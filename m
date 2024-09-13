@@ -1,178 +1,116 @@
-Return-Path: <linux-kernel+bounces-327565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA959777B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:04:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B899777B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84ECF287422
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:04:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9292871C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B811BF7F9;
-	Fri, 13 Sep 2024 04:03:57 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A711BC078;
+	Fri, 13 Sep 2024 04:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nmDD9/iR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0E218C902
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97D93EA64
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726200236; cv=none; b=QhQNXkXrSrDtkSQ+e+EdLq81DNa5vHqg5DY1J+se7kZoI+6m9YV+qDCZz7Ke6ZR56IewHw2lWIneJyjaJnqdHHvhh8+ugcwxi6UI+X4olJTB4ILxbOR3w4fTRkQQm7W5Q+5WbfTsLDr84JuXNGqVIpDmdmRA+CLX79Ny12LCJWY=
+	t=1726200055; cv=none; b=fjmvX2iAcWpi8ICH8Y8+GpadMGnpFaHW2QCWNUmawxgSbHg71I0Q5lb/sLXMQ3iGJ0+/QzN5dmpkIABFY3QgiATZkcB2axUmfHlaumrXJ3+Ha/YOzeIXoN1N3CwydYUqFPd2JobEpm+tHW7pxqvoOqhZNzdNExt7PtCeuAnPdpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726200236; c=relaxed/simple;
-	bh=8pWpXeBox2Y+jRM6HjWyWrmbWbyUqgT6yE7fxROn93M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EyPddXU9U2EunzWGoHiT8qfexVt5A6UmsSaYKSiVV7jRdcbxV/+aHHLhlsouTCzOMlrjbD/D3WjxZAryI+T/XD8EE5vkTRlikfwlqJHVFKjY47hNubNueYHcEOTijsBgZRce1Y3pdMr7sg5U62r4lQz0nMfIyLIRqy3jId+l3Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4X4gf82qR8z1yls6;
-	Fri, 13 Sep 2024 12:03:44 +0800 (CST)
-Received: from kwepemd500019.china.huawei.com (unknown [7.221.188.86])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3F38318001B;
-	Fri, 13 Sep 2024 12:03:45 +0800 (CST)
-Received: from [10.67.109.61] (10.67.109.61) by kwepemd500019.china.huawei.com
- (7.221.188.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Sep
- 2024 12:03:44 +0800
-Message-ID: <9982cb8d-9346-0640-dd9f-f68390f922e9@huawei.com>
-Date: Fri, 13 Sep 2024 12:03:38 +0800
+	s=arc-20240116; t=1726200055; c=relaxed/simple;
+	bh=AGU8oW2VkIQczxGH1AKW27KabmMuxPVommcOqMkQ9Wo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ghZretdq9lkqLDZ8bvkUYgUMlJx0GIR8AtZw1oQhOrNOyctm+Bksq+ELPO86TdmILTXS3zLgasMwP4uMcxZmJQUZUvGseae7ZylGU6bhSJzAYwhVQ86kxhXKJcKLS1WFAAUyGZxwtTc1a1jeGOv4Fg91R5n23sl3JsejU5KNObY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nmDD9/iR; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726200054; x=1757736054;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AGU8oW2VkIQczxGH1AKW27KabmMuxPVommcOqMkQ9Wo=;
+  b=nmDD9/iR9VgxBhYPqCJEUbD8suRbwlmKNmDA/Cu09y5DszF0NqA6j1UZ
+   TO+u1Priw0Ft7gSsiCT9y5J9b/XOMhTZoQd/xKSBVP38wT/t9z091Lrs4
+   cWQnFj4h4nJrxCUHetpfBcJiTT15bKffmed03CP1i+tZFAHNFm8HqOYLp
+   Uo80ET9dPvCOm/7Qb5Cpu2QPc1+oaJRUS/YlXGAZOJ6JES+DQ1dPSJL5l
+   Ni41Z3m3ICdhFX3jz6QbyupVwzIl2beYUIHCGd2ep2yd0/BC3Ki9qnHCV
+   1EfFxhxRRj7Eo4STzP1EOzjzqgePOElsJNVNukE2IEcG8h8cQcKfMym22
+   A==;
+X-CSE-ConnectionGUID: 7XjfXYZaQJetHZE+XX8Z+g==
+X-CSE-MsgGUID: eVjKU1lvQg6WxtTkMaWb9g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24962845"
+X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
+   d="scan'208";a="24962845"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 21:00:53 -0700
+X-CSE-ConnectionGUID: JBEVXyBLQWGChKAWfpuiHw==
+X-CSE-MsgGUID: qFBNViP7Tj29GaiaKFBEug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
+   d="scan'208";a="72728425"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 21:00:52 -0700
+Date: Thu, 12 Sep 2024 21:06:35 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
+	Radu Rendec <rrendec@redhat.com>,
+	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/4] cacheinfo: Allocate memory during CPU hotplug if
+ not done from the primary CPU
+Message-ID: <20240913040635.GA9167@ranerica-svr.sc.intel.com>
+References: <20240905060036.5655-1-ricardo.neri-calderon@linux.intel.com>
+ <20240905060036.5655-3-ricardo.neri-calderon@linux.intel.com>
+ <20240911140844.GFZuGkbHQ_E-K5LW1q@fat_crate.local>
+ <20240911233410.GA7043@ranerica-svr.sc.intel.com>
+ <20240912105918.GBZuLJhtVBHKK54KFD@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: =?UTF-8?Q?=5bQuestion=5d_sched=ef=bc=9athe_load_is_unbalanced_in_th?=
- =?UTF-8?Q?e_VM_overcommitment_scenario?=
-To: Waiman Long <longman@redhat.com>, <peterz@infradead.org>,
-	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
-	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>, <oleg@redhat.com>, Frederic
- Weisbecker <frederic@kernel.org>, <mingo@kernel.org>, <peterx@redhat.com>,
-	<tj@kernel.org>, <tjcao980311@gmail.com>, <vincent.guittot@linaro.org>,
-	zhengzucheng <zhengzucheng@huawei.com>
-CC: <linux-kernel@vger.kernel.org>
-References: <20240725120315.212428-1-zhengzucheng@huawei.com>
- <3e68ccda-1606-9494-f57a-75be9668b83d@huawei.com>
- <cb3a3f3e-727a-4cbb-b4a8-f9469ed4f08d@redhat.com>
-From: zhengzucheng <zhengzucheng@huawei.com>
-In-Reply-To: <cb3a3f3e-727a-4cbb-b4a8-f9469ed4f08d@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd500019.china.huawei.com (7.221.188.86)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912105918.GBZuLJhtVBHKK54KFD@fat_crate.local>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-In the VM overcommitment scenario, the overcommitment ratio is 1:2, 8 
-CPUs are overcommitted to 2 x 8u VMs,
-and 16 vCPUs are bound to 8 cpu. However, one VM obtains only 2 CPUs 
-resources, the other VM has 6 CPUs.
-The host is configured with 80 CPUs in a sched domain and other CPUs are 
-in the idle state.
-The root cause is that the load of the host is unbalanced, some vCPUs 
-exclusively occupy CPU resources.
-when the CPU that triggers load balance calculates imbalance value, 
-env->imbalance = 0 is calculated because of
-local->avg_load > sds->avg_load. As a result, the load balance fails.
-The processing logic: 
-https://github.com/torvalds/linux/commit/91dcf1e8068e9a8823e419a7a34ff4341275fb70
+On Thu, Sep 12, 2024 at 12:59:18PM +0200, Borislav Petkov wrote:
+> On Wed, Sep 11, 2024 at 04:34:10PM -0700, Ricardo Neri wrote:
+> > Yes, both patches address issues during CPU hotplug (both NULL-pointer
+> > dereference). However, IHMO, they are separate issues. Patch 1/4 fixes
+> > a missing allocation check. Patch 2/4 causes the allocation to happen in
+> > case early allocation is not used.
+> > 
+> > If I did not convince you, I am happy to merge together patches 1 and 2.
+> 
+> Well, what is easier to handle by stable and/or backporters: one patch or two
+> patches fixing two very similar CPU hotplug isuses in cacheinfo?
 
+Indeed, one patch would be easier to handle.
 
-It's normal from kernel load balance, but it's not reasonable from the 
-perspective of VM users.
-In cgroup v1, set cpuset.sched_load_balance=0 to modify the schedule 
-domain to fix it.
-Is there any other method to fix this problem? thanks.
+> 
+> IOW, what is the benefit in having two patches instead of one?
 
-Abstracted reproduction case：
-1.environment information：
+Marginal I guess. I can put all the background and rationale in the commit
+message.
 
-[root@localhost ~]# cat /proc/schedstat
-
-cpu0
-domain0 00000000,00000000,00010000,00000000,00000001
-domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-cpu1
-domain0 00000000,00000000,00020000,00000000,00000002
-domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-cpu2
-domain0 00000000,00000000,00040000,00000000,00000004
-domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-cpu3
-domain0 00000000,00000000,00080000,00000000,00000008
-domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-
-2.test case:
-
-vcpu.c
-#include <stdio.h>
-#include <unistd.h>
-
-int main()
-{
-         sleep(20);
-         while (1);
-         return 0;
-}
-
-gcc vcpu.c -o vcpu
------------------------------------------------------------------
-test.sh
-
-#!/bin/bash
-
-#vcpu1
-mkdir /sys/fs/cgroup/cpuset/vcpu_1
-echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.cpus
-echo 0 > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.mems
-for i in {1..8}
-do
-         ./vcpu &
-         pid=$!
-         sleep 1
-         echo $pid > /sys/fs/cgroup/cpuset/vcpu_1/tasks
-done
-
-#vcpu2
-mkdir /sys/fs/cgroup/cpuset/vcpu_2
-echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.cpus
-echo 0 > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.mems
-for i in {1..8}
-do
-         ./vcpu &
-         pid=$!
-         sleep 1
-         echo $pid > /sys/fs/cgroup/cpuset/vcpu_2/tasks
-done
-------------------------------------------------------------------
-[root@localhost ~]# ./test.sh
-
-[root@localhost ~]# top -d 1 -c -p $(pgrep -d',' -f vcpu)
-
-14591 root      20   0    2448   1012    928 R 100.0   0.0 13:10.73 ./vcpu
-14582 root      20   0    2448   1012    928 R 100.0   0.0 13:12.71 ./vcpu
-14606 root      20   0    2448    872    784 R 100.0   0.0 13:09.72 ./vcpu
-14620 root      20   0    2448    916    832 R 100.0   0.0 13:07.72 ./vcpu
-14622 root      20   0    2448    920    836 R 100.0   0.0 13:06.72 ./vcpu
-14629 root      20   0    2448    920    832 R 100.0   0.0 13:05.72 ./vcpu
-14643 root      20   0    2448    924    836 R  21.0   0.0 2:37.13 ./vcpu
-14645 root      20   0    2448    868    784 R  21.0   0.0 2:36.51 ./vcpu
-14589 root      20   0    2448    900    816 R  20.0   0.0 2:45.16 ./vcpu
-14608 root      20   0    2448    956    872 R  20.0   0.0 2:42.24 ./vcpu
-14632 root      20   0    2448    872    788 R  20.0   0.0 2:38.08 ./vcpu
-14638 root      20   0    2448    924    840 R  20.0   0.0 2:37.48 ./vcpu
-14652 root      20   0    2448    928    844 R  20.0   0.0 2:36.42 ./vcpu
-14654 root      20   0    2448    924    840 R  20.0   0.0 2:36.14 ./vcpu
-14663 root      20   0    2448    900    816 R  20.0   0.0 2:35.38 ./vcpu
-14669 root      20   0    2448    868    784 R  20.0   0.0 2:35.70 ./vcpu
-
+I will post a new version merging patches 1 and 2... and fixing the
+formatting of allocate_cache_info().
 
