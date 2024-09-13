@@ -1,110 +1,163 @@
-Return-Path: <linux-kernel+bounces-328270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06404978143
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:35:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E3A978144
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405331C22D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:35:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65DB91C238D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D661DB943;
-	Fri, 13 Sep 2024 13:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CdMs9gNE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B149B1DB936;
-	Fri, 13 Sep 2024 13:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BC61DB551;
+	Fri, 13 Sep 2024 13:35:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292CC1DA318;
+	Fri, 13 Sep 2024 13:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726234501; cv=none; b=grmE25k1yNsuOKTj98IN5jXHJyw2b3Y2vgh51JXoIHdRrEk/o7jOkADcu/rWISkx7jmv7AcMwvo9ogeBtx+OWkqL3c7NzLA9jPiwq8b6C7QpVZL+N4FMPAEep3ZSkDEga9xKDIc1C5oiZtIQ+DWM+3/Sk9XilipSY3jSL8fSAK4=
+	t=1726234513; cv=none; b=mG4A8n8tcOyWFGGkz0ji+cqxU3j3HtELUj7gM2h8mMBQQ8ll8px5DeXlLZZeIDjc/VbRzI1aCO6dD1HNJSxtVC9i/rE1h2m4N9QNDUVS5XtydLGf4k1xOolgOaiFRHnuFH6bitHcifnRv9+Qrc/mp3TzCcT+JZCGGiDNkU3oYSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726234501; c=relaxed/simple;
-	bh=DC812cNP2cjU0UjaJrBz8Qs8libYI+MgnRXo4lg77Uo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVB//cDIIyUg4GDtv+sC5gcftY9uv6NWrK6yEidRQ/M8IwN4uolGZZFiKaGMlinV9lqty/guRihBQ/0ibW5q7u/34Eh6cWJ5ZozpDyN01l4CgWruE03hv3z55hXpSYqoCIYw6wNMY+Lp/9q+2T3oYe9P9m1wCAdDdlPFPZjRkiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CdMs9gNE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA23C4CEC0;
-	Fri, 13 Sep 2024 13:35:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726234501;
-	bh=DC812cNP2cjU0UjaJrBz8Qs8libYI+MgnRXo4lg77Uo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CdMs9gNEXxn2HMZjDKQ5dPndDm7rPln8EE6zu6jv50x3A+Vdb18F36xEAPCAamAMF
-	 3WWoj44PwexEleU4b42D5Hw+aAWEzO9bD2YR4HQpvJsy3lIugN3hz9mL1LJCGmOS08
-	 wLgzhD+6wOo/dxU3g3uw129hN95bAEbwJ/A66glY=
-Date: Fri, 13 Sep 2024 15:34:58 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v1 1/1] software node: Simplify swnode_register() a bit
-Message-ID: <2024091300-afford-tamper-1831@gregkh>
-References: <20240913110523.3584749-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1726234513; c=relaxed/simple;
+	bh=S+rR3ivhe3t3xEBNPwDuDi45Uhrw68HH6I3Ap16DZpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rru71NFYP7lUWyUBWQQdAvzY2LtQKXmWY0iYTQrG3tmvtmKbUscHDUoAPp9qvzaEqZVpf/kHaRQjA0c8oVRhAbKMWDwvIfcAPyDr+s+10hSRQCavmQ5eM93/8TIkjlXSK1bKSJSGqTddhNXf4a86BxR/l80g4LndxWK0UnqsVx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C65A613D5;
+	Fri, 13 Sep 2024 06:35:40 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 787033F73B;
+	Fri, 13 Sep 2024 06:35:08 -0700 (PDT)
+Message-ID: <42bfbda0-3b4a-496f-a96a-8f16d3e108f7@arm.com>
+Date: Fri, 13 Sep 2024 14:35:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913110523.3584749-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/7] perf test: cs-etm: Test Coresight disassembly
+ script
+To: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ gankulkarni@os.amperecomputing.com, coresight@lists.linaro.org,
+ scclevenger@os.amperecomputing.com
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
+ Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
+ <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240912151143.1264483-1-james.clark@linaro.org>
+ <20240912151143.1264483-8-james.clark@linaro.org>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240912151143.1264483-8-james.clark@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 02:05:23PM +0300, Andy Shevchenko wrote:
-> By introducing two temporary variables simplify swnode_register() a bit.
-> No functional change intended.
+
+
+On 9/12/24 16:11, James Clark wrote:
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Run a few samples through the disassembly script and check to see that
+> at least one branch instruction is printed.
+> 
+> Signed-off-by: James Clark <james.clark@linaro.org>
 > ---
->  drivers/base/swnode.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>   .../tests/shell/test_arm_coresight_disasm.sh  | 63 +++++++++++++++++++
+>   1 file changed, 63 insertions(+)
+>   create mode 100755 tools/perf/tests/shell/test_arm_coresight_disasm.sh
 > 
-> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-> index b0be765b12da..810c27a8c9c1 100644
-> --- a/drivers/base/swnode.c
-> +++ b/drivers/base/swnode.c
-> @@ -908,6 +908,7 @@ static struct fwnode_handle *
->  swnode_register(const struct software_node *node, struct swnode *parent,
->  		unsigned int allocated)
->  {
-> +	struct kobject *kobj_parent = parent ? &parent->kobj : NULL;
+> diff --git a/tools/perf/tests/shell/test_arm_coresight_disasm.sh b/tools/perf/tests/shell/test_arm_coresight_disasm.sh
+> new file mode 100755
+> index 000000000000..6d004bf29f80
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/test_arm_coresight_disasm.sh
+> @@ -0,0 +1,63 @@
+> +#!/bin/sh
+> +# Check Arm CoreSight disassembly script completes without errors
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +# The disassembly script reconstructs ranges of instructions and gives these to objdump to
+> +# decode. objdump doesn't like ranges that go backwards, but these are a good indication
+> +# that decoding has gone wrong either in OpenCSD, Perf or in the range reconstruction in
+> +# the script. Test all 3 parts are working correctly by running the script.
+> +
+> +skip_if_no_cs_etm_event() {
+> +       perf list | grep -q 'cs_etm//' && return 0
+> +
+> +       # cs_etm event doesn't exist
+> +       return 2
+> +}
+> +
+> +skip_if_no_cs_etm_event || exit 2
+> +
+> +# Assume an error unless we reach the very end
+> +set -e
+> +glb_err=1
+> +
+> +perfdata_dir=$(mktemp -d /tmp/__perf_test.perf.data.XXXXX)
+> +perfdata=${perfdata_dir}/perf.data
+> +file=$(mktemp /tmp/temporary_file.XXXXX)
+> +
+> +cleanup_files()
+> +{
+> +       set +e
+> +       rm -rf ${perfdata_dir}
+> +       rm -f ${file}
+> +       trap - EXIT TERM INT
+> +       exit $glb_err
+> +}
+> +
+> +trap cleanup_files EXIT TERM INT
+> +
+> +# Ranges start and end on branches, so check for some likely branch instructions
+> +sep="\s\|\s"
+> +branch_search="\sbl${sep}b${sep}b.ne${sep}b.eq${sep}cbz\s"
+> +
+> +## Test kernel ##
+> +if [ -e /proc/kcore ]; then
+> +       echo "Testing kernel disassembly"
+> +       perf record -o ${perfdata} -e cs_etm//k --kcore -- touch $file > /dev/null 2>&1
+> +       perf script -i ${perfdata} -s python:tools/perf/scripts/python/arm-cs-trace-disasm.py -- \
+> +               -d --stop-sample=30 2> /dev/null > ${file}
 
-I despise ?: use just so much, EXCEPT for when it's used in something
-like this:
+This is fine for self test. But for a CI test in a distro, will it fail to
+find script with prefix 'tools/perf/...'?
 
->  	struct swnode *swnode;
->  	int ret;
->  
-> @@ -934,12 +935,10 @@ swnode_register(const struct software_node *node, struct swnode *parent,
->  
->  	if (node->name)
->  		ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
-> -					   parent ? &parent->kobj : NULL,
-> -					   "%s", node->name);
-> +					   kobj_parent, "%s", node->name);
+Thanks,
+Leo
 
-Which really is the only valid way I'd put up with it :)
-
-So can you rewrite the change above to be just:
-
-	struct kobject *kobj_parent = NULL;
-
-	...
-
-	if (parent)
-		kobj_parent = &parent->kobj;
-
-Which is much simpler to read, right?
-
-thanks,
-
-greg k-h
+> +       grep -q -e ${branch_search} ${file}
+> +       echo "Found kernel branches"
+> +else
+> +       # kcore is required for correct kernel decode due to runtime code patching
+> +       echo "No kcore, skipping kernel test"
+> +fi
+> +
+> +## Test user ##
+> +echo "Testing userspace disassembly"
+> +perf record -o ${perfdata} -e cs_etm//u -- touch $file > /dev/null 2>&1
+> +perf script -i ${perfdata} -s python:tools/perf/scripts/python/arm-cs-trace-disasm.py -- \
+> +       -d --stop-sample=30 2> /dev/null > ${file}
+> +grep -q -e ${branch_search} ${file}
+> +echo "Found userspace branches"
+> +
+> +glb_err=0
+> --
+> 2.34.1
+> 
 
