@@ -1,192 +1,187 @@
-Return-Path: <linux-kernel+bounces-328627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80021978695
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:22:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE6F978696
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F031F25DF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:22:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 274261C21A48
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2415A824A1;
-	Fri, 13 Sep 2024 17:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2048D84D12;
+	Fri, 13 Sep 2024 17:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Vf7TKf9j"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Pxx/orLm"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FFC4F20E;
-	Fri, 13 Sep 2024 17:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726248157; cv=none; b=DRL5slRJZaimxQF2byZXkkSRciaQ/QflD8dfmj12xuCDaVqXrVOamj4f1dTopV2HeK/CL7xzfPChG3+513sa1NaWixPsIAPypP740dhG/5S1pm7lrNsfyxpj7zzXPrJdr9OxRz5hTpSZfbPKv6MVMule4a4VGIpqf1Ioy9JcJpk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726248157; c=relaxed/simple;
-	bh=s7eO93kg8ysBRRZfrfS1e3Z3WCkhxLWch1MA5EoLsto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P3ZQw2UTL1V0KrizBX9XadBxmlM2ffb2/JHiUBwxXsDudEN5Rz6krdySgNSIyLDKkHuOyU3L+BZ7hJ3FZ9EL85bpPGbX9bn/eT8llRDXjmfpoWs/eGOw6VzOSNYeFp9tDCBQDAGADakRlkpiFl+plMy0DkG3F26XPqDffSPQbRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Vf7TKf9j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DA9NGr032375;
-	Fri, 13 Sep 2024 17:22:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZqhrEEqwuyfI/PMaelNfv0IQVewxxkYdfiJILt0Fpl4=; b=Vf7TKf9jdlJr7Mha
-	J76hus+R4RDfROWBIrfVXC658gZFLoxKGuQGsmRoLKH0PxbtbdSQLG146nlDFUqh
-	kmZo1/eb1DvsSngstvcoVtljMElh0LHsz6+4gpN78A5Qon3rDTbsVf8LhJvNKMTI
-	UAxzAo4TCjN6Xz1i44NRpCX+SWYJgBl71HsIn1+/eS8GRFVPzjtRUyLU+wbBXaqL
-	sHjmVfrGcwVx/Iqrz/WcYARldsxmfv2NK1JnntYAYo65aRGJyq+j56QtR9GAHRhI
-	LZqJWc1Dkqn2xfDorXB4pxHKiY1KE6HH8EDHV7nVWvo11j4mLYleMnaCoj80xzkJ
-	mnd7Rw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6t1q31-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 17:22:13 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48DHMCPr018146
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 17:22:12 GMT
-Received: from [10.46.19.239] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Sep
- 2024 10:22:07 -0700
-Message-ID: <4b6addfe-5a54-41f8-9353-4541440950e9@quicinc.com>
-Date: Fri, 13 Sep 2024 10:22:06 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F092181AD7;
+	Fri, 13 Sep 2024 17:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726248159; cv=fail; b=WAzQuglV26W1XWM/EyHGFyCViGScvILWUjd5UsocXsuAitBUMoLz9hgXb9BTssyqKoIU2LwXPu8QjLdiqX2Po1DiHf00Izr8WIq2EITEiFZpPQrym49LdbR64ruogwfmAQMForqEHmuS+fB0tKahqjBGR6Yh6DpIVvzvlwiXmLs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726248159; c=relaxed/simple;
+	bh=ohKT095S+SbpiVTa+/BCxqva81fRi88jBpiE9xPMGxk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZDnCD/dr1vvdVVKzPMU5wMShCBZNvFBt3azeXRXOF49cv7VyZddOJsknkQEVUQJvTLisbwb+rR7FXUo9XRJ5M6lCYqtfpdqiEk8jHy082qWbgzow0z0kLhK8iMqEMlLllD/wAffsrhLgW2AU8KwqwArJjYbjwVv8zhI2lUp1st8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Pxx/orLm; arc=fail smtp.client-ip=40.107.93.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qMM73XgG8nofgyr78j+tRmhWFASaC5UvSgME18qubnf/qCEbYglQtWUNc6YWupapvfzHV2EaGuBqALLefSC6jYCK1/ujocjgpJxujUnmyMpBOtMfodPwCJnv+95IJEPUv7xxaPosD0Fs8cw06+E8JF88Ze3nSuGNSePsg2EMECwFKHwpZkQdGgJF8mNk2l+6ItJD2WugIJQhlE/9ko4asBMYIkDf75XI5j52tN2XaeZJACQapnpFDyfxAmHQepktzhQpwr2URsO/Q74h5D8oiIVeiAU7ts5Btk4AmxdQXiUOhy9trkofYhieIHo6iwRd/N8KvCn0BFJ8V3NsDwd4Kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iHB2oTE3JWv21fdRXFqod2B4b1auiYBt4/XeUV64oZU=;
+ b=JnFUod5hwMd5/EPdsMkwZdZms/+76uVBl305BAZyupgn3bjDVyoHsmT8nDS7v0hKcv7UrhqJKBli/BmdkbjRTDx3h56UztTmElmgYAqQi/Ql8KedkuyNZ3L/JiHQHaM/gy9IQasOqWN/kjAVdpCvOuFUmcnAWYd3M/YFAX9tHSs5xGm0jVMAHxj3Vy6QLFlgkDcj5YxrxoAnG48iLehDvOxkoBGdOEJUJytuK2aXo6//E2p1rBDxuxvuS1zqeIKP7QUbNcG05YGT209bj8+XiPwZLP7X1AOiBGvpP6/pdsT0zpFhxKOJuGbrxXg5qK/BtnE8xgRNMgCNJGYPfQGN+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iHB2oTE3JWv21fdRXFqod2B4b1auiYBt4/XeUV64oZU=;
+ b=Pxx/orLmjcn4U08Ph5KLd8/DMKGt2kvr0w+rYIREUcLuKpESkGb0rg4WrCS58sD1IZFDH/edHPNQI2wRPg/zJXYJLJDaHRn0TLX9r86FYTzCJyF8z0ZtO9xSiCSA97zWYNxSQmW88GNkTrGGtxK8+/w45rcF1VmzNOXjl8BY2q8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by PH8PR12MB7207.namprd12.prod.outlook.com (2603:10b6:510:225::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Fri, 13 Sep
+ 2024 17:22:35 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
+ 17:22:35 +0000
+Message-ID: <16af70c2-ddc8-409f-958a-cc3dea31603e@amd.com>
+Date: Fri, 13 Sep 2024 12:22:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v11 02/20] virt: sev-guest: Rename local guest message
+ variables
+Content-Language: en-US
+To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+ bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
+Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+ pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
+References: <20240731150811.156771-1-nikunj@amd.com>
+ <20240731150811.156771-3-nikunj@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20240731150811.156771-3-nikunj@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0160.namprd13.prod.outlook.com
+ (2603:10b6:806:28::15) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH net v1] net: phy: aquantia: Set phy speed to 2.5gbps
- for AQR115c
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Heiner Kallweit
-	<hkallweit1@gmail.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Brad Griffis
-	<bgriffis@nvidia.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Jon Hunter
-	<jonathanh@nvidia.com>, <kernel@quicinc.com>
-References: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
- <20240913100120.75f9d35c@fedora.home>
- <eb601920-c2ea-4ef6-939b-44aa18deed82@quicinc.com>
- <c6cc025a-ff13-46b8-97ac-3ad9df87c9ff@lunn.ch>
-Content-Language: en-US
-From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-In-Reply-To: <c6cc025a-ff13-46b8-97ac-3ad9df87c9ff@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bgYaCwxVRs7CJ1dCfy7Ejhft1EVVHW1-
-X-Proofpoint-ORIG-GUID: bgYaCwxVRs7CJ1dCfy7Ejhft1EVVHW1-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- suspectscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409130124
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|PH8PR12MB7207:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24ae9af7-2b3f-4087-c8d5-08dcd418a881
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NEJqL3VzTmtmaTQ5dS9UNWZVOUxOOUttOGVOeDk4N3VIVHJMSlo3cGU4U3h5?=
+ =?utf-8?B?aEZiQm1xOS9KWmEralA3anczU3NFRTNZNkhtck8wanREQTlQY3IxNWo2Slgz?=
+ =?utf-8?B?MlRHTmJucDNSWUtWaUNSQVkzZm5ZenZhYkJRTkpaME9wOVR0Rmwxa1VraFdl?=
+ =?utf-8?B?VWRiYzVoLzZhY3JISEExemhjTkpBd1k0cXY2R3p3ZGJGc2YvM1l3WEpoS1JJ?=
+ =?utf-8?B?TTlLTEdVZUJUZzBta25RcDU2STFJbklXRGZ3VlJEamZmTEJOcDRsWmxvZE5B?=
+ =?utf-8?B?VWtmOTFRWC9teDE0VlhFZy84L0tlVjVNallnTy9UczBtRGhUQXVXMW9JNDdh?=
+ =?utf-8?B?RFY4amZ4WFhPZWdHRWp2cVlhVlpCc0wwdXZjTjcwdEtwcGppdnpNazJwOFBQ?=
+ =?utf-8?B?QkJKQmZpTFM3T1lnKzhEeEhlNmlVbTFnaG1KLytRYlo3Sm50SHNKTC9YNGdu?=
+ =?utf-8?B?TG8zdGFDeEgrbFZ0ZXZkZmVoUUZwZVovdy9UdWhIdCtCRGw1b293RU03VzlX?=
+ =?utf-8?B?UVUzRWxvS1RIWHdHV3JIbEZ6akMxYVhHcUVUZDRWcTh4UTRMeGlCOXRQbWdh?=
+ =?utf-8?B?czRHWUFwTDVMSnoycjIwa2FnTUVGVkdyZ0FFQWd2RG5qRVpLMDQ1WlJLK3dx?=
+ =?utf-8?B?VUp4dmNpWUozV1lCK0RROUJOcUJEbVY1ZmU3RktobkYwaFNVaTRKS1VhOU8r?=
+ =?utf-8?B?blBOcUdkWkd6M01SSFU1bFI1Uks0WWpTTTZnZEl0eFE3VlNnTGFBWWRIWlNB?=
+ =?utf-8?B?SWlXZzlBUVpWWHBHVXBjZFJRcUpjV05ZUTJhRTd1bkRHa1pld2l4TXZKV3ZN?=
+ =?utf-8?B?RFV3bW1acTEzVVlYbllYSmg0SHFzdXk4RnNUUXBtbVkwUEJKdFF4alR1K3RB?=
+ =?utf-8?B?RWdZSUZLK3ZKZ3dxZXg2d3FYSDRDUXFFY1luYjMzY0ltemQ1aTRUaEYvMW9O?=
+ =?utf-8?B?UHA2ZFFFaHNQc1g3K201Qm5Kb0x1djc2c2FDOXZ6SFIzS24yRVUyVXVEeWp0?=
+ =?utf-8?B?Z1lNNTNraHNWNDYrY2g0SWl0Y1UzVUhPbUd5UEl4aVhPaFcxaVVGclcyV2J4?=
+ =?utf-8?B?WjF1czFzYnpzbzlIbGZWaFNMWXdJWWNPSm5MSHFLeEMvM0s2ek9zMGsvR003?=
+ =?utf-8?B?U1E4cDBZY3ZjamZUVWNFSnVtN0l5dVZsMzB6TUZMOXk4RzJBeVlLWEFwcElP?=
+ =?utf-8?B?NWR2UjBnVHI1dVIwNm9XK1BqdWFGUkVyVkhTc0trd05nLzJaclYyRUxNUHdJ?=
+ =?utf-8?B?Y0FQc2x4S0RMS0hnM01CY2Y3cDhMVG1yQlBQMUdmd0RXOU12cjJUblZ2VkRw?=
+ =?utf-8?B?WWNnYm9ycEZvRElnV2x0Y1BaYWRFdXVsSGNBUlF3TEZJM3ZFTHF3bUpZZU1B?=
+ =?utf-8?B?ZlNlU0NHcHQxZlIraThOWGFqMk1yTW1ld2NoVDVTcysrNHFVNXlMTzEwSS8z?=
+ =?utf-8?B?enc2NDNWS1Q3UXVRbmw1dWNFWExYR29sUXhsN2xvZUgzMVRKYjA3cU9xcGpk?=
+ =?utf-8?B?VGVlNi8zUFE2SVpES0lEb3FEcndJQ3ZjcW9RKzJVY3RkcDdVT3g5RHBkWkpT?=
+ =?utf-8?B?RDVzU0UybkVrMkZJU1NRTEZZMmFQbmJKUmdlK25HMHVwZ3UrWitkWHY4anRT?=
+ =?utf-8?B?MWpyTE40N0YvaUEzK3VYQjkvTm96UXdxdGJERmJrSHdkZmlWRDJ4MmQzeWt3?=
+ =?utf-8?B?aGU2bGozRkYwM3p5cTNOVkhxbERrOFJvTlNnTVBHMTRqalFadmFjMGduT1Nz?=
+ =?utf-8?B?b3BRWC9zVDlNbktBamNhZWxVS0J5R1V0TFRJc2p2emFNTkRrbHgxYlN0MGJq?=
+ =?utf-8?B?ZHp6OUVKOWhtWTFISVZQQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MTJ4VzRya2hFTHZLSXY2NEhSdkN5MWI2NWhWUHFMTU5Dblhob1Z5MWFYaU9V?=
+ =?utf-8?B?aXNNS3FVcTQxZytueVo5QWprdE5EZ082N3k4Q1JnUGRVUHVUa1NnWFAxQnV3?=
+ =?utf-8?B?NWJvU3RLUHhiYVZ4R2xHalN2T1czN2pFYTk2OUZwRmV6a000RlZSYW1STjBm?=
+ =?utf-8?B?RWd1d1hWd29HQzRkcStDNXREOHRvN1lHaUwxSUFnZlY4TkpJalZ3bjdnZVJt?=
+ =?utf-8?B?VDk0NFBIWjVVZzd4NWNubngvUFVhOFNlMmNRS2RBWHFYd1dWeUYrcmxDSkQz?=
+ =?utf-8?B?eTRLWWQ5RS8xR0VIUjRiaXVRSXJIVm44aDU4MGFSYWJHWlRsOC9lb2NiMzJx?=
+ =?utf-8?B?KzRHdGZSV1FxOU11bnJTWUFMRHpJaVhObno4WXZJTGxJMmowQWtwWXpmSzVw?=
+ =?utf-8?B?aURCamdscXNjSWo4WUlKYkpmZ3V1U3BMeUhTMFhrdHpDZUlEeDBrK1ZMOThW?=
+ =?utf-8?B?ZVd4U2Y1RjBRRjNoam1xb0grK3I1WlZtK1hGVU1PT0VOc2h6dExvOWV1U3hH?=
+ =?utf-8?B?WkVkeHkwcHdlVDNIbkxqQUlnL3NSSURxcDFKLzV3ZXMveGRTMVFzS3RCS0tW?=
+ =?utf-8?B?RVJXc1B6SDMzcTE5SFJPZTVKNVJ0azEvak00bGUvNnNHV05udktRL1g4bUIv?=
+ =?utf-8?B?Sjkrb096L2dCdFBFM1hrUlpZL2lEUTR4M2ZNbUp3TUFjY3pFVTVMNi8xUHU3?=
+ =?utf-8?B?WjB3M3hwMW1odnJIWmZJQlV5UWdCTDJFbHdVMlNleXE4NjdjcjAvSEY1WWVX?=
+ =?utf-8?B?WkwxR3BXdlp0T2prenlxaXRuVmJNM2dzK0IxK1VCenJRSEp4RE5NNnVxa1F2?=
+ =?utf-8?B?a0dOcW1YekVzUTRaY241QUVOQU13SWZQMWY2aEFZSVpvZUl1WDFXdXhTSnAz?=
+ =?utf-8?B?dFl1ZE9zelc2Z25qZTZoNmI4SWVBZXBMNHA0eGtLVHdGbEtDbWdTQnZnUVpJ?=
+ =?utf-8?B?djhjM01mdVBIbllaOUtKUzVsamV4RmMyZjRlYnB2ZkthVk1CRDBZNTFtV0Nv?=
+ =?utf-8?B?ZjNzU043RExueC9nMVRHeTN5bXZsTldSek5nMktOTzk3bjQ3VHVKMUhjSGlW?=
+ =?utf-8?B?NTdFYmRDWlpvZ1EwcVFZektLS1FCS0w3dW1NR2VnUGt6UmdWMDBZVkdoc1ZE?=
+ =?utf-8?B?bHVzUkdYYjhPWkpKdzhpeHZPbUtqNXRFRkl2SDY3Z2labzQ4N1NUYmZqTDVN?=
+ =?utf-8?B?Q0cvQk5WSHZQUGk1VVpTMFVvSWhxc3pQSmt2WDg4dDRRN1lzWFNtbG50THQy?=
+ =?utf-8?B?OENla3M5OHNlWkpyZ1psYlJkOFlSTDVsM1dJNUppUmExc1Z6SWo1Qkg0Nmdy?=
+ =?utf-8?B?dTBqbGNDV0dyRndIMmZReW5sSmNzd0RFdkdwY1NEV1hHRnNpVnRYTWF0enFi?=
+ =?utf-8?B?Qm4wb2JkbVJ4aG9NUDBCem94L08xQklKRDVjcVFBWDZEN09lOEpkd1EvWVhU?=
+ =?utf-8?B?RzNtd1Zob3B6ZzVNZmxNVlJJWnAwMWI5Um1hc08xZWhiczJwRklnM3k0MGMw?=
+ =?utf-8?B?Q2w4NzBlcG1rcWl4VVc3SUtyK3luaWtnWXFhcWxaMWNnUEY1YzBHdlltajky?=
+ =?utf-8?B?aVBnTmlxaE1jdC9xdlBoS1FWRDhFaWFqTVFoK3Evdll4THVYdktMeUZIUlhp?=
+ =?utf-8?B?NmhhT3JPenRsUjcxVmlldzNFa3l6cXg4emloMkRYa2UwNnNhZGRjK2duMk9J?=
+ =?utf-8?B?ZHNTenZ6dkNaTm5JcUZOK3EwRmwySWtWZVdJMTNpVk9Ma3M3QTl0bGxQSjJD?=
+ =?utf-8?B?TlpQdDI0c3ZZOHdwY0NPOEV5ekM4OWdXa3FMa3FhbXpkZHpQclNOejdpR0I5?=
+ =?utf-8?B?RVpFTFdaRlNQem1sbm5OZDdYRngzc290WFc4R3Jyb0FYZVVTbkpGR2tQRWN6?=
+ =?utf-8?B?aUlNOW5HRzNzRGx4bytzcW1SU2xzUWorVWEzcXRrMUZsVGlLUW5DckNheUNn?=
+ =?utf-8?B?MEYxY1MrNjEyZk5qeHAwOGU5TG45aVpFdWh2WTYvZWc5YVIzc2dRU3JsUGJR?=
+ =?utf-8?B?WjZsaDN6VS9remE0MmlCK3dGa0toVWMwOTBZTjBIR2ppNi83YmJyT3BwM214?=
+ =?utf-8?B?SXBJZXZObXBhRCtka1ZENzA2Zi9TV21IcHJRWnk4NlVtcHA5cU5jMnlyVGp1?=
+ =?utf-8?Q?1m8nGPyrlZrwaNf95TmTXBacc?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24ae9af7-2b3f-4087-c8d5-08dcd418a881
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 17:22:35.2373
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0GVLWTUkwI/T4amHgTI+hEKYgR/53bUD2J8lvdaotgLZuuiCzkgt+tIXq84Ofj9tfbGRGm+Gsn7Ox4kZOP62Ag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7207
 
-
-
-On 9/13/2024 9:35 AM, Andrew Lunn wrote:
-> On Fri, Sep 13, 2024 at 09:12:13AM -0700, Abhishek Chauhan (ABC) wrote:
->>
->>
->> On 9/13/2024 1:01 AM, Maxime Chevallier wrote:
->>> Hi,
->>>
->>> On Thu, 12 Sep 2024 18:16:35 -0700
->>> Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
->>>
->>>> Recently we observed that aquantia AQR115c always comes up in
->>>> 100Mbps mode. AQR115c aquantia chip supports max speed up to
->>>> 2.5Gbps. Today the AQR115c configuration is done through
->>>> aqr113c_config_init which internally calls aqr107_config_init.
->>>> aqr113c and aqr107 are both capable of 10Gbps. Whereas AQR115c
->>>> supprts max speed of 2.5Gbps only.
->>>>
->>>> Fixes: 0ebc581f8a4b ("net: phy: aquantia: add support for aqr115c")
->>>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
->>>> ---
->>>>  drivers/net/phy/aquantia/aquantia_main.c | 7 +++++++
->>>>  1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
->>>> index e982e9ce44a5..9afc041dbb64 100644
->>>> --- a/drivers/net/phy/aquantia/aquantia_main.c
->>>> +++ b/drivers/net/phy/aquantia/aquantia_main.c
->>>> @@ -499,6 +499,12 @@ static int aqr107_config_init(struct phy_device *phydev)
->>>>  	if (!ret)
->>>>  		aqr107_chip_info(phydev);
->>>>  
->>>> +	/* AQR115c supports speed up to 2.5Gbps */
->>>> +	if (phydev->interface == PHY_INTERFACE_MODE_2500BASEX) {
->>>> +		phy_set_max_speed(phydev, SPEED_2500);
->>>> +		phydev->autoneg = AUTONEG_ENABLE;
->>>> +	}
->>>> +
->>>
->>> If I get your commit log right, the code above will also apply for
->>> ASQR107, AQR113 and so on, don't you risk breaking these PHYs if they
->>> are in 2500BASEX mode at boot?
->>>
->>
->> I was thinking of the same. That this might break something here for other Phy chip. 
->> As every phy shares the same config init. Hence the reason for RFC. 
->>
->>> Besides that, if the PHY switches between SGMII and 2500BASEX
->>> dynamically depending on the link speed, it could be that it's
->>> configured by default in SGMII, hence this check will be missed.
->>>
->>>
->> I think the better way is to have AQR115c its own config_init which sets 
->> the max speed to 2.5Gbps and then call aqr113c_config_init . 
+On 7/31/24 10:07, Nikunj A Dadhania wrote:
+> Rename local guest message variables for more clarity
 > 
-
-Noted!
-
-> phy_set_max_speed(phydev, SPEED_2500) is something a MAC does, not a
-> PHY. It is a way for the MAC to say is supports less than the PHY. I
-> would say the current aqcs109_config_init() is doing this wrong.
+> No functional change.
 > 
->>> Is the AQR115c in the same situation as AQR111 for example, where the
->>> PMA capabilities reported are incorrect ?
-> 
-> This is the approach to follow. The PHY registers should report what
-> it is actually capable of. But some aquantia PHYs get this
-> wrong. Please check if this is also true for your PHY. Look at what
-> genphy_c45_pma_read_abilities() is doing.
-> 
-> You might need to implement a .get_feature callback for this PHY which
-> first calls genphy_c45_pma_read_abilities() and then manually fixes up
-> what the PHY gets wrong.
-> 
+> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
 
-Thanks alot Andrew. I will get back to you with my analysis on AQR115c 
-phy. Most likely the pma abilities are reported incorrectly. 
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-
-> 	Andrew     	
+> ---
+>  drivers/virt/coco/sev-guest/sev-guest.c | 117 ++++++++++++------------
+>  1 file changed, 59 insertions(+), 58 deletions(-)
+> 
 
