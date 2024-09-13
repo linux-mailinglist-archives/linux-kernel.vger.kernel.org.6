@@ -1,163 +1,101 @@
-Return-Path: <linux-kernel+bounces-328159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BBA977FC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:21:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0752C977FC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3AE51C21BD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:21:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 802D4B225B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9091DA11B;
-	Fri, 13 Sep 2024 12:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830191D9329;
+	Fri, 13 Sep 2024 12:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="yfmfE6VF"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e4kgR371"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DC91DA106
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE3A1C2BF;
+	Fri, 13 Sep 2024 12:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726230079; cv=none; b=ZdTiKngeMNCl9kdeistTI8/JLK6NYxZxOfKCU+EIyQqSRNO6DfrQ8RpyreMujodgNsApUnGvLCJ9/wwncoIA9kcdcZSwk3B2gub7FV1Ln57N1NPRLam5KZTXGfwTS/Taz4BsLFlObnHXjqt9C4eAy6lZEdgZ5M6HGQ8Lr/6UjOU=
+	t=1726230166; cv=none; b=g+NfoP2K3o6AW85HZMJJPjW4LJSAh43uMFFyZUcmX1OetSoDpr4hdm5wByYyEysZPbPPRStCjX6b1OtvQzLPbb/pGcZMc7CE5L8EBU0pcgMWQaDTmKzzdFtJx6382cfSH6Ko/2DItQowip9i/M86UvWnbpa/wUtYibZRaHyMzwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726230079; c=relaxed/simple;
-	bh=8fGbJEAot3YIDsB1Y/oZ33VF8cPl4VKopjOCG8P1X4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PnXDN4r4InvFE47Zy8jD1AOQsLkuDr1pzb8HS6j7BuVlyR8QiQL8C6bPCQJsO+xKoMAuq6OPnSmE/OiOxcHNSGnFOwjO1yyr5U8wd9jogwgb6Xj7r7lbwy3LYij8dyJ/qOf26WMiuRp6s1qrU8bbyrD+vl2NWVP5n8sGM/dhaYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=yfmfE6VF; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so11303655e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1726230076; x=1726834876; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C2xf8rE0I0Vf7hYWniCA9aZSnwb/1pY5PjnZIFr0SCw=;
-        b=yfmfE6VFBiC2zPBemlX3Sc1HDKQ9mfkVxyYMzNjHOpB9s/tGDlktD0vs7Byt5Y3JJt
-         bJRRIl0Yz2ktGDYpAtJLlKJgYkEWG4uDzwmFOvcO+8fmjMsGSl33K7NRwl0XUawr3qZ8
-         j2k6T+LB7c+jFNJSPQwTxCcWDr38pb5twLuVcHemD43haGJZcNr392qBG2lzyu/ao6pt
-         Mxjv+oJh09XYwcHS3RRLpTWEaaMCuxkysQLzihiR0eXHqIeAXBN3JiFfokWcgyeZfmWw
-         7pn6rTD6PB+UHDBr5oV84tarDzOMpxOHUuCy4krnuCKBBIVMw4f3EiPjaHf/ZCtIcIDg
-         Ai7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726230076; x=1726834876;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C2xf8rE0I0Vf7hYWniCA9aZSnwb/1pY5PjnZIFr0SCw=;
-        b=u4z5ltKjV6KsqvZLt7kb3tpRvGBKtKTOFapE+wcnaKjvHlDZL/r8i296voGqbvcArs
-         7zadWJPsCbU4/0F/PLOVHL3OpnEaimUUThH7nBiTj8wEhH1tldBBh/D3RJiRqKoPc727
-         i/irhRyaJbyTDcJxI8yHddoPf4eDdDCAdqiY9PV1u6SA5toog9jS4uQ7QV2K2XZdvxUt
-         Z7mbHc76pcucGF2o9bBeqz/0Ujepa4D4eb4SpeBPv7VxdYU7TkY57e38MlQP469K1Jpr
-         WwMgF5UniAd1ZnEf012XTO14IoFd4r3pLrEZlatB+l7qbxOrVHS0eS1HitOhhG4lKrIo
-         oMQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhA6TLuVTXwfOXoKHHFBkiSb5efH6e4y471UoLJPh9l2hLHNEyzNTn3rhZjooA+uL3Dej8lz/wtXOnd5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEgSEGvS2XNwF3eN6T9d8syRTTQFVwENmI2Of1eLBtD1OhTFvj
-	r9ix7htG06BJ1q3loj8ZSU2L5OVTIIiAK/LE9ILQ2yZghFJfIe7GjI7bd+6Vp0I=
-X-Google-Smtp-Source: AGHT+IHIKarTEBaRn58s3UvWoCwjM6vihgga95P3kKVtfHdcVOOvOS/CWQUaLXKidGqAASKMpnC9CA==
-X-Received: by 2002:a05:600c:4590:b0:42c:bb58:a077 with SMTP id 5b1f17b1804b1-42d907221a9mr26390825e9.14.1726230075344;
-        Fri, 13 Sep 2024 05:21:15 -0700 (PDT)
-Received: from [192.168.0.101] ([90.241.98.187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05d6fcsm22995435e9.15.2024.09.13.05.21.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 05:21:14 -0700 (PDT)
-Message-ID: <4e85edc5-a155-460a-b470-aa7247b83230@ursulin.net>
-Date: Fri, 13 Sep 2024 13:21:14 +0100
+	s=arc-20240116; t=1726230166; c=relaxed/simple;
+	bh=tsjyV5WmCxOKrv8UlvO79U9fnpyBSl0fDpwhIEhOQvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7NS++DIWuYmLWVfbAD+QS+sFyAxFrGaood+tjiULe46o2X7mMu1VNmMjTWzl5vzCLp01Jgxy2cQaNeATIcy2IfORxfMTF2tg1Yl0hrnguLv1ksIV9+661a35+owg+OBIMlgLgvHSYwaflE1m7gDvulXx+DgcQg+hzcCascwlnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e4kgR371; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF345C4CEC0;
+	Fri, 13 Sep 2024 12:22:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726230165;
+	bh=tsjyV5WmCxOKrv8UlvO79U9fnpyBSl0fDpwhIEhOQvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e4kgR371V65iAMzz3d+5ghuPUs3ewdc0bx2GMQgM76rwfdUFZfcK11fbj4xDjWJDK
+	 OT8t5aO38BmjK1BoSdjP9T5x0ipTR8CFGBwlM35E2yq0/6yUed4oCZdgpC/rjNUC5l
+	 GgyJAWHCbcfBWoILL5zFn9vINtMhWrBWl5qm+vZw=
+Date: Fri, 13 Sep 2024 14:22:42 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Richard Narron <richard@aaazen.com>
+Cc: Linux stable <stable@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux kernel <linux-kernel@vger.kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH 5.15 000/214] 5.15.167-rc1 review
+Message-ID: <2024091328-excusable-lubricant-c607@gregkh>
+References: <4a5321bd-b1f-1832-f0c-cea8694dc5aa@aaazen.com>
+ <2024091103-revivable-dictator-a9da@gregkh>
+ <a6392c39-e12f-e913-8f4f-c135b283ce@aaazen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drm/sched: warn about drm_sched_job_init()'s
- partial init
-To: Philipp Stanner <pstanner@redhat.com>, Luben Tuikov
- <ltuikov89@gmail.com>, Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Danilo Krummrich <dakr@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240828094133.17402-2-pstanner@redhat.com>
- <20240828094133.17402-4-pstanner@redhat.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20240828094133.17402-4-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6392c39-e12f-e913-8f4f-c135b283ce@aaazen.com>
 
-
-On 28/08/2024 10:41, Philipp Stanner wrote:
-> drm_sched_job_init()'s name suggests that after the function succeeded,
-> parameter "job" will be fully initialized. This is not the case; some
-> members are only later set, notably "job->sched" by drm_sched_job_arm().
+On Thu, Sep 12, 2024 at 02:54:18PM -0700, Richard Narron wrote:
+> On Wed, 11 Sep 2024, Greg Kroah-Hartman wrote:
 > 
-> Document that drm_sched_job_init() does not set all struct members.
+> > On Tue, Sep 10, 2024 at 03:54:18PM -0700, Richard Narron wrote:
+> > > Slackware 15.0 64-bit compiles and runs fine.
+> > > Slackware 15.0 32-bit fails to build and gives the "out of memory" error:
+> > >
+> > > cc1: out of memory allocating 180705472 bytes after a total of 284454912
+> > > bytes
+> > > ...
+> > > make[4]: *** [scripts/Makefile.build:289:
+> > > drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.ho
+> > > st.o] Error 1
+> > >
+> > > Patching it with help from Lorenzo Stoakes allows the build to
+> > > run:
+> > > https://lore.kernel.org/lkml/5882b96e-1287-4390-8174-3316d39038ef@lucifer.local/
+> > >
+> > > And then 32-bit runs fine too.
+> >
+> > Great, please help to get that commit merged into Linus's tree and then
+> > I can backport it here.
 > 
-> Document that job->sched in particular is uninitialized before
-> drm_sched_job_arm().
+> Thanks to Linus and Lorenzo and Hans there is new smaller fix patch in
+> Linus's tree:
 > 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
-> Changes in v2:
->    - Change grammar in the new comments a bit.
-> ---
->   drivers/gpu/drm/scheduler/sched_main.c | 4 ++++
->   include/drm/gpu_scheduler.h            | 7 +++++++
->   2 files changed, 11 insertions(+)
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/staging/media/atomisp/pci/sh_css_frac.h?id=7c6a3a65ace70f12b27b1a27c9a69cb791dc6e91
 > 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index b0c8ad10b419..721373938c1e 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -781,6 +781,10 @@ EXPORT_SYMBOL(drm_sched_resubmit_jobs);
->    * Drivers must make sure drm_sched_job_cleanup() if this function returns
->    * successfully, even when @job is aborted before drm_sched_job_arm() is called.
->    *
-> + * Note that this function does not assign a valid value to each struct member
-> + * of struct drm_sched_job. Take a look at that struct's documentation to see
-> + * who sets which struct member with what lifetime.
+> This works with the new 5.15.167 kernel with both 32-bit (x86) and 64-bit
+> (x86_64) CPUs
+> 
+> Can this be backported?
 
-First sentence is fine, but the second I don't see the those details in 
-struct drm_sched_job. (And I am not saying that they must be listed. IMO 
-at some point it is better to have a high level overview than describe 
-the lifetime rules with individual members.)
+Yes it will, give us a chance to catch up :)
 
-> + *
->    * WARNING: amdgpu abuses &drm_sched.ready to signal when the hardware
->    * has died, which can mean that there's no valid runqueue for a @entity.
->    * This function returns -ENOENT in this case (which probably should be -EIO as
-> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> index 5acc64954a88..04a268cd22f1 100644
-> --- a/include/drm/gpu_scheduler.h
-> +++ b/include/drm/gpu_scheduler.h
-> @@ -337,6 +337,13 @@ struct drm_sched_fence *to_drm_sched_fence(struct dma_fence *f);
->   struct drm_sched_job {
->   	struct spsc_node		queue_node;
->   	struct list_head		list;
-> +
-> +	/*
-> +	 * The scheduler this job is or will be scheduled on.
-> +	 *
-> +	 * Gets set by drm_sched_arm(). Valid until the scheduler's backend_ops
-> +	 * callback "free_job()" has been called.
+thanks,
 
-This is interesting - I was not sure where lifetime for job->sched is 
-defined and couldn't find it browsing around. Where did you find the 
-clues to tie it to the free_job() callback?
-
-Regards,
-
-Tvrtko
-
-> +	 */
->   	struct drm_gpu_scheduler	*sched;
->   	struct drm_sched_fence		*s_fence;
->   
+greg k-h
 
