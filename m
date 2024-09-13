@@ -1,96 +1,124 @@
-Return-Path: <linux-kernel+bounces-327716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C01977A36
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:47:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4061977A1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701A11C20D61
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:47:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67681288FC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EE61BE255;
-	Fri, 13 Sep 2024 07:43:55 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7671D54F4;
+	Fri, 13 Sep 2024 07:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoWxUrnX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06821D61BB;
-	Fri, 13 Sep 2024 07:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161281BDAA7;
+	Fri, 13 Sep 2024 07:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726213434; cv=none; b=QB8BDbpfKONXq0NPuWDO++4tQcHJK9GBERxKhPQX7daVhJVX5iArP64GoD9Cp16gMAhX21Bp8to5+Pc40uxjNRpNtDVkXMnOKqcfbiAaMMrWKcC2EXur3TbEeHX3ihnSSb0vb0rRDyViJZwEpFP2a04uaJPix6KjqJ+/jxNEhTg=
+	t=1726213409; cv=none; b=RKk0DC15qV7M0mtJKUukJctl5pENgB0m38roMrqY69oy8H5w+T8/LMJ7zgoDZ9gkF1NEvbV2C5J3GbWHXsV7zENqoq1wx4ctBWeRT/8gt0xWFPM1nVxIZs1ydDSO8p/RRB1qNJXQtdf35mJ/Qc4LvwOucjdNRBCdUPkofH3RokY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726213434; c=relaxed/simple;
-	bh=xZdT457q7Xw3O6HixSjq4gETMAr8coiwnOjbeKePmrI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p2bopleB9gSRjM9WZB+YdoXyzwrsucpmVIgzav1dQugY3QlthbfrpUayUSNF+yIYL1T8eD5je9IDJr/Gv3EoAn7E0cKvSpdrXcWYwowibm6C0zrauKxZ5BoRhdtdZorwvcKB+H6dSXfmgNfn72r691BgCapHGMPyoVIFkCy2l/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 13 Sep
- 2024 15:43:26 +0800
-Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Fri, 13 Sep 2024 15:43:25 +0800
-From: Billy Tsai <billy_tsai@aspeedtech.com>
-To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
-	<andrew@codeconstruct.com.au>, <linux-gpio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<BMC-SW@aspeedtech.com>, <Peter.Yin@quantatw.com>
-Subject: [PATCH v3 5/6] gpio: aspeed: Change the macro to support deferred probe
-Date: Fri, 13 Sep 2024 15:43:24 +0800
-Message-ID: <20240913074325.239390-6-billy_tsai@aspeedtech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240913074325.239390-1-billy_tsai@aspeedtech.com>
-References: <20240913074325.239390-1-billy_tsai@aspeedtech.com>
+	s=arc-20240116; t=1726213409; c=relaxed/simple;
+	bh=kwzdX+8F7dVZ3+T9RXxURmOh+xGEJSRS6RIzA7Wna7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FrANwNdP5P250Il4TU1t6ecWJaEzgbg6HCg9aXrBs7L9r4OKDVYrLPd+fFaJoYG4GZwytP+RaZXTTMwbNWmj8gIgOpSkT9K3T86ZSvcNHubG8gGLbpZrLz4oA/tWPviyTu/SOfuDLF4p0kIGRQiyWoMOc2+vvvDklYeprpQYGgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoWxUrnX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9C7C4CECC;
+	Fri, 13 Sep 2024 07:43:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726213408;
+	bh=kwzdX+8F7dVZ3+T9RXxURmOh+xGEJSRS6RIzA7Wna7U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MoWxUrnXrzn3U/spGO0uvUs+CynPY+zyG2UkU7vHSUI2KEEGgvWahTxE3NFeFRQjv
+	 PBQs45DqyDoKMRP1n4XXy9xmCcnfE/VJl2qqx2MwigV7ub98MkjnBEa2/Y+3d1zZeo
+	 TDLDTKD5A8njD2PwM6z/D5Fcd38fG9rlSsmuscS1//LxwqZ4gq0w/1+xJuvjCcozPR
+	 a3wMyXnq6+Mn3UxkRE/v/hnnZUsRFHa4arKLYxCaPN2qKyRzzvpzem8Ojfe/a+sEKg
+	 bK/LrB5D786DwT2W6dKKpUYuDnml644KO/XpFD6mpqiVoLp/pwk0KDBb8bpz1e6cIY
+	 0JOTJTneAhpqA==
+Date: Fri, 13 Sep 2024 08:43:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Justin Stitt <justinstitt@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH] caif: replace deprecated strncpy with strscpy_pad
+Message-ID: <20240913074324.GA1132019@kernel.org>
+References: <20240909-strncpy-net-caif-chnl_net-c-v1-1-438eb870c155@google.com>
+ <20240910093751.GA572255@kernel.org>
+ <CAFhGd8qQ_e_rh1xQqAnaAZmA7R+ftRGjprxGp+njoqg_FGMCSw@mail.gmail.com>
+ <CAFhGd8r2PO9qLej9okVpwcfL2Kz5oCahdnzEVRpCJVm+b5g-Bw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <CAFhGd8r2PO9qLej9okVpwcfL2Kz5oCahdnzEVRpCJVm+b5g-Bw@mail.gmail.com>
 
-Use module_platform_driver() to replace module_platform_driver_probe().
-The former utilizes platform_driver_register(), which allows the driver to
-defer probing when it doesn't acquire the necessary resources due to probe
-order. In contrast, the latter uses __platform_driver_probe(), which
-includes the comment "Note that this is incompatible with deferred
-probing." Since our GPIO driver requires access to the clock resource, the
-former is more suitable.
+On Thu, Sep 12, 2024 at 01:47:22PM -0700, Justin Stitt wrote:
+> On Thu, Sep 12, 2024 at 1:43 PM Justin Stitt <justinstitt@google.com> wrote:
+> >
+> > Hi,
+> >
+> > On Tue, Sep 10, 2024 at 2:37 AM Simon Horman <horms@kernel.org> wrote:
+> > >
+> > > On Mon, Sep 09, 2024 at 04:39:28PM -0700, Justin Stitt wrote:
+> > > > strncpy() is deprecated for use on NUL-terminated destination strings [1] and
+> > > > as such we should prefer more robust and less ambiguous string interfaces.
+> > > >
+> > > > Towards the goal of [2], replace strncpy() with an alternative that
+> > > > guarantees NUL-termination and NUL-padding for the destination buffer.
+> > >
+> > > Hi Justin,
+> > >
+> > > I am curious to know why the _pad variant was chosen.
+> >
+> > I chose the _pad variant as it matches the behavior of strncpy in this
+> > context, ensuring minimal functional change. I think the point you're
+> > trying to get at is that the net_device should be zero allocated to
+> > begin with -- rendering all thus NUL-padding superfluous. I have some
+> > questions out of curiosity: 1) do all control paths leading here
+> > zero-allocate the net_device struct? and 2) does it matter that this
+> > private data be NUL-padded (I assume not).
+> >
+> > With all that being said, I'd be happy to send a v2 using the regular
+> > strscpy variant if needed.
+> 
+> I just saw [1] so let's go with that, obviously.
 
-Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
----
- drivers/gpio/gpio-aspeed.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hi Justin,
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index 13495442e1aa..d322c03481a8 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -1359,13 +1359,14 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
- }
- 
- static struct platform_driver aspeed_gpio_driver = {
-+	.probe = aspeed_gpio_probe,
- 	.driver = {
- 		.name = KBUILD_MODNAME,
- 		.of_match_table = aspeed_gpio_of_table,
- 	},
- };
- 
--module_platform_driver_probe(aspeed_gpio_driver, aspeed_gpio_probe);
-+module_platform_driver(aspeed_gpio_driver);
- 
- MODULE_DESCRIPTION("Aspeed GPIO Driver");
- MODULE_LICENSE("GPL");
--- 
-2.25.1
+Yes, right, let's go with that.
 
+But as I asked some questions, and you provided your own, let me see if I
+can respond appropriately as although the answers are specific to this
+patch the questions seem more generally applicable.
+
+1) It seems to me that the priv data is allocated by alloc_netdev_mqs()
+   which makes the allocation using kvzalloc(). So I believe the answer
+   is that the allocation of name is zeroed.
+
+   My analysis is based on ops->priv_size being passed
+   to rtnl_create_link() by rtnl_create_link().
+
+   And ops being registered using rtnl_link_register()
+   by chnl_init_module().
+
+   Of course, I could be missing something here.
+
+2) Regarding a requirement to NUL-pad. FWIIW, this is what I had in mind
+   when I asked my question. But perhaps given 1) it is moot.
+
+   In any event we now know, thanks to Jakub's investigation [1],
+   that the answer must be no. For the trivial reason that name isn't used.
 
