@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-328093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36442977EC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:45:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE89D977EC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0154B2705D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:45:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DDF288ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004A31D9329;
-	Fri, 13 Sep 2024 11:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289721DA119;
+	Fri, 13 Sep 2024 11:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hp0Vdf3L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ra1edKq+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CADF1BAED2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71441D88C7;
 	Fri, 13 Sep 2024 11:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726227927; cv=none; b=sqitKUvhZI+IOzVRUUR1wJb5xlS6qM6iOuGcizqHaoGS+LEtx1MEl53nI3xDgmoPhBRqcWyJLPUmOMeNER6Q6+n/BfgPKPQYVdln6f4r/tE471kSoIjLLL9OqHwsDR9kLq4ki+nOG/FTHC6inbdbf+/5ioEaPTF1Vlo51QnmnXQ=
+	t=1726227927; cv=none; b=dEQZR/IDA/iFvjFVhqcjYOZA1cxMftMFxq1wpWDNPeheJ6PlN+EfiTpCzH+z3E+/KS8hqSBT9Jrle7vN0knd7+a6J4S1U9kSGd4onyePnxEOVXfK6VIVo2IEIB9Ap5Zsk0VyN4gpXNmk7LRpby43Co1MgGAjH8Hyz8IZbRhu/9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726227927; c=relaxed/simple;
-	bh=yI/YdEzUxnbqQlsPHNM+E/+LIgmQwvyu/UUnjDxNwS8=;
+	bh=ZQzu5Awk7csrIQP8WA5EilsMPXyklmrTn+/ECQpc/IE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bZg9seRFc72X40NIEapMLhSKJlCRKamP0eC554d4gJ4jFYrCmaU7s8Rxi2MtM+C/QOFwl0NNNJfollYN0fnC3ZSL3FUFjleNtbQudxNHomSoEPS7KShelK1dh3W1/dnmC26I5/jdcjRdaLQihCekB61eXzqnOLNy+OBEnGVBVgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hp0Vdf3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 26364C4CED1;
+	 In-Reply-To:To:Cc; b=BnYZrkQURYvZBiLviQwt1/4m17fs8tDziNKSBP6Cjb/NB/6gS5XAb+UCxJh3SlHixJ6lf6Hw1P7vHNEs9m1pX5CF4voqbwdJW0up+N4ZZZXBTrNWu546tuHfdr0UuJxwtWxPg/F4D5X1OBWQw5Whkq8cCyNyLvdEzJs99WtX/mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ra1edKq+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 38AADC4CED2;
 	Fri, 13 Sep 2024 11:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1726227927;
-	bh=yI/YdEzUxnbqQlsPHNM+E/+LIgmQwvyu/UUnjDxNwS8=;
+	bh=ZQzu5Awk7csrIQP8WA5EilsMPXyklmrTn+/ECQpc/IE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Hp0Vdf3LmtddAbaYrY/fHpyvA+KDCnKjHGDo6W2b+9tXqgkgoe0v6zatj4kgskf0y
-	 R5kwYaGVC7CySH6IDbTP9tyoEQJjmS1JzLSPfky+Y1k3QV1qk6XdTjkytFJQ0J7DP/
-	 pV7cDBhOGFiO3sYsAbyhgxfK7xLYuDL2b0NQHNqmiB4GvdqwiJ5Ew0OWPIcHSxTWpl
-	 IFf/J3f+nOn3gHnRDHSP5WBPxkuvAlvTQznHz9h894Kvn4m/6KWL7IwgH3GVjuBo0B
-	 4mk5qPxl89/m9NM9dkzb/fTzdwIAqympoUzDO6oufhy2Fp+aDxD9ut7MADGCLj0IO7
-	 SCTunpFgDQa5A==
+	b=ra1edKq+SgQHwcyXwTJ/h59HkOWKDJUpbKJV7RQM5cCVM2D0KRPQdL6WtscZ45Qn1
+	 c1QWD7t6Kr8Wtin+hhdq1vR6z/afTaGa5GTgrhlWrFeYUP8K4Ss0tbH+YhDb498Hzd
+	 BD/95uO0NdHppKX97c/mEi+xsJX0OP+YLeZSU99sfGY9qTKXzv1TaQdc/2eKPrvTj8
+	 wXMpLSzLbLB90C1hSjoU8lCEm6q+rzroDV6q3AGsjRTDcabkMUmrisMwuWhj53fl2A
+	 ppHmrgl5ZUrMYWYxtS5VE34BpQkdNAnGROhAXuECzYa2ymbKjDaulTM9wx6R8zD++b
+	 6gXX6qfeST8xQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF79FA3748;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA88EEE26C;
 	Fri, 13 Sep 2024 11:45:27 +0000 (UTC)
 From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
-Date: Fri, 13 Sep 2024 13:44:50 +0200
-Subject: [PATCH v2 4/5] iommufd: Enable PRI when doing the
- iommufd_hwpt_alloc
+Date: Fri, 13 Sep 2024 13:44:51 +0200
+Subject: [PATCH v2 5/5] iommu/vt-d: drop pasid requirement for prq
+ initialization
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240913-jag-iopfv8-v2-4-dea01c2343bc@samsung.com>
+Message-Id: <20240913-jag-iopfv8-v2-5-dea01c2343bc@samsung.com>
 References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
 In-Reply-To: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
 To: David Woodhouse <dwmw2@infradead.org>, 
@@ -64,21 +64,21 @@ To: David Woodhouse <dwmw2@infradead.org>,
  Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
  Klaus Jensen <its@irrelevant.dk>
 Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
- Joel Granados <j.granados@samsung.com>
+ Joel Granados <j.granados@samsung.com>, Klaus Jensen <k.jensen@samsung.com>
 X-Mailer: b4 0.15-dev-00a43
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1694;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1454;
  i=j.granados@samsung.com; h=from:subject:message-id;
- bh=DxEbBmnkeSWlQ/5MEXCH0l7yNP6fyq/9U3DrRBtODeQ=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGbkJdN3nIyQtewYxO5dzLpub6VBCQvASt1vP
- lOAMWJPVRuvTYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJm5CXTAAoJELqXzVK3
- lkFPctcL+QHiIJxPNK8u2+QZbImwSx9KtOG1MIiyOjy1prL1mFeCx3hv6fyrYsZCBYZnVFQCnC5
- OKY6Ot6kNutAzzaHvu+wFxeGddX25+OJL9VRjwSPv4hRHGdK+ojK2etw+3/V1jdURYxBRyf37ew
- mkpmo1QTBDb2e8dqWUXQa9dliujivt92tXPIdiSPMFJz1pPZD0guvljBA3JdLEpKERGubE6EIhb
- PuWihQnMVVcaNtPhsjy/9XbRnklRtaMVoM+CSnchCXq+BSTczuwvYIvTdyxKOOvtFMKEGBK8w0/
- o6azqmqwvHDVuk6/DirH/w1kDqsGhbLHcjJNtQAfWhxZls/qwkAxE1jZPFnDxtXu6ikOo/aJwdC
- rSf5p/ppZd0uaiO116XZ9pWvVBfq++VcpqL1Fwbh9X5eLN1qGtNRsgBoY2HMVNw5D5ho3SpGgHI
- i+2OUylhqVMFDlzJyCXkP1l6udZe1MR5z/ppRBWeHhXAzTHb3d8KpsCQz/26dkyjMV+iEfmX0D7
- x8=
+ bh=GQ979ruQ4vAANRiiIGnsASOC26gBsL07Le0pjm1OYPs=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGbkJdSDbDHpYQc6xVbn9fVpO6eCYSpUK9GLI
+ mT3uAH1eI7JaokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJm5CXUAAoJELqXzVK3
+ lkFPSRoL/jDNsHyu6rk8NtWUxOEZDUDZI8W/LxsklCrAfGXhdevfW124gc/cIkMBbEYtCbEynMP
+ +ZMotsHFO1hEgp+Oiha5ma8cRVjdK+sq2BSE4TLUP9Kz0/4Wt8fEJbZ803ur0tRYqYdEeNc1hp1
+ io8W7KtZlCUuc19Y2UGZLJvqqa+Z9SMNebnwRqiBayNu/h3Hub62B942p2NCol7P0MkXqt5x8BI
+ KvLdDJUYkSd82IfQ5SedIurTIICvxlfNMO07CH0fYxel+a/fS36M4i+xLAT/7CnRkks+PEg3umv
+ qy0Lns+EXrol0jdJykO//wCbNcM0Olg2B0qiqwOrff/PUQfEbazxru4CJrIvv5VyidU5rBkeivG
+ fNQuljbsElRdiM2mrtf+5yy7P4eBHDYhVuBV7AEsQ5Rv9lmJcmb4W4zMq6Gv4QOyYs7uF7z23U9
+ 0/Tx/tykCCFxQ1cSUEneLyk/NhlvALPL2s1UaZuK8FP6i8TYiPZ1H19CvLOYTSHAqb6rsxE1D17
+ yw=
 X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
@@ -86,46 +86,52 @@ X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
 X-Original-From: Joel Granados <j.granados@samsung.com>
 Reply-To: j.granados@samsung.com
 
-From: Joel Granados <j.granados@samsung.com>
+From: Klaus Jensen <k.jensen@samsung.com>
 
-Add IOMMU_HWPT_FAULT_ID_VALID as part of the valid flags when doing an
-iommufd_hwpt_alloc allowing the use of an iommu fault allocation
-(iommu_fault_alloc) with the IOMMU_HWPT_ALLOC ioctl.
+PASID support within the IOMMU is not required to enable the Page
+Request Queue, only the PRS capability.
 
+Signed-off-by: Klaus Jensen <k.jensen@samsung.com>
 Signed-off-by: Joel Granados <j.granados@samsung.com>
 ---
- drivers/iommu/intel/iommu.c          | 3 ++-
- drivers/iommu/iommufd/hw_pagetable.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/iommu/intel/iommu.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 5acc52c62e8c..3d1c971eb9e5 100644
+index 3d1c971eb9e5..9f3bbdbd6372 100644
 --- a/drivers/iommu/intel/iommu.c
 +++ b/drivers/iommu/intel/iommu.c
-@@ -3718,7 +3718,8 @@ intel_iommu_domain_alloc_user(struct device *dev, u32 flags,
- 	}
+@@ -1487,10 +1487,8 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
+ 	/* free context mapping */
+ 	free_context_table(iommu);
  
- 	if (flags &
--	    (~(IOMMU_HWPT_ALLOC_NEST_PARENT | IOMMU_HWPT_ALLOC_DIRTY_TRACKING)))
-+	    (~(IOMMU_HWPT_ALLOC_NEST_PARENT | IOMMU_HWPT_ALLOC_DIRTY_TRACKING
-+	       | IOMMU_HWPT_FAULT_ID_VALID)))
- 		return ERR_PTR(-EOPNOTSUPP);
- 	if (nested_parent && !nested_supported(iommu))
- 		return ERR_PTR(-EOPNOTSUPP);
-diff --git a/drivers/iommu/iommufd/hw_pagetable.c b/drivers/iommu/iommufd/hw_pagetable.c
-index aefde4443671..88074e459995 100644
---- a/drivers/iommu/iommufd/hw_pagetable.c
-+++ b/drivers/iommu/iommufd/hw_pagetable.c
-@@ -107,7 +107,8 @@ iommufd_hwpt_paging_alloc(struct iommufd_ctx *ictx, struct iommufd_ioas *ioas,
- 			  const struct iommu_user_data *user_data)
- {
- 	const u32 valid_flags = IOMMU_HWPT_ALLOC_NEST_PARENT |
--				IOMMU_HWPT_ALLOC_DIRTY_TRACKING;
-+				IOMMU_HWPT_ALLOC_DIRTY_TRACKING |
-+				IOMMU_HWPT_FAULT_ID_VALID;
- 	const struct iommu_ops *ops = dev_iommu_ops(idev->dev);
- 	struct iommufd_hwpt_paging *hwpt_paging;
- 	struct iommufd_hw_pagetable *hwpt;
+-	if (pasid_supported(iommu)) {
+-		if (ecap_prs(iommu->ecap))
+-			intel_finish_prq(iommu);
+-	}
++	if (ecap_prs(iommu->ecap))
++		intel_finish_prq(iommu);
+ }
+ 
+ /*
+@@ -2480,7 +2478,7 @@ static int __init init_dmars(void)
+ 
+ 		iommu_flush_write_buffer(iommu);
+ 
+-		if (pasid_supported(iommu) && ecap_prs(iommu->ecap)) {
++		if (ecap_prs(iommu->ecap)) {
+ 			/*
+ 			 * Call dmar_alloc_hwirq() with dmar_global_lock held,
+ 			 * could cause possible lock race condition.
+@@ -2921,7 +2919,7 @@ static int intel_iommu_add(struct dmar_drhd_unit *dmaru)
+ 	intel_iommu_init_qi(iommu);
+ 	iommu_flush_write_buffer(iommu);
+ 
+-	if (pasid_supported(iommu) && ecap_prs(iommu->ecap)) {
++	if (ecap_prs(iommu->ecap)) {
+ 		ret = intel_enable_prq(iommu);
+ 		if (ret)
+ 			goto disable_iommu;
 
 -- 
 2.43.0
