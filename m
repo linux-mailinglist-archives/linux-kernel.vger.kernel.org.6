@@ -1,214 +1,129 @@
-Return-Path: <linux-kernel+bounces-328889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2C8978A80
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:21:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EA4978A84
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E29D1F248B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6F92864E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7624B154435;
-	Fri, 13 Sep 2024 21:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0D514EC73;
+	Fri, 13 Sep 2024 21:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="6HOELQXB"
-Received: from CY4PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11020074.outbound.protection.outlook.com [40.93.198.74])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GJMi/kZB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2352D1494BF;
-	Fri, 13 Sep 2024 21:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726262477; cv=fail; b=nfVgmBfZQ0q9vaTejOrueHZIxs4fmfpVrgunn1EK+SQQSeAul+7r4h1ejpzQdeTTQQ6rujI+Idyyi6UwO+sjG3xNFEXlZN8pAERRo7rMbKDuX+WhjwfWhnsgx64OQbxjVOX5tnGFkLmmLpFkHDbUoXWxjdGBejkvsta+7cn1YYc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726262477; c=relaxed/simple;
-	bh=SblnQGEMidt8dw5R5I88ZPKAfnBUMIDrexglMPgUn1Y=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ulYJgqiIKRszW+QC4Pj6XNND+2wvw8SK2xi9HIAoqRM31VlAy/KReGexhLD3WEoFSwIgv3mQiK2nNglnM9J/h/8LNAi0tKG3LCtLJsnNAL89Jku3RmGr4gk9xp5kZVpoP1IEmng84L/toP+4i2aN+vkT8txXs0pF1x9/Mq3dIZ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=6HOELQXB reason="key not found in DNS"; arc=fail smtp.client-ip=40.93.198.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lO4wch+4J4x39XT3XRRI/k1RbEmBx8BIOB+94BlTdCb6wtjdvJfemd/dJuHxapOQM+NlfdkbDWgk1hKFZxucL64rV9bWbU83gFF89ZnsrovLe845DUTaAqGhUOjUi990Is+FV7XDDqukvnRaCsoJwZz/5n6sqkVmfSMIxtyKPdfFqKJC5wYZQguybzYWbLIKLSmxA25LS95ZIgJVDPMz8TeSUu1SnUZnZCA9RkhuDa7+Svi3xENFkH4M2H0f/GCfZWXISq9cy4HdrP/LGlEcy2vpUZWNVqTqUxmkkd7ppJlMcmGSJjG2NjY4cvuqlbPoMpzBr7GBd+CH6lxL09+H6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VTD4GnO9x4orFNDZ+fmMEJ2vArsQe2+vsrD/ec4BsUs=;
- b=bciU/QdsEIYX5r6HOTma6FXCt1CxfugLYuMvDhxMnMcnMTvBYI2+XUoBIe1FCugJyUo13VhnsM3O9o5SIJqICwhfws2C7j2fN+0D2AjRCBgj9inYbOnOBAK/Qz1FVUEqi6oaVO8PxqqnJlgg8LM8Y8d0+AIEsyalRXVZU0F2Gy97uT4vevDIBVi5j/NfIeKMMhDN18TECPlYqOffTYXBv3MSZbiBLiUb0t8a2x/F+F0o9duFsv3Bba5jU3P/eCMu0urIQ92J8L5Y8P7xdxBxTzssWPfLyGm5rbYevrNDbZfWGsya5ZTKeUyProvNHe8vv0wzJzxuWCyAfdX6GcXquA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VTD4GnO9x4orFNDZ+fmMEJ2vArsQe2+vsrD/ec4BsUs=;
- b=6HOELQXB7cKD9kGYipwHzQbfXiDg1RxziCpKoDq9fLZAl5bumn3oXmL4U0oc6LRBG/oajcvAlE7GQiY+v5goa8zLVGT4knG4j2eSg4gHad8CnQ59UDVAkIG0KKuSRcKf4qjMNp33UfoOkT2cNXo1YThqva7kSeOWhXo3TEP5UDA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
- MW6PR01MB8414.prod.exchangelabs.com (2603:10b6:303:23d::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7962.17; Fri, 13 Sep 2024 21:21:12 +0000
-Received: from SA0PR01MB6171.prod.exchangelabs.com
- ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
- ([fe80::b0e5:c494:81a3:5e1d%4]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
- 21:21:12 +0000
-Message-ID: <a3f91c94-e829-4942-abde-193462769cba@amperemail.onmicrosoft.com>
-Date: Fri, 13 Sep 2024 17:21:06 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] mctp pcc: Check before sending MCTP PCC response
- ACK
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
- admiyo@os.amperecomputing.com
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Jassi Brar
- <jassisinghbrar@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jeremy Kerr <jk@codeconstruct.com.au>,
- Matt Johnston <matt@codeconstruct.com.au>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Huisong Li <lihuisong@huawei.com>
-References: <20240712023626.1010559-1-admiyo@os.amperecomputing.com>
- <20240712023626.1010559-2-admiyo@os.amperecomputing.com>
- <20240801124126.00007a57@Huawei.com>
-Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <20240801124126.00007a57@Huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0290.namprd03.prod.outlook.com
- (2603:10b6:a03:39e::25) To SA0PR01MB6171.prod.exchangelabs.com
- (2603:10b6:806:e5::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3428E14A099;
+	Fri, 13 Sep 2024 21:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726262612; cv=none; b=rZST8ii+lREI7LKCtTyj/3KTkr+XI4P0uiCrBxETBIKbRJBpqtD4zGGg0fcH+oNAf5wNCIgS1mB7nS5w03UYrvz2QI4UpUcwFZrfFgL60wN3tYj0doesBuB20/7ZYXQslJI5OeGXfJIkihY6xPNHOOMYM3tCCKzZUfo+WfHjLio=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726262612; c=relaxed/simple;
+	bh=kgN2i7NsfUPKHMks6Mw32UbeU2Yvq5ArmNtuqvuaYM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FoJAxf5Q5+Ho1rU6L3Y3OsmD/1rY9ftptfFk88szWZZPFu5DQTgA9EcrrPaGCI/IvaHwJYMJ8pd+yesPDcrYTwgJwusGaXrwVdfRhKAFgr0wBUI12JF9I+BgalJ93EGiKpgofgXlD7b0J8Ke4G3TX7tjwm1zSU6qFitLOwecpWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GJMi/kZB; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726262610; x=1757798610;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kgN2i7NsfUPKHMks6Mw32UbeU2Yvq5ArmNtuqvuaYM8=;
+  b=GJMi/kZB2mWYHmfDBKXYpjRa5XPJP4rzH449R9URD9g5lcy30XTdp5FG
+   b4RfWjc2tnHGNWN5D5tycfuRcaCHOSSpTvRx/uzMJBzsf1l8Gwo6T2jQi
+   Ma5ShZxtsPv23kMxIgOuU42EMiC90U3D2+5m4e/JpiLHaxPAWsRId8QVi
+   0HBB+Y2yo0Kg75qpCd4/43H+Onz/w+H1Y7g3mqJZZ6u5es6/U/ciPdx7E
+   Pz5w848IVrqyliQGK2BgUYruwvtJKtFfVGBMaXfER1w1QKlt9bg6pMrOg
+   pLc34ekhp7fp3xLOO2ywkfOnq1HSTJBz4Dryc//sdG1RAbhFtxX+lKc4N
+   g==;
+X-CSE-ConnectionGUID: t1ONs8sWQlmNrNgaz9gDRA==
+X-CSE-MsgGUID: JlPbWAgSTdWfzF1lVZSpPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25062601"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="25062601"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 14:23:29 -0700
+X-CSE-ConnectionGUID: wcD6Tg/0SbWtW7sX5NwBfg==
+X-CSE-MsgGUID: Ehnn7tAjQTqDu8DphUsfGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="68520817"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 13 Sep 2024 14:23:27 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spDlE-000728-13;
+	Fri, 13 Sep 2024 21:23:24 +0000
+Date: Sat, 14 Sep 2024 05:22:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexandru Ardelean <aardelean@baylibre.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jic23@kernel.org,
+	krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
+	michael.hennerich@analog.com, gstols@baylibre.com,
+	dlechner@baylibre.com, Alexandru Ardelean <aardelean@baylibre.com>
+Subject: Re: [PATCH v6 8/8] iio: adc: ad7606: add support for AD7606C-{16,18}
+ parts
+Message-ID: <202409140543.VXctRtFP-lkp@intel.com>
+References: <20240913135744.152669-9-aardelean@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|MW6PR01MB8414:EE_
-X-MS-Office365-Filtering-Correlation-Id: d1163ad1-0e74-440a-72d8-08dcd439fdec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z3FiRWkyZzl2ZERGVVNJY3BiSmlGTGdidEtZQ2dvaVh2MFM1dFJ6NGlqajZw?=
- =?utf-8?B?d2RTdFN1OS8wa3BOWFF5YW91MGFjb1gxZnhsWGhDQVRZV0ppODdVOVo0eDU5?=
- =?utf-8?B?Mm1PaFBYNzVVd1F6c0VITUd3T2M3QVNMT3pEbEs5cGhMVG1PVHE5SCtMWkhm?=
- =?utf-8?B?MmM4a203WW9xdlgvZlJSblF6QkVhcW5QWVJKYXFTY0ZVOC9tUnBhdVM2dkRK?=
- =?utf-8?B?aFJoSStWZ1JHclRyeDhUMTFIRExMQmJPaDdhdlJlUm03emVtTnRxaWh1b2w2?=
- =?utf-8?B?RWlkbVF3UjBpNVJIbFVueTJmbnNtZmRWSGE2K1dvcDdMZXIvajU4MG90eGJ0?=
- =?utf-8?B?T2VKQ2x4WDN6VjZ3Y1VtT1ZuRVJxby9UUGt4Q1BTWE52MlE0eVY2OFZQL25t?=
- =?utf-8?B?S0d6QVRvbjM1MjhRTzNyZ1ZQUnZFSjR1aHdqZTdtS1R0SmNnVTY0S01FdUM0?=
- =?utf-8?B?YjhkQ1d1ci9LeW5lTkY0QnJ5dEZoWGFRbU1VS1A4ZGZqblFmMU83MThlbXJa?=
- =?utf-8?B?cHZYTWFBRzQzU2EwV2NWam5DTFNjUWRtV0lZcjRTU1VhY3NuTXdodmkzZERt?=
- =?utf-8?B?ZStpNjVXNC9OZlphcEkxMTlKaGZtNWx5dVFLMThVeGNTSUh1cDhGcFBMS1dF?=
- =?utf-8?B?cUVFRGhZQzVIM2dpUmFFeFJrZ055Tk5JM2tIVDhBV3l5Zjg3SDZaanZTTlRy?=
- =?utf-8?B?NkZaRGJEeFNwUEprSkpMNzVzdlA1bjB3d25GSFpkUlIrOTZldkFBbC9PS0lv?=
- =?utf-8?B?aEN5N0J1YzZrZ2tyYllWWEt5R0ppNmRFSy93OTBlZWFVb1c0TzZUaGM5eUpH?=
- =?utf-8?B?RXFvTXJSZkh3WFV6ald6VUpXZTQ3WmFqNFdBTEJ3OUZ0WnNienk1WVhpeFlW?=
- =?utf-8?B?UHFKa1ZtT1hmVW4zNUxzUEVJTVgvWXdjM0NpT2JMWXFVbndLQ3ZxR0ZjRzVU?=
- =?utf-8?B?ZnRMdCthcG1jLzE3RklBeEg4bERBckI3QXd1bzJadWExTnpGOEw1ZFR2RDJ3?=
- =?utf-8?B?bGpNMHRLMkR5QmZIdmdGVjl2ZFZEc2dRaDNSTEJLZkR4ZTBqWE5lK25TUy9a?=
- =?utf-8?B?bWtEUzhUZGtqRllqSmJ5Um01S1FlR281VTVZUlRaNCtVcjdDZ3Z1M1RkSnFT?=
- =?utf-8?B?SVcrL0txWTZqckVFZWlIQWtHRi90MEs0NUVHQmd0TmdRTUhxY21zbHlFaE5X?=
- =?utf-8?B?bTZQR05ualIwamZrTVRDL1gwR2NhWU9vc2MyVE9yUkU4akY4WlROTnFENGJQ?=
- =?utf-8?B?dmNvbHBCSS8xTG95T0VSdWVWYUpQRDZZU3BpOHNlek9CUERZWFpUWFRmanZj?=
- =?utf-8?B?VGJIbHBqbi9sVE9MRk8yY1VlUno5T3pWcDdiR25QYXNpaFRjWVF3RWl6Q0c3?=
- =?utf-8?B?Y2VWMHovMi9FUWtNL0JSbG9pYkRERVhPYjMvQnB2RmNMZVNudjh2WlBXN1RB?=
- =?utf-8?B?ZmJBWU8wQzJURERUanZsTWY5cFlHUWtQRjZoZWx1eHhkMThjeHBJT1B1LzR0?=
- =?utf-8?B?bUdPdWcyczVPOUlnWUpxRXA2MVFuRU9GbzhJdjRUcVFPRzZLMmdRUG9LMDdE?=
- =?utf-8?B?NVRIem85OVFtN0UyTFhRUGFwV1oyVDhsNjMraHR1dlBock1aL0VwMWNCQjBB?=
- =?utf-8?B?WlZWMTZ4a05Qck1acnh0cktadjFVbk05eVFzeVJrNjhFMHFQOE9jRzBpQ3ZT?=
- =?utf-8?B?c0lkaHZyZUc1cW5aL2RPNGtGVWVQUjlwZWtHRG0vRXdud1FiS3hZclNwWHp0?=
- =?utf-8?B?dzF4QlJreXNiZVBxRkkwOVVZTlljT3BKRVJTd3RkQWhlV29RMlU0cXVteEFQ?=
- =?utf-8?B?ZzlLbXExaG55QXpUZGN1UT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OWwxM2RpLzl3a2hHdmo4Q0Z4amlmWDBLck5sWlRDUUFIOUROdEt5dGNJWm42?=
- =?utf-8?B?SUp2enhzVVhYaU5sSy9reW90OEl0VW5XcVZnMCswdTVYWk5uYXZ2eWRuWGhB?=
- =?utf-8?B?dnd3R1grbGNjWjFONEZDaU1lTkMzdnA2amtHUXhiUzM5WUVLRUxnTFZWakNw?=
- =?utf-8?B?bWc4bFM2Z0FVYi9CNkg1ZHVFZkpoRVB2M0VnTGo4WjdmSkFFU0REQUZCdUlx?=
- =?utf-8?B?YWFYeUZ0cmE5RE8vZU9QUXlQbEZ3dUlmVnVCQTZxc01nQ1M0RFJ2U3I1UE9i?=
- =?utf-8?B?amNlYWU2TU9EQzR3aU5nZWdWc09ZOGcreFB2dmo0MG5hckJyQ1BWaHJ4bE0z?=
- =?utf-8?B?Mk5oWDFuYTlxVnRVSkdodys5VGg0SE0yMnZEKzBqTGJldEUwVER4VDZDdnlV?=
- =?utf-8?B?K0FhU0xkZWhNbm0zbm5aSGg2U0lPYWRXdmwrVnI4OURvcW5SMXhyQUJWYWNW?=
- =?utf-8?B?Ulc0TEdlVXBwc3FtWWs0TWxLRCs4WWlUcTFxRkpHUURVZlZxZ09LaHhaRlRC?=
- =?utf-8?B?eEtQU1hHTDN4QXUvT2M2bFNRYVJIWGFwclpkSXJ6cmZBNkE0RUJKSG1ZYXRV?=
- =?utf-8?B?QVVRU3Z3VVVzL2xMcXZxN2xIK3pRa0ZiRkMrcE9LeUpqWHpDb1pmcDZBbGlq?=
- =?utf-8?B?RGdhVlppVE81Z3R2RGZHeERraklUYjkxZGxnNlRCL284QnVaalp1MUMxQkVo?=
- =?utf-8?B?b2lSWWljT1FYNTN3bis4Ykd0aDhGMXZkNyswMUF3cG8zQTYwWUVIb0JIVStL?=
- =?utf-8?B?cEUvT2FnY0JaWGdKRXFWNHFPWjdJV2RZa3lEVUMwaWFwcnRFby9JRmNLRmZN?=
- =?utf-8?B?cFBnM1VpQlhGYWd2S1crKzlJV2huRmdOanVJcEdieXBKRkpySmk2WjhIWGpD?=
- =?utf-8?B?Y29jOVBQaFBFOVliQnh1YzVKUjFZYmpDbUw5WE5xcHRWOThidm5ydU5MNnVX?=
- =?utf-8?B?NVZEMlZ6L21NaXZLcnpmbUFDWGVCaTJmWTk1U0NwTG1LRHg3RytqM1l4U1V0?=
- =?utf-8?B?RmNPOVh5bmtwNGhzeFdCb0JWS21ZK1liK1hXelZGUk9CTjJSSHFhZjI1VEFM?=
- =?utf-8?B?YXJMa2dSRXA2cEJjWjlSKy9wd3lrb0ZOSWxlTVArZlU2QVllZzlVeU5UaDli?=
- =?utf-8?B?ZFFUTStYUFQ0NTBJL0pVdHdkRExuRVZLZDllNVpSTi9tZGxFZlg1UVZFR2du?=
- =?utf-8?B?bTFPWG1mKzVoQTJ1Q2loZnRBYlJ1M3JkTlFDRUxaZm44b0ZmN0l4UFZvSTFT?=
- =?utf-8?B?Q0xCeXVGa3ZNVE8zNVdmSEZ4Kzc5MXFwbjlBMEM3WlBOb0txNzNFZzlRQjhF?=
- =?utf-8?B?cjBCWHBEQzY5a2YxVGowQlFCejdlMmllUFlBaXhkUi9PU2NtYTF0eGZDbkVq?=
- =?utf-8?B?Qkk4ZXNuL0tjUmZSMHhMbUtZSElvM2t5aVMwQytZSGZOVXdOWGdZTGNTUjVl?=
- =?utf-8?B?c1JlNWhuYytoMy83YW5ua1F2SzNTRTNHMFR5ZzBwYTZsUWQ4Yml3YXQxSzFM?=
- =?utf-8?B?RGNQS2ZGRy9WN0k4Zkpzcm56ZVE0RGVVdnd2N0pjWXQ0NmZwc0taYVpyczF3?=
- =?utf-8?B?WHQ0VXhjamNUMVpKbDdGWFhpTnhpRWdRU2RWUnFjblJMUit4bFQzemFwNzJp?=
- =?utf-8?B?UXZrU2dNYXJlWWtVbjFyTXl3YkVGMWM5ZEsxT3lnTVBWUStIa1VCYVVhcGdT?=
- =?utf-8?B?eGVyeHF3SHEyNVdid0hCSGFUUjBGNkdzTE5MNkhROEdGWXNRS2wwRDJJZlRE?=
- =?utf-8?B?WGJwWnhoei83WjlDc08vU1MvK3czQjdSaWRqbmVwa0FMZWQyMEp6VWI4M0dT?=
- =?utf-8?B?TkRrcUpQNkNGV3FsdC9jRWFNdFRMNkFEblM3UVVlUGRoTWJzcWgzcHNZTm1J?=
- =?utf-8?B?akdiVlZPZkJkYmE4QmlkWXpMRlNIdXp2Ym1hTGxnVFdmaWV3SGhpT3lGSVE2?=
- =?utf-8?B?SnpEbFFrcXBjcDFDYXlTWHBGMjF0cmFQUlExRWFiTXRXZFRJeDJtOEo4Mloz?=
- =?utf-8?B?ZU9VQjU0SDNadnJHR2R5UVhmQ2RVaEl2ZkhxbmFrdFcyYjRrRUdac21HK1pC?=
- =?utf-8?B?QnYvR2lyc2lZZ216M3B0RjNxeHVLeEZTZlRiRklWbS9qZ3dsaTRIczBrMjBD?=
- =?utf-8?B?U3Y2ekhabE1kVUo2eWFaTTJ3ZVpkbHphVm8vV0ZSYnp5THFNRE1WS0NnRzI5?=
- =?utf-8?B?aDRxaUZ5QUZGOGNCTnQwalVWRm9Nci9heHVQZ3hpenZsOXlWUGZrZEZDN3pq?=
- =?utf-8?Q?SWzV8qftn/AcNv1IJ6f/vXYn3/ruCLeOnk8mIS9UP8=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1163ad1-0e74-440a-72d8-08dcd439fdec
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 21:21:12.2055
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cBkSF49J5C5XBIuWo8TLG642XGji6Hhjag1bb/3QT1hI+a+5WYwVsUq5AcsUm5awigRgp0soHaiBwpw1Yww6xtaWp6EbkBfCKvTYwjjxsmgiXNFHBEZevlNUDOBnJND0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR01MB8414
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913135744.152669-9-aardelean@baylibre.com>
 
->>+ * @shmem_base_addr: the virtual memory address of the shared buffer
+Hi Alexandru,
 
->If you are only going to map this from this pointer for the
->initiator/responder shared memory region, maybe it would benefit
->from a more specific name?
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on next-20240913]
+[cannot apply to linus/master v6.11-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexandru-Ardelean/iio-adc-ad7606-add-bits-parameter-to-channels-macros/20240913-220501
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240913135744.152669-9-aardelean%40baylibre.com
+patch subject: [PATCH v6 8/8] iio: adc: ad7606: add support for AD7606C-{16,18} parts
+config: i386-buildonly-randconfig-002-20240914 (https://download.01.org/0day-ci/archive/20240914/202409140543.VXctRtFP-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140543.VXctRtFP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409140543.VXctRtFP-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/adc/ad7606.c:39:27: warning: unused variable 'ad7606_18bit_hw_scale_avail' [-Wunused-const-variable]
+      39 | static const unsigned int ad7606_18bit_hw_scale_avail[2] = {
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
 
 
-I am not certain what would be more correct.
+vim +/ad7606_18bit_hw_scale_avail +39 drivers/iio/adc/ad7606.c
 
+    38	
+  > 39	static const unsigned int ad7606_18bit_hw_scale_avail[2] = {
+    40		38147, 76294
+    41	};
+    42	
 
-On 8/1/24 07:41, Jonathan Cameron wrote:
-
->> +	pchan->shmem_base_addr = devm_ioremap(chan->mbox->dev,
->> +					      pchan->chan.shmem_base_addr,
->> +					      pchan->chan.shmem_size);
-> devm doesn't seem appropriate here given we have manual management
-> of other resources, so the ordering will be different in remove
-> vs probe.
->
-> So I'd handle release of this manually in mbox_free_channel()
-
-
-How fixed are you on this?  mbox_free_channel is the parent code, and 
-knows nothing about this resource.  It does no specific resource cleanup.
-
-The only place we could release it is in the pcc_mbox_free, but that is 
-essentially a call to the parent function.
-
-All other comments should be addressed in the next version.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
