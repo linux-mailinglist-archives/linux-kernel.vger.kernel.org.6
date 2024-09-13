@@ -1,75 +1,160 @@
-Return-Path: <linux-kernel+bounces-327631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E2B97788B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:58:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F6697789C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42088283F4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:57:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F392B1C22093
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D529187FF7;
-	Fri, 13 Sep 2024 05:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243791A4E86;
+	Fri, 13 Sep 2024 06:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RPpDGyt1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b="krppPV00"
+Received: from us-smtp-delivery-162.mimecast.com (us-smtp-delivery-162.mimecast.com [170.10.133.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84F4323D;
-	Fri, 13 Sep 2024 05:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEF815666D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726207071; cv=none; b=NHjuLX8rzLgbs1+TH6yVxhBUnMzs96JNd6QnUnFbYyylWShPwht0SzsOvXQJRuWyINZsMsmIeMN1H2gzhAzdLkBhkXksN/6rv6ZrrbH/J6FPNbRZGvHFJ06x0jmcxDR3fY63WP4lfqAhE74hNTZDAA+KqpeAUMvft1kBYEp5UGY=
+	t=1726207584; cv=none; b=BBjrhkT8ZVaDcpaP1P3GXcYaaTyTjhpkk1bPcDY45+KjqyBToQvZhLCEHeI0qUdMlSnB0WblSQad+wloydYoIj0o++GZQaI/VyO/FwTdK9Ynt4IFxNQYyPWG8s03KdoNLUEiUNUmLD/LZ1PEglhJzJZFamY0hDCT2KJMTA2K0mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726207071; c=relaxed/simple;
-	bh=i2oHzhi3OjrA/yeKLYHkzWF/t73q/CvWLnOx7mHRCPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F5y9lufb0mqkSAgoYQRCEQdRSE2feepOphbIAxXSQTax1qVfH3A1ySDXKSImlZv6+ZptiVwewmczLHb67zaN9VNNBoajEKUoSJBjTGq8eFUNlxginyMhAuCI0tchGlM7JXwq9h958tGOhrGay8NbnyYz1UdPM+X2Gu4RC9YGlQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RPpDGyt1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59D9C4CEC0;
-	Fri, 13 Sep 2024 05:57:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726207071;
-	bh=i2oHzhi3OjrA/yeKLYHkzWF/t73q/CvWLnOx7mHRCPE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RPpDGyt1hAmEtLoJ6yK1ErU81O1+IVwAixICc6f+hXmByIY2e4zkTfGNczGCNgwXd
-	 KUgtHwpUL264b+Iv0sqk+mEcCTTTLfZ7F294eCUzrL3ErdEFAJzkv+9wpu3AJh/H7X
-	 LMACN7E1MJCwimOhdldylTaOqLdVe2HlpY2z/Tcg=
-Date: Fri, 13 Sep 2024 07:57:48 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Raul E Rangel <rrangel@chromium.org>
-Cc: linux-serial@vger.kernel.org, pmladek@suse.com,
-	rafael.j.wysocki@intel.com, ribalda@chromium.org,
-	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] earlycon: Print a notice when uartclk is unknown
-Message-ID: <2024091340-tacky-everybody-b582@gregkh>
-References: <20240912173901.3969597-1-rrangel@chromium.org>
- <20240912113616.2.Id2235082fc6c2d238789dfc3ee923492e9ed7387@changeid>
+	s=arc-20240116; t=1726207584; c=relaxed/simple;
+	bh=T2WVPeItws/8KSshd4JJuacLfIblNmrXh3m4eR9SqGM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nBjAVgVP5jelIWRNMQ8qdAL21WFlODtlro8tAcK1SGsvUqAUzpu99w1jYFr06GHebUW8B4uXP12WI3Iigy+sCeLJZC6g/GOaVjE/Lrtuz+JNcg8VXrqLl6spDf5P48MLUtmcV9LW/PO2632KaQetERL+SDgWpYyH4EmprrEoBuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com; spf=pass smtp.mailfrom=hp.com; dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b=krppPV00; arc=none smtp.client-ip=170.10.133.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hp.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hp.com; s=mimecast20180716;
+	t=1726207580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=u5UMeaxqG4NmIWc0i5zrZ9ZlV9cl6Ku3OxStJMFQQko=;
+	b=krppPV00SjPB4FJiDdxtjfNnWFNruuirS46hYKUjU2I9L7exk1EV0UOdoM9QyzN5yE1ELY
+	V7whuk2rAOQSkjSD6U1Z7JRW5UYJp/nJddMdIK//ZVlpFkdsMd+w5d3gTC1dX8g7UR8VSs
+	Ie2GdrObRUEcUQIoss91+T9xnLQziuU=
+Received: from g8t13017g.inc.hp.com (g8t13017g.inc.hp.com [15.72.64.135]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-350-KkGqon8TN8qbvEYjHahyow-1; Fri,
+ 13 Sep 2024 02:06:19 -0400
+X-MC-Unique: KkGqon8TN8qbvEYjHahyow-1
+Received: from g8t01565g.inc.hpicorp.net (g8t01565g.inc.hpicorp.net [15.60.11.226])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by g8t13017g.inc.hp.com (Postfix) with ESMTPS id D6C796000C02;
+	Fri, 13 Sep 2024 06:06:18 +0000 (UTC)
+Received: from mail.hp.com (unknown [15.32.134.51])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by g8t01565g.inc.hpicorp.net (Postfix) with ESMTPS id 374F2212D3;
+	Fri, 13 Sep 2024 06:06:17 +0000 (UTC)
+Received: from cdc-linux-buildsrv17.. (localhost [127.0.0.1])
+	by mail.hp.com (Postfix) with ESMTP id E83BAA40465;
+	Fri, 13 Sep 2024 13:58:41 +0800 (CST)
+From: Wade Wang <wade.wang@hp.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wade.wang@hp.com
+Cc: stable@vger.kernel.org
+Subject: [PATCH] HID: plantronics: Additional PID for double volume key presses quirk
+Date: Fri, 13 Sep 2024 13:58:31 +0800
+Message-Id: <20240913055831.1322457-1-wade.wang@hp.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912113616.2.Id2235082fc6c2d238789dfc3ee923492e9ed7387@changeid>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: hp.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=WINDOWS-1252; x-default=true
 
-On Thu, Sep 12, 2024 at 11:36:20AM -0600, Raul E Rangel wrote:
-> When trying to construct an earlycon=uart parameter it's hard to debug
-> why it's not working.  In my specific case it was because the default
-> uartclk earlycon assumes doesn't match my hardware. This change adds a
-> notice so that the user is made aware of that this assumption is being
-> made. This should hopefully lead to them adding a <uartclk> option to
-> their earlycon parameter.
-> 
-> Booting with `console=uart,mmio32,0xfedc9000,115200n8`:
-> [    0.000000] earlycon: uart: Unknown uartclk, assuming 1843200hz
-> [    0.000000] earlycon: uart0 at MMIO32 0x00000000fedc9000 (options '115200n8')
-> 
-> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+Add the below headsets for double volume key presses quirk
+        Plantronics EncorePro 500 Series  (047f:431e)
+        Plantronics Blackwire_3325 Series (047f:430c)
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Quote from previous patch by Maxim Mikityanskiy and Terry Junge
+=09'commit f567d6ef8606 ("HID: plantronics: Workaround for double volume
+=09 key presses")'
+=09'commit 3d57f36c89d8 ("HID: plantronics: Additional PIDs for double
+=09 volume key presses quirk")'
+These Plantronics Series headset sends an opposite volume key following
+each volume key press. This patch adds a quirk to hid-plantronics for this
+product ID, which will ignore the second opposite volume key press if it
+happens within 250 ms from the last one that was handled.
+
+Signed-off-by: Wade Wang <wade.wang@hp.com>
+---
+ drivers/hid/hid-ids.h         |  2 ++
+ drivers/hid/hid-plantronics.c | 11 +++++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 781c5aa29859..a0aaac98a891 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -1050,6 +1050,8 @@
+ #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3220_SERIES=090xc056
+ #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3215_SERIES=090xc057
+ #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES=090xc058
++#define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES=090x430c
++#define USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES=09=090x431e
+=20
+ #define USB_VENDOR_ID_PANASONIC=09=090x04da
+ #define USB_DEVICE_ID_PANABOARD_UBT780=090x1044
+diff --git a/drivers/hid/hid-plantronics.c b/drivers/hid/hid-plantronics.c
+index 3d414ae194ac..2a19f3646ecb 100644
+--- a/drivers/hid/hid-plantronics.c
++++ b/drivers/hid/hid-plantronics.c
+@@ -38,8 +38,10 @@
+ =09=09=09    (usage->hid & HID_USAGE_PAGE) =3D=3D HID_UP_CONSUMER)
+=20
+ #define PLT_QUIRK_DOUBLE_VOLUME_KEYS BIT(0)
++#define PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS BIT(1)
+=20
+ #define PLT_DOUBLE_KEY_TIMEOUT 5 /* ms */
++#define PLT_FOLLOWED_KEY_TIMEOUT 250 /* ms */
+=20
+ struct plt_drv_data {
+ =09unsigned long device_type;
+@@ -134,6 +136,9 @@ static int plantronics_event(struct hid_device *hdev, s=
+truct hid_field *field,
+ =09=09cur_ts =3D jiffies;
+ =09=09if (jiffies_to_msecs(cur_ts - prev_ts) <=3D PLT_DOUBLE_KEY_TIMEOUT)
+ =09=09=09return 1; /* Ignore the repeated key. */
++=09=09if ((drv_data->quirks & PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS)
++=09=09 && jiffies_to_msecs(cur_ts - prev_ts) <=3D PLT_FOLLOWED_KEY_TIMEOUT=
+)
++=09=09=09return 1; /* Ignore the followed volume key. */
+=20
+ =09=09drv_data->last_volume_key_ts =3D cur_ts;
+ =09}
+@@ -210,6 +215,12 @@ static const struct hid_device_id plantronics_devices[=
+] =3D {
+ =09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
+ =09=09=09=09=09 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES),
+ =09=09.driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS },
++=09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
++=09=09=09=09=09 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES),
++=09=09.driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOLLOWED_VOL=
+UME_UP_DN_KEYS },
++=09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
++=09=09=09=09=09 USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES),
++=09=09.driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOLLOWED_VOL=
+UME_UP_DN_KEYS },
+ =09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
+ =09{ }
+ };
+--=20
+2.34.1
+
 
