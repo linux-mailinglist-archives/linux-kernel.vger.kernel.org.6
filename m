@@ -1,87 +1,186 @@
-Return-Path: <linux-kernel+bounces-328922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4474978ACA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594E3978ACB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 633F0B24BB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:45:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBDBC1F2121C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D17D17C9B2;
-	Fri, 13 Sep 2024 21:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996E816F85E;
+	Fri, 13 Sep 2024 21:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDGjjDCo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IkR186KB"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47D67F460;
-	Fri, 13 Sep 2024 21:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306317F460
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726263866; cv=none; b=QVrYcPMIssYLVGlfqGKz9oWsuZXbkC996ZQGvDqadIPDRmLIukEYP5LoQHgzMisIDXrG0OoGE03Fty8bzW3FQuOEm/hj6pSzczWQX+80c2hIRSafzKh/amEKQxlQhmEmO98s8wULILyH2ALWocPkE6cgMuA1muIw+thg9FXNgQA=
+	t=1726263882; cv=none; b=VeFLK7Azd6YVVbTTsbQ6bcbK9icdkmlm5HVTwBalvmlJRoknNw+neyG1k94UKRYm8ewWKfQn10wa2r8YQtZAFj4R9eTiKJvBuwV2wFPCSeqCMbOckOL/eq06uhWwWQ184e0WmFgz5M555OBBkbf1PYBArOovEKLhhpo/UubPrBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726263866; c=relaxed/simple;
-	bh=0qZpgua4L0xrtWkUfIR6unEX4LXRvx7Pt6VezLDtDeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBIWe+Gze2IwRYU7FvUXPEo0io5CG++8sRjhnrYDWjZ1zUduBPl0kAbEMwU+0kfiekBUlZGK5N4MWbmuPNEKoTMYeLlebty/2E06XmEi779idaaYoZx3IQa33XxoTJfBgeYPceJDGKxviExsWJ4nBAByBGPlNFk4sWTHRNBEnw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDGjjDCo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAA0C4CEC0;
-	Fri, 13 Sep 2024 21:44:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726263866;
-	bh=0qZpgua4L0xrtWkUfIR6unEX4LXRvx7Pt6VezLDtDeQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hDGjjDCoe3ljU2LTBneE7fwJ+vGP+DhxIpnFjUD6TVcLlrARRVYetn/38/12r8k64
-	 l0/KS/AQYc0gs8N1L0vRva4anmO1FGgqtRbpOf4zX3Eg4kxcAhvKCFNJF6dXA7/kdw
-	 lTALwyMBZew240jI8W2g9eGorAVDl249MNWoOg2U6Ti911YESKSloazxVWz39wRMN5
-	 tDIRup2hcWmepqGHVemmC4cA1bgI9Rvr/6i+w3Q5wyDEztTi7T+y0Wsvh9uccWPq4b
-	 2lvgcvZlHzcXur/X127aDE6DyqXrTRSGlS6dRMXoAkysZAenE16a+jTScdQUxyBjPY
-	 8CbCUpMXJgERw==
-Date: Fri, 13 Sep 2024 23:44:23 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>,
-	Cheng-Jui Wang <Cheng-Jui.Wang@mediatek.com>
-Subject: Re: [PATCH 0/3] rcu/nocb updates
-Message-ID: <ZuSyN_1jKUrVAprO@pavilion.home>
-References: <20240913214205.12359-1-frederic@kernel.org>
+	s=arc-20240116; t=1726263882; c=relaxed/simple;
+	bh=weOpgQgGVFeeHCvUfr70gOb841HLcQ83LvyuGQsmjS8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M+Xq38K5xJI8XvXdrvw8zYaFa44zc9Ba2PvRm/b97eN/5rSnnuBVfPMCtJYI4vLWwfkvBKfQAycC58R8/EjWstopK3q25Hzb+JuyQrgbgZrK94Fd6mjrRZU6bcFOVneiY3GZNsvDkcM4IR4Cq0xo6bQmxhZZpHXjWX32aiBUCjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IkR186KB; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374b5f27cf2so1824406f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:44:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726263879; x=1726868679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vf45eyq3v7x3TRRfxhlxvxhoc9NAlP67nksFtDxcHog=;
+        b=IkR186KBfaQsAZ4xjhiDUpvS9xtesuAms4d5XDza895eRNp48p8HRby/UDmEgisjAX
+         aRf7cCRuU9temCBUViOeQlGnBGcvkrslfYV1F47WXtju1VtA291gpnrooloDCvqzyVOy
+         1QbLnKKv4xZxyP3nAI4PuBs71v3ljOPVqYXdS5zV6AkcKea4L5ut1CkjMX8QWZx2MXFU
+         vBYP8Sw7suty+scy1n+DUWdp8vAPHVaY+zeD8vevzRUf758RiF/VaK31VusoRhYCCYZu
+         8j9FHFxcsQra6ocXaMH1/fX22k9IOKJGUwSlRJvuvjeTnK2w0o66fJmwfoe/2kUlsyrZ
+         gmGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726263879; x=1726868679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vf45eyq3v7x3TRRfxhlxvxhoc9NAlP67nksFtDxcHog=;
+        b=IXxd2Di1fDEcunkEsIuGJp2wcGNtLwxvnIGyfD17/LI0Q23w8hS3AlXzz0xl+r4Ije
+         4Dv8M1FmbLDIY02+U1g/HHiyki5FsY2DikhK4wJCsjODgAIKcaVXmRQGbvFieNS+2CLr
+         ZB9GTLhHDaZfiTZy4Y4FQNyETA6xquP4jo1k7X6eoGBHwWJsGKR6s4v7BPUAhDw5iOn1
+         KlJHt5T71jyP96UqfVAlwRgo1otpY+isGshjYBUY3YDJZ7k2tinb3HX/NOy/TCxLAQCp
+         Odr+rm93COMkV/fMjNgdUdtItef+bqs3IblhzmWeIuhwAX50mSV0IabSUDy/ZThw+nj3
+         JVJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcfAcioW3I3Ben8r06Nb8cPRYRXWruSr7iwQhZED1br9pPlSuXURZzPF3v9NhvoHmdh2O1k4PPoAxUOGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww0ZGMfY2Wmf3byX5vgT4eGsTcWZST8tcpp+JoyMzmiT4LsBXU
+	y1g/Q+XrdXH3Q6LP1SGEN+VWfqVLaXAouAo1ASXs+vic+OAmUg6OSgkxUfYRV6RtlOSH8wKf28g
+	c1lgI6GAR+oofitgYMlvyj8zbliJThDUfUX7a
+X-Google-Smtp-Source: AGHT+IEmwetFagY93QocO76IsaU0CwLVTVwEf+i4UEMkAx5533P8vYmTDozz/DvOPi7tFuew3ENtKMeHxf8V8bRaarI=
+X-Received: by 2002:a5d:5711:0:b0:374:b685:672 with SMTP id
+ ffacd0b85a97d-378c2d04ad5mr4700069f8f.26.1726263879124; Fri, 13 Sep 2024
+ 14:44:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240913214205.12359-1-frederic@kernel.org>
+References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
+ <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com> <20240913-shack-estate-b376a65921b1@spud>
+In-Reply-To: <20240913-shack-estate-b376a65921b1@spud>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 13 Sep 2024 23:44:26 +0200
+Message-ID: <CAH5fLggX=Uw8T6EqyonJyOkjOVM7ELy4hK8NV80suvDEBnq_Lg@mail.gmail.com>
+Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
+To: Conor Dooley <conor@kernel.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Fri, Sep 13, 2024 at 11:42:02PM +0200, Frederic Weisbecker a écrit :
-> Hi,
-> 
-> This series include:
-> 
-> * Fix another RT wake up while CPU is offline (reported by Cheng-Jui Wang)
-> * Cleanup rcuo wakeup
-> * Remove another superfluous barrier
-> 
-> Thanks.
-> 
-> Frederic Weisbecker (3):
->   rcu/nocb: Fix RT throttling hrtimer armed from offline CPU
->   rcu/nocb: Conditionally wake up rcuo if not already waiting on GP
->   rcu/nocb: Remove superfluous memory barrier after bypass enqueue
-> 
->  kernel/rcu/tree_nocb.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Sep 13, 2024 at 11:18=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Fri, Sep 13, 2024 at 12:08:20AM +0200, Miguel Ojeda wrote:
+> > On Thu, Aug 29, 2024 at 10:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.c=
+om> wrote:
+> > >
+> > > Add all of the flags that are needed to support the shadow call stack
+> > > (SCS) sanitizer with Rust, and updates Kconfig to allow only
+> > > configurations that work.
+> >
+> > Applied to `rust-next` -- thanks everyone!
+> >
+> > Paul/Palmer/Albert/RISC-V: I think you were not Cc'd (at least in this
+> > version?), so please shout if you have a problem with this.
+>
+> For some reason I deleted the series from my mailbox, must've been in
+> dt-binding review mode and hit ctrl + d. I've been away and busy, so my
+> apologies Alice for not trying this out sooner.
+> It's sorta annoying to test rust + scs on riscv, cos you need (unless I
+> am mistaken) llvm-19. llvm-18 + rust built fine, but has no SCS.
+>
+> llvm-19 + rust failed to build for me riscv, producing:
+>
+> In file included from /stuff/linux/rust/helpers/helpers.c:22:
+> /stuff/linux/rust/helpers/spinlock.c:10:23: error: call to undeclared fun=
+ction 'spinlock_check'; ISO C99 and later do not support implicit function =
+declarations [-Wimplicit-function-declaration]
+> __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+> ^
+> /stuff/linux/rust/helpers/spinlock.c:10:23: error: incompatible integer t=
+o pointer conversion passing 'int' to parameter of type 'raw_spinlock_t *' =
+(aka 'struct raw_spinlock *') [-Wint-conversion]
+> __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+> ^~~~~~~~~~~~~~~~~~~~
+> /stuff/linux/include/linux/spinlock.h:101:52: note: passing argument to p=
+arameter 'lock' here
+> extern void __raw_spin_lock_init(raw_spinlock_t *lock, const char *name,
+> ^
+> 2 errors generated.
+>
+> This occurs because I have DEBUG_SPINLOCK enabled. I didn't check why,
+> but Andreas seems to have introduced that code - luckily he's already on
+> CC here :)
+>
+> With that disabled, there are dozens of warnings along the lines of:
+> /stuff/linux/rust/helpers/err.c:6:14: warning: symbol 'rust_helper_ERR_PT=
+R' was not declared. Should it be static?
+> If those are okay for rust code, it would be rather helpful if the
+> warnings could be disabled - otherwise they should really be fixed.
+>
+> Following that, I got a build error:
+>
+> error[E0425]: cannot find function `__mutex_init` in crate `bindings`
+> --> /stuff/linux/rust/kernel/sync/lock/mutex.rs:104:28
+> |
+> 104   |           unsafe { bindings::__mutex_init(ptr, name, key) }
+> |                              ^^^^^^^^^^^^ help: a function with a simil=
+ar name exists: `__mutex_rt_init`
+> |
+> ::: /stuff/brsdk/work/linux/rust/bindings/bindings_generated.rs:12907:5
+> |
+> 12907 | /     pub fn __mutex_rt_init(
+> 12908 | |         lock: *mut mutex,
+> 12909 | |         name: *const core::ffi::c_char,
+> 12910 | |         key: *mut lock_class_key,
+> 12911 | |     );
+> | |_____- similarly named function `__mutex_rt_init` defined here
+>
+> error: aborting due to 1 previous error
 
-Please discard this series. It has been applied already. Scripting error...
+This looks like an unrelated problem to me. This patch only changes
+the rustc flags, but these errors have to do with the Rust
+helpers/bindings, which get generated before the rustc flags are used
+at all. Most likely, there is a problem under the particular
+configuration you are using. Were you able to reproduce these errors
+without this patch?
+
+> I stopped there, Space Marine 2 awaits.
+>
+> Hopefully I'll get to say hello next week,
+> Conor.
+
+Thanks for taking a look, and see you at Plumbers!
+
+Alice
 
