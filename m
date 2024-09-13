@@ -1,158 +1,143 @@
-Return-Path: <linux-kernel+bounces-328875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A8D978A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:50:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C207E978A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02B341C21C72
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:50:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 603C0282D98
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A79C146A71;
-	Fri, 13 Sep 2024 20:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6306149C64;
+	Fri, 13 Sep 2024 20:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="pVdVjUQQ"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="l4tNLFek"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BBB34CD8;
-	Fri, 13 Sep 2024 20:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726260612; cv=none; b=G/UMX6zMcXwpi1SPa9AQcioQbBRWVEp00hAqf0p6jE0JE40rNZInQoIQTxypG+NVN/7Zoxj4VpRDdhcrUzS0HRjyRKAD7wDlDOkivrWG9mJcgiASMm0lKtmOwS/Bj8SkZuWcmGWr8ZDgJC4Ju+ZhvTTriXzn2hvwWGi7S3Tamdg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726260612; c=relaxed/simple;
-	bh=2zrYHpA3kX7JC9/5SSEGb4MN5LXNBxgDBMyfH9tRaJI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g8mUslEN/gNo2G659ltj8bnccWyr08SI7rtbteCMwY3nfKF4RVFeIDKZo8n32K9XYN+w+uZBmAF8f6uHUnHm9rp4zo6DcCEfaGO4/VD5PrckjY3PQe6zkrksQgSgfvB7PutExIzUDrjL9Yz8oZNbMvKZI+xpbkTPxpw6Y/hp3iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=pVdVjUQQ; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=jEbycQkoY9Azc+AVUuDXEFyr7MoYnCHK99x5c0TENqw=; b=pVdVjUQQa79uxa4+
-	EMWhBqRmKqBrs9XI5qCf3F7pLmX67mVeyim0A6u5rtEeafpUAangpGyFhfeOXv0AbL/VfZI+eaWBn
-	xE4BZkSHxGabrN7BSOfLron793/1vw8WGHdZRILhPKSn5SassfFr0qFQjApFMVxL3HJ7dJJmSXHgx
-	cyMJs/a2HGe2jMCWI0upsYdSs9wapGnP/xHuDfX42QG/8kQxoHnDxAuWpXAS9kh7sMuwU+em7t846
-	isFB10fntPtXjbkSm6KS6drgtiD3ut2szXAa5c0Jzy2Cg81+5KG+EHpcbgJfSOVTLOV9Kbdap+bPW
-	k7lFB/6luppr0PkOlA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1spDF1-005foX-2B;
-	Fri, 13 Sep 2024 20:50:07 +0000
-From: linux@treblig.org
-To: almaz.alexandrovich@paragon-software.com
-Cc: ntfs3@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] fs/ntfs3: Remove unused al_delete_le
-Date: Fri, 13 Sep 2024 21:50:06 +0100
-Message-ID: <20240913205006.279177-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D64E824A1;
+	Fri, 13 Sep 2024 20:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726260637; cv=pass; b=ZOAculWvAIBub2yMfpA9tANHY7O5Nqv6QOID5ydA8JQq1lt3mSUHaoL918MGTYLK9oro7VALPyijBHmwU/wOqZRi8+Bpa6sUmPZyPNQXp1rtKPntMVzzW/7+H2vAe+zDfAM7bWLEmU4Ui0P6rghZ3tcx1/k8uKevh1Z3L0IK6R0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726260637; c=relaxed/simple;
+	bh=IyHwq3gLv93dYm4dDVxpET0KKx/gYmYIpij+l71ZSgk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rucmliWrdZ/A8jSAqvAtw/NUCHLJP4XUhsFR5vo/wnSiSyp8XCRqiYCqe3uYHsHNrvrl3GC92uvi8MuUdelnZCfhXt+MFqvrq5Y0e0s1wP7EldXQ41vJpA4Y3G+Nf0q8OZtYVty2Wm0Q/Y0MAeLLf2AIJ3Dwa/DkvZnqdwgJsMs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=l4tNLFek; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (83-245-197-106.elisa-laajakaista.fi [83.245.197.106])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4X55zk1W3lz49Q33;
+	Fri, 13 Sep 2024 23:50:26 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1726260626;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IyHwq3gLv93dYm4dDVxpET0KKx/gYmYIpij+l71ZSgk=;
+	b=l4tNLFek/TDFwZBOxa+fufpxVTS+FaVSZS33KwbLImz/KcR4/yPUbBM+N9mBLBmCVJp2zn
+	lcAkmPGVA34ADF8ARM2q+fvXoa5CSxGA2o9JIJpFkqZEwJK9Mw6KFvY9ApCHdfjfITi5Qy
+	N6dV9tb+HK9pv9CEEwY02m5yrIyrAB0Nm/6fPhUz4j/+C2vsTqSwabdrm+BjlbqDWNkSEE
+	CyO+hLGlJ6+yvbQGKOvWg4lnJAZK6sY8CF6fT7pkdyqwv34BaOH8lhL/b0IsZsKoGq4bUP
+	e4LumVA1oJNkj+rVGvEheQTwClDtgOo6RIviy8keZClra+arl1qUE3UcBA0pRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1726260626;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IyHwq3gLv93dYm4dDVxpET0KKx/gYmYIpij+l71ZSgk=;
+	b=tq6KLSnUXAW1zeEzBJT5ak+sbn2fl9eh3+XRND730ZPBak+kO3yCAVJ/LJzMcZoXBPFr6k
+	9h7ag0Fr107V2BYG5QODKqXy/MwSXVqFQiL1H+ugjtD0ExQxW7YB8nRlD9GerDtP+z/ru4
+	bEe5SVHORRcOAbSoTl8M2rgQxfB/qdR5VCSnr6BMdrD5w+GZ3Vlo5J9H9L0/WycErZxCmT
+	4JK808o8/4IC4YO7HiuOxWWgA23KWLTgXsRM/qh1zH+pDf6YtvV6vlOupxjujDQlb+M6+b
+	zrCts5dXDqiwl1SQEaOSzZ3nmILXBN3odFX76NhMzbuC14d+bE18+m/k6qY32g==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1726260626; a=rsa-sha256;
+	cv=none;
+	b=pG0r/+T06biVOJqOTx9dZx9owVgyiCBY71em/k7Jqt0XexY9dhdCJESOjNgZbpUT6qN2Zh
+	9/p9eUZtENLEXI6P33uHs3B4epwcUnTtmyIYJo3o90Vhz3nB8p5XeRhBkwpFhaKM0tpSIy
+	2CMvpQ/FLzeqUZHud1MIeUEfk99BV09pU5J1Flb1/dcX5QxEMFvnToA3kVs0o3bp1LT6vF
+	3VKz1bDaPI8o5SEQMTzYjwiWG3TD7F1DXq1hDhGyuC2gJZVkT2EcAscOPiQATcE2p/gEmE
+	QeSHYKK34qyu0753tG42ueBslcgp5XT9ril+fud9t8B4DBbZmB1zvb69lcj/Dg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 13 Sep 2024 23:50:24 +0300
+Message-Id: <D45GBJ51SBNP.1WR34VCVNSN52@iki.fi>
+Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
+ "Pengyu Ma" <mapengyu@gmail.com>
+Subject: Re: [regression] significant delays when secureboot is enabled
+ since 6.10
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, "Jarkko Sakkinen"
+ <jarkko@kernel.org>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Linux regressions mailing list"
+ <regressions@lists.linux.dev>
+X-Mailer: aerc 0.18.2
+References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
+ <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
+ <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
+ <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
+ <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
+ <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
+ <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
+ <D43JXBFOOB2O.3U6ZQ7DASR1ZW@kernel.org>
+ <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
+In-Reply-To: <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu Sep 12, 2024 at 11:13 AM EEST, Roberto Sassu wrote:
+> On Wed, 2024-09-11 at 18:14 +0300, Jarkko Sakkinen wrote:
+> > On Wed Sep 11, 2024 at 11:53 AM EEST, Roberto Sassu wrote:
+> > > I made few measurements. I have a Fedora 38 VM with TPM passthrough.
+> >=20
+> > I was thinking more like
+> >=20
+> > sudo bpftrace -e 'k:tpm_transmit { @start[tid] =3D nsecs; } kr:tpm_tran=
+smit { @[kstack, ustack, comm] =3D sum(nsecs - @start[tid]); delete(@start[=
+tid]); } END { clear(@start); }'
+> >=20
+> > For example when running "tpm2_createprimary --hierarchy o -G rsa2048 -=
+c owner.txt", I get:
+>
+> Sure:
 
-'al_delete_le' was added by:
-Commit be71b5cba2e6 ("fs/ntfs3: Add attrib operations")
+Took couple of days to upgrade my BuildRoot environment to have bcc and
+bpftrace [1] but finally got similar figures (not the same test but doing
+extends).
 
-but has remained unused; there is an al_remove_le which seems
-to be being used instead.
+Summarizing your results looking at call before tpm_transmit:
 
-Remove 'al_delete_le'.
+- HMAC management: 124 ms
+- extend with HMAC: 25 ms
+- extend without HMAC: 5.2 ms=20
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- fs/ntfs3/attrlist.c | 53 ---------------------------------------------
- fs/ntfs3/ntfs_fs.h  |  2 --
- 2 files changed, 55 deletions(-)
+I'd see the only possible way to fix this would be refactor the HMAC
+implementation by making the caller always the orchestrator and thus
+allowing to use continueSession flag for TPM2_StartAuthSession to be
+used.
 
-diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
-index 9f4bd8d26090..a4d74bed74fa 100644
---- a/fs/ntfs3/attrlist.c
-+++ b/fs/ntfs3/attrlist.c
-@@ -382,59 +382,6 @@ bool al_remove_le(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le)
- 	return true;
- }
- 
--/*
-- * al_delete_le - Delete first le from the list which matches its parameters.
-- */
--bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
--		  const __le16 *name, u8 name_len, const struct MFT_REF *ref)
--{
--	u16 size;
--	struct ATTR_LIST_ENTRY *le;
--	size_t off;
--	typeof(ni->attr_list) *al = &ni->attr_list;
--
--	/* Scan forward to the first le that matches the input. */
--	le = al_find_ex(ni, NULL, type, name, name_len, &vcn);
--	if (!le)
--		return false;
--
--	off = PtrOffset(al->le, le);
--
--next:
--	if (off >= al->size)
--		return false;
--	if (le->type != type)
--		return false;
--	if (le->name_len != name_len)
--		return false;
--	if (name_len && ntfs_cmp_names(le_name(le), name_len, name, name_len,
--				       ni->mi.sbi->upcase, true))
--		return false;
--	if (le64_to_cpu(le->vcn) != vcn)
--		return false;
--
--	/*
--	 * The caller specified a segment reference, so we have to
--	 * scan through the matching entries until we find that segment
--	 * reference or we run of matching entries.
--	 */
--	if (ref && memcmp(ref, &le->ref, sizeof(*ref))) {
--		off += le16_to_cpu(le->size);
--		le = Add2Ptr(al->le, off);
--		goto next;
--	}
--
--	/* Save on stack the size of 'le'. */
--	size = le16_to_cpu(le->size);
--	/* Delete the le. */
--	memmove(le, Add2Ptr(le, size), al->size - (off + size));
--
--	al->size -= size;
--	al->dirty = true;
--
--	return true;
--}
--
- int al_update(struct ntfs_inode *ni, int sync)
- {
- 	int err;
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index e5255a251929..f0cf4c8aa1ec 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -471,8 +471,6 @@ int al_add_le(struct ntfs_inode *ni, enum ATTR_TYPE type, const __le16 *name,
- 	      u8 name_len, CLST svcn, __le16 id, const struct MFT_REF *ref,
- 	      struct ATTR_LIST_ENTRY **new_le);
- bool al_remove_le(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le);
--bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
--		  const __le16 *name, u8 name_len, const struct MFT_REF *ref);
- int al_update(struct ntfs_inode *ni, int sync);
- static inline size_t al_aligned(size_t size)
- {
--- 
-2.46.0
+For example if you do multiple extends there should not be good reason
+to setup and rollback session for each call separately right?
 
+[1] https://codeberg.org/jarkko/linux-tpmdd-test
+
+BR, Jarkko
 
