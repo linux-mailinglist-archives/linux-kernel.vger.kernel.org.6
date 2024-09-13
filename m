@@ -1,205 +1,128 @@
-Return-Path: <linux-kernel+bounces-328597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05C297864E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:59:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B73F978650
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06EF8B23FAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:59:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B8A282469
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98D1823C3;
-	Fri, 13 Sep 2024 16:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753086BB4B;
+	Fri, 13 Sep 2024 17:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xvkW71PA"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2064.outbound.protection.outlook.com [40.107.92.64])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="JXo5eKd8"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8757A15A;
-	Fri, 13 Sep 2024 16:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726246764; cv=fail; b=RtcceWGHKD1ijuLaK0HV29NAsQxjx8k/EwJC/Ome/EO/U27o8Ogb4e2txf53FsyJhfBnaaj/tLndtuZR5wRnd4OzbcdOiUvBryWCZM4VxIGG5d5uFB3HeSzICFFBjImZ33M3BFedZDvwec4x045DUcDYOBqoB7SYXooOVGRRAZk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726246764; c=relaxed/simple;
-	bh=46jY6p0Akt/mWLeglomtmpAsjE4sgP7oECovXIx4fLI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=e+YoQf2Gzm7vufFmGWKF0W5IUhuD2h81A9lw+9d/P0NleP2kzFWX428z7D1NENUCJpCxSxe8BZMb4Ik+GiLdyxCpnRBQvbYmp4+fguz+XWUPd/hCzYlxUx2SScOenXW7nb5uusaWXt9a2fwuoT1a4JeSuA2gvB6EDu4i835dals=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xvkW71PA; arc=fail smtp.client-ip=40.107.92.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B4afDoUSM2+z858LnBftNuoXyt1U/G1aWdUjTifiTsaOoI9bvEjs0i5THQ49BYluleOf72U6I3bpAcAhddhzI03SmofuuBhBfX+5P9FoJcG2DscBl9/ckB/xLYJehjkUsdITg94nbU2nyl4odAt6e+Xt+ystec4VXu0F20xOKqmX9zvmnfEg6KalXQP5iqQ03LKSY8B26IYgPA+lE8a3AzH+P/tKbvlLeuaeW9d+Cwr3ievlQQ50V3JFfsM4FyjTbmF33P9dnqRlMCccsbdk8mAJ3589jh4g3QYUuLBf8mF4hCrMRtlo3J2w8jGDCykoCsaMgozKoU/H8I72jxkDCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4+aOPa3plXhuZvw25Xh2Sc2hGjEyi3vlPpt3GmcZe/w=;
- b=xgYOwbIjNc98p2/9zkzjqsAR0x+PgWte2f2EzuO92/kaq6H278BgOyQF0TdfilOQkCUoQY8cmHU+0JoLDW5pP78MVwirEFY8R8FYVwaDYJcfMheVapzJoyxLJ/HgHzYVdGumvAYtz/5Gu7v8xuLA4FNcqa/lKd4nPN+N36ypZj+rCtlFR51yhbtVTA0E3kifyX/ubgac0oKiBvKpkN8QMBYwXfo8iPkB/aHu3clv4qCi6AYAbbdeFUy8sv5ddLJLgj2pKwlvr/Eu/ljLYMPavFMTfurrljXl9uhStnOT5+GRTrvcp2Ug6IqYcZreaGrRfCV1t1ObNFH+4vo80uvEDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4+aOPa3plXhuZvw25Xh2Sc2hGjEyi3vlPpt3GmcZe/w=;
- b=xvkW71PA08DYLS3idQK7SVA7ng0gP+GJuTt3/4v9Dwm6nUt1pl9OgjmSd2ZgYvmad9Te/5qbco9EjXR33Be43C9tCVcRqoC+kztdEF+OGReoza8707NyHlK8l9ShiXXizzh5gKj9T6XR+DXS49n2i6bfa9JWFPuFMWGb/fdQRyw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by IA1PR12MB8240.namprd12.prod.outlook.com (2603:10b6:208:3f2::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Fri, 13 Sep
- 2024 16:59:18 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
- 16:59:18 +0000
-Message-ID: <55705fb4-65ed-5fea-8fec-36309ef0d523@amd.com>
-Date: Fri, 13 Sep 2024 11:59:21 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v11 18/20] x86/sev: Mark Secure TSC as reliable
- clocksource
-Content-Language: en-US
-To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20240731150811.156771-1-nikunj@amd.com>
- <20240731150811.156771-19-nikunj@amd.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20240731150811.156771-19-nikunj@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7P220CA0003.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:806:123::8) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E7F57CBB;
+	Fri, 13 Sep 2024 17:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726246894; cv=none; b=DWNLbQvbaxUoI0GsP3aTERpIwQX0Qt8gOtGG1heOIEh0eakyzEeMrvaJFXaMLkCfwLXOB0xjiuVLrxyUHbCL9w5L0mUz7FlU5md2Ah2BMYv0D/cDY6nYKfkGgXQ7yX9lAVq3w7s50r4lqZ1/Ligix7a5XAbxibeycYpWSbygTDg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726246894; c=relaxed/simple;
+	bh=qDtC1y7ZBxJ9wlYLMS6bSqD52Tijs/FV2RCHH1h3K8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iK+yVJpvVNtvNd5mI8NEJSCeoHkShBQKzPHZrQSQ/kK6JymJ6CMqWmrikKztF29Sbb4evlK+0Y4piXEGaMpHGS8MYLR3vVopgOVIs6h286wKlvIymEpyyVdNqqqw+sLsuUKumMDR+CyOTFRbEfuKhJAuV1NG8ilYHyuVa9cyKhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=JXo5eKd8; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=xh6orQbvPl5FfKLfh/aG37BBQRsqWm3ZnNvZp2gsyIA=; b=JXo5eKd8wHDMS7Sx
+	D/ftgTYfCjAoD890WSd4hPrb2oSL1ZBQrQMKz4q1aNihjrzSrlKLOCim3j1fASnhfMjra5TCD+aEl
+	vSx/R/wbb4/7p3V9AT/EzhRXReHzLMmEE8BSE17ebFVIs8QvNxDN6sj+/rkFpiJ+pPZCHbNwvdfQs
+	778TIuRBSZlGFb/z6QCYas8/TLms6GiIqi78qok8JOnFTZ1syALvbsnF/wJprXpQmtgv+c9zJIKUn
+	xogDSIHYtREv7U5DXqzSJX+anC77j+RyyOYHUYVFyA/2+1gmYsCK641owlVNtod8kuhCnAwRzx2q/
+	zSp80kqEs1bZ1H7ICA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sp9fe-005dOb-2I;
+	Fri, 13 Sep 2024 17:01:22 +0000
+From: linux@treblig.org
+To: hare@suse.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] scsi: aic7xxx: Remove unused aic7770_find_device
+Date: Fri, 13 Sep 2024 18:01:16 +0100
+Message-ID: <20240913170116.250996-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|IA1PR12MB8240:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ea71f09-e3c0-4d15-418d-08dcd41567aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dDRZUThOV0lzZGxyUjIwRjhqT01Sejc0NTI1clNwUEdITGtBWDdpZitBWllr?=
- =?utf-8?B?TnJoRzBra2h4RG1XNURqQlkxalI1V25PY0JPTW1yOEdqTjA4YXZBOTVKZG9x?=
- =?utf-8?B?WTRJdFZQV1M5TDJhLzNVWDVTK2NYZ2ZRVDhFbWxuQmU1YjZvMG5KMzVDWkNZ?=
- =?utf-8?B?aWZXaFZaRDQxbHBxZWFJbmIxMHMxWk9ZM0tVZVY5aGF6Ny9DMXZFZHdUL2Nk?=
- =?utf-8?B?VDlzMXg2NVF1cU5zR3R1STRrc3RrejUwYzFuOWJoM3VVaG5uVzltenFmc3Yz?=
- =?utf-8?B?M1VsMS9ETHlBWjZKZjFFVm4zWGpTT2dxdzlkY3dnRXVjUDZQeXcyVVRkT0cr?=
- =?utf-8?B?VHp5ZG9EcTZLdWUwdmZkUHB1czJMd3o0Yy8yWjRmcDNyVElnbzNLdFBkOUJY?=
- =?utf-8?B?bDNrV1dqVGlaMlR5K3hMNTZCNFQwb2FvSVUrNXNQYzNPTVBKbW5mZ2ZSSWZy?=
- =?utf-8?B?ekRHL0xwN204dThIM09vSGtxM2FJUUFGSTVDRTBsL3IvK2NlUi9qS0hXMGlO?=
- =?utf-8?B?N3FRUVRKaDIrVDFhd3pST2FmV3hMKy9BNTI3ZEtoTHVNWTlxNmpQM0VsR3hH?=
- =?utf-8?B?ci9rVDlTM0JkclNmSmdFVGl1VVkydlVad0VZTnFtd2xVYS9nTVRFUzd4N1RG?=
- =?utf-8?B?TEZnQjdNS1pZckEvUzc2N0NDWVlyQkpvaUNVQ0dpQ00yUFE0NVVGVmZxdGU5?=
- =?utf-8?B?Rm5mNXFLOVBET2dmemVydU50M2pyeW1zc1RPaXdMTjNKQ0pMMXB0YVhacWUr?=
- =?utf-8?B?MzY5SGtDUUFFdURzNUpQNWt3bDhHY0xncklRdjlsbi9RRUtORlE3VU9EYzNw?=
- =?utf-8?B?aEpQREJ1d3ljNld2THhXUVJ3dG5YUXhtREFTMHQ5UEZFMTRXbVFPemlXaXZC?=
- =?utf-8?B?MnkxY2huVTRCOHNYZFl6SVA1bnFibFRaT0hYTDZhM0ZnK1ppYmMza3UzMkcx?=
- =?utf-8?B?UFVUeUxFYzA4d0QxdWxsTTNPNElma1pLUGZ1YUV5ZjJzZFNDcUtqTW5lME1z?=
- =?utf-8?B?TERMQzZ4OFRtMkRlWlVFaFp2ZG5pcjhQU0FvU0xMU1BmS3hObit0TmpicDMx?=
- =?utf-8?B?bTI5dW40MjFQMjJkRGw4MGJ5NDZZYTk3QUgxMm1UNGFtRWcvWVVNczJOSFZl?=
- =?utf-8?B?WW9yaHk2ejlqajNDcnY0eUkzSFdUeFFWTFBTSEYxSVdkRlE5eXpuMlNXZ1Bl?=
- =?utf-8?B?NE1weFVrdldGMXBvVEh4TDhuWXNyMGpsSFF4RFlDZDRUbmliNjM4VXRhMjNy?=
- =?utf-8?B?Uk9MbGF0WWNOVjY2Vy9mOEFhT05jQklUMkRrZ3FSeWhXRTZPa1NEcmZZRmNN?=
- =?utf-8?B?Vzd2Rlg1UTJ5RzFYc1NrY1p5cjV3eTFNdXBoam9LaWRidDFKeTdNakxva1pJ?=
- =?utf-8?B?dWNFcnMvazZqTWVGQmRkZStvK1lMRmltVHhBUW9RS0VYSjRUSkQ1dVZrZzFi?=
- =?utf-8?B?ZUF5eHNBU1JTaFY3bnJXSStERlJVbFZzZDU1RWhFNW4rZHNWbTVoTXJCdTJQ?=
- =?utf-8?B?a3owa3laR1pCR2EwK2Z5cGdOaVhsUnI1bFBWSTJuMTdHOUFaZWdhSjBnenNk?=
- =?utf-8?B?ci9LNWRraW9PUE9IV2lGc0JHb3Ywd0REdXdsWThiK0MwWEJ3cmg0QmZzZk55?=
- =?utf-8?B?ZWpEd3JoVUFtU3p5Vy9JQnRqa1dMNVdoMlBWb2tGd1gzd2wrUlFjdGpZT05E?=
- =?utf-8?B?Tjk1T3c0SjVPOVRYeU9LSzM1SjN6S0VURGk4RXlRTWhQV2tkeFh4Qk9jZW9s?=
- =?utf-8?B?UE9VMnh2aXRWaStMTjloelYrRnN3Rk82K0c4RWlIemF2cmxsZStUYm1EYkNq?=
- =?utf-8?B?RmN5NjFQN2hPY0lPWUlWZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UmJTZWJjbjNWZjE2d1JGVFFXNFlWMG04bElnbHI5eHlab3FKSVhDaytmbHBu?=
- =?utf-8?B?ZjJOMGxscFhpTkY4U3VuanQybGY5Rklkc1hjMkxMUVJpVUlyYlNnZHlDVzRK?=
- =?utf-8?B?VzhhYndMMWZoR3FPRUpsZ3dpcno3aysyMDBLeDNkUFlQL1hiRmxGOFVQVWU4?=
- =?utf-8?B?ODVxUVRzeWRHKzdUYnp5N0tUcFRidEtrR3owTi9pSTVnZXpFeVRKQWxDbVRJ?=
- =?utf-8?B?VzB2RkpUdzJxOWpmSzNESnRHRjF5NUhqQWVpcDhZYndrcEw2VjAra2F0c1lw?=
- =?utf-8?B?UnphVGtHNS9NOXUwM0ZlQnNXUXhMNGVWdk1qVGZRTTJxOUJpd0xWbWRlK1RY?=
- =?utf-8?B?a2FkZFBxL0NvVi85VWRMQ0Y3SkpZaXZqbTlYZ1luaTFibUJJSzIyb084NFdR?=
- =?utf-8?B?c3lIdmpKSTQ3ZExENEJQSU5hZnhwNnJVTFAwRzU1NXNsa2ZBREZhQjFLVXM4?=
- =?utf-8?B?WVBucGpuSERsK1V2YTBKVHBjVSs5OVQvYklQMW90VjFWMGNtZi9maFlHcUd1?=
- =?utf-8?B?MWFTMkNSYzEzOTRTdWhFakpsQVVXVHU4cCs4WG4rMEFWNVBMeGJiYW1sQzA3?=
- =?utf-8?B?b2NTMURxWDZOZGdkbmV2eGZmTk9QVFA0ZjBrYk1qWVp4TVNmVTJCYlVhQW1O?=
- =?utf-8?B?U2hST2FVN05UUGNTT0ZoVzhPWU9aYVlOdzF6QWRDNjZTRWhXd2p3aUJPc096?=
- =?utf-8?B?TEkzbXlqK0FGdks2dGNORmxzaUtMWm5RWGRicGxiRCtUUjF2eDhsQXpGOVdP?=
- =?utf-8?B?V3ZSUGpYb0haV0RlbGt5WFI4UEtlNStlRDRIdWU5cGVtRHM0bjliajVUd3Jk?=
- =?utf-8?B?cXMwelZKdS9BVGh4QmRNckVxQm83RzRBVWR6SmpxTEt6b21yYjhET1hhbWwr?=
- =?utf-8?B?UjdpMXhVL1dKYnhOMlRUdjhYbEY2d0s5RjBnblRyWThMQmh1TC9ScmkvU25n?=
- =?utf-8?B?UUIyeEJOQlk5TmlvUjBlemhYQll5YlFlK01mZTJOaU82UElHUG9taXUzdjA2?=
- =?utf-8?B?anVrZjlqdTVHV0RIbFlpSzk2MXlrNk94VzlCSVdLODNjaDdGRmRXbXUxenNz?=
- =?utf-8?B?NGpxQ29vaUpZUlNHd3o2RnVBZmwxbGJOMUc0bDlYMG5kYVNRdTY5QjNpN1NM?=
- =?utf-8?B?V3RlZnd4M282TGRQRGUyc0FrM1NJZUtGQ24vcUNtRWNkRGdtdnNQQ2kvbzJ0?=
- =?utf-8?B?MFpaeVgwazZ3TUc4cGMwcFc1S1Nab0c0WlUvMlo0Q2VNaHI1Mzh5YysvUU5Y?=
- =?utf-8?B?TWdZS053MVh3cStwSVdMOFlLOGtNSjh4OHdhdnFnZlJjZlJrRUJEUnZpeTVM?=
- =?utf-8?B?SVBHYlhyQytRQUdFWit0c0doajJlcTdlSmFsdkoyMXZwSE9OTnlOa0dBbVd0?=
- =?utf-8?B?blZuNk9ycDEwYnJ6YUJ0MnphMHpWQXRONGdOUWQrcGRXUm9DRitaRzhEdlls?=
- =?utf-8?B?N3J2enJ5eGdXY3dycVoyYUxaVXdTR2pCSkw4WExuVUlEYXVTRGNkZW1odUtQ?=
- =?utf-8?B?QkpJOXhJUjBON283VDl5SlRpaitHS1B6RTVPZmlWRkxTYmtUNTcyMXY0dE1Y?=
- =?utf-8?B?YzhUMEIwVGs2VVg2bVRxUXJIalRld2dNYWVHbTRQUnRtQU9kRHlvK1Bwejl3?=
- =?utf-8?B?Ym9ZbHJmWGJzc2Z6ZVo4RlhnUTd0ang5NjJxek5qMm9KbGo3czRHcnEwVkxn?=
- =?utf-8?B?TEdPVDhmK3pGVDRhR2orQSt3M05EeUFvandHeGExUjg2VVRld2tTMEx3QkVp?=
- =?utf-8?B?KzBTUVJMakxLR1k4Zm0zUmZpdXliVWhwcXN0aElHak9SNzNieEprbFk0bHA5?=
- =?utf-8?B?cmVrUW1GZ3FEYXZPRnpwTkJuTm5OaGx4MVdPQjNGZHVhYjZTTmdQWlZSY1JY?=
- =?utf-8?B?UXVzYjJvQncwS1d2QkE3cGxFTTZqZUVwbDR5cHlJN1ZFT1VNbmlxUEtzdW56?=
- =?utf-8?B?UHh6OEVBU2QvWmNJTDE3OVJGeXBUWmxyeDdnVFFWWTJTY2NvbmJ5Z2lFMjNL?=
- =?utf-8?B?dGtDYVp6Sy9rdko5V29PWGFKTGZMdmFjV0JuamZjbE5QUlpwUnZKdkZKYUJE?=
- =?utf-8?B?S3RDd0Y2Smk4bTAxeHZKckVNTDJuZW9oYzM0OE9scWpqWFdFRDUrSHo0QzZN?=
- =?utf-8?Q?RFbRhVnPyk1wW1lZcVCVnjsOh?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ea71f09-e3c0-4d15-418d-08dcd41567aa
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 16:59:18.0290
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vbCEgJeLXSU2HICoprQRRgfocdMPyJo6jp0JppSlkYf7vBTdwGjRTOf5xe4M56Yr8s+6l+L5fyBehX4RGt6I7A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8240
+Content-Transfer-Encoding: 8bit
 
-On 7/31/24 10:08, Nikunj A Dadhania wrote:
-> In SNP guest environment with Secure TSC enabled, unlike other clock
-> sources (such as HPET, ACPI timer, APIC, etc.), the RDTSC instruction is
-> handled without causing a VM exit, resulting in minimal overhead and
-> jitters. Hence, mark Secure TSC as the only reliable clock source,
-> bypassing unstable calibration.
-> 
-> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> Tested-by: Peter Gonda <pgonda@google.com>
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+'aic7770_find_device' has been unused since 2005's
+  commit dedd83108105 ("[SCSI] aic7xxx: remove Linux 2.4 ifdefs")
 
-> ---
->  arch/x86/mm/mem_encrypt_amd.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
-> index 86a476a426c2..e9fb5f24703a 100644
-> --- a/arch/x86/mm/mem_encrypt_amd.c
-> +++ b/arch/x86/mm/mem_encrypt_amd.c
-> @@ -516,6 +516,10 @@ void __init sme_early_init(void)
->  	 * kernel mapped.
->  	 */
->  	snp_update_svsm_ca();
-> +
-> +	/* Mark the TSC as reliable when Secure TSC is enabled */
-> +	if (sev_status & MSR_AMD64_SNP_SECURE_TSC)
-> +		setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
->  }
->  
->  void __init mem_encrypt_free_decrypted_mem(void)
+Remove it and the associated constant.
+(Whether anyone still has one of these cards in use is another question,
+I've just build tested this).
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/scsi/aic7xxx/aic7770.c | 15 ---------------
+ drivers/scsi/aic7xxx/aic7xxx.h |  2 --
+ 2 files changed, 17 deletions(-)
+
+diff --git a/drivers/scsi/aic7xxx/aic7770.c b/drivers/scsi/aic7xxx/aic7770.c
+index 176704b24e6a..f1ce02cd569e 100644
+--- a/drivers/scsi/aic7xxx/aic7770.c
++++ b/drivers/scsi/aic7xxx/aic7770.c
+@@ -99,21 +99,6 @@ struct aic7770_identity aic7770_ident_table[] =
+ 		ahc_aic7770_EISA_setup
+ 	}
+ };
+-const int ahc_num_aic7770_devs = ARRAY_SIZE(aic7770_ident_table);
+-
+-struct aic7770_identity *
+-aic7770_find_device(uint32_t id)
+-{
+-	struct	aic7770_identity *entry;
+-	int	i;
+-
+-	for (i = 0; i < ahc_num_aic7770_devs; i++) {
+-		entry = &aic7770_ident_table[i];
+-		if (entry->full_id == (id & entry->id_mask))
+-			return (entry);
+-	}
+-	return (NULL);
+-}
+ 
+ int
+ aic7770_config(struct ahc_softc *ahc, struct aic7770_identity *entry, u_int io)
+diff --git a/drivers/scsi/aic7xxx/aic7xxx.h b/drivers/scsi/aic7xxx/aic7xxx.h
+index 9bc755a0a2d3..20857c213c72 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx.h
++++ b/drivers/scsi/aic7xxx/aic7xxx.h
+@@ -1119,7 +1119,6 @@ struct aic7770_identity {
+ 	ahc_device_setup_t	*setup;
+ };
+ extern struct aic7770_identity aic7770_ident_table[];
+-extern const int ahc_num_aic7770_devs;
+ 
+ #define AHC_EISA_SLOT_OFFSET	0xc00
+ #define AHC_EISA_IOSIZE		0x100
+@@ -1135,7 +1134,6 @@ int			 ahc_pci_test_register_access(struct ahc_softc *);
+ void __maybe_unused	 ahc_pci_resume(struct ahc_softc *ahc);
+ 
+ /*************************** EISA/VL Front End ********************************/
+-struct aic7770_identity *aic7770_find_device(uint32_t);
+ int			 aic7770_config(struct ahc_softc *ahc,
+ 					struct aic7770_identity *,
+ 					u_int port);
+-- 
+2.46.0
+
 
