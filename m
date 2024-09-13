@@ -1,177 +1,233 @@
-Return-Path: <linux-kernel+bounces-328033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3083977E05
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:53:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE2B977E08
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB613B2464E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A832C282CB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F7A1D86E3;
-	Fri, 13 Sep 2024 10:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4533B1D86E5;
+	Fri, 13 Sep 2024 10:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DS0g2vZk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2LfT74wn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iRo2otEf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2LfT74wn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iRo2otEf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0FF14A4FB;
-	Fri, 13 Sep 2024 10:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975001D67AB;
+	Fri, 13 Sep 2024 10:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726224775; cv=none; b=cuv287MSLCwqlxdr7xt4O0pYxi3kZzLTUxuqnRM17OZRW3HtZtHBTRsI7OGLbcjmo8qkDz2UdVHA0STY/vYcMNoRTWxJojAYWEOBycGKGSaCAs0P2jTr8R8ZFuwhIqxio25rFbB0AeCzK7sYhJ3V+hLz1vUcI8e/asC4FuE4ww8=
+	t=1726224809; cv=none; b=gFNLt8hLhhZXBJQZYEcVMEbKRjpCniJu74ZuIhGNRFDrXmZFycSrC1kaoi8oHsNkZZs/eGZU+b7Sqo3z3W4vwnVn4GBk2Ffk75NXWmwPo69Rmc1Gm3S9FZg7V31TVRavnJOBpbrDheZLOAhi1nb2fvZjkjRQmtWjZ6jeGPLPLbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726224775; c=relaxed/simple;
-	bh=vfmDCSc14mOA4j2yfWDNkchC1g26e9g7RDxQlrvfJnI=;
+	s=arc-20240116; t=1726224809; c=relaxed/simple;
+	bh=Uc9FxDNdoUWjc+hbZ9UaZylbEv2yZbdiKtk7vYetpkA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JJGFzS1krq3XL4Vs2dOuSUJtr1BP5kiQYz+SfMtr40wypfUwKHsFyj4nF2zfo44arhF7YeDjAu7qrXL4M6jrMg/TOyu5Rwg+SXCkvGKbJ3sYJozLdsFt2nSdPw/qnecVkADFrr/stsMOnTnguKnAvQEpxvLt2oXhSBF/LDIp50w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DS0g2vZk; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726224774; x=1757760774;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vfmDCSc14mOA4j2yfWDNkchC1g26e9g7RDxQlrvfJnI=;
-  b=DS0g2vZkQ/zqWYJZ9edZ33/IC7ex4hnYXMqNOalLnNIMCMSKfH3uVhVi
-   bx+oWdsmbqMLHPfrpAjRZp7ivj9/35g+iXUqOoejHAkOnh5fZJvmcaMlr
-   rRd7Irfe3l1vlY8t0+IHS36pbiuddV4CPNRwb9MP95uNmsNAUIWiTZl+7
-   m2Y1OCfsv7mBn8Slm0LAI2RfGMx7SuEQd4mi2I8BNTbMbLwH8ljHZ/1gX
-   r3Qm3ZU4G+6MuFwBUe+Jj0U7t1W49mdXSq2xOUec8iKBpVuSVuKg3mhUj
-   iJhZitARPNPGmfwIxcN0qFNZgLV/ke4ssiFn2Fc17x9uxlg/4uzJiYZyd
-   A==;
-X-CSE-ConnectionGUID: 4u5yQGEXQRGU1lTq8mb7FQ==
-X-CSE-MsgGUID: vEHy6HWVRTKwhuM13kmzog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24989409"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="24989409"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:52:54 -0700
-X-CSE-ConnectionGUID: cSOVMhO3SjG5+iiaEOC6lw==
-X-CSE-MsgGUID: Bcldi3p3QBCw2CtSci/RBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="68331128"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:52:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp3uw-00000008Gdo-2uie;
-	Fri, 13 Sep 2024 13:52:46 +0300
-Date: Fri, 13 Sep 2024 13:52:46 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v7 08/10] i2c: of-prober: Add GPIO support to simple
- helpers
-Message-ID: <ZuQZfvqGii9fcH-j@smile.fi.intel.com>
-References: <20240911072751.365361-1-wenst@chromium.org>
- <20240911072751.365361-9-wenst@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LMDvRBPX+UIXFFssm9ckhPqbW3E9KvZOWX2PIJupu2Rs4pczCrN+LsfMWZidqCxyxt6XBNL/FKMP0qfXpdDeR806YzOngn6Yuv78+uVttXa8MlVfzN7Z0Pa9WkUak/ojTVQPmRvJOVBRYexWp+Oq2EqIB2Nl1tM6fKavNzubFfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2LfT74wn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iRo2otEf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2LfT74wn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iRo2otEf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AF631219CA;
+	Fri, 13 Sep 2024 10:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726224805; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=olF/tjLVnkmEFHRD9cOhZmsPxNvhRvaywZFv/z2JUyc=;
+	b=2LfT74wnCcxzbMz1AWJNwlvHu00UwXPd7bjx9IVWXfUKHtnNYl/62DOI6IkkL9/o+cQrCC
+	DSTX/abF2cLbpS9slYAo8+nxbFd1X7WANdeCATCJ25x8gzuSZA+5YcN6UIQ7RWC0+2i9eo
+	xl1x7/ANJYPp7G8GjzPEZOAnHiQMfqM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726224805;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=olF/tjLVnkmEFHRD9cOhZmsPxNvhRvaywZFv/z2JUyc=;
+	b=iRo2otEfgTRtgHfPOYqkkBhtr1dZUZvo32uXzdFtly8mbefzmj0mICZGp0igN6ZTb9N9RX
+	Y2MolsUPOGjYh7Dw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726224805; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=olF/tjLVnkmEFHRD9cOhZmsPxNvhRvaywZFv/z2JUyc=;
+	b=2LfT74wnCcxzbMz1AWJNwlvHu00UwXPd7bjx9IVWXfUKHtnNYl/62DOI6IkkL9/o+cQrCC
+	DSTX/abF2cLbpS9slYAo8+nxbFd1X7WANdeCATCJ25x8gzuSZA+5YcN6UIQ7RWC0+2i9eo
+	xl1x7/ANJYPp7G8GjzPEZOAnHiQMfqM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726224805;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=olF/tjLVnkmEFHRD9cOhZmsPxNvhRvaywZFv/z2JUyc=;
+	b=iRo2otEfgTRtgHfPOYqkkBhtr1dZUZvo32uXzdFtly8mbefzmj0mICZGp0igN6ZTb9N9RX
+	Y2MolsUPOGjYh7Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4EC413999;
+	Fri, 13 Sep 2024 10:53:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Eoc7KKUZ5GbtbQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 13 Sep 2024 10:53:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5CB9EA08EF; Fri, 13 Sep 2024 12:53:10 +0200 (CEST)
+Date: Fri, 13 Sep 2024 12:53:10 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Jan Kara <jack@suse.cz>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?5bq357qq5ruoIChTdGV2ZSBLYW5nKQ==?= <steve.kang@unisoc.com>
+Subject: Re: [PATCHv3 1/1] fs: ext4: Don't use CMA for buffer_head
+Message-ID: <20240913105310.enqz47nmcn24ux45@quack3>
+References: <20240904075300.1148836-1-zhaoyang.huang@unisoc.com>
+ <CAGWkznF0LvqP59edcrs_wxpbUAnK6mZWY-ovE0CPBBXNysUUtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240911072751.365361-9-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGWkznF0LvqP59edcrs_wxpbUAnK6mZWY-ovE0CPBBXNysUUtg@mail.gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Sep 11, 2024 at 03:27:46PM +0800, Chen-Yu Tsai wrote:
-> Add GPIO support to the simple helpers for the I2C OF component prober.
-> Components that the prober intends to probe likely require their
-> regulator supplies be enabled, and GPIOs be toggled to enable them or
-> bring them out of reset before they will respond to probe attempts.
-> Regulator supplies were handled in the previous patch.
+On Fri 13-09-24 10:02:40, Zhaoyang Huang wrote:
+> loop in jan kara
 > 
-> The assumption is that the same class of components to be probed are
-> always connected in the same fashion with the same regulator supply
-> and GPIO. The names may vary due to binding differences, but the
-> physical layout does not change.
-> 
-> This supports at most one GPIO pin. The user must specify the GPIO name,
-> the polarity, and the amount of time to wait after the GPIO is toggled.
-> Devices with more than one GPIO pin likely require specific power
-> sequencing beyond what generic code can easily support.
+> On Wed, Sep 4, 2024 at 3:54 PM zhaoyang.huang <zhaoyang.huang@unisoc.com> wrote:
+> >
+> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> >
+> > cma_alloc() keep failed in our system which thanks to a jh->bh->b_page
+> > can not be migrated out of CMA area[1] as the jh has one cp_transaction
+> > pending on it because of j_free > j_max_transaction_buffers[2][3][4][5][6].
+> > We temporarily solve this by launching jbd2_log_do_checkpoint forcefully
+> > somewhere. Since journal is common mechanism to all JFSs and
+> > cp_transaction has a little fewer opportunity to be launched, the
+> > cma_alloc() could be affected under the same scenario. This patch
+> > would like to have buffer_head of ext4 not use CMA pages when doing
+> > sb_getblk.
+> >
+> > [1]
+> > crash_arm64_v8.0.4++> kmem -p|grep ffffff808f0aa150(sb->s_bdev->bd_inode->i_mapping)
+> > fffffffe01a51c00  e9470000 ffffff808f0aa150        3  2 8000000008020 lru,private
+> > fffffffe03d189c0 174627000 ffffff808f0aa150        4  2 2004000000008020 lru,private
+> > fffffffe03d88e00 176238000 ffffff808f0aa150      3f9  2 2008000000008020 lru,private
+> > fffffffe03d88e40 176239000 ffffff808f0aa150        6  2 2008000000008020 lru,private
+> > fffffffe03d88e80 17623a000 ffffff808f0aa150        5  2 2008000000008020 lru,private
+> > fffffffe03d88ec0 17623b000 ffffff808f0aa150        1  2 2008000000008020 lru,private
+> > fffffffe03d88f00 17623c000 ffffff808f0aa150        0  2 2008000000008020 lru,private
+> > fffffffe040e6540 183995000 ffffff808f0aa150      3f4  2 2004000000008020 lru,private
+> >
+> > [2] page -> buffer_head
+> > crash_arm64_v8.0.4++> struct page.private fffffffe01a51c00 -x
+> >       private = 0xffffff802fca0c00
+> >
+> > [3] buffer_head -> journal_head
+> > crash_arm64_v8.0.4++> struct buffer_head.b_private 0xffffff802fca0c00
+> >   b_private = 0xffffff8041338e10,
+> >
+> > [4] journal_head -> b_cp_transaction
+> > crash_arm64_v8.0.4++> struct journal_head.b_cp_transaction 0xffffff8041338e10 -x
+> >   b_cp_transaction = 0xffffff80410f1900,
+> >
+> > [5] transaction_t -> journal
+> > crash_arm64_v8.0.4++> struct transaction_t.t_journal 0xffffff80410f1900 -x
+> >   t_journal = 0xffffff80e70f3000,
+> >
+> > [6] j_free & j_max_transaction_buffers
+> > crash_arm64_v8.0.4++> struct journal_t.j_free,j_max_transaction_buffers 0xffffff80e70f3000 -x
+> >   j_free = 0x3f1,
+> >   j_max_transaction_buffers = 0x100,
+> >
+> > Suggested-by: Theodore Ts'o <tytso@mit.edu>
+> > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-...
+I think there are better fixes to the problem but as a quick stopgap
+solution I have no problem with this since this is trivial and influences
+only CMA users on ext4. So feel free to add:
 
-> +static int i2c_of_probe_simple_get_gpiod(struct device *dev, struct device_node *node,
-> +					 struct i2c_of_probe_simple_ctx *ctx)
-> +{
-> +	struct fwnode_handle *fwnode = of_fwnode_handle(node);
-> +	struct gpio_desc *gpiod;
-> +	const char *con_id = NULL;
-> +
-> +	/* NULL signals no GPIO needed */
-> +	if (!ctx->opts->gpio_name)
-> +		return 0;
-> +
-> +	/* An empty string signals an unnamed GPIO */
-> +	if (strlen(ctx->opts->gpio_name))
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-You run for entire string in order to check the first byte only?
+								Honza
 
-	if (ctx->opts->gpio_name[0] == '\0')
-		con_id = NULL;
-	else
-
-> +		con_id = ctx->opts->gpio_name;
-
-Also note, that comment is given in inverted condition to what you actually do
-in the code. With my suggestion it looks better.
-
-> +	gpiod = fwnode_gpiod_get_index(fwnode, con_id, 0, GPIOD_ASIS, "i2c-of-prober");
-> +	if (IS_ERR(gpiod))
-> +		return PTR_ERR(gpiod);
-> +
-> +	ctx->gpiod = gpiod;
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int i2c_of_probe_simple_set_gpio(struct device *dev, struct i2c_of_probe_simple_ctx *ctx)
-> +{
-> +	int ret;
-> +
-> +	if (!ctx->gpiod)
-> +		return 0;
-
-> +	dev_dbg(dev, "Setting GPIO\n");
-
-> +	ret = gpiod_direction_output_raw(ctx->gpiod, ctx->opts->gpio_high_to_enable ? 1 : 0);
-
-Hmm... _raw() in use... Perhaps it's on a territory of Bart and Linus to review
-and comment on this.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	msleep(ctx->opts->post_reset_deassert_delay_ms);
-> +
-> +	return 0;
-> +}
-
+> > ---
+> > v3: switch to use getblk_unmoveable as suggested by Theodore Ts'o
+> > ---
+> > ---
+> >  fs/ext4/inode.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > index 941c1c0d5c6e..a0f48840c5c1 100644
+> > --- a/fs/ext4/inode.c
+> > +++ b/fs/ext4/inode.c
+> > @@ -869,7 +869,14 @@ struct buffer_head *ext4_getblk(handle_t *handle, struct inode *inode,
+> >         if (nowait)
+> >                 return sb_find_get_block(inode->i_sb, map.m_pblk);
+> >
+> > -       bh = sb_getblk(inode->i_sb, map.m_pblk);
+> > +       /*
+> > +        * Since bh could introduce extra ref count such as referred by
+> > +        * journal_head etc. Try to avoid using __GFP_MOVABLE here
+> > +        * as it may fail the migration when journal_head remains.
+> > +        */
+> > +       bh = getblk_unmovable(inode->i_sb->s_bdev, map.m_pblk,
+> > +                               inode->i_sb->s_blocksize);
+> > +
+> >         if (unlikely(!bh))
+> >                 return ERR_PTR(-ENOMEM);
+> >         if (map.m_flags & EXT4_MAP_NEW) {
+> > --
+> > 2.25.1
+> >
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
