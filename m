@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-328601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F8797865B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE22E97865E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38878281817
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F86E281F8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5124C7E0FF;
-	Fri, 13 Sep 2024 17:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB25824A0;
+	Fri, 13 Sep 2024 17:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TL+fxFfd"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxin2TFY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC496BB4B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0CC7DA64;
+	Fri, 13 Sep 2024 17:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726247038; cv=none; b=YijzkqFwdkgs+SHJy2HLndH8Wpw1rMaxo0PkYSuopRTL3KdpMmkHU3SHsW8JygVW56q+xy2BFAfkUFs+5ZHE+57MXSIWR6vmNA16gc9nng6d1PQD3MxuSvBrQ20UKNY54ejnSI8/eiQsH/GH824mkz6aDf7ZjUQXXw3bCzkJG8k=
+	t=1726247062; cv=none; b=nr956Nvbbcc6+Y6SjilXfoGLWHleLsfBG+EnZzYDMHgptFi0AYx3u0H+odUuNoOC6WocrsBLFBoBUPjs4bE9PiVNjxAjmUO01WEY8zErzTdUc0O5k9fMmWWcZoz7y0col7R9lJJIQjzb7KDO7NBes8ONZYxFgpPbKGMhAEOea3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726247038; c=relaxed/simple;
-	bh=8WbxGBSvn5rwQymHF4M6G6ZnUhK1rbxtExhx/o7QBCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MIsLFMLta3N8CZ71jEK6P98OCIIcKNkgnEzYuKsn/TgBVlGtb694/AYyrZg3BxNQBev63ZTTwzxylg1N0DWOVcg1LM+Y1+z6eB3lovWyvx63T2S0OAsjamm9mgodoyT7KtQei6l6JQOhJztz5iQmtH2Bn6RPhWqD277LPBj47PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TL+fxFfd; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4X50y828v0z9swM;
-	Fri, 13 Sep 2024 19:03:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1726247024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=avxAXBZIHosQwZAL3nU4/XFwoH0jkpslKikMAFvSkK4=;
-	b=TL+fxFfdWtl3qFXmo4vJqbxXq60QOELM0HsKaXjcoYc42mBI+hCtUGvH83w0J5EAfI3iVp
-	mrh3ucnd3Rr2laY6I4xtM90X8JCYIimf6FpJaI7s/PGPU6PAjbyC5vGjUoRSttqZ4NLaIy
-	vwiP839t+KIsed+oaLCUYOTCn9PO69CzGpIXS7QwShtAQHVN0G5a7r5XAKkcs8dpVr9l+G
-	9TfjaVDCaBVf/3Ct40/y1gFyGQzFDRrSTgvllzWp0DnAjAnwjhaYDeGAEpQ96268baCkKN
-	2XgsaZwgBv6/TujSGlS980c8Xhoy2TgsnqBuU5gav4qA8faaQiSq+BnQtx41Og==
-Message-ID: <fa243d3e-abe2-47d9-928f-70e24065baf1@mailbox.org>
-Date: Fri, 13 Sep 2024 19:03:39 +0200
+	s=arc-20240116; t=1726247062; c=relaxed/simple;
+	bh=Bimw3teACghVaYDGbMFiMeYLIhGUrCaX5bh5RjG58O0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KmQg5ut2GFL0eMz0DtXM8yT/LGdTwVOQ25HAHmWczRlbrav0ORRPIY7WNPpw9XYDVn2f+jaDJ60S6w/I5mJF8U9jf/k4TUM5RUOueZgrD7BEjDTr94yqE+EA7pz47jsx+1uwM1kLaByQWHawbyf+70kNRwInAaF4JVhX1gQlW2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxin2TFY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A6ADC4CEC0;
+	Fri, 13 Sep 2024 17:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726247061;
+	bh=Bimw3teACghVaYDGbMFiMeYLIhGUrCaX5bh5RjG58O0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kxin2TFYdo2MpnoqN3/ru1HXkcRRgGB0aGiMC3+oI/dvsnotFUvxCMtQoPFpmLWvp
+	 42JQreaD/b26F7UepH93bp8GmZOfDc4wN7EZ3Bg+NTdgjnUOyaKulsSOlH5amgeWwX
+	 JJI3jHupE1s5neWUzhqNkYRCr0KAcI5V6nzAy71JqPFPEZvCtU6eXVYGTR2kMdC4sb
+	 1+zZ84ml2XFSO3tMSmzcs2os+2sX9Wd4HUTImpGtSXeQZzaKXuCGQ52O8ha2iM9/NW
+	 yW8ybh0rzwS1NZPOxcCNP+wTbin7+prMU7oAx1BiAK55l0smOaodlE6spWLfFPFxe4
+	 5evh8JodlF01Q==
+Date: Fri, 13 Sep 2024 18:04:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/4] dt-bindings: net: dsa: the adjacent DSA
+ port must appear first in "link" property
+Message-ID: <20240913-estimate-badland-5ab577e69bab@spud>
+References: <20240913131507.2760966-1-vladimir.oltean@nxp.com>
+ <20240913131507.2760966-3-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] drm/sched: Fix dynamic job-flow control race
-To: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: Rob Clark <robdclark@chromium.org>, Asahi Lina <lina@asahilina.net>,
- Luben Tuikov <ltuikov89@gmail.com>, Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Danilo Krummrich <dakr@redhat.com>, open list <linux-kernel@vger.kernel.org>
-References: <20240913165326.8856-1-robdclark@gmail.com>
-From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Content-Language: en-CA
-In-Reply-To: <20240913165326.8856-1-robdclark@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: cqrhgikb5fxynet6ffh9qq55ggbxmc5q
-X-MBO-RS-ID: 3e2dbf2b7d24b5fb6bf
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="erhZyKGbQwqN4Ufv"
+Content-Disposition: inline
+In-Reply-To: <20240913131507.2760966-3-vladimir.oltean@nxp.com>
 
-On 2024-09-13 18:53, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Fixes a race condition reported here: https://github.com/AsahiLinux/linux/issues/309#issuecomment-2238968609
-> 
-> The whole premise of lockless access to a single-producer-single-
-> consumer queue is that there is just a single producer and single
-> consumer.  That means we can't call drm_sched_can_queue() (which is
-> about queueing more work to the hw, not to the spsc queue) from
-> anywhere other than the consumer (wq).
-> 
-> This call in the producer is just an optimization to avoid scheduling
-> the consuming worker if it cannot yet queue more work to the hw.  It
-> is safe to drop this optimization to avoid the race condition.
-> 
-> Suggested-by: Asahi Lina <lina@asahilina.net>
-> Fixes: a78422e9dff3 ("drm/sched: implement dynamic job-flow control")
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
+
+--erhZyKGbQwqN4Ufv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Sep 13, 2024 at 04:15:05PM +0300, Vladimir Oltean wrote:
+> If we don't add something along these lines, it is absolutely impossible
+> to know, for trees with 3 or more switches, which links represent direct
+> connections and which don't.
+>=20
+> I've studied existing mainline device trees, and it seems that the rule
+> has been respected thus far. I've actually tested such a 3-switch setup
+> with the Turris MOX.
+
+What about out of tree (so in u-boot or the likes)? Are there other
+users that we need to care about?
+
+This doesn't really seem like an ABI change, if this is the established
+convention, but feels like a fixes tag and backports to stable etc are
+in order to me.
+
+>=20
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 > ---
->  drivers/gpu/drm/scheduler/sched_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index ab53ab486fe6..1af1dbe757d5 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1020,8 +1020,7 @@ EXPORT_SYMBOL(drm_sched_job_cleanup);
->  void drm_sched_wakeup(struct drm_gpu_scheduler *sched,
->  		      struct drm_sched_entity *entity)
->  {
-> -	if (drm_sched_can_queue(sched, entity))
-> -		drm_sched_run_job_queue(sched);
-> +	drm_sched_run_job_queue(sched);
->  }
->  
->  /**
+>  Documentation/devicetree/bindings/net/dsa/dsa-port.yaml | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml b/Do=
+cumentation/devicetree/bindings/net/dsa/dsa-port.yaml
+> index 480120469953..307c61aadcbc 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
+> @@ -31,10 +31,11 @@ properties:
+> =20
+>    link:
+>      description:
+> -      Should be a list of phandles to other switch's DSA port. This
+> -      port is used as the outgoing port towards the phandle ports. The
+> -      full routing information must be given, not just the one hop
+> -      routes to neighbouring switches
+> +      Should be a list of phandles to other switch's DSA port. This port=
+ is
+> +      used as the outgoing port towards the phandle ports. In case of tr=
+ees
+> +      with more than 2 switches, the full routing information must be gi=
+ven.
+> +      The first element of the list must be the directly connected DSA p=
+ort
+> +      of the adjacent switch.
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+>      items:
+>        maxItems: 1
+> --=20
+> 2.34.1
+>=20
 
-The entity parameter is unused now.
+--erhZyKGbQwqN4Ufv
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Earthling Michel Dänzer       \        GNOME / Xwayland / Mesa developer
-https://redhat.com             \               Libre software enthusiast
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuRwkAAKCRB4tDGHoIJi
+0vfHAP9cFzroVB3GZuA91GabzA+2kn0YS6xgfGRCeLfS6kRX1QEA5gk62mEFp0mn
+yro855Nq9nioDWT9HBzDB0OgiW+rHAA=
+=W9Nn
+-----END PGP SIGNATURE-----
+
+--erhZyKGbQwqN4Ufv--
 
