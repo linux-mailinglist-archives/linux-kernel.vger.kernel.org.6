@@ -1,178 +1,249 @@
-Return-Path: <linux-kernel+bounces-328888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83280978A7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B55978A8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C5A71F2449B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 750971F24C43
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A349D153824;
-	Fri, 13 Sep 2024 21:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BD8154C04;
+	Fri, 13 Sep 2024 21:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1x1OZ2i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="CwqmJYKt"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF716E61B;
-	Fri, 13 Sep 2024 21:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B5F14EC73;
+	Fri, 13 Sep 2024 21:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726262285; cv=none; b=F6BIeHnEZlipCKHIT9qgjlyEdmIOvc8BjGz1WigwG3Njgc6qt+NsGA3gurtLyfol/l+Q5z7qoA7346cTzl4WCDrnSOnopBAqGuCxj1SBOs/LV9jtGgvkTKGge8Wg2wGtHoHfxV4Ybiw8/GBae8wdALBZDc6epo9UoAetoUJfnK8=
+	t=1726262799; cv=none; b=nLkcokld399+cfcqVM8r/Y6x5fDpfp1Yc7H7P4MZ5g438VtEWciCWwXTLwNi831CHO/9LGo2J5sbyrOyIPrn/RK/1gC6Mt3lhbOMK4UQmTPxR9KBOtfnTFfx4/fLVR1LbNvyEsb7dMtsAfNGlHELdliJbxAFPx09EZRBNDBqCsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726262285; c=relaxed/simple;
-	bh=RuPrAU4bZnhY3Wyzxzt/JEXLr9Rmcb4tQI/BYwh/mJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SF/+HwGvQ5PLGKxIiqEnSFL3s68B7yrtUwaUv6ejeLywl/uO6MM+fkPnIXznDDl5dbaD9cwNkVBayFX4It2vKCJLeaIMV1otphjirKfVt8JA81IUf5G4lVhCXaOks+b7yyp3v/+uFctrZXVjtoABaTkUxasDkGSiMpZHG/xOX84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1x1OZ2i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800D0C4CEC0;
-	Fri, 13 Sep 2024 21:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726262284;
-	bh=RuPrAU4bZnhY3Wyzxzt/JEXLr9Rmcb4tQI/BYwh/mJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V1x1OZ2igt/94pR3CkGpZoH7RhxZeNP8Ey1dji1IgNIfzG1CC73ZPIRv4uTASM8rM
-	 kzghfznvxXVxL1XkSVoltFpae+bcXMI9lvek3/t5e+2UdJdOeSuvPhkQJUT/Uz6o6p
-	 QnvkjlHW+hmpnobRgPLzv4mc5HjQoCwayWSL8SOfvn3p+9Dwm0E/t9PQkrrfM0KW/h
-	 5yuWA2NEisDw2aV1WbSmG325zyZfwGFSub4lwaf2ELbQETYQTLiM1MjN5k54+gE7Yc
-	 aat2e6Yb6MD6OphnFuduZwc4UaNK9kEKSCb2DLIIGOC5p8/y4r+aPIRm52hBj/eG3n
-	 ICMvmnD9e3aBQ==
-Date: Fri, 13 Sep 2024 22:17:56 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org,
-	linux-riscv <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
-Message-ID: <20240913-shack-estate-b376a65921b1@spud>
-References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
- <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
+	s=arc-20240116; t=1726262799; c=relaxed/simple;
+	bh=uq1fFp1dyul0YEnDpEY3zyiKQ89fFRtHbay+aPbNGxs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U0lT1cynlHJkPyvkGKUMJmjPz5nZihIARDQ9WMq1uf7PJ53rekDhONsbAw1RJX2eXhJdhSIPXOLIgtvmywT/1op0DdFFP8SqGOuwVVCpTH5l2LDhNm1HaP5jrXvRoDm+br2pJvXAC0PQkRZDKyqYoF8C2PlyZTblz25M4P3sr48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=CwqmJYKt; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id 45C3D635B044;
+	Fri, 13 Sep 2024 23:19:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1726262353;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEpUsGTEKp/21YhjVnQYIlBG3qJE8+pJXR8PiPJjyt4=;
+	b=CwqmJYKtnHjf2wXCEPxur25DC1zt6umUahU766d0Ghj1BhDRZV+mMHYSbwzSbyAKAaC+8t
+	I5BuemIIZF1cUcCpeu9cDe5spx4MYuejsLleFGZ7BSin+XXPeeN1cYvI7j7VYsCjv/cIo0
+	AVF9G0EQ6yj5C+Z3PUYCfhtR9JkIUog=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ rui.zhang@intel.com, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: eranian@google.com, gautham.shenoy@amd.com, ravi.bangoria@amd.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Subject:
+ Re: [PATCH v5 0/9] Add per-core RAPL energy counter support for AMD CPUs
+Date: Fri, 13 Sep 2024 23:18:58 +0200
+Message-ID: <12511146.O9o76ZdvQC@natalenko.name>
+In-Reply-To: <20240913152149.6317-1-Dhananjay.Ugwekar@amd.com>
+References: <20240913152149.6317-1-Dhananjay.Ugwekar@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/xsIueD3ju/hMl6p"
-Content-Disposition: inline
-In-Reply-To: <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
+Content-Type: multipart/signed; boundary="nextPart5814330.DvuYhMxLoT";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-
---/xsIueD3ju/hMl6p
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+--nextPart5814330.DvuYhMxLoT
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Fri, 13 Sep 2024 23:18:58 +0200
+Message-ID: <12511146.O9o76ZdvQC@natalenko.name>
+In-Reply-To: <20240913152149.6317-1-Dhananjay.Ugwekar@amd.com>
+References: <20240913152149.6317-1-Dhananjay.Ugwekar@amd.com>
+MIME-Version: 1.0
 
-On Fri, Sep 13, 2024 at 12:08:20AM +0200, Miguel Ojeda wrote:
-> On Thu, Aug 29, 2024 at 10:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
-> wrote:
-> >
-> > Add all of the flags that are needed to support the shadow call stack
-> > (SCS) sanitizer with Rust, and updates Kconfig to allow only
-> > configurations that work.
+Hello.
+
+On p=C3=A1tek 13. z=C3=A1=C5=99=C3=AD 2024 17:21:40, SEL=C4=8C Dhananjay Ug=
+wekar wrote:
+> Currently the energy-cores event in the power PMU aggregates energy
+> consumption data at a package level. On the other hand the core energy
+> RAPL counter in AMD CPUs has a core scope (which means the energy=20
+> consumption is recorded separately for each core). Earlier efforts to add
+> the core event in the power PMU had failed [1], due to the difference in=
+=20
+> the scope of these two events. Hence, there is a need for a new core scope
+> PMU.
 >=20
-> Applied to `rust-next` -- thanks everyone!
+> This patchset adds a new "power_per_core" PMU alongside the existing
+> "power" PMU, which will be responsible for collecting the new
+> "energy-per-core" event.
 >=20
-> Paul/Palmer/Albert/RISC-V: I think you were not Cc'd (at least in this
-> version?), so please shout if you have a problem with this.
+> Tested the package level and core level PMU counters with workloads
+> pinned to different CPUs.
+>=20
+> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa=20
+> machine:
+>=20
+> $ perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 1
+>=20
+>  Performance counter stats for 'system wide':
+>=20
+> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-core/
+> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-core/
+>=20
+> v4 Link: https://lore.kernel.org/all/20240711102436.4432-1-Dhananjay.Ugwe=
+kar@amd.com/
+>=20
+> v5 changes:
+> * Rebase on top of Kan Liang's "PMU scope" patchset [2]
+> * rapl_cntr_mask moved to rapl_pmus struct in patch 8
+> * Patch 1 from v4 is merged separately, so removed from this series
+> * Add an extra argument "scope" in patch 5 to the init functions
+> * Add an new patch 2, which removes the cpu_to_rapl_pmu() function
+>=20
+> Base: tip/perf/core(currently has just 1-5 patches from [2]) + patch 6 fr=
+om [2] +=20
+>       diff [3] + patch 7 from [2] + revert [4] + apply [5]=20
+>=20
+> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b14228868d@li=
+nux.intel.com/
+> [2]: https://lore.kernel.org/all/20240802151643.1691631-1-kan.liang@linux=
+=2Eintel.com/
+> [3]: https://lore.kernel.org/all/8c09633c-5bf2-48a2-91a6-a0af9b9f2e8c@lin=
+ux.intel.com/
+> [4]: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?=
+h=3Dperf/core&id=3D8d72eba1cf8cecd76a2b4c1dd7673c2dc775f514
+> [5]: https://lore.kernel.org/all/20240910085504.204814-1-Dhananjay.Ugweka=
+r@amd.com/
+>=20
+> Dhananjay Ugwekar (8):
+>   perf/x86/rapl: Remove the cpu_to_rapl_pmu() function
+>   perf/x86/rapl: Rename rapl_pmu variables
+>   perf/x86/rapl: Make rapl_model struct global
+>   perf/x86/rapl: Add arguments to the cleanup and init functions
+>   perf/x86/rapl: Modify the generic variable names to *_pkg*
+>   perf/x86/rapl: Remove the global variable rapl_msrs
+>   perf/x86/rapl: Move the cntr_mask to rapl_pmus struct
+>   perf/x86/rapl: Add per-core energy counter support for AMD CPUs
+>=20
+> K Prateek Nayak (1):
+>   x86/topology: Introduce topology_logical_core_id()
+>=20
+>  Documentation/arch/x86/topology.rst   |   4 +
+>  arch/x86/events/rapl.c                | 406 ++++++++++++++++----------
+>  arch/x86/include/asm/processor.h      |   1 +
+>  arch/x86/include/asm/topology.h       |   1 +
+>  arch/x86/kernel/cpu/debugfs.c         |   1 +
+>  arch/x86/kernel/cpu/topology_common.c |   1 +
+>  6 files changed, 266 insertions(+), 148 deletions(-)
 
-For some reason I deleted the series from my mailbox, must've been in
-dt-binding review mode and hit ctrl + d. I've been away and busy, so my
-apologies Alice for not trying this out sooner.
-It's sorta annoying to test rust + scs on riscv, cos you need (unless I
-am mistaken) llvm-19. llvm-18 + rust built fine, but has no SCS.
+With v6.11-rc7 + all the mentioned preparatory patches and this series:
 
-llvm-19 + rust failed to build for me riscv, producing:
+$ taskset -c 9 dd if=3D/dev/zero of=3D/dev/null &
 
-In file included from /stuff/linux/rust/helpers/helpers.c:22:
-/stuff/linux/rust/helpers/spinlock.c:10:23: error: call to undeclared funct=
-ion 'spinlock_check'; ISO C99 and later do not support implicit function de=
-clarations [-Wimplicit-function-declaration]
-__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
-^
-/stuff/linux/rust/helpers/spinlock.c:10:23: error: incompatible integer to =
-pointer conversion passing 'int' to parameter of type 'raw_spinlock_t *' (a=
-ka 'struct raw_spinlock *') [-Wint-conversion]
-__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
-^~~~~~~~~~~~~~~~~~~~
-/stuff/linux/include/linux/spinlock.h:101:52: note: passing argument to par=
-ameter 'lock' here
-extern void __raw_spin_lock_init(raw_spinlock_t *lock, const char *name,
-^
-2 errors generated.
+$ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ sleep 5
 
-This occurs because I have DEBUG_SPINLOCK enabled. I didn't check why,
-but Andreas seems to have introduced that code - luckily he's already on
-CC here :)
+ Performance counter stats for 'system wide':
 
-With that disabled, there are dozens of warnings along the lines of:
-/stuff/linux/rust/helpers/err.c:6:14: warning: symbol 'rust_helper_ERR_PTR'=
- was not declared. Should it be static?
-If those are okay for rust code, it would be rather helpful if the
-warnings could be disabled - otherwise they should really be fixed.
+S0-D0-C0              1               3,79 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C1              1               5,65 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C2              1               1,26 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C3              1               3,18 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C4              1               2,06 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C5              1               3,51 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C6              1               0,77 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C7              1               0,55 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C8              1               1,65 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C9              1              47,85 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C10             1               2,49 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C11             1              11,85 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C12             1               1,75 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C13             1               0,74 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C14             1               2,58 Joules power_per_core/energy-per=
+=2Dcore/
+S0-D0-C15             1               4,67 Joules power_per_core/energy-per=
+=2Dcore/
 
-Following that, I got a build error:
+       5,003391425 seconds time elapsed
 
-error[E0425]: cannot find function `__mutex_init` in crate `bindings`
---> /stuff/linux/rust/kernel/sync/lock/mutex.rs:104:28
-|
-104   |           unsafe { bindings::__mutex_init(ptr, name, key) }
-|                              ^^^^^^^^^^^^ help: a function with a similar=
- name exists: `__mutex_rt_init`
-|
-::: /stuff/brsdk/work/linux/rust/bindings/bindings_generated.rs:12907:5
-|
-12907 | /     pub fn __mutex_rt_init(
-12908 | |         lock: *mut mutex,
-12909 | |         name: *const core::ffi::c_char,
-12910 | |         key: *mut lock_class_key,
-12911 | |     );
-| |_____- similarly named function `__mutex_rt_init` defined here
+on the following CPU:
 
-error: aborting due to 1 previous error
+AMD Ryzen 9 5950X 16-Core Processor
 
-I stopped there, Space Marine 2 awaits.
+If this behaves as expected, please add:
 
-Hopefully I'll get to say hello next week,
-Conor.
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
 
---/xsIueD3ju/hMl6p
+Thank you.
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart5814330.DvuYhMxLoT
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuSsBAAKCRB4tDGHoIJi
-0vtiAQCY+OLWcVZf0fpqur8tYsRgYAJPjNJ2P0PCVhfZCICfegD/QuzWgPhDgx3e
-FEKT34MNfaoZAH0lOGq4JmHedMgOqQs=
-=5XHB
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmbkrEIACgkQil/iNcg8
+M0tZMhAAlvJWp4AIPX79UnmqnETyOtW7FHZFOjNE9YOHX9KchlLb7V3iNP2S/TAv
+oIjQoTpRciVosdnuWeiBSw0k41kp8QlSI+Pd2OK94RNDH8eS+mUaUzBvjS6fRFXP
+NenzZHMg554tJiLcptKqfcBvsVf7Jf0KNsQWlaaL/lG4G9d5Yr3UROd1owPlTmC8
+zoQB0ZKNYJf7P2AHmjXAaKme1jGYLenO7SgxXBcmPVqEKVBxtZnBmwciJrtQdJsY
+k8gV3d0pSO1mvgJglWA1WpAZOV9mMktV9FAzene8gc547RQYUkNFahQJYFIgHMTN
+7X4V9D6syY9Xw7QTNCY3hgOM2gtzV2pSkYjNXAf1Tn29v/7ukzEze2NX/XgOlB3G
+HipdhYFu4DCKOMPhBvY14xxe5kRbonYd5pEleHGv+FeV0tLZkoOikVAgZbKUEa0p
+X+UOvvcU1W0+Sp7aI/ngi+CNHMaPk0gAqlLxjKaqb3ao99IuzcjQIzk/OF8h4LYi
+OqWdq0Y6AOj+6vFc6KQF32roSPlH4WVrUqxbUX7nfOwgL36xAiHuo/V/rcSc2YVo
++3U6sYDto0Q2Tx2q6DSDiHxKfgfjUqFYH7N0EibtDgUi0s/urJnKFif3fHOEkyUH
+6Nr12Ehip8FB25rNrMwZwShQISZcVZRX7lm1J3yq+Rka7c1Vd6Y=
+=8uuH
 -----END PGP SIGNATURE-----
 
---/xsIueD3ju/hMl6p--
+--nextPart5814330.DvuYhMxLoT--
+
+
+
 
