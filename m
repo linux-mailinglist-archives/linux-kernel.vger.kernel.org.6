@@ -1,102 +1,276 @@
-Return-Path: <linux-kernel+bounces-328500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D32F9784FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787D8978502
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDFAD1F277E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:37:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50AC1C22DEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75624EB51;
-	Fri, 13 Sep 2024 15:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7C414A85;
+	Fri, 13 Sep 2024 15:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sEtY0NeT"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNYqmg/V"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB35B2B9C6
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C80DF60;
+	Fri, 13 Sep 2024 15:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726241870; cv=none; b=HVgl7Q7SCtFVkx9lcBvZ4W6JSWoZ30NdgYQpy1UjmJqVxVcsKLTIAKdtI+iZCCMwDZ3y/2D2XZ+1JNwvgM7XgCXYKxA5MKBsjw9D9Z8SFRJ6+bNKl39XcmSsEgzAb5mQyXZfzcTdbjerZ8Q89Cf0Ry4KOI80D61IefBi3k1Ix1o=
+	t=1726241910; cv=none; b=rtm44F6RK0RBHzegu/7yB4RwoCyLYXwmzeEJBhct82B+YdajO9gar/CYzYf3gwiQ3RKs8lkloTgNEGVnhFrlxkwB0Fxo2OPQY8F9lSYwWx4ayX7KIp3wjPHJSVWr/iUd5V1bu9H0H/21c/tWIE6yKuFTLv9iGmGmchqsQqid+co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726241870; c=relaxed/simple;
-	bh=8ixziJ+NoVh4KOQg8C8NgzofR7i3xJZLSc06BKDtxXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mbd74ban0GGRyhNCRbnTsJNb+mUzOcp7PxRxo6sIvKvjB7OkjfxyMQKRAmQQ+xE3pS3Ubxszxd4XrdvLdSzAaY1OdlVmBVjE5ppIW1XbOu2Y7Lwlb/QCB4i8bj+weW/AlllBPzwYT0tMBvZvrQVB6ORb47lF8m1xrRd9yA0Z1jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sEtY0NeT; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c245c62362so2561435a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:37:48 -0700 (PDT)
+	s=arc-20240116; t=1726241910; c=relaxed/simple;
+	bh=1oUBzH2Lrd/2lTjm9uW9rzeq/PFv9SuAOD4g7xOMbIQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s38bjerkCbOuhn461o3oMASmcxJNSEjTNGtgSujOK4AEItIIhqm7/ULDiQDw0fbSK/h23tcEQY5d/cCZQpQAxjwnqmfW3zcmdO7lBzenP4bPVr4dg/G0ffGIG2PVnAQvEGNy5M4XuM0ciKrroQWAhA7EBtNnl7wdYawIFjO7Lac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNYqmg/V; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-27b55c4b35eso368989fac.3;
+        Fri, 13 Sep 2024 08:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726241867; x=1726846667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ixziJ+NoVh4KOQg8C8NgzofR7i3xJZLSc06BKDtxXE=;
-        b=sEtY0NeTFRRF0/RcRwDu45eVUcbz3bjNqVmz2rjiT+avVsEusmNo6bkt4fy+GF8aw9
-         rPezas8OvrcZAwlq5yd7FzIT1E8puhG0yWxJU33qfvHCEW/u7nOoaTvz+bqW3dIE5A1X
-         YxrASmZCe+7/io1+HuIqLtPKWdFFVtfuhCuQFC6hN4zr8BxmQL/CC73LLJF7Umeml5B7
-         D9wai5DTnC+66bViMRa62HM/YNxEcf26j3mwzj+/IRs3yRYjukhn6/IMDkudU03RYi/4
-         jaDmp7mbReG1Nn1KVOVPrW/3aUta4/mChqitfQUhGnTSG5DtKevkR4sbEOmZe1Uft2Kn
-         mgaQ==
+        d=gmail.com; s=20230601; t=1726241908; x=1726846708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FLfwHNRPQKjp8R+M0/7sXVhVRXpTNwRmME8gmf+riNs=;
+        b=eNYqmg/V1INmGCtqussuO/urMFe9ELT3lxsyQo3pb4pFqUxVdblLG0OBWsAY5bTNvZ
+         b71EAIaXs46AkQwnb67Zrc5oygpc3wukjjmgtPb3WZqqz218UI7eO96gm/YSTH+d8pb+
+         q+TgWH0/l2n3DqIixSn3+5N2aLUkdtH91xxgmo3sWCShcFqhL5Momyg4m9vIZGD8WnMw
+         Rf1bJ5ZIR/6ZSCqYy0kY9+ZNJQVsj3OQtGjM7kV07gjrB3DdhDMGb4+W2/T/LaIupX9G
+         FyhNmTHBTyYKkq1RqvyLuEiS3lNqg8KULY8KYefcQ/hY0HrDjbV2/D71aZ+1LINkN1db
+         9wkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726241867; x=1726846667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8ixziJ+NoVh4KOQg8C8NgzofR7i3xJZLSc06BKDtxXE=;
-        b=PgK0D+XeGyn5458Cma+cEQeHtMCiFQEJIsiIKnpEK0S4SrNbwZldoLAFbovmNSOA2j
-         Ga4AcGvPm1nPwgIA2Zc5Pgcb3B+QCujla01izRY4evQT7tl3H9gCuAMJAkZlqLYCqh98
-         gIG1KUt72TmPY4uAeUJhEDAcTmCWJdOCDoXdBhoPojzyxI04tZsq7FVXbATiAhkjhCKO
-         s17m71mGz5tqnOKjrXqiGG+hbrWlv40ZA7ayEJmfL8TxC2YkkDXO/b8UADgjvTGQmQHn
-         5ZBwNeYv6iudiyOTowUhI04wHfF6YD/iGYx33JyozcLGHD6exhDkIo+0D+kbUh58z3Tk
-         rTSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhP64xTNW9y6LzZM4MuXm4LuDto0k9GcG1ZeQ61JRn84WTqD1SjUU+x4at59E+b+iHswIgQWM/H9zOjjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOyQfEXRzfBXzClemgp6Q3vP4/nn0PGGXk2Ac3LmUlW/tLXPGP
-	C7hO1bn4uIx7bYq/5nV/OhHlgjb34xUv00L4DOglhtBhY3ZCSfKcNvx6rDroQCgK1V1U8Qm7XKe
-	5h5LeCWK1ujexOX86d2NyPYeyJ4KcHanKZQs1
-X-Google-Smtp-Source: AGHT+IGb5+Ky2+5hGPg9TOJMT/1uVEafLvwFY32TQ483pUMrOKix9BbKOuCjTfYl0Y8ZspD31CnMtbkI1Ixvmdip3Nc=
-X-Received: by 2002:a17:907:e2cf:b0:a8c:d6a3:d03a with SMTP id
- a640c23a62f3a-a902947d3f4mr643415066b.21.1726241866556; Fri, 13 Sep 2024
- 08:37:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726241908; x=1726846708;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FLfwHNRPQKjp8R+M0/7sXVhVRXpTNwRmME8gmf+riNs=;
+        b=dGIVXXJ5cIyP3Lu5S8kpGUCUReS5gj7+OkEDdm4cbqK2OBwWXQXhIKCFfxVx53q2nt
+         DQViAYMLUmD5EYKkqGSV4QKhlwnvDWqtXm6pKrL4H/oYVXPjo5oUqkauDML8cRRPlkl/
+         akygvgH/DRHV6RlmjW9erMG6OrLsr9Asrc+Cu1Kp1iYzycAw2MVjmS49g3bJNTPEayFb
+         Qh8sE+e17eSNtndNWKX7QfxxHk3IJLkhceKKOJOGS4GhfQauBZ1hSDIy/Em7Q+KZcf1C
+         0Q8Fi/keotez2ymQ0dSQYk9bUgsZFoh85BotQ5wyyxfJLIloW5a3TD7oAFm779ruNI8p
+         WP7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVZqsq5ubBtj6WVCMNg/cXUx98TByFKZZYuAr7FYEGjYO5x6E7CT1IrrzpBU3QZHmM0tURF/y6G66Ks@vger.kernel.org, AJvYcCWth4/qjBcmVwjLAaXc4gXUhNXld7BR+kIBvdp0nvZRy3vQATWxYsXb9acQN6C2dbvhVckCih0SB+w=@vger.kernel.org, AJvYcCXSb8bfzfAxqO98AbF8Lf2YAEjfDZ2L4F+Q1zCRVM63iR22/DKiJHF3gKVBh9/oIndAvPRY72JrDycHKsew@vger.kernel.org, AJvYcCXf1BmteCLVplCftNP8W9GIrPXUCyqBoXNm9AIbPIY14aD5wz/oum6phVexUbd8FED2bsZDRJ9daAJL5HtFfb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfEJKShe5buUxUcGF1CV6+PhuekUA7VU4fI5Q2GXuWf08DJ4fd
+	QybQjHvA2j8cyemkOtksm5TQMwUsHZfDMhKKntmvoP8RmK1seBJg
+X-Google-Smtp-Source: AGHT+IFVVoW6JJ2gEx8dkL4ssj/046MJSupkqjqrm2dz5JDbRsSdE/E9s0lqYcl1CUam3uKpfyiFBw==
+X-Received: by 2002:a05:6870:ac07:b0:27b:63fc:a2af with SMTP id 586e51a60fabf-27c68bf05f7mr1824173fac.39.1726241908090;
+        Fri, 13 Sep 2024 08:38:28 -0700 (PDT)
+Received: from pipaware.tx.rr.com ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-27ba3f5356dsm3670827fac.34.2024.09.13.08.38.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 08:38:27 -0700 (PDT)
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+To: corbet@lwn.net,
+	ojeda@kernel.org,
+	dirk.behme@de.bosch.com
+Cc: alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	bilbao@vt.edu,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+Subject: [PATCH v2] kernel-docs: Add new section for Rust learning materials
+Date: Fri, 13 Sep 2024 10:38:24 -0500
+Message-ID: <20240913153824.161150-1-carlos.bilbao.osdev@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913145711.2284295-1-sean.anderson@linux.dev>
-In-Reply-To: <20240913145711.2284295-1-sean.anderson@linux.dev>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 13 Sep 2024 17:37:35 +0200
-Message-ID: <CANn89i+BGju58H3u6-Z_tZApjaMC+LB5XEocPbuTWK9owHyM4Q@mail.gmail.com>
-Subject: Re: [PATCH net v2] net: xilinx: axienet: Schedule NAPI in two steps
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, "David S . Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Michal Simek <michal.simek@amd.com>, 
-	linux-kernel@vger.kernel.org, Robert Hancock <robert.hancock@calian.com>, 
-	Shannon Nelson <shannon.nelson@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 4:57=E2=80=AFPM Sean Anderson <sean.anderson@linux.=
-dev> wrote:
->
-> As advised by Documentation/networking/napi.rst, masking IRQs after
-> calling napi_schedule can be racy. Avoid this by only masking/scheduling
-> if napi_schedule_prep returns true.
->
-> Fixes: 9e2bc267e780 ("net: axienet: Use NAPI for TX completion path")
-> Fixes: cc37610caaf8 ("net: axienet: implement NAPI and GRO receive")
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> Reviewed-by: Shannon Nelson <shannon.nelson@amd.com>
-> ---
+Include a new section in the Index of Further Kernel Documentation with
+resources to learn Rust. Reference it in the Rust index.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+---
+
+Changes since v1:
+ - Added two more Rust blogs proposed by Dirk Behme.
+
+---
+ Documentation/process/kernel-docs.rst | 131 +++++++++++++++++++++++---
+ Documentation/rust/index.rst          |   3 +
+ 2 files changed, 123 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/process/kernel-docs.rst b/Documentation/process/kernel-docs.rst
+index 55552ec4b043..b56c2adcb954 100644
+--- a/Documentation/process/kernel-docs.rst
++++ b/Documentation/process/kernel-docs.rst
+@@ -72,17 +72,6 @@ On-line docs
+         programming. Lots of examples. Currently the new version is being
+         actively maintained at https://github.com/sysprog21/lkmpg.
+ 
+-    * Title: **Rust for Linux**
+-
+-      :Author: various
+-      :URL: https://rust-for-linux.com/
+-      :Date: rolling version
+-      :Keywords: glossary, terms, linux-kernel.
+-      :Description: From the website: "Rust for Linux is the project adding
+-        support for the Rust language to the Linux kernel. This website is
+-        intended as a hub of links, documentation and resources related to
+-        the project".
+-
+ Published books
+ ---------------
+ 
+@@ -220,6 +209,126 @@ Miscellaneous
+         other original research and content related to Linux and software
+         development.
+ 
++Rust
++----
++
++    * Title: **Rust for Linux**
++
++      :Author: various
++      :URL: https://rust-for-linux.com/
++      :Date: rolling version
++      :Keywords: glossary, terms, linux-kernel, rust.
++      :Description: From the website: "Rust for Linux is the project adding
++        support for the Rust language to the Linux kernel. This website is
++        intended as a hub of links, documentation and resources related to
++        the project".
++
++    * Title: **Learning Rust the Dangerous Way**
++
++      :Author: Cliff L. Biffle
++      :URL: https://cliffle.com/p/dangerust/
++      :Date: Accessed Sep 11 2024
++      :Keywords: rust, blog.
++      :Description: From the website: "LRtDW is a series of articles
++        putting Rust features in context for low-level C programmers who
++        maybe don’t have a formal CS background — the sort of people who
++        work on firmware, game engines, OS kernels, and the like.
++        Basically, people like me.". It illustrates line-by-line
++        conversions from C to Rust.
++
++    * Title: **The Rust Book**
++
++      :Author: Steve Klabnik and Carol Nichols, with contributions from the
++        Rust community
++      :URL: https://doc.rust-lang.org/book/
++      :Date: Accessed Sep 11 2024
++      :Keywords: rust, book.
++      :Description: From the website: "This book fully embraces the
++        potential of Rust to empower its users. It’s a friendly and
++        approachable text intended to help you level up not just your
++        knowledge of Rust, but also your reach and confidence as a
++        programmer in general. So dive in, get ready to learn—and welcome
++        to the Rust community!".
++
++    * Title: **Rust for the Polyglot Programmer**
++
++      :Author: Ian Jackson
++      :URL: https://www.chiark.greenend.org.uk/~ianmdlvl/rust-polyglot/index.html
++      :Date: December 2022
++      :Keywords: rust, blog, tooling.
++      :Description: From the website: "There are many guides and
++        introductions to Rust. This one is something different: it is
++        intended for the experienced programmer who already knows many
++        other programming languages. I try to be comprehensive enough to be
++        a starting point for any area of Rust, but to avoid going into too
++        much detail except where things are not as you might expect. Also
++        this guide is not entirely free of opinion, including
++        recommendations of libraries (crates), tooling, etc.".
++
++    * Title: **Fasterthanli.me**
++
++      :Author: Amos Wenger
++      :URL: https://fasterthanli.me/
++      :Date: Accessed Sep 11 2024
++      :Keywords: rust, blog, news.
++      :Description: From the website: "I make articles and videos about how
++        computers work. My content is long-form, didactic and exploratory
++        — and often an excuse to teach Rust!".
++
++    * Title: **Comprehensive Rust**
++
++      :Author: Android team at Google
++      :URL: https://google.github.io/comprehensive-rust/
++      :Date: Accessed Sep 13 2024
++      :Keywords: rust, blog.
++      :Description: From the website: "The course covers the full spectrum
++        of Rust, from basic syntax to advanced topics like generics and
++        error handling".
++
++    * Title: **The Embedded Rust Book**
++
++      :Author: Multiple contributors, mostly Jorge Aparicio
++      :URL: https://docs.rust-embedded.org/book/
++      :Date: Accessed Sep 13 2024
++      :Keywords: rust, blog.
++      :Description: From the website: "An introductory book about using
++        the Rust Programming Language on "Bare Metal" embedded systems,
++        such as Microcontrollers".
++
++    * Title: **You Can't Spell Trust Without Rust**
++
++      :Author: Alexis Beingessner
++      :URL: https://repository.library.carleton.ca/downloads/1j92g820w?locale=en
++      :Date: 2015
++      :Keywords: rust, master, thesis.
++      :Description: This thesis focuses on Rust's ownership system, which
++        ensures memory safety by controlling data manipulation and
++        lifetime, while also highlighting its limitations and comparing it
++        to similar systems in Cyclone and C++.
++
++    * Name: **Linux Plumbers (LPC) Rust presentations**
++
++      :Title: Rust microconference
++      :URL: https://lpc.events/event/18/sessions/186/#20240918
++      :Title: Rust for Linux
++      :URL: https://lpc.events/event/18/contributions/1912/
++      :Title: Journey of a C kernel engineer starting a Rust driver project
++      :URL: https://lpc.events/event/18/contributions/1911/
++      :Title: Crafting a Linux kernel scheduler that runs in user-space
++        using Rust
++      :URL: https://lpc.events/event/18/contributions/1723/
++      :Title: openHCL: A Linux and Rust based paravisor
++      :URL: https://lpc.events/event/18/contributions/1956/
++      :Keywords: rust, lpc, presentations.
++      :Description: A number of LPC talks related to Rust.
++
++    * Name: **The Rustacean Station Podcast**
++
++      :URL: https://rustacean-station.org/
++      :Keywords: rust, podcasts.
++      :Description: A community project for creating podcast content for
++        the Rust programming language.
++
+ -------
+ 
+ This document was originally based on:
+diff --git a/Documentation/rust/index.rst b/Documentation/rust/index.rst
+index 46d35bd395cf..01f09216c229 100644
+--- a/Documentation/rust/index.rst
++++ b/Documentation/rust/index.rst
+@@ -42,6 +42,9 @@ configurations.
+     arch-support
+     testing
+ 
++You can also find learning materials for Rust in its section in
++:doc:`../process/kernel-docs`.
++
+ .. only::  subproject and html
+ 
+    Indices
+-- 
+2.43.5
+
 
