@@ -1,368 +1,165 @@
-Return-Path: <linux-kernel+bounces-327823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97702977B9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:52:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF4B977BA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039B12860DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:52:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 992B71C21CB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8521D6C47;
-	Fri, 13 Sep 2024 08:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687871BD507;
+	Fri, 13 Sep 2024 08:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="uBTZe1sz"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvfnj9Pn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A7F188A21;
-	Fri, 13 Sep 2024 08:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B311AD256;
+	Fri, 13 Sep 2024 08:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726217547; cv=none; b=hZ1o3kZC1ROp+W/Dz2fwzocMJzmnU+vz1qYOAcTe4tk9j+hjhU/pAHbNCnS14SPvfRX/UFZXnKzPjLHOclDSEfKcdxo2PHy3qWd0NYY5/n5bvmv/+L3pqtSJ9TpyebDkq/PpRs6ptROt0VVQKlRLYCJnGXOpGiCDBVHow75vyKU=
+	t=1726217563; cv=none; b=FOmiOMyiE9e2gZTe4vooadsIqcuicrDdTcVlyMRvc4MPpG6M/NEP+y6dCgSJJ/AOB1mC3IvmpppwvVCK7n32vKIvw/CzmRQ7mnScNJUcaXQNj7ySLWI1dz9d0nMMDSNhLZnAIxlp+U4rBzhFUzVh2MgWWUq+3k6+hEoQVzq91Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726217547; c=relaxed/simple;
-	bh=BV246ObWi9nh2lKEuPpmuyNRlDkYmnW6Hfc4HO8X8mA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ocWQjsSK0RbjgONpMhkoyKrUACskaKIBUh3OakJVuLLJ0a+ibZMVXB7bn2AyIxnmyUnRF1wFj4RQD7NBcGtq5LqpCJ5d3yTIrrtIKV21bxrA6GAn0ejEJx2hYJvPLMDR5CzVdewEtKsZpIMAQZqpKFZmIgMtVbxdPaeHGJe2riU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=uBTZe1sz; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References; bh=8fPtszLx5YXcXZRLXTlBT9KYalg3KhBwObue5cmzP+s=; b=uB
-	TZe1szVFaBNHgqAs9Nzsq/zg1yQbCFAoWwgXQxb5vhGF+aIDSR8Z236o1BMoSKayFg69/q6B6Jhnc
-	Gj38hCbGxedRUHjn0Yg1GtLHFCPj564QTZ76AE6r36CchsrKx+NQunrpnmL0SgJq0J8ku1/C9TiP6
-	qM+Tp3DKk2lCgNmVGScxK23vMTJHADDgQMiJiiXwmnrtpuCR0rDO5VvgAS77H8DM+NNj5835OjpmS
-	eRdt0QtkJLtd9ItO1UGN1kWUU9ibCh6/6JQIeyHmbTLfImKno0EsdnsZ1OlQl4IDUST0aEpz0NRBb
-	a0nTL9y2lGhwPo8Z4YJs86i9W+8rifNg==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sp22Q-000GDC-OY; Fri, 13 Sep 2024 10:52:22 +0200
-Received: from [80.62.117.18] (helo=localhost)
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sp22P-000PqN-2w;
-	Fri, 13 Sep 2024 10:52:22 +0200
-From: Esben Haabendal <esben@geanix.com>
-Date: Fri, 13 Sep 2024 10:52:19 +0200
-Subject: [PATCH v3] serial: imx: Switch to nbcon console
+	s=arc-20240116; t=1726217563; c=relaxed/simple;
+	bh=u5PZfoHHduyDVk2oOdcetiVZcs9IihPNrUYn6Fio744=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L1ntftRoEj1EUUjzOrpnMusbsBn+bMbPzoL4zn7T0AQ8mG34QEv32F1bbQz+jwU2jggVBY7Goqv3RxAxl+YN9dLN8FEwb2jzOKvanhfK+894EAMZwbiYBYq5LFOksS1NctiFteOrmpQBP2wIIuX1lsE/nVoMp4uGoEgRFw/ZENU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvfnj9Pn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A709C4CEC0;
+	Fri, 13 Sep 2024 08:52:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726217563;
+	bh=u5PZfoHHduyDVk2oOdcetiVZcs9IihPNrUYn6Fio744=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bvfnj9PnU4jjDRGFduZHFwL2QrGZ+IqQqPN+q1NMqmVBRzxl0nYwzRPwc1dfxxdjX
+	 c5kVIgaeuelejpPOm+ueeVECEuGtEIzJ9nnJmCq87KuWpxQ9BiAoUiuoe9cv3d/7/u
+	 15QOJr9zPhnqlytuujeWh8aqbqm9J296oH2JTmfR+Lm9yzy4GadRQsB7/2Wmv5JT7p
+	 lJr7X6RzSLnIQsfLQcmCg+8MhlEcR4Eo/s3XvKPrUXJlI0RcyQctIBaien6o73cjcj
+	 fcGK3ezRRqW76ol1U7eeq+diuElfjt5QGfWtA2RTvsQuMglE25RasWUArPVp3uhEOG
+	 yJLiwY7H40edw==
+Date: Fri, 13 Sep 2024 10:52:38 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Liu =?utf-8?B?S2ltcml2ZXIv5YiY6YeR5rKz?= <kimriver.liu@siengine.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	"jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>, 
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, 
+	"mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "jsd@semihalf.com" <jsd@semihalf.com>, 
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH v11] i2c: designware: fix controller is holding SCL low
+ while ENABLE bit is disabled
+Message-ID: <lon3lijqcb5zpylqfni4xecjxbv6tlfn4kmyn3zwfkhajyiamw@g72c4r7fo2c6>
+References: <4ebc4e8882a52620cbca30f1bf25650cbc3723fb.1726197817.git.kimriver.liu@siengine.com>
+ <CAHp75Vdbr5sJejwfkxYrgkdNMMZV+D5w1mipTxz=R+EkEUrA0w@mail.gmail.com>
+ <971008d0fd32403198785e1e4543d108@siengine.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240913-serial-imx-nbcon-v3-1-4c627302335b@geanix.com>
-X-B4-Tracking: v=1; b=H4sIAEL942YC/x3MSwrDIBSF4a2EO67iq9h01H2UDoy9mguNFg1BC
- Nl7bYYfnPPvULEQVrgPOxTcqFJOHfoygJ9disjo3Q1KKCNGqdh/7z6MlsbS5HNiRhhnR+ulCR7
- 67VswUDuTz1d3KHlh61zQnSGfNyxcWqm00Pp645FWjnXC9IjoEjXu8wLH8QPyne09mgAAAA==
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Esben Haabendal <esben@geanix.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726217541; l=10439;
- i=esben@geanix.com; s=20240523; h=from:subject:message-id;
- bh=BV246ObWi9nh2lKEuPpmuyNRlDkYmnW6Hfc4HO8X8mA=;
- b=cSbkgCWUV/BNxNGHXwqa92oFV3hPUh8Qi09uGq/ROTn30WTDVPVUt/WnO7/4YqbG2g0yuN18g
- SJ/TOgc1w9tBOisd+8iFaTt4i7AdI509RbEoF7G1MjOWMAQt+3aLIzQ
-X-Developer-Key: i=esben@geanix.com; a=ed25519;
- pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27396/Thu Sep 12 10:46:40 2024)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <971008d0fd32403198785e1e4543d108@siengine.com>
 
-Implements the necessary callbacks to switch the imx console driver to
-perform as an nbcon console.
+Hi Kimriver,
 
-Add implementations for the nbcon consoles (write_atomic, write_thread,
-driver_enter, driver_exit) and add CON_NBCON to the initial flags.
+please, don't send v12 anymore, I will take care of these little
+notes from Andy.
 
-The legacy code is kept in order to easily switch back to legacy mode
-by defining CONFIG_SERIAL_IMX_LEGACY_CONSOLE.
+You did a great job at following up on all the reviews, thanks!
 
-Signed-off-by: Esben Haabendal <esben@geanix.com>
----
-Implement the necessary callbacks to allow the imx console driver to be
-used as an nbcon console.
+Andi
 
-This is based on the work done on converting the 8250 driver to NBCON
-console [0], adapted to the imx driver.
-
-The _write_atomic() and _write_thread() functions access the following
-registers: ucr1, ucr2, ucr3 and uts, which all needs to be protected by
-the port lock. The driver has been reviewed for correct handling of
-these registers, and except for a single missing lock in in
-_enable_wakeup(), the driver was found sound. The registers are accessed
-initially in _probe() without lock held, but I assume that is all good
-and normal, as it before the uart port have been added.
-
-A fix for the missing lock have been submitted for mainline [1].
-
-The read_poll_timeout() call in _write_thread() have been changed to run
-as a tight loop. If allowed to sleep (4th argument >0), a kernel warning
-such as this one is triggered:
-
-[    0.322860] ------------[ cut here ]------------
-[    0.322870] Voluntary context switch within RCU read-side critical section!
-[    0.322885] WARNING: CPU: 2 PID: 75 at kernel/rcu/tree_plugin.h:331 rcu_note_context_switch+0x454/0x52c
-[    0.322907] Modules linked in:
-[    0.322916] CPU: 2 UID: 0 PID: 75 Comm: pr/ttymxc1 Not tainted 6.11.0-rc7-next-20240912-g3d12610ae2ac #1
-[    0.322925] Hardware name: DEIF PCM3.3 board (DT)
-[    0.322929] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    0.322937] pc : rcu_note_context_switch+0x454/0x52c
-[    0.322944] lr : rcu_note_context_switch+0x454/0x52c
-[    0.322950] sp : ffff800082a3bb60
-[    0.322953] x29: ffff800082a3bb60 x28: ffff0000029f5280 x27: 0000000000000000
-[    0.322964] x26: ffff0000029f5280 x25: 0000000000000001 x24: ffff800081885270
-[    0.322975] x23: 0000000000000000 x22: ffff0000029f5280 x21: ffff800081a6afe0
-[    0.322985] x20: ffff00007fb6d880 x19: ffff00007fb6e6c0 x18: fffffffffffe3140
-[    0.322996] x17: 1fffe000007a7421 x16: ffff000003d3a180 x15: 0000000000000048
-[    0.323007] x14: fffffffffffe3188 x13: 216e6f6974636573 x12: 206c616369746972
-[    0.323018] x11: 6320656469732d64 x10: 6165722055435220 x9 : 206e696874697720
-[    0.323029] x8 : 6863746977732074 x7 : ffff8000818a0d80 x6 : ffff800082a3b920
-[    0.323039] x5 : 0000000000000004 x4 : 0000000000000000 x3 : 0000000000000001
-[    0.323049] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000029f5280
-[    0.323060] Call trace:
-[    0.323064]  rcu_note_context_switch+0x454/0x52c
-[    0.323071]  __schedule+0x9c/0x854
-[    0.323080]  schedule+0x34/0x104
-[    0.323086]  usleep_range_state+0xf8/0x128
-[    0.323096]  imx_uart_console_write_thread+0x1d4/0x248
-[    0.323105]  nbcon_emit_next_record+0x25c/0x2a4
-[    0.323118]  nbcon_emit_one+0xc0/0x108
-[    0.323127]  nbcon_kthread_func+0x154/0x200
-[    0.323138]  kthread+0x114/0x118
-[    0.323147]  ret_from_fork+0x10/0x20
-[    0.323156] ---[ end trace 0000000000000000 ]---
-
-Is this as intended?
-
-I have tried a different logic instead of the console_newline_needed. I
-hope it might be found more intuitive.
-
-[0] https://lore.kernel.org/linux-serial/20240905134719.142554-1-john.ogness@linutronix.de/
-[1] https://lore.kernel.org/all/20240913-serial-imx-lockfix-v1-0-4d102746c89d@geanix.com/
-
-v3:
-- Patch 1/2 dropped as it has been merged to mainline.
-- Use USEC_PER_SEC macro instead of 1000000 number.
-- Fix kernel warning "Voluntary context switch within RCU read-side
-  critical section!" caused by usleep_range() in read_poll_timeout().
-- Remove legacy console implementation.
-- Adapt to rename of driver_enter/driver_exit renamed to
-  device_lock/device_unlock.
-- Change _write_atomic() and write_thread() to return void.
-- Change console_newline_needed logic to a simpler and (hopefully) more
-  readable last_putchar_was_newline logic.
-- Link to v2: https://lore.kernel.org/all/cover.1712303358.git.esben@geanix.com/
-
-v2:
-- Switch to tight loop (no udelay()) in atomic context.
-- Increase timeout to 1 second.
-- Add note in commit message about (no) error handling on timeout.
-- Link to v1: https://lore.kernel.org/all/cover.1712156846.git.esben@geanix.com/
----
- drivers/tty/serial/imx.c | 120 +++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 101 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 67d4a72eda77..b043ac3cd2cd 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -230,6 +230,8 @@ struct imx_port {
- 	unsigned int            saved_reg[10];
- 	bool			context_saved;
- 
-+	bool			last_putchar_was_newline;
-+
- 	enum imx_tx_state	tx_state;
- 	struct hrtimer		trigger_start_tx;
- 	struct hrtimer		trigger_stop_tx;
-@@ -2054,26 +2056,34 @@ static void imx_uart_console_putchar(struct uart_port *port, unsigned char ch)
- 		barrier();
- 
- 	imx_uart_writel(sport, ch, URTX0);
-+
-+	sport->last_putchar_was_newline = (ch == '\n');
- }
- 
--/*
-- * Interrupts are disabled on entering
-- */
--static void
--imx_uart_console_write(struct console *co, const char *s, unsigned int count)
-+static void imx_uart_console_device_lock(struct console *co, unsigned long *flags)
-+{
-+	struct uart_port *up = &imx_uart_ports[co->index]->port;
-+
-+	return __uart_port_lock_irqsave(up, flags);
-+}
-+
-+static void imx_uart_console_device_unlock(struct console *co, unsigned long flags)
-+{
-+	struct uart_port *up = &imx_uart_ports[co->index]->port;
-+
-+	return __uart_port_unlock_irqrestore(up, flags);
-+}
-+
-+static void imx_uart_console_write_atomic(struct console *co,
-+					  struct nbcon_write_context *wctxt)
- {
- 	struct imx_port *sport = imx_uart_ports[co->index];
-+	struct uart_port *port = &sport->port;
- 	struct imx_port_ucrs old_ucr;
--	unsigned long flags;
- 	unsigned int ucr1, usr2;
--	int locked = 1;
- 
--	if (sport->port.sysrq)
--		locked = 0;
--	else if (oops_in_progress)
--		locked = uart_port_trylock_irqsave(&sport->port, &flags);
--	else
--		uart_port_lock_irqsave(&sport->port, &flags);
-+	if (!nbcon_enter_unsafe(wctxt))
-+		return;
- 
- 	/*
- 	 *	First, save UCR1/2/3 and then disable interrupts
-@@ -2087,10 +2097,12 @@ imx_uart_console_write(struct console *co, const char *s, unsigned int count)
- 	ucr1 &= ~(UCR1_TRDYEN | UCR1_RRDYEN | UCR1_RTSDEN);
- 
- 	imx_uart_writel(sport, ucr1, UCR1);
--
- 	imx_uart_writel(sport, old_ucr.ucr2 | UCR2_TXEN, UCR2);
- 
--	uart_console_write(&sport->port, s, count, imx_uart_console_putchar);
-+	if (!sport->last_putchar_was_newline)
-+		uart_console_write(port, "\n", 1, imx_uart_console_putchar);
-+	uart_console_write(port, wctxt->outbuf, wctxt->len,
-+			   imx_uart_console_putchar);
- 
- 	/*
- 	 *	Finally, wait for transmitter to become empty
-@@ -2100,8 +2112,73 @@ imx_uart_console_write(struct console *co, const char *s, unsigned int count)
- 				 0, USEC_PER_SEC, false, sport, USR2);
- 	imx_uart_ucrs_restore(sport, &old_ucr);
- 
--	if (locked)
--		uart_port_unlock_irqrestore(&sport->port, flags);
-+	nbcon_exit_unsafe(wctxt);
-+}
-+
-+static void imx_uart_console_write_thread(struct console *co,
-+					  struct nbcon_write_context *wctxt)
-+{
-+	struct imx_port *sport = imx_uart_ports[co->index];
-+	struct uart_port *port = &sport->port;
-+	struct imx_port_ucrs old_ucr;
-+	unsigned int ucr1, usr2;
-+
-+	if (!nbcon_enter_unsafe(wctxt))
-+		return;
-+
-+	/*
-+	 *	First, save UCR1/2/3 and then disable interrupts
-+	 */
-+	imx_uart_ucrs_save(sport, &old_ucr);
-+	ucr1 = old_ucr.ucr1;
-+
-+	if (imx_uart_is_imx1(sport))
-+		ucr1 |= IMX1_UCR1_UARTCLKEN;
-+	ucr1 |= UCR1_UARTEN;
-+	ucr1 &= ~(UCR1_TRDYEN | UCR1_RRDYEN | UCR1_RTSDEN);
-+
-+	imx_uart_writel(sport, ucr1, UCR1);
-+	imx_uart_writel(sport, old_ucr.ucr2 | UCR2_TXEN, UCR2);
-+
-+	if (nbcon_exit_unsafe(wctxt)) {
-+		int len = READ_ONCE(wctxt->len);
-+		int i;
-+
-+		/*
-+		 * Write out the message. Toggle unsafe for each byte in order
-+		 * to give another (higher priority) context the opportunity
-+		 * for a friendly takeover. If such a takeover occurs, this
-+		 * context must reacquire ownership in order to perform final
-+		 * actions (such as re-enabling the interrupts).
-+		 *
-+		 * IMPORTANT: wctxt->outbuf and wctxt->len are no longer valid
-+		 *	      after a reacquire so writing the message must be
-+		 *	      aborted.
-+		 */
-+		for (i = 0; i < len; i++) {
-+			if (!nbcon_enter_unsafe(wctxt))
-+				break;
-+
-+			uart_console_write(port, wctxt->outbuf + i, 1,
-+					   imx_uart_console_putchar);
-+
-+			if (!nbcon_exit_unsafe(wctxt))
-+				break;
-+		}
-+	}
-+
-+	while (!nbcon_enter_unsafe(wctxt))
-+		nbcon_reacquire_nobuf(wctxt);
-+
-+	/*
-+	 *	Finally, wait for transmitter to become empty
-+	 *	and restore UCR1/2/3
-+	 */
-+	read_poll_timeout(imx_uart_readl, usr2, usr2 & USR2_TXDC,
-+			  0, USEC_PER_SEC, false, sport, USR2);
-+	imx_uart_ucrs_restore(sport, &old_ucr);
-+
-+	nbcon_exit_unsafe(wctxt);
- }
- 
- /*
-@@ -2193,6 +2270,8 @@ imx_uart_console_setup(struct console *co, char *options)
- 	if (retval)
- 		goto error_console;
- 
-+	sport->last_putchar_was_newline = true;
-+
- 	if (options)
- 		uart_parse_options(options, &baud, &parity, &bits, &flow);
- 	else
-@@ -2229,11 +2308,14 @@ imx_uart_console_exit(struct console *co)
- static struct uart_driver imx_uart_uart_driver;
- static struct console imx_uart_console = {
- 	.name		= DEV_NAME,
--	.write		= imx_uart_console_write,
-+	.write_atomic	= imx_uart_console_write_atomic,
-+	.write_thread	= imx_uart_console_write_thread,
-+	.device_lock	= imx_uart_console_device_lock,
-+	.device_unlock	= imx_uart_console_device_unlock,
-+	.flags		= CON_PRINTBUFFER | CON_NBCON,
- 	.device		= uart_console_device,
- 	.setup		= imx_uart_console_setup,
- 	.exit		= imx_uart_console_exit,
--	.flags		= CON_PRINTBUFFER,
- 	.index		= -1,
- 	.data		= &imx_uart_uart_driver,
- };
-
----
-base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-change-id: 20240912-serial-imx-nbcon-404a797c14fc
-
-Best regards,
--- 
-Esben Haabendal <esben@geanix.com>
-
+On Fri, Sep 13, 2024 at 08:31:18AM GMT, Liu Kimriver/刘金河 wrote:
+> Hi Andy
+>  
+>   Subject:  [PATCH v11] i2c: designware: fix controller is holding SCL low while ENABLE bit is disabled
+>   I will change the subject to：
+>   Subject:  [PATCH v11] i2c: designware: fix controller is holding SCL low while the ENABLE bit is disabled
+> 
+> >-----Original Message-----
+> >From: Andy Shevchenko <andy.shevchenko@gmail.com> 
+> >Sent: 2024年9月13日 15:41
+> >To: Liu Kimriver/刘金河 <kimriver.liu@siengine.com>
+> >Cc: jarkko.nikula@linux.intel.com; andriy.shevchenko@linux.intel.com; mika.westerberg@linux.intel.com; jsd@semihalf.com; andi.shyti@kernel.org; linux-i2c@vger.kernel.org; linux-kernel@vger.kernel.org; Andy >Shevchenko <andy@kernel.org>
+> >Subject: Re: [PATCH v11] i2c: designware: fix controller is holding SCL low while ENABLE bit is disabled
+> 
+> >On Fri, Sep 13, 2024 at 6:35 AM Kimriver Liu <kimriver.liu@siengine.com> wrote:
+> >>
+> >> It was observed that issuing the ABORT bit (IC_ENABLE[1]) will not 
+> >> work when IC_ENABLE is already disabled.
+> >>
+> >> Check if the ENABLE bit (IC_ENABLE[0]) is disabled when the controller 
+> >> is holding SCL low. If the ENABLE bit is disabled, the software needs 
+> >> to enable it before trying to issue the ABORT bit. otherwise, the 
+> >> controller ignores any write to ABORT bit.
+> >>
+> >> These kernel logs show up whenever an I2C transaction is attempted 
+> >> after this failure.
+> >> i2c_designware e95e0000.i2c: timeout waiting for bus ready 
+> >> i2c_designware e95e0000.i2c: timeout in disabling adapter
+> >>
+> >> The patch fixes the issue where the controller cannot be disabled 
+> >> while SCL is held low if the ENABLE bit is already disabled.
+> >
+> >...
+> >
+> >> +                       /*Set ENABLE bit before setting ABORT*/
+> 
+>        /* Set ENABLE bit before setting ABORT */
+> 
+> >Missing spaces
+> >
+> >...
+> 
+> >> +/*
+> >> + * This function waits controller idling before disabling I2C
+> 
+> >waits for controller
+> 
+>  + * This function waits for controller idling before disabling I2C
+> 
+> >> + * When the controller is not in the IDLE state,
+> >> + * MST_ACTIVITY bit (IC_STATUS[5]) is set.
+> >> + * Values:
+> >> + * 0x1 (ACTIVE): Controller not idle
+> >> + * 0x0 (IDLE): Controller is idle
+> >> + * The function is called after returning the end of the current 
+> >> + transfer
+> >> + * Returns:
+> 
+> >> + * False when controller is in IDLE state.
+> >> + * True when controller is in ACTIVE state.
+> 
+> >Yeah, I know that this is a copy of what I suggested, but if we going to amend, these should be with definite article
+> 
+> > * False when the controller is in the IDLE state.
+> > * True when the controller is in the ACTIVE state.
+> 
+>  
+> 
+> >> + */
+> 
+> >...
+> 
+> >> +       return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+> >> +                                      !(status & DW_IC_STATUS_MASTER_ACTIVITY),
+> >> +                                      1100, 20000) != 0;
+> 
+> >You broke the indentation again.
+> 
+> it has been indented and aligned from the web：
+> https://lore.kernel.org/all/4ebc4e8882a52620cbca30f1bf25650cbc3723fb.1726197817.git.kimriver.liu@siengine.com/
+> 
+> Thanks！ 
+> 
+> >--
+> ------------------------------------------
+> Best Regards
+> Kimriver Liu
 
