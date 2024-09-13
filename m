@@ -1,129 +1,159 @@
-Return-Path: <linux-kernel+bounces-328551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743649785AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:23:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9439F9785AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 181B7281E39
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70ED1C22760
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042AD6F067;
-	Fri, 13 Sep 2024 16:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D0959155;
+	Fri, 13 Sep 2024 16:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I8JzeIf9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VwJ65O2U"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22CA14A85;
-	Fri, 13 Sep 2024 16:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9009252F62;
+	Fri, 13 Sep 2024 16:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726244598; cv=none; b=Mr+mnp1/kS45VeNQnxijzJ8i9ZsA05uyFBaMclECQavwRawSGBGx8D80+Lmw1xAzTf7t2ad7ivgdqfgKIDLcDh03JQHEfxBkF/ZINz/MqT3/ZJck4XUWGxildEcrJkpDQRHPhi5/mbW+CupPYdmTFR/GXcvj+Obq1SE6OJBiUHM=
+	t=1726244671; cv=none; b=KYA/Pt28h4pS3hBURnr2TIWHqehv0bi95c01QeLqomM6doQzkr2liNhFopKiFA0xoI2sN7FAlCquK/3r2Vzri/wwkUFAm+182CeNocoFyLyxZYmqYDFaiBYMjah/iX829jyh+FR5RfgThOQwZUDbwYGnBp5kX84a9Pl4NnMKikM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726244598; c=relaxed/simple;
-	bh=xPaBfHmiDOQqdl2HEej4im/bq3I5EDwYcwH4PiP9kR0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l30kCxkkEb9V+wwU/FlyApkkTbnwmmbx+ZmMa8lY7ZG81K5yoqrWXGC7sJXo1n95RlGxY6XsoS+kQZ9ObexYTpAYMHkf8RgkyEEg5OqJ4Lt8Xn/haANTYrLP5F7ywpS0F7sVZ/f85c+m221WfCooWRK7L3H1A1FKFBMyayZR2V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I8JzeIf9; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726244597; x=1757780597;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=xPaBfHmiDOQqdl2HEej4im/bq3I5EDwYcwH4PiP9kR0=;
-  b=I8JzeIf9Agyid1FMd+/fABCXTpWK+6XwkJZ8HetdUiDLTR5FUJXVdHgS
-   z71opI5p7FlWeEWK50qQ9o0UY1JE0xia+E4yEfSt7VopsPb/3tRF9sdEa
-   qQgSFfAY14E5S1TWJVOqe2DOs9yrc+KfDK1NVd1re3zvJhnNKyf5kCB0M
-   OTaOQoR9bUcGFzxrZyjs8pRNUuVbaOddGrmUTZ20l736jf5T13KDYIde+
-   6f28LOvEejlr0UF+D8ppv7fAimdUX8PovBtLo22tUOatYXo4JRKM1RsiR
-   BPNZQ2thJ8RFSkYI0agqkqGnSqiRoO8oMwPB1yIAUsR8u8yUuhwMhPixm
-   g==;
-X-CSE-ConnectionGUID: SXtTqjU4QHqZ/lY3xKno5Q==
-X-CSE-MsgGUID: 1c/gGpLMR2SVWZHIDsDQeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25350582"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="25350582"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 09:23:15 -0700
-X-CSE-ConnectionGUID: J4PvnfFKQOmIn/+UrDwK8A==
-X-CSE-MsgGUID: 0Yi3hYBBSjWGNjktLeAm8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="98958333"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa001.fm.intel.com with ESMTP; 13 Sep 2024 09:23:14 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: Kan Liang <kan.liang@linux.intel.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH] perf: Fix missing RCU reader protection in perf_event_clear_cpumask()
-Date: Fri, 13 Sep 2024 09:23:40 -0700
-Message-Id: <20240913162340.2142976-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1726244671; c=relaxed/simple;
+	bh=NdlpI2lfrJdlHUiowIjiCgNjd6opv3x/ygUeGqaQ7nY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ELNdpE03UGWB63sABW8t9b/xP0DU184V1y0tFPXTtyowcV3zgvtgILB7Oc2nSkZQCy3tibbDBPGIXaJlQMI0rhGSrjBjfIs67ZyCBVy8YOUZeIIvfhOkrl5G/dBqNAW0xHuLcXadH/CG43HEZ8Mf5otA0qFkxAvJKXV3RJCC5bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VwJ65O2U; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DGBZ0j003723;
+	Fri, 13 Sep 2024 16:24:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=H
+	YF5FpI54H7Ps7tpK+vSjMcqh1QBU19xCspJZIBi5PA=; b=VwJ65O2U6s6IR0ux/
+	MiUGIEU/iEMcEAQSig3FCYJ9Ijv/MWqiAu1MvfhpKS5ovvLZhjVv1zhO1eRqy8fu
+	xzAZROf8zGrGOdY1H3vKJ9KqJRdjb4j5yrvVm8uTlLUW+fwWXeDxlu5Y0B2zsNyj
+	oRqRdgTCVFn2U2VPXZ2fTwD9BlbrNQwYZ8MVv7ySQ++4e4cXtM5k7CgXolupc/cN
+	ZxZezeM1kf4rncC8ILeFV8shFQDu97UQQCZ8CcyeeommX4ZNcg0gGYkOZ775odKZ
+	YfRTvjMg0XjhicNRyQ7XVrYB4ALJX0fdyul8lzMhEt+2gm8Ahn5LizVaUFMbGfot
+	B+s/g==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gejb3arp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 16:24:27 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48DFh8ke013566;
+	Fri, 13 Sep 2024 16:24:26 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h3cmq3vr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 16:24:26 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48DGOQOB19268274
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 16:24:26 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 07CA058057;
+	Fri, 13 Sep 2024 16:24:26 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6519258059;
+	Fri, 13 Sep 2024 16:24:25 +0000 (GMT)
+Received: from [9.61.88.111] (unknown [9.61.88.111])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 13 Sep 2024 16:24:25 +0000 (GMT)
+Message-ID: <e9a74fbb-4367-4595-9af7-47e3786b2cb1@linux.ibm.com>
+Date: Fri, 13 Sep 2024 12:24:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] s390/vfio-ap: Driver feature advertisement
+To: Heiko Carstens <hca@linux.ibm.com>,
+        "Jason J. Herne"
+ <jjherne@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fiuczy@linux.ibm.com, borntraeger@de.ibm.com, agordeev@linux.ibm.com,
+        gor@linux.ibm.com
+References: <20240910113440.8107-1-jjherne@linux.ibm.com>
+ <20240911065707.6563-A-hca@linux.ibm.com>
+Content-Language: en-US
+From: Anthony Krowiak <akrowiak@linux.ibm.com>
+In-Reply-To: <20240911065707.6563-A-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: trO5wOEovL71kpqrW_duYzdbAlXaaAyJ
+X-Proofpoint-GUID: trO5wOEovL71kpqrW_duYzdbAlXaaAyJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ phishscore=0 mlxlogscore=766 spamscore=0 impostorscore=0 adultscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409130113
 
-From: Kan Liang <kan.liang@linux.intel.com>
 
-Running rcutorture scenario TREE05, the below warning is triggered.
 
-[   32.604594] WARNING: suspicious RCU usage
-[   32.605928] 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238 Not tainted
-[   32.607812] -----------------------------
-[   32.609140] kernel/events/core.c:13946 RCU-list traversed in non-reader section!!
-[   32.611595] other info that might help us debug this:
-[   32.614247] rcu_scheduler_active = 2, debug_locks = 1
-[   32.616392] 3 locks held by cpuhp/4/35:
-[   32.617687]  #0: ffffffffb666a650 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-[   32.620563]  #1: ffffffffb666cd20 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-[   32.623412]  #2: ffffffffb677c288 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context+0x32/0x2f0
+On 9/11/24 2:57 AM, Heiko Carstens wrote:
+> On Tue, Sep 10, 2024 at 07:34:40AM -0400, Jason J. Herne wrote:
+>> Advertise features of the driver for the benefit of automated tooling
+>> like Libvirt and mdevctl.
+>>
+>> Signed-off-by: Jason J. Herne <jjherne@linux.ibm.com>
+>> Reviewed-by: Anthony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Boris Fiuczynski <fiuczy@linux.ibm.com>
+>> ---
+>>   Documentation/arch/s390/vfio-ap.rst | 34 +++++++++++++++++++++++++++++
+>>   drivers/s390/crypto/vfio_ap_drv.c   | 13 +++++++++++
+>>   2 files changed, 47 insertions(+)
+> ...
+>
+>> +Driver Features
+>> +===============
+>> +The vfio_ap driver exposes a sysfs file containing supported features.
+>> +This exists so third party tools (like Libvirt and mdevctl) can query the
+>> +availability of specific features.
+>> +
+>> +The features list can be found here: /sys/bus/matrix/devices/matrix/features
+>> +
+>> +Entries are \n delimited. Each entry contains a key value pair. The key is made
+>> +up of a combination of alphanumeric and underscore characters. The separator
+>> +consists of a space, a colon and then another space. The value consists of
+>> +alphanumeric, space, and underscore characters.
+>> +
+>> +Example:
+>> +cat /sys/bus/matrix/devices/matrix/features
+>> +flags : guest_matrix dyn ap_config
+>> +
+>> +Presently only a single field named flags is defined. It is meant to advertise a
+>> +list of features the driver provides. The flags fields advertises the following
+>> +features:
+> I stumbled across this only now: sysfs files are not supposed to have
+> several key value pairs. Actually the file(name) itself is supposed to
+> be the key and its contents are the value. So I would expect:
+>
+> cat /sys/bus/matrix/devices/matrix/flags
+> guest_matrix dyn ap_config
+>
+> Which is also easier to parse. Is there a good reason why this does
+> not follow the general approach for sysfs files?
 
-In perf_event_clear_cpumask(), uses list_for_each_entry_rcu() without an
-obvious RCU read-side critical section.
+I am okay with this, but I would keep the sysfs filename  'features'.
 
-Either pmus_srcu or pmus_lock is good enough to protect the pmus list.
-In the current context, pmus_lock is already held. The
-list_for_each_entry_rcu() is not required.
+cat /sys/bus/matrix/devices/matrix/features
+guest_matrix dyn ap_config
 
-Fixes: 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
-Reported-by: Paul E. McKenney <paulmck@kernel.org>
-Closes: https://lore.kernel.org/lkml/2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop/
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202409131559.545634cc-oliver.sang@intel.com
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 20e97c1aa4d6..5ba9934b49df 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -13912,7 +13912,7 @@ static void perf_event_clear_cpumask(unsigned int cpu)
- 	}
- 
- 	/* migrate */
--	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
-+	list_for_each_entry(pmu, &pmus, entry) {
- 		if (pmu->scope == PERF_PMU_SCOPE_NONE ||
- 		    WARN_ON_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE))
- 			continue;
--- 
-2.38.1
+
 
 
