@@ -1,147 +1,128 @@
-Return-Path: <linux-kernel+bounces-327635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F881977898
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A5B9778A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 551E41F257E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:04:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781811F25C5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B14185B7D;
-	Fri, 13 Sep 2024 06:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A073187356;
+	Fri, 13 Sep 2024 06:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="B7TwvFZ6"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tyAZ6py/"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71404224CF;
-	Fri, 13 Sep 2024 06:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DED9224CF
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726207453; cv=none; b=lh0CGjQFu3hxvTadC09ZM6GFBgbcItkgYPMI0DgU3CI/Ib5xszbLsj4s2J6IcVfM+aM0eVr0xSuVv35UTCaPijrRuIgrSPajCyS18wIyWX17mDGTsqsqMwjiTjtCRc/LT8EhHhdAT468wIljJqDCUTvWD3BnihfMGCWvezJzrts=
+	t=1726207672; cv=none; b=iJ5b8Eya+eOzL6AKvQs+WhsxWga+SoYZUiCtnO5aZO6Xxcchq1fXpjc1vUNXkSM0FFcz9Uy7j1bsB8uOSaGEWZboIuIyM8bzIO2d+chUklHzO5Ct4kmsFd5xSE5vOvivUtEy1hr5yrqY+g35Ui+xd319BhNGQRgPi27dfSqnURE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726207453; c=relaxed/simple;
-	bh=nstVZHkUy5pKTdbUjOMs70lhCwSaOSVyh/g/ucQQHw0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=WSeP6AITyl19d3WSxPso4fPCxqOm4vf4Zi06Q2AN2MW8octjIOTQTpymbsh1gwGfmRLQP0wHTFlZjDsZcHVSlNi6G4Oy63qzqGrGr4r6PnXbdo6LrpXmYYGIezFkrDE0WK38vyqoPngR7rC1SGl6WkNZZTH7GHQDTFRk6iST4kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=B7TwvFZ6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CNo6ej022644;
-	Fri, 13 Sep 2024 06:03:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:content-type:mime-version; s=pp1; bh=w8Yaj17rePOkc2oA8hmd/PPLMU
-	G7M8Thql5tfawg9RU=; b=B7TwvFZ6cvkbhvnMBeO26n0h86Qnr6mIB4wCl18lm0
-	EDaynUwRx2yqEcTSkUnj7vX74bkzHD3IMnTMobTf5JdYtniKUo+uMsIld0szlLM7
-	j65sy82ZM58HKeVZbDERZZ0RNiUWY3uVAwLFE9/Hq6NPsq89hFc0hb3Qh36sptaO
-	mPIv6Hq2pVeWW89ZrB2ONk8Q+0YXrb7ldbCFBznlshCnsaS2b3sstgGqUXGfKEKy
-	JiUhLGk/W3V9Ve7hWCxkoQAy/WTzB0Sqhz5NCbw3qLvhZd1VTpRIyqUgEc7sLfqX
-	P0N+c6XYNbAW6HSYnhjxrOeQ8A6MORxHZIS2wSqigMaQ==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gebaqxgj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 06:03:55 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48D2035B010729;
-	Fri, 13 Sep 2024 06:03:54 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41kmb6yv6y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 06:03:54 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48D63qmC46203320
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 06:03:52 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 563AF20043;
-	Fri, 13 Sep 2024 06:03:52 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2AA1020040;
-	Fri, 13 Sep 2024 06:03:52 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 13 Sep 2024 06:03:52 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
- <mark.rutland@arm.com>,
-        Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>,
-        Paul Walmsley
- <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert
- Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-csky@vger.kernel.org
-Subject: Re: [PATCH 0/7] add function arguments to ftrace
-In-Reply-To: <yt9dh6ape022.fsf@linux.ibm.com> (Sven Schnelle's message of
-	"Mon, 09 Sep 2024 09:52:21 +0200")
-References: <20240904065908.1009086-1-svens@linux.ibm.com>
-	<20240905111620.5211d9f8@gandalf.local.home>
-	<yt9dv7z9l2zp.fsf@linux.ibm.com>
-	<20240906100738.2526cffd@gandalf.local.home>
-	<20240908222830.01a01b10d62d59ed73dcb676@kernel.org>
-	<yt9dh6ape022.fsf@linux.ibm.com>
-Date: Fri, 13 Sep 2024 08:03:51 +0200
-Message-ID: <yt9djzfgccoo.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 7nToZDWGKNT9QZOOlyB71xBhYhClmsHN
-X-Proofpoint-GUID: 7nToZDWGKNT9QZOOlyB71xBhYhClmsHN
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1726207672; c=relaxed/simple;
+	bh=Qn9vFZIIQDppzZHqV0PZeq/qL8NYT/cOW7+cTxel7IQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HTIvKFaKoRpyeOvwCuxbrAEqzjAGaVyVTFsS7voFkX4qaSP8OoDvo4CioTg9NXR+gdo0R4hiCiVBE9tycJVWBgcEav2ct30Jeg5fCR+3NRFoN0vzDvy4IvPL1w0cLL02U9J3I3rHoLBr+TUg0dPHXONXgs4v/JdxgCC0SCZUKTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tyAZ6py/; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d73c1c8356so36120527b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 23:07:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726207669; x=1726812469; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zU158RLcOKHBeCjPsX4GvZJnYHBn9YCtM61eCV0teBo=;
+        b=tyAZ6py/00dn0HtgEPLew8RDttOL3hoHrdgsomxxaCIDDUuCcNm8d5shlLTTsV/krw
+         NDQvG030RVfJyZDhG5XwlUn6+O4p75fs3TBK1l8nGIHrFflv4KketoZp6xcQFYSnuZSP
+         z5NFx0nzZyR34grU9iADbfAKEKbifjWPCLseDNFCrvxOqSKRm+uM3RmRn92qWekSoa6Q
+         OB5/EU4mBxvUYexsTfCxwybTcdPIcKQQpwy0AWumCEc+BirPSon4IyKfzgcwO8NIBZNv
+         xW2+y2Af8z+7cFWCQ2CeRbqlsWuIC+tOn0Zsr2u005WCfjaWclmvaGy5grBklfFGm5hl
+         4gng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726207669; x=1726812469;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zU158RLcOKHBeCjPsX4GvZJnYHBn9YCtM61eCV0teBo=;
+        b=aXopoCxtRWipm9CEl2kdK9bS66lvmpog9WSSevC0xVM+nueNqTFudNvNSETjXinxll
+         H6iLGmTPRYGSDDkFHwzqmXGzCOKP+0mAL0YqFfFJ+uxHNgzYgT+lAfD9lKptBsswsqMw
+         DsLtxgATyM/T0vOp2PmtT4losOdzsOv7FPqYqcTuxlnT6Uh/MBjKYt7BZcgjt9qxwmIG
+         cKWEEj4GN2I1JOAWDucBuHllUGx0zj0d8+6V7SgDYVcuWcFmAHy3xjLNi3hpftJzHJT7
+         dz6EfBqO/RjI2mka5e6JhIjmj0G+fC4TkJ+wO4eIdABsoobIFdlzRSOGmOu8kOKQ/lVp
+         XJpg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2NoBJyq5KHxpCh8fYRFPHiS7LrGGPkBm0QfcqF2YX+881mNCqy4/ziCHBV1fj+PP/Hh1b8eqG3Wy4ilY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIxeg3vJjIIxZ3PccN7z0bWqtRKHj+cSw5SYfnND9PBL8dAosu
+	A38H5QFRxAz6J343iWnv2PANqsswdCP/mUSJfZkAUp3F5yky0SBAUFu8Ntu/lurBWTbelwylaCY
+	d2lck6rWtcwnLAuCTWC82uw==
+X-Google-Smtp-Source: AGHT+IFiXDKzLAcHwDf50KVgcFjqRPr12bDjQHGm4KlZSMNuZu648rOdSGNh5XOu+wrn3hpE5s5BsWF6kbKejVSTNQ==
+X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
+ (user=almasrymina job=sendgmr) by 2002:a25:86c9:0:b0:e11:5a3c:26c7 with SMTP
+ id 3f1490d57ef6-e1d9dc4275fmr9133276.9.1726207669285; Thu, 12 Sep 2024
+ 23:07:49 -0700 (PDT)
+Date: Fri, 13 Sep 2024 06:07:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-13_03,2024-09-12_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
- mlxscore=0 mlxlogscore=858 impostorscore=0 clxscore=1015 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409130042
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+Message-ID: <20240913060746.2574191-1-almasrymina@google.com>
+Subject: [PATCH net-next v1] memory-provider: disable building dmabuf mp on !CONFIG_PAGE_POOL
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mina Almasry <almasrymina@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Sven Schnelle <svens@linux.ibm.com> writes:
+When CONFIG_TRACEPOINTS=y but CONFIG_PAGE_POOL=n, we end up with this
+build failure that is reported by the 0-day bot:
 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> writes:
->
->> On Fri, 6 Sep 2024 10:07:38 -0400
->> Steven Rostedt <rostedt@goodmis.org> wrote:
->>
->>> On Fri, 06 Sep 2024 08:18:02 +0200
->>> Sven Schnelle <svens@linux.ibm.com> wrote:
->>> 
->>> 
->>> > One thing i learned after submitting the series is that struct
->>> > ftrace_regs depends on CONFIG_FUNCTION_TRACER, so it cannot be used
->>> > with the graph tracer.
->>
->> Yeah, this is solved by my series [1].
->>
->> [1] https://patchwork.kernel.org/project/linux-trace-kernel/patch/172398532480.293426.13232399076477198126.stgit@devnote2/
->>
->> So I think this series is easier to apply after my series, which
->> passes fgraph_regs in return handler.
->
-> Thanks, i'll rebase my changes on top of your patches then.
+ld: vmlinux.o: in function `mp_dmabuf_devmem_alloc_netmems':
+>> (.text+0xc37286): undefined reference to `__tracepoint_page_pool_state_hold'
+>> ld: (.text+0xc3729a): undefined reference to `__SCT__tp_func_page_pool_state_hold'
+>> ld: vmlinux.o:(__jump_table+0x10c48): undefined reference to `__tracepoint_page_pool_state_hold'
+>> ld: vmlinux.o:(.static_call_sites+0xb824): undefined reference to `__SCK__tp_func_page_pool_state_hold'
 
-While doing so i noticed that i completely forgot about arguments
-located on the stack. The current patchset tries to read from the
-current kernel stack, which is obviously wrong. So either the tracer
-needs to save the stack frame in the ringbuffer (which would be quite
-a lot of data), or ftrace only prints arguments located in registers.
-Also not nice. Opinions?
+The root cause is that in this configuration, traces are enabled but the
+page_pool specific trace_page_pool_state_hold is not registered.
 
-Thanks
-Sven
+There is no reason to build the dmabuf memory provider when
+CONFIG_PAGE_POOL is not present, as it's really a provider to the
+page_pool.
+
+In fact the whole NET_DEVMEM is RX path-only at the moment, so we can
+make the entire config dependent on the PAGE_POOL.
+
+Note that this may need to be revisited after/while devmem TX is
+added,  as devmem TX likely does not need CONFIG_PAGE_POOL. For now this
+build fix is sufficient.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202409131239.ysHQh4Tv-lkp@intel.com/
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+
+---
+ net/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/Kconfig b/net/Kconfig
+index 7574b066d7cd..a629f92dc86b 100644
+--- a/net/Kconfig
++++ b/net/Kconfig
+@@ -70,6 +70,7 @@ config NET_DEVMEM
+ 	def_bool y
+ 	depends on DMA_SHARED_BUFFER
+ 	depends on GENERIC_ALLOCATOR
++	depends on PAGE_POOL
+ 
+ menu "Networking options"
+ 
+-- 
+2.46.0.662.g92d0881bb0-goog
+
 
