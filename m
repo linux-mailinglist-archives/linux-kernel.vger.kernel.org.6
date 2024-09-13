@@ -1,217 +1,305 @@
-Return-Path: <linux-kernel+bounces-327948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B831A977D00
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB45977D04
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F861C218EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:13:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9E6D1C2467E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3821D7E4C;
-	Fri, 13 Sep 2024 10:13:14 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770721D86C2;
+	Fri, 13 Sep 2024 10:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="dVCn/rys"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0774A1BD00C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47481D7E42
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726222393; cv=none; b=q/7NydjMo0G9aR1bdsA2SiGhgFxeDjx9K3GGdbfV3z94+9Qg9cOb32uyPYAco99mvWGFcpRWZTtzUeBVWYD9jwcNDvpdlvGZkjte4szsiT+3NUM7aSbqMOGmdWMaCjbcVfe6lMKQBjM9V1ECV+UQZUD9UUJDToXaT5yp7AaYJhE=
+	t=1726222462; cv=none; b=Wo/ZZ4btR+j+H+yYPgFWirHUc2XnofD3yTf/VkQND8rNZAUkt0btO1uHgY5XZ4gS2qZrv/dGoCYttKBhQw+CIvsmQIbgpbMuc1D+7kIKt0CwwVcIkiWiR1kU4PHIVl1vXxDXZvaG29rMTop0if+uNzCAVUxmMF/IrNnnwNwrIsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726222393; c=relaxed/simple;
-	bh=e561I76LFkMwActjOsNc60/xDhpEWKEb2h7xYwmd0Nw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ljm/IwsiTMDSxlQzFS1F1hSxE/PvSM4coIt21RfeAOXuDtcupnc5vqnAwl/hZKxrn22tgcWfJtuwa69gujJCc6WkaLAFLLoZ9LcgnM7ShH9SoqAIoLtvXbwA6h9J5ZBmOJGDX13mwA/bQtbdbOF6zxu+Fpb/CId+IUgzmcOLhAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X4qkd420Qz6GC0R;
-	Fri, 13 Sep 2024 18:08:09 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0E4A11400CD;
-	Fri, 13 Sep 2024 18:13:03 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 13 Sep
- 2024 12:13:02 +0200
-Date: Fri, 13 Sep 2024 11:13:00 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v8 06/13] acpi/ghes: add support for generic error
- injection via QAPI
-Message-ID: <20240913111300.00007a3c@Huawei.com>
-In-Reply-To: <20240913072025.76a329b0@foz.lan>
-References: <cover.1723793768.git.mchehab+huawei@kernel.org>
-	<2c8970b5d54d17b601dc65d778cc8b5fb288984b.1723793768.git.mchehab+huawei@kernel.org>
-	<20240819145136.0452ff2b@imammedo.users.ipa.redhat.com>
-	<20240825052923.715f88bc@sal.lan>
-	<20240911152132.65a7a219@imammedo.users.ipa.redhat.com>
-	<20240911163436.00004738@Huawei.com>
-	<20240912144233.675d6b63@imammedo.users.ipa.redhat.com>
-	<20240913072025.76a329b0@foz.lan>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1726222462; c=relaxed/simple;
+	bh=jwnUKFwawSYD1vuSblqX+PfrC395ExZkCFFaSIohnmw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qbpUoNPpEdP9SdIlaUJ7c2A2okUOx6fLWVKIweNnchoT60ovFGA94h507bTYOZL9yMH4aRzAtRp9JJq0ymz3aiigXTCv4IhVWbvtv9/trzylk+BnR2nFB1yg9IKVOKQxT2ioVQmrkzFyEUrxyNiaipcYK9rDYlO9BxVY3IbxmhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=dVCn/rys; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id odcVsWt3dqvuop3JksZ0b1; Fri, 13 Sep 2024 10:14:20 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id p3JjsGqRXHGLjp3Jjs2b37; Fri, 13 Sep 2024 10:14:19 +0000
+X-Authority-Analysis: v=2.4 cv=VaHxPkp9 c=1 sm=1 tr=0 ts=66e4107b
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=rpUMG24A1zG+UrzXDtAMsg==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7T7KSl7uo7wA:10 a=anyJmfQTAAAA:8
+ a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8
+ a=Co-KuMXxJcsvc7DC3HAA:9 a=QEXdDO2ut3YA:10 a=mmqRlSCDY2ywfjPLJ4af:22
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/i8RPO9eFL0DrWzxkq+6NW6yIxztwoW7oSYVe/XjxhU=; b=dVCn/rys8mxpvhTDhfDYs3l5Xq
+	788w1/MnJX0vAj7vyX6Q1iaeQ4CmVKXq3a6BH5yIn/Sv4SiXLVZHYZVBi8IZWJyLAZnKNv935qsJ1
+	aK9/K2DT1gCz5WL8grPJNGma3y52tUxbrkFoNn9P45lAj3NH8gM9eiEDa8RlsdymGCkMDjomH8Aip
+	BrfPFBlhpgztlI7kyphcRu28QcXy2N3ITByp56x+kgkNb0wotj1hoeQVuzI39u0M3N/6vUw+Cex0h
+	q44r37cmljPwp7qUycQ07vm/MxwBoKAWTUYvtx96mbIpwnk9YvJrmsYxbXNPvn713tSXofLP/HIXZ
+	1oS0nlmQ==;
+Received: from [185.44.53.103] (port=34042 helo=[192.168.1.187])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sp3Jg-001LX5-1t;
+	Fri, 13 Sep 2024 05:14:17 -0500
+Message-ID: <7e1d4077-51d7-45ce-bab4-efec875b36f2@embeddedor.com>
+Date: Fri, 13 Sep 2024 12:14:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2][next] wifi: iwlwifi: mvm: Use __counted_by() and avoid
+ -Wfamnae warnings
+To: kernel test robot <lkp@intel.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+ Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes@sipsolutions.net>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZrZs5KL5Pz9tIinr@cute> <202408110634.V68RFEtW-lkp@intel.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <202408110634.V68RFEtW-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.44.53.103
+X-Source-L: No
+X-Exim-ID: 1sp3Jg-001LX5-1t
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.187]) [185.44.53.103]:34042
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKd7l0Frfshza38a+hXHlp8zeVFhwFiODrx/Dbna3YwAw5SlC7fejYPWJrBNNDWdVE23ftAHRIIVkIISOjmx+S/oA969K8QTjIjwW3MpHiEQ7yAr4F1C
+ g0LSguoFxeZD0rxAcwE31sgN75YrJjfXQMu6bo2knfuNmWSVYkdE5k2uoXNQX0df2jW2D1PmXEoKyxYUK2B3k+BqquUqO8SB9tIHUmQbikYzI8j5LXBxk/As
 
-On Fri, 13 Sep 2024 07:20:25 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-> Em Thu, 12 Sep 2024 14:42:33 +0200
-> Igor Mammedov <imammedo@redhat.com> escreveu:
-> 
-> > On Wed, 11 Sep 2024 16:34:36 +0100
-> > Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> >   
-> > > On Wed, 11 Sep 2024 15:21:32 +0200
-> > > Igor Mammedov <imammedo@redhat.com> wrote:
-> > >   
-> > > > On Sun, 25 Aug 2024 05:29:23 +0200
-> > > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > > >     
-> > > > > Em Mon, 19 Aug 2024 14:51:36 +0200
-> > > > > Igor Mammedov <imammedo@redhat.com> escreveu:
-> > > > >       
-> > > > > > > +        read_ack = 1;
-> > > > > > > +        cpu_physical_memory_write(read_ack_start_addr,
-> > > > > > > +                                  &read_ack, (uint64_t));          
-> > > > > > we don't do this for SEV so, why are you setting it to 1 here?      
-> 
-> The diffstat doesn't really help here. The full code is:
-> 
->     /* zero means OSPM does not acknowledge the error */
->     if (!read_ack) {
->         error_setg(errp,
->                    "Last CPER record was not acknowledged yet");
->         read_ack = 1;
->         cpu_physical_memory_write(read_ack_start_addr,
->                                   &read_ack, sizeof(read_ack));
->         return;
->     }
-> 
-> > > > what you are doing here by setting read_ack = 1,
-> > > > is making ack on behalf of OSPM when OSPM haven't handled existing error yet.
-> > > > 
-> > > > Essentially making HW/FW do the job of OSPM. That looks wrong to me.
-> > > > From HW/FW side read_ack register should be thought as read-only.    
-> > > 
-> > > It's not read-only because HW/FW has to clear it so that HW/FW can detect
-> > > when the OSPM next writes it.  
-> > 
-> > By readonly, I've meant that hw shall not do above mentioned write
-> > (bad phrasing on my side).  
-> 
-> The above code is actually an error handling condition: if for some
-> reason errors are triggered too fast, there's a bug on QEMU or there is
-> a bug at the OSPM, an error message is raised and the logic resets the 
-> record to a sane state. So, on a next error, OSPM will get it.
-> 
-> As described at https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html?highlight=asynchronous#generic-hardware-error-source:
-> 
->    "Some platforms may describe multiple Generic Hardware Error Source
->     structures with different notification types, as defined in 
->     Table 18.10. For example, a platform may describe one error source
->     for the handling of synchronous errors (e.g. MCE or SEA), and a 
->     second source for handling asynchronous errors (e.g. SCI or
->     External Interrupt)."
-> 
-> Basically, the error logic there seems to fit for the asynchronous
-> case, detecting if another error happened before OSPM handles the
-> first one.
 
-Agreed - the error logic to act as backpressure for the tool injecting
-the error makes sense - it's just hardware acknowledging to paper
-over slow software that is an issue.
+On 10/08/24 22:26, kernel test robot wrote:
+> Hi Gustavo,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on wireless-next/main]
+> [also build test ERROR on wireless/main linus/master v6.11-rc2 next-20240809]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Gustavo-A-R-Silva/wifi-iwlwifi-mvm-Use-__counted_by-and-avoid-Wfamnae-warnings/20240810-103759
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
+> patch link:    https://lore.kernel.org/r/ZrZs5KL5Pz9tIinr%40cute
+> patch subject: [PATCH v2][next] wifi: iwlwifi: mvm: Use __counted_by() and avoid -Wfamnae warnings
+> config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20240811/202408110634.V68RFEtW-lkp@intel.com/config)
+> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project f86594788ce93b696675c94f54016d27a6c21d18)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240811/202408110634.V68RFEtW-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408110634.V68RFEtW-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>     In file included from drivers/net/wireless/intel/iwlwifi/mvm/d3.c:7:
+>     In file included from include/linux/etherdevice.h:20:
+>     In file included from include/linux/if_ether.h:19:
+>     In file included from include/linux/skbuff.h:17:
+>     In file included from include/linux/bvec.h:10:
+>     In file included from include/linux/highmem.h:8:
+>     In file included from include/linux/cacheflush.h:5:
+>     In file included from arch/riscv/include/asm/cacheflush.h:9:
+>     In file included from include/linux/mm.h:2228:
+>     include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+>       500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+>       501 |                            item];
+>           |                            ~~~~
+>     include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+>       507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+>       508 |                            NR_VM_NUMA_EVENT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~~
+>     include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+>       514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+>           |                               ~~~~~~~~~~~ ^ ~~~
+>     include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+>       519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+>       520 |                            NR_VM_NUMA_EVENT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~~
+>     include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+>       528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+>       529 |                            NR_VM_NUMA_EVENT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~~
+>>> drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2149:2: error: call to '__compiletime_assert_1044' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
+>      2149 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
+>           |         ^
+>     include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+>        50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+>           |         ^
+>     include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+>        39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+>           |                                     ^
+>     include/linux/compiler_types.h:510:2: note: expanded from macro 'compiletime_assert'
+>       510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>           |         ^
+>     include/linux/compiler_types.h:498:2: note: expanded from macro '_compiletime_assert'
+>       498 |         __compiletime_assert(condition, msg, prefix, suffix)
+>           |         ^
+>     include/linux/compiler_types.h:491:4: note: expanded from macro '__compiletime_assert'
+>       491 |                         prefix ## suffix();                             \
+>           |                         ^
+>     <scratch space>:38:1: note: expanded from here
+>        38 | __compiletime_assert_1044
+>           | ^
+>>> drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2148:2: error: call to '__compiletime_assert_1043' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_CCMP
+>      2148 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
+>           |         ^
+>     include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+>        50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+>           |         ^
+>     include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+>        39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+>           |                                     ^
+>     include/linux/compiler_types.h:510:2: note: expanded from macro 'compiletime_assert'
+>       510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>           |         ^
+>     include/linux/compiler_types.h:498:2: note: expanded from macro '_compiletime_assert'
+>       498 |         __compiletime_assert(condition, msg, prefix, suffix)
+>           |         ^
+>     include/linux/compiler_types.h:491:4: note: expanded from macro '__compiletime_assert'
+>       491 |                         prefix ## suffix();                             \
+>           |                         ^
+>     <scratch space>:34:1: note: expanded from here
+>        34 | __compiletime_assert_1043
+>           | ^
+>     5 warnings and 2 errors generated.
+> 
+> 
+> vim +2149 drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+> 
+>    2134	
+>    2135	static bool iwl_mvm_gtk_rekey(struct iwl_wowlan_status_data *status,
+>    2136				      struct ieee80211_vif *vif,
+>    2137				      struct iwl_mvm *mvm, u32 gtk_cipher)
+>    2138	{
+>    2139		int i, j;
+>    2140		struct ieee80211_key_conf *key;
+>    2141		DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen,
+>    2142			    WOWLAN_KEY_MAX_SIZE);
+>    2143		int link_id = vif->active_links ? __ffs(vif->active_links) : -1;
 
-> 
-> IMO, there are a couple of alternatives to handle such case:
-> 
-> 1. Keep the code as-is: if this ever happens, an error message will
->    be issued. If SEA/MCE gets implemented synchronously on HW/FW/OSPM,
->    the above code will never be called;
-> 2. Change the logic to do that only for asynchronous sources
->    (currently, only if source ID is QMP);
-> 3. Add a special QMP message to reset the notification ack. Probably
->    would use Notification type as an input parameter;
-> 4. Have a much more complex code to implement asynchronous notifications,
->    with a queue to receive HEST errors and a separate thread to deliver
->    errors to OSPM asynchronously. If we go this way, QMP would be
->    returning the number of error messages queued, allowing error injection
->    code to know if OSPM has troubles delivering errors;
 
-Is this not better done in the injection code outside of qemu?
-So detect the error in that and if it happens back off and try again
-later?  Basically EBUSY done in an inelegant way.
+Holy molly guaca-guaca... swapping the above two lines fixes the issue:
 
-> 5. Just return an error code without doing any resets. To me, this is 
->    the worse scenario.
-> 
-> I don't like (5), as if something bad happens, there's nothing to be
-> done.
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+index 581455ab5e6d..764580cf6c58 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+@@ -2138,9 +2138,8 @@ static bool iwl_mvm_gtk_rekey(struct iwl_wowlan_status_data *status,
+  {
+         int i, j;
+         struct ieee80211_key_conf *key;
+-       DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen,
+-                   WOWLAN_KEY_MAX_SIZE);
+         int link_id = vif->active_links ? __ffs(vif->active_links) : -1;
++       DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen, WOWLAN_KEY_MAX_SIZE);
 
-If it happens on a real system nothing is done either. So I'm not sure
-we need to handle that.  Or maybe real hardware reinjects the interrupt
-if the OSPM hasn't done anything about it for a while.
+         conf->cipher = gtk_cipher;
 
-> 
-> For QMP error injection (4) seems is overkill. It may be needed in the
-> future if we end implementing a logic where host OS informs guest about
-> hardware problems, and such errors use asynchronous notifications.
-> 
-> I would also avoid implementing (3) at least for now, as reporting
-> such error via QMP seems enough for the QMP usecase.
-> 
-> So, if ok for you, I'll change the code to (2).
 
-Whilst I don't feel strongly about it, I think 5 is unfortunately the
-correct option if we aren't going to queue errors in qemu (so make it
-an injection tool problem).
+This is the first time I've seen this compiler behavior when building DEFINE_FLEX() changes...
 
-> 
-> 
-> > > Agreed this write to 1 looks wrong, but the one a few lines further down (to zero
-> > > it) is correct.  
-> > 
-> > yep, hw should clear register.
-> > It would be better to so on OSPM ACK, but alas we can't intercept that,
-> > so the next option would be to do that at the time when we add a new error block
-> >   
-> > > 
-> > > My bug a long time back I think.
-> > > 
-> > > Jonathan
-> > >   
-> > > >     
-> > > > > 
-> > > > > IMO, this is needed, independently of the notification mechanism.
-> > > > > 
-> > > > > Regards,
-> > > > > Mauro
-> > > > >       
-> > > > 
-> > > >     
-> > >   
-> >   
-> 
-> 
-> 
-> Thanks,
-> Mauro
+--
+Gustavo
 
+>    2144	
+>    2145		conf->cipher = gtk_cipher;
+>    2146	
+>    2147		BUILD_BUG_ON(WLAN_KEY_LEN_CCMP != WLAN_KEY_LEN_GCMP);
+>> 2148		BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
+>> 2149		BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
+>    2150		BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_TKIP);
+>    2151		BUILD_BUG_ON(conf->keylen < sizeof(status->gtk[0].key));
+>    2152	
+>    2153		switch (gtk_cipher) {
+>    2154		case WLAN_CIPHER_SUITE_CCMP:
+>    2155		case WLAN_CIPHER_SUITE_GCMP:
+>    2156			conf->keylen = WLAN_KEY_LEN_CCMP;
+>    2157			break;
+>    2158		case WLAN_CIPHER_SUITE_GCMP_256:
+>    2159			conf->keylen = WLAN_KEY_LEN_GCMP_256;
+>    2160			break;
+>    2161		case WLAN_CIPHER_SUITE_TKIP:
+>    2162			conf->keylen = WLAN_KEY_LEN_TKIP;
+>    2163			break;
+>    2164		default:
+>    2165			WARN_ON(1);
+>    2166		}
+>    2167	
+>    2168		for (i = 0; i < ARRAY_SIZE(status->gtk); i++) {
+>    2169			if (!status->gtk[i].len)
+>    2170				continue;
+>    2171	
+>    2172			conf->keyidx = status->gtk[i].id;
+>    2173			IWL_DEBUG_WOWLAN(mvm,
+>    2174					 "Received from FW GTK cipher %d, key index %d\n",
+>    2175					 conf->cipher, conf->keyidx);
+>    2176			memcpy(conf->key, status->gtk[i].key,
+>    2177			       sizeof(status->gtk[i].key));
+>    2178	
+>    2179			key = ieee80211_gtk_rekey_add(vif, conf, link_id);
+>    2180			if (IS_ERR(key))
+>    2181				return false;
+>    2182	
+>    2183			for (j = 0; j < ARRAY_SIZE(status->gtk_seq); j++) {
+>    2184				if (!status->gtk_seq[j].valid ||
+>    2185				    status->gtk_seq[j].key_id != key->keyidx)
+>    2186					continue;
+>    2187				iwl_mvm_set_key_rx_seq_idx(key, status, j);
+>    2188				break;
+>    2189			}
+>    2190			WARN_ON(j == ARRAY_SIZE(status->gtk_seq));
+>    2191		}
+>    2192	
+>    2193		return true;
+>    2194	}
+>    2195	
+> 
 
