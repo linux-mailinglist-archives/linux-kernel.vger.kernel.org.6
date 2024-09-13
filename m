@@ -1,125 +1,164 @@
-Return-Path: <linux-kernel+bounces-328806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8832F97891F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:51:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8312978924
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A10283533
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:51:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C31F283175
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A811487DC;
-	Fri, 13 Sep 2024 19:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F931487C1;
+	Fri, 13 Sep 2024 19:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTWlhpV0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8cWxaab"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC3B13CAA5;
-	Fri, 13 Sep 2024 19:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AC0146D76;
+	Fri, 13 Sep 2024 19:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726257070; cv=none; b=aCsVV8XhqJJgnGvvfgSAyCSuQhbAOhx1lplD1VLr3vqPm0NdARU1jR6nWDKl/lrUaaqAL1zFR4NBbIU3XWBdUHi46qoDR92rAED8DUyQCB3e7vZQByWmCxk5cL64yqKBRgaL4/YTEfiymHCcZjIpiLEleSgf29KSLeX0dQKHRAM=
+	t=1726257098; cv=none; b=NbM4e8QWW9dBx2oFsy3R3wEaNBWHOCN7Y+UrQ9K6it0dDOCI4TBzw918nI4G3XMgJwXyLdXuo5oPgPeR41F70YzdiLjkArDiAR7G3NTARk3LOdHN93dyP0Fm+VRJVrdY8u1gi8liDfF9jUUSOG5mhZizdhpvOASG8iDgsx9szXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726257070; c=relaxed/simple;
-	bh=W2r+kS904i1eF8SnmU6ynsgUgAqTin0VQq7IlkO2umU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=gFPv8y6LNhpnoR3CV0dvlOSRjpJytDkYZwlMGW1eJKJt/HaBbfuleLRVeYDwceZ2GfuZtO/ARjECRnnZ/oHlqn44sjrpiQpgTiphEspM/B1j+hnlH8JRNlr007EXhCfNSzgLTwJLb4wn8MT3Mws6tG7PobbUTAuYPfy03zzxJjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTWlhpV0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6F91C4CEC0;
-	Fri, 13 Sep 2024 19:51:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726257069;
-	bh=W2r+kS904i1eF8SnmU6ynsgUgAqTin0VQq7IlkO2umU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=XTWlhpV0GW6n8Q0Y46b6EcDU34hs45fEGQJLJGqwssA0KF91mvCmAgMPv/ZVxDD/o
-	 21rNvfs4sFftS1IPadMy1LpstLfVsRXLICQJVZPs1H5KFZG6g91GoTTxvvGx15eWZU
-	 ZkVjwxnFu7e0lTE03QIRoA7vcvU10T4XUy4ZMIPsx/Dr14ym9syQfhEd68sXngddbK
-	 BzJxkzvkK87z4sctn3NVyD5+u6kRy5XD3dQ6xMAVVd0QAi55RpDKJ4JqURfCx90N7c
-	 afnIzGTgmrit/dzA46aPrZhLxCQnHWvGbpIUIP0mqe0SOiSqSLLbrW0D572JpmQq5l
-	 ut64rM77w5GYw==
+	s=arc-20240116; t=1726257098; c=relaxed/simple;
+	bh=4j4P8LD9JnCOCurh5UQmuPYLFoyTDeDzK7xfDStOvBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tajEeefMLzth4Y+SAJBHCzv9k4xUVDVZJpe8AyOqfGCQrDnJcY1776rhLF0hZRcr4w1Ft74C4R4uLJIbboVYp32OVwqMx0uLwhPRTBkd0YC0XhODlowvzMISA4L/D8vHLN0J0zCw8DHkIeTs/idYxZPF/LCczDktXJJ0ArsY8hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8cWxaab; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fee6435a34so23920715ad.0;
+        Fri, 13 Sep 2024 12:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726257096; x=1726861896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CB8jZGjPjnOyT8KVsrlJmg/A4Cpb/kxqtggkRJsoV9U=;
+        b=P8cWxaaba+GePvNW24yb5FKQRZaui614zc4x4t10BVOrZubGOo4AcEo3ce+OxKLUIz
+         /0Wj7Hr6p8alIB2zA6Ae986+HwZLAiUsyJ/3E/DfJaFk6+Ju52e8S7zefN5HgGzM489A
+         MLTvZbH7QtD0ng5AkbCqCq+FKq4huPTPW12zB58uP2W9KwQVEGZXTI5gCf4I74n3vxQM
+         5lQy4ewJ3ukl/HwXpimPK3Kan+tibksbl3IXyotR3K7GDkIHks9CIfI5SuyqSgSsgaNj
+         cY7MEMWkdeNR3Y1DMnJM/w57ZgY7kcE1YtggHW/PbEKoziLGXuJg9vN8BEOM0bzfBtPp
+         aUBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726257096; x=1726861896;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CB8jZGjPjnOyT8KVsrlJmg/A4Cpb/kxqtggkRJsoV9U=;
+        b=aW3Xcmg3KhgokMZ7k0PBFV/K0ksO/OW1Bc0xm+u3stwqseBVv5DJh+Hnz8l6jlanOc
+         wm/N4e41yHKKeyvTsUKd2xh+aB/iZVTknW51hsYEQmQ/b5Q1u1lbDH/60TEU/I3hCuVt
+         zFGt1Wlc0HE2NvMocwslcYRK4wREj+bFmB0BDOlmajDmrOTBVNrX4IGC2+5nJroltA5g
+         O2DPQHIdwMlYTNspL/Rn3I0MdO+l7imPNPDVCo7Au/x1NMou8SmXTu2msaNvmiW7RGi9
+         8GGTxK15r51E0u1DHis/so7eZr6x8kLIvL+PJrFW6Eug6/hkulXn78h8y33KNPlQ8eOX
+         oXgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnczX9E3xc21NGPZEakN8NNSy1MWnu4OFooop2WMk79k3mfbvL0EtouKZGkZfWNTHU3KgCz0XKvhzaM18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVFmco3eT8SiwhBA6Arut4iFujnPZDpG1BkCpI4CrGUtTKQ2Sn
+	W8+zdPbojD9kKn4JpRajqGwuebeGe8EO+lKCOj/tiZl5Hf2bY4JJ
+X-Google-Smtp-Source: AGHT+IF2m8yqpRXDRCpHC9T48pLfZDaKaeeZwKrb5xVVqT8J3uKIrDGq4EO2eV7HtkaI2gEwjhuChA==
+X-Received: by 2002:a17:902:f693:b0:205:68a4:b2d8 with SMTP id d9443c01a7336-2076e3155e9mr125176375ad.11.1726257096201;
+        Fri, 13 Sep 2024 12:51:36 -0700 (PDT)
+Received: from localhost ([2a00:79e1:2e00:1301:12e9:d196:a1e9:ab67])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945daa86sm169925ad.61.2024.09.13.12.51.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 12:51:35 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Akhil P Oommen <quic_akhilpo@quicinc.com>,
+	Connor Abbott <cwabbott0@gmail.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm/a6xx+: Insert a fence wait before SMMU table update
+Date: Fri, 13 Sep 2024 12:51:31 -0700
+Message-ID: <20240913195132.8282-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 13 Sep 2024 22:51:04 +0300
-Message-Id: <D45F23O3EX54.1NDMXAY5G7AL3@kernel.org>
-Cc: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
- find_asymmetric_key()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Sergey Shtylyov" <s.shtylyov@omp.ru>, "Roman Smirnov"
- <r.smirnov@omp.ru>, "David Howells" <dhowells@redhat.com>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
- "Andrew Zaborowski" <andrew.zaborowski@intel.com>
-X-Mailer: aerc 0.17.0
-References: <20240910111806.65945-1-r.smirnov@omp.ru>
- <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
- <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
- <D43HG3PEBR4I.2INNPVZIT19ZZ@kernel.org>
- <D43HH3XOAXFO.2MX7FA48VOLE9@kernel.org>
- <85607ea7-a42a-1c7b-0722-e4b63a814385@omp.ru>
-In-Reply-To: <85607ea7-a42a-1c7b-0722-e4b63a814385@omp.ru>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Sep 11, 2024 at 5:45 PM EEST, Sergey Shtylyov wrote:
-> On 9/11/24 4:19 PM, Jarkko Sakkinen wrote:
->
-> [...]
->
-> >>>>> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} par=
-ameters
-> >>>>> the kernel will first emit WARN and then have an oops because id_2 =
-gets
-> >>>>> dereferenced anyway.
-> >>>>>
-> >>>>> Found by Linux Verification Center (linuxtesting.org) with Svace st=
-atic
-> >>>>> analysis tool.
-> >>>>
-> >>>> Weird, I recall that I've either sent a patch to address the same si=
-te
-> >>>> OR have commented a patch with similar reasoning. Well, it does not
-> >>>> matter, I think it this makes sense to me.
-> >>>>
-> >>>> You could further add to the motivation that given the panic_on_warn
-> >>>> kernel command-line parameter, it is for the best limit the scope an=
-d
-> >>>> use of the WARN-macro.
-> >>>
-> >>>    I don't understand what you mean -- this version of the patch keep=
-s
-> >>> the WARN_ON() call, it just moves that call, so that the duplicate id=
-_{0,1,2}
-> >>> checks are avoided...
-> >>
-> >> I overlooked the code change (my bad sorry). Here's a better version o=
-f
-> >> the first paragraph:
-> >>
-> >> "find_asymmetric_keys() has nullity checks of id_0 and id_1 but ignore=
-s
-> >> validation for id_2. Check nullity also for id_2."
-> >>
-> >> Yep, and it changes no situation with WARN_ON() macro for better or
-> >> worse. It would logically separate issue to discuss and address so
-> >> as far as I'm concerned, with this clarification I think the change
-> >> makes sense to me.
-> >=20
-> > Actually explicitly stating that call paths leading to WARN_ON()
-> > invocation are intact by the commit (as a reminder for future).
->
->    OK...
->    Do you still think the Fixes tag should be dropped (and thus the
-> Reported-by tag would become unnecessary?)?
+From: Rob Clark <robdclark@chromium.org>
 
-I think we can keep them.
+The CP_SMMU_TABLE_UPDATE _should_ be waiting for idle, but on some
+devices (x1-85, possibly others), it seems to pass that barrier while
+there are still things in the event completion FIFO waiting to be
+written back to memory.
 
-BR, Jarkko
+Work around that by adding a fence wait before context switch.  The
+CP_EVENT_WRITE that writes the fence is the last write from a submit,
+so seeing this value hit memory is a reliable indication that it is
+safe to proceed with the context switch.
+
+Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/63
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index bcaec86ac67a..ba5b35502e6d 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -101,9 +101,10 @@ static void get_stats_counter(struct msm_ringbuffer *ring, u32 counter,
+ }
+ 
+ static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_gpu,
+-		struct msm_ringbuffer *ring, struct msm_file_private *ctx)
++		struct msm_ringbuffer *ring, struct msm_gem_submit *submit)
+ {
+ 	bool sysprof = refcount_read(&a6xx_gpu->base.base.sysprof_active) > 1;
++	struct msm_file_private *ctx = submit->queue->ctx;
+ 	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+ 	phys_addr_t ttbr;
+ 	u32 asid;
+@@ -115,6 +116,13 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_gpu,
+ 	if (msm_iommu_pagetable_params(ctx->aspace->mmu, &ttbr, &asid))
+ 		return;
+ 
++	/* Wait for previous submit to complete before continuing: */
++	OUT_PKT7(ring, CP_WAIT_TIMESTAMP, 4);
++	OUT_RING(ring, 0);
++	OUT_RING(ring, lower_32_bits(rbmemptr(ring, fence)));
++	OUT_RING(ring, upper_32_bits(rbmemptr(ring, fence)));
++	OUT_RING(ring, submit->seqno - 1);
++
+ 	if (!sysprof) {
+ 		if (!adreno_is_a7xx(adreno_gpu)) {
+ 			/* Turn off protected mode to write to special registers */
+@@ -193,7 +201,7 @@ static void a6xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+ 	struct msm_ringbuffer *ring = submit->ring;
+ 	unsigned int i, ibs = 0;
+ 
+-	a6xx_set_pagetable(a6xx_gpu, ring, submit->queue->ctx);
++	a6xx_set_pagetable(a6xx_gpu, ring, submit);
+ 
+ 	get_stats_counter(ring, REG_A6XX_RBBM_PERFCTR_CP(0),
+ 		rbmemptr_stats(ring, index, cpcycles_start));
+@@ -283,7 +291,7 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+ 	OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
+ 	OUT_RING(ring, CP_THREAD_CONTROL_0_SYNC_THREADS | CP_SET_THREAD_BR);
+ 
+-	a6xx_set_pagetable(a6xx_gpu, ring, submit->queue->ctx);
++	a6xx_set_pagetable(a6xx_gpu, ring, submit);
+ 
+ 	get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
+ 		rbmemptr_stats(ring, index, cpcycles_start));
+-- 
+2.46.0
+
 
