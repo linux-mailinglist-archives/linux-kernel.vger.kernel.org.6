@@ -1,135 +1,221 @@
-Return-Path: <linux-kernel+bounces-328657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58AAC9786FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:39:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B54978704
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79EE328AAE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:39:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7BCE1C242C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC5B84DF1;
-	Fri, 13 Sep 2024 17:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B782D84DE0;
+	Fri, 13 Sep 2024 17:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2k6XDHLI"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uWg4c/mr"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D1F1C2BF
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3819584A5C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726249161; cv=none; b=O4HLK5p55bT2PHVMBQQ9hZP9mrS4UVz7KALlt0CYk1tBgDt9KgUzLNBDNNr1FJB1cTpZEI/w/dBlycn0SVDt+IF4rv14xD3A0nmzwaBJaJ4ay9Oztog4BNMEcH2nL3feElAt5JxvyAcOAwH5FelK8uZcPvZmzRyPzEzzkKjFJkM=
+	t=1726249236; cv=none; b=c7lKzcF5ilS27Zo4AgolCBnpAjTbHaW84VD2UVKgyTS/p0AOBW7rEIKlmJXka6rM8dm9bOnPUWlsNk54Xik7qyljOIu69c88Xm1k7XaKj68HVyVzXCQUv1D0FgAdDrxfiQYzPfvcrLuLypLwtM5t9MoaoRArHgrtbCCpqmsXBzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726249161; c=relaxed/simple;
-	bh=evRLds+DdPC5pyCASAV4XWXLDt2x6Uv90fA6yJV1gPw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bFr9EYKytfTC/qFywUCC4fzf+b3omRCh0+FPm1+yGP/iDacS8NgcJRHniMZUDAVTLfPCg5CZnGU1EBr7jFiP7ts36/Ijt+kA+idxGtFq+YCW8hRaqf1h00pBE8tqs9Ni58ZllDdxmwwOnM6G3jVFQlbmTo83vxnG3CbFdW6lWrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2k6XDHLI; arc=none smtp.client-ip=209.85.210.201
+	s=arc-20240116; t=1726249236; c=relaxed/simple;
+	bh=/2Ohq0NMyGeL3WSa8dFttARPWMpEABhBJB3xllDYmYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=En0J7+6vKmn0DHtgTDmVQOFs3jCXR0idMIYx8Jk59ZnYRs8iE+pCnZklvmKCFurwGUGKT4ylmtyf1KzxgQiJLLBgtqbyec8iiia8xyyElB3Hyki6Zz/AbLxSJmIRfFU5IHEjQ7hgwcruIEjmMQtGZKSA8inCJJXiuRTJfIewwXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uWg4c/mr; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71923d87da2so2792172b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:39:19 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so15797675e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:40:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726249159; x=1726853959; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ba0FHqDBHCbI118uGJsUV1vp4JaUj/8z5TMh6FauZPc=;
-        b=2k6XDHLIVcPN8BOxgyOtF2UfAJo03uolhQy9j0IZAB7Pcg8FbRVh+q8Z9wOICHKm4q
-         77N2eBC4sNOVzcVv5HKsidPJnj941dGxl9z8iV7HKdbQQeM2gVZD2eAI8kRuRHhAHMSD
-         TqsD94y7rftZv+h/jgf1Xh//Cs/fF8+n2kqYWoQAvNA3CLvFSb6KewuRMfAwIBB3Z6Tt
-         53bsa/ycG42OiYggXfnIsslJJyUZFOSjTBlY1xbsFkoGZju2oFpf0Z9li6TjpK6+PyuI
-         SLZ2e9oZMxm+cAesYZtsOB9Tw5Ji5vbAJUaAF1+x6xd/7bL7aRhA29wuyAk2L5dJisu3
-         G5nQ==
+        d=google.com; s=20230601; t=1726249232; x=1726854032; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MV//vMadBXNAeDxNpKJbhQVJOpXHshAUgJME6e2RQz4=;
+        b=uWg4c/mrdQGGEJV4zdU/Sh6BsBt2SVNNzJ/p2MtZBhkzpxOxYx2jnISEUqeJ+zCCAR
+         l3Mf5llS8X67cVkQ4XHioBf+sm2UNMbd9E5qtEe7DmEmFcSmHsC9WBgI/2n/naP7pbLG
+         0rZjD2PcR+ik751TNzICpNuqXQNnahE4XXdrlHoI365/bewwW1KVI5gliy63s3NfbRpf
+         J0IkaZAFSXuua6mMYs2X+NZJHSqgyOQ3zCEqxpnUri3PtBnhbuas6jGTSa/lOPwY2I7F
+         gxdqRhmTnCqHQtuKme5E3QOfjqumeDi03DnuMNn31Vk9TOYw1GIaGOSu8QTSJD3Cndo7
+         /OEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726249159; x=1726853959;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ba0FHqDBHCbI118uGJsUV1vp4JaUj/8z5TMh6FauZPc=;
-        b=giRE5Kjfu4hDyS6NQpBFm5tKpr1XY1Zp3Ts00zQ9aeJCUbMlvYFXZuyIbzafsa/++f
-         D+3uPvAUc4IT0l7AaFtPjmS882OEUpIQ5/Biybxt1BbADywZJCyvYc6hTasYNOoyW8e/
-         on6HroKjoKqC8vElfM32dAEYHDaBikd+xNwD9+m/OeURsJ+dxjBGMJdkc+VFIfINwcJ9
-         ZxyRwcPYv7bj9P0V+0qULz0xjBXNPA125PKQ8KcYOCP6Vccyqy6+Gt5YlLmKbzgQLDrq
-         4GREj9CfjSFq5c5eStXh1rY7j7SDFCWg97g6kmsn7t/F14ThpmNNKP5HN1VMJ4HxBGd8
-         0G0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVvPfrjom5xboSQSB5OYAKRde00pe6eGrlDYlsPjzyE75SckSKzH214XjyakLK9cqk4CQypt5x3nBjYK1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5uohK7nD4OplygLXpKtAFmNxnEFrjil2wVaxLt0TgZwsE7piH
-	ZiiV0C21f5YLjT/bC41KD6CumecdIyo3Eiy2aChfXNVngTa9S+B9vIR7FAylx71zmYZIyJ4sJ6S
-	Hxw==
-X-Google-Smtp-Source: AGHT+IFIw5bwLE9Jkesd/6So5FmVUUhFVWaY5epVthqEhVMkYSprKp3lhtrI3TJV+i3Bx+4kH28A8vyKt68=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:6f09:b0:718:dfec:9570 with SMTP id
- d2e1a72fcca58-719263748bbmr14398b3a.6.1726249159126; Fri, 13 Sep 2024
- 10:39:19 -0700 (PDT)
-Date: Fri, 13 Sep 2024 10:39:17 -0700
-In-Reply-To: <74fe44da-b99e-4fe6-b07c-43a146184e7c@intel.com>
+        d=1e100.net; s=20230601; t=1726249232; x=1726854032;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MV//vMadBXNAeDxNpKJbhQVJOpXHshAUgJME6e2RQz4=;
+        b=WQwffD0sX2jQ75ayWQ4j/QnqncJ26LeeJCfpzbw1W+Z64L6KgqQybDaD/hxMRC/SOf
+         JY7i3v55a9MZ7iByXz9TBywCrh+17si/oDDtPz86qOo8jrpMZyNN6WHuyKtC+I+OF/2/
+         UA+kcYCWwesoS+C98ITxsCBxZHFuspCscgltnCljaXSdKbrMC5Hwa6LhkyWd+mFxdmhj
+         kd1E+uANfvHJmgnhcKqpuhoW4OY3PKSqLO6tUSCNlU2ojjOZ/xw25AkLNTtA3isBu9AI
+         s4VF3RIR7Ykn7ort1CXjH68AnJ5Xds6P1YEXU3tk0ez8VuvsvC1i4Ab4v9Mn0s0kHzgq
+         V6tw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3IpUvXnnuaejI5gCdbWgQBC8QG7HE0MANT1HIJ/gm4QT2e2OklbhatOLJXeBoO0LjjR+95k4u5B4RqK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhClMprDLagX0GBtBMaxoceuyAjw3SBQjKJ8fI7YgUH87clt7K
+	zptwFG4G9mGrp8sv0/WPUB/40TtBy9TG7jXCBxmgs725kHqq4uydQFgdcyMliG27D0XSReviJZI
+	mWwdp7ZBy3eNvSfIvChBPVq2XC3tI1ZkTJwzzi+X3XnoAFXmRYPgh
+X-Google-Smtp-Source: AGHT+IFIyujRzAe4WlemD4EfCBpbqNG9oq0567HHDveKlpdCWunt+0ofHO0jr8IHidqrsP7gfOEuMszgh2JULwWn3vs=
+X-Received: by 2002:a5d:550d:0:b0:374:c69b:5a24 with SMTP id
+ ffacd0b85a97d-378d6243ba0mr3009632f8f.51.1726249231412; Fri, 13 Sep 2024
+ 10:40:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <6c158a14-ba01-4146-9c6c-8e4c035dd055@intel.com>
- <ZttwkLP74TrQgVtL@google.com> <d3895e03-bdfc-4f2a-a1c4-b2c95a098fb5@intel.com>
- <ZuHC-G575S4A-S_m@google.com> <h5gp6dgcfazm2yk3lorwqms24c2y2z4saqyed6bnzkk2zhq5g2@rf3lj2a22omd>
- <039bc47c-9b5d-41f3-87da-4500731ad347@intel.com> <2v2egjmdpb2fzjriqc2ylvqns3heo5bpirtqm7cn32h3zsuwry@y5ejrbyniwxq>
- <c0d9ff5f-85d5-4df0-94a8-82e3bf6fe21f@intel.com> <ZuRoE6P3DxxK_3C9@google.com>
- <74fe44da-b99e-4fe6-b07c-43a146184e7c@intel.com>
-Message-ID: <ZuR4xUoJRX7gWX1r@google.com>
-Subject: Re: [PATCH v6 0/6] x86/tdx: Allow MMIO instructions from userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Alexey Gladkov <legion@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, 
-	Kai Huang <kai.huang@intel.com>, Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, 
-	cho@microsoft.com, decui@microsoft.com, John.Starks@microsoft.com, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <CAJD7tkaTcnuCFW+dWTzSAuLKBqkkGv9s5uByYm9DaJC=Cp-Xqg@mail.gmail.com>
+ <2272920.vFx2qVVIhK@electra>
+In-Reply-To: <2272920.vFx2qVVIhK@electra>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 13 Sep 2024 10:39:55 -0700
+Message-ID: <CAJD7tkaPjJWr28CzGoTK3e-4e4eP2gLSojaEH3U9X9E0KgBs8g@mail.gmail.com>
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+To: =?UTF-8?B?VG9tw6HFoSBUcm5rYQ==?= <trnka@scm.com>
+Cc: hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	nphamcs@gmail.com, pedro.falcato@gmail.com, piotr.oniszczuk@gmail.com, 
+	regressions@lists.linux.dev, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024, Dave Hansen wrote:
-> On 9/13/24 09:28, Sean Christopherson wrote:
-> >> because folks would update their kernel and old userspace would break.
-> >>
-> >> Or maybe we start enforcing things at >=SEV-SNP and TDX and just say
-> >> that security model has changed too much to allow the old userspace.
-> > Heh, that's an outright lie though.  Nothing relevant has changed between SEV-ES
-> > and SEV-SNP that makes old userspace any less secure, or makes it harder for the
-> > kernel to support decoding instructions on SNP vs. ES.
-> 
-> The trust model does change, though.
-> 
-> The VMM is still in the guest TCB for SEV-ES because there are *so* many
-> ways to leverage NPT to compromise a VM.  Yeah, the data isn't in plain
-> view of the VMM, but that doesn't mean the VMM is out of the TCB.
-> 
-> With SEV-ES, old crusty userspace is doing MMIO to a VMM in the TCB.
-> 
-> With SEV-SNP, old crusty userspace is talking to an untrusted VMM.
-> 
-> I think that's how the security model changes.
+On Fri, Sep 13, 2024 at 2:03=E2=80=AFAM Tom=C3=A1=C5=A1 Trnka <trnka@scm.co=
+m> wrote:
+>
+> > Well, it's possible that some zswap change was not fully compatible
+> > with z3fold, or surfaced a dormant bug in z3fold. Either way, my
+> > recommendation is to use zsmalloc. I have been trying to deprecate
+> > z3fold, and honestly you are the only person I have seen use z3fold in
+> > a while -- which is probably why no one else reported such a problem.
+>
+> FWIW, I have repeatedly hit this exact BUG (mm/zswap.c:1005) on two of my
+> machines on 6.10.x (possibly 6.9.x as well, but I don't have the logs at =
+hand
+> to confirm). In both cases, this was also using z3fold under moderate mem=
+ory
+> pressure. I think this fairly conclusively rules out a HW issue.
+>
+> Additionally, I have hit the following BUG on 6.10.8, which is potentiall=
+y
+> related (note __z3fold_alloc in there):
+>
+> list_del corruption, ffff977c17128000->next is NULL
+> ------------[ cut here ]------------
+> kernel BUG at lib/list_debug.c:52!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 3 PID: 248608 Comm: kworker/u32:3 Tainted: G        W
+> 6.10.8-100.fc39.x86_64 #1
+> Hardware name: HP HP EliteBook 850 G6/8549, BIOS R70 Ver. 01.28.00 04/12/=
+2024
+> Workqueue: zswap12 compact_page_work
+> RIP: 0010:__list_del_entry_valid_or_report+0x5d/0xc0
+> Code: 48 8b 01 48 39 f8 75 5a 48 8b 72 08 48 39 f0 75 65 b8 01 00 00 00 c=
+3 cc
+> cc cc cc 48 89 fe 48 c7 c7 f0 89 ba ad e8 73 34 8f ff <0f> 0b 48 89 fe 48=
+ c7
+> c7 20 8a ba ad e8 62 34 8f ff 0f 0b 48 89 fe
+> RSP: 0018:ffffac7299f5bdb0 EFLAGS: 00010246
+> RAX: 0000000000000033 RBX: ffff977c0afd0b08 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffff977f2d5a18c0 RDI: ffff977f2d5a18c0
+> RBP: ffff977c0afd0b00 R08: 0000000000000000 R09: 4e20736920747865
+> R10: 7478656e3e2d3030 R11: 4c4c554e20736920 R12: ffff977c17128010
+> R13: 000000000000000a R14: 00000000000000a0 R15: ffff977c17128000
+> FS:  0000000000000000(0000) GS:ffff977f2d580000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f063638a000 CR3: 0000000179428002 CR4: 00000000003706f0
+> Call Trace:
+>  <TASK>
+>  ? die+0x36/0x90
+>  ? do_trap+0xdd/0x100
+>  ? __list_del_entry_valid_or_report+0x5d/0xc0
+>  ? do_error_trap+0x6a/0x90
+>  ? __list_del_entry_valid_or_report+0x5d/0xc0
+>  ? exc_invalid_op+0x50/0x70
+>  ? __list_del_entry_valid_or_report+0x5d/0xc0
+>  ? asm_exc_invalid_op+0x1a/0x20
+>  ? __list_del_entry_valid_or_report+0x5d/0xc0
+>  __z3fold_alloc+0x4e/0x4b0
+>  do_compact_page+0x20e/0xa60
+>  process_one_work+0x17b/0x390
+>  worker_thread+0x265/0x380
+>  ? __pfx_worker_thread+0x10/0x10
+>  kthread+0xcf/0x100
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork+0x31/0x50
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork_asm+0x1a/0x30
+>  </TASK>
+> Modules linked in: nf_conntrack_netbios_ns nf_conntrack_broadcast lp parp=
+ort
+> ti_usb_3410_5052 hid_logitech_hidpp snd_usb_audio snd_usbmidi_lib snd_ump
+> snd_rawmidi hid_logitech_dj r8153_ecm cdc_ether usbnet r8152 mii ib_core
+> dimlib tls >
+>  snd_hda_codec_realtek snd_hda_codec_generic snd_hda_scodec_component
+> snd_soc_dmic snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_in=
+tel
+> soundwire_cadence snd_sof_intel_hda_common snd_sof_intel_hda_mlink
+> snd_sof_intel_hda snd>
+>  processor_thermal_device_pci_legacy intel_cstate hp_wmi
+> processor_thermal_device snd_timer sparse_keymap processor_thermal_wt_hin=
+t
+> intel_uncore intel_wmi_thunderbolt thunderbolt wmi_bmof cfg80211 snd
+> processor_thermal_rfim i2c_i801 sp>
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:__list_del_entry_valid_or_report+0x5d/0xc0
+> Code: 48 8b 01 48 39 f8 75 5a 48 8b 72 08 48 39 f0 75 65 b8 01 00 00 00 c=
+3 cc
+> cc cc cc 48 89 fe 48 c7 c7 f0 89 ba ad e8 73 34 8f ff <0f> 0b 48 89 fe 48=
+ c7
+> c7 20 8a ba ad e8 62 34 8f ff 0f 0b 48 89 fe
+> RSP: 0018:ffffac7299f5bdb0 EFLAGS: 00010246
+> RAX: 0000000000000033 RBX: ffff977c0afd0b08 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffff977f2d5a18c0 RDI: ffff977f2d5a18c0
+> RBP: ffff977c0afd0b00 R08: 0000000000000000 R09: 4e20736920747865
+> R10: 7478656e3e2d3030 R11: 4c4c554e20736920 R12: ffff977c17128010
+> R13: 000000000000000a R14: 00000000000000a0 R15: ffff977c17128000
+> FS:  0000000000000000(0000) GS:ffff977f2d580000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f063638a000 CR3: 0000000179428002 CR4: 00000000003706f0
+> note: kworker/u32:3[248608] exited with preempt_count 3
+>
+> > > Is there any possibility/way to avoid bisecting? (due limited time fr=
+om my
+> > > side)>
+> > So unless you have a reason to specifically use z3fold or avoid
+> > zsmalloc, please use zsmalloc. It should be better for you anyway. I
+> > doubt that you (or anyone) wants to spend time debugging a z3fold
+> > problem :)
+>
+> I could conceivably try to bisect this, but since I don't have a quick
+> reproducer, it would likely take weeks to finish. I'm wondering whether i=
+t's
+> worth trying or if z3fold is going out of the door anyway. I don't think =
+it's
+> hardware-related so it should be possible to test this in a VM, but that =
+still
+> takes some effort to set up.
 
-I agree to some extent, but as below, this really only holds true if we're talking
-about old crusty userspace.  And even then, it's weird to draw the line at the
-emulated MMIO boundary, because if crusty old userspace is a security risk, then
-the kernel arguably shouldn't have mapped the MMIO address into that userspace in
-the first place.
+z3fold is going out of the door anyway, I already sent a patch to deprecate=
+ it:
+https://lore.kernel.org/lkml/20240904233343.933462-1-yosryahmed@google.com/
 
-> > I also don't know that this is for old userspace.  AFAIK, the most common case
-> > for userspace triggering emulated MMIO is when a device is passed to userspace
-> > via VFIO/IOMMUFD, e.g. a la DPDK.
-> 
-> Ahh, that would make sense.
-> 
-> It would be nice to hear from those folks _somewhere_ about what their
-> restrictions are and if they'd ever be able to enforce a subset of the
-> ISA for MMIO or even (for example) make system calls to do MMIO.
-> 
-> Does it matter to them if all of a sudden the NIC or the NVMe device on
-> the other side of VFIO is malicious?
+I will send a new version after the merge window, and I will include
+your bug report in the list of problems in the commit log :) Thanks
+for the report, please don't waste time debugging this and use
+zsmalloc!
+
+>
+> Best regards,
+>
+> Tom=C3=A1=C5=A1 Trnka
+>
+>
 
