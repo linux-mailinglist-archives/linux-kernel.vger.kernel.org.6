@@ -1,209 +1,276 @@
-Return-Path: <linux-kernel+bounces-328757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B5B97885D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:01:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB822978866
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7200E289211
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:01:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242481C208DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF9714658F;
-	Fri, 13 Sep 2024 19:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CD613AA26;
+	Fri, 13 Sep 2024 19:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjJ7Trer"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="O+H3CUKB"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7D54A2C;
-	Fri, 13 Sep 2024 19:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD1712CDA5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726254080; cv=none; b=Ckn+fFSd4DnYzR7aTS9a6OuQapmoAEXF8qTk9xFoMIYDYsoSwBcteXA2GBg2WM5LKsT/dehTmHFRAe3c2f56UrWObIC30QCVd0JVqsQwADeCfJEfvFAzMkhDj+91MSsEsAD3hPKkBRyiN/LBW5nScPqbK31XcfEY7mks3npQgr4=
+	t=1726254174; cv=none; b=S2LuLMj3+BkSKtA7MNEg+2B7VggWwa3PKwDQehAcuwkp2b8l/1sCctqR9rkZ7mNo4PVV4OuiML1rh2VS/BIf6MXV1KYWioQHRokmuDY2gmNDbPwAQTyVHAEKBZD/4R2lJE+kf0ZE/7f3GJNU0IWzuRmLPKtegd8cXg4xFzArSek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726254080; c=relaxed/simple;
-	bh=2i1ZG4ljUzAmz9IKHnQ6+AZ/x+IQqBP/mEBwZRNLuMo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KNZGmtx134u8dhqUBt792UVQ4TMJBJUf41Uqrx4JfBOj2n+eQyUs5TyF5uRwK9oKZY8o1j1VXfF1yBZr9G7FwZQ3XoKAPNhf/ur2wjZUBl390okrNwOEJk4RYy20lqAKa7bR/FJZMVOwm4/DPA4vCX5bfpNFLU00gtbFtablvFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjJ7Trer; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EC51C4CEC7;
-	Fri, 13 Sep 2024 19:01:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726254080;
-	bh=2i1ZG4ljUzAmz9IKHnQ6+AZ/x+IQqBP/mEBwZRNLuMo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JjJ7TrerA16lQxN0X1DF3z7Qk4a5O8Yp7ifogVlTVLG/g1c+80czzcM+iW1k4RXyj
-	 JTii8WPw1xcKmPXO5BO7yvB89j2PWsSwUsHG7DkvYMkYa/6mLHpHdABiNicGxCIEe9
-	 loPLsR1ELkQrUUlT8abZiBOD8MHJVuhBD9IFum97gb9RDX64xj3SwiJhPrL3A6ux32
-	 9GMF6eg2TiIWBOtZ3BGTXbb2mMlcLHNUwB2CScuu1sQFI/ng4n8FRpqLS4rulkWpE7
-	 jIKOM29ujaA/xj49W9H/+IOoSf8tcnkUE6WS4iTt1j9y/fCiuiuZL5+zaDK8r1Mlaq
-	 v7QkuIrG+SxIQ==
-Message-ID: <4e4b1096b322f2998b5e59a861c5fdad410c108a.camel@kernel.org>
-Subject: Re: [PATCH v2] timekeeping: move multigrain timestamp floor
- handling into timekeeper
-From: Jeff Layton <jlayton@kernel.org>
-To: John Stultz <jstultz@google.com>
-Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner
-	 <brauner@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd
-	 <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>, Vadim Fedorenko
-	 <vadim.fedorenko@linux.dev>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-Date: Fri, 13 Sep 2024 15:01:18 -0400
-In-Reply-To: <CANDhNCpBpBFrwu85oozKNW0N9_FzYXdpDbmX9sOnT_2oCGDeFw@mail.gmail.com>
-References: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org>
-	 <20240913112602.xrfdn7hinz32bhso@quack3>
-	 <bfc8fc016aa16a757f264010fdb8e525513379ce.camel@kernel.org>
-	 <CANDhNCpBpBFrwu85oozKNW0N9_FzYXdpDbmX9sOnT_2oCGDeFw@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1726254174; c=relaxed/simple;
+	bh=hzf9eTYQm5HBPInuHGmxUJ8hYh5awgKWO6NeIjhpAxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HtTHfn76GDuiGUIlkJ0OlPsV9k5ZPF4gpmbv0tVRCYU0WKN4pz5oPU6o9ErbXXmX+Oj8LLM68swP+vHUxXGvQrMPQTy+QRdmlUrg4wTM7LnORtBYz+U3IrVdQATRXGZOw4G0ZeObyrkcyUo+0pFc0PoMr+fDSmKO47UX/vB4xV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=O+H3CUKB; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f74e468aa8so28241361fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kali.org; s=google; t=1726254170; x=1726858970; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aFMQpW/5xpKH62jSxPCKZoeksH9vz3ccBemfSscBQOM=;
+        b=O+H3CUKB4D0skb6Ux77/1PKCMfVMve3XDdkTgZWUrsKh09DlTgJSEZp+N/NmMlpPh7
+         FFLvGnqiC3ZMG8vdTtbkSgtvRVjv7+yjUb8G0XNy3SqRLcz8TukjHS8a6SlpsQNI9d0M
+         JztnKohoG6QrTsZDLLzlABKTzakVi+arIcswbdDPTpYdBEc1r3UfltKofyduucEfFcbF
+         J/VrAmI/r2wikboLlbDjl7eZtvZ8oDwOq00ilFOMuXGl/SwlL4qlHiaW6lcDbLyeRH6/
+         ZDQTnNC73mfdEbmBsRvYNRgYM1X02yxJvKpDl0xlRkHBYaT1hRarmNzCDXrYNfxXg4aF
+         ElOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726254170; x=1726858970;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aFMQpW/5xpKH62jSxPCKZoeksH9vz3ccBemfSscBQOM=;
+        b=uhM+Jd7iaNOlDaZFR8HqhrEO9CH99vsIp65UDJeopzO2M/6XI6UFoKFJi3NcX7TALA
+         8IKkNNp430EQ8fHLZ+vRYXiHEeYiEt1OrxtuEz8Aj7ljb5VK4wWowyooRzla2CmfbJT6
+         UxMjkQbQuN/TO2nmwBZVsX5K9T4LxLN4s/OZrmttEphddl6/Wy6ItqE1/KHGa5FQ/LBR
+         EtfFLLVt5SFOXkr2T/zjlZAHosVmNT5PYNCzho5dRxdqIjvg1Pie6g5OWd+HJVIpLrNS
+         /7zIMAqaU8syog1Z+6epaIgazPZgmukdbXz+cd5fTaD5GHR9/Fq7ksGsjHFBm0jZDpoF
+         HM9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+arGjHHAk6EF5NRIQAVA2KsUXnlc/XfPBKEQquHoJFfrT93kN/G6XuJXQMG0BbcdA32IEjtPCWIdUhl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfpB2lvMdQTnicfKsoPAljbki+Og5QvcOA8kSF5uDS4Th/7HSw
+	stmT3U17/OcG2s04r/O2YNY0y+usJT0Bs1NeaeZ6L+Qy8Fa9vjkIJLqTLA0PO2HujMeSBpst6TQ
+	zyNiRkYYmsr4NQHcjdP5rhvwMJBNQ0rz0u8VlBw==
+X-Google-Smtp-Source: AGHT+IG04MtFkoqeSZ+ZwHbb/afYODEkr16FWXAk4qdDs5nfmXBBJ7oS+aKXnVw26IQAdUNCPeHcTtPlTkeDl/uvGDw=
+X-Received: by 2002:a05:651c:b2b:b0:2f1:563d:ec8a with SMTP id
+ 38308e7fff4ca-2f787f4a407mr40618911fa.41.1726254169824; Fri, 13 Sep 2024
+ 12:02:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-16-2d2efd5c5877@gmail.com>
+In-Reply-To: <20240913-starqltechn_integration_upstream-v4-16-2d2efd5c5877@gmail.com>
+From: Steev Klimaszewski <steev@kali.org>
+Date: Fri, 13 Sep 2024 14:02:37 -0500
+Message-ID: <CAKXuJqgrkt3qqCZsYP=jB2CVDSoacxH645Qxqein+JMkApx0Aw@mail.gmail.com>
+Subject: Re: [PATCH v4 16/27] arm64: dts: qcom: sdm845: enable gmu
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
+	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-09-13 at 11:43 -0700, John Stultz wrote:
-> On Fri, Sep 13, 2024 at 5:01=E2=80=AFAM Jeff Layton <jlayton@kernel.org> =
-wrote:
-> > On Fri, 2024-09-13 at 13:26 +0200, Jan Kara wrote:
-> > > So what would be the difference if we did instead:
-> > >=20
-> > >       old =3D atomic64_read(&mg_floor);
-> > >=20
-> > > and not bother with the cookie? AFAIU this could result in somewhat m=
-ore
-> > > updates to mg_floor (the contention on the mg_floor cacheline would b=
-e the
-> > > same but there would be more invalidates of the cacheline). OTOH thes=
-e
-> > > updates can happen only if max(current_coarse_time, mg_floor) =3D=3D
-> > > inode->i_ctime which is presumably rare? What is your concern that I'=
-m
-> > > missing?
-> > >=20
-> >=20
-> > My main concern is the "somewhat more updates to mg_floor". mg_floor is
-> > a global variable, so one of my main goals is to minimize the updates
-> > to it. There is no correctness issue in doing what you're saying above
-> > (AFAICT anyway), but the window of time between when we fetch the
-> > current floor and try to do the swap will be smaller, and we'll end up
-> > doing more swaps as a result.
->=20
-> Would it be worth quantifying that cost?
->=20
+Hi Dzmitry,
 
-There's a patch in the larger set that adds some percpu counters to
-count events. One of them was successful floor value swaps. I dropped
-that particular counter from the v7 set, but we could resurrect it.
+On Fri, Sep 13, 2024 at 10:15=E2=80=AFAM Dzmitry Sankouski <dsankouski@gmai=
+l.com> wrote:
+>
+> Leave gmu enabled, because it's only probed when
+> GPU is.
+>
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi                   | 4 ----
+>  arch/arm64/boot/dts/qcom/sdm845-db845c.dts                   | 4 ----
+>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts                      | 4 ----
+>  arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi          | 4 ----
+>  arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts            | 4 ----
+>  arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi        | 4 ----
+>  arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi | 4 ----
+>  arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts           | 4 ----
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi                         | 2 --
+>  9 files changed, 34 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot=
+/dts/qcom/sdm845-cheza.dtsi
+> index e8276db9eabb..a5149a384167 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+> @@ -741,10 +741,6 @@ touchscreen@10 {
+>         };
+>  };
+>
+> -&gmu {
+> -       status =3D "okay";
+> -};
+> -
+>  &gpu {
+>         status =3D "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot=
+/dts/qcom/sdm845-db845c.dts
+> index 9a6d3d0c0ee4..59cb6e6e434c 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
+> @@ -444,10 +444,6 @@ &gcc {
+>                            <GCC_LPASS_SWAY_CLK>;
+>  };
+>
+> -&gmu {
+> -       status =3D "okay";
+> -};
+> -
+>  &gpi_dma0 {
+>         status =3D "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dt=
+s/qcom/sdm845-mtp.dts
+> index 2391f842c903..d31efad8a321 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> @@ -414,10 +414,6 @@ &gcc {
+>                            <GCC_LPASS_SWAY_CLK>;
+>  };
+>
+> -&gmu {
+> -       status =3D "okay";
+> -};
+> -
+>  &gpu {
+>         status =3D "okay";
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/a=
+rm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+> index 46e25c53829a..8a0f154bffc3 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+> @@ -345,10 +345,6 @@ &gcc {
+>                                 <GCC_LPASS_SWAY_CLK>;
+>  };
+>
+> -&gmu {
+> -       status =3D "okay";
+> -};
+> -
+>  &gpu {
+>         status =3D "okay";
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts b/arch/arm=
+64/boot/dts/qcom/sdm845-shift-axolotl.dts
+> index 486ce175e6bc..87fc4021e024 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+> @@ -419,10 +419,6 @@ &gcc {
+>                            <GCC_LPASS_SWAY_CLK>;
+>  };
+>
+> -&gmu {
+> -       status =3D "okay";
+> -};
+> -
+>  &gpu {
+>         status =3D "okay";
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi b/arch=
+/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi
+> index b02a1dc5fecd..a3a304e1ac87 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi
+> @@ -415,10 +415,6 @@ &gcc {
+>                         <GCC_LPASS_SWAY_CLK>;
+>  };
+>
+> -&gmu {
+> -       status =3D "okay";
+> -};
+> -
+>  &gpi_dma0 {
+>         status =3D "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi=
+ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
+> index 617b17b2d7d9..f790eb73abdd 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
+> @@ -239,10 +239,6 @@ &gcc {
+>                            <GCC_LPASS_SWAY_CLK>;
+>  };
+>
+> -&gmu {
+> -       status =3D "okay";
+> -};
+> -
+>  &gpu {
+>         status =3D "okay";
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts b/arch/ar=
+m64/boot/dts/qcom/sdm845-xiaomi-polaris.dts
+> index e386b504e978..501575c9beda 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts
+> @@ -381,10 +381,6 @@ &gcc {
+>                                 <GCC_LPASS_SWAY_CLK>;
+>  };
+>
+> -&gmu {
+> -       status =3D "okay";
+> -};
+> -
+>  &gpi_dma0 {
+>         status =3D "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/q=
+com/sdm845.dtsi
+> index 54077549b9da..fe154216f138 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -4948,8 +4948,6 @@ gmu: gmu@506a000 {
+>
+>                         operating-points-v2 =3D <&gmu_opp_table>;
+>
+> -                       status =3D "disabled";
+> -
+>                         gmu_opp_table: opp-table {
+>                                 compatible =3D "operating-points-v2";
+>
+>
+> --
+> 2.39.2
+>
+>
 
+This seems like it would also affect the sdm850-lenovo-yoga-c630 which
+inherits from sdm850.dtsi which inherits from sdm845.dtsi (they are
+sdm845s with 2 higher clock speeds)
 
-> > Do you have any objection to adding the cookie to this API?
->=20
-> My main concern is it is just a bit subtle. I found it hard to grok
-> (though I can be pretty dim sometimes, so maybe that doesn't count for
-> much :)
-> It seems if it were misused, the fine-grained accessor could
-> constantly return coarse grained results when called repeatedly with a
-> very stale cookie.
->=20
-> Further, the point about avoiding "too many" mg_floor writes is a
-> little fuzzy. It feels almost like folks would need to use the cookie
-> update as a tuning knob to balance the granularity of their timestamps
-> against the cost of the global mg_floor writes. So this probably needs
-> some clear comments to make it more obvious.
->=20
-
-Fair points. I don't have any hard numbers around it. I'm mainly just
-trying to do what I can to keep the floor swaps to an absolute minimum.
-This is a global value after all so we really are better off avoiding
-cache invalidations.
-
-That said, passing the cookie like this would only open the window a
-small amount. I can certainly drop that part of the interface. In the
-big scheme of things I doubt it'll make much difference in performance,
-and if it does we can always bring it back.
-
-If that sounds OK, I'll send a v8 (after some testing). I have some
-comment updates I'd like to add as well.
---=20
-Jeff Layton <jlayton@kernel.org>
+-- steev
 
