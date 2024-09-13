@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-328292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0DB97817D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:49:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE0A978184
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33D0A2829B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A89C283D86
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9787C1DB534;
-	Fri, 13 Sep 2024 13:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C471DB921;
+	Fri, 13 Sep 2024 13:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ulOrN9Cn"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KF1nvcdz"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516BB43144
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5629643144
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235355; cv=none; b=TWzUFjSdRj+AGDyj+sgQRiqlRzza3iRUJmO/yOO/HB1sVz9HuIyWogzbdgUfRENxW0AahTmoXVEK911baANBD57QBHWVeEwI13uopdu5P77aPYXf7vXRO8eqNI9FA6rG5bfLViQ3B5VEGCXeZvFVbNAc8RT3G8vzJPAOwSKoSb8=
+	t=1726235474; cv=none; b=UQQRNE347IPiRn0YUH3dm1s20TUfMrxrKxsmXlEKqVvxI6leizhZeVMuphd3f0PpVOvHPVr4BS7FjN1cehyBWK2x8kNsEUvc+Z0CWchDp2YRSD2hsu2HZlGv4rZIf+XkmsgL6rH3XTM85Koa3IPOfalyNF1y99ndvfc0SAMz9xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235355; c=relaxed/simple;
-	bh=7JMOY50sAL1FBFBstjag6aZboPGwPJyHsAb4jiAZkZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YjfCsICjdGk8prF/bWbIrlbr4H/fLr56XZshsiWbclpwhLg9B1sic2aSXsP1KQegv+GeMRcc4aYmP0SUswXOcYid7ELxE5kVrb2/tfY3J09e073Ydt1MIb+V7XWMwPgw/48Pvh8GdaLOxyhqrodzEdxEuERXVw5nhNWX+mlXVRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ulOrN9Cn; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so19999655e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:49:13 -0700 (PDT)
+	s=arc-20240116; t=1726235474; c=relaxed/simple;
+	bh=waOnIjeTmScoMEheJRY5cbM5B5rvXKyGUG8sIRJTLyI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sto3ddb0eh0R/uM6Op17iLGv+y22d2zVEW48i0JQ0LNwRaVwGU0MDIRtpCpz9kNouhD7TslGgGdK09Uw1tNXP7dUBjqySi2kerdY1zF9LzSXTDn+rrNlSP3bHJzQd2aoeyDH89UGifh+g1MWGGH9p38UnFConVdTedbLD+OAu5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KF1nvcdz; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d29b7edc2so277400866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:51:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726235352; x=1726840152; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VX8L0wE8NO95OVzJ0ST2l5vUkGHAoSVmZ6/3SaE5kFo=;
-        b=ulOrN9CnId2/SnGqWwtMdOZGf6mldfmuHWXSGx++/OmEc/1Vwin1Jvg5FqE9JPCanD
-         GAxJ5pGRPjP1JYXRlODsk5SLaYE4afTp9lXpWpYvM3Uhw3m4AXKAbVdygxdMvmuxV0Ab
-         w+cGez30nU2li+8eoDHybC2tUYhjnQKwLmIr+RUD5PDnKTxKOGF4tgzawpao3LZRDEM3
-         qMYum8IKKvpZlqcF/RqjOitalHSdTs0QVjWM/kFEgWyk204u18hul0IgpfValpTzTkI6
-         UfNMC807elzTVbT4+Bghej4LTkjL9yZaLeZS1Sy5xU2fnlbirWWt4Rrp03MRTUnKBDPT
-         V3aQ==
+        d=google.com; s=20230601; t=1726235471; x=1726840271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=waOnIjeTmScoMEheJRY5cbM5B5rvXKyGUG8sIRJTLyI=;
+        b=KF1nvcdz1z/SZbDIubjytMDtCZQ1Ig8EOB3vghRwLqJYSl5Hi6q6a0PZN9fIK0iysf
+         0LdEb0UW0LW93KIa6loaJwFzvce3+buvgmdMf0vv1hWOwmybfAS2VEmoW+8ssmeA/stD
+         tsbaA+XaQFlZ4W097di+WtmE7CoG8b3wQ5ScRa3TCACIL62PZHsidwQRW0IQVhPuiNC/
+         8RrrQJo18wP6Riow5prXq6hSvNcyyUfJbB/DQgQT4LbbjBXry0G6RXegtCjXhnPXqROv
+         +smMzzH9mO6yyAXCkQpeKoJIeRFrbAdB7/vXnIbz+V+p932jb0A1RPay+PkjgvQw21Bm
+         64RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726235352; x=1726840152;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VX8L0wE8NO95OVzJ0ST2l5vUkGHAoSVmZ6/3SaE5kFo=;
-        b=VmlNxWCNDjCFxVmz9ozec2J802nhZg2+bVFWD+8JsiGSdc+HPLBWyEvKi1sjy5pFlp
-         t0wRPrQJwWoAfigzxVBSGIq961AaQ5/7Ku/AE3ggqgxXP20TFla0jpMKgOBWHzlwTIvR
-         HbZdZURTxhMNdgsFNDyAUOHv+jw/IKNj9GmUx98VsqzgTNHssVTARyTUrXMGg9Q29zoY
-         MjyWOwG07N58fDNduPt8y37yb3fRO8+SW3+AiF+s2MmPJzL0uASVChxyaPkv9YPjDXwq
-         cHxCVhMFyD1wg9D+JtsEzOlYFCr9NkHG7DAd28LLJHmFjHhaVw7jWPbs0NRGzXFsZ7fp
-         i/3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWs9n/whCjiLnOR1BTAI+1D9xe+AuqT7i5hkWpaZrZ69couTgkCyWfjK2pQm9//xIs2XqH8yA13A9z8iGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVgSd68c/ezak25x/mut6UJywso3p+dBeJVz6RybSbuUGQ6Sjf
-	1YQGPDlTMIK/Ocs8CR3aXXkjjXRT75IayFmoc2ULRz6lbTk0bO/tBIKir8/l7SY=
-X-Google-Smtp-Source: AGHT+IGCU3GflcAt3JPkUP8a6qTIV9vzRAlTlW+gej7YT0JQazoHvetjZZccwX3hpCfpCaxguNO2AA==
-X-Received: by 2002:a05:600c:4fc3:b0:42c:bcc8:5877 with SMTP id 5b1f17b1804b1-42cdb522f2cmr58941455e9.13.1726235350948;
-        Fri, 13 Sep 2024 06:49:10 -0700 (PDT)
-Received: from [192.168.1.61] ([84.67.228.188])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b055069sm27633255e9.6.2024.09.13.06.49.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 06:49:10 -0700 (PDT)
-Message-ID: <d6df6edd-688d-403d-8006-491e302fd042@linaro.org>
-Date: Fri, 13 Sep 2024 14:49:24 +0100
+        d=1e100.net; s=20230601; t=1726235471; x=1726840271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=waOnIjeTmScoMEheJRY5cbM5B5rvXKyGUG8sIRJTLyI=;
+        b=kABybSsVdz+fVxkQi4Y9ELuZZoeBV8E7ZclO1EvBTMso/pXv9BplSNF8mD+UhzmBq+
+         XOTSjf5AGO9uqEaZzWnn2flxRShkPPOg9s0Ho8t9AuRPACn4Si/U89jnkjp5aRTDdkAZ
+         KHwA1kHdoQ+mzlAXhzgU72WH10qJn9LcP/XwbmEA5WOiTDbsIe/HzeMT3su2jsspIJC4
+         hnpyYLRg4wVfzbsuzf5bMc9dRfHxSci2PIuWY44offjg+JlPJrtvWmL1HKdd7bNtFLN7
+         QowL9DObzyldXvuhpAU8oq+yh9A21F6fBY8fXP0cEtaQtERFJLBIskniFHgHQ8jbZS5P
+         9z6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXcRu/Y7S5aPdcCNCwEmR5zfnipSFyfNZV+zwbir05U9S7l/SVIckDOMRvRN1kgt05Kw5LdIWXuvYPqHFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDB3K6Nlne4hoZtXf5Bv2MSgixV7Q1gDKuIHBgpFaD7bVuhFkc
+	3Vzkjyjy79HY+J7kE/aObomA+QQ6k9cTjWPyACFoSm7fudSk49WEJIWkLDbFTu4quwZErlF784p
+	EvVgLYFpXKd9Km5AbhqyEn9nUAdvfTdUV8nsE
+X-Google-Smtp-Source: AGHT+IFsvw1OZoYw8aYPkzNLtQGVBrl2QmmW1oz1u96SRZI1zK8l6qsV9EUfaHcN4+qhaNfgAMvf7AUI6mtJT83pjGw=
+X-Received: by 2002:a17:907:e2cf:b0:a8c:d6a3:d03a with SMTP id
+ a640c23a62f3a-a902947d3f4mr610279366b.21.1726235469432; Fri, 13 Sep 2024
+ 06:51:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] perf stat: Stop repeating when ref_perf_stat()
- returns -1
-To: Levi Yun <yeoreum.yun@arm.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- nd@arm.com, peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- asmadeus@codewreck.org
-References: <20240913101456.633819-1-yeoreum.yun@arm.com>
- <20240913101456.633819-3-yeoreum.yun@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20240913101456.633819-3-yeoreum.yun@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAHTA-uZDaJ-71o+bo8a96TV4ck-8niimztQFaa=QoeNdUm-9wg@mail.gmail.com>
+ <20240912191306.0cf81ce3@kernel.org> <CAHTA-uZvLg4aW7hMXMxkVwar7a3vL+yR=YOznW3Yresaq3Yd+A@mail.gmail.com>
+In-Reply-To: <CAHTA-uZvLg4aW7hMXMxkVwar7a3vL+yR=YOznW3Yresaq3Yd+A@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 13 Sep 2024 15:50:56 +0200
+Message-ID: <CANn89iJ==5rnYa1CrtP113C_4JYQeuT6wdcJ58aa6jm-V1uqLw@mail.gmail.com>
+Subject: Re: Namespaced network devices not cleaned up properly after
+ execution of pmtu.sh kernel selftest
+To: Mitchell Augustin <mitchell.augustin@canonical.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jacob Martin <jacob.martin@canonical.com>, dann frazier <dann.frazier@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Sep 13, 2024 at 3:45=E2=80=AFPM Mitchell Augustin
+<mitchell.augustin@canonical.com> wrote:
+>
+> Hi Jakub,
+> Executing ./pmtu.sh pmtu_ipv6_ipv6_exception manually will only
+> trigger the pmtu_ipv6_ipv6_exception sub-case, which only takes a
+> second to run on my machines, so you shouldn't need to run the
+> entirety of pmtu.sh to trigger the bug. It won't trigger on attempt
+> #1, but in my experience, when I do it in that while loop, it will
+> trigger in under a minute reliably.
+>
+> > Somewhat tangentially but if you'd be willing I wouldn't mind if you
+> > were to send patches to break this test up upstream, too. It takes
+> > 1h23m to run with various debug kernel options enabled. If we split
+> > it into multiple smaller tests each running 10min or 20min we can
+> > then spawn multiple VMs and get the results faster.
+>
+> This logical division of tests already exists in pmtu.sh if you pass a
+> sub-test name in as the first parameter like above, but if you think
+> there would be value in separating them out further or into different
+> files not all in pmtu.sh, I would be happy to help with that. Just let
+> me know.
+>
+> Regardless, I will go ahead and work on a new regression test that
+> executes just our quick reproducer for this specific bug and will send
+> it to this list.
+>
+> Thanks,
+> Mitchell Augustin
+>
+> On Thu, Sep 12, 2024 at 9:13=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> =
+wrote:
+> >
+> > On Wed, 11 Sep 2024 17:20:29 -0500 Mitchell Augustin wrote:
+> > > We recently identified a bug still impacting upstream, triggered
+> > > occasionally by one of the kernel selftests (net/pmtu.sh) that
+> > > sometimes causes the following behavior:
+> > > * One of this tests's namespaced network devices does not get properl=
+y
+> > > cleaned up when the namespace is destroyed, evidenced by
+> > > `unregister_netdevice: waiting for veth_A-R1 to become free. Usage
+> > > count =3D 5` appearing in the dmesg output repeatedly
+> > > * Once we start to see the above `unregister_netdevice` message, an
+> > > un-cancelable hang will occur on subsequent attempts to run `modprobe
+> > > ip6_vti` or `rmmod ip6_vti`
+> >
+> > Thanks for the report! We have seen it in our CI as well, it happens
+> > maybe once a day. But as you say on x86 is quite hard to reproduce,
+> > and nothing obvious stood out as a culprit.
+> >
+> > > However, I can easily reproduce the issue on an Nvidia Grace/Hopper
+> > > machine (and other platforms with modern CPUs) with the performance
+> > > governor set by doing the following:
+> > > * Install/boot any affected kernel
+> > > * Clone the kernel tree just to get an older version of the test case=
+s
+> > > without subtle timing changes that mask the issue (such as
+> > > https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/no=
+ble/tree/?h=3DUbuntu-6.8.0-39.39)
+> > > * cd tools/testing/selftests/net
+> > > * while true; do sudo ./pmtu.sh pmtu_ipv6_ipv6_exception; done
+> >
+> > That's exciting! Would you be able to try to cut down the test itself
+> > (is quite long and has a ton of sub-cases). Figure out which sub-cases
+> > trigger this? And maybe with an even quicker repro we'll bisect or
+> > someone will correctly guess the fix?
+> >
+> > Somewhat tangentially but if you'd be willing I wouldn't mind if you
+> > were to send patches to break this test up upstream, too. It takes
+> > 1h23m to run with various debug kernel options enabled. If we split
+> > it into multiple smaller tests each running 10min or 20min we can
+> > then spawn multiple VMs and get the results faster.
+>
 
+Note that this issue has been discussed already with Paolo Abeni.
 
-On 13/09/2024 11:14, Levi Yun wrote:
-> Exit when run_perf_stat() returns an error to avoid continuously
-> repeating the same error message. It's not expected that COUNTER_FATAL
-> or internal errors are recoverable so there's no point in retrying.
-> 
-> This fixes the following flood of error messages for permission issues,
-> for example when perf_event_paranoid==3:
->    perf stat -r 1044 -- false
-> 
->    Error:
->    Access to performance monitoring and observability operations is limited.
->    ...
->    Error:
->    Access to performance monitoring and observability operations is limited.
->    ...
->    (repeating for 1044 times).
-> 
-> Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
-> ---
->   tools/perf/builtin-stat.c | 14 +++++++++++++-
->   1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 954eb37ce7b8..d25528ea7e40 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -2875,7 +2875,19 @@ int cmd_stat(int argc, const char **argv)
->   			evlist__reset_prev_raw_counts(evsel_list);
->   
->   		status = run_perf_stat(argc, argv, run_idx);
-> -		if (forever && status != -1 && !interval) {
-> +
-> +		/*
-> +		 * Returns -1 for fatal errors which signifies to not continue
-> +		 * when in repeat mode.
-> +		 *
-> +		 * Returns < -1 error codes when stat record is used. These
-> +		 * result in the stat information being displayed, but writing
-> +		 * to the file fails and is non fatal.
-> +		 */
-
-I meant this to be a function doc above the run_perf_stat() function. 
-Usually what a function returns would be documented there, in case there 
-end up being multiple callers.
-
-With that change:
-
-Reviewed-by: James Clark <james.clark@linaro.org>
-
-Also I think something happened with the cover letter as well, it's 
-marked as V2.
+The problem lies in dst_cache infrastructure.
 
