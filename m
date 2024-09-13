@@ -1,91 +1,190 @@
-Return-Path: <linux-kernel+bounces-328279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5434B97815E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:40:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D3C978182
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2FC01F2199F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:40:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8922839BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6861DB942;
-	Fri, 13 Sep 2024 13:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BD51DB54F;
+	Fri, 13 Sep 2024 13:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bOQlm1wO"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="oq3kYpLJ"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486A51DA313;
-	Fri, 13 Sep 2024 13:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8969B1DA62C;
+	Fri, 13 Sep 2024 13:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726234836; cv=none; b=irqHrqXYOilNqks1Y4uYx9KA06eSt+3hErU5hKPNKcri9bVU5U5BxSG1f9Gp/2aM6VxavDikK1inXyPQa+0I8YiMWxrKh7X9BTryTZum6O+TsyAOalDHicuiN69dmNB8nTeK0KDdY4u1LaEwwbXr3N0jva2gKpMiMFeZ9DA41Pk=
+	t=1726235430; cv=none; b=r8mWpXRBkIvJnYQvwoYKPFsD6R3ln7xCQhs9zQpizNT3ZWb6n1tf1WDv/MZfVxE7gVjo2AlOmlrBAyQ0KXyCTjCVleUS3FaSjVuBj+B7iKiAIHmoyNOrUEuKzr1yUQGJE9t6Q0K66Ry3IwzTMdhNtlGnBpMjv9kMENmbe/2MTbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726234836; c=relaxed/simple;
-	bh=GwqNWtgSAfwhVL1PGDJn96EYuazBb/NxsQZM2bDXl4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TugL3qsRf/NyL1z7QMt3cUpnrR+BHkCVYpDs277LrAMhEX5qSVrOZbS6JGk/cMdLkKck304hFvJ/k+0CSN3rtm125rWWSpCUcIcw043llu8jEFCk5DlTGSlDTTldhY3kXXXEl95iT+070pczeFDhrT9uVF8XztltKXT1XpwttbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bOQlm1wO; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=dd/M2sQ+n4X121m4YxqzlkNWGkjUh6yL8ADLqSfBv1E=; b=bOQlm1wOdJrJDU52KTANe+QxYr
-	8tSjTPZHK8Nmmd3zjztTybESuKXq8F1goZk7XCyHxoVRSDKjqwis7zMIkvSZLIOFwapoaCULc1y+H
-	KuAvXd2nT+A0mnUYqe2BRlw5M7lgai6wA9CIkIux3Akmv3SgHZxkCvjviRIqtr/Vfxxg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sp6XG-007OfV-7D; Fri, 13 Sep 2024 15:40:30 +0200
-Date: Fri, 13 Sep 2024 15:40:30 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, davem@davemloft.net,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH net-next 0/7] Allow controlling PHY loopback and isolate
- modes
-Message-ID: <749884b8-9588-4666-8862-e7895cda3d39@lunn.ch>
-References: <20240911212713.2178943-1-maxime.chevallier@bootlin.com>
- <aae18d69-fc00-47f2-85d8-2a45d738261b@lunn.ch>
- <8372fe02-110a-4fca-839a-a4fa6a2dea74@gmail.com>
- <20240913093453.30811cb3@fedora.home>
+	s=arc-20240116; t=1726235430; c=relaxed/simple;
+	bh=rmbVteh3MhMwb6kEdNs/84s2F30jItgTqVYsZhXGmko=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jDnTRYdX6nRcCtk3iVtUMFEXemBwSf2ZiCyNoe47y1WmggLQpGXxC5hlpM89d4RIClX1zPmeC3W5L4x1+o5J2xsm11qgkRI+fZoe3/BmFFsa+aAMhqE/5xEQsa7kmknk8hV2w49hZsmp7H0H8TIShVnMN8SP4C0u9oXiS8s2xlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=oq3kYpLJ; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Finn Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1726234868; bh=koEIKzayacr7Jw1JspcVjhqLCbSZescfm3Wqy+rjWOs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=oq3kYpLJwiuDiblrUu8Tds3YRWHP9RXxhCzUyZPChjf4FpGPNNy4sKBPf/B6BGqjv
+	 1L1PNHdNcroidcPyfFjCxY6dd5sUZuPk8laioBYMiHbXqZIDuieYHLIbMfVvXtZFgV
+	 Gvuu4ZpHYeRrzCl/R+7x1q0pof7wkpKDiH6CsOYQ=
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] rust: add untrusted data abstraction
+Date: Fri, 13 Sep 2024 15:41:06 +0200
+Message-ID: <EE2A76E7-58E6-40E5-9075-48A169292250@kloenk.dev>
+In-Reply-To: <20240913112643.542914-2-benno.lossin@proton.me>
+References: <20240913112643.542914-1-benno.lossin@proton.me>
+ <20240913112643.542914-2-benno.lossin@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913093453.30811cb3@fedora.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> With that being said, is it OK if I split the loopback part out of that
-> series ? From the comments, it looks like a complex-enough topic to be
-> covered on its own, and if we consider the loopback as a NIC feature,
-> then it doesn't really fit into the current work anymore.
-> 
-> I am however happy to continue discussing that topic. Using loopback
-> has proven to be most helpful several times for me when bringing-up
-> devices.
 
-I agree Loopback is a useful facility, and is something we should
-support. But i see it as being a topic of its own. So please do split
-it out of this patchset.
 
-	Andrew
+On 13 Sep 2024, at 13:26, Benno Lossin wrote:
+
+> When reading data from userspace, hardware or other external untrusted
+> sources, the data must be validated before it is used for logic within
+> the kernel. This abstraction provides a generic newtype wrapper that
+> prevents direct access to the inner type. It does allow access through
+> the `untrusted()` method, but that should be a telltale sign to
+> reviewers that untrusted data is being used at that point.
+>
+> Any API that reads data from an untrusted source should return
+> `Untrusted<T>` where `T` is the type of the underlying untrusted data.
+> This generic allows other abstractions to return their custom type
+> wrapped by `Untrusted`, signaling to the caller that the data must be
+> validated before use. This allows those abstractions to be used both in=
+
+> a trusted and untrusted manner, increasing their generality.
+> Additionally, using the arbitrary self types feature, APIs can be
+> designed to explicitly read untrusted data:
+>
+>     impl MyCustomDataSource {
+>         pub fn read(self: &Untrusted<Self>) -> &Untrusted<[u8]>;
+>     }
+>
+> To validate data, the `Validator` trait is introduced, readers of
+> untrusted data should implement it for their type and move all of their=
+
+> validation and parsing logic into its `validate` function. That way
+> reviewers and later contributors have a central location to consult for=
+
+> data validation.
+>
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> ---
+>  rust/kernel/types.rs | 248 ++++++++++++++++++++++++++++++++++++++++++-=
+
+>  1 file changed, 247 insertions(+), 1 deletion(-)
+>
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index 9e7ca066355c..20ef04b1b417 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
+=E2=80=A6
+> +
+> +/// Validates untrusted data.
+> +///
+> +/// # Examples
+> +///
+> +/// ## Using an API returning untrusted data
+> +///
+> +/// Create the type of the data that you want to parse:
+> +///
+> +/// ```
+> +/// pub struct FooData {
+> +///     data: [u8; 4],
+> +/// }
+> +/// ```
+> +///
+> +/// Then implement this trait:
+> +///
+> +/// ```
+> +/// use kernel::types::{Untrusted, Validator};
+> +/// # pub struct FooData {
+> +/// #     data: [u8; 4],
+> +/// # }
+> +/// impl Validator for FooData {
+> +///     type Input =3D [u8];
+> +///     type Output =3D FooData;
+> +///     type Err =3D Error;
+> +///
+> +///     fn validate(untrusted: &Untrusted<Self::Input>) -> Result<Self=
+::Output, Self::Err> {
+> +///         let untrusted =3D untrusted.untrusted();
+> +///         let untrusted =3D <[u8; 4]>::try_from(untrusted);
+> +///         for byte in &untrusted {
+> +///             if byte & 0xf0 !=3D 0 {
+> +///                 return Err(());
+> +///             }
+> +///         }
+> +///         Ok(FooData { data: untrusted })
+> +///     }
+> +/// }
+> +/// ```
+> +///
+> +/// And then use the API that returns untrusted data:
+> +///
+> +/// ```ignore
+> +/// let result =3D get_untrusted_data().validate::<FooData>();
+> +/// ```
+> +///
+> +/// ## Creating an API returning untrusted data
+> +///
+> +/// In your API instead of just returning the untrusted data, wrap it =
+in [`Untrusted<T>`]:
+> +///
+> +/// ```
+> +/// pub fn get_untrusted_data(&self) -> &Untrusted<[u8]> {
+> +///     todo!()
+> +/// }
+> +/// ```
+> +pub trait Validator {
+> +    /// Type of the input data that is untrusted.
+> +    type Input: ?Sized;
+
+I would like to explore this trait with being generic over Input, instead=
+ of having Input as an associated type. Might be nicer to have Validators=
+ for different input types if the valid data is always the same?
+
+> +    /// Type of the validated data.
+> +    type Output;
+> +    /// Validation error.
+> +    type Err;
+> +
+> +    /// Validate the given untrusted data and parse it into the output=
+ type.
+> +    ///
+> +    /// When implementing this function, you can use [`Untrusted::untr=
+usted()`] to get access to
+> +    /// the raw untrusted data.
+> +    fn validate(untrusted: &Untrusted<Self::Input>) -> Result<Self::Ou=
+tput, Self::Err>;
+> +}
+> -- =
+
+> 2.46.0
 
