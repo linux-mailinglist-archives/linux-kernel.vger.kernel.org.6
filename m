@@ -1,142 +1,154 @@
-Return-Path: <linux-kernel+bounces-327750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988DA977AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:07:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F5F977AAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A051B1C25949
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAC228193F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F04B1BD4F9;
-	Fri, 13 Sep 2024 08:07:51 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB761BD4EB;
+	Fri, 13 Sep 2024 08:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="hQ1sYzGq"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35912154C04;
-	Fri, 13 Sep 2024 08:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D550E154C04
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726214870; cv=none; b=cZGddZ0eUJ3rpXpaxqCtzs3Nhe4qkxuiZsgQP7CRaobRH4RWVkAWXjHekGQT7ZEXuB3UPDzLIO1k1+34lUPZ23lCLGX8YHKx6VFqtIpPzC7AelsIEBrYqGRfR5+S2ecKdZ895mpFF9abz3MCUVQf01V6avf6DzXrFwWr00GmEpw=
+	t=1726214849; cv=none; b=QyWd+IyYJzNIw/XifSp2mNORchDqzBvpVpYMpf+93oAHtzseMUa4coDuDD7AuDcshwRHE9JFHPzdGZD3+foTNCvk+YMNSsRdCLqTJ/BmaeI54di06JSXCIw90+I1OB5QvB7YHXQMzd2Mo0zuzqVbaD7WKjJTBW0VbFgK3q9Ej1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726214870; c=relaxed/simple;
-	bh=9ujN5GDn3kjjokM6XfuxHvZV/LXXR6pjqoGAAGI+SfA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NynwcQSgbfJFci/N16rfI4AOWwILFVYvHn5hfRntRJTBuNYdG3l5MbJtlAm7wcZo05kWBM+TwW8XsqZnSH/tfbHO1prfI9+/vNw/5OkxbRv+ELTnwieptx40jvzeq6J8T0E1cW29G1jfqk1NkvXxabmXuMvBbuZyPTVlkaBfXu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48D3XOTJ008583;
-	Fri, 13 Sep 2024 01:07:18 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41gpbk6qfj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 13 Sep 2024 01:07:18 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 13 Sep 2024 01:07:17 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 13 Sep 2024 01:07:14 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com>
-CC: <christophe.leroy@csgroup.eu>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <maxime.chevallier@bootlin.com>,
-        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH net-next] net: ethtool: phy: Distinguish whether dev is got by phy start or doit
-Date: Fri, 13 Sep 2024 16:07:13 +0800
-Message-ID: <20240913080714.1809254-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000d3bf150621d361a7@google.com>
-References: <000000000000d3bf150621d361a7@google.com>
+	s=arc-20240116; t=1726214849; c=relaxed/simple;
+	bh=yqwLZ2LI3whzMjlCRXdDh07KaVH9PUVEAxZ1ZiWkd9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JMPAO6rfNG66LECnvf5t8HFO4ElisIp3Mi7spBc+cbr+3I5LVzMIHGEA+RDX5sBPa2p2oL4FUdjTqxrvc0PVdQ+Ovh+ASm5UP3M6hN4X7kUhDQned2E23aK+EbExcmKmklsjxebYwHjDmoJ4q6jIPiMRyKqFUOBzo91E8qorHYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=hQ1sYzGq; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5001a.ext.cloudfilter.net ([10.0.29.139])
+	by cmsmtp with ESMTPS
+	id oyyBsMKtyg2lzp1KrsqWjy; Fri, 13 Sep 2024 08:07:21 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id p1KqsZOD1mqhip1Krsp4KJ; Fri, 13 Sep 2024 08:07:21 +0000
+X-Authority-Analysis: v=2.4 cv=NdEt1HD4 c=1 sm=1 tr=0 ts=66e3f2b9
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=rpUMG24A1zG+UrzXDtAMsg==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=XDqWC4Y5o2EKXtXKao0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=6KfcZtPVeZZV/1trMGJbgYpR83sGh6LCzvZuwD+hI2A=; b=hQ1sYzGqhnO9XQDtwWNSTBhuyX
+	5xBTO8VpxiBaSx6ob4XmniY+X0tIUGO+l3OMHXgwLUPPBY/tXpOYQU+jqGP1A/Wqpt9grR4pctGDd
+	/SmrnwLT18OH57s7mYh2SmuJtrYFs8IEM0Db58ioidys2VIYzOM6xWSrSIrxEcpQhJFzZxPDoPd1N
+	R+QDOH+KTaRGqaHiyHEzxyJ88kxVGoYbtlJbPbRpyrOpB1TM47FIaIS7s9a7CgL4GMrVEzUG1broa
+	9kepKcT0OdcSDUAybAtqcgQhoxnTRrL5ak4iTv4KeJDgrUVpIyioe1fj5Q90mstj41uU/sZpjNRed
+	zPD6wtLg==;
+Received: from [185.44.53.103] (port=33586 helo=[192.168.1.187])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sp1Kp-003hly-34;
+	Fri, 13 Sep 2024 03:07:20 -0500
+Message-ID: <9fabe73e-23ea-49f2-9c06-17766a07fe9d@embeddedor.com>
+Date: Fri, 13 Sep 2024 10:07:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] xen/pci: Avoid -Wflex-array-member-not-at-end
+ warning
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <ZsU58MvoYEEqBHZl@elsanto>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <ZsU58MvoYEEqBHZl@elsanto>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: _3xazUSHFPwHRqc0I3lfNArgubU8KGIU
-X-Authority-Analysis: v=2.4 cv=Ye3v5BRf c=1 sm=1 tr=0 ts=66e3f2b6 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=EaEq8P2WXUwA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=40mUqnhr4SogbDg-WAEA:9 a=cQPPKAXgyycSBL8etih5:22
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: _3xazUSHFPwHRqc0I3lfNArgubU8KGIU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-13_04,2024-09-13_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- spamscore=0 mlxlogscore=888 clxscore=1011 bulkscore=0 malwarescore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
- priorityscore=1501 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2408220000 definitions=main-2409130055
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.44.53.103
+X-Source-L: No
+X-Exim-ID: 1sp1Kp-003hly-34
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.187]) [185.44.53.103]:33586
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfNrTLV6CtgMvAvPIO51s6XYCac8nFJ5BaLGLs393Lr4qNPo/cwnT6ZqFfkI1LfJTClFb5P5ybL7z1PdsXm3i3OdVwz3VHvIT6gqlivk24dsu4AsjR/A5
+ zwXJyBtaCiTuPaNRF3p1WkOSf9JMI4/HgtldQPphHinBveIAbXcECYITd7XoakIe2tEfmpdh4uZPQGaJnojJScDWfFwkpY/SLpqMHe5oAzEQuSXEQMpFbUrM
 
-Syzbot reported a refcount bug in ethnl_phy_done.
-This is because when executing ethnl_phy_done, it does not know who obtained
-the dev(it can be got by ethnl_phy_doit or ethnl_phy_start) and directly
-executes ethnl_parse_header_dev_put as long as the dev is not NULL.
-Add dev_start_doit to the structure phy_req_info to distinguish who obtains dev.
+Hi all,
 
-Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on an interface")
-Reported-and-tested-by: syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e9ed4e4368d450c8f9db
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- net/ethtool/phy.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Friendly ping: who can take this, please? 🙂
 
-diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
-index 4ef7c6e32d10..321a7f89803f 100644
---- a/net/ethtool/phy.c
-+++ b/net/ethtool/phy.c
-@@ -13,6 +13,7 @@
- struct phy_req_info {
- 	struct ethnl_req_info		base;
- 	struct phy_device_node		*pdn;
-+	u8 dev_start_doit;
- };
- 
- #define PHY_REQINFO(__req_base) \
-@@ -157,6 +158,9 @@ int ethnl_phy_doit(struct sk_buff *skb, struct genl_info *info)
- 	if (ret < 0)
- 		return ret;
- 
-+	if (req_info.base.dev)
-+		req_info.dev_start_doit = 0;
-+
- 	rtnl_lock();
- 
- 	ret = ethnl_phy_parse_request(&req_info.base, tb, info->extack);
-@@ -223,10 +227,14 @@ int ethnl_phy_start(struct netlink_callback *cb)
- 					 false);
- 	ctx->ifindex = 0;
- 	ctx->phy_index = 0;
-+	ctx->phy_req_info->dev_start_doit = 0;
- 
- 	if (ret)
- 		kfree(ctx->phy_req_info);
- 
-+	if (ctx->phy_req_info->base.dev)
-+		ctx->phy_req_info->dev_start_doit = 1;
-+
- 	return ret;
- }
- 
-@@ -234,7 +242,7 @@ int ethnl_phy_done(struct netlink_callback *cb)
- {
- 	struct ethnl_phy_dump_ctx *ctx = (void *)cb->ctx;
- 
--	if (ctx->phy_req_info->base.dev)
-+	if (ctx->phy_req_info->base.dev && ctx->phy_req_info->dev_start_doit)
- 		ethnl_parse_header_dev_put(&ctx->phy_req_info->base);
- 
- 	kfree(ctx->phy_req_info);
+Thanks
 -- 
-2.43.0
+Gustavo
 
+On 21/08/24 02:50, Gustavo A. R. Silva wrote:
+> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+> a flexible structure where the size of the flexible-array member
+> is known at compile-time, and refactor the rest of the code,
+> accordingly.
+> 
+> So, with this, fix the following warning:
+> 
+> drivers/xen/pci.c:48:55: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   drivers/xen/pci.c | 14 +++++---------
+>   1 file changed, 5 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/xen/pci.c b/drivers/xen/pci.c
+> index 72d4e3f193af..a2facd8f7e51 100644
+> --- a/drivers/xen/pci.c
+> +++ b/drivers/xen/pci.c
+> @@ -44,15 +44,11 @@ static int xen_add_device(struct device *dev)
+>   	}
+>   #endif
+>   	if (pci_seg_supported) {
+> -		struct {
+> -			struct physdev_pci_device_add add;
+> -			uint32_t pxm;
+> -		} add_ext = {
+> -			.add.seg = pci_domain_nr(pci_dev->bus),
+> -			.add.bus = pci_dev->bus->number,
+> -			.add.devfn = pci_dev->devfn
+> -		};
+> -		struct physdev_pci_device_add *add = &add_ext.add;
+> +		DEFINE_RAW_FLEX(struct physdev_pci_device_add, add, optarr, 1);
+> +
+> +		add->seg = pci_domain_nr(pci_dev->bus);
+> +		add->bus = pci_dev->bus->number;
+> +		add->devfn = pci_dev->devfn;
+>   
+>   #ifdef CONFIG_ACPI
+>   		acpi_handle handle;
 
