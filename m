@@ -1,222 +1,127 @@
-Return-Path: <linux-kernel+bounces-328948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486E5978B5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:23:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72703978B60
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2BC1C21CD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6AED2862AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1F11741D2;
-	Fri, 13 Sep 2024 22:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F19A1714D9;
+	Fri, 13 Sep 2024 22:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nf5G/WUa"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCuznCCg"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7521547FF
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 22:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50A74A21;
+	Fri, 13 Sep 2024 22:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726266220; cv=none; b=rWcWsrjlSb25+dewxpvjCmFyXiG4pugoxX48aVTOXAmRjrC7e39LfqmbXiXDuag8jmUiGzVwcVpBeiQv08IK4KOcci7pnHlSdJJ3y+bK7VbluRrvUlFCqurRPDZ5dd87f+xSV3G6tHlVZm5pKFl3L9HxsLoIHcdjcpXD/IGbIRA=
+	t=1726266378; cv=none; b=rVMUvCNq87b8utT3q+T9Yg277JXYp6asLtyendewcxJmiThH+GUfGKF43maK/ufWKlXezey/SDmOGPYVP7wFrBG7beNGytRVYcEIk3c+12i9Y8sPGLTcgo4ehP6JWxwft9MiE+y4fiEK+9CWpb7uxscS91s+uQlOq4BozQlk3mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726266220; c=relaxed/simple;
-	bh=8XDxKfnE4f6ZNHCbw/Ar5LgDExZsWgFcsROXUnVV87c=;
+	s=arc-20240116; t=1726266378; c=relaxed/simple;
+	bh=9cJQyS5tckhCBfLGqyRval8t4KISO8g7HDnpONuphig=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PnXCDBbLsFIxO4nz+4deT3ppMVK9Aipa9SgRd5N7vwzLGbBGtzK31YJDlaPSdKq7nNO/1pU1NCzEOaCRCwwcAck3xZh083Ba0p+4JgyJ8yK1fPi8EYq1k9/44PJNULkNIsBfwFKsl0SDAMxK3bkeIhlWuLu2yjIUI1RPOMDzm8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nf5G/WUa; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4582fa01090so95981cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:23:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=r22vN5Ee/P8jT58nQ5fqyxunIKVWyY4AdLSdR15rTolN3ZMJOP29JzWf18TmRbMMXsyz+aWkKdc3XTRFek+HW9ozwS6KpYldTsSJMeEWpHBDHPkc63LQ7pIYJsGdXgEUTuDhGz5CLpUPsg37NP9amnXWR+Gal+BI7QBU+9Sp4UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCuznCCg; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d8abac30ddso2220042a91.0;
+        Fri, 13 Sep 2024 15:26:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726266217; x=1726871017; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726266376; x=1726871176; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eqqyM6e9cpYbtlo2tWfzei5AGAvl9ob43ovRmyypuYs=;
-        b=Nf5G/WUaXJpSgWwrhf0v5ilQ4diXqKjHIGSntopvu3x41Y0Gxa5lJgcPvg/IgkrBhB
-         S51YC+w2YLzo5y8pMy+Hd0ViWVHarBSmxV8sB3VvLg6wvMeA3Y6Ps3sYuZcd9hv2EJAR
-         0zFXZN99+3arNYaiBPOvrwFMq9gWwyF0gaFbKhVxK+fyLuWkyR1r0Sd18lvTZrDh0N+R
-         6rl2Mdy4Ey8myBpjC4P3XF4eFgoyyJIWz/YMTsDps356n8mqrYPULnFz2aeF7bW5tTzt
-         pUhEx6ifJn8rV9n5osXsurlC8mM85hGTKDzq80qDFPJ1y1R84NydVcWgTvpTuQ4kFK30
-         Qmnw==
+        bh=577wDrVMlYw6/7vSWbBSE5NWOXmotjfe7aI48K4g2gs=;
+        b=BCuznCCgRG6N+RfoukMKKSuxRPnr9VBTuWUTOEk6Xlt7ifUsnSczuStl+hZYU7InBm
+         bB1zWDxLHVPJuXvDw2pOJOwhcRBRMthsgMwmW8FcqIYrt6p3YGS1EOLaUao1zBfERLi6
+         OtdpV5js/fs4QIoY5nJHKsv8Cpq7H7cdkhcJuJ/7Pjz3NuC6B315qYn8WfvqM0QrDfzI
+         NWYgc9InAOqXJTCkrLJTohHWfQrtLO6vDVkZrH0Vj9Jze5OK7EjKEOSimZ/MKXzlRlGA
+         AkY4MGSK4sdQX2cgp106YcBz9C7eLKX84WL0K8arFjt8TWGKmJwycgdtcarfwyEEJOWt
+         lRRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726266217; x=1726871017;
+        d=1e100.net; s=20230601; t=1726266376; x=1726871176;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eqqyM6e9cpYbtlo2tWfzei5AGAvl9ob43ovRmyypuYs=;
-        b=pZkFtnJSjXQaTGc8X/7/ii8kXXx8GfH6u0TqSumlOyaIHDbIucALndvyl6uUll7Otd
-         XYzvFRR6QoeAE2/rq3FYZIWud9aUYhKHn9gEJO5x/ttuc3LGKO4a5SeulYFJi94cj+uY
-         NeJWgzXr6P0fxWL8aBr/AanL78xqfNgLdLf2fPHvKcNpTvNzWU+z0WQwq9IQ/ETO9plv
-         u97EI9tgTdyF69Z6KCg+ZqMMAsp/85bAFeChL0yKhlApyvtPu7W96//UDgbMk7dy4TDJ
-         yaBSp5Jhksj1R3cpXdB2Cuyir9E7g9ioKgwkd13tovDMI4u7tMrDstBIFKSgrsefom3P
-         DVBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOSm+BJOJWhYk2W/xU4QqcOAEHErjDmuPJ6LZ3ginaydSQpZV4VuS7RDW9OhXhKTjKjnG/SYD4ixshqT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBryEJYmKsSYjlti++lLN9STep3mLIZ+xiXmgMRx++lNTNEEg+
-	It7TI2axCQSaVklxo0StkwAmFRpZyThDHyzJHgOTK/EF85VwP9bher5OSMOrdWkdN1aq70nz6oZ
-	J5DiU2m/FQUSqhvqk6AOUCzfaImNzo2Qbx0FtNL5LQZ2Vdzd6YZdc
-X-Google-Smtp-Source: AGHT+IFnKX/B3cqJDC/JWovLKRmYSwF/IsdRdB5Egzrid1jjZiPb9OcqTMWDL6pk/cxRtNKG6BhhmgB+oQUm5lTqrG4=
-X-Received: by 2002:ac8:5782:0:b0:453:58b6:e022 with SMTP id
- d75a77b69052e-458608844demr10344731cf.28.1726266217155; Fri, 13 Sep 2024
- 15:23:37 -0700 (PDT)
+        bh=577wDrVMlYw6/7vSWbBSE5NWOXmotjfe7aI48K4g2gs=;
+        b=MSCPj237F0ltuNUyvkCIcXvPyTq35ds8lvKm1XqHBgZ3faELOPpqoKB2+CjhFtQAVN
+         rDK2eVwpak2ZpRYX4xzSdeypkhYdHXQkSnYHlge5C83CoZcFJnoPo2gtjUcWS/rsra/5
+         pvZ9VfR0s84diu8AcD8xExFBzqcVSOPpdJQ+pDHJZOtnuUiLycoDgqKG9eaRqeh89sEr
+         eGuENFTcZ70oLl/nKq5dxY5vTCpVleQ6OQEi9uAxEjadnY73N17Cx0VIwVt0j+pFnE39
+         G7+NQlgmtVrNrXA7pdX6gBxkcA3YhRXGo3Ybjipst38gtd/HcIftENXsdhpjw4VGg4gw
+         Lq1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUrCQ6+6S9oDhD1kpsiaLkWq35qNp8kg/QSVxbWNetrywfqOM10UhU9nKC9JkphSb4Sg7I=@vger.kernel.org, AJvYcCXvA9kvFMI5nGzuyPnCx174XQ0HBHK04P1BK3dD/8BvU8nvFHkA8TQBJ/jK+n8rUu6MWXMh93m6H9p1nIDe@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHIIgzA2hYivBpzFVV8mOj70/9iIEzU5NAAMXR6G6LtduyekCG
+	wcfOQsXXvDQNqVMPgH0TBTcSTk3r9kg0aVBfkQUal4O5hLJUgVWjEAjwvkskcqUF/VOoigO2ZIH
+	EKcI4ti0eMoVINzhbBUXjgCAsC7WejQ==
+X-Google-Smtp-Source: AGHT+IHvnwtB3+stKJHSsZVtQW2oiRmiz6NV/Jr4tCbAT1Zn462bwAj8DwFN1UoHGTNK6F8Ml/KmyNQAj0Pwqb1YGmk=
+X-Received: by 2002:a17:90b:886:b0:2ca:2c4b:476 with SMTP id
+ 98e67ed59e1d1-2db9ffbcb61mr9072136a91.10.1726266375883; Fri, 13 Sep 2024
+ 15:26:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913213351.3537411-1-almasrymina@google.com> <ZuS0x5ZRCGyzvTBg@mini-arch>
-In-Reply-To: <ZuS0x5ZRCGyzvTBg@mini-arch>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 13 Sep 2024 15:23:22 -0700
-Message-ID: <CAHS8izPthEJJX1yRenCjGeU9s6dgbfRE+pMZvcxfnMMC5kD9iQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Matthew Wilcox <willy@infradead.org>
+References: <20240913173759.1316390-1-masahiroy@kernel.org>
+In-Reply-To: <20240913173759.1316390-1-masahiroy@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 13 Sep 2024 15:26:04 -0700
+Message-ID: <CAEf4Bzawf_EgHyHB+-=2U6eyJtBDVHVQ+Nx1JFw+TTbNSqSmuA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] btf: remove redundant CONFIG_BPF test in scripts/link-vmlinux.sh
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Alan Maguire <alan.maguire@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 2:55=E2=80=AFPM Stanislav Fomichev <stfomichev@gmai=
-l.com> wrote:
+On Fri, Sep 13, 2024 at 10:38=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
 >
-> On 09/13, Mina Almasry wrote:
-> > Building net-next with powerpc with GCC 14 compiler results in this
-> > build error:
-> >
-> > /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
-> > /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is
-> > not a multiple of 4)
-> > make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
-> > net/core/page_pool.o] Error 1
-> >
-> > Root caused in this thread:
-> > https://lore.kernel.org/netdev/913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-=
-soprasteria.com/
-> >
-> > We try to access offset 40 in the pointer returned by this function:
-> >
-> > static inline unsigned long _compound_head(const struct page *page)
-> > {
-> >         unsigned long head =3D READ_ONCE(page->compound_head);
-> >
-> >         if (unlikely(head & 1))
-> >                 return head - 1;
-> >         return (unsigned long)page_fixed_fake_head(page);
-> > }
-> >
-> > The GCC 14 (but not 11) compiler optimizes this by doing:
-> >
-> > ld page + 39
-> >
-> > Rather than:
-> >
-> > ld (page - 1) + 40
-> >
-> > And causing an unaligned load. Get around this by issuing a READ_ONCE a=
-s
-> > we convert the page to netmem.  That disables the compiler optimizing t=
-he
-> > load in this way.
-> >
-> > Cc: Simon Horman <horms@kernel.org>
-> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Cc: Jakub Kicinski <kuba@kernel.org>
-> > Cc: David Miller <davem@davemloft.net>
-> > Cc: Paolo Abeni <pabeni@redhat.com>
-> > Cc: Networking <netdev@vger.kernel.org>
-> > Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-> > Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> >
-> > Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> > Signed-off-by: Mina Almasry <almasrymina@google.com>
-> >
-> > ---
-> >
-> > v2: https://lore.kernel.org/netdev/20240913192036.3289003-1-almasrymina=
-@google.com/
-> >
-> > - Work around this issue as we convert the page to netmem, instead of
-> >   a generic change that affects compound_head().
-> > ---
-> >  net/core/page_pool.c | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> > index a813d30d2135..74ea491d0ab2 100644
-> > --- a/net/core/page_pool.c
-> > +++ b/net/core/page_pool.c
-> > @@ -859,12 +859,25 @@ void page_pool_put_page_bulk(struct page_pool *po=
-ol, void **data,
-> >  {
-> >       int i, bulk_len =3D 0;
-> >       bool allow_direct;
-> > +     netmem_ref netmem;
-> > +     struct page *page;
-> >       bool in_softirq;
-> >
-> >       allow_direct =3D page_pool_napi_local(pool);
-> >
-> >       for (i =3D 0; i < count; i++) {
-> > -             netmem_ref netmem =3D page_to_netmem(virt_to_head_page(da=
-ta[i]));
-> > +             page =3D virt_to_head_page(data[i]);
-> > +
-> > +             /* GCC 14 powerpc compiler will optimize reads into the
-> > +              * resulting netmem_ref into unaligned reads as it sees a=
-ddress
-> > +              * arithmetic in _compound_head() call that the page has =
-come
-> > +              * from.
-> > +              *
-> > +              * The READ_ONCE here gets around that by breaking the
-> > +              * optimization chain between the address arithmetic and =
-later
-> > +              * indexing.
-> > +              */
-> > +             netmem =3D page_to_netmem(READ_ONCE(page));
-> >
-> >               /* It is not the last user for the page frag case */
-> >               if (!page_pool_is_last_ref(netmem))
+> CONFIG_DEBUG_INFO_BTF depends on CONFIG_BPF_SYSCALL, which in turn
+> selects CONFIG_BPF.
 >
-> Are we sure this is the only place where we can hit by this?
-> Any reason not to hide this inside page_to_netmem?
+> When CONFIG_DEBUG_INFO_BTF=3Dy, CONFIG_BPF=3Dy is always met.
 >
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index 8a6e20be4b9d..46bc362acec4 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -100,7 +100,7 @@ static inline netmem_ref net_iov_to_netmem(struct net=
-_iov *niov)
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> ---
 >
->  static inline netmem_ref page_to_netmem(struct page *page)
->  {
-> -       return (__force netmem_ref)page;
-> +       return (__force netmem_ref)READ_ONCE(page);
->  }
->
->  static inline int netmem_ref_count(netmem_ref netmem)
->
-> Is it gonna generate slower code elsewhere?
 
-Yeah, I think it will likely generate slower code elsewhere, and
-avoiding the overhead when this is the only callsite that needs this
-really seemed like a plus.
+Masahiro,
 
---=20
-Thanks,
-Mina
+Are you planning to take this through your tree, or you'd prefer us
+routing it through bpf-next?
+
+> (no changes since v1)
+>
+>  scripts/link-vmlinux.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> index bd196944e350..cfffc41e20ed 100755
+> --- a/scripts/link-vmlinux.sh
+> +++ b/scripts/link-vmlinux.sh
+> @@ -288,7 +288,7 @@ strip_debug=3D
+>  vmlinux_link vmlinux
+>
+>  # fill in BTF IDs
+> -if is_enabled CONFIG_DEBUG_INFO_BTF && is_enabled CONFIG_BPF; then
+> +if is_enabled CONFIG_DEBUG_INFO_BTF; then
+>         info BTFIDS vmlinux
+>         ${RESOLVE_BTFIDS} vmlinux
+>  fi
+> --
+> 2.43.0
+>
 
