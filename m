@@ -1,125 +1,184 @@
-Return-Path: <linux-kernel+bounces-328795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323649788FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:33:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1B89788FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE852897A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:33:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C5F1F26EFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153981465A0;
-	Fri, 13 Sep 2024 19:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F0C146A6B;
+	Fri, 13 Sep 2024 19:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fBKuZZ5E"
-Received: from msa.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yednq30N"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE61513AD03
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E86413AD03;
+	Fri, 13 Sep 2024 19:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726256000; cv=none; b=mXcU/PXd6ceh1sKVKViZTBZnxwNLlBCdZ7KYDpjbFD4DdfdfUkAi5vT9saw8bYc48vG6cvGZQ6mboQpGvxhIUWqKxbpyohy3MKaUtTtOvQdrcN3vnbC9lpNnGA7zTLj+xvOtilWtk7PS6pwVBsQacpzo2iKNyJEH3/Iz39c0Sd0=
+	t=1726255947; cv=none; b=UlTThsAOpEmr7eASh0WfP0ZOPgTj/uga48V6CKHhzv+7NsRAB2cTG4jafqmF9H7RU/WkrwvavP1AudHSI5ha39kR4oaqwvttgymE3EjjasiZld2k+TZdmWgwFF8LLe3dUIz4UIjCJYgF66HdKRhljAiXjj0/WumjYKifLEYHpFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726256000; c=relaxed/simple;
-	bh=FJf2/qicU/Ub7t4CHyb6DnSpZplsW5xVb2wAQve19O0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C15FTTvQONznPlTbX7FLGB6c6i/BYjHr62J0MHSo2Wdip3sM951JCiaAlMvc7eOaatwVrZk+XxUWtluYW4mGJxv46Mf9xgamG1FxpLAQk0nJpiO+Xd+gHQE7wNW7lNCHYgBz9Ocv5TrxuUVLyL7Jn6/55ljmCWXqet4f2i8MWAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fBKuZZ5E; arc=none smtp.client-ip=80.12.242.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id pC1OsIlQM71UmpC1OsZYb7; Fri, 13 Sep 2024 21:31:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726255919;
-	bh=nVA7uG1NwgGwCUCbBVabP7FPCkwT9VHonPQjHtNDTOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=fBKuZZ5EdgcATloIEZ5h5J9PNsbxS/ecJLKobaFG7LPiXngodlYSiNpyGK8QaU7QD
-	 aKoXPnxlSmr1cCp8sJC3dM5S5vNUBv69LXmL0mGhD1vVRhpAfSr/prKajXeokmmmpw
-	 5SeXNiubfk4DZWonLlU/7DVG1G0psXvCiNsAISd0qin0OlMXwP2BSxJeKXqS7Tze2V
-	 uBItcOO41KlLwmnMsaS0+f8avUnxVLeL0S4Th79pagkAmJfhU68wCMvyYt9ZhPB2Pa
-	 FPKTrANkK/TuyMV0cm4fCxYR3xM14A+iCajiWIPjC1i0f69YddexGu2PtrTCVuYgN5
-	 zEKMuZIKj9lwA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 13 Sep 2024 21:31:59 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <c4e7b3ac-d8fa-47b9-84f6-e3332bb54e12@wanadoo.fr>
-Date: Fri, 13 Sep 2024 21:31:57 +0200
+	s=arc-20240116; t=1726255947; c=relaxed/simple;
+	bh=CAh7OJCKr+ZZWcKaCK8a8dneJu3h6r5pEUsUumEe//Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b6LMG1qL8zNafOZYNbmu7ivrByDMLMJSQhzCQnfybXGz7GProZWxhjqjclNI5i2NSm6Put1ZV1XTmkWNa2j/UgDoNdpcPJe8Zc8s7yyT3gcSPd4TzbrPgo/gk5phtAVUTOvPeaUVO5bjRqYiEVQVBA7177s/SdhQ/Kyno+5+fxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yednq30N; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E834F60002;
+	Fri, 13 Sep 2024 19:32:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726255942;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x2of1BdHGwZAspl/pHlPclrXtKEUjMefV4+slP9HEaE=;
+	b=Yednq30NTIRFFSqwaFEEiemih/JhA8Y5QpUO/NJaO7jdAS8ykd/LaJYepppl1vRMGh5Bu3
+	5KglUphzYAwMjRSJQoH+XEV6DIJ2Da+phyzUur5iMSwAYes2nj4VNsfsMmjF8Gl/HckJml
+	4DXajWu5uj5Q7VU9IkbYsigpcGBPxafH4Ds/RMHYuP0RYYsSNIaZntl4TYBgI+QTxfiN+I
+	jZGeTI4aD/dxORLSNAD0gP+9GaYgpk3yNBMWY+Ape+coSlLrilqrzBP3ZsyKCKyxqPIQKD
+	0KV3dJBNVEk8f5rUcpOiAGgZVV6iQLNL1fBSq4uuHfNd/Glll+yAyNdQEze0TA==
+Date: Fri, 13 Sep 2024 21:32:19 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, Douglas Anderson
+ <dianders@chromium.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek
+ Szyprowski <m.szyprowski@samsung.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 0/5] Fix a deadlock with clk_pm_runtime_get()
+Message-ID: <20240913213219.2d5efa2c@xps-13>
+In-Reply-To: <20240325054403.592298-1-sboyd@kernel.org>
+References: <20240325054403.592298-1-sboyd@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: thermal: Use strscpy() instead of strcpy()
-To: Abdul Rahim <abdul.rahim@myyahoo.com>, rafael@kernel.org,
- rui.zhang@intel.com, lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240913191249.51822-1-abdul.rahim.ref@myyahoo.com>
- <20240913191249.51822-1-abdul.rahim@myyahoo.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240913191249.51822-1-abdul.rahim@myyahoo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Le 13/09/2024 à 21:12, Abdul Rahim a écrit :
-> strcpy() is generally considered unsafe and use of strscpy() is
-> recommended [1]
-> 
-> this fixes checkpatch warning:
->      WARNING: Prefer strscpy over strcpy
-> 
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
-> Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+Hi Stephen,
 
-Hi,
+I only discover this thread today, interesting read!
 
-in order to ease the review process, when you send a new version of a 
-patch, the subject line should state the version: (i.e.: [PATCH v2] ...)
+sboyd@kernel.org wrote on Sun, 24 Mar 2024 22:43:57 -0700:
 
+> This patch series fixes a deadlock reported[1] on ChromeOS devices
+> (Qualcomm sc7180 Trogdor). To get there, we allow __clk_release() to run
 
-It is also a good practice to explain what has changed with the previous 
-version.
-Finally, it is nice to provide the link on lore to the previous version.
-All this should added below the first ---.
-Here it could look like:
+Not only ChromeOS devices are affected, there have been several reports
+with similar issues on the mailing list, especially on i.MX8MP, where
+the clock and power management domains are tightly connected.
 
-> ---
+> without the prepare_lock held. Then we add runtime PM enabled clk_core
+> structs to a list that we iterate and enable runtime PM for each entry
+> before grabbing the prepare_lock to walk the clk tree. The details are
+> in patch #4.
 
-Changes in v2:
-   - Remove an unneeded extra parameter (MAX_ACPI_DEVICE_NAME_LEN) in 
-the 2nd strscpy() call
+I am happy we ended-up leaning to the same solution: runtime PM calls
+should no longer happen after acquiring the prepare lock.
 
-v1: 
-https://lore.kernel.org/all/20240912205922.302036-1-abdul.rahim@myyahoo.com/
+> The patch after that is based on the analysis in the disable unused
+> patch. We similarly resume devices from runtime suspend when walking the
+> clk tree for the debugfs clk_summary.
+>=20
+> Unfortunately this doesn't fix all problems with the usage of runtime PM
+> in the clk framework. We still have a problem if preparing a clk happens
+> in parallel to the device providing that clk runtime resuming or
+> suspending. In that case, the task will go to sleep waiting for the
+> runtime PM state to change, and we'll deadlock. This is primarily a
+> problem with the global prepare_lock. I suspect we'll be able to fix
+> this by implementing per-clk locking, because then we will be able to
+> split up the big prepare_lock into smaller locks that don't deadlock on
+> some device runtime PM transitions.
 
-CJ
+I fear splitting the locks will actually not solve the problems we
+encounter on i.MX8.
 
->   drivers/acpi/thermal.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
-> index 78db38c7076e..6671537cb4b7 100644
-> --- a/drivers/acpi/thermal.c
-> +++ b/drivers/acpi/thermal.c
-> @@ -796,9 +796,9 @@ static int acpi_thermal_add(struct acpi_device *device)
->   		return -ENOMEM;
->   
->   	tz->device = device;
-> -	strcpy(tz->name, device->pnp.bus_id);
-> -	strcpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
-> -	strcpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
-> +	strscpy(tz->name, device->pnp.bus_id);
-> +	strscpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
-> +	strscpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
->   	device->driver_data = tz;
->   
->   	acpi_thermal_aml_dependency_fix(tz);
+Let me quote some parts of your commit log in patch 4/5:
 
+---8<---
+> This is a classic ABBA deadlock. To properly fix the deadlock, we
+> must never runtime PM resume or suspend a device with the clk
+> prepare_lock held. Actually doing that is near impossible today
+> because the global prepare_lock would have to be dropped in the
+> middle of the tree, the device runtime PM resumed/suspended, and then
+> the prepare_lock grabbed again to ensure consistency of the clk tree
+> topology. If anything changes with the clk tree in the meantime,
+> we've lost and will need to start the operation all over again.
+>
+> Luckily, most of the time we're simply incrementing or decrementing
+> the runtime PM count on an active device, so we don't have the chance
+> to schedule away with the prepare_lock held. Let's fix this immediate
+> problem that can be triggered more easily by simply booting on
+> Qualcomm sc7180.
+--->8---
+
+Regarding your former statement, I don't think it is impossible, this
+is what I've been trying to do recently. It is really impacting, and
+must be handled specifically for each situation: I am counting three of
+them depending on the action, where either the parents, or the
+children or both sides of the tree should be resumed before
+continuing (with optionally the new parent, when reparenting explicitly
+or doing some rate changes which also involve reparenting). I don't yet
+have a working proof-of-concept -I would have loved to before LPC- but
+this is promising and I believe doable.
+
+About your second paragraph however, I am asking whether being "most of
+the time" incrementing or decrementing the runtime PM count is
+acceptable, because if we ever perform a real state change within the
+right conditions, we will just deadlock the platform. This is
+theoretical and is unlikely to happen in general, I agree. But shall we
+consider this situation too unlikely from happening for just ignoring
+it? Shall we instead fix it properly and prepare ourselves for future
+power-optimized architecture with a lot of dependencies between clocks
+and other power-related subsystems? This is an open question.
+
+> I'll start working on that problem in earnest now because I'm worried
+> we're going to run into that problem very soon.
+
+Is there any public branch I could look into?
+
+On my side I tried to warn about this but got no feedback. I'd have
+loved to be pointed towards this patchset at that time :) Here is the
+report if you want to check it out. FYI, I was asking for feedback on
+very specific questions, which I consider now solved:
+https://lore.kernel.org/all/20240527181928.4fc6b5f0@xps-13/
+
+> Stephen Boyd (5):
+>   clk: Remove prepare_lock hold assertion in __clk_release()
+>   clk: Don't hold prepare_lock when calling kref_put()
+>   clk: Initialize struct clk_core kref earlier
+>   clk: Get runtime PM before walking tree during disable_unused
+>   clk: Get runtime PM before walking tree for clk_summary
+>=20
+>  drivers/clk/clk.c | 142 +++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 115 insertions(+), 27 deletions(-)
+>=20
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Taniya Das <quic_tdas@quicinc.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+>=20
+> [1] https://lore.kernel.org/all/20220922084322.RFC.2.I375b6b9e0a0a5348962=
+f004beb3dafee6a12dfbb@changeid/
+>=20
+> base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
+
+Thanks,
+Miqu=C3=A8l
 
