@@ -1,237 +1,339 @@
-Return-Path: <linux-kernel+bounces-327474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A87977669
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:25:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BEF897766D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0642816DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:25:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 777E7B22E25
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4926EBA50;
-	Fri, 13 Sep 2024 01:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299384A3E;
+	Fri, 13 Sep 2024 01:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="aOinusi/";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="IpiHUVAN"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bURSXsvR"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B478F5B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726190727; cv=fail; b=CpzgYK8Ik5TYwxkH//C2vUJSqcUAiGnT7X4u4w/iZYooz8q0yKy+N8RMovKgE+IIrQuITUFEXlsC4uRZVJtxUUE6CvS3l0ecX13jrfbpiCpVKPhLzmWFeKD5n33R13RIzjcgFjE2qXmCPZ9kSI0ficMLM70vVMUxit1c4BPm4x0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726190727; c=relaxed/simple;
-	bh=5jLn+HjyLOfrdtRFZwb0avdPbt4r3x0J71ZFPnzRF/0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=B4aV5Rpzxl/pUQAWXs1lIvnKxKw67mLjxP8O/jQYhQK8nIk61YGgtW9X/qoeaDRS1Fqok8h0N94YuUG2HZD4m7M6ZSXEfQ+Otf3MxkyE+eVNL5eIBn+88AjW2u83PQO6247q9qQ/Ip71NvBD9kp4kTLVHHyusAxaDagmIkP2nI8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=aOinusi/; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=IpiHUVAN; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 09226020716f11efb66947d174671e26-20240913
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=5jLn+HjyLOfrdtRFZwb0avdPbt4r3x0J71ZFPnzRF/0=;
-	b=aOinusi/vrywjHarajlOYI2OiTA9fqgmVQ8xu4RbnM+A9rcnHisxRRApKOQq41KWriH/drw0PRiBopKg1jtYo/hkEEXvfxt6/hSnNJ+tdyK97J1jrpsG9Gt+LDaS5k7mgCaWEc7lAcEW0m7Otdq8jxopGabxQdm85PMMoeDZpa8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:788527a6-082b-46e6-83ae-0a87054c5e55,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6dc6a47,CLOUDID:988fe2bf-d7af-4351-93aa-42531abf0c7b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
-X-UUID: 09226020716f11efb66947d174671e26-20240913
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <ck.hu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1621083585; Fri, 13 Sep 2024 09:25:18 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 12 Sep 2024 18:25:16 -0700
-Received: from HK3PR03CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 13 Sep 2024 09:25:16 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qQIZljVOl8eb6KLbzGTnhz1UPCEB6SM75r7RN3SIJIUWCs2O0AmMhwBnF4uKzVpDj55ljNVYK5LrhK8I9vToUIpUCuDF+3xD+q2oelwJ9Ymb5bnHRws5DkUz+lJ7jKWvYZBK2DZ8zirk7B9RHERrLz7ufLfAShfhDAjcMVBBunaHKrIqzzkTHxRgAhcMwDVUmi8WXPMHhQXE1PIbCHx3AGdrwRkqNOEQlKzP9KlEdcSFfo6g/Pv7IkT2hzQBWh9njQqFZohH+PkbxW9Fjwf5u745HZEgXXI7OkJuWQiYm343MfBNildo6bXeStMeZrPovusOmn7+AgFRQB5XqZ0wCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5jLn+HjyLOfrdtRFZwb0avdPbt4r3x0J71ZFPnzRF/0=;
- b=oAR/QsBolgjLOiWgUFCZEiljgs8P0V9ngXa5B4GKy6A0lGJWW27YyUueN/qVSBPuhY3M53YaBZuhnhx3RssB/3eoBYAX3WWrO28XX3V4fnrPVZKDxIhYe8Pgo547eJD7uFq1lVz2ucmtgwolcYNUuHqvNz6pvmSs14LwXDXK9dFYtagydTfw+JAUBuyYbSSG9/NBgEMpug1qyLpg8b/Jhbcvc9MbO4jw3W6JOoQccIKGhKWPP6sNrTle7zFwLN8ZzK3R6We9thxcLwlAD2q1nIS/5n/ywq9GHaL0AqJmPDfBVWrcVMlJx0ZLX2kjPWBycAy+U6srhVufGlxFrg8ksA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE5E4A06
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726190998; cv=none; b=kIDAOIN05IC40tEwNOmRZRzTHgzQnoH/M5HbB/TekIQmr0L0H8gUUnU9kFR5mc1ajLbsLDt5qRQRn2Y1JRVSh8PR5B23mjkSbcBL91UGgAhuh7fMlECuZNfdOteRNi4FqbDD5SbzIff96PwzG5IFC4ZwPmSSCZ68m08UUrwjTDA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726190998; c=relaxed/simple;
+	bh=94OVKNo7+/2yX9lYKqNr+7qk9kQow0P186JyrepvVFI=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=SHSJSlx7SxfR0bdI/M2cqZWyBb+8Sv1lpJ4/kzXZO30e9RLrSDS8O37UCVwtVrInlgUy52e24ivb8AffVVZ0mQXf8Sh7Cd86YfDk9hffySfiJPtmwInJZQAkl1k3GJ2Qx973tduM5zbswaokWvdFHNAc3uYgjadjFDMhvimhKfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bURSXsvR; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a9aec89347so99433285a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5jLn+HjyLOfrdtRFZwb0avdPbt4r3x0J71ZFPnzRF/0=;
- b=IpiHUVANy9GW84t1RCtinIw+uFpQjaHhRmkLrwsR9O6hqnyK0nJdcJ8P4jzdxhh0f3qu9bPtWR3l2xDo3gUSJs47DSnI5OczCmcf9PNVXq5z+kY1sZG3nSV7hQeSlH5l/ENQSOurI5T302681iKzvAMV4mJGM+IlhsO+oCFG0FE=
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
- by SEYPR03MB8453.apcprd03.prod.outlook.com (2603:1096:101:20c::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.19; Fri, 13 Sep
- 2024 01:25:13 +0000
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54%7]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
- 01:25:13 +0000
-From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-To: =?utf-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
-	"alpernebiyasak@gmail.com" <alpernebiyasak@gmail.com>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
-	=?utf-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"wenst@chromium.org" <wenst@chromium.org>, "daniel@ffwll.ch"
-	<daniel@ffwll.ch>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"shawn.sung@mediatek.corp-partner.google.com"
-	<shawn.sung@mediatek.corp-partner.google.com>, "airlied@gmail.com"
-	<airlied@gmail.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>, "angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v4 0/5] Support alpha blending in MTK display driver
-Thread-Topic: [PATCH v4 0/5] Support alpha blending in MTK display driver
-Thread-Index: AQHa2AmroDt1y/BtDkmY4b/bkxAN0bIQ7LWAgEQIBACAAFLCAA==
-Date: Fri, 13 Sep 2024 01:25:13 +0000
-Message-ID: <a2cf4e9b9c3343a7398521760934f1740505aa13.camel@mediatek.com>
-References: <20240717-alpha-blending-v4-0-4b1c806c0749@mediatek.com>
-	 <CAAOTY_8ThuusfHk9Gd5pFP8VhJkG2seuJmkFiruK1rPQFZGBzg@mail.gmail.com>
-	 <6c9b7f85-f92d-44ed-ae9d-00f6d55ea614@gmail.com>
-In-Reply-To: <6c9b7f85-f92d-44ed-ae9d-00f6d55ea614@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|SEYPR03MB8453:EE_
-x-ms-office365-filtering-correlation-id: ea534736-4344-4a7d-38f4-08dcd392eac8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?cWZDREFNRm5IejhaUFBuZXpTZFYvR0R5aTBOaXExanlXRm16dXpzQWxiYzg1?=
- =?utf-8?B?WDJmaDRmN0RGTmtrTHdnOVgyTTRldlI3UE11blc1SUxpY1hsWVB1aDMrcTBB?=
- =?utf-8?B?TFplYWo1Qk9wa0pHNzkzbnZDbW9uRkl1WDV4aE5BS0pmZ05GT0dzdlBRYzFi?=
- =?utf-8?B?c2NLVXdUclNUSEhnTEN3djJWOEdRZks5Ulp2b3JIakw4OGlXL3Q1eWptZDVP?=
- =?utf-8?B?YUJ0eDVUR0lpdEVaQUdsTkMxem5wOWk4Z1IzNUcwTmVQck9oS0tLM09jVXFw?=
- =?utf-8?B?SzRuQzc5cWJZME55aVRwUW84SEliT2tpVkszRkozbXo0M1dIY1BnNk5senRj?=
- =?utf-8?B?eWlrZjJ2Mm1IMW9zV1NtVUU4NmovNGN4ZFJmM3VPdi9rRklFbCsveDVXL2xs?=
- =?utf-8?B?VzNnWnYvVVlvdlc1bDVKNWNLRVJtdmUrdUd6cm5WSWZ6eFEvZkljM2JJbTZN?=
- =?utf-8?B?ajVZN3l0Z0hrL3pqR0hoYkV0ajl5emtVNUQvZnU3Y1BTNHpoWGpRdW1TY2Zw?=
- =?utf-8?B?dGpOYWF3QWc1L2ZOQ1cvelFNWHdnVzIrSGJWeDJqeGc5NFRjcEIvTmIybU80?=
- =?utf-8?B?QzZWejhxTk5uTVZOSUtSeGdCVzdyMEwzajBKcERSb3BnVjZON0RETnoxcjRX?=
- =?utf-8?B?b2ZtUGhEWlFvNGhtdnYzdVY3MERVRGRiNVpaTllUR3RqaVpITXlhOFBMN29W?=
- =?utf-8?B?RE00SGRyWHFuWU5ydXpVU1U3ZHROTGgyWTIwVTQwK3QwRFZYL21weVRQOG9O?=
- =?utf-8?B?SWUvdFhUcEdEaFE4YUk0RllQekRpVXMrd2E1eE1PVFFkZGNxMmlkdWNvRHgw?=
- =?utf-8?B?SVZOaWRiQUk4Tmo5eVdLb2U0RC83WFhxR0M4ZmxrSko0SVRRdGdXWGlNeVQy?=
- =?utf-8?B?bVJKL2dIRFgwSkNnRlpmczBrV2lQa042cGlaU2krbDVTYTNzaHBwNnJTNkFi?=
- =?utf-8?B?c1Rva1dwSDNiY2VheW9KbmV2Sk5CSnBQZFVibk9KbWNyYVpNL0NRU2NhTXk1?=
- =?utf-8?B?aDAzMVVKZkczTzNocThBM3RkY0h0K0RHWUwzZ2p4TVNINmR2MHdaajN5RVJO?=
- =?utf-8?B?MDZBaFRuNlVBN3czUk9uVGNDdWp6bXFpcmxOcWxJaHhlUk5TMVR4cU5HWXRP?=
- =?utf-8?B?VEVGd0I4NkVVVThMVG1sY0JIdmpkNjNNcTl4QnJvUnRweHFLWHkyVHcrU1Vv?=
- =?utf-8?B?aVhqMUw3TTNmR0JYbHowVDFacWp5N1VOVmViQjJxbkRIU2xzZkdKN2x3dlYy?=
- =?utf-8?B?di9MSW4wcTNLeTZycU91SHArZFZpa0xIdHl2UlQxaHFjaFdrT2ZHQjlaZHdH?=
- =?utf-8?B?S3JaendnNjRiUzdnMkdNTWRTYjhmeGxUVXZQLzVvZjlCZ0Z5V3gvUXF0Uitx?=
- =?utf-8?B?bXN0QldYZXRwYWk2MmdDNVBkVUZSVE1jOFgzelV6bzFReXJ1MTZFd0dYeTUz?=
- =?utf-8?B?UnF2R1BOem5ianZaTCtBaVJCSUE2aGFCZzZrUytiVXlSU0l5MTNoalcxK2k5?=
- =?utf-8?B?elV5RXJRdk1oeWVQOGtzNDFDY0hzK0tTaThQMERWK3hiUkptZWtkQUNmVWpZ?=
- =?utf-8?B?SzQ1RlArdjRVb2htd1dubGV5czgzNmI3RlIzZ1pPMk0zOFBFWmJuS21tSW11?=
- =?utf-8?B?ZDVrTGR0TjhSc3VFNUpSMFhtN1pqcHpNZGVEMmt1dG8rNnc3TjYvczZLNVds?=
- =?utf-8?B?V3hhK2g2VmxCUmw4cmQyR2RobVJwMzhNYjlTTW8veHhtK3lBRVlJcWU5YUxw?=
- =?utf-8?B?T3JvaFVqZkhyaEZUcnM5TTBOYm93TlM2VnNuNkREczJ5MG9venQ0UWtGSjlE?=
- =?utf-8?Q?LLkLsE7ncHVt8jexo5YY5Fjzf+jzmz5nL2OOE=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RkU2SUJtQmlheTRYeURlMzhoUHEySVdRcnp0TWF2RzdXaFV2ZWZrRVVoZXBG?=
- =?utf-8?B?aVNESWxzZzltVHhCc0IycmlXZUhNY3J1Tk04b0xla2NGWUk2TEpCOThJTU02?=
- =?utf-8?B?MHBaM3B5aFhRWkozT2MwVy9PZTF6TTZlWnR2ekFkUzJHeVV1VXdmVGNhRnZ0?=
- =?utf-8?B?VCtNMnd2bDgyNktWYmZURHVFY2JNdlI2bHI3Y3ZZUHdtcGxyQmdXK1F3TUpP?=
- =?utf-8?B?dlJWUUp4MnpIVy95eitLL0RRU1N4UEhyOWNzTXFjV1ozSFdxQXB6L1poVFBr?=
- =?utf-8?B?MWM1VzNaR3dTZW1ibURHcHNlaW8vNUsrSDBTZGhGK1pCN3pUTVFiTUIyWEdk?=
- =?utf-8?B?L1h5SmNwWWpFaVE2S1JXaXN5Wk9MVG1wV1FabEZHckdFVmg4ODE5Q3hnYzdR?=
- =?utf-8?B?Z1QrQjhNQjBGODJiWVIwM3h6N2t4SlpkSkFYVUNXUFN5OWZLRDhTUXpkd0NS?=
- =?utf-8?B?Sms4ZWc2WUxwVThMVCtFK2RRbk0yZEpmUjEwM242bWpQTktQbnR0T1R6MlVL?=
- =?utf-8?B?SjRWQjRRd0grQXBDUTI4R0NkZ24xWTlTU2l4MlltdDJKUFgyRjUrbEppc1hR?=
- =?utf-8?B?WDB2SDFPZlJzWXQyVUVRcUl1M1Z2UHZNTE5STlJoeE1tRlRsdGh6STlYenln?=
- =?utf-8?B?NzQ1cDVMYWN1YmJraEwzTm5QTnR2KzVQaURtTWE5TGI2TlYrUTJYR2JFc24y?=
- =?utf-8?B?ekNRWndaREx2SGd6SHd5TFVPZ1BhY3EzaGZpQ1l4NVlZenNvRmFFdDA5ZHYy?=
- =?utf-8?B?YXU0VkdTYTdCem5iWlpuNEtONS90L2hwUEpYbXVlQURCK25yVW83eWptZzVi?=
- =?utf-8?B?VnZxeXZyOGxLMm53WDFhZmtacUZOTmV5d3VscmNMcWRUZ2VoRGFRWnpyeUJ1?=
- =?utf-8?B?Wkd4dTh3alNHNEZNcFFHSml2S2FIWEFpeTlqV0R4V3F3dU4yeFRrYmJwV2Vo?=
- =?utf-8?B?K1BjZDYrdmw1eXdVZjF3TWR6OHdtUjVKY3I0cHd1TkhWVlpUSnlGaXBDWCtV?=
- =?utf-8?B?Zzl6SDJzZW5ZalFzYVg4UGJLMFJGUHQ0d3U5dnRoeHhaMzFQc1dITFZnV3dE?=
- =?utf-8?B?KzZGTTdVaWdOYTduR2RZVDd0cTZuL09UWmJmcllaaXVTelJFTjVTWnU1N1Jm?=
- =?utf-8?B?M0o2QzQ1VENmKzcvVi9BMFBlVFpwWkIzRlVCc0FVTWc3NHFzT2IvWE1KVFU5?=
- =?utf-8?B?TW9ValFGVHFFamhMbHl5MU9sekhhOTZTbkR0R0EvcUlKSitXRmdDaVRwbVRR?=
- =?utf-8?B?RE04Mm9lWU8rdVd5VGdhU2JIem5ZWTNSaG1hRzMwc2w0bHFyVUtubTBMT29x?=
- =?utf-8?B?U3lCYkY5SEhsNzBaalI1ZHpkZjdRcmpzNWNzM1hYRXlPNUlzWUtzZXZxV1Vh?=
- =?utf-8?B?SUlvQ08yVWJqUWdaa2U0M3d0YUdWTytiNngrRjZ1aHlwRUoxNTlQWGNYNzlL?=
- =?utf-8?B?NCtJbDZGWDFORmxaemUweUp3U2kyYThBWnBiUEFRWjUxYnJ3L3UvRC94QjlS?=
- =?utf-8?B?eXhtVkZ0NXlCU25MMUFLanFZUjdaQkdLRlZveHNFeTRNeEN3bHgwTmhmcjV3?=
- =?utf-8?B?a1lmUFEyaktleWlwR0tISjdDK1BYWUNrOUV3bFBtT2t6d0JiUU1sMmQxcE83?=
- =?utf-8?B?OTc2dGdQUGh1anZCaDMwWlNXbmJPMHphUTFEN3hocjRRVUlXVGE3eFBrdTF3?=
- =?utf-8?B?VFQ2TGswZy9WTWg1ZUlJTXEzUEtKRDAyUlErNTBFM2JZYnhPVXA1MllFQmY2?=
- =?utf-8?B?RkFaOUVtNC9CU08vQ0tmTW5VM3ZTZVBDYTJyRDdXQXJremVQZGM2MWFDR0N0?=
- =?utf-8?B?eGgvQW4yL0JUSHh4eVhzOFBHbTQ4OVlrcnpwRVUxZzRtWlJTY2ppV3FHQWNP?=
- =?utf-8?B?d2pnWGlscFBWdEYzKzdORWs2eWxKdDlkdFZpYkN0OVArTzZpamI3SW5VRXJE?=
- =?utf-8?B?b2ZISk1CVFVSQllyYlRMOEFWYlhuVU5Pb1JQdlBwTlJ5Uk1YbEs3eVVnb0F6?=
- =?utf-8?B?NXNWQTRMNXhTeldaVDlYdUdNQXB3SmRlM29nMWlTR200bEpLaUZ0TGtsY3FH?=
- =?utf-8?B?bndpeVlNY0R1WU9YMUdPNjQwR0x2NVpIU2VlY0JwWTZlMlpKTFgyQ3NIWTl3?=
- =?utf-8?Q?CNTIHMINi4QcB6+7tH27oBuGs?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DE541A1BD1F73C48B50F72027464CB15@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=paul-moore.com; s=google; t=1726190995; x=1726795795; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yKsryRZxeeDHRG/BrSJmrMq93TR8VGtT1uFe4+enWiY=;
+        b=bURSXsvRaY3/ZWscos6Jf/CpRPGuGnUdMvpLyVASdTP3cCL+NEN2cvZu4AqNfjuTGz
+         qJEIpw1sKWX9OR5+hU7nJMWdXXHm0ggIk0fSSbVllXfP8uJevDedWu/hCVhqcfoWMwPq
+         zfiR0dmrrWxpl1blC+fbKDvmqG84V4e7obeOcwnrYODVz3s3OKY3HiP6C0So7MfKvcrr
+         hMP1ZNm5wZ5hEriP4e5tGy2JfjEDuHmwusFh9r2aRn9twtehOWdBwyK415LaE/9kLKDb
+         B5T5rPJueAA0qBLoFUTGHjfhjs9wF0EwlusT7EY3iuBb2ASSdadfkX9rliC3Emcw/D07
+         S2/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726190995; x=1726795795;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yKsryRZxeeDHRG/BrSJmrMq93TR8VGtT1uFe4+enWiY=;
+        b=A4myJtutn95IsCr/YWW7+SRqs18PxnTbzcebk9Gwp5g0wqN9C9Nfe+q0vgaqzsm2uT
+         1L7lhF0aIYOe+namviBYF8IbUHhJ/T+snO8Tp6Ro+TTzfKDGaTGUjIfvUS55f6qDFG8u
+         b67C1RKJRvtTYoGEMopjaSUjhHeurfWLfJybcmOMGmY0eIKTLLzQrDG0+7W/j0YnHHn8
+         TfHM+Uf4FkekiFNJjj15oOqmrk6NhRkwzN13e/CmeQCTMr5Ws3RJzDQ4WcsA9qg//WTT
+         bwy2xT351dcM6wL3c2SCqN9EaD+mlcuhFg6RRp5xfca9nTbMUiBJ5jUdbzkzWZ6oOrUr
+         fykQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuEuGI1F838QJXPqRyMpneCNGxjYETX3bSaJUtT3IGQXyw1/3xL0sEEP5QcAWIsDfLLdxh9i9WN5vNVJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY9QJxkrDbHDWe0SmS7t5heF8gZsvwayEB839Vsf1BiqXwcbLk
+	MlbmkAQvLbvus2pDfZRjkt0U1p75cET4RefyOaIRSBKllkbd9G6D7LRm2JRPLGRREHqGnnXaRpo
+	=
+X-Google-Smtp-Source: AGHT+IF3T7Zq8bcbhwTy6n0E+YB2QeEfjLstJF9RICxYJ5lNg2eFj8SjI4ixrEFSwXtAmv//s1r4rQ==
+X-Received: by 2002:a05:6214:469e:b0:6c5:2fc7:a623 with SMTP id 6a1803df08f44-6c573543ccemr70624966d6.11.1726190994996;
+        Thu, 12 Sep 2024 18:29:54 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53433982esm60313976d6.42.2024.09.12.18.29.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 18:29:54 -0700 (PDT)
+Date: Thu, 12 Sep 2024 21:29:54 -0400
+Message-ID: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20240911
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea534736-4344-4a7d-38f4-08dcd392eac8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2024 01:25:13.7143
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +0+7BSVhZKK/i+ER84TJXywhY3cYe6R4l58WcylPhwKYFxMki/2VPKn63jHh8b1YQkr9a2uZTOfOzlbcTs9IOQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB8453
 
-SGksIEphc29uOg0KDQpQbGVhc2UgaGVscCB0byBmaXggdGhpcyBpc3N1ZS4NCk90aGVyd2lzZSwg
-SSB3b3VsZCByZXZlcnQgdGhpcyBzZXJpZXMuDQoNClJlZ2FyZHMsDQpDSw0KDQpPbiBUaHUsIDIw
-MjQtMDktMTIgYXQgMjM6MjkgKzAzMDAsIEFscGVyIE5lYmkgWWFzYWsgd3JvdGU6DQo+ICAJIA0K
-PiBFeHRlcm5hbCBlbWFpbCA6IFBsZWFzZSBkbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRh
-Y2htZW50cyB1bnRpbCB5b3UgaGF2ZSB2ZXJpZmllZCB0aGUgc2VuZGVyIG9yIHRoZSBjb250ZW50
-Lg0KPiAgSGksDQo+IA0KPiBPbiAyMDI0LTA3LTMxIDE2OjM0ICswMzowMCwgQ2h1bi1LdWFuZyBI
-dSB3cm90ZToNCj4gPiBIaSwgU2hhd246DQo+ID4gDQo+ID4gSHNpYW8gQ2hpZW4gU3VuZyB2aWEg
-QjQgUmVsYXkNCj4gPiA8ZGV2bnVsbCtzaGF3bi5zdW5nLm1lZGlhdGVrLmNvbUBrZXJuZWwub3Jn
-PiDmlrwgMjAyNOW5tDfmnIgxN+aXpSDpgLHkuIkg5LiL5Y2IMToyNOWvq+mBk++8mg0KPiA+Pg0K
-PiA+PiBTdXBwb3J0ICJQcmUtbXVsdGlwbGllZCIgYW5kICJOb25lIiBibGVuZCBtb2RlIG9uIE1l
-ZGlhVGVrJ3MgY2hpcHMgYnkNCj4gPj4gYWRkaW5nIGNvcnJlY3QgYmxlbmQgbW9kZSBwcm9wZXJ0
-eSB3aGVuIHRoZSBwbGFuZXMgaW5pdC4NCj4gPj4gQmVmb3JlIHRoaXMgcGF0Y2gsIG9ubHkgdGhl
-ICJDb3ZlcmFnZSIgbW9kZSAoZGVmYXVsdCkgaXMgc3VwcG9ydGVkLg0KPiA+IA0KPiA+IEZvciB0
-aGUgd2hvbGUgc2VyaWVzLCBhcHBsaWVkIHRvIG1lZGlhdGVrLWRybS1uZXh0IFsxXSwgdGhhbmtz
-Lg0KPiA+IA0KPiA+IFsxXSBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2Vy
-bmVsL2dpdC9jaHVua3VhbmcuaHUvbGludXguZ2l0L2xvZy8/aD1tZWRpYXRlay1kcm0tbmV4dA0K
-PiANCj4gSSBhbSBzZWVpbmcgYnJva2VuIGNvbG9ycyBvbiBhbiBNVDgxNzMgQ2hyb21lYm9vayB3
-aXRoIG5leHQtMjAyNDA5MTIsDQo+IHdoaWNoIGdvZXMgYXdheSBpZiBJIGdpdC1yZXZlcnQgdGhp
-cyBzZXJpZXMgKGNvbW1pdHMgMWY2NmZlNjJjYzA5DQo+IGViMTdjNTkwOTQ4MSBhM2Y3ZjdlZjRi
-ZmUgNTllOWQ5ZGUyNWYwIDQyMjVkNWQ1ZTc3OSkuDQo+IA0KPiBUbyBpbGx1c3RyYXRlLCBJIHRv
-b2sgYSBwaWN0dXJlIFsxXSBvZiBzb21lIGNvbG9yIG1peGluZyBkaWFncmFtcyBmcm9tDQo+IFdp
-a2lwZWRpYSBbMl0uIERvIHlvdSBoYXZlIGFuIGlkZWEgb2Ygd2hhdCBnb2VzIHdyb25nPw0KPiAN
-Cj4gKEknbSBidXN5IHdpdGggdG9vIG1hbnkgdGhpbmdzIHNvIEkgZG9uJ3Qgd2FudCB0byBkZWJ1
-ZyBpdCBub3cuLi4pDQo+IA0KPiBbMV0gaHR0cHM6Ly9pLmltZ3VyLmNvbS90TkZ2b3ZCLmpwZWcN
-Cj4gWzJdIGh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0NvbG9yX3NwYWNlI0dlbmVyaWMN
-Cj4gDQo=
+Linus,
+
+We've got a reasonably large pull request for the LSM framework this
+time (at least it's large for us), here are the highlights:
+
+* Move the LSM framework to static calls
+
+Based on some of our exchanges over the summer, it sounds like you
+are already familiar with the effort to convert the LSM callbacks
+from function pointers to static calls.  This pull request includes
+that work and transitions the vast majority of the LSM callbacks into
+static calls.  Those callbacks which haven't been converted were
+left as-is due to the general ugliness of the changes required to
+support the static call conversion; we can revisit those callbacks
+at a future date.
+
+It is worth mentioning that Tetsuo Handa is opposed to the static call
+patches, some even carry his NACK, as they make it more difficult to
+dynamically load out-of-tree LSMs, or unsupported LSMs on distro kernels.
+Many of us have tried to explain that out-of-tree LSMs are not a
+concern for the upstream LSM framework, or the Linux kernel in general,
+and that decisions around what LSMs are enabled in distro kernels is
+a distro issue, not an upstream issue, but unfortunately Tetsuo
+continues to disregard these arguments.
+
+* Add the Integrity Policy Enforcement (IPE) LSM
+
+This pull request adds a new LSM, Integrity Policy Enforcement (IPE).
+There is plenty of documentation about IPE in this patches, so I'll
+refrain from going into too much detail here, but the basic motivation
+behind IPE is to provide a mechanism such that administrators can
+restrict execution to only those binaries which come from integrity
+protected storage, e.g. a dm-verity protected filesystem.  You will
+notice that IPE requires additional LSM hooks in the initramfs,
+dm-verity, and fs-verity code, with the associated patches carrying
+ACK/review tags from the associated maintainers.  We couldn't find an
+obvious maintainer for the initramfs code, but the IPE patchset has
+been widely posted over several years.
+
+Both Deven Bowers and Fan Wu have contributed to IPE's development
+over the past several years, with Fan Wu agreeing to serve as the IPE
+maintainer moving forward.  Once IPE is accepted into your tree, I'll
+start working with Fan to ensure he has the necessary accounts, keys,
+etc. so that he can start submitting IPE pull requests to you directly
+during the next merge window.
+
+* Move the lifecycle management of the LSM blobs to the LSM framework
+
+Management of the LSM blobs (the LSM state buffers attached to various
+kernel structs, typically via a void pointer named "security" or similar)
+has been mixed, some blobs were allocated/managed by individual LSMs,
+others were managed by the LSM framework itself.  Starting with this
+pull request we move management of all the LSM blobs, minus the XFRM
+blob, into the framework itself, improving consistency across LSMs, and
+reducing the amount of duplicated code across LSMs.  Due to some
+additional work required to migrate the XFRM blob, it has been left as
+a todo item for a later date; from a practical standpoint this omission
+should have little impact as only SELinux provides a XFRM LSM
+implementation.
+
+* Fix problems with the LSM's handling of F_SETOWN
+
+The LSM hook for the fcntl(F_SETOWN) operation had a couple of problems:
+it was racy with itself, and it was disconnected from the associated DAC
+related logic in such a way that the LSM state could be updated in cases
+where the DAC state would not.  We fix both of these problems by moving
+the security_file_set_fowner() hook into the same section of code where
+the DAC attributes are updated.  Not only does this resolve the DAC/LSM
+synchronization issue, but as that code block is protected by a lock, it
+also resolve the race condition.
+
+* Fix potential problems with the security_inode_free() LSM hook 
+
+Due to use of RCU to protect inodes and the placement of the LSM hook
+associated with freeing the inode, there is a bit of a challenge when
+it comes to managing any LSM state associated with an inode.  The VFS
+folks are not open to relocating the LSM hook so we have to get creative
+when it comes to releasing an inode's LSM state.  Traditionally we have
+used a single LSM callback within the hook that is triggered when the
+inode is "marked for death", but not actually released due to RCU.
+Unfortunately, this causes problems for LSMs which want to take an
+action when the inode's associated LSM state is actually released; this
+pull request adds an additional LSM callback, inode_free_security_rcu(),
+that is called when the inode's LSM state is released in the RCU free
+callback.
+
+* Refactor two LSM hooks to better fit the LSM return value patterns
+
+The vast majority of the LSM hooks follow the "return 0 on success,
+negative values on failure" pattern, however, there are a small handful
+that have unique return value behaviors which has caused confusion in the
+past and makes it difficult for the BPF verifier to properly vet BPF LSM
+programs.  This pull request includes patches to convert two of these
+"special" LSM hooks to the common 0/-ERRNO pattern.
+
+* Various cleanups and improvements
+
+A handful of patches to remove redundant code, better leverage the
+IS_ERR_OR_NULL() helper, add missing "static" markings, and do some minor
+style fixups.
+
+-Paul
+
+--
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20240911
+
+for you to fetch changes up to 19c9d55d72a9040cf9dc8de62633e6217381106b:
+
+  security: Update file_set_fowner documentation
+    (2024-09-09 12:30:51 -0400)
+
+----------------------------------------------------------------
+lsm/stable-6.12 PR 20240911
+----------------------------------------------------------------
+
+Casey Schaufler (6):
+      lsm: infrastructure management of the sock security
+      lsm: infrastructure management of the key security blob
+      lsm: add helper for blob allocations
+      lsm: infrastructure management of the dev_tun blob
+      lsm: infrastructure management of the infiniband blob
+      lsm: infrastructure management of the perf_event security blob
+
+Deven Bowers (13):
+      lsm: add IPE lsm
+      ipe: add policy parser
+      ipe: add evaluation loop
+      ipe: add LSM hooks on execution and kernel read
+      ipe: add userspace interface
+      audit,ipe: add IPE auditing support
+      ipe: add permissive toggle
+      block,lsm: add LSM blob and new LSM hooks for block devices
+      dm-verity: expose root hash digest and signature data to LSMs
+      ipe: add support for dm-verity as a trust provider
+      scripts: add boot policy generation program
+      ipe: kunit test for parser
+      documentation: add IPE documentation
+
+Fan Wu (7):
+      initramfs,lsm: add a security hook to do_populate_rootfs()
+      ipe: introduce 'boot_verified' as a trust provider
+      lsm: add new securityfs delete function
+      lsm: add security_inode_setintegrity() hook
+      fsverity: expose verified fsverity built-in signatures to LSMs
+      ipe: enable support for fs-verity as a trust provider
+      MAINTAINERS: add IPE entry with Fan Wu as maintainer
+
+Hongbo Li (1):
+      lsm: Use IS_ERR_OR_NULL() helper function
+
+KP Singh (4):
+      init/main.c: Initialize early LSMs after arch code, static keys
+         and calls.
+      kernel: Add helper macros for loop unrolling
+      lsm: count the LSMs enabled at compile time
+      lsm: replace indirect LSM hook calls with static calls
+
+Mickaël Salaün (2):
+      fs: Fix file_set_fowner LSM hook inconsistencies
+      security: Update file_set_fowner documentation
+
+Paul Moore (2):
+      lsm: cleanup lsm_hooks.h
+      lsm: add the inode_free_security_rcu() LSM implementation hook
+
+Tetsuo Handa (1):
+      lsm: remove LSM_COUNT and LSM_CONFIG_COUNT
+
+Xu Kuohai (2):
+      lsm: Refactor return value of LSM hook vm_enough_memory
+      lsm: Refactor return value of LSM hook inode_copy_up_xattr
+
+Yang Li (1):
+      ipe: Remove duplicated include in ipe.c
+
+Yue Haibing (1):
+      lockdown: Make lockdown_lsmid static
+
+ Documentation/admin-guide/LSM/index.rst             |    1 
+ Documentation/admin-guide/LSM/ipe.rst               |  790 ++++++++++++
+ Documentation/admin-guide/kernel-parameters.txt     |   12 
+ Documentation/filesystems/fsverity.rst              |   27 
+ Documentation/security/index.rst                    |    1 
+ Documentation/security/ipe.rst                      |  446 ++++++
+ MAINTAINERS                                         |   10 
+ block/bdev.c                                        |    7 
+ drivers/md/dm-verity-target.c                       |  118 +
+ drivers/md/dm-verity.h                              |    4 
+ fs/fcntl.c                                          |   14 
+ fs/overlayfs/copy_up.c                              |    6 
+ fs/verity/signature.c                               |   18 
+ include/linux/args.h                                |    6 
+ include/linux/blk_types.h                           |    3 
+ include/linux/lsm_count.h                           |  135 ++
+ include/linux/lsm_hook_defs.h                       |   20 
+ include/linux/lsm_hooks.h                           |  129 +
+ include/linux/security.h                            |   55 
+ include/linux/unroll.h                              |   36 
+ include/uapi/linux/audit.h                          |    3 
+ include/uapi/linux/lsm.h                            |    1 
+ init/initramfs.c                                    |    3 
+ init/main.c                                         |    6 
+ scripts/Makefile                                    |    1 
+ scripts/ipe/Makefile                                |    2 
+ scripts/ipe/polgen/.gitignore                       |    2 
+ scripts/ipe/polgen/Makefile                         |    5 
+ scripts/ipe/polgen/polgen.c                         |  145 ++
+ security/Kconfig                                    |   11 
+ security/Makefile                                   |    1 
+ security/apparmor/include/net.h                     |    3 
+ security/apparmor/lsm.c                             |   17 
+ security/apparmor/net.c                             |    2 
+ security/commoncap.c                                |   11 
+ security/inode.c                                    |   27 
+ security/integrity/evm/evm_main.c                   |    2 
+ security/integrity/ima/ima.h                        |    2 
+ security/integrity/ima/ima_iint.c                   |   20 
+ security/integrity/ima/ima_main.c                   |    2 
+ security/ipe/.gitignore                             |    2 
+ security/ipe/Kconfig                                |   97 +
+ security/ipe/Makefile                               |   31 
+ security/ipe/audit.c                                |  292 ++++
+ security/ipe/audit.h                                |   19 
+ security/ipe/digest.c                               |  118 +
+ security/ipe/digest.h                               |   26 
+ security/ipe/eval.c                                 |  393 +++++
+ security/ipe/eval.h                                 |   70 +
+ security/ipe/fs.c                                   |  247 +++
+ security/ipe/fs.h                                   |   16 
+ security/ipe/hooks.c                                |  314 ++++
+ security/ipe/hooks.h                                |   52 
+ security/ipe/ipe.c                                  |   98 +
+ security/ipe/ipe.h                                  |   26 
+ security/ipe/policy.c                               |  227 +++
+ security/ipe/policy.h                               |   98 +
+ security/ipe/policy_fs.c                            |  472 +++++++
+ security/ipe/policy_parser.c                        |  559 ++++++++
+ security/ipe/policy_parser.h                        |   11 
+ security/ipe/policy_tests.c                         |  296 ++++
+ security/landlock/fs.c                              |    9 
+ security/lockdown/lockdown.c                        |    2 
+ security/security.c                                 |  615 ++++++---
+ security/selinux/hooks.c                            |  176 --
+ security/selinux/include/objsec.h                   |   28 
+ security/selinux/netlabel.c                         |   23 
+ security/smack/smack.h                              |   12 
+ security/smack/smack_lsm.c                          |  107 -
+ security/smack/smack_netfilter.c                    |    4 
+ tools/testing/selftests/lsm/lsm_list_modules_test.c |    3 
+ 71 files changed, 6063 insertions(+), 484 deletions(-)
+
+--
+paul-moore.com
 
