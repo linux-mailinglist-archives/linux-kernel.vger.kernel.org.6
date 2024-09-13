@@ -1,158 +1,308 @@
-Return-Path: <linux-kernel+bounces-327942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0D2977CE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F386977CE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8756D1C251A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC761C24940
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD82C1D7E45;
-	Fri, 13 Sep 2024 10:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7A31D7E55;
+	Fri, 13 Sep 2024 10:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="z6e0hP6O"
-Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WppxqUri";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="G6YiXexh"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E432F1D6C5C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726221985; cv=none; b=nTRs2BBpENQDbHJKfN2m1jkdzxOHJsvDfw6EVBmIJCtwNF/QrUFtuo+kZ/3GQajIHMy7YeM/vcgvROL8jJ3NHgyPceO+v3DRB/oOuPLV6ctkvaxEWojWw+ThUOOxxoSHc3N7Tzgxdi376katUwNVnfacUr7Xs8LjbI7eAYOwW4g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726221985; c=relaxed/simple;
-	bh=ma3gih4QZb3W22XO1BUgS2TgaOmdM7cLRLgQ6YOHH+0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pKG2+Dx5JyblQUo+t4X2r/cWmghW/qWnhlbkAqakK+YgcTeoxQqdJPo5VcmQe9gErmS1fcajO/ET/XXMG9mtyNlMzfAQdm4LrXwhZ1Im6y97QFuyyoQw+RPR7eLHol7LR6b3nu3N8FUiraW5rePaT0DYEWprXko7DqUiM3ox1W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=z6e0hP6O; arc=none smtp.client-ip=209.85.215.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7db1f0e1641so762923a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 03:06:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37021D6C47;
+	Fri, 13 Sep 2024 10:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726222029; cv=fail; b=TMO2PQPlAiSYOwcXy0i6jZvz3RB3BZU2MKRQz1cuL7sPJhQH6MaYb+ROKuCYDC0YtTFUCM9oYqwFhUGwbkqBtUU9CpGeuaa8hyVHkI3UZGkkNzKIucMTjGG9aA1ACOhjpBOYFpFbr9Cjo37iaIatxb5vgAVLwnZHIKcxxvxkPWc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726222029; c=relaxed/simple;
+	bh=svcyHmzHK6hsFOMOQM+HyR3N1AzWGTjynJVUKp9QXKk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IXs1RPQysPRTedHOKAzMtzQpkqwt7Eg+o0VkUPL1Up5gNqALwltx6jyAA8YtP2IJuA5WrW97ot9NCyspEmqPeKZ/vXQtKucnSOHtObeKNC1ZbX5p/jnotscotiMx4Ac0WQm+la8u7RTusVakRWPJ0yAPnqjRUXSHOvtUGgeS6/Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WppxqUri; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=G6YiXexh; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48D9YJ7D012278;
+	Fri, 13 Sep 2024 10:06:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=MH7esTSbBESGy3C6YSgKy361CiEKM4K4qfTtvJo7tXU=; b=
+	WppxqUri1tAGIVZ8i6gdnM0H2F0ecwndeb/M1R+KOssLYsjDp47v8weGOcFB9BDJ
+	ZhXMRUJOsS+vFqtuCUX/ZgNttGXtJUD80IWuCdwLzYHcfCtRVVrVUpD7a0ZQja/j
+	PPoHZuDZr2XdwRgFy4DKGCA6FJjR3vD16Uvmg9mJjfCGO/IB8hX3ZG4gl1AiS/Mw
+	ycZVEnJYUFpKvtKTzanfKEiOuVIoRZJzC+K4RR1cLidI7FHgW/DuwxQa/FPyd7nc
+	SRHYGBpGhUvE9+/bVbgxNqNWIGmmfR6x2cwioOdRLMyZA7dSX6WBX/4oaKkCvle0
+	0SjjTxN+6SVOg0o8h1GhGg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gfctn78j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 10:06:57 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48D95E8Z040809;
+	Fri, 13 Sep 2024 10:06:57 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2045.outbound.protection.outlook.com [104.47.51.45])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9e5762-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 10:06:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Em3Z4mFA7k1HzE6tXu7ZDE0Fg7n73Zp0Zll8UHwgT7+s4hN8y41J3CT8QDRAy/wXjcrYriXLsHRDjHc+T7MwFQbWkB5k+qYHrgvbUfxORfE3I+L62fIUed5Qc+bz+GE4LRulQo6/AqSd9u5NEfXJr5COXakd2XEo2jk1NqBygwUv6Plfw/cLnuqJCMTa9Go0+pejRR/f18ajok/yAprmvKutRt9UF+MT3Lld37i+qq35+J3J+MohQgePPV4ZUyCgfDVnTySw08mkdcoeiJG4TqJpp5KrFg59IKYG/tqyNteW5LGPSqPdzls6nhQlySg9ESRL5MXBW7iadsJQqkT3Dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MH7esTSbBESGy3C6YSgKy361CiEKM4K4qfTtvJo7tXU=;
+ b=EcHmhhv4dyXVCHIC8E1Mb+6uZ32dJU2YYFubbkhpnVMVSLHGYoTU/GTni2WNr8sBtpL5dcK/4aOxra9Qaky2adnF1nneGqfsUP28Ny2ZmzS0/gC3vHc6QQioZiQ//f5hXEkVJxinNCZy4UJLk8ABOmtbsBN99n0AI07CbOSnjgbm/Fh8oAIBkzZSiejjRLhjn0xX/H+vXNmlL0xJgn1WJ6qMLTNKiUhO2YHc0wHIrixk0vnQGmLiUFLGRTSZIwXXQP6jkr2CCCrpTh/oTeE24MuYLO6pRgyLwj4YfYZggHPW0Hh8v5jtLJy2gou2k8P5GWK9ooIU9hOrJukWGrV+3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1726221983; x=1726826783; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mebWSTRXrpHOd1Ov9TjvCQ1BH1A/L8W/aymjC8YjMyA=;
-        b=z6e0hP6OxTMPKuUg5RaTBbFTmZqs3vk4s2dISS0tYPRoh8V5sR/hvna32G8oSlzlCE
-         kZy8oXZq9iNnBXhvK3Qqmyy4x/uwXLOOJNMEpbra4AGZmtyc9l4UeVPFmT+RqiPUYFKm
-         4C+coIIKTd4Bjg+JVzNIGghCHf6z07QBS7gIsgZAkYa1fCYwGWS3f+14v2/jhNVCrBoe
-         8qbDAzmE7FUV+ZykKD8ujyvhP2C9udICRX3S7od5nYnIUA05zcXNQbx7or8PfhZo3GV5
-         PqHisU/tjfFpk+YmhlsELWaQqtpqBX2C9a3JXohyZlIw6OtDf7k2+02KBCuR9WEAjQZo
-         tlGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726221983; x=1726826783;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mebWSTRXrpHOd1Ov9TjvCQ1BH1A/L8W/aymjC8YjMyA=;
-        b=Tdb0xetG8WbL57QFBErCW11InNSmX74txc27ufi0yLaEUByK8l9nwKeW/58S7ls6i3
-         rLbJUTMvw1PLe1O0Z/zh0MDyUxDj2bhMb6t/EbiiS1D+xmmA08vqEgrG8PTdkQYxZwmw
-         9tmjM5N3PSTmyhp3sPSWTuwNJRWZYC78mMK2rFktGLmN+lrwztsyg60/dRyv0TpCTNpX
-         XxP4NYUD0MkrKH765M/rmUShs+cL8WLpKUguUOvbeIrNAHaHHXipepb74tMLMztZG9z2
-         4jxjXo8aKjbIcPn60zSETKVPbzAvzTxaS8WsGgRvBWQN6MjWufJ6FouJNk85JQDi42Hd
-         a6yA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAXqMhUrBxVWirTSPvOKPU/aEdmLFCv/QJA5I1Wv+Eh2TEFSH0hyffEsnZc/dtozUcNQfdS5rj1NCzOCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIfnD9qeMsYE238Pxpk8sEZBY1YTovFqeVfqyQ6WvlR0EuKOXg
-	1e/R5yQnjAYHqJttaYfzm4xzTMnvc2MypJob/sP5jxSs2TX1BvLr4+qjFsxI+QR/GWWZT7kOcET
-	lwgcW
-X-Google-Smtp-Source: AGHT+IGLF8zeCK3gH9gqiVNfJYO+Cu9SMZiiwsrMlizscSm85IPSqVB6yJRnzNjrd0cry5ZoLKZYdQ==
-X-Received: by 2002:a17:90b:238a:b0:2d8:8fe9:b00f with SMTP id 98e67ed59e1d1-2db9ffbeec2mr6810986a91.13.1726221982859;
-        Fri, 13 Sep 2024 03:06:22 -0700 (PDT)
-Received: from [172.16.118.100] ([103.15.228.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9cd2debsm1308113a91.33.2024.09.13.03.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 03:06:22 -0700 (PDT)
-From: Ayush Singh <ayush@beagleboard.org>
-Date: Fri, 13 Sep 2024 15:36:06 +0530
-Subject: [PATCH] arm64: dts: ti: k3-am625-beagleplay: Enable MikroBUS PWM
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MH7esTSbBESGy3C6YSgKy361CiEKM4K4qfTtvJo7tXU=;
+ b=G6YiXexhiC08PAbk+H07HvQhGdgEB0RqQ/AKz3HhANEHkaapJ3IJXKw7e++ezEDPeLM7/iLuv1cAeRJNf2hanDmTg19SCV+BFgPSLCbTFq1y+30ehjVqodAC/6583QZeTR1jc1woghi8xP6fjabGp5Tge9K/uD+AfIiy+i5LaoU=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CH2PR10MB4375.namprd10.prod.outlook.com (2603:10b6:610:7d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.16; Fri, 13 Sep
+ 2024 10:06:54 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.7982.008; Fri, 13 Sep 2024
+ 10:06:54 +0000
+Message-ID: <5831e24d-dd96-4bad-815f-b79da73f7634@oracle.com>
+Date: Fri, 13 Sep 2024 11:06:51 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/5] ext4: Implement support for extsize hints
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+        dchinner@redhat.com
+References: <cover.1726034272.git.ojaswin@linux.ibm.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <cover.1726034272.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0213.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:33a::11) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240913-beagleplay-pwm-v1-1-d38ee5b36d8c@beagleboard.org>
-X-B4-Tracking: v=1; b=H4sIAI0O5GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0Nj3aTUxPSc1IKcxErdgvJc3SQLU8uUJENLY0OLFCWgpoKi1LTMCrC
- B0bG1tQB9SXGEYAAAAA==
-To: d-gole@ti.com, lorforlinux@beagleboard.org, jkridner@beagleboard.org, 
- robertcnelson@beagleboard.org, Nishanth Menon <nm@ti.com>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ayush Singh <ayush@beagleboard.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1443; i=ayush@beagleboard.org;
- h=from:subject:message-id; bh=ma3gih4QZb3W22XO1BUgS2TgaOmdM7cLRLgQ6YOHH+0=;
- b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBm5A6Zx6uuVBdo3ha/5xti0lllZFtl8lR1cNRX2
- Yx244On5EOJAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZuQOmQAKCRAFzvXHieVa
- dInaD/9Pmkto8ZWDHi68ML9FmaWdEtTeFO/ldoi3zNJVP1yWscyJL+64k9mbUgBWtRFcgkY55en
- FVeoKby3zVuKwpexAtk3iWqqkcRHcb2QTeEG7vD5Vdx/uh8N4hOFlSXksFWq0mEiSaw55isJMsh
- PYZq3Ni9YIutSxD/ChCuUsUw8kwkhRkCc4kmZlnm4g70YpM/CcjngrKJ6//bzdIthiTr4cK2r1I
- ZejdKGLIAoN52aT3GQJWKDcOmYhobdgCQK9kwr1UjDVvZpquj9zqYqF1UWFmdh4DxsL5xe7VJYy
- 0GdacoRnwBtUxCdntoPefkWWzZnafpeEsEKAINH+pAcMr6DXdA9jVj4jAAWANqWzkIh7Pl4Z911
- WFSX+dfVjavT4lKlR4JCguiVvcQpJTIIh7FPLEjmfTyela88RE+E4zgHQHzS8mttVBcSdrQBrcs
- B6EQ78FA+AkM5s3bpKXi7qKBpt4o3JsWSjlzFP6GSjswfmuBQLZquQhSHJmstQ/m76J2lgGK1/I
- sSjhTst/is7qnvehmrHmrpjEpz0j6qp8l2z8sQ7rmacptSRpBPHqzkY9DMNmd6NyEvPRCTAqRbw
- Yy9WdtKWmee+GRJymhoclrzgEAVJiPmehtkWQ2W0QZwXooAvWMGlXfjP5DnhdDfmIqljeAo0t6n
- ZyGkzoWCBemeBjA==
-X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
- fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CH2PR10MB4375:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7d3b877-18cb-470c-64ed-08dcd3dbcb3c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OXdtUXdvb3o3NUE0RmllME9teXVubFZJSC9nYmVweFpKSktRWjQyTXBZcDhr?=
+ =?utf-8?B?czVBK0lQUmk1WjkrRHlJb3FRM0lFTS9TK01tSW1ybnJTeU5neWFhdVdZL0py?=
+ =?utf-8?B?TlJkMklsd2U2VElSNDhmbk5mZ3c2S1UrQXJnUkluN01SYnhKMHltei9MekU3?=
+ =?utf-8?B?SUFkNzFxVXZGLzkrcDRzdkRtd3pHTWRhVlc0U0lubUpGcUllRTFzek1Ec0Jx?=
+ =?utf-8?B?ZTQ1enRSYk5GWHg5c3ZnYXRPcmJueU1YYTYzS0xHbTlTVG41eW5xZm56czAw?=
+ =?utf-8?B?Mm9YV1ZaRXJBT2ErMC9BMndIOWJpZ2puRVJWMHhDb2tuOGRkdlFnOHF1TUhx?=
+ =?utf-8?B?NEVhRzhZNDdSQW41cndQc3Q0bllTWEQ3ZUxSNGcvKzhJTXNwQXc4UXlwOFov?=
+ =?utf-8?B?VlQ5OTgzVUwzYkpSWVNRR3BVcTRaNlRTWEFBcFlkWG9kZU43VnBtTkJobU1G?=
+ =?utf-8?B?a0xyZkRRSFJ1ZlRyL2FiN1ZlMHl1TXRHZFZhTlFHMXJKdmxDQ0hZTkZZZG9L?=
+ =?utf-8?B?YnNiY0p5dDRUQ1ZiSkZPQnJocFBMSE9jajZ6dkJ3RkRxamp2WXZtNWUwYWF3?=
+ =?utf-8?B?VDZVVGJ6UGVJUmVQNms5RC93TG5GelU3Q1hCRVhWbzFDQmR6YVc1RXF3OVUr?=
+ =?utf-8?B?bFl2VWZ1cWcvdE5mR3lzRWozaDdxaWVFa0htY2NUMDRLOFp1aGVzTUhhNS9s?=
+ =?utf-8?B?bjZCVnNBUnZpUlIyTW5vMVNpUHFqTXFEbHhtOHdjc21rQzNFcXdaZmgweStC?=
+ =?utf-8?B?SjZKS2ZsRzhVako3WkZSQ3Z6ZU9xRnZNYnRHUUNpSk1hTXp2U2dTc0MzSXhR?=
+ =?utf-8?B?d2RUWHRZeDNwVk9LYnpGdE40elZHU3dBdkxvN29lM3dRV1Q3ckoySGNMQzla?=
+ =?utf-8?B?QWFHSnA2bzI5NERNRlpXK3BqczRKVm1YRzhZRldTL0V0eEhpRUdzb21Nc2E3?=
+ =?utf-8?B?alNqQzJhb2lQMEl5bXlmeFdKZzBzSlNvSWgrSzlJbVBKOGwwQnZsZllNSEtt?=
+ =?utf-8?B?bzMyeFM5bGUrbjIvekJQWC90VzNxWnJGZTZON1RaSi8wMmcyNWx0Q0VHN1A2?=
+ =?utf-8?B?OWllcXlyVm1Ubm16VWdBMmQvN25LNkJNSlIvS3FSOGxNQWl5emJmd05wRU5l?=
+ =?utf-8?B?UW5Md0tDTXo1TlZ0OTY1R0pzUFdPNGEzKzQ2cXpTNGVBbldrQUJOSyt4Y2Rp?=
+ =?utf-8?B?ZXRYQmN3dWxPYTJ4OW9SeE5TS3UwTTZGZXhsKzNpYlVaVWtLcFRTQ0xNTEc1?=
+ =?utf-8?B?VFpkTlpIRy82MElicGJndlVtZ0Z1ZG5IZHIrVGF1cXdueHNBZTRXMm0wK1Fo?=
+ =?utf-8?B?Y2l3YzU5K2c2TVpjNXNKMTJMZHc0dE4rOTdHcVh4aklraE9PdVg3akVpaStE?=
+ =?utf-8?B?a2xwZktHWnZqQ3ZESEQvQVRYNnRiYXJ3bEZhN1RNbXZPN3haMUNISlkvVS9I?=
+ =?utf-8?B?VWlMYW5MekFRSW9iZDRJTy9QOUxxaXhTTWxMTVdRV1hIVkpNME5Gci9xb2Ji?=
+ =?utf-8?B?VFpnazRaTkVkTFROOElwalVkN0loVSsrb0JZL2dzSXlPdjd4T1VDbXd3R2tJ?=
+ =?utf-8?B?ckJPWmFBNkZiMTBMNkpHdWx6aFVCNmh4Y1htY0h0VWtUS1E3Q3RKV0hnMFNS?=
+ =?utf-8?B?WTZQbkxBbXg1aEtEVUlyamVtWWpWUmRCdExUV0J3ZDVvL0FxNUd5U3VSYjJs?=
+ =?utf-8?B?a1V2OEU2R0hjT2hwYTVicnB3OTRDYzlLUVJHUkZZVis2d0pvT2Rsd3JhUjZp?=
+ =?utf-8?B?NXN5L0x6MnFrMW0rTUZHN2xnMjFaK0ovUlBpbjdkd3BhS3pmdDYrU2diQ3c1?=
+ =?utf-8?B?cytDbHlaNHRwZXNhbUludz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NURXSDVFenB4dDdUQ0l0b3AzUUQrdTFtTkErRDJtSU04bDZmUFZLRC9rWGpU?=
+ =?utf-8?B?ZmQ1ZTJET202dzVTelU0b3I2SW01eDFEaytOUUdwVUhWRWJHNTVHdzhTZFFh?=
+ =?utf-8?B?RTc4Q210TmNYZDlqVGdzbkUvaytmSjc1RXNmTVZkZFVFU215UHhPMXMvZm9R?=
+ =?utf-8?B?RHk5YTFGeEpZbjViVUJFZUovQnQySU4wYnZQR2JRajZRU0pJcUkwRFNmQzVt?=
+ =?utf-8?B?UVhYV1dFN1VwS24zRC8wR2ZtYTAwRW84WDdxa3Q2UEVDbCtUWTU3RlBEOW04?=
+ =?utf-8?B?VVAyUGJXVE8wTVExOUFYc20wRHJQN0wxMTY4ODQxZ3ljdUpOdEcvbU50VmhZ?=
+ =?utf-8?B?aWpRdm9FaHJhRmE2b2p0d3FlZno5UFg4YmhvRC8yMDVUTEhqamxuQlhaYndL?=
+ =?utf-8?B?aTNmNVp5dGg4RnZKUnpKM3l4TXFYaXdOM0VGclFuVzB3aFB3V1Rkc3RSRXR6?=
+ =?utf-8?B?aExmMStLRjByeDUrTW9hZG9TVUFIZGdDamlvZjJRMTBRblhnRUZBNnRoL2VW?=
+ =?utf-8?B?NHB6VWxqREpLSndkWWZuNEVtRTFoS3lBVjBSTVFaOWdsRjcyWmFubWdQWFhx?=
+ =?utf-8?B?Q0JCaXNtMVR5T1AvMkR2QWFtVmhmY0ZhdWRaUzhwV1dyVzFBWGFzOXEvMTFR?=
+ =?utf-8?B?QjNhbVNhaGpyUDhwRGhIemRKVGJ2UW45VmpsTnRSSGwxWm5vWE5mVEpkTSsw?=
+ =?utf-8?B?ZmU5ZkRWbUwzNVdHMm84V003RUdKZkhXUkNvMWlNYVVmeUZiNTBLcDRqMzlH?=
+ =?utf-8?B?S0tReUhCaWZRZFRqSWNjcG5sODhzc1dJZGVOcUdSbUZnTWZIckhUeU1Dcld4?=
+ =?utf-8?B?RGNMWExHYTBWYmhmaTR3TjA5YjFEZXA1UWgrdExTMzU0QWYrdEUyL1o0SGVo?=
+ =?utf-8?B?Yk5yTVhNcDdOTnNsa3Vma2FBbHZTbElzNTI4UjZDb2paWHNKb0lUYjQ0WFNW?=
+ =?utf-8?B?Zzl3RjgyV2lyVGlvcW1hRWsxZUMrRUdhOVk5TE9yQW1sc0pibDdDL1RpTWJ1?=
+ =?utf-8?B?c1VOVDAwYmMwQjlBcGxHOHJtU2NBM2hwT3B0OG9rL2pSVlBuMlF3L21mS3dI?=
+ =?utf-8?B?NVkxdnNvRlRmK1J5MzZvNnNMNjNwZy8veEU2MG5ObWtxRXdSUS93TXdkK2Nn?=
+ =?utf-8?B?MVJKQUNHRGpZNDdZWm56WldXNkFtYnU1bXNjQVQ2bkFNemppaGNSbS9HQk1t?=
+ =?utf-8?B?c0o3dVVsc2dReXZoeCtDOFVKOW1TVlc1VzR3ZkhweFBsamp5WVMzeXNpNWpk?=
+ =?utf-8?B?VWZkNHJNYUVKU0FkYXQ3eDRZYzJwYzRxbElibld4Z1RlSzBJTkJCUmp1a2xW?=
+ =?utf-8?B?VEZ0L0lMUDNkQkk5Q2NQTmFVVEhCWGxjL004M0RMdzVJalNsOVVpeXJNTXp3?=
+ =?utf-8?B?aUdTejNzYjNrMXNXMG83QTkrRk41dlc2bXlPenhHa0R5OTJ0dmdFZ2NzWUVw?=
+ =?utf-8?B?VmZ0cCtZeG5HaUFLSm1HRDFpVGZyODVtQmk2OGZYNVJ4cEkyL3JmUGV5OFJv?=
+ =?utf-8?B?bkxGQXBjQXQzRFpsWm0yVUlWUjlqRWxCam8yNVhFb3A0by8rMERkVCtJc3RT?=
+ =?utf-8?B?L3RBL2l6cmtQLy9hYXkvRVA3cm9tQjhVQ1B4UEp5NGNMRCsvNDVqWU14Qmxo?=
+ =?utf-8?B?Vm9jNGZnTmlTRXpYbDlyYnA3Q1l2UkpsdEt6ekg5aHFRdEtKUFpGK1p0S1Qy?=
+ =?utf-8?B?T2g5UXBEN29SNURpYnZxSlp6a3FrVk9YRURlTXBCNm8xTm95akozbndMaUY5?=
+ =?utf-8?B?UWwzMUc2bUxFSmJ4dUgrRHlnZXlubHAzakRaOU51QVIzaFJIY29Id012ZDFQ?=
+ =?utf-8?B?QzdIMEN2QjhpTkRUNk5ndCt4NHJvOFZNRFhaeUp5UlBDSjB1WG1XM0s0Q0Fr?=
+ =?utf-8?B?WkI0VmlqaFRYS0lGaUsvUzJoL0NCRFUxelpDV0YxaU9SczFRdko3cTN5TWt5?=
+ =?utf-8?B?SldhUDErbkFSdW5paTFsMzVqSzlwVGVvZmNXSDJKRkFQQ0hrR2ZPVFRLN2tt?=
+ =?utf-8?B?OEtyOEV5VzFLY3B0ZitRWm5rRmZUUzlUWnFzMDlXSmZoM2NYUEdsRmROQWhY?=
+ =?utf-8?B?TmVVUU1tcXkwd3V5OCszTHNBSzVPT0RDZ2VCNWdUeTdESVFqMG04UE5MWHdy?=
+ =?utf-8?Q?Zs878Kg4divnFGCpkRdBUxjsL?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Lgf7myRypJK8cC08uoMVtnXaeuSjpMoJ5CAdvM5YoTFnD/sSyQ8fV0z1ZGxdDMOKXxx3/LZLPLW2lgasdPdrnCj53R1pRn9WtyAjiwDeRc9XNCJymRjDDzFyaeF2lzGeL9gZV8kTdwsOq3GJHc4irgeYDvL01/+mYOuHsPU+eTnSOLpV3F7mOb9QB8LkhH9F0C1rg9NCZ/hZ4e7Xd9oilRUwDsl76vvOWNnQmVncqntwUyDqiWvybZ+yySt4rQQrJWmcoWAHqAw9YHoUVk49U2yAN/O8aWw+AbnwTRz2zNnPj1iVM1hcFSueLKiusRadpY48WW4kTU0yl1SCFS6zLePZTPbeLMXbuZDAwQY0H5DU7W/A2JLqFYwmtMZzXfpaPY0goE6jz9kZ1YxnVe0I/RPn7YSVrKTeb0S4aRC2sQhuoeqIvNm05+RlVyY5vtIy2aEy+tV880kSNuSwr2bg6V4I2WwqKV+X9S1i+WtR1vxP6qVygXn8TEYLXl1txKuPO5KgCjTIA4YjBQk6zF8nk1s5RX98PsBWG70BfnopKqqjtsG08Xp6Xn1FjL0Q+8zF1v+pOkonmP5KP9rgDp2aEdfacYehTYeKqu3VzDsinrI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7d3b877-18cb-470c-64ed-08dcd3dbcb3c
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 10:06:54.3877
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8yJAojVpxZd3NfeobdqEJkXGj287hsI30cVZ8gM1BkTIqsQf958fn20l26FjzblTYDqpuhT2X2TwMuCHLUw4XQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4375
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_08,2024-09-13_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ mlxlogscore=993 mlxscore=0 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409130070
+X-Proofpoint-GUID: tRS8AKhRKE9uSe8qq8nXV-MkDACSfQrk
+X-Proofpoint-ORIG-GUID: tRS8AKhRKE9uSe8qq8nXV-MkDACSfQrk
 
-Add pinmux for PWM functionality of MikroBUS PWM pin and enable the pwm
-controller.
+On 11/09/2024 10:01, Ojaswin Mujoo wrote:
+> This patchset implements extsize hint feature for ext4. Posting this RFC to get
+> some early review comments on the design and implementation bits. This feature
+> is similar to what we have in XFS too with some differences.
+> 
+> extsize on ext4 is a hint to mballoc (multi-block allocator) and extent
+> handling layer to do aligned allocations. We use allocation criteria 0
+> (CR_POWER2_ALIGNED) for doing aligned power-of-2 allocations. With extsize hint
+> we try to align the logical start (m_lblk) and length(m_len) of the allocation
+> to be extsize aligned. CR_POWER2_ALIGNED criteria in mballoc automatically make
+> sure that we get the aligned physical start (m_pblk) as well. So in this way
+> extsize can make sure that lblk, len and pblk all are aligned for the allocated
+> extent w.r.t extsize.
+> 
+> Note that extsize feature is just a hinting mechanism to ext4 multi-block
+> allocator. That means that if we are unable to get an aligned allocation for
+> some reason, than we drop this flag and continue with unaligned allocation to
+> serve the request. However when we will add atomic/untorn writes support, then
+> we will enforce the aligned allocation and can return -ENOSPC if aligned
+> allocation was not successful.
 
-Signed-off-by: Ayush Singh <ayush@beagleboard.org>
----
-Add pinmux for MikroBUS port PWM pin. Also enable the pwm controller.
+A few questions/confirmations:
+- You have no intention of adding an equivalent of forcealign, right?
 
-Tested with the sysfs interface [0].
+- Would you also plan on using FS_IOC_FS(GET/SET)XATTR interface for 
+enabling atomic writes on a per-inode basis?
 
-[0]: https://docs.kernel.org/driver-api/pwm.html#using-pwms-with-the-sysfs-interface
----
- arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+- Can extsize be set at mkfs time?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-index 70de288d728e..2dbb8930be3f 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-@@ -419,6 +419,12 @@ AM62X_IOPAD(0x01a8, PIN_INPUT, 7) /* (D20) MCASP0_AFSX.GPIO1_12 */
- 		>;
- 	};
- 
-+	mikrobus_pwm_pins_default: mikrobus-pwm-default-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x01a4, PIN_INPUT, 2) /* (B20) MCASP0_ACLKX.ECAP2_IN_APWM_OUT */
-+		>;
-+	};
-+
- 	main_uart0_pins_default: main-uart0-default-pins {
- 		bootph-all;
- 		pinctrl-single,pins = <
-@@ -925,3 +931,9 @@ &mcasp1 {
- 	       0 0 0 0
- 	>;
- };
-+
-+&ecap2 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mikrobus_pwm_pins_default>;
-+};
+- Is there any userspace support for this series available?
 
----
-base-commit: 57f962b956f1d116cd64d5c406776c4975de549d
-change-id: 20240913-beagleplay-pwm-b859db19318d
+- how would/could extsize interact with bigalloc?
 
-Best regards,
--- 
-Ayush Singh <ayush@beagleboard.org>
+> 
+> Comparison with XFS extsize feature -
+> =====================================
+> 1. extsize in XFS is a hint for aligning only the logical start and the lengh
+>     of the allocation v/s extsize on ext4 make sure the physical start of the
+>     extent gets aligned as well.
+
+note that forcealign with extsize aligns AG block also
+
+only for atomic writes do we enforce the AG block is aligned to physical 
+block
+
+> 
+> 2. eof allocation on XFS trims the blocks allocated beyond eof with extsize
+>     hint. That means on XFS for eof allocations (with extsize hint) only logical
+>     start gets aligned. However extsize hint in ext4 for eof allocation is not
+>     supported in this version of the series.
+> 
+> 3. XFS allows extsize to be set on file with no extents but delayed data.
+>     However, ext4 don't allow that for simplicity. The user is expected to set
+>     it on a file before changing it's i_size.
+> 
+> 4. XFS allows non-power-of-2 values for extsize but ext4 does not, since we
+>     primarily would like to support atomic writes with extsize.
+> 
+> 5. In ext4 we chose to store the extsize value in SYSTEM_XATTR rather than an
+>     inode field as it was simple and most flexible, since there might be more
+>     features like atomic/untorn writes coming in future.
+> 
+> 6. In buffered-io path XFS switches to non-delalloc allocations for extsize hint.
+>     The same has been kept for EXT4 as well.
+> 
+> Some TODOs:
+> ===========
+> 1. EOF allocations support can be added and can be kept similar to XFS
+
+Note that EOF alignment for forcealign may change - it needs to be 
+discussed further.
+
+Thanks,
+John
+
+.
+> 
+> Rest of the design details can be found in the individual commit messages.
+> 
+> Thoughts and suggestions are welcome!
+> 
+> Ojaswin Mujoo (5):
+>    ext4: add aligned allocation hint in mballoc
+>    ext4: allow inode preallocation for aligned alloc
+>    ext4: Support for extsize hint using FS_IOC_FS(GET/SET)XATTR
+>    ext4: pass lblk and len explicitly to ext4_split_extent*()
+>    ext4: Add extsize hint support
+> 
+>   fs/ext4/ext4.h              |  12 +-
+>   fs/ext4/ext4_jbd2.h         |  15 ++
+>   fs/ext4/extents.c           | 224 ++++++++++++++----
+>   fs/ext4/inode.c             | 442 +++++++++++++++++++++++++++++++++---
+>   fs/ext4/ioctl.c             | 119 ++++++++++
+>   fs/ext4/mballoc.c           | 126 ++++++++--
+>   fs/ext4/super.c             |   1 +
+>   include/trace/events/ext4.h |   2 +
+>   8 files changed, 841 insertions(+), 100 deletions(-)
+> 
 
 
