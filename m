@@ -1,182 +1,142 @@
-Return-Path: <linux-kernel+bounces-328800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB71797890B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:40:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E83997890F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F70284D9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:40:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87161C2249A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7DE1474D9;
-	Fri, 13 Sep 2024 19:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEAE149C52;
+	Fri, 13 Sep 2024 19:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="hfMEeYIq"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkPfKM2l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4273F1369BC
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DBA148317;
+	Fri, 13 Sep 2024 19:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726256395; cv=none; b=l+GrZHOJqygpmE37r6Lz1TIT8J0Qg7Z0iCSe2k9mqrFcHjiMu70IMvYVY/vCqsEVCZXek0fhNsbUGJKwVFEes5sDQ6MvhqiHvr1K7OvefXOkH0hc2ulnmRpnU5NkqV9eHd71hi/AnSJ0503Ns2DQVtiHMS/D5YJjOxSdPFzQmsw=
+	t=1726256396; cv=none; b=SoFkJrRKymsZRpDcg3+0W6Xa1o5gWXPdc/Zi96NWcyXFr3SBIPTzFSmI0i4lV404/zklr+p8wxIKgys959NhNLmQsZ8wM8btOIgaGAAwwio6/+uIuJml6ehfK7xnp8c8jw/Ppn5fBUH4pbuUWtqJR3sYtZhOJXdDPZxczQT+2yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726256395; c=relaxed/simple;
-	bh=CMo7HkkIhI1I7aI8ilt0+qYkkVtrZmJ4OottzfDvO6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yj5bm6gVKFg73KpB/uYq07AZj5XbNKIuhRBPXRgJUcukc+h41y30kdwZWVGTkZJSezm/q1FpebgnfgVrIYb+O+PNqXM4fQopANtuOfv2Nn5MrqCSPLMDnnxagrJ8J0jZ+nvX6SKSSAnzeA6h2/1c/lbOWLAuZJ+MzAQzGAs/c54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=hfMEeYIq; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a83562f9be9so276490066b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1726256392; x=1726861192; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G5CQI17h6VCYt4zGN52zL9wyqg2yBHJSk6YPjhxtg2Q=;
-        b=hfMEeYIq0E7XiIOnaENE+m0ZAYe1nK9r3tnTUpseNJtY3+K3k+bLqL3PEIvbwDccXS
-         QTC+u5r7eHYDPObbV9f1PUZ2DTmJV2H+oL/VTzLpXLJuGSQjIVUisAVgPNfggWcstxhJ
-         lIyon8B3eG+wTroLMMw2bJK6eR7mbJtH9kfeg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726256392; x=1726861192;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G5CQI17h6VCYt4zGN52zL9wyqg2yBHJSk6YPjhxtg2Q=;
-        b=hK7vbT1ZinrVNUXq0ubHEoNU2PyhN2eVHLNshsKACqefirPrckqqW7b+dWoHbLiT1b
-         J6w97uG1lADqc0v9uzu+LtNPr/Bsq2tpU1U3BQoHcQ4IHcN+0/T+dfeEbEpH1mv/66W2
-         IsgrYqOX9yPTWHc3TlopUBgscuRdt74c1526Ttu6gGEGhBTemewJywo9lNuQ+EXLKIxZ
-         wBLD81FmjEhBio/v/NgqMjjrV1ng4GPh+vBnogCXp9AXrM39xcQbCO6qIMm8k9yrq4xV
-         NpuoR54R3gy7ORsTAIjoT4iV8ND2YXvBX2Q6B/bEt9LHlt4Wn62uMNgPzO0jnoskIhsJ
-         EyWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVx/iZclzN9G5kH822QR5VAjR9kldwFv8fGTfvdO9pZOWczQAjZkEoyALljfITPgMoJpJ4xkI6AE5cHO2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7OFx3CB/yE1S+Wy0ETeM/JzDG7xNp30lzGcVYz+qq81+7bzfj
-	ub3hHJvP19FmixdFw2JsPBFjJ/WDaBzF4Uz7NEiAMOxVyZGW1kmupwAthZPtUSo=
-X-Google-Smtp-Source: AGHT+IGt1aG8kG/1Hgn/PR9xu8QfYT2lfl93SU7pfYjcITtFlHzQXzZGxUHxJ1HFhi5SShCzMCXnTQ==
-X-Received: by 2002:a17:907:e8d:b0:a86:80ef:4fe5 with SMTP id a640c23a62f3a-a9029617930mr702246266b.47.1726256392054;
-        Fri, 13 Sep 2024 12:39:52 -0700 (PDT)
-Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d258354ecsm899909866b.8.2024.09.13.12.39.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 12:39:51 -0700 (PDT)
-Date: Fri, 13 Sep 2024 21:39:49 +0200
-From: Joe Damato <jdamato@fastly.com>
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, kuba@kernel.org,
-	skhawaja@google.com, sdf@fomichev.me, bjorn@rivosinc.com,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next v3 5/9] net: napi: Add napi_config
-Message-ID: <ZuSVBfgrN5wigT90@LQ3V64L9R2.homenet.telecomitalia.it>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Stanislav Fomichev <stfomichev@gmail.com>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
-	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240912100738.16567-1-jdamato@fastly.com>
- <20240912100738.16567-6-jdamato@fastly.com>
- <ZuR5jU3BGbsut-q6@mini-arch>
+	s=arc-20240116; t=1726256396; c=relaxed/simple;
+	bh=RUEVWgvk6mTpIhbMZyR3ybMcrifXc1NcuV8nvnQ7Z2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vCxdK4OLFKC0LK+XisbOKCIj6R5G9DJFAg0R+zDGUOP+dt3qc0nTXaJt3E2A09EwYND+DvaNI8QcI2g5tlD5eJyEAkyL614jGZpkUyPIW8KNBH1+V1IbU0F+JLu3g4/A+Z5a/htxr8ZFmgQtQt0IfrGRc18Y2IiU1CqbHCsHWTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkPfKM2l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AF3C4CECC;
+	Fri, 13 Sep 2024 19:39:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726256396;
+	bh=RUEVWgvk6mTpIhbMZyR3ybMcrifXc1NcuV8nvnQ7Z2Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XkPfKM2lxkNEq4p+g6nAtThYVWFspucb3zEcTqZK0ROXAA8mOSrVtvQLoozYScctH
+	 SBTLXvGAh0lKJ5YHPyPyocQi+ovGSmFHemw3x8I+O1ThIiSM2bR/efSkt1QUQvC+UL
+	 VHuiUdLcTt18LUH5/ZwYQWiDUAKqLPcGg4CwCY/zjHNDntiY4QSyHffri6UqkZeMkd
+	 YilGwuzVXjyDh83cj/j8sUQeB2pIkEyXnf46W6SnRw3YPEpAyMfZvIpNcJFieqMrXj
+	 iVlG5hZ6DKPDJhPAsLT4mxbDFpY5VLEjv2z/TI+I1hggUciRsR6Nr/uGfSo24Aq7Ru
+	 lNH23BRAfpEGQ==
+Date: Fri, 13 Sep 2024 20:39:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Carpenter
+ <dan.carpenter@linaro.org>, kernel-janitors@vger.kernel.org,
+ lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: pac1921: add missing error return in probe()
+Message-ID: <20240913203950.06ed1603@jic23-huawei>
+In-Reply-To: <172604712407.3581.15543200034844778072@njaxe.localdomain>
+References: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
+	<36b1a47a-7af2-4baf-8188-72f6eed78529@wanadoo.fr>
+	<66b5c5df76766_133d37031@njaxe.notmuch>
+	<9a98aab5-bb68-4206-9ecf-32fbf6c9c7ef@stanley.mountain>
+	<20240810113518.2cbceb66@jic23-huawei>
+	<172604712407.3581.15543200034844778072@njaxe.localdomain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuR5jU3BGbsut-q6@mini-arch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 10:42:37AM -0700, Stanislav Fomichev wrote:
-> On 09/12, Joe Damato wrote:
+On Wed, 11 Sep 2024 11:32:04 +0200
+Matteo Martelli <matteomartelli3@gmail.com> wrote:
 
-[...]
+> Quoting Jonathan Cameron (2024-08-10 12:35:18)
+> > On Fri, 9 Aug 2024 18:18:13 +0300
+> > Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >  =20
+> > > On Fri, Aug 09, 2024 at 09:31:43AM +0200, Matteo Martelli wrote: =20
+> > > > Christophe JAILLET wrote:   =20
+> > > > > Le 08/08/2024 =C3=A0 21:28, Dan Carpenter a =C3=A9crit=C2=A0:   =
+=20
+> > > > > > This error path was intended to return, and not just print an e=
+rror.  The
+> > > > > > current code will lead to an error pointer dereference.
+> > > > > >=20
+> > > > > > Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+> > > > > > Signed-off-by: Dan Carpenter <dan.carpenter-QSEj5FYQhm4dnm+yROf=
+E0A@public.gmane.org>
+> > > > > > ---
+> > > > > >   drivers/iio/adc/pac1921.c | 4 ++--
+> > > > > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > >=20
+> > > > > > diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac192=
+1.c
+> > > > > > index d04c6685d780..8200a47bdf21 100644
+> > > > > > --- a/drivers/iio/adc/pac1921.c
+> > > > > > +++ b/drivers/iio/adc/pac1921.c
+> > > > > > @@ -1168,8 +1168,8 @@ static int pac1921_probe(struct i2c_clien=
+t *client)
+> > > > > >  =20
+> > > > > >         priv->regmap =3D devm_regmap_init_i2c(client, &pac1921_=
+regmap_config);
+> > > > > >         if (IS_ERR(priv->regmap))
+> > > > > > -               dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> > > > > > -                             "Cannot initialize register map\n=
+");
+> > > > > > +               return dev_err_probe(dev, (int)PTR_ERR(priv->re=
+gmap),   =20
+> > > > >=20
+> > > > > The (int) is unusual.
+> > > > >   =20
+> > > > The (int) explicit cast is to address Wconversion warnings since de=
+v_err_probe
+> > > > takes an int as argument.   =20
+> > >=20
+> > > I don't want to remove the int because it's unrelated, but Christophe=
+ is right
+> > > that the int is unusual.  We really would want to discourage that. =20
+> >=20
+> > Applied, but I'd ideally like a follow up patch removing the int and the
+> > couple of similar instances from this driver.  Anyone want to spin one?
+> >  =20
+>=20
+> I can spin the patch, but at this point I am wondering whether I should r=
+emove all
+> the unnecessary explicit casts that I put to address Wconversion
+> and Wsign-compare warnings. If that's the general approach to help readab=
+ility I
+> am totally fine with it.
 
-> > --- a/net/core/dev.c
-> > +++ b/net/core/dev.c
-> > @@ -6493,6 +6493,18 @@ EXPORT_SYMBOL(napi_busy_loop);
-> >  
-> >  #endif /* CONFIG_NET_RX_BUSY_POLL */
-> >  
-> > +static void napi_hash_add_with_id(struct napi_struct *napi, unsigned int napi_id)
-> > +{
-> > +	spin_lock(&napi_hash_lock);
-> > +
-> > +	napi->napi_id = napi_id;
-> > +
-> > +	hlist_add_head_rcu(&napi->napi_hash_node,
-> > +			   &napi_hash[napi->napi_id % HASH_SIZE(napi_hash)]);
-> > +
-> > +	spin_unlock(&napi_hash_lock);
-> > +}
-> > +
-> >  static void napi_hash_add(struct napi_struct *napi)
-> >  {
-> >  	if (test_bit(NAPI_STATE_NO_BUSY_POLL, &napi->state))
-> > @@ -6505,12 +6517,13 @@ static void napi_hash_add(struct napi_struct *napi)
-> >  		if (unlikely(++napi_gen_id < MIN_NAPI_ID))
-> >  			napi_gen_id = MIN_NAPI_ID;
-> >  	} while (napi_by_id(napi_gen_id));
-> 
-> [..]
-> 
-> > -	napi->napi_id = napi_gen_id;
-> > -
-> > -	hlist_add_head_rcu(&napi->napi_hash_node,
-> > -			   &napi_hash[napi->napi_id % HASH_SIZE(napi_hash)]);
-> >  
-> >  	spin_unlock(&napi_hash_lock);
-> > +
-> > +	napi_hash_add_with_id(napi, napi_gen_id);
-> 
-> nit: it is very unlikely that napi_gen_id is gonna wrap around after the
-> spin_unlock above, but maybe it's safer to have the following?
-> 
-> static void __napi_hash_add_with_id(struct napi_struct *napi, unsigned int napi_id)
-> {
-> 	napi->napi_id = napi_id;
-> 	hlist_add_head_rcu(&napi->napi_hash_node,
-> 			   &napi_hash[napi->napi_id % HASH_SIZE(napi_hash)]);
-> }
-> 
-> static void napi_hash_add_with_id(struct napi_struct *napi, unsigned int napi_id)
-> {
-> 	spin_lock(&napi_hash_lock);
-> 	__napi_hash_add_with_id(...);
-> 	spin_unlock(&napi_hash_lock);
-> }
-> 
-> And use __napi_hash_add_with_id here before spin_unlock?
+I think it is probably sensible to do so as mostly we know the value ranges
+etc so they don't matter.
 
-After making this change and re-testing on a couple reboots, I haven't
-been able to reproduce the page pool issue I mentioned in the other
-email [1].
+Jonathan
 
-Not sure if I've just been... "getting lucky" or if this fixed
-something that I won't fully grasp until I read the mlx5 source
-again.
+>=20
+> > Thanks,
+> >=20
+> > Jonathan
+> >  =20
+>=20
+> Thanks,
+> Matteo Martelli
 
-Will test it a few more times, though.
-
-[1]: https://lore.kernel.org/netdev/ZuMC2fYPPtWggB2w@LQ3V64L9R2.homenet.telecomitalia.it/
 
