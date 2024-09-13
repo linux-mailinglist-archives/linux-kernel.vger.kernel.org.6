@@ -1,125 +1,103 @@
-Return-Path: <linux-kernel+bounces-327495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212449776C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:11:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84599776C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79895B21D3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028A91C243D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F9F1D2794;
-	Fri, 13 Sep 2024 02:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC19D1D27AD;
+	Fri, 13 Sep 2024 02:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmd40VmH"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cK+WqHSB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E02A55886
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3048455886;
+	Fri, 13 Sep 2024 02:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726193486; cv=none; b=qADTnvzmIW15kMIjBoXJoWMMYRw9otpAZyHutXmB3/4aC96rB9i/5zuEU2vDo7Dlo35bIgsYwrvWI72I/2po2ObyoHlvkiehEisn+CjL3dXIhzy4vLxp9efg/ttqnhcWNjqMBMcc+q6tAJD3+fG9RnDBFnMhtuhf700IFjqTCSE=
+	t=1726193589; cv=none; b=PqNHkRPSABcU2e6jTBSOG+tUUEmAqLWOdbDKO0SDP475VTrYJjwZrq7SW2qxYDZuixzYs9MXacjQSTYQiLPp9o++izJvt7Axs4SMWlgYG2HYCPcqKZ4Le+LNzAgVymO6LHZu8/YZW2Z4bpCMNl4slumJXW0JsIYWLWZc3HNPP7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726193486; c=relaxed/simple;
-	bh=+g+iYLsDPMNU1DGfwkevSBUgkSvkrTNSbSdY7kviCWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2s+s+qtVvqWyUBenpRH93+kypEWamu8X8pU2/SF0HbIHCiukRCnIEc5i8iPyceTRkIX325PklpvvLf36NlcEWNcVQRdKuUsefnh4tLLL4bHsSxzk302dxIt7MG2vaVhrZG+ojyrYksL7/SBu9m8h1vZSvz8lQ+2OAzJ8ZMwL+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmd40VmH; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2057c6c57b5so9570715ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:11:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726193484; x=1726798284; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VKXxde7RE5OYjcQSsDvsckGBTQR5Rmzs2NTJhqDpLY0=;
-        b=cmd40VmHnWh+Vxf//d05TSDoqNi4SY4Z3fZjzmitYO8avOZclCFMEZFB7DkeJiYHy7
-         +JRzvqtbtAppPdI5oAlaq7MigJED1J5mxofOJzZPbV+M9tFm/ZlFi2yvEgPcEbJ8qus0
-         SxNyZBcQrKUJauNBjlJ4l0Nf0VdEYKzabpnD3olx+FKN+jxTdiI+F8t9QRy69UJ0QauJ
-         VpW2vfs9n6FNdKqDIQ/EvGjZMEPBb3OqVHv4X8aQhZU0WzDiYaxlZk6bhmkkWP/a2gi0
-         zPQlFuvU+FgyaAibyYwTiJBbthwdAg+VirNgYUTxsjwMhXj9oQCBvtlHkchnj1LR8yxy
-         XTSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726193484; x=1726798284;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VKXxde7RE5OYjcQSsDvsckGBTQR5Rmzs2NTJhqDpLY0=;
-        b=J4krJHohKwz2fltUrR1eld9vbtX4jC9N5pIs6mW2xHRkKhZTR+nw1Kw6rtEhqyaLFu
-         1oISmo8ukQySUjevrXna+IwMjlhM3O2l6TBbsKmkBEYW3F/QG4GzU0clhTie01Og0USR
-         QLCjI1/m+L+SK/ix3Hr7y6IDjLHSjnpU9rvPOFTEfBbH7/e0RiWFMAi2Qx2bj0Zlo1wx
-         6uqzHsa4uMuxsTvyxwIZy6AhgPYOW0M0kgrnbWFBHhIdAdn4ttAWJnYt1AUjhZqdkO9N
-         FlpXzTjchi+uZirDM7gMK4vCJg58466ApPDdRm52GcBgk35jRrJ6aWU8o7Et4a7loSDK
-         h3WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCQ88CpWOtgybom4eP0bM4xZ6LA+pizus5CgKTorWJt/V5YIji/mnzfkYIYAWnOcNwFTT2XxRsjU1LMkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye7QMDQEdSoHJ5MwIvdU+4CEaWJl4d6L4zOSzn0e7HvPQ6Uidc
-	aR87cFefJzAW/gGFJZmkPxs6zPtYyh3GWpa8kGEYRhe9VsNTjQhD
-X-Google-Smtp-Source: AGHT+IEqrZCzRb+7n3J3P4T7vXPxWSJssj5ZmpmeBBQjEtUecyl2Bpb6qoxteoq3R1rJwSoV4Mle6A==
-X-Received: by 2002:a17:902:f684:b0:1fd:6ca4:f987 with SMTP id d9443c01a7336-2076e592912mr64011855ad.15.1726193484186;
-        Thu, 12 Sep 2024 19:11:24 -0700 (PDT)
-Received: from embed-PC.myguest.virtualbox.org ([106.222.229.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af478a6sm19925485ad.102.2024.09.12.19.11.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 19:11:23 -0700 (PDT)
-Date: Fri, 13 Sep 2024 07:41:15 +0530
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: "Ricardo B. Marliere" <ricardo.marliere@suse.com>
-Cc: gregkh@linuxfoundation.org, skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: octeon: Use new initialization api for tasklet
-Message-ID: <ZuOfQ9JxL71s2JFx@embed-PC.myguest.virtualbox.org>
-References: <20240912172231.369566-1-abhishektamboli9@gmail.com>
- <wpmjgqvxzzowc36wtwxlht23pvvuzdpijhtkiojlayr66cktxp@dnj2ss4fu6x7>
+	s=arc-20240116; t=1726193589; c=relaxed/simple;
+	bh=TvUg8JpVDCWZbKxhwdcbMY2TgwsG2HjjEy20zkRhrEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o/3WDCcZYezs/jwMgGj4V5rBQEWSnBVruTCa/YAfi+SsW9bQy8xwRdVwNDUgivdUjwjpkzrd8gDjMhfY9qXwkPgc/TmpAJWZD4OUxcixGoaCFXeRpv0LLiehPQ7opmkLsOAW08VWWlk8wkBC0JnWaatpXStdiXwgocEI/IZjhMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cK+WqHSB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35308C4CEC3;
+	Fri, 13 Sep 2024 02:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726193588;
+	bh=TvUg8JpVDCWZbKxhwdcbMY2TgwsG2HjjEy20zkRhrEY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cK+WqHSBFZgbtB9lKdv4jslrMn6pHtJAp7iETp8ZTBGu0w82I6LSsG1u0dVw0l2T/
+	 zVrcr+uWZUTjyiqJMOgjl5yqNnf0+/XTDZkiGfLdyW+6KNaeMRrftCjXyW3YYCLY3r
+	 5c0qj8d2gBlH4JRFu+VGOgUAJXv8mEAX6RqkcP8b+AjLrA8j/JUZSRfHdSOPz8wY1F
+	 OOjFnhjZvToj9yFnHk6FY4U4SlEUkllFF9SIYFuNQn/3GzGydDOsISAp81EoXaLIqJ
+	 McqU8LG6Y/hbqLi+Tdk9/nXh/2SvBQZMByRcu+1cLRNMOVziv/kBfa2WBV368x+6hO
+	 qrGZL43FN594g==
+Date: Thu, 12 Sep 2024 19:13:06 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mitchell Augustin <mitchell.augustin@canonical.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
+ <jiri@resnulli.us>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jacob Martin <jacob.martin@canonical.com>,
+ dann frazier <dann.frazier@canonical.com>
+Subject: Re: Namespaced network devices not cleaned up properly after
+ execution of pmtu.sh kernel selftest
+Message-ID: <20240912191306.0cf81ce3@kernel.org>
+In-Reply-To: <CAHTA-uZDaJ-71o+bo8a96TV4ck-8niimztQFaa=QoeNdUm-9wg@mail.gmail.com>
+References: <CAHTA-uZDaJ-71o+bo8a96TV4ck-8niimztQFaa=QoeNdUm-9wg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <wpmjgqvxzzowc36wtwxlht23pvvuzdpijhtkiojlayr66cktxp@dnj2ss4fu6x7>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Ricardo,
->
-> This fails to compile for me:
-> 
-> In file included from ./include/linux/kernel_stat.h:8,
->                  from ./include/linux/cgroup.h:25,
->                  from ./include/net/netprio_cgroup.h:11,
->                  from ./include/linux/netdevice.h:42,
->                  from drivers/staging/octeon/ethernet-tx.c:10:
-> drivers/staging/octeon/ethernet-tx.c:44:52: error: initialization of ‘void (*)(struct tasklet_struct *)’ from incompatible pointer type ‘void (*)(struct tasklet_struct)’ [-Wincompatible-pointer-types]
->    44 | static DECLARE_TASKLET(cvm_oct_tx_cleanup_tasklet, cvm_oct_tx_do_cleanup);
->       |                                                    ^~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/interrupt.h:665:21: note: in definition of macro ‘DECLARE_TASKLET’
->   665 |         .callback = _callback,                          \
->       |                     ^~~~~~~~~
-> drivers/staging/octeon/ethernet-tx.c:44:52: note: (near initialization for ‘cvm_oct_tx_cleanup_tasklet.<anonymous>.callback’)
->    44 | static DECLARE_TASKLET(cvm_oct_tx_cleanup_tasklet, cvm_oct_tx_do_cleanup);
->       |                                                    ^~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/interrupt.h:665:21: note: in definition of macro ‘DECLARE_TASKLET’
->   665 |         .callback = _callback,                          \
->       |                     ^~~~~~~~~
->   CC      mm/memfd.o
->   CC      fs/proc/fd.o
->   CC      fs/jbd2/transaction.o
->   CC      drivers/firmware/efi/libstub/gop.o
-> make[5]: *** [scripts/Makefile.build:244: drivers/staging/octeon/ethernet-tx.o] Error 1
-> make[4]: *** [scripts/Makefile.build:485: drivers/staging/octeon] Error 2
-> make[3]: *** [scripts/Makefile.build:485: drivers/staging] Error 2
+On Wed, 11 Sep 2024 17:20:29 -0500 Mitchell Augustin wrote:
+> We recently identified a bug still impacting upstream, triggered
+> occasionally by one of the kernel selftests (net/pmtu.sh) that
+> sometimes causes the following behavior:
+> * One of this tests's namespaced network devices does not get properly
+> cleaned up when the namespace is destroyed, evidenced by
+> `unregister_netdevice: waiting for veth_A-R1 to become free. Usage
+> count = 5` appearing in the dmesg output repeatedly
+> * Once we start to see the above `unregister_netdevice` message, an
+> un-cancelable hang will occur on subsequent attempts to run `modprobe
+> ip6_vti` or `rmmod ip6_vti`
 
-Thank you for pointing out the issue. I’ll be more cautious to 
-avoid such issues in the future and will resubmit the patch.
+Thanks for the report! We have seen it in our CI as well, it happens
+maybe once a day. But as you say on x86 is quite hard to reproduce,
+and nothing obvious stood out as a culprit.
 
-Regards,
-Abhishek
+> However, I can easily reproduce the issue on an Nvidia Grace/Hopper
+> machine (and other platforms with modern CPUs) with the performance
+> governor set by doing the following:
+> * Install/boot any affected kernel
+> * Clone the kernel tree just to get an older version of the test cases
+> without subtle timing changes that mask the issue (such as
+> https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble/tree/?h=Ubuntu-6.8.0-39.39)
+> * cd tools/testing/selftests/net
+> * while true; do sudo ./pmtu.sh pmtu_ipv6_ipv6_exception; done
+
+That's exciting! Would you be able to try to cut down the test itself
+(is quite long and has a ton of sub-cases). Figure out which sub-cases
+trigger this? And maybe with an even quicker repro we'll bisect or
+someone will correctly guess the fix?
+
+Somewhat tangentially but if you'd be willing I wouldn't mind if you
+were to send patches to break this test up upstream, too. It takes
+1h23m to run with various debug kernel options enabled. If we split 
+it into multiple smaller tests each running 10min or 20min we can 
+then spawn multiple VMs and get the results faster.
 
