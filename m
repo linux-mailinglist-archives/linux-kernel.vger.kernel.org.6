@@ -1,168 +1,147 @@
-Return-Path: <linux-kernel+bounces-328291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2BE97817C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:49:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0DB97817D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5C6EB24648
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33D0A2829B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9912A1DB52E;
-	Fri, 13 Sep 2024 13:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9787C1DB534;
+	Fri, 13 Sep 2024 13:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/NGqr5H"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ulOrN9Cn"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6FD43144;
-	Fri, 13 Sep 2024 13:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516BB43144
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235334; cv=none; b=n1jcT4u83j3pc1pezYKJ/fY7Jzxo1lm0CrSn+6yaZCL2J6FWSec4PjGncXI6xJb8B5+xk/mhWYrJUl8RHaHGFXaen4+afYiieDdZi5TcjQCrGBnLrY4rq1oVgqddWMLxHAOYaGKCV658e5q0IPy3B6csKxbs+5KB0Zg6ufwSqaY=
+	t=1726235355; cv=none; b=TWzUFjSdRj+AGDyj+sgQRiqlRzza3iRUJmO/yOO/HB1sVz9HuIyWogzbdgUfRENxW0AahTmoXVEK911baANBD57QBHWVeEwI13uopdu5P77aPYXf7vXRO8eqNI9FA6rG5bfLViQ3B5VEGCXeZvFVbNAc8RT3G8vzJPAOwSKoSb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235334; c=relaxed/simple;
-	bh=w9FExomQkO9zLed5+T4zKe7DEkRTD9fEAbX+qeHNS4o=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvi8FlFGkfytNQUXU00MMLnJLhysXs1v+iuXpXlWfkc2Z7z5nCfh4InYPuocPTTpjZUNatY8anUyNXq/hiGjE11KA6E1eXK/UVTcd00U/JG21Bw30VcWYJ8E42LeT/dQ1JO3VIM8V+KCgZCscHAUa3GJRHA894/JlD/5eY8g3fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/NGqr5H; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53654e2ed93so2567769e87.0;
-        Fri, 13 Sep 2024 06:48:51 -0700 (PDT)
+	s=arc-20240116; t=1726235355; c=relaxed/simple;
+	bh=7JMOY50sAL1FBFBstjag6aZboPGwPJyHsAb4jiAZkZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YjfCsICjdGk8prF/bWbIrlbr4H/fLr56XZshsiWbclpwhLg9B1sic2aSXsP1KQegv+GeMRcc4aYmP0SUswXOcYid7ELxE5kVrb2/tfY3J09e073Ydt1MIb+V7XWMwPgw/48Pvh8GdaLOxyhqrodzEdxEuERXVw5nhNWX+mlXVRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ulOrN9Cn; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so19999655e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:49:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726235330; x=1726840130; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qoTX/lGS0Vd1haNlwbKVAGI/z8WWxdqBKXR6G9V4jtU=;
-        b=B/NGqr5HRz3uMZUe9BBud/TV8aRnlYPBgq+UDrc4cGqEZYqFy+DA8Z70jKXtdtVGL+
-         42rvmsL6TpWcAMNoAlmDovsVdvPSuBgHa9YsYlUmXwEIYT7jk7xxWtgVXM1tOkhNqpxY
-         OUYTUQ1itOeXEDEdhRyNZy3qPyxdyrYkS7dKMeSU+vppJJ3GSpcqC1jp8jvZolFJp446
-         s8hIVCfOUApix34yeFp+wwbCZqrqnYNLB2KhYDfggqpkFiDBh5aybOOdH7z9lnzkYTiI
-         qRSnHUsKrd8w+cFr0CqMa794jp3dXd3sFlrNECs1Hv8AMh6eQPbzSzIZa7q/tSCxcOdA
-         W0VQ==
+        d=linaro.org; s=google; t=1726235352; x=1726840152; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VX8L0wE8NO95OVzJ0ST2l5vUkGHAoSVmZ6/3SaE5kFo=;
+        b=ulOrN9CnId2/SnGqWwtMdOZGf6mldfmuHWXSGx++/OmEc/1Vwin1Jvg5FqE9JPCanD
+         GAxJ5pGRPjP1JYXRlODsk5SLaYE4afTp9lXpWpYvM3Uhw3m4AXKAbVdygxdMvmuxV0Ab
+         w+cGez30nU2li+8eoDHybC2tUYhjnQKwLmIr+RUD5PDnKTxKOGF4tgzawpao3LZRDEM3
+         qMYum8IKKvpZlqcF/RqjOitalHSdTs0QVjWM/kFEgWyk204u18hul0IgpfValpTzTkI6
+         UfNMC807elzTVbT4+Bghej4LTkjL9yZaLeZS1Sy5xU2fnlbirWWt4Rrp03MRTUnKBDPT
+         V3aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726235330; x=1726840130;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qoTX/lGS0Vd1haNlwbKVAGI/z8WWxdqBKXR6G9V4jtU=;
-        b=QMd2m6sMPtDkVcL3uePmogiZcsUsOF7ABAlwKgJwCiNjOChL7mvG8UFXgufTyYuKhP
-         VSnS2WIJdFjA+MtV9fEs1wvjoN7zRoWPfKdjUydhMwQumB6PJJD5bfN6NzdE9U4edDHI
-         H97zG75KTzwy0JSZoNiIuRbnbxShSYHqkdhkklvDMV+kOGKR5m1XKitKeNMQKgp2GBMl
-         EKpcspKPlktFr4wHL2U/5EepmKtZPcEY/N3thR4EVHHQTn3vhrfb6HHV7sNunpfVvBPn
-         1kmE86QYlDnHACy2hak7hjrt2Etd/aFmHhNUowI5XFrnrALWQ7gYyXtuVWPf0VrTKRdu
-         Txmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWywM1F9WF8zaSSnbofbC8c5o+Vd92aCarr+wL2cWNO1jbhhCd0TcFCswCysYm3Hen6cLI=@vger.kernel.org, AJvYcCX3eyr9yEnOtqtVrllo1QqOQbrLsqMIbTUg+miaKxbb0SuXolbuKekEYae/GgWSzzdYRxORpSvTxPfChr78@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8tFvF/HUWQvzqGLWG1iuwUBr0+Cc1r3ZrWOse2och4KbCF8HO
-	Y/RNT2LwoH0XslIVz19s3+FP7PFPPo5nS5q2WNrgkylWemrNEn00
-X-Google-Smtp-Source: AGHT+IE6PX99BZKkzzTURystMGMFz8NkzEnOs36bsRarMxVipYoi3GfMiI0aeU4VKeXVzd9tFr9CQA==
-X-Received: by 2002:a05:6512:4013:b0:52c:842b:c276 with SMTP id 2adb3069b0e04-53678ff49cdmr4297716e87.53.1726235329599;
-        Fri, 13 Sep 2024 06:48:49 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a258a3sm868657566b.89.2024.09.13.06.48.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 06:48:49 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 13 Sep 2024 15:48:46 +0200
-To: Tao Chen <chen.dylane@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] libbpf: Fix expected_attach_type set when
- kernel not support
-Message-ID: <ZuRCO3_075wY2zbG@krava>
-References: <20240913121627.153898-1-chen.dylane@gmail.com>
+        d=1e100.net; s=20230601; t=1726235352; x=1726840152;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VX8L0wE8NO95OVzJ0ST2l5vUkGHAoSVmZ6/3SaE5kFo=;
+        b=VmlNxWCNDjCFxVmz9ozec2J802nhZg2+bVFWD+8JsiGSdc+HPLBWyEvKi1sjy5pFlp
+         t0wRPrQJwWoAfigzxVBSGIq961AaQ5/7Ku/AE3ggqgxXP20TFla0jpMKgOBWHzlwTIvR
+         HbZdZURTxhMNdgsFNDyAUOHv+jw/IKNj9GmUx98VsqzgTNHssVTARyTUrXMGg9Q29zoY
+         MjyWOwG07N58fDNduPt8y37yb3fRO8+SW3+AiF+s2MmPJzL0uASVChxyaPkv9YPjDXwq
+         cHxCVhMFyD1wg9D+JtsEzOlYFCr9NkHG7DAd28LLJHmFjHhaVw7jWPbs0NRGzXFsZ7fp
+         i/3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWs9n/whCjiLnOR1BTAI+1D9xe+AuqT7i5hkWpaZrZ69couTgkCyWfjK2pQm9//xIs2XqH8yA13A9z8iGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVgSd68c/ezak25x/mut6UJywso3p+dBeJVz6RybSbuUGQ6Sjf
+	1YQGPDlTMIK/Ocs8CR3aXXkjjXRT75IayFmoc2ULRz6lbTk0bO/tBIKir8/l7SY=
+X-Google-Smtp-Source: AGHT+IGCU3GflcAt3JPkUP8a6qTIV9vzRAlTlW+gej7YT0JQazoHvetjZZccwX3hpCfpCaxguNO2AA==
+X-Received: by 2002:a05:600c:4fc3:b0:42c:bcc8:5877 with SMTP id 5b1f17b1804b1-42cdb522f2cmr58941455e9.13.1726235350948;
+        Fri, 13 Sep 2024 06:49:10 -0700 (PDT)
+Received: from [192.168.1.61] ([84.67.228.188])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b055069sm27633255e9.6.2024.09.13.06.49.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 06:49:10 -0700 (PDT)
+Message-ID: <d6df6edd-688d-403d-8006-491e302fd042@linaro.org>
+Date: Fri, 13 Sep 2024 14:49:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913121627.153898-1-chen.dylane@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] perf stat: Stop repeating when ref_perf_stat()
+ returns -1
+To: Levi Yun <yeoreum.yun@arm.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nd@arm.com, peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ asmadeus@codewreck.org
+References: <20240913101456.633819-1-yeoreum.yun@arm.com>
+ <20240913101456.633819-3-yeoreum.yun@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20240913101456.633819-3-yeoreum.yun@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 08:16:27PM +0800, Tao Chen wrote:
-> The commit "5902da6d8a52" set expected_attach_type again with
-> filed of bpf_program after libpf_prepare_prog_load, which makes
-> expected_attach_type = 0 no sense when kenrel not support the
-> attach_type feature, so fix it.
+
+
+On 13/09/2024 11:14, Levi Yun wrote:
+> Exit when run_perf_stat() returns an error to avoid continuously
+> repeating the same error message. It's not expected that COUNTER_FATAL
+> or internal errors are recoverable so there's no point in retrying.
 > 
-> Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
-> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+> This fixes the following flood of error messages for permission issues,
+> for example when perf_event_paranoid==3:
+>    perf stat -r 1044 -- false
+> 
+>    Error:
+>    Access to performance monitoring and observability operations is limited.
+>    ...
+>    Error:
+>    Access to performance monitoring and observability operations is limited.
+>    ...
+>    (repeating for 1044 times).
+> 
+> Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
 > ---
->  tools/lib/bpf/libbpf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   tools/perf/builtin-stat.c | 14 +++++++++++++-
+>   1 file changed, 13 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 219facd0e66e..9035edf763a3 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -7343,7 +7343,7 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
->  
->  	/* old kernels might not support specifying expected_attach_type */
->  	if ((def & SEC_EXP_ATTACH_OPT) && !kernel_supports(prog->obj, FEAT_EXP_ATTACH_TYPE))
-> -		opts->expected_attach_type = 0;
-> +		prog->expected_attach_type = 0;
->  
->  	if (def & SEC_SLEEPABLE)
->  		opts->prog_flags |= BPF_F_SLEEPABLE;
-> -- 
-> 2.25.1
-> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 954eb37ce7b8..d25528ea7e40 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -2875,7 +2875,19 @@ int cmd_stat(int argc, const char **argv)
+>   			evlist__reset_prev_raw_counts(evsel_list);
+>   
+>   		status = run_perf_stat(argc, argv, run_idx);
+> -		if (forever && status != -1 && !interval) {
+> +
+> +		/*
+> +		 * Returns -1 for fatal errors which signifies to not continue
+> +		 * when in repeat mode.
+> +		 *
+> +		 * Returns < -1 error codes when stat record is used. These
+> +		 * result in the stat information being displayed, but writing
+> +		 * to the file fails and is non fatal.
+> +		 */
 
-good catch! thanks
+I meant this to be a function doc above the run_perf_stat() function. 
+Usually what a function returns would be documented there, in case there 
+end up being multiple callers.
 
-I can't remember why it was needed, perhaps we should go back to where it 
-was before?
+With that change:
 
-I'm guessing prog->expected_attach_type might not get updated properly and
-that might cause issues, not sure
+Reviewed-by: James Clark <james.clark@linaro.org>
 
-thanks,
-jirka
-
-
----
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 219facd0e66e..df2244397ba1 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -7353,7 +7353,7 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
- 
- 	/* special check for usdt to use uprobe_multi link */
- 	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK))
--		prog->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
-+		opts->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
- 
- 	if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
- 		int btf_obj_fd = 0, btf_type_id = 0, err;
-@@ -7443,6 +7443,7 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
- 	load_attr.attach_btf_id = prog->attach_btf_id;
- 	load_attr.kern_version = kern_version;
- 	load_attr.prog_ifindex = prog->prog_ifindex;
-+	load_attr.expected_attach_type = prog->expected_attach_type;
- 
- 	/* specify func_info/line_info only if kernel supports them */
- 	if (obj->btf && btf__fd(obj->btf) >= 0 && kernel_supports(obj, FEAT_BTF_FUNC)) {
-@@ -7474,9 +7475,6 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
- 		insns_cnt = prog->insns_cnt;
- 	}
- 
--	/* allow prog_prepare_load_fn to change expected_attach_type */
--	load_attr.expected_attach_type = prog->expected_attach_type;
--
- 	if (obj->gen_loader) {
- 		bpf_gen__prog_load(obj->gen_loader, prog->type, prog->name,
- 				   license, insns, insns_cnt, &load_attr,
+Also I think something happened with the cover letter as well, it's 
+marked as V2.
 
