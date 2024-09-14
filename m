@@ -1,265 +1,287 @@
-Return-Path: <linux-kernel+bounces-329419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC9D97911B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D2D97911C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8860A282B33
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 204C62822D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E0A43ABD;
-	Sat, 14 Sep 2024 13:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2682E16F0EC;
+	Sat, 14 Sep 2024 13:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OETWaeGL"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jXJktlGr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A632D4C7D
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165804C7D
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726321530; cv=none; b=Gz3AzGP0BicZ/t4bYmxNDNUnfSii4V8j2PhlB1z87uReymDOYD6f4kapj/XZ92gnwmsiPf0McY9sR6jLDGB3cQex8kCODkp0r2Oo48cBEQ/wO+gvRLQewqgR8b3G7u3w5NWLgOnzxDWHxg99FqnbRW2NbdRNADd92wkB28jbmFM=
+	t=1726321566; cv=none; b=kaQoJQH1AU518CB1Vg6W9IgFhlvxeimWf75C9GpDuizET4VB3Q1VFCsiGK8M6wNsIX47WtXdzR2Xrfi/+ZWLvL0yW3sHrmjCfUvUFESXt/mDk0+l4P2b3MZz8Wg2iF/gB2yT6TQh3hOuCzVBfmcz7ujAwFvNluNAK+dKlDtfAPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726321530; c=relaxed/simple;
-	bh=3Mw5ZMAxbwuXJTOvXIs8Xe/mcjqxT37F0+3zX+8m+Us=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pj5peA6MqJP6KmBUzbA43kc1q1GzY5LpJrwFGvnlXcd0WZOCTBUrzxncgqSXOzh5PvXCiU+wxBd8H4MU8r3fLnb6Wbso5RkVB3VbaWpdoa7ZCEXEFLvnL9UjyNyBJHWViyY6YaLkBL85UKbN4anMVIXt0/em83Tv2uVL1W6Hh9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OETWaeGL; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5365c060f47so3557899e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:45:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726321527; x=1726926327; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dnx6z67Qvm8Om8aao/Sb8GX+CmG9uaSgAAMTwiPf1j4=;
-        b=OETWaeGLJQuSWD7pZUYPAh6ibumxC6yCf3SSNiiyXb9M7OPHbVl6we0cXa8AjJ4zG8
-         CGQc1jp1EhyEGOcLCO4DZR5Y4ttE3IzCDyD+X6ibI0gUhZ7gPLWoJwM8kN6O0u6ah8Ny
-         dR0XeR4JTMIKrZnJ4yzPACu4DzdIkdkq6t3jxuY1AEtbi46bD5YCuHnsgqQhL9pm1Ge3
-         pzUI/e0Mw0InymYoLFE6fgzB413YTqy5Ah+sfii2CiQSaBlP7utPET4ATBJBAx5La5nF
-         t9+1bdBpyLmMLsCDIKjDbG82ppQFWMmBQ4Ct6rzG/m/41DlC4ziVHcbt2spJTX4hCgAR
-         d/jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726321527; x=1726926327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dnx6z67Qvm8Om8aao/Sb8GX+CmG9uaSgAAMTwiPf1j4=;
-        b=UqNOAuViESCA0ppJ53R+3vk3z14cXEF7XJKB5sZGh6PifyNok/fHpUKv2XobIbUD75
-         dT64Q1NJNjfJx9Mbfj/Mdq71g+9n3jzUeMZojTpu4Am3D95tu/weubWW9Qzc4qT25h2j
-         qaDJWUzCvAVUErNUPAHQhard6i1cdPuuujOO9AJp24FCgPifBg1gUjMPu8olHOD968mh
-         xssugCpzezLcW9GrPPWzMLu5o91NHTeRXB3KgaN4mi5ltSg9k3pTPvvR0T3XgCKUnO32
-         TxMdLkxwVzm/BiJ9p1ng5ngkISzYYIlXZVEtvM86fE6DHW/w+dZ1cCTObdcCoMzZ6cOv
-         XfYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXImZJ7XKSk99bT14sXHjHBjRRwjsFUko8pCAtk+isXHdxAtcxTHAdhTTo1dLV0W4Tkq0cEGF2RhqvPaNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeXAKFLMsvx2vJycsHKO+B1o6ShKKYUFqHbKGFQGN1LJdFOaOO
-	U/wutJ906Og9D4YKpT+7oqx4w/yIaTPxXth9heeb0DWfFCmqr/ZtclDHMO0F26cJlZy3Ih+Nne3
-	oW1LRdVsEfYrTyGIqoF4woMs56U4=
-X-Google-Smtp-Source: AGHT+IGbsdHKb+cxECZzgxcilu2dyLbNfszhUAzcNWB/SvN9RP1kKKljZFHLhLufBTxBpmgsNE/LruHhG1Fyv0ydQM4=
-X-Received: by 2002:a05:6512:138c:b0:535:6778:952b with SMTP id
- 2adb3069b0e04-53678fed19cmr5292708e87.44.1726321526389; Sat, 14 Sep 2024
- 06:45:26 -0700 (PDT)
+	s=arc-20240116; t=1726321566; c=relaxed/simple;
+	bh=n8VBfWaUT8bQutnt2AiQ6pQL+k5ToERXhhYaG2DcWK8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=aDUmMLhkRV2MpkkiWeBbCB/msK6Hu2S6S/vXYDAkkNTMIGpOY1IfafCNdBbqCAJGG/58Ure6Z/Pd8UUZpadv/hgtiCpPE1KVF0GNC6oHE41zCKXzFTDV0PcCctWOmdW4H7ceqGJYWkgdtF28BT4Y9FDcQoGARw65h6X4B4SSMqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jXJktlGr; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726321564; x=1757857564;
+  h=date:from:to:cc:subject:message-id;
+  bh=n8VBfWaUT8bQutnt2AiQ6pQL+k5ToERXhhYaG2DcWK8=;
+  b=jXJktlGrtkOqdXRr7vaDSvcltne2iYDMMo3+t7iTXyjKKLWy0mruhjYI
+   wKTVLxIJGSStcnM/TWXFC72A7pdPa5qLxomrYpc2zAGHmrrwgo6WPF7k9
+   FuUczA3o/H/hEW4RgtiS0Ahwbp7tPa//VDuDKlbcMontWdLBIuNdHd3cd
+   /Cp4RGlQPwaOTyXhK13vG8LOKsiicXsipPH/cNd+euNQkbq179YmjBVdu
+   NLlsqmeezIeBgsp2JJ2LIS99K16FL1ROyCpYh/WDpF3W8vOMThrdBNWOh
+   beNdEYInC/XPDhJ4EY3pTFgzergh7eWXM0qNl0k8pvqbgBg0jBE0WvYSl
+   A==;
+X-CSE-ConnectionGUID: G1EMRuEySASZeFNPeMPmFA==
+X-CSE-MsgGUID: OpLJRcOOSFq2Uff9K4N80w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="47726163"
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="47726163"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 06:46:02 -0700
+X-CSE-ConnectionGUID: tGjHuf19Sb+i/0ja8OIlLw==
+X-CSE-MsgGUID: mhGHNP0USkauHd79sp4WQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="99254520"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 14 Sep 2024 06:45:59 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spT66-0007nM-1A;
+	Sat, 14 Sep 2024 13:45:58 +0000
+Date: Sat, 14 Sep 2024 21:45:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20240912] BUILD REGRESSION
+ f2ca068393cf1157c12ab08556b05824eec16511
+Message-ID: <202409142130.awwiHNXm-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240819070204.753179-1-liuyongqiang13@huawei.com>
- <CAB=+i9TxYRcr+ZRMD31SDay+899RXOwTvQevC=8sv7b27ZO1Vg@mail.gmail.com> <6e744d2b-bbb3-4e1f-bd61-e0e971f974db@huawei.com>
-In-Reply-To: <6e744d2b-bbb3-4e1f-bd61-e0e971f974db@huawei.com>
-From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Date: Sat, 14 Sep 2024 22:45:14 +0900
-Message-ID: <CAB=+i9RF_kjYgnsPJrE-1STT+zbCOKr3dHPKN1RyR7-jk4NdpA@mail.gmail.com>
-Subject: Re: [PATCH] mm, slub: prefetch freelist in ___slab_alloc()
-To: Yongqiang Liu <liuyongqiang13@huawei.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, zhangxiaoxu5@huawei.com, 
-	cl@linux.com, wangkefeng.wang@huawei.com, penberg@kernel.org, 
-	rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, 
-	vbabka@suse.cz, roman.gushchin@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 3:58=E2=80=AFPM Yongqiang Liu <liuyongqiang13@huawe=
-i.com> wrote:
->
->
-> =E5=9C=A8 2024/8/19 17:33, Hyeonggon Yoo =E5=86=99=E9=81=93:
-> > On Mon, Aug 19, 2024 at 4:02=E2=80=AFPM Yongqiang Liu <liuyongqiang13@h=
-uawei.com> wrote:
-> >> commit 0ad9500e16fe ("slub: prefetch next freelist pointer in
-> >> slab_alloc()") introduced prefetch_freepointer() for fastpath
-> >> allocation. Use it at the freelist firt load could have a bit
-> >> improvement in some workloads. Here is hackbench results at
-> >> arm64 machine(about 3.8%):
-> >>
-> >> Before:
-> >>    average time cost of 'hackbench -g 100 -l 1000': 17.068
-> >>
-> >> Afther:
-> >>    average time cost of 'hackbench -g 100 -l 1000': 16.416
-> >>
-> >> There is also having about 5% improvement at x86_64 machine
-> >> for hackbench.
-> > I think adding more prefetch might not be a good idea unless we have
-> > more real-world data supporting it because prefetch might help when sla=
-b
-> > is frequently used, but it will end up unnecessarily using more cache
-> > lines when slab is not frequently used.
->
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240912
+branch HEAD: f2ca068393cf1157c12ab08556b05824eec16511  treewide_some: fix multiple -Wfamnae warnings that must be audited separately
 
-Hi,
+Error/Warning (recently discovered and may have been fixed):
 
-sorry for the late reply.
-Thanks for explaining how it impacts hackbench, even when prefetch is
-added in the slow path.
+    https://lore.kernel.org/oe-kbuild-all/202409141152.VgCj23dh-lkp@intel.com
+    https://lore.kernel.org/oe-kbuild-all/202409141212.JISRQdpc-lkp@intel.com
+    https://lore.kernel.org/oe-kbuild-all/202409142117.35sIzcUJ-lkp@intel.com
+    https://lore.kernel.org/oe-kbuild-all/202409142133.w3pk77Qm-lkp@intel.com
 
-However, I still think the main issue is that hackbench is too
-synthetic to make a strong argument that
-prefetch in the slow path would help in most real-world scenarios.
+    drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2148:2: error: call to '__compiletime_assert_1055' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_CCMP
+    drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2149:2: error: call to '__compiletime_assert_1056' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
+    include/linux/build_bug.h:78:41: error: static assertion failed: "struct member likely outside of struct_group_tagged()"
+    kernel/bpf/core.c:2505:22: warning: comparison of distinct pointer types ('struct bpf_prog_array *' and 'struct bpf_prog_array_hdr *') [-Wcompare-distinct-pointer-types]
+    kernel/bpf/core.c:2505:29: warning: comparison of distinct pointer types lacks a cast
 
-> Yes, prefetching unnecessary objects is a bad idea. But I think the slab
-> entered
->
-> in slowpath that means it will more likely need more objects.
+Error/Warning ids grouped by kconfigs:
 
-The fast path is hit when an object can be allocated from the CPU slab
-without much work,
-and the slow path is hit when it can=E2=80=99t. This doesn't give any
-indication about future allocations.
+recent_errors
+|-- alpha-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- alpha-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- arc-randconfig-001-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- arc-randconfig-002-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- arm-randconfig-001-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- arm-randconfig-002-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- arm-randconfig-003-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- arm-randconfig-004-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- arm64-randconfig-001-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- csky-randconfig-002-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- hexagon-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- i386-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-buildonly-randconfig-003-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-buildonly-randconfig-004-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-buildonly-randconfig-006-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-defconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- i386-randconfig-001-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-randconfig-002-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- i386-randconfig-003-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-randconfig-004-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-randconfig-005-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- i386-randconfig-006-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- i386-randconfig-011-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-randconfig-012-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- i386-randconfig-013-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- i386-randconfig-014-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- i386-randconfig-015-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- i386-randconfig-016-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- i386-randconfig-141-20240914
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- loongarch-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- loongarch-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- m68k-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- m68k-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- mips-allmodconfig
+|   |-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- mips-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- openrisc-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- openrisc-defconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- parisc-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- parisc-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- parisc-defconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- powerpc-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- powerpc-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- riscv-allmodconfig
+|   |-- drivers-net-wireless-intel-iwlwifi-mvm-d3.c:error:call-to-__compiletime_assert_NNN-declared-with-error-attribute:BUILD_BUG_ON-failed:conf-keylen-WLAN_KEY_LEN_CCMP
+|   |-- drivers-net-wireless-intel-iwlwifi-mvm-d3.c:error:call-to-__compiletime_assert_NNN-declared-with-error-attribute:BUILD_BUG_ON-failed:conf-keylen-WLAN_KEY_LEN_GCMP_256
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- riscv-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- s390-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- s390-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- sh-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- sparc-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+|-- x86_64-allmodconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- x86_64-allyesconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+|-- x86_64-defconfig
+|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
+`-- x86_64-rhel-8.3-rust
+    `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
 
-To be honest, I'm not even sure if prefetching in the fast path really
-helps if slab is not frequently called.
-Just because it hits the fast path or slow path doesn=E2=80=99t necessarily
-mean more objects will be needed in the future.
+elapsed time: 1695m
 
-And then, I don't think "Prefetch some data because we might need it
-in the future" is not a good argument
-because if we don't need it, it just wastes a cache line. If it helps
-in some cases but hurts in other cases,
-is not a net gain.
+configs tested: 72
+configs skipped: 2
 
-I might be wrong. If I am, please prove me wrong and convince me and others=
-.
+tested configs:
+alpha                             allnoconfig    gcc-13.3.0
+alpha                            allyesconfig    gcc-13.3.0
+arc                               allnoconfig    gcc-13.2.0
+arc                   randconfig-001-20240914    gcc-13.2.0
+arc                   randconfig-002-20240914    gcc-13.2.0
+arm                               allnoconfig    clang-20
+arm                   randconfig-001-20240914    gcc-14.1.0
+arm                   randconfig-002-20240914    gcc-14.1.0
+arm                   randconfig-003-20240914    gcc-14.1.0
+arm                   randconfig-004-20240914    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+arm64                 randconfig-001-20240914    gcc-14.1.0
+arm64                 randconfig-002-20240914    gcc-14.1.0
+arm64                 randconfig-003-20240914    clang-20
+arm64                 randconfig-004-20240914    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+csky                  randconfig-001-20240914    gcc-14.1.0
+csky                  randconfig-002-20240914    gcc-14.1.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    clang-20
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20240914    gcc-12
+i386        buildonly-randconfig-002-20240914    clang-18
+i386        buildonly-randconfig-003-20240914    gcc-12
+i386        buildonly-randconfig-004-20240914    gcc-12
+i386        buildonly-randconfig-005-20240914    clang-18
+i386        buildonly-randconfig-006-20240914    gcc-11
+i386                                defconfig    clang-18
+i386                  randconfig-001-20240914    gcc-12
+i386                  randconfig-002-20240914    clang-18
+i386                  randconfig-003-20240914    gcc-12
+i386                  randconfig-004-20240914    gcc-12
+i386                  randconfig-005-20240914    clang-18
+i386                  randconfig-006-20240914    clang-18
+i386                  randconfig-011-20240914    gcc-12
+i386                  randconfig-012-20240914    gcc-12
+i386                  randconfig-013-20240914    clang-18
+i386                  randconfig-014-20240914    clang-18
+i386                  randconfig-015-20240914    clang-18
+i386                  randconfig-016-20240914    clang-18
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+nios2                             allnoconfig    gcc-14.1.0
+openrisc                          allnoconfig    gcc-14.1.0
+openrisc                         allyesconfig    gcc-14.1.0
+openrisc                            defconfig    gcc-14.1.0
+parisc                           allmodconfig    gcc-14.1.0
+parisc                            allnoconfig    gcc-14.1.0
+parisc                              defconfig    gcc-14.1.0
+powerpc                           allnoconfig    gcc-14.1.0
+powerpc                          allyesconfig    clang-20
+riscv                             allnoconfig    gcc-14.1.0
+s390                             allmodconfig    clang-20
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+um                                allnoconfig    clang-17
+x86_64                            allnoconfig    clang-18
+x86_64                           allyesconfig    clang-18
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-8.3-rust    clang-18
+xtensa                            allnoconfig    gcc-14.1.0
 
-Best,
-Hyeonggon
-
-> I've tested the cases from commit 0ad9500e16fe ("slub: prefetch next free=
-list pointer in
-> slab_alloc()"). Here is the result:
-> Before:
->
-> Performance counter stats for './hackbench 50 process 4000' (32 runs):
->
->                  2545.28 msec task-clock                #    6.938 CPUs
-> utilized        ( +-  1.75% )
->                       6166     context-switches          #    0.002
-> M/sec                    ( +-  1.58% )
->                      1129      cpu-migrations            #    0.444
-> K/sec                     ( +-  2.16% )
->                    13298      page-faults                  # 0.005
-> M/sec                    ( +-  0.38% )
->          4435113150      cycles                           # 1.742
-> GHz                         ( +-  1.22% )
->          2259717630      instructions                 #    0.51 insn per
-> cycle           ( +-  0.05% )
->            385847392      branches                     #  151.593
-> M/sec                    ( +-  0.06% )
->               6205369       branch-misses            #    1.61% of all
-> branches       ( +-  0.56% )
->
->             0.36688 +- 0.00595 seconds time elapsed  ( +-  1.62% )
-> After:
->
->   Performance counter stats for './hackbench 50 process 4000' (32 runs):
->
->                 2277.61 msec task-clock                #    6.855 CPUs
-> utilized            ( +-  0.98% )
->                      5653      context-switches         #    0.002
-> M/sec                       ( +-  1.62% )
->                      1081      cpu-migrations           #    0.475
-> K/sec                        ( +-  1.89% )
->                    13217      page-faults                 # 0.006
-> M/sec                       ( +-  0.48% )
->          3751509945      cycles                          #    1.647
-> GHz                          ( +-  1.14% )
->          2253177626      instructions                #    0.60 insn per
-> cycle             ( +-  0.06% )
->            384509166      branches                    #    168.821
-> M/sec                    ( +-  0.07% )
->                6045031      branch-misses           #    1.57% of all
-> branches          ( +-  0.58% )
->
->             0.33225 +- 0.00321 seconds time elapsed  ( +-  0.97% )
->
-> >
-> > Also I don't understand how adding prefetch in slowpath affects the per=
-formance
-> > because most allocs/frees should be done in the fastpath. Could you
-> > please explain?
->
-> By adding some debug info to count the slowpath for the hackbench:
->
-> 'hackbench -g 100 -l 1000' slab alloc total: 80416886, and the slowpath:
-> 7184236.
->
-> About 9% slowpath in total allocation. The perf stats in arm64 as follow=
-=EF=BC=9A
->
-> Before:
->   Performance counter stats for './hackbench -g 100 -l 1000' (32 runs):
->
->         34766611220 branches                      ( +-  0.01% )
->             382593804      branch-misses                  # 1.10% of all
-> branches          ( +-  0.14% )
->           1120091414 cache-misses                 ( +-  0.08% )
->         76810485402 L1-dcache-loads               ( +-  0.03% )
->           1120091414      L1-dcache-load-misses     #    1.46% of all
-> L1-dcache hits    ( +-  0.08% )
->
->             23.8854 +- 0.0804 seconds time elapsed  ( +-  0.34% )
->
-> After:
->   Performance counter stats for './hackbench -g 100 -l 1000' (32 runs):
->
->         34812735277 branches                  ( +-  0.01% )
->             393449644      branch-misses             #    1.13% of all
-> branches           ( +-  0.15% )
->           1095185949 cache-misses             ( +-  0.15% )
->         76995789602 L1-dcache-loads             ( +-  0.03% )
->           1095185949      L1-dcache-load-misses     #    1.42% of all
-> L1-dcache hits    ( +-  0.15% )
->
->              23.341 +- 0.104 seconds time elapsed  ( +-  0.45% )
->
-> It seems having less L1-dcache-load-misses.
->
-> >
-> >> Signed-off-by: Yongqiang Liu <liuyongqiang13@huawei.com>
-> >> ---
-> >>   mm/slub.c | 1 +
-> >>   1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/mm/slub.c b/mm/slub.c
-> >> index c9d8a2497fd6..f9daaff10c6a 100644
-> >> --- a/mm/slub.c
-> >> +++ b/mm/slub.c
-> >> @@ -3630,6 +3630,7 @@ static void *___slab_alloc(struct kmem_cache *s,=
- gfp_t gfpflags, int node,
-> >>          VM_BUG_ON(!c->slab->frozen);
-> >>          c->freelist =3D get_freepointer(s, freelist);
-> >>          c->tid =3D next_tid(c->tid);
-> >> +       prefetch_freepointer(s, c->freelist);
-> >>          local_unlock_irqrestore(&s->cpu_slab->lock, flags);
-> >>          return freelist;
-> >>
-> >> --
-> >> 2.25.1
-> >>
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
