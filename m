@@ -1,59 +1,75 @@
-Return-Path: <linux-kernel+bounces-329226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09CB978EE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:30:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB82C978EF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770AE1F23EED
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98ACF1C22C34
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C889513A3F3;
-	Sat, 14 Sep 2024 07:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234FC13A899;
+	Sat, 14 Sep 2024 07:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uh8JOugt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XQa6vH0I"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA0E57CA7;
-	Sat, 14 Sep 2024 07:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C2A38B
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 07:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726299051; cv=none; b=MP9Ud0CnBSFTiCjyO49cjHbEcKg9du7t1FPYaZdfrdEZ9xH4XTiUWQGcHW7efBOA11aPepNU1wuMj02fPZLqJeciuklOspHTkAVL/cv/KQkHdpKvIyu3pTUsTifoS1Okec9dQHLlwhr3wQaM1LoU48Q5z30KGT03+UmmZmo6M/E=
+	t=1726299652; cv=none; b=ZT5uzDYyvlTbIaRDRrqE+L3ZAO/4l1Ducmp2fV//XkBIrqYPiAuCj4oDsjPLCaOwyqqvGAgiWR2siXTyULsYzVthUmQIMtj5gkYhuGUfLKj7jVQz024cijtoaKkB8jcoe6GGCTNShkF9j0SELF7VeSSpLCzMJFInergvDuyH2Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726299051; c=relaxed/simple;
-	bh=lIeKmaLoCOmVme4H3Fn1x8hNoYV7+LCeW9p0eyUY2Wo=;
+	s=arc-20240116; t=1726299652; c=relaxed/simple;
+	bh=6TVOCPKXL+yI9IFKhOfOruHrpAAgXmmkSzo9JZQpyUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MjPtbs7fv5KeFNWy8tyxrQzjdt7mvH8TjD1YI/T0sSpS86IM1rgp41f320ggiKhgQcNE3hHpHPiFKw3kpjheYaIZN5b82Fg2eouTvY9DXFMdQgdvCbyv63sYrAcLD/15aB7/qTsCGVdKekJl4UXXjtmRBpPhTYFNZgamdBWA5Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uh8JOugt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A5DC4CEC0;
-	Sat, 14 Sep 2024 07:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726299050;
-	bh=lIeKmaLoCOmVme4H3Fn1x8hNoYV7+LCeW9p0eyUY2Wo=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=Uh8JOugtH46vjvYJ1roy8tS2KgMjujfju3oo3nJOMysN9yIEeHgT8HF7kd6VqrJcX
-	 8/JyMvMPnIOZ7F/L4sFxceJuLVNRJXcMjRIufYdmmBhF74jMtA2Sov4biB5vYf6hXn
-	 fqF1Id73rwyOJPb2ghXr4lF8Qu3Oz1d13RmkXwYktIV0XsbUZnwIJ9KIBiTwUnjm93
-	 vKs128b8karEY4rltGEtvO2uXrczREHOKD5UX/nYBi3vO53YCOnZpCDygKQfntd3HX
-	 geglAKFuEC0TeWqmPYJZbBMV6Q8Y1toszq/hxSB5QPIzi/k8eyHhYlx3L0ys8trVD5
-	 GCXi7N3E8NtlQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3F18CCE0E7A; Sat, 14 Sep 2024 00:30:48 -0700 (PDT)
-Date: Sat, 14 Sep 2024 00:30:48 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel-team@meta.com, elver@google.com, akpm@linux-foundation.org,
-	tglx@linutronix.de, peterz@infradead.org, arnd@arndb.de,
-	broonie@kernel.org, naresh.kamboju@linaro.org, nathan@kernel.org,
-	linus.walleij@linaro.org, rmk+kernel@armlinux.org.uk, afd@ti.com,
-	eric.devolder@oracle.com, robh@kernel.org, mark.rutland@arm.com
-Subject: [GIT PULL] Emulated one-byte cmpxchg() for ARC and sh
-Message-ID: <c22df1ae-42b4-4a57-91f7-a02e50176ad0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	 Content-Disposition; b=VD/W9e9xLe0XeiBD5zcs1SvXLxodq/T90v5E24IeRekJqk1e07dUzbazHgtMNwK4DLT252xeF45rns5aANRW839szkV8veOvQ2TV/ETdmnbQFdSn2FZ9jiQZhBdWn1KVnm8UO8s27oaGFret3Jq5EmyNyA3mzjFa7VVkkQKKoUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XQa6vH0I; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726299651; x=1757835651;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=6TVOCPKXL+yI9IFKhOfOruHrpAAgXmmkSzo9JZQpyUY=;
+  b=XQa6vH0IZSrufkAjWh9MdMarxXU54ehBk4ft4i69uqFdgP/+L+IZkWXk
+   42vptfsTcOw+Pt3qjVaCOOpu4ykBphQx8f/DXORp20n532Gh/jHGrQdL9
+   aFbFF6gpb1LSm+92+LUMC6JL/3KwIfKdQNIHuoxYXA708C8REn8/iaMPW
+   aQ7khHMC6MPW1z/q9CNHtugDnHhEjOH0rQ1IKZC6WVYVAd/IvoJGj61/0
+   0/Lh4Id6AEj3lR3acMy/0QcTjSaI3JsQBsxr0i4ML+RoE1ZZxIpvUk0zT
+   9LpUsVpVBhe9Mv/8iJizP9LYyyc7qk7aP7k91Bv0oa45FKJArU0cuvLFo
+   Q==;
+X-CSE-ConnectionGUID: 2bZFYPASTiGhtOhppxaZ0w==
+X-CSE-MsgGUID: xpg2Y2RZQEmLoacMEkbrxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25300235"
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="25300235"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 00:40:50 -0700
+X-CSE-ConnectionGUID: qjNTC4IMT0acK6d6Wzh93A==
+X-CSE-MsgGUID: rcYbopStRSujERRtNNKj/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="68038030"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 14 Sep 2024 00:40:48 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spNOg-0007VS-1Q;
+	Sat, 14 Sep 2024 07:40:46 +0000
+Date: Sat, 14 Sep 2024 15:40:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
+	Akshata MukundShetty <akshata.mukundshetty@amd.com>
+Subject: drivers/spi/spi-amd.o: warning: objtool: .text.amd_set_spi_freq:
+ unexpected end of section
+Message-ID: <202409141539.2uAlMu2x-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,33 +79,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello, Linux,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   b7718454f937f50f44f98c1222f5135eaef29132
+commit: 6defadbe6cbc3a87dc39c119a6748d19bfba0544 spi: spi_amd: Add support for SPI MEM framework
+date:   6 months ago
+config: x86_64-randconfig-r052-20240913 (https://download.01.org/0day-ci/archive/20240914/202409141539.2uAlMu2x-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141539.2uAlMu2x-lkp@intel.com/reproduce)
 
-Please pull the following cmpxchg()-related changes:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409141539.2uAlMu2x-lkp@intel.com/
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/cmpxchg.2024.09.14a
-  # HEAD: c81a748edefd098ea21dd35d4bba03f69412fc26: sh: Emulate one-byte cmpxchg (2024-09-13 07:10:38 -0700)
+All warnings (new ones prefixed by >>):
 
-----------------------------------------------------------------
-ARC/sh: Provide one-byte cmpxchg emulation
+>> drivers/spi/spi-amd.o: warning: objtool: .text.amd_set_spi_freq: unexpected end of section
 
-This series provides emulated one-byte cmpxchg() support for ARM and
-sh using the cmpxchg_emu_u8() function that uses a four-byte cmpxchg()
-to emulate the one-byte variant.
-
-A similar patch for emulation of one-byte cmpxchg() for xtensa has not yet
-received a maintainer ack, so it is slated for the v6.13 merge window.
-If you are not that patient, there is another signed tag covering all
-three (ARC, sh, and xtensa) named cmpxchg.2024.09.15a.
-
-----------------------------------------------------------------
-Paul E. McKenney (2):
-      ARC: Emulate one-byte cmpxchg
-      sh: Emulate one-byte cmpxchg
-
- arch/arc/Kconfig               | 1 +
- arch/arc/include/asm/cmpxchg.h | 6 ++++--
- arch/sh/Kconfig                | 1 +
- arch/sh/include/asm/cmpxchg.h  | 3 +++
- 4 files changed, 9 insertions(+), 2 deletions(-)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
