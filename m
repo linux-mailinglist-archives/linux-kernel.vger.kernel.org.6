@@ -1,122 +1,139 @@
-Return-Path: <linux-kernel+bounces-329320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FD8978FF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:29:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E113E978FFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D5B71F22B21
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:29:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60C1EB20D04
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AD71CEEA1;
-	Sat, 14 Sep 2024 10:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6520F1CF28A;
+	Sat, 14 Sep 2024 10:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="a/PVE6cN"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="H48Ifsl9"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39404139CE9;
-	Sat, 14 Sep 2024 10:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D251422C5
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 10:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726309789; cv=none; b=svB7m+gc+sMeH+CFrQAbULQi2NjCANfEh6AedqLjXHqYoDGzMA1XsymVWoHuzWJUtmPrpHgpZJxWmu5YO4+j0PE8Fw5eLmrsBQUOfuhbcP55WwE9hEgz6/hCLm3L/yIrTpsmZ+JcianyJ1V4aSwyOCrcs/HnC5AYYq2+x9HSA1E=
+	t=1726309962; cv=none; b=A2ZzAjS3I3TKo6ByI2chNQPf7oYw0LyYshbwVtkqs3YnH1cgqeq8pcMJIdFSg9x1gjtv35pXkYfO/e6Z2nREd1NO+5kdzYGZqkxUGBRVco64V7yqwGZOGwdIIj/UmR4/VPNbrpoIx3GGggv7tCNY8L+PcVGbQG3F9j0wHqVvt0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726309789; c=relaxed/simple;
-	bh=oqxt8qh5CI6tQrJsN0hHnJsXYeDBrlCbLqId3kb3IMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lVJSuELHo9EX+dJWqIEtPhgH6jOWAec6edKr6DpfkCU1jd7MKl5PihyNsWOlwJRP+vs4BLAkzoUeTFX3Ao4vLzeEGaLGh4NivRcSgX8vDtQhVcPDFibEuWawpJDctaAqRevwre18eDHQ+Ut4/QpQynF8bfmGVO2B6kyrlfrXKCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=a/PVE6cN; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-Message-ID: <8515a57b-4369-4bd9-a43f-b5543295a472@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1726309779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1bnCm56rV4nld5AJ7M6A+mhuRfHAViEPcep8BayClas=;
-	b=a/PVE6cN6/W3UECA3p1gpXD5WJuyhijlaKmHWgVaPVHdsbZv8Lo4+f8xympZZukMiWZa9t
-	k7VyyN+zyghJDJr1xM7KPVrpuPdVLIamK6fzDRzg3UiNeOm1B4JozCOCKnC3RWFUiFJ+t1
-	7qUJeBfNpTs6D+orHgqPj/VtMSa0Q5k=
-Date: Sat, 14 Sep 2024 13:30:11 +0300
+	s=arc-20240116; t=1726309962; c=relaxed/simple;
+	bh=DdYB00ibTxT+QJRCxLcc/asgoMEjnRMB60l7urVdFTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WhlvtgxJApbFpBqa1QNB6tyDUvA+kpRIyiafp/rH4l7LZTbtHdNwmI1Qr4j0FxXcw8meRGy3B9bc8MVL9X2UBCo6WD1QLaOkjYieECEYrkqJBx3ykTwO+c6hLudlyEKMjOdDKNDO+96subHJkJygG0Z1u1Nt+BAQX5HXKIHAw/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=H48Ifsl9; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-718816be6cbso2326433b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 03:32:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1726309960; x=1726914760; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yoScSacKs8+apMRHN8PMRjEmtp//jkcASgSvFvAksOc=;
+        b=H48Ifsl9Mi+sjKnBeoN3uI4sUCUDqRWSlgRb1MthfWaUSorboOfNxpOIei6sJ0WYHp
+         uxCC9iQza3QYs0bnPby45hYajaFJ5kmsMqkryb8/GDjh6/Z6uVDBMdHErYyC5/+ez4+H
+         j9eg8Ueg/ROzZlveompWIqq/aMJCShCAw4btV3Q9hwvNij3gz0zq8s6PmkEfDgrhcBgG
+         FwVT1qdgR1mIZzo49ZShjAmXjyvxe1uC6m1cXG93tLakFUXr2aR7hOqqcx0BoKbwtj+B
+         ytAq7N4zyAYMDxm8ELu+SYS9hA4Qa8hfuQXt8vjYFPTU4nc8KIBuAhHtNcgaM3hbXM7y
+         Ul6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726309960; x=1726914760;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yoScSacKs8+apMRHN8PMRjEmtp//jkcASgSvFvAksOc=;
+        b=qPLdHOWM5BVC/fQlXg2ALOYGC+XrMTxqzaFbwrpRom/qEUJinW+7ro8sCBoRyX8Nw7
+         m0gq1gbIPzMp6Om/p6ZdC7rOeCE1fXZaK7zCTinEAtcy4H6dDHxgHBRhhckrR1vyOsHj
+         wLvIBSlWX5jk3kLISjV2gRznm4L5KNEY0kYAhL2nzCR8FUANMfKwYlsPC4F9o2P2ckmX
+         DnMfzEJlzwwyhoDYfJv9Wb4SrGqHxxLQ6TxGA7c1IJ7/sooTBtGUi+JiKWtfFuKg6D80
+         9aR0PpLV2dbG7Bzkr1oz9bnDV9Da8WwTnyVyQ1C7Jmo8+8kVmofsFVcc/8GupXvkbgr5
+         T3+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWFdvDpsLtKGkEERXi13qLbvYZHa/+kMRH365pMBfmIHKKC4Z0tBhJtbdbPvMy1MwZ9nMmGVH1movdxe/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiQIWpHeQP63xCQ8Kk1gdVXwZV+JyB94bgZNm0yFEVPoJKVyw9
+	S0caObmMXSU9iPsvcO1fgEgAf9ppNCG6oxVyBZ8QYNncrudUTmGvDLsRF9Aw4cQ=
+X-Google-Smtp-Source: AGHT+IHyOQXstBZ/vgJqI3gYOTidc2uIM7hZ/h3P9ag32Q0XCBusk2SPUr0cj7hP+LUn4iRsjuZYeA==
+X-Received: by 2002:a05:6a21:e8f:b0:1cf:4458:8b0d with SMTP id adf61e73a8af0-1cf75ec54f8mr12394722637.11.1726309959601;
+        Sat, 14 Sep 2024 03:32:39 -0700 (PDT)
+Received: from C02F52LSML85.bytedance.net ([203.208.167.149])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944ab50cbsm788332b3a.53.2024.09.14.03.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Sep 2024 03:32:39 -0700 (PDT)
+From: Feng zhou <zhoufeng.zf@bytedance.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mykolal@fb.com,
+	shuah@kernel.org,
+	alan.maguire@oracle.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	yangzhenze@bytedance.com,
+	wangdongdong.6@bytedance.com,
+	zhoufeng.zf@bytedance.com
+Subject: [PATCH bpf-next v3 0/2] Fix bpf_get/setsockopt failed when TCP over IPv4 via INET6 API
+Date: Sat, 14 Sep 2024 18:32:24 +0800
+Message-Id: <20240914103226.71109-1-zhoufeng.zf@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <20240910184125.224651-1-casey@schaufler-ca.com>
- <20240910184125.224651-2-casey@schaufler-ca.com>
- <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
- <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
-Content-Language: en-US
-From: Konstantin Andreev <andreev@swemel.ru>
-Disposition-Notification-To: Konstantin Andreev <andreev@swemel.ru>
-In-Reply-To: <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 14 Sep 2024 10:29:39.0513 (UTC) FILETIME=[010BB290:01DB0691]
 
-Casey Schaufler, 14 Sep 2024:
-> On 9/13/2024 1:49 PM, Konstantin Andreev wrote:
->> Casey Schaufler, 10 Sep 2024:
->>> ...
->>> The lsm_prop structure definition is intended to keep the LSM
->>> specific information private to the individual security modules.
->>> ...
->>> index 1390f1efb4f0..1027c802cc8c 100644
->>> --- a/include/linux/security.h
->>> +++ b/include/linux/security.h
->>> @@ -140,6 +144,22 @@ enum lockdown_reason {
->>> +
->>> +/*
->>> + * Data exported by the security modules
->>> + */
->>> +struct lsm_prop {
->>> +    struct lsm_prop_selinux selinux;
->>> +    struct lsm_prop_smack smack;
->>> +    struct lsm_prop_apparmor apparmor;
->>> +    struct lsm_prop_bpf bpf;
->>> +    struct lsm_prop_scaffold scaffold;
->>> +};
->>
->> This design prevents compiling and loading out-of-tree 3rd party LSM,
->> am I right?
-> 
-> No more so than the existing implementation. An upstream acceptable
-> scheme for loading out-of-tree LSMs has much bigger issues to address
-> than adding an element to struct lsm_prop.
-> 
->> Out-of-tree LSM's were discussed recently at
->>
->> https://lore.kernel.org/linux-security-module/efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp/T/
->> https://lore.kernel.org/linux-security-module/960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp/T/
->>
->> but it looks like a final decision to ban them is not taken yet.
-> 
-> There has never been (to my knowledge) an effort to "ban" out-of-tree
-> LSMs. There has also not been interest in actively supporting them since
-> the "L" in LSM changed from "Loadable" to "Linux", with the exception of
-> Tetsuo Handa, who has been invited to suggest a viable mechanism. There
-> is currently support for BPF based security implementations, which can
-> be maintained out-of-tree. We are currently battling with the notion that
-> the LSM infrastructure is an attack surface. We really don't want to do
-> anything to increase that exposure.
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
 
-Thank you for explaining this. Although the “ban” is a side effect of the
-other activity, I think the “ban” should be explicitly recognized as ban,
-rather than evasive “we don’t care”.
+When TCP over IPv4 via INET6 API, sk->sk_family is AF_INET6, but it is a v4 pkt.
+inet_csk(sk)->icsk_af_ops is ipv6_mapped and use ip_queue_xmit. Some sockopt did
+not take effect, such as tos.
 
-The reason I think so is that this decision significantly (at times)
-increases the cost of user (here: system owner) <-> 3rd party LSM developer
-interaction, and decreases openness of Linux in this particular aspect.
---
-Konstantin Andreev
+0001: Use sk_is_inet helper to fix it.
+0002: Setget_sockopt add a test for tcp over ipv4 via ipv6.
+
+Changelog:
+v2->v3: Addressed comments from Eric Dumazet
+- Use sk_is_inet() helper
+Details in here:
+https://lore.kernel.org/bpf/CANn89i+9GmBLCdgsfH=WWe-tyFYpiO27wONyxaxiU6aOBC6G8g@mail.gmail.com/T/
+
+v1->v2: Addressed comments from kernel test robot
+- Fix compilation error
+Details in here:
+https://lore.kernel.org/bpf/202408152058.YXAnhLgZ-lkp@intel.com/T/
+
+Feng Zhou (2):
+  bpf: Fix bpf_get/setsockopt to tos not take effect when TCP over IPv4
+    via INET6 API
+  selftests/bpf: Setget_sockopt add a test for tcp over ipv4 via ipv6
+
+ net/core/filter.c                             |  7 +++-
+ .../selftests/bpf/prog_tests/setget_sockopt.c | 33 +++++++++++++++++++
+ .../selftests/bpf/progs/setget_sockopt.c      | 13 ++++++--
+ 3 files changed, 49 insertions(+), 4 deletions(-)
+
+-- 
+2.30.2
+
 
