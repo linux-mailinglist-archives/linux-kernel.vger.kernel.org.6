@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel+bounces-329260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F24978F51
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:01:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8466978F54
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67362B24B71
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:01:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA7061C22068
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EFE1448E4;
-	Sat, 14 Sep 2024 09:00:52 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994A21CCEEE;
+	Sat, 14 Sep 2024 09:01:17 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CE04C80;
-	Sat, 14 Sep 2024 09:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AD91487C1;
+	Sat, 14 Sep 2024 09:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726304452; cv=none; b=AYPyJbJfWtLUzBmuAv7ZBC1rjQVLwwIQm4mIJPEEZ8owHK2Mx23vdWEI87lOuAS570L1YGP+MEa5yKYY3AlrfqUdtiSG94qpDIUF57RRUwGJ2wmlbd1QIMoy/qDXXvQhrHDUqwYFJ0dEp9LgpqFR3Zdyk7Q8XuLCMMeQyJYIfBA=
+	t=1726304477; cv=none; b=dWapTfN8Uqt3M59M/egXSxbsI86X4c99l4HamISkwB8OcqSgQle5ZjPUtv3YIbkOBa4+quGHl76vpYAA1rtUaD9eVmy0KcVAc/wBd33+YgaP/07SEbOfYF++Fat0X3oNRM0tlvmxSlYEErkA6CMVBMan2J8gqKifb/JGzz8MBqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726304452; c=relaxed/simple;
-	bh=eKOQYWLXaPne6jFaVaOzWLjZsel1T4Pgwevi6Fg7Khg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pMfqz/pVkjQrTDV+k5HlD8D9U+kHqBi1tXl3HeJT4OY2NS6br2mdWsASb708m8HWTOws2gmkvFfcooiRQ+KEEEnp1PqZfc0UV77uJYQJ9nqj82dmg6EAZkmzVYMkqZpq9UrLpqwnPxRJgavvcZ5P/+BKrq7b/CzJ559GkiuoIR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X5Q7v2bRzzfc9N;
-	Sat, 14 Sep 2024 16:58:35 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 494F214035F;
-	Sat, 14 Sep 2024 17:00:47 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 14 Sep 2024 17:00:46 +0800
-Message-ID: <315a63f5-712e-c6a0-c447-9dd70253e3aa@huawei.com>
-Date: Sat, 14 Sep 2024 17:00:45 +0800
+	s=arc-20240116; t=1726304477; c=relaxed/simple;
+	bh=icNKcmpquoKE/03kYN3EdCdWEne6Kb6LGJ0UkA8qL/M=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Di9iznjrfIOwdS61uBKeHmIrcXdvY6rdrxFV/EwBE8YLQtksqef0ZKc5JuFDoUz2vxaC4q4dTVcQ0WvNyRHZ4Kr4/woZyubBuVfc8Yg4B7qELTGe6AeFUFSiKZNt5lDvO62zraTMqMsHpC8ZIb9T4dSqtpGQ3tJMG5aR6BpfV9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48E8sN0Y012592;
+	Sat, 14 Sep 2024 02:00:55 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41gpbk7sr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sat, 14 Sep 2024 02:00:54 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sat, 14 Sep 2024 02:00:54 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Sat, 14 Sep 2024 02:00:52 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+53d541c7b07d55a392ca@syzkaller.appspotmail.com>
+CC: <chandan.babu@oracle.com>, <djwong@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [xfs?] possible deadlock in xfs_can_free_eofblocks (2)
+Date: Sat, 14 Sep 2024 17:00:51 +0800
+Message-ID: <20240914090051.636332-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000002b8b05061fb8147f@google.com>
+References: <0000000000002b8b05061fb8147f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next v3 1/2] posix-timers: Check timespec64 before call
- clock_set()
-Content-Language: en-US
-To: Thomas Gleixner <tglx@linutronix.de>, Richard Cochran
-	<richardcochran@gmail.com>
-CC: <bryan.whitehead@microchip.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<anna-maria@linutronix.de>, <frederic@kernel.org>,
-	<UNGLinuxDriver@microchip.com>, <mbenes@suse.cz>, <jstultz@google.com>,
-	<andrew@lunn.ch>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240909074124.964907-1-ruanjinjie@huawei.com>
- <20240909074124.964907-2-ruanjinjie@huawei.com>
- <Zt8SFUpFp7JDkNbM@hoboy.vegasvil.org>
- <ea351ea0-5095-d7ae-5592-ec3bd45c771c@huawei.com> <874j6l9ixk.ffs@tglx>
- <46efd1be-688e-ecd0-a9e1-cf5f69d0110f@huawei.com> <87v7yz96gr.ffs@tglx>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <87v7yz96gr.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: RgLr_YTnMDgahEVsPlEO5MeKi9noxxU7
+X-Authority-Analysis: v=2.4 cv=Ye3v5BRf c=1 sm=1 tr=0 ts=66e550c6 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=EaEq8P2WXUwA:10 a=N7_jEAYsZG4nfPjY8GMA:9
+X-Proofpoint-ORIG-GUID: RgLr_YTnMDgahEVsPlEO5MeKi9noxxU7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-14_07,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ spamscore=0 mlxlogscore=669 clxscore=1011 bulkscore=0 malwarescore=0
+ mlxscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.21.0-2408220000 definitions=main-2409140062
 
+we use GFP_NOFS for sbp
 
+#syz test
 
-On 2024/9/13 18:46, Thomas Gleixner wrote:
-> On Thu, Sep 12 2024 at 20:24, Jinjie Ruan wrote:
->> On 2024/9/12 20:04, Thomas Gleixner wrote:
->>> How does this code validate timespecs for clock_settime(clockid) where
->>> clockid != CLOCK_REALTIME?
->>
->> According to the man manual of clock_settime(), the other clockids are
->> not settable.
->>
->> And in Linux kernel code, except for CLOCK_REALTIME which is defined in
->> posix_clocks array, the clock_set() hooks are not defined and will
->> return -EINVAL in SYSCALL_DEFINE2(clock_settime), so the check is not
->> necessary.
-> 
-> You clearly understand the code you are modifying:
-> 
-> const struct k_clock clock_posix_dynamic = {
-> 	.clock_getres           = pc_clock_getres,
->         .clock_set              = pc_clock_settime, 
-> 
-> which is what PTP clocks use and that's what this is about, no?
-
-Yes, it uses the dynamic one rather than the static ones.
-
-> 
-> Thanks,
-> 
->         tglx
+diff --git a/fs/xfs/xfs_attr_list.c b/fs/xfs/xfs_attr_list.c
+index 7db386304875..0dc4600010b8 100644
+--- a/fs/xfs/xfs_attr_list.c
++++ b/fs/xfs/xfs_attr_list.c
+@@ -114,7 +114,7 @@ xfs_attr_shortform_list(
+ 	 * It didn't all fit, so we have to sort everything on hashval.
+ 	 */
+ 	sbsize = sf->count * sizeof(*sbuf);
+-	sbp = sbuf = kmalloc(sbsize, GFP_KERNEL | __GFP_NOFAIL);
++	sbp = sbuf = kmalloc(sbsize, GFP_NOFS | __GFP_NOFAIL);
+ 
+ 	/*
+ 	 * Scan the attribute list for the rest of the entries, storing
 
