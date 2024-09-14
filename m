@@ -1,137 +1,85 @@
-Return-Path: <linux-kernel+bounces-329439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5410979157
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:19:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B5797915C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB73B21828
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 14:19:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1E161C216C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 14:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D05C1CFEDA;
-	Sat, 14 Sep 2024 14:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94021CFEC7;
+	Sat, 14 Sep 2024 14:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="USgBtCjV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MqzUFhHl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5A91CF2B0;
-	Sat, 14 Sep 2024 14:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329F81DFFB;
+	Sat, 14 Sep 2024 14:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726323552; cv=none; b=mN1wUtf1MSNc3Jig69WGK9VMAw8OnNnVTK6rfxPUMTsR4546TCiUy6RWrR3WS6ZFqMCfbmBKYhXIHGI9FNZE63WacsV+F4ZrqhykN8OGQ4a/HL3HiygxYv4Z5rU2Vsn9lsig137c6M7GhcMMpLTITjPKN/i3q29wg1JthL5Dmcs=
+	t=1726323721; cv=none; b=t5QcvmFKJl7olxY1kX2ncHt5iDeHIDNAcSQCRRoXgXwUVOeK1Iq3G5Wlf0kt3uRsbQK40q31HlEG87N1yRDT1YU9PtB4UsMmDnaZCz09+afz2PHJcQnL8FsGzQx7nUPPqGzky49TcszuDdEPLBRfh8dJ44Mwbm97anc6L80xvug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726323552; c=relaxed/simple;
-	bh=N9wMgdRefGu42K7ypeuSJnPQEd7Ns/OJA/BRmLa/8qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uJJp/zNV6wlh/bIXFG2F2Eswyc4T3XC0E8BnKqw93pziEiNWswDrzzsOfVFA9+5O+Z4HH+G3SJiBTci5KCjGqMe8qKfnzSWLXWWaEKDCXABVD4zN1hpQuMNata+f+2ZV9oPPTlgbUNJPsEapFQGTEmh6UMDKeO643hJMp2DtX78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=USgBtCjV; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726323552; x=1757859552;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N9wMgdRefGu42K7ypeuSJnPQEd7Ns/OJA/BRmLa/8qc=;
-  b=USgBtCjVcxufnJh9KVshcT6/3aSddwTsIRIxa+Ulnels+esyy0gAXEV5
-   PNr3wAGmQi8cgru5XhKuinNueGZcFwEpm0rFBztt5uzCOm77k2vLGLJU8
-   2Z0nq27B7TjEI7DJoTe7/EdyIwRLmoUR1k52Aw1Pn1DFwN9oPTKN+mZ89
-   5/lXiJhlrhm+GJzMLX1Mhlf9P2/34yeY6EVYNhPS5vqmsBlvYHMF7bI2d
-   B5TUdbze0dKXJUHn/R8R474SKgwNYd1eqwdvgifl5IWm2sUDwklZOlq42
-   WYUJr/ZbWJm4IEPZKh9j9LYBAqTaXcSxhb7V6s8fKHnYXNlTpGjUTA82N
-   w==;
-X-CSE-ConnectionGUID: cQGj1BAaSe64yTfLvQ6EMQ==
-X-CSE-MsgGUID: AVh9oKYtQ3aaT2zxoofULA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="25090381"
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="25090381"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 07:19:11 -0700
-X-CSE-ConnectionGUID: bLVvHNP4RYS89Cob7sBRYA==
-X-CSE-MsgGUID: 1WBix8DISMO95aCgNnVb5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="99080744"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 14 Sep 2024 07:19:03 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spTc5-0007pg-0v;
-	Sat, 14 Sep 2024 14:19:01 +0000
-Date: Sat, 14 Sep 2024 22:18:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arturs Artamonovs via B4 Relay <devnull+arturs.artamonovs.analog.com@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Malysa <greg.malysa@timesys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Utsav Agarwal <Utsav.Agarwal@analog.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>, soc@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
-	Arturs Artamonovs <arturs.artamonovs@analog.com>,
-	adsp-linux@analog.com,
-	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-Subject: Re: [PATCH 07/21] clock: Add driver for ADI ADSP-SC5xx clock
-Message-ID: <202409142102.LvuMEIro-lkp@intel.com>
-References: <20240912-test-v1-7-458fa57c8ccf@analog.com>
+	s=arc-20240116; t=1726323721; c=relaxed/simple;
+	bh=DJw+zD1ONsQb6UFWuhlj3hFjx1QgK17KY/bmJZCAjyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T0i1oEZUWZb+Uciid9/FxmSFDb0fXbAyRpF14iHhJxT1Yyi+4dav1RhEv3iPo1M8JyLTpJAxhXA+qIyUYnTuqcA4NEQFYFAZuBnxoU3MywkhWWWRD6RZ2rIs0kViAEQiFt2xROEvdsfn/Cd1mq9OeSv3TC/BLdBGezylSKYaFn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MqzUFhHl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A3D1C4CEC0;
+	Sat, 14 Sep 2024 14:21:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726323720;
+	bh=DJw+zD1ONsQb6UFWuhlj3hFjx1QgK17KY/bmJZCAjyE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MqzUFhHlMfxUnOocrOoASAu0DbQZVvrblQc0MK3a/DrYpOrJHq++YhsJ52k41BQbF
+	 gt6Udc2AsKltYNmldKHKDmtCCMVQLGRn7pwEvrgbkGNj00YZGXBuhtEYTbMx6VZhsN
+	 yK9ogxSgqdTpNDe9CyAMZY7Y7GzqwXbUjcldnXdTyIYLLSuNEI/VqBU/Cv4K4gl7M+
+	 VDiE5tvQWIeaaodq2yK/ZgD7t4Q9SRBDJKvZP0+CAZN4fd5x7NTSK6d0J5UpIxxFaJ
+	 djp7qUhnLIGD3kRtiyp8yPuefZthD8PBhkRs3vB4lbaVV0e1HjlNDTDcPgBv7mzPyu
+	 SflZYahGvPtxA==
+Date: Sat, 14 Sep 2024 15:21:54 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Denis Benato <benato.denis96@gmail.com>, Jagath Jog J
+ <jagathjog1996@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] iio: bmi323: Fix some bugs in suspend resume
+Message-ID: <20240914152154.2263b31d@jic23-huawei>
+In-Reply-To: <2efd1dd8-5a4f-4df0-8acf-972c91b7c9a0@stanley.mountain>
+References: <2efd1dd8-5a4f-4df0-8acf-972c91b7c9a0@stanley.mountain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912-test-v1-7-458fa57c8ccf@analog.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Arturs,
+On Wed, 11 Sep 2024 10:54:25 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-kernel test robot noticed the following build warnings:
+> These were a couple bugs I found using static analysis.  I have not tested
+> this code.
+> 
+> Dan Carpenter (2):
+>   iio: bmi323: fix copy and paste bugs in suspend resume
+>   iio: bmi323: fix reversed if statement in bmi323_core_runtime_resume()
+> 
+>  drivers/iio/imu/bmi323/bmi323_core.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
 
-[auto build test WARNING on da3ea35007d0af457a0afc87e84fddaebc4e0b63]
+These look good to me, but because I'm not planning another pre merge window
+pull these will need to wait for rc1 so I have the code in my fixes branch.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Arturs-Artamonovs-via-B4-Relay/arm64-Add-ADI-ADSP-SC598-SoC/20240913-022308
-base:   da3ea35007d0af457a0afc87e84fddaebc4e0b63
-patch link:    https://lore.kernel.org/r/20240912-test-v1-7-458fa57c8ccf%40analog.com
-patch subject: [PATCH 07/21] clock: Add driver for ADI ADSP-SC5xx clock
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+If I seem to have lost them, feel free to poke me around rc2 time.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409142102.LvuMEIro-lkp@intel.com/
+Thanks,
 
-includecheck warnings: (new ones prefixed by >>)
->> drivers/clk/adi/clk-adi-sc598.c: linux/clk.h is included more than once.
-
-vim +9 drivers/clk/adi/clk-adi-sc598.c
-
-   > 9	#include <linux/clk.h>
-    10	#include <linux/clk-provider.h>
-  > 11	#include <linux/clk.h>
-    12	#include <linux/err.h>
-    13	#include <linux/module.h>
-    14	#include <linux/of_address.h>
-    15	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jonathan
 
