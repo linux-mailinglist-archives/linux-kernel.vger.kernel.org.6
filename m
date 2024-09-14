@@ -1,305 +1,201 @@
-Return-Path: <linux-kernel+bounces-329264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A70978F57
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1A9978F73
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648341C21107
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:06:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BAD1F23C30
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D381CCEF8;
-	Sat, 14 Sep 2024 09:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB51A146D6F;
+	Sat, 14 Sep 2024 09:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RgBbmPzc"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2085.outbound.protection.outlook.com [40.107.255.85])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HJj/+qrc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FF413C3C2
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726304780; cv=fail; b=jl9CPKd96rw9YKYGTSQAJ+W4O5Ep7Sa1jUgDwZzprxNzsf3PXol5IqLt0Yj1dnGzxAeJC7d9cc8Y1R0ldUoTB+m43FXR7C5RYejB1ZMescIPGjXFazVAUEK5F6ECxc89h+U2tdpDOvhbevScEnrCPoePd3+AHXklrcYDKUuDpyo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726304780; c=relaxed/simple;
-	bh=tOKoWLXHel+jL/EmqHyGm8E4ePficnFSgOd1pUqTgSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TUb/6UnK0A4l/ZxJHBLtluzjtCQFKuRHbI+C7VYbYlOfu9IVcKDXypeTJgWh6g3wkuCJzn3Jy74SYVEBtloNZ23gaTvHGOa4btBVsZBpKiSZHYg9Vs0nneEwImprFk9E4aLtI0c/BX6tm9gApcwNbH7hEJEV9FTarsyU2eyYmWo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RgBbmPzc; arc=fail smtp.client-ip=40.107.255.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f6LowYdAsRb11AkT37zR+9EWz18PynxB/ujSvOXPv2kJZVnzJUd2D//1QCb9jbb9ekBFUNeR0Cj+y1NxyXBWPGiTmUifM2IK/yUie4NxExfCOnNXjs+VHo2y9DpsonccSnuQ471N9lp4QEcRPmbFWj4yGO4Ss6dUU4+MrbSdhU/8m2n2fSPmjXYn5s6NLHeWF0JR0aEqWlQ2/6ZjML/pDLlKVWNugY3FaRlTikN/5Bq0QlshSQsRe7o6rkDocFIeOBmw3WIIJP7Mefien8d5w3LaX0MUUMf5yAzVfsAMnz1XxvVPp69agdM1ePGD67mu8gcCqcPfKGOyobVBDoC2dg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9p9Mw+X8NcH3ZyrUhS636Xv8f6yUvBPrkf+CDGzCuAc=;
- b=w/HaD2KxTPb/510+7CS4nHfD+Fpjm4+CQXp31lDedbrApXPReTNYbtlhXOFjQ/xkleG0wtREW1f1ZY+1bMpgTkwwQcNL4Ca8P9WwUEn8UhGcoBUPVuNmQhRreT/nzw6KbhtwnBo4DzROQB3Kgx/Ss5W/67oaR/daPMn45xW+JXw0nOsWh8x2yf1qCKuvAKJUh35WccP75MYAhr1MswpNd1vnmk+unDZFuj7KWjUiQp1hdo39XaUc/2wKEeJZfJ+5UklDrQ4zBF1H495FlMWIcfHk7ENGmilxF9SElWm7YwACtxnwcYQoLxVQlcpWub5T4KBb7cgxb7MDY/l622g4Gg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9p9Mw+X8NcH3ZyrUhS636Xv8f6yUvBPrkf+CDGzCuAc=;
- b=RgBbmPzc0BHIpjpgCvculC/VZZgl2YroAcjTwK4IP1JNQMo8VQocQfkAxv9QX3dzvYZVmD0Y0ZErHgyuZdZJN1j78/b/5+di5CvYtw1NIiD4/h0y5OLvP11y0+If4dRz2M7xtGPWmwtIVaHQoO5iwxSMpWSxy4MS2AX0RW1vbu8TUV0n8Qra379UzYVD3SAKtPD9LZnmIfbriVt5Nib8G/JgQdxCNepWvR42ITsf6/BHdHRjY5k0rcBBwCfyzd286Y/POxeMx0kwzy03JZyTnfUPAJQMD/6HpSeTKQwgOVMVigR0sS4e/nieLooLtrfnmq6/+PJviiiJfMtuA3UH5w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
- by KL1PR06MB6018.apcprd06.prod.outlook.com (2603:1096:820:d4::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Sat, 14 Sep
- 2024 09:06:15 +0000
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5%4]) with mapi id 15.20.7962.021; Sat, 14 Sep 2024
- 09:06:14 +0000
-From: Wu Bo <bo.wu@vivo.com>
-To: Chao Yu <chao@kernel.org>,
-	Wu Bo <wubo.oduw@gmail.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Cc: Wu Bo <bo.wu@vivo.com>
-Subject: Re: [f2fs-dev] [PATCH v2 00/13] f2fs: introduce inline tail
-Date: Sat, 14 Sep 2024 03:21:38 -0600
-Message-Id: <20240914092138.1120355-1-bo.wu@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240914024112.1069698-1-bo.wu@vivo.com>
-References:
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0034.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::9) To PSAPR06MB4486.apcprd06.prod.outlook.com
- (2603:1096:301:89::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CF6440C
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726305838; cv=none; b=Nrll73qlSxdxFEcdV3fOny6h+mm5Glxk2LOPsividknDM2UaubALexxLVjF+ZrPhhOQNOG8qmaa5gx3LDGRiU5ohU5vMt8b5rgw5zvkxbY3Tszhs3mHCw1WQH5VyhuSXJbmMjdummKkYa79vxi7K0WCb9QUJDI2FtSR6HTndVwo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726305838; c=relaxed/simple;
+	bh=IlQt7P6JVzN+TnjCNHu/EtD8MX8AGNKfKRMDFgmVvug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I9yFxV5SH1P8WyCgz5eSg2J7zg0E884+qHIQaOoVFITvOEEDT5cy6kBlmyKkNFyGPcFWaROHh9KX6EdDh1Z4X8VFPUy5RtkX8sOc7eAB8wqV8kiHi4P+wZNKT+8C0WLEmbsoibJkBJRuAWpJwKWGkoFiMi8qik8SvjpGhDMEnBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HJj/+qrc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726305835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+awoBYbz+fiOegQ6mOk8qScgUrhW8r4PWwqAdqhz0MQ=;
+	b=HJj/+qrcFvMOVYGnO+XhN6cFbOw3/D5SHJWWNfC6RnP1l5eWJYryBQRUee6ubvH5mgsluu
+	Au+gLitmLEeePhU6OSHZtVmqAcNmpvCkmw9MbACiUNWfQH/Q50jIDmi/3p8s1f28X2m6zM
+	tcLHj+FfYd4VUAWIXWIorJnxNrC3Q7w=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-497-9VV0LSQnOFWAvlD-AuBZqw-1; Sat, 14 Sep 2024 05:23:54 -0400
+X-MC-Unique: 9VV0LSQnOFWAvlD-AuBZqw-1
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39fe9710b7fso55589185ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:23:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726305833; x=1726910633;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+awoBYbz+fiOegQ6mOk8qScgUrhW8r4PWwqAdqhz0MQ=;
+        b=iQP3UyrU2sOV/+lTuSTpJb6UDpIe2jmnS+FxrpE0pUkcMgJi0f/Vo0ExO23YYytEv5
+         OrFGNuiQfcnELG06l3D0YS2OLGoPlq3Rr/BeHcNDWS1/yoX8Lrr3sVeOvnAyaTFMCt4O
+         RXITm/lkzWYmW4h8FnnBIxaKqKmhFR5AvAkD48wwDYKnwbJM8AXrshtYR38fBYlWkaDE
+         8KY+ywGLP/uolTFR/OFJ81Hi4x5TtNnmZCOu4vW7AZb/zZCmbEylEPKDs5WeBz7Irx3s
+         VW+6hDrfAn4UM9uqf1DWZiqRVjEh4dVHUnJDFUaocxa6wOVvn3ZXnLYq6w1z/NL4VHrR
+         wDTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMbD/BLX5zausc1iPERBdVZgDzCNZc4DerEhg50piYW1YRSeURR3DKOoO5Wjj9+mxnJX5wgbjksUCsB00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfDElzj9q4/aO1hEJI2mj33Kyj630qf4ZOw0pywNryQN+Mq/T2
+	kpHyuMZS6RGSaLbIeh1XVjvmGTuTz3PSWCzpVh7JV0jOx/kTxjlXvcEO6TfD5JZmAbU0ElHZqDY
+	IU2mP73kqfJmHS5W2cRwBBnGY+IL6rHiShqXqMl00T76WfFHrP34qByaFYYvQRBMQqiS+ugpDOG
+	P/it9eoRnFRmTCNZK0fI8leSx+tmMJVDjtJL2v
+X-Received: by 2002:a92:c54f:0:b0:39b:2ceb:1a23 with SMTP id e9e14a558f8ab-3a08b6eaf31mr60811965ab.3.1726305833243;
+        Sat, 14 Sep 2024 02:23:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1udwAp2hvQpffUsSCAinuqeX3gwXdqv9mYS2VXLF1QMtgx2Uyroz30Qdf3rG7X/Vc0kyHoQWKJ7b7ZwTjkmU=
+X-Received: by 2002:a92:c54f:0:b0:39b:2ceb:1a23 with SMTP id
+ e9e14a558f8ab-3a08b6eaf31mr60811745ab.3.1726305832959; Sat, 14 Sep 2024
+ 02:23:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|KL1PR06MB6018:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c9c4a88-74c2-461e-07fd-08dcd49c7c0e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?b29Tfx0SvmZMu6XM+vMZ0+1kaQPk4e75W54+sfVlp2xrFxY8LiFKUYQkDlh1?=
- =?us-ascii?Q?FJS2iLADF0QC3u/TzRvr9//9hgtg5hkC0oHVP739sduw8lJVGxjSns98kEzk?=
- =?us-ascii?Q?o5OL3MN9sZaUPtQgzOr2bp28JrZEKICS2CjMfxu0wg0je82RxGunz4F0Q9xb?=
- =?us-ascii?Q?8ItnXCcl4r/1izleQ+SocaxatsgL80/yp8SVxih+7eDRS66VQMNMj2uzLr2t?=
- =?us-ascii?Q?F8kaW225MBI6El1zE5mqaF1vjRrOD1AV+VgkL/7uHeVRvT1BBtRY+1PQIHW6?=
- =?us-ascii?Q?jfmCY17Ck5MX6FtTuDJw1tCjCpEsBQontsiC01+iRkr6BvUbrEZPK7YRBX8O?=
- =?us-ascii?Q?ziQ9M6MoMytdxCh9T/juYqRLDStWupMDPVaMQ472+0CNL1G6jnhJFVv16fX7?=
- =?us-ascii?Q?WL23yD4/Dhvk6m+8mRn2H30xQR7M0DFFvjx3ESuo90LajhUk/LOwNZNIDoQX?=
- =?us-ascii?Q?x5Ql113K3W++rovQcQN+eaN/zXiYRmTov0pCqpyTi5AeBwZvFhj/zGJFYWFg?=
- =?us-ascii?Q?SH7PDiEtlmJiZxSu0lR+ysBWq/kSmApXSqxbRBHeFZlMSupt+WeWtbUK1koA?=
- =?us-ascii?Q?aKKJqI+zCNQtN2Uby63icf/ywDtHfjmRZVXoei2dFv9kVIDGgoAQ98r2QYhb?=
- =?us-ascii?Q?IP3OB67f4KO5sGVU1cB4079YnKsNs3fDLCkWybtaVSmzdvyb32yyY1u3Gu77?=
- =?us-ascii?Q?Srlap9FkTWrjezQ8ZEvRYofQgLa2wifH0l/3CVSz/kVZ0Bfi1sdN8AhS6/JU?=
- =?us-ascii?Q?r39YEI3kUUwyl8YUVs52Fxtq+bouySgOpKfK+vYCUHseNtzi6WMi0bWduAPj?=
- =?us-ascii?Q?vhpCOJhEH7Vz4mCbRfu2LUdp9j01SBVqJtsZLQ24Aong/EaQVuq0MM+Rxeqz?=
- =?us-ascii?Q?oWfZVLqz5YKjMM77dPgd4WNMv2cBUtn8/w51PkCjFPYVbFLENIX9T6TH5SJp?=
- =?us-ascii?Q?OlLoO+Hl/n/WNrOnub5DX/rgw6TrpSpbG8qREoQfmV6twd81Rl0qs0LNCRq+?=
- =?us-ascii?Q?KQh+J7mXTS6CsDWDYILf4kyCbgrmDURFQ1UfFh7seN5B/tEissaFZOGGv4eF?=
- =?us-ascii?Q?Vc6Nq9Noufp0N1nhorhFhRW/+UI3QFUGWNjY7/vSQyHlywINxdC2iN5aG2cE?=
- =?us-ascii?Q?Cczcf9fqHIuflxGWuscfNj/RPw+rCJAKujKmLe6jWtMZqSpK1kgxcgH3XMS6?=
- =?us-ascii?Q?vab6Lr2uImG1YAjXJqvYHnDccMs7s6pBOyT261Y1mHbYzqV4Lh4CNVk4utzE?=
- =?us-ascii?Q?TQ/wISFsAK2+/wk8h8mRiObQ3L8jiXr2O8xBD8m6mXX3efPhOhgzjIAi6s8E?=
- =?us-ascii?Q?BBfekZsgGHBo6ksuGLskjr7Tw/ATtFL3tazUZcymVMwX6sEOaBrUC4UdkDDA?=
- =?us-ascii?Q?OEIhX/vh6VJkp+KLRrmDKWzTKbiAvBUOqQLuMDiFRBbIKUZo4A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wxg1BfbURR6CYTDGePoOMZruoi9Kqbe8eKvIWKgMi24yJH2YsBm5C8+SL2hM?=
- =?us-ascii?Q?UybcUgD1qPmqBaIJXqtuky19fDMPjsnzChqT75AuEHBMp3VXEjeDsjOlZO8a?=
- =?us-ascii?Q?0hGVClb843WS+KlJMkAu4nhPuiqCXZ8ccUd4CCs/P85zrAmt9ydOLh6pG+uT?=
- =?us-ascii?Q?YtTbFmQtJkpPDC5m2Yt0mLNOEUud0zD3zZOXyN71Zidn9MiV10jmg2OBw4PF?=
- =?us-ascii?Q?6jrocpBSIdUPbReYBQFntE7qGBbWCRQsifko3vKI3E6EfwpPEo2oFK9ZKYdL?=
- =?us-ascii?Q?ernonL1kxYTwoHioMpIkZ7Eu+EQ60C5i8Pdw0Ujnl/ajHrFGWFknLuYzfISM?=
- =?us-ascii?Q?9LDfFFPEO4+K84HV47wIgB2WtnE7SE3TeFb2VN0E9t6C3gRVd/+EQ2OaGgkV?=
- =?us-ascii?Q?Ra127H8qIKL7+SMQ4cGrkvwfhiMCzfnHyp31Pq5/jN+GOTS2Xq30kBXa/48T?=
- =?us-ascii?Q?HZUSBU06sN61bV8lfNar1NAOl8yyAs6ee5JWxLCUXyafUUp4awTE+G+Rdyet?=
- =?us-ascii?Q?J1433L2QOScasek4hk/8MAburMFD9TCEXBWzlOb/oCOcQI/b5vW2xqoJJFC2?=
- =?us-ascii?Q?yHcmscXCnY0e+PZsqkDvFv6dX75YeAZQ5hqevjK2zpFivfW0IkDmdRRUR/jE?=
- =?us-ascii?Q?R7bVjsMxQGfAbEvHKU8O0YkqjMVTyscINu027enkJsi0EDkYgFKW3rLi0wzc?=
- =?us-ascii?Q?qTmq9sumfMawtMDhNk0IrCFALYpOiRiCvGygBujzcPERp0StnLN7oFheOv7Q?=
- =?us-ascii?Q?YhSouqb0Ps0543ud0p/rQQABeGrbIp4xumlNP1ynCcBgtMdLIiwOqBG4PKoC?=
- =?us-ascii?Q?543FmQDgQ8eo+xb7xz5jERo8Jptexi3uQuvoxZZX715eYhuKIJXQmxbbYYcb?=
- =?us-ascii?Q?bYVc6HXdR7CJ3X0o6HJ1OsA0NnAYBI07bVy0LQuFHftoRhVVCSANjH/kL/WN?=
- =?us-ascii?Q?gQ1xh+Zna+uuH8uERnS7z/WTppoMHBizBFp1Cgmw8iaW7Zyz52A/BrbeGu37?=
- =?us-ascii?Q?9cV4oP+znWSQK3gJEdoY8eU2k//C+uh2PQfOlQeurcyxGr08Z3dxkde/Nk0u?=
- =?us-ascii?Q?rHDIgr55jIv+Ybp5ndp6ZWeE95B5rbo9YDxuF9VqyP3z0xvIXTDbijIhT41x?=
- =?us-ascii?Q?gu6c4bZW8KvcC0X3kb5lw5NATsLmDm5b9gZs2fqI8kzUK7+R1ZRhfERXbClq?=
- =?us-ascii?Q?awFqL8eXbYt6/gJFCCgqY6yZLaB30H0RNOhi8NG8k65yWHInUozJ1yqaiAaH?=
- =?us-ascii?Q?bchzoLgD6yTQJjRen6Dh99e+LX5uvTl7gKxRvNhLkQsxLkBmtAWT9tQifG++?=
- =?us-ascii?Q?koe+EdaLIr1qYak5P2KOAbCQt249v2kixh0JOAGU/L66/hkop3CRO3c1x3Ba?=
- =?us-ascii?Q?Ds42KnrqjJ7pU2QaAt9NqFUPJ9bC/7lWBBJ0aEa0xa7whwyeigLaVRKExyoM?=
- =?us-ascii?Q?MsIZgwHMsCr+DnDFVwSV+ZkzPYQOAQOiJjPhU7hqAPzHHVuX1BgQh+/WlSFB?=
- =?us-ascii?Q?pZi/5YTi1xAI5qudyb/iRh0j0y7U7KqB+xG/TzW7D87tDkeiniGVUAlMruWW?=
- =?us-ascii?Q?XffqglKZyBZOPyjJkh9D0bdlySuDZENj3FERlMxS?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c9c4a88-74c2-461e-07fd-08dcd49c7c0e
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2024 09:06:14.3532
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DXOXYUJGSnxdlnMw29yYbKmo1C7aYS0E45FgmsqClSYUx54lL844i3Gedyl4i05SGELLG9t1f76B7weYffXQLA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6018
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
+ <6b2cc4c4-4354-4b29-bc73-c1384b90dfc6@gmail.com> <CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com>
+ <CAMj1kXFr+N9LMj0=wULchYosUpV0ygZSKUj1vdUP0KWEANKasw@mail.gmail.com>
+ <CALu+AoS9+OxPmVJB9fAJFkjsX9xUVw6K_uXiOi0-XsK6-b4THg@mail.gmail.com>
+ <CALu+AoTQ6NFDuM6-5ng7yXrDAmezdAsdsPvh7KKUVdW4FXPe7w@mail.gmail.com> <CAMj1kXEXH2YvWtzEJEEOnTLqACsRhan3Lf9OCLYDjKf6gxDmBQ@mail.gmail.com>
+In-Reply-To: <CAMj1kXEXH2YvWtzEJEEOnTLqACsRhan3Lf9OCLYDjKf6gxDmBQ@mail.gmail.com>
+From: Dave Young <dyoung@redhat.com>
+Date: Sat, 14 Sep 2024 17:24:01 +0800
+Message-ID: <CALu+AoSp1ZryfH_j6RYqeCCjG5mFf6JkgaF4V9UwgPp+pE+mjA@mail.gmail.com>
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, Breno Leitao <leitao@debian.org>, linux-efi@vger.kernel.org, 
+	kexec@lists.infradead.org, ebiederm@xmission.com, bhe@redhat.com, 
+	vgoyal@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com, 
+	x86@kernel.org, linux-kernel@vger.kernel.org, rmikey@meta.com, 
+	gourry@gourry.net
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 13, 2024 at 08:41:12PM -0600, Wu Bo via Linux-f2fs-devel wrote:
-> On Thu, Sep 12, 2024 at 03:14:24PM +0800, Chao Yu via Linux-f2fs-devel wrote:
-> > On 2024/9/11 11:57, Wu Bo wrote:
-> > > The inode in F2FS occupies an entire 4k block. For many small files, this means
-> > > they consume much more space than their actual size. Therefore, there is
-> > > significant potential to better utilize the inode block space.
-> > > 
-> > > Currently, F2FS has two features to make use of the inode block space: inline
-> > > data and inline xattr.
-> > > 
-> > > Inline data stores file which size is smaller then 3.5k in inode block. However,
-> > > for slightly larger small files, there still have much waste.
-> > > For example, a 5k file requires 3 blocks, totaling 12k of space, which is
-> > > more than twice the size of the file itself!
-> > > 
-> > > Additionally, the end of a file often does not occupy an entire block. If we can
-> > > store the end of the file data within the inode block, we can save an entire
-> > > block for the file. This is particularly important for small files.
-> > > 
-> > > In fact, the current inline data is a special case of inline tail, and
-> > > inline tail is an extension of inline data.
-> > > 
-> > > To make it simple, inline tail only on small files(<64k). And for larger files,
-> > > inline tails don't provide any significant benefits.
-> > > 
-> > > The layout of an inline tail inode block is following:
-> > > 
-> > > | inode block     | 4096 |     inline tail enable    |
-> > > | --------------- | ---- | --------------------------|
-> > > | inode info      | 360  |                           |
-> > > | --------------- | ---- | --------------------------|
-> > > |                 |      | extra info         | 0~36 |
-> > > |                 |      | **compact_addr[16] | 64   |
-> > > | addr table[923] | 3692 | reserved           | 4    |
-> > > |                 |      | **tail data        |      |
-> > > |                 |      | inline_xattr       | 200  |
-> > > | --------------- | ---- | --------------------------|
-> > > | nid table[5]    | 20   |
-> > > | node footer     | 24   |
-> > > 
-> > > F2fs-tools to support inline tail:
-> > > https://lore.kernel.org/linux-f2fs-devel/20240903075931.3339584-1-bo.wu@vivo.com
-> > > 
-> > > I tested inline tail by copying the source code of Linux 6.9.7. The storage
-> > > space was reduced by approximately 8%. Additionally, due to the reduced IO, the
-> > > copy time also reduced by around 10%.
-> > > 
-> > > This patch series has been tested with xfstests by running 'kvm-xfstests -c f2fs
-> > > -g quick' both with and without the patch; no regressions were observed.
-> > > The test result is:
-> > > f2fs/default: 583 tests, 6 failures, 213 skipped, 650 seconds
-> > >    Failures: generic/050 generic/064 generic/250 generic/252 generic/563
-> > >        generic/735
-> > >        Totals: 607 tests, 213 skipped, 30 failures, 0 errors, 579s
-> > 
-> > MKFS_OPTIONS  -- -O extra_attr,encrypt,inode_checksum,flexible_inline_xattr,inode_crtime,verity,compression -f /dev/vdc
-> > MOUNT_OPTIONS -- -o acl,user_xattr -o discard,inline_tail /dev/vdc /mnt/scratch_f2fs
-> 
-> Hi Chao,
-> 
-> I used the default cfg to run xfstest-bld and didn't encounter the failed
-> failures. This suggests the issue might be related to these additional options.
-> However, I'm not sure how to include these options when running xfstest-bld.
-> Could you let me know how to add them?
-> 
-> Thanks
+On Sat, 14 Sept 2024 at 16:31, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Sat, 14 Sept 2024 at 08:46, Dave Young <dyoung@redhat.com> wrote:
+> >
+> > On Fri, 13 Sept 2024 at 18:56, Dave Young <dyoung@redhat.com> wrote:
+> > >
+> > > On Thu, 12 Sept 2024 at 22:15, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > > >
+> > > > (cc Dave)
+> > >
+> > > Thanks for ccing me.
+> > >
+> > > >
+> > > > Full thread here:
+> > > > https://lore.kernel.org/all/CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com/T/#u
+> > > >
+> > > > On Thu, 12 Sept 2024 at 16:05, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > > > >
+> > > > > On Thu, 12 Sept 2024 at 15:55, Usama Arif <usamaarif642@gmail.com> wrote:
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > > On 12/09/2024 14:10, Ard Biesheuvel wrote:
+> > > > > > > Does the below help at all?
+> > > > > > >
+> > > > > > > --- a/drivers/firmware/efi/tpm.c
+> > > > > > > +++ b/drivers/firmware/efi/tpm.c
+> > > > > > > @@ -60,7 +60,7 @@ int __init efi_tpm_eventlog_init(void)
+> > > > > > >         }
+> > > > > > >
+> > > > > > >         tbl_size = sizeof(*log_tbl) + log_tbl->size;
+> > > > > > > -       memblock_reserve(efi.tpm_log, tbl_size);
+> > > > > > > +       efi_mem_reserve(efi.tpm_log, tbl_size);
+> > > > > > >
+> > > > > > >         if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
+> > > > > > >                 pr_info("TPM Final Events table not present\n");
+> > > > > >
+> > > > > > Unfortunately not. efi_mem_reserve updates e820_table, while kexec looks at /sys/firmware/memmap
+> > > > > > which is e820_table_firmware.
 
-I found how to pass these options:
-1. Add custom config file
-```
-# cat test-appliance/files/root/fs/f2fs/cfg/custom
-SIZE=small
-export MKFS_OPTIONS="-O extra_attr,encrypt,inode_checksum,flexible_inline_xattr,inode_crtime,verity,compression -f"
-export F2FS_MOUNT_OPTIONS="discard,inline_tail"
-TESTNAME="f2fs custom"
-```
-2. Then run command as following:
-```
-kvm-xfstests -c f2fs/custom "generic/418"
-```
+Updating e820_table should be good enough, it depends on where the
+corruption is happening.
 
-However, I am only able to reproduce generic/418 and f2fs/004. I will look into
-these two cases first.
+kexec will find a suitable memory for the kernel via searching through
+the system ram resources.   So efi_mem_reserve will update e820_table,
+then reserve in the resources list as E820_TYPE_RESERVED, thus it
+should not be a problem.
+During the 2nd kernel boot phase, it is carried as EFI_LOADER_DATA
+with EFI_MEMORY_RUNTIME attribute, I think it is also fine,  and later
+efi_mem_reserve will be called as what have been done in previous
+kernel.
 
-> 
-> > 
-> > Before:
-> > Failures: generic/042 generic/050 generic/250 generic/252 generic/270 generic/389 generic/563 generic/700 generic/735
-> > Failed 9 of 746 tests
-> > 
-> > After:
-> > Failures: generic/042 generic/050 generic/125 generic/250 generic/252 generic/270 generic/389 generic/418 generic/551 generic/563 generic/700 generic/735
-> > Failed 12 of 746 tests
-> > 
-> > Failures: f2fs/004
-> > 
-> > Can you please check failed testcases?
-> > 
-> > Thanks,
-> > 
-> > > 
-> > > ---
-> > > v2:
-> > > - fix ARCH=arc build warning
-> > > 
-> > > ---
-> > > Wu Bo (13):
-> > >    f2fs: add inline tail mount option
-> > >    f2fs: add inline tail disk layout definition
-> > >    f2fs: implement inline tail write & truncate
-> > >    f2fs: implement inline tail read & fiemap
-> > >    f2fs: set inline tail flag when create inode
-> > >    f2fs: fix address info has been truncated
-> > >    f2fs: support seek for inline tail
-> > >    f2fs: convert inline tail when inode expand
-> > >    f2fs: fix data loss during inline tail writing
-> > >    f2fs: avoid inlining quota files
-> > >    f2fs: fix inline tail data lost
-> > >    f2fs: convert inline tails to avoid potential issues
-> > >    f2fs: implement inline tail forward recovery
-> > > 
-> > >   fs/f2fs/data.c     |  93 +++++++++++++++++++++++++-
-> > >   fs/f2fs/f2fs.h     |  46 ++++++++++++-
-> > >   fs/f2fs/file.c     |  85 +++++++++++++++++++++++-
-> > >   fs/f2fs/inline.c   | 159 +++++++++++++++++++++++++++++++++++++++------
-> > >   fs/f2fs/inode.c    |   6 ++
-> > >   fs/f2fs/namei.c    |   3 +
-> > >   fs/f2fs/node.c     |   6 +-
-> > >   fs/f2fs/recovery.c |   9 ++-
-> > >   fs/f2fs/super.c    |  25 +++++++
-> > >   fs/f2fs/verity.c   |   4 ++
-> > >   10 files changed, 409 insertions(+), 27 deletions(-)
-> > > 
-> > > 
-> > > base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
-> > 
-> > 
-> > 
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+So I think no need to update the e820_table_kexec and e820_table_firmware
+
+> > > > > >
+> > > > > > arch_update_firmware_area introduced in the RFC patch does the same thing as efi_mem_reserve does at
+> > > > > > its end, just with e820_table_firmware instead of e820_table.
+> > > > > > i.e. efi_mem_reserve does:
+> > > > > >         e820__range_update(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+> > > > > >         e820__update_table(e820_table);
+> > > > > >
+> > > > > > while arch_update_firmware_area does:
+> > > > > >         e820__range_update_firmware(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+> > > > > >         e820__update_table(e820_table_firmware);
+> > > > > >
+> > > > >
+> > > > > Shame.
+> > > > >
+> > > > > Using efi_mem_reserve() is appropriate here in any case, but I guess
+> > > > > kexec on x86 needs to be fixed to juggle the EFI memory map, memblock
+> > > > > table, and 3 (!) versions of the E820 table in the correct way
+> > > > > (e820_table, e820_table_kexec and e820_table_firmware)
+> > > > >
+> > > > > Perhaps we can put this additional logic in x86's implementation of
+> > > > > efi_arch_mem_reserve()? AFAICT, all callers of efi_mem_reserve() deal
+> > > > > with configuration tables produced by the firmware that may not be
+> > > > > reserved correctly if kexec looks at e820_table_firmware[] only.
+> > > >
+> > >
+> > > I have not read all the conversations,  let me have a look and response later.
+> > >
+> >
+> > I'm still confused after reading the code about why this issue can
+> > still happen with a efi_mem_reserve.
+> > Usama, Breno, could any of you share the exact steps on how to
+> > reproduce this issue with a kvm guest?
+> >
+>
+> The code does not use efi_mem_reserve() only memblock_reserve().
+
+Yes, I see this, I just thought that Usama tested with changes to
+efi_mem_reserve and it still did not work, this is what I'm confused
+about.
+
+But maybe Usama did not test and only checked the code and assumed
+that we have to update the e820_table_kexec and e820_table_firmware.
+See my reply inline above.
+
+Thanks
+Dave
+>
+
 
