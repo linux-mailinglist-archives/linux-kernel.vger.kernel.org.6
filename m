@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-329252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB81E978F33
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:45:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F9E978F39
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBAF91C229AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:45:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F180B240CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716A11487DD;
-	Sat, 14 Sep 2024 08:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59FD1482F5;
+	Sat, 14 Sep 2024 08:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ch3j6soz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OClk+0lw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D859712E5D;
-	Sat, 14 Sep 2024 08:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241F115D1;
+	Sat, 14 Sep 2024 08:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726303496; cv=none; b=gHvCQ59aqVA14QF9aTtBn4AYeMPo9Xh0om7EReHAMbihShZwDxEqyjan14C9omRTtei+iJDCmB9eynFWE6Vnbc0Twr4BbbeEX5tF+sXMoyFO7V+hway8f2H7LWOjkqzRzmXfZ0bf0K3aoecS+LRPjnRIUdkjy4GkueavM1DcTgY=
+	t=1726303643; cv=none; b=aJ9HZ3keD2riMj8IqUj7hapMPiwJ9p5rz0ZbULh4Ii0u9OKyMpC/oU8ukV9k2GXYGxmsDGD6KVEptdsnu3lE6n3YySzdQPh+qhKxYu27jKedg3uS6aWv5c3h7UZ6ERNd7Uhty465J7xCGY8jqdRdBehnPlSxwV+sq5BPsjp1HwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726303496; c=relaxed/simple;
-	bh=Yo2t08wq6mqrLt2v9Yb6EbR8Hv+2oN77BrDNhVFJZzk=;
+	s=arc-20240116; t=1726303643; c=relaxed/simple;
+	bh=pM41I7GYBIObPxP8lAyins5PGX0tZr2so12UfRynbeE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gP7zr7lf8usWdS9sNn3+S4Ck3g5dBQC+YuW9mfU4wVkj7YaXe2Jk2j8anjJi/FjtlFazmPvlFuQfBR7Tm3iujIPwI6WtKwZSzf1hKLGolnhTx8rwC0c/SFIx1NmGpJybG1QPLRpaZGT6XLDo2dxhZPFUiyGDLmMi6qC1gyBaM9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ch3j6soz; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726303495; x=1757839495;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Yo2t08wq6mqrLt2v9Yb6EbR8Hv+2oN77BrDNhVFJZzk=;
-  b=ch3j6sozVqrlmOrZeHC1SgTh45J7+vh6Y9odXQevxrnJKT8Pvhd8tHOV
-   L6wFu3uu+jWPlly8yXW1FwkxbQA6RVG9/NYa2SX7u3rHH4BxfwiAVDA6k
-   mwA/dhYyUTuSXeuog/fKJ4TbtWMyGohhIRNQtPBLGnrYbo1acEXwDUYwt
-   B1jEs31nrAhTjw9PTclTAfhKctqo9fz7+AFnYPvL0z1JHUuy14E2BGDjQ
-   mVjfJlganeAkAIoNIDYvG7RyY4TTsKiP2CMlSEUdpbNcAFMczeeiA41de
-   h02i9xM7wqh6hhPYaxWyoSvG7e4V4QV81kL0+rkgLWl3cDffsgTDqAKpS
-   g==;
-X-CSE-ConnectionGUID: pFpam943RqCDmEwWobTedQ==
-X-CSE-MsgGUID: vxIaa1n/SqiZlRu72b9rmg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25092067"
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="25092067"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 01:44:54 -0700
-X-CSE-ConnectionGUID: xmrBwu1NS0qQAciLVisk0w==
-X-CSE-MsgGUID: E9tgl2zaSju+Bp7vrddTKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="105796452"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 14 Sep 2024 01:44:50 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spOOe-0007Xw-0K;
-	Sat, 14 Sep 2024 08:44:48 +0000
-Date: Sat, 14 Sep 2024 16:44:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org,
-	brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com,
-	Peter.Yin@quantatw.com
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v3 5/6] gpio: aspeed: Change the macro to support
- deferred probe
-Message-ID: <202409141654.wHuMQLLU-lkp@intel.com>
-References: <20240913074325.239390-6-billy_tsai@aspeedtech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pUf1piI1xuba9+wdlyCDOI01lqzS5xDp7WFKb0WGJaLgSjXmztpXlh9XfrObB5+JhkhcjwaoQFvMRawS2YSNZ2p6XcLKHdyNzBHojnSotSIoOVWI/mD3aCLk9zKOS362SGWa+02r6C/C/4EbTaDGexUihNMAShQ9LJlhrL+lMV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OClk+0lw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F77C4CEC0;
+	Sat, 14 Sep 2024 08:47:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726303642;
+	bh=pM41I7GYBIObPxP8lAyins5PGX0tZr2so12UfRynbeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OClk+0lwA1O69g/rFyxVhltTq+6B3LXvUJNjmHumahB3oOsCqv1BmMeY5Jgyyl0r2
+	 3rCe5lxY8XeKlY1JsmlwQQI2WmMCBgSBNL5iMbWGjclKuNuQcIdlip6DHGPU4a5NFU
+	 oM8pCHFscG6MQcSv95o/nf66CussD6XGiQ6ezwVCVGykBGclVv4ONIb8oXJsKbGPB5
+	 471n750TU3lF6R3zqDdemtsMzeUpDisqkjujkKRhsfZ7LzJwbEZKu1F8BUnxjyJh9v
+	 FSBcIDcJRt4yunC+foYozqULtUUwj7bFxA5pXt9xr+jCrRqpYxFi69bEfYNPC3Slhi
+	 HXtNSb5gsbKDA==
+Date: Sat, 14 Sep 2024 09:47:17 +0100
+From: Simon Horman <horms@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 4/4] net: dsa: sja1105: implement management
+ routes for cascaded switches
+Message-ID: <20240914084717.GA12935@kernel.org>
+References: <20240913131507.2760966-1-vladimir.oltean@nxp.com>
+ <20240913131507.2760966-5-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,36 +65,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913074325.239390-6-billy_tsai@aspeedtech.com>
+In-Reply-To: <20240913131507.2760966-5-vladimir.oltean@nxp.com>
 
-Hi Billy,
+On Fri, Sep 13, 2024 at 04:15:07PM +0300, Vladimir Oltean wrote:
+> The SJA1105 management route concept was previously explained in commits
+> 227d07a07ef1 ("net: dsa: sja1105: Add support for traffic through
+> standalone ports") and 0a51826c6e05 ("net: dsa: sja1105: Always send
+> through management routes in slot 0").
+> 
+> In a daisy chained topology with at least 2 switches, sending link-local
+> frames belonging to the downstream switch should program 2 management
+> routes: one on the upstream switch and one on the leaf switch. In the
+> general case, each switch along the TX path of the packet, starting from
+> the CPU, need a one-shot management route installed over SPI.
+> 
+> The driver currently does not handle this, but instead limits link-local
+> traffic support to a single switch, due to 2 major blockers:
+> 
+> 1. There was no way up until now to calculate the path (the management
+>    route itself) between the CPU and a leaf user port. Sure, we can start
+>    with dp->cpu_dp and use dsa_routing_port() to figure out the cascade
+>    port that targets the next switch. But we cannot make the jump from
+>    one switch to the next. The dst->rtable is fundamentally flawed by
+>    construction. It contains not only directly-connected link_dp entries,
+>    but links to _all_ other cascade ports in the tree. For trees with 3
+>    or more switches, this means that we don't know, by following
+>    dst->rtable, if the link_dp that we pick is really one hop away, or
+>    more than one hop away. So we might skip programming some switches
+>    along the packet's path.
+> 
+> 2. The current priv->mgmt_lock does not serialize enough code to work in
+>    a cross-chip scenario. When sending a packet across a tree, we want
+>    to block updates to the management route tables for all switches
+>    along that path, not just for the leaf port (because link-local
+>    traffic might be transmitted concurrently towards other ports).
+>    Keeping this lock where it is (in struct sja1105_private, which is
+>    per switch) will not work, because sja1105_port_deferred_xmit() would
+>    have to acquire and then release N locks, and that's simply
+>    impossible to do without risking AB/BA deadlocks.
+> 
+> To solve 1, recent changes have introduced struct dsa_port :: link_dp in
+> the DSA core, to make the hop-by-hop traversal of the DSA tree possible.
+> Using that information, we statically compute management routes for each
+> user port at switch setup time.
+> 
+> To solve 2, we go for the much more complex scheme of allocating a
+> tree-wide structure for managing the management routes, which holds a
+> single lock.
+> 
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> ---
+>  drivers/net/dsa/sja1105/sja1105.h      |  43 ++++-
+>  drivers/net/dsa/sja1105/sja1105_main.c | 253 ++++++++++++++++++++++---
+>  2 files changed, 263 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/sja1105/sja1105.h b/drivers/net/dsa/sja1105/sja1105.h
+> index 8c66d3bf61f0..7753b4d62bc6 100644
+> --- a/drivers/net/dsa/sja1105/sja1105.h
+> +++ b/drivers/net/dsa/sja1105/sja1105.h
+> @@ -245,6 +245,43 @@ struct sja1105_flow_block {
+>  	int num_virtual_links;
+>  };
+>  
+> +/**
+> + * sja1105_mgmt_route_port: Representation of one port in a management route
 
-kernel test robot noticed the following build warnings:
+Hi Vladimir,
 
-[auto build test WARNING on brgl/gpio/for-next]
-[also build test WARNING on linus/master v6.11-rc7 next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+As this series has been deferred, a minor nit from my side.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Billy-Tsai/dt-bindings-gpio-aspeed-ast2400-gpio-Support-ast2700/20240913-154911
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20240913074325.239390-6-billy_tsai%40aspeedtech.com
-patch subject: [PATCH v3 5/6] gpio: aspeed: Change the macro to support deferred probe
-config: arc-randconfig-001-20240914 (https://download.01.org/0day-ci/archive/20240914/202409141654.wHuMQLLU-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141654.wHuMQLLU-lkp@intel.com/reproduce)
+Tooling seems to want the keyword struct at the beginning of the
+short description. So I suggest something like this:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409141654.wHuMQLLU-lkp@intel.com/
+ * struct sja1105_mgmt_route_port: One port in a management route
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+Likewise for the two Kernel docs for structures below.
 
->> WARNING: modpost: vmlinux: section mismatch in reference: aspeed_gpio_driver+0x0 (section: .data) -> aspeed_gpio_probe (section: .init.text)
+Flagged by ./scripts/kernel-doc -none
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> + * @dp: DSA user or cascade port
+> + * @list: List node element for the mgmt_route->ports list membership
+> + */
+> +struct sja1105_mgmt_route_port {
+> +	struct dsa_port *dp;
+> +	struct list_head list;
+> +};
+> +
+> +/**
+> + * sja1105_mgmt_route: Structure to represent a SJA1105 management route
+> + * @ports: List of ports on which the management route needs to be installed,
+> + *	   starting with the downstream-facing cascade port of the switch which
+> + *	   has the CPU connection, and ending with the user port of the leaf
+> + *	   switch.
+> + * @list: List node element for the mgmt_tree->routes list membership.
+> + */
+> +struct sja1105_mgmt_route {
+> +	struct list_head ports;
+> +	struct list_head list;
+> +};
+> +
+> +/**
+> + * sja1105_mgmt_tree: DSA switch tree-level structure for management routes
+> + * @lock: Serializes transmission of management frames across the tree, so that
+> + *	  the switches don't confuse them with one another.
+> + * @routes: List of sja1105_mgmt_route structures, one for each user port in
+> + *	    the tree.
+> + * @refcount: Reference count.
+> + */
+> +struct sja1105_mgmt_tree {
+> +	struct mutex lock;
+> +	struct list_head routes;
+> +	refcount_t refcount;
+> +};
+> +
+>  struct sja1105_private {
+>  	struct sja1105_static_config static_config;
+>  	int rgmii_rx_delay_ps[SJA1105_MAX_NUM_PORTS];
+
+...
 
