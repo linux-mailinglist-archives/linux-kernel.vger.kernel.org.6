@@ -1,486 +1,133 @@
-Return-Path: <linux-kernel+bounces-329149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72C4978E1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:50:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F46978E13
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3C05B2449E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23231F23EAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51B876056;
-	Sat, 14 Sep 2024 05:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F3B210E9;
+	Sat, 14 Sep 2024 05:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5s7EMPz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ahyj0j+7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13CD175A1;
-	Sat, 14 Sep 2024 05:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FFC38B
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 05:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726293026; cv=none; b=KlNi1fCQl5Tn1JNfyV0QdrYuWVhFtiRNoy6i9o+znmzrBIRl48ofNGCYHndQe0M9U0zBfGTNxTaQ0L1hcEx9BWu8ISJMeuRwdsJZbIbWIBq+gsoxXv4PDeTebQytqnpn5txH3ozWr9mqkd0G0ibLhLVuwtZ+4bpjW890fv5xfis=
+	t=1726292991; cv=none; b=glS6OP0ZwP99Y9C3S1muYqzLYGW7oz2+Z+iFElnLrKzW48GT45GeDVvsrzOXAGG+k6oXNBJKKOT2pV3PVFIFPoOLs7RWvBufCC8Vmxnw0HxsHwqvqoXzRpi78VO+CdnmLBkvBEJxbbux6HdWnpItauXnJI+7v7jK+ZklW3eZAF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726293026; c=relaxed/simple;
-	bh=gjxdgzOTbuK1t3oNsNGH+aVaLHi2i5JqWnGkD0BaPas=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kN0hHpsqS7ah27qTCQC2gmkAm/ebYx5YDbd9WmNZldAqy7+3LFZZ5dmO4E6hgft+P5f93Asf9wX9f/n0Stk6sso5pTB+IEMD4vUiwp6UK32rWhI5hQBzkn1ytuUxOeeXRuPLNWn2wGFQglhM3COhF3X99FHHWPd7RUZVvKjohIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5s7EMPz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7A9AFC4CECD;
-	Sat, 14 Sep 2024 05:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726293025;
-	bh=gjxdgzOTbuK1t3oNsNGH+aVaLHi2i5JqWnGkD0BaPas=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=C5s7EMPzyMWnm9HyjQzfs2guh3+smdYyF/iUn1tIbvz9dWaMfqrEdBDQhChJNZE/G
-	 vxNRxcC3bp6hervarZaqFns99lkONQTWiJ2FjzwWexcZ+uvL1Ihad1rzlIK+HvSSgp
-	 M5k4rjYhYKkq6D+20nfEUU1448oXKZrBoDMu9cLhY2avEAnQMbhJ9XWlSps9PzpxdJ
-	 /hO7AMjRSsuWguJavFycCQD7U7Vr0u4KfzLhDgRZsGI5E3WKzczV1I2uDEaBC8PBau
-	 C+VckMXnnHoHkI/4/XOXhpGkNsv9VVVZtD4NWVXwe13DWzLo7QBPTYRWylUrK0rKpc
-	 o9eX1RZcJoNsw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFC5FC619A;
-	Sat, 14 Sep 2024 05:50:25 +0000 (UTC)
-From: Kelvin Zhang via B4 Relay <devnull+kelvin.zhang.amlogic.com@kernel.org>
-Date: Sat, 14 Sep 2024 13:48:59 +0800
-Subject: [PATCH v2 2/2] arm64: dts: amlogic: Add Amlogic C3 PWM
+	s=arc-20240116; t=1726292991; c=relaxed/simple;
+	bh=aKFWUQ404h4zm3qUo72pHpV2BdBq+aBjiSEvde1qQgQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KbU1ohPK0BaEuImc/lK+QY+RCukOn5hh0PLEhtaTmpYjaLdR0ctJxCSOID+8lu8OMBUGAOg1mq62RGDJMzm9qleyfwzuybd+0YVq/5WoEBCK8qlcROrfrWlkof27WKzxrHCQijAIfY3LnXfILdJxgDuhe2nBovPrAS/f0n12EMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ahyj0j+7; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726292990; x=1757828990;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aKFWUQ404h4zm3qUo72pHpV2BdBq+aBjiSEvde1qQgQ=;
+  b=ahyj0j+7H+L1GHFIu+02yRmpDuO2bMN8q5XdwWMDZ48K1+fyGKljWeNO
+   HOQrLiJ77LWNvd55wIFnczLDJPQlhDgJNjPbs2PLafX2Xlx3F1s103PTl
+   hc7QnCe2jI/KBA45FVSu5PXT1GDBUoA3V20cyV87PPhSzoEJPzTXKTee5
+   ZRUW8yJrDAmmET31m8uzQsOl7cIPHWXtDY0TBbNfXYvNwjKbqT7LueMzx
+   TbnPlcUjbJ3GxOFocu34P3O5jmDqUgypJYt4/rJwsUSfA6b9WkyukS7vA
+   bI20a38KdtMCr/tAYJvvSQfvHocsOgMQXfxnWnDAxwb8X+s6HwNQJkIT1
+   A==;
+X-CSE-ConnectionGUID: 2e+maksrSfathiJ2PIAEqA==
+X-CSE-MsgGUID: V7ljpgGVT3qxNBsGbBoa2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="42678206"
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="42678206"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 22:49:49 -0700
+X-CSE-ConnectionGUID: z4VUWwPCRu+A4afkSfh01Q==
+X-CSE-MsgGUID: WoIvm360SSyqmoBCE3/E5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="72434791"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 22:49:47 -0700
+Message-ID: <c8708b95-14b9-4545-84f7-6f45161456cc@linux.intel.com>
+Date: Sat, 14 Sep 2024 13:49:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v2 1/5] iommu/vt-d: Separate page request queue from SVM
+To: "Tian, Kevin" <kevin.tian@intel.com>,
+ "j.granados@samsung.com" <j.granados@samsung.com>,
+ David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Klaus Jensen <its@irrelevant.dk>
+References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
+ <20240913-jag-iopfv8-v2-1-dea01c2343bc@samsung.com>
+ <BL1PR11MB52713D3D5947C66AE463FA4B8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <e0a1347f-877e-445c-9158-7584ae200bff@linux.intel.com>
+ <BN9PR11MB527611131A808B78C8E0E8388C662@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB527611131A808B78C8E0E8388C662@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240914-c3-pwm-v2-2-ac1f34c68ac2@amlogic.com>
-References: <20240914-c3-pwm-v2-0-ac1f34c68ac2@amlogic.com>
-In-Reply-To: <20240914-c3-pwm-v2-0-ac1f34c68ac2@amlogic.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, Kelvin Zhang <kelvin.zhang@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726293023; l=8236;
- i=kelvin.zhang@amlogic.com; s=20240329; h=from:subject:message-id;
- bh=zpCPu/y3GMnpSwM1eRSKg3vp+x4qEdbYa0rlZLB2lXQ=;
- b=kSRvb9Ilv4OsX1gfzgPhAyAJD3kPLD3z3CeHohnoZ8mYQUK9rTktKOiteONxWuFQ45C14eNEj
- 8vjjf09TkjaCJv4JWpHFm5pRInBeDd9bZ0iZDfYieJWp88bAujoNh/g
-X-Developer-Key: i=kelvin.zhang@amlogic.com; a=ed25519;
- pk=pgnle7HTNvnNTcOoGejvtTC7BJT30HUNXfMHRRXSylI=
-X-Endpoint-Received: by B4 Relay for kelvin.zhang@amlogic.com/20240329 with
- auth_id=148
-X-Original-From: Kelvin Zhang <kelvin.zhang@amlogic.com>
-Reply-To: kelvin.zhang@amlogic.com
 
-From: Kelvin Zhang <kelvin.zhang@amlogic.com>
+On 2024/9/14 10:53, Tian, Kevin wrote:
+>> From: Baolu Lu<baolu.lu@linux.intel.com>
+>> Sent: Saturday, September 14, 2024 9:18 AM
+>>
+>> On 9/14/24 8:52 AM, Tian, Kevin wrote:
+>>>> From: Joel Granados via B4 Relay
+>>>> <devnull+j.granados.samsung.com@kernel.org>
+>>>>
+>>>> From: Joel Granados<j.granados@samsung.com>
+>>>>
+>>>> IO page faults are no longer dependent on CONFIG_INTEL_IOMMU_SVM.
+>>>> Move
+>>>> all Page Request Queue (PRQ) functions that handle prq events to a new
+>>>> file in drivers/iommu/intel/prq.c. The page_req_des struct is now
+>>>> declared in drivers/iommu/intel/prq.c.
+>>>>
+>>>> No functional changes are intended. This is a preparation patch to
+>>>> enable the use of IO page faults outside the SVM/PASID use cases.
+>>> Do we want to guard it under a new config option e.g.
+>>> CONFIG_INTEL_IOMMU_IOPF? it's unnecessary to allocate resources
+>>> for the majority usages which don't require IOPF.
+>>>
+>>> Baolu?
+>> The OS builder doesn't know if Linux will run on a platform with PRI-
+>> capable devices. They'll probably always enable this option if we
+>> provide it.
+> hmm then why do we need a SVM option? In reality I haven't seen
+> a platform which supports IOPF but no pasid/SVM. so the reason
+> for whether to have an option should be same between IOPF/SVM.
+> 
+> IMHO the point of options is to allow reducing footprint of the kernel
+> image and many options are probably always enabled in distributions...
 
-Add device nodes for PWM_AB, PWM_CD, PWM_EF, PWM_GH, PWM_IJ, PWM_KL
-and PWM_MN, along with the GPIO pin configurations for each channel.
+To be honest, I would hope to remove the SVM option some day. It's
+nothing special except listening to an external notification and
+synchronize the caches when the page table is updated. It's common to
+all cases where a page table is shared between the IOMMU and another
+component.
 
-Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 364 ++++++++++++++++++++++++++++
- 1 file changed, 364 insertions(+)
+As for CONFIG_INTEL_IOMMU_IOPF, my suggestion is that we don't need to
+add any unnecessary options unless we see a real need.
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-index d0cda759c25d..fd0e557eba06 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-@@ -410,6 +410,300 @@ mux {
- 						drive-strength-microamp = <4000>;
- 					};
- 				};
-+
-+				pwm_a_pins1: pwm-a-pins1 {
-+					mux {
-+						groups = "pwm_a";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_b_pins1: pwm-b-pins1 {
-+					mux {
-+						groups = "pwm_b";
-+						function = "pwm_b";
-+					};
-+				};
-+
-+				pwm_c_pins1: pwm-c-pins1 {
-+					mux {
-+						groups = "pwm_c";
-+						function = "pwm_c";
-+					};
-+				};
-+
-+				pwm_d_pins1: pwm-d-pins1 {
-+					mux {
-+						groups = "pwm_d";
-+						function = "pwm_d";
-+					};
-+				};
-+
-+				pwm_e_pins1: pwm-e-pins1 {
-+					mux {
-+						groups = "pwm_e";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_f_pins1: pwm-f-pins1 {
-+					mux {
-+						groups = "pwm_f";
-+						function = "pwm_f";
-+					};
-+				};
-+
-+				pwm_g_pins1: pwm-g-pins1 {
-+					mux {
-+						groups = "pwm_g_b";
-+						function = "pwm_g";
-+					};
-+				};
-+
-+				pwm_g_pins2: pwm-g-pins2 {
-+					mux {
-+						groups = "pwm_g_c";
-+						function = "pwm_g";
-+					};
-+				};
-+
-+				pwm_g_pins3: pwm-g-pins3 {
-+					mux {
-+						groups = "pwm_g_d";
-+						function = "pwm_g";
-+					};
-+				};
-+
-+				pwm_g_pins4: pwm-g-pins4 {
-+					mux {
-+						groups = "pwm_g_x0";
-+						function = "pwm_g";
-+					};
-+				};
-+
-+				pwm_g_pins5: pwm-g-pins5 {
-+					mux {
-+						groups = "pwm_g_x8";
-+						function = "pwm_g";
-+					};
-+				};
-+
-+				pwm_h_pins1: pwm-h-pins1 {
-+					mux {
-+						groups = "pwm_h_b";
-+						function = "pwm_h";
-+					};
-+				};
-+
-+				pwm_h_pins2: pwm-h-pins2 {
-+					mux {
-+						groups = "pwm_h_c";
-+						function = "pwm_h";
-+					};
-+				};
-+
-+				pwm_h_pins3: pwm-h-pins3 {
-+					mux {
-+						groups = "pwm_h_d";
-+						function = "pwm_h";
-+					};
-+				};
-+
-+				pwm_h_pins4: pwm-h-pins4 {
-+					mux {
-+						groups = "pwm_h_x1";
-+						function = "pwm_h";
-+					};
-+				};
-+
-+				pwm_h_pins5: pwm-h-pins5 {
-+					mux {
-+						groups = "pwm_h_x9";
-+						function = "pwm_h";
-+					};
-+				};
-+
-+				pwm_i_pins1: pwm-i-pins1 {
-+					mux {
-+						groups = "pwm_i_b";
-+						function = "pwm_i";
-+					};
-+				};
-+
-+				pwm_i_pins2: pwm-i-pins2 {
-+					mux {
-+						groups = "pwm_i_c";
-+						function = "pwm_i";
-+					};
-+				};
-+
-+				pwm_i_pins3: pwm-i-pins3 {
-+					mux {
-+						groups = "pwm_i_d";
-+						function = "pwm_i";
-+					};
-+				};
-+
-+				pwm_i_pins4: pwm-i-pins4 {
-+					mux {
-+						groups = "pwm_i_x2";
-+						function = "pwm_i";
-+					};
-+				};
-+
-+				pwm_i_pins5: pwm-i-pins5 {
-+					mux {
-+						groups = "pwm_i_x10";
-+						function = "pwm_i";
-+					};
-+				};
-+
-+				pwm_j_pins1: pwm-j-pins1 {
-+					mux {
-+						groups = "pwm_j_c";
-+						function = "pwm_j";
-+					};
-+				};
-+
-+				pwm_j_pins2: pwm-j-pins2 {
-+					mux {
-+						groups = "pwm_j_d";
-+						function = "pwm_j";
-+					};
-+				};
-+
-+				pwm_j_pins3: pwm-j-pins3 {
-+					mux {
-+						groups = "pwm_j_b";
-+						function = "pwm_j";
-+					};
-+				};
-+
-+				pwm_j_pins4: pwm-j-pins4 {
-+					mux {
-+						groups = "pwm_j_x3";
-+						function = "pwm_j";
-+					};
-+				};
-+
-+				pwm_j_pins5: pwm-j-pins5 {
-+					mux {
-+						groups = "pwm_j_x12";
-+						function = "pwm_j";
-+					};
-+				};
-+
-+				pwm_k_pins1: pwm-k-pins1 {
-+					mux {
-+						groups = "pwm_k_c";
-+						function = "pwm_k";
-+					};
-+				};
-+
-+				pwm_k_pins2: pwm-k-pins2 {
-+					mux {
-+						groups = "pwm_k_d";
-+						function = "pwm_k";
-+					};
-+				};
-+
-+				pwm_k_pins3: pwm-k-pins3 {
-+					mux {
-+						groups = "pwm_k_b";
-+						function = "pwm_k";
-+					};
-+				};
-+
-+				pwm_k_pins4: pwm-k-pins4 {
-+					mux {
-+						groups = "pwm_k_x4";
-+						function = "pwm_k";
-+					};
-+				};
-+
-+				pwm_k_pins5: pwm-k-pins5 {
-+					mux {
-+						groups = "pwm_k_x13";
-+						function = "pwm_k";
-+					};
-+				};
-+
-+				pwm_l_pins1: pwm-l-pins1 {
-+					mux {
-+						groups = "pwm_l_c";
-+						function = "pwm_l";
-+					};
-+				};
-+
-+				pwm_l_pins2: pwm-l-pins2 {
-+					mux {
-+						groups = "pwm_l_x";
-+						function = "pwm_l";
-+					};
-+				};
-+
-+				pwm_l_pins3: pwm-l-pins3 {
-+					mux {
-+						groups = "pwm_l_b";
-+						function = "pwm_l";
-+					};
-+				};
-+
-+				pwm_l_pins4: pwm-l-pins4 {
-+					mux {
-+						groups = "pwm_l_a";
-+						function = "pwm_l";
-+					};
-+				};
-+
-+				pwm_m_pins1: pwm-m-pins1 {
-+					mux {
-+						groups = "pwm_m_c";
-+						function = "pwm_m";
-+					};
-+				};
-+
-+				pwm_m_pins2: pwm-m-pins2 {
-+					mux {
-+						groups = "pwm_m_x";
-+						function = "pwm_m";
-+					};
-+				};
-+
-+				pwm_m_pins3: pwm-m-pins3 {
-+					mux {
-+						groups = "pwm_m_a";
-+						function = "pwm_m";
-+					};
-+				};
-+
-+				pwm_m_pins4: pwm-m-pins4 {
-+					mux {
-+						groups = "pwm_m_b";
-+						function = "pwm_m";
-+					};
-+				};
-+
-+				pwm_n_pins1: pwm-n-pins1 {
-+					mux {
-+						groups = "pwm_n_x";
-+						function = "pwm_n";
-+					};
-+				};
-+
-+				pwm_n_pins2: pwm-n-pins2 {
-+					mux {
-+						groups = "pwm_n_a";
-+						function = "pwm_n";
-+					};
-+				};
-+
-+				pwm_n_pins3: pwm-n-pins3 {
-+					mux {
-+						groups = "pwm_n_b";
-+						function = "pwm_n";
-+					};
-+				};
- 			};
- 
- 			gpio_intc: interrupt-controller@4080 {
-@@ -490,6 +784,16 @@ spicc1: spi@52000 {
- 				status = "disabled";
- 			};
- 
-+			pwm_mn: pwm@54000 {
-+				compatible = "amlogic,c3-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 54000 0x0 0x24>;
-+				clocks = <&clkc_periphs CLKID_PWM_M>,
-+					 <&clkc_periphs CLKID_PWM_N>;
-+				#pwm-cells = <3>;
-+				status = "disabled";
-+			};
-+
- 			spifc: spi@56000 {
- 				compatible = "amlogic,a1-spifc";
- 				reg = <0x0 0x56000 0x0 0x290>;
-@@ -499,6 +803,66 @@ spifc: spi@56000 {
- 				status = "disabled";
- 			};
- 
-+			pwm_ab: pwm@58000 {
-+				compatible = "amlogic,c3-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x58000 0x0 0x24>;
-+				clocks = <&clkc_periphs CLKID_PWM_A>,
-+					 <&clkc_periphs CLKID_PWM_B>;
-+				#pwm-cells = <3>;
-+				status = "disabled";
-+			};
-+
-+			pwm_cd: pwm@5a000 {
-+				compatible = "amlogic,c3-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x5a000 0x0 0x24>;
-+				clocks = <&clkc_periphs CLKID_PWM_C>,
-+					 <&clkc_periphs CLKID_PWM_D>;
-+				#pwm-cells = <3>;
-+				status = "disabled";
-+			};
-+
-+			pwm_ef: pwm@5c000 {
-+				compatible = "amlogic,c3-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x5c000 0x0 0x24>;
-+				clocks = <&clkc_periphs CLKID_PWM_E>,
-+					 <&clkc_periphs CLKID_PWM_F>;
-+				#pwm-cells = <3>;
-+				status = "disabled";
-+			};
-+
-+			pwm_gh: pwm@5e000 {
-+				compatible = "amlogic,c3-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x5e000 0x0 0x24>;
-+				clocks = <&clkc_periphs CLKID_PWM_G>,
-+					 <&clkc_periphs CLKID_PWM_H>;
-+				#pwm-cells = <3>;
-+				status = "disabled";
-+			};
-+
-+			pwm_ij: pwm@60000 {
-+				compatible = "amlogic,c3-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x60000 0x0 0x24>;
-+				clocks = <&clkc_periphs CLKID_PWM_I>,
-+					 <&clkc_periphs CLKID_PWM_J>;
-+				#pwm-cells = <3>;
-+				status = "disabled";
-+			};
-+
-+			pwm_kl: pwm@62000 {
-+				compatible = "amlogic,c3-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x62000 0x0 0x24>;
-+				clocks = <&clkc_periphs CLKID_PWM_K>,
-+					 <&clkc_periphs CLKID_PWM_L>;
-+				#pwm-cells = <3>;
-+				status = "disabled";
-+			};
-+
- 			i2c0: i2c@66000 {
- 				compatible = "amlogic,meson-axg-i2c";
- 				reg = <0x0 0x66000 0x0 0x24>;
-
--- 
-2.37.1
-
-
+Thanks,
+baolu
 
