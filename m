@@ -1,341 +1,178 @@
-Return-Path: <linux-kernel+bounces-329184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4284D978E73
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:38:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE53A978E75
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFAD22871CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:38:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0D641C225FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D5514EC71;
-	Sat, 14 Sep 2024 06:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246B217B51A;
+	Sat, 14 Sep 2024 06:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjmQlOfR"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="jjqTyhJd"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011027.outbound.protection.outlook.com [52.101.129.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E8C748D
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726295880; cv=none; b=eu4LTRNzqYczwFUGYeX2lCbEtsoDjOdRNTQrdq6h2bZVrHKltPLl1mzQjw81aL91mbPXPf8Y+45wMncfgo9qockm/Xh47LdzyQqi1IG3Aa2sQgVAsYLLcGlFPZjFhfL4ZpygZ3+bqbNPECLW0UYQz7jNCWXz1to32a/tlYXdbJM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726295880; c=relaxed/simple;
-	bh=oz7QanlSOfMZ25ytwP5sFLfaEV2c2Lqp5/4E+nUWy6Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SXaiEVVfolavsjG5W6D1Y+j4dvh703KWSBZBHBf/L9BRrQhiNSLTd3N0CRbylKiikk0M3bWI88dUwOkoS7q24m7e2bQEUVaqItYC7jM3DirbxP1WS7fBoPuixsb4ofY5P3jc2VI5G/ZxXK7xhYP5Zm2EvrIZ/nIdWeRmNNGxtYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IjmQlOfR; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7d7a9200947so1010252a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 23:37:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726295878; x=1726900678; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h0XGXnTz50hOJaeNhqtXIh7+Vq+6DDbhWS4ntxPilS0=;
-        b=IjmQlOfRibflEoQJ4x69+aTPKgPJJvJovJlIQKvhk1i8GsxJxL3UW/KHberUdkPEhx
-         TJEp7EoRTwmh2amoS8traLPge4aEtDT07pye36Ko6KmwCDoETgGs3LjIbM1+KqwRAEIS
-         u6fbkkCYoL7fYcjrIW1wz+cxXn8Z7+AxjuK7Ym93QZOTvQ4u85PKqWxL2DdtxAZ9VAuf
-         k/1W065CESA6T1TV/VvAnu+u7bfI9rKdcf6ibHRIL9UNxWscbmEmys0vyq+o8orFb/XD
-         6WadxZjKxvTV4c/F9oGjT6ld+s//nmzE5ldWH3/SZaQuBRUAMb5smpvTAWdWJMHf1eMf
-         PG4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726295878; x=1726900678;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h0XGXnTz50hOJaeNhqtXIh7+Vq+6DDbhWS4ntxPilS0=;
-        b=ngQb9W4flXcPkGiQC7uGr/DJobUQjgohuZNGyiOgDVRs44mqg/FzUuIO9fwoJgAHRA
-         HhFesn+SqhIyG/7XhFpdkHEGqPA7xb2cHoiI3yTu8rFiK8tpaErUsSknEDbOqKOcZE4j
-         f76YvlknmPDMiRQKLM6BNCmrNaibsK1k8YU9ATQJB+plT1Ubw+Z/uYcDBGfmyJX+b3Ij
-         bbeKmNhLUwd/K40v1luGmMTWp45/p4b1Zeepdc0xb2Umw3ttrPo50IN1eZUIIIKRpEbx
-         z9EHhICpn0p8nDCCXhVCNre/cVrKfaXeaIPX4S8qAuKTOanGyO785x15Xnr3ZVRAkRMv
-         6m0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW/HWh0aFfKanm34gCyaazICqauzjG5Q1ttfFc7h8576/6PNQo3W0K2m559x+iE4vEh6tiy16kMu4Wm/BM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVC8E14QVNoB7k6GL20NnsmMvKqY6fGWe5y+P8rTOrPSNAWR3P
-	5CA64IimpB6BTS9nEJMzAkg4gbHXhPTMRzqwwNnljmiwCtANP5ncr6fMmpg2
-X-Google-Smtp-Source: AGHT+IHUSR5jD2duXHLe3BrgPTf5h7DhPZAFxKcDMcB2yTXSiHyvVeTo590mSkNIjdz80NvYheEK+w==
-X-Received: by 2002:a17:90b:388d:b0:2d8:f81f:87a0 with SMTP id 98e67ed59e1d1-2dbb9dee70cmr6516049a91.9.1726295878119;
-        Fri, 13 Sep 2024 23:37:58 -0700 (PDT)
-Received: from Barrys-MBP.hub ([2407:7000:8942:5500:6927:3898:c182:14f1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d2928sm4835395ad.120.2024.09.13.23.37.51
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 13 Sep 2024 23:37:57 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: mhocko@suse.com,
-	fengbaopeng@honor.com,
-	gaoxu2@honor.com,
-	hailong.liu@oppo.com,
-	kaleshsingh@google.com,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D60516426
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726295915; cv=fail; b=V2NS995wEkBr/KfmMdRgPEky51BgzcDvFc2wcuJk+L1KU1qCevee7fjnEmUlRV+Hcv+v6ZpQ3dGg0EscjOGMPl4N8VLzScdwunLtjXzVFVWoB8ZT5BL+pHko3EaDA3k0Tf8Sc6qtFYsQRlcIMH+7p4T/RCCy1iURXDJB0hYVdCg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726295915; c=relaxed/simple;
+	bh=fJ+tyGB8i1BiVrdB3EGjGln8fCuGsFSY5CgwgYbbqRg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=fcASk/T79EBu9MFN7ZnjFMcriBJcrOPTk04KJ1OgFi2ehgDiVU/X5529HR8LSP1KQxIc210MsKRSs6AvXSHJfhcaTx8LPQ3KeDQMUmT3khwNX7hizbprdAASWI6mTIPVVuF3Uu0MsfKUvq2Fy2wEHXH3/A0YeNESaInL/I1fG88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=jjqTyhJd; arc=fail smtp.client-ip=52.101.129.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tkFodL+/wJMvgPhTOBDoSw5cPe4DdK1BtVrwOqnCLI/r8uva9itw9bDCyWW0rMjB/56eL1STLQDdWA1GG98VDRFxEnCwthlD1iWdfH+MsrwXm48HXYogbwY/+QseUwcKPX18BoKhDYK9STMti4NovW5r797KduSvBjkCjyjkoqTgTbJDSDc1NlvuxFK7AW7AClQ+T1/J8t9fvohfDTxwmHmZi8k49IEdKfBA/e5vED99K5GLGkA+/MY/d4RDegXMyZk8me0av3148ov0bVWh6BuiAFt0xmaLDZpmUa2TSZE2XxYGzWLfZUcdkhqrwAXNnNY071D8IQJPX0wxAY1nOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q/qfS9GNPnFZg6LSoys3wr4HTtl/VwgvOGK5noHbitE=;
+ b=TeDjCMWxgwi0VQRdnCiMyxTDO8i6o7joWfJJCUveeOpadS7CKaTgD/+kLcfrRNc+X7azyFYGbHg7BRBVJnkiM1kMV0ykLJ0xh/yIy0d9i9aC0UrasqTehCqSezUOpSYtG1vkPUxZ4wQVGet23POUhE0B+e5BeJp8iZV93C5z8fVqVmoz2UpwjepUnejeqopVAiJ9K5wPUC+zQfkLv8PUaD73S0UMMhBdXOcNk5TsJw30epLepx+EGY0AKRFBrSi+DCp3jQVKOMPH8PhVSwHVimu2Sua0nb+FZWQ3jTvAu/3QfQ4XN/PnHZzswF1VPi4qEZZM8vNoVQxB/jQrsIAdOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q/qfS9GNPnFZg6LSoys3wr4HTtl/VwgvOGK5noHbitE=;
+ b=jjqTyhJdv5TZ42orsU+HmzSdRHXLmR8rPysqnqlBheEwopUYEhrUPa+yXpINlacFIiELlrTZv7MnnSLYNIpg/x6xrRd3QfeOxaSnYv9fANt2IvhenVMZtI/9LBE2lsvQUO4ZZ8TgKSxlOREcWDfrzIReaoBzdamzYYgX4LhoP/k2HpJJWo2Mdko1qu82tkmfya4y5t3tS+X6GKYTvY0VPvNfxqS4QNKyIS9epcd1Kt1lKDO9qqsoKmxVOqS8pLHxs+sFI+iKDFtRnrjm/O3w8LPkrN9smwc4m573nyUXBSgWSSTlM9IJermEkUeSu61JJZcUcZzs50JfhurYlVFGtw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
+ by OS8PR06MB7322.apcprd06.prod.outlook.com (2603:1096:604:28c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Sat, 14 Sep
+ 2024 06:38:29 +0000
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7962.021; Sat, 14 Sep 2024
+ 06:38:29 +0000
+From: Shen Lichuan <shenlichuan@vivo.com>
+To: msakai@redhat.com
+Cc: snitzer@kernel.org,
+	dm-devel@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	lokeshgidra@google.com,
-	ngeoffray@google.com,
-	shli@fb.com,
-	surenb@google.com,
-	yipengxiang@honor.com,
-	david@redhat.com,
-	yuzhao@google.com,
-	minchan@kernel.org,
-	Barry Song <v-songbaohua@oppo.com>
-Subject: [PATCH RFC] mm: mglru: provide a separate list for lazyfree anon folios
-Date: Sat, 14 Sep 2024 18:37:46 +1200
-Message-Id: <20240914063746.46290-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	opensource.kernel@vivo.com,
+	Shen Lichuan <shenlichuan@vivo.com>
+Subject: [PATCH v1] dm vdo indexer: Convert comma to semicolon
+Date: Sat, 14 Sep 2024 14:38:08 +0800
+Message-Id: <20240914063808.3471-1-shenlichuan@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR06CA0001.apcprd06.prod.outlook.com
+ (2603:1096:4:186::21) To SEZPR06MB5899.apcprd06.prod.outlook.com
+ (2603:1096:101:e3::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|OS8PR06MB7322:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5627f207-6c48-4788-429a-08dcd487d823
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Bnx5tHmBIu21aBTh6KZuG+G6l2L/779rMGu5Pl/poA9p9yNMXXqyuZbc2YhI?=
+ =?us-ascii?Q?EiiN+n2/L4W8ovWlZLP1HBNqaoCT1DcjYK8m2FAf/QI1gy369yjsQPU0eIQ1?=
+ =?us-ascii?Q?pnRYv9xIXN0YmCOOyqAihsxZsm3Gofg0wf/gwjz4+mX5zps0LMR866B9qoDO?=
+ =?us-ascii?Q?WgUl3qm7RfYEYCT2vJfvRTWZs818D3Yd/4Vt6F9/vrdif9F5aJbIVBXH9QEx?=
+ =?us-ascii?Q?AWswAwpTFp2hvWQaCXNP6P7urBzEuHwGCeT+HhbrhGF+uJ9lb4/7b89Kf9dG?=
+ =?us-ascii?Q?zowlP/5YQSfJ8PxJgqc5B0XsUyyfzxlD3aGLD5fZpVXtDuweTJ1xCSm/2r+h?=
+ =?us-ascii?Q?CZcouDn00IuvHtLxrZgC0ARd80w89VPFpt/CP2Yt5xxc7cV8opQKu1pr/74K?=
+ =?us-ascii?Q?nTPWteLESJyZoSFJcrRfHaXiz3SuaJRkRWHtSB6lvhdR2bdOWa9x45iaIPmr?=
+ =?us-ascii?Q?jVM9aExcJPRyXc+VW1SWGu+Ylsi9uiZU50ZYVOlTDv2k2rgwFKlwBwYc+kNb?=
+ =?us-ascii?Q?w89ZzoqC5kb2w70cggg9RFEi7O6P/0dT33kCOFij1y+wQBuEpChy0VzphDU+?=
+ =?us-ascii?Q?qvmj+LgBkFWjV9rDGztf0BZSs/lAxPe9qK3dYYdwhT2haRhBK+dw9SsoYxzh?=
+ =?us-ascii?Q?v9d04Yj75EXBgO0go8/yv0fKGwR/m4pVl8VrRfWaJrlDyxet7+ciDKnSSU4Y?=
+ =?us-ascii?Q?q90env9lOywRlMrGRvyBl69r8giM0OuL8lV5Z3Gh8Xeihcx623yHSeEp7+Ox?=
+ =?us-ascii?Q?u0J6VBAjT7zloxbyC+bWPtOsN1qfpxPUEFkC+JoJ/pxYLELjAVQm0wM7YxSi?=
+ =?us-ascii?Q?b24u9e15LBQojleMl0qqBJv7gIwuRFBLRaE8LxNz5Cqbc4uGB6pVcvqvB/7L?=
+ =?us-ascii?Q?RDXfNIYWO8X6AOdt5IG1NNFD1/YJOwd2j8L9V2TesO1PQgZiaXvA9nVSGvnj?=
+ =?us-ascii?Q?6XB5H7PCe6FJtDPfLIaPnEoShpp7WHIKqfF0U9MlfcZbprgmRtuJuZO3roqJ?=
+ =?us-ascii?Q?62Fbe+JD0Etsy/CfHGqNk+/yCB+XUl7GOkqnINlavttvBzqHdKKJX1pxfxZ4?=
+ =?us-ascii?Q?FsDgLYdOpeGGnTjGG3KyVJrh58CuCQl54GNBMz+gimxRiSIBbiCbOFaFxlpp?=
+ =?us-ascii?Q?Nh40smVxrhfIua9rKsd0UwBofIofZOgdrHLXep2WZEHptdQoA4TDM1Bi2enT?=
+ =?us-ascii?Q?oDNGk0rG5jLwEdn4I1MTdTqXW2tCPzddDUGg/fR8s1fLT57mR36FQSAw2ll6?=
+ =?us-ascii?Q?NCRW+28drQUuMpVM8J9QtKt8aahdYc2JHTi+AkkdmqP+8TYLaPExq08pJkPf?=
+ =?us-ascii?Q?EdkMXJXMeFsxjSuCRwVeIs6B4deccOlyjx5POTmNF/bFTPyDz+ZVeIyRQdCC?=
+ =?us-ascii?Q?chm47gHeLxiO1UMdlKpIce2J/555y7K7tPT85wTUrmmj0ZMqYw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ihsAet+QEPZ2GUwjD85KuMgxnfebThPedAOXSn9YP8LPO9dDOFlZWeNPwhKP?=
+ =?us-ascii?Q?hLFxIdzwKmUPMcccz3XrP1TP/kO7ZrqGzg53tGZO0RmKm9F+Fc/ALUznzr2G?=
+ =?us-ascii?Q?smV0NmoFvoj2o56tXOpSIb50TzvC3cASzWwj5pcC2qWF634gIpiV0HjFYgOC?=
+ =?us-ascii?Q?e3DwBwqYBqL0GecL0xUgpNoxej6lTiNKy4QKiVyJK7Apd7bu0Ri0sVKOWtWD?=
+ =?us-ascii?Q?6oRtkMSxs/VZCqqIld1lHbUrcfhav/NhOyw3MPm8Q0h064GBFkWVlLuMV0t1?=
+ =?us-ascii?Q?qdIOUSP9LHfaXyXb9zmEwg2xJ7xlO06zjzlCP6X16hfFeEjkWZUIxh68aVlA?=
+ =?us-ascii?Q?wTeCKGMAjbg4ZbOeamh1VZ3UHs7NC1YinSpCCAH8x+9qAUIbaLPI5GnqtM05?=
+ =?us-ascii?Q?++wKDkX3BZzQEE2AHmTXrO6a6CB0dEnljOw8saasD+0qBYzQsC6NbPCb00/Q?=
+ =?us-ascii?Q?izUY7T5HGZfa1CA3bM6yXvZ72rlgMX1L77IWdyxDPynoCiKJABMnilQqeJIt?=
+ =?us-ascii?Q?9yD2WTRgfIye9yWqwZV1YiJKJSWzqzv7Qgn0BZBe5ze3GNHUnJP7SSb+80mf?=
+ =?us-ascii?Q?5h4qS0YUeZXinTJEImW8ViDsnemtdSdesqUnAoUbmigV193hIPWY3NTs3UoP?=
+ =?us-ascii?Q?vnPKQu94mpipyVLv/zyf9x6h2/8eoIlzKin/wAA7XmsK4OIdhmGJ5haYguNe?=
+ =?us-ascii?Q?LPxh5yfbyD1U6vAtngx+iD5DSQ+q1eVkB3qWBBapRl6ZQ44FMRpw/vT7Wa5T?=
+ =?us-ascii?Q?GVJC25knHWnhYG8QxbCsFqwk2tGejjLSKWBFpR0fnFHo1NAuZh5uy2GfCGLM?=
+ =?us-ascii?Q?PYdB0u19NhXElAxTSoojkZC5LGC23lViQn3eUw6TZp5Pxmlbp33Fh1zOluxp?=
+ =?us-ascii?Q?1vepTiN6hWHZwJSH0vmkAhehQ8PDWx5EkFbI44IovIaS3J0TU27T+24QcnDb?=
+ =?us-ascii?Q?DhEouxBDc6Srsf19fvtnCHF2BuRcCcYbvaeruxn4WTv98bDDp+m969sKI6tj?=
+ =?us-ascii?Q?e0tQCgCcUZwJWopPEwOF7qgaIXOFvQyUjOlHAH9zxo7OSRtSVx61TmW1DvX/?=
+ =?us-ascii?Q?TscWxcj6pXpDxDLcp0NKxOzpdlfXNG4cNV8j6/dtieOgxg4+DkRedagyk+g/?=
+ =?us-ascii?Q?YV4/zFFyU7+2DJG2by+4XXekc0k+sQ7qJGsFdsdEezQBI86wk3/aTtZT3KSY?=
+ =?us-ascii?Q?QaAwq5GkenIcsoS7pS34RgrIzAVGqD0fbgRngj5xXXjizDC7PwLVDAXJG6d9?=
+ =?us-ascii?Q?23Q08j0uToJCWNy8M34hr4wyykJf1f3si4CxfqgwxL6vpdl+Q3H0qmp1QD7T?=
+ =?us-ascii?Q?9WCKgdp82PXeXUc3Nsdl8xdrrqkGZvB0EY1MyyHYzyWfMNlRaCQIiEXj1ndg?=
+ =?us-ascii?Q?Cc68E/y958+4284THBgbO7I70HUTmbsWUG0Lp49xlUKhJGTiOXDsvZ9JyhEY?=
+ =?us-ascii?Q?9zJYDkHxCjmIFdNfPEl00mZchgO8gfNgAKwOWQR0A8YEN+EEccJ5u7JcIYEW?=
+ =?us-ascii?Q?4+0EhuxNsrWUvIArv1AN/AWntNDFVkrYFqfjbZq9/0SeKUUMOq/OBK1qrVhi?=
+ =?us-ascii?Q?Qq6P8iKOhxMZxgRTwfn0j1DBnCFFi1X7RXKogVBV?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5627f207-6c48-4788-429a-08dcd487d823
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2024 06:38:29.3516
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FhvCsMnsCSv8Vgav9HpuGsF07oKXbsZ6jrk1k9E5A1EPF5ArleAxE17Z4yoop0nk/UYq5HPfRglh3+PBIf8Yew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS8PR06MB7322
 
-From: Barry Song <v-songbaohua@oppo.com>
+To ensure code clarity and prevent potential errors, it's advisable
+to employ the ';' as a statement separator, except when ',' are
+intentionally used for specific purposes.
 
-This follows up on the discussion regarding Gaoxu's work[1]. It's
-unclear if there's still interest in implementing a separate LRU
-list for lazyfree folios, but I decided to explore it out of
-curiosity.
-
-According to Lokesh, MADV_FREE'd anon folios are expected to be 
-released earlier than file folios. One option, as implemented 
-by Gao Xu, is to place lazyfree anon folios at the tail of the 
-file's `min_seq` generation. However, this approach results in 
-lazyfree folios being released in a LIFO manner, which conflicts 
-with LRU behavior, as noted by Michal.
-
-To address this, this patch proposes maintaining a separate list 
-for lazyfree anon folios while keeping them classified under the 
-"file" LRU type to minimize code changes. These lazyfree anon 
-folios will still be counted as file folios and share the same 
-generation with regular files. In the eviction path, the lazyfree 
-list will be prioritized for scanning before the actual file 
-LRU list.
-
-[1] https://lore.kernel.org/linux-mm/f29f64e29c08427b95e3df30a5770056@honor.com/
-
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
 ---
- include/linux/mm_inline.h |  5 +-
- include/linux/mmzone.h    |  2 +-
- mm/vmscan.c               | 97 +++++++++++++++++++++++----------------
- 3 files changed, 61 insertions(+), 43 deletions(-)
+ drivers/md/dm-vdo/indexer/chapter-index.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index f4fe593c1400..118d70ed3120 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -225,6 +225,7 @@ static inline bool lru_gen_add_folio(struct lruvec *lruvec, struct folio *folio,
- 	int gen = folio_lru_gen(folio);
- 	int type = folio_is_file_lru(folio);
- 	int zone = folio_zonenum(folio);
-+	int lazyfree = type ? folio_test_anon(folio) : 0;
- 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
+diff --git a/drivers/md/dm-vdo/indexer/chapter-index.c b/drivers/md/dm-vdo/indexer/chapter-index.c
+index 7e32a25d3f2f..fb1db41c794b 100644
+--- a/drivers/md/dm-vdo/indexer/chapter-index.c
++++ b/drivers/md/dm-vdo/indexer/chapter-index.c
+@@ -177,7 +177,7 @@ int uds_pack_open_chapter_index_page(struct open_chapter_index *chapter_index,
+ 			if (list_number < 0)
+ 				return UDS_OVERFLOW;
  
- 	VM_WARN_ON_ONCE_FOLIO(gen != -1, folio);
-@@ -262,9 +263,9 @@ static inline bool lru_gen_add_folio(struct lruvec *lruvec, struct folio *folio,
- 	lru_gen_update_size(lruvec, folio, -1, gen);
- 	/* for folio_rotate_reclaimable() */
- 	if (reclaiming)
--		list_add_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_add_tail(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 	else
--		list_add(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_add(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 
- 	return true;
- }
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 17506e4a2835..5d2331778528 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -434,7 +434,7 @@ struct lru_gen_folio {
- 	/* the birth time of each generation in jiffies */
- 	unsigned long timestamps[MAX_NR_GENS];
- 	/* the multi-gen LRU lists, lazily sorted on eviction */
--	struct list_head folios[MAX_NR_GENS][ANON_AND_FILE][MAX_NR_ZONES];
-+	struct list_head folios[MAX_NR_GENS][ANON_AND_FILE + 1][MAX_NR_ZONES];
- 	/* the multi-gen LRU sizes, eventually consistent */
- 	long nr_pages[MAX_NR_GENS][ANON_AND_FILE][MAX_NR_ZONES];
- 	/* the exponential moving average of refaulted */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 96abf4a52382..9dc665dc6ba9 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3725,21 +3725,25 @@ static bool inc_min_seq(struct lruvec *lruvec, int type, bool can_swap)
- 
- 	/* prevent cold/hot inversion if force_scan is true */
- 	for (zone = 0; zone < MAX_NR_ZONES; zone++) {
--		struct list_head *head = &lrugen->folios[old_gen][type][zone];
-+		int list_num = type ? 2 : 1;
-+		struct list_head *head;
- 
--		while (!list_empty(head)) {
--			struct folio *folio = lru_to_folio(head);
-+		for (int i = list_num - 1; i >= 0; i--) {
-+			head = &lrugen->folios[old_gen][type + i][zone];
-+			while (!list_empty(head)) {
-+				struct folio *folio = lru_to_folio(head);
- 
--			VM_WARN_ON_ONCE_FOLIO(folio_test_unevictable(folio), folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_test_active(folio), folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_is_file_lru(folio) != type, folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_zonenum(folio) != zone, folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_test_unevictable(folio), folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_test_active(folio), folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_is_file_lru(folio) != type, folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_zonenum(folio) != zone, folio);
- 
--			new_gen = folio_inc_gen(lruvec, folio, false);
--			list_move_tail(&folio->lru, &lrugen->folios[new_gen][type][zone]);
-+				new_gen = folio_inc_gen(lruvec, folio, false);
-+				list_move_tail(&folio->lru, &lrugen->folios[new_gen][type + i][zone]);
- 
--			if (!--remaining)
--				return false;
-+				if (!--remaining)
-+					return false;
-+			}
- 		}
- 	}
- done:
-@@ -4291,6 +4295,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	int refs = folio_lru_refs(folio);
- 	int tier = lru_tier_from_refs(refs);
- 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
-+	int lazyfree = type ? folio_test_anon(folio) : 0;
- 
- 	VM_WARN_ON_ONCE_FOLIO(gen >= MAX_NR_GENS, folio);
- 
-@@ -4306,7 +4311,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 
- 	/* promoted */
- 	if (gen != lru_gen_from_seq(lrugen->min_seq[type])) {
--		list_move(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_move(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 		return true;
- 	}
- 
-@@ -4315,7 +4320,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 		int hist = lru_hist_from_seq(lrugen->min_seq[type]);
- 
- 		gen = folio_inc_gen(lruvec, folio, false);
--		list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_move_tail(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 
- 		WRITE_ONCE(lrugen->protected[hist][type][tier - 1],
- 			   lrugen->protected[hist][type][tier - 1] + delta);
-@@ -4325,7 +4330,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	/* ineligible */
- 	if (!folio_test_lru(folio) || zone > sc->reclaim_idx) {
- 		gen = folio_inc_gen(lruvec, folio, false);
--		list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_move_tail(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 		return true;
- 	}
- 
-@@ -4333,7 +4338,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	if (folio_test_locked(folio) || folio_test_writeback(folio) ||
- 	    (type == LRU_GEN_FILE && folio_test_dirty(folio))) {
- 		gen = folio_inc_gen(lruvec, folio, true);
--		list_move(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_move(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 		return true;
- 	}
- 
-@@ -4377,7 +4382,7 @@ static bool isolate_folio(struct lruvec *lruvec, struct folio *folio, struct sca
- static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
- 		       int type, int tier, struct list_head *list)
- {
--	int i;
-+	int i, j;
- 	int gen;
- 	enum vm_event_item item;
- 	int sorted = 0;
-@@ -4399,33 +4404,38 @@ static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
- 		LIST_HEAD(moved);
- 		int skipped_zone = 0;
- 		int zone = (sc->reclaim_idx + i) % MAX_NR_ZONES;
--		struct list_head *head = &lrugen->folios[gen][type][zone];
--
--		while (!list_empty(head)) {
--			struct folio *folio = lru_to_folio(head);
--			int delta = folio_nr_pages(folio);
--
--			VM_WARN_ON_ONCE_FOLIO(folio_test_unevictable(folio), folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_test_active(folio), folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_is_file_lru(folio) != type, folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_zonenum(folio) != zone, folio);
--
--			scanned += delta;
-+		int list_num = type ? 2 : 1;
-+		struct list_head *head;
-+
-+		for (j = list_num - 1; j >= 0; j--) {
-+			head = &lrugen->folios[gen][type + j][zone];
-+			while (!list_empty(head)) {
-+				struct folio *folio = lru_to_folio(head);
-+				int delta = folio_nr_pages(folio);
-+
-+				VM_WARN_ON_ONCE_FOLIO(folio_test_unevictable(folio), folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_test_active(folio), folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_is_file_lru(folio) != type, folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_zonenum(folio) != zone, folio);
-+
-+				scanned += delta;
-+
-+				if (sort_folio(lruvec, folio, sc, tier))
-+					sorted += delta;
-+				else if (isolate_folio(lruvec, folio, sc)) {
-+					list_add(&folio->lru, list);
-+					isolated += delta;
-+				} else {
-+					list_move(&folio->lru, &moved);
-+					skipped_zone += delta;
-+				}
- 
--			if (sort_folio(lruvec, folio, sc, tier))
--				sorted += delta;
--			else if (isolate_folio(lruvec, folio, sc)) {
--				list_add(&folio->lru, list);
--				isolated += delta;
--			} else {
--				list_move(&folio->lru, &moved);
--				skipped_zone += delta;
-+				if (!--remaining || max(isolated, skipped_zone) >= MIN_LRU_BATCH)
-+					goto isolate_done;
- 			}
--
--			if (!--remaining || max(isolated, skipped_zone) >= MIN_LRU_BATCH)
--				break;
- 		}
- 
-+isolate_done:
- 		if (skipped_zone) {
- 			list_splice(&moved, head);
- 			__count_zid_vm_events(PGSCAN_SKIP, zone, skipped_zone);
-@@ -5586,8 +5596,15 @@ void lru_gen_init_lruvec(struct lruvec *lruvec)
- 	for (i = 0; i <= MIN_NR_GENS + 1; i++)
- 		lrugen->timestamps[i] = jiffies;
- 
--	for_each_gen_type_zone(gen, type, zone)
-+	for_each_gen_type_zone(gen, type, zone) {
- 		INIT_LIST_HEAD(&lrugen->folios[gen][type][zone]);
-+		/*
-+		 * lazyfree anon folios have a separate list while using
-+		 * file as type
-+		 */
-+		if (type)
-+			INIT_LIST_HEAD(&lrugen->folios[gen][type + 1][zone]);
-+	}
- 
- 	if (mm_state)
- 		mm_state->seq = MIN_NR_GENS;
+-			next_list = first_list + list_number--,
++			next_list = first_list + list_number--;
+ 			result = uds_start_delta_index_search(delta_index, next_list, 0,
+ 							      &entry);
+ 			if (result != UDS_SUCCESS)
 -- 
-2.39.3 (Apple Git-146)
+2.17.1
 
 
