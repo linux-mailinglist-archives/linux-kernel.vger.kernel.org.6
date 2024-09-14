@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-329607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2157897936E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 23:56:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173E7979370
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 23:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8589A1F223EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 21:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD59128412B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 21:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BC21487C8;
-	Sat, 14 Sep 2024 21:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE7D14F9E9;
+	Sat, 14 Sep 2024 21:55:29 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59D213DDA7;
-	Sat, 14 Sep 2024 21:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007C3148304;
+	Sat, 14 Sep 2024 21:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726350926; cv=none; b=Pv5hIgAIarxDFww2Pp+VQel347f9uwFNAniR2+6LJsM74zXnUFzfU5TwMb7mmCMecLUlJBprwaZiEjBy4h2OrqnIIq7CndTLviIUpzOo+R7vYpQ9AmDidrQt+omrPjp7byJC36iXry9nUqIwJANl7O6inSY8bCWdVeRkH0teebY=
+	t=1726350928; cv=none; b=JQ+2h4sUtuZoW0TJv1cuwoSSANaWtoA0mi9JLYmgUCdV6LuvGWmFYspRhcQXD0qeHPwznbPezKomO2ePEOQHLfp1Y843x0VllyDModC0Av03/zQeUmaGMfmEbvXD0UnfSCLxccZTGBzYnq4AJhUBSsUsdlF+5snE7Inh9MMqiY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726350926; c=relaxed/simple;
-	bh=ML3kt6uULPwU3f260Hrr/Ahh7vokh2zqjUQ1OzJCg8Y=;
+	s=arc-20240116; t=1726350928; c=relaxed/simple;
+	bh=zHq/VdqpyzLDJ8wHmcGMNwoat4GyL4J6cLWHqWwsFmY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Jm5P2u4Icj+pxQAX7tsymzOEZNUrmDuvuNcmwJq3P9OR3g60ApUL8665Ucy4zJc6elyR2fOfx3naveMvo7t5OFU3ifjs/wlygIWIe5OMCbsnSn0R54KCN7TDpHMpj000v2pp8NZygk6dWWVu2LhTXVrOvRCe9JzPvwuzxdvi+hs=
+	 MIME-Version; b=U0J9y8WT9+l1aOrTigcmkgr17074wk1f6vXv2+Yp2AYOOR8qxWZIUmqFo9vxof9OS4Nf+eDT/YzB/HX37p3upZcUSovkqQR7qODtjrhgyyfuZ3PR7Jbkvw/mrqu0wOd4MpMmohyAy18Dmvp5nc4sWIE1T+n6LA07nYRT6LPbPkc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EF1716A3;
-	Sat, 14 Sep 2024 14:55:53 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E42A711FB;
+	Sat, 14 Sep 2024 14:55:55 -0700 (PDT)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 38FE03F66E;
-	Sat, 14 Sep 2024 14:55:22 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7E2EA3F66E;
+	Sat, 14 Sep 2024 14:55:24 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	James Clark <james.clark@linaro.org>,
@@ -47,9 +47,9 @@ To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v2 4/5] perf arm-spe: Support metadata version 2
-Date: Sat, 14 Sep 2024 22:54:57 +0100
-Message-Id: <20240914215458.751802-5-leo.yan@arm.com>
+Subject: [PATCH v2 5/5] perf arm-spe: Dump metadata with version 2
+Date: Sat, 14 Sep 2024 22:54:58 +0100
+Message-Id: <20240914215458.751802-6-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240914215458.751802-1-leo.yan@arm.com>
 References: <20240914215458.751802-1-leo.yan@arm.com>
@@ -61,168 +61,149 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit is to support metadata version 2 and at the meantime it is
-backward compatible for version 1's format.
+This commit dumps metadata with version 2. It dumps metadata for header
+and per CPU data respectively in the arm_spe_print_info() function to
+support metadata version 2 format.
 
-The metadata version 1 doesn't include the ARM_SPE_HEADER_VERSION field.
-As version 1 is fixed with two u64 fields, by checking the metadata
-size, it distinguishes the metadata is version 1 or version 2 (and any
-new versions if later will have). For version 2, it reads out CPU number
-and retrieves the metadata info for every CPU.
+After:
+
+  0 0 0x3c0 [0x1b0]: PERF_RECORD_AUXTRACE_INFO type: 4
+    Header version     :2
+    Header size        :4
+    Shared PMU type    :13
+    CPU number         :8
+      Magic            :0x1010101010101010
+      CPU #            :0
+      Num of params    :3
+      MIDR             :0x410fd801
+      PMU Type         :-1
+      Min Interval     :0
+      Magic            :0x1010101010101010
+      CPU #            :1
+      Num of params    :3
+      MIDR             :0x410fd801
+      PMU Type         :-1
+      Min Interval     :0
+      Magic            :0x1010101010101010
+      CPU #            :2
+      Num of params    :3
+      MIDR             :0x410fd870
+      PMU Type         :13
+      Min Interval     :1024
+      Magic            :0x1010101010101010
+      CPU #            :3
+      Num of params    :3
+      MIDR             :0x410fd870
+      PMU Type         :13
+      Min Interval     :1024
+      Magic            :0x1010101010101010
+      CPU #            :4
+      Num of params    :3
+      MIDR             :0x410fd870
+      PMU Type         :13
+      Min Interval     :1024
+      Magic            :0x1010101010101010
+      CPU #            :5
+      Num of params    :3
+      MIDR             :0x410fd870
+      PMU Type         :13
+      Min Interval     :1024
+      Magic            :0x1010101010101010
+      CPU #            :6
+      Num of params    :3
+      MIDR             :0x410fd850
+      PMU Type         :-1
+      Min Interval     :0
+      Magic            :0x1010101010101010
+      CPU #            :7
+      Num of params    :3
+      MIDR             :0x410fd850
+      PMU Type         :-1
+      Min Interval     :0
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- tools/perf/util/arm-spe.c | 95 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 92 insertions(+), 3 deletions(-)
+ tools/perf/util/arm-spe.c | 54 +++++++++++++++++++++++++++++++++++----
+ 1 file changed, 49 insertions(+), 5 deletions(-)
 
 diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 70989b1bae47..17782cb40fb5 100644
+index 17782cb40fb5..4212a8aa0d2c 100644
 --- a/tools/perf/util/arm-spe.c
 +++ b/tools/perf/util/arm-spe.c
-@@ -78,6 +78,10 @@ struct arm_spe {
+@@ -1133,16 +1133,60 @@ static bool arm_spe_evsel_is_auxtrace(struct perf_session *session,
+ 	return evsel->core.attr.type == spe->pmu_type;
+ }
  
- 	unsigned long			num_events;
- 	u8				use_ctx_pkt_for_pid;
-+
-+	u64				**metadata;
-+	u64				metadata_ver;
-+	u64				metadata_nr_cpu;
+-static const char * const arm_spe_info_fmts[] = {
+-	[ARM_SPE_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
++static const char * const metadata_hdr_v1_fmts[] = {
++	[ARM_SPE_PMU_TYPE]		= "  PMU Type           :%"PRId64"\n",
++	[ARM_SPE_PER_CPU_MMAPS]		= "  Per CPU mmaps      :%"PRId64"\n",
  };
  
- struct arm_spe_queue {
-@@ -1016,6 +1020,73 @@ static int arm_spe_flush(struct perf_session *session __maybe_unused,
- 	return 0;
- }
- 
-+static u64 *arm_spe__alloc_per_cpu_metadata(u64 *buf, int cpu_size)
-+{
-+	u64 *metadata;
+-static void arm_spe_print_info(__u64 *arr)
++static const char * const metadata_hdr_fmts[] = {
++	[ARM_SPE_HEADER_VERSION]	= "  Header version     :%"PRId64"\n",
++	[ARM_SPE_HEADER_SIZE]		= "  Header size        :%"PRId64"\n",
++	[ARM_SPE_SHARED_PMU_TYPE]	= "  Shared PMU type    :%"PRId64"\n",
++	[ARM_SPE_CPUS_NUM]		= "  CPU number         :%"PRId64"\n",
++};
 +
-+	metadata = zalloc(sizeof(*metadata) * cpu_size);
-+	if (!metadata)
-+		return NULL;
++static const char * const metadata_per_cpu_fmts[] = {
++	[ARM_SPE_MAGIC]			= "    Magic            :0x%"PRIx64"\n",
++	[ARM_SPE_CPU]			= "    CPU #            :%"PRId64"\n",
++	[ARM_SPE_CPU_NR_PARAMS]		= "    Num of params    :%"PRId64"\n",
++	[ARM_SPE_CPU_MIDR]		= "    MIDR             :0x%"PRIx64"\n",
++	[ARM_SPE_CPU_PMU_TYPE]		= "    PMU Type         :%"PRId64"\n",
++	[ARM_SPE_CAP_MIN_IVAL]		= "    Min Interval     :%"PRId64"\n",
++};
 +
-+	memcpy(metadata, buf, cpu_size);
-+	return metadata;
-+}
-+
-+static void arm_spe__free_metadata(u64 **metadata, int nr_cpu)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_cpu; i++)
-+		zfree(&metadata[i]);
-+	free(metadata);
-+}
-+
-+static u64 **arm_spe__alloc_metadata(struct perf_record_auxtrace_info *info,
-+				     u64 *ver, int *nr_cpu)
-+{
-+	u64 *ptr = (u64 *)info->priv;
-+	u64 metadata_size;
-+	u64 **metadata = NULL;
-+	int hdr_sz, cpu_sz, i;
-+
-+	metadata_size = info->header.size -
-+		sizeof(struct perf_record_auxtrace_info);
-+
-+	/* Metadata version 1 */
-+	if (metadata_size == ARM_SPE_AUXTRACE_V1_PRIV_SIZE) {
-+		*ver = 1;
-+		*nr_cpu = 0;
-+		/* No per CPU metadata */
-+		return NULL;
-+	}
-+
-+	*ver = ptr[ARM_SPE_HEADER_VERSION];
-+	hdr_sz = ptr[ARM_SPE_HEADER_SIZE];
-+	*nr_cpu = ptr[ARM_SPE_CPUS_NUM];
-+
-+	metadata = zalloc(sizeof(*metadata) * (*nr_cpu));
-+	if (!metadata)
-+		return NULL;
-+
-+	/* Locate the start address of per CPU metadata */
-+	ptr += hdr_sz;
-+	cpu_sz = (metadata_size - (hdr_sz * sizeof(u64))) / (*nr_cpu);
-+
-+	for (i = 0; i < *nr_cpu; i++) {
-+		metadata[i] = arm_spe__alloc_per_cpu_metadata(ptr, cpu_sz);
-+		if (!metadata[i])
-+			goto err_per_cpu_metadata;
-+
-+		ptr += cpu_sz / sizeof(u64);
-+	}
-+
-+	return metadata;
-+
-+err_per_cpu_metadata:
-+	arm_spe__free_metadata(metadata, *nr_cpu);
-+	return NULL;
-+}
-+
- static void arm_spe_free_queue(void *priv)
++static void arm_spe_print_info(struct arm_spe *spe, __u64 *arr)
  {
- 	struct arm_spe_queue *speq = priv;
-@@ -1050,6 +1121,7 @@ static void arm_spe_free(struct perf_session *session)
- 	auxtrace_heap__free(&spe->heap);
- 	arm_spe_free_events(session);
- 	session->auxtrace = NULL;
-+	arm_spe__free_metadata(spe->metadata, spe->metadata_nr_cpu);
- 	free(spe);
- }
++	unsigned int i, cpu, hdr_size, cpu_num, cpu_size;
++	const char * const *hdr_fmts;
++
+ 	if (!dump_trace)
+ 		return;
  
-@@ -1267,15 +1339,24 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
- 	const char *cpuid = perf_env__cpuid(session->evlist->env);
- 	u64 midr = strtol(cpuid, NULL, 16);
- 	struct arm_spe *spe;
--	int err;
-+	u64 **metadata = NULL;
-+	u64 metadata_ver;
-+	int nr_cpu, err;
- 
- 	if (auxtrace_info->header.size < sizeof(struct perf_record_auxtrace_info) +
- 					min_sz)
- 		return -EINVAL;
- 
-+	metadata = arm_spe__alloc_metadata(auxtrace_info, &metadata_ver,
-+					   &nr_cpu);
-+	if (!metadata && metadata_ver != 1) {
-+		pr_err("Failed to parse Arm SPE metadata.\n");
-+		return -EINVAL;
+-	fprintf(stdout, arm_spe_info_fmts[ARM_SPE_PMU_TYPE], arr[ARM_SPE_PMU_TYPE]);
++	if (spe->metadata_ver == 1) {
++		cpu_num = 0;
++		hdr_size = ARM_SPE_AUXTRACE_V1_PRIV_MAX;
++		hdr_fmts = metadata_hdr_v1_fmts;
++	} else {
++		cpu_num = arr[ARM_SPE_CPUS_NUM];
++		hdr_size = arr[ARM_SPE_HEADER_SIZE];
++		hdr_fmts = metadata_hdr_fmts;
 +	}
 +
- 	spe = zalloc(sizeof(struct arm_spe));
- 	if (!spe)
--		return -ENOMEM;
-+		goto err_free_metadata;
- 
- 	err = auxtrace_queues__init(&spe->queues);
- 	if (err)
-@@ -1284,8 +1365,14 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
- 	spe->session = session;
- 	spe->machine = &session->machines.host; /* No kvm support */
- 	spe->auxtrace_type = auxtrace_info->type;
--	spe->pmu_type = auxtrace_info->priv[ARM_SPE_PMU_TYPE];
-+	if (metadata_ver == 1)
-+		spe->pmu_type = auxtrace_info->priv[ARM_SPE_PMU_TYPE];
-+	else
-+		spe->pmu_type = auxtrace_info->priv[ARM_SPE_SHARED_PMU_TYPE];
- 	spe->midr = midr;
-+	spe->metadata = metadata;
-+	spe->metadata_ver = metadata_ver;
-+	spe->metadata_nr_cpu = nr_cpu;
- 
- 	spe->timeless_decoding = arm_spe__is_timeless_decoding(spe);
- 
-@@ -1346,5 +1433,7 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
- 	session->auxtrace = NULL;
- err_free:
- 	free(spe);
-+err_free_metadata:
-+	arm_spe__free_metadata(metadata, nr_cpu);
- 	return err;
++	for (i = 0; i < hdr_size; i++)
++		fprintf(stdout, hdr_fmts[i], arr[i]);
++
++	arr += hdr_size;
++	for (cpu = 0; cpu < cpu_num; cpu++) {
++		/*
++		 * The parameters from ARM_SPE_MAGIC to ARM_SPE_CPU_NR_PARAMS
++		 * are fixed. The sequential parameter size is decided by the
++		 * field 'ARM_SPE_CPU_NR_PARAMS'.
++		 */
++		cpu_size = (ARM_SPE_CPU_NR_PARAMS + 1) + arr[ARM_SPE_CPU_NR_PARAMS];
++		for (i = 0; i < cpu_size; i++)
++			fprintf(stdout, metadata_per_cpu_fmts[i], arr[i]);
++		arr += cpu_size;
++	}
  }
+ 
+ static void arm_spe_set_event_name(struct evlist *evlist, u64 id,
+@@ -1405,7 +1449,7 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
+ 	spe->auxtrace.evsel_is_auxtrace = arm_spe_evsel_is_auxtrace;
+ 	session->auxtrace = &spe->auxtrace;
+ 
+-	arm_spe_print_info(&auxtrace_info->priv[0]);
++	arm_spe_print_info(spe, &auxtrace_info->priv[0]);
+ 
+ 	if (dump_trace)
+ 		return 0;
 -- 
 2.34.1
 
