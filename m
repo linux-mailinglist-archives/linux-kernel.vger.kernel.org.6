@@ -1,150 +1,100 @@
-Return-Path: <linux-kernel+bounces-329481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048409791DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:42:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C194C9791E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372251C21501
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:42:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774C61F228B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648911D0944;
-	Sat, 14 Sep 2024 15:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419341D0964;
+	Sat, 14 Sep 2024 15:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mNY1rBPx"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWk6yPJN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79571E487
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 15:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964E739ACC;
+	Sat, 14 Sep 2024 15:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726328519; cv=none; b=MdcybymE580BuLjaHNOnrPZEaYQRsxFUh2S75ebuLCYDN4Ue43qqeO0JyKn/K5jSe4pkFxHj3CWHwPuHxDLkE/qf+THnkpyluD3eiTui9Pd7bwixqcaFfLai2IByzmkhhmsVeCe8mwRvMy0foeSmHRTr/chylTJl5L0xKwraJjQ=
+	t=1726328777; cv=none; b=aY/pxRsC0eVbxpWfa41NAPep2F1/tn6pymC2XNagbbg8MXjVyGlmE0JdZDoUVXHcQmqbhjEJUOtvIbm17BhcYFhDigxkOpmg4g7QIbDN8YMkxQLeuLAdRrbkNsT9IsHyuiRsvnHPBlojFG9Mb2CU3ljM0pUfMBku1YXND3KV6yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726328519; c=relaxed/simple;
-	bh=MlOD187Zi5ij3VslII2JeRMUAl8BTdsRdLzSQpk5oXA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EInk196o+xsYC5TOhlyorlNU324XFAMvHkkw+1o4T5zNTMf4LtU+Cq3pCmjGPZtVdNuqrD47dXtUGBP5JNYaVDIuOzJuuFBodmYihbJWb0Q3j6zr/AFEZ0b1Vk+A9zkze7Zw2qDadn/LE6rrCSG7wYuDKfqU8U9NTbYjcifNjRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mNY1rBPx; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id pUuBs2kqnUkczpUuBsZAQc; Sat, 14 Sep 2024 17:41:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726328509;
-	bh=vKwgWmnbA3QuKEEAm+WYy246t2HIUMAY8j3NUoCGyt8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=mNY1rBPx7uKcmPSEqculwktpC2nlZFtzTXcFJH3B9ymaBW8/IXxXeBCeAX/nhDEj8
-	 89sii0RP3HK5yInShqEwlZbaKgNBVkJ9FXnpSGDHoZbCN8Ivpl6fmlf9g0y1HcZ/Fx
-	 EtxyozzbtffLfaUwSpTBDxmrjikr0M8eqpDuj29/F7d4EfpCAWgVq6YiYlOBPCO+V6
-	 Gwjh6VQ1boVtyypHT8TRjMUzSMBH4EFL2TihF4OPNgpe1Bgek5ZJHud9WhOj3vYSh1
-	 /APrimk0qqLqekhT1c8zGP7TdjdbiQk1ioNbYMTkXZ5alwfKfYHpGSyKAIbTCkZvCL
-	 yK9BUK+Eyx0lA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 14 Sep 2024 17:41:49 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Beleswar Padhi <b-padhi@ti.com>,
-	Andrew Davis <afd@ti.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v3] remoteproc: k3-dsp: Fix an error handling path in k3_dsp_rproc_probe()
-Date: Sat, 14 Sep 2024 17:41:13 +0200
-Message-ID: <591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726328777; c=relaxed/simple;
+	bh=E+sZ1BUnpUiXyBvhWY2ZCb218Q3rYMJ5THsYte1+QpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FOTGean3XRurduot6y6A/G/mr0BAOa31xOMm5WZ6klBs4PLY1V84EGSoGf2WgiEuwV10KuUK/ENiEm7oL/c5BGEhXWdbd/CxqhKnpUhvoOO4BKWQYOMLW/dsrBRuBZevy7IuBqtVOPz6sLIJuF2u7zzjOJidkD+E1FHlt4xCtWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWk6yPJN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF73C4CEC0;
+	Sat, 14 Sep 2024 15:46:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726328777;
+	bh=E+sZ1BUnpUiXyBvhWY2ZCb218Q3rYMJ5THsYte1+QpU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nWk6yPJNceiPrsyqSGJ2uY1SbcWnosV9794sfjTVLLX/hacgn06FlOJoyizfZI/3E
+	 OsvPzBuBfmmk13ZSWN7OP1s40K/ia9oUUmyF0hbY6We5OWcOHXXk28WhrV7DNCJZYD
+	 ZSYlK2S/zr1XupLEuofLNTTscHk1BmFmKaNpupcF+a60ovJw/ULHg1jpVFcnMKJ+Um
+	 puqcF2OFZI+lv1y9eDaQo40zuhhnUMjF//hyVmx/0sSWzKg1O39rNuwG7VEy4yfDqt
+	 Lm37rRl/djFUCAMAXV8wrDbv58/MNKl9nS4jWc0GtVIMInuk9KgXeBr+dQCO3TQDPh
+	 RQZx0IOri7y0w==
+Date: Sat, 14 Sep 2024 16:46:12 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bryan Whitehead <bryan.whitehead@microchip.com>,
+	Raju Lakkaraju <Raju.Lakkaraju@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: lan743x: clean up a check in
+ lan743x_netdev_open()
+Message-ID: <20240914154612.GG11774@kernel.org>
+References: <f2483839-687f-4f30-b5fa-20eac90c1885@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2483839-687f-4f30-b5fa-20eac90c1885@stanley.mountain>
 
-If an error occurs after mbox_request_channel() in
-k3_dsp_rproc_request_mbox(), mbox_free_channel() must be called,
-as already done in the remove function.
+On Sat, Sep 14, 2024 at 12:59:01PM +0300, Dan Carpenter wrote:
+> The "adapter->netdev->phydev" and "netdev->phydev" pointers are different
+> names for the same thing.  Use them consistently.  It makes the code more
+> clear to humans and static checkers alike.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Instead of adding an error handling path in the probe and changing all
-error handling in the function, add a new devm_add_action_or_reset() and
-simplify the error handling path of k3_dsp_rproc_request_mbox() and the
-.remove() function.
+Hi Dan,
 
-Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Andrew Davis <afd@ti.com>
----
-Compile tested only.
+net-next is currently closed, other than for bug fixes.
+So please repost this once it re-opens, after v6.12-rc1 is released.
 
-Change in v3:
-  - pass the correct variable to devm_add_action_or_reset()   [Mathieu Poirier]
-  - move the devm_add_action_or_reset() call just after
-    mbox_request_channel() and simplify error handling in
-    k3_dsp_rproc_request_mbox()
-  - Because of these changes, remove previous R-b tag
+> ---
+> I noticed a different static checker warning that I never reported because it
+> was too old.  However, I think it's a valid issue.
+> drivers/net/ethernet/microchip/lan743x_main.c:109 lan743x_pci_init() warn: missing error code 'ret'
+> I think we should set an error code on that path.  It disables the PCI device
+> and then we continue to do PCI stuff even though the device is disabled.
 
-Change in v2:
-  - fix the subject (cut'n'paste issue)   [Andrew Davis]
-  - add R-b tag
+Yes, I agree.
 
-v1: https://lore.kernel.org/all/9485e127a00419c76cf13dbccf4874af395ef6ba.1725653543.git.christophe.jaillet@wanadoo.fr/
----
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+I tend to think that is a bug. Though perhaps
+there is no urgency in fixing it as it seems unlikely
+to occur in practice and it seems to date back to when the
+driver was added in 2018 / v4.17.
 
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index 8be3f631c192..f0da29fa7f60 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -224,6 +224,13 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
- 	return ret;
- }
- 
-+static void k3_dsp_free_channel(void *data)
-+{
-+	struct k3_dsp_rproc *kproc = data;
-+
-+	mbox_free_channel(kproc->mbox);
-+}
-+
- static int k3_dsp_rproc_request_mbox(struct rproc *rproc)
- {
- 	struct k3_dsp_rproc *kproc = rproc->priv;
-@@ -242,6 +249,10 @@ static int k3_dsp_rproc_request_mbox(struct rproc *rproc)
- 		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
- 				     "mbox_request_channel failed\n");
- 
-+	ret = devm_add_action_or_reset(dev, k3_dsp_free_channel, kproc);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * Ping the remote processor, this is only for sanity-sake for now;
- 	 * there is no functional effect whatsoever.
-@@ -252,7 +263,6 @@ static int k3_dsp_rproc_request_mbox(struct rproc *rproc)
- 	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
- 	if (ret < 0) {
- 		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
--		mbox_free_channel(kproc->mbox);
- 		return ret;
- 	}
- 
-@@ -741,8 +751,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
- 		if (ret)
- 			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
- 	}
--
--	mbox_free_channel(kproc->mbox);
- }
- 
- static const struct k3_dsp_mem_data c66_mems[] = {
+commit 23f0703c125b ("lan743x: Add main source files for new lan743x driver")
+
+...
+
 -- 
-2.46.0
-
+pw-bot: defer
 
