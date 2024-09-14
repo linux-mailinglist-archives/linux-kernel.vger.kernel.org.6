@@ -1,125 +1,150 @@
-Return-Path: <linux-kernel+bounces-329575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5916E979319
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 21:03:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E04197931E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 21:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22CA4283785
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:03:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 671B3B20D24
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87284AEDA;
-	Sat, 14 Sep 2024 19:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A247D417;
+	Sat, 14 Sep 2024 19:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Xwqc7nsf"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJEtLFcN"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB53BBA49;
-	Sat, 14 Sep 2024 19:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4389BA49;
+	Sat, 14 Sep 2024 19:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726340632; cv=none; b=PgAosQpVMYACO90aoGbwzATnXGiRd3oHWHRYu3Hf3bd8DOKrrQaXlvw7Xjl2PpGGnwsTD9uYsnYfDCGWQLXSJTYhgo0NGrFaGRkX+8E5RowhAdjbOty9YopwDfiptyQhi435O/speXKNfk8VNC/aC+StRGdTnlwNfeaghklCXvs=
+	t=1726340780; cv=none; b=jxolTjYWDvPL5k+18SNVHGfwnKcTZsyznuGkGzkBqoDTPszHZzDe2t/wpFBSXqWEBi96TOyg/mDPAg/jgoPBj2gDIgfSgivwLlMNYTksc2SffAmRqEDw00syClVSeMCLzXh1GhW1ouPj9z4e2DThMmpQ36n/yG3ngts8r3owOZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726340632; c=relaxed/simple;
-	bh=ME7sk2AmCoCHu/rkVug9j87MuQpxKkQkN3VLinh7z4I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZpzwrZOGm4gBfiYccOwQZOFDrmtsXyo1RWJyYVrp5Yo7WZJDcET/zAbGD2OBZ+w7470BFanyR56e2jON+xW+KIBg2M6fiNYKge7hCiyEx2uEzorpZaWz28NxsLsxAo7wp2/49Zr41i6B6lq0mDEW+XOJnYA+QDGxZWBBjib7P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Xwqc7nsf; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726340629; x=1757876629;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ME7sk2AmCoCHu/rkVug9j87MuQpxKkQkN3VLinh7z4I=;
-  b=Xwqc7nsfJQthU5DRJcfQwlLaHu7x5DfrQ8u0VU2CraqKXeOoykj3gOmj
-   dGr89t8nIfWthfoNIOe1KFNoSJLx8vvpbndc2J/aI+CYGnGTfQYOBtqDa
-   nzfAUjkfEVWgQfE9fVlNu784eFW9l1zODX7Rdg01N0TbQW2BnChU2/LDb
-   9XIhTAFrK4qlrcytdpN8m4ntoCVsTcOE5nHASP4lNulIvfLipabrrC7sE
-   PjmH5cVWsv69+OWI6H02Og/9TpAXqADzdFGnfFrj78qKhWgOkbZ9YTiCU
-   GNfFLcNEft3ggF0BQCi3BdueVH3VL1K63tc+XM77lbkD8eQAJAs38tuqV
-   Q==;
-X-CSE-ConnectionGUID: 7QGG7ucfREGEfXw/1IAUpw==
-X-CSE-MsgGUID: pg4eQ+CyQ6KPIJB9iSKGLg==
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="31675481"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Sep 2024 12:03:48 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sat, 14 Sep 2024 12:03:46 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Sat, 14 Sep 2024 12:03:44 -0700
-Date: Sat, 14 Sep 2024 19:03:43 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Aakash Menon <aakash.r.menon@gmail.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <lars.povlsen@microchip.com>,
-	<Steen.Hegelund@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<aakash.menon@protempis.com>, <horms@kernel.org>,
-	<horatiu.vultur@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: sparx5: Fix invalid timestamps
-Message-ID: <20240914190343.rq3fhgadxeuvc5qb@DEN-DL-M70577>
-References: <20240913193357.21899-1-aakash.menon@protempis.com>
+	s=arc-20240116; t=1726340780; c=relaxed/simple;
+	bh=CmPs93dkNOpUxrHVTG6C0mEVmM3qCYnJgM1VMOxxHlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YLgpAvKwPdkP9qRZUN12eKiv+AQEhT6hgAG/miraSaW1JsThOw6jnHf51iB94b4WLjWmkIwMsvYpJrHvCIY7KYUVlrfEym/YjgYJoM/NFD0c372fIbDhjdn4ymI0Gd/1XLxC7+d7JSxDGo31W58uPXcsWAU1RHma0ivySPp+aLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJEtLFcN; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-374cacf18b1so1980207f8f.2;
+        Sat, 14 Sep 2024 12:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726340777; x=1726945577; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LuNYzT43Vkmg8RXSZdViTvcj8HasFgQbtLREqQgw8Tw=;
+        b=QJEtLFcNQYNgqpf09J1W4CdJW0TW+ER0c1KZZDIWeR7q4sxgVHOfZV2PB92JJvWqJw
+         KNcAyJO0Zb8aFmC7+d7b0RDPyTcrSBDkenTgHpv0PwuOMmwjGFu+e70/rcOqvdxPpMbW
+         o9D5vT9OOhBTxo8eBgM85qua/wTJmHPNQjk0Vf7jzwEy5K3iPAobPKP2HkeCnffuTkGp
+         K0fcTKMj+cu1neMbnCkHV8XXmEus9clrCsUzti/zNoki/WHv4ziy8aIE1gKXqJKk0otZ
+         5MoJy72EYUGXgpFqLOMTBFnrRSV338PkDvZiYLppN54K4soiKfKSyVlA4cVoYV8ZL1bd
+         WATg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726340777; x=1726945577;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LuNYzT43Vkmg8RXSZdViTvcj8HasFgQbtLREqQgw8Tw=;
+        b=Zp8z69D8rpzEDwqYlrPaZDioJbJE8r3wFWPX0+pIFs+t/gp0qSsybQJWTa3Ce4Sstt
+         Fv5TJNECmWDnjQgPtrMfIX7g1EIkFyhjhy7+PBm6r6ExTi7CMN2j/o82RaDhMa/E2Fqj
+         ESdraExJa5Gq/4EZ2U/j6ScJMn0LsHLADJKEsG8Ax3ccQKIJdRkBE84oPcSxYCOb9UDE
+         HuHfa4k9fA1C7A5OFjskqvqVjL9HxngWABEeQcwAHYAN9y899+ZIHaf3U54Vrtsc2xK0
+         hzglJPGb14cJPJPDkcT0FNzykKzeWbRD7ELJSiyIaZijwuGLUUyPM/gG4ph8cMid3Fpi
+         YkWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUL2J0tOVueB2GiyomAIfpMmWb+hTsWvOZn4zfqODr8Vv70t+OzyJzcM7kn1c7k0yamX3rmXogmiv6X1nlC@vger.kernel.org, AJvYcCVrwOmYuPGsUYRjX1o0RIorrhicEb5P3xdcOpWyo1ZUrt2C9o4mwi121yfopss/sSRGEiU/fh/feTXggVEY@vger.kernel.org, AJvYcCXVCyQ6BxLwz9EVQdeSFN6z5ECKh0d8jOwOSQ4TU21TggsLtuxlmBeX7N2slIQpafP5z20T2wlfQ/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9WO9bs0+97KxPHzw86iUznvvQ9k6q9F5PAV6yvehj06yDcaNK
+	7YVdDV7xZx6HhS15OQUnPpD7B0j2Fxo13Y+2p7vAD3W5LUSnb4zM
+X-Google-Smtp-Source: AGHT+IEoKZah9+MftPbBQW73l8XG1j93fsqlfYPRssafg2fQyBW8LdAoxhPgqdAJfc48CXHoj8GNlg==
+X-Received: by 2002:a5d:4983:0:b0:368:7f4f:9ead with SMTP id ffacd0b85a97d-378c2cd546fmr6106937f8f.7.1726340776081;
+        Sat, 14 Sep 2024 12:06:16 -0700 (PDT)
+Received: from mobilestation ([5.227.29.5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da22b8b15sm27289315e9.4.2024.09.14.12.06.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Sep 2024 12:06:15 -0700 (PDT)
+Date: Sat, 14 Sep 2024 22:06:13 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Ferry Toth <ftoth@exalondelft.nl>
+Cc: Ferry Toth <ftoth@exalondelft.nl>, Viresh Kumar <vireshk@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v4 0/6] dmaengine: dw: Fix src/dst addr width
+ misconfig
+Message-ID: <hp2n4efzoe5n5zvgaygv4pz4rwip2iwj5nwpaofdwgzv65735b@bp4hn4aqkwrk>
+References: <20240802075100.6475-1-fancer.lancer@gmail.com>
+ <CAHp75VcnfrOOC610JxAdTwJv8j1i_Abo72E0h1aqRbrYOWRrZw@mail.gmail.com>
+ <rsy7z45nhl74nzvq5a2ij4eeqgzu3htje2xpparxgam7jowo6a@6l75wjh2dqll>
+ <ZuXbCKUs1iOqFu51@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240913193357.21899-1-aakash.menon@protempis.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZuXbCKUs1iOqFu51@black.fi.intel.com>
 
-> Bit 270-271 are occasionally unexpectedly set by the hardware.
+Hi Andy
+
+On Sat, Sep 14, 2024 at 09:50:48PM +0300, Andy Shevchenko wrote:
+> On Mon, Aug 05, 2024 at 03:25:35PM +0300, Serge Semin wrote:
+> > On Sat, Aug 03, 2024 at 09:29:54PM +0200, Andy Shevchenko wrote:
+> > > On Fri, Aug 2, 2024 at 9:51 AM Serge Semin <fancer.lancer@gmail.com> wrote:
+> > > >
+> > > > The main goal of this series is to fix the data disappearance in case of
+> > > > the DW UART handled by the DW AHB DMA engine. The problem happens on a
+> > > > portion of the data received when the pre-initialized DEV_TO_MEM
+> > > > DMA-transfer is paused and then disabled. The data just hangs up in the
+> > > > DMA-engine FIFO and isn't flushed out to the memory on the DMA-channel
+> > > > suspension (see the second commit log for details). On a way to find the
+> > > > denoted problem fix it was discovered that the driver doesn't verify the
+> > > > peripheral device address width specified by a client driver, which in its
+> > > > turn if unsupported or undefined value passed may cause DMA-transfer being
+> > > > misconfigured. It's fixed in the first patch of the series.
+> > > >
+> > > > In addition to that three cleanup patches follow the fixes described above
+> > > > in order to make the DWC-engine configuration procedure more coherent.
+> > > > First one simplifies the CTL_LO register setup methods. Second and third
+> > > > patches simplify the max-burst calculation procedure and unify it with the
+> > > > rest of the verification methods. Please see the patches log for more
+> > > > details.
+> > > >
+> > > > Final patch is another cleanup which unifies the status variables naming
+> > > > in the driver.
+> > > 
+> > > Acked-by: Andy Shevchenko <andy@kernel.org>
+> > 
+> > Awesome! Thanks.
 > 
-> This issue was observed with 10G SFPs causing huge time errors (> 30ms) in PTP.
+> Not really :-)
+> This series broke iDMA32 + SPI PXA2xx on Intel Merrifield. 
+
+Damn. Sorry to hear that.(
+
+> I haven't
+> had time to investigate further, but rolling back all patches helps.
 > 
-> Only 30 bits are needed for the nanosecond part of the timestamp, clear 2 most significant bits before extracting timestamp from the internal frame header.
+> +Cc: Ferry who might also test and maybe investigate as he reported the
+> issue to me initially.
+
+Ferry, could you please roll back the series patch-by-patch to find
+out the particular commit to blame?
+
+-Serge(y)
+
 > 
-> Signed-off-by: Aakash Menon <aakash.menon@protempis.com>
-> ---
->  drivers/net/ethernet/microchip/sparx5/sparx5_packet.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 > 
-> diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
-> index f3f5fb420468..a05263488851 100644
-> --- a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
-> +++ b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
-> @@ -45,8 +45,12 @@ void sparx5_ifh_parse(u32 *ifh, struct frame_info *info)
->         fwd = (fwd >> 5);
->         info->src_port = FIELD_GET(GENMASK(7, 1), fwd);
 > 
-> +       /*
-> +        * Bit 270-271 are occasionally unexpectedly set by the hardware,
-> +        * clear bits before extracting timestamp
-> +        */
->         info->timestamp =
-> -               ((u64)xtr_hdr[2] << 24) |
-> +               ((u64)(xtr_hdr[2] & 0x3F) << 24) |
->                 ((u64)xtr_hdr[3] << 16) |
->                 ((u64)xtr_hdr[4] <<  8) |
->                 ((u64)xtr_hdr[5] <<  0);
-> --
-> 2.46.0
->
-
-Hi Aakash,
-
-I will (or somebody else) try to reproduce and test this at the
-beginning of the next week.
-
-Meanwhile, you can address the issues that Simon mentioned.
-
-Thanks.
-
-/Daniel
+> 
 
