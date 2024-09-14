@@ -1,214 +1,203 @@
-Return-Path: <linux-kernel+bounces-329324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B998979007
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:33:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C446979048
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49369283D0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:33:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF72285986
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373EE1CF5E8;
-	Sat, 14 Sep 2024 10:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7481DA5E;
+	Sat, 14 Sep 2024 11:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YRkBn9Ss"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="eRGuhE01"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229E11CE6E1
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 10:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDF61CEAA9;
+	Sat, 14 Sep 2024 11:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726309978; cv=none; b=p+BDsMZjSMALN0FzFO3bhHXeTTT/8rvAvjX8e4vARSveob+QcBw4RsQHBbn0Czm8zVumm9EqnUu4NEhS+Me0KjrprUsSiBucmA9i3xqLxstUdF8IREXqBn1Y+PZWyliXklKcwAigBVBDSgybk7DGSUR7xWEktLvBsp/s2IDaA7Y=
+	t=1726312151; cv=none; b=cvRdaEE1Oq2idzLZJDl8ZhNm4rraNLMNhKMezfPojw0kMUFPDcJ7ai/RWEhFuCewm3L93rOwKFsDjm4DCfYlPQ+cnqTLSVZhfGIt7YzDv6T4t2TMO0+TviMV6mU216trJeQevXOpETV6YHzhGSL7SOO1U84JAKxw8oXI+SsIf7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726309978; c=relaxed/simple;
-	bh=m6tganteey5Zg+ZqOOxN3LGGrsmpJmws608jYsU4v9Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Fev0wg+8eAwtSLKpH+KIRJtjrSblYYDqBsj6ZZV/j0m+n0PITR+Evuqi/w/vo0cxFQnF7WoRUvi6KfPXDJ1JeBiueM4pLmFhSALmrT3Z3yzpT+Zm2avAOH4RSzEBUg/KC5fGOfraBFKVkZOCdVHtmOP5W6g4npCerWJXRbaHrSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YRkBn9Ss; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-718e2855479so2194904b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 03:32:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1726309976; x=1726914776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2wKJ6T8lzrG3Rgs6AhFQqgnkeWhWEchyLf0I6JJ+l9w=;
-        b=YRkBn9Ssnea4wzVsgFxbSa6SpUnr31dRWq86B8ztJytn/Zben3too/SnZLkaWpjD55
-         KPvjtuZ1xSRSVhEliXtzzLgYfMUz0CQRsrDBwxScQ3lqCCzkUDMhLQnAaWf3UwKp8y5a
-         IhZaQ2pKutl0fdD0cYKS/UyZ46OiWRafrp26utdmDy5CvsVBoCRm6i2i3n9WHf/jkzCp
-         /QkoJ7ZrRRe30lN03gEEC/zXO0pIsPcJWrbAlzbpy57kJEXpKF+dHDWRlLUzlZRULGms
-         qMzKnYfDSx0W2RvOpHMVlKrh96pvhHIwKK4Q1ux0OzFT6IOV/N2LXGVSxy9zG1zKZsDG
-         U4Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726309976; x=1726914776;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2wKJ6T8lzrG3Rgs6AhFQqgnkeWhWEchyLf0I6JJ+l9w=;
-        b=UgGmFxGSzJqrAP8O+PxuDmn2B/z7tLlV3Wm2GgY9JlL+Zz4WrwUv3pYtsVcUrIs2C0
-         h7wHJwSNr2l5rogCzUftRlEzpTPfsDODXCzKADfWTU3LQlzxCGILD2OyUjQ/6La5F8y0
-         Cv6Fv1Vsu5EBt6JIdvjgibqDDnBdJMjdoxNHDqAMDcUIvaFG0fAUv4VTUuqV23c73WD+
-         NXwmYPR+m5m69pCebYjCNn4iMGO7igf4e2BAnAlktDhSXFeojchR8hmFxK/uNZBDuTpo
-         nXobKtBsbd0n/WZ570oQ4U6n3hgO2yluZMk8H41xOE5Fw0/07l+l+1SjQkGT0FkMmPTz
-         uAHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgUcrPDgAclTYu7iYr0OeqsUzrFwvaU9UX5NvMfY9FH/s2JVBZ7y6V6Y5qlT29Zf6eGWE9sLUH+SmwcEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7eT/QvRnbBpbtJORid0nr1Qv8Nb2GdXjQHjdmlrQ1Dt60apsQ
-	zRG3c3cb3q5+5FokR5DHwno3S946eudpWc4rmE0jLSQnqkWwhm9DLqycuKuzg8s=
-X-Google-Smtp-Source: AGHT+IF8FZ62F3t14kxbTqWQfHm1EgOf2TO1sWKDgesgw76UlXpQC6XKw5Ig4N3rdi4YJTYevfZbNg==
-X-Received: by 2002:a05:6a00:812:b0:70d:1b48:e362 with SMTP id d2e1a72fcca58-719262065e5mr13240001b3a.26.1726309976169;
-        Sat, 14 Sep 2024 03:32:56 -0700 (PDT)
-Received: from C02F52LSML85.bytedance.net ([203.208.167.149])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944ab50cbsm788332b3a.53.2024.09.14.03.32.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2024 03:32:55 -0700 (PDT)
-From: Feng zhou <zhoufeng.zf@bytedance.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mykolal@fb.com,
-	shuah@kernel.org,
-	alan.maguire@oracle.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	yangzhenze@bytedance.com,
-	wangdongdong.6@bytedance.com,
-	zhoufeng.zf@bytedance.com
-Subject: [PATCH bpf-next v3 2/2] selftests/bpf: Setget_sockopt add a test for tcp over ipv4 via ipv6
-Date: Sat, 14 Sep 2024 18:32:26 +0800
-Message-Id: <20240914103226.71109-3-zhoufeng.zf@bytedance.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20240914103226.71109-1-zhoufeng.zf@bytedance.com>
-References: <20240914103226.71109-1-zhoufeng.zf@bytedance.com>
+	s=arc-20240116; t=1726312151; c=relaxed/simple;
+	bh=sq2UmYbbnOGBr85+l3Ku3qnhEozpZ2jyvuuLubWqfKQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q5kI0IFb4DYtMW7x+2wRdW1yp1cyT5QnQr8ltnG/CrlUNoRDKZqzNNXHDHv3jOFRluPn+O85eatz18a5Ey6ULqHs7bLiwf+c3vNUuKWgg9/J+UhTcKvLDyFocW7Z+iBzM+k///gsla8y3CMr5dO+pP69aYwSLQlNNxKRhiCQxHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=eRGuhE01 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id d45f49d283229167; Sat, 14 Sep 2024 13:09:07 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 442BF853358;
+	Sat, 14 Sep 2024 13:09:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1726312147;
+	bh=sq2UmYbbnOGBr85+l3Ku3qnhEozpZ2jyvuuLubWqfKQ=;
+	h=From:Subject:Date;
+	b=eRGuhE01zhmibwHIvieYYdaLcSFQid7rGN2ag/5mfi8jiiX342yrdaWjPfNhwFexl
+	 7zlj1rrMlXJASmyjCPk7RlnUJKP4B/N+VNTbrr7cTcHkPSRR63T66ydUQTdQ9d15og
+	 Q7FLdzfBAZH2L2eik3AFnu/kndqwlYEaXkZPg5/Ue5VW3xQvWpop0LafJWGpICC6oC
+	 btUrqUL2Ge1Cn+WS7V6F9d6n3KfN7YUvSsQgG1m9aMrsb23VN/BaDZWpNp5yQaJ0FQ
+	 sBcuXCI49muP2wiqWg5yZyfWPsgcjwgBkg4zW4MiO2gKdHgKDLwuK40joyoUkq05p0
+	 6BXrkacORofBA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [RFC PATCH for 6.13 v1 06/20] thermal: core: Consolidate thermal zone locking
+ during initialization
+Date: Sat, 14 Sep 2024 12:32:45 +0200
+Message-ID: <10548633.nUPlyArG6x@rjwysocki.net>
+In-Reply-To: <6100907.lOV4Wx5bFT@rjwysocki.net>
+References: <6100907.lOV4Wx5bFT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudektddgfeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdr
+ tghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=35 Fuz1=35 Fuz2=35
 
-From: Feng Zhou <zhoufeng.zf@bytedance.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This patch adds a test for TCP over IPv4 via INET6 API.
+The part of thermal zone initialization carried out under
+thermal_list_lock acquires the thermal zone lock and releases it
+multiple times back-to-back which is not really necessary.
 
-Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+Instead of doing this, acquire the thermal zone lock once after
+acquiring thermal_list_lock and release it along with that lock.
+
+For this purpose, move all of the code in question to
+thermal_zone_init_complete() introduced previously and provide an
+"unloacked" variant of thermal_zone_cdev_bind() to be invoked from
+there.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- .../selftests/bpf/prog_tests/setget_sockopt.c | 33 +++++++++++++++++++
- .../selftests/bpf/progs/setget_sockopt.c      | 13 ++++++--
- 2 files changed, 43 insertions(+), 3 deletions(-)
+ drivers/thermal/thermal_core.c |   40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c b/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c
-index 7d4a9b3d3722..3cad92128e60 100644
---- a/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c
-+++ b/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c
-@@ -15,8 +15,11 @@
- 
- #define CG_NAME "/setget-sockopt-test"
- 
-+#define INT_PORT	8008
-+
- static const char addr4_str[] = "127.0.0.1";
- static const char addr6_str[] = "::1";
-+static const char addr6_any_str[] = "::";
- static struct setget_sockopt *skel;
- static int cg_fd;
- 
-@@ -67,6 +70,35 @@ static void test_tcp(int family)
- 	ASSERT_EQ(bss->nr_binddev, 2, "nr_bind");
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -919,16 +919,14 @@ void print_bind_err_msg(struct thermal_z
+ 		cdev->type, thermal_zone_trip_id(tz, &td->trip), ret);
  }
  
-+static void test_tcp_over_ipv4_via_ipv6(void)
+-static void thermal_zone_cdev_bind(struct thermal_zone_device *tz,
+-				   struct thermal_cooling_device *cdev)
++static void __thermal_zone_cdev_bind(struct thermal_zone_device *tz,
++				     struct thermal_cooling_device *cdev)
+ {
+ 	struct thermal_trip_desc *td;
+ 
+ 	if (!tz->ops.should_bind)
+ 		return;
+ 
+-	guard(thermal_zone)(tz);
+-
+ 	for_each_trip_desc(tz, td) {
+ 		struct cooling_spec c = {
+ 			.upper = THERMAL_NO_LIMIT,
+@@ -946,6 +944,14 @@ static void thermal_zone_cdev_bind(struc
+ 	}
+ }
+ 
++static void thermal_zone_cdev_bind(struct thermal_zone_device *tz,
++				   struct thermal_cooling_device *cdev)
 +{
-+	struct setget_sockopt__bss *bss = skel->bss;
-+	int sfd, cfd;
++	guard(thermal_zone)(tz);
 +
-+	memset(bss, 0, sizeof(*bss));
-+	skel->bss->test_tcp_over_ipv4_via_ipv6 = 1;
-+
-+	sfd = start_server(AF_INET6, SOCK_STREAM,
-+			   addr6_any_str, INT_PORT, 0);
-+	if (!ASSERT_GE(sfd, 0, "start_server"))
-+		return;
-+
-+	cfd = connect_to_addr_str(AF_INET, SOCK_STREAM, addr4_str, INT_PORT, NULL);
-+	if (!ASSERT_GE(cfd, 0, "connect_to_addr_str")) {
-+		close(sfd);
-+		return;
-+	}
-+	close(sfd);
-+	close(cfd);
-+
-+	ASSERT_EQ(bss->nr_listen, 1, "nr_listen");
-+	ASSERT_EQ(bss->nr_connect, 1, "nr_connect");
-+	ASSERT_EQ(bss->nr_active, 1, "nr_active");
-+	ASSERT_EQ(bss->nr_passive, 1, "nr_passive");
-+	ASSERT_EQ(bss->nr_socket_post_create, 2, "nr_socket_post_create");
-+	ASSERT_EQ(bss->nr_binddev, 2, "nr_bind");
++	__thermal_zone_cdev_bind(tz, cdev);
 +}
 +
- static void test_udp(int family)
+ /**
+  * __thermal_cooling_device_register() - register a new thermal cooling device
+  * @np:		a pointer to a device tree node.
+@@ -1313,17 +1319,20 @@ int thermal_zone_get_crit_temp(struct th
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_get_crit_temp);
+ 
+-static void thermal_zone_add_to_list(struct thermal_zone_device *tz)
++static void thermal_zone_init_complete(struct thermal_zone_device *tz)
  {
- 	struct setget_sockopt__bss *bss = skel->bss;
-@@ -191,6 +223,7 @@ void test_setget_sockopt(void)
- 	test_udp(AF_INET);
- 	test_ktls(AF_INET6);
- 	test_ktls(AF_INET);
-+	test_tcp_over_ipv4_via_ipv6();
+-	guard(thermal_zone)(tz);
++	struct thermal_cooling_device *cdev;
++
++	mutex_lock(&thermal_list_lock);
  
- done:
- 	setget_sockopt__destroy(skel);
-diff --git a/tools/testing/selftests/bpf/progs/setget_sockopt.c b/tools/testing/selftests/bpf/progs/setget_sockopt.c
-index 60518aed1ffc..ff834d94dd23 100644
---- a/tools/testing/selftests/bpf/progs/setget_sockopt.c
-+++ b/tools/testing/selftests/bpf/progs/setget_sockopt.c
-@@ -20,6 +20,7 @@ int nr_connect;
- int nr_binddev;
- int nr_socket_post_create;
- int nr_fin_wait1;
-+int test_tcp_over_ipv4_via_ipv6;
+ 	list_add_tail(&tz->node, &thermal_tz_list);
+-}
  
- struct sockopt_test {
- 	int opt;
-@@ -262,9 +263,15 @@ static int bpf_test_sockopt(void *ctx, struct sock *sk)
- 		if (n != ARRAY_SIZE(sol_ip_tests))
- 			return -1;
- 	} else {
--		n = bpf_loop(ARRAY_SIZE(sol_ipv6_tests), bpf_test_ipv6_sockopt, &lc, 0);
--		if (n != ARRAY_SIZE(sol_ipv6_tests))
--			return -1;
-+		if (test_tcp_over_ipv4_via_ipv6) {
-+			n = bpf_loop(ARRAY_SIZE(sol_ip_tests), bpf_test_ip_sockopt, &lc, 0);
-+			if (n != ARRAY_SIZE(sol_ip_tests))
-+				return -1;
-+		} else {
-+			n = bpf_loop(ARRAY_SIZE(sol_ipv6_tests), bpf_test_ipv6_sockopt, &lc, 0);
-+			if (n != ARRAY_SIZE(sol_ipv6_tests))
-+				return -1;
-+		}
+-static void thermal_zone_init_complete(struct thermal_zone_device *tz)
+-{
+ 	guard(thermal_zone)(tz);
+ 
++	/* Bind cooling devices for this zone. */
++	list_for_each_entry(cdev, &thermal_cdev_list, node)
++		__thermal_zone_cdev_bind(tz, cdev);
++
+ 	tz->state &= ~TZ_STATE_FLAG_INIT;
+ 	/*
+ 	 * If system suspend or resume is in progress at this point, the
+@@ -1334,6 +1343,8 @@ static void thermal_zone_init_complete(s
+ 		tz->state |= TZ_STATE_FLAG_SUSPENDED;
+ 
+ 	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
++
++	mutex_unlock(&thermal_list_lock);
+ }
+ 
+ /**
+@@ -1370,7 +1381,6 @@ thermal_zone_device_register_with_trips(
+ 					unsigned int polling_delay)
+ {
+ 	const struct thermal_trip *trip = trips;
+-	struct thermal_cooling_device *cdev;
+ 	struct thermal_zone_device *tz;
+ 	struct thermal_trip_desc *td;
+ 	int id;
+@@ -1496,18 +1506,8 @@ thermal_zone_device_register_with_trips(
+ 			goto unregister;
  	}
  
- 	return 0;
--- 
-2.30.2
+-	mutex_lock(&thermal_list_lock);
+-
+-	thermal_zone_add_to_list(tz);
+-
+-	/* Bind cooling devices for this zone */
+-	list_for_each_entry(cdev, &thermal_cdev_list, node)
+-		thermal_zone_cdev_bind(tz, cdev);
+-
+ 	thermal_zone_init_complete(tz);
+ 
+-	mutex_unlock(&thermal_list_lock);
+-
+ 	thermal_notify_tz_create(tz);
+ 
+ 	thermal_debug_tz_add(tz);
+
+
 
 
