@@ -1,133 +1,109 @@
-Return-Path: <linux-kernel+bounces-329053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB86978C89
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:02:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE45978CB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB992B23472
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:02:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3F1288780
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D497C8FE;
-	Sat, 14 Sep 2024 02:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="DH0dsbxR"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1BFC13D;
+	Sat, 14 Sep 2024 02:15:54 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DCD33E8;
-	Sat, 14 Sep 2024 02:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762E010E9
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726279338; cv=none; b=AbfkPgjaRN+newIb0rtaTZwdoW0a30RtBfThcs6Dhv5GHj+UiGaHb2wyxOh0MO6PMx7muQtJLdLnrnlojX7aA9b1VKxW8i6E361gdzdFajNlFaO+Ip0aOhWa0VKp4iyMjvA1ebN/zF0b98ntieEFFGm6CQjz/z51niragC6wOQE=
+	t=1726280154; cv=none; b=NmYFP9vu+52rrmEDNdcok4cBpyY/h5TQLEVG36bJhlYJQ/uV2AnfTE65VsotdjIMZR7UANG7Z+HNcbqBrYVSZabWCcBtAYrCYasflD6hVFnino842Zu1xP9TdA1hLXc4nNjr4inCtYRrS5sg7CPvdtxayPUKTs4APBhtv3aKQeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726279338; c=relaxed/simple;
-	bh=KVQI4gRkAKlBL/HZnc2Jyu/Q+cbFZDKCOE64jrTo+js=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=trrMSUyg/k1ZDjupmM7Tda3v4yYSSyHEEe6jsIWuOrcuwy8k7nFE/vai4bt9NmLhby7/y+Xih0R+MT3B4VWvsfykQeBq7ebSRS1mGopNLTf0BvF8sfgp0q2im71mUSnqKM/5C5H0fzxTEo/Bfa2+rWOApXPuvXkCZkB8x7IUg8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=DH0dsbxR; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1726279332;
-	bh=/wsM4f9mZobOe68S738M7h2FcsJwRNVl7jUmuHE5wmY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DH0dsbxRzHaIGZKdW/VAzQa6uKPKiQwb8xCnbJaXLX9IAec2jz1b/fzg6cAhA8ErS
-	 pB/HLkT+Chh7obMNzCGZjoOWTe/vD0JNDCM4Bk1nb264MmakqUKTgdIBJ2vYKocfIX
-	 TQFU167XMfXx/BQsIbkQmum5VaXobPpVYwGgo1VhMa4CtzPmjmlEkxQ80fw3po0b0D
-	 HtJ6eUTWVbxOb+AYQWVe+VAvYPaM3Togzjtar6Bx3JrukSCSxH/pAfJbln0hO7udza
-	 MN7MYow2a+b425Pd8snDmc6s2XJ5BK0WWvGoVetzAKhaADtomefCQYQLBwDN6OI2zp
-	 D2h9711DyUhjg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X5DvR1TfQz4xD3;
-	Sat, 14 Sep 2024 12:02:11 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Mina Almasry <almasrymina@google.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux
- Next Mailing List <linux-next@vger.kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, "linuxppc-dev@lists.ozlabs.org"
- <linuxppc-dev@lists.ozlabs.org>, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
-In-Reply-To: <20240913213351.3537411-1-almasrymina@google.com>
-References: <20240913213351.3537411-1-almasrymina@google.com>
-Date: Sat, 14 Sep 2024 12:02:09 +1000
-Message-ID: <87jzffq9ge.fsf@mail.lhotse>
+	s=arc-20240116; t=1726280154; c=relaxed/simple;
+	bh=vuUUoejhfm66HVV/NQ+foywGWQ+O4eWCJYgHgnozVLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LloDVrB5hyfZFLXXSvj/8dLlB08OvmC7S3gx6CXDBByL2pjK5AXD6C5XEMOScyD8Ph2S3+WtqYyAaTlbwaIde/gENoUJCalRh/jEmDxCAGEg0iBP3vTF0QLaUVWWt0j2uWtVl/lrb6XdURgpgDTyjWwMB3ehMKpL+i7l1SV7ybc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X5F9p58tyz1RCRB;
+	Sat, 14 Sep 2024 10:14:38 +0800 (CST)
+Received: from kwepemd500019.china.huawei.com (unknown [7.221.188.86])
+	by mail.maildlp.com (Postfix) with ESMTPS id C1D5B140137;
+	Sat, 14 Sep 2024 10:15:48 +0800 (CST)
+Received: from [10.67.109.61] (10.67.109.61) by kwepemd500019.china.huawei.com
+ (7.221.188.86) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 14 Sep
+ 2024 10:15:48 +0800
+Message-ID: <672a45a5-722f-af57-dad4-a285acb0e53a@huawei.com>
+Date: Sat, 14 Sep 2024 10:15:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-Mina Almasry <almasrymina@google.com> writes:
-> Building net-next with powerpc with GCC 14 compiler results in this
-> build error:
->
-> /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
-> /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is
-> not a multiple of 4)
-> make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
-> net/core/page_pool.o] Error 1
->
-> Root caused in this thread:
-> https://lore.kernel.org/netdev/913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-soprasteria.com/
-
-Sorry I'm late to this, the original report wasn't Cc'ed to linuxppc-dev :D
-
-I think this is a bug in the arch/powerpc inline asm constraints.
-
-Can you try the patch below, it fixes the build error for me.
-
-I'll run it through some boot tests and turn it into a proper patch over
-the weekend.
-
-cheers
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: =?UTF-8?Q?Re=3a_=5bQuestion=5d_sched=ef=bc=9athe_load_is_unbalanced?=
+ =?UTF-8?Q?_in_the_VM_overcommitment_scenario?=
+To: Waiman Long <longman@redhat.com>, <peterz@infradead.org>,
+	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
+	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
+	<mgorman@suse.de>, <vschneid@redhat.com>, <oleg@redhat.com>, Frederic
+ Weisbecker <frederic@kernel.org>, <mingo@kernel.org>, <peterx@redhat.com>,
+	<tj@kernel.org>, <tjcao980311@gmail.com>
+CC: <linux-kernel@vger.kernel.org>
+References: <20240725120315.212428-1-zhengzucheng@huawei.com>
+ <3e68ccda-1606-9494-f57a-75be9668b83d@huawei.com>
+ <cb3a3f3e-727a-4cbb-b4a8-f9469ed4f08d@redhat.com>
+ <9982cb8d-9346-0640-dd9f-f68390f922e9@huawei.com>
+ <3fd8aa75-ce1b-4d5a-aada-0b2cfbedb36c@redhat.com>
+From: zhengzucheng <zhengzucheng@huawei.com>
+In-Reply-To: <3fd8aa75-ce1b-4d5a-aada-0b2cfbedb36c@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd500019.china.huawei.com (7.221.188.86)
 
 
-diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
-index 5bf6a4d49268..0e41c1da82dd 100644
---- a/arch/powerpc/include/asm/atomic.h
-+++ b/arch/powerpc/include/asm/atomic.h
-@@ -23,6 +23,12 @@
- #define __atomic_release_fence()					\
- 	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory")
- 
-+#ifdef CONFIG_CC_IS_CLANG
-+#define DS_FORM_CONSTRAINT "Z<>"
-+#else
-+#define DS_FORM_CONSTRAINT "YZ<>"
-+#endif
-+
- static __inline__ int arch_atomic_read(const atomic_t *v)
- {
- 	int t;
-@@ -197,7 +203,7 @@ static __inline__ s64 arch_atomic64_read(const atomic64_t *v)
- 	if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
- 		__asm__ __volatile__("ld %0,0(%1)" : "=r"(t) : "b"(&v->counter));
- 	else
--		__asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : "m<>"(v->counter));
-+		__asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : DS_FORM_CONSTRAINT (v->counter));
- 
- 	return t;
- }
-@@ -208,7 +214,7 @@ static __inline__ void arch_atomic64_set(atomic64_t *v, s64 i)
- 	if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
- 		__asm__ __volatile__("std %1,0(%2)" : "=m"(v->counter) : "r"(i), "b"(&v->counter));
- 	else
--		__asm__ __volatile__("std%U0%X0 %1,%0" : "=m<>"(v->counter) : "r"(i));
-+		__asm__ __volatile__("std%U0%X0 %1,%0" : "=" DS_FORM_CONSTRAINT (v->counter) : "r"(i));
- }
- 
- #define ATOMIC64_OP(op, asm_op)						\
+在 2024/9/14 1:17, Waiman Long 写道:
+> you don't actually need to use 2 different cpusets if they all get the 
+> same set of CPUs and memory nodes
+
+Yes, you're right. The purpose of setting two different cpusets is to 
+simulate the scenario of two VMs.
+
+each cpuset is a VM.
+
+For example, the VM configuration is as follows:
+
+<domain type='kvm' id='12676'>
+   <name>master</name>
+   <vcpu placement='static' cpuset='0-3,80-83'>8</vcpu>
+   <iothreads>1</iothreads>
+   <iothreadids>
+     <iothread id='1'/>
+   </iothreadids>
+   <cputune>
+     <vcpupin vcpu='0' cpuset='0-3,80-83'/>
+     <vcpupin vcpu='1' cpuset='0-3,80-83'/>
+     <vcpupin vcpu='2' cpuset='0-3,80-83'/>
+     <vcpupin vcpu='3' cpuset='0-3,80-83'/>
+     <vcpupin vcpu='4' cpuset='0-3,80-83'/>
+     <vcpupin vcpu='5' cpuset='0-3,80-83'/>
+     <vcpupin vcpu='6' cpuset='0-3,80-83'/>
+     <vcpupin vcpu='7' cpuset='0-3,80-83'/>
+     <emulatorpin cpuset='0-79'/>
+   </cputune>
+   <numatune>
+     <memory mode='strict' nodeset='0'/>
+     <memnode cellid='0' mode='strict' nodeset='0'/>
+   </numatune>
+
+
+
 
