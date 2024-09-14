@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-329040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE402978C5B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:14:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB4C978C5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93044286476
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:14:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E1C91C24920
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99E318039;
-	Sat, 14 Sep 2024 01:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B291F19A;
+	Sat, 14 Sep 2024 01:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UnN4JQw8"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ffjpccr9"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB6E168BE
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 01:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA29918044
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 01:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726276439; cv=none; b=nXES5SCFILwvMrFAFw72mbv65RfcSWIux33r8Rok/ats3jgE+/XR/VoIxsj0uD2r6wGZbdrYb7AiCxhrSF5UhiR3rWLjqtMa3iLvTmoABWBJoJp8g37SF+hw+keItvsCcJPio1fX79WRzeapOdnSeSEN+4MzLFAYZwHYWiUGDvs=
+	t=1726276441; cv=none; b=s//PpolE6fdCd+FvkeghgfjUVzFMCFZDz9+2e+9Yi8z5X4HBI0WG6VHmuZEOiXFzsN0oEEAWB0qWBe8IshUGnG/wQGrFQwGAH6rhkxOH75x8Kw6uyB2A+LM0cQ9MPzEgOEUXYAEjmYC9dyTiZr5bqdsEno46bMyS2Em/XdKTvck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726276439; c=relaxed/simple;
-	bh=JhQjvHU4nlyd0cPtYHleziW0WDbsr6+EQ8xZwOs1dHc=;
+	s=arc-20240116; t=1726276441; c=relaxed/simple;
+	bh=ExoZITeT8vdpAmAdIIZ9I8AL3y8dN7G3G8J+621IInE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=c2qd3B5slg28F7lMMjJLwUzfQoLZpHEQE9HEEdRw2TKHi2VjZHFw7OqaIIr6ovJoR+AyhYmzAW81WGb3uwFlVrWBbrUG9AHjdw5WZgan8Advc6DAYNdSDoKTyGfNujjd+mHZawtrkaHigu6DvI5jGgF5U8KK6/RVhEH2THmRbiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UnN4JQw8; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=LmTSW+t3QdtVSlYsp+vWJ+KtXyuPPMhsFI3jl5FImXPbZxjywzO7pfppd5oUubviKyvmqzRapWnLaSXjrkse6YIiMmdQ3+OG9DgcuiE87zAFb85eT1HbtHWMVkT/62NJc8ohcvvuScJEqQ5kZ9fqD03awOXrT3Yzez684lE9leo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ffjpccr9; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7d5a54dcaefso2449791a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:13:57 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1d46cee0b0so4765661276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:13:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726276437; x=1726881237; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1726276439; x=1726881239; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=aacdJw8TNmRgJZleOUeRazwv02Hn4nA2W9oH/j73FzM=;
-        b=UnN4JQw8+hTScOdL40L26QDQThpK13Dh9HdBxRsKRXGzWMYnYbAJKNEc3dweOZ9HAk
-         Sqi3URjmo3OzTVEXahhFC62O6U6VQzJ2SK350iJPgasbuD9Uy2s5vjoEp+XH95WscGN5
-         Xw7Fg2jkAYYHPvI33RWSH9CBS6UusKiTFdQlHppXgKfntTT3gc046q6cx9qfcirSQmsl
-         3N/4hZzgaSGBcRttj7sZOIDeysDpkQYg/d8GGJOqOggajvOvii63DOhZMfst9hOZZYJ5
-         gUz6yJRvtQFvfB9xwfV7624TG3gEcH+beRuIHCYvTg33zQ3IEZ1KM0YxFxP+zhF6OVME
-         D7BA==
+        bh=9TLAp+O1W7qMdk5rDFQ8BmVg/YGy7ndsRosC6n7b5qA=;
+        b=ffjpccr9NRgHDBGRvPq6rsfdIVPfZ0wnb9kHplMPpbftqrzVLNwSDkJSQ77RQ+HaWr
+         TPiSBE/gXwf/6aUWRvgWsPhE69be2MwS7P398qEl228rBXrB56Oq/G56hlHf7BYLWg+c
+         lu8OCtR9Zr+FbKKFnx/0CB+8uNbPpzy1TtrVUqa812NIMGpBuzYFwKQ/TB8WkJnIgw7m
+         jyxZi9X79QD7mQrTAKB/+7RdLFoEhlfhMDxG/9CnPeShrQtT+BJk4+s6Jky1QUiz+/y3
+         UPnoq7WU7sj6zbK9V7k7G2nHqFjN9/bir+bttD4s5eywhMwA5ZUFg4sTe+ZrTv+xwGyH
+         JrIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726276437; x=1726881237;
+        d=1e100.net; s=20230601; t=1726276439; x=1726881239;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aacdJw8TNmRgJZleOUeRazwv02Hn4nA2W9oH/j73FzM=;
-        b=uPWqzZdDoOLh05WTbdUPIkM+M1hCioMyu0bAGEfGEQZJZQOI89qEFcVxQin6KAtM/i
-         3rwd0sCkud2mV8bc04qoNFZ+wtpXb/LVnUkA09NqPjSUAA155NSm8uZHY77HD5+QyFrZ
-         ETT2hkJOhjGWygBAQV67k+NCC98mk3p9VQe59SIlDMGk5aHkycrTG1SXRvr/MOOMFnXy
-         lEGhn/ttZeBoGudX/VU5Dml1quFee57cDsIPhLP+k6PJ6P3rne516gOvvQGiakaTeQYz
-         9VLoFEmWMejYeJEsMbEHWt04g+TJVO1IdnyU2eHC2eRgD3IxFUNaZjxVeMYcIzjDUolI
-         pBEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpFxP/z2KFI5yBlfBpHg6k1HJrmBny1FbT4u6R5PpAWXyMu89Xv86+T/ia8jV4qpRgNbtWXWf2Z3Lf1TQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf22rmr2z7LnHcDfLEZEsX8wWpbN/JsQXraV/xWxCVuecMhtlJ
-	xza6bAxBRslGax95b+1ubFi7u8mOm1/5duDzx+KU+WEf0hMI4FSnrrhoKn8itWO7ZDdjDDuLPz2
-	XfA==
-X-Google-Smtp-Source: AGHT+IGlEsXZ2dgj+PLxZlYHIQ0vi4apKgGfQ/Win3919G8dju4lDWtoWfN0fO9U+MC+ECnEqlqFjWVZvbc=
+        bh=9TLAp+O1W7qMdk5rDFQ8BmVg/YGy7ndsRosC6n7b5qA=;
+        b=rtJrQEPTdxXHw8srLrbkdpq2CS3OU+0ef/t4KtOvg0+pnym+riQrNW1fUtGfkxAInc
+         jnydsx4Lqdo6LzMtkSJbr4xzM6Y/1lEGKbH5dZg2hskeUhj95ce3gLD9nmJawID46W8J
+         i/pzc6VyRvWks59X2yQDqb6dPyupmw2fLryOB8Ny9l0EUwVzGDL37fkO2i7rQzuxa8nu
+         OZpmi1u4EW6vSEA7huPx5U3q7icvDEyHy4Jgtc5d5RP4I4nUTyMvcZVBPCVg0655vhdX
+         MSuu0pXbUnA+vyNrAWhcTINbgvwouQMWWgXuYRrwZbKzqtzOOuhwYHo7GOQ/19bYGip/
+         PX1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWmVOlJLma/dnKk1woCRxO9zbfJ+ziXXyhLb/Nht8Aedfqj0OkB1gskY4c7GtvYi21avS7iEotFu8fkpgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx507Jffek/VkFCx6BFmI3HTAi4/leJt8qR0cmkyaZiJ7bEdIzy
+	ZrRR4PtkNYeXeYlBQuEXtS12cT9QGdvd0nOOEOo4WWZJ/nM5XN9i+K55tLKHMaOB+0K+3xYlR4f
+	mqw==
+X-Google-Smtp-Source: AGHT+IFU+zIpfMcULNa4fEmUA9OUbZKHi1gV8iwEarOxF3jBVam9+F23SRLggLGcE83n4gOd353JcM1RChk=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a65:6859:0:b0:7d6:66fb:3da7 with SMTP id
- 41be03b00d2f7-7db2057ef03mr22911a12.3.1726276436690; Fri, 13 Sep 2024
- 18:13:56 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a5b:b4b:0:b0:e03:2f90:e81d with SMTP id
+ 3f1490d57ef6-e1d9dc528e0mr20621276.11.1726276438759; Fri, 13 Sep 2024
+ 18:13:58 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 13 Sep 2024 18:13:44 -0700
+Date: Fri, 13 Sep 2024 18:13:45 -0700
 In-Reply-To: <20240914011348.2558415-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,17 +75,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240914011348.2558415-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
-Message-ID: <20240914011348.2558415-4-seanjc@google.com>
-Subject: [GIT PULL] KVM: x86: MMU changes for 6.12
+Message-ID: <20240914011348.2558415-5-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86: VMX and PAT MSRs cleanup
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The bulk of the changes are to clean up the thorny "unprotect and retry" mess
-that grew over time.  The other notable change is to support yielding in the
-shadow MMU when zapping rmaps (simply a historic oversight, AFAICT).
+The theme of this pull request is to clean up the VMX MSR macros.  The PAT MSR
+changes (reviewed by tglx) are included here as they allowed for an even more
+aggressive cleanup of the VMX macros related to memtypes, e.g. for specifying
+the EPT walk memtype in EPTPs.
 
 The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
@@ -93,69 +94,45 @@ The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
 are available in the Git repository at:
 
-  https://github.com/kvm-x86/linux.git tags/kvm-x86-mmu-6.12
+  https://github.com/kvm-x86/linux.git tags/kvm-x86-pat_vmx_msrs-6.12
 
-for you to fetch changes up to 9a5bff7f5ec2383e3edac5eda561b52e267ccbb5:
+for you to fetch changes up to 566975f6ecd85247bd8989884d7b909d5a456da1:
 
-  KVM: x86/mmu: Use KVM_PAGES_PER_HPAGE() instead of an open coded equivalent (2024-09-09 20:22:08 -0700)
-
-----------------------------------------------------------------
-KVM x86 MMU changes for 6.12:
-
- - Overhaul the "unprotect and retry" logic to more precisely identify cases
-   where retrying is actually helpful, and to harden all retry paths against
-   putting the guest into an infinite retry loop.
-
- - Add support for yielding, e.g. to honor NEED_RESCHED, when zapping rmaps in
-   the shadow MMU.
-
- - Refactor pieces of the shadow MMU related to aging SPTEs in prepartion for
-   adding MGLRU support in KVM.
-
- - Misc cleanups
+  KVM: nVMX: Use macros and #defines in vmx_restore_vmx_misc() (2024-08-22 11:25:54 -0700)
 
 ----------------------------------------------------------------
-Sean Christopherson (33):
-      KVM: x86/mmu: Clean up function comments for dirty logging APIs
-      KVM: x86/mmu: Decrease indentation in logic to sync new indirect shadow page
-      KVM: x86/mmu: Drop pointless "return" wrapper label in FNAME(fetch)
-      KVM: x86/mmu: Reword a misleading comment about checking gpte_changed()
-      KVM: x86/mmu: Replace PFERR_NESTED_GUEST_PAGE with a more descriptive helper
-      KVM: x86/mmu: Trigger unprotect logic only on write-protection page faults
-      KVM: x86/mmu: Skip emulation on page fault iff 1+ SPs were unprotected
-      KVM: x86: Retry to-be-emulated insn in "slow" unprotect path iff sp is zapped
-      KVM: x86: Get RIP from vCPU state when storing it to last_retry_eip
-      KVM: x86: Store gpa as gpa_t, not unsigned long, when unprotecting for retry
-      KVM: x86/mmu: Apply retry protection to "fast nTDP unprotect" path
-      KVM: x86/mmu: Try "unprotect for retry" iff there are indirect SPs
-      KVM: x86: Move EMULTYPE_ALLOW_RETRY_PF to x86_emulate_instruction()
-      KVM: x86: Fold retry_instruction() into x86_emulate_instruction()
-      KVM: x86/mmu: Don't try to unprotect an INVALID_GPA
-      KVM: x86/mmu: Always walk guest PTEs with WRITE access when unprotecting
-      KVM: x86/mmu: Move event re-injection unprotect+retry into common path
-      KVM: x86: Remove manual pfn lookup when retrying #PF after failed emulation
-      KVM: x86: Check EMULTYPE_WRITE_PF_TO_SP before unprotecting gfn
-      KVM: x86: Apply retry protection to "unprotect on failure" path
-      KVM: x86: Update retry protection fields when forcing retry on emulation failure
-      KVM: x86: Rename reexecute_instruction()=>kvm_unprotect_and_retry_on_failure()
-      KVM: x86/mmu: Subsume kvm_mmu_unprotect_page() into the and_retry() version
-      KVM: x86/mmu: Detect if unprotect will do anything based on invalid_list
-      KVM: x86/mmu: WARN on MMIO cache hit when emulating write-protected gfn
-      KVM: x86/mmu: Move walk_slot_rmaps() up near for_each_slot_rmap_range()
-      KVM: x86/mmu: Plumb a @can_yield parameter into __walk_slot_rmaps()
-      KVM: x86/mmu: Add a helper to walk and zap rmaps for a memslot
-      KVM: x86/mmu: Honor NEED_RESCHED when zapping rmaps and blocking is allowed
-      KVM: x86/mmu: Morph kvm_handle_gfn_range() into an aging specific helper
-      KVM: x86/mmu: Fold mmu_spte_age() into kvm_rmap_age_gfn_range()
-      KVM: x86/mmu: Add KVM_RMAP_MANY to replace open coded '1' and '1ul' literals
-      KVM: x86/mmu: Use KVM_PAGES_PER_HPAGE() instead of an open coded equivalent
+KVM VMX and x86 PAT MSR macro cleanup for 6.12:
 
- arch/x86/include/asm/kvm_host.h |  14 +-
- arch/x86/kvm/mmu/mmu.c          | 522 ++++++++++++++++++++++------------------
- arch/x86/kvm/mmu/mmu_internal.h |   3 +
- arch/x86/kvm/mmu/mmutrace.h     |   1 +
- arch/x86/kvm/mmu/paging_tmpl.h  |  63 ++---
- arch/x86/kvm/mmu/tdp_mmu.c      |   6 +-
- arch/x86/kvm/x86.c              | 133 +++-------
- 7 files changed, 368 insertions(+), 374 deletions(-)
+ - Add common defines for the x86 architectural memory types, i.e. the types
+   that are shared across PAT, MTRRs, VMCSes, and EPTPs.
+
+ - Clean up the various VMX MSR macros to make the code self-documenting
+   (inasmuch as possible), and to make it less painful to add new macros.
+
+----------------------------------------------------------------
+Sean Christopherson (5):
+      x86/cpu: KVM: Add common defines for architectural memory types (PAT, MTRRs, etc.)
+      x86/cpu: KVM: Move macro to encode PAT value to common header
+      KVM: x86: Stuff vCPU's PAT with default value at RESET, not creation
+      KVM: nVMX: Add a helper to encode VMCS info in MSR_IA32_VMX_BASIC
+      KVM VMX: Move MSR_IA32_VMX_MISC bit defines to asm/vmx.h
+
+Xin Li (5):
+      KVM: VMX: Move MSR_IA32_VMX_BASIC bit defines to asm/vmx.h
+      KVM: VMX: Track CPU's MSR_IA32_VMX_BASIC as a single 64-bit value
+      KVM: nVMX: Use macros and #defines in vmx_restore_vmx_basic()
+      KVM: VMX: Open code VMX preemption timer rate mask in its accessor
+      KVM: nVMX: Use macros and #defines in vmx_restore_vmx_misc()
+
+ arch/x86/include/asm/msr-index.h | 34 +++++++++++++---------
+ arch/x86/include/asm/vmx.h       | 40 +++++++++++++++++++-------
+ arch/x86/kernel/cpu/mtrr/mtrr.c  |  6 ++++
+ arch/x86/kvm/vmx/capabilities.h  | 10 +++----
+ arch/x86/kvm/vmx/nested.c        | 62 +++++++++++++++++++++++++++-------------
+ arch/x86/kvm/vmx/nested.h        |  2 +-
+ arch/x86/kvm/vmx/vmx.c           | 30 +++++++++----------
+ arch/x86/kvm/x86.c               |  4 +--
+ arch/x86/kvm/x86.h               |  3 +-
+ arch/x86/mm/pat/memtype.c        | 36 +++++++----------------
+ 10 files changed, 132 insertions(+), 95 deletions(-)
 
