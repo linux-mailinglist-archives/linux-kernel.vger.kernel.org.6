@@ -1,149 +1,153 @@
-Return-Path: <linux-kernel+bounces-329225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8412978EDE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:26:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4154B978EE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DBDE1F232B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE1F1C22E24
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81D613B58F;
-	Sat, 14 Sep 2024 07:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D1B146585;
+	Sat, 14 Sep 2024 07:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="FTjLiNSE"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JGhPSGsP"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B2318037;
-	Sat, 14 Sep 2024 07:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA7013B7A3
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 07:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726298761; cv=none; b=ns/kcGSWXe5ZTA0OpdlYLpx/M+k39oaeHLLar7n6kPLPm/9xr1Yh3flvLXbXXwdxMG43fF3v4Amqst+SarEfqSN0mLzY9Kk9reXix26d+rJXCSzlGa/5xzewidNdrlMsGK0Poawc8Y+OhRQ4Uxq3AagUlMfNQ+UBh5R1IhmVXBA=
+	t=1726299054; cv=none; b=Oilr2lSGX0mWFXFtnuCujHMu0ZFaL9M9PvW5LpKNkfZy/uDTvpM3itPiawV+Q5eGSGaV2TjATK5hfJgwVRmWY2Cf0THi+vc8uOPDWHDnlWvPKqUYU4SdJQLifRJYMz7hztkMnxeXGIgL8F/MP++DZpjo0Y0Kl0dkDQcArXi+JWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726298761; c=relaxed/simple;
-	bh=qFL+mUVBFOPf791W4Y56O/R0pcp1xBN5lnEoQ5LITqE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=B/k5PuE2eQzHi9hhlPXv9LAQjwccB0BQ9AFxm9UXYZefgA+dE01FV7qm1dXwjHkw5hdbI7AekPGbE4QDpsN5PfCzmg3AoUguV6B0ETd5i79nta0h7ylMZE1YFHAihiG+5yQW1//pbWpNhYyOkzdYdGAJxR0uSjOQ5eCjS2iixUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=FTjLiNSE; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 92883afa726a11ef8b96093e013ec31c-20240914
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:CC:To:From:Subject:MIME-Version:Date:Message-ID; bh=RRzjjCjxMrZMuVkofMLoApDTjN0xU6WSzacOzaOb9YQ=;
-	b=FTjLiNSECw6I1YTBPpUQBSIVRVKuaTiPZmLKxxS43RtRjACohI2vF2a4X5Url498rz8zUje/4ucQByT91bYBoO7LwDGTt0SCKiBCdNbtSVY+H+yYmpDucVLrDsxdo0N+bUbtYb4u28rXFLk/0mOEJdC4zRG2EonT+81Eo39kTz0=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:daf33a7d-0ee8-4a5d-a6b2-0d07e9c2b1ab,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:687d33d0-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 92883afa726a11ef8b96093e013ec31c-20240914
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1819714121; Sat, 14 Sep 2024 15:25:52 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 14 Sep 2024 15:25:49 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Sat, 14 Sep 2024 15:25:49 +0800
-Message-ID: <4a396c65-2353-da09-4dd2-71b822237920@mediatek.com>
-Date: Sat, 14 Sep 2024 15:25:46 +0800
+	s=arc-20240116; t=1726299054; c=relaxed/simple;
+	bh=paxtq8DGH1QuphnI3BlUnhiBze44+6OFfkrMCUBsYNI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nr0lmpJs1CPPaZUF6ViFbWu6P9PWDbMYXFQzwXZAFwk8LmTy+2dL7RAVFAtpBZEGcCetWopJgLOU4dj0LpcsxBvOc8TaGSRkmbcbmjlEuSJKrvex6EfIqIPTKsENhwMzLAeQhzwIoaNbh0dhLy45eWOJJ1hMn6gFU4zV+jzlQug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JGhPSGsP; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7db0fb03df5so2273209a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 00:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1726299051; x=1726903851; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/2a46OQ5WaS5274HZtlPL6nHGoqHOePxGG4Boyap1o8=;
+        b=JGhPSGsPX5Qk6Imt41A12XCdWBy+ESkbovQpEEssrMHOTvBd6rY6LVNYrwwAx3jb4e
+         eIzXcZKDE/lquLYgoIq3fNyIMME7+lBqF+yyDWLodSage/MmQQPbBAXIm4pzV/ZPD1yb
+         OeYdIyrJg2pNwh4Qr7hYLUQMuRXpRcxuTQm6gHKQvEvkKllP6HCIhgo2ZcgoDGlGNeE/
+         kTKzB/JI60WnDwBvSUV1zCOWlCSzEKCr3m4NdI7vXJOuw5apn9Yb4Fl5mazIL1GZswEe
+         hPFHsn5U3+dgtj3jXHU0o6JVVUs0U8q+sW5S6MTPRa8hhCnsJ7sd3OvCmgZNVLpMRRZb
+         MnLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726299051; x=1726903851;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/2a46OQ5WaS5274HZtlPL6nHGoqHOePxGG4Boyap1o8=;
+        b=MBVAp0fAgNtz0Qw7jTgWU+WwX6n8Ws2bIntfZGpRNJZxA93OaWOyNXU7vr6/q11FLG
+         aPmuukfEH+8cpPe091eMfd0QWIdCPiEqejlKudQx/s0KvNw2g7HWnWNMWO2TjGlyC9r6
+         FU8tlWxHLXmBahKm+Sx8QmgFldSgEmWKPUhwUB2nZGA3N4bNEVJUTzpQWvFB+s8J6vIm
+         5qYg3RIpZsIOzADGKOoxCRstxNN3IZhOfNFedAWsy+XS9mSK+KS71Set3z6ChFaXGuR+
+         EuhHC4B0rg05RQWIZqcbNKVsCvpwnf47ZMucQBnBneo1rkEPBvvgg1t3HMRG45S3SQI/
+         sFwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdyA1N3Zs7b4l+le4vbm6LgBS//VLdZgCK+R9YBgl3IsHxfnVDT0s/ESsBmsJz8+wl5HGCzM2WLvdgTE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZM4q8/UNBPGuWSPemGHnGYliJmKvbOGrzp86wNy9JINbjJGZH
+	2A82fxKoRrKB8Lr99wF1Cc3ich1ASakmWdWSqD8zlcaHG1CLjhCmAI68Yu2G48gpwv9i2uHgLVn
+	Utcc=
+X-Google-Smtp-Source: AGHT+IGaqFo9ChX70Ea5mL7gUNEzX04dCGW52S5KwDopHouW0juPkOoymuCAu/hO1wv1BIbgmO427w==
+X-Received: by 2002:a05:6a21:4d8a:b0:1cf:2218:1be6 with SMTP id adf61e73a8af0-1cf764b02aemr12874259637.50.1726299051497;
+        Sat, 14 Sep 2024 00:30:51 -0700 (PDT)
+Received: from PXLDJ45XCM.bytedance.net ([61.213.176.6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b9ac05sm555687b3a.155.2024.09.14.00.30.48
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 14 Sep 2024 00:30:50 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: axboe@kernel.dk,
+	ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	muchun.song@linux.dev,
+	Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v3 0/3] Fix some starvation problems in block layer
+Date: Sat, 14 Sep 2024 15:28:41 +0800
+Message-Id: <20240914072844.18150-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v3 2/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT
- schema format
-Content-Language: en-US
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Bear Wang <bear.wang@mediatek.com>, Conor Dooley <conor+dt@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Chen Zhong
-	<chen.zhong@mediatek.com>, <linux-leds@vger.kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>, Lee Jones
-	<lee@kernel.org>, <linux-mediatek@lists.infradead.org>, Macpaul Lin
-	<macpaul@gmail.com>, Mark Brown <broonie@kernel.org>, Chris-qj chen
-	<chris-qj.chen@mediatek.com>, <linux-input@vger.kernel.org>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>, <linux-rtc@vger.kernel.org>, "MediaTek
- Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>, Pavel Machek <pavel@ucw.cz>,
-	<linux-pm@vger.kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, "Sebastian
- Reichel" <sre@kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>,
-	<devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sound@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Pablo Sun <pablo.sun@mediatek.com>
-References: <20240913175926.7443-1-macpaul.lin@mediatek.com>
- <172625540069.478205.2893721075637493498.robh@kernel.org>
- <099c4f3e-0772-3d30-79f7-8b996142cd7c@mediatek.com>
-In-Reply-To: <099c4f3e-0772-3d30-79f7-8b996142cd7c@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--15.756400-8.000000
-X-TMASE-MatchedRID: HXSqh3WYKfsOwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
-	qIY+/skQkABPgKBt/0r/bIpz2qRIjbvjKWK1iQnHSHCU59h5KrHWSrKtwxqWpU+u3rM3lFPnCkE
-	raFSKEBfgwC+tMY7byJTQ/2UxBcQVxAFMYEMzeR2+dJWHbg4ITpPFJV0Myxm8BUe+Zw5ql5RljC
-	/GdRjZi6wHHwdmt++AY44xtvjJ5ninykMun0J1wp4CIKY/Hg3AtOt1ofVlaoLUHQeTVDUrIim3J
-	iZU/IeW5MIx11wv+CM7AFczfjr/7Js2nJP/TBEf7zzlbeQx+6obMO7jRDhYejeCelNBvicJfykA
-	wdsjhlY=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--15.756400-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 1F09D541324631173BB6E61E34600C8115661A49623ECD40C5A8504DD98134082000:8
+Content-Transfer-Encoding: 8bit
 
-On 9/14/24 15:06, Macpaul Lin wrote:
-> 
-> 
-> On 9/14/24 03:23, Rob Herring (Arm) wrote:
->>
->>
->> External email : Please do not click links or open attachments until 
->> you have verified the sender or the content.
->>
->> On Sat, 14 Sep 2024 01:59:26 +0800, Macpaul Lin wrote:
->>> Convert the mfd: mediatek: mt6397 binding to DT schema format.
->>>
-> 
-> [snip]
-> 
->>>
->>
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> Warning: Duplicate compatible "mediatek,mt6357" found in schemas 
->> matching "$id":
-> 
-> I'm using dtschema 2024.09 and the dt_bindings_check didn't report this 
-> issue even the full check has been run.
+We encounter a problem on our servers where hundreds of UNINTERRUPTED
+processes are all waiting in the WBT wait queue. And the IO hung detector
+logged so many messages about "blocked for more than 122 seconds". The
+call trace is as follows:
 
-Hopefully I've found a way to update latest dtschema without bothering 
-IT. ;)
+    Call Trace:
+        __schedule+0x959/0xee0
+        schedule+0x40/0xb0
+        io_schedule+0x12/0x40
+        rq_qos_wait+0xaf/0x140
+        wbt_wait+0x92/0xc0
+        __rq_qos_throttle+0x20/0x30
+        blk_mq_make_request+0x12a/0x5c0
+        generic_make_request_nocheck+0x172/0x3f0
+        submit_bio+0x42/0x1c0
+        ...
 
-pip3 install -U git+https://github.com/devicetree-org/dt-schema.git@main
+The WBT module is used to throttle buffered writeback, which will block
+any buffered writeback IO request until the previous inflight IOs have
+been completed. So I checked the inflight IO counter. That was one meaning
+one IO request was submitted to the downstream interface like block core
+layer or device driver (virtio_blk driver in our case). We need to figure
+out why the inflight IO is not completed in time. I confirmed that all
+the virtio ring buffers of virtio_blk are empty and the hardware dispatch
+list had one IO request, so the root cause is not related to the block
+device or the virtio_blk driver since the driver has never received that
+IO request.
 
-I'll run latest dt_bindings_check for v4 version.
+We know that block core layer could submit IO requests to the driver
+through kworker (the callback function is blk_mq_run_work_fn). I thought
+maybe the kworker was blocked by some other resources causing the callback
+to not be evoked in time. So I checked all the kworkers and workqueues and
+confirmed there was no pending work on any kworker or workqueue.
 
-Thanks.
-Macpaul Lin
+Integrate all the investigation information, the problem should be in the
+block core layer missing a chance to submit that IO request. After
+some investigation of code, I found some scenarios which could cause the
+problem.
+
+Changes in v3:
+  - Collect RB tag from Ming Lei.
+  - Adjust text to fit maximum 74 chars per line from Jens Axboe.
+
+Changes in v2:
+  - Collect RB tag from Ming Lei.
+  - Use barrier-less approach to fix QUEUE_FLAG_QUIESCED ordering problem
+    suggested by Ming Lei.
+  - Apply new approach to fix BLK_MQ_S_STOPPED ordering for easier
+    maintenance.
+  - Add Fixes tag to each patch.
+
+Muchun Song (3):
+  block: fix missing dispatching request when queue is started or
+    unquiesced
+  block: fix ordering between checking QUEUE_FLAG_QUIESCED and adding
+    requests
+  block: fix ordering between checking BLK_MQ_S_STOPPED and adding
+    requests
+
+ block/blk-mq.c | 55 ++++++++++++++++++++++++++++++++++++++------------
+ block/blk-mq.h | 13 ++++++++++++
+ 2 files changed, 55 insertions(+), 13 deletions(-)
+
+-- 
+2.20.1
+
 
