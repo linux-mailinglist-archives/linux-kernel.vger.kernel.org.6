@@ -1,132 +1,212 @@
-Return-Path: <linux-kernel+bounces-329195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECBD978E91
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:58:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525AF978EA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 397A8285DBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:58:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7715F1C2557B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B9A1CDA17;
-	Sat, 14 Sep 2024 06:58:21 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED0F1CF5D2;
+	Sat, 14 Sep 2024 07:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J74b5Vz4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C5720328;
-	Sat, 14 Sep 2024 06:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9530A1CF2B9;
+	Sat, 14 Sep 2024 07:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726297101; cv=none; b=dtoL9gQI42DXCVbq8cTPf6xfHgnzSRH4OmnUbnKnJvdzWCqPIQvx0YvKyYwJayaUhFUkHAm+zsc/E8F5lfKkVWvWUU9/XuxmgjrwGdgfohGUrciK6r8h+XDxOqzNhui/9poB4mufxPDkmTmilVfJ/iumfBegJi10MscZbrUgaOA=
+	t=1726297286; cv=none; b=tvlHIgoSZag5yVYUi3SSI46hHOB6lXmLpEi51KtvaHQ7tIAJouF+ATQaKObRGFftWJY1p4v3eusPVOJCdKUvG7nLhufP8lCa3mQdY9yykUwq8aTXQtDPlMK3/tZDyMSu8lHjW1N073ZwKDMDooJEInj8xTqjZQz1/NFd5moGWhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726297101; c=relaxed/simple;
-	bh=76/NlTo2FJWz02hzNbiFQBHEOZ3d7GE73yzvs/WKS6c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=AXZQUB+A08Kmnw3T4+mXKsganGG49mr5am2JWOubIXMBtxHS9CMAG1C9ctjWHo7nzF6sWexpnzlFADvAhmr9s61CsYl0qhrV4AzENrqIdhv+EcQ1bWpWUgS9Dk2g9mBcfugMQQVYooo6eg+9YBXeOLngBbD81pg7YQqrBJZFIHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X5MSb38KXz4f3kvf;
-	Sat, 14 Sep 2024 14:57:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id CB3701A018D;
-	Sat, 14 Sep 2024 14:58:07 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP2 (Coremail) with SMTP id Syh0CgBXi2D8M+Vms30aBQ--.9992S2;
-	Sat, 14 Sep 2024 14:58:05 +0800 (CST)
-Message-ID: <1f1a9b07-0818-4e82-9690-0b3ae3d33433@huaweicloud.com>
-Date: Sat, 14 Sep 2024 14:58:04 +0800
+	s=arc-20240116; t=1726297286; c=relaxed/simple;
+	bh=pAAX0KCSWLQBA01Cd4CQx1R8SR/audm/xYtxJbBZpUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KM/BjTzndrdsa9Uv+2sbsRPGi+0mC3ZalGWUrGJmb2vBTsvEv2WDI5D0tSeyC484xVsB9wibG6tlyNleM3CdYrBa1u+JKGZXKxl1nBzr/XNj8/VzhFVYC/k2C0H1bT9lm9wo1ZYqYOdDqxvz/1mILNedJfsImzwUhPTgr5NsEuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J74b5Vz4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49DC1C4CECD;
+	Sat, 14 Sep 2024 07:01:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726297286;
+	bh=pAAX0KCSWLQBA01Cd4CQx1R8SR/audm/xYtxJbBZpUM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=J74b5Vz4+f3CdfiHng+lO6CemsJs+rNJwG2eChMkifZKQ+LvI8NAKpzpNYjC2Wet1
+	 aEVvn0fWLDDu4RJeZ6DpFCxDPjNIQ7R98oVvUKAONLyf35VJ0663M5bJDScgGAEVXx
+	 5pBjknskq2eE7eX1SoRalqOr4TNSr2a/rFp8pI7VpQF2oySndCtcVU7Yl5HRfA7DM6
+	 BC0wZZFLYuGKh0LUNPcrsUwpB+IzaHyWkPqKirtJrbQJkD6trGEnz2cWHZXRzZ28F/
+	 hTV0DaMQDpUDx6ENQlMIZqEiNUgWfeBNfggWqoSff+ogYPcdIJDqgRKN2X31SMMfGn
+	 OF2/P5jnoae2A==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c4146c7d5dso1985162a12.3;
+        Sat, 14 Sep 2024 00:01:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrUG5QlbRKNm4xDGmy6w682ww6r93CV5tJPaijHTP/FsIaqhEROOeibj886MyKUOXsRIQJ0qSDQMXm@vger.kernel.org, AJvYcCX73VWNsyKlqCDOjSoaPuJQVtCBeQaCaUlNL54iFNeDC1dssw7NBDCcZsELn15AY9NkUWTa2V2F1c9/o+vm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH1sgk1lQaKyPD4AHP4mFI4yce9MvII8cyuQDp68AG3uFSacVw
+	xJeMLlEnoivWRVjL8vWLMVKFfAEwMqWCyC92E2YvQxdag6NpgNleaX9x4skyeVYgrgl21LzoV6Y
+	4zdkBz0DQItD+wxr5E5EcAyK7aAc=
+X-Google-Smtp-Source: AGHT+IHtBBMLgh+2a9loR1CyOfl973gonH0M92BPbQAzTuGjcRcCGrclL2qbUIUH5p8hwjjcDoEyR/4TbDZwO11Va6c=
+X-Received: by 2002:a05:6402:d05:b0:5c2:4a98:7520 with SMTP id
+ 4fb4d7f45d1cf-5c41e1b5302mr4978875a12.31.1726297284766; Sat, 14 Sep 2024
+ 00:01:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v2 0/2] perf stat: Support inherit events for bperf
-From: Tengda Wu <wutengda@huaweicloud.com>
-To: Song Liu <song@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20240905115918.772234-1-wutengda@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20240905115918.772234-1-wutengda@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBXi2D8M+Vms30aBQ--.9992S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJrWDtrWrtry3Kr4xKrW5GFg_yoW8XryDpF
-	43C39Igw1rKF1akwnxAwsruF1Yqr93CFy5Gr1kKrWxJF4kZr1DWrZ7KFW5tF98XryxCFy0
-	vw4qgw45WFZ8A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+References: <20240914065318.2099448-1-maobibo@loongson.cn>
+In-Reply-To: <20240914065318.2099448-1-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 14 Sep 2024 15:01:12 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6k2c9M1htncx3UQdqy275PHDZTeo_56fWbtxDYNH-s6w@mail.gmail.com>
+Message-ID: <CAAhV-H6k2c9M1htncx3UQdqy275PHDZTeo_56fWbtxDYNH-s6w@mail.gmail.com>
+Subject: Re: [PATCH v2] LoongArch: Enable ACPI BGRT handling
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Song and Numhyung,
+Hi, Bibo,
 
-Gentle ping.
+On Sat, Sep 14, 2024 at 2:53=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
+>
+> Add ACPI BGRT support on LoongArch so it can display image provied by
+> acpi table at boot stage and switch to graphical UI smoothly.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409102056.DNqh6zzA-lkp@i=
+ntel.com/
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> ---
+> v1 ... v2:
+>   1. Solve compile warning issue reported from lkp, return type of
+>      function early_memunmap() is void *, that of function early_ioremap(=
+)
+>      is void __iomem *, force type conversion is added.
+I've applied V1, build warnings seems another problem which has no
+relationship with this patch itself.
 
-This patch set provides event inheritance support for bperf during fork(). Currently, based on numhyung's feedback, the v2 version has been modified. Could you please take a look?
+Huacai
 
-Any comment or suggestion is appreciated.
-
-Thanks!
-Tengda
-
-On 2024/9/5 19:59, Tengda Wu wrote:
-> Hi,
-> 
-> bperf (perf-stat --bpf-counter) has not supported inherit events
-> during fork() since it was first introduced.
-> 
-> This patch series tries to add this support by:
->  1) adding two new bpf programs to monitor task lifecycle;
->  2) recording new tasks in the filter map dynamically;
->  3) reusing `accum_key` of parent task for new tasks.
-> 
-> Thanks,
-> Tengda
-> 
-> 
-> Changelog:
-> ---------
-> v2: (Address comments from Namhyung)
->  * Remove the unused init_filter_entries in follower bpf, declare
->    a global filter_entry_count in bpf_counter instead
->  * Attach on_newtask and on_exittask progs only if the filter type
->    is either PID or TGID
-> 
-> v1: https://lore.kernel.org/all/20240904123103.732507-1-wutengda@huaweicloud.com/
-> 
-> 
-> Tengda Wu (2):
->   perf stat: Support inherit events during fork() for bperf
->   perf test: Use sqrtloop workload to test bperf event
-> 
->  tools/perf/tests/shell/stat_bpf_counters.sh   |  2 +-
->  tools/perf/util/bpf_counter.c                 | 32 +++++++--
->  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 70 +++++++++++++++++--
->  tools/perf/util/bpf_skel/bperf_u.h            |  5 ++
->  4 files changed, 95 insertions(+), 14 deletions(-)
-> 
-
+> ---
+>  arch/loongarch/include/asm/io.h | 4 +---
+>  arch/loongarch/kernel/acpi.c    | 8 ++++++--
+>  arch/loongarch/mm/ioremap.c     | 9 +++++++++
+>  drivers/acpi/Kconfig            | 2 +-
+>  4 files changed, 17 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/loongarch/include/asm/io.h b/arch/loongarch/include/asm=
+/io.h
+> index 5e95a60df180..3049bccec693 100644
+> --- a/arch/loongarch/include/asm/io.h
+> +++ b/arch/loongarch/include/asm/io.h
+> @@ -10,6 +10,7 @@
+>
+>  #include <asm/addrspace.h>
+>  #include <asm/cpu.h>
+> +#include <asm/early_ioremap.h>
+>  #include <asm/page.h>
+>  #include <asm/pgtable-bits.h>
+>  #include <asm/string.h>
+> @@ -17,9 +18,6 @@
+>  extern void __init __iomem *early_ioremap(u64 phys_addr, unsigned long s=
+ize);
+>  extern void __init early_iounmap(void __iomem *addr, unsigned long size)=
+;
+>
+> -#define early_memremap early_ioremap
+> -#define early_memunmap early_iounmap
+> -
+>  #ifdef CONFIG_ARCH_IOREMAP
+>
+>  static inline void __iomem *ioremap_prot(phys_addr_t offset, unsigned lo=
+ng size,
+> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+> index 929a497c987e..2993d7921198 100644
+> --- a/arch/loongarch/kernel/acpi.c
+> +++ b/arch/loongarch/kernel/acpi.c
+> @@ -9,6 +9,7 @@
+>
+>  #include <linux/init.h>
+>  #include <linux/acpi.h>
+> +#include <linux/efi-bgrt.h>
+>  #include <linux/irq.h>
+>  #include <linux/irqdomain.h>
+>  #include <linux/memblock.h>
+> @@ -39,14 +40,14 @@ void __init __iomem * __acpi_map_table(unsigned long =
+phys, unsigned long size)
+>         if (!phys || !size)
+>                 return NULL;
+>
+> -       return early_memremap(phys, size);
+> +       return (void __iomem *)early_memremap(phys, size);
+>  }
+>  void __init __acpi_unmap_table(void __iomem *map, unsigned long size)
+>  {
+>         if (!map || !size)
+>                 return;
+>
+> -       early_memunmap(map, size);
+> +       early_memunmap((void *)map, size);
+>  }
+>
+>  void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size=
+)
+> @@ -212,6 +213,9 @@ void __init acpi_boot_table_init(void)
+>         /* Do not enable ACPI SPCR console by default */
+>         acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
+>
+> +       if (IS_ENABLED(CONFIG_ACPI_BGRT))
+> +               acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
+> +
+>         return;
+>
+>  fdt_earlycon:
+> diff --git a/arch/loongarch/mm/ioremap.c b/arch/loongarch/mm/ioremap.c
+> index 70ca73019811..28562ac510c8 100644
+> --- a/arch/loongarch/mm/ioremap.c
+> +++ b/arch/loongarch/mm/ioremap.c
+> @@ -16,6 +16,15 @@ void __init early_iounmap(void __iomem *addr, unsigned=
+ long size)
+>
+>  }
+>
+> +void __init *early_memremap(resource_size_t phys_addr, unsigned long siz=
+e)
+> +{
+> +       return (__force void *)early_ioremap(phys_addr, size);
+> +}
+> +
+> +void __init early_memunmap(void *addr, unsigned long size)
+> +{
+> +}
+> +
+>  void *early_memremap_ro(resource_size_t phys_addr, unsigned long size)
+>  {
+>         return early_memremap(phys_addr, size);
+> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> index e3a7c2aedd5f..d67f63d93b2a 100644
+> --- a/drivers/acpi/Kconfig
+> +++ b/drivers/acpi/Kconfig
+> @@ -451,7 +451,7 @@ config ACPI_HED
+>
+>  config ACPI_BGRT
+>         bool "Boottime Graphics Resource Table support"
+> -       depends on EFI && (X86 || ARM64)
+> +       depends on EFI && (X86 || ARM64 || LOONGARCH)
+>         help
+>           This driver adds support for exposing the ACPI Boottime Graphic=
+s
+>           Resource Table, which allows the operating system to obtain
+>
+> base-commit: 196145c606d0f816fd3926483cb1ff87e09c2c0b
+> --
+> 2.39.3
+>
+>
 
