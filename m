@@ -1,191 +1,122 @@
-Return-Path: <linux-kernel+bounces-329356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6FE979054
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:11:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FD8978FF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FA051C223E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D5B71F22B21
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DF91CF2BF;
-	Sat, 14 Sep 2024 11:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AD71CEEA1;
+	Sat, 14 Sep 2024 10:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="mxZD+nC2"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="a/PVE6cN"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE9F1CE71F;
-	Sat, 14 Sep 2024 11:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39404139CE9;
+	Sat, 14 Sep 2024 10:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726312286; cv=none; b=k5aEJsV9JBEc4FS1jQtDfT0FuMGaDpF9nX7PWnbRDtmcn+HoyPPKUOh4S+o9lgKWPigVTWYQSYwzir0m6QYqJkfgunQRZhSCbUNU3IMkvQ+ydcGpTa/wRdToJwsUe4/bMkzb8USBkPEtEWCGol9+K6muEMol2vtScPp8IBlpu60=
+	t=1726309789; cv=none; b=svB7m+gc+sMeH+CFrQAbULQi2NjCANfEh6AedqLjXHqYoDGzMA1XsymVWoHuzWJUtmPrpHgpZJxWmu5YO4+j0PE8Fw5eLmrsBQUOfuhbcP55WwE9hEgz6/hCLm3L/yIrTpsmZ+JcianyJ1V4aSwyOCrcs/HnC5AYYq2+x9HSA1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726312286; c=relaxed/simple;
-	bh=1aGP2ubyvlPoEmFhGtZ1hFKOD0UpMhJppFF6WSwrEmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HiPnXY5yQ/erx56d4Rlnf/uy7He2ZV+GyFRdalwsF6vT0htlqXE/xZCvqPdjUzIWmj2d73JCS86TeFa4M8s7zp8Wtb0CwaTmuem/3GhIxVjAiRTZjYG0UpqsST0m59wNXLox8j3cggxAHNsBwK2/wVYbDvkBHiS10jTjeTNp1ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=mxZD+nC2 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id e74fefbdeaa75e17; Sat, 14 Sep 2024 13:11:23 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 822248532AE;
-	Sat, 14 Sep 2024 13:11:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1726312282;
-	bh=1aGP2ubyvlPoEmFhGtZ1hFKOD0UpMhJppFF6WSwrEmA=;
-	h=From:Subject:Date;
-	b=mxZD+nC2qi0WsWWYJvxP7JQCAn3mkvaMm0odBTFz4lvvld8hfR0BgNwwNkN13tliz
-	 lViaGxKu6r9ZhiQz6ko4zdEgaGi4T/KqwWxOK3F9pTJ4qetzaURvq2O+8DsPTPHRHs
-	 cWzFZIYlgp2Qa1OU+KErPOMzHcEnB9ayF+gUdlOD7mE5WqWzR5JPadILx0xU2h1SwX
-	 ajWIJTTem/AjyJnvwyykB/zo0jzG1Dhq+tyBPjk0Mf6maXpKEw3b7UhHZlMR9DBNDW
-	 x0vBX4cGnj1lHiMwMQ0xATLToMxsluQC+71dhJ2ij/RpRwTOLFZH2dogsFVcPu/uux
-	 gIxzBkL50CAyw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [RFC PATCH for 6.13 v1 03/20] thermal: core: Represent suspend-related
- thermal zone flags as bits
-Date: Sat, 14 Sep 2024 12:28:43 +0200
-Message-ID: <2215885.irdbgypaU6@rjwysocki.net>
-In-Reply-To: <6100907.lOV4Wx5bFT@rjwysocki.net>
-References: <6100907.lOV4Wx5bFT@rjwysocki.net>
+	s=arc-20240116; t=1726309789; c=relaxed/simple;
+	bh=oqxt8qh5CI6tQrJsN0hHnJsXYeDBrlCbLqId3kb3IMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lVJSuELHo9EX+dJWqIEtPhgH6jOWAec6edKr6DpfkCU1jd7MKl5PihyNsWOlwJRP+vs4BLAkzoUeTFX3Ao4vLzeEGaLGh4NivRcSgX8vDtQhVcPDFibEuWawpJDctaAqRevwre18eDHQ+Ut4/QpQynF8bfmGVO2B6kyrlfrXKCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=a/PVE6cN; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+Message-ID: <8515a57b-4369-4bd9-a43f-b5543295a472@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1726309779;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1bnCm56rV4nld5AJ7M6A+mhuRfHAViEPcep8BayClas=;
+	b=a/PVE6cN6/W3UECA3p1gpXD5WJuyhijlaKmHWgVaPVHdsbZv8Lo4+f8xympZZukMiWZa9t
+	k7VyyN+zyghJDJr1xM7KPVrpuPdVLIamK6fzDRzg3UiNeOm1B4JozCOCKnC3RWFUiFJ+t1
+	7qUJeBfNpTs6D+orHgqPj/VtMSa0Q5k=
+Date: Sat, 14 Sep 2024 13:30:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudektddgfeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdr
- tghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=40 Fuz1=40 Fuz2=40
+Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <20240910184125.224651-1-casey@schaufler-ca.com>
+ <20240910184125.224651-2-casey@schaufler-ca.com>
+ <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
+ <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
+Content-Language: en-US
+From: Konstantin Andreev <andreev@swemel.ru>
+Disposition-Notification-To: Konstantin Andreev <andreev@swemel.ru>
+In-Reply-To: <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 14 Sep 2024 10:29:39.0513 (UTC) FILETIME=[010BB290:01DB0691]
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Casey Schaufler, 14 Sep 2024:
+> On 9/13/2024 1:49 PM, Konstantin Andreev wrote:
+>> Casey Schaufler, 10 Sep 2024:
+>>> ...
+>>> The lsm_prop structure definition is intended to keep the LSM
+>>> specific information private to the individual security modules.
+>>> ...
+>>> index 1390f1efb4f0..1027c802cc8c 100644
+>>> --- a/include/linux/security.h
+>>> +++ b/include/linux/security.h
+>>> @@ -140,6 +144,22 @@ enum lockdown_reason {
+>>> +
+>>> +/*
+>>> + * Data exported by the security modules
+>>> + */
+>>> +struct lsm_prop {
+>>> +    struct lsm_prop_selinux selinux;
+>>> +    struct lsm_prop_smack smack;
+>>> +    struct lsm_prop_apparmor apparmor;
+>>> +    struct lsm_prop_bpf bpf;
+>>> +    struct lsm_prop_scaffold scaffold;
+>>> +};
+>>
+>> This design prevents compiling and loading out-of-tree 3rd party LSM,
+>> am I right?
+> 
+> No more so than the existing implementation. An upstream acceptable
+> scheme for loading out-of-tree LSMs has much bigger issues to address
+> than adding an element to struct lsm_prop.
+> 
+>> Out-of-tree LSM's were discussed recently at
+>>
+>> https://lore.kernel.org/linux-security-module/efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp/T/
+>> https://lore.kernel.org/linux-security-module/960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp/T/
+>>
+>> but it looks like a final decision to ban them is not taken yet.
+> 
+> There has never been (to my knowledge) an effort to "ban" out-of-tree
+> LSMs. There has also not been interest in actively supporting them since
+> the "L" in LSM changed from "Loadable" to "Linux", with the exception of
+> Tetsuo Handa, who has been invited to suggest a viable mechanism. There
+> is currently support for BPF based security implementations, which can
+> be maintained out-of-tree. We are currently battling with the notion that
+> the LSM infrastructure is an attack surface. We really don't want to do
+> anything to increase that exposure.
 
-Instead of using two separate fields in struct thermal_zone_device for
-representing flags related to thermal zone suspend, represent them
-explicitly as bits in one u8 "state" field.
+Thank you for explaining this. Although the “ban” is a side effect of the
+other activity, I think the “ban” should be explicitly recognized as ban,
+rather than evasive “we don’t care”.
 
-Subsequently, that field will be used for addressing race conditions
-related to thermal zone initialization and exit.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |   11 +++++------
- drivers/thermal/thermal_core.h |   11 +++++++----
- 2 files changed, 12 insertions(+), 10 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -497,7 +497,7 @@ void __thermal_zone_device_update(struct
- 	int low = -INT_MAX, high = INT_MAX;
- 	int temp, ret;
- 
--	if (tz->suspended || tz->mode != THERMAL_DEVICE_ENABLED)
-+	if (tz->state != TZ_STATE_READY || tz->mode != THERMAL_DEVICE_ENABLED)
- 		return;
- 
- 	ret = __thermal_zone_get_temp(tz, &temp);
-@@ -1651,7 +1651,7 @@ static void thermal_zone_device_resume(s
- 
- 	guard(thermal_zone)(tz);
- 
--	tz->suspended = false;
-+	tz->state &= ~(TZ_STATE_FLAG_SUSPENDED | TZ_STATE_FLAG_RESUMING);
- 
- 	thermal_debug_tz_resume(tz);
- 	thermal_zone_device_init(tz);
-@@ -1659,14 +1659,13 @@ static void thermal_zone_device_resume(s
- 	__thermal_zone_device_update(tz, THERMAL_TZ_RESUME);
- 
- 	complete(&tz->resume);
--	tz->resuming = false;
- }
- 
- static void thermal_zone_pm_prepare(struct thermal_zone_device *tz)
- {
- 	guard(thermal_zone)(tz);
- 
--	if (tz->resuming) {
-+	if (tz->state & TZ_STATE_FLAG_RESUMING) {
- 		/*
- 		 * thermal_zone_device_resume() queued up for this zone has not
- 		 * acquired the lock yet, so release it to let the function run
-@@ -1679,7 +1678,7 @@ static void thermal_zone_pm_prepare(stru
- 		mutex_lock(&tz->lock);
- 	}
- 
--	tz->suspended = true;
-+	tz->state |= TZ_STATE_FLAG_SUSPENDED;
- }
- 
- static void thermal_zone_pm_complete(struct thermal_zone_device *tz)
-@@ -1689,7 +1688,7 @@ static void thermal_zone_pm_complete(str
- 	cancel_delayed_work(&tz->poll_queue);
- 
- 	reinit_completion(&tz->resume);
--	tz->resuming = true;
-+	tz->state |= TZ_STATE_FLAG_RESUMING;
- 
- 	/*
- 	 * Replace the work function with the resume one, which will restore the
-Index: linux-pm/drivers/thermal/thermal_core.h
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.h
-+++ linux-pm/drivers/thermal/thermal_core.h
-@@ -62,6 +62,11 @@ struct thermal_governor {
- 	struct list_head	governor_list;
- };
- 
-+#define	TZ_STATE_FLAG_SUSPENDED	BIT(0)
-+#define	TZ_STATE_FLAG_RESUMING	BIT(1)
-+
-+#define TZ_STATE_READY		0
-+
- /**
-  * struct thermal_zone_device - structure for a thermal zone
-  * @id:		unique id number for each thermal zone
-@@ -103,8 +108,7 @@ struct thermal_governor {
-  * @node:	node in thermal_tz_list (in thermal_core.c)
-  * @poll_queue:	delayed work for polling
-  * @notify_event: Last notification event
-- * @suspended: thermal zone suspend indicator
-- * @resuming:	indicates whether or not thermal zone resume is in progress
-+ * @state: 	current state of the thermal zone
-  * @trips:	array of struct thermal_trip objects
-  */
- struct thermal_zone_device {
-@@ -139,8 +143,7 @@ struct thermal_zone_device {
- 	struct list_head node;
- 	struct delayed_work poll_queue;
- 	enum thermal_notify_event notify_event;
--	bool suspended;
--	bool resuming;
-+	u8 state;
- #ifdef CONFIG_THERMAL_DEBUGFS
- 	struct thermal_debugfs *debugfs;
- #endif
-
-
-
+The reason I think so is that this decision significantly (at times)
+increases the cost of user (here: system owner) <-> 3rd party LSM developer
+interaction, and decreases openness of Linux in this particular aspect.
+--
+Konstantin Andreev
 
