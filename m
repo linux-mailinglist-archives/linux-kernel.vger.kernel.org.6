@@ -1,307 +1,170 @@
-Return-Path: <linux-kernel+bounces-329065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81224978CD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:52:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D476978CDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 051F91F26339
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:52:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECDBC1C24733
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8B3134B2;
-	Sat, 14 Sep 2024 02:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="O7/l4jf6"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3BB16426;
+	Sat, 14 Sep 2024 02:53:09 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8211078F
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E626D4C92;
+	Sat, 14 Sep 2024 02:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726282333; cv=none; b=X6itvYxAfYvvRw9RM6QT4XSqzc4PqfOzCf45dYz4UbOD5zOP82B6Y6QTPzxf4GpSQPSQ53YpzQHukLcqVKWzNwO4KfRusDk5hXai5arFijy69lpjDeMcTB9LWIn/I6Botbh6KWBwEMlY8PIq8tmHrBSHLqYVUXcmWfYiLXx9Tgs=
+	t=1726282389; cv=none; b=BU+asmbGYTGkP9tPEQ3NFG/uTLwIOkRW2pNQV3WYScDCovFD6aQk18vSDSwATn+RQ/sxfHQGfMNmw/eU7FR7XtUOvB7Zzy4Vb7VLTNICEypHmnOHD69duTd7y5jUe55mBurqlagG9QZGVRnIjZVS2klf5JwdsSHQlKAh5GD8miU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726282333; c=relaxed/simple;
-	bh=1Gr5pJH9pMrNB4Z2ewdxf3KB031tjCazkwMcq3AHEks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VRkzwidtA+Hv4sVgqKkq9ZgCISVM4hC7qMFBe+/KwMKQaH22gJbpLf1IJ1H2zi5mJPu0JXOhvMQNYWEg4MqIzJPagm7P+2nrkkj1wTvtepKDg870mOifv1suU0EvkrejsMvczW7H4mLuBsbKxXybuoJWZS8/o0HCR1dbV9P7/YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=O7/l4jf6; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a046d4c465so9595985ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1726282330; x=1726887130; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PcgocvC07KwdgYkvDV/qMfScM5+LqmPejCCEAA1uMJI=;
-        b=O7/l4jf6WeHi3/qunfph2cyQj94ZPUkAtgNgcMFvigFIzUCCXx9Q8kuFw1Tz52eyiu
-         a04cS3mJ/OeBbfxXrrPIUX7kyjTrTFROQOjL9Llx9Wta/I3kBvM0W4pksc/l+4T4N7nt
-         3yGauRwmLcCCWBNBkyJH0tWFKKylkcrNMFOVeJKzC2KY6xiSsMXMNLZ5SkKGHMDqkFT6
-         /wVMqYk09lis4/r83VD3lDgyWWnNUimTOGCHGnefVRETqy1K2lUDtZzOEzc5nBBZRDy2
-         jzVbx480MMm8rlllzyUMm9bcQvnCJlEhjwZ5AV9SzG2FbQCdxcdRIjcP5SyaypbVHhq/
-         VevQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726282330; x=1726887130;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PcgocvC07KwdgYkvDV/qMfScM5+LqmPejCCEAA1uMJI=;
-        b=GWPlHyONMKh1bfa9CtE107OvKpbHMRftyGZw8ysGx7dTIL6DgYDKf7DS93zOz2G3OK
-         2ciOmVP1UGEtZkiJwY7tkzuvtkwm1f3WKu7NCU+x4L6mm5LEc/Uk0BIZKv1LpdPznA3E
-         PGS8q3QEyWwGsAX/QCUxebCxb5XcB8+deKFoh5SxYMZ8IVNnEtnUIM0R12gZRwUxTV4v
-         U0rT6pWH8SA5gIF8tsFCkCyHWmUun3c6639RbB4Wkz+3O74qO595YsQnALzAFNSoK7Q3
-         luOV8G5o/JhEqN/2M2ZlyuWGCHoZTTPn8J3xCkL8LNvi6neLLdyU1yDl9qHkGEk9S9Y1
-         1KDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxIGHJDICQIV5kA2Yb/E+tdA73nzT7oM4KXthOpSW9AA0bFg0EUKzBbKQ1A9ApUxMnA70yZOX7ra2u2Ak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk/dDunWLXKJQ3+ohgxLUTAgj9JQDrzDzylNcbqoxd2XkbcFWh
-	EMme1/YflCOo0L6PgrR54C7z4mkD5rYG7soMTLhDkzKO8HIWBXIiCGT6LTEA1Cw=
-X-Google-Smtp-Source: AGHT+IEaD4v+a/RKnKmId+r+Iz4R86fNRYyVeVXynZnVMTjpM3fXydjExpGYdtf8Iye3kIi/wgX9bQ==
-X-Received: by 2002:a05:6e02:5ad:b0:3a0:8dae:8b06 with SMTP id e9e14a558f8ab-3a08dae8c99mr24837465ab.9.1726282330175;
-        Fri, 13 Sep 2024 19:52:10 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a092dfe1d8sm1609685ab.13.2024.09.13.19.52.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 19:52:09 -0700 (PDT)
-Message-ID: <8e474b14-e963-4d3e-8240-37f662e7bd8a@sifive.com>
-Date: Fri, 13 Sep 2024 21:52:07 -0500
+	s=arc-20240116; t=1726282389; c=relaxed/simple;
+	bh=CzdkWVv9/yiMtGtG4wA7P6VDMMTifj0mpX3iXE4TtcU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=sAosRz5Wnqa1LOb3NSXPuC/7ke7FXlEgYmSqAe+iuG3kmziARu34wPjc9sx4A38/vjmqcQ5hwQMQPeAUqCULOqoIHLgPJd3c2cO2ibw6uOB6EfEFis+PX7Fvw44AUcH0Z/M7Z4BqTWikhNVN/W6Pbq4wCzi9i6gWLbdx7aDsr9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4X5G262rV7z23jX3;
+	Sat, 14 Sep 2024 10:53:02 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1523A140134;
+	Sat, 14 Sep 2024 10:53:03 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Sat, 14 Sep 2024 10:53:02 +0800
+Message-ID: <cfa88a34-617b-9a24-a648-55262a4e8a4c@huawei.com>
+Date: Sat, 14 Sep 2024 10:53:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/10] RISC-V: KVM: Allow Smnpm and Ssnpm extensions
- for guests
-To: Anup Patel <anup@brainfault.org>
-Cc: Anup Patel <apatel@ventanamicro.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
- linux-kernel@vger.kernel.org, Conor Dooley <conor@kernel.org>,
- kasan-dev@googlegroups.com, Atish Patra <atishp@atishpatra.org>,
- Evgenii Stepanov <eugenis@google.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- kvm-riscv@lists.infradead.org
-References: <20240829010151.2813377-1-samuel.holland@sifive.com>
- <20240829010151.2813377-10-samuel.holland@sifive.com>
- <CAK9=C2WjraWjuQCeU2Y4Jhr-gKkOcP42Sza7wVp0FgeGaD923g@mail.gmail.com>
- <b6de8769-7e4e-4a19-b239-a39fd424e0c8@sifive.com>
- <CAAhSdy08SoDoZCii9R--BK7_NKLnRciW7V3mo2aQRKW1dbOgNg@mail.gmail.com>
- <20ab0fa2-d5dd-446d-9fff-a3ef82e8db35@sifive.com>
- <CAAhSdy1pZcEfajg3OZUCaFf9JMYcMzpRVogCT5VL2FHx__vDdA@mail.gmail.com>
- <4c010cb1-b57c-427e-a241-1dd3ab15f2ce@sifive.com>
- <CAAhSdy0kYUdgX8NUKuOdQa-69ET=cscduJvyz3z31kVeB-JaNw@mail.gmail.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <CAAhSdy0kYUdgX8NUKuOdQa-69ET=cscduJvyz3z31kVeB-JaNw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v3 0/2] uprobes: Improve scalability by reducing the
+ contention on siglock
+From: "Liao, Chang" <liaochang1@huawei.com>
+To: <oleg@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>, Masami Hiramatsu
+	<mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko
+	<andrii@kernel.org>
+References: <20240815014629.2685155-1-liaochang1@huawei.com>
+In-Reply-To: <20240815014629.2685155-1-liaochang1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-Hi Anup,
+Hi, Oleg
 
-On 2024-09-05 12:18 AM, Anup Patel wrote:
-> On Wed, Sep 4, 2024 at 9:25 PM Samuel Holland <samuel.holland@sifive.com> wrote:
->>
->> On 2024-09-04 10:20 AM, Anup Patel wrote:
->>> On Wed, Sep 4, 2024 at 8:27 PM Samuel Holland <samuel.holland@sifive.com> wrote:
->>>>
->>>> Hi Anup,
->>>>
->>>> On 2024-09-04 9:45 AM, Anup Patel wrote:
->>>>> On Wed, Sep 4, 2024 at 8:01 PM Samuel Holland <samuel.holland@sifive.com> wrote:
->>>>>> On 2024-09-04 7:17 AM, Anup Patel wrote:
->>>>>>> On Thu, Aug 29, 2024 at 6:32 AM Samuel Holland
->>>>>>> <samuel.holland@sifive.com> wrote:
->>>>>>>>
->>>>>>>> The interface for controlling pointer masking in VS-mode is henvcfg.PMM,
->>>>>>>> which is part of the Ssnpm extension, even though pointer masking in
->>>>>>>> HS-mode is provided by the Smnpm extension. As a result, emulating Smnpm
->>>>>>>> in the guest requires (only) Ssnpm on the host.
->>>>>>>>
->>>>>>>> Since the guest configures Smnpm through the SBI Firmware Features
->>>>>>>> interface, the extension can be disabled by failing the SBI call. Ssnpm
->>>>>>>> cannot be disabled without intercepting writes to the senvcfg CSR.
->>>>>>>>
->>>>>>>> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
->>>>>>>> ---
->>>>>>>>
->>>>>>>> (no changes since v2)
->>>>>>>>
->>>>>>>> Changes in v2:
->>>>>>>>  - New patch for v2
->>>>>>>>
->>>>>>>>  arch/riscv/include/uapi/asm/kvm.h | 2 ++
->>>>>>>>  arch/riscv/kvm/vcpu_onereg.c      | 3 +++
->>>>>>>>  2 files changed, 5 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
->>>>>>>> index e97db3296456..4f24201376b1 100644
->>>>>>>> --- a/arch/riscv/include/uapi/asm/kvm.h
->>>>>>>> +++ b/arch/riscv/include/uapi/asm/kvm.h
->>>>>>>> @@ -175,6 +175,8 @@ enum KVM_RISCV_ISA_EXT_ID {
->>>>>>>>         KVM_RISCV_ISA_EXT_ZCF,
->>>>>>>>         KVM_RISCV_ISA_EXT_ZCMOP,
->>>>>>>>         KVM_RISCV_ISA_EXT_ZAWRS,
->>>>>>>> +       KVM_RISCV_ISA_EXT_SMNPM,
->>>>>>>> +       KVM_RISCV_ISA_EXT_SSNPM,
->>>>>>>>         KVM_RISCV_ISA_EXT_MAX,
->>>>>>>>  };
->>>>>>>>
->>>>>>>> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
->>>>>>>> index b319c4c13c54..6f833ec2344a 100644
->>>>>>>> --- a/arch/riscv/kvm/vcpu_onereg.c
->>>>>>>> +++ b/arch/riscv/kvm/vcpu_onereg.c
->>>>>>>> @@ -34,9 +34,11 @@ static const unsigned long kvm_isa_ext_arr[] = {
->>>>>>>>         [KVM_RISCV_ISA_EXT_M] = RISCV_ISA_EXT_m,
->>>>>>>>         [KVM_RISCV_ISA_EXT_V] = RISCV_ISA_EXT_v,
->>>>>>>>         /* Multi letter extensions (alphabetically sorted) */
->>>>>>>> +       [KVM_RISCV_ISA_EXT_SMNPM] = RISCV_ISA_EXT_SSNPM,
->>>>>>>
->>>>>>> Why not use KVM_ISA_EXT_ARR() macro here ?
->>>>>>
->>>>>> Because the extension name in the host does not match the extension name in the
->>>>>> guest. Pointer masking for HS mode is provided by Smnpm. Pointer masking for VS
->>>>>> mode is provided by Ssnpm at the hardware level, but this needs to appear to the
->>>>>> guest as if Smnpm was implemented, since the guest thinks it is running on bare
->>>>>> metal.
->>>>>
->>>>> Okay, makes sense.
->>>>>
->>>>>>
->>>>>>>>         KVM_ISA_EXT_ARR(SMSTATEEN),
->>>>>>>>         KVM_ISA_EXT_ARR(SSAIA),
->>>>>>>>         KVM_ISA_EXT_ARR(SSCOFPMF),
->>>>>>>> +       KVM_ISA_EXT_ARR(SSNPM),
->>>>>>>>         KVM_ISA_EXT_ARR(SSTC),
->>>>>>>>         KVM_ISA_EXT_ARR(SVINVAL),
->>>>>>>>         KVM_ISA_EXT_ARR(SVNAPOT),
->>>>>>>> @@ -129,6 +131,7 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(unsigned long ext)
->>>>>>>>         case KVM_RISCV_ISA_EXT_M:
->>>>>>>>         /* There is not architectural config bit to disable sscofpmf completely */
->>>>>>>>         case KVM_RISCV_ISA_EXT_SSCOFPMF:
->>>>>>>> +       case KVM_RISCV_ISA_EXT_SSNPM:
->>>>>>>
->>>>>>> Why not add KVM_RISCV_ISA_EXT_SMNPM here ?
->>>>>>>
->>>>>>> Disabling Smnpm from KVM user space is very different from
->>>>>>> disabling Smnpm from Guest using SBI FWFT extension.
->>>>>>
->>>>>> Until a successful SBI FWFT call to KVM to enable pointer masking for VS mode,
->>>>>> the existence of Smnpm has no visible effect on the guest. So failing the SBI
->>>>>> call is sufficient to pretend that the hardware does not support Smnpm.
->>>>>>
->>>>>>> The KVM user space should always add Smnpm in the
->>>>>>> Guest ISA string whenever the Host ISA string has it.
->>>>>>
->>>>>> I disagree. Allowing userspace to disable extensions is useful for testing and
->>>>>> to support migration to hosts which do not support those extensions. So I would
->>>>>> only add extensions to this list if there is no possible way to disable them.
->>>>>
->>>>> I am not saying to disallow KVM user space disabling Smnpm.
->>>>
->>>> Then I'm confused. This is the "return false;" switch case inside
->>>> kvm_riscv_vcpu_isa_disable_allowed(). If I add KVM_RISCV_ISA_EXT_SMNPM here,
->>>> then (unless I am misreading the code) I am disallowing KVM userspace from
->>>> disabling Smnpm in the guest (i.e. preventing KVM userspace from removing Smnpm
->>>> from the guest ISA string). If that is not desired, then why do you suggest I
->>>> add KVM_RISCV_ISA_EXT_SMNPM here?
->>>
->>> Yes, adding KVM_RISCV_ISA_EXT_SMNPM here means KVM
->>> user space can't disable it using ONE_REG interface but KVM user
->>> space can certainly not add it in the Guest ISA string.
->>
->> Is there a problem with allowing KVM userspace to disable the ISA extension with
->> the ONE_REG interface?
->>
->> If KVM userspace removes Smnpm from the ISA string without the host kernel's
->> knowledge, that doesn't actually prevent the guest from successfully calling
->> sbi_fwft_set(POINTER_MASKING_PMLEN, ...), so it doesn't guarantee that the VM
->> can be migrated to a host without pointer masking support. So the ONE_REG
->> interface still has value. (And that's my answer to your original question "Why
->> not add KVM_RISCV_ISA_EXT_SMNPM here ?")
-> 
-> Currently, disabling KVM_RISCV_ISA_EXT_SMNPM via ONE_REG
-> will only clear the corresponding bit in VCPU isa bitmap. Basically, the
-> KVM user space disabling KVM_RISCV_ISA_EXT_SMNPM for Guest
-> changes nothing for the Guest/VM.
-> 
-> On other hand, disabling KVM_RISCV_ISA_EXT_SVPBMT via
-> ONE_REG will not only clear it from VCPU isa bitmap but also
-> disable Svpmbt from henvcfg CSR for the Guest/VM.
-> 
-> In other words, if disabling an ISA extension is allowed by the
-> kvm_riscv_vcpu_isa_disable_allowed() then the Guest/VM must
-> see a different behaviour when the ISA extension is disabled by
-> KVM user space.
-> 
->>
->>>>> The presence of Smnpm in ISA only means that it is present in HW
->>>>> but it needs to be explicitly configured/enabled using SBI FWFT.
->>>>>
->>>>> KVM user space can certainly disable extensions by not adding it to
->>>>> ISA string based on the KVMTOOL/QEMU-KVM command line option.
->>>>> Additionally, when SBI FWFT is added to KVM RISC-V. It will have its
->>>>> own way to explicitly disable firmware features from KVM user space.
->>>>
->>>> I think we agree on this, but your explanation here appears to conflict with
->>>> your suggested code change. Apologies if I'm missing something.
->>>
->>> I think the confusion is about what does it mean when Smnpm is present
->>> in the ISA string. We have two approaches:
->>>
->>> 1) Presence of Smnpm in ISA string only means it is present in HW but
->>>     says nothing about its enable/disable state. To configure/enable
->>>     Smnpm, the supervisor must use SBI FWFT.
->>>
->>> 2) Presence of Smnpm in ISA string means it is present in HW and
->>>     enabled at boot-time. To re-configure/disable Smnpm, the supervisor
->>>     must use SBI FWFT.
->>>
->>> I am suggesting approach #1 but I am guessing you are leaning towards
->>> approach #2 ?
->>>
->>> For approach #2, additional hencfg.PMM configuration is required in
->>> this patch based on the state of KVM_RISCV_ISA_EXT_SMNPM.
->>
->> No, I am definitely suggesting only approach #1. My proposal for adding pointer
->> masking to the SBI FWFT extension[1] specifies the feature as disabled by
->> default, and this would apply both inside and ouside a VM.
->>
->> But I am also suggesting that the ONE_REG interface is a useful way to
->> completely hide the extension from the guest, like we do for other extensions
->> such as Svpbmt. The only difference between something like Svpbmt and Smnpm is
->> that instead of clearing a bit in henvcfg to hide the extension from the guest,
->> we reject calls to sbi_fwft_set(POINTER_MASKING_PMLEN, ...) when the ISA
->> extension is hidden from the guest.
-> 
-> I think we are converging towards the same thing.
-> 
-> How about this ?
-> 
-> For this series, lets add KVM_RISCV_ISA_EXT_SMNPM to
-> kvm_riscv_vcpu_isa_disable_allowed() so that for the time
-> being KVM user space can't disable Smnpm.
-> 
-> In the future, a separate series which adds SBI FWFT to
-> KVM RISC-V will remove KVM_RISCV_ISA_EXT_SMNPM
-> from the kvm_riscv_vcpu_isa_disable_allowed() because
-> disabling Smnpm from KVM user space would mean that
-> the POINTER_MASKING_PMLEN firmware feature is
-> not available to the Guest/VM.
-> 
-> This means in the future (after SBI FWFT is implemented in
-> KVM RISC-V), Guest with Smnpm disabled can be migrated
-> to a host without pointer masking.
+Kindly ping.
 
-OK, that is a reasonable compromise. I'll do that for v5.
+This series have been pending for a month. Is thre any issue I overlook?
 
-Regards,
-Samuel
+Thanks.
 
+在 2024/8/15 9:46, Liao Chang 写道:
+> The profiling result of BPF selftest on ARM64 platform reveals the
+> significant contention on the current->sighand->siglock is the
+> scalability bottleneck. The reason is also very straightforward that all
+> producer threads of benchmark have to contend the spinlock mentioned to
+> resume the TIF_SIGPENDING bit in thread_info that might be removed in
+> uprobe_deny_signal().
+> 
+> The contention on current->sighand->siglock is unnecessary, this series
+> remove them thoroughly. I've use the script developed by Andrii in [1]
+> to run benchmark. The CPU used was Kunpeng916 (Hi1616), 4 NUMA nodes,
+> 64 cores@2.4GHz running the kernel on next tree + the optimization in
+> [2] for get_xol_insn_slot().
+> 
+> before-opt
+> ----------
+> uprobe-nop      ( 1 cpus):    0.907 ± 0.003M/s  (  0.907M/s/cpu)
+> uprobe-nop      ( 2 cpus):    1.676 ± 0.008M/s  (  0.838M/s/cpu)
+> uprobe-nop      ( 4 cpus):    3.210 ± 0.003M/s  (  0.802M/s/cpu)
+> uprobe-nop      ( 8 cpus):    4.457 ± 0.003M/s  (  0.557M/s/cpu)
+> uprobe-nop      (16 cpus):    3.724 ± 0.011M/s  (  0.233M/s/cpu)
+> uprobe-nop      (32 cpus):    2.761 ± 0.003M/s  (  0.086M/s/cpu)
+> uprobe-nop      (64 cpus):    1.293 ± 0.015M/s  (  0.020M/s/cpu)
+> 
+> uprobe-push     ( 1 cpus):    0.883 ± 0.001M/s  (  0.883M/s/cpu)
+> uprobe-push     ( 2 cpus):    1.642 ± 0.005M/s  (  0.821M/s/cpu)
+> uprobe-push     ( 4 cpus):    3.086 ± 0.002M/s  (  0.771M/s/cpu)
+> uprobe-push     ( 8 cpus):    3.390 ± 0.003M/s  (  0.424M/s/cpu)
+> uprobe-push     (16 cpus):    2.652 ± 0.005M/s  (  0.166M/s/cpu)
+> uprobe-push     (32 cpus):    2.713 ± 0.005M/s  (  0.085M/s/cpu)
+> uprobe-push     (64 cpus):    1.313 ± 0.009M/s  (  0.021M/s/cpu)
+> 
+> uprobe-ret      ( 1 cpus):    1.774 ± 0.000M/s  (  1.774M/s/cpu)
+> uprobe-ret      ( 2 cpus):    3.350 ± 0.001M/s  (  1.675M/s/cpu)
+> uprobe-ret      ( 4 cpus):    6.604 ± 0.000M/s  (  1.651M/s/cpu)
+> uprobe-ret      ( 8 cpus):    6.706 ± 0.005M/s  (  0.838M/s/cpu)
+> uprobe-ret      (16 cpus):    5.231 ± 0.001M/s  (  0.327M/s/cpu)
+> uprobe-ret      (32 cpus):    5.743 ± 0.003M/s  (  0.179M/s/cpu)
+> uprobe-ret      (64 cpus):    4.726 ± 0.016M/s  (  0.074M/s/cpu)
+> 
+> after-opt
+> ---------
+> uprobe-nop      ( 1 cpus):    0.985 ± 0.002M/s  (  0.985M/s/cpu)
+> uprobe-nop      ( 2 cpus):    1.773 ± 0.005M/s  (  0.887M/s/cpu)
+> uprobe-nop      ( 4 cpus):    3.304 ± 0.001M/s  (  0.826M/s/cpu)
+> uprobe-nop      ( 8 cpus):    5.328 ± 0.002M/s  (  0.666M/s/cpu)
+> uprobe-nop      (16 cpus):    6.475 ± 0.002M/s  (  0.405M/s/cpu)
+> uprobe-nop      (32 cpus):    4.831 ± 0.082M/s  (  0.151M/s/cpu)
+> uprobe-nop      (64 cpus):    2.564 ± 0.053M/s  (  0.040M/s/cpu)
+> 
+> uprobe-push     ( 1 cpus):    0.964 ± 0.001M/s  (  0.964M/s/cpu)
+> uprobe-push     ( 2 cpus):    1.766 ± 0.002M/s  (  0.883M/s/cpu)
+> uprobe-push     ( 4 cpus):    3.290 ± 0.009M/s  (  0.823M/s/cpu)
+> uprobe-push     ( 8 cpus):    4.670 ± 0.002M/s  (  0.584M/s/cpu)
+> uprobe-push     (16 cpus):    5.197 ± 0.004M/s  (  0.325M/s/cpu)
+> uprobe-push     (32 cpus):    5.068 ± 0.161M/s  (  0.158M/s/cpu)
+> uprobe-push     (64 cpus):    2.605 ± 0.026M/s  (  0.041M/s/cpu)
+> 
+> uprobe-ret      ( 1 cpus):    1.833 ± 0.001M/s  (  1.833M/s/cpu)
+> uprobe-ret      ( 2 cpus):    3.384 ± 0.003M/s  (  1.692M/s/cpu)
+> uprobe-ret      ( 4 cpus):    6.677 ± 0.004M/s  (  1.669M/s/cpu)
+> uprobe-ret      ( 8 cpus):    6.854 ± 0.005M/s  (  0.857M/s/cpu)
+> uprobe-ret      (16 cpus):    6.508 ± 0.006M/s  (  0.407M/s/cpu)
+> uprobe-ret      (32 cpus):    5.793 ± 0.009M/s  (  0.181M/s/cpu)
+> uprobe-ret      (64 cpus):    4.743 ± 0.016M/s  (  0.074M/s/cpu)
+> 
+> Above benchmark results demonstrates a obivious improvement in the
+> scalability of trig-uprobe-nop and trig-uprobe-push, the peak throughput
+> of which are from 4.5M/s to 6.4M/s and 3.3M/s to 5.1M/s individually.
+> 
+> v3->v2:
+> Renaming the flag in [2/2], s/deny_signal/signal_denied/g.
+> 
+> v2->v1:
+> Oleg pointed out the _DENY_SIGNAL will be replaced by _ACK upon the
+> completion of singlestep which leads to handle_singlestep() has no
+> chance to restore the removed TIF_SIGPENDING [3] and some case in
+> question. So this revision proposes to use a flag in uprobe_task to
+> track the denied TIF_SIGPENDING instead of new UPROBE_SSTEP state.
+> 
+> [1] https://lore.kernel.org/all/20240731214256.3588718-1-andrii@kernel.org
+> [2] https://lore.kernel.org/all/20240727094405.1362496-1-liaochang1@huawei.com
+> [3] https://lore.kernel.org/all/20240801082407.1618451-1-liaochang1@huawei.com
+> 
+> Liao Chang (2):
+>   uprobes: Remove redundant spinlock in uprobe_deny_signal()
+>   uprobes: Remove the spinlock within handle_singlestep()
+> 
+>  include/linux/uprobes.h |  1 +
+>  kernel/events/uprobes.c | 10 +++++-----
+>  2 files changed, 6 insertions(+), 5 deletions(-)
+> 
+
+-- 
+BR
+Liao, Chang
 
