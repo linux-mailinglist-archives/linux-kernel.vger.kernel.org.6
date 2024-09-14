@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-329167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C487E978E42
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:15:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0580C978E3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F64C1F2130D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9C0D284775
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C72C14F132;
-	Sat, 14 Sep 2024 06:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407061482ED;
+	Sat, 14 Sep 2024 06:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBYz5o2x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKtc53yV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA69474C1B;
-	Sat, 14 Sep 2024 06:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF896E614
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726294434; cv=none; b=KSNtf3/zds/BRCDbndpyfP+fbqxsJQj4fbzwFJNmXnyIgU/APfP3AyJKb7aCaqgMoFi71SoW78GYUo/w5q8c8Ar2FfOejVoVlC0usGBqgFp9WEWzThHzIFHtcQzI4wRYbdIWyllZRYU8GWrmlbK20ISxUw2N1QKycg/CzCCjqDE=
+	t=1726294434; cv=none; b=IRt5upJp63BWwjN+yi5pYQuSdrv0N1hc8H+UwD/6jn79DPYpCnOJ5IXHNjME+4HCyTwYGmU/6gIsPA+tgML1uQEDP9tn3yZ3c7BNCWpUQSpnnffk794ascWSbMa9ECWkVmNNkOM+TnkONWVfzj60RJcLlAFEhq74zwBLxwZW1xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726294434; c=relaxed/simple;
-	bh=j86Wt0drRUC8+O/GuJIO38u52d1Uwkl4NKopuoo6RP0=;
+	bh=rOz2cndH3nNMcDN2uIMMMoryGTnl09uDUgmaCBrSPzw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=izVtHV1oDmdOzJx3nf+PKq3KsudCvTKUsr2Ee1A2B8T5z8bpp9GwDt38UZ84xuVUGDDcL2Gkw34mTNJGJU4ffJxW9ZiCzT/zYEzRYIK+D4yI7mVdZ9TwWnsK9d8bxaEfRysC2ubKopL5GARB091ljQt9Es3zTNNE0vf4VU/9yo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBYz5o2x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30424C4CEDE;
+	 MIME-Version; b=dHIV8g+SR2Ozq7ho389j/9TRwpaJ7geJernABGAIdo8PvhF/Q8U58ZU/maSVxeCpegF8ryT98mCjO977/+FnXoAT7V+1okThVPJEe/vdg5g7zRUli47Xy9/6c0sOyoZ2kWgRKXR/hM75/b7jg9GOjO3WjcmwIOvqCxd+AiLKz8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKtc53yV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 287FEC4AF0D;
 	Sat, 14 Sep 2024 06:13:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1726294434;
-	bh=j86Wt0drRUC8+O/GuJIO38u52d1Uwkl4NKopuoo6RP0=;
+	bh=rOz2cndH3nNMcDN2uIMMMoryGTnl09uDUgmaCBrSPzw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CBYz5o2xAzHSKbCptSEajGxYj72BMJuTTmQrGJxcGJGCiEwk9ERy/JpI3LDVRVcOn
-	 GjpC68Lg9tCOALjKczBh56apwSCIlm1pmYC3Ch+pT19wUCvqR1s2Ty4q/mRIDsDfNO
-	 AHlTHdmYK7tBMWqm95Q58HBkZQSVncQUTbVBrQLqJqNhfxrui13Jf7zLUZptut3mm5
-	 h6aiBfEYo8FFr7i6/akGfPexwV+QE4WWhsjmhMRtoaY2eafXnQvVPd0lNEQVDHJNAK
-	 XJgZ0Fovf8W5VUPZdQ+YJrpF58b9cHxO/Y65lyBb5kpV6sYKSiAJfVoeQZD9CrRmZK
-	 mhKE0H4RT4YvA==
+	b=CKtc53yV3Irs96TZAqTudg8emR0URa67qodP02zdVGPrMX8LxRyCRlO44LF9AoFg4
+	 vK/AF+AXcskeHQH25OLrFLo87iSQmL1PrfuS1oOiqNlODG5mqzbgFTTAKe8PPZsEWP
+	 xeL4WJV9pwFfQ9WUxaQTzPgx+uhvYEFR9eigEmWZpv/VHCEl9EpELpbHUU4EPCoDGC
+	 a/STbxLG2IbS34rdKN305o+HqaISAZ5yCxbXf3l/hxjO3wocyW80w3bUuPqsH8cT1H
+	 tOvWZeQ0XM1SUBKerL6TybU7DYyJEgluT3eW8t4znXpc+g7RWoB9e8B+ZyRbcOot3g
+	 8cIOVxkpnW2mQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1spM2a-00000003V6F-1A4F;
+	id 1spM2a-00000003V6J-1Gmn;
 	Sat, 14 Sep 2024 08:13:52 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Igor Mammedov <imammedo@redhat.com>
@@ -52,15 +52,12 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	"Michael S. Tsirkin" <mst@redhat.com>,
 	Ani Sinha <anisinha@redhat.com>,
 	Dongjiu Geng <gengdongjiu1@gmail.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Peter Maydell <peter.maydell@linaro.org>,
-	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	qemu-arm@nongnu.org,
 	qemu-devel@nongnu.org
-Subject: [PATCH v10 13/21] acpi/ghes: better name GHES memory error function
-Date: Sat, 14 Sep 2024 08:13:34 +0200
-Message-ID: <0f9cbeee62a22b94a6487cc444d87fabd45626f7.1726293808.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v10 14/21] acpi/ghes: add a notifier to notify when error data is ready
+Date: Sat, 14 Sep 2024 08:13:35 +0200
+Message-ID: <bdcbee82bbcb614dd7ed57fd63d504af5cd5c558.1726293808.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1726293808.git.mchehab+huawei@kernel.org>
 References: <cover.1726293808.git.mchehab+huawei@kernel.org>
@@ -73,81 +70,53 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The current function used to generate GHES data is specific for
-memory errors. Give a better name for it, as we now have a generic
-function as well.
+Some error injection notify methods are async, like GPIO
+notify. Add a notifier to be used when the error record is
+ready to be sent to the guest OS.
 
-Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- hw/acpi/ghes-stub.c    | 2 +-
- hw/acpi/ghes.c         | 2 +-
- include/hw/acpi/ghes.h | 4 ++--
- target/arm/kvm.c       | 3 ++-
- 4 files changed, 6 insertions(+), 5 deletions(-)
+ hw/acpi/ghes.c         | 5 +++++
+ include/hw/acpi/ghes.h | 3 +++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/hw/acpi/ghes-stub.c b/hw/acpi/ghes-stub.c
-index 58a04e935142..b0f053d5998f 100644
---- a/hw/acpi/ghes-stub.c
-+++ b/hw/acpi/ghes-stub.c
-@@ -11,7 +11,7 @@
- #include "qemu/osdep.h"
- #include "hw/acpi/ghes.h"
- 
--int acpi_ghes_record_errors(int source_id, uint64_t physical_address)
-+int acpi_ghes_memory_errors(int source_id, uint64_t physical_address)
- {
-     return -1;
- }
 diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-index dc15d6a693d6..a8feb39c9f30 100644
+index a8feb39c9f30..7bea265c7ef3 100644
 --- a/hw/acpi/ghes.c
 +++ b/hw/acpi/ghes.c
-@@ -501,7 +501,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-     cpu_physical_memory_write(cper_addr, cper, len);
+@@ -409,6 +409,9 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+     ags->present = true;
  }
  
--int acpi_ghes_record_errors(int source_id, uint64_t physical_address)
-+int acpi_ghes_memory_errors(int source_id, uint64_t physical_address)
++NotifierList acpi_generic_error_notifiers =
++    NOTIFIER_LIST_INITIALIZER(error_device_notifiers);
++
+ void ghes_record_cper_errors(const void *cper, size_t len,
+                              uint16_t source_id, Error **errp)
  {
-     /* Memory Error Section Type */
-     const uint8_t guid[] =
+@@ -499,6 +502,8 @@ void ghes_record_cper_errors(const void *cper, size_t len,
+ 
+     /* Write the generic error data entry into guest memory */
+     cpu_physical_memory_write(cper_addr, cper, len);
++
++    notifier_list_notify(&acpi_generic_error_notifiers, NULL);
+ }
+ 
+ int acpi_ghes_memory_errors(int source_id, uint64_t physical_address)
 diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-index 344919f1f75c..7a7961e6078a 100644
+index 7a7961e6078a..83c912338137 100644
 --- a/include/hw/acpi/ghes.h
 +++ b/include/hw/acpi/ghes.h
-@@ -82,7 +82,7 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
-                      const char *oem_id, const char *oem_table_id);
- void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
-                           GArray *hardware_errors);
--int acpi_ghes_record_errors(int source_id,
-+int acpi_ghes_memory_errors(int source_id,
-                             uint64_t error_physical_addr);
- void ghes_record_cper_errors(const void *cper, size_t len,
-                              uint16_t source_id, Error **errp);
-@@ -91,7 +91,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-  * acpi_ghes_present: Report whether ACPI GHES table is present
-  *
-  * Returns: true if the system has an ACPI GHES table and it is
-- * safe to call acpi_ghes_record_errors() to record a memory error.
-+ * safe to call acpi_ghes_memory_errors() to record a memory error.
-  */
- bool acpi_ghes_present(void);
- #endif
-diff --git a/target/arm/kvm.c b/target/arm/kvm.c
-index 849e2e21b304..57192285fb96 100644
---- a/target/arm/kvm.c
-+++ b/target/arm/kvm.c
-@@ -2373,7 +2373,8 @@ void kvm_arch_on_sigbus_vcpu(CPUState *c, int code, void *addr)
-              */
-             if (code == BUS_MCEERR_AR) {
-                 kvm_cpu_synchronize_state(c);
--                if (!acpi_ghes_record_errors(ACPI_HEST_SRC_ID_SEA, paddr)) {
-+                if (!acpi_ghes_memory_errors(ARM_ACPI_HEST_SRC_ID_SYNC,
-+                                             paddr)) {
-                     kvm_inject_arm_sea(c);
-                 } else {
-                     error_report("failed to record the error");
+@@ -24,6 +24,9 @@
+ 
+ #include "hw/acpi/bios-linker-loader.h"
+ #include "qapi/error.h"
++#include "qemu/notify.h"
++
++extern NotifierList acpi_generic_error_notifiers;
+ 
+ /*
+  * Values for Hardware Error Notification Type field
 -- 
 2.46.0
 
