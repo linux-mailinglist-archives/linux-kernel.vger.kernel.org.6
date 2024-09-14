@@ -1,169 +1,166 @@
-Return-Path: <linux-kernel+bounces-329387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBED9790AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A99F39790AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17921C21A9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA2BF1C20BAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7B51CF5E2;
-	Sat, 14 Sep 2024 11:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C8C1CF5CA;
+	Sat, 14 Sep 2024 11:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCMaev+i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="JlJIyRWL"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9501482F3;
-	Sat, 14 Sep 2024 11:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B741482F3;
+	Sat, 14 Sep 2024 11:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726314694; cv=none; b=IaGd50mwkxtw5eZbPDDVKQe/0v/BpU5HIl7KyZAxZvDbS2PSZEi19hvnh93KsaRRtBOnad5tihs0l5lE54Tq81CxpmjwGKzCWs8w4MsjGg05rwF+uRPkS2aoy+6csYHnxX89yIeiBcWM1XEIaHF4fn8UAvO+mB7ULHapdIuUnB0=
+	t=1726314765; cv=none; b=ayPmPWdKgE8uApKBoMiGOTpHJj/RkgUbXEHVpcgzw3OLJY5VEJnG2p4vx+jwYXLSLPSclxxZbSUH2DNrQll2TaAwH4nJmQh+nEU2NMbDA4gHJUE5yxpl51/ZENmeyfWC5WIAWSne7uc6EXsmnAV8KC67p6IqmQW1haccBYJjEhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726314694; c=relaxed/simple;
-	bh=D3alaH9FVz0eNtgjK7+8PY9RsxlT58gKMLTR4lhwrXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MRJYvDzEvRj1/Y1ZsZ56vLW/b8KJojSmfvRhbqASLZCQqhzFRZhwDvuSaUWLh5W5+ZwvmFHQU4X3+zmmjk6OoaOIj3rSpqfu0YtAvnkMiuo6ZafxPDKGp7ryVum5LnB0NifB/Sool1+qJmbQPBJkWW/Zy4YyAj6QNFOhG14lID4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCMaev+i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9DEDC4CEC0;
-	Sat, 14 Sep 2024 11:51:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726314693;
-	bh=D3alaH9FVz0eNtgjK7+8PY9RsxlT58gKMLTR4lhwrXc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SCMaev+iHtp/B5hdrJYkCRC444/iSywfihSD5qTRX7OiROVFtpWnz5SXQO2ITH2vU
-	 pZ/chHUhdmG4sFh17S9zvNgykKRxXa1Uw9tMUKOabCsoaZ92DPrnBZDaPI8V9SWTSZ
-	 LglwUcYsHsEmvWh2SijxAJAIo7g+ry9rkeox96gBPEocX9L5EzofIiBvr4X8dDYlRn
-	 QuVHJa5d/0wjmdad2NgPpm1Hyb7r238/n10aOKA3KZ+Wl6gsK8QqHhdbH6+3Sinw/C
-	 WwZfejSQ2SkF9U9/KQ8KEkk/8Jerm2qRmDxDvmEGjxYHfDRxkaAYSacvZtEYk7hxQr
-	 FmqxioiFxaHMg==
-Date: Sat, 14 Sep 2024 12:51:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Alex Lanzano <lanzano.alex@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Jagath Jog J <jagathjog1996@gmail.com>,
- Ramona Gradinariu <ramona.bolboaca13@gmail.com>, Nuno Sa
- <nuno.sa@analog.com>, oe-kbuild-all@lists.linux.dev,
- skhan@linuxfoundation.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iio: imu: Add i2c driver for bmi270 imu
-Message-ID: <20240914125123.13ec48f1@jic23-huawei>
-In-Reply-To: <f5zruqfmohoaohr2qwqug33dsar5q3fubhspbwuisxxblni6h4@paioiqyjzeg5>
-References: <20240909043254.611589-3-lanzano.alex@gmail.com>
-	<202409100026.17N3K11W-lkp@intel.com>
-	<f5zruqfmohoaohr2qwqug33dsar5q3fubhspbwuisxxblni6h4@paioiqyjzeg5>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726314765; c=relaxed/simple;
+	bh=PseeGydaW7P7gcDIexeJPYFC9+KYnfOcDOJjNIwz30g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B+Yjm8DhJ6LRDS5Rz3mOXQ9pPArqJFRRRMOWdMyqJPZrsDY8cfnB/veqHvV5l+Bfy6iOXFzeYEvoh1v/HrVvsFohrg4lAD2dheFA9UPMWNuDG71GsFRGLVaRlaTarj1pTlChpZC5CzbGUJbTEpLS2YWRwThYedwpKj+RYlkIoGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=JlJIyRWL; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JMlYom8FcCA2dWJkTLSCkHY6YrKnhlwr8nNq9Iy+Jik=; b=JlJIyRWLqr5n+VG1fxF1P4qHWc
+	tLrfVEw4jDFiCMDfrKcbLa0gF0LOiKZxmDmvCi2uYck1Wy2ZRz4eUKrdx44pmSSmw7ukc6oMHCuHd
+	WFiMEg6zWT1e+mGl4F4806ujcawN5w+I6ifuVqDYhAD3pHuvraC72dIY7IoKnxDjRWaj07JQcU9EJ
+	QIAyc4BsJjzJsIZFpvEQvRgBUBGKiw0kwJoqDl47Z8UmQRaVBI+ioVw/hy2fwF/V5pnZCffdWa/EF
+	HDE+LF6qxhlCrmgu5xhhm8nAc43OH9bSJioM5CtoHGEPodM2EAEwlQzCUf5VunTdaLqpcnma0e0Yh
+	9VyZv2oA==;
+Received: from i53875af6.versanet.de ([83.135.90.246] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1spRKK-0003Qy-U9; Sat, 14 Sep 2024 13:52:32 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Kever Yang <kever.yang@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+Subject:
+ Re: [PATCH] mmc: dw_mmc: rockchip: Keep controller working for card detect
+Date: Sat, 14 Sep 2024 13:52:32 +0200
+Message-ID: <4920950.GXAFRqVoOG@diego>
+In-Reply-To:
+ <20240912152538.1.I858c2a0bf83606c8b59ba1ab6944978a398d2ac5@changeid>
+References:
+ <20240912152538.1.I858c2a0bf83606c8b59ba1ab6944978a398d2ac5@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 9 Sep 2024 23:21:52 -0400
-Alex Lanzano <lanzano.alex@gmail.com> wrote:
-
-> On Tue, Sep 10, 2024 at 01:03:04AM GMT, kernel test robot wrote:
-> > Hi Alex,
-> > 
-> > kernel test robot noticed the following build errors:
-> > 
-> > [auto build test ERROR on jic23-iio/togreg]
-> > [also build test ERROR on robh/for-next linus/master v6.11-rc7 next-20240909]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > 
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Lanzano/dt-bindings-iio-imu-add-bmi270-bindings/20240909-123509
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-> > patch link:    https://lore.kernel.org/r/20240909043254.611589-3-lanzano.alex%40gmail.com
-> > patch subject: [PATCH v3 2/2] iio: imu: Add i2c driver for bmi270 imu
-> > config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240910/202409100026.17N3K11W-lkp@intel.com/config)
-> > compiler: m68k-linux-gcc (GCC) 14.1.0
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409100026.17N3K11W-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202409100026.17N3K11W-lkp@intel.com/
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> >    drivers/iio/imu/bmi270/bmi270_core.c: In function 'bmi270_configure_imu':  
-> > >> drivers/iio/imu/bmi270/bmi270_core.c:180:31: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]  
-> >      180 |                               FIELD_PREP(BMI270_ACC_CONF_ODR_MSK,
-> >          |                               ^~~~~~~~~~
-> > 
-> > 
-> > vim +/FIELD_PREP +180 drivers/iio/imu/bmi270/bmi270_core.c
-> > 
-> >    165	
-> >    166	static int bmi270_configure_imu(struct bmi270_data *bmi270_device)
-> >    167	{
-> >    168		int ret;
-> >    169		struct device *dev = bmi270_device->dev;
-> >    170		struct regmap *regmap = bmi270_device->regmap;
-> >    171	
-> >    172		ret = regmap_set_bits(regmap, BMI270_PWR_CTRL_REG,
-> >    173				      BMI270_PWR_CTRL_AUX_EN_MSK |
-> >    174				      BMI270_PWR_CTRL_GYR_EN_MSK |
-> >    175				      BMI270_PWR_CTRL_ACCEL_EN_MSK);
-> >    176		if (ret)
-> >    177			return dev_err_probe(dev, ret, "Failed to enable accelerometer and gyroscope");
-> >    178	
-> >    179		ret = regmap_set_bits(regmap, BMI270_ACC_CONF_REG,  
-> >  > 180				      FIELD_PREP(BMI270_ACC_CONF_ODR_MSK,  
-> >    181						 BMI270_ACC_CONF_ODR_100HZ) |
-> >    182				      FIELD_PREP(BMI270_ACC_CONF_BWP_MSK,
-> >    183						 BMI270_ACC_CONF_BWP_NORMAL_MODE) |
-> >    184				      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
-> >    185		if (ret)
-> >    186			return dev_err_probe(dev, ret, "Failed to configure accelerometer");
-> >    187	
-> >    188		ret = regmap_set_bits(regmap, BMI270_GYR_CONF_REG,
-> >    189				      FIELD_PREP(BMI270_GYR_CONF_ODR_MSK,
-> >    190						 BMI270_GYR_CONF_ODR_200HZ) |
-> >    191				      FIELD_PREP(BMI270_GYR_CONF_BWP_MSK,
-> >    192						 BMI270_GYR_CONF_BWP_NORMAL_MODE) |
-> >    193				      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
-> >    194		if (ret)
-> >    195			return dev_err_probe(dev, ret, "Failed to configure gyroscope");
-> >    196	
-> >    197		/* Enable FIFO_WKUP, Disable ADV_PWR_SAVE and FUP_EN */
-> >    198		ret = regmap_write(regmap, BMI270_PWR_CONF_REG,
-> >    199				   BMI270_PWR_CONF_FIFO_WKUP_MSK);
-> >    200		if (ret)
-> >    201			return dev_err_probe(dev, ret, "Failed to set power configuration");
-> >    202	
-> >    203		return 0;
-> >    204	}
-> >    205	
-> > 
-> > -- 
-> > 0-DAY CI Kernel Test Service
-> > https://github.com/intel/lkp-tests/wiki  
+Am Donnerstag, 12. September 2024, 09:26:14 CEST schrieb Kever Yang:
+> In order to make the SD card hotplug working we need the card detect
+> function logic inside the controller always working. The runtime PM will
+> gate the clock and the power domain, which stops controller working when
+> no data transfer happen.
 > 
-> I am having trouble reproducing this build error on both jic23-iio/togreg and
-> linus/master v6.11.rc7 on an aarch64 box with the same compiler version.
-> Maybe a config option is causing this?
+> So lets skip enable runtime PM when the card needs to detected by the
+> controller and the card is removable.
 > 
-> However, I will add #include <linux/bitfield.h> to remedy this issue if
-> some edge case is being hit.
-Makes sense anyways roughly speaking we should aim for "include what you use"
-for headers to avoid this sort of subtle build issue.
-There are exceptions for one or two headers that are always included via
-another path, but bitfield.h isn't one of those.
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 
-Jonathan
+So for the change itself this looks good, i.e. it fixes an issue for baords relying
+on the on-chip-card-detect.
 
+
+But for boards doing that, the controller will be running _all the time_
+even if there is never any card inserted.
+
+So relying on the on-soc card-detect will effectively increase the power-
+consumption of the board - even it it'll never use any sd-card?
+
+> ---
 > 
-> Best regards,
-> Alex
+>  drivers/mmc/host/dw_mmc-rockchip.c | 23 +++++++++++++++++------
+>  1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
+> index b07190ba4b7a..df91205f9cd3 100644
+> --- a/drivers/mmc/host/dw_mmc-rockchip.c
+> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
+> @@ -345,28 +345,39 @@ static int dw_mci_rockchip_probe(struct platform_device *pdev)
+>  	const struct dw_mci_drv_data *drv_data;
+>  	const struct of_device_id *match;
+>  	int ret;
+> +	bool use_rpm = true;
+>  
+>  	if (!pdev->dev.of_node)
+>  		return -ENODEV;
+>  
+> +	if (!device_property_read_bool(&pdev->dev, "non-removable") &&
+
+It would be nice to add a comment here about the fact that this will
+disable power-management for the controller.
+
+Also shouldn't non-removable already work, making the case above not
+necessary?
+
+
+Thanks
+Heiko
+
+> +	     !device_property_read_bool(&pdev->dev, "cd-gpios"))
+> +		use_rpm = false;
+> +
+>  	match = of_match_node(dw_mci_rockchip_match, pdev->dev.of_node);
+>  	drv_data = match->data;
+>  
+>  	pm_runtime_get_noresume(&pdev->dev);
+>  	pm_runtime_set_active(&pdev->dev);
+> -	pm_runtime_enable(&pdev->dev);
+> -	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+> -	pm_runtime_use_autosuspend(&pdev->dev);
+> +
+> +	if (use_rpm) {
+> +		pm_runtime_enable(&pdev->dev);
+> +		pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+> +		pm_runtime_use_autosuspend(&pdev->dev);
+> +	}
+>  
+>  	ret = dw_mci_pltfm_register(pdev, drv_data);
+>  	if (ret) {
+> -		pm_runtime_disable(&pdev->dev);
+> -		pm_runtime_set_suspended(&pdev->dev);
+> +		if (use_rpm) {
+> +			pm_runtime_disable(&pdev->dev);
+> +			pm_runtime_set_suspended(&pdev->dev);
+> +		}
+>  		pm_runtime_put_noidle(&pdev->dev);
+>  		return ret;
+>  	}
+>  
+> -	pm_runtime_put_autosuspend(&pdev->dev);
+> +	if (use_rpm)
+> +		pm_runtime_put_autosuspend(&pdev->dev);
+>  
+>  	return 0;
+>  }
+> 
+
+
+
 
 
