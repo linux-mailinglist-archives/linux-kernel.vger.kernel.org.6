@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-329077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0709F978D02
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BED978D06
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B082B259D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:10:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FB91F25ED4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5C2175AB;
-	Sat, 14 Sep 2024 03:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BD81DFFC;
+	Sat, 14 Sep 2024 03:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cve48Wgn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hzFRSt9f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F6B8462;
-	Sat, 14 Sep 2024 03:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEEB1AAD7;
+	Sat, 14 Sep 2024 03:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726283429; cv=none; b=aaxEzm5Lo/slwVn9zVGl8cBqjIHIVzQhk5/WIyfiCyn7oSSApSeGC7Fm996wMtlTETi5YtUNG8HKTJ2RFDSVmyot6TUxkHWpbK7gCad8rM3rFinu8rQ8QH8nze24Eq/tEuSgqCiRAAgH5+TrK6iE7kp6Ol3vfT3G11hn2HHwk2s=
+	t=1726283434; cv=none; b=DsGSUcExzA06DYqSYp+tIwHhicw/6HPVBcx7pjOV18VwoGQNKHlbHsUogJa5yb+n3D5wlSioQVhLM7alvfr/rVoR40sdsoCef7yYiQZOWuOanq/q3Eyi+HzRiiBznKWXJjKUHdwltVuIWc7u3qE489Dvkr1paZ6fmZmFlhs6anQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726283429; c=relaxed/simple;
-	bh=DyEgc3d/VLDrSlr8tQW+qSGWD4Nni9C1Kv9VIi8oNpw=;
+	s=arc-20240116; t=1726283434; c=relaxed/simple;
+	bh=Fnsv2OZOlitml233jAUNjLoVR7xV+MJufffq3gpkwJQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ur+YJYqj72B0L7gwLLAF4aCsqd0AOiB2hO90GczTHOf7D6c3TB+P65eeSh4tKMu9eiCAH1fY1wehvf5C0ZDVZZK5yXqgX1HSOGGEIBJP9RxCjl8PZe67OGmNg7TxN2zYFJpiCIYNQOq136Ti6ApSYA3y4OJCnYOYVY71xl57VzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cve48Wgn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B17FC4CEC0;
-	Sat, 14 Sep 2024 03:10:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=tpZc9qtAR7gbwsKK5JSAxw1xy4t0DuCYM269wmZO/2A5JNX7tD4qRQbMWvvX4Q3FEMY0iG4EkHQndLcipOfL7nfMoDVwy3RXcLYnreOcw9hzwwYR2QcN0PK9squzNrZfmYrO3eqqUJDYN42CBlVsZHkJ38GpS8GAebLVlq34wNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hzFRSt9f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D964C4CEC0;
+	Sat, 14 Sep 2024 03:10:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726283429;
-	bh=DyEgc3d/VLDrSlr8tQW+qSGWD4Nni9C1Kv9VIi8oNpw=;
+	s=k20201202; t=1726283434;
+	bh=Fnsv2OZOlitml233jAUNjLoVR7xV+MJufffq3gpkwJQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Cve48WgnXe4vwJT4UKVVv7wSXBjqhttPghwiZA+UlsBYmg3FneeInkpC052Fzg/xh
-	 2GPGp4qRxBDaYPGlwnnzmEIn9qiY0gsQ5TpS8iDIuuo8+jjjzsBlkwN46344tWRNFE
-	 uKbXaFjRX7CU3znNoKjcpgewi7Sngz7NHvglvhTnr95ggVWeQYlsAPePLLYez44gsV
-	 VfPrIqr3Vum+xIxJ1vE8iYFu160VwpKeMr3ovJwUir5iWs1dq7yXWjyWHgrbt29ZzF
-	 YCHUcI9VALX/eD2LF0Q/mqFu4GK7s+lydUNGpw2aXLxgGBsB46dDP/RCkkAtiPh7AB
-	 Vjhbb2gVN58/w==
+	b=hzFRSt9fNzBTeys28PY4Hd6vUqa+/VhmwOa49nbam4721hts4vWiyD9Cp9hUdDPSI
+	 x7uLBP1PuA35DTWVIUFiWIVyZwhw4sHlgbLWhxLg3THkZupwWxgqbZf64/VJZE2CKW
+	 vqy/fkunmUtqEZTjQEG+Mz0QAJHdwjdNMY13qVDODrFYAZhBXgQ0YcyoTH0MVcEkBc
+	 fVEgJFFYOx/uw4V21TthjqiauafDe0l9vzmWD3hhhGeGYzV6E0K+4rXUOKmWT3RhXP
+	 4+uxr4Va9/VXlJORzGzUHDTvrtbY9I3svLlhIDBsZBpL+UDt2ypnNlU1DX042bIHxZ
+	 dN8v476KhAPXw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2403806655;
-	Sat, 14 Sep 2024 03:10:31 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD923806655;
+	Sat, 14 Sep 2024 03:10:36 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 1/3] btf: remove redundant CONFIG_BPF test in
- scripts/link-vmlinux.sh
+Subject: Re: [PATCH net] fbnic: Set napi irq value after calling netif_napi_add
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172628343077.2438539.18220678074751617298.git-patchwork-notify@kernel.org>
-Date: Sat, 14 Sep 2024 03:10:30 +0000
-References: <20240913173759.1316390-1-masahiroy@kernel.org>
-In-Reply-To: <20240913173759.1316390-1-masahiroy@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: martin.lau@linux.dev, bpf@vger.kernel.org, andrii@kernel.org,
- linux-kernel@vger.kernel.org, nathan@kernel.org, alan.maguire@oracle.com
+ <172628343575.2438539.17479638997726025148.git-patchwork-notify@kernel.org>
+Date: Sat, 14 Sep 2024 03:10:35 +0000
+References: <20240912174922.10550-1-brett.creeley@amd.com>
+In-Reply-To: <20240912174922.10550-1-brett.creeley@amd.com>
+To: Brett Creeley <brett.creeley@amd.com>
+Cc: alexanderduyck@fb.com, kuba@kernel.org, kernel-team@meta.com,
+ davem@davemloft.net, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jdamato@fastly.com, stable@vger.kernel.org
 
 Hello:
 
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On Sat, 14 Sep 2024 02:37:52 +0900 you wrote:
-> CONFIG_DEBUG_INFO_BTF depends on CONFIG_BPF_SYSCALL, which in turn
-> selects CONFIG_BPF.
+On Thu, 12 Sep 2024 10:49:22 -0700 you wrote:
+> The driver calls netif_napi_set_irq() and then calls netif_napi_add(),
+> which calls netif_napi_add_weight(). At the end of
+> netif_napi_add_weight() is a call to netif_napi_set_irq(napi, -1), which
+> clears the previously set napi->irq value. Fix this by calling
+> netif_napi_set_irq() after calling netif_napi_add().
 > 
-> When CONFIG_DEBUG_INFO_BTF=y, CONFIG_BPF=y is always met.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> This was found when reviewing another patch and I have no way to test
+> this, but the fix seemed relatively straight forward.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,1/3] btf: remove redundant CONFIG_BPF test in scripts/link-vmlinux.sh
-    https://git.kernel.org/bpf/bpf-next/c/c980dc9c67a9
-  - [v2,2/3] btf: move pahole check in scripts/link-vmlinux.sh to lib/Kconfig.debug
-    https://git.kernel.org/bpf/bpf-next/c/42450f7a9086
-  - [v2,3/3] btf: require pahole 1.21+ for DEBUG_INFO_BTF with default DWARF version
-    https://git.kernel.org/bpf/bpf-next/c/5277d130947b
+  - [net] fbnic: Set napi irq value after calling netif_napi_add
+    https://git.kernel.org/netdev/net/c/9f3e7f11f21a
 
 You are awesome, thank you!
 -- 
