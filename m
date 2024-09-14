@@ -1,225 +1,114 @@
-Return-Path: <linux-kernel+bounces-329543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A77C9792B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:43:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0803E9792B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2548A1F22857
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:43:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88BE0B2222E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DA81D12FA;
-	Sat, 14 Sep 2024 17:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73CB1D0DC1;
+	Sat, 14 Sep 2024 17:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="L1htHe4x"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOCi4FX6"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E35D1D0492;
-	Sat, 14 Sep 2024 17:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B912E522F;
+	Sat, 14 Sep 2024 17:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726335777; cv=none; b=oqyH7lyHzBmw64Ei+7hdD5U5Vbad11wDxuJVoeU5goOkIwpAHAP+0vi6mj19nztlfS3yBRe3zzbq+t04rpSEJUyq0Ilu8IPF7Hon4L16JZjtRXNTV7hMgswyonIUQDK1DTuk0PhgDf0TDvNzUbvaN1yGuSeriqZAyKRu9pSBkvg=
+	t=1726335972; cv=none; b=O5e2Q4H04BBCSO7ijMbqyk2PQp8xLc67q/xe41VL1XPpoPEQOGPdoJk5z80MEiq3d2y7wun1wgZhGH0JvogV68lDx6ZSdrfkg9NG5cZ+SB60h+5xGofI1RJcIUYqgM1Tan23MCYSCYNVExg18p8hY3bBnm54/r5nIwIckUPbSm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726335777; c=relaxed/simple;
-	bh=uQstSLTVghrRz3Hp0SSvpuHfpaluhuyPOLKq+qY5whU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TCbg4ETSZs7xkxQgunbkp1egLKfl4XR7NcdCOBE6MSABexXImz5W5r1Riy57iE/mG/xtU5VgCwpntTtOYz5TlCU3DDV8a14gI8+nsJkn2FcIdppygECOlilTjBous2APX3tvHDtyWIhDy+wvyaTBVXm4lxg1okqOSMqE9bkJM1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=L1htHe4x; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48EDRC3a018796;
-	Sat, 14 Sep 2024 17:42:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=U76+Y92+6cnP9XFTsniXm+oVV04
-	feYHa4KALmWM53C8=; b=L1htHe4xiPjUW2QZHub0vijPUTnrqeZqme3ThfN96qC
-	hmOtDR0KY/wNdKFT/0kv7ziDSxvgvQpMtDWZk7MN71eQtcT9OMslArhlG6sFkRKC
-	0EzwEJG45UH6En6Us7aC1UBR5xLZexVy7qMKiq/Z/EQVriG7VAh44w6fcrwncDqo
-	8xIG3EnlLsA2bcr/7NeV13on5GNqhYhaH23Dhvkku1KdkDJoX2D9wnPiaXgALchH
-	KDGU55tXLoPZR8SDTbmDlr6wGB6flAR12WbWKVKzR4RgS0GcG1Z/wxCUEe/Q2hbN
-	Sj3CeGl68TJlXOqKh7wWojsj+MTFdJfrM5c/RKx8zdA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3vna827-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Sep 2024 17:42:52 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48EGsulT032355;
-	Sat, 14 Sep 2024 17:42:52 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41n3xqaseu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Sep 2024 17:42:51 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48EHgmn947448518
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 14 Sep 2024 17:42:48 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2F4FC20043;
-	Sat, 14 Sep 2024 17:42:48 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A023820040;
-	Sat, 14 Sep 2024 17:42:47 +0000 (GMT)
-Received: from osiris (unknown [9.179.13.161])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat, 14 Sep 2024 17:42:47 +0000 (GMT)
-Date: Sat, 14 Sep 2024 19:42:46 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
-Message-ID: <20240914174246.8394-A-hca@linux.ibm.com>
-References: <20240913130544.2398678-1-hca@linux.ibm.com>
- <20240913130544.2398678-8-hca@linux.ibm.com>
- <ZuRWmJTWqmD92D8d@zx2c4.com>
- <ZuRYoVIrg28kBKqb@zx2c4.com>
- <20240913173206.30385-C-hca@linux.ibm.com>
- <ZuSRKLFdYI1gCHh9@zx2c4.com>
+	s=arc-20240116; t=1726335972; c=relaxed/simple;
+	bh=xdsRpfxRInmPg4q7y9hC1YTNqmCPfKPBOSYVrCk7+oM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QNGR9v4u245iC8DdlsYM6mALpgXq++JAw67Z66uHINOdczluP3UKOQ8dVbXrYT+ApXaEvFfud4MOpJROzcnuQ+2xrVX4I/pGhH779F/pFHpH0jjcyCS3RjlZWH1mupbvs4f/fZOLC7/HgsUhN2oSVHRVp24753yLM6ZwGI1+suM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOCi4FX6; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-718d704704aso2959049b3a.3;
+        Sat, 14 Sep 2024 10:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726335970; x=1726940770; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHBpOvx+l+y5X2KaI6opgE4I/Foj2cPkSFAdvhEr8s8=;
+        b=DOCi4FX6Zfqiy2xATQvgUhT5KAEicvy1WY9JkRKYk04HASC3AqFo5DZZ0+FKK8h7ub
+         JSmYkjLxx05i4L4ALAGhMU6FVA1ArEkA2/AZVCzxqGKtn/gmig/2eVCAW1sLc3LQqeKp
+         Zh6dsvoWyVQCpDUVIN8TFbiwCqOq5APAHdewNfov6UGoF0ChxnQ+ks7rONaVkgNyYH8J
+         1wJcSt2jI0XjuQbpRtKSBRq7QIojSiAzFZ0JjG7yZe2zERWtkUo1Ue11CRVI0opSIqgG
+         U6r7rwCOXrPuDvp7ZW3w0u5f1nKUaXpQ5sFSLyxdGevx21G512/0bEDB3exF3Rc3+Dcx
+         mmtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726335970; x=1726940770;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tHBpOvx+l+y5X2KaI6opgE4I/Foj2cPkSFAdvhEr8s8=;
+        b=r4vkVnyTiEsgkJEgZgQcE+KMUzBFWw0PAKsYJlhrM6jn4SJERjm0LhPujzZpL4uy0x
+         cHbBdxJLwgOmXi9kywdKsWagGxzJIulQzMq5+MyNcBUB11G6Noi+8Q2bH01Sif5hgLxc
+         ZutXpvo2iEkI6PZ62GHNnv6wa79OETeUuC6qgI9NkfI5zRqaPo6qRQOXzrO9ClUssYmN
+         UNj5p6tV96jTs0FB1pyfB0fW87Hv9mJwFiZFXbN03xidwSfI04DZEB3HBNXLVrqa3u7n
+         4G63zwVDELy5fmnauBFpat7y4flmKLmsQugnqxUDL2Sn4BMWlGI2xt5qc31IK2ZHXlIf
+         B3tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkZY9hEyFVsWLTe2dpTZNS1466KCsvFSOfiJqOOQ8N0FDnphK4NOY+2Vg6f+g/JSZ8WsDN7NyAQIV2ujQ=@vger.kernel.org, AJvYcCWOddAdEw9Ot0fahvnLr8ZERvHYuDr4+n3yxPl69BcOJs4V4r/jD3eeeMYAKwEri+h9OFLR2AC2Ga02@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3lj4wY39BTRIZbx338+6Mlkh4GcFX6dDe/1cHGgB3IyuMHAmN
+	PwEtc0JNGFGNC0H/ZNYhLycYWaQEE0FIS/XLWLhHhNDT7bKKwHt0uR52jA==
+X-Google-Smtp-Source: AGHT+IFFwVHfyzHkNJ0FwA/uSGeJi+5YOEebxs28rbGUObKeRIQqNU9Bebdt7dkiX+RHG3u3k1xcLg==
+X-Received: by 2002:a05:6a00:1ad2:b0:717:8f4b:afd6 with SMTP id d2e1a72fcca58-719261e777dmr15875574b3a.20.1726335969815;
+        Sat, 14 Sep 2024 10:46:09 -0700 (PDT)
+Received: from localhost.localdomain ([187.120.158.74])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a97415sm1212997b3a.21.2024.09.14.10.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Sep 2024 10:46:09 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: bhelgaas@google.com
+Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: remove uneccessary if() and assignment
+Date: Sat, 14 Sep 2024 14:45:53 -0300
+Message-ID: <20240914174554.98975-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuSRKLFdYI1gCHh9@zx2c4.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: B2CQxQX1rtAf2iSdA3GJe8w-ZW1zjE1L
-X-Proofpoint-GUID: B2CQxQX1rtAf2iSdA3GJe8w-ZW1zjE1L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-14_09,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409140123
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 09:23:20PM +0200, Jason A. Donenfeld wrote:
-> > > >   CC       vdso_test_chacha
-> > > > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S: Assembler messages:
-> > > > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S:147: Error: Unrecognized opcode: `alsih'
-> > > > 
-> > > > Any idea what's up?
-> > > 
-> > > Looks like I needed `-march=arch9`. I can potentially rebuild my
-> > > toolchains to do this by default, though, if that's a normal thing to
-> > > have and this is just my toolchain being crappy. Or, if it's not a
-> > > normal thing to have, do we need to add it to the selftests Makefile?
-> > 
-> > That needs to be fixed differently, since the kernel build would also
-> > fail when building for z10. Could you squash the below fix into this
-> > patch, please?
-> 
-> Done.
-> 
-> > So for the kernel itself including the vdso code, everything is
-> > correct now. But similar checks are missing within vdso_test_chacha.c.
-> > I'll provide something for that, so that the test case will be skipped
-> > if the required instructions are missing, but not today.
-> 
-> Okay. I would assume no rush there, because it's unlikely there are
-> those machines part of kselftest fleets anyway?
+This second if is uneccesary, because, the first if is equals.
+The assignment os return pci_revert_fw_address() to ret variable is uneccessary to.
+Then, the second if() was removed and the return function is the return of pci_revert_fw_address()
 
-There was another surprise waiting for me: the ALTERNATIVE macro
-within the tools header file is defined in a way that it omits
-everything. So I was just lucky that the s390 chacha assembler code
-worked, since even without the alternatives the code is working, but
-executes code for newer CPU generations, which it shouldn't.
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ drivers/pci/setup-res.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-So below is a diff which fixes both:
-
-- Add an s390 specific ALTERNATIVE macro that emits code that is
-  supposed to work on older CPU generations, instead of no code
-
-- Add a hwcap check to make sure that all CPU capabilities required to
-  run the assembler code are present
-
-It probably makes sense to squash this also into
-"s390/vdso: Wire up getrandom() vdso implementation".
-
-Please feel free to change the code in whatever way you like.
-If you prefer separate patches, I will provide them.
-
-diff --git a/tools/include/asm/alternative.h b/tools/include/asm/alternative.h
-index 7ce02a223732..68dc894c0892 100644
---- a/tools/include/asm/alternative.h
-+++ b/tools/include/asm/alternative.h
-@@ -2,8 +2,18 @@
- #ifndef _TOOLS_ASM_ALTERNATIVE_ASM_H
- #define _TOOLS_ASM_ALTERNATIVE_ASM_H
+diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
+index c6d933ddfd46..8ca1007cb6b3 100644
+--- a/drivers/pci/setup-res.c
++++ b/drivers/pci/setup-res.c
+@@ -352,12 +352,7 @@ int pci_assign_resource(struct pci_dev *dev, int resno)
+ 	 */
+ 	if (ret < 0) {
+ 		pci_info(dev, "%s %pR: can't assign; no space\n", res_name, res);
+-		ret = pci_revert_fw_address(res, dev, resno, size);
+-	}
+-
+-	if (ret < 0) {
+-		pci_info(dev, "%s %pR: failed to assign\n", res_name, res);
+-		return ret;
++		return pci_revert_fw_address(res, dev, resno, size);
+ 	}
  
-+#if defined(__s390x__)
-+#ifdef __ASSEMBLY__
-+.macro ALTERNATIVE oldinstr, newinstr, feature
-+	\oldinstr
-+.endm
-+#endif
-+#else
-+	
- /* Just disable it so we can build arch/x86/lib/memcpy_64.S for perf bench: */
- 
- #define ALTERNATIVE #
- 
- #endif
-+
-+#endif
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-index e81d72c9882e..f1eace68a63b 100644
---- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -5,11 +5,34 @@
- 
- #include <tools/le_byteshift.h>
- #include <sys/random.h>
-+#include <sys/auxv.h>
- #include <string.h>
- #include <stdint.h>
- #include <stdbool.h>
- #include "../kselftest.h"
- 
-+#if defined(__s390x__)
-+
-+#ifndef HWCAP_S390_VX
-+#define HWCAP_S390_VX 2048
-+#endif
-+
-+static bool cpu_has_capabilities(void)
-+{
-+	if (getauxval(AT_HWCAP) & HWCAP_S390_VX)
-+		return true;
-+	return false;
-+}
-+
-+#else
-+
-+static bool cpu_has_capabilities(void)
-+{
-+	return true;
-+}
-+
-+#endif
-+
- static uint32_t rol32(uint32_t word, unsigned int shift)
- {
- 	return (word << (shift & 31)) | (word >> ((-shift) & 31));
-@@ -67,6 +90,8 @@ int main(int argc, char *argv[])
- 	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
- 
- 	ksft_print_header();
-+	if (!cpu_has_capabilities())
-+		ksft_exit_skip("Required CPU capabilities missing\n");
- 	ksft_set_plan(1);
- 
- 	for (unsigned int trial = 0; trial < TRIALS; ++trial) {
+ 	res->flags &= ~IORESOURCE_UNSET;
+-- 
+2.46.0
+
 
