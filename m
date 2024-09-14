@@ -1,130 +1,125 @@
-Return-Path: <linux-kernel+bounces-329025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B75978C38
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:36:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0FFF978C10
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3CB286467
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C881287D9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775CE4414;
-	Sat, 14 Sep 2024 00:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8EB2114;
+	Sat, 14 Sep 2024 00:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qcmzqxN2"
-Received: from sonic311-31.consmr.mail.ne1.yahoo.com (sonic311-31.consmr.mail.ne1.yahoo.com [66.163.188.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CTfKcAmr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE496138E
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 00:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995EB1370;
+	Sat, 14 Sep 2024 00:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726274190; cv=none; b=i7m90I3NNelXBqcxEZBvBNbFraAJh3ep3P7wthc1VdA5U9SUghrAw+Wp4az7PAkNiJNmWKGj502mA3Hz17z2ZaYPGg77RWTZcQF/NE2Na0I2wEbRkOzaPEuTXRGOe/8HwK6ocXWdGeCrKNg+6ceeGz/jdPjWhwn6G3kYYUWQFz0=
+	t=1726273004; cv=none; b=QhRo62sk6XWaX+w6+UVPmzPCMsEgO2oPSqSbkuXQaVMqhgr3mwW4zgcfQuTgoSdtTsCD4JUJDSPXP/bpMde5xfZae10/eRBaaniXJxvHunmvCujM4cDGkFnNbtRcnLoa3ny3/XjSTf+tPT/S7OiwHJwZ96b21rjjWq4AQjqRJIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726274190; c=relaxed/simple;
-	bh=HVYWaizPFvOoKMVkPadUmaQzD+XrTBx940Oi8uHO9mQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
-	 References; b=sG4DkC/laaCxGRbPKjg7fEnGsNDz9WcuqbtK6NM5GT7TnEYANeafJQIwM7gp+PaIoHzN4ldXmr7Y5RX6HP41eNjrnnB4jWGDzfCf7MhfxEbYAdLOwNQ6mRGpS5u2uNiym2W7rOUkbL71BSmQI9BoCV+3nhW1aJ8lY4XqIKaueAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qcmzqxN2; arc=none smtp.client-ip=66.163.188.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726274187; bh=zE54Jt3wm6Ao2eRXWuC6wUEP7H3d1PYU/MEgqkriwe0=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=qcmzqxN2ose2deha7LVYj5cGgZRTI6M187ma8r1s3w9MPpeGAqBNxi7sM5AwK2TYTI18pnyr5Gz194D9X6VwZWPtZF0/Pt3Ja68KkH0Q0CUdFFkb293D17YCedvjAkKLI9/7do3fi8Wmx4zDotHhCf2uLRA6bhOJHBbQl+fOBC9km1YY1TyXR82uuCoE9gOeBcFgFvP9GZZWBYjX0/mRWvhr0D7nRNEs+/814Tn2H+Ul2BkC3GVzsm9fh553PFHiOKT7wRNZ1iAunWv7yul8N/fikesY3jn/izK0t7SIBnmR4QNWHyNkzk6PR1b0EbdEE4bYVmH4FsXEpiLOTP124A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726274187; bh=UD17RexcKsmVyfsj/l9jsBbMvuW8hJqVdMM/SCh5dlA=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=Zg1foDTD7wbQ4koT/emgYOhXtfKOLQTujNlqmXm3F5pmjhLKuKPfAvF52xZznwZG6Th0S2+yqid66PJ86L4n3dC3jwbyEtaFDerKKtlrLTmCDFhHGqJRW29Vugy405TpRgtJZDSN/5+IuctaZFaJf6iQ6zTMK9iGrWIb/Rc2gMnYaIDYLzEaDP3bWkNu5R/futnc2lVTMxJ9nPxj+RHyUNVjUn1ApJBgoIelST1bKPjFkE30LPR1ETs0T7aHLIDr1+DPFQqOpa89oHTkUMDzh7ozhsM10wNVXm65HgcVcS2EZS95/X+/7oqfoEGJcKvPz/KsnGaSnLDoVMAf1LozsA==
-X-YMail-OSG: tEVtgpUVM1kecB8htSH8ZxPWU94_2RCMds8chALGZrRxEn4bmiIU4Ebos2iHA7u
- Tl1CL72v8FGn7wJFA4a.7VDKaI8bEayyG3ymqlPJIWOzmvXEU.BEKUY1VcE5K2JanBLxXWMIsqV9
- 644yX6r0KmOn71fAJzr5JdjAhy5ZQVe9lRe0xFR00zcIu8OdxMzXqbIGyBvkX2IRMOww2G4vBp9n
- ycrQrXBVmVpqqNPkVIO8B0ydPsK49HyfPd6StJu9pLj4.C7jjMs7NLwuzxQrett06q0BC.hQTs1P
- tQQf2cbQ74l1p2f3ateQo.c4dGrSaiFItSDC50IE7BP7AvpIpn2kZSN95YSst6Ta_ysLQ9tDFS49
- k7YA62XvM9YSm7WtgxRisLgnri2qSpZUzfe9uyvN6byZs_PeCdxG231Rdoty1drMCFhzB65uw2q_
- zy6r8HdXOT0TgaLHdtLpcvGLgI1pAtHXb_ftuBj2YPuVgfg492VTwzM0AbGK2p.cqPJPhRDreRrl
- CA9iXq4vb_zf.nS_T.ZrbdhTcFbXSdm5w1mn6NnXM0jPagKn728CCE82vE82zSLn_Qwq.n21R3Yb
- V3d1Q9lJibVHUk0JobbGzYcuXNeP52UJs90aiGhe9K0BA0WVedMl.BITzYKHknop7dE_ivJd2gpI
- kqNiOP5OgIiF4qWINclYDWTe5gYXdd1KEN7HJlje1EmgHMkTwm7mkTvqyYi1pPy_1GA0KVP8ToQ.
- 6ifRvLADUe.Hi8X1EK.d_Don5f70Df8XR22pjpttwKFU.jOj3UCndhVNn2Ot0785fdVsCv3o.BER
- .BllIdhTdYxGwyydvWkHrGCA3LsjWvTrTBMymQ4WYmF3CYT4md5R4HXXm175ky4w9X_O_DW2jmk5
- o33VBdgDqtax9_2BLD49dHY3Shoq5gKZj508UzcetMrN9R0xg5KN1optqAqs8p3t3VwuN1qs0U2R
- QGNP1Q2k89vLaKR1WoowHMD6TJ.47cf_9TIJd_gfF4.kfL.YNdKBlrQY.CzYpp.1x7xTJ_0ZaOvY
- gdomRAmbX7JV3QuupKCQ5R3Zi5J.44v6_S2FNj0tQ..3k0jlfjQdjZmOuNBH7fYZNyElfccrKBc8
- UDHQIw1QAF4eXg2qizebTCTs18DBhRFq_6oBTcxmoXmFPrmxFsKf_JUF76Z_cZfUhJYN7XNp6clk
- KXctL5EmUw8Wp6VFv98fKQ7AxfVsR_7Y6S1PlMUFkVN99YzyCNcr3IrfzlIMiVKnvtO.cXrknf0J
- F.F_L3rlbGnB9HaLSGU.CJTy6E4dXP4rNHv07ja.pcCmfD7eVYpjGJhYwAAegycWhIWHQ5RQMaSd
- KTB3uisKzpHTKvHcKG2RYy0acbMQO3PV1qn6MmZ576lw6bmaC_McbcdHeEW0cupqNfdjyIljmivy
- sFKFuZhqLPXAFW_41idP6RNcwwsra2o8sjWa4Bu7FmumrpaVrONrXCpZ2.q0RprOwALJcCeppGg0
- kna4LULxqs4A412hnqX0zVOOLxBealr5TWF.3e3dp9O.E7658t5v396FuH8SB_LOjaRBaWQkbPQ5
- hv0H4t3kEBh8fQ6yaN_0.tvIQ4CMJPjcUKvkeTke7T9MqGcfVRPbIbvzlwiQqEJ3L3xFveyoqtjw
- hT0pPziC5qOMgZjn1y3D_6yirfxddvuLLxfPsFIDzZuXD9puNpsn87WVSjNhGEtUcUWMVDLqzF.P
- 8LLKgJ79vfTUwulZB5gw9R2IvB2EhnTjbo2B0fvUEmpiFxCFXaSxXW06xefOkirKzf.dYjQc..hx
- Gya1J6xpFV92fRdxLxno4K_oBo8FjpCZ.0LDl57S_sBOeWZorCn2Jq.M4V8tK.qCzAnQTL6lvwBn
- gzvzpTdDFIWwrUhBrlunJlT2OPbjRzEw1GDlVOajopBlG39YgIDDcMMfd7BDUIylvpoSG54Y3.1X
- 1ENuN2ybUaL8ckt4QTMsG6kNsMcNS8It6SKt22oeFLgWnJ2DNS8rje.k7h6Sxiy3UUtAasQJX.Ek
- k751AJ6dJiwNebtdvyk8X_qkZ7bEbmdu9Gob.Xifozos_0FEp4Up_OQ5hLlj5gmbUF6Lr3cr1FiU
- Mg_54ohWHnomsZbRiiGtyi.86Z35eBCFIJKm62sbLfaoZMZD.0CORCDF.G5DGQXJyy05a3J0NFXI
- YrqQLk3.FHjWEt9U7_d15eEcdvUq5BH_N.toZgQfinhh9GVnuwMMx0jWwJOysyuOmtLINrLCLoVu
- ggfBrTQ6nGhOZW0uUefGdHoVDW6lvgGpj9N633Fi7ZhyqZ5BTJg68hVEZFn7vGmn5hJzRdDyjfUP
- OlQYCy44T9C5Ya83gHeJ8LrSPRedIYWjVtqBF6g--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 213773a2-f4bc-4c95-baa1-254bc33656f5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Sat, 14 Sep 2024 00:36:27 +0000
-Received: by hermes--production-gq1-5d95dc458-24x88 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 23a764f4fc0e6237015cfda9103fbad1;
-          Sat, 14 Sep 2024 00:16:10 +0000 (UTC)
-Message-ID: <b14d039a-7b06-4552-ae61-fbfb4e912b4d@schaufler-ca.com>
-Date: Fri, 13 Sep 2024 17:16:09 -0700
+	s=arc-20240116; t=1726273004; c=relaxed/simple;
+	bh=ObSmvscYaRXKIg1yx72Ji1fQveuKwgCMhUB67aQXL2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oRxtDDLQhcRQsa4N/M8BJQg16rNYy0KC9i0LeQ9X6jIKD3C55RiJzLkYKzaROWjKww92I3eDEWIHKbRRRoL2HMEPfFp1QrsOB0Awi739jtXwpH5N+gNicCq0v41XN25Ibkm0GH4rfrQFi6ClHZVj+ujCDeQNhvgpMbUxGzTy3k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CTfKcAmr; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726273002; x=1757809002;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ObSmvscYaRXKIg1yx72Ji1fQveuKwgCMhUB67aQXL2M=;
+  b=CTfKcAmrkpOvyL+iTMQbL1joYsPG6hkDHThEvRlIOq+PsFWlQVcPq8gY
+   mN64NJ3LeqC2EabR+AUGSsPtBvsIk8eJ5xfgOtoe3gWHfCttEv2Z2lHWc
+   S4S8tlp73hWiA4/zj8jWdX98hLr5xQUTCCGI+StjIOcnp04xr/pJ4+CpJ
+   T6Yww3bZGKsp+0EHR1+MNpSiveZ9Skd/hGfUIl/qJSzLRPmX4Y7Uo8zQO
+   e+3nfN1O8XTA32ofGeC2LfCpqwjzTmJpb3e7zBokcBSGKJ0NFsmQaNtFt
+   tebuy4Y0JBIG3GhI7QYO8JsftHSsl4LRgSmP7aDlzGvmlYzpcJylKlGQ5
+   g==;
+X-CSE-ConnectionGUID: tGTCTMGzQWihaqKnrSsb9w==
+X-CSE-MsgGUID: Pc72cwrASmSofgcOhDEEdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25343544"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="25343544"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 17:16:42 -0700
+X-CSE-ConnectionGUID: l9kFhpPHRKilOw5t8bluXg==
+X-CSE-MsgGUID: 3bEsX3aZTq+jl6mjv+g88A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="91521412"
+Received: from tbrumzie-mobl2.amr.corp.intel.com (HELO desk) ([10.125.147.158])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 17:16:41 -0700
+Date: Fri, 13 Sep 2024 17:16:23 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Jim Mattson <jmattson@google.com>
+Cc: Chao Gao <chao.gao@intel.com>, Jon Kohler <jon@nutanix.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"kvm @ vger . kernel . org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH] x86/bhi: avoid hardware mitigation for
+ 'spectre_bhi=vmexit'
+Message-ID: <20240914001623.fzpc2dunmpidi47a@desk>
+References: <20240912141156.231429-1-jon@nutanix.com>
+ <20240912151410.bazw4tdc7dugtl6c@desk>
+ <070B4F7E-5103-4C1B-B901-01CE7191EB9A@nutanix.com>
+ <20240912162440.be23sgv5v5ojtf3q@desk>
+ <ZuPNmOLJPJsPlufA@intel.com>
+ <CALMp9eRDtcYKsxqW=z6m=OqF+kB6=GiL-XaWrVrhVQ_2uQz_nA@mail.gmail.com>
+ <CALMp9eTQUznmXKAGYpes=A0b1BMbyKaCa+QAYTwwftMN3kufLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LSM List <linux-security-module@vger.kernel.org>,
- Linux kernel mailing list <linux-kernel@vger.kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>,
- GiSeong Ji <jiggyjiggy0323@gmail.com>, Jiawei Ye <jiawei.ye@foxmail.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Subject: [GIT PULL] Smack patches for 6.12
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <b14d039a-7b06-4552-ae61-fbfb4e912b4d.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALMp9eTQUznmXKAGYpes=A0b1BMbyKaCa+QAYTwwftMN3kufLA@mail.gmail.com>
 
-Hello Linus,
+On Fri, Sep 13, 2024 at 04:04:56PM -0700, Jim Mattson wrote:
+> > The IA32_SPEC_CTRL mask and shadow fields should be perfect for this.
+> 
+> In fact, this is the guidance given in
+> https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/branch-history-injection.html:
+> 
+> The VMM should use the “virtualize IA32_SPEC_CTRL” VM-execution
+> control to cause BHI_DIS_S to be set (see the VMM Support for
+> BHB-clearing Software Sequences section) whenever:
+> o The VMM is running on a processor for which the short software
+> sequence may not be effective:
+>   - Specifically, it does not enumerate BHI_NO, but does enumerate
+> BHI_DIS_S, and is not an Atom-only processor.
+> 
+> In other words, the VMM should set bit 10 in the IA32_SPEC_CTRL mask
+> on SPR. As long as the *effective* guest IA32_SPEC_CTRL value matches
+> the host value, there is no need to write the MSR on VM-{entry,exit}.
 
-Here is the Smack pull request for v6.12.
+With host setting the effective BHI_DIS_S for guest using virtual
+SPEC_CTRL, there will be no way for guest to opt-out of BHI mitigation.
+Or if the guest is mitigating BHI with the software sequence, it will
+still get the hardware mitigation also.
 
-There are 2 patches. One is a simple indentation correction.
-The other corrects a potentially rcu unsafe pointer assignment.
-Both have time in next and pass all tests.
+To overcome this, the guest and KVM need to implement
+MSR_VIRTUAL_MITIGATION_CTRL to allow guest to opt-out of hardware
+mitigation.
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+> There is no need to disable BHI_DIS_S on the host and use the TSX
+> abort sequence in its place.
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/cschaufler/smack-next tags/Smack-for-6.12
-
-for you to fetch changes up to 2749749afa071f8a0e405605de9da615e771a7ce:
-
-  smackfs: Use rcu_assign_pointer() to ensure safe assignment in smk_set_cipso (2024-09-03 08:37:17 -0700)
-
-----------------------------------------------------------------
-Smack changes for v6.12
-	- rcu pointer assignment in smk_set_cipso
-	- indentation in smack_ip_output
-
-----------------------------------------------------------------
-GiSeong Ji (1):
-      security: smack: Fix indentation in smack_netfilter.c
-
-Jiawei Ye (1):
-      smackfs: Use rcu_assign_pointer() to ensure safe assignment in smk_set_cipso
-
- security/smack/smack_netfilter.c | 4 ++--
- security/smack/smackfs.c         | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
+Exactly.
 
