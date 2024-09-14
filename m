@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-329507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAD0979229
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA4E97922A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDDDD1C2153E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27DEB1C216E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904D61D12E2;
-	Sat, 14 Sep 2024 16:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CA81D12F9;
+	Sat, 14 Sep 2024 16:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVnrVP58"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iN18I8gl"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAE018E1F;
-	Sat, 14 Sep 2024 16:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A821D12E2
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 16:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726332195; cv=none; b=GVfCT88Ep3JPf6Z1BXll+TcWA7CLwmI9pIyhgMEBAExJNZoBg/ESlsQg45odHJQjO96AugpowwG9Js0WWHnPfbpjanhHn3gzBs2KE4lkH6Lw17VPex5f2obz5SlGV9e5LFJTQVxgo40veV6schRu4odtJ4537+akkVZS/goOkrI=
+	t=1726332304; cv=none; b=H73yGZ7XR+5eITCC7jG1WRne+6OdWToJfbzIAVRK14WiQK/Ba5InKIoEuKHzhnJ0TcGOfZNBk5EcsISPZbMhqq5wcK9e73ma8ZX3UNav+PPXBNu4VtE3lMZciFYf2+NN1HdKWTT9hlHJh7Aw+0ulWmquURRohWctKJay7ykLH0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726332195; c=relaxed/simple;
-	bh=watUBebX08tfb8o6tzfts79eY5rRh5OJeggswK03nC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h5FJr1avStc8/dopFgvr7vteKzeF8rMxnRv8a+Ngx+EMUFLcjsgHDXBEJhQcvdhemmb3BsEpCy2oPAOgcTcR6rVMel7pEjAnKV5adQFLb3TYn4iyT8DJ3eXH5owfeJKJwbuDPYD3uArrDRg8VXZsteY4kBbm3K/PWwKMyXDETZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVnrVP58; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EDD0C4CEC0;
-	Sat, 14 Sep 2024 16:43:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726332194;
-	bh=watUBebX08tfb8o6tzfts79eY5rRh5OJeggswK03nC0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dVnrVP582RSHH+g5kV0x8+3x9HThsB8vvlPLUgUE59tDKi2QsRBQv5MdxAIKZucPs
-	 RHEgwJC8gYRzo62L/gd2/U80FA4XTH+zA994A906q/Gmhs2WaC4/J5BEmWgT+uVJhf
-	 KyiFRdu+yAr+1+lhHdcob5euRBK204EPvMJEKbXY5LEKIdS/7uDmtrMolaeGRLGF9o
-	 m4+KBYnNA00M/IeY5+JIKIgIy3J8gaflvjh6tOZXYjaQAE4L8xYS6BQNABEaXhkNqF
-	 /1Z/APeZJEpjOxL4zUTcl5EOC3uGxmg8r5522EAjRsGgoSPdwHElFQXhpeAh6zdn31
-	 IhW1IryaLSAOQ==
-Date: Sat, 14 Sep 2024 17:43:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Ramona Alexandra Nechita <ramona.nechita@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Cosmin Tanislav <cosmin.tanislav@analog.com>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Nuno Sa <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, David
- Lechner <dlechner@baylibre.com>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29u?=
- =?UTF-8?B?w6dhbHZlcw==?= <joao.goncalves@toradex.com>, Alisa-Dariana Roman
- <alisadariana@gmail.com>, Mike Looijmans <mike.looijmans@topic.nl>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v5 2/3] Documentation: ABI: added filter mode doc in
- sysfs-bus-iio
-Message-ID: <20240914174306.02d1b2fe@jic23-huawei>
-In-Reply-To: <202409131243.olYA3Qdt-lkp@intel.com>
-References: <20240912121609.13438-3-ramona.nechita@analog.com>
-	<202409131243.olYA3Qdt-lkp@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726332304; c=relaxed/simple;
+	bh=VMBG2Dh3Zw7faqlpcqUYMWLfsHTm5HJFrtJVUFbwLYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bI9HnkBzxU4v0L3Yc/r6HU1aRCocB7S2TLwHxo2VtT74F4NP+3YP3Wo8yiNHm/nrw0Y4bNxsL44yhHITOFkB/IVd9nHfZx1j0ryXcZ4LBB2Dq2r59SCOgfTgKCYS8UCcWuivYe6rl+CvII8U2wLLM/2UfBPc+itH/E4dTfuGkJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iN18I8gl; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7d4f8a1626cso1502110a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:45:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726332302; x=1726937102; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jho1JF+P59lkbzGdVgYwLqxMLIAumaTqEKGdD7HjJX0=;
+        b=iN18I8glGCCwT+FSVt3dFsSa6m6sE6Q+8jQxBQ3xcQ78bj7a/lNpWshsTYMnmylXIA
+         pPc5RunEKYqNUEKOFymm01dIEmxEZR1xQin/fRBaWOp1zZbUDJ39O7+BH9TeuvaPs7YN
+         U+5Z+TB5JLVjPV1xVhtQ5vyJD3dtj8vn7mxDcK4Qd5C+8E2dtRDXEgxt5MpUbypmo9rB
+         hDmNB440+/6vc7DOcy6LP/I4WYgves705pPNmIbt93b0RomJplJfXN/xnkjVYO2MqyUD
+         HsoJ//u/0PN4S/JR+eXUKYWC8slkk0ynO1yHmp6tmI4ePF6haGeh3O58UbxgWKfn3yOh
+         hioQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726332302; x=1726937102;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jho1JF+P59lkbzGdVgYwLqxMLIAumaTqEKGdD7HjJX0=;
+        b=uP9vTrYE70Ct8Od+9R6rmnwEmN9Wxy35LVLK8rXnQiyPAXpUjhEUbwOuS3f46MkTo7
+         5UnmtmjSlt7SxwpS0vVbqj8W3gKHmjdMMOiFWlyiWg+WgLerPV8t53Y+FbwvHlLibNup
+         oLEvzXpvyz38aJE93jRUeZyosbwxw1e48bOBwmUMhWfOMGM/cExRDeS7RBWn8hFvKGhI
+         4Zns/zA0Ikx6lS7pjMyb8rb68paw98iGFYLWfOpxFOAfSQW6g2Du7qRq0q9d2ww4z6sM
+         iV2W/OXCG0+x+v8N6ALS13B/jeb32jaPQe7sf50E2AZAnX16gitMtrTmBblOSYwz16/L
+         F9Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcH0q7ykmzHpHAug+J+O8b3EFgeX39MbB3HTy1zwCQoID8fpSNRyU5D1EVCHPFo3xgT+Wppamjih4PdBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdNBtizqnAFXR0tOB8WkLxluL8AfCngT0PXnyCoDr0Qkdxm67U
+	Q219fuMwLChKEwVcryStl7+GHNj7x/S05Eyi6E1iG8MOzjiQMS6zKjVGmYrRBPk=
+X-Google-Smtp-Source: AGHT+IGlu9u+g3BPmkH/baJXqXWvTrZtLsscYZ70k87KumegUKrIqkB8liTQ2W23TEeaRKBwr286pA==
+X-Received: by 2002:a17:90b:1c92:b0:2d3:bc5f:715f with SMTP id 98e67ed59e1d1-2dbb9df9afbmr8375713a91.10.1726332301803;
+        Sat, 14 Sep 2024 09:45:01 -0700 (PDT)
+Received: from embed-PC.myguest.virtualbox.org ([106.222.229.152])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbcfdc0ac3sm1737304a91.53.2024.09.14.09.44.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Sep 2024 09:45:01 -0700 (PDT)
+Date: Sat, 14 Sep 2024 22:14:56 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: skhan@linuxfoundation.org, rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] staging: octeon: Use new initialization api for
+ tasklet
+Message-ID: <ZuW9iInzizGypLRt@embed-PC.myguest.virtualbox.org>
+References: <20240913191734.805815-1-abhishektamboli9@gmail.com>
+ <2024091424-glisten-unmanned-bb8f@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024091424-glisten-unmanned-bb8f@gregkh>
 
-On Fri, 13 Sep 2024 12:16:34 +0800
-kernel test robot <lkp@intel.com> wrote:
+Hi Greg,
 
-> Hi Ramona,
+On Sat, Sep 14, 2024 at 10:20:02AM +0200, Greg KH wrote:
+> On Sat, Sep 14, 2024 at 12:47:34AM +0530, Abhishek Tamboli wrote:
+> > Use the new api DECLARE_TASKLET instead of DECLARE_TASKLET_OLD
+> > introduced in commit 12cc923f1ccc ("tasklet: Introduce new
+> > initialization API").
 > 
-> kernel test robot noticed the following build warnings:
+> This says what you are doing, but not why you are doing this.
 > 
-> [auto build test WARNING on jic23-iio/togreg]
-> [also build test WARNING on robh/for-next linus/master v6.11-rc7 next-20240912]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Why is this needed?  What bug does this fix?  The code is the exact same
+> afterward so why should this be accepted?
 > 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Ramona-Alexandra-Nechita/dt-bindings-iio-adc-add-a7779-doc/20240912-201936
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-> patch link:    https://lore.kernel.org/r/20240912121609.13438-3-ramona.nechita%40analog.com
-> patch subject: [PATCH v5 2/3] Documentation: ABI: added filter mode doc in sysfs-bus-iio
-> reproduce: (https://download.01.org/0day-ci/archive/20240913/202409131243.olYA3Qdt-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202409131243.olYA3Qdt-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
->    Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
->    Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
-> >> Warning: MAINTAINERS references a file that doesn't exist: Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130  
-Ah. Ramona, make sure to delete this reference as well in this patch.
+ While this patch doesn't fix any functional bug, it ensures that the 
+ code is kept up to date with the new Initialization API for tasklets.
 
-Thanks,
-
-Jonathan
-
->    Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
->    Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
->    Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
->    Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/nvmem/u-boot,env.yaml
->    Using alabaster theme
-> 
-
+ Regards,
+ Abhishek
 
