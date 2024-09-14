@@ -1,148 +1,234 @@
-Return-Path: <linux-kernel+bounces-329417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6B8979118
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:40:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FBBD97911A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C1A1B20A7B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:40:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E75F1F20FAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7377F1CF7DA;
-	Sat, 14 Sep 2024 13:40:35 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A161CFEA0;
+	Sat, 14 Sep 2024 13:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sv4cOXwV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FB514659B;
-	Sat, 14 Sep 2024 13:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA5C1CEEAB;
+	Sat, 14 Sep 2024 13:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726321235; cv=none; b=ZmwricMWeel6pTnV/YviZlcFqdg6t03Q0ywJHBUsUYm1GU+uYGhyRc9qkBg2lLxLY7YoSaBGXdTNhDQGH9PMwk7N+XX1cHlGD4CuWOSMQbEhPqCe9NeQfLcyxVB55rMGQ+HQSsHYQnJEq7vf2sqtr+P8FjFP+UErH/f2FH5UFKo=
+	t=1726321449; cv=none; b=RBV+esdHdLt9LTue2kPy2LKrQAP9PTMo2sFq9Dxwgje7dYsvCMorOj35O4KD02PYnHjpWEaKGb7HSV80rE6O5aHDVqN35eLiz/7rTcjCuMihCy8BqStJ9yg1IATRAz6uSIW7z0E5Zqwy+MWQDLkCzAmu+FKg2Zav8xqB10AR+60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726321235; c=relaxed/simple;
-	bh=mn3vPt1oww2MgjPGA+PJ5Bp/OXpKqUfotXZnSaDnPkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wz1/i/Os4V858zjfJKLk1ylv3gDO8JM81l8Bb49pOtcEqDJtqiEM1pgf5XzsJWcaDKvG/Pmb1NkLCrUPdGusXR7TeMI43kTKdx7/UIwtq8HFohlLKEM5u3VBcTq1oxc2ay3XCQoCNBbYUPZ+QdlRBmNlXwL3Pkq08eCnmlfZPJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 48EDeAQw041686;
-	Sat, 14 Sep 2024 22:40:10 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
- Sat, 14 Sep 2024 22:40:10 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 48EDe9ZA041683
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 14 Sep 2024 22:40:10 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <72759961-1f11-4bad-ad0e-b665b5a86aaa@I-love.SAKURA.ne.jp>
-Date: Sat, 14 Sep 2024 22:40:07 +0900
+	s=arc-20240116; t=1726321449; c=relaxed/simple;
+	bh=/lAtZJ5HykopUMiPN/wR8wLT7yz7+UzfH0VFgsHLvMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JJgvhF0SKUAoCNOfJvUW8MKOUvs1MXk5DEdks7Ms4p1snKwJMWo3W5GOz7ucO70k/l8sA/Jc5dFu2SSdEwdLydS7Iq0ff4uQiqIUp3Z2cmZyWSLQ4sMZg/kcjwCbNROD5GBDktHYM1Gv7wNg9w7/Xr1rKhoho7XkzxctDYbUHWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sv4cOXwV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A37EC4CEC0;
+	Sat, 14 Sep 2024 13:44:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726321448;
+	bh=/lAtZJ5HykopUMiPN/wR8wLT7yz7+UzfH0VFgsHLvMw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Sv4cOXwVAOCfixVvQqrd9WAVAKuDShiQom1Iitjs+d0BEmaaqsB0HgCp0Qa86FCL5
+	 FNcu3+15gAmZOBMm5PE1nB7ZqskmVfiKSbwDyhzpgflA43aTh7oNvg8QNXT7wo/wS4
+	 nOncnobEB4zLx93Prlhrjaat92R/SREb5F1GYpkuWFVyW4q/dAHSosNMS4lEGGV9kQ
+	 oBNYUEe86KCAXC0+/+tfSR7whC0Qm+FxRM9fMWQ87QA0jzn4gJF2ZvtJH3T/bUhIeO
+	 rHnCbbvX+t8+O/s85vgMBj/v5yC8i2GrzichCFDSoD8UWO+xFflJPoWLXEiIwTMWKi
+	 oA5Q14lb5sDkQ==
+Date: Sat, 14 Sep 2024 14:44:02 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] iio: light: ltr390: Added configurable sampling
+ frequency support
+Message-ID: <20240914144402.16486b79@jic23-huawei>
+In-Reply-To: <20240910045030.266946-2-abhashkumarjha123@gmail.com>
+References: <20240910045030.266946-1-abhashkumarjha123@gmail.com>
+	<20240910045030.266946-2-abhashkumarjha123@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
-To: Konstantin Andreev <andreev@swemel.ru>,
-        Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20240910184125.224651-1-casey@schaufler-ca.com>
- <20240910184125.224651-2-casey@schaufler-ca.com>
- <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
- <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
- <8515a57b-4369-4bd9-a43f-b5543295a472@swemel.ru>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <8515a57b-4369-4bd9-a43f-b5543295a472@swemel.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2024/09/14 19:30, Konstantin Andreev wrote:
-> Casey Schaufler, 14 Sep 2024:
->> On 9/13/2024 1:49 PM, Konstantin Andreev wrote:
->>> Casey Schaufler, 10 Sep 2024:
->>>> ...
->>>> The lsm_prop structure definition is intended to keep the LSM
->>>> specific information private to the individual security modules.
->>>> ...
->>>> index 1390f1efb4f0..1027c802cc8c 100644
->>>> --- a/include/linux/security.h
->>>> +++ b/include/linux/security.h
->>>> @@ -140,6 +144,22 @@ enum lockdown_reason {
->>>> +
->>>> +/*
->>>> + * Data exported by the security modules
->>>> + */
->>>> +struct lsm_prop {
->>>> +    struct lsm_prop_selinux selinux;
->>>> +    struct lsm_prop_smack smack;
->>>> +    struct lsm_prop_apparmor apparmor;
->>>> +    struct lsm_prop_bpf bpf;
->>>> +    struct lsm_prop_scaffold scaffold;
->>>> +};
->>>
->>> This design prevents compiling and loading out-of-tree 3rd party LSM,
->>> am I right?
->>
->> No more so than the existing implementation. An upstream acceptable
->> scheme for loading out-of-tree LSMs has much bigger issues to address
->> than adding an element to struct lsm_prop.
+On Tue, 10 Sep 2024 10:20:26 +0530
+Abhash Jha <abhashkumarjha123@gmail.com> wrote:
 
-What I imagine with "loadable LSMs" is "trivial LSMs which do not depend
-on blobs managed by infrastructure but do depend on hooks being called
-by infrastructure". Some of such LSMs could be implemented using BPF, but
-BPF is too limited to re-implement TOMOYO (or TOMOYO-like LSMs).
+> Provied configurable sampling frequency(Measurement rate) support.
+Spell check: Provide
 
-TOMOYO is one of trivial LSMs which can easily opt out from "infrastructure
-managed blobs". Also, I don't have a plan to allow "loadable LSMs" to use
-"infrastructure managed blobs" including "struct lsm_prop".
-
->>
->>> Out-of-tree LSM's were discussed recently at
->>>
->>> https://lore.kernel.org/linux-security-module/efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp/T/
->>> https://lore.kernel.org/linux-security-module/960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp/T/
->>>
->>> but it looks like a final decision to ban them is not taken yet.
->>
->> There has never been (to my knowledge) an effort to "ban" out-of-tree
->> LSMs. There has also not been interest in actively supporting them since
->> the "L" in LSM changed from "Loadable" to "Linux", with the exception of
->> Tetsuo Handa, who has been invited to suggest a viable mechanism. There
->> is currently support for BPF based security implementations, which can
->> be maintained out-of-tree. We are currently battling with the notion that
->> the LSM infrastructure is an attack surface. We really don't want to do
->> anything to increase that exposure.
+> Also exposed the available sampling frequency values using read_avail
+> callback.
 > 
-> Thank you for explaining this. Although the “ban” is a side effect of the
-> other activity, I think the “ban” should be explicitly recognized as ban,
-> rather than evasive “we don’t care”.
+> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+Hi Abhash,
 
-The "we don't care" response is really irritating. But if loadable LSMs were
-banned, LSM will be dead and an alternative to LSM will be crazily pushed.
-No one can enforce "military level security" to averaged Linux users.
-That attempt is a reoccurrence of "Only my version is correct" crap.
-
-Only those who needs "military level security" in LSM will use LSM.
-Those who don't need "military level security" will use a different framework.
-
+A few minor comments inline and an (optional) request to cleanup
+the mask definitions in the existing code.
+> ---
+>  drivers/iio/light/ltr390.c | 68 ++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 66 insertions(+), 2 deletions(-)
 > 
-> The reason I think so is that this decision significantly (at times)
-> increases the cost of user (here: system owner) <-> 3rd party LSM developer
-> interaction, and decreases openness of Linux in this particular aspect.
+> diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
+> index 7e58b50f3..73ef4a5a0 100644
+> --- a/drivers/iio/light/ltr390.c
+> +++ b/drivers/iio/light/ltr390.c
+> @@ -39,6 +39,7 @@
+>  
+>  #define LTR390_PART_NUMBER_ID		0xb
+>  #define LTR390_ALS_UVS_GAIN_MASK	0x07
+> +#define LTR390_ALS_UVS_MEAS_RATE_MASK	0x07
+These masks should be converted to GENMASK().
+If you don't mind doing it a precursor patch to do so
+would be nice to have.
 
-If loadable LSMs were banned, the value of distribution kernel will be
-significantly lost. The point of loadable kernel module is to share the
-workload.
+However whether or not you cleanup existing mask definitions,
+please use GENMASK() for this new one.
+
+>  #define LTR390_ALS_UVS_INT_TIME_MASK	0x70
+>  #define LTR390_ALS_UVS_INT_TIME(x)	FIELD_PREP(LTR390_ALS_UVS_INT_TIME_MASK, (x))
+>  
+> @@ -87,6 +88,18 @@ static const struct regmap_config ltr390_regmap_config = {
+>  	.val_bits = 8,
+>  };
+>  
+> +/* Sampling frequency is in mili Hz and mili Seconds */
+> +static const int ltr390_samp_freq_table[][2] = {
+> +		[0] = {40000, 25},
+I'm trying to slowly get IIO to standardise strongly around
+		[0] = { 4000, 25 },
+
+etc.  So space after { and before }
+> +		[1] = {20000, 50},
+> +		[2] = {10000, 100},
+> +		[3] = {5000, 200},
+> +		[4] = {2000, 500},
+> +		[5] = {1000, 1000},
+> +		[6] = {500, 2000},
+> +		[7] = {500, 2000}
+
+Add a trailing comma.  Sure we probably will never get any more entries
+but it isn't a terminator entry so convention is put the comma anyway.
+
+> +};
+> +
+>  static int ltr390_register_read(struct ltr390_data *data, u8 register_address)
+>  {
+>  	struct device *dev = &data->client->dev;
+> @@ -135,6 +148,18 @@ static int ltr390_counts_per_uvi(struct ltr390_data *data)
+>  	return DIV_ROUND_CLOSEST(23 * data->gain * data->int_time_us, 10 * orig_gain * orig_int_time);
+>  }
+>  
+> +static int ltr390_get_samp_freq(struct ltr390_data *data)
+> +{
+> +	int ret, value;
+> +
+> +	ret = regmap_read(data->regmap, LTR390_ALS_UVS_MEAS_RATE, &value);
+> +	if (ret < 0)
+> +		return ret;
+> +	value &= LTR390_ALS_UVS_MEAS_RATE_MASK;
+
+FIELD_GET() preferred because then the reader doesn't have to check
+if this mask includes the LSB.  It slightly helps review and compiler
+will get rid of the shift by nothing anyway.
+
+> +
+> +	return ltr390_samp_freq_table[value][0];
+> +}
+> +
+>  static int ltr390_read_raw(struct iio_dev *iio_device,
+>  			   struct iio_chan_spec const *chan, int *val,
+>  			   int *val2, long mask)
+> @@ -191,6 +216,10 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
+>  		*val = data->int_time_us;
+>  		return IIO_VAL_INT;
+>  
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		*val = ltr390_get_samp_freq(data);
+> +		return IIO_VAL_INT;
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -199,6 +228,7 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
+>  /* integration time in us */
+>  static const int ltr390_int_time_map_us[] = { 400000, 200000, 100000, 50000, 25000, 12500 };
+>  static const int ltr390_gain_map[] = { 1, 3, 6, 9, 18 };
+> +static const int ltr390_freq_map[] = { 40000, 20000, 10000, 5000, 2000, 1000, 500, 500 };
+>  
+>  static const struct iio_chan_spec ltr390_channels[] = {
+>  	/* UV sensor */
+> @@ -206,16 +236,18 @@ static const struct iio_chan_spec ltr390_channels[] = {
+>  		.type = IIO_UVINDEX,
+>  		.scan_index = 0,
+>  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
+> -		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
+> +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME) | BIT(IIO_CHAN_INFO_SAMP_FREQ),
+>  		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_INT_TIME) | BIT(IIO_CHAN_INFO_SCALE)
+> +						| BIT(IIO_CHAN_INFO_SAMP_FREQ)
+Obviously a long line above, but | should generally be on that previous line.
+Probably best to reformat it as
+ 		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_INT_TIME) |
+						     BIT(IIO_CHAN_INFO_SCALE) |
+						     BIT(IIO_CHAN_INFO_SAMP_FREQ),
+
+Note should have always had a trailing comma.  Add that whilst here.
+
+	
+>  	},
+>  	/* ALS sensor */
+>  	{
+>  		.type = IIO_LIGHT,
+>  		.scan_index = 1,
+>  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
+> -		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
+> +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME) | BIT(IIO_CHAN_INFO_SAMP_FREQ),
+>  		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_INT_TIME) | BIT(IIO_CHAN_INFO_SCALE)
+> +						| BIT(IIO_CHAN_INFO_SAMP_FREQ)
+>  	},
+>  };
+>  
+> @@ -264,6 +296,27 @@ static int ltr390_set_int_time(struct ltr390_data *data, int val)
+>  	return -EINVAL;
+>  }
+>  
+> +static int ltr390_set_samp_freq(struct ltr390_data *data, int val)
+> +{
+> +	int ret, idx;
+> +
+> +	for (idx = 0; idx < ARRAY_SIZE(ltr390_samp_freq_table); idx++) {
+> +		if (ltr390_samp_freq_table[idx][0] != val)
+> +			continue;
+> +
+> +		guard(mutex)(&data->lock);
+> +		ret = regmap_update_bits(data->regmap,
+> +					LTR390_ALS_UVS_MEAS_RATE,
+> +					LTR390_ALS_UVS_MEAS_RATE_MASK, idx);
+
+		return regmap_update_bits()
+
+is the same thing as what you have here.
+
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+
 
 
