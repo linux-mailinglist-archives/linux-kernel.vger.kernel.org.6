@@ -1,373 +1,189 @@
-Return-Path: <linux-kernel+bounces-329518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD533979240
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:07:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498B8979246
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30B8EB21BC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:07:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A19D1C2165F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D9F1D0DFE;
-	Sat, 14 Sep 2024 17:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F3D1D1316;
+	Sat, 14 Sep 2024 17:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0tU4ifW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIhrG/TD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718F6208DA;
-	Sat, 14 Sep 2024 17:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3921D094B;
+	Sat, 14 Sep 2024 17:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726333619; cv=none; b=V8RcDyYVAQhfWe2d23lbpc7BzMvKNXEpsV6cmsjxvNgXkHfaTAgp5SuwPF4pci2ZSW9QTB7LhQHjaoMKCUCgeKfPJuqOnaCnJhxRcMeR/UY9IsTqWiUSxIoT7UD6Sfry5FIU0zP470oUf51D+9rekO5PwtCQJHJKc+4f8Najz8o=
+	t=1726333642; cv=none; b=orOSv9okK/WjDvde51Yk7ow/Yki1S2hqXT+zz6rTClCXBGI24VjiObDvgRfqP7VeOKHJG5QlZNKSnpqvyvfV6lACvbqWZo020ORwNzTa7ci21ssfIkCYPuRC0fI2PLTxrbxOPesDLtZZBgKa8m21Rbssetshwpz/uqKYRbKJwDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726333619; c=relaxed/simple;
-	bh=Hc328JVFbmZz+imPdU0ZX1xC9jylhpvtV+oaxa8mRLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eoafTLvaFlsghpPII4nX0rMUsCVKVmK8kOxccTBYgIkziZD9jCEMfyX1fysWlI46HLQQVJgMXt3GWNnHtPp8M1+l7ssavkdvBI+jj1qmtCua2+libt24/nEduzsOSDSkF+RxTdY6eAUAaYdLWvztKW/Rbs7npOMmEXECmUUyjD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0tU4ifW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EA78C4CEC0;
-	Sat, 14 Sep 2024 17:06:53 +0000 (UTC)
+	s=arc-20240116; t=1726333642; c=relaxed/simple;
+	bh=oNZ9ifUx85pIo9YMYCgfUbZxCuBYJVyxSYhJ7nj6Okw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qRBLeW81DXmygBi7s7o3T9o9hiIoFS2RRTZaa7D9CIAKEWF0gDULw/5Fo3fUF6D+sM5C560PJM1yhvETRiDKquAXWGDyNf11yBxOkgdehnYeICkZ513my6pLpJ2i+7JplmQOH4lcotWzwN6WcUgRRJkOk9cD9ZR1N7W5Gi4QoJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIhrG/TD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C27AC4CEC0;
+	Sat, 14 Sep 2024 17:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726333619;
-	bh=Hc328JVFbmZz+imPdU0ZX1xC9jylhpvtV+oaxa8mRLw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c0tU4ifW5PomF3ZO3nf5H9wJkgggx2GjQ7FdFnKkI5H8p4Wc7mSz9eCknG3PCFBAD
-	 xoxRtRLV6IvWVHaa9MigveIphZhVX0vRcMqj5z4ZDUZi1yY6R7+9qylLUsGEa4TFUo
-	 Iuv52q2j63ejLdVqdhXyXfuXpIwPmquF7EGftyk49fLhkwiXB1zuuP4oachjtO4TMn
-	 EBNecDtQtnnq0Uc2F9HC3irtm/E2zSjepinWA0n+mT8E+1UulQR5bFdjy6+Y6p1Jt5
-	 vsZXZO35sC1hXpmcn46lMALKopUp/ZoIWUwy70+vKA62YSoyytBHV4D4Ghf5Z6UaBS
-	 LgC16mpV6Xn8A==
-Date: Sat, 14 Sep 2024 18:06:48 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
- Sa <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>, Dumitru Ceclan
- <mitrutzceclan@gmail.com>, Matteo Martelli <matteomartelli3@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>, Ivan Mikhaylov
- <fr0st61te@gmail.com>, Mike Looijmans <mike.looijmans@topic.nl>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <20240914180648.592cd69e@jic23-huawei>
-In-Reply-To: <20240912121609.13438-4-ramona.nechita@analog.com>
-References: <20240912121609.13438-1-ramona.nechita@analog.com>
-	<20240912121609.13438-4-ramona.nechita@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1726333641;
+	bh=oNZ9ifUx85pIo9YMYCgfUbZxCuBYJVyxSYhJ7nj6Okw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=NIhrG/TDQrl07dQ6TTbVV11vXpgZGzQZxMb7rqWJf9YAqDCOnuN8/88/0FV3S4zRz
+	 F/sRefY+mAgWCj290EfoHiDr/tFuPLrwWcSPQa15Ly6rSF8ogjkIt9UdqTIlKPC6by
+	 Ybmndyp8mgSJurKbFuIIBPi34KWS2K3oD1BKV6lHzBNQ3ZGMbbXyVe7+GO3Zpc3NRi
+	 3InVqX8jWq2iggLuTzveSlnI6KzQIp3opdUoZSS0xkYAeY7SsvDvGTc+PtrVtaSZF8
+	 Kvle/Z2ivJSJ4h9S9YYYq1bGJyyCGkGmp3hcpex84I2YuUaTGKdwN8yJ1Ags2cbifD
+	 BkS6SDCaPGIoA==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v8 00/11] fs: multigrain timestamp redux
+Date: Sat, 14 Sep 2024 13:07:13 -0400
+Message-Id: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMHC5WYC/1WNQQ6CMBBFr0Jmbc1QChRX3sO4oHSEiQKmJY2Gc
+ HcLxqjL9zPvzQyeHJOHQzKDo8CexyGC3iXQdPXQkmAbGSRKhVWaib6duCchsam0aWytNUE8vju
+ 68GMLnc6RO/bT6J5bNxTr+k6Uaf5JhEKgUJpymyljpamPV3ID3faja2FthPLr/bwOZfQqaRVKp
+ Mwg/nnLsrwA+W2M09UAAAA=
+To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+ Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+ Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+ Chuck Lever <chuck.lever@oracle.com>, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org, 
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, linux-mm@kvack.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4242; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=oNZ9ifUx85pIo9YMYCgfUbZxCuBYJVyxSYhJ7nj6Okw=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm5cLFlgIi7SHE2OO3b2zPbvHekVLuRGgQpvr7G
+ ARO3J1jIfeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZuXCxQAKCRAADmhBGVaC
+ FdqoD/4wRjGY+YRjkK+C/HU/G/RaDXKhm2vvNLBmfdXKKZsZoysJ15/xGizWxxwA3gcNG+I3yRu
+ 0ya0o2/adat2un1V3fbCiW9mnm3KqYqPhZEbDFWMz7RFpwNqeDg1/Rm0q8BOcDfGeufzR8Efzqe
+ Poq08GAsbKITk3hkfpYd7AFI7lVhMn+moLz2knAjzLmaRjUa/Emlf6ENFKVbU7Re4bVE67s+SZt
+ 9qpFpLKD3v0PtrKw0/B3Mb87PCRMrothPihtbKQun6+QO6bnkx7QRQGVdytzwGL4wARIYKKpQca
+ AZcLEYR5BfQ5V9zNX2psOArfBOplvawPoBhxOP9ttGSUN7yS3vpvYYP2nqczTOQeRF4TWpfqPlz
+ Ce7A0iWlkjue9rMYQUBdyMle/8b/mqHfL5I1pCZXGgY4uewUk5LhXe+imQCPFd7nq4dkZV51R7v
+ x6WgqXLj3yFQv9+3Bzs2rRe+JdP8EVYTCEPR4Xk6Z3H0puhANuW1kkQozhZokAbNfprVPcMTHxV
+ qN8XM9rTuaLF3XOJ2OGNKepD+szArorAasN6pHEY/olnn1AGh67bAqLTNgDGEFg/adoDvAKJ4ls
+ SwTAwrprK0N0HzEmTCBo4f6ri25yP5TbqSpDmUNRMFBerH0a27fgMu0FXbm7JhVIOIatQE6T2AM
+ Xzp8+BwB3oev/GQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Thu, 12 Sep 2024 15:15:47 +0300
-Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
+This is a fairly small update to the v7 set. It seems to pass all of my
+testing. Again, most of the changes are in the first two patches, but
+there are some differences in the patch that adds percpu counters as
+well.
 
-> Add support for AD7770, AD7771, AD7779 ADCs. The device is capable of
-> sending out data both on DOUT lines interface,as on the SDO line.
-> The driver currently implements only the SDO data streaming mode. SPI
-> communication is used alternatively for accessing registers and streaming
-> data. Register access are protected by crc8.
-> 
-> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Hi Ramona,
+Since the report of a performance regression came just before the merge
+window, it looks like we're going to have to wait for yet another
+release, so consider this version v6.13 material.
 
-A few additional comments inline,
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v8:
+- drop the cookie handling from the new timekeeper interfaces
+- add back the floor_swaps percpu counter
+- comment updates and minor cleanups
+- Link to v7: https://lore.kernel.org/r/20240913-mgtime-v7-0-92d4020e3b00@kernel.org
 
-Jonathan
-> diff --git a/drivers/iio/adc/ad7779.c b/drivers/iio/adc/ad7779.c
-> new file mode 100644
-> index 000000000000..05ae72257c9e
-> --- /dev/null
-> +++ b/drivers/iio/adc/ad7779.c
-> @@ -0,0 +1,917 @@
+Changes in v7:
+- move the floor value handling into timekeeper for better performance
+- Link to v6: https://lore.kernel.org/r/20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org
 
-> +static int ad7779_set_calibbias(struct ad7779_state *st, int channel, int val)
-> +{
-> +	int ret;
-> +	u8 calibbias[3];
-> +
-> +	put_unaligned_be24(val, calibbias);
-> +	ret = ad7779_spi_write(st,
-> +			       AD7779_REG_CH_OFFSET_UPPER_BYTE(channel),
-> +			       calibbias[0]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad7779_spi_write(st,
-> +			       AD7779_REG_CH_OFFSET_MID_BYTE(channel),
-> +			       calibbias[1]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ad7779_spi_write(st,
-> +				AD7779_REG_CH_OFFSET_LOWER_BYTE(channel),
-Wrap closer to 80 chars.
-	return ad7779_spi_write(st, AD7779_REG_CH_OFFSET_LOWER_BYTE(channel),
-				calibbias[2]);
+Changes in v6:
+- Normalize timespec64 in inode_set_ctime_to_ts
+- use DEFINE_PER_CPU counters for better vfs consistency
+- skip ctime cmpxchg if the result means nothing will change
+- add trace_ctime_xchg_skip to track skipped ctime updates
+- use __print_flags in ctime_ns_xchg tracepoint
+- Link to v5: https://lore.kernel.org/r/20240711-mgtime-v5-0-37bb5b465feb@kernel.org
 
-etc as it'll shorted the code a little bit for no significant loss
-of readability.  Do the same for all other such cases.
-> +}
+Changes in v5:
+- refetch coarse time in coarse_ctime if not returning floor
+- timestamp_truncate before swapping new ctime value into place
+- track floor value as atomic64_t
+- cleanups to Documentation file
+- Link to v4: https://lore.kernel.org/r/20240708-mgtime-v4-0-a0f3c6fb57f3@kernel.org
 
-> +
-> +static irqreturn_t ad7779_trigger_handler(int irq, void *p)
-> +{
-> +	struct iio_poll_func *pf = p;
-> +	struct iio_dev *indio_dev = pf->indio_dev;
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +	int bit;
-> +	int k = 0;
-> +	/*
-> +	 * Each channel shifts out HEADER + 24 bits of data therefore 8 * u32
-> +	 * for the data and 64 bits for the timestamp
-> +	 */
-> +	u32 tmp[10];
-> +
-> +	struct spi_transfer sd_readback_tr[] = {
-> +		{
-> +			.rx_buf = st->spidata_rx,
-> +			.tx_buf = st->spidata_tx,
-> +			.len = AD7779_NUM_CHANNELS * AD7779_CHAN_DATA_SIZE,
-> +		}
-> +	};
-> +
-> +	if (!iio_buffer_enabled(indio_dev))
-> +		goto exit_handler;
+Changes in v4:
+- reordered tracepoint fields for better packing
+- rework percpu counters again to also count fine grained timestamps
+- switch to try_cmpxchg for better efficiency
+- Link to v3: https://lore.kernel.org/r/20240705-mgtime-v3-0-85b2daa9b335@kernel.org
 
-If buffers aren't enabled, the push to buffers won't do anything. So this race
-shouldn't matter.  If it does, what happens?
-I'm curious because I'd expect any races that cause trouble in this case
-to be pretty universal across drivers.
+Changes in v3:
+- Drop the conversion of i_ctime fields to ktime_t, and use an unused bit
+  of the i_ctime_nsec field as QUERIED flag.
+- Better tracepoints for tracking floor and ctime updates
+- Reworked percpu counters to be more useful
+- Track floor as monotonic value, which eliminates clock-jump problem
 
+Changes in v2:
+- Added Documentation file
+- Link to v1: https://lore.kernel.org/r/20240626-mgtime-v1-0-a189352d0f8f@kernel.org
 
-> +
-> +	st->spidata_tx[0] = AD7779_SPI_READ_CMD;
-> +	ret = spi_sync_transfer(st->spi, sd_readback_tr,
-> +				ARRAY_SIZE(sd_readback_tr));
-> +	if (ret) {
-> +		dev_err(&st->spi->dev,
-> +			"spi transfer error in irq handler");
-> +		goto exit_handler;
-> +	}
-> +
-> +	for_each_set_bit(bit, indio_dev->active_scan_mask, AD7779_NUM_CHANNELS - 1)
-> +		tmp[k++] = st->spidata_rx[bit];
+---
+Jeff Layton (11):
+      timekeeping: move multigrain timestamp floor handling into timekeeper
+      fs: add infrastructure for multigrain timestamps
+      fs: have setattr_copy handle multigrain timestamps appropriately
+      fs: handle delegated timestamps in setattr_copy_mgtime
+      fs: tracepoints around multigrain timestamp events
+      fs: add percpu counters for significant multigrain timestamp events
+      Documentation: add a new file documenting multigrain timestamps
+      xfs: switch to multigrain timestamps
+      ext4: switch to multigrain timestamps
+      btrfs: convert to multigrain timestamps
+      tmpfs: add support for multigrain timestamps
 
-If you can't use the core demux handling + available_scan_masks, please add
-a comment here to say why.  That would allow you to do the SPI transfer directly
-into the buffer you then push below. The IIO core will figure out how to
-pull data out of that if the user wants a subset of channels.
+ Documentation/filesystems/index.rst         |   1 +
+ Documentation/filesystems/multigrain-ts.rst | 121 ++++++++++++
+ fs/attr.c                                   |  60 +++++-
+ fs/btrfs/file.c                             |  25 +--
+ fs/btrfs/super.c                            |   3 +-
+ fs/ext4/super.c                             |   2 +-
+ fs/inode.c                                  | 278 +++++++++++++++++++++++++---
+ fs/stat.c                                   |  42 ++++-
+ fs/xfs/libxfs/xfs_trans_inode.c             |   6 +-
+ fs/xfs/xfs_iops.c                           |  10 +-
+ fs/xfs/xfs_super.c                          |   2 +-
+ include/linux/fs.h                          |  36 +++-
+ include/linux/timekeeping.h                 |   5 +
+ include/trace/events/timestamp.h            | 124 +++++++++++++
+ kernel/time/timekeeping.c                   |  83 +++++++++
+ kernel/time/timekeeping_debug.c             |  12 ++
+ kernel/time/timekeeping_internal.h          |   3 +
+ mm/shmem.c                                  |   2 +-
+ 18 files changed, 742 insertions(+), 73 deletions(-)
+---
+base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+change-id: 20240913-mgtime-20c98bcda88e
 
-
-> +
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &tmp[0], pf->timestamp);
-> +
-> +exit_handler:
-> +	iio_trigger_notify_done(indio_dev->trig);
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int ad7779_reset(struct iio_dev *indio_dev, struct gpio_desc *reset_gpio)
-> +{
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +	struct spi_transfer reg_read_tr[] = {
-> +		{
-> +			.tx_buf = st->reset_buf,
-> +			.len = 8,
-> +		},
-> +	};
-> +
-> +	memset(st->reset_buf, 0xff, sizeof(st->reset_buf));
-> +
-> +	if (reset_gpio) {
-> +		/* Delay for reset to occur is 225 microseconds*/
-> +		gpiod_set_value(reset_gpio, 1);
-> +		fsleep(230);
-> +		return 0;
-
- +	}
-	if (reset_gpio) {
-		/* Delay for reset to occur is 225 microseconds*/
-		gpiod_set_value(reset_gpio, 1);
-
-	} else {
-		struct spi_transfer reg_read_tr[] = {
-			{
-				.tx_buf = st->reset_buf,
-				.len = 8,
-			},
-		};
-		int ret;
-
-		memset(st->reset_buf, 0xff, sizeof(st->reset_buf));
-		ret = spi_sync_transfer(st->spi, reg_read_tr,
-					ARRAY_SIZE(reg_read_tr));
-		if (ret)
-			return ret;
-	}
-	fsleep(230);
-	return 0;
-
-or something along those lines.  Shares the sleep so showing the wait
-is the same in both types of reset and doesn't do a memset that I think
-is otherwise irrelevant if there is a gpio.
-> +
-> +	ret = spi_sync_transfer(st->spi, reg_read_tr,
-> +				ARRAY_SIZE(reg_read_tr));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Delay for reset to occur is 225 microseconds*/
-> +	fsleep(230);
-> +
-> +	return 0;
-> +}
-
-> +static int ad7779_probe(struct spi_device *spi)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct ad7779_state *st;
-> +	struct gpio_desc *reset_gpio, *start_gpio;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +
-> +	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
-> +	if (IS_ERR(st->mclk))
-> +		return PTR_ERR(st->mclk);
-> +
-> +	if (!spi->irq)
-> +		return dev_err_probe(&spi->dev, ret,
-> +				     "DRDY irq not present\n");
-> +
-> +	reset_gpio = devm_gpiod_get_optional(&spi->dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(reset_gpio))
-> +		return PTR_ERR(reset_gpio);
-> +
-> +	start_gpio = devm_gpiod_get(&spi->dev, "start", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(start_gpio))
-> +		return PTR_ERR(start_gpio);
-> +
-> +	crc8_populate_msb(ad7779_crc8_table, AD7779_CRC8_POLY);
-> +	st->spi = spi;
-> +
-> +	st->chip_info = spi_get_device_match_data(spi);
-> +	if (!st->chip_info)
-> +		return -ENODEV;
-> +
-> +	ret = ad7779_reset(indio_dev, reset_gpio);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ad7779_powerup(st, start_gpio);
-> +	if (ret)
-> +		return ret;
-What powers the device down again if we hit an error?
-
-Probably need a devm_add_action_or_reset() or if it self powers down
-may a comment on that.
-
-> +
-> +	indio_dev->name = st->chip_info->name;
-> +	indio_dev->info = &ad7779_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = st->chip_info->channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(ad7779_channels);
-> +
-> +	st->trig = devm_iio_trigger_alloc(&spi->dev, "%s-dev%d",
-> +					  indio_dev->name, iio_device_id(indio_dev));
-> +	if (!st->trig)
-> +		return -ENOMEM;
-> +
-> +	st->trig->ops = &ad7779_trigger_ops;
-> +
-> +	iio_trigger_set_drvdata(st->trig, st);
-> +
-> +	ret = devm_request_irq(&spi->dev, spi->irq,
-> +			      iio_trigger_generic_data_rdy_poll,
-> +			      IRQF_ONESHOT | IRQF_NO_AUTOEN,
-> +			      indio_dev->name, st->trig);
-> +	if (ret)
-> +		return dev_err_probe(&spi->dev, ret, "request irq %d failed\n",
-> +				     st->spi->irq);
-> +
-> +	ret = devm_iio_trigger_register(&spi->dev, st->trig);
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev->trig = iio_trigger_get(st->trig);
-> +
-> +	init_completion(&st->completion);
-> +
-> +	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
-> +					      &iio_pollfunc_store_time,
-> +					      &ad7779_trigger_handler,
-> +					      &ad7779_buffer_setup_ops);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
-> +				    AD7779_DCLK_CLK_DIV_MSK,
-> +				    FIELD_PREP(AD7779_DCLK_CLK_DIV_MSK, 7));
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_iio_device_register(&spi->dev, indio_dev);
-> +}
-> +
-> +static int ad7779_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = ad7779_spi_write_mask(st, AD7779_REG_GENERAL_USER_CONFIG_1,
-> +				    AD7779_MOD_POWERMODE_MSK,
-> +				    FIELD_PREP(AD7779_MOD_POWERMODE_MSK,
-> +					       AD7779_LOW_POWER));
-> +	if (ret)
-> +		return ret;
-As below.  Given if !ret, ret == 0 so same as just returning it unconditionally.
-
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad7779_resume(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = ad7779_spi_write_mask(st, AD7779_REG_GENERAL_USER_CONFIG_1,
-> +				    AD7779_MOD_POWERMODE_MSK,
-> +				    FIELD_PREP(AD7779_MOD_POWERMODE_MSK,
-> +					       AD7779_HIGH_POWER));
-> +	if (ret)
-> +		return ret;
-	return ad7779_spi_write_mask...
-
-> +
-> +	return 0;
-> +}
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
