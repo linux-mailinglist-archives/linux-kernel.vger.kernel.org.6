@@ -1,109 +1,103 @@
-Return-Path: <linux-kernel+bounces-329263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 270E4978F56
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:02:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31625978F5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BECCA1F2322D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:02:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 641901C208C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7631CDA10;
-	Sat, 14 Sep 2024 09:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69B51CDA2D;
+	Sat, 14 Sep 2024 09:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JCUsxhlW"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvNNYbnZ"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64011CCEF8
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38D76EB4A;
+	Sat, 14 Sep 2024 09:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726304528; cv=none; b=tMyOVPZzcaduVRkUFrq1qHETX4NU22Vs/FVm65/hyH0/ghlJ75I85qU3ipYbBAy2i1sku4Oam+SwHqIdJadSBByRliZrdro+EigaEa6KMktRshNcHsK9hnCKt+534ciKWT9FXDCUwul18K1SHNLYXHJxCxBKKEX+YeUnXT2sTBY=
+	t=1726304920; cv=none; b=ueE8ju26LsnZ+2GFoU3n+dSuIaTv/eqDyRM51V9RMNDzW7PNk3etoORsnPpqTpzeeS1r6BAHn0v5hjFu5VVdNaxmn0lbAH2ci9KETRWDCqedUei3fjSe2ZgOIFWT/dCqWcejIcGDji9L/BTH0rbsonMIZcWKgjCBYiB1CxsgV1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726304528; c=relaxed/simple;
-	bh=RguIB3aGEfSWCgglIE1kYAFxeTfH5FygVmsAfzK51S4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gy7wAmnVnpJVErivyS+Tg/LGmWXX1w9BMs5/ORmXErlMV2kL9me+rtBHRK2FlEZwpW5mBpkKrKnf6UfgvI2tWdHG+B3wTHn2yxRgssFFUOwrDd0MF1CiJVQLVVnOGny8jDNEhHx6b93UDU0IF44WGt+1cCUmZGyphMf4WdaK+lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JCUsxhlW; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id pOfCshuFQv6ompOfCsZIYM; Sat, 14 Sep 2024 11:01:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726304518;
-	bh=knYckm5aJnSchYoHGjtSQ5Mu9N8dnHyi0u0NUCdhg5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=JCUsxhlWfnXYG7qqBlHRwqWbVdqUSsjgkQL6eUR58kbIeuUVtWohDGPbV5/s2q8Ee
-	 4TSYJVLz5jqr29u0eDWEUW4IbLK1xdclOTn/+c3sdiztY4zYW4r4FmWssPaOiPGkxd
-	 qRyk0A8vwwRLQnQcfRqCScBOLofMPnqZla4+sQTtxLXVZ+u7gpbUnuQ0ubJc4JtXZ7
-	 PvIXA2Y6oFzDf8jmElTU3OgoFNv5CyODjrReBzHeuebceWwtXjgjNs9Gj7fI4OTV1W
-	 w7OJ2fPASMTBKQDpp11+MMZJeuY/RIGb4o9kswfaRZOEh96zUxkZBK/jXewddbJz7I
-	 srteqXsdDNv8A==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 14 Sep 2024 11:01:58 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <484a980a-8ea4-490b-89b3-9fca3c471133@wanadoo.fr>
-Date: Sat, 14 Sep 2024 11:01:53 +0200
+	s=arc-20240116; t=1726304920; c=relaxed/simple;
+	bh=//XKPDwJkx7558uUbKSoPZwhWdJk6RG2bYnXSmqspMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ER+C9m4MRQpFp9tKysd4jIVYhA4AdjnTCgbw+lIndJvQlnsNTFQdmzPzhLd9vuW9FNtvPTNFY9RfUmn1Zewj9cjk4Ij2hHO+cid8zB4LMMetd11+F3Q2OWPfCrQMCpBVWo4JZqsjNCz2BbqffdqNmi3P1nN7aaE9takTOLjMlqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvNNYbnZ; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8a7b1c2f2bso463789666b.0;
+        Sat, 14 Sep 2024 02:08:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726304917; x=1726909717; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zHi4FPzinOFrHUEhjpR1lWqNuYcHEgDVupU8EZ5qZH0=;
+        b=GvNNYbnZZobqBbUzMyjdnW0k95IOjryIbENGZhioP2AmmfbC1jOI5GkJNp+46x5h/F
+         s0X1IxulSs4EPmbnLRQYMflzrt9h1hhhUI9u+TsyY5engNwihjhBgPQd85LP8fxvoo2D
+         sjoz4FNZHnHiA1AtLOKzN/CbEqjqFPcyZdeFJzMsqhLscN/JML9TB+fG8FFvnJirosTt
+         wLgPr3vo3urJRxIY1LpVpEj0pPHVKPQrSTY0BjNCXq5HhBzm/nuD4426SjTyrcqajr1k
+         mx6aDAkc4fwWJGGOvOMBzR/KG0TDM94dIhvtDot2Aitin2Ebp4ARjoj8IDpXZTgk2OIZ
+         X0+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726304917; x=1726909717;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zHi4FPzinOFrHUEhjpR1lWqNuYcHEgDVupU8EZ5qZH0=;
+        b=I+JKwLDfyiNWTCc5QM07dbmfAewXgZ/Nzy6pORtg16gAg7Lo6KdUltH2DjXe21VxbQ
+         lxMlhPehH50hCYWxL69758VvK/JpK641eRavJgGuAtj6Fq+R8NGiYkmIcBIdNl/b+Qck
+         RPeI7daZlO9yCZDbvPqEkqtyZr1ip9n2/1Fd6rg/LyL4mLGVEpoJx246jDQtpiT7PbCP
+         A154p0BZpuOqC9GAUcT0mGjN42t1A6qma4/RjZGFgNrUD04IVxkBwjMsW9rY5aS5aEiY
+         XFf08V9xYp0hlfMJbX3yd/hhOa12PA9qr9elhDJKO15U3yLBcHPFdwNNu+7nKi6vBUdC
+         VrVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCFZbVYyOOpB15AGlNFYT0baiHqs52sJ/pdCdE0m9YZbqiKgZVk7DP0fouB7ZyRVSWTnV6LeXh@vger.kernel.org, AJvYcCVL8MGKrjSTkLHH1cNnu83NLvxp8iKaqCSruDId6w95GYU6dB5UjEWUqQWIibNH5WH+9hNfa6fu3dEDH6c=@vger.kernel.org, AJvYcCVybEMtYv0djb9Zyi107EYTiTdV5bpJGIUK2/yxe9ITQRxBSxj3DO2vYaRfgjRqyQBxHBLwbRmwXIA8Qc/1xhSx@vger.kernel.org
+X-Gm-Message-State: AOJu0YygLcc3VpTfPbp/P+qtYl+dMBhQq4rxHH4b16/5so3IsDNyL7bR
+	STvooPzfeyv5h09gDkCvnkX9aC2XRE7XpY6rlugT8mWclcbliWqdTN40B171qGBBU2m17OrAAZo
+	zM/i47i4TD/a3rQ8M7ivOeZbCEQ8=
+X-Google-Smtp-Source: AGHT+IH9ntPY9TFBzaU2iJX3U3KxHgW4NYvBwYVsMlt/qjFhv6IDs3xYGOpRGBqK4bRMC0xEG+APFi3qpuV2Wsmvgco=
+X-Received: by 2002:a17:906:f5a9:b0:a8c:d6a3:d049 with SMTP id
+ a640c23a62f3a-a90294fea6cmr959797366b.19.1726304916391; Sat, 14 Sep 2024
+ 02:08:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: ethernet: fs_enet: Make the per clock
- optional
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
- Pantelis Antoniou <pantelis.antoniou@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, thomas.petazzoni@bootlin.com,
- Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>
-References: <20240914081821.209130-1-maxime.chevallier@bootlin.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240914081821.209130-1-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <b77ab871df2475df37aa29672c9bbcc33d03e90f.1726220359.git.jamie.bainbridge@gmail.com>
+ <20240913075657.6062ad40@kernel.org>
+In-Reply-To: <20240913075657.6062ad40@kernel.org>
+From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+Date: Sat, 14 Sep 2024 19:08:24 +1000
+Message-ID: <CAAvyFNhgWYH2fa6t1mi8VbQPRxLfTvteq9WBrkE7=UN-8VjDrQ@mail.gmail.com>
+Subject: Re: [PATCH net] selftests: forwarding: Avoid false MDB delete/flush failures
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Ido Schimmel <idosch@nvidia.com>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Le 14/09/2024 à 10:18, Maxime Chevallier a écrit :
-> Some platforms that use fs_enet don't have the PER register clock. This
-> optional dependency on the clock was incorrectly made mandatory when
-> switching to devm_ accessors.
-> 
-> Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Closes: https://lore.kernel.org/netdev/4e4defa9-ef2f-4ff1-95ca-6627c24db20c@wanadoo.fr/
-> Fixes: c614acf6e8e1 ("net: ethernet: fs_enet: simplify clock handling with devm accessors")
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
-> This patch fixes a commit in net-next.
-> 
->   drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-> index d300b01859a1..3425c4a6abcb 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-> +++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-> @@ -895,7 +895,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
->   	 * but require enable to succeed when a clock was specified/found,
->   	 * keep a reference to the clock upon successful acquisition
->   	 */
-> -	clk = devm_clk_get_enabled(&ofdev->dev, "per");
-> +	clk = devm_clk_get_optional_enabled(&ofdev->dev, "per");
->   	if (IS_ERR(clk))
->   		goto out_free_fpi;
->   
+On Sat, 14 Sept 2024 at 00:56, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Fri, 13 Sep 2024 19:40:04 +1000 Jamie Bainbridge wrote:
+> > Running this test on a small system produces different failures every
+> > test checking deletions, and some flushes. From different test runs:
+>
+> This increases the runtime of the test 1m 25s -> 1m 35s sec which may
+> be fine. But unfortunately it also makes it reliably fail with:
+>
+> # TEST: Flush tests                                                   [FAIL]
+> # Managed to flush by destination VNI
+>
+> on x86 VMs.
 
-Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Thanks, I see why that could be.
 
-Thanks
+Will re-test and re-send.
 
