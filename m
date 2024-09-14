@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-329431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0771979136
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:57:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE12979139
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78A88282BFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:57:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872E1282D9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365341CEE87;
-	Sat, 14 Sep 2024 13:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232931CF7D2;
+	Sat, 14 Sep 2024 13:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rw3qgZeu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZ/+DIW5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904891CF7B0;
-	Sat, 14 Sep 2024 13:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFBA4C83;
+	Sat, 14 Sep 2024 13:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726322239; cv=none; b=B72Sc4WvMvew/911bila4SjDCXanEfSM2xJrLpqrwekQHmuZwnIVr4KqE6quq2PA9E2VjluTSBgkyiFxiYwCvr40QDfZcpFsqtdIE1PAvxfIOPkDfk/dB0b7BIQ1YbdI8Hj8Eqzgt8hF/9fFejYYau0D+sIgzWrwAg9I/6jCrX0=
+	t=1726322342; cv=none; b=UOmOq0BdxDTCc52KzcRnCUuCm7LSg8gMgVcIA4ca68c+ti3yyjNTsr/wPLKDFPN0Mnb+rhbApc1AP+Eq9oVEOkrAgSU1poM2EOj82/M115thjB9SMU5oYJ3l8NzUrIMr3/6DU3bUukkD2LJdhoGoP2gonsAQZkw7FurHdKMYU4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726322239; c=relaxed/simple;
-	bh=/SA+Q8ligYDHVrlwyqxED78/YrIfXmZdo5guel73H6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VaJPVeot6pUndg/cER8GzuWDLz3EoAnTGc25Gq2if3TLn03EtxNa5+7bxaGlcvMl2MJQekVo5Z7avKRY3vC0Sh6w4kg50PSOA6BsVVpKLVnGdO4blEyfVVN9MNI/RwoBV24HGnwNAKbFGx9HC2s+MpiQ0D8KCBjoQTRFkvLiD80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rw3qgZeu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB92DC4CEC0;
-	Sat, 14 Sep 2024 13:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726322239;
-	bh=/SA+Q8ligYDHVrlwyqxED78/YrIfXmZdo5guel73H6s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rw3qgZeuQqy5IHcPwC/uW3Tmziev0WIezswuZ2sM2yQCMLN9WtoVSBcIwEiG8HqgK
-	 Zz6jbtM7Qo6xS4rvi35QPOt541DfTvYSRBLY/p1CouF9EgxtvTJ5oU+3KesppxuQvV
-	 jmxc1MgbI+tj3ubz5N5/DtkXOoZRRtCuX3waHpvU=
-Date: Sat, 14 Sep 2024 15:57:16 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Yibin Ding <Yibin.Ding@unisoc.com>
-Cc: djakov@kernel.org, rafael@kernel.org, yibin.ding01@gmail.com,
-	niuzhiguo84@gmail.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hao_hao.Wang@unisoc.com,
-	Ke.Wang@unisoc.com
-Subject: Re: [PATCH V2 0/2] Added debugfs node initialization and null
- pointer detection.
-Message-ID: <2024091404-battered-boxlike-c7c1@gregkh>
-References: <20240914102418.3879203-1-Yibin.Ding@unisoc.com>
+	s=arc-20240116; t=1726322342; c=relaxed/simple;
+	bh=JJmCLgSlEQdFPGZ/XJL2+wLA1WbdDjWdX0DRTpMH6uM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pcRNuZCpjzw6kYANGTi0c4Qiejj3qpiCb+1OAArXQjj8s6YuZlgv3xKtx5oEvNf/DlOekNoAaAywOmzKUhEXBE5G4ahJoP2zSkVtmibFUzP4DTYm7OuT6uFs76bxy0aQR6PgoPqxrU06PXIEcqvlClSTceQYn2LytpPx0k/2Mz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZ/+DIW5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F9BBC4CEC0;
+	Sat, 14 Sep 2024 13:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726322342;
+	bh=JJmCLgSlEQdFPGZ/XJL2+wLA1WbdDjWdX0DRTpMH6uM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eZ/+DIW5TFcB/oOC25xVaohsSe3B5cJUaBr0bnD8YG1gcP0eaInoM+8uA/09dcXyy
+	 /P5JR0HZ/VogXd+821bTeowJVpaVDBYhTpL9wQqa6ZVn1JsGVyiVtE579qZu8VCdS/
+	 OYkdmgeeUZu+8TtoJy0m6VwoDKLYKPPIxq5WV41g2ZAt6iNk9a9Pfz16uJ8d16/r5c
+	 l24MjSFRTeiZinm48SsR07ssKKSumszEG0pxrzDt4wCkQ4WpYqd6rMOkUg5wWWnWB1
+	 aHcEhJUb9TTxV2fVSXy+xPb264yilrKIjpA85K3ElnyTWFYl7mVp0/icK7lgY28rxU
+	 HXjjoe5kGpp1Q==
+Date: Sat, 14 Sep 2024 14:58:54 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mikhail Lobanov <m.lobanov@rosalinux.ru>
+Cc: Dan Robertson <dan@dlrobertson.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Jagath Jog J <jagathjog1996@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH] iio: accel: bma400: Fix uninitialized variable
+ field_value in tap event handling.
+Message-ID: <20240914145854.21569134@jic23-huawei>
+In-Reply-To: <20240910083624.27224-1-m.lobanov@rosalinux.ru>
+References: <20240910083624.27224-1-m.lobanov@rosalinux.ru>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240914102418.3879203-1-Yibin.Ding@unisoc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 14, 2024 at 06:24:18PM +0800, Yibin Ding wrote:
-> From: Yibin Ding <Yibin.ding@unisoc.com>
+On Tue, 10 Sep 2024 04:36:20 -0400
+Mikhail Lobanov <m.lobanov@rosalinux.ru> wrote:
+
+> In the current implementation, the local variable field_value is used
+> without prior initialization, which may lead to reading uninitialized
+> memory. Specifically, in the macro set_mask_bits, the initial
+> (potentially uninitialized) value of the buffer is copied into old__,
+> and a mask is applied to calculate new__. A similar issue was resolved in
+> commit 6ee2a7058fea ("iio: accel: bma400: Fix smatch warning based on use
+> of unintialized value.").
 > 
-> The two debugfs nodes (/sys/kernel/debug/interconnect/test_client/dst_node,
-> src_node) do not initialize the character pointers before creation. For
-> such uninitialized nodes, direct access will cause a crash due to accessing
-> a null pointer.
-> For example, directly execute the following command after booting:
->     cat /sys/kernel/debug/interconnect/test_client/dst_node.
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> Therefore, for the problem nodes, it is necessary to add initialization
-> operations and null pointer detection when accessing.
+> Fixes: 961db2da159d ("iio: accel: bma400: Add support for single and double tap events")
+> Signed-off-by: Mikhail Lobanov <m.lobanov@rosalinux.ru>
+Ok. It's not a bug as such because ultimately the bits that aren't set are masked out
+but it is non obvious.  So applied to the fixes-togreg branch of iio.git.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/accel/bma400_core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Yibin Ding (2):
->   interconnect: Add character pointer initialization
->   debugfs: Fix crash problem caused by accessing uninitialized nodes
-> 
->  drivers/interconnect/debugfs-client.c | 9 +++++++--
->  fs/debugfs/file.c                     | 4 ++++
->  2 files changed, 11 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 2.25.1
-> 
+> diff --git a/drivers/iio/accel/bma400_core.c b/drivers/iio/accel/bma400_core.c
+> index e90e2f01550a..04083b7395ab 100644
+> --- a/drivers/iio/accel/bma400_core.c
+> +++ b/drivers/iio/accel/bma400_core.c
+> @@ -1219,7 +1219,8 @@ static int bma400_activity_event_en(struct bma400_data *data,
+>  static int bma400_tap_event_en(struct bma400_data *data,
+>  			       enum iio_event_direction dir, int state)
+>  {
+> -	unsigned int mask, field_value;
+> +	unsigned int mask;
+> +	unsigned int field_value = 0;
+>  	int ret;
+>  
+>  	/*
 
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
