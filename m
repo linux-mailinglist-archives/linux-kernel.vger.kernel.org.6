@@ -1,157 +1,103 @@
-Return-Path: <linux-kernel+bounces-329251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDDE978F2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:39:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F23978F23
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1327F280C89
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:39:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D97E2887DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D1919DF46;
-	Sat, 14 Sep 2024 08:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B63146A60;
+	Sat, 14 Sep 2024 08:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="UD9rh84s"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pm2w91O1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3696433D5;
-	Sat, 14 Sep 2024 08:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726303157; cv=pass; b=srsmMcSIJ+W5XWJ+8EBBu2IyxZcU08+eYhSYu161+XANKyz6Pww7dm0ecBt8sfkvB2QkuDuMkuDeiSITkNGbV/cGQOfEXZKFvsOT9+6cEYhjzTnduRxzhRGbagPkRP5AjCQDjBbf6ke6dcNH1HV1ilNQfr9+zu2XYLkgZKYDBwU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726303157; c=relaxed/simple;
-	bh=pfSJVhTniD/TEI8prxwxup12Sbw+prmH32swhXL3LQ0=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E9E79CC;
+	Sat, 14 Sep 2024 08:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726303113; cv=none; b=n0/wglhw+mj8okixGeaAw/ehUloKVs204E8eFNrzc33r6QFbmIcJsd/8fHb6OiFevHnO0ILf322ibBE4HU0rBu5yJj47QinDmEvInP0iSV7lOihehcpJ94a/TL+zQibPHVYIuaXI7bDlo6jFao8N/kMLOU7jit6o/BBHcQSkK8E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726303113; c=relaxed/simple;
+	bh=PKtoMpXxtMNQgMD2WWGoiAlbw1hPMweydHUrcUGVJZE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=La1Z/G55fHQep/l+nANHaaft687CgjRp46uxOd4FJowgEEc448Z5M/opkHf3RtXzbsi0d0+yGb71V/rC4NPx6CNiqKpGqygyikG2qXfzk52snEyqHbJfboD0zkulcjdCBvNXmbgDjLpOGXr/gUZ+ZJ8+rPfeA6D/0luuF0FV14w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=UD9rh84s; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726303126; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MLOmakQrtsg4TH4ciQgVKKbaYfee0msm0gpHo0IRm2TCR1PjW/dhublzRh0fRtGTGALhk45SIBObhSMIdaclT1VZ9llt1dpmAWq4/rrRaZnP0TlystVIRu8JLbEtT5I9dAY40SMVINghKRE66+gmMtnaXLBPvrGwUkoll0SY1iU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726303126; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Ej6QX9G1dmM07ksR/FVgVBTC5gPecCY6T1R8JXBXxZk=; 
-	b=QY6lMDWN3HqBg2CDOf4cd+x4CEh43tB3mXTwIHABzoMI9JNSgz3eCEZESG2I+hR6nX15ncOa5pdT8gmwe3yMArbB0phGyXskFZyfoOp4NyvlZWvqyKpCJ2GuN5ZhbcTzbw8Mtg8QOC6CbLtFeId2ZLx38RRRTlrcB5KrD33AbT0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726303126;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=Ej6QX9G1dmM07ksR/FVgVBTC5gPecCY6T1R8JXBXxZk=;
-	b=UD9rh84s/7G9dAEtd71GxxzLUEpLcscRJ47S8/+Pe+224BS1cdckHNW/uTnB9dg5
-	ie+cQG6VuPJdexJ7jiJPsrCstd7qabLh6ikWCE7quHAz3dCrzp0Zv10KpGsPVcL2ajR
-	EzZkbOiu/30stenQoIDwq5734cnSfpNxAyU85Jbc=
-Received: by mx.zohomail.com with SMTPS id 1726303124615201.60398788551277;
-	Sat, 14 Sep 2024 01:38:44 -0700 (PDT)
-Received: by mercury (Postfix, from userid 1000)
-	id 3FFFB1060578; Sat, 14 Sep 2024 10:38:28 +0200 (CEST)
-Date: Sat, 14 Sep 2024 10:38:28 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Simona Vetter <simona@ffwll.ch>, cros-qcom-dts-watchers@chromium.org, 
-	Konrad Dybcio <konradybcio@kernel.org>, Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 01/27] power: supply: add undervoltage health status
- property
-Message-ID: <uta55qswxp43tdziertbwvopytx26kjanouxfffvkjfnhrkwj2@bwoyfygw3pp7>
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-1-2d2efd5c5877@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zlr0Vzheq6guMm4XHOxoh7e1UEBBCwAtka//wW2vXErq3IRuads4lrtwy9yC7dtGrHbJuDdnj7WSr8e9vJaLJ5mdtoUpoX06MoHUjo2wQS0mCmlEAz54teSjHJgajOMPNpeg2DuunumSY+T7PblANkfk+6jqdAIJbTpmvG1qIYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pm2w91O1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72665C4CEC0;
+	Sat, 14 Sep 2024 08:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726303113;
+	bh=PKtoMpXxtMNQgMD2WWGoiAlbw1hPMweydHUrcUGVJZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pm2w91O18pRTdtAcxA5uCMQMvGqPsnuL+ALkfiPQuz8oE3qESOGi9ZD/V0hUapLnp
+	 wSO4FFCylWMqc6gVtBIcz2zlBH2704dC1xZINogm8mLpt75+LwU/TYJ4rfIbnepC2T
+	 o5Q8uFOUWLGcXmkOK0tYCVnXakHoi/DDsdN51G8dbHoJ9DWCthyv6tH6fu3IGVFJbJ
+	 vUjLCxMGTBQvAkJi/vteaZwAMmdbQry0thmV3Nz19gNgNvEqoKWTuu/jZ5BLaVit47
+	 5FTv4bbK4eAUhBQohtpd/YdZ3btToTXDfk+gYuC1CnrDJuzrAGv6GO1nKD1H8zAHGi
+	 Vrkdgz/w8Jm4Q==
+Date: Sat, 14 Sep 2024 09:38:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: Aakash Menon <aakash.r.menon@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, lars.povlsen@microchip.com,
+	Steen.Hegelund@microchip.com, daniel.machon@microchip.com,
+	UNGLinuxDriver@microchip.com, aakash.menon@protempis.com,
+	horatiu.vultur@microchip.com, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: sparx5: Fix invalid timestamps
+Message-ID: <20240914083828.GC8319@kernel.org>
+References: <20240913193357.21899-1-aakash.menon@protempis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r7xlkoqbyyg5k4lc"
-Content-Disposition: inline
-In-Reply-To: <20240913-starqltechn_integration_upstream-v4-1-2d2efd5c5877@gmail.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/223.982.64
-X-ZohoMailClient: External
-
-
---r7xlkoqbyyg5k4lc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240913193357.21899-1-aakash.menon@protempis.com>
 
-Hi,
+On Fri, Sep 13, 2024 at 12:33:57PM -0700, Aakash Menon wrote:
+> Bit 270-271 are occasionally unexpectedly set by the hardware.
+> 
+> This issue was observed with 10G SFPs causing huge time errors (> 30ms) in PTP.
+> 
+> Only 30 bits are needed for the nanosecond part of the timestamp, clear 2 most significant bits before extracting timestamp from the internal frame header.
 
-On Fri, Sep 13, 2024 at 06:07:44PM GMT, Dzmitry Sankouski wrote:
-> Add POWER_SUPPLY_HEALTH_UNDERVOLTAGE status for power supply
-> to report under voltage lockout failures.
->=20
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
+Hi Aakash,
 
-This is missing updates to
-Documentation/ABI/testing/sysfs-class-power and
-drivers/power/supply/power_supply_sysfs.c
-(POWER_SUPPLY_HEALTH_TEXT).
+Thanks for your patch.
 
-Greetings,
+I'll leave the review of the code change itself to others,
+but here is some feedback on process.
 
--- Sebastian
+Please line-wrap patch descriptions at 75 columns wide.
 
->  include/linux/power_supply.h | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-> index 910d407ebe63..8682e6466544 100644
-> --- a/include/linux/power_supply.h
-> +++ b/include/linux/power_supply.h
-> @@ -58,6 +58,7 @@ enum {
->  	POWER_SUPPLY_HEALTH_OVERHEAT,
->  	POWER_SUPPLY_HEALTH_DEAD,
->  	POWER_SUPPLY_HEALTH_OVERVOLTAGE,
-> +	POWER_SUPPLY_HEALTH_UNDERVOLTAGE,
->  	POWER_SUPPLY_HEALTH_UNSPEC_FAILURE,
->  	POWER_SUPPLY_HEALTH_COLD,
->  	POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE,
->=20
-> --=20
-> 2.39.2
->=20
+Link: https://docs.kernel.org/process/submitting-patches.html#the-canonical-patch-format
 
---r7xlkoqbyyg5k4lc
-Content-Type: application/pgp-signature; name="signature.asc"
+Assuming this is a bug fix, a Fixes tag should be present.
+It should go just before the signed-off-by line (or other tags),
+with no blank lines in between.
 
------BEGIN PGP SIGNATURE-----
+I'm wondering if this Fixes tag is appropriate:
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmblS3wACgkQ2O7X88g7
-+prRCxAAlhYUU4yJX7NEhfMbNTVWhURSBhobZ62HayXzgdpD6Mq48r79Maug7GC9
-GT0mcYXyGLCZjLkte5Qn0695klYG9JsIWdZqOdQV7fgHhH6gDBkFYghMVv8NVnXF
-Pmcmwc1QOCjmDp37EkvxjXKOc+XNdnVuAlSwpnP3zkXKtexwe3kvZtD3qLToP7vs
-Q+6qA8/9KVvC83i5VqrHUoWdkR514ZI8YcPzjStj6FecIRitH0xtOm9inpeLj1tv
-fFcknMQkRSdNAarhfpZNzFLoyOSpImY/yeUEx3qFUqKNGtDZVkXvWNHVaEEEtxih
-+1mX44QV5thBOSuKfuIA0deafptEjaP/eXhQEwS619aqDJd7J+JBmnZAdlmiBLqK
-iEsBgTeThbx7RuOvBvRUVYPlUPG1jpYBgfWT4OT6w7x9tkkfemxU/JT1tXJNmKAp
-onm6UftL9rF/olPVoXIL4AZ8QhsLkGQ+2iDNWaUbcvhWdEAo0AFnJNIRJHdbUT4a
-fPlTrlZ5DO/ufGCPj7rbPehkVjKD/apDK84Dp8mQrIjlzuxqMacWFBv0Szrj9k4L
-ZpUae4iBOygN1fXd6M8w3SvZw+9JOixLL/1vm2Av8vJwMYUUt4eNInyN4Pr1cjMh
-Rd6zPpSmphSU+AgGnN70hqkRetW7+zUoyFzoKWtQeWApkEdHhVE=
-=Gfk0
------END PGP SIGNATURE-----
+Fixes: 70dfe25cd866 ("net: sparx5: Update extraction/injection for timestamping")
+> Signed-off-by: Aakash Menon <aakash.menon@protempis.com>
 
---r7xlkoqbyyg5k4lc--
+Also, for reference, fixes for Networking should, in general,
+be targeted at the net tree.
+
+	Subject: [PATCH net] ...
+
+And lastly, if you do post a new patch, be sure to wait 24h since
+the original patch posting before doing so.
+
+Link: https://docs.kernel.org/process/maintainer-netdev.html
+
+...
 
