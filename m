@@ -1,73 +1,94 @@
-Return-Path: <linux-kernel+bounces-329098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CFD978D47
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:26:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052C2978D56
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3FC01F2569F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:26:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC9E1F25805
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4CC18E25;
-	Sat, 14 Sep 2024 04:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD7E39FD6;
+	Sat, 14 Sep 2024 04:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R53AFevS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDbkdmcW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B944A14F90;
-	Sat, 14 Sep 2024 04:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691C52030A;
+	Sat, 14 Sep 2024 04:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726287995; cv=none; b=VZ3q0k9rUVeLPWSAef6chxFEhEgRbsEYJLq2TkGTLXT4aZW+IaeW0lxugAlBpmm5JF8YnY04OZV3Hqi2KO9LX4q55rYZ1i7bfVZ8lKAbPisVyOmAfiuaXTGFbcx9rirBioalwO2eAWQ8ymgUrKcU9Zo/PE57C3WdfyfCwieRfu8=
+	t=1726288240; cv=none; b=s/R7JsAfsj8GedrW5fpGPIUapKnedRGiVOvhj0LFJqaDOjJoixBVKh3YN8xofJvsil1YsORSCGEYvHNldxJZovz4+5AMd980U9UgBHKe0F+dBys4UH1apBP3OOLEjG+FcLRRK7ngFBPpgs9lAbZtSZgnM/b+pprx7PeSBLKZyGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726287995; c=relaxed/simple;
-	bh=uWmpgmx8ElKDY7r+PbUD4ysn9NKB7N3en+sWmM4oZBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E6lKLWYFt8RstWcI7iKLuuR8APkPRDVMA/snEuZrOLHIzSExz435IvF5IKlMt4e4vG+h1jYAi1mh3YdJcDChSxkwagnSTNuNq6o6ZCm8h+k5CeJE7+EJ5t8LdNGLKDZ/TB/phgB2RlB/vTcs7KNLj6yPu0zPdh7xOsO26gI8h1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R53AFevS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6334C4CEC0;
-	Sat, 14 Sep 2024 04:26:34 +0000 (UTC)
+	s=arc-20240116; t=1726288240; c=relaxed/simple;
+	bh=0VAJUlyyOl//hCHp1YA51Ng2zstRM71mbjnKyr5lvc8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=N9QImi1xiElwLh+QjrffsP2kA503jhqRrCFSM6PzvHpCrsqW1XmErv/kAVyI1B+PRQ5eK3WdWB/Gr019q29wrS9mjzCdBxmwY9IfdOJ2evV7q8uj7Lgx3N+p9GXxn/WTvAsxV36Lb3bbYDBtItBQl0iiV5ecNMi1eOXYp9cMo74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDbkdmcW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F2BC4CECC;
+	Sat, 14 Sep 2024 04:30:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726287995;
-	bh=uWmpgmx8ElKDY7r+PbUD4ysn9NKB7N3en+sWmM4oZBY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R53AFevSR/qSXCtF9xbavZqDqhHmcP0/7rImEKPaKXawAQH3poAz+1TvzF+ttTbbg
-	 0l5mjcXnnInkndHVL5PRT1c5iWuX6gtlvbofXnKf8p94pP7F9bd4VixLFpBWvvlIsb
-	 gZjxHlLeVDV3FJvq24HE78mfQJzO2s/HKAsvEE/7yR/ucI1i2jR+zlTGbC7w1cst8r
-	 obFamgOnU52XmaqZqhqwTUGGyG09BUfmx1f8A1/hYP70lCLAbgI/tqG5SgpYRfQipY
-	 POp0gE4aXznb1Iyh9jVe1smsf6zr5mg07TNFTtJ05V5L4PLlGylWlXGoOizGcFQBI9
-	 /UPf/mZyTbgog==
-Date: Fri, 13 Sep 2024 21:26:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <davem@davemloft.net>, <pabeni@redhat.com>, <jiri@resnulli.us>,
- <edumazet@google.com>, <sgoutham@marvell.com>, <sbhatta@marvell.com>,
- <hkelam@marvell.com>
-Subject: Re: [net-next PATCH v3 0/4] Refactoring RVU NIC driver
-Message-ID: <20240913212633.2d35773c@kernel.org>
-In-Reply-To: <20240912064017.4429-1-gakula@marvell.com>
-References: <20240912064017.4429-1-gakula@marvell.com>
+	s=k20201202; t=1726288239;
+	bh=0VAJUlyyOl//hCHp1YA51Ng2zstRM71mbjnKyr5lvc8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=rDbkdmcWu8VnJDOm8kM7223PCtVm2o58dfh37MLzB89qYUYBHR1ARkU5lnnQXVjaD
+	 AXFTmQmeqjEXPwX0ExnUYO/vFbxtvJPLNKbMvlUg/JuBfKQAzVmgKGaTsYJlOq5jN4
+	 NuD/02WSl/4gjzEEnSs7CbuSG0T5EHMmXRo2Zw5u1MtkpGjxLYXbyY+AgBXvh8iKS8
+	 5Qob6PC1F5OOuSFEt8KLv8JUrLfj87mBYC7gv2Q80YO86Qh/4KXFgtXnWdQMdeRsx7
+	 rLO/Wb2YqCqlPKdyN2MO6hFs2E2M0bJR+MFxOdE2ChjWNN0kTXXVO7t6EA4/Jvqjit
+	 lSKwNFGA6nuyg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DF33806655;
+	Sat, 14 Sep 2024 04:30:42 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: ethtool: Enhance error messages sent to user
+ space
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172628824101.2458848.15881827170447348187.git-patchwork-notify@kernel.org>
+Date: Sat, 14 Sep 2024 04:30:41 +0000
+References: <20240910091044.3044568-1-danieller@nvidia.com>
+In-Reply-To: <20240910091044.3044568-1-danieller@nvidia.com>
+To: Danielle Ratson <danieller@nvidia.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ petrm@nvidia.com
 
-On Thu, 12 Sep 2024 12:10:13 +0530 Geetha sowjanya wrote:
-> These patches are part of "Introduce RVU representors" patchset. 
-> https://lore.kernel.org/all/ZsdJ-w00yCI4NQ8T@nanopsycho.orion/T/
-> As suggested by "Jiri Pirko", submitting as separate patchset.
+Hello:
 
-Changes look good, but you also have to remove the EXPORTs.
-Kernel has a general policy of not exporting functions
-if there is no in-tree caller that needs the exports.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 10 Sep 2024 12:10:44 +0300 you wrote:
+> During the firmware flashing process, notifications are sent to user
+> space to provide progress updates. When an error occurs, an error
+> message is sent to indicate what went wrong.
+> 
+> In some cases, appropriate error messages are missing.
+> 
+> Add relevant error messages where applicable, allowing user space to better
+> understand the issues encountered.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net: ethtool: Enhance error messages sent to user space
+    https://git.kernel.org/netdev/net-next/c/716425d6f3fb
+
+You are awesome, thank you!
 -- 
-pw-bot: cr
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
