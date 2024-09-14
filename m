@@ -1,95 +1,103 @@
-Return-Path: <linux-kernel+bounces-329081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FA6978D0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:11:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B9D978D0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F02A285CBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CB2C1F25F04
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3B07E792;
-	Sat, 14 Sep 2024 03:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLVi19b2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D111758E;
+	Sat, 14 Sep 2024 03:13:09 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A516F066;
-	Sat, 14 Sep 2024 03:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACAB17BA2
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 03:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726283440; cv=none; b=UKNX8Y+8klERmNihnsUr/V9Op+vZtssdsB7iS7VS7558OahPR67tanL4c2vpbZfDYssCwj6APDisvoNvx34w6kTNHndCSsFdTHjyUKAeoRx3sNckowV0mxUMrn1d2+CEuKMJHjjnbVZLV3/NcjzUgX2YjGD7GjZFn7evzellIhQ=
+	t=1726283589; cv=none; b=dur5agoH0XO8yvKoJcFuyKxYr55ihMiAjfaHt2lqOsaey5fF2eO1ucviGovNQdqmJC5tGs7kWgE/+VGw7Ksat+DZk5bWRtQ146eLwtMduXGLgSML4ObERSxqeSO+9r03YqaTJyETUw78vsBWGeW9XTK9XYwmCow0qCsfBaMw3WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726283440; c=relaxed/simple;
-	bh=Fe/jkW7vM2O7n8FUgTQvbPGVFaUtObCOxrHuCrGlJV4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oZ9WQlPw/cRwycq6vTdlCgovnQQUnHiN//Ro5gTwf/7fdf/eZGIpETlBF8Az9ArbFMXVFxOZ0WOQZ/RRdMLrD9ByRBDU6YDsKWdoiY6W4kpcBXwYBw415CIYeh6kcwEnmN8eHMkCki+GIdMSXmfqrSKeCYsB41wRibAZY3Svjgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLVi19b2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4ECEC4CECD;
-	Sat, 14 Sep 2024 03:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726283440;
-	bh=Fe/jkW7vM2O7n8FUgTQvbPGVFaUtObCOxrHuCrGlJV4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cLVi19b2IBwkiMWAlv7vAZGZDlC56M5zw7YAQHYGRbrBuqofhWBxSZRUwuTGElXK0
-	 QDQyPype8pmravnpG35r2+KysX1Tg1jyi7Y0Jey/r0alQ3PaIjPuvG9h2SSB6tk3gi
-	 DXJik0o/otRSdOyhdDrpvKYgavpd+6SahDIALq/vWd2V9xPUzQCC91HAjWzRT20BDq
-	 hpGJjH+FqTRvM6eNm8j7DOuvxnsjpjYFy3Gvk/dA/FOOmoXh4bi9AMW5a+KQAXAvFz
-	 /hycZcFGH8GBl9hviHI3miOO95qLC3lIuB0866cJy/abovZ4xBHcX8wA+Kuh7MKYce
-	 DsIAErkV3iKDg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340EE3806655;
-	Sat, 14 Sep 2024 03:10:43 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726283589; c=relaxed/simple;
+	bh=eFzergyr9CHVtmYSpVbh4M7inxyMIwlG9sQsDx8D+c8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bwB8ArUfylYbjzncVCvXC5mRjUjUX16jEdK8wPIY91FsFOS2hXRji8Kv0WPI+AYJSlWLcUlE5cuBC29tbrPw4HiW/c4pCZQScvVovtwRca379+fC5gcOzaDYjtUqU2DU3D+FKCDfL1TrU9b3fSWZMeFlOggy1TQqsTIGC07QYNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+	by SHSQR01.spreadtrum.com with ESMTP id 48E3D2s3003632
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 11:13:02 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 48E3CH60000371;
+	Sat, 14 Sep 2024 11:12:17 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4X5GHq16q2z2Nk1dW;
+	Sat, 14 Sep 2024 11:04:55 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Sat, 14 Sep 2024 11:12:14 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
+        <Hao_hao.Wang@unisoc.com>, <xiuhong.wang@unisoc.com>
+Subject: [PATCH] f2fs-toos: use getpagesize() to get default blocksize in Android
+Date: Sat, 14 Sep 2024 11:11:47 +0800
+Message-ID: <1726283507-16611-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] Documentation: networking: Fix missing PSE
- documentation and grammar issues
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172628344200.2438539.2596888301581438974.git-patchwork-notify@kernel.org>
-Date: Sat, 14 Sep 2024 03:10:42 +0000
-References: <20240912090550.743174-1-kory.maincent@bootlin.com>
-In-Reply-To: <20240912090550.743174-1-kory.maincent@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kuba@kernel.org, o.rempel@pengutronix.de,
- horms@kernel.org, thomas.petazzoni@bootlin.com, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, corbet@lwn.net
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 48E3CH60000371
 
-Hello:
+When 16K page/block size is enabled in Android platform,
+a error maybe detected in mount process in kernel if "-b"
+parameters is not specified in mkfs.f2fs.
+Just as the following check:
+if (le32_to_cpu(raw_super->log_blocksize) != F2FS_BLKSIZE_BITS)
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+So use getpagesize() to get correct default blocksize.
 
-On Thu, 12 Sep 2024 11:05:50 +0200 you wrote:
-> Fix a missing end of phrase in the documentation. It describes the
-> ETHTOOL_A_C33_PSE_ACTUAL_PW attribute, which was not fully explained.
-> 
-> Also, fix grammar issues by using simple present tense instead of
-> present continuous.
-> 
-> Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> 
-> [...]
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
+---
+ lib/libf2fs.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Here is the summary with links:
-  - [net-next,v2] Documentation: networking: Fix missing PSE documentation and grammar issues
-    https://git.kernel.org/netdev/net-next/c/9297886f9fcd
-
-You are awesome, thank you!
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index ecd22d4..98ee0ae 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -685,8 +685,17 @@ void f2fs_init_configuration(void)
+ 
+ 	memset(&c, 0, sizeof(struct f2fs_configuration));
+ 	c.ndevs = 1;
++#ifdef WITH_ANDROID
++	c.blksize = getpagesize();
++	c.blksize_bits = log_base_2(c.blksize);
++	if ((1 << c.blksize_bits) != c.blksize) {
++		c.blksize = 1 << DEFAULT_BLKSIZE_BITS;
++		c.blksize_bits = DEFAULT_BLKSIZE_BITS;
++	}
++#else
+ 	c.blksize = 1 << DEFAULT_BLKSIZE_BITS;
+ 	c.blksize_bits = DEFAULT_BLKSIZE_BITS;
++#endif
+ 	c.sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
+ 	c.blks_per_seg = DEFAULT_BLOCKS_PER_SEGMENT;
+ 	c.wanted_total_sectors = -1;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+1.9.1
 
 
