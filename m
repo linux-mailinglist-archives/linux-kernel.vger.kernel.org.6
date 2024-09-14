@@ -1,75 +1,117 @@
-Return-Path: <linux-kernel+bounces-329467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CDD9791BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC1A9791BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD701F21F72
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:05:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41DF91F22477
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCA01D0159;
-	Sat, 14 Sep 2024 15:05:47 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527601D017D;
+	Sat, 14 Sep 2024 15:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t45USvuL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28291E487;
-	Sat, 14 Sep 2024 15:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8261D014D;
+	Sat, 14 Sep 2024 15:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726326346; cv=none; b=SmszlbdMirvfvl8sp/FLJ9urWzbAZH9yNKwFwQYUIgW+Xp8PsYuwQtcvLJJswKE+ondxkeSzeZbODkVTROQEkUpceot75EZfP/Htsxk1J67t+TFcbPR0ibQ+X/tyQj/3yUSzGqH4qH+nCYICpUMfwW3TbrtNDLxqlT1HwmOLKJg=
+	t=1726326371; cv=none; b=pbiMbU8O07ZuTjnAvtgyRu6sO1WdWxJgTTnrn1OE1iThqJr/9dTPm39aSsinQTJogq2RYk+J1QzZKB03JH/Vv6eHnjzT2Y5bD2OUC+MwXMFQTaOe13DJfks9EZdZptLZYG10Q/exsQ001gt9BQsAOrHoNTVMD6xpH8dfmA3byxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726326346; c=relaxed/simple;
-	bh=e3178mH9e3miqrwA2yB1b/UwBrX2B7lngCjU2EwYQTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h+i9raNHabVSdMo8oUDCBP7a4xzD18z1DzVZG4lw+wSKoIc1j5b0cnf3h8JzjESGISUWg4zpYvnZvVBAlEWtOJ8wyiqIGTu9kZlfUVUgdxdzSJcq4/nAa4gNXM93sQahQLcFlWtr2KxAryGfMTf7RvdbF3Qe8+DRO3tp3p5Wj+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav411.sakura.ne.jp (fsav411.sakura.ne.jp [133.242.250.110])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 48EF5TYI066665;
-	Sun, 15 Sep 2024 00:05:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav411.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp);
- Sun, 15 Sep 2024 00:05:29 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 48EF5Tr0066647
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 15 Sep 2024 00:05:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <0529f07a-d8c5-4290-8056-6d04aa70c670@I-love.SAKURA.ne.jp>
-Date: Sun, 15 Sep 2024 00:05:26 +0900
+	s=arc-20240116; t=1726326371; c=relaxed/simple;
+	bh=hBDDooI+VDm7Eo1wgZJPe14xFNUu/LcC/bTZ7Uudp/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rLDDTa/jJkXQkmssWobjCvKgN4VdyCT4Y9NHR0TJeMdDDAJiJZiN9ysviZSq5z00gITFLmDOEaorHLpAcZL8lY/BuCAsyPSKDIWMBt7wgLrEseWKFd3eQSDl/tI3E8yqA+5FhUfL9+qrK+J851HNpRlttBWVHEDjjo93EWAK7WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t45USvuL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D7C2C4CEC0;
+	Sat, 14 Sep 2024 15:06:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726326371;
+	bh=hBDDooI+VDm7Eo1wgZJPe14xFNUu/LcC/bTZ7Uudp/s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t45USvuLaDS04Eh+rsck2B7DKGFU1WNXrF0oFTRdAMFaXP7GJP/KmyPLP7YuVniqx
+	 GKAT8I7K4C5BnmLRI2xLgq9iVwyqtAP/F53i+R4gOT4CdHmlLQTeo2yhg28BM46ifb
+	 f0XKZ2zTp69Wvt4W2h1RVlRxX7ngbxhwjnWXyXM1jTBunLZg4PupCvOvCnh1f1lykz
+	 V/YEXM91XYI684zqF9j4KAbCb7DRP4JUSQqRxmvrIqbm2KOSYJhA9rVTT6dprEcCZU
+	 PJXPxZqRNBeDwMoneccKw3cSLjLDNFTffAedthUqjwFXkrDY+90OYLpSVkgxS021/J
+	 inE5pnwJ+sdxw==
+Date: Sat, 14 Sep 2024 16:06:03 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Ilpo
+ =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] iio: light: ltr501: Drop most likely fake ACPI
+ ID
+Message-ID: <20240914160603.0eab9716@jic23-huawei>
+In-Reply-To: <95134eee-5000-44d7-8a8b-67a93a86c05a@redhat.com>
+References: <20240911212202.2892451-1-andriy.shevchenko@linux.intel.com>
+	<c45dd21c-493a-4e56-809e-85d6d7201254@redhat.com>
+	<ZuQGcyrTFek1yExt@smile.fi.intel.com>
+	<20240914152541.1c2228f4@jic23-huawei>
+	<95134eee-5000-44d7-8a8b-67a93a86c05a@redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
-To: Casey Schaufler <casey@schaufler-ca.com>,
-        Konstantin Andreev <andreev@swemel.ru>, paul@paul-moore.com
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20240910184125.224651-1-casey@schaufler-ca.com>
- <20240910184125.224651-2-casey@schaufler-ca.com>
- <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
- <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2024/09/14 8:05, Casey Schaufler wrote:
-> There has never been (to my knowledge) an effort to "ban" out-of-tree
-> LSMs.
+On Sat, 14 Sep 2024 16:30:00 +0200
+Hans de Goede <hdegoede@redhat.com> wrote:
 
-No, commit f3b8788cde61 ("LSM: Identify modules by more than name") is
-an effort to "ban" out-of-tree LSMs.
+> Hi,
+> 
+> On 9/14/24 4:25 PM, Jonathan Cameron wrote:
+> > On Fri, 13 Sep 2024 12:31:31 +0300
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> >   
+> >> On Thu, Sep 12, 2024 at 03:51:09PM +0200, Hans de Goede wrote:  
+> >>> Hi,
+> >>>
+> >>> On 9/11/24 11:22 PM, Andy Shevchenko wrote:    
+> >>>> The commit in question does not proove that ACPI ID exists.
+> >>>> Quite likely it was a cargo cult addition while doint that
+> >>>> for DT-based enumeration.  Drop most likely fake ACPI ID.
+> >>>>
+> >>>> Googling for LTERxxxx gives no useful results in regard to DSDT.
+> >>>> Moreover, there is no "LTER" official vendor ID in the registry.
+> >>>>
+> >>>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>    
+> >>>
+> >>> Thanks, patch looks good to me:    
+> >>
+> >> Have you grepped over your collection of real DSDTs?
+> >>  
+> >>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>    
+> >>
+> >> Thank you!
+> >>  
+> > I'll pick these up in the meantime. Applied to the testing
+> > branch of iio.git.  
+> 
+> As mentioned earlier today, at least the LTER0301 ACPI Hardware ID
+> is real, so please drop this one. The kmx61 patch is fine to keep.
+Done.
+
+Thanks,
+
+J
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> 
 
 
