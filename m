@@ -1,84 +1,202 @@
-Return-Path: <linux-kernel+bounces-329052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153E9978C84
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575B9978C7D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 715E9B2367D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6311285B01
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3557C9463;
-	Sat, 14 Sep 2024 01:59:12 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95063D51C;
+	Sat, 14 Sep 2024 01:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iC1SMSZg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D748C1A
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 01:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888FC8831;
+	Sat, 14 Sep 2024 01:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726279151; cv=none; b=KPYIcFs4TnODzhVe67X8SIDh/de0CA1tsf6vHxHfwhmVVWcJd6XYC44Dz+Ic7tjJGrK/KMbfVupne4sROL0iHJBnSIfuH38d+DHLsOHgoTMdvORO59wvyNlcx7iReataiQdSSBXOpje5BJv/jfFqfy36YIB5kNcUQLv7h0YGiH4=
+	t=1726278885; cv=none; b=kv5nVEldfpTF2nLDCDi0gPz0Put8dJrSh850GOsE/5GeGcw6P/l4dxV5RomRT56qHReThiH/FujWtKXDbZckPL56MXjClfE5SgHAJ+2QlLNFRNEnxY2eGZUOEZ8TQvqZxkIhq60AHJnaTEeosQ1CqDDnPV5idqdC1sVTmmxg93Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726279151; c=relaxed/simple;
-	bh=1yef+0DuIca+tWZ9IuqxSd7PV15QdSYIijO0wPid4EQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SNrr6iYYn3tj2KFX0koNchYCkN3ZHAnaLek7ukHz+/UZ7YldF5lTUt/VMtKC67tEmgqYxV1ERm7A4DNxjyy9sACeewjOji4/ZFnr784h8ojgKEHjcDUvb7A5vDm0SWuLQB0RO3+ognPeyfUbO1+RCYN7qeQC8Qnm7FTgACt5yn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4X5DqD4K1xz1S9vR;
-	Sat, 14 Sep 2024 09:58:32 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id E0CA21401F4;
-	Sat, 14 Sep 2024 09:59:05 +0800 (CST)
-Received: from huawei.com (10.173.127.72) by kwepemd200019.china.huawei.com
- (7.221.188.193) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 14 Sep
- 2024 09:59:05 +0800
-From: Miaohe Lin <linmiaohe@huawei.com>
-To: <akpm@linux-foundation.org>
-CC: <willy@infradead.org>, <david@redhat.com>, <linmiaohe@huawei.com>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm/huge_memory: ensure huge_zero_folio won't have large_rmappable flag set
-Date: Sat, 14 Sep 2024 09:53:06 +0800
-Message-ID: <20240914015306.3656791-1-linmiaohe@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1726278885; c=relaxed/simple;
+	bh=TLXeBUebCUeA7FDBNQ7Y62aN1d7vguuNY9Dg5smqFKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vf6j/9hDU9Wils1i+gnr3e+06dTBfEhU5klVzfjbAGL1c6WWHemPCuMgc1YVyRUIpCfPXcaMBsE/TaiOTdfaP5mt6s1GDcCglkkGcCB0gJoFbP6eHIAUeekoAZ+oP7t1vD9gzuOtbLGb8+gB9V9aO/Cr1Du6F73nN0MZuuBBaS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iC1SMSZg; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726278883; x=1757814883;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TLXeBUebCUeA7FDBNQ7Y62aN1d7vguuNY9Dg5smqFKw=;
+  b=iC1SMSZgdTYS74S2jZF/JMBSqTmam9t/3GowyHLIlo2320k77tgoS55c
+   RcQPnOjND0CCjccScVkbxtvDUPV+w+dZk2CGfNAloPbjxoMLXuQuNOC2I
+   SriMuKI7dLkfULM2eD4rHoCrand4uXmTLISYNpxSmLLbzLTG8k7trkob9
+   nHG6o3PRqbEB9ZugGv84hsOeTYzKzQxHYT8HsSyGk86UlZwdBNQiIhTAs
+   rLulAQMARBSrKPqejtxvc019bdBBqEGSxztrqEICcw+XG7XbVSTmYUM07
+   C/XuaWomrpNqCgvvvTfuI/ZHe15R72YIIc7mVDS8SbGFdqQq+vGr0wm6L
+   A==;
+X-CSE-ConnectionGUID: S58WrIBpSYq6GuzfB8cOnw==
+X-CSE-MsgGUID: /GTPAQsvScqjnTtbTf5hhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25392356"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="25392356"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 18:54:42 -0700
+X-CSE-ConnectionGUID: 8/RVo9fwTHKmd/RxSkbmmA==
+X-CSE-MsgGUID: 6noWOEqXTIaiVBZhuyPnbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="72381126"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 13 Sep 2024 18:54:35 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spHzc-0007Eu-2R;
+	Sat, 14 Sep 2024 01:54:32 +0000
+Date: Sat, 14 Sep 2024 09:54:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Deepak Gupta <debug@rivosinc.com>, paul.walmsley@sifive.com,
+	palmer@sifive.com, conor@kernel.org, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, corbet@lwn.net,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, robh@kernel.org,
+	krzk+dt@kernel.org, oleg@redhat.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, akpm@linux-foundation.org,
+	arnd@arndb.de, ebiederm@xmission.com, kees@kernel.org,
+	Liam.Howlett@oracle.com, vbabka@suse.cz
+Subject: Re: [PATCH v4 16/30] riscv/shstk: If needed allocate a new shadow
+ stack on clone
+Message-ID: <202409140913.73qFCOmB-lkp@intel.com>
+References: <20240912231650.3740732-17-debug@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912231650.3740732-17-debug@rivosinc.com>
 
-Ensure huge_zero_folio won't have large_rmappable flag set. So it can be
-reported as thp,zero correctly through stable_page_flags().
+Hi Deepak,
 
-Fixes: 5691753d73a2 ("mm: convert huge_zero_page to huge_zero_folio")
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- mm/huge_memory.c | 2 ++
- 1 file changed, 2 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2a73efea02d7..4e34b7f89daf 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -218,6 +218,8 @@ static bool get_huge_zero_page(void)
- 		count_vm_event(THP_ZERO_PAGE_ALLOC_FAILED);
- 		return false;
- 	}
-+	/* Ensure zero folio won't have large_rmappable flag set. */
-+	folio_clear_large_rmappable(zero_folio);
- 	preempt_disable();
- 	if (cmpxchg(&huge_zero_folio, NULL, zero_folio)) {
- 		preempt_enable();
+[auto build test WARNING on shuah-kselftest/next]
+[also build test WARNING on shuah-kselftest/fixes tip/x86/core robh/for-next tip/smp/core kees/for-next/execve linus/master v6.11-rc7]
+[cannot apply to akpm-mm/mm-everything next-20240913]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Deepak-Gupta/mm-Introduce-ARCH_HAS_USER_SHADOW_STACK/20240913-072124
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
+patch link:    https://lore.kernel.org/r/20240912231650.3740732-17-debug%40rivosinc.com
+patch subject: [PATCH v4 16/30] riscv/shstk: If needed allocate a new shadow stack on clone
+config: riscv-defconfig (https://download.01.org/0day-ci/archive/20240914/202409140913.73qFCOmB-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140913.73qFCOmB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409140913.73qFCOmB-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from arch/riscv/kernel/asm-offsets.c:10:
+   In file included from include/linux/mm.h:7:
+   In file included from include/linux/gfp.h:7:
+   In file included from include/linux/mmzone.h:8:
+   In file included from include/linux/spinlock.h:56:
+   In file included from include/linux/preempt.h:79:
+   In file included from ./arch/riscv/include/generated/asm/preempt.h:1:
+   In file included from include/asm-generic/preempt.h:5:
+   In file included from include/linux/thread_info.h:60:
+   In file included from arch/riscv/include/asm/thread_info.h:37:
+   In file included from arch/riscv/include/asm/processor.h:17:
+>> arch/riscv/include/asm/usercfi.h:44:15: warning: no previous prototype for function 'get_shstk_base' [-Wmissing-prototypes]
+      44 | unsigned long get_shstk_base(struct task_struct *task, unsigned long *size)
+         |               ^
+   arch/riscv/include/asm/usercfi.h:44:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      44 | unsigned long get_shstk_base(struct task_struct *task, unsigned long *size)
+         | ^
+         | static 
+   In file included from arch/riscv/kernel/asm-offsets.c:10:
+   In file included from include/linux/mm.h:2233:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   2 warnings generated.
+--
+   In file included from arch/riscv/kernel/soc.c:7:
+   In file included from include/linux/pgtable.h:6:
+   In file included from arch/riscv/include/asm/pgtable.h:9:
+   In file included from include/linux/mmzone.h:8:
+   In file included from include/linux/spinlock.h:56:
+   In file included from include/linux/preempt.h:79:
+   In file included from ./arch/riscv/include/generated/asm/preempt.h:1:
+   In file included from include/asm-generic/preempt.h:5:
+   In file included from include/linux/thread_info.h:60:
+   In file included from arch/riscv/include/asm/thread_info.h:37:
+   In file included from arch/riscv/include/asm/processor.h:17:
+>> arch/riscv/include/asm/usercfi.h:44:15: warning: no previous prototype for function 'get_shstk_base' [-Wmissing-prototypes]
+      44 | unsigned long get_shstk_base(struct task_struct *task, unsigned long *size)
+         |               ^
+   arch/riscv/include/asm/usercfi.h:44:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      44 | unsigned long get_shstk_base(struct task_struct *task, unsigned long *size)
+         | ^
+         | static 
+   1 warning generated.
+--
+   In file included from arch/riscv/kernel/asm-offsets.c:10:
+   In file included from include/linux/mm.h:7:
+   In file included from include/linux/gfp.h:7:
+   In file included from include/linux/mmzone.h:8:
+   In file included from include/linux/spinlock.h:56:
+   In file included from include/linux/preempt.h:79:
+   In file included from ./arch/riscv/include/generated/asm/preempt.h:1:
+   In file included from include/asm-generic/preempt.h:5:
+   In file included from include/linux/thread_info.h:60:
+   In file included from arch/riscv/include/asm/thread_info.h:37:
+   In file included from arch/riscv/include/asm/processor.h:17:
+>> arch/riscv/include/asm/usercfi.h:44:15: warning: no previous prototype for function 'get_shstk_base' [-Wmissing-prototypes]
+      44 | unsigned long get_shstk_base(struct task_struct *task, unsigned long *size)
+         |               ^
+   arch/riscv/include/asm/usercfi.h:44:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      44 | unsigned long get_shstk_base(struct task_struct *task, unsigned long *size)
+         | ^
+         | static 
+   In file included from arch/riscv/kernel/asm-offsets.c:10:
+   In file included from include/linux/mm.h:2233:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   2 warnings generated.
+
+
+vim +/get_shstk_base +44 arch/riscv/include/asm/usercfi.h
+
+    43	
+  > 44	unsigned long get_shstk_base(struct task_struct *task, unsigned long *size)
+    45	{
+    46		return 0;
+    47	}
+    48	
+
 -- 
-2.33.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
