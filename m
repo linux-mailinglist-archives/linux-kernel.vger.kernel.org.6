@@ -1,174 +1,220 @@
-Return-Path: <linux-kernel+bounces-329288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9582978F98
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08CCF978F99
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EE9C286DF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4345286EEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B95A1CEABF;
-	Sat, 14 Sep 2024 09:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F461CDFD4;
+	Sat, 14 Sep 2024 09:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dCTCFO0L"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OLS0+6Kg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5206E13342F;
-	Sat, 14 Sep 2024 09:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B6833999
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726307152; cv=none; b=D8rwPPkYzZOxIKVPFDuNC+dNQaVD5YIMXkJ4fuCJjnsevLq3BwDgarasK6DZTZPI5tOVkbHiwx2Mm7+2LxGcexsSkpF4EDy3Fdh+CbVBYrettObcLe/9ov/a6mUrK4ylcvy2OZrlWndp+HJNi9z5E+lWctIGQSbQkuLRIT+THks=
+	t=1726307207; cv=none; b=YEV2fbEuziuhsS474gNFpcekCIIYylgP9AXQEvSUdVxoVLn8E60DN9VGIQktJrJ0eSu2QmgNZGy1V+QMaFSeCY/r8DdtWvRmYCbuTSrm9EZYe3lVCyc7qtRvJwnUt84Nl6DiDaVSnP2WiAy4rBdjE4TmnkZkyfS4F4MkO1YFXRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726307152; c=relaxed/simple;
-	bh=IQt8YvLdgZK2Ul2Fo05K3SidoxgzyxbCVIohz8TUv3M=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=rh373Bs1XEQZvNrTypdXd1c/14lUxEOb4wbDJ2PtVZ29g/mBaWCr65tn+ciqfG67RlrQWu1Hvowk2wCPW7eIX5Xi6zeu6dMcNkeK712wjKcaIwkAUfDs90HsyIq9baKoCVvpHdv1TshaiDA20IcNZqU52VBfJGgWdKvptMWuau4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dCTCFO0L; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 1ade62d6727e11ef8b96093e013ec31c-20240914
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:CC:To:From:Subject:MIME-Version:Date:Message-ID; bh=td6W5BqS/w7GJGWIguOqNkiPUX+ROKcwQb3R/eDFAI0=;
-	b=dCTCFO0L1H0bx1lR4E4FH4Mbf5IxigQ5QTIMahA90uYSzPP/Ln24ubkmDOboP2skNe0A4e61h/88mPd18zRiOamP+uPZcQxv8+LDCLOmYX4ILPaMeX2k+r4bIR2TdwS/btNt8SqQe32H/uH//FG9INiCeQsRPKgK/jLz1YAI/50=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:967cd962-b5cf-4726-8a0d-fff50ef6ada8,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:ffd7f5bf-d7af-4351-93aa-42531abf0c7b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 1ade62d6727e11ef8b96093e013ec31c-20240914
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 546005059; Sat, 14 Sep 2024 17:45:41 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 14 Sep 2024 17:45:38 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Sat, 14 Sep 2024 17:45:38 +0800
-Message-ID: <9a120bc4-f671-dd35-a1f9-b9ae7031bdd1@mediatek.com>
-Date: Sat, 14 Sep 2024 17:45:34 +0800
+	s=arc-20240116; t=1726307207; c=relaxed/simple;
+	bh=HfDs9vKKpUMXKBktOYCjRMqkPLi1l0HAt9gIy7hkfnQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mY8bpJpzKkH8qBkCcb6yiIpJ6gDQQv2g7Zy6i2DkYvVHCq/Xs3lirgIgQrXlf3PdOl6vnVPhTuHtYpcdKtpCt8GCySnGU8heCOdji3JhQ8yoABvah/He8AlPv6W+sz2tzPWMlpUqLQAKr+88YVggXdRrQKi9g4u7yfqWqAlLlhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OLS0+6Kg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726307204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MxxOFQJCqEB32Xbl36OLM2qVBup0qK/FWWJmZiWVi+c=;
+	b=OLS0+6KgEjN/ISMUBTBQN/zq5DXTfBa7i5tpwvWIzOshJv8/9PgEvKYOWO9JdYlLg7rNf/
+	1tHehnp22gJ+oaY7fff480nP5Z5njHPvOKB5+TD6Fjd236tPa37d61vvpkmIhJuFUWD4n4
+	oRCaqoISOU6V+Ejek+Yr0bkyZxUVHCY=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-149-dAF0CPwFNAm7VL5yLvJSgA-1; Sat, 14 Sep 2024 05:46:43 -0400
+X-MC-Unique: dAF0CPwFNAm7VL5yLvJSgA-1
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cf2a9da36so327593639f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:46:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726307202; x=1726912002;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MxxOFQJCqEB32Xbl36OLM2qVBup0qK/FWWJmZiWVi+c=;
+        b=wvuFCVDG0Fw2y4l/tm2azdEyRrMJuLWCnCpD4NYCDxQlPt/KI+92M+mydhenmkp74Q
+         qHDhtkGjyKKyRYq7yprlUCSdk7MyJI8nrIc16112u3g/KmoZHEVMs/im4Y2OOIZ7z+Hu
+         B0lUeKEjjSrlYiQCEVScjI+Pb10rZSA1pJKQN80KKAVPJUmYh7E5elIvt1cv2D78IC0g
+         MdkZUBMIM24OsG4hU8Ni7dtXwHcD1Hj5pg57wDa0+SirI+tx9hxipp6G/JF9trwqN3tX
+         eH5nC8D5nKNPJbEWsOmhQ0GZqWe8drTU7lhr7MwlUA+xSlEvHz2DLPohF7mF3Afggahe
+         4tAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5A3fk1STqPkGhWNXub6yU5fsrDCdwaMCH8quU7p61VSDMHCdXOIwfwxJ+otccTr5JzToD+FanNhkVsvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5rahEJRrxGJ/CKPc73m4X7FOWOlz0DbUQsJAQf+7O044ArmU/
+	8mB5MyeQO5sUS7IFYgqTXNyXc1ekB7Y9OGXSqWZH8UaSyq1ZzLtrW3Wgw+s3eNKXdBdMBubuF2X
+	D+d++yWwtLp5u04QrxsWuZkbJxQwdj1yZYsQVL69D5hWp+wUdoiAOE5t1WOdjpXwz19xk+OPKRG
+	5ux2qk0+z7pK6Ak1gEfmK/2At+SO+3y+EPx9vb
+X-Received: by 2002:a05:6e02:1d86:b0:397:6dfc:993a with SMTP id e9e14a558f8ab-3a08b7a94b0mr45629685ab.21.1726307202212;
+        Sat, 14 Sep 2024 02:46:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEIEuPHrZGBWWZc7Rwb3xSzsldHkhVkQXmjDXeLX8wKGTKKCnEJ2HsxTey1fcAd2uKlGSJCk/nMrJhmDcqEzGo=
+X-Received: by 2002:a05:6e02:1d86:b0:397:6dfc:993a with SMTP id
+ e9e14a558f8ab-3a08b7a94b0mr45629465ab.21.1726307201800; Sat, 14 Sep 2024
+ 02:46:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v3 2/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT
- schema format
-Content-Language: en-US
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Bear Wang <bear.wang@mediatek.com>, Conor Dooley <conor+dt@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Chen Zhong
-	<chen.zhong@mediatek.com>, <linux-leds@vger.kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>, Lee Jones
-	<lee@kernel.org>, <linux-mediatek@lists.infradead.org>, Macpaul Lin
-	<macpaul@gmail.com>, Mark Brown <broonie@kernel.org>, Chris-qj chen
-	<chris-qj.chen@mediatek.com>, <linux-input@vger.kernel.org>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>, <linux-rtc@vger.kernel.org>, "MediaTek
- Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>, Pavel Machek <pavel@ucw.cz>,
-	<linux-pm@vger.kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, "Sebastian
- Reichel" <sre@kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>,
-	<devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sound@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Pablo Sun <pablo.sun@mediatek.com>
-References: <20240913175926.7443-1-macpaul.lin@mediatek.com>
- <172625540069.478205.2893721075637493498.robh@kernel.org>
- <099c4f3e-0772-3d30-79f7-8b996142cd7c@mediatek.com>
- <4a396c65-2353-da09-4dd2-71b822237920@mediatek.com>
-In-Reply-To: <4a396c65-2353-da09-4dd2-71b822237920@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--18.448200-8.000000
-X-TMASE-MatchedRID: 6otD/cJAac0OwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
-	qIY+/skQkABPgKBt/0r/bIpz2qRIjbvjKWK1iQnHSHCU59h5KrHWSrKtwxqWpU+u3rM3lFPnCkE
-	raFSKEBfgwC+tMY7byJTQ/2UxBcQVxAFMYEMzeR2+dJWHbg4ITpPFJV0Myxm8BUe+Zw5ql5RljC
-	/GdRjZi6wHHwdmt++AY44xtvjJ5nioB6BkKpx1kfSG/+sPtZVk4mC51qavDrQ2ANpk6Ruu/cJ0s
-	YMUJ2E10s4PPEfk7xPV55op6HGBQmyeGFxbrq7l5gCHftmwEMJ9LQinZ4QefL6qvLNjDYTwsuf7
-	RWbvUtyrusVRy4an8SAHAopEd76vF7r821BSEoHux3p95mrDUygbh3X/XOfuagda0wu3hd8CCEh
-	VFxWr8g==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--18.448200-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: F43395B9D1A6CB275AE5AF30E52C01AC9CD434BD27F2C2F01DD624AA796E78802000:8
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
+ <6b2cc4c4-4354-4b29-bc73-c1384b90dfc6@gmail.com> <CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com>
+ <CAMj1kXFr+N9LMj0=wULchYosUpV0ygZSKUj1vdUP0KWEANKasw@mail.gmail.com>
+ <CALu+AoS9+OxPmVJB9fAJFkjsX9xUVw6K_uXiOi0-XsK6-b4THg@mail.gmail.com>
+ <CALu+AoTQ6NFDuM6-5ng7yXrDAmezdAsdsPvh7KKUVdW4FXPe7w@mail.gmail.com>
+ <CAMj1kXEXH2YvWtzEJEEOnTLqACsRhan3Lf9OCLYDjKf6gxDmBQ@mail.gmail.com> <CALu+AoSp1ZryfH_j6RYqeCCjG5mFf6JkgaF4V9UwgPp+pE+mjA@mail.gmail.com>
+In-Reply-To: <CALu+AoSp1ZryfH_j6RYqeCCjG5mFf6JkgaF4V9UwgPp+pE+mjA@mail.gmail.com>
+From: Dave Young <dyoung@redhat.com>
+Date: Sat, 14 Sep 2024 17:46:50 +0800
+Message-ID: <CALu+AoQto=vnvhv1K+7_Lm85+Rw9WqmKD6zB8mH9T9xkvX-T4w@mail.gmail.com>
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, Breno Leitao <leitao@debian.org>, linux-efi@vger.kernel.org, 
+	kexec@lists.infradead.org, ebiederm@xmission.com, bhe@redhat.com, 
+	vgoyal@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com, 
+	x86@kernel.org, linux-kernel@vger.kernel.org, rmikey@meta.com, 
+	gourry@gourry.net
+Content-Type: text/plain; charset="UTF-8"
+
+On Sat, 14 Sept 2024 at 17:24, Dave Young <dyoung@redhat.com> wrote:
+>
+> On Sat, 14 Sept 2024 at 16:31, Ard Biesheuvel <ardb@kernel.org> wrote:
+> >
+> > On Sat, 14 Sept 2024 at 08:46, Dave Young <dyoung@redhat.com> wrote:
+> > >
+> > > On Fri, 13 Sept 2024 at 18:56, Dave Young <dyoung@redhat.com> wrote:
+> > > >
+> > > > On Thu, 12 Sept 2024 at 22:15, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > > > >
+> > > > > (cc Dave)
+> > > >
+> > > > Thanks for ccing me.
+> > > >
+> > > > >
+> > > > > Full thread here:
+> > > > > https://lore.kernel.org/all/CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com/T/#u
+> > > > >
+> > > > > On Thu, 12 Sept 2024 at 16:05, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > > > > >
+> > > > > > On Thu, 12 Sept 2024 at 15:55, Usama Arif <usamaarif642@gmail.com> wrote:
+> > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > > On 12/09/2024 14:10, Ard Biesheuvel wrote:
+> > > > > > > > Does the below help at all?
+> > > > > > > >
+> > > > > > > > --- a/drivers/firmware/efi/tpm.c
+> > > > > > > > +++ b/drivers/firmware/efi/tpm.c
+> > > > > > > > @@ -60,7 +60,7 @@ int __init efi_tpm_eventlog_init(void)
+> > > > > > > >         }
+> > > > > > > >
+> > > > > > > >         tbl_size = sizeof(*log_tbl) + log_tbl->size;
+> > > > > > > > -       memblock_reserve(efi.tpm_log, tbl_size);
+> > > > > > > > +       efi_mem_reserve(efi.tpm_log, tbl_size);
+> > > > > > > >
+> > > > > > > >         if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
+> > > > > > > >                 pr_info("TPM Final Events table not present\n");
+> > > > > > >
+> > > > > > > Unfortunately not. efi_mem_reserve updates e820_table, while kexec looks at /sys/firmware/memmap
+> > > > > > > which is e820_table_firmware.
+>
+> Updating e820_table should be good enough, it depends on where the
+> corruption is happening.
+>
+> kexec will find a suitable memory for the kernel via searching through
+> the system ram resources.   So efi_mem_reserve will update e820_table,
+> then reserve in the resources list as E820_TYPE_RESERVED, thus it
+> should not be a problem.
+> During the 2nd kernel boot phase, it is carried as EFI_LOADER_DATA
+> with EFI_MEMORY_RUNTIME attribute, I think it is also fine,  and later
+> efi_mem_reserve will be called as what have been done in previous
+> kernel.
+>
+> So I think no need to update the e820_table_kexec and e820_table_firmware
 
 
-On 9/14/24 15:25, Macpaul Lin wrote:
-> On 9/14/24 15:06, Macpaul Lin wrote:
->>
->>
->> On 9/14/24 03:23, Rob Herring (Arm) wrote:
->>>
->>>
->>> External email : Please do not click links or open attachments until 
->>> you have verified the sender or the content.
->>>
->>> On Sat, 14 Sep 2024 01:59:26 +0800, Macpaul Lin wrote:
->>>> Convert the mfd: mediatek: mt6397 binding to DT schema format.
->>>>
->>
->> [snip]
->>
->>>>
->>>
->>> My bot found errors running 'make dt_binding_check' on your patch:
->>>
->>> yamllint warnings/errors:
->>>
->>> dtschema/dtc warnings/errors:
->>> Warning: Duplicate compatible "mediatek,mt6357" found in schemas 
->>> matching "$id":
->>
->> I'm using dtschema 2024.09 and the dt_bindings_check didn't report 
->> this issue even the full check has been run.
-> 
-> Hopefully I've found a way to update latest dtschema without bothering 
-> IT. ;)
-> 
-> pip3 install -U git+https://github.com/devicetree-org/dt-schema.git@main
-> 
-> I'll run latest dt_bindings_check for v4 version.
-> 
-Dear Rob,
+Hmm,  oops, I again forgot the kexec_load code in userspace kexec-tools.
+The kexec-tools code still searching for memory ranges from e820_table_firmware
 
-Just want to leave a note here.
+>
+> > > > > > >
+> > > > > > > arch_update_firmware_area introduced in the RFC patch does the same thing as efi_mem_reserve does at
+> > > > > > > its end, just with e820_table_firmware instead of e820_table.
+> > > > > > > i.e. efi_mem_reserve does:
+> > > > > > >         e820__range_update(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+> > > > > > >         e820__update_table(e820_table);
+> > > > > > >
+> > > > > > > while arch_update_firmware_area does:
+> > > > > > >         e820__range_update_firmware(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+> > > > > > >         e820__update_table(e820_table_firmware);
+> > > > > > >
+> > > > > >
+> > > > > > Shame.
+> > > > > >
+> > > > > > Using efi_mem_reserve() is appropriate here in any case, but I guess
+> > > > > > kexec on x86 needs to be fixed to juggle the EFI memory map, memblock
+> > > > > > table, and 3 (!) versions of the E820 table in the correct way
+> > > > > > (e820_table, e820_table_kexec and e820_table_firmware)
+> > > > > >
+> > > > > > Perhaps we can put this additional logic in x86's implementation of
+> > > > > > efi_arch_mem_reserve()? AFAICT, all callers of efi_mem_reserve() deal
+> > > > > > with configuration tables produced by the firmware that may not be
+> > > > > > reserved correctly if kexec looks at e820_table_firmware[] only.
+> > > > >
+> > > >
+> > > > I have not read all the conversations,  let me have a look and response later.
+> > > >
+> > >
+> > > I'm still confused after reading the code about why this issue can
+> > > still happen with a efi_mem_reserve.
+> > > Usama, Breno, could any of you share the exact steps on how to
+> > > reproduce this issue with a kvm guest?
+> > >
+> >
+> > The code does not use efi_mem_reserve() only memblock_reserve().
+>
+> Yes, I see this, I just thought that Usama tested with changes to
+> efi_mem_reserve and it still did not work, this is what I'm confused
+> about.
+>
+> But maybe Usama did not test and only checked the code and assumed
+> that we have to update the e820_table_kexec and e820_table_firmware.
+> See my reply inline above.
 
-After I've updated to dtschema 2024.10.dev3+gdc4787b,
-the 'make dt_bindings_check' still reported no error with this patch v3.
+Please ignore the above comment.   The userspace code does need the
+e820_table_firmware.
+So the best way to make it easier is to clean up the e820 tables and
+maintain only one table then the kernel kexec_file_load behavior will
+be the same as the userspace.   But need a closer look about the
+details, eg. if the hibernate (mentioned in code comment) is happy.
 
-pip show dtschema
+Or to change userspace to go through the /proc/iomem instead of
+checking the /sys/firmware/memmap
 
-Name: dtschema
-Version: 2024.10.dev3+gdc4787b
-Summary: DeviceTree validation schema and tools
-Home-page: https://github.com/devicetree-org/dt-schema
+>
+> Thanks
+> Dave
+> >
 
-python: 3.10
-pip: 24.2
-
-If you have any clue about root cause or any other dependencies
-of this environment issue, please let me know. I'll try to check if
-there is a fix. Thanks.
-
-Regards,
-Macpaul Lin
 
