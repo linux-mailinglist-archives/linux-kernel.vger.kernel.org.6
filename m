@@ -1,160 +1,139 @@
-Return-Path: <linux-kernel+bounces-329353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F0D97904A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:09:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E113E978FFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9EF1F23685
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:09:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60C1EB20D04
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4945C1CF2B6;
-	Sat, 14 Sep 2024 11:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6520F1CF28A;
+	Sat, 14 Sep 2024 10:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="dV6U00Me"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="H48Ifsl9"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C848E1CEE87;
-	Sat, 14 Sep 2024 11:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D251422C5
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 10:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726312152; cv=none; b=n0VGMmjYkB7MWboH2o14f9sLBIRYJIPrGNKT7wWzRgc9+GOEQzi6zmOcmXXZd1EE0kdObEHIKBrzkbg/HrvX7n1kgTDv5nycW5yhhN+TO1T5GE0u4UivfFdOtB1cf2T0wZxbm7AQSLpEtVTgadOKl/nPULNktAWtepkbzLU5/E8=
+	t=1726309962; cv=none; b=A2ZzAjS3I3TKo6ByI2chNQPf7oYw0LyYshbwVtkqs3YnH1cgqeq8pcMJIdFSg9x1gjtv35pXkYfO/e6Z2nREd1NO+5kdzYGZqkxUGBRVco64V7yqwGZOGwdIIj/UmR4/VPNbrpoIx3GGggv7tCNY8L+PcVGbQG3F9j0wHqVvt0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726312152; c=relaxed/simple;
-	bh=w8kkdEpj36L90ciznlhiK8sldUmkY+C4hInsCITqYWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Est2dlChIaluwEPdHKtL73Bl/Kcj+vc+9hdIYvv6kKqmdz//ME/fTObS0X26VgjKbDSvaQ7ThGUqY5sYQ8+ibwmFS5swnHrXwayMbhbvr9bcTZwk5SVAKojw0iKeIyH3V/2pS6Y6RWAo7YNIgVgEqX/DYU7SwF9yhmscmc21iu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=dV6U00Me reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id e52e580cb7d3fbf3; Sat, 14 Sep 2024 13:09:08 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 4DF918532AE;
-	Sat, 14 Sep 2024 13:09:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1726312148;
-	bh=w8kkdEpj36L90ciznlhiK8sldUmkY+C4hInsCITqYWg=;
-	h=From:Subject:Date;
-	b=dV6U00MeRxkvTex/wF/NTmcthJps7rv4EozLHbeb63VWw8IhAN4tl2P+dJkuKkY4h
-	 S64WQrJGTK+81uXuFS7+6oBzOB4Ben5ORZ8QxD9urRNih3yc2AsD6HqQsiZ28jCw4A
-	 fkyiUxzyKw7/R4oDu4kScaDDkCvchdCWL+goCPoxH5rQVO9E2OdbDaWh4bLhiyIGvW
-	 VcEmg9K3ttkXJe9hbxci7xrywkf2gb0aZIecOf7o5qOeGLFao5+IzjgS+S24yc1pwr
-	 AMBX9ZGgP3HZ4QXjoUmyg1IOIllkWZvgOXkv/JMuBy0wur3LfunwQ8dqFpWRsBQE98
-	 WS3qeSuJBhpCQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [RFC PATCH for 6.13 v1 05/20] thermal: core: Fix race between zone
- registration and system suspend
-Date: Sat, 14 Sep 2024 12:31:28 +0200
-Message-ID: <3335807.44csPzL39Z@rjwysocki.net>
-In-Reply-To: <6100907.lOV4Wx5bFT@rjwysocki.net>
-References: <6100907.lOV4Wx5bFT@rjwysocki.net>
+	s=arc-20240116; t=1726309962; c=relaxed/simple;
+	bh=DdYB00ibTxT+QJRCxLcc/asgoMEjnRMB60l7urVdFTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WhlvtgxJApbFpBqa1QNB6tyDUvA+kpRIyiafp/rH4l7LZTbtHdNwmI1Qr4j0FxXcw8meRGy3B9bc8MVL9X2UBCo6WD1QLaOkjYieECEYrkqJBx3ykTwO+c6hLudlyEKMjOdDKNDO+96subHJkJygG0Z1u1Nt+BAQX5HXKIHAw/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=H48Ifsl9; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-718816be6cbso2326433b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 03:32:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1726309960; x=1726914760; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yoScSacKs8+apMRHN8PMRjEmtp//jkcASgSvFvAksOc=;
+        b=H48Ifsl9Mi+sjKnBeoN3uI4sUCUDqRWSlgRb1MthfWaUSorboOfNxpOIei6sJ0WYHp
+         uxCC9iQza3QYs0bnPby45hYajaFJ5kmsMqkryb8/GDjh6/Z6uVDBMdHErYyC5/+ez4+H
+         j9eg8Ueg/ROzZlveompWIqq/aMJCShCAw4btV3Q9hwvNij3gz0zq8s6PmkEfDgrhcBgG
+         FwVT1qdgR1mIZzo49ZShjAmXjyvxe1uC6m1cXG93tLakFUXr2aR7hOqqcx0BoKbwtj+B
+         ytAq7N4zyAYMDxm8ELu+SYS9hA4Qa8hfuQXt8vjYFPTU4nc8KIBuAhHtNcgaM3hbXM7y
+         Ul6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726309960; x=1726914760;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yoScSacKs8+apMRHN8PMRjEmtp//jkcASgSvFvAksOc=;
+        b=qPLdHOWM5BVC/fQlXg2ALOYGC+XrMTxqzaFbwrpRom/qEUJinW+7ro8sCBoRyX8Nw7
+         m0gq1gbIPzMp6Om/p6ZdC7rOeCE1fXZaK7zCTinEAtcy4H6dDHxgHBRhhckrR1vyOsHj
+         wLvIBSlWX5jk3kLISjV2gRznm4L5KNEY0kYAhL2nzCR8FUANMfKwYlsPC4F9o2P2ckmX
+         DnMfzEJlzwwyhoDYfJv9Wb4SrGqHxxLQ6TxGA7c1IJ7/sooTBtGUi+JiKWtfFuKg6D80
+         9aR0PpLV2dbG7Bzkr1oz9bnDV9Da8WwTnyVyQ1C7Jmo8+8kVmofsFVcc/8GupXvkbgr5
+         T3+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWFdvDpsLtKGkEERXi13qLbvYZHa/+kMRH365pMBfmIHKKC4Z0tBhJtbdbPvMy1MwZ9nMmGVH1movdxe/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiQIWpHeQP63xCQ8Kk1gdVXwZV+JyB94bgZNm0yFEVPoJKVyw9
+	S0caObmMXSU9iPsvcO1fgEgAf9ppNCG6oxVyBZ8QYNncrudUTmGvDLsRF9Aw4cQ=
+X-Google-Smtp-Source: AGHT+IHyOQXstBZ/vgJqI3gYOTidc2uIM7hZ/h3P9ag32Q0XCBusk2SPUr0cj7hP+LUn4iRsjuZYeA==
+X-Received: by 2002:a05:6a21:e8f:b0:1cf:4458:8b0d with SMTP id adf61e73a8af0-1cf75ec54f8mr12394722637.11.1726309959601;
+        Sat, 14 Sep 2024 03:32:39 -0700 (PDT)
+Received: from C02F52LSML85.bytedance.net ([203.208.167.149])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944ab50cbsm788332b3a.53.2024.09.14.03.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Sep 2024 03:32:39 -0700 (PDT)
+From: Feng zhou <zhoufeng.zf@bytedance.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mykolal@fb.com,
+	shuah@kernel.org,
+	alan.maguire@oracle.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	yangzhenze@bytedance.com,
+	wangdongdong.6@bytedance.com,
+	zhoufeng.zf@bytedance.com
+Subject: [PATCH bpf-next v3 0/2] Fix bpf_get/setsockopt failed when TCP over IPv4 via INET6 API
+Date: Sat, 14 Sep 2024 18:32:24 +0800
+Message-Id: <20240914103226.71109-1-zhoufeng.zf@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudektddgfeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdr
- tghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=35 Fuz1=35 Fuz2=35
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
 
-If the registration of a thermal zone takes place at the same time when
-system suspend is started, thermal_pm_notify() can run before the new
-thermal zone is added to thermal_tz_list and its "suspended" flag will
-not be set.  Consequently, if __thermal_zone_device_update() is called
-for that thermal zone, it will not return early as expected which may
-cause some destructive interference with the system suspend or resume
-flow to occur.
+When TCP over IPv4 via INET6 API, sk->sk_family is AF_INET6, but it is a v4 pkt.
+inet_csk(sk)->icsk_af_ops is ipv6_mapped and use ip_queue_xmit. Some sockopt did
+not take effect, such as tos.
 
-To avoid that, make thermal_zone_init_complete() introduced previously
-set the "suspended" flag for new thermal zones if it runs during system
-suspend or resume.
+0001: Use sk_is_inet helper to fix it.
+0002: Setget_sockopt add a test for tcp over ipv4 via ipv6.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+Changelog:
+v2->v3: Addressed comments from Eric Dumazet
+- Use sk_is_inet() helper
+Details in here:
+https://lore.kernel.org/bpf/CANn89i+9GmBLCdgsfH=WWe-tyFYpiO27wONyxaxiU6aOBC6G8g@mail.gmail.com/T/
 
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -39,6 +39,8 @@ static DEFINE_MUTEX(thermal_governor_loc
- 
- static struct thermal_governor *def_governor;
- 
-+static bool thermal_pm_suspended;
-+
- /*
-  * Governor section: set of functions to handle thermal governors
-  *
-@@ -1323,6 +1325,14 @@ static void thermal_zone_init_complete(s
- 	guard(thermal_zone)(tz);
- 
- 	tz->state &= ~TZ_STATE_FLAG_INIT;
-+	/*
-+	 * If system suspend or resume is in progress at this point, the
-+	 * new thermal zone needs to be marked as suspended because
-+	 * thermal_pm_notify() has run already.
-+	 */
-+	if (thermal_pm_suspended)
-+		tz->state |= TZ_STATE_FLAG_SUSPENDED;
-+
- 	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
- }
- 
-@@ -1494,10 +1504,10 @@ thermal_zone_device_register_with_trips(
- 	list_for_each_entry(cdev, &thermal_cdev_list, node)
- 		thermal_zone_cdev_bind(tz, cdev);
- 
--	mutex_unlock(&thermal_list_lock);
--
- 	thermal_zone_init_complete(tz);
- 
-+	mutex_unlock(&thermal_list_lock);
-+
- 	thermal_notify_tz_create(tz);
- 
- 	thermal_debug_tz_add(tz);
-@@ -1718,6 +1728,8 @@ static int thermal_pm_notify(struct noti
- 	case PM_SUSPEND_PREPARE:
- 		mutex_lock(&thermal_list_lock);
- 
-+		thermal_pm_suspended = true;
-+
- 		list_for_each_entry(tz, &thermal_tz_list, node)
- 			thermal_zone_pm_prepare(tz);
- 
-@@ -1728,6 +1740,8 @@ static int thermal_pm_notify(struct noti
- 	case PM_POST_SUSPEND:
- 		mutex_lock(&thermal_list_lock);
- 
-+		thermal_pm_suspended = false;
-+
- 		list_for_each_entry(tz, &thermal_tz_list, node)
- 			thermal_zone_pm_complete(tz);
- 
+v1->v2: Addressed comments from kernel test robot
+- Fix compilation error
+Details in here:
+https://lore.kernel.org/bpf/202408152058.YXAnhLgZ-lkp@intel.com/T/
 
+Feng Zhou (2):
+  bpf: Fix bpf_get/setsockopt to tos not take effect when TCP over IPv4
+    via INET6 API
+  selftests/bpf: Setget_sockopt add a test for tcp over ipv4 via ipv6
 
+ net/core/filter.c                             |  7 +++-
+ .../selftests/bpf/prog_tests/setget_sockopt.c | 33 +++++++++++++++++++
+ .../selftests/bpf/progs/setget_sockopt.c      | 13 ++++++--
+ 3 files changed, 49 insertions(+), 4 deletions(-)
+
+-- 
+2.30.2
 
 
