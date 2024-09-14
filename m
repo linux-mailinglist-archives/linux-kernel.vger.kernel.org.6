@@ -1,142 +1,98 @@
-Return-Path: <linux-kernel+bounces-329051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46EA978C80
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:56:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91542978C8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73FEFB2253A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:56:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0856CB248BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1939BE5D;
-	Sat, 14 Sep 2024 01:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF553D528;
+	Sat, 14 Sep 2024 02:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="JJNmq9jL"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wx0lFibl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4488C1A;
-	Sat, 14 Sep 2024 01:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726278987; cv=pass; b=cJEsN0l54y95wMAj5yM3OxuIp3wPu698Q0qoXNLdKgAZhCn/3GUHXIYDqO/3dGByb0VlcwiZrHA/dYx13bX4mmRwyTKO0HlvY4Ik8GXTyML2TKRW6EsZ86cK20iIZcXrTZYEi1rqmtYrjRYEgc65SwPR/xGoynQOZZ0huEwK+Jo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726278987; c=relaxed/simple;
-	bh=ayBCYZquB2nxVKX6mp0OElWmvLIk/UXOyDEVCYprcsY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O55ffQne+VGIuVCfvn2Yc2IvYi20I2jrOtM0rE1mm9ITT0KIJYnukdvd/meVQ1XE4MVVsrrrSkNBr72wn7ncKh0LR6TcuQ4EJqmrV05c3aJBXnoB3eIDZN8idLa4+mCPZR3yGkYH9UXA0NQ5zv4CzJP8dfHUH4Nh1DO1Q6Twrm4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=JJNmq9jL; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1726278962; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RzJyEf15GliLrSVJ/uyX7penK2QMkryN+d4RXb6QJ+6ncXwSJGTy/7GOWV1ckmLDatEPFQzhxrIyognx/6uMMvLQFhIwNZf4YwweT2y940uaqn3k6jEUFiZ5MuZJ5WnbPHKR0BEWlOfzx7kwNigV3wCFNuUj1p+HDtSL5hWZzWk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726278962; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NXQ26KT6Pv90YwCJ3APT9lq+9hwmObUaP8zl7IDRZwQ=; 
-	b=YUuDxBcrCMqE7sf81QwLdoaT0JqQi+gxSRajQgUF5A7iIGvIJhjxVXj+fjoXfC24qjPSNJTCNjv13yZdQiPT+duK25CsK5hye+wuhUZHlDyiwHfC/FNYKVeYcIcqO128AUeov4IRRdz59c+ht5oFWRiJn2NL7G/pVchcVHPpaTQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726278962;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=NXQ26KT6Pv90YwCJ3APT9lq+9hwmObUaP8zl7IDRZwQ=;
-	b=JJNmq9jLLHCaqwfhUXkVQTdtdGm8q9fe+oLihCQoK9+cANoPVN4caaGg+8aEw0gm
-	oCvW1te5P8I5iiwm722yBp/HW0m3VVe7hORwALOo+jD5hHi8jY2191pO/o0OPUPurss
-	mPRawi+IxSq/0UlgezWaITrvHz6YFwbjZCfrfiMsOGNg3AgPF2tWZ9Ui1eQW6b0k0fb
-	RVZ9ZYmJ72w6BQyBxJm+KLuduHvhw3yrif11BKHLOBHtJBdfsMoKl3cXKIPpIGhRjqo
-	LCyoVofFN7JlrR9uYYcAAus6RZObpHkaLp7xC79RQq4te1RwXC0hHLdRtMKYaWbJwjm
-	fGtv6NXA3g==
-Received: by mx.zohomail.com with SMTPS id 1726278961359640.2990860982334;
-	Fri, 13 Sep 2024 18:56:01 -0700 (PDT)
-Message-ID: <ad869e684c940435ba3fcf4dbccbfc770b38c16b.camel@icenowy.me>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: document RerVision
- A33-Vstar board
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-sunxi@lists.linux.dev, Andre Przywara <andre.przywara@arm.com>,
- Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Date: Sat, 14 Sep 2024 09:55:55 +0800
-In-Reply-To: <172623730520.4076253.7175037716930825765.robh@kernel.org>
-References: <20240913104845.4112986-1-uwu@icenowy.me>
-	 <172623730520.4076253.7175037716930825765.robh@kernel.org>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0190179DC;
+	Sat, 14 Sep 2024 02:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726279578; cv=none; b=HTKGZHX1b38VhQSQnG2GDEEmShz/nd5NA8WtddiC7h95ZkaIVf1s2B2pl7L1O75BtNUS2pInBQVfwo8PX3nOgLDXURMYeha2fPUq6ZnuAGRVCfU/fK/S5rJAMMp/rYN78iTmwCRahANlFTPttZtB9WCzb1wl+5IVj//TccSfw5g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726279578; c=relaxed/simple;
+	bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rA7P6qI2i/xQ2yCaacnD3csUwSNfIb9YZ4RGYiHkeZKux8RTgtFRpjfjENtH9mxWe3DoTyM4/FObOlOh+o+VPWOYJgbpnd0GfhMS6M3vcrNl5O7TvjHZnP7TMUlkhNRR9QOvToqAfa4mf3kkuMDa+bCqBjwLpJ2DOKuzmpNq4OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wx0lFibl; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726279576; x=1757815576;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
+  b=Wx0lFiblieA/9/9zel9rjGGqiBhBg5zYjJ/ObIHxufVPcAMw1Fk+5oEb
+   zjOJOQL72vzWiy8zQsKghpnSbtgajYcGTpXhEBXRi9FkGj/Q7G3uHH/k6
+   Mp6q9arZJUfEnohcT+UYK9SFpVyVg8lfV+784+4Kc3JSkMqmKfyfZf8l3
+   1fSe3I8qlsUlHfu1PSil9tghCgNGIa+ZCDyWZFVxhf8+D3hJskkidrG+u
+   8y2xVFJhTo7kBnkBtA1zftgd7EosIg7aXwbmWoHQ6B2E3lw32By4gB1MF
+   HvIqeRGlSQns9/n+49kVgwbAc6m84o675WYdjX7T5Ea9Rc23HTk1zQ702
+   A==;
+X-CSE-ConnectionGUID: 7++i2EDnTCq797+HfENnXQ==
+X-CSE-MsgGUID: 3+9wc8S+TgyxDSnps6brwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="47706728"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="47706728"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 19:06:15 -0700
+X-CSE-ConnectionGUID: hrcCDiI6S7qL/42olX80Rg==
+X-CSE-MsgGUID: gzoUIxuVSy6K+Ux6zmuDmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="67968803"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa007.fm.intel.com with ESMTP; 13 Sep 2024 19:06:12 -0700
+Message-ID: <42bbc500-578c-474b-98ec-1988906f31ef@linux.intel.com>
+Date: Sat, 14 Sep 2024 10:02:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+References: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-=E5=9C=A8 2024-09-13=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 09:24 -0500=EF=BC=
-=8CRob Herring (Arm)=E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Fri, 13 Sep 2024 18:48:44 +0800, Icenowy Zheng wrote:
-> > RerVision A33-Vstar is an evaluation board of their A33-Core1 SoM.
-> >=20
-> > Add its compatible (with the SoM compatible) to the sunxi board DT
-> > binding file.
-> >=20
-> > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> > ---
-> > =C2=A0Documentation/devicetree/bindings/arm/sunxi.yaml | 6 ++++++
-> > =C2=A01 file changed, 6 insertions(+)
-> >=20
->=20
->=20
-> My bot found new DTB warnings on the .dts files added or changed in
-> this
-> series.
->=20
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the
-> warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to
-> reply
-> unless the platform maintainer has comments.
->=20
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->=20
-> =C2=A0 pip3 install dtschema --upgrade
->=20
->=20
-> New warnings running 'make CHECK_DTBS=3Dy allwinner/sun8i-a33-
-> vstar.dtb' for 20240913104845.4112986-1-uwu@icenowy.me:
->=20
-> arch/arm/boot/dts/allwinner/sun8i-a33-vstar.dtb: hub@1: '#address-
-> cells', '#size-cells', 'ethernet@4' do not match any of the regexes:
-> 'pinctrl-[0-9]+'
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from schema $id:
-> http://devicetree.org/schemas/usb/genesys,gl850g.yaml#
+On 9/13/24 10:34 PM, Dan Carpenter wrote:
+> The iommu_paging_domain_alloc() function doesn't  return NULL pointers,
+> it returns error pointers.  Update the check to match.
+> 
+> Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
+> Signed-off-by: Dan Carpenter<dan.carpenter@linaro.org>
+> ---
+>   drivers/gpu/drm/tegra/drm.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 
-I think I need help to properly reference usb-device.yaml to allow
-cells properties. Currently it's in a allOf: section of
-genesys,gl850g.yaml along with Genesys-specific per-compatible rules
-(USB2/USB3 hubs), but it looks that this fails to work.
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-I copied the patternProperties rule from usb-hcd.yaml to allow
-downstream devices,  this works well.
-
-BTW should a usb-hub.yaml be present to allow different hub bindings to
-share the code for downstream devices?
-
->=20
->=20
->=20
->=20
->=20
-
+Thanks,
+baolu
 
