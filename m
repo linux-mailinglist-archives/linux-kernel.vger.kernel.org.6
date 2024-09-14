@@ -1,162 +1,129 @@
-Return-Path: <linux-kernel+bounces-329311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10E7978FE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:12:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343B0978FE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24E31C21D10
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:12:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E41F22831F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D94313B280;
-	Sat, 14 Sep 2024 10:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929911CEAAC;
+	Sat, 14 Sep 2024 10:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="aORr7H8J";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U9Nm20lH"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjQOKSkG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B71CE6FE;
-	Sat, 14 Sep 2024 10:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405CB17CA1D;
+	Sat, 14 Sep 2024 10:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726308715; cv=none; b=RBaqC1/rBTyRVQP+wKPHEV4MYiZ7NnkwA4bj33sbJ/TsMVxPa/hfZrUcuYnEjsYq2w6PuHHT6uZO2NFQPrOiU/zdbc0gNBhbZghKEYxkgWYsx7y7RhSd4VF1GKCg9nLAApo4OZxnRJML/s7p72/RoSkpiYKY2vCt2EZTShUc4wU=
+	t=1726309143; cv=none; b=g0TF5xFnsCu3vgtWEi3mvDaig4c4wQOviIk8VYLGujljxyq7zOj4KaIdTwNICVvsmE7jMIaT1cW1KZAbFgJA6yLwOCizyx3lBkJjrl65a9Zniy2I5c0R/Q0tY6l0j7zMPHu1H1s5jAtEivZKhpl6Ay11ORqEz0tr88bCSGE/B6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726308715; c=relaxed/simple;
-	bh=c7hrh1mNhY5Po59linuz91/Lp273Kl2sAkDSofcmW3U=;
+	s=arc-20240116; t=1726309143; c=relaxed/simple;
+	bh=y7/Y94rbPyCtN5tdM798SrcYkgwX0uEZqv3jidWpe3M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCMzOt6OkbAe/h9Sfqeyn5elVWiTNHxlUZKRhWr+bwwepxzKmfAhkFQyKxf+B1we468J6vI1Cb0zXk/pTQI9uPnMphHobHuurlgyKZ1wVVGQJDv+TEyiIG13rxvwGwaS4HqkFTKllBeUfox6bvxYdFCVglIxZoOxh8cJzVkYR1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=aORr7H8J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U9Nm20lH; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6D141138034D;
-	Sat, 14 Sep 2024 06:11:52 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Sat, 14 Sep 2024 06:11:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1726308712; x=1726395112; bh=wdYBlJH1j2
-	NJdmrQ3AgD6IKbm38HR2Yf3Znhh5VlisQ=; b=aORr7H8JGhZkcbuntmIvaMOGA0
-	/MNDvEBK3EaaffdNtywXEszDv4oT8lgmjaAJSQ6hG4BZw3pyXUZ0HuxCFgW51Jho
-	3mxbyvmk50xrGYlquXhO9YOAOFGgFsltTBmbcmDFqDlo3RqCG9omkTpF7ayriiuJ
-	HxjmMyu8tF7M7aprtQ8tnmEszHEQLWNueWq5efKeL4iw8HZciroSaRIqJlDdr9Bn
-	8xrCLzoGJ05vb0DdrlD43/tXcrLeGGYtF3NMicV9HmVnUolIb0DH3O6WwBH4S84v
-	Op/8/PmCnq1TsZQqWGzYVx5XtRJUdpUStYtXAiSyjFzJn3UJ22qS14RzkREQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1726308712; x=1726395112; bh=wdYBlJH1j2NJdmrQ3AgD6IKbm38H
-	R2Yf3Znhh5VlisQ=; b=U9Nm20lH/voTbRJWFA4oNdsQX1ya+5iERjCc+qxE3p9N
-	V6H3QXBWhGBNMpDapVyukAbnWJkhnoNY18qLSVd8bKe3irf9zwvfZrn+7KSepErX
-	w3Zt9TGVJspLYGoC5482obPRi5YoxGuIb9hXjuDJLO2Q9jLLi252gYPhVXzXTJBn
-	XHYqPUxlR5VWYeNnYUIFaqiOteX1j7xIaD0kz/A9cp2hOvuxOLzzfG2nfaPOZv+6
-	4g8rDYXNBd5B0iwEjg12ecYIH0xzUDAhusQWpWI7o4TbmTycae11hBm0MKvCc0EC
-	20vZIXKSTkSdDcnkuN4lGVjCK/aTKYGf8HBFo7Gx5g==
-X-ME-Sender: <xms:Z2HlZgLGCIZ8gWL6kJFrNK_OJRgX8CdROU6K_bAEQdAXwk5Z7xh3-A>
-    <xme:Z2HlZgI3cIECw5vwULhBTJ8t9KgInmT1VhnPb5-_kVfEnoo2lqfrZegd5WmuoMDEU
-    Lz5XPEa5LAwbZcr2cs>
-X-ME-Received: <xmr:Z2HlZguQa1dRX1HqSEuHnyIrsg3uN2AoNXiXIL9wWhUTJARPgtvtSegE0y1IC9Fmx5vYQg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudektddgvdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
-    ucfhrhhomheplfgrnhhnvgcuifhruhhnrghuuceojhgrnhhnvgesjhgrnhhnrghurdhnvg
-    htqeenucggtffrrghtthgvrhhnpeetkeegfffhhfekhfdtveejueevtdefkeehgeekgeel
-    teeluddugeeuvddukeeuffenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhgrnhhnvgesjhgr
-    nhhnrghurdhnvghtpdhnsggprhgtphhtthhopeefvddpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhk
-    hheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegrhihushhhse
-    gsvggrghhlvggsohgrrhgurdhorhhgpdhrtghpthhtohepfhgrsghivghnrdhprghrvghn
-    theslhhinhgrrhhordhorhhgpdhrtghpthhtohepugdqghholhgvsehtihdrtghomhdprh
-    gtphhtthhopehlohhrfhhorhhlihhnuhigsegsvggrghhlvggsohgrrhgurdhorhhgpdhr
-    tghpthhtohepjhhkrhhiughnvghrsegsvggrghhlvggsohgrrhgurdhorhhgpdhrtghpth
-    htoheprhhosggvrhhttghnvghlshhonhessggvrghglhgvsghorghrugdrohhrghdprhgt
-    phhtthhopegrfhgusehtihdrtghomh
-X-ME-Proxy: <xmx:Z2HlZtaiPXWo0hoNfwFmPC9K2ADDDofXYS8ZgxTLBNIaDKBpiSKpDQ>
-    <xmx:Z2HlZnZdFjkun-rTi_pNVt9B7MhEdaB-MEYhEQnEPnt7l3WQBz4S6Q>
-    <xmx:Z2HlZpBrLGThc8Oyk8ay8ddteDZxWvpwHx7WsmKyt6rhy076VLNfMA>
-    <xmx:Z2HlZta96gou4U4zmRiYrSQYPZ7O0VpCGl0y45bvGn_lJHxiPLwY6A>
-    <xmx:aGHlZkwpfgeBBy3OeE8ggur4QJ_hWsPnlquY6Hme4l7QxApo3RtW2okr>
-Feedback-ID: i449149f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 14 Sep 2024 06:11:51 -0400 (EDT)
-Date: Sat, 14 Sep 2024 12:11:49 +0200
-From: Janne Grunau <janne@jannau.net>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ayush Singh <ayush@beagleboard.org>, fabien.parent@linaro.org,
-	d-gole@ti.com, lorforlinux@beagleboard.org,	jkridner@beagleboard.org,
- robertcnelson@beagleboard.org,	Andrew Davis <afd@ti.com>,
- Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Rob Herring <robh@kernel.org>,	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,	Arnd Bergmann <arnd@arndb.de>,
- Nishanth Menon <nm@ti.com>,	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, asahi@lists.linux.dev
-Subject: Re: [PATCH 1/8] rust: kernel: Add Platform device and driver
- abstractions
-Message-ID: <ZuVhZV2KW2Gv340V@robin>
-References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
- <20240911-mikrobus-dt-v1-1-3ded4dc879e7@beagleboard.org>
- <2024091106-scouring-smitten-e740@gregkh>
- <ZuHU5yrJUOKnJGrB@pollux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o7JGQKBqV2lDNq4tw0F6HodUKkd7mpc4SRYVb9TYTqJ/APGFgAvHHlwCGmSEMjYM3PLG4qTLMaZzzhxNGZlDAULAN0lBqAKbT3GU75Nlamw/io2JKKo8WVvFIkHEDRBAy6zehEFGVjYcNLZ6hWd7mRv9yrzDhFodwwT0h51b6E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjQOKSkG; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726309142; x=1757845142;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=y7/Y94rbPyCtN5tdM798SrcYkgwX0uEZqv3jidWpe3M=;
+  b=gjQOKSkGENx0aeZlSYYrQCKblFYoLe1wUHUwfminJU7c8keWfcq7SVRp
+   QW74un6T2dtEzdLVxbAo1OoMTgbhyCon1QLrepfBPPuOhub1Vsky6Bfjd
+   ZC4pox8Tm+7Lwi0dJvE29RUe3NXq7Y1szmjemIOAC1B97IANV6iDyce9l
+   fQ0SCiQK1b3LYdBpzOKup/WrYi8LtLqFe0rU7JH2dc35m2BLUqXZUuc8B
+   MZUFnY/ARGBL/Z7hPC4+awNBiGrx9CgcR2TIHxDfDCqwXwxqQC95up5T9
+   dIiK9QCxnzQET+XInKjq+BiwjCJhgwUi2op5vXXsjIxCpjVTJQmWgzx+1
+   Q==;
+X-CSE-ConnectionGUID: PG9mN+DaT9uiHvA1POHOeA==
+X-CSE-MsgGUID: gPbgvaI3TdSqtsBRH42ycQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="42686527"
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="42686527"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 03:19:01 -0700
+X-CSE-ConnectionGUID: ma0ME4eVQOWKAuY/NinueQ==
+X-CSE-MsgGUID: HpSeGok9RNevnNu+ScCisQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="99038812"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 14 Sep 2024 03:18:54 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spPrg-0007d3-16;
+	Sat, 14 Sep 2024 10:18:52 +0000
+Date: Sat, 14 Sep 2024 18:18:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: John Ogness <john.ogness@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: oe-kbuild-all@lists.linux.dev, Jiri Slaby <jirislaby@kernel.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>, Arnd Bergmann <arnd@arndb.de>,
+	Tony Lindgren <tony@atomide.com>, Udit Kumar <u-kumar1@ti.com>,
+	Ronald Wahl <ronald.wahl@raritan.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Serge Semin <fancer.lancer@gmail.com>
+Subject: Re: [PATCH next v2 2/4] serial: 8250: Split out IER from
+ rs485_stop_tx()
+Message-ID: <202409141849.iyZNNZgc-lkp@intel.com>
+References: <20240913140538.221708-3-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZuHU5yrJUOKnJGrB@pollux>
+In-Reply-To: <20240913140538.221708-3-john.ogness@linutronix.de>
 
-On Wed, Sep 11, 2024 at 07:35:35PM +0200, Danilo Krummrich wrote:
-> On Wed, Sep 11, 2024 at 04:56:14PM +0200, Greg Kroah-Hartman wrote:
-> > On Wed, Sep 11, 2024 at 07:57:18PM +0530, Ayush Singh wrote:
-> > > +/// An identifier for Platform devices.
-> > > +///
-> > > +/// Represents the kernel's [`struct of_device_id`]. This is used to find an appropriate
-> > > +/// Platform driver.
-> > > +///
-> > > +/// [`struct of_device_id`]: srctree/include/linux/mod_devicetable.h
-> > > +pub struct DeviceId(&'static CStr);
-> > > +
-> > > +impl DeviceId {
-> > 
-> > <snip>
-> > 
-> > I appreciate posting this, but this really should go on top of the
-> > device driver work Danilo Krummrich has been doing.
-> 
-> If everyone agrees, I'd offer to just provide platform device / driver
-> abstractions with my next patch series. This way you don't need to worry
-> about aligning things with the rest of the abstractions yourself and throughout
-> potential further versions of the series.
+Hi John,
 
-Covering platform device/driver abstractions in the same series would
-be appreciated from asahi side. It hopefully results in earlier merge
-since it avoids a dependency on the device driver abstractions.
-Feel free to reach out to me for an earlier preview / rabsing of the
-asahi driver.
-https://github.com/AsahiLinux/linux/tree/bits/210-gpu has all relevant
-rust changes from 6.11-rc but I plan to rebase onto 6.11 in the next
-days and possibly import changes from 6.12-rc* / rust-next.
+kernel test robot noticed the following build errors:
 
-Thanks
-Janne
+[auto build test ERROR on b794563ea12fb46d9499da9e30c33d9607e33697]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/John-Ogness/serial-8250-Split-out-IER-from-rs485_start_tx/20240913-220810
+base:   b794563ea12fb46d9499da9e30c33d9607e33697
+patch link:    https://lore.kernel.org/r/20240913140538.221708-3-john.ogness%40linutronix.de
+patch subject: [PATCH next v2 2/4] serial: 8250: Split out IER from rs485_stop_tx()
+config: parisc-randconfig-r064-20240914 (https://download.01.org/0day-ci/archive/20240914/202409141849.iyZNNZgc-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141849.iyZNNZgc-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409141849.iyZNNZgc-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
+>> ERROR: modpost: "serial8250_rs485_stop_tx" [drivers/tty/serial/8250/8250_omap.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
