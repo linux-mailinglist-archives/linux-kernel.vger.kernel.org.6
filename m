@@ -1,180 +1,137 @@
-Return-Path: <linux-kernel+bounces-329438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB0D979151
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:18:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5410979157
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4A41F225F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 14:18:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB73B21828
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 14:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2249E1CFEB9;
-	Sat, 14 Sep 2024 14:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D05C1CFEDA;
+	Sat, 14 Sep 2024 14:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkPyBMlM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="USgBtCjV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761D71CF2B0;
-	Sat, 14 Sep 2024 14:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5A91CF2B0;
+	Sat, 14 Sep 2024 14:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726323494; cv=none; b=HiiKmRFY1xSJAT+v/hDp2occShLD5df38usMsx+NEx9O3QOIcrvAM91XUPeM0ZShowRwkUwmWUd1jcoEJWrndYMNRgHBUG5LV150EqM2BoiFacpIbgwExbCtBwEvvSUqMeM4+muNKjifm93PlHRhCtDdhKOjX0SP7oRGU12X2nk=
+	t=1726323552; cv=none; b=mN1wUtf1MSNc3Jig69WGK9VMAw8OnNnVTK6rfxPUMTsR4546TCiUy6RWrR3WS6ZFqMCfbmBKYhXIHGI9FNZE63WacsV+F4ZrqhykN8OGQ4a/HL3HiygxYv4Z5rU2Vsn9lsig137c6M7GhcMMpLTITjPKN/i3q29wg1JthL5Dmcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726323494; c=relaxed/simple;
-	bh=YzlIrKa9qROLJ8Xaw/r1jxKSFT05Dy3NWxL/FjHMwig=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hEP0CdwHlNbIaKgIo6FrdZkYg34RN6g+0PVblbBQMdjwOK48maQDUoeWHqw51x4Ucy+F7ecmvfODaFnq1EkKq9gjpe6oPV3FL+/uOHvwZ7Pfe4jMbqchuQIgH+0jSkauqEYYVqQ74twj5EBvpFfOkx14PTpgZ4nt8eSMEawnA58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkPyBMlM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77113C4CEC0;
-	Sat, 14 Sep 2024 14:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726323494;
-	bh=YzlIrKa9qROLJ8Xaw/r1jxKSFT05Dy3NWxL/FjHMwig=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QkPyBMlMruE8ewcrPt7o7wG4IgQF2yRzoiyJrY5xhfsmkSHNwb3sFd9QTC6iPnETM
-	 sBLJne1rJM+si+vhC8o7vxUfjkw8g4rlLmSK+yDTisjdL8pozBNg27TlM27yXCd9V+
-	 cXxsvENmA6jHqJ4jT2yauxxiJ8Mbsybw206AYkFpfABED7cOTwFfCgv5umhj4dUToq
-	 0ZII9M40+uGUuoZoTY1IdLP7umV9FAJbRAUAWgSykFn6L19SzOHcAyNj3ZvBfd6ZKh
-	 w8KFBe8i7YMYWud0DRLvA5eHrQnRsMB6BUznru1udel3UuZKA8LNZckBmhLUhXQFY4
-	 Gx0cNRsm9GUPQ==
-Date: Sat, 14 Sep 2024 15:18:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Michael Auchter
- <michael.auchter@ni.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: dac: adi,ad56xx: Fix duplicate
- compatible strings
-Message-ID: <20240914151806.66c58bfd@jic23-huawei>
-In-Reply-To: <20240910234440.1045098-1-robh@kernel.org>
-References: <20240910234440.1045098-1-robh@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726323552; c=relaxed/simple;
+	bh=N9wMgdRefGu42K7ypeuSJnPQEd7Ns/OJA/BRmLa/8qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uJJp/zNV6wlh/bIXFG2F2Eswyc4T3XC0E8BnKqw93pziEiNWswDrzzsOfVFA9+5O+Z4HH+G3SJiBTci5KCjGqMe8qKfnzSWLXWWaEKDCXABVD4zN1hpQuMNata+f+2ZV9oPPTlgbUNJPsEapFQGTEmh6UMDKeO643hJMp2DtX78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=USgBtCjV; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726323552; x=1757859552;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N9wMgdRefGu42K7ypeuSJnPQEd7Ns/OJA/BRmLa/8qc=;
+  b=USgBtCjVcxufnJh9KVshcT6/3aSddwTsIRIxa+Ulnels+esyy0gAXEV5
+   PNr3wAGmQi8cgru5XhKuinNueGZcFwEpm0rFBztt5uzCOm77k2vLGLJU8
+   2Z0nq27B7TjEI7DJoTe7/EdyIwRLmoUR1k52Aw1Pn1DFwN9oPTKN+mZ89
+   5/lXiJhlrhm+GJzMLX1Mhlf9P2/34yeY6EVYNhPS5vqmsBlvYHMF7bI2d
+   B5TUdbze0dKXJUHn/R8R474SKgwNYd1eqwdvgifl5IWm2sUDwklZOlq42
+   WYUJr/ZbWJm4IEPZKh9j9LYBAqTaXcSxhb7V6s8fKHnYXNlTpGjUTA82N
+   w==;
+X-CSE-ConnectionGUID: cQGj1BAaSe64yTfLvQ6EMQ==
+X-CSE-MsgGUID: AVh9oKYtQ3aaT2zxoofULA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="25090381"
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="25090381"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 07:19:11 -0700
+X-CSE-ConnectionGUID: bLVvHNP4RYS89Cob7sBRYA==
+X-CSE-MsgGUID: 1WBix8DISMO95aCgNnVb5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="99080744"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 14 Sep 2024 07:19:03 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spTc5-0007pg-0v;
+	Sat, 14 Sep 2024 14:19:01 +0000
+Date: Sat, 14 Sep 2024 22:18:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arturs Artamonovs via B4 Relay <devnull+arturs.artamonovs.analog.com@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Malysa <greg.malysa@timesys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Utsav Agarwal <Utsav.Agarwal@analog.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>, soc@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
+	Arturs Artamonovs <arturs.artamonovs@analog.com>,
+	adsp-linux@analog.com,
+	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+Subject: Re: [PATCH 07/21] clock: Add driver for ADI ADSP-SC5xx clock
+Message-ID: <202409142102.LvuMEIro-lkp@intel.com>
+References: <20240912-test-v1-7-458fa57c8ccf@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912-test-v1-7-458fa57c8ccf@analog.com>
 
-On Tue, 10 Sep 2024 18:44:39 -0500
-"Rob Herring (Arm)" <robh@kernel.org> wrote:
+Hi Arturs,
 
-> adi,ad5686.yaml and adi,ad5696.yaml duplicate all the I2C device
-> compatible strings with the exception of "adi,ad5337r". Since
-> adi,ad5686.yaml references spi-peripheral-props.yaml, drop the I2C
-> devices from it making it only SPI devices. Update the titles to make
-> the distinction clear.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-Is this an urgent thing, or can it wait for the merge window after next?
-For now I've queued it up for then in my testing branch but can yank it
-out and send it as a fix after rc1 if that is useful.
+kernel test robot noticed the following build warnings:
 
-Jonathan
- 
-> ---
->  .../bindings/iio/dac/adi,ad5686.yaml          | 53 ++++++-------------
->  .../bindings/iio/dac/adi,ad5696.yaml          |  3 +-
->  2 files changed, 19 insertions(+), 37 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5686.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5686.yaml
-> index b4400c52bec3..713f535bb33a 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad5686.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5686.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/iio/dac/adi,ad5686.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Analog Devices AD5360 and similar DACs
-> +title: Analog Devices AD5360 and similar SPI DACs
->  
->  maintainers:
->    - Michael Hennerich <michael.hennerich@analog.com>
-> @@ -12,41 +12,22 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    oneOf:
-> -      - description: SPI devices
-> -        enum:
-> -          - adi,ad5310r
-> -          - adi,ad5672r
-> -          - adi,ad5674r
-> -          - adi,ad5676
-> -          - adi,ad5676r
-> -          - adi,ad5679r
-> -          - adi,ad5681r
-> -          - adi,ad5682r
-> -          - adi,ad5683
-> -          - adi,ad5683r
-> -          - adi,ad5684
-> -          - adi,ad5684r
-> -          - adi,ad5685r
-> -          - adi,ad5686
-> -          - adi,ad5686r
-> -      - description: I2C devices
-> -        enum:
-> -          - adi,ad5311r
-> -          - adi,ad5337r
-> -          - adi,ad5338r
-> -          - adi,ad5671r
-> -          - adi,ad5675r
-> -          - adi,ad5691r
-> -          - adi,ad5692r
-> -          - adi,ad5693
-> -          - adi,ad5693r
-> -          - adi,ad5694
-> -          - adi,ad5694r
-> -          - adi,ad5695r
-> -          - adi,ad5696
-> -          - adi,ad5696r
-> -
-> +    enum:
-> +      - adi,ad5310r
-> +      - adi,ad5672r
-> +      - adi,ad5674r
-> +      - adi,ad5676
-> +      - adi,ad5676r
-> +      - adi,ad5679r
-> +      - adi,ad5681r
-> +      - adi,ad5682r
-> +      - adi,ad5683
-> +      - adi,ad5683r
-> +      - adi,ad5684
-> +      - adi,ad5684r
-> +      - adi,ad5685r
-> +      - adi,ad5686
-> +      - adi,ad5686r
->  
->    reg:
->      maxItems: 1
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5696.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5696.yaml
-> index 56b0cda0f30a..b5a88b03dc2f 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad5696.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5696.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/iio/dac/adi,ad5696.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Analog Devices AD5696 and similar multi-channel DACs
-> +title: Analog Devices AD5696 and similar I2C multi-channel DACs
->  
->  maintainers:
->    - Michael Auchter <michael.auchter@ni.com>
-> @@ -16,6 +16,7 @@ properties:
->    compatible:
->      enum:
->        - adi,ad5311r
-> +      - adi,ad5337r
->        - adi,ad5338r
->        - adi,ad5671r
->        - adi,ad5675r
+[auto build test WARNING on da3ea35007d0af457a0afc87e84fddaebc4e0b63]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Arturs-Artamonovs-via-B4-Relay/arm64-Add-ADI-ADSP-SC598-SoC/20240913-022308
+base:   da3ea35007d0af457a0afc87e84fddaebc4e0b63
+patch link:    https://lore.kernel.org/r/20240912-test-v1-7-458fa57c8ccf%40analog.com
+patch subject: [PATCH 07/21] clock: Add driver for ADI ADSP-SC5xx clock
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409142102.LvuMEIro-lkp@intel.com/
+
+includecheck warnings: (new ones prefixed by >>)
+>> drivers/clk/adi/clk-adi-sc598.c: linux/clk.h is included more than once.
+
+vim +9 drivers/clk/adi/clk-adi-sc598.c
+
+   > 9	#include <linux/clk.h>
+    10	#include <linux/clk-provider.h>
+  > 11	#include <linux/clk.h>
+    12	#include <linux/err.h>
+    13	#include <linux/module.h>
+    14	#include <linux/of_address.h>
+    15	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
