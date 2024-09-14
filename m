@@ -1,94 +1,143 @@
-Return-Path: <linux-kernel+bounces-329618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217DE9793A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:11:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1828E9793A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFD5A1F22A19
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:11:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3749281BF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3191155392;
-	Sat, 14 Sep 2024 22:09:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AC615575F;
-	Sat, 14 Sep 2024 22:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EDB13F435;
+	Sat, 14 Sep 2024 22:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQDKnls0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEA118E1F;
+	Sat, 14 Sep 2024 22:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726351777; cv=none; b=L2eRJBonNJEzmXZX0jWAlk4Uh6h43WXhKCLcdG+xEepRTmfvm6mP5x+RxZ/kaPPe+OhMSkHNQqyU3ZiFYOB0wViulHotlbJY867MhTKo6Xk1Ew9X/nKv5XFZMejSvEhDChljLyIys28JCXGN05KUkZAzqFxR/r3ThezLHnorOWk=
+	t=1726352136; cv=none; b=bVUpZ1/suyCrdBuEUbN3PWkRx+Whki1dp7rLlMHldeVMI6Y4u3aR/tF3ORN5MXFoYDI8Nd83E7++L5Ug4YJ4zxG8J92gC58d+D8YK0WD1qms2obtd5p5vbwyfbBUVvn5vSm5VEEnec9tg6QKzbiFTowgm2Yp7axKZaeSP+hQids=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726351777; c=relaxed/simple;
-	bh=/X1eIoXTgs28/tCarZ6WVyEGCBHdsLYnDDJJxdZeuAE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KS6ClxoLWjKWqTOAMxvG8+nEcINWKcjUekhDDtFr/mnuB+Oa9WhMcYl123/q+H/Pnw3QPgyzBVUTC1b+SqPEF11H1AThLCLwtOJaJdF7jrrRJRjMk80hIpPbbe9bULX9UhFm/AzC9T9+zUraKtVT5wcJ5pKSwuS6mJ8AXasFFYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DEA4C11FB;
-	Sat, 14 Sep 2024 15:10:04 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A38B33F66E;
-	Sat, 14 Sep 2024 15:09:33 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	James Clark <james.clark@linaro.org>,
+	s=arc-20240116; t=1726352136; c=relaxed/simple;
+	bh=CbuOYtL+nJOrUCr5pQsOYq97OPNcveR8zM/nfsn08qY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fglx5me35Ou0UAwqTM2jmDrmUflHfxRwIOwGXH9cqWZYRrKALnzJPjgF+UexX5g3rZNmxuPhhVVsx+q8MtDmle5usaWhtD7W6XSCMEzj7Y44v5LTV+EKMg5QvUg4K+yj9zww/mLTLXFivLnQ7cU/p/N8fyHaCy/zC4jRKZJvYFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQDKnls0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF7BC4CEC0;
+	Sat, 14 Sep 2024 22:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726352135;
+	bh=CbuOYtL+nJOrUCr5pQsOYq97OPNcveR8zM/nfsn08qY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VQDKnls003f8BK0pKf1mAStEZ9zE6wsWHaExX8l8zaWXnpDiBsz1jZs7ZttGkqDSa
+	 XatEWwLlqGA1c6lCIgeKGcsUk99gpo63jaFqtbfURKCUTk7glOMU4PdvuguR/Rk5xd
+	 008Op3BGEMvHes4BgTBis51CxqO/Q+Lse+BZ0FWM4mdsg0ftYw9+Z70Cm920dhA5Go
+	 FQzfzQCtDH1SqvgamYPu9C/Bj8QTuM0ENOBpC+tTr3Pnd4b1Ky+JSApbXwzGyLnIRA
+	 gIIWc3a9hlYpEhltsut6EeWj1jdEBP8nCX/uOAHZ6fRNW7M03nXKHVj95BYfODd31K
+	 Wt0mM0JoWMGTA==
+Date: Sat, 14 Sep 2024 23:15:27 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Gary Guo <gary@garyguo.net>
+Cc: rust-for-linux@vger.kernel.org,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Besar Wicaksono <bwicaksono@nvidia.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v2 7/7] perf arm-spe: Add Cortex CPUs to common data source encoding list
-Date: Sat, 14 Sep 2024 23:09:01 +0100
-Message-Id: <20240914220901.756177-8-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240914220901.756177-1-leo.yan@arm.com>
-References: <20240914220901.756177-1-leo.yan@arm.com>
+	Mark Brown <broonie@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
+Message-ID: <20240914-romp-clothing-965a16cb4dd4@spud>
+References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
+ <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
+ <20240913-shack-estate-b376a65921b1@spud>
+ <20240914173037.422902b9.gary@garyguo.net>
+ <20240914-jitters-barber-a0e51e7b83a8@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="aukCVL/k+hWQAKhq"
+Content-Disposition: inline
+In-Reply-To: <20240914-jitters-barber-a0e51e7b83a8@spud>
 
-Add Cortex-A720, Cortex-A725, Cortex-X1C, Cortex-X3 and Cortex-X925 into
-the common data source encoding list. For everyone of these CPUs, it
-technical reference manual defines the data source packet as the common
-encoding format.
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/util/arm-spe.c | 5 +++++
- 1 file changed, 5 insertions(+)
+--aukCVL/k+hWQAKhq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 07bec88a3c7d..b64a5f3949f5 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -428,6 +428,11 @@ static int arm_spe__synth_instruction_sample(struct arm_spe_queue *speq,
- }
- 
- static const struct midr_range common_ds_encoding_cpus[] = {
-+	MIDR_ALL_VERSIONS(MIDR_CORTEX_A720),
-+	MIDR_ALL_VERSIONS(MIDR_CORTEX_A725),
-+	MIDR_ALL_VERSIONS(MIDR_CORTEX_X1C),
-+	MIDR_ALL_VERSIONS(MIDR_CORTEX_X3),
-+	MIDR_ALL_VERSIONS(MIDR_CORTEX_X925),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
--- 
-2.34.1
+On Sat, Sep 14, 2024 at 05:46:14PM +0100, Conor Dooley wrote:
+> On Sat, Sep 14, 2024 at 05:30:37PM +0100, Gary Guo wrote:
+> > On Fri, 13 Sep 2024 22:17:56 +0100
+> > Conor Dooley <conor@kernel.org> wrote:
+>=20
+> > > error[E0425]: cannot find function `__mutex_init` in crate `bindings`
+> > > --> /stuff/linux/rust/kernel/sync/lock/mutex.rs:104:28 =20
+> > > |
+> > > 104   |           unsafe { bindings::__mutex_init(ptr, name, key) }
+> > > |                              ^^^^^^^^^^^^ help: a function with a s=
+imilar name exists: `__mutex_rt_init`
+> > > |
+> > > ::: /stuff/brsdk/work/linux/rust/bindings/bindings_generated.rs:12907=
+:5
+> > > |
+> > > 12907 | /     pub fn __mutex_rt_init(
+> > > 12908 | |         lock: *mut mutex,
+> > > 12909 | |         name: *const core::ffi::c_char,
+> > > 12910 | |         key: *mut lock_class_key,
+> > > 12911 | |     );
+> > > | |_____- similarly named function `__mutex_rt_init` defined here
+> > >=20
+> > > error: aborting due to 1 previous error
+> > >=20
+> >=20
+> > Do you have PREEMPT_RT enabled?
+>=20
+> I do indeed.
 
+
+Turned it off, only to find out my board farm is non-functional! Looks
+fine in QEMU however :)
+
+
+--aukCVL/k+hWQAKhq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuYK/wAKCRB4tDGHoIJi
+0l1DAQCyyTAltATXfFiGsTKm9k1tm3bo1zh+Ka4em8UHR49XWgD+IOU3xgen2R5l
+RRhM8jVPdaxa/BqvxrBHgqH4wRX5xgg=
+=Fb0t
+-----END PGP SIGNATURE-----
+
+--aukCVL/k+hWQAKhq--
 
