@@ -1,158 +1,205 @@
-Return-Path: <linux-kernel+bounces-329410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB71B979101
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61DEF979104
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CFA01F22D5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:34:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08EA1F22D38
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ADD1CF280;
-	Sat, 14 Sep 2024 13:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D50F1CFECA;
+	Sat, 14 Sep 2024 13:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V9t/S0Yf"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UB91XjC2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715501CDA15
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19B81CFEC0;
+	Sat, 14 Sep 2024 13:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726320891; cv=none; b=oJBSOeWW0wyyf5sJufRj3nly5LUfxBXZV8VjLsEn0FF9Rswz4Q2x+ZBCPSr28VyT4JPP6UKkVAtSwKl1GBUnQ8pPD0VpveK1JmwXfFsrHDBf4lNnEdOblxs+WwP3qoCiBZlI33wdr8GU1Vw15eU1mAVCgt/rgv+MAK+o788meEM=
+	t=1726320894; cv=none; b=O6TV3uS5zcuux68XfKVHGIQd7Eqm8Am0Lh06XIDXlapz9x/u1bj21L9HzM3LnkNE8sFiFc5nqt1Mgn/y0gDDEKFidWejlthFYeCUxqWdXMFgKeK1o84YpM5lzkohL/hqWYr0GhUw3Z5r2jGheK3ROABUiEVe5bYdFo6BTkEq5U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726320891; c=relaxed/simple;
-	bh=dHM/9nGeV0kB5TjHKKHKGDZ6zh5A8DGqa4bFzJrKT/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NWNNBLzE0m9F1RJgtU2xr+y86OwTV9LyOGt2GTJM056sNfm5BD1macDYG809+gNxvznjYj9q4iiHo736CrzU1pD52wbeZXy1KDiEoTiINyFQduXElE/V1QGF9bLr5PmNVNDAMBFEw9y6fC+3rYf3CvkqbncRmiS9aU8J+oaZdsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V9t/S0Yf; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cae4ead5bso11825e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:34:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726320888; x=1726925688; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dHM/9nGeV0kB5TjHKKHKGDZ6zh5A8DGqa4bFzJrKT/U=;
-        b=V9t/S0YfvqGt18n1LGGsMgqgKHI5SlP4OdMcEzXgOFMe1ICK4kLgk5lR4+VqXze3Oi
-         Ns6rU3WQmZhEmBqKYMlNQorw8BrBwesnjBWTJGU1denCkuYgF+0s2pZVNtv0WjC87LIw
-         MANdkrNi1ADdjYZdd3BM75uuinL1jfbae4jx6E0UalYwNfII0A0FGKlWutl1QX8O2OVR
-         p5+hq3m6KnFQtxWXulZnr8vZ2uRKiYsyFeh1ICHj9oStUOwSJB7ehbPMccrNt7VZpImT
-         cCX7bYX/VITDInLxtfA+D8y58Tl1yn56z7+KfM7SeqrN0aDRUgrgkIjuIzbA45rwnxha
-         I/Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726320888; x=1726925688;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dHM/9nGeV0kB5TjHKKHKGDZ6zh5A8DGqa4bFzJrKT/U=;
-        b=NZIv0d18v9BAGd5cqfiiJec33ZmF2G6WbyhiI0oPZ6g63VqW8ym3wXG/oZcfhG3yLj
-         6PCmpfKN/UUXqvUZsCkF1Ef087xCut9L/30t4QLajuCPTrQhDr5lDZ6SaaHw19q2D3Pb
-         HrmKHw0lZ1dWkkPPl5rST3jNQdREbBFsXxwF2DRkcStMy+rCLdOkiWeO53zo/UwxCfuJ
-         HVSXut8ojZort1gzvh9CGs6bnpvlI97EoPCSaKRni2bQ7roD1wYe9g6jUBzDG4TXaPgT
-         YSBJtVtDWhjAsNrYgh3oKuYEpMD2cmJqSeX+hu14DyQnzYzI2W7OaSJFSaow3wyHRasr
-         X+9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUN+gzZhx1rYj+VvEpg7q7h7dW1Ei60IX3U94KHQ5m1tMmWkKVve6OemiOSUEIDley5DosWuZXqt6lQ61M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS7MqdM+ENMKvB/YXbKQPwGKmNdvCIDH0QbMx0LKCU432TStcE
-	H+ZtmoRPyCqPZ0m1+cVnRPMjdcxLs4Qn+4l2YXHrRw6/tmc8j/fe2cfx2iOYs7qP3tuBEHChv7D
-	EUujkyfvOkn3t62Ap/alkhWSYBAQVfEl/e4yC
-X-Google-Smtp-Source: AGHT+IEU9079HmdtThcsiN8JY3iJ1eHKyBPsG+CZSLZMAH2usfwIpF0g9bdh4YwDboVE3ql8z1EaPMYZFS9J2snJ4E8=
-X-Received: by 2002:a05:600c:1da5:b0:42b:a8fc:3937 with SMTP id
- 5b1f17b1804b1-42cdcd1ec3amr514975e9.4.1726320887370; Sat, 14 Sep 2024
- 06:34:47 -0700 (PDT)
+	s=arc-20240116; t=1726320894; c=relaxed/simple;
+	bh=UA+Ahx4H9tczSchnnxH6+0vhcc1dZN7jl6skWGzRNik=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gTS0odC9GngywAQUMexyymJELtOSjetDnxrwv9iKzQcw9SQCW8rqAe8PD5pPEaR6rs2R+ZFig2F84RdR/B2ru4Ggj2+5B1TwUX3f16Jg1u6uhC946wLBxMJfCtZX03XGDeF3Zv9b8OZsIN8H0Xk6eHv80VEAIqM4xhgs65CHxOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UB91XjC2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23625C4CEC4;
+	Sat, 14 Sep 2024 13:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726320894;
+	bh=UA+Ahx4H9tczSchnnxH6+0vhcc1dZN7jl6skWGzRNik=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UB91XjC218s25Sy2De+b4V2ibsDA9Q+Vyo6YcmImVVVbwvkpSHAZkf2PH2TTulRu8
+	 UUka/7icjjCq3Lg4lbkIedFM2IexO4umoPBuS/QGB58BQy5KSd4PEfQ+yamU1viXWM
+	 4+7sXqVjthK/xMY0me1kO+XpmwJ4S+NHWHzNMInE3Qbvs1ybFdM4DuxrjcIMoBF5uC
+	 RwR6oKrSZwOKgjeuzdE1l9Ld29LawEGk3XeGKCG9OvCebGbGjB0wnqutz4l0lS4slW
+	 idMJWXdJegu16/RaP65VUkgG36V1FIoG70h6c1fzefa1DsWw3KWbD9SaaPAifipD+w
+	 be1VEsRUtvsWQ==
+Date: Sat, 14 Sep 2024 14:34:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, songqiang1304521@gmail.com, lars@metafoo.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] iio: proximity: vl53l0x-i2c: Added continuous
+ mode support
+Message-ID: <20240914143447.1c5d5623@jic23-huawei>
+In-Reply-To: <20240909101508.263085-3-abhashkumarjha123@gmail.com>
+References: <20240909101508.263085-1-abhashkumarjha123@gmail.com>
+	<20240909101508.263085-3-abhashkumarjha123@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1726009989.git.ackerleytng@google.com> <MN0PR11MB61813367958D393369C0AD8399662@MN0PR11MB6181.namprd11.prod.outlook.com>
-In-Reply-To: <MN0PR11MB61813367958D393369C0AD8399662@MN0PR11MB6181.namprd11.prod.outlook.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Sat, 14 Sep 2024 06:34:36 -0700
-Message-ID: <CAGtprH-GczOb64XrLpdW4ObRG7Gsv8tHWNhiW7=2dE=OAF7-Rw@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/39] 1G page support for guest_memfd
-To: "Du, Fan" <fan.du@intel.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, "tabba@google.com" <tabba@google.com>, 
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
-	"jgg@nvidia.com" <jgg@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>, 
-	"david@redhat.com" <david@redhat.com>, "rientjes@google.com" <rientjes@google.com>, 
-	"fvdl@google.com" <fvdl@google.com>, "jthoughton@google.com" <jthoughton@google.com>, 
-	"seanjc@google.com" <seanjc@google.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"Li, Zhiquan1" <zhiquan1.li@intel.com>, "Miao, Jun" <jun.miao@intel.com>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	"mike.kravetz@oracle.com" <mike.kravetz@oracle.com>, "Aktas, Erdem" <erdemaktas@google.com>, 
-	"qperret@google.com" <qperret@google.com>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>, 
-	"willy@infradead.org" <willy@infradead.org>, "shuah@kernel.org" <shuah@kernel.org>, 
-	"brauner@kernel.org" <brauner@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "pvorel@suse.cz" <pvorel@suse.cz>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"anup@brainfault.org" <anup@brainfault.org>, "Xu, Haibo1" <haibo1.xu@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	"linux-fsdevel@kvack.org" <linux-fsdevel@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 6:08=E2=80=AFPM Du, Fan <fan.du@intel.com> wrote:
->
-> ...
-> >
-> > Hello,
-> >
-> > This patchset is our exploration of how to support 1G pages in guest_me=
-mfd,
-> > and
-> > how the pages will be used in Confidential VMs.
-> >
-> > The patchset covers:
-> >
-> > + How to get 1G pages
-> > + Allowing mmap() of guest_memfd to userspace so that both private and
-> > shared
->
-> Hi Ackerley
->
-> Thanks for posting new version :)
->
-> W.r.t above description and below patch snippet from Patch 26-29,
-> Does this new design aim to backup shared and private GPA with a single
-> Hugetlb spool which equal VM instance total memory?
+On Mon,  9 Sep 2024 15:45:07 +0530
+Abhash Jha <abhashkumarjha123@gmail.com> wrote:
 
-Yes.
+> The continuous mode of the sensor is enabled in the buffer_postenable.
+> Replaced the original irq handler with a threaded irq handler to perform
+> i2c reads during continuous mode.
+> The continuous mode is disabled by disabling the buffer.
+> Added a trigger for this device to be used for continuous mode.
+> 
+> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+Hi Abhash,
+
+Applied this with a couple of minor tweaks (see below) to the
+testing branch of iio.git.  I'll be rebasing that tree on rc1 once
+available and pushing out as togreg which gets picked up by linux-next.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/proximity/vl53l0x-i2c.c | 161 +++++++++++++++++++++++-----
+>  1 file changed, 135 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
+> index 3f416d3db..cbf030869 100644
+> --- a/drivers/iio/proximity/vl53l0x-i2c.c
+> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
+> @@ -22,6 +22,12 @@
+>  #include <linux/module.h>
+>  
+>  #include <linux/iio/iio.h>
+> +#include <linux/iio/buffer.h>
+> +#include <linux/iio/trigger.h>
+> +#include <linux/iio/trigger_consumer.h>
+> +#include <linux/iio/triggered_buffer.h>
+> +
+> +#include <asm/unaligned.h>
+>  
+>  #define VL_REG_SYSRANGE_START				0x00
+>  
+> @@ -43,20 +49,70 @@
+>  #define VL_REG_RESULT_RANGE_STATUS_COMPLETE		BIT(0)
+>  
+>  #define VL53L0X_MODEL_ID_VAL				0xEE
+> +#define VL53L0X_CONTINUOUS_MODE				0x02
+> +#define VL53L0X_SINGLE_MODE				0x01
+>  
+>  struct vl53l0x_data {
+>  	struct i2c_client *client;
+>  	struct completion completion;
+>  	struct regulator *vdd_supply;
+>  	struct gpio_desc *reset_gpio;
+> +	struct iio_trigger *trig;
+> +
+> +	struct {
+> +		u16 chan;
+> +		s64 timestamp __aligned(8);
+I tweak this whilst applying to use the new aligned_s64
+(the patch crossed with yours)
+
+> +	} scan;
+>  };
+>  
 >
-> By my understanding, before this new changes, shared memfd and gmem fd
-> has dedicate hugetlb pool, that's two copy/reservation of hugetlb spool.
+> @@ -153,7 +192,7 @@ static int vl53l0x_read_proximity(struct vl53l0x_data *data,
+>  		return -EREMOTEIO;
+>  
+>  	/* Values should be between 30~1200 in millimeters. */
+> -	*val = (buffer[10] << 8) + buffer[11];
+> +	*val = get_unaligned_be16(&buffer[10]);
 
-Selftests attached to this series use single gmem fd to back guest memory.
+In theory this should have been a different patch, but meh it's tiny so
+I'll just take it in here.
 
->
-> Does Qemu require new changes as well? I'd like to have a test of this se=
-ries
-> if you can share Qemu branch?
->
+>  
+>  	return 0;
+>  }
+> @@ -163,7 +202,14 @@ static const struct iio_chan_spec vl53l0x_channels[] = {
+>  		.type = IIO_DISTANCE,
+>  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+>  				      BIT(IIO_CHAN_INFO_SCALE),
+> +		.scan_index = 0,
+> +		.scan_type = {
+> +			.sign = 'u',
+> +			.realbits = 12,
+> +			.storagebits = 16,
+> +		},
+>  	},
+> +	IIO_CHAN_SOFT_TIMESTAMP(1),
+>  };
+>  
+>  static int vl53l0x_read_raw(struct iio_dev *indio_dev,
+> @@ -193,8 +239,16 @@ static int vl53l0x_read_raw(struct iio_dev *indio_dev,
+>  	}
+>  }
+>  
+> +static int vl53l0x_validate_trigger(struct iio_dev *indio_dev, struct iio_trigger *trig)
+> +{
+> +	struct vl53l0x_data *data = iio_priv(indio_dev);
+> +
+> +	return data->trig == trig ? 0 : -EINVAL;
+> +}
+> +
+>  static const struct iio_info vl53l0x_info = {
+>  	.read_raw = vl53l0x_read_raw,
+> +	.validate_trigger = vl53l0x_validate_trigger,
+>  };
+>  
+>  static void vl53l0x_power_off(void *_data)
+> @@ -221,6 +275,39 @@ static int vl53l0x_power_on(struct vl53l0x_data *data)
+>  	return 0;
+>  }
+>  
+> +static int vl53l0x_buffer_postenable(struct iio_dev *indio_dev)
+> +{
+> +	struct vl53l0x_data *data = iio_priv(indio_dev);
+> +
+> +	return i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START,
+> +						VL53L0X_CONTINUOUS_MODE);
+> +}
+> +
+> +static int vl53l0x_buffer_postdisable(struct iio_dev *indio_dev)
+> +{
+> +	struct vl53l0x_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	ret = i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START,
+> +						VL53L0X_SINGLE_MODE);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Let the ongoing reading finish */
+> +	reinit_completion(&data->completion);
+> +	wait_for_completion_timeout(&data->completion, HZ / 10);
+Trivial but I'll add a blank line here to separate the completion related
+bits from the clear irq as they are more or less unrelated.
 
-We are going to discuss this RFC series and related issues at LPC.
-Once the next steps are finalized, the plan will be to send out an
-improved version. You can use/modify the selftests that are part of
-this series to test this feature with software protected VMs for now.
+> +	return vl53l0x_clear_irq(data);
+> +}
 
-Qemu will require changes for this feature on top of already floated
-gmem integration series [1] that adds software protected VM support to
-Qemu. If you are interested in testing this feature with TDX VMs then
-it needs multiple series to set up the right test environment
-(including [2]). We haven't considered posting Qemu patches and it
-will be a while before we can get to it.
-
-[1] https://patchew.org/QEMU/20230914035117.3285885-1-xiaoyao.li@intel.com/
-[2] https://patchwork.kernel.org/project/kvm/cover/20231115071519.2864957-1=
--xiaoyao.li@intel.com/
 
