@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-329478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 773FC9791D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:35:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879FD9791DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC271F222E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:35:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446872843EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F02C1D04B0;
-	Sat, 14 Sep 2024 15:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FE41D094A;
+	Sat, 14 Sep 2024 15:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZESC0Kz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKlJf/th"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7530E1E487;
-	Sat, 14 Sep 2024 15:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F140C1482F5;
+	Sat, 14 Sep 2024 15:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726328122; cv=none; b=qSh0fsDlwx89pdSjagLouVRR0PIL020aATACrcnvJoQNxiq0/01DUhk1UR0UFDD5mOK8adt3MU203mNSCu4ciHLSpVfqBAZTRMMn0bNWzj7JIFucBXvBLQYl/HYFlrO5jKIVhXAlwBhMi9oHxz9C09LtjnmnUW6FeufsbXq/Pog=
+	t=1726328353; cv=none; b=RhSNTwoYTchV8VYyw7RhromTiiTPQo858dYzcdGiIWAy6t1lFBSw6iCdKxADYErd5jSOlLWn5vXUTUTBu0kzB9VlkdQWwkMB4r3jxzqEmMui7qAj/a2GV7fGEFPc0wydKYsuES5Pcqj3BvgDTqxX73djwaKtZu3mOgg8NFIzGiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726328122; c=relaxed/simple;
-	bh=YUiVVIN1byk9IEgbqpoRtEXRLK+aMNbubM3NnX0qqwI=;
+	s=arc-20240116; t=1726328353; c=relaxed/simple;
+	bh=6utujUreTN+l/YtN8myICbzB+48c/VEAfl+TLn72uCA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rWVNg15s7bpYgGIQ6SfF//Q8egstU4v+uQoCbBHQ/k18CLfPJrl4alzk6LnDU9KXtom0QErUXrxyLzdz67QpLf4WAPB74J6OgyP46cnkIajto4gJs4J2FjFfrWnEIJ8ujCs+faDJDrtS8fV5bEcEWOJHlNGwzncnhxIBGZxW0E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZESC0Kz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32DB9C4CEC6;
-	Sat, 14 Sep 2024 15:35:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERNhlp7y1wMJ69eXCw4pC3c6F0u5sF7INsR1jgSxjwjYRVKXumC4k26lMZ2C5zkgn7AxHS+GWGWLxaPn1O8dqfGfM2ZMJdAYxEPM/3HhmrBoj4sz+DjgfvVWiECDs/Z6FMNYAOv2Uz80sY9eVDMFH3bqLsw9Vyk78AJKk0XpfZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKlJf/th; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D194EC4CEC0;
+	Sat, 14 Sep 2024 15:39:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726328122;
-	bh=YUiVVIN1byk9IEgbqpoRtEXRLK+aMNbubM3NnX0qqwI=;
+	s=k20201202; t=1726328352;
+	bh=6utujUreTN+l/YtN8myICbzB+48c/VEAfl+TLn72uCA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YZESC0Kzh0zT3CnDnrRxh9HrjnbshfqyiNbqaQX2qc/Uzjg+7ilJYcMoPhHguCYEe
-	 Tn0Q8T6T/2SJsSm+XB5WdmE1YV4gPEend8P0qBlYTkh8cJRnh5wXc3IriFVBmuP/Zu
-	 NC30MFtn/AQXTGdWGJJJa1wIBch2s0oWPpHaExAEzKqJ0amJUcWN4OI005gaVbkfZ8
-	 JoDoFzmBKz/pcqR484aTps86XyqoO9Tjvd/8Nzf3KlJim56y6wbI/jQ36xqJgp4A0m
-	 L0avmgSC0TdKDd1PX7MJi4jqyh9fvbBnJKcjNwl/lr0aAbj+ktI6Ug+eJ5CC+nTSa1
-	 Q08byLBzZtgCQ==
-Date: Sat, 14 Sep 2024 16:35:16 +0100
+	b=pKlJf/thmbAF98QHr6tb8t5w1eCGcAsXqz6aoM4AyofZuhrpVEutoJJwGcQCr9viq
+	 AUYVDWMcFb3mcemGawYZ82/q9clGSnuFNOLnWLZpI0A8bj5DeODbOQcjS3Gn8a7wQA
+	 rrPGnsTnxoaA6d6Gwo3YR8fK6r5diIOmwZur17NXe5bRtt58XEceIWOIBSzJk5fjct
+	 eCMhADcOlAGXC3MHBS5TBVix33KzAqCSpcsY4fncAkhdGlo8W7jZ27irSSkG3Fnxpd
+	 llRclngqNp3jaYtH4Rn3mBhFZtX4x4K5iVW01+1F60jCYc9CwfdUfy+WAOitKCyK9A
+	 FAiWJj2NCiRmA==
+Date: Sat, 14 Sep 2024 16:39:07 +0100
 From: Simon Horman <horms@kernel.org>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Piotr Raczynski <piotr.raczynski@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+Cc: Yevgeny Kliteynik <kliteyn@nvidia.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] ice: Fix a NULL vs IS_ERR() check in probe()
-Message-ID: <20240914153516.GE11774@kernel.org>
-References: <6951d217-ac06-4482-a35d-15d757fd90a3@stanley.mountain>
+	Itamar Gozlan <igozlan@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net/mlx5: HWS, check the correct variable in
+ hws_send_ring_alloc_sq()
+Message-ID: <20240914153907.GF11774@kernel.org>
+References: <da822315-02b7-4f5b-9c86-0d5176c5069d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,14 +64,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6951d217-ac06-4482-a35d-15d757fd90a3@stanley.mountain>
+In-Reply-To: <da822315-02b7-4f5b-9c86-0d5176c5069d@stanley.mountain>
 
-On Sat, Sep 14, 2024 at 12:57:56PM +0300, Dan Carpenter wrote:
-> The ice_allocate_sf() function returns error pointers on error.  It
-> doesn't return NULL.  Update the check to match.
+On Sat, Sep 14, 2024 at 12:58:26PM +0300, Dan Carpenter wrote:
+> There is a copy and paste bug so this code checks "sq->dep_wqe" where
+> "sq->wr_priv" was intended.  It could result in a NULL pointer
+> dereference.
 > 
-> Fixes: 177ef7f1e2a0 ("ice: base subfunction aux driver")
+> Fixes: 2ca62599aa0b ("net/mlx5: HWS, added send engine and context handling")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
 Reviewed-by: Simon Horman <horms@kernel.org>
+
 
