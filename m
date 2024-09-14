@@ -1,132 +1,154 @@
-Return-Path: <linux-kernel+bounces-329423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCC2979122
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:47:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFFB979123
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9315C1F22DB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5A92827BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C6C1CF7BF;
-	Sat, 14 Sep 2024 13:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6D41CF7B5;
+	Sat, 14 Sep 2024 13:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mt2McpUL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g4G5vrno"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEE51DDF5
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840401482F3
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726321648; cv=none; b=Gq3f5YNFkuwuWMf8yEto/rBvDODRb7COBaMKosXyacwR3CcjUbZu4cfXWZ3x0FIK3xwBnjSU2XDZYwLgnH7xoLMpKUzAncyz5n3C8VL0OegZva5rBvINuByIT8NnhLzB6VSm3PmjA8PQt+pg5OdLTzMWl2ASPdTTuLX46TGnB+g=
+	t=1726321684; cv=none; b=So+p7pILJJw+iHgS40mB7t+UoZcNpbWsbo+YJlX/TDXR7RGEY0WqMubT//wGyhczOw78KskuXjaJaW0T7OdrcwtIII3UjhR0FWIJkI1bMxG8jxbI00LeF3X1uZ/QTqj5MiAjrsgNErGhcQau3VqWv3/KWjOueyq2fjK19x14PaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726321648; c=relaxed/simple;
-	bh=2aUSAWq9PMKnd3bXhMP4hf8KrWEx1Z33mDmimkWdq1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H6N8PLhuE0oj6E+XI/oW1t8EDCZhGQKAuFh7nI+FAmN0ukwlnzVWU0pZOJcjDwMr25V//04KjH31guKXm1OFX1SiIogNnNl5FTYnyTgdINza6c6b6uspTurf+MQZf2Uzmo+ZJpMNZ/c+AJfdYF0Q3x9+/3+6UBZ1snzBlV/e1u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mt2McpUL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726321645;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9UrBWJboZVlP+TK6YL/vAFOG1Z7ivRqSHOs6x+zzkZE=;
-	b=Mt2McpULDcEn7wje8l61Hq1J7oT42CW/mR3a+89DSd+d08D8ZW58s9OJXk6n/bupog5dGH
-	nkRzPovgKwu3JnKqOnUkz9mIlIXCrgSK/toKYM45rj2Gpvp/iE48jcQML5LegEPw04U/6S
-	pt4sn7FisrNHGCxoP5ZmfaLFISdOLBY=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-391-yjophCiYOcOFiG8WdAXWKg-1; Sat, 14 Sep 2024 09:47:24 -0400
-X-MC-Unique: yjophCiYOcOFiG8WdAXWKg-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a8d13a9cc7aso172193866b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:47:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726321643; x=1726926443;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9UrBWJboZVlP+TK6YL/vAFOG1Z7ivRqSHOs6x+zzkZE=;
-        b=HsXSHCWKMZ/4J7zc5ymQJcN8kxh9QEB0qi9SaMi1y5MPtjB0DpJBge3ZxrLoqWBu8p
-         p9AThYU4G0zhCnqmlvvJrDqPiKTFli8axSvAw18+BxKUBnkC8n8iqOlXcC4c5TnVCrjj
-         HQS388Lf7fNBSUD1Emh7n0RQ8+aPE0Vrv1riXUnWJD7yaUNGjjWq0BX1yieQIgksQ+U7
-         xb53ttJQ+FBlfhL2zeINV6lokNrkXS4lo8VpJsbm8sx6MPKgSiFqszBc0a6YtBobpvbk
-         xO+OGArjp4qqUIMdl4IV9qsTvonzXLzn0ZJ+h+tWMIo8OyxIi7xLF5lYKVZX2YSIceXg
-         vD5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVEDLFhoWLGUhkutARammiKmkARPLeKRn415sDNwceSvNp6JhhxS6jmttgEFe17QDHHzoyT94MP8gDKrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDFSCu04fXclXcFbvWev1kkuMnxwcO9n4VVTG5OCztnCIZPuZI
-	mq/50uzg1+YLjpSS2cL34X6ESQjKGHdkNuCDdVbLOyR1MJLeHY5gFHjApwHqiFSh4Q9uczbSf1u
-	/t7WxzKaWf8qdvm8qskbSNOV0rq9/okxk+/12msaI6Etx9ByE4z2rYpGRsSWiPw==
-X-Received: by 2002:a17:907:97c8:b0:a7a:8c55:6b2 with SMTP id a640c23a62f3a-a902946e6b8mr992195866b.14.1726321642867;
-        Sat, 14 Sep 2024 06:47:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGeVtEl540QCdPDElJLsU+3E7gzfPsv+l59/grcOEsHW8pUQY8YIvfpkxUhpKZYk2He3o8c3A==
-X-Received: by 2002:a17:907:97c8:b0:a7a:8c55:6b2 with SMTP id a640c23a62f3a-a902946e6b8mr992193366b.14.1726321642300;
-        Sat, 14 Sep 2024 06:47:22 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610968adsm82960966b.7.2024.09.14.06.47.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Sep 2024 06:47:21 -0700 (PDT)
-Message-ID: <aac0e587-3770-43c5-a9b1-4da4890c979a@redhat.com>
-Date: Sat, 14 Sep 2024 15:47:21 +0200
+	s=arc-20240116; t=1726321684; c=relaxed/simple;
+	bh=znCDGR/1I3uZJmx5nX/kZLRTvWflBaMzIgAybI6mI7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LGjcXrZuaro7ieNZS1k5+AJSUcks81+DoS+4Rkd61qFdCXA30aJ84OXS/LL0YwvOBQba8ULbN/xcgzHc+y2f7EySDUpmkYfEQ8Zrbjxgu0RteMgSmRSjN9gSCfAfVmvDIAzrohoCMi8wLSU5pP8jAlYAwRxbBkhbohYYfHknPA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g4G5vrno; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726321683; x=1757857683;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=znCDGR/1I3uZJmx5nX/kZLRTvWflBaMzIgAybI6mI7Y=;
+  b=g4G5vrnoc58NkO7bU1eY/zyYM+055PIXOvRcJtSvuIionWnvEQUWVqH2
+   4fmXCmLD24zDheneL8FilF8yzyuHcEtL2OpCRJkGHtowt5r+XXBopI/U8
+   RubbfnMIw4Zzk2cpXJmEi4fshyqNNUGV6pRAvVHrlUgncmpgs7ThA5gBG
+   aSXC4YtiHGkzGRzaP0+Rpvx0oaqkXnZDHGt3EettpRvlXd0izOIDA6RII
+   nbvluQg0D84XB+slJFsU24C5OR7wSB9s44V3GRnqynS71jdHLYgPr0R62
+   SAIgwcwXXimNBk4AgAV+fIaNn4rG68AvcrKdAYv1nW9v6aYoYcPN7x+wR
+   A==;
+X-CSE-ConnectionGUID: 6mRoHMJUSzqmFRxuTFht5Q==
+X-CSE-MsgGUID: LVzXi285R9+XlBpTMW1alA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="13527091"
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="13527091"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 06:48:02 -0700
+X-CSE-ConnectionGUID: zpLOYR4XRPCwq9aW/Xd4wg==
+X-CSE-MsgGUID: isVdNTEtR1+s1Cn1QAILow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="68395336"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 14 Sep 2024 06:48:01 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spT82-0007nf-1f;
+	Sat, 14 Sep 2024 13:47:58 +0000
+Date: Sat, 14 Sep 2024 21:47:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20240912 5/15]
+ include/linux/build_bug.h:78:41: error: static assertion failed: "struct
+ member likely outside of struct_group_tagged()"
+Message-ID: <202409142117.35sIzcUJ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] iio: imu: kmx61: Drop most likely fake ACPI ID
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20240911213110.2893562-1-andriy.shevchenko@linux.intel.com>
- <2b847413-f8ee-436c-a635-f5a36253e953@redhat.com>
- <ZuQGnqgdkJhyIiLK@smile.fi.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZuQGnqgdkJhyIiLK@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240912
+head:   f2ca068393cf1157c12ab08556b05824eec16511
+commit: 06f3631525808b4ce559a30508e178bae26acb3c [5/15] RDMA/uverbs: Use static_assert() to check struct sizes
+config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20240914/202409142117.35sIzcUJ-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409142117.35sIzcUJ-lkp@intel.com/reproduce)
 
-On 9/13/24 11:32 AM, Andy Shevchenko wrote:
-> On Thu, Sep 12, 2024 at 03:52:34PM +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 9/11/24 11:31 PM, Andy Shevchenko wrote:
->>> The commit in question does not proove that ACPI ID exists.
->>> Quite likely it was a cargo cult addition while doint that
->>> for DT-based enumeration.  Drop most likely fake ACPI ID.
->>>
->>> Googling for KMX61021L gives no useful results in regard to DSDT.
->>> Moreover, the official vendor ID in the registry for Kionix is KIOX.
->>>
->>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>
->> Thanks, patch looks good to me:
-> 
-> Same Q here.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409142117.35sIzcUJ-lkp@intel.com/
 
-Yes I did look for KMX61021 in my DSDT collection and I did
-not find anything, neither does:
+All errors (new ones prefixed by >>):
 
-https://www.catalog.update.microsoft.com/Search.aspx?q=kmx61021
+   In file included from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/module.h:12,
+                    from drivers/infiniband/core/nldev.c:33:
+>> include/linux/build_bug.h:78:41: error: static assertion failed: "struct member likely outside of struct_group_tagged()"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   include/rdma/uverbs_ioctl.h:643:1: note: in expansion of macro 'static_assert'
+     643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
+         | ^~~~~~~~~~~~~
 
-find anything.
-
-So I believe that this one can really be dropped.
-
-Regards,
-
-Hans
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+   WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
+   Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
+   Selected by [m]:
+   - TI_K3_M4_REMOTEPROC [=m] && REMOTEPROC [=y] && (ARCH_K3 || COMPILE_TEST [=y])
 
 
+vim +78 include/linux/build_bug.h
+
+bc6245e5efd70c Ian Abbott       2017-07-10  60  
+6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
+6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
+6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
+6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
+6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
+6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
+6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
+6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
+6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
+6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
+6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
+6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
+6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
+6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+6bab69c65013be Rasmus Villemoes 2019-03-07  79  
+07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
+
+:::::: The code at line 78 was first introduced by commit
+:::::: 6bab69c65013bed5fce9f101a64a84d0385b3946 build_bug.h: add wrapper for _Static_assert
+
+:::::: TO: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
