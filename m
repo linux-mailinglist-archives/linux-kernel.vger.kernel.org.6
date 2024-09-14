@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-329091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4384978D2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:47:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D251978D30
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFB0C1C2221E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:47:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0579B21E36
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E143317C96;
-	Sat, 14 Sep 2024 03:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE0F175BF;
+	Sat, 14 Sep 2024 03:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHjjrBQE"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dnZiuIej"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1175D528;
-	Sat, 14 Sep 2024 03:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518251B964;
+	Sat, 14 Sep 2024 03:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726285624; cv=none; b=LzOa2rMwtv/LbXbvHa6H7Qn94kotKbotbfXyS9soOG8shgdHvMxJqFFmCyo4khMqo8qRylWhR4fFhqQIQRJu47lYFi1c0/Ys7vjedAz6//4y1nvZJ/ET7aXBEGKyDYeIG9aTfmXQPblWtU3T/mGw8pI+Sz4Noa6LrzOxsDKNvDA=
+	t=1726285662; cv=none; b=tDemftdUtlkpYf9ayLwl7Bmbuj9Pc379aDAO8b/tui5N2oeNCqEjNZ/k49iLPhWyAarOU3nXJCKijDdeXglWctK8l2cXcavejBOU2znzrqghprgVzqAmX9vhiiOn3UXJCWyx6g9c94+s7Dbvgh51aWXfduFVXEEf20uIpoDMEG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726285624; c=relaxed/simple;
-	bh=UOGC/8KQyUmk/djAeqsWg+upqOqROGfOn5+f87rsqlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCEz2DpjZvBHlWba0VRT/2roiU2AG5+mok6nZ+PtMwjiezfCJfzWWxoN5ZOgEdE2MIiOPPREWo26uUAeNYFFkvjnoKxaUulc5w/TdXbua2JOJEVF9gfHWgwKB4FDv9QfQQ1zDnzydUC+6sfKL3sfOPfKs/g2JiJaG0pXpSSqStg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHjjrBQE; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1726285662; c=relaxed/simple;
+	bh=pFH2oVQMOP6KXHUNI17BgtBd44onxVMFl9/jEqLmuEg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ApSfThgK9fKJ8GWsxckrgH6lgMdrAUpq3vZS08vr0BfHjPrbfi8NQ7N7nQXwQXWx07X7MISFLRwbo2ADwnAcp0XfDJeMEU45JwosRIPtmsA7jmVfBL5F2AwuNTLOdtsNVomlPy/Hx3H+wEUi9FU/jT2DlpUKfj+O3jRZSMsDLhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dnZiuIej; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2057c6c57b5so16838655ad.1;
-        Fri, 13 Sep 2024 20:47:01 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-206bd1c6ccdso14354615ad.3;
+        Fri, 13 Sep 2024 20:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726285621; x=1726890421; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UOGC/8KQyUmk/djAeqsWg+upqOqROGfOn5+f87rsqlQ=;
-        b=UHjjrBQEgWhdLMsCBojvW5iG4XMa0C4Hf26Q6Jsh7DQGqA6zWKuhHCb3J1aKnv3h62
-         rOttdiB/s/RTlTrmiS/dKoSWe4sW7OCGZ0bykWKzrvU0KsEKD5bNykUwc5Tw5ANFUD9E
-         UXVfO1rA6ACqRaLmNqP63oughCOCsykJQF8Ol8KAmYrjh1IUkNIVhv05dxuoMN1Wwf0R
-         hH18GK0m+uhEOsq7IYAlI/m5SzvGYA+VzeVSLgdqVUb7t+VwVMFLbPiYMcpvzSYz7E05
-         yaxAjLbqCo78punicT9X085i6LX7gKTdbq5pr+FjfKhM7UlLpkhZPhfhVsZ7sufoAuPP
-         PN3Q==
+        d=gmail.com; s=20230601; t=1726285660; x=1726890460; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6/w6egkoYxdXy/98m068U02aaTBghut5WCy5SzQeOFU=;
+        b=dnZiuIejW13i5uaRwutZnwTTg+54rZK3oE0FGeDBhNJPANMahBy0NrfK2vu2eeS797
+         oRq/6RfhzrrsNlSKX2pzCFKQmdFgripdRiVDj9+q0t9i61xd/AYDaH2N8+tGRLSKiu46
+         yz2FTqoBT6N8T2EqlujJp57m2YrcsjeTCkSr+9OF753O1iKkLgRCiqwHm6aHWd1dni1L
+         gMey61tCnQM4d8MBiCD5tXj2t8dn7/vcqDwu1ftwMXABLBLyv1HQAoekSw+hGGJ1urMJ
+         polXQ7pEWq5j0jMcz4BKirxGqtFdnSMX9D6oVxj0QzRaXHANTEKaKk7GxvqA4mctuAP8
+         yZvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726285621; x=1726890421;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UOGC/8KQyUmk/djAeqsWg+upqOqROGfOn5+f87rsqlQ=;
-        b=trwFZhuzPo6rbqXL95TR7qPL2Sw56fO60V35vdD5hL11Y9gQmCa4CFPtxDVWpGLxsC
-         gEu/ALrgv1OPWwF0S+BEHiKYo3GYYNbLL3z3AYa33qLXivxaTn4CGmPHmt7EfJTzmpcq
-         SfC6xrwbvsRk1IjwtzbxBOfAXaNuvJmdTAA6hbwfCv9FIisf/N/Ol0B+FvoNTdCYa5pH
-         iNqTuyMrp5Pi7vwAOXoe3OUNtkgT3r8oaRbTtMEeASXp6lHPbPFPUzFSy6c7/Ps+8O5q
-         GrGV2qpCIQ8SvFOZrL7Sid35NcaI5qt2j7C9oyWTCrOK0P/l59L8vpT614EeWW/DdhHg
-         T47A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJTILowRlvK1FWnN3/kfbKnax/B4ypjS/Sd9brTefKGhxlbVS5a94oXLyQ2NHgQ6atmEPA6hoFxKLgmiWn@vger.kernel.org, AJvYcCX7t2W+hzm3jJxraKM3GKgJQ+jhUN3T5gvmu8HFpn+XNpX48SaMDJyHnosufQSdoMjSHJ3DvzqAIv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqRpMMfhBulhIrqykj4KQsFMjFF16Ul7c+mUy4FHhexmzIlVXK
-	ZZp+Kq8rFaJiXqH24UYJkuoTCbLy0Av7dvf7UrmEFKjBGozjxozh
-X-Google-Smtp-Source: AGHT+IExTh4sE2dSavfpwo4le+w02Q/wEN2CuAipPKijPK4VJUyg2q5Zn8F/TmmAXocQ0Y+9QvxwMA==
-X-Received: by 2002:a17:902:d501:b0:205:7b04:dde1 with SMTP id d9443c01a7336-2074c6df55dmr214950935ad.20.1726285620519;
-        Fri, 13 Sep 2024 20:47:00 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794731606sm2978505ad.270.2024.09.13.20.46.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 20:46:59 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 332114A0EB86; Sat, 14 Sep 2024 10:46:56 +0700 (WIB)
-Date: Sat, 14 Sep 2024 10:46:55 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com
-Cc: kevin.tian@intel.com, corbet@lwn.net, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yi.l.liu@intel.com, eric.auger@redhat.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
-	baolu.lu@linux.intel.com
-Subject: Re: [PATCH v3] Documentation: userspace-api: iommufd: Update
- HWPT_PAGING and HWPT_NESTED
-Message-ID: <ZuUHL7HXAe0vANdY@archie.me>
-References: <20240913052519.2153-1-nicolinc@nvidia.com>
+        d=1e100.net; s=20230601; t=1726285660; x=1726890460;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6/w6egkoYxdXy/98m068U02aaTBghut5WCy5SzQeOFU=;
+        b=tpM7NXZ3L4qaA7x8amgXwOW/0sH2pBOf5+9sxWZZBprYyof9NISO4MkMy+ySo7qfL8
+         6XV3ljUVNgydb7JYt3b1PF1Z4/iUuC+LEJ014wWdoc5Il+EQpK31Rj1Tipsoy0r7nv+o
+         guPR+e1ou6y/t3YXm5pQ9roelJklbOH0Vya3b4oPx8hc3h1ZCiR7h0vX+nKhMXmQLs1i
+         iJtYkqhfRbB3sag388HwW9yrq1FgpRAHqGhPUTULFveYLLjCEh6IgEJxLe1mxquOywlj
+         zcRFVpVWVtAdGHC6pxQRwDTn1UPGQM6KmzLBBh/frI5eHt595yaJtn/Qx4FOFHrPbzaW
+         3xDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8F2UuTEqkd0k7vffxEpB2HQTdkdEG2O/qj/llOePS8D3BNE8s95ZU+yAR8JmnZ6DvZxKzHjW0nnkoZgls@vger.kernel.org, AJvYcCWq/mJN0jP8jGEw52EBUo7ZJwfr21FgHtjMBUo8MLnpn6TSovfgrg9KgRNqVFd78T5Pfy34ktF1F6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwjZEdAXvRwiX+p7mB5GiTlNtBw87yjn7o+LgDdSozQoL3njUa
+	LOtkwRd/X2rpoTs1pzPKhjaCiF/QHtZnlBl1InLSqbW9YSCNtX5hnlFe2g==
+X-Google-Smtp-Source: AGHT+IHY5Kbr/IxGld49diZlQVX4pMVOcXPFBLNkf33nVglaamhRITFoVjShjgLO2nhMJSxVzsspcA==
+X-Received: by 2002:a17:903:32c9:b0:205:80e7:dcab with SMTP id d9443c01a7336-20781d5e224mr70535435ad.18.1726285660471;
+        Fri, 13 Sep 2024 20:47:40 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946010d9sm3031995ad.65.2024.09.13.20.47.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 20:47:40 -0700 (PDT)
+Message-ID: <2704d2a7-b2cc-4586-8608-10aabbdb91f3@gmail.com>
+Date: Sat, 14 Sep 2024 12:47:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PBkg31RWqd7Uf7Oh"
-Content-Disposition: inline
-In-Reply-To: <20240913052519.2153-1-nicolinc@nvidia.com>
+User-Agent: Mozilla Thunderbird
+To: corbet@lwn.net
+Cc: alexs@kernel.org, chengziqiu@hust.edu.cn, dzm91@hust.edu.cn,
+ hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, siyanteng@loongson.cn,
+ Vegard Nossum <vegard.nossum@oracle.com>, Akira Yokosawa <akiyks@gmail.com>
+References: <875xqz39gf.fsf@trenco.lwn.net>
+Subject: Re: [PATCH] scripts: use ':Original:' tag to locate the origin file
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <875xqz39gf.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+[+CC: Vegard]
 
---PBkg31RWqd7Uf7Oh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Thu, Sep 12, 2024 at 10:25:19PM -0700, Nicolin Chen wrote:
-> The previous IOMMUFD_OBJ_HW_PAGETABLE has been reworked to two separated
-> objects: IOMMUFD_OBJ_HWPT_PAGING and IOMMUFD_OBJ_HWPT_NESTED in order to
-> support a nested translation context.
->=20
-> Corresponding to the latest iommufd APIs and uAPIs, update the doc so as
-> to reflect the new design.
->=20
+On Fri, 13 Sep 2024 08:38:24 -0600, Jonathan Corbet wrote:
+> Cheng Ziqiu <chengziqiu@hust.edu.cn> writes:
+> 
+>> Simply substitute path may cause file finding failed
+>> if we have a different dir map for translation. The
+>> ':Original:' tag could be used to locate the origin
+>> file if both the tag and file exist.
+>>
+>> Signed-off-by: Cheng Ziqiu <chengziqiu@hust.edu.cn>
+>> ---
+>>  scripts/checktransupdate.py | 13 +++++++++++++
+>>  1 file changed, 13 insertions(+)
+> 
+> Perhaps we need this, but I would really rather move any files that
+> don't conform to the English-language directory structure.  Having them
+> be anything but the same can only lead to this sort of confusion.
 
-LGTM, thanks!
++1
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Furthermore, the "translations" extension for htmldocs available since
+v6.8 at:
+    Documentation/sphinx/translations.py
+assumes the same structure as the English one.
 
---=20
-An old man doll... just what I always wanted! - Clara
+It might be nice for this script to warn about translation docs
+whose positions don't match the assumption.
 
---PBkg31RWqd7Uf7Oh
-Content-Type: application/pgp-signature; name="signature.asc"
+        Thanks, Akira
 
------BEGIN PGP SIGNATURE-----
+> 
+> Thanks,
+> 
+> jon
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZuUHKQAKCRD2uYlJVVFO
-owvjAQDSw5TgYY8NMgLw+QyfLivJhB7uKdT02aP1nAn6TtpTfQD/QNhgfBqI6HQK
-JvLMcrifmDGlSUVtqide+k63/C3V1As=
-=Mu1T
------END PGP SIGNATURE-----
-
---PBkg31RWqd7Uf7Oh--
 
