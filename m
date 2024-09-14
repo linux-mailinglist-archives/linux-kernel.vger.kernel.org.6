@@ -1,142 +1,222 @@
-Return-Path: <linux-kernel+bounces-329535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A6E9792A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:18:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A58C9792A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D911F22970
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:18:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EDB51C21A89
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135B91D131B;
-	Sat, 14 Sep 2024 17:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05341D1319;
+	Sat, 14 Sep 2024 17:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aoqGHgcm"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRmiCdyc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F399B1CFEC1;
-	Sat, 14 Sep 2024 17:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232C01CFEC1;
+	Sat, 14 Sep 2024 17:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726334285; cv=none; b=C7UX2vRNMGMqbp9F29Vyr1O5ilQZoIBHQabeygm5ohqjqYof9ixFiGAwdxp7D4YsH8jlK0/jmU+Gu1R/8vU7rU3mWy9iRO6/p2HS5fykotQ5w79oky0lcLWnle+gYu+09QjOG98m3HXEAu1CdeSpj+0qrUcRHv/c5lQGxlRkbAc=
+	t=1726334316; cv=none; b=bvZZzcHARp5w9tlUlelaHAmlyxyLrOAxiHg8jkFVjTWb+vodwBZmS/9Cvp7LQATWHSHvxeL1Q4rlbNL9DKoVLnk96VQAJxskwRo7ySUwT95NhDGeOu3njNTsmqYpsTcANB9KrnE5GKY58gR/Cp4c6nLF83LZuKpHTxXZsoEd0xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726334285; c=relaxed/simple;
-	bh=aRytwP9pLBei3TTlU1BMBB5/oF2kGbMPm/3Y+2Ugk9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pVd6oIxVJ2f+34yNzTPZ/Cv9mf/H+gVDutWrO8tIoTM8l7STwfQQweES0DJiyGbZiiLCNboS2XPHjkfiEBhrTmSjypEl28AtFuVsBd/Y7A6ZkFOWpCvf9dQ5w1aDMdmaXsL2AMew49hR3JH9aI6Rabra2g4b4abj1hA/LBW3XNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aoqGHgcm; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-718f4fd89e5so2925803b3a.0;
-        Sat, 14 Sep 2024 10:18:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726334283; x=1726939083; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5+GhMoA3xa1971oY2HzI8hp5Uk+PbFfIHHqZtQjkbuw=;
-        b=aoqGHgcmwSE8wbps4MAOXLJh50AaJmj5IVUjAJ5wazDJROV/MrdWS8KgL5nazrpB8Y
-         CgJj48ZVu+b9rSxghfmgie02ycaau4zdJb2cvLNJr8rcnGI5YoR0k82XACkYT3rf0fUh
-         z68GbGKQhjgGrR3GfoSIZij4vmx1pA4uY4f2AQiA6mipu+38+oXcUNpjsSWNS3yTBEQc
-         HJAjXIWliDj7NvBcficUOpNWA8GncHGMRjJ39IVenFGahyZDxJXtY7EGaiY3/FIWqzVg
-         exth4x6xPoKCc0857MESbPrMjYNap7szo637826JlGlvRyK+FHH1aZAyS22ZuEFnCNpY
-         GtEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726334283; x=1726939083;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5+GhMoA3xa1971oY2HzI8hp5Uk+PbFfIHHqZtQjkbuw=;
-        b=A5auRwNcAAHxvUOV9IlYk4lqFI4bFlXtPkPqx5hUpWZAwSKUrv+pl5umbZnDwOObdZ
-         UtQNXRL/RPecc/waKZD5YGaaYiCzurv/iVbnWs4M1dsaKf+SsVTGJ3MiNb4Q6hMet8AW
-         zYuY4V1O19BVIEjhL1TVrEtlMkv7uDhsLefQ/lLfYlEgC1hIjw73SJ7Ux36OuXF+2Bhs
-         De2AuvM6+7mQeZQaWdsTqXsWA1y48hFHR+oyjYZyAvdR4CPa4jMo8TVG68m/9rz6XtkE
-         NJ6IY4TRG+kfmkFCdXA/TupSRT1gKXeJAdUb/q8ny8R9AU8FqQoBaMPg03cY3Gy/+SKI
-         LnkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUS9IR76KT1NN986O4Lp8UfGQ7EAgzo8dgbFA++2RRliQEQ7C+gY/528vAbo3pnNiyGiJMf5ZavpMk=@vger.kernel.org, AJvYcCVR5DR9TxAnxQfsSiAuVCF+UQmEABuNeOZXdm9qqPDhg2/n8uZLtARv246wEx6gzdNNWrAcFArdUODcMzG+@vger.kernel.org, AJvYcCVtGXsS7U/nAveX9bG5c6vOmzYjUXqadikcthwqvMyJWU2nXUglNoOIymmnLZJOPO95ripyBM1gV/BMMHhEbo8=@vger.kernel.org, AJvYcCXLW1k6vseSJtk+2UVIOMeiPRgBUnwrAZDn1PIHwL3u7NySl9MaA0J+9rztt9aIWBM8nvpmD7gd7The@vger.kernel.org, AJvYcCXONPUUPsBNOucWQd6yj7wjH3/h1VvXKJhZdEtlo88PnvfulgS215XemBRMsnf11ioT0KKPbYDjBwHHDg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqerectmuYGGykdaZxsRDmeKFDAZbI+lPIdhJXW+HznZwPeaGL
-	mUDNpREOkzi3rEmlXj4dTgH7tP4zzP7gm/rVpwT8Y/87kp72B4Kw
-X-Google-Smtp-Source: AGHT+IEVlENJgk8dXWBf4D2XILJQRHJRlYjJlO5FZwJPUxVX2SZ1X5qAa0SOTNhIkEM4keufiASuDw==
-X-Received: by 2002:a05:6a00:b92:b0:717:8d81:e548 with SMTP id d2e1a72fcca58-7192606523bmr15785200b3a.1.1726334283027;
-        Sat, 14 Sep 2024 10:18:03 -0700 (PDT)
-Received: from [192.168.0.122] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4999cfb7sm1397145a12.79.2024.09.14.10.17.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Sep 2024 10:18:02 -0700 (PDT)
-Message-ID: <2ebf5258-b55d-4010-aa94-d5bab1f93bb5@gmail.com>
-Date: Sun, 15 Sep 2024 01:17:57 +0800
+	s=arc-20240116; t=1726334316; c=relaxed/simple;
+	bh=xg6hK/fXzG2UUmxxWKEk6Ei3QeIfxPrF8uCj/a0xQJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QTeIndGE4EZLbVjahmT8vQPD9JKcoZEfrfRiF3HwJJg1z2pBUvTtyhdGrQ0lv6mg6eZQz1L0Ujzt/imnzXS4UMPSewFYTl0NYwY9352f/GbQvkhUipiSKIp7wyH4dN5cXZyqXvILRGtqO9bjxxA+JwD0AgSxxBcUI+a72+oQb0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRmiCdyc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D180C4CEC0;
+	Sat, 14 Sep 2024 17:18:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726334315;
+	bh=xg6hK/fXzG2UUmxxWKEk6Ei3QeIfxPrF8uCj/a0xQJ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qRmiCdyckqkGcjjjBMO0g8Eq7wAYr+oDt/A6VL8zgxEng59RocuRRPG5qfJ0LcrWY
+	 /xgkW/GfgfJr0LU5YByThbW+AReCPHvCQKv1s4tstsFbz7FyDrVe1oAerbkrXn1YHu
+	 0el/PZGKZTmVAbb1wrhwcwCqvL7f3AVWGo7phx1SMIcQYHMApYLC3skyBvSd9DF3X6
+	 x02iM9gsaI0ANHQ9JvaaHUpYga74b7otn/4yuPsEBeGOFAAfFUnupluef4TVRnpqI7
+	 5w17EI46CyqbDLtIF4dZHMQoNscjPAMAx+9NUs8KcFHWC3z06vKaZwO8nvkyWh+uQ0
+	 Sspm74lpxy2PA==
+Date: Sat, 14 Sep 2024 18:18:27 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mariel Tinaco <Mariel.Tinaco@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Hennerich <Michael.Hennerich@analog.com>, Conor Dooley
+ <conor+dt@kernel.org>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Dimitri Fedrau <dima.fedrau@gmail.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v4 2/2] iio: dac: support the ad8460 Waveform DAC
+Message-ID: <20240914181827.2c0a9578@jic23-huawei>
+In-Reply-To: <20240912095435.18639-3-Mariel.Tinaco@analog.com>
+References: <20240912095435.18639-1-Mariel.Tinaco@analog.com>
+	<20240912095435.18639-3-Mariel.Tinaco@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/22] dt-bindings: cpufreq: apple,cluster-cpufreq: Add
- A10 compatible
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-References: <20240914052413.68177-1-towinchenmi@gmail.com>
- <20240914052413.68177-6-towinchenmi@gmail.com>
-Content-Language: en-MW
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <20240914052413.68177-6-towinchenmi@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 12 Sep 2024 17:54:35 +0800
+Mariel Tinaco <Mariel.Tinaco@analog.com> wrote:
+
+> The AD8460 is a =E2=80=9Cbits in, power out=E2=80=9D high voltage, high-p=
+ower,
+> high-speed driver optimized for large output current (up to =C2=B11 A)
+> and high slew rate (up to =C2=B11800 V/=CE=BCs) at high voltage (up to =
+=C2=B140 V)
+> into capacitive loads.
+>=20
+> A digital engine implements user-configurable features: modes for
+> digital input, programmable supply current, and fault monitoring
+> and programmable protection settings for output current,
+> output voltage, and junction temperature. The AD8460 operates on
+> high voltage dual supplies up to =C2=B155 V and a single low voltage
+> supply of 5 V.
+>=20
+> Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
+Hi Mariel
+
+A few minor comments from me.  I'd like it to sit on the list a while
+longer, but if there is nothing else I can make minor tweaks whilst
+applying.
+
+Jonathan
+
+> diff --git a/drivers/iio/dac/ad8460.c b/drivers/iio/dac/ad8460.c
+> new file mode 100644
+> index 000000000000..9ce3a0f288ba
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad8460.c
+> @@ -0,0 +1,947 @@
 
 
+> +static struct iio_chan_spec_ext_info ad8460_ext_info[] =3D {
+> +	AD8460_CHAN_EXT_INFO("raw0", 0, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw1", 1, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw2", 2, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw3", 3, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw4", 4, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw5", 5, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw6", 6, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw7", 7, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw8", 8, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw9", 9, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw10", 10, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw11", 11, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw12", 12, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw13", 13, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw14", 14, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw15", 15, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("toggle_en", 0, ad8460_read_toggle_en,
+> +			     ad8460_write_toggle_en),
+> +	AD8460_CHAN_EXT_INFO("symbol", 0, ad8460_read_symbol,
+> +			     ad8460_write_symbol),
+> +	AD8460_CHAN_EXT_INFO("powerdown", 0, ad8460_read_powerdown,
+> +			     ad8460_write_powerdown),
+> +	IIO_ENUM("powerdown_mode", IIO_SEPARATE, &ad8460_powerdown_mode_enum),
+> +	IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE,
+> +			   &ad8460_powerdown_mode_enum),
+> +	{}
+	{ }
+is my style preference.  Mostly I want consistency and happened to pick this
+for IIO.
 
-On 14/9/2024 13:17, Nick Chan wrote:
-> The block found on the Apple A10 SoC is compatible with the
-> existing driver so just add its per-SoC compatible.
-> 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
->  .../devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml    | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
-> index 76cb9726660e..e0d1a9813696 100644
-> --- a/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
-> +++ b/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
-> @@ -24,7 +24,9 @@ properties:
->                - apple,t8112-cluster-cpufreq
->            - const: apple,cluster-cpufreq
->        - items:
-> -          - const: apple,t6000-cluster-cpufreq
-> +          - enum:
-> +              - apple,t8010-cluster-cpufreq
-> +              - apple,t6000-cluster-cpufreq
->            - const: apple,t8103-cluster-cpufreq
->            - const: apple,cluster-cpufreq
->  
+> +};
 
-Have to retract the cpufreq patches, a v3 without them will be available
-tomorrow. cpufreq works on iPad 7 (A10). However it is already pretty
-weird when the cpufreq did not work on Apple TV 4K (A10X), with adjusted
-p-states. However, it seems that iPhone 7 (A10) is also not working. So
-this is definitely broken. As far as the hardware interfaces go they should
-be compatible, so the only explanation that makes sense is that the behavior
-is not correct on t8010 and t8011 and it only *happened* to work on iPad 7,
-with some incorrect behaviors.
+> +#define AD8460_TEMP_CHAN {					\
+> +	.type =3D IIO_TEMP,					\
+> +	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),		\
+> +	.output =3D 1,						\
 
-Marked as deferred on patchwork.
+An output temperature channel?  That's a heater which seems unlikely
+on this device.
 
-Nick Chan
+> +	.indexed =3D 1,						\
+> +	.channel =3D 0,						\
+> +	.scan_index =3D -1,					\
+> +	.event_spec =3D ad8460_events,				\
+> +	.num_event_specs =3D 1,					\
+> +}
+
+> +static int ad8460_probe(struct spi_device *spi)
+> +{
+> +	struct ad8460_state *state;
+> +	struct iio_dev *indio_dev;
+> +	struct device *dev;
+> +	u32 tmp[2], temp;
+> +	int ret;
+> +
+> +	indio_dev =3D devm_iio_device_alloc(&spi->dev, sizeof(*state));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	state =3D iio_priv(indio_dev);
+> +
+> +	indio_dev->name =3D "ad8460";
+> +	indio_dev->info =3D &ad8460_info;
+> +
+> +	state->spi =3D spi;
+> +	dev =3D &spi->dev;
+Might as well do this one where you declare above.
+	struct device *dev =3D &spi->dev;
+
+> +
+> +	state->regmap =3D devm_regmap_init_spi(spi, &ad8460_regmap_config);
+> +	if (IS_ERR(state->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(state->regmap),
+> +				     "Failed to initialize regmap");
+> +
+> +	devm_mutex_init(dev, &state->lock);
+
+Check return value.  devm registration can potentially fail.
+
+...
+
+> +
+> +	/* Enables DAC by default */
+> +	ret =3D regmap_update_bits(state->regmap, AD8460_CTRL_REG(0x01),
+> +				 AD8460_HVDAC_SLEEP_MSK,
+> +				 FIELD_PREP(AD8460_HVDAC_SLEEP_MSK, 0));
+
+regmap_clear_bits() perhaps.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	indio_dev->modes =3D INDIO_DIRECT_MODE;
+> +	indio_dev->setup_ops =3D &ad8460_buffer_setup_ops;
+> +
+> +	ret =3D devm_iio_dmaengine_buffer_setup_ext(dev, indio_dev, "tx",
+> +						  IIO_BUFFER_DIRECTION_OUT);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Failed to get DMA buffer\n");
+> +
+> +	return devm_iio_device_register(dev, indio_dev);
+> +}
 
