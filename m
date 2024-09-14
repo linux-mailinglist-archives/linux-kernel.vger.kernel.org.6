@@ -1,518 +1,600 @@
-Return-Path: <linux-kernel+bounces-329405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFF49790ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:28:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B1D9790EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C25F1C21800
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:28:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96C5DB21A3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8D01CFEAB;
-	Sat, 14 Sep 2024 13:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842151CF7CB;
+	Sat, 14 Sep 2024 13:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Zs15mpMW"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWCGzEoK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3B31CEEAB;
-	Sat, 14 Sep 2024 13:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D23E1CF5FC;
+	Sat, 14 Sep 2024 13:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726320465; cv=none; b=QX6G1uXfrsjH63eFx93iNTELaJpk4bE7ZmkZYf2KZix2eU3UQ//mqTJciJ0VWApSrIpoVyEdTwKe9DUSkimEESoD62G+DlMuabcOX/FfLjXGOsHBjFx6B3cPc5pxqXUjGyrNr+XIyrzY0pcHVh17vmoJ3dqG0ntBC8BLNqKDgmM=
+	t=1726320462; cv=none; b=LIMdZAW72PV2Wpp5Rb8EjRccsuk1Qofy0J6J9KICAqZLUGAq25RjvW8EjS4yYAcLjkE2WDibOhKQI24OvDO7lpQADW4tgfPU8GhwRBNARMq+7rnxymJY3vMGJj96QbMXnIMB6wiVhYRV5Uyz2TkaV3QQg8AcMEASgcpZybBOIBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726320465; c=relaxed/simple;
-	bh=zPua+CxXAKZXuW94Bzr8SK+vKLP4u2pbMhBLxCBOQn8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mYzHPZoTEWmf0n+61aQ47rSk1i+n2utWNbTgpFGuidnAAmSpb7kQQOpoOjE1eaLsWWuEPt6Z6LP21c1ZgRPOS3CJhfTyLVrgqcp9BTkwjXyK9KsN+nu1rOTp1hwPMuQ9lsk+6yFEBozK5kSkxjdXAbriWOlXUQggGhI5aSB0Z7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Zs15mpMW; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 19f2820c729d11efb66947d174671e26-20240914
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=R1tyu7t1WZvTldB3ra0ZBvt66Zcdv18jD5kP8QJwR5g=;
-	b=Zs15mpMWazHz8F/Kz2MyuPRguC/uLkq8CsgaCab/iLktzsZD6DvoLSjFLNkUdsM7B4DGsTXEXjt6uRV1vOZeFJbjprTrYLzdxUEJ6hySPygLd3zRU9Xuv4qILijHGL/XOviTTW8IeH9llsfTNep4tWQfNCuZO4rua5Mc3nCiPeE=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:9accaa87-c3e4-4388-a280-be599fa09ea2,IP:0,U
-	RL:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:6dc6a47,CLOUDID:2403f7bf-d7af-4351-93aa-42531abf0c7b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 19f2820c729d11efb66947d174671e26-20240914
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1600607146; Sat, 14 Sep 2024 21:27:34 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 14 Sep 2024 21:27:32 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sat, 14 Sep 2024 21:27:32 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sean Wang
-	<sean.wang@mediatek.com>, Sen Chu <sen.chu@mediatek.com>, Macpaul Lin
-	<macpaul.lin@mediatek.com>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Alexandre Mergnat <amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>
-Subject: [PATCH v4 1/3] regulator: dt-bindings: mt6323: Convert to DT schema
-Date: Sat, 14 Sep 2024 21:27:31 +0800
-Message-ID: <20240914132731.9211-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1726320462; c=relaxed/simple;
+	bh=CltfCIwmJ9gTdLOuKsqwCDhjQQ668Etn27WjWdq8nFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bxRS4WETpphjuqRBc2la4kAkroTN6ccUxE5Yfwoly2fqS2LwebgGpTZf8acrP1KXLdzHMcyCW9p2f4QRqJncKjZwr3Jbs8a3bYZl2+c/yQ2P2qkwYDo1Nz9kWbDQ98d6Br75Ce84JJL+11z950G6VbOr9d8jwUVi0OYdwR4lVVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWCGzEoK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 780BAC4CEC0;
+	Sat, 14 Sep 2024 13:27:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726320462;
+	bh=CltfCIwmJ9gTdLOuKsqwCDhjQQ668Etn27WjWdq8nFc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PWCGzEoK249129i3r4OdmbnkEy5kcpSAySANxTBO/f/A21ZlvI58rgtyBahLKRPkf
+	 ydncry8qwIX9vuziAO4OFiyS7WYSgBi76ecgXDbQ6T5B8BXPERB5ojRN+U4lS0FWdP
+	 HGyOMCgDUiJzNiMzKIPSqbQQttiEjJCbYK6ShDO3pDei2nXWVZ9ZHemxzw4otkxuLw
+	 UrLdVQiVIfQ60i/hgRcSWZ7rmSZCfgYoShygo+KaiBONEFt1rHXWLRqyoC8P+7tJG0
+	 0Bldn8qAns+Ao9sFFNLozrMLuHpopOuIBbz8UL89KMu/VBYGJlild7uEv5k9U0AFcw
+	 SAlChWDs0DTpw==
+Date: Sat, 14 Sep 2024 14:27:34 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Alex Lanzano <lanzano.alex@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jagath Jog J <jagathjog1996@gmail.com>, Ramona
+ Gradinariu <ramona.bolboaca13@gmail.com>, Nuno Sa <nuno.sa@analog.com>,
+ linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] iio: imu: Add i2c driver for bmi270 imu
+Message-ID: <20240914142734.4bcf14bc@jic23-huawei>
+In-Reply-To: <20240912210749.3080157-3-lanzano.alex@gmail.com>
+References: <20240912210749.3080157-1-lanzano.alex@gmail.com>
+	<20240912210749.3080157-3-lanzano.alex@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Convert the MT6323 regulator binding from the old text-based format to
-the new DT schema style. The property "regulator-name" has been added
-as required property to reflect current usage in mt6323.dtsi.
+On Thu, 12 Sep 2024 17:07:19 -0400
+Alex Lanzano <lanzano.alex@gmail.com> wrote:
 
-Examples have been streamlined and relocated to the parent schema file:
-  mfd/mediatek,mt6397.yaml.
+> Add initial i2c support for the Bosch BMI270 6-axis IMU.
+> Provides raw read access to acceleration and angle velocity measurements
+> via iio channels. Device configuration requires firmware provided by
+> Bosch and is requested and load from userspace.
+> 
+> Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
 
-Update maintainer and submitter information with new entries from MediaTek.
+Hi Alex,
 
-The reference document cited in "mediatek,mt7530.yaml" has been updated
-to point to this new DT schema file
+A bunch of fairly minor stuff so I've just tweaked it whilst applying rather
+than wasting time on going around again.
 
-Signed-off-by: Sen Chu <sen.chu@mediatek.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- .../bindings/net/dsa/mediatek,mt7530.yaml     |   4 +-
- .../regulator/mediatek,mt6323-regulator.yaml  | 120 +++++++++
- .../bindings/regulator/mt6323-regulator.txt   | 237 ------------------
- 3 files changed, 122 insertions(+), 239 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6323-regulator.yaml
- delete mode 100644 Documentation/devicetree/bindings/regulator/mt6323-regulator.txt
+I also changed a few line wraps to keep lines a bit shorter.
+Where it doesn't hurt readability 80 chars is still my preference for IIO.
 
-Changes for v1 and v2:
- - This is the first version of converting mt6323-regulator.
-   This is because converting mt6323-regulator together
-   with mfd/mediatek,mt6397.yaml, so we've create a patch set
-   instead of single patch for each skydives.
- - This patch has been made base on linux-next/master git repo.
+The diff of the tweaks I made is as follows. Shout if I messed anything up!
 
-Changes for v3:
- - Rebased on linux-next/master git repo near next-20240906.
- - Added 'regulator-name' to 'requried' property to reflect current usage.
- - replace ^(buck_)? and ^(ldo_)? to ^buck_ and ^ldo_ prefix.
- - Update file name of 'mediatek,mt6323-regulator.yaml' in
-   'mediatek,mt7530.yaml'
+Thanks,
 
-Changes for v4:
- - No change.
+Jonathan
 
-diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-index ea979bc..413db38 100644
---- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-@@ -129,8 +129,8 @@ properties:
-   io-supply:
-     description: |
-       Phandle to the regulator node necessary for the I/O power.
--      See Documentation/devicetree/bindings/regulator/mt6323-regulator.txt for
--      details for the regulator setup on these boards.
-+      See Documentation/devicetree/bindings/regulator/mediatek,mt6323-regulator.yaml
-+      for details for the regulator setup on these boards.
+diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
+index 4af4098d8e82..608b29ea58a3 100644
+--- a/drivers/iio/imu/bmi270/bmi270.h
++++ b/drivers/iio/imu/bmi270/bmi270.h
+@@ -3,53 +3,9 @@
+ #ifndef BMI270_H_
+ #define BMI270_H_
  
-   mediatek,mcm:
-     type: boolean
-diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6323-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6323-regulator.yaml
-new file mode 100644
-index 0000000..01b0aba
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6323-regulator.yaml
-@@ -0,0 +1,120 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/mediatek,mt6323-regulator.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek MT6323 Regulator
-+
-+maintainers:
-+  - John Crispin <john@phrozen.org>
-+  - Sen Chu <sen.chu@mediatek.com>
-+  - Macpaul Lin <macpaul.lin@mediatek.com>
-+
-+description: |
-+  Regulator node of the PMIC. This node should under the PMIC's device node.
-+  All voltage regulators provided by the PMIC are described as sub-nodes of
-+  this node.
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: mediatek,mt6323-regulator
-+
-+patternProperties:
-+  "^buck_v(pa|proc|sys)$":
-+    description: Buck regulators
-+    type: object
-+    $ref: regulator.yaml#
-+
-+    properties:
-+      regulator-allowed-modes: false
-+
-+    unevaluatedProperties: false
-+
-+    required:
-+      - regulator-name
-+
-+  "^ldo_v(camio|cn18)$":
-+    description: LDO with fixed 1.8V output and 0~100/10mV tuning
-+    type: object
-+    $ref: regulator.yaml#
-+
-+    properties:
-+      regulator-allowed-modes: false
-+
-+    unevaluatedProperties: false
-+
-+    required:
-+      - regulator-name
-+
-+  "^ldo_v((io|rf)18)$":
-+    description: LDOs with fixed 1.825V output and 0~100/10mV tuning
-+    type: object
-+    $ref: regulator.yaml#
-+
-+    properties:
-+      regulator-allowed-modes: false
-+
-+    unevaluatedProperties: false
-+
-+    required:
-+      - regulator-name
-+
-+  "^ldo_v(a|rtc|tcxo|(cn|io)28)$":
-+    description: LDOs with fixed 2.8V output and 0~100/10mV tuning
-+    type: object
-+    $ref: regulator.yaml#
-+
-+    properties:
-+      regulator-allowed-modes: false
-+
-+    unevaluatedProperties: false
-+
-+    required:
-+      - regulator-name
-+
-+  "^ldo_v(usb)$":
-+    description: LDOs with fixed 3.3V output and 0~100/10mV tuning
-+    type: object
-+    $ref: regulator.yaml#
-+
-+    properties:
-+      regulator-allowed-modes: false
-+
-+    unevaluatedProperties: false
-+
-+    required:
-+      - regulator-name
-+
-+  "^ldo_v(cn33_(bt|wifi))$":
-+    description: LDOs with variable 3.3V output and 0~100/10mV tuning
-+    type: object
-+    $ref: regulator.yaml#
-+
-+    properties:
-+      regulator-allowed-modes: false
-+
-+    unevaluatedProperties: false
-+
-+    required:
-+      - regulator-name
-+
-+  "^ldo_v(cama|camaf|camd|emc3v3|gp[123]|ibr|m|mc|mch|sim[12])$":
-+    description: LDOs with variable output and 0~100/10mV tuning
-+    type: object
-+    $ref: regulator.yaml#
-+
-+    properties:
-+      regulator-allowed-modes: false
-+
-+    unevaluatedProperties: false
-+
-+    required:
-+      - regulator-name
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-diff --git a/Documentation/devicetree/bindings/regulator/mt6323-regulator.txt b/Documentation/devicetree/bindings/regulator/mt6323-regulator.txt
-deleted file mode 100644
-index a48749d..0000000
---- a/Documentation/devicetree/bindings/regulator/mt6323-regulator.txt
-+++ /dev/null
-@@ -1,237 +0,0 @@
--Mediatek MT6323 Regulator
+-#include <linux/iio/iio.h>
 -
--All voltage regulators are defined as subnodes of the regulators node. A list
--of regulators provided by this controller are defined as subnodes of the
--PMIC's node. Each regulator is named according to its regulator type,
--buck_<name> and ldo_<name>. The definition for each of these nodes is defined
--using the standard binding for regulators at
--Documentation/devicetree/bindings/regulator/regulator.txt.
+-#define BMI270_CHIP_ID_REG                             0x00
+-#define BMI270_CHIP_ID_VAL                             0x24
+-#define BMI270_CHIP_ID_MSK                             GENMASK(7, 0)
 -
--The valid names for regulators are::
--BUCK:
--  buck_vproc, buck_vsys, buck_vpa
--LDO:
--  ldo_vtcxo, ldo_vcn28, ldo_vcn33_bt, ldo_vcn33_wifi, ldo_va, ldo_vcama,
--  ldo_vio28, ldo_vusb, ldo_vmc, ldo_vmch, ldo_vemc3v3, ldo_vgp1, ldo_vgp2,
--  ldo_vgp3, ldo_vcn18, ldo_vsim1, ldo_vsim2, ldo_vrtc, ldo_vcamaf, ldo_vibr,
--  ldo_vrf18, ldo_vm, ldo_vio18, ldo_vcamd, ldo_vcamio
+-#define BMI270_ACCEL_X_REG                             0x0c
+-#define BMI270_ANG_VEL_X_REG                           0x12
 -
--Example:
+-#define BMI270_INTERNAL_STATUS_REG                     0x21
+-#define BMI270_INTERNAL_STATUS_MSG_MSK                 GENMASK(3, 0)
+-#define BMI270_INTERNAL_STATUS_MSG_INIT_OK             0x01
 -
--	pmic: mt6323 {
--		mt6323regulator: regulators {
--			mt6323_vproc_reg: buck_vproc{
--				regulator-name = "vproc";
--				regulator-min-microvolt = < 700000>;
--				regulator-max-microvolt = <1350000>;
--				regulator-ramp-delay = <12500>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
+-#define BMI270_INTERNAL_STATUS_AXES_REMAP_ERR_MSK      BIT(5)
+-#define BMI270_INTERNAL_STATUS_ODR_50HZ_ERR_MSK                BIT(6)
 -
--			mt6323_vsys_reg: buck_vsys{
--				regulator-name = "vsys";
--				regulator-min-microvolt = <1400000>;
--				regulator-max-microvolt = <2987500>;
--				regulator-ramp-delay = <25000>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
+-#define BMI270_ACC_CONF_REG                            0x40
+-#define BMI270_ACC_CONF_ODR_MSK                                GENMASK(3, 0)
+-#define BMI270_ACC_CONF_ODR_100HZ                      0x08
+-#define BMI270_ACC_CONF_BWP_MSK                                GENMASK(6, 4)
+-#define BMI270_ACC_CONF_BWP_NORMAL_MODE                        0x02
+-#define BMI270_ACC_CONF_FILTER_PERF_MSK                        BIT(7)
 -
--			mt6323_vpa_reg: buck_vpa{
--				regulator-name = "vpa";
--				regulator-min-microvolt = < 500000>;
--				regulator-max-microvolt = <3650000>;
--			};
+-#define BMI270_GYR_CONF_REG                            0x42
+-#define BMI270_GYR_CONF_ODR_MSK                                GENMASK(3, 0)
+-#define BMI270_GYR_CONF_ODR_200HZ                      0x09
+-#define BMI270_GYR_CONF_BWP_MSK                                GENMASK(5, 4)
+-#define BMI270_GYR_CONF_BWP_NORMAL_MODE                        0x02
+-#define BMI270_GYR_CONF_NOISE_PERF_MSK                 BIT(6)
+-#define BMI270_GYR_CONF_FILTER_PERF_MSK                        BIT(7)
 -
--			mt6323_vtcxo_reg: ldo_vtcxo{
--				regulator-name = "vtcxo";
--				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt = <2800000>;
--				regulator-enable-ramp-delay = <90>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
+-#define BMI270_INIT_CTRL_REG                           0x59
+-#define BMI270_INIT_CTRL_LOAD_DONE_MSK                 BIT(0)
 -
--			mt6323_vcn28_reg: ldo_vcn28{
--				regulator-name = "vcn28";
--				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt = <2800000>;
--				regulator-enable-ramp-delay = <185>;
--			};
+-#define BMI270_INIT_DATA_REG                           0x5e
 -
--			mt6323_vcn33_bt_reg: ldo_vcn33_bt{
--				regulator-name = "vcn33_bt";
--				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt = <3600000>;
--				regulator-enable-ramp-delay = <185>;
--			};
+-#define BMI270_PWR_CONF_REG                            0x7c
+-#define BMI270_PWR_CONF_ADV_PWR_SAVE_MSK               BIT(0)
+-#define BMI270_PWR_CONF_FIFO_WKUP_MSK                  BIT(1)
+-#define BMI270_PWR_CONF_FUP_EN_MSK                     BIT(2)
 -
--			mt6323_vcn33_wifi_reg: ldo_vcn33_wifi{
--				regulator-name = "vcn33_wifi";
--				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt = <3600000>;
--				regulator-enable-ramp-delay = <185>;
--			};
--
--			mt6323_va_reg: ldo_va{
--				regulator-name = "va";
--				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt = <2800000>;
--				regulator-enable-ramp-delay = <216>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
--
--			mt6323_vcama_reg: ldo_vcama{
--				regulator-name = "vcama";
--				regulator-min-microvolt = <1500000>;
--				regulator-max-microvolt = <2800000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--
--			mt6323_vio28_reg: ldo_vio28{
--				regulator-name = "vio28";
--				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt = <2800000>;
--				regulator-enable-ramp-delay = <216>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
--
--			mt6323_vusb_reg: ldo_vusb{
--				regulator-name = "vusb";
--				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-enable-ramp-delay = <216>;
--				regulator-boot-on;
--			};
--
--			mt6323_vmc_reg: ldo_vmc{
--				regulator-name = "vmc";
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-enable-ramp-delay = <36>;
--				regulator-boot-on;
--			};
--
--			mt6323_vmch_reg: ldo_vmch{
--				regulator-name = "vmch";
--				regulator-min-microvolt = <3000000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-enable-ramp-delay = <36>;
--				regulator-boot-on;
--			};
--
--			mt6323_vemc3v3_reg: ldo_vemc3v3{
--				regulator-name = "vemc3v3";
--				regulator-min-microvolt = <3000000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-enable-ramp-delay = <36>;
--				regulator-boot-on;
--			};
--
--			mt6323_vgp1_reg: ldo_vgp1{
--				regulator-name = "vgp1";
--				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--
--			mt6323_vgp2_reg: ldo_vgp2{
--				regulator-name = "vgp2";
--				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt = <3000000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--
--			mt6323_vgp3_reg: ldo_vgp3{
--				regulator-name = "vgp3";
--				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--
--			mt6323_vcn18_reg: ldo_vcn18{
--				regulator-name = "vcn18";
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--
--			mt6323_vsim1_reg: ldo_vsim1{
--				regulator-name = "vsim1";
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <3000000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--
--			mt6323_vsim2_reg: ldo_vsim2{
--				regulator-name = "vsim2";
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <3000000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--
--			mt6323_vrtc_reg: ldo_vrtc{
--				regulator-name = "vrtc";
--				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt = <2800000>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
--
--			mt6323_vcamaf_reg: ldo_vcamaf{
--				regulator-name = "vcamaf";
--				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--
--			mt6323_vibr_reg: ldo_vibr{
--				regulator-name = "vibr";
--				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-enable-ramp-delay = <36>;
--			};
--
--			mt6323_vrf18_reg: ldo_vrf18{
--				regulator-name = "vrf18";
--				regulator-min-microvolt = <1825000>;
--				regulator-max-microvolt = <1825000>;
--				regulator-enable-ramp-delay = <187>;
--			};
--
--			mt6323_vm_reg: ldo_vm{
--				regulator-name = "vm";
--				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-enable-ramp-delay = <216>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
--
--			mt6323_vio18_reg: ldo_vio18{
--				regulator-name = "vio18";
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-enable-ramp-delay = <216>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
--
--			mt6323_vcamd_reg: ldo_vcamd{
--				regulator-name = "vcamd";
--				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--
--			mt6323_vcamio_reg: ldo_vcamio{
--				regulator-name = "vcamio";
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-enable-ramp-delay = <216>;
--			};
--		};
--	};
--- 
-2.45.2
+-#define BMI270_PWR_CTRL_REG                            0x7d
+-#define BMI270_PWR_CTRL_AUX_EN_MSK                     BIT(0)
+-#define BMI270_PWR_CTRL_GYR_EN_MSK                     BIT(1)
+-#define BMI270_PWR_CTRL_ACCEL_EN_MSK                   BIT(2)
+-#define BMI270_PWR_CTRL_TEMP_EN_MSK                    BIT(3)
++#include <linux/regmap.h>
+ 
++struct device;
+ struct bmi270_data {
+        struct device *dev;
+        struct regmap *regmap;
+iff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
+index 319e5601d9e7..8e45343d6472 100644
+--- a/drivers/iio/imu/bmi270/bmi270_core.c
++++ b/drivers/iio/imu/bmi270/bmi270_core.c
+@@ -1,14 +1,60 @@
+ // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ 
++#include <linux/bitfield.h>
+ #include <linux/firmware.h>
+ #include <linux/i2c.h>
+-#include <linux/iio/iio.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+-#include <linux/bitfield.h>
++
++#include <linux/iio/iio.h>
+ 
+ #include "bmi270.h"
+ 
++#define BMI270_CHIP_ID_REG                             0x00
++#define BMI270_CHIP_ID_VAL                             0x24
++#define BMI270_CHIP_ID_MSK                             GENMASK(7, 0)
++
++#define BMI270_ACCEL_X_REG                             0x0c
++#define BMI270_ANG_VEL_X_REG                           0x12
++
++#define BMI270_INTERNAL_STATUS_REG                     0x21
++#define BMI270_INTERNAL_STATUS_MSG_MSK                 GENMASK(3, 0)
++#define BMI270_INTERNAL_STATUS_MSG_INIT_OK             0x01
++
++#define BMI270_INTERNAL_STATUS_AXES_REMAP_ERR_MSK      BIT(5)
++#define BMI270_INTERNAL_STATUS_ODR_50HZ_ERR_MSK                BIT(6)
++
++#define BMI270_ACC_CONF_REG                            0x40
++#define BMI270_ACC_CONF_ODR_MSK                                GENMASK(3, 0)
++#define BMI270_ACC_CONF_ODR_100HZ                      0x08
++#define BMI270_ACC_CONF_BWP_MSK                                GENMASK(6, 4)
++#define BMI270_ACC_CONF_BWP_NORMAL_MODE                        0x02
++#define BMI270_ACC_CONF_FILTER_PERF_MSK                        BIT(7)
++
++#define BMI270_GYR_CONF_REG                            0x42
++#define BMI270_GYR_CONF_ODR_MSK                                GENMASK(3, 0)
++#define BMI270_GYR_CONF_ODR_200HZ                      0x09
++#define BMI270_GYR_CONF_BWP_MSK                                GENMASK(5, 4)
++#define BMI270_GYR_CONF_BWP_NORMAL_MODE                        0x02
++#define BMI270_GYR_CONF_NOISE_PERF_MSK                 BIT(6)
++#define BMI270_GYR_CONF_FILTER_PERF_MSK                        BIT(7)
++
++#define BMI270_INIT_CTRL_REG                           0x59
++#define BMI270_INIT_CTRL_LOAD_DONE_MSK                 BIT(0)
++
++#define BMI270_INIT_DATA_REG                           0x5e
++
++#define BMI270_PWR_CONF_REG                            0x7c
++#define BMI270_PWR_CONF_ADV_PWR_SAVE_MSK               BIT(0)
++#define BMI270_PWR_CONF_FIFO_WKUP_MSK                  BIT(1)
++#define BMI270_PWR_CONF_FUP_EN_MSK                     BIT(2)
++
++#define BMI270_PWR_CTRL_REG                            0x7d
++#define BMI270_PWR_CTRL_AUX_EN_MSK                     BIT(0)
++#define BMI270_PWR_CTRL_GYR_EN_MSK                     BIT(1)
++#define BMI270_PWR_CTRL_ACCEL_EN_MSK                   BIT(2)
++#define BMI270_PWR_CTRL_TEMP_EN_MSK                    BIT(3)
++
+ #define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
+
+ enum bmi270_scan {
+@@ -35,10 +81,10 @@ static int bmi270_get_data(struct bmi270_data *bmi270_device,
+ 
+        switch (chan_type) {
+        case IIO_ACCEL:
+-               reg = BMI270_ACCEL_X_REG + (axis - IIO_MOD_X) * sizeof(sample);
++               reg = BMI270_ACCEL_X_REG + (axis - IIO_MOD_X) * 2;
+                break;
+        case IIO_ANGL_VEL:
+-               reg = BMI270_ANG_VEL_X_REG + (axis - IIO_MOD_X) * sizeof(sample);
++               reg = BMI270_ANG_VEL_X_REG + (axis - IIO_MOD_X) * 2;
+                break;
+        default:
+                return -EINVAL;
+@@ -82,7 +128,7 @@ static const struct iio_info bmi270_info = {
+        .channel2 = IIO_MOD_##_axis,                            \
+        .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),           \
+        .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |  \
+-       BIT(IIO_CHAN_INFO_FREQUENCY),                           \
++               BIT(IIO_CHAN_INFO_FREQUENCY),                   \
+ }
+ 
+ #define BMI270_ANG_VEL_CHANNEL(_axis) {                                \
+@@ -91,7 +137,7 @@ static const struct iio_info bmi270_info = {
+        .channel2 = IIO_MOD_##_axis,                            \
+        .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),           \
+        .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |  \
+-       BIT(IIO_CHAN_INFO_FREQUENCY),                           \
++               BIT(IIO_CHAN_INFO_FREQUENCY),                   \
+ }
+ 
+ static const struct iio_chan_spec bmi270_channels[] = {
+@@ -100,7 +146,7 @@ static const struct iio_chan_spec bmi270_channels[] = {
+        BMI270_ACCEL_CHANNEL(Z),
+        BMI270_ANG_VEL_CHANNEL(X),
+        BMI270_ANG_VEL_CHANNEL(Y),
+-       BMI270_ANG_VEL_CHANNEL(Z)
++       BMI270_ANG_VEL_CHANNEL(Z),
+ };
+ 
+ static int bmi270_validate_chip_id(struct bmi270_data *bmi270_device)
+@@ -115,7 +161,7 @@ static int bmi270_validate_chip_id(struct bmi270_data *bmi270_device)
+                return dev_err_probe(dev, ret, "Failed to read chip id");
+ 
+        if (chip_id != BMI270_CHIP_ID_VAL)
+-               return dev_err_probe(dev, -ENODEV, "Invalid chip id 0x%x", chip_id);
++               dev_info(dev, "Unknown chip id 0x%x", chip_id);
+ 
+        return 0;
+ }
+@@ -128,18 +174,24 @@ static int bmi270_write_calibration_data(struct bmi270_data *bmi270_device)
+        struct device *dev = bmi270_device->dev;
+        struct regmap *regmap = bmi270_device->regmap;
+ 
+-       ret = regmap_clear_bits(regmap, BMI270_PWR_CONF_REG, BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
++       ret = regmap_clear_bits(regmap, BMI270_PWR_CONF_REG,
++                               BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
+        if (ret)
+-               return dev_err_probe(dev, ret, "Failed to write power configuration");
++               return dev_err_probe(dev, ret,
++                                    "Failed to write power configuration");
+ 
+-       /* After disabling advanced power save, all registers are accessible after a 450us delay
+-        * This delay is specified in table A of the datasheet.
++       /*
++        * After disabling advanced power save, all registers are accessible
++        * after a 450us delay. This delay is specified in table A of the
++        * datasheet.
+         */
+        usleep_range(450, 1000);
+ 
+-       ret = regmap_clear_bits(regmap, BMI270_INIT_CTRL_REG, BMI270_INIT_CTRL_LOAD_DONE_MSK);
++       ret = regmap_clear_bits(regmap, BMI270_INIT_CTRL_REG,
++                               BMI270_INIT_CTRL_LOAD_DONE_MSK);
+        if (ret)
+-               return dev_err_probe(dev, ret, "Failed to prepare device to load init data");
++               return dev_err_probe(dev, ret,
++                                    "Failed to prepare device to load init data");
+ 
+        ret = request_firmware(&init_data, BMI270_INIT_DATA_FILE, dev);
+        if (ret)
+@@ -151,11 +203,14 @@ static int bmi270_write_calibration_data(struct bmi270_data *bmi270_device)
+        if (ret)
+                return dev_err_probe(dev, ret, "Failed to write init data");
+ 
+-       ret = regmap_set_bits(regmap, BMI270_INIT_CTRL_REG, BMI270_INIT_CTRL_LOAD_DONE_MSK);
++       ret = regmap_set_bits(regmap, BMI270_INIT_CTRL_REG,
++                             BMI270_INIT_CTRL_LOAD_DONE_MSK);
+        if (ret)
+-               return dev_err_probe(dev, ret, "Failed to stop device initialization");
++               return dev_err_probe(dev, ret,
++                                    "Failed to stop device initialization");
+ 
+-       /* Wait at least 140ms for the device to complete configuration.
++       /*
++        * Wait at least 140ms for the device to complete configuration.
+         * This delay is specified in table C of the datasheet.
+         */
+        usleep_range(140000, 160000);
+@@ -231,7 +286,7 @@ int bmi270_core_probe(struct device *dev, struct regmap *regmap)
+        struct bmi270_data *bmi270_device;
+        struct iio_dev *indio_dev;
+ 
+-       indio_dev = devm_iio_device_alloc(dev, sizeof(struct bmi270_data *));
++       indio_dev = devm_iio_device_alloc(dev, sizeof(*bmi270_device));
+        if (!indio_dev)
+                return -ENOMEM;
+
+> diff --git a/drivers/iio/imu/bmi270/Makefile b/drivers/iio/imu/bmi270/Makefile
+> new file mode 100644
+> index 000000000000..ab4acaaee6d2
+> --- /dev/null
+> +++ b/drivers/iio/imu/bmi270/Makefile
+> @@ -0,0 +1,6 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Makefile for Bosch BMI270 IMU
+> +#
+> +obj-$(CONFIG_BMI270) += bmi270_core.o
+> +obj-$(CONFIG_BMI270_I2C) += bmi270_i2c.o
+> diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
+> new file mode 100644
+> index 000000000000..4af4098d8e82
+> --- /dev/null
+> +++ b/drivers/iio/imu/bmi270/bmi270.h
+> @@ -0,0 +1,62 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef BMI270_H_
+> +#define BMI270_H_
+> +
+> +#include <linux/iio/iio.h>
+no obvious reason for this.  Headers should only include things
+they need.
+
+However you do need some forward definitions for
+struct device;
+and an include of regmap.h for the regmap_config.
+
+> +
+> +#define BMI270_CHIP_ID_REG				0x00
+> +#define BMI270_CHIP_ID_VAL				0x24
+> +#define BMI270_CHIP_ID_MSK				GENMASK(7, 0)
+> +
+> +#define BMI270_ACCEL_X_REG				0x0c
+> +#define BMI270_ANG_VEL_X_REG				0x12
+> +
+> +#define BMI270_INTERNAL_STATUS_REG			0x21
+> +#define BMI270_INTERNAL_STATUS_MSG_MSK			GENMASK(3, 0)
+> +#define BMI270_INTERNAL_STATUS_MSG_INIT_OK		0x01
+> +
+> +#define BMI270_INTERNAL_STATUS_AXES_REMAP_ERR_MSK	BIT(5)
+> +#define BMI270_INTERNAL_STATUS_ODR_50HZ_ERR_MSK		BIT(6)
+> +
+> +#define BMI270_ACC_CONF_REG				0x40
+> +#define BMI270_ACC_CONF_ODR_MSK				GENMASK(3, 0)
+> +#define BMI270_ACC_CONF_ODR_100HZ			0x08
+> +#define BMI270_ACC_CONF_BWP_MSK				GENMASK(6, 4)
+> +#define BMI270_ACC_CONF_BWP_NORMAL_MODE			0x02
+> +#define BMI270_ACC_CONF_FILTER_PERF_MSK			BIT(7)
+> +
+> +#define BMI270_GYR_CONF_REG				0x42
+> +#define BMI270_GYR_CONF_ODR_MSK				GENMASK(3, 0)
+> +#define BMI270_GYR_CONF_ODR_200HZ			0x09
+> +#define BMI270_GYR_CONF_BWP_MSK				GENMASK(5, 4)
+> +#define BMI270_GYR_CONF_BWP_NORMAL_MODE			0x02
+> +#define BMI270_GYR_CONF_NOISE_PERF_MSK			BIT(6)
+> +#define BMI270_GYR_CONF_FILTER_PERF_MSK			BIT(7)
+> +
+> +#define BMI270_INIT_CTRL_REG				0x59
+> +#define BMI270_INIT_CTRL_LOAD_DONE_MSK			BIT(0)
+> +
+> +#define BMI270_INIT_DATA_REG				0x5e
+> +
+> +#define BMI270_PWR_CONF_REG				0x7c
+> +#define BMI270_PWR_CONF_ADV_PWR_SAVE_MSK		BIT(0)
+> +#define BMI270_PWR_CONF_FIFO_WKUP_MSK			BIT(1)
+> +#define BMI270_PWR_CONF_FUP_EN_MSK			BIT(2)
+> +
+> +#define BMI270_PWR_CTRL_REG				0x7d
+> +#define BMI270_PWR_CTRL_AUX_EN_MSK			BIT(0)
+> +#define BMI270_PWR_CTRL_GYR_EN_MSK			BIT(1)
+> +#define BMI270_PWR_CTRL_ACCEL_EN_MSK			BIT(2)
+> +#define BMI270_PWR_CTRL_TEMP_EN_MSK			BIT(3)
+Currently all these defines are just used in the core c file.
+So I'd move them there for now. We can drag them back into the header
+if the spi bus driver needs them.
+
+> +
+> +struct bmi270_data {
+> +	struct device *dev;
+> +	struct regmap *regmap;
+> +};
+> +
+> +extern const struct regmap_config bmi270_regmap_config;
+> +
+> +int bmi270_core_probe(struct device *dev, struct regmap *regmap);
+> +
+> +#endif  /* BMI270_H_ */
+> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
+> new file mode 100644
+> index 000000000000..319e5601d9e7
+> --- /dev/null
+> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
+> @@ -0,0 +1,258 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +
+> +#include <linux/firmware.h>
+> +#include <linux/i2c.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/bitfield.h>
+> +
+> +#include "bmi270.h"
+> +
+> +#define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
+> +
+> +enum bmi270_scan {
+> +	BMI270_SCAN_ACCEL_X,
+> +	BMI270_SCAN_ACCEL_Y,
+> +	BMI270_SCAN_ACCEL_Z,
+> +	BMI270_SCAN_GYRO_X,
+> +	BMI270_SCAN_GYRO_Y,
+> +	BMI270_SCAN_GYRO_Z,
+> +};
+> +
+> +const struct regmap_config bmi270_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +};
+> +EXPORT_SYMBOL_NS_GPL(bmi270_regmap_config, IIO_BMI270);
+> +
+> +static int bmi270_get_data(struct bmi270_data *bmi270_device,
+> +			   int chan_type, int axis, int *val)
+> +{
+> +	__le16 sample;
+> +	int reg;
+> +	int ret;
+> +
+> +	switch (chan_type) {
+> +	case IIO_ACCEL:
+> +		reg = BMI270_ACCEL_X_REG + (axis - IIO_MOD_X) * sizeof(sample);
+> +		break;
+> +	case IIO_ANGL_VEL:
+> +		reg = BMI270_ANG_VEL_X_REG + (axis - IIO_MOD_X) * sizeof(sample);
+
+This only works because they are 1 byte registers which isn't obvious here
+So I don't think sizeof(sample) is very useful vs 2.
+
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = regmap_bulk_read(bmi270_device->regmap, reg, &sample, sizeof(sample));
+> +	if (ret)
+> +		return ret;
+> +
+> +	*val = sign_extend32(le16_to_cpu(sample), 15);
+> +
+> +	return 0;
+> +}
+> +
+
+> +
+> +#define BMI270_ACCEL_CHANNEL(_axis) {				\
+> +	.type = IIO_ACCEL,					\
+> +	.modified = 1,						\
+> +	.channel2 = IIO_MOD_##_axis,				\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
+> +	BIT(IIO_CHAN_INFO_FREQUENCY),				\
+
+Probably good to indent this last item by one more tab to help
+with reability.
+
+> +}
+> +
+> +#define BMI270_ANG_VEL_CHANNEL(_axis) {				\
+> +	.type = IIO_ANGL_VEL,					\
+> +	.modified = 1,						\
+> +	.channel2 = IIO_MOD_##_axis,				\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
+> +	BIT(IIO_CHAN_INFO_FREQUENCY),				\
+> +}
+> +./v4_20240912_lanzano_alex_add_i2c_driver_for_bosch_bmi270_imu.mbx
+> +static const struct iio_chan_spec bmi270_channels[] = {
+> +	BMI270_ACCEL_CHANNEL(X),
+> +	BMI270_ACCEL_CHANNEL(Y),
+> +	BMI270_ACCEL_CHANNEL(Z),
+> +	BMI270_ANG_VEL_CHANNEL(X),
+> +	BMI270_ANG_VEL_CHANNEL(Y),
+> +	BMI270_ANG_VEL_CHANNEL(Z)
+Add a trailing comma as we may well have additional channels in future
+that come after this.
+
+> +};
+> +
+> +static int bmi270_validate_chip_id(struct bmi270_data *bmi270_device)
+> +{
+> +	int chip_id;
+> +	int ret;
+> +	struct device *dev = bmi270_device->dev;
+> +	struct regmap *regmap = bmi270_device->regmap;
+> +
+> +	ret = regmap_read(regmap, BMI270_CHIP_ID_REG, &chip_id);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to read chip id");
+> +
+> +	if (chip_id != BMI270_CHIP_ID_VAL)
+> +		return dev_err_probe(dev, -ENODEV, "Invalid chip id 0x%x", chip_id);
+A failure to match on a ID register should not result in a failure to probe.
+The reason for this is Device tree fallback compatibles.
+Those allow for a future device that is compatible (it may have a superset of
+features) with this part to use a dt-binding that includes the compatible
+for this one despite having a different ID register value.
+
+As such this should print an information message to say it's an unknown
+device ID but return success.
+	
+> +
+> +	return 0;
+> +}
+> +
+> +static int bmi270_write_calibration_data(struct bmi270_data *bmi270_device)
+> +{
+> +	int ret;
+> +	int status = 0;
+> +	const struct firmware *init_data;
+> +	struct device *dev = bmi270_device->dev;
+> +	struct regmap *regmap = bmi270_device->regmap;
+> +
+> +	ret = regmap_clear_bits(regmap, BMI270_PWR_CONF_REG, BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to write power configuration");
+> +
+> +	/* After disabling advanced power save, all registers are accessible after a 450us delay
+All IIO multiline comments are
+
+	/* 
+	 * After...
+
+
+> +	 * This delay is specified in table A of the datasheet.
+> +	 */
+> +	usleep_range(450, 1000);
+> +
+> +	ret = regmap_clear_bits(regmap, BMI270_INIT_CTRL_REG, BMI270_INIT_CTRL_LOAD_DONE_MSK);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to prepare device to load init data");
+> +
+> +	ret = request_firmware(&init_data, BMI270_INIT_DATA_FILE, dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to load init data file");
+> +
+> +	ret = regmap_bulk_write(regmap, BMI270_INIT_DATA_REG,
+> +				init_data->data, init_data->size);
+> +	release_firmware(init_data);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to write init data");
+> +
+> +	ret = regmap_set_bits(regmap, BMI270_INIT_CTRL_REG, BMI270_INIT_CTRL_LOAD_DONE_MSK);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to stop device initialization");
+> +
+> +	/* Wait at least 140ms for the device to complete configuration.
+> +	 * This delay is specified in table C of the datasheet.
+> +	 */
+> +	usleep_range(140000, 160000);
+> +
+> +	ret = regmap_read(regmap, BMI270_INTERNAL_STATUS_REG, &status);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to read internal status");
+> +
+> +	if (status != BMI270_INTERNAL_STATUS_MSG_INIT_OK)
+> +		return dev_err_probe(dev, -ENODEV, "Device failed to initialize");
+> +
+> +	return 0;
+> +}
 
 
