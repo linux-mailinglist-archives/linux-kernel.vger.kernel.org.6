@@ -1,250 +1,121 @@
-Return-Path: <linux-kernel+bounces-329378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BECE97908A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:36:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3301B97908D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D111C21A23
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B9128317E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378DA1CF2A3;
-	Sat, 14 Sep 2024 11:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732A01CF2B2;
+	Sat, 14 Sep 2024 11:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5uFXxFX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pC0rAyg/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B6D43177;
-	Sat, 14 Sep 2024 11:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC49C1CEE91;
+	Sat, 14 Sep 2024 11:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726313778; cv=none; b=QxQ7PNcAG9O7YL7oQnZOmqD6VOzYDQ+2ARTTSpxS0hbRSTkBxMwHljbha+QjOhFfg/3YZXnzzbDoXvFFZjhG9ia3/7vwUqh5dW75rmjTnlNTIQefQuEYZt5PZBe2AxNiPasfIKLVIaLYc6oG6wtydsbD531ZSHHKnPGm1B4biMg=
+	t=1726313799; cv=none; b=IaiAxN7z5VZNGmCUU+qnRscUTFqPq39LoKbSpq16DrTu7Q7j7w6AB63t8G6qiKomD2jNmFM+BohDTWxwnwTZofhAf4BOfTu6VpffVk7WVJvUjZLNZN1KGKcXcC4gCdPc2GBZflsBMnVbScoik/qidDRStK/yX3XPyEc2B8kKNEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726313778; c=relaxed/simple;
-	bh=KniP7/7T0/7iq4KLpY88z5uNWVBS7tQwjtKjGv1gMCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o1zSGZ9wm65bSFCl8HPdtRSY+wxxKtnUEz3MeOEDqkmBy/oNI5eixxNrdgbbVkdHXBS7V+ot71VLaD+wtgTqfQf1BD6yEWUchRaN/NDcZ80umzNviDwZy85x1kPbPXR80mWko+cZx62QtNlGeBN35UhY+y0vBQIyC/DHSdr+lBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5uFXxFX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DDAC4CEC0;
-	Sat, 14 Sep 2024 11:36:15 +0000 (UTC)
+	s=arc-20240116; t=1726313799; c=relaxed/simple;
+	bh=qnVKswh1C/VcMi/8JBHh5XHeNODqo3B7FYnosOg1iQ8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=WS1eTaXkEOJpStB0rTXv7uso+8ku1JXB8yKNCQNmUPgwJJijACuMn18+NEtGiCm02KzWFsfMpWP1S2f2B8EstUrjmgd10uQLwBbqOqCCSPiCUhR0jyH140ZUUHAcjv+mlFDDeQKYktuBqjeddS5lKy6kQvXShoOgr8JEKDiy2Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pC0rAyg/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E2ECC4CEC0;
+	Sat, 14 Sep 2024 11:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726313778;
-	bh=KniP7/7T0/7iq4KLpY88z5uNWVBS7tQwjtKjGv1gMCg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Q5uFXxFX6f0qi61Vy6Ogq0wSnXoQHzxorxn+UpnNbG7Gnl+MB8YrmSyU1W6bZb/26
-	 Gsd0Cim2Ns8Ae44hWDK5ILje1O576B43CDBdFgwn17D6nWxQip6gIsmr2YMz/CO70c
-	 XPQfsWI6jufespqsrIEoS8HVSu4OVCGMHBy+OgwAbL6QtNMzE5P8P0UwVsU/PZ1Uob
-	 Cr7JiUiUS7/P6Siw8bQNfn68UOAugJaf1N6AOYoF/Zghq6O+78GEGGg2MKMD2jI4pU
-	 K+P1yKUJAEa23595Ec03QW4q8lCVFzAiX4mJ3iVPyp1zmZ/VtEBu4I+06KzO3ZveO8
-	 5woyIK4PWnPqQ==
-Date: Sat, 14 Sep 2024 12:36:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: dan.carpenter@linaro.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: iio: pressure: bmp280: Use char instead of s32 for data buffer
-Message-ID: <20240914123611.3fdb1fbf@jic23-huawei>
-In-Reply-To: <20240823172017.9028-1-vassilisamir@gmail.com>
-References: <20240823172017.9028-1-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1726313799;
+	bh=qnVKswh1C/VcMi/8JBHh5XHeNODqo3B7FYnosOg1iQ8=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=pC0rAyg/AeP9bBL1eEWSuL3M3eNWRaTA3iUMWDTHAej2H9t8eARMY6EJKXkSpY7qd
+	 Fvs6jnJ83YZZsJUyW8C2W/c3aJfR4HNWSO7BkIFnKmHUczs2lShv378hyR+gaIiHDj
+	 ufksGhjE7KFs2CJKAMsBNtNV8xh5mQo32I8XCEpwCHafAxHNJDCw1TB2YMaTqWZCVq
+	 fCCJP2bPvoeuJsRBQiKDTbNbQDM4tKpi2Cr+k8RgVqUujO+Ggzlu0//Xn5d1dTD2mh
+	 oIivRCysd3rT07AMHAqVV22jii4bgcJ2WfzWp/YI0zDDF/tZq+qXzL2Qrmq0lCJYPg
+	 cC1eBCEyzQWwg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 14 Sep 2024 14:36:35 +0300
+Message-Id: <D45Z61F5DSHN.1PJB50JEMACEW@kernel.org>
+Cc: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, "Sergey
+ Shtylyov" <s.shtylyov@omp.ru>, "Karina Yankevich" <k.yankevich@omp.ru>,
+ "Sergey Yudin" <s.yudin@omp.ru>
+Subject: Re: [PATCH v3] KEYS: prevent NULL pointer dereference in
+ find_asymmetric_key()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Roman Smirnov" <r.smirnov@omp.ru>, "David Howells"
+ <dhowells@redhat.com>, "Herbert Xu" <herbert@gondor.apana.org.au>, "David S
+ . Miller" <davem@davemloft.net>, "Andrew Zaborowski"
+ <andrew.zaborowski@intel.com>
+X-Mailer: aerc 0.18.2
+References: <20240913143010.117883-1-r.smirnov@omp.ru>
+In-Reply-To: <20240913143010.117883-1-r.smirnov@omp.ru>
 
-On Fri, 23 Aug 2024 19:20:17 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-
-> As it was reported and discussed here [1], storing the sensor data in an
-> endian aware s32 buffer is not optimal. Advertising the timestamp as an
-> addition of 2 s32 variables which is also implied is again not the best
-> practice. For that reason, change the s32 sensor_data buffer to a char
-> buffer with an extra value for the timestamp (as it is common practice).
-> 
-> [1]: https://lore.kernel.org/linux-iio/73d13cc0-afb9-4306-b498-5d821728c3ba@stanley.mountain/
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-Hi.
-Thanks for poking. Looks like I'd accidentally marked this one handled
-without actually doing so :(
-
+On Fri Sep 13, 2024 at 5:30 PM EEST, Roman Smirnov wrote:
+> In find_asymmetric_key(), if all NULLs are passed in the id_{0,1,2}
+> arguments, the kernel will first emit WARN but then have an oops
+> because id_2 gets dereferenced anyway.
+>
+> Add the missing id_2 check and move WARN_ON() to the final else branch
+> to avoid duplicate NULL checks.
+>
+> Found by Linux Verification Center (linuxtesting.org) with Svace static
+> analysis tool.
+>
+> Fixes: 7d30198ee24f ("keys: X.509 public key issuer lookup without AKID")
+> Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 > ---
->  drivers/iio/pressure/bmp280-core.c | 43 +++++++++++++++++-------------
->  drivers/iio/pressure/bmp280.h      |  5 +++-
->  2 files changed, 28 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> index 3deaa57bb3f5..71e481c2f30d 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -1035,7 +1035,8 @@ static irqreturn_t bmp280_trigger_handler(int irq, void *p)
->  		goto out;
->  	}
->  
-> -	data->sensor_data[1] = bmp280_compensate_temp(data, adc_temp);
-> +	ret = bmp280_compensate_temp(data, adc_temp);
-> +	memcpy(&data->buffer.buf[4], &ret, 4);
-
-The 4's in here are magic indexes.  Probably use sizeof(s32) in both cases.
-Maybe for the first one make the fact it's after an s32 explicit with
-&data->buffer.buf[1 * sizeof(s32)]
-
-Of carry an offset through the code that you update when you fill in part of
-the buffer.  That is probably cleaner.
-
-	int offset = 0;
-	stuff
-	offset += sizeof(s32);
-	mempcy(&data->bufer.buf[offset], &ret, 4);
-
-if offset is used for a later entry then add the new element.
-
-
->  
->  	/* Pressure calculations */
->  	adc_press = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[0]));
-> @@ -1045,10 +1046,10 @@ static irqreturn_t bmp280_trigger_handler(int irq, void *p)
->  	}
->  
->  	t_fine = bmp280_calc_t_fine(data, adc_temp);
-> +	ret = bmp280_compensate_press(data, adc_press, t_fine);
-> +	memcpy(&data->buffer.buf[0], &ret, 4);
->  
-> -	data->sensor_data[0] = bmp280_compensate_press(data, adc_press, t_fine);
+>  V1 -> V2: updated patch description, returned WARN_ON() macro
+>  V2 -> V3: updated patch description
+>  crypto/asymmetric_keys/asymmetric_type.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric=
+_keys/asymmetric_type.c
+> index a5da8ccd353e..43af5fa510c0 100644
+> --- a/crypto/asymmetric_keys/asymmetric_type.c
+> +++ b/crypto/asymmetric_keys/asymmetric_type.c
+> @@ -60,17 +60,18 @@ struct key *find_asymmetric_key(struct key *keyring,
+>  	char *req, *p;
+>  	int len;
+> =20
+> -	WARN_ON(!id_0 && !id_1 && !id_2);
 > -
-> -	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
->  					   iio_get_time_ns(indio_dev));
->  
->  out:
-> @@ -1148,7 +1149,8 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
->  		goto out;
+>  	if (id_0) {
+>  		lookup =3D id_0->data;
+>  		len =3D id_0->len;
+>  	} else if (id_1) {
+>  		lookup =3D id_1->data;
+>  		len =3D id_1->len;
+> -	} else {
+> +	} else if (id_2) {
+>  		lookup =3D id_2->data;
+>  		len =3D id_2->len;
+> +	} else {
+> +		WARN_ON(1);
+> +		return ERR_PTR(-EINVAL);
 >  	}
->  
-> -	data->sensor_data[1] = bmp280_compensate_temp(data, adc_temp);
-> +	ret = bmp280_compensate_temp(data, adc_temp);
-> +	memcpy(&data->buffer.buf[4], &ret, 4);
->  
->  	/* Pressure calculations */
->  	adc_press = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[0]));
-> @@ -1158,8 +1160,8 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
->  	}
->  
->  	t_fine = bmp280_calc_t_fine(data, adc_temp);
-> -
-> -	data->sensor_data[0] = bmp280_compensate_press(data, adc_press, t_fine);
-> +	ret = bmp280_compensate_press(data, adc_press, t_fine);
-> +	memcpy(&data->buffer.buf[0], &ret, 4);
->  
->  	/* Humidity calculations */
->  	adc_humidity = get_unaligned_be16(&data->buf[6]);
-> @@ -1168,9 +1170,11 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
->  		dev_err(data->dev, "reading humidity skipped\n");
->  		goto out;
->  	}
-> -	data->sensor_data[2] = bme280_compensate_humidity(data, adc_humidity, t_fine);
->  
-> -	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
-> +	ret = bme280_compensate_humidity(data, adc_humidity, t_fine);
-> +	memcpy(&data->buffer.buf[8], &ret, 4);
-as above, but here it is I guess after 2 other elements, so
+> =20
+>  	/* Construct an identifier "id:<keyid>". */
 
-2 * sizeof(s32)
+Thanks this works for me at least. David do you have objections?
+If not, I'll pick it up for my v6.12 PR.
 
-> +
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
->  					   iio_get_time_ns(indio_dev));
->  
->  out:
-> @@ -1628,7 +1632,8 @@ static irqreturn_t bmp380_trigger_handler(int irq, void *p)
->  		goto out;
->  	}
->  
-> -	data->sensor_data[1] = bmp380_compensate_temp(data, adc_temp);
-> +	ret = bmp380_compensate_temp(data, adc_temp);
-> +	memcpy(&data->buffer.buf[4], &ret, 4);
->  
->  	/* Pressure calculations */
->  	adc_press = get_unaligned_le24(&data->buf[0]);
-> @@ -1638,10 +1643,10 @@ static irqreturn_t bmp380_trigger_handler(int irq, void *p)
->  	}
->  
->  	t_fine = bmp380_calc_t_fine(data, adc_temp);
-> +	ret = bmp380_compensate_press(data, adc_press, t_fine);
-> +	memcpy(&data->buffer.buf[0], &ret, 4);
->  
-> -	data->sensor_data[0] = bmp380_compensate_press(data, adc_press, t_fine);
-> -
-> -	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
->  					   iio_get_time_ns(indio_dev));
->  
->  out:
-> @@ -2203,12 +2208,12 @@ static irqreturn_t bmp580_trigger_handler(int irq, void *p)
->  	}
->  
->  	/* Temperature calculations */
-> -	memcpy(&data->sensor_data[1], &data->buf[0], 3);
-> +	memcpy(&data->buffer.buf[4], &data->buf[0], 3);
->  
->  	/* Pressure calculations */
-> -	memcpy(&data->sensor_data[0], &data->buf[3], 3);
-> +	memcpy(&data->buffer.buf[0], &data->buf[3], 3);
-
-> -	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
->  					   iio_get_time_ns(indio_dev));
->  
->  out:
-> @@ -2522,15 +2527,15 @@ static irqreturn_t bmp180_trigger_handler(int irq, void *p)
->  	if (ret)
->  		goto out;
->  
-> -	data->sensor_data[1] = chan_value;
-> +	memcpy(&data->buffer.buf[4], &chan_value, 4);
->  
->  	ret = bmp180_read_press(data, &chan_value);
->  	if (ret)
->  		goto out;
->  
-> -	data->sensor_data[0] = chan_value;
-> +	memcpy(&data->buffer.buf[0], &chan_value, 4);
->  
-> -	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
->  					   iio_get_time_ns(indio_dev));
->  
->  out:
-> diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
-> index ccacc67c1473..a853b6d5bdfa 100644
-> --- a/drivers/iio/pressure/bmp280.h
-> +++ b/drivers/iio/pressure/bmp280.h
-> @@ -411,7 +411,10 @@ struct bmp280_data {
->  	 * Data to push to userspace triggered buffer. Up to 3 channels and
->  	 * s64 timestamp, aligned.
->  	 */
-> -	s32 sensor_data[6] __aligned(8);
-> +	struct {
-> +		u8 buf[12];
-> +		s64 ts __aligned(8);
-
-We have a new aligned_s64 that is cleaner for these cases.  It's only
-in my togreg branch currently though so you'll need to base on that
-to use it.
-
-Jonathan
-
-
-> +	} buffer;
->  
->  	/*
->  	 * DMA (thus cache coherency maintenance) may require the
-
+BR, Jarkko
 
