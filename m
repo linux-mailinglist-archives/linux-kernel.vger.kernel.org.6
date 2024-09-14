@@ -1,122 +1,128 @@
-Return-Path: <linux-kernel+bounces-329351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446BC979046
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:08:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E8D97904F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3606B2345E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:08:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAAF61C233FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B24F1CEE8C;
-	Sat, 14 Sep 2024 11:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE581CCEE7;
+	Sat, 14 Sep 2024 11:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JiMfdwfq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3AFowFB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63B28F7D
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 11:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC627A15A;
+	Sat, 14 Sep 2024 11:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726312127; cv=none; b=cJZvaD3EAcuijo+7l2AwWpOWqVHNHviwJdW6Y0H9MBky2FF5iTyjB9LRTLEZ7g/Wv9sYGWbqJYHUch4APF68Tf12Ty8XNCBAhoUtXMfLwZWWHbQb4fpFdOWY7nDMoGX93ZMBvto4CnFrpfmdJP79d48lVzjXDYluVgvqU4Onh6E=
+	t=1726312187; cv=none; b=tSUBqwQQ8WCHUZYXIGlRD+SS71vAxR7/c2n2SakhkReYpsReD2essj3QYAkXaDc1OhuLyL7mk/6ybE6ShkHO32nAZbEkkXI59Wsospv0fWfgM8thE88WezmEodSgfefSHoW8BkQbuJPAbl+IXQqwwQ1TimVZh7mvl2smJDJ7LG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726312127; c=relaxed/simple;
-	bh=XsoSN9idZ7w1vGfxQcAYT2cp/v55f8wnURfLYiQtq74=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=kaTPuDPq91PhDYC/kEPnfH6uxwhO1w4n/BW5C4NAekMBrVmgAvrip9S1fT3g+YWmB7ufD3nbcVX1QdH+nw0/xdEmNgE75gcRvhrf4wKOzigcD4abAtj3Bpj/51S1HD6rw1hVixUE0EeepDhC/frzIM0T8tsrhht2w/wZ6uqIwdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JiMfdwfq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726312124;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=5hWv2p2YsLipAZ5vTTG2ulS62USpNXTSCdiYtz6i4es=;
-	b=JiMfdwfqujVV8R4KeLo6G1nCe0axctsVSi0d5Apr5no4KmrtiPfO4QmSuMl2xZi6afv+GP
-	Agi9TlgiykJuPZMOZI9Of0o4UptPN0KxN7oVpNvX9Ie7wCTk52f3g0/pH/Sa/SHI1q4WYV
-	sQymlPWxxYj9CntnIylOWLfDg9I075A=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-64-XjRgLm8TPcaqCplGoVx3MQ-1; Sat, 14 Sep 2024 07:08:43 -0400
-X-MC-Unique: XjRgLm8TPcaqCplGoVx3MQ-1
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39f4f43b818so67417345ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 04:08:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726312122; x=1726916922;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5hWv2p2YsLipAZ5vTTG2ulS62USpNXTSCdiYtz6i4es=;
-        b=ROSqLd5W3nxGq/H9bBd3BToOImpNi2YK+tSgZYjEherT+H4iuR7x9/e3O5N8JSIFy6
-         E4l8bB+709l2y6FDzHEkGwL54GVGEhHl6b2J93aWE2Alww7r6jkTg+hlosZHvs8KQ42S
-         udZe5FM7ADJxSRtsU19z7HE88IqYUyPFmqqiLeKpSfkTuPFAoQZP2bLmTOk/ZQ7Tgbs4
-         lJ4kZoOqgG0sAyWGrpz7vh1upTgT7XrpwyQygNfSFG4Q1BG6DQG08Gl2SFloyNkhp0DZ
-         ExOrFR8JS5XMgSmgLHWwSRjWVmEr95D7gLI+NCFO/rx+zutvQv5xXQF1FOUV7OYRhLRy
-         2XDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXl3zatGBAVO3p5DtuTD4J2IoYAGhPsTngLnvRo/W2N0/N15Qte0S23REVrtQA59fRcIq0EnuUPtDA3Qq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlealnm1huJU4KbMkdA4aOQTuUYoCO0cpiVqTY5+iD878Y9ZgE
-	Eo5yDFeL7Zkl2ESd2OTG4BXJy/HBOkpSAo60KHTmcKraSzR+z8s7EijHFqET2wQTNzpto7a7j0h
-	c7EKHT4YSg9FBVo3rfcYhgVBM8Kw553iolljyHUB9iaEiD2SBtEPjO89Nf8ZwBJRfJvIHzCA1rG
-	HU0dKwh+V2c2rBiu980eo1qS+8SalULkssXp7r
-X-Received: by 2002:a05:6e02:1d88:b0:395:e85e:f2fa with SMTP id e9e14a558f8ab-3a084611b38mr80010875ab.1.1726312122586;
-        Sat, 14 Sep 2024 04:08:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLEgZRYuK78TvhEpzPipQjXBQpjmz90/JWHNwPzBDfQVodpJaRcUvzxokERl4ytbOKVYQGFjB3CUpDJ2OizQk=
-X-Received: by 2002:a05:6e02:1d88:b0:395:e85e:f2fa with SMTP id
- e9e14a558f8ab-3a084611b38mr80010695ab.1.1726312122279; Sat, 14 Sep 2024
- 04:08:42 -0700 (PDT)
+	s=arc-20240116; t=1726312187; c=relaxed/simple;
+	bh=dj3RBJNoLKQBK3vq1ElWbWaAStCLklS2fV4ce+qLNLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=npXadbZT0wVoKEkp2R0HeIMTl2VaIEaHAItCpFXTcQlRAryLPVwNi56sgz4kZXC+9Mru5mdH+B/9nQeGFORKMyI61Kqdavz05tldKNUDdofEhag0GXOpJ2MlC+ZtqDU0JUYEtw4m2Z452hM8/jflekvrCTl9PCbFdbbfwZPpT/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3AFowFB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43321C4CEC0;
+	Sat, 14 Sep 2024 11:09:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726312186;
+	bh=dj3RBJNoLKQBK3vq1ElWbWaAStCLklS2fV4ce+qLNLw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A3AFowFBpYHm3nEXBsh3KY+x69JVDf+m+f2xnGnr/5M3fRQDzUsqxBbp1VK4Xe5Jz
+	 XL6KwzGdfp8Tob718K9bFBbD8mu+Q6PVKpTG7Z3vfdNpNm0ecEZ9Ljk7WpvFx9UVpY
+	 pAD5OLo7Jzw5qMmjcZpvIItjpZ0IIY9bEYXydbrWEs2BkHjYaj+mrpXGAU7zE6qNIN
+	 I+5GJwVAg5zNwYxUigqH9XdOQqifOWpWmuJR0Vweje6uBMGNC0jr2TenJWxT0hkYDN
+	 uGJRrJbTWH2XYn3KohTR1QLabVJ/IM9ZY8hyiBiLm44VQrym4WDnLmQGHahZemO6s3
+	 NDewcY92WN7/Q==
+Date: Sat, 14 Sep 2024 12:09:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ aardelean@baylibre.com
+Subject: Re: [PATCH 7/8] iio: adc: ad7606: Switch to
+ xxx_get_device_match_data
+Message-ID: <20240914120936.01e3d694@jic23-huawei>
+In-Reply-To: <e6d3926a-002d-445a-8ac5-8d47b2be27b0@baylibre.com>
+References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
+	<20240815-ad7606_add_iio_backend_support-v1-7-cea3e11b1aa4@baylibre.com>
+	<20240817163354.68ec95f4@jic23-huawei>
+	<e6d3926a-002d-445a-8ac5-8d47b2be27b0@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Young <dyoung@redhat.com>
-Date: Sat, 14 Sep 2024 19:08:51 +0800
-Message-ID: <CALu+AoTKBRGgZW6JK19AV6QRTi7_eCzJbh9JCKENxsL7t061rQ@mail.gmail.com>
-Subject: question about RMP table fixups for kexec
-To: Ashish Kalra <ashish.kalra@amd.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ashish,
+On Sat, 14 Sep 2024 11:21:34 +0200
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-I'm reading the code about E820 tables related code,  I noticed with
-below commit you updated all three e820 tabes including
-e820_table_kexec and e820_table_firmware.
-commit 400fea4b9651adf5d7ebd5d71e905f34f4e4e493
-Author: Ashish Kalra <ashish.kalra@amd.com>
-Date:   Fri Apr 26 00:43:18 2024 +0000
+> On 8/17/24 17:33, Jonathan Cameron wrote:
+> > On Thu, 15 Aug 2024 12:12:01 +0000
+> > Guillaume Stols <gstols@baylibre.com> wrote:
+> > =20
+> >> On the parallel version, the current implementation is only compatible
+> >> with id tables and won't work with fx_nodes. So in this commit, the go=
+al
+> >> is to switch to use get_device_match_data, in order to simplify the
+> >> logic of retrieving chip data.
+> >>
+> >> Also, chip info is moved in the .h file so to be accessible to all the
+> >> driver files that can set a pointer to the corresponding chip as the
+> >> driver data. =20
+> > This means each driver gets their own copy.
+> >
+> > Better to use an extern in the header and keep the actual data
+> > in the core module. =20
+>=20
+> ack.
+>=20
+> Given your previous comment about introducing=20
+> platform_device_get_match_data, I guess I should instead do it directly=20
+> in the driver's probe, like its done in axp20x_adc.c ? Somehting like tha=
+t:
+>=20
+> if (!dev_fwnode(&pdev->dev)) {
+>  =C2=A0=C2=A0=C2=A0 const struct platform_device_id *id;
+>=20
+>  =C2=A0=C2=A0=C2=A0 id =3D platform_get_device_id(pdev);
+>  =C2=A0=C2=A0=C2=A0 chip_info =3D (const struct ad7606_chip_info *)id->dr=
+iver_data;
+> } else {
+>  =C2=A0=C2=A0=C2=A0 struct device *dev =3D &pdev->dev;
+>  =C2=A0=C2=A0=C2=A0 chip_info =3D device_get_match_data(dev);
+> }
 
-    x86/sev: Add callback to apply RMP table fixups for kexec
+Yes, something along those lines makes sense.
 
-...
+If there are enough instances of this we can have a standard
+definition for this similar to the i2c / spi ones that defaults
+to device_get_match_data() if available, and falls back to the old
+way if not.
 
-+       if (e820__mapped_any(pa, pa + PMD_SIZE, E820_TYPE_RAM)) {
-+               pr_info("Reserving start/end of RMP table on a 2MB
-boundary [0x%016llx]\n", pa);
-+               e820__range_update(pa, PMD_SIZE, E820_TYPE_RAM,
-E820_TYPE_RESERVED);
-+               e820__range_update_table(e820_table_kexec, pa,
-PMD_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
-+               e820__range_update_table(e820_table_firmware, pa,
-PMD_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
-+       }
-+}
+If you want to add that great, if not it can be a separate
+bit of work for another day.
 
-A question here is, have you tried only updating e820_table and
-e820_table_firmware?
+Jonathan
 
-I do not know much about SEV,  if you update e820_table, then the
-memory range will be reserved in resouces, and kexec will not load
-segments into the reserved ranges,  during the 2nd kernel bootup  your
-code will be run again so I assume it is not necessary to pre-reserve
-in e820_table_kexec and passing to 2nd kernel.
 
-Could you confirm this question?
 
-Thanks
-Dave
 
 
