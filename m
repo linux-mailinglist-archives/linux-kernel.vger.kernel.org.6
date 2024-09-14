@@ -1,96 +1,93 @@
-Return-Path: <linux-kernel+bounces-329603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6695A979369
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 23:53:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C963397936B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 23:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B080E283AD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 21:53:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D0D9B2248C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 21:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4A713D2BB;
-	Sat, 14 Sep 2024 21:53:35 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92281129A78;
-	Sat, 14 Sep 2024 21:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9846813C9C0;
+	Sat, 14 Sep 2024 21:55:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2014E7D405;
+	Sat, 14 Sep 2024 21:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726350814; cv=none; b=M1+kn88YT7MAvqV8gr97draISwcmEC31lalvNlWoahLKym0j/t8Uoo5EZzgZcK6i/E4RjyRrfIlAqkqlrak7fgEwV2Vyho1yvKQeFAbEdw8vqXq/FHcjqbRYsdZjSgg9GwySI0y496mbcwYIXliH2iRhEv5Ggs/SvEbC9mTc6DE=
+	t=1726350924; cv=none; b=AyGHqEFqqQC++AWwV4dJW1/b/NvYWUM3L9R55BdJsr1f2XlYeVFSg5udEO1LBXbG7Z/US//H8M2I7P/KGH7lUKjMG1EVoTWCbwCSOvFNMAhz8Ow1ZFSWuo0a2xrCWH1i20MFaFPTDledhq/9xWyUwa3DE4sm1gsHP3uRfOsxTJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726350814; c=relaxed/simple;
-	bh=KcvOUuH7U/6mCdw/qFZw6N/Cn5GUTv466T+YcGHTvZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sUu6byQhwwZXjE6VncZMaK2yasnNywmzzLTG8heEHWSsOF/hwnUCNy5DvaKRANujLlATsg4mXpCkI1RRJ+2I5eQejEGwXnH5zOTIXAnEJVuBrvxYFfm9/jig53DQTWduvHa0IYcPPkyHKFAlOKaUsMUuEjj8uLD4Bv+2PTp1OFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCEE5C4CEC0;
-	Sat, 14 Sep 2024 21:53:28 +0000 (UTC)
-Date: Sat, 14 Sep 2024 17:53:23 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Sven Schnelle <svens@linux.ibm.com>, Alexei
- Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>,
- linux-arch@vger.kernel.org
-Subject: Re: [PATCH v14 19/19] fgraph: Skip recording calltime/rettime if it
- is not nneeded
-Message-ID: <20240914175323.16206416@rorschach.local.home>
-In-Reply-To: <172615389864.133222.14452329708227900626.stgit@devnote2>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
-	<172615389864.133222.14452329708227900626.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726350924; c=relaxed/simple;
+	bh=wptflPFYRHPNo0BAaRLEmf4xd8pDvxWY43nzDnCet3Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fe5yOJP1QynosDgWvLAEsKFiY/M6jUYFpLABlizU+e5XcOmOx8UY9zue3dHMvPCu+z5FCV6tAFIKuNaty5rOzmUmTPychlqQDKYp5Hx4Ihyqv2yGCKMZ1B1Y8pFL3TfxfkdKAToLFTXLVkdl0+MTw/Dwx76coL862+rqm2TyI3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 806CE11FB;
+	Sat, 14 Sep 2024 14:55:44 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0F63E3F66E;
+	Sat, 14 Sep 2024 14:55:12 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Will Deacon <will@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v2 0/5] perf arm-spe: Introduce metadata version 2
+Date: Sat, 14 Sep 2024 22:54:53 +0100
+Message-Id: <20240914215458.751802-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, 13 Sep 2024 00:11:38 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+This patch series enhances Arm SPE metadata in the Perf file to a
+version 2 format and maintains backward compatibility for metadata v1.
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->=20
-> Skip recording calltime and rettime if the fgraph_ops does not need it.
-> This is a kind of performance optimization for fprobe. Since the fprobe
-> user does not use these entries, recording timestamp in fgraph is just
-> a overhead (e.g. eBPF, ftrace). So introduce the skip_timestamp flag,
-> and all fgraph_ops sets this flag, skip recording calltime and rettime.
->=20
-> Here is the performance results measured by
->  tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
->=20
-> Without this:
-> kprobe-multi   :    5.700 =C2=B1 0.065M/s
-> kretprobe-multi:    4.239 =C2=B1 0.006M/s
->=20
-> With skip-timestamp:
-> kprobe-multi   :    6.265 =C2=B1 0.033M/s	+9.91%
-> kretprobe-multi:    4.758 =C2=B1 0.009M/s	+12.24%
->=20
-> Suggested-by: Jiri Olsa <olsajiri@gmail.com>
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+The version 2 metadata contains a global structure with fields for
+metadata header version number, header size, CPU numbers. It also
+expands to store per-CPU metadata, which includes the CPU logical
+number in the kernel, MIDR, and capacity values associated with Arm SPE.
 
-Can you try this series instead:
+This patch set has been tested the perf to decode the Arm SPE metadata
+v1 and v2.
 
- https://lore.kernel.org/all/20240914214805.779822616@goodmis.org/
+Changes from v1:
+- Dropped LDS bit exposing from Arm SPE driver (Will Deacon).
+- To simplify the change, this series did not include multiple AUX event
+  support.
 
-I rather get rid of the calltime completely from the generic logic, and
-that series does just that.
 
-That series only replaces this patch and can be applied before this
-series (or after).
+Leo Yan (5):
+  perf arm-spe: Define metadata header version 2
+  perf arm-spe: Calculate meta data size
+  perf arm-spe: Save per CPU information in metadata
+  perf arm-spe: Support metadata version 2
+  perf arm-spe: Dump metadata with version 2
 
--- Steve
+ tools/perf/arch/arm64/util/arm-spe.c | 106 ++++++++++++++++++-
+ tools/perf/util/arm-spe.c            | 151 +++++++++++++++++++++++++--
+ tools/perf/util/arm-spe.h            |  38 ++++++-
+ 3 files changed, 281 insertions(+), 14 deletions(-)
+
+-- 
+2.34.1
+
 
