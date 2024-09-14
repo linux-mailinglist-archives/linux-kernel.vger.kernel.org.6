@@ -1,108 +1,153 @@
-Return-Path: <linux-kernel+bounces-329620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C12C9793A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:21:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448109793AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1F01F22384
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:21:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B821C210A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB4513FD84;
-	Sat, 14 Sep 2024 22:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C57145B10;
+	Sat, 14 Sep 2024 22:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cw6RZ0Ca"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHxgIOuQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562CA18E1F;
-	Sat, 14 Sep 2024 22:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA14D6F066;
+	Sat, 14 Sep 2024 22:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726352462; cv=none; b=mTEjYn5bsfMXWPx2PEmRQWlG63tXY3BKI4xc3/LCFFVl2DWPkIrb96eGHpRkMCGABXR3bKjRUNRd8u4/t1LR8dqK34MFaA4DolpId5jnLiM+bf2o8Dq61PuGPWFXOIMAPxdYp2McI+fgqJA9TUNh+SEJFxW8moWMycEyvjZkPXQ=
+	t=1726352587; cv=none; b=jP4bSnz9CGd/1p/DVWq2za9JU3Q9Ia6pqUz6/OvkLhEdIctbyNUDFeEsr4kpjGSm0WxEroYG+rc2KSpt0TxQf6sS0JzZDNtJem+3s5lGDCtVwKrxX2xcXml6kq6CalOt//DPT22i3afaVCyUugdqTJE9Vtwxs3GSIz7VhmlmjeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726352462; c=relaxed/simple;
-	bh=p7CxOhjrl3nQfmL/O6fE3qasLAJlXnRtQFjSq6H0T2g=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hTLa9jatt9hlbxibt9UcPPIEPhf265k9G+R1LUBMetIllKd4x3Zw4rIhB5XsKvLn6IxWe2dK0HnOyvc+uBESs+pnbrJr9HjwhMQmK8We9XF+NRCn/6nxxzQA6XP4UKW5aj8hcgsQHHJC0Ct9qWQMFD0pmzw0harRp205Q+C97n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cw6RZ0Ca; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D96E4C4CEC0;
-	Sat, 14 Sep 2024 22:21:00 +0000 (UTC)
+	s=arc-20240116; t=1726352587; c=relaxed/simple;
+	bh=6f4sJYGh10WHP6XIIiyMztxdnYvZzcortC5SK3D2qz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QaWdTmv/j0TQpYHEoYsZrQ6g7TytcPhpCjjqdWtXh0noASRkcH0tMS2YXzN40lszR3dzaWjcd6p5fv4twm7XsXUEX3rqcDhm15RmlZJtEpUFXLvwntstkdB96F7Jxav/b/rVINE9+6gmYQS4GrFRDw+CkUth9M2dS3awEH5hCBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHxgIOuQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E3A3C4CEC0;
+	Sat, 14 Sep 2024 22:23:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726352460;
-	bh=p7CxOhjrl3nQfmL/O6fE3qasLAJlXnRtQFjSq6H0T2g=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Cw6RZ0Cao6q+CqdBdk1wJgx6S1QUZspmrbVGr0ZxkyvYmT3DwKzyXLp95OPR3UwqJ
-	 uVM8j4FOP5mbxa+A8YwsxE8WZnSkWwt8MMT336umt7nCGSkUT6Ah5Sy4sOYAvoFFw6
-	 BB9C8bt9ssXW7yIXLVlUFzJlkPX7VF31R5fgrLA1X72+0P68sX+5CyT4qC2b24ZvZs
-	 Up6dSbJ9m930FSoolI4rHR0fNDa+LMcG4RiXnVRryCosV/2C9L8GrXTG27UGFFpXxd
-	 sRJimSFnax6GrIyZwU8PhYQvfeLNWyKJ8FtUh4sLZUMEO7q1S3cIxmTuew7IomU1kv
-	 jQz2Dkofoa9rg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D5E3822D1B;
-	Sat, 14 Sep 2024 22:21:03 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1726352586;
+	bh=6f4sJYGh10WHP6XIIiyMztxdnYvZzcortC5SK3D2qz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sHxgIOuQx4qk2R9Sbd+XDWF/uz80nTlxayfdXhfmsK3wS5bEZKtYlOvjlTl22pcJh
+	 ESDVwL1+wHcr3iKbSD5TN6xtMp/yVd3ou7sST4areIk3F12j7JxsqkW8PVM3wlIWV2
+	 rc33vBeRhx/cpcT64h52+X2ckq8A8hn8fxFfeaqoc4yfYbZPV5wFHt+YiPcGK1AHV6
+	 SlQDhhZuKJE3PVcADFoi/g7jP8L1BB5Sh5e6WqxaHiE57kq/zbTi0UF9DAAdrenb8+
+	 AMQ/+Y2NTUql924V+tS61XjzRKFq5veOAPhf7UqlWccIPI70aDligyRdZrRK0EPeI+
+	 fSHg3eZdN2I7Q==
+Date: Sat, 14 Sep 2024 23:23:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v2 03/22] dt-bindings: cpufreq: apple,cluster-cpufreq:
+ Add A10 compatible
+Message-ID: <20240914-jiffy-scheming-356866ebc316@spud>
+References: <20240914052413.68177-1-towinchenmi@gmail.com>
+ <20240914052413.68177-6-towinchenmi@gmail.com>
+ <2ebf5258-b55d-4010-aa94-d5bab1f93bb5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v6 0/5] Introduce HSR offload support for ICSSG
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172635246230.2644819.1539639253246657986.git-patchwork-notify@kernel.org>
-Date: Sat, 14 Sep 2024 22:21:02 +0000
-References: <20240911081603.2521729-1-danishanwar@ti.com>
-In-Reply-To: <20240911081603.2521729-1-danishanwar@ti.com>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: robh@kernel.org, jan.kiszka@siemens.com, dan.carpenter@linaro.org,
- r-gunasekaran@ti.com, saikrishnag@marvell.com, andrew@lunn.ch,
- javier.carrasco.cruz@gmail.com, jacob.e.keller@intel.com,
- diogo.ivo@siemens.com, horms@kernel.org, richardcochran@gmail.com,
- pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com, vigneshr@ti.com,
- rogerq@kernel.org
-
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 11 Sep 2024 13:45:58 +0530 you wrote:
-> Hi All,
-> This series introduces HSR offload support for ICSSG driver. To support HSR
-> offload to hardware, ICSSG HSR firmware is used.
-> 
-> This series introduces,
-> 1. HSR frame offload support for ICSSG driver.
-> 2. HSR Tx Packet duplication offload
-> 3. HSR Tx Tag and Rx Tag offload
-> 4. Multicast filtering support in HSR offload mode.
-> 5. Dependencies related to IEP.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v6,1/5] net: ti: icss-iep: Move icss_iep structure
-    https://git.kernel.org/netdev/net-next/c/8f88c072c2ba
-  - [net-next,v6,2/5] net: ti: icssg-prueth: Stop hardcoding def_inc
-    https://git.kernel.org/netdev/net-next/c/4ebe0599fc36
-  - [net-next,v6,3/5] net: ti: icssg-prueth: Add support for HSR frame forward offload
-    https://git.kernel.org/netdev/net-next/c/95540ad6747c
-  - [net-next,v6,4/5] net: ti: icssg-prueth: Enable HSR Tx duplication, Tx Tag and Rx Tag offload
-    https://git.kernel.org/netdev/net-next/c/56375086d093
-  - [net-next,v6,5/5] net: ti: icssg-prueth: Add multicast filtering support in HSR mode
-    https://git.kernel.org/netdev/net-next/c/1d6ae9652780
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Ki+UkIw/U+rQPBsd"
+Content-Disposition: inline
+In-Reply-To: <2ebf5258-b55d-4010-aa94-d5bab1f93bb5@gmail.com>
 
 
+--Ki+UkIw/U+rQPBsd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Sep 15, 2024 at 01:17:57AM +0800, Nick Chan wrote:
+>=20
+>=20
+> On 14/9/2024 13:17, Nick Chan wrote:
+> > The block found on the Apple A10 SoC is compatible with the
+> > existing driver so just add its per-SoC compatible.
+> >=20
+> > Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> > ---
+> >  .../devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml    | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/cpufreq/apple,cluster-cp=
+ufreq.yaml b/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufre=
+q.yaml
+> > index 76cb9726660e..e0d1a9813696 100644
+> > --- a/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.y=
+aml
+> > +++ b/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.y=
+aml
+> > @@ -24,7 +24,9 @@ properties:
+> >                - apple,t8112-cluster-cpufreq
+> >            - const: apple,cluster-cpufreq
+> >        - items:
+> > -          - const: apple,t6000-cluster-cpufreq
+> > +          - enum:
+> > +              - apple,t8010-cluster-cpufreq
+> > +              - apple,t6000-cluster-cpufreq
+> >            - const: apple,t8103-cluster-cpufreq
+> >            - const: apple,cluster-cpufreq
+> > =20
+>=20
+> Have to retract the cpufreq patches, a v3 without them will be available
+> tomorrow. cpufreq works on iPad 7 (A10). However it is already pretty
+> weird when the cpufreq did not work on Apple TV 4K (A10X), with adjusted
+> p-states. However, it seems that iPhone 7 (A10) is also not working. So
+> this is definitely broken. As far as the hardware interfaces go they shou=
+ld
+> be compatible, so the only explanation that makes sense is that the behav=
+ior
+> is not correct on t8010 and t8011 and it only *happened* to work on iPad =
+7,
+> with some incorrect behaviors.
+>=20
+> Marked as deferred on patchwork.
+
+When you send the v3, make sure you pick up the acks I already gave you.
+I didn't check all the patches on this version, but I think you forgot
+to add some.
+
+Thanks,
+Conor.
+
+--Ki+UkIw/U+rQPBsd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuYMwwAKCRB4tDGHoIJi
+0nrkAQC2FOhcj45xEZCSUn6OVcREvB72MdKx61HqWuqQJGOMWAD/XyehiQe31kxj
+nK74z7sVmXbM5Wh7UgZSbbwg5cj6CQA=
+=ruKL
+-----END PGP SIGNATURE-----
+
+--Ki+UkIw/U+rQPBsd--
 
