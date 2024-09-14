@@ -1,70 +1,55 @@
-Return-Path: <linux-kernel+bounces-329253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1225978F36
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:46:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D76E978F02
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71E628394F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AA581F2368C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCD713B58E;
-	Sat, 14 Sep 2024 08:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3551213DBB6;
+	Sat, 14 Sep 2024 08:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="Gj3GRfXU"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NmaslCxb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EE329415;
-	Sat, 14 Sep 2024 08:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EFE38B
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 08:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726303591; cv=none; b=pKWE4Aj1ZbHx48wwh17YRs4XinVa6XjOkf6AmaK+xrDY4y0S6A1dOSCc1aLpHwUriwFadE6YgqhmqcfVh/2Y3TRGPTBWRZenzo1x9oIjXTxAEkmocNBRzIq64s7N9ExJgTX//E+DA54GvXB1fM4BMyxp/GXLugV2cSUNyxGEJn4=
+	t=1726301439; cv=none; b=bOubj8OarFlF9hlM0R+Zqo2S7rdL9Rf3dq3p4H9CAEGs4czZejmY/GMWZ699Lg+V5XqBqe/zad/bxWe04CqL4gSgIvM8LdgT5AR1c1zXZeW++Yt2JLcKBSdNAIhJW+VBMnyiBHESzQ+fYCaYsqqSETMzELCAlnzEKsq3sf4oHA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726303591; c=relaxed/simple;
-	bh=dGVVExZAgsJf/0B5o56CGEutiaBBg4kvMiJLmXnSWA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MtPfjA2gMYjslXRi3O3HVwx3X6GgFERYPLsm+AWExtfNXkVG0J3WB4o8J4pLEp6pmlzojfiHY4Kdt7UYLhMsfUYqcuIZLMY6nLRzP8Xf7VPHDvGeO3YhOM7M3NWY/pN7Ka4dV29CZogEZepiudinvTPcaZH/DENwQjNJqjL+6dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=Gj3GRfXU; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VetaU/oOL3Zc7EWr4oazjj3TUguWh7N8AwR7snHhCag=; b=Gj3GRfXU7WsIWx3zEwxG2TfWOx
-	IQwLZYGqVfCs8B5g4O0C8Ink5VBcYqoU2nUadWBunF1cVuFRBLMWVUly/e6VFHgwRPWaprvJA6Rjy
-	kDcomPf0dYucBF6PNU6OK/sC+Id7u5o9TqFyU+UeHLZEEpIVKBAlAnwdugpWe4gLMhQt/yt7I7PAT
-	dU01ZRm+8ReCd2Bmhi/M/UVqCGku6ju+v8wFlMApVXavSjjJY1noMTxB5pNTtg/T4kCFzznOh5s5P
-	kxnUQw+U7+xRvvcz6DriIGwjc/wqTZI5owZ4iJsMTXeAPCM1+K5eI9NTVwYHAzY41Kp2b1AJsXcjT
-	1yOZBfGA==;
-Received: from [2001:9e8:9c6:1501:3235:adff:fed0:37e6] (port=59544 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1spMzo-0087cE-Ai;
-	Sat, 14 Sep 2024 09:15:04 +0200
-Date: Sat, 14 Sep 2024 09:14:58 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	rust-for-linux@vger.kernel.org, Finn Behrens <me@kloenk.de>,
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH] kbuild: remove unnecessary export of RUST_LIB_SRC
-Message-ID: <20240914-wonderful-orthodox-wrasse-3ab134@lindesnes>
-References: <20240913180622.1327656-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1726301439; c=relaxed/simple;
+	bh=3cqbnEns8FhaXZ7RhQ1y60Ts0u+WhQ3C0RUXeUkit8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tIJTyWL36rL57aQ6F+Uz5gkuW1m5hRBJ1UyJhe44UqGeZt6MSX16kVCBQDvQrcRxssEQD0Lhir+s/l8v8KbRvepSv7RnvLEv9VoNXWhki9b1wqEM4TVcftfv+N7UJpQSsLTndS285AXXovf6u7txPZO2nFkjZgqUDNVcLnRN2GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NmaslCxb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1E10C4CEC0;
+	Sat, 14 Sep 2024 08:10:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726301439;
+	bh=3cqbnEns8FhaXZ7RhQ1y60Ts0u+WhQ3C0RUXeUkit8Q=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=NmaslCxbhs6UHT1W3KHFVLVz9fjwtPLW7u9nPH2GBm17HjNggUrSnogh8rxaEP+k0
+	 SlPOMRqkqBGcylgBV4ZaGDldRUn3FevmezMxV4IZ+4CLvq8iDFRCdXuSkRTFtW5+Ha
+	 /lTVXrOulrYm9V5Eyah5r4LQ69AygZpMO+AS5oFOFYi6FxmVTaxoWUAvxLMwkijIhi
+	 0cl5Rm4LZyQEE25QzYlR2S+Qe3frtbU1KdrYn9xpXh8gztI5AGIGksY4FtvLyjLB4c
+	 YMWnowMXQCP6cg7Wqjgv4yZb2F0ABBHbNoj96rD84c6CR98HVfngKKH+tlaCBsqN4G
+	 5l1xUIUGMtjeQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 56AA9CE0E7A; Sat, 14 Sep 2024 01:10:36 -0700 (PDT)
+Date: Sat, 14 Sep 2024 01:10:36 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	kernel-team@meta.com, elver@google.com, thorsten.blum@toblux.com
+Subject: [GIT PULL] KCSAN changes for v6.12
+Message-ID: <65bb8a3e-9d52-4f2a-9123-a4e310c88d10@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,33 +58,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913180622.1327656-1-masahiroy@kernel.org>
 
-On Sat, Sep 14, 2024 at 03:06:20AM +0900, Masahiro Yamada wrote:
-> If RUST_LIB_SRC is defined in the top-level Makefile (via an environment
-> variable or command line), it is already exported.
-> 
-> The only situation where it is defined but not exported is when the
-> top-level Makefile is wrapped by another Makefile (e.g., GNUmakefile).
-> I cannot think of any other use cases.
-> 
-> I know some people use this tip to define custom variables. However,
-> even in that case, you can export it directly in the wrapper Makefile.
-> 
-> Example GNUmakefile:
-> 
->     export RUST_LIB_SRC = /path/to/your/sysroot/lib/rustlib/src/rust/library
->     include Makefile
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> This code was added by this commit:
-> 
->   https://github.com/Rust-for-Linux/linux/commit/3f46885dc03ed2d750085b2237078a1628323964
-> 
-> Please me know if I am missing something.
+Hello, Linus,
 
-Looks good to me.
+When the merge window opens, please pull the latest KCSAN git commit from:
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/kcsan.2024.09.14a
+  # HEAD: 43d631bf06ec961bbe4c824b931fe03be44c419c: kcsan: Use min() to fix Coccinelle warning (2024-08-01 16:40:44 -0700)
+
+----------------------------------------------------------------
+kcsan: Use min() to fix Coccinelle warning.
+
+Courtesy of Thorsten Blum.
+
+----------------------------------------------------------------
+Thorsten Blum (1):
+      kcsan: Use min() to fix Coccinelle warning
+
+ kernel/kcsan/debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
