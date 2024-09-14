@@ -1,93 +1,109 @@
-Return-Path: <linux-kernel+bounces-329262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8466978F54
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:01:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270E4978F56
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA7061C22068
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BECCA1F2322D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994A21CCEEE;
-	Sat, 14 Sep 2024 09:01:17 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7631CDA10;
+	Sat, 14 Sep 2024 09:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JCUsxhlW"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AD91487C1;
-	Sat, 14 Sep 2024 09:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64011CCEF8
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726304477; cv=none; b=dWapTfN8Uqt3M59M/egXSxbsI86X4c99l4HamISkwB8OcqSgQle5ZjPUtv3YIbkOBa4+quGHl76vpYAA1rtUaD9eVmy0KcVAc/wBd33+YgaP/07SEbOfYF++Fat0X3oNRM0tlvmxSlYEErkA6CMVBMan2J8gqKifb/JGzz8MBqE=
+	t=1726304528; cv=none; b=tMyOVPZzcaduVRkUFrq1qHETX4NU22Vs/FVm65/hyH0/ghlJ75I85qU3ipYbBAy2i1sku4Oam+SwHqIdJadSBByRliZrdro+EigaEa6KMktRshNcHsK9hnCKt+534ciKWT9FXDCUwul18K1SHNLYXHJxCxBKKEX+YeUnXT2sTBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726304477; c=relaxed/simple;
-	bh=icNKcmpquoKE/03kYN3EdCdWEne6Kb6LGJ0UkA8qL/M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Di9iznjrfIOwdS61uBKeHmIrcXdvY6rdrxFV/EwBE8YLQtksqef0ZKc5JuFDoUz2vxaC4q4dTVcQ0WvNyRHZ4Kr4/woZyubBuVfc8Yg4B7qELTGe6AeFUFSiKZNt5lDvO62zraTMqMsHpC8ZIb9T4dSqtpGQ3tJMG5aR6BpfV9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48E8sN0Y012592;
-	Sat, 14 Sep 2024 02:00:55 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41gpbk7sr6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 14 Sep 2024 02:00:54 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 14 Sep 2024 02:00:54 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Sat, 14 Sep 2024 02:00:52 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+53d541c7b07d55a392ca@syzkaller.appspotmail.com>
-CC: <chandan.babu@oracle.com>, <djwong@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [xfs?] possible deadlock in xfs_can_free_eofblocks (2)
-Date: Sat, 14 Sep 2024 17:00:51 +0800
-Message-ID: <20240914090051.636332-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000002b8b05061fb8147f@google.com>
-References: <0000000000002b8b05061fb8147f@google.com>
+	s=arc-20240116; t=1726304528; c=relaxed/simple;
+	bh=RguIB3aGEfSWCgglIE1kYAFxeTfH5FygVmsAfzK51S4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gy7wAmnVnpJVErivyS+Tg/LGmWXX1w9BMs5/ORmXErlMV2kL9me+rtBHRK2FlEZwpW5mBpkKrKnf6UfgvI2tWdHG+B3wTHn2yxRgssFFUOwrDd0MF1CiJVQLVVnOGny8jDNEhHx6b93UDU0IF44WGt+1cCUmZGyphMf4WdaK+lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JCUsxhlW; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id pOfCshuFQv6ompOfCsZIYM; Sat, 14 Sep 2024 11:01:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726304518;
+	bh=knYckm5aJnSchYoHGjtSQ5Mu9N8dnHyi0u0NUCdhg5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=JCUsxhlWfnXYG7qqBlHRwqWbVdqUSsjgkQL6eUR58kbIeuUVtWohDGPbV5/s2q8Ee
+	 4TSYJVLz5jqr29u0eDWEUW4IbLK1xdclOTn/+c3sdiztY4zYW4r4FmWssPaOiPGkxd
+	 qRyk0A8vwwRLQnQcfRqCScBOLofMPnqZla4+sQTtxLXVZ+u7gpbUnuQ0ubJc4JtXZ7
+	 PvIXA2Y6oFzDf8jmElTU3OgoFNv5CyODjrReBzHeuebceWwtXjgjNs9Gj7fI4OTV1W
+	 w7OJ2fPASMTBKQDpp11+MMZJeuY/RIGb4o9kswfaRZOEh96zUxkZBK/jXewddbJz7I
+	 srteqXsdDNv8A==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 14 Sep 2024 11:01:58 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <484a980a-8ea4-490b-89b3-9fca3c471133@wanadoo.fr>
+Date: Sat, 14 Sep 2024 11:01:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: ethernet: fs_enet: Make the per clock
+ optional
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+ Pantelis Antoniou <pantelis.antoniou@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, thomas.petazzoni@bootlin.com,
+ Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Herve Codina <herve.codina@bootlin.com>
+References: <20240914081821.209130-1-maxime.chevallier@bootlin.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240914081821.209130-1-maxime.chevallier@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: RgLr_YTnMDgahEVsPlEO5MeKi9noxxU7
-X-Authority-Analysis: v=2.4 cv=Ye3v5BRf c=1 sm=1 tr=0 ts=66e550c6 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=EaEq8P2WXUwA:10 a=N7_jEAYsZG4nfPjY8GMA:9
-X-Proofpoint-ORIG-GUID: RgLr_YTnMDgahEVsPlEO5MeKi9noxxU7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-14_07,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- spamscore=0 mlxlogscore=669 clxscore=1011 bulkscore=0 malwarescore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
- priorityscore=1501 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2408220000 definitions=main-2409140062
 
-we use GFP_NOFS for sbp
+Le 14/09/2024 à 10:18, Maxime Chevallier a écrit :
+> Some platforms that use fs_enet don't have the PER register clock. This
+> optional dependency on the clock was incorrectly made mandatory when
+> switching to devm_ accessors.
+> 
+> Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Closes: https://lore.kernel.org/netdev/4e4defa9-ef2f-4ff1-95ca-6627c24db20c@wanadoo.fr/
+> Fixes: c614acf6e8e1 ("net: ethernet: fs_enet: simplify clock handling with devm accessors")
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> ---
+> This patch fixes a commit in net-next.
+> 
+>   drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> index d300b01859a1..3425c4a6abcb 100644
+> --- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> +++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> @@ -895,7 +895,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
+>   	 * but require enable to succeed when a clock was specified/found,
+>   	 * keep a reference to the clock upon successful acquisition
+>   	 */
+> -	clk = devm_clk_get_enabled(&ofdev->dev, "per");
+> +	clk = devm_clk_get_optional_enabled(&ofdev->dev, "per");
+>   	if (IS_ERR(clk))
+>   		goto out_free_fpi;
+>   
 
-#syz test
+Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/fs/xfs/xfs_attr_list.c b/fs/xfs/xfs_attr_list.c
-index 7db386304875..0dc4600010b8 100644
---- a/fs/xfs/xfs_attr_list.c
-+++ b/fs/xfs/xfs_attr_list.c
-@@ -114,7 +114,7 @@ xfs_attr_shortform_list(
- 	 * It didn't all fit, so we have to sort everything on hashval.
- 	 */
- 	sbsize = sf->count * sizeof(*sbuf);
--	sbp = sbuf = kmalloc(sbsize, GFP_KERNEL | __GFP_NOFAIL);
-+	sbp = sbuf = kmalloc(sbsize, GFP_NOFS | __GFP_NOFAIL);
- 
- 	/*
- 	 * Scan the attribute list for the rest of the entries, storing
+Thanks
 
