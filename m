@@ -1,102 +1,147 @@
-Return-Path: <linux-kernel+bounces-329231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB82C978EF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:40:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CC4978EF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98ACF1C22C34
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:40:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6753E1F240EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234FC13A899;
-	Sat, 14 Sep 2024 07:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E13913A888;
+	Sat, 14 Sep 2024 07:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XQa6vH0I"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="inCsllv3"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C2A38B
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 07:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726299652; cv=none; b=ZT5uzDYyvlTbIaRDRrqE+L3ZAO/4l1Ducmp2fV//XkBIrqYPiAuCj4oDsjPLCaOwyqqvGAgiWR2siXTyULsYzVthUmQIMtj5gkYhuGUfLKj7jVQz024cijtoaKkB8jcoe6GGCTNShkF9j0SELF7VeSSpLCzMJFInergvDuyH2Hc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726299652; c=relaxed/simple;
-	bh=6TVOCPKXL+yI9IFKhOfOruHrpAAgXmmkSzo9JZQpyUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VD/W9e9xLe0XeiBD5zcs1SvXLxodq/T90v5E24IeRekJqk1e07dUzbazHgtMNwK4DLT252xeF45rns5aANRW839szkV8veOvQ2TV/ETdmnbQFdSn2FZ9jiQZhBdWn1KVnm8UO8s27oaGFret3Jq5EmyNyA3mzjFa7VVkkQKKoUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XQa6vH0I; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726299651; x=1757835651;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=6TVOCPKXL+yI9IFKhOfOruHrpAAgXmmkSzo9JZQpyUY=;
-  b=XQa6vH0IZSrufkAjWh9MdMarxXU54ehBk4ft4i69uqFdgP/+L+IZkWXk
-   42vptfsTcOw+Pt3qjVaCOOpu4ykBphQx8f/DXORp20n532Gh/jHGrQdL9
-   aFbFF6gpb1LSm+92+LUMC6JL/3KwIfKdQNIHuoxYXA708C8REn8/iaMPW
-   aQ7khHMC6MPW1z/q9CNHtugDnHhEjOH0rQ1IKZC6WVYVAd/IvoJGj61/0
-   0/Lh4Id6AEj3lR3acMy/0QcTjSaI3JsQBsxr0i4ML+RoE1ZZxIpvUk0zT
-   9LpUsVpVBhe9Mv/8iJizP9LYyyc7qk7aP7k91Bv0oa45FKJArU0cuvLFo
-   Q==;
-X-CSE-ConnectionGUID: 2bZFYPASTiGhtOhppxaZ0w==
-X-CSE-MsgGUID: xpg2Y2RZQEmLoacMEkbrxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25300235"
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="25300235"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 00:40:50 -0700
-X-CSE-ConnectionGUID: qjNTC4IMT0acK6d6Wzh93A==
-X-CSE-MsgGUID: rcYbopStRSujERRtNNKj/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="68038030"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 14 Sep 2024 00:40:48 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spNOg-0007VS-1Q;
-	Sat, 14 Sep 2024 07:40:46 +0000
-Date: Sat, 14 Sep 2024 15:40:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Raju Rangoju <Raju.Rangoju@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
-	Akshata MukundShetty <akshata.mukundshetty@amd.com>
-Subject: drivers/spi/spi-amd.o: warning: objtool: .text.amd_set_spi_freq:
- unexpected end of section
-Message-ID: <202409141539.2uAlMu2x-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4D638B
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 07:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726299830; cv=pass; b=SRTTbJdjd3xstIcXof5zsWEIJUsQN/icgQwMki8TECnFzYsNgFpY81qtdHqPE2BdBQ8iYQnoUq7EVrzrRzfU5MZChfNwe7YedB4cbJwF0S1IYjKxM/OzY/pmX4sMpbpcelkhcte7pHdo5BF29aJNWVvaNbJq/XXnxxPGyda45kI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726299830; c=relaxed/simple;
+	bh=fi4cZchvgvSn5MoH3VB5JWtAVo0kFpjrgsKbZcJ2RAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9ttq5AD5OQSPmOHpjN/AHOnUzoYWplSnkVAPb3YmQX2bJiCYXPTHPhWAHhbK1t45FSE2OTYADMwHKSWMB1ZHb/d+ZlCI61Cq0xOISRoOLfE+MuUpMdDp58GNvE5h+zCDeBfR/UEKLZDBnnCkVu7grbpYbdAOLNFm9qeyy9A2ow=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=inCsllv3; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726299810; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RbnwAjEucXAKzNeT8OSRgFyVTfJqTiNV1SPybCL8HFrpn3cfwaUHlG6q4wteMAQhVbeD111Xkr+hWuYayvI9nD6ohp9DUjN9RhAKdVttQqlmZswlLEDC1xsWRodjUO2gjgCz0v2wPcmxu5ivWJKvo9vFSbsSe6IQF3oNp53ERFk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726299810; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9s6xbgvRK66eWsct5dwCUnVpO4nqDb+N6HYnzutOOR4=; 
+	b=Us3Eit+cTSmh7lDAwTyHD2I8Z54xM5bK0ZlCk6g+TNt5pDkZceUW3g0hk0vuwCa/vZllB5RO+ytgxh4znYVoTShjh6Ammz7FPOkXM2RZsQZ2oYqgiXZ8eUpWxCcQjl9+3BIMKU8n4Iru6AimuDxt+VUijelEN9FztkayAhJ8/Lk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726299810;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=9s6xbgvRK66eWsct5dwCUnVpO4nqDb+N6HYnzutOOR4=;
+	b=inCsllv3x9n7C2tlssmPf/tMvrPWt9e3mLm60cAKlcsL6P7/Mny4uzdiM8TtUqJ9
+	zXyDR1I8sZv6zMOq4egzE2rXWSDfnPaR5Dqfthbp7O5ynv5UK/HRfhJiytTQMPERiZZ
+	j8EPRzwEsb8F5UyNHWxv1sBqaqzExKqmFEkkSfYw=
+Received: by mx.zohomail.com with SMTPS id 172629980865397.08858448934461;
+	Sat, 14 Sep 2024 00:43:28 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 18B7A1060578; Sat, 14 Sep 2024 09:43:18 +0200 (CEST)
+Date: Sat, 14 Sep 2024 09:43:18 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH 0/3] drm/omap: Minor fixes
+Message-ID: <p63avbtt3vovvmcjpz5xywpneuegb2yasvfllo6leskldbac7p@rkfhsgvjusrf>
+References: <20240806-omapdrm-misc-fixes-v1-0-15d31aea0831@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ecfymshjkc7m26ry"
+Content-Disposition: inline
+In-Reply-To: <20240806-omapdrm-misc-fixes-v1-0-15d31aea0831@ideasonboard.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/223.982.64
+X-ZohoMailClient: External
+
+
+--ecfymshjkc7m26ry
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b7718454f937f50f44f98c1222f5135eaef29132
-commit: 6defadbe6cbc3a87dc39c119a6748d19bfba0544 spi: spi_amd: Add support for SPI MEM framework
-date:   6 months ago
-config: x86_64-randconfig-r052-20240913 (https://download.01.org/0day-ci/archive/20240914/202409141539.2uAlMu2x-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141539.2uAlMu2x-lkp@intel.com/reproduce)
+Hi,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409141539.2uAlMu2x-lkp@intel.com/
+On Tue, Aug 06, 2024 at 04:50:26PM GMT, Tomi Valkeinen wrote:
+> A few minor fixes to omapdrm, mostly to remove sparse or other checker
+> warnings.
+>=20
+>  Tomi
+>=20
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-All warnings (new ones prefixed by >>):
+For the series:
 
->> drivers/spi/spi-amd.o: warning: objtool: .text.amd_set_spi_freq: unexpected end of section
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Greetings,
+
+-- Sebastian
+
+> ---
+> Tomi Valkeinen (3):
+>       drm/omap: Fix possible NULL dereference
+>       drm/omap: Hide sparse warnings
+>       drm/omap: Fix locking in omap_gem_new_dmabuf()
+>=20
+>  drivers/gpu/drm/omapdrm/dss/base.c       | 25 ++++++-------------------
+>  drivers/gpu/drm/omapdrm/dss/omapdss.h    |  3 +--
+>  drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |  6 +++---
+>  drivers/gpu/drm/omapdrm/omap_drv.c       |  4 ++--
+>  drivers/gpu/drm/omapdrm/omap_gem.c       | 10 ++--------
+>  5 files changed, 14 insertions(+), 34 deletions(-)
+> ---
+> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+> change-id: 20240806-omapdrm-misc-fixes-2ea920193dde
+>=20
+> Best regards,
+> --=20
+> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>=20
+
+--ecfymshjkc7m26ry
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmblPpIACgkQ2O7X88g7
++prUWg/9EdoySBxDqVDFjyZIU8WKrTZK2WPiQUn4aJsTugo8jA1jQrX+c4CNUO8h
+8fa6s9RjZMqpP0EKEmyp3I3801cJmN8cZwdS5YjkiWIjFTlsrWPIlf4Ve+ukMINX
+k3qizRuWLSOTiJgdu0u3vaKjh4uhjWzlPyl/uKFx5N3pSVxw1OQQBXFSYsqY5AFj
+hHN14+j4hmomtDHRB+OicWVV4+KBsvvCcFhknGSbVvs4je2CKn9Fn83JNY6WJz9r
+sAMFAHN9jsJWX0L6OQNFbutoW9p+ym+8YLoaNO4OKgBJyIeVNVHb9h5bjASLusI4
+XXjrHOTpaRL8cJGrqnJJ65fzX7+4dif5ZNUUt13MvQO+hSlM6nXLRzhYzGskBpJn
+rxnmfVhrGMD+X1tmBqShwutklogpFjYgFGX2TwmJDpZOU2chViNbDvDsuz5pZmOf
+n1K2OF4wDMaG/wZ9XkeahbSbjNkObRHehkRIBocGPcjppiRDiGCgPZX9x1RzyTGi
+P0uOG3sjjPA4pAhrfZVaVMZoX68lngd5wMot2PtcMBiSe1v7maEnLtNgjd7pACgv
+dlz6h0QAk2u0ZpCmx6POKatzakP0QoBgHAaqqVJKgbWTzo5/y3cZoiWfOzJuvygj
+C6m06J0AK7lvaAo/8bixuT+w85IJfn9MyqerjCc1zrKifyrgSVA=
+=Tzmd
+-----END PGP SIGNATURE-----
+
+--ecfymshjkc7m26ry--
 
