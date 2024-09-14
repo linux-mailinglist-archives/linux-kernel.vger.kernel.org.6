@@ -1,120 +1,198 @@
-Return-Path: <linux-kernel+bounces-329302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9D5978FC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:59:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BE5978FC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38A9D1F24141
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9D231F22634
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C631CEEA8;
-	Sat, 14 Sep 2024 09:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4CA1CEE83;
+	Sat, 14 Sep 2024 10:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eUdgDJ+j"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="fyCjPE36"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE3D9479
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726307949; cv=none; b=V4if3eJef8U2jh7p22vcSqeisBTYCziWJV9Ezt0XoMSnYm/FXdJhx1RHGnjVSCTrkdpJt8O8Eu+g2iHJAWTsIihz2WxDFHkrdJq2+ZFO110eH2P7xWcwWLAB+qsrCtaHUS3SqQm2urpyFkyL3AmrdzaUHqn5C3Gd8ZYrHhj+Ysg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726307949; c=relaxed/simple;
-	bh=H+3JuBd9mljp5tywseAzvY42o3nzP65j7tN8PSllVis=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i9GC+nvhiSIBYIoaqW/uDFQ9qUoxCq4w/d/MCflA9TtXdFmN8kW/WHGi02CKZzbrXoL1HnpSldvScdhqj4Jzjay827v91m171uZL3R8UQ8FLzMxmm2Ql95+nmF5x+O5D5Xd+Yv5OgZN1r9I/A1oBFePiJkOPKr7OVxY6Mcd2bcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eUdgDJ+j; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c4146c7d5dso2115981a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:59:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726307946; x=1726912746; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sLR1LdrdWoek5k6vcLJ4wJbjv1o0UlgVrCVA4EoYNzA=;
-        b=eUdgDJ+jjHs0JwobXKXxKC167YOwJHo9MiORf13/GB2yHaJrawFu+jon7eb/Jaw3OM
-         8BLQn2aSym2tFiEotYsgyP089kaZy1glZQfy8WKo2gfUxWt+Vty1Qa1S/MAOa1xFRd+7
-         S1YZ/yf2e4W5dRss25LEjN2GirPupbT2tPcZdE/kC6ySKz5eeqByC3ZS2cFo0fiB1UAn
-         R4eDqRtp2YCsUV1vuRmpoWY4he6YUlQ3PDEchnAzkK6WzTnTfptFQe5+BCv2QbQyET4T
-         UOXyJHyAaB15cs3s378yrRC6ky1VhKZOSr8DM6qWUMeem9C8HmR2qcAy1mIYmykHo8/O
-         734A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726307946; x=1726912746;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLR1LdrdWoek5k6vcLJ4wJbjv1o0UlgVrCVA4EoYNzA=;
-        b=b278rfNiyM9YVWbQwv4NC7KhQswjTkNRsO46nkq7TfLJe2Lk0c7RnT32WaWm1/+4st
-         wNZUxRXfA7BkvHasi9fD5JnstocGb7NTlDShfz5OEfdMfJ8yo2GaA+Lhkpz3lHi3bIOA
-         uOIUwCCotCV0Ls9x7zdDZdza9wsrYDDvdSZ+t9XW270Ii3SSy4zrO4BB14Ui2WWLEb3M
-         FgIC9LL4w9lh3xmFwpyiqiyh2AYFPGI6BonrpGWY4+7a1ZWrULXa6AHc39+HhpapCnMf
-         QDLFSwccz7r2bSyMFb3kEbp628PaN0RKyfv8JjJ/oD8OAlujaNJo6wJEFzuifCX3UgPB
-         Uw+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUHEmWdq2JuAEe2z+BaFhjJVuRZSEWaCVlkqQmHXTylZZ1b7mokLLB7mpvmdfkyCT9Za5ma6b53ZgI/W3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJqT38AepslX/53ja870Q70uM8tZlGmuWk3IdMLKJfkUdyUxWk
-	bS5nMQyjXarbbjPSqEfMH23KiAAzHA7VB1GO3pPW5qBi5B0W3daLi5JgcV+dmrk=
-X-Google-Smtp-Source: AGHT+IEmamaFtiQks6EQA/58DDUZK1tAOjmtLmuXTiDcTiIt0u2Q9COe7kNjD2a0VxyS3xWdA0xvRg==
-X-Received: by 2002:a05:6402:1d53:b0:5c2:6e51:9d11 with SMTP id 4fb4d7f45d1cf-5c41e1ace3bmr4559018a12.27.1726307945688;
-        Sat, 14 Sep 2024 02:59:05 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb53620sm506170a12.27.2024.09.14.02.59.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2024 02:59:05 -0700 (PDT)
-Date: Sat, 14 Sep 2024 12:59:01 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bryan Whitehead <bryan.whitehead@microchip.com>,
-	Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: UNGLinuxDriver@microchip.com, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: lan743x: clean up a check in
- lan743x_netdev_open()
-Message-ID: <f2483839-687f-4f30-b5fa-20eac90c1885@stanley.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D1F1CEABE;
+	Sat, 14 Sep 2024 10:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726308014; cv=pass; b=H3PeEbGx2ARybETbDaajlA4UZrI2KMXfcbzQNd5VDhj+HutixBVedz6EpPrZTfCL/z3WuhqpG6IQeoOvWt0V+St5prkM/aAnDzhXx3E2w0KrzNnRJG/tLx1K+ma8kZBhLao4gk5HAk31rF4a716YxelKdFXpc3051MELn30ftfE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726308014; c=relaxed/simple;
+	bh=5R+Y9lB9ZoOdYRrqfp0U0ntD6+HFI8Og6awdgO/XBuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tBvCZbzPsM6y3Pa5EVvPQY4MlbzJaq4QaHvO0TVGoWTfVq4nUkyCxb5LE9JwJ6xv25hnXS4X6QjiX2SsB3CGArQAusnN3Z3ep1GGHN8RYVjRJOKpqQPPrMhdprOp+wsuG7SzV54NcAH1GlECV6Oi5pqIH/wNV7dfa+6Ge48sToA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=fyCjPE36; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726308005; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OK52piqpogkLzQ3YtuhE+mscifDRugj3QZoiFm7HYcHaVtwduBllXZaUGB4/Q43KD49L3gal11rhaetuyv/RNRC7/ylcrr7eCV+oisBlBv7pHx7FJVVvL8mWS4PiV1ycKhsfhGVFb0dHNFQKUGFITXCCggxrU78TtXm2TrV9uu8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726308005; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=SJCrPzDZ79kaHSw7KpGfLXXqWwZrHosR+oT9Hy/85ng=; 
+	b=lTmxzo7WBTkjsp4kTqO78j0g/Ot1pXC5thlrC5rpVjyNTU2JUqwoe/TvTVX2NYkWtUJbc51Er4pL68o+RyWkljg0zGk/1e++elB1kIVFfOG9AYbNJ0a/jzpMxC39XrdYjDhkeqaPOLnl6ATzYrPHb+OLaHBWX2H93cN41JL4Vms=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726308005;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=SJCrPzDZ79kaHSw7KpGfLXXqWwZrHosR+oT9Hy/85ng=;
+	b=fyCjPE36lW7osQ8a56IydK/REcpzQ56MxFjGKkXkE2aa32e2i5m6hFZobib6mIFP
+	KuKWBzlUBANy2U/ARyt+1V68xX0k9MQPwJe50eHlkBH8itcogj8RwL6kRCYs++V4Gka
+	0fbKYJZrb0APuSrUH+oOurUrUZIta2K7qsUOwPik=
+Received: by mx.zohomail.com with SMTPS id 1726308003272472.5385277458963;
+	Sat, 14 Sep 2024 03:00:03 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 8A6511060578; Sat, 14 Sep 2024 11:59:57 +0200 (CEST)
+Date: Sat, 14 Sep 2024 11:59:57 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v3 5/9] power: supply: sysfs: rework uevent property
+ loop
+Message-ID: <7oa7cmhqsctdcxxrlq7bjg4ryzcfzzayktrjduwkgkvc53kkq3@asavedqgttnb>
+References: <20240904-power-supply-extensions-v3-0-62efeb93f8ec@weissschuh.net>
+ <20240904-power-supply-extensions-v3-5-62efeb93f8ec@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ub32aja7tdcftnq6"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20240904-power-supply-extensions-v3-5-62efeb93f8ec@weissschuh.net>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/223.982.64
+X-ZohoMailClient: External
 
-The "adapter->netdev->phydev" and "netdev->phydev" pointers are different
-names for the same thing.  Use them consistently.  It makes the code more
-clear to humans and static checkers alike.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-I noticed a different static checker warning that I never reported because it
-was too old.  However, I think it's a valid issue.
-drivers/net/ethernet/microchip/lan743x_main.c:109 lan743x_pci_init() warn: missing error code 'ret'
-I think we should set an error code on that path.  It disables the PCI device
-and then we continue to do PCI stuff even though the device is disabled.
+--ub32aja7tdcftnq6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/net/ethernet/microchip/lan743x_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index 4dc5adcda6a3..0b8c82ff5e8e 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -3262,7 +3262,7 @@ static int lan743x_netdev_open(struct net_device *netdev)
- 		phy_support_eee(netdev->phydev);
- 
- #ifdef CONFIG_PM
--	if (adapter->netdev->phydev) {
-+	if (netdev->phydev) {
- 		struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
- 
- 		phy_ethtool_get_wol(netdev->phydev, &wol);
--- 
-2.45.2
+On Wed, Sep 04, 2024 at 09:25:38PM GMT, Thomas Wei=DFschuh wrote:
+> Instead of looping through all properties known to be supported by the
+> psy, loop over all known properties and decide based on the return value
+> of power_supply_get_property() whether the property existed.
+>=20
+> This makes the code shorter now and even more so when power supply
+> extensions are added.
+> It also simplifies the locking, as it can all happen inside
+> power_supply_get_property().
+>=20
+> Signed-off-by: Thomas Wei=DFschuh <linux@weissschuh.net>
+> ---
+>  drivers/power/supply/power_supply_sysfs.c | 26 +++++---------------------
+>  1 file changed, 5 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/su=
+pply/power_supply_sysfs.c
+> index 4ab08386bcb7..915a4ba62258 100644
+> --- a/drivers/power/supply/power_supply_sysfs.c
+> +++ b/drivers/power/supply/power_supply_sysfs.c
+> @@ -290,6 +290,8 @@ static ssize_t power_supply_show_property(struct devi=
+ce *dev,
+>  				dev_dbg_ratelimited(dev,
+>  					"driver has no data for `%s' property\n",
+>  					attr->attr.name);
+> +			else if (ret =3D=3D -EINVAL) /* property is not supported */
+> +				return -ENODATA;
 
+I think it's better to update the check in add_prop_uevent, so that
+it also skips -EINVAL. That way sysfs still exposes the correct
+error code.
+
+Otherwise LGTM, even though I wonder about the performance impact of
+this change. I suppose this is not called often enough to really
+matter, though.
+
+Greetings,
+
+-- Sebastian
+
+>  			else if (ret !=3D -ENODEV && ret !=3D -EAGAIN)
+>  				dev_err_ratelimited(dev,
+>  					"driver failed to report `%s' property: %zd\n",
+> @@ -451,11 +453,7 @@ static int add_prop_uevent(const struct device *dev,=
+ struct kobj_uevent_env *env
+> =20
+>  int power_supply_uevent(const struct device *dev, struct kobj_uevent_env=
+ *env)
+>  {
+> -	const struct power_supply *psy =3D dev_get_drvdata(dev);
+> -	const enum power_supply_property *battery_props =3D
+> -		power_supply_battery_info_properties;
+> -	unsigned long psy_drv_properties[POWER_SUPPLY_ATTR_CNT /
+> -					 sizeof(unsigned long) + 1] =3D {0};
+> +	struct power_supply *psy =3D dev_get_drvdata(dev);
+>  	int ret =3D 0, j;
+>  	char *prop_buf;
+> =20
+> @@ -483,22 +481,8 @@ int power_supply_uevent(const struct device *dev, st=
+ruct kobj_uevent_env *env)
+>  	if (ret)
+>  		goto out;
+> =20
+> -	for (j =3D 0; j < psy->desc->num_properties; j++) {
+> -		set_bit(psy->desc->properties[j], psy_drv_properties);
+> -		ret =3D add_prop_uevent(dev, env, psy->desc->properties[j],
+> -				      prop_buf);
+> -		if (ret)
+> -			goto out;
+> -	}
+> -
+> -	for (j =3D 0; j < power_supply_battery_info_properties_size; j++) {
+> -		if (test_bit(battery_props[j], psy_drv_properties))
+> -			continue;
+> -		if (!power_supply_battery_info_has_prop(psy->battery_info,
+> -				battery_props[j]))
+> -			continue;
+> -		ret =3D add_prop_uevent(dev, env, battery_props[j],
+> -			      prop_buf);
+> +	for (j =3D 0; j < POWER_SUPPLY_ATTR_CNT; j++) {
+> +		ret =3D add_prop_uevent(dev, env, j, prop_buf);
+>  		if (ret)
+>  			goto out;
+>  	}
+>=20
+> --=20
+> 2.46.0
+>=20
+>=20
+
+--ub32aja7tdcftnq6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmblXpkACgkQ2O7X88g7
++pqYSRAAnX1Ei4PdnGpqcfIY7X4fe0pxb2wSJuELGYF0WFaHmuScnsen8241qLrW
+4mVyJ5DOND4TR3gpxhEhu2BoBcaCWw+zmNqaKw3bpWIpAdiL8CAM27rGbQTS2o9G
+T8td525S/TlC/oWGg2KwgEowT1qtB5OxIyidf1HOwwHyEluJjg1bSPNIYvuLPTRN
+aVbGN4IxCqRj5jXkZRMsZJTyJ/7Bpv1lLj2l/CaKjiYyg5gFNOBsDGKfa8DpdRdX
+pbrRs2H5nGzXQCWl8EzaN7wLGk4NHwSklxcM9dQ9GK/CUtWYeShiP9r/4901g0zg
+tXSCMvYjAZBQGWqfV1Im+i6Ni4ezaW0ZH9XLFVU6JqTjdUJJ4HTSuAYKs5ekZ1mR
+u8mkh6xsZqxnq4esWitaqn68ccOgNul8pnOwRn6b9e9O90oNtNQ88Xv/UO7qGshq
+sr4O9WFk/eZUi8pD3iqPWwr4DocRlliVSCXLzxkVtwceCxxvuRZS/nmBUyMovDcq
+7hU3kkSlJuIX3s8iudXJbERjNr/DhUH0LCcUR8wiJYIJ3/bIHzcHw9NOD0ZFkbz4
+zHtDjJV1BzjCF/gtLTsnb8HTGtBOz9Gf0MgvVRLOr1PDdvrN2d8NXJ+kfAAH69HZ
+rZeSIg2IzYnwqMhjlQSJOrB4/SV5B+LEjRqg9lQcx2JvBJ/R4mc=
+=OPty
+-----END PGP SIGNATURE-----
+
+--ub32aja7tdcftnq6--
 
