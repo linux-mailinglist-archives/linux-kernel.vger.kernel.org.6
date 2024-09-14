@@ -1,123 +1,85 @@
-Return-Path: <linux-kernel+bounces-329545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B269792BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:56:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC32C9792C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1C21F22385
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:56:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCB0D1C203AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0071D131C;
-	Sat, 14 Sep 2024 17:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DD41D1309;
+	Sat, 14 Sep 2024 17:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BCKnMStk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="GQJ5jy8a"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAA6522F;
-	Sat, 14 Sep 2024 17:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919D1433BB;
+	Sat, 14 Sep 2024 17:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726336574; cv=none; b=WtgyLB5XCKpA7ioEWVtxsCz3uPfxQKhRBY4JBVWudomC3ChKl9b5C35x0D/SGn1QdHl2r0pA+uwwnjfFewNuVUEe2X2mECOO2kDEtj85QLm73XDEpyclUvD5tlKnh2Gs3/Gh7DuMJrhu0wgjITNxticNFDn69mSItbtBFkMVsOk=
+	t=1726336618; cv=none; b=EvNZ3aIeJMBFO5vbTyOKXbRiIf8yebHI8jVoC+ex73bdTRf+SGYvjv9ccBP/6NuF6m9coS2+s6Y9sCEFoMKQsNvhaRaK/8Exb/PkGAt7ath73Vdxg0B7vxwE+Jgh9axL659yoevTsl32V8uAJ8gibGQU1Rwfk44UVLEwZi+nGUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726336574; c=relaxed/simple;
-	bh=usg5zuvL6dMiMtReqxAmcXPlYBF1AWzxevclY567A/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGPxkqOOeL2frg0ZxgqulD244E4Pn3cRqlgLHYfr5DlwhmK1eAXyi2ScBrvMhgaHNfN6+Bn8MX1c33+kQSZXNuGbynbL7n6v+bacrvua2YQSoIFMZLSfG8eiZxup+bUZq/kpSwzgEWD56dCsu32TGYxjlDro0ArzPuMq4QtE03c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BCKnMStk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78388C4CEC0;
-	Sat, 14 Sep 2024 17:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726336573;
-	bh=usg5zuvL6dMiMtReqxAmcXPlYBF1AWzxevclY567A/4=;
-	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To:From;
-	b=BCKnMStk0KD+KF5iLNc2XB3G3YDXTC7IF5zt1upbDpbkyTewGa+L+bN3T+QCIm+/Y
-	 dcUP4wpxJ5OVej1SrXlGVNH6rMQsZ8gFAsxwg3lKkaE7rzFkVGFbcQIkMnzvhVM6Kr
-	 M5RTY7BxqmGcL3I30T4qtMRxT9JvvK30B023vO8c=
-Date: Sat, 14 Sep 2024 19:56:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Arturs Artamonovs <Arturs.Artamonovs@analog.com>,
-	Greg Malysa <greg.malysa@timesys.com>,
-	Nathan Barrett-Morrison <nathan.morrison@timesys.com>,
-	Utsav Agarwal <Utsav.Agarwal@analog.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	soc@kernel.org, Andi Shyti <andi.shyti@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Olof Johansson <olof@lixom.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, adsp-linux@analog.com
-Subject: Re: [PATCH 01/21] arm64: Add ADI ADSP-SC598 SoC
-Message-ID: <2024091459-company-diabolic-a9ed@gregkh>
-References: <20240912-test-v1-1-458fa57c8ccf@analog.com>
- <b6af2603-7f72-47d7-98b9-6dc2761dfb74@web.de>
+	s=arc-20240116; t=1726336618; c=relaxed/simple;
+	bh=dD7xaoWu9YGaPQ3bJ0EPoxTKTYlYt+kZpnhjEU2jeA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QBZrpgLYzAsXTnnSDtLpv4GWgAWmbgW1Y/P/ubrdSCZuPaj6/EA+BrK4ImClRpJWaKxTHr3ie+xfdVVhpad2G8SIc2YDwL5/ucOFZfphFXsYQ1ZNsy19vdgSpSZbQ75j3utEVWXwt1vRI/yntdEIsIXquMtpESJZ/eoE2ZmSoow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=GQJ5jy8a; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=4xjUEiTV/Fxa2/tsOWp1Mc3wNtQvWZ9FHr+91WMPEJw=; b=GQJ5jy8anA+yuzbb
+	//tYn/enOX9yur2wa/nKlrLR6yMlgFFlzIxeJ6B7lFsf25umBYTOLH/s5HAWndgj24aFXBnKBdJYQ
+	Frme3lhPt1P/Jkiw5eNxTGC2+CGtariFnwPY5E+W3d/yTHuVg8yAfFMUkq0jew0LLXB9XxI6RSLI0
+	qAThq0O6cz0vURk4HzgK+xF0Vv6n6I3g9CVPRkhZBmBJBJKkbL/zJPedxDoNINOV7K5O7/YFJIpxn
+	1OZi1JgfRURdTHjKZkwXoMPbEw8xniONQDBQbhGN8yExoBo2auKQooy6ekEwV56zZ5B8w0TR6nP42
+	Ukv4ZlvNJN7UKsqoSQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1spX0k-005lyK-21;
+	Sat, 14 Sep 2024 17:56:42 +0000
+Date: Sat, 14 Sep 2024 17:56:42 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: hdegoede@redhat.com, mchehab@kernel.org, sakari.ailus@linux.intel.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: atomisp-libmsrlisthelper.c
+Message-ID: <ZuXOWjvVYa64c1-5@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b6af2603-7f72-47d7-98b9-6dc2761dfb74@web.de>
-
-On Sat, Sep 14, 2024 at 07:15:08PM +0200, Markus Elfring wrote:
-> …
-> > +++ b/drivers/soc/adi/system.c
-> > @@ -0,0 +1,257 @@
-> …
-> > +static void adi_system_config_remove(struct platform_device *pdev)
-> +{
-> > +	struct adi_system_config *config = platform_get_drvdata(pdev);
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&adi_system_config_lock, flags);
-> > +	list_del(&config->list);
-> > +	spin_unlock_irqrestore(&adi_system_config_lock, flags);
-> > +}
-> …
-> 
-> Under which circumstances would you become interested to apply a statement
-> like “guard(spinlock_irqsave)(&adi_system_config_lock);”?
-> https://elixir.bootlin.com/linux/v6.11-rc7/source/include/linux/spinlock.h#L572
-> 
-> Regards,
-> Markus
-> 
-
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 17:31:48 up 129 days,  4:45,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
 Hi,
+  As far as I can tell none of the functions in atomisp-libmsrlisthelper.c
+are called in the tree any more; I think:
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+commit 3a81c7660f8021967dccd52624fa1a6fcf117000
+Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date:   Wed Sep 27 14:24:56 2017 -0400
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+    media: staging: atomisp: Remove IMX sensor support
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+removed the last users of it.
 
-thanks,
+Would it make sense just to remove that?
 
-greg k-h's patch email bot
+Dave
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
