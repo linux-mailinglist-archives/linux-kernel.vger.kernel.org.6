@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-329299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060A0978FBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:58:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2CE0978FC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D621F2385B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:58:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CC87B2554D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3530E1CEEA0;
-	Sat, 14 Sep 2024 09:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99071CF29E;
+	Sat, 14 Sep 2024 09:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="V/si4WmR"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFOWjVhI"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49AB1CEAC4;
-	Sat, 14 Sep 2024 09:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B707D1CEEBA
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726307874; cv=none; b=bD4cJOcWBBrqxRUtEkbnpoTmPg/bT42t+DfwbqI3whxI8vsMZaJDtMF6lX6z3t41wMRW8MYsN68saIT+0y0f6IyvoBKf5nsT/jrABx9GY5b6Fo0wnSJAiOTRFO2y+smcOsdB2W9zs5B9FEbNOqdDUxpzAukMeqPxHkIep6yfx5M=
+	t=1726307884; cv=none; b=Sc30+9eYLo0nxe2ATrCnbsJAea/nnWxVI96bD1T6TAYNj14JtPCTVppr3Ili6MpNcyi+80sJ4tt7+gnrtOtui1i9jX9zeOry2UElY3H8sXRb55piBnsMpZKVa0IAxFqoxI0Z9XZHbsKcnNGdQHUH5Zc+mrAD7340QG2vuoKdROw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726307874; c=relaxed/simple;
-	bh=lQuCovKkPxKUqkSM6dLvf+LTYz3rx59/IsS3+vLvl2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X6N0Oy94uwLplEvUU+VdMMeldZ1ECuB8sIjrZuCZM7nmTLMG6/TqsjKcT1Lxt9fML20asvjBlmJoIZdryyZKYtUP3D0sxRJ/V04q0QX5vG/JvAGASQcS5koZRV2GhosMrUjwnowP621mcYhowfaUYjmuipSBMROqLhvJlctL3fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=V/si4WmR; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=93cKUn+WXxWXdpPau06HwygofLes83prKM3wRZ1aJSA=; b=V/si4WmRcwGdDPY7xSTd9CPgiY
-	b2zGH7yKIppATzRtzFjSP+bqwhygBumjZDykoWXinEwGBDrDaDD+tDTmmWyqdy1P/Z9eoy/l8uU5F
-	y+S+So88DF7xxP2dhn1lWErZD3Z+RzSONVJOJKPlxzClscIHyggbf0JU3BOMhwCkI85l5k6oLn4yH
-	tZEoVfHcUWfmxmonXSYaZQWTYWVSjtvN/2uJlR6TJ5mO1slUtK46Y4SYvibf0J6ErvGFr25LX/Vdg
-	BMDOOC+C0Ho8j8brHKV6uI3WhPVEMxpl6D3aTAodiNouI61WkvNBL31mla6JEU2A1ElS5X873oRPu
-	vXyO90tg==;
-Received: from i53875af6.versanet.de ([83.135.90.246] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1spPX6-0002qE-48; Sat, 14 Sep 2024 11:57:36 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Yao Zi <ziyao@disroot.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Yao Zi <ziyao@disroot.org>
-Subject: Re: [PATCH] clk: rockchip: fix finding of maximum clock ID
-Date: Sat, 14 Sep 2024 11:57:35 +0200
-Message-ID: <5815159.DvuYhMxLoT@diego>
-In-Reply-To: <20240912133204.29089-2-ziyao@disroot.org>
-References: <20240912133204.29089-2-ziyao@disroot.org>
+	s=arc-20240116; t=1726307884; c=relaxed/simple;
+	bh=/5HMoiKsNQpQYsVih2u9baT8T81pGg0AoSnNhsPK+ck=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=I3fyxkAAtTJfZeDgL5LjSZ+FL427eQQUOJFzdKGB0aUteBOe2eUOz45L2FcWFhw3RxhMe/qsOv7wocMPCcrjObXYCl5T+4VpRgdHXvr52pXYiZ5OcTvER0f/ad3Ab0lSiu00Mq21skp7Uw7wdi2Liqmb9Q/6BN5fERXcTQCCQHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RFOWjVhI; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso22803025e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:58:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726307881; x=1726912681; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=88eCWCoJ6XR75TD+7uqwXik/mRXRbb4L/oRDMA8RVAc=;
+        b=RFOWjVhIv6CimJ+dEyqLUMcW7ICZPRYhey9E0lbnoHsUn3lz3x9xc1kaa6tsJPFFSG
+         myBuko0uhM8fvSYIf/c/5xxevBqZYjDBaRcutsuEGdLadZ2pC8/0RUn+rupIpYwo3eyL
+         r7xmLAaKuTxxu7e80a/bzefhcWJ9xigFiKVx6wS6eEBFH1IW69uo3z/lJqjALP1wAQ5/
+         o0SQDVpIDT6EhB3vZV1CKY071eWCKzypoDNacwhiYRhwGQzvKNZOsGEJtyHz6+s1hYOG
+         BcQNaxnMFtsuZSPWWB7G0CmqrkRS8g6VizrdDctNvPK0mXA0XGcgXpJOtyXINP+BQDAs
+         8O0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726307881; x=1726912681;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=88eCWCoJ6XR75TD+7uqwXik/mRXRbb4L/oRDMA8RVAc=;
+        b=Kt5fK08VVOTJgz6TUEWG21x6B8k0KPWHoQoGhEe1l0KZ3mFBknByJ3erKmjKJBZTJj
+         IlSGY6QNS8tMphDHJty6Bmg5C1Zke2u0urvxy+cc7IO4ObnYWhkVEGuhBjOg3my38MOx
+         oImPFwwg7YYlG6wxJJ+9YQ5/vXBqQgJ24SeHfvfod8tN8oDbIv25812IjACLwOJPEKBg
+         9pIOWD1I2CjELTM0McmhkxOsvAgfXc3KdUfGypdh+BGfn3llSYCaGVjM8NUlbTyCitpY
+         H/G7uSv3/UhfrfsbN/k2V2/uZ7l8PrpmWIPJBR23gqZ1iwOggsFs4UmC+74Sw2xJSotM
+         uLgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVO4XbZw5XNQRm99UQ9/1eSSDcyDThaBW29WpXMI2IJJ8tQxEcvL7NDXZPs0V2oEJ0qZ7c5OA79qV5A3R0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6H8h+mhydMstfexTzO1ZX6PwFzSADjdmOOyvSGOO0eprrQc9c
+	9Fn+r8cCYty0EiyhiDfX5okrwCgStKJIxnTOFKpnmLC+Lg6vsBpEPuRnZblcla4=
+X-Google-Smtp-Source: AGHT+IH7GmXL2XmaP0VmzSlcMV8/a2NLWHWGYPOZMBM/UtK5vb5oZb81UImFpRwQaVXMv0UR3lG/Yw==
+X-Received: by 2002:a05:600c:83c6:b0:42c:b220:4769 with SMTP id 5b1f17b1804b1-42da2bd7679mr14208405e9.32.1726307881005;
+        Sat, 14 Sep 2024 02:58:01 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b3eb6sm60495966b.105.2024.09.14.02.57.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Sep 2024 02:58:00 -0700 (PDT)
+Date: Sat, 14 Sep 2024 12:57:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Piotr Raczynski <piotr.raczynski@intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] ice: Fix a NULL vs IS_ERR() check in probe()
+Message-ID: <6951d217-ac06-4482-a35d-15d757fd90a3@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Am Donnerstag, 12. September 2024, 15:32:05 CEST schrieb Yao Zi:
-> If an ID of a branch's child is greater than current maximum, we should
-> set new maximum to the child's ID, instead of its parent's.
-> 
-> Fixes: 2dc66a5ab2c6 ("clk: rockchip: rk3588: fix CLK_NR_CLKS usage")
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+The ice_allocate_sf() function returns error pointers on error.  It
+doesn't return NULL.  Update the check to match.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Fixes: 177ef7f1e2a0 ("ice: base subfunction aux driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/ethernet/intel/ice/ice_sf_eth.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-@Stephen: can you put that on top of the other Rockchip changes for 6.12
-please?
-
-Thanks a lot
-Heiko
-
-> ---
->  drivers/clk/rockchip/clk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index 73d2cbdc716b..0972e9f87470 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -439,7 +439,7 @@ unsigned long rockchip_clk_find_max_clk_id(struct rockchip_clk_branch *list,
->  		if (list->id > max)
->  			max = list->id;
->  		if (list->child && list->child->id > max)
-> -			max = list->id;
-> +			max = list->child->id;
->  	}
->  
->  	return max;
-> 
-
-
-
+diff --git a/drivers/net/ethernet/intel/ice/ice_sf_eth.c b/drivers/net/ethernet/intel/ice/ice_sf_eth.c
+index d00389c405c4..75d7147e1c01 100644
+--- a/drivers/net/ethernet/intel/ice/ice_sf_eth.c
++++ b/drivers/net/ethernet/intel/ice/ice_sf_eth.c
+@@ -108,9 +108,9 @@ static int ice_sf_dev_probe(struct auxiliary_device *adev,
+ 	vsi->flags = ICE_VSI_FLAG_INIT;
+ 
+ 	priv = ice_allocate_sf(&adev->dev, pf);
+-	if (!priv) {
++	if (IS_ERR(priv)) {
+ 		dev_err(dev, "Subfunction devlink alloc failed");
+-		return -ENOMEM;
++		return PTR_ERR(priv);
+ 	}
+ 
+ 	priv->dev = sf_dev;
+-- 
+2.45.2
 
 
