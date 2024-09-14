@@ -1,119 +1,118 @@
-Return-Path: <linux-kernel+bounces-329024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBB8978C33
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:30:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F8C978C3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76501F22E9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:30:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75AFA2870F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED844C76;
-	Sat, 14 Sep 2024 00:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7A42F56;
+	Sat, 14 Sep 2024 00:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlCRdcQ+"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TcuKtfXP"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA3D1C2E;
-	Sat, 14 Sep 2024 00:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81C04C6E
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 00:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726273840; cv=none; b=Vjwlsd7VqB5GmQOlBfeUsI95blW4a4OxO/mmZFAMaxXkRV8pC349F32/YWI8E6jWGXkz+mA8gfHP8yTzwJbAekiNYUnsglquwY2lG3RHoMQ5SOX3KmQPNC73jWkyrKhT8mXMCVMCGiS2sIHij52QZx9GvreGCVw6ZEjo9T6QLmQ=
+	t=1726274244; cv=none; b=eg1k8nlGPf8gIXOOL0TqDGXxUbc2n+bt8n7VB/kHp8NG2jY/1pg5zb3JXVl4YCScIItnSf3UM7WeRvQG0wmZU/ptOIVV4gMVbPFnRnYCKNPdM4MqmftwUQoPL4gbqPBzyBh8gmRj2CCrfygGpJdfBMYIQcVHgtuLweQ/wN9VnHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726273840; c=relaxed/simple;
-	bh=VS/w9+FjOSUoGItTyb6HFFrmUwWWjlvcOqrGKD1tMZs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DBeiJR0j67L6/HwfrchYZQ8qLJMk6I8AU+xyTCrP7cbQsQJ1Djp2qzQven/35Cgj0UBB2oS0JlAKQpNhgieiNmVwF5V7TgXI3OIRDYD0Utz6XKVLaNCfqd614XbvrJFSEcxgvDEetk6zIOIdc+4SDZDIbCB7d3e09SJfK0NSZ2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LlCRdcQ+; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a81bd549eso310856766b.3;
-        Fri, 13 Sep 2024 17:30:38 -0700 (PDT)
+	s=arc-20240116; t=1726274244; c=relaxed/simple;
+	bh=RTzDpsJT3aW2jJibA0QXRjsEY5d1N4cIw2XADng6ot0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ffy6NI29IPIjh3iDDDVQwXNtAJeR72s6uE5qO/kNLQBylQpAPhI4NAm1gIzFiGrAYhPfn93DTccrgq1o1L4eX8oBE7D7+fNPWWNg6cdOg6eiJO7CMoQ9OI4HQmQH5bm8KhXoNPLKIth00XIMsjEaHMigL8dMO86taQDIECv+esU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TcuKtfXP; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-378c16a4d3eso1507633f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726273837; x=1726878637; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=clKYHVTnGLAXatAsDAW8Z/W+xhYAhmjTu2sFhcCtn5c=;
-        b=LlCRdcQ+vIheFUjcS6hYCB28cd3CIHRbCgydWXMqm2iOwSeBzcZgvfTdAmFcO5z8Re
-         4yf3gxdAF/rorXFbN3tSQpGTLkBVmemhbvJNLW+oCDHR98zOXk/+FktAOYqhY6s/BArw
-         arrA+P9M5gtxv/DpB5RmCx+V/CvAFykSrCYGLRnxcyQRl36nScNOIs6HhjQIKA7WEBp9
-         CB8xI5XlGQOzM3TOQ3vX5ze+IFogIOZ+SUADlTDtcIlW49lVn1zC+QyotAqgwhEdXYe1
-         /fXDsyeeK+0ufyQSwDExbhvEamA0gm0BkOHZhrejDOMcKEYIfcj99P5ycXop48xyB9jI
-         KD8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726273837; x=1726878637;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1726274241; x=1726879041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=clKYHVTnGLAXatAsDAW8Z/W+xhYAhmjTu2sFhcCtn5c=;
-        b=N/MY8U62NfxeqchmVvn5LtERLJBDR2u1jCqAX4sJsiIXtxCMZyLyQ2wMMcMTRauoo0
-         YeGy7wkTZOagG9Z8rDCRjL9LxW9xvLtmqpUpNtyfhKS5amrj3025u3OKNlSxOeyweeuC
-         wwv7QC/QAjUD9gndfnh4GwoAHaBlwEf2+VsxI4SvxVM2pzhePdTgCczd8AYenkIXBe2p
-         UySgfinEj+PmQSXNZMNx7rwbDwiRU65INOHmlm6wj7s3CSjNFr7tTelVRi9M6m2vqZ8O
-         ZLiYYffSh7MBPYJGPBSurZ+mzNuisgBx2MwbOUaUixmOHNhX6mYWN6KBp/wYbM60xRci
-         Jerg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvO5YTycwRTNJfVeRga7EeY3MVopJowyjHbQDmMzUdAb3KASFAI5y7aq+8Ho19VqYJaJ3gp2UJCOqi@vger.kernel.org, AJvYcCX/F2YuSwTpVYW7CYdHKkUN6H5bashfrjKAJJ1X2MbSMgCFxzWPDpH/fcPlOMIGwsMUz01tgymWdn/T@vger.kernel.org, AJvYcCX07NkTZP308EfPyDPAfmN5P9rRVDBE7cWBnhAr5dEHbLGPsrGFb19/dF5zvI5t/nCOgbxeqDEI8xBxxAhP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCr0ZBlqUa2wl1mNZEPP1B0asUHm690iGfFcO6USqT4PhrBJ2Q
-	bu3SmQbAXoYS/mnHs9vLyDASef1nfHHTxrbVACwYzIJMKRtiUZf+
-X-Google-Smtp-Source: AGHT+IG4d8Yu791E7Q7EQ/6vRRF+wpYQIQdFrDUsAQEc59Bzxh9bHGC+gm6CQ29WeAjVgFd7TjQAOw==
-X-Received: by 2002:a17:907:f166:b0:a8d:2faf:d329 with SMTP id a640c23a62f3a-a90294ab58cmr809893066b.2.1726273837398;
-        Fri, 13 Sep 2024 17:30:37 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:6bd1:9a24:6b02:4a8f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a906133049csm14452266b.205.2024.09.13.17.30.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 17:30:36 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Sat, 14 Sep 2024 02:30:34 +0200
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v6 0/4] pressure: bmp280: Minor cleanup and interrupt
- support
-Message-ID: <20240914003034.GD33362@vamoiridPC>
-References: <20240912233234.45519-1-vassilisamir@gmail.com>
- <ZuQL845_lQhpNpSR@smile.fi.intel.com>
+        bh=e+jOycPGSwq1ePA6ixu4fJZLfQQpDHMjNmpy29S17Wc=;
+        b=TcuKtfXPL8zNPcZNfza941b/pVY7cxiSteL37zdW5Lefkavuamm8Ix3xeBdjrrkDC1
+         nH2iKQ4NhzmkLrPjKL2jFen5awmj2lwLGg4plY+/DqiltTvSh7PR3ObbDLORvw3NpYfY
+         gaTvWnA3mvQ6hmQHZ87TUFxISnS4hF5OF6pG7MCjCVhVpTGX2MAlmt1ACZh77ApTBl5F
+         mSxUbxde+AsNXNms2tYn7hZWhTT3a5NCIgMtJRuK04LpvXgtZ3pQPwl1xx8txUQmg68S
+         kuy83KEF7zWsuXdDf4DQk86xH2xXFtzPgFSXgX5qjS48wDjj+Pk8a/DIyAltT4cntqko
+         0V+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726274241; x=1726879041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e+jOycPGSwq1ePA6ixu4fJZLfQQpDHMjNmpy29S17Wc=;
+        b=DyQCWM+l0X3pPaUu1QE/ufBdxEa2jmeUfCP3HkKibBuhv37r3bb7rzTcef7BcEorY/
+         x4pRKgi32ESStHPpHB8ECXTztM4vEFqi3t2LMlnbNgBTqb8vTjC2rAYlUn1hrSgS1MtH
+         kNxY6VjiUx3PWeowj8h8PzzevgYGveD39ENXXLiP4RRxX+uWJWjXGMoyuq8NT5Ae/EqO
+         5smbma223YZwaf10gGdfE5rzPTjhWcOi0DlDUYQYdh/2i27136GQMIEuzf/XmR3M9QH2
+         2hdtp+VlBURj8387cZO/u/4zzQbYOesFfOsIOtKGcMF7H4b6Neoc1CDRYhIVZNTMLmwH
+         sqDQ==
+X-Gm-Message-State: AOJu0Yxv0pd2PDBZpQ1AnOeSfeRt1wmCB+w9mR1vQz8wtNK12vog/2vB
+	OYJ01wz0QMgDX0a2cKNxAbIfNENP/cqHyafn0ozSD4R+ulBOHFGbYSgnxOD453gAXrZEpX6Jop/
+	0LNRsqVk4s1UKdHoqjDF+4nQiR8WCGw7Zf7s=
+X-Google-Smtp-Source: AGHT+IG0R3iZSYDceJ8QQ7aQUZ5mvB7fALHhi5+yuQq3+Zk4UOHO9Z9eK9IPl6HzSfkk6HkzS8GeL1OtpkYSa73FER4=
+X-Received: by 2002:a05:6000:1862:b0:374:cc4b:596e with SMTP id
+ ffacd0b85a97d-378d6235e10mr4454924f8f.37.1726274240277; Fri, 13 Sep 2024
+ 17:37:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuQL845_lQhpNpSR@smile.fi.intel.com>
+References: <20240910221235.2132138-1-jstultz@google.com> <20240910221235.2132138-6-jstultz@google.com>
+ <a608c2df-ce2b-45d8-94f5-16c830104d46@arm.com>
+In-Reply-To: <a608c2df-ce2b-45d8-94f5-16c830104d46@arm.com>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 13 Sep 2024 17:37:08 -0700
+Message-ID: <CANDhNCoQU3x7tkXve0Tuwyo_WDTq8-pNbmsAHcABPJCy2txpog@mail.gmail.com>
+Subject: Re: [RESEND x2][PATCH v12 5/7] sched: Consolidate pick_*_task to
+ task_is_pushable helper
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 12:54:59PM +0300, Andy Shevchenko wrote:
-> On Fri, Sep 13, 2024 at 01:32:30AM +0200, Vasileios Amoiridis wrote:
-> > Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> for patches 1 & 3.
-> Dunno if a couple of nit-picks warrants the v7, so I leave it to Jonathan to
-> decide.
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+On Thu, Sep 12, 2024 at 10:29=E2=80=AFAM Christian Loehle
+<christian.loehle@arm.com> wrote:
+> On 9/10/24 23:12, John Stultz wrote:
+> > +static inline
+> > +bool task_is_pushable(struct rq *rq, struct task_struct *p, int cpu)
+> > +{
+> > +     if (!task_on_cpu(rq, p) &&
+> > +         cpumask_test_cpu(cpu, &p->cpus_mask))
+> > +             return true;
+> > +
+> > +     return false;
+> > +}
+>
+> The slightly awkward
+> if (condition)
+>         return true;
+> return false;
+>
+> is more convenient for you for the tri-state later, I assume.
+> Fine by me FWIW.
+> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
-Hi Andy!
-
-Thanks for the reviews! 
-
-Jonathan, I just sent a v7 with these small changes so you can go and
-pick up the v7!
-
-Cheers,
-Vasilis
+Thanks so much for the review! Very much appreciate it!
+-john
 
