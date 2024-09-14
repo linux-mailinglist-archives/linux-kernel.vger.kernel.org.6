@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-329108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FBE978D72
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:00:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B91F2978D75
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3385B24938
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:00:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23C09B2524A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70DA22071;
-	Sat, 14 Sep 2024 05:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5EF43AD9;
+	Sat, 14 Sep 2024 05:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uAGW3RRL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J3zAeJNK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1D94437;
-	Sat, 14 Sep 2024 05:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C965A18044
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 05:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726290032; cv=none; b=fhX7xcIu2cyVYJYfYbnNKWW6L+92sTVFV4IYJqCx7DRaikh7Z+2lcVKyjvRKdklzB9ZSnH2biiILFzaYIaPumgbz7qOcZS8KD81sHGyDXPuDK4SlVpqGdWgXqH1Y5yyus9/hged0alRdDhkn1gcSFW/rh8hPY7nWGFzroMSJWVQ=
+	t=1726290164; cv=none; b=NNK0lINHNhzqIPXWG/L0ENhps//VQwHqeRoNPMLOZWUHtuxEcJ+pT5i1RyBteWcUrNvL+cMiSH8o781k++XoKrw8rt7xRanQvGwRWMrv/u+4K7mg32WIdCPxU/E03/0Tr7mqKXphMdFdTT5seNN8Ag7IP6unJPfbxxp3Uo2Kw3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726290032; c=relaxed/simple;
-	bh=TU6+0ZV2vIa+B6CuwSGtaZg1fH3e9avaFbiyTxXIxCg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sB9TUmBjWuwaIi8quuD3xQXbAToq2WFm0k1xfuoahJR4qaB9J8i6sS08J7lH2qHWY9yv/XJT0W57K0MgIJzQEioedDkXlOhNsmJqln8U1uOHydZe/GarTLqks2dGDemYmdXSHzNHt5uLmqhPV+9vy+BMS6zjTp3y6bv27c6KNqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uAGW3RRL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1EA1C4CEC0;
-	Sat, 14 Sep 2024 05:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726290031;
-	bh=TU6+0ZV2vIa+B6CuwSGtaZg1fH3e9avaFbiyTxXIxCg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=uAGW3RRL7XOg/9EunDa6Jylph3B+XdvGGoAv8DNTziA6HwjKKSdd3ENZCu4F3vp1z
-	 DgD3ovh8M9XnojXwUTbW652RwtVoWy18lckP6RWAFV3PrpGZMhQeZJE4QDylWRVr20
-	 dT2GCqzsB2Nv+YZJto8f4byuEcUeszTY/lk0hsAv51+58lS+9G3xa1PmGOqe7O/bES
-	 stdIbzy7Aa3PQvASippMkxfWm1Ja5Q5YF0cTcwiLJhHoq2dKpNQjAOPb4e28b7wUKn
-	 sWuGYQDCBg8t4c/dJ4CPVQcq0Hv5jGkDj7safHddz7/D3MM7E9bKWR20Fzm+D1IF7I
-	 IKrh10uLOEnYw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D1C3806655;
-	Sat, 14 Sep 2024 05:00:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726290164; c=relaxed/simple;
+	bh=PRHxpwqBWGpM+2d2QT8lyeuCwQ6nd5/elvNqX+lmXWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=afHeUaKzggE5xU5vzcDxnsaBRSXf2pI/XE/uz9UsRmOCGPG5QW6bVEiBUNTXq5J2eDL9MQsBXLZJnl1Fqq7xoaNzX5Gz3i29tmvEriA9DnveQNVSxN2MLXKhtDBBvCp/m8xYzOd41JDpX1LZYzctUGLdcL02h2Vcahe3NoJSSCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J3zAeJNK; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726290163; x=1757826163;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=PRHxpwqBWGpM+2d2QT8lyeuCwQ6nd5/elvNqX+lmXWY=;
+  b=J3zAeJNK5qO8noTli+hMKJy3AxFFQt/dh9qjM3TBLfL47e1ZGYO/Yo8T
+   oDlfNVJLKABy3yPt7cHLPw3VnMe56Qwed6sewffVq2BN5+zqQPMKRx8i2
+   4HqN5HNZ+pxzcL6DP5EC8roKHhmHOB1QaEaRtD6j9qeQlXdGQxDCwUst/
+   9q0pLdEgKPw4S9KWcVtVYLwhT0eVDnAkyhr17XUvPn/GuRUOj7wzAtSjB
+   EvJi12njkw+YbJXLBnVL+Qyq3LYcbujjRU4MR0WlOslQMplXJCSTGSCC/
+   tSllADfFA81mLcGcVJNGVRibLwW/ZCuGckfI0477rZUbXxoAbp/u6axRd
+   g==;
+X-CSE-ConnectionGUID: LKx8guYDQ0urqRmTAdqlcA==
+X-CSE-MsgGUID: 8e6JMg5ZQRa+/y3+Ht2V7Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="35874105"
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="35874105"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 22:02:42 -0700
+X-CSE-ConnectionGUID: ssI9cVoiSF+soSImCuzkgg==
+X-CSE-MsgGUID: F89ZKZi/QGaCBPbBI10qCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="73319859"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 13 Sep 2024 22:02:41 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spKve-0007OK-1j;
+	Sat, 14 Sep 2024 05:02:38 +0000
+Date: Sat, 14 Sep 2024 13:01:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20240912 15/15]
+ kernel/bpf/core.c:2505:22: warning: comparison of distinct pointer types
+ ('struct bpf_prog_array *' and 'struct bpf_prog_array_hdr *')
+Message-ID: <202409141212.JISRQdpc-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCHv5 net-next 0/9] net: ibm: emac: modernize a bit
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172629003301.2464053.6462513032875139594.git-patchwork-notify@kernel.org>
-Date: Sat, 14 Sep 2024 05:00:33 +0000
-References: <20240912024903.6201-1-rosenp@gmail.com>
-In-Reply-To: <20240912024903.6201-1-rosenp@gmail.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org, jacob.e.keller@intel.com, horms@kernel.org,
- sd@queasysnail.net, chunkeey@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240912
+head:   f2ca068393cf1157c12ab08556b05824eec16511
+commit: f2ca068393cf1157c12ab08556b05824eec16511 [15/15] treewide_some: fix multiple -Wfamnae warnings that must be audited separately
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240914/202409141212.JISRQdpc-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141212.JISRQdpc-lkp@intel.com/reproduce)
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409141212.JISRQdpc-lkp@intel.com/
 
-On Wed, 11 Sep 2024 19:48:54 -0700 you wrote:
-> v2: removed the waiting code in favor of EPROBE_DEFER.
-> v3: reverse xmas order fix, unnecessary assignment fix, wrong usage of
-> EPROBE_DEFER fix.
-> v4: fixed line length warnings and unused goto.
-> v5: Add back accidentally left out commit
-> 
-> Rosen Penev (9):
->   net: ibm: emac: use devm for alloc_etherdev
->   net: ibm: emac: manage emac_irq with devm
->   net: ibm: emac: use devm for of_iomap
->   net: ibm: emac: remove mii_bus with devm
->   net: ibm: emac: use devm for register_netdev
->   net: ibm: emac: use netdev's phydev directly
->   net: ibm: emac: replace of_get_property
->   net: ibm: emac: remove all waiting code
->   net: ibm: emac: get rid of wol_irq
-> 
-> [...]
+All warnings (new ones prefixed by >>):
 
-Here is the summary with links:
-  - [PATCHv5,net-next,1/9] net: ibm: emac: use devm for alloc_etherdev
-    https://git.kernel.org/netdev/net-next/c/b9758c434284
-  - [PATCHv5,net-next,2/9] net: ibm: emac: manage emac_irq with devm
-    https://git.kernel.org/netdev/net-next/c/dcc34ef7c834
-  - [PATCHv5,net-next,3/9] net: ibm: emac: use devm for of_iomap
-    https://git.kernel.org/netdev/net-next/c/969b002d7b65
-  - [PATCHv5,net-next,4/9] net: ibm: emac: remove mii_bus with devm
-    https://git.kernel.org/netdev/net-next/c/93a6d4e03629
-  - [PATCHv5,net-next,5/9] net: ibm: emac: use devm for register_netdev
-    https://git.kernel.org/netdev/net-next/c/a4dd8535a527
-  - [PATCHv5,net-next,6/9] net: ibm: emac: use netdev's phydev directly
-    https://git.kernel.org/netdev/net-next/c/baab9de385a8
-  - [PATCHv5,net-next,7/9] net: ibm: emac: replace of_get_property
-    https://git.kernel.org/netdev/net-next/c/cc0c92ff662d
-  - [PATCHv5,net-next,8/9] net: ibm: emac: remove all waiting code
-    https://git.kernel.org/netdev/net-next/c/c092d0be38f4
-  - [PATCHv5,net-next,9/9] net: ibm: emac: get rid of wol_irq
-    https://git.kernel.org/netdev/net-next/c/39b9b78065cd
+>> kernel/bpf/core.c:2505:22: warning: comparison of distinct pointer types ('struct bpf_prog_array *' and 'struct bpf_prog_array_hdr *') [-Wcompare-distinct-pointer-types]
+    2505 |         if (!progs || progs == &bpf_empty_prog_array.hdr)
+         |                       ~~~~~ ^  ~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
 
-You are awesome, thank you!
+
+vim +2505 kernel/bpf/core.c
+
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2502  
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2503  void bpf_prog_array_free_sleepable(struct bpf_prog_array *progs)
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2504  {
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14 @2505  	if (!progs || progs == &bpf_empty_prog_array.hdr)
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2506  		return;
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2507  	call_rcu_tasks_trace(&progs->rcu, __bpf_prog_array_free_sleepable_cb);
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2508  }
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2509  
+
+:::::: The code at line 2505 was first introduced by commit
+:::::: 8c7dcb84e3b744b2b70baa7a44a9b1881c33a9c9 bpf: implement sleepable uprobes by chaining gps
+
+:::::: TO: Delyan Kratunov <delyank@fb.com>
+:::::: CC: Alexei Starovoitov <ast@kernel.org>
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
