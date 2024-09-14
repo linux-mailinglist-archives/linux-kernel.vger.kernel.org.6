@@ -1,254 +1,183 @@
-Return-Path: <linux-kernel+bounces-329183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EAF978E72
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:32:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F73978E77
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 283362871B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FC221F24E4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC3319D06D;
-	Sat, 14 Sep 2024 06:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5129017C9A7;
+	Sat, 14 Sep 2024 06:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="m8tuBQv7"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgKfcvbT"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9148A19923C
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF7E748D;
+	Sat, 14 Sep 2024 06:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726295514; cv=none; b=A27r/GPLgHlvdxZFwTt1J96FJY9bsL+BLjOsi35aiflh9nrg1M0tiz5KZDSfM/pH83ioepchxCM4s3ptjjBx7043ZSj6jBaXUfdZ/cLs3jLQwFnArPTWC/1peJdkGe3l0ehAkLinlgcPYLQ88MhXd0rp4tytJvzEkiXZ7YYAnxc=
+	t=1726296076; cv=none; b=f9B89d+RC/TzevchzYyY7sGGHwJBrazRDEZh9C4Z+VTDJSj8UhEhmSI553lHdNiztRH8OU1YYZphsRtVlWuMq/fFEhuRAC1SeDjE3lurcSztCghgfO1xvTHLXVeoxRLPrFbdXxLU0Uy2gnoPBGOCiVF9Hzp0YAEAzyMWK6wL3YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726295514; c=relaxed/simple;
-	bh=YGySdCl9oHCQEVuL0rPLs8S/OL4b/TWh+9D0N8uRP20=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=H/ZpDrVwgIMYjOjZ1pi8Anb3s+pM5tQxFrYm6CVifcPSwpUsVjX3qXWbOt4Yl67spycjvyNdWPzPuH0FoouA/GzUqK3yX/3//3eEJEyOtNlXOywDN6km1jcn83gZqN2afoKu7aa1PNqidqsFlaRIvlKXpCR2OIDh5Ii9sMvot30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=m8tuBQv7; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-70b2421471aso1084160a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 23:31:50 -0700 (PDT)
+	s=arc-20240116; t=1726296076; c=relaxed/simple;
+	bh=i6x5+w90U8Ps5RP3eYPjER699hgmw+WWRz+0AwTGLfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqXoWKVoQJFakZAZLVQL2rCOpWEldS98D0r5uE7ypRPtrorccP3i3WnidPe677SUHQWDfraxg+ILbuQxrzDj7Ved650dehF9hfExl3VZ2m+ri8KOwODaLb35sEd6Oko/u4NVI9zaGtgsnlumsod+ku4m745cH8lg5+qZxbDj5pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgKfcvbT; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c351809a80so21751226d6.1;
+        Fri, 13 Sep 2024 23:41:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1726295510; x=1726900310; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1726296074; x=1726900874; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RMDclbtx7gHhtYQ7pcwGHJBdL790wexMa87Hv1rL3aE=;
-        b=m8tuBQv77edkVC+z3NkC65BksG2FLWY47UoJJaYN81du+iOp+3YF7rtRzgTlL9Vhpi
-         qUdq1ZqoXRtQX5juHRPuCkgGqF1J5L4+aGmn1FOKGb8y5xJqhdx3YGmxXM+TZM6K6hYW
-         PQ1P7audV77BAof60cGsdr2ZHnlgmnaT5beGwpnzAMGUZ4+NbMIubiB7GVryuuUl14XG
-         CJ2ZUs4iduRiTxH7Do0rwFsoNRIeN/RqHQXlKZK1yOLJISu8kUqjYUyFXwKB7fgbbN+F
-         z5pdSBqgQIWhUgNBqvFnJYoej8T23ix1RXbWuEloYYvEI+jeGG+2OWNx25S/oG9bdbC7
-         Cx1A==
+        bh=D6Utq6wPOaksPeu7TRNeQZKl8eCYWJU4eVCJRxeL5AQ=;
+        b=bgKfcvbTB7A8WY2kjE/ZoPnE2YO2TP3/j7ZhME+B6cjQEvRYNbXHbrQnSW+IOiE3m8
+         O0rl7q/lJsZAk6XVn5MPjyS4KaV6zJioKSR3TgWARwA/BRUqTHlzjTibt3TOMFG33cav
+         xGBm8MH0P7VelN2C9fVCdnX1wlX6ZVYtY1cNBthyTeWeVURYbLyJ8huqsAYFq/l9FlUj
+         V9QmFxPmKVVsOYqznwBQwTuOyORxlomwhN1gCJhSUkMANYAfIRvP6ZfxmM1gXwgtcAs1
+         pMvheqC+ASoWwF2mGaVFnI9HshYaYGx74pE9UM21ZhEiJVsAmJvK6MD1FF2n2VMrRixk
+         YJpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726295510; x=1726900310;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1726296074; x=1726900874;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RMDclbtx7gHhtYQ7pcwGHJBdL790wexMa87Hv1rL3aE=;
-        b=vxaTE4/otXvOxHdH4pxRWHc61QIiVN7JJcc9bK2Smx6JsU+NA6NzOjQCQnZkhxQopx
-         ZrtPGEcrM/uGBAXGGkNQC1ANnoNkbnj6LTucLSmXHBYFzEONOmbjlGLxUVdvIbcCWs7S
-         keULFdULWLXcmu0omDJ3L8bQ/0nqonovGepPAZx8gmn+oWlMjzBZCdD0skUWSIWlmwMF
-         m5PsAfJkrCZQOXnKKrMEPAtywcfjqMZWvQ85XH0IkMEzDYrJusAIlRJ+ubpYNTyaoCzH
-         qEGD7xj0JEiZ2izI3JvSoy5Nt+fTfWXaUF/Md5ru2y9KlxkcNHHn6AMBE/SXvQxmo8jo
-         JuLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWC8Cv/GUKwN+ao8fyVPf5akjqdbWXSCnoHSZ4EovEPp7OS8LHkbACT2XMgWkSI1zjeLjrZLSJ5yIPdMpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN07M+wLIY42HX5QQ8G2R2ANYOYyxP1pTILI0BZNtst0DB0FwI
-	TCcA4J2OTgUS1Qrs+jqvj+dWmTr0xBGUmo+ZmjHBc1x9tIj0AACZ09/4/5JLqiI=
-X-Google-Smtp-Source: AGHT+IGsok1vDAZ/mi760URrjlrejrK4cZ0oz7PvT67mcNxyXmewLZnIj+/X60ao6Owm7NY6ot6Hmg==
-X-Received: by 2002:a05:6a20:304a:b0:1d1:1795:4b43 with SMTP id adf61e73a8af0-1d117954cb8mr4571669637.26.1726295509521;
-        Fri, 13 Sep 2024 23:31:49 -0700 (PDT)
-Received: from zjn.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4990cebbsm599216a12.37.2024.09.13.23.31.47
+        bh=D6Utq6wPOaksPeu7TRNeQZKl8eCYWJU4eVCJRxeL5AQ=;
+        b=VkvueVx8Nf9q4NnqhnW3Dv10F3QQZZA3ZSgAv5xbIaEO+D2QYhmb5RqGkHS/RmLUlG
+         +h/pqCUSSsDMD0ibyAwDkurkRgl+i2cmxONiOpGSFw7szyE9EI9NdvEJX1KNRxSki7+f
+         SjGimYj3RMVUAqB54PxeVm9CL33xOPApCt15/nqnYFXl+8rbdM//315mDKHaIcwEUEUL
+         icjDZNj2uYp8kWAP0XrfqT/qZmi6HVs0IWqJf6QQrJiRa0y8F1zE7gnRqD+5NQILPwX7
+         J+qrYOXzGDdaB5GwwURoo0jR1fNukDj3ubI0bWv+BQwQmuhPGVJrDkKunbGcktxy78Uf
+         js6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUxrEsBd+94E0H3GforO9f5Yrvy+dDa1qVrxCHt5DQIRYF8Tqh8ONZdjtTc0yelzeovhUzo1mENvI/WZvq9GQw=@vger.kernel.org, AJvYcCW8K7t7DkM+Vt9UMMUmJprdxf1K37cOoQIG0SVSvOuJwBvAJJmOsgxBQJi+/byDtvedTo9eoYdM34NzEo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1y4BHmHhCBiqSef+PKTUYISSl7UxwaS5ZKBFM0mWOthtUXySj
+	4PMe1v2H1fz71g4K/iuRaWPmkfhiMCf0hdaBD0bmTfkPH8BQokFH
+X-Google-Smtp-Source: AGHT+IFnc18cSpUrpNwkFNDWUcQNlLf7zsEk4fFAIjMHa1BqZk+Ip1Od++IGx10jUpUiZzKQWn2HiQ==
+X-Received: by 2002:a05:6214:469d:b0:6c3:562f:568 with SMTP id 6a1803df08f44-6c573477a68mr154519336d6.0.1726296073987;
+        Fri, 13 Sep 2024 23:41:13 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c58c7d589csm3860446d6.132.2024.09.13.23.41.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 23:31:49 -0700 (PDT)
-From: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
-To: angelogioacchino.delregno@collabora.com,
-	matthias.bgg@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	knoxchiou@google.com,
-	hsinyi@google.com
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
-Subject: [PATCH v8 2/2] arm64: dts: mediatek: Add MT8186 Ponyta Chromebooks
-Date: Sat, 14 Sep 2024 14:31:22 +0800
-Message-Id: <20240914063122.1622196-3-cengjianeng@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240914063122.1622196-1-cengjianeng@huaqin.corp-partner.google.com>
-References: <20240914063122.1622196-1-cengjianeng@huaqin.corp-partner.google.com>
+        Fri, 13 Sep 2024 23:41:13 -0700 (PDT)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 319C51200068;
+	Sat, 14 Sep 2024 02:33:59 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Sat, 14 Sep 2024 02:33:59 -0400
+X-ME-Sender: <xms:Vy7lZrxxFD58crdmOFvVUe1aXZGpXWTMDXZSItZbOvj81JBKe3uZpA>
+    <xme:Vy7lZjRxKfaLRhFaHUZj1tc9IIVAMZB3mNNMHyLpLtEeqJuk5h2hNSNmDwrhfiyFi
+    QNApocfrsy2X7RnBA>
+X-ME-Received: <xmr:Vy7lZlVDqnYrzahoa2n8sVoSXiVvo3sVAXR8IsST280JJ9h56KvYjR5i8AcNSQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejledguddtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
+    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduiedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    rghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurg
+    hvihgusehfrhhomhhorhgsihhtrdgtohhmpdhrtghpthhtohepiihhvghnghhqihdrrghr
+    tghhsegshihtvggurghntggvrdgtohhmpdhrtghpthhtoheprhhomhgrnhdrghhushhhtg
+    hhihhnsehlihhnuhigrdguvghvpdhrtghpthhtohepmhhutghhuhhnrdhsohhngheslhhi
+    nhhugidruggvvhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtph
+    htthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomh
+X-ME-Proxy: <xmx:Vy7lZlh1PIyscQABF8npfDdm8-7f39Wy6eas-mJGizUpRGdaZh2JPg>
+    <xmx:Vy7lZtDKjsBFd_HIomYtN1ds7MvZngO9nYOFKPNgVvDOboucXeqeMA>
+    <xmx:Vy7lZuLWqR99KHccnIRvR2lZKyCIQrXUXc_b-wqSVxw4QDU_1tGiiw>
+    <xmx:Vy7lZsAbVZn5_gux__0x4MFcleyvSO8NA9rJb-DwodOhKg_cHpbctA>
+    <xmx:Vy7lZpwd3N31Bgnpul6uYXjFu8qNmiqDPnEHtVzTocZVNq10sacym68d>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 14 Sep 2024 02:33:58 -0400 (EDT)
+Date: Fri, 13 Sep 2024 23:33:49 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Chinner <david@fromorbit.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] rust: shrinker: add shrinker abstraction
+Message-ID: <ZuUuTS096DcmyofF@boqun-archlinux>
+References: <20240912-shrinker-v1-1-18b7f1253553@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912-shrinker-v1-1-18b7f1253553@google.com>
 
-MT8186 Ponyta is a Huaqin board based on the Corsola board design
-with the addition of LTE connectivity through usb integrated module.
-SKU0 with LTE. SKU1 without LTE.
+On Thu, Sep 12, 2024 at 09:54:01AM +0000, Alice Ryhl wrote:
+> Rust Binder holds incoming transactions in a read-only mmap'd region
+> where it manually manages the pages. These pages are only in use until
+> the incoming transaction is consumed by userspace, but the kernel will
+> keep the pages around for future transactions. Rust Binder registers a
+> shrinker with the kernel so that it can give back these pages if the
+> system comes under memory pressure.
+> 
+> Separate types are provided for registered and unregistered shrinkers.
+> The unregistered shrinker type can be used to configure the shrinker
+> before registering it. Separating it into two types also enables the
+> user to construct the private data between the calls to `shrinker_alloc`
+> and `shrinker_register` and avoid constructing the private data if
+> allocating the shrinker fails.
+> 
+> The user specifies the callbacks in use by implementing the Shrinker
+> trait for the type used for the private data. This requires specifying
+> three things: implementations for count_objects and scan_objects, and
+> the pointer type that the private data will be wrapped in.
+> 
+> The return values of count_objects and scan_objects are provided using
+> new types called CountObjects and ScanObjects respectively. These types
+> prevent the user from e.g. returning SHRINK_STOP from count_objects or
+> returning SHRINK_EMPTY from scan_objects.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+[...]
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -45,6 +45,7 @@
+>  pub mod prelude;
+>  pub mod print;
+>  pub mod rbtree;
+> +pub mod shrinker;
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
----
-Changes in v8:
-- PATCH 2/2: Change the commit about ponyta.
-- Link to v7:https://lore.kernel.org/all/20240913031505.372868-3-cengjianeng@huaqin.corp-partner.google.com/
+Meta comment: I think we should create a mm mod (memory management) and
+put shrinker there, otherwise there would be a very long list of "pub
+mod" in rust/kernel/lib.rs ;-)
 
-Changes in v7:
-- PATCH 2/2: Remove prototype sku.
-- PATCH 2/2: Disable the other trackpad to enable one of them.
-- Link to v5:https://lore.kernel.org/all/20240909023148.1677936-3-cengjianeng@huaqin.corp-partner.google.com/
+Thoughts?
 
-Changes in v6:
-- No change.
+Regards,
+Boqun
 
-Changes in v5:
-- PATCH 2/2: Remove sku2147483647.
-- Link to v4:https://lore.kernel.org/all/20240906085739.1322676-3-cengjianeng@huaqin.corp-partner.google.com/
-
-Chage since v3:
-- No change.
-
-Changes in v2:
-- PATCH 2/2: Modify the dtb name without rev2.
-- Link to v1:https://lore.kernel.org/all/20240902125502.1844374-1-cengjianeng@huaqin.corp-partner.google.com/
-
----
- arch/arm64/boot/dts/mediatek/Makefile         |  2 +
- .../mediatek/mt8186-corsola-ponyta-sku0.dts   | 18 ++++++++
- .../mediatek/mt8186-corsola-ponyta-sku1.dts   | 22 ++++++++++
- .../dts/mediatek/mt8186-corsola-ponyta.dtsi   | 44 +++++++++++++++++++
- 4 files changed, 86 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
-
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index 8fd7b2bb7a15..50b5cf04d3ae 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -58,6 +58,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-pumpkin.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393216.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393217.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393218.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-ponyta-sku0.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-ponyta-sku1.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-rusty-sku196608.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-steelix-sku131072.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-steelix-sku131073.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
-new file mode 100644
-index 000000000000..986498af4c70
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2023 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8186-corsola-ponyta.dtsi"
-+
-+/ {
-+	model = "Google Ponyta sku0 board";
-+	compatible = "google,ponyta-sku0", "google,ponyta", "mediatek,mt8186";
-+};
-+
-+&i2c2 {
-+	trackpad@15 {
-+		status = "disabled";
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
-new file mode 100644
-index 000000000000..ff5eea0ddeb4
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2023 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8186-corsola-ponyta.dtsi"
-+
-+/ {
-+	model = "Google Ponyta sku1 board";
-+	compatible = "google,ponyta-sku1", "google,ponyta", "mediatek,mt8186";
-+};
-+
-+&i2c2 {
-+	trackpad@2c {
-+		status = "disabled";
-+	};
-+};
-+
-+&usb_c1 {
-+	status = "disabled";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
-new file mode 100644
-index 000000000000..59594022331e
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2023 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8186-corsola-steelix.dtsi"
-+
-+&keyboard_controller {
-+	function-row-physmap = <
-+		MATRIX_KEY(0x00, 0x02, 0)	/* T1 */
-+		MATRIX_KEY(0x03, 0x02, 0)	/* T2 */
-+		MATRIX_KEY(0x02, 0x02, 0)	/* T3 */
-+		MATRIX_KEY(0x01, 0x02, 0)	/* T4 */
-+		MATRIX_KEY(0x03, 0x04, 0)	/* T5 */
-+		MATRIX_KEY(0x02, 0x04, 0)	/* T6 */
-+		MATRIX_KEY(0x01, 0x04, 0)	/* T7 */
-+		MATRIX_KEY(0x00, 0x04, 0)	/* T8 */
-+		MATRIX_KEY(0x00, 0x01, 0)	/* T9 */
-+		MATRIX_KEY(0x02, 0x09, 0)	/* T10 */
-+		MATRIX_KEY(0x01, 0x09, 0)	/* T11 */
-+		MATRIX_KEY(0x01, 0x05, 0)	/* T12 */
-+	>;
-+
-+	linux,keymap = <
-+		CROS_STD_MAIN_KEYMAP
-+		MATRIX_KEY(0x00, 0x02, KEY_BACK)
-+		MATRIX_KEY(0x03, 0x02, KEY_REFRESH)
-+		MATRIX_KEY(0x02, 0x02, KEY_ZOOM)
-+		MATRIX_KEY(0x01, 0x02, KEY_SCALE)
-+		MATRIX_KEY(0x03, 0x04, KEY_SYSRQ)
-+		MATRIX_KEY(0x02, 0x04, KEY_BRIGHTNESSDOWN)
-+		MATRIX_KEY(0x01, 0x04, KEY_BRIGHTNESSUP)
-+		MATRIX_KEY(0x00, 0x04, KEY_PLAYPAUSE)
-+		MATRIX_KEY(0x00, 0x01, KEY_MICMUTE)
-+		MATRIX_KEY(0x02, 0x09, KEY_MUTE)
-+		MATRIX_KEY(0x01, 0x09, KEY_VOLUMEDOWN)
-+		MATRIX_KEY(0x01, 0x05, KEY_VOLUMEUP)
-+	>;
-+};
-+
-+&mt6366codec {
-+	mediatek,dmic-mode = <1>; /* one-wire */
-+};
--- 
-2.34.1
-
+>  mod static_assert;
+>  #[doc(hidden)]
+>  pub mod std_vendor;
+> diff --git a/rust/kernel/shrinker.rs b/rust/kernel/shrinker.rs
+> new file mode 100644
+> index 000000000000..9af726bfe0b1
+[...]
 
