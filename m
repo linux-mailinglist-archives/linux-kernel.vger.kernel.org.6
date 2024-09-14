@@ -1,270 +1,196 @@
-Return-Path: <linux-kernel+bounces-329590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0580397934B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:11:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25BC97934F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E7328365F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:11:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A389283B3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B026D13FD83;
-	Sat, 14 Sep 2024 20:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCE012D744;
+	Sat, 14 Sep 2024 20:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x/1thsOn"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="oXj/Rwd4"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FC512BF02
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 20:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA52E34CDD
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 20:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726344671; cv=none; b=D2D4jc/TklI4B9A2ZmJ7KmhUff2whPIZsUyfAID40Oo77mn44YZw6NhbKjOqA0AUpQffoDrvkd2t3/gwVl62JSaZ3gXbwCNI6n6pBSG0xkR/5N/KsN0/Wk/uretMasyGIq5o6drc1+WbHygHZuwvhUD4ocm4VXU0gnpSFDH28b0=
+	t=1726345114; cv=none; b=bOAWX/O448CI3Cf1RS8eBtnnk8e6IscYZYsP33YxnhCvfKv87LGbCyzxab3CaXPM39ttynH4qvhYM5ufEaixRd1XEAqKX3ZBehIGziPbOZ1sG73uuFS5b3tkMqbu7LmZ3GBHw2qKjSWcVxi8Hvhw/gH/C3oX/TMmUWJJCneihdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726344671; c=relaxed/simple;
-	bh=/8lm/VXRISAhE5jgmVX9FAfI4c15JR3dQ/kV9AmQ4s4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eM65OSI2e5XdM3qSpEGehZzmniNiFF0zMGDTvQBBCHJrEh6U7X9JgAPs1NMcCZjwjbdvA+tVQAPq673zlBSUVXflCeRJ5oHmHp0egUV3Gsxk4YSm9STi/t8C2vfrmaZpuUJ6iT7rmOXQxX3uLkEqK+pzUEMSdcGaESM5SRggKfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x/1thsOn; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c42bcf35fbso1029189a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:11:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726344666; x=1726949466; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/6BEqsMQwTfqIOsLh2idDV9ULwQH/It7+hyl6N9v7o0=;
-        b=x/1thsOna1b4xxRCuYEkmbfSdvGV+ri2FbMkR6yMe+V2XihSzAOYHTHO84SWSA8daX
-         pBErJvvsmQxv64oSaXa84BPb+FFn94bUhxKxCx47FGT0ZT1H+2ppmTD4lWbw4hpCLKbL
-         1dMCCLSrLZfVXWpS5g/vmZpBNsr4oXilGAIZx1d3AEgN4XMt8zNDX//hFGbJmAU+uAFS
-         +aPCJzTWeUJaEnVVXNh2VQxHd2fA1iJVolDnOAhLhIz3OIoVDk/NBItdT3qZ0JtMMB/+
-         p8T4y/IBh8OlApjJm2Yvk40JJu73dxg/NEYAPL/26NRkWcbL1wwjkuXR/LL3miiuBg1d
-         BTKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726344666; x=1726949466;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/6BEqsMQwTfqIOsLh2idDV9ULwQH/It7+hyl6N9v7o0=;
-        b=IXAT6hxYyBb1ONuUQ0vu0OQ0xgZeOjI0FxuEFrwPN/U8qqWsDELd66rPCB1Gt9OWeD
-         QZ6MXGPIXO0fx347OM1Ug/rTrMhbSmmm5uCb2qWzotBR8aA13ZRLjZFuOyeeecNKtlJf
-         n6V2mDlJU/nDTElbYJVg82VyCeGJzxZ5f8jhq36MMeki5wuyHNrcMmZDQLW6s0zqhvWT
-         ftPk6yHlG82eWrvdMUbTeKLmuIw8itFDuBlbOuH9p1PRlbnubBq0txJcPIZzReActer0
-         pMAOc1Rxzsq4z0MRVy3tvwAFG6SVn/g9hne31FGLG4hjAoIGta3eKn+yumWs3gTJsjoO
-         MKDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOQ+YZHgfwfBxbZS7fCwFYMPAy35LtXNkQBbbq/Rjploy0L4PLoebl9Pi+ayZFcpsRhoOuby74/SFV5kE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIbD7RiL9rJWBLNKAoDe/nUktTlB1ce6YstqhVt5sYF1YBVZsn
-	9Je2ZMpfQFoMuVnUwzLlmnXIk1W1IGlYEYeX9LekRHZ8dva5zMBAGgLaX2hLq8A68z6ROlBGQGX
-	bZ1nowSkKVYFpIeEjrSyDPeJT3kNZyjfpWy0=
-X-Google-Smtp-Source: AGHT+IFs1sXaKM4VOxehK4mNhVRQjd3/gDCwMPvCwIMtQ05vol5GnMxRAUVkjsh8/C1xzMc9AivKp9raF20+AN2HOxc=
-X-Received: by 2002:a17:907:7da1:b0:a86:96ca:7f54 with SMTP id
- a640c23a62f3a-a9047ca3bebmr634617166b.21.1726344665517; Sat, 14 Sep 2024
- 13:11:05 -0700 (PDT)
+	s=arc-20240116; t=1726345114; c=relaxed/simple;
+	bh=ZExCQHKIi7J6n0bdDKpGDjVFqGq2FSEwpOYmBhkdlDw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F+dUJSI/xd376x6cldvm/sSxSmMYCn06sviuyzPXf3jUw1JjuuOFOtb2c4RIOjNVZji1e/bPC+w1Zi92dtA+TQQCtdRDMFSORDjaUV29IDpOxkpb09z6QZWuToB/lXpWovkbrgxtruQKrqjf47RuhHjiZrwD2lgBiuWJNeCZND4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=oXj/Rwd4; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 7cdbbbd472d611ef8b96093e013ec31c-20240915
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=KzEvm60ursdehxva7VL1w/guECU2w+ClPXr73nuhGlM=;
+	b=oXj/Rwd4KrxNPAFdYgOhJTPGOy+yk0VmHdzQq+YpapcFLqdlqwOzVnx/cm/lobD6ZFSIFWzNxc+fuzyfew7lpwWj9941BpAayorsYgGHC3gOuupmFNXDzhCI6V5J+8tkA1NuVyLcVTv20aTFBOSpLgFJ77zwUTCLzmNAkI4EdWg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:868cfbc3-3385-4275-9267-62afd586378d,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:cea637d0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 7cdbbbd472d611ef8b96093e013ec31c-20240915
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 564874747; Sun, 15 Sep 2024 04:18:21 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Sun, 15 Sep 2024 04:18:20 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Sun, 15 Sep 2024 04:18:20 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>, Chun-Kuang Hu
+	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: Shawn Sung <shawn.sung@mediatek.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, "Jason-JH . Lin"
+	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Nancy
+ Lin <nancy.lin@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH] drm/mediatek: ovl: Add fmt_support_man for MT8192 and MT8195
+Date: Sun, 15 Sep 2024 04:18:19 +0800
+Message-ID: <20240914201819.3357-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org> <20240914-mgtime-v8-1-5bd872330bed@kernel.org>
-In-Reply-To: <20240914-mgtime-v8-1-5bd872330bed@kernel.org>
-From: John Stultz <jstultz@google.com>
-Date: Sat, 14 Sep 2024 13:10:54 -0700
-Message-ID: <CANDhNCpaySH5HmkEb9BS738Fo+Kk=6s0_zNwB=uYtOQ63uc6xw@mail.gmail.com>
-Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
- handling into timekeeper
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Randy Dunlap <rdunlap@infradead.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-MTK: N
 
-On Sat, Sep 14, 2024 at 10:07=E2=80=AFAM Jeff Layton <jlayton@kernel.org> w=
-rote:
->
-> For multigrain timestamps, we must keep track of the latest timestamp
-> that has ever been handed out, and never hand out a coarse time below
-> that value.
->
-> Add a static singleton atomic64_t into timekeeper.c that we can use to
-> keep track of the latest fine-grained time ever handed out. This is
-> tracked as a monotonic ktime_t value to ensure that it isn't affected by
-> clock jumps.
->
-> Add two new public interfaces:
->
-> - ktime_get_coarse_real_ts64_mg() fills a timespec64 with the later of th=
-e
->   coarse-grained clock and the floor time
->
-> - ktime_get_real_ts64_mg() gets the fine-grained clock value, and tries
->   to swap it into the floor. A timespec64 is filled with the result.
->
-> Since the floor is global, we take great pains to avoid updating it
-> unless it's absolutely necessary. If we do the cmpxchg and find that the
-> value has been updated since we fetched it, then we discard the
-> fine-grained time that was fetched in favor of the recent update.
->
-> To maximize the window of this occurring when multiple tasks are racing
-> to update the floor, ktime_get_coarse_real_ts64_mg returns a cookie
-> value that represents the state of the floor tracking word, and
-> ktime_get_real_ts64_mg accepts a cookie value that it uses as the "old"
-> value when calling cmpxchg().
+OVL_CON_CLRFMT_MAN is an configuration for extending color format
+settings of DISP_REG_OVL_CON(n).
+It will change some of the original color format settings.
 
-This last bit seems out of date.
+Take the settings of (3 << 12) for example.
+- If OVL_CON_CLRFMT_MAN = 0 means OVL_CON_CLRFMT_RGBA8888.
+- If OVL_CON_CLRFMT_MAN = 1 means OVL_CON_CLRFMT_PARGB8888.
 
-> ---
->  include/linux/timekeeping.h |  4 +++
->  kernel/time/timekeeping.c   | 82 +++++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 86 insertions(+)
->
-> diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-> index fc12a9ba2c88..7aa85246c183 100644
-> --- a/include/linux/timekeeping.h
-> +++ b/include/linux/timekeeping.h
-> @@ -45,6 +45,10 @@ extern void ktime_get_real_ts64(struct timespec64 *tv)=
-;
->  extern void ktime_get_coarse_ts64(struct timespec64 *ts);
->  extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
->
-> +/* Multigrain timestamp interfaces */
-> +extern void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
-> +extern void ktime_get_real_ts64_mg(struct timespec64 *ts);
-> +
->  void getboottime64(struct timespec64 *ts);
->
->  /*
-> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> index 5391e4167d60..16937242b904 100644
-> --- a/kernel/time/timekeeping.c
-> +++ b/kernel/time/timekeeping.c
-> @@ -114,6 +114,13 @@ static struct tk_fast tk_fast_raw  ____cacheline_ali=
-gned =3D {
->         .base[1] =3D FAST_TK_INIT,
->  };
->
-> +/*
-> + * This represents the latest fine-grained time that we have handed out =
-as a
-> + * timestamp on the system. Tracked as a monotonic ktime_t, and converte=
-d to the
-> + * realtime clock on an as-needed basis.
-> + */
-> +static __cacheline_aligned_in_smp atomic64_t mg_floor;
-> +
->  static inline void tk_normalize_xtime(struct timekeeper *tk)
->  {
->         while (tk->tkr_mono.xtime_nsec >=3D ((u64)NSEC_PER_SEC << tk->tkr=
-_mono.shift)) {
-> @@ -2394,6 +2401,81 @@ void ktime_get_coarse_real_ts64(struct timespec64 =
-*ts)
->  }
->  EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
->
-> +/**
-> + * ktime_get_coarse_real_ts64_mg - get later of coarse grained time or f=
-loor
-> + * @ts: timespec64 to be filled
-> + *
-> + * Adjust floor to realtime and compare it to the coarse time. Fill
-> + * @ts with the latest one. Note that this is a filesystem-specific
-> + * interface and should be avoided outside of that context.
-> + */
-> +void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
-> +{
-> +       struct timekeeper *tk =3D &tk_core.timekeeper;
-> +       u64 floor =3D atomic64_read(&mg_floor);
-> +       ktime_t f_real, offset, coarse;
-> +       unsigned int seq;
-> +
-> +       WARN_ON(timekeeping_suspended);
-> +
-> +       do {
-> +               seq =3D read_seqcount_begin(&tk_core.seq);
-> +               *ts =3D tk_xtime(tk);
-> +               offset =3D *offsets[TK_OFFS_REAL];
-> +       } while (read_seqcount_retry(&tk_core.seq, seq));
-> +
-> +       coarse =3D timespec64_to_ktime(*ts);
-> +       f_real =3D ktime_add(floor, offset);
-> +       if (ktime_after(f_real, coarse))
-> +               *ts =3D ktime_to_timespec64(f_real);
-> +}
-> +EXPORT_SYMBOL_GPL(ktime_get_coarse_real_ts64_mg);
-> +
-> +/**
-> + * ktime_get_real_ts64_mg - attempt to update floor value and return res=
-ult
-> + * @ts:                pointer to the timespec to be set
-> + *
-> + * Get a current monotonic fine-grained time value and attempt to swap
-> + * it into the floor. @ts will be filled with the resulting floor value,
-> + * regardless of the outcome of the swap. Note that this is a filesystem
-> + * specific interface and should be avoided outside of that context.
-> + */
-> +void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
+Since OVL_CON_CLRFMT_MAN is not supported on previous SoCs,
+It breaks the OVL color format setting of MT8173.
+So add fmt_support_man to the driver data of MT8192 and MT8195
+to solve the downgrade problem.
 
-Still passing a cookie. It doesn't match the header definition, so I'm
-surprised this builds.
+Fixes: a3f7f7ef4bfe ("drm/mediatek: Support "Pre-multiplied" blending in OVL")
+Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 28 ++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-> +{
-> +       struct timekeeper *tk =3D &tk_core.timekeeper;
-> +       ktime_t old =3D atomic64_read(&mg_floor);
-> +       ktime_t offset, mono;
-> +       unsigned int seq;
-> +       u64 nsecs;
-> +
-> +       WARN_ON(timekeeping_suspended);
-> +
-> +       do {
-> +               seq =3D read_seqcount_begin(&tk_core.seq);
-> +
-> +               ts->tv_sec =3D tk->xtime_sec;
-> +               mono =3D tk->tkr_mono.base;
-> +               nsecs =3D timekeeping_get_ns(&tk->tkr_mono);
-> +               offset =3D *offsets[TK_OFFS_REAL];
-> +       } while (read_seqcount_retry(&tk_core.seq, seq));
-> +
-> +       mono =3D ktime_add_ns(mono, nsecs);
-> +
-> +       if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
-> +               ts->tv_nsec =3D 0;
-> +               timespec64_add_ns(ts, nsecs);
-> +       } else {
-> +               /*
-> +                * Something has changed mg_floor since "old" was
-> +                * fetched. "old" has now been updated with the
-> +                * current value of mg_floor, so use that to return
-> +                * the current coarse floor value.
-> +                */
-> +               *ts =3D ktime_to_timespec64(ktime_add(old, offset));
-> +       }
-> +}
-> +EXPORT_SYMBOL_GPL(ktime_get_real_ts64_mg);
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+index 89b439dcf3a6..aa575569f996 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+@@ -70,10 +70,18 @@
+ #define OVL_CON_CLRFMT_UYVY	(4 << 12)
+ #define OVL_CON_CLRFMT_YUYV	(5 << 12)
+ #define OVL_CON_MTX_YUV_TO_RGB	(6 << 16)
+-#define OVL_CON_CLRFMT_PARGB8888 ((3 << 12) | OVL_CON_CLRFMT_MAN)
+-#define OVL_CON_CLRFMT_PABGR8888 (OVL_CON_CLRFMT_PARGB8888 | OVL_CON_RGB_SWAP)
+-#define OVL_CON_CLRFMT_PBGRA8888 (OVL_CON_CLRFMT_PARGB8888 | OVL_CON_BYTE_SWAP)
+-#define OVL_CON_CLRFMT_PRGBA8888 (OVL_CON_CLRFMT_PABGR8888 | OVL_CON_BYTE_SWAP)
++#define OVL_CON_CLRFMT_PARGB8888(ovl)	((ovl)->data->fmt_support_man ? \
++					((3 << 12) | OVL_CON_CLRFMT_MAN) : \
++					OVL_CON_CLRFMT_ABGR8888)
++#define OVL_CON_CLRFMT_PABGR8888(ovl)	((ovl)->data->fmt_support_man ? \
++					(OVL_CON_CLRFMT_PARGB8888 | OVL_CON_RGB_SWAP) : \
++					OVL_CON_CLRFMT_ABGR8888)
++#define OVL_CON_CLRFMT_PBGRA8888(ovl)	((ovl)->data->fmt_support_man ? \
++					(OVL_CON_CLRFMT_PARGB8888 | OVL_CON_BYTE_SWAP) : \
++					OVL_CON_CLRFMT_BGRA8888)
++#define OVL_CON_CLRFMT_PRGBA8888(ovl)	((ovl)->data->fmt_support_man ? \
++					(OVL_CON_CLRFMT_PABGR8888 | OVL_CON_BYTE_SWAP) : \
++					OVL_CON_CLRFMT_RGBA8888)
+ #define OVL_CON_CLRFMT_RGB565(ovl)	((ovl)->data->fmt_rgb565_is_0 ? \
+ 					0 : OVL_CON_CLRFMT_RGB)
+ #define OVL_CON_CLRFMT_RGB888(ovl)	((ovl)->data->fmt_rgb565_is_0 ? \
+@@ -144,6 +152,7 @@ struct mtk_disp_ovl_data {
+ 	unsigned int gmc_bits;
+ 	unsigned int layer_nr;
+ 	bool fmt_rgb565_is_0;
++	bool fmt_support_man;
+ 	bool smi_id_en;
+ 	bool supports_afbc;
+ 	const u32 *formats;
+@@ -410,28 +419,28 @@ static unsigned int ovl_fmt_convert(struct mtk_disp_ovl *ovl, unsigned int fmt,
+ 	case DRM_FORMAT_RGBA1010102:
+ 		return blend_mode == DRM_MODE_BLEND_COVERAGE ?
+ 		       OVL_CON_CLRFMT_RGBA8888 :
+-		       OVL_CON_CLRFMT_PRGBA8888;
++		       OVL_CON_CLRFMT_PRGBA8888(ovl);
+ 	case DRM_FORMAT_BGRX8888:
+ 	case DRM_FORMAT_BGRA8888:
+ 	case DRM_FORMAT_BGRX1010102:
+ 	case DRM_FORMAT_BGRA1010102:
+ 		return blend_mode == DRM_MODE_BLEND_COVERAGE ?
+ 		       OVL_CON_CLRFMT_BGRA8888 :
+-		       OVL_CON_CLRFMT_PBGRA8888;
++		       OVL_CON_CLRFMT_PBGRA8888(ovl);
+ 	case DRM_FORMAT_XRGB8888:
+ 	case DRM_FORMAT_ARGB8888:
+ 	case DRM_FORMAT_XRGB2101010:
+ 	case DRM_FORMAT_ARGB2101010:
+ 		return blend_mode == DRM_MODE_BLEND_COVERAGE ?
+ 		       OVL_CON_CLRFMT_ARGB8888 :
+-		       OVL_CON_CLRFMT_PARGB8888;
++		       OVL_CON_CLRFMT_PARGB8888(ovl);
+ 	case DRM_FORMAT_XBGR8888:
+ 	case DRM_FORMAT_ABGR8888:
+ 	case DRM_FORMAT_XBGR2101010:
+ 	case DRM_FORMAT_ABGR2101010:
+ 		return blend_mode == DRM_MODE_BLEND_COVERAGE ?
+ 		       OVL_CON_CLRFMT_ABGR8888 :
+-		       OVL_CON_CLRFMT_PABGR8888;
++		       OVL_CON_CLRFMT_PABGR8888(ovl);
+ 	case DRM_FORMAT_UYVY:
+ 		return OVL_CON_CLRFMT_UYVY | OVL_CON_MTX_YUV_TO_RGB;
+ 	case DRM_FORMAT_YUYV:
+@@ -662,6 +671,7 @@ static const struct mtk_disp_ovl_data mt8192_ovl_driver_data = {
+ 	.gmc_bits = 10,
+ 	.layer_nr = 4,
+ 	.fmt_rgb565_is_0 = true,
++	.fmt_support_man = true,
+ 	.smi_id_en = true,
+ 	.formats = mt8173_formats,
+ 	.num_formats = ARRAY_SIZE(mt8173_formats),
+@@ -672,6 +682,7 @@ static const struct mtk_disp_ovl_data mt8192_ovl_2l_driver_data = {
+ 	.gmc_bits = 10,
+ 	.layer_nr = 2,
+ 	.fmt_rgb565_is_0 = true,
++	.fmt_support_man = true,
+ 	.smi_id_en = true,
+ 	.formats = mt8173_formats,
+ 	.num_formats = ARRAY_SIZE(mt8173_formats),
+@@ -682,6 +693,7 @@ static const struct mtk_disp_ovl_data mt8195_ovl_driver_data = {
+ 	.gmc_bits = 10,
+ 	.layer_nr = 4,
+ 	.fmt_rgb565_is_0 = true,
++	.fmt_support_man = true,
+ 	.smi_id_en = true,
+ 	.supports_afbc = true,
+ 	.formats = mt8195_formats,
+-- 
+2.43.0
 
-Other than those issues, I'm ok with it. Thanks again for working
-through my concerns!
-
-Since I'm traveling for LPC soon, to save the next cycle, once the
-fixes above are sorted:
- Acked-by: John Stultz <jstultz@google.com>
-
-thanks
--john
 
