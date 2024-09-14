@@ -1,261 +1,293 @@
-Return-Path: <linux-kernel+bounces-329566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C599792F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:32:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B6B9792FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1655E283FC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672511F2227B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9004B1D1F77;
-	Sat, 14 Sep 2024 18:32:35 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4911D1F56;
+	Sat, 14 Sep 2024 18:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HYta+5/v";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="USTroZnx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HYta+5/v";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="USTroZnx"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0D31CF5D2
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 18:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5705F873;
+	Sat, 14 Sep 2024 18:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726338755; cv=none; b=CO1Bhgvj0pmaRB8bGyI64YVF8pHwRiIaj2/Mqs604nqeczVXnCIB1FL4JX4NK3usIeAu3balQS/szFcbvYZIo+cgfuUqRyvAcPhTuuzO26lzrs8gfMJ68B+QJWCNKx5090RHv3dZUNhbjsKKTRTCfVvSFd/1YqIo6JvjMabhuH0=
+	t=1726339183; cv=none; b=fwFX8xR/pV3nmedHnO4guZPkpCt9BVYDxhdUmSoO3ZJwrTXeKbtRCYA4Jrbui03yfY7qTn6482NOTQYTfZDDoz8cCyJerWBHqL4BLMjClczEkBvlE2ZtelGRI4jnxHSdSjPpM7z2YNca4OVmj80rDcP8Xg7mRIkZTRPmf7pz2uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726338755; c=relaxed/simple;
-	bh=4NzyaYcFLyFdiwFlH1SF4vhTsrTJ+gOMxR6mOjJ10TY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PHQxlkPJeoI8ZrLuZX1zzCC5R8hFSEP4azTIb63uUqzyn61SVs0efopDGzeUMHc5SHmAQCUiZ59xfaKbVHGMsWIQt3/0hkMFNwWe8DAP1Jb//4WI9+Eq8hhzzZrEUAKtfU6nF5Qzt6lDBEh+85TkKTlaiJ+5tYvGb9e7dXnOTBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aa499f938so743039439f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 11:32:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726338752; x=1726943552;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vCk7m8bdTlsEaBcbvj4x/KUx6uyEvQuBhZ5cw+5b2WI=;
-        b=VYJVpYrbVkjufueNShGbejx5d2mv/nck1TPakW+C6TRy9f4jnh5YOtjKgZ9EaVAW1p
-         UOSDwbzXB9svOsqcx6NRilD8PmTTwbeOP0deMlz357syJs+kjvQZt/4kVnHDVpgkHtGc
-         caiRVrnRvEab4QrNBuwU5w7aOEDYk/zdg3ySvJIEQPAx7tqHiMUhUDAj2coPrLdXawwY
-         vFWCk+LZojsz3Qr5UN4ZcKHu/GIAO62lkUIyGoORv7yfFUKqFRyskapHWjkuCLeynOYF
-         hhvz2XiqF38kqjhfAi5ofLBzGlir7d+vLpSLxcRoihsgjK1KJ8NlhxFMjEYblrhmm+8I
-         JGtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTdmI5cbKx04v8vxPdJQ7vIoDb7efiDHupvy4XPBo7/Z8fDkBK5YtA65QvUp1ZwLQ4PWGrI/gk78IY62g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzggcMO06/N3MFbt3dy5eIX4AzDC9EVan7DcXBbr3V2s+GUcSqi
-	HuWGXnuSe+XlsfL4e06VTCFHX3Ygt17timnk7MIZfosTxQU1RihNdDlEu0qF8um4YsOLwdjmYWc
-	OJHl5rizCT1o4Nm1Hsg7o+DtykUY2946xjyO2ZUALq1DiYTG/cxFnN+o=
-X-Google-Smtp-Source: AGHT+IHxfv/r6206/lgRVgpCntlAQjD6LhnnFmcb01k6yxsxSfB4NczYR/dBfZGAaVKF2C2l3+Akv3WNu1DvjkO7Gq66zDDgSjMc
+	s=arc-20240116; t=1726339183; c=relaxed/simple;
+	bh=GEjjYkXy/k7sAR6IUnFwV7MCYuk5iajqNOb5X8g7Tcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MYlbxo7bz+ErGV9fiybvW/IuEakyV68Tr1ru36DT1BFyA8Tbbi1Z6AUueRyqRXbp5sH2UZslSyDt3HEpUhttFXeoS80fjfO2UNi/GDc/u/0BNj6Dl2hZ/B1Y7+5t7VlVahpjTA3AuVzeCHCWDTHk4sh5IaAmJffC2AePGnWuiMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HYta+5/v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=USTroZnx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HYta+5/v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=USTroZnx; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 399F51FC23;
+	Sat, 14 Sep 2024 18:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726339179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zqYH48BDG1o+pBNq8eXY+DwTztxHAJ/NGHCTo7dJGes=;
+	b=HYta+5/vbbf81qmH1AJcV8tXwiJgl0x2bh0JYnGzC0arw642ZKtlZ9ARwPBhM/e7Ztpnii
+	3+FlPrPY7gaBlmyWaQS3b6oO+1fZ3aWvwIRNWjqbJPG9kSmSdBElu0AfbTK18uvlNZD5k2
+	j5j4WkBGN4gOzr46JdI2tF/Njkj+9C0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726339179;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zqYH48BDG1o+pBNq8eXY+DwTztxHAJ/NGHCTo7dJGes=;
+	b=USTroZnxbnJ8OHEk8eqlMFgP0ANPzzfmOreofjXOc+zw3XmvaXAdB9xCORmRku7qeqkJrH
+	9spmkUpUfy1Wn5BQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="HYta+5/v";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=USTroZnx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726339179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zqYH48BDG1o+pBNq8eXY+DwTztxHAJ/NGHCTo7dJGes=;
+	b=HYta+5/vbbf81qmH1AJcV8tXwiJgl0x2bh0JYnGzC0arw642ZKtlZ9ARwPBhM/e7Ztpnii
+	3+FlPrPY7gaBlmyWaQS3b6oO+1fZ3aWvwIRNWjqbJPG9kSmSdBElu0AfbTK18uvlNZD5k2
+	j5j4WkBGN4gOzr46JdI2tF/Njkj+9C0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726339179;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zqYH48BDG1o+pBNq8eXY+DwTztxHAJ/NGHCTo7dJGes=;
+	b=USTroZnxbnJ8OHEk8eqlMFgP0ANPzzfmOreofjXOc+zw3XmvaXAdB9xCORmRku7qeqkJrH
+	9spmkUpUfy1Wn5BQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0580B1386E;
+	Sat, 14 Sep 2024 18:39:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WE0AAWvY5WbkAgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Sat, 14 Sep 2024 18:39:39 +0000
+Message-ID: <e7d0ca75-82ce-4079-9426-e82e83e38621@suse.cz>
+Date: Sat, 14 Sep 2024 20:39:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d88:b0:395:e85e:f2fa with SMTP id
- e9e14a558f8ab-3a084611b38mr89973065ab.1.1726338752490; Sat, 14 Sep 2024
- 11:32:32 -0700 (PDT)
-Date: Sat, 14 Sep 2024 11:32:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001abfb506221890b2@google.com>
-Subject: [syzbot] [hams?] possible deadlock in nr_rt_device_down (3)
-From: syzbot <syzbot+ccdfb85a561b973219c7@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, ralf@linux-mips.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/7] kunit, slub: add test_kfree_rcu() and
+ test_leak_destroy()
+Content-Language: en-US
+To: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Jakub Kicinski <kuba@kernel.org>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+ Jann Horn <jannh@google.com>, Mateusz Guzik <mjguzik@gmail.com>
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+ <20240807-b4-slab-kfree_rcu-destroy-v2-7-ea79102f428c@suse.cz>
+ <CAB=+i9RHHbfSkmUuLshXGY_ifEZg9vCZi3fqr99+kmmnpDus7Q@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAB=+i9RHHbfSkmUuLshXGY_ifEZg9vCZi3fqr99+kmmnpDus7Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 399F51FC23
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[26];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,joelfernandes.org,joshtriplett.org,gmail.com,linux.com,google.com,goodmis.org,efficios.com,inria.fr,zx2c4.com,linux-foundation.org,linux.dev,kvack.org,vger.kernel.org,googlegroups.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLsm9p66qmnckghmjmpccdnq6s)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-Hello,
+On 9/14/24 15:22, Hyeonggon Yoo wrote:
+> On Wed, Aug 7, 2024 at 7:31 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> Add a test that will create cache, allocate one object, kfree_rcu() it
+>> and attempt to destroy it. As long as the usage of kvfree_rcu_barrier()
+>> in kmem_cache_destroy() works correctly, there should be no warnings in
+>> dmesg and the test should pass.
+>>
+>> Additionally add a test_leak_destroy() test that leaks an object on
+>> purpose and verifies that kmem_cache_destroy() catches it.
+>>
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>>  lib/slub_kunit.c | 31 +++++++++++++++++++++++++++++++
+>>  1 file changed, 31 insertions(+)
+>>
+> 
+> Hi Vlastimil,
+> 
+> I think we might need to suppress the WARN() due to the active objects
+> in kmem_cache_destroy()
+> when it's called from slub_kunit. With this change, the warning below
+> will be printed every time
+> slub_kunit is loaded, which made me wonder if there's a bug (for a while).
+> 
+> Actually, SLUB calls pr_err() is called by __kmem_cache_shutdown() if
+> there are any active objects
+> during destruction, and the error message is suppressed by slub_kunit.
+> However, kmem_cache_destroy()
+> still calls WARN() regardless if there is any error during shutdown.
 
-syzbot found the following issue on:
+Yeah, there was a LKP report about it already and I wanted to handle this
+but forgot. It's not wrong to produce warnings during the tests, for example
+the KASAN tests generate tons of them. But it's true that we suppress them
+for slub and should continue so for consistency and not having to teach lkp
+what can be ignored.
 
-HEAD commit:    4c8002277167 fou: fix initialization of grc
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=10513877980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=ccdfb85a561b973219c7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+But I think it's fine if we add the suppressing during the rc stabilization
+phase so will send the PR for merge window as it is, too late now.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Want to take a stab at the patch? :)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9058e311cdd1/disk-4c800227.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1659255894d5/vmlinux-4c800227.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/04227ccb2e58/bzImage-4c800227.xz
+Vlastimil
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ccdfb85a561b973219c7@syzkaller.appspotmail.com
+> [  147.546531] Object 0x00000000c09342ca @offset=640
+> [  147.546542] ------------[ cut here ]------------
+> [  147.546544] kmem_cache_destroy TestSlub_kfree_rcu: Slab cache still
+> has objects when called from test_leak_destroy+0x74/0x108 [slub_kunit]
+> [  147.546579] WARNING: CPU: 5 PID: 39703 at mm/slab_common.c:507
+> kmem_cache_destroy+0x174/0x188
+> [  147.546587] Modules linked in: slub_kunit uinput snd_seq_dummy
+> snd_hrtimer rfkill nf_conntrack_netbios_ns nf_conntrack_broadcast
+> nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet
+> nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct sunrpc nft_chain_nat
+> nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip_set nf_tables
+> nfnetlink qrtr binfmt_misc vfat fat snd_hda_codec_generic
+> snd_hda_intel snd_intel_dspcfg snd_hda_codec uvcvideo snd_hda_core uvc
+> snd_hwdep videobuf2_vmalloc snd_seq videobuf2_memops snd_seq_device
+> videobuf2_v4l2 snd_pcm videobuf2_common snd_timer snd videodev mc
+> soundcore virtio_balloon acpi_tad joydev loop zram virtio_gpu
+> ahci_platform libahci_platform virtio_dma_buf crct10dif_ce polyval_ce
+> polyval_generic ghash_ce sha3_ce virtio_net sha512_ce net_failover
+> sha512_arm64 failover virtio_mmio ip6_tables ip_tables fuse
+> [  147.546646] CPU: 5 UID: 0 PID: 39703 Comm: kunit_try_catch Tainted:
+> G                 N 6.11.0-rc7-next-20240912 #2
+> [  147.546649] Tainted: [N]=TEST
+> [  147.546650] Hardware name: Parallels International GmbH. Parallels
+> ARM Virtual Machine/Parallels ARM Virtual Platform, BIOS 20.0.0
+> (55653) Thu, 05 Sep 202
+> [  147.546652] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> [  147.546655] pc : kmem_cache_destroy+0x174/0x188
+> [  147.546657] lr : kmem_cache_destroy+0x174/0x188
+> [  147.546659] sp : ffff80008aba3d60
+> [  147.546660] x29: ffff80008aba3d60 x28: 0000000000000000 x27: 0000000000000000
+> [  147.546662] x26: 0000000000000000 x25: 0000000000000000 x24: ffff800094a2b438
+> [  147.546665] x23: ffff80008089b750 x22: 0000000000000001 x21: f9cc80007c1782f4
+> [  147.546666] x20: ffff800082f9d088 x19: ffff0000c2308b00 x18: 00000000fffffffd
+> [  147.546668] x17: 0000000046d4ed9c x16: 00000000ae1ad4db x15: ffff80008aba3430
+> [  147.546670] x14: 0000000000000001 x13: ffff80008aba3657 x12: ffff800082f0f060
+> [  147.546679] x11: 0000000000000001 x10: 0000000000000001 x9 : ffff8000801652c8
+> [  147.546682] x8 : c0000000ffffdfff x7 : ffff800082e5ee68 x6 : 00000000000affa8
+> [  147.546684] x5 : ffff00031fc70448 x4 : 0000000000000000 x3 : ffff80029d6b7000
+> [  147.546686] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff00011f1c8000
+> [  147.546688] Call trace:
+> [  147.546689]  kmem_cache_destroy+0x174/0x188
+> [  147.546692]  test_leak_destroy+0x74/0x108 [slub_kunit]
+> [  147.546693]  kunit_try_run_case+0x74/0x170
+> [  147.546697]  kunit_generic_run_threadfn_adapter+0x30/0x60
+> [  147.546699]  kthread+0xf4/0x108
+> [  147.546705]  ret_from_fork+0x10/0x20
+> [  147.546710] ---[ end trace 0000000000000000 ]---
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc6-syzkaller-00180-g4c8002277167 #0 Not tainted
-------------------------------------------------------
-syz.1.4509/22182 is trying to acquire lock:
-ffffffff8fde86d8 (nr_node_list_lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
-ffffffff8fde86d8 (nr_node_list_lock){+...}-{2:2}, at: nr_rt_device_down+0xb5/0x7b0 net/netrom/nr_route.c:517
-
-but task is already holding lock:
-ffffffff8fde8678 (nr_neigh_list_lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
-ffffffff8fde8678 (nr_neigh_list_lock){+...}-{2:2}, at: nr_rt_device_down+0x28/0x7b0 net/netrom/nr_route.c:514
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (nr_neigh_list_lock){+...}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
-       _raw_spin_lock_bh+0x35/0x50 kernel/locking/spinlock.c:178
-       spin_lock_bh include/linux/spinlock.h:356 [inline]
-       nr_remove_neigh net/netrom/nr_route.c:307 [inline]
-       nr_dec_obs net/netrom/nr_route.c:472 [inline]
-       nr_rt_ioctl+0x398/0xfb0 net/netrom/nr_route.c:692
-       sock_do_ioctl+0x158/0x460 net/socket.c:1222
-       sock_ioctl+0x629/0x8e0 net/socket.c:1341
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&nr_node->node_lock){+...}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
-       _raw_spin_lock_bh+0x35/0x50 kernel/locking/spinlock.c:178
-       spin_lock_bh include/linux/spinlock.h:356 [inline]
-       nr_node_lock include/net/netrom.h:152 [inline]
-       nr_dec_obs net/netrom/nr_route.c:459 [inline]
-       nr_rt_ioctl+0x192/0xfb0 net/netrom/nr_route.c:692
-       sock_do_ioctl+0x158/0x460 net/socket.c:1222
-       sock_ioctl+0x629/0x8e0 net/socket.c:1341
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (nr_node_list_lock){+...}-{2:2}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
-       _raw_spin_lock_bh+0x35/0x50 kernel/locking/spinlock.c:178
-       spin_lock_bh include/linux/spinlock.h:356 [inline]
-       nr_rt_device_down+0xb5/0x7b0 net/netrom/nr_route.c:517
-       nr_device_event+0x134/0x150 net/netrom/af_netrom.c:126
-       notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
-       call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
-       call_netdevice_notifiers net/core/dev.c:2046 [inline]
-       dev_close_many+0x33c/0x4c0 net/core/dev.c:1587
-       dev_close+0x1c0/0x2c0 net/core/dev.c:1609
-       bpq_device_event+0x372/0x8b0 drivers/net/hamradio/bpqether.c:547
-       notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
-       __dev_notify_flags+0x207/0x400
-       dev_change_flags+0xf0/0x1a0 net/core/dev.c:8915
-       dev_ifsioc+0x7c8/0xe70 net/core/dev_ioctl.c:527
-       dev_ioctl+0x719/0x1340 net/core/dev_ioctl.c:784
-       sock_do_ioctl+0x240/0x460 net/socket.c:1236
-       sock_ioctl+0x629/0x8e0 net/socket.c:1341
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  nr_node_list_lock --> &nr_node->node_lock --> nr_neigh_list_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(nr_neigh_list_lock);
-                               lock(&nr_node->node_lock);
-                               lock(nr_neigh_list_lock);
-  lock(nr_node_list_lock);
-
- *** DEADLOCK ***
-
-2 locks held by syz.1.4509/22182:
- #0: ffffffff8fc8be48 (rtnl_mutex){+.+.}-{3:3}, at: dev_ioctl+0x706/0x1340 net/core/dev_ioctl.c:783
- #1: ffffffff8fde8678 (nr_neigh_list_lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
- #1: ffffffff8fde8678 (nr_neigh_list_lock){+...}-{2:2}, at: nr_rt_device_down+0x28/0x7b0 net/netrom/nr_route.c:514
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 22182 Comm: syz.1.4509 Not tainted 6.11.0-rc6-syzkaller-00180-g4c8002277167 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
- _raw_spin_lock_bh+0x35/0x50 kernel/locking/spinlock.c:178
- spin_lock_bh include/linux/spinlock.h:356 [inline]
- nr_rt_device_down+0xb5/0x7b0 net/netrom/nr_route.c:517
- nr_device_event+0x134/0x150 net/netrom/af_netrom.c:126
- notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
- call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
- call_netdevice_notifiers net/core/dev.c:2046 [inline]
- dev_close_many+0x33c/0x4c0 net/core/dev.c:1587
- dev_close+0x1c0/0x2c0 net/core/dev.c:1609
- bpq_device_event+0x372/0x8b0 drivers/net/hamradio/bpqether.c:547
- notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
- __dev_notify_flags+0x207/0x400
- dev_change_flags+0xf0/0x1a0 net/core/dev.c:8915
- dev_ifsioc+0x7c8/0xe70 net/core/dev_ioctl.c:527
- dev_ioctl+0x719/0x1340 net/core/dev_ioctl.c:784
- sock_do_ioctl+0x240/0x460 net/socket.c:1236
- sock_ioctl+0x629/0x8e0 net/socket.c:1341
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdcda77def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fdcdb4b4038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fdcda935f80 RCX: 00007fdcda77def9
-RDX: 0000000020000700 RSI: 0000000000008914 RDI: 000000000000000b
-RBP: 00007fdcda7f09f6 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fdcda935f80 R15: 00007ffe2567ade8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
