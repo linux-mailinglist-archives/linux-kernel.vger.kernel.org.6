@@ -1,100 +1,87 @@
-Return-Path: <linux-kernel+bounces-329241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F40978F0C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E057978F0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E8F8B27966
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:16:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 325221C2545A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B243913D51B;
-	Sat, 14 Sep 2024 08:16:31 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248AA749A;
-	Sat, 14 Sep 2024 08:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085ED13C90F;
+	Sat, 14 Sep 2024 08:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUmjxD+O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF8561FFC
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 08:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726301791; cv=none; b=BFXQwBD/Gk/UXaN33SwinQVlKj70WAg9UcGDYkSjsQiKbtEhLd7WN8zQeCejt4sx0vohX5VB5eAcqM+QiMqh8wJlsoTTe1fV3PRXRKf6onUpaKV2DXM+4z1n4p8F1HaHuGUeNkG9bHQKP+2K77tj+P0c+Pby+dfq6PYs6jhUfRk=
+	t=1726301801; cv=none; b=oRdBOaWwR4RFS2DQMYD4J5gE5hmXkc7oot6Ewswhcc38PoObt+Jam8X6Lp4dFVodYu3Nyj6DJpwckAVvMYNEM1BOpDVmE7BnQBBZb7ydy8HD+m6Y1S3HAKjus/1Mi1vryI/8csp26UURBbCLihI+sRUE2PT0sS1NSIGXZtYumig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726301791; c=relaxed/simple;
-	bh=Xm70qA5TINNqEgWIYiIK01VDtk+x++S0wteTAF4+bps=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iWi8SLmpOjo9GETzu5BUPN7MOjdxg/pyVUK/jvT6ziNBuVmwHZfWe69FNBro1KkPobme6GnChr758ATQJe1H+cku8UNPwahWyoxjuLvAEhs6cnesD+lRe7y/cpxL+I2PHut3g8eX6xPulcoXrkZlw0ttlPM4TDtwdJmQa1xLJsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee666e546550f4-089b7;
-	Sat, 14 Sep 2024 16:16:23 +0800 (CST)
-X-RM-TRANSID:2ee666e546550f4-089b7
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from leadsec.example.com.localdomain (unknown[10.54.5.252])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee466e54653e1e-99ba7;
-	Sat, 14 Sep 2024 16:16:23 +0800 (CST)
-X-RM-TRANSID:2ee466e54653e1e-99ba7
-From: Tang Bin <tangbin@cmss.chinamobile.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tang Bin <tangbin@cmss.chinamobile.com>
-Subject: [PATCH] ASoC: topology: Fix incorrect addressing assignments
-Date: Sat, 14 Sep 2024 16:16:08 +0800
-Message-Id: <20240914081608.3514-1-tangbin@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1726301801; c=relaxed/simple;
+	bh=kzKk5Q06zQ1pwbZrZjIXTAuOQYsUk99hu7LQcJDwHw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cjWeFwHqXQPzAefhuG6haiDaL+Ao6cAXWnvRaSXcd3+b3Vc/E61Fkf02UP7lYYWy6atjESWP2Zzv0cuSWiQc5yfmy0tdxSSk4aVZn4/LClnIPWi5cxmzyvFVmC+HW7xkOoXShdMOifucb0Ec+B4QD+62sGWqpHW24Dk9/IDxpEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iUmjxD+O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2758C4CEC0;
+	Sat, 14 Sep 2024 08:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726301801;
+	bh=kzKk5Q06zQ1pwbZrZjIXTAuOQYsUk99hu7LQcJDwHw0=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=iUmjxD+OIseIe9D1FnkRRAF1J/m9oN7LMjYRGMNdhpZzu4gbdjynU9Xj00rX0/Vgh
+	 UrGIEYN0dBTlI+QINZ6SxuZ6MI46HNRn929FP+70hfzdR5tjvDoDKz2bli/eMpVRqe
+	 EUw0s+WCoyACcIYix1BfotT61xqok9xMG7A2EHl9kquB/P9JrdYZIITBGN+XvTv+BC
+	 RyGww8btoSJlWXf9+JtjawlyWO4L9MpGDq2Tn+OqUz8JfxdR9daIAcMgqyw+ghZOcK
+	 nVFXC8ta17tZtnDe8nI5BACM701yeQY+sq6KvWnPS+6+j4HGa00PD2emORFvygvNCI
+	 0B/RGHOCxK4BQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 8619BCE0E7A; Sat, 14 Sep 2024 01:16:38 -0700 (PDT)
+Date: Sat, 14 Sep 2024 01:16:38 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, oleg@redhat.com,
+	axboe@kernel.dk, brauner@kernel.org, akpm@linux-foundation.org,
+	willy@infradead.org, clm@fb.com, riel@surriel.com
+Subject: [GIT PULL] exit/core-dump non-urgent sleep for v6.12
+Message-ID: <bb2c5f74-2f89-4bb5-9d49-3061c218dde9@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The variable 'kc' is handled in the function
-soc_tplg_control_dbytes_create(), and 'kc->private_value'
-is assigned to 'sbe', so In the function soc_tplg_dbytes_create(),
-the right 'sbe' should be 'kc.private_value', the same logical error
-in the function soc_tplg_dmixer_create(), thus fix them.
+Hello, Linus,
 
-Fixes: 0867278200f7 ("ASoC: topology: Unify code for creating standalone and widget bytes control")
-Fixes: 4654ca7cc8d6 ("ASoC: topology: Unify code for creating standalone and widget mixer control")
-Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
----
- sound/soc/soc-topology.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+When the merge window opens, please pull the following exit-path
+application core-dump commit for v6.12:
 
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index af3158cdc..97517423d 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -889,7 +889,7 @@ static int soc_tplg_dbytes_create(struct soc_tplg *tplg, size_t size)
- 		return ret;
- 
- 	/* register dynamic object */
--	sbe = (struct soc_bytes_ext *)&kc.private_value;
-+	sbe = (struct soc_bytes_ext *)kc.private_value;
- 
- 	INIT_LIST_HEAD(&sbe->dobj.list);
- 	sbe->dobj.type = SND_SOC_DOBJ_BYTES;
-@@ -923,7 +923,7 @@ static int soc_tplg_dmixer_create(struct soc_tplg *tplg, size_t size)
- 		return ret;
- 
- 	/* register dynamic object */
--	sm = (struct soc_mixer_control *)&kc.private_value;
-+	sm = (struct soc_mixer_control *)kc.private_value;
- 
- 	INIT_LIST_HEAD(&sm->dobj.list);
- 	sm->dobj.type = SND_SOC_DOBJ_MIXER;
--- 
-2.33.0
+  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/misc.2024.09.14a
+  # HEAD: b8e753128ed074fcb48e9ceded940752f6b1c19f: exit: Sleep at TASK_IDLE when waiting for application core dump (2024-08-02 10:55:04 -0700)
 
+No, this is not my usual part of the kernel, but it does have Oleg
+Nesterov's ack.
 
+----------------------------------------------------------------
+exit: Sleep at TASK_IDLE when waiting for application core dump
 
+This causes the coredump_task_exit() function to sleep at TASK_IDLE,
+thus preventing task-blocked splats in case of large core dumps to
+slow devices.
+
+----------------------------------------------------------------
+Paul E. McKenney (1):
+      exit: Sleep at TASK_IDLE when waiting for application core dump
+
+ kernel/exit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
