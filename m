@@ -1,140 +1,122 @@
-Return-Path: <linux-kernel+bounces-329582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D228979330
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 21:12:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7E8979333
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 21:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F9F283C63
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:12:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25D2DB2227D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CC8811EB;
-	Sat, 14 Sep 2024 19:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F84B12C81F;
+	Sat, 14 Sep 2024 19:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZsfJFGSY"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PdeBC3gY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3B1C2C8;
-	Sat, 14 Sep 2024 19:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA505C2C8;
+	Sat, 14 Sep 2024 19:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726341154; cv=none; b=QmhoJuJTDTe9aQwEXCNqjFI9dl4pubVmr3POt98IqUlg8FsjZW5jV0IXm85uztbUYrCJVHnwclsXXIHVrp/FBEZ3eSXGDN/IlgRg/CU5o/I6RuoOEQXrzZGablYTLGmd3BF10FnPto+pHeG8/P5IgICq20/ALuTaWaMzlMv5BJA=
+	t=1726341161; cv=none; b=bqYzbDX5UQwWSiZqXprmWO8beAKXL7A5BgGqeubPdkFg1WF9L9ijErdnR+6xgtsjMrZgXxLyKAxOs4+48l8qSXpPugSlEd1Uh9gPhlDM6nbjjOBCeZeD66TdiqCnpsx6tCjWBi8yux1AMbEjf6d/Ns8jorAxIkBM3ekTL9GCk3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726341154; c=relaxed/simple;
-	bh=PHZHrVw10h99rYEQdEFbDtMypLDFs11UWr5JxLxSJxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uMigEKvi51TllyBbShesCXfYgwQc4yckRG41OB2bJY37nhzodrYJEDXvwfApQkGOdqcIoXh7sHi6WTetBDm4JG6ffiYlgTVxW5GErWxdJCJOAfrU+KwIZVqj1ApYtsY9jG36yRjp7URMc2HUrh2D9sr+1sRxvo2SZyFw56SepR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZsfJFGSY; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1726341150;
-	bh=PHZHrVw10h99rYEQdEFbDtMypLDFs11UWr5JxLxSJxc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZsfJFGSYVsRNIwiMZkbPX4u3316vZoyqdoN5oaoIHurdx8PORAWYwKCaI2Ya8Eq7j
-	 ZjUPDFuoAbXYO5f0MqVNQv9EbaBriNnVCJGKtLRoTSnqokcQtdczHiTVDdYaON+JBn
-	 xXTjY/+IzgYlZ4Au5t9dzm/XMV5E1YiowMkGvd0eNkOR3RksqGoTPmIB3ArhvC6qSN
-	 ml4C7jyy2TVNCU8VQ6+Ab45XU8dGK+JRHbl1K9NB0djtMIe6YxB+zg532IXMId9oyL
-	 KtEVWAMO8FHw1ahJg2fILKtgdSFo/Gx63i4FEjrKaqA6FNmDAtTFjPVBSWpcdoBJFv
-	 CBvYulvUh0Ycw==
-Received: from [192.168.1.90] (unknown [188.27.55.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1122E17E3612;
-	Sat, 14 Sep 2024 21:12:30 +0200 (CEST)
-Message-ID: <f8b17995-ce53-45ab-8e68-c7087dbc9786@collabora.com>
-Date: Sat, 14 Sep 2024 22:12:29 +0300
+	s=arc-20240116; t=1726341161; c=relaxed/simple;
+	bh=mcUQixhdnK2aPn9HVH6fLWBcBl50B4cNgoVwv6sKlf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=td1bBrz8RUZBwdxfmrstURTKrrorY6LZyOFBMTJ2lvTSHTdKMiYkTJ6hIZwEDNSC8urxDiGTU5CJwYwg6gASfuuK2SeMPC11VNJiFK2P6srwQsfasEDJDflB7N95BbYCMiRe7t/FhNJglNvYZR2yeGDYgcHrgRm4ygqx+K6jIVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PdeBC3gY; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726341160; x=1757877160;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mcUQixhdnK2aPn9HVH6fLWBcBl50B4cNgoVwv6sKlf0=;
+  b=PdeBC3gY2Aw16luFrvx/WXQshzG2aA6vBiniW8R6Y89f+ngLd4RmCKom
+   KFzqnR3xuyjB+QOJynvv8iBgi77I99EHH11K3nFD6wyeR0oOEVkU9Qgxg
+   r7OyiD9vzDVnAmMo+fBxjmsDLrxzl+XMKb2rFW/L4XKRuha5f5ZR0A7Qs
+   /UciWaqlKG1PX7cvOwWpzdvRPYi6TQw8Q8T365m8h3y8jSrx79Osp/7Jj
+   2xpS7X5ggMvnN+zDr7v6CT7nz9g2a5Vmg9k0+dxHwuD7UdWUtmrlf0hEj
+   Fb8OOOCHDCmXCi6KY50uMgU8oL1keKuGnYg27A0nTGvcXZnj1H5azr6E5
+   Q==;
+X-CSE-ConnectionGUID: 80CNMxQBQ7C9w2X+1ELzBQ==
+X-CSE-MsgGUID: VkJE8ZapQn2LQ2SP3tX7Mw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="25320197"
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="25320197"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 12:12:39 -0700
+X-CSE-ConnectionGUID: LIXJ9f+rTaWQxAbNOw8J/w==
+X-CSE-MsgGUID: FkCOIfrrS3inh6xi629n0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="73049902"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 14 Sep 2024 12:12:37 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id E249432A; Sat, 14 Sep 2024 22:12:35 +0300 (EEST)
+Date: Sat, 14 Sep 2024 22:12:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Serge Semin <fancer.lancer@gmail.com>,
+	Ferry Toth <ftoth@exalondelft.nl>
+Cc: Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v4 1/6] dmaengine: dw: Add peripheral bus width
+ verification
+Message-ID: <ZuXgI-VcHpMgbZ91@black.fi.intel.com>
+References: <20240802075100.6475-1-fancer.lancer@gmail.com>
+ <20240802075100.6475-2-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/3] drm/bridge: synopsys: Add DW HDMI QP TX Controller
- support library
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
- Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
-References: <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
- <20240906-b4-rk3588-bridge-upstream-v6-1-a3128fb103eb@collabora.com>
- <20240909-horned-congenial-curassow-ebc5fa@houat>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20240909-horned-congenial-curassow-ebc5fa@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802075100.6475-2-fancer.lancer@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Maxime,
-
-On 9/9/24 6:13 PM, Maxime Ripard wrote:
-> Hi,
+On Fri, Aug 02, 2024 at 10:50:46AM +0300, Serge Semin wrote:
+> Currently the src_addr_width and dst_addr_width fields of the
+> dma_slave_config structure are mapped to the CTLx.SRC_TR_WIDTH and
+> CTLx.DST_TR_WIDTH fields of the peripheral bus side in order to have the
+> properly aligned data passed to the target device. It's done just by
+> converting the passed peripheral bus width to the encoded value using the
+> __ffs() function. This implementation has several problematic sides:
 > 
-> On Fri, Sep 06, 2024 at 04:17:40AM GMT, Cristian Ciocaltea wrote:
->> +static enum drm_connector_status
->> +dw_hdmi_qp_bridge_detect(struct drm_bridge *bridge)
->> +{
->> +	struct dw_hdmi_qp *hdmi = bridge->driver_private;
->> +	enum drm_connector_status status;
->> +
->> +	status = hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
->> +
->> +	dev_dbg(hdmi->dev, "%s conn=%d scramb=%d\n", __func__,
->> +		status == connector_status_connected, hdmi->scramb_enabled);
->> +
->> +	if (hdmi->scramb_enabled) {
->> +		cancel_delayed_work_sync(&hdmi->scramb_work);
->> +
->> +		if (status == connector_status_connected)
->> +			dw_hdmi_qp_check_and_set_scramb(hdmi);
->> +	}
->> +
->> +	return status;
->> +}
+> 1. __ffs() is undefined if no bit exist in the passed value. Thus if the
+> specified addr-width is DMA_SLAVE_BUSWIDTH_UNDEFINED, __ffs() may return
+> unexpected value depending on the platform-specific implementation.
 > 
-> Unfortunately, that won't work. The HDMI Spec has (HDMI 2.0, Section
-> 6.1.3.1 - Scrambling Control):
+> 2. DW AHB DMA-engine permits having the power-of-2 transfer width limited
+> by the DMAH_Mk_HDATA_WIDTH IP-core synthesize parameter. Specifying
+> bus-width out of that constraints scope will definitely cause unexpected
+> result since the destination reg will be only partly touched than the
+> client driver implied.
 > 
-> The minimum time period between the write to the Scrambling_Enable bit,
-> and the transmission of a scrambled video signal is not specified;
-> however the Source shall not begin transmission of a scrambled video
-> signal before writing a 1 to the Scrambling_Enable bit. The maximum time
-> period between the write to the Scrambling_Enable bit and the
-> transmission of a scrambled video signal shall be 100 ms.
-> 
-> So you need to disable the output and enable it again.
-> 
-> vc4 does just that, you can have a look here:
-> https://elixir.bootlin.com/linux/v6.10.9/source/drivers/gpu/drm/vc4/vc4_hdmi.c#L410
+> Let's fix all of that by adding the peripheral bus width verification
+> method and calling it in dwc_config() which is supposed to be executed
+> before preparing any transfer. The new method will make sure that the
+> passed source or destination address width is valid and if undefined then
+> the driver will just fallback to the 1-byte width transfer.
 
-Thanks for all the details and references!
+This patch broke Intel Merrifield iDMA32 + SPI PXA2xx configuration to
+me. Since it's first in the series and most likely the rest is
+dependent and we are almost at the release date I propose to roll back
+and start again after v6.12-rc1 will be out. Vinod, can we revert the
+entire series, please?
 
-Unfortunately I had to drop the scrambling setup for now [1], as I
-encountered some issues while attempting to get this implemented as
-suggested.  Will get back to this and submit it separately when done.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Regards,
-Cristian
-
-[1] https://lore.kernel.org/lkml/20240914-b4-rk3588-bridge-upstream-v7-0-2b1348137123@collabora.com/
 
 
