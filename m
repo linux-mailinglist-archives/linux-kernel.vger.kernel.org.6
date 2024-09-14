@@ -1,98 +1,133 @@
-Return-Path: <linux-kernel+bounces-329054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91542978C8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:06:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB86978C89
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0856CB248BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:06:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB992B23472
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF553D528;
-	Sat, 14 Sep 2024 02:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D497C8FE;
+	Sat, 14 Sep 2024 02:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wx0lFibl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="DH0dsbxR"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0190179DC;
-	Sat, 14 Sep 2024 02:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DCD33E8;
+	Sat, 14 Sep 2024 02:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726279578; cv=none; b=HTKGZHX1b38VhQSQnG2GDEEmShz/nd5NA8WtddiC7h95ZkaIVf1s2B2pl7L1O75BtNUS2pInBQVfwo8PX3nOgLDXURMYeha2fPUq6ZnuAGRVCfU/fK/S5rJAMMp/rYN78iTmwCRahANlFTPttZtB9WCzb1wl+5IVj//TccSfw5g=
+	t=1726279338; cv=none; b=AbfkPgjaRN+newIb0rtaTZwdoW0a30RtBfThcs6Dhv5GHj+UiGaHb2wyxOh0MO6PMx7muQtJLdLnrnlojX7aA9b1VKxW8i6E361gdzdFajNlFaO+Ip0aOhWa0VKp4iyMjvA1ebN/zF0b98ntieEFFGm6CQjz/z51niragC6wOQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726279578; c=relaxed/simple;
-	bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rA7P6qI2i/xQ2yCaacnD3csUwSNfIb9YZ4RGYiHkeZKux8RTgtFRpjfjENtH9mxWe3DoTyM4/FObOlOh+o+VPWOYJgbpnd0GfhMS6M3vcrNl5O7TvjHZnP7TMUlkhNRR9QOvToqAfa4mf3kkuMDa+bCqBjwLpJ2DOKuzmpNq4OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wx0lFibl; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726279576; x=1757815576;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
-  b=Wx0lFiblieA/9/9zel9rjGGqiBhBg5zYjJ/ObIHxufVPcAMw1Fk+5oEb
-   zjOJOQL72vzWiy8zQsKghpnSbtgajYcGTpXhEBXRi9FkGj/Q7G3uHH/k6
-   Mp6q9arZJUfEnohcT+UYK9SFpVyVg8lfV+784+4Kc3JSkMqmKfyfZf8l3
-   1fSe3I8qlsUlHfu1PSil9tghCgNGIa+ZCDyWZFVxhf8+D3hJskkidrG+u
-   8y2xVFJhTo7kBnkBtA1zftgd7EosIg7aXwbmWoHQ6B2E3lw32By4gB1MF
-   HvIqeRGlSQns9/n+49kVgwbAc6m84o675WYdjX7T5Ea9Rc23HTk1zQ702
-   A==;
-X-CSE-ConnectionGUID: 7++i2EDnTCq797+HfENnXQ==
-X-CSE-MsgGUID: 3+9wc8S+TgyxDSnps6brwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="47706728"
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="47706728"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 19:06:15 -0700
-X-CSE-ConnectionGUID: hrcCDiI6S7qL/42olX80Rg==
-X-CSE-MsgGUID: gzoUIxuVSy6K+Ux6zmuDmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="67968803"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa007.fm.intel.com with ESMTP; 13 Sep 2024 19:06:12 -0700
-Message-ID: <42bbc500-578c-474b-98ec-1988906f31ef@linux.intel.com>
-Date: Sat, 14 Sep 2024 10:02:05 +0800
+	s=arc-20240116; t=1726279338; c=relaxed/simple;
+	bh=KVQI4gRkAKlBL/HZnc2Jyu/Q+cbFZDKCOE64jrTo+js=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=trrMSUyg/k1ZDjupmM7Tda3v4yYSSyHEEe6jsIWuOrcuwy8k7nFE/vai4bt9NmLhby7/y+Xih0R+MT3B4VWvsfykQeBq7ebSRS1mGopNLTf0BvF8sfgp0q2im71mUSnqKM/5C5H0fzxTEo/Bfa2+rWOApXPuvXkCZkB8x7IUg8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=DH0dsbxR; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1726279332;
+	bh=/wsM4f9mZobOe68S738M7h2FcsJwRNVl7jUmuHE5wmY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=DH0dsbxRzHaIGZKdW/VAzQa6uKPKiQwb8xCnbJaXLX9IAec2jz1b/fzg6cAhA8ErS
+	 pB/HLkT+Chh7obMNzCGZjoOWTe/vD0JNDCM4Bk1nb264MmakqUKTgdIBJ2vYKocfIX
+	 TQFU167XMfXx/BQsIbkQmum5VaXobPpVYwGgo1VhMa4CtzPmjmlEkxQ80fw3po0b0D
+	 HtJ6eUTWVbxOb+AYQWVe+VAvYPaM3Togzjtar6Bx3JrukSCSxH/pAfJbln0hO7udza
+	 MN7MYow2a+b425Pd8snDmc6s2XJ5BK0WWvGoVetzAKhaADtomefCQYQLBwDN6OI2zp
+	 D2h9711DyUhjg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X5DvR1TfQz4xD3;
+	Sat, 14 Sep 2024 12:02:11 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Mina Almasry <almasrymina@google.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux
+ Next Mailing List <linux-next@vger.kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, "linuxppc-dev@lists.ozlabs.org"
+ <linuxppc-dev@lists.ozlabs.org>, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
+In-Reply-To: <20240913213351.3537411-1-almasrymina@google.com>
+References: <20240913213351.3537411-1-almasrymina@google.com>
+Date: Sat, 14 Sep 2024 12:02:09 +1000
+Message-ID: <87jzffq9ge.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
- Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-References: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 9/13/24 10:34 PM, Dan Carpenter wrote:
-> The iommu_paging_domain_alloc() function doesn't  return NULL pointers,
-> it returns error pointers.  Update the check to match.
-> 
-> Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
-> Signed-off-by: Dan Carpenter<dan.carpenter@linaro.org>
-> ---
->   drivers/gpu/drm/tegra/drm.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+Mina Almasry <almasrymina@google.com> writes:
+> Building net-next with powerpc with GCC 14 compiler results in this
+> build error:
+>
+> /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
+> /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is
+> not a multiple of 4)
+> make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
+> net/core/page_pool.o] Error 1
+>
+> Root caused in this thread:
+> https://lore.kernel.org/netdev/913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-soprasteria.com/
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Sorry I'm late to this, the original report wasn't Cc'ed to linuxppc-dev :D
 
-Thanks,
-baolu
+I think this is a bug in the arch/powerpc inline asm constraints.
+
+Can you try the patch below, it fixes the build error for me.
+
+I'll run it through some boot tests and turn it into a proper patch over
+the weekend.
+
+cheers
+
+
+diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
+index 5bf6a4d49268..0e41c1da82dd 100644
+--- a/arch/powerpc/include/asm/atomic.h
++++ b/arch/powerpc/include/asm/atomic.h
+@@ -23,6 +23,12 @@
+ #define __atomic_release_fence()					\
+ 	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory")
+ 
++#ifdef CONFIG_CC_IS_CLANG
++#define DS_FORM_CONSTRAINT "Z<>"
++#else
++#define DS_FORM_CONSTRAINT "YZ<>"
++#endif
++
+ static __inline__ int arch_atomic_read(const atomic_t *v)
+ {
+ 	int t;
+@@ -197,7 +203,7 @@ static __inline__ s64 arch_atomic64_read(const atomic64_t *v)
+ 	if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
+ 		__asm__ __volatile__("ld %0,0(%1)" : "=r"(t) : "b"(&v->counter));
+ 	else
+-		__asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : "m<>"(v->counter));
++		__asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : DS_FORM_CONSTRAINT (v->counter));
+ 
+ 	return t;
+ }
+@@ -208,7 +214,7 @@ static __inline__ void arch_atomic64_set(atomic64_t *v, s64 i)
+ 	if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
+ 		__asm__ __volatile__("std %1,0(%2)" : "=m"(v->counter) : "r"(i), "b"(&v->counter));
+ 	else
+-		__asm__ __volatile__("std%U0%X0 %1,%0" : "=m<>"(v->counter) : "r"(i));
++		__asm__ __volatile__("std%U0%X0 %1,%0" : "=" DS_FORM_CONSTRAINT (v->counter) : "r"(i));
+ }
+ 
+ #define ATOMIC64_OP(op, asm_op)						\
 
