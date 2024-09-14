@@ -1,143 +1,141 @@
-Return-Path: <linux-kernel+bounces-329332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACFC97901D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:52:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB12F97903C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552332857D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:52:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE4001C22BC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744111CF7CD;
-	Sat, 14 Sep 2024 10:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="OaYMqFv+"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614A71CEEBA;
+	Sat, 14 Sep 2024 11:01:25 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23F51CF2A6;
-	Sat, 14 Sep 2024 10:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726311082; cv=pass; b=sw/99onEt8B3oS0fEjtgjdPsV+8HXXgOHVqEYNPJUKZduW4h7IYyqfBEwcl2wMkF8pjNmsCl+aB0cpKSfMoa85dhQWCDQCe1YMJsjqPdLQJHHXEDAfQZ+SkN9os3i/oFDV3QHwjWhvopPsb0V5VCe8i1WvYZBgLC65F4jG3GTDA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726311082; c=relaxed/simple;
-	bh=m8d+9q3kZe0ADCcH+zl7FFtgiggpLWzcGS+CWgkb0+E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=SgQi+P92GUuJm58335oEXZH1KT45F1KsBYd13U595sRoO1xdEyOly1u0DsSQKDzm1cMDW1VQkGNAGIDNjkdtY1W95JSILZIHYEyJN7FC/vCJpBYYZpIcVanK1MQJeeiuS0KXQRnulZ0EcMTYbONc1+XLS7UBu4P388zMxHHmwE0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=OaYMqFv+; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from localhost (83-245-197-106.elisa-laajakaista.fi [83.245.197.106])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4X5Sdp2XM7zySy;
-	Sat, 14 Sep 2024 13:51:10 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1726311072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m8d+9q3kZe0ADCcH+zl7FFtgiggpLWzcGS+CWgkb0+E=;
-	b=OaYMqFv+VE+RnQrHLC88LVhHfkYqNkh5TaGThhrw5IANBSm2DJnzDniZOS18BIwcTYzjMX
-	tbpNGkLkm4WrAN2FCZauKfeL2x+EGuCBVkjOhXyW2CmL36fLz2LxgzyMQpbpCvkqTdXdMC
-	lKgyalCT6+5uHLLF/4CAH/BrTrzn2PA=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1726311072; a=rsa-sha256; cv=none;
-	b=Tnsxy6J9Xwit+N3c2o2ua/OpWzVJDRZtncgjjj8IJCLSX8fpveMMq3BSNJ8IsQK4i20bRm
-	Cc59vkRUa8uD0KpgF2IoGNnjjp3ama0kTKjMSbndovhXy8Bk672Tzh5gqfuI5YmLQI7GMx
-	6fGUoT8WT4ysF+EWhZZImvp0Y8CavYk=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1726311072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m8d+9q3kZe0ADCcH+zl7FFtgiggpLWzcGS+CWgkb0+E=;
-	b=A/TAUolZcNt+grDn2cSx88Faz8YuHcwdDij0KfV8nWjp1m3TZeY2EptgNlmO6O5qS20Y7n
-	MGx6eH3AoFUnLLKg8e3jVtM+4hEI209h9RkndjqPYYoiEbnuWkLLKJfee2ki0R442C6dG+
-	Qnh/7u9Tv/SFCt5Xnsdjq2TNMZWLkPA=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D674113A27D;
+	Sat, 14 Sep 2024 11:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726311685; cv=none; b=gfTXdkNl4ZY/lSyIKFymAu3pmWHZ0VZTshSUOpyodqom9YfDj2TuyDkRaE+KN/CnHH2rnSBXfT2a1G55Gr5eyfNVO9ItPyNS7kyRKnojqKEdLjoYukQrq19wprGwo9OXJ6oPaIPT+VrVmvyZZWMOVf9gwHttx70Of2yOeL52m3w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726311685; c=relaxed/simple;
+	bh=2cdpzxaJak4sk84HBja4AHAxecY3fd/vX4aFAisLU1w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EENgzL/bXmGrJ8FEUGmqvqcb/43bxAPVuEB28YjXhBd4AcJU+0mi3n6zXTx/qfd0MDzIM3CQB57/QtaUeJyJZj9RjMaxxauCayZvH40xyBQ6eQ1j2ZSlzwxJYr1f6toHUNob5iaqgPhiyO9vTzCkcs3EcCyBH9QDuq1b6aC8Zkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X5Sps3z0Szfc1B;
+	Sat, 14 Sep 2024 18:59:01 +0800 (CST)
+Received: from kwepemm600009.china.huawei.com (unknown [7.193.23.164])
+	by mail.maildlp.com (Postfix) with ESMTPS id 82CF414035F;
+	Sat, 14 Sep 2024 19:01:13 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ kwepemm600009.china.huawei.com (7.193.23.164) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sat, 14 Sep 2024 19:01:13 +0800
+From: Weili Qian <qianweili@huawei.com>
+To: <herbert@gondor.apana.org.au>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liulongfang@huawei.com>, <shenyang39@huawei.com>
+Subject: [PATCH] crypto: hisilicon/hpre - enable all clusters clock gating
+Date: Sat, 14 Sep 2024 18:57:16 +0800
+Message-ID: <20240914105716.20840-1-qianweili@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 14 Sep 2024 13:51:08 +0300
-Message-Id: <D45Y78TPNUC3.VPF1BWS5EI0Q@iki.fi>
-Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
- "Pengyu Ma" <mapengyu@gmail.com>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Roberto Sassu"
- <roberto.sassu@huaweicloud.com>, "Linux regressions mailing list"
- <regressions@lists.linux.dev>
-X-Mailer: aerc 0.18.2
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
- <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
- <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
- <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
- <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
- <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
- <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
- <10ae7b8592af7bacef87e493e6d628a027641b8d.camel@HansenPartnership.com>
- <D45Y0H3JRIJE.3LIRI1PEDTJE3@kernel.org>
-In-Reply-To: <D45Y0H3JRIJE.3LIRI1PEDTJE3@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm600009.china.huawei.com (7.193.23.164)
 
-On Sat Sep 14, 2024 at 1:42 PM EEST, Jarkko Sakkinen wrote:
-> Please address how this discussion is related to https://bugzilla.kernel.=
-org/show_bug.cgi?id=3D219229
->
-> I just read the bug report nothing about IMA or PCR extend.
->
-> There's now tons of spam about performance issue in a patch set that is
-> not in the mainline and barely nothing about the original issue:
->
-> "
-> When secureboot is enabled,
-> the kernel boot time is ~20 seconds after 6.10 kernel.
-> it's ~7 seconds on 6.8 kernel version.
->
-> When secureboot is disabled,
-> the boot time is ~7 seconds too.
->
-> Reproduced on both AMD and Intel platform on ThinkPad X1 and T14.
->
-> It probably caused autologin failure and micmute led not loaded on AMD pl=
-atform.
->
-> 6.9 kernel version is not tested since not signed kernel found.
-> 6.8, 6.10, 6.11 are tested, the first bad version is 6.10.
-> "
->
-> How is this going to help to fix this one?
->
-> I say this once and one: I zero care fixing code that is in the
-> mainline.
+Currently, the driver enables clock gating for only one cluster.
+However, the new hardware has three clusters. Therefore, clock
+gating needs to be enabled based on the number of clusters on the
+current hardware.
 
-How do we now that bug is anything to do with IMA? I'm having a weekend
-now but on Monday I'll ask the kconfig from the reporter. I think
-important thing is to then revisit how many times the session is setup
-during boot and make conclusions from that.
+Signed-off-by: Weili Qian <qianweili@huawei.com>
+---
+ drivers/crypto/hisilicon/hpre/hpre_main.c | 40 +++++++++++++++--------
+ 1 file changed, 26 insertions(+), 14 deletions(-)
 
-It is plain wrong and immoral to convolute a regression with marketing
-a new kernel feature. These topics should be brought up in the topic
-(i.e. patch set comments), not here. It misleads everyone.
+diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
+index 6b536ad2ada5..23e8fb9414af 100644
+--- a/drivers/crypto/hisilicon/hpre/hpre_main.c
++++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
+@@ -593,6 +593,8 @@ static void hpre_close_sva_prefetch(struct hisi_qm *qm)
+ 
+ static void hpre_enable_clock_gate(struct hisi_qm *qm)
+ {
++	unsigned long offset;
++	u8 clusters_num, i;
+ 	u32 val;
+ 
+ 	if (qm->ver < QM_HW_V3)
+@@ -606,17 +608,23 @@ static void hpre_enable_clock_gate(struct hisi_qm *qm)
+ 	val |= HPRE_PEH_CFG_AUTO_GATE_EN;
+ 	writel(val, qm->io_base + HPRE_PEH_CFG_AUTO_GATE);
+ 
+-	val = readl(qm->io_base + HPRE_CLUSTER_DYN_CTL);
+-	val |= HPRE_CLUSTER_DYN_CTL_EN;
+-	writel(val, qm->io_base + HPRE_CLUSTER_DYN_CTL);
+-
+-	val = readl_relaxed(qm->io_base + HPRE_CORE_SHB_CFG);
+-	val |= HPRE_CORE_GATE_EN;
+-	writel(val, qm->io_base + HPRE_CORE_SHB_CFG);
++	clusters_num = qm->cap_tables.dev_cap_table[HPRE_CLUSTER_NUM_CAP_IDX].cap_val;
++	for (i = 0; i < clusters_num; i++) {
++		offset = (unsigned long)i * HPRE_CLSTR_ADDR_INTRVL;
++		val = readl(qm->io_base + offset + HPRE_CLUSTER_DYN_CTL);
++		val |= HPRE_CLUSTER_DYN_CTL_EN;
++		writel(val, qm->io_base + offset + HPRE_CLUSTER_DYN_CTL);
++
++		val = readl(qm->io_base + offset + HPRE_CORE_SHB_CFG);
++		val |= HPRE_CORE_GATE_EN;
++		writel(val, qm->io_base + offset + HPRE_CORE_SHB_CFG);
++	}
+ }
+ 
+ static void hpre_disable_clock_gate(struct hisi_qm *qm)
+ {
++	unsigned long offset;
++	u8 clusters_num, i;
+ 	u32 val;
+ 
+ 	if (qm->ver < QM_HW_V3)
+@@ -630,13 +638,17 @@ static void hpre_disable_clock_gate(struct hisi_qm *qm)
+ 	val &= ~HPRE_PEH_CFG_AUTO_GATE_EN;
+ 	writel(val, qm->io_base + HPRE_PEH_CFG_AUTO_GATE);
+ 
+-	val = readl(qm->io_base + HPRE_CLUSTER_DYN_CTL);
+-	val &= ~HPRE_CLUSTER_DYN_CTL_EN;
+-	writel(val, qm->io_base + HPRE_CLUSTER_DYN_CTL);
+-
+-	val = readl_relaxed(qm->io_base + HPRE_CORE_SHB_CFG);
+-	val &= ~HPRE_CORE_GATE_EN;
+-	writel(val, qm->io_base + HPRE_CORE_SHB_CFG);
++	clusters_num = qm->cap_tables.dev_cap_table[HPRE_CLUSTER_NUM_CAP_IDX].cap_val;
++	for (i = 0; i < clusters_num; i++) {
++		offset = (unsigned long)i * HPRE_CLSTR_ADDR_INTRVL;
++		val = readl(qm->io_base + offset + HPRE_CLUSTER_DYN_CTL);
++		val &= ~HPRE_CLUSTER_DYN_CTL_EN;
++		writel(val, qm->io_base + offset + HPRE_CLUSTER_DYN_CTL);
++
++		val = readl(qm->io_base + offset + HPRE_CORE_SHB_CFG);
++		val &= ~HPRE_CORE_GATE_EN;
++		writel(val, qm->io_base + offset + HPRE_CORE_SHB_CFG);
++	}
+ }
+ 
+ static int hpre_set_user_domain_and_cache(struct hisi_qm *qm)
+-- 
+2.33.0
 
-Please explain me how this is going to help the reporter in any
-possible?=20
-
-BR, Jarkko
 
