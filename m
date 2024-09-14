@@ -1,126 +1,152 @@
-Return-Path: <linux-kernel+bounces-329011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29FC978C08
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:02:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2351978C0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0371928497F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708651F2363C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC56440C;
-	Sat, 14 Sep 2024 00:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A94F1103;
+	Sat, 14 Sep 2024 00:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlBtulml"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JEZ9Jvna"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112DB79DC;
-	Sat, 14 Sep 2024 00:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8600802;
+	Sat, 14 Sep 2024 00:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726272138; cv=none; b=nYYCcath8rJ1s4lLfgLZIR1dSoLD4IGTfexhLYgYxvwTtSJ/FHf8X7ilF5qCpIhLsg119D5FqgxCHQRcBQyAGKxdwX3IXHfqEvsRZhQ27vpnNUW3D8ppf/5IuxPNzEeqcvB+zYeQs+Qc4aklBxNs0RUWEusGMHj6so1vuBrsj+0=
+	t=1726272645; cv=none; b=XU5OkNeB7J7+3noykLHT8f946QX7jjDAWb7lbt3//XqHU+RVgYfcH3FOxD5GRvKxSgbRs8P57lHwLMwaYktZEquGItoJT1C9gp2kaPHaUI/Bf4ybxoxzPqCEqje+aZq5xhf+Qe9ig7+xUQ/22zUmwr5hjlUPgDllOX7RnlTJyL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726272138; c=relaxed/simple;
-	bh=EQnAXd9EotjYoYlNyiAMNzEMGoNMlAbitn51cd8vaUw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i/O2unTKybhyKAt6g8FQllJqbCJKXDqY3wmREvMeHuwU5ziYVcNXYfHKaTXf/DYbnfKxvFrefc1X3anT+PeMszQXHg7+vFsi5mVn/zbaZgYf0PKqf8evM09Gw/GW5l0I/ERpq9rnSSp5evFpeUSjJ2s1hbPPcOZOjgP1eb+WKik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlBtulml; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374c326c638so973572f8f.2;
-        Fri, 13 Sep 2024 17:02:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726272135; x=1726876935; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BXX8mzgSJjoBnbX4xJ/wcXQ868Ptyga4WSAsSgAvq8Y=;
-        b=nlBtulmlAmJ9tvjiZTCtkpP32toaht6bOPEj3ZVXHRgctSU1JRBkjBCBGU0wXZuCEB
-         JmZneZb72coWvNVUi4W7JIWMX8VdxnKsquygw+baKzHJwMFHt03kXsvIrvzpI7b07xGX
-         y8zH/rBpUXCD6K69zKozY9YGiHK0BXJZgQU59AcfaQ3rin+M2g/x1ZoJpG7fqkXQ3XJm
-         IQgC6EeoZAz99RoPYAi7Z7bA4G/MI1bPmppxRtiiJBwJj/VGccDW5u0203HtjDIk8OG4
-         zQfiJ3J7cY/ROVdskyG3Ny7DlqWHHMugaJ+CFJ+DQRuo8rezlHrxrqPKRa6fSx68Bk9C
-         jXMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726272135; x=1726876935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BXX8mzgSJjoBnbX4xJ/wcXQ868Ptyga4WSAsSgAvq8Y=;
-        b=q2qqYtm3BvaGUyhmSV7PBE0Yf+ZhcD11JTqE6xlMI1hYH4zRFlbJz20Et3JRUyFqJM
-         qF2m+EYPSCDpbZrUluyTUZFDIkI8Rd6WSeoU4dtOwEhb51v4lFoJHwaEjaMxO4H02yWg
-         9SJMxOFL5gBnpgPHG1tFugh8V+jeaefAIRGRNDnrVGkMGK2RQgCT6c7WzGKVT0MzTGhR
-         J60QoiaUQHacCDXoIWl1TwkXhGBzlKWAcBNz9Y0b6OmuKZwJQMCiI3wDyoW0Cw7GgBQv
-         c12kZHWjEoYlmw8+y7SKBGApYI6Aep27Cee92lRJJOtjq8+avswQ/igsu3JSGXaQhONv
-         D8+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUKNUbS47Kx48erFrNwdV6Qrnh0RB42an3sgzS1mNE4PCX5C8vrPbWfDbeJzmHdwbP4Ym6px/w6oTvGCpBH@vger.kernel.org, AJvYcCW6C9ydvMmUV3Hlaf5o8kiVFU4EwhEWvQBz4JEr+QQymADrNhVUBCGmpd0ewUph+1ULZp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlhWzuaM8M1gU7JumefUDSBUOZt+nVpgUUkof2c826Lppf4Fe+
-	ByxzH9wzZ10gXRSMlQaucvCRPvHxVUV+EBaxI+b5lpMvsnDf8UNVohn/v1RdPT5F2sXjwJ8OGID
-	GS+uElICHslLSJ1QXKhl3to9W+anXTAej
-X-Google-Smtp-Source: AGHT+IFF9KWopyjRufo4m/UyfPVjYIhmHIokSx4pmGbJIqezYQhgeQi+coTfVC9V8/fRc9QYjkqoLTcQkKgI64Q6wm0=
-X-Received: by 2002:a05:6000:c89:b0:374:b9a0:ddee with SMTP id
- ffacd0b85a97d-378d625a9d0mr2247305f8f.56.1726272135011; Fri, 13 Sep 2024
- 17:02:15 -0700 (PDT)
+	s=arc-20240116; t=1726272645; c=relaxed/simple;
+	bh=pBlXE22qTfUfu7R4b/GcgpMEmYdx7gX5i4yw66loTlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uemOLbKniYB1fmxpgCsBbsE77Xy8exr0LRwSYkRepaKMcmaZ0p7+FzdksBZvHcPUenNyB6rONzeZBsPclcqKoq/0DExxke3h0vgUBEbQW4XIe5kNCwCDfHPp7U24zmitzUNu1C1ArDKptRp7jm0/5Hv+AL+AFA1KRj68yHUKqGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JEZ9Jvna; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726272643; x=1757808643;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pBlXE22qTfUfu7R4b/GcgpMEmYdx7gX5i4yw66loTlg=;
+  b=JEZ9JvnaQG5i2f+tlh5T8WbtJQLGDMgtdKWb6DEV/zU0I84r6HkcudfQ
+   LB2JQqIeXkirKzoe7A58J6B6uK+5dQ5qyOf/aW/deJ3EIkRGdliyKFyY/
+   hZvj+EFHovLsekuRhNlDqN2hPy+kLe/ane/1Bnq3Bdryz1XW/eLtZYp7y
+   vWJtx8SpSY7Uf0aAYqvtlVVTXLCSvC4esIs3KF+KOaP69mII6HX3SEMwX
+   segn/gzNWvKQRc2I7ix6ALw9EV81XPfRzQdc16+randWBlrVYArkYvQwk
+   IdOKx1JgCuNQ3xK+rxVMDNGALZ1wx4m9TI5dq9LqOhu7Lyj5sxjxF/SPC
+   g==;
+X-CSE-ConnectionGUID: sd54NgDMSt2mnzEq7rVqrg==
+X-CSE-MsgGUID: /6kXExrMS6OeSPlVznqj1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25061966"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="25061966"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 17:10:36 -0700
+X-CSE-ConnectionGUID: ZQDgBaKzScWKseKdZctE8Q==
+X-CSE-MsgGUID: BUzx7VxoTSuGCSExL6LSKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="72616669"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 13 Sep 2024 17:10:32 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spGMw-0007AY-0j;
+	Sat, 14 Sep 2024 00:10:30 +0000
+Date: Sat, 14 Sep 2024 08:10:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jean Delvare <jdelvare@suse.com>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Re: [PATCH v1 04/12] i2c: isch: Switch to memory mapped IO accessors
+Message-ID: <202409140743.kKVc8T3C-lkp@intel.com>
+References: <20240911154820.2846187-5-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912081730.22094-1-zhangjiao2@cmss.chinamobile.com>
-In-Reply-To: <20240912081730.22094-1-zhangjiao2@cmss.chinamobile.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 13 Sep 2024 17:02:03 -0700
-Message-ID: <CAADnVQJbzjt0w158Ww2PBJvrzwVbUeCq7O_HHyVfKvZa3UC4_g@mail.gmail.com>
-Subject: Re: [PATCH] tools/bpf: Add missing fclose.
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911154820.2846187-5-andriy.shevchenko@linux.intel.com>
 
-On Thu, Sep 12, 2024 at 1:58=E2=80=AFAM zhangjiao2
-<zhangjiao2@cmss.chinamobile.com> wrote:
->
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
->
-> Cppcheck find a error as below:
->         bpf_dbg.c:1397:2: error: Resource leak: fin [resourceLeak]
-> Add fclose to rm this error.
->
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> ---
->  tools/bpf/bpf_dbg.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/bpf/bpf_dbg.c b/tools/bpf/bpf_dbg.c
-> index 00e560a17baf..5fb17fa0ace8 100644
-> --- a/tools/bpf/bpf_dbg.c
-> +++ b/tools/bpf/bpf_dbg.c
-> @@ -1394,5 +1394,11 @@ int main(int argc, char **argv)
->         if (argc >=3D 3)
->                 fout =3D fopen(argv[2], "w");
->
-> -       return run_shell_loop(fin ? : stdin, fout ? : stdout);
-> +       run_shell_loop(fin ? : stdin, fout ? : stdout);
-> +
-> +       if (fin)
-> +               fclose(fin);
-> +       if (fout)
-> +               fclose(fout);
-> +       return 0;
+Hi Andy,
 
-main() is about to exit. There is really no need to close it explicitly.
+kernel test robot noticed the following build warnings:
 
-pw-bot: cr
+[auto build test WARNING on andi-shyti/i2c/i2c-host]
+[also build test WARNING on linus/master v6.11-rc7]
+[cannot apply to next-20240913]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Daniel,
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/i2c-isch-Add-missed-else/20240912-002224
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20240911154820.2846187-5-andriy.shevchenko%40linux.intel.com
+patch subject: [PATCH v1 04/12] i2c: isch: Switch to memory mapped IO accessors
+config: i386-buildonly-randconfig-001-20240913 (https://download.01.org/0day-ci/archive/20240914/202409140743.kKVc8T3C-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140743.kKVc8T3C-lkp@intel.com/reproduce)
 
-is this debugger still useful?
-Should we remove it?
-and bpf_jit_disasm.c too ?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409140743.kKVc8T3C-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/i2c/busses/i2c-isch.c:296:32: warning: format specifies type 'unsigned int' but the argument has type 'resource_size_t' (aka 'unsigned long long') [-Wformat]
+     296 |                 "SMBus SCH adapter at %04x", res->start);
+         |                                       ~~~~   ^~~~~~~~~~
+         |                                       %04llx
+   1 warning generated.
+
+
+vim +296 drivers/i2c/busses/i2c-isch.c
+
+   276	
+   277	static int smbus_sch_probe(struct platform_device *dev)
+   278	{
+   279		struct resource *res;
+   280		int retval;
+   281	
+   282		res = platform_get_resource(dev, IORESOURCE_IO, 0);
+   283		if (!res)
+   284			return -EBUSY;
+   285	
+   286		sch_smba = devm_ioport_map(&dev->dev, res->start, resource_size(res));
+   287		if (!sch_smba) {
+   288			dev_err(&dev->dev, "SMBus region %pR already in use!\n", res);
+   289			return -EBUSY;
+   290		}
+   291	
+   292		/* set up the sysfs linkage to our parent device */
+   293		sch_adapter.dev.parent = &dev->dev;
+   294	
+   295		snprintf(sch_adapter.name, sizeof(sch_adapter.name),
+ > 296			"SMBus SCH adapter at %04x", res->start);
+   297	
+   298		retval = i2c_add_adapter(&sch_adapter);
+   299		if (retval)
+   300			sch_smba = NULL;
+   301	
+   302		return retval;
+   303	}
+   304	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
