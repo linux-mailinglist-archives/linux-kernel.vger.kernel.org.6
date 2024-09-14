@@ -1,115 +1,244 @@
-Return-Path: <linux-kernel+bounces-329569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89426979306
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:51:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D1D97930D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A294282E31
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D296028320C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4035D1D1F56;
-	Sat, 14 Sep 2024 18:50:55 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C041D2217;
+	Sat, 14 Sep 2024 18:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hlppsv4L"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570E01CF5D2;
-	Sat, 14 Sep 2024 18:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A4E13C9C0;
+	Sat, 14 Sep 2024 18:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726339854; cv=none; b=aT9ARfNZKtWvVdHvYmzhw6i7KGJnhHm46G0qbupd476buKbbtMk5JU7CBHUK7AXxKZDtCvGZ8bn5LkckqE+ETlrVyXctGqky6W7bfjVv0VK4qFJhoi7BIZtAMSx5l1L3lzofRKlpaP9wp/gn/1LUb8C9uDCfvTOD40arFpAq5v4=
+	t=1726340244; cv=none; b=SxU8ZhejzUQ+hNg/WZmSAQDlbggi2/UkdtZUWx3oJ0MJ7PtIjjk0hTmOmpSDyp7H9pb6ZGcBouJz5KgmanwWNfjsGUym/hBV6kj8RYlF/u8OOd7Q939me6zaoL/MIUEf0Pp9ns9WGCEH90GxvbngqSqNaY35vvTwbz8nKF1XYVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726339854; c=relaxed/simple;
-	bh=1+0i56bgZWFuRczRUSZOUy6y6O3IBgMKZJEbVdhGTMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1T3gQeUU9KsvsVW2Lv1y3ZzEF+n4lC/FDDq24gy+U5XusyReUDFkfKF2yLF7dkZkh5m2yKaKKUjeJPSkeoblEYs3Q0+FBzjnvPWpL8TRqQ0M23RQxuoqaolrwprWnrqLcLRnVpT1ppV8LcuIM5OddBEwLlXI1JYS1LICnMaFm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: JcQCkXBnQWGIpL2noeEPJg==
-X-CSE-MsgGUID: wj9o/3EVQu2+GpsGYgv90Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="35807446"
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="35807446"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 11:50:52 -0700
-X-CSE-ConnectionGUID: Yw+FtJ8qTrqIUtQscRy50Q==
-X-CSE-MsgGUID: pgMcnzDpR7qiQnIVDNhQjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="68954373"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 14 Sep 2024 11:50:50 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id B444032A; Sat, 14 Sep 2024 21:50:48 +0300 (EEST)
-Date: Sat, 14 Sep 2024 21:50:48 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Serge Semin <fancer.lancer@gmail.com>,
-	Ferry Toth <ftoth@exalondelft.nl>
-Cc: Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v4 0/6] dmaengine: dw: Fix src/dst addr width
- misconfig
-Message-ID: <ZuXbCKUs1iOqFu51@black.fi.intel.com>
-References: <20240802075100.6475-1-fancer.lancer@gmail.com>
- <CAHp75VcnfrOOC610JxAdTwJv8j1i_Abo72E0h1aqRbrYOWRrZw@mail.gmail.com>
- <rsy7z45nhl74nzvq5a2ij4eeqgzu3htje2xpparxgam7jowo6a@6l75wjh2dqll>
+	s=arc-20240116; t=1726340244; c=relaxed/simple;
+	bh=5ul6YU6VFuo+kMw6RoRxtCTIyP0+R8NRSQ8btws5xak=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PCuW5uaGj/dxuwLAcUURWZC9F8nW1+wUMi7ajfm3Bn/8uogRoo7MailE2Qzg/xH6UKuCP7CX5rZoGs2kXKozyZu4cofcY+yF9A6O2hKUoBzb50/UNE9bqkYsHQNwumG+bZBwGkQTN7OB20LtlK08xd8zfZj52zI7RPmSMt9OhO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hlppsv4L; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726340233;
+	bh=5ul6YU6VFuo+kMw6RoRxtCTIyP0+R8NRSQ8btws5xak=;
+	h=From:Subject:Date:To:Cc:From;
+	b=hlppsv4LcO9EsBjTBRRt7uH4hCkCWbt6yfb5FF0qXFvFqDcbeNcHIHCd5RqeZSvd/
+	 dMEQp+kOusEJ3IJj33OUuvUBUuZg8kj4uW74ANvbUI4KI9L7zqzEuUCYCNZHNpxkpP
+	 jADZx3iVPfhUOVpKCFYmiq2ZTvZ39OhtqKqV7qn2L2JvqWBdNXeOQhdMwrl0B0araa
+	 eMrjIxH73xHdwOgvB0pQiMUOzAzm0Zv0Cl8hG1YQD4+JLYEyFQZXHPHivRBazIkhuG
+	 VSouAjUeOs/awVMNIQFUKU8Pg3NrLqueuXF/pTsxOBF+Z/ktqoJVq+f/cdhD/nzUVG
+	 k5CI01xuyKvSg==
+Received: from localhost (unknown [188.27.55.48])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 805A717E1167;
+	Sat, 14 Sep 2024 20:57:13 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v7 0/3] Add initial support for the Rockchip RK3588 HDMI TX
+ Controller
+Date: Sat, 14 Sep 2024 21:56:50 +0300
+Message-Id: <20240914-b4-rk3588-bridge-upstream-v7-0-2b1348137123@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <rsy7z45nhl74nzvq5a2ij4eeqgzu3htje2xpparxgam7jowo6a@6l75wjh2dqll>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHLc5WYC/43QzW7DIAwH8FepOI/JYL6y095j6gEIrGhtqaCLO
+ lV595FeGmkR2vFvyz/LvpMaSgqVvO3upIQp1ZTPLeiXHfEHe/4MNI0tEw5cgAJGnaDlC6Ux1JU
+ 0tv73pV5LsCdquXY2RuZM9KTNX0qI6fawP/YtH1K95vLzWDWxpfofdWIUaFQcUEvkyN27z8ejd
+ bnYV59PZJEn/tRMX+NNG6JVUlsRmNzUcK3pnoZNUzAqZx2MXvstTaw0NvQ0sWiCaa95+6UYtjS
+ 50rB7qVwulYAu+AAM1ZamntoAqqeppllk3ETHAMOfv83z/AvQnCaBTAIAAA==
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Simona Vetter <simona@ffwll.ch>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ devicetree@vger.kernel.org, kernel@collabora.com, 
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>, 
+ Algea Cao <algea.cao@rock-chips.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
 
-On Mon, Aug 05, 2024 at 03:25:35PM +0300, Serge Semin wrote:
-> On Sat, Aug 03, 2024 at 09:29:54PM +0200, Andy Shevchenko wrote:
-> > On Fri, Aug 2, 2024 at 9:51 AM Serge Semin <fancer.lancer@gmail.com> wrote:
-> > >
-> > > The main goal of this series is to fix the data disappearance in case of
-> > > the DW UART handled by the DW AHB DMA engine. The problem happens on a
-> > > portion of the data received when the pre-initialized DEV_TO_MEM
-> > > DMA-transfer is paused and then disabled. The data just hangs up in the
-> > > DMA-engine FIFO and isn't flushed out to the memory on the DMA-channel
-> > > suspension (see the second commit log for details). On a way to find the
-> > > denoted problem fix it was discovered that the driver doesn't verify the
-> > > peripheral device address width specified by a client driver, which in its
-> > > turn if unsupported or undefined value passed may cause DMA-transfer being
-> > > misconfigured. It's fixed in the first patch of the series.
-> > >
-> > > In addition to that three cleanup patches follow the fixes described above
-> > > in order to make the DWC-engine configuration procedure more coherent.
-> > > First one simplifies the CTL_LO register setup methods. Second and third
-> > > patches simplify the max-burst calculation procedure and unify it with the
-> > > rest of the verification methods. Please see the patches log for more
-> > > details.
-> > >
-> > > Final patch is another cleanup which unifies the status variables naming
-> > > in the driver.
-> > 
-> > Acked-by: Andy Shevchenko <andy@kernel.org>
-> 
-> Awesome! Thanks.
+The Rockchip RK3588 SoC family integrates the Synopsys DesignWare HDMI
+2.1 Quad-Pixel (QP) TX controller, which is a new IP block, quite
+different from those used in the previous generations of Rockchip SoCs.
 
-Not really :-)
-This series broke iDMA32 + SPI PXA2xx on Intel Merrifield. I haven't
-had time to investigate further, but rolling back all patches helps.
+The controller supports the following features, among others:
 
-+Cc: Ferry who might also test and maybe investigate as he reported the
-issue to me initially.
+* Fixed Rate Link (FRL)
+* Display Stream Compression (DSC)
+* 4K@120Hz and 8K@60Hz video modes
+* Variable Refresh Rate (VRR) including Quick Media Switching (QMS)
+* Fast Vactive (FVA)
+* SCDC I2C DDC access
+* Multi-stream audio
+* Enhanced Audio Return Channel (EARC)
 
--- 
-With Best Regards,
-Andy Shevchenko
+This is the last component that needs to be supported in order to enable
+the HDMI output functionality on the RK3588 based SBCs, such as the
+RADXA Rock 5B.  The other components are the Video Output Processor
+(VOP2) and the Samsung IP based HDMI/eDP TX Combo PHY, for which basic
+support has been already made available via [1] and [2], respectively.
 
+Please note this is a reworked version of the original series, which
+relied on a commonized dw-hdmi approach.  Since the general consensus
+was to handle it as an entirely new IP, I dropped all patches related to
+the old dw-hdmi and Rockchip glue code - a few of them might still make
+sense as general improvements and will be submitted separately.
+
+It's worth mentioning the HDMI output support is currently limited to
+RGB output up to 4K@60Hz, without audio, CEC or any of the HDMI 2.1
+specific features.  Moreover, the VOP2 driver is not able to properly
+handle all display modes supported by the connected screens, e.g. it
+doesn't cope with non-integer refresh rates.
+
+A possible workaround consists of enabling the display controller to
+make use of the clock provided by the HDMI PHY PLL.  This is still work
+in progress and will be submitted later, as well as the required DTS
+updates.
+
+To facilitate testing and experimentation, all HDMI output related
+patches, including those part of this series, are available at [3].
+
+So far I could only verify this on the RADXA Rock 5B board.
+
+Thanks,
+Cristian
+
+[1]: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
+[2]: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
+[3]: https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/commits/rk3588-hdmi-bridge-next-20240913
+[4]: https://lore.kernel.org/lkml/20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@collabora.com/
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v7:
+- Added R-b from Krzysztof on DT binding patch (also dropped the
+  superfluous minItems property from resets)
+- Fixed a sparse warning reported by kernel test robot when returning
+  the error pointer from devm_platform_ioremap_resource() (made use of
+  ERR_CAST() helper)
+- Simplified locking in dw_hdmi_qp_i2c_xfer() via guard() (Markus)
+- Dropped high TMDS clock ratio and scrambling support for now (will be
+  submitted separately when ready)
+- Introduced dw_hdmi_qp_bridge_mode_valid() function to filter out
+  unsupported mode clocks
+- Dropped the superfluous 'display' parameter of ->init() in struct
+  dw_hdmi_qp_phy_ops
+- Improved error handling in dw_hdmi_qp_bridge_atomic_enable()
+- Handled dw_hdmi_qp_i2c_adapter() errors as fatal for bridge setup
+- Rebased series onto next-20240913
+- Updated ROCKCHIP_DW_HDMI_QP kconfig to select the recently introduced
+  DRM_BRIDGE_CONNECTOR dependency (Heiko)
+- Link to v6: https://lore.kernel.org/r/20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com
+
+Changes in v6:
+- Improved scrambling setup by using a delayed work queue in conjunction
+  with the bridge ->detect() callback to support use cases like modetest
+  where ->atomic_enable() is not called on reconnection (Maxime)
+- Explicitly include workqueue.h in platform driver
+- Dropped the common binding patch after merging its content into RK
+  specific one; also moved the clocks & irq setup from the bridge
+  library to the platform driver
+- Got rid of the phy-names property and fixed indentation in the binding
+  example (Krzysztof)
+- Link to v5: https://lore.kernel.org/r/20240831-b4-rk3588-bridge-upstream-v5-0-9503bece0136@collabora.com
+
+Changes in v5:
+- Renamed Rockchip binding file to match the SoC compatible (Conor)
+- Made all clocks mandatory (Conor)
+- Renamed rockchip,vo1-grf property to rockchip,vo-grf as future SoCs
+  (e.g. RK3576) may refer to it as vo0 instead of vo1
+- Reworked the setup of high TMDS clock ratio and scrambling
+  * Dropped curr_conn & pix_clock from struct dw_hdmi_qp
+  * Also removed exported function dw_hdmi_qp_set_high_tmds_clock_ratio()
+  * A few additional (mostly cosmetic) changes
+- Link to v4: https://lore.kernel.org/r/20240819-b4-rk3588-bridge-upstream-v4-0-6417c72a2749@collabora.com
+
+Changes in v4:
+- Added Tested-by tag from Heiko
+- Updated "[PATCH v3 3/5] dt-bindings: display: rockchip: Add schema for
+  RK3588 HDMI TX Controller" according to Rob's review
+  * Referenced full path for synopsys,dw-hdmi-qp.yaml
+  * Moved ports to common schema and updated descriptions
+  * Renamed rockchip,vo1_grf to rockchip,vo1-grf and updated "[PATCH v3
+    5/5] drm/rockchip: Add basic RK3588 HDMI output support" accordingly
+- Dropped "[PATCH v3 4/5] drm/rockchip: Explicitly include bits header"
+  already applied by Heiko
+- Link to v3: https://lore.kernel.org/r/20240807-b4-rk3588-bridge-upstream-v3-0-60d6bab0dc7c@collabora.com
+
+Changes in v3:
+- Reintegrated bridge patchset [4] to allow automated testing and
+  simplify reviewing (Krzysztof); the after-split changes were:
+  * Made use of the new bridge HDMI helpers indicated by Dmitry
+  * Dropped connector creation to ensure driver does only support
+    DRM_BRIDGE_ATTACH_NO_CONNECTOR
+  * Updated I2C segment handling to properly handle connected DVI
+    displays (reported and fixed by Heiko)
+- Updated schema for DW HDMI QP TX IP providing some hardware details
+- Updated patch for DW HDMI QP TX Controller module referring to a
+  support library instead of a platform driver (Krzysztof)
+- Drop empty dw_hdmi_qp_unbind() export from the library and related
+  usage from RK platform driver
+- Drop Fixes tag from "drm/rockchip: Explicitly include bits header"
+  patch (Krzysztof)
+- Link to v2: https://lore.kernel.org/r/20240801-b4-rk3588-bridge-upstream-v2-0-9fa657a4e15b@collabora.com
+
+Changes in v2:
+- Reworked the glue code for RK3588 into a new Rockchip platform driver
+- Moved bridge driver patches to a separate series [4]
+- Dropped all the patches touching to the old dw-hdmi and RK platform
+  drivers
+- Added connector creation to ensure the HDMI QP bridge driver does only
+  support DRM_BRIDGE_ATTACH_NO_CONNECTOR
+- Link to v1: https://lore.kernel.org/r/20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com
+
+---
+Cristian Ciocaltea (3):
+      drm/bridge: synopsys: Add DW HDMI QP TX Controller support library
+      dt-bindings: display: rockchip: Add schema for RK3588 HDMI TX Controller
+      drm/rockchip: Add basic RK3588 HDMI output support
+
+ .../rockchip/rockchip,rk3588-dw-hdmi-qp.yaml       | 188 +++++
+ drivers/gpu/drm/bridge/synopsys/Kconfig            |   8 +
+ drivers/gpu/drm/bridge/synopsys/Makefile           |   2 +
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c       | 645 ++++++++++++++++
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h       | 834 +++++++++++++++++++++
+ drivers/gpu/drm/rockchip/Kconfig                   |   9 +
+ drivers/gpu/drm/rockchip/Makefile                  |   1 +
+ drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c     | 436 +++++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |   2 +
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   1 +
+ include/drm/bridge/dw_hdmi_qp.h                    |  32 +
+ 11 files changed, 2158 insertions(+)
+---
+base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
+change-id: 20240601-b4-rk3588-bridge-upstream-a27baff1b8fc
 
 
