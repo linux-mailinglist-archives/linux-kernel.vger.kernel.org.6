@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-329510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDB297922D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:46:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954E9979230
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A4ABB21BF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6FC2844F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD3C1D0DE7;
-	Sat, 14 Sep 2024 16:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210101D12E4;
+	Sat, 14 Sep 2024 16:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ES4QW2+U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJ6xiKyQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8005126AFF;
-	Sat, 14 Sep 2024 16:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7107D4414;
+	Sat, 14 Sep 2024 16:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726332382; cv=none; b=fCx11QJsYEPItn0+t+LPXdw1sbzhPmMQfCvN16Pc7XfbD9XRC1T+0KEa3nqs69jSQ0okRYmSW6PvRqFYNV5+BuocMLVcdLsygNyHRFI0cIViST5V/NCUG0WrzvRlpYGk41EsSZ95Jg22UhUmw9MpZ2MaMqfvWwa2CF8Y3PE9W3U=
+	t=1726332423; cv=none; b=m1BezxWl6rJ8PlOg1HY5k1memlV74wxWQI+XpN1vYGC8Y3Onv4RxhpVr6wSQfx/6KJv0ENxZYqorf1oHVnmMyfb22L9PHjyx286TegkuGUfLcF7njzVSul2GOT4p/gIk/CzatiBhOLmpUWrh90kXLB9j0T3zlt/7z5FPLe0nkw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726332382; c=relaxed/simple;
-	bh=Z9KLHDysHT+QZFA9N2DhaeAfpGSFeSGzTbu4CvQ+R/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HW1kLakv8dP6XoMS9R2jPEdC+lfDTuOrTKg6vUTWnL7klmDTo++lUXMjxjflfC133RmoNc9/4Gxd6Zb9ZS/Z7mqbHpIRHfDQBjn2Gmrc9eg52nIZ8rt72lPv3eevkVGzAlF1Ky9PJy1HTaU2I+Uaus2qLgOmHFKlK+cp10ih7MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ES4QW2+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28943C4CEC0;
-	Sat, 14 Sep 2024 16:46:15 +0000 (UTC)
+	s=arc-20240116; t=1726332423; c=relaxed/simple;
+	bh=liZKaFwxwXaMkbT/pgS5baf34JjvMUlV1qcvBQ7ER/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lxiF2X8kUb9jg7N3v7ltdaO8FP8xnbtOI58rucWsqX0OLv6SQczXtTgmVUUI7iQgD39THtIe2EiXSoQdW6Wmw3whi7pb2Gx8sgW3NanAi3yKvp6b+5vxbrCHgl6ipx2fsiCST9QFmbEb+/+bIKVrehj6ecojFlU6RWv3WTx8HK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJ6xiKyQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3948C4CEC0;
+	Sat, 14 Sep 2024 16:46:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726332382;
-	bh=Z9KLHDysHT+QZFA9N2DhaeAfpGSFeSGzTbu4CvQ+R/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ES4QW2+Uwsj+XxM5lsWtejDsyOt9ZxevTIIBqFbZx8Ekjs8gGHWSIh3a8CpIVW9HY
-	 qNvzSPQulxAR2lc1Zc3mYbp1WxeuanQ/YnOtjtE4tbV7Dk3hpC2ZFMR9Ui/ZcXnJMd
-	 joB8iOzpysPGpZoTeUIclgN/bkqEURdblOs3dA5z94M8KJohCAXAWf6e3+fv3tH/aS
-	 w/hAMRF8JFDk28dxJwTeM70QvXD9PExnCQFxaf7pkYJ1pQtHWRvd23OFe9056W6CiY
-	 9mOw0QVp9E0wRJnUMOiLwN8YTMDpTOuEy4jt3c/ZVaBHUvCUoEMFlZojKSaVomwxHJ
-	 bBo2jcypLgsUQ==
-Date: Sat, 14 Sep 2024 17:46:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Gary Guo <gary@garyguo.net>
-Cc: rust-for-linux@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
-Message-ID: <20240914-jitters-barber-a0e51e7b83a8@spud>
-References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
- <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
- <20240913-shack-estate-b376a65921b1@spud>
- <20240914173037.422902b9.gary@garyguo.net>
+	s=k20201202; t=1726332423;
+	bh=liZKaFwxwXaMkbT/pgS5baf34JjvMUlV1qcvBQ7ER/Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kJ6xiKyQGRkpSj6hLu9NjbLXM94w2g3y5DOcoL1r3sFeTdc85KtFRVD4NGOYowwQD
+	 6gxnDDgJ0lWiz6eT/JQ8dPQJZWdM6Vo8ZlUsgTfTQsOvt9FoAjphzFZWoOaNuMXrEf
+	 EcQmBDbGnk9uR+EjlFzfYzK3ADHCePTJHn+dW9DsBZprozWIaLR3XamgjKUATNLW1l
+	 c+00MsazKymQVF3+HppRD3XmgsinMF+G1v/XNK4z7DXu2tmVjdL8PO+KJGaOvt7Tfx
+	 hY4hyIXJeeVz1WlnoPzfy0zb+MREpsmR0yqXA3xyNVK5802/F2QDCjRM1bg3/FWr0Z
+	 3Um8DahwhQJxw==
+Date: Sat, 14 Sep 2024 17:46:53 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Ramona Alexandra Nechita <ramona.nechita@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Cosmin Tanislav <cosmin.tanislav@analog.com>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Alisa-Dariana Roman
+ <alisadariana@gmail.com>, Ivan Mikhaylov <fr0st61te@gmail.com>, Mike
+ Looijmans <mike.looijmans@topic.nl>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] drivers: iio: adc: add support for ad777x family
+Message-ID: <20240914174653.1c8788de@jic23-huawei>
+In-Reply-To: <CAHp75VdBf6UX7XGVWi0Luw9Bs2tCzcvFFy8Dp-ZGsEU=TqOn1w@mail.gmail.com>
+References: <20240912121609.13438-1-ramona.nechita@analog.com>
+	<20240912121609.13438-4-ramona.nechita@analog.com>
+	<CAHp75VdBf6UX7XGVWi0Luw9Bs2tCzcvFFy8Dp-ZGsEU=TqOn1w@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="B4QM7QVF324ySoAc"
-Content-Disposition: inline
-In-Reply-To: <20240914173037.422902b9.gary@garyguo.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
---B4QM7QVF324ySoAc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> ...
+> 
+> > +       iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> > +               switch (mask) {
+> > +               case IIO_CHAN_INFO_CALIBSCALE:
+> > +                       *val = ad7779_get_calibscale(st, chan->channel);
+> > +                       if (*val < 0)
+> > +                               return -EINVAL;
+> > +                       *val2 = GAIN_REL;
+> > +                       return IIO_VAL_FRACTIONAL;
+> > +               case IIO_CHAN_INFO_CALIBBIAS:
+> > +                       *val = ad7779_get_calibbias(st, chan->channel);
+> > +                       if (*val < 0)
+> > +                               return -EINVAL;
+> > +                       return IIO_VAL_INT;
+> > +               case IIO_CHAN_INFO_SAMP_FREQ:
+> > +                       *val = st->sampling_freq;
+> > +                       if (*val < 0)
+> > +                               return -EINVAL;
+> > +                       return IIO_VAL_INT;
+> > +               }
+> > +               return -EINVAL;
+> > +       }  
+> 
+> > +       unreachable();  
+> 
+> Hmm... Is it necessary? Same Q for other similar cases. I.o.w. what
+> will be if we don't add this line?
 
-On Sat, Sep 14, 2024 at 05:30:37PM +0100, Gary Guo wrote:
-> On Fri, 13 Sep 2024 22:17:56 +0100
-> Conor Dooley <conor@kernel.org> wrote:
+The compiler can't tell that the contents of iio_device_claim_direct_scoped()
+always runs.  Hence normal result is it complains that nothing was returned.
 
-> > error[E0425]: cannot find function `__mutex_init` in crate `bindings`
-> > --> /stuff/linux/rust/kernel/sync/lock/mutex.rs:104:28 =20
-> > |
-> > 104   |           unsafe { bindings::__mutex_init(ptr, name, key) }
-> > |                              ^^^^^^^^^^^^ help: a function with a sim=
-ilar name exists: `__mutex_rt_init`
-> > |
-> > ::: /stuff/brsdk/work/linux/rust/bindings/bindings_generated.rs:12907:5
-> > |
-> > 12907 | /     pub fn __mutex_rt_init(
-> > 12908 | |         lock: *mut mutex,
-> > 12909 | |         name: *const core::ffi::c_char,
-> > 12910 | |         key: *mut lock_class_key,
-> > 12911 | |     );
-> > | |_____- similarly named function `__mutex_rt_init` defined here
-> >=20
-> > error: aborting due to 1 previous error
-> >=20
->=20
-> Do you have PREEMPT_RT enabled?
+Why the compiler can't figure out?  Who knows... 
 
-I do indeed.
-
-
---B4QM7QVF324ySoAc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuW91QAKCRB4tDGHoIJi
-0g1AAP4jVE5sTjh7ZpAYSXX8cAez9VIN9z196SmWTQQotiAMIQEAglBSa7/hmf+1
-k1drziNQUGk/j2h9jhXIhrEAGrRagwI=
-=6Xln
------END PGP SIGNATURE-----
-
---B4QM7QVF324ySoAc--
+Jonathan
 
