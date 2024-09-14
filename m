@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-329092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D251978D30
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:47:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 032F8978D31
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0579B21E36
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 325941C22447
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE0F175BF;
-	Sat, 14 Sep 2024 03:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCE7175BF;
+	Sat, 14 Sep 2024 03:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dnZiuIej"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mDRvYa4d"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518251B964;
-	Sat, 14 Sep 2024 03:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED00C17996
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 03:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726285662; cv=none; b=tDemftdUtlkpYf9ayLwl7Bmbuj9Pc379aDAO8b/tui5N2oeNCqEjNZ/k49iLPhWyAarOU3nXJCKijDdeXglWctK8l2cXcavejBOU2znzrqghprgVzqAmX9vhiiOn3UXJCWyx6g9c94+s7Dbvgh51aWXfduFVXEEf20uIpoDMEG8=
+	t=1726285781; cv=none; b=FVkClCK2thKYrkun6U7YyChCrB3mzBB5cZmTp/gtLCZFqHX3j2nUsOsksV3gD1wbKC1hKGxsaTz2Fu0a0/1QqgvimBGkZt1481RZj8gvaRHzsnu5oGKFzJSg7j+qM7iHQHi7AVyd4+9x/GNPC5uqy6f6S0Ixij5tpe1qtGYnbfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726285662; c=relaxed/simple;
-	bh=pFH2oVQMOP6KXHUNI17BgtBd44onxVMFl9/jEqLmuEg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ApSfThgK9fKJ8GWsxckrgH6lgMdrAUpq3vZS08vr0BfHjPrbfi8NQ7N7nQXwQXWx07X7MISFLRwbo2ADwnAcp0XfDJeMEU45JwosRIPtmsA7jmVfBL5F2AwuNTLOdtsNVomlPy/Hx3H+wEUi9FU/jT2DlpUKfj+O3jRZSMsDLhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dnZiuIej; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-206bd1c6ccdso14354615ad.3;
-        Fri, 13 Sep 2024 20:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726285660; x=1726890460; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6/w6egkoYxdXy/98m068U02aaTBghut5WCy5SzQeOFU=;
-        b=dnZiuIejW13i5uaRwutZnwTTg+54rZK3oE0FGeDBhNJPANMahBy0NrfK2vu2eeS797
-         oRq/6RfhzrrsNlSKX2pzCFKQmdFgripdRiVDj9+q0t9i61xd/AYDaH2N8+tGRLSKiu46
-         yz2FTqoBT6N8T2EqlujJp57m2YrcsjeTCkSr+9OF753O1iKkLgRCiqwHm6aHWd1dni1L
-         gMey61tCnQM4d8MBiCD5tXj2t8dn7/vcqDwu1ftwMXABLBLyv1HQAoekSw+hGGJ1urMJ
-         polXQ7pEWq5j0jMcz4BKirxGqtFdnSMX9D6oVxj0QzRaXHANTEKaKk7GxvqA4mctuAP8
-         yZvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726285660; x=1726890460;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/w6egkoYxdXy/98m068U02aaTBghut5WCy5SzQeOFU=;
-        b=tpM7NXZ3L4qaA7x8amgXwOW/0sH2pBOf5+9sxWZZBprYyof9NISO4MkMy+ySo7qfL8
-         6XV3ljUVNgydb7JYt3b1PF1Z4/iUuC+LEJ014wWdoc5Il+EQpK31Rj1Tipsoy0r7nv+o
-         guPR+e1ou6y/t3YXm5pQ9roelJklbOH0Vya3b4oPx8hc3h1ZCiR7h0vX+nKhMXmQLs1i
-         iJtYkqhfRbB3sag388HwW9yrq1FgpRAHqGhPUTULFveYLLjCEh6IgEJxLe1mxquOywlj
-         zcRFVpVWVtAdGHC6pxQRwDTn1UPGQM6KmzLBBh/frI5eHt595yaJtn/Qx4FOFHrPbzaW
-         3xDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8F2UuTEqkd0k7vffxEpB2HQTdkdEG2O/qj/llOePS8D3BNE8s95ZU+yAR8JmnZ6DvZxKzHjW0nnkoZgls@vger.kernel.org, AJvYcCWq/mJN0jP8jGEw52EBUo7ZJwfr21FgHtjMBUo8MLnpn6TSovfgrg9KgRNqVFd78T5Pfy34ktF1F6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwjZEdAXvRwiX+p7mB5GiTlNtBw87yjn7o+LgDdSozQoL3njUa
-	LOtkwRd/X2rpoTs1pzPKhjaCiF/QHtZnlBl1InLSqbW9YSCNtX5hnlFe2g==
-X-Google-Smtp-Source: AGHT+IHY5Kbr/IxGld49diZlQVX4pMVOcXPFBLNkf33nVglaamhRITFoVjShjgLO2nhMJSxVzsspcA==
-X-Received: by 2002:a17:903:32c9:b0:205:80e7:dcab with SMTP id d9443c01a7336-20781d5e224mr70535435ad.18.1726285660471;
-        Fri, 13 Sep 2024 20:47:40 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946010d9sm3031995ad.65.2024.09.13.20.47.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 20:47:40 -0700 (PDT)
-Message-ID: <2704d2a7-b2cc-4586-8608-10aabbdb91f3@gmail.com>
-Date: Sat, 14 Sep 2024 12:47:34 +0900
+	s=arc-20240116; t=1726285781; c=relaxed/simple;
+	bh=WvIpZlcITf2CqW3ox8sQkV/fW+NYeGhzXc6ObKkYoaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Stqb4qTBQsYqmfKPjvbu+R9v+0RDWEemchAUYRK5G9hQHx34tBq2IEI7Up1vnhR+HnJQC4XOkGeQEGSi/NJyGMnmXHg9oL9ufS7W5zjYIfPi5jUFT1eVT/3RTQQG4iGZVXBrOtQU1h3jeMhkkk9G3wNpp4u7TCasPPSQsByqK+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mDRvYa4d; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726285780; x=1757821780;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=WvIpZlcITf2CqW3ox8sQkV/fW+NYeGhzXc6ObKkYoaw=;
+  b=mDRvYa4dW7Vlx1PIiS1KgQVKtaD3eQbT3clhIQl6u9dABnOeRsbL4MGn
+   hLt/QPxTLbwMo6MzaWqsjEROG6+MV8r5qzoddc+zHTM6dx09JWUWdV6mc
+   nc5WXc4QJfyF8TqXJuv0MLJTi2OUqlABH7vv6TIUbS0/P4gudkqhjcIRw
+   cOHOI0f9yXTl93++o8sMlZ3XS0mkVFXun58ET4g+AzW46ezuylbtTtVDS
+   tXsPR3sRSAqxkz24zhjjYQdHfYGxb/aHxkQo+7XPvg2rpBuhmNzeVDUaC
+   +86oj0d7rBx7k1k51UjMTxxFYP4X2O5VI9l9oxHBgKurnt1z1slzXj2/A
+   Q==;
+X-CSE-ConnectionGUID: u4kfBT9tROSGQoanTM4DPA==
+X-CSE-MsgGUID: OWiP2uu7QAyj9gUolaSp4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="50612794"
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="50612794"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 20:49:39 -0700
+X-CSE-ConnectionGUID: QrIC1uNRQA6OSVWITJLd2A==
+X-CSE-MsgGUID: ElgOlXIvSV6zFOJN8IgLIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="68155495"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 13 Sep 2024 20:49:38 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spJmx-0007Kk-32;
+	Sat, 14 Sep 2024 03:49:35 +0000
+Date: Sat, 14 Sep 2024 11:48:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20240912 15/15]
+ kernel/bpf/core.c:2505:29: warning: comparison of distinct pointer types
+ lacks a cast
+Message-ID: <202409141152.VgCj23dh-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: corbet@lwn.net
-Cc: alexs@kernel.org, chengziqiu@hust.edu.cn, dzm91@hust.edu.cn,
- hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, siyanteng@loongson.cn,
- Vegard Nossum <vegard.nossum@oracle.com>, Akira Yokosawa <akiyks@gmail.com>
-References: <875xqz39gf.fsf@trenco.lwn.net>
-Subject: Re: [PATCH] scripts: use ':Original:' tag to locate the origin file
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <875xqz39gf.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[+CC: Vegard]
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240912
+head:   f2ca068393cf1157c12ab08556b05824eec16511
+commit: f2ca068393cf1157c12ab08556b05824eec16511 [15/15] treewide_some: fix multiple -Wfamnae warnings that must be audited separately
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240914/202409141152.VgCj23dh-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141152.VgCj23dh-lkp@intel.com/reproduce)
 
-Hi,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409141152.VgCj23dh-lkp@intel.com/
 
-On Fri, 13 Sep 2024 08:38:24 -0600, Jonathan Corbet wrote:
-> Cheng Ziqiu <chengziqiu@hust.edu.cn> writes:
-> 
->> Simply substitute path may cause file finding failed
->> if we have a different dir map for translation. The
->> ':Original:' tag could be used to locate the origin
->> file if both the tag and file exist.
->>
->> Signed-off-by: Cheng Ziqiu <chengziqiu@hust.edu.cn>
->> ---
->>  scripts/checktransupdate.py | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
-> 
-> Perhaps we need this, but I would really rather move any files that
-> don't conform to the English-language directory structure.  Having them
-> be anything but the same can only lead to this sort of confusion.
+All warnings (new ones prefixed by >>):
 
-+1
+   kernel/bpf/core.c: In function 'bpf_prog_array_free_sleepable':
+>> kernel/bpf/core.c:2505:29: warning: comparison of distinct pointer types lacks a cast
+    2505 |         if (!progs || progs == &bpf_empty_prog_array.hdr)
+         |                             ^~
 
-Furthermore, the "translations" extension for htmldocs available since
-v6.8 at:
-    Documentation/sphinx/translations.py
-assumes the same structure as the English one.
 
-It might be nice for this script to warn about translation docs
-whose positions don't match the assumption.
+vim +2505 kernel/bpf/core.c
 
-        Thanks, Akira
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2502  
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2503  void bpf_prog_array_free_sleepable(struct bpf_prog_array *progs)
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2504  {
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14 @2505  	if (!progs || progs == &bpf_empty_prog_array.hdr)
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2506  		return;
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2507  	call_rcu_tasks_trace(&progs->rcu, __bpf_prog_array_free_sleepable_cb);
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2508  }
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2509  
 
-> 
-> Thanks,
-> 
-> jon
+:::::: The code at line 2505 was first introduced by commit
+:::::: 8c7dcb84e3b744b2b70baa7a44a9b1881c33a9c9 bpf: implement sleepable uprobes by chaining gps
 
+:::::: TO: Delyan Kratunov <delyank@fb.com>
+:::::: CC: Alexei Starovoitov <ast@kernel.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
