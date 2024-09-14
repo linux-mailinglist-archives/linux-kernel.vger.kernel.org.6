@@ -1,151 +1,197 @@
-Return-Path: <linux-kernel+bounces-329223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BB9978ED3
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32FBB978ED7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773621F23D56
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25451F24037
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CC613D278;
-	Sat, 14 Sep 2024 07:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+3axpA2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C17E13A27D
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 07:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D89413A26B;
+	Sat, 14 Sep 2024 07:24:19 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA3783CD6;
+	Sat, 14 Sep 2024 07:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726298414; cv=none; b=Oq3SRc4+PPmflIS1OAbMktY7B7F2NYBmTWOOu2ogIJga7q4/wGLGc9dmgRmV2LP7g0MuUL6iov0otWCYtkD06JLLeMGFMQVd6StdEAhoCYC/Rp8VUQOQ343rbMi8IDJlXDtux9PccqoJXrTgDW4ymBCOIExwi7Z59SJS0bA6yvA=
+	t=1726298659; cv=none; b=AK4uGMC0rdWTmtcBJdxdX661gOva1QKy7aCPmFbUYf07FOUN+R6nOjJlRSSjTxc/wYNds1Pevqrau2I3AaxZRwiIJsHgyzST+6Bm/xpuZiAVj1sWT03nodNWuUuov6WdSaclrFXn447Lsn89UtnfsF15BDzNkjA4DSkC2yBPrUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726298414; c=relaxed/simple;
-	bh=vUqu35v/RHRRdjOIWlabA82GDwl80rWgemxzi+UrVh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VsTIXTSMSnTqi5oc7q4JGJBEG1LhiQjdfwtPjU0nq+ygItqPpi6PBVlcQtTr9Sen4WrvujqoPZ4E3BDhcaKaiQqdxtXAsqtyCepXEq5ALF2H/HwKLzxtvKXPNBO9IL7txMpU+wt4jmhacafoMUrEFUN92shi6gk+wTL+4simqNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+3axpA2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D47C4CEC0;
-	Sat, 14 Sep 2024 07:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726298414;
-	bh=vUqu35v/RHRRdjOIWlabA82GDwl80rWgemxzi+UrVh0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T+3axpA2F2l+jrO6wbWLl227a2er1619kCaSapwqVmEMU22DVHzZsbWHri3XcO48I
-	 J9k06Sx/dvoaCJPoN3UeIVAtHCphEAC7r7cpsM3+UARWPTgf1NgTfTr4Lc99aje77q
-	 kr09vDCmiKVHVAFI+Vzu0wgS74mdGuBQ7/WtV7CmF1osCLe+3kgE5QsZoWq2UI4eVS
-	 IMTVhCo4yg9Pp2TiX3k2uB0oXn46dlA/ZuyQ13qCFJX3QlscgY9LOP6y3KMi4J4js+
-	 vhyecXJbxRC4FliwMI3rV9C8BFhCABubj+6Ital26/BKLnRtHaWCJe+voGICEWwBkS
-	 KZmR+Jj2hOxFg==
-Received: by mercury (Postfix, from userid 1000)
-	id E77FF1060578; Sat, 14 Sep 2024 09:20:07 +0200 (CEST)
-Date: Sat, 14 Sep 2024 09:20:07 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Cc: andriy.shevchenko@linux.intel.com, rdunlap@infradead.org, 
-	linux-kernel@vger.kernel.org, 21210240012@m.fudan.edu.cn, 21302010073@m.fudan.edu.cn
-Subject: Re: [PATCH] HSI: ssi_protocol: Fix use after free vulnerability in
- ssi_protocol Driver Due to Race Condition
-Message-ID: <wcynr6qrl72i5gsibxvj2aldh6ohea6x2wbqwwf2dfuszipvhp@nzz45sllypav>
-References: <20240911151915.844957-1-kxwang23@m.fudan.edu.cn>
+	s=arc-20240116; t=1726298659; c=relaxed/simple;
+	bh=VkMGAtffLbvdQYgO/+tFo8X5yq65AjvU2bRStlj604g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fHdH4Xxt1ZfenZgJmiRdxj/UhcqZa6j4aIkDLrmL6j9iE4VgtGdNZGTuxarb3Y/z2hUu04p1NqNAjpijT8DperDtmQDhjk2ueqTaXnR/qePLUAQXbzeUPEXRF+PQslG8tDryYofMYwb31askOvvaaCF9O6v1phKKzJF6tz97K/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee766e53a1a0c5-390cb;
+	Sat, 14 Sep 2024 15:24:13 +0800 (CST)
+X-RM-TRANSID:2ee766e53a1a0c5-390cb
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from leadsec.example.com.localdomain (unknown[10.54.5.252])
+	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee766e53a1344e-94fe4;
+	Sat, 14 Sep 2024 15:24:12 +0800 (CST)
+X-RM-TRANSID:2ee766e53a1344e-94fe4
+From: Tang Bin <tangbin@cmss.chinamobile.com>
+To: shenghao-ding@ti.com,
+	kevin-lu@ti.com,
+	baojun.xu@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tang Bin <tangbin@cmss.chinamobile.com>
+Subject: [PATCH] ASoC: tas2781: Fix redundant parameter assignment
+Date: Sat, 14 Sep 2024 15:23:52 +0800
+Message-Id: <20240914072352.2997-1-tangbin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fqvokrgn6bzeb2xd"
-Content-Disposition: inline
-In-Reply-To: <20240911151915.844957-1-kxwang23@m.fudan.edu.cn>
+Content-Transfer-Encoding: 8bit
+
+In these functions, the variable 'rc' is redundant,
+thus remove it.
+
+Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+---
+ sound/soc/codecs/tas2781-i2c.c | 35 ++++++++--------------------------
+ 1 file changed, 8 insertions(+), 27 deletions(-)
+
+diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
+index 8a8d97dd7..68887799e 100644
+--- a/sound/soc/codecs/tas2781-i2c.c
++++ b/sound/soc/codecs/tas2781-i2c.c
+@@ -650,7 +650,6 @@ static int tasdev_tf_data_get(struct snd_kcontrol *kcontrol,
+ 		(struct soc_bytes_ext *) kcontrol->private_value;
+ 	unsigned char *dst = ucontrol->value.bytes.data;
+ 	unsigned int reg;
+-	int rc = -1;
+ 
+ 	if (tas_priv->chip_id == TAS2781)
+ 		reg = TAS2781_RUNTIME_RE_REG_TF;
+@@ -659,9 +658,7 @@ static int tasdev_tf_data_get(struct snd_kcontrol *kcontrol,
+ 
+ 	guard(mutex)(&tas_priv->codec_lock);
+ 	dst[0] = bytes_ext->max;
+-	rc = calib_data_get(tas_priv, reg, &dst[1]);
+-
+-	return rc;
++	return calib_data_get(tas_priv, reg, &dst[1]);
+ }
+ 
+ static int tasdev_re_data_get(struct snd_kcontrol *kcontrol,
+@@ -673,7 +670,6 @@ static int tasdev_re_data_get(struct snd_kcontrol *kcontrol,
+ 		(struct soc_bytes_ext *) kcontrol->private_value;
+ 	unsigned char *dst = ucontrol->value.bytes.data;
+ 	unsigned int reg;
+-	int rc = -1;
+ 
+ 	if (tas_priv->chip_id == TAS2781)
+ 		reg = TAS2781_RUNTIME_RE_REG;
+@@ -681,9 +677,7 @@ static int tasdev_re_data_get(struct snd_kcontrol *kcontrol,
+ 		reg = TAS2563_RUNTIME_RE_REG;
+ 	guard(mutex)(&tas_priv->codec_lock);
+ 	dst[0] = bytes_ext->max;
+-	rc = calib_data_get(tas_priv, reg, &dst[1]);
+-
+-	return rc;
++	return calib_data_get(tas_priv, reg, &dst[1]);
+ }
+ 
+ static int tasdev_r0_data_get(struct snd_kcontrol *kcontrol,
+@@ -696,7 +690,6 @@ static int tasdev_r0_data_get(struct snd_kcontrol *kcontrol,
+ 		(struct soc_bytes_ext *) kcontrol->private_value;
+ 	unsigned char *dst = ucontrol->value.bytes.data;
+ 	unsigned int reg;
+-	int rc = -1;
+ 
+ 	guard(mutex)(&tas_priv->codec_lock);
+ 
+@@ -707,9 +700,7 @@ static int tasdev_r0_data_get(struct snd_kcontrol *kcontrol,
+ 	else
+ 		return -1;
+ 	dst[0] = bytes_ext->max;
+-	rc = calib_data_get(tas_priv, reg, &dst[1]);
+-
+-	return rc;
++	return calib_data_get(tas_priv, reg, &dst[1]);
+ }
+ 
+ static int tasdev_XMA1_data_get(struct snd_kcontrol *kcontrol,
+@@ -721,13 +712,10 @@ static int tasdev_XMA1_data_get(struct snd_kcontrol *kcontrol,
+ 		(struct soc_bytes_ext *) kcontrol->private_value;
+ 	unsigned char *dst = ucontrol->value.bytes.data;
+ 	unsigned int reg = TASDEVICE_XM_A1_REG;
+-	int rc = -1;
+ 
+ 	guard(mutex)(&tas_priv->codec_lock);
+ 	dst[0] = bytes_ext->max;
+-	rc = calib_data_get(tas_priv, reg, &dst[1]);
+-
+-	return rc;
++	return calib_data_get(tas_priv, reg, &dst[1]);
+ }
+ 
+ static int tasdev_XMA2_data_get(struct snd_kcontrol *kcontrol,
+@@ -739,13 +727,10 @@ static int tasdev_XMA2_data_get(struct snd_kcontrol *kcontrol,
+ 		(struct soc_bytes_ext *) kcontrol->private_value;
+ 	unsigned char *dst = ucontrol->value.bytes.data;
+ 	unsigned int reg = TASDEVICE_XM_A2_REG;
+-	int rc = -1;
+ 
+ 	guard(mutex)(&tas_priv->codec_lock);
+ 	dst[0] = bytes_ext->max;
+-	rc = calib_data_get(tas_priv, reg, &dst[1]);
+-
+-	return rc;
++	return calib_data_get(tas_priv, reg, &dst[1]);
+ }
+ 
+ static int tasdev_nop_get(
+@@ -1115,14 +1100,12 @@ static int tasdevice_active_num_put(struct snd_kcontrol *kcontrol,
+ 	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
+ 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
+ 	int dev_id = ucontrol->value.integer.value[0];
+-	int max = tas_priv->ndev - 1, rc;
++	int max = tas_priv->ndev - 1;
+ 
+ 	dev_id = clamp(dev_id, 0, max);
+ 
+ 	guard(mutex)(&tas_priv->codec_lock);
+-	rc = tasdev_chn_switch(tas_priv, dev_id);
+-
+-	return rc;
++	return tasdev_chn_switch(tas_priv, dev_id);
+ }
+ 
+ static int tasdevice_dsp_create_ctrls(struct tasdevice_priv *tas_priv)
+@@ -1339,10 +1322,8 @@ static int tasdevice_create_cali_ctrls(struct tasdevice_priv *priv)
+ 		i++;
+ 	}
+ 
+-	rc = snd_soc_add_component_controls(priv->codec, cali_ctrls,
++	return snd_soc_add_component_controls(priv->codec, cali_ctrls,
+ 		nctrls < i ? nctrls : i);
+-
+-	return rc;
+ }
+ 
+ static void tasdevice_fw_ready(const struct firmware *fmw,
+-- 
+2.33.0
 
 
---fqvokrgn6bzeb2xd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Wed, Sep 11, 2024 at 11:19:15PM GMT, Kaixin Wang wrote:
-> In the ssi_protocol_probe function, &ssi->work is bound with
-> ssip_xmit_work, In ssip_pn_setup, the ssip_pn_xmit function
-> within the ssip_pn_ops structure is capable of starting the
-> work.
->=20
-> If we remove the module which will call ssi_protocol_remove
-> to make a cleanup, it will free ssi through kfree(ssi),
-> while the work mentioned above will be used. The sequence
-> of operations that may lead to a UAF bug is as follows:
->=20
-> CPU0                                    CPU1
->=20
->                         | ssip_xmit_work
-> ssi_protocol_remove     |
-> kfree(ssi);             |
->                         | struct hsi_client *cl =3D ssi->cl;
->                         | // use ssi
->=20
-> Fix it by ensuring that the work is canceled before proceeding
-> with the cleanup in ssi_protocol_remove
->=20
-> Signed-off-by: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-> ---
-
-This does not even compile :(
-
-During module removal the network device is unregistered (and thus
-stopped), which calls ssip_reset(), which should stop any activity
-regarding traffic exchange. That's the right place to cancel the
-work.
-
-Greetings,
-
--- Sebastian
-
->  drivers/hsi/clients/ssi_protocol.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi=
-_protocol.c
-> index afe470f3661c..3506c70e3505 100644
-> --- a/drivers/hsi/clients/ssi_protocol.c
-> +++ b/drivers/hsi/clients/ssi_protocol.c
-> @@ -1155,6 +1155,7 @@ static int ssi_protocol_remove(struct device *dev)
->  	unregister_netdev(ssi->netdev);
->  	ssip_free_cmds(ssi);
->  	hsi_client_set_drvdata(cl, NULL);
-> +	cancel_work_sync(&ssi->work)
->  	kfree(ssi);
-> =20
->  	return 0;
-> --=20
-> 2.25.1
->=20
->=20
-
---fqvokrgn6bzeb2xd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmblORcACgkQ2O7X88g7
-+pqqbQ//YRTQFnSgTMI9EnzwIYtATipHhfgPnvTvmPI0wdLFkTDbZK5eSwUPPwQY
-wMnocy+GdGX7rk5nxWosyz7TH59LBfsw0S3FCiGeNxSjWkzpi56pqYBsf41L+5fr
-j4VL2wX9HgiXKCtcpLdk7J7VLC+oee70d/q/Kz4HA5iWWxjT3hAMrPErdPikrcfG
-idAn66b/uKQSXWkjy5lz2RnHZqzggaLTeIo1eZPe87yXL7REcsPgMDUGAaGnb5Uv
-WncDiTSoOyJGcmJYBMRlpgXZkREE2nIPEOXNjZBxWBOyDbh8Y2B16jILU5UvMFfr
-sdH/2CKmtsrUPhqwwtWaTcFFisXZFoeBDmEdMBkSywuubUT6nrs38knGL8w6Zefj
-N2JqCF7GguDR1ulQ3Iddvn0sc9eOBeWuYW+996wvAtbVV++D2unxmSuZje5nVi31
-bnGthZFAuIMagrXTZUJsKe7sP1jq3MES5lvcFz0w9zBuYavzcYOdpNO4APUPU1R+
-ZWsSfquDsyuDfiZfh1v3yjzAjDCWmq2BHxFCqOdNhXRLLP3pipqfnxYAvDpoUlhS
-ew6kxbt9fYbN2xnS11EPPrOgYv0FnheDFBisfjeCJtKHToADTvqnTonNyj9LxnoB
-UJ54rV4wGUFhDLCx6pwc4HaY8TycOK5kAU1kC0UvgwsoGEEtP0g=
-=pyF8
------END PGP SIGNATURE-----
-
---fqvokrgn6bzeb2xd--
 
