@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-329617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3DD97939F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 217DE9793A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448CA1F22626
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFD5A1F22A19
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EDB15534E;
-	Sat, 14 Sep 2024 22:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3191155392;
+	Sat, 14 Sep 2024 22:09:37 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7E814A635;
-	Sat, 14 Sep 2024 22:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AC615575F;
+	Sat, 14 Sep 2024 22:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726351775; cv=none; b=hlTeRofmN2Kesu+krEZh3WIj1wQ/nvJwLPHNrQD6StE0n8QANGDxqY3my6u0FCYFHm4KmiIyq7MN8fJMqh69XGndFQ4wRwP1ofY8CO3aC29cHfIxhQl91edfKIQPuMBGwZ6Y8ODrb4QIZwgBP8TVwili9jXwlXHySSeRGkkrEk4=
+	t=1726351777; cv=none; b=L2eRJBonNJEzmXZX0jWAlk4Uh6h43WXhKCLcdG+xEepRTmfvm6mP5x+RxZ/kaPPe+OhMSkHNQqyU3ZiFYOB0wViulHotlbJY867MhTKo6Xk1Ew9X/nKv5XFZMejSvEhDChljLyIys28JCXGN05KUkZAzqFxR/r3ThezLHnorOWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726351775; c=relaxed/simple;
-	bh=VkOUDlVxYwrPSOrg/medc2fCns6IwYe1oVW8xKV6Gfg=;
+	s=arc-20240116; t=1726351777; c=relaxed/simple;
+	bh=/X1eIoXTgs28/tCarZ6WVyEGCBHdsLYnDDJJxdZeuAE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CXnA/aln6CGargmqzTMCPwryPZTCECdgMFH8wePzNtawLhBckiH6UUsAOiLrJ8B0LQjRCSylvBPW8ZXmOEwt9qKW3SEnFQV0t33z04sESmAiRDuDB0by6VLlAavLQxRAVZN+ndt+/hkS45xJ7//QcCMJFZkO8Dxe7Ca8V3qq1Xk=
+	 MIME-Version; b=KS6ClxoLWjKWqTOAMxvG8+nEcINWKcjUekhDDtFr/mnuB+Oa9WhMcYl123/q+H/Pnw3QPgyzBVUTC1b+SqPEF11H1AThLCLwtOJaJdF7jrrRJRjMk80hIpPbbe9bULX9UhFm/AzC9T9+zUraKtVT5wcJ5pKSwuS6mJ8AXasFFYA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDEFC1691;
-	Sat, 14 Sep 2024 15:10:02 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DEA4C11FB;
+	Sat, 14 Sep 2024 15:10:04 -0700 (PDT)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 92A803F66E;
-	Sat, 14 Sep 2024 15:09:31 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A38B33F66E;
+	Sat, 14 Sep 2024 15:09:33 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	James Clark <james.clark@linaro.org>,
@@ -48,9 +48,9 @@ To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v2 6/7] perf arm-spe: Add Neoverse-V2 to common data source encoding list
-Date: Sat, 14 Sep 2024 23:09:00 +0100
-Message-Id: <20240914220901.756177-7-leo.yan@arm.com>
+Subject: [PATCH v2 7/7] perf arm-spe: Add Cortex CPUs to common data source encoding list
+Date: Sat, 14 Sep 2024 23:09:01 +0100
+Message-Id: <20240914220901.756177-8-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240914220901.756177-1-leo.yan@arm.com>
 References: <20240914220901.756177-1-leo.yan@arm.com>
@@ -62,28 +62,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Besar Wicaksono <bwicaksono@nvidia.com>
+Add Cortex-A720, Cortex-A725, Cortex-X1C, Cortex-X3 and Cortex-X925 into
+the common data source encoding list. For everyone of these CPUs, it
+technical reference manual defines the data source packet as the common
+encoding format.
 
-Add Neoverse-V2 MIDR to the common data source encoding range list.
-
-Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- tools/perf/util/arm-spe.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/arm-spe.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index cb0d40b7e3fa..07bec88a3c7d 100644
+index 07bec88a3c7d..b64a5f3949f5 100644
 --- a/tools/perf/util/arm-spe.c
 +++ b/tools/perf/util/arm-spe.c
-@@ -431,6 +431,7 @@ static const struct midr_range common_ds_encoding_cpus[] = {
+@@ -428,6 +428,11 @@ static int arm_spe__synth_instruction_sample(struct arm_spe_queue *speq,
+ }
+ 
+ static const struct midr_range common_ds_encoding_cpus[] = {
++	MIDR_ALL_VERSIONS(MIDR_CORTEX_A720),
++	MIDR_ALL_VERSIONS(MIDR_CORTEX_A725),
++	MIDR_ALL_VERSIONS(MIDR_CORTEX_X1C),
++	MIDR_ALL_VERSIONS(MIDR_CORTEX_X3),
++	MIDR_ALL_VERSIONS(MIDR_CORTEX_X925),
  	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
  	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
  	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
-+	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
- 	{},
- };
- 
 -- 
 2.34.1
 
