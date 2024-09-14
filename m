@@ -1,115 +1,130 @@
-Return-Path: <linux-kernel+bounces-329595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E30979355
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93AD5979358
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5348E283178
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:40:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AE0A283C7D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCDA138490;
-	Sat, 14 Sep 2024 20:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEED76056;
+	Sat, 14 Sep 2024 20:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AckHqm/M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fMwRAiAG"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039683CC8
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 20:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBCC83CDB
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 20:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726346416; cv=none; b=XaFwM+GX9NoaO/qZoUFkVfF0h2MG4VAW1+dL9kmhvg0NLp5uAN+Ngz97Q1z+JckzhOuhEODTqGSxIpQmYSssWm7wN61c4kY0wOa2CB5Dt/v3M+wUdhY6NxUeT6s80KvQNDZsoaNYjHmXLW3jwlkF7cEq6oS3uPU0QwLgBYqhPqc=
+	t=1726346742; cv=none; b=mFp5Zk46n8ylVXvLoUHXSoOVYl4qflOjst+2OsKu9cJQmnjt6RfrAW9CnBuipnjIXi/3xYKiMXngHa4p7h6pfcnzyyJ3AqTEgXFzjcej28DALCa70S0bzFpOrMfPqsWlnIsWon/0osOm1kuYpN+Dnhykyl26nhIYelFHI2uUImY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726346416; c=relaxed/simple;
-	bh=8uxyuUaxJOkH8vX/RGr3kDFl9I63UzbJ+nTNCh6D+/U=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Vaalsi89OI0y5JRRse53tfFIHR4lZXcT0DqBLz1t5Op73VNizsnR5PBGlOessmhocYiJQlaBeOJ/9VcaZfXNg0b0ul+NmwrMqgX6tuWv1RIPaJEnA0WvW5UvOvnr2aKUwA41S5t4M4FNgWQAoDf2IgzFemENS3ly85W/0Evznn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AckHqm/M; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726346413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RfizNILj8Bic7UhBJkx7foDXeeUTZejgV3kKoRryAVc=;
-	b=AckHqm/MDteYaexe5s+8wK4HaC1iru8fYpNVMW5M0sc5OQ411HTKuIFyBeTD/hI4GpiHFE
-	X6ryx/dl3EGMwyArs+TwugwTBlHVktEg44E50oz/splthhjG0yV1Tb4QU2Nhn0+IVy2HNa
-	L7f1pJ5E3i2A1NXKWeV9/CzSarHoKOY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-483-vDdsiWTFMj6PNxmjdDY64Q-1; Sat,
- 14 Sep 2024 16:40:08 -0400
-X-MC-Unique: vDdsiWTFMj6PNxmjdDY64Q-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 800C71956089;
-	Sat, 14 Sep 2024 20:40:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D252D30001AB;
-	Sat, 14 Sep 2024 20:40:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Marc Dionne <marc.dionne@auristor.com>
-cc: dhowells@redhat.com, "Dr. David Alan Gilbert" <linux@treblig.org>,
-    brauner@kernel.org, Jeff Layton <jlayton@kernel.org>,
-    linux-afs@lists.infradead.org, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Fix missing wire-up of afs_retry_request()
+	s=arc-20240116; t=1726346742; c=relaxed/simple;
+	bh=YZ5SuZfV42affykQM6C2ivTr0iGXmgCbtCc16bO/iNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BufqrimIWOiXrsss6R2xH7xwTgk+PFZIQ41pKhugGGoqDEFuqKjEQHIvg5g0GBnqvq5lboDmv4TfvrC35OHEQSBU3cGmBJLmZgX0079ef2AsvIcbN5sXUKY1e0dIyl/iElMKaEVpwpOsYfYnN45gauqF+jtl3cnz+dv/PgWnzB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fMwRAiAG; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=OPMY
+	z59S5g/FP6m/X5sGQO+neZNnTnBivlMt+S4rvMw=; b=fMwRAiAG9glWINlngtk+
+	1meCSkydzQsW1jznlQh7XZ6grS9pQ+A9OZuOvFYXCesUg8eYMnd6lJL9jqSjTr1C
+	UuR4ksjV+awnXcmOVN1HF4fOdWgZ/DSXZrY658NjOMRniP2I9Zv3MJhOUVOJmB5y
+	drEmdTnkwONS78au8xHVOTX8q2UNmBYspU5oxZdF0irBY3eZAbFPIHhP9kyvappF
+	IpA/WCmf1tQzks/gZiL5HxFbrcey4xdHcuGVYytWqY5m7gwp7YOdpOB8rhqfCvZQ
+	herMEUeWiip4TqCbwQBaumBq0OWYqonl/2uvdtF8M6ss23+WL6jmF5AdkipMx5mi
+	yw==
+Received: (qmail 1555125 invoked from network); 14 Sep 2024 22:45:35 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2024 22:45:35 +0200
+X-UD-Smtp-Session: l3s3148p1@3yHraxoiOLdQT+F6
+Date: Sat, 14 Sep 2024 22:45:35 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v5 00/11] i2c: riic: Add support for Renesas RZ/G3S
+Message-ID: <ZuX176V2OhI4ticP@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240820101918.2384635-1-claudiu.beznea.uj@bp.renesas.com>
+ <pwgwgzrjx56ftxazloljkhmnptqkzzzvs2tfq2tnrz7y3mfmma@ru7mawibsipc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1690846.1726346402.1@warthog.procyon.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ugIP7Ik1/cAGUKwF"
+Content-Disposition: inline
+In-Reply-To: <pwgwgzrjx56ftxazloljkhmnptqkzzzvs2tfq2tnrz7y3mfmma@ru7mawibsipc>
+
+
+--ugIP7Ik1/cAGUKwF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 14 Sep 2024 21:40:02 +0100
-Message-ID: <1690847.1726346402@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-afs_retry_request() is supposed to be pointed to by the afs_req_ops netfs
-operations table, but the pointer got lost somewhere.  The function is use=
-d
-during writeback to rotate through the authentication keys that were in
-force when the file was modified locally.
+On Wed, Aug 21, 2024 at 04:12:27PM +0200, Andi Shyti wrote:
+> Hi Claudiu,
+>=20
+> > Claudiu Beznea (11):
+> >   i2c: riic: Use temporary variable for struct device
+> >   i2c: riic: Call pm_runtime_get_sync() when need to access registers
+> >   i2c: riic: Use pm_runtime_resume_and_get()
+> >   i2c: riic: Enable runtime PM autosuspend support
+> >   i2c: riic: Add suspend/resume support
+> >   i2c: riic: Define individual arrays to describe the register offsets
+> >   dt-bindings: i2c: renesas,riic: Document the R9A08G045 support
+> >   i2c: riic: Add support for fast mode plus
+>=20
+> Up to here, first 8 patches, merged to i2c/i2c-host.
 
-Fix this by adding the pointer to the function.
+It took a while but I needed to get my Genmai-board booting again. It
+does now and I could test these changes on r7s72100 (RZA1H). Reading,
+writing, suspend/resume, works like expected. No regressions
+experienced. So, for the record.
 
-Fixes: 1ecb146f7cd8 ("netfs, afs: Use writeback retry to deal with alterna=
-te keys")
-Reported-by: "Dr. David Alan Gilbert" <linux@treblig.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/afs/file.c |    1 +
- 1 file changed, 1 insertion(+)
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index ec1be0091fdb..290f60460ec7 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -404,6 +404,7 @@ const struct netfs_request_ops afs_req_ops =3D {
- 	.begin_writeback	=3D afs_begin_writeback,
- 	.prepare_write		=3D afs_prepare_write,
- 	.issue_write		=3D afs_issue_write,
-+	.retry_request		=3D afs_retry_request,
- };
- =
 
- static void afs_add_open_mmap(struct afs_vnode *vnode)
+--ugIP7Ik1/cAGUKwF
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbl9esACgkQFA3kzBSg
+KbaRqQ//QWFIvXRdxDWQ8HjC1iJcRpW2JCMMCfSuZx4cT38fZBOcK5xl+9zq+ctH
+zUXjYZA1NA82LDXv855Z/iYt73y18cULFqYkaGzhpDxj2a7x4zHv0e9R4eof0dXE
+mpuiON1icbNBQ083P14hmMeF6l32tpZAfNo1wI97PpIOYpMqEBcCn6z2moWbWb+q
+daFgjDA0NONROxcSn07ZffUuOBqVT/bgtIHmWbxHTekM9fB0jjv78ZH9bg6Dt7Hy
+4T3+JH8tew8Cq4MteoC0y3NA+g0S9zStUx7LctsQfFBVgQ0wcCfhrOyphrCqPnMo
+P632COoRSHwu2YB7pN0aT/UxD/L3TULnt5sy6tTJCKt0GVwOPcgze0BN3FAz4/b5
+7OGYf+NZbKhNXeguE8IsmtdouxGq7cBQJSmS+M1VM3QJGBORpOnpeRvm5AYuVqnk
+5jt8B5j4UfOblozMHpyjxnMFtlbydrBhomqRwBqhd89doyBb3WhrISeJFdhlwbJR
+S6PeIDy/T+fb+tHax9lx5wHQAjkjOIYyDWxOGnJWgIrKLr0rPD+jjP3AmwO5Elxe
+QNQFUgwtzKMXxAF7kyuavv6C3xdMJmwZqvWh5XV9oVQJvND+pSF+Myf+gG1sFlSB
+EokMuKiJCecj9z0+/7TOEqaaVHazjqNf7REty0ejsWrHD4yqVF0=
+=Xipk
+-----END PGP SIGNATURE-----
+
+--ugIP7Ik1/cAGUKwF--
 
