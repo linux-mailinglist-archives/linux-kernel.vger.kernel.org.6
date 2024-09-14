@@ -1,197 +1,149 @@
-Return-Path: <linux-kernel+bounces-329224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32FBB978ED7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8412978EDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25451F24037
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:24:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DBDE1F232B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D89413A26B;
-	Sat, 14 Sep 2024 07:24:19 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA3783CD6;
-	Sat, 14 Sep 2024 07:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81D613B58F;
+	Sat, 14 Sep 2024 07:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="FTjLiNSE"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B2318037;
+	Sat, 14 Sep 2024 07:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726298659; cv=none; b=AK4uGMC0rdWTmtcBJdxdX661gOva1QKy7aCPmFbUYf07FOUN+R6nOjJlRSSjTxc/wYNds1Pevqrau2I3AaxZRwiIJsHgyzST+6Bm/xpuZiAVj1sWT03nodNWuUuov6WdSaclrFXn447Lsn89UtnfsF15BDzNkjA4DSkC2yBPrUM=
+	t=1726298761; cv=none; b=ns/kcGSWXe5ZTA0OpdlYLpx/M+k39oaeHLLar7n6kPLPm/9xr1Yh3flvLXbXXwdxMG43fF3v4Amqst+SarEfqSN0mLzY9Kk9reXix26d+rJXCSzlGa/5xzewidNdrlMsGK0Poawc8Y+OhRQ4Uxq3AagUlMfNQ+UBh5R1IhmVXBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726298659; c=relaxed/simple;
-	bh=VkMGAtffLbvdQYgO/+tFo8X5yq65AjvU2bRStlj604g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fHdH4Xxt1ZfenZgJmiRdxj/UhcqZa6j4aIkDLrmL6j9iE4VgtGdNZGTuxarb3Y/z2hUu04p1NqNAjpijT8DperDtmQDhjk2ueqTaXnR/qePLUAQXbzeUPEXRF+PQslG8tDryYofMYwb31askOvvaaCF9O6v1phKKzJF6tz97K/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee766e53a1a0c5-390cb;
-	Sat, 14 Sep 2024 15:24:13 +0800 (CST)
-X-RM-TRANSID:2ee766e53a1a0c5-390cb
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from leadsec.example.com.localdomain (unknown[10.54.5.252])
-	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee766e53a1344e-94fe4;
-	Sat, 14 Sep 2024 15:24:12 +0800 (CST)
-X-RM-TRANSID:2ee766e53a1344e-94fe4
-From: Tang Bin <tangbin@cmss.chinamobile.com>
-To: shenghao-ding@ti.com,
-	kevin-lu@ti.com,
-	baojun.xu@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tang Bin <tangbin@cmss.chinamobile.com>
-Subject: [PATCH] ASoC: tas2781: Fix redundant parameter assignment
-Date: Sat, 14 Sep 2024 15:23:52 +0800
-Message-Id: <20240914072352.2997-1-tangbin@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1726298761; c=relaxed/simple;
+	bh=qFL+mUVBFOPf791W4Y56O/R0pcp1xBN5lnEoQ5LITqE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=B/k5PuE2eQzHi9hhlPXv9LAQjwccB0BQ9AFxm9UXYZefgA+dE01FV7qm1dXwjHkw5hdbI7AekPGbE4QDpsN5PfCzmg3AoUguV6B0ETd5i79nta0h7ylMZE1YFHAihiG+5yQW1//pbWpNhYyOkzdYdGAJxR0uSjOQ5eCjS2iixUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=FTjLiNSE; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 92883afa726a11ef8b96093e013ec31c-20240914
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:CC:To:From:Subject:MIME-Version:Date:Message-ID; bh=RRzjjCjxMrZMuVkofMLoApDTjN0xU6WSzacOzaOb9YQ=;
+	b=FTjLiNSECw6I1YTBPpUQBSIVRVKuaTiPZmLKxxS43RtRjACohI2vF2a4X5Url498rz8zUje/4ucQByT91bYBoO7LwDGTt0SCKiBCdNbtSVY+H+yYmpDucVLrDsxdo0N+bUbtYb4u28rXFLk/0mOEJdC4zRG2EonT+81Eo39kTz0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:daf33a7d-0ee8-4a5d-a6b2-0d07e9c2b1ab,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:687d33d0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 92883afa726a11ef8b96093e013ec31c-20240914
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1819714121; Sat, 14 Sep 2024 15:25:52 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Sat, 14 Sep 2024 15:25:49 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Sat, 14 Sep 2024 15:25:49 +0800
+Message-ID: <4a396c65-2353-da09-4dd2-71b822237920@mediatek.com>
+Date: Sat, 14 Sep 2024 15:25:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v3 2/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT
+ schema format
+Content-Language: en-US
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+CC: Bear Wang <bear.wang@mediatek.com>, Conor Dooley <conor+dt@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Chen Zhong
+	<chen.zhong@mediatek.com>, <linux-leds@vger.kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>, Lee Jones
+	<lee@kernel.org>, <linux-mediatek@lists.infradead.org>, Macpaul Lin
+	<macpaul@gmail.com>, Mark Brown <broonie@kernel.org>, Chris-qj chen
+	<chris-qj.chen@mediatek.com>, <linux-input@vger.kernel.org>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>, <linux-rtc@vger.kernel.org>, "MediaTek
+ Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>, Pavel Machek <pavel@ucw.cz>,
+	<linux-pm@vger.kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, "Sebastian
+ Reichel" <sre@kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>,
+	<devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sound@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	Pablo Sun <pablo.sun@mediatek.com>
+References: <20240913175926.7443-1-macpaul.lin@mediatek.com>
+ <172625540069.478205.2893721075637493498.robh@kernel.org>
+ <099c4f3e-0772-3d30-79f7-8b996142cd7c@mediatek.com>
+In-Reply-To: <099c4f3e-0772-3d30-79f7-8b996142cd7c@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--15.756400-8.000000
+X-TMASE-MatchedRID: HXSqh3WYKfsOwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
+	qIY+/skQkABPgKBt/0r/bIpz2qRIjbvjKWK1iQnHSHCU59h5KrHWSrKtwxqWpU+u3rM3lFPnCkE
+	raFSKEBfgwC+tMY7byJTQ/2UxBcQVxAFMYEMzeR2+dJWHbg4ITpPFJV0Myxm8BUe+Zw5ql5RljC
+	/GdRjZi6wHHwdmt++AY44xtvjJ5ninykMun0J1wp4CIKY/Hg3AtOt1ofVlaoLUHQeTVDUrIim3J
+	iZU/IeW5MIx11wv+CM7AFczfjr/7Js2nJP/TBEf7zzlbeQx+6obMO7jRDhYejeCelNBvicJfykA
+	wdsjhlY=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--15.756400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 1F09D541324631173BB6E61E34600C8115661A49623ECD40C5A8504DD98134082000:8
 
-In these functions, the variable 'rc' is redundant,
-thus remove it.
+On 9/14/24 15:06, Macpaul Lin wrote:
+> 
+> 
+> On 9/14/24 03:23, Rob Herring (Arm) wrote:
+>>
+>>
+>> External email : Please do not click links or open attachments until 
+>> you have verified the sender or the content.
+>>
+>> On Sat, 14 Sep 2024 01:59:26 +0800, Macpaul Lin wrote:
+>>> Convert the mfd: mediatek: mt6397 binding to DT schema format.
+>>>
+> 
+> [snip]
+> 
+>>>
+>>
+>> My bot found errors running 'make dt_binding_check' on your patch:
+>>
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>> Warning: Duplicate compatible "mediatek,mt6357" found in schemas 
+>> matching "$id":
+> 
+> I'm using dtschema 2024.09 and the dt_bindings_check didn't report this 
+> issue even the full check has been run.
 
-Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
----
- sound/soc/codecs/tas2781-i2c.c | 35 ++++++++--------------------------
- 1 file changed, 8 insertions(+), 27 deletions(-)
+Hopefully I've found a way to update latest dtschema without bothering 
+IT. ;)
 
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index 8a8d97dd7..68887799e 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -650,7 +650,6 @@ static int tasdev_tf_data_get(struct snd_kcontrol *kcontrol,
- 		(struct soc_bytes_ext *) kcontrol->private_value;
- 	unsigned char *dst = ucontrol->value.bytes.data;
- 	unsigned int reg;
--	int rc = -1;
- 
- 	if (tas_priv->chip_id == TAS2781)
- 		reg = TAS2781_RUNTIME_RE_REG_TF;
-@@ -659,9 +658,7 @@ static int tasdev_tf_data_get(struct snd_kcontrol *kcontrol,
- 
- 	guard(mutex)(&tas_priv->codec_lock);
- 	dst[0] = bytes_ext->max;
--	rc = calib_data_get(tas_priv, reg, &dst[1]);
--
--	return rc;
-+	return calib_data_get(tas_priv, reg, &dst[1]);
- }
- 
- static int tasdev_re_data_get(struct snd_kcontrol *kcontrol,
-@@ -673,7 +670,6 @@ static int tasdev_re_data_get(struct snd_kcontrol *kcontrol,
- 		(struct soc_bytes_ext *) kcontrol->private_value;
- 	unsigned char *dst = ucontrol->value.bytes.data;
- 	unsigned int reg;
--	int rc = -1;
- 
- 	if (tas_priv->chip_id == TAS2781)
- 		reg = TAS2781_RUNTIME_RE_REG;
-@@ -681,9 +677,7 @@ static int tasdev_re_data_get(struct snd_kcontrol *kcontrol,
- 		reg = TAS2563_RUNTIME_RE_REG;
- 	guard(mutex)(&tas_priv->codec_lock);
- 	dst[0] = bytes_ext->max;
--	rc = calib_data_get(tas_priv, reg, &dst[1]);
--
--	return rc;
-+	return calib_data_get(tas_priv, reg, &dst[1]);
- }
- 
- static int tasdev_r0_data_get(struct snd_kcontrol *kcontrol,
-@@ -696,7 +690,6 @@ static int tasdev_r0_data_get(struct snd_kcontrol *kcontrol,
- 		(struct soc_bytes_ext *) kcontrol->private_value;
- 	unsigned char *dst = ucontrol->value.bytes.data;
- 	unsigned int reg;
--	int rc = -1;
- 
- 	guard(mutex)(&tas_priv->codec_lock);
- 
-@@ -707,9 +700,7 @@ static int tasdev_r0_data_get(struct snd_kcontrol *kcontrol,
- 	else
- 		return -1;
- 	dst[0] = bytes_ext->max;
--	rc = calib_data_get(tas_priv, reg, &dst[1]);
--
--	return rc;
-+	return calib_data_get(tas_priv, reg, &dst[1]);
- }
- 
- static int tasdev_XMA1_data_get(struct snd_kcontrol *kcontrol,
-@@ -721,13 +712,10 @@ static int tasdev_XMA1_data_get(struct snd_kcontrol *kcontrol,
- 		(struct soc_bytes_ext *) kcontrol->private_value;
- 	unsigned char *dst = ucontrol->value.bytes.data;
- 	unsigned int reg = TASDEVICE_XM_A1_REG;
--	int rc = -1;
- 
- 	guard(mutex)(&tas_priv->codec_lock);
- 	dst[0] = bytes_ext->max;
--	rc = calib_data_get(tas_priv, reg, &dst[1]);
--
--	return rc;
-+	return calib_data_get(tas_priv, reg, &dst[1]);
- }
- 
- static int tasdev_XMA2_data_get(struct snd_kcontrol *kcontrol,
-@@ -739,13 +727,10 @@ static int tasdev_XMA2_data_get(struct snd_kcontrol *kcontrol,
- 		(struct soc_bytes_ext *) kcontrol->private_value;
- 	unsigned char *dst = ucontrol->value.bytes.data;
- 	unsigned int reg = TASDEVICE_XM_A2_REG;
--	int rc = -1;
- 
- 	guard(mutex)(&tas_priv->codec_lock);
- 	dst[0] = bytes_ext->max;
--	rc = calib_data_get(tas_priv, reg, &dst[1]);
--
--	return rc;
-+	return calib_data_get(tas_priv, reg, &dst[1]);
- }
- 
- static int tasdev_nop_get(
-@@ -1115,14 +1100,12 @@ static int tasdevice_active_num_put(struct snd_kcontrol *kcontrol,
- 	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
- 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
- 	int dev_id = ucontrol->value.integer.value[0];
--	int max = tas_priv->ndev - 1, rc;
-+	int max = tas_priv->ndev - 1;
- 
- 	dev_id = clamp(dev_id, 0, max);
- 
- 	guard(mutex)(&tas_priv->codec_lock);
--	rc = tasdev_chn_switch(tas_priv, dev_id);
--
--	return rc;
-+	return tasdev_chn_switch(tas_priv, dev_id);
- }
- 
- static int tasdevice_dsp_create_ctrls(struct tasdevice_priv *tas_priv)
-@@ -1339,10 +1322,8 @@ static int tasdevice_create_cali_ctrls(struct tasdevice_priv *priv)
- 		i++;
- 	}
- 
--	rc = snd_soc_add_component_controls(priv->codec, cali_ctrls,
-+	return snd_soc_add_component_controls(priv->codec, cali_ctrls,
- 		nctrls < i ? nctrls : i);
--
--	return rc;
- }
- 
- static void tasdevice_fw_ready(const struct firmware *fmw,
--- 
-2.33.0
+pip3 install -U git+https://github.com/devicetree-org/dt-schema.git@main
 
+I'll run latest dt_bindings_check for v4 version.
 
-
+Thanks.
+Macpaul Lin
 
