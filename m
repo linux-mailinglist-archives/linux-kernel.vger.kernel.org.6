@@ -1,184 +1,132 @@
-Return-Path: <linux-kernel+bounces-329194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A2D978E8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:57:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECBD978E91
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF0A6B21C9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 397A8285DBE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6F31CDFAE;
-	Sat, 14 Sep 2024 06:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G0+QHPCl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B9A1CDA17;
+	Sat, 14 Sep 2024 06:58:21 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3651CDA2F;
-	Sat, 14 Sep 2024 06:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C5720328;
+	Sat, 14 Sep 2024 06:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726297015; cv=none; b=JvCi8iqY3gXgTAYbvBCEkWKo7PqYxyv+G5xg9wvipDnbuWtOA5fR3QtHlHVWe8k2+yVVJXjeid/S+hqWSQO6gHd5xQzBFQ5Brq4KgJyzPam0hGBmr+J9k9lilEjjTTqJCqaLBzZojv3SxGBxhskCD6IfbASw/CwecIOcVovKsZM=
+	t=1726297101; cv=none; b=dtoL9gQI42DXCVbq8cTPf6xfHgnzSRH4OmnUbnKnJvdzWCqPIQvx0YvKyYwJayaUhFUkHAm+zsc/E8F5lfKkVWvWUU9/XuxmgjrwGdgfohGUrciK6r8h+XDxOqzNhui/9poB4mufxPDkmTmilVfJ/iumfBegJi10MscZbrUgaOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726297015; c=relaxed/simple;
-	bh=z82qoXfdXrLYs3jMxnQP89C3VVMg1koj+ufGNLLviTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6FvcGUNTdpePSTNjP5C8D4nGtvGZyhr7Z4buH1Wfu2/Uxu1I9O5DBFOz1Xh1zZFxJBvF4n+3CkhnQWjpma/Zv5SCCVt/rAnFA6BgBFmJvVo9xF+A6jX+BUJEhb9YtVYnJiKn8AQX89YXHgJePgX0UPiOenvHRYaWRMXXi3ZA2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G0+QHPCl; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726297014; x=1757833014;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z82qoXfdXrLYs3jMxnQP89C3VVMg1koj+ufGNLLviTY=;
-  b=G0+QHPClqpztL4q1gszdIj/Jax2lSZlm/wtYKhCDZbyZTgaRi2fM0DkO
-   IrF022bg1z49ZT0qKZY5bSmpbuMz/w2sX3aQplbiv+oqOzDAmuEVMXcQZ
-   bqaY1CwYyQdbc3+565FHcffjLpO1iZCHGDkB+svefUeXJ12LzSIlxklMb
-   qn7qrwoXL0FUsw4hwV/pBXo2flCYNWiaD2eKghFtleViZ8ZOB5OAT1d8x
-   Ql77av5CJU2dfkM9tRwlvLw9rbj2OAL1dur0mYplR54RVaYEPyPL8Z+ro
-   RSGJD7YT8o8h7hizbz8FBNrwaWHgsY2gx7XUBCyRy5fDTRiiphqrXfntU
-   A==;
-X-CSE-ConnectionGUID: QVd9BH0OTziphDShyzQA6g==
-X-CSE-MsgGUID: cHz493HESm66AzGNDOVU4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="35878469"
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="35878469"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 23:56:53 -0700
-X-CSE-ConnectionGUID: 0Ta95WA3Rs+rO+CmSX4CtQ==
-X-CSE-MsgGUID: 5n97j3mcQOyiIWczxHzCcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="68320761"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 13 Sep 2024 23:56:47 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spMi5-0007TQ-0T;
-	Sat, 14 Sep 2024 06:56:45 +0000
-Date: Sat, 14 Sep 2024 14:56:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	cros-qcom-dts-watchers@chromium.org,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 03/27] gcc-sdm845: Add general purpose clock ops
-Message-ID: <202409141429.Wv6WJPEQ-lkp@intel.com>
-References: <20240913-starqltechn_integration_upstream-v4-3-2d2efd5c5877@gmail.com>
+	s=arc-20240116; t=1726297101; c=relaxed/simple;
+	bh=76/NlTo2FJWz02hzNbiFQBHEOZ3d7GE73yzvs/WKS6c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=AXZQUB+A08Kmnw3T4+mXKsganGG49mr5am2JWOubIXMBtxHS9CMAG1C9ctjWHo7nzF6sWexpnzlFADvAhmr9s61CsYl0qhrV4AzENrqIdhv+EcQ1bWpWUgS9Dk2g9mBcfugMQQVYooo6eg+9YBXeOLngBbD81pg7YQqrBJZFIHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X5MSb38KXz4f3kvf;
+	Sat, 14 Sep 2024 14:57:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id CB3701A018D;
+	Sat, 14 Sep 2024 14:58:07 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP2 (Coremail) with SMTP id Syh0CgBXi2D8M+Vms30aBQ--.9992S2;
+	Sat, 14 Sep 2024 14:58:05 +0800 (CST)
+Message-ID: <1f1a9b07-0818-4e82-9690-0b3ae3d33433@huaweicloud.com>
+Date: Sat, 14 Sep 2024 14:58:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913-starqltechn_integration_upstream-v4-3-2d2efd5c5877@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next v2 0/2] perf stat: Support inherit events for bperf
+From: Tengda Wu <wutengda@huaweicloud.com>
+To: Song Liu <song@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20240905115918.772234-1-wutengda@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20240905115918.772234-1-wutengda@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgBXi2D8M+Vms30aBQ--.9992S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJrWDtrWrtry3Kr4xKrW5GFg_yoW8XryDpF
+	43C39Igw1rKF1akwnxAwsruF1Yqr93CFy5Gr1kKrWxJF4kZr1DWrZ7KFW5tF98XryxCFy0
+	vw4qgw45WFZ8A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-Hi Dzmitry,
+Hi Song and Numhyung,
 
-kernel test robot noticed the following build errors:
+Gentle ping.
 
-[auto build test ERROR on 5acd9952f95fb4b7da6d09a3be39195a80845eb6]
+This patch set provides event inheritance support for bperf during fork(). Currently, based on numhyung's feedback, the v2 version has been modified. Could you please take a look?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20240913-231027
-base:   5acd9952f95fb4b7da6d09a3be39195a80845eb6
-patch link:    https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-3-2d2efd5c5877%40gmail.com
-patch subject: [PATCH v4 03/27] gcc-sdm845: Add general purpose clock ops
-config: arm-randconfig-001-20240914 (https://download.01.org/0day-ci/archive/20240914/202409141429.Wv6WJPEQ-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141429.Wv6WJPEQ-lkp@intel.com/reproduce)
+Any comment or suggestion is appreciated.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409141429.Wv6WJPEQ-lkp@intel.com/
+Thanks!
+Tengda
 
-All errors (new ones prefixed by >>):
+On 2024/9/5 19:59, Tengda Wu wrote:
+> Hi,
+> 
+> bperf (perf-stat --bpf-counter) has not supported inherit events
+> during fork() since it was first introduced.
+> 
+> This patch series tries to add this support by:
+>  1) adding two new bpf programs to monitor task lifecycle;
+>  2) recording new tasks in the filter map dynamically;
+>  3) reusing `accum_key` of parent task for new tasks.
+> 
+> Thanks,
+> Tengda
+> 
+> 
+> Changelog:
+> ---------
+> v2: (Address comments from Namhyung)
+>  * Remove the unused init_filter_entries in follower bpf, declare
+>    a global filter_entry_count in bpf_counter instead
+>  * Attach on_newtask and on_exittask progs only if the filter type
+>    is either PID or TGID
+> 
+> v1: https://lore.kernel.org/all/20240904123103.732507-1-wutengda@huaweicloud.com/
+> 
+> 
+> Tengda Wu (2):
+>   perf stat: Support inherit events during fork() for bperf
+>   perf test: Use sqrtloop workload to test bperf event
+> 
+>  tools/perf/tests/shell/stat_bpf_counters.sh   |  2 +-
+>  tools/perf/util/bpf_counter.c                 | 32 +++++++--
+>  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 70 +++++++++++++++++--
+>  tools/perf/util/bpf_skel/bperf_u.h            |  5 ++
+>  4 files changed, 95 insertions(+), 14 deletions(-)
+> 
 
-   arm-linux-gnueabi-ld: drivers/clk/qcom/clk-rcg2.o: in function `clk_rcg2_calc_mnd':
->> drivers/clk/qcom/clk-rcg2.c:437:(.text.clk_rcg2_calc_mnd+0x26): undefined reference to `__aeabi_uldivmod'
->> arm-linux-gnueabi-ld: drivers/clk/qcom/clk-rcg2.c:438:(.text.clk_rcg2_calc_mnd+0x38): undefined reference to `__aeabi_uldivmod'
-
-
-vim +437 drivers/clk/qcom/clk-rcg2.c
-
-   427	
-   428	static void clk_rcg2_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f,
-   429				unsigned int mnd_max, unsigned int hid_max)
-   430	{
-   431		int i = 2, count = 0;
-   432		unsigned int pre_div_pure = 1;
-   433		unsigned long rates_gcd, scaled_parent_rate;
-   434		u16 m, n = 1, n_candidate = 1, n_max;
-   435	
-   436		rates_gcd = gcd(parent_rate, rate);
- > 437		m = rate / rates_gcd;
- > 438		scaled_parent_rate = parent_rate / rates_gcd;
-   439		while (scaled_parent_rate > (mnd_max + m) * hid_max) {
-   440			// we're exceeding divisor's range, trying lower scale.
-   441			if (m > 1) {
-   442				m--;
-   443				scaled_parent_rate = mult_frac(scaled_parent_rate, m, (m + 1));
-   444			} else {
-   445				f->n = mnd_max + m;
-   446				f->pre_div = hid_max;
-   447				f->m = m;
-   448			}
-   449		}
-   450	
-   451		n_max = m + mnd_max;
-   452	
-   453		while (scaled_parent_rate > 1) {
-   454			while (scaled_parent_rate % i == 0) {
-   455				n_candidate *= i;
-   456				if (n_candidate < n_max)
-   457					n = n_candidate;
-   458				else if (pre_div_pure * i < hid_max)
-   459					pre_div_pure *= i;
-   460				else
-   461					clk_rcg2_split_div(i, &pre_div_pure, &n, hid_max);
-   462	
-   463				scaled_parent_rate /= i;
-   464			}
-   465			i++;
-   466			count++;
-   467		}
-   468	
-   469		f->m = m;
-   470		f->n = n;
-   471		f->pre_div = pre_div_pure > 1 ? pre_div_pure : 0;
-   472	}
-   473	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
