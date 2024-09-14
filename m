@@ -1,164 +1,134 @@
-Return-Path: <linux-kernel+bounces-329151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1897978E1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:54:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA4F7978E22
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15DF21C226D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D47D1F2413E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB6444376;
-	Sat, 14 Sep 2024 05:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3E147772;
+	Sat, 14 Sep 2024 05:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a//pjtFh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RPz6skDU"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C1C49630
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 05:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAB74437
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 05:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726293287; cv=none; b=kbSYuQIRN3LuOhxZyfGhrrB14hh8uMaK+cEEfY7I8j4YmjrUIcJYGpLeWrj/5S1hf8lX+GaVklvmuq53A8sWeazqHPzGhgXF8wWFsGBk+X4XzUKsNCGVTuGzXxhlMI/h+VNBYQEqc58iFTHbkTh6mjtUd5xBJV1nlCO5kdss+0U=
+	t=1726293467; cv=none; b=TSNWgOKWcOMIIwWUW+Xe5VBH12r7Tu02MKJ2xr2gziQpCAVEVywOaqVcfMhXU1EBO4b69L+9aePXyQmuwxdVC1LnvvhDNiDPfBFOM1HwXwdgK/zLZxAKq7rw+OsStAaLMHxSB/5s4YUHYvTSf7cgttW6hYigNNGJ3it9T2deM/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726293287; c=relaxed/simple;
-	bh=ZLBKNq0IphChD+uYcOGVnCk5dABAxh20ThwO2CsQFo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eBSqdr/0brcpRej5OU7oFsyO1VHBHuzsNnn1KodsgoITxj2BRAb3D6E1SywWV7Csc2eS1x0Vbovl8ZU8zTH5QeOqwR6HSV899nszlsWUxxKmAD0ePkVYLDyG9nZns9mMEFsU6hZQT2yocW8kPzhfwFlmILIp9Nk5RkolK+hFf2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a//pjtFh; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726293285; x=1757829285;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ZLBKNq0IphChD+uYcOGVnCk5dABAxh20ThwO2CsQFo4=;
-  b=a//pjtFheR+lDjFSTv8CfwKWKeHXeJuYuWD1oVWgNMecQdWPKttjWano
-   6nNyq0SJz6cDHbyA7LoCWyeQu/uAQWslLDyVxkZUzbXhGG/OsTjIWuy+5
-   qoGJ5Slt3Ajia18Go53EhzgWF24tIFpZHpHfg2hYQo4aNhVB1Ij39FP1F
-   UGnotjuRmC1zabpW/g4UAeTbT56ffOUYdaadQylb+vub7t5jJjX0UaCHI
-   dyG6GQ3LKXaog57TmXCj68BmPhHDmJSYcUv3cZmzMUa7FnyeSzZzzQBK2
-   pCWZrcGGsVRaMlaincq/7zdz4aPMev7OTS900Yf0C12cmvGldvMW/2qUQ
-   g==;
-X-CSE-ConnectionGUID: vYsIyTzDTw+DmHRbjLjx4g==
-X-CSE-MsgGUID: ZO0Y5UdnRQiAVTIR+Omg/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="42678423"
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="42678423"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 22:54:45 -0700
-X-CSE-ConnectionGUID: fKL4IcV4RnmZg2YEptAk2Q==
-X-CSE-MsgGUID: Mo+S/tC0RripLi3SUTr3AQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="98995434"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 13 Sep 2024 22:54:44 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spLk1-0007QZ-15;
-	Sat, 14 Sep 2024 05:54:41 +0000
-Date: Sat, 14 Sep 2024 13:53:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ashutosh Dixit <ashutosh.dixit@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Umesh Nerlige Ramappa <umesh.nerlige.ramappa@intel.com>
-Subject: drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in
- initializer (different address spaces)
-Message-ID: <202409141346.Wokfate3-lkp@intel.com>
+	s=arc-20240116; t=1726293467; c=relaxed/simple;
+	bh=yrxyEG+7h1OUZv+xEB0fzKoqpnFZveTpJbp5Nli51Wk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pykPgVsQmo1eGa0z9H87UW9QoA9dbNhUVoqCt3kyJ9XeORFHutfDLTGqmY0GJkcPe3BgTuZGflKEcI8G2W6bU1W8CO3q0yF60zI29kMmHEH5QmghRszEQ3OXEUXoTmhFqWpDr90rFS0Z/p2grlmGaLopfbA745YKyoN/OjxgQEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RPz6skDU; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a90188ae58eso318604866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 22:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726293463; x=1726898263; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jj7BI1d/P05L4yR+fUrwV54+pcNt/eQNbd1AyE1f2W0=;
+        b=RPz6skDUX6Gwn6/RbgsTRHDxBQ0GEZv/qn2k/4zXVdbR2zChH0KHY9x6ZvtGr5HiQV
+         g4hisVL8BucDXhbiJKBDX2N0BfbheQrSTSJzqzIcVMiSMG9HRY5IHzHUSjleX0Flnjvd
+         Fx0hYu+NVa8zgGBJcXbyRrzTn36MFrPFP4BOxKLnB7etAUgWWuzmcl+yY0jTGiO7z2eA
+         7vPqxVHwuPmWyv9gnK9QzERp7CboIQFoJxmGryqXAXAnooZxkfZnCtI8v01dpXqIlcIr
+         UEDoVP2x1lno011SfRQ0gy6B8uv5Ck/YzX943ZuuBwALv/DgG9+SPjpLD5rW2DFbaEt1
+         37TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726293463; x=1726898263;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jj7BI1d/P05L4yR+fUrwV54+pcNt/eQNbd1AyE1f2W0=;
+        b=VJJirKhvzQrxE14j2bm6r3GzqcDKYNsitm92PfqyfbmBhy60s7lhF9GYsrSShipU1O
+         oOxfgAbRi6ftf8s893Chof+oneWTE3+viHaIJJMj6g1VCcaFGKto+2xiRGF5MC9aILGE
+         wzv+FbpyjbjMoVueX+i8hMyXQVvIw9v+Sk8xsnZUlByyjFdofmfW5Q4wQqyOpPZYdSUx
+         D+rwzY9ysjV/BUCKXttasbZlu7KdGibhG4k7BpuGiPhnmCYT5d90dYIStqmf1dm84yMw
+         tyJPgQC6JTSIbIFstIzOEp4Ts08eIsrZzmVJy+DX2Fzznrv8/xawdLDzMZ4sZzZqLcGq
+         BI9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUUHqUyhoEXzmIoX4gSqqE4qsxElxng7+zyI0qaspj4qcuHhFNA9394KvjGZJnMrGQXqCMKnxhNCSwmxYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiQtFiHAnze3/juFYdrXzLupSHLdcBvGl2/yd9/cYzt6GQ2P6D
+	NJH46vKrzr2j1RfjVfURdjxvoEvFQnDSihqxKq6OLCoGu7+j0/ELmu7154XYCQ==
+X-Google-Smtp-Source: AGHT+IHQRdOpdMJ4Y1cJj+samNp4BzlrRh+uCRWFfdK6L+8JVEJRsNx51Bj2WAtb1ztXOUZFBjsz3w==
+X-Received: by 2002:a17:907:94d4:b0:a90:34e8:780f with SMTP id a640c23a62f3a-a9034e87ae4mr673589866b.63.1726293462430;
+        Fri, 13 Sep 2024 22:57:42 -0700 (PDT)
+Received: from [172.31.47.100] ([193.118.249.27])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610966ccsm37044366b.45.2024.09.13.22.57.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 22:57:42 -0700 (PDT)
+Message-ID: <e5a05e0a-ce58-4779-ae7e-c3803af82d3a@suse.com>
+Date: Sat, 14 Sep 2024 07:57:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xen/swiotlb: add alignment check for dma buffers
+To: Stefano Stabellini <sstabellini@kernel.org>
+Cc: Juergen Gross <jgross@suse.com>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev
+References: <20240913145655.10076-1-jgross@suse.com>
+ <a0b0dec5-03c1-4b69-aa0e-65771251d859@suse.com>
+ <alpine.DEB.2.22.394.2409131728420.1417852@ubuntu-linux-20-04-desktop>
+Content-Language: en-US
+From: Jan Beulich <jbeulich@suse.com>
+In-Reply-To: <alpine.DEB.2.22.394.2409131728420.1417852@ubuntu-linux-20-04-desktop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b7718454f937f50f44f98c1222f5135eaef29132
-commit: cdf02fe1a94a768cbcd20f5c4e1a1d805f4a06c0 drm/xe/oa/uapi: Add/remove OA config perf ops
-date:   3 months ago
-config: arm-randconfig-r132-20240914 (https://download.01.org/0day-ci/archive/20240914/202409141346.Wokfate3-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240914/202409141346.Wokfate3-lkp@intel.com/reproduce)
+On 14.09.2024 02:38, Stefano Stabellini wrote:
+> On Fri, 13 Sep 2024, Jan Beulich wrote:
+>> On 13.09.2024 16:56, Juergen Gross wrote:
+>>> --- a/drivers/xen/swiotlb-xen.c
+>>> +++ b/drivers/xen/swiotlb-xen.c
+>>> @@ -78,9 +78,15 @@ static inline int range_straddles_page_boundary(phys_addr_t p, size_t size)
+>>>  {
+>>>  	unsigned long next_bfn, xen_pfn = XEN_PFN_DOWN(p);
+>>>  	unsigned int i, nr_pages = XEN_PFN_UP(xen_offset_in_page(p) + size);
+>>> +	unsigned int order = get_order(size);
+>>>  
+>>>  	next_bfn = pfn_to_bfn(xen_pfn);
+>>>  
+>>> +	/* If buffer is physically aligned, ensure DMA alignment. */
+>>> +	if (IS_ALIGNED(p, 1UL << (order + PAGE_SHIFT)) &&
+>>
+>> Why this check? xen_swiotlb_alloc_coherent() guarantees it, while
+>> xen_swiotlb_free_coherent() only checks properties of the original
+>> allocation. And for xen_swiotlb_map_page() this looks actively
+>> wrong to me, in case that function was called with offset non-zero.
+> 
+> I understand xen_swiotlb_alloc_coherent and xen_swiotlb_free_coherent
+> not needing the check, but I think we might need the check for
+> xen_swiotlb_map_page. At that point, I would keep the check for all
+> callers.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409141346.Wokfate3-lkp@intel.com/
+Whereas I would be inclined to suggest to put it in the one place it's
+needed, not the least to avoid the abuse of the function (going just
+from its name).
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/gpu/drm/xe/xe_oa.c:388:25: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long [usertype] *ptr @@     got void [noderef] __user * @@
-   drivers/gpu/drm/xe/xe_oa.c:388:25: sparse:     expected unsigned long long [usertype] *ptr
-   drivers/gpu/drm/xe/xe_oa.c:388:25: sparse:     got void [noderef] __user *
->> drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long [noderef] __user *register __p @@     got unsigned long long [usertype] *ptr @@
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     expected unsigned long long [noderef] __user *register __p
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     got unsigned long long [usertype] *ptr
+> Unless there is another way to detect whether the mapping needs
+> alignment specifically for map_page?
+> 
+> For the offset, in theory if the device needs alignment, the offset
+> should be zero? If the offset is not zero, then there should be no
+> alignment requirement. The way Juergen wrote the check, we would take
+> the fast path if offset != zero, which makes sense to me.
 
-vim +401 drivers/gpu/drm/xe/xe_oa.c
+Hmm, right.
 
-   377	
-   378	/**
-   379	 * xe_oa_remove_config_ioctl - Removes one OA config
-   380	 * @dev: @drm_device
-   381	 * @data: pointer to struct @drm_xe_perf_param
-   382	 * @file: @drm_file
-   383	 */
-   384	int xe_oa_remove_config_ioctl(struct drm_device *dev, u64 data, struct drm_file *file)
-   385	{
-   386		struct xe_oa *oa = &to_xe_device(dev)->oa;
-   387		struct xe_oa_config *oa_config;
-   388		u64 arg, *ptr = u64_to_user_ptr(data);
-   389		int ret;
-   390	
-   391		if (!oa->xe) {
-   392			drm_dbg(&oa->xe->drm, "xe oa interface not available for this system\n");
-   393			return -ENODEV;
-   394		}
-   395	
-   396		if (xe_perf_stream_paranoid && !perfmon_capable()) {
-   397			drm_dbg(&oa->xe->drm, "Insufficient privileges to remove xe OA config\n");
-   398			return -EACCES;
-   399		}
-   400	
- > 401		ret = get_user(arg, ptr);
-   402		if (XE_IOCTL_DBG(oa->xe, ret))
-   403			return ret;
-   404	
-   405		ret = mutex_lock_interruptible(&oa->metrics_lock);
-   406		if (ret)
-   407			return ret;
-   408	
-   409		oa_config = idr_find(&oa->metrics_idr, arg);
-   410		if (!oa_config) {
-   411			drm_dbg(&oa->xe->drm, "Failed to remove unknown OA config\n");
-   412			ret = -ENOENT;
-   413			goto err_unlock;
-   414		}
-   415	
-   416		WARN_ON(arg != oa_config->id);
-   417	
-   418		sysfs_remove_group(oa->metrics_kobj, &oa_config->sysfs_metric);
-   419		idr_remove(&oa->metrics_idr, arg);
-   420	
-   421		mutex_unlock(&oa->metrics_lock);
-   422	
-   423		drm_dbg(&oa->xe->drm, "Removed config %s id=%i\n", oa_config->uuid, oa_config->id);
-   424	
-   425		xe_oa_config_put(oa_config);
-   426	
-   427		return 0;
-   428	
-   429	err_unlock:
-   430		mutex_unlock(&oa->metrics_lock);
-   431		return ret;
-   432	}
-   433	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jan
 
