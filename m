@@ -1,169 +1,222 @@
-Return-Path: <linux-kernel+bounces-329562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676F79792EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:17:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D519792EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 879F1B22B39
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01C9283B81
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0361D1315;
-	Sat, 14 Sep 2024 18:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3EF1D1725;
+	Sat, 14 Sep 2024 18:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="DtBwNX+U"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TARNF8fy"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891671CDFC6;
-	Sat, 14 Sep 2024 18:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D841CFEAF
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 18:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726337832; cv=none; b=Ii2FjEeqierl9SXh4eefViV2Wn9ki5PO2VVDcufa6J1YLjziirud4x+OGABtdCzbHcH+jiov/EPFUcjfcZC3kEWIsTxsK4cwpKdaFZ2Xi4SCBZNQ79spBNSdt656HcQuJbSgh9TADA7TnBvr2h8w6rayVl8sp1NugekCbGcE8I4=
+	t=1726338127; cv=none; b=RkX/Qc4ubTFXZKVuMQN/roZ0Wmyx5uWSvttZqPNlobb+ZQjBmIWTd/ku4r+a29SC5PH+Q1Vt+RsLIi2geuj1O5vY9gtOl6wfFwjy4I1jlQXz/9FjQGtSgpezMqWIXSA/+56UBCjXEp5USsQJf+DTkULrzY1N+Lk4QP3sA6BPZ/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726337832; c=relaxed/simple;
-	bh=KSxYMvwzWExMOlybnMZ65eeInZIByCHwyO/WMYkPYac=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FPTAgag8tF5wx2unT4WXlFpPt3N3MXgDESGJgRkMZo6ZooD5WimHKMaNYcePHfXOu/Y9rCDZrwOSto9EtTUOOFpCndHjqqCtlBovl/PPqOTwnvRApUdJFRUqwXAmLBx+DhvJLmXWn+c+l0rMLDHvyiFKtCnkkeIifv/3yAFJseE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=DtBwNX+U; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726337822; x=1726597022;
-	bh=/KR+FXEOU6u/KXqaVStIhlDxBZ9t2csbGHnVL3UlLOc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=DtBwNX+UdrRc/re1CvuzSkks1sKdbdnPqNwaCiJxV/J180X8zsibeSpa3gVNScZVV
-	 eydnH5cEtmvQjRHJ08P2LYsygxcGer7fZQIbk7Jj/JLPpDDSyoLj15fk7zd57UZJVE
-	 8HxFsFdut56QHn+O1SDRGfnckx75OOnnCU82TW5jdZ3tYODV7HYTm8i1O+ThZKOoyX
-	 jJWnqn6xowBa7LHkRU0Vjrpb8HMom8HvkaYi/CFQCOdsyhyKVwxiEAneVoNf1kX9es
-	 4h7BXEGDMScswPBh8UGxZ63KPHDXw3BJ5tBhjmX0uj2WO+MXhym8qFTxVu/CfPfjch
-	 OUosgS3hfyg+w==
-Date: Sat, 14 Sep 2024 18:16:56 +0000
-To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-From: Patrick Miller <paddymills@proton.me>
-Cc: Patrick Miller <paddymills@proton.me>
-Subject: [PATCH v4 2/2] checkpatch: warn on known non-plural rust doc headers
-Message-ID: <20240914181618.837227-2-paddymills@proton.me>
-In-Reply-To: <20240912195649.227878-1-paddymills@proton.me>
-References: <20240912195649.227878-1-paddymills@proton.me>
-Feedback-ID: 45271957:user:proton
-X-Pm-Message-ID: 7b1fc0057ce9d945857cd673e7073809e11ee970
+	s=arc-20240116; t=1726338127; c=relaxed/simple;
+	bh=j55s553NOeci77Fom8LTNM9U0CMq/EwxScjnjpwSj6s=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:Cc:To:
+	 In-Reply-To:Content-Type; b=OFvVav3VWb7gQODn6EE2tp89EbDNpmsCJUU5FCiR4JRpYVion2sth8ge0hTI6ZtekTgcrcPnulduS++7qCOWMu953R8vNZ42N4NVFZZmuqWc46Pte+82vzYReNQgIrpwchU1vIpcyKlAT0NB+d4YQS0vrrWRRly79Tv5IbjbKsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TARNF8fy; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id pXPDskhYqv6ompXPEsampP; Sat, 14 Sep 2024 20:22:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726338121;
+	bh=OFVbNL38l0/PGyVb7FHahbcqf/dMCKYK2Z28IptNgWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=TARNF8fy9dkV0wQYIkEHOdKPxwQwEWBr+ZQAZFB5GFeXJgqxzw8U2tq5xQR44dACw
+	 qDvRc96FXAt0Cc6hMLx27Z9AoB14LttkKQa6yq6uwUbc1X2MICg29HeYTNIRtu5clQ
+	 1FW1oVPJAdcdQ04lm2NU9KIYwHJct5qidTjeO/6AcZ4w+l5avCmepRSvA3LTD9T5cg
+	 LIvKn7HQ4nEsFY8gDXgLdH1tJ11H6/SqMqSKl+0ebr434y5GOGrOBuYnvwWG6SJXyN
+	 jbNHSQfV9uK4++DfLkD2VXh3s8anSDTpsBfd+LDD3QDHmdJzZlLCKUDlWkQxbdIe9O
+	 hrkut749LJaKg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 14 Sep 2024 20:22:01 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <8f869b3b-df3f-49a9-9b6e-640697aa91dd@wanadoo.fr>
+Date: Sat, 14 Sep 2024 20:21:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="------5298901a6e89a37904785a8d17e5fbdf3129cdc3fdfa6b1748cd390d78d5855b"; charset=utf-8
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------5298901a6e89a37904785a8d17e5fbdf3129cdc3fdfa6b1748cd390d78d5855b
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] iio: dac: support the ad8460 Waveform DAC
+References: <20240912095435.18639-1-Mariel.Tinaco@analog.com>
+ <20240912095435.18639-3-Mariel.Tinaco@analog.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Dimitri Fedrau <dima.fedrau@gmail.com>, David Lechner
+ <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
+To: Mariel Tinaco <Mariel.Tinaco@analog.com>
+In-Reply-To: <20240912095435.18639-3-Mariel.Tinaco@analog.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-From: Patrick Miller <paddymills@proton.me>
-To: Andy Whitcroft <apw@canonical.com>,
-	Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: Patrick Miller <paddymills@proton.me>
-Subject: [PATCH v4 2/2] checkpatch: warn on known non-plural rust doc headers
-Date: Sat, 14 Sep 2024 14:16:17 -0400
-Message-ID: <20240914181618.837227-2-paddymills@proton.me>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240912195649.227878-1-paddymills@proton.me>
-References: <20240914181618.837227-1-paddymills@proton.me>
-MIME-Version: 1.0
 
-Adds a check for documentation in rust file. Warns if certain known
-documentation headers are not plural.
+Le 12/09/2024 à 11:54, Mariel Tinaco a écrit :
+> The AD8460 is a “bits in, power out” high voltage, high-power,
+> high-speed driver optimized for large output current (up to ±1 A)
+> and high slew rate (up to ±1800 V/μs) at high voltage (up to ±40 V)
+> into capacitive loads.
+> 
+> A digital engine implements user-configurable features: modes for
+> digital input, programmable supply current, and fault monitoring
+> and programmable protection settings for output current,
+> output voltage, and junction temperature. The AD8460 operates on
+> high voltage dual supplies up to ±55 V and a single low voltage
+> supply of 5 V.
+> 
+> Signed-off-by: Mariel Tinaco <Mariel.Tinaco-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+> ---
 
-The rust maintainers prefer document headers to be plural. This is to
-enforce consistency among the documentation as well as to protect against
-errors when additions are made. For example, if the header said "Example"
-because there was only 1 example, if a second example was added, making
-the header plural could easily be missed and the maintainers prefer to
-not have to remind people to fix their documentation.
+Hi,
 
-Signed-off-by: Patrick Miller <paddymills@proton.me>
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1110
+...
 
----
-v1: https://lore.kernel.org/rust-for-linux/2024090628-bankable-refusal-5f20@gregkh/T/#t
-v2: https://lore.kernel.org/rust-for-linux/92be0b48-cde9-4241-8ef9-7fe4d7c42466@proton.me/T/#t
-  - fixed whitespace that was formatted due to editor settings 
-v3: https://lore.kernel.org/rust-for-linux/da34f89
-c-f94c-43aa-946c-57fec3597974@proton.me/T/#t
-  - move && to previous line and remove whitespace in WARN per Joe Perches
-  - reformat following C coding style
-v4:
-  - add @fix option (credit: Joe Perches)
-  - add Error to list of checked section headers
-  - make check for rust file its own if statement because more rust
-      checks are planned
+> +#define AD8460_CHAN_EXT_INFO(_name, _what, _read, _write) {		\
+> +	.name = _name,							\
+> +	.read = (_read),						\
+> +	.write = (_write),						\
+> +	.private = (_what),						\
 
- scripts/checkpatch.pl | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Why () for _read, _write, _what?
+(or why no () for _name?)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 39032224d504..d4711cd14b36 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3900,6 +3900,18 @@ sub process {
- 			     "Avoid using '.L' prefixed local symbol names for denoting a range of code via 'SYM_*_START/END' annotations; see Documentation/core-api/asm-annotations.rst\n" . $herecurr);
- 		}
- 
-+# checks for rust files
-+		if ($realfile =~ /\.rs$/) {
-+# check that document section headers are plural in rust files
-+			if ($rawline =~ /^\+\s*\/\/\/\s+#+\s+(Example|Er
-ror|Guarantee|Invariant|Panic)\s*$/i) {
-+				if (WARN("RUST_DOC_HEADER",
-+				         "Rust doc section names should be plural\n" . $herecurr) &&
-+				    $fix) {
-+					$fixed[$fixlinenr] = s/\b$1\b/ucfirst(lc($1))/e;
-+				}
-+			}
-+		}
-+
- # check we are in a valid source file C or perl if not then ignore this hunk
- 		next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
- 
--- 
-2.46.0
+> +	.shared = IIO_SEPARATE,						\
+> +}
+> +
+> +static struct iio_chan_spec_ext_info ad8460_ext_info[] = {
 
+I think this can be static const struct.
 
---------5298901a6e89a37904785a8d17e5fbdf3129cdc3fdfa6b1748cd390d78d5855b
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+> +	AD8460_CHAN_EXT_INFO("raw0", 0, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw1", 1, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw2", 2, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw3", 3, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw4", 4, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw5", 5, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw6", 6, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw7", 7, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw8", 8, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw9", 9, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw10", 10, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw11", 11, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw12", 12, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw13", 13, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw14", 14, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("raw15", 15, ad8460_dac_input_read,
+> +			     ad8460_dac_input_write),
+> +	AD8460_CHAN_EXT_INFO("toggle_en", 0, ad8460_read_toggle_en,
+> +			     ad8460_write_toggle_en),
+> +	AD8460_CHAN_EXT_INFO("symbol", 0, ad8460_read_symbol,
+> +			     ad8460_write_symbol),
+> +	AD8460_CHAN_EXT_INFO("powerdown", 0, ad8460_read_powerdown,
+> +			     ad8460_write_powerdown),
+> +	IIO_ENUM("powerdown_mode", IIO_SEPARATE, &ad8460_powerdown_mode_enum),
+> +	IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE,
+> +			   &ad8460_powerdown_mode_enum),
+> +	{}
+> +};
 
------BEGIN PGP SIGNATURE-----
-Version: ProtonMail
+...
 
-wnUEARYIACcFAmbl0xgJEJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
-nhEAAP3hAP9EAzqV0t6KrEC30osktcjOX/wpmG6aOPo3cI/JBduDlwEAoVUT
-XtySwU6su03pc2emeY/dFraDHGFhAOjOeEuKqAE=
-=Dyq5
------END PGP SIGNATURE-----
+> +static int ad8460_probe(struct spi_device *spi)
+> +{
+> +	struct ad8460_state *state;
+> +	struct iio_dev *indio_dev;
+> +	struct device *dev;
+> +	u32 tmp[2], temp;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*state));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	state = iio_priv(indio_dev);
+> +
+> +	indio_dev->name = "ad8460";
+> +	indio_dev->info = &ad8460_info;
+> +
+> +	state->spi = spi;
+> +	dev = &spi->dev;
+> +
+> +	state->regmap = devm_regmap_init_spi(spi, &ad8460_regmap_config);
+> +	if (IS_ERR(state->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(state->regmap),
+> +				     "Failed to initialize regmap");
+> +
+> +	devm_mutex_init(dev, &state->lock);
+> +
+> +	state->sync_clk = devm_clk_get_enabled(dev, NULL);
+> +	if (IS_ERR(state->sync_clk))
+> +		return dev_err_probe(dev, PTR_ERR(state->sync_clk),
+> +				     "Failed to get sync clk\n");
+> +
+> +	state->tmp_adc_channel = devm_iio_channel_get(dev, "ad8460-tmp");
+> +	if (IS_ERR(state->tmp_adc_channel)) {
+> +		if (PTR_ERR(state->tmp_adc_channel) == -EPROBE_DEFER)
+> +			return -EPROBE_DEFER;
+> +		indio_dev->channels = ad8460_channels;
+> +		indio_dev->num_channels = ARRAY_SIZE(ad8460_channels);
+> +	} else {
+> +		indio_dev->channels = ad8460_channels_with_tmp_adc;
+> +		indio_dev->num_channels = ARRAY_SIZE(ad8460_channels_with_tmp_adc);
+> +	}
+> +
+> +	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(ad8460_supplies),
+> +					     ad8460_supplies);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to enable power supplies\n");
+> +		return ret;
 
+Nitpick: return dev_err_probe() as done in other places?
 
---------5298901a6e89a37904785a8d17e5fbdf3129cdc3fdfa6b1748cd390d78d5855b--
+> +	}
+> +
+> +	ret = devm_regulator_get_enable_read_voltage(dev, "refio_1p2v");
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return dev_err_probe(dev, ret, "Failed to get reference voltage\n");
+> +
+> +	state->refio_1p2v_mv = ret == -ENODEV ? 1200 : ret / 1000;
 
+...
+
+CJ
 
