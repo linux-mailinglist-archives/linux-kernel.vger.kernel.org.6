@@ -1,272 +1,226 @@
-Return-Path: <linux-kernel+bounces-329623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F0B9793AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:27:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2949793BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 01:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D0C1F22386
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:27:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7BA1B22707
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 23:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CC8145A07;
-	Sat, 14 Sep 2024 22:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD23145B10;
+	Sat, 14 Sep 2024 23:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FCzHAecQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="PkJNCryG"
+Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020141.outbound.protection.outlook.com [52.101.195.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7631A7D405;
-	Sat, 14 Sep 2024 22:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726352846; cv=none; b=q28rIqil+9jVwd0/kxFDFW5Bjyi5WR51ERmDnM9smqG3QWEulwKKVxYbn34F1eMFVdKefLEY6f0HsF8Ref+wSVxubu1FpXUC1jXHkurjTD/eCeS0FaNtK1dRsw5FxvFUlMEwNlBn4AIKODA/Dl8s6nkGw4JLvJHbzHlwlpCdoh0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726352846; c=relaxed/simple;
-	bh=kXHQ/nA3IGU83zXrkZOHQopDJj/qiJ+jyxnz3cPSqlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLxWuqfvRLwrU2d6OJxwtuPNZFu+Vc0nN8TtFm7861FEBQGx8PtCkGPg4JyvHMLVKZka/ztSX+ON81574xxMf6Wigk1B2B2YevMUUX2KrUdvPXDJTG0bXHWNAxkU3/PB8PU/gu8GcMLV8p2kkBamN98JNNUUVSp1QoKEXRKwAuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FCzHAecQ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726352845; x=1757888845;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kXHQ/nA3IGU83zXrkZOHQopDJj/qiJ+jyxnz3cPSqlo=;
-  b=FCzHAecQz7YuGLJp346DqoeCXa7ykvy5t8VjVaQBenvpU2OzmLvUsm/z
-   9A4xZIpsG+5dkSZgUfTsZPaxuTnsbffZUPMORXwnUWh3D/psCLAKFimvz
-   FcpmeS8ls6yW20FliFUE1XDYWhMmoBMRgDXx3o+ShU2d0i4spdrWaNhXG
-   N/INfymGPXzAgjjGIwRhMDCUXDDEgWyMem3g5LR5pAtwPy9hX3YjEbtUN
-   dx7L/I/uP33Rm4yCVtvcGEhsCs8U9iaBexJO6r5sIoxXpeWMP3VUTyPK8
-   09LTXgyAZJI1FeYmHc8sLRbUHy+pjBLfaWE5x0aPa/Rr5iqOqFX/WuVjU
-   g==;
-X-CSE-ConnectionGUID: gwxF1zJmTI6N+mBlBH6qQQ==
-X-CSE-MsgGUID: dhTeGvLpR5W7rhLrWE8Oig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="35905856"
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="35905856"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 15:27:24 -0700
-X-CSE-ConnectionGUID: bOCOHGs4RlSf4BIebvCY0w==
-X-CSE-MsgGUID: h9cYkHMQQxij9JQJ9URGtQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="72867586"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 14 Sep 2024 15:27:21 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spbEd-0008CA-0p;
-	Sat, 14 Sep 2024 22:27:19 +0000
-Date: Sun, 15 Sep 2024 06:26:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Donglin Peng <dolinux.peng@gmail.com>, rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Donglin Peng <dolinux.peng@gmail.com>
-Subject: Re: [PATCH v1] function_graph: Support recording and printing the
- function return address
-Message-ID: <202409150605.HgUmU8ea-lkp@intel.com>
-References: <20240913123456.600950-1-dolinux.peng@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EEA80034;
+	Sat, 14 Sep 2024 23:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.141
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726355442; cv=fail; b=s9uPEaFo9/8VwpbTiOLx+sB7gJRop/3Kh58glEQWt4B9XrJSQXIhx0wjiHYDlqUo+Pla3c0onmwBBQNd2XdPfUTy9RPSpJSGybcNED5XRQ/9z0Pt6slnlYmqEZI8wI2jkSMo5eH6RGnTByk4EnnljlqVqSvahvOuSF1bOroU6g8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726355442; c=relaxed/simple;
+	bh=pM7JhtR++M/6RZedHK+OJ8DlLqCo+1zYBFvs+Tx2Gdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=F5cG3hHbILjpXc3+cp4ZFQQ1JY0pMf24SSYYoAb3vfJpKJM3XuZw2TdAYREXhes7dsiqihproUtQEvM1D2Z5cwNJrHsOuudVJOtRtCA9JoV0iuUe+HfX3qs1a9vyzHTW8rK0AayZaO7Ah8FIi6sLHFG2z3wZZeaTPbt8JY9ujVU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=PkJNCryG; arc=fail smtp.client-ip=52.101.195.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PjWOVFgED1Sb/RRz1wnGQMwcCU7IM2RFDIaO4gFWC2lXYXoghcAeTdt50lx+qLBQhWdPhN8hJlpfRC4n/hwdhJZvOSY4M+Amz5k4saoIs/YsZO0u2WSflGxbYJJ3UHNhPhacWfoFYxeoVh5wHvcdypkmvGiSYNeCiPMmsDbhGJwcgDYlblhkVnWnoicm75nEBCehEFPT09CTJg3UzdAcHQSlRWZ6BExhpA/Vh2su3R+lWJ/Te/2LL4xGCxCFKAQunZnVOwBZSJ0Dp382D4Ghvt0lUbsF35EJHW5y1gCot7/s2yk5KCMZ5Zb4TAbFRCw119h7ftWU2KIMpOoVjdy3Iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4x4twgSz8hB3x0n4r5G/vJFy/zZuJCSSzwNu6Z3MHqc=;
+ b=i3W+FcGb2tlJ0w00d6EYMd2EnxtOPfv4x7bb0SRNSSWDhLyr8m8vLoZvRcROeA+2H/SQBrZEddUDgl9F9976qJ4+ih2OCSDgXLOA5iXgagotifFkpYpogWKr39Z2JTvMDwDyvS7ByubbJ2dwcJBQxwuQ06N5IDqup4aXXhJGi9TL4sWH/RMNPoWz/qWZFgFwnPvTa30aBOBP6tSRWCjWg5rOWqAsOpuBBgzRedr/17nozUjmsOgPQ/RFM4e8qCA03HzKEw38xRKearUjsFNAye8/RRMFD7QtAT5eQyfoFsdLnsc+OElJpDpD0Az7/Zoh/1DWD3yzYlfWFCZej8fpfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4x4twgSz8hB3x0n4r5G/vJFy/zZuJCSSzwNu6Z3MHqc=;
+ b=PkJNCryGAghOyEb6j668eLdmRk71kc8XzK7/+XG6MMSUX4EkWOEO87gLF4XWKKA7EaAbrNLlbhM5WjxA2kUJZVwTw7aVQK30ohsN5Ts5ICjKQic/1xehSRp4IoFY++JW505ZgDQNMuLvPdEwrjSL52ZuGhzljcKpWK4qyeA5lVI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO2P265MB5629.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:25d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.22; Sat, 14 Sep
+ 2024 23:10:37 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.7962.022; Sat, 14 Sep 2024
+ 23:10:37 +0000
+Date: Sun, 15 Sep 2024 00:10:35 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Geert Stappers <stappers@stappers.nl>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH 12/19] rust: replace `clippy::dbg_macro` with
+ `disallowed_macros`
+Message-ID: <20240915001035.5fc4d4a6.gary@garyguo.net>
+In-Reply-To: <Ztk/rn+wztXYVTtd@gpm.stappers.nl>
+References: <20240904204347.168520-1-ojeda@kernel.org>
+	<20240904204347.168520-13-ojeda@kernel.org>
+	<Ztk/rn+wztXYVTtd@gpm.stappers.nl>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P265CA0001.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:339::9) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913123456.600950-1-dolinux.peng@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO2P265MB5629:EE_
+X-MS-Office365-Filtering-Correlation-Id: a96efd0d-37a4-4821-6877-08dcd5127198
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?C2nBzHeHIBsfOPdFvJlSuNkM7OeTcqqfa5+D2ZuCyrPWI9TkQqvuIS8enOzH?=
+ =?us-ascii?Q?Ag0iKBCf/vr5Ee5kJok4ZCRDZbUxA/kcxaIUCCIK0OFsI4wFOOQT7CJhYk5t?=
+ =?us-ascii?Q?MDVIPNeN53Gb7k2gShUfbYDO/ustF1QwqLMIurkm61TLemc7VapGEPwS6elN?=
+ =?us-ascii?Q?FP/GlMGJGNJZcssJxt1w4Dd68reRaXXzOlNCIcc8ZsHXuthxL1rR/oUicIfX?=
+ =?us-ascii?Q?52wOyrKme5W5tCtrJNibDEYuYLZsr/vNbT9KApsd1uXsBffEig4zMGvL5jSI?=
+ =?us-ascii?Q?BcxK+LFyfTdWAIl3C/p3xq/dCh7g1a25MsAzGm/7BZvVvxN5V/tDu5JPgcx0?=
+ =?us-ascii?Q?CP2g/Rhk38OuBTRQpJ6nsEO92K0m2Gr2zTfCE3wD6bpC39IHPJHWbd4cb2Xt?=
+ =?us-ascii?Q?/AJf6Y5Ts+WAMiXZBhcCrzGmok2TUngcaWWZhqwz4bSFZq7jyTX3vx4wkBPa?=
+ =?us-ascii?Q?dtuvDJj3cgZIZmwNwvk6lcwOh9vUoaL/SMPK/dvJe5yLOKz+fenzroi+C171?=
+ =?us-ascii?Q?8h6R4LcqzOFwpMPCARuT3anznHhz0V2W+3Yk0h6sdsGOJFLTlxV8UQpN3Jrg?=
+ =?us-ascii?Q?6s0mjzdwW5GI5NuSHVGrU2yYydEoB0rtzdmbaoFvpgxQKhtNBg97JoQeth41?=
+ =?us-ascii?Q?G8GeFCV8qMWES9VeoNiaiRkKiq8ULSbmQ0DXbCZwRdcGDHYHMOhJxJBGS7b4?=
+ =?us-ascii?Q?Ua+UjFXOYR1NLWsmmAKFfrtEsnxu4NcfwyEWWNIJoi6ZYB1l1/74ijPKmjVC?=
+ =?us-ascii?Q?SUJonrQCcAN+DTnLY+rc43bpSQ8PyypC2JlAxHVRnhsCQ2XpW4LNlra+H1PF?=
+ =?us-ascii?Q?/djM2pCHGLk9MaacwxXYz/eHxnhhVWCB62wuB14nKU/2f4Qdv8REZPuhD7AO?=
+ =?us-ascii?Q?VG6SflFdNQOEF8Wei/HTo9B+jY0Hyq4PAEeg74GFrlJlyhkOVsSfc8COwJ9h?=
+ =?us-ascii?Q?TTh0Ud3gt/7JldKKrljjhnDl84EF29i3zFCkAl0s7zwvl+qMJy1Gps0xxZqM?=
+ =?us-ascii?Q?EMdEBScjIOZ6jjuodE5BEm+x3f+zEahaUgdpXQJUxuJBRg+qwTYwRYZi0x75?=
+ =?us-ascii?Q?fojpm56lHATgY57j+fCXmRZLKRM28jnjaXZViMNKcmHxX0Eri8nXv61Ak8Tt?=
+ =?us-ascii?Q?+K0gzU8b99uRZRWRrUqlfW20KKWcvM/RZRtQPLM8emNJFkKOLI466oAve6Fa?=
+ =?us-ascii?Q?halWBhN7t74chwLKzzkp2HZSbxLeXm/rI79klauuIT8I0EmnBAm8CouBu5Ca?=
+ =?us-ascii?Q?YAsRhxW6lP+JOfQFB0f9/VIg+m3cFhbhiIHBzT+j8nVD2mx9tbM3E22myNtf?=
+ =?us-ascii?Q?iaw03vTkaLj6TOB9GAzKrl4/pnPgxE16pMFzd6z/g9G1wA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YEzzDS/d/sq6csTFaRNA3P9rHHTEcS1rv2zyvOtwncZ9Ng6+Nlnry6nqWYJo?=
+ =?us-ascii?Q?jp7K7ggb2PyHAqHyqJ+Je1HtJSmuLYqgdukW9qF9fRFf8sNhaL4uIMTVO+Qd?=
+ =?us-ascii?Q?TVqVeIoGpDo+NglR8li9UdZgxJvYReBkT8Sis2/N7bVmVijXLEp3Fj/0Z9yc?=
+ =?us-ascii?Q?ArgUfb+TO3/CWq5kSTxzgkXLIHNlONf88LKn8j21i7V666gqzmTgROMNQDJ1?=
+ =?us-ascii?Q?L2NdS9l0UozEkLkKvfZj0tHAlMs8Wc0WSfL8mwh1OD0b86wIHL4po6wbS3jq?=
+ =?us-ascii?Q?FeguwNlQBs0GdZnF5+HEp5LPg4Vyvwjo7ZDByWNX51gdl1/ntg2abiWhZ8vS?=
+ =?us-ascii?Q?B4gTmYXULGpaQkdQWHeUro/JJsFi/H1CI2+pYtI7y8DjAJjt9Ax+o7ZcY8Hs?=
+ =?us-ascii?Q?3Vs0bdiLmB44+E+6P5hAN5snmMH6/dDvtPo8SqjBJ0rIG9lUe4k2KZLpaS2u?=
+ =?us-ascii?Q?mPlX/bHimZ+TpsWDtpGbS8/drtYrCOmzaa0BC/x9hU0hwXqOWQ5nC4BDm7lo?=
+ =?us-ascii?Q?D/+nbQpxtHU23H8dtVQSdkQr5Ft0z4wLFXjo3GXTLbAEG0znP7lOE0vQUYSu?=
+ =?us-ascii?Q?Ngz/XsXqUZXny5lNh3FnnHGbYERr25uwMjZKJHizTUpOUyFHyJS0KZcOzSis?=
+ =?us-ascii?Q?XVEjbJXSpamRbrz1i3qtZEMgWUkHhNUtFJhJI6z81Vax1tSzyt8mQetWNALG?=
+ =?us-ascii?Q?6P3XYu03QUCv3pVdooWbunYA0X6SVZg8wODZLo12BcrquxxYb9G39fN8uqOX?=
+ =?us-ascii?Q?YPKrsSBGGA1apoz+En7jhPG3Bh8JuqHZhalQipaHys6YFx5Mtf2cr/IwjhFA?=
+ =?us-ascii?Q?AKmV2aNhxk88kAjUTE48+usZtWFQhIYSUxPVOtuHZF7cwzLpFXH/mL4d8yIz?=
+ =?us-ascii?Q?cmhTZ36Eyz997yqj5NWIYWz8kqPR1VNLIxkU0VaoJrIfNUUFkHI6Ey1NE+wf?=
+ =?us-ascii?Q?p/AM27rIJdIHcLbyNF5w3HJqrJOw5Fj8hMzx03SvfkWoJTUk8xaqORBhJSLU?=
+ =?us-ascii?Q?86QG3hM5Y7PG7SHhr7nh2omQPl+BdxosRhaIi+gEExNLh8YF9XMldxuaITT9?=
+ =?us-ascii?Q?w61SU2VR9uKijNoZQ5wo4ZfgGpZIn3Q4py1GAvMi7+HAo0svXMinYRmblQv+?=
+ =?us-ascii?Q?qcOTlA/EZGf5vDiJ5DhzRGB73pWtybrhjy3yVReW2++Wa3E6tr4HsnRIcwb4?=
+ =?us-ascii?Q?SOSaRr5wNOcwzdMM1SlsNWDVdeQ2zqRaxFXfJA69new+BD5cOTHg3D7Re66U?=
+ =?us-ascii?Q?NVjxsTS+m1KJvIQH5bg0wKxFjk7+GNTOFP69Klddb9Pbn5J3uIyguOBJOdNQ?=
+ =?us-ascii?Q?iA2EVtiXzeoVwM2SEDcGDrpSRdTjjcBHk2JfhQp2KIZXbu4cGbuYBL+zZ12k?=
+ =?us-ascii?Q?woP+xngspFXFJfRvi33V0sbA983frOYZ4lDUSj4x2if8YFjZnYUw5YXiTYEn?=
+ =?us-ascii?Q?TvOC+QK8fBRjx3GtHxdGm++vVDuJcF7bD5yu6ugjjp3dbTAWTEXSJW+koyFD?=
+ =?us-ascii?Q?RAJyDZzGhy+OjcIDXPvzmOXLmAZcvx6H36PdLpGRYVAgpff9iw0wuq4CiSKV?=
+ =?us-ascii?Q?xijE82Yv9aK+pRk87JT5YLWAwlFN3Dw3tBItn3Uv?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: a96efd0d-37a4-4821-6877-08dcd5127198
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2024 23:10:37.2950
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5rdnUlXKZooqU4ySXLDYy3G+382RR/IE/0k2F9SsPMCzDLGUVdP3kGP2kOhTBDcHTM2DMNkxkC5Nuvc92ozxbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB5629
 
-Hi Donglin,
+On Thu, 5 Sep 2024 07:20:46 +0200
+Geert Stappers <stappers@stappers.nl> wrote:
 
-kernel test robot noticed the following build errors:
+> On Wed, Sep 04, 2024 at 10:43:40PM +0200, Miguel Ojeda wrote:
+> > diff --git a/.clippy.toml b/.clippy.toml
+> > index f66554cd5c45..ad9f804fb677 100644
+> > --- a/.clippy.toml
+> > +++ b/.clippy.toml
+> > @@ -1 +1,7 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> > +
+> > +disallowed-macros = [
+> > +    # The `clippy::dbg_macro` lint only works with `std::dbg!`, thus we simulate
+> > +    # it here, see: https://github.com/rust-lang/rust-clippy/issues/11303.
+> > +    { path = "kernel::dbg", reason = "the `dbg!` macro is intended as a debugging tool" },
+> > +]
+> > diff --git a/rust/kernel/std_vendor.rs b/rust/kernel/std_vendor.rs
+> > index 67bf9d37ddb5..085b23312c65 100644
+> > --- a/rust/kernel/std_vendor.rs
+> > +++ b/rust/kernel/std_vendor.rs
+> > @@ -14,7 +14,7 @@
+> > -/// # #[allow(clippy::dbg_macro)]
+> > +/// # #[allow(clippy::disallowed_macros)]
+> > @@ -52,7 +52,7 @@
+> > -/// # #[allow(clippy::dbg_macro)]
+> > +/// # #[allow(clippy::disallowed_macros)]
+> > @@ -71,7 +71,7 @@
+> > -/// # #[allow(clippy::dbg_macro)]
+> > +/// # #[allow(clippy::disallowed_macros)]
+> > @@ -118,7 +118,7 @@
+> >  /// a tuple (and return it, too):
+> >  ///
+> >  /// ```
+> > -/// # #[allow(clippy::dbg_macro)]
+> > +/// # #![allow(clippy::disallowed_macros)]
+> >  /// assert_eq!(dbg!(1usize, 2u32), (1, 2));
+> >  /// ```
+> >  ///  
+> 
+> For what it is worth, the exclamation mark did surprise me.
 
-[auto build test ERROR on shuah-kselftest/next]
-[also build test ERROR on shuah-kselftest/fixes linus/master v6.11-rc7]
-[cannot apply to next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+`#[]` would apply to the next item/statement, and `#![]` would apply to
+the surrouding scope. In this case there's just a single statement so
+they should be equivalent.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Donglin-Peng/function_graph-Support-recording-and-printing-the-function-return-address/20240913-204403
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
-patch link:    https://lore.kernel.org/r/20240913123456.600950-1-dolinux.peng%40gmail.com
-patch subject: [PATCH v1] function_graph: Support recording and printing the function return address
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240915/202409150605.HgUmU8ea-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409150605.HgUmU8ea-lkp@intel.com/reproduce)
+Miguel, is this change from `#[]` to `#![]` intentional?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409150605.HgUmU8ea-lkp@intel.com/
+Best,
+Gary
 
-All errors (new ones prefixed by >>):
+> 
+> 
+> > @@ -127,7 +127,7 @@
+> >  ///
+> >  /// ```
+> > -/// # #[allow(clippy::dbg_macro)]
+> > +/// # #[allow(clippy::disallowed_macros)]
+> >  /// # {
+> >  /// assert_eq!(1, dbg!(1u32,)); // trailing comma ignored
+> >  /// assert_eq!((1,), dbg!((1u32,))); // 1-tuple  
+> 
+> 
+> Groeten
+> Geert Stappers
 
-   In file included from kernel/trace/trace.c:8677:
->> kernel/trace/trace_selftest.c:910:18: error: incompatible function pointer types initializing 'trace_func_graph_ent_t' (aka 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)') with an expression of type 'int (struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-function-pointer-types]
-     910 |                         .entryfunc              = store_entry,
-         |                                                   ^~~~~~~~~~~
-   kernel/trace/trace_selftest.c:918:18: error: incompatible function pointer types initializing 'trace_func_graph_ent_t' (aka 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)') with an expression of type 'int (struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-function-pointer-types]
-     918 |                         .entryfunc              = store_entry,
-         |                                                   ^~~~~~~~~~~
-   kernel/trace/trace_selftest.c:926:18: error: incompatible function pointer types initializing 'trace_func_graph_ent_t' (aka 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)') with an expression of type 'int (struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-function-pointer-types]
-     926 |                         .entryfunc              = store_entry,
-         |                                                   ^~~~~~~~~~~
-   kernel/trace/trace_selftest.c:934:18: error: incompatible function pointer types initializing 'trace_func_graph_ent_t' (aka 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)') with an expression of type 'int (struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-function-pointer-types]
-     934 |                         .entryfunc              = store_entry,
-         |                                                   ^~~~~~~~~~~
->> kernel/trace/trace_selftest.c:1029:38: error: too few arguments to function call, expected 3, have 2
-    1029 |         return trace_graph_entry(trace, gops);
-         |                ~~~~~~~~~~~~~~~~~            ^
-   kernel/trace/trace.h:689:5: note: 'trace_graph_entry' declared here
-     689 | int trace_graph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-         |     ^                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     690 |                       struct fgraph_extras *priv);
-         |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from kernel/trace/trace.c:8677:
-   kernel/trace/trace_selftest.c:1033:16: error: incompatible function pointer types initializing 'trace_func_graph_ent_t' (aka 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)') with an expression of type 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-function-pointer-types]
-    1033 |         .entryfunc              = &trace_graph_entry_watchdog,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   6 errors generated.
-
-
-vim +910 kernel/trace/trace_selftest.c
-
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   906) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   907) static struct fgraph_fixture store_bytes[4] __initdata = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   908) 	[0] = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   909) 		.gops = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03  @910) 			.entryfunc		= store_entry,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   911) 			.retfunc		= store_return,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   912) 		},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   913) 		.store_size = 1,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   914) 		.store_type_name = "byte",
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   915) 	},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   916) 	[1] = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   917) 		.gops = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   918) 			.entryfunc		= store_entry,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   919) 			.retfunc		= store_return,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   920) 		},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   921) 		.store_size = 2,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   922) 		.store_type_name = "short",
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   923) 	},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   924) 	[2] = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   925) 		.gops = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   926) 			.entryfunc		= store_entry,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   927) 			.retfunc		= store_return,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   928) 		},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   929) 		.store_size = 4,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   930) 		.store_type_name = "word",
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   931) 	},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   932) 	[3] = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   933) 		.gops = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   934) 			.entryfunc		= store_entry,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   935) 			.retfunc		= store_return,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   936) 		},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   937) 		.store_size = 8,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   938) 		.store_type_name = "long long",
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   939) 	},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   940) };
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   941) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   942) static __init int test_graph_storage_multi(void)
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   943) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   944) 	struct fgraph_fixture *fixture;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   945) 	bool printed = false;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   946) 	int i, ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   947) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   948) 	pr_cont("PASSED\n");
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   949) 	pr_info("Testing multiple fgraph storage on a function: ");
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   950) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   951) 	for (i = 0; i < ARRAY_SIZE(store_bytes); i++) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   952) 		fixture = &store_bytes[i];
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   953) 		ret = init_fgraph_fixture(fixture);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   954) 		if (ret && ret != -ENODEV) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   955) 			pr_cont("*Could not set filter* ");
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   956) 			printed = true;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   957) 			goto out;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   958) 		}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   959) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   960) 		ret = register_ftrace_graph(&fixture->gops);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   961) 		if (ret) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   962) 			pr_warn("Failed to init store_bytes fgraph tracing\n");
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   963) 			printed = true;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   964) 			goto out;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   965) 		}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   966) 	}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   967) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   968) 	DYN_FTRACE_TEST_NAME();
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   969) out:
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   970) 	while (--i >= 0) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   971) 		fixture = &store_bytes[i];
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   972) 		unregister_ftrace_graph(&fixture->gops);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   973) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   974) 		if (fixture->error_str && !printed) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   975) 			pr_cont("*** %s ***", fixture->error_str);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   976) 			printed = true;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   977) 		}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   978) 	}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   979) 	return printed ? -1 : 0;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   980) }
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   981) 
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   982) /* Test the storage passed across function_graph entry and return */
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   983) static __init int test_graph_storage(void)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   984) {
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   985) 	int ret;
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   986) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   987) 	ret = test_graph_storage_single(&store_bytes[0]);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   988) 	if (ret)
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   989) 		return ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   990) 	ret = test_graph_storage_single(&store_bytes[1]);
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   991) 	if (ret)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   992) 		return ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   993) 	ret = test_graph_storage_single(&store_bytes[2]);
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   994) 	if (ret)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   995) 		return ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   996) 	ret = test_graph_storage_single(&store_bytes[3]);
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   997) 	if (ret)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   998) 		return ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   999) 	ret = test_graph_storage_multi();
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1000) 	if (ret)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1001) 		return ret;
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1002) 	return 0;
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1003) }
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1004) #else
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1005) static inline int test_graph_storage(void) { return 0; }
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1006) #endif /* CONFIG_DYNAMIC_FTRACE */
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1007) 
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1008  /* Maximum number of functions to trace before diagnosing a hang */
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1009  #define GRAPH_MAX_FUNC_TEST	100000000
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1010  
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1011  static unsigned int graph_hang_thresh;
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1012  
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1013  /* Wrap the real function entry probe to avoid possible hanging */
-37238abe3cb47b Steven Rostedt (VMware    2024-06-03  1014) static int trace_graph_entry_watchdog(struct ftrace_graph_ent *trace,
-37238abe3cb47b Steven Rostedt (VMware    2024-06-03  1015) 				      struct fgraph_ops *gops)
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1016  {
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1017  	/* This is harmlessly racy, we want to approximately detect a hang */
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1018  	if (unlikely(++graph_hang_thresh > GRAPH_MAX_FUNC_TEST)) {
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1019  		ftrace_graph_stop();
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1020  		printk(KERN_WARNING "BUG: Function graph tracer hang!\n");
-19f0423fd55c30 Huang Yiwei               2024-02-23  1021  		if (ftrace_dump_on_oops_enabled()) {
-7fe70b579c9e3d Steven Rostedt (Red Hat   2013-03-15  1022) 			ftrace_dump(DUMP_ALL);
-7fe70b579c9e3d Steven Rostedt (Red Hat   2013-03-15  1023) 			/* ftrace_dump() disables tracing */
-7fe70b579c9e3d Steven Rostedt (Red Hat   2013-03-15  1024) 			tracing_on();
-7fe70b579c9e3d Steven Rostedt (Red Hat   2013-03-15  1025) 		}
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1026  		return 0;
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1027  	}
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1028  
-37238abe3cb47b Steven Rostedt (VMware    2024-06-03 @1029) 	return trace_graph_entry(trace, gops);
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1030  }
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1031  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
