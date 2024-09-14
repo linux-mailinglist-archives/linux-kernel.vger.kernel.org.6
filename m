@@ -1,232 +1,104 @@
-Return-Path: <linux-kernel+bounces-329360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5404B97905C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:14:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B855978FF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 837DFB245E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB015283BC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D430A1CF5C8;
-	Sat, 14 Sep 2024 11:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="q7Z2q5zH"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C601DA5E;
-	Sat, 14 Sep 2024 11:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63441CEEA7;
+	Sat, 14 Sep 2024 10:26:53 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 11B1B139CE9;
+	Sat, 14 Sep 2024 10:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726312444; cv=none; b=HHYWL9R7dGn32p1O/dmncNteHPJj7GIN+YjVHZg3X4yr0HiTPXoeVFPKHNRUowabsDF0+vwrQ4FYikF41IrkKmUSk/5ZjDZ2UmMCFHch4NtMBdK2aRRLQVaEYhI+xCEuLdfqx3Nw1O4SyDddnUoZc2boYIK66td/7XZj1sJkZ1I=
+	t=1726309613; cv=none; b=Tfcl01xgmYGiV2TY7TPn3uW0UibLX9zfOmFqgdWJOrI9ani+tNLoPisoDUVxlAUJOUdcpF9FKNnFS65AoAl4KEVwUVbeO+0e0f+6TcuJwmIKXgZRqgz8dBSImV4P4S9l9UYPE5bcUno0L/DFQ3bX6XmNwczZAAni6NcKNmD++EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726312444; c=relaxed/simple;
-	bh=IlQgOKwKcriIkpiTmpqGXxTu1Frf5sbwkloQzYZPnSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E+JTBXfMLay+hm6hNQxEcnToVfex0FL2xMLY3XH2EIGhZJNJMutKfd0cjddIvWxlEa9c3F/lyfhqJihvOE0n7D+X9wLDA7boNJ8xuf63EegdRTG8+sguH3R73ZgM5idrevl0jO1e9NPUnllo09JltDZVI/tWROfXz+/KG+UesDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=q7Z2q5zH reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id b6bb8940ca4bfd4e; Sat, 14 Sep 2024 13:14:00 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id CDD2C8532AE;
-	Sat, 14 Sep 2024 13:13:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1726312440;
-	bh=IlQgOKwKcriIkpiTmpqGXxTu1Frf5sbwkloQzYZPnSQ=;
-	h=From:Subject:Date;
-	b=q7Z2q5zH9AKEBmD4ZyzfRBukAT/LzrP4Abf+oEHTz4YlYTiwqEyfM+jV8wrmIEu57
-	 aJF873KS7jEFHuOdpOzJ2nLXcK3gM9dAM0DsFsdQAtc5ykYMcThlEmeCpL2RHgVDYK
-	 t4ZhiCFXfCyoNJqSHA2CY0/U+KFMBJIdBTVAQvEb8PfIFitqZokf9rREosM4UlJ/Tu
-	 MIEgSy64DJ511xWBFTG3lWVDhflERGuUNt83A73/ZCTVSN5cx2pam5AdkciQRO7j5R
-	 /jmaHeewqEzkerg7/UTdiPDrRFL8tfnXag7jNYnjCxQSeZ3QCiKlexwydyNFJUl+sS
-	 vSS/krDZb6l/w==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [RFC PATCH for 6.13 v1 01/20] thermal: core: Use the thermal zone guard in
- more cases
-Date: Sat, 14 Sep 2024 12:25:53 +0200
-Message-ID: <4613601.LvFx2qVVIh@rjwysocki.net>
-In-Reply-To: <6100907.lOV4Wx5bFT@rjwysocki.net>
-References: <6100907.lOV4Wx5bFT@rjwysocki.net>
+	s=arc-20240116; t=1726309613; c=relaxed/simple;
+	bh=fTgHgYrxq8ERpTbnxCewRt4jdubSmOVdRC43Fb/8CL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CrgsedbGB7FFTZYb0YliuoI74cfursXKSjfUKA3oO2b0ybdlxaojZ9UEwx7s3KMQPcwTwm2NTQ5B8Xko7EZw7Z7d3ZMPIXnBvu09CJzQqmi5KMs5Ii7PyI2C0p1CR+LfhCSrNyrzmFqsIzO30ATPzIBDFP69GvitSL6FKUhnhcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C024B602EDA6E;
+	Sat, 14 Sep 2024 18:26:44 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: jmaloy@redhat.com,
+	ying.xue@windriver.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: Su Hui <suhui@nfschina.com>,
+	horms@kernel.org,
+	dan.carpenter@linaro.org,
+	tuong.t.lien@dektech.com.au,
+	netdev@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net v2] net: tipc: avoid possible garbage value
+Date: Sat, 14 Sep 2024 18:26:21 +0800
+Message-Id: <20240914102620.1411089-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudektddgfeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphht
- thhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=45 Fuz1=45 Fuz2=45
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Clang static checker (scan-build) warning:
+net/tipc/bcast.c:305:4:
+The expression is an uninitialized value. The computed value will also
+be garbage [core.uninitialized.Assign]
+  305 |                         (*cong_link_cnt)++;
+      |                         ^~~~~~~~~~~~~~~~~~
 
-There are a few more cases in which the thermal zone guard introduced
-previously can be used to help clarify the code, so do that.
+tipc_rcast_xmit() will increase cong_link_cnt's value, but cong_link_cnt
+is uninitialized. Although it won't really cause a problem, it's better
+to fix it.
 
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+Reviewed-by: Justin Stitt <justinstitt@google.com>
 ---
+v2:
+- sending to net rather than net-next
+- keeping xmas tree order
 
-To be merged with https://lore.kernel.org/linux-pm/3241904.5fSG56mABF@rjwysocki.net/
+ net/tipc/bcast.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
- drivers/thermal/thermal_debugfs.c |   25 +++++++++++++++----------
- drivers/thermal/thermal_hwmon.c   |    6 +-----
- drivers/thermal/thermal_netlink.c |   21 ++++++---------------
- 3 files changed, 22 insertions(+), 30 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_netlink.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_netlink.c
-+++ linux-pm/drivers/thermal/thermal_netlink.c
-@@ -460,7 +460,7 @@ static int thermal_genl_cmd_tz_get_trip(
- 	if (!start_trip)
- 		return -EMSGSIZE;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	for_each_trip_desc(tz, td) {
- 		const struct thermal_trip *trip = &td->trip;
-@@ -470,19 +470,12 @@ static int thermal_genl_cmd_tz_get_trip(
- 		    nla_put_u32(msg, THERMAL_GENL_ATTR_TZ_TRIP_TYPE, trip->type) ||
- 		    nla_put_u32(msg, THERMAL_GENL_ATTR_TZ_TRIP_TEMP, trip->temperature) ||
- 		    nla_put_u32(msg, THERMAL_GENL_ATTR_TZ_TRIP_HYST, trip->hysteresis))
--			goto out_cancel_nest;
-+			return -EMSGSIZE;
- 	}
- 
--	mutex_unlock(&tz->lock);
--
- 	nla_nest_end(msg, start_trip);
- 
- 	return 0;
--
--out_cancel_nest:
--	mutex_unlock(&tz->lock);
--
--	return -EMSGSIZE;
- }
- 
- static int thermal_genl_cmd_tz_get_temp(struct param *p)
-@@ -515,7 +508,7 @@ static int thermal_genl_cmd_tz_get_gov(s
+diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
+index 593846d25214..114fef65f92e 100644
+--- a/net/tipc/bcast.c
++++ b/net/tipc/bcast.c
+@@ -320,8 +320,8 @@ static int tipc_mcast_send_sync(struct net *net, struct sk_buff *skb,
  {
- 	struct sk_buff *msg = p->msg;
- 	struct thermal_zone_device *tz;
--	int id, ret = 0;
-+	int id;
+ 	struct tipc_msg *hdr, *_hdr;
+ 	struct sk_buff_head tmpq;
++	u16 cong_link_cnt = 0;
+ 	struct sk_buff *_skb;
+-	u16 cong_link_cnt;
+ 	int rc = 0;
  
- 	if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
- 		return -EINVAL;
-@@ -526,16 +519,14 @@ static int thermal_genl_cmd_tz_get_gov(s
- 	if (!tz)
- 		return -EINVAL;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	if (nla_put_u32(msg, THERMAL_GENL_ATTR_TZ_ID, id) ||
- 	    nla_put_string(msg, THERMAL_GENL_ATTR_TZ_GOV_NAME,
- 			   tz->governor->name))
--		ret = -EMSGSIZE;
--
--	mutex_unlock(&tz->lock);
-+		return -EMSGSIZE;
- 
--	return ret;
-+	return 0;
- }
- 
- static int __thermal_genl_cmd_cdev_get(struct thermal_cooling_device *cdev,
-Index: linux-pm/drivers/thermal/thermal_debugfs.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_debugfs.c
-+++ linux-pm/drivers/thermal/thermal_debugfs.c
-@@ -885,6 +885,19 @@ void thermal_debug_tz_add(struct thermal
- 	tz->debugfs = thermal_dbg;
- }
- 
-+static struct thermal_debugfs *thermal_debug_tz_clear(struct thermal_zone_device *tz)
-+{
-+	struct thermal_debugfs *thermal_dbg;
-+
-+	guard(thermal_zone)(tz);
-+
-+	thermal_dbg = tz->debugfs;
-+	if (thermal_dbg)
-+		tz->debugfs = NULL;
-+
-+	return thermal_dbg;
-+}
-+
- void thermal_debug_tz_remove(struct thermal_zone_device *tz)
- {
- 	struct thermal_debugfs *thermal_dbg;
-@@ -892,17 +905,9 @@ void thermal_debug_tz_remove(struct ther
- 	struct tz_debugfs *tz_dbg;
- 	int *trips_crossed;
- 
--	mutex_lock(&tz->lock);
--
--	thermal_dbg = tz->debugfs;
--	if (!thermal_dbg) {
--		mutex_unlock(&tz->lock);
-+	thermal_dbg = thermal_debug_tz_clear(tz);
-+	if (!thermal_dbg)
- 		return;
--	}
--
--	tz->debugfs = NULL;
--
--	mutex_unlock(&tz->lock);
- 
- 	tz_dbg = &thermal_dbg->tz_dbg;
- 
-Index: linux-pm/drivers/thermal/thermal_hwmon.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_hwmon.c
-+++ linux-pm/drivers/thermal/thermal_hwmon.c
-@@ -78,19 +78,15 @@ temp_crit_show(struct device *dev, struc
- 	int temperature;
- 	int ret;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	ret = tz->ops.get_crit_temp(tz, &temperature);
--
--	mutex_unlock(&tz->lock);
--
- 	if (ret)
- 		return ret;
- 
- 	return sprintf(buf, "%d\n", temperature);
- }
- 
--
- static struct thermal_hwmon_device *
- thermal_hwmon_lookup_by_type(const struct thermal_zone_device *tz)
- {
-
-
+ 	/* Is a cluster supporting with new capabilities ? */
+-- 
+2.30.2
 
 
