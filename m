@@ -1,154 +1,177 @@
-Return-Path: <linux-kernel+bounces-329095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBFD978D3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCE2978D3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C28351C2271E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DFE728695A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F102818EA2;
-	Sat, 14 Sep 2024 03:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dWZr7WPS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8849E179A8;
+	Sat, 14 Sep 2024 04:00:30 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A26D7344C;
-	Sat, 14 Sep 2024 03:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CCF8C1F
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 04:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726286386; cv=none; b=mxQryzgSJDWEsFcVjZ3DPqfx86xzBDpXzIgXnjQMoLndHjPPsoruHJejYYbNZe33nEq2YiDN2lvGlvwvU8nRv6wi3RqKBxTP8p0Sg5dT0q7ZjM3cMntOQ1yQVpM2+hB6nJDBkSSIGHUJMpet5pFNcuk34LhA5bUDV2Zk3X3b/m8=
+	t=1726286430; cv=none; b=DJXX06lLJz81l53J4uqgbWhj1YOQZ2RnfjmAuIwO6knazudsMyGQxib7ocft9VTtJ0XawRCi+iWkwb7MsJkVnbQ89mnzBCw+CxeUFKp1GZ5aZZdkyXXq7dn0/t/et/uD9tfWnl7YWI0i4EBialptrMrhT/U9Wbfdq6IVtJshCaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726286386; c=relaxed/simple;
-	bh=06upt1Vs+/DbmoMxTZMYSr4eiBax5V3t8bLJ+fYqkVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rRF7LxcAA7MbS0aKi76XVJcASSlBx0I4TarwiPKYo4YfS32lS30OsbBgdmwUErMDD7IIxj09rOu3kX1NHGEQqtBahSQoiEKT58N3Lgg0hnTX5PfxdCk1XKVOlQJiN8Y8+Aa51Jl1Uz0ywJx+MJWmXu8G6AZh3XVuGyQp7120JmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dWZr7WPS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48E0K2rd029091;
-	Sat, 14 Sep 2024 03:59:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iA/kORVBL6Wxi6a/guxYnyVIschyH2EOUiO0lvyRjFk=; b=dWZr7WPST3zK1SYM
-	e5AOEV3hgapNEn59a8Z2qG7wO069I6mEu7jE0ozy6fcxiz9gQ+NKtIKHNBnlYXAo
-	7Uvpb4j5LwP267Fwtil94dNau2/Hm0S2+xKZO8M+uY59FFgcAJi4VR9Q5IeTWzSN
-	j6iAal/17XtVTkSfdhwL8yW8i7EZgzZqFQuAgUfCr75fzzqPyKY/rErTzIC0/cG+
-	Z3BHZcx5TTVon3tybhzyTVz5p3WxL4RuVmOqArXjxjjXN/rbZe4bkT9ERRAUcZh/
-	wOXmPsSep+Dd2tccayag0P42R+qnBmH13skPiIzDIZHzpM+ZNws6XnlkbubpMTVs
-	6/1r1A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41myumrarv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Sep 2024 03:59:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48E3xUFo030003
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Sep 2024 03:59:30 GMT
-Received: from [10.216.29.174] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Sep
- 2024 20:59:22 -0700
-Message-ID: <36bd9f69-e263-08a1-af07-45185ea03671@quicinc.com>
-Date: Sat, 14 Sep 2024 09:29:17 +0530
+	s=arc-20240116; t=1726286430; c=relaxed/simple;
+	bh=fZv/ftlALop4h6I557vAed5tUBZOdf2pPSg3yn31628=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Bbm26PGf4p1M/KUxO8Ocu9d0U+HjCOTk0IdsidCGEynbcXkuNz9kJpgUGYfMLnNshX3tvaukzxkllb7ADRMSbXer1+3ICe0OoDqL868AjP77tpwN7S1omt3IlIBZOnwkkMm1FVjiwGQiipVEVMSdSJzXb5++ioDhsOi3nqzKWcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a04af50632so48209285ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:00:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726286428; x=1726891228;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bz5WZJ4tHVtePKnHi+SbP+S0EHx46AHTGM3wRpRV1ZU=;
+        b=U12wbsknSim9byv/gAQpQN95/lb0xal1eDCwH89DePi7RCzj/Ag2i7vzmLT9bsqejM
+         0gCS4vdFDhsk5/XMY/nL2M5dq88Qcd+61EOUPtyMYY12dEdDJQ8lMkOqxZLwgb7/vZb5
+         U9RxdVrqFPY2Lv9LxFQMsEGMfPCja14bHku/6GAbHqhq3mRBn1jcyrMZooYE7I1gB0fC
+         JZ3k+hcG0Ou1WepZaq/4hrx3VmTMlAMbeX8v6z2KhdWcoLzD4u+5zwNKPp2QXqBJ9RND
+         ETQk9fjt/t5NhEPiaALek9y3d2069uglCdgE3fFc59ZFDDdyPRbdEmdESR6nmqrDEaFi
+         0vSg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2m1axIy+4zClVwr2BMdhkiBOmvY03YxRnYTXMO9m50KTD6P8VrDMel1ojuxNJ0Tr5v5Jbq4+5/UTN3l8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0uHz1L3q4iq8NhqF3ju7vAReKxqpjPLO+M5gpWHUHZLTShRZT
+	/wIPEBCNa1/YzDFnMnILE74TO7/eWEruJJA+TZwtTS7qV+B70fyCn9hLQQt4v4IJnsDX4nm7fPt
+	NSiRbYTUtPtuvHRcYb1PArFcHFwJSvxNrGMyjhvwUvK+TtTqs5etQB/M=
+X-Google-Smtp-Source: AGHT+IE9/reacg2tKFboN78px8MUZJfQuDgk58r8fMFV0V8YdjqZ2DN3jpSugRI00e1A4TiA+SL/FJ5p3WnTJ4rhkU2aC48Mv2pQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 0/5] Add support for PCIe3 on x1e80100
-Content-Language: en-US
-To: Qiang Yu <quic_qianyu@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
-        <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
-        <quic_devipriy@quicinc.com>
-CC: <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zFX8fzgqJUywOZLiwxkJshUCOO-16e_o
-X-Proofpoint-GUID: zFX8fzgqJUywOZLiwxkJshUCOO-16e_o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- bulkscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0 adultscore=0
- spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409140026
+X-Received: by 2002:a05:6e02:154f:b0:3a0:4250:165f with SMTP id
+ e9e14a558f8ab-3a0847d0c17mr91913705ab.0.1726286427673; Fri, 13 Sep 2024
+ 21:00:27 -0700 (PDT)
+Date: Fri, 13 Sep 2024 21:00:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004d651706220c61a5@google.com>
+Subject: [syzbot] [v9fs?] BUG: corrupted list in p9_fd_cancelled (3)
+From: syzbot <syzbot+15a08eabe3d3838fb641@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi qiang,
+Hello,
 
-In next series can you add logic in controller driver
-to have new ops for this x1e80100 since this hardware
-has smmuv3 support but currently the ops_1_9_0 ops which
-is being used has configuring bdf to sid table which will
-be not present for this devices.
+syzbot found the following issue on:
+
+HEAD commit:    e936e7d4a83b Merge tag 'spi-fix-v6.11-rc7' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=136467c7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28869f34c32848cf
+dashboard link: https://syzkaller.appspot.com/bug?extid=15a08eabe3d3838fb641
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d80a1fd7fbf1/disk-e936e7d4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7096765887fd/vmlinux-e936e7d4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/703093aff5a7/bzImage-e936e7d4.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+15a08eabe3d3838fb641@syzkaller.appspotmail.com
+
+list_del corruption, ffff88805af61610->next is LIST_POISON1 (dead000000000100)
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:56!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 10605 Comm: syz.0.1206 Not tainted 6.11.0-rc7-syzkaller-00133-ge936e7d4a83b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:__list_del_entry_valid_or_report+0x108/0x1c0 lib/list_debug.c:56
+Code: c7 c7 e0 fe b0 8b e8 97 5e de fc 90 0f 0b 48 c7 c7 40 ff b0 8b e8 88 5e de fc 90 0f 0b 48 c7 c7 a0 ff b0 8b e8 79 5e de fc 90 <0f> 0b 48 89 ca 48 c7 c7 00 00 b1 8b e8 67 5e de fc 90 0f 0b 48 89
+RSP: 0018:ffffc9000455f6d0 EFLAGS: 00010282
+RAX: 000000000000004e RBX: ffff88805af61550 RCX: ffffc9000f602000
+RDX: 0000000000000000 RSI: ffffffff816ceea6 RDI: 0000000000000005
+RBP: ffff888025047800 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000001 R11: 0000000000000001 R12: ffff88805c934830
+R13: 0000000000000005 R14: ffff88805af61610 R15: ffff88805af61618
+FS:  00007fedb6f3b6c0(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f375bdfc408 CR3: 000000001eab8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __list_del_entry_valid include/linux/list.h:124 [inline]
+ __list_del_entry include/linux/list.h:215 [inline]
+ list_del include/linux/list.h:229 [inline]
+ p9_fd_cancelled+0xa2/0x2a0 net/9p/trans_fd.c:736
+ p9_client_flush.isra.0+0x34b/0x420 net/9p/client.c:618
+ p9_client_rpc+0xaef/0xc10 net/9p/client.c:741
+ p9_client_version net/9p/client.c:930 [inline]
+ p9_client_create+0xcc8/0x1210 net/9p/client.c:1034
+ v9fs_session_init+0x1f8/0x1a80 fs/9p/v9fs.c:410
+ v9fs_mount+0xc6/0xa50 fs/9p/vfs_super.c:122
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x8f/0x380 fs/super.c:1800
+ do_new_mount fs/namespace.c:3472 [inline]
+ path_mount+0x14e6/0x1f20 fs/namespace.c:3799
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount fs/namespace.c:3997 [inline]
+ __x64_sys_mount+0x294/0x320 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fedb617def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fedb6f3b038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fedb6336130 RCX: 00007fedb617def9
+RDX: 0000000020000b80 RSI: 0000000020000040 RDI: 0000000000000000
+RBP: 00007fedb61f0b76 R08: 0000000020000180 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fedb6336130 R15: 00007ffd5f34b4f8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_del_entry_valid_or_report+0x108/0x1c0 lib/list_debug.c:56
+Code: c7 c7 e0 fe b0 8b e8 97 5e de fc 90 0f 0b 48 c7 c7 40 ff b0 8b e8 88 5e de fc 90 0f 0b 48 c7 c7 a0 ff b0 8b e8 79 5e de fc 90 <0f> 0b 48 89 ca 48 c7 c7 00 00 b1 8b e8 67 5e de fc 90 0f 0b 48 89
+RSP: 0018:ffffc9000455f6d0 EFLAGS: 00010282
+RAX: 000000000000004e RBX: ffff88805af61550 RCX: ffffc9000f602000
+RDX: 0000000000000000 RSI: ffffffff816ceea6 RDI: 0000000000000005
+RBP: ffff888025047800 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000001 R11: 0000000000000001 R12: ffff88805c934830
+R13: 0000000000000005 R14: ffff88805af61610 R15: ffff88805af61618
+FS:  00007fedb6f3b6c0(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f375bdfc408 CR3: 000000001eab8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-- Krishna Chaitanya.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 9/13/2024 2:07 PM, Qiang Yu wrote:
-> This series add support for PCIe3 on x1e80100.
-> 
-> PCIe3 needs additional set of clocks, regulators and new set of PCIe QMP
-> PHY configuration compare other PCIe instances on x1e80100. Hence add
-> required resource configuration and usage for PCIe3.
-> 
-> v2->v1:
-> 1. Squash [PATCH 1/8], [PATCH 2/8],[PATCH 3/8] into one patch and make the
->     indentation consistent.
-> 2. Put dts patch at the end of the patchset.
-> 3. Put dt-binding patch at the first of the patchset.
-> 4. Add a new patch where opp-table is added in dt-binding to avoid dtbs
->     checking error.
-> 5. Remove GCC_PCIE_3_AUX_CLK, RPMH_CXO_CLK, put in TCSR_PCIE_8L_CLKREF_EN
->     as ref.
-> 6. Remove lane_broadcasting.
-> 7. Add 64 bit bar, Remove GCC_PCIE_3_PIPE_CLK_SRC,
->     GCC_CFG_NOC_PCIE_ANOC_SOUTH_AHB_CLK is changed to
->     GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK.
-> 8. Add Reviewed-by tag.
-> 9. Remove [PATCH 7/8], [PATCH 8/8].
-> 
-> Qiang Yu (5):
->    dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100
->      QMP PCIe PHY Gen4 x8
->    dt-bindings: PCI: qcom: Add OPP table for X1E80100
->    phy: qcom: qmp: Add phy register and clk setting for x1e80100 PCIe3
->    clk: qcom: gcc-x1e80100: Fix halt_check for pipediv2 clocks
->    arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
-> 
->   .../bindings/pci/qcom,pcie-x1e80100.yaml      |   4 +
->   .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |   3 +
->   arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 202 ++++++++++++++++-
->   drivers/clk/qcom/gcc-x1e80100.c               |  10 +-
->   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 211 ++++++++++++++++++
->   .../qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h    |  25 +++
->   drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h |  19 ++
->   7 files changed, 468 insertions(+), 6 deletions(-)
->   create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
->   create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
