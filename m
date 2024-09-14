@@ -1,102 +1,107 @@
-Return-Path: <linux-kernel+bounces-329384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4569790A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:46:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B6F9790A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 950AD1F22A33
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:46:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75CD2B2122C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B9C1CF2B1;
-	Sat, 14 Sep 2024 11:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F330A1CF5E3;
+	Sat, 14 Sep 2024 11:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LHcWtlco"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bVUGYYRJ"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605624C96;
-	Sat, 14 Sep 2024 11:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F2B1CEAC3
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 11:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726314397; cv=none; b=OwDlgOvNMGYraSMgDiVDKj+Rm1ZOU88+XvMQus3wp+qdudhNfDz2DguA84OYX1hyQBKgXwZtDC9sN06ePO360FMjb5NiJFLu1eNbszqnHOEf3ite9h+f1EBolNneMGpScQjk6NahfVM+w46QxAuGCZPort31kMTpaNrkZLiD7Ao=
+	t=1726314453; cv=none; b=riGptgBXf/EHHRhgA8uBj53sbcXmkSZIam1F4WrbR4W2rKee1XAbouP9EA5RIrmHYuzd/YYMvolwr8T7COQS+QgcBlTsRYIRB01FFx63cEq1/8GjXfuzU4h5frdEOjmBbLUqIwhsSlwgm/s9g+zdtJU0/hD0w8iX92WxHPHnLkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726314397; c=relaxed/simple;
-	bh=dddmxcbbKN61UbSqv5ZO/Fi6xeWeSevCQdpUku5tGjE=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=eK8b9rgDGTrtwMwGbG3oAIcOofR/JfVnA/nNaB0R4O5AGOuIzGv/trCvhUMjTapeOcERnYCwHBCBJUaoWKvRf26IV8HatIr3lbNY+PtxXuFh5wMNoasuAL8bnJe2OCkb+kFloTTxBOXrbiL/pyrFIeP/QobjqfQp4yB2MljCsP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LHcWtlco; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E47BDC4CEC0;
-	Sat, 14 Sep 2024 11:46:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726314396;
-	bh=dddmxcbbKN61UbSqv5ZO/Fi6xeWeSevCQdpUku5tGjE=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=LHcWtlco2zfmYYNeaJxg0eqQPLElbGRH1d8k2u+sBRU6QjWbLtR8KNKxMh0Yeobkd
-	 Dz1xQNAfYbFM9Q/PpC9Em/+OYm077HUp4AqgUu1qsEr4oU3koGIP9wQbyvAc9+QuWP
-	 /F1LKuGINbCVZIowfuooRKybM3LbzuVeUZ0EGoh/4RYD4A9JXjRVwBiJnChG0uGXrf
-	 lE+wrOS7zM+jYME1dSN2Uqb9pndWceMcbzso3kTmHeG+D/O3NtHHXUWb5Q/NuAmN5j
-	 cylJIZhHTcn4hiUBMq5+MdVSFKeEeVXpJDOqz1M3ohWxCv40jdvijPLcvGbi0Jks0n
-	 mC5H2BSqtb1tA==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726314453; c=relaxed/simple;
+	bh=aIbIZsM9D2zS+abKlDyHzRp3uzwJndEOuqNYVvTPr68=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h0GM5G0KO/B6vVJ8n3jExVrRsWTyz0PnV5pD2jPKEnqtDjMUX2x/HZR8RR7T3gHC/jbpODobNqeuaH2b00xoIQ3J0f95g3SMQ4nybTqz5mAIyNRtOpFHUI+tJMRhcfGc6++w0pUZrms9rpZID5WBOGNxYBXChdmQe04Riu6B734=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bVUGYYRJ; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c255e3c327so3551882a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 04:47:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726314450; x=1726919250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aIbIZsM9D2zS+abKlDyHzRp3uzwJndEOuqNYVvTPr68=;
+        b=bVUGYYRJB+tjaOi/otyE+1z5FiCPABKtvQ9C+0n7Jep5qmUKVbaKcIhpHu+LNfh82A
+         v6IGk4PHiH1TeC3MIJi7Wa3IL2TGcx5uyMnEvfOmqv1370DzyTDFH7454JRs3rzrasvS
+         eWGl13CDix3fGmEKe/8J8rcZPAUlIxtma3W0bEBfSnT0JKT4fTMKQPCOTJCq5foO/Q3a
+         l1aweMMQHVUFc5FXwCGuAk8OAATeica1M8hBG6BdMsuFGR9bab5NYZurcw2E0OhWv+zg
+         Z/OdqtKK2YRupLY8QJfCTJMBRhDr84aXQRryVLwKxO3MJKqFE6BjgWnioDPIygvFA0kO
+         Jvcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726314450; x=1726919250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aIbIZsM9D2zS+abKlDyHzRp3uzwJndEOuqNYVvTPr68=;
+        b=eE83wPCblCMfAK+Q68OBT2g92uplNnThU70O0xd2FozB06sJrBRjqn5tklYdiwPH+T
+         309si30a6zZNzM6r4010sOy2NHbU+pkGHm+EyHkYnRa2cRp3C9nIdgTRhf6njKeOiO6B
+         Uhr18T9XoueDHPyteLJRz8k0cgNtcpeHHw74hBdbxBBqMMPrTARa9CFA6+3yf+F5tDlT
+         4Z0cWQqHUFSYE/M7jaCHDzwUPlj59ij+GcvPBhtPG40KidxTaRgXdx8fuKIAdXIS0MZ+
+         8wGMzCcjiBmH+73erghEso+tjv5GLWzV57/nXjeeSu7EGCdqhh12ExQyqxet7ubMCTXv
+         O0rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXawBXLsKHIcFLOdS7DNsUEXU+Qnz+55AAVwiRKyB2cGWkDw/u8n9GB/dezHPfkyvoGMUl6jSkQJZfxIRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj+ODTN8vE4AaWbB6Ao9IlKx5nK1RM/54BUevXoaQQGESMK+/u
+	jUznjGtN6bYHy/Z/XCbbmhlaf+5A39rFRi3rzGluExZNcuao5XBUkig9oGFey1qYvd732/Qlhfl
+	S98+aH0Q1JJGKxTq5L4X8ZdYCZg1J2qcsOW1k
+X-Google-Smtp-Source: AGHT+IFtdrSxlO4oLPwyB3rc7pgzSuSRHZMIf4+9ownvSxFM74FNtfppj59QZ9sJ+X03DfBTWg5uNF5t1+P4iaYK+H4=
+X-Received: by 2002:a05:6402:4012:b0:5c2:7699:fa95 with SMTP id
+ 4fb4d7f45d1cf-5c413e1ff4amr8494152a12.19.1726314448521; Sat, 14 Sep 2024
+ 04:47:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] wifi: ath9k: add range check for conn_rsp_epid in
- htc_connect_service()
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240909103855.68006-1-aha310510@gmail.com>
-References: <20240909103855.68006-1-aha310510@gmail.com>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: toke@toke.dk, Sujith.Manoharan@atheros.com, senthilkumar@atheros.com,
- vasanth@atheros.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeongjun Park <aha310510@gmail.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172631439319.3042536.1475962432679276880.kvalo@kernel.org>
-Date: Sat, 14 Sep 2024 11:46:34 +0000 (UTC)
+References: <20240914103226.71109-1-zhoufeng.zf@bytedance.com> <20240914103226.71109-2-zhoufeng.zf@bytedance.com>
+In-Reply-To: <20240914103226.71109-2-zhoufeng.zf@bytedance.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Sat, 14 Sep 2024 13:47:17 +0200
+Message-ID: <CANn89iLkmsLZHfp=K5Ho9_asVzmv03knj1n=aap9G+xhRaeBXA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 1/2] bpf: Fix bpf_get/setsockopt to tos not
+ take effect when TCP over IPv4 via INET6 API
+To: Feng zhou <zhoufeng.zf@bytedance.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, mykolal@fb.com, shuah@kernel.org, 
+	alan.maguire@oracle.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	yangzhenze@bytedance.com, wangdongdong.6@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Jeongjun Park <aha310510@gmail.com> wrote:
+On Sat, Sep 14, 2024 at 12:32=E2=80=AFPM Feng zhou <zhoufeng.zf@bytedance.c=
+om> wrote:
+>
+> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+>
+> when TCP over IPv4 via INET6 API, bpf_get/setsockopt with ipv4 will
+> fail, because sk->sk_family is AF_INET6. With ipv6 will success, not
+> take effect, because inet_csk(sk)->icsk_af_ops is ipv6_mapped and
+> use ip_queue_xmit, inet_sk(sk)->tos.
+>
+> Bpf_get/setsockopt use sk_is_inet() helper to fix this case.
+>
+> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
 
-> I found the following bug in my fuzzer:
-> 
->   UBSAN: array-index-out-of-bounds in drivers/net/wireless/ath/ath9k/htc_hst.c:26:51
->   index 255 is out of range for type 'htc_endpoint [22]'
->   CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc6-dirty #14
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
->   Workqueue: events request_firmware_work_func
->   Call Trace:
->    <TASK>
->    dump_stack_lvl+0x180/0x1b0
->    __ubsan_handle_out_of_bounds+0xd4/0x130
->    htc_issue_send.constprop.0+0x20c/0x230
->    ? _raw_spin_unlock_irqrestore+0x3c/0x70
->    ath9k_wmi_cmd+0x41d/0x610
->    ? mark_held_locks+0x9f/0xe0
->    ...
-> 
-> Since this bug has been confirmed to be caused by insufficient verification
-> of conn_rsp_epid, I think it would be appropriate to add a range check for
-> conn_rsp_epid to htc_connect_service() to prevent the bug from occurring.
-> 
-> Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
-
-Patch applied to ath-next branch of ath.git, thanks.
-
-8619593634cb wifi: ath9k: add range check for conn_rsp_epid in htc_connect_service()
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240909103855.68006-1-aha310510@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-https://docs.kernel.org/process/submitting-patches.html
-
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
