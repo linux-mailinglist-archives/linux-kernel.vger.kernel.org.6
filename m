@@ -1,143 +1,108 @@
-Return-Path: <linux-kernel+bounces-329619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1828E9793A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:15:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C12C9793A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3749281BF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:15:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1F01F22384
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EDB13F435;
-	Sat, 14 Sep 2024 22:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB4513FD84;
+	Sat, 14 Sep 2024 22:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQDKnls0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cw6RZ0Ca"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEA118E1F;
-	Sat, 14 Sep 2024 22:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562CA18E1F;
+	Sat, 14 Sep 2024 22:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726352136; cv=none; b=bVUpZ1/suyCrdBuEUbN3PWkRx+Whki1dp7rLlMHldeVMI6Y4u3aR/tF3ORN5MXFoYDI8Nd83E7++L5Ug4YJ4zxG8J92gC58d+D8YK0WD1qms2obtd5p5vbwyfbBUVvn5vSm5VEEnec9tg6QKzbiFTowgm2Yp7axKZaeSP+hQids=
+	t=1726352462; cv=none; b=mTEjYn5bsfMXWPx2PEmRQWlG63tXY3BKI4xc3/LCFFVl2DWPkIrb96eGHpRkMCGABXR3bKjRUNRd8u4/t1LR8dqK34MFaA4DolpId5jnLiM+bf2o8Dq61PuGPWFXOIMAPxdYp2McI+fgqJA9TUNh+SEJFxW8moWMycEyvjZkPXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726352136; c=relaxed/simple;
-	bh=CbuOYtL+nJOrUCr5pQsOYq97OPNcveR8zM/nfsn08qY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fglx5me35Ou0UAwqTM2jmDrmUflHfxRwIOwGXH9cqWZYRrKALnzJPjgF+UexX5g3rZNmxuPhhVVsx+q8MtDmle5usaWhtD7W6XSCMEzj7Y44v5LTV+EKMg5QvUg4K+yj9zww/mLTLXFivLnQ7cU/p/N8fyHaCy/zC4jRKZJvYFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQDKnls0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF7BC4CEC0;
-	Sat, 14 Sep 2024 22:15:29 +0000 (UTC)
+	s=arc-20240116; t=1726352462; c=relaxed/simple;
+	bh=p7CxOhjrl3nQfmL/O6fE3qasLAJlXnRtQFjSq6H0T2g=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=hTLa9jatt9hlbxibt9UcPPIEPhf265k9G+R1LUBMetIllKd4x3Zw4rIhB5XsKvLn6IxWe2dK0HnOyvc+uBESs+pnbrJr9HjwhMQmK8We9XF+NRCn/6nxxzQA6XP4UKW5aj8hcgsQHHJC0Ct9qWQMFD0pmzw0harRp205Q+C97n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cw6RZ0Ca; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D96E4C4CEC0;
+	Sat, 14 Sep 2024 22:21:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726352135;
-	bh=CbuOYtL+nJOrUCr5pQsOYq97OPNcveR8zM/nfsn08qY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VQDKnls003f8BK0pKf1mAStEZ9zE6wsWHaExX8l8zaWXnpDiBsz1jZs7ZttGkqDSa
-	 XatEWwLlqGA1c6lCIgeKGcsUk99gpo63jaFqtbfURKCUTk7glOMU4PdvuguR/Rk5xd
-	 008Op3BGEMvHes4BgTBis51CxqO/Q+Lse+BZ0FWM4mdsg0ftYw9+Z70Cm920dhA5Go
-	 FQzfzQCtDH1SqvgamYPu9C/Bj8QTuM0ENOBpC+tTr3Pnd4b1Ky+JSApbXwzGyLnIRA
-	 gIIWc3a9hlYpEhltsut6EeWj1jdEBP8nCX/uOAHZ6fRNW7M03nXKHVj95BYfODd31K
-	 Wt0mM0JoWMGTA==
-Date: Sat, 14 Sep 2024 23:15:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Gary Guo <gary@garyguo.net>
-Cc: rust-for-linux@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
-Message-ID: <20240914-romp-clothing-965a16cb4dd4@spud>
-References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
- <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
- <20240913-shack-estate-b376a65921b1@spud>
- <20240914173037.422902b9.gary@garyguo.net>
- <20240914-jitters-barber-a0e51e7b83a8@spud>
+	s=k20201202; t=1726352460;
+	bh=p7CxOhjrl3nQfmL/O6fE3qasLAJlXnRtQFjSq6H0T2g=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Cw6RZ0Cao6q+CqdBdk1wJgx6S1QUZspmrbVGr0ZxkyvYmT3DwKzyXLp95OPR3UwqJ
+	 uVM8j4FOP5mbxa+A8YwsxE8WZnSkWwt8MMT336umt7nCGSkUT6Ah5Sy4sOYAvoFFw6
+	 BB9C8bt9ssXW7yIXLVlUFzJlkPX7VF31R5fgrLA1X72+0P68sX+5CyT4qC2b24ZvZs
+	 Up6dSbJ9m930FSoolI4rHR0fNDa+LMcG4RiXnVRryCosV/2C9L8GrXTG27UGFFpXxd
+	 sRJimSFnax6GrIyZwU8PhYQvfeLNWyKJ8FtUh4sLZUMEO7q1S3cIxmTuew7IomU1kv
+	 jQz2Dkofoa9rg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D5E3822D1B;
+	Sat, 14 Sep 2024 22:21:03 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aukCVL/k+hWQAKhq"
-Content-Disposition: inline
-In-Reply-To: <20240914-jitters-barber-a0e51e7b83a8@spud>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v6 0/5] Introduce HSR offload support for ICSSG
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172635246230.2644819.1539639253246657986.git-patchwork-notify@kernel.org>
+Date: Sat, 14 Sep 2024 22:21:02 +0000
+References: <20240911081603.2521729-1-danishanwar@ti.com>
+In-Reply-To: <20240911081603.2521729-1-danishanwar@ti.com>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: robh@kernel.org, jan.kiszka@siemens.com, dan.carpenter@linaro.org,
+ r-gunasekaran@ti.com, saikrishnag@marvell.com, andrew@lunn.ch,
+ javier.carrasco.cruz@gmail.com, jacob.e.keller@intel.com,
+ diogo.ivo@siemens.com, horms@kernel.org, richardcochran@gmail.com,
+ pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com, vigneshr@ti.com,
+ rogerq@kernel.org
+
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 11 Sep 2024 13:45:58 +0530 you wrote:
+> Hi All,
+> This series introduces HSR offload support for ICSSG driver. To support HSR
+> offload to hardware, ICSSG HSR firmware is used.
+> 
+> This series introduces,
+> 1. HSR frame offload support for ICSSG driver.
+> 2. HSR Tx Packet duplication offload
+> 3. HSR Tx Tag and Rx Tag offload
+> 4. Multicast filtering support in HSR offload mode.
+> 5. Dependencies related to IEP.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v6,1/5] net: ti: icss-iep: Move icss_iep structure
+    https://git.kernel.org/netdev/net-next/c/8f88c072c2ba
+  - [net-next,v6,2/5] net: ti: icssg-prueth: Stop hardcoding def_inc
+    https://git.kernel.org/netdev/net-next/c/4ebe0599fc36
+  - [net-next,v6,3/5] net: ti: icssg-prueth: Add support for HSR frame forward offload
+    https://git.kernel.org/netdev/net-next/c/95540ad6747c
+  - [net-next,v6,4/5] net: ti: icssg-prueth: Enable HSR Tx duplication, Tx Tag and Rx Tag offload
+    https://git.kernel.org/netdev/net-next/c/56375086d093
+  - [net-next,v6,5/5] net: ti: icssg-prueth: Add multicast filtering support in HSR mode
+    https://git.kernel.org/netdev/net-next/c/1d6ae9652780
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---aukCVL/k+hWQAKhq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Sep 14, 2024 at 05:46:14PM +0100, Conor Dooley wrote:
-> On Sat, Sep 14, 2024 at 05:30:37PM +0100, Gary Guo wrote:
-> > On Fri, 13 Sep 2024 22:17:56 +0100
-> > Conor Dooley <conor@kernel.org> wrote:
->=20
-> > > error[E0425]: cannot find function `__mutex_init` in crate `bindings`
-> > > --> /stuff/linux/rust/kernel/sync/lock/mutex.rs:104:28 =20
-> > > |
-> > > 104   |           unsafe { bindings::__mutex_init(ptr, name, key) }
-> > > |                              ^^^^^^^^^^^^ help: a function with a s=
-imilar name exists: `__mutex_rt_init`
-> > > |
-> > > ::: /stuff/brsdk/work/linux/rust/bindings/bindings_generated.rs:12907=
-:5
-> > > |
-> > > 12907 | /     pub fn __mutex_rt_init(
-> > > 12908 | |         lock: *mut mutex,
-> > > 12909 | |         name: *const core::ffi::c_char,
-> > > 12910 | |         key: *mut lock_class_key,
-> > > 12911 | |     );
-> > > | |_____- similarly named function `__mutex_rt_init` defined here
-> > >=20
-> > > error: aborting due to 1 previous error
-> > >=20
-> >=20
-> > Do you have PREEMPT_RT enabled?
->=20
-> I do indeed.
-
-
-Turned it off, only to find out my board farm is non-functional! Looks
-fine in QEMU however :)
-
-
---aukCVL/k+hWQAKhq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuYK/wAKCRB4tDGHoIJi
-0l1DAQCyyTAltATXfFiGsTKm9k1tm3bo1zh+Ka4em8UHR49XWgD+IOU3xgen2R5l
-RRhM8jVPdaxa/BqvxrBHgqH4wRX5xgg=
-=Fb0t
------END PGP SIGNATURE-----
-
---aukCVL/k+hWQAKhq--
 
