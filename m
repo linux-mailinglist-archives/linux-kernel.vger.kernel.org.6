@@ -1,185 +1,135 @@
-Return-Path: <linux-kernel+bounces-329394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F98E9790C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 14:13:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8279790C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 14:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F102D1F22DEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:13:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D09284B4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B951CF2B9;
-	Sat, 14 Sep 2024 12:12:57 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9081CF7BC;
+	Sat, 14 Sep 2024 12:15:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13E677115;
-	Sat, 14 Sep 2024 12:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994891CF5F4
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 12:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726315976; cv=none; b=oTXT2cOdgFoWyN6jLWMkwk7heDo46yEsq1uHpTEbHSB2gqzxE72a9tPWEOZ1/+DMmb7Ej04/+BE5W6UGVLh2yIXT4hParQvFlDkYPZ8EuA4HXKp7IPpADZZ5aR82vb7z6+7BmsLRLjuel9GGd9TWn5eYT0uSHBqI60nSfdL1O8o=
+	t=1726316105; cv=none; b=icQl+Lf3bSHrWPdCuG6a3JK7g+0jyeKYPBrjO/l7Z6nSzdFET4C9QE3eshhqkfoFeejDWxNfSOfi4hITeoy1UB9ff0PQvpfIG959/OBhSLQOyAqbE7iHneTNmw4RHdjpKxN5+KOHFojQ3cucNkXooIYEm29C6jYTW+KFDp8H4cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726315976; c=relaxed/simple;
-	bh=Pl9ObVTke+fwVEyKkC+JOM9WLEuzpl957b9y4okZyX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VqzghH+voL65QFrXpxgrQJEkpTMjk2IQJhJnWt4HYWwLQ+ayjACXdBcqHoh/WIvp4e1AMU9G2vXSpEvyStklh56SyaMzM/QftrazBgX6xVxtQDg7zjrhCv6R/b4sr+n+H8keINoWPKrCAduhvCGZEX0iUW06MyczMyv4SVOrBsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A67C4CEC0;
-	Sat, 14 Sep 2024 12:12:50 +0000 (UTC)
-Date: Sat, 14 Sep 2024 08:12:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>, Mark
- Rutland <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian
- Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, Mark
- Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, Jordan Rome
- <jordalgo@meta.com>, Sam James <sam@gentoo.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v2 00/11] unwind, perf: sframe user space unwinding,
- deferred perf callchains
-Message-ID: <20240914081246.1e07090c@rorschach.local.home>
-In-Reply-To: <cover.1726268190.git.jpoimboe@kernel.org>
-References: <cover.1726268190.git.jpoimboe@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726316105; c=relaxed/simple;
+	bh=jWChWfgfN+58Jr1U9s7nAsadg0GktEvvZErgoD0Bhik=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NT4VEpqvHFi8HFAAyaavzBgXQ9xInAtmO5cVJKqUEvv1yVCFXhTSFNX4mNZbVrtCaUKLcf/88ZqtF8Mj58uDZf3uDLCT4Rju7w+idE0Tb5JSsrCMYx9KPXg8i5svfuemHHNGvef+uXtTtljlk3O9Ed7AB0PgNLpnO3LTaXaaPC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a08d90c938so46814245ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 05:15:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726316102; x=1726920902;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xzGv6iFwh1lE0Ji83jyaP5V8lNuOWsUXua3UnU6JHbs=;
+        b=gtKLSWvAXgWhQmtlSmm84TwyocrxYnygbKVUF87hzaClo98cNo28jxIf4hIBVpE+X5
+         5zSVMV6zipiAahZrL6Yxyu3x+s+BBm8hNY9fhCLPBglFvbdkfe8P251afvegfytIbjSP
+         2dYXvW4wmzzzaYeKPy9q3ntOjd2J6StCiKkrLSB+zBh9qoAMeoF6TRqILQ3wxZ/EcjIq
+         sard4lt0B0PlYzfFYp0kJwEh5kTC0OnYw9ludiU0mATYGCnZu9MVLczxV3sO/fbx36tO
+         Lcmh3ddaeLxfqTcZLnvHQ0JpWT4VrL1CcraDlYkPbafRMYvtramxIqdaQ5dr87vACpUY
+         T+IA==
+X-Gm-Message-State: AOJu0YzbyAPMzlQFXq/8iXsJlEwJAsz8TPkPSIpGWRW9RYdynW6veh8h
+	HKavQFXtLG3yVo3Z4pAZa7BSj0V0PXhuZMZujt8+d/IjRpP3hUM8E7UAVHZnbQjeDfKhKSoPtzG
+	cXe0g/VvoZBJGVo7rw7LzPSaHiOaK6C7lB1Bu4JlxsEiMJqzjzDS5kAI=
+X-Google-Smtp-Source: AGHT+IGAdVnVJgs/ifGHJFkZXdGs+sV9hQ3jNs0C9+iqyj3oKwPIbiE7oUIDAKL0KMwCtfs/aTRYEKUtZT8tLlY7dLhABL7OYpj8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:c549:0:b0:383:4a12:b77c with SMTP id
+ e9e14a558f8ab-3a084902ac6mr108353875ab.8.1726316102536; Sat, 14 Sep 2024
+ 05:15:02 -0700 (PDT)
+Date: Sat, 14 Sep 2024 05:15:02 -0700
+In-Reply-To: <Vb6itTIqiK_hBcmPGWEcD1s6-FXS_btlvF1QhQYj6P33qEOyDUlGjdEAQz_lTPdXxCX09q4bEPzeE7mTrcy4R8mublQS8aUISzxZKCYeppQ=@pm.me>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66e57e46.050a0220.115905.0002.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_bkey_cmp_packed_inlined
+From: syzbot <syzbot+6f655a60d3244d0c6718@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, pz010001011111@pm.me, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 14 Sep 2024 01:02:02 +0200
-Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+Hello,
 
-> This is a new version of sframe user space unwinding + perf deferred
-> callchains.  Better late than never.
-> 
-> Unfortunately I didn't get a chance to do any testing with this one yet
-> as I'm rushing it out the door before GNU Cauldron starts.
-> Conference-driven development ;-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel panic: corrupted stack end in x64_sys_call
 
-Thanks for posting this!
-
-BTW, next time, can you also Cc linux-trace-kernel@vger.kerne.org.
-
-> 
-> Plus I don't have the perf tool piece working yet so I don't have a way
-> of doing end-to-end testing at the moment anyway.
-> 
-> In other words, please don't merge this yet.
-> 
-> Namhyung, if you're still available to write a perf tool patch which
-> integrates with this, that would be great.  Otherwise I could give it a
-> try.
-> 
-> Steven, let me know if this would interface ok with your anticipated
-> tracing usage.
-
-This is a very good starting point for me. A couple of notes.
-
-I think the unwinder should have an interface itself that provides the
-deferred unwinding, instead of having all the tracers to implement
-their own.
-
-The user space unwinder (regardless of sframe or not) should provide a
-way to say "I want a user space stack trace for here, but don't do it
-yet. Just give me a cookie and then call my callback function with the
-stack and cookie before going back to user space".
-
-That is, we should have an interface like:
-
-typedef void (unwinder_callback_t)(struct user_space_stack *, u64 cookie);
-
-struct unwinder_client {
-	struct list_head	list;
-	unwinder_callback_t	callback;
-};
-
-
-struct unwinder_client my_unwinder = {
-	.callback = mycallback;
-};
-
-	register_unwinder(&my_unwinder);
-
-
-
-Then a tracer could do this in NMI context:
-
-	/* Get the current cookie of the current task */
-	cookie = unwinder_get_cookie();
-
-	/* Tell the unwinder to call the callbacks */
-	unwinder_trigger();
-
-	/* then the tracer can save off that cookie, do a kernel stack trace
-	 * and save the cookie with that stack trace.
-	 */
+bucket 0:127 gen 0 has wrong data_type: got free, should be sb, fixing
+bucket 0:127 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+ done
+bcachefs (loop0): going read-write
+bcachefs (loop0): journal_replay...
+Kernel panic - not syncing: corrupted stack end detected inside scheduler
+CPU: 0 UID: 0 PID: 5945 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-g57719771a244-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:119
+ dump_stack+0x1e/0x30 lib/dump_stack.c:128
+ panic+0x4e2/0xcd0 kernel/panic.c:354
+ schedule_debug kernel/sched/core.c:5745 [inline]
+ __schedule+0x660/0x6580 kernel/sched/core.c:6411
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x13d/0x380 kernel/sched/core.c:6621
+ __closure_sync+0x163/0x1c0 lib/closure.c:146
+ closure_sync include/linux/closure.h:195 [inline]
+ bch2_journal_flush_pins+0x263/0x3b0 fs/bcachefs/journal_reclaim.c:851
+ bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
+ bch2_journal_replay+0x4923/0x4d20 fs/bcachefs/recovery.c:383
+ bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:183 [inline]
+ bch2_run_recovery_passes+0x400/0xec0 fs/bcachefs/recovery_passes.c:230
+ bch2_fs_recovery+0x42d2/0x5c60 fs/bcachefs/recovery.c:859
+ bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0x13e8/0x22d0 fs/bcachefs/fs.c:1954
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1800
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3472
+ path_mount+0x742/0x1f10 fs/namespace.c:3799
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:3997
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:3997
+ x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6261f7e69a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6262e37e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f6262e37ef0 RCX: 00007f6261f7e69a
+RDX: 00000000200058c0 RSI: 0000000020005900 RDI: 00007f6262e37eb0
+RBP: 00000000200058c0 R08: 00007f6262e37ef0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005900
+R13: 00007f6262e37eb0 R14: 0000000000005905 R15: 00000000200001c0
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-On return to user space, it will go the ptrace slow path and call all
-registered callbacks with the cookie, regardless if it asked for it or
-not.
+Tested on:
 
-	/* Save the stack somewhere, could even allocate memory to do so */
-	list_for_each_entry(callback, &unwinder_callback, list) {
-		callback->callback(userstack, cookie);
-	}
-	update_next_cookie();
+commit:         57719771 Merge tag 'sound-6.11' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=162ce900580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea008021530b2de3
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f655a60d3244d0c6718
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11026200580000
 
-The cookie is a unique number for every entry into the kernel by all
-tasks. Then it is up to the tracer's callback to know if it should save
-the trace or ignore it. That is, if perf and ftrace are expecting
-callbacks, but only perf triggered the callback, it should record the
-cookie, and save the stack if it matches a cookie it wants. ftrace's
-callback would ignore the trace, because it did not ask for a callback.
-That is, the tracer will need to save off the cookie to know if its
-callback needs to do something or not.
-
-The cookie can be generated by this:
-
-static u64 next_cookie;
-
-u64 unwinder_get_cookie(void)
-{
-	u64 next;
-
-	if (current->unwinder_cookie)
-		return current->unwinder_cookie;
-
-	next = next_cookie;
-	while (!try_cmpxchg64(&next_cookie, &next, next + 1))
-		;
-
-	next++;
-
-	/* Check for races with NMI */
-	if (!cmpxchg(&current->unwinder_cookie, 0, next))
-		next = current->unwinder_cookie;
-
-	return next;
-}
-
-When the task goes back to user space and does all the callbacks, it
-would reset the task cookie.
-
-	current->unwinder_cookie = 0;
-
-Now the loop of callbacks should also catch if unwinder_trigger() was
-called again (NMI), and may need to recall all the back traces again
-with the new cookie.
-
-That will need some thought about handling that race.
-
-This is just an idea to start discussion.
-
--- Steve
 
