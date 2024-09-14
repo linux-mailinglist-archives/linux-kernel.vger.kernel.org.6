@@ -1,349 +1,124 @@
-Return-Path: <linux-kernel+bounces-329112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2254978D80
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:23:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B34978DA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D069A1C22580
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BACD1F234C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC042942A;
-	Sat, 14 Sep 2024 05:23:22 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8803583CDB;
+	Sat, 14 Sep 2024 05:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPLP5TJY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D358C1F
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 05:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF6A44C8C;
+	Sat, 14 Sep 2024 05:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726291401; cv=none; b=n9TwkT3Lt4hDRdyswvC0CD5DmwjL/yqKzZx4QIDOhG3vx3wWwGAjMEc13+3lOReKPBzCIyuqg4Iue07Lb541gMef+BoCcl3IQdEkJVPawlVlLoOgC8pwT4hgoBIDGbDvqEjOEDqjJ+YppUMwDdvY/UJ90N1SteKpBUt7fQ3vgbo=
+	t=1726291532; cv=none; b=DMny2r2+izun2p8frZbsfVvSNt/Fi3vTvg/3psXm63yif1ILHeBuPk0yw6AuAu75IOdCxoS7xEzlz2s7xP0jUBhkig9jXAN5vwFJ4oX8zxpMK4AIUUIKVm8HgtQriHXHLUNIcsY3wO/KL4eudeceq2HkpBR9L4jxHqt2OcrTvNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726291401; c=relaxed/simple;
-	bh=i33NVdGmhxMeJpPIx773VKdMN1cLXUnLKgeBZrGQR08=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gNq4uiUQu9dwog3pn8RvGua3HLYfuOgdyyDfd14UIit1xnTrBWopyMZbrfKEqTuAb0E6LiBjq9j34oOnf+5roQAAhKyDO43W7loLLv2NjoWM0l14lL+Eo5J8STXdC4z2iCHzlBwqxnIK0Z2601vjH4zeBS/FtlvKGsAL8qSsfw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0980547efso9698455ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 22:23:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726291398; x=1726896198;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IuzhE3quXoWLaf8W8LHd6PqdLfaO1wjo2HTcmvuxTMs=;
-        b=sUOZ4UF24nLpE5MP6w9rvzFGwG+jE2xzTHRmW6CHMWl8MPXCWe/ou624NfSaqnqXoi
-         1A/meBuOvK6aaxt3vc+BOJBZ9W4F3Uu1bGzNaIWquwcgyDoWnr+AFEiwzLwl6QuWrrVj
-         E1Af2CgUbWRG4by3oTl0cwh0GtvodbEF7PWdHXzqA57F+KKPssZ4z5qMoR+tVvbu6jgY
-         t/ibYW1HaRf7KFyXzsrbLSf3uO+x9069SQEgUU068+BwOOcW5i0nnm3FnpEKzFPOyrPp
-         P7xUGtaTVQe8i/4FfWUi6ktKRi3Yq8SSmoRmuDPOcdw6YlGS4VADWB01SZ1oIJ+cBbZS
-         ijkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfCF83Psmb/YMVdU0DbyWiDA4VWGBCqNrwt0XfmDryK0g+dP5g98YaFf/Q5JPf9ciKsSH+xeSH1Z+tUzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmde0HGv3mecd10UGzpKRN/3BYRVfAHoQPGTpzMshN2cLXAQ1/
-	Po/QOH/YMkb85jGe1TR4F0K+F5SLC2n6eqo3WbBKnQ4ngdD9/wCcLFGkEDtUNrh3S9JtServlhr
-	bCfKGHS+tLWCOFIXYAfjLbIPowJ9is9oW/6jKrR/dmCsNFnjrKxTYSww=
-X-Google-Smtp-Source: AGHT+IEbbFc37o2ptQHTdnWKtB/vdHibyHqRMZ8AaBxIxHXoQX9APBMTiZgUJxUiynqm2f+WNBOKabIpOX2h8lLapdkt2eshK99W
+	s=arc-20240116; t=1726291532; c=relaxed/simple;
+	bh=y10UL2fiKM6zXqdv45T+NCDp2jd43U6zrfE3QLH15qU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NsGv82Q8wX5Efa/oD1YErUaSDM4yaydaiHD8YxIIP047z2/vpmfD/4YHOgSguLLuQrVB87Di/E6905AiLkjsKTH2Q19+66vp26IygDSdmL0Y+ylKYsFtew0OR8agTQEyAzXqOCzz3cSACKqwuhvRm28pBzPhB5JvoJr7fPcMvG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPLP5TJY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 541BAC4CECC;
+	Sat, 14 Sep 2024 05:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726291532;
+	bh=y10UL2fiKM6zXqdv45T+NCDp2jd43U6zrfE3QLH15qU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=nPLP5TJYWkdJdEgOCEQ5vpb+KiRf/nRbnZ+G9jyjppMeoMFCGpD4ZQSdvHkYqtiCS
+	 O9ySghrOtoXSZwuLmg/P635Lw4E2/2aiFzCtozHyXxFz9D/K8vB97L1FBkxC8CnNsF
+	 WwoTJWdjIcYbospS/JHpDPpOWjKC+FMHe+teS1gQd2/7AMcPcU2Lmeccqod6S44pr8
+	 gEOy4obLpVGS41j5G69tQsHkNvF8FHyCFMTexFSQVqosbku6Y/AZye6Xh51fPSXVIQ
+	 1F5a69Cn7AiRkDn0rLrUr3bVoVzjtmOp3KtPkQsOKLk7pBT7dCK1PiWg3/46+Jr96V
+	 xKtXcwJ23cLOg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD82FA374E;
+	Sat, 14 Sep 2024 05:25:32 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH 0/5] Add A5 SoC PLLs and Peripheral clock
+Date: Sat, 14 Sep 2024 13:25:22 +0800
+Message-Id: <20240914-a5-clk-v1-0-5ee2c4f1b08c@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c549:0:b0:383:4a12:b77c with SMTP id
- e9e14a558f8ab-3a084902ac6mr97962545ab.8.1726291398627; Fri, 13 Sep 2024
- 22:23:18 -0700 (PDT)
-Date: Fri, 13 Sep 2024 22:23:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000098231306220d8972@google.com>
-Subject: [syzbot] [mm?] [cgroups?] possible deadlock in refill_stock
-From: syzbot <syzbot+dfd0410e573d2afac470@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org, 
-	muchun.song@linux.dev, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEIe5WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0ND3URT3eScbF1j02QTy8TkJGOTVEMloOKCotS0zAqwQdGxtbUAVqX
+ Sv1gAAAA=
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726291530; l=1750;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=y10UL2fiKM6zXqdv45T+NCDp2jd43U6zrfE3QLH15qU=;
+ b=sUAB/u6hyKEzqV+R2fe113uLL+QgpGEdnrQzsqmHoS4LtwcUOpqrDytQM0YYlyT5HmDUqn3l5
+ n9qfi5GZ0DwBdITVtOTKWoe3YbR/qVjhcoZn7RJXksRTcBduZShmnUR
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-Hello,
+The patchset adds support for the peripheral and PLL clock controller
+found on the Amlogic A5 SoC family, such as A113X2.
 
-syzbot found the following issue on:
+Some clocks are provided by security zones. These clock accessed
+througth SCMI driver in linux, inlcuding OSC, SYS_CLK, AXI_CLK,
+CPU_CLK, DSU_CLK, GP1_PLL, FIXED_PLL_DCO, FIXED_PLL, SYS_PLL_DIV16,
+ACLKM, CPU_CLK_DIV16, FCLK_50M_PREDIV, FCLK_50M_DIV, FCLK_50M, 
+FCLK_DIV2_DIV, FCLK_DIV2, FCLK_DIV2P5_DIV, FCLK_DIV2P5, FCLK_DIV3_DIV,
+FCLK_DIV3, FCLK_DIV4_DIV, FCLK_DIV4, FCLK_DIV5_DIV, FCLK_DIV5,
+FCLK_DIV7_DIV and FCLK_DIV7.
 
-HEAD commit:    bc83b4d1f086 Merge tag 'bcachefs-2024-09-09' of git://evil..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1781a807980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
-dashboard link: https://syzkaller.appspot.com/bug?extid=dfd0410e573d2afac470
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/beba571a2693/disk-bc83b4d1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/827e1dae7a22/vmlinux-bc83b4d1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5a6d2fb15704/bzImage-bc83b4d1.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dfd0410e573d2afac470@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc7-syzkaller-00017-gbc83b4d1f086 #0 Not tainted
-------------------------------------------------------
-syz-executor/5237 is trying to acquire lock:
-ffff8880b893e158 (&pool->lock){-.-.}-{2:2}, at: __queue_work+0x759/0xf50
-
-but task is already holding lock:
-ffff8880b89394f8 (stock_lock){..-.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
-ffff8880b89394f8 (stock_lock){..-.}-{2:2}, at: refill_stock+0x112/0x470 mm/memcontrol.c:1826
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #4 (stock_lock){..-.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
-       consume_stock mm/memcontrol.c:1741 [inline]
-       try_charge_memcg+0x27e/0x1170 mm/memcontrol.c:2171
-       obj_cgroup_charge_pages+0x91/0x230 mm/memcontrol.c:2660
-       __memcg_kmem_charge_page+0xc8/0x1d0 mm/memcontrol.c:2687
-       __alloc_pages_noprof+0x28c/0x6c0 mm/page_alloc.c:4719
-       __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
-       alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
-       ___kmalloc_large_node+0x8b/0x1d0 mm/slub.c:4107
-       __kmalloc_large_node_noprof+0x1a/0x80 mm/slub.c:4134
-       __do_kmalloc_node mm/slub.c:4150 [inline]
-       __kmalloc_node_noprof+0x2d2/0x440 mm/slub.c:4168
-       kmalloc_node_noprof include/linux/slab.h:708 [inline]
-       bpf_map_kmalloc_node+0xd3/0x1c0 kernel/bpf/syscall.c:422
-       lpm_trie_node_alloc kernel/bpf/lpm_trie.c:299 [inline]
-       trie_update_elem+0x1cd/0xc00 kernel/bpf/lpm_trie.c:342
-       bpf_map_update_value+0x4d5/0x540 kernel/bpf/syscall.c:203
-       map_update_elem+0x53a/0x6f0 kernel/bpf/syscall.c:1654
-       __sys_bpf+0x76f/0x810 kernel/bpf/syscall.c:5698
-       __do_sys_bpf kernel/bpf/syscall.c:5817 [inline]
-       __se_sys_bpf kernel/bpf/syscall.c:5815 [inline]
-       __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5815
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #3 (&trie->lock){....}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
-       trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
-       0xffffffffa0000912
-       bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
-       __bpf_prog_run include/linux/filter.h:691 [inline]
-       bpf_prog_run include/linux/filter.h:698 [inline]
-       __bpf_trace_run kernel/trace/bpf_trace.c:2406 [inline]
-       bpf_trace_run4+0x336/0x590 kernel/trace/bpf_trace.c:2449
-       __traceiter_sched_switch+0x9a/0xd0 include/trace/events/sched.h:222
-       trace_sched_switch include/trace/events/sched.h:222 [inline]
-       __schedule+0x2591/0x4a60 kernel/sched/core.c:6526
-       __schedule_loop kernel/sched/core.c:6606 [inline]
-       schedule+0x14b/0x320 kernel/sched/core.c:6621
-       futex_wait_queue+0x14e/0x1d0 kernel/futex/waitwake.c:370
-       __futex_wait+0x17f/0x320 kernel/futex/waitwake.c:669
-       futex_wait+0x101/0x360 kernel/futex/waitwake.c:697
-       do_futex+0x33b/0x560 kernel/futex/syscalls.c:102
-       __do_sys_futex kernel/futex/syscalls.c:179 [inline]
-       __se_sys_futex+0x3f9/0x480 kernel/futex/syscalls.c:160
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&rq->__lock){-.-.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
-       raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
-       raw_spin_rq_lock kernel/sched/sched.h:1415 [inline]
-       rq_lock kernel/sched/sched.h:1714 [inline]
-       task_fork_fair+0x61/0x1e0 kernel/sched/fair.c:12710
-       sched_cgroup_fork+0x37e/0x410 kernel/sched/core.c:4633
-       copy_process+0x2217/0x3dc0 kernel/fork.c:2483
-       kernel_clone+0x226/0x8f0 kernel/fork.c:2781
-       user_mode_thread+0x132/0x1a0 kernel/fork.c:2859
-       rest_init+0x23/0x300 init/main.c:712
-       start_kernel+0x47a/0x500 init/main.c:1103
-       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
-       x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
-       common_startup_64+0x13e/0x147
-
--> #1 (&p->pi_lock){-.-.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
-       class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
-       try_to_wake_up+0xb0/0x1470 kernel/sched/core.c:4051
-       create_worker+0x507/0x720 kernel/workqueue.c:2827
-       workqueue_init+0x520/0x8a0 kernel/workqueue.c:7841
-       kernel_init_freeable+0x3fe/0x5d0 init/main.c:1562
-       kernel_init+0x1d/0x2b0 init/main.c:1467
-       ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (&pool->lock){-.-.}-{2:2}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
-       _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
-       __queue_work+0x759/0xf50
-       queue_work_on+0x1c2/0x380 kernel/workqueue.c:2392
-       percpu_ref_put_many include/linux/percpu-refcount.h:335 [inline]
-       percpu_ref_put+0x178/0x180 include/linux/percpu-refcount.h:351
-       css_put include/linux/cgroup_refcnt.h:79 [inline]
-       drain_stock mm/memcontrol.c:1774 [inline]
-       __refill_stock+0x133/0x3e0 mm/memcontrol.c:1811
-       refill_stock+0x1ad/0x470 mm/memcontrol.c:1827
-       try_charge_memcg+0xd73/0x1170 mm/memcontrol.c:2294
-       obj_cgroup_charge_pages+0x91/0x230 mm/memcontrol.c:2660
-       __memcg_kmem_charge_page+0xc8/0x1d0 mm/memcontrol.c:2687
-       __alloc_pages_noprof+0x28c/0x6c0 mm/page_alloc.c:4719
-       alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2263
-       pagetable_alloc_noprof include/linux/mm.h:2872 [inline]
-       __pte_alloc_one_noprof include/asm-generic/pgalloc.h:70 [inline]
-       pte_alloc_one+0x88/0x5d0 arch/x86/mm/pgtable.c:33
-       __pte_alloc+0x79/0x3a0 mm/memory.c:448
-       copy_pte_range mm/memory.c:1106 [inline]
-       copy_pmd_range+0x7ccd/0x8500 mm/memory.c:1252
-       copy_pud_range mm/memory.c:1289 [inline]
-       copy_p4d_range mm/memory.c:1313 [inline]
-       copy_page_range+0x99f/0xe90 mm/memory.c:1411
-       dup_mmap kernel/fork.c:749 [inline]
-       dup_mm kernel/fork.c:1672 [inline]
-       copy_mm+0x11ea/0x1f30 kernel/fork.c:1721
-       copy_process+0x187a/0x3dc0 kernel/fork.c:2374
-       kernel_clone+0x226/0x8f0 kernel/fork.c:2781
-       __do_sys_clone kernel/fork.c:2924 [inline]
-       __se_sys_clone kernel/fork.c:2908 [inline]
-       __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2908
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &pool->lock --> &trie->lock --> stock_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(stock_lock);
-                               lock(&trie->lock);
-                               lock(stock_lock);
-  lock(&pool->lock);
-
- *** DEADLOCK ***
-
-6 locks held by syz-executor/5237:
- #0: ffffffff8e9e5390 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mmap kernel/fork.c:635 [inline]
- #0: ffffffff8e9e5390 (dup_mmap_sem){.+.+}-{0:0}, at: dup_mm kernel/fork.c:1672 [inline]
- #0: ffffffff8e9e5390 (dup_mmap_sem){.+.+}-{0:0}, at: copy_mm+0x277/0x1f30 kernel/fork.c:1721
- #1: ffff88803429b118 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
- #1: ffff88803429b118 (&mm->mmap_lock){++++}-{3:3}, at: dup_mmap kernel/fork.c:636 [inline]
- #1: ffff88803429b118 (&mm->mmap_lock){++++}-{3:3}, at: dup_mm kernel/fork.c:1672 [inline]
- #1: ffff88803429b118 (&mm->mmap_lock){++++}-{3:3}, at: copy_mm+0x29a/0x1f30 kernel/fork.c:1721
- #2: ffff88803429cd98 (&mm->mmap_lock/1){+.+.}-{3:3}, at: mmap_write_lock_nested include/linux/mmap_lock.h:113 [inline]
- #2: ffff88803429cd98 (&mm->mmap_lock/1){+.+.}-{3:3}, at: dup_mmap kernel/fork.c:645 [inline]
- #2: ffff88803429cd98 (&mm->mmap_lock/1){+.+.}-{3:3}, at: dup_mm kernel/fork.c:1672 [inline]
- #2: ffff88803429cd98 (&mm->mmap_lock/1){+.+.}-{3:3}, at: copy_mm+0x3de/0x1f30 kernel/fork.c:1721
- #3: ffff8880b89394f8 (stock_lock){..-.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
- #3: ffff8880b89394f8 (stock_lock){..-.}-{2:2}, at: refill_stock+0x112/0x470 mm/memcontrol.c:1826
- #4: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #4: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #4: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: percpu_ref_put_many include/linux/percpu-refcount.h:330 [inline]
- #4: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: percpu_ref_put+0x19/0x180 include/linux/percpu-refcount.h:351
- #5: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #5: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #5: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: __queue_work+0x199/0xf50 kernel/workqueue.c:2261
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5237 Comm: syz-executor Not tainted 6.11.0-rc7-syzkaller-00017-gbc83b4d1f086 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- __queue_work+0x759/0xf50
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2392
- percpu_ref_put_many include/linux/percpu-refcount.h:335 [inline]
- percpu_ref_put+0x178/0x180 include/linux/percpu-refcount.h:351
- css_put include/linux/cgroup_refcnt.h:79 [inline]
- drain_stock mm/memcontrol.c:1774 [inline]
- __refill_stock+0x133/0x3e0 mm/memcontrol.c:1811
- refill_stock+0x1ad/0x470 mm/memcontrol.c:1827
- try_charge_memcg+0xd73/0x1170 mm/memcontrol.c:2294
- obj_cgroup_charge_pages+0x91/0x230 mm/memcontrol.c:2660
- __memcg_kmem_charge_page+0xc8/0x1d0 mm/memcontrol.c:2687
- __alloc_pages_noprof+0x28c/0x6c0 mm/page_alloc.c:4719
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2263
- pagetable_alloc_noprof include/linux/mm.h:2872 [inline]
- __pte_alloc_one_noprof include/asm-generic/pgalloc.h:70 [inline]
- pte_alloc_one+0x88/0x5d0 arch/x86/mm/pgtable.c:33
- __pte_alloc+0x79/0x3a0 mm/memory.c:448
- copy_pte_range mm/memory.c:1106 [inline]
- copy_pmd_range+0x7ccd/0x8500 mm/memory.c:1252
- copy_pud_range mm/memory.c:1289 [inline]
- copy_p4d_range mm/memory.c:1313 [inline]
- copy_page_range+0x99f/0xe90 mm/memory.c:1411
- dup_mmap kernel/fork.c:749 [inline]
- dup_mm kernel/fork.c:1672 [inline]
- copy_mm+0x11ea/0x1f30 kernel/fork.c:1721
- copy_process+0x187a/0x3dc0 kernel/fork.c:2374
- kernel_clone+0x226/0x8f0 kernel/fork.c:2781
- __do_sys_clone kernel/fork.c:2924 [inline]
- __se_sys_clone kernel/fork.c:2908 [inline]
- __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2908
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc048174753
-Code: 1f 84 00 00 00 00 00 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 35 89 c2 85 c0 75 2c 64 48 8b 04 25 10 00 00
-RSP: 002b:00007ffcadc92ad8 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fc048174753
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 000055557eebb7d0 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000003000d R14: 000000000002fe18 R15: 00007ffcadc92c60
- </TASK>
-
-
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Chuan Liu (5):
+      dt-bindings: clock: add Amlogic A5 PLL clock controller
+      dt-bindings: clock: add Amlogic A5 SCMI clock controller support
+      dt-bindings: clock: add Amlogic A5 peripherals clock controller
+      clk: meson: add support for the A5 SoC PLL clock
+      clk: meson: add A5 clock peripherals controller driver
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ .../clock/amlogic,a5-peripherals-clkc.yaml         |  126 ++
+ .../bindings/clock/amlogic,a5-pll-clkc.yaml        |   62 +
+ drivers/clk/meson/Kconfig                          |   28 +
+ drivers/clk/meson/Makefile                         |    2 +
+ drivers/clk/meson/a5-peripherals.c                 | 1471 ++++++++++++++++++++
+ drivers/clk/meson/a5-pll.c                         |  553 ++++++++
+ .../clock/amlogic,a5-peripherals-clkc.h            |  139 ++
+ include/dt-bindings/clock/amlogic,a5-pll-clkc.h    |   24 +
+ include/dt-bindings/clock/amlogic,a5-scmi-clkc.h   |   37 +
+ 9 files changed, 2442 insertions(+)
+---
+base-commit: c92651b5d51738859098d59692ff8ff4fa85bcd6
+change-id: 20240911-a5-clk-35c49acb34e1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
