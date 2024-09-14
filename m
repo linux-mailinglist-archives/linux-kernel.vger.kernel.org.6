@@ -1,108 +1,167 @@
-Return-Path: <linux-kernel+bounces-329540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794E89792AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:30:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0529792A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242AF1F20F17
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:30:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84F3A1C21169
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6CB1D173A;
-	Sat, 14 Sep 2024 17:30:07 +0000 (UTC)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99CE1D130B;
+	Sat, 14 Sep 2024 17:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cDiQxUVy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E60C1D1721
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 17:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B441CFEC5
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 17:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726335007; cv=none; b=LIu+IMvOh/HDGkeYZi5Hv7fFwDNNX6N8rhPp5KrPHMdhCKziABwRrDbczbn/0G7ghzD3QBKaZJ98mQQznmyUZulJUN8LIHB1/0qRh0n5fJ+U8nOZz/EnywyPBbhDpbYLY5nCGOFE3Gdilc7vE3lf0VMhnZoYzF3kaZrbnstpTXM=
+	t=1726334533; cv=none; b=QcPw/FG72zO5hvWuy5hMiRWyHY722SgeISENfgXtgmhJC8PvhpQRCmtEP/mWcAuxF1mfkmRpX+4yUwDF7gaScQpGwCSZNd3JeOaz7KPvjfGvZeMiaCSi204YTC4PUKHVVBXBN07yprpFOepv63Mu/9k7lbA1baENEbvb5J3yDbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726335007; c=relaxed/simple;
-	bh=7SwQDAyUoFMWzIy3yXdqXJzgfsyJhcb5PxtbX+NzEd4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uYzH3VwMY//fIiiTrgPPoxLffGCbSrm0imAaz3CykJoLDeufI/Qy9aH+Ix/FoB8/KsY631mak3N1hTfTR1jgbnExOFK9ibBHxbscco1nL746YMENPMrUhl66qI9bG75Uz4N6pkYORnZPKtRKhT5ZLnsdsQzWImc6BxmArFrkTig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-X-QQ-mid: bizesmtpip2t1726334958tz8kkms
-X-QQ-Originating-IP: in1OYiiuQTYbide+/sv3GmdQ04ZIDyV4AGI52lnlhok=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 15 Sep 2024 01:29:15 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16676436338478922279
-From: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-To: sre@kernel.org
-Cc: andriy.shevchenko@linux.intel.com,
-	rdunlap@infradead.org,
-	linux-kernel@vger.kernel.org,
-	21210240012@m.fudan.edu.cn,
-	21302010073@m.fudan.edu.cn,
-	Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Subject: [PATCH v2] HSI: ssi_protocol: Fix use after free vulnerability in ssi_protocol Driver Due to Race Condition
-Date: Sun, 15 Sep 2024 01:21:43 +0800
-Message-Id: <20240914172142.328-1-kxwang23@m.fudan.edu.cn>
-X-Mailer: git-send-email 2.39.1.windows.1
+	s=arc-20240116; t=1726334533; c=relaxed/simple;
+	bh=xQFX4Q0Ux4wuliWmkNy0+0kNrGocQMF3qwDpU/ASMx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MvcdLWYyXX8dFi1m1KbxYV3UAOXMusqjVkZ/x8Oo7ZO2oef/99VE2Li8SAX7PZpwls5UOVoVNW1yjiGmhAyL0F9gArEkeXf3TEW06FI9xx/Pkqbu5DpVoWv7JvFO5Ug274pv9O7zjVBbYNhxj1bgiTsd3AAev6KPoL/AJdGQaO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cDiQxUVy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726334529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O7EzSgsDr9r9jIruy2sWZCrY67MSTMTwLiKAaXeqnvA=;
+	b=cDiQxUVyzCTa6kXc4uWo9vpSq52iyWDoEKKZOwmrW3/NcGu4hJYil24Wd1ujIwlaJDh9dU
+	KxI5y1J+nr1QIOKnbNUdkNKY+0tzsFq5/k5aPVkmE4IvRMFg85LIG7zbKtXxGb6IqTCc6t
+	xauxaSDOhBjsaY1sOJZbK14zl5TPGxo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-x083uZMQOLWEIrsA5KYNaw-1; Sat,
+ 14 Sep 2024 13:22:04 -0400
+X-MC-Unique: x083uZMQOLWEIrsA5KYNaw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 16C4E195608B;
+	Sat, 14 Sep 2024 17:22:02 +0000 (UTC)
+Received: from [10.2.16.15] (unknown [10.2.16.15])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 919F31955D44;
+	Sat, 14 Sep 2024 17:21:59 +0000 (UTC)
+Message-ID: <5045fb8b-4968-4b5a-9d9e-1def94308426@redhat.com>
+Date: Sat, 14 Sep 2024 13:21:58 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] locking/osq_lock: The numa-aware lock memory prepare,
+ assign and cleanup.
+To: yongli-oc <yongli-oc@zhaoxin.com>, peterz@infradead.org,
+ mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
+Cc: linux-kernel@vger.kernel.org, yongli@zhaoxin.com, louisqi@zhaoxin.com,
+ cobechen@zhaoxin.com, jiangbowang@zhaoxin.com
+References: <20240914085327.32912-1-yongli-oc@zhaoxin.com>
+ <20240914085327.32912-5-yongli-oc@zhaoxin.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240914085327.32912-5-yongli-oc@zhaoxin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-In the ssi_protocol_probe function, &ssi->work is bound with
-ssip_xmit_work, In ssip_pn_setup, the ssip_pn_xmit function
-within the ssip_pn_ops structure is capable of starting the
-work.
 
-If we remove the module which will call ssi_protocol_remove
-to make a cleanup, it will free ssi through kfree(ssi),
-while the work mentioned above will be used. The sequence
-of operations that may lead to a UAF bug is as follows:
+On 9/14/24 04:53, yongli-oc wrote:
+> The numa-aware lock kernel memory cache preparation, and a
+> workqueue to turn numa-aware lock back to osq lock.
+> The /proc interface. Enable dynamic switch by
+> echo 1 > /proc/zx_numa_lock/dynamic_enable
+>
+> Signed-off-by: yongli-oc <yongli-oc@zhaoxin.com>
+> ---
+>   kernel/locking/zx_numa.c | 537 +++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 537 insertions(+)
+>   create mode 100644 kernel/locking/zx_numa.c
+>
+> diff --git a/kernel/locking/zx_numa.c b/kernel/locking/zx_numa.c
+> new file mode 100644
+> index 000000000000..89df6670a024
+> --- /dev/null
+> +++ b/kernel/locking/zx_numa.c
+> @@ -0,0 +1,537 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Dynamic numa-aware osq lock
+> + * Crossing from numa-aware lock to osq_lock
+> + * Numa lock memory initialize and /proc interface
+> + * Author: LiYong <yongli-oc@zhaoxin.com>
+> + *
+> + */
+> +#include <linux/cpumask.h>
+> +#include <asm/byteorder.h>
+> +#include <asm/kvm_para.h>
+> +#include <linux/percpu.h>
+> +#include <linux/sched.h>
+> +#include <linux/slab.h>
+> +#include <linux/osq_lock.h>
+> +#include <linux/module.h>
+> +#include <linux/proc_fs.h>
+> +#include <linux/seq_file.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/reboot.h>
+> +
+> +#include "numa.h"
+> +#include "numa_osq.h"
+> +
+> +int enable_zx_numa_osq_lock;
+> +struct delayed_work zx_numa_start_work;
+> +struct delayed_work zx_numa_cleanup_work;
+> +
+> +atomic_t numa_count;
+> +struct _numa_buf *zx_numa_entry;
+> +int zx_numa_lock_total = 256;
+> +LIST_HEAD(_zx_numa_head);
+> +LIST_HEAD(_zx_numa_lock_head);
+> +
+> +struct kmem_cache *zx_numa_entry_cachep;
+> +struct kmem_cache *zx_numa_lock_cachep;
+> +int NUMASHIFT;
+> +int NUMACLUSTERS;
+> +static atomic_t lockindex;
+> +int dynamic_enable;
+> +
+> +static const struct numa_cpu_info numa_cpu_list[] = {
+> +	/*feature1=1, a numa node includes two clusters*/
+> +	//{1, 23, X86_VENDOR_AMD, 0, 1},
+> +	{0x5b, 7, X86_VENDOR_CENTAUR, 0, 1},
+> +	{0x5b, 7, X86_VENDOR_ZHAOXIN, 0, 1}
+> +};
 
-CPU0                                    CPU1
+Why are this zx_*() code specifically for ZhaoXin and Centaur family of 
+CPUs? Are there some special hardware features that are specific to 
+these CPUs?
 
-                        | ssip_xmit_work
-ssi_protocol_remove     |
-kfree(ssi);             |
-                        | struct hsi_client *cl = ssi->cl;
-                        | // use ssi
+BTW, your patch series lacks performance data to justify the addition of 
+quite a lot of complexity to the core locking code. We are unlikely to 
+take this without sufficient justification.
 
-Fix it by ensuring that the work is canceled before proceeding
-with the cleanup in ssi_protocol_remove.
+Another question that I have is that the base osq_lock() can coexist 
+with your xz_osq_lock(). A cpu can dynamically switch from using 
+osq_lock() to xz_osq_lock() and vice versa. What happens if some CPUs 
+use osq_lock() while others use xz_osq_lock()? Will that cause a 
+problem? Have you fully test this scenario to make sure that nothing 
+breaks?
 
-Signed-off-by: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
----
-v2:
-- cancel the work in ssip_reset(), suggested by Sebastian
-- add the Acked-by label from Andy
-- Link to v1: https://lore.kernel.org/r/20240911151915.844957-1-kxwang23@m.fudan.edu.cn
----
- drivers/hsi/clients/ssi_protocol.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi_protocol.c
-index afe470f3661c..6105ea9a6c6a 100644
---- a/drivers/hsi/clients/ssi_protocol.c
-+++ b/drivers/hsi/clients/ssi_protocol.c
-@@ -401,6 +401,7 @@ static void ssip_reset(struct hsi_client *cl)
- 	del_timer(&ssi->rx_wd);
- 	del_timer(&ssi->tx_wd);
- 	del_timer(&ssi->keep_alive);
-+	cancel_work_sync(&ssi->work);
- 	ssi->main_state = 0;
- 	ssi->send_state = 0;
- 	ssi->recv_state = 0;
--- 
-2.39.1.windows.1
+Cheers,
+Longman
 
 
