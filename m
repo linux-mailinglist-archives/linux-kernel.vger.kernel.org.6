@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-329043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73812978C61
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:15:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF7A978C63
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D1D928134F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:15:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B54C71F23318
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73524DA1F;
-	Sat, 14 Sep 2024 01:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63EB79B8E;
+	Sat, 14 Sep 2024 01:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lHNB1SQS"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kHbRyYqq"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12B13CF5E
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 01:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1B14C634
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 01:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726276445; cv=none; b=Epc0qlxuwf4YHVZFfq2/pa+88zNt1RLx1tt7U2WDPxg2xLqKfzpmkuPER/ZBv0ByDhslzQPGBwLIXTw58u+J4s0HFWNAVWxrIBXQ6IBA1FYKvLn4FnyvJn71U4Q71ltNIpvgZQNDiNCr3ZZs4tRP+Ki+xta8mDTzqSxJJxX944U=
+	t=1726276447; cv=none; b=NFKHoJnrOYD3lHQ8BtEPr4g9kLFFOtjVP1PRrYw3VyESp77JiZ0LLL2FwlzZp/Vmb/aKwe+W1qZkG0/rMD+JQb5TAZPXE0g3KzyhUQ8JPEu64iVcUpDmo/UUjXT8OOGvqKNnussXrXilwjNwK9EK2VYI3gKS+Ijbbl8tcIxlVOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726276445; c=relaxed/simple;
-	bh=8hGFnDmx97YvmntVh7A6887mN5n1bo6yLTTUAOGk2Z0=;
+	s=arc-20240116; t=1726276447; c=relaxed/simple;
+	bh=ueTthrEQY4cNvAirvvTM1EwBWy+xGQEqZyqx9AKteTI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gQABz3nGvDDWBoQwP/RACcRTCnyV31JgvPkmtqlQZ2IE5TzujdZiSc+nZjw1IGkXdJjJxvdiZUv7i0UAtD1Q5ZrdsMGgCpwYtgqzyMNykrZOIPTgBUet8eP0X6bgex84GkR8ffl5BFOJIPJW7PEYc/IHSV+j14Di78omDwi8jDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lHNB1SQS; arc=none smtp.client-ip=209.85.219.202
+	 To:Cc:Content-Type; b=LSsIgFenhbaHep3qHfuCgJ0rQ9yT5XA9Oe6MLxAKJiIwmHJL0JgqIgHnQogfcvucjjpAq36QIqQkZo/DUm6mMp3AYPZOskh9LyXamVNKNQK1DOqRfwRcF2FwXllKNSLiECAIMRxCv3Za33tNkEvbcDwP3BJMTWgwSMUSd97FBBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kHbRyYqq; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1e275db7faso33379276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:14:03 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7db1762d70fso1289750a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:14:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726276443; x=1726881243; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1726276445; x=1726881245; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=/wusTrY/RaRpW8ZSA2W7PXFPM2ScRlEcVob6BeeQf34=;
-        b=lHNB1SQSKi16zGJR5BT2upfl57z+qabwnPGnzSFfwhQI0nrPF9DFW0zq77gheiU/4T
-         wu0KpttkVuidniVrRh5jbW2YQE4lyX/tlMRqIQIGSz+PDLFwQ/8JZrQ+u8rbUcmBtv82
-         Fdg/yTCMDvbdiFAVyH67C+ku+6mggTS7oLczIcExton3DsfJLIWIlcnKNNa374x3uj/3
-         CcyRn9rC+V5Yp00YCg0JlsLGE/blNdNnuZ26vwnB+kFYU3DpBJtWNqBeI8da1j2zoxie
-         kYGeIQS2DeRjn1eSTDIGGdxgdQMEb3JnjHaRoOY/1ijHFs+mz4wnzcgkG4eYBjmxL9Zn
-         LGGA==
+        bh=bua2CGp90GMqWxyby2eury6z0g1PZdHKdvB/SsXzYTk=;
+        b=kHbRyYqqOkQBM2DmRsziLrd4A6/DtxZzBPpryu8uLJbbD/eVvxAJrAQEV91wlnGYCZ
+         YOZwJqGP30LoboeUt90v59lUx6AAot6EoSfb6m5AAM8StLlGxpb3opxAabjMN7H2qJaQ
+         qB3si5v+cFspqRzSY1oGz8mFegdf+Vc8kKhLiFxxt2IPXaP+bv61+zwbZBUPCRM3/6il
+         uTMT3HsEyCeBvOIfXEbnTOLQ/M1/oBISRcQqYOl13RSjQLWHc+RLmHd0uMLjxq4Ym12/
+         q3xHosPDJwUCOupdJxIYZI77eGTYN0rwk3JSUEbL9tqpwFIiYVxBCeTJxyEVhOmyDYqw
+         kQOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726276443; x=1726881243;
+        d=1e100.net; s=20230601; t=1726276445; x=1726881245;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/wusTrY/RaRpW8ZSA2W7PXFPM2ScRlEcVob6BeeQf34=;
-        b=GzTlfN2K4638u4dbJ6WLoDaocRhu3N4Dm8DCaAheGD1uXkHghikcfaolqDEV7iLqSr
-         8iXoK9qUdjEHct9iyUdLQ+6Sza44MisqzLG5KJO0GsYoH/Z3+2Oehl3Ls1Fe9wS4yPRS
-         A2uo4B6DpRqCOayZl/AWqD/YglaGLG3fg7ugnXltZOmg2VL8gLdEQIzvnIjxm3VEIVUE
-         8UFvJKdpwPsyQJk30B1bg3U00oe1v/ZdnJpcV0PtHGUea6DugIEekFU470O5zr1AsIwv
-         Xqlj6VUY4+RMOSJx4eBxPFg+g0xQDvYYEHsvXlvsiz5rLixq+mcZ75yfQRrbQ7oj3Zfm
-         uNLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXolixbFeSC+d7ZS+OsnmVXI9bDusDhLHs6nbEyxjai2Ktwbvdwz6ZHJgwGNkaPow4F0/1fmvmjFFh67HQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN3zZKGF+31owHl6xXgmuJcMVQei4dJ32xUDczOGMJIOU6y710
-	SU5UGsVR7bLcrGfWnjgOKQ36ykWjRcaB2iGWXHK7xa/hdf2U0bc2NrNOwlrY/mAC6OEkTvVDJ5N
-	jJg==
-X-Google-Smtp-Source: AGHT+IGqMoVw7IyDOoeQsf0VKAfkCs3rgUl0XVcRxqiZgLjIaoMEzdFDDd3f9P30bTFCqJfct6AgL/JcPJU=
+        bh=bua2CGp90GMqWxyby2eury6z0g1PZdHKdvB/SsXzYTk=;
+        b=JBVB3yokHxr3QidJUBW9W6Sd/Ic2AYzvMcai13FNPAsNKjC8O49QvCxdKAi78isg2U
+         ybtZn0snqh7ZtnyNmlLNw7Q4lzB3aoLqlCeEAg8Lmi0XMS1ElXMlAtJ+F3J3HjQezXz6
+         BPrE92AtWN+jSfmv5+AI7E5EZeo7z2yvnsKUFr4bjMFtECUL/FD7RkbpGtINHeUJNTS7
+         35gfDnAdM/tSxDK628CDMBFoE7ZWb2deMIbo1rKmtahX5bDgFPmCcOJPhx8Xsuu3GF9N
+         LqvCP0h918H2NDVaKkzNhbo7ffvEsVkhxX9jMqeaED1XQcw5MsHDsGRp1i6LGYc4vP4G
+         2oCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFop6RV8vAnygY4ei291xgsz9rrGrc8bAakDz5BcOXtz8fPDtucl9MntIcUCbnE10daFMIUKoo98/h9tU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSN6gzKFp5kk/3O+nRNcM5Idgx9198CsPfmozlGoHxOgrC62YS
+	57BgP+LU7c9uJHUjbKz9xHexv57hIlo8q6+NdQz268wt2FnIUggE8jsncKJSg3F5J1XEc1SILFe
+	BjQ==
+X-Google-Smtp-Source: AGHT+IH1qTrcj2HMLhVi3ezfOjPimwI0P7CmQRAFQ43pU1GOSoiXdDDc8TSs3tVwUpDNu2HV+s0zQEbJQzM=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:6890:0:b0:e16:55e7:5138 with SMTP id
- 3f1490d57ef6-e1d9daabfb5mr12120276.0.1726276442805; Fri, 13 Sep 2024 18:14:02
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:f88:b0:7d5:e79:3a99 with SMTP id
+ 41be03b00d2f7-7db2f6f4a38mr9908a12.1.1726276444956; Fri, 13 Sep 2024 18:14:04
  -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 13 Sep 2024 18:13:47 -0700
+Date: Fri, 13 Sep 2024 18:13:48 -0700
 In-Reply-To: <20240914011348.2558415-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,15 +75,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240914011348.2558415-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
-Message-ID: <20240914011348.2558415-7-seanjc@google.com>
-Subject: [GIT PULL] KVM: x86: SVM changes for 6.12
+Message-ID: <20240914011348.2558415-8-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86: VMX changes for 6.12
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-I got nothing clever or interesting to say for this one.
+The highlight is a fix for nested posted interrupts that shows up on CPUs with
+IPI virtualization.  If KVM ends up handling an L1 virtual IRQ for L2's posted
+interrupt notification vector, KVM will incorrectly synthesize a VM-Exit to L1
+instead of processing pending posted interrupts.
+
+I am very confident in the fix itself.  The refactorings to land the fix without
+creating a TOCTOU bug on the other hand...  I did my best to test that I didn't
+botch anything, but my first attempt went poorly, and as a result the changes
+haven't been in -next for as long as I'd normally prefer.
 
 The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
@@ -91,39 +99,66 @@ The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
 are available in the Git repository at:
 
-  https://github.com/kvm-x86/linux.git tags/kvm-x86-svm-6.12
+  https://github.com/kvm-x86/linux.git tags/kvm-x86-vmx-6.12
 
-for you to fetch changes up to 4440337af4d415c8abf8b9b0e10c79b7518e6e3c:
+for you to fetch changes up to f3009482512eb057e7161214a068c6bd7bae83a4:
 
-  KVM: SVM: let alternatives handle the cases when RSB filling is required (2024-09-10 10:27:53 -0700)
-
-----------------------------------------------------------------
-KVM SVM changes for 6.12:
-
- - Don't stuff the RSB after VM-Exit when RETPOLINE=y and AutoIBRS is enabled,
-   i.e. when the CPU has already flushed the RSB.
-
- - Trace the per-CPU host save area as a VMCB pointer to improve readability
-   and cleanup the retrieval of the SEV-ES host save area.
-
- - Remove unnecessary accounting of temporary nested VMCB related allocations.
+  KVM: VMX: Set PFERR_GUEST_{FINAL,PAGE}_MASK if and only if the GVA is valid (2024-09-09 20:33:22 -0700)
 
 ----------------------------------------------------------------
-Amit Shah (1):
-      KVM: SVM: let alternatives handle the cases when RSB filling is required
+KVM VMX changes for 6.12:
 
-Sean Christopherson (3):
-      KVM: SVM: Add a helper to convert a SME-aware PA back to a struct page
-      KVM: SVM: Add host SEV-ES save area structure into VMCB via a union
-      KVM: SVM: Track the per-CPU host save area as a VMCB pointer
+ - Set FINAL/PAGE in the page fault error code for EPT Violations if and only
+   if the GVA is valid.  If the GVA is NOT valid, there is no guest-side page
+   table walk and so stuffing paging related metadata is nonsensical.
 
-Yongqiang Liu (1):
-      KVM: SVM: Remove unnecessary GFP_KERNEL_ACCOUNT in svm_set_nested_state()
+ - Fix a bug where KVM would incorrectly synthesize a nested VM-Exit instead of
+   emulating posted interrupt delivery to L2.
 
- arch/x86/include/asm/svm.h | 20 +++++++++++++++-----
- arch/x86/kvm/svm/nested.c  |  4 ++--
- arch/x86/kvm/svm/svm.c     | 24 ++++++++++++------------
- arch/x86/kvm/svm/svm.h     | 18 ++++++++++++++++--
- arch/x86/kvm/svm/vmenter.S |  8 ++------
- 5 files changed, 47 insertions(+), 27 deletions(-)
+ - Add a lockdep assertion to detect unsafe accesses of vmcs12 structures.
+
+ - Harden eVMCS loading against an impossible NULL pointer deref (really truly
+   should be impossible).
+
+ - Minor SGX fix and a cleanup.
+
+----------------------------------------------------------------
+Kai Huang (2):
+      KVM: VMX: Do not account for temporary memory allocation in ECREATE emulation
+      KVM: VMX: Also clear SGX EDECCSSA in KVM CPU caps when SGX is disabled
+
+Maxim Levitsky (1):
+      KVM: nVMX: Use vmx_segment_cache_clear() instead of open coded equivalent
+
+Qiang Liu (1):
+      KVM: VMX: Modify the BUILD_BUG_ON_MSG of the 32-bit field in the vmcs_check16 function
+
+Sean Christopherson (9):
+      KVM: nVMX: Honor userspace MSR filter lists for nested VM-Enter/VM-Exit
+      KVM: x86: Move "ack" phase of local APIC IRQ delivery to separate API
+      KVM: nVMX: Get to-be-acknowledge IRQ for nested VM-Exit at injection site
+      KVM: nVMX: Suppress external interrupt VM-Exit injection if there's no IRQ
+      KVM: nVMX: Detect nested posted interrupt NV at nested VM-Exit injection
+      KVM: x86: Fold kvm_get_apic_interrupt() into kvm_cpu_get_interrupt()
+      KVM: nVMX: Explicitly invalidate posted_intr_nv if PI is disabled at VM-Enter
+      KVM: nVMX: Assert that vcpu->mutex is held when accessing secondary VMCSes
+      KVM: VMX: Set PFERR_GUEST_{FINAL,PAGE}_MASK if and only if the GVA is valid
+
+Vitaly Kuznetsov (1):
+      KVM: VMX: hyper-v: Prevent impossible NULL pointer dereference in evmcs_load()
+
+ Documentation/virt/kvm/api.rst  | 23 ++++++++++---
+ arch/x86/include/asm/kvm_host.h |  3 ++
+ arch/x86/kvm/irq.c              | 10 ++++--
+ arch/x86/kvm/lapic.c            |  9 +++---
+ arch/x86/kvm/lapic.h            |  2 +-
+ arch/x86/kvm/vmx/nested.c       | 72 ++++++++++++++++++++++++++++++-----------
+ arch/x86/kvm/vmx/nested.h       |  6 ++++
+ arch/x86/kvm/vmx/sgx.c          |  2 +-
+ arch/x86/kvm/vmx/vmx.c          | 17 ++++++----
+ arch/x86/kvm/vmx/vmx.h          |  5 +++
+ arch/x86/kvm/vmx/vmx_onhyperv.h |  8 +++++
+ arch/x86/kvm/vmx/vmx_ops.h      |  2 +-
+ arch/x86/kvm/x86.c              |  6 ++--
+ 13 files changed, 124 insertions(+), 41 deletions(-)
 
