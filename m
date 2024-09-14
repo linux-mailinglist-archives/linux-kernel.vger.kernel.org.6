@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-329428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6F697912B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:55:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE22979132
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06CF51C213A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 018AA1C215C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520C21CF7B5;
-	Sat, 14 Sep 2024 13:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FADE1CF7C9;
+	Sat, 14 Sep 2024 13:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H50Xks3a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9AVMNS7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03641805E;
-	Sat, 14 Sep 2024 13:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8144C83;
+	Sat, 14 Sep 2024 13:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726322094; cv=none; b=LIdQJk5WyuW4QUYXNpUGuJocih9l8xk1aTINCm+ubIJlApM9RtzMfbmLRPuURaGjghlOqmkNOQ96HywGYzohlBJPagLjxDHc0C/6Fi/WOqAE7E7TOqDbqEZjJ3dZwGxi8tlVoEKXAcKbFn5oHTQUQqAAhYBG4PNFXXv66JY9jLY=
+	t=1726322198; cv=none; b=NriyPXAqJXnjGpAYhVdZOMBtMw/xHzwUhg5nbdFLZxOhUUioga4X+9ePB9bkjXRRDQFt6c/JASwDJoQfdbAAKWQvJKvV2kDm6b9W9SjNqD51Mztqs4RFQnr3WS4Y4h47jkIQp9uLTfVmDyV7vgZv1vOetMiKDy6HibA8McuEWkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726322094; c=relaxed/simple;
-	bh=JrebZ837oqXThXWh5gHfZwkNjkE9AsmhlzJxcIgo9P8=;
+	s=arc-20240116; t=1726322198; c=relaxed/simple;
+	bh=6+KW+N3O29ycU1LxFNHsVlvBd5v1NjovqOllP2HXLlE=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eoei4EL2HFwOUiIL59LzHaZ6GWKtLNQ9jwW7994puFzmXfA9eC8qkSTs+NnVF3UgwSzb7r+O7oD/b67IUaKMB/QT6YlAsOAEG8UQUYZY3+pEQfAVw2HGfR5L7Mtatz+gtT42WhO31BLrXIvTJCaoZ17zdlAV49K7cTdCGmGIaXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H50Xks3a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74670C4CEC0;
-	Sat, 14 Sep 2024 13:54:52 +0000 (UTC)
+	 MIME-Version:Content-Type; b=pSWgWdX7V56IfO+RD8wsnf3dBVXUqWzlHsyaPCPP8Ui6w6k08nc5q3YDkv17AwxVe+xphIJSH7iqQjZACzpXaB+x6S13mqPKOCxLnYkOKiGl0ocXy5h7llbCY2CoVlQzweC6UJnfV2PA2kYskFzqnJixX/Es8DuDfhAOjVhCSVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9AVMNS7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F03C4CEC0;
+	Sat, 14 Sep 2024 13:56:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726322094;
-	bh=JrebZ837oqXThXWh5gHfZwkNjkE9AsmhlzJxcIgo9P8=;
+	s=k20201202; t=1726322198;
+	bh=6+KW+N3O29ycU1LxFNHsVlvBd5v1NjovqOllP2HXLlE=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=H50Xks3aTGWr2g3X77sUjxdqsIWMn7okkp9/8fhZM8bZfHJ31Gcpy6axz5aXnVEaP
-	 6zZKw119c5HAWCJLaEBbgdxezj35SlEiJs/rB5o4pEsZfSBL2d9Wh/CCy5U10AmQE/
-	 VC78dw3YHCUx7ImM1i4D9Bh0ycniSdUYoCVrVLOZlyoR/2WWbmCuFpOABddblqX71q
-	 gjPzLB5lha9RNHxKr10ZREsIXBHLuevKCfJ2d1x72e0stogjWxe3rp7YNHA1YZoyw8
-	 EQt9tfl4I9oeUHjrlMcH03DzhPVgvrI9wiFZktHPf6EHRkZrnYl9JZyYXbfnsX4PoZ
-	 4zYx8Rv8i9DWg==
-Date: Sat, 14 Sep 2024 14:54:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] iio: light: ltr390: Add interrupt persistance
- support
-Message-ID: <20240914145446.21dfddec@jic23-huawei>
-In-Reply-To: <20240910045030.266946-5-abhashkumarjha123@gmail.com>
-References: <20240910045030.266946-1-abhashkumarjha123@gmail.com>
-	<20240910045030.266946-5-abhashkumarjha123@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	b=s9AVMNS7bmD02ML3MIkas/tNGuOxttmTc9ODXhXahXCKdavDLAUfZTCPDXhlyo02c
+	 LiiPV+HY3UqiDmBDkoCEy5D/E5ubyxcMgD+U39NfIoXcmyqzyUP4nxGkKkibnE+1bd
+	 pG2t8x+KBbVheOy09IIvc4j6agaQuk3TQs36OxjpDkpQiUjvej5KWRU6OT0puTs2yD
+	 02o/76Y+3K6lfjHYN1L2KrV80X+cUAudzEB2A4ObnVK2vqaTpK+jx5vDA5Chl1DaYC
+	 iN9sc/Hk97mvgjjh/OEfGihkN31U7ykEpkUSeap/V9nYFG5FbEFHUuj8K1PtnUBs+X
+	 IceNv9NeHeJCA==
+Date: Sat, 14 Sep 2024 06:56:36 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: <bryan.whitehead@microchip.com>, <davem@davemloft.net>,
+ <edumazet@google.com>, <pabeni@redhat.com>, <anna-maria@linutronix.de>,
+ <frederic@kernel.org>, <tglx@linutronix.de>, <richardcochran@gmail.com>,
+ <UNGLinuxDriver@microchip.com>, <mbenes@suse.cz>, <jstultz@google.com>,
+ <andrew@lunn.ch>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next v4 2/2] net: lan743x: Remove duplicate check
+Message-ID: <20240914065636.71aa64d5@kernel.org>
+In-Reply-To: <20240914100625.414013-3-ruanjinjie@huawei.com>
+References: <20240914100625.414013-1-ruanjinjie@huawei.com>
+	<20240914100625.414013-3-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,34 +62,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 10 Sep 2024 10:20:29 +0530
-Abhash Jha <abhashkumarjha123@gmail.com> wrote:
+On Sat, 14 Sep 2024 18:06:25 +0800 Jinjie Ruan wrote:
+> Since timespec64_valid() has been checked in higher layer
+> pc_clock_settime(), the duplicate check in lan743x_ptpci_settime64()
+> can be removed.
 
-> Added support to configure the threshold interrupt persistance value by
-> providing IIO_EV_INFO_PERIOD attribute. The value written to the
-> attribute should be in miliseconds and should be greater than the
-> sampling rate of the sensor.
-> 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
-> ---
->  drivers/iio/light/ltr390.c | 66 +++++++++++++++++++++++++++++++++++---
->  1 file changed, 62 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-> index 8a8a118ca..9706105c6 100644
-> --- a/drivers/iio/light/ltr390.c
-> +++ b/drivers/iio/light/ltr390.c
-> @@ -40,6 +40,7 @@
-
->  
-> -static int ltr390_get_samp_freq(struct ltr390_data *data)
-> +static int ltr390_get_samp_freq_or_period(struct ltr390_data *data, enum ltr390_meas_rate option)
-
-Wrap this as the line is getting too long.
-
-Otherwise LGTM
-
-Thanks,
-
-Jonathan
+net-next is closed until the end of the 6.12 merge window:
+https://lore.kernel.org/all/20240912181222.2dd75818@kernel.org/
+please repost when it reopens
+-- 
+pw-bot: defer
 
