@@ -1,112 +1,152 @@
-Return-Path: <linux-kernel+bounces-329375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05837979083
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:30:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE9F979086
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A39C7B231CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:30:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F41A1C21B6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AD31CF2A3;
-	Sat, 14 Sep 2024 11:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7681CF2A3;
+	Sat, 14 Sep 2024 11:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="skuqOD8j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixU4HPOP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ED212C54D;
-	Sat, 14 Sep 2024 11:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042D41DA5E;
+	Sat, 14 Sep 2024 11:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726313383; cv=none; b=FRrkk5XARqLLjdLAKt7C5F1VFl2nPj7vzRnMEQlzhei6kY/QvhJH4Q+Z4Xd3ZLTQel5Orns5b07zRfyYMF2m3fSRFxKyyYEQwYK1tc8n6a+Tp6/OQP9/aSy//bG4ikvbzk6Ey9EguIHPyQmJALs/CBxtzD/Mlah9/JrXY84Z+oY=
+	t=1726313603; cv=none; b=dGkjv/k7ENUFTQgLsDI3d2Ko8UW1lg7727auCRuWOe0BAIdEcmfBO1PQPvkmMVS2oE9Ivw5ELA/zQ3flD7X9itJLYky7w+xaODKw1aZW/xrd7VttDXTPHAEatRSs86S2bMf4g2CN/jXiS3l7slNJt7FBx0jrVMd+3f6G7ox30gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726313383; c=relaxed/simple;
-	bh=ibWf5h/YDMR7+aYKTl31w6DGDWtFK+8+WSEzQEoJnZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P4Dzee9r3x2qvbS3L55w/BgC/RQUJwCwla24lAQL7SwAuDHlMTvHtGI/hsJyUZGcLHrHthEabDsjZHJR7qzOVXeqW/ECgsj0QIsmoJzX46PF0qgGy1IMW0uYCfFX4tQjkSCKiiSpHIm7yw5Q6QR0kYJS9Lo6gTVkgAmhVkHNYlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=skuqOD8j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C2E0C4CEC0;
-	Sat, 14 Sep 2024 11:29:33 +0000 (UTC)
+	s=arc-20240116; t=1726313603; c=relaxed/simple;
+	bh=N+eA+vXiE+7USFq4J1f1zDHROoHvcWUvof4TiItgmVI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=NkhUmXbP9+ZQd+E69r2ERPGp03/5aWSfZXl8ocx1FZNt1/auMgauxqODjRzIbRh7Gd/dqk5zDfralvfjgVnprarUsyi3dGpoXvoX7tVioUCW03J6mqz7SNZsjMyNUphiCkl0a8U/RidB7tNxO+lIY+emPYm0w/iG7knbNO432pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixU4HPOP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 250CBC4CEC0;
+	Sat, 14 Sep 2024 11:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726313383;
-	bh=ibWf5h/YDMR7+aYKTl31w6DGDWtFK+8+WSEzQEoJnZI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=skuqOD8jLO7TYF3xAdh+YzydIe9lA57IQWVfeOofeb/wdeY9m1D21+O6Sqr+hdQgi
-	 jFDyapW0FM9Psk+p7GcptCxlZ1hj1rFJsFVE7ntKdO1ati3NHnDz6aghSXCPaTwGKj
-	 DWX25ggg7LaRE2kuREHyxIVzW/ji6J5U5lLPWsgY1yN2oPtnTGXKvijlw3lkTANNfM
-	 ewYgVKxuIlVWqPQtNEZj2vTMMDLM+RFNZmaxMdBRZ6/I0uCpFlJvTQF4RS9paQ53Lw
-	 IMypwu06ZvhZncqZwcDmvvso5R0YMRPsl0kuKgET+/MMuC57GXcTktuNg89w8PcwW4
-	 t8oSRpTjCaEoQ==
-Message-ID: <9fee28de-24eb-46b1-aa5b-6febc2972a3c@kernel.org>
-Date: Sat, 14 Sep 2024 13:29:31 +0200
+	s=k20201202; t=1726313602;
+	bh=N+eA+vXiE+7USFq4J1f1zDHROoHvcWUvof4TiItgmVI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ixU4HPOPRYdIdUtrTaqZboeUpxPXGrvxKq6SxuD1L/VhR4wu3lOWD04s/xwMso11v
+	 KGLUvMaYPt2p+vH0C0zizRDKjHB+uprZhIhyekneTUXKc/xYo6H1q4mDkUql+Umg29
+	 6xNxwAC0hT3GiFJhhSW9AW8JFO0ENfgWxdgNs+ncKWQMSOMGriDPrNTK6hT6LLeO80
+	 1AKc1vdtRG3h032tjEhmBRAQStlzUImJcfsdwWhPsoGiXIHRy6FMGlaXLp8E3FwpuA
+	 r24X9GCLEe96mh4NsSZJU30vZHW7n4JO25E6Fw5G9wp8z222AuS17jNJxTuY5XkcDd
+	 gbTS2kzPrLu5g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] phy: qcom: edp: Introduce aux_cfg array for
- version specific aux settings
-To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>, vkoul@kernel.org,
- kishon@kernel.org, konradybcio@kernel.org, andersson@kernel.org,
- simona@ffwll.ch, dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
- robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run,
- marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- quic_khsieh@quicinc.com, konrad.dybcio@linaro.org,
- quic_parellan@quicinc.com, quic_bjorande@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- quic_riteshk@quicinc.com, quic_vproddut@quicinc.com
-References: <20240913103755.7290-1-quic_mukhopad@quicinc.com>
- <20240913103755.7290-3-quic_mukhopad@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240913103755.7290-3-quic_mukhopad@quicinc.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Sat, 14 Sep 2024 14:33:18 +0300
+Message-Id: <D45Z3J2E2MPX.4SDWNGAP3D41@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Chen Ridong" <chenridong@huawei.com>, <dhowells@redhat.com>,
+ <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
+Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <chenridong@huaweicloud.com>
+Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
+ key_task_permission
+X-Mailer: aerc 0.18.2
+References: <20240913070928.1670785-1-chenridong@huawei.com>
+In-Reply-To: <20240913070928.1670785-1-chenridong@huawei.com>
 
-On 13.09.2024 12:37 PM, Soutrik Mukhopadhyay wrote:
-> In order to support different HW versions, introduce aux_cfg array
-> to move v4 specific aux configuration settings.
-> 
-> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+On Fri Sep 13, 2024 at 10:09 AM EEST, Chen Ridong wrote:
+> We meet the same issue with the LINK, which reads memory out of bounds:
+
+Nit: don't use "we" anywhere".
+
+Tbh, I really don't understand the sentence above. I don't what
+"the same issue with the LINK" really is.
+
+> BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uidgid.h:36
+> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63 [inlin=
+e]
+> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
+> security/keys/permission.c:54
+> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
+>
+> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafbffd6c3ede #=
+15
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:82 [inline]
+>  dump_stack+0x107/0x167 lib/dump_stack.c:123
+>  print_address_description.constprop.0+0x19/0x170 mm/kasan/report.c:400
+>  __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
+>  kasan_report+0x3a/0x50 mm/kasan/report.c:585
+>  __kuid_val include/linux/uidgid.h:36 [inline]
+>  uid_eq include/linux/uidgid.h:63 [inline]
+>  key_task_permission+0x394/0x410 security/keys/permission.c:54
+>  search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
+>  keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
+>  search_cred_keyrings_rcu+0x111/0x2e0 security/keys/process_keys.c:459
+>  search_process_keyrings_rcu+0x1d/0x310 security/keys/process_keys.c:544
+>  lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
+>  keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
+>  __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
+>  __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
+>  do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+>  entry_SYSCALL_64_after_hwframe+0x67/0xd1
+>
+> However, we can't reproduce this issue.
+
+"The issue cannot be easily reproduced but by analyzing the code
+it can be broken into following steps:"
+
+> After our analysis, it can make this issue by following steps.
+> 1.As syzkaller reported, the memory is allocated for struct
+>   assoc_array_shortcut in the assoc_array_insert_into_terminal_node
+>   functions.
+> 2.In the search_nested_keyrings, when we go through the slots in a node,
+>   (bellow tag ascend_to_node), and the slot ptr is meta and
+>   node->back_pointer !=3D NULL, we will proceed to  descend_to_node.
+>   However, there is an exception. If node is the root, and one of the
+>   slots points to a shortcut, it will be treated as a keyring.
+> 3.Whether the ptr is keyring decided by keyring_ptr_is_keyring function.
+>   However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
+>   ASSOC_ARRAY_PTR_SUBTYPE_MASK,
+> 4.As mentioned above, If a slot of the root is a shortcut, it may be
+>   mistakenly be transferred to a key*, leading to an read out-of-bounds
+>   read.
+>
+> To fix this issue, one should jump to descend_to_node if the pointer is a
+> shortcut.
+>
+> Link: https://syzkaller.appspot.com/bug?id=3D68a5e206c2a8e08d317eb83f0561=
+0c0484ad10b9
+> Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 > ---
-> v2: Fixed review comments from Bjorn and Dmitry
-> 	- Made aux_cfg array as const.
-> 
-> ---
->  drivers/phy/qualcomm/phy-qcom-edp.c | 37 ++++++++++++++++++-----------
->  1 file changed, 23 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
-> index da2b32fb5b45..bcd5aced9e06 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-edp.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
-> @@ -90,6 +90,7 @@ struct phy_ver_ops {
->  
->  struct qcom_edp_phy_cfg {
->  	bool is_edp;
-> +	const u8 *aux_cfg;
->  	const struct qcom_edp_swing_pre_emph_cfg *swing_pre_emph_cfg;
->  	const struct phy_ver_ops *ver_ops;
->  };
-> @@ -186,11 +187,15 @@ static const struct qcom_edp_swing_pre_emph_cfg edp_phy_swing_pre_emph_cfg = {
->  	.pre_emphasis_hbr3_hbr2 = &edp_pre_emp_hbr2_hbr3,
->  };
->  
-> +static const u8 edp_phy_aux_cfg_v4[10] = {
-> +	0x00, 0x13, 0x24, 0x00, 0x0a, 0x26, 0x0a, 0x03, 0x37, 0x03
-> +};
+>  security/keys/keyring.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+> index 4448758f643a..7958486ac834 100644
+> --- a/security/keys/keyring.c
+> +++ b/security/keys/keyring.c
+> @@ -772,7 +772,9 @@ static bool search_nested_keyrings(struct key *keyrin=
+g,
+>  	for (; slot < ASSOC_ARRAY_FAN_OUT; slot++) {
+>  		ptr =3D READ_ONCE(node->slots[slot]);
+> =20
+> -		if (assoc_array_ptr_is_meta(ptr) && node->back_pointer)
+> +		if ((assoc_array_ptr_is_meta(ptr) && node->back_pointer) ||
+> +		    (assoc_array_ptr_is_meta(ptr) &&
+> +		     assoc_array_ptr_is_shortcut(ptr)))
+>  			goto descend_to_node;
+> =20
+>  		if (!keyring_ptr_is_keyring(ptr))
 
-How about we only abstract the values that differ? It would seem like more
-platforms reuse about half of these magic bytes
 
-Konrad
+BR, Jarkko
 
