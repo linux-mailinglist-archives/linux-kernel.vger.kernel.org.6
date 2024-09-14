@@ -1,55 +1,88 @@
-Return-Path: <linux-kernel+bounces-329483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311F69791E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:46:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B389791DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6CE1F225C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:46:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9086B2257F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B2A1D0970;
-	Sat, 14 Sep 2024 15:46:18 +0000 (UTC)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08191D04BD;
+	Sat, 14 Sep 2024 15:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZs0V33Z"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D836749A;
-	Sat, 14 Sep 2024 15:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0D21E487;
+	Sat, 14 Sep 2024 15:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726328778; cv=none; b=LMbi9J4PtvsuRfD7otxXG3EY1zpL2dgYFIqQdICPNde39citMJzkfs3DLq40HdeyzkPsFWRr2K5Y1g3+hkAeSBkjhvD+9UK3YKIeyhD5nxdyRq1f/YppcbgFvDlFfIVM6RL2Z6FpxVUwvhr9wbQ92a+vWfD9MmU/7I4bUqxSrTc=
+	t=1726328456; cv=none; b=rnAk11EM8Qe11jeGLI6YQr+WN9VKxTMX2KwtgmKlSOMK6ihibjdruIMyq9K+P3Uzbk/+ote6g7vcdNDk8cdnvSJdNsDIIbojh3rVqkYhU7lylkM2F+DZh5P9zJhqGmX35ViS/bqGOrBSTQPLz/MC6dXhmdyxsCAY+l8hQmOwtu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726328778; c=relaxed/simple;
-	bh=20+yhgT9p/xQ8QoCmoOGZLzO+I0VmtTVue4TDZWkL4g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q6dOc95BCqYsVwEU2cFFKbI5vSfFxFsdk2HbeNH3WYVs/5FcwppzodeER7bta2/G2lKuo0orIHZFOjrJgEWMJY64aWD1mnbVkPSqvqSaBjfIhseXiL80OtQyIKgRcyRUpgbi6NDm2R13d2gUEQPnxgL3J2SirDOg4eR9D+cd/G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-X-QQ-mid: bizesmtpip3t1726328721td2rd4i
-X-QQ-Originating-IP: C+8UI1lNAvQxIkMuI2KqnBuNs/WHZRtwxSlHtl4LGQ4=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 14 Sep 2024 23:45:18 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6681894478682742638
-From: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-To: miquel.raynal@bootlin.com
-Cc: 21210240012@m.fudan.edu.cn,
-	21302010073@m.fudan.edu.cn,
-	conor.culhane@silvaco.com,
-	alexandre.belloni@bootlin.com,
-	linux-i3c@lists.infradead.org,
+	s=arc-20240116; t=1726328456; c=relaxed/simple;
+	bh=hGrn4Ijr2Ad5CTcvel+OIItNtTnloC9BiAfdHwX3gm0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g6GIM1KgvudI2d1r/iXYLGj9SjXpjnAZyAo2lgCXepYyp70DUiINRAn8kTm3cVujklhsCG85y9dGyZm8aRvRVJmx2B4l4RAp28p2uKyTKnW7B8utLC3IgoOEshK78CvGm1tA1eSa8JgL3VZsk63hfTwpE95ufwfdiBugfB/L2sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZs0V33Z; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7cf5e179b68so2567431a12.1;
+        Sat, 14 Sep 2024 08:40:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726328454; x=1726933254; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dNXiVc6HBB/MX7lj3NuFCRwP2pO9DqNplr5Vwya/2lI=;
+        b=RZs0V33ZpGKyrV29EW60Tly3CaqDXJk8akrCg+4x/qdSuUujymSLO/hVvh+y3UqFuh
+         g7PV1fAW331iaLDU+ZFoCoiYFWsAcy1iSxrDzl0xUxGF+04r6aA+QhCSv/ZLHVSv//4o
+         DaeOj3BVAC4SGrUt1XUqJP/eRoJGo2e7S5W3kNohz7uvZ4nO72tEJd9JC/SEIdFm27U2
+         jhzDn936ai6CcoLKf0Jp6sxE1i5g8x4/YrKajL3vNl5WtxpGb0vPfIhOaGakHRTs36Ie
+         qYP2A5wPtC3YdLRfMHDyCrXb6WvBkOAWBjK1y/iW51B1Dyt9taxjWVZruFwNnuX1q5wS
+         tN7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726328454; x=1726933254;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dNXiVc6HBB/MX7lj3NuFCRwP2pO9DqNplr5Vwya/2lI=;
+        b=WIHY1ZfJL3vxlrhnDsOwcrqEujn/4PYXY5OIMHgCTfS4uNlBLBn+urnahUjUPABheP
+         RihwZwfp07TfH3O3fYvwh/hdnVRRcfoZFfmIGMq+R+InRg8+fVflWdO5HZrvC/Ew5pYx
+         1C+0rgdmZ4muK2H59T0mpCnOylLPT/w25b4Tb/0Wvh0kY5vS+SaFik2tm3lnfcxsfBmw
+         i85b94e+ZkfZm0cp+Zwx2Q+2zCm4umwSHUicqV4sjS3xb1hAyy9vk7ni7zvrgIKVn2iu
+         EfyN1KHwoAeF8u7SBwDwoid9XBIQh4QDUPL08ymCBdQzUzoemEXYrKTLS6yKNbJ+XkXi
+         Sgig==
+X-Forwarded-Encrypted: i=1; AJvYcCUbkmeTN9R6AA3QaDN2bfVhgqOzE/GPxGTHNMaH1NhuhQS9ZZbYM8C7PCpVsh7Hany27z7TluToSFyvVOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUDCnwH98Noq8znyOwrsMiwkmffNEyQEYGpwmFRvYh8pZxzvWZ
+	PfyKvD91BjgYZAa02dseUMrXiz6W0k9CHfWVyQCjh4r9oWvn+spj
+X-Google-Smtp-Source: AGHT+IEKJVnvIE8PfL66jpv6OxO7nXIK2eQAPrsmGX4INkDJIxPzoqcMdyfG4+E22rvDgk7OW8nGLQ==
+X-Received: by 2002:a17:902:fb0e:b0:206:a6fe:2343 with SMTP id d9443c01a7336-2074c5eec88mr166782385ad.8.1726328454010;
+        Sat, 14 Sep 2024 08:40:54 -0700 (PDT)
+Received: from localhost ([116.198.225.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207a095944bsm1352995ad.238.2024.09.14.08.40.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Sep 2024 08:40:53 -0700 (PDT)
+From: Tao Chen <chen.dylane@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	frank.li@nxp.com,
-	stable@vger.kernel.org,
-	Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Subject: [PATCH v2] i3c: master: svc: Fix use after free vulnerability in svc_i3c_master Driver Due to Race Condition
-Date: Sat, 14 Sep 2024 23:40:32 +0800
-Message-Id: <20240914154030.180-1-kxwang23@m.fudan.edu.cn>
-X-Mailer: git-send-email 2.39.1.windows.1
+	Tao Chen <chen.dylane@gmail.com>
+Subject: [PATCH bpf-next v3] libbpf: Fix expected_attach_type set when kernel not support
+Date: Sat, 14 Sep 2024 23:40:40 +0800
+Message-Id: <20240914154040.276933-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,59 +90,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-In the svc_i3c_master_probe function, &master->hj_work is bound with
-svc_i3c_master_hj_work, &master->ibi_work is bound with
-svc_i3c_master_ibi_work. And svc_i3c_master_ibi_work  can start the
-hj_work, svc_i3c_master_irq_handler can start the ibi_work.
+The commit "5902da6d8a52" set expected_attach_type again with
+field of bpf_program after libpf_prepare_prog_load, which makes
+expected_attach_type = 0 no sense when kenrel not support the
+attach_type feature, so fix it.
 
-If we remove the module which will call svc_i3c_master_remove to
-make cleanup, it will free master->base through i3c_master_unregister
-while the work mentioned above will be used. The sequence of operations
-that may lead to a UAF bug is as follows:
-
-CPU0                                         CPU1
-
-                                    | svc_i3c_master_hj_work
-svc_i3c_master_remove               |
-i3c_master_unregister(&master->base)|
-device_unregister(&master->dev)     |
-device_release                      |
-//free master->base                 |
-                                    | i3c_master_do_daa(&master->base)
-                                    | //use master->base
-
-Fix it by ensuring that the work is canceled before proceeding with the
-cleanup in svc_i3c_master_remove.
-
-Fixes: 0f74f8b6675c ("i3c: Make i3c_master_unregister() return void")
-Signed-off-by: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
+Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
+Suggested-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
 ---
-v2:
-- add fixes tag and cc stable, suggested by Frank
-- add Reviewed-by label from Miquel
-- Link to v1: https://lore.kernel.org/r/20240911150135.839946-1-kxwang23@m.fudan.edu.cn
----
- drivers/i3c/master/svc-i3c-master.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/lib/bpf/libbpf.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index 0a68fd1b81d4..e084ba648b4a 100644
---- a/drivers/i3c/master/svc-i3c-master.c
-+++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -1775,6 +1775,7 @@ static void svc_i3c_master_remove(struct platform_device *pdev)
- {
- 	struct svc_i3c_master *master = platform_get_drvdata(pdev);
+Change list:
+- v2 -> v3:
+    - update BPF_TRACE_UPROBE_MULTI both in prog and opts suggedted by
+      Andrri
+- v1 -> v2:
+    - restore the original initialization way suggested by Jiri
+
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 219facd0e66e..a78e24ff354b 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -7352,8 +7352,14 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
+ 		opts->prog_flags |= BPF_F_XDP_HAS_FRAGS;
  
-+	cancel_work_sync(&master->hj_work);
- 	i3c_master_unregister(&master->base);
+ 	/* special check for usdt to use uprobe_multi link */
+-	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK))
++	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK)) {
++		/* for BPF_TRACE_KPROBE_MULTI, user might want to query exected_attach_type
++		 * in prog, and expected_attach_type we set in kenrel is from opts, so we
++		 * update both.
++		 */
+ 		prog->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
++		opts->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
++	}
  
- 	pm_runtime_dont_use_autosuspend(&pdev->dev);
+ 	if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
+ 		int btf_obj_fd = 0, btf_type_id = 0, err;
+@@ -7443,6 +7449,7 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
+ 	load_attr.attach_btf_id = prog->attach_btf_id;
+ 	load_attr.kern_version = kern_version;
+ 	load_attr.prog_ifindex = prog->prog_ifindex;
++	load_attr.expected_attach_type = prog->expected_attach_type;
+ 
+ 	/* specify func_info/line_info only if kernel supports them */
+ 	if (obj->btf && btf__fd(obj->btf) >= 0 && kernel_supports(obj, FEAT_BTF_FUNC)) {
+@@ -7474,9 +7481,6 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
+ 		insns_cnt = prog->insns_cnt;
+ 	}
+ 
+-	/* allow prog_prepare_load_fn to change expected_attach_type */
+-	load_attr.expected_attach_type = prog->expected_attach_type;
+-
+ 	if (obj->gen_loader) {
+ 		bpf_gen__prog_load(obj->gen_loader, prog->type, prog->name,
+ 				   license, insns, insns_cnt, &load_attr,
 -- 
-2.39.1.windows.1
+2.25.1
 
 
