@@ -1,107 +1,141 @@
-Return-Path: <linux-kernel+bounces-329489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486F49791F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:06:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C649791FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F40451F21A3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E946284580
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CD31D0DDC;
-	Sat, 14 Sep 2024 16:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDE11D095F;
+	Sat, 14 Sep 2024 16:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F83e812r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dFLl+TTw"
+Received: from msa.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD021D017F;
-	Sat, 14 Sep 2024 16:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D4B81741
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 16:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726329991; cv=none; b=lWvVicgLenW3OvAbzcJqreWcvIm92q7byCO2Z3q5foCaeEpiUez4ac82Oo95UMB7H5j5bRSqQinmvAomBjbZGMg6hy4oCbYpEQ3dM9iFVjReH9GQ0tk2MTwVscAqemvFjDO9txJOrdDImnzS49UAJUWYvVw3+hWIi+9pi6wZs+s=
+	t=1726330071; cv=none; b=SBrIjIrZgrypi/z6iiVX5hiW0P3fTiShT3GYEspzuTlnVHGq+05FathZ/fcic5+Kqvb+lH0fL2fq0YcDh7RmeVu3k7w0Pgu0j4kPbsyouMtTmFGn4uOg+tFlqfrzZhf/RRZNUaeXFkxeBqhj2zE77wTNbLDo3F5U5RM/8DNbhe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726329991; c=relaxed/simple;
-	bh=ifewKtXDDSzBHBaLKq1ugJVVgHAeaiWFeGyekN8Mw2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LRlxIQU3TaD0g1Wq2jHRW2b9VZdOEmcOCUwOqWrDUHpEbIM0uRCsFj/UnqtxTRcTIG9IxlpOSIC0/pscW8JEm5C1QNxyUad3lnnnJmKqOA1yjuMLSM8HTjx1v1i1L9LvH4ctgEGUnDFYZ+qZt6zrr0nfIXxnrFccwHoGWkp+Kaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F83e812r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78477C4CEC0;
-	Sat, 14 Sep 2024 16:06:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726329990;
-	bh=ifewKtXDDSzBHBaLKq1ugJVVgHAeaiWFeGyekN8Mw2w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F83e812rl3HrSn6UeU1K+uuqaT0GjnoZNXpvL/qnqIXWIILBQKljcmaz0Qrg+CNPv
-	 NaaZ9O3j88y7+gMldkWpAkPT209YrrOSVWo/jj8q5T130rZaP0az3OEo70O41AFVTw
-	 we7Ivjd9P7qs9W+AGYBTnr7onFGSmC8wCDhNGyxadSB6+Fj7RiqtoLHAWCUj1nUcEO
-	 qgu5oBfAPWcoAmSVXnoT1ePBcdiCVEDxO7F+1uuqNUbd2DzNCSVhM5CmtfRa537yIs
-	 AXDyISBEAudohTClj1FpJ2FO+wXUIJDTQX1Uy/ZzkQnF9Nv1D+X+JBSifbtgcExjjY
-	 M70snPA4cv/Qw==
-Date: Sat, 14 Sep 2024 17:06:22 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Emil Gedenryd <emil.gedenryd@axis.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andreas Dannenberg <dannenberg@ti.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <kernel@axis.com>
-Subject: Re: [PATCH v2 1/3] iio: light: opt3001: add missing full-scale
- range value
-Message-ID: <20240914170622.227911f8@jic23-huawei>
-In-Reply-To: <20240913-add_opt3002-v2-1-69e04f840360@axis.com>
-References: <20240913-add_opt3002-v2-0-69e04f840360@axis.com>
-	<20240913-add_opt3002-v2-1-69e04f840360@axis.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726330071; c=relaxed/simple;
+	bh=4sBx9Pok9ci2U6rCdVYCCf2eawSqaEDxsKn9nhdoqx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ofZc9Eyu7vIcLtXKW5rSFuheJSHgoMKMpIeXGweopBKtuGN5ezN17ZqJjdyl1DVdRlNpD3lWe3mJDYTd8PO0w1GJpANUFPisVxhLDPpc9YjImxxQ0c77jwJ41bsPPnsC+57La1iMmK9pfi+JRlOeEwIHuBnn6lzEomIn+wtChf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dFLl+TTw; arc=none smtp.client-ip=80.12.242.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id pVJIseX6XZkdcpVJIsxPA7; Sat, 14 Sep 2024 18:07:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726330066;
+	bh=3K7AI48QI2FbNvgXLRmIkhjGNi47KFNECaCiYHSyQbw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=dFLl+TTwv3G1/KfT9nw1cqsJ+7ILIdiOX2VCQMiLqGRNUDl1yEJEfSeqv7R6W/9SB
+	 g+xbrqxkuVQzAs3hipVm8DwhRzdtN4Q9wvoHhWkZkFTrQG62/uNXrG/XDaMXOgWiYP
+	 dKwmHdpvr82dD2gDK5iKCnn66GGNJnYZ2kgnatiZ8p6yspye+TEffcDPth75+dfpfo
+	 k6Ruxq0iQjTzUaeFdSSK2RjgzrZGid+N3yGCKVE6GoDEXiBVoFOFLq+p4SMcVAuPak
+	 cHn3iLLJmWR5sl9GTOkXO54JkPM9Gj2VnL0Rv0IDL1lMwezXTTMf3P2Z8TdAorbZam
+	 6vfeMBY5QEhmg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 14 Sep 2024 18:07:46 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: biju.das.jz@bp.renesas.com,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: [PATCH v3] phy: renesas: rcar-gen3-usb2: Fix an error handling path in rcar_gen3_phy_usb2_probe()
+Date: Sat, 14 Sep 2024 18:07:24 +0200
+Message-ID: <290b25827e3f0742808940719455ff0c5cb9d01d.1726329925.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 13 Sep 2024 11:57:02 +0200
-Emil Gedenryd <emil.gedenryd@axis.com> wrote:
+If an error occurs after the reset_control_deassert(),
+reset_control_assert() must be called, as already done in the remove
+function.
 
-> The opt3001 driver uses predetermined full-scale range values to
-> determine what exponent to use for event trigger threshold values.
-> The problem is that one of the values specified in the datasheet is
-> missing from the implementation. This causes larger values to be
-> scaled down to an incorrect exponent, effectively reducing the
-> maximum settable threshold value by a factor of 2.
-> 
-> Add missing full-scale range array value.
-> 
-> Fixes: 94a9b7b1809f ("iio: light: add support for TI's opt3001 light sensor")
-> Signed-off-by: Emil Gedenryd <emil.gedenryd@axis.com>
-Applied to the fixes-togreg branch of iio.git and marked for stable.
-I'll probably send a pull request with this in shortly after rc1.
+Use devm_add_action_or_reset() to add the missing call and simplify the
+.remove() function accordingly.
 
-Jonathan
+Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch changes the order of function calls when releasing the resources
+in the .remove function(). Looks fine to me, but pm_ functions are
+sometimes tricky.
 
-> ---
->  drivers/iio/light/opt3001.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/iio/light/opt3001.c b/drivers/iio/light/opt3001.c
-> index 887c4b776a86..176e54bb48c3 100644
-> --- a/drivers/iio/light/opt3001.c
-> +++ b/drivers/iio/light/opt3001.c
-> @@ -138,6 +138,10 @@ static const struct opt3001_scale opt3001_scales[] = {
->  		.val = 20966,
->  		.val2 = 400000,
->  	},
-> +	{
-> +		.val = 41932,
-> +		.val2 = 800000,
-> +	},
->  	{
->  		.val = 83865,
->  		.val2 = 600000,
-> 
+Changes in v3:
+  - Use devm_add_action_or_reset()   [Biju Das]
+
+Changes in v2: (broken proposal)
+  - Re-use 'error' to simplify the patch   [claudiu beznea]
+  - Update the commit description to explain why it is safe.
+v2: https://lore.kernel.org/all/4efe2d0419cbe98163e2422ebe0c7896b8a5efed.1725717505.git.christophe.jaillet@wanadoo.fr/
+
+v1: https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 58e123305152..c8a3727f56aa 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -668,6 +668,13 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct device_node *np)
+ 	return candidate;
+ }
+ 
++static void rcar_gen3_reset_assert(void *data)
++{
++	struct reset_control *rstc = data;
++
++	reset_control_assert(rstc);
++}
++
+ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+ {
+ 	struct device *dev = channel->dev;
+@@ -686,6 +693,11 @@ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+ 	if (ret)
+ 		goto rpm_put;
+ 
++	ret = devm_add_action_or_reset(dev, rcar_gen3_reset_assert,
++				       channel->rstc);
++	if (ret)
++		return ret;
++
+ 	val = readl(channel->base + USB2_AHB_BUS_CTR);
+ 	val &= ~USB2_AHB_BUS_CTR_MBL_MASK;
+ 	val |= USB2_AHB_BUS_CTR_MBL_INCR4;
+@@ -815,7 +827,6 @@ static void rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+ 	if (channel->is_otg_channel)
+ 		device_remove_file(&pdev->dev, &dev_attr_role);
+ 
+-	reset_control_assert(channel->rstc);
+ 	pm_runtime_disable(&pdev->dev);
+ };
+ 
+-- 
+2.46.0
 
 
