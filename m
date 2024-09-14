@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-329164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334EC978E3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C29CB978E50
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43DA91C2291B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:15:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E39F21C218E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FF0147C86;
-	Sat, 14 Sep 2024 06:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A7317C991;
+	Sat, 14 Sep 2024 06:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYOIxiJ/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAojqD2c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFB5629E4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DDD7D417
 	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726294434; cv=none; b=L4LIP4Np+EbEDs2Sdeq9LIbaWveltncA5HVXb0tn38jYPZnlNGHC2yDIn5i4YTrNRXVkkIq7pdJ+0IIBUSnlC94HV5JQMJQeoH82QzuDwKhfkPr/XGL1pqABu0k5WkK4bRP0sSrzZtGP4DETK4KUpDPgxOqA3BBvOZW3G1cemmU=
+	t=1726294435; cv=none; b=OKWUeB8th5Gfl5B8gjpz0x3sCL/r3/1988uxMrItGOGjfcTF9st9chWjrqpi4XtVCb9q2v2v83AE7VRm1U3WYUrF035aPajPWd2z4ZrQ1wYXkQaro3h0a8wdnkl9RQGKQQ5GM0Mf/bzzkiQuIle4lZeJAzcTD7+dAKWcsQ1YIEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726294434; c=relaxed/simple;
-	bh=vpDuK1QOOxW/nhXim4UoOwQVPFVm8z+z0ABlhDW3SxA=;
+	s=arc-20240116; t=1726294435; c=relaxed/simple;
+	bh=PMe9CyHoae/jRKMRZBtMlSwi45l1l+ra99k0C2eM4vo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kPedszZ2c5xtZ1Tnd6gvfiAMYNsuX0aGFZ50Gy5YHcyLlK78PyI6vv5Xv9PXpPnc6wZlip5OmTM54HtCgNUXb/pmC0y6nC1+2XogNzdaIb4a88qCzyc72CpBmeEe4KT3dVTZHvxtEPDIzJ4jmZhWvQ9NcyymY3GE705CrhF9i+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYOIxiJ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04459C4CED1;
-	Sat, 14 Sep 2024 06:13:53 +0000 (UTC)
+	 MIME-Version; b=BxwtpOG41rY7JyqXgfVZWCNfcPUihnTirEujxW82lglKt/hDmI0dXj/SgCHf+X1hYCv5i3Zjpe/lhcEZcaz7B3/i/3nFRQx2i2oyetjNnTN5WznJ9dXjWVFY9g85izPLvPmm4dCPcnEhWoC8BQ/d8Bqtlqbaq4OUgIgZfcMSp+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAojqD2c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27CE1C4AF0B;
+	Sat, 14 Sep 2024 06:13:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1726294434;
-	bh=vpDuK1QOOxW/nhXim4UoOwQVPFVm8z+z0ABlhDW3SxA=;
+	bh=PMe9CyHoae/jRKMRZBtMlSwi45l1l+ra99k0C2eM4vo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VYOIxiJ/A/QYzgOAFp31F2+2pZuGt+OAL7PxzpOjtJ1f35xLUhxJN/gWjVZ6UTRJ2
-	 jXAQWmu2ijiFrY9HOyc9QCCNA1ZW6ssQ02XeipW0NQH3IUFIVD5hr3PbBQdPgY8xvt
-	 dcx0KKMzOpju1G2bOBiluid0p3ChUePkg/HD10jnZ1zSFLl/9EJLIIEzmmdMG7edgL
-	 3RMLkjP71R69B3oAZL3OxmjiNys0lCUfLmmXIxj+ScYmF7hcMvR3CQ2Lt4NQrjUWCe
-	 FPsr0sp2UrV+wkF4WDIGkfat3+PU4eS9UFeULL+4hGe3j37EOplV8XVvWdbwgr0R2Y
-	 Dh7mND7JVVAZQ==
+	b=AAojqD2cpm2rmLL6qAh1bLv3MtEYbzBgPM3IZ7CsK3F1Sbt12P8yqjVTAoww2KTWN
+	 ev8dmAi0DLVbSqzT4yCwbkT6BDhwJfvPII9ECNbklvyUwcGx9q8ULKi5qMiZkc7mke
+	 D1sDTIDMRjOCRWbl9nOsGnODPU96KmCS+2aWeUXjjcMhDu+Ph/GJccAz+e9/ymKbAm
+	 PS2AXGQ6fhNL+Qjajtui8q2XSawAoJh6h9e6mdZ0ZcRcBp72UTDC9a8UkxkPD8KZOU
+	 K6nQwSP7gBAr66Ov54zS+sDak6NIRSnk/Zfofe7EgPVIaINdHXt6RYa7Y9fqNc9lGY
+	 bjeQfhp2OXJ6Q==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1spM2a-00000003V5v-0bm1;
+	id 1spM2a-00000003V5z-0iYu;
 	Sat, 14 Sep 2024 08:13:52 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Igor Mammedov <imammedo@redhat.com>
@@ -52,12 +52,14 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	"Michael S. Tsirkin" <mst@redhat.com>,
 	Ani Sinha <anisinha@redhat.com>,
 	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	qemu-arm@nongnu.org,
 	qemu-devel@nongnu.org
-Subject: [PATCH v10 08/21] acpi/ghes: Change the type for source_id
-Date: Sat, 14 Sep 2024 08:13:29 +0200
-Message-ID: <64de87ae9e03e9be6cb98dc75e2eb02503354904.1726293808.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v10 09/21] acpi/ghes: Don't hardcode the number of sources on ghes
+Date: Sat, 14 Sep 2024 08:13:30 +0200
+Message-ID: <08010058cca88a04e6db8303b5c09987c0cc922b.1726293808.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1726293808.git.mchehab+huawei@kernel.org>
 References: <cover.1726293808.git.mchehab+huawei@kernel.org>
@@ -70,55 +72,241 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-HEST source ID is actually a 16-bit value. Yet, make it a little
-bit more generic using just an integer type.
+The number of sources is architecture-dependent. Usually,
+architectures will implement one synchronous and/or one
+asynchronous source.
+
+Change the logic to better cope with such model.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- hw/acpi/ghes-stub.c    | 2 +-
- hw/acpi/ghes.c         | 2 +-
- include/hw/acpi/ghes.h | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ hw/acpi/ghes.c           | 53 +++++++++++++++++++++++-----------------
+ hw/arm/virt-acpi-build.c |  5 ++++
+ include/hw/acpi/ghes.h   | 21 ++++++++++------
+ 3 files changed, 49 insertions(+), 30 deletions(-)
 
-diff --git a/hw/acpi/ghes-stub.c b/hw/acpi/ghes-stub.c
-index c315de1802d6..58a04e935142 100644
---- a/hw/acpi/ghes-stub.c
-+++ b/hw/acpi/ghes-stub.c
-@@ -11,7 +11,7 @@
- #include "qemu/osdep.h"
- #include "hw/acpi/ghes.h"
- 
--int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
-+int acpi_ghes_record_errors(int source_id, uint64_t physical_address)
- {
-     return -1;
- }
 diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-index 6e5f0e8cf0c9..4e34b16a6ca9 100644
+index 4e34b16a6ca9..c88717fb1bef 100644
 --- a/hw/acpi/ghes.c
 +++ b/hw/acpi/ghes.c
-@@ -416,7 +416,7 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
-     ags->present = true;
- }
- 
--int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
-+int acpi_ghes_record_errors(int source_id, uint64_t physical_address)
+@@ -251,17 +251,18 @@ static int acpi_ghes_record_mem_error(uint64_t error_block_address,
+  * Initialize "etc/hardware_errors" and "etc/hardware_errors_addr" fw_cfg blobs.
+  * See docs/specs/acpi_hest_ghes.rst for blobs format.
+  */
+-static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
++static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker,
++                                   int num_sources)
  {
+     int i, error_status_block_offset;
+ 
+     /* Build error_block_address */
+-    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
++    for (i = 0; i < num_sources; i++) {
+         build_append_int_noprefix(hardware_errors, 0, sizeof(uint64_t));
+     }
+ 
+     /* Build read_ack_register */
+-    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
++    for (i = 0; i < num_sources; i++) {
+         /*
+          * Initialize the value of read_ack_register to 1, so GHES can be
+          * writable after (re)boot.
+@@ -276,13 +277,13 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+ 
+     /* Reserve space for Error Status Data Block */
+     acpi_data_push(hardware_errors,
+-        ACPI_GHES_MAX_RAW_DATA_LENGTH * ACPI_GHES_ERROR_SOURCE_COUNT);
++        ACPI_GHES_MAX_RAW_DATA_LENGTH * num_sources);
+ 
+     /* Tell guest firmware to place hardware_errors blob into RAM */
+     bios_linker_loader_alloc(linker, ACPI_GHES_ERRORS_FW_CFG_FILE,
+                              hardware_errors, sizeof(uint64_t), false);
+ 
+-    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
++    for (i = 0; i < num_sources; i++) {
+         /*
+          * Tell firmware to patch error_block_address entries to point to
+          * corresponding "Generic Error Status Block"
+@@ -304,10 +305,12 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+ /* Build Generic Hardware Error Source version 2 (GHESv2) */
+ static void build_ghes_v2(GArray *table_data,
+                           BIOSLinker *linker,
+-                          enum AcpiGhesNotifyType notify,
+-                          uint16_t source_id)
++                          const AcpiNotificationSourceId *notif_src,
++                          uint16_t index, int num_sources)
+ {
+     uint64_t address_offset;
++    const uint16_t notify = notif_src->notify;
++    const uint16_t source_id = notif_src->source_id;
+ 
+     /*
+      * Type:
+@@ -336,7 +339,7 @@ static void build_ghes_v2(GArray *table_data,
+                      4 /* QWord access */, 0);
+     bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
+         address_offset + GAS_ADDR_OFFSET, sizeof(uint64_t),
+-        ACPI_GHES_ERRORS_FW_CFG_FILE, source_id * sizeof(uint64_t));
++        ACPI_GHES_ERRORS_FW_CFG_FILE, index * sizeof(uint64_t));
+ 
+     /* Notification Structure */
+     build_ghes_hw_error_notification(table_data, notify);
+@@ -353,9 +356,10 @@ static void build_ghes_v2(GArray *table_data,
+     build_append_gas(table_data, AML_AS_SYSTEM_MEMORY, 0x40, 0,
+                      4 /* QWord access */, 0);
+     bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
+-        address_offset + GAS_ADDR_OFFSET,
+-        sizeof(uint64_t), ACPI_GHES_ERRORS_FW_CFG_FILE,
+-        (ACPI_GHES_ERROR_SOURCE_COUNT + source_id) * sizeof(uint64_t));
++                                   address_offset + GAS_ADDR_OFFSET,
++                                   sizeof(uint64_t),
++                                   ACPI_GHES_ERRORS_FW_CFG_FILE,
++                                   (num_sources + index) * sizeof(uint64_t));
+ 
+     /*
+      * Read Ack Preserve field
+@@ -370,12 +374,15 @@ static void build_ghes_v2(GArray *table_data,
+ /* Build Hardware Error Source Table */
+ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+                      BIOSLinker *linker,
++                     const AcpiNotificationSourceId * const notif_source,
++                     int num_sources,
+                      const char *oem_id, const char *oem_table_id)
+ {
+     AcpiTable table = { .sig = "HEST", .rev = 1,
+                         .oem_id = oem_id, .oem_table_id = oem_table_id };
++    int i;
+ 
+-    build_ghes_error_table(hardware_errors, linker);
++    build_ghes_error_table(hardware_errors, linker, num_sources);
+ 
+     acpi_table_begin(&table, table_data);
+ 
+@@ -383,9 +390,10 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+     int hest_offset = table_data->len;
+ 
+     /* Error Source Count */
+-    build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
+-    build_ghes_v2(table_data, linker,
+-                  ACPI_GHES_NOTIFY_SEA, ACPI_HEST_SRC_ID_SEA);
++    build_append_int_noprefix(table_data, num_sources, 4);
++    for (i = 0; i < num_sources; i++) {
++        build_ghes_v2(table_data, linker, &notif_source[i], i, num_sources);
++    }
+ 
+     acpi_table_end(linker, &table);
+ 
+@@ -421,13 +429,11 @@ int acpi_ghes_record_errors(int source_id, uint64_t physical_address)
      uint64_t hest_read_ack_start_addr, read_ack_start_addr;
      uint64_t hest_addr, cper_addr, err_source_struct;
+     uint64_t hest_err_block_addr, error_block_addr;
+-    uint32_t i, ret;
++    uint32_t num_sources, i, ret;
+     AcpiGedState *acpi_ged_state;
+     AcpiGhesState *ags;
+     uint64_t read_ack;
+ 
+-    assert(source_id < ACPI_GHES_ERROR_SOURCE_COUNT);
+-
+     acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
+                                                        NULL));
+     g_assert(acpi_ged_state);
+@@ -435,16 +441,18 @@ int acpi_ghes_record_errors(int source_id, uint64_t physical_address)
+ 
+     hest_addr = le64_to_cpu(ags->hest_addr_le);
+ 
++    cpu_physical_memory_read(hest_addr, &num_sources, sizeof(num_sources));
+     if (!physical_address) {
+         return -1;
+     }
+ 
+-    err_source_struct = hest_addr + ACPI_GHES_ERROR_SOURCE_COUNT;
++    err_source_struct = hest_addr + sizeof(num_sources);
+ 
+     /*
+      * Currently, HEST Error source navigates only for GHESv2 tables
+      */
+-    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
++
++    for (i = 0; i < num_sources; i++) {
+         uint64_t addr = err_source_struct;
+         uint16_t type, src_id;
+ 
+@@ -463,9 +471,8 @@ int acpi_ghes_record_errors(int source_id, uint64_t physical_address)
+ 
+         err_source_struct += HEST_GHES_V2_TABLE_SIZE;
+     }
+-    if (i == ACPI_GHES_ERROR_SOURCE_COUNT) {
+-        error_report("can not find Generic Error Status Block");
+-
++    if (i == num_sources) {
++        error_report("HEST: Source %d not found.", source_id);
+         return -1;
+     }
+ 
+diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+index bafd9a56c217..476c365851c4 100644
+--- a/hw/arm/virt-acpi-build.c
++++ b/hw/arm/virt-acpi-build.c
+@@ -890,6 +890,10 @@ static void acpi_align_size(GArray *blob, unsigned align)
+     g_array_set_size(blob, ROUND_UP(acpi_data_len(blob), align));
+ }
+ 
++static const AcpiNotificationSourceId hest_ghes_notify[] = {
++    {ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA},
++};
++
+ static
+ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+ {
+@@ -945,6 +949,7 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+     if (vms->ras) {
+         acpi_add_table(table_offsets, tables_blob);
+         acpi_build_hest(tables_blob, tables->hardware_errors, tables->linker,
++                        hest_ghes_notify, ARRAY_SIZE(hest_ghes_notify),
+                         vms->oem_id, vms->oem_table_id);
+     }
+ 
 diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-index 7485f54c28f2..6471934d7775 100644
+index 6471934d7775..344919f1f75c 100644
 --- a/include/hw/acpi/ghes.h
 +++ b/include/hw/acpi/ghes.h
-@@ -75,7 +75,7 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+@@ -57,21 +57,28 @@ enum AcpiGhesNotifyType {
+     ACPI_GHES_NOTIFY_RESERVED = 12
+ };
+ 
+-enum {
+-    ACPI_HEST_SRC_ID_SEA = 0,
+-    /* future ids go here */
+-
+-    ACPI_GHES_ERROR_SOURCE_COUNT
+-};
+-
+ typedef struct AcpiGhesState {
+     uint64_t hest_addr_le;
+     uint64_t ghes_addr_le;
+     bool present; /* True if GHES is present at all on this board */
+ } AcpiGhesState;
+ 
++/*
++ * ID numbers used to fill HEST source ID field
++ */
++enum AcpiGhesSourceID {
++    ACPI_HEST_SRC_ID_SYNC,
++};
++
++typedef struct AcpiNotificationSourceId {
++    enum AcpiGhesSourceID source_id;
++    enum AcpiGhesNotifyType notify;
++} AcpiNotificationSourceId;
++
+ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+                      BIOSLinker *linker,
++                     const AcpiNotificationSourceId * const notif_source,
++                     int num_sources,
                       const char *oem_id, const char *oem_table_id);
  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
                            GArray *hardware_errors);
--int acpi_ghes_record_errors(uint8_t source_id,
-+int acpi_ghes_record_errors(int source_id,
-                             uint64_t error_physical_addr);
- void ghes_record_cper_errors(const void *cper, size_t len,
-                              uint16_t source_id, Error **errp);
 -- 
 2.46.0
 
