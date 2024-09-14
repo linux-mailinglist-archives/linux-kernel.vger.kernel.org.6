@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-329023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBB6978C30
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBB8978C33
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45F4CB2689C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:30:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76501F22E9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4BB4C76;
-	Sat, 14 Sep 2024 00:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED844C76;
+	Sat, 14 Sep 2024 00:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SdMho9r/"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlCRdcQ+"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BAC23CE
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 00:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA3D1C2E;
+	Sat, 14 Sep 2024 00:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726273778; cv=none; b=sn2Dt2hyfpF/IYa2+6HGKcD2a6mU2GYuCIMZ9Vgx735UD3WutTD+vmvJZV7ygxz0OaST4TF6mhWQybBNTU39xORh2xQXJyJ/vpJKyBRWBJIz8G2plI8dVSIlzaqgFQwuT0FjyOAPub4dd05+82/VBMg0onTO7LzAIVV/fVFVqrY=
+	t=1726273840; cv=none; b=Vjwlsd7VqB5GmQOlBfeUsI95blW4a4OxO/mmZFAMaxXkRV8pC349F32/YWI8E6jWGXkz+mA8gfHP8yTzwJbAekiNYUnsglquwY2lG3RHoMQ5SOX3KmQPNC73jWkyrKhT8mXMCVMCGiS2sIHij52QZx9GvreGCVw6ZEjo9T6QLmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726273778; c=relaxed/simple;
-	bh=N14vxJmV7LijXqMBkKqxEUgrSANtjfJ1MJyTVLTMdj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0l3lirpBspcOXqf01Yyu6ieAF7wSBBKXf3zl+OlzN7zpbgo7//ZajY3IOhsonMu/iUwhBfk2ECQPaQACwYzDBI1LNcjUW4EoQ1HD4tP3qSmjYq4YpqiJx+xzS9Qt7adXXvaJDj2eBS5HVo/Z0lDD+kcowKcpiSDhV0QmXxbEck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SdMho9r/; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6b678872-5303-4088-b65c-42e166b4d9e5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726273774;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Nob2QmDLDqj2rBxmVNmdR9Zxqpeldv1XBqw00D21mA=;
-	b=SdMho9r/ZehgPoQkyfQFm5kWUGRX62+fmgg9kW8XRCTP9uztBoGvsbRBLrq/y9jUHR9arP
-	W25heYTCF0R3gwaIBkojzne325RDcR4JX/iD7pWi1Cefg2f//XNguzcWx/ZQG+u4uNzATE
-	8KQYtc+kvu5eY+ShJqK7FjrQwuB2dOI=
-Date: Fri, 13 Sep 2024 17:29:25 -0700
+	s=arc-20240116; t=1726273840; c=relaxed/simple;
+	bh=VS/w9+FjOSUoGItTyb6HFFrmUwWWjlvcOqrGKD1tMZs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBeiJR0j67L6/HwfrchYZQ8qLJMk6I8AU+xyTCrP7cbQsQJ1Djp2qzQven/35Cgj0UBB2oS0JlAKQpNhgieiNmVwF5V7TgXI3OIRDYD0Utz6XKVLaNCfqd614XbvrJFSEcxgvDEetk6zIOIdc+4SDZDIbCB7d3e09SJfK0NSZ2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LlCRdcQ+; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a81bd549eso310856766b.3;
+        Fri, 13 Sep 2024 17:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726273837; x=1726878637; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=clKYHVTnGLAXatAsDAW8Z/W+xhYAhmjTu2sFhcCtn5c=;
+        b=LlCRdcQ+vIheFUjcS6hYCB28cd3CIHRbCgydWXMqm2iOwSeBzcZgvfTdAmFcO5z8Re
+         4yf3gxdAF/rorXFbN3tSQpGTLkBVmemhbvJNLW+oCDHR98zOXk/+FktAOYqhY6s/BArw
+         arrA+P9M5gtxv/DpB5RmCx+V/CvAFykSrCYGLRnxcyQRl36nScNOIs6HhjQIKA7WEBp9
+         CB8xI5XlGQOzM3TOQ3vX5ze+IFogIOZ+SUADlTDtcIlW49lVn1zC+QyotAqgwhEdXYe1
+         /fXDsyeeK+0ufyQSwDExbhvEamA0gm0BkOHZhrejDOMcKEYIfcj99P5ycXop48xyB9jI
+         KD8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726273837; x=1726878637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=clKYHVTnGLAXatAsDAW8Z/W+xhYAhmjTu2sFhcCtn5c=;
+        b=N/MY8U62NfxeqchmVvn5LtERLJBDR2u1jCqAX4sJsiIXtxCMZyLyQ2wMMcMTRauoo0
+         YeGy7wkTZOagG9Z8rDCRjL9LxW9xvLtmqpUpNtyfhKS5amrj3025u3OKNlSxOeyweeuC
+         wwv7QC/QAjUD9gndfnh4GwoAHaBlwEf2+VsxI4SvxVM2pzhePdTgCczd8AYenkIXBe2p
+         UySgfinEj+PmQSXNZMNx7rwbDwiRU65INOHmlm6wj7s3CSjNFr7tTelVRi9M6m2vqZ8O
+         ZLiYYffSh7MBPYJGPBSurZ+mzNuisgBx2MwbOUaUixmOHNhX6mYWN6KBp/wYbM60xRci
+         Jerg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvO5YTycwRTNJfVeRga7EeY3MVopJowyjHbQDmMzUdAb3KASFAI5y7aq+8Ho19VqYJaJ3gp2UJCOqi@vger.kernel.org, AJvYcCX/F2YuSwTpVYW7CYdHKkUN6H5bashfrjKAJJ1X2MbSMgCFxzWPDpH/fcPlOMIGwsMUz01tgymWdn/T@vger.kernel.org, AJvYcCX07NkTZP308EfPyDPAfmN5P9rRVDBE7cWBnhAr5dEHbLGPsrGFb19/dF5zvI5t/nCOgbxeqDEI8xBxxAhP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCr0ZBlqUa2wl1mNZEPP1B0asUHm690iGfFcO6USqT4PhrBJ2Q
+	bu3SmQbAXoYS/mnHs9vLyDASef1nfHHTxrbVACwYzIJMKRtiUZf+
+X-Google-Smtp-Source: AGHT+IG4d8Yu791E7Q7EQ/6vRRF+wpYQIQdFrDUsAQEc59Bzxh9bHGC+gm6CQ29WeAjVgFd7TjQAOw==
+X-Received: by 2002:a17:907:f166:b0:a8d:2faf:d329 with SMTP id a640c23a62f3a-a90294ab58cmr809893066b.2.1726273837398;
+        Fri, 13 Sep 2024 17:30:37 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:6bd1:9a24:6b02:4a8f])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a906133049csm14452266b.205.2024.09.13.17.30.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 17:30:36 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Sat, 14 Sep 2024 02:30:34 +0200
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v6 0/4] pressure: bmp280: Minor cleanup and interrupt
+ support
+Message-ID: <20240914003034.GD33362@vamoiridPC>
+References: <20240912233234.45519-1-vassilisamir@gmail.com>
+ <ZuQL845_lQhpNpSR@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next/net v6 3/3] selftests/bpf: Add mptcp subflow
- subtest
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
- Geliang Tang <geliang@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, mptcp@lists.linux.dev,
- Mat Martineau <martineau@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
-References: <20240911-upstream-bpf-next-20240506-mptcp-subflow-test-v6-0-7872294c466b@kernel.org>
- <20240911-upstream-bpf-next-20240506-mptcp-subflow-test-v6-3-7872294c466b@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20240911-upstream-bpf-next-20240506-mptcp-subflow-test-v6-3-7872294c466b@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuQL845_lQhpNpSR@smile.fi.intel.com>
 
-On 9/11/24 8:16 AM, Matthieu Baerts (NGI0) wrote:
-> +static void test_subflow(void)
-> +{
-> +	int cgroup_fd, prog_fd, err;
-> +	struct mptcp_subflow *skel;
-> +	struct nstoken *nstoken;
-> +	struct bpf_link *link;
-> +
-> +	cgroup_fd = test__join_cgroup("/mptcp_subflow");
-> +	if (!ASSERT_OK_FD(cgroup_fd, "join_cgroup: mptcp_subflow"))
-> +		return;
-> +
-> +	skel = mptcp_subflow__open_and_load();
-> +	if (!ASSERT_OK_PTR(skel, "skel_open_load: mptcp_subflow"))
-> +		goto close_cgroup;
-> +
-> +	skel->bss->pid = getpid();
-> +
-> +	err = mptcp_subflow__attach(skel);
+On Fri, Sep 13, 2024 at 12:54:59PM +0300, Andy Shevchenko wrote:
+> On Fri, Sep 13, 2024 at 01:32:30AM +0200, Vasileios Amoiridis wrote:
+> > Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
+> 
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> for patches 1 & 3.
+> Dunno if a couple of nit-picks warrants the v7, so I leave it to Jonathan to
+> decide.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
-This is not needed.
+Hi Andy!
 
-> +	if (!ASSERT_OK(err, "skel_attach: mptcp_subflow"))
-> +		goto skel_destroy;
-> +
-> +	prog_fd = bpf_program__fd(skel->progs.mptcp_subflow);
-> +	err = bpf_prog_attach(prog_fd, cgroup_fd, BPF_CGROUP_SOCK_OPS, 0);
+Thanks for the reviews! 
 
-Use bpf_program__attach_cgroup here instead since ...
+Jonathan, I just sent a v7 with these small changes so you can go and
+pick up the v7!
 
-> +	if (!ASSERT_OK(err, "prog_attach"))
-> +		goto skel_destroy;
-> +
-> +	nstoken = create_netns();
-> +	if (!ASSERT_OK_PTR(nstoken, "create_netns: mptcp_subflow"))
-> +		goto skel_destroy;
-> +
-> +	if (endpoint_init("subflow") < 0)
-> +		goto close_netns;
-> +
-> +	link = bpf_program__attach_cgroup(skel->progs._getsockopt_subflow,
-> +					  cgroup_fd);
-
-... bpf_program__attach_cgroup is used here also.
-
-Instead of declaring a local "link", use the skel->links.{mptcp_subflow, 
-_getsockopt_subflow}. Then mptcp_subflow__destroy(skel) will take care of them 
-also. e.g. "skel->links._getsockopt_subflow = bpf_program__attach_cgroup(...)"
-
-pw-bot: cr
-
+Cheers,
+Vasilis
 
