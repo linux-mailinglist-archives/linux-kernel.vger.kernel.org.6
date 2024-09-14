@@ -1,81 +1,89 @@
-Return-Path: <linux-kernel+bounces-329542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE1B9792B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:37:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A77C9792B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4702F1C218B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:37:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2548A1F22857
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D615B1D12FA;
-	Sat, 14 Sep 2024 17:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DA81D12FA;
+	Sat, 14 Sep 2024 17:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C/2KZaFu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="L1htHe4x"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3291D094C;
-	Sat, 14 Sep 2024 17:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E35D1D0492;
+	Sat, 14 Sep 2024 17:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726335441; cv=none; b=BekDs8Vv4hR+hne2demPesfjlL/uRipm6fMNuxTJZsx8MYkC6ce8w0J7qllG89f3Rq1dOV2HSPqjECqwsqjWjvUlcoGFnBl+I61idoyE/wlM3cE/K7b9JI2+xa6Q4xCGWActwWdoQZ85Ur1lQSHUtmGwMcn3XdWuFFnhbGU8Oqw=
+	t=1726335777; cv=none; b=oqyH7lyHzBmw64Ei+7hdD5U5Vbad11wDxuJVoeU5goOkIwpAHAP+0vi6mj19nztlfS3yBRe3zzbq+t04rpSEJUyq0Ilu8IPF7Hon4L16JZjtRXNTV7hMgswyonIUQDK1DTuk0PhgDf0TDvNzUbvaN1yGuSeriqZAyKRu9pSBkvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726335441; c=relaxed/simple;
-	bh=bdeTaft8mZqRo5px+2z30ZmBbAywulCX2M/9l9QbDkA=;
+	s=arc-20240116; t=1726335777; c=relaxed/simple;
+	bh=uQstSLTVghrRz3Hp0SSvpuHfpaluhuyPOLKq+qY5whU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gsiA+6I7VwzovG+K4uK+w+hlJfQEpf+Lat1YIkL8lCXrZ8yyaXM2rskVG7ucWOfuRLRaYgBUZDUhQZ9E8NzBwwEq2osABb1ElxZMCgH7oS8TyRT9c2zGkdaOYVmkyvq6jT/jBzJ4I3amadYMoum+jKZBKwSaIilr6gLjxMdB7tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C/2KZaFu; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726335437; x=1757871437;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bdeTaft8mZqRo5px+2z30ZmBbAywulCX2M/9l9QbDkA=;
-  b=C/2KZaFu8unzLrcbXzujMjPHPzjrJjWmTZPxT0HNQAhPIsML8Drf6Qwt
-   phOpZPQGBG6RKl2FPp3P4g3Fws7yTMlU5aC9bAnIZfe5Q3LvtPqkxJETO
-   aryfOaeoCEbk0XzRwtIzudpO5ncCXDdQ02Men3PVblb64UF+EGjqZnr0L
-   0+I4sc4kGaBivf3k2NnTNbyZxgysbRey5Fz1j0nVAzyDe572AjCxmhRIP
-   VRehYeilHs8KfyQbvhJ1K6jE7wB3QOChZ30sbYl8eb+aMNgAyhs9wCIes
-   sXY1CK2UWql2X6x5H3Hk4f1ihRZZ1lQuFaL/nDt+A7VTzIPFYyucwFjBC
-   w==;
-X-CSE-ConnectionGUID: zetyLbBWQjWWwMnq0BsUBQ==
-X-CSE-MsgGUID: Gj7oREftSyqp8Tk8j4VE5w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="24758377"
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="24758377"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 10:37:16 -0700
-X-CSE-ConnectionGUID: pZGSGrYJTAGuvs13gFzz1Q==
-X-CSE-MsgGUID: TUlD6Sg7SYOH5LMDPifvEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="68134716"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 14 Sep 2024 10:37:12 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spWhq-000814-1w;
-	Sat, 14 Sep 2024 17:37:10 +0000
-Date: Sun, 15 Sep 2024 01:37:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, netdev@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, bryan.whitehead@microchip.com,
-	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
-	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
-	andrew@lunn.ch, Steen.Hegelund@microchip.com,
-	Raju.Lakkaraju@microchip.com, daniel.machon@microchip.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next V2 2/5] net: lan743x: Add support to
- software-nodes for sfp
-Message-ID: <202409150110.dSOZKgpK-lkp@intel.com>
-References: <20240911161054.4494-3-Raju.Lakkaraju@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCbg4ETSZs7xkxQgunbkp1egLKfl4XR7NcdCOBE6MSABexXImz5W5r1Riy57iE/mG/xtU5VgCwpntTtOYz5TlCU3DDV8a14gI8+nsJkn2FcIdppygECOlilTjBous2APX3tvHDtyWIhDy+wvyaTBVXm4lxg1okqOSMqE9bkJM1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=L1htHe4x; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48EDRC3a018796;
+	Sat, 14 Sep 2024 17:42:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=U76+Y92+6cnP9XFTsniXm+oVV04
+	feYHa4KALmWM53C8=; b=L1htHe4xiPjUW2QZHub0vijPUTnrqeZqme3ThfN96qC
+	hmOtDR0KY/wNdKFT/0kv7ziDSxvgvQpMtDWZk7MN71eQtcT9OMslArhlG6sFkRKC
+	0EzwEJG45UH6En6Us7aC1UBR5xLZexVy7qMKiq/Z/EQVriG7VAh44w6fcrwncDqo
+	8xIG3EnlLsA2bcr/7NeV13on5GNqhYhaH23Dhvkku1KdkDJoX2D9wnPiaXgALchH
+	KDGU55tXLoPZR8SDTbmDlr6wGB6flAR12WbWKVKzR4RgS0GcG1Z/wxCUEe/Q2hbN
+	Sj3CeGl68TJlXOqKh7wWojsj+MTFdJfrM5c/RKx8zdA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3vna827-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 14 Sep 2024 17:42:52 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48EGsulT032355;
+	Sat, 14 Sep 2024 17:42:52 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41n3xqaseu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 14 Sep 2024 17:42:51 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48EHgmn947448518
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 14 Sep 2024 17:42:48 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2F4FC20043;
+	Sat, 14 Sep 2024 17:42:48 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A023820040;
+	Sat, 14 Sep 2024 17:42:47 +0000 (GMT)
+Received: from osiris (unknown [9.179.13.161])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sat, 14 Sep 2024 17:42:47 +0000 (GMT)
+Date: Sat, 14 Sep 2024 19:42:46 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
+Message-ID: <20240914174246.8394-A-hca@linux.ibm.com>
+References: <20240913130544.2398678-1-hca@linux.ibm.com>
+ <20240913130544.2398678-8-hca@linux.ibm.com>
+ <ZuRWmJTWqmD92D8d@zx2c4.com>
+ <ZuRYoVIrg28kBKqb@zx2c4.com>
+ <20240913173206.30385-C-hca@linux.ibm.com>
+ <ZuSRKLFdYI1gCHh9@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,44 +92,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911161054.4494-3-Raju.Lakkaraju@microchip.com>
+In-Reply-To: <ZuSRKLFdYI1gCHh9@zx2c4.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: B2CQxQX1rtAf2iSdA3GJe8w-ZW1zjE1L
+X-Proofpoint-GUID: B2CQxQX1rtAf2iSdA3GJe8w-ZW1zjE1L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-14_09,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409140123
 
-Hi Raju,
+On Fri, Sep 13, 2024 at 09:23:20PM +0200, Jason A. Donenfeld wrote:
+> > > >   CC       vdso_test_chacha
+> > > > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S: Assembler messages:
+> > > > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S:147: Error: Unrecognized opcode: `alsih'
+> > > > 
+> > > > Any idea what's up?
+> > > 
+> > > Looks like I needed `-march=arch9`. I can potentially rebuild my
+> > > toolchains to do this by default, though, if that's a normal thing to
+> > > have and this is just my toolchain being crappy. Or, if it's not a
+> > > normal thing to have, do we need to add it to the selftests Makefile?
+> > 
+> > That needs to be fixed differently, since the kernel build would also
+> > fail when building for z10. Could you squash the below fix into this
+> > patch, please?
+> 
+> Done.
+> 
+> > So for the kernel itself including the vdso code, everything is
+> > correct now. But similar checks are missing within vdso_test_chacha.c.
+> > I'll provide something for that, so that the test case will be skipped
+> > if the required instructions are missing, but not today.
+> 
+> Okay. I would assume no rush there, because it's unlikely there are
+> those machines part of kselftest fleets anyway?
 
-kernel test robot noticed the following build errors:
+There was another surprise waiting for me: the ALTERNATIVE macro
+within the tools header file is defined in a way that it omits
+everything. So I was just lucky that the s390 chacha assembler code
+worked, since even without the alternatives the code is working, but
+executes code for newer CPU generations, which it shouldn't.
 
-[auto build test ERROR on net-next/main]
+So below is a diff which fixes both:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Raju-Lakkaraju/net-lan743x-Add-SFP-support-check-flag/20240912-002444
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240911161054.4494-3-Raju.Lakkaraju%40microchip.com
-patch subject: [PATCH net-next V2 2/5] net: lan743x: Add support to software-nodes for sfp
-config: x86_64-randconfig-003-20240914 (https://download.01.org/0day-ci/archive/20240915/202409150110.dSOZKgpK-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409150110.dSOZKgpK-lkp@intel.com/reproduce)
+- Add an s390 specific ALTERNATIVE macro that emits code that is
+  supposed to work on older CPU generations, instead of no code
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409150110.dSOZKgpK-lkp@intel.com/
+- Add a hwcap check to make sure that all CPU capabilities required to
+  run the assembler code are present
 
-All errors (new ones prefixed by >>):
+It probably makes sense to squash this also into
+"s390/vdso: Wire up getrandom() vdso implementation".
 
->> ld.lld: error: undefined symbol: devm_i2c_add_adapter
-   >>> referenced by i2c-mchp-pci1xxxx.c:1182 (drivers/i2c/busses/i2c-mchp-pci1xxxx.c:1182)
-   >>>               drivers/i2c/busses/i2c-mchp-pci1xxxx.o:(pci1xxxx_i2c_probe_pci) in archive vmlinux.a
+Please feel free to change the code in whatever way you like.
+If you prefer separate patches, I will provide them.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GP_PCI1XXXX
-   Depends on [n]: PCI [=y] && GPIOLIB [=y] && NVMEM_SYSFS [=n]
-   Selected by [y]:
-   - LAN743X [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
-   WARNING: unmet direct dependencies detected for I2C_PCI1XXXX
-   Depends on [m]: I2C [=m] && HAS_IOMEM [=y] && PCI [=y]
-   Selected by [y]:
-   - LAN743X [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/tools/include/asm/alternative.h b/tools/include/asm/alternative.h
+index 7ce02a223732..68dc894c0892 100644
+--- a/tools/include/asm/alternative.h
++++ b/tools/include/asm/alternative.h
+@@ -2,8 +2,18 @@
+ #ifndef _TOOLS_ASM_ALTERNATIVE_ASM_H
+ #define _TOOLS_ASM_ALTERNATIVE_ASM_H
+ 
++#if defined(__s390x__)
++#ifdef __ASSEMBLY__
++.macro ALTERNATIVE oldinstr, newinstr, feature
++	\oldinstr
++.endm
++#endif
++#else
++	
+ /* Just disable it so we can build arch/x86/lib/memcpy_64.S for perf bench: */
+ 
+ #define ALTERNATIVE #
+ 
+ #endif
++
++#endif
+diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
+index e81d72c9882e..f1eace68a63b 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
++++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
+@@ -5,11 +5,34 @@
+ 
+ #include <tools/le_byteshift.h>
+ #include <sys/random.h>
++#include <sys/auxv.h>
+ #include <string.h>
+ #include <stdint.h>
+ #include <stdbool.h>
+ #include "../kselftest.h"
+ 
++#if defined(__s390x__)
++
++#ifndef HWCAP_S390_VX
++#define HWCAP_S390_VX 2048
++#endif
++
++static bool cpu_has_capabilities(void)
++{
++	if (getauxval(AT_HWCAP) & HWCAP_S390_VX)
++		return true;
++	return false;
++}
++
++#else
++
++static bool cpu_has_capabilities(void)
++{
++	return true;
++}
++
++#endif
++
+ static uint32_t rol32(uint32_t word, unsigned int shift)
+ {
+ 	return (word << (shift & 31)) | (word >> ((-shift) & 31));
+@@ -67,6 +90,8 @@ int main(int argc, char *argv[])
+ 	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
+ 
+ 	ksft_print_header();
++	if (!cpu_has_capabilities())
++		ksft_exit_skip("Required CPU capabilities missing\n");
+ 	ksft_set_plan(1);
+ 
+ 	for (unsigned int trial = 0; trial < TRIALS; ++trial) {
 
