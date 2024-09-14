@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-329491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49A29791FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:10:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E1B979201
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B2E1C21536
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03EC8282206
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54E81D095E;
-	Sat, 14 Sep 2024 16:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869BE1D049D;
+	Sat, 14 Sep 2024 16:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BaXzLoFU"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KS6NA1/v"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF3E1D04B8
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 16:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FCF1D0492
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 16:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726330214; cv=none; b=R6mT3dCcPlpHFMvXzwCOlt1i+9iJW7xdnotBG3fLea2AS9Cy2TkP7BK9IiQlQR97n5m6FH2HyWcBrHk5OLnB2mugbQ341vmJjmqUp9LhGNc+Q6pwS9oLulCGPl0DvbPW9hMG2jthIA+X7VC8jw3TqBQT1uYdPoaRpD7LEw8Czas=
+	t=1726330235; cv=none; b=TJ3+SIdEOvIr0xTw6lGJTjV0U0Y2+DhdIdOMnFKCKkUZDmhdzCbAAyNu8AET0dOA39d3GSU6VKMMNOkFkfw3eiL32HgFy73IoiBse11l+mlgtENkrMKNbWm/927sV72wiVaob/penTKlAa9CspQOM4yxCpUgGd/KKdIChUSAl9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726330214; c=relaxed/simple;
-	bh=8AOCxFfb7j8DcfInrSLgYDK9nmwjDzPAdDYsIDvR/lk=;
+	s=arc-20240116; t=1726330235; c=relaxed/simple;
+	bh=+pSKj6HDL8FELscRGfL7YvgnU8F9HvlK8aong9i1NZY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AJ7xi5IeHkJRGmSgAzRav193LRND0+JFOF39NJaXZutD+nnuAdUrlSYlBelMlB15vde5lQTZ24otrF5zzC0y7YmwM9JBnpBw283/EJdopagw800h7ZDiGIDmCdgLU1E7npc28+Zo8uoVu6ZClyd6GlY462rKs6hWmpVJ/lO3P6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BaXzLoFU; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=YHvtCAhaeWHLHnqaI/CIUsXJAGU5RxsKNWH6oY8isVJro/yfuiePkeWeMbN2i2DWcnMh0wrqt3Yb8cWHw6gRmk8XWNdL9tmJo9fk4BWXB0zdGISZQm2hPgOAUtu6oySKemvgw3VZkDxuqmZEqBtklfwT0FSC5KIVDMrI/zbf1Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KS6NA1/v; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726330211;
+	s=mimecast20190719; t=1726330232;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gVjWpjqJODWBhVoOOIKNl587HfNajGvXg1O8JyOtZI8=;
-	b=BaXzLoFUNrnoj5arWZLk3GUMTIIYYzsgUgJTmQMA+a+F0cntdCkNDTCbQDUbKT1qXQzz2B
-	+Fl6BU3Pa83xwrPFvlfyY55T1Iu+Agd2zJAvfsUOggXY/vmB67ZfjLkh5+PxCqQyZrz0f3
-	FRbHiG58dbuVCQ1x/2p+NRgsOez5/Vc=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=xxBI77JIB7tNuQKnFvDRwold1IQndzyzLltbMBY/n+c=;
+	b=KS6NA1/v2072zz8qdPzftwTluBi0YOyeXyzBCGRj0mVBcP9pMAEsMGDkMbFp6FpjFvNV1w
+	alRXDrEPUomMomF9yEVQmn6/T/mqYYy13Mj6CdQn3KVHi5zGnUofv9146tdBWhped0HwiU
+	btOfYgMsYQrOfDpmxTEgWUXO2CgIDac=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-18-sWIfxNsFOJCaQoo_AR9UXw-1; Sat, 14 Sep 2024 12:10:09 -0400
-X-MC-Unique: sWIfxNsFOJCaQoo_AR9UXw-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c25cf44030so1982191a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:10:09 -0700 (PDT)
+ us-mta-30-YGbG0apoOCG7HdXSuxTf1w-1; Sat, 14 Sep 2024 12:10:31 -0400
+X-MC-Unique: YGbG0apoOCG7HdXSuxTf1w-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a8a84b60255so216582466b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:10:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726330208; x=1726935008;
+        d=1e100.net; s=20230601; t=1726330230; x=1726935030;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gVjWpjqJODWBhVoOOIKNl587HfNajGvXg1O8JyOtZI8=;
-        b=jaR/t2GtlTdJZfe3smeZKlYFbE4FOBImVt16vptsKifyJoHrFKXwAN+hoyKlO60IBK
-         8bK3tSlzPPzz8D0nY8cxRqpUCZNZwKYFQcOZNA1Tkj1V8P2zp99Eda2pDsBfTgJmAMya
-         Lo3Mpi5JutVTvTcQ4LSjlZBceaKYlC4/ic4DiC1CCFlsPV/tnTay1yB9yBmxZWiHXKrD
-         VTSVRXGj1GD2trQBVph5tVjap/iYy4YnJI0kRbZuloceABTTSfm9c4hh/NEdNmqSfBwp
-         YjpPse+gKT+GyM9ML2gXtXGVRUizFe6H0ExKJp11FzQlk4ltMaS6g/lxWN++oW0giNQS
-         uXcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrdIX7oQNqL7jKKa84+eAi5Yck4ddI85aZqSqT8VLx26N8X5Mk4zTwKZ3nxkCWhGzPpNEHNssl03ju0mE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyetYHk9D58NlxQBQZIiN7Tu5yDAhPeGLAr2jjHlmOF+v+/sAAi
-	OAdCPu79Xxzd1s0uvSK5tjF7Wr+/TJuBAGFdCDnbfx5PzZ0rBjtYvy6oHqadj13xLJfSLRp/zHo
-	j89O0p6F4qjh7WgkNm/PtpAPYU4TJCks5gcn2xeTESkQyo5g03LGSHKvRZcar2Q==
-X-Received: by 2002:a05:6402:51cd:b0:5c4:1d22:9fd0 with SMTP id 4fb4d7f45d1cf-5c41d22a03emr5251871a12.8.1726330208544;
-        Sat, 14 Sep 2024 09:10:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGnSE/Qvo9dn/cOeU/e6N9e8WObdZYM7N1mwuFdI0DuIuqajIEaNoiroJO0uOjqGvDq2PqXqQ==
-X-Received: by 2002:a05:6402:51cd:b0:5c4:1d22:9fd0 with SMTP id 4fb4d7f45d1cf-5c41d22a03emr5251843a12.8.1726330208020;
-        Sat, 14 Sep 2024 09:10:08 -0700 (PDT)
+        bh=xxBI77JIB7tNuQKnFvDRwold1IQndzyzLltbMBY/n+c=;
+        b=JM9IkTGAfl7fgW57NpnurXZfpBSz0R7+7sVE/nNxz47keZjdBpoi85M47R9GP6z8/v
+         F9gfdyOeMUf8Bnd/604XxmYTiTJuqzTwpzB6k+3vERXtlK+APs3UbPgMIuUQ4NJ9ybJH
+         qN4fX7aTgFAEEm4CsRsWiUdGBav5wCJnupefF4wBEL9nwY74wwtdN18L5kK37dOeMuT7
+         ruOOcf0/fSCMgGurRHAAE+Ckltocn26WCN68FuoE5J7/nbu3jWWeoHM5C0pSYIUSIuqS
+         +uqCIjyLeMHwjSH9+/Ibbe8vLXlhSNRw6sGkG9/htcE+Nzkr8b5By2G9+JcrNnqfWyyp
+         RKWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3fD90xNyXDwp3BbvENkYLiq59EnnHvByw0B99ZHpO53/uYWEmHqZWMHBunR59Yys94q7mGlt/Pdz6Px8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq292hkz9LRvsvCuBLLOCjSklWXS+gaSeugQ1xCXQWIVaPAttO
+	FC3+hdtD31jMkVMXyhlDZEsos5YXiMKAQdbgg0nyaEkcXsxJYfZomFLDd0k4Yn8wKhnM3bFmUTq
+	VGnfeOMMmjLPEkBtquS0ZT4YYunm1OUJog2gipbg0UBfnXfUdfiIqOATLS3so+w==
+X-Received: by 2002:a17:907:d867:b0:a8a:8de6:a610 with SMTP id a640c23a62f3a-a9029617a48mr1020313066b.40.1726330230298;
+        Sat, 14 Sep 2024 09:10:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbeAWUkQeBz+cg+u9aoffGof5ioUaG2342zDqDi8fgGbeBr1zpJkJFh45IxZ/Nv5yRtkRdUA==
+X-Received: by 2002:a17:907:d867:b0:a8a:8de6:a610 with SMTP id a640c23a62f3a-a9029617a48mr1020309766b.40.1726330229774;
+        Sat, 14 Sep 2024 09:10:29 -0700 (PDT)
 Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89c7fsm773079a12.67.2024.09.14.09.10.06
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb4ad45sm797438a12.3.2024.09.14.09.10.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Sep 2024 09:10:06 -0700 (PDT)
-Message-ID: <f987b71a-361f-4d4e-a2d1-6410f4b22cc7@redhat.com>
-Date: Sat, 14 Sep 2024 18:10:06 +0200
+        Sat, 14 Sep 2024 09:10:28 -0700 (PDT)
+Message-ID: <1603a3f1-ac49-45af-a666-8cecdaa02194@redhat.com>
+Date: Sat, 14 Sep 2024 18:10:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,24 +81,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86/amd: pmf: Add quirk for TUF Gaming A14
-To: aln8 <aln8un@gmail.com>, Shyam-sundar.S-k@amd.com
-Cc: ilpo.jarvinen@linux.intel.com, luke@ljones.dev,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240912073601.65656-1-aln8un@gmail.com>
+Subject: Re: [PATCH] platform/mellanox: mlxbf-pmc: fix lockdep warning
+To: Luiz Capitulino <luizcap@redhat.com>, ilpo.jarvinen@linux.intel.com,
+ shravankr@nvidia.com
+Cc: davthompson@nvidia.com, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, lcapitulino@gmail.com
+References: <20240912190532.377097-1-luizcap@redhat.com>
 Content-Language: en-US, nl
 From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240912073601.65656-1-aln8un@gmail.com>
+In-Reply-To: <20240912190532.377097-1-luizcap@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi,
 
-On 9/12/24 9:36 AM, aln8 wrote:
-> The ASUS TUF Gaming A14 has the same issue as the ROG Zephyrus G14
-> where it advertises SPS support but doesn't use it.
+On 9/12/24 9:05 PM, Luiz Capitulino wrote:
+> It seems the mlxbf-pmc driver is missing initializing sysfs attributes
+> which causes the warning below when CONFIG_LOCKDEP and
+> CONFIG_DEBUG_LOCK_ALLOC are enabled. This commit fixes it.
 > 
-> Signed-off-by: aln8 <aln8un@gmail.com>
+> [  155.380843] BUG: key ffff470f45dfa6d8 has not been registered!
+> [  155.386749] ------------[ cut here ]------------
+> [  155.391361] DEBUG_LOCKS_WARN_ON(1)
+> [  155.391381] WARNING: CPU: 4 PID: 1828 at kernel/locking/lockdep.c:4894 lockdep_init_map_type+0x1d0/0x288
+> [  155.404254] Modules linked in: mlxbf_pmc(+) xfs libcrc32c mmc_block mlx5_core crct10dif_ce mlxfw ghash_ce virtio_net tls net_failover sha2
+> _ce failover psample sha256_arm64 dw_mmc_bluefield pci_hyperv_intf sha1_ce dw_mmc_pltfm sbsa_gwdt dw_mmc micrel mmc_core nfit i2c_mlxbf pwr_m
+> lxbf gpio_generic libnvdimm mlxbf_tmfifo mlxbf_gige dm_mirror dm_region_hash dm_log dm_mod
+> [  155.436786] CPU: 4 UID: 0 PID: 1828 Comm: modprobe Kdump: loaded Not tainted 6.11.0-rc7-rep1+ #1
+> [  155.445562] Hardware name: https://www.mellanox.com BlueField SoC/BlueField SoC, BIOS 4.8.0.13249 Aug  7 2024
+> [  155.455463] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [  155.462413] pc : lockdep_init_map_type+0x1d0/0x288
+> [  155.467196] lr : lockdep_init_map_type+0x1d0/0x288
+> [  155.471976] sp : ffff80008a1734e0
+> [  155.475279] x29: ffff80008a1734e0 x28: ffff470f45df0240 x27: 00000000ffffee4b
+> [  155.482406] x26: 00000000000011b4 x25: 0000000000000000 x24: 0000000000000000
+> [  155.489532] x23: ffff470f45dfa6d8 x22: 0000000000000000 x21: ffffd54ef6bea000
+> [  155.496659] x20: ffff470f45dfa6d8 x19: ffff470f49cdc638 x18: ffffffffffffffff
+> [  155.503784] x17: 2f30303a31444642 x16: ffffd54ef48a65e8 x15: ffff80010a172fe7
+> [  155.510911] x14: 0000000000000000 x13: 284e4f5f4e524157 x12: 5f534b434f4c5f47
+> [  155.518037] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffd54ef3f48a14
+> [  155.525163] x8 : 00000000000bffe8 x7 : c0000000ffff7fff x6 : 00000000002bffa8
+> [  155.532289] x5 : ffff4712bdcb6088 x4 : 0000000000000000 x3 : 0000000000000027
+> [  155.539416] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff470f43e5be00
+> [  155.546542] Call trace:
+> [  155.548976]  lockdep_init_map_type+0x1d0/0x288
+> [  155.553410]  __kernfs_create_file+0x80/0x138
+> [  155.557673]  sysfs_add_file_mode_ns+0x94/0x150
+> [  155.562106]  create_files+0xb0/0x248
+> [  155.565672]  internal_create_group+0x10c/0x328
+> [  155.570105]  internal_create_groups.part.0+0x50/0xc8
+> [  155.575060]  sysfs_create_groups+0x20/0x38
+> [  155.579146]  device_add_attrs+0x1b8/0x228
+> [  155.583146]  device_add+0x2a4/0x690
+> [  155.586625]  device_register+0x24/0x38
+> [  155.590362]  __hwmon_device_register+0x1e0/0x3c8
+> [  155.594969]  devm_hwmon_device_register_with_groups+0x78/0xe0
+> [  155.600703]  mlxbf_pmc_probe+0x224/0x3a0 [mlxbf_pmc]
+> [  155.605669]  platform_probe+0x6c/0xe0
+> [  155.609320]  really_probe+0xc4/0x398
+> [  155.612887]  __driver_probe_device+0x80/0x168
+> [  155.617233]  driver_probe_device+0x44/0x120
+> [  155.621405]  __driver_attach+0xf4/0x200
+> [  155.625230]  bus_for_each_dev+0x7c/0xe8
+> [  155.629055]  driver_attach+0x28/0x38
+> [  155.632619]  bus_add_driver+0x110/0x238
+> [  155.636445]  driver_register+0x64/0x128
+> [  155.640270]  __platform_driver_register+0x2c/0x40
+> [  155.644965]  pmc_driver_init+0x24/0xff8 [mlxbf_pmc]
+> [  155.649833]  do_one_initcall+0x70/0x3d0
+> [  155.653660]  do_init_module+0x64/0x220
+> [  155.657400]  load_module+0x628/0x6a8
+> [  155.660964]  init_module_from_file+0x8c/0xd8
+> [  155.665222]  idempotent_init_module+0x194/0x290
+> [  155.669742]  __arm64_sys_finit_module+0x6c/0xd8
+> [  155.674261]  invoke_syscall.constprop.0+0x74/0xd0
+> [  155.678957]  do_el0_svc+0xb4/0xd0
+> [  155.682262]  el0_svc+0x5c/0x248
+> [  155.685394]  el0t_64_sync_handler+0x134/0x150
+> [  155.689739]  el0t_64_sync+0x17c/0x180
+> [  155.693390] irq event stamp: 6407
+> [  155.696693] hardirqs last  enabled at (6407): [<ffffd54ef3f48564>] console_unlock+0x154/0x1b8
+> [  155.705207] hardirqs last disabled at (6406): [<ffffd54ef3f485ac>] console_unlock+0x19c/0x1b8
+> [  155.713719] softirqs last  enabled at (6404): [<ffffd54ef3e9740c>] handle_softirqs+0x4f4/0x518
+> [  155.722320] softirqs last disabled at (6395): [<ffffd54ef3df0160>] __do_softirq+0x18/0x20
+> [  155.730484] ---[ end trace 0000000000000000 ]---
+> 
+> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
 
 Thank you for your patch, I've applied this patch to my review-hans 
 branch:
@@ -120,29 +188,52 @@ Hans
 
 
 > ---
-> v1 -> v2: Change to FA401W so full series models will get the fix.
-> ---
->  drivers/platform/x86/amd/pmf/pmf-quirks.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  drivers/platform/mellanox/mlxbf-pmc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/drivers/platform/x86/amd/pmf/pmf-quirks.c b/drivers/platform/x86/amd/pmf/pmf-quirks.c
-> index 48870ca52..7cde5733b 100644
-> --- a/drivers/platform/x86/amd/pmf/pmf-quirks.c
-> +++ b/drivers/platform/x86/amd/pmf/pmf-quirks.c
-> @@ -37,6 +37,14 @@ static const struct dmi_system_id fwbug_list[] = {
->  		},
->  		.driver_data = &quirk_no_sps_bug,
->  	},
-> +	{
-> +		.ident = "ASUS TUF Gaming A14",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "FA401W"),
-> +		},
-> +		.driver_data = &quirk_no_sps_bug,
-> +	},
->  	{}
->  };
+> diff --git a/drivers/platform/mellanox/mlxbf-pmc.c b/drivers/platform/mellanox/mlxbf-pmc.c
+> index 4ed9c7fd2b62..9d18dfca6a67 100644
+> --- a/drivers/platform/mellanox/mlxbf-pmc.c
+> +++ b/drivers/platform/mellanox/mlxbf-pmc.c
+> @@ -1774,6 +1774,7 @@ static int mlxbf_pmc_init_perftype_counter(struct device *dev, unsigned int blk_
 >  
+>  	/* "event_list" sysfs to list events supported by the block */
+>  	attr = &pmc->block[blk_num].attr_event_list;
+> +	sysfs_attr_init(&attr->dev_attr.attr);
+>  	attr->dev_attr.attr.mode = 0444;
+>  	attr->dev_attr.show = mlxbf_pmc_event_list_show;
+>  	attr->nr = blk_num;
+> @@ -1787,6 +1788,7 @@ static int mlxbf_pmc_init_perftype_counter(struct device *dev, unsigned int blk_
+>  	if (strstr(pmc->block_name[blk_num], "l3cache") ||
+>  	    ((pmc->block[blk_num].type == MLXBF_PMC_TYPE_CRSPACE))) {
+>  		attr = &pmc->block[blk_num].attr_enable;
+> +		sysfs_attr_init(&attr->dev_attr.attr);
+>  		attr->dev_attr.attr.mode = 0644;
+>  		attr->dev_attr.show = mlxbf_pmc_enable_show;
+>  		attr->dev_attr.store = mlxbf_pmc_enable_store;
+> @@ -1814,6 +1816,7 @@ static int mlxbf_pmc_init_perftype_counter(struct device *dev, unsigned int blk_
+>  	/* "eventX" and "counterX" sysfs to program and read counter values */
+>  	for (j = 0; j < pmc->block[blk_num].counters; ++j) {
+>  		attr = &pmc->block[blk_num].attr_counter[j];
+> +		sysfs_attr_init(&attr->dev_attr.attr);
+>  		attr->dev_attr.attr.mode = 0644;
+>  		attr->dev_attr.show = mlxbf_pmc_counter_show;
+>  		attr->dev_attr.store = mlxbf_pmc_counter_store;
+> @@ -1826,6 +1829,7 @@ static int mlxbf_pmc_init_perftype_counter(struct device *dev, unsigned int blk_
+>  		attr = NULL;
+>  
+>  		attr = &pmc->block[blk_num].attr_event[j];
+> +		sysfs_attr_init(&attr->dev_attr.attr);
+>  		attr->dev_attr.attr.mode = 0644;
+>  		attr->dev_attr.show = mlxbf_pmc_event_show;
+>  		attr->dev_attr.store = mlxbf_pmc_event_store;
+> @@ -1861,6 +1865,7 @@ static int mlxbf_pmc_init_perftype_reg(struct device *dev, unsigned int blk_num)
+>  	while (count > 0) {
+>  		--count;
+>  		attr = &pmc->block[blk_num].attr_event[count];
+> +		sysfs_attr_init(&attr->dev_attr.attr);
+>  		attr->dev_attr.attr.mode = 0644;
+>  		attr->dev_attr.show = mlxbf_pmc_counter_show;
+>  		attr->dev_attr.store = mlxbf_pmc_counter_store;
 
 
