@@ -1,213 +1,252 @@
-Return-Path: <linux-kernel+bounces-329221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AC7978ECB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:12:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEAE978ED2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ACA41C24E7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:12:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E20501C21EBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECFA1CDFB4;
-	Sat, 14 Sep 2024 07:12:53 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F031CDA09;
-	Sat, 14 Sep 2024 07:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879D313AA53;
+	Sat, 14 Sep 2024 07:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="T5XcjebT"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8A7175B1;
+	Sat, 14 Sep 2024 07:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726297973; cv=none; b=Qe9roExvHvAHZ4iTChTMOKP/sbNSWX/WDeLZM/YhkbcbZuFStgloFn2wtUlvwyRg6l/6as/S0MC4osqzIJ8oC+ofCeexlDdchqLuy53crAJABAkQ5juZyKlKzKjBc9KbIM1mCN+lw45clzY7BDVyIsULtyFvcuqKwQJWTPPEOU8=
+	t=1726298407; cv=none; b=FyRydCC/0CusFnj29TJyrWBSk2tXwHiBgSViLnMCEridAPnewdngSAsNWMaM43QCUrrwSBq1YG6nvDyxHRfNncE/3MYfXShFp146m9AJV3DIqm4br7T4tfn/wC60pkecclHDQfs6T8bEBcGnKwbxw0FoIp1UzqpVBPLUZsuQhYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726297973; c=relaxed/simple;
-	bh=ZceQdqQJqEGlJLdBWTH43nSRYHAKB33VcqzfQ+YQbvE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aS+CpE6axj9Du9KxkYtphNWribYSy6uK4+LeBPCe96BTIwDgvXOHazFDYj5NjkZJmNAQISN0MCbs0EkrDxzPH1zodwMkTi2DGKhlYdqDnHLqvptY9UlV+KNv5hrL5SVwtekW1yuss7HU6AZpaUR6wWIcmg6yLxKf6iziwCge67I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxhehwN+VmP8sHAA--.17038S3;
-	Sat, 14 Sep 2024 15:12:48 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMDx_9dsN+VmQ6IGAA--.38150S3;
-	Sat, 14 Sep 2024 15:12:47 +0800 (CST)
-Subject: Re: [PATCH v2] LoongArch: Enable ACPI BGRT handling
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <20240914065318.2099448-1-maobibo@loongson.cn>
- <CAAhV-H6k2c9M1htncx3UQdqy275PHDZTeo_56fWbtxDYNH-s6w@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <76b79099-ea95-eef5-e02b-6879f0998f18@loongson.cn>
-Date: Sat, 14 Sep 2024 15:12:44 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1726298407; c=relaxed/simple;
+	bh=+nCRBcECe+f7eLWxihkl9KlyRYWxmo7Kggbc1KNnjQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wmq1mVQ6hF2PGd/mWOjM3t7sLGiK2CULPiE+i9/B5GxSBljseY/SHCip+mh2hqS9vVAxkVJ8bpDh8PoqFBAdPN419IaJY7e950TQ3eskEfYvR9zLwxjWf2RbUByjXyfXaCHHyQkYxYkrB1MpmRVbE3O+SdhdUx8rq9L5YWqsEn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=T5XcjebT; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ZNbttXLmsVTMJFfGZ6eGNTGy2rEvBvnnhCiM1YadOGs=; b=T5XcjebTzldcSw0eTGWOH00qZf
+	1/tC4KrHsifNzy9aqGeOfujkr5GUa/C3rWvyB7zeO8Fj91XU8P5z6bF5KsmE6MCeqPjc+X1eS+fBj
+	7mvMnXJWOmncZNBgX89XsijRX0aSNPvoyQ3LexQlx68rDu3v0if8yeDeLK/sZzSgH2L9j4q5Z33Ru
+	7ndW+bJcrhu1AU4HJYmCivVwzzzaMzD7FmRfFM6rHYTyXogkWGxf4xBPx/+CBlq8sFYDOhkkSBSWg
+	sqgaSg2ER2LF36QtyqCkruf3/DPbOUBLwgT2puhhqJjOk33xos+r7QII+06b2lqDHb5xFwC+GOPtZ
+	yyhIwB+w==;
+Received: from [2001:9e8:9c6:1501:3235:adff:fed0:37e6] (port=46920 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1spN4T-0088YS-FG;
+	Sat, 14 Sep 2024 09:19:53 +0200
+Date: Sat, 14 Sep 2024 09:19:42 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Jing Leng <3090101217@zju.edu.cn>,
+	Michal Marek <michal.lkml@markovi.net>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Jing Leng <jleng@ambarella.com>
+Subject: Re: External modules with O=... (was: Re: [PATCH] kbuild: Fix
+ include path in scripts/Makefile.modpost)
+Message-ID: <20240914-loutish-crouching-echidna-3bfd6d@lindesnes>
+References: <aowpzz4rbedjkwkl7b4a2f5pf2p5cgsu6knsgxnayckhbumxf3@aznrm7oliydb>
+ <442e8058.43a4.191dea175d7.Coremail.3090101217@zju.edu.cn>
+ <lnizw6jklneisxkhah7ezy4tcrn2wpm52ibh5euz7ipyfansde@kc4onuvrrmxr>
+ <mesi5e46iumhgdbvzl2gfwdamtv34baydb5d4pmud4fu7n4dto@fewx4uzbtjl6>
+ <CAK7LNATDVN9ukAJdztobZ=aMLvfgE_wW1N_gsB-x3OiRE-Jrog@mail.gmail.com>
+ <oli5wymvdxrk4ds54yh65s4cewztn4daxujgjfprzw2f2ozqqi@35kdsvivgrzw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H6k2c9M1htncx3UQdqy275PHDZTeo_56fWbtxDYNH-s6w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDx_9dsN+VmQ6IGAA--.38150S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxJF4DCrWDGFWDXw17Gw48uFX_yoWruF1xpF
-	yvkF4kJFs8CF18Grnrt343WF98tr4kKrWIqFy7Ka43ZFnFvr17Ar4kur9IvFyjv3yDKF4F
-	9FWSqa13uF4UXagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
-	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jY
-	SoJUUUUU=
+In-Reply-To: <oli5wymvdxrk4ds54yh65s4cewztn4daxujgjfprzw2f2ozqqi@35kdsvivgrzw>
 
-
-
-On 2024/9/14 下午3:01, Huacai Chen wrote:
-> Hi, Bibo,
+On Wed, Sep 11, 2024 at 10:38:58AM -0500, Lucas De Marchi wrote:
+> On Wed, Sep 11, 2024 at 04:28:30PM GMT, Masahiro Yamada wrote:
+> > On Wed, Sep 11, 2024 at 1:36 PM Lucas De Marchi
+> > <lucas.demarchi@intel.com> wrote:
+> > > 
+> > > On Tue, Sep 10, 2024 at 09:43:14PM GMT, Lucas De Marchi wrote:
+> > > >On Wed, Sep 11, 2024 at 09:10:09AM GMT, Jing Leng wrote:
+> > > >>>-----Original Messages-----
+> > > >>>From: "Lucas De Marchi" <lucas.demarchi@intel.com>
+> > > >>>Send time:Tuesday, 09/10/2024 22:00:29
+> > > >>>To: "Masahiro Yamada" <masahiroy@kernel.org>
+> > > >>>Cc: 3090101217@zju.edu.cn, "Michal Marek" <michal.lkml@markovi.net>, "Nick
+> > > >>> Desaulniers" <ndesaulniers@google.com>, "Linux Kbuild mailing list" <linux-kbuild@vger.kernel.org>, "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, "Jing Leng" <jleng@ambarella.com>
+> > > >>>Subject: External modules with O=... (was: Re: [PATCH] kbuild: Fix include path in scripts/Makefile.modpost)
+> > > >>>
+> > > >>>Hi, I was pointed to this thread since I'm trying something similar
+> > > >>>in kmod's testsuite. See below.
+> > > >>>
+> > > >>>On Tue, May 24, 2022 at 02:52:45AM GMT, Masahiro Yamada wrote:
+> > > >>>>On Tue, May 17, 2022 at 7:51 PM <3090101217@zju.edu.cn> wrote:
+> > > >>>>>
+> > > >>>>> From: Jing Leng <jleng@ambarella.com>
+> > > >>>>>
+> > > >>>>> When building an external module, if users don't need to separate the
+> > > >>>>> compilation output and source code, they run the following command:
+> > > >>>>> "make -C $(LINUX_SRC_DIR) M=$(PWD)". At this point, "$(KBUILD_EXTMOD)"
+> > > >>>>> and "$(src)" are the same.
+> > > >>>>>
+> > > >>>>> If they need to separate them, they run "make -C $(KERNEL_SRC_DIR)
+> > > >>>>> O=$(KERNEL_OUT_DIR) M=$(OUT_DIR) src=$(PWD)". Before running the
+> > > >>>>> command, they need to copy "Kbuild" or "Makefile" to "$(OUT_DIR)" to
+> > > >>>>> prevent compilation failure.
+> > > >>>>>
+> > > >>>>> So the kernel should change the included path to avoid the copy operation.
+> > > >>>>>
+> > > >>>>> Signed-off-by: Jing Leng <jleng@ambarella.com>
+> > > >>>>> ---
+> > > >>>>>  scripts/Makefile.modpost | 3 +--
+> > > >>>>>  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > >>>>>
+> > > >>>>> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+> > > >>>>> index 48585c4d04ad..0273bf7375e2 100644
+> > > >>>>> --- a/scripts/Makefile.modpost
+> > > >>>>> +++ b/scripts/Makefile.modpost
+> > > >>>>> @@ -87,8 +87,7 @@ obj := $(KBUILD_EXTMOD)
+> > > >>>>>  src := $(obj)
+> > > >>>>>
+> > > >>>>>  # Include the module's Makefile to find KBUILD_EXTRA_SYMBOLS
+> > > >>>>> -include $(if $(wildcard $(KBUILD_EXTMOD)/Kbuild), \
+> > > >>>>> -             $(KBUILD_EXTMOD)/Kbuild, $(KBUILD_EXTMOD)/Makefile)
+> > > >>>>> +include $(if $(wildcard $(src)/Kbuild), $(src)/Kbuild, $(src)/Makefile)
+> > > >>>>>
+> > > >>>>>  # modpost option for external modules
+> > > >>>>>  MODPOST += -e
+> > > >>>>> --
+> > > >>>>> 2.17.1
+> > > >>>>>
+> > > >>>>
+> > > >>>>
+> > > >>>>I do not think "M=$(OUT_DIR) src=$(PWD)" is the official way,
+> > > >>>>but this patch is a clean up.
+> > > >>>
+> > > >>>I tried what is in this patch and also tried to find an official way in
+> > > >>>the docs.
+> > 
+> > 
+> > There is no official way.
+> > 
+> > > >>>
+> > > >>>In kmod's testsuite we build dummy kernel modules to exercise the API.
+> > > >>>https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/tree/testsuite/module-playground
+> > > >>>
+> > > >>>This works:
+> > > >>>     make -C /lib/modules/$(uname -r)/build M=$PWD
+> > > >>>
+> > > >>>This doesn't:
+> > > >>>     make -C /lib/modules/$(uname -r)/build M=$PWD O=/tmp/kmod_test_modules
+> > 
+> > 
+> > 
+> > O= points the output directory of the kernel,
+> > not the output directory of the external modules.
+> > 
+> > 
+> > /lib/modules/$(uname -r)/build
+> > is the clean source tree.
+> > 
+> > /tmp/kmod_test_modules
+> > contains the build artifacts of vmlinux and
+> > in-tree modules.
+> > 
+> > Then, the command you gave would work.
+> > 
+> > 
+> > 
+> > 
+> > 
+> > 
+> > > >>>
+> > > >>>I also tried the variants above with setting src, but all of them give
+> > > >>>me errors - I used 6.10 and 6.11-rc7 for these tests.
+> > > >>>
+> > > >>>Is there a way to do this?
+> > > >>>
+> > > >>>thanks
+> > > >>>Lucas De Marchi
+> > > >>>
+> > > >>>>
+> > > >>>>Applied to linux-kbuild. Thanks.
+> > > >>>>
+> > > >>>>
+> > > >>>>--
+> > > >>>>Best Regards
+> > > >>>>Masahiro Yamada
+> > > >>
+> > > >>Hi Masahiro,
+> > > >
+> > > >I guess you meant Lucas :)
+> > > >
+> > > >>
+> > > >>I think your intention is to separate the source code from the compiled output.
+> > > >>The correct command should be:
+> > > >>   make -C /lib/modules/$(uname -r)/build src=$PWD M=/tmp/kmod_test_modules
+> > > >
+> > > >oh, looks like this works. Apparently my mistake was trying to set O=
+> > > >like I normally do for in-tree modules.
+> > > 
+> > > spoke too early... It worked because I was in another machine pointing
+> > > to a 6.8 kernel. It seems like something broke between 6.9 and 6.10.
+> > > 
+> > > Running a quick bisect, it's pointing to this commit:
+> > > 9a0ebe5011f4 ("kbuild: use $(obj)/ instead of $(src)/ for common pattern rules")
+> > 
+> > 
+> > Overriding 'src' from the command is not allowed. That's why.
+> > 
+> > 
+> > > Error like below:
+> > > 
+> > > $ make -j$(nproc) -C ~/p/linux-dim/src MddPWD/build srcx=$PWD
+> > > make: Entering directory '/home/ldmartin/p/linux-dim/src'
+> > > make[2]: *** No rule to make target '/home/ldmartin/p/kmod/testsuite/module-playground/build/mod-simple.o', needed by '/home/ldmartin/p/kmod/testsuite/module-playground/build/'.  Stop.
+> > > make[1]: *** [/home/ldmartin/p/linux-dim/src/Makefile:1922: /home/ldmartin/p/kmod/testsuite/module-playground/build] Error 2
+> > > make: *** [Makefile:240: __sub-make] Error 2
+> > > make: Leaving directory '/home/ldmartin/p/linux-dim/src'
+> > 
+> > 
+> > I suggested M=relative-path + VPATH=
+> > but I do not know what you want to achieve.
+> > 
+> > https://lore.kernel.org/linux-kbuild/CAK7LNATGGibmjZzYX_A2SkJthmOPbKw2K3R7JYuHTWzgGL2Zjg@mail.gmail.com/
 > 
-> On Sat, Sep 14, 2024 at 2:53 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> Add ACPI BGRT support on LoongArch so it can display image provied by
->> acpi table at boot stage and switch to graphical UI smoothly.
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202409102056.DNqh6zzA-lkp@intel.com/
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->> v1 ... v2:
->>    1. Solve compile warning issue reported from lkp, return type of
->>       function early_memunmap() is void *, that of function early_ioremap()
->>       is void __iomem *, force type conversion is added.
-> I've applied V1, build warnings seems another problem which has no
-> relationship with this patch itself.
-Good, thanks for applying it.
-
-Regards
-Bibo Mao
+> but that is only for in-tree modules, not external modules, right?
+> Quick reproducer on what I expected would work:
 > 
-> Huacai
+> 	git clone https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git
+> 	cd kmod/testsuite/module-playground
+> 	make -C $KDIR M=$PWD O=$PWD/build
 > 
->> ---
->>   arch/loongarch/include/asm/io.h | 4 +---
->>   arch/loongarch/kernel/acpi.c    | 8 ++++++--
->>   arch/loongarch/mm/ioremap.c     | 9 +++++++++
->>   drivers/acpi/Kconfig            | 2 +-
->>   4 files changed, 17 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/loongarch/include/asm/io.h b/arch/loongarch/include/asm/io.h
->> index 5e95a60df180..3049bccec693 100644
->> --- a/arch/loongarch/include/asm/io.h
->> +++ b/arch/loongarch/include/asm/io.h
->> @@ -10,6 +10,7 @@
->>
->>   #include <asm/addrspace.h>
->>   #include <asm/cpu.h>
->> +#include <asm/early_ioremap.h>
->>   #include <asm/page.h>
->>   #include <asm/pgtable-bits.h>
->>   #include <asm/string.h>
->> @@ -17,9 +18,6 @@
->>   extern void __init __iomem *early_ioremap(u64 phys_addr, unsigned long size);
->>   extern void __init early_iounmap(void __iomem *addr, unsigned long size);
->>
->> -#define early_memremap early_ioremap
->> -#define early_memunmap early_iounmap
->> -
->>   #ifdef CONFIG_ARCH_IOREMAP
->>
->>   static inline void __iomem *ioremap_prot(phys_addr_t offset, unsigned long size,
->> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
->> index 929a497c987e..2993d7921198 100644
->> --- a/arch/loongarch/kernel/acpi.c
->> +++ b/arch/loongarch/kernel/acpi.c
->> @@ -9,6 +9,7 @@
->>
->>   #include <linux/init.h>
->>   #include <linux/acpi.h>
->> +#include <linux/efi-bgrt.h>
->>   #include <linux/irq.h>
->>   #include <linux/irqdomain.h>
->>   #include <linux/memblock.h>
->> @@ -39,14 +40,14 @@ void __init __iomem * __acpi_map_table(unsigned long phys, unsigned long size)
->>          if (!phys || !size)
->>                  return NULL;
->>
->> -       return early_memremap(phys, size);
->> +       return (void __iomem *)early_memremap(phys, size);
->>   }
->>   void __init __acpi_unmap_table(void __iomem *map, unsigned long size)
->>   {
->>          if (!map || !size)
->>                  return;
->>
->> -       early_memunmap(map, size);
->> +       early_memunmap((void *)map, size);
->>   }
->>
->>   void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
->> @@ -212,6 +213,9 @@ void __init acpi_boot_table_init(void)
->>          /* Do not enable ACPI SPCR console by default */
->>          acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
->>
->> +       if (IS_ENABLED(CONFIG_ACPI_BGRT))
->> +               acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
->> +
->>          return;
->>
->>   fdt_earlycon:
->> diff --git a/arch/loongarch/mm/ioremap.c b/arch/loongarch/mm/ioremap.c
->> index 70ca73019811..28562ac510c8 100644
->> --- a/arch/loongarch/mm/ioremap.c
->> +++ b/arch/loongarch/mm/ioremap.c
->> @@ -16,6 +16,15 @@ void __init early_iounmap(void __iomem *addr, unsigned long size)
->>
->>   }
->>
->> +void __init *early_memremap(resource_size_t phys_addr, unsigned long size)
->> +{
->> +       return (__force void *)early_ioremap(phys_addr, size);
->> +}
->> +
->> +void __init early_memunmap(void *addr, unsigned long size)
->> +{
->> +}
->> +
->>   void *early_memremap_ro(resource_size_t phys_addr, unsigned long size)
->>   {
->>          return early_memremap(phys_addr, size);
->> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
->> index e3a7c2aedd5f..d67f63d93b2a 100644
->> --- a/drivers/acpi/Kconfig
->> +++ b/drivers/acpi/Kconfig
->> @@ -451,7 +451,7 @@ config ACPI_HED
->>
->>   config ACPI_BGRT
->>          bool "Boottime Graphics Resource Table support"
->> -       depends on EFI && (X86 || ARM64)
->> +       depends on EFI && (X86 || ARM64 || LOONGARCH)
->>          help
->>            This driver adds support for exposing the ACPI Boottime Graphics
->>            Resource Table, which allows the operating system to obtain
->>
->> base-commit: 196145c606d0f816fd3926483cb1ff87e09c2c0b
->> --
->> 2.39.3
->>
->>
+> So... did I get the below statement right?
+> 
+> 	There never was an official way to build external modules with
+> 	source and build in different directories. Up until 6.9 we
+> 	could pass `-C <kernel_srcdir> M=<mod_builddir> src=<mod_srcdir>`
+> 	for unofficial way. After that there's no alternative.
 
+yes, AFAICT your summary describes the situation quite precisely.
+
+Kind regards,
+Nicolas
 
