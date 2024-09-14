@@ -1,242 +1,177 @@
-Return-Path: <linux-kernel+bounces-329560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CB49792E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:14:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5029792EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BACB91C21467
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:14:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F109B1F21DF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A514C1D3629;
-	Sat, 14 Sep 2024 18:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BCE1D12FE;
+	Sat, 14 Sep 2024 18:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIkwuz2T"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="k20dK9Ve"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3431D3196;
-	Sat, 14 Sep 2024 18:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDEF1758B
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 18:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726337629; cv=none; b=lwB9ChvGYIvgHC7skWPEw4a5334IR+oqEn4VSURVlATIeJMCS7vIiZp1w9rnEHEWd9W4AhrODTp5Dbc7Fi6YNJt6zRkJ0Ofr6ocdu70wKFvCaxrnvJsJP/Eof91owtD3eDw5214uBw9LUyXddjbCn1CGvVqe2O4y81bCFhbaSnk=
+	t=1726337816; cv=none; b=tWop79Y6d5hh7aCEH7a+ZLJ4/7IyidbiZOq+XgerpAmAbrRRXsp61Zw4h+YCEpVYUBJfALUptExMcmf0CaV2aBH8GWwfJZx3NK3bzUxrNZwpUM1zos6zSMLQvSSC7+m57RoLSoWrjhbK6TPM/H5/f76T+KerzVxBuzMBp1AJuZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726337629; c=relaxed/simple;
-	bh=Qw6txWVPdZ7FgDvn4pS7WGFdIcv31Wh2+xKLWxH8g3o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RoduutVATFGaKNy6F/R84tAWUUdFLiXE9rami6W5sP5zZMPwonrdllAh6YmScA8rxj4mvspNjZFNxUKRGcW8eMTgvgViWpQrIcYlYHXh5vu8kaupH9XysdV4dYrtmWy8OzMkI4o2fhHDKdUMxRKNsdpAjEY4k8p5VgAsbcxGCSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIkwuz2T; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20573eb852aso28071015ad.1;
-        Sat, 14 Sep 2024 11:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726337626; x=1726942426; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=028JaGJ1ahArc8EOD+3vvYERpoxcW3WW4Or8S3HILb4=;
-        b=SIkwuz2TH0kp5RMPptdxst/x+UkFQlOcQqIHDloQqDRYKSUyRbtUh+FFY3ZX6fwEYR
-         m1qOJecOfQqWpcGyThmiSQT+PG1OemrA+LmC/pp1pNHOi/6pyerDqY7o7r4iswn65GvR
-         5Y37CcM1G+3nVn2vGe3N25syj/ccshmKC6fQqiyM8aa1mjtl/VMAzWn+VtFnM1eC8oWS
-         40Jz7qcVkWil600DPBZE1F/qzQWAPujcNc07qm/ShM5p1UbAhsVwMhbrCV8IKpkDNJBr
-         5cuHsL1vFTuRXQlMpOgoIedDrMl2JFsU1zNXElheMapZe3xQbfSNV4U9rm1O1O2s+t7Z
-         LA7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726337626; x=1726942426;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=028JaGJ1ahArc8EOD+3vvYERpoxcW3WW4Or8S3HILb4=;
-        b=c7Ya3T/seDopYVFJUT9c4GyBy/wZyl2hbSfcGVyszDcnSKCMhvy56kP7GqBLD8YLVl
-         ZE69csnxnZAZIULt46v0duKDIA7NXmpF6JrvXLlzCU/N7XAamBfApYHIY2cBv0tOXbSm
-         SqOGBctmIdP537l83hhuYv2JwPcGpagt3AhWRGyvYxfG4ZakP3V0iS/dBXR3O/MIumlr
-         4EB01HxCtZuDpnAtpBLgfifZvQA3v9MEZNfMfwGk5lr7SBfQ3kqYS9f/FRij7e76oA+t
-         n8W2Rw6oRsUpUW6uxg6nlF2zSUPyd3ksT6Cbkn5FH56PbC3ltbeBovRErgbIacWEzO4K
-         2/pA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfF/yEehsTwMRYyfAZVswLn3xBK+vkvStG0gJY6Mz/9/75BSFD8Pr/uubY9bD+g8vhw5nveZcjjBsPIms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwcBRUg+UM8sqgEZbv4I9VzVQwp6TwiDGJ1lTKdWNVq5JwJTyc
-	WyDBNBPL4OjOxvaRp3zOPeq3VmS3R+xzFVW0uUgRqbZrsHdW7lvZ3gxmIstivdM=
-X-Google-Smtp-Source: AGHT+IF7DPpO9UMOZdwoydrcnG4dGInQk2kuK5Z6EZkb0Su3KwkpSd/qTrIfDI56nTkKN0A+j6XXgA==
-X-Received: by 2002:a17:90a:62ca:b0:2d8:9fbe:6727 with SMTP id 98e67ed59e1d1-2db9fc1adabmr15562659a91.4.1726337625752;
-        Sat, 14 Sep 2024 11:13:45 -0700 (PDT)
-Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([136.233.9.100])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2dbcfd26f2csm1830870a91.31.2024.09.14.11.13.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2024 11:13:45 -0700 (PDT)
-From: Abhash Jha <abhashkumarjha123@gmail.com>
-To: linux-iio@vger.kernel.org
-Cc: anshulusr@gmail.com,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	linux-kernel@vger.kernel.org,
-	Abhash Jha <abhashkumarjha123@gmail.com>
-Subject: [PATCH v3 4/4] iio: light: ltr390: Add interrupt persistance support
-Date: Sat, 14 Sep 2024 23:42:46 +0530
-Message-ID: <20240914181246.504450-5-abhashkumarjha123@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240914181246.504450-1-abhashkumarjha123@gmail.com>
-References: <20240914181246.504450-1-abhashkumarjha123@gmail.com>
+	s=arc-20240116; t=1726337816; c=relaxed/simple;
+	bh=BgsGnxvet2+gN6DH8JKOPSGzcf2huUfEnnNLFrzpFbE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DY8nJ2CA1iJe7ZEkKiLd8aQo8JGQRAYlPJh5Qp1PWf9+dzSdC1+aajKBs/J6/0dR+yLdCoNFIEupOY391RKFpyukMALjU1tYGUtx3YMcfBMYbtTvolNQEGRplvs9hcnOg1EWCE/0Fz0N+A/N6Kufw6ZoVy0IGkGxT1j8HZbWBHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=k20dK9Ve; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726337806; x=1726597006;
+	bh=4Z/zNpRWUAHAN0n9gNoJ1GGQwLlmBKdUuu429m0YRdM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=k20dK9VeRxgukkX07CH2RdQ04pvptvHv1nz0ACtgxWWd+ZqiwkK1CFfWZEIT2yeXo
+	 FPGVLuIK0ignBnoUQLsMdPTq4J+/Yb9NSpKY2re/WaOGg8S2Cte+sKTrz59kkzhCHt
+	 GvO+oPdM5zDN4romvolq/ixMg8H6+S8YNXTHJ+P6AmRSoHlQa6FQ1ibY8hy7AxzBGC
+	 Kk6OdnU2O35417mOBHlfMA9K3OL5E21t4zrNfxlbaOYWa/fDGsg/CfycBVDCvsI1KI
+	 H9xp1OTKss8VMKHeL45uP5P1UIP2fnqpoeoN9DDOUW2FGn3jV+fkOmA7JAep4TfgtA
+	 rJ5wm/vvv5K+Q==
+Date: Sat, 14 Sep 2024 18:16:41 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Patrick Miller <paddymills@proton.me>
+Cc: Patrick Miller <paddymills@proton.me>
+Subject: [PATCH v4 1/2] docs: rust: make section names plural
+Message-ID: <20240914181618.837227-1-paddymills@proton.me>
+In-Reply-To: <20240912195629.227696-1-paddymills@proton.me>
+References: <20240912195629.227696-1-paddymills@proton.me>
+Feedback-ID: 45271957:user:proton
+X-Pm-Message-ID: 10d2905e834928946bee038f6ffd11edc47085ef
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="------23753c95b9ccd3160450a4cbf1a53e3e4e2c25d6673940a59af2c788844b671c"; charset=utf-8
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------23753c95b9ccd3160450a4cbf1a53e3e4e2c25d6673940a59af2c788844b671c
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+From: Patrick Miller <paddymills@proton.me>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Patrick Miller <paddymills@proton.me>
+Subject: [PATCH v4 1/2] docs: rust: make section names plural
+Date: Sat, 14 Sep 2024 14:16:16 -0400
+Message-ID: <20240914181618.837227-1-paddymills@proton.me>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240912195629.227696-1-paddymills@proton.me>
+References: 
+MIME-Version: 1.0
 
-Added support to configure the threshold interrupt persistance value by
-providing IIO_EV_INFO_PERIOD attribute. The value written to the
-attribute should be in miliseconds and should be greater than the
-sampling rate of the sensor.
+Fixes existing rust documentation section headers to be use plural names.
 
-Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+Signed-off-by: Patrick Miller <paddymills@proton.me>
+Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1110
+
 ---
- drivers/iio/light/ltr390.c | 65 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 61 insertions(+), 4 deletions(-)
+ rust/kernel/init.rs     | 2 +-
+ rust/kernel/list/arc.rs | 2 +-
+ rust/kernel/sync/arc.rs | 2 +-
+ rust/macros/lib.rs      | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-index 57bf48595..a51ad6704 100644
---- a/drivers/iio/light/ltr390.c
-+++ b/drivers/iio/light/ltr390.c
-@@ -41,6 +41,7 @@
- #define LTR390_ALS_DATA			0x0D
- #define LTR390_UVS_DATA			0x10
- #define LTR390_INT_CFG			0x19
-+#define LTR390_INT_PST			0x1A
- #define LTR390_THRESH_UP		0x21
- #define LTR390_THRESH_LOW		0x24
+diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
+index a17ac8762d8f..98889ddf9828 100644
+--- a/rust/kernel/init.rs
++++ b/rust/kernel/init.rs
+@@ -746,7 +746,7 @@ macro_rules! try_init {
+ /// Asserts that a field on a struct using `#[pin_data]` is marked with `#[pin]` ie. that it is
+ /// structurally pinned.
+ ///
+-/// # Example
++/// # Examples
+ ///
+ /// This will succeed:
+ /// ```
+diff --git a/rust/kernel/list/arc.rs b/rust/kernel/list/arc.rs
+index d801b9dc6291..611ce07cd290 100644
+--- a/rust/kernel/list/arc.rs
++++ b/rust/kernel/list/arc.rs
+@@ 
+-464,7 +464,7 @@ impl<T, U, const ID: u64> core::ops::DispatchFromDyn<ListArc<U, ID>> for ListArc
  
-@@ -49,6 +50,8 @@
- #define LTR390_ALS_UVS_MEAS_RATE_MASK	GENMASK(2, 0)
- #define LTR390_ALS_UVS_INT_TIME_MASK	0x70
- #define LTR390_ALS_UVS_INT_TIME(x)	FIELD_PREP(LTR390_ALS_UVS_INT_TIME_MASK, (x))
-+#define LTR390_INT_PST_MASK		GENMASK(7, 4)
-+#define LTR390_INT_PST_VAL(x)		FIELD_PREP(LTR390_INT_PST_MASK, (x))
- 
- #define LTR390_SW_RESET	      BIT(4)
- #define LTR390_UVS_MODE	      BIT(3)
-@@ -80,6 +83,11 @@ enum ltr390_mode {
- 	LTR390_SET_UVS_MODE,
- };
- 
-+enum ltr390_meas_rate {
-+	LTR390_GET_FREQ,
-+	LTR390_GET_PERIOD,
-+};
-+
- struct ltr390_data {
- 	struct regmap *regmap;
- 	struct i2c_client *client;
-@@ -157,7 +165,8 @@ static int ltr390_counts_per_uvi(struct ltr390_data *data)
- 	return DIV_ROUND_CLOSEST(23 * data->gain * data->int_time_us, 10 * orig_gain * orig_int_time);
- }
- 
--static int ltr390_get_samp_freq(struct ltr390_data *data)
-+static int ltr390_get_samp_freq_or_period(struct ltr390_data *data,
-+					enum ltr390_meas_rate option)
- {
- 	int ret, value;
- 
-@@ -166,7 +175,7 @@ static int ltr390_get_samp_freq(struct ltr390_data *data)
- 		return ret;
- 	value = FIELD_GET(LTR390_ALS_UVS_MEAS_RATE_MASK, value);
- 
--	return ltr390_samp_freq_table[value][0];
-+	return ltr390_samp_freq_table[value][option];
- }
- 
- static int ltr390_read_raw(struct iio_dev *iio_device,
-@@ -226,7 +235,7 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
- 		return IIO_VAL_INT;
- 
- 	case IIO_CHAN_INFO_SAMP_FREQ:
--		*val = ltr390_get_samp_freq(data);
-+		*val = ltr390_get_samp_freq_or_period(data, LTR390_GET_FREQ);
- 		return IIO_VAL_INT;
- 
- 	default:
-@@ -251,7 +260,8 @@ static const struct iio_event_spec ltr390_event_spec[] = {
- 	}, {
- 		.type = IIO_EV_TYPE_THRESH,
- 		.dir = IIO_EV_DIR_EITHER,
--		.mask_separate = BIT(IIO_EV_INFO_ENABLE),
-+		.mask_separate = BIT(IIO_EV_INFO_ENABLE) |
-+				BIT(IIO_EV_INFO_PERIOD),
- 	}
- };
- 
-@@ -397,6 +407,44 @@ static int ltr390_write_raw(struct iio_dev *indio_dev, struct iio_chan_spec cons
- 	}
- }
- 
-+static int ltr390_read_intr_prst(struct ltr390_data *data, int *val)
-+{
-+	int ret, prst, samp_period;
-+
-+	samp_period = ltr390_get_samp_freq_or_period(data, LTR390_GET_PERIOD);
-+	ret = regmap_read(data->regmap, LTR390_INT_PST, &prst);
-+	if (ret < 0)
-+		return ret;
-+	*val = prst * samp_period;
-+
-+	return IIO_VAL_INT;
-+}
-+
-+static int ltr390_write_intr_prst(struct ltr390_data *data, int val)
-+{
-+	int ret, samp_period, new_val;
-+
-+	samp_period = ltr390_get_samp_freq_or_period(data, LTR390_GET_PERIOD);
-+
-+	/* persist period should be greater than or equal to samp period */
-+	if (val < samp_period)
-+		return -EINVAL;
-+
-+	new_val = DIV_ROUND_UP(val, samp_period);
-+	if (new_val < 0 || new_val > 0x0f)
-+		return -EINVAL;
-+
-+	guard(mutex)(&data->lock);
-+	ret = regmap_update_bits(data->regmap,
-+				LTR390_INT_PST,
-+				LTR390_INT_PST_MASK,
-+				LTR390_INT_PST_VAL(new_val));
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int ltr390_read_threshold(struct iio_dev *indio_dev,
- 				enum iio_event_direction dir,
- 				int *val, int *val2)
-@@ -453,6 +501,9 @@ static int ltr390_read_event_value(struct iio_dev *indio_dev,
- 	case IIO_EV_INFO_VALUE:
- 		return ltr390_read_threshold(indio_dev, dir, val, val2);
- 
-+	case IIO_EV_INFO_PERIOD:
-+		return ltr390_read_intr_prst(iio_priv(indio_dev), val);
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -472,6 +523,12 @@ static int ltr390_write_event_value(struct iio_dev *indio_dev,
- 
- 		return ltr390_write_threshold(indio_dev, dir, val, val2);
- 
-+	case IIO_EV_INFO_PERIOD:
-+		if (val2 != 0)
-+			return -EINVAL;
-+
-+		return ltr390_write_intr_prst(iio_priv(indio_dev), val);
-+
- 	default:
- 		return -EINVAL;
- 	}
+ /// A utility for tracking whether a [`ListArc`] exists using an atomic.
+ ///
+-/// # Invariant
++/// # Invariants
+ ///
+ /// If the boolean is `false`, then there is no [`ListArc`] for this value.
+ #[repr(transparent)]
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index 3021f30fd822..3d3c100b0c0d 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -436,7 +436,7 @@ fn from(item: Pin<UniqueArc<T>>) -> Self {
+ /// There are no mutable references to the underlying [`Arc`], and it remains valid for the
+ /// lifetime of the [`ArcBorrow`] instance.
+ ///
+-/// # Example
++/// # Examples
+ ///
+ /// ```
+ /// use kernel::sync::{Arc, ArcBorrow};
+diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+index a626b1145e5c..3879e1162866 100644
+--- a/rust/macros/lib.rs
++++ b/rust/macros/lib.rs
+@@ -307,7 +307,7 @@ pub fn pinned_drop(args: TokenStream, 
+input: TokenStream) -> TokenStream {
+ /// literals (lifetimes and documentation strings are not supported). There is a difference in
+ /// supported modifiers as well.
+ ///
+-/// # Example
++/// # Examples
+ ///
+ /// ```ignore
+ /// use kernel::macro::paste;
 -- 
-2.43.0
+2.46.0
+
+
+--------23753c95b9ccd3160450a4cbf1a53e3e4e2c25d6673940a59af2c788844b671c
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: ProtonMail
+
+wnUEARYIACcFAmbl0wgJEJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
+nhEAACdeAP9dcoOzo89NLPj9ZfXq20zFXBWK/OgsVHfel3FBqNMNHQD6Ap8n
+yIuOt0cFJo6TNYFbidlDfoytD8/QdH+X2jIeGQk=
+=qSkH
+-----END PGP SIGNATURE-----
+
+
+--------23753c95b9ccd3160450a4cbf1a53e3e4e2c25d6673940a59af2c788844b671c--
 
 
