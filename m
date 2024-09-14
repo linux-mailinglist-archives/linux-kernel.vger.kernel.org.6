@@ -1,174 +1,114 @@
-Return-Path: <linux-kernel+bounces-329312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1AF978FE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:12:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4057978F8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D928CB2364C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:12:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906612864A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640001CEE84;
-	Sat, 14 Sep 2024 10:12:05 +0000 (UTC)
-Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [203.110.167.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82C71CE719;
+	Sat, 14 Sep 2024 09:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTPuLtMc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43D01CEAB0
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 10:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.110.167.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15ABD1448C5;
+	Sat, 14 Sep 2024 09:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726308725; cv=none; b=njY0TwuxItp25xlqNg9sxepX9s6GxMR4eZtxMsosjQTseT0xUF47nFzw7tMVedHF1hBm0Toux/OtF6h5u/lhCZcHOQx2et6pFDGYaJwmFm1tEf4j421G9qxp6NNieBdRXzbjOKXVywKrvjQUSbmBU3RsoGFreLmWC/1Yf3iPm18=
+	t=1726306970; cv=none; b=C3x/bcCyDRDx5U6olJJGvMNZK6NZI20PWlwaMjqyWeKbvyg5udrgC7alluQPsc0Ijp/BUyN89acu1m+fbbZHUNaCFvwmY3YHu02HLXBgWqcgQLiQlbeUoBiC8qHZClkcjuls+ILCJlZvLG0OBMW8At3A0oNb1i4rijsqkTQkDgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726308725; c=relaxed/simple;
-	bh=wPI3zNhSdv3gb78ggllcLXpOTosR4Rj2VqflNSUysxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EnR4bUN2D9g+vtNg3lzh3cI+5lnMZsNImGynbd74AogFLdcI6n5MnSot7vducgUfz6wgPzB88gPxE5YE2CabgfA0I9M6m0pFrQ9TGMrS2hu7qdgCNLHA7lbXmEQFXZ7BJ4fP2t3+DlNPPckjcdhuUo9TsIiA2+o/0GmPCViJ4Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=203.110.167.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1726308719-1eb14e31a7106210001-xx1T2L
-Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx2.zhaoxin.com with ESMTP id nfZBCpheHgHbejwd (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Sat, 14 Sep 2024 18:11:59 +0800 (CST)
-X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from ZXSHMBX2.zhaoxin.com (10.28.252.164) by ZXSHMBX3.zhaoxin.com
- (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 14 Sep
- 2024 18:11:59 +0800
-Received: from ZXSHMBX2.zhaoxin.com ([fe80::d4e0:880a:d21:684d]) by
- ZXSHMBX2.zhaoxin.com ([fe80::d4e0:880a:d21:684d%4]) with mapi id
- 15.01.2507.039; Sat, 14 Sep 2024 18:11:59 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from [10.32.65.165] (10.32.65.165) by ZXBJMBX03.zhaoxin.com
- (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 14 Sep
- 2024 17:36:40 +0800
-Message-ID: <64b1becd-ebf8-40ae-af5a-59d32b652362@zhaoxin.com>
-Date: Sat, 14 Sep 2024 17:36:39 +0800
+	s=arc-20240116; t=1726306970; c=relaxed/simple;
+	bh=nFdqN8ZIg9d56NL0UDelISUEoSXmQsSo2jA9nIE+K08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmw8uHi5FCE9J2TdhaWNcZw0YTne8r7EI7KmQrFux24olavUUHTvZd9Bw8aRswPvvepftWv+gdc/CfIJPcrlkuL+7YGREEwkObwWZ4iyYNibscYAPJZkpTLcvzKGJ50wMsQtgQrEWYJgDrNsA1lzEUTtnhG9+o+jcac1QFMKTmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTPuLtMc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E751C4CEC0;
+	Sat, 14 Sep 2024 09:42:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726306969;
+	bh=nFdqN8ZIg9d56NL0UDelISUEoSXmQsSo2jA9nIE+K08=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BTPuLtMcxIJ6UJQ6YPL+PPzx6chFHXkjTXGCSVE5L6Q6B83OyN19nNUYshONpb4pa
+	 uI6/ki1GtGw8r1G5qKqJQ0C1KFm03LPFPNc/OD7pdhahOX2XGxf5pqRNg4dvFz7ddb
+	 zQcJdSP66MVeHnyijY5BXTh+t8rZnp82iizIJXqQoixmBpRnq/iMJc0EtRDfR2A2f3
+	 8ebriMWS6k/WkGUePHo82DHUHVIE0/uUpIbRU7Jy+iWUgng7Vg3ZG3ClGyEwep9vs8
+	 Tzvv4yZxLbRXG02N84X6pks6zLDtBfw+vR6E4igfSLCokKB4ZCV7bn2GsemQaXzh/y
+	 2UgtzJOmfqSzw==
+Date: Sat, 14 Sep 2024 10:42:44 +0100
+From: Simon Horman <horms@kernel.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
+	justinstitt@google.com, tuong.t.lien@dektech.com.au,
+	netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: tipc: avoid possible garbage value
+Message-ID: <20240914094244.GG12935@kernel.org>
+References: <20240912110119.2025503-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] x86/mce: Add centaur vendor to support Zhaoxin MCA
-To: Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>
-X-ASG-Orig-Subj: Re: [PATCH v1 1/3] x86/mce: Add centaur vendor to support Zhaoxin MCA
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <tony.luck@intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-	<CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>, <LeoLiu-oc@zhaoxin.com>, "Lyle
- Li" <LyleLi@zhaoxin.com>
-References: <20240909104349.3349-1-TonyWWang-oc@zhaoxin.com>
- <20240909104349.3349-2-TonyWWang-oc@zhaoxin.com>
- <20240913142703.GIZuRLt1-nDZrOsIlE@fat_crate.local>
- <a25f878e-83d9-440a-9741-4cf86db4a716@intel.com>
-Content-Language: en-US
-From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-In-Reply-To: <a25f878e-83d9-440a-9741-4cf86db4a716@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: ZXSHCAS1.zhaoxin.com (10.28.252.161) To
- ZXBJMBX03.zhaoxin.com (10.29.252.7)
-X-Moderation-Data: 9/14/2024 6:11:58 PM
-X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
-X-Barracuda-Start-Time: 1726308719
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 2639
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.130434
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912110119.2025503-1-suhui@nfschina.com>
 
+On Thu, Sep 12, 2024 at 07:01:20PM +0800, Su Hui wrote:
+> Clang static checker (scan-build) warning:
+> net/tipc/bcast.c:305:4:
+> The expression is an uninitialized value. The computed value will also
+> be garbage [core.uninitialized.Assign]
+>   305 |                         (*cong_link_cnt)++;
+>       |                         ^~~~~~~~~~~~~~~~~~
+> 
+> tipc_rcast_xmit() will increase cong_link_cnt's value, but cong_link_cnt
+> is uninitialized. Although it won't really cause a problem, it's better
+> to fix it.
+> 
+> Fixes: dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
+Hi Su Hui,
 
-On 2024/9/13 23:47, Dave Hansen wrote:
->=20
->=20
-> [=E8=BF=99=E5=B0=81=E9=82=AE=E4=BB=B6=E6=9D=A5=E8=87=AA=E5=A4=96=E9=83=A8=
-=E5=8F=91=E4=BB=B6=E4=BA=BA =E8=B0=A8=E9=98=B2=E9=A3=8E=E9=99=A9]
->=20
-> On 9/13/24 07:27, Borislav Petkov wrote:
->>> +    if (c->x86_vendor =3D=3D X86_VENDOR_CENTAUR) {
->>> +            /*
->>> +             * All newer Centaur CPUs support MCE broadcasting. Enable
->>> +             * synchronization with a one second timeout.
->>> +             */
->>> +            if ((c->x86 =3D=3D 6 && c->x86_model =3D=3D 0xf && c->x86_=
-stepping >=3D 0xe) ||
->>> +                 c->x86 > 6) {
->>> +                    if (cfg->monarch_timeout < 0)
->>> +                            cfg->monarch_timeout =3D USEC_PER_SEC;
->>> +            }
->>> +    }
->> So if centaur =3D=3D zhaoxin, why aren't you moving this hunk to
->> mce_zhaoxin_feature_init() instead?
->=20
-> The centaur and zhaoxin logic is also _really_ close here:
->=20
->>                  if (c->x86 > 6 || (c->x86_model =3D=3D 0x19 || c->x86_m=
-odel =3D=3D 0x1f)) {
->>                          if (cfg->monarch_timeout < 0)
->>                                  cfg->monarch_timeout =3D USEC_PER_SEC;
->>                  }
->=20
-> vs
->=20
->>          if ((c->x86 =3D=3D 6 && c->x86_model =3D=3D 0xf && c->x86_stepp=
-ing >=3D 0xe) ||
->>               c->x86 > 6) {
->>                  if (cfg->monarch_timeout < 0)
->>                          cfg->monarch_timeout =3D USEC_PER_SEC;
->>          }
->=20
-> I'd just randomly guess that the zhaoxin version is buggy because it
-> doesn't do a c->x86 check before the "(c->x86_model =3D=3D 0x19 ||
-> c->x86_model =3D=3D 0x1f)".
->=20
+This looks like a bug fix. If so it should be targeted at net rather than
+net-next. If not, the Fixes tag should be dropped, and the commit can be
+referenced in the patch description with some other text around:
 
-Yes, the check for c->x86 =3D=3D 6 is omitted in the zhaoxin version.
+commit dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
 
-> So instead of copying and pasting the same block over and over, can we
-> consolidate it a bit?
->=20
-> foo()
-> {
->          /* Older CPUs do not do MCE broadcast: */
->          if (c->x86 < 6)
->                  return;
->          /* All newer ones do: */
->          if (c->x86 > 6)
->                  goto mce_broadcast;
->=20
->          /* Family 6 is mixed: */
->          if (c->x86_vendor =3D=3D X86_VENDOR_CENTAUR) {
->                  if (c->x86_model =3D=3D 0xf &&
->                      c->x86_stepping >=3D 0xe)
->                          goto mce_broadcast;
->          } else if (c->x86_vendor =3D=3D X86_VENDOR_ZHAOXIN) {
->                  if (c->x86_model =3D=3D 0x19 ||
->                      c->x86_model =3D=3D 0x1f))
->                          goto mce_broadcast;
->          }
->=20
->          return;
->=20
-> mce_broadcast:
->          if (cfg->monarch_timeout < 0)
->                  cfg->monarch_timeout =3D USEC_PER_SEC;
-> }
->
+> ---
+>  net/tipc/bcast.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
+> index 593846d25214..a3699be6a634 100644
+> --- a/net/tipc/bcast.c
+> +++ b/net/tipc/bcast.c
+> @@ -321,7 +321,7 @@ static int tipc_mcast_send_sync(struct net *net, struct sk_buff *skb,
+>  	struct tipc_msg *hdr, *_hdr;
+>  	struct sk_buff_head tmpq;
+>  	struct sk_buff *_skb;
+> -	u16 cong_link_cnt;
+> +	u16 cong_link_cnt = 0;
+>  	int rc = 0;
 
-Thank you! That makes more sense, and will adopt it into zhaoxin.c
+I think we should preserve reverse xmas tree order - longest like to
+shortest - for these local variable declarations.
 
-Sincerely!
-TonyWWang-oc
+>  
+>  	/* Is a cluster supporting with new capabilities ? */
+> -- 
+> 2.30.2
+> 
+> 
 
