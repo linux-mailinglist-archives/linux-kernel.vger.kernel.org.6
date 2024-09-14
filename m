@@ -1,133 +1,305 @@
-Return-Path: <linux-kernel+bounces-329274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A63C978F72
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A70978F57
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA441C21DDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648341C21107
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E7E1474B9;
-	Sat, 14 Sep 2024 09:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D381CCEF8;
+	Sat, 14 Sep 2024 09:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bMFxqsqy"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RgBbmPzc"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2085.outbound.protection.outlook.com [40.107.255.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD9119D885
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726305702; cv=none; b=alSsWxQjZKYQVsLzi7vkO0+dFgEqCNNMTJFYMTkIny9F5nqAYMjc0iNN3qfTIaxaWtfft8cghQqfY/u5Se4P/0Q29IJ6AG17qTjhPpr9I48PieBVKR3lfB6WioQzRQm+IhYU9yKLQlrGLprRgdkJ5cl6Djr0/i9NKX8Sp7vk6BE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726305702; c=relaxed/simple;
-	bh=QWLN81duHcC98U8Wgfo/hW2STVBwULFC4YNBCXuyjVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yp7Zr5yCfiu45tELXrAjsYG4kvSrBBBTaPZlChvqR008m4hkId1xGrDhYUfuG3ur37Iw+0+h33SK+y1HHCxBq8rdtn1Dt1EEQ7m0bYjwygJ/K9nGvgSdHldyBuUGqPYUW6ZkGZCB5GZ2wfRYLbT5FyiRDgNAghitrdqsTS9nwIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bMFxqsqy; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3787ddbd5a2so1804231f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:21:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726305698; x=1726910498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W0vwYUdOyrcmqsU8fkyOeRsFNoi3+GuwHokLYeTePag=;
-        b=bMFxqsqyWEjPrbHHUC9TCakNJgnrB5KppFykmlFKAaHSV8UbbR30zYdJlZf/LMGJVV
-         GNIO14YfippErn0PqCSVgGgsyxzCnuooFOpQ2FmDCKljxjL4fJNJjd62AhYOlLs2i4NJ
-         U/vz2577IwD1NG0cRrOgkMTDWPB0WcD0037Ml2qqU2I5KWDZsD74OJ2FiK4dVfAIemiY
-         XgcWdBrVtUsFd3ewqMC5vKwZK0RKEQQ7FH6zsEfKIYYbrC/F8PkCGv06c2REWPNN3ICl
-         6qNxDzvsk5r6jqEokatD20dmfFyi4RYtsIcLNvaiHCsqxywpRz5wWm+E29A+XDkPQYvM
-         IseQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726305698; x=1726910498;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W0vwYUdOyrcmqsU8fkyOeRsFNoi3+GuwHokLYeTePag=;
-        b=SwMkyYx+cfE0b2cZbUAyG1D6bqAmnerpNmIbMEBPgnheSQwUWYLbP/CpH46V1qZOCv
-         P+LV3KoiLVXIWycp6Te0mGGUlzGH0e7VVqymx+HlvVN+W+Xm8wq3Kx2b/txt0NAwc/Dk
-         Jpb9iTEXYYLnLoGTS4Yw61RN3dJ1JB7Q+sXc0IWhXAHqsuGuaO7CGKEg5heCYFkOGTsY
-         g967xu8DrSfS77VLGsy/ccFuwoD51Rt1Jk4v/WrNc2S6vhHkQ/SCx303ufEDyMITg61A
-         7rlJJGGZp9jmFSZ5n5/hB2SltE3/d7mZP9YAbWSUXJqCG1AClxfdAQn6CDeOFJpEfrmg
-         hApQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV47d6iakvpbS0BgQOGekYcdIFkawIX0wzReB7CN4Ktoq5SkBmR3lgNw9KiBxXqH3ZFJzZ8YfkEosw5+dY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMeYMUyo60VFyxr/rKDZHInAmJeljEshoyq2m2EuJi5eqURGaV
-	gDcu7td6hl2rYdXCIct/mNaRmWu1I+/Er095vW/SWIV5e5LsydMKO3INXDnL3gU=
-X-Google-Smtp-Source: AGHT+IH45xR6Gog1ZY7V2YLrPhCGhfQF/3R1gLbHp9LuneqGr615sJyZ4/UcDCFDXXJAze+fTRg3rg==
-X-Received: by 2002:a5d:4f12:0:b0:374:ccb0:66c7 with SMTP id ffacd0b85a97d-378c2d0623bmr5708624f8f.16.1726305696892;
-        Sat, 14 Sep 2024 02:21:36 -0700 (PDT)
-Received: from ?IPV6:2a04:cec2:24:e9b5:6dd7:b979:f3bd:3baf? ([2a04:cec2:24:e9b5:6dd7:b979:f3bd:3baf])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e837csm1242741f8f.27.2024.09.14.02.21.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Sep 2024 02:21:36 -0700 (PDT)
-Message-ID: <e6d3926a-002d-445a-8ac5-8d47b2be27b0@baylibre.com>
-Date: Sat, 14 Sep 2024 11:21:34 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FF413C3C2
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726304780; cv=fail; b=jl9CPKd96rw9YKYGTSQAJ+W4O5Ep7Sa1jUgDwZzprxNzsf3PXol5IqLt0Yj1dnGzxAeJC7d9cc8Y1R0ldUoTB+m43FXR7C5RYejB1ZMescIPGjXFazVAUEK5F6ECxc89h+U2tdpDOvhbevScEnrCPoePd3+AHXklrcYDKUuDpyo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726304780; c=relaxed/simple;
+	bh=tOKoWLXHel+jL/EmqHyGm8E4ePficnFSgOd1pUqTgSU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TUb/6UnK0A4l/ZxJHBLtluzjtCQFKuRHbI+C7VYbYlOfu9IVcKDXypeTJgWh6g3wkuCJzn3Jy74SYVEBtloNZ23gaTvHGOa4btBVsZBpKiSZHYg9Vs0nneEwImprFk9E4aLtI0c/BX6tm9gApcwNbH7hEJEV9FTarsyU2eyYmWo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RgBbmPzc; arc=fail smtp.client-ip=40.107.255.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f6LowYdAsRb11AkT37zR+9EWz18PynxB/ujSvOXPv2kJZVnzJUd2D//1QCb9jbb9ekBFUNeR0Cj+y1NxyXBWPGiTmUifM2IK/yUie4NxExfCOnNXjs+VHo2y9DpsonccSnuQ471N9lp4QEcRPmbFWj4yGO4Ss6dUU4+MrbSdhU/8m2n2fSPmjXYn5s6NLHeWF0JR0aEqWlQ2/6ZjML/pDLlKVWNugY3FaRlTikN/5Bq0QlshSQsRe7o6rkDocFIeOBmw3WIIJP7Mefien8d5w3LaX0MUUMf5yAzVfsAMnz1XxvVPp69agdM1ePGD67mu8gcCqcPfKGOyobVBDoC2dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9p9Mw+X8NcH3ZyrUhS636Xv8f6yUvBPrkf+CDGzCuAc=;
+ b=w/HaD2KxTPb/510+7CS4nHfD+Fpjm4+CQXp31lDedbrApXPReTNYbtlhXOFjQ/xkleG0wtREW1f1ZY+1bMpgTkwwQcNL4Ca8P9WwUEn8UhGcoBUPVuNmQhRreT/nzw6KbhtwnBo4DzROQB3Kgx/Ss5W/67oaR/daPMn45xW+JXw0nOsWh8x2yf1qCKuvAKJUh35WccP75MYAhr1MswpNd1vnmk+unDZFuj7KWjUiQp1hdo39XaUc/2wKEeJZfJ+5UklDrQ4zBF1H495FlMWIcfHk7ENGmilxF9SElWm7YwACtxnwcYQoLxVQlcpWub5T4KBb7cgxb7MDY/l622g4Gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9p9Mw+X8NcH3ZyrUhS636Xv8f6yUvBPrkf+CDGzCuAc=;
+ b=RgBbmPzc0BHIpjpgCvculC/VZZgl2YroAcjTwK4IP1JNQMo8VQocQfkAxv9QX3dzvYZVmD0Y0ZErHgyuZdZJN1j78/b/5+di5CvYtw1NIiD4/h0y5OLvP11y0+If4dRz2M7xtGPWmwtIVaHQoO5iwxSMpWSxy4MS2AX0RW1vbu8TUV0n8Qra379UzYVD3SAKtPD9LZnmIfbriVt5Nib8G/JgQdxCNepWvR42ITsf6/BHdHRjY5k0rcBBwCfyzd286Y/POxeMx0kwzy03JZyTnfUPAJQMD/6HpSeTKQwgOVMVigR0sS4e/nieLooLtrfnmq6/+PJviiiJfMtuA3UH5w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
+ by KL1PR06MB6018.apcprd06.prod.outlook.com (2603:1096:820:d4::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Sat, 14 Sep
+ 2024 09:06:15 +0000
+Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
+ ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
+ ([fe80::43cb:1332:afef:81e5%4]) with mapi id 15.20.7962.021; Sat, 14 Sep 2024
+ 09:06:14 +0000
+From: Wu Bo <bo.wu@vivo.com>
+To: Chao Yu <chao@kernel.org>,
+	Wu Bo <wubo.oduw@gmail.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Cc: Wu Bo <bo.wu@vivo.com>
+Subject: Re: [f2fs-dev] [PATCH v2 00/13] f2fs: introduce inline tail
+Date: Sat, 14 Sep 2024 03:21:38 -0600
+Message-Id: <20240914092138.1120355-1-bo.wu@vivo.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240914024112.1069698-1-bo.wu@vivo.com>
+References:
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0034.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::9) To PSAPR06MB4486.apcprd06.prod.outlook.com
+ (2603:1096:301:89::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] iio: adc: ad7606: Switch to xxx_get_device_match_data
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, aardelean@baylibre.com
-References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
- <20240815-ad7606_add_iio_backend_support-v1-7-cea3e11b1aa4@baylibre.com>
- <20240817163354.68ec95f4@jic23-huawei>
-Content-Language: en-US
-From: Guillaume Stols <gstols@baylibre.com>
-In-Reply-To: <20240817163354.68ec95f4@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|KL1PR06MB6018:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c9c4a88-74c2-461e-07fd-08dcd49c7c0e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?b29Tfx0SvmZMu6XM+vMZ0+1kaQPk4e75W54+sfVlp2xrFxY8LiFKUYQkDlh1?=
+ =?us-ascii?Q?FJS2iLADF0QC3u/TzRvr9//9hgtg5hkC0oHVP739sduw8lJVGxjSns98kEzk?=
+ =?us-ascii?Q?o5OL3MN9sZaUPtQgzOr2bp28JrZEKICS2CjMfxu0wg0je82RxGunz4F0Q9xb?=
+ =?us-ascii?Q?8ItnXCcl4r/1izleQ+SocaxatsgL80/yp8SVxih+7eDRS66VQMNMj2uzLr2t?=
+ =?us-ascii?Q?F8kaW225MBI6El1zE5mqaF1vjRrOD1AV+VgkL/7uHeVRvT1BBtRY+1PQIHW6?=
+ =?us-ascii?Q?jfmCY17Ck5MX6FtTuDJw1tCjCpEsBQontsiC01+iRkr6BvUbrEZPK7YRBX8O?=
+ =?us-ascii?Q?ziQ9M6MoMytdxCh9T/juYqRLDStWupMDPVaMQ472+0CNL1G6jnhJFVv16fX7?=
+ =?us-ascii?Q?WL23yD4/Dhvk6m+8mRn2H30xQR7M0DFFvjx3ESuo90LajhUk/LOwNZNIDoQX?=
+ =?us-ascii?Q?x5Ql113K3W++rovQcQN+eaN/zXiYRmTov0pCqpyTi5AeBwZvFhj/zGJFYWFg?=
+ =?us-ascii?Q?SH7PDiEtlmJiZxSu0lR+ysBWq/kSmApXSqxbRBHeFZlMSupt+WeWtbUK1koA?=
+ =?us-ascii?Q?aKKJqI+zCNQtN2Uby63icf/ywDtHfjmRZVXoei2dFv9kVIDGgoAQ98r2QYhb?=
+ =?us-ascii?Q?IP3OB67f4KO5sGVU1cB4079YnKsNs3fDLCkWybtaVSmzdvyb32yyY1u3Gu77?=
+ =?us-ascii?Q?Srlap9FkTWrjezQ8ZEvRYofQgLa2wifH0l/3CVSz/kVZ0Bfi1sdN8AhS6/JU?=
+ =?us-ascii?Q?r39YEI3kUUwyl8YUVs52Fxtq+bouySgOpKfK+vYCUHseNtzi6WMi0bWduAPj?=
+ =?us-ascii?Q?vhpCOJhEH7Vz4mCbRfu2LUdp9j01SBVqJtsZLQ24Aong/EaQVuq0MM+Rxeqz?=
+ =?us-ascii?Q?oWfZVLqz5YKjMM77dPgd4WNMv2cBUtn8/w51PkCjFPYVbFLENIX9T6TH5SJp?=
+ =?us-ascii?Q?OlLoO+Hl/n/WNrOnub5DX/rgw6TrpSpbG8qREoQfmV6twd81Rl0qs0LNCRq+?=
+ =?us-ascii?Q?KQh+J7mXTS6CsDWDYILf4kyCbgrmDURFQ1UfFh7seN5B/tEissaFZOGGv4eF?=
+ =?us-ascii?Q?Vc6Nq9Noufp0N1nhorhFhRW/+UI3QFUGWNjY7/vSQyHlywINxdC2iN5aG2cE?=
+ =?us-ascii?Q?Cczcf9fqHIuflxGWuscfNj/RPw+rCJAKujKmLe6jWtMZqSpK1kgxcgH3XMS6?=
+ =?us-ascii?Q?vab6Lr2uImG1YAjXJqvYHnDccMs7s6pBOyT261Y1mHbYzqV4Lh4CNVk4utzE?=
+ =?us-ascii?Q?TQ/wISFsAK2+/wk8h8mRiObQ3L8jiXr2O8xBD8m6mXX3efPhOhgzjIAi6s8E?=
+ =?us-ascii?Q?BBfekZsgGHBo6ksuGLskjr7Tw/ATtFL3tazUZcymVMwX6sEOaBrUC4UdkDDA?=
+ =?us-ascii?Q?OEIhX/vh6VJkp+KLRrmDKWzTKbiAvBUOqQLuMDiFRBbIKUZo4A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wxg1BfbURR6CYTDGePoOMZruoi9Kqbe8eKvIWKgMi24yJH2YsBm5C8+SL2hM?=
+ =?us-ascii?Q?UybcUgD1qPmqBaIJXqtuky19fDMPjsnzChqT75AuEHBMp3VXEjeDsjOlZO8a?=
+ =?us-ascii?Q?0hGVClb843WS+KlJMkAu4nhPuiqCXZ8ccUd4CCs/P85zrAmt9ydOLh6pG+uT?=
+ =?us-ascii?Q?YtTbFmQtJkpPDC5m2Yt0mLNOEUud0zD3zZOXyN71Zidn9MiV10jmg2OBw4PF?=
+ =?us-ascii?Q?6jrocpBSIdUPbReYBQFntE7qGBbWCRQsifko3vKI3E6EfwpPEo2oFK9ZKYdL?=
+ =?us-ascii?Q?ernonL1kxYTwoHioMpIkZ7Eu+EQ60C5i8Pdw0Ujnl/ajHrFGWFknLuYzfISM?=
+ =?us-ascii?Q?9LDfFFPEO4+K84HV47wIgB2WtnE7SE3TeFb2VN0E9t6C3gRVd/+EQ2OaGgkV?=
+ =?us-ascii?Q?Ra127H8qIKL7+SMQ4cGrkvwfhiMCzfnHyp31Pq5/jN+GOTS2Xq30kBXa/48T?=
+ =?us-ascii?Q?HZUSBU06sN61bV8lfNar1NAOl8yyAs6ee5JWxLCUXyafUUp4awTE+G+Rdyet?=
+ =?us-ascii?Q?J1433L2QOScasek4hk/8MAburMFD9TCEXBWzlOb/oCOcQI/b5vW2xqoJJFC2?=
+ =?us-ascii?Q?yHcmscXCnY0e+PZsqkDvFv6dX75YeAZQ5hqevjK2zpFivfW0IkDmdRRUR/jE?=
+ =?us-ascii?Q?R7bVjsMxQGfAbEvHKU8O0YkqjMVTyscINu027enkJsi0EDkYgFKW3rLi0wzc?=
+ =?us-ascii?Q?qTmq9sumfMawtMDhNk0IrCFALYpOiRiCvGygBujzcPERp0StnLN7oFheOv7Q?=
+ =?us-ascii?Q?YhSouqb0Ps0543ud0p/rQQABeGrbIp4xumlNP1ynCcBgtMdLIiwOqBG4PKoC?=
+ =?us-ascii?Q?543FmQDgQ8eo+xb7xz5jERo8Jptexi3uQuvoxZZX715eYhuKIJXQmxbbYYcb?=
+ =?us-ascii?Q?bYVc6HXdR7CJ3X0o6HJ1OsA0NnAYBI07bVy0LQuFHftoRhVVCSANjH/kL/WN?=
+ =?us-ascii?Q?gQ1xh+Zna+uuH8uERnS7z/WTppoMHBizBFp1Cgmw8iaW7Zyz52A/BrbeGu37?=
+ =?us-ascii?Q?9cV4oP+znWSQK3gJEdoY8eU2k//C+uh2PQfOlQeurcyxGr08Z3dxkde/Nk0u?=
+ =?us-ascii?Q?rHDIgr55jIv+Ybp5ndp6ZWeE95B5rbo9YDxuF9VqyP3z0xvIXTDbijIhT41x?=
+ =?us-ascii?Q?gu6c4bZW8KvcC0X3kb5lw5NATsLmDm5b9gZs2fqI8kzUK7+R1ZRhfERXbClq?=
+ =?us-ascii?Q?awFqL8eXbYt6/gJFCCgqY6yZLaB30H0RNOhi8NG8k65yWHInUozJ1yqaiAaH?=
+ =?us-ascii?Q?bchzoLgD6yTQJjRen6Dh99e+LX5uvTl7gKxRvNhLkQsxLkBmtAWT9tQifG++?=
+ =?us-ascii?Q?koe+EdaLIr1qYak5P2KOAbCQt249v2kixh0JOAGU/L66/hkop3CRO3c1x3Ba?=
+ =?us-ascii?Q?Ds42KnrqjJ7pU2QaAt9NqFUPJ9bC/7lWBBJ0aEa0xa7whwyeigLaVRKExyoM?=
+ =?us-ascii?Q?MsIZgwHMsCr+DnDFVwSV+ZkzPYQOAQOiJjPhU7hqAPzHHVuX1BgQh+/WlSFB?=
+ =?us-ascii?Q?pZi/5YTi1xAI5qudyb/iRh0j0y7U7KqB+xG/TzW7D87tDkeiniGVUAlMruWW?=
+ =?us-ascii?Q?XffqglKZyBZOPyjJkh9D0bdlySuDZENj3FERlMxS?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c9c4a88-74c2-461e-07fd-08dcd49c7c0e
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2024 09:06:14.3532
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DXOXYUJGSnxdlnMw29yYbKmo1C7aYS0E45FgmsqClSYUx54lL844i3Gedyl4i05SGELLG9t1f76B7weYffXQLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6018
 
+On Fri, Sep 13, 2024 at 08:41:12PM -0600, Wu Bo via Linux-f2fs-devel wrote:
+> On Thu, Sep 12, 2024 at 03:14:24PM +0800, Chao Yu via Linux-f2fs-devel wrote:
+> > On 2024/9/11 11:57, Wu Bo wrote:
+> > > The inode in F2FS occupies an entire 4k block. For many small files, this means
+> > > they consume much more space than their actual size. Therefore, there is
+> > > significant potential to better utilize the inode block space.
+> > > 
+> > > Currently, F2FS has two features to make use of the inode block space: inline
+> > > data and inline xattr.
+> > > 
+> > > Inline data stores file which size is smaller then 3.5k in inode block. However,
+> > > for slightly larger small files, there still have much waste.
+> > > For example, a 5k file requires 3 blocks, totaling 12k of space, which is
+> > > more than twice the size of the file itself!
+> > > 
+> > > Additionally, the end of a file often does not occupy an entire block. If we can
+> > > store the end of the file data within the inode block, we can save an entire
+> > > block for the file. This is particularly important for small files.
+> > > 
+> > > In fact, the current inline data is a special case of inline tail, and
+> > > inline tail is an extension of inline data.
+> > > 
+> > > To make it simple, inline tail only on small files(<64k). And for larger files,
+> > > inline tails don't provide any significant benefits.
+> > > 
+> > > The layout of an inline tail inode block is following:
+> > > 
+> > > | inode block     | 4096 |     inline tail enable    |
+> > > | --------------- | ---- | --------------------------|
+> > > | inode info      | 360  |                           |
+> > > | --------------- | ---- | --------------------------|
+> > > |                 |      | extra info         | 0~36 |
+> > > |                 |      | **compact_addr[16] | 64   |
+> > > | addr table[923] | 3692 | reserved           | 4    |
+> > > |                 |      | **tail data        |      |
+> > > |                 |      | inline_xattr       | 200  |
+> > > | --------------- | ---- | --------------------------|
+> > > | nid table[5]    | 20   |
+> > > | node footer     | 24   |
+> > > 
+> > > F2fs-tools to support inline tail:
+> > > https://lore.kernel.org/linux-f2fs-devel/20240903075931.3339584-1-bo.wu@vivo.com
+> > > 
+> > > I tested inline tail by copying the source code of Linux 6.9.7. The storage
+> > > space was reduced by approximately 8%. Additionally, due to the reduced IO, the
+> > > copy time also reduced by around 10%.
+> > > 
+> > > This patch series has been tested with xfstests by running 'kvm-xfstests -c f2fs
+> > > -g quick' both with and without the patch; no regressions were observed.
+> > > The test result is:
+> > > f2fs/default: 583 tests, 6 failures, 213 skipped, 650 seconds
+> > >    Failures: generic/050 generic/064 generic/250 generic/252 generic/563
+> > >        generic/735
+> > >        Totals: 607 tests, 213 skipped, 30 failures, 0 errors, 579s
+> > 
+> > MKFS_OPTIONS  -- -O extra_attr,encrypt,inode_checksum,flexible_inline_xattr,inode_crtime,verity,compression -f /dev/vdc
+> > MOUNT_OPTIONS -- -o acl,user_xattr -o discard,inline_tail /dev/vdc /mnt/scratch_f2fs
+> 
+> Hi Chao,
+> 
+> I used the default cfg to run xfstest-bld and didn't encounter the failed
+> failures. This suggests the issue might be related to these additional options.
+> However, I'm not sure how to include these options when running xfstest-bld.
+> Could you let me know how to add them?
+> 
+> Thanks
 
-On 8/17/24 17:33, Jonathan Cameron wrote:
-> On Thu, 15 Aug 2024 12:12:01 +0000
-> Guillaume Stols <gstols@baylibre.com> wrote:
->
->> On the parallel version, the current implementation is only compatible
->> with id tables and won't work with fx_nodes. So in this commit, the goal
->> is to switch to use get_device_match_data, in order to simplify the
->> logic of retrieving chip data.
->>
->> Also, chip info is moved in the .h file so to be accessible to all the
->> driver files that can set a pointer to the corresponding chip as the
->> driver data.
-> This means each driver gets their own copy.
->
-> Better to use an extern in the header and keep the actual data
-> in the core module.
+I found how to pass these options:
+1. Add custom config file
+```
+# cat test-appliance/files/root/fs/f2fs/cfg/custom
+SIZE=small
+export MKFS_OPTIONS="-O extra_attr,encrypt,inode_checksum,flexible_inline_xattr,inode_crtime,verity,compression -f"
+export F2FS_MOUNT_OPTIONS="discard,inline_tail"
+TESTNAME="f2fs custom"
+```
+2. Then run command as following:
+```
+kvm-xfstests -c f2fs/custom "generic/418"
+```
 
-ack.
+However, I am only able to reproduce generic/418 and f2fs/004. I will look into
+these two cases first.
 
-Given your previous comment about introducing 
-platform_device_get_match_data, I guess I should instead do it directly 
-in the driver's probe, like its done in axp20x_adc.c ? Somehting like that:
-
-if (!dev_fwnode(&pdev->dev)) {
-     const struct platform_device_id *id;
-
-     id = platform_get_device_id(pdev);
-     chip_info = (const struct ad7606_chip_info *)id->driver_data;
-} else {
-     struct device *dev = &pdev->dev;
-     chip_info = device_get_match_data(dev);
-}
-
+> 
+> > 
+> > Before:
+> > Failures: generic/042 generic/050 generic/250 generic/252 generic/270 generic/389 generic/563 generic/700 generic/735
+> > Failed 9 of 746 tests
+> > 
+> > After:
+> > Failures: generic/042 generic/050 generic/125 generic/250 generic/252 generic/270 generic/389 generic/418 generic/551 generic/563 generic/700 generic/735
+> > Failed 12 of 746 tests
+> > 
+> > Failures: f2fs/004
+> > 
+> > Can you please check failed testcases?
+> > 
+> > Thanks,
+> > 
+> > > 
+> > > ---
+> > > v2:
+> > > - fix ARCH=arc build warning
+> > > 
+> > > ---
+> > > Wu Bo (13):
+> > >    f2fs: add inline tail mount option
+> > >    f2fs: add inline tail disk layout definition
+> > >    f2fs: implement inline tail write & truncate
+> > >    f2fs: implement inline tail read & fiemap
+> > >    f2fs: set inline tail flag when create inode
+> > >    f2fs: fix address info has been truncated
+> > >    f2fs: support seek for inline tail
+> > >    f2fs: convert inline tail when inode expand
+> > >    f2fs: fix data loss during inline tail writing
+> > >    f2fs: avoid inlining quota files
+> > >    f2fs: fix inline tail data lost
+> > >    f2fs: convert inline tails to avoid potential issues
+> > >    f2fs: implement inline tail forward recovery
+> > > 
+> > >   fs/f2fs/data.c     |  93 +++++++++++++++++++++++++-
+> > >   fs/f2fs/f2fs.h     |  46 ++++++++++++-
+> > >   fs/f2fs/file.c     |  85 +++++++++++++++++++++++-
+> > >   fs/f2fs/inline.c   | 159 +++++++++++++++++++++++++++++++++++++++------
+> > >   fs/f2fs/inode.c    |   6 ++
+> > >   fs/f2fs/namei.c    |   3 +
+> > >   fs/f2fs/node.c     |   6 +-
+> > >   fs/f2fs/recovery.c |   9 ++-
+> > >   fs/f2fs/super.c    |  25 +++++++
+> > >   fs/f2fs/verity.c   |   4 ++
+> > >   10 files changed, 409 insertions(+), 27 deletions(-)
+> > > 
+> > > 
+> > > base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
+> > 
+> > 
+> > 
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
