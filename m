@@ -1,93 +1,130 @@
-Return-Path: <linux-kernel+bounces-329233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C610978EFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A885978EFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4707A1F242F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A7C1F24259
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB29513BC3F;
-	Sat, 14 Sep 2024 07:53:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB70713C9C0;
+	Sat, 14 Sep 2024 08:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E11eIdHm"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34ABC13A257
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 07:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F1F43ADF;
+	Sat, 14 Sep 2024 08:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726300384; cv=none; b=aLqCHabwRqkH8JjOkezMW1geCFJudFCgNWrhJzmiLTPPcuEYwz6Y+/hos8QL76k5xpc7JgLp0LdJeAZGOGh6szak5DpaRxE4jeTeA3ctd9bxWQAV55BEFFjkroaZKVMhtwu3d8DrIAHMjTtSYJcfLHqL3hyokppBtFlLDTSaDw8=
+	t=1726300877; cv=none; b=lTTZ/nc12Ot8KttsD/CmAZhXG+h4bSGq42d1oEpbgxz3tIMbdmZIE4NlRXn9dsvrDEE+awbtlCqjAbie53F2P2OuKR0d9sFp8Kifc+ZUoJ5M5ZCwQz3wt9M+sb29GydWid9gDHnSQjsji/cvXwVfPfAvPJxNM9Y43yg46vZs3pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726300384; c=relaxed/simple;
-	bh=kYrcfGqyI9UWqVgfDl8JjHC+PQmcip52vOqz4ExrGq8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nbjXnuE1k8gi21WEl/N89VutkI96Y6iItkvHzVFxNydYrc0SdvkJnaDRbQx+bbOF2dEMRfBRNyachwKKAHbXVvXEHDwd3SOCJWZkgGwYCjfKNJEa1zjb4Gv+Mjf31F3xR3pYTSaXEHxaAzgs6yszIs13h7aWUVgc0uqFpG2dDCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f5605c674so41195695ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 00:53:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726300382; x=1726905182;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TBh4u3skwGtSv3GL/wDNzy7yp1jEN3S+V/wuQDqlikA=;
-        b=JmOdPep0Y+fsJ9dlkh9lJz9BZfjMo/E/LASnGlZ1CzPS7KL9i4wR18u6OesELDXvnm
-         BX9zEcy+gP50GrVcN2TwG3/yH4qdjKm9o0Us4wneXrVxFFf71i40IMM+vowx0H4vSC4+
-         XF3+lhEwG0IShyOz4l+oHjlPXxYzHPQRO9b94BdkqLG6f0PdTdkmzQdpGKEispl4bg+i
-         JlXg8SfhzgjiAGbn9SEE9Sp7H+pkZhExnf47qR/alCXv3/q7lSLPMxCyIDio9iZyCzVj
-         vIfFccFwfFqZSc0eqaYTjD2p/lYeQABFibpNWr6MNbt7GT6hjL2o41tb7m/vDoKRY4Be
-         H/gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJqp1spjbRorV1PztnKfarD1pr4/OHLp3wqx0EyOK96bIjslEZ/yk7xRnLR+aAwUHvWUHrD5bxDdoumnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw4djuYdW5dizhfX+8iP9ZKTgY1NaskT+kFRmuKx0sG1JwH2mN
-	5hC+8m9x/HvBYJm4kvg2wyroAMEA0yvigM6oHHw3h1q4i8g35I87AKb+CiGxFIHfGqMrjpxcKXG
-	LO5T5eNcNudEeYyvOzXpJMzAJD96zRvf7YCIgEUJBAjg8uQKmiiK99FM=
-X-Google-Smtp-Source: AGHT+IEilAHp69i8GKZ0aEbebAOEzDE2jEWi+Isl/7f3TMAf601houOnWWM7jwutZZkAMOjwOs1+fGn2OYwSntljErZp6dAsZHow
+	s=arc-20240116; t=1726300877; c=relaxed/simple;
+	bh=8zW3qHATwHmhh62Rt3t1nuvcqJ5Ef2QgDF5Wc6yLSjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RuywPRxpp8ENXVTdPVmiWKl6ock1ofku9jb12qeDaeRsPl9L6BreI6+rAnHFAvKduYU9JtkoNnZIEoVZl8dv/ePJRI/9BR3vHnHj4fvl22oH3NQglq/O9Gk23/t5Y2DOYlWOTLV1Xsoi7AyYgv+D5jaWP1OtsC91ouTHKfeBge8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E11eIdHm; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7C0BF1BF204;
+	Sat, 14 Sep 2024 08:01:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726300866;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1UTzwRfMDy5HUNy5t2BEx5nu4xKFJUQAXBDNug6N3+I=;
+	b=E11eIdHm8uer8IY6NePNlmJm3NGTsjxqY6GGUbB9EAf+cI248nxxM7A1Fm7uafMUF5py8s
+	4vmc4RMyl+1XQFnRUF2g+DFJqckPPeNA8ErIn4WZNqHi3NotlJg7fozFB+3uRPhhI2uTBc
+	GePcRZUoddDQ00M80cSJXDCWFEPlD+OREATmKZWkHEUcDbyphuMznihlPA0L6YlOnJd3dE
+	hoAFHk/Stu53BxfZM+QQQ7OmikgjpwoxGFeT+89iG5t6EBmG7Jy2sEkdhBT0jLPPxZKZjm
+	UC0BxC3sUWpha4hHYy2lMGYwxjgJuOe5VfnQQh+AvC02nnShzT2VJHq8wL4Hgw==
+Date: Sat, 14 Sep 2024 10:01:03 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+ Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
+ King <linux@armlinux.org.uk>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Florian Fainelli <f.fainelli@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Herve Codina
+ <herve.codina@bootlin.com>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH net-next v3 7/8] net: ethernet: fs_enet: simplify clock
+ handling with devm accessors
+Message-ID: <20240914100103.37970b03@fedora.home>
+In-Reply-To: <4e4defa9-ef2f-4ff1-95ca-6627c24db20c@wanadoo.fr>
+References: <20240904171822.64652-1-maxime.chevallier@bootlin.com>
+	<20240904171822.64652-8-maxime.chevallier@bootlin.com>
+	<4e4defa9-ef2f-4ff1-95ca-6627c24db20c@wanadoo.fr>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1e0a:b0:3a0:4d6b:42f7 with SMTP id
- e9e14a558f8ab-3a08b79a1a2mr58094615ab.22.1726300382397; Sat, 14 Sep 2024
- 00:53:02 -0700 (PDT)
-Date: Sat, 14 Sep 2024 00:53:02 -0700
-In-Reply-To: <000000000000e28810061fb68dd0@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66e540de.050a0220.175489.0002.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_get_system_file_inode
-From: syzbot <syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com>
-To: elic@nvidia.com, jasowang@redhat.com, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, mark@fasheh.com, 
-	mst@redhat.com, ocfs2-devel@lists.linux.dev, ocfs2-devel@oss.oracle.com, 
-	parav@nvidia.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-syzbot has bisected this issue to:
+Hello Christophe,
 
-commit a3c06ae158dd6fa8336157c31d9234689d068d02
-Author: Parav Pandit <parav@nvidia.com>
-Date:   Tue Jan 5 10:32:03 2021 +0000
+On Fri, 13 Sep 2024 22:24:28 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-    vdpa_sim_net: Add support for user supported devices
+> Le 04/09/2024 =C3=A0 19:18, Maxime Chevallier a =C3=A9crit=C2=A0:
+> > devm_clock_get_enabled() can be used to simplify clock handling for the
+> > PER register clock.
+> >=20
+> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > ---
+> >   .../ethernet/freescale/fs_enet/fs_enet-main.c    | 16 ++++------------
+> >   drivers/net/ethernet/freescale/fs_enet/fs_enet.h |  2 --
+> >   2 files changed, 4 insertions(+), 14 deletions(-)
+> >=20
+> > diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/dr=
+ivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> > index c96a6b9e1445..ec43b71c0eba 100644
+> > --- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> > +++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> > @@ -900,14 +900,9 @@ static int fs_enet_probe(struct platform_device *o=
+fdev)
+> >   	 * but require enable to succeed when a clock was specified/found,
+> >   	 * keep a reference to the clock upon successful acquisition
+> >   	 */
+> > -	clk =3D devm_clk_get(&ofdev->dev, "per");
+> > -	if (!IS_ERR(clk)) {
+> > -		ret =3D clk_prepare_enable(clk);
+> > -		if (ret)
+> > -			goto out_deregister_fixed_link;
+> > -
+> > -		fpi->clk_per =3D clk;
+> > -	}
+> > +	clk =3D devm_clk_get_enabled(&ofdev->dev, "per");
+> > +	if (IS_ERR(clk))
+> > +		goto out_deregister_fixed_link; =20
+>=20
+> Hi,
+>=20
+> I don't know if this can lead to the same issue, but a similar change=20
+> broke a use case in another driver. See the discussion at[1].
+>=20
+> It ended to using devm_clk_get_optional_enabled() to keep the same=20
+> behavior as before.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ea8407980000
-start commit:   196145c606d0 Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=141a8407980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=101a8407980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1c9e296880039df9
-dashboard link: https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16fdd49f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f5a7c7980000
+After digging around, there appears to be some platforms that don't
+have this clock indeed. Thanks for catching this, the optional is the
+way to go.
 
-Reported-by: syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
-Fixes: a3c06ae158dd ("vdpa_sim_net: Add support for user supported devices")
+Thanks,
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Maxime
 
