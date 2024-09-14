@@ -1,205 +1,151 @@
-Return-Path: <linux-kernel+bounces-329411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61DEF979104
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 495C7979106
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08EA1F22D38
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:35:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0120F1F22E2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D50F1CFECA;
-	Sat, 14 Sep 2024 13:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23831CF7BD;
+	Sat, 14 Sep 2024 13:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UB91XjC2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V0nmaUBl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19B81CFEC0;
-	Sat, 14 Sep 2024 13:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2B71CEAA6
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726320894; cv=none; b=O6TV3uS5zcuux68XfKVHGIQd7Eqm8Am0Lh06XIDXlapz9x/u1bj21L9HzM3LnkNE8sFiFc5nqt1Mgn/y0gDDEKFidWejlthFYeCUxqWdXMFgKeK1o84YpM5lzkohL/hqWYr0GhUw3Z5r2jGheK3ROABUiEVe5bYdFo6BTkEq5U4=
+	t=1726320927; cv=none; b=Ow1y6kUjJrea/4Rs35UCv6/1MsS/RvH/1MqXMa7BIhtwWW3rcyMAvlaAdBc83DzRtpQRnHZ0RXn7vpqZvZu47Cgsb3ZPdI5cn81xvdef8inahy6sZe0Z6/K65K1D1Vc8epz9wqbrK6sYj5l2wsgaFpTt0O0r00JrhDxPBYs4zm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726320894; c=relaxed/simple;
-	bh=UA+Ahx4H9tczSchnnxH6+0vhcc1dZN7jl6skWGzRNik=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gTS0odC9GngywAQUMexyymJELtOSjetDnxrwv9iKzQcw9SQCW8rqAe8PD5pPEaR6rs2R+ZFig2F84RdR/B2ru4Ggj2+5B1TwUX3f16Jg1u6uhC946wLBxMJfCtZX03XGDeF3Zv9b8OZsIN8H0Xk6eHv80VEAIqM4xhgs65CHxOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UB91XjC2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23625C4CEC4;
-	Sat, 14 Sep 2024 13:34:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726320894;
-	bh=UA+Ahx4H9tczSchnnxH6+0vhcc1dZN7jl6skWGzRNik=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UB91XjC218s25Sy2De+b4V2ibsDA9Q+Vyo6YcmImVVVbwvkpSHAZkf2PH2TTulRu8
-	 UUka/7icjjCq3Lg4lbkIedFM2IexO4umoPBuS/QGB58BQy5KSd4PEfQ+yamU1viXWM
-	 4+7sXqVjthK/xMY0me1kO+XpmwJ4S+NHWHzNMInE3Qbvs1ybFdM4DuxrjcIMoBF5uC
-	 RwR6oKrSZwOKgjeuzdE1l9Ld29LawEGk3XeGKCG9OvCebGbGjB0wnqutz4l0lS4slW
-	 idMJWXdJegu16/RaP65VUkgG36V1FIoG70h6c1fzefa1DsWw3KWbD9SaaPAifipD+w
-	 be1VEsRUtvsWQ==
-Date: Sat, 14 Sep 2024 14:34:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, songqiang1304521@gmail.com, lars@metafoo.de,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] iio: proximity: vl53l0x-i2c: Added continuous
- mode support
-Message-ID: <20240914143447.1c5d5623@jic23-huawei>
-In-Reply-To: <20240909101508.263085-3-abhashkumarjha123@gmail.com>
-References: <20240909101508.263085-1-abhashkumarjha123@gmail.com>
-	<20240909101508.263085-3-abhashkumarjha123@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726320927; c=relaxed/simple;
+	bh=iL2sP6qDwiloz5Ja9a59YqgaEE/yyEL18B1Y0Gzn43I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VuvjeoxDLu2nRmvbIV9FIHYW2eTfufhWXZUxokzv/OJmLyi7IQh1KMH5r2t2Jm0GIKsu1OgkNcKX9J0mVPCSC3/IoiT3U8d5m1S4U8J+0ieC1JrVt4DrOraWVHVPMWxwBVj4qAVf2syqFPXQSSVV6umwQqX2yi5xV+w/GEgs3bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V0nmaUBl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726320924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ld0UP3PRmivVuoJrwDe2lnCU/nD5gTvPPRMst7Yu8i8=;
+	b=V0nmaUBl/NYz1czGPInBYX2A4kCWeAoj/P5nigDMI2k/5e2OcxWuNFTdATJr8kJBsFHKqy
+	Dg05Wpi/uXVZmBwgfEUVAB4wT/OouRroS2DHVytJZEwofDailsYKLeZTFy+rD+7u1fhxmO
+	Nnizvz4/ZSmVvzyWHL9zldmzMWcdZx4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-688-7LoKHQ8dNC-lDfxhtsh_ow-1; Sat, 14 Sep 2024 09:35:23 -0400
+X-MC-Unique: 7LoKHQ8dNC-lDfxhtsh_ow-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb5b01c20so12555465e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:35:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726320921; x=1726925721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ld0UP3PRmivVuoJrwDe2lnCU/nD5gTvPPRMst7Yu8i8=;
+        b=CWzzYuRnIY8Xv3B4swLBruqDhqAPxoTQmifCz7kQk5mBgt7KUDcRjlMxJVTDzvOAnd
+         DPK3guiqRdKh5/0m4fSNtYx6+H9gUFfeHhgdqB/x3BzWPQJAs2bye7Eynu79voOI8fCV
+         SUVZCbcMmyMSH3t3k74amCWnPmj/2R+ebuJAZuOaGJZepSTizMOr9E+KCN3v6yii4l67
+         P/LPz7lKmTLdSMapQBO7ll+3GQac8EAxxN6gm0aPPkEcxX/VTx0XqkWJ2C0eSJtqJWWZ
+         YwchCjiNJG9HK2kwRT1WBULXDfjUF6F0x629tLnfQhwCoHNn1k1XeLFjYF8YSAdnPIe5
+         OATQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVq8j/l1opm9n3c3RVd1qcHev1FrqWnqJb7yvV/stxThR6tF9EJLCApFhLuOIA+ZSUHX1Ndua81GdJfFUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbJa819m+XDuEj4UbotVeu8z26GhhKlh408NWTdmtB008/fO4Y
+	UyUj0px/gbAEqNj4KXkm07dtoQYeRR9DMS3CGAjMp43Es2DoIy+WxJsYzKTySEWdhA4odNCioGU
+	GIDNKJC9srfnizVnfPjgd9Af2qDRoun6yh6rXlMnw+zwUb5Uh6DOECgjYhDpFRR7RaT1H/XtZt7
+	dDbQaxqT24VGvQNdsJw3Ny9CpHFSUxWpu5JNmrLTWJhu9/YDs=
+X-Received: by 2002:a05:600c:1d05:b0:42c:c08e:c315 with SMTP id 5b1f17b1804b1-42d90827159mr52190445e9.16.1726320921117;
+        Sat, 14 Sep 2024 06:35:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZa1HkPyf/nXwY2gWJhrKbQjj1W29fkvwKM7sq40Mkj6VbUZM6phKBtQENBljHgDCxGxGqupkWYE2snthe8oA=
+X-Received: by 2002:a05:600c:1d05:b0:42c:c08e:c315 with SMTP id
+ 5b1f17b1804b1-42d90827159mr52190275e9.16.1726320920644; Sat, 14 Sep 2024
+ 06:35:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240914011348.2558415-1-seanjc@google.com> <20240914011348.2558415-2-seanjc@google.com>
+In-Reply-To: <20240914011348.2558415-2-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Sat, 14 Sep 2024 15:35:09 +0200
+Message-ID: <CABgObfZh0PX5CMa-Jbny82GvSS9oV6uPxYugoi0n7Vrv=yj5Rg@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM: Common changes for 6.12
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon,  9 Sep 2024 15:45:07 +0530
-Abhash Jha <abhashkumarjha123@gmail.com> wrote:
-
-> The continuous mode of the sensor is enabled in the buffer_postenable.
-> Replaced the original irq handler with a threaded irq handler to perform
-> i2c reads during continuous mode.
-> The continuous mode is disabled by disabling the buffer.
-> Added a trigger for this device to be used for continuous mode.
-> 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
-Hi Abhash,
-
-Applied this with a couple of minor tweaks (see below) to the
-testing branch of iio.git.  I'll be rebasing that tree on rc1 once
-available and pushing out as togreg which gets picked up by linux-next.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/proximity/vl53l0x-i2c.c | 161 +++++++++++++++++++++++-----
->  1 file changed, 135 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
-> index 3f416d3db..cbf030869 100644
-> --- a/drivers/iio/proximity/vl53l0x-i2c.c
-> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
-> @@ -22,6 +22,12 @@
->  #include <linux/module.h>
->  
->  #include <linux/iio/iio.h>
-> +#include <linux/iio/buffer.h>
-> +#include <linux/iio/trigger.h>
-> +#include <linux/iio/trigger_consumer.h>
-> +#include <linux/iio/triggered_buffer.h>
-> +
-> +#include <asm/unaligned.h>
->  
->  #define VL_REG_SYSRANGE_START				0x00
->  
-> @@ -43,20 +49,70 @@
->  #define VL_REG_RESULT_RANGE_STATUS_COMPLETE		BIT(0)
->  
->  #define VL53L0X_MODEL_ID_VAL				0xEE
-> +#define VL53L0X_CONTINUOUS_MODE				0x02
-> +#define VL53L0X_SINGLE_MODE				0x01
->  
->  struct vl53l0x_data {
->  	struct i2c_client *client;
->  	struct completion completion;
->  	struct regulator *vdd_supply;
->  	struct gpio_desc *reset_gpio;
-> +	struct iio_trigger *trig;
-> +
-> +	struct {
-> +		u16 chan;
-> +		s64 timestamp __aligned(8);
-I tweak this whilst applying to use the new aligned_s64
-(the patch crossed with yours)
-
-> +	} scan;
->  };
->  
+On Sat, Sep 14, 2024 at 3:14=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
 >
-> @@ -153,7 +192,7 @@ static int vl53l0x_read_proximity(struct vl53l0x_data *data,
->  		return -EREMOTEIO;
->  
->  	/* Values should be between 30~1200 in millimeters. */
-> -	*val = (buffer[10] << 8) + buffer[11];
-> +	*val = get_unaligned_be16(&buffer[10]);
+> Fix a long-standing goof in the coalesced IO code, and a lurking bug in
+> kvm_clear_guest().
+>
+> The following changes since commit 47ac09b91befbb6a235ab620c32af719f82083=
+99:
+>
+>   Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+>
+> are available in the Git repository at:
+>
+>   https://github.com/kvm-x86/linux.git tags/kvm-x86-generic-6.12
+>
+> for you to fetch changes up to 025dde582bbf31e7618f9283594ef5e2408e384b:
+>
+>   KVM: Harden guest memory APIs against out-of-bounds accesses (2024-09-0=
+9 20:15:34 -0700)
 
-In theory this should have been a different patch, but meh it's tiny so
-I'll just take it in here.
+Pulled, thanks.
 
->  
->  	return 0;
->  }
-> @@ -163,7 +202,14 @@ static const struct iio_chan_spec vl53l0x_channels[] = {
->  		.type = IIO_DISTANCE,
->  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
->  				      BIT(IIO_CHAN_INFO_SCALE),
-> +		.scan_index = 0,
-> +		.scan_type = {
-> +			.sign = 'u',
-> +			.realbits = 12,
-> +			.storagebits = 16,
-> +		},
->  	},
-> +	IIO_CHAN_SOFT_TIMESTAMP(1),
->  };
->  
->  static int vl53l0x_read_raw(struct iio_dev *indio_dev,
-> @@ -193,8 +239,16 @@ static int vl53l0x_read_raw(struct iio_dev *indio_dev,
->  	}
->  }
->  
-> +static int vl53l0x_validate_trigger(struct iio_dev *indio_dev, struct iio_trigger *trig)
-> +{
-> +	struct vl53l0x_data *data = iio_priv(indio_dev);
-> +
-> +	return data->trig == trig ? 0 : -EINVAL;
-> +}
-> +
->  static const struct iio_info vl53l0x_info = {
->  	.read_raw = vl53l0x_read_raw,
-> +	.validate_trigger = vl53l0x_validate_trigger,
->  };
->  
->  static void vl53l0x_power_off(void *_data)
-> @@ -221,6 +275,39 @@ static int vl53l0x_power_on(struct vl53l0x_data *data)
->  	return 0;
->  }
->  
-> +static int vl53l0x_buffer_postenable(struct iio_dev *indio_dev)
-> +{
-> +	struct vl53l0x_data *data = iio_priv(indio_dev);
-> +
-> +	return i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START,
-> +						VL53L0X_CONTINUOUS_MODE);
-> +}
-> +
-> +static int vl53l0x_buffer_postdisable(struct iio_dev *indio_dev)
-> +{
-> +	struct vl53l0x_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START,
-> +						VL53L0X_SINGLE_MODE);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Let the ongoing reading finish */
-> +	reinit_completion(&data->completion);
-> +	wait_for_completion_timeout(&data->completion, HZ / 10);
-Trivial but I'll add a blank line here to separate the completion related
-bits from the clear irq as they are more or less unrelated.
+Paolo
 
-> +	return vl53l0x_clear_irq(data);
-> +}
+> ----------------------------------------------------------------
+> KVK generic changes for 6.12:
+>
+>  - Fix a bug that results in KVM prematurely exiting to userspace for coa=
+lesced
+>    MMIO/PIO in many cases, clean up the related code, and add a testcase.
+>
+>  - Fix a bug in kvm_clear_guest() where it would trigger a buffer overflo=
+w _if_
+>    the gpa+len crosses a page boundary, which thankfully is guaranteed to=
+ not
+>    happen in the current code base.  Add WARNs in more helpers that read/=
+write
+>    guest memory to detect similar bugs.
+>
+> ----------------------------------------------------------------
+> Ilias Stamatis (1):
+>       KVM: Fix coalesced_mmio_has_room() to avoid premature userspace exi=
+t
+>
+> Sean Christopherson (4):
+>       KVM: selftests: Add a test for coalesced MMIO (and PIO on x86)
+>       KVM: Clean up coalesced MMIO ring full check
+>       KVM: Write the per-page "segment" when clearing (part of) a guest p=
+age
+>       KVM: Harden guest memory APIs against out-of-bounds accesses
+>
+>  tools/testing/selftests/kvm/Makefile            |   3 +
+>  tools/testing/selftests/kvm/coalesced_io_test.c | 236 ++++++++++++++++++=
+++++++
+>  tools/testing/selftests/kvm/include/kvm_util.h  |  26 +++
+>  virt/kvm/coalesced_mmio.c                       |  31 +---
+>  virt/kvm/kvm_main.c                             |  11 +-
+>  5 files changed, 283 insertions(+), 24 deletions(-)
+>  create mode 100644 tools/testing/selftests/kvm/coalesced_io_test.c
+>
 
 
