@@ -1,114 +1,145 @@
-Return-Path: <linux-kernel+bounces-329516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0F2979239
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B492097923D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09B87B218AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:57:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 186FAB21B15
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834131D12E9;
-	Sat, 14 Sep 2024 16:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030A71D0DF4;
+	Sat, 14 Sep 2024 17:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNZ0IbL5"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XFXCeKKS"
+Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8CC4414;
-	Sat, 14 Sep 2024 16:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5C231A89
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 17:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726333061; cv=none; b=YQDQ2tEvHUL52yTCBOznsh1zNeZG1xp7Ky38UrHxqvNFjWfncjQEnKKqhVsZG9OTY3apjNddxP9tVYUJtXYJWUFEN78MOMxP49tlZS0cbD4KW3/Dww5J0kAELxwiBG/Ka93wUzNS/J8mFP4mgm72Fg1NEEZZ92AN6y1+CKkXJ/0=
+	t=1726333382; cv=none; b=IIofIYyqqWGbaUKdXn1GVirC5idvEHnQg+awoWnYBwetfsf16jQvmWteq2siZYtvX9+KqPgAfaAMxD3ymWy3UIm2RtdXEPNxIwb2uEbEOY4sKY/fZRaS1fQgIh/+sh0R0F6Z3BTHC/BaZ68hZpXKbO8JUShj/IHuwqWXDOfl9Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726333061; c=relaxed/simple;
-	bh=sWamHUsY/1onflk8CIeKOaBisZMhSZHiw70nbhdLc2o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qdI0OPXST8wgsFh2xHtmoQ2MGQ0GIpNGQlo7tUsJyX1NbluFnosw08M9Qli+XVL57SdBEviFPNtwUS60ik/yU8HfwjST4rr0INH3nDUTsJd8qJrN11NiiDz1pz7kyriQjagtvudBNwl463yZ4hquWVk4K1xFKtEgNzU4J23qPaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JNZ0IbL5; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7d50e7a3652so2119439a12.3;
-        Sat, 14 Sep 2024 09:57:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726333059; x=1726937859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sWamHUsY/1onflk8CIeKOaBisZMhSZHiw70nbhdLc2o=;
-        b=JNZ0IbL5fLRue6pFXp7XiGuPFE+djmvrAD8dGqN29d2d6DvDGkZoqSaDEeeRiTi9fz
-         w2IajTDXQeODT6n7y3xN4XSx7ht/H1AP/hVeeOrBB6eFKjFw7GOIkQUmQHSlpuBqatmn
-         DL4PNL12BtIlZo6tO/0rvaA5/io9iXI4u6OSm9TFlrRw71EKLY+r2Qw+oCP8H6IkwzzL
-         Ke7gGjXLrqGeerAIxKdWX8EUWpA8fMDJBCCiuKYfPcYVVKXIuiFqK1htaICNyXCpUWnb
-         siX+Bvkh5IqiPnQk81B3vwdD5nsEGNK9b61dcLW3JuV8J/hs7fop0VW5+UI/kmwoR30U
-         Jy1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726333059; x=1726937859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sWamHUsY/1onflk8CIeKOaBisZMhSZHiw70nbhdLc2o=;
-        b=vdNaOLG/TihuI/mYjmz1bJ/hgMvCZxXdX/BXHsx0ezQiwiQx9RKzv2aJ42GbD+Ygyu
-         BtxpfFnWbo06kbPBJb9OKaswi75nGoDyjsBQPqy5g5lOY/F91/WmkH3nx/bdw26itML0
-         rN7uX1j7S/AykgwqTwWAK9uYx5YNRt6WWPUVRBZ+nTiTB/yq3vxRzvihRS3uf+SPorsJ
-         AXT+cGUU5MO4QTc1TiHbAs8PpMhri5nSVe1cRccBiaLFPXO+QgpUDi8P7EnQp3ifUSYg
-         G28pw9M2pjTEhiUl8teWDK+xwu4kZAeBZymoCGfMNwivxRst35sIg9YFxDKkH4GeHLpA
-         JzIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqFA3VgMdA3Dfq61syWt1W9cqdCLY4hBJZ1xvoPTrM+TUMz75tyAQiXEKH+Rd+tibxI/rss1H2oLkTBGXj3Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye8lCtklcz5FUflxLI3sGhQM5RY+Jnn+aTvPwEuQsecPomNJr3
-	7jE/RaS6vnICrmzXO45b7G0HTJSmZMdFKPMXx5hXKOq/Rv+ddn2hRwt6xVRpiBcMT0mC7cEKKV7
-	sBBleRTUrm99caw6TimUuDBHDnjo=
-X-Google-Smtp-Source: AGHT+IHdJq2AvKX1ib+0MKP9D53s3u/6TP280RdkZBHn648wSqhY+E9pVg2teLVhE+lnQyb8WtH9haiwMUpc0t1GthI=
-X-Received: by 2002:a17:90a:10c2:b0:2c9:359c:b0c with SMTP id
- 98e67ed59e1d1-2dba006d66dmr12134919a91.28.1726333058750; Sat, 14 Sep 2024
- 09:57:38 -0700 (PDT)
+	s=arc-20240116; t=1726333382; c=relaxed/simple;
+	bh=CfOgQpo0wd5FNYZlcNhUIiMkd4jJ7pzoQSKISw4XJu0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zra8L5hKLaKu9vJ1fs1zcIwW3q990XCZx+ppgVFhHeR/5BRERPZyD/ZMCNxxRIwnBP4Q3DSUs32DQjTP0BIRKFel9iX21RpLrSsEXKxUVpkK/ZfSG6rtoohWJQn28+3eDmf6bR3M0mDuHkQ7QtIqdxhXxvYw/v4F5UJad4bJqNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XFXCeKKS; arc=none smtp.client-ip=193.252.23.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id pWAYsZyXRERiZpWAZsSBCx; Sat, 14 Sep 2024 19:02:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726333371;
+	bh=9mmHPrhPQ42BfgqjlGF5PD7LXLG84dsNAms6oZMuxi8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=XFXCeKKSgs/6kEZR+yw8/6YixXB2Ry4EgFcEoDs730RFo8/mVKjYYcz769o/M9usl
+	 f3ZanConqPx6SBi2+cViQDQZgqiOisduInT/PDD1obuCa4A43nilp+v6UEp42Gaec0
+	 X+OgTrPmaqVmnt4o8hDlW/z80AscVjI+RP6PZ2Kx58FQecBcWvp1whSasZxOQquz/W
+	 r6bu1QH553Bu4oGAzJDQQG/ykTgGI3BLxLlnoVXl/YUXarNqd0BJpCO9CJ4Ts+Qiy4
+	 JQYAWQpX/SKoAXurjVrUcjqZwBcvGodhJrniBkVkxpdSuBXQqX/QjFPSXRJQ8agSrE
+	 Ir6aUFAU5jaQw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 14 Sep 2024 19:02:51 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: biju.das.jz@bp.renesas.com,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: [PATCH v4] phy: renesas: rcar-gen3-usb2: Fix an error handling path in rcar_gen3_phy_usb2_probe()
+Date: Sat, 14 Sep 2024 19:02:44 +0200
+Message-ID: <1457c401e3cdf792c5170f5c703cb24de137c19a.1726333335.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aa1b4059dfac001945745db02b6f6d9db2e5d1cb.1726072795.git.hridesh699@gmail.com>
- <7877d23adba22e2f89a61efc129ecf1b0627510b.1726072795.git.hridesh699@gmail.com>
- <CALiyAo=Z7SCwCRD_2rBnQrkF71q4MRyMjqJZy8iWGAuFqOmWUw@mail.gmail.com> <20240914174249.107a1533.gary@garyguo.net>
-In-Reply-To: <20240914174249.107a1533.gary@garyguo.net>
-From: Hridesh MG <hridesh699@gmail.com>
-Date: Sat, 14 Sep 2024 22:27:02 +0530
-Message-ID: <CALiyAo=ZdFy0bR03NndODmE7vP_JRzxs52-z=iXKQbO_Z6rtYg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] checkpatch: warn on empty rust doc comments
-To: Gary Guo <gary@garyguo.net>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Shuah Khan <skhan@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 14, 2024 at 10:12=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
->
-> On Sat, 14 Sep 2024 21:01:24 +0530
-> Hridesh MG <hridesh699@gmail.com> wrote:
->
-> > Ah, sorry. I did not intend to post this version as a reply to the
-> > previous thread, I wrongly assumed that editing the patch manually
-> > wouldn't have side effects. Should I post it again or is this fine?
->
-> I don't know what happened, somehow in my email client I saw the old
-> replies to your v2 patch becomes reply to your v3 patch.
->
-> Did you somehow reuse Message-ID between v3 and v2? Not sure how that's
-> supposed to happen...
->
-> Best,
-> Gary
+If an error occurs after the reset_control_deassert(),
+reset_control_assert() must be called, as already done in the remove
+function.
 
-Yeah, I did not run git format-patch again to create v3. That messed
-everything up.
+Use devm_add_action_or_reset() to add the missing call and simplify the
+.remove() function accordingly.
+
+Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch changes the order of function calls when releasing the resources
+in the .remove function(). Looks fine to me, but pm_ functions are
+sometimes tricky.
+
+Changes in v4:
+  - Use the error handling path in rcar_gen3_phy_usb2_init_bus()
+
+Changes in v3:
+  - Use devm_add_action_or_reset()   [Biju Das]
+v3: https://lore.kernel.org/all/290b25827e3f0742808940719455ff0c5cb9d01d.1726329925.git.christophe.jaillet@wanadoo.fr/
+
+Changes in v2: (broken proposal)
+  - Re-use 'error' to simplify the patch   [claudiu beznea]
+  - Update the commit description to explain why it is safe.
+v2: https://lore.kernel.org/all/4efe2d0419cbe98163e2422ebe0c7896b8a5efed.1725717505.git.christophe.jaillet@wanadoo.fr/
+
+v1: https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 58e123305152..f900fe42c311 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -668,6 +668,13 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct device_node *np)
+ 	return candidate;
+ }
+ 
++static void rcar_gen3_reset_assert(void *data)
++{
++	struct reset_control *rstc = data;
++
++	reset_control_assert(rstc);
++}
++
+ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+ {
+ 	struct device *dev = channel->dev;
+@@ -686,6 +693,11 @@ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+ 	if (ret)
+ 		goto rpm_put;
+ 
++	ret = devm_add_action_or_reset(dev, rcar_gen3_reset_assert,
++				       channel->rstc);
++	if (ret)
++		goto rpm_put;
++
+ 	val = readl(channel->base + USB2_AHB_BUS_CTR);
+ 	val &= ~USB2_AHB_BUS_CTR_MBL_MASK;
+ 	val |= USB2_AHB_BUS_CTR_MBL_INCR4;
+@@ -815,7 +827,6 @@ static void rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+ 	if (channel->is_otg_channel)
+ 		device_remove_file(&pdev->dev, &dev_attr_role);
+ 
+-	reset_control_assert(channel->rstc);
+ 	pm_runtime_disable(&pdev->dev);
+ };
+ 
+-- 
+2.46.0
+
 
