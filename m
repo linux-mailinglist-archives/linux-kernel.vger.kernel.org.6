@@ -1,134 +1,133 @@
-Return-Path: <linux-kernel+bounces-329152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4F7978E22
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:57:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2845C978E27
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D47D1F2413E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9634F1F23F28
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3E147772;
-	Sat, 14 Sep 2024 05:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83155433C8;
+	Sat, 14 Sep 2024 06:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RPz6skDU"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YfltoV3J"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAB74437
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 05:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F088BE5;
+	Sat, 14 Sep 2024 06:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726293467; cv=none; b=TSNWgOKWcOMIIwWUW+Xe5VBH12r7Tu02MKJ2xr2gziQpCAVEVywOaqVcfMhXU1EBO4b69L+9aePXyQmuwxdVC1LnvvhDNiDPfBFOM1HwXwdgK/zLZxAKq7rw+OsStAaLMHxSB/5s4YUHYvTSf7cgttW6hYigNNGJ3it9T2deM/I=
+	t=1726293695; cv=none; b=NtOTVWwo7tlYXQsgKnaGXXTJayc4m4bIClXkuTq5q1bf5x1+zkm/FOaYsLmyRmYB+vl99dPmpe29xLRZOMU/xtskoFk7wsU2KF8mQnJOcrFKVFWpbwpq1z6bzRNf4FlhGRaJnnXQ6QJH4DWxm6/N0/t5vqLbtcgz+aEzSRPxVRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726293467; c=relaxed/simple;
-	bh=yrxyEG+7h1OUZv+xEB0fzKoqpnFZveTpJbp5Nli51Wk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pykPgVsQmo1eGa0z9H87UW9QoA9dbNhUVoqCt3kyJ9XeORFHutfDLTGqmY0GJkcPe3BgTuZGflKEcI8G2W6bU1W8CO3q0yF60zI29kMmHEH5QmghRszEQ3OXEUXoTmhFqWpDr90rFS0Z/p2grlmGaLopfbA745YKyoN/OjxgQEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RPz6skDU; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a90188ae58eso318604866b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 22:57:44 -0700 (PDT)
+	s=arc-20240116; t=1726293695; c=relaxed/simple;
+	bh=RkSSgfAuKRdysLiIrkmcZussub2Fp+poWPfy2LCsOMI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nY2mbUIYIO2NbL6IEkt19idOFzidlfXNZvRDWnQfXY4t8u9GBNRZFUlP9VntLyExTBAVpw3VQiH2RKHXSZ7Ec2AjBkQxCOCq3k7ZcNIhtR2CINgOR34p72EH/M/yAKhr4c75Vkze/ZpRZXvKITtaJIW3kt8deAVsM+Jj5QwZIOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YfltoV3J; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8a897bd4f1so192672166b.3;
+        Fri, 13 Sep 2024 23:01:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726293463; x=1726898263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jj7BI1d/P05L4yR+fUrwV54+pcNt/eQNbd1AyE1f2W0=;
-        b=RPz6skDUX6Gwn6/RbgsTRHDxBQ0GEZv/qn2k/4zXVdbR2zChH0KHY9x6ZvtGr5HiQV
-         g4hisVL8BucDXhbiJKBDX2N0BfbheQrSTSJzqzIcVMiSMG9HRY5IHzHUSjleX0Flnjvd
-         Fx0hYu+NVa8zgGBJcXbyRrzTn36MFrPFP4BOxKLnB7etAUgWWuzmcl+yY0jTGiO7z2eA
-         7vPqxVHwuPmWyv9gnK9QzERp7CboIQFoJxmGryqXAXAnooZxkfZnCtI8v01dpXqIlcIr
-         UEDoVP2x1lno011SfRQ0gy6B8uv5Ck/YzX943ZuuBwALv/DgG9+SPjpLD5rW2DFbaEt1
-         37TQ==
+        d=gmail.com; s=20230601; t=1726293692; x=1726898492; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lf/YMIfb+2Zu/yKChK72uKrs+v0SF/ljvcIM9ywqVpg=;
+        b=YfltoV3Jgg7qp3uWs9eYBzpuxwEk+T1HynZ4PJdMyrx4RGIj+EvQEfkAC+Api1lN/7
+         VwM3u9Qd/6qlB2EF6iSh7gmSLSqoj/DvMO4WJDwsoXuDVk6LcQ6jfCo2CsMsYwbA0tyB
+         xNGuNZapB8yJmsLJ0QUThBVBnmBhNSwhjHyffo5OwdhjX3ASRKtFxqycPqSY6EqBTn+t
+         hSDDCFlVrvzmowNl6QRQMi4+4c8fXDo5EvS9T/A4/CCtI/K9Q6iFnzgyLQzwdeRsbTpP
+         2xgm73lXireaCqL4p/lXFy41ymHSIrqw6K+fbjXY+O6A7JxvMICCsq/M/e4mAd19B4Ss
+         HZkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726293463; x=1726898263;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jj7BI1d/P05L4yR+fUrwV54+pcNt/eQNbd1AyE1f2W0=;
-        b=VJJirKhvzQrxE14j2bm6r3GzqcDKYNsitm92PfqyfbmBhy60s7lhF9GYsrSShipU1O
-         oOxfgAbRi6ftf8s893Chof+oneWTE3+viHaIJJMj6g1VCcaFGKto+2xiRGF5MC9aILGE
-         wzv+FbpyjbjMoVueX+i8hMyXQVvIw9v+Sk8xsnZUlByyjFdofmfW5Q4wQqyOpPZYdSUx
-         D+rwzY9ysjV/BUCKXttasbZlu7KdGibhG4k7BpuGiPhnmCYT5d90dYIStqmf1dm84yMw
-         tyJPgQC6JTSIbIFstIzOEp4Ts08eIsrZzmVJy+DX2Fzznrv8/xawdLDzMZ4sZzZqLcGq
-         BI9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUUHqUyhoEXzmIoX4gSqqE4qsxElxng7+zyI0qaspj4qcuHhFNA9394KvjGZJnMrGQXqCMKnxhNCSwmxYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiQtFiHAnze3/juFYdrXzLupSHLdcBvGl2/yd9/cYzt6GQ2P6D
-	NJH46vKrzr2j1RfjVfURdjxvoEvFQnDSihqxKq6OLCoGu7+j0/ELmu7154XYCQ==
-X-Google-Smtp-Source: AGHT+IHQRdOpdMJ4Y1cJj+samNp4BzlrRh+uCRWFfdK6L+8JVEJRsNx51Bj2WAtb1ztXOUZFBjsz3w==
-X-Received: by 2002:a17:907:94d4:b0:a90:34e8:780f with SMTP id a640c23a62f3a-a9034e87ae4mr673589866b.63.1726293462430;
-        Fri, 13 Sep 2024 22:57:42 -0700 (PDT)
-Received: from [172.31.47.100] ([193.118.249.27])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610966ccsm37044366b.45.2024.09.13.22.57.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 22:57:42 -0700 (PDT)
-Message-ID: <e5a05e0a-ce58-4779-ae7e-c3803af82d3a@suse.com>
-Date: Sat, 14 Sep 2024 07:57:41 +0200
+        d=1e100.net; s=20230601; t=1726293692; x=1726898492;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lf/YMIfb+2Zu/yKChK72uKrs+v0SF/ljvcIM9ywqVpg=;
+        b=TTZ/GzxV36CXHsmhd7LJOb3nSm7DOFieR0ao3A9nHa0obAmV9qRxDA3tgudIDB9GW2
+         j3pXKQgLpDxRSj9BmaINNFlbSOJ2n3vY3NGfiPK45DGMu7MRfx3q37RD2RDPPz0e2TNT
+         ddAof+WWdI2CT400K0CevIi1arH9JTPxJJQA9gj+dToWpbqJ/n/5Tc7Hlz0nSvBv652m
+         r3h1Y07V3+mL2OdnNqwGDnGJh47k/7uk+hg+kpCjtosm10cQrEFiDKe7OwOFypV9SThh
+         hD/S/vd0TjskqcwjRzMiIdFXGFDQsJE1QtAjFyqRnHiMBJzy2QW2O/qnW1/ePLQrFXkG
+         7RpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsgF+6xfEPqyYnsYX0ol045KAOotSV2drGUCDFI626jJIUO+y7BduiJpYstGk8FQSDKsCyGdQmOPicSuIo@vger.kernel.org, AJvYcCXXlZ/G6mol2P7z/vI2BFbbkwv1rlKNs/YCYoukJ+63+7mwhQD3J58TIohwEr+kYhuP3YBQrEkFjmvH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBMdmqvmbqr5gDnSPN/RNQ/1BXXHCDwt0ElHVI6AB1Go2DrVDT
+	aWqJOVDSLQHPICBk3AE2CEJO3i/0PjCgSkHfmHXlIpT/3VZzgPvWM5IOoOJl7MlKXbG0CzU8zvi
+	0ZIukR+nzLeDuEfaveRtYCanDn/M=
+X-Google-Smtp-Source: AGHT+IGc2jE7I4KNR724zpEtd52VLgY4GffBQHicvuMutrirxiXRQn27NUACjEy+Zrk+aHKGdg7OSDQoK3qLOx2sX2A=
+X-Received: by 2002:a17:907:7da1:b0:a86:96ca:7f54 with SMTP id
+ a640c23a62f3a-a9047ca3bebmr416539066b.21.1726293691180; Fri, 13 Sep 2024
+ 23:01:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen/swiotlb: add alignment check for dma buffers
-To: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Juergen Gross <jgross@suse.com>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev
-References: <20240913145655.10076-1-jgross@suse.com>
- <a0b0dec5-03c1-4b69-aa0e-65771251d859@suse.com>
- <alpine.DEB.2.22.394.2409131728420.1417852@ubuntu-linux-20-04-desktop>
-Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-In-Reply-To: <alpine.DEB.2.22.394.2409131728420.1417852@ubuntu-linux-20-04-desktop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240913032750.175840-1-qianqiang.liu@163.com> <63aacc6d-8e3c-476d-938f-cce25d74a6b5@stanley.mountain>
+In-Reply-To: <63aacc6d-8e3c-476d-938f-cce25d74a6b5@stanley.mountain>
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 14 Sep 2024 01:01:19 -0500
+Message-ID: <CAH2r5mtswGSeNWb9GyGy0r6aaiQAF0x1q2uYmWONGVNq_Q0Udg@mail.gmail.com>
+Subject: Re: [PATCH v2] smb: client: compress: fix an "illegal accesses" issue
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Qianqiang Liu <qianqiang.liu@163.com>, ematsumiya@suse.de, sfrench@samba.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14.09.2024 02:38, Stefano Stabellini wrote:
-> On Fri, 13 Sep 2024, Jan Beulich wrote:
->> On 13.09.2024 16:56, Juergen Gross wrote:
->>> --- a/drivers/xen/swiotlb-xen.c
->>> +++ b/drivers/xen/swiotlb-xen.c
->>> @@ -78,9 +78,15 @@ static inline int range_straddles_page_boundary(phys_addr_t p, size_t size)
->>>  {
->>>  	unsigned long next_bfn, xen_pfn = XEN_PFN_DOWN(p);
->>>  	unsigned int i, nr_pages = XEN_PFN_UP(xen_offset_in_page(p) + size);
->>> +	unsigned int order = get_order(size);
->>>  
->>>  	next_bfn = pfn_to_bfn(xen_pfn);
->>>  
->>> +	/* If buffer is physically aligned, ensure DMA alignment. */
->>> +	if (IS_ALIGNED(p, 1UL << (order + PAGE_SHIFT)) &&
->>
->> Why this check? xen_swiotlb_alloc_coherent() guarantees it, while
->> xen_swiotlb_free_coherent() only checks properties of the original
->> allocation. And for xen_swiotlb_map_page() this looks actively
->> wrong to me, in case that function was called with offset non-zero.
-> 
-> I understand xen_swiotlb_alloc_coherent and xen_swiotlb_free_coherent
-> not needing the check, but I think we might need the check for
-> xen_swiotlb_map_page. At that point, I would keep the check for all
-> callers.
+added to cifs-2.6.git for-next (after correcting minor typo in Fixes:
+tag spotted by checkpatch) and added RB
 
-Whereas I would be inclined to suggest to put it in the one place it's
-needed, not the least to avoid the abuse of the function (going just
-from its name).
+Will let Enzo address your other suggestions but they seemed reasonable.
 
-> Unless there is another way to detect whether the mapping needs
-> alignment specifically for map_page?
-> 
-> For the offset, in theory if the device needs alignment, the offset
-> should be zero? If the offset is not zero, then there should be no
-> alignment requirement. The way Juergen wrote the check, we would take
-> the fast path if offset != zero, which makes sense to me.
 
-Hmm, right.
+On Fri, Sep 13, 2024 at 8:26=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> On Fri, Sep 13, 2024 at 11:27:51AM +0800, Qianqiang Liu wrote:
+> > Using uninitialized value "bkt" when calling "kfree"
+> >
+> > Fixes: 13b68d44990d9 ("smb: client: compress: LZ77 code improvements cl=
+eanup")
+> > Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+>
+> Thanks.
+>
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+>
+> I was reviewing this static checker warning.  I also have an unpublished =
+warning
+> which complains about collect_sample().
+>
+> fs/smb/client/compress.c:207 collect_sample() warn: should we be adding '=
+len' of the min_t value?
+>
+> It's a bit weird to sample data from each page.  Could we add some commen=
+ts at
+> the top of the function explaining what the function does.
+>
+> /*
+>  * This reads a 2k sample from the start of each page to see the data is =
+already
+>  * compressed or whether we can compress it further.
+>  */
+>
+> regards,
+> dan carpenter
+>
+>
 
-Jan
+
+--=20
+Thanks,
+
+Steve
 
