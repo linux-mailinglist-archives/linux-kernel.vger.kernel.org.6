@@ -1,147 +1,99 @@
-Return-Path: <linux-kernel+bounces-329365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A944D97906D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:21:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F2097906B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7330128143C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:21:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED75282238
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639A71CF29C;
-	Sat, 14 Sep 2024 11:21:51 +0000 (UTC)
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0941CEEB8;
+	Sat, 14 Sep 2024 11:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BaRyVGw1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D022154BE0;
-	Sat, 14 Sep 2024 11:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63AB154BE0
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 11:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726312911; cv=none; b=bcoP3nfjYGwsen29zXq+puQGQ0KQPhrGRkeBMH5aSO0QEX+Gc6GdJtXD36b29up+GLsk7IBk3vyLGwqdye1DYUEUqWbvF5FKg92FRWr0xJO/+vOQTORSZq0+8/iVtLvNi4Ar3Z2icslel0ziTHCXXU1yyckckbTcl8GIKgtyScE=
+	t=1726312848; cv=none; b=XrRU1qxj+ss7rqNH3AXM61M7XffdbqvPJKpeaawbkRekhsPtAVTCpfOfhSLNInte+Tw4go/8hvA2Qlrvzycru/HtVvrI4LImI6444/HctjsF3E+xJ9wX+5JUs7qgAqRle7umbNydv2vuP0sMNwTnHz1EAX95Qdc876gmpMJfI9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726312911; c=relaxed/simple;
-	bh=wYs6+e3ncIibwOg937qyqqpMKoEQH/DfvlRasOabw7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qQso1rdfR5Mefp/PBAgFEe65GeMKPs+6/kMdpIvtdjZRLlMdqSlpPfi1YgPHY9wZJb3esrs1JqIFCLn+rM7sO7TrnqinzHUrUCE5Vb20HQxzF3WCLEEYmthKdVOcS1FQdFRb3FLK6O06qMU3X2YCbGo3oB5XXubLiIT9nGAU80w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=43.154.197.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: bizesmtpsz7t1726312842t8wcg69
-X-QQ-Originating-IP: SOLrjz+HwFUP3pt84UGTG+9SZb7SAJ5qXRN8euUzMpw=
-Received: from [192.168.159.131] ( [106.150.157.243])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 14 Sep 2024 19:20:40 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2777605266862131744
-Message-ID: <46A8525FAB17E4F4+92686d5e-1de3-40c6-9767-ba9f7fedd984@radxa.com>
-Date: Sat, 14 Sep 2024 20:20:39 +0900
+	s=arc-20240116; t=1726312848; c=relaxed/simple;
+	bh=+CB+CuYtZ/mhcbG17QDFzv6IoSH9Ssufh4NcWKgof90=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hUBQKlnm8E15sOavd1ohTatsEcHsUMRIWpZUzQ4pcLXjfIKFbVIDKZr2V185MSkGiI7ZawMoI4yiltB9/GSgVvQZthw8611bwfSd5iyBIgCA3+90y32PsAdoD5sbIAh1XOavJkNyr8T6CVQxUPWYsdKXGW77/kLsG6KW2Iz/2DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BaRyVGw1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726312844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=VDcY1DfwhFJthdW3rQWNw4xYgYdrHBOnbtRjNWLoSsU=;
+	b=BaRyVGw1/lGP9mt5+2CsrsSX+oi7ZoKaQUe5b3VHPJuPv1bWqL0MIfBLqeAXc1Fer3gBKu
+	iNjl6otSZJHPhD8MfN8Bldn2UmCQKA9f+Bmb1X7gB4TRA44OgzHVYayodWO2RoyTwO9xAW
+	kFDylUfd68c2ZHZzldlOr1RGHQiFynw=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-386-OvZ34fq1OGOVmLTWMt3KOA-1; Sat,
+ 14 Sep 2024 07:20:43 -0400
+X-MC-Unique: OvZ34fq1OGOVmLTWMt3KOA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C3161956096;
+	Sat, 14 Sep 2024 11:20:41 +0000 (UTC)
+Received: from darkstar.users.ipa.redhat.com (unknown [10.72.112.115])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 88D6630001AB;
+	Sat, 14 Sep 2024 11:20:37 +0000 (UTC)
+Date: Sat, 14 Sep 2024 19:20:52 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: [PATCH] x86/e820: update code comment about e820_table_kexec
+Message-ID: <ZuVxlJ77V2_U0HPM@darkstar.users.ipa.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: dw_mmc: rockchip: Keep controller working for card
- detect
-To: Kever Yang <kever.yang@rock-chips.com>, heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org, Jaehoon Chung
- <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <20240912152538.1.I858c2a0bf83606c8b59ba1ab6944978a398d2ac5@changeid>
-Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <20240912152538.1.I858c2a0bf83606c8b59ba1ab6944978a398d2ac5@changeid>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-hi
+The setup_data ranges are not reserved for kexec any more after
+commit fc7f27cda843 ("x86/kexec: Do not update E820 kexec table
+for setup_data"), so update the code comment here.
 
-On 9/12/24 16:26, Kever Yang wrote:
-> In order to make the SD card hotplug working we need the card detect
-> function logic inside the controller always working. The runtime PM will
-> gate the clock and the power domain, which stops controller working when
-> no data transfer happen.
-> 
-> So lets skip enable runtime PM when the card needs to detected by the
-> controller and the card is removable.
-> 
-> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+Signed-off-by: Dave Young <dyoung@redhat.com>
+---
+ arch/x86/kernel/e820.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-following RK3588(s) boards work fine without cd-gpios,
+Index: linux-x86/arch/x86/kernel/e820.c
+===================================================================
+--- linux-x86.orig/arch/x86/kernel/e820.c	2024-09-14 10:39:57.423551301 +0800
++++ linux-x86/arch/x86/kernel/e820.c	2024-09-14 18:56:30.158316496 +0800
+@@ -36,10 +36,8 @@
+  *
+  * - 'e820_table_kexec': a slightly modified (by the kernel) firmware version
+  *   passed to us by the bootloader - the major difference between
+- *   e820_table_firmware[] and this one is that, the latter marks the setup_data
+- *   list created by the EFI boot stub as reserved, so that kexec can reuse the
+- *   setup_data information in the second kernel. Besides, e820_table_kexec[]
+- *   might also be modified by the kexec itself to fake a mptable.
++ *   e820_table_firmware[] and this one is that e820_table_kexec[]
++ *   might be modified by the kexec itself to fake a mptable.
+  *   We use this to:
+  *
+  *       - kexec, which is a bootloader in disguise, uses the original E820
 
-- Radxa E54C
-- Radxa ROCK 5A
-- Radxa ROCK 5B
-- Radxa ROCK 5C
-
-thank you very much!
-
-Tested-by: FUKAUMI Naoki <naoki@radxa.com>
-
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
-
-> ---
-> 
->   drivers/mmc/host/dw_mmc-rockchip.c | 23 +++++++++++++++++------
->   1 file changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-> index b07190ba4b7a..df91205f9cd3 100644
-> --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-> @@ -345,28 +345,39 @@ static int dw_mci_rockchip_probe(struct platform_device *pdev)
->   	const struct dw_mci_drv_data *drv_data;
->   	const struct of_device_id *match;
->   	int ret;
-> +	bool use_rpm = true;
->   
->   	if (!pdev->dev.of_node)
->   		return -ENODEV;
->   
-> +	if (!device_property_read_bool(&pdev->dev, "non-removable") &&
-> +	     !device_property_read_bool(&pdev->dev, "cd-gpios"))
-> +		use_rpm = false;
-> +
->   	match = of_match_node(dw_mci_rockchip_match, pdev->dev.of_node);
->   	drv_data = match->data;
->   
->   	pm_runtime_get_noresume(&pdev->dev);
->   	pm_runtime_set_active(&pdev->dev);
-> -	pm_runtime_enable(&pdev->dev);
-> -	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
-> -	pm_runtime_use_autosuspend(&pdev->dev);
-> +
-> +	if (use_rpm) {
-> +		pm_runtime_enable(&pdev->dev);
-> +		pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
-> +		pm_runtime_use_autosuspend(&pdev->dev);
-> +	}
->   
->   	ret = dw_mci_pltfm_register(pdev, drv_data);
->   	if (ret) {
-> -		pm_runtime_disable(&pdev->dev);
-> -		pm_runtime_set_suspended(&pdev->dev);
-> +		if (use_rpm) {
-> +			pm_runtime_disable(&pdev->dev);
-> +			pm_runtime_set_suspended(&pdev->dev);
-> +		}
->   		pm_runtime_put_noidle(&pdev->dev);
->   		return ret;
->   	}
->   
-> -	pm_runtime_put_autosuspend(&pdev->dev);
-> +	if (use_rpm)
-> +		pm_runtime_put_autosuspend(&pdev->dev);
->   
->   	return 0;
->   }
 
