@@ -1,140 +1,118 @@
-Return-Path: <linux-kernel+bounces-329106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FF1978D69
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:51:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2FBE978D72
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 07:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64DD91F24793
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:51:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3385B24938
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3B218B09;
-	Sat, 14 Sep 2024 04:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70DA22071;
+	Sat, 14 Sep 2024 05:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V5vnDLzC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uAGW3RRL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55F018E25
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 04:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1D94437;
+	Sat, 14 Sep 2024 05:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726289505; cv=none; b=tBuwsueMtfuRpJ0HJiaxSfFl0Behn4C0qk6HSghil+PlOk1EZyTf9dssRbn9AQOshGgBecl6RE9TXTF/5+fN/41NZ6Iv4TokNd2ZB7+u0vDG0TWe0LdRhss5k56zMzF3ltaLcQlV1/xeMBAEFDdQn+y/tQfJRNHsF/acgrWZx/8=
+	t=1726290032; cv=none; b=fhX7xcIu2cyVYJYfYbnNKWW6L+92sTVFV4IYJqCx7DRaikh7Z+2lcVKyjvRKdklzB9ZSnH2biiILFzaYIaPumgbz7qOcZS8KD81sHGyDXPuDK4SlVpqGdWgXqH1Y5yyus9/hged0alRdDhkn1gcSFW/rh8hPY7nWGFzroMSJWVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726289505; c=relaxed/simple;
-	bh=bfIjfZkeRWlbuyAdkVpJDILEQcdLaSRjgJRuJiFYJro=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jc/eBRLgXEC6fyIFXK9LYq13kggcszIKdylxkFBqh5uu+r/nExfxF5E3oBTe3p412K8904BgO7FraHrsAigneZ/zwkE1BDbhMoUslU8p7TtcEtQuOoyWVChf7SA72AEbyTKVPPX3TBTrlnEdMTU7HDPB8Dj+xkzbmmkTqhw3OTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V5vnDLzC; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726289502; x=1757825502;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=bfIjfZkeRWlbuyAdkVpJDILEQcdLaSRjgJRuJiFYJro=;
-  b=V5vnDLzCEIYSHsLlWOJzb7woiTwx6B89rgeu+IscK/Jlh6svGjLfSYA9
-   pyKP/qNImX+YPd6Gm61s2zDrEPU7b/ZHdUaKqcByiI1jlGspn6x0Xe9Sm
-   gzDRyya0can1FKDND9ugg8+3YPrKiam8Mmw/L61UdP3o8+geF1g3wP4cG
-   HqiAxFtCCenZN9XgMVN2crQ6w/efV7A2/gon1NlJL57U/IrR+czerQK4o
-   /zYeprpQGJoobOuqCBPAKM38k7lCbghIqdxUZL2HMWAsRuGtssz9QL2sa
-   QLJOy8hpiEJnxpVfYe64JVcjy8FZCOCSLvFN9OApHAYdF0vUaQnfVH4Zd
-   A==;
-X-CSE-ConnectionGUID: mGyK0XdISuGPaJoCQNqLrg==
-X-CSE-MsgGUID: 321RsIEzRli2BKe901wapQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25025904"
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="25025904"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 21:51:41 -0700
-X-CSE-ConnectionGUID: BA2B1eS8Ruip4oicnfDI3Q==
-X-CSE-MsgGUID: ctMZrdlZT4KQtAT61AWzbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="73062334"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 13 Sep 2024 21:51:40 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spKkz-0007NO-2j;
-	Sat, 14 Sep 2024 04:51:37 +0000
-Date: Sat, 14 Sep 2024 12:51:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Howells <dhowells@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: arch/powerpc/include/asm/cmpxchg.h:241:47: sparse: sparse: cast
- truncates bits from constant value (8000000000000000 becomes 0)
-Message-ID: <202409141258.oHu7Og9E-lkp@intel.com>
+	s=arc-20240116; t=1726290032; c=relaxed/simple;
+	bh=TU6+0ZV2vIa+B6CuwSGtaZg1fH3e9avaFbiyTxXIxCg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=sB9TUmBjWuwaIi8quuD3xQXbAToq2WFm0k1xfuoahJR4qaB9J8i6sS08J7lH2qHWY9yv/XJT0W57K0MgIJzQEioedDkXlOhNsmJqln8U1uOHydZe/GarTLqks2dGDemYmdXSHzNHt5uLmqhPV+9vy+BMS6zjTp3y6bv27c6KNqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uAGW3RRL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1EA1C4CEC0;
+	Sat, 14 Sep 2024 05:00:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726290031;
+	bh=TU6+0ZV2vIa+B6CuwSGtaZg1fH3e9avaFbiyTxXIxCg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=uAGW3RRL7XOg/9EunDa6Jylph3B+XdvGGoAv8DNTziA6HwjKKSdd3ENZCu4F3vp1z
+	 DgD3ovh8M9XnojXwUTbW652RwtVoWy18lckP6RWAFV3PrpGZMhQeZJE4QDylWRVr20
+	 dT2GCqzsB2Nv+YZJto8f4byuEcUeszTY/lk0hsAv51+58lS+9G3xa1PmGOqe7O/bES
+	 stdIbzy7Aa3PQvASippMkxfWm1Ja5Q5YF0cTcwiLJhHoq2dKpNQjAOPb4e28b7wUKn
+	 sWuGYQDCBg8t4c/dJ4CPVQcq0Hv5jGkDj7safHddz7/D3MM7E9bKWR20Fzm+D1IF7I
+	 IKrh10uLOEnYw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D1C3806655;
+	Sat, 14 Sep 2024 05:00:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCHv5 net-next 0/9] net: ibm: emac: modernize a bit
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172629003301.2464053.6462513032875139594.git-patchwork-notify@kernel.org>
+Date: Sat, 14 Sep 2024 05:00:33 +0000
+References: <20240912024903.6201-1-rosenp@gmail.com>
+In-Reply-To: <20240912024903.6201-1-rosenp@gmail.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org, jacob.e.keller@intel.com, horms@kernel.org,
+ sd@queasysnail.net, chunkeey@gmail.com
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b7718454f937f50f44f98c1222f5135eaef29132
-commit: 453924de6212ac159f946b75c6b59918e2e30944 afs: Overhaul invalidation handling to better support RO volumes
-date:   9 months ago
-config: powerpc64-randconfig-r111-20240913 (https://download.01.org/0day-ci/archive/20240914/202409141258.oHu7Og9E-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
-reproduce: (https://download.01.org/0day-ci/archive/20240914/202409141258.oHu7Og9E-lkp@intel.com/reproduce)
+Hello:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409141258.oHu7Og9E-lkp@intel.com/
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-sparse warnings: (new ones prefixed by >>)
-   fs/afs/callback.c: note: in included file (through arch/powerpc/include/asm/pgtable-be-types.h, arch/powerpc/include/asm/page.h, arch/powerpc/include/asm/mmu.h, ...):
->> arch/powerpc/include/asm/cmpxchg.h:241:47: sparse: sparse: cast truncates bits from constant value (8000000000000000 becomes 0)
-   arch/powerpc/include/asm/cmpxchg.h:243:48: sparse: sparse: cast truncates bits from constant value (8000000000000000 becomes 0)
-   fs/afs/callback.c:146:22: sparse: sparse: context imbalance in 'afs_lookup_volume_rcu' - different lock contexts for basic block
---
-   fs/afs/rotate.c: note: in included file (through arch/powerpc/include/asm/pgtable-be-types.h, arch/powerpc/include/asm/page.h, arch/powerpc/include/asm/mmu.h, ...):
->> arch/powerpc/include/asm/cmpxchg.h:241:47: sparse: sparse: cast truncates bits from constant value (8000000000000000 becomes 0)
-   arch/powerpc/include/asm/cmpxchg.h:243:48: sparse: sparse: cast truncates bits from constant value (8000000000000000 becomes 0)
+On Wed, 11 Sep 2024 19:48:54 -0700 you wrote:
+> v2: removed the waiting code in favor of EPROBE_DEFER.
+> v3: reverse xmas order fix, unnecessary assignment fix, wrong usage of
+> EPROBE_DEFER fix.
+> v4: fixed line length warnings and unused goto.
+> v5: Add back accidentally left out commit
+> 
+> Rosen Penev (9):
+>   net: ibm: emac: use devm for alloc_etherdev
+>   net: ibm: emac: manage emac_irq with devm
+>   net: ibm: emac: use devm for of_iomap
+>   net: ibm: emac: remove mii_bus with devm
+>   net: ibm: emac: use devm for register_netdev
+>   net: ibm: emac: use netdev's phydev directly
+>   net: ibm: emac: replace of_get_property
+>   net: ibm: emac: remove all waiting code
+>   net: ibm: emac: get rid of wol_irq
+> 
+> [...]
 
-vim +241 arch/powerpc/include/asm/cmpxchg.h
+Here is the summary with links:
+  - [PATCHv5,net-next,1/9] net: ibm: emac: use devm for alloc_etherdev
+    https://git.kernel.org/netdev/net-next/c/b9758c434284
+  - [PATCHv5,net-next,2/9] net: ibm: emac: manage emac_irq with devm
+    https://git.kernel.org/netdev/net-next/c/dcc34ef7c834
+  - [PATCHv5,net-next,3/9] net: ibm: emac: use devm for of_iomap
+    https://git.kernel.org/netdev/net-next/c/969b002d7b65
+  - [PATCHv5,net-next,4/9] net: ibm: emac: remove mii_bus with devm
+    https://git.kernel.org/netdev/net-next/c/93a6d4e03629
+  - [PATCHv5,net-next,5/9] net: ibm: emac: use devm for register_netdev
+    https://git.kernel.org/netdev/net-next/c/a4dd8535a527
+  - [PATCHv5,net-next,6/9] net: ibm: emac: use netdev's phydev directly
+    https://git.kernel.org/netdev/net-next/c/baab9de385a8
+  - [PATCHv5,net-next,7/9] net: ibm: emac: replace of_get_property
+    https://git.kernel.org/netdev/net-next/c/cc0c92ff662d
+  - [PATCHv5,net-next,8/9] net: ibm: emac: remove all waiting code
+    https://git.kernel.org/netdev/net-next/c/c092d0be38f4
+  - [PATCHv5,net-next,9/9] net: ibm: emac: get rid of wol_irq
+    https://git.kernel.org/netdev/net-next/c/39b9b78065cd
 
-ae3a197e3d0bfe David Howells 2012-03-28  235  
-ae3a197e3d0bfe David Howells 2012-03-28  236  static __always_inline unsigned long
-26760fc19a7e66 Boqun Feng    2015-12-15  237  __xchg_relaxed(void *ptr, unsigned long x, unsigned int size)
-ae3a197e3d0bfe David Howells 2012-03-28  238  {
-ae3a197e3d0bfe David Howells 2012-03-28  239  	switch (size) {
-d0563a1297e234 Pan Xinhui    2016-04-27  240  	case 1:
-d0563a1297e234 Pan Xinhui    2016-04-27 @241  		return __xchg_u8_relaxed(ptr, x);
-d0563a1297e234 Pan Xinhui    2016-04-27  242  	case 2:
-d0563a1297e234 Pan Xinhui    2016-04-27  243  		return __xchg_u16_relaxed(ptr, x);
-ae3a197e3d0bfe David Howells 2012-03-28  244  	case 4:
-26760fc19a7e66 Boqun Feng    2015-12-15  245  		return __xchg_u32_relaxed(ptr, x);
-ae3a197e3d0bfe David Howells 2012-03-28  246  #ifdef CONFIG_PPC64
-ae3a197e3d0bfe David Howells 2012-03-28  247  	case 8:
-26760fc19a7e66 Boqun Feng    2015-12-15  248  		return __xchg_u64_relaxed(ptr, x);
-ae3a197e3d0bfe David Howells 2012-03-28  249  #endif
-ae3a197e3d0bfe David Howells 2012-03-28  250  	}
-068550631fbe0b Andrzej Hajda 2023-01-18  251  	BUILD_BUG_ON_MSG(1, "Unsupported size for __xchg_relaxed");
-ae3a197e3d0bfe David Howells 2012-03-28  252  	return x;
-ae3a197e3d0bfe David Howells 2012-03-28  253  }
-9eaa82935dccb7 Mark Rutland  2021-05-25  254  #define arch_xchg_local(ptr,x)						     \
-ae3a197e3d0bfe David Howells 2012-03-28  255    ({									     \
-ae3a197e3d0bfe David Howells 2012-03-28  256       __typeof__(*(ptr)) _x_ = (x);					     \
-26760fc19a7e66 Boqun Feng    2015-12-15  257       (__typeof__(*(ptr))) __xchg_local((ptr),				     \
-26760fc19a7e66 Boqun Feng    2015-12-15  258       		(unsigned long)_x_, sizeof(*(ptr))); 			     \
-ae3a197e3d0bfe David Howells 2012-03-28  259    })
-ae3a197e3d0bfe David Howells 2012-03-28  260  
-
-:::::: The code at line 241 was first introduced by commit
-:::::: d0563a1297e234ed37f6b51c2e9321accebd1839 powerpc: Implement {cmp}xchg for u8 and u16
-
-:::::: TO: Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>
-:::::: CC: Michael Ellerman <mpe@ellerman.id.au>
-
+You are awesome, thank you!
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
