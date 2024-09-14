@@ -1,600 +1,1617 @@
-Return-Path: <linux-kernel+bounces-329404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35B1D9790EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:27:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9C19790F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96C5DB21A3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:27:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560F31F22700
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842151CF7CB;
-	Sat, 14 Sep 2024 13:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153C11CF7DE;
+	Sat, 14 Sep 2024 13:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWCGzEoK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lvSDhnwR"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D23E1CF5FC;
-	Sat, 14 Sep 2024 13:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8D21CF5FC;
+	Sat, 14 Sep 2024 13:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726320462; cv=none; b=LIMdZAW72PV2Wpp5Rb8EjRccsuk1Qofy0J6J9KICAqZLUGAq25RjvW8EjS4yYAcLjkE2WDibOhKQI24OvDO7lpQADW4tgfPU8GhwRBNARMq+7rnxymJY3vMGJj96QbMXnIMB6wiVhYRV5Uyz2TkaV3QQg8AcMEASgcpZybBOIBs=
+	t=1726320503; cv=none; b=OarUqwl7+6yz7m8MYVlnMbAiA/kFplaHt0+EFN+YVOu1ezFIIHz9Xb+PZABH98TIeYpGZrlubJ0EHXBQ6b1qzXX0Ib/rnlX8Yhv/07t0DQl63znqrgLt/qKatDiQO/6baui9L3cGIrLLY21MjdjssrRlcO/4KcVU+N01Y4UzxC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726320462; c=relaxed/simple;
-	bh=CltfCIwmJ9gTdLOuKsqwCDhjQQ668Etn27WjWdq8nFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bxRS4WETpphjuqRBc2la4kAkroTN6ccUxE5Yfwoly2fqS2LwebgGpTZf8acrP1KXLdzHMcyCW9p2f4QRqJncKjZwr3Jbs8a3bYZl2+c/yQ2P2qkwYDo1Nz9kWbDQ98d6Br75Ce84JJL+11z950G6VbOr9d8jwUVi0OYdwR4lVVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWCGzEoK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 780BAC4CEC0;
-	Sat, 14 Sep 2024 13:27:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726320462;
-	bh=CltfCIwmJ9gTdLOuKsqwCDhjQQ668Etn27WjWdq8nFc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PWCGzEoK249129i3r4OdmbnkEy5kcpSAySANxTBO/f/A21ZlvI58rgtyBahLKRPkf
-	 ydncry8qwIX9vuziAO4OFiyS7WYSgBi76ecgXDbQ6T5B8BXPERB5ojRN+U4lS0FWdP
-	 HGyOMCgDUiJzNiMzKIPSqbQQttiEjJCbYK6ShDO3pDei2nXWVZ9ZHemxzw4otkxuLw
-	 UrLdVQiVIfQ60i/hgRcSWZ7rmSZCfgYoShygo+KaiBONEFt1rHXWLRqyoC8P+7tJG0
-	 0Bldn8qAns+Ao9sFFNLozrMLuHpopOuIBbz8UL89KMu/VBYGJlild7uEv5k9U0AFcw
-	 SAlChWDs0DTpw==
-Date: Sat, 14 Sep 2024 14:27:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Alex Lanzano <lanzano.alex@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jagath Jog J <jagathjog1996@gmail.com>, Ramona
- Gradinariu <ramona.bolboaca13@gmail.com>, Nuno Sa <nuno.sa@analog.com>,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] iio: imu: Add i2c driver for bmi270 imu
-Message-ID: <20240914142734.4bcf14bc@jic23-huawei>
-In-Reply-To: <20240912210749.3080157-3-lanzano.alex@gmail.com>
-References: <20240912210749.3080157-1-lanzano.alex@gmail.com>
-	<20240912210749.3080157-3-lanzano.alex@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726320503; c=relaxed/simple;
+	bh=bCfUd8KjhPbexCvv9nx3BWXq+Or4CsVDlrCI2AF4FMk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xi3MCTZUZG2Ck3C3dlCAB+paYonGxMph06O9mVYTG5qgZzziNcvCN/RwM9P8pgCQEYocIzuWx4sjSfgzgyYnm8T3dxVaU1XXrRF6rHS4HJtcB1ky41he+1kDH+F1Z8I/L++dd1hlSbiLSNGQmmjmJdfWRA7SaJLb2YeCPofVhNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lvSDhnwR; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 32665ec6729d11ef8b96093e013ec31c-20240914
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=uOhl8U8BJCxdUAg3MLs0KkC7ej4G6AC3aCMWvAKrtJI=;
+	b=lvSDhnwRRLc6GT4NkdbBK6ZFnX52DSMKbAikmBZRa81O4cmHT2GbDlT2Bpz1iTXPQDiZDhxDcYH2zvsnVknx6Z/uuRR9DcG5CrW2u+BeJTwWRk3IrQPZiO/j2M4AnyQNM5ArKLTnQNNf2TawXcMDCszmD1bg4zkTVm6lC/a+qdA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:a98c50dd-d78c-44ad-b5f4-4dca026f33cb,IP:0,U
+	RL:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:6dc6a47,CLOUDID:d18d35d0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 32665ec6729d11ef8b96093e013ec31c-20240914
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1080096368; Sat, 14 Sep 2024 21:28:15 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Sat, 14 Sep 2024 21:28:13 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Sat, 14 Sep 2024 21:28:13 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones
+	<lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>, Sen Chu
+	<sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, Macpaul Lin
+	<macpaul.lin@mediatek.com>, Sebastian Reichel <sre@kernel.org>, Alexandre
+ Belloni <alexandre.belloni@bootlin.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Chen Zhong <chen.zhong@mediatek.com>,
+	<linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+Subject: [PATCH v4 2/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT schema format
+Date: Sat, 14 Sep 2024 21:28:11 +0800
+Message-ID: <20240914132811.9637-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Thu, 12 Sep 2024 17:07:19 -0400
-Alex Lanzano <lanzano.alex@gmail.com> wrote:
+Convert the mfd: mediatek: mt6397 binding to DT schema format.
 
-> Add initial i2c support for the Bosch BMI270 6-axis IMU.
-> Provides raw read access to acceleration and angle velocity measurements
-> via iio channels. Device configuration requires firmware provided by
-> Bosch and is requested and load from userspace.
-> 
-> Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+MT6323, MT6358, and MT6397 are PMIC devices with multiple function
+subdevices. They share a common PMIC design but have variations in
+subdevice combinations.
 
-Hi Alex,
+Key updates in this conversion:
 
-A bunch of fairly minor stuff so I've just tweaked it whilst applying rather
-than wasting time on going around again.
+1. RTC:
+   - Convert rtc-mt6397.txt and merge into parent MT6397 PMIC DT schema.
 
-I also changed a few line wraps to keep lines a bit shorter.
-Where it doesn't hurt readability 80 chars is still my preference for IIO.
+2. Regulators:
+   - Align to generic name "regulators".
+   - Update references from .txt to .yaml for mt6323, mt6358, and mt6397
+     regulators.
+   - Simplify regulator name labels in device tree examples.
 
-The diff of the tweaks I made is as follows. Shout if I messed anything up!
+3. Audio Codec:
+   - Convert sound/mt6358.txt and merge into parent MT6397 PMIC DT schema.
+   - Align to generic name "audio-codec" for codec and sound subdevices.
+   - Add "mediatek,dmic-mode" and "Avdd-supply" properties.
 
-Thanks,
+4. Clocks:
+   - Align to generic name "clocks" for clockbuffer subdevices.
 
-Jonathan
+5. LEDs:
+   - Convert leds-mt6323.txt and merge into parent MT6397 PMIC DT schema.
+   - Update LED binding.
 
-diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
-index 4af4098d8e82..608b29ea58a3 100644
---- a/drivers/iio/imu/bmi270/bmi270.h
-+++ b/drivers/iio/imu/bmi270/bmi270.h
-@@ -3,53 +3,9 @@
- #ifndef BMI270_H_
- #define BMI270_H_
+6. Keys:
+   - Add detailed descriptions for power and home keys.
+   - Add compatible: mediatek,mt6358-keys.
+
+7. Power Controller:
+   - Convert mt6323-poweroff.txt and merge into parent MT6397 PMIC DT
+     schema.
+   - Add #power-domain-cells property to fix dt-binding check error.
+   - Clarify "BBPU" as "Baseband power up".
+
+8. Pinctrl:
+   - Align to generic name "pinctrl" instead of "pin-controller".
+
+9. Compatible:
+   - Drop "mediatek,mt6357" since there is a separated DT Schema
+     for PMIC MT6357.
+
+Additional updates:
+- MAINTAINERS: Add co-maintainers and reference to
+  mfd/mediatek,mt6397.yaml for LED and power-controller drivers.
+- input/mediatek,pmic-keys.yaml: Update reference to
+  mfd/mediatek,mt6397.yaml.
+
+Signed-off-by: Sen Chu <sen.chu@mediatek.com>
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ .../bindings/input/mediatek,pmic-keys.yaml    |    2 +-
+ .../devicetree/bindings/leds/leds-mt6323.txt  |   63 -
+ .../bindings/mfd/mediatek,mt6397.yaml         | 1077 +++++++++++++++++
+ .../devicetree/bindings/mfd/mt6397.txt        |  110 --
+ .../bindings/power/reset/mt6323-poweroff.txt  |   20 -
+ .../devicetree/bindings/rtc/rtc-mt6397.txt    |   31 -
+ .../devicetree/bindings/sound/mt6358.txt      |   26 -
+ MAINTAINERS                                   |    8 +-
+ 8 files changed, 1084 insertions(+), 253 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/mt6397.txt
+ delete mode 100644 Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
+ delete mode 100644 Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/mt6358.txt
+
+Changes for v1:
+ - This patch depends on conversion of mediatek,mt6397-regulator.yaml
+   [1] https://lore.kernel.org/lkml/20240807091738.18387-1-macpaul.lin@mediatek.com/T/
+
+Changes for v2:
+ - This patch has been made base on linux-next/master git repo.
+ - Keep the parent and child relationship with mediatek,pwrap in description.
+   [2] https://lore.kernel.org/all/20240826-slurp-earphone-0d5173923ae8@spud/
+ - Keep the $ref for regulators since dt_binding_check didn't report any issue
+   based on linux-next/master repo.
+ - Fix description of mt6397/mt6323 devices, use "power management chip"
+   instead of "multifunction device"
+ - Drop unnecessary comments or description according to the review.
+ - Convert sub-modules to DT Schema:
+  - RTC, LEDs, power-controllers, regulators
+ - Drop duplicate sub node name and description for sub-modules
+  - RTC, Keys
+ - examples:
+  - drop parent pwrap node
+  - Add examples from mediatek,mt6323-regulator.yaml
+  - Add examples from mediatek,mt6358-regulator.yaml
+  - Add examples from mediatek,mt6397-regulator.yaml
+  - Complete the examples as could as possible.
+
+Changes for v3:
+ - Rebased on linux-next/master git repo near next-20240906.
+ - Revise commit message.
+ - Regulators:
+  - Use "additionalProperties: true" and add "contains" for matching
+    $ref DT bindings.
+  - Simplify regulator name labels in device tree examples.
+ - LEDs:
+  - Use LED bindings.
+ - Squash following patches in v2 for removing old text format DT bindings
+   into this patch, includes:
+  - leds-mt6323.txt, mt6323-poweroff.txt, rtc-mt6397.txt, sound/mt6358.txt.
+ - Fix file format of DT schemas, add blank between properties.
+ - Fix 'make checkrefdoc' errors, update reference in mediatek,pmic-keys.yaml.
+
+Changes for v4:
+ - Remove "mediatek,mt6357" from PMIC's compatible string since there is a
+   seperated DT schema for PMIC mt6357.
+
+diff --git a/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml b/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
+index 70567d9..466566a 100644
+--- a/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
++++ b/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
+@@ -19,7 +19,7 @@ description: |
+   by the PMIC that is defined as a Multi-Function Device (MFD).
  
--#include <linux/iio/iio.h>
+   For MediaTek MT6323/MT6397 PMIC bindings see
+-  Documentation/devicetree/bindings/mfd/mt6397.txt
++  Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/leds/leds-mt6323.txt b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
+deleted file mode 100644
+index 052dccb8..0000000
+--- a/Documentation/devicetree/bindings/leds/leds-mt6323.txt
++++ /dev/null
+@@ -1,63 +0,0 @@
+-Device Tree Bindings for LED support on MT6323 PMIC
 -
--#define BMI270_CHIP_ID_REG                             0x00
--#define BMI270_CHIP_ID_VAL                             0x24
--#define BMI270_CHIP_ID_MSK                             GENMASK(7, 0)
+-MT6323 LED controller is subfunction provided by MT6323 PMIC, so the LED
+-controllers are defined as the subnode of the function node provided by MT6323
+-PMIC controller that is being defined as one kind of Muti-Function Device (MFD)
+-using shared bus called PMIC wrapper for each subfunction to access remote
+-MT6323 PMIC hardware.
 -
--#define BMI270_ACCEL_X_REG                             0x0c
--#define BMI270_ANG_VEL_X_REG                           0x12
+-For MT6323 MFD bindings see:
+-Documentation/devicetree/bindings/mfd/mt6397.txt
+-For MediaTek PMIC wrapper bindings see:
+-Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
 -
--#define BMI270_INTERNAL_STATUS_REG                     0x21
--#define BMI270_INTERNAL_STATUS_MSG_MSK                 GENMASK(3, 0)
--#define BMI270_INTERNAL_STATUS_MSG_INIT_OK             0x01
+-Required properties:
+-- compatible : Must be one of
+-  - "mediatek,mt6323-led"
+-  - "mediatek,mt6331-led"
+-  - "mediatek,mt6332-led"
+-- address-cells : Must be 1
+-- size-cells : Must be 0
 -
--#define BMI270_INTERNAL_STATUS_AXES_REMAP_ERR_MSK      BIT(5)
--#define BMI270_INTERNAL_STATUS_ODR_50HZ_ERR_MSK                BIT(6)
+-Each led is represented as a child node of the mediatek,mt6323-led that
+-describes the initial behavior for each LED physically and currently only four
+-LED child nodes can be supported.
 -
--#define BMI270_ACC_CONF_REG                            0x40
--#define BMI270_ACC_CONF_ODR_MSK                                GENMASK(3, 0)
--#define BMI270_ACC_CONF_ODR_100HZ                      0x08
--#define BMI270_ACC_CONF_BWP_MSK                                GENMASK(6, 4)
--#define BMI270_ACC_CONF_BWP_NORMAL_MODE                        0x02
--#define BMI270_ACC_CONF_FILTER_PERF_MSK                        BIT(7)
+-Required properties for the LED child node:
+-- reg : LED channel number (0..3)
 -
--#define BMI270_GYR_CONF_REG                            0x42
--#define BMI270_GYR_CONF_ODR_MSK                                GENMASK(3, 0)
--#define BMI270_GYR_CONF_ODR_200HZ                      0x09
--#define BMI270_GYR_CONF_BWP_MSK                                GENMASK(5, 4)
--#define BMI270_GYR_CONF_BWP_NORMAL_MODE                        0x02
--#define BMI270_GYR_CONF_NOISE_PERF_MSK                 BIT(6)
--#define BMI270_GYR_CONF_FILTER_PERF_MSK                        BIT(7)
+-Optional properties for the LED child node:
+-- label : See Documentation/devicetree/bindings/leds/common.txt
+-- linux,default-trigger : See Documentation/devicetree/bindings/leds/common.txt
+-- default-state: See Documentation/devicetree/bindings/leds/common.txt
 -
--#define BMI270_INIT_CTRL_REG                           0x59
--#define BMI270_INIT_CTRL_LOAD_DONE_MSK                 BIT(0)
+-Example:
 -
--#define BMI270_INIT_DATA_REG                           0x5e
+-	mt6323: pmic {
+-		compatible = "mediatek,mt6323";
 -
--#define BMI270_PWR_CONF_REG                            0x7c
--#define BMI270_PWR_CONF_ADV_PWR_SAVE_MSK               BIT(0)
--#define BMI270_PWR_CONF_FIFO_WKUP_MSK                  BIT(1)
--#define BMI270_PWR_CONF_FUP_EN_MSK                     BIT(2)
+-		...
 -
--#define BMI270_PWR_CTRL_REG                            0x7d
--#define BMI270_PWR_CTRL_AUX_EN_MSK                     BIT(0)
--#define BMI270_PWR_CTRL_GYR_EN_MSK                     BIT(1)
--#define BMI270_PWR_CTRL_ACCEL_EN_MSK                   BIT(2)
--#define BMI270_PWR_CTRL_TEMP_EN_MSK                    BIT(3)
-+#include <linux/regmap.h>
- 
-+struct device;
- struct bmi270_data {
-        struct device *dev;
-        struct regmap *regmap;
-iff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-index 319e5601d9e7..8e45343d6472 100644
---- a/drivers/iio/imu/bmi270/bmi270_core.c
-+++ b/drivers/iio/imu/bmi270/bmi270_core.c
-@@ -1,14 +1,60 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- 
-+#include <linux/bitfield.h>
- #include <linux/firmware.h>
- #include <linux/i2c.h>
--#include <linux/iio/iio.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
--#include <linux/bitfield.h>
+-		mt6323led: leds {
+-			compatible = "mediatek,mt6323-led";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			led@0 {
+-				reg = <0>;
+-				label = "LED0";
+-				linux,default-trigger = "timer";
+-				default-state = "on";
+-			};
+-			led@1 {
+-				reg = <1>;
+-				label = "LED1";
+-				default-state = "off";
+-			};
+-			led@2 {
+-				reg = <2>;
+-				label = "LED2";
+-				default-state = "on";
+-			};
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+new file mode 100644
+index 0000000..d53003f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+@@ -0,0 +1,1077 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/iio/iio.h>
- 
- #include "bmi270.h"
- 
-+#define BMI270_CHIP_ID_REG                             0x00
-+#define BMI270_CHIP_ID_VAL                             0x24
-+#define BMI270_CHIP_ID_MSK                             GENMASK(7, 0)
++title: MediaTek MT6397/MT6323 Multifunction Device (PMIC)
 +
-+#define BMI270_ACCEL_X_REG                             0x0c
-+#define BMI270_ANG_VEL_X_REG                           0x12
++maintainers:
++  - Sen Chu <sen.chu@mediatek.com>
++  - Macpaul Lin <macpaul.lin@mediatek.com>
 +
-+#define BMI270_INTERNAL_STATUS_REG                     0x21
-+#define BMI270_INTERNAL_STATUS_MSG_MSK                 GENMASK(3, 0)
-+#define BMI270_INTERNAL_STATUS_MSG_INIT_OK             0x01
++description: |
++  MT6397/MT6323 is a power management system chip.
++  Please see the sub-modules below for supported features.
 +
-+#define BMI270_INTERNAL_STATUS_AXES_REMAP_ERR_MSK      BIT(5)
-+#define BMI270_INTERNAL_STATUS_ODR_50HZ_ERR_MSK                BIT(6)
++  MT6397/MT6323 is a multifunction device with the following sub modules:
++  - Regulators
++  - RTC
++  - Audio codec
++  - GPIO
++  - Clock
++  - LED
++  - Keys
++  - Power controller
 +
-+#define BMI270_ACC_CONF_REG                            0x40
-+#define BMI270_ACC_CONF_ODR_MSK                                GENMASK(3, 0)
-+#define BMI270_ACC_CONF_ODR_100HZ                      0x08
-+#define BMI270_ACC_CONF_BWP_MSK                                GENMASK(6, 4)
-+#define BMI270_ACC_CONF_BWP_NORMAL_MODE                        0x02
-+#define BMI270_ACC_CONF_FILTER_PERF_MSK                        BIT(7)
++  It is interfaced to host controller using SPI interface by a proprietary hardware
++  called PMIC wrapper or pwrap. MT6397/MT6323 PMIC is a child device of pwrap.
++  See the following for pwrap node definitions:
++  Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
 +
-+#define BMI270_GYR_CONF_REG                            0x42
-+#define BMI270_GYR_CONF_ODR_MSK                                GENMASK(3, 0)
-+#define BMI270_GYR_CONF_ODR_200HZ                      0x09
-+#define BMI270_GYR_CONF_BWP_MSK                                GENMASK(5, 4)
-+#define BMI270_GYR_CONF_BWP_NORMAL_MODE                        0x02
-+#define BMI270_GYR_CONF_NOISE_PERF_MSK                 BIT(6)
-+#define BMI270_GYR_CONF_FILTER_PERF_MSK                        BIT(7)
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - mediatek,mt6323
++          - mediatek,mt6331 # "mediatek,mt6331" for PMIC MT6331 and MT6332.
++          - mediatek,mt6358
++          - mediatek,mt6359
++          - mediatek,mt6397
++      - items:
++          - enum:
++              - mediatek,mt6366
++          - const: mediatek,mt6358
 +
-+#define BMI270_INIT_CTRL_REG                           0x59
-+#define BMI270_INIT_CTRL_LOAD_DONE_MSK                 BIT(0)
++  interrupts:
++    maxItems: 1
 +
-+#define BMI270_INIT_DATA_REG                           0x5e
++  interrupt-controller: true
 +
-+#define BMI270_PWR_CONF_REG                            0x7c
-+#define BMI270_PWR_CONF_ADV_PWR_SAVE_MSK               BIT(0)
-+#define BMI270_PWR_CONF_FIFO_WKUP_MSK                  BIT(1)
-+#define BMI270_PWR_CONF_FUP_EN_MSK                     BIT(2)
++  "#interrupt-cells":
++    const: 2
 +
-+#define BMI270_PWR_CTRL_REG                            0x7d
-+#define BMI270_PWR_CTRL_AUX_EN_MSK                     BIT(0)
-+#define BMI270_PWR_CTRL_GYR_EN_MSK                     BIT(1)
-+#define BMI270_PWR_CTRL_ACCEL_EN_MSK                   BIT(2)
-+#define BMI270_PWR_CTRL_TEMP_EN_MSK                    BIT(3)
++  rtc:
++    type: object
++    $ref: /schemas/rtc/rtc.yaml#
++    unevaluatedProperties: false
++    description:
++      MT6397 Real Time Clock.
 +
- #define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
-
- enum bmi270_scan {
-@@ -35,10 +81,10 @@ static int bmi270_get_data(struct bmi270_data *bmi270_device,
++    properties:
++      compatible:
++        oneOf:
++          - enum:
++              - mediatek,mt6323-rtc
++              - mediatek,mt6331-rtc
++              - mediatek,mt6358-rtc
++              - mediatek,mt6397-rtc
++          - items:
++              - enum:
++                  - mediatek,mt6366-rtc
++              - const: mediatek,mt6358-rtc
++
++      start-year: true
++
++    required:
++      - compatible
++
++  regulators:
++    type: object
++    description:
++      List of child nodes that specify the regulators.
++    additionalProperties: true
++    properties:
++      compatible:
++        oneOf:
++          - enum:
++              - mediatek,mt6323-regulator
++              - mediatek,mt6358-regulator
++              - mediatek,mt6397-regulator
++          - items:
++              - enum:
++                  - mediatek,mt6366-regulator
++              - const: mediatek,mt6358-regulator
++
++    required:
++      - compatible
++
++    allOf:
++      - if:
++          properties:
++            compatible:
++              contains:
++                const: mediatek,mt6323-regulator
++
++        then:
++          $ref: /schemas/regulator/mediatek,mt6323-regulator.yaml
++
++      - if:
++          properties:
++            compatible:
++              contains:
++                const: mediatek,mt6358-regulator
++
++        then:
++          $ref: /schemas/regulator/mediatek,mt6358-regulator.yaml
++
++      - if:
++          properties:
++            compatible:
++              contains:
++                const: mediatek,mt6397-regulator
++
++        then:
++          $ref: /schemas/regulator/mediatek,mt6397-regulator.yaml
++
++  audio-codec:
++    type: object
++    additionalProperties: false
++    description:
++      Audio codec support with MT6397 and MT6358.
++    properties:
++      compatible:
++        oneOf:
++          - enum:
++              - mediatek,mt6397-codec
++              - mediatek,mt6358-sound
++          - items:
++              - enum:
++                  - mediatek,mt6366-sound
++              - const: mediatek,mt6358-sound
++
++      mediatek,dmic-mode:
++        description: |
++          Indicates how many data pins are used to transmit two channels of PDM
++          signal.
++          0 - two wires;
++          1 - one wire;
++          Default value is 0.
++        enum: [0, 1]
++        default: 0
++
++      Avdd-supply:
++        description: Power source of AVDD.
++
++    required:
++      - compatible
++
++  clocks:
++    type: object
++    additionalProperties: false
++    description: |
++      This is a clock buffer node for mt6397. However, there are no sub nodes
++      or any public document exposed in public.
++    properties:
++      compatible:
++        const: mediatek,mt6397-clk
++      '#clock-cells':
++        const: 1
++    required:
++      - compatible
++
++  leds:
++    type: object
++    additionalProperties: false
++    description: |
++      MT6323 LED controller is subfunction provided by MT6323 PMIC, so the LED
++      controllers are defined as the subnode of the function node provided by MT6323
++      PMIC controller that is being defined as one kind of Muti-Function Device (MFD)
++      using shared bus called PMIC wrapper for each subfunction to access remote
++      MT6323 PMIC hardware.
++
++      Each led is represented as a child node of the mediatek,mt6323-led that
++      describes the initial behavior for each LED physically and currently only four
++      LED child nodes can be supported.
++
++    properties:
++      compatible:
++        enum:
++          - mediatek,mt6323-led
++          - mediatek,mt6331-led
++          - mediatek,mt6332-led
++
++      reg:
++        maxItems: 1
++
++      "#address-cells":
++        const: 1
++
++      "#size-cells":
++        const: 0
++
++    patternProperties:
++      "^led@[0-3]$":
++        type: object
++        $ref: /schemas/leds/common.yaml#
++        unevaluatedProperties: false
++
++        properties:
++          reg:
++            description:
++              LED channel number (0..3)
++            minimum: 0
++            maximum: 3
++
++        required:
++          - reg
++
++    required:
++      - compatible
++      - '#address-cells'
++      - '#size-cells'
++
++  keys:
++    type: object
++    $ref: /schemas/input/mediatek,pmic-keys.yaml
++    unevaluatedProperties: false
++    description:
++      Power and Home keys.
++    properties:
++      compatible:
++        enum:
++          - mediatek,mt6323-keys
++          - mediatek,mt6331-keys
++          - mediatek,mt6358-keys
++          - mediatek,mt6397-keys
++
++  power-controller:
++    type: object
++    additionalProperties: false
++    description:
++      The power controller which could be found on PMIC is responsible for
++      externally powering off or on the remote MediaTek SoC through the
++      circuit BBPU (baseband power up).
++    properties:
++      compatible:
++        const: mediatek,mt6323-pwrc
++
++      '#power-domain-cells':
++        const: 0
++
++  pinctrl:
++    type: object
++    $ref: /schemas/pinctrl/mediatek,mt65xx-pinctrl.yaml
++    unevaluatedProperties: false
++    description:
++      Pin controller
++    properties:
++      compatible:
++        const: mediatek,mt6397-pinctrl
++
++required:
++  - compatible
++  - regulators
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/leds/common.h>
++
++    pmic {
++        compatible = "mediatek,mt6323";
++        interrupt-parent = <&pio>;
++        interrupts = <150 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        leds {
++                compatible = "mediatek,mt6323-led";
++                #address-cells = <1>;
++                #size-cells = <0>;
++        };
++
++        regulators {
++            compatible = "mediatek,mt6323-regulator";
++
++            buck_vproc {
++                regulator-name = "vproc";
++                regulator-min-microvolt = < 700000>;
++                regulator-max-microvolt = <1350000>;
++                regulator-ramp-delay = <12500>;
++                regulator-always-on;
++                regulator-boot-on;
++            };
++
++            buck_vsys {
++                regulator-name = "vsys";
++                regulator-min-microvolt = <1400000>;
++                regulator-max-microvolt = <2987500>;
++                regulator-ramp-delay = <25000>;
++                regulator-always-on;
++                regulator-boot-on;
++            };
++
++            buck_vpa {
++                regulator-name = "vpa";
++                regulator-min-microvolt = < 500000>;
++                regulator-max-microvolt = <3650000>;
++            };
++
++            ldo_vtcxo {
++                regulator-name = "vtcxo";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <90>;
++                regulator-always-on;
++                regulator-boot-on;
++            };
++
++            ldo_vcn28 {
++                regulator-name = "vcn28";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <185>;
++            };
++
++            ldo_vcn33_bt {
++                regulator-name = "vcn33_bt";
++                regulator-min-microvolt = <3300000>;
++                regulator-max-microvolt = <3600000>;
++                regulator-enable-ramp-delay = <185>;
++            };
++
++            ldo_vcn33_wifi {
++                regulator-name = "vcn33_wifi";
++                regulator-min-microvolt = <3300000>;
++                regulator-max-microvolt = <3600000>;
++                regulator-enable-ramp-delay = <185>;
++            };
++
++            ldo_va {
++                regulator-name = "va";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <216>;
++                regulator-always-on;
++                regulator-boot-on;
++            };
++
++            ldo_vcama {
++                regulator-name = "vcama";
++                regulator-min-microvolt = <1500000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++
++            ldo_vio28 {
++                regulator-name = "vio28";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <216>;
++                regulator-always-on;
++                regulator-boot-on;
++            };
++
++            ldo_vusb {
++                regulator-name = "vusb";
++                regulator-min-microvolt = <3300000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <216>;
++                regulator-boot-on;
++            };
++
++            ldo_vmc {
++                regulator-name = "vmc";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <36>;
++                regulator-boot-on;
++            };
++
++            ldo_vmch {
++                regulator-name = "vmch";
++                regulator-min-microvolt = <3000000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <36>;
++                regulator-boot-on;
++            };
++
++            ldo_vemc3v3 {
++                regulator-name = "vemc3v3";
++                regulator-min-microvolt = <3000000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <36>;
++                regulator-boot-on;
++            };
++
++            ldo_vgp1 {
++                regulator-name = "vgp1";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++
++            ldo_vgp2 {
++                regulator-name = "vgp2";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3000000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++
++            ldo_vgp3 {
++                regulator-name = "vgp3";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++
++            ldo_vcn18 {
++                regulator-name = "vcn18";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++
++            ldo_vsim1 {
++                regulator-name = "vsim1";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <3000000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++
++            ldo_vsim2 {
++                regulator-name = "vsim2";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <3000000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++
++            ldo_vrtc {
++                regulator-name = "vrtc";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-always-on;
++                regulator-boot-on;
++            };
++
++            ldo_vcamaf {
++                regulator-name = "vcamaf";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++
++            ldo_vibr {
++                regulator-name = "vibr";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <36>;
++            };
++
++            ldo_vrf18 {
++                regulator-name = "vrf18";
++                regulator-min-microvolt = <1825000>;
++                regulator-max-microvolt = <1825000>;
++                regulator-enable-ramp-delay = <187>;
++            };
++
++            ldo_vm {
++                regulator-name = "vm";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <216>;
++                regulator-always-on;
++                regulator-boot-on;
++            };
++
++            ldo_vio18 {
++                regulator-name = "vio18";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <216>;
++                regulator-always-on;
++                regulator-boot-on;
++            };
++
++           ldo_vcamd {
++                regulator-name = "vcamd";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++
++            ldo_vcamio {
++                regulator-name = "vcamio";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <216>;
++            };
++        };
++
++        keys {
++                compatible = "mediatek,mt6323-keys";
++                mediatek,long-press-mode = <1>;
++                power-off-time-sec = <0>;
++
++                power {
++                        linux,keycodes = <116>;
++                        wakeup-source;
++                };
++
++                home {
++                        linux,keycodes = <114>;
++                };
++        };
++
++        power-controller {
++            compatible = "mediatek,mt6323-pwrc";
++            #power-domain-cells = <0>;
++        };
++
++        rtc {
++            compatible = "mediatek,mt6323-rtc";
++        };
++    };
++
++  - |
++    #include <dt-bindings/input/input.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    pmic {
++        compatible = "mediatek,mt6358";
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        audio-codec {
++            compatible = "mediatek,mt6358-sound";
++            Avdd-supply = <&mt6358_vaud28_reg>;
++            mediatek,dmic-mode = <0>;
++        };
++
++        regulators {
++            compatible = "mediatek,mt6358-regulator";
++
++            buck_vdram1 {
++                regulator-name = "vdram1";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <2087500>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <0>;
++                regulator-always-on;
++                regulator-allowed-modes = <0 1>;
++            };
++
++            buck_vcore {
++                regulator-name = "vcore";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <1293750>;
++                regulator-ramp-delay = <6250>;
++                regulator-enable-ramp-delay = <200>;
++                regulator-always-on;
++                regulator-allowed-modes = <0 1>;
++            };
++
++            buck_vpa {
++                regulator-name = "vpa";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <3650000>;
++                regulator-ramp-delay = <50000>;
++                regulator-enable-ramp-delay = <250>;
++                regulator-allowed-modes = <0 1>;
++            };
++
++            buck_vproc11 {
++                regulator-name = "vproc11";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <1293750>;
++                regulator-ramp-delay = <6250>;
++                regulator-enable-ramp-delay = <200>;
++                regulator-always-on;
++                regulator-allowed-modes = <0 1>;
++            };
++
++            buck_vproc12 {
++                regulator-name = "vproc12";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <1293750>;
++                regulator-ramp-delay = <6250>;
++                regulator-enable-ramp-delay = <200>;
++                regulator-always-on;
++                regulator-allowed-modes = <0 1>;
++            };
++
++            buck_vgpu {
++                regulator-name = "vgpu";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <1293750>;
++                regulator-ramp-delay = <6250>;
++                regulator-enable-ramp-delay = <200>;
++                regulator-allowed-modes = <0 1>;
++            };
++
++            buck_vs2 {
++                regulator-name = "vs2";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <2087500>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <0>;
++                regulator-always-on;
++            };
++
++            buck_vmodem {
++                regulator-name = "vmodem";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <1293750>;
++                regulator-ramp-delay = <6250>;
++                regulator-enable-ramp-delay = <900>;
++                regulator-always-on;
++                regulator-allowed-modes = <0 1>;
++            };
++
++            buck_vs1 {
++                regulator-name = "vs1";
++                regulator-min-microvolt = <1000000>;
++                regulator-max-microvolt = <2587500>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <0>;
++                regulator-always-on;
++            };
++
++            ldo_vdram2 {
++                regulator-name = "vdram2";
++                regulator-min-microvolt = <600000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <3300>;
++            };
++
++            ldo_vsim1 {
++                regulator-name = "vsim1";
++                regulator-min-microvolt = <1700000>;
++                regulator-max-microvolt = <3100000>;
++                regulator-enable-ramp-delay = <540>;
++            };
++
++            ldo_vibr {
++                regulator-name = "vibr";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <60>;
++            };
++
++            ldo_vrf12 {
++                regulator-name = "vrf12";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <1200000>;
++                regulator-enable-ramp-delay = <120>;
++            };
++
++            ldo_vio18 {
++                regulator-name = "vio18";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <2700>;
++                regulator-always-on;
++            };
++
++            ldo_vusb {
++                regulator-name = "vusb";
++                regulator-min-microvolt = <3000000>;
++                regulator-max-microvolt = <3100000>;
++                regulator-enable-ramp-delay = <270>;
++                regulator-always-on;
++            };
++
++            ldo_vcamio {
++                regulator-name = "vcamio";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <325>;
++            };
++
++            ldo_vcamd {
++                regulator-name = "vcamd";
++                regulator-min-microvolt = <900000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <325>;
++            };
++
++            ldo_vcn18 {
++                regulator-name = "vcn18";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_vfe28 {
++                regulator-name = "vfe28";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_vsram_proc11 {
++                regulator-name = "vsram_proc11";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <1293750>;
++                regulator-ramp-delay = <6250>;
++                regulator-enable-ramp-delay = <240>;
++                regulator-always-on;
++            };
++
++            ldo_vcn28 {
++                regulator-name = "vcn28";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_vsram_others {
++                regulator-name = "vsram_others";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <1293750>;
++                regulator-ramp-delay = <6250>;
++                regulator-enable-ramp-delay = <240>;
++                regulator-always-on;
++            };
++
++            ldo_vsram_gpu {
++                regulator-name = "vsram_gpu";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <1293750>;
++                regulator-ramp-delay = <6250>;
++                regulator-enable-ramp-delay = <240>;
++            };
++
++            ldo_vxo22 {
++                regulator-name = "vxo22";
++                regulator-min-microvolt = <2200000>;
++                regulator-max-microvolt = <2200000>;
++                regulator-enable-ramp-delay = <120>;
++                regulator-always-on;
++            };
++
++            ldo_vefuse {
++                regulator-name = "vefuse";
++                regulator-min-microvolt = <1700000>;
++                regulator-max-microvolt = <1900000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_vaux18 {
++                regulator-name = "vaux18";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_vmch {
++                regulator-name = "vmch";
++                regulator-min-microvolt = <2900000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <60>;
++            };
++
++            ldo_vbif28 {
++                regulator-name = "vbif28";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_vsram_proc12 {
++                regulator-name = "vsram_proc12";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <1293750>;
++                regulator-ramp-delay = <6250>;
++                regulator-enable-ramp-delay = <240>;
++                regulator-always-on;
++            };
++
++            ldo_vcama1 {
++                regulator-name = "vcama1";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <3000000>;
++                regulator-enable-ramp-delay = <325>;
++            };
++
++            ldo_vemc {
++                regulator-name = "vemc";
++                regulator-min-microvolt = <2900000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <60>;
++            };
++
++            ldo_vio28 {
++                regulator-name = "vio28";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_va12 {
++                regulator-name = "va12";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <1200000>;
++                regulator-enable-ramp-delay = <270>;
++                regulator-always-on;
++            };
++
++            ldo_vrf18 {
++                regulator-name = "vrf18";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <1800000>;
++                regulator-enable-ramp-delay = <120>;
++            };
++
++            ldo_vcn33 {
++                regulator-name = "vcn33";
++                regulator-min-microvolt = <3300000>;
++                regulator-max-microvolt = <3500000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_vcama2 {
++                regulator-name = "vcama2";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <3000000>;
++                regulator-enable-ramp-delay = <325>;
++            };
++
++            ldo_vmc {
++                regulator-name = "vmc";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <60>;
++            };
++
++            ldo_vldo28 {
++                regulator-name = "vldo28";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <3000000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_vaud28 {
++                regulator-name = "vaud28";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <270>;
++            };
++
++            ldo_vsim2 {
++                regulator-name = "vsim2";
++                regulator-min-microvolt = <1700000>;
++                regulator-max-microvolt = <3100000>;
++                regulator-enable-ramp-delay = <540>;
++            };
++        };
++
++        rtc {
++            compatible = "mediatek,mt6358-rtc";
++        };
++
++        keys {
++            compatible = "mediatek,mt6358-keys";
++            power {
++                linux,keycodes = <KEY_POWER>;
++                wakeup-source;
++            };
++            home {
++                linux,keycodes = <KEY_HOME>;
++            };
++        };
++    };
++
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    pmic {
++        compatible = "mediatek,mt6397";
++
++        interrupt-parent = <&pio>;
++        interrupts-extended = <&pio 222 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        audio-codec {
++            compatible = "mediatek,mt6397-codec";
++        };
++
++        clocks {
++            compatible = "mediatek,mt6397-clk";
++            #clock-cells = <1>;
++        };
++
++        pinctrl {
++            compatible = "mediatek,mt6397-pinctrl";
++            gpio-controller;
++            #gpio-cells = <2>;
++        };
++
++        regulators {
++            compatible = "mediatek,mt6397-regulator";
++
++            buck_vpca15 {
++                regulator-name = "vpca15";
++                regulator-min-microvolt = < 850000>;
++                regulator-max-microvolt = <1350000>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <200>;
++            };
++
++            buck_vpca7 {
++                regulator-name = "vpca7";
++                regulator-min-microvolt = < 850000>;
++                regulator-max-microvolt = <1350000>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <115>;
++            };
++
++            buck_vsramca15 {
++                regulator-name = "vsramca15";
++                regulator-min-microvolt = < 850000>;
++                regulator-max-microvolt = <1350000>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <115>;
++            };
++
++            buck_vsramca7 {
++                regulator-name = "vsramca7";
++                regulator-min-microvolt = < 850000>;
++                regulator-max-microvolt = <1350000>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <115>;
++            };
++
++            buck_vcore {
++                regulator-name = "vcore";
++                regulator-min-microvolt = < 850000>;
++                regulator-max-microvolt = <1350000>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <115>;
++            };
++
++            buck_vgpu {
++                regulator-name = "vgpu";
++                regulator-min-microvolt = < 700000>;
++                regulator-max-microvolt = <1350000>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <115>;
++            };
++
++            buck_vdrm {
++                regulator-name = "vdrm";
++                regulator-min-microvolt = < 800000>;
++                regulator-max-microvolt = <1400000>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <500>;
++            };
++
++            buck_vio18 {
++                regulator-name = "vio18";
++                regulator-min-microvolt = <1500000>;
++                regulator-max-microvolt = <2120000>;
++                regulator-ramp-delay = <12500>;
++                regulator-enable-ramp-delay = <500>;
++            };
++
++            ldo_vtcxo {
++                regulator-name = "vtcxo";
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <90>;
++            };
++
++            ldo_va28 {
++                regulator-name = "va28";
++                /* fixed output 2.8 V */
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vcama {
++                regulator-name = "vcama";
++                regulator-min-microvolt = <1500000>;
++                regulator-max-microvolt = <2800000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vio28 {
++                regulator-name = "vio28";
++                /* fixed output 2.8 V */
++                regulator-enable-ramp-delay = <240>;
++            };
++
++            ldo_vusb {
++                regulator-name = "vusb";
++                /* fixed output 3.3 V */
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vmc {
++                regulator-name = "vmc";
++                regulator-min-microvolt = <1800000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vmch {
++                regulator-name = "vmch";
++                regulator-min-microvolt = <3000000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vemc3v3 {
++                regulator-name = "vemc_3v3";
++                regulator-min-microvolt = <3000000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vgp1 {
++                regulator-name = "vcamd";
++                regulator-min-microvolt = <1220000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <240>;
++            };
++
++            ldo_vgp2 {
++                regulator-name = "vcamio";
++                regulator-min-microvolt = <1000000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vgp3 {
++                regulator-name = "vcamaf";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vgp4 {
++                regulator-name = "vgp4";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vgp5 {
++                regulator-name = "vgp5";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3000000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vgp6 {
++                regulator-name = "vgp6";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++
++            ldo_vibr {
++                regulator-name = "vibr";
++                regulator-min-microvolt = <1200000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-enable-ramp-delay = <218>;
++            };
++        };
++
++        rtc {
++            compatible = "mediatek,mt6397-rtc";
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/mfd/mt6397.txt b/Documentation/devicetree/bindings/mfd/mt6397.txt
+deleted file mode 100644
+index 10540aa..0000000
+--- a/Documentation/devicetree/bindings/mfd/mt6397.txt
++++ /dev/null
+@@ -1,110 +0,0 @@
+-MediaTek MT6397/MT6323 Multifunction Device Driver
+-
+-MT6397/MT6323 is a multifunction device with the following sub modules:
+-- Regulator
+-- RTC
+-- Audio codec
+-- GPIO
+-- Clock
+-- LED
+-- Keys
+-- Power controller
+-
+-It is interfaced to host controller using SPI interface by a proprietary hardware
+-called PMIC wrapper or pwrap. MT6397/MT6323 MFD is a child device of pwrap.
+-See the following for pwarp node definitions:
+-../soc/mediatek/mediatek,pwrap.yaml
+-
+-This document describes the binding for MFD device and its sub module.
+-
+-Required properties:
+-compatible:
+-	"mediatek,mt6323" for PMIC MT6323
+-	"mediatek,mt6331" for PMIC MT6331 and MT6332
+-	"mediatek,mt6357" for PMIC MT6357
+-	"mediatek,mt6358" for PMIC MT6358
+-	"mediatek,mt6359" for PMIC MT6359
+-	"mediatek,mt6366", "mediatek,mt6358" for PMIC MT6366
+-	"mediatek,mt6397" for PMIC MT6397
+-
+-Optional subnodes:
+-
+-- rtc
+-	Required properties: Should be one of follows
+-		- compatible: "mediatek,mt6323-rtc"
+-		- compatible: "mediatek,mt6331-rtc"
+-		- compatible: "mediatek,mt6358-rtc"
+-		- compatible: "mediatek,mt6397-rtc"
+-	For details, see ../rtc/rtc-mt6397.txt
+-- regulators
+-	Required properties:
+-		- compatible: "mediatek,mt6323-regulator"
+-	see ../regulator/mt6323-regulator.txt
+-		- compatible: "mediatek,mt6358-regulator"
+-		- compatible: "mediatek,mt6366-regulator", "mediatek-mt6358-regulator"
+-	see ../regulator/mt6358-regulator.txt
+-		- compatible: "mediatek,mt6397-regulator"
+-	see ../regulator/mt6397-regulator.txt
+-- codec
+-	Required properties:
+-		- compatible: "mediatek,mt6397-codec" or "mediatek,mt6358-sound"
+-- clk
+-	Required properties:
+-		- compatible: "mediatek,mt6397-clk"
+-- led
+-	Required properties:
+-		- compatible: "mediatek,mt6323-led"
+-	see ../leds/leds-mt6323.txt
+-
+-- keys
+-	Required properties: Should be one of the following
+-		- compatible: "mediatek,mt6323-keys"
+-		- compatible: "mediatek,mt6331-keys"
+-		- compatible: "mediatek,mt6397-keys"
+-	see ../input/mtk-pmic-keys.txt
+-
+-- power-controller
+-	Required properties:
+-		- compatible: "mediatek,mt6323-pwrc"
+-	For details, see ../power/reset/mt6323-poweroff.txt
+-
+-- pin-controller
+-	Required properties:
+-		- compatible: "mediatek,mt6397-pinctrl"
+-	For details, see ../pinctrl/pinctrl-mt65xx.txt
+-
+-Example:
+-	pwrap: pwrap@1000f000 {
+-		compatible = "mediatek,mt8135-pwrap";
+-
+-		...
+-
+-		pmic {
+-			compatible = "mediatek,mt6397";
+-
+-			codec: mt6397codec {
+-				compatible = "mediatek,mt6397-codec";
+-			};
+-
+-			regulators {
+-				compatible = "mediatek,mt6397-regulator";
+-
+-				mt6397_vpca15_reg: buck_vpca15 {
+-					regulator-compatible = "buck_vpca15";
+-					regulator-name = "vpca15";
+-					regulator-min-microvolt = <850000>;
+-					regulator-max-microvolt = <1400000>;
+-					regulator-ramp-delay = <12500>;
+-					regulator-always-on;
+-				};
+-
+-				mt6397_vgp4_reg: ldo_vgp4 {
+-					regulator-compatible = "ldo_vgp4";
+-					regulator-name = "vgp4";
+-					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <3300000>;
+-					regulator-enable-ramp-delay = <218>;
+-				};
+-			};
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt b/Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
+deleted file mode 100644
+index 933f0c4..0000000
+--- a/Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
++++ /dev/null
+@@ -1,20 +0,0 @@
+-Device Tree Bindings for Power Controller on MediaTek PMIC
+-
+-The power controller which could be found on PMIC is responsible for externally
+-powering off or on the remote MediaTek SoC through the circuit BBPU.
+-
+-Required properties:
+-- compatible: Should be one of follows
+-       "mediatek,mt6323-pwrc": for MT6323 PMIC
+-
+-Example:
+-
+-       pmic {
+-               compatible = "mediatek,mt6323";
+-
+-               ...
+-
+-               power-controller {
+-                       compatible = "mediatek,mt6323-pwrc";
+-               };
+-       }
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-mt6397.txt b/Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
+deleted file mode 100644
+index 7212076..0000000
+--- a/Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
++++ /dev/null
+@@ -1,31 +0,0 @@
+-Device-Tree bindings for MediaTek PMIC based RTC
+-
+-MediaTek PMIC based RTC is an independent function of MediaTek PMIC that works
+-as a type of multi-function device (MFD). The RTC can be configured and set up
+-with PMIC wrapper bus which is a common resource shared with the other
+-functions found on the same PMIC.
+-
+-For MediaTek PMIC MFD bindings, see:
+-../mfd/mt6397.txt
+-
+-For MediaTek PMIC wrapper bus bindings, see:
+-../soc/mediatek/pwrap.txt
+-
+-Required properties:
+-- compatible: Should be one of follows
+-       "mediatek,mt6323-rtc": for MT6323 PMIC
+-       "mediatek,mt6358-rtc": for MT6358 PMIC
+-       "mediatek,mt6366-rtc", "mediatek,mt6358-rtc": for MT6366 PMIC
+-       "mediatek,mt6397-rtc": for MT6397 PMIC
+-
+-Example:
+-
+-       pmic {
+-               compatible = "mediatek,mt6323";
+-
+-               ...
+-
+-               rtc {
+-                       compatible = "mediatek,mt6323-rtc";
+-               };
+-       };
+diff --git a/Documentation/devicetree/bindings/sound/mt6358.txt b/Documentation/devicetree/bindings/sound/mt6358.txt
+deleted file mode 100644
+index fbe9e55..0000000
+--- a/Documentation/devicetree/bindings/sound/mt6358.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-Mediatek MT6358 Audio Codec
+-
+-The communication between MT6358 and SoC is through Mediatek PMIC wrapper.
+-For more detail, please visit Mediatek PMIC wrapper documentation.
+-
+-Must be a child node of PMIC wrapper.
+-
+-Required properties:
+-
+-- compatible - "string" - One of:
+-    "mediatek,mt6358-sound"
+-    "mediatek,mt6366-sound"
+-- Avdd-supply : power source of AVDD
+-
+-Optional properties:
+-- mediatek,dmic-mode : Indicates how many data pins are used to transmit two
+-	channels of PDM signal. 0 means two wires, 1 means one wire. Default
+-	value is 0.
+-
+-Example:
+-
+-mt6358_snd {
+-	compatible = "mediatek,mt6358-sound";
+-	Avdd-supply = <&mt6358_vaud28_reg>;
+-	mediatek,dmic-mode = <0>;
+-};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0a3d9e1..003f096 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14365,10 +14365,12 @@ F:	Documentation/devicetree/bindings/net/bluetooth/mediatek,mt7921s-bluetooth.ya
+ F:	drivers/bluetooth/btmtkuart.c
  
-        switch (chan_type) {
-        case IIO_ACCEL:
--               reg = BMI270_ACCEL_X_REG + (axis - IIO_MOD_X) * sizeof(sample);
-+               reg = BMI270_ACCEL_X_REG + (axis - IIO_MOD_X) * 2;
-                break;
-        case IIO_ANGL_VEL:
--               reg = BMI270_ANG_VEL_X_REG + (axis - IIO_MOD_X) * sizeof(sample);
-+               reg = BMI270_ANG_VEL_X_REG + (axis - IIO_MOD_X) * 2;
-                break;
-        default:
-                return -EINVAL;
-@@ -82,7 +128,7 @@ static const struct iio_info bmi270_info = {
-        .channel2 = IIO_MOD_##_axis,                            \
-        .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),           \
-        .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |  \
--       BIT(IIO_CHAN_INFO_FREQUENCY),                           \
-+               BIT(IIO_CHAN_INFO_FREQUENCY),                   \
- }
+ MEDIATEK BOARD LEVEL SHUTDOWN DRIVERS
++M:	Sen Chu <sen.chu@mediatek.com>
+ M:	Sean Wang <sean.wang@mediatek.com>
++M:	Macpaul Lin <macpaul.lin@mediatek.com>
+ L:	linux-pm@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
++F:	Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+ F:	drivers/power/reset/mt6323-poweroff.c
  
- #define BMI270_ANG_VEL_CHANNEL(_axis) {                                \
-@@ -91,7 +137,7 @@ static const struct iio_info bmi270_info = {
-        .channel2 = IIO_MOD_##_axis,                            \
-        .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),           \
-        .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |  \
--       BIT(IIO_CHAN_INFO_FREQUENCY),                           \
-+               BIT(IIO_CHAN_INFO_FREQUENCY),                   \
- }
+ MEDIATEK CIR DRIVER
+@@ -14529,9 +14531,11 @@ F:	Documentation/devicetree/bindings/mtd/mediatek,mtk-nfc.yaml
+ F:	drivers/mtd/nand/raw/mtk_*
  
- static const struct iio_chan_spec bmi270_channels[] = {
-@@ -100,7 +146,7 @@ static const struct iio_chan_spec bmi270_channels[] = {
-        BMI270_ACCEL_CHANNEL(Z),
-        BMI270_ANG_VEL_CHANNEL(X),
-        BMI270_ANG_VEL_CHANNEL(Y),
--       BMI270_ANG_VEL_CHANNEL(Z)
-+       BMI270_ANG_VEL_CHANNEL(Z),
- };
+ MEDIATEK PMIC LED DRIVER
++M:	Sen Chu <sen.chu@mediatek.com>
+ M:	Sean Wang <sean.wang@mediatek.com>
++M:	Macpaul Lin <macpaul.lin@mediatek.com>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/leds/leds-mt6323.txt
++F:	Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+ F:	drivers/leds/leds-mt6323.c
  
- static int bmi270_validate_chip_id(struct bmi270_data *bmi270_device)
-@@ -115,7 +161,7 @@ static int bmi270_validate_chip_id(struct bmi270_data *bmi270_device)
-                return dev_err_probe(dev, ret, "Failed to read chip id");
- 
-        if (chip_id != BMI270_CHIP_ID_VAL)
--               return dev_err_probe(dev, -ENODEV, "Invalid chip id 0x%x", chip_id);
-+               dev_info(dev, "Unknown chip id 0x%x", chip_id);
- 
-        return 0;
- }
-@@ -128,18 +174,24 @@ static int bmi270_write_calibration_data(struct bmi270_data *bmi270_device)
-        struct device *dev = bmi270_device->dev;
-        struct regmap *regmap = bmi270_device->regmap;
- 
--       ret = regmap_clear_bits(regmap, BMI270_PWR_CONF_REG, BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
-+       ret = regmap_clear_bits(regmap, BMI270_PWR_CONF_REG,
-+                               BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
-        if (ret)
--               return dev_err_probe(dev, ret, "Failed to write power configuration");
-+               return dev_err_probe(dev, ret,
-+                                    "Failed to write power configuration");
- 
--       /* After disabling advanced power save, all registers are accessible after a 450us delay
--        * This delay is specified in table A of the datasheet.
-+       /*
-+        * After disabling advanced power save, all registers are accessible
-+        * after a 450us delay. This delay is specified in table A of the
-+        * datasheet.
-         */
-        usleep_range(450, 1000);
- 
--       ret = regmap_clear_bits(regmap, BMI270_INIT_CTRL_REG, BMI270_INIT_CTRL_LOAD_DONE_MSK);
-+       ret = regmap_clear_bits(regmap, BMI270_INIT_CTRL_REG,
-+                               BMI270_INIT_CTRL_LOAD_DONE_MSK);
-        if (ret)
--               return dev_err_probe(dev, ret, "Failed to prepare device to load init data");
-+               return dev_err_probe(dev, ret,
-+                                    "Failed to prepare device to load init data");
- 
-        ret = request_firmware(&init_data, BMI270_INIT_DATA_FILE, dev);
-        if (ret)
-@@ -151,11 +203,14 @@ static int bmi270_write_calibration_data(struct bmi270_data *bmi270_device)
-        if (ret)
-                return dev_err_probe(dev, ret, "Failed to write init data");
- 
--       ret = regmap_set_bits(regmap, BMI270_INIT_CTRL_REG, BMI270_INIT_CTRL_LOAD_DONE_MSK);
-+       ret = regmap_set_bits(regmap, BMI270_INIT_CTRL_REG,
-+                             BMI270_INIT_CTRL_LOAD_DONE_MSK);
-        if (ret)
--               return dev_err_probe(dev, ret, "Failed to stop device initialization");
-+               return dev_err_probe(dev, ret,
-+                                    "Failed to stop device initialization");
- 
--       /* Wait at least 140ms for the device to complete configuration.
-+       /*
-+        * Wait at least 140ms for the device to complete configuration.
-         * This delay is specified in table C of the datasheet.
-         */
-        usleep_range(140000, 160000);
-@@ -231,7 +286,7 @@ int bmi270_core_probe(struct device *dev, struct regmap *regmap)
-        struct bmi270_data *bmi270_device;
-        struct iio_dev *indio_dev;
- 
--       indio_dev = devm_iio_device_alloc(dev, sizeof(struct bmi270_data *));
-+       indio_dev = devm_iio_device_alloc(dev, sizeof(*bmi270_device));
-        if (!indio_dev)
-                return -ENOMEM;
-
-> diff --git a/drivers/iio/imu/bmi270/Makefile b/drivers/iio/imu/bmi270/Makefile
-> new file mode 100644
-> index 000000000000..ab4acaaee6d2
-> --- /dev/null
-> +++ b/drivers/iio/imu/bmi270/Makefile
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Makefile for Bosch BMI270 IMU
-> +#
-> +obj-$(CONFIG_BMI270) += bmi270_core.o
-> +obj-$(CONFIG_BMI270_I2C) += bmi270_i2c.o
-> diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
-> new file mode 100644
-> index 000000000000..4af4098d8e82
-> --- /dev/null
-> +++ b/drivers/iio/imu/bmi270/bmi270.h
-> @@ -0,0 +1,62 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +
-> +#ifndef BMI270_H_
-> +#define BMI270_H_
-> +
-> +#include <linux/iio/iio.h>
-no obvious reason for this.  Headers should only include things
-they need.
-
-However you do need some forward definitions for
-struct device;
-and an include of regmap.h for the regmap_config.
-
-> +
-> +#define BMI270_CHIP_ID_REG				0x00
-> +#define BMI270_CHIP_ID_VAL				0x24
-> +#define BMI270_CHIP_ID_MSK				GENMASK(7, 0)
-> +
-> +#define BMI270_ACCEL_X_REG				0x0c
-> +#define BMI270_ANG_VEL_X_REG				0x12
-> +
-> +#define BMI270_INTERNAL_STATUS_REG			0x21
-> +#define BMI270_INTERNAL_STATUS_MSG_MSK			GENMASK(3, 0)
-> +#define BMI270_INTERNAL_STATUS_MSG_INIT_OK		0x01
-> +
-> +#define BMI270_INTERNAL_STATUS_AXES_REMAP_ERR_MSK	BIT(5)
-> +#define BMI270_INTERNAL_STATUS_ODR_50HZ_ERR_MSK		BIT(6)
-> +
-> +#define BMI270_ACC_CONF_REG				0x40
-> +#define BMI270_ACC_CONF_ODR_MSK				GENMASK(3, 0)
-> +#define BMI270_ACC_CONF_ODR_100HZ			0x08
-> +#define BMI270_ACC_CONF_BWP_MSK				GENMASK(6, 4)
-> +#define BMI270_ACC_CONF_BWP_NORMAL_MODE			0x02
-> +#define BMI270_ACC_CONF_FILTER_PERF_MSK			BIT(7)
-> +
-> +#define BMI270_GYR_CONF_REG				0x42
-> +#define BMI270_GYR_CONF_ODR_MSK				GENMASK(3, 0)
-> +#define BMI270_GYR_CONF_ODR_200HZ			0x09
-> +#define BMI270_GYR_CONF_BWP_MSK				GENMASK(5, 4)
-> +#define BMI270_GYR_CONF_BWP_NORMAL_MODE			0x02
-> +#define BMI270_GYR_CONF_NOISE_PERF_MSK			BIT(6)
-> +#define BMI270_GYR_CONF_FILTER_PERF_MSK			BIT(7)
-> +
-> +#define BMI270_INIT_CTRL_REG				0x59
-> +#define BMI270_INIT_CTRL_LOAD_DONE_MSK			BIT(0)
-> +
-> +#define BMI270_INIT_DATA_REG				0x5e
-> +
-> +#define BMI270_PWR_CONF_REG				0x7c
-> +#define BMI270_PWR_CONF_ADV_PWR_SAVE_MSK		BIT(0)
-> +#define BMI270_PWR_CONF_FIFO_WKUP_MSK			BIT(1)
-> +#define BMI270_PWR_CONF_FUP_EN_MSK			BIT(2)
-> +
-> +#define BMI270_PWR_CTRL_REG				0x7d
-> +#define BMI270_PWR_CTRL_AUX_EN_MSK			BIT(0)
-> +#define BMI270_PWR_CTRL_GYR_EN_MSK			BIT(1)
-> +#define BMI270_PWR_CTRL_ACCEL_EN_MSK			BIT(2)
-> +#define BMI270_PWR_CTRL_TEMP_EN_MSK			BIT(3)
-Currently all these defines are just used in the core c file.
-So I'd move them there for now. We can drag them back into the header
-if the spi bus driver needs them.
-
-> +
-> +struct bmi270_data {
-> +	struct device *dev;
-> +	struct regmap *regmap;
-> +};
-> +
-> +extern const struct regmap_config bmi270_regmap_config;
-> +
-> +int bmi270_core_probe(struct device *dev, struct regmap *regmap);
-> +
-> +#endif  /* BMI270_H_ */
-> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-> new file mode 100644
-> index 000000000000..319e5601d9e7
-> --- /dev/null
-> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
-> @@ -0,0 +1,258 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +
-> +#include <linux/firmware.h>
-> +#include <linux/i2c.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/bitfield.h>
-> +
-> +#include "bmi270.h"
-> +
-> +#define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
-> +
-> +enum bmi270_scan {
-> +	BMI270_SCAN_ACCEL_X,
-> +	BMI270_SCAN_ACCEL_Y,
-> +	BMI270_SCAN_ACCEL_Z,
-> +	BMI270_SCAN_GYRO_X,
-> +	BMI270_SCAN_GYRO_Y,
-> +	BMI270_SCAN_GYRO_Z,
-> +};
-> +
-> +const struct regmap_config bmi270_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +};
-> +EXPORT_SYMBOL_NS_GPL(bmi270_regmap_config, IIO_BMI270);
-> +
-> +static int bmi270_get_data(struct bmi270_data *bmi270_device,
-> +			   int chan_type, int axis, int *val)
-> +{
-> +	__le16 sample;
-> +	int reg;
-> +	int ret;
-> +
-> +	switch (chan_type) {
-> +	case IIO_ACCEL:
-> +		reg = BMI270_ACCEL_X_REG + (axis - IIO_MOD_X) * sizeof(sample);
-> +		break;
-> +	case IIO_ANGL_VEL:
-> +		reg = BMI270_ANG_VEL_X_REG + (axis - IIO_MOD_X) * sizeof(sample);
-
-This only works because they are 1 byte registers which isn't obvious here
-So I don't think sizeof(sample) is very useful vs 2.
-
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = regmap_bulk_read(bmi270_device->regmap, reg, &sample, sizeof(sample));
-> +	if (ret)
-> +		return ret;
-> +
-> +	*val = sign_extend32(le16_to_cpu(sample), 15);
-> +
-> +	return 0;
-> +}
-> +
-
-> +
-> +#define BMI270_ACCEL_CHANNEL(_axis) {				\
-> +	.type = IIO_ACCEL,					\
-> +	.modified = 1,						\
-> +	.channel2 = IIO_MOD_##_axis,				\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
-> +	BIT(IIO_CHAN_INFO_FREQUENCY),				\
-
-Probably good to indent this last item by one more tab to help
-with reability.
-
-> +}
-> +
-> +#define BMI270_ANG_VEL_CHANNEL(_axis) {				\
-> +	.type = IIO_ANGL_VEL,					\
-> +	.modified = 1,						\
-> +	.channel2 = IIO_MOD_##_axis,				\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
-> +	BIT(IIO_CHAN_INFO_FREQUENCY),				\
-> +}
-> +./v4_20240912_lanzano_alex_add_i2c_driver_for_bosch_bmi270_imu.mbx
-> +static const struct iio_chan_spec bmi270_channels[] = {
-> +	BMI270_ACCEL_CHANNEL(X),
-> +	BMI270_ACCEL_CHANNEL(Y),
-> +	BMI270_ACCEL_CHANNEL(Z),
-> +	BMI270_ANG_VEL_CHANNEL(X),
-> +	BMI270_ANG_VEL_CHANNEL(Y),
-> +	BMI270_ANG_VEL_CHANNEL(Z)
-Add a trailing comma as we may well have additional channels in future
-that come after this.
-
-> +};
-> +
-> +static int bmi270_validate_chip_id(struct bmi270_data *bmi270_device)
-> +{
-> +	int chip_id;
-> +	int ret;
-> +	struct device *dev = bmi270_device->dev;
-> +	struct regmap *regmap = bmi270_device->regmap;
-> +
-> +	ret = regmap_read(regmap, BMI270_CHIP_ID_REG, &chip_id);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to read chip id");
-> +
-> +	if (chip_id != BMI270_CHIP_ID_VAL)
-> +		return dev_err_probe(dev, -ENODEV, "Invalid chip id 0x%x", chip_id);
-A failure to match on a ID register should not result in a failure to probe.
-The reason for this is Device tree fallback compatibles.
-Those allow for a future device that is compatible (it may have a superset of
-features) with this part to use a dt-binding that includes the compatible
-for this one despite having a different ID register value.
-
-As such this should print an information message to say it's an unknown
-device ID but return success.
-	
-> +
-> +	return 0;
-> +}
-> +
-> +static int bmi270_write_calibration_data(struct bmi270_data *bmi270_device)
-> +{
-> +	int ret;
-> +	int status = 0;
-> +	const struct firmware *init_data;
-> +	struct device *dev = bmi270_device->dev;
-> +	struct regmap *regmap = bmi270_device->regmap;
-> +
-> +	ret = regmap_clear_bits(regmap, BMI270_PWR_CONF_REG, BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to write power configuration");
-> +
-> +	/* After disabling advanced power save, all registers are accessible after a 450us delay
-All IIO multiline comments are
-
-	/* 
-	 * After...
-
-
-> +	 * This delay is specified in table A of the datasheet.
-> +	 */
-> +	usleep_range(450, 1000);
-> +
-> +	ret = regmap_clear_bits(regmap, BMI270_INIT_CTRL_REG, BMI270_INIT_CTRL_LOAD_DONE_MSK);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to prepare device to load init data");
-> +
-> +	ret = request_firmware(&init_data, BMI270_INIT_DATA_FILE, dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to load init data file");
-> +
-> +	ret = regmap_bulk_write(regmap, BMI270_INIT_DATA_REG,
-> +				init_data->data, init_data->size);
-> +	release_firmware(init_data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to write init data");
-> +
-> +	ret = regmap_set_bits(regmap, BMI270_INIT_CTRL_REG, BMI270_INIT_CTRL_LOAD_DONE_MSK);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to stop device initialization");
-> +
-> +	/* Wait at least 140ms for the device to complete configuration.
-> +	 * This delay is specified in table C of the datasheet.
-> +	 */
-> +	usleep_range(140000, 160000);
-> +
-> +	ret = regmap_read(regmap, BMI270_INTERNAL_STATUS_REG, &status);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to read internal status");
-> +
-> +	if (status != BMI270_INTERNAL_STATUS_MSG_INIT_OK)
-> +		return dev_err_probe(dev, -ENODEV, "Device failed to initialize");
-> +
-> +	return 0;
-> +}
+ MEDIATEK RANDOM NUMBER GENERATOR SUPPORT
+-- 
+2.45.2
 
 
