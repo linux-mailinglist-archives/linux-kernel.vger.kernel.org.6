@@ -1,75 +1,92 @@
-Return-Path: <linux-kernel+bounces-329084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FF8978D17
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:17:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2C9978D1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86F6288116
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:17:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BA23B22780
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD4E1DFFC;
-	Sat, 14 Sep 2024 03:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C5C18B09;
+	Sat, 14 Sep 2024 03:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeE8KWbU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqHQ1PIC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAFB1AAD7;
-	Sat, 14 Sep 2024 03:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6F118027;
+	Sat, 14 Sep 2024 03:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726283822; cv=none; b=hkl4YXYTN1MZB04rYW1ysD5eClan1fEps5WhSxHdBGsY26qBUs83P8+nOHUkNz0H+6pHG9JoULSX+W567GNUBiBkA/w1m5nGgVZnD7/Qw5CUftmUowRkb8kOhq+PIDY0AXvZcC1e1mpeMHytTF9uGRA67nJW9PLwId99DGxpoxc=
+	t=1726284030; cv=none; b=QLyk5S8olxiKnG9rxNm/geBsOLFe4nF8LGkLaNhstiXvaFhK2Gc3EvaaB7RNWJU5Hv7pvrzmi0UDiLcGrukm7KWMcv9E5l0YIWVbIF1E6JYLOKJTPaFGCWBjp3S5fdVhxRBG5k6dTCAuLCNZBmeRZevaGka0nsjVaWO+R5i18ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726283822; c=relaxed/simple;
-	bh=Gffs7E+w0YaUF775WZiM4kfYw2JL46REVe0T5O7hsDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jdw421AvTVDOEfy+ogOKJ64NwdZGBHrN6Gb4IV0hMAl8p0C3WuUrk8m8gKSnsYme6W97ObCeoNmTL/Nztz+cwhr0v5Td8r3GZIv6UC/b8K2x+hmToP+ncaLPVX+JeSF5FC1Be9aESCvkrTjQaTLnkSyGG6QWq5dsVyTdnr4ss9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeE8KWbU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36223C4CEC0;
-	Sat, 14 Sep 2024 03:17:01 +0000 (UTC)
+	s=arc-20240116; t=1726284030; c=relaxed/simple;
+	bh=UGgCnQvAag744FAJTxCYxiew2Q/lnHQxEcUtfmCyitQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=cj5GFLJP7iLbo7XNWDpC1bmUrTUFjsC4JOw3IYjIieueQheZHBjzVnExo9sI6CR4dMmTB0LC2QQFFKAHnSGFLY6NOqRebYaWcbbRhRj/9lbMMuKmG/UkHeiEUESSy9kenK9iMRjyJr/3Ue608hRMXImFQPTt0ywT1v31WdoklVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqHQ1PIC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A002C4CEC0;
+	Sat, 14 Sep 2024 03:20:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726283821;
-	bh=Gffs7E+w0YaUF775WZiM4kfYw2JL46REVe0T5O7hsDw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CeE8KWbUsErIEv9POLRn5OrYtnAA+yxGiaCgN0iQzyK6851hca/o2FAYYIt3qrJT+
-	 fraclGxus91DJWNZrzfM1C44nQ50cm/WLZGDFtybdnHwFJ5S9QDVsmLWMt2QW+Wbgd
-	 7bI4GFRjuGjNky7Q1YWNz4S206boxM9XCQSZ0jftFL2AVb3qy76yrerxWbOiLOeRBL
-	 bld457NZdfQZpNcZsUbpbXteOgip7OWGvXiT/2LiDQfguoLZ5KyDK638FZbozrllKE
-	 92GLCrDAh00e83keI0Hz8M8Ryh7vIo4LFdf1uKqGve6TZMUOPkDj/7ghgTajT65xDs
-	 7sswukRlTdNew==
-Date: Fri, 13 Sep 2024 20:17:00 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Stephen Rothwell
- <sfr@canb.auug.org.au>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Matthew
- Wilcox <willy@infradead.org>
-Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
-Message-ID: <20240913201700.34249129@kernel.org>
-In-Reply-To: <87jzffq9ge.fsf@mail.lhotse>
-References: <20240913213351.3537411-1-almasrymina@google.com>
-	<87jzffq9ge.fsf@mail.lhotse>
+	s=k20201202; t=1726284029;
+	bh=UGgCnQvAag744FAJTxCYxiew2Q/lnHQxEcUtfmCyitQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=sqHQ1PIC1xusVvqjAX3Gx3lUtYsdmU+pOg3Nf2MXb/1WTD7/VRhBTvUn0ridCWGgO
+	 VyNDydjADjie/rMBJ6UiHKd1OMx+99DtFD0ZNlRPwUImsxg0VkSFhrqFepP0NgnorK
+	 t8uQH8Nq5VLrqMPbcyl+GlWRjDDJxownV2J6Fpw4mhWq0vFy6plTrQIMNpnSKKGTYz
+	 GwhteLh/aglgPZIYhC9M0ZwNxZKzYVvYd5Mh+M4SDtE2w9Lj8E2TdLkufEtHYbFbCi
+	 qlLSgrT5ZHTdJ14zG5ddNiHm1SyvOKpLo0JFaOTs869Ta+hir2ownoX714MLqzj5vg
+	 lTCuZIDNS3M/A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADE23806655;
+	Sat, 14 Sep 2024 03:20:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v1 1/1] net: macb: Use predefined PCI vendor ID
+ constant
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172628403049.2440307.1119465668642813382.git-patchwork-notify@kernel.org>
+Date: Sat, 14 Sep 2024 03:20:30 +0000
+References: <20240913125146.3628751-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240913125146.3628751-1-andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, pawell@cadence.com
 
-On Sat, 14 Sep 2024 12:02:09 +1000 Michael Ellerman wrote:
-> Can you try the patch below, it fixes the build error for me.
+Hello:
 
-Excellent, fixes it for me too!
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 13 Sep 2024 15:51:46 +0300 you wrote:
+> The PCI vendor ID for Cadence is defined in pci_ids.h. Use it.
+> While at it, move to PCI_VDEVICE() macro and usual pattern for
+> PCI device ID.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/net/ethernet/cadence/macb_pci.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+
+Here is the summary with links:
+  - [net-next,v1,1/1] net: macb: Use predefined PCI vendor ID constant
+    https://git.kernel.org/netdev/net-next/c/6503734916cc
+
+You are awesome, thank you!
 -- 
-pw-bot: nap
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
