@@ -1,76 +1,100 @@
-Return-Path: <linux-kernel+bounces-329610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58558979396
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:08:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B250979398
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 00:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3B41C20DC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333851F2227E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240F31422D8;
-	Sat, 14 Sep 2024 22:07:50 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006D56F066;
-	Sat, 14 Sep 2024 22:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A570713E41D;
+	Sat, 14 Sep 2024 22:09:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91B5137775;
+	Sat, 14 Sep 2024 22:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726351669; cv=none; b=nE1DWyzLt98/PovmKGEGbWy38m2c+FspQ/eKRkx+qN+FQkbueI9jnlI1iX+gau3NGoOKZM9ll00fLm8+VDnsK8CGOBlYOP6hDTky30k66zV/HlF8I+1Fc1+noPtNt46qJvFMqroye77rsuqLJg9AR4uqJ4nu+vhUMb8up2Ltm7I=
+	t=1726351763; cv=none; b=OmtbdyAAEuSeVBqt1iu+nccj8K1ND34VR8xilAnDaJ7iWT3rO2NaT+uh+SIVqueqB5ZzQZDf0cIYvK5z2kJbxIZKFxGlw5rBwoI5u8iVKyoBRU0x/z7BjcCj/thwPbZF9rby0B8PqlATl+h1TbmJUxWzxEs+DftGXs5BNcCAQKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726351669; c=relaxed/simple;
-	bh=8UYJTps9ziYwnwbXUxK+LWRqU6OAMrQVi8OKICgzcwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+G6o6HtWGLbogBGiSMG/KsbFdITkTS68Y4ukJ6ihSPIE2TLvbjjD1iNVEudEM8NZnHLcYaz+Pk1dTLTWq83FeAYRwN9bHBeTrWfiBTA3Bv4K3b9AHx9X2SpSx00nGRARVwr2XrnDdKmJB24lRotorverv3cC4/f4tlldCzCWNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=53302 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1spavX-00CioL-9K; Sun, 15 Sep 2024 00:07:37 +0200
-Date: Sun, 15 Sep 2024 00:07:34 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Florian Westphal <fw@strlen.de>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] netfilter: nft_socket: Fix a NULL vs IS_ERR() bug in
- nft_socket_cgroup_subtree_level()
-Message-ID: <ZuYJJonibwaFdpab@calendula>
-References: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
- <20240914111940.GA19902@breakpoint.cc>
+	s=arc-20240116; t=1726351763; c=relaxed/simple;
+	bh=bomcdNOvSH+gXumAWZMRBUSyFUwT1OUklkr0dC5xi2g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gAfRgDGqYYHgymYC6LUDJBKAm89PNyoxeUGMjB1t6U51BCS4I4G0x4eMzJHmNqxsyMIAfhZy26O2Fjfr08AsZePwDXeR2YDZh/h2hoHt+wniuKyEqqVkqO1fB+H+eeplKvCSxDoI5GlCKbFpZchxrpRwCEUTGIBXMcEleViZYug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9722B11FB;
+	Sat, 14 Sep 2024 15:09:50 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 626C93F66E;
+	Sat, 14 Sep 2024 15:09:19 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Besar Wicaksono <bwicaksono@nvidia.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v2 0/7] perf arm-spe: Refactor data source encoding
+Date: Sat, 14 Sep 2024 23:08:54 +0100
+Message-Id: <20240914220901.756177-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240914111940.GA19902@breakpoint.cc>
-X-Spam-Score: -1.9 (-)
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 14, 2024 at 01:19:40PM +0200, Florian Westphal wrote:
-> Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > The cgroup_get_from_path() function never returns NULL, it returns error
-> > pointers.  Update the error handling to match.
-> 
-> Good news, I will retire in the next few years so I don't send shit
-> patches anymore.
-> 
-> Acked-by: Florian Westphal <fw@strlen.de>
+As more Arm CPU variants (not only Neoverse CPUs) support data source
+encoding, they share the same format for the data source packet.
 
-This is also my fault, I did not help to catch this error in any way:
+To extend supporting these CPU variants for Arm SPE data source, this
+series refactors the code. It converts the Neoverse specific naming to
+the common naming, and then based on the MIDR stored in the metadata to
+decide if the CPU follows up the common encoding format.
 
-Acked-by: Pablo Neira Ayuso <pablo@netfilter.org>
+At the last, it extends CPU list for Neoverse-V2 and Cortex CPUs.
+
+This patch series is dependent on the metadata version 2 series [1] for
+retrieving CPU MIDR. It has been verified for per CPU mode and per
+thread mode on Cortex-A725 CPUs.
+
+[1] https://lore.kernel.org/linux-perf-users/20240914215458.751802-1-leo.yan@arm.com/T/#t
+
+Changes from v1:
+- Dropped LDS bit checking in data source parsing.
+
+
+Besar Wicaksono (1):
+  perf arm-spe: Add Neoverse-V2 to common data source encoding list
+
+Leo Yan (6):
+  perf arm-spe: Rename arm_spe__synth_data_source_generic()
+  perf arm-spe: Rename the common data source encoding
+  perf arm-spe: Introduce arm_spe__is_homogeneous()
+  perf arm-spe: Use metadata to decide the data source feature
+  perf arm-spe: Remove the unused 'midr' field
+  perf arm-spe: Add Cortex CPUs to common data source encoding list
+
+ .../util/arm-spe-decoder/arm-spe-decoder.h    |  18 +--
+ tools/perf/util/arm-spe.c                     | 135 +++++++++++++++---
+ 2 files changed, 121 insertions(+), 32 deletions(-)
+
+-- 
+2.34.1
+
 
