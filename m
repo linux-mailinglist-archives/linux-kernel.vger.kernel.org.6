@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-329027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0FD3978C3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:38:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB7F978C41
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E172C1C221FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:38:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E904DB236CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1544C92;
-	Sat, 14 Sep 2024 00:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BB1748F;
+	Sat, 14 Sep 2024 00:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvdbTk0q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nPlzuzl0"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EF24C6E;
-	Sat, 14 Sep 2024 00:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821C34C7D
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 00:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726274326; cv=none; b=UQljDfRglNc8Rx7ckheTBdNlX8N2X+0iQk6oRFV9dVRvVQvrFD/DoMFXA5VGihu6ce0HzVgHFDIyZegkU9vmMGfahZx+IyEXY0JnUQ3Z5OvmyZHVwmG7OqfIkGQ5casNLwmEyYTWXURun7i8GmksygTInR43fK11IO4mndELqA0=
+	t=1726274624; cv=none; b=bvgY/Xm5L60/DN4gj1Owy0EdLR8iqGIDmrhQeQ8F3gADGmjpD/nozpzK7vCDH93zTCM1Y3Um8fL/Tg8nCVFFYWDDpxGAGVsspYOTUBt1ndueTyQZxiS1ZgQwtTK/26/3cFdYrJG9ct+XHVETkYLS31Fw0kXgBnxGBucYQn3YIOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726274326; c=relaxed/simple;
-	bh=xPV8+ZCZJcBdtoPdBMxViz7qFsscKin9fUcUeIj1Das=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=pnuGja4J6lg4Eyuqd3RXjr9W/bcuQOVKva6G98JR4ThZ9WK49Zci4ZUUi0YbEyUIuI0Q8+NILQ+M3AbmRvfXb5bOax7xiOOYF6dx4P9XRSj1f9HC78Jp7SJR7ijJG/bZbKJhdqVI4XArzyKmMdwKcZRK52AAFriHu7IMUhZJ+cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvdbTk0q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41336C4CEC0;
-	Sat, 14 Sep 2024 00:38:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726274325;
-	bh=xPV8+ZCZJcBdtoPdBMxViz7qFsscKin9fUcUeIj1Das=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=IvdbTk0qtd4kv3EfRvhJuttLjW3wI/AaYCcs7hTeWEW6MqTOT1+S1Kfkw9qbfJpS6
-	 sT2wWYpJ2h/HfHJQmeFREzvUXXoI3z5FiXFDc3vtRx1oqGfiekJ62ApfahE818lPhs
-	 3+WNpwNyFhD1JQA5EOY/47tZ6dGUXxX6k8NOPdGOMGYj9XZlFAZLaeA9Q2iRiolSsd
-	 xfkCowhZtEn7sRRuROXJMO/pjSo3xwK3RVMeRPwE0a+jBFxfQWYWhsahFU5zTISYi5
-	 umMVtk0N2Mhf2HhpfoP54Hc6PapCaPWT7ZUvXymslbMS31ETfwCyGcKW9DUFbSCyUJ
-	 2JzXKNEK9i/Kw==
-Date: Fri, 13 Sep 2024 17:38:28 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Jan Beulich <jbeulich@suse.com>
-cc: Juergen Gross <jgross@suse.com>, 
-    Stefano Stabellini <sstabellini@kernel.org>, 
-    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-    xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, 
-    iommu@lists.linux.dev
-Subject: Re: [PATCH] xen/swiotlb: add alignment check for dma buffers
-In-Reply-To: <a0b0dec5-03c1-4b69-aa0e-65771251d859@suse.com>
-Message-ID: <alpine.DEB.2.22.394.2409131728420.1417852@ubuntu-linux-20-04-desktop>
-References: <20240913145655.10076-1-jgross@suse.com> <a0b0dec5-03c1-4b69-aa0e-65771251d859@suse.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1726274624; c=relaxed/simple;
+	bh=TUrY80ehNCka8U/7IMHBt62KZb3yd9vuXPbLAb87cq8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YiX3D5xeVoFN6StIeRGQM+7cK30IPEiRF9ZFH5XdEGvN2ntla5r9WtArCp44/MTgg34PfJ9GijFsI2yC7rptmAvrX6NvPXBWq+zwU5uw3A3Dj8QJqZhr9tRDCnvuWw84unFg1iTc9SKY/4MW7ABjs6lWI9gGE7VKGjU/23Pf4gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nPlzuzl0; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-39d41b61178so67875ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726274621; x=1726879421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TUrY80ehNCka8U/7IMHBt62KZb3yd9vuXPbLAb87cq8=;
+        b=nPlzuzl0Nc/X+2IaHPj1dbEl5Yce/9K8Swfnhzig9YV4I9dOASphObM/6QXZRvpTZI
+         F4TM4iYbmzDoGrRZstzc0fQFf26pcESRMwct5Wj4YGECDEU7v8TEyljDBekDItSWKw3A
+         gt9/l3u2ZDnS8szNqWiuiRhJTgtCUXK074P5GPQQrA7mYSRKZwaUd7mF825aSAaBA/RD
+         YvMiLvOy9dtcCtZ4ltFJ7kakn1wl4WCg+beHND1VV4YqPN2oaYnlEXiuReS21xaJLwup
+         c8z04yEfKemxmHhgpyo70Fl5C0eTNKthhBFyszTdXKo151Iu7cWpCmSpKbwUdB4G6nlz
+         iNHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726274621; x=1726879421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TUrY80ehNCka8U/7IMHBt62KZb3yd9vuXPbLAb87cq8=;
+        b=pDQeQBLaNggsh/lbkedA8hKXAaSUC/KyUJsvi5kEqFm6/zNO38XxJMRXJieoVkaYRk
+         +0AthDpyRCA6oCRm3QxduDjEoGGziOM2lTAhElw7HME1oqEuE20nZl2MzjlTPJmlfj/d
+         L8/6AGdOsYUw5iKFobSLIZ6Y0L+xMOg1uBZrZpB4XLx+lI5CpM99WzKVRpALQiDv/PCX
+         lDub8ONYBnti50ld13FJ0nLy8PCo2vVQ6ha9LkNO97OjCCXtFIqlUjdjL0qH8sSDTw7T
+         wr6KQ8NelN1GAix+DtyaLrGocgTKwWlu21R6moxGIdgbdZ3WizygAaz93IgEOtwo6jwM
+         Scfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVR7laUlU6gPXm2oOE3eT9Vr6qe4QknTxOjb6lHKOylB4R9SEYtIrL/cPeMZRTmjw70SHbB1wlTcfmiaYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxaBotL6summRaglaj5LWOdsCCjdsCVtVT63k/Poza01i42O+D
+	JWeSUFkqI936CQh5FpHtHX9xkdLMPGK5LL0g3CXRm6EjcL0T42OKbFm92yuzD3ON2+tLFT0dC7r
+	ks4dhs5RphogA2ykX8tulLNnyHeDCQEr/DtAcxCu9GztBh50HXIaP
+X-Google-Smtp-Source: AGHT+IHSaLglF5wz9mRniAwttRxI65kTwctZxzJQBTwNtA0gsvJL1chvFzwE6pyoct9NSOfvWET8xaMujC2vxvEZXKc=
+X-Received: by 2002:a05:6e02:1c41:b0:39f:3778:c896 with SMTP id
+ e9e14a558f8ab-3a0856908e3mr10731525ab.5.1726274621421; Fri, 13 Sep 2024
+ 17:43:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240913213351.3537411-1-almasrymina@google.com>
+ <ZuS0wKBUTSWvD_FZ@casper.infradead.org> <CAHS8izMwQDQ9-JNBpvVeN+yFMzmG+UB-hJWVtz_-ty+NHUdyGA@mail.gmail.com>
+ <20240913171729.6bf3de40@kernel.org>
+In-Reply-To: <20240913171729.6bf3de40@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 13 Sep 2024 17:43:29 -0700
+Message-ID: <CAHS8izO+AgUQwMXQ_17bRvLetcgSUJCXhOeQre2Z49XDd8kdrQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Sep 2024, Jan Beulich wrote:
-> On 13.09.2024 16:56, Juergen Gross wrote:
-> > --- a/drivers/xen/swiotlb-xen.c
-> > +++ b/drivers/xen/swiotlb-xen.c
-> > @@ -78,9 +78,15 @@ static inline int range_straddles_page_boundary(phys_addr_t p, size_t size)
-> >  {
-> >  	unsigned long next_bfn, xen_pfn = XEN_PFN_DOWN(p);
-> >  	unsigned int i, nr_pages = XEN_PFN_UP(xen_offset_in_page(p) + size);
-> > +	unsigned int order = get_order(size);
-> >  
-> >  	next_bfn = pfn_to_bfn(xen_pfn);
-> >  
-> > +	/* If buffer is physically aligned, ensure DMA alignment. */
-> > +	if (IS_ALIGNED(p, 1UL << (order + PAGE_SHIFT)) &&
-> 
-> Why this check? xen_swiotlb_alloc_coherent() guarantees it, while
-> xen_swiotlb_free_coherent() only checks properties of the original
-> allocation. And for xen_swiotlb_map_page() this looks actively
-> wrong to me, in case that function was called with offset non-zero.
+On Fri, Sep 13, 2024 at 5:17=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Fri, 13 Sep 2024 15:20:13 -0700 Mina Almasry wrote:
+> > I have not reported the issue to GCC yet. From the build break thread
+> > it seemed a fix was urgent, so I posted the fix and was planning to
+> > report the issue after. If not, no problem, I'll report the issue and
+> > repost the fix with a GCC bugzilla link, waiting 24hr before reposts
+> > this time.
+>
+> I should have clarified, the "please post ASAP" applies
+> to all devmem build fixes, ignore the cool down period :)
+>
+> > I just need to go through the steps in https://gcc.gnu.org/bugs/,
+> > shouldn't be an issue.
+>
+> Just post the link here, I'll add it to the commit msg when applying.
 
-I understand xen_swiotlb_alloc_coherent and xen_swiotlb_free_coherent
-not needing the check, but I think we might need the check for
-xen_swiotlb_map_page. At that point, I would keep the check for all
-callers. Unless there is another way to detect whether the mapping needs
-alignment specifically for map_page?
+Ah, I need a GCC bugzilla account before I can file bugs there. I
+don't currently have one and creating an account involves emailing
+them and waiting 24hr. I've done that and am waiting for an account.
+I'll file the issue as soon as I get access and post the link here.
+I'm also poking to see if anyone around already has an account and can
+file the issue on my behalf.
 
-For the offset, in theory if the device needs alignment, the offset
-should be zero? If the offset is not zero, then there should be no
-alignment requirement. The way Juergen wrote the check, we would take
-the fast path if offset != zero, which makes sense to me.
+--
+Thanks,
+Mina
 
