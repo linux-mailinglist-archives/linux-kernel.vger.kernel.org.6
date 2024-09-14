@@ -1,287 +1,224 @@
-Return-Path: <linux-kernel+bounces-329420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D2D97911C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:46:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E74A97911D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 204C62822D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:46:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0AE91F22C66
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2682E16F0EC;
-	Sat, 14 Sep 2024 13:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A081CF7DD;
+	Sat, 14 Sep 2024 13:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jXJktlGr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dyC5Olzs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165804C7D
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F9843ABD
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726321566; cv=none; b=kaQoJQH1AU518CB1Vg6W9IgFhlvxeimWf75C9GpDuizET4VB3Q1VFCsiGK8M6wNsIX47WtXdzR2Xrfi/+ZWLvL0yW3sHrmjCfUvUFESXt/mDk0+l4P2b3MZz8Wg2iF/gB2yT6TQh3hOuCzVBfmcz7ujAwFvNluNAK+dKlDtfAPM=
+	t=1726321568; cv=none; b=l7LRlgatNDWpgRshm4vXGZopcsYvIawSR6QL6MEl9mNJlleec8B+ffnp1AC79LwhHe50SFNirT6CgKD21ME6lcHBmHFQmXKKNN9Jan4xsab56ulQo8zuvN7wcDH31fHV/HeO7LzRsZtGdkbzCPaT1iPkx01PcrKv+wEe5U0gGuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726321566; c=relaxed/simple;
-	bh=n8VBfWaUT8bQutnt2AiQ6pQL+k5ToERXhhYaG2DcWK8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=aDUmMLhkRV2MpkkiWeBbCB/msK6Hu2S6S/vXYDAkkNTMIGpOY1IfafCNdBbqCAJGG/58Ure6Z/Pd8UUZpadv/hgtiCpPE1KVF0GNC6oHE41zCKXzFTDV0PcCctWOmdW4H7ceqGJYWkgdtF28BT4Y9FDcQoGARw65h6X4B4SSMqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jXJktlGr; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726321564; x=1757857564;
-  h=date:from:to:cc:subject:message-id;
-  bh=n8VBfWaUT8bQutnt2AiQ6pQL+k5ToERXhhYaG2DcWK8=;
-  b=jXJktlGrtkOqdXRr7vaDSvcltne2iYDMMo3+t7iTXyjKKLWy0mruhjYI
-   wKTVLxIJGSStcnM/TWXFC72A7pdPa5qLxomrYpc2zAGHmrrwgo6WPF7k9
-   FuUczA3o/H/hEW4RgtiS0Ahwbp7tPa//VDuDKlbcMontWdLBIuNdHd3cd
-   /Cp4RGlQPwaOTyXhK13vG8LOKsiicXsipPH/cNd+euNQkbq179YmjBVdu
-   NLlsqmeezIeBgsp2JJ2LIS99K16FL1ROyCpYh/WDpF3W8vOMThrdBNWOh
-   beNdEYInC/XPDhJ4EY3pTFgzergh7eWXM0qNl0k8pvqbgBg0jBE0WvYSl
-   A==;
-X-CSE-ConnectionGUID: G1EMRuEySASZeFNPeMPmFA==
-X-CSE-MsgGUID: OpLJRcOOSFq2Uff9K4N80w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="47726163"
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="47726163"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 06:46:02 -0700
-X-CSE-ConnectionGUID: tGjHuf19Sb+i/0ja8OIlLw==
-X-CSE-MsgGUID: mhGHNP0USkauHd79sp4WQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="99254520"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 14 Sep 2024 06:45:59 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spT66-0007nM-1A;
-	Sat, 14 Sep 2024 13:45:58 +0000
-Date: Sat, 14 Sep 2024 21:45:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20240912] BUILD REGRESSION
- f2ca068393cf1157c12ab08556b05824eec16511
-Message-ID: <202409142130.awwiHNXm-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1726321568; c=relaxed/simple;
+	bh=7LIgMNt/HYMs9JMX58x8rEKmnOParwufdKZfl4X/AQk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cNuWoLN3QonGr1gClE6kO9a2YFDVSJhRd1Bo2+d6Z2Ijm4qOcqOdhwQVGMPWjOUR7+WWo4CPNXeIq6nD26IGjdVFLtVH7/ZpscgneU8G6/w4MfoIV7UWzcd4/VthzsHfwow4kZAjJMdr0SCK3RlxnjIeCt0eJiwOvdtQfNc/c4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dyC5Olzs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726321565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UcbH6xKjPio0d3vBUKsMg5DSPgp+NCqhlSRBuQiAMdA=;
+	b=dyC5OlzsWourNSLz5G1mJ2YgoBh6ZsflM9ZofK2/w9SoOtCdO4GMEgZNUvf9hATCJJUP65
+	N3Czx2JOjJnJVIx1gqVbZUigBIT6T0rYZ0PnkyKPmhZTQHFjVW3wCQypDJ6FMx3t+mUIBi
+	tMukqSAMXm/BLJUzQuVNLvPv7h9r1hM=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-55-OlZXgsLXOOeMPZcX04YHuw-1; Sat, 14 Sep 2024 09:46:02 -0400
+X-MC-Unique: OlZXgsLXOOeMPZcX04YHuw-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5c269f277eeso2098103a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 06:46:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726321561; x=1726926361;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UcbH6xKjPio0d3vBUKsMg5DSPgp+NCqhlSRBuQiAMdA=;
+        b=mgFMdtPmVyscKCdGbrIaOoG9HCoaKv1O8IznKaSpqeM5QFEyQDUEZd6k0OwbuGk3Wj
+         uznBjl6o2r6o/s/JkmvdNwDhykLC1GGp59PGm25eh0BS6YPwalNiG9yZjUkHP1LQisDr
+         QAaJZM/gZitf2EKOzIkf8+H4LoFZAT+v6DL6ziQzpKJyUtF3SiKme2XLD9G2iyPIrNsL
+         rSDMab8dAZaG9UxWJOV1bCpclTSQRCkKWTn9PKem5VGGsmkXbKQ6ReHYfuCEJqMvjigG
+         1rzrBawG6M0IhbP4guiiM1zIdAp5DqqelZDNgNY/+v8ep0o4fb247e0dhHRgp8hX+EI2
+         JU8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXJhAJyzIW1735rPGVKEFmyEEBLp0X+UVj1HB3+9PrKtGXebqCXZuCHt5gLguwPWA5ZILV/qoxieUqt3WI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLwpFtQ1dLw+EzoBobjt7xf2mMR0JHflNR2NMXYoqwjIug1ACz
+	awniSDDD7L1bOdaBWvODiF/ziiDcQhed4ATkK6lCXcy79KF7XEY4JgGelOK8Ap3VRmgee0+xJAz
+	KWKPXjIw1MJckaYIzDnXACAPXV1RlFMEukE/tzRdsw6ogVog3p2HOu7K98/cNaA==
+X-Received: by 2002:a05:6402:278b:b0:5c2:480e:7960 with SMTP id 4fb4d7f45d1cf-5c413cbc723mr8706912a12.0.1726321560606;
+        Sat, 14 Sep 2024 06:46:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHgr+Inr50L4KRA7VVQODXZub0jVSMHk2Ur9cSfsqmJ1S2LbHYM3ln4qatBW8FyycvFp6pErw==
+X-Received: by 2002:a05:6402:278b:b0:5c2:480e:7960 with SMTP id 4fb4d7f45d1cf-5c413cbc723mr8706886a12.0.1726321559975;
+        Sat, 14 Sep 2024 06:45:59 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89e97sm679519a12.65.2024.09.14.06.45.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Sep 2024 06:45:59 -0700 (PDT)
+Message-ID: <9cdda3e0-d56e-466f-911f-96ffd6f602c8@redhat.com>
+Date: Sat, 14 Sep 2024 15:45:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] iio: light: ltr501: Drop most likely fake ACPI ID
+From: Hans de Goede <hdegoede@redhat.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+References: <20240911212202.2892451-1-andriy.shevchenko@linux.intel.com>
+ <c45dd21c-493a-4e56-809e-85d6d7201254@redhat.com>
+Content-Language: en-US, nl
+In-Reply-To: <c45dd21c-493a-4e56-809e-85d6d7201254@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240912
-branch HEAD: f2ca068393cf1157c12ab08556b05824eec16511  treewide_some: fix multiple -Wfamnae warnings that must be audited separately
+Hi Andy,
 
-Error/Warning (recently discovered and may have been fixed):
+On 9/12/24 3:51 PM, Hans de Goede wrote:
+> Hi,
+> 
+> On 9/11/24 11:22 PM, Andy Shevchenko wrote:
+>> The commit in question does not proove that ACPI ID exists.
+>> Quite likely it was a cargo cult addition while doint that
+>> for DT-based enumeration.  Drop most likely fake ACPI ID.
+>>
+>> Googling for LTERxxxx gives no useful results in regard to DSDT.
+>> Moreover, there is no "LTER" official vendor ID in the registry.
+>>
+>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-    https://lore.kernel.org/oe-kbuild-all/202409141152.VgCj23dh-lkp@intel.com
-    https://lore.kernel.org/oe-kbuild-all/202409141212.JISRQdpc-lkp@intel.com
-    https://lore.kernel.org/oe-kbuild-all/202409142117.35sIzcUJ-lkp@intel.com
-    https://lore.kernel.org/oe-kbuild-all/202409142133.w3pk77Qm-lkp@intel.com
+On 9/13/24 11:31 AM, Andy Shevchenko wrote:
+> Have you grepped over your collection of real DSDTs?
 
-    drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2148:2: error: call to '__compiletime_assert_1055' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_CCMP
-    drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2149:2: error: call to '__compiletime_assert_1056' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
-    include/linux/build_bug.h:78:41: error: static assertion failed: "struct member likely outside of struct_group_tagged()"
-    kernel/bpf/core.c:2505:22: warning: comparison of distinct pointer types ('struct bpf_prog_array *' and 'struct bpf_prog_array_hdr *') [-Wcompare-distinct-pointer-types]
-    kernel/bpf/core.c:2505:29: warning: comparison of distinct pointer types lacks a cast
+Yes I did, but I just double-checked looking for only LTER and there
+are several DSDTs using LTER0303 for an ambient light sensor.
 
-Error/Warning ids grouped by kconfigs:
+duckduckgo-ing for LTER0303 finds:
 
-recent_errors
-|-- alpha-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- alpha-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- arc-randconfig-001-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- arc-randconfig-002-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- arm-randconfig-001-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- arm-randconfig-002-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- arm-randconfig-003-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- arm-randconfig-004-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- arm64-randconfig-001-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- csky-randconfig-002-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- hexagon-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- i386-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-buildonly-randconfig-003-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-buildonly-randconfig-004-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-buildonly-randconfig-006-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-defconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- i386-randconfig-001-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-randconfig-002-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- i386-randconfig-003-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-randconfig-004-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-randconfig-005-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- i386-randconfig-006-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- i386-randconfig-011-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-randconfig-012-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- i386-randconfig-013-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- i386-randconfig-014-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- i386-randconfig-015-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- i386-randconfig-016-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- i386-randconfig-141-20240914
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- loongarch-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- loongarch-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- m68k-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- m68k-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- mips-allmodconfig
-|   |-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- mips-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- openrisc-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- openrisc-defconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- parisc-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- parisc-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- parisc-defconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- powerpc-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- powerpc-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- riscv-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-d3.c:error:call-to-__compiletime_assert_NNN-declared-with-error-attribute:BUILD_BUG_ON-failed:conf-keylen-WLAN_KEY_LEN_CCMP
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-d3.c:error:call-to-__compiletime_assert_NNN-declared-with-error-attribute:BUILD_BUG_ON-failed:conf-keylen-WLAN_KEY_LEN_GCMP_256
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- riscv-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- s390-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- s390-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- sh-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- sparc-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-|-- x86_64-allmodconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- x86_64-allyesconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
-|-- x86_64-defconfig
-|   `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-lacks-a-cast
-`-- x86_64-rhel-8.3-rust
-    `-- kernel-bpf-core.c:warning:comparison-of-distinct-pointer-types-(-struct-bpf_prog_array-and-struct-bpf_prog_array_hdr-)
+https://www.catalog.update.microsoft.com/Search.aspx?q=lter0303
 
-elapsed time: 1695m
+which is actually quite an interesting URL to search for ACPI
+HID-s used in any Windows drivers.
 
-configs tested: 72
-configs skipped: 2
+Checking for LTER0301:
 
-tested configs:
-alpha                             allnoconfig    gcc-13.3.0
-alpha                            allyesconfig    gcc-13.3.0
-arc                               allnoconfig    gcc-13.2.0
-arc                   randconfig-001-20240914    gcc-13.2.0
-arc                   randconfig-002-20240914    gcc-13.2.0
-arm                               allnoconfig    clang-20
-arm                   randconfig-001-20240914    gcc-14.1.0
-arm                   randconfig-002-20240914    gcc-14.1.0
-arm                   randconfig-003-20240914    gcc-14.1.0
-arm                   randconfig-004-20240914    clang-20
-arm64                             allnoconfig    gcc-14.1.0
-arm64                 randconfig-001-20240914    gcc-14.1.0
-arm64                 randconfig-002-20240914    gcc-14.1.0
-arm64                 randconfig-003-20240914    clang-20
-arm64                 randconfig-004-20240914    gcc-14.1.0
-csky                              allnoconfig    gcc-14.1.0
-csky                  randconfig-001-20240914    gcc-14.1.0
-csky                  randconfig-002-20240914    gcc-14.1.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    clang-20
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20240914    gcc-12
-i386        buildonly-randconfig-002-20240914    clang-18
-i386        buildonly-randconfig-003-20240914    gcc-12
-i386        buildonly-randconfig-004-20240914    gcc-12
-i386        buildonly-randconfig-005-20240914    clang-18
-i386        buildonly-randconfig-006-20240914    gcc-11
-i386                                defconfig    clang-18
-i386                  randconfig-001-20240914    gcc-12
-i386                  randconfig-002-20240914    clang-18
-i386                  randconfig-003-20240914    gcc-12
-i386                  randconfig-004-20240914    gcc-12
-i386                  randconfig-005-20240914    clang-18
-i386                  randconfig-006-20240914    clang-18
-i386                  randconfig-011-20240914    gcc-12
-i386                  randconfig-012-20240914    gcc-12
-i386                  randconfig-013-20240914    clang-18
-i386                  randconfig-014-20240914    clang-18
-i386                  randconfig-015-20240914    clang-18
-i386                  randconfig-016-20240914    clang-18
-loongarch                        allmodconfig    gcc-14.1.0
-loongarch                         allnoconfig    gcc-14.1.0
-m68k                             allmodconfig    gcc-14.1.0
-m68k                              allnoconfig    gcc-14.1.0
-m68k                             allyesconfig    gcc-14.1.0
-microblaze                       allmodconfig    gcc-14.1.0
-microblaze                        allnoconfig    gcc-14.1.0
-microblaze                       allyesconfig    gcc-14.1.0
-mips                              allnoconfig    gcc-14.1.0
-nios2                             allnoconfig    gcc-14.1.0
-openrisc                          allnoconfig    gcc-14.1.0
-openrisc                         allyesconfig    gcc-14.1.0
-openrisc                            defconfig    gcc-14.1.0
-parisc                           allmodconfig    gcc-14.1.0
-parisc                            allnoconfig    gcc-14.1.0
-parisc                              defconfig    gcc-14.1.0
-powerpc                           allnoconfig    gcc-14.1.0
-powerpc                          allyesconfig    clang-20
-riscv                             allnoconfig    gcc-14.1.0
-s390                             allmodconfig    clang-20
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.1.0
-sh                               allmodconfig    gcc-14.1.0
-sh                                allnoconfig    gcc-14.1.0
-um                                allnoconfig    clang-17
-x86_64                            allnoconfig    clang-18
-x86_64                           allyesconfig    clang-18
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-8.3-rust    clang-18
-xtensa                            allnoconfig    gcc-14.1.0
+https://www.catalog.update.microsoft.com/Search.aspx?q=lter0301
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Shows that that HID is also actually used, so:
+
+> Thanks, patch looks good to me:
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Correction, at least the LTER0301 ACPI id seems to actually be real:
+
+https://www.catalog.update.microsoft.com/Search.aspx?q=lter0301
+
+So NACK for dropping all 3 HIDs.
+
+It seems to me that the LTER05xx HIDs can be dropped and
+a LTER0303 HID should be added instead of dropping all HIDs.
+
+Note I do not have any hw with a ltr303 light sensor, so
+I cannot test this.
+
+Regards,
+
+Hans
+
+
+
+
+>> ---
+>>  drivers/iio/light/ltr501.c | 23 -----------------------
+>>  1 file changed, 23 deletions(-)
+>>
+>> diff --git a/drivers/iio/light/ltr501.c b/drivers/iio/light/ltr501.c
+>> index 8c516ede9116..0e0420573286 100644
+>> --- a/drivers/iio/light/ltr501.c
+>> +++ b/drivers/iio/light/ltr501.c
+>> @@ -15,7 +15,6 @@
+>>  #include <linux/err.h>
+>>  #include <linux/delay.h>
+>>  #include <linux/regmap.h>
+>> -#include <linux/acpi.h>
+>>  #include <linux/regulator/consumer.h>
+>>  
+>>  #include <linux/iio/iio.h>
+>> @@ -1422,17 +1421,6 @@ static int ltr501_powerdown(struct ltr501_data *data)
+>>  				  data->ps_contr & ~LTR501_CONTR_ACTIVE);
+>>  }
+>>  
+>> -static const char *ltr501_match_acpi_device(struct device *dev, int *chip_idx)
+>> -{
+>> -	const struct acpi_device_id *id;
+>> -
+>> -	id = acpi_match_device(dev->driver->acpi_match_table, dev);
+>> -	if (!id)
+>> -		return NULL;
+>> -	*chip_idx = id->driver_data;
+>> -	return dev_name(dev);
+>> -}
+>> -
+>>  static int ltr501_probe(struct i2c_client *client)
+>>  {
+>>  	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+>> @@ -1523,8 +1511,6 @@ static int ltr501_probe(struct i2c_client *client)
+>>  	if (id) {
+>>  		name = id->name;
+>>  		chip_idx = id->driver_data;
+>> -	} else  if (ACPI_HANDLE(&client->dev)) {
+>> -		name = ltr501_match_acpi_device(&client->dev, &chip_idx);
+>>  	} else {
+>>  		return -ENODEV;
+>>  	}
+>> @@ -1609,14 +1595,6 @@ static int ltr501_resume(struct device *dev)
+>>  
+>>  static DEFINE_SIMPLE_DEV_PM_OPS(ltr501_pm_ops, ltr501_suspend, ltr501_resume);
+>>  
+>> -static const struct acpi_device_id ltr_acpi_match[] = {
+>> -	{ "LTER0501", ltr501 },
+>> -	{ "LTER0559", ltr559 },
+>> -	{ "LTER0301", ltr301 },
+>> -	{ },
+>> -};
+>> -MODULE_DEVICE_TABLE(acpi, ltr_acpi_match);
+>> -
+>>  static const struct i2c_device_id ltr501_id[] = {
+>>  	{ "ltr501", ltr501 },
+>>  	{ "ltr559", ltr559 },
+>> @@ -1640,7 +1618,6 @@ static struct i2c_driver ltr501_driver = {
+>>  		.name   = LTR501_DRV_NAME,
+>>  		.of_match_table = ltr501_of_match,
+>>  		.pm	= pm_sleep_ptr(&ltr501_pm_ops),
+>> -		.acpi_match_table = ltr_acpi_match,
+>>  	},
+>>  	.probe = ltr501_probe,
+>>  	.remove	= ltr501_remove,
+> 
+
 
