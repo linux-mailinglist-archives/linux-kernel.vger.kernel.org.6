@@ -1,146 +1,255 @@
-Return-Path: <linux-kernel+bounces-329485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B089791EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 377959791F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 919D71F2220F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDFDE282B4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15111D0955;
-	Sat, 14 Sep 2024 16:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5661D095A;
+	Sat, 14 Sep 2024 16:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxzAka99"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGmnWC1Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D020B33E8;
-	Sat, 14 Sep 2024 16:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4161E4AD;
+	Sat, 14 Sep 2024 16:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726329631; cv=none; b=T9mIW+tvUSWumdTmQohLwVkP4v68uUsFap4i8sGApV/wUgIAUoCoNcGz4X8LeGe/+TIOgWOmlmVHELVE6l1nouMnA2R/DRMOkzzDuqWpKf66e8T8CJEwIiqhdZOYPN0u3vsLRzNobfa8nNb3OwM2JYcXltDsQN6+JQ3LdX/tmMk=
+	t=1726329836; cv=none; b=rjOm+iOVzV+e9AYeGEw1vRjwAz053/+bW6CrlwQwvB3nVdfe3nfkmu5lNIXhk6WvSThi+FLVBM9qC5ZvAncZX3CaxUlwv52riMCsZgbXOTHc8vpO7dE+VG7LvqOBt0AAnQmqo+iwif9qGjT7w78hv8hZhDqcIBNEcXifvxnn17w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726329631; c=relaxed/simple;
-	bh=gmhuqzvzoZsULPOnqM46R1nBOweiWnFl3W8Yd+keNgA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=np6PrY59tMm66oRLH7hdcjzgxNnr20QZX19g7F7qx5zUeI2SCQIZrocyQFPzB0j9x3DWUxn+ADKDoSbwNXJOKUT91+Qgx8iaSVsQSgzKafRcxdx5n+3UEswHTqXUaXdwvK+tDX5GbXU8LUon9AhDS/iGUvZYZuF6kg1o9CqU60I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxzAka99; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso3032527276.0;
-        Sat, 14 Sep 2024 09:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726329629; x=1726934429; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pw8obV4t7WvzYfzFMrurtyNaCLSHnDvfl6MF+sbwPeI=;
-        b=hxzAka99G5ZtRgaOD1V7WcUlVFk4yZil5ol2EJEDp3UUdheSmpsmBLpO389v1GGAr3
-         q4aE3tUM+kgyX0HsQBpVhML2HcAzCDiXcOyxHoOOgWMCbOl3REV2fMB9/R6t8HZgJnQd
-         SDqKaU0sv+yhofch03ktyBRzjKJ8h2EsfAtzZwnWBxJqeVn2tpFd9+R/lXNAq4MuOYw7
-         yyXszIgl1q2Ww6kx0mB/qEKX524ePIPzx8Yu+bQZgm0efyanUwtT2+QwPVLaQmi3oYiu
-         +3UpHLC4ScQi8+7ln2XcP4kCYhIvWkIYpOlOIzceBQNVBO/5VET6HAsZh2J9AJkWLpP3
-         m6Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726329629; x=1726934429;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pw8obV4t7WvzYfzFMrurtyNaCLSHnDvfl6MF+sbwPeI=;
-        b=TCE+K3agqf9KBGjx3dGVHFEyByJGhSR6VlipLrm0Sj5KrJ1y/pM1bYQnVoxcpr2LEy
-         3pv6VU8eDImcgkesI16HucPuALhnZRVuavZn5z+F+mlvKh9PCy14Am3Xxlj9rtez/ufW
-         WOUy9zsYA97KIunEu/5NbSUv0g3ivdwB3YyVMJg9tjgD6mT0ByPDqxOS8N7MkwuYhm9S
-         ljJoXvgBYY3WiWqBlpOH92oB1Po73ViJ3XplOnTlnqK558QaetGH7sCgsrNCzEZMVBZ2
-         8OA4smlLS2J0cYKrcPO0rtPesrjHo/4x8u1GjauvdjEF4bzp9cubHwgfrz/woRsgUg8N
-         gAWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpMQ/Sp87dDowuE48of0Hr5gdNSxZW/FspSRdR6/LCVAWdD8dH1t/u+FpvuaYE5uMyvRetqIYY14JX2Yc=@vger.kernel.org, AJvYcCWV66gI/GO5BRLo8uXQEVgEkbRu9H8T3gnUQVWBfMntd+BpceyN4iWvJCf1WLE9wDdzgeURRykqcJ/WWcnqRSUB@vger.kernel.org, AJvYcCXCTq+/o34XqSzh2oNItt6+0H5XDftc51+dmsRgZytOAVGG8LNEAaWGUcjxpJVBBtHI9aaJMr/A@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVEJbiGNRSOE20pc8mFE+dTGU3m0Syn/r8W4Oe2uQ2uWsZaelx
-	kejUaavU4JZZ6IINeaJPQqkGAmZOUg9GVXJsskUSJtTiNlNdFttLtMT5EA==
-X-Google-Smtp-Source: AGHT+IGFT+SYdQRRuCDaUGQGbIE6pE5mxpTXkPQVIUtM63s57kbgKD6W0SBd7MNUld8Cxw//MO5jGw==
-X-Received: by 2002:a05:690c:83:b0:6af:6762:eba1 with SMTP id 00721157ae682-6dbb6b35d38mr84461067b3.20.1726329627172;
-        Sat, 14 Sep 2024 09:00:27 -0700 (PDT)
-Received: from localhost ([2600:1700:6165:1c10:eecb:23b8:cac:4583])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6dbe2e25833sm2709327b3.59.2024.09.14.09.00.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2024 09:00:26 -0700 (PDT)
-From: David Hunter <david.hunter.linux@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org
-Cc: David Hunter <david.hunter.linux@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1 V4] selftests: net: improve missing modules error message
-Date: Sat, 14 Sep 2024 12:00:04 -0400
-Message-ID: <20240914160007.62418-1-david.hunter.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726329836; c=relaxed/simple;
+	bh=Aa/Dt/9oSgkSjzIOJ/ghRzxN708Zll4gS9FIDuzDbJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fkUVdP834TPWpnXHgOd2RABDQzndq45f8ZbEBM1CuiJaTqEieCXeXcHbpy4tk3ZJDJac6Wq+bLY+0Y+vVUENddF28fuUa5w/cX7aBXANjBcmWlKlEwj5ZG6uVDmKXCIUCNOafSqYQ4tMdDa2dWMKZD52ZfMaFBwd+x4kO67inoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGmnWC1Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54E84C4CEC0;
+	Sat, 14 Sep 2024 16:03:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726329836;
+	bh=Aa/Dt/9oSgkSjzIOJ/ghRzxN708Zll4gS9FIDuzDbJM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TGmnWC1Zej/XHTM5dW6CNBnUa1T7i/ttwfw+lBPzTfYFrDoow7WRghj4OsEV4IKnc
+	 fZP8ETOchVja7TMRLBZakWA7bdtD1z874r2Cblg97ap4L94MlxjO+p5wDK5USjnRI/
+	 EkSfP8NpUiJGJLC+1SviR8izN7uYoO7jGzY4pz36yiqwjUJPRoAmyp1MCGCys+wsz7
+	 k2L1fFZJL0SSqx1na83NVknfvwvMudPiPYEIwXM6cq5og1w+K8d2wrGSL53+A5PgNH
+	 8cZvx9TSUq+DFsMZrD9hRcZAm2Qd0O5zYNkBuph63dzMqJDKIBGtQfMM7taLRqLXCN
+	 +dNtrfbtDQLeg==
+Date: Sat, 14 Sep 2024 17:03:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH 7/7] iio: light: veml6030: add support for veml6035
+Message-ID: <20240914170347.54959319@jic23-huawei>
+In-Reply-To: <20240913-veml6035-v1-7-0b09c0c90418@gmail.com>
+References: <20240913-veml6035-v1-0-0b09c0c90418@gmail.com>
+	<20240913-veml6035-v1-7-0b09c0c90418@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The error message describing the required modules is inaccurate.
-Currently, only  "SKIP: Need act_mirred module" is printed when any of
-the modules are missing. As a result, users might only include that
-module; however, three modules are required.
+On Fri, 13 Sep 2024 15:19:02 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-Fix the error message to show any/all modules needed for the script file
-to properly execute.
+> The veml6035 is an ALS that shares most of its functionality with the
+> veml6030, which allows for some code recycling.
+> 
+> Some chip-specific properties differ and dedicated functions to get and
+> set the sensor gain as well as its initialization are required.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Mostly a request to first switch to using read_avail() and the relevant
+bit masks instead of custom attributes.  That will require converting the
+driver to that approach first, but looks straight forward.
 
-Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
----
+> ---
+>  drivers/iio/light/veml6030.c | 300 +++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 273 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
+> index 2945cc1db599..105f310c4954 100644
+> --- a/drivers/iio/light/veml6030.c
+> +++ b/drivers/iio/light/veml6030.c
+> @@ -1,13 +1,19 @@
+>  // SPDX-License-Identifier: GPL-2.0+
+>  /*
+> - * VEML6030 Ambient Light Sensor
+> + * VEML6030 and VMEL6035 Ambient Light Sensors
+>   *
+>   * Copyright (c) 2019, Rishi Gupta <gupt21@gmail.com>
+>   *
+> + * VEML6030:
+>   * Datasheet: https://www.vishay.com/docs/84366/veml6030.pdf
+>   * Appnote-84367: https://www.vishay.com/docs/84367/designingveml6030.pdf
+> + *
+> + * VEML6035:
+> + * Datasheet: https://www.vishay.com/docs/84889/veml6035.pdf
+> + * Appnote-84944: https://www.vishay.com/docs/84944/designingveml6035.pdf
+>   */
+>  
+> +#include <linux/bitfield.h>
+>  #include <linux/module.h>
+>  #include <linux/i2c.h>
+>  #include <linux/err.h>
+> @@ -38,16 +44,33 @@
+>  #define VEML6030_ALS_INT_EN   BIT(1)
+>  #define VEML6030_ALS_SD       BIT(0)
+>  
+> +#define VEML6035_GAIN_M       GENMASK(12, 10)
+> +#define VEML6035_GAIN         BIT(10)
+> +#define VEML6035_DG           BIT(11)
+> +#define VEML6035_SENS         BIT(12)
+> +#define VEML6035_INT_CHAN     BIT(3)
+> +#define VEML6035_CHAN_EN      BIT(2)
+> +
+> +struct veml603x_chip {
+> +	const char *name;
+> +	const struct iio_info *info;
+> +	const struct iio_info *info_no_irq;
+> +	const char * const in_illuminance_scale_avail;
 
-V1 
-	- https://lore.kernel.org/all/20240820202116.6124-1-david.hunter.linux@gmail.com/
-V2
-	- https://lore.kernel.org/all/20240823054833.144612-1-david.hunter.linux@gmail.com/
-	- included subject prefixes
-	- split the patch into two separate patches (one for each issue)
-	- fixed typos in message body
-	- removed second, unnecessary for loop
-V3
-	- https://lore.kernel.org/all/20240827205629.51004-1-david.hunter.linux@gmail.com/#r
-	- fixed subject prefix (omit capitilization)
-	- fixed spelling mistake in commit message
-	- fixed coding style based on recommendations
----
- .../selftests/net/test_ingress_egress_chaining.sh    | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+For this, better with read_avail() provided and a pointer to an array of
+values + a size element in here.  That way we can get rid of the
+custom attribute handling.  Might end up as similar amount of code, but
+will be simpler to read.
 
-diff --git a/tools/testing/selftests/net/test_ingress_egress_chaining.sh b/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-index 08adff6bb3b6..007a5d04c3e1 100644
---- a/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-+++ b/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-@@ -13,10 +13,20 @@ if [ "$(id -u)" -ne 0 ];then
- fi
- 
- needed_mods="act_mirred cls_flower sch_ingress"
-+mods_missing=""
-+numb_mods_needed=0
-+
- for mod in $needed_mods; do
--	modinfo $mod &>/dev/null || { echo "SKIP: Need act_mirred module"; exit $ksft_skip; }
-+	modinfo $mod &>/dev/null && continue
-+	mods_missing="$mods_missing$mod "
-+	numb_mods_needed=$(expr $numb_mods_needed + 1)
- done
- 
-+if [ $numb_mods_needed -gt 0 ]; then
-+	echo "SKIP: $numb_mods_needed modules needed: $mods_missing"
-+	exit $ksft_skip
-+fi
-+
- ns="ns$((RANDOM%899+100))"
- veth1="veth1$((RANDOM%899+100))"
- veth2="veth2$((RANDOM%899+100))"
--- 
-2.43.0
+> +	int (*hw_init)(struct iio_dev *indio_dev);
+> +	int (*set_als_gain)(struct iio_dev *indio_dev, int val, int val2);
+> +	int (*get_als_gain)(struct iio_dev *indio_dev, int *val, int *val2);
+> +};
+
+>  
+>  /* Integration time available in seconds */
+> @@ -63,14 +87,25 @@ static IIO_CONST_ATTR(in_illuminance_integration_time_available,
+>  
+>  /*
+>   * Scale is 1/gain. Value 0.125 is ALS gain x (1/8), 0.25 is
+> - * ALS gain x (1/4), 1.0 = ALS gain x 1 and 2.0 is ALS gain x 2.
+> + * ALS gain x (1/4), 0.5 is ALS gain x (1/2), 1.0 is ALS gain x 1,
+> + * 2.0 is ALS gain x2, and 4.0 is ALS gain x 4.
+>   */
+> -static IIO_CONST_ATTR(in_illuminance_scale_available,
+> +static IIO_CONST_ATTR_NAMED(veml6030_in_illuminance_scale_available,
+> +			    in_illuminance_scale_available,
+>  				"0.125 0.25 1.0 2.0");
+> +static IIO_CONST_ATTR_NAMED(veml6035_in_illuminance_scale_available,
+> +			    in_illuminance_scale_available,
+> +				"0.125 0.25 0.5 1.0 2.0 4.0");
+>  
+>  static struct attribute *veml6030_attributes[] = {
+>  	&iio_const_attr_in_illuminance_integration_time_available.dev_attr.attr,
+> -	&iio_const_attr_in_illuminance_scale_available.dev_attr.attr,
+> +	&iio_const_attr_veml6030_in_illuminance_scale_available.dev_attr.attr,
+> +	NULL
+> +};
+> +
+> +static struct attribute *veml6035_attributes[] = {
+> +	&iio_const_attr_in_illuminance_integration_time_available.dev_attr.attr,
+> +	&iio_const_attr_veml6035_in_illuminance_scale_available.dev_attr.attr,
+
+Using get_avail() etc would let you handle these as arrays of numbers rather than
+strings + get rid of the need for any custom attributes. This should be
+a very simple conversion so perhaps worth doing before adding the
+new support.  Then you will have pointers to the value arrays + sizes
+in your chip specific structures that just get looked up directly
+by read_avail()
+
+
+>  	NULL
+>  };
+
+
+>  
+> +/*
+> + * Set ALS gain to 1/8, integration time to 100 ms, ALS and WHITE
+> + * channel enabled, ALS channel interrupt, PSM enabled,
+> + * PSM_WAIT = 0.8 s, persistence to 1 x integration time and the
+> + * threshold interrupt disabled by default. First shutdown the sensor,
+> + * update registers and then power on the sensor.
+> + */
+> +static int veml6035_hw_init(struct iio_dev *indio_dev)
+> +{
+> +	int ret, val;
+> +	struct veml6030_data *data = iio_priv(indio_dev);
+> +	struct i2c_client *client = data->client;
+> +
+> +	ret = veml6030_als_shut_down(data);
+> +	if (ret) {
+> +		dev_err(&client->dev, "can't shutdown als %d\n", ret);
+> +		return ret;
+
+If this is only ever called from probe() (I think that's true?)
+can use return dev_err_probe() for all these error cases.
+Main advantage here being shorter simpler code.
+
+> +	}
+> +
+> +	ret = regmap_write(data->regmap, VEML6030_REG_ALS_CONF,
+> +			   VEML6035_SENS | VEML6035_CHAN_EN | VEML6030_ALS_SD);
+> +	if (ret) {
+> +		dev_err(&client->dev, "can't setup als configs %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_update_bits(data->regmap, VEML6030_REG_ALS_PSM,
+> +				 VEML6030_PSM | VEML6030_PSM_EN, 0x03);
+> +	if (ret) {
+> +		dev_err(&client->dev, "can't setup default PSM %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_write(data->regmap, VEML6030_REG_ALS_WH, 0xFFFF);
+> +	if (ret) {
+> +		dev_err(&client->dev, "can't setup high threshold %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_write(data->regmap, VEML6030_REG_ALS_WL, 0x0000);
+> +	if (ret) {
+> +		dev_err(&client->dev, "can't setup low threshold %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = veml6030_als_pwr_on(data);
+> +	if (ret) {
+> +		dev_err(&client->dev, "can't poweron als %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Clear stale interrupt status bits if any during start */
+> +	ret = regmap_read(data->regmap, VEML6030_REG_ALS_INT, &val);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev,
+> +			"can't clear als interrupt status %d\n", ret);
+> +		return ret;
+
+It's true of existing code, but I noticed it here.
+Should we be powering down in this error path?
+
+> +	}
+> +
+> +	/* Cache currently active measurement parameters */
+> +	data->cur_gain = 5;
+> +	data->cur_resolution = 1024;
+> +	data->cur_integration_time = 3;
+> +
+> +	return 0;
+> +}
 
 
