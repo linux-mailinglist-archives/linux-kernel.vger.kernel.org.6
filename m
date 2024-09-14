@@ -1,152 +1,157 @@
-Return-Path: <linux-kernel+bounces-329249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B14B978F1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:31:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDDE978F2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E2E21C21976
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1327F280C89
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9220D13B7BE;
-	Sat, 14 Sep 2024 08:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D1919DF46;
+	Sat, 14 Sep 2024 08:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROjz95TM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="UD9rh84s"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E477479CC;
-	Sat, 14 Sep 2024 08:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726302677; cv=none; b=ejEfK25FxT75krJQf9wqjux3dNN6duY1eQioB4Zs8ZL1CpO9d4mE8HdprVMdMs+J3Y8Y8q2Nc6Psk9I8L74So1pnk50N4n3VWiYgn+NadOkwmrgQGO4lTWcUMUtIyWr2WBzUpOZRE6YdjY5sjWUhGyorsRWXQEBOOjuYS0P1pB4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726302677; c=relaxed/simple;
-	bh=z6OpSHyEljBBz2GYwX2VAF5oOERrd1UKlQ8BaPdqpYE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IC2XU3SEZCjlK+Z4ZvVVJrz+C0iIuS8s8Jpf73/+Z3c3kcmM1lm8fOWcIyHLZh5GE8VEgZSr4HJzaL/Q1u3ZuQ4ejI62o6cFEBahJtKcTY47My0vmTiTwbMMhzpXaJQHMGeCsDDyE7ThoQYMWdjy4bM+5bLR5nRds5CxqC5ERao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROjz95TM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AB5CC4CED5;
-	Sat, 14 Sep 2024 08:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726302676;
-	bh=z6OpSHyEljBBz2GYwX2VAF5oOERrd1UKlQ8BaPdqpYE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ROjz95TM7LP+Hvu6LkrpLidU65BWo2NV9yF9CwVi/S38MphX6UqDxhFyOnLGFcO1m
-	 ovlE9ezlY9sD+XIVjixw3LodeTCJvIyKvQByzhFpq1pj5g4jxJ7JtoZesgxKksYDk7
-	 fia86LA7hLUGry2bl+bZkmqwVi5leDXi/TH4fmOxCHyeToDHYSBCGXHpJueyCOz5XG
-	 ExJ6IRtD8DGLkwTOrNyYbZEwYhIvDHq1HbQzUynQxkY2/SHgdp8iqTD90bH/TQkGJx
-	 x5V7UNiNd7N8/lb3fVjtvARrqrvhj/a3i93D4T/eEB+1ugvZtGUZQFqxLphiBA4J8x
-	 zmPnTsc/QCG4w==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53653ff0251so2090700e87.0;
-        Sat, 14 Sep 2024 01:31:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxH3HCbh0xIpq9pw2RKo52qaUyqo1AbSROlhRCGSWBEFWsalWXwvTRbKzmIn3V3gdHBiIfy/MqYv3paHr+@vger.kernel.org, AJvYcCVBwnjimY53XDRlHjb4TkKPNBrbMYujI0C2sJRTFJ5OOjNU8hAofWRve0dmFKm3kuZeaogLb75BHhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxxvufcaeBkUuzFazB9KDti26PAY9pwj5zLQ6NGHq/ZL/kr3Ka
-	YG9uwXwXDWPQRpwMQ18asiETr5JRUZ/FKuwhBSPLnFXq6alpzlbKbx9ZFv7kC6SecyJVBupdrRo
-	XBVMwFSdnZlNBWjbXjO5O43pZCE0=
-X-Google-Smtp-Source: AGHT+IFej30mwd0JRuY/+RDqkCSNoFipebnwEVsOZMyMFIDB2nW1hoN7F/05QIm2Cx3HgmT7MU97zNOZYAFTrGH5Y4A=
-X-Received: by 2002:a05:6512:a91:b0:535:3d08:5844 with SMTP id
- 2adb3069b0e04-5367feb964fmr3403400e87.6.1726302674503; Sat, 14 Sep 2024
- 01:31:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3696433D5;
+	Sat, 14 Sep 2024 08:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726303157; cv=pass; b=srsmMcSIJ+W5XWJ+8EBBu2IyxZcU08+eYhSYu161+XANKyz6Pww7dm0ecBt8sfkvB2QkuDuMkuDeiSITkNGbV/cGQOfEXZKFvsOT9+6cEYhjzTnduRxzhRGbagPkRP5AjCQDjBbf6ke6dcNH1HV1ilNQfr9+zu2XYLkgZKYDBwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726303157; c=relaxed/simple;
+	bh=pfSJVhTniD/TEI8prxwxup12Sbw+prmH32swhXL3LQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=La1Z/G55fHQep/l+nANHaaft687CgjRp46uxOd4FJowgEEc448Z5M/opkHf3RtXzbsi0d0+yGb71V/rC4NPx6CNiqKpGqygyikG2qXfzk52snEyqHbJfboD0zkulcjdCBvNXmbgDjLpOGXr/gUZ+ZJ8+rPfeA6D/0luuF0FV14w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=UD9rh84s; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726303126; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MLOmakQrtsg4TH4ciQgVKKbaYfee0msm0gpHo0IRm2TCR1PjW/dhublzRh0fRtGTGALhk45SIBObhSMIdaclT1VZ9llt1dpmAWq4/rrRaZnP0TlystVIRu8JLbEtT5I9dAY40SMVINghKRE66+gmMtnaXLBPvrGwUkoll0SY1iU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726303126; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Ej6QX9G1dmM07ksR/FVgVBTC5gPecCY6T1R8JXBXxZk=; 
+	b=QY6lMDWN3HqBg2CDOf4cd+x4CEh43tB3mXTwIHABzoMI9JNSgz3eCEZESG2I+hR6nX15ncOa5pdT8gmwe3yMArbB0phGyXskFZyfoOp4NyvlZWvqyKpCJ2GuN5ZhbcTzbw8Mtg8QOC6CbLtFeId2ZLx38RRRTlrcB5KrD33AbT0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726303126;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Ej6QX9G1dmM07ksR/FVgVBTC5gPecCY6T1R8JXBXxZk=;
+	b=UD9rh84s/7G9dAEtd71GxxzLUEpLcscRJ47S8/+Pe+224BS1cdckHNW/uTnB9dg5
+	ie+cQG6VuPJdexJ7jiJPsrCstd7qabLh6ikWCE7quHAz3dCrzp0Zv10KpGsPVcL2ajR
+	EzZkbOiu/30stenQoIDwq5734cnSfpNxAyU85Jbc=
+Received: by mx.zohomail.com with SMTPS id 1726303124615201.60398788551277;
+	Sat, 14 Sep 2024 01:38:44 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 3FFFB1060578; Sat, 14 Sep 2024 10:38:28 +0200 (CEST)
+Date: Sat, 14 Sep 2024 10:38:28 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Simona Vetter <simona@ffwll.ch>, cros-qcom-dts-watchers@chromium.org, 
+	Konrad Dybcio <konradybcio@kernel.org>, Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 01/27] power: supply: add undervoltage health status
+ property
+Message-ID: <uta55qswxp43tdziertbwvopytx26kjanouxfffvkjfnhrkwj2@bwoyfygw3pp7>
+References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-1-2d2efd5c5877@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911104109.1831501-1-usamaarif642@gmail.com>
- <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
- <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
- <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
- <6b2cc4c4-4354-4b29-bc73-c1384b90dfc6@gmail.com> <CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com>
- <CAMj1kXFr+N9LMj0=wULchYosUpV0ygZSKUj1vdUP0KWEANKasw@mail.gmail.com>
- <CALu+AoS9+OxPmVJB9fAJFkjsX9xUVw6K_uXiOi0-XsK6-b4THg@mail.gmail.com> <CALu+AoTQ6NFDuM6-5ng7yXrDAmezdAsdsPvh7KKUVdW4FXPe7w@mail.gmail.com>
-In-Reply-To: <CALu+AoTQ6NFDuM6-5ng7yXrDAmezdAsdsPvh7KKUVdW4FXPe7w@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 14 Sep 2024 10:31:03 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEXH2YvWtzEJEEOnTLqACsRhan3Lf9OCLYDjKf6gxDmBQ@mail.gmail.com>
-Message-ID: <CAMj1kXEXH2YvWtzEJEEOnTLqACsRhan3Lf9OCLYDjKf6gxDmBQ@mail.gmail.com>
-Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
-To: Dave Young <dyoung@redhat.com>
-Cc: Usama Arif <usamaarif642@gmail.com>, Breno Leitao <leitao@debian.org>, linux-efi@vger.kernel.org, 
-	kexec@lists.infradead.org, ebiederm@xmission.com, bhe@redhat.com, 
-	vgoyal@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com, 
-	x86@kernel.org, linux-kernel@vger.kernel.org, rmikey@meta.com, 
-	gourry@gourry.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r7xlkoqbyyg5k4lc"
+Content-Disposition: inline
+In-Reply-To: <20240913-starqltechn_integration_upstream-v4-1-2d2efd5c5877@gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/223.982.64
+X-ZohoMailClient: External
 
-On Sat, 14 Sept 2024 at 08:46, Dave Young <dyoung@redhat.com> wrote:
->
-> On Fri, 13 Sept 2024 at 18:56, Dave Young <dyoung@redhat.com> wrote:
-> >
-> > On Thu, 12 Sept 2024 at 22:15, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > >
-> > > (cc Dave)
-> >
-> > Thanks for ccing me.
-> >
-> > >
-> > > Full thread here:
-> > > https://lore.kernel.org/all/CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com/T/#u
-> > >
-> > > On Thu, 12 Sept 2024 at 16:05, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > >
-> > > > On Thu, 12 Sept 2024 at 15:55, Usama Arif <usamaarif642@gmail.com> wrote:
-> > > > >
-> > > > >
-> > > > >
-> > > > > On 12/09/2024 14:10, Ard Biesheuvel wrote:
-> > > > > > Does the below help at all?
-> > > > > >
-> > > > > > --- a/drivers/firmware/efi/tpm.c
-> > > > > > +++ b/drivers/firmware/efi/tpm.c
-> > > > > > @@ -60,7 +60,7 @@ int __init efi_tpm_eventlog_init(void)
-> > > > > >         }
-> > > > > >
-> > > > > >         tbl_size = sizeof(*log_tbl) + log_tbl->size;
-> > > > > > -       memblock_reserve(efi.tpm_log, tbl_size);
-> > > > > > +       efi_mem_reserve(efi.tpm_log, tbl_size);
-> > > > > >
-> > > > > >         if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
-> > > > > >                 pr_info("TPM Final Events table not present\n");
-> > > > >
-> > > > > Unfortunately not. efi_mem_reserve updates e820_table, while kexec looks at /sys/firmware/memmap
-> > > > > which is e820_table_firmware.
-> > > > >
-> > > > > arch_update_firmware_area introduced in the RFC patch does the same thing as efi_mem_reserve does at
-> > > > > its end, just with e820_table_firmware instead of e820_table.
-> > > > > i.e. efi_mem_reserve does:
-> > > > >         e820__range_update(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
-> > > > >         e820__update_table(e820_table);
-> > > > >
-> > > > > while arch_update_firmware_area does:
-> > > > >         e820__range_update_firmware(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
-> > > > >         e820__update_table(e820_table_firmware);
-> > > > >
-> > > >
-> > > > Shame.
-> > > >
-> > > > Using efi_mem_reserve() is appropriate here in any case, but I guess
-> > > > kexec on x86 needs to be fixed to juggle the EFI memory map, memblock
-> > > > table, and 3 (!) versions of the E820 table in the correct way
-> > > > (e820_table, e820_table_kexec and e820_table_firmware)
-> > > >
-> > > > Perhaps we can put this additional logic in x86's implementation of
-> > > > efi_arch_mem_reserve()? AFAICT, all callers of efi_mem_reserve() deal
-> > > > with configuration tables produced by the firmware that may not be
-> > > > reserved correctly if kexec looks at e820_table_firmware[] only.
-> > >
-> >
-> > I have not read all the conversations,  let me have a look and response later.
-> >
->
-> I'm still confused after reading the code about why this issue can
-> still happen with a efi_mem_reserve.
-> Usama, Breno, could any of you share the exact steps on how to
-> reproduce this issue with a kvm guest?
->
 
-The code does not use efi_mem_reserve() only memblock_reserve().
+--r7xlkoqbyyg5k4lc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, Sep 13, 2024 at 06:07:44PM GMT, Dzmitry Sankouski wrote:
+> Add POWER_SUPPLY_HEALTH_UNDERVOLTAGE status for power supply
+> to report under voltage lockout failures.
+>=20
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+
+This is missing updates to
+Documentation/ABI/testing/sysfs-class-power and
+drivers/power/supply/power_supply_sysfs.c
+(POWER_SUPPLY_HEALTH_TEXT).
+
+Greetings,
+
+-- Sebastian
+
+>  include/linux/power_supply.h | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+> index 910d407ebe63..8682e6466544 100644
+> --- a/include/linux/power_supply.h
+> +++ b/include/linux/power_supply.h
+> @@ -58,6 +58,7 @@ enum {
+>  	POWER_SUPPLY_HEALTH_OVERHEAT,
+>  	POWER_SUPPLY_HEALTH_DEAD,
+>  	POWER_SUPPLY_HEALTH_OVERVOLTAGE,
+> +	POWER_SUPPLY_HEALTH_UNDERVOLTAGE,
+>  	POWER_SUPPLY_HEALTH_UNSPEC_FAILURE,
+>  	POWER_SUPPLY_HEALTH_COLD,
+>  	POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE,
+>=20
+> --=20
+> 2.39.2
+>=20
+
+--r7xlkoqbyyg5k4lc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmblS3wACgkQ2O7X88g7
++prRCxAAlhYUU4yJX7NEhfMbNTVWhURSBhobZ62HayXzgdpD6Mq48r79Maug7GC9
+GT0mcYXyGLCZjLkte5Qn0695klYG9JsIWdZqOdQV7fgHhH6gDBkFYghMVv8NVnXF
+Pmcmwc1QOCjmDp37EkvxjXKOc+XNdnVuAlSwpnP3zkXKtexwe3kvZtD3qLToP7vs
+Q+6qA8/9KVvC83i5VqrHUoWdkR514ZI8YcPzjStj6FecIRitH0xtOm9inpeLj1tv
+fFcknMQkRSdNAarhfpZNzFLoyOSpImY/yeUEx3qFUqKNGtDZVkXvWNHVaEEEtxih
++1mX44QV5thBOSuKfuIA0deafptEjaP/eXhQEwS619aqDJd7J+JBmnZAdlmiBLqK
+iEsBgTeThbx7RuOvBvRUVYPlUPG1jpYBgfWT4OT6w7x9tkkfemxU/JT1tXJNmKAp
+onm6UftL9rF/olPVoXIL4AZ8QhsLkGQ+2iDNWaUbcvhWdEAo0AFnJNIRJHdbUT4a
+fPlTrlZ5DO/ufGCPj7rbPehkVjKD/apDK84Dp8mQrIjlzuxqMacWFBv0Szrj9k4L
+ZpUae4iBOygN1fXd6M8w3SvZw+9JOixLL/1vm2Av8vJwMYUUt4eNInyN4Pr1cjMh
+Rd6zPpSmphSU+AgGnN70hqkRetW7+zUoyFzoKWtQeWApkEdHhVE=
+=Gfk0
+-----END PGP SIGNATURE-----
+
+--r7xlkoqbyyg5k4lc--
 
