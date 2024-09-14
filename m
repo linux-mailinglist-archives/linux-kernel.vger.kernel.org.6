@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-329061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A15978CCB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:33:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C58978CCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BBE41F260EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:33:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C65BCB23D7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3BD1078F;
-	Sat, 14 Sep 2024 02:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023AC10A1F;
+	Sat, 14 Sep 2024 02:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="A5vmQRwF"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0Hll38PE"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5F21103;
-	Sat, 14 Sep 2024 02:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81268C1A
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726281191; cv=none; b=KPOUyZv7z1xk6SPvYGPFsfIY00tj0fQyOpGN3mIjGeC4wWZp60KBvNv4rhaU4XBJetgvqRhZAVyIDlMCbOSl/NG1HIpiG2NjK63gcpl1/Zu0B9953Ithpl5t7oZliHRFCcZJ0/Vz3RR4kbPqnPfMdHfTjD7oIXnwiP/U2HFYFZo=
+	t=1726281322; cv=none; b=bcfPwy23XoS9uaep/BC9nIHNtJ2NvUUBogKjfifLTqtwfpPKOY9WERJYt4oIVaK64BvB0ze3X8+2Z25G/m++ePz7wyga+3/XbG2/Nv3IKzyGosB9UTdvNApdXqcHjI9cX5Hsym231dI3EuGjWwWn0MQYVLEApkp2wmOeFk12J+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726281191; c=relaxed/simple;
-	bh=hJq/6PBF3sLbLnqKLZJjrgpBEM96uIsrLMnjX63Oq7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HuX9gFIGC2P3enzy7ydzproBQD1llXSTZIxobKzPUTWeM6BCWdfX0I0q6eyusAxiwORJG5AD2MEBCGa8ZEXTuUxoafNDhfLsK49dxLxPYY79yRs4EgrmVqimWAVdBdn+Y6t4cCJDw3sljedxYNcgI6wn1ZdVl+wlDuSM/QUFp8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=A5vmQRwF; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726281185;
-	bh=IXODKEe3p+GPPq+OmwlVmOqxhuyvfZujvYHlJhtMSKg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=A5vmQRwFtF0709SnQzA0l3k5YNzxl13DlLiN6kIkcTc2TH8T/qtBhUCDOxDOm7Udp
-	 /tigOCaTMIC2GVOU58T6cHYfq2Kci0ogX+LkusXqruEHvl1H0t0Bjb/t3CWhoEn7JD
-	 cf2Be3e1+53Mh3sqXmnJrcNEI3vm/YDXt4qg+lvbxWUH0/b+o6/IbX3pitAGCz7zN1
-	 m26BAcInxZmiD46Ga1W40o3KpEK/35eD99lBQp/mp0XvJD65Z/bV0He+o1SnQCc2Me
-	 VDwJgR3O/Tvf6M4tlpDoE9NYa3cKT20uCBiiyHTiMQBGtuHYq7UGMesEXGOIo8hI1G
-	 8VftC3nuOMFnQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X5Fb51nbdz4xD3;
-	Sat, 14 Sep 2024 12:33:05 +1000 (AEST)
-Date: Sat, 14 Sep 2024 12:33:04 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Al Viro  <viro@zeniv.linux.org.uk>
-Subject: Re: [GIT PULL] vfs mount
-Message-ID: <20240914123304.172831bd@canb.auug.org.au>
-In-Reply-To: <20240913-vfs-mount-ff71ba96c312@brauner>
-References: <20240913-vfs-mount-ff71ba96c312@brauner>
+	s=arc-20240116; t=1726281322; c=relaxed/simple;
+	bh=Zxg5otL1B6i1olA/BBrcKApvmjoPUf88u7JkfqEzASo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cZtyAmLGX9BZWNIbGPp2w2lk6m8ymA+kTp558is7HmIN4gt7pCKXDsjO6b6k0/VxPL0Y19OvWnoBI0V7v7zvMmahDrjqBPutwmANWzywUdORsQpiKwVdZOWVgKAiE1WbtGuwJ5kVewHjniyJJqZl2of3qWDCrBW6kWpuBjw6e3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0Hll38PE; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-39d2a107aebso134755ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:35:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726281320; x=1726886120; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XQULOfyh/DJvaScdxz940oydRSf0WRZPwFZKMmWALzE=;
+        b=0Hll38PEUw2ci9LiQLmAcrY6Qevb8ArAMdqa9ypnhbjpm9QnvZ75KDwmdpp8kM4tL7
+         hQsUr3u5O39jnMr/sU7JpLOTMAk7uNtz3ChakK6w0mSAF583oIfLYvIw4EZ4y9pu9iQj
+         /AdOiTop8C6gYRmZoqzjcsASMaTsvQT7LiW5+dhd4f5nGi31dalJn71qAEhrk+G56sfy
+         uen7TRA1pFe2n67nQh+mGEvpzyciiKYY/xAw+Npwz/GID7u03jSqeynogBCstFoEJ5Cd
+         ivJF6e1vrnCD5WctcZBHkA5m5n9h2vILFqys4ntm6GcPlNX5uwRF9mOBx2UMegFycm9M
+         Lvcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726281320; x=1726886120;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XQULOfyh/DJvaScdxz940oydRSf0WRZPwFZKMmWALzE=;
+        b=tINOVjccLu9Y/ol/N/hAK3Qkca4muRTl7vIgXf/Afi+x4Bc+nPKyd36D4qXfb+Wktx
+         16K3jGcbVnFFsN0NpB5bs4R++20GpEPefc0MYfw9USw74dDdjXjEDrT9ZHY/WDFc8moS
+         KeILKOnEYD3aiF7oe/3LHSrvHbRSGkjRAEg+NQXlmNT++VUSX7lJLDme7u7grDE/iYIX
+         QEM1jY5WVnFZrkRlBoP1rno5D97rcT0d6cnGPdZVYm9B6rwRUG6Osvwt8c/huVR4svHC
+         ynYW183LKlPjlXHUYJ1e6Lg7wMJPYGJKeLdiGJk4gbPXWXh0e0zBxAebpWrgMrvkEa/W
+         vd2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWEuvdPpFUr/K/NhRTnpIklD0SHP7XITbz580EGLdChdYvbhA69ppq6++QeBldAK1IyPLxVFN2ANYdCyto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLBDQpCSJo9VJNQm9DI6VY5TT72LZuDg0dwthKWslje1EQfcId
+	RVW43bFDI4FwceQxEGj6iV457pe1MJkQq9TVwE5Pr9TORff0V0LjcKpPZZwmdbcmKnt4lDH8mGg
+	Cwi7ZvrA15FbjXRwqA01+QtVgZnUiNYZV9T1J
+X-Google-Smtp-Source: AGHT+IFMUAlaPADSOJhXfO70nksqOL+i8glvUTYqOQodqAIKD4Lb4U7ImJZrC/sVwjXk0MI4qk+PZjZt/Lvfp1Mm5sY=
+X-Received: by 2002:a92:c249:0:b0:375:bb49:930d with SMTP id
+ e9e14a558f8ab-3a0856d2141mr9417565ab.23.1726281319987; Fri, 13 Sep 2024
+ 19:35:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wSIiq+IvzhhMIXid3Y9yCpQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/wSIiq+IvzhhMIXid3Y9yCpQ
-Content-Type: text/plain; charset=US-ASCII
+References: <20240912141156.231429-1-jon@nutanix.com> <20240912151410.bazw4tdc7dugtl6c@desk>
+ <070B4F7E-5103-4C1B-B901-01CE7191EB9A@nutanix.com> <20240912162440.be23sgv5v5ojtf3q@desk>
+ <ZuPNmOLJPJsPlufA@intel.com> <CALMp9eRDtcYKsxqW=z6m=OqF+kB6=GiL-XaWrVrhVQ_2uQz_nA@mail.gmail.com>
+ <CALMp9eTQUznmXKAGYpes=A0b1BMbyKaCa+QAYTwwftMN3kufLA@mail.gmail.com> <20240914001623.fzpc2dunmpidi47a@desk>
+In-Reply-To: <20240914001623.fzpc2dunmpidi47a@desk>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 13 Sep 2024 19:35:08 -0700
+Message-ID: <CALMp9eRvoY5NH3sW6tc+=mP=7ZtuC05HQJUrZdvDAdt27B2cZw@mail.gmail.com>
+Subject: Re: [PATCH] x86/bhi: avoid hardware mitigation for 'spectre_bhi=vmexit'
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Chao Gao <chao.gao@intel.com>, Jon Kohler <jon@nutanix.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, LKML <linux-kernel@vger.kernel.org>, 
+	"kvm @ vger . kernel . org" <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
-
-On Fri, 13 Sep 2024 16:41:58 +0200 Christian Brauner <brauner@kernel.org> w=
-rote:
+On Fri, Sep 13, 2024 at 5:16=E2=80=AFPM Pawan Gupta
+<pawan.kumar.gupta@linux.intel.com> wrote:
 >
-> (1) linux-next: build failure after merge of the bpf-next tree
->     https://lore.kernel.org/r/20240913133240.066ae790@canb.auug.org.au
->=20
->     The reported merge conflict isn't really with bpf-next but with the
->     series to convert to fd_file() accessors for the changed struct fd
->     representation.
->=20
->     The patch you need to fix this however is correct in that draft. But
->     honestly, it's pretty easy for you to figure out on your own anyway.
+> On Fri, Sep 13, 2024 at 04:04:56PM -0700, Jim Mattson wrote:
+> > > The IA32_SPEC_CTRL mask and shadow fields should be perfect for this.
+> >
+> > In fact, this is the guidance given in
+> > https://www.intel.com/content/www/us/en/developer/articles/technical/so=
+ftware-security-guidance/technical-documentation/branch-history-injection.h=
+tml:
+> >
+> > The VMM should use the =E2=80=9Cvirtualize IA32_SPEC_CTRL=E2=80=9D VM-e=
+xecution
+> > control to cause BHI_DIS_S to be set (see the VMM Support for
+> > BHB-clearing Software Sequences section) whenever:
+> > o The VMM is running on a processor for which the short software
+> > sequence may not be effective:
+> >   - Specifically, it does not enumerate BHI_NO, but does enumerate
+> > BHI_DIS_S, and is not an Atom-only processor.
+> >
+> > In other words, the VMM should set bit 10 in the IA32_SPEC_CTRL mask
+> > on SPR. As long as the *effective* guest IA32_SPEC_CTRL value matches
+> > the host value, there is no need to write the MSR on VM-{entry,exit}.
+>
+> With host setting the effective BHI_DIS_S for guest using virtual
+> SPEC_CTRL, there will be no way for guest to opt-out of BHI mitigation.
+> Or if the guest is mitigating BHI with the software sequence, it will
+> still get the hardware mitigation also.
+>
+> To overcome this, the guest and KVM need to implement
+> MSR_VIRTUAL_MITIGATION_CTRL to allow guest to opt-out of hardware
+> mitigation.
 
-Except Al Viro told me an earlier time we had this conflict (the commit
-the did the convert to fd_file() was removed form linux-next for a while)
-that !fd_file(f) should (could)? be replaced by fd_empty(f) - but that
-may be done later.
+I don't think there is much value in this additional complexity. If
+the guest opts out of BHI mitigation, it will pay dearly for it,
+because then the effective value of the guest IA32_SPEC_CTRL will not
+be the same as the host value, and KVM will have to write the MSR on
+every VM-{entry,exit}. That's likely to be a higher cost than
+BHI_DIS_S in VMX non-root operation.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wSIiq+IvzhhMIXid3Y9yCpQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbk9eAACgkQAVBC80lX
-0Gwv/Af/Xe48GEh3qp6w9EqA83fo+8wnPvFcg3rpEpCiBe0/pj7/7Qig/YCnZ0vC
-/Jt+8G9RUNhNIH0wrmMZG+GY5rIyhECAsew2+yTPLKnYeFvZbDo1edJHqXZZYXTH
-9410/yMMZw9EVdRYqbSAgDDDAuS9V9CGuF+ARx39n9nCTNWsmIIxYDprezL8w0Pv
-tAIAIlWNqgFKW1VGDbz3Gb0n7Otjy1YvEVAaKnjicLtKVHEFURlk/RtfS5vPWKxp
-x++ju9Z8PcxWQ8raqFaWFpsYT/kVUZCM/10hXIMXJU+15XfcD1JgEfaUQnXk67ol
-D5m1jsxJv+enWaiUNNRtASsVGszHLA==
-=cEDV
------END PGP SIGNATURE-----
-
---Sig_/wSIiq+IvzhhMIXid3Y9yCpQ--
+> > There is no need to disable BHI_DIS_S on the host and use the TSX
+> > abort sequence in its place.
+>
+> Exactly.
 
