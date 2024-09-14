@@ -1,69 +1,147 @@
-Return-Path: <linux-kernel+bounces-329363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D566979069
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:20:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A944D97906D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499A31F224A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7330128143C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDF01CF5D0;
-	Sat, 14 Sep 2024 11:20:02 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639A71CF29C;
+	Sat, 14 Sep 2024 11:21:51 +0000 (UTC)
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DF61CE71F;
-	Sat, 14 Sep 2024 11:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D022154BE0;
+	Sat, 14 Sep 2024 11:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726312801; cv=none; b=aI+dNOya08A0lbi/78GJOkYAEWyQMGeNPlKuLMUJhZjGaGNuSyGNRTOEN9L+g54LsRvOCJ8QlS6xNp5D4ZNgg5A3+iK/7elDYfz9yi9cqwJ9UDdaVMHs+YDRSFQ5nK+poJKnZDmbIWQTkZLhERALG9sk0JiyBC4aj3JA/P4oNLo=
+	t=1726312911; cv=none; b=bcoP3nfjYGwsen29zXq+puQGQ0KQPhrGRkeBMH5aSO0QEX+Gc6GdJtXD36b29up+GLsk7IBk3vyLGwqdye1DYUEUqWbvF5FKg92FRWr0xJO/+vOQTORSZq0+8/iVtLvNi4Ar3Z2icslel0ziTHCXXU1yyckckbTcl8GIKgtyScE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726312801; c=relaxed/simple;
-	bh=B/e4582x5/eQYicpm4MVSH0gKsfgYsgnmvIVQhvpiRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1HcKvAWH46O1pttwfd+kXBplvXeRbbfiwphrxFw9prBeZlMr33Ad0g3Kfh3iQvhtOHGYxp1YYsDYgwnNMjFHAZbiCANa9SJQHyOv3eVDdOk7xIgy9tYvhatgMYLTmFiEwT+udJjvCzJ8yVSFlX/3gUXKlRwTJZGhXMHERUDPWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1spQoW-0005BJ-Ba; Sat, 14 Sep 2024 13:19:40 +0200
-Date: Sat, 14 Sep 2024 13:19:40 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Florian Westphal <fw@strlen.de>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] netfilter: nft_socket: Fix a NULL vs IS_ERR() bug in
- nft_socket_cgroup_subtree_level()
-Message-ID: <20240914111940.GA19902@breakpoint.cc>
-References: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
+	s=arc-20240116; t=1726312911; c=relaxed/simple;
+	bh=wYs6+e3ncIibwOg937qyqqpMKoEQH/DfvlRasOabw7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qQso1rdfR5Mefp/PBAgFEe65GeMKPs+6/kMdpIvtdjZRLlMdqSlpPfi1YgPHY9wZJb3esrs1JqIFCLn+rM7sO7TrnqinzHUrUCE5Vb20HQxzF3WCLEEYmthKdVOcS1FQdFRb3FLK6O06qMU3X2YCbGo3oB5XXubLiIT9nGAU80w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=43.154.197.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: bizesmtpsz7t1726312842t8wcg69
+X-QQ-Originating-IP: SOLrjz+HwFUP3pt84UGTG+9SZb7SAJ5qXRN8euUzMpw=
+Received: from [192.168.159.131] ( [106.150.157.243])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 14 Sep 2024 19:20:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2777605266862131744
+Message-ID: <46A8525FAB17E4F4+92686d5e-1de3-40c6-9767-ba9f7fedd984@radxa.com>
+Date: Sat, 14 Sep 2024 20:20:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: dw_mmc: rockchip: Keep controller working for card
+ detect
+To: Kever Yang <kever.yang@rock-chips.com>, heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org, Jaehoon Chung
+ <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+References: <20240912152538.1.I858c2a0bf83606c8b59ba1ab6944978a398d2ac5@changeid>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <20240912152538.1.I858c2a0bf83606c8b59ba1ab6944978a398d2ac5@changeid>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> The cgroup_get_from_path() function never returns NULL, it returns error
-> pointers.  Update the error handling to match.
+hi
 
-Good news, I will retire in the next few years so I don't send shit
-patches anymore.
+On 9/12/24 16:26, Kever Yang wrote:
+> In order to make the SD card hotplug working we need the card detect
+> function logic inside the controller always working. The runtime PM will
+> gate the clock and the power domain, which stops controller working when
+> no data transfer happen.
+> 
+> So lets skip enable runtime PM when the card needs to detected by the
+> controller and the card is removable.
+> 
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 
-Acked-by: Florian Westphal <fw@strlen.de>
+following RK3588(s) boards work fine without cd-gpios,
+
+- Radxa E54C
+- Radxa ROCK 5A
+- Radxa ROCK 5B
+- Radxa ROCK 5C
+
+thank you very much!
+
+Tested-by: FUKAUMI Naoki <naoki@radxa.com>
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+> ---
+> 
+>   drivers/mmc/host/dw_mmc-rockchip.c | 23 +++++++++++++++++------
+>   1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
+> index b07190ba4b7a..df91205f9cd3 100644
+> --- a/drivers/mmc/host/dw_mmc-rockchip.c
+> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
+> @@ -345,28 +345,39 @@ static int dw_mci_rockchip_probe(struct platform_device *pdev)
+>   	const struct dw_mci_drv_data *drv_data;
+>   	const struct of_device_id *match;
+>   	int ret;
+> +	bool use_rpm = true;
+>   
+>   	if (!pdev->dev.of_node)
+>   		return -ENODEV;
+>   
+> +	if (!device_property_read_bool(&pdev->dev, "non-removable") &&
+> +	     !device_property_read_bool(&pdev->dev, "cd-gpios"))
+> +		use_rpm = false;
+> +
+>   	match = of_match_node(dw_mci_rockchip_match, pdev->dev.of_node);
+>   	drv_data = match->data;
+>   
+>   	pm_runtime_get_noresume(&pdev->dev);
+>   	pm_runtime_set_active(&pdev->dev);
+> -	pm_runtime_enable(&pdev->dev);
+> -	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+> -	pm_runtime_use_autosuspend(&pdev->dev);
+> +
+> +	if (use_rpm) {
+> +		pm_runtime_enable(&pdev->dev);
+> +		pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+> +		pm_runtime_use_autosuspend(&pdev->dev);
+> +	}
+>   
+>   	ret = dw_mci_pltfm_register(pdev, drv_data);
+>   	if (ret) {
+> -		pm_runtime_disable(&pdev->dev);
+> -		pm_runtime_set_suspended(&pdev->dev);
+> +		if (use_rpm) {
+> +			pm_runtime_disable(&pdev->dev);
+> +			pm_runtime_set_suspended(&pdev->dev);
+> +		}
+>   		pm_runtime_put_noidle(&pdev->dev);
+>   		return ret;
+>   	}
+>   
+> -	pm_runtime_put_autosuspend(&pdev->dev);
+> +	if (use_rpm)
+> +		pm_runtime_put_autosuspend(&pdev->dev);
+>   
+>   	return 0;
+>   }
 
