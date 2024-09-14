@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-329059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE38978CC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:24:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A15978CCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 04:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A2611F245BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:24:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BBE41F260EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 02:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2916D517;
-	Sat, 14 Sep 2024 02:24:35 +0000 (UTC)
-Received: from smtpbg156.qq.com (smtpbg156.qq.com [15.184.82.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3BD1078F;
+	Sat, 14 Sep 2024 02:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="A5vmQRwF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D386A8BEA
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.82.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5F21103;
+	Sat, 14 Sep 2024 02:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726280675; cv=none; b=IZyLd0+kBJgg9AuPB4rZrhX4uKLdyDVBjFE8vU/FuiMjSKkdNhC+25udlbcfkGpgdTjY7WKICkcxTHBj1KWKiueSzsVYX1hSE563IB2J7gd8AbIzX9LK/JhWnCvew4KzFSn7BsCBqQ2xlIrTW7Nm8GS529ajKhjzud1Hh27FFiw=
+	t=1726281191; cv=none; b=KPOUyZv7z1xk6SPvYGPFsfIY00tj0fQyOpGN3mIjGeC4wWZp60KBvNv4rhaU4XBJetgvqRhZAVyIDlMCbOSl/NG1HIpiG2NjK63gcpl1/Zu0B9953Ithpl5t7oZliHRFCcZJ0/Vz3RR4kbPqnPfMdHfTjD7oIXnwiP/U2HFYFZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726280675; c=relaxed/simple;
-	bh=SvjgF0NBdlcX3CwbzkLCjZjAkfZ1075lpWbkTYbIeGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TyUoCgvW4Re/3EPdsHElC0nc1vqPp74jFo8fe5OW7MVb8ehJ+GhhazLAjktYWTFoSREKHKf1iuWBObi9byB81eGfpS4im90ZeF7ecNCcGvo8WsYbWK5UWYIPlCLQsp9QtwH8OZj9ChLhnpgdIPJXG+aNx56TnbWj83UEXi7goBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=15.184.82.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtpsz4t1726280583t45kfja
-X-QQ-Originating-IP: zt9s5hnMP9ASfBOErfW6YV8nnU/KKrV7riW77zoyeqY=
-Received: from HX09040029.powercore.com.cn ( [180.171.104.254])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 14 Sep 2024 10:23:00 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2754753639437398407
-Date: Sat, 14 Sep 2024 10:22:34 +0800
-From: Luming Yu <luming.yu@shingroup.cn>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	mpe@ellerman.id.au, npiggin@gmail.com, jialong.yang@shingroup.cn,
-	luming.yu@gmail.com
-Subject: Re: [PATCH 1/2] powerpc/entry: convert to common and generic entry
-Message-ID: <9B5E7C0A7C4BFBF0+ZuTzanfk7BcYoFas@HX09040029.powercore.com.cn>
-References: <B4ABABEA5F13B86A+20240912082500.1469-1-luming.yu@shingroup.cn>
- <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
- <153FD6B5CE4F97D9+ZuOYDQ-iHIIwJjbh@HX09040029.powercore.com.cn>
- <95ced963-b584-4ccf-ba34-8f2ba99172f4@csgroup.eu>
- <0332BAE1905768B6+ZuPsBvgv0nwmFAjW@HX09040029.powercore.com.cn>
- <854eef54-4779-4233-a958-0c98ae5fcb7e@csgroup.eu>
- <F81D1486B7B82141+ZuQp4YQkAA2cB9Rw@HX09040029.powercore.com.cn>
- <81200b50-eaec-4cfd-9121-f661f3065572@csgroup.eu>
+	s=arc-20240116; t=1726281191; c=relaxed/simple;
+	bh=hJq/6PBF3sLbLnqKLZJjrgpBEM96uIsrLMnjX63Oq7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HuX9gFIGC2P3enzy7ydzproBQD1llXSTZIxobKzPUTWeM6BCWdfX0I0q6eyusAxiwORJG5AD2MEBCGa8ZEXTuUxoafNDhfLsK49dxLxPYY79yRs4EgrmVqimWAVdBdn+Y6t4cCJDw3sljedxYNcgI6wn1ZdVl+wlDuSM/QUFp8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=A5vmQRwF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726281185;
+	bh=IXODKEe3p+GPPq+OmwlVmOqxhuyvfZujvYHlJhtMSKg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A5vmQRwFtF0709SnQzA0l3k5YNzxl13DlLiN6kIkcTc2TH8T/qtBhUCDOxDOm7Udp
+	 /tigOCaTMIC2GVOU58T6cHYfq2Kci0ogX+LkusXqruEHvl1H0t0Bjb/t3CWhoEn7JD
+	 cf2Be3e1+53Mh3sqXmnJrcNEI3vm/YDXt4qg+lvbxWUH0/b+o6/IbX3pitAGCz7zN1
+	 m26BAcInxZmiD46Ga1W40o3KpEK/35eD99lBQp/mp0XvJD65Z/bV0He+o1SnQCc2Me
+	 VDwJgR3O/Tvf6M4tlpDoE9NYa3cKT20uCBiiyHTiMQBGtuHYq7UGMesEXGOIo8hI1G
+	 8VftC3nuOMFnQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X5Fb51nbdz4xD3;
+	Sat, 14 Sep 2024 12:33:05 +1000 (AEST)
+Date: Sat, 14 Sep 2024 12:33:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Al Viro  <viro@zeniv.linux.org.uk>
+Subject: Re: [GIT PULL] vfs mount
+Message-ID: <20240914123304.172831bd@canb.auug.org.au>
+In-Reply-To: <20240913-vfs-mount-ff71ba96c312@brauner>
+References: <20240913-vfs-mount-ff71ba96c312@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <81200b50-eaec-4cfd-9121-f661f3065572@csgroup.eu>
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: multipart/signed; boundary="Sig_/wSIiq+IvzhhMIXid3Y9yCpQ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Sep 13, 2024 at 02:15:40PM +0200, Christophe Leroy wrote:
-> 
-> 
-> Le 13/09/2024 à 14:02, Luming Yu a écrit :
-> 
-> > > ...
-> > > nothing happens after that.
-> > reproduced with ppc64_defconfig
-> > [    0.818972][    T1] Run /init as init process
-> > [    5.851684][  T240] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
-> > [    5.851742][  T240] kworker/u33:18 (240) used greatest stack depth: 13584 bytes left
-> > [    5.860081][  T232] kworker/u33:16 (232) used greatest stack depth: 13072 bytes left
-> > [    5.863145][  T210] kworker/u35:13 (210) used greatest stack depth: 12928 bytes left
-> > [    5.865000][    T1] Failed to execute /init (error -8)
-> > [    5.868897][    T1] Run /sbin/init as init process
-> > [   10.891673][  T315] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
-> > [   10.894036][    T1] Starting init: /sbin/init exists but couldn't execute it (error -8)
-> > [   10.901455][    T1] Run /etc/init as init process
-> > [   10.903154][    T1] Run /bin/init as init process
-> > [   10.904747][    T1] Run /bin/sh as init process
-> > [   15.931679][  T367] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
-> > [   15.934689][    T1] Starting init: /bin/sh exists but couldn't execute it (error -8)
-> 
-> That's something different, this is because you built a big-endian kernel
-> and you are trying to run a little-endian userspace.
-okay
-> 
-> Does it work with ppc64le_defconfig ?
-make ppc64le_defconfig
+--Sig_/wSIiq+IvzhhMIXid3Y9yCpQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-yes, it builds && boots just fine.
-the host is a p8 powernv system , the qemu command line is as below:
-qemu-system-ppc64 -m 64g -smp 16,cores=4,threads=4 --enable-kvm  -nographic -net nic -net tap,ifname=tap0,script=/etc/qemu-ifup-nat,downscript=/etc/qemu-ifdown-nat  Downloads/Fedora-Cloud-Base-38-1.6.ppc64le.qcow2
+Hi Linus,
 
-I will try other test configures as well.
-> 
-> On my side there is absolutely nothing happening after the last line, the
-> screen remains steady.
-> 
-> 
-> Christophe
-> 
+On Fri, 13 Sep 2024 16:41:58 +0200 Christian Brauner <brauner@kernel.org> w=
+rote:
+>
+> (1) linux-next: build failure after merge of the bpf-next tree
+>     https://lore.kernel.org/r/20240913133240.066ae790@canb.auug.org.au
+>=20
+>     The reported merge conflict isn't really with bpf-next but with the
+>     series to convert to fd_file() accessors for the changed struct fd
+>     representation.
+>=20
+>     The patch you need to fix this however is correct in that draft. But
+>     honestly, it's pretty easy for you to figure out on your own anyway.
 
+Except Al Viro told me an earlier time we had this conflict (the commit
+the did the convert to fd_file() was removed form linux-next for a while)
+that !fd_file(f) should (could)? be replaced by fd_empty(f) - but that
+may be done later.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/wSIiq+IvzhhMIXid3Y9yCpQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbk9eAACgkQAVBC80lX
+0Gwv/Af/Xe48GEh3qp6w9EqA83fo+8wnPvFcg3rpEpCiBe0/pj7/7Qig/YCnZ0vC
+/Jt+8G9RUNhNIH0wrmMZG+GY5rIyhECAsew2+yTPLKnYeFvZbDo1edJHqXZZYXTH
+9410/yMMZw9EVdRYqbSAgDDDAuS9V9CGuF+ARx39n9nCTNWsmIIxYDprezL8w0Pv
+tAIAIlWNqgFKW1VGDbz3Gb0n7Otjy1YvEVAaKnjicLtKVHEFURlk/RtfS5vPWKxp
+x++ju9Z8PcxWQ8raqFaWFpsYT/kVUZCM/10hXIMXJU+15XfcD1JgEfaUQnXk67ol
+D5m1jsxJv+enWaiUNNRtASsVGszHLA==
+=cEDV
+-----END PGP SIGNATURE-----
+
+--Sig_/wSIiq+IvzhhMIXid3Y9yCpQ--
 
