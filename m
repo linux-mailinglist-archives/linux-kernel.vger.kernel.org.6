@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-329237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC9D978F04
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:13:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB693978F06
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E0F2827B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:13:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364F0B2343A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC92146D57;
-	Sat, 14 Sep 2024 08:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0188146585;
+	Sat, 14 Sep 2024 08:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgpTdH3l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWNIKpLd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB9F146013
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 08:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EEA13DDA7;
+	Sat, 14 Sep 2024 08:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726301590; cv=none; b=ZJkAp7fGx0zxxdTCBWHAbEWUuqd6TPjj4ZYm5yw8iznh6yrpwb2Rsc9kmamnx+KT7hqNv6l/Xwv/lxb3wl6dXX6YRlrqrp2GIWnsxMb/c31C+lfy4TVnytOg4i9n1lbG993mMVh6RJlmTl2FtbQaCbBN4olSrxh6uKilsJqxkI0=
+	t=1726301602; cv=none; b=OktnKh/vSsPQoScWYhNFmSaorxC8oo4+pbT5Z9jCgBixHo0Uep9qq5iIGKvkZfOGIWSUOLFpv5Adk/JQSsPRJQxKCqYzbRCKEbt/INMBJnvyKNfhZIwJ+CKbjMTc7SrgDJ24P0LxjoqXcyAH7AYlwdzQX52h5TlrJ7zi0C2+qi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726301590; c=relaxed/simple;
-	bh=/2SevD51AcV5pVbvRLnt56xDTvHbzz40ZtLBxX4HJQ4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mPVwcD+Y+cAU81SFypoE3QKk0hyEYg6sAgQQGUjOiCnPO25LDktmEO1yKqYn6E2HnZbP11c9iMV97OAvTPnZNbkm9+lY10RzOlYmSqkI2jdgNBTmzyjMN1rg0M0+uJDgWzd3cubMTay76G5SBKoQfb9M3OAfjFUl2+8+L2pU+2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgpTdH3l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63E34C4CEC0;
-	Sat, 14 Sep 2024 08:13:10 +0000 (UTC)
+	s=arc-20240116; t=1726301602; c=relaxed/simple;
+	bh=M+Zf4JY7aU+gdS50S+1fYY8bKADB2nX5JxUksO+lNZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EzEWpQAllIpOqnCWzX9JjvgNogzLGYkNgvUnBnj+TYUIkTy+/cUiWWgkqEALnHzRv4V7OnGLAIuIAEc6b+ixRfplJo2xFLCsZn78kSjr1vBiLp/lgM4PyKRzBYczF1cDyVA1T/1SZdJvUXjK0fwlOt0xmPo1jKDnO9Gdfh+cQ54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWNIKpLd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D346C4CEC0;
+	Sat, 14 Sep 2024 08:13:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726301590;
-	bh=/2SevD51AcV5pVbvRLnt56xDTvHbzz40ZtLBxX4HJQ4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=GgpTdH3l75heIogZDa3tqbkaBULKvauLr8695+GhRAaE8oGLVk6GRi6NvGDfTyrBs
-	 ZGMJLu5jB3XBys1IUGSC3RAcLwEQOcp6rwJs+c3c4i4PS+WkCjy9yB9fiD5NkHsd8z
-	 900xT8f0d0pDfdh5XLcn+HeUTrJXLG/ReFpt2gabul7S2A3T06nmHJRoBww+LeZovn
-	 rghF+p+35Wu4TbZueHtcCVCQT9oLKz3i31ozKLVL8PR1pyRTnXhyUQoI3tV2if3DUt
-	 +89/Cx49Hj0quN6ouVWPqjenDe90njlwhuU2kxqG9gZEJ7FU/qH00pAr6fL0oZ0pRW
-	 dqIf/aJ937mtA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2E73806655;
-	Sat, 14 Sep 2024 08:13:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1726301601;
+	bh=M+Zf4JY7aU+gdS50S+1fYY8bKADB2nX5JxUksO+lNZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fWNIKpLdmAOW117JnXlk6GSbuLqlPp7A4RSyI0+XWJ05EynYG/hr+qXCMZPNd8Iqn
+	 IR7Z0hlN74RxImblVHRjeJALmXsd/cG37sXQvfPBnunVX7NL96SqFOpTobsmJ+FTkF
+	 KhojZ+Ap3PbarALR5gs+mjyBmqsmV35HKGU14CJ7PpiidDYvPJ0hM+QAYvtaYMW3Q+
+	 1Nl7yaA74ujRWXn5PvQvhI5TPipHd8Fvlsp2BbTf6/zXvF2exl2uz81DpnLFKlhJtA
+	 Geei6zdImqlLXNjIUvd/KpfQUSE8VfaUof+V0rT2lO4ZFRdU3PZtleSeIVLEp/oJqH
+	 4lpPKWTgUeQxQ==
+Date: Sat, 14 Sep 2024 09:13:17 +0100
+From: Simon Horman <horms@kernel.org>
+To: Linu Cherian <lcherian@marvell.com>
+Cc: davem@davemloft.net, sgoutham@marvell.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, gakula@marvell.com,
+	hkelam@marvell.com, sbhatta@marvell.com, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com
+Subject: Re: [PATCH v2 net-next 1/2] octeontx2-af: Knobs for NPC default rule
+ counters
+Message-ID: <20240914081317.GA8319@kernel.org>
+References: <20240912161450.164402-1-lcherian@marvell.com>
+ <20240912161450.164402-2-lcherian@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/2] riscv: Add missing licenses
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <172630159149.2498524.12159135435898265005.git-patchwork-notify@kernel.org>
-Date: Sat, 14 Sep 2024 08:13:11 +0000
-References: <20240729-riscv_fence_license-v1-0-7d5648069640@rivosinc.com>
-In-Reply-To: <20240729-riscv_fence_license-v1-0-7d5648069640@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912161450.164402-2-lcherian@marvell.com>
 
-Hello:
-
-This series was applied to riscv/linux.git (for-next)
-by Palmer Dabbelt <palmer@rivosinc.com>:
-
-On Mon, 29 Jul 2024 14:00:01 -0700 you wrote:
-> I was poking around some files and noticed that vmalloc.h and fence.h
-> were missing licenses. This series simply adds in those licenses.
+On Thu, Sep 12, 2024 at 09:44:49PM +0530, Linu Cherian wrote:
+> Add devlink knobs to enable/disable counters on NPC
+> default rule entries.
 > 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Introduce lowlevel variant of rvu_mcam_remove/add_counter_from/to_rule
+> for better code reuse, which assumes necessary locks are taken at
+> higher level.
+> 
+> Sample command to enable default rule counters:
+> devlink dev param set <dev> name npc_def_rule_cntr value true cmode runtime
+> 
+> Sample command to read the counter:
+> cat /sys/kernel/debug/cn10k/npc/mcam_rules
+> 
+> Signed-off-by: Linu Cherian <lcherian@marvell.com>
 > ---
-> Charlie Jenkins (2):
->       riscv: Add license to fence.h
->       riscv: Add license to vmalloc.h
-> 
-> [...]
+> Changelog from v1:
+> Removed wrong mutex_unlock invocations.
 
-Here is the summary with links:
-  - [1/2] riscv: Add license to fence.h
-    https://git.kernel.org/riscv/c/097c72e1f2b5
-  - [2/2] riscv: Add license to vmalloc.h
-    https://git.kernel.org/riscv/c/4ffc8a342298
+Hi Linu,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+This patch seems to be doing two things:
 
+1) Refactoring some functions to have locking and non-locking variants.
+   By LoC this is appears the bulk of the code changed in this patch.
+   It also appears to be straightforward.
+
+2) Adding devlink knobs
+
+   As this is a user-facing change it probably requires a deeper review
+   than 1)
+
+I would suggest, that for review, it would be very nice to split
+1) and 2) into separate patches. Maybe including a note in the patch
+for 1) that the refactor will be used in the following patch for 2).
+
+As for the code changes themselves, I did look over them,
+and I didn't see any problems.
 
 
