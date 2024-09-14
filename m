@@ -1,167 +1,104 @@
-Return-Path: <linux-kernel+bounces-329537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0529792A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:22:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B209792A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 19:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84F3A1C21169
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:22:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74100284583
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99CE1D130B;
-	Sat, 14 Sep 2024 17:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0A21D1315;
+	Sat, 14 Sep 2024 17:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cDiQxUVy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kT0mQG9h"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B441CFEC5
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 17:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627341CF29F;
+	Sat, 14 Sep 2024 17:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726334533; cv=none; b=QcPw/FG72zO5hvWuy5hMiRWyHY722SgeISENfgXtgmhJC8PvhpQRCmtEP/mWcAuxF1mfkmRpX+4yUwDF7gaScQpGwCSZNd3JeOaz7KPvjfGvZeMiaCSi204YTC4PUKHVVBXBN07yprpFOepv63Mu/9k7lbA1baENEbvb5J3yDbc=
+	t=1726334860; cv=none; b=D5sjx7gd7qKS5Pthz5LK/2amvBOM/T+UUvqEIJudbbXitR1ejbUM9dMjEkh2lWcnV/9c/px5FpnlTueoJs8kae/UP7oizd56cZeF4y1Tt7OaQPdLfIOUU8j2V3YLMbGRFXuS61Ub8Wek/1zhd65hXAC8dXtv8uTCeKMnl9IwrwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726334533; c=relaxed/simple;
-	bh=xQFX4Q0Ux4wuliWmkNy0+0kNrGocQMF3qwDpU/ASMx0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MvcdLWYyXX8dFi1m1KbxYV3UAOXMusqjVkZ/x8Oo7ZO2oef/99VE2Li8SAX7PZpwls5UOVoVNW1yjiGmhAyL0F9gArEkeXf3TEW06FI9xx/Pkqbu5DpVoWv7JvFO5Ug274pv9O7zjVBbYNhxj1bgiTsd3AAev6KPoL/AJdGQaO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cDiQxUVy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726334529;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O7EzSgsDr9r9jIruy2sWZCrY67MSTMTwLiKAaXeqnvA=;
-	b=cDiQxUVyzCTa6kXc4uWo9vpSq52iyWDoEKKZOwmrW3/NcGu4hJYil24Wd1ujIwlaJDh9dU
-	KxI5y1J+nr1QIOKnbNUdkNKY+0tzsFq5/k5aPVkmE4IvRMFg85LIG7zbKtXxGb6IqTCc6t
-	xauxaSDOhBjsaY1sOJZbK14zl5TPGxo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-x083uZMQOLWEIrsA5KYNaw-1; Sat,
- 14 Sep 2024 13:22:04 -0400
-X-MC-Unique: x083uZMQOLWEIrsA5KYNaw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 16C4E195608B;
-	Sat, 14 Sep 2024 17:22:02 +0000 (UTC)
-Received: from [10.2.16.15] (unknown [10.2.16.15])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 919F31955D44;
-	Sat, 14 Sep 2024 17:21:59 +0000 (UTC)
-Message-ID: <5045fb8b-4968-4b5a-9d9e-1def94308426@redhat.com>
-Date: Sat, 14 Sep 2024 13:21:58 -0400
+	s=arc-20240116; t=1726334860; c=relaxed/simple;
+	bh=G7MGD6YFlVzcoRY2U5cpBxTQS4KQQJAjDF4qA7NCnDc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eMO+9Ak+atyrVM89iZfEyEti2cNOy3fLGNiOBtenBYkZdznri32EXvb2KSNM6diD2OFTztqDtYwHYjtNuWHNNPyhS29UR8pFjZFs0Ztn4ATGcgDjcdcEQ7C6Fd4TniUqIl/S6OBF4wOAqWeSeZeIlho1VcCL40orLAfGUQjSgKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kT0mQG9h; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53567b4c3f4so3056433e87.2;
+        Sat, 14 Sep 2024 10:27:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726334856; x=1726939656; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ua0RwIdNbsjghsvTrAc/40v+bEWhVeTz6+XAYW2j+4A=;
+        b=kT0mQG9hcMSyNMtGcvfbDW+oflOI6na8TEVsLm2xEannihdl9/McH67K8dz+q18YUV
+         uZvWDOpOaD70qdV9Hb7kn+q9MUvclwrO4MDiHvEw/noDa3N9Q1Qri6dVe+d/SGsfxmYQ
+         gfJiWVMyNMuO9wHB4Qli1Ry1caIyVssel5gFE/nEAVYxCziMWYseXOYUd8DUS0W2Etqu
+         CcleEusAWfkQku0rZXss+LVg1wHGlgHCKLqQAxiywW1l7aog6Ghc5etjxHQTd7kmuxsx
+         /qFdfMeWGsOYXLZcSlA4Vp+ty2K/Mz74CYrVURV8200R6vpTTpuU4lNH0iK/b5kof4zk
+         uUhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726334856; x=1726939656;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ua0RwIdNbsjghsvTrAc/40v+bEWhVeTz6+XAYW2j+4A=;
+        b=a/hnu9A0SolXE8efhp5HfvaC6W1ZiS7dDO9lntko7JMbbNlWaT9NkGsKqc9qAxGe05
+         mrehGjjOXJGFgRqtSEFNNX5Stom/fKHLgasGHpofx4tFtkmqOX1yx2fsZGiJ5lTt0fCN
+         cJWeCnWBUH4TrU4HyXrX0uPEjc22Vjkk2mAtoNIfKooj/iGURTT8JT+ODGIG+bGPADCN
+         +gdnAvqS7U/ft+xrP3voVM0H/lxmJ8G+y2W6i/nYWOjke+Lydsv+abcd44lCcn21UhK9
+         l/BdOalMFIza+Oj8/dUCbw2yqhoXQFfGgfNGELgeIxISYV9NQZaatKn/3vQWY3G/ax1E
+         bGZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ/OPc16mmp2iFAZIVp7ECTxhsRug4NkO8CXMkFC8lYMsXe7+zgVgxXt5ic1Zig6xoMvckF/3Dhs4t/+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl4mJzlHKuMcRXuZBoLP0TJn0v+5J7gvWYbw6p+5aMxAlbWJpA
+	btamUgh87aV/JrueANXE8DWqCshak6MnyhzquqyoJboPNthE/JeqCFwMBwdYE/y7Xf9kZWrQqhi
+	hHvgTBmri2NS1jchfiY77vh62so8=
+X-Google-Smtp-Source: AGHT+IFx1ixGYkC8ziz1GzRu0FxwU9Yc1Wopig6eol/64aGuDHuzaI2KsiYl0tNin+B10ZefRsd+N6ESwQMAyPZ3Ndc=
+X-Received: by 2002:a05:6512:b9b:b0:536:52c4:e45c with SMTP id
+ 2adb3069b0e04-53678fcd1c1mr6260267e87.31.1726334855953; Sat, 14 Sep 2024
+ 10:27:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] locking/osq_lock: The numa-aware lock memory prepare,
- assign and cleanup.
-To: yongli-oc <yongli-oc@zhaoxin.com>, peterz@infradead.org,
- mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Cc: linux-kernel@vger.kernel.org, yongli@zhaoxin.com, louisqi@zhaoxin.com,
- cobechen@zhaoxin.com, jiangbowang@zhaoxin.com
-References: <20240914085327.32912-1-yongli-oc@zhaoxin.com>
- <20240914085327.32912-5-yongli-oc@zhaoxin.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240914085327.32912-5-yongli-oc@zhaoxin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240910045030.266946-1-abhashkumarjha123@gmail.com>
+ <20240910045030.266946-2-abhashkumarjha123@gmail.com> <20240914144402.16486b79@jic23-huawei>
+In-Reply-To: <20240914144402.16486b79@jic23-huawei>
+From: Abhash jha <abhashkumarjha123@gmail.com>
+Date: Sat, 14 Sep 2024 22:57:24 +0530
+Message-ID: <CAG=0RqL7y-Dmi6nAibkGOr32ufmMHS=pGjgp_7Er_oBTMqEszQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] iio: light: ltr390: Added configurable sampling
+ frequency support
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 9/14/24 04:53, yongli-oc wrote:
-> The numa-aware lock kernel memory cache preparation, and a
-> workqueue to turn numa-aware lock back to osq lock.
-> The /proc interface. Enable dynamic switch by
-> echo 1 > /proc/zx_numa_lock/dynamic_enable
+> Hi Abhash,
 >
-> Signed-off-by: yongli-oc <yongli-oc@zhaoxin.com>
-> ---
->   kernel/locking/zx_numa.c | 537 +++++++++++++++++++++++++++++++++++++++
->   1 file changed, 537 insertions(+)
->   create mode 100644 kernel/locking/zx_numa.c
+> A few minor comments inline and an (optional) request to cleanup
+> the mask definitions in the existing code.
+> >
+> >  #define LTR390_PART_NUMBER_ID                0xb
+> >  #define LTR390_ALS_UVS_GAIN_MASK     0x07
+> > +#define LTR390_ALS_UVS_MEAS_RATE_MASK        0x07
+> These masks should be converted to GENMASK().
+> If you don't mind doing it a precursor patch to do so
+> would be nice to have.
 >
-> diff --git a/kernel/locking/zx_numa.c b/kernel/locking/zx_numa.c
-> new file mode 100644
-> index 000000000000..89df6670a024
-> --- /dev/null
-> +++ b/kernel/locking/zx_numa.c
-> @@ -0,0 +1,537 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Dynamic numa-aware osq lock
-> + * Crossing from numa-aware lock to osq_lock
-> + * Numa lock memory initialize and /proc interface
-> + * Author: LiYong <yongli-oc@zhaoxin.com>
-> + *
-> + */
-> +#include <linux/cpumask.h>
-> +#include <asm/byteorder.h>
-> +#include <asm/kvm_para.h>
-> +#include <linux/percpu.h>
-> +#include <linux/sched.h>
-> +#include <linux/slab.h>
-> +#include <linux/osq_lock.h>
-> +#include <linux/module.h>
-> +#include <linux/proc_fs.h>
-> +#include <linux/seq_file.h>
-> +#include <linux/uaccess.h>
-> +#include <linux/reboot.h>
-> +
-> +#include "numa.h"
-> +#include "numa_osq.h"
-> +
-> +int enable_zx_numa_osq_lock;
-> +struct delayed_work zx_numa_start_work;
-> +struct delayed_work zx_numa_cleanup_work;
-> +
-> +atomic_t numa_count;
-> +struct _numa_buf *zx_numa_entry;
-> +int zx_numa_lock_total = 256;
-> +LIST_HEAD(_zx_numa_head);
-> +LIST_HEAD(_zx_numa_lock_head);
-> +
-> +struct kmem_cache *zx_numa_entry_cachep;
-> +struct kmem_cache *zx_numa_lock_cachep;
-> +int NUMASHIFT;
-> +int NUMACLUSTERS;
-> +static atomic_t lockindex;
-> +int dynamic_enable;
-> +
-> +static const struct numa_cpu_info numa_cpu_list[] = {
-> +	/*feature1=1, a numa node includes two clusters*/
-> +	//{1, 23, X86_VENDOR_AMD, 0, 1},
-> +	{0x5b, 7, X86_VENDOR_CENTAUR, 0, 1},
-> +	{0x5b, 7, X86_VENDOR_ZHAOXIN, 0, 1}
-> +};
+Can I do the mask to GENMASK conversion in an additional cleanup patch
+at the end? The patch would clean up stuff related to newlines and such.
 
-Why are this zx_*() code specifically for ZhaoXin and Centaur family of 
-CPUs? Are there some special hardware features that are specific to 
-these CPUs?
+Meanwhile I would use GENMASK for the new ones
 
-BTW, your patch series lacks performance data to justify the addition of 
-quite a lot of complexity to the core locking code. We are unlikely to 
-take this without sufficient justification.
-
-Another question that I have is that the base osq_lock() can coexist 
-with your xz_osq_lock(). A cpu can dynamically switch from using 
-osq_lock() to xz_osq_lock() and vice versa. What happens if some CPUs 
-use osq_lock() while others use xz_osq_lock()? Will that cause a 
-problem? Have you fully test this scenario to make sure that nothing 
-breaks?
-
-Cheers,
-Longman
-
+Thanks,
+Abhash
 
