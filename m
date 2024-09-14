@@ -1,110 +1,115 @@
-Return-Path: <linux-kernel+bounces-329594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6F5979353
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:32:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E30979355
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 22:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B6581C2107D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5348E283178
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 20:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94098129A78;
-	Sat, 14 Sep 2024 20:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCDA138490;
+	Sat, 14 Sep 2024 20:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TO6as4Lw"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AckHqm/M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47BD433BB
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 20:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039683CC8
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 20:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726345954; cv=none; b=mCKqzuClsYt6XWQvCQTW/43WXfIv4ELTTBrG85NPZQSrd3kcqH+OUys1VUvoW9QkKf2qfVWOWXtZrSOQrEuYfEVB6k8GNF5BPcsf9JsiZzznsrr5xAEd7MCukle3qGSXCQItfGWUG4UIxYA6ShUx4tmtpXwRorbSbRTy3MayQkA=
+	t=1726346416; cv=none; b=XaFwM+GX9NoaO/qZoUFkVfF0h2MG4VAW1+dL9kmhvg0NLp5uAN+Ngz97Q1z+JckzhOuhEODTqGSxIpQmYSssWm7wN61c4kY0wOa2CB5Dt/v3M+wUdhY6NxUeT6s80KvQNDZsoaNYjHmXLW3jwlkF7cEq6oS3uPU0QwLgBYqhPqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726345954; c=relaxed/simple;
-	bh=F3IiwGIlOBcsHPpCUg0PYbzsHuC7Wa9ijM+/bgB4CMs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ceeLhTnu250eiMaMKqOhaEod8Rc33AW0zdoY9ETx97h5GgaFQ6Fd6M0c31dxACsYW6T2TIVV/bDCoCyGq/jcZgpD1cstXYgdhNL4xZ/qFTvyom12B7G84sLS3MfQ/jOfwUmJHQ1jnDocwvZk3dHLGp49OpUKp5XHrTVe9AFgbug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TO6as4Lw; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-207397d1000so32626855ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726345950; x=1726950750; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jdKV1HEUhnJOzOUSDTkMKFHQ0OWb2jLH54eu+r9ySoM=;
-        b=TO6as4LwigvR3gEWHOiUxhjh1h9TNw9vxBd4FhfRgqhRHGYdglLLzmg9u58LORcLBV
-         8w0vxDjeGjrIDshZJcNw8MQWbbPfNMo/uN3vrUoQRs6GpF19QBGoXu7oIao8bHNgz32m
-         Oi9cSqvQRkZVTeQ2Rqtb24IlzqeI3/kx2pPXHVIv0mrkF+FrSHtrefS7CfuTxqdhl/gq
-         pP3wdWnTenpumfnutDxYiYmbIY67q8aoE6q292GMmmMge9wHCYd88YVOBIlc5TFMFMoZ
-         hI2RsokXZUQ/GEIRqs0j/DiWXE6czdn3Itl5pHAfn3UiiozDdRk4w3H4XsKdrIanoCUN
-         FXHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726345950; x=1726950750;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jdKV1HEUhnJOzOUSDTkMKFHQ0OWb2jLH54eu+r9ySoM=;
-        b=mHt77El/TISmoNJZl4ltF/yvc3r6JS8UGdyOWpSuxqQV28he4OQ2xfAulo+lCZ0XFO
-         JLgJWECRRRDyXHNBAWspG80ay+Xy+bugrqdjkeOcR/Htsi3OjNxAKgSllQDz0YZ5JINd
-         fYyzpJ8n3bYP4Y2uYPRyhydb5uAK3486oRgqTgFhwdpIwmOf9Rg+NpShHtzXbOiBKCLD
-         +2d3KDkTAwdjQBS6wyVomZyUa1TlUpAEIfoaq6sWIeJp0caej8a4DPTRbsGCX0h9r+kB
-         NRmPQPaM+JHuw141MKv7CNEChiDgl0bjpXMVjk0reM1ndsJdBxdefQVeF0lcwzF6H6En
-         Cfwg==
-X-Gm-Message-State: AOJu0YwC95Fn3CQVD2qvOKUn9YLzlXgpbommN+1WrN3aFpDgTdYH6r85
-	OyvsPKTNmPdiCoJlcEVvOH+lm5ybTiuuGW9dDel9YiGIgIWNde70
-X-Google-Smtp-Source: AGHT+IE1lA37ZVqupKEOTVaPbMVLYxIHYlm8EZ0ya+mHOr2CVKWmUD7Y+KF+KSASaQCL4BKwjyZQdg==
-X-Received: by 2002:a17:903:41c9:b0:1fd:6033:f94e with SMTP id d9443c01a7336-2076e61ddabmr184752265ad.27.1726345950277;
-        Sat, 14 Sep 2024 13:32:30 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945da9f3sm12866805ad.23.2024.09.14.13.32.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2024 13:32:30 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-infoleak in iowarrior_read
-Date: Sun, 15 Sep 2024 05:32:26 +0900
-Message-Id: <20240914203226.99700-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <0000000000001fdbd80621e28ae3@google.com>
-References: <0000000000001fdbd80621e28ae3@google.com>
+	s=arc-20240116; t=1726346416; c=relaxed/simple;
+	bh=8uxyuUaxJOkH8vX/RGr3kDFl9I63UzbJ+nTNCh6D+/U=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Vaalsi89OI0y5JRRse53tfFIHR4lZXcT0DqBLz1t5Op73VNizsnR5PBGlOessmhocYiJQlaBeOJ/9VcaZfXNg0b0ul+NmwrMqgX6tuWv1RIPaJEnA0WvW5UvOvnr2aKUwA41S5t4M4FNgWQAoDf2IgzFemENS3ly85W/0Evznn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AckHqm/M; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726346413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RfizNILj8Bic7UhBJkx7foDXeeUTZejgV3kKoRryAVc=;
+	b=AckHqm/MDteYaexe5s+8wK4HaC1iru8fYpNVMW5M0sc5OQ411HTKuIFyBeTD/hI4GpiHFE
+	X6ryx/dl3EGMwyArs+TwugwTBlHVktEg44E50oz/splthhjG0yV1Tb4QU2Nhn0+IVy2HNa
+	L7f1pJ5E3i2A1NXKWeV9/CzSarHoKOY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-483-vDdsiWTFMj6PNxmjdDY64Q-1; Sat,
+ 14 Sep 2024 16:40:08 -0400
+X-MC-Unique: vDdsiWTFMj6PNxmjdDY64Q-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 800C71956089;
+	Sat, 14 Sep 2024 20:40:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D252D30001AB;
+	Sat, 14 Sep 2024 20:40:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Marc Dionne <marc.dionne@auristor.com>
+cc: dhowells@redhat.com, "Dr. David Alan Gilbert" <linux@treblig.org>,
+    brauner@kernel.org, Jeff Layton <jlayton@kernel.org>,
+    linux-afs@lists.infradead.org, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix missing wire-up of afs_retry_request()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1690846.1726346402.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 14 Sep 2024 21:40:02 +0100
+Message-ID: <1690847.1726346402@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+afs_retry_request() is supposed to be pointed to by the afs_req_ops netfs
+operations table, but the pointer got lost somewhere.  The function is use=
+d
+during writeback to rotate through the authentication keys that were in
+force when the file was modified locally.
 
+Fix this by adding the pointer to the function.
+
+Fixes: 1ecb146f7cd8 ("netfs, afs: Use writeback retry to deal with alterna=
+te keys")
+Reported-by: "Dr. David Alan Gilbert" <linux@treblig.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-afs@lists.infradead.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
 ---
- drivers/usb/misc/iowarrior.c | 6 ------
- 1 file changed, 6 deletions(-)
+ fs/afs/file.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-index 6d28467ce352..c36eb831e3db 100644
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -182,12 +182,6 @@ static void iowarrior_callback(struct urb *urb)
- 	    && (dev->interface->cur_altsetting->desc.bInterfaceNumber == 0)) {
- 		/* + 1 for serial number */
- 		offset = aux_idx * (dev->report_size + 1);
--		if (!memcmp
--		    (dev->read_queue + offset, urb->transfer_buffer,
--		     dev->report_size)) {
--			/* equal values on interface 0 will be ignored */
--			goto exit;
--		}
- 	}
- 
- 	/* aux_idx become next intr_idx */
---
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index ec1be0091fdb..290f60460ec7 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -404,6 +404,7 @@ const struct netfs_request_ops afs_req_ops =3D {
+ 	.begin_writeback	=3D afs_begin_writeback,
+ 	.prepare_write		=3D afs_prepare_write,
+ 	.issue_write		=3D afs_issue_write,
++	.retry_request		=3D afs_retry_request,
+ };
+ =
+
+ static void afs_add_open_mmap(struct afs_vnode *vnode)
+
 
