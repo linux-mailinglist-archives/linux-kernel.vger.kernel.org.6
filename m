@@ -1,141 +1,148 @@
-Return-Path: <linux-kernel+bounces-329490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C649791FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:07:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49A29791FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 18:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E946284580
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B2E1C21536
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 16:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDE11D095F;
-	Sat, 14 Sep 2024 16:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54E81D095E;
+	Sat, 14 Sep 2024 16:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dFLl+TTw"
-Received: from msa.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BaXzLoFU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D4B81741
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 16:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF3E1D04B8
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 16:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726330071; cv=none; b=SBrIjIrZgrypi/z6iiVX5hiW0P3fTiShT3GYEspzuTlnVHGq+05FathZ/fcic5+Kqvb+lH0fL2fq0YcDh7RmeVu3k7w0Pgu0j4kPbsyouMtTmFGn4uOg+tFlqfrzZhf/RRZNUaeXFkxeBqhj2zE77wTNbLDo3F5U5RM/8DNbhe8=
+	t=1726330214; cv=none; b=R6mT3dCcPlpHFMvXzwCOlt1i+9iJW7xdnotBG3fLea2AS9Cy2TkP7BK9IiQlQR97n5m6FH2HyWcBrHk5OLnB2mugbQ341vmJjmqUp9LhGNc+Q6pwS9oLulCGPl0DvbPW9hMG2jthIA+X7VC8jw3TqBQT1uYdPoaRpD7LEw8Czas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726330071; c=relaxed/simple;
-	bh=4sBx9Pok9ci2U6rCdVYCCf2eawSqaEDxsKn9nhdoqx8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ofZc9Eyu7vIcLtXKW5rSFuheJSHgoMKMpIeXGweopBKtuGN5ezN17ZqJjdyl1DVdRlNpD3lWe3mJDYTd8PO0w1GJpANUFPisVxhLDPpc9YjImxxQ0c77jwJ41bsPPnsC+57La1iMmK9pfi+JRlOeEwIHuBnn6lzEomIn+wtChf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dFLl+TTw; arc=none smtp.client-ip=80.12.242.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id pVJIseX6XZkdcpVJIsxPA7; Sat, 14 Sep 2024 18:07:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726330066;
-	bh=3K7AI48QI2FbNvgXLRmIkhjGNi47KFNECaCiYHSyQbw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=dFLl+TTwv3G1/KfT9nw1cqsJ+7ILIdiOX2VCQMiLqGRNUDl1yEJEfSeqv7R6W/9SB
-	 g+xbrqxkuVQzAs3hipVm8DwhRzdtN4Q9wvoHhWkZkFTrQG62/uNXrG/XDaMXOgWiYP
-	 dKwmHdpvr82dD2gDK5iKCnn66GGNJnYZ2kgnatiZ8p6yspye+TEffcDPth75+dfpfo
-	 k6Ruxq0iQjTzUaeFdSSK2RjgzrZGid+N3yGCKVE6GoDEXiBVoFOFLq+p4SMcVAuPak
-	 cHn3iLLJmWR5sl9GTOkXO54JkPM9Gj2VnL0Rv0IDL1lMwezXTTMf3P2Z8TdAorbZam
-	 6vfeMBY5QEhmg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 14 Sep 2024 18:07:46 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: biju.das.jz@bp.renesas.com,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Subject: [PATCH v3] phy: renesas: rcar-gen3-usb2: Fix an error handling path in rcar_gen3_phy_usb2_probe()
-Date: Sat, 14 Sep 2024 18:07:24 +0200
-Message-ID: <290b25827e3f0742808940719455ff0c5cb9d01d.1726329925.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726330214; c=relaxed/simple;
+	bh=8AOCxFfb7j8DcfInrSLgYDK9nmwjDzPAdDYsIDvR/lk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AJ7xi5IeHkJRGmSgAzRav193LRND0+JFOF39NJaXZutD+nnuAdUrlSYlBelMlB15vde5lQTZ24otrF5zzC0y7YmwM9JBnpBw283/EJdopagw800h7ZDiGIDmCdgLU1E7npc28+Zo8uoVu6ZClyd6GlY462rKs6hWmpVJ/lO3P6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BaXzLoFU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726330211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gVjWpjqJODWBhVoOOIKNl587HfNajGvXg1O8JyOtZI8=;
+	b=BaXzLoFUNrnoj5arWZLk3GUMTIIYYzsgUgJTmQMA+a+F0cntdCkNDTCbQDUbKT1qXQzz2B
+	+Fl6BU3Pa83xwrPFvlfyY55T1Iu+Agd2zJAvfsUOggXY/vmB67ZfjLkh5+PxCqQyZrz0f3
+	FRbHiG58dbuVCQ1x/2p+NRgsOez5/Vc=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-18-sWIfxNsFOJCaQoo_AR9UXw-1; Sat, 14 Sep 2024 12:10:09 -0400
+X-MC-Unique: sWIfxNsFOJCaQoo_AR9UXw-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c25cf44030so1982191a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:10:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726330208; x=1726935008;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gVjWpjqJODWBhVoOOIKNl587HfNajGvXg1O8JyOtZI8=;
+        b=jaR/t2GtlTdJZfe3smeZKlYFbE4FOBImVt16vptsKifyJoHrFKXwAN+hoyKlO60IBK
+         8bK3tSlzPPzz8D0nY8cxRqpUCZNZwKYFQcOZNA1Tkj1V8P2zp99Eda2pDsBfTgJmAMya
+         Lo3Mpi5JutVTvTcQ4LSjlZBceaKYlC4/ic4DiC1CCFlsPV/tnTay1yB9yBmxZWiHXKrD
+         VTSVRXGj1GD2trQBVph5tVjap/iYy4YnJI0kRbZuloceABTTSfm9c4hh/NEdNmqSfBwp
+         YjpPse+gKT+GyM9ML2gXtXGVRUizFe6H0ExKJp11FzQlk4ltMaS6g/lxWN++oW0giNQS
+         uXcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrdIX7oQNqL7jKKa84+eAi5Yck4ddI85aZqSqT8VLx26N8X5Mk4zTwKZ3nxkCWhGzPpNEHNssl03ju0mE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyetYHk9D58NlxQBQZIiN7Tu5yDAhPeGLAr2jjHlmOF+v+/sAAi
+	OAdCPu79Xxzd1s0uvSK5tjF7Wr+/TJuBAGFdCDnbfx5PzZ0rBjtYvy6oHqadj13xLJfSLRp/zHo
+	j89O0p6F4qjh7WgkNm/PtpAPYU4TJCks5gcn2xeTESkQyo5g03LGSHKvRZcar2Q==
+X-Received: by 2002:a05:6402:51cd:b0:5c4:1d22:9fd0 with SMTP id 4fb4d7f45d1cf-5c41d22a03emr5251871a12.8.1726330208544;
+        Sat, 14 Sep 2024 09:10:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnSE/Qvo9dn/cOeU/e6N9e8WObdZYM7N1mwuFdI0DuIuqajIEaNoiroJO0uOjqGvDq2PqXqQ==
+X-Received: by 2002:a05:6402:51cd:b0:5c4:1d22:9fd0 with SMTP id 4fb4d7f45d1cf-5c41d22a03emr5251843a12.8.1726330208020;
+        Sat, 14 Sep 2024 09:10:08 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89c7fsm773079a12.67.2024.09.14.09.10.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Sep 2024 09:10:06 -0700 (PDT)
+Message-ID: <f987b71a-361f-4d4e-a2d1-6410f4b22cc7@redhat.com>
+Date: Sat, 14 Sep 2024 18:10:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] platform/x86/amd: pmf: Add quirk for TUF Gaming A14
+To: aln8 <aln8un@gmail.com>, Shyam-sundar.S-k@amd.com
+Cc: ilpo.jarvinen@linux.intel.com, luke@ljones.dev,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240912073601.65656-1-aln8un@gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240912073601.65656-1-aln8un@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If an error occurs after the reset_control_deassert(),
-reset_control_assert() must be called, as already done in the remove
-function.
+Hi,
 
-Use devm_add_action_or_reset() to add the missing call and simplify the
-.remove() function accordingly.
+On 9/12/24 9:36 AM, aln8 wrote:
+> The ASUS TUF Gaming A14 has the same issue as the ROG Zephyrus G14
+> where it advertises SPS support but doesn't use it.
+> 
+> Signed-off-by: aln8 <aln8un@gmail.com>
 
-Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch changes the order of function calls when releasing the resources
-in the .remove function(). Looks fine to me, but pm_ functions are
-sometimes tricky.
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
 
-Changes in v3:
-  - Use devm_add_action_or_reset()   [Biju Das]
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
 
-Changes in v2: (broken proposal)
-  - Re-use 'error' to simplify the patch   [claudiu beznea]
-  - Update the commit description to explain why it is safe.
-v2: https://lore.kernel.org/all/4efe2d0419cbe98163e2422ebe0c7896b8a5efed.1725717505.git.christophe.jaillet@wanadoo.fr/
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
 
-v1: https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr/
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Regards,
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 58e123305152..c8a3727f56aa 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -668,6 +668,13 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct device_node *np)
- 	return candidate;
- }
- 
-+static void rcar_gen3_reset_assert(void *data)
-+{
-+	struct reset_control *rstc = data;
-+
-+	reset_control_assert(rstc);
-+}
-+
- static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
- {
- 	struct device *dev = channel->dev;
-@@ -686,6 +693,11 @@ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
- 	if (ret)
- 		goto rpm_put;
- 
-+	ret = devm_add_action_or_reset(dev, rcar_gen3_reset_assert,
-+				       channel->rstc);
-+	if (ret)
-+		return ret;
-+
- 	val = readl(channel->base + USB2_AHB_BUS_CTR);
- 	val &= ~USB2_AHB_BUS_CTR_MBL_MASK;
- 	val |= USB2_AHB_BUS_CTR_MBL_INCR4;
-@@ -815,7 +827,6 @@ static void rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
- 	if (channel->is_otg_channel)
- 		device_remove_file(&pdev->dev, &dev_attr_role);
- 
--	reset_control_assert(channel->rstc);
- 	pm_runtime_disable(&pdev->dev);
- };
- 
--- 
-2.46.0
+Hans
+
+
+
+
+> ---
+> v1 -> v2: Change to FA401W so full series models will get the fix.
+> ---
+>  drivers/platform/x86/amd/pmf/pmf-quirks.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/amd/pmf/pmf-quirks.c b/drivers/platform/x86/amd/pmf/pmf-quirks.c
+> index 48870ca52..7cde5733b 100644
+> --- a/drivers/platform/x86/amd/pmf/pmf-quirks.c
+> +++ b/drivers/platform/x86/amd/pmf/pmf-quirks.c
+> @@ -37,6 +37,14 @@ static const struct dmi_system_id fwbug_list[] = {
+>  		},
+>  		.driver_data = &quirk_no_sps_bug,
+>  	},
+> +	{
+> +		.ident = "ASUS TUF Gaming A14",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "FA401W"),
+> +		},
+> +		.driver_data = &quirk_no_sps_bug,
+> +	},
+>  	{}
+>  };
+>  
 
 
