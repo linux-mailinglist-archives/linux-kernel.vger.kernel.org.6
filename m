@@ -1,60 +1,80 @@
-Return-Path: <linux-kernel+bounces-329476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9289791CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:33:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A929791D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 17:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C771C214DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:33:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B043B21AA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEBD1D049D;
-	Sat, 14 Sep 2024 15:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0461D049E;
+	Sat, 14 Sep 2024 15:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXNdi+dW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bcOz2c9/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525DC4C92;
-	Sat, 14 Sep 2024 15:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3CB1CFEC1;
+	Sat, 14 Sep 2024 15:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726327997; cv=none; b=HZoUBKxK0kh9SLc9rft7AhPd/WjC6GYQwIp66gs7EK9QpaB7D8Gsp6KNWRdVbM/BHOngJoeLVSjELN4kreI+tncWbbMd9VERRoPP4e3VJS/udguJTzI4z0BZmSB3z4V+unHytdQLCr4LQiZjS88+2MaJtY3ZoZXn2d7bv4b3F3Y=
+	t=1726328061; cv=none; b=Rv29lxgBtQ0RBd3WV7QEMWZwLiPDsMyz8eYYQnLB56nzsBecOQDOzHmK5ChTorXxN0Cdwm0qaP4AENJl6UUcUcKAc83lHPhlXJNqQKQgOGG1HnY3RTDc/0o38lJxYGe5FFRDHzRtL5Vm5YcLXsRcuMvbYkkRnmrjdQilSt1aWso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726327997; c=relaxed/simple;
-	bh=irG2ZvLex5ubZB79jar/ygEFO4yemcD2PPyp9Ezkvvs=;
+	s=arc-20240116; t=1726328061; c=relaxed/simple;
+	bh=QBOVB0yM2vWg5VsUrg726BxZNDRJISV0VOA08vKcut4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZpVDJygMiSUsQccl6Co83QElXDH/6V7lZcIpLwru1cIOoibK2XZU+TCm8zwms/WJZfhH5tYqs2NVmvoc9OdNwouEpJpUWU0EgeJEnY12MZCtSbdFcHJSDpQpFcwR4gTnJEeMKqezK01Z/YESe5ODfu9EmURLIyEQ7FiOkB85PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXNdi+dW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 464A1C4CEC0;
-	Sat, 14 Sep 2024 15:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726327996;
-	bh=irG2ZvLex5ubZB79jar/ygEFO4yemcD2PPyp9Ezkvvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KXNdi+dW+AbaS2se3S2XvOZVG/5Oc+AUPphhIT1gvw7FIoqJfhYp7RVpMW3+rPL+M
-	 tQAluj/s1ltg6FkefAGjMW52D5qYUyPbCWQA6FCq285b6c+QefT1zv2D7XiilxPQts
-	 Fz98bLVvoEpt8ocaHVpIvfyv1BddXlZT/tBN+goejGtqtk7U7qSpoysUYZLup88URU
-	 /HHr0t/ipSsKnARkYwZ9IoqXTzroYBUCHpnUPnBfQt3YVJS2EogOwz355KwF4XjN9p
-	 jI75uD0PcRnThJkz3otNMctGaWNoN0jLSYviLYakmlpZUDhZA0pYCRhCvgrt7EZByc
-	 IRVXvpVIvrugg==
-Date: Sat, 14 Sep 2024 16:33:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Wojciech Drewek <wojciech.drewek@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] ice: Fix a couple NULL vs IS_ERR() bugs
-Message-ID: <20240914153311.GD11774@kernel.org>
-References: <7f7aeb91-8771-47b8-9275-9d9f64f947dd@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BndMD6L0sabHDzR24B3aS0eZm6jVEK0AZj4Kqgjualx6k81xXT2W21xSk483UjXZfAvCxnXGwJUd+6bAIFboWrPmXvcfUqwSKg4q5HU7OQMRYFmgSLwJfjQNvJuGuKDBhzKK0eVLCcbG5fOvZ33m4iNq7guqst6kJjXBUTfNBTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bcOz2c9/; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726328060; x=1757864060;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QBOVB0yM2vWg5VsUrg726BxZNDRJISV0VOA08vKcut4=;
+  b=bcOz2c9/JxfV2MYZcKLRZDAhF0o2iZS29XCNQ+oQIMLKOzcIrvC50wm5
+   hqvqHFlGWJpVefPIk5QkpBrKiVjVocV1D5YLOuX/WRuSB6DFByUlURToZ
+   abmRy52jVpuxRxlx6gpyTOr5hgzSCOgxEQG64XeH4TkiUI3We0+2aG65H
+   dBNhKmJgdXfZzWm51UzO+pGE7/zgLWel8ydYLasNaZjf3PElVugEWvBkr
+   YK/IZ5rsz3zzryH3C8mM0bu2qCw13IlQB4u7+6jZC6rqO+vToQkhVHfFb
+   ZqAR6GaNVZdvQF3M7gHAxNxnp+k5m2wOKWLBAWduexyUS/fhEmjZl+oIF
+   w==;
+X-CSE-ConnectionGUID: fKtYEDC4TPKaUQVEnVM2GQ==
+X-CSE-MsgGUID: wbkB+K5+Qcy5tmReeT4FGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="42695731"
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="42695731"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 08:34:10 -0700
+X-CSE-ConnectionGUID: bxZoZih5SFOFijIVQ5phng==
+X-CSE-MsgGUID: txFGEYR2TWmI7oVjMJY0xA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="72808096"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 14 Sep 2024 08:34:06 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spUmh-0007ta-20;
+	Sat, 14 Sep 2024 15:34:03 +0000
+Date: Sat, 14 Sep 2024 23:33:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org,
+	brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com,
+	Peter.Yin@quantatw.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3 5/6] gpio: aspeed: Change the macro to support
+ deferred probe
+Message-ID: <202409142334.UEVN1oRP-lkp@intel.com>
+References: <20240913074325.239390-6-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,16 +83,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7f7aeb91-8771-47b8-9275-9d9f64f947dd@stanley.mountain>
+In-Reply-To: <20240913074325.239390-6-billy_tsai@aspeedtech.com>
 
-On Sat, Sep 14, 2024 at 12:57:28PM +0300, Dan Carpenter wrote:
-> The ice_repr_create() function returns error pointers.  It never returns
-> NULL.  Fix the callers to check for IS_ERR().
-> 
-> Fixes: 977514fb0fa8 ("ice: create port representor for SF")
-> Fixes: 415db8399d06 ("ice: make representor code generic")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Hi Billy,
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on brgl/gpio/for-next]
+[also build test WARNING on linus/master v6.11-rc7 next-20240913]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Billy-Tsai/dt-bindings-gpio-aspeed-ast2400-gpio-Support-ast2700/20240913-154911
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20240913074325.239390-6-billy_tsai%40aspeedtech.com
+patch subject: [PATCH v3 5/6] gpio: aspeed: Change the macro to support deferred probe
+config: arm-randconfig-003-20240914 (https://download.01.org/0day-ci/archive/20240914/202409142334.UEVN1oRP-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409142334.UEVN1oRP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409142334.UEVN1oRP-lkp@intel.com/
+
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+>> WARNING: modpost: drivers/gpio/gpio-aspeed: section mismatch in reference: aspeed_gpio_driver+0x0 (section: .data) -> aspeed_gpio_probe (section: .init.text)
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-ast-cf.o
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
