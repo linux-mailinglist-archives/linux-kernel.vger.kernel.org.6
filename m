@@ -1,91 +1,120 @@
-Return-Path: <linux-kernel+bounces-329072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57214978CF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:01:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29521978CF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 05:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B87E1F25764
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:01:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E321228731F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A281CFBC;
-	Sat, 14 Sep 2024 03:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C3A12E5D;
+	Sat, 14 Sep 2024 03:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+a2lTdx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4Ebr6Pr"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9E51B978;
-	Sat, 14 Sep 2024 03:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323C93D62;
+	Sat, 14 Sep 2024 03:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726282836; cv=none; b=UZjc4f+r6g2bpTPYamUZ82dt2fv6kA6YjVoI5F6D1Q7xlHEcw3vXuhLZ/19dqf5SFt6eqbGXPO2qL1U4kaixfPCQS88AETYErTvtFNGBoO/drpw8HnDpw5+xWZiBWidlTxF7eB/hz6dK4rCXZQFZIE2LnLxgZeMim6F+LkdlA4Q=
+	t=1726282997; cv=none; b=PsWwX5a2d8S8bSh3OqePdhvVugYramPgwYPfJE8X+GmhPixB2uqFpIs47Q1K0QZcnW8jR8miyfbMfqZFYU8colU1yPAbldH1bZD56gMLfKJRo7HGg/a8vhGwF8Upz5UE3fYmoRyOZc8npS0JKP2082hE6uByE8NoLbnXiqpQrnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726282836; c=relaxed/simple;
-	bh=95WTj2xlbZFe2YzZu+W90jZJWS/V+G1wqG/2TCbK7AU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=D8/SC5Sh111K0LM9T0sK6oRdBFz+rHHPVS7IoWO26QkdVQz+QT5aaWrHuSOt0Le4P4yMbbVMR1sTv5a7V5s4KbQxDzaw2RzbLNp/ao2Fu9EEuS6nl6WXiJdf9/aO6aL0i8qitJeMh+OniCgsZVgWndyOPqA5O6aEeQHCoTio3ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+a2lTdx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8154C4CECE;
-	Sat, 14 Sep 2024 03:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726282835;
-	bh=95WTj2xlbZFe2YzZu+W90jZJWS/V+G1wqG/2TCbK7AU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Z+a2lTdxgXMSE0ASbwsipLpHbn5g3/aC3tMWXBhvmLqe6CIRXAlFMuy6fAbjCUcsT
-	 25GYe8RG50lKeE+CCsERP6qE5lWKeC1Kh0bcgwgHwglg99og73p7eCcvCUUNGmFmZ0
-	 bD06egDhTYlRtavqOC6UG+eP6fr5awjlopX+dKPSuEwtzSEVr0u2ZOYtvjNag9qTV0
-	 O8ijxLN0RFBeT+f3Q2LAGJvZiAMFqwBnPWQcTNuWYTDS3qAlWj15I05uwT1JVqpw/L
-	 Pv/IBiZt4HA024pH2Jy919UX4i13JSoHuissjUY9salKAGTVCY0Zw0/UYWxyvOhKjC
-	 4IjmPuTkceM/g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BF33806655;
-	Sat, 14 Sep 2024 03:00:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726282997; c=relaxed/simple;
+	bh=wHRovX7RnBYXUTVQdCoomJetxBSN1EYFT4oLTbCD058=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C8HS5dMzyhd2cW+fbj3iPQ9pKshClvNeOqk9K/gRBLZaCD9Jdj1HhJ9uv6xFeC0HXe+LJfmQ8AgImKvTk2EGHtIQXabJuAL1yLid0UuhobVxaGzEaIkeg53NSZ8I6niNHgBfI06hSWCLq8NSQYcZhqpQTiijZhhzOHP7+GrhspU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f4Ebr6Pr; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3787ddbd5a2so1726040f8f.0;
+        Fri, 13 Sep 2024 20:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726282994; x=1726887794; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wHRovX7RnBYXUTVQdCoomJetxBSN1EYFT4oLTbCD058=;
+        b=f4Ebr6PrG7R64KFEUlNu8lt1FIdCh4+Qw/jEaRbNr1tzl3cqogBrx+NKYvFRwTN5+P
+         CYff1eXmt9gvrBLhChlYP+tuBAJE0nTjU6rbFsiEvPvLmKzkZDtn6c/cTOzrjFb2h1Cf
+         EYl5+fJz42uf8CBTQXEbN78to576FxB5+EQH6S7sBuKp+6TcozbQevSyuLxmCiC+kcjO
+         KN1JhNc65rO2DHeMpONnDEY1fzFiMyXYtVhIP+d52QQ96I05XwYEOUkKPoAx5zNc3Xib
+         N8GAyeNnUe3Xlakc3z7lzMZ7TpycRgJ94bK77+NxE395wZ9TCROlNBL24m6OB0mrDGkz
+         KWLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726282994; x=1726887794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wHRovX7RnBYXUTVQdCoomJetxBSN1EYFT4oLTbCD058=;
+        b=tZVJTVVNWniVKYfqWWugpT9d+HJK2sFl5Av3xWLZ++ypdj4RCgh/WOJ9p9VO2ur9XC
+         UegBnh1GNWsbyN7AmaTPqWsX2t2mxPtMmO/zblCLp6RhYw95qgtNb8ZmZnBnLDmRAmvJ
+         jJQ2gftC+xgd0xej8IySe4RGoIornmcWKv746A9BoXwXVoWQOeEUohGRAkBOSPA2do4K
+         ESojvU2m3lD7L0aWTsKBQ0e1C1YN/BqHKBkTO1xCxxQCWclxKdJGOcsj02JAWV2vVfmF
+         VnjVJt1hBFW+v4THhf7uRENXs1nLyARtnGfiI35dPxq4pf3n4l7+O0T+mEPGF541UPO9
+         kbZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuToFmxnV3lGZCIRo83nblNayubAYJzaUFugy4K7dq4ihTztKw9742RJ5VqR4UdNr/gzg=@vger.kernel.org, AJvYcCWvpVYOHIz6OaAzYDJLUUwcGG1rPsHCSeqCPYTOMeAmA4Pog0s0G9gbuf3ebVFjIarkOueOKribH9mlwA6F@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFF+yRWmT+XH6u1fH/QaMwg7C2g6qrbrrR87ny5SAE9X2Ic4cm
+	UTzMh3Md+9rxXrvJtDLihphmTLGl55Pv1EPDF3PW88JMEyZxFUDfim7MRNCN6WO38fLeYAYtMmL
+	7FRfPeUsE6vZvpe4AxCOe/hQAokE=
+X-Google-Smtp-Source: AGHT+IE6Te4DOj0dAlpaYwvHWTDV+Aas2h8lEFu/BGIZ+NBGJFXioJ3kNLILpRoarvahX1CeJTjDvcKi/Y/yknMQVac=
+X-Received: by 2002:adf:b30e:0:b0:374:c33d:377b with SMTP id
+ ffacd0b85a97d-378c2d5a7ddmr5138642f8f.45.1726282994197; Fri, 13 Sep 2024
+ 20:03:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] net: ag71xx: remove dead code path
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172628283724.2435669.12894402416372191357.git-patchwork-notify@kernel.org>
-Date: Sat, 14 Sep 2024 03:00:37 +0000
-References: <20240913014731.149739-1-qianqiang.liu@163.com>
-In-Reply-To: <20240913014731.149739-1-qianqiang.liu@163.com>
-To: Qianqiang Liu <qianqiang.liu@163.com>
-Cc: kuba@kernel.org, edumazet@google.com, usama.anjum@collabora.com,
- andrew@lunn.ch, o.rempel@pengutronix.de, rosenp@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240913173759.1316390-1-masahiroy@kernel.org>
+ <CAEf4Bzawf_EgHyHB+-=2U6eyJtBDVHVQ+Nx1JFw+TTbNSqSmuA@mail.gmail.com> <CAK7LNATurz9J-w+Vbc4FJ+r2Pov028+G+q8SrF12GjjZb1irtQ@mail.gmail.com>
+In-Reply-To: <CAK7LNATurz9J-w+Vbc4FJ+r2Pov028+G+q8SrF12GjjZb1irtQ@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 13 Sep 2024 20:03:02 -0700
+Message-ID: <CAADnVQKnyRPWqJG1uL-BOeYjvfxd=+fnaMOFeikQc+Povc=HOw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] btf: remove redundant CONFIG_BPF test in scripts/link-vmlinux.sh
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	bpf <bpf@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Fri, Sep 13, 2024 at 6:52=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> On Sat, Sep 14, 2024 at 7:26=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Fri, Sep 13, 2024 at 10:38=E2=80=AFAM Masahiro Yamada <masahiroy@ker=
+nel.org> wrote:
+> > >
+> > > CONFIG_DEBUG_INFO_BTF depends on CONFIG_BPF_SYSCALL, which in turn
+> > > selects CONFIG_BPF.
+> > >
+> > > When CONFIG_DEBUG_INFO_BTF=3Dy, CONFIG_BPF=3Dy is always met.
+> > >
+> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > > Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+> > > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> > > ---
+> > >
+> >
+> > Masahiro,
+> >
+> > Are you planning to take this through your tree, or you'd prefer us
+> > routing it through bpf-next?
+>
+> Hi,
+>
+> If possible, could you apply it to bpf-next
+> for the upcoming MW?
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 13 Sep 2024 09:47:32 +0800 you wrote:
-> The "err" is always zero, so the following branch can never be executed:
-> if (err) {
-> 	ndev->stats.rx_dropped++;
-> 	kfree_skb(skb);
-> }
-> Therefore, the "if" statement can be removed.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2] net: ag71xx: remove dead code path
-    https://git.kernel.org/netdev/net-next/c/7fd551a87ba4
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Sure thing. We'll do.
 
