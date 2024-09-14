@@ -1,163 +1,169 @@
-Return-Path: <linux-kernel+bounces-329326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AAAA97900F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:43:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8E8979024
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 12:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9FF8B23878
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:43:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31B3B221FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 10:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CD51CEE91;
-	Sat, 14 Sep 2024 10:43:35 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A2C1CF29B;
+	Sat, 14 Sep 2024 10:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="peEt8jP8"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379F71CDA1E;
-	Sat, 14 Sep 2024 10:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4885635;
+	Sat, 14 Sep 2024 10:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726310614; cv=none; b=plfMcxUALt/oYBCvMh47U2WsdlzuSuEEyUgvh9Yp2xqd3wBXR95g/tJuEMIOT815cQGhN1u2wtcS2wUE59fJeZKonZeHiQ29lTZM821vhSwof0qYsKDzBYrjaFObROrscGgIrHOnHi82EJKXFdDSDzcRGHWcINx+mc+5juImr5U=
+	t=1726311488; cv=none; b=qujEPOB78x6e7FXt9vUoaXoBRyPEJTE1GfRuDZ+qoEIuVTlwTuLZcslTKGlpw1/e66IDmu7NvIbPskAy0oCdbeZ9ja4CN4IrxWiu2a1SCi7YDNpS4cFsf4HCOP6gfsYRBEf9to5lACd69gveHhDFZKPqcu/cUnNx+X5mCiO8G0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726310614; c=relaxed/simple;
-	bh=W3CbrpRRnofOMK51ORYuAItMi4ThiwBTj2Lzkrp522c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjiJjn4jLDQkeU0oZuPgqLIy0clx4+YiQHJ92LpvMRohXAYiqE8H772TQgsRRVfpk2/MWFJDanON9HjBv0KJALlWhA6Z9n4JslIpsK/xjZv9Qmyimj2CuDn8hyjz024JCWumwqf9hcrB72qF8mqF8kRGv2MWBYhc47CFP6NMPDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4X5SSW43g0z4f3jdm;
-	Sat, 14 Sep 2024 18:43:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 28F6D1A0359;
-	Sat, 14 Sep 2024 18:43:23 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgBnm8fIaOVmaO8sBQ--.15683S2;
-	Sat, 14 Sep 2024 18:43:22 +0800 (CST)
-Message-ID: <33b56a8a-75da-4ab1-871b-ea6af5c22bed@huaweicloud.com>
-Date: Sat, 14 Sep 2024 18:43:20 +0800
+	s=arc-20240116; t=1726311488; c=relaxed/simple;
+	bh=JZzx1172XcqWvR1UQZF0WI04VQXPhB3F9mKK19knqDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KQtFpM7DGerAvSZcKlqmEn9vDGR1fxAa93cIPWGmPOv09HbGdRwLGWd8vMXDO1KaXyRnElXEjec5nrJDcCiXr0uhAqWebkrTxv7UUD8aH6XslhiE/NGIduj2bp5OtoarTFMI1AWswESYo+8fQFarlOE4XorAdtP4gx/FI6nUs28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=peEt8jP8 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 6ed451219db4accd; Sat, 14 Sep 2024 12:58:05 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 78B498532AE;
+	Sat, 14 Sep 2024 12:58:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1726311484;
+	bh=JZzx1172XcqWvR1UQZF0WI04VQXPhB3F9mKK19knqDE=;
+	h=From:Subject:Date;
+	b=peEt8jP8CrAvxU39LOOYcnt5pegi3H6JK8Fue2hKUAo+qGMkT2pHeEqNDOtAh7ech
+	 nG4pemubZTVe3jOs3qpvagcwQK/Lk3t1qtefaQBZXiD/6g/ciDmmqNaPoYlV9adaC5
+	 UCJALMT/8hJBInYq2/3ZM81cN6oUVWOH2PesinWWMThe1Lq6aPNWmixhsK3WxYtfnY
+	 kQ3s27oayWIbZH9eP1rfxOmNbgVSK+V1p660dhwDYanPqqfqJOC9A79q5r42SXIi8u
+	 Z2gSdGDlUXpcw5KhxHoxPYGDV3UL5Dlq2etQj0wksZ9H14SE4s4Wz5kwXajzZPDSMf
+	 8EwE82bBxYF+Q==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [RFC PATCH for 6.13 v1 14/20] thermal: core: Introduce thermal_instance_add()
+Date: Sat, 14 Sep 2024 12:43:24 +0200
+Message-ID: <2641944.Lt9SDvczpP@rjwysocki.net>
+In-Reply-To: <6100907.lOV4Wx5bFT@rjwysocki.net>
+References: <6100907.lOV4Wx5bFT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
- key_task_permission
-To: dhowells@redhat.com, jarkko@kernel.org, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240913070928.1670785-1-chenridong@huawei.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20240913070928.1670785-1-chenridong@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBnm8fIaOVmaO8sBQ--.15683S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw4rZFW8Jr18tryxtr4fZrb_yoWrXw1kpF
-	ZxKFyjyr1Ut34agr1rC3W5Ww1rZa909w17K39Ig3yUZFn5Xr1DJFWvkF1j9Fy5urW7AFyq
-	ya12vws3A3Wqv37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudektddgfeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdr
+ tghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=15 Fuz1=15 Fuz2=15
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+To reduce the number of redundant result checks in
+thermal_bind_cdev_to_trip() and make the code in it easier to
+follow, move some of that code to a new function called
+thermal_instance_add() and make thermal_bind_cdev_to_trip()
+invoke that function.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |   46 ++++++++++++++++++++++++++---------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -736,6 +736,28 @@ struct thermal_zone_device *thermal_zone
+  *				     binding, and unbinding.
+  */
+ 
++static int thermal_instance_add(struct thermal_instance *new_instance,
++				struct thermal_cooling_device *cdev,
++				struct thermal_trip_desc *td)
++{
++	struct thermal_instance *instance;
++
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
++		if (instance->cdev == cdev)
++			return -EEXIST;
++	}
++
++	list_add_tail(&new_instance->trip_node, &td->thermal_instances);
++
++	mutex_lock(&cdev->lock);
++
++	list_add_tail(&new_instance->cdev_node, &cdev->thermal_instances);
++
++	mutex_unlock(&cdev->lock);
++
++	return 0;
++}
++
+ /**
+  * thermal_bind_cdev_to_trip - bind a cooling device to a thermal zone
+  * @tz:		pointer to struct thermal_zone_device
+@@ -754,7 +776,7 @@ static int thermal_bind_cdev_to_trip(str
+ 				     struct thermal_cooling_device *cdev,
+ 				     struct cooling_spec *cool_spec)
+ {
+-	struct thermal_instance *dev, *instance;
++	struct thermal_instance *dev;
+ 	bool upper_no_limit;
+ 	int result;
+ 
+@@ -816,23 +838,15 @@ static int thermal_bind_cdev_to_trip(str
+ 	if (result)
+ 		goto remove_trip_file;
+ 
+-	mutex_lock(&cdev->lock);
+-	list_for_each_entry(instance, &td->thermal_instances, trip_node)
+-		if (instance->cdev == cdev) {
+-			result = -EEXIST;
+-			break;
+-		}
+-	if (!result) {
+-		list_add_tail(&dev->trip_node, &td->thermal_instances);
+-		list_add_tail(&dev->cdev_node, &cdev->thermal_instances);
+-	}
+-	mutex_unlock(&cdev->lock);
++	result = thermal_instance_add(dev, cdev, td);
++	if (result)
++		goto remove_weight_file;
+ 
+-	if (!result) {
+-		thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
+-		return 0;
+-	}
++	thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
++
++	return 0;
+ 
++remove_weight_file:
+ 	device_remove_file(&tz->device, &dev->weight_attr);
+ remove_trip_file:
+ 	device_remove_file(&tz->device, &dev->attr);
 
 
-
-On 2024/9/13 15:09, Chen Ridong wrote:
-> We meet the same issue with the LINK, which reads memory out of bounds:
-> BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uidgid.h:36
-> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63 [inline]
-> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
-> security/keys/permission.c:54
-> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
-> 
-> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafbffd6c3ede #15
-> Call Trace:
->   __dump_stack lib/dump_stack.c:82 [inline]
->   dump_stack+0x107/0x167 lib/dump_stack.c:123
->   print_address_description.constprop.0+0x19/0x170 mm/kasan/report.c:400
->   __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
->   kasan_report+0x3a/0x50 mm/kasan/report.c:585
->   __kuid_val include/linux/uidgid.h:36 [inline]
->   uid_eq include/linux/uidgid.h:63 [inline]
->   key_task_permission+0x394/0x410 security/keys/permission.c:54
->   search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
->   keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
->   search_cred_keyrings_rcu+0x111/0x2e0 security/keys/process_keys.c:459
->   search_process_keyrings_rcu+0x1d/0x310 security/keys/process_keys.c:544
->   lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
->   keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
->   __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
->   __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
->   do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
->   entry_SYSCALL_64_after_hwframe+0x67/0xd1
-> 
-> However, we can't reproduce this issue.
-> After our analysis, it can make this issue by following steps.
-> 1.As syzkaller reported, the memory is allocated for struct
->    assoc_array_shortcut in the assoc_array_insert_into_terminal_node
->    functions.
-> 2.In the search_nested_keyrings, when we go through the slots in a node,
->    (bellow tag ascend_to_node), and the slot ptr is meta and
->    node->back_pointer != NULL, we will proceed to  descend_to_node.
->    However, there is an exception. If node is the root, and one of the
->    slots points to a shortcut, it will be treated as a keyring.
-> 3.Whether the ptr is keyring decided by keyring_ptr_is_keyring function.
->    However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
->    ASSOC_ARRAY_PTR_SUBTYPE_MASK,
-> 4.As mentioned above, If a slot of the root is a shortcut, it may be
->    mistakenly be transferred to a key*, leading to an read out-of-bounds
->    read.
-> 
-> To fix this issue, one should jump to descend_to_node if the pointer is a
-> shortcut.
-> 
-> Link: https://syzkaller.appspot.com/bug?id=68a5e206c2a8e08d317eb83f05610c0484ad10b9
-> Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   security/keys/keyring.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> index 4448758f643a..7958486ac834 100644
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
-> @@ -772,7 +772,9 @@ static bool search_nested_keyrings(struct key *keyring,
->   	for (; slot < ASSOC_ARRAY_FAN_OUT; slot++) {
->   		ptr = READ_ONCE(node->slots[slot]);
->   
-> -		if (assoc_array_ptr_is_meta(ptr) && node->back_pointer)
-> +		if ((assoc_array_ptr_is_meta(ptr) && node->back_pointer) ||
-> +		    (assoc_array_ptr_is_meta(ptr) &&
-> +		     assoc_array_ptr_is_shortcut(ptr)))
->   			goto descend_to_node;
->   
->   		if (!keyring_ptr_is_keyring(ptr))
-
-Should assoc_array_ptr_is_shortcut add ASSOC_ARRAY_PTR_TYPE_MASK 
-judgement? Just like:
-
-static inline bool assoc_array_ptr_is_shortcut(const struct 
-assoc_array_ptr *x)
-{
-	return (unsigned long)x & ASSOC_ARRAY_PTR_TYPE_MASK &&
-		   (unsigned long)x & ASSOC_ARRAY_PTR_SUBTYPE_MASK;
-}
 
 
