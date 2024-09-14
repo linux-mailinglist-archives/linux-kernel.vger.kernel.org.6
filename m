@@ -1,292 +1,289 @@
-Return-Path: <linux-kernel+bounces-329047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CCE1978C72
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:40:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0804E978C75
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 03:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824E71C24D31
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:40:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E121B259B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8798E8F66;
-	Sat, 14 Sep 2024 01:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD099463;
+	Sat, 14 Sep 2024 01:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHzUmrW6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gGpB6VHd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DE338C;
-	Sat, 14 Sep 2024 01:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A025748D;
+	Sat, 14 Sep 2024 01:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726278021; cv=none; b=Hqxd0Sv91XNYK6a/LJ561s4Iajp1EFRnwN12u9K1guu0AXBQoGHw0vD+ulPLVosqAc1us6V/oGgrgAkkCxDCrGqHWudBh4Va5FJ04BPjt9QGUkhsbqLY+FO1xJKmNiabLBdSotpNQeIOXJM6TjzowZV1KOKmxOnftSABFIBA8hk=
+	t=1726278283; cv=none; b=QlVgeThqpa7tNkO8mq13drjMcaQ3f0GJMXmUaN2xLDGTbbSS9JhItvGP366Hc4vZfLrMbOFUjkEFkv6OHK4cP3RDPm264iDEPSe4uT+Ts2+PmAxJfxKnMfgAt7diIe0Ug8OEjXR5VXkfiLk3aWHZATjs6MmlrN+iBammDT3kPqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726278021; c=relaxed/simple;
-	bh=b2anS5rR6OZ5jXoHMGC0/vcLNMsTsR3jDOk7jVdHGu8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=QoB2DIbeMTxyc9/aG7knELW7IS2ZiI6cy8nW7DjT5UnL3UAYmblGceaThsxvaB8tq04iJQgtzizbb5B/Jtxlhg2CevCAt3VXqP0fHWmK79J6epCLatLFKqt60JSgBI3VB9vVgUKSB2mfYYiKonNudvMpcG/vZD4e5o0GKuPZgPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UHzUmrW6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE0B1C4CEC0;
-	Sat, 14 Sep 2024 01:40:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726278021;
-	bh=b2anS5rR6OZ5jXoHMGC0/vcLNMsTsR3jDOk7jVdHGu8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UHzUmrW6q+uwwUrk5jMQ5dhMYPFsOsxwGLLevef52TkBTNSN+9zpdY82EszJ6hd0i
-	 Q+6Evut5QICsuuOlescKq8eV5wTvBPri6eF+z2OcCzoVFvkOtLj+rCzTq32D6H2gX6
-	 QOQORvCYTrRa4ejBgwHHk7BuCeNVCeonUfGY1q7mSa+GVmAdC5WZNGitxHFXOOxjm+
-	 +fU1K3iaXrD1omphKyATxQecMgSYENcD7ptzhSsUChXRtRMNasQizLTSq1zUj+xJKg
-	 oB7Y2PQrKrtgCQ5d19o3FLtCLF1ERJsIY6abcNfz0ZEnxLEMTTXRw7wrMkbPxyBY9J
-	 yDPWMVlw9PcLw==
-Date: Sat, 14 Sep 2024 10:40:16 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Andrii Nakryiko <andrii@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
- mingo@kernel.org, oleg@redhat.com, rostedt@goodmis.org,
- mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- jolsa@kernel.org, paulmck@kernel.org
-Subject: Re: [PATCH] uprobes: switch to RCU Tasks Trace flavor for better
- performance
-Message-Id: <20240914104016.0803799fa677b696766bf03d@kernel.org>
-In-Reply-To: <20240910174312.3646590-1-andrii@kernel.org>
-References: <20240910174312.3646590-1-andrii@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726278283; c=relaxed/simple;
+	bh=iLGIsaLTMLN5+yfFHCAWEL882yp38PL3qxmT0t2FzKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KKTdGxVfJvGN9d1M16tDzkqBpjGTPxAYp9OJ3yw+uyt8Mow0XipU+CMtoukKI5M5MEXIwhnXCils7+9W7HUFx/dvrpxwKJd5G9Lz+p4OBPwsaV9VObReE9ClA/SglPdC90LlhimIlbB9SU00c9d7m/8erQIsk0fneiMUucA5IgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gGpB6VHd; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726278282; x=1757814282;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iLGIsaLTMLN5+yfFHCAWEL882yp38PL3qxmT0t2FzKQ=;
+  b=gGpB6VHdUo41TbB11g6/yGmVNj+GtDCZE/mFl1hON9FMkM+i1PdEwqUH
+   x9qyScoqpMcN5G/RbMOD9p2lj9Ux/W1/u24oxw+Kz9wI8kTq9EwUJqVSi
+   xg4+yEoThvNhPLojeijPATljIog54nHgOJOrZiwRj9LDVw+buYuSZDpSO
+   U3PUl9YITeyEI2/6aNRHIAQbHl2lo3IMORs3aAVLUBO2n2mh7ME9WUQNd
+   GBJD09wa/xUKSdjqsQ8kO1su7OTbcRIbswUnJpwwj4pOHiSYwp9Q7z8dx
+   Uyu2cKzj6/FpLimJs8QmPPIoz6IGNJAT52/euqganp2QUocMWQ1KUSh9k
+   Q==;
+X-CSE-ConnectionGUID: kTPH5JJoQ466ZNaV3+9LPg==
+X-CSE-MsgGUID: N59k2577QNGJ7iZ7SPuTjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="28978689"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="28978689"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 18:44:41 -0700
+X-CSE-ConnectionGUID: bADnWdd0R3a9MFHG4j/syg==
+X-CSE-MsgGUID: qISTvLKgSNW4o6+EzSGfCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="67887817"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 13 Sep 2024 18:44:34 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spHpw-0007Ei-1s;
+	Sat, 14 Sep 2024 01:44:32 +0000
+Date: Sat, 14 Sep 2024 09:44:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v5 3/3] drivers: iio: adc: add support for ad777x family
+Message-ID: <202409140955.bz1rH7Q6-lkp@intel.com>
+References: <20240912121609.13438-4-ramona.nechita@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912121609.13438-4-ramona.nechita@analog.com>
 
-On Tue, 10 Sep 2024 10:43:12 -0700
-Andrii Nakryiko <andrii@kernel.org> wrote:
+Hi Ramona,
 
-> This patch switches uprobes SRCU usage to RCU Tasks Trace flavor, which
-> is optimized for more lightweight and quick readers (at the expense of
-> slower writers, which for uprobes is a fine tradeof) and has better
-> performance and scalability with number of CPUs.
-> 
-> Similarly to baseline vs SRCU, we've benchmarked SRCU-based
-> implementation vs RCU Tasks Trace implementation.
-> 
-> SRCU
-> ====
-> uprobe-nop      ( 1 cpus):    3.276 ± 0.005M/s  (  3.276M/s/cpu)
-> uprobe-nop      ( 2 cpus):    4.125 ± 0.002M/s  (  2.063M/s/cpu)
-> uprobe-nop      ( 4 cpus):    7.713 ± 0.002M/s  (  1.928M/s/cpu)
-> uprobe-nop      ( 8 cpus):    8.097 ± 0.006M/s  (  1.012M/s/cpu)
-> uprobe-nop      (16 cpus):    6.501 ± 0.056M/s  (  0.406M/s/cpu)
-> uprobe-nop      (32 cpus):    4.398 ± 0.084M/s  (  0.137M/s/cpu)
-> uprobe-nop      (64 cpus):    6.452 ± 0.000M/s  (  0.101M/s/cpu)
-> 
-> uretprobe-nop   ( 1 cpus):    2.055 ± 0.001M/s  (  2.055M/s/cpu)
-> uretprobe-nop   ( 2 cpus):    2.677 ± 0.000M/s  (  1.339M/s/cpu)
-> uretprobe-nop   ( 4 cpus):    4.561 ± 0.003M/s  (  1.140M/s/cpu)
-> uretprobe-nop   ( 8 cpus):    5.291 ± 0.002M/s  (  0.661M/s/cpu)
-> uretprobe-nop   (16 cpus):    5.065 ± 0.019M/s  (  0.317M/s/cpu)
-> uretprobe-nop   (32 cpus):    3.622 ± 0.003M/s  (  0.113M/s/cpu)
-> uretprobe-nop   (64 cpus):    3.723 ± 0.002M/s  (  0.058M/s/cpu)
-> 
-> RCU Tasks Trace
-> ===============
-> uprobe-nop      ( 1 cpus):    3.396 ± 0.002M/s  (  3.396M/s/cpu)
-> uprobe-nop      ( 2 cpus):    4.271 ± 0.006M/s  (  2.135M/s/cpu)
-> uprobe-nop      ( 4 cpus):    8.499 ± 0.015M/s  (  2.125M/s/cpu)
-> uprobe-nop      ( 8 cpus):   10.355 ± 0.028M/s  (  1.294M/s/cpu)
-> uprobe-nop      (16 cpus):    7.615 ± 0.099M/s  (  0.476M/s/cpu)
-> uprobe-nop      (32 cpus):    4.430 ± 0.007M/s  (  0.138M/s/cpu)
-> uprobe-nop      (64 cpus):    6.887 ± 0.020M/s  (  0.108M/s/cpu)
-> 
-> uretprobe-nop   ( 1 cpus):    2.174 ± 0.001M/s  (  2.174M/s/cpu)
-> uretprobe-nop   ( 2 cpus):    2.853 ± 0.001M/s  (  1.426M/s/cpu)
-> uretprobe-nop   ( 4 cpus):    4.913 ± 0.002M/s  (  1.228M/s/cpu)
-> uretprobe-nop   ( 8 cpus):    5.883 ± 0.002M/s  (  0.735M/s/cpu)
-> uretprobe-nop   (16 cpus):    5.147 ± 0.001M/s  (  0.322M/s/cpu)
-> uretprobe-nop   (32 cpus):    3.738 ± 0.008M/s  (  0.117M/s/cpu)
-> uretprobe-nop   (64 cpus):    4.397 ± 0.002M/s  (  0.069M/s/cpu)
-> 
-> Peak throughput for uprobes increases from 8 mln/s to 10.3 mln/s
-> (+28%!), and for uretprobes from 5.3 mln/s to 5.8 mln/s (+11%), as we
-> have more work to do on uretprobes side.
-> 
-> Even single-thread (no contention) performance is slightly better: 3.276
-> mln/s to 3.396 mln/s (+3.5%) for uprobes, and 2.055 mln/s to 2.174 mln/s
-> (+5.8%) for uretprobes.
-> 
-> We also select TASKS_TRACE_RCU for UPROBES in Kconfig due to the new
-> dependency.
-> 
+kernel test robot noticed the following build warnings:
 
-Looks good to me. Peter, do you have any comment?
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on robh/for-next linus/master v6.11-rc7 next-20240913]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+url:    https://github.com/intel-lab-lkp/linux/commits/Ramona-Alexandra-Nechita/dt-bindings-iio-adc-add-a7779-doc/20240912-201936
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240912121609.13438-4-ramona.nechita%40analog.com
+patch subject: [PATCH v5 3/3] drivers: iio: adc: add support for ad777x family
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240914/202409140955.bz1rH7Q6-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140955.bz1rH7Q6-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409140955.bz1rH7Q6-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/iio/adc/ad7779.c:15:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/iio/adc/ad7779.c:15:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/iio/adc/ad7779.c:15:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from drivers/iio/adc/ad7779.c:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2232:
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/iio/adc/ad7779.c:748:35: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
+     748 |                 return dev_err_probe(&spi->dev, ret,
+         |                                                 ^~~
+   drivers/iio/adc/ad7779.c:735:9: note: initialize the variable 'ret' to silence this warning
+     735 |         int ret;
+         |                ^
+         |                 = 0
+   8 warnings generated.
 
 
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
->  arch/Kconfig            |  1 +
->  kernel/events/uprobes.c | 38 ++++++++++++++++----------------------
->  2 files changed, 17 insertions(+), 22 deletions(-)
-> 
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 975dd22a2dbd..a0df3f3dc484 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -126,6 +126,7 @@ config KPROBES_ON_FTRACE
->  config UPROBES
->  	def_bool n
->  	depends on ARCH_SUPPORTS_UPROBES
-> +	select TASKS_TRACE_RCU
->  	help
->  	  Uprobes is the user-space counterpart to kprobes: they
->  	  enable instrumentation applications (such as 'perf probe')
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 4b7e590dc428..a2e6a57f79f2 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -26,6 +26,7 @@
->  #include <linux/task_work.h>
->  #include <linux/shmem_fs.h>
->  #include <linux/khugepaged.h>
-> +#include <linux/rcupdate_trace.h>
->  
->  #include <linux/uprobes.h>
->  
-> @@ -42,8 +43,6 @@ static struct rb_root uprobes_tree = RB_ROOT;
->  static DEFINE_RWLOCK(uprobes_treelock);	/* serialize rbtree access */
->  static seqcount_rwlock_t uprobes_seqcount = SEQCNT_RWLOCK_ZERO(uprobes_seqcount, &uprobes_treelock);
->  
-> -DEFINE_STATIC_SRCU(uprobes_srcu);
-> -
->  #define UPROBES_HASH_SZ	13
->  /* serialize uprobe->pending_list */
->  static struct mutex uprobes_mmap_mutex[UPROBES_HASH_SZ];
-> @@ -652,7 +651,7 @@ static void put_uprobe(struct uprobe *uprobe)
->  	delayed_uprobe_remove(uprobe, NULL);
->  	mutex_unlock(&delayed_uprobe_lock);
->  
-> -	call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
-> +	call_rcu_tasks_trace(&uprobe->rcu, uprobe_free_rcu);
->  }
->  
->  static __always_inline
-> @@ -707,7 +706,7 @@ static struct uprobe *find_uprobe_rcu(struct inode *inode, loff_t offset)
->  	struct rb_node *node;
->  	unsigned int seq;
->  
-> -	lockdep_assert(srcu_read_lock_held(&uprobes_srcu));
-> +	lockdep_assert(rcu_read_lock_trace_held());
->  
->  	do {
->  		seq = read_seqcount_begin(&uprobes_seqcount);
-> @@ -935,8 +934,7 @@ static bool filter_chain(struct uprobe *uprobe, struct mm_struct *mm)
->  	bool ret = false;
->  
->  	down_read(&uprobe->consumer_rwsem);
-> -	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
-> -				 srcu_read_lock_held(&uprobes_srcu)) {
-> +	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
->  		ret = consumer_filter(uc, mm);
->  		if (ret)
->  			break;
-> @@ -1157,7 +1155,7 @@ void uprobe_unregister_sync(void)
->  	 * unlucky enough caller can free consumer's memory and cause
->  	 * handler_chain() or handle_uretprobe_chain() to do an use-after-free.
->  	 */
-> -	synchronize_srcu(&uprobes_srcu);
-> +	synchronize_rcu_tasks_trace();
->  }
->  EXPORT_SYMBOL_GPL(uprobe_unregister_sync);
->  
-> @@ -1241,19 +1239,18 @@ EXPORT_SYMBOL_GPL(uprobe_register);
->  int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool add)
->  {
->  	struct uprobe_consumer *con;
-> -	int ret = -ENOENT, srcu_idx;
-> +	int ret = -ENOENT;
->  
->  	down_write(&uprobe->register_rwsem);
->  
-> -	srcu_idx = srcu_read_lock(&uprobes_srcu);
-> -	list_for_each_entry_srcu(con, &uprobe->consumers, cons_node,
-> -				 srcu_read_lock_held(&uprobes_srcu)) {
-> +	rcu_read_lock_trace();
-> +	list_for_each_entry_rcu(con, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
->  		if (con == uc) {
->  			ret = register_for_each_vma(uprobe, add ? uc : NULL);
->  			break;
->  		}
->  	}
-> -	srcu_read_unlock(&uprobes_srcu, srcu_idx);
-> +	rcu_read_unlock_trace();
->  
->  	up_write(&uprobe->register_rwsem);
->  
-> @@ -2123,8 +2120,7 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
->  
->  	current->utask->auprobe = &uprobe->arch;
->  
-> -	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
-> -				 srcu_read_lock_held(&uprobes_srcu)) {
-> +	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
->  		int rc = 0;
->  
->  		if (uc->handler) {
-> @@ -2162,15 +2158,13 @@ handle_uretprobe_chain(struct return_instance *ri, struct pt_regs *regs)
->  {
->  	struct uprobe *uprobe = ri->uprobe;
->  	struct uprobe_consumer *uc;
-> -	int srcu_idx;
->  
-> -	srcu_idx = srcu_read_lock(&uprobes_srcu);
-> -	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
-> -				 srcu_read_lock_held(&uprobes_srcu)) {
-> +	rcu_read_lock_trace();
-> +	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
->  		if (uc->ret_handler)
->  			uc->ret_handler(uc, ri->func, regs);
->  	}
-> -	srcu_read_unlock(&uprobes_srcu, srcu_idx);
-> +	rcu_read_unlock_trace();
->  }
->  
->  static struct return_instance *find_next_ret_chain(struct return_instance *ri)
-> @@ -2255,13 +2249,13 @@ static void handle_swbp(struct pt_regs *regs)
->  {
->  	struct uprobe *uprobe;
->  	unsigned long bp_vaddr;
-> -	int is_swbp, srcu_idx;
-> +	int is_swbp;
->  
->  	bp_vaddr = uprobe_get_swbp_addr(regs);
->  	if (bp_vaddr == uprobe_get_trampoline_vaddr())
->  		return uprobe_handle_trampoline(regs);
->  
-> -	srcu_idx = srcu_read_lock(&uprobes_srcu);
-> +	rcu_read_lock_trace();
->  
->  	uprobe = find_active_uprobe_rcu(bp_vaddr, &is_swbp);
->  	if (!uprobe) {
-> @@ -2319,7 +2313,7 @@ static void handle_swbp(struct pt_regs *regs)
->  
->  out:
->  	/* arch_uprobe_skip_sstep() succeeded, or restart if can't singlestep */
-> -	srcu_read_unlock(&uprobes_srcu, srcu_idx);
-> +	rcu_read_unlock_trace();
->  }
->  
->  /*
-> -- 
-> 2.43.5
-> 
+vim +/ret +748 drivers/iio/adc/ad7779.c
 
+   729	
+   730	static int ad7779_probe(struct spi_device *spi)
+   731	{
+   732		struct iio_dev *indio_dev;
+   733		struct ad7779_state *st;
+   734		struct gpio_desc *reset_gpio, *start_gpio;
+   735		int ret;
+   736	
+   737		indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+   738		if (!indio_dev)
+   739			return -ENOMEM;
+   740	
+   741		st = iio_priv(indio_dev);
+   742	
+   743		st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
+   744		if (IS_ERR(st->mclk))
+   745			return PTR_ERR(st->mclk);
+   746	
+   747		if (!spi->irq)
+ > 748			return dev_err_probe(&spi->dev, ret,
+   749					     "DRDY irq not present\n");
+   750	
+   751		reset_gpio = devm_gpiod_get_optional(&spi->dev, "reset", GPIOD_OUT_LOW);
+   752		if (IS_ERR(reset_gpio))
+   753			return PTR_ERR(reset_gpio);
+   754	
+   755		start_gpio = devm_gpiod_get(&spi->dev, "start", GPIOD_OUT_HIGH);
+   756		if (IS_ERR(start_gpio))
+   757			return PTR_ERR(start_gpio);
+   758	
+   759		crc8_populate_msb(ad7779_crc8_table, AD7779_CRC8_POLY);
+   760		st->spi = spi;
+   761	
+   762		st->chip_info = spi_get_device_match_data(spi);
+   763		if (!st->chip_info)
+   764			return -ENODEV;
+   765	
+   766		ret = ad7779_reset(indio_dev, reset_gpio);
+   767		if (ret)
+   768			return ret;
+   769	
+   770		ad7779_powerup(st, start_gpio);
+   771		if (ret)
+   772			return ret;
+   773	
+   774		indio_dev->name = st->chip_info->name;
+   775		indio_dev->info = &ad7779_info;
+   776		indio_dev->modes = INDIO_DIRECT_MODE;
+   777		indio_dev->channels = st->chip_info->channels;
+   778		indio_dev->num_channels = ARRAY_SIZE(ad7779_channels);
+   779	
+   780		st->trig = devm_iio_trigger_alloc(&spi->dev, "%s-dev%d",
+   781						  indio_dev->name, iio_device_id(indio_dev));
+   782		if (!st->trig)
+   783			return -ENOMEM;
+   784	
+   785		st->trig->ops = &ad7779_trigger_ops;
+   786	
+   787		iio_trigger_set_drvdata(st->trig, st);
+   788	
+   789		ret = devm_request_irq(&spi->dev, spi->irq,
+   790				      iio_trigger_generic_data_rdy_poll,
+   791				      IRQF_ONESHOT | IRQF_NO_AUTOEN,
+   792				      indio_dev->name, st->trig);
+   793		if (ret)
+   794			return dev_err_probe(&spi->dev, ret, "request irq %d failed\n",
+   795					     st->spi->irq);
+   796	
+   797		ret = devm_iio_trigger_register(&spi->dev, st->trig);
+   798		if (ret)
+   799			return ret;
+   800	
+   801		indio_dev->trig = iio_trigger_get(st->trig);
+   802	
+   803		init_completion(&st->completion);
+   804	
+   805		ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
+   806						      &iio_pollfunc_store_time,
+   807						      &ad7779_trigger_handler,
+   808						      &ad7779_buffer_setup_ops);
+   809		if (ret)
+   810			return ret;
+   811	
+   812		ret = ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
+   813					    AD7779_DCLK_CLK_DIV_MSK,
+   814					    FIELD_PREP(AD7779_DCLK_CLK_DIV_MSK, 7));
+   815		if (ret)
+   816			return ret;
+   817	
+   818		return devm_iio_device_register(&spi->dev, indio_dev);
+   819	}
+   820	
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
