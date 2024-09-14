@@ -1,146 +1,118 @@
-Return-Path: <linux-kernel+bounces-329293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB78978FAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:56:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1E8978FAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 11:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4724E1C21D3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:56:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14A42B2327C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 09:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4965C1CEAA3;
-	Sat, 14 Sep 2024 09:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11431CEABB;
+	Sat, 14 Sep 2024 09:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="CIfXDoM4"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R8cWZ7F+"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA8912E5D;
-	Sat, 14 Sep 2024 09:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F66F13342F
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 09:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726307765; cv=none; b=WAXDTgY09JjZVjpE+vDmxl/xbCQRUSbu16KC8SmI+hE7Ix+gesP49F2Tk38YcQ9J0i/6CNle9/ypDIEmFlPZoaSZr0vVG4XI7U/1uJM79WfGvo+RpPdFLSdOJFib7j66BoDDZQocgt6YFyhkfahKows/3L+Glnl6D1THiPQu73I=
+	t=1726307819; cv=none; b=bFVgkOECdyE48ftZ/sX3TVmJ/I/sZr5Ao8G+JnsJYJEma5MjNw0Em8ADvnrEdpBgASZCa3SUQltnE81K1XdbxWDgvkluR2bR5ItU8m2XykzDc2C08K5Ax16yU6nVxiYKzD6dJM2WG382OciToD3zvdIYkdZtZM/DtcoUhETeKe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726307765; c=relaxed/simple;
-	bh=znyJK4DVxNCOTiJgip1sATbUHiE/5IPzUPQycdeV/GU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pIMlwtlRSm7QT9PhYutnl6kCB8a7gyhkawzw6geNzacc4C7C+/cmQVAHWxgOophHr7fj4v3CyRIWTO3dE9FEGvb7thpszv86SfDRcesO/IqC59eDzsV0m+ty1SgO/oOHLHOmpKZzu4cIoXYeCRG/BJdKa+CL9mJVGm4bm3S+rMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=CIfXDoM4; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1726307758;
-	bh=znyJK4DVxNCOTiJgip1sATbUHiE/5IPzUPQycdeV/GU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CIfXDoM41BsIDAdiCrnCSe2qjZPP5+sH4c4CAkvOsRUINIQhx5+L8zogn22ovizpE
-	 lfIh0osh/52stoVrPmUOoKJzgRxR2Y5dEnaY1CWYEYkT8Q//PGDK3ue9GjQwUvuDkT
-	 7jqz46uZ7zJGdwdPjtBUbu7vv/qUDHOjeHpRU+6M=
-Date: Sat, 14 Sep 2024 11:55:58 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 2/9] power: supply: core: register thermal zone
- for battery
-Message-ID: <def2fa94-61b0-40b3-a89d-0451bff0c872@t-8ch.de>
-References: <20240904-power-supply-extensions-v3-0-62efeb93f8ec@weissschuh.net>
- <20240904-power-supply-extensions-v3-2-62efeb93f8ec@weissschuh.net>
- <ibihc343f3fcuk5c6gtz7kwhtf6e7pbtwkbx4wxu2wbmk4amfy@qorjk4mrbq44>
+	s=arc-20240116; t=1726307819; c=relaxed/simple;
+	bh=5/7xNgVMM5znzPlTwRdQPzrcGDt5NrLxOnLVL5Ox/kE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rQS4CazSs+ySWvqKEdhTU/JqDWN4FrRaMKaU/ZpfZAuG5LoB7p65jDUbp27y1mKZGr+ky7RQh95LgUnHufn+CW1pCdvW2tcDTNjo6Oro4FCCKPuLtiTmLbJLQ9ETnm3RxsJUBzgL6JLCqTgr+w7yq6b/0ueSvPPsL1Mb5hFicRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R8cWZ7F+; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c42bda005eso434045a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 02:56:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726307816; x=1726912616; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZkttiUwbZSAhIQr2HB1QpBV3Ynk91TOIcc4nZQ4D7J4=;
+        b=R8cWZ7F+VkvG5LxQGnbvRBxjNNGZwgSTiNCot7EAtRn3NT/CSfYnsNtRFDVthzLLXN
+         yL7OCrKefDQJUmXORQqDJjhS/v4pPiKFNQ6neWpCVfDa1eOPTMilUtPMGJi8EzWyMMpN
+         lkm355sn2DXTtYM0eTOcFraoP6Pw0a9597NreMz4Ea1B5qPqkHJzrLCW0Jb14ehbWeOO
+         LDG8l2sZtlyWPpqGVw9JhLdjzVug944wE6EywV1Uc4Jjxv/FdaBDt5Yin+Bh1damXJcV
+         AZ0cb22/ssFmhWTx018g1ByrGaaFYWcXm2SKRUOC6dwayKqrNVnhlsetb9k8b4PDZJUR
+         iU5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726307816; x=1726912616;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZkttiUwbZSAhIQr2HB1QpBV3Ynk91TOIcc4nZQ4D7J4=;
+        b=dYBYcmeTfsdfqb8dMKVA6NSoJyaq+fpjTv+HMSENGRw6Q9pYnw2iPUisd8HSDDII5r
+         V5avmkpYH3JrRy80d5gs/TIOZgO74NwstxFhV/fU6D+vV5LO+PnJ18A8fK4Dv8+46Rkf
+         JXSRf/8qHnSC5DPp1vTsG1QzdceiAz8Zzwxsw1zB2O8v+34LXAzl0B3aRqmfM4lwpLyb
+         1kyq4EYYLMJDZ5GEsJszXDPDlwCD8TeqPyiwGoJ3+pp0ewJq6G3MLG1pTa1FVC9Nj3as
+         J2mLCAMj+IdHnBEgoO6LKoUvFYIE1KkqR52HzUtbzSbBkOKkdXMOC38v920xAXhIjLg3
+         zP5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWr+MQbxtLwmD/FflLqp73yJCMJSBACzTZKOxxtHyDh4TST33ft1+5xhl+WTW+k0Zxu4TmCS9hDmwteBJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySStjzTE45z9p/oISecMIcY4w5fR+eXwfyJ5apm2lgjKtPzzvl
+	8O0GK9EMXorTuNKyEDrlTkG9FGL/6HI5qMOxkIf7I8jwle0pqpKjRkVwOFh3rpo=
+X-Google-Smtp-Source: AGHT+IHW72oX7a7JyqQYEvWLyhwpREGh2KNn57UUT6JYrRYTabD7lJwM/On03q66LCo0gYCNv4awyg==
+X-Received: by 2002:a05:6402:5108:b0:5c3:2440:856f with SMTP id 4fb4d7f45d1cf-5c413e4bd3fmr6660928a12.27.1726307815533;
+        Sat, 14 Sep 2024 02:56:55 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bc88d82sm497729a12.81.2024.09.14.02.56.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Sep 2024 02:56:54 -0700 (PDT)
+Date: Sat, 14 Sep 2024 12:56:51 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Florian Westphal <fw@strlen.de>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net] netfilter: nft_socket: Fix a NULL vs IS_ERR() bug in
+ nft_socket_cgroup_subtree_level()
+Message-ID: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ibihc343f3fcuk5c6gtz7kwhtf6e7pbtwkbx4wxu2wbmk4amfy@qorjk4mrbq44>
+X-Mailer: git-send-email haha only kidding
 
-Hi,
+The cgroup_get_from_path() function never returns NULL, it returns error
+pointers.  Update the error handling to match.
 
-On 2024-09-14 11:29:04+0000, Sebastian Reichel wrote:
-> On Wed, Sep 04, 2024 at 09:25:35PM GMT, Thomas Weißschuh wrote:
-> > power_supply_read_team() can also read the temperature from the battery.
-> power_supply_read_temp()
-> 
-> > But currently when registering the thermal zone, the battery is
-> > not checked for POWER_SUPPLY_PROP_TEMP. Introduce a helper which
-> > can check both the desc and the battery info for property
-> > existence and use that. Export the helper to the rest of the psy
-> > core because it will also be used by different subcomponents.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> 
-> power_supply_battery_info contains constant battery information like
-> design capacity or maximum voltage, which is e.g. supplied by the
-> firmware and needed by fuel-gauges or chargers. The temperature is
-> not constant and cannot be part of power_supply_battery_info, so
-> this does not really make sense.
+Fixes: 7f3287db6543 ("netfilter: nft_socket: make cgroupsv2 matching work with namespaces")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ net/netfilter/nft_socket.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Good point. Also this code will run before the extensions will be
-registered, so it doesn't make sense for that either.
-I'll change the patch to only introduce power_supply_has_property().
+diff --git a/net/netfilter/nft_socket.c b/net/netfilter/nft_socket.c
+index ac3c9e9cf0f3..f5da0c1775f2 100644
+--- a/net/netfilter/nft_socket.c
++++ b/net/netfilter/nft_socket.c
+@@ -61,8 +61,8 @@ static noinline int nft_socket_cgroup_subtree_level(void)
+ 	struct cgroup *cgrp = cgroup_get_from_path("/");
+ 	int level;
+ 
+-	if (!cgrp)
+-		return -ENOENT;
++	if (IS_ERR(cgrp))
++		return PTR_ERR(cgrp);
+ 
+ 	level = cgrp->level;
+ 
+-- 
+2.45.2
 
-> 
-> Greetings,
-> 
-> -- Sebastian
-> 
-> >  drivers/power/supply/power_supply.h      |  3 +++
-> >  drivers/power/supply/power_supply_core.c | 14 +++++++++++++-
-> >  2 files changed, 16 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/power/supply/power_supply.h b/drivers/power/supply/power_supply.h
-> > index 3cbafc58bdad..b01faeaf7827 100644
-> > --- a/drivers/power/supply/power_supply.h
-> > +++ b/drivers/power/supply/power_supply.h
-> > @@ -13,6 +13,9 @@ struct device;
-> >  struct device_type;
-> >  struct power_supply;
-> >  
-> > +extern bool power_supply_has_property(struct power_supply *psy,
-> > +				      enum power_supply_property psp);
-> > +
-> >  #ifdef CONFIG_SYSFS
-> >  
-> >  extern void power_supply_init_attrs(void);
-> > diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-> > index cff68c4fd63c..dcb7e4853030 100644
-> > --- a/drivers/power/supply/power_supply_core.c
-> > +++ b/drivers/power/supply/power_supply_core.c
-> > @@ -1199,6 +1199,18 @@ static bool psy_desc_has_property(const struct power_supply_desc *psy_desc,
-> >  	return found;
-> >  }
-> >  
-> > +bool power_supply_has_property(struct power_supply *psy,
-> > +			       enum power_supply_property psp)
-> > +{
-> > +	if (psy_desc_has_property(psy->desc, psp))
-> > +		return true;
-> > +
-> > +	if (power_supply_battery_info_has_prop(psy->battery_info, psp))
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +
-> >  int power_supply_get_property(struct power_supply *psy,
-> >  			    enum power_supply_property psp,
-> >  			    union power_supply_propval *val)
-> > @@ -1308,7 +1320,7 @@ static int psy_register_thermal(struct power_supply *psy)
-> >  		return 0;
-> >  
-> >  	/* Register battery zone device psy reports temperature */
-> > -	if (psy_desc_has_property(psy->desc, POWER_SUPPLY_PROP_TEMP)) {
-> > +	if (power_supply_has_property(psy, POWER_SUPPLY_PROP_TEMP)) {
-> >  		/* Prefer our hwmon device and avoid duplicates */
-> >  		struct thermal_zone_params tzp = {
-> >  			.no_hwmon = IS_ENABLED(CONFIG_POWER_SUPPLY_HWMON)
-> > 
-> > -- 
-> > 2.46.0
 
