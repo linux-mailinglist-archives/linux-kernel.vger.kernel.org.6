@@ -1,204 +1,224 @@
-Return-Path: <linux-kernel+bounces-329179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9270D978E66
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:21:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57256978E69
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 08:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 510D9286F12
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 773751C221FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 06:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2862647796;
-	Sat, 14 Sep 2024 06:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64D26E614;
+	Sat, 14 Sep 2024 06:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T74dUBYQ"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZCg9qDF"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A203B22071;
-	Sat, 14 Sep 2024 06:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7876D1805E;
+	Sat, 14 Sep 2024 06:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726294893; cv=none; b=TIQao4fQQ0uD2qBT3ZV6dv7aYIFMNaZWTkMdq7WVXya+o4unoM4EQmvQ0zEawvFWw0fHfdYynQmj20ZxvRKMhYsUwzux40V9RDi2SGntkgSwGC/tq12LpHfGvrzoI6oqjKtNwEuOBK0GWcUxqNZavV5gvbSAP3g49peLQT43OQ4=
+	t=1726295331; cv=none; b=Itojo1R/W1cRNs7AoccVW0153YumaHgozXIRLQoPuUr1+xOXqA4k3mcoQu0IndlE9QQYghZK7n6OvvJn0mQQ8eS1PiWZTCbZgkiqJOYqG8XNDoGp9zFvrPjO29QcDH+LcJKygChZdkdStkzBY1KLj7KnMFyQ9HiwvuHv4IEz9D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726294893; c=relaxed/simple;
-	bh=WkMDuGdZXtQdX4Axd7GKeCsBR07A6JstNka7dRcJrq8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DBDVD1Whwfbj51JGzMN9KLNigzEdwCjG40GuXevT58y2kBCcMvc3qBttbg/2creaaizrkFO6yhQ27A3mgt+9QyjMniLxQ/xvvWBGP+lPxaVZEKBeYe48lGgTJIXwiB2Tw0Tn58/Q0ZKKGbk6dM32UccxzOgkAacYK0RKRAHy700=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T74dUBYQ; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1726295331; c=relaxed/simple;
+	bh=1qR9wHfPRJFwvSE3B98E7SDsBj44G8aq26FBsusaxmA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DGrKY+VUs4EeXUuDK0b/emyf1+UOn0uwkgCLPYJEb1bj7FKrH6RaV9fuUTGk0+f+ZP9ISk38wyPV/0DAkIJcb7SwPBzY2mEVKM+Jyh0F1Wn+eam1ltkQOlEc3+8CkEACW1zemfADrwucCfwxaWo0ZnjhZsQrKH4n+x+weUbLnHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZCg9qDF; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so1903103a12.0;
-        Fri, 13 Sep 2024 23:21:31 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4581e7f31eeso13772501cf.0;
+        Fri, 13 Sep 2024 23:28:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726294890; x=1726899690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=joLOAVe4hRH3NR5iKNMj2U1MIz4Q2rmmeqog2vo7XzY=;
-        b=T74dUBYQDTbO3pPY2u+IQmNxMPrufxnOyABIrbSFuatmgKFSmFWIwc6SBeFW6wFqT7
-         OO13+XN5Eej2ACdA6iABLwzzAlP4SYb5ONUyrMukguCanN/JtSo0AArwfjQQdrtNxI7L
-         fej4LVrS4S+jkcttfLkGmXFKNZRjksRiZxijIh6IYTjqvdQwAYLIPdUL+dQ8BX4Gj8e9
-         KPyu+bp+YxeCrQ2D/J0wdwz+kwnbT3QdyMmX+/nO856nFSvI17lDiAcysb5LfHm4BeuL
-         vVw1WUp5VzXbMyXWLtPmaPikMGKW+igwtfaKQdZylGFV5lCUssTeeSZrApV/m1eYCYTz
-         nSew==
+        d=gmail.com; s=20230601; t=1726295328; x=1726900128; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:feedback-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R/LGgXmIndL3SCPEW9jZlfhiJ8WqrC9UKkvceLgY3EA=;
+        b=bZCg9qDFw20ILhsmFS6aGKQjNDkf2V+vIO8OirV5rytWGWuk+oK4JknQSV2bjck98U
+         5gs7Cm4FdL6DuOyhfUaqAhIuck6OJFxVHMB2yH1T5x3Oc868mRUlCgowkQPQ6tPi+S2+
+         2UdN5u6Zrlx1zNKfEqeCZpNDKlY28t6B012EX/ieZajttyK60c+qNNJulIXyVa7NanWu
+         rrbLGAHBDJfim6q9Pn9DkxbDxKrdmgSsDVfi2BzFyPsUP8Q6n/dVqzkTxHHpoEhXq26l
+         qe4gsijA+8Dw9wJT3G6l3T9W1cHPR9fpzjEVCu12bk6+PzG6eLjx2fx4ZOXuXyWc60TA
+         7T0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726294890; x=1726899690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1726295328; x=1726900128;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=joLOAVe4hRH3NR5iKNMj2U1MIz4Q2rmmeqog2vo7XzY=;
-        b=GMyx0OBYAPN/Eby0VaxaDJbAYagcy/v5avtDNYOunFnDSZElXFAOUZNjn3Yv/lDVf5
-         DFFCnyIZpA8E51UxLe8gcRu+eWsBWJutTk6TeE4H05g5E3STrHzQ9eYBPUuxyJ2ayYyr
-         OOybJ67ucBqPipu0xejWtz33qabPqdXxezA/cBiAPfA3qaN3Z/jApFjaMC/om/UfSFLv
-         139fJxfnKGk73WF75Mepz8l59cryDCGweesfxkBoO0V+Of2nn/r97XsPoZ37uROCWz3Q
-         wNBEeDmFamzjJwT7K8PG3/Cuz6JexT+8r8Ry4AFM4x6O1POpeIeAzjb5IIsGDK0P3uTg
-         VuYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtZOvC+8zCe3qWY4KurE9AY4HpeN+XyHI3/3wbuxjsmUEwWXvZ30W6ZjFJWFWrdR9QKV+PtNKZ9i1Wmhs6@vger.kernel.org, AJvYcCW8JtgsWUkFu3WowRCks3W3jth5qVLMHChgWzpmd9YGpvrCw4mpzSE7GG+cXwuqlEymiycFyJE56lcd@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx606ZPOIo7ds585HtIo9DfyaGQMWRapkpZCO+p9N6K8ByWe/55
-	lWRZWVWOkk6q++BKgba5eeIfSpBgS3CUDlsDrEGTi9nCdN5QeDy+5MmyK7Vaj988hEXHkWzLZqs
-	lz6+iT9whDxhWdrvPDsCsrjJAFyk=
-X-Google-Smtp-Source: AGHT+IHPRmAFZolwJZ5oqY2INKoSDpA+AYfALJsAgLM11B0l++07GMwzktEj6z/mMbRwWVRau9Bc6hiy0DbfFj027Hw=
-X-Received: by 2002:a05:6402:909:b0:5c0:ac1d:b970 with SMTP id
- 4fb4d7f45d1cf-5c41e1b52f7mr5049419a12.32.1726294889857; Fri, 13 Sep 2024
- 23:21:29 -0700 (PDT)
+        bh=R/LGgXmIndL3SCPEW9jZlfhiJ8WqrC9UKkvceLgY3EA=;
+        b=Edj6g6htdaQ2rfu4WrDmhpxNlnRjwhi+STbfZRbE6rNl5udp1YPAlZuPkivncs2n31
+         CVS79DMTrEUEiyVTJ6Qp7z+KCXrpcckSZUg1d3dqwR3U5fCRDJbs1PhQnfQg8ijSeldT
+         CqzRcvipc998Ug3HQIPNZHT/0A5sdHOdFpNMAG/X9bJPRunW0UKlcq9QY7r3QZ1b1rrh
+         XRVbJp7HZ2wOIG7hBUa0krBW52xa+b+BBOWR5WtDbvT3xsKd5ckiryuE5naEHzPbCDUP
+         5Nlk03kqMedasgKgp3F9/YufVLRiggPVix1IATatGOUTHzvxFabfpZiQBlaleT6f1x7n
+         Rl/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2shFU53yjU/R9seswy5y28HdY7HQZvMFalNXTm4qmdDh+pQcqkdoSD8COlwyiepJh4zx8gRGDfSIKGqA=@vger.kernel.org, AJvYcCUre3MExRWfDA3U60wTXOSY+khMSvQrd4QSSK4rwkhHwMXdjxDZM6ScvHNGC8jxW6Xbag3zgoqy@vger.kernel.org, AJvYcCXlry13XSFHrVRMJHXi9SEfsXeehTfAQmro4KVekqBlNl13spvTHZ668mkf0UNbts/DbqCOUvVutabv7/Yi2rI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI3BmEO+AhpU3mHvz/b8JwILhIS/ev/6142KekrS+CCwYDmcXP
+	yR30uK88uIKIYi2Hd4rygO8YKSsGIiJYuOo0Gfg/PXkjA0jmeyjh
+X-Google-Smtp-Source: AGHT+IHBJi3CzFMFwQpKBZFUGTbIzDHa18QYekID29Lw1qGBfZdJgqNzoqPu3k7CS8cjG+qG8L9o2Q==
+X-Received: by 2002:a05:622a:15cf:b0:458:4c86:4564 with SMTP id d75a77b69052e-4599d29c7b0mr89071481cf.37.1726295328309;
+        Fri, 13 Sep 2024 23:28:48 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-459aac99ba7sm4218521cf.47.2024.09.13.23.28.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 23:28:47 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 43BCC1200068;
+	Sat, 14 Sep 2024 02:28:47 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Sat, 14 Sep 2024 02:28:47 -0400
+X-ME-Sender: <xms:Hy3lZlIpUIhu1C2YHldeNZSKVV7ost2PfL4uCf67MTJFkaRSnzuFMw>
+    <xme:Hy3lZhJgz4rZs8rBmh1OKw35-oNtCnbXTE49mFaKx2AIYiC8l-9jMGCs2YFapmaFQ
+    nDtHF-YRyCkCQNSag>
+X-ME-Received: <xmr:Hy3lZttrlI4ibLq84ZHUgBGRUlSptpcXlXbHHW4YIWnH2FJFUllBWIwrMx_jMA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejledguddtkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeegudegfedtjedtffdvleelteefuddvkefgheej
+    uedujeehfeelkeetjeegtdefgfenucffohhmrghinhepfhhffihllhdrtghhnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgv
+    shhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehhe
+    ehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
+    pdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprg
+    hlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtg
+    hpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthht
+    ohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtoheprgdrhh
+    hinhgusghorhhgsehsrghmshhunhhgrdgtohhmpdhrtghpthhtohepthhmghhrohhsshes
+    uhhmihgthhdrvgguuhdprhgtphhtthhopeihrghkohihohhkuhesghhmrghilhdrtghomh
+    dprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrgh
+X-ME-Proxy: <xmx:Hy3lZmYa4KroPslS4loDGh0mdPYR8Q-r0TmqTmu4w-SaVMHpeVEfuA>
+    <xmx:Hy3lZsalbh_lLyndKZ3IDjPP_KZKQumQqFlHF2iPdbD0oZrVfRKHLw>
+    <xmx:Hy3lZqAVe9JzYN8e1WCOjCk4gdxOhLS5tVRdq2W00n8HJEQqdZ7v-Q>
+    <xmx:Hy3lZqaG81VMtAkGJzv6H4gtBlK2pHe9vqK2Dmywn8aPY7Ep7cxuUw>
+    <xmx:Hy3lZopFYoE7hK_uTQlzSPhe4nthZzEft_hV7Xv-vLG_-Cs2mnaEUfLb>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 14 Sep 2024 02:28:46 -0400 (EDT)
+Date: Fri, 13 Sep 2024 23:28:37 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] rust: sync: fix incorrect Sync bounds for LockedBy
+Message-ID: <ZuUtFQ9zs6jJkasD@boqun-archlinux>
+References: <20240912-locked-by-sync-fix-v1-1-26433cbccbd2@google.com>
+ <ZuSIPIHn4gDLm4si@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912120548.15877-1-pali@kernel.org> <20240912120548.15877-7-pali@kernel.org>
- <20240913200721.7egunkwp76qo5yy7@pali> <CAH2r5mvEa8mUrK7mEKFiimkb1asTWA0p7ADz4937yoxM916RAw@mail.gmail.com>
- <20240913224248.k5tn2le3gau2prmo@pali>
-In-Reply-To: <20240913224248.k5tn2le3gau2prmo@pali>
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 14 Sep 2024 01:21:17 -0500
-Message-ID: <CAH2r5mtgV=NkZVChDY-apdqkvM9KFkraRGy_jDCpLmFU6PFMAA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] cifs: Fix creating of SFU fifo and socket special files
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuSIPIHn4gDLm4si@phenom.ffwll.local>
 
-On Fri, Sep 13, 2024 at 5:42=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> On Friday 13 September 2024 17:14:22 Steve French wrote:
-> > How did you find the format of the FIFO and SOCK file types?  I
->
-> For fifo there are multiple sources on internet, but none of them is
-> normative. Everything is just what people have tried. For example this
-> old email on samba list:
-> https://lists.samba.org/archive/linux-cifs-client/2005-May/000856.html
->
-> Format of the socket I have figured out by creating it in Interix
-> subsystem and then dumped content of the file from Win32 subsystem.
-> Then I checked that it has also same format over older MS NFS server.
-> It was easier than trying to search for some documentation (which I have
-> not found).
->
-> > couldn't find any references to those so added two new types to allow
-> > current Linux to be able to create these (especially since they are
-> > opaque to the server and thus low risk).
->
-> I was searching over internet again and now I have found patent
-> https://patents.google.com/patent/US20090049459 which describe symlink
-> content:
->
-> #define NFS_SPECFILE_LNK_V1=E2=80=83=E2=80=830x014b4e4c78746e49 /* =E2=80=
-=9CIntxLNK=E2=80=9D */
->
-> But does not describe other types.
->
-> > > +     case S_IFSOCK:
-> > > -             strscpy(pdev.type, "LnxSOCK");
-> > > +             /* SFU socket is system file with one zero byte */
-> > > +             pdev_len =3D 1;
-> > > +             pdev.type[0] =3D '\0';
-> > >               break;
-> > >       case S_IFIFO:
-> > > -             strscpy(pdev.type, "LnxFIFO");
-> > > +             /* SFU fifo is system file which is empty */
-> > > +             pdev_len =3D 0;
-> >
-> > My worry about the suggested change above is that it is possible that
-> > we could accidentally match to an empty file.
->
-> I fully understand your concerns, but code in this patch is for creating
-> new fifos. Not recognizing existing fifos.
->
-> Code for recognizing existing fifos (=3Dempty file with system attribute)
-> was not changed and is in Linux cifs client for a very long time.
-<>
-> > We intentionally added
-> > the two new dev.type fields for these to avoid collisions with other
-> > things (and since they are Linux specific).  It seems risky to have an
-> > empty file with the system attribute marked as a FIFO, and similarly a
-> > file with one byte null as Socket.   Since this is for only the Linux
-> > client to recognize, I wanted to do something safe for those file
-> > types less likely to be confusing (ie strings for Socket and FIFO that
-> > were similar in length and format to the other special files seemed
-> > intuitive) and "LnxFIFO" and LnxSOCK" were used as the tags in the
-> > file to reduce confusion ie the tags for those two start with "Lnx" -
-> > ie "something used for Linux client" not related to the original
-> > Interix (those begin with "Intx").
->
-> I see. Now I understand what are those types (as I have not seen them
-> before). It is somehow misleading if such "LnxFIFO" and LnxSOCK"
-> functionality is provided by SFU option, but is incompatible with MS SFU
-> and also with MS NFS server. And is also incompatible with older Linux
-> cifs clients (as they do not understand those Lnx types).
+On Fri, Sep 13, 2024 at 08:45:16PM +0200, Simona Vetter wrote:
+> On Thu, Sep 12, 2024 at 02:20:06PM +0000, Alice Ryhl wrote:
+> > The `impl Sync for LockedBy` implementation has insufficient trait
+> > bounds, as it only requires `T: Send`. However, `T: Sync` is also
+> > required for soundness because the `LockedBy::access` method could be
+> > used to provide shared access to the inner value from several threads in
+> > parallel.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: 7b1f55e3a984 ("rust: sync: introduce `LockedBy`")
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> 
+> So I was pondering this forever, because we don't yet have read locks and
+> for exclusive locks Send is enough. But since Arc<T> allows us to build
+> really funny read locks already we need to require Sync for LockedBy,
+> unlike Lock.
+> 
+> We could split access and access_mut up with a newtype so that Sync is
+> only required when needed, but that's not too hard to sneak in when we
+> actually need it.
+> 
 
-I am not as worried about FIFO and SOCK type being recognized by
-older servers (since almost every use case for them would be for them
-to be seen (only) by the client - e.g. for mounts to servers that
-don't implement reparse points yet), and since they are less
-common file types I am willing to let them be unrecognized by
-old clients (we can tag them for stable if older distros don't have
-them),  but I am concerned about allowing "current clients" to
-create empty files for an unusual purpose which could be
-confusing/non-intuitive.
+Hmm.. I think it makes more sense to make `access()` requires `where T:
+Sync` instead of the current fix? I.e. I propose we do:
 
-And since this change (at least the one to allow FIFOs to be created with "=
-sfu"
-has been in mainline for a year and also since it uses a more intuitive tag
-("LnxFIFO") than the empty one used by very old Windows) the only
-clients who would have created these would be already using this newer tag
-(older Linux clients couldn't have created such files - there seems more
-risk of regression with reverting the change than with continuing with
-the Linux client specific tag (at least to the one for FIFOs
-since that has been in much longer than the socket one which is recent)
+	impl<T, U> LockedBy<T, U> {
+	    pub fn access<'a>(&'a self, owner: &'a U) -> &'a T
+	    where T: Sync {
+	    	...
+	    }
+	}
 
-Will discuss with others - opinions welcome.
+The current fix in this patch disallows the case where a user has a
+`Foo: !Sync`, but want to have multiple `&LockedBy<Foo, X>` in different
+threads (they would use `access_mut()` to gain unique accesses), which
+seems to me is a valid use case.
 
-There is an upcoming SMB3.1.1 test event coming up next week (and the annua=
-l
-Storage Developer Conference too) so I can see if others have opinions one
-way or another on whether to move to empty (or 1 byte) files for
-creating fifos/sockets
+The where-clause fix disallows the case where a user has a `Foo: !Sync`,
+a `&LockedBy<Foo, X>` and a `&X`, and is trying to get a `&Foo` with
+`access()`, this doesn't seems to be a common usage, but maybe I'm
+missing something?
 
-> > Note that in the long run we hope to use reparse points by default in
-> > more servers to store special files like this but there are a few
-> > cases for unusual workloads that need special file support that would
-> > have to use sfu still.  The newer reparse tags that Windows uses "WSL"
-> > have the advantage that they require fewer roundtrips to query (since
-> > the file type is in the reparse tag).
->
-> Yes, new WSL tags seems to be better. Also SFU mount option is not
-> activated by default.
->
-> > Also noticed an interesting problem when mounted with "sfu" -
-> > "smbgetinfo filebasicinfo /mnt/fifo1" will hang (in sys_open).  Is
-> > that expected for a FIFO?
->
-> Reading from fifo sleep reading process until some other process write
-> data to fifo. This is how fifos are working. You can try it on local
-> filesystem (e.g. ext4 or tmpfs).
+Thoughts?
 
-makes sense - thx
+Regards,
+Boqun
+
+> Reviewed-by: Simona Vetter <simona.vetter@ffwll.ch>
+> 
+> > ---
+> >  rust/kernel/sync/locked_by.rs | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/rust/kernel/sync/locked_by.rs b/rust/kernel/sync/locked_by.rs
+> > index babc731bd5f6..153ba4edcb03 100644
+> > --- a/rust/kernel/sync/locked_by.rs
+> > +++ b/rust/kernel/sync/locked_by.rs
+> > @@ -83,9 +83,10 @@ pub struct LockedBy<T: ?Sized, U: ?Sized> {
+> >  // SAFETY: `LockedBy` can be transferred across thread boundaries iff the data it protects can.
+> >  unsafe impl<T: ?Sized + Send, U: ?Sized> Send for LockedBy<T, U> {}
+> >  
+> > -// SAFETY: `LockedBy` serialises the interior mutability it provides, so it is `Sync` as long as the
+> > -// data it protects is `Send`.
+> > -unsafe impl<T: ?Sized + Send, U: ?Sized> Sync for LockedBy<T, U> {}
+> > +// SAFETY: Shared access to the `LockedBy` can provide both `&mut T` references in a synchronized
+> > +// manner, or `&T` access in an unsynchronized manner. The `Send` trait is sufficient for the first
+> > +// case, and `Sync` is sufficient for the second case.
+> > +unsafe impl<T: ?Sized + Send + Sync, U: ?Sized> Sync for LockedBy<T, U> {}
+> >  
+> >  impl<T, U> LockedBy<T, U> {
+> >      /// Constructs a new instance of [`LockedBy`].
+> > @@ -127,7 +128,7 @@ pub fn access<'a>(&'a self, owner: &'a U) -> &'a T {
+> >              panic!("mismatched owners");
+> >          }
+> >  
+> > -        // SAFETY: `owner` is evidence that the owner is locked.
+> > +        // SAFETY: `owner` is evidence that there are only shared references to the owner.
+> >          unsafe { &*self.data.get() }
+> >      }
+> >  
+> > 
+> > ---
+> > base-commit: 93dc3be19450447a3a7090bd1dfb9f3daac3e8d2
+> > change-id: 20240912-locked-by-sync-fix-07193df52f98
+> > 
+> > Best regards,
+> > -- 
+> > Alice Ryhl <aliceryhl@google.com>
+> > 
+> 
+> -- 
+> Simona Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
