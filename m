@@ -1,77 +1,76 @@
-Return-Path: <linux-kernel+bounces-329414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C026497910B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:37:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F82979109
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 15:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543D5282686
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:37:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1F70B22089
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 13:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05481CF5E0;
-	Sat, 14 Sep 2024 13:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB971CF7DD;
+	Sat, 14 Sep 2024 13:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vf1usc5C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T0/EhIKY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538D31CEE87;
-	Sat, 14 Sep 2024 13:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5150D14659B
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 13:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726321026; cv=none; b=ogyWg9t5oXF7XWt9hY5inQ3CrXlIlAxVYipAl/ahjfjNkd9Tk2pr3I5A/5+BpIvn1LBJJ/bVu6giqbqu7QjJKnl90JUo+dTiNqT4PhcwwEqkdk/bBmH1ySLiaygIws5otYfu93ErU6xLML3hHJ9o02g3d4DsbFRZmjO9i1Oa6Qs=
+	t=1726321025; cv=none; b=mPYF/O3ks6ldXv2YzK6aOHztK2bX7U2kAsYLXm7tJI9eL9Nsf9eZNy5AELy9OeBLKKXFO4GNJUilSGyjHZ22zv7cuevsSgYWzPJvvFJICgYQBIto2tZ8OeGA5fQdSWluJLlDps7XOmNhngAhHainQWHOR5hoVc5vwtixOaqFaIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726321026; c=relaxed/simple;
-	bh=kFXHFprFgR4slCLR0FGUcGELc2KesBc1hafcDj0mvbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIdpeYs3Eglbjaz3GyUfeyKWxEyuhNHiuCaYrXnjMIBp63cDy1ZjIs7NDmdag/M4w/ij+8SdQ3pT8lRt7OOp8Wt5cugLSW8vuCmlgiW591mlMZc1M03HwKpTkP5Qxn8/FCkzbXVn5/9kKoNm0pVpIE6qgHpIR7sUqFouk4TdDLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vf1usc5C; arc=none smtp.client-ip=198.175.65.16
+	s=arc-20240116; t=1726321025; c=relaxed/simple;
+	bh=mZZoSkk7t3hKDVlOYlPSQH31oO6NrGfwJNlrezjjVyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uIyD0fF6C1wtocPUEmshHgM8aeFpRuMyH22Wezt4YRMKBBdhsateTNe73Zlj88dBi69XsdhK19sjGXbLI4AkFBvKBPUYSLRtEroddJBgkMzb0vhTsHrTxClYUjzSB+LHh8wTWx+8cW3F6+V8arE/mZlWqd1bob9Mni/vodm0NC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T0/EhIKY; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726321024; x=1757857024;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kFXHFprFgR4slCLR0FGUcGELc2KesBc1hafcDj0mvbc=;
-  b=Vf1usc5CizGErRr8QPcPn67tAL2YQLr+oiPzNR4Jl+nWxY78WufZ7t+d
-   Ku8Tn/D8zxXFapsgcpCkpTC0jABsWEnGw/9o+1rL+istl8SdKTmO+uCaW
-   FJ3ZJLSwFzpqM5+/mg/g/5VL+79SDi0zXbdKPW5vkF8o150NMs17V+gpn
-   6EGrOBcyuhFL8f9eOjhB0F2CLMfA4X/8qF7VqD4rTGyo0mJM7U09yll1q
-   tMd+x77AuV/y2vj6pWYCRDHv7yJzmpi+++hQKkJSezSVSqqvcw2ZL/elz
-   79JGT43IbhPTgrk3TUR0QtXYGKRXWMYNMUuS3P9XZyM9ubD/FbdLxmkcI
-   w==;
-X-CSE-ConnectionGUID: +f9aN4OLTVqHMydGmQ4OAQ==
-X-CSE-MsgGUID: R94JWIYrQ+eHWh2leLuC5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="25310292"
+  t=1726321023; x=1757857023;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=mZZoSkk7t3hKDVlOYlPSQH31oO6NrGfwJNlrezjjVyg=;
+  b=T0/EhIKYBpC+JuE6/e2AcKjogiSG4XdRbhpDFzrM4T2R7wGhdiHLDehm
+   2xTisuk3xHNNJ3FrIgf4FyG/BKmgD2uHYvUzuMpsJcjIp4LfzF2tTKsWN
+   AZUX0Y0OIM1tykD6X27Glmpne161PR2lz2tdylt6WrdBCYkum8D7McpDo
+   X4pqEormru0KBNHcS7yn8SkFO2aIz0PtY+qIh75/3phWgQaMr1/+GkpaC
+   AP6sacapMVz/sa+uI6th5eATh0IXHAiV5W5uW1z1RIBakhIAMKqx7wtIo
+   AJ5J22XLOMQBbPDw/MGqw8WmSr+36WXsszHfC96G06CX04gDELcz0xAS9
+   g==;
+X-CSE-ConnectionGUID: 275q5NcvRW28ZCZH+GfSXA==
+X-CSE-MsgGUID: xTJL7jC/R/+9heifnFEfmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="29000128"
 X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="25310292"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 06:37:03 -0700
-X-CSE-ConnectionGUID: COJoVwLDRmeUauPfmGWZxg==
-X-CSE-MsgGUID: XzbL1QYES+SD6AiAWtM+2w==
+   d="scan'208";a="29000128"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 06:37:02 -0700
+X-CSE-ConnectionGUID: sl4lNyDwQEiYTJx3gFUspQ==
+X-CSE-MsgGUID: icwwkJf6RRWEaujXEMPO3w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
-   d="scan'208";a="73408876"
+   d="scan'208";a="68640534"
 Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 14 Sep 2024 06:37:01 -0700
+  by fmviesa010.fm.intel.com with ESMTP; 14 Sep 2024 06:37:00 -0700
 Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1spSxO-0007mu-0L;
+	id 1spSxO-0007ms-03;
 	Sat, 14 Sep 2024 13:36:58 +0000
 Date: Sat, 14 Sep 2024 21:36:52 +0800
 From: kernel test robot <lkp@intel.com>
-To: Donglin Peng <dolinux.peng@gmail.com>, rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Donglin Peng <dolinux.peng@gmail.com>
-Subject: Re: [PATCH v1] function_graph: Support recording and printing the
- function return address
-Message-ID: <202409142157.EPUFJ6zw-lkp@intel.com>
-References: <20240913123456.600950-1-dolinux.peng@gmail.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20240912 6/15]
+ drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2149:2: error: call to
+ '__compiletime_assert_1056' declared with 'error' attribute: BUILD_BUG_ON
+ failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
+Message-ID: <202409142133.w3pk77Qm-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,203 +79,163 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913123456.600950-1-dolinux.peng@gmail.com>
 
-Hi Donglin,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on shuah-kselftest/next]
-[also build test ERROR on shuah-kselftest/fixes linus/master v6.11-rc7]
-[cannot apply to next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Donglin-Peng/function_graph-Support-recording-and-printing-the-function-return-address/20240913-204403
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
-patch link:    https://lore.kernel.org/r/20240913123456.600950-1-dolinux.peng%40gmail.com
-patch subject: [PATCH v1] function_graph: Support recording and printing the function return address
-config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20240914/202409142157.EPUFJ6zw-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409142157.EPUFJ6zw-lkp@intel.com/reproduce)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240912
+head:   f2ca068393cf1157c12ab08556b05824eec16511
+commit: 7256c015db0178a6e2221d8f03b0d2fea660d9ea [6/15] wifi: iwlwifi: mvm: Use __counted_by() and avoid -Wfamnae warnings
+config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20240914/202409142133.w3pk77Qm-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409142133.w3pk77Qm-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409142157.EPUFJ6zw-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409142133.w3pk77Qm-lkp@intel.com/
 
-All error/warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
-   In file included from kernel/trace/trace.c:8677:
->> kernel/trace/trace_selftest.c:910:51: error: initialization of 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)' from incompatible pointer type 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-pointer-types]
-     910 |                         .entryfunc              = store_entry,
-         |                                                   ^~~~~~~~~~~
-   kernel/trace/trace_selftest.c:910:51: note: (near initialization for 'store_bytes[0].gops.entryfunc')
-   kernel/trace/trace_selftest.c:918:51: error: initialization of 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)' from incompatible pointer type 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-pointer-types]
-     918 |                         .entryfunc              = store_entry,
-         |                                                   ^~~~~~~~~~~
-   kernel/trace/trace_selftest.c:918:51: note: (near initialization for 'store_bytes[1].gops.entryfunc')
-   kernel/trace/trace_selftest.c:926:51: error: initialization of 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)' from incompatible pointer type 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-pointer-types]
-     926 |                         .entryfunc              = store_entry,
-         |                                                   ^~~~~~~~~~~
-   kernel/trace/trace_selftest.c:926:51: note: (near initialization for 'store_bytes[2].gops.entryfunc')
-   kernel/trace/trace_selftest.c:934:51: error: initialization of 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)' from incompatible pointer type 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-pointer-types]
-     934 |                         .entryfunc              = store_entry,
-         |                                                   ^~~~~~~~~~~
-   kernel/trace/trace_selftest.c:934:51: note: (near initialization for 'store_bytes[3].gops.entryfunc')
-   kernel/trace/trace_selftest.c: In function 'trace_graph_entry_watchdog':
->> kernel/trace/trace_selftest.c:1029:16: error: too few arguments to function 'trace_graph_entry'
-    1029 |         return trace_graph_entry(trace, gops);
-         |                ^~~~~~~~~~~~~~~~~
-   In file included from kernel/trace/trace.c:54:
-   kernel/trace/trace.h:689:5: note: declared here
-     689 | int trace_graph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-         |     ^~~~~~~~~~~~~~~~~
-   kernel/trace/trace_selftest.c: At top level:
-   kernel/trace/trace_selftest.c:1033:35: error: initialization of 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *, struct fgraph_extras *)' from incompatible pointer type 'int (*)(struct ftrace_graph_ent *, struct fgraph_ops *)' [-Wincompatible-pointer-types]
-    1033 |         .entryfunc              = &trace_graph_entry_watchdog,
-         |                                   ^
-   kernel/trace/trace_selftest.c:1033:35: note: (near initialization for 'fgraph_ops.entryfunc')
-   kernel/trace/trace_selftest.c: In function 'trace_graph_entry_watchdog':
->> kernel/trace/trace_selftest.c:1030:1: warning: control reaches end of non-void function [-Wreturn-type]
-    1030 | }
+   In file included from drivers/net/wireless/intel/iwlwifi/mvm/d3.c:7:
+   In file included from include/linux/etherdevice.h:20:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/riscv/include/asm/cacheflush.h:9:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2149:2: error: call to '__compiletime_assert_1056' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
+    2149 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
+         |         ^
+   include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^
+   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^
+   include/linux/compiler_types.h:517:2: note: expanded from macro 'compiletime_assert'
+     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^
+   include/linux/compiler_types.h:505:2: note: expanded from macro '_compiletime_assert'
+     505 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ^
+   include/linux/compiler_types.h:498:4: note: expanded from macro '__compiletime_assert'
+     498 |                         prefix ## suffix();                             \
+         |                         ^
+   <scratch space>:67:1: note: expanded from here
+      67 | __compiletime_assert_1056
          | ^
+>> drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2148:2: error: call to '__compiletime_assert_1055' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_CCMP
+    2148 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
+         |         ^
+   include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^
+   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^
+   include/linux/compiler_types.h:517:2: note: expanded from macro 'compiletime_assert'
+     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^
+   include/linux/compiler_types.h:505:2: note: expanded from macro '_compiletime_assert'
+     505 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ^
+   include/linux/compiler_types.h:498:4: note: expanded from macro '__compiletime_assert'
+     498 |                         prefix ## suffix();                             \
+         |                         ^
+   <scratch space>:63:1: note: expanded from here
+      63 | __compiletime_assert_1055
+         | ^
+   4 warnings and 2 errors generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
+   Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
+   Selected by [m]:
+   - TI_K3_M4_REMOTEPROC [=m] && REMOTEPROC [=y] && (ARCH_K3 || COMPILE_TEST [=y])
 
 
-vim +910 kernel/trace/trace_selftest.c
+vim +2149 drivers/net/wireless/intel/iwlwifi/mvm/d3.c
 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   906) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   907) static struct fgraph_fixture store_bytes[4] __initdata = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   908) 	[0] = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   909) 		.gops = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03  @910) 			.entryfunc		= store_entry,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   911) 			.retfunc		= store_return,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   912) 		},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   913) 		.store_size = 1,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   914) 		.store_type_name = "byte",
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   915) 	},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   916) 	[1] = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   917) 		.gops = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   918) 			.entryfunc		= store_entry,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   919) 			.retfunc		= store_return,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   920) 		},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   921) 		.store_size = 2,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   922) 		.store_type_name = "short",
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   923) 	},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   924) 	[2] = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   925) 		.gops = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   926) 			.entryfunc		= store_entry,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   927) 			.retfunc		= store_return,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   928) 		},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   929) 		.store_size = 4,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   930) 		.store_type_name = "word",
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   931) 	},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   932) 	[3] = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   933) 		.gops = {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   934) 			.entryfunc		= store_entry,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   935) 			.retfunc		= store_return,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   936) 		},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   937) 		.store_size = 8,
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   938) 		.store_type_name = "long long",
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   939) 	},
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   940) };
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   941) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   942) static __init int test_graph_storage_multi(void)
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   943) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   944) 	struct fgraph_fixture *fixture;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   945) 	bool printed = false;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   946) 	int i, ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   947) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   948) 	pr_cont("PASSED\n");
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   949) 	pr_info("Testing multiple fgraph storage on a function: ");
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   950) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   951) 	for (i = 0; i < ARRAY_SIZE(store_bytes); i++) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   952) 		fixture = &store_bytes[i];
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   953) 		ret = init_fgraph_fixture(fixture);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   954) 		if (ret && ret != -ENODEV) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   955) 			pr_cont("*Could not set filter* ");
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   956) 			printed = true;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   957) 			goto out;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   958) 		}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   959) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   960) 		ret = register_ftrace_graph(&fixture->gops);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   961) 		if (ret) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   962) 			pr_warn("Failed to init store_bytes fgraph tracing\n");
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   963) 			printed = true;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   964) 			goto out;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   965) 		}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   966) 	}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   967) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   968) 	DYN_FTRACE_TEST_NAME();
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   969) out:
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   970) 	while (--i >= 0) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   971) 		fixture = &store_bytes[i];
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   972) 		unregister_ftrace_graph(&fixture->gops);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   973) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   974) 		if (fixture->error_str && !printed) {
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   975) 			pr_cont("*** %s ***", fixture->error_str);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   976) 			printed = true;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   977) 		}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   978) 	}
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   979) 	return printed ? -1 : 0;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   980) }
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   981) 
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   982) /* Test the storage passed across function_graph entry and return */
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   983) static __init int test_graph_storage(void)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   984) {
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   985) 	int ret;
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   986) 
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   987) 	ret = test_graph_storage_single(&store_bytes[0]);
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   988) 	if (ret)
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   989) 		return ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   990) 	ret = test_graph_storage_single(&store_bytes[1]);
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   991) 	if (ret)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   992) 		return ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   993) 	ret = test_graph_storage_single(&store_bytes[2]);
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   994) 	if (ret)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   995) 		return ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   996) 	ret = test_graph_storage_single(&store_bytes[3]);
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   997) 	if (ret)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03   998) 		return ret;
-dd120af2d5f8f3 Masami Hiramatsu (Google  2024-06-03   999) 	ret = test_graph_storage_multi();
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1000) 	if (ret)
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1001) 		return ret;
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1002) 	return 0;
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1003) }
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1004) #else
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1005) static inline int test_graph_storage(void) { return 0; }
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1006) #endif /* CONFIG_DYNAMIC_FTRACE */
-47c3c70aa36971 Steven Rostedt (VMware    2024-06-03  1007) 
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1008  /* Maximum number of functions to trace before diagnosing a hang */
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1009  #define GRAPH_MAX_FUNC_TEST	100000000
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1010  
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1011  static unsigned int graph_hang_thresh;
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1012  
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1013  /* Wrap the real function entry probe to avoid possible hanging */
-37238abe3cb47b Steven Rostedt (VMware    2024-06-03  1014) static int trace_graph_entry_watchdog(struct ftrace_graph_ent *trace,
-37238abe3cb47b Steven Rostedt (VMware    2024-06-03  1015) 				      struct fgraph_ops *gops)
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1016  {
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1017  	/* This is harmlessly racy, we want to approximately detect a hang */
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1018  	if (unlikely(++graph_hang_thresh > GRAPH_MAX_FUNC_TEST)) {
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1019  		ftrace_graph_stop();
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1020  		printk(KERN_WARNING "BUG: Function graph tracer hang!\n");
-19f0423fd55c30 Huang Yiwei               2024-02-23  1021  		if (ftrace_dump_on_oops_enabled()) {
-7fe70b579c9e3d Steven Rostedt (Red Hat   2013-03-15  1022) 			ftrace_dump(DUMP_ALL);
-7fe70b579c9e3d Steven Rostedt (Red Hat   2013-03-15  1023) 			/* ftrace_dump() disables tracing */
-7fe70b579c9e3d Steven Rostedt (Red Hat   2013-03-15  1024) 			tracing_on();
-7fe70b579c9e3d Steven Rostedt (Red Hat   2013-03-15  1025) 		}
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1026  		return 0;
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1027  	}
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1028  
-37238abe3cb47b Steven Rostedt (VMware    2024-06-03 @1029) 	return trace_graph_entry(trace, gops);
-cf586b61f80229 Frederic Weisbecker       2009-03-22 @1030  }
-cf586b61f80229 Frederic Weisbecker       2009-03-22  1031  
-688f7089d8851b Steven Rostedt (VMware    2018-11-15  1032) static struct fgraph_ops fgraph_ops __initdata  = {
-688f7089d8851b Steven Rostedt (VMware    2018-11-15 @1033) 	.entryfunc		= &trace_graph_entry_watchdog,
-688f7089d8851b Steven Rostedt (VMware    2018-11-15  1034) 	.retfunc		= &trace_graph_return,
-688f7089d8851b Steven Rostedt (VMware    2018-11-15  1035) };
-688f7089d8851b Steven Rostedt (VMware    2018-11-15  1036) 
+  2134	
+  2135	static bool iwl_mvm_gtk_rekey(struct iwl_wowlan_status_data *status,
+  2136				      struct ieee80211_vif *vif,
+  2137				      struct iwl_mvm *mvm, u32 gtk_cipher)
+  2138	{
+  2139		int i, j;
+  2140		struct ieee80211_key_conf *key;
+  2141		DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen,
+  2142			    WOWLAN_KEY_MAX_SIZE);
+  2143		int link_id = vif->active_links ? __ffs(vif->active_links) : -1;
+  2144	
+  2145		conf->cipher = gtk_cipher;
+  2146	
+  2147		BUILD_BUG_ON(WLAN_KEY_LEN_CCMP != WLAN_KEY_LEN_GCMP);
+> 2148		BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
+> 2149		BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
+  2150		BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_TKIP);
+  2151		BUILD_BUG_ON(conf->keylen < sizeof(status->gtk[0].key));
+  2152	
+  2153		switch (gtk_cipher) {
+  2154		case WLAN_CIPHER_SUITE_CCMP:
+  2155		case WLAN_CIPHER_SUITE_GCMP:
+  2156			conf->keylen = WLAN_KEY_LEN_CCMP;
+  2157			break;
+  2158		case WLAN_CIPHER_SUITE_GCMP_256:
+  2159			conf->keylen = WLAN_KEY_LEN_GCMP_256;
+  2160			break;
+  2161		case WLAN_CIPHER_SUITE_TKIP:
+  2162			conf->keylen = WLAN_KEY_LEN_TKIP;
+  2163			break;
+  2164		default:
+  2165			WARN_ON(1);
+  2166		}
+  2167	
+  2168		for (i = 0; i < ARRAY_SIZE(status->gtk); i++) {
+  2169			if (!status->gtk[i].len)
+  2170				continue;
+  2171	
+  2172			conf->keyidx = status->gtk[i].id;
+  2173			IWL_DEBUG_WOWLAN(mvm,
+  2174					 "Received from FW GTK cipher %d, key index %d\n",
+  2175					 conf->cipher, conf->keyidx);
+  2176			memcpy(conf->key, status->gtk[i].key,
+  2177			       sizeof(status->gtk[i].key));
+  2178	
+  2179			key = ieee80211_gtk_rekey_add(vif, conf, link_id);
+  2180			if (IS_ERR(key))
+  2181				return false;
+  2182	
+  2183			for (j = 0; j < ARRAY_SIZE(status->gtk_seq); j++) {
+  2184				if (!status->gtk_seq[j].valid ||
+  2185				    status->gtk_seq[j].key_id != key->keyidx)
+  2186					continue;
+  2187				iwl_mvm_set_key_rx_seq_idx(key, status, j);
+  2188				break;
+  2189			}
+  2190			WARN_ON(j == ARRAY_SIZE(status->gtk_seq));
+  2191		}
+  2192	
+  2193		return true;
+  2194	}
+  2195	
 
 -- 
 0-DAY CI Kernel Test Service
