@@ -1,232 +1,224 @@
-Return-Path: <linux-kernel+bounces-329726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97502979508
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:33:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA1B979509
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD740B21270
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:33:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37EE61C21934
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E71208A0;
-	Sun, 15 Sep 2024 07:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026CF1CF93;
+	Sun, 15 Sep 2024 07:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LgmIn2ju"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AyEgZ0yJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D64B168BE;
-	Sun, 15 Sep 2024 07:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF96168BE
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 07:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726385571; cv=none; b=XXt0gKPqwJ/U+r4xlf7wn8xtQBzvfOLU+4PLq+h5uALDflZ2MdkoLgx5oh7kGS2nlAcxjy0E9iNtQxzYE2BEEvEKIY3jtQ6Gn3LQO2UasjfqtkyKPyVT6Ca3PZCsGNFvCbdB3JbjJ6bPoU30v2qd8rY7PbFUFO0rRff4kVso9wA=
+	t=1726385680; cv=none; b=XptkPNwa+9IQyhmGxd5aBniRBPodqnw5wcJCS0Q14VUpcacaFGNEzl5M0Ti+mvCJc+B6sGn//I6ScPUYz0CBCsgUBN4qH04LD9ZWs26ouYjwnmMabcncKH8jNsQ0U/xeXfLAc/URxwo2Zngq0UqsLVWtZ9DfQ+U7gdFEqSFMajE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726385571; c=relaxed/simple;
-	bh=Sk8UXaCUA/vlAWm8B2E0We3KmFV1OhCUNjsb6him7uA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SzacOAjOXstu7Nx/9ZcSrXb/rwz70Iv9ukek0kwh2dInK0stiw+3zUQWQj7rWcwRvS7f/KyJ8h0rDYngAmah1Kj8bvA0t56apDBwCkw9f8hD5wg9+4hGZ/tEuNbk2K32T7dZWlJ5s90MoWpENannY6LkZv7aCglXCLoke7NQHs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LgmIn2ju; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a81bd549eso410293066b.3;
-        Sun, 15 Sep 2024 00:32:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726385568; x=1726990368; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IeRHQu+yKzQUqrXbd5lul2wLwuoHFUxcLP2h5VUYKXk=;
-        b=LgmIn2juHHmgV5K+08jGXQ1nhCtaxw5K3zjL/RLwUSA2ZvG7xeR1LlXHwHuhEZ4R9s
-         EgoaMK3M+R0j+uWWnWR1rNJFQCFg5RE5Bcj+bVG0hxt+YJiPHlKwL1TblpSfr2eZ+O0k
-         Kp3EauMCR2agQKWzR+7o09Zj7zZummC12JTGwjmlqclbaCOmOoIQoAM0Y5q9+sX7gVs4
-         b/xVLSfP71KLq8lctiq7gKnOnEt7xtB133ps4HTMmEoJiXrmpW3uijyU0igd0MTstag9
-         Im3voXN7luRPsZfJejscDXoxRFJNwKnKTzs5Me57m4SX7cxj2SBjkBgm5a6FzIww1iua
-         aPgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726385568; x=1726990368;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IeRHQu+yKzQUqrXbd5lul2wLwuoHFUxcLP2h5VUYKXk=;
-        b=K5HQKqTXR8SrO5adg0iCp3gE28WXwTBXy+m1ubJFjTyxMrjaxgbpzOwlEdaC8W7ihN
-         iFg3PVxAIEuqn1AT1PbldS1GlupbFOYi/7+wZ/V+NWUX5MtAl/gjgMoKw+Ykf3yHXyST
-         YPvymIE5SpHcaT2PKGVSwEMrrxwm1k9IVXS/asTe9nxqPTVZTJmlRnNhbz+gBFkRg5jE
-         I0o/WjddjrA4uOqg0fuQped6TCDWGCGMp1lnO7vWG3tIE2ur70K4oRlgJTngLGVNu4TN
-         N3p9NUhAPIdyeKpAakbabiyM8W1zmK7Yy8n7CrlHEsTLeubeZNE4DqcwaCiuOc2PbWkk
-         3UFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKx4yNJ+U8FrinzLnLVHWX0a7hpWhdmXURsPlLgtxw8HZGDVs8cUwS0S8pbbdgijFzYES0nx/eobnGez48pok=@vger.kernel.org, AJvYcCVqppMvOvpjyacU9CG3N9IyDWI/cFEFAaZJnVrB0ZN28UgrbQFdAgjDVSj9c97esezWn933p1w5aHlnDKn0@vger.kernel.org, AJvYcCWNB3a32DzVrmFGN0k44xY1Mtt+4Eu4Kl//d4TMIQGvG1nDBjChX+YO8NB1ObsgOYVtjnuTWuqYsVN0j4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw//nVXi+foFNk496KBozO7FCkh3JQFlhNubyprjgCMWWTIGNb4
-	fSZNi4tNoEXOJjbcRJa6GlPOIGPAyqagOXV6C1U3s/Z0ly9OgCwO
-X-Google-Smtp-Source: AGHT+IGlHUAsnPjOFFuTn/tXNwH8GByOCS4k9zUVf6iXg3eJnbjo7p2RPWPflOmT8NKEozFzWvNMPQ==
-X-Received: by 2002:a17:907:e28f:b0:a8d:2ab2:c99e with SMTP id a640c23a62f3a-a9029730615mr1197571366b.55.1726385566847;
-        Sun, 15 Sep 2024 00:32:46 -0700 (PDT)
-Received: from ?IPV6:2003:df:bf21:aa00:bafe:d6:9476:f8d4? (p200300dfbf21aa00bafe00d69476f8d4.dip0.t-ipconnect.de. [2003:df:bf21:aa00:bafe:d6:9476:f8d4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90613205b8sm163145166b.188.2024.09.15.00.32.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Sep 2024 00:32:46 -0700 (PDT)
-Message-ID: <c7c5a16b-d033-4b46-8994-259c55bfd8b1@gmail.com>
-Date: Sun, 15 Sep 2024 09:32:44 +0200
+	s=arc-20240116; t=1726385680; c=relaxed/simple;
+	bh=vI/EqcHfqLXhj+Xp5qXnWOanPCfo3IcQWUPpWplXq/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bFTzmuI7TLzNdOIibiQrU/9e6o5MqkXlfAl5pv7T5SWUX1SIG0eBykDR+nZ0+tsLURBlg2AaOgCNQQ4sI4XzO9I6PxGYhbk4Xe0xrmJWccMQI3ZmojiTZGfNvK/IrKwqMkXCDyvUveiF+33RTuEBhUpwOiHNQFmdel0FL0EMP4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AyEgZ0yJ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726385678; x=1757921678;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=vI/EqcHfqLXhj+Xp5qXnWOanPCfo3IcQWUPpWplXq/8=;
+  b=AyEgZ0yJY2qp4tk3k1/CZIiU9eyqyHbM5iw5rA1N+OvaIGMq33tqDs2U
+   3Eq44sMFvWuiyPuf2Plwgh5/RTH8hxomdjcgnXGNaUPU5H6jBoGQTPMgb
+   xql4baSzpBeAKafnUYF0eX7Y7KifvmrXJ+E9ybDQnTIUoVd2F33+sLAIe
+   BbUlxXe/lz5W4trZjcNpY9HSvcEEuRNY5sjNVP4PqtmzYsM/sDyy1D0IH
+   4oYM/ilDUFWK6vcuoC4YDCUBSq6DVhpgnSbfzZscskDSCMicATpjY0cO1
+   oYJ2CrRLFGUq2p5EqJQxfHduvlhsCjCD4v1zxzvwZksdAfcfMnsCms3ML
+   A==;
+X-CSE-ConnectionGUID: jeDYM3ayT9ezuGNLbCEFgg==
+X-CSE-MsgGUID: lJf2dLulQIeL3Sz+aY28Ug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="25392834"
+X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
+   d="scan'208";a="25392834"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 00:34:37 -0700
+X-CSE-ConnectionGUID: f478bZOAQU+HBku6EDx/EA==
+X-CSE-MsgGUID: s5eQomInSK6ufiyxpWDI8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
+   d="scan'208";a="69339722"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 15 Sep 2024 00:34:36 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spjmD-0008Us-2F;
+	Sun, 15 Sep 2024 07:34:33 +0000
+Date: Sun, 15 Sep 2024 15:33:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Javier Martinez Canillas <javierm@redhat.com>
+Subject: drivers/video/console/dummycon.c:26:25: error:
+ 'CONFIG_DUMMY_CONSOLE_COLUMNS' undeclared; did you mean
+ 'CONFIG_DUMMY_CONSOLE'?
+Message-ID: <202409151512.LML1slol-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
-To: Alice Ryhl <aliceryhl@google.com>, Conor Dooley <conor@kernel.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mark Brown <broonie@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- rust-for-linux@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>
-References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
- <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
- <20240913-shack-estate-b376a65921b1@spud>
- <CAH5fLggX=Uw8T6EqyonJyOkjOVM7ELy4hK8NV80suvDEBnq_Lg@mail.gmail.com>
-Content-Language: en-US
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <CAH5fLggX=Uw8T6EqyonJyOkjOVM7ELy4hK8NV80suvDEBnq_Lg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Am 13.09.24 um 23:44 schrieb Alice Ryhl:
-> On Fri, Sep 13, 2024 at 11:18 PM Conor Dooley <conor@kernel.org> wrote:
->>
->> On Fri, Sep 13, 2024 at 12:08:20AM +0200, Miguel Ojeda wrote:
->>> On Thu, Aug 29, 2024 at 10:23 AM Alice Ryhl <aliceryhl@google.com> wrote:
->>>>
->>>> Add all of the flags that are needed to support the shadow call stack
->>>> (SCS) sanitizer with Rust, and updates Kconfig to allow only
->>>> configurations that work.
->>>
->>> Applied to `rust-next` -- thanks everyone!
->>>
->>> Paul/Palmer/Albert/RISC-V: I think you were not Cc'd (at least in this
->>> version?), so please shout if you have a problem with this.
->>
->> For some reason I deleted the series from my mailbox, must've been in
->> dt-binding review mode and hit ctrl + d. I've been away and busy, so my
->> apologies Alice for not trying this out sooner.
->> It's sorta annoying to test rust + scs on riscv, cos you need (unless I
->> am mistaken) llvm-19. llvm-18 + rust built fine, but has no SCS.
->>
->> llvm-19 + rust failed to build for me riscv, producing:
->>
->> In file included from /stuff/linux/rust/helpers/helpers.c:22:
->> /stuff/linux/rust/helpers/spinlock.c:10:23: error: call to undeclared function 'spinlock_check'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->> __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
->> ^
->> /stuff/linux/rust/helpers/spinlock.c:10:23: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'raw_spinlock_t *' (aka 'struct raw_spinlock *') [-Wint-conversion]
->> __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
->> ^~~~~~~~~~~~~~~~~~~~
->> /stuff/linux/include/linux/spinlock.h:101:52: note: passing argument to parameter 'lock' here
->> extern void __raw_spin_lock_init(raw_spinlock_t *lock, const char *name,
->> ^
->> 2 errors generated.
->>
->> This occurs because I have DEBUG_SPINLOCK enabled. I didn't check why,
->> but Andreas seems to have introduced that code - luckily he's already on
->> CC here :)
->>
->> With that disabled, there are dozens of warnings along the lines of:
->> /stuff/linux/rust/helpers/err.c:6:14: warning: symbol 'rust_helper_ERR_PTR' was not declared. Should it be static?
->> If those are okay for rust code, it would be rather helpful if the
->> warnings could be disabled - otherwise they should really be fixed.
->>
->> Following that, I got a build error:
->>
->> error[E0425]: cannot find function `__mutex_init` in crate `bindings`
->> --> /stuff/linux/rust/kernel/sync/lock/mutex.rs:104:28
->> |
->> 104   |           unsafe { bindings::__mutex_init(ptr, name, key) }
->> |                              ^^^^^^^^^^^^ help: a function with a similar name exists: `__mutex_rt_init`
->> |
->> ::: /stuff/brsdk/work/linux/rust/bindings/bindings_generated.rs:12907:5
->> |
->> 12907 | /     pub fn __mutex_rt_init(
->> 12908 | |         lock: *mut mutex,
->> 12909 | |         name: *const core::ffi::c_char,
->> 12910 | |         key: *mut lock_class_key,
->> 12911 | |     );
->> | |_____- similarly named function `__mutex_rt_init` defined here
->>
->> error: aborting due to 1 previous error
-> 
-> This looks like an unrelated problem to me. 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0babf683783ddca06551537c6781e413cfe8d27b
+commit: 4293b09251490fe493c3fc5e0d3de7168fe70039 dummycon: limit Arm console size hack to footbridge
+date:   11 months ago
+config: arm-randconfig-r003-20221107 (https://download.01.org/0day-ci/archive/20240915/202409151512.LML1slol-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409151512.LML1slol-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409151512.LML1slol-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/video/console/dummycon.c: In function 'dummycon_init':
+>> drivers/video/console/dummycon.c:26:25: error: 'CONFIG_DUMMY_CONSOLE_COLUMNS' undeclared (first use in this function); did you mean 'CONFIG_DUMMY_CONSOLE'?
+      26 | #define DUMMY_COLUMNS   CONFIG_DUMMY_CONSOLE_COLUMNS
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/video/console/dummycon.c:104:23: note: in expansion of macro 'DUMMY_COLUMNS'
+     104 |         vc->vc_cols = DUMMY_COLUMNS;
+         |                       ^~~~~~~~~~~~~
+   drivers/video/console/dummycon.c:26:25: note: each undeclared identifier is reported only once for each function it appears in
+      26 | #define DUMMY_COLUMNS   CONFIG_DUMMY_CONSOLE_COLUMNS
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/video/console/dummycon.c:104:23: note: in expansion of macro 'DUMMY_COLUMNS'
+     104 |         vc->vc_cols = DUMMY_COLUMNS;
+         |                       ^~~~~~~~~~~~~
+>> drivers/video/console/dummycon.c:27:25: error: 'CONFIG_DUMMY_CONSOLE_ROWS' undeclared (first use in this function); did you mean 'CONFIG_DUMMY_CONSOLE'?
+      27 | #define DUMMY_ROWS      CONFIG_DUMMY_CONSOLE_ROWS
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/video/console/dummycon.c:105:23: note: in expansion of macro 'DUMMY_ROWS'
+     105 |         vc->vc_rows = DUMMY_ROWS;
+         |                       ^~~~~~~~~~
 
 
-Yes, it is unrelated to this change. It is PREEMPT_RT usage related. I 
-think we could add something like
+vim +26 drivers/video/console/dummycon.c
 
-#ifdef CONFIG_PREEMPT_RT
-void rust_helper___mutex_init(struct mutex *mutex, const char *name,
-			 struct lock_class_key *key)
-{
-	return __mutex_init(mutex, name, key);
-}
-#endif
+^1da177e4c3f41 Linus Torvalds     2005-04-16   16  
+^1da177e4c3f41 Linus Torvalds     2005-04-16   17  /*
+^1da177e4c3f41 Linus Torvalds     2005-04-16   18   *  Dummy console driver
+^1da177e4c3f41 Linus Torvalds     2005-04-16   19   */
+^1da177e4c3f41 Linus Torvalds     2005-04-16   20  
+4293b09251490f Arnd Bergmann      2023-10-09   21  #if defined(CONFIG_ARCH_FOOTBRIDGE) && defined(CONFIG_VGA_CONSOLE)
+3ea33510001478 H. Peter Anvin     2007-10-16   22  #define DUMMY_COLUMNS	screen_info.orig_video_cols
+3ea33510001478 H. Peter Anvin     2007-10-16   23  #define DUMMY_ROWS	screen_info.orig_video_lines
+8f5b1e6511b83a Geert Uytterhoeven 2015-01-12   24  #else
+^1da177e4c3f41 Linus Torvalds     2005-04-16   25  /* set by Kconfig. Use 80x25 for 640x480 and 160x64 for 1280x1024 */
+^1da177e4c3f41 Linus Torvalds     2005-04-16  @26  #define DUMMY_COLUMNS	CONFIG_DUMMY_CONSOLE_COLUMNS
+^1da177e4c3f41 Linus Torvalds     2005-04-16  @27  #define DUMMY_ROWS	CONFIG_DUMMY_CONSOLE_ROWS
+^1da177e4c3f41 Linus Torvalds     2005-04-16   28  #endif
+^1da177e4c3f41 Linus Torvalds     2005-04-16   29  
+83d83bebf40132 Hans de Goede      2018-06-28   30  #ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
+83d83bebf40132 Hans de Goede      2018-06-28   31  /* These are both protected by the console_lock */
+83d83bebf40132 Hans de Goede      2018-06-28   32  static RAW_NOTIFIER_HEAD(dummycon_output_nh);
+83d83bebf40132 Hans de Goede      2018-06-28   33  static bool dummycon_putc_called;
+83d83bebf40132 Hans de Goede      2018-06-28   34  
+83d83bebf40132 Hans de Goede      2018-06-28   35  void dummycon_register_output_notifier(struct notifier_block *nb)
+83d83bebf40132 Hans de Goede      2018-06-28   36  {
+214b0dd591abfd Daniel Vetter      2019-05-28   37  	WARN_CONSOLE_UNLOCKED();
+214b0dd591abfd Daniel Vetter      2019-05-28   38  
+83d83bebf40132 Hans de Goede      2018-06-28   39  	raw_notifier_chain_register(&dummycon_output_nh, nb);
+83d83bebf40132 Hans de Goede      2018-06-28   40  
+83d83bebf40132 Hans de Goede      2018-06-28   41  	if (dummycon_putc_called)
+83d83bebf40132 Hans de Goede      2018-06-28   42  		nb->notifier_call(nb, 0, NULL);
+83d83bebf40132 Hans de Goede      2018-06-28   43  }
+83d83bebf40132 Hans de Goede      2018-06-28   44  
+83d83bebf40132 Hans de Goede      2018-06-28   45  void dummycon_unregister_output_notifier(struct notifier_block *nb)
+83d83bebf40132 Hans de Goede      2018-06-28   46  {
+214b0dd591abfd Daniel Vetter      2019-05-28   47  	WARN_CONSOLE_UNLOCKED();
+214b0dd591abfd Daniel Vetter      2019-05-28   48  
+83d83bebf40132 Hans de Goede      2018-06-28   49  	raw_notifier_chain_unregister(&dummycon_output_nh, nb);
+83d83bebf40132 Hans de Goede      2018-06-28   50  }
+83d83bebf40132 Hans de Goede      2018-06-28   51  
+83d83bebf40132 Hans de Goede      2018-06-28   52  static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos)
+83d83bebf40132 Hans de Goede      2018-06-28   53  {
+214b0dd591abfd Daniel Vetter      2019-05-28   54  	WARN_CONSOLE_UNLOCKED();
+214b0dd591abfd Daniel Vetter      2019-05-28   55  
+83d83bebf40132 Hans de Goede      2018-06-28   56  	dummycon_putc_called = true;
+83d83bebf40132 Hans de Goede      2018-06-28   57  	raw_notifier_call_chain(&dummycon_output_nh, 0, NULL);
+83d83bebf40132 Hans de Goede      2018-06-28   58  }
+83d83bebf40132 Hans de Goede      2018-06-28   59  
+83d83bebf40132 Hans de Goede      2018-06-28   60  static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
+83d83bebf40132 Hans de Goede      2018-06-28   61  			   int count, int ypos, int xpos)
+83d83bebf40132 Hans de Goede      2018-06-28   62  {
+83d83bebf40132 Hans de Goede      2018-06-28   63  	int i;
+83d83bebf40132 Hans de Goede      2018-06-28   64  
+83d83bebf40132 Hans de Goede      2018-06-28   65  	if (!dummycon_putc_called) {
+83d83bebf40132 Hans de Goede      2018-06-28   66  		/* Ignore erases */
+83d83bebf40132 Hans de Goede      2018-06-28   67  		for (i = 0 ; i < count; i++) {
+83d83bebf40132 Hans de Goede      2018-06-28   68  			if (s[i] != vc->vc_video_erase_char)
+83d83bebf40132 Hans de Goede      2018-06-28   69  				break;
+83d83bebf40132 Hans de Goede      2018-06-28   70  		}
+83d83bebf40132 Hans de Goede      2018-06-28   71  		if (i == count)
+83d83bebf40132 Hans de Goede      2018-06-28   72  			return;
+83d83bebf40132 Hans de Goede      2018-06-28   73  
+83d83bebf40132 Hans de Goede      2018-06-28   74  		dummycon_putc_called = true;
+83d83bebf40132 Hans de Goede      2018-06-28   75  	}
+83d83bebf40132 Hans de Goede      2018-06-28   76  
+83d83bebf40132 Hans de Goede      2018-06-28   77  	raw_notifier_call_chain(&dummycon_output_nh, 0, NULL);
+83d83bebf40132 Hans de Goede      2018-06-28   78  }
+83d83bebf40132 Hans de Goede      2018-06-28   79  
+83d83bebf40132 Hans de Goede      2018-06-28   80  static int dummycon_blank(struct vc_data *vc, int blank, int mode_switch)
+83d83bebf40132 Hans de Goede      2018-06-28   81  {
+83d83bebf40132 Hans de Goede      2018-06-28   82  	/* Redraw, so that we get putc(s) for output done while blanked */
+83d83bebf40132 Hans de Goede      2018-06-28   83  	return 1;
+83d83bebf40132 Hans de Goede      2018-06-28   84  }
+83d83bebf40132 Hans de Goede      2018-06-28   85  #else
+83d83bebf40132 Hans de Goede      2018-06-28   86  static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos) { }
+83d83bebf40132 Hans de Goede      2018-06-28   87  static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
+83d83bebf40132 Hans de Goede      2018-06-28   88  			   int count, int ypos, int xpos) { }
+83d83bebf40132 Hans de Goede      2018-06-28   89  static int dummycon_blank(struct vc_data *vc, int blank, int mode_switch)
+83d83bebf40132 Hans de Goede      2018-06-28   90  {
+83d83bebf40132 Hans de Goede      2018-06-28   91  	return 0;
+83d83bebf40132 Hans de Goede      2018-06-28   92  }
+83d83bebf40132 Hans de Goede      2018-06-28   93  #endif
+83d83bebf40132 Hans de Goede      2018-06-28   94  
+^1da177e4c3f41 Linus Torvalds     2005-04-16   95  static const char *dummycon_startup(void)
+^1da177e4c3f41 Linus Torvalds     2005-04-16   96  {
+^1da177e4c3f41 Linus Torvalds     2005-04-16   97      return "dummy device";
+^1da177e4c3f41 Linus Torvalds     2005-04-16   98  }
+^1da177e4c3f41 Linus Torvalds     2005-04-16   99  
+^1da177e4c3f41 Linus Torvalds     2005-04-16  100  static void dummycon_init(struct vc_data *vc, int init)
+^1da177e4c3f41 Linus Torvalds     2005-04-16  101  {
+^1da177e4c3f41 Linus Torvalds     2005-04-16  102      vc->vc_can_do_color = 1;
+^1da177e4c3f41 Linus Torvalds     2005-04-16  103      if (init) {
+^1da177e4c3f41 Linus Torvalds     2005-04-16 @104  	vc->vc_cols = DUMMY_COLUMNS;
+^1da177e4c3f41 Linus Torvalds     2005-04-16  105  	vc->vc_rows = DUMMY_ROWS;
+^1da177e4c3f41 Linus Torvalds     2005-04-16  106      } else
+^1da177e4c3f41 Linus Torvalds     2005-04-16  107  	vc_resize(vc, DUMMY_COLUMNS, DUMMY_ROWS);
+^1da177e4c3f41 Linus Torvalds     2005-04-16  108  }
+^1da177e4c3f41 Linus Torvalds     2005-04-16  109  
 
-to helpers to fix
+:::::: The code at line 26 was first introduced by commit
+:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/rust/kernel/sync/lock/mutex.rs?&id=6d20d629c6d8575be98eeebe49a16fb2d7b32350
+:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
+:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
 
-?
-
-Explanation: Looking at
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/mutex.h?#n52
-
-we have (simplified)
-
-#ifndef CONFIG_PREEMPT_RT
-extern void __mutex_init(struct mutex *lock, const char *name,
-			 struct lock_class_key *key);
-#else
-#define __mutex_init(mutex, name, key)			\
-do {							\
-	rt_mutex_base_init(&(mutex)->rtmutex);		\
-	__mutex_rt_init((mutex), name, key);		\
-} while (0)
-#endif
-
-So in the CONFIG_PREEMPT_RT case bindgen doesn't resolve the macro 
-what could be fixed by adding a helper.
-
-Dirk
-
-
-> This patch only changes
-> the rustc flags, but these errors have to do with the Rust
-> helpers/bindings, which get generated before the rustc flags are used
-> at all. Most likely, there is a problem under the particular
-> configuration you are using. Were you able to reproduce these errors
-> without this patch?
-> 
->> I stopped there, Space Marine 2 awaits.
->>
->> Hopefully I'll get to say hello next week,
->> Conor.
-> 
-> Thanks for taking a look, and see you at Plumbers!
-> 
-> Alice
-> 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
