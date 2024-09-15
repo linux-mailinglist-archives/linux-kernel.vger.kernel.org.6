@@ -1,302 +1,143 @@
-Return-Path: <linux-kernel+bounces-329896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E0E97973A
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B1097973B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC1A71C209A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9555D282700
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BF41CA6B2;
-	Sun, 15 Sep 2024 14:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9C01C6F53;
+	Sun, 15 Sep 2024 14:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vs1dnjdS"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="oMN3SUW1"
+Received: from ci74p00im-qukt09090302.me.com (ci74p00im-qukt09090302.me.com [17.57.156.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2641C9EDC
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 14:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84221EB31
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 14:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.156.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726410718; cv=none; b=fHtbbAsbBwXC5OH+gWWY4o3w/VxbmVaiKzKAqELr6Bso6DJRGj1/FF88/hG5eSsqPBSkGGiYzx3U4cf0sw32Tw3QBFLgIi+RxuDV+5olCdfLIBLZg4gy65R8w2Uyo4lKioTgzuMRH1aL0Gm8hYewWCEn19zMdEW9ta3zOiR5CjY=
+	t=1726411013; cv=none; b=VjZJmUDlr3AkbNy3oTflh2bzybzTBaAork0lqd/f1fZhAk6tdSRqAAUhAqwhRT4YzT1DwVHR1QPF/RwD8st7GyqjAShI4dzqyqwdN4sRn8+AEgNBOBSP1yiVkqYGNss8ri3AyeY80ErWC8r+flFltIqJ2fYurMXzGJ02CtxTwUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726410718; c=relaxed/simple;
-	bh=/bhxtkSWHddRRHFAN7ilQCw+DOk04+8fISK58//Qtwg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uJRPzigkNcpPMlhr7bg7LDBjU0ve2DpX9j0xOYm0S3o0zInvxqs9Y6eorZBdhXZbQRCBe6AOvF0u3wnkebk6WqP2Lmfyq6JZcma4S2USrHDWfaa2/7Kc/LksNq6enOFhSsl/RMJLBfdnWuWQiZAnklaiI99UcHOw+MCRpA4UWIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vs1dnjdS; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ddcf7599ddso3233187b3.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 07:31:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726410716; x=1727015516; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=di//Gho9LFvKMRY5a1n6309m9s0BrxpbnPkhPUuDJj8=;
-        b=vs1dnjdSmq0U9sQ6kb4YzuTFcxbSec9IhoGTeHkroo3OSZfQPZ8Ln7ODiciz+o4ItP
-         wWmnhXwifZdu5LOnQmuCVqQI5V2HIoNv5SLivWCcEfbBp7Gvul3VBTxK7qwSRs1wZzBk
-         CBowbB/NLp+yjwBaKkJXZM2xBmrOiMMxDcVDcWtSdngnPs1+VPGkN19ReGSbOsdiDO+c
-         vc9FfhoI8YQZBWN8Rcb4ekYRY0LiLIFVduz8wVMCglqPk52hxi0HHS391/g2vtkrujJh
-         zeAZFpl6pEk8RJf/xatGEcGhGdpra35lalpkzIG2Qe2lRVtmQqLA1MdYHoNiwGDuQCRK
-         jLIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726410716; x=1727015516;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=di//Gho9LFvKMRY5a1n6309m9s0BrxpbnPkhPUuDJj8=;
-        b=pnrKOGFbu/5oSJBoNa8YTDF2ufdEu9uzEPAwIdWZFdred/aVQKDcTgMCHYRfltgJVA
-         RwEVb74GAUttMJZ35pbrRn+aPKv/FcJRYVt93lcfkuaJi46WwJT6TLdVKy8QeD/fbK4I
-         2LPHOohrmLyhhdeURfQOQ4HQ9V3laqGlbgTAuu2TOGxP0EjFGcmvEjm1lhOZahbrdYZc
-         SY4ebt+asnMm08bZ3+2cRHVKNLs4oWD0OG8dIlrSAPS5wxWtQyAUZ5EKxKdYG28wcq+s
-         loJR7Ouj4aStSfErEUs5XqUU6+l1hT1UaIOVd/AR4CX5s0EKzg743lPZW3LpPVt5/MiK
-         UOgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfR80WQ5aWXVNAsye9G/KDm75s58vFHJ/Gb+ShMRM5MXvA7SICcLJxfogkmBemmD6kX3H7U6G5BZzFSrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+vBcXKAPYkBQIudc47qOHim3JTxhqhgSeiNFHMO9JnrKqASQF
-	viWqjvSU6i1Gwp5M6BO5oJz/Sx3KGKhe6AHNo/NoElaFGX4qvMhxlkeAez9rQEdWBXwo18JWFso
-	AYTfHTgnIX79UzQ==
-X-Google-Smtp-Source: AGHT+IEqlJxhhgtl0WBF7hObPiWjQTUHQogWXSYtK0XmWW8HuhrSb0S1tCc/N2MSYjTsOMRd6dJrCxOBAsMkGxQ=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a05:690c:201b:b0:650:a16c:91ac with SMTP
- id 00721157ae682-6dbb6bb973amr6339087b3.8.1726410715744; Sun, 15 Sep 2024
- 07:31:55 -0700 (PDT)
-Date: Sun, 15 Sep 2024 14:31:34 +0000
-In-Reply-To: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+	s=arc-20240116; t=1726411013; c=relaxed/simple;
+	bh=wj2pmhXTeqqH+P7nAES7vhM923fqTcNAvawf49E0mEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hIrfH2AWI30nrBLR51Hli5nECZfWJRk3g6Ok6MH+Vcz1abbN0Wu+IrDrQI5RivJwmhGzou9CMUwJHRLXny+GDBjMscqb/frEmSGOF1KbZQT/hq4KDSooUW1zcqvEZnON+L2mumyDnMvLaEs19hqW4g7A3LcWSOBSJCQkNc8I4Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=oMN3SUW1; arc=none smtp.client-ip=17.57.156.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1726411010;
+	bh=9HFTlBlbkQp/3070DYW8Jut6fR1McfS3daxGKCDsDUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=oMN3SUW1NWzF8KvvBuQQfrvsyy88Fgk7ZmuctU7HR3TDPZ0iyz7PSlbO+oCGs0vaL
+	 pmowihwClFs3lEsoxFOAydfFnh017tcTotchsAWAGauvhKPIxJblkx2AXvqgYANV9d
+	 Ro9+YqmuBUh270PpJy80Gtme5qreAPgKUezwghUHnkYuDxG/RdmEAU+V1+G/3K66V6
+	 KgrZL+zBBDzLvaW73Sh2tEw5v/nLvXVObf28A7eCmkaYoJfgDTBc/cGQUspcHrmBKh
+	 nk0izcbx0R6M1Vtbji1JRJIvmuivgBBj319vA6mK4VVTvX3Qj0i6spYmjGDt+bjwp1
+	 /VrOqSV87RfvA==
+Received: from [192.168.1.26] (ci77p00im-dlb-asmtp-mailmevip.me.com [17.57.156.26])
+	by ci74p00im-qukt09090302.me.com (Postfix) with ESMTPSA id 72F0C5BC03DE;
+	Sun, 15 Sep 2024 14:36:48 +0000 (UTC)
+Message-ID: <506644dc-4ca2-4284-a557-eb0ef4bf36bd@icloud.com>
+Date: Sun, 15 Sep 2024 22:36:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7280; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=/bhxtkSWHddRRHFAN7ilQCw+DOk04+8fISK58//Qtwg=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm5u/FBSvbkR7slpTehWQOty+m7zbQ9LMW+MoUh
- 7o6gHEbB/mJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZubvxQAKCRAEWL7uWMY5
- RkhLD/4i1Eo+PbWN3iXaWA3DOMC6LIYxC6mgd+Jv+qT/dG6AWMh684o0Slyi5rY0yygGtUuBjsK
- d62bBrWsXMZdAOZp1Qp0YodOcc1VbfqkgBWVLQemhfTvklq3TsA0mzEWtwqWzLt5o70FhnNCV15
- NYEX0yKcNBw9Bj46xfWt/5ps7WdoTSKolRFu3c4pN1hUOMetj9DmK+B/pvwDXsrGJrsSPz+2uD2
- /qe21/Ai3W05KpKThpgE1psdOk5bvRZLn4ITWOoE88P0Wo8i3wsHd6WH5nnzPOyJemlAl5K3uVT
- nUkPvHYsz9SgHJZ9+7JhUxfku7FXA3vta7UT0PcFeIjmH/vCDokvvGDZifY9teEvMru5ZGXMTHo
- ZTuNvovSSlJ4PdsGgK0Z+aa2p84X8cwr/RcN/WrmOZ18So1fUA7wGUS9Wyxsaeslwy8o2MsF5Dr
- 1cn6I3DKTHPB6ZO/Fe+3MWANfhl0xMxVzLBzih1ZQ+e49vhEW5AFfZYGAm8VnMSX1HdzbIweSEz
- h6h+MpbxuZYJJ7fKX85Kvi0qxoOfM4ilSGy1/zUaIiyMGe61vbv/JVvvtXydvDa566YcJcQv/7l
- SsVgKgS8gXR3KXExFknkGpsW+yfeG7m/W0q31Sif8fachxL4ryPBqIBoYVQnJ/zcLp7z+Pt/bxn wq/HzPM9DwjYDGQ==
-X-Mailer: b4 0.13.0
-Message-ID: <20240915-alice-file-v10-8-88484f7a3dcf@google.com>
-Subject: [PATCH v10 8/8] rust: file: add abstraction for `poll_table`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] driver core: bus: Mark an impossible error path with
+ WARN_ON() in bus_add_driver()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240915-bus_add_driver_fix-v1-1-ce5cf1f66601@quicinc.com>
+ <2024091530-antacid-magical-8302@gregkh>
+ <8620a8a6-9101-4f53-858f-2e09aa310d16@icloud.com>
+ <2024091540-scrubber-navigator-4aae@gregkh>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <2024091540-scrubber-navigator-4aae@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: VVorR_8QU6fXZokKfb_5bcoQc-djjpGi
+X-Proofpoint-ORIG-GUID: VVorR_8QU6fXZokKfb_5bcoQc-djjpGi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-15_06,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 malwarescore=0 phishscore=0 bulkscore=0
+ clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2409150111
 
-The existing `CondVar` abstraction is a wrapper around
-`wait_queue_head`, but it does not support all use-cases of the C
-`wait_queue_head` type. To be specific, a `CondVar` cannot be registered
-with a `struct poll_table`. This limitation has the advantage that you
-do not need to call `synchronize_rcu` when destroying a `CondVar`.
+On 2024/9/15 21:55, Greg Kroah-Hartman wrote:
+> On Sun, Sep 15, 2024 at 09:38:15PM +0800, Zijun Hu wrote:
+>> On 2024/9/15 21:00, Greg Kroah-Hartman wrote:
+>>> On Sun, Sep 15, 2024 at 06:22:05PM +0800, Zijun Hu wrote:
+>>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>>>
+>>>> driver_attach() called by bus_add_driver() always returns 0, so its
+>>>> corresponding error path will never happen, hence mark the impossible
+>>>> error path with WARN_ON() to remind readers to disregard it.
+>>>
+>>> So you just caused the machine to crash and reboot if that happens
+>>> (remember, panic-on-warn is enabled in a few billion Linux systems...)
+>>>
+>> are there good way to mark a if condition which is always or mostly
+>> evaluated to false currently without any side effect?
+> 
+> If always, then remove the code involved.  If mostly, just do it
+> normally.
+> 
+>> i think this is a generic requirement since readers may not want to
+>> care about things which will never or rarely happen, below link
+>> involves such discussion:
+>> https://lore.kernel.org/all/2024090444-earmark-showpiece-b3dc@gregkh/
+> 
+> Yes, but likely/unlikely is for performance, not for documentation.
 
-However, we need the ability to register a `poll_table` with a
-`wait_queue_head` in Rust Binder. To enable this, introduce a type
-called `PollCondVar`, which is like `CondVar` except that you can
-register a `poll_table`. We also introduce `PollTable`, which is a safe
-wrapper around `poll_table` that is intended to be used with
-`PollCondVar`.
+if you git grep unlikely in current kernel tree, you will find
+that there are too many unlikely usages which should be irrelevant
+performance. you maybe look at drivers/base/devres.c.
 
-The destructor of `PollCondVar` unconditionally calls `synchronize_rcu`
-to ensure that the removal of epoll waiters has fully completed before
-the `wait_queue_head` is destroyed.
+so i think one of purpose of unlikely may be for the requirement i
+mentioned.
 
-That said, `synchronize_rcu` is rather expensive and is not needed in
-all cases: If we have never registered a `poll_table` with the
-`wait_queue_head`, then we don't need to call `synchronize_rcu`. (And
-this is a common case in Binder - not all processes use Binder with
-epoll.) The current implementation does not account for this, but if we
-find that it is necessary to improve this, a future patch could store a
-boolean next to the `wait_queue_head` to keep track of whether a
-`poll_table` has ever been registered.
-
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-Reviewed-by: Trevor Gross <tmgross@umich.edu>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/sync.rs             |   1 +
- rust/kernel/sync/poll.rs        | 121 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 123 insertions(+)
-
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index e854ccddecee..ca13659ded4c 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -20,6 +20,7 @@
- #include <linux/mdio.h>
- #include <linux/phy.h>
- #include <linux/pid_namespace.h>
-+#include <linux/poll.h>
- #include <linux/refcount.h>
- #include <linux/sched.h>
- #include <linux/security.h>
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index 0ab20975a3b5..bae4a5179c72 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -11,6 +11,7 @@
- mod condvar;
- pub mod lock;
- mod locked_by;
-+pub mod poll;
- 
- pub use arc::{Arc, ArcBorrow, UniqueArc};
- pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
-diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
-new file mode 100644
-index 000000000000..d5f17153b424
---- /dev/null
-+++ b/rust/kernel/sync/poll.rs
-@@ -0,0 +1,121 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2024 Google LLC.
-+
-+//! Utilities for working with `struct poll_table`.
-+
-+use crate::{
-+    bindings,
-+    fs::File,
-+    prelude::*,
-+    sync::{CondVar, LockClassKey},
-+    types::Opaque,
-+};
-+use core::ops::Deref;
-+
-+/// Creates a [`PollCondVar`] initialiser with the given name and a newly-created lock class.
-+#[macro_export]
-+macro_rules! new_poll_condvar {
-+    ($($name:literal)?) => {
-+        $crate::sync::poll::PollCondVar::new(
-+            $crate::optional_name!($($name)?), $crate::static_lock_class!()
-+        )
-+    };
-+}
-+
-+/// Wraps the kernel's `struct poll_table`.
-+///
-+/// # Invariants
-+///
-+/// This struct contains a valid `struct poll_table`.
-+///
-+/// For a `struct poll_table` to be valid, its `_qproc` function must follow the safety
-+/// requirements of `_qproc` functions:
-+///
-+/// * The `_qproc` function is given permission to enqueue a waiter to the provided `poll_table`
-+///   during the call. Once the waiter is removed and an rcu grace period has passed, it must no
-+///   longer access the `wait_queue_head`.
-+#[repr(transparent)]
-+pub struct PollTable(Opaque<bindings::poll_table>);
-+
-+impl PollTable {
-+    /// Creates a reference to a [`PollTable`] from a valid pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must ensure that for the duration of 'a, the pointer will point at a valid poll
-+    /// table (as defined in the type invariants).
-+    ///
-+    /// The caller must also ensure that the `poll_table` is only accessed via the returned
-+    /// reference for the duration of 'a.
-+    pub unsafe fn from_ptr<'a>(ptr: *mut bindings::poll_table) -> &'a mut PollTable {
-+        // SAFETY: The safety requirements guarantee the validity of the dereference, while the
-+        // `PollTable` type being transparent makes the cast ok.
-+        unsafe { &mut *ptr.cast() }
-+    }
-+
-+    fn get_qproc(&self) -> bindings::poll_queue_proc {
-+        let ptr = self.0.get();
-+        // SAFETY: The `ptr` is valid because it originates from a reference, and the `_qproc`
-+        // field is not modified concurrently with this call since we have an immutable reference.
-+        unsafe { (*ptr)._qproc }
-+    }
-+
-+    /// Register this [`PollTable`] with the provided [`PollCondVar`], so that it can be notified
-+    /// using the condition variable.
-+    pub fn register_wait(&mut self, file: &File, cv: &PollCondVar) {
-+        if let Some(qproc) = self.get_qproc() {
-+            // SAFETY: The pointers to `file` and `self` need to be valid for the duration of this
-+            // call to `qproc`, which they are because they are references.
-+            //
-+            // The `cv.wait_queue_head` pointer must be valid until an rcu grace period after the
-+            // waiter is removed. The `PollCondVar` is pinned, so before `cv.wait_queue_head` can
-+            // be destroyed, the destructor must run. That destructor first removes all waiters,
-+            // and then waits for an rcu grace period. Therefore, `cv.wait_queue_head` is valid for
-+            // long enough.
-+            unsafe { qproc(file.as_ptr() as _, cv.wait_queue_head.get(), self.0.get()) };
-+        }
-+    }
-+}
-+
-+/// A wrapper around [`CondVar`] that makes it usable with [`PollTable`].
-+///
-+/// [`CondVar`]: crate::sync::CondVar
-+#[pin_data(PinnedDrop)]
-+pub struct PollCondVar {
-+    #[pin]
-+    inner: CondVar,
-+}
-+
-+impl PollCondVar {
-+    /// Constructs a new condvar initialiser.
-+    pub fn new(name: &'static CStr, key: &'static LockClassKey) -> impl PinInit<Self> {
-+        pin_init!(Self {
-+            inner <- CondVar::new(name, key),
-+        })
-+    }
-+}
-+
-+// Make the `CondVar` methods callable on `PollCondVar`.
-+impl Deref for PollCondVar {
-+    type Target = CondVar;
-+
-+    fn deref(&self) -> &CondVar {
-+        &self.inner
-+    }
-+}
-+
-+#[pinned_drop]
-+impl PinnedDrop for PollCondVar {
-+    fn drop(self: Pin<&mut Self>) {
-+        // Clear anything registered using `register_wait`.
-+        //
-+        // SAFETY: The pointer points at a valid `wait_queue_head`.
-+        unsafe { bindings::__wake_up_pollfree(self.inner.wait_queue_head.get()) };
-+
-+        // Wait for epoll items to be properly removed.
-+        //
-+        // SAFETY: Just an FFI call.
-+        unsafe { bindings::synchronize_rcu() };
-+    }
-+}
-
--- 
-2.46.0.662.g92d0881bb0-goog
+> 
+>>>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>>>> ---
+>>>>  drivers/base/bus.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+>>>> index 657c93c38b0d..59a48edda267 100644
+>>>> --- a/drivers/base/bus.c
+>>>> +++ b/drivers/base/bus.c
+>>>> @@ -673,7 +673,7 @@ int bus_add_driver(struct device_driver *drv)
+>>>>  	klist_add_tail(&priv->knode_bus, &sp->klist_drivers);
+>>>>  	if (sp->drivers_autoprobe) {
+>>>>  		error = driver_attach(drv);
+>>>> -		if (error)
+>>>> +		if (WARN_ON(error))
+>>>
+>>> What exactly are you trying to show here?  If this really can never
+>>> fail, then let's just remove the check entirely.
+>>>
+>> what i want to show is that this error patch will never happen here
+>> currently, so readers can disregard it.
+> 
+> Then just remove it, and document in the changelog text why it can never
+> happen.  But if it can never happen, then why is the function returning
+> anything at all?
+> 
+> thanks,
+> 
+> greg k-h
 
 
