@@ -1,95 +1,160 @@
-Return-Path: <linux-kernel+bounces-329808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F2C979643
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:08:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B4C979647
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7461F2829D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CE671C20E39
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D3819ADAC;
-	Sun, 15 Sep 2024 10:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2B31C4613;
+	Sun, 15 Sep 2024 10:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PokY6f7c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMfyMZvZ"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D8343AD9;
-	Sun, 15 Sep 2024 10:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC6743AD9;
+	Sun, 15 Sep 2024 10:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726394881; cv=none; b=BqPMQ6IX9b9A+tDReVMJviC+Yo/IOBO/lebcqu/XNXVZMtyzwtTgppOAXqgH8niIyh1G3CIKTDO2suFK/rlIlCwtiC00DEO15G99BU5pTypfhAXjDYGyHrQlT2mwI2Ia1PuCfjC2wBbuRko/DcBHkDmkUGc2fwrPbnaf/VDdF9M=
+	t=1726394978; cv=none; b=awDmmaCOvdWxxw07+Nz2ou23Jb4IhSSEhXHB75/l4jr/d7wUdiMMS6ga1QA0hzNLDz5Od7AQej6NTUNUfEVOeWEYPgJ0jvjPggXW7kTalRi6pKD/TJPgtM/s1f111ZZX7auIraPllrt1nH/eHBfZMHLwWU2oubv+9BGgW2gx22w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726394881; c=relaxed/simple;
-	bh=YdbDhh4xMmlFf3aK29meBGYVCd2R6xK3NzgPUKIf5Tk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=sJU1EVZWAt5LHX+DhpZlpohiOe3IXC8YfzF3qwUL4KwnxhT51Wxpi83JgfA7mwbbPoLLGcU2dJUZldsyIo96RYHQ8cmQf8HUUXkZfKrcmpToqhPFMRM7A3lUwL462RGn09Q6m0vHrs5JruMPo2fdz3ChuFzcl8vDi4a7bMMFHkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PokY6f7c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75678C4CEC3;
-	Sun, 15 Sep 2024 10:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726394881;
-	bh=YdbDhh4xMmlFf3aK29meBGYVCd2R6xK3NzgPUKIf5Tk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=PokY6f7cqmhnLvhnlcz8piVvc7Og1vDaZVxTzITdJbia+JBgxYH8AwAsCgH5BxJT1
-	 xMgEx36OUnTIw/W1BzJ5JCGaN5qcJ42P6uzRhy/ET/3td9CiaYtMRcUfMwPTsg43rK
-	 vZg08sSQ9Q+eZwcBnLDWGt85IiiEt7KZN5d7vl8TsIrQqctEwacUgqVSv8R+ZfEYlY
-	 2FbMVBr02BBDYUmkD/kkN88i0K5T0CTnPpcHrvvwezH7Gkqcz2iZ7bPKU5tY6uAm5K
-	 0FqVEI+9BlfCSpwoERQ98m6mdxAmIxG187dLKG4HD1+8t9Uk3ZKoERXgxIby0SXcpn
-	 0eJBeD4rce2dw==
+	s=arc-20240116; t=1726394978; c=relaxed/simple;
+	bh=AiBwI9RHjL7pzSgnaY8FkwVq8dBhc8U8HPlIjMivQIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNm9kaMjexPPmgkQjryWod4NdSKltHreGjH3W6oomhwFLu5pvf7Q/WYbS6zQNfYW5c5wpmwDvIhaIPAcfuaN/EWTJjyMm6gqoNqMLbqmQAnDmkvXwNXpVAXkESWcDg9f1IinGef136awxAe+4GoNeQNnr8mNfzsqRQqaBTEq9vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hMfyMZvZ; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5365b71a6bdso2465054e87.2;
+        Sun, 15 Sep 2024 03:09:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726394974; x=1726999774; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N/DaHEnUjrhvmfJyjNw/EJYlPiWPCk7haRRTEhJV3pU=;
+        b=hMfyMZvZwqqEm2epT4mdCdiyhtkN2ogEEdU81vO2bXr2J+lpTQb242YFLkdsz1e0dB
+         A6j015JqN9aScEWQeJAqo+M+VdDyMa91Msr9xyjQn2DmgFV+gHJnK0g/Rgu764VO2b5u
+         yGg36LOEiklEzvDGMJmNQVbPikqQLvoA3xY6L9nuO29e3JPE+d6ldIc1gw7N3iSnhOLX
+         kW2i5CUqG9jPZ8EkmZrJIamGEiuBVUpRb73uLZFfWRpTXUkeJa3GPH7TNwKIG5uvLXUB
+         hpZQFi9f2cbU0QVi9drjQI4BCX4s0XSPSkk/jjk9f2lVxKykipnpksM6Ht1ec6KeAWz0
+         iHpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726394974; x=1726999774;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N/DaHEnUjrhvmfJyjNw/EJYlPiWPCk7haRRTEhJV3pU=;
+        b=fnGhdKtGAhI01afBnynlWZzgBJCM28QN2D2FBJeE64zy7j2ZBiR/Fy1VIBxkT4I1Je
+         cLDRQLHyls4ko8D6RZ3cPRAnYc7Jx0b5qHz+rRax+XU9J+R+tfQUsSAQI/tJLqpvBNqm
+         47x60cz2T1wFkBjgmjwvT6jti2hgPSZixTXMjjo+1/bb4eAD3Itt+Dv3D9HmkjgfnPwD
+         YI89dTWXkE1r51xeRIXroypm6S6GFk2efJdXH44S32NTAg+NkKjQ/1Momnua7MYiLaXx
+         ZYTM6PU6wtIaPLXk99L939f7iLqQNzL58Va2xoNjb+j50aj7FSjrlN4fBqj1dahhrccC
+         RKnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUoRsl6ZWN29dZJp9Soj7zg/krDmOmVKqWXFpbGM0P0jURJEtduJ/kbkFegR7DdmYMxhQn5tbG6PVmbONK@vger.kernel.org, AJvYcCWIh/UgDWLo2boX/qZyxQVm95yhuGDQMqMrHFH8hzlMXELgKsDGucsOVs5DE+i34EvVwjZIMAOatTcN@vger.kernel.org, AJvYcCX/qccsO2EebcD0ilTyN8LN11FSmHb1z27tOAFj3DarnNQpypgQ3bpLQH0jhmysYMlIcwwi7doyj/Jr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLGzPi11SDqWD7aDBiFOzNPoz+KAUjoDcQ6EZJlMYSloTWJMcS
+	1J4T3WMRoiL2gHLDDhW96nALGJsHQMkTaIA51RPPVs0xuLjNAGh9
+X-Google-Smtp-Source: AGHT+IGaUky0E13On+sxK3FeW8LoYl+upTv1F/M3d5F2vr5G6OAHtvOyCkJgJ5xhe603775A/voLzw==
+X-Received: by 2002:a05:6512:3f06:b0:534:5453:ecda with SMTP id 2adb3069b0e04-5367fee2703mr4169678e87.23.1726394973484;
+        Sun, 15 Sep 2024 03:09:33 -0700 (PDT)
+Received: from localhost ([94.19.228.143])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704c2c2sm513630e87.75.2024.09.15.03.09.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 03:09:32 -0700 (PDT)
+Date: Sun, 15 Sep 2024 13:09:32 +0300
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v7 06/10] i2c: Introduce OF component probe function
+Message-ID: <ZuayXMGMdEqSyvUl@skv.local>
+Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org
+References: <20240911072751.365361-1-wenst@chromium.org>
+ <20240911072751.365361-7-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 15 Sep 2024 13:07:57 +0300
-Message-Id: <D46RWPQ211ZS.12EYKZY053BH@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
- "Pengyu Ma" <mapengyu@gmail.com>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Roberto Sassu"
- <roberto.sassu@huaweicloud.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Linux regressions mailing list"
- <regressions@lists.linux.dev>
-X-Mailer: aerc 0.18.2
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
- <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
- <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
- <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
- <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
- <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
- <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
- <D43JXBFOOB2O.3U6ZQ7DASR1ZW@kernel.org>
- <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
- <D46RE2BWMGJ4.25VA7IVYTJ8MO@kernel.org>
-In-Reply-To: <D46RE2BWMGJ4.25VA7IVYTJ8MO@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240911072751.365361-7-wenst@chromium.org>
 
-On Sun Sep 15, 2024 at 12:43 PM EEST, Jarkko Sakkinen wrote:
-> When it comes to boot we should aim for one single start_auth_session
-> during boot, i.e. different phases would leave that session open so
-> that we don't have to load the context every single time.  I think it
-> should be doable.
+On 24-09-11 15:27, Chen-Yu Tsai wrote:
+> Some devices are designed and manufactured with some components having
+> multiple drop-in replacement options. These components are often
+> connected to the mainboard via ribbon cables, having the same signals
+> and pin assignments across all options. These may include the display
+> panel and touchscreen on laptops and tablets, and the trackpad on
+> laptops. Sometimes which component option is used in a particular device
+> can be detected by some firmware provided identifier, other times that
+> information is not available, and the kernel has to try to probe each
+> device.
+> 
+> This change attempts to make the "probe each device" case cleaner. The
+> current approach is to have all options added and enabled in the device
+> tree. The kernel would then bind each device and run each driver's probe
+> function. This works, but has been broken before due to the introduction
+> of asynchronous probing, causing multiple instances requesting "shared"
+> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
+> time, with only one instance succeeding. Work arounds for these include
+> moving the pinmux to the parent I2C controller, using GPIO hogs or
+> pinmux settings to keep the GPIO pins in some fixed configuration, and
+> requesting the interrupt line very late. Such configurations can be seen
+> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
+> Lenovo Thinkpad 13S.
+> 
+> Instead of this delicate dance between drivers and device tree quirks,
+> this change introduces a simple I2C component probe. function For a
+> given class of devices on the same I2C bus, it will go through all of
+> them, doing a simple I2C read transfer and see which one of them responds.
+> It will then enable the device that responds.
+> 
+> This requires some minor modifications in the existing device tree. The
+> status for all the device nodes for the component options must be set
+> to "failed-needs-probe". This makes it clear that some mechanism is
 
-The best possible idea how to improve performance here would be to
-transfer the cost from time to space. This can be achieved by keeping
-null key permanently in the TPM memory during power cycle.
+Wrong status name ("failed-needs-probe"), "fail-needs-probe". This is
+minor, but it confused me as I went through patchset first time, since
+there are different name in different patches.
 
-It would give about 80% increase given Roberto's benchmark to all
-in-kernel callers. There's no really other possible solution for this
-to make any major improvements. So after opt-in kernel command line
-option I might look into this.
+> needed to enable one of them, and also prevents the prober and device
+> drivers running at the same time.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-This is already done locally in tpm2_get_random(), which uses
-continueSession to keep session open for all calls.
-
-BR, Jarkko
+-- 
+Best regards,
+Andrey Skvortsov
 
