@@ -1,142 +1,109 @@
-Return-Path: <linux-kernel+bounces-329732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E4F979514
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:50:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08056979511
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F671F2347D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:50:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307D41C20F33
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B5D288B5;
-	Sun, 15 Sep 2024 07:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C00C21A1C;
+	Sun, 15 Sep 2024 07:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="kxyTxuYw"
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z3RvT6gb"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09ED1C69C;
-	Sun, 15 Sep 2024 07:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.141.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C2D364A9
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 07:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726386641; cv=none; b=MdE4p3fwhn3+hGuyQV+UyuGpm+wXFZKhz1MbcocwSJ/x+E2cMc/ZbH/47OzLoduHmzr9zXGhxg9fNcDyVva5gsKa+9h1wOaRPHXawPVy4JCarUiRypTfoc6768u3qKWbnIUqSbMxN553HEizJrsaqmJCFfTcA+WQKPqdZB/ye9k=
+	t=1726386614; cv=none; b=rg4Ad06CxcAQUmBQ8WyxoFg7HVNtMMVAb0aszofZeK+ZdcIXQu+DGKjmAc++52PLzRlpI/PhGiYutKqt/+ebTMzzZfFIKHEkMQ2fuRMI/UxY7tV/AKEiBAsI7ec55qLzhvaMlRWiUXs8+gm7UAiZWqkQugynT4jHJyXIerx1K94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726386641; c=relaxed/simple;
-	bh=lLr9bdWkckgYhAIUM9LylQ1iK/DbmLn2UfjaZur6YMg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SyXB+IMxAS6Bu0OTuiRS39RdQzoCiuPyL6Qh9qol8VM32NFgZw/Lo/ucgqHEpYChILSQanymf3txJnLsYJlNYB6GRBjXwGFAd63Wgld7280L1wsqMxX6NH0v1sHJmYjettf9mrhhBEkcfQPBYhK/cYjE7Krcz8m3kNB/e5yh8/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=kxyTxuYw; arc=none smtp.client-ip=68.232.141.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1726386639; x=1757922639;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=lLr9bdWkckgYhAIUM9LylQ1iK/DbmLn2UfjaZur6YMg=;
-  b=kxyTxuYwp5J1hFKlHKqAHrvH8bu6fpFGRdNOtdiB/t7XgwQjzVwEIceO
-   aQhqvxhj/YWuisG0o9Ze65V7lxyHwNj7e2p/U7oPmTX06ecqHiPIiQkAw
-   c3q9SwtibFWyQ6R661MZsRFa2M9W6y7ueKREUe3s3iGq4G7/xJJYOYSND
-   07fA4SdAEF2Rb3DyQNqnj/NCyBDn4bbEjAcVjbeAvuj8nUZB97NVQx8rt
-   GokryM9EqZlc1hkftcvSYvs8lwSze6eUDN+y/ekt3alcRFU+lF2waaplk
-   TEiwVc4HlCRYhsZNrbSvCxYdXPV9IKKmKtHqhyEwN+x5hJjobbLGRYtMd
-   A==;
-X-CSE-ConnectionGUID: WHpMz4WHSaeyPa+zjef7LA==
-X-CSE-MsgGUID: oFi29HRoSomU/744LwByVg==
-X-IronPort-AV: E=Sophos;i="6.10,230,1719849600"; 
-   d="scan'208";a="27540762"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Sep 2024 15:50:32 +0800
-IronPort-SDR: 66e684e5_iI1xTiBCs83ttupI/Ur+jbipuA5i8SLEbm8I7zCPD2VFYp9
- A2gPRRy/+IeUPUJLzvWoTfv6rvxU1E0iHnM61Aw==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Sep 2024 23:55:33 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2024 00:50:32 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v2] scsi: ufs: Zero utp_upiu_req at the beginning of each command
-Date: Sun, 15 Sep 2024 10:48:42 +0300
-Message-Id: <20240915074842.4111336-1-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1726386614; c=relaxed/simple;
+	bh=QsY4XZPWNrDF93W1mg/lR3N3nA9sy/l3K0ESNcVu0Bg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=AveyolKCbKJrMZBuTEIocWiQB6BeGpe26N42xOwYS3m058tBOLnqXyzdG5MqluyYzVTMGBrYCpbsQsPllhT88sWDz943qCwJe2yGqxRw8Zcp32glPbx+a6saj45Kw1NuekCXSYaPjR/XhKD0ZbtujlV/yHUMjK0qPJdocNX7TQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z3RvT6gb; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2056aa5cefcso162445ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 00:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726386612; x=1726991412; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0sP0C/SZXbtE7kXb1uPu6iN1tgyGfXaUc3oWuyV4hHE=;
+        b=z3RvT6gbzqgmp4qev/AQ+z5Tw/dB1RofkSSQikNvjIkcNk1Ap8UvwrQPFk2zuvGkBU
+         jkOKYjFmHpjO92ulPDuL9ZpsRbJhAYJRYCj+AFsNp3UviQqwqH9huIZdYg/oCbiuKPm/
+         ZBrRuxOYABgYvJjrGz8uafeZ1oKZGliIqSJNONZJ83m0LiG/fUEh90d7uwJsRzUhVxba
+         kdleBlPNnxUM527JZh91DTGD9N3H9TQTbrMiso8VJ/t8ggzyUQoasCeExXx0/oPSWiAi
+         bO7NwnzXwyyBOj24UC9M0ThtzBvguzUDGDrJXVOAKRt3HLFjpj0JRLbJh7gsc8rxGkh3
+         sD/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726386612; x=1726991412;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0sP0C/SZXbtE7kXb1uPu6iN1tgyGfXaUc3oWuyV4hHE=;
+        b=oQwnw6dTIQtQBYtsmsE18bOgkO46Zq6F5fRhk3Whmr0FbNziCqOjuXD9fxuOrdKK5E
+         lEd/UhOLoUpcR/+6CBm8ex3FoKfOESBaj1Zg22bGwTNUDXr0Zuqp3dmU4WUq+NN68cjW
+         3oB4qIsvMKLPXVmR5AB9WdkkAtzLI2tUS7MlQs3YObqlggy/6FbfomGZX5X3UA/AIZgL
+         /0Lu9n06LHKXEbFlYOPieBw2kVIAjMRd14QuRJB5AQdL3MLsRL5wGsppgwp8vVMZwEqj
+         IiaoP71MaQSB3vt22p95QXk+utgPpYliT8QzowRQQq5k91cHVgwyGO7ZjqYzzeXY9L2I
+         SLXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEeGD1ptLCjyQ66idg1ZKPBFkhvGQkt0q3SFo+/vxdts/cKDK5+FZNNlwC/KjfK6me+95tkc39EU3KRz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFABFvUfcMdMIz3hRqR3MpCwx4FwApZEF+sh9SjJkE5Xjl1pTW
+	sp4EoY06VUH5o62zEREL0OQcJe8z11zRT7eBIPewWmdc4EyfwzFLjaPY/8wDIw==
+X-Google-Smtp-Source: AGHT+IEPML2/cMATOIRhcrZ7qpCU8XOPOY9iRaNq1New23c86px/YVkX7cWtzIXR1QGfzY08RFGckg==
+X-Received: by 2002:a17:902:cec9:b0:207:14ab:722e with SMTP id d9443c01a7336-2077278b5f7mr7877975ad.7.1726386611571;
+        Sun, 15 Sep 2024 00:50:11 -0700 (PDT)
+Received: from [2620:0:1008:15:8b83:20f7:eba:dd56] ([2620:0:1008:15:8b83:20f7:eba:dd56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946fab1fsm17926595ad.195.2024.09.15.00.50.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 00:50:11 -0700 (PDT)
+Date: Sun, 15 Sep 2024 00:50:10 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
+    Liam Howlett <liam.howlett@oracle.com>, Shakeel Butt <shakeelb@google.com>, 
+    Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH] mm/madvise: process_madvise() drop capability check if
+ same mm
+In-Reply-To: <20240913140628.77047-1-lorenzo.stoakes@oracle.com>
+Message-ID: <5db5f367-9efd-7a9b-07dc-efb06669b260@google.com>
+References: <20240913140628.77047-1-lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-This patch introduces a previously missing step: zeroing the
-`utp_upiu_req` structure at the beginning of each upiu transaction. This
-ensures that the upiu request fields are properly initialized,
-preventing potential issues caused by residual data from previous
-commands.
+On Fri, 13 Sep 2024, Lorenzo Stoakes wrote:
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
+> In commit 96cfe2c0fd23 ("mm/madvise: replace ptrace attach requirement for
+> process_madvise") process_madvise() was updated to require the caller to
+> possess the CAP_SYS_NICE capability to perform the operation, in addition
+> to a check against PTRACE_MODE_READ performed by mm_access().
+> 
+> The mm_access() function explicitly checks to see if the address space of
+> the process being referenced is the current one, in which case no check is
+> performed.
+> 
+> We, however, do not do this when checking the CAP_SYS_NICE capability. This
+> means that we insist on the caller possessing this capability in order to
+> perform madvise() operations on its own address space, which seems
+> nonsensical.
+> 
+> Simply add a check to allow for an invocation of this function with pidfd
+> set to the current process without elevation.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
----
-Changes in v2:
- - Simplify things (Bart)
----
- drivers/ufs/core/ufshcd.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 8ea5a82503a9..1f6575afc1c5 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -2761,7 +2761,6 @@ void ufshcd_prepare_utp_scsi_cmd_upiu(struct ufshcd_lrb *lrbp, u8 upiu_flags)
- 	ucd_req_ptr->sc.exp_data_transfer_len = cpu_to_be32(cmd->sdb.length);
- 
- 	cdb_len = min_t(unsigned short, cmd->cmd_len, UFS_CDB_SIZE);
--	memset(ucd_req_ptr->sc.cdb, 0, UFS_CDB_SIZE);
- 	memcpy(ucd_req_ptr->sc.cdb, cmd->cmnd, cdb_len);
- 
- 	memset(lrbp->ucd_rsp_ptr, 0, sizeof(struct utp_upiu_rsp));
-@@ -2834,6 +2833,8 @@ static int ufshcd_compose_devman_upiu(struct ufs_hba *hba,
- 	u8 upiu_flags;
- 	int ret = 0;
- 
-+	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
-+
- 	ufshcd_prepare_req_desc_hdr(hba, lrbp, &upiu_flags, DMA_NONE, 0);
- 
- 	if (hba->dev_cmd.type == DEV_CMD_TYPE_QUERY)
-@@ -2858,6 +2859,8 @@ static void ufshcd_comp_scsi_upiu(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
- 	unsigned int ioprio_class = IOPRIO_PRIO_CLASS(req_get_ioprio(rq));
- 	u8 upiu_flags;
- 
-+	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
-+
- 	ufshcd_prepare_req_desc_hdr(hba, lrbp, &upiu_flags, lrbp->cmd->sc_data_direction, 0);
- 	if (ioprio_class == IOPRIO_CLASS_RT)
- 		upiu_flags |= UPIU_CMD_FLAGS_CP;
-@@ -7165,6 +7168,8 @@ static int ufshcd_issue_devman_upiu_cmd(struct ufs_hba *hba,
- 
- 	ufshcd_setup_dev_cmd(hba, lrbp, cmd_type, 0, tag);
- 
-+	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
-+
- 	ufshcd_prepare_req_desc_hdr(hba, lrbp, &upiu_flags, DMA_NONE, 0);
- 
- 	/* update the task tag in the request upiu */
-@@ -7317,6 +7322,8 @@ int ufshcd_advanced_rpmb_req_handler(struct ufs_hba *hba, struct utp_upiu_req *r
- 
- 	ufshcd_setup_dev_cmd(hba, lrbp, DEV_CMD_TYPE_RPMB, UFS_UPIU_RPMB_WLUN, tag);
- 
-+	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
-+
- 	ufshcd_prepare_req_desc_hdr(hba, lrbp, &upiu_flags, DMA_NONE, ehs);
- 
- 	/* update the task tag */
--- 
-2.25.1
-
+Acked-by: David Rientjes <rientjes@google.com>
 
