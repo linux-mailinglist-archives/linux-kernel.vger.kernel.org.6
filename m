@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-329952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F330C9797E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:17:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ACAD97980C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADC001F217D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 17:17:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3416281FF5
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136F61C9DE3;
-	Sun, 15 Sep 2024 17:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSXZHPeZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0641B210E9;
+	Sun, 15 Sep 2024 18:05:50 +0000 (UTC)
+Received: from sxb1plsmtpa01-06.prod.sxb1.secureserver.net (sxb1plsmtpa01-06.prod.sxb1.secureserver.net [188.121.53.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3FC200CD;
-	Sun, 15 Sep 2024 17:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926A31DFEF
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 18:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.60
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726420643; cv=none; b=eXn1/gFkr8aG8g+Z+kbUWqOZPzP7pwCTSce1YDcjGIrQK5seAWrWNOtJk9LbM4c1w5nsjOfYeswGLVZmzUrv7xZU0TBi+kRImzfFkAenGBYYqZxcMYW7942nfK8hEtKT1EwnvGVqk+j7d6o+KRDaZkDnDi2BFKMIFeL16tee5lI=
+	t=1726423549; cv=none; b=q+SOfNeWpyQBNch4K2uwwih0j8N9LaSxwHaCBTY2vBGKgBu8UdXQ4h/9sUKugFpYGod1a0rW0IgsQa1qBgVZjiWkayaArhZ7dPLdGjjBGmK13LqdFPqQK5LuxdFLRMAF735ZEXOo3Iqd9cM/HwLG0VO3m08gAeyv7FXsFocHNgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726420643; c=relaxed/simple;
-	bh=ySWSP/6B0wVdjoSXAvcqT2SOPGUizjoKyoYbxrOo3+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VWNg3YrJltxQnSeQDvndXrX43DWceKy4argWFCk2Llq39vgmCyhf4gAitEUwoRG+c8Sq0ZUvKCE4Icp+xcGnHmIChdaXLzT6UJrnWtI52Bsi2ZlYHZNENmuHpitl1GhpxzjFn/QVv15aSrX18T6ScCoKWxGoVHJWkfM/yTMWwZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSXZHPeZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C565C4CEC3;
-	Sun, 15 Sep 2024 17:17:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726420643;
-	bh=ySWSP/6B0wVdjoSXAvcqT2SOPGUizjoKyoYbxrOo3+8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BSXZHPeZXI+ar2S65BY1nn05TM96WbKvv0qsZvRwpVUvc43Ky9duSUryeFEwYaj1X
-	 Vs84YevWm8ETurSeOFncnMw2w9zj43ZqUEO0llKLANbqt7Enw+bQAL5vXq81qiMLbA
-	 AXhaLtppLQevbP4D8K34u1G9ribQmIj+Y8fn9NyNNLmRg4vAae7NWgt7WgTRr9760u
-	 vCRiQzeSxK5NT4WZ1DN+IDVE3CTtEPqN6GtqekkLVcp3dITYYG6H9VADE5IMFonKJd
-	 LiJX7w5PnTTguKGfkbmVDC3I76pl2QDTXhmGo2UpYBMoeaPs7BqYAsmoAqNZ1rwiuq
-	 HkbiEJcPeWMVg==
-Date: Sun, 15 Sep 2024 19:17:18 +0200
-From: Jakub Kicinski <kuba@kernel.org>
-To: Danielle Ratson <danieller@nvidia.com>
-Cc: <netdev@vger.kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
- <pabeni@redhat.com>, <yuehaibing@huawei.com>,
- <linux-kernel@vger.kernel.org>, <petrm@nvidia.com>
-Subject: Re: [PATCH net-next v2 0/2] ethtool: Add support for writing
- firmware
-Message-ID: <20240915191718.1da2bc78@kernel.org>
-In-Reply-To: <20240910090217.3044324-1-danieller@nvidia.com>
-References: <20240910090217.3044324-1-danieller@nvidia.com>
+	s=arc-20240116; t=1726423549; c=relaxed/simple;
+	bh=fx8Y7JYlg4rbNgBARTDBCuvDk8+mpnNDQWmH267bmsM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pfcL97eBJaeqNIlbl6pRYfTD1gVqwU88+bRXSgGE9kVkgfHTOJeuhbzqNVSf4bxvxuuTtI6guS1JuECmuKD8muiZiglR0Znhnyaq4B/qMhpKxnG/X6xWYSweAAHyK8vlC70U4g+1di3BAy6+BYr9MqQL7vaABp4bxeABTQPRry4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piie.net; spf=pass smtp.mailfrom=piie.net; arc=none smtp.client-ip=188.121.53.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piie.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piie.net
+Received: from localhost ([109.90.180.58])
+	by :SMTPAUTH: with ESMTPSA
+	id psvmszCxGiW5Ypsvns9sxY; Sun, 15 Sep 2024 10:21:03 -0700
+X-CMAE-Analysis: v=2.4 cv=VoboAP2n c=1 sm=1 tr=0 ts=66e71780
+ a=ujCVow8R4Y5jPCx6COW8WA==:117 a=ujCVow8R4Y5jPCx6COW8WA==:17
+ a=IkcTkHD0fZMA:10 a=t3YNmgBSAAAA:8 a=o7PI2Wm5cik088qZixgA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=ctH_qozkpUrkr3SVbfwb:22
+X-SECURESERVER-ACCT: peter@piie.net
+From: Peter Kaestle <peter@piie.net>
+To: linux-pm@vger.kernel.org
+Cc: rjw@rjwysocki.net,
+	daniel.lezcano@linaro.org,
+	linux-kernel@vger.kernel.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	=?UTF-8?q?Peter=20K=C3=A4stle?= <peter@piie.net>
+Subject: [PATCH 0/1] acerhdf refactoring
+Date: Sun, 15 Sep 2024 19:19:52 +0200
+Message-ID: <20240915171953.163220-1-peter@piie.net>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfDKYDgXJ2DHG8daYcwXJzJQ2Hz6VUuLEXEOEwTCLWrC/ZQmHDX4fWmav3gja537plxXjnXwnodXJ2lwGYJ4kwHv4RLVhOXE3mBpKvBmKrIAz6YPNrTWI
+ dtK7XG19acYRcUYYWsYvK0BvTSVdqklmEj2kGkH2MKeFjVEulknlznCKr5z/GuS3KRyD8/vrk/PRso+Kv7rKGTUerWsTE6CgLt8CpG8yse6xK0Pjb+3ESFbi
+ Ej5OBX/JDoVlrZvuoTcAJmtkQa7muV4/bQ2yxyjCRyOT0p3PgySCx0nUszxmWXQjHuJ4FgLYGwzT+TzVoUyDU/zrsrWcEI/ricnI31i4Kus/2+AV391gPgc3
+ qroFGwWDgC/eFhycWfpYoXH6t/VyuQ==
 
-On Tue, 10 Sep 2024 12:02:15 +0300 Danielle Ratson wrote:
-> In the CMIS specification for pluggable modules, LPL (Local Payload) and
-> EPL (Extended Payload) are two types of data payloads used for managing
-> various functions and features of the module.
-> 
-> EPL payloads are used for more complex and extensive management functions
-> that require a larger amount of data, so writing firmware blocks using EPL
-> is much more efficient.
-> 
-> Currently, only LPL payload is supported for writing firmware blocks to
-> the module.
-> 
-> Add support for writing firmware block using EPL payload, both to support
-> modules that support only EPL write mechanism, and to optimize the flashing
-> process of modules that support LPL and EPL.
-> 
-> Running the flashing command on the same sample module using EPL vs. LPL
-> showed an improvement of 84%.
+From: Peter Kästle <peter@piie.net>
 
-this missed 6.12, sorry, I didn't get a clear enough signal form 
-the discussion to merge it in time
+Hi,
+
+hope you're doing good.  I finally found some time to rework acerhdf.
+Main goal was to simplify testing by removing code of dynamically
+instructing acerhdf, as all of this can be done in similar way by using
+rmmod acerhdf ; modprobe acerhdf fanon=xx fanoff=xx kernelmode=x or so.
+
+It was tested on top of 0a06811d pm-6.12-rc1.
+
+Thanks and best regards,
+--peter
+
+Peter Kaestle (1):
+  acerhdf: clean-up and remove interval parameter
+
+ drivers/platform/x86/acerhdf.c | 95 +++++-----------------------------
+ 1 file changed, 12 insertions(+), 83 deletions(-)
+
 -- 
-pw-bot: defer
+2.46.1
+
 
