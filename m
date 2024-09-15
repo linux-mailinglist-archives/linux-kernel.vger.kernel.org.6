@@ -1,115 +1,141 @@
-Return-Path: <linux-kernel+bounces-329709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 618349794D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:44:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C8D9794D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925FC1C21022
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97250281758
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FAE1B977;
-	Sun, 15 Sep 2024 06:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B03C1C69A;
+	Sun, 15 Sep 2024 06:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLDEqOAN"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iobofBEk"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3C125570;
-	Sun, 15 Sep 2024 06:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF3C1F5FF
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726382679; cv=none; b=qqrHwgoWQ1yWO/BksRrqB8BGaUCExQ8XM3Hi6XQN3kI7Y/sLopdEmW1EzkGFUzFd1FxGQ4uOyt4ltJNugtR/EBc7LKl+3wfsWlsCOY8OWM/1jvQVwOwYMu4aYQiaVWgZ6s9p9VYYcoGe34if3ErUxZTpD0MmlFs1y99NFNia8EM=
+	t=1726382711; cv=none; b=WzO00wlCvw4WJymywlQIrlB+pGoKGMHT8OH+HStSo5LczbTu8I4Em/c5AeHU3otW9FbE83vJek17pbUvg9Ao1NVnzBtSZIj/xheLq0kLVVoSwSznACSExY53ngQrOcakWfcaqu+RjZkCtguLOOoyCuYamO6mRH0Fu6gqBNlug3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726382679; c=relaxed/simple;
-	bh=q03nswiAshUbon3Pfv4QqueXclwfdc55jIPLX1ziK74=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P9Ym5khBuRtaBWZK5d3R3OWu43lmTluLs9gYEwxbfE7kdhrZrrtmANhBCTN+w+H8uEwdyjTjBpUW1k6VipUp/Jrm87KPeyY49PLY3Xa3TufD1SOerNrhnSPQmVpwnSGm3B3/wrbwzkGmFFQ9Nd87FRhaECUI6JwLt6Y+NL6zLcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLDEqOAN; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fee6435a34so30152665ad.0;
-        Sat, 14 Sep 2024 23:44:37 -0700 (PDT)
+	s=arc-20240116; t=1726382711; c=relaxed/simple;
+	bh=2cDl6WtLGXTvVPOzxG2CUri0osMteN44h5R/YVStwWI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IBskf+4vDjKWHtdwB5qDt5PBNSbGSIRtrj8f8J5qUQcHmougiLpWRoms0OIRdjhFavNHncLHibbfOak1bPY3r2GFFlTYEQvniywgQ0N2Zq5Wl+/Ysl+UW+Xe0wJhwTLkQvOPUhnrGpSTCPQvdEAkUrz2sAFb+O+srdAtrpMabiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iobofBEk; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6c3551505a0so4475046d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:45:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726382677; x=1726987477; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fB1iJHerb9EwcLKBKYuEUZxaTVOQFRr0n1KVkpDHAjQ=;
-        b=kLDEqOANMkbBXc2KBoEytf2i4ue7ruZASduv+YLQl0K2t2jljv/KyRKHSbaNN2Hjrn
-         FUNe0zb9+56N6kwB1USVtf1LKBLmIiurE8YcBMm+7PuUVFaxTu6OWCQzLVzqmDoiOOMR
-         XHsVhzyXQJXdV2XpU/Ts6AiZB5P67ZNYSG5hQ6rytRQxXdssQsaB6omgTatX73Srn8F/
-         rxFosSw7UExbxNDOq4DUsEBfbsklswV8fsi4nJTTXyi/DsnG+NsAsRxfcHLeKDS7jAWi
-         0m9QksgwuqwSWEz+E5ODt/EOL+0RfbRBHEk6RJMHUnYWN3zwa0VhnzlOwI4K4mTvxOMe
-         olKw==
+        d=linaro.org; s=google; t=1726382708; x=1726987508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6kb0CxTCYk7wgmKngYZCf/JDr8PtnKr7Ci97TV3E52U=;
+        b=iobofBEk3uO8tg12v8CtnMaVBVfjJtPYXX9I6gCfTkUeUMhZRKhsK3A33JEdUGQCwf
+         D8FlW77ioEimNfY8iOpK2euyKW3ZXHrfFpheFXlV2icRdbb9ZaZuJCJIOcz2M0qlHx4u
+         3jtcoMyXb64lLB/KRCpVaEzRAIojSo73ZfIWipuSiiZGI2+K3ckr45VBWabMhJ5UHxdc
+         I4GBUx2135K379VSHSI9OuRg5+KDIhoY5tx/FeOmp6ca+fEpitvW1ewUmqsxEJdybCEC
+         sYlbtMAlYjpSA4ASiwEhcQxOXLvMuQI5Ar6XvWcquDyl/Nr2xmLXum5av/869/MjHnS4
+         XA+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726382677; x=1726987477;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fB1iJHerb9EwcLKBKYuEUZxaTVOQFRr0n1KVkpDHAjQ=;
-        b=pOhdCqRw9NzhwGA2eXMJDmbTG0B1cx0CRb6r5C+mhCrEeGOP99PigW+o6ng1zo8K0C
-         5U3pMy4RF/aixB0Yz/26dhvb2eeG1q31Fi5s6xyGVgfedqamXQ5F5ZaBAjo5P34XIl45
-         5D2/s7XebA+Doc7M1NkxzhMKl9Sw/BpVcSEfMDzGD5s39x4xZE9r+kr8EeojJ46EjS6H
-         ZnenV9ezl/AcDZJQw+N1oBKLt3/fCgpOuwloQuLpm2VMn2tghE2R0GoxG+AFzT+GB8Vt
-         CBE/QmpiWAwe7sogrW3wjmIqUxAuPjlm82r3MUuTlfWM4cElpe9Yyav2aBihA1THFyTI
-         uV0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXea+6sR4pwh7KmSXcwCQMEWbW/WmZjVBkZXAOHOeZuj80Imr0jwhp8UVgtQ8E5l5skmUgBXTcslEBI7FQi@vger.kernel.org, AJvYcCXvsc8GcwjMpW64i2EBOvdaKZrcW+UDPFmmiEB0BotBYo8vOpMY15x0fojMutlhS8FReQ/Ch54WlLDZcW/p@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGX7oqymJ1SKJhQ086x7CY/3Dz+owc0iBRehMAMit0fOupslmS
-	7SV6xR6Ilw6mAq/tIGInyd8a5rPBtDc/LTAyWidOcdVvFjD0MmTQ
-X-Google-Smtp-Source: AGHT+IHLObd+CA2v8GkjKFBnbdXn2oCZmNRDPGD9K3fblyb5n2EV7BmyDAfUBew20DD1PSotmtBmfg==
-X-Received: by 2002:a17:902:e5c8:b0:1fc:2e38:d3de with SMTP id d9443c01a7336-2076e315577mr186275495ad.7.1726382676843;
-        Sat, 14 Sep 2024 23:44:36 -0700 (PDT)
-Received: from localhost.localdomain (syn-076-088-006-086.res.spectrum.com. [76.88.6.86])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-207946d2a79sm17335895ad.159.2024.09.14.23.44.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2024 23:44:36 -0700 (PDT)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Daniel Yang <danielyangkang@gmail.com>,
-	syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
-Subject: [PATCH] fs/exfat: resolve memory leak from exfat_create_upcase_table()
-Date: Sat, 14 Sep 2024 23:44:03 -0700
-Message-Id: <20240915064404.221474-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1726382708; x=1726987508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6kb0CxTCYk7wgmKngYZCf/JDr8PtnKr7Ci97TV3E52U=;
+        b=eAvhegBYGClKyskMVnjIAbzsVZtGpxGEDLnFYksoUSBUODzz6iwA2vRBCh5u8qs1mQ
+         xWBqIJTd1o6Ld9slSIN6SJWviSnuyXzwIWxCe8QYjz1ydOGn/PaE3+bCPALWI8OFBt7z
+         d2GpRlR0m1iCHUWub26WmlJ7Q+0g7GlGJBjPKj6Roon+d5+fnXqPrlExDYJsM+uRZitv
+         Jubt8fNSe5A6LDSfORSjGqu2CEEMbQC+eQ9usVHmqatQ44zkeu3ol/cTKdUDHo0gLGQt
+         CR90SKCecSPC7ikGDA+K4UNDnLb4nCV3KkQgHkEKx4uHpM8fTmksXeeSgBwGVcjcZ4ae
+         8jIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMugknPzYOcuwqaAdxxac+stWvrk521xFJvPJ45Cz9eIgnG074D2u2ewSDl3g7mGeYrLtxwrMUJ0aAGN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGI+1KYAHjLT+/EgsnuDueLJFj0XRLVn4CZ1XcDVXvHJKoAMAg
+	CrKBedEQx9EBe+hTVMDHGHGXB6yRBEixMXEhKLbykqBLads+ZoDU1EuKYhdCpbVdwAa+lrAblgx
+	3IP5tZivRFPbidAE1dQ6aw8BMDZ+nCJMuJcZxOg==
+X-Google-Smtp-Source: AGHT+IF/ArzWzaDvqW1hMJiWIaZQtLFS3pCkl4+VCpIgUFNI2XO2aPdLmQayQukDhNtDDDF2Gf2lCPW4OZYIKEDHba0=
+X-Received: by 2002:ad4:4ee4:0:b0:6c5:1572:4423 with SMTP id
+ 6a1803df08f44-6c57350a89dmr83197946d6.2.1726382708374; Sat, 14 Sep 2024
+ 23:45:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240912063119.1277322-1-anders.roxell@linaro.org> <20240912082307.556db015@kernel.org>
+In-Reply-To: <20240912082307.556db015@kernel.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Sun, 15 Sep 2024 08:44:57 +0200
+Message-ID: <CADYN=9+OTGJtN-z_ffQx9C+UA=a_9rpF7bGtnunFJoq0BWL3vQ@mail.gmail.com>
+Subject: Re: [PATCH] selftests: Makefile: add missing 'net/lib' to targets
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: shuah@kernel.org, willemb@google.com, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-    If exfat_load_upcase_table reaches end and returns -EINVAL,
-    allocated memory doesn't get freed and while
-    exfat_load_default_upcase_table allocates more memory, leading to a    
-    memory leak.
-    
-    Here's link to syzkaller crash report illustrating this issue:
-    https://syzkaller.appspot.com/text?tag=CrashReport&x=1406c201980000
+On Thu, 12 Sept 2024 at 17:23, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Thu, 12 Sep 2024 08:31:18 +0200 Anders Roxell wrote:
+> > Fixes: 1d0dc857b5d8 ("selftests: drv-net: add checksum tests")
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  tools/testing/selftests/Makefile | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests=
+/Makefile
+> > index 3b7df5477317..fc3681270afe 100644
+> > --- a/tools/testing/selftests/Makefile
+> > +++ b/tools/testing/selftests/Makefile
+> > @@ -64,6 +64,7 @@ TARGETS +=3D net
+> >  TARGETS +=3D net/af_unix
+> >  TARGETS +=3D net/forwarding
+> >  TARGETS +=3D net/hsr
+> > +TARGETS +=3D net/lib
+> >  TARGETS +=3D net/mptcp
+> >  TARGETS +=3D net/netfilter
+> >  TARGETS +=3D net/openvswitch
+>
+> Please make sure you always include a commit message. Among other
+> things writing one would force you to understand the code, and
+> in this case understand that this target is intentionally left out.
+> Look around the Makefile for references to net/lib, you'll figure
+> it out.
+>
+> The patch is incorrect.
 
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-Reported-by: syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
----
- fs/exfat/nls.c | 1 +
- 1 file changed, 1 insertion(+)
+You=E2=80=99re right, the patch is incorrect, I could have explained better=
+.
+I=E2=80=99m seeing an issue with an out-of-tree cross compilation build of
+kselftest and can=E2=80=99t figure out what=E2=80=99s wrong.
 
-diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-index afdf13c34..ec69477d0 100644
---- a/fs/exfat/nls.c
-+++ b/fs/exfat/nls.c
-@@ -699,6 +699,7 @@ static int exfat_load_upcase_table(struct super_block *sb,
- 
- 	exfat_err(sb, "failed to load upcase table (idx : 0x%08x, chksum : 0x%08x, utbl_chksum : 0x%08x)",
- 		  index, chksum, utbl_checksum);
-+	exfat_free_upcase_table(sbi);
- 	return -EINVAL;
- }
- 
--- 
-2.39.2
+make --keep-going --jobs=3D32 O=3D/tmp/build
+INSTALL_PATH=3D/tmp/build/kselftest_install \
+     ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- \
+     CROSS_COMPILE_COMPAT=3Darm-linux-gnueabihf- kselftest-install
 
+[...]
+make[4]: Entering directory
+'/home/anders/src/kernel/linux/tools/testing/selftests/net/lib'
+  CC       csum
+/usr/lib/gcc-cross/aarch64-linux-gnu/13/../../../../aarch64-linux-gnu/bin/l=
+d:
+cannot open output file /tmp/build/kselftest/net/lib/csum: No such
+file or directory
+collect2: error: ld returned 1 exit status
+[...]
+
+Any thoughts on what might be causing this?
+
+Cheers,
+Anders
 
