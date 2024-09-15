@@ -1,126 +1,177 @@
-Return-Path: <linux-kernel+bounces-330089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132EF979997
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 01:42:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC08C97999E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 01:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFE7B1F22BD1
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EEF62834E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDDB1339B1;
-	Sun, 15 Sep 2024 23:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D1713699A;
+	Sun, 15 Sep 2024 23:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rh/93whM"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vSPE8pAN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6A6d8CiC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vSPE8pAN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6A6d8CiC"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A8E17BA7;
-	Sun, 15 Sep 2024 23:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6258175F;
+	Sun, 15 Sep 2024 23:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726443729; cv=none; b=PNFwvjl9Ucykp2/9pz1wQGtnDlgNvU6n09p5V4uqtLlEgBtzmRlnt2dOJ0rvFvw/1t6qv/yBtjV063nbiD7jTgvRlw8yCP0kl8jh9y8OX5EY1T+M3irjXDVBt910S4B0YrbgPD+IZ/G91BWn96skjVsZVD93cuTyYt4a7hj2SFA=
+	t=1726444377; cv=none; b=pYfPdkGyvn1Szf7XXBS3ZoLRXE5icU+iGKhsUWjdutc0wrAdoEPGREM9NUGzyyf2oYKnSKl528tzLY7FtTffDd5TyW++Q4COKoG4JFnFFIm1R3gIlmGRPt9jaK6oXiggskpr/UBlXYs6uEzpA/uwOzDcXySHFZXFb/8rzzfr7U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726443729; c=relaxed/simple;
-	bh=R0GPPeKHAbFbXFW+ljpOdYlAFUC/6BJEokBZh4E9gB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qw7Ep/I+nkmX3+ba83OeGy76QDwuO/5RDBpcV4yDiYOToyTyoU6sVwnsPVci8g0SXbmEheKzV8nE/t1AsJR4/ThbIRpblCuCk2bAFk+M+pKyhAR8hXj1ceNPZP+zLwsCzO2mWYO0x/EOAQaKgnHu6YcFqHsYOfNPzPrJYf/XiPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rh/93whM; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726443723;
-	bh=N62nmdW/mIjLgwLjyQ9RXaf/g2kvV724xrfZkUHciBw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rh/93whMBR8iPEyWGJzyBu9wqjXpsq7y3VA4+hODh1AIJrS+Hd5MoNa1QcLFQy0kX
-	 7CBe7B2O7nPi3pHGSK8CJ44D7vNczODVnzWFcGCllqHwHceUpz3OkDhw1bhxoRmLce
-	 QwBgfRakRnzEfXYl4xykZxDRz9GlucoAZVQ6a8oW09D4VlaPYuBJTq0lZu5ueCn6TR
-	 XH4xdt5JG2/TjovRdm8T39h6DS6WX4NX00kQIh5MyvNWnVwOL8IWvHAIMhQw9sSxNt
-	 b2+W6U0kxyaK+XUJe25sDKtF1xu/dwkOgQh0alaoglDlruoHAxRMQwSWcAanTOXQO/
-	 /QacaJEjSSc0g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1726444377; c=relaxed/simple;
+	bh=ITkpgHKfuRfbjMe47+uAfPeMZI5fcCA82SAhXnYL82c=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=arS2vB1Hji2GQQdJPtSdB3ERqpwptTYDiQm5DjxV6uvmKUZtIU+fSkMD46VdrG8xbRtK0dChCXUQbHnf7l5BD37qKUWkpHM3hp6V050yhfuyBp9A2Il+GHm5XwL5cp8ZET6TqAOa7K+O/QTieSZnT5ZIU006XXseYEWMcMsNTgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vSPE8pAN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6A6d8CiC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vSPE8pAN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6A6d8CiC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6Phn4Xw7z4x8H;
-	Mon, 16 Sep 2024 09:42:01 +1000 (AEST)
-Date: Mon, 16 Sep 2024 09:42:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Al Viro
- <viro@zeniv.linux.org.uk>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
- <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Aleksa Sarai
- <cyphar@cyphar.com>, bpf <bpf@vger.kernel.org>, Networking
- <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the
- vfs-brauner tree
-Message-ID: <20240916094201.212c3b23@canb.auug.org.au>
-In-Reply-To: <20240814105629.0ad9631b@canb.auug.org.au>
-References: <20240814105629.0ad9631b@canb.auug.org.au>
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 226FA1F837;
+	Sun, 15 Sep 2024 23:52:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726444373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
+	b=vSPE8pANYfBffFX2LjfSTIXbetOsfauvQi+6EC5tgY79kiIs65xPNMZe5+c8J5L6KNJ72z
+	TOrR9zkdSYnSknDBYr/bVT9xC58BiB1uPfSGmlHynzFgH81Z+Q2cBIUOSESRmcJpqNL0Bs
+	/HJsp2looqiqS5ANYZmNq4Nj5f5GlAQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726444373;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
+	b=6A6d8CiCwfWdLOZePf1uIcZeO1ut5uBH0tuB0RHXFerSz2k/VNnt0zPtC0kgRE72/evI5t
+	mxFhPz56kyhc1xBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vSPE8pAN;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=6A6d8CiC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726444373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
+	b=vSPE8pANYfBffFX2LjfSTIXbetOsfauvQi+6EC5tgY79kiIs65xPNMZe5+c8J5L6KNJ72z
+	TOrR9zkdSYnSknDBYr/bVT9xC58BiB1uPfSGmlHynzFgH81Z+Q2cBIUOSESRmcJpqNL0Bs
+	/HJsp2looqiqS5ANYZmNq4Nj5f5GlAQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726444373;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xiG13ZfZHbRtXyGwPrjs6tm9m2K4dADm70BU8g/HNek=;
+	b=6A6d8CiCwfWdLOZePf1uIcZeO1ut5uBH0tuB0RHXFerSz2k/VNnt0zPtC0kgRE72/evI5t
+	mxFhPz56kyhc1xBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B9B0E1351A;
+	Sun, 15 Sep 2024 23:52:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nmF1G1Jz52YbNgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Sun, 15 Sep 2024 23:52:50 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Ed2Nn8F8WPVJvnATdGlcyLf";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From: "NeilBrown" <neilb@suse.de>
+To: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Jens Axboe" <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org
+Subject: Re: [PATCH 0/7 v2 RFC] Make wake_up_{bit,var} less fragile
+In-reply-to: <20240826063659.15327-1-neilb@suse.de>
+References: <20240826063659.15327-1-neilb@suse.de>
+Date: Mon, 16 Sep 2024 09:52:47 +1000
+Message-id: <172644436782.17050.10401810341028694092@noble.neil.brown.name>
+X-Rspamd-Queue-Id: 226FA1F837
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[noble.neil.brown.name:mid,suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
---Sig_/Ed2Nn8F8WPVJvnATdGlcyLf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Ingo and Peter,
+ have you had a chance to look at these yet?  Should I resend?  Maybe
+ after -rc is out?
 
-On Wed, 14 Aug 2024 10:56:29 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the bpf-next tree got a conflict in:
->=20
->   fs/coda/inode.c
->=20
-> between commit:
->=20
->   626c2be9822d ("coda: use param->file for FSCONFIG_SET_FD")
->=20
-> from the vfs-brauner tree and commit:
->=20
->   1da91ea87aef ("introduce fd_file(), convert all accessors to it.")
->=20
-> from the bpf-next tree.
->=20
-> I fixed it up (the former removed the code modified by the latter, so I
-> used the former) and can carry the fix as necessary. This is now fixed
-> as far as linux-next is concerned, but any non trivial conflicts should
-> be mentioned to your upstream maintainer when your tree is submitted for
-> merging.  You may also want to consider cooperating with the maintainer
-> of the conflicting tree to minimise any particularly complex conflicts.
+Thanks,
+NeilBrown
 
-This is now a conflict between the vfs tree and the vfs-branuer tree.
 
---=20
-Cheers,
-Stephen Rothwell
+On Mon, 26 Aug 2024, NeilBrown wrote:
+> This is a second attempt to make wake_up_{bit,var} less fragile.
+> This version doesn't change those functions much, but instead
+> improves the documentation and provides some helpers which
+> both serve as patterns to follow and alternates so that use of the
+> fragile functions can be limited or eliminated.
+> 
+> The only change to either function is that wake_up_bit() is changed to
+> take an unsigned long * rather than a void *.  This necessitates the
+> first patch which changes the one place where something other then
+> unsigned long * is passed to wake_up bit - it is in block/.
+> 
+> The final patch modifies the same bit of code as a demonstration of one
+> of the new APIs that has been added.
+> 
+> Thanks,
+> NeilBrown
+> 
+> 
+>  [PATCH 1/7] block: change wait on bd_claiming to use a var_waitqueue,
+>  [PATCH 2/7] sched: change wake_up_bit() and related function to
+>  [PATCH 3/7] sched: Improve documentation for wake_up_bit/wait_on_bit
+>  [PATCH 4/7] sched: Document wait_var_event() family of functions and
+>  [PATCH 5/7] sched: Add test_and_clear_wake_up_bit() and
+>  [PATCH 6/7] sched: Add wait/wake interface for variable updated under
+>  [PATCH 7/7] Block: switch bd_prepare_to_claim to use
+> 
+> 
 
---Sig_/Ed2Nn8F8WPVJvnATdGlcyLf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbncMkACgkQAVBC80lX
-0GwuvQf/dvsPxheb2d2OlHJSqWC9TwnVGKJmNFVej4FdL3DNp08Ok6+Yj29PsP/2
-vnSGMQFxpZVEOSXnlSl5Yhk5UksSc91AWpdO6358xekh2vG2GvltByCc3JdkaCNn
-1jIDsvIXEkeRyKIT7XR3yrLvwe+yOsIcY7Q36/jjp8ndIl/Uo4ExSZuYGFRXPARh
-cUVLI0ROJGGWGr68WUoggHcEu1WaeekyQnpelYHTtP0p6m7MREBdDvLKfPiSfOMz
-Xoi5bWYcoJ2Hz+N7w6VZU9SxRFIpRVgb/BBkxQ7vMGOkHVXF139N4ZZoAA6z1rP1
-M0OZiYi0PHNlNA2x6/hWjW/s7eSM/w==
-=f/Ds
------END PGP SIGNATURE-----
-
---Sig_/Ed2Nn8F8WPVJvnATdGlcyLf--
 
