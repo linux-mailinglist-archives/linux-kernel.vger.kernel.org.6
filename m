@@ -1,160 +1,108 @@
-Return-Path: <linux-kernel+bounces-329761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EF39795C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:31:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1859795CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09CD91C2188F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97B1283DB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1CC19B3DA;
-	Sun, 15 Sep 2024 08:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC639198A17;
+	Sun, 15 Sep 2024 08:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mE8kHD5/"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dOzuuwFi"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D4E3D551;
-	Sun, 15 Sep 2024 08:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8728C13D8A2
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 08:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726389077; cv=none; b=JkxpASaPyhLhg4wQRY7eQEHUcjpmc4kIz4n0aVc3AUNGJoap2Z6f0JwmGr/wJ5l6sybc0Pkf+uS7lL6mYS8Fy/s29F4A1YxtwByEPsnoOuU4mkfrrdR+t+dRe7pHA4HpsviuHjBltQFM99KmNQYaC9qVrREOKxOD6NLmClN+hRU=
+	t=1726389638; cv=none; b=AixDn0RKydJH1mpR8OMshNNIjWN/JryLQL+5YanNRmawMN7J3N9i7cosK6rpaXxGtY3dlJR7SBarbGdpcQBUQ1dK39iC3WH8UG1+j88+AWjOQqviWvLgtGL2S8/1wC3jD1Ym54yfIJPY7W9QyzdPZ4I7IkBEGxkLOzS1XtiQq18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726389077; c=relaxed/simple;
-	bh=Ig1FkFcRZSJZYcQ6hxBNwKQh2ZnsvOEtNNR7FzfafWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NmCLEfgx/PIdGRey1Zv07eqJ+CCR/xaDY9A0kgvZNSYdHuHthR7QfzmjeZLzMjM8SxZAn9+INvQECgJnIi3SjhqkDubV68fvq3FpwZus61JYYVu8oXsj+zORiFJUbI6xW657jrlKZSK9XC0BJfHbnaMKoEu187tOLTYgFPhyPI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mE8kHD5/; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8ce5db8668so589179666b.1;
-        Sun, 15 Sep 2024 01:31:15 -0700 (PDT)
+	s=arc-20240116; t=1726389638; c=relaxed/simple;
+	bh=7W4dXzHo6ZsXChruk3vokDJnvUK3D1xdySswkG1oy0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TUL3hc3WJsW5fiFCG9Uog93uQY/dLYBSTtL0oxM8lqf5xqabTu4ov0TnhZ0rxnf41zZcrKgOJhA4hkQiGMTH9dpb5KQlY8KDfvOetkntbkcmmNvCCe1AURRvXAoq41dK0v8jmIu9c5quWo3VKsREwWYKaD3QKieR3umTu8shguQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dOzuuwFi; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so554467666b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 01:40:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726389074; x=1726993874; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IozNnz9tpUO80GrsvBdDl8DQ07b0U3NFAs75ot5NvHA=;
-        b=mE8kHD5/qyE46B/DGEi8Xy/+7TM8EiJTyZAfEetfQp6KzTdLb9ao8te/62gxNnlOXl
-         qd0pDcGIynKojXUsvGIquQfUjqObt29OmZPhleLY6lAtqgl8TvcFpzbY/AwhZhR1Q0Xd
-         wM1d290W4mp9cLupU3QSLCLVxRZvje50YYpYbqppzjrqS27KQwtblyxsouF3BSkOgjPw
-         IDDNbaaIqoIwowtJMHTzdmSbmp9RIPNSKIdfWdP4emP90Gkbv26I7OOzLFkKzCiTwzBb
-         6NZikxtWZ3q66Va2JW4hbq7H4Ua8bzwbdfTIs1bjqWAPwyH1goIp75pNuGFpBWl2Sy/C
-         pxCw==
+        d=linux-foundation.org; s=google; t=1726389635; x=1726994435; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IDDAsPUl2QeVKALO8ENGYLR9AUDsg9hKmMIPotwlIM8=;
+        b=dOzuuwFicCQC44mKbciceS1JSKwbG7E8prg2gNArQ3ZWCTGbeN6ZbfDVX9Ipb1q/qC
+         jBhD2i6jEa7p17ucTYWckZz0JhLSkMJI4oBVk0Ii9EYQQKcGdEdEgA32HQZ+5Zxh1AKd
+         6f+HpKwfi1yApLsxbUX0KzS2OIJX6UpJqzTyY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726389074; x=1726993874;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IozNnz9tpUO80GrsvBdDl8DQ07b0U3NFAs75ot5NvHA=;
-        b=VN/OO2P0xueRsLPD6Mu5O3Cy4WYYp8rxmrcZJYCX7nettkGxSlilRs+rvFnwa6UiI2
-         AJiv0s4QUuFuCf5SlR7otJfnn8l1DvxxOIq+tmiFEjYKWV5tk51kMN9NEZYqi+df6jMC
-         mrHQiRhuOr96TjTY5c4+wazOw1PzmhlPLUWnEX6ZkcxM5oOMXgpmSbnQoKxcspwENvtP
-         1IYfe/PmX4mYuRsZPFsNZXn7wXasxs7mf6QBe1onTgUV65TDgXkN7jSJLGTPtD+Ezygy
-         Iyoa+TFzKTTy9h5x4j6197hjY3DFa91XwsVE+7KLbJx430/X0y8yaw5Pt0/6NZjgU6ag
-         5pPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPfivvz3Nk39Q8rnmWlVILNxDifh8TtKsDiGZyhw1ATSBaSHwTi4E8Fp8+qdXUHRdG0+R57gIJ1dIt@vger.kernel.org, AJvYcCVK8j8qOV9H3fs4tVBCWssX0n99yPywDm1uG39u0ycnrZk91Q/yZJm3GUuQFywQQpR63wL35D5yAne2U+aV@vger.kernel.org, AJvYcCXAOBmRqr3Cl+MdRMs5hvhnFY/ZlWRqV9kVcfSxLzA4Y5pqJBOyoDagTxCSzQTZ8XnqRf8fiMNgTOVk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz911QsrYEi4X0GN119e/WvBTQF8xRIM2GBZVYnRAkYVUHWvqpo
-	yMZqlnhJBp7Tzeaw/w1f1rvENUMl4YbqPokkfY46g+R0uLrDcwrupV3V+g==
-X-Google-Smtp-Source: AGHT+IELc630NWg4QW94es9Z90TBuWreYukrYfytcd2kPVGaBtQoeWpEgY5v6+Y0K/lfZHBmYwp9Tg==
-X-Received: by 2002:a17:907:9446:b0:a86:894e:cd09 with SMTP id a640c23a62f3a-a90293c4fe5mr1293596266b.9.1726389073723;
-        Sun, 15 Sep 2024 01:31:13 -0700 (PDT)
-Received: from [192.168.0.106] (178.115.72.241.wireless.dyn.drei.com. [178.115.72.241])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061116388sm170985166b.92.2024.09.15.01.31.12
+        d=1e100.net; s=20230601; t=1726389635; x=1726994435;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IDDAsPUl2QeVKALO8ENGYLR9AUDsg9hKmMIPotwlIM8=;
+        b=DFMhIOZJAYfeq59NjeeFBvN7/rRwsr0ofAVYYpl5E+VxHB0DM6AKCi4FfBohkGoWDT
+         zzz6ybahHwJgK1ylcBXYhfjlttE+9r4eE/b8rY4g76jh1McnsxUF5SxLH4ZoU2lcURw7
+         iopt1zHDVdzvUR13a3C0c5jiI0tqMMiq2ygJWEg142H7AFMGPL+ZebTP/GirQaHTA4lx
+         O+4t7r1k7esl4VQYSKcsC/zsWIJG7es629XGg+dOUXjhUGDcS1MfqefEqVl4t/8oGc8w
+         hD/7KwHxmUueHn7ZFUt1ATxH+kO+BAtoKEXYPvZvNXX+vl++ClwXvBpeVncAmDPXGRkD
+         yf5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU9BIcZaPRBveTUzaqxrAu7Cj10bKdxfdU7BMFsmwHzB4bzebuL56TGpn2Ac0ekQnmsZlGRTH2Wk8r0pbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxln3JHvmfyNiif6UvSFRnnjN8tOp3TnmBoTjcbiGxyPIiStSIX
+	c0NibKxhaH4v0ZtZ4KuKVNiarg5b8Go4bUudGK6ybKNeKY4hIpYOoWqm3NUHB7NuxsPtpBIPgqm
+	TXc6N+A==
+X-Google-Smtp-Source: AGHT+IETmBAG33LdpCI85oUaO8Uu6uWzlGTWpupN+hkFe72pSMssK3WaUmmv2dRR7KxrUYv7XNKgGg==
+X-Received: by 2002:a17:907:f74d:b0:a8a:8c92:1c76 with SMTP id a640c23a62f3a-a90294a03d9mr1197391766b.36.1726389634404;
+        Sun, 15 Sep 2024 01:40:34 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b33fasm170312766b.139.2024.09.15.01.40.32
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Sep 2024 01:31:13 -0700 (PDT)
-Message-ID: <5199bc7c-c3fe-49e8-9122-78b476c4aa90@gmail.com>
-Date: Sun, 15 Sep 2024 10:31:11 +0200
+        Sun, 15 Sep 2024 01:40:33 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so1146213a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 01:40:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBNxPkofrQRJSOTwKZDCVvWN2KK5NnVCX3RWfgoasti1V9m2Qd8Zq6FrTCoNw4OPjHpNS2AfVDbzzwV1M=@vger.kernel.org
+X-Received: by 2002:a50:9b57:0:b0:5c2:58f7:fe95 with SMTP id
+ 4fb4d7f45d1cf-5c413e5164emr9626495a12.31.1726389632541; Sun, 15 Sep 2024
+ 01:40:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] iio: light: veml6030: update sensor resolution
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20240913-veml6035-v1-0-0b09c0c90418@gmail.com>
- <20240913-veml6035-v1-5-0b09c0c90418@gmail.com>
- <20240914155716.09496630@jic23-huawei>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240914155716.09496630@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+ <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com> <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
+In-Reply-To: <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 15 Sep 2024 10:40:15 +0200
+X-Gmail-Original-Message-ID: <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
+Message-ID: <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com, dwmw2@infradead.org, 
+	davem@davemloft.net, linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, zohar@linux.ibm.com, 
+	linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
+	linux-security-module@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 14/09/2024 16:57, Jonathan Cameron wrote:
-> On Fri, 13 Sep 2024 15:19:00 +0200
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> 
->> The driver still uses the sensor resolution provided in the datasheet
->> until Rev. 1.6, 28-Apr-2022, which was updated with Rev 1.7,
->> 28-Nov-2023. The original ambient light resolution has been updated from
->> 0.0036 lx/ct to 0.0042 lx/ct, which is the value that can be found in
->> the current device datasheet.
->>
->> Update the default resolution for IT = 100 ms and GAIN = 1/8 from the
->> original 4608 mlux/cnt to the current value from the "Resolution and
->> maximum detection range" table (Application Note 84367, page 5), 5376
->> mlux/cnt.
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> Interesting.  So does the datasheet say this was fixing an error, or
-> is there any chance there are different versions of the chip out there?
-> 
-> Also, should we treat this as a fix?  I think we probably should given
-> we don't really want stable kernels to have wrong data being reported.
-> If so, please reply with a fixes tag.
-> 
-> Jonathan
+On Sun, 15 Sept 2024 at 10:08, Herbert Xu <herbert@gondor.apana.org.au> wrote:
 >
+> If the aformentioned EFI use-case is bogus, then distro package
+> verification is going to be the only application for PGP keys in
+> the kernel.
 
-According to the Product Information Notification (link in the cover
-letter):
+So I haven't actually seen _that_ series, but as mentioned it does
+smell pretty conceptually broken to me.
 
-"Reason for Change: Adjusted resolution as this was wrongly stated in
-the current datasheet."
+But hey, code talks, bullshit walks. People can most certainly try to
+convince me.
 
-"If resolution is defined in the particular application by the customer,
-no changes in the system should be made. In the case resolution was
-taken from the datasheet or app note, this has to be adjusted accordingly."
-
-Which means that stable kernels are using the wrong resolution. I don't
-know what IIO usually does in such cases, because a fix could
-potentially make existing applications return "wrong data". If that is
-alright, and applications are meant to be adjusted after the kernel
-update, I have no problems to make this patch as a fix and add the
-stable tag.
-
-Best regards,
-Javier Carrasco
-
->> ---
->>  drivers/iio/light/veml6030.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
->> index 5d4c2e35b987..d5add040d0b3 100644
->> --- a/drivers/iio/light/veml6030.c
->> +++ b/drivers/iio/light/veml6030.c
->> @@ -779,7 +779,7 @@ static int veml6030_hw_init(struct iio_dev *indio_dev)
->>  
->>  	/* Cache currently active measurement parameters */
->>  	data->cur_gain = 3;
->> -	data->cur_resolution = 4608;
->> +	data->cur_resolution = 5376;
->>  	data->cur_integration_time = 3;
->>  
->>  	return ret;
->>
-> 
-
+                   Linus
 
