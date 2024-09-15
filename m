@@ -1,341 +1,340 @@
-Return-Path: <linux-kernel+bounces-329947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A6A9797DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:44:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1A89797DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2973E281F43
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:44:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4B81C20C32
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C6D1C9DEF;
-	Sun, 15 Sep 2024 16:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA071C9DCE;
+	Sun, 15 Sep 2024 16:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUteucF5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="OFt/KO26"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC731C9875
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 16:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0BB17BA7
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 16:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726418637; cv=none; b=BwbJLwyyiOEYCXCBzgf+LqJX94X83GOWmLaZzfqde2pwrGNbulrNJd4HejwYCt4N9UhXnrqx630vaNhoqG6JvCalVjXhdBAY9tgq425PtzN3iW2HiUCH+xANBepPK7H/lVAHqL9IUjUU0ivVsAbe/ft+AvBsa7WXdlORbFMKPAg=
+	t=1726419374; cv=none; b=Fdd5Hc//QTvaNQsnpmNA+0XnnAFpJPuXhMYVRxudonzygl1++72BOysHKksgN6gAtKWNlqFNF06pDS0jnT9ZO3lved1PYkT3QvwGiApZJN7hTRbdIoM8fEO5vy6Y560aqsSZtfKjpwn1MrHjJm1rtykHeh08Lq0eHPAPjHjmxXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726418637; c=relaxed/simple;
-	bh=X+946g+pnrYm6n0oQwKXqGyu4C2TG/BJk84qgLd+hNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqxFMVDNOhunkQ8MlzxOSJ6BCn0S2oq9iex1SHIOBReS8HP0UrSXIIBayFHmMkphFlcjT0fkZFy9tPr+Y9dsj9c/0Vf5k4u61HbBOEeVVng2it38MK7Roy0P8yzBa7y3YJyD4LBmPdqt1C1S3U1lfipenRKyZfnnGoUb+EkOKfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUteucF5; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726418636; x=1757954636;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X+946g+pnrYm6n0oQwKXqGyu4C2TG/BJk84qgLd+hNU=;
-  b=UUteucF5wxqCNfjnP4u9Yt7pqDsWaXBwfmRukocHwR35nqmjiIj9BrKv
-   stUAT24H+cXZv9Pdq7+E22pm7KO3MY55/+eQcDZHr2qdzTipDHUSWcK9f
-   CfUB7AXPqmZ5cjDU20HZkZgKDVHNAF0RpOrpnLEVieK3cO6DKSTynjJpR
-   uv8XyxlNC8Gub4Z+g0mAoC6XaYOe/5DmtwUADfOYok/KJdZF6G1MULEYF
-   gq0HUiq7AfAdS15oJdT++jsSBEBBifeg/NAJw9AYAu5eCghpnpxGHZNex
-   946DmtadXcnBKMtLueRHlUEWCUXJnBEPPQG7/Pk69echaKBqhl+yte0Ux
-   w==;
-X-CSE-ConnectionGUID: IAdiTB1hRQSQBLBTDUymig==
-X-CSE-MsgGUID: fT6R62TGQzGxVSrZGgoFCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="36641447"
-X-IronPort-AV: E=Sophos;i="6.10,231,1719903600"; 
-   d="scan'208";a="36641447"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 09:43:55 -0700
-X-CSE-ConnectionGUID: hAwCZOZdQfW7hAIWzPjx4g==
-X-CSE-MsgGUID: wAoRu1pdROaiTGe7QtkSFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,231,1719903600"; 
-   d="scan'208";a="68897856"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 15 Sep 2024 09:43:52 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spsLl-0008qi-1x;
-	Sun, 15 Sep 2024 16:43:49 +0000
-Date: Mon, 16 Sep 2024 00:43:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: yongli-oc <yongli-oc@zhaoxin.com>, mingo@redhat.com, will@kernel.org,
-	longman@redhat.com, boqun.feng@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, yongli@zhaoxin.com,
-	louisqi@zhaoxin.com, cobechen@zhaoxin.com, jiangbowang@zhaoxin.com
-Subject: Re: [PATCH 4/4] locking/osq_lock: The numa-aware lock memory
- prepare, assign and cleanup.
-Message-ID: <202409160059.VIbC9G04-lkp@intel.com>
-References: <20240914085327.32912-5-yongli-oc@zhaoxin.com>
+	s=arc-20240116; t=1726419374; c=relaxed/simple;
+	bh=Hc0OgOxoYGGFjBVPDg84kNnAPJI/CfIuupDMDx0KGq4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=E4lETh5BTg/D1ZulrEeUeHF9o7txR3/6Ko9ohgR6sCpqPoHB6/D3Cpk6hzoZhQpeg/bxtg0TtJ/ZFcyAC7oappar0FPxNVl8Quj5KEtzp/cxVErRKHd/OwsDeXosBIfiQ4HdNZjRbTg9rJZh0qfOFu3DZ5edJLVqJx8v7/NgXL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=OFt/KO26; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=zYjFOxhIc6gg0NkYVM/96e0omPWTOB1ufw2hZ+jyrUc=;
+	t=1726419373; x=1727628973; b=OFt/KO26FCUCux9NFnL5oNAw2IMJ5aMys9af/H8Dq8uVwns
+	q482vfzj94/EBVxD1I3NRF156wyDClncctiLUHZKTINiCkzq8CxoIXvxNnrJ9poX26YYPWPhk3tAE
+	w+XcCEBXT5E9Rg9gvA3E5bGiUTgK61PC9hN1kyP4s+i5wWQZ3ihFCi1m27B1hGIc+lyTPWCfMILvk
+	xF5cRQxzfIVARQdUu6M8T6qaAr3CloGN63mhu9mmFxMsU05yx8Bsqxdqtf3zIM2YHwMg36VNSZbWv
+	k6S4HgOYfOv7CuiUrMsWfE6xOZWb2GTG53a23UM1Z76U8Ssoj2LHspPUvlGjyqdg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <benjamin@sipsolutions.net>)
+	id 1spsXX-00000007VaX-0alN;
+	Sun, 15 Sep 2024 18:55:59 +0200
+Message-ID: <56a679e9ea6a6e6c7d9316608f25fd691001e8dc.camel@sipsolutions.net>
+Subject: Re: [PATCH 2/3] um: Remove highmem leftovers
+From: Benjamin Berg <benjamin@sipsolutions.net>
+To: Tiwei Bie <tiwei.btw@antgroup.com>, richard@nod.at, 
+	anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net
+Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Sun, 15 Sep 2024 18:55:49 +0200
+In-Reply-To: <20240913142137.248245-3-tiwei.btw@antgroup.com>
+References: <20240913142137.248245-1-tiwei.btw@antgroup.com>
+	 <20240913142137.248245-3-tiwei.btw@antgroup.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240914085327.32912-5-yongli-oc@zhaoxin.com>
+X-malware-bazaar: not-scanned
 
-Hi yongli-oc,
+Hi,
 
-kernel test robot noticed the following build warnings:
+does that mean we can also drop the 3-level page table support on i386?
+It seems like the two level page table is entirely sufficient on a
+system without high memory (i.e. only 32bit physical addresses).
 
-[auto build test WARNING on tip/locking/core]
-[also build test WARNING on akpm-mm/mm-nonmm-unstable linus/master v6.11-rc7 next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+When I took a look at it for the 4-level page table support on 64 bit I
+got a bit confused. But I had not realized that highmem support had
+been removed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/yongli-oc/locking-osq_lock-The-Kconfig-for-dynamic-numa-aware-osq-lock/20240914-172336
-base:   tip/locking/core
-patch link:    https://lore.kernel.org/r/20240914085327.32912-5-yongli-oc%40zhaoxin.com
-patch subject: [PATCH 4/4] locking/osq_lock: The numa-aware lock memory prepare, assign and cleanup.
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240916/202409160059.VIbC9G04-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240916/202409160059.VIbC9G04-lkp@intel.com/reproduce)
+Benjamin
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409160059.VIbC9G04-lkp@intel.com/
+On Fri, 2024-09-13 at 22:21 +0800, Tiwei Bie wrote:
+> Highmem was only supported on UML/i386. And the support has been
+> removed by commit a98a6d864d3b ("um: Remove broken highmem support").
+> Remove the leftovers and stop UML from trying to setup highmem when
+> the sum of physmem_size and iomem_size exceeds max_physmem.
+>=20
+> Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
+> ---
+> =C2=A0arch/um/drivers/virtio_uml.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 9 +--------
+> =C2=A0arch/um/include/shared/as-layout.h |=C2=A0 1 -
+> =C2=A0arch/um/include/shared/mem_user.h=C2=A0 |=C2=A0 5 ++---
+> =C2=A0arch/um/kernel/mem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ---
+> =C2=A0arch/um/kernel/physmem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 30 +++++++++++-----------------
+> --
+> =C2=A0arch/um/kernel/um_arch.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 17 +++++++----------
+> =C2=A06 files changed, 21 insertions(+), 44 deletions(-)
+>=20
+> diff --git a/arch/um/drivers/virtio_uml.c
+> b/arch/um/drivers/virtio_uml.c
+> index 2b6e701776b6..e7f5556e3c96 100644
+> --- a/arch/um/drivers/virtio_uml.c
+> +++ b/arch/um/drivers/virtio_uml.c
+> @@ -72,7 +72,7 @@ struct virtio_uml_vq_info {
+> =C2=A0	bool suspended;
+> =C2=A0};
+> =C2=A0
+> -extern unsigned long long physmem_size, highmem;
+> +extern unsigned long long physmem_size;
+> =C2=A0
+> =C2=A0#define vu_err(vu_dev, ...)	dev_err(&(vu_dev)->pdev->dev,
+> ##__VA_ARGS__)
+> =C2=A0
+> @@ -673,13 +673,6 @@ static int vhost_user_set_mem_table(struct
+> virtio_uml_device *vu_dev)
+> =C2=A0
+> =C2=A0	if (rc < 0)
+> =C2=A0		return rc;
+> -	if (highmem) {
+> -		msg.payload.mem_regions.num++;
+> -		rc =3D vhost_user_init_mem_region(__pa(end_iomem),
+> highmem,
+> -				&fds[1],
+> &msg.payload.mem_regions.regions[1]);
+> -		if (rc < 0)
+> -			return rc;
+> -	}
+> =C2=A0
+> =C2=A0	return vhost_user_send(vu_dev, false, &msg, fds,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 msg.payload.mem_regions.num=
+);
+> diff --git a/arch/um/include/shared/as-layout.h
+> b/arch/um/include/shared/as-layout.h
+> index 06292fca5a4d..61965a06c18a 100644
+> --- a/arch/um/include/shared/as-layout.h
+> +++ b/arch/um/include/shared/as-layout.h
+> @@ -41,7 +41,6 @@ extern unsigned long uml_physmem;
+> =C2=A0extern unsigned long uml_reserved;
+> =C2=A0extern unsigned long end_vm;
+> =C2=A0extern unsigned long start_vm;
+> -extern unsigned long long highmem;
+> =C2=A0
+> =C2=A0extern unsigned long brk_start;
+> =C2=A0
+> diff --git a/arch/um/include/shared/mem_user.h
+> b/arch/um/include/shared/mem_user.h
+> index 11a723a58545..adfa08062f88 100644
+> --- a/arch/um/include/shared/mem_user.h
+> +++ b/arch/um/include/shared/mem_user.h
+> @@ -47,10 +47,9 @@ extern int iomem_size;
+> =C2=A0#define ROUND_4M(n) ((((unsigned long) (n)) + (1 << 22)) & ~((1 <<
+> 22) - 1))
+> =C2=A0
+> =C2=A0extern unsigned long find_iomem(char *driver, unsigned long
+> *len_out);
+> -extern void mem_total_pages(unsigned long physmem, unsigned long
+> iomem,
+> -		=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long highmem);
+> +extern void mem_total_pages(unsigned long physmem, unsigned long
+> iomem);
+> =C2=A0extern void setup_physmem(unsigned long start, unsigned long usable=
+,
+> -			=C2=A0 unsigned long len, unsigned long long
+> highmem);
+> +			=C2=A0 unsigned long len);
+> =C2=A0extern void map_memory(unsigned long virt, unsigned long phys,
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long len, int r, in=
+t w, int x);
+> =C2=A0
+> diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
+> index a5b4fe2ad931..5026668dc054 100644
+> --- a/arch/um/kernel/mem.c
+> +++ b/arch/um/kernel/mem.c
+> @@ -6,7 +6,6 @@
+> =C2=A0#include <linux/stddef.h>
+> =C2=A0#include <linux/module.h>
+> =C2=A0#include <linux/memblock.h>
+> -#include <linux/highmem.h>
+> =C2=A0#include <linux/mm.h>
+> =C2=A0#include <linux/swap.h>
+> =C2=A0#include <linux/slab.h>
+> @@ -51,8 +50,6 @@ EXPORT_SYMBOL(empty_zero_page);
+> =C2=A0pgd_t swapper_pg_dir[PTRS_PER_PGD];
+> =C2=A0
+> =C2=A0/* Initialized at boot time, and readonly after that */
+> -unsigned long long highmem;
+> -EXPORT_SYMBOL(highmem);
+> =C2=A0int kmalloc_ok =3D 0;
+> =C2=A0
+> =C2=A0/* Used during early boot */
+> diff --git a/arch/um/kernel/physmem.c b/arch/um/kernel/physmem.c
+> index fb2adfb49945..cc5238c1bf1e 100644
+> --- a/arch/um/kernel/physmem.c
+> +++ b/arch/um/kernel/physmem.c
+> @@ -24,17 +24,14 @@ EXPORT_SYMBOL(high_physmem);
+> =C2=A0
+> =C2=A0extern unsigned long long physmem_size;
+> =C2=A0
+> -void __init mem_total_pages(unsigned long physmem, unsigned long
+> iomem,
+> -		=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long highmem)
+> +void __init mem_total_pages(unsigned long physmem, unsigned long
+> iomem)
+> =C2=A0{
+> -	unsigned long phys_pages, highmem_pages;
+> -	unsigned long iomem_pages, total_pages;
+> +	unsigned long phys_pages, iomem_pages, total_pages;
+> =C2=A0
+> -	phys_pages=C2=A0=C2=A0=C2=A0 =3D physmem >> PAGE_SHIFT;
+> -	iomem_pages=C2=A0=C2=A0 =3D iomem=C2=A0=C2=A0 >> PAGE_SHIFT;
+> -	highmem_pages =3D highmem >> PAGE_SHIFT;
+> +	phys_pages=C2=A0 =3D physmem >> PAGE_SHIFT;
+> +	iomem_pages =3D iomem=C2=A0=C2=A0 >> PAGE_SHIFT;
+> =C2=A0
+> -	total_pages=C2=A0=C2=A0 =3D phys_pages + iomem_pages + highmem_pages;
+> +	total_pages =3D phys_pages + iomem_pages;
+> =C2=A0
+> =C2=A0	max_mapnr =3D total_pages;
+> =C2=A0}
+> @@ -64,13 +61,12 @@ void map_memory(unsigned long virt, unsigned long
+> phys, unsigned long len,
+> =C2=A0 * @reserve_end:	end address of the physical kernel memory.
+> =C2=A0 * @len:	Length of total physical memory that should be
+> mapped/made
+> =C2=A0 *		available, in bytes.
+> - * @highmem:	Number of highmem bytes that should be mapped/made
+> available.
+> =C2=A0 *
+> - * Creates an unlinked temporary file of size (len + highmem) and
+> memory maps
+> + * Creates an unlinked temporary file of size (len) and memory maps
+> =C2=A0 * it on the last executable image address (uml_reserved).
+> =C2=A0 *
+> =C2=A0 * The offset is needed as the length of the total physical memory
+> - * (len + highmem) includes the size of the memory used be the
+> executable image,
+> + * (len) includes the size of the memory used be the executable
+> image,
+> =C2=A0 * but the mapped-to address is the last address of the executable
+> image
+> =C2=A0 * (uml_reserved =3D=3D end address of executable image).
+> =C2=A0 *
+> @@ -78,19 +74,19 @@ void map_memory(unsigned long virt, unsigned long
+> phys, unsigned long len,
+> =C2=A0 * of all user space processes/kernel tasks.
+> =C2=A0 */
+> =C2=A0void __init setup_physmem(unsigned long start, unsigned long
+> reserve_end,
+> -			=C2=A0 unsigned long len, unsigned long long
+> highmem)
+> +			=C2=A0 unsigned long len)
+> =C2=A0{
+> =C2=A0	unsigned long reserve =3D reserve_end - start;
+> =C2=A0	long map_size =3D len - reserve;
+> =C2=A0	int err;
+> =C2=A0
+> -	if(map_size <=3D 0) {
+> +	if (map_size <=3D 0) {
+> =C2=A0		os_warn("Too few physical memory! Needed=3D%lu,
+> given=3D%lu\n",
+> =C2=A0			reserve, len);
+> =C2=A0		exit(1);
+> =C2=A0	}
+> =C2=A0
+> -	physmem_fd =3D create_mem_file(len + highmem);
+> +	physmem_fd =3D create_mem_file(len);
+> =C2=A0
+> =C2=A0	err =3D os_map_memory((void *) reserve_end, physmem_fd,
+> reserve,
+> =C2=A0			=C2=A0=C2=A0=C2=A0 map_size, 1, 1, 1);
+> @@ -109,7 +105,7 @@ void __init setup_physmem(unsigned long start,
+> unsigned long reserve_end,
+> =C2=A0	os_write_file(physmem_fd, __syscall_stub_start, PAGE_SIZE);
+> =C2=A0	os_fsync_file(physmem_fd);
+> =C2=A0
+> -	memblock_add(__pa(start), len + highmem);
+> +	memblock_add(__pa(start), len);
+> =C2=A0	memblock_reserve(__pa(start), reserve);
+> =C2=A0
+> =C2=A0	min_low_pfn =3D PFN_UP(__pa(reserve_end));
+> @@ -137,10 +133,6 @@ int phys_mapping(unsigned long phys, unsigned
+> long long *offset_out)
+> =C2=A0			region =3D region->next;
+> =C2=A0		}
+> =C2=A0	}
+> -	else if (phys < __pa(end_iomem) + highmem) {
+> -		fd =3D physmem_fd;
+> -		*offset_out =3D phys - iomem_size;
+> -	}
+> =C2=A0
+> =C2=A0	return fd;
+> =C2=A0}
+> diff --git a/arch/um/kernel/um_arch.c b/arch/um/kernel/um_arch.c
+> index 8e594cda6d77..8f86aa468b50 100644
+> --- a/arch/um/kernel/um_arch.c
+> +++ b/arch/um/kernel/um_arch.c
+> @@ -366,18 +366,15 @@ int __init linux_main(int argc, char **argv)
+> =C2=A0
+> =C2=A0	setup_machinename(init_utsname()->machine);
+> =C2=A0
+> -	highmem =3D 0;
+> +	physmem_size =3D (physmem_size + PAGE_SIZE - 1) & PAGE_MASK;
+> =C2=A0	iomem_size =3D (iomem_size + PAGE_SIZE - 1) & PAGE_MASK;
+> +
+> =C2=A0	max_physmem =3D TASK_SIZE - uml_physmem - iomem_size -
+> MIN_VMALLOC;
+> =C2=A0
+> -	/*
+> -	 * Zones have to begin on a 1 << MAX_PAGE_ORDER page
+> boundary,
+> -	 * so this makes sure that's true for highmem
+> -	 */
+> -	max_physmem &=3D ~((1 << (PAGE_SHIFT + MAX_PAGE_ORDER)) - 1);
+> =C2=A0	if (physmem_size + iomem_size > max_physmem) {
+> -		highmem =3D physmem_size + iomem_size - max_physmem;
+> -		physmem_size -=3D highmem;
+> +		physmem_size =3D max_physmem - iomem_size;
+> +		os_info("Physical memory size shrunk to %llu
+> bytes\n",
+> +			physmem_size);
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	high_physmem =3D uml_physmem + physmem_size;
+> @@ -413,8 +410,8 @@ void __init setup_arch(char **cmdline_p)
+> =C2=A0	u8 rng_seed[32];
+> =C2=A0
+> =C2=A0	stack_protections((unsigned long) &init_thread_info);
+> -	setup_physmem(uml_physmem, uml_reserved, physmem_size,
+> highmem);
+> -	mem_total_pages(physmem_size, iomem_size, highmem);
+> +	setup_physmem(uml_physmem, uml_reserved, physmem_size);
+> +	mem_total_pages(physmem_size, iomem_size);
+> =C2=A0	uml_dtb_init();
+> =C2=A0	read_initrd();
+> =C2=A0
 
-All warnings (new ones prefixed by >>):
-
->> kernel/locking/zx_numa.c:250:10: warning: variable 'left' set but not used [-Wunused-but-set-variable]
-     250 |                                         u32 left = 0;
-         |                                             ^
->> kernel/locking/zx_numa.c:375:6: warning: variable 'err' set but not used [-Wunused-but-set-variable]
-     375 |         int err = 0;
-         |             ^
-   2 warnings generated.
-
-
-vim +/left +250 kernel/locking/zx_numa.c
-
-   203	
-   204	static void zx_numa_cleanup(struct work_struct *work)
-   205	{
-   206		int i = 0;
-   207		int checktimes = 2;
-   208	
-   209		//reboot or power off state
-   210		if (READ_ONCE(enable_zx_numa_osq_lock) == 0xf)
-   211			return;
-   212	
-   213		if (atomic_read(&numa_count) == 0) {
-   214			if (READ_ONCE(dynamic_enable) != 0)
-   215				schedule_delayed_work(&zx_numa_cleanup_work, 60*HZ);
-   216			return;
-   217		}
-   218	
-   219		for (i = 0; i < zx_numa_lock_total; i++) {
-   220			int s = 0;
-   221			u32 lockaddr = READ_ONCE(zx_numa_entry[i].lockaddr);
-   222			u32 type = zx_numa_entry[i].type;
-   223			struct _numa_lock *buf =  zx_numa_entry[i].numa_ptr;
-   224			int nodes = 0;
-   225	
-   226			if (lockaddr == 0 || type == 3 || zx_numa_entry[i].idle == 0)
-   227				continue;
-   228			nodes = buf->numa_nodes;
-   229			if (zx_numa_entry[i].idle < checktimes) {
-   230	
-   231				s = zx_check_numa_dynamic_locked(lockaddr, buf, 1);
-   232				if (s != 0) {
-   233					zx_numa_entry[i].idle = 1;
-   234					continue;
-   235				}
-   236				zx_numa_entry[i].idle++;
-   237			}
-   238	
-   239			if (zx_numa_entry[i].idle == checktimes) {
-   240				zx_numa_lock_stopping(buf);
-   241				zx_numa_entry[i].idle++;
-   242	
-   243			}
-   244	
-   245			if (zx_numa_entry[i].idle == checktimes+1) {
-   246				while (1) {
-   247					if (zx_numa_lock64_try_to_freeze(lockaddr, buf,
-   248							i) == nodes + 1) {
-   249						//all node has been locked
- > 250						u32 left = 0;
-   251	
-   252						left = atomic_dec_return(&numa_count);
-   253						break;
-   254					}
-   255					cpu_relax(); cpu_relax();
-   256					cpu_relax(); cpu_relax();
-   257				}
-   258			}
-   259		}
-   260		schedule_delayed_work(&zx_numa_cleanup_work, 60*HZ);
-   261	}
-   262	
-   263	static int create_numa_buffer_list(int clusters, int len)
-   264	{
-   265		int i = 0;
-   266	
-   267		for (i = 0; i < zx_numa_lock_total; i++) {
-   268			struct _numa_lock *s = (struct _numa_lock *)kmem_cache_alloc(
-   269					zx_numa_lock_cachep, GFP_KERNEL);
-   270			if (!s) {
-   271				while (i > 0) {
-   272					kmem_cache_free(zx_numa_lock_cachep,
-   273							zx_numa_entry[i-1].numa_ptr);
-   274					i--;
-   275				}
-   276				return 0;
-   277			}
-   278			memset((char *)s, 0,
-   279				len * L1_CACHE_BYTES * (clusters + NUMAEXPAND));
-   280			numa_lock_init_data(s, clusters, NUMA_LOCKED_VAL, 0);
-   281			zx_numa_entry[i].numa_ptr = s;
-   282			zx_numa_entry[i].lockaddr = 0;
-   283			zx_numa_entry[i].highaddr = 0;
-   284			zx_numa_entry[i].idle = 0;
-   285			zx_numa_entry[i].type = 0;
-   286		}
-   287	
-   288		for (i = 0; i < zx_numa_lock_total; i++) {
-   289			zx_numa_entry[i].index = i;
-   290			list_add_tail(&(zx_numa_entry[i].list), &_zx_numa_lock_head);
-   291		}
-   292		return 1;
-   293	}
-   294	
-   295	static int zx_numa_lock_init(int numa)
-   296	{
-   297		int align = max_t(int, L1_CACHE_BYTES, ARCH_MIN_TASKALIGN);
-   298		int d = 0;
-   299		int status = 0;
-   300	
-   301		atomic_set(&lockindex, 0);
-   302		atomic_set(&numa_count, 0);
-   303	
-   304		if (sizeof(struct _numa_lock) & 0x3f)
-   305			d = (int)((sizeof(struct _numa_lock) + L1_CACHE_BYTES) /
-   306				  L1_CACHE_BYTES);
-   307		else
-   308			d = (int)(sizeof(struct _numa_lock) / L1_CACHE_BYTES);
-   309	
-   310		zx_numa_entry_cachep = kmem_cache_create(
-   311			"zx_numa_entry",
-   312			sizeof(struct _numa_buf) * zx_numa_lock_total, align,
-   313			SLAB_PANIC | SLAB_ACCOUNT, NULL);
-   314	
-   315		zx_numa_lock_cachep = kmem_cache_create(
-   316			"zx_numa_lock",
-   317			d * L1_CACHE_BYTES * (numa + NUMAEXPAND), align,
-   318			SLAB_PANIC | SLAB_ACCOUNT, NULL);
-   319	
-   320	
-   321		if (zx_numa_entry_cachep && zx_numa_lock_cachep) {
-   322			zx_numa_entry = (struct _numa_buf *)kmem_cache_alloc(
-   323					zx_numa_entry_cachep, GFP_KERNEL);
-   324			if (zx_numa_entry) {
-   325				memset((char *)zx_numa_entry, 0,
-   326					sizeof(struct _numa_buf) * zx_numa_lock_total);
-   327				create_numa_buffer_list(numa, d);
-   328				status = 1;
-   329			}
-   330		}
-   331	
-   332		pr_info("enable dynamic numa-aware osq_lock, clusters %d\n",
-   333			numa);
-   334		return status;
-   335	}
-   336	
-   337	
-   338	#define numa_lock_proc_dir "zx_numa_lock"
-   339	#define zx_numa_enable_dir "dynamic_enable"
-   340	#define numa_entry_total 8
-   341	struct proc_dir_entry *numa_lock_proc;
-   342	struct proc_dir_entry *numa_lock_enable;
-   343	struct proc_dir_entry *numa_proc_entry[numa_entry_total];
-   344	
-   345	static ssize_t numa_lock_proc_read(struct file *file,
-   346			char __user *usrbuf, size_t len, loff_t *off)
-   347	{
-   348		int id = (long) pde_data(file_inode(file));
-   349		char kbuffer[128];
-   350		ssize_t retval = 0;
-   351		size_t n = 0;
-   352	
-   353		memset(kbuffer, 0, sizeof(kbuffer));
-   354		if (id == 0)
-   355			n = sprintf(kbuffer, "%d\n", READ_ONCE(dynamic_enable));
-   356		else if (id == 1)
-   357			n = sprintf(kbuffer, "%d\n", READ_ONCE(osq_lock_depth));
-   358		else if (id == 2)
-   359			n = sprintf(kbuffer, "%d\n", READ_ONCE(osq_keep_times));
-   360		else if (id == 3)
-   361			n = sprintf(kbuffer, "%d\n", READ_ONCE(osq_node_max));
-   362		else if (id == 4)
-   363			n = sprintf(kbuffer, "%d\n", atomic_read(&numa_count));
-   364		retval = simple_read_from_buffer(usrbuf, len, off, kbuffer, n);
-   365	
-   366		return retval;
-   367	}
-   368	
-   369	static ssize_t numa_lock_proc_write(struct file *file,
-   370			const char __user *buffer, size_t count, loff_t *f_pos)
-   371	{
-   372		int id = (long) pde_data(file_inode(file));
-   373		char kbuffer[128];
-   374		unsigned long new = 0;
- > 375		int err = 0;
-   376	
-   377		memset(kbuffer, 0, sizeof(kbuffer));
-   378		if (copy_from_user(kbuffer, buffer, count))
-   379			return count;
-   380		kbuffer[count] = '\0';
-   381		err = kstrtoul(kbuffer, 10, &new);
-   382	
-   383		if (id == 0) {
-   384			int last = READ_ONCE(dynamic_enable);
-   385	
-   386			if (new < 0 || new >= 2 || last == new)
-   387				return count;
-   388	
-   389			if (last == 0) {
-   390				prefetchw(&enable_zx_numa_osq_lock);
-   391				//enable to the 2-bytes-tail osq-lock
-   392				prefetchw(&enable_zx_numa_osq_lock);
-   393				WRITE_ONCE(enable_zx_numa_osq_lock, 2);
-   394				schedule_delayed_work(&zx_numa_cleanup_work, 60*HZ);
-   395			}
-   396			prefetchw(&dynamic_enable);
-   397			WRITE_ONCE(dynamic_enable, new);
-   398			return count;
-   399		}
-   400	
-   401		if (READ_ONCE(dynamic_enable) != 0) {
-   402			pr_info("dynamic %d: change setting should disable dynamic\n",
-   403				dynamic_enable);
-   404			return count;
-   405		}
-   406		if (id == 1 && new > 4 && new <= 32)
-   407			WRITE_ONCE(osq_lock_depth, new);
-   408		else if (id == 2 && new >= 16 && new <= 2048)
-   409			WRITE_ONCE(osq_keep_times, new);
-   410		else if (id == 3 && new > 4 && new <= 2048)
-   411			WRITE_ONCE(osq_node_max, new);
-   412		return count;
-   413	}
-   414	static int numa_lock_proc_show(struct seq_file *m, void *v)
-   415	{
-   416		return 0;
-   417	}
-   418	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
