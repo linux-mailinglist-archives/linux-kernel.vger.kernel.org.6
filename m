@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-329722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B990A9794FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 737FD979501
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F601F21BB3
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DA621F21465
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4CA22F19;
-	Sun, 15 Sep 2024 07:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0640725570;
+	Sun, 15 Sep 2024 07:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="izJ2nuxY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="f+XCFuOk"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A646D22315;
-	Sun, 15 Sep 2024 07:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21955DDCD;
+	Sun, 15 Sep 2024 07:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726384452; cv=none; b=D6cZ14h/cKr8jCb/R7Enp4rWiHDvRyg/F1eQMnEhF30IRYyLEQeO767agjqG1Oh7S7G87q/wtXXr6MGSs5Na9A/6XmOR6qnjFbaLmNGlJwvTFApkDneTYSSGgc9QseF88QipgphYudBlaVtAj+/61Ed752UvQVMfiR4EVleV8YA=
+	t=1726385021; cv=none; b=NoU6KrkzUx4QcyFT7ymJ9c0OU9plnO4t0Y3CW8lXUgEuRM/PzZ3TxrnATkxb6ukKIiSYcxeKWhG5EZOQyhydmbfm8PtX0oyk67RmUYeLphQfH4ly23H7RLa2w+98+CWgYH5VtUqEYe+gOPIKAfOXhctVFMxWe68rlmtF5Xr2xRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726384452; c=relaxed/simple;
-	bh=gguBgbwKdqH6OkJl+S82MCRDHkOu58Yma2Jh+r+nV5M=;
+	s=arc-20240116; t=1726385021; c=relaxed/simple;
+	bh=/LN6+rKNmoQGtTt0uFoyaZGtZos5cWCC3ZF3U9Kp/Dk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ukrvjTgEoC+fASiRebnbEyUz57mQken7g0dr0OCEuruWmobdb6iLzlkHwGBw67R3eW1KIviHXIXG3t5NKfcvbUsW2C3mryXd4BiCq1XbTFdpOTN1xN1XjqFlliBtVD3KpQk7OAHU9gybiu7qpEebo+PfDgx/X2NxPESxiGVfT8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=izJ2nuxY; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726384450; x=1757920450;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gguBgbwKdqH6OkJl+S82MCRDHkOu58Yma2Jh+r+nV5M=;
-  b=izJ2nuxYbtwavD32BSyDbG1UQLu09OCShfeHS41skcCXt9yWKRPvOwX0
-   2/aAE+t6mUiRjsgb6zkTfiDIw4l5n3rsvpT/fQS0PARfi+4G1lwyFOmOx
-   o5u0ndTVlSDGxsyHWvMVvRaoSuzUv6uLmVLyzS+k1IWM8MXhhErkB6qKB
-   9RgGOmGP+R2dqmLmO/keyBL2yWv/3y4pFa+k3ro1XghBZkYOQ1JkZtcsu
-   oWKNhBxJw91aoWP6NvSxJKwuWCmu68lxT8S+crtpqqS5MNPNhoa/FTEaA
-   5MTVuEOM+Gmh62Y/ZM+BajqLQGoLa5UWOVkDBuDijn/l6lOtI1BZA1ezS
-   w==;
-X-CSE-ConnectionGUID: e4Yd1kpoRBG4capf0g0jSg==
-X-CSE-MsgGUID: Oe8qf89JTc+LiFFIyi9dBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="24726730"
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="24726730"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 00:14:09 -0700
-X-CSE-ConnectionGUID: 8uaiC5iITU2eoNyQ1j54EA==
-X-CSE-MsgGUID: nyexTW3fQL6QfXyJF+6FTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="69061964"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 15 Sep 2024 00:14:08 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 727AA18F; Sun, 15 Sep 2024 10:14:06 +0300 (EEST)
-Date: Sun, 15 Sep 2024 10:14:06 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Kai-Heng Feng <kaihengfeng@gmail.com>,
-	Bjorn Helgaas <helgaas@kernel.org>, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
-Message-ID: <20240915071406.GR275077@black.fi.intel.com>
-References: <CAAd53p7vP8TcPj=u5TTuPMXFaWW15hwpJdECCprvXGBhigKD6Q@mail.gmail.com>
- <20240912165709.GA674430@bhelgaas>
- <CAMusMWqxi3s8sb+j0wV251kRj9R9-oqKQUqKscVTk_sktm2m5A@mail.gmail.com>
- <20240913080123.GP275077@black.fi.intel.com>
- <12857e01-f6cc-4489-935b-7e6c354706e9@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d28lC2PWE5CUhIMy9gDM4JMIYmXRvxqta7yLljtB+nqgPSYXWKOBgEnRkJ+sEbC87SIkqg5rZh4LjrJt2hkAxKJRr5veh+yT9TJ9c804iaxm/SeuvWbDlE3DWOsSJxWRjhimliXrUWmMibNSFfP1kpsXzR/jnnzTtrWPbOu6P5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=f+XCFuOk; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OLy4GDrTHMAiWDjgfJFwNqFOV+uatM8nRA6OZdxf68E=; b=f+XCFuOkbxtwqUDSweJNUGWw2t
+	niJW5Q7et1z2OcXZCl3Ck2flEKK1bWRnPw+XazNvtN62tNujQMqLU2q2rIjs2xwalcrOzIdfMIO3M
+	NkxCRxcXmoS2Xm6FkA7XSsOwldFz3XXgbUgh+UGnpzb9MJxldW91J0OR5EEAhyuZM6ue3VrnE5dDW
+	CKKlOLgsVA+ptdzL+D6jyGx9ub6XBImVRHwEqeXTosIgecKosBL0LM7k6WPHs937Agy6l9TBd/nc0
+	BkX6Y/GpbFJWVaqaOPKk4m/6bNbbmx/JW/yUZ+zSZ761TRQZN1pSTL2EbPGJRDzm9TVXjvaP+bjQp
+	0sgZHXlQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1spjbc-0000000Cci7-1tB0;
+	Sun, 15 Sep 2024 07:23:36 +0000
+Date: Sun, 15 Sep 2024 08:23:36 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Daniel Yang <danielyangkang@gmail.com>
+Cc: Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
+Subject: Re: [PATCH] fs/exfat: resolve memory leak from
+ exfat_create_upcase_table()
+Message-ID: <20240915072336.GF2825852@ZenIV>
+References: <20240915064404.221474-1-danielyangkang@gmail.com>
+ <20240915070546.GE2825852@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <12857e01-f6cc-4489-935b-7e6c354706e9@amd.com>
+In-Reply-To: <20240915070546.GE2825852@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi,
+On Sun, Sep 15, 2024 at 08:05:46AM +0100, Al Viro wrote:
 
-On Fri, Sep 13, 2024 at 03:33:33PM -0500, Mario Limonciello wrote:
-> > I know this is about entering S5 (power off) but I wonder if simply
-> > disabling the device (I/O, MMIO and bus mastering) could stop it from
-> > waking up?
+> 	Interesting...  How does the mainline manage to avoid the
+> call of exfat_kill_sb(), which should call_rcu() delayed_free(), which
+> calls exfat_free_upcase_table()?
 > 
-> To me, it's a two-fold problem.  The device consumes too much power, and the
-> device issues interrupts when system is in S5.
+> 	Could you verify that your reproducer does *NOT* hit that
+> callchain?  AFAICS, the only caller of exfat_load_upcase_table()
+> is exfat_create_upcase_table(), called by __exfat_fill_super(),
+> called by exfat_fill_super(), passed as callback to get_tree_bdev().
+> And if that's the case, ->kill_sb() should be called on failure and
+> with non-NULL ->s_fs_info...
 > 
-> Putting it in D3 should nip both, disabling the device might help the
-> latter.
-> 
-> I did the same thing a vendor did for KH where I double checked the waveform
-> at S5 and could see the devices still in D0.
-> 
-> Or do you think that by the device being in D0 but disabled should be enough
-> for decreasing power?
+> 	Something odd is going on there.
 
-No, not about power but just to solve the issue here. I'm not objecting
-putting the device into D3 instead on the grounds that if Windows does
-this then probably it is safe or us to do as well and also avoids
-possible untested paths in the firmware side too.
+	Yecchh...  OK, I see what's happening, and the patch is probably
+correct, but IMO it's way too subtle.  Unless I'm misreading what's
+going on there, you have the following:
+	exfat_load_upcase_table() have 3 failure exits.
 
-Strictly based on ACPI spec [1] there is no such requirement though.
+One of them is with -ENOMEM; no table allocated and we proceed to
+exfat_load_default_upcase_table().
 
-[1] https://uefi.org/specs/ACPI/6.5/16_Waking_and_Sleeping.html#transitioning-from-the-working-to-the-soft-off-state
+Another is with -EIO.  In that case the table is left allocated, the
+caller of exfat_load_upcase_table() returns immediately and the normal
+logics in ->kill_sb() takes it out.
+
+Finally, there's one with -EINVAL.  There the caller proceeds to
+exfat_load_default_upcase_table(), which is where the mainline leaks.
+That's the case your patch adjusts.
+
+Note that resulting rules for exfat_load_upcase_table()
+	* should leave for ->kill_sb() to free if failing with -EIO.
+	* should make sure it's freed on all other failure exits.
+
+At the very least that needs to be documented.  However, since the
+problem happens when the caller proceeds to exfat_load_default_upcase_table(),
+the things would be simpler if you had taken the "need to free what we'd
+allocated" logics into the place where that logics is visible.  I.e.
+
+                        ret = exfat_load_upcase_table(sb, sector, num_sectors,
+                                le32_to_cpu(ep->dentry.upcase.checksum));
+
+                        brelse(bh);
+                        if (ret && ret != -EIO) {
+				/* clean after exfat_load_upcase_table() */
+				exfat_free_upcase_table(sbi);
+                                goto load_default;
+			}
+IMO it would be less brittle that way.  And commit message needs
+the explanation of the leak mechanism - a link to reporter is
+nice, but it doesn't explain what's going on.
 
