@@ -1,140 +1,102 @@
-Return-Path: <linux-kernel+bounces-329685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891119794B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:08:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 804DA9794B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E19FAB2239E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:08:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D73F1F220DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6862522334;
-	Sun, 15 Sep 2024 06:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8783E182C3;
+	Sun, 15 Sep 2024 06:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R+xzG2YJ"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="pcJw0O0n"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851C6200DE;
-	Sun, 15 Sep 2024 06:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9823417991
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726380505; cv=none; b=nZjMJZcsOe6QtWyPJgotNO03opgEyRkL4zDYonO74b3wdGCtEQRHMMeQEAOf88B463aA2Zznh0VJMFSDCcwoZ3gBbVfr5ub3AYPGDPMlhBGOnmWH8/BvEUfqIvvecJNmnfrStZSt568Cmn3OIz54HVNDHhRrfsw1FdVasHf75T4=
+	t=1726380496; cv=none; b=YLMRbSpuVpNGPN+J6aa456h7hczkICYqti4d9uXJSVeposEH53QiT/JYAmnkH82zb8aMt/UdyvNGVM7HUHT0SQW6TLfoCJFRf30uSc+XS3zilXR8ZRihq06ijsLtnhLF2mmJ6XyTTcBMXEe8jWBUsyOphzRCOABcxrM1OcHRHTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726380505; c=relaxed/simple;
-	bh=L3eJl6CdvysS8D+2/c8wFT9mytYLO1s6eBj3mjV8OjQ=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K/o2jnc1RQ5XV9ieZlJI8VilIGi0vFtxmEKipZfK84A5qcppK9ajtD3sfke6EDsKS7IDmcfLush7etwwu1duGTsKRl8TCugVZQggsssQr2+ZRIDgx+lrboJmhCv7Ubvt7CCsD/BLh6+momepLd1pp3KMagvo3wGbPf/qljQZ7As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R+xzG2YJ; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48F67bol080272;
-	Sun, 15 Sep 2024 01:07:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726380457;
-	bh=6R4bT4eG+pR13vlD+1lb47ZNgfISERBM6UKaIOkTBQ8=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date;
-	b=R+xzG2YJQndSEIKqNk3CDItHvOpmLqJwxfZPPp9/2IYsRgKG45vAJhe2iI/fY1WzU
-	 ldddRPjr2ogRkRtAjrvsN4+AI/l/7a5dHoEJV55BMDcZipUd7dH93lyIzAgBIMqP8b
-	 Yt2/mSX6+2i8tf7HXiNblUOjJsJIFdklMZmIA9oc=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48F67b6q020473
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 15 Sep 2024 01:07:37 -0500
-Received: from flwvowa01.ent.ti.com (10.64.41.90) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 15
- Sep 2024 01:07:37 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by flwvowa01.ent.ti.com
- (10.64.41.90) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Sun, 15 Sep
- 2024 01:07:37 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 15 Sep 2024 01:07:37 -0500
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48F67a7E048692;
-	Sun, 15 Sep 2024 01:07:36 -0500
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-To: Danny Tsen <dtsen@linux.ibm.com>, <linux-crypto@vger.kernel.org>
-CC: <herbert@gondor.apana.org.au>, <leitao@debian.org>, <nayna@linux.ibm.com>,
-        <appro@cryptogams.org>, <linux-kernel@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <ltcgcw@linux.vnet.ibm.com>,
-        <dtsen@us.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 1/1] crypto: Fix data mismatch over ipsec tunnel
- encrypted/decrypted with ppc64le AES/GCM module.
-In-Reply-To: <83a1ce2f-c633-42cb-92c6-2477cd2e47f2@linux.ibm.com>
-References: <20240912174537.1409567-1-dtsen@linux.ibm.com>
- <87seu4qmv6.fsf@mail.lhotse>
- <875xr0m5ss.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
- <83a1ce2f-c633-42cb-92c6-2477cd2e47f2@linux.ibm.com>
-Date: Sun, 15 Sep 2024 11:37:35 +0530
-Message-ID: <8734m1mouw.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+	s=arc-20240116; t=1726380496; c=relaxed/simple;
+	bh=znVqT6GCzYVJuY7ELeDSV7O5N8U5p0AKotjL0wSNki8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YJXYjuvb/nNs19GoNLynMbhOKJKkDaEJJ9/T110b1ihBJH3pCfszYyC41VY9faq9PsyDBSO+rO1+lIeGCMWNz810Xr90LsowAaQCtrz+ZIrgUnDOthfwHoocIJ4zkz5IagqlAfQbgFG8AqKbshZ8rAg/m4odJ8oR7wdOa5XirkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=pcJw0O0n; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1726380491; bh=znVqT6GCzYVJuY7ELeDSV7O5N8U5p0AKotjL0wSNki8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pcJw0O0noBzSrW3k9hoSSFSb76ZMI+3DG5PRxDQsrxuS7yvAUIQVQ0sloaK+js2PY
+	 LDVwd1SK9lhPyoSFHfyKnsV8Fb8mZCYl+rFKNhRWR62aNrS0aQM2s+7gHbM5QAtO70
+	 us2evpIiRG68V3zF44YXMjHTKgIVUofIuFCYIb64=
+Date: Sun, 15 Sep 2024 08:08:10 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: Wen Yang <wen.yang@linux.dev>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Joel Granados <j.granados@samsung.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] sysctl: encode the min/max values directly in the
+ table entry
+Message-ID: <ec28176d-5ed4-4635-932d-bbc4c1cf6bd7@t-8ch.de>
+References: <cover.1726365007.git.wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1726365007.git.wen.yang@linux.dev>
 
-Danny Tsen <dtsen@linux.ibm.com> writes:
+Hi,
 
-> Yes, checkpath was run.
+On 2024-09-15 10:08:26+0000, Wen Yang wrote:
+> Many modules use these additional static/global variables (such as
+> two_five_five, n_65535, ue_int_max, etc.) in the boundary checking of
+> sysctl, and they are read-only and never changed.
+> 
+> Eric points out: "by turning .extra1 and .extra2 into longs instead of
+> keeping them as pointers and needing constants to be pointed at somewhere
+> .. The only people I can see who find a significant benefit by
+> consolidating all of the constants into one place are people who know how
+> to stomp kernel memory."
+> 
+> This patch series achieves direct encoding values in table entries and still
+> maintains compatibility with existing extra1/extra2 pointers.
+> Afterwards, we can remove these unnecessary static variables progressively and
+> also gradually kill the shared const array.
 
-As you're splitting the patches anyways, this may not be
-needed anymore, but below is guideline for subject line.
+As this is already v3 it would be nice to have a series changelog and
+links to previous revisions.
 
-https://docs.kernel.org/process/submitting-patches.html
-
-"For these reasons, the summary must be no more than 70-75 characters,
-and it must describe both what the patch changes, as well as why the
-patch might be necessary.
-It is challenging to be both succinct and descriptive, but that is what
-a well-written summary should do."
-
-I guess check patch is not checking that.
-
-Also avoid top posting,
-
-Read "Use trimmed interleaved replies in email discussions" from above
-document.
-
-Kamlesh
-
->
-> Not sure what you mean by "some indentation changes.(This can't go with 
-> fixes patch, will just add the noise)"
->
-> Thanks.
->
-...
->>> As this is a bug fix it should have a Fixes: tag, and probably a stable
->>> Cc as well.
->>>
->>> But that diffstat is really large for a bug fix. Is there no way to fix
->>> the issue in a smaller patch? Even if that is just disabling the feature
->>> until it can be fixed in subsequent commits?
->>>
->>> cheers
->> The commit message says "The fix is to register algs as SIMD modules"
->>
->> and
->>
->> "A new module rfc4106(gcm(aes)) is also added."
->>
->> and I also see some indentation changes.(This can't go with fixes patch,
->> will just add the noise)
->>
->> Would suggest to break the patch in three.
->>
->> I see a big subject line, have you ran the checkpatch?
->>
->> Kamlesh
->>
+> 
+> Wen Yang (5):
+>   sysctl: add helper functions to extract table->extra1/extra2
+>   sysctl: support encoding values directly in the table entry
+>   sysctl: add KUnit test code to check for encoding  min/max in table
+>     entries
+>   sysctl: delete mmap_rnd_bits_{min/max} and
+>     mmap_rnd_compat_bits_{min/max} to save 16 bytes
+>   sysctl: delete six_hundred_forty_kb to save 4 bytes
+> 
+>  fs/proc/proc_sysctl.c  |  29 +-
+>  include/linux/mm.h     |   4 -
+>  include/linux/sysctl.h |  95 ++++++-
+>  kernel/sysctl-test.c   | 581 +++++++++++++++++++++++++++++++++++++++++
+>  kernel/sysctl.c        |  45 ++--
+>  mm/mmap.c              |   4 -
+>  6 files changed, 708 insertions(+), 50 deletions(-)
+> 
+> -- 
+> 2.25.1
+> 
 
