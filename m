@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-329829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6F4979678
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:42:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC83597967D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A1BF1C20D9C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:42:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691A81F21FC0
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43A61C579C;
-	Sun, 15 Sep 2024 11:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1926A1C68AB;
+	Sun, 15 Sep 2024 11:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJtX8d58"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMbKPBNX"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9511625570;
-	Sun, 15 Sep 2024 11:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30331C57A0;
+	Sun, 15 Sep 2024 11:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726400566; cv=none; b=pegEnFMW+996AkUXLz6VmPZhXb3I6GGhyOy9QlWABUWw3jeSFztKBgdoWQHY0gnBBIhaJoljHvaedtNCsIIc1iDz8oWfWgFiI4+kv/F6YFZHXKtJE2AQuCtnXmBZiL5HZ3BF+A01Alg7BlK5TYuZ80k07wEXS2cpJ52857rASXM=
+	t=1726400642; cv=none; b=rzdied57a4dT+jHiBrt7EBgSdgqAIA13W2WWSdgmleheXZwvwub+8W7Gru6jAepQscWq/3ALc73pAqE538vplkdHh69OYt7oXpud9ONYzpCQ2kDsUCW2BfDyrfFw8Shz3rUj+j/23H+bYSmNL/I6ukS48vY60+cez9i49vfBbvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726400566; c=relaxed/simple;
-	bh=V7BSTAtZFlkGUrqoLYcf78IeSSWOtXpI74x9W4dHEEM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DQFTBStHxJMrdjIz3jitqd/rsajdC7TilTZslmxNm5CUken8XeV56KHQBzObo0CMa3ebAvO4Dcj+otxfo2+OVZkwvnVoSCTwlzGz/WfkGBc60N1c2kw18S1dkwawpQBPPAnJSdz8jja4WH6DnYFStI+7h62KuzIG9FJjagvwfio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJtX8d58; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1726400642; c=relaxed/simple;
+	bh=H9q9CQoYEll1vyUTQ0sNcL7d6nkLtx+8/uKIZDi4t8k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pa1if6D+KTJ5K3m+BYyZTJHDyJVVQueABQGbUGPcYd2jx88hUQQG+ycFXgSJ02jqiEDe7wt8HQgoroOJbMS6/K5Mj97oMZwf3nFyeQGtBOePUiC9j+qlgRcNpk3Xcbikva0Wh6mVJSC9+mq7DiJBZZmBOn7QBJ/tkGl9u7foJKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lMbKPBNX; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so18960425e9.3;
-        Sun, 15 Sep 2024 04:42:44 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d2daa2262so295248766b.1;
+        Sun, 15 Sep 2024 04:44:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726400563; x=1727005363; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726400639; x=1727005439; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lynL6C4hkouH3XP1yfEpNa/RXQ4liCR3A0iI32ucKD8=;
-        b=AJtX8d58X2P5P9ruP9Tu32dDnAn/MPLbvRAxqhJk2I8USZQhBgkO4TP2SQbhxZG/zW
-         ntWldP2/qV7Bkem2b+WKdQcrCMgsgKzqnIR4t2QRegt2clLIMMeF6f4MzinR5unwwo0D
-         j8xiYnA0ae3+dfvFpDzNw8MFauptmvujI+9KdDjAZyXIlSkrYkmy3xzohErkFmJwJfiN
-         7N9zn14/kU9Tgni4UkWUm1TwOL9NZomNIATCkr7b29rCDGM1FEZ2ygaPL2g3OlwOOKU8
-         8bRogtnOaBUzLf2pp07LwZBzuKoyREvzeyn39ctbq2iqWTKBuRi0AyNFU+9yVjhEBnR/
-         5NGg==
+        bh=4mH+l6efe7nU0WFZ7S2EM77Dno5UaL2UqZkqt5PiIGk=;
+        b=lMbKPBNXpolt8oCve6f8QPRS6dX3Og6covNvzJOniEwg+y8zQSE3MqIbE72TTsXHay
+         gyWaATi56SZu7sk7PaTo5NqJmu/oX2BFTryVVFOHQs3Al0f+IPAuG31QTlXaaAFQnt7L
+         mg8G4mMBmd8YTtU0gthcRQdeXApnUXc0Txc8tHc4ZlVSnbaBBdjIkDMlCM+DIN512gVa
+         A0Uq93GAwOtqNWo8kdzxpaRbluxuEKl5BaYW3HdOtHltsEWo7fx5X6kSv6aZ9UehA3d0
+         3dRN0bu7pnwiaeFz1HhdEKYPE8ZzwK68oKk3fL3dV0pZu7uiZOt+jwHT0TT8WFtotSRb
+         NQpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726400563; x=1727005363;
+        d=1e100.net; s=20230601; t=1726400639; x=1727005439;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lynL6C4hkouH3XP1yfEpNa/RXQ4liCR3A0iI32ucKD8=;
-        b=g+/UFolut7qPg3d7XQNA8g5j8c0EwESoDUndB4VyKAJaHRdw9GSIRyTKNA6QKSNpgm
-         8yH+3IMUciDGV+A6ki4WSwr+aGI8ra/A7F5DOM6bcMzSDAx0XEadGofdgVZ9yz0WIKlD
-         eIlHTIBctNicef5sgpI30OsNxFwpiSOgtrhjslCnON8R2NHlaL8boSe2fcZiBz0fqMBy
-         X5aqf84mcrMcQwgKHy2ahtxwj3WDtHZX9ZNaxXPaRoFcphPGvGBA3aXZY72rXvnQcYON
-         4Q9Rxo87R0lzrPzhaNwAIIXXBKI0qwu+o+UEvAw+ksqDycROcXAL0aypxoW9ofHcj9PQ
-         zWVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEGLkkhKWTzxrpVpVI8U3dTNS+VK4qR1J4mT92YEIe0P/GcoPHZtGX3CUXlPtPXWrhud0ZgVUcuR60hHuL@vger.kernel.org, AJvYcCVy+AVOcIAutI3Rk2sanOvep4Ob6pMEqyamodpwk8jCiLDrSaWM7CT9UQVdoqm647qIEMLw4B/Efb+pxw==@vger.kernel.org, AJvYcCXFxpAHtAP0rOYFPlw1+9gCPdeqexKiMYrXqYWd1HhqgRVq9OgU9x0TxF1Kpfp7I7grNXWtYaH9UOegN95K/2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRCD3vtLi7D70TjSUlmD+UBAsICXcW568EOSS2bckk8JCDWj3g
-	xmJ0QSxT3mNKrMsDtYIvL4PmjubK3WOVFxyiAqM4kfO074GBu71n
-X-Google-Smtp-Source: AGHT+IFc0ijcmTZXOGVPK+Zk6DrSX+Gw9wOVUakAcGKwQpuRuUvsUpbaTUw4X0AcNIyoG255bHioTQ==
-X-Received: by 2002:a05:600c:4447:b0:429:e6bb:a436 with SMTP id 5b1f17b1804b1-42d9081b3d6mr53676555e9.9.1726400561903;
-        Sun, 15 Sep 2024 04:42:41 -0700 (PDT)
-Received: from void.void ([141.226.169.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc137556esm174961325e9.1.2024.09.15.04.42.40
+        bh=4mH+l6efe7nU0WFZ7S2EM77Dno5UaL2UqZkqt5PiIGk=;
+        b=lemi2y7XWqUa0UFpzP9CnAfZ17kE7g2dH8saDiY5B/Rz4S5AkQWpLwR/jcSIJ+3S9N
+         eMxaupQLaZexbjswEMsAho99QV7xyMsX/qwYF51febGXu+yc5IijRQrNdoGvrvYRJ9mP
+         H9JuDUgVosE0dAWBJFfNgGa9m+OWOonDESkLLWBFZZhtqCAKGlBMTVXwWflfpDWGgOBo
+         CqEHV2RB7g7sDH6gYK1SkXaW4q4hvlW0k8ZkoDmkCN/bC0YQhebbVvH5tIgIn/kwuQM9
+         ssQsvR3euGKeSP0FObizyuxzbaAn0EevGZvglFgtnVk7BW6p8Ouhbi7jjRrLp3t4a3Hs
+         vuJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgaElQjOswzQ3dG7TMDuXGjipFeZeir0CCFFMIQaCD8GTWuSSxCdY6JOcmCHUxJ36ygldaMQZ2SS8HKnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9DDchArdvnwiz5AJA0/HOKckDCXAcGz1nZPCcWk0/eEao7xVS
+	aMZtCfD3OysxF0dSGJEvkAAM1xFhsagMfxA1v3TE3PpPGY9L8Fal
+X-Google-Smtp-Source: AGHT+IGpuSYUApsVlxE96RegA0p6FojKMuwIiy0j7XRDE+Uns7f4FOzDKSl5hSO6PEgMpBfIYTWuqA==
+X-Received: by 2002:a17:907:3daa:b0:a86:94e2:2a47 with SMTP id a640c23a62f3a-a9047ca074bmr759433466b.15.1726400638297;
+        Sun, 15 Sep 2024 04:43:58 -0700 (PDT)
+Received: from playground.localdomain ([86.127.146.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a906109676esm188778266b.33.2024.09.15.04.43.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 04:42:41 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] net/mlx5: Fix typos
-Date: Sun, 15 Sep 2024 14:42:25 +0300
-Message-Id: <20240915114225.99680-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Sun, 15 Sep 2024 04:43:57 -0700 (PDT)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+X-Google-Original-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liu Ying <victor.liu@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] Add support for imx8ulp's SIM
+Date: Sun, 15 Sep 2024 07:43:08 -0400
+Message-Id: <20240915114311.75496-1-laurentiu.mihalcea@nxp.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,42 +89,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix typos in comments.
+i.MX8ULP's SIM (System Integration Module) allows
+control and configuration of certain components
+form the domain it's assigned to. Add DT node
+and schema for it. Its child shall also be
+included.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c | 2 +-
- drivers/net/ethernet/mellanox/mlx5/core/main.c         | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Changes in v4:
+- Addressed Rob and Krzysztof's comments
+- Link to v3: https://lore.kernel.org/all/20240715164514.8718-1-laurentiumihalcea111@gmail.com/
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
-index 1477db7f5307..4336ac98d85d 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
-@@ -80,7 +80,7 @@ irq_pool_request_irq(struct mlx5_irq_pool *pool, struct irq_affinity_desc *af_de
-  * isn't subset of req_mask, so we will skip it. irq1_mask is subset of req_mask,
-  * we don't skip it.
-  * If pool is sf_ctrl_pool, then all IRQs have the same mask, so any IRQ will
-- * fit. And since mask is subset of itself, we will pass the first if bellow.
-+ * fit. And since mask is subset of itself, we will pass the first if below.
-  */
- static struct mlx5_irq *
- irq_pool_find_least_loaded(struct mlx5_irq_pool *pool, const struct cpumask *req_mask)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-index c6e951b8ebdb..a6bf3f975d52 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -1647,7 +1647,7 @@ void mlx5_unload_one(struct mlx5_core_dev *dev, bool suspend)
- 	devl_unlock(devlink);
- }
- 
--/* In case of light probe, we don't need a full query of hca_caps, but only the bellow caps.
-+/* In case of light probe, we don't need a full query of hca_caps, but only the below caps.
-  * A full query of hca_caps will be done when the device will reload.
-  */
- static int mlx5_query_hca_caps_light(struct mlx5_core_dev *dev)
+Changes in v3:
+- Addressed Krzysztof's comments
+- The "reset: add driver for imx8ulp SIM reset controller" patch might generate conflict when
+applied to Rob and Shawn Guo's trees (for-next branch). Tested all patches with linux-next,
+next-20240715 tag and no conflicts.
+- Link to v2: https://lore.kernel.org/all/20240609125901.76274-1-laurentiumihalcea111@gmail.com/
+
+Changes in v2:
+- Reset controller is now also a syscon provider.
+- Changed vendor prefix to nxp.
+- Link to v1: https://lore.kernel.org/all/20240516204031.171920-1-laurentiumihalcea111@gmail.com/
+
+---
+Laurentiu Mihalcea (3):
+  dt-bindings: reset: add schema for imx8ulp SIM reset
+  reset: add driver for imx8ulp SIM reset controller
+  arm64: dts: imx8ulp: add AVD-SIM node
+
+ .../reset/nxp,imx8ulp-avd-sim-reset.yaml      |  58 ++++++++++
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  13 +++
+ drivers/reset/Kconfig                         |   7 ++
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-imx8ulp-sim.c             | 106 ++++++++++++++++++
+ 5 files changed, 185 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/nxp,imx8ulp-avd-sim-reset.yaml
+ create mode 100644 drivers/reset/reset-imx8ulp-sim.c
+
 -- 
-2.39.5
+2.34.1
 
 
