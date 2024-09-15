@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-329820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC440979666
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:55:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98481979667
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A33EB22536
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:55:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA8B41C21147
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5391C3F04;
-	Sun, 15 Sep 2024 10:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fuviuyn7"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98EA1C3F08;
+	Sun, 15 Sep 2024 10:56:29 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AB0184E
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 10:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1BD184E
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 10:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726397706; cv=none; b=Vgi1YdCMhP3CwsqkGkyfx0ImZwqwhlsUzdNt1P7bAbCdEN90GqIEfTsTaSSuTGIcaKOAl4oL7JmXEx1/ZLmmYcD515F5YEkvCJBelIjoZA0r2gwdn3p0spodrzl7/b+8Fe/yy43W5L/+1MAXut/dfIqObPRd8cZcOQMEfW0m6sQ=
+	t=1726397789; cv=none; b=mcawFxDF/LU/0zIyAq/EGIyth3qKqXI7oNDjgMcL6dAE9fH31wN2rQ434TDVEEIN3ukBYasq6rNgUIkTiWM27hNPwi62CJuB91yqD0FDZLCAK/UYhVOU2xvhyq4kAZyFLCOVMouHPPVGPjG95jyZKDnhLioBn4Q4q7CdMYUadJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726397706; c=relaxed/simple;
-	bh=WFoiRQi5eiVQqJJgt9Ptci+hSBbY9xGbXGG/H6dFknU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qvrNjfsp/vItdas9F7GLRZjT1aGMD8ah+79XHuuqGS4rqkskx4b3JRy8EHK+rxEbN7Pnvah0glgOMRItrMdHNO7ZlbjMmNPu4hvV+8eHYt7l218wC7/DrSwJp/TBol9dQKmQEsq1o/HgEMiJpjkCIaH1Bpmyf4ETESi2SYDVXg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fuviuyn7; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so30612395e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 03:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726397703; x=1727002503; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KfJHt9roWykgi6iCo8OJXtKub6FZQX7k2pQODR1XVPY=;
-        b=fuviuyn7R6tUGOTSKsxN+jzbpPOrH3zOqkefGzMcEY0zsThrenfPcd0WQlmK9F8Hs/
-         Z9QLouBPQgdGfeqVJmGl0ptgPKVrcuz733JdnS1BCf1/6ilDvGMZxc5zi3CWQYwf424g
-         HFiqGzuUr4/FUAJ3DJTbWPsBC0AOJA74LkhzA6Wm97suCd8rzNgHQwbCs55qeZtcoWJ0
-         q0e0iEaHXFoBqixMI1fuTei4ue09FGWYY1wM5Asa+PdY1Ox+kUdJsfDMawTl/5UDl7Qg
-         iMdAPw637QAXVmme53XumCyShIiucIf/3dmVU0kulFJfpJSln1az2nMz/Sh2Y7VJUV6H
-         Y25g==
+	s=arc-20240116; t=1726397789; c=relaxed/simple;
+	bh=ekkZSLgT8GBlupVzFvKzgHzMo6+PEhQJ4SayxBylpfE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uZOBu2rmV3pws+IasasenlqOQRMs8+LF7TU1esp0hyY1hvT3jye+9b+OFCdwAwzcYr2E8uKb4OLk1Iy0pAHZXuAWP8X7jWzWU/I7J1DPH1DEAMTKjLxkpFI6Ij3Kzz9+JSt5GHEGvsXo+4B5htL6CVtEzaEp3hXSnLq1X3svvI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0980547efso34740465ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 03:56:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726397703; x=1727002503;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1726397787; x=1727002587;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KfJHt9roWykgi6iCo8OJXtKub6FZQX7k2pQODR1XVPY=;
-        b=c+vYA2/uq5cfFzhl152ByqWHPy263/y3XAyW8WaDmQIuD6ZKolcQi+qrxDQP0ijoAI
-         AI9UgVDdVMnFKryHbeNHJON5Iwb7nRD4v0tjPS3Aq4uW7YtPWlzRmdqeHzJ0ChtDc8I4
-         8fmD49lth5p+Z9ZKgll9qZ3lLvNuWWdA4B6Nx963tFk61rWqEe6Uwa3fG2YWsw45klkz
-         LQ4FikzxEul/uGooY62S/zf/m4CqGjlYPJVGOJkdjBj3x4FGi9rf8qzsGNTGp4uuRhQM
-         /3sDKUDCTgAvkpoPtHSdnvVaQ8LpSZ2WjnH3iEynw0/WIhtYOFHVjzcEfRFhXOAhfX4M
-         eCIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFJaYqKZDLgUx3X9FyeNPLBAzvOupehIpU62OyuKFGeu+i9cpSb0PMBQr7uX0Rs2+N4+X9qnfC7vZh++A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLqK5eW3N8MKUswktYReu1lboUgARTN09VKW8wkCG73OcsPyUT
-	D6aq2/CU5X6U+eUI265juNvY/UQNENBKm85Ok/JJL4MDGNdoCLDz
-X-Google-Smtp-Source: AGHT+IE7YoEPsvKgdohHfPyJvwpQ7Im0rUIBUpBdVjvxGocvco6SAce7YBX2SYunJXDZO0VL5oYdrg==
-X-Received: by 2002:a5d:5e12:0:b0:378:c2f3:defd with SMTP id ffacd0b85a97d-378c2f3e021mr6334242f8f.13.1726397702891;
-        Sun, 15 Sep 2024 03:55:02 -0700 (PDT)
-Received: from [192.168.0.10] ([178.233.24.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da22b87a9sm46384925e9.6.2024.09.15.03.55.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Sep 2024 03:55:02 -0700 (PDT)
-Message-ID: <c8f8d556-77bf-4b60-abd9-bfcf7ac40ac5@gmail.com>
-Date: Sun, 15 Sep 2024 13:54:59 +0300
+        bh=FCoDL4bGqu6MNdtjog0pKzofOJnEE3mfH4E8N0Dflak=;
+        b=Y5xfd84amQzsO7NrOy4hIPHho2aBfhO7uPYrg5mjaM6RAZ5O2TNK/ecuseG5sBHy9T
+         jVgBMhQ6A2pcI7k8vC8VKrf17NWq7VRRC3PfdnEE+RJVzhETUShhZNyjs1825GIYoJHs
+         gy1e/W/AoHTMuMxZ8zPu+h5y3JqL37oB4hsY12Z+gc0qf98h74zK78krIQyVJtR1b/kD
+         UJO127aLSd8mQ9/SFnLN9GELlNp3ndOCWJN6Yz1E1Cu6A+daEOJzIjXk5G0H5QWc6quD
+         udlEbOeRnq6G2Zks/ZK+bVwVYPyjShuqVOCAQFiqzQMtzln/NoZbh0xra+YTey/HdwXP
+         6yoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzlWn3tFjmTMda1LdzPxQiZftKr6y5X5qTvvVMLPd3P0oQzPGZ4z0qoZ96/bLrUZ4RDK4bpQrldKTct+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfN2qFHcjSOvLBWI5CX73x+OG3amvn46cCZMwSpKaNeJGMn33p
+	IVxZpuDbYfP+fUtn0K8X2fBLepORKnoFmusv9SVKj+OyG8XmJ1+Wk4zAQeaJ+sv9l4X39YjmfZv
+	uSTz+NOmURGghSiTp9CoXPt5jUtiTKz0YQgjbpMG4IKufGSOc0Zb7fGI=
+X-Google-Smtp-Source: AGHT+IE1Z8eMdn0P6e7EYxc8b2e0sVwR60adnak2pImyXJp+frv0RSaiKt98e8XAy3JOnrORYtdOJ4hECyq+ImicyzJaJgRT3kDR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/mediatek: ovl: Add fmt_support_man for MT8192 and
- MT8195
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Singo Chang
- <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20240914201819.3357-1-jason-jh.lin@mediatek.com>
-From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-Content-Language: en-US, tr, en-GB
-In-Reply-To: <20240914201819.3357-1-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:168e:b0:3a0:4df2:52e2 with SMTP id
+ e9e14a558f8ab-3a0848e8395mr124889465ab.4.1726397787028; Sun, 15 Sep 2024
+ 03:56:27 -0700 (PDT)
+Date: Sun, 15 Sep 2024 03:56:27 -0700
+In-Reply-To: <000000000000ea79f70621404a85@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d64ef20622264e82@google.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in z3fold_page_migrate
+From: syzbot <syzbot+63f9ce7427394b75d9a3@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linmiaohe@huawei.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, vitaly.wool@konsulko.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+syzbot has found a reproducer for the following issue on:
 
-On 2024-09-14 23:18 +03:00, Jason-JH.Lin wrote:
-> OVL_CON_CLRFMT_MAN is an configuration for extending color format
-> settings of DISP_REG_OVL_CON(n).
-> It will change some of the original color format settings.
-> 
-> Take the settings of (3 << 12) for example.
-> - If OVL_CON_CLRFMT_MAN = 0 means OVL_CON_CLRFMT_RGBA8888.
-> - If OVL_CON_CLRFMT_MAN = 1 means OVL_CON_CLRFMT_PARGB8888.
-> 
-> Since OVL_CON_CLRFMT_MAN is not supported on previous SoCs,
-> It breaks the OVL color format setting of MT8173.
-> So add fmt_support_man to the driver data of MT8192 and MT8195
-> to solve the downgrade problem.
-> 
-> Fixes: a3f7f7ef4bfe ("drm/mediatek: Support "Pre-multiplied" blending in OVL")
-> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 28 ++++++++++++++++++-------
->  1 file changed, 20 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> index 89b439dcf3a6..aa575569f996 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> @@ -70,10 +70,18 @@
->  #define OVL_CON_CLRFMT_UYVY	(4 << 12)
->  #define OVL_CON_CLRFMT_YUYV	(5 << 12)
->  #define OVL_CON_MTX_YUV_TO_RGB	(6 << 16)
-> -#define OVL_CON_CLRFMT_PARGB8888 ((3 << 12) | OVL_CON_CLRFMT_MAN)
-> -#define OVL_CON_CLRFMT_PABGR8888 (OVL_CON_CLRFMT_PARGB8888 | OVL_CON_RGB_SWAP)
-> -#define OVL_CON_CLRFMT_PBGRA8888 (OVL_CON_CLRFMT_PARGB8888 | OVL_CON_BYTE_SWAP)
-> -#define OVL_CON_CLRFMT_PRGBA8888 (OVL_CON_CLRFMT_PABGR8888 | OVL_CON_BYTE_SWAP)
-> +#define OVL_CON_CLRFMT_PARGB8888(ovl)	((ovl)->data->fmt_support_man ? \
-> +					((3 << 12) | OVL_CON_CLRFMT_MAN) : \
-> +					OVL_CON_CLRFMT_ABGR8888)
+HEAD commit:    0babf683783d Merge tag 'pinctrl-v6.11-4' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=178ae407980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
+dashboard link: https://syzkaller.appspot.com/bug?extid=63f9ce7427394b75d9a3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163fbc77980000
 
-Should be OVL_CON_CLRFMT_ARGB8888 (*RGB* vs *BGR*)?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-0babf683.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b153c86536a6/vmlinux-0babf683.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ef8726833cde/bzImage-0babf683.xz
 
-Otherwise I still see broken colors, but in blue instead of red.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+63f9ce7427394b75d9a3@syzkaller.appspotmail.com
 
-> +#define OVL_CON_CLRFMT_PABGR8888(ovl)	((ovl)->data->fmt_support_man ? \
-> +					(OVL_CON_CLRFMT_PARGB8888 | OVL_CON_RGB_SWAP) : \
+ try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4755
+ shrink_one+0x3b9/0x850 mm/vmscan.c:4793
+ shrink_many mm/vmscan.c:4856 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4934 [inline]
+ shrink_node+0x3799/0x3de0 mm/vmscan.c:5914
+ kswapd_shrink_node mm/vmscan.c:6742 [inline]
+ balance_pgdat mm/vmscan.c:6934 [inline]
+ kswapd+0x1cbc/0x3720 mm/vmscan.c:7203
+------------[ cut here ]------------
+kernel BUG at mm/z3fold.c:1293!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 29 Comm: kcompactd1 Not tainted 6.11.0-rc7-syzkaller-00149-g0babf683783d #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:z3fold_page_migrate+0xafd/0xf50 mm/z3fold.c:1293
+Code: ff 4c 89 f7 48 c7 c6 40 36 18 8c e8 9d 17 d7 ff 90 0f 0b e8 25 ba 8c ff 48 8b 7c 24 08 48 c7 c6 a0 36 18 8c e8 84 17 d7 ff 90 <0f> 0b f3 0f 1e fa 48 89 ee 48 81 e6 ff 0f 00 00 31 ff e8 dc be 8c
+RSP: 0018:ffffc900004fed98 EFLAGS: 00010246
+RAX: 2ac19587b3dc5700 RBX: 0000000000000000 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: ffffffff8c0ad560 RDI: 0000000000000001
+RBP: ffffea00012a6f80 R08: ffffffff9018766f R09: 1ffffffff2030ecd
+R10: dffffc0000000000 R11: fffffbfff2030ece R12: dffffc0000000000
+R13: ffffffff8c1834a8 R14: ffffea0001157580 R15: 1ffffd400022aeb0
+FS:  0000000000000000(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000003793000 CR3: 0000000011e16000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ move_to_new_folio+0x99e/0x12e0 mm/migrate.c:999
+ migrate_folio_move mm/migrate.c:1288 [inline]
+ migrate_pages_batch+0x2527/0x3560 mm/migrate.c:1818
+ migrate_pages_sync mm/migrate.c:1911 [inline]
+ migrate_pages+0x262b/0x3460 mm/migrate.c:1993
+ compact_zone+0x3404/0x4af0 mm/compaction.c:2671
+ compact_node+0x2de/0x460 mm/compaction.c:2935
+ kcompactd+0x788/0x1530 mm/compaction.c:3233
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:z3fold_page_migrate+0xafd/0xf50 mm/z3fold.c:1293
+Code: ff 4c 89 f7 48 c7 c6 40 36 18 8c e8 9d 17 d7 ff 90 0f 0b e8 25 ba 8c ff 48 8b 7c 24 08 48 c7 c6 a0 36 18 8c e8 84 17 d7 ff 90 <0f> 0b f3 0f 1e fa 48 89 ee 48 81 e6 ff 0f 00 00 31 ff e8 dc be 8c
+RSP: 0018:ffffc900004fed98 EFLAGS: 00010246
+RAX: 2ac19587b3dc5700 RBX: 0000000000000000 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: ffffffff8c0ad560 RDI: 0000000000000001
+RBP: ffffea00012a6f80 R08: ffffffff9018766f R09: 1ffffffff2030ecd
+R10: dffffc0000000000 R11: fffffbfff2030ece R12: dffffc0000000000
+R13: ffffffff8c1834a8 R14: ffffea0001157580 R15: 1ffffd400022aeb0
+FS:  0000000000000000(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000003cf5010 CR3: 000000001f032000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Compile error, likely (OVL_CON_CLRFMT_PARGB8888(ovl) | ...)?
 
-> +					OVL_CON_CLRFMT_ABGR8888)
-> +#define OVL_CON_CLRFMT_PBGRA8888(ovl)	((ovl)->data->fmt_support_man ? \
-> +					(OVL_CON_CLRFMT_PARGB8888 | OVL_CON_BYTE_SWAP) : \
-
-Same as above, OVL_CON_CLRFMT_PARGB8888(ovl)
-
-> +					OVL_CON_CLRFMT_BGRA8888)
-> +#define OVL_CON_CLRFMT_PRGBA8888(ovl)	((ovl)->data->fmt_support_man ? \
-> +					(OVL_CON_CLRFMT_PABGR8888 | OVL_CON_BYTE_SWAP) : \
-
-Same as above, OVL_CON_CLRFMT_PABGR8888(ovl)
-
-> +					OVL_CON_CLRFMT_RGBA8888)
->  #define OVL_CON_CLRFMT_RGB565(ovl)	((ovl)->data->fmt_rgb565_is_0 ? \
->  					0 : OVL_CON_CLRFMT_RGB)
->  #define OVL_CON_CLRFMT_RGB888(ovl)	((ovl)->data->fmt_rgb565_is_0 ? \
-
-With those changes, colors are fine on my MT8173, MT8183, MT8186 
-Chromebooks.
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
