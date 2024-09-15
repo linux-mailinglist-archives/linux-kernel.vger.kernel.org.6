@@ -1,188 +1,128 @@
-Return-Path: <linux-kernel+bounces-329690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9529794C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:37:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E409794C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28FE41F2212E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:37:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 437021F220DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4FD182C3;
-	Sun, 15 Sep 2024 06:37:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71CD18E0E;
+	Sun, 15 Sep 2024 06:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGTnQOrK"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFAB1B85EC
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15A117BCE
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726382226; cv=none; b=Cw3liwDqH6TDXA2FMpIxH7RjrpS1OCMbVhEkF4lrxb2xHMDjk4eI3yR1B7/HcrK6lnku0druatNY/cL4o9wcobcRp1WP60eVsCoO4PBJSbZG541hWER5xN+m0LQQCQbF5aEo3u2bQQld1hn0OQ+wsX/zmAe1zCIPJ1L9LT3yL+4=
+	t=1726382452; cv=none; b=fLAu5I42xTEK64lziI3n09G8VRjjGJIU23dAxM3F1aAb2hDutg5BoftXuWYbb36QBei2MkPEf66S1GN1yiAvQlzC7+BXhaVQ9kIOHmi3l+pGDwqm2+drHuCFaUpoOD/+kVSUgvoCoEV5EFzblzLzGvKM/szu5t4Yy93oF4Vql0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726382226; c=relaxed/simple;
-	bh=Jeq9g1EVn0e1rImbpD4xE1bDgDzTm7r1xLB5EfOdgRw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=E20wfkYxrZe9H7RkSfbLX3af1bzlrFmCnxHU9kh1gPTMyjLeu0rFslQYlyNWOEKjqnLHumh2cD75njKvWAWNHKMFuTIpE/CHfzLnn4xetN5hj7MH81qgN45ft3yHDb5rCAOZPjLq0sL3TBHc8yterfwh7s1isWkQMp/+Ulnb6pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a08c7d4273so77861255ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:37:04 -0700 (PDT)
+	s=arc-20240116; t=1726382452; c=relaxed/simple;
+	bh=map9OqAqlhHdp3AyeG30zmc8rrWcD32kRYETJOholq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kAjdqjbf/4kJrIqWohVNfJq4HM3oh1xblFVRZpJ070p3ux+PWsaEDPsSnS84tqbRqRamkGTHAlds7/fiFJ2DR8R29vwMoTzcx/1daGkXC8o6sVA3VUvvCe9/GejAja0PB0Wbbmzf5UFQL0wLufQ1xB88tLolBPbArzq1WGADE+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZGTnQOrK; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8b155b5e9eso464888966b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:40:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726382449; x=1726987249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lJWrJsnaH56i3Ai65QAPyR9wjb9ssl4jYtrKSQ32fSk=;
+        b=ZGTnQOrKqYKCle06OO2kaqWfhd0yJl7xBTCcx4WaZoAcrLTkALEDYCyNCQ+GT+srbj
+         rvdcg6bo1rslWx8DlQUkb58cw67K8MXxa+xVBnZLeNWMvsjsGtoRWa/gbkkKiA1fLqpR
+         txf9/A/GVzDKtWF8Yp6t8yHVuDxLhNON8as5sBG7CZyzUYFic88PAufHAUTIi4DF7i9m
+         55sWqhjRL8UKo/58LIppQeCUysqJGRKgLvyU7csDhyZFKUwULzOxxz5gVTQYQ1Vv4i00
+         Z+yh5bUrPscncplN+Z98W57tXMwhAUiwzKcz7WSA5oik2WXl5rfdhIItpTuPvpvXNjhT
+         q9LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726382224; x=1726987024;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ypphWypHoF0L+XSfbD47L87RzngigBSDDcHldv2D2mc=;
-        b=QVxMNl2Oxf/c/D0wleMRL3v4el005SdmnzMPvtpgokZy0tCAljRkl62g68MRPQ14fy
-         CvcMsIMrLeNW7UXx1stdHtlAXijrd7NVeTN+elkGSn3deCaAJKH0gziVxH5crh0k9m2H
-         1+dEZLuO353vvDVwBMWIL18rOGCwc8i/VP5+EifV2oPTMsnDCnB2EEukWtSnvB7RTbDt
-         9bXBNyo0Tbr9qjrWTAMuP+BAd3ElfViLt/D27eAOwPRs4+XHEHqkjasiZN8+9IqmMkR/
-         R33G9U0fsJvM2LSMRVour3Bi8EuJTtvMcKngWY9qP81s/L+6T4Y2dP8kZdJzqqU1S6pZ
-         d3ug==
-X-Forwarded-Encrypted: i=1; AJvYcCX0HZmhQWL4OQSbtbHZW6JsQpP2A5El/yrplL2Bpj13IsTbq3djOsfrRmK47GaSfcax85tcV741VgbyMos=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwt1dqyqVJjuzDymoczRSTSPeOManPEkdPBrJc6SDl2ojkajpg
-	B6oRziG11hmJVuCccCFl8mHrbmVfHIIVD0Ts7tJp9KbgIWW4vSdKJL8JS9RFkmss8YT27yvQ+OO
-	bm2AxSsCIn3T5ffACzqSps13GuhuWFhZFbeI8loiVPPX/jjD2zDLxv+8=
-X-Google-Smtp-Source: AGHT+IH/Nopdxom+QwoYSkYEbwMDc4ITO4dz64DvobjgergWm1KT8QzyXt2GUrE44fwZ4ZLqbfFcvhi8VoBnu+mYm2+mgZgYgaLa
+        d=1e100.net; s=20230601; t=1726382449; x=1726987249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lJWrJsnaH56i3Ai65QAPyR9wjb9ssl4jYtrKSQ32fSk=;
+        b=mgKuqMSUYeT+kYtU4n3lvqFN/UkamI2GvQhVQFy3KxBe/4OUK/yEmOvnaHYurskxTV
+         7fZ3ICrK7l8GSZqzLqKztYBPreim3jfsLS+0j1xn+6pYOmHSwK5kXvnDs9y6H6ZTOOe0
+         yCtzcU24s2hM9Bv/TGh+f+j/M29WHk5hHVnudEtB1svVsfIzecadCLcDtIVyte2WXrAg
+         z6/RxSiHs2r66pPV2AmMhksujhI3RmLNGttfvrduGOSkn7cycPPjQAnv+a6yQ0OgYYIe
+         c32v2qljG+nQBOqslZUeSUmoe7EfrDwaM1qoGu8uoc+r5TUmryceiMoe0hhEUHtgo/YJ
+         lBYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQdwdmWsrk9eC1OFRWt+ST1LqUTHWs8Q6J4GBVunN4UsM808hFYhzWHnt8lVwYr2sxyuXpeqfmZrLiIsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2XzbGtR0iluRTW3df/Uzn8FDyukiWoJqdbIwMXO4lPKEP/z6C
+	CIADsP6ov/NdlxMPutRXuznkuaaUvDNzAEgEUIcImASP2zGkXUIWl+Yvqg==
+X-Google-Smtp-Source: AGHT+IHkiIYQJMF61aW8pW6xiR50hEB5C33k3GbqB75AhLB2g8jrrvySSA5ogj8eQgPtcxjEyQSlNA==
+X-Received: by 2002:a17:907:6d26:b0:a7a:9fe9:99e7 with SMTP id a640c23a62f3a-a90296174a7mr1163444066b.41.1726382448911;
+        Sat, 14 Sep 2024 23:40:48 -0700 (PDT)
+Received: from kernel-710.speedport.ip (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610967bbsm160201066b.8.2024.09.14.23.40.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Sep 2024 23:40:48 -0700 (PDT)
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Subject: [PATCH 00/17] staging: rtl8723bs: Remove unused functions including read_cam
+Date: Sun, 15 Sep 2024 08:38:14 +0200
+Message-ID: <cover.1726339782.git.philipp.g.hortmann@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1849:b0:3a0:98b2:8f3b with SMTP id
- e9e14a558f8ab-3a098b2908fmr40529385ab.7.1726382223929; Sat, 14 Sep 2024
- 23:37:03 -0700 (PDT)
-Date: Sat, 14 Sep 2024 23:37:03 -0700
-In-Reply-To: <CAGiJo8QvTyC9NpS5XMy8CzSYv1suZarwWnGdYmXAXhR+NuAhgg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000034483d062222af77@google.com>
-Subject: Re: [syzbot] [mm?] [exfat?] memory leak in corrupted (2)
-From: syzbot <syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com>
-To: danielyangkang@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Remove unused functions, macros and one enum.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-memory leak in corrupted
+Tested with rtl8723bs in ODYS Trendbook Next 14
 
-2024/09/15 06:35:20 executed programs: 1
-2024/09/15 06:35:26 executed programs: 3
-BUG: memory leak
-unreferenced object 0xffff88811efdfc00 (size 96):
-  comm "syz-executor", pid 6043, jiffies 4294946716
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    bb bb bb bb bb 00 00 73 79 7a 30 00 00 00 00 00  .......syz0.....
-  backtrace (crc 3da58c63):
-    [<ffffffff8163e352>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-    [<ffffffff8163e352>] slab_post_alloc_hook mm/slub.c:3996 [inline]
-    [<ffffffff8163e352>] slab_alloc_node mm/slub.c:4041 [inline]
-    [<ffffffff8163e352>] __kmalloc_cache_noprof+0x282/0x320 mm/slub.c:4188
-    [<ffffffff84a65f10>] kmalloc_noprof include/linux/slab.h:681 [inline]
-    [<ffffffff84a65f10>] nr_add_node+0xd0/0x1440 net/netrom/nr_route.c:185
-    [<ffffffff84a67ed9>] nr_rt_ioctl+0xc49/0x1710 net/netrom/nr_route.c:651
-    [<ffffffff84a6025f>] nr_ioctl+0x11f/0x1a0 net/netrom/af_netrom.c:1254
-    [<ffffffff843b1052>] sock_do_ioctl+0x82/0x1a0 net/socket.c:1222
-    [<ffffffff843b327e>] sock_ioctl+0x14e/0x480 net/socket.c:1341
-    [<ffffffff81717166>] vfs_ioctl fs/ioctl.c:51 [inline]
-    [<ffffffff81717166>] __do_sys_ioctl fs/ioctl.c:907 [inline]
-    [<ffffffff81717166>] __se_sys_ioctl fs/ioctl.c:893 [inline]
-    [<ffffffff81717166>] __x64_sys_ioctl+0xf6/0x150 fs/ioctl.c:893
-    [<ffffffff8512561e>] do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-    [<ffffffff8512561e>] do_syscall_64+0x9e/0x1d0 arch/x86/entry/common.c:83
-    [<ffffffff85200130>] entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Philipp Hortmann (17):
+  staging: rtl8723bs: Remove unused function dvobj_get_port0_adapter
+  staging: rtl8723bs: Remove unused function rtw_search_max_mac_id
+  staging: rtl8723bs: Remove unused function read_cam
+  staging: rtl8723bs: Remove unused function rtw_get_oper_choffset
+  staging: rtl8723bs: Remove unused function rtw_get_oper_bw
+  staging: rtl8723bs: Remove unused function _ReadCAM
+  staging: rtl8723bs: Remove unused entries from struct hal_ops
+  staging: rtl8723bs: Remove unused function PHY_SetBWMode8723B
+  staging: rtl8723bs: Remove unused function PHY_GetTxPowerLevel8723B
+  staging: rtl8723bs: Remove unused function Hal_BT_EfusePowerSwitch
+  staging: rtl8723bs: Remove unused function rtl8723b_GetHalODMVar
+  staging: rtl8723bs: Remove unused function GetHalODMVar
+  staging: rtl8723bs: Remove unused function rtl8723bs_inirp_init
+  staging: rtl8723bs: Remove unused function rtl8723bs_inirp_deinit
+  staging: rtl8723bs: Remove constant result macro is_primary_adapter
+  staging: rtl8723bs: Remove constant result macro get_iface_type
+  staging: rtl8723bs: Remove unused enum with first entry IFACE_PORT0
 
-BUG: memory leak
-unreferenced object 0xffff88811dc39ae0 (size 96):
-  comm "syz-executor", pid 6045, jiffies 4294946717
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    bb bb bb bb bb 00 00 73 79 7a 30 00 00 00 00 00  .......syz0.....
-  backtrace (crc 2e887761):
-    [<ffffffff8163e352>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-    [<ffffffff8163e352>] slab_post_alloc_hook mm/slub.c:3996 [inline]
-    [<ffffffff8163e352>] slab_alloc_node mm/slub.c:4041 [inline]
-    [<ffffffff8163e352>] __kmalloc_cache_noprof+0x282/0x320 mm/slub.c:4188
-    [<ffffffff84a65f10>] kmalloc_noprof include/linux/slab.h:681 [inline]
-    [<ffffffff84a65f10>] nr_add_node+0xd0/0x1440 net/netrom/nr_route.c:185
-    [<ffffffff84a67ed9>] nr_rt_ioctl+0xc49/0x1710 net/netrom/nr_route.c:651
-    [<ffffffff84a6025f>] nr_ioctl+0x11f/0x1a0 net/netrom/af_netrom.c:1254
-    [<ffffffff843b1052>] sock_do_ioctl+0x82/0x1a0 net/socket.c:1222
-    [<ffffffff843b327e>] sock_ioctl+0x14e/0x480 net/socket.c:1341
-    [<ffffffff81717166>] vfs_ioctl fs/ioctl.c:51 [inline]
-    [<ffffffff81717166>] __do_sys_ioctl fs/ioctl.c:907 [inline]
-    [<ffffffff81717166>] __se_sys_ioctl fs/ioctl.c:893 [inline]
-    [<ffffffff81717166>] __x64_sys_ioctl+0xf6/0x150 fs/ioctl.c:893
-    [<ffffffff8512561e>] do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-    [<ffffffff8512561e>] do_syscall_64+0x9e/0x1d0 arch/x86/entry/common.c:83
-    [<ffffffff85200130>] entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ drivers/staging/rtl8723bs/core/rtw_cmd.c      |  3 +-
+ drivers/staging/rtl8723bs/core/rtw_mlme.c     |  6 +-
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  3 +-
+ drivers/staging/rtl8723bs/core/rtw_pwrctrl.c  |  7 --
+ .../staging/rtl8723bs/core/rtw_wlan_util.c    | 64 -------------------
+ drivers/staging/rtl8723bs/hal/hal_com.c       | 34 +++-------
+ drivers/staging/rtl8723bs/hal/hal_intf.c      | 20 +++---
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 53 ---------------
+ .../staging/rtl8723bs/hal/rtl8723b_phycfg.c   | 15 -----
+ drivers/staging/rtl8723bs/hal/sdio_halinit.c  | 13 ----
+ drivers/staging/rtl8723bs/include/drv_types.h | 10 ---
+ drivers/staging/rtl8723bs/include/hal_com.h   |  4 --
+ drivers/staging/rtl8723bs/include/hal_intf.h  | 14 ----
+ .../staging/rtl8723bs/include/hal_phy_cfg.h   |  5 --
+ .../staging/rtl8723bs/include/rtw_mlme_ext.h  |  5 --
+ drivers/staging/rtl8723bs/os_dep/os_intfs.c   |  3 +-
+ 16 files changed, 22 insertions(+), 237 deletions(-)
 
-BUG: memory leak
-unreferenced object 0xffff88810c3ea180 (size 96):
-  comm "syz-executor", pid 6049, jiffies 4294947314
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    bb bb bb bb bb 00 00 73 79 7a 30 00 00 00 00 00  .......syz0.....
-  backtrace (crc 7ec7dee2):
-    [<ffffffff8163e352>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-    [<ffffffff8163e352>] slab_post_alloc_hook mm/slub.c:3996 [inline]
-    [<ffffffff8163e352>] slab_alloc_node mm/slub.c:4041 [inline]
-    [<ffffffff8163e352>] __kmalloc_cache_noprof+0x282/0x320 mm/slub.c:4188
-    [<ffffffff84a65f10>] kmalloc_noprof include/linux/slab.h:681 [inline]
-    [<ffffffff84a65f10>] nr_add_node+0xd0/0x1440 net/netrom/nr_route.c:185
-    [<ffffffff84a67ed9>] nr_rt_ioctl+0xc49/0x1710 net/netrom/nr_route.c:651
-    [<ffffffff84a6025f>] nr_ioctl+0x11f/0x1a0 net/netrom/af_netrom.c:1254
-    [<ffffffff843b1052>] sock_do_ioctl+0x82/0x1a0 net/socket.c:1222
-    [<ffffffff843b327e>] sock_ioctl+0x14e/0x480 net/socket.c:1341
-    [<ffffffff81717166>] vfs_ioctl fs/ioctl.c:51 [inline]
-    [<ffffffff81717166>] __do_sys_ioctl fs/ioctl.c:907 [inline]
-    [<ffffffff81717166>] __se_sys_ioctl fs/ioctl.c:893 [inline]
-    [<ffffffff81717166>] __x64_sys_ioctl+0xf6/0x150 fs/ioctl.c:893
-    [<ffffffff8512561e>] do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-    [<ffffffff8512561e>] do_syscall_64+0x9e/0x1d0 arch/x86/entry/common.c:83
-    [<ffffffff85200130>] entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff88810c32eea0 (size 96):
-  comm "syz-executor", pid 6051, jiffies 4294947315
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    bb bb bb bb bb 00 00 73 79 7a 30 00 00 00 00 00  .......syz0.....
-  backtrace (crc f02899b5):
-    [<ffffffff8163e352>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-    [<ffffffff8163e352>] slab_post_alloc_hook mm/slub.c:3996 [inline]
-    [<ffffffff8163e352>] slab_alloc_node mm/slub.c:4041 [inline]
-    [<ffffffff8163e352>] __kmalloc_cache_noprof+0x282/0x320 mm/slub.c:4188
-    [<ffffffff84a65f10>] kmalloc_noprof include/linux/slab.h:681 [inline]
-    [<ffffffff84a65f10>] nr_add_node+0xd0/0x1440 net/netrom/nr_route.c:185
-    [<ffffffff84a67ed9>] nr_rt_ioctl+0xc49/0x1710 net/netrom/nr_route.c:651
-    [<ffffffff84a6025f>] nr_ioctl+0x11f/0x1a0 net/netrom/af_netrom.c:1254
-    [<ffffffff843b1052>] sock_do_ioctl+0x82/0x1a0 net/socket.c:1222
-    [<ffffffff843b327e>] sock_ioctl+0x14e/0x480 net/socket.c:1341
-    [<ffffffff81717166>] vfs_ioctl fs/ioctl.c:51 [inline]
-    [<ffffffff81717166>] __do_sys_ioctl fs/ioctl.c:907 [inline]
-    [<ffffffff81717166>] __se_sys_ioctl fs/ioctl.c:893 [inline]
-    [<ffffffff81717166>] __x64_sys_ioctl+0xf6/0x150 fs/ioctl.c:893
-    [<ffffffff8512561e>] do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-    [<ffffffff8512561e>] do_syscall_64+0x9e/0x1d0 arch/x86/entry/common.c:83
-    [<ffffffff85200130>] entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-
-
-Tested on:
-
-commit:         0babf683 Merge tag 'pinctrl-v6.11-4' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1772f49f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=aff2ee6dd356627d
-dashboard link: https://syzkaller.appspot.com/bug?extid=e1c69cadec0f1a078e3d
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1682f49f980000
+-- 
+2.43.0
 
 
