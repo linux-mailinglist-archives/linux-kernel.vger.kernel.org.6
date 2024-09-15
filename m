@@ -1,135 +1,102 @@
-Return-Path: <linux-kernel+bounces-329755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FC29795B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:14:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A0E979557
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 417261F22557
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:14:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5FB2837D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4233E155393;
-	Sun, 15 Sep 2024 08:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB137D405;
+	Sun, 15 Sep 2024 08:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nEW1Lvat"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Q56alLRj"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340B11509A5;
-	Sun, 15 Sep 2024 08:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A443EA83;
+	Sun, 15 Sep 2024 08:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726387787; cv=none; b=B85Cwc1BiRyY+ql9WEE3NLkmB4dHIZpGvlIwmygvWpI0aipFy4/ltrscfTAztGfoBMH6Axait/Ku7jK5r23mB5/ihfQLXXDrMrT2PBjGA5hQs6INiDBnYGHK2K1+bjiX8AfZ0CvEg5O+7Je2Rkpeq21ppP73qxjSG02IqgTEmYw=
+	t=1726387703; cv=none; b=tMrWIeIA+t2byC1Zz6i0M9Q6laWV4tOAjYa7pyzT9cXAkW082du56YOqFTQbB8XCvhYC6lxa8ZdrsQVhshMIkL5YWrNluRMRE7wYjtdmGkbWy9hSLcEbbq6aK5fslJXJG9kXck5aYcQrRpdR1vxrPmDnm0hmk70Wub7F2nitN9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726387787; c=relaxed/simple;
-	bh=IlwfpKeYG1A6lmRpl2J8Js+0dUrkM33rNMIVVPeLcso=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QcbpANDJoIV9IK1Yeqd00X8U9AJZ3odsDQMPtK6XOaDV0Nm4VaXC0sm0dvmzyKnVv46BhE4fZaHBacXGE11PADZka3zYuQC9uKKWSWn199PdVeGVqnLmXdauSH1zQbj2IcPGGiyQavdEaQ+S0t3gkLfTA0GY33pY+TVE9dUgiNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nEW1Lvat; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20551eeba95so19922325ad.2;
-        Sun, 15 Sep 2024 01:09:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726387785; x=1726992585; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zy0C2tn+S+ad9UGMaUozuLH5nIPIOY9VH2lYfYG3DPM=;
-        b=nEW1Lvat+KJEFwfdf3+/asoKqIBIPXFUiP3YQjoQDFMRgPVxTrNGI/h3RM8md/wnEh
-         A5KbI4bTpeqM8e5OFTd0pLsR7k02SxX6cYWrLYyU+SJxmAvdIBneM48ykMPs0SVgpeRY
-         xTU83ZF73PhuJ8f4/PHvCpMjv+4RfjwOJS5xbQWhqh1jyf4VS3VJDDqrNKSWUTB4vltk
-         LrXv8KEwdNmEArBI30x/zqgV8a8sdt1QwhlXMocgJOGFb6ID7u9kcyIvWKG4YLcxixi5
-         aiuzJeAtpfSDEGrOT3OkrmfOdxnufk0t9LraIgQ9onwN/PaNraG6yDtIfupHUp5UUtV6
-         lH3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726387785; x=1726992585;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zy0C2tn+S+ad9UGMaUozuLH5nIPIOY9VH2lYfYG3DPM=;
-        b=dG8XohxPlvavMDzZ4mwMat0K1/mkUJdu9UTtzTVSYfX/8H2lMuMrCVKrRmepZBCOa1
-         vOvKU14qsU1doKkHspD1Y4Nn4y8Dsj8s3yarpG/XIHN5fqGdKS3ua74rLu3P0gBxgLn8
-         ycfzPpQBShxD6+NjSxKffjbrQun0+lBW+vlS6JRO2NwIGQfyoqMdSvHOGEMH60vXaMyT
-         /9T1cgvU9OqTLjExHHH06qr1ui3WJaLsXv0K6GnxQP2NKdW9sTzDWWZ4sr8PULjyx28I
-         jdADn+VjKt7m1wea/7h2h/rRc6Pt4B80cUuS8sQe8Lvda0M4b70aLIn9qZuBc+BZ4bIM
-         tVug==
-X-Forwarded-Encrypted: i=1; AJvYcCUprWa1Jm4uLXBhXpuUOUbeBhCNdhtTaXWmatOuH5jzoc2WoGVfmuXzli5bHD8ibsDBRIHINaEd+jXdSg==@vger.kernel.org, AJvYcCVfKS8gfk8IDIvBqkCC9Bm4eLer48f4dSCOFGTn6v3vNm/w1BPM8u18YfZo7/33WJrpu29atieEl2Q=@vger.kernel.org, AJvYcCVksF2l6dNf9YpCWljcrEaU28rliISAL3s9XLWCN27R8UTSpCXgQCZyhXWeW1jM5zV7R9tZh4cRZ5bP8zG8fJ4=@vger.kernel.org, AJvYcCVq94PcLdNxBXNcxs/aQIN+FHlEHzhWdUvD8lQ1TkpsRqlI59iCuvmACz69ra8u0jv1r5hVNVCqVLaaCoPM@vger.kernel.org, AJvYcCW/HXOLs0YU0kRcvYdJ+GT4FcoNugvt2lChIu1aQFaLi8F8P6LnnVzgea+FrfsnpUIsPL5u3CZwF/8D@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo9iKfh1ffoo+3TatUbD7sbgjEant2oXaxW79ct290zPwLMJqp
-	94ax1ttwfjCb+a28uUTBrwZESEZF29gGmGr/TgFhLC6o+vAAn8Rh
-X-Google-Smtp-Source: AGHT+IEhRWXW9tetbRUykWlZtl50TVcdbuFF9ykKbMI555PV2RLTxvSDad+vXmu1916oXJ3kbB/w4A==
-X-Received: by 2002:a17:902:e88a:b0:206:ba7c:9f2e with SMTP id d9443c01a7336-207822414b5mr118708455ad.25.1726387785317;
-        Sun, 15 Sep 2024 01:09:45 -0700 (PDT)
-Received: from localhost.localdomain ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-207945db012sm18248865ad.19.2024.09.15.01.09.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 01:09:44 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-To: Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Kettenis <kettenis@openbsd.org>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-watchdog@vger.kernel.org
-Cc: Nick Chan <towinchenmi@gmail.com>,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: [PATCH v3 20/20] arm64: Kconfig: Update help text for CONFIG_ARCH_APPLE
-Date: Sun, 15 Sep 2024 15:59:05 +0800
-Message-ID: <20240915080733.3565-21-towinchenmi@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240915080733.3565-1-towinchenmi@gmail.com>
-References: <20240915080733.3565-1-towinchenmi@gmail.com>
+	s=arc-20240116; t=1726387703; c=relaxed/simple;
+	bh=r92Bf7xVtngzQHui2J95febW1US8tRSTwQNcYBrkL8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dFLp3pQ/4jwjBGRMsLeAa3fpiqFTpfcQiT+t5w0JIb/5qmhXoJQtngl5mjfcPZHhTSVFeQsvcaFo9IPAOsHux6hyIyRzawkIONSFFOtuPir4eQF1tHc91PcVOoRFx8Hd7CxvI3p+I0yQrvHRmqBXUGONq+YDxbNWNxsBYTKWk2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Q56alLRj; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=tmmYr7AUv+WyGTIFQO0zZ+SlHsGUZCWusRU4ymvvKec=; b=Q56alLRjfdJQXvhTz2ZuTxLFO8
+	We8liIyQouHmCyvHCuGoRb7A05ROGYXAryVOwBFAxpNQ0iQGkpG/wwko8gELPjeHr7z6zg20yv1AX
+	vKDiUIMRpTfgJ8uuzzmcH4NnS8/cWz7PAVGgaLru/HJQd9x/Hl9aZHBW7PFymF/nuPdMU1BElNw6y
+	4+HqKlMNnKu8HAZhTti4biUrKiMo7ESvnyNsg08kIIVGtzmHsh03+j4MrDui2fv/KjX3O2BhkBEfd
+	IzYeGm48EnzjqhyAfdlGETMnymHBCkpinpIHiTegHRrbE1V8hSIqb6OhqQed6OyOAgxd7+DB5Yx6I
+	N6dkNamA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1spk8N-002b6A-1N;
+	Sun, 15 Sep 2024 16:07:42 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 15 Sep 2024 16:07:41 +0800
+Date: Sun, 15 Sep 2024 16:07:41 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com,
+	dwmw2@infradead.org, davem@davemloft.net,
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org, zohar@linux.ibm.com,
+	linux-integrity@vger.kernel.org, roberto.sassu@huawei.com,
+	linux-security-module@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+Message-ID: <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
+ <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+ <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
 
-Apple's A7-A11 SoC is now supported, so the original help text is no longer
-accurate.
+On Sun, Sep 15, 2024 at 09:11:04AM +0200, Linus Torvalds wrote:
+>
+> So honestly, just the series adding pgp key verification I have no
+> objection to. The use case where some firmware uses pgp to validate
+> allowed keys in EFI variables etc sounds like a "ok, then we need to
+> parse them".
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
- arch/arm64/Kconfig.platforms | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The use-case for EFI variables appears to be invalid:
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 6c6d11536b42..370a9d2b6919 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -37,8 +37,8 @@ config ARCH_APPLE
- 	bool "Apple Silicon SoC family"
- 	select APPLE_AIC
- 	help
--	  This enables support for Apple's in-house ARM SoC family, starting
--	  with the Apple M1.
-+	  This enables support for Apple's in-house ARM SoC family, such
-+	  as the Apple M1.
- 
- menuconfig ARCH_BCM
- 	bool "Broadcom SoC Support"
+https://lore.kernel.org/all/CAMj1kXH8nWtAzX+9xc2tLyy5d0w==JNQCMJBAbL=LdcF+XrYkw@mail.gmail.com/
+
+> The objections I had were against the whole "start doing policy in
+> kernel", with what sounded like actually parsing and unpacking rpm
+> contents and verifying them with a pgp key. *That* still sounds like a
+> disaster to me, and is the part that made me go "why isn't that done
+> in user space together with then generating the fsverifty
+> information"?
+
+If the aformentioned EFI use-case is bogus, then distro package
+verification is going to be the only application for PGP keys in
+the kernel.  
+
+Cheers,
 -- 
-2.46.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
