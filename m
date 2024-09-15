@@ -1,131 +1,162 @@
-Return-Path: <linux-kernel+bounces-330059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6543979919
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0915897991B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8309F282C44
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E24E1C209FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BBA47F5F;
-	Sun, 15 Sep 2024 21:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E0A4965B;
+	Sun, 15 Sep 2024 21:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BrJzMwqT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MHY4Pwzq"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6583517C69
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 21:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C8B31A60
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 21:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726434383; cv=none; b=EAmd13ia/FQxyZnAnYBZMsf9BoLY7oPq+221uJN5d5+z/n+LjlFU8pxzhVOaGy4aY37pRScWjaSseoUHQCRbEV5/Tm/w20S40A38pal+wTiiR0QOiPbGBS5UDTTIhJd3KAb+0K8ZxjhvQ/deGZXemOfy80oBmmMV7Eo3r2qfTvo=
+	t=1726434454; cv=none; b=EbrdjfqOIrJ2LjgpHhVZFGLu2hBnJ5zvTHLBsiBClkieaVcPSn/0YacFS+05y4I1XY1rbRBQwzbuk15Mwdk0diIIwgYyh1RuymP7NKfD+5uDPCPKThJ/I81vha08HLD5e1PPTAhiKC+aZxVnLZ40TEnNz3iyNQNwMDhnpQYBmOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726434383; c=relaxed/simple;
-	bh=VTeWG0/achFcJkMFubNhd3Hqr6YIm0U2U7oJtSuJteY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pHxc+EvZG9RRFpe0Z9sMRZTfdYxuXnpCc+V+6dn8RpIb7tKhkVWIlRXLc9s3sXN8N5/3yAzbwOWB1WjtR3fYQ5tn3093QVwLJVymnzqKsLnnyHj2Udz5d+aKqHkD4nLORAyU10AuEtARKypbesey8UpweCovOB9SUIohleG1Pdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BrJzMwqT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726434380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kjG2AT8F3XQfonol0zYOj7Kgq7T42Ks5Rvtk/ww6Tx4=;
-	b=BrJzMwqTqJe/0bZfV9yUEYBVWuPu7e7Ptg0SOA6QAZCAFWi9qF2q2+Z84TNOvoUnA9OJh/
-	oQQgUcJdZrnzO3Y8PXBnm4qp28XNJb5yHjGI9PER3F7gei1dAueIrih1lqyrqr65HorQo5
-	HC2/bNrDYdL/M9gKjVk7a0DgiJPP2Ks=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-326-PD-EjNkmOG6GY1g56rYKJA-1; Sun,
- 15 Sep 2024 17:06:17 -0400
-X-MC-Unique: PD-EjNkmOG6GY1g56rYKJA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD1B019560B4;
-	Sun, 15 Sep 2024 21:06:14 +0000 (UTC)
-Received: from [10.2.16.6] (unknown [10.2.16.6])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2CE7C19560AA;
-	Sun, 15 Sep 2024 21:06:11 +0000 (UTC)
-Message-ID: <afddc02d-fa96-4793-bc60-6c81629d8d5b@redhat.com>
-Date: Sun, 15 Sep 2024 17:06:10 -0400
+	s=arc-20240116; t=1726434454; c=relaxed/simple;
+	bh=u0mauue4pFbpJvPlGNnG8KmtJCv5osrYKUh15cf2xQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ea1qTjYxrulf96sNyhlkc/q4o31b+oMQOLyUiVuSl9CRH1wyvA88N/QgKtyiFQpfX49xDWDE5PV6zuXUVmd6/TFATLBohcXErAXXsdOxSWPdPFyfwGZbgm0vrICVXFAIzRFliNemmaXZMBCeDig9Zubd/h6vg5b0K0UPX81+z2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MHY4Pwzq; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374bb08d011so2204458f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 14:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726434451; x=1727039251; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aMSCaCClJjZ0q/vopdrKwBeXnkKAsPzQyB/3kJTnFhk=;
+        b=MHY4Pwzqh5CGlH4wC/IS77bKhiHWywWFmRUFNuzLfK2rzG7Kqgi7VQMs5Gew/tQ9PZ
+         RGfaDvvMg9OmGHo5mkpIZU3YfFTcOrrZbVH/XsseHfMpUTyO8vYXBzGSYyU3Hm/BYEJs
+         KYT5dqzf3twXemIzQWuG3YzWmMEvknhYadBkUYmj9FV6RU5E/EvUNuDDwHeYXRzrLLzl
+         washlT17OTkQnEkEl8+8lZmob7wU+TPq0bhhnpKzFGsUxYNgP0SCN8OxFfiP7C8ifuDk
+         zGSVV4x8rS80PF0Xa18SO69HK6vCOYyaX8hFhZUgIxsAHDjUzsvYsaKZFptHtvpa/Mtg
+         EATA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726434451; x=1727039251;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aMSCaCClJjZ0q/vopdrKwBeXnkKAsPzQyB/3kJTnFhk=;
+        b=Gk5DpdTnm90MVcnDqRSGpwg9jLhd/PwAWvomU2bMpPdsisRjFRdQQWAR3YD25+nq47
+         dKR+KAgiE4BopwV3lfQIoo35Ch/Naj/ztZJRiz8nwpOt/jI0WnLB1O8ZJnp/9KxSrXfV
+         iAeZ3nLWdhpOed39zgF7xGA9t/PjzMYe9JZ5tJIJMNgvXsdBKf9h84Geuj4CbwLt89kc
+         dq/QUXRWk6Mq/RUFqKApmY4xAzu6T5icnXHky654me3p5LEu5SrG13xV1tWDaGkUXhl+
+         1+BsmxFFN9L9LwB3Mr4rPgwscM5yTtN8dt8bhCGt16RUxC2N6MnW3XNVFyvkZ3//oe/F
+         McfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/gk09BTlz8lHD850hGcRj3f05dUetTtQ8M4cxq/W456DJ7At4HxSinuF+v32Aud8E9f8BXyx5xUYQJGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP5J5rKZctXXBSoOpJtVOXUJB3ie178BKT4mh9LpwWDGfV5H2h
+	kg6QXR1qKjhGCk8rXcGOhXGGBGm1e+sQKnndqLkNmfhaw+q9WW4+8dK763dD2JxHTsAbhjn77Jj
+	ZAf0OUb0csRrw3mGskcMnm2u1KkVxC1nqLB1k
+X-Google-Smtp-Source: AGHT+IHHL9ci38l3QyRKB9ijCz+Na//ffly7AGZW2nAho4rRP9TW1RbmkTpcC/P3ssAUOSVor4hTQsXWMTlb9HHx0V4=
+X-Received: by 2002:a5d:4983:0:b0:374:c1f9:ea79 with SMTP id
+ ffacd0b85a97d-378c2cd5e5fmr7840237f8f.5.1726434451067; Sun, 15 Sep 2024
+ 14:07:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] locking/osq_lock: From x_osq_lock/unlock to
- numa-aware lock/unlock.
-To: Uros Bizjak <ubizjak@gmail.com>, yongli-oc <yongli-oc@zhaoxin.com>,
- peterz@infradead.org, mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Cc: linux-kernel@vger.kernel.org, yongli@zhaoxin.com, louisqi@zhaoxin.com,
- cobechen@zhaoxin.com, jiangbowang@zhaoxin.com
-References: <20240914085327.32912-1-yongli-oc@zhaoxin.com>
- <20240914085327.32912-4-yongli-oc@zhaoxin.com>
- <fd0e5627-b89c-d25b-bbf5-edc712642f85@gmail.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <fd0e5627-b89c-d25b-bbf5-edc712642f85@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-5-88484f7a3dcf@google.com> <202409151325.09E4F3C2F@keescook>
+In-Reply-To: <202409151325.09E4F3C2F@keescook>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Sun, 15 Sep 2024 23:07:19 +0200
+Message-ID: <CAH5fLghA0tLTwCDBRrm+GAEWhhY7Y8qLtpj0wwcvTK_ZRZVgBw@mail.gmail.com>
+Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
+To: Kees Cook <kees@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/15/24 14:44, Uros Bizjak wrote:
+On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
 >
+> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
+> > Add an abstraction for viewing the string representation of a security
+> > context.
 >
-> On 14. 09. 24 10:53, yongli-oc wrote:
->> According to the contention level, switches from x_osq_lock to
->> numa-aware osq_lock.
->> The numa-aware lock is a two level osq_lock.
->> The Makefile for dynamic numa-aware osq lock.
->>
->> Signed-off-by: yongli-oc <yongli-oc@zhaoxin.com>
->> ---
->>   kernel/locking/Makefile      |   1 +
->>   kernel/locking/numa.h        |  98 ++++++++
->>   kernel/locking/numa_osq.h    |  32 +++
->>   kernel/locking/x_osq_lock.c  | 332 +++++++++++++++++++++++++++
->>   kernel/locking/zx_numa_osq.c | 433 +++++++++++++++++++++++++++++++++++
->>   5 files changed, 896 insertions(+)
->>   create mode 100644 kernel/locking/numa.h
->>   create mode 100644 kernel/locking/numa_osq.h
->>   create mode 100644 kernel/locking/x_osq_lock.c
->>   create mode 100644 kernel/locking/zx_numa_osq.c
+> Hm, this may collide with "LSM: Move away from secids" is going to happen=
+.
+> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-ca.com=
+/
 >
-> ...
->
->> +    if (lock->numa_enable == OSQLOCKSTOPPING && old == 
->> OSQ_UNLOCKED_VAL)
->> +        old = OSQ_LOCKED_VAL;
->> +
->> +    for (;;) {
->> +        if (READ_ONCE(lock->tail16) == curr &&
->> +            cmpxchg(&lock->tail16, curr, old) == curr) {
->
-> I would like to ask if there is any benefit to read the location two 
-> times? cmpxchg() reads the location and skips the update when curr is 
-> different from the value at the location by itself. Using 
-> try_cmpxchg() can produce even more optimized code, since on x86 arch 
-> CMPXCHG also sets ZF flag when operand 2 is equal to the value at 
-> location (and update happens), and this flag can be used in a 
-> conditional jump.
+> This series is not yet landed, but in the future, the API changes should
+> be something like this, though the "lsmblob" name is likely to change to
+> "lsmprop"?
+> security_cred_getsecid()   -> security_cred_getlsmblob()
+> security_secid_to_secctx() -> security_lsmblob_to_secctx()
 
-The major reason is for doing a read first before cmpxchg() is to avoid 
-the overhead of an atomic operation in case the current task isn't the 
-tail. We usually optimize for the case with a lot of incoming lockers 
-where the chance of a match isn't particularly high.
+Thanks for the heads up. I'll make sure to look into how this
+interacts with those changes.
 
-Cheers,
-Longman
+> > This is needed by Rust Binder because it has a feature where a process
+> > can view the string representation of the security context for incoming
+> > transactions. The process can use that to authenticate incoming
+> > transactions, and since the feature is provided by the kernel, the
+> > process can trust that the security context is legitimate.
+> >
+> > This abstraction makes the following assumptions about the C side:
+> > * When a call to `security_secid_to_secctx` is successful, it returns a
+> >   pointer and length. The pointer references a byte string and is valid
+> >   for reading for that many bytes.
+>
+> Yes. (len includes trailing C-String NUL character.)
 
+I suppose the NUL character implies that this API always returns a
+non-zero length? I could simplify the patch a little bit by not
+handling empty strings.
+
+It looks like the CONFIG_SECURITY=3Dn case returns -EOPNOTSUPP, so we
+don't get an empty string from that case, at least.
+
+> > * The string may be referenced until `security_release_secctx` is
+> >   called.
+>
+> Yes.
+>
+> > * If CONFIG_SECURITY is set, then the three methods mentioned in
+> >   rust/helpers are available without a helper. (That is, they are not a
+> >   #define or `static inline`.)
+>
+> Yes.
+>
+> >
+> > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> > Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+> > Reviewed-by: Trevor Gross <tmgross@umich.edu>
+> > Reviewed-by: Gary Guo <gary@garyguo.net>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>
+> Reviewed-by: Kees Cook <kees@kernel.org>
+
+Thanks for the review!
+
+Alice
 
