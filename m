@@ -1,146 +1,96 @@
-Return-Path: <linux-kernel+bounces-330015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E115979876
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A52797987D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402841C218B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D1671C21B13
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FC91CA691;
-	Sun, 15 Sep 2024 19:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7381CA69E;
+	Sun, 15 Sep 2024 19:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uce/rLQF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="4GfNyVVs"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A051CA685;
-	Sun, 15 Sep 2024 19:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686A63D551;
+	Sun, 15 Sep 2024 19:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726428908; cv=none; b=k5CK7Go0BTyqCzf/x7+Kv9kFOwZFKiZazAnrII00NPDrjKkDeIXMFEPCI3lPa/wraiSQNZ5RLF89MHJbE9jsWaH1ddLlDqhmNGTlNE61Y7IYpo/VRjR0USGGgdt8iEMVYSguyHvEgDGyZr2d9EkwnG+XcDGiyiBcgyqE34mKTx8=
+	t=1726428951; cv=none; b=emVLVPQJd211FhKtJg++bDfb6hV8tmXZTrqltyqpY1wMsRHmuoQnLGTicyKekSF75Y2FSz5MjFZW8elLVHmFdEcNYV3U5zNVx+ppXurC89z/TZ80Kgatuq1l4KmdJzeqmLWavm1B0TcrayOCM+iwfL+qNIBJfdvVDvRnGXNHo3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726428908; c=relaxed/simple;
-	bh=TegTfxzMRKVsjSI958Q3E0pV4BcivWmeXOWpP71ZNh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlR6n4TnbpgGOj/+9KspLsdRQS3vBII8rG6oaISosfcvb/XopUDjJJfBrV5QZ3/sPQqdyFRti2u/q/WPr8pUjScg8GfWq+3HChMGTOGzY6zYay1NpsShwXuZlaIFzNjEKqSPUSAw2ZGrraM9o20AHgdtZsUHS/X6xzGN4ecXNl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uce/rLQF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47350C4CEC3;
-	Sun, 15 Sep 2024 19:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726428907;
-	bh=TegTfxzMRKVsjSI958Q3E0pV4BcivWmeXOWpP71ZNh0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uce/rLQFmd2E1rkjh8POBHvnJYzVZsdoRWrsqAH4jxBLkC++ToznVXMGsZXneSsnT
-	 1mAf0PP5pJtlGnh1qpQjERBVkEKD8vUJbssm3D7PkVZKwGqis4ox1j64o2YoYZk9Q5
-	 i7IpnNQpMVA5HvXHUoHfjaKpsO1O4unouAvAxEMUvfsiv/R5uwR7zpYJi+g5mpgrEP
-	 v02UhFpu3c//sss+5+52xKJgH5CVGnls7NduFfYni/PHn9c0klt3MBhbAyv6SXEHTz
-	 6CMstSEUCq0thVzF3cMJotaaH6hkkjwJA3/xhrtAHlc8MI6usuDZMldZbKceuYCe5t
-	 jt446Li/EB0oA==
-Date: Sun, 15 Sep 2024 20:35:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ze Huang <18771902331@163.com>
-Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, cyy@cyyself.name, jesse@rivosinc.com,
-	jszhang@kernel.org, inochiama@outlook.com, uwu@icenowy.me,
-	zhangmeng.kevin@spacemit.com, kevin.z.m@hotmail.com,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, dlan@gentoo.org
-Subject: Re: [PATCH 0/3] Add initial support for Canaan Kendryte K230 pinctrl
-Message-ID: <20240915-flinch-harness-e9e1b92f5c79@spud>
-References: <ZubtZKlxqejnCFx_@jean.localdomain>
- <320c1fd8-2f8d-414d-a6a5-23280955b9b8@163.com>
+	s=arc-20240116; t=1726428951; c=relaxed/simple;
+	bh=tuVA2WxlehopaUYYIhQg6h1R4SWk601XYWtIMU3ROH8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=geylrb7TCElPH+3akeyOAzfQg7crGm+RdQ6xcskmMbGhba8HNUhkDsZXIo1LkBKSWGIQd4W3blEWrkhcYnlSRkvg76xOYug5T4LgIlVuV4aAJVwVCImDm3L2DVNSlKf/46kAZ9N6oYI5iM9nvUGoBzEB4e8jPrNkGQc9GR04Gbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=4GfNyVVs; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=45Z33l/RcutDajIr/YKmREB0obYUTwFgojxxwKicMXU=; b=4GfNyVVsrxdoIGrOJ0cXr9AlRB
+	penG2KpgmIVe81/fQB9BpURffzqCXhBUWOqnBQgylPYgbY+qj9HImhis3oRzImPnWvutgAntvBxs/
+	R7SkBa56djhDsvATwBiBhePM3lya9/O6yjLxO3u+D2h/ZaxzHlJ15+dgV5R+9SgldqGT+KOLV/reT
+	EZsmKv9T6Hb4+RoVTLqER8MT9CW1n+pbNCadzv+vb6Zr8wDOQ/N0unCS9ai+nT3nsz5XMyLF7Fe+J
+	NWP0+/ezePWwJuQ0toS67EmPFJJs5y+AdEur0a3r9OEuT2w/ESAjR1truIcYN4okPmdhtljWVOxqA
+	FVhh0n8Q==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: tony@atomide.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+	Paul Kocialkowski <contact@paulk.fr>
+Subject: [PATCH] ARM: dts: omap4-kc1: fix twl6030 power node
+Date: Sun, 15 Sep 2024 21:35:27 +0200
+Message-Id: <20240915193527.1071792-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CyzwYAu3/6FE9Ujm"
-Content-Disposition: inline
-In-Reply-To: <320c1fd8-2f8d-414d-a6a5-23280955b9b8@163.com>
+Content-Transfer-Encoding: 8bit
 
+dtbs_check was moaning about twl6030-power, use the standard property
+instead.
+Apparently that twl6030 power snippet slipped in without the
+corresponding driver. Now it is handled by the standard property.
 
---CyzwYAu3/6FE9Ujm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+CC: Paul Kocialkowski <contact@paulk.fr>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ arch/arm/boot/dts/ti/omap/omap4-kc1.dts | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-On Sun, Sep 15, 2024 at 11:22:16PM +0800, Ze Huang wrote:
->=20
-> On 9/15/24 10:21 PM, Ze Huang wrote:
-> > This patch series introduces support for the pinctrl driver of the Cana=
-an
-> > K230 SoC. The K230 SoC features 64 IO pins, each of which can be config=
-ured
-> > for up to five different functions.
-> > 						=09
-> > The controller manages the entire pin configuration and multiplexing
-> > through a single register, which control features such as schmitt trigg=
-er,
-> > drive strength, bias pull-up/down, input/output enable, power source, a=
-nd
-> > mux mode.
-> >=20
-> > The changes have been tested on the K230 development board.
-> > 						=09
-> > The pin function definition can be found here [1], and most of the DTS =
-data
-> > was converted from the vendor's code [2].
-> >=20
-> > Link: https://developer.canaan-creative.com/k230/dev/_downloads/a53655a=
-81951bc8a440ae647be286e75/K230_PINOUT_V1.1_20230321.xlsx [1]
-> > Link: https://github.com/kendryte/k230_sdk/blob/main/src/little/uboot/a=
-rch/riscv/dts/k230_canmv.dts [2]
-> >=20
-> > Ze Huang (3):
-> >    dt-bindings: pinctrl: Add support for canaan,k230 SoC
-> >    pinctrl: canaan: Add support for k230 SoC
-> >    riscv: dts: canaan: Add k230's pinctrl node
-> >=20
-> >   .../bindings/pinctrl/canaan,k230-pinctrl.yaml | 128 ++++
-> >   arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi  | 318 +++++++++
-> >   arch/riscv/boot/dts/canaan/k230-pinctrl.h     |  18 +
-> >   arch/riscv/boot/dts/canaan/k230.dtsi          |   2 +
-> >   drivers/pinctrl/Kconfig                       |  10 +
-> >   drivers/pinctrl/Makefile                      |   1 +
-> >   drivers/pinctrl/pinctrl-k230.c                | 674 ++++++++++++++++++
-> >   7 files changed, 1151 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k=
-230-pinctrl.yaml
-> >   create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
-> >   create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.h
-> >   create mode 100644 drivers/pinctrl/pinctrl-k230.c
-> >=20
->=20
-> lost base commit and prerequisite patch id here:
->=20
-> base-commit: 0eea987088a22d73d81e968de7347cdc7e594f72
-> prerequisite-patch-id: 740cbeb9fc3f3e3fd30df4914cd31e9eb148a581
-> prerequisite-patch-id: b5cc919a7e8e2f852569d5918944dbe4f21e6912
-> prerequisite-patch-id: 554cb838b7264109437359e88443cc3497ed344c
+diff --git a/arch/arm/boot/dts/ti/omap/omap4-kc1.dts b/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
+index c6b79ba8bbc91..df874d5f5327f 100644
+--- a/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
++++ b/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
+@@ -112,11 +112,7 @@ twl: twl@48 {
+ 		reg = <0x48>;
+ 		/* IRQ# = 7 */
+ 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* IRQ_SYS_1N cascaded to gic */
+-
+-		twl_power: power {
+-			compatible = "ti,twl6030-power";
+-			ti,system-power-controller;
+-		};
++		system-power-controller;
+ 	};
+ };
+ 
+-- 
+2.39.2
 
-I don't have the ability to convert those to something I can understand,
-is
-https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=3Dk2=
-30-basic
-effectively the basis for your series?
-
---CyzwYAu3/6FE9Ujm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuc25gAKCRB4tDGHoIJi
-0ulQAQCknK6VYQasoWh8AAI3+LsDn+3tbfKKbzDGoTZdf0W2tQD/ayh4pmeE6f4b
-G7dvGUnbYVw+aPXbxopXJPwekkLhtQU=
-=a291
------END PGP SIGNATURE-----
-
---CyzwYAu3/6FE9Ujm--
 
