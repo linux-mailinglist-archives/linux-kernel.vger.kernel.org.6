@@ -1,116 +1,105 @@
-Return-Path: <linux-kernel+bounces-329970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F99979811
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:09:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1419979813
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A3ED1F214AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:09:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6971B281CD0
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53F71C9EB4;
-	Sun, 15 Sep 2024 18:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5431C9DDE;
+	Sun, 15 Sep 2024 18:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HzwUWc3r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KzDbRkCx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3446F1DA21;
-	Sun, 15 Sep 2024 18:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF99E17C91;
+	Sun, 15 Sep 2024 18:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726423752; cv=none; b=XM5R3uXhRQIPeUazBxWM5zPCkLX8xmdsQVFRMHYKa8Ke9gu5a2MGhED3MSV6VTL3xTGi3F411W2rNMzzlIXkegP9SVM5Mq4Wrle/kIe3UqoMOabZJ3YsjjCLDp8bnE3WKtgQL4BzuRnlbr+qv+pOrJTbNnf7LZZDQEt4AN+byUA=
+	t=1726423974; cv=none; b=Pxp6giCOc0ohvTe51J/CNC+q6OcdjepESUsWYV1NVl+jlsyrPO9ubDjPtFNR0jiBCPO7h49m1Leu9pw1WsN1DhBDChsqk35wNvx8z2+YXU+VpO9NV3I5uq/SJQA4riSXJOafYMGWCV8eogkid1BBDwGyZPxxaMMSPWR2yiB0GI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726423752; c=relaxed/simple;
-	bh=AhRhu73/ZHh9YOfiIGSm+rRFXWuJkHfivxwYeFFjvnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rwh67BiKNYmtbNaiAl/pN5FnEsYluX2Dqj07bdTJEKohMLk/2eIGJu0L2BiFmyZ2ICDS3h+XKriDz3hmaONVwUl02Oym2JAb01S9JceSqI1E/1zNyPdBqqXVQBvpwqo2oMkJoi9hVnTwMIrM/2TSqJwalweohWoWcfjrPQBBTwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HzwUWc3r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0BF9C4CEC3;
-	Sun, 15 Sep 2024 18:09:07 +0000 (UTC)
+	s=arc-20240116; t=1726423974; c=relaxed/simple;
+	bh=zXJSMhDJvF8KX1pUeO8bKX2FXlDPqGfTCpebMUz6I48=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=HmcY6mQeHz0jZkl3taSjvwg/pheTUh/wESgMjmxmOovbOqW32N47nmGy0pd9Z+3s+WVhZFXaemJDeOan1DIYSmte/1PgZWZgledsS7TP+LUr73c7TltSOGJngPJ2FyyTCzBrddY5JURrVy08D3ZJDzcbKFeq0Rs7YRqHhk4BrAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KzDbRkCx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDB90C4CEC3;
+	Sun, 15 Sep 2024 18:12:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726423751;
-	bh=AhRhu73/ZHh9YOfiIGSm+rRFXWuJkHfivxwYeFFjvnk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HzwUWc3riPr5RkxkVrUG1A2X9KBN5i8Y8IyCrayouA7GZbndZcBbU4WSKWK/74WPB
-	 SGGOlovYiePnjqUB15MHyXH2KE0eU0W8YmRRnKbinmw7qsSXfe6fzSBH6GFgv1hHSZ
-	 DV9QZS8xANQhC/43R/iSXBZbXArPrZDB43ttKpBMDAYsFZGrzyEAym3F4xBsO8Pbut
-	 Qmcc+Hg4pA+/WMDlfLgAhLSNZvNHz3VJyEH9p3+QKv7feVg6mP+MP8lxo6/8lHfOdC
-	 dCKgitvmSQl2qHO2VmVHycRjiF1qtbW/w6U11J6KUGW5R851BB6ZsvWsGDd5NDOxFk
-	 AlQIlQqxncabw==
-Date: Sun, 15 Sep 2024 19:08:35 +0100
-From: Simon Horman <horms@kernel.org>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Long Li <longli@microsoft.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH net-next] net: mana: Increase the
- DEF_RX_BUFFERS_PER_QUEUE to 1024
-Message-ID: <20240915180835.GA167971@kernel.org>
-References: <1726376184-14874-1-git-send-email-shradhagupta@linux.microsoft.com>
+	s=k20201202; t=1726423973;
+	bh=zXJSMhDJvF8KX1pUeO8bKX2FXlDPqGfTCpebMUz6I48=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=KzDbRkCxSkReK5yxmQDmJspOmysePm8rzQBcPkyekqCXFQJX0fUdBi/ZBC4rfX7i2
+	 smrfa5IFNaebERxd8qUkrgpj4JN1NH+vD+yalbxMHfDk72p1sQkXgu8qSqtO2JBAtg
+	 kBojmUpd2Ol5UQLKydrhedEZ9KRwWxATHkTqhN0LcQ0lpGor4bxXvG1vyTPnB9BI6S
+	 Hg9YQDSOHC6nhNq5bURIGpomhp9vQgYE3erXxJbJ3xNOvg2zOgtKVGCc+9qoliaDaT
+	 PRmTOkBqLcgM5gd9tysi+Ahlv2xnmitmpOwjck8WY/WCiT317Or3aPJMYqjFpOPHto
+	 ZM5j4QQ8dN2og==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1726376184-14874-1-git-send-email-shradhagupta@linux.microsoft.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 15 Sep 2024 21:12:49 +0300
+Message-Id: <D4727YOJY8KZ.L6RKMRBKRCSN@kernel.org>
+Cc: <James.Bottomley@HansenPartnership.com>, <roberto.sassu@huawei.com>,
+ <mapengyu@gmail.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe"
+ <jgg@ziepe.ca>, "open list" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] tpm: lazy flush for the session null key
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240915180448.2030115-1-jarkko@kernel.org>
+In-Reply-To: <20240915180448.2030115-1-jarkko@kernel.org>
 
-On Sat, Sep 14, 2024 at 09:56:24PM -0700, Shradha Gupta wrote:
-> Through some experiments, we found out that increasing the default
-> RX buffers count from 512 to 1024, gives slightly better throughput
-> and significantly reduces the no_wqe_rx errs on the receiver side.
-> Along with these, other parameters like cpu usage, retrans seg etc
-> also show some improvement with 1024 value.
-> 
-> Following are some snippets from the experiments
-> 
-> ntttcp tests with 512 Rx buffers
-> ---------------------------------------
-> connections|  throughput|  no_wqe errs|
-> ---------------------------------------
-> 1          |  40.93Gbps | 123,211     |
-> 16         | 180.15Gbps | 190,120
-> 128        | 180.20Gbps | 173,508     |
-> 256        | 180.27Gbps | 189,884     |
-> 
-> ntttcp tests with 1024 Rx buffers
-> ---------------------------------------
-> connections|  throughput|  no_wqe errs|
-> ---------------------------------------
-> 1          |  44.22Gbps | 19,864      |
-> 16         | 180.19Gbps | 4,430       |
-> 128        | 180.21Gbps | 2,560       |
-> 256        | 180.29Gbps | 1,529       |
-> 
-> So, increasing the default RX buffers per queue count to 1024
-> 
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+On Sun Sep 15, 2024 at 9:04 PM EEST, Jarkko Sakkinen wrote:
+> There is no load and flush the null key for every transaction. It only
+> needs to be flushed when user space accesses TPM. This postpones the
+> flush up to that point.
+>
+> The goal is to take the first step addressing [1]. Other performance
+> improvements are needed too but this is the most obvious one and
+> easiest to address.
+>
+> [1] https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
+>
+> Jarkko Sakkinen (4):
+>   tpm: remove file header documentation from tpm2-sessions.c
+>   tpm: address tpm2_create_null_primary() return value
+>   tpm: address tpm2_create_primary() failure
+>   tpm: flush the session null key only when required
+>
+>  drivers/char/tpm/tpm-chip.c       |  13 ++++
+>  drivers/char/tpm/tpm-dev-common.c |   7 ++
+>  drivers/char/tpm/tpm-interface.c  |   9 ++-
+>  drivers/char/tpm/tpm2-cmd.c       |   3 +
+>  drivers/char/tpm/tpm2-sessions.c  | 115 ++++++++++--------------------
+>  include/linux/tpm.h               |   2 +
+>  6 files changed, 68 insertions(+), 81 deletions(-)
 
-Hi Shradha,
+I did not take any benchmarks yet but I did run this through
+run-tests.sh in [1] to make sure that it does not break anything.
 
-net-next is currently closed other than for bug fixes.
-Please consider reposting once it re-opens, after v6.12-rc1
-has been released.
+Looking at pseude-code of ContextSave from [2] fixing this is
+orthogonal from any possible context gap issues as null key
+is just plain transient object.
 
--- 
-pw-bot: defer
+I would fix the obvious first and then look what can be done
+to sessions (e.g. global LRU tracking of sessions or similar
+approach). I don't expect over the top performance improvement
+with this patch set.
+
+[1] https://codeberg.org/jarkko/linux-tpmdd-test
+[2] https://trustedcomputinggroup.org/wp-content/uploads/TPM-2.0-1.83-Part-=
+3-Commands-Code.pdf
+
+BR, Jarkko
 
