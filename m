@@ -1,143 +1,102 @@
-Return-Path: <linux-kernel+bounces-329897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B1097973B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA19E979740
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9555D282700
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7443B280A9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9C01C6F53;
-	Sun, 15 Sep 2024 14:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="oMN3SUW1"
-Received: from ci74p00im-qukt09090302.me.com (ci74p00im-qukt09090302.me.com [17.57.156.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265301C7B8D;
+	Sun, 15 Sep 2024 14:39:25 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84221EB31
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 14:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.156.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED981C68A0
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 14:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726411013; cv=none; b=VjZJmUDlr3AkbNy3oTflh2bzybzTBaAork0lqd/f1fZhAk6tdSRqAAUhAqwhRT4YzT1DwVHR1QPF/RwD8st7GyqjAShI4dzqyqwdN4sRn8+AEgNBOBSP1yiVkqYGNss8ri3AyeY80ErWC8r+flFltIqJ2fYurMXzGJ02CtxTwUk=
+	t=1726411164; cv=none; b=alSplmdGbZ0rqIOK0fnw0u/WVFj5eV7wYLXCpqcsR9nand5o3oPi8z7xukYMat2q2xWgrcHQ5/gCXL16RtAu7VMiPzO+ee7hyF6UebMhboxXein8ZwfM1llLs/56Lxy+3aLjRUr5xIZ7ttCMbMlWCQwdd9/MdYtRur0WvTjFzVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726411013; c=relaxed/simple;
-	bh=wj2pmhXTeqqH+P7nAES7vhM923fqTcNAvawf49E0mEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hIrfH2AWI30nrBLR51Hli5nECZfWJRk3g6Ok6MH+Vcz1abbN0Wu+IrDrQI5RivJwmhGzou9CMUwJHRLXny+GDBjMscqb/frEmSGOF1KbZQT/hq4KDSooUW1zcqvEZnON+L2mumyDnMvLaEs19hqW4g7A3LcWSOBSJCQkNc8I4Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=oMN3SUW1; arc=none smtp.client-ip=17.57.156.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1726411010;
-	bh=9HFTlBlbkQp/3070DYW8Jut6fR1McfS3daxGKCDsDUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=oMN3SUW1NWzF8KvvBuQQfrvsyy88Fgk7ZmuctU7HR3TDPZ0iyz7PSlbO+oCGs0vaL
-	 pmowihwClFs3lEsoxFOAydfFnh017tcTotchsAWAGauvhKPIxJblkx2AXvqgYANV9d
-	 Ro9+YqmuBUh270PpJy80Gtme5qreAPgKUezwghUHnkYuDxG/RdmEAU+V1+G/3K66V6
-	 KgrZL+zBBDzLvaW73Sh2tEw5v/nLvXVObf28A7eCmkaYoJfgDTBc/cGQUspcHrmBKh
-	 nk0izcbx0R6M1Vtbji1JRJIvmuivgBBj319vA6mK4VVTvX3Qj0i6spYmjGDt+bjwp1
-	 /VrOqSV87RfvA==
-Received: from [192.168.1.26] (ci77p00im-dlb-asmtp-mailmevip.me.com [17.57.156.26])
-	by ci74p00im-qukt09090302.me.com (Postfix) with ESMTPSA id 72F0C5BC03DE;
-	Sun, 15 Sep 2024 14:36:48 +0000 (UTC)
-Message-ID: <506644dc-4ca2-4284-a557-eb0ef4bf36bd@icloud.com>
-Date: Sun, 15 Sep 2024 22:36:44 +0800
+	s=arc-20240116; t=1726411164; c=relaxed/simple;
+	bh=ugIgT3P62YyJVUICzflGXO4+NPncChk5Efv/8bam+Lk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XVW7plBl6CLdzRFLLMmNQ8jHM0moG4zmNRs4XKoddTpy6tXudF0oogcTP2bjnVhkDQlVgyflc1vq181XTHzAHSNdF9lFGdVG1PJHgk3zVj3UHly6SG96IoNzy7kL+nw1muSM20mFTJ7t5yZq1qEJciHIiq+rq09TfNPtSwlCcMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a04af50632so76477415ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 07:39:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726411162; x=1727015962;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZCeSY0Tg+irvuLC3MHarMWgiDRbCnO96UywqFeUzQRo=;
+        b=soL+PC6SZLhgaqs0OX7uvxXll+NDdLfJTRnXSYw/vp52zO0Z8lf9Q9HF8PbiVXzu6t
+         eSK40+rZbmLqevT9OL6V+XdQU/FiePfFkRCdt3JGDSaWhVA332X47KtafisGGP9uS0Ku
+         NepOquEmzRTbBoHlgkxsc4ePAp+KynDKb2jw1rFXJ29C1Zgq8qanQNiSEFs5pHChnP5y
+         PcMrwdoHuCGi/Lz3mLvWJV+1RmcSxb7TuwKeEjxowivFeFDA1cDU+xY18cm8LsFGiwXx
+         uecV7UR7usWi7AgBVLMlHjS2G6FKjpeXwx0WC9XQjOjLCbiTsD6w3Tkn8Gpn2SICm0nO
+         MX4w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2hwhvJgdmYQJpYfveVcglSgcN0ciB0Qmf9mzmiGOjrVGvZbEXODM8EGHkJlby51ZOuI9n3dPRBcGuaDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKIHUdT7y21TgQpdrSqUPFgS0u6uqcgAV+8aaq2qY3ULz9/QBj
+	VCsX0McwE401NNhWqEQiN4TiBtokbvqy5DzzwNgXIJll+5JGUexs+ohUw4deKiZ40MjIKbcvsm+
+	HnUU0TX6yAZ5xnY+ZKjwtgm+KIccz3DJJNmCw9MhojKJgIphQDuVynOg=
+X-Google-Smtp-Source: AGHT+IFQCy/4x1+qIcUS78qlxaHEfbLJHaTgAyEWKHIOreX4S4vfwVxeiKiC7YC0stMLhACcVCG1HXNalqL/gA77UIQLT179hvEc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: bus: Mark an impossible error path with
- WARN_ON() in bus_add_driver()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240915-bus_add_driver_fix-v1-1-ce5cf1f66601@quicinc.com>
- <2024091530-antacid-magical-8302@gregkh>
- <8620a8a6-9101-4f53-858f-2e09aa310d16@icloud.com>
- <2024091540-scrubber-navigator-4aae@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2024091540-scrubber-navigator-4aae@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: VVorR_8QU6fXZokKfb_5bcoQc-djjpGi
-X-Proofpoint-ORIG-GUID: VVorR_8QU6fXZokKfb_5bcoQc-djjpGi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-15_06,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 malwarescore=0 phishscore=0 bulkscore=0
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409150111
+X-Received: by 2002:a05:6e02:198b:b0:39e:68f8:43e5 with SMTP id
+ e9e14a558f8ab-3a0848cb45cmr123293255ab.9.1726411162418; Sun, 15 Sep 2024
+ 07:39:22 -0700 (PDT)
+Date: Sun, 15 Sep 2024 07:39:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000012905e0622296c1e@google.com>
+Subject: [syzbot] Monthly xfs report (Sep 2024)
+From: syzbot <syzbot+list09475edf415676cc6e2c@syzkaller.appspotmail.com>
+To: chandan.babu@oracle.com, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/9/15 21:55, Greg Kroah-Hartman wrote:
-> On Sun, Sep 15, 2024 at 09:38:15PM +0800, Zijun Hu wrote:
->> On 2024/9/15 21:00, Greg Kroah-Hartman wrote:
->>> On Sun, Sep 15, 2024 at 06:22:05PM +0800, Zijun Hu wrote:
->>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>>>
->>>> driver_attach() called by bus_add_driver() always returns 0, so its
->>>> corresponding error path will never happen, hence mark the impossible
->>>> error path with WARN_ON() to remind readers to disregard it.
->>>
->>> So you just caused the machine to crash and reboot if that happens
->>> (remember, panic-on-warn is enabled in a few billion Linux systems...)
->>>
->> are there good way to mark a if condition which is always or mostly
->> evaluated to false currently without any side effect?
-> 
-> If always, then remove the code involved.  If mostly, just do it
-> normally.
-> 
->> i think this is a generic requirement since readers may not want to
->> care about things which will never or rarely happen, below link
->> involves such discussion:
->> https://lore.kernel.org/all/2024090444-earmark-showpiece-b3dc@gregkh/
-> 
-> Yes, but likely/unlikely is for performance, not for documentation.
+Hello xfs maintainers/developers,
 
-if you git grep unlikely in current kernel tree, you will find
-that there are too many unlikely usages which should be irrelevant
-performance. you maybe look at drivers/base/devres.c.
+This is a 31-day syzbot report for the xfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/xfs
 
-so i think one of purpose of unlikely may be for the requirement i
-mentioned.
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 13 issues are still open and 23 have been fixed so far.
 
-> 
->>>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->>>> ---
->>>>  drivers/base/bus.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
->>>> index 657c93c38b0d..59a48edda267 100644
->>>> --- a/drivers/base/bus.c
->>>> +++ b/drivers/base/bus.c
->>>> @@ -673,7 +673,7 @@ int bus_add_driver(struct device_driver *drv)
->>>>  	klist_add_tail(&priv->knode_bus, &sp->klist_drivers);
->>>>  	if (sp->drivers_autoprobe) {
->>>>  		error = driver_attach(drv);
->>>> -		if (error)
->>>> +		if (WARN_ON(error))
->>>
->>> What exactly are you trying to show here?  If this really can never
->>> fail, then let's just remove the check entirely.
->>>
->> what i want to show is that this error patch will never happen here
->> currently, so readers can disregard it.
-> 
-> Then just remove it, and document in the changelog text why it can never
-> happen.  But if it can never happen, then why is the function returning
-> anything at all?
-> 
-> thanks,
-> 
-> greg k-h
+Some of the still happening issues:
 
+Ref Crashes Repro Title
+<1> 602     Yes   possible deadlock in xfs_ilock_attr_map_shared
+                  https://syzkaller.appspot.com/bug?extid=069cc167ecbee6e3e91a
+<2> 137     Yes   possible deadlock in xfs_icwalk_ag (2)
+                  https://syzkaller.appspot.com/bug?extid=4248e91deb3db78358a2
+<3> 78      No    KASAN: slab-use-after-free Read in xfs_inode_item_push
+                  https://syzkaller.appspot.com/bug?extid=1a28995e12fd13faa44e
+<4> 74      Yes   INFO: task hung in xfs_buf_item_unpin (2)
+                  https://syzkaller.appspot.com/bug?extid=837bcd54843dd6262f2f
+<5> 3       No    possible deadlock in xfs_fs_dirty_inode (2)
+                  https://syzkaller.appspot.com/bug?extid=1116a7b7b96b9c426a1a
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
