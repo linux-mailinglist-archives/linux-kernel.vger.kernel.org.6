@@ -1,123 +1,105 @@
-Return-Path: <linux-kernel+bounces-329679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA809794A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B4F9794A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13EF928335E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 04:56:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA3A283E47
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 05:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC92417BBE;
-	Sun, 15 Sep 2024 04:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0430415E96;
+	Sun, 15 Sep 2024 05:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="W6Dd31fd"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73911B85CD;
-	Sun, 15 Sep 2024 04:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ULzHZoV2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C44917991
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 05:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726376187; cv=none; b=n5ywVrWrdZTvRTiSqpVXn4Li+lUAdvrveCj1Ki6xNcVLZZtMkA4cCx5oar6m4QPxajxRE5QsmZpx5Qtsv/Hm4V+20NODd5bxQx0RWrjHjp6grIlJVsRMlpzFmnCyFD6xRYZDkT4Cl13Ctaie7Vln9rgIRgXyqHTndqyCJhdDBUo=
+	t=1726377037; cv=none; b=VN3tYOaRUGvVyGF3H/DX4MWXqzSRlX5vi3bujSn4K6IrVjhGkFqFj00KG7S2c4UIQU/ppz2bjuyLypaWnxbeCrHfS7e5qs1VMImGLnHn9Iidp8K6rEtrcffl80kOjj5piuRy8ap90sZZtw/N9TNUxj6SQALdkF/QUO7oxLSH5TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726376187; c=relaxed/simple;
-	bh=9w30dChxYIMmPxhl67+/YhDv8UAzy02LRnlwADKHBNg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Tbt3iMr1STSbA9v2n5zE58Idlhf49eUqmUL2Ia6X53ixYpSsylOs/HhDex3pXXjTzaKv047kadHbXzmSIXHBeHJMG0//9iadOtMwAAacMqksnwgXNBcF4DsR4BbIeHORDIBCX5Sl4/i4Gm3BGnCGj94C1m/Y+xdHKR9RYZdUOsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=W6Dd31fd; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 2ED1D20C08A3; Sat, 14 Sep 2024 21:56:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2ED1D20C08A3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1726376185;
-	bh=N+lwgWnXJnJIv3ORmL8lZsGxIiQ/BGyrO1aZxWResDM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=W6Dd31fdlCYaoBHGnUNiNgYBg4SHFoHewSeoHayK7WCFR7ECh3Bfk+yRFdiI3D/++
-	 Je6I0S9nR6LcT6MrU8LyY/0/d4yHDuYCMe6a17I4Xp7vK6OuDtsX3iI+aETGDkUgP5
-	 UQRO3XlqkPP4bFxi2Xsa3Yj9xYEbLyeYjxuPafzw=
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Long Li <longli@microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: [PATCH net-next] net: mana: Increase the DEF_RX_BUFFERS_PER_QUEUE to 1024
-Date: Sat, 14 Sep 2024 21:56:24 -0700
-Message-Id: <1726376184-14874-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1726377037; c=relaxed/simple;
+	bh=RxTGjSoI79wApBYWetHwYwhgLsl7qmp5bhB6TsW2XTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=a+wChrwvZ+XS9hzTgmmZGIGgQ1wtrKk+nWjbPijcEhfsu8keMkbwoj/IBSSakHPyzpUndOnQU1VR5ZXRYqn2fzkRlLZw3rChwKQNGfc8iX9g90LCylLtvWF9BVXvW1+WD6LmthubUg7WLlEBE7pVO5VK5wClioFozbSKQnZcDm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ULzHZoV2; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726377034; x=1757913034;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=RxTGjSoI79wApBYWetHwYwhgLsl7qmp5bhB6TsW2XTA=;
+  b=ULzHZoV2F8WjYCzYNL7VLsZGJie/Sbsdkou30OA2vcCltUpBt7z6ZOwJ
+   ORD3w76/FqpNMOqOoiIFxVI6NIx8AdoJLeCpuJ0pVxZDNvUlEFAmSF6pf
+   no8cki1WoHt5CpTwEeB16UnwcRveyegaaxavLb+3i8uKWAzS4IuaRx+2N
+   SL5JQK9TjloQqbPZi4WDjE70pcCFjF+lkdSdPSIOrZU9ub44yroyUxNnj
+   6wPckW6Rxu91F2Q8QZTzTeTEmT7hYv3FOqSiI0XkoEmsSzM3nkKFlXHPe
+   p71OXW8oUkFUNEF4hjoBgpNg9TlgNXgY/stMJSwdITC54sIPyfbwSnLt5
+   A==;
+X-CSE-ConnectionGUID: PKwPNToMRyugp/tl6DdCaA==
+X-CSE-MsgGUID: Wy+iVRdkQ22fGVNjqeSASg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="24723336"
+X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
+   d="scan'208";a="24723336"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 22:10:34 -0700
+X-CSE-ConnectionGUID: 3+zxR6tIQ7aK6vjPE+AvTA==
+X-CSE-MsgGUID: s/iZ3OEoSKm0ua+k6wOP/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
+   d="scan'208";a="91815794"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 14 Sep 2024 22:10:33 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sphWo-0008QQ-2G;
+	Sun, 15 Sep 2024 05:10:30 +0000
+Date: Sun, 15 Sep 2024 13:10:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: WARNING: modpost: vmlinux: section mismatch in reference:
+ run_tracer_selftest+0x2c0 (section: .text.unlikely) -> initcall_level_names
+ (section: .init.data)
+Message-ID: <202409151344.pZ2wYwG1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Through some experiments, we found out that increasing the default
-RX buffers count from 512 to 1024, gives slightly better throughput
-and significantly reduces the no_wqe_rx errs on the receiver side.
-Along with these, other parameters like cpu usage, retrans seg etc
-also show some improvement with 1024 value.
+Hi Masahiro,
 
-Following are some snippets from the experiments
+FYI, the error/warning still remains.
 
-ntttcp tests with 512 Rx buffers
----------------------------------------
-connections|  throughput|  no_wqe errs|
----------------------------------------
-1          |  40.93Gbps | 123,211     |
-16         | 180.15Gbps | 190,120
-128        | 180.20Gbps | 173,508     |
-256        | 180.27Gbps | 189,884     |
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0babf683783ddca06551537c6781e413cfe8d27b
+commit: 481461f5109919babbb393d6f68002936b8e2493 linux/export.h: make <linux/export.h> independent of CONFIG_MODULES
+date:   1 year, 2 months ago
+config: xtensa-randconfig-r024-20220805 (https://download.01.org/0day-ci/archive/20240915/202409151344.pZ2wYwG1-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409151344.pZ2wYwG1-lkp@intel.com/reproduce)
 
-ntttcp tests with 1024 Rx buffers
----------------------------------------
-connections|  throughput|  no_wqe errs|
----------------------------------------
-1          |  44.22Gbps | 19,864      |
-16         | 180.19Gbps | 4,430       |
-128        | 180.21Gbps | 2,560       |
-256        | 180.29Gbps | 1,529       |
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409151344.pZ2wYwG1-lkp@intel.com/
 
-So, increasing the default RX buffers per queue count to 1024
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- include/net/mana/mana.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+>> WARNING: modpost: vmlinux: section mismatch in reference: run_tracer_selftest+0x2c0 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
 
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index f2a5200d8a0f..9b0faa24b758 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -43,7 +43,7 @@ enum TRI_STATE {
-  * size beyond this value gets rejected by __alloc_page() call.
-  */
- #define MAX_RX_BUFFERS_PER_QUEUE 8192
--#define DEF_RX_BUFFERS_PER_QUEUE 512
-+#define DEF_RX_BUFFERS_PER_QUEUE 1024
- #define MIN_RX_BUFFERS_PER_QUEUE 128
- 
- /* This max value for TX buffers is derived as the maximum allocatable
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
