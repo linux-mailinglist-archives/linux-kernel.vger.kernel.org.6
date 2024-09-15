@@ -1,109 +1,126 @@
-Return-Path: <linux-kernel+bounces-329731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08056979511
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:50:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0AA97953F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307D41C20F33
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:50:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CE1DB227B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C00C21A1C;
-	Sun, 15 Sep 2024 07:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E2D364A9;
+	Sun, 15 Sep 2024 07:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z3RvT6gb"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhGp1eIz"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C2D364A9
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 07:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89A421A1C;
+	Sun, 15 Sep 2024 07:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726386614; cv=none; b=rg4Ad06CxcAQUmBQ8WyxoFg7HVNtMMVAb0aszofZeK+ZdcIXQu+DGKjmAc++52PLzRlpI/PhGiYutKqt/+ebTMzzZfFIKHEkMQ2fuRMI/UxY7tV/AKEiBAsI7ec55qLzhvaMlRWiUXs8+gm7UAiZWqkQugynT4jHJyXIerx1K94=
+	t=1726386924; cv=none; b=dfOChXxGIyqxlsdeOqDSGTUFLj+7bK5SKadnkf0RCqztJSGfZtNacBjofdO1+H2NAOETkfs5ClO1A0xHu/Mz9Mjk3I9yHEmVewXB//NPGEG6cpa2I0/4E1KtZ+ENxDRB16W65YcVqJ6zzkgB76jluUR4xRjCs0i9ATl8GiSkxDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726386614; c=relaxed/simple;
-	bh=QsY4XZPWNrDF93W1mg/lR3N3nA9sy/l3K0ESNcVu0Bg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=AveyolKCbKJrMZBuTEIocWiQB6BeGpe26N42xOwYS3m058tBOLnqXyzdG5MqluyYzVTMGBrYCpbsQsPllhT88sWDz943qCwJe2yGqxRw8Zcp32glPbx+a6saj45Kw1NuekCXSYaPjR/XhKD0ZbtujlV/yHUMjK0qPJdocNX7TQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z3RvT6gb; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2056aa5cefcso162445ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 00:50:12 -0700 (PDT)
+	s=arc-20240116; t=1726386924; c=relaxed/simple;
+	bh=QralsGpTk/VE7c1/yICJm16dg/6F7TBywR1ptd4plqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tb1/8fss8f8uXbZGmXbH5ecNq5u8yMiXos0R3p8DEGJ6EwGKnooabv7QUbcYIxikthCP2J2FA57CX5bQewoRzwlwptceTa2uXrYGSrw8uYdA/VkG8saxdqfxlKpBtyJDzjYaWsFjn3rpuo7RkTjJcTCxCBWK0Tdo+Tq6KJTM3LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhGp1eIz; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso508022966b.0;
+        Sun, 15 Sep 2024 00:55:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726386612; x=1726991412; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0sP0C/SZXbtE7kXb1uPu6iN1tgyGfXaUc3oWuyV4hHE=;
-        b=z3RvT6gbzqgmp4qev/AQ+z5Tw/dB1RofkSSQikNvjIkcNk1Ap8UvwrQPFk2zuvGkBU
-         jkOKYjFmHpjO92ulPDuL9ZpsRbJhAYJRYCj+AFsNp3UviQqwqH9huIZdYg/oCbiuKPm/
-         ZBrRuxOYABgYvJjrGz8uafeZ1oKZGliIqSJNONZJ83m0LiG/fUEh90d7uwJsRzUhVxba
-         kdleBlPNnxUM527JZh91DTGD9N3H9TQTbrMiso8VJ/t8ggzyUQoasCeExXx0/oPSWiAi
-         bO7NwnzXwyyBOj24UC9M0ThtzBvguzUDGDrJXVOAKRt3HLFjpj0JRLbJh7gsc8rxGkh3
-         sD/Q==
+        d=gmail.com; s=20230601; t=1726386921; x=1726991721; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QralsGpTk/VE7c1/yICJm16dg/6F7TBywR1ptd4plqU=;
+        b=KhGp1eIzqWcE/Lp6mnIKvOQqqLM28ERUGXzJ3eXN0JNuhB1zd6idU56U7bC8u6xZe6
+         UPEu04DCcq+H7Hz2OnSyYLs/kc2Cbt/+P1rMF72tTloY1FtYxiu2Sc0Xpy7s7mbn2ADo
+         V3tLx/ndsYu7/NdkVhTwrLB0O2QLTfz33pj3atlclUFYvG2OO8W6a9kzaVExZkN2PWnQ
+         Z8mVYO+cbkT8udPqHndGpufnLRvY+Q8BMgw2IXYfPuaw2A4FTkELa1To5g3AEAkL04bX
+         ow90vXOc4jgG9eE6EDPkfN6sBDJrI0xGWoDgSdEdW+J6QKQW4Fe28lJyhCq8K/b41uip
+         W2Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726386612; x=1726991412;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0sP0C/SZXbtE7kXb1uPu6iN1tgyGfXaUc3oWuyV4hHE=;
-        b=oQwnw6dTIQtQBYtsmsE18bOgkO46Zq6F5fRhk3Whmr0FbNziCqOjuXD9fxuOrdKK5E
-         lEd/UhOLoUpcR/+6CBm8ex3FoKfOESBaj1Zg22bGwTNUDXr0Zuqp3dmU4WUq+NN68cjW
-         3oB4qIsvMKLPXVmR5AB9WdkkAtzLI2tUS7MlQs3YObqlggy/6FbfomGZX5X3UA/AIZgL
-         /0Lu9n06LHKXEbFlYOPieBw2kVIAjMRd14QuRJB5AQdL3MLsRL5wGsppgwp8vVMZwEqj
-         IiaoP71MaQSB3vt22p95QXk+utgPpYliT8QzowRQQq5k91cHVgwyGO7ZjqYzzeXY9L2I
-         SLXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEeGD1ptLCjyQ66idg1ZKPBFkhvGQkt0q3SFo+/vxdts/cKDK5+FZNNlwC/KjfK6me+95tkc39EU3KRz0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFABFvUfcMdMIz3hRqR3MpCwx4FwApZEF+sh9SjJkE5Xjl1pTW
-	sp4EoY06VUH5o62zEREL0OQcJe8z11zRT7eBIPewWmdc4EyfwzFLjaPY/8wDIw==
-X-Google-Smtp-Source: AGHT+IEPML2/cMATOIRhcrZ7qpCU8XOPOY9iRaNq1New23c86px/YVkX7cWtzIXR1QGfzY08RFGckg==
-X-Received: by 2002:a17:902:cec9:b0:207:14ab:722e with SMTP id d9443c01a7336-2077278b5f7mr7877975ad.7.1726386611571;
-        Sun, 15 Sep 2024 00:50:11 -0700 (PDT)
-Received: from [2620:0:1008:15:8b83:20f7:eba:dd56] ([2620:0:1008:15:8b83:20f7:eba:dd56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946fab1fsm17926595ad.195.2024.09.15.00.50.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 00:50:11 -0700 (PDT)
-Date: Sun, 15 Sep 2024 00:50:10 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
-    Liam Howlett <liam.howlett@oracle.com>, Shakeel Butt <shakeelb@google.com>, 
-    Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH] mm/madvise: process_madvise() drop capability check if
- same mm
-In-Reply-To: <20240913140628.77047-1-lorenzo.stoakes@oracle.com>
-Message-ID: <5db5f367-9efd-7a9b-07dc-efb06669b260@google.com>
-References: <20240913140628.77047-1-lorenzo.stoakes@oracle.com>
+        d=1e100.net; s=20230601; t=1726386921; x=1726991721;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QralsGpTk/VE7c1/yICJm16dg/6F7TBywR1ptd4plqU=;
+        b=XJ1gfevuzcvjE3qstTEqObQIGG+yEITA1TDLe95t07A5e29uoZqX8A213kA8hcC8XU
+         pbgLnZO+FQUcR5919DhR3pwLE3u16p5IOsDrATdpNQIALznhnFfmzsNEOTaIB1kE4Rz5
+         RDw0Zrl6iEdQw8u5VhvI7dhNV6ENWdssO1y+rzX6PFNZE3Q+Iz0AmD9+0SireqbWEUmb
+         P8re4j3KB6LDsll6vjIp638Be7MR2lta3X0AENsNzX1vXxomikdESMnTfgV2o8r9pkx4
+         hIMSBggya4VRlRFpXHiXqmnygj5y1mEfOcY/VVWU8M/CVBSqpxkI31JrszwQwbO6HYId
+         zpQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVc+TUHyifB1I89sxc5k59dXzzi9kAlxq5Y2QIsF8Ez1wmiUMVAqBAW3EnopM8pkatQMHsubm8C46fMhWY=@vger.kernel.org, AJvYcCVhiSQX6E9Gpew/touNRm9Rvw9zPl3bTCPx3UJGHHN6oiGln4c24cBhqJOVnsx8/mLyhcoD694ZAr/JDdI=@vger.kernel.org, AJvYcCW/u8IyvMOSBw42bZt05uudpnuLYl9ZehS+c9WT3zVSOIHjX/b7elEFVLg8FdCmBNS0Hf6vWzlLwpCT@vger.kernel.org, AJvYcCWslBRVf9IGmPAmH/WmbaYlMUPCJEh6zXYNcbRrsf6Y4mLBq7AH9gZSW/QdGggXtZm54L8FParzoAn3bfY8Lw==@vger.kernel.org, AJvYcCXFDP2D5CjGAEBPRCxbNCmLdnhR9eJQy4D4UuI3cCWm4Otu8wQp/q4fkW+lc2iNt6gFsaJd1xu6MgUkW1QR@vger.kernel.org, AJvYcCXQ8laiwz/vTGWPyyvgaOOBraqMNqqM2jyg3BWRMnIrPs3SiIU8XhngqMmnOgvBMyTSdi0fEi9SS0bH@vger.kernel.org, AJvYcCXWZ2HdmcVMdGy8TCUxbq1Im47/EqIfnr6Ymzphb0dD9GRRpHjGOq/aXllmYZNVGFNBLC42lWEVBrEf@vger.kernel.org
+X-Gm-Message-State: AOJu0YybRTt05DmhFbqrBlqRpxOac/6E+UYSHvaRoeluwLe9VZ+aylng
+	Iafr3iL3nTk0zj3iFrHlO87toI8H0/WecHSW9MzYCEe28OKVpImg
+X-Google-Smtp-Source: AGHT+IGPQI+t4lYTwiuu4hyJoLvLouchr9DqQvDvbSEOgzDQJG8ZpceHMqTZzT7/DgMVYuW1CsOVDg==
+X-Received: by 2002:a17:906:259a:b0:a90:126f:bcbf with SMTP id a640c23a62f3a-a90126fd1c5mr1196022766b.10.1726386920479;
+        Sun, 15 Sep 2024 00:55:20 -0700 (PDT)
+Received: from foxbook (bin105.neoplus.adsl.tpnet.pl. [83.28.129.105])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f4375sm166709266b.73.2024.09.15.00.55.18
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Sun, 15 Sep 2024 00:55:20 -0700 (PDT)
+Date: Sun, 15 Sep 2024 09:55:14 +0200
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: <mathias.nyman@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
+ <alsa-devel@alsa-project.org>, <bgoswami@quicinc.com>,
+ <broonie@kernel.org>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+ <devicetree@vger.kernel.org>, <dmitry.torokhov@gmail.com>,
+ <gregkh@linuxfoundation.org>, <krzk+dt@kernel.org>, <lgirdwood@gmail.com>,
+ <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+ <mathias.nyman@intel.com>, <perex@perex.cz>,
+ <pierre-louis.bossart@linux.intel.com>, <robh@kernel.org>,
+ <srinivas.kandagatla@linaro.org>, <tiwai@suse.com>
+Subject: Re: [PATCH v27 01/32] xhci: add helper to stop endpoint and wait
+ for completion
+Message-ID: <20240915095514.6b01fefb@foxbook>
+In-Reply-To: <a9dcaa5a-4f5d-451a-93aa-7457798fc243@quicinc.com>
+References: <20240913103237.2f5dc796@foxbook>
+	<a9dcaa5a-4f5d-451a-93aa-7457798fc243@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Sep 2024, Lorenzo Stoakes wrote:
+Hi,
 
-> In commit 96cfe2c0fd23 ("mm/madvise: replace ptrace attach requirement for
-> process_madvise") process_madvise() was updated to require the caller to
-> possess the CAP_SYS_NICE capability to perform the operation, in addition
-> to a check against PTRACE_MODE_READ performed by mm_access().
-> 
-> The mm_access() function explicitly checks to see if the address space of
-> the process being referenced is the current one, in which case no check is
-> performed.
-> 
-> We, however, do not do this when checking the CAP_SYS_NICE capability. This
-> means that we insist on the caller possessing this capability in order to
-> perform madvise() operations on its own address space, which seems
-> nonsensical.
-> 
-> Simply add a check to allow for an invocation of this function with pidfd
-> set to the current process without elevation.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Maybe the last sentence is not needed.=C2=A0 When we are using the
+> secondary interrupters, at least in the offload use case that I've
+> verified with, the XHCI is completely unaware of what TDs have been
+> queued, etc...=C2=A0 So technically, even if we did call the default
+> handler (ie xhci_handle_cmd_stop_ep), most of the routines to
+> invalidate TDs are going to be no-ops.
 
-Acked-by: David Rientjes <rientjes@google.com>
+Yes, the cancellation machinery will return immediately if there are
+no TDs queued by xhci_hcd itself.
+
+But xhci_handle_cmd_stop_ep() does a few more things for you - it
+checks if the command has actually succeeded, clears any halt condition
+which may be preventing stopping the endpoint, and it sometimes retries
+the command (only on "bad" chips, AFAIK).
+
+This new code does none of the above, so in the general case it can't
+even guarantee that the endpoint is stopped when it returns zero. This
+should ideally be documented in some way, or fixed, before somebody is
+tempted to call it with unrealistically high expectations ;)
+
+As far as I see, it only works for you because isochronous never halts
+and Qualcomm HW is (hopefully) free of those stop-after-restart bugs.
+There will be problems if the SB tries to use any other endpoint type.
+
+Regards,
+Michal
 
