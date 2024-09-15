@@ -1,112 +1,128 @@
-Return-Path: <linux-kernel+bounces-330074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CB097995F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 00:05:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B2F979961
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 00:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61FE41F220E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 22:05:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1AC28212E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 22:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFAD73466;
-	Sun, 15 Sep 2024 22:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BE55FB9C;
+	Sun, 15 Sep 2024 22:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mfQMqo0z"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="hsC8YnZD"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5DE1EB35;
-	Sun, 15 Sep 2024 22:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C52924B34
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 22:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726437938; cv=none; b=iIHb/zd+LZuBawuvtv4yppQRIsW0xVqiVql9lsq4zvAdey5YnZVY+Jx56MlOdHtDVKALrar4DGYrmZmwZCs5i8dLTlDNBoeryxZEa0f6JhfqtRyvgLd1391gZZVWssrJbjR7np2ol9G3dgEZ7roejZOs1l0XaDl9SmT81ULkdXI=
+	t=1726438177; cv=none; b=nAU5fYOgBiw7eUmWNTrh2/gLJrSNzAOSTs0ZhSMyMClKYvB8J8dATYvvKClVx7OLpXFkgs+ouoUImvZfYfSVTmCKAwKnlP26mDJUFVtDMjnrR28nfvkJzhOSVZBKdEyVd7fTTvHXMQ9RMotXA9Mrx/MZ+I0uwsP1l8emkl1zi+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726437938; c=relaxed/simple;
-	bh=Dqf16xxmKXc0Xq9NEQiRVkhivChl6iBtUI3bo0Xg7nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IHxBsoW4sGLRAaC7o35gZWv6IgOpwKxaIPggf6Fov7WYteGOcW97sCRUDt0tMzEzsFsLM6PgaErs24/ycc81ADPksFoCdgPi892IVkz6dDSm5JZy2Aiz3uGhRB6jk4aQy65YD+sFfkicVDr/lk0TUsIEP6zCVGuoiHWzxCnNP5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mfQMqo0z; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/adAEHyd5WxOAKHUz3Yg2C+W9ssk43MsRIrF8KsG2IQ=; b=mfQMqo0zAT8SW4qhYmHffFCZQB
-	e3MIhktMVgIeyO0IvyoYkPEfqb4XRrhdiTB7AWHfifSfLEaElyQUeZnKDAGI2bJl6N1Z87QBFiRBH
-	UO9QwIioCA8Y6WbFHHmeAlvN6vJ6peu0rbayhHKQAnvjRH2XwUn0rfh89keZ+u7ajT8AeoPjj7YQF
-	0E8lPi7YeAzKRkSgBocJmiR0YcDrAKh8Smlse3fwT1nsw+/tnvnnjfq2QcWZ9AU3TGA0F0KpdWJRw
-	S1gWEmIzi4LAfLWaqv7eNGqeYS2g9LyE746y7xU/BzvYukVe//T3IFPKsVGZUXcBkak+j2WhG0V8n
-	ejfJgwIw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1spxMx-0000000ClQB-1nNE;
-	Sun, 15 Sep 2024 22:05:23 +0000
-Date: Sun, 15 Sep 2024 23:05:23 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v10 6/8] rust: file: add `FileDescriptorReservation`
-Message-ID: <20240915220523.GM2825852@ZenIV>
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-6-88484f7a3dcf@google.com>
- <20240915183905.GI2825852@ZenIV>
- <CAH5fLghu1NAoj1hSUOD2ULz2XEed329OtHY+w2eAnFd5GrXOKQ@mail.gmail.com>
- <20240915220126.GL2825852@ZenIV>
+	s=arc-20240116; t=1726438177; c=relaxed/simple;
+	bh=DFgewJF3bjaw1LsjVEdGiZtHPMm1fksFaN4lu1lHV1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SbwA5dfvZon33mqXlxqqyhpVJfWU5342saxZoVEyuBoC5KRoGCX+YFluR7yrobP3aEwBTQfhmUkCI8OPrqpoW37CjhWP4cimBh632XO8LZF6ogt2pJpyUlv5p/t5b9JC2afU4WSbPRY8MHVr5I492wWaHR1HU1pL+xcIjFxZlD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np; spf=none smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=hsC8YnZD; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=everestkc.com.np
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7191901abd6so1657181b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 15:09:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1726438174; x=1727042974; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zujAfybg0k3ecejyzxyXAqNjvZ2n21BDSk9qIYiYrog=;
+        b=hsC8YnZDgpB0WxQbPAyPs3OMIXe8JuVXonguk6aMkYUeqMYV6QYrBH577MwvNB+tNc
+         FIoAuU8webgNNl3tcGA5CTZkhVevU0cjtYJxmsqAiVcRio7E6u1xmCcm+v1+XAmOB4br
+         eHipbNcA6V7wrssl+d4fRjQkaahCvml7Bbs4wl5F5h74GlMPmTOYvM4ZCHDEWk0r+93G
+         T05PlreBiTy73YRx7fw/pIszgmZX/KnU/yrLHfU7AF0cqn4yrZMkYBMpVMUynM7CKI4F
+         0yn57Ppx7olEwqomw2UMrSkar16z8a73NzCcWc+DEMPxx5b8oCCMnSisvxUQRDH+cIv6
+         PGag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726438174; x=1727042974;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zujAfybg0k3ecejyzxyXAqNjvZ2n21BDSk9qIYiYrog=;
+        b=t7sfSKKHP/UjDkym105ETs89HWqpe6BS7U+U/PevZwCM1bkywIOCWFfRioyjz7TddQ
+         ih4ZT25Na437lOApHvX13m2hWfv0PqKKqHgTrrrhKP5yodjraq7ecDM7CNr94gTEXeOq
+         XL0VFu+uwTpnRy9ZvgxtZMrrpjgUSdkAaiWnMaR+xomiIEgoA3wi3fyi1b22wo7dI+fZ
+         XC+MNrhIIyJr40lH3ouj9nUH7p6FbxBpa/SDcJ1e/UmLUldSrqs6/lKVmyQ/WX5xKMsI
+         DNnWFrkUwmSPSyeV8OAI+aos+xBSDqfXWo4HM9bTXmOt/l/FwuRjUsZdO0xlqQwuZ/Zo
+         I51A==
+X-Forwarded-Encrypted: i=1; AJvYcCXUejZU7QYvg/Ne/5NAVuIqAbCsElGdeXcJeBhVGbQxWFKm59I5nvmADXLCwOo+SAU/rQjf6BRbrGk0wdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg9dGltdIjbD1aa8CEHXYv0lUbXTcHynigPnlWcxhs7RqLeDm9
+	U6ejAjMSF8ATuddQUunJD/T5c46oXV6vzFgvYdOFzOxWrAkhcGA30A5HKSOsgXysWdE1JXfvSY5
+	bL8w=
+X-Google-Smtp-Source: AGHT+IG5kyzlL2wGkCWldXaLED0oO5cn3o21nRGdKJwKg5meM7vVuozZXI//EMCcuVYm7uqMkTpA1A==
+X-Received: by 2002:a05:6a00:997:b0:719:20b0:d041 with SMTP id d2e1a72fcca58-71936a49390mr14475864b3a.10.1726438174330;
+        Sun, 15 Sep 2024 15:09:34 -0700 (PDT)
+Received: from localhost.localdomain ([132.178.238.28])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7db49837d41sm3100223a12.0.2024.09.15.15.09.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 15:09:33 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: nabijaczleweli@nabijaczleweli.xyz,
+	akpm@linux-foundation.org
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] Fix spelling error in file kernel/relay.c
+Date: Sun, 15 Sep 2024 16:08:00 -0600
+Message-ID: <20240915220805.4378-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <68fd5771-6931-46f3-a15e-31d849c34bd0@wanadoo.fr>
+References: <68fd5771-6931-46f3-a15e-31d849c34bd0@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240915220126.GL2825852@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 15, 2024 at 11:01:26PM +0100, Al Viro wrote:
+Fixed spelling error reported by codespell as follows:
+	perfomring ==> performing
+        implemention ==> implementation
 
-> There's not a lot of binary formats (5 of those currently -
-> all in fs/binmt_*.c), but there's nothing to prohibit more
-            binfmt_*.c, sorry.
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+---
+ v1 -> v2: * Rolled back the change in multiline comment that broke the
+	     patch
+	   * Changed "ementation" and "emention" (which was messedup in v10) 
+	     to "implementation"
 
-> of them.  If somebody decides to add the infrastructure for
-> writing those in Rust, begin_new_exec() wrapper will need
-> to be documented as "never call that in scope of reserved
-> descriptor".  Maybe by marking that wrapper unsafe and
-> telling the users about the restriction wrt descriptor
-> reservations, maybe by somehow telling the compiler to
-> watch out for that - or maybe the constraint will be gone
-> by that time.
-> 
-> In any case, the underlying constraint ("a thread with
-> reserved descriptors should not try to get a private
-> descriptor table until all those descriptors are disposed
-> of one way or another") needs to be documented.
-> 
+ kernel/relay.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/relay.c b/kernel/relay.c
+index a8e90e98bf2c..04b04c238c96 100644
+--- a/kernel/relay.c
++++ b/kernel/relay.c
+@@ -560,7 +560,7 @@ static void __relay_set_buf_dentry(void *info)
+  *	Use to setup files for a previously buffer-only channel created
+  *	by relay_open() with a NULL parent dentry.
+  *
+- *	For example, this is useful for perfomring early tracing in kernel,
++ *	For example, this is useful for performing early tracing in kernel,
+  *	before VFS is up and then exposing the early results once the dentry
+  *	is available.
+  */
+@@ -837,7 +837,7 @@ static int relay_file_mmap(struct file *filp, struct vm_area_struct *vma)
+  *	@filp: the file
+  *	@wait: poll table
+  *
+- *	Poll implemention.
++ *	Poll implementation.
+  */
+ static __poll_t relay_file_poll(struct file *filp, poll_table *wait)
+ {
+-- 
+2.43.0
+
 
