@@ -1,123 +1,178 @@
-Return-Path: <linux-kernel+bounces-329943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042759797CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:22:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFB69797D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D899B20F57
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10FE51C20B17
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222CD1C9DD2;
-	Sun, 15 Sep 2024 16:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7B41C9DF0;
+	Sun, 15 Sep 2024 16:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpC6ELW6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="oOk7OuHW"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E0618B04;
-	Sun, 15 Sep 2024 16:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBEB38DD1;
+	Sun, 15 Sep 2024 16:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726417328; cv=none; b=XjlKIE6vit9d0U1gqCo7gPD/oJssLSp+s+GnY8PlhN5eRmlqKWoBZmAU1Vf0qSaH04+NAv8UEPNPTu4UbiEFZAvg8RFkyDysOQzIrSt7JYrZ7VnJ2rPhXP1yGPD1eO5k7swNxUDBmS64hiv9CzjHx2tAJgT6pgIvGoOrd5YWOaQ=
+	t=1726417515; cv=none; b=oVwTWJZC5yPHDqgyv5XRogiG2OaUm2HSYP/g8tOgloILwQT9JOzW/c71WYbI6aDuA2U/aAgvo60FVYlnw6dqmvmaZbVpKWqjSV8VpbVDDD/rFWT7ZyCdqz/0VhPJUEHfXT2wFcEzEb/EXAzCg295F73jgDAyf8r6NWNBkeWflsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726417328; c=relaxed/simple;
-	bh=Fq7ExgekfgiYR2Q2UUEbsFBFg9UlNjKP9oZ4jQg+N10=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=A4YGTHfsRZZoFm7GgxPVUi5UJn6EPwTo3ud1aLxIXZq8RKPUu6nXs3MMCUE8asFbbVQeaCyt2izBaHn88vvC+OnrtMH70xcJ20wY62/DJKIbISkmEfmoX9484goL5WKgGmLLYdqvql05StLR1pSO6V+zxD25glPj0nNqlmmINFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpC6ELW6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A47C4CEC3;
-	Sun, 15 Sep 2024 16:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726417327;
-	bh=Fq7ExgekfgiYR2Q2UUEbsFBFg9UlNjKP9oZ4jQg+N10=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=LpC6ELW61q80XTX72iF4DECJhAJ6/VBb2mr3poUPNGrgaIUMR/KQc+wrmmpce5l0N
-	 eMUxvCKup90GEtZZFT7UI1x2EOhIfRS5wlyQDhFY1gkIGGbTCCPWgW3q+wH6vJRzUS
-	 mvmGIw3C2eKrbJN190te3+5pqlJ91QL40gcYI8HpmjYLYrHutMh5h31xL1KkzOwTgp
-	 OQjIWa0Gx65nTBWqwQf7k+XLbzQy82IznPWbg8Sp9jnPONMHa43C+UL0U+faw7YJkc
-	 6Ylcu+imnuJW4NuB+HbiEJq7qKi+rdHvhyyMWvjBBRQqiRP6JWgX3AIWyBBeuZX/TI
-	 fAexa6X22Zy4A==
+	s=arc-20240116; t=1726417515; c=relaxed/simple;
+	bh=VHFRphAhdMvcqZFfp/DQo2k/onRbN3noRBK3dtVZjU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nm7sHz+UWQEvSiI+ksj5ogrMCvgdFB5/jKOjDvBydukXlxFmcyeWLQ3iDrURtYiqC7LUJcVU8YUok59UEw+g0O0bLTREJgn99vA9GvjcEvfaXbQs3cR4JK5qTn5FbX1vHGT4HHsbgUgUHZaVK8cylkTyJdOOau68nJNZjSQzqUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=oOk7OuHW; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=jG0LHkK9+s47i4vFCqHPgQ+PxeWrvcfGdTU2q+UJdfs=; b=oOk7OuHW61OWYX1R
+	Mokg30kCwgCjO0n0+s9oHDvheIpfYWXrRwp4c/vdeFWFHvKBm8xVoobEFwcWO4aNKQxYUcoGYpf8k
+	xo0EKF8/RMBe+ArCQ1T7ke43iFOBqb6cneuTGzvp56wGZ2O/AmhULhlhGsiQzeJt7UFma/VtFS0tq
+	OR0Ebwph0ueIy1419IIJTcBmiq/DVZecCGWecZJMTsyurFknYF4TV2DTdMrFiQRRc2K3BvtNRm8lk
+	ar0KO5NWzo2qfrpbWeMRKIWsFyFNl0AFc0Y68iaOn+40gtFgWXNxqCD/p1zyhuAv4lpuWtQN/ByEh
+	bB+RzrFDVsvk9DGm+g==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sps3h-005qek-2W;
+	Sun, 15 Sep 2024 16:25:09 +0000
+Date: Sun, 15 Sep 2024 16:25:09 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Alexander Zubkov <green@qrator.net>, pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org, linux-newbie@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] Fix misspelling of "accept*"
+Message-ID: <ZucKZcwmd28S_t24@gallifrey>
+References: <20240622164013.24488-2-green@qrator.net>
+ <Zncwl4DAwTQL0YDl@gallifrey>
+ <CABr+u0b-RAV9hz25O5a3Axz6s9vYLVc5shr8xAgPsykP_XRFgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 15 Sep 2024 19:22:04 +0300
-Message-Id: <D46ZV5RXW7Z9.26N1IRXNRLV9X@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
- "Pengyu Ma" <mapengyu@gmail.com>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Roberto
- Sassu" <roberto.sassu@huaweicloud.com>, "Linux regressions mailing list"
- <regressions@lists.linux.dev>
-X-Mailer: aerc 0.18.2
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
- <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
- <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
- <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
- <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
- <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
- <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
- <D43JXBFOOB2O.3U6ZQ7DASR1ZW@kernel.org>
- <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
- <D46RE2BWMGJ4.25VA7IVYTJ8MO@kernel.org>
- <D46RWPQ211ZS.12EYKZY053BH@kernel.org>
- <0b22c2c4b4a998fb44bb08be60a359acb9ecb8da.camel@HansenPartnership.com>
- <D46XX6HNU686.50X57ZWI2GUX@kernel.org>
- <7586c7e6e6028a734a8cac3d4b1a8504e6cd4b21.camel@HansenPartnership.com>
-In-Reply-To: <7586c7e6e6028a734a8cac3d4b1a8504e6cd4b21.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABr+u0b-RAV9hz25O5a3Axz6s9vYLVc5shr8xAgPsykP_XRFgw@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 16:24:25 up 130 days,  3:38,  1 user,  load average: 0.02, 0.02,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Sun Sep 15, 2024 at 6:00 PM EEST, James Bottomley wrote:
-> On Sun, 2024-09-15 at 17:50 +0300, Jarkko Sakkinen wrote:
-> > On Sun Sep 15, 2024 at 4:59 PM EEST, James Bottomley wrote:
-> > > On Sun, 2024-09-15 at 13:07 +0300, Jarkko Sakkinen wrote:
-> > > > On Sun Sep 15, 2024 at 12:43 PM EEST, Jarkko Sakkinen wrote:
-> > > > > When it comes to boot we should aim for one single
-> > > > > start_auth_session during boot, i.e. different phases would
-> > > > > leave that session open so that we don't have to load the
-> > > > > context every single time.=C2=A0 I think it should be doable.
-> > > >=20
-> > > > The best possible idea how to improve performance here would be
-> > > > to transfer the cost from time to space. This can be achieved by
-> > > > keeping null key permanently in the TPM memory during power
-> > > > cycle.
-> > >=20
-> > > No it's not at all.=C2=A0 If you look at it, the NULL key is only use=
-d
-> > > to encrypt the salt for the start session and that's the operating
-> > > taking a lot of time.=C2=A0 That's why the cleanest mitigation would =
-be
-> > > to save and restore the session.=C2=A0 Unfortunately the timings you
-> > > already complain about still show this would be about 10x longer
-> > > than a no-hmac extend so I'm still waiting to see if IMA people
-> > > consider that an acceptable tradeoff.
-> >=20
-> > The bug report does not say anything about IMA issues. Please read
-> > the bug reports before commenting ;-) I will ignore your comment
-> > because it is plain misleading information.
-> >=20
-> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
->
-> Well, given that the kernel does no measured boot extends after the EFI
-> boot stub (which isn't session protected) finishes, what's your theory
-> for the root cause?
+* Alexander Zubkov (green@qrator.net) wrote:
+> Hi,
+> 
+> I just wanted to kindly check in on the status of my patch. Please let
+> me know if any further action is needed from my side.
+> 
+> Thanks for your time!
 
-I don't think there is a silver bullet. Based on benchmark which showed
-80% overhead from throttling the context reducing number of loads and
-saves will cut a slice of the fat.
+I was only a reviewer on this; it'll need some of the netdev people
+to notice it for it to get further.
 
-Since it is the low-hanging fruit I'll start with that. In other words,
-I'm not going touch session loading and saving. I'll start with null
-key loading and saving.
+Dave
 
-BR, Jarkko
+> Best regards,
+> Alexander Zubkov
+> 
+> On Sat, Jun 22, 2024 at 10:14 PM Dr. David Alan Gilbert
+> <linux@treblig.org> wrote:
+> >
+> > * Alexander Zubkov (green@qrator.net) wrote:
+> > > Several files have "accept*" misspelled as "accpet*" in the comments.
+> > > Fix all such occurrences.
+> > >
+> > > Signed-off-by: Alexander Zubkov <green@qrator.net>
+> >
+> > Reviewed-by: Dr. David Alan Gilbert <linux@treblig.org>
+> >
+> > hmm, should probably cc in some maintainers, I guess networking.
+> > (added netdev and Paolo)
+> >
+> > Dave
+> >
+> > > ---
+> > >  drivers/infiniband/hw/irdma/cm.c                              | 2 +-
+> > >  drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c | 4 ++--
+> > >  drivers/net/ethernet/natsemi/ns83820.c                        | 2 +-
+> > >  include/uapi/linux/udp.h                                      | 2 +-
+> > >  4 files changed, 5 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/drivers/infiniband/hw/irdma/cm.c b/drivers/infiniband/hw/irdma/cm.c
+> > > index 36bb7e5ce..ce8d821bd 100644
+> > > --- a/drivers/infiniband/hw/irdma/cm.c
+> > > +++ b/drivers/infiniband/hw/irdma/cm.c
+> > > @@ -3631,7 +3631,7 @@ void irdma_free_lsmm_rsrc(struct irdma_qp *iwqp)
+> > >  /**
+> > >   * irdma_accept - registered call for connection to be accepted
+> > >   * @cm_id: cm information for passive connection
+> > > - * @conn_param: accpet parameters
+> > > + * @conn_param: accept parameters
+> > >   */
+> > >  int irdma_accept(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
+> > >  {
+> > > diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
+> > > index 455a54708..96fd31d75 100644
+> > > --- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
+> > > +++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
+> > > @@ -342,8 +342,8 @@ static struct sk_buff *copy_gl_to_skb_pkt(const struct pkt_gl *gl,
+> > >  {
+> > >       struct sk_buff *skb;
+> > >
+> > > -     /* Allocate space for cpl_pass_accpet_req which will be synthesized by
+> > > -      * driver. Once driver synthesizes cpl_pass_accpet_req the skb will go
+> > > +     /* Allocate space for cpl_pass_accept_req which will be synthesized by
+> > > +      * driver. Once driver synthesizes cpl_pass_accept_req the skb will go
+> > >        * through the regular cpl_pass_accept_req processing in TOM.
+> > >        */
+> > >       skb = alloc_skb(gl->tot_len + sizeof(struct cpl_pass_accept_req)
+> > > diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/ethernet/natsemi/ns83820.c
+> > > index 998586872..bea969dfa 100644
+> > > --- a/drivers/net/ethernet/natsemi/ns83820.c
+> > > +++ b/drivers/net/ethernet/natsemi/ns83820.c
+> > > @@ -2090,7 +2090,7 @@ static int ns83820_init_one(struct pci_dev *pci_dev,
+> > >        */
+> > >       /* Ramit : 1024 DMA is not a good idea, it ends up banging
+> > >        * some DELL and COMPAQ SMP systems
+> > > -      * Turn on ALP, only we are accpeting Jumbo Packets */
+> > > +      * Turn on ALP, only we are accepting Jumbo Packets */
+> > >       writel(RXCFG_AEP | RXCFG_ARP | RXCFG_AIRL | RXCFG_RX_FD
+> > >               | RXCFG_STRIPCRC
+> > >               //| RXCFG_ALP
+> > > diff --git a/include/uapi/linux/udp.h b/include/uapi/linux/udp.h
+> > > index 1a0fe8b15..d85d671de 100644
+> > > --- a/include/uapi/linux/udp.h
+> > > +++ b/include/uapi/linux/udp.h
+> > > @@ -31,7 +31,7 @@ struct udphdr {
+> > >  #define UDP_CORK     1       /* Never send partially complete segments */
+> > >  #define UDP_ENCAP    100     /* Set the socket to accept encapsulated packets */
+> > >  #define UDP_NO_CHECK6_TX 101 /* Disable sending checksum for UDP6X */
+> > > -#define UDP_NO_CHECK6_RX 102 /* Disable accpeting checksum for UDP6 */
+> > > +#define UDP_NO_CHECK6_RX 102 /* Disable accepting checksum for UDP6 */
+> > >  #define UDP_SEGMENT  103     /* Set GSO segmentation size */
+> > >  #define UDP_GRO              104     /* This socket can receive UDP GRO packets */
+> > >
+> > > --
+> > > 2.45.2
+> > >
+> > >
+> > --
+> >  -----Open up your eyes, open up your mind, open up your code -------
+> > / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \
+> > \        dave @ treblig.org |                               | In Hex /
+> >  \ _________________________|_____ http://www.treblig.org   |_______/
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
