@@ -1,218 +1,131 @@
-Return-Path: <linux-kernel+bounces-329828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D84979674
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:40:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6F4979678
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739581C20D70
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A1BF1C20D9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A591C3F33;
-	Sun, 15 Sep 2024 11:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43A61C579C;
+	Sun, 15 Sep 2024 11:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fkH+d+D7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJtX8d58"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFCB38C
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 11:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9511625570;
+	Sun, 15 Sep 2024 11:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726400430; cv=none; b=dGKwC0CpMX4I9ZKRqbf5SKiDta1xLJRLuhKX+f6oKjJC3gFpleQq6pk47vQLJ26Ag2r5WOZYGhuEwo+qfxnf4BgNv110FVvzTdPIXb8fmJFU2D1Pr/Pn8OUuqShxVOb+/IzHwWhCL2bTrfQoyPTBfrGwIKZANoiQ0JEgKBS9Ggk=
+	t=1726400566; cv=none; b=pegEnFMW+996AkUXLz6VmPZhXb3I6GGhyOy9QlWABUWw3jeSFztKBgdoWQHY0gnBBIhaJoljHvaedtNCsIIc1iDz8oWfWgFiI4+kv/F6YFZHXKtJE2AQuCtnXmBZiL5HZ3BF+A01Alg7BlK5TYuZ80k07wEXS2cpJ52857rASXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726400430; c=relaxed/simple;
-	bh=qpG5FvqDX9/bq3PfSZRPFDyEbORTIN4lxDZtuQvKAxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OQR+6T9KUQPcT59bhhTpSBdwdRyg9QQttuYM9CaHYVdDuBgSlFZ/e3ZVqwsIQ/1IdMQ+iac7R3UEstO9F3DR4QpwX6eiaqE1vBWRu7D4cQ3ZN0+mE+VTv4GqFbPl05sbV9IWM/QngcDQKoeLAhE1mhlG/6aNqv+WYOCuUCVtibY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fkH+d+D7; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726400428; x=1757936428;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qpG5FvqDX9/bq3PfSZRPFDyEbORTIN4lxDZtuQvKAxE=;
-  b=fkH+d+D7ohPTAaQVxHUNxvSey8njECKkZMPfTrj376DsD4PSyzPplh82
-   j7xvTqoi7+yHU9X/yUTabD9J6UKLgzycjmMdnEtf8EXBBJU12VgSMKXb2
-   yQvuSVL+fiP+5wCS5wjGpkF3N/N27ASv4FMseV7J5dILcS5uG76I/+DVp
-   sQbafAN41VDQT9XN+bM7RfgnNuQb0gB0GVl5V7IWPd4b+IV04yrdgtVYG
-   Sw22vvl/Wyrv9+u3ZHhRND4QITGBVPkgvET34pTDNhE20HD7bz7NymqMk
-   axZLUybDYDWdMKkDaNUxuwxgeZUZzIj5//eqI9rypybOmT5qnQ/ciWFfE
-   A==;
-X-CSE-ConnectionGUID: 9UEP/fhVQ5O9bT78Lw0hnQ==
-X-CSE-MsgGUID: 4KG6OmrDTTaWDlm7g/TAIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="36630301"
-X-IronPort-AV: E=Sophos;i="6.10,231,1719903600"; 
-   d="scan'208";a="36630301"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 04:40:27 -0700
-X-CSE-ConnectionGUID: s0XK6YRCRK6bXZykdXmYyw==
-X-CSE-MsgGUID: 7p254ljQSwOdCGac7tPY6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,231,1719903600"; 
-   d="scan'208";a="68307618"
-Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.221.130]) ([10.124.221.130])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 04:40:26 -0700
-Message-ID: <e5081e3b-0f14-4e1e-975a-a4fd22944fc7@intel.com>
-Date: Sun, 15 Sep 2024 04:40:04 -0700
+	s=arc-20240116; t=1726400566; c=relaxed/simple;
+	bh=V7BSTAtZFlkGUrqoLYcf78IeSSWOtXpI74x9W4dHEEM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DQFTBStHxJMrdjIz3jitqd/rsajdC7TilTZslmxNm5CUken8XeV56KHQBzObo0CMa3ebAvO4Dcj+otxfo2+OVZkwvnVoSCTwlzGz/WfkGBc60N1c2kw18S1dkwawpQBPPAnJSdz8jja4WH6DnYFStI+7h62KuzIG9FJjagvwfio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJtX8d58; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so18960425e9.3;
+        Sun, 15 Sep 2024 04:42:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726400563; x=1727005363; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lynL6C4hkouH3XP1yfEpNa/RXQ4liCR3A0iI32ucKD8=;
+        b=AJtX8d58X2P5P9ruP9Tu32dDnAn/MPLbvRAxqhJk2I8USZQhBgkO4TP2SQbhxZG/zW
+         ntWldP2/qV7Bkem2b+WKdQcrCMgsgKzqnIR4t2QRegt2clLIMMeF6f4MzinR5unwwo0D
+         j8xiYnA0ae3+dfvFpDzNw8MFauptmvujI+9KdDjAZyXIlSkrYkmy3xzohErkFmJwJfiN
+         7N9zn14/kU9Tgni4UkWUm1TwOL9NZomNIATCkr7b29rCDGM1FEZ2ygaPL2g3OlwOOKU8
+         8bRogtnOaBUzLf2pp07LwZBzuKoyREvzeyn39ctbq2iqWTKBuRi0AyNFU+9yVjhEBnR/
+         5NGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726400563; x=1727005363;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lynL6C4hkouH3XP1yfEpNa/RXQ4liCR3A0iI32ucKD8=;
+        b=g+/UFolut7qPg3d7XQNA8g5j8c0EwESoDUndB4VyKAJaHRdw9GSIRyTKNA6QKSNpgm
+         8yH+3IMUciDGV+A6ki4WSwr+aGI8ra/A7F5DOM6bcMzSDAx0XEadGofdgVZ9yz0WIKlD
+         eIlHTIBctNicef5sgpI30OsNxFwpiSOgtrhjslCnON8R2NHlaL8boSe2fcZiBz0fqMBy
+         X5aqf84mcrMcQwgKHy2ahtxwj3WDtHZX9ZNaxXPaRoFcphPGvGBA3aXZY72rXvnQcYON
+         4Q9Rxo87R0lzrPzhaNwAIIXXBKI0qwu+o+UEvAw+ksqDycROcXAL0aypxoW9ofHcj9PQ
+         zWVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEGLkkhKWTzxrpVpVI8U3dTNS+VK4qR1J4mT92YEIe0P/GcoPHZtGX3CUXlPtPXWrhud0ZgVUcuR60hHuL@vger.kernel.org, AJvYcCVy+AVOcIAutI3Rk2sanOvep4Ob6pMEqyamodpwk8jCiLDrSaWM7CT9UQVdoqm647qIEMLw4B/Efb+pxw==@vger.kernel.org, AJvYcCXFxpAHtAP0rOYFPlw1+9gCPdeqexKiMYrXqYWd1HhqgRVq9OgU9x0TxF1Kpfp7I7grNXWtYaH9UOegN95K/2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRCD3vtLi7D70TjSUlmD+UBAsICXcW568EOSS2bckk8JCDWj3g
+	xmJ0QSxT3mNKrMsDtYIvL4PmjubK3WOVFxyiAqM4kfO074GBu71n
+X-Google-Smtp-Source: AGHT+IFc0ijcmTZXOGVPK+Zk6DrSX+Gw9wOVUakAcGKwQpuRuUvsUpbaTUw4X0AcNIyoG255bHioTQ==
+X-Received: by 2002:a05:600c:4447:b0:429:e6bb:a436 with SMTP id 5b1f17b1804b1-42d9081b3d6mr53676555e9.9.1726400561903;
+        Sun, 15 Sep 2024 04:42:41 -0700 (PDT)
+Received: from void.void ([141.226.169.213])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc137556esm174961325e9.1.2024.09.15.04.42.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 04:42:41 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] net/mlx5: Fix typos
+Date: Sun, 15 Sep 2024 14:42:25 +0300
+Message-Id: <20240915114225.99680-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
-To: John <therealgraysky@proton.me>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Unknown <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-References: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/15/24 04:05, John wrote:
-> +config MAMD_CPU_V2
-> +	bool "AMD x86-64-v2"
-> +	depends on (CC_IS_GCC && GCC_VERSION > 110000) || (CC_IS_CLANG && CLANG_VERSION >= 120000)
-> +	depends on X86_64
-> +	help
-> +	  AMD x86-64 CPU with v2 instructions.
-> +	  Run equally well on all AMD x86-64 CPUs with min support of -march=x86-64-v2.
+Fix typos in comments.
 
-If these are going to be exposed to end users, we need *some* kind of
-help text that helps end users select among these options and what the
-pitfalls are.
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c | 2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/main.c         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I actually don't have the foggiest idea what an "AMD x86-64 CPU with v2
-instructions" even is.  Even saying "AMD x86-64 CPU" isn't super helpful
-because "AMD x86_64" is kinda a generic way to refer to all the 64-bit
-x86 CPUs, Intel included.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
+index 1477db7f5307..4336ac98d85d 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
+@@ -80,7 +80,7 @@ irq_pool_request_irq(struct mlx5_irq_pool *pool, struct irq_affinity_desc *af_de
+  * isn't subset of req_mask, so we will skip it. irq1_mask is subset of req_mask,
+  * we don't skip it.
+  * If pool is sf_ctrl_pool, then all IRQs have the same mask, so any IRQ will
+- * fit. And since mask is subset of itself, we will pass the first if bellow.
++ * fit. And since mask is subset of itself, we will pass the first if below.
+  */
+ static struct mlx5_irq *
+ irq_pool_find_least_loaded(struct mlx5_irq_pool *pool, const struct cpumask *req_mask)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index c6e951b8ebdb..a6bf3f975d52 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -1647,7 +1647,7 @@ void mlx5_unload_one(struct mlx5_core_dev *dev, bool suspend)
+ 	devl_unlock(devlink);
+ }
+ 
+-/* In case of light probe, we don't need a full query of hca_caps, but only the bellow caps.
++/* In case of light probe, we don't need a full query of hca_caps, but only the below caps.
+  * A full query of hca_caps will be done when the device will reload.
+  */
+ static int mlx5_query_hca_caps_light(struct mlx5_core_dev *dev)
+-- 
+2.39.5
 
-I assume that the compilers have grouped the CPUs into epochs that have
-some similarity.  That's great and all, but we need to tell users what
-those are.
-
-Why are there v4's for both AMD and Intel that do the exact same thing?
-
-+        cflags-$(CONFIG_MAMD_CPU_V4)	+= -march=x86-64-v4
-...
-+        cflags-$(CONFIG_MINTEL_CPU_V4)	+= -march=x86-64-v4
-
-Why is this copied and pasted six times?
-
-+	depends on (CC_IS_GCC && GCC_VERSION > 110000)...
-
-I'm also _kinda_ surprised we don't have some kind of Kconfig option to
-just pass random flags into the compiler.  That would be another way to
-do this.  That would also be a, maybe, 10-line patch.
-
-Alternatively, anyone wanting to do this could just hack their makefile
-or (I assume) pass CFLAGS= into the build command-line.  Why is
-something like that insufficient.
-
-In the *WORST* case, we shouldn't be doing this with bools.  Do this:
-
-config X86_MARCH_VER
-	int "Compiler Micro-Architecture Level"
-	range 2 4
-	depends on (CC_IS_GCC   && GCC_VERSION   >  110000) ||
-                   (CC_IS_CLANG && CLANG_VERSION >= 120000)
-	depends on EXPERT
-	depends on X86_64
-	help
-	  Specify a specific compiler "micro-architecture" version.
-	  You might want to do this when...
-	  You can find the best version for your CPU here...
-	  The pitfalls of this option are...
-
-Then you can do fun like:
-
- config X86_L1_CACHE_SHIFT
- 	int
-	default "7" if MPENTIUM4 || MPSC
-+	default "6" if MK7 || MK8 || MPENTIUMM || MCORE2 || ...
-+		       X86_MARCH_VER >= 2
-
-which has the added advantage of never needing to be touched when v5
-gets added.
-
-Oh, and this:
-
->  config X86_HAVE_PAE
->  	def_bool y
-> -	depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC7 || MCORE2 || MATOM || X86_64
-> +	depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC7 || MCORE2 || MATOM || X86_64 || MAMD_CPU_V2 || MAMD_CPU_V3 || MAMD_CPU_V4 || MINTEL_CPU_V2 || MINTEL_CPU_V3 || MINTEL_CPU_V4
-
-is rather silly when M*_CPU_V* all:
-
-	depends on X86_64
-
-right?
-
-So, taking a step back: Please convince us that this is something we
-want to expose to end users in the first place, as opposed to having
-them hack makefiles or just allowing users a string instead of using the
-existing CONFIG_M* Kconfig options.
-
-Then, we can discuss the structure of these options.  Should these
-"versions" be new "Processor family" options?  Or, should they be
-_instead_ of selecting a "Processor family"
-
-Then, should the new Kconfig options be a series of bools, or an int?
-
-Last, how do we deal with multiple vendors?  Or do we need it at all?
-I'm not actually sure at all why this has the AMD versus Intel
-distinction at all.
 
