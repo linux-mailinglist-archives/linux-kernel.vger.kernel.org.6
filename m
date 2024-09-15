@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-329845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B276B9796A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:49:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5769796AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E27AA1C20F11
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A715D282A27
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDEB1C579D;
-	Sun, 15 Sep 2024 12:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8191C68A9;
+	Sun, 15 Sep 2024 12:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JjMqU2h4"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AL/Bsuj4"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FE9184E
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 12:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB40184E;
+	Sun, 15 Sep 2024 12:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726404541; cv=none; b=c++0UXxQTtPouVYG0JDboA7M/DM5D3sZI8DmBSTc5U2StUZgZN9g7B7MfyTdpUTLFtyLWZ4XzSLv4lqu7IUPE3ZjhLbQP3xvyrpk9Kxtw5pDn5T11JBqgLu/FI4FlvcT6zEWXQKTbann2G4QyAkRlp2wOonnoeO6mExgWmC7rZ8=
+	t=1726404740; cv=none; b=ntOWvgPtpPUR16cM5k2EMxd6GzZOeGhgVdxIOkzGXaALmj8o12ypUGRIyJTCB4SGe9smunHycFKMRRIkd6KnqoTHuESTrjRKM/vJMDzA/EW0vzLW8ZF8Lxf4YeyfevwxLgh3KpXZiSW6UVeCYTQvAAyJ7DjVgyGiOdZdljlpBo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726404541; c=relaxed/simple;
-	bh=qVRP/dgmh6U4Hg5y3CGOE++A5+kvwiVLlE8hoiQFl+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FOQMsERzBFIT0/A7dfKuA3BLQ6gHgj9SPfBlQqFwXxYfJSX/UcdlHhA6sXi0E4nIxReVbZoI899rrU1g2D0ZHM7xk7UFxXSZjHxKq1B695sFUrFkB1wF+BPOPy6Ozpir6KfoxZi//PXluT9vnL2WyGpnjjxum2Ojq4DUUJCfE4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JjMqU2h4; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2697C40E0289;
-	Sun, 15 Sep 2024 12:48:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id t8wrKQS7D4WO; Sun, 15 Sep 2024 12:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1726404524; bh=twWhhJv2IWqN+i3BOP1ACMclSg7Wkbfm6L0PuPo6+X4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JjMqU2h4X2E0f0w2RHFQ1MY0Om2YxUNsfJJVrgzlUoTcfG09IzV9RYPAl9g22tsGd
-	 6gSKdsLs0oDurNFHm9A5GwMvxf4gGImkQNSXKKKid7TlAmSOxRmz+mWDtaR/i+1ib0
-	 eSDCeU3QMqriUIHGH7v9OX9TZ48em8PH5TcWo/y1mHcp3v9+0TFT9s8ComoMvuTC0L
-	 XXfCdNfmSnIMed28KWaGhlc/9840kCEd6lAiqOxCK4jXiQo6kCVSWQQzTShu+hoC43
-	 DbbXLXUjxPfod3hT15dF6R6Ww35i1Go9vJ2oJjCUXv5CUYaYAVzf9l/AbQay92kYRu
-	 /gZE0Jt8xDhu5t8hnpe1x+pvFxcxSYcvUWKNcN3rKCKeTqJrWzGXuO4w8/jC1THbeh
-	 +EG0D0lotRrVe37RlmacXU77H2bEs+BARQufSj2q92VZBQefkDDSoljIa9zQEZXCAL
-	 S7jGa8NPMn0wHyTCAk0Pthtc5JacI/MF0CfTQ08i5xXqBvYjdKoqRexjb8f5oiDBWh
-	 D0CHqYKTgcsxuFYRzzSobHGhKdEocwrhffTAfiJks7lYOIl8ZIaVswaNeqx6ufWNqD
-	 P2mXm3LtYNuW4EE74lA+zK2fnuqDJSLab18MpWZxxuM1l/wc0gFLziUwxXeLJaEqMY
-	 fVH3hM6x7xLtJKpvmurpsIJo=
-Received: from nazgul.tnic (unknown [88.128.88.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ADD0040E021C;
-	Sun, 15 Sep 2024 12:48:36 +0000 (UTC)
-Date: Sun, 15 Sep 2024 14:49:44 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: John <therealgraysky@proton.me>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
-Message-ID: <20240915124944.GAZubX6LAcjQjN-yEb@fat_crate.local>
-References: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me>
+	s=arc-20240116; t=1726404740; c=relaxed/simple;
+	bh=UD+FaTe/XS6BZJvtZd3fLAHoxC9hPqHBX2elpi9dmww=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cBnH0/Nk3teVyQ+KWPXDdT4NBNoy5aUnHw/14zr0OZacbyz5TQaTqiVgcxRXiz3MSxe5411TCEKVsLHfy048WoGZEQflWtKhv2V+HdWeT3ef231ivLmpb44JAVouEhKWHdJa509iytu86mUmuiNGLYpBdhicvmeseiI7Xt4T9Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AL/Bsuj4; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so35001025e9.0;
+        Sun, 15 Sep 2024 05:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726404737; x=1727009537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CSOs8W1FAJEI0MCh2EABTXHbZJkcnbnhZeBAaKLM7nU=;
+        b=AL/Bsuj4WZBFvn1JCdGLRDc+UAr7QcwT5XKWaFZle/ngOzKLOde/KXuuyFiihP520x
+         doGAbB0g1EJcOXWp2pcwy8Oqr4i9BYCo4Tm3Sxpwv71ONFMFS3kJpERCsxgoKEFBO57A
+         HGNfW9lJKdkpqGMFL7smP/Ms3ixJDBo6hQhKI7FQ4tJ3YKBb/6x/LGG1PZMLypaW9nj5
+         ZPBkv++ozwKNbmzIdN5Mxu0yIUQB9eLrJ2u1/243V8T929FgcEXJ7sY/Vo84nNwa3NZp
+         sWrYfJG2SfgYKE7GhY8QTmboalmDjEOStaplKmvNuaJPIDTPjobZ0jrDPrEAOPgraZD+
+         BFSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726404737; x=1727009537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CSOs8W1FAJEI0MCh2EABTXHbZJkcnbnhZeBAaKLM7nU=;
+        b=rOhqxIzKnbt7KKYaUV6LXX77QB5wVNTJdO9O1pNFofw1H5mis9RgOCuqqH8q/fT8E7
+         vlsfBqEuJDC8J89+peVvGZhWQFNe1Tx47cKpiuKcN4o97cIlQc8/fkmchmT6c54NYebs
+         1NMn2txjFX154GhOK1NK6/mRUWJnPTklV+22fHNu057v4x1wecNHApsVl5AgSipndywN
+         IezdPOHvFtYmsg0xeqZBr40d99RE4/umxMKU0xJRMoCLjURfySPG0R+4gwIm17Cpqtv7
+         1hFJhezb2v7AsDWco22cmDNoU2rCCWVyL32jT7l8eQRBqLk2lsIOfqDVs1PUDlhtwaHz
+         lokw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUkwD7h4N+fVBJbWaJvCCTrPFNsXnOSbe3JHEVRsFO2l6rpeEcgSVqs0vpQ3mAhlCEkKq1+KUc5Vj/Km2V@vger.kernel.org, AJvYcCWhD9G5iZ9kTZ5TGM5k1MB2msOlpLEOaxcujyw3IeubBuX+1AO3b9EKbjxUrjDK8J2r7xNoylY6X44ZLoCR9y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8JO41VLFM6Xr5nrFMb/qm82sEHfBvR/C3DGHtQx0nkjg8YIUI
+	NTd1m+ENlkG1rYZCOw+oNXWtTIra2vlvbzIiLjlKxYMiIy7bsD4n
+X-Google-Smtp-Source: AGHT+IF8MKtgOrHnS3QqlOowMhjeIVw7D2zOA5gMTQlJio7smcc/kN3ZPm5lrm404ZVDP3NNZeAqeA==
+X-Received: by 2002:a05:600c:5489:b0:42c:bb41:a05a with SMTP id 5b1f17b1804b1-42cdb5789fcmr94458055e9.34.1726404736632;
+        Sun, 15 Sep 2024 05:52:16 -0700 (PDT)
+Received: from void.void ([141.226.169.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f99ebsm4622911f8f.63.2024.09.15.05.52.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 05:52:16 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] ethernet: chelsio: fix a typo
+Date: Sun, 15 Sep 2024 15:52:04 +0300
+Message-Id: <20240915125204.107241-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 15, 2024 at 11:05:52AM +0000, John wrote:
-> GCC 11.1 and Clang 12.0[1] allow for the following new generic
-> 64-bit levels: x86-64-v2, x86-64-v3, and x86-64-v4.  This commit
-> adds them as options accessible under:
->  Processor type and features  --->
->   Processor family --->
-> 
-> Users of glibc 2.33 and above can see which level is supported
-> by running: /lib/ld-linux-x86-64.so.2 --help | grep supported
-> 
-> or: /lib64/ld-linux-x86-64.so.2 --help | grep supported
-> 
-> ACKNOWLEDGMENTS
-> This patch builds on the seminal work by Jeroen.[2]
-> 
-> REFERENCES
-> 1.  https://gitlab.com/x86-psABIs/x86-64-ABI/-/commit/77566eb03bc6a326811cb7e9
-> 2.  http://www.linuxforge.net/docs/linux/linux-gcc.php
-> 
-> Signed-off-by: John Audia <therealgraysky@proton.me>
-> ---
->  arch/x86/Kconfig.cpu | 60 +++++++++++++++++++++++++++++++++++++++-----
->  arch/x86/Makefile    |  6 +++++
->  2 files changed, 60 insertions(+), 6 deletions(-)
+Fix a typo in comments.
 
-Patches like this one appear off and on on the mailing list and each
-time I ask what's the upside of maintaining this complexity?
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And everytime I get no reply or random handwaving. That's because -march
-settings have no noticeable effect on kernel code generation. Because
-the kernel code is already pretty much optimized when generated by the
-compiler and all those flavors don't bring anything additional.
-
-So this is not going anywhere. But hey, I'm always open to nice
-surprises...
-
-Thx.
-
+diff --git a/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h b/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h
+index 4c883170683b..ad82119db20b 100644
+--- a/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h
++++ b/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h
+@@ -49,7 +49,7 @@
+ /******************************************************************************/
+ /** S/UNI-1x10GE-XP REGISTER ADDRESS MAP                                     **/
+ /******************************************************************************/
+-/* Refer to the Register Bit Masks bellow for the naming of each register and */
++/* Refer to the Register Bit Masks below for the naming of each register and */
+ /* to the S/UNI-1x10GE-XP Data Sheet for the signification of each bit        */
+ /******************************************************************************/
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.39.5
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
