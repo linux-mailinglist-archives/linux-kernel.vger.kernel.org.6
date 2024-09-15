@@ -1,76 +1,104 @@
-Return-Path: <linux-kernel+bounces-329686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276F89794B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:11:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2659D9794B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD342830DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 599A11C212C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA37182C3;
-	Sun, 15 Sep 2024 06:11:49 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DED1A270;
+	Sun, 15 Sep 2024 06:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="DER2PoBD"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099361B85D6
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100C21B85D6;
+	Sun, 15 Sep 2024 06:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726380709; cv=none; b=ryuEmieU6W+3aMPvsL/AgoG3JM5UgrJwxJi5esK4g+fin87Nz2nGYPIbvCIWBKDrbaI8mw0mmDKyFtsvJObWFTwdS8TuayWITHCAATkR4Z0l/H9UN+d+xlwXZvSs/ZN8MQr2WKVg+iRylYWfF5x1eM4ySZVip1IGDCdcGlaS0B8=
+	t=1726380896; cv=none; b=igcYfGc4vwHfjIZNdJdoL1ha8g9j4feKTyvRbIzjLao0FHLc4SxqV7Fdcn+lHSJojNDLTHlcBiz6qJtFU9Su6fjgP6mp1pHLU0LjuXg/x2CscNTJW1YPd+kJ+6+HlRBSfCPIgtC8gLvlawR/LtwuNAeVaMpM8Zz451AtPe5RtLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726380709; c=relaxed/simple;
-	bh=krM0vfjQ6huA4N4SXybTbbUXxW2Fq2dbHTuBWkmzobg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Pmz5ihlEMrie9pm8nWdo6K4qCvbvqyggTa7yViA6QCNy5/l1HGXSVyUE/m7bWGYdO2liIbLCdySi0DqoGUmgJ7/qM+IgEGArxAbUxsUn9P/Q58UNWJuQUqw712LZmtIOD9RAqpISubmbeMiKx3tCIscQKqBDdfLk3H/lhUbrCpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a09aecb414so27872015ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:11:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726380707; x=1726985507;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=krM0vfjQ6huA4N4SXybTbbUXxW2Fq2dbHTuBWkmzobg=;
-        b=f+E4SOIVaXu2FZEIq/8wp6rbihd62TN+j2XHl+UlpK7fYXvnkUIOA/Lvy5TgcJuRVL
-         3rZnls/f9elscp+xj3q342fvFwhk9sWA6XWP52Hn82UQZfdQ+cuht8M5lHxjMxU3KoSg
-         A6hZHt/Xe10SofdALn8WqrM2xGUdvE6BhsNlHP7xKpW4QsE54kflA4ZUhICEjNOY7eth
-         FTMMDb2LZK7H8mhch4V/VlAgcAPQXLC5os4Di0ABPWCOZXboVOdIbuJEe8r6BPJszbRx
-         LuCZJYOCHD9swnO5JLSYfOGaD5313RdU5t4wEY8naNwTh+rznH+NRglbW93SHhyPZYdh
-         arRg==
-X-Gm-Message-State: AOJu0YyZBt3ekKRLZXe2XA23MHKa9ZE1nKPjIX2d71JvW28woPfift4L
-	4L7JurQIbSP8g9iOJpBWiqIX8GMUkNf6dC5SCJJrKn+f5Dik11OOsBn+Ih8VDa/KCG+OdSqs73e
-	0w3xktZTW32gE+TA6CMjxdzLD/fu1ZDc980Je+wp7luJ1QH8clA4fMgc=
-X-Google-Smtp-Source: AGHT+IGjVktiMuLWJECbiF+IZlIsZ9MGZWs2fMTVS1U3gaaFTWtpforNtl7WYJZaWdeh2RJ049m/F+7UYKanxhXW3HyvFrGT1ieY
+	s=arc-20240116; t=1726380896; c=relaxed/simple;
+	bh=QFcX13p8OW5CrGZzXg3ZbeocYkXwmHrZHAM9iVL4z2E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GNi4PTtqb2MKobjfUWDS8vwQd+BXf7IenBMJlIbLgW2DGcXaeFo6sCaxHKZ7EwJNnFLxnIYCQrJ6OFQ4aBW94Va2mSyltxpPV+/EgW+ECKhVtBJ78YXBkrPZHXXahWcUxt6Z3nwGxd/5LScCG8zzCFJzPkAOORVXqTx96yunIcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=DER2PoBD; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=f+4XgwVGxJeOjUz5ZvQCVWlV8A1nJn2/v5ZCP+iqPbM=; b=DER2PoBDYhRvbzjwgZnsh1iREo
+	m3QYH/xlflR6I9HxIc99+Vl1nBuJBnIuWf9hFYtFnNYq7A1B5q/rf+KMKyFf2xyPScBLmkS7byTpv
+	0O4WSDqQ1LM1xbyoatxdmo5mu9C3OJ/eSNMNb3lABEqxtnLFyzPvbo8p6kxcy2wRqe+O9ucH6s0d4
+	+oFbx3NFjhBTqcKhfPl7NobNfhFG7Aj04+DmkdcmiBLMfpNicSSeU8ZpGcQO+6ZJM/xA/50YaQ1Tq
+	Ek+GjfTq8e3sGBMZXuEUjVacGdqeniNoqbdFDYEYwjh0iVv4FX456PTyBZheaIzeTEcxrLW6Q34pm
+	NVMtw74Q==;
+Received: from [213.235.133.41] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1spiWX-0008L4-NC; Sun, 15 Sep 2024 08:14:18 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
+Date: Sun, 15 Sep 2024 08:13:53 +0200
+Message-ID: <2748376.mvXUDI8C0e@phil>
+In-Reply-To: <4766d230-c9c3-414d-a954-3b0c890e7e08@collabora.com>
+References:
+ <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
+ <2376712.1SvkZsmPdQ@diego>
+ <4766d230-c9c3-414d-a954-3b0c890e7e08@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:144e:b0:398:4bda:cf66 with SMTP id
- e9e14a558f8ab-3a084942bdfmr134727425ab.18.1726380707059; Sat, 14 Sep 2024
- 23:11:47 -0700 (PDT)
-Date: Sat, 14 Sep 2024 23:11:47 -0700
-In-Reply-To: <000000000000ab9af106150da113@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000caaab006222254f9@google.com>
-Subject: Re: [syzbot] memory leak in corrupted (2)
-From: syzbot <syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Am Samstag, 14. September 2024, 20:28:59 CEST schrieb Cristian Ciocaltea:
+> On 9/10/24 10:08 PM, Heiko St=FCbner wrote:
+> > Am Freitag, 6. September 2024, 03:17:42 CEST schrieb Cristian Ciocaltea:
 
-***
+> > That hdmi->ref_clk just accidentially falls out of that loop at the end
+> > looks somewhat strange, so getting and keeping that refclk
+> > separately would make this look cleaner.
+>=20
+> I've added /* keep "ref" last */ comment above, but I agree it's not real=
+ly
+> the best approach.
+>=20
+> I'm going to submit v7 in the meantime, as this was the last remaining op=
+en
+> topic on my list.  I guess we can figure this out afterwards.
 
-Subject: memory leak in corrupted (2)
-Author: danielyangkang@gmail.com
+yep, that is fine to figure out later, as it's mainly a style thing.
 
-#syz test
+
 
