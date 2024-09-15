@@ -1,152 +1,154 @@
-Return-Path: <linux-kernel+bounces-329987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CA3979835
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:41:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4E0979837
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C88CF1C2105C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:41:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD258B21CBB
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBEE1CA6AF;
-	Sun, 15 Sep 2024 18:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BfiZuwXU"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00AC1CA681;
+	Sun, 15 Sep 2024 18:41:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AD61CBEB5;
-	Sun, 15 Sep 2024 18:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1211C9DFF
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 18:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726425574; cv=none; b=mXxAmg471PSXHc0eis9i9AgeLZMLwNFHot2Dt2Pe8aepdDStl3WTu9VZKLGyR/SLlFqm8B8bMFZdpleF5N+RxJEZit7qaTI3A/gDmqJOZkl+/IAQztebSm0kNS18XjnmZebRzAHw+7X9xBCw1kmJ0h/RbwzR/sk7Lqi5XicW3IM=
+	t=1726425665; cv=none; b=QCrx1gW6HJxHQ+Fg9Np6GL9Uml/7A0BE/dd2lcdYHHzhfVJL7tsKzr69/MCdCrQsXnwgcGbbr6ADDG48Jmgy0sw0oqnVRZO6IN3DZu0dhGr5aeGyBnJdpdhpsOCCNuruotnbvF5LW1RbUVBQNdndb4olJtLTbWS3VI7GKxgHfFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726425574; c=relaxed/simple;
-	bh=ujI3ob0yLW4HSxrKVQjvMzAe8JcPZ3eIAEBeL/dVX6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPSuCfCDnvF6asJ8iDP1u9qIXwixdpAlhDUjphc8yjRrDIV+RbruBpKy/YP7CxW1jcAUt7QeByAzo/Z0AwRVBAuXZvpWpzzyjXVl4CCSSxglSAyMZGQNN5EtpN5cOIZ3gAgTd3gtgFxnI5u62sJpeIqFQJoh18mPtVLj8wrsvz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BfiZuwXU; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=l1/sYaWb1avWw0suXdNddcpJnS6z0B2rjO19tHcg/uI=; b=BfiZuwXU2BH++axM4Gw1YN95tR
-	c1O4s11Y39h0Mz3c1+8MmNLDkr7F3WGYsb/1sp3uPpZOmCNYiYjBuZPwhW7FxF0oa/08uglBM1ggJ
-	0NL+hulG2dqPrP4ONB0plbmWRCVbAr//BF+AteapPoy4tugIR5nsfpv0Fh7DbGLbS8YvkUP5hA+t0
-	5ADTWU/Pz+hNJBSnuZsFmxD8sLk47JDCoWuc6d0igsUP0V9VburIFLorPQohHCFH7b2qUUfr/pR1w
-	j97a+22+AQ99ZAZWYVe/FG6lI5a3H+UqGBY28diMxY1P6UoZo0BisMBS96IZcHOh006QcnEchT1Kf
-	wzugQBoQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1spu9J-0000000CjB7-3t5m;
-	Sun, 15 Sep 2024 18:39:05 +0000
-Date: Sun, 15 Sep 2024 19:39:05 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v10 6/8] rust: file: add `FileDescriptorReservation`
-Message-ID: <20240915183905.GI2825852@ZenIV>
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-6-88484f7a3dcf@google.com>
+	s=arc-20240116; t=1726425665; c=relaxed/simple;
+	bh=iAirVr/PDoQbjcJ3UWzFf81sxQF57szPJR1tu8UljmA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ulArnKo4GcY8VcLEhc3aDrrfR5cQI+bcFiyCylZZK6NAthX5NUFqcjRpuF6f984WIdT2O2Bj1UBVCD4tr7u+0g13F4tuxIorDZjO8xJtLziyKgPg6wcQHKR5NI7/nRu7rb/Ld5kr1LalTzNy4oScJp+YfmGKo9nLihr+ZxDRYbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0629ed658so82315135ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 11:41:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726425663; x=1727030463;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=axSYlTik1BW5U6rzNQvrcq+UMpeJRDIHWIjkI85cetw=;
+        b=gzkHj5AJjFzOaRF8BwQsO4T13TLmQDLyvpJa64pKJIjCUCJNP6DRMtvQakA6rzl/pI
+         CCnZkmWz4DjFqz4ge8JNU535lC4jQRdchLYFh5ASptNCA+Bx/tJb2Xrq60BBZmJNvUP7
+         znig91XeMq9KRvFQbV2F15Q/aMX86v9Eb3CLUs7H8Z6ue6OyOQBDKVU69uEqSuKJk4aF
+         Rfcw6PvpmEH+dQeEEPwIITVft8zYWUuCAz31LiBz6wrecfpy61W/48KmStg3af0ZPwu3
+         KVnKiFk4gsZo/ghfpWRBjO0FERqSxXZ7TTxC0t9tHqoCap2AF1qHE54Js2cTvrv9YvGK
+         jMqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlidfvWy51GgfbMwgM+m1qvtd+/L8oEY/KEtKPonkTgAYg2IQDb3k/0ykickN+Z5ejM3hhR6Y9EYEjdyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLWxJ1P9xCxBerBgqdtD9VihGvKoNPOlJvldYA5rn6XjR6ZLXf
+	80cw5C5O+3otH5XKRugzw5o3PMEC8L1Z3e9q92EGbEzLhvDJ4wF4JykZU/X1Go6eEaQ3mTUFYG8
+	/GbNpjl5ck58SHRpAnSPp68YvYW9Te1sTyUlizMsJ5gDbiIPMZPGdNnQ=
+X-Google-Smtp-Source: AGHT+IGZiuusz9APmkDNUZ/S4dbJO1p5/YEgUvKNRBfCnp+6wbvkccstA736bOpip64D46BTrL0DHrZSpdT74Wt6gBBCb03RVjMx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240915-alice-file-v10-6-88484f7a3dcf@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6e02:1d1a:b0:3a0:97fe:e89e with SMTP id
+ e9e14a558f8ab-3a097fee929mr47819725ab.18.1726425663029; Sun, 15 Sep 2024
+ 11:41:03 -0700 (PDT)
+Date: Sun, 15 Sep 2024 11:41:03 -0700
+In-Reply-To: <20240915181301.18904-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000060587d06222ccca6@google.com>
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-infoleak in iowarrior_read
+From: syzbot <syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Sep 15, 2024 at 02:31:32PM +0000, Alice Ryhl wrote:
+Hello,
 
-> +impl Drop for FileDescriptorReservation {
-> +    fn drop(&mut self) {
-> +        // SAFETY: By the type invariants of this type, `self.fd` was previously returned by
-> +        // `get_unused_fd_flags`. We have not yet used the fd, so it is still valid, and `current`
-> +        // still refers to the same task, as this type cannot be moved across task boundaries.
-> +        unsafe { bindings::put_unused_fd(self.fd) };
-> +    }
-> +}
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: kernel-infoleak in iowarrior_read
 
-FWIW, it's a bit more delicate.  The real rules for API users are
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+ _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:209 [inline]
+ iowarrior_read+0xb02/0xdc0 drivers/usb/misc/iowarrior.c:326
+ vfs_read+0x2a1/0xf60 fs/read_write.c:474
+ ksys_read+0x20f/0x4c0 fs/read_write.c:619
+ __do_sys_read fs/read_write.c:629 [inline]
+ __se_sys_read fs/read_write.c:627 [inline]
+ __x64_sys_read+0x93/0xe0 fs/read_write.c:627
+ x64_sys_call+0x3055/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-	1) anything you get from get_unused_fd_flags() (well, alloc_fd(),
-internally) must be passed either to put_unused_fd() or fd_install() before
-you return from syscall.  That should be done by the same thread and
-all calls of put_unused_fd() or fd_install() should be paired with
-some get_unused_fd_flags() in that manner (i.e. by the same thread,
-within the same syscall, etc.)
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3998 [inline]
+ slab_alloc_node mm/slub.c:4041 [inline]
+ __do_kmalloc_node mm/slub.c:4161 [inline]
+ __kmalloc_noprof+0x661/0xf30 mm/slub.c:4174
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ kmalloc_array_noprof include/linux/slab.h:726 [inline]
+ iowarrior_probe+0x10ea/0x1b90 drivers/usb/misc/iowarrior.c:836
+ usb_probe_interface+0xd6f/0x1350 drivers/usb/core/driver.c:399
+ really_probe+0x4db/0xd90 drivers/base/dd.c:657
+ __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
+ driver_probe_device+0x72/0x890 drivers/base/dd.c:829
+ __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
+ bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
+ __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
+ device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
+ bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
+ device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
+ usb_set_configuration+0x31c9/0x38d0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x109/0x2a0 drivers/usb/core/generic.c:254
+ usb_probe_device+0x3a7/0x690 drivers/usb/core/driver.c:294
+ really_probe+0x4db/0xd90 drivers/base/dd.c:657
+ __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
+ driver_probe_device+0x72/0x890 drivers/base/dd.c:829
+ __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
+ bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
+ __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
+ device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
+ bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
+ device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
+ usb_new_device+0x15f4/0x2470 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x4ffb/0x72d0 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3393
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-	2) calling thread MUST NOT unshare descriptor table while it has
-any reserved descriptors.  I.e.
-	fd = get_unused_fd();
-	unshare_files();
-	fd_install(fd, file);
-is a bug.  Reservations are discarded by that.  Getting rid of that
-constraint would require tracking the sets of reserved descriptors
-separately for each thread that happens to share the descriptor table.
-Conceptually they *are* per-thread - the same thread that has done
-reservation must either discard it or use it.  However, it's easier to
-keep the "it's reserved by some thread" represented in descriptor table
-itself (bit set in ->open_fds bitmap, file reference in ->fd[] array is
-NULL) than try and keep track of who's reserved what.  The constraint is
-basically "all reservations can stay with the old copy", i.e. "caller has
-no reservations of its own to transfer into the new private copy it gets".
-	It's not particularly onerous[*] and it simplifies things
-quite a bit.  However, if we are documenting thing, it needs to be
-put explicitly.  With respect to Rust, if you do e.g. binfmt-in-rust
-support it will immediately become an issue - begin_new_exec() is calling
-unshare_files(), so the example above can become an issue.
+Bytes 0-72 of 73 are uninitialized
+Memory access of size 73 starts at ffff88811889e000
+Data copied to user address 0000000020000000
 
-	Internally (in fs/file.c, that is) we have additional safety
-rule - anything that might be given an arbitrary descriptor (e.g.
-do_dup2() destination can come directly from dup2(2) argument,
-file_close_fd_locked() victim can come directly from close(2) one,
-etc.) must leave reserved descriptors alone.  Not an issue API users
-need to watch out for, though.
+CPU: 1 UID: 0 PID: 6520 Comm: syz.0.143 Not tainted 6.11.0-syzkaller-g98f7e32f20d2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
 
-[*] unsharing the descriptor table is done by
-	+ close_range(2), which has no reason to allocate any descriptors
-and is only called by userland.
-	+ unshare(2), which has no reason to allocate any descriptors
-and is only called by userland.
-	+ a place in early init that call ksys_unshare() while arranging
-the environment for /linuxrc from initrd image to be run.  Again, no
-reserved descriptors there.
-	+ coredumping thread in the beginning of do_coredump().
-The caller is at the point of signal delivery, which means that it had
-already left whatever syscall it might have been in.  Which means
-that all reservations must have been undone by that point.
-	+ execve() at the point of no return (in begin_new_exec()).
-That's the only place where violation of that constraint on some later
-changes is plausible.  That one needs to be watched out for.
+
+Tested on:
+
+commit:         98f7e32f Linux 6.11
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=117b97c7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3ab8d456be59dad9
+dashboard link: https://syzkaller.appspot.com/bug?extid=b8080cbc8d286a5fa23a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
