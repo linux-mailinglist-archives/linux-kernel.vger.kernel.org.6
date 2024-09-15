@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-330057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A690979914
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A77D8979918
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2995928287B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BED0282AC6
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1806F2F2;
-	Sun, 15 Sep 2024 20:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EAD49620;
+	Sun, 15 Sep 2024 21:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="XcR10VZF"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJfz6NfO"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6F65A4D5
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 20:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438EA17C69;
+	Sun, 15 Sep 2024 21:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726433986; cv=none; b=GrDsx0+6XHDvSS3GnFrb7iHBOREbJwUcjg1V5CUXtmP8je0wO2KmqsGNbwzL+6pg91g2ZZMDp+CMPkhJuIGFGT3dWfMNvoPjKx5nqNgTdhlKLiL8HUt0Rab8sWA8QAGi/58Zl/OidDi+MI4RhvI24ZxbUp5troNObve8/LJJ4o0=
+	t=1726434372; cv=none; b=nSS1JMSRou1uHWkYmzxhgXSvpWUGq14Nw24DRihzVJiEY35Iv5ZSP9xDBh/ubM8Kmy3f7b9suDId0ctuyuCkL/bQYr2ggzHlLViZzb8LPJ5lsDSMy9pDmugSa5jCg0ssoUjHy39IPrb3+MAehX8Gebmhe6dKw/CIoHfYAhSr8YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726433986; c=relaxed/simple;
-	bh=fd+FZuZJiHUm0PxnKAViKC5VKt6xV0cdYB0QnuTsf0s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=mprc6VIGXgjScZpXyGcEKXKaL0wgPV7DukNFhjZU2UyzolDkAtEC+FS9ScyBN9IUTdW3DX+F7DniBa8vCuVB+shTBZ1ucayWuRsbFOceMlxGv2L4z1eumG+ho2EyPO7JKy4PKDiPs6N8mOBjgElkXJ/GFixbuT2CnCiZq8FKMLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net; spf=pass smtp.mailfrom=telus.net; dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b=XcR10VZF; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=telus.net
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20699ab963cso2472895ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 13:59:44 -0700 (PDT)
+	s=arc-20240116; t=1726434372; c=relaxed/simple;
+	bh=2O3gdX3u82tGv2/Dix0+XKlk7OiqassCAjQjSXroIPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BA+/OarHCNiin4eNx3Wi1tdSKfhv27zG2l+eT3oC5hseZ/Hggq3567B0QjyBBL6jqHdkFjVm1ICQKq3SYOgt53RRqCY7TvXfN12w1GaInapl0iXAEnYNUsGGFQIimWRhGjPwYZYg0z6EEyzYEjwGirPpUVeSQaoTLiEQ8jndLTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJfz6NfO; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d446adf6eso375156466b.2;
+        Sun, 15 Sep 2024 14:06:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=telus.net; s=google; t=1726433983; x=1727038783; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f3jzBcU4H9vVYqtYmdjnG9gCLBDa0F/Pxz22ykP76Xw=;
-        b=XcR10VZFxsOaBlZF4XwkiarjAJUX5Q4hkPR73ZKKHhpNTHQ2ODkQD67emUzuw/iWYC
-         hlW3aHLEdFtrD0dYAa7bIsY6NjperpL105HV4mZ3jOCj+8nUJvN+9LCtA6AfCTTgWJRX
-         dS7RxAUe734zOC/rmDS6ZI7aAW/F60XHY0R8Pthz9n/A51uzizwABZzjt//gIS3Co04H
-         XlNdAVlHTie396pinZ5EAIqZQXmbAO3ZPjBABB9KQvzMcsdrHxFUkPo6iQHN4Fkyyqga
-         rTU5bDO3SPWX0Q5iggUUyRrac3BT34rOlhDWDUNIMvbAQCxBQWfo/ES0ZLUecWHabRK0
-         H1uw==
+        d=gmail.com; s=20230601; t=1726434368; x=1727039168; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oWWwfkH9KQrIY6QEmR0wF7YR/KfyiBzU7EaMIwcIgIc=;
+        b=MJfz6NfOjCC/MiQjpNZss3BH1sT+boWkSVq51OG/mehdP/83YPzGdSv6yZ5ohLNpC7
+         U6plNmVQVGGKfmjeBhOR0wwjsBU12+ua4RdSLEbVC4Wnb+4kt+OMF8jtiNXDgKLKw7Sc
+         c2Qyo7FSEX5PPX+q33gj+yOomGuadNUVvqdhG26auoI7J//0h7TmEEWndJBSM2TznOkg
+         ZwP8liGz1VTjyOybycPJORtBqBFADIxFFgYx6Kkyq7/KqKcntc6xud8RFgXcvgyODirI
+         9TlMc63g63coETS6Jy5C/ugLS42q91SFoGHjO/mM9odwt2a4h/SZthOiz2mUZ2JSLuXF
+         MXzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726433983; x=1727038783;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1726434368; x=1727039168;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f3jzBcU4H9vVYqtYmdjnG9gCLBDa0F/Pxz22ykP76Xw=;
-        b=RuJ+lzwGBLlPxKtaGGyViYaW9PprKEH4801Ci6g6DiBU732OBUnW1ooVwYAYVHl3Ym
-         dFaJIMCLrvoC8sfyxAB4LyILJ/4RpMpB8mrOfgIq0ERe7Xq+CBT0eb8xFJExJ2pJrwug
-         EmRqKS/JUDSFwV+IZhQMz7LjX1frR3FsC9kqRpC1y/sfiiqyTjytpJzDMx/G9H9eKeom
-         OtQE9JFwThYKdGYmFIzCk0LrJipC+NK1f5xFPel+pzjGtYSbAK261VcNI5M7lXWIfEIt
-         eoOfzouPyxAQhL09kutLRhZ6FOnCNigkamRwFB77DF+SmIzjQZqnSHjgEzi8ARO39/6R
-         skrg==
-X-Gm-Message-State: AOJu0YwooXbzDmRcTSI2e81NoVncOfDKqePAMptTQWEhtUH72ghUef5g
-	QysIr2UNa0XI/kP03blvGe6Qvw8PADBP9iFVSEjnFoTlUNQsX3/y8UFqFRiQ2QH6tjPcxy403TH
-	O
-X-Google-Smtp-Source: AGHT+IFFjVxAV1NcvAin2FgiRX+kVfEBWPyny/cb18fftKcnaFnux0SuSDNFbKWxq3L8yAzeWR3QgQ==
-X-Received: by 2002:a17:902:c406:b0:207:4734:2ca6 with SMTP id d9443c01a7336-2076e41caa6mr83685755ad.10.1726433982529;
-        Sun, 15 Sep 2024 13:59:42 -0700 (PDT)
-Received: from ?IPV6:2001:56a:f979:1f00:5e1c:4719:2f2b:297d? ([2001:56a:f979:1f00:5e1c:4719:2f2b:297d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946032b9sm25568885ad.116.2024.09.15.13.59.41
-        for <linux-kernel@vger.kernel.org>
+        bh=oWWwfkH9KQrIY6QEmR0wF7YR/KfyiBzU7EaMIwcIgIc=;
+        b=HgYQBwGjnOUA8X/Ks0CLsNzzxLv7OR/j5hH1HIH9iVSOVr1evWPCLM0q81bBbcqLCK
+         oJvXZ9/EnyVGM8WAqdruh4nNG6j/46jcNWM9tohvAa9DFT2pjML4EYmhhYMbL/2Lw3Mc
+         U9XMSYI1iAG+b8xEcCc+dr1VNJa4Gk1mvswHh9bhRebYeW6VBL4Y5KBpJxFaa5RtFfA+
+         SOlBF4964da7uGh6cvKqGdzLmVkFJiHFhRx7bNLH1J+HEGLCbOe1mQA8qPe+5ZxkgW9x
+         VCoq7VYLT/Z4ozW2/7YDbXkBmTh6uh3AIl0hZqpnGVcqE+qRMVutBswmaDk15zcwdd4J
+         eytg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNjCnxy0RIvqAB/MbshCmwhKh+btP+KpcVJ+1YhNyOwCaAths9Kigr4mfUXpZafPnL5HO7t4s7HUM=@vger.kernel.org, AJvYcCXNSRvp4sSFGu+uo0itf2NFN9KBXjquNicBWa8ItjnI37jUM7Hkg/8ey9ITUiVIjfMRu2By0GSXUfVhWrjR@vger.kernel.org, AJvYcCXxHeYy8ArtC9ErfE33mlVeK+0MGHesJWRydI67+aNVjzsj7es0HUiAGwpGbfYCvqjGygnm2HwGbJDUjxD5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOe8XiMj31INzq4twyzn8/lHp/EsW1+YBSbynUIerPopnEtJX/
+	70GLya0Hdp+AhDbE1cTgMwV6xMcWOCjIGgJwiyLAqbsOTb47x1VmDU82QQ==
+X-Google-Smtp-Source: AGHT+IFE2Rl0nxQvNooP+jVbxK5faYIYNQgNbKbhRlY6ISS2ZnDUIxqV7PmVljXQNtSlznRqcHom+w==
+X-Received: by 2002:a17:907:6d26:b0:a77:c95e:9b1c with SMTP id a640c23a62f3a-a9047d1aa36mr901961466b.27.1726434367404;
+        Sun, 15 Sep 2024 14:06:07 -0700 (PDT)
+Received: from ?IPV6:2a02:a466:68ed:1:f90b:5a64:5ccc:e327? (2a02-a466-68ed-1-f90b-5a64-5ccc-e327.fixed6.kpn.net. [2a02:a466:68ed:1:f90b:5a64:5ccc:e327])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f43e9sm232858866b.72.2024.09.15.14.06.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Sep 2024 13:59:42 -0700 (PDT)
-Message-ID: <b955ec60-081d-4194-8688-b49ff206ea1d@telus.net>
-Date: Sun, 15 Sep 2024 14:59:40 -0600
+        Sun, 15 Sep 2024 14:06:07 -0700 (PDT)
+Message-ID: <a574695b-2c4a-466e-8d72-154d16328643@gmail.com>
+Date: Sun, 15 Sep 2024 23:06:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,100 +75,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Bob Gill <gillb5@telus.net>
-Subject: 6.11.0 crash on X startup
-To: linux-kernel@vger.kernel.org
-References: <96030dde-6c02-4308-b41b-48aeeba670f3@telus.net>
+Subject: Re: [PATCH RESEND v4 1/6] dmaengine: dw: Add peripheral bus width
+ verification
+To: Serge Semin <fancer.lancer@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Ferry Toth <ftoth@exalondelft.nl>, Viresh Kumar <vireshk@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240802075100.6475-1-fancer.lancer@gmail.com>
+ <20240802075100.6475-2-fancer.lancer@gmail.com>
+ <ZuXgI-VcHpMgbZ91@black.fi.intel.com>
+ <wghwkx6xbkwxff5wbi2erdl2z3fmjdl54qqb3rfty7oiabvk7h@3vpzlkjataor>
 Content-Language: en-US
-In-Reply-To: <96030dde-6c02-4308-b41b-48aeeba670f3@telus.net>
+From: Ferry Toth <fntoth@gmail.com>
+In-Reply-To: <wghwkx6xbkwxff5wbi2erdl2z3fmjdl54qqb3rfty7oiabvk7h@3vpzlkjataor>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-So 6.10.0 runs ok.  6.11.0-rc1 was the first kernel that started 
-crashing.  Every rc after, including 6.11.0 all crash.
+Hi,
 
-By that I mean it seems the startup is ok, but when it comes to the X 
-server, when it tries to start, it crashes (and takes everything else 
-along with it).
+Op 14-09-2024 om 21:22 schreef Serge Semin:
+> On Sat, Sep 14, 2024 at 10:12:35PM +0300, Andy Shevchenko wrote:
+>> On Fri, Aug 02, 2024 at 10:50:46AM +0300, Serge Semin wrote:
+>>> Currently the src_addr_width and dst_addr_width fields of the
+>>> dma_slave_config structure are mapped to the CTLx.SRC_TR_WIDTH and
+>>> CTLx.DST_TR_WIDTH fields of the peripheral bus side in order to have the
+>>> properly aligned data passed to the target device. It's done just by
+>>> converting the passed peripheral bus width to the encoded value using the
+>>> __ffs() function. This implementation has several problematic sides:
+>>>
+>>> 1. __ffs() is undefined if no bit exist in the passed value. Thus if the
+>>> specified addr-width is DMA_SLAVE_BUSWIDTH_UNDEFINED, __ffs() may return
+>>> unexpected value depending on the platform-specific implementation.
+>>>
+>>> 2. DW AHB DMA-engine permits having the power-of-2 transfer width limited
+>>> by the DMAH_Mk_HDATA_WIDTH IP-core synthesize parameter. Specifying
+>>> bus-width out of that constraints scope will definitely cause unexpected
+>>> result since the destination reg will be only partly touched than the
+>>> client driver implied.
+>>>
+>>> Let's fix all of that by adding the peripheral bus width verification
+>>> method and calling it in dwc_config() which is supposed to be executed
+>>> before preparing any transfer. The new method will make sure that the
+>>> passed source or destination address width is valid and if undefined then
+>>> the driver will just fallback to the 1-byte width transfer.
+>> This patch broke Intel Merrifield iDMA32 + SPI PXA2xx configuration to
+>> me. Since it's first in the series and most likely the rest is
+>> dependent and we are almost at the release date I propose to roll back
+>> and start again after v6.12-rc1 will be out. Vinod, can we revert the
+>> entire series, please?
+Indeed all six need to be reverted due to dependency.
+>> I guess it's not the best option, since the patch has already been
+>> backported to the stable kernels anyway. Rolling back it from all of
+>> them seems tiresome. Let's at least try to fix the just discovered
+>> problem?
+>>
+>> Could you please provide more details about what exactly happening?
 
-I ran recovery kernel, enabled networking, dropped into terminal.
+I can reproduce (after working around another issue with the following 
+tip from Andy: The DMA module is loaded _after_ the SPI, and for some 
+reason the DMA engine APIs haven't returned deferred probe and hence the 
+SPI considered the absence of DMA even if we have ACPI description 
+non-fatal. So, you may try to manually unload SPI and load again and it 
+should start showing DMA).
 
-service --status-all | grep lightdm gave:
+On 6.11.0-rc6 I get:
+root@edison:~# ./spidev_test -D /dev/spidev5.1 -l
+spi mode: 0x20
+bits per word: 8
+max speed: 500000 Hz (500 kHz)
+can't send spi message: Device or resource busy
+Aborted (core dumped)
 
-[ - ]  lightdm
+And on 6.11.0-rc7 with the 6 patches reverted:
 
-Portions of Xorg.0.log:
-
-cat Xorg.0.log | grep EE
-
-[    61.679] Current Operating System: Linux freedom 6.11.0 #1 SMP 
-PREEMPT_DYNAMIC Sun Sep 15 13:10:55 MDT 2024 x86_64
-     (WW) warning, (EE) error, (NI) not implemented, (??) unknown.
-[    61.809] (EE) systemd-logind: failed to get session: PID 2028 does 
-not belong to any known session
-[    61.913] (EE) open /dev/dri/card0: No such file or directory
-[    61.913] (EE) open /dev/dri/card0: No such file or directory
-[    61.914] (EE) Unable to find a valid framebuffer device
-[    61.914] (EE) open /dev/fb0: No such file or directory
-[    61.914] (EE) Screen 0 deleted because of no matching config section.
-[    61.914] (EE) Screen 0 deleted because of no matching config section.
-
-
- From the terminal, I can't run 'service lightdm start' and get back to 
-any state.  pressing ctrl-alt-(f1-f9) does nothing. Pressing the 
-caps-lock button on/off on the keyboard stops responding immediately.  
-Even the power/reset buttons on the case do nothing.  I have to hit the 
-power switch.  The kernel crashes hard.
-
-My graphics hardware (taken from 6.10.0):
-
-inxi -G
-
-Graphics:
-   Device-1: AMD driver: amdgpu v: kernel
-   Device-2: Conexant Systems CX23887/8 PCIe Broadcast Audio and Video
-     Decoder with 3D Comb
-     driver: cx23885 v: 0.0.4
-   Device-3: Razer USA Kiyo Pro type: USB driver: snd-usb-audio,uvcvideo
-   Device-4: Realtek RTL2838 DVB-T type: USB driver: N/A
-   Display: x11 server: X.Org v: 1.21.1.4 driver: X: loaded: amdgpu,ati
-     unloaded: fbdev,modesetting,radeon,vesa gpu: amdgpu resolution:
-     1: 1920x1080~60Hz 2: 1920x1080~60Hz
-   OpenGL:
-     renderer: AMD Radeon RX 6500 XT (navi24 LLVM 15.0.7 DRM 3.57 
-6.10.0-rc7+)
-     v: 4.6 Mesa 23.2.1-1ubuntu3.1~22.04.2
-
-
-There is a weird line from /var/log/Xorg.0.log.old:
-
-[   299.900] (++) using VT number 7
-
-[   299.900] (II) systemd-logind: logind integration requires -keeptty 
-and -keeptty was not provided, disabling logind integration
-[   299.908] (--) PCI:*(4@0:0:0) 1002:743f:148c:2415 rev 193, Mem @ 
-0xd0000000/268435456, 0xcfe00000/2097152, 0xfb700000/1048576, I/O @ 
-0x0000a000/256, B
-IOS @ 0x????????/131072
-[   299.908] (--) PCI: (9@0:0:0) 14f1:8880:0070:7801 rev 15, Mem @ 
-0xfbc00000/2097152
-[   299.908] (II) LoadModule: "glx"
-
-I don't know why the BIOS line looks like: BIOS @ 0x????????/131072
-
-Is that normal or did it not find it?
-
-
-Sure, its a corner case.  I might be the only one on the planet with 
-this problem.  Or maybe not.
-
-I have been using a standard .config for building kernels for a while 
-now.  Please reply to me directly as I'm not on the list.
-
-Bob
-
-
-
-
-
+root@edison:~# ./spidev_test -D /dev/spidev5.1 -l -v
+spi mode: 0x20
+bits per word: 8
+max speed: 500000 Hz (500 kHz)
+TX | FF FF FF FF FF FF 40 00 00 00 00 95 FF FF FF FF FF FF FF FF FF FF 
+FF FF FF FF FF FF FF FF F0 0D  |......@.........................|
+RX | FF FF FF FF FF FF 40 00 00 00 00 95 FF FF FF FF FF FF FF FF FF FF 
+FF FF FF FF FF FF FF FF F0 0D  |......@.........................|
+>> -Serge(y)
+>>
+>> -- 
+>> With Best Regards,
+>> Andy Shevchenko
+>>
+>>
 
