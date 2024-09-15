@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-329730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1B0979510
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:45:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E4F979514
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56A3283EFD
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F671F2347D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474D02209F;
-	Sun, 15 Sep 2024 07:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B5D288B5;
+	Sun, 15 Sep 2024 07:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TjyFfb9H"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="kxyTxuYw"
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F06617C7C
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 07:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09ED1C69C;
+	Sun, 15 Sep 2024 07:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.141.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726386341; cv=none; b=AB5E3MWPNFO3NraoySak/hTFEdXzQ7ntsd+diEgrwUbBMJE1TaFi3uONrVz9wLq2B6X0EVHhs2iqqQ4ZeGvGAMHNEHYqfACapnefCGk3CYL8kUrWhfHMBEw9XDWsxHf6p4Hon4FwYHUxovoVps5l1m8buyfKRA5WvF0pSMNrhZs=
+	t=1726386641; cv=none; b=MdE4p3fwhn3+hGuyQV+UyuGpm+wXFZKhz1MbcocwSJ/x+E2cMc/ZbH/47OzLoduHmzr9zXGhxg9fNcDyVva5gsKa+9h1wOaRPHXawPVy4JCarUiRypTfoc6768u3qKWbnIUqSbMxN553HEizJrsaqmJCFfTcA+WQKPqdZB/ye9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726386341; c=relaxed/simple;
-	bh=ln6JdQKZxPzLOTZu5d6+cUSDJEZvAnaWQJ5mqRPyLOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6IudXkQQK+OkGeIcNHoCOPo9PReBZgIFTsuFUYAExYkHnTMlb2pDwV9Ji11yNuSZ4iqR3R2pwc9QZHXHyL9jHjnLtqlX8ZQAuwQbd61RTgVslxVWXzJBt5BeWE16KTSSoJuNDEohTHE5pZ5rG6mizqyfaLEpqKUGKV4prwm0T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TjyFfb9H; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726386339; x=1757922339;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ln6JdQKZxPzLOTZu5d6+cUSDJEZvAnaWQJ5mqRPyLOk=;
-  b=TjyFfb9HdYZhHwMTXzgrqiTXxC45IBg4q51VMHTgdDQ0kJEJxRTdlVlW
-   2o81BAeOrJgz/4UNY77oRr+FDFF0wpLrSwwsjDs2ZdGHBJdRulwGEgSTo
-   Ifm2QuRtBEIaKSDCkhHmulOnrAFX60qAW6G1Q0+iyf4K/5PSbMUazmkYi
-   caHTMgTXex0t2r45ixc9ZR1QlDYPGzC6TxWLQOxrJTCBXxdFd78dbDRP2
-   eSnuBIaGagyNFIb4s934wbh2uiX3cvc/NBuddDJ3tC0eC4MTOLUKymWG3
-   YxmNCiRbIB3twwlMzcRXwYBcwN6aR2wkNIhedfP/C0sZ0dfjwi0Ib7q7Q
+	s=arc-20240116; t=1726386641; c=relaxed/simple;
+	bh=lLr9bdWkckgYhAIUM9LylQ1iK/DbmLn2UfjaZur6YMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SyXB+IMxAS6Bu0OTuiRS39RdQzoCiuPyL6Qh9qol8VM32NFgZw/Lo/ucgqHEpYChILSQanymf3txJnLsYJlNYB6GRBjXwGFAd63Wgld7280L1wsqMxX6NH0v1sHJmYjettf9mrhhBEkcfQPBYhK/cYjE7Krcz8m3kNB/e5yh8/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=kxyTxuYw; arc=none smtp.client-ip=68.232.141.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1726386639; x=1757922639;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lLr9bdWkckgYhAIUM9LylQ1iK/DbmLn2UfjaZur6YMg=;
+  b=kxyTxuYwp5J1hFKlHKqAHrvH8bu6fpFGRdNOtdiB/t7XgwQjzVwEIceO
+   aQhqvxhj/YWuisG0o9Ze65V7lxyHwNj7e2p/U7oPmTX06ecqHiPIiQkAw
+   c3q9SwtibFWyQ6R661MZsRFa2M9W6y7ueKREUe3s3iGq4G7/xJJYOYSND
+   07fA4SdAEF2Rb3DyQNqnj/NCyBDn4bbEjAcVjbeAvuj8nUZB97NVQx8rt
+   GokryM9EqZlc1hkftcvSYvs8lwSze6eUDN+y/ekt3alcRFU+lF2waaplk
+   TEiwVc4HlCRYhsZNrbSvCxYdXPV9IKKmKtHqhyEwN+x5hJjobbLGRYtMd
    A==;
-X-CSE-ConnectionGUID: iY9YOBKPTauN3sdcf7Uthg==
-X-CSE-MsgGUID: UWZcjR8rS4GJMLGxfYGh7g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="25070289"
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="25070289"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 00:45:39 -0700
-X-CSE-ConnectionGUID: 8SqHzLf2TnmkpkuZpV8jEQ==
-X-CSE-MsgGUID: f5XJnoTnTueAo3BE2Fgj4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="68799103"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 15 Sep 2024 00:45:36 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spjwr-0008V4-2W;
-	Sun, 15 Sep 2024 07:45:33 +0000
-Date: Sun, 15 Sep 2024 15:44:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Julius Werner <jwerner@chromium.org>,
-	Hugues Bruant <hugues.bruant@gmail.com>,
-	intel-gfx@lists.freedesktop.org,
-	Brian Norris <briannorris@chromium.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org, Borislav Petkov <bp@alien8.de>,
-	chrome-platform@lists.linux.dev,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>
-Subject: Re: [PATCH v3] firmware: coreboot: Don't register a pdev if
- screen_info data is present
-Message-ID: <202409151528.CIWZRPBq-lkp@intel.com>
-References: <20240913213246.1549213-1-javierm@redhat.com>
+X-CSE-ConnectionGUID: WHpMz4WHSaeyPa+zjef7LA==
+X-CSE-MsgGUID: oFi29HRoSomU/744LwByVg==
+X-IronPort-AV: E=Sophos;i="6.10,230,1719849600"; 
+   d="scan'208";a="27540762"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 15 Sep 2024 15:50:32 +0800
+IronPort-SDR: 66e684e5_iI1xTiBCs83ttupI/Ur+jbipuA5i8SLEbm8I7zCPD2VFYp9
+ A2gPRRy/+IeUPUJLzvWoTfv6rvxU1E0iHnM61Aw==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Sep 2024 23:55:33 -0700
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2024 00:50:32 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH v2] scsi: ufs: Zero utp_upiu_req at the beginning of each command
+Date: Sun, 15 Sep 2024 10:48:42 +0300
+Message-Id: <20240915074842.4111336-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913213246.1549213-1-javierm@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Javier,
+This patch introduces a previously missing step: zeroing the
+`utp_upiu_req` structure at the beginning of each upiu transaction. This
+ensures that the upiu request fields are properly initialized,
+preventing potential issues caused by residual data from previous
+commands.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
 
-[auto build test ERROR on chrome-platform/for-next]
-[also build test ERROR on chrome-platform/for-firmware-next linus/master v6.11-rc7 next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+---
+Changes in v2:
+ - Simplify things (Bart)
+---
+ drivers/ufs/core/ufshcd.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Javier-Martinez-Canillas/firmware-coreboot-Don-t-register-a-pdev-if-screen_info-data-is-present/20240914-053323
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240913213246.1549213-1-javierm%40redhat.com
-patch subject: [PATCH v3] firmware: coreboot: Don't register a pdev if screen_info data is present
-config: riscv-randconfig-001-20240915 (https://download.01.org/0day-ci/archive/20240915/202409151528.CIWZRPBq-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409151528.CIWZRPBq-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409151528.CIWZRPBq-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: screen_info
-   >>> referenced by framebuffer-coreboot.c:27 (drivers/firmware/google/framebuffer-coreboot.c:27)
-   >>>               drivers/firmware/google/framebuffer-coreboot.o:(framebuffer_probe) in archive vmlinux.a
-   >>> referenced by framebuffer-coreboot.c:27 (drivers/firmware/google/framebuffer-coreboot.c:27)
-   >>>               drivers/firmware/google/framebuffer-coreboot.o:(framebuffer_probe) in archive vmlinux.a
-
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 8ea5a82503a9..1f6575afc1c5 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -2761,7 +2761,6 @@ void ufshcd_prepare_utp_scsi_cmd_upiu(struct ufshcd_lrb *lrbp, u8 upiu_flags)
+ 	ucd_req_ptr->sc.exp_data_transfer_len = cpu_to_be32(cmd->sdb.length);
+ 
+ 	cdb_len = min_t(unsigned short, cmd->cmd_len, UFS_CDB_SIZE);
+-	memset(ucd_req_ptr->sc.cdb, 0, UFS_CDB_SIZE);
+ 	memcpy(ucd_req_ptr->sc.cdb, cmd->cmnd, cdb_len);
+ 
+ 	memset(lrbp->ucd_rsp_ptr, 0, sizeof(struct utp_upiu_rsp));
+@@ -2834,6 +2833,8 @@ static int ufshcd_compose_devman_upiu(struct ufs_hba *hba,
+ 	u8 upiu_flags;
+ 	int ret = 0;
+ 
++	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
++
+ 	ufshcd_prepare_req_desc_hdr(hba, lrbp, &upiu_flags, DMA_NONE, 0);
+ 
+ 	if (hba->dev_cmd.type == DEV_CMD_TYPE_QUERY)
+@@ -2858,6 +2859,8 @@ static void ufshcd_comp_scsi_upiu(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
+ 	unsigned int ioprio_class = IOPRIO_PRIO_CLASS(req_get_ioprio(rq));
+ 	u8 upiu_flags;
+ 
++	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
++
+ 	ufshcd_prepare_req_desc_hdr(hba, lrbp, &upiu_flags, lrbp->cmd->sc_data_direction, 0);
+ 	if (ioprio_class == IOPRIO_CLASS_RT)
+ 		upiu_flags |= UPIU_CMD_FLAGS_CP;
+@@ -7165,6 +7168,8 @@ static int ufshcd_issue_devman_upiu_cmd(struct ufs_hba *hba,
+ 
+ 	ufshcd_setup_dev_cmd(hba, lrbp, cmd_type, 0, tag);
+ 
++	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
++
+ 	ufshcd_prepare_req_desc_hdr(hba, lrbp, &upiu_flags, DMA_NONE, 0);
+ 
+ 	/* update the task tag in the request upiu */
+@@ -7317,6 +7322,8 @@ int ufshcd_advanced_rpmb_req_handler(struct ufs_hba *hba, struct utp_upiu_req *r
+ 
+ 	ufshcd_setup_dev_cmd(hba, lrbp, DEV_CMD_TYPE_RPMB, UFS_UPIU_RPMB_WLUN, tag);
+ 
++	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
++
+ 	ufshcd_prepare_req_desc_hdr(hba, lrbp, &upiu_flags, DMA_NONE, ehs);
+ 
+ 	/* update the task tag */
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
