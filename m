@@ -1,159 +1,152 @@
-Return-Path: <linux-kernel+bounces-329661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E84997945F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 04:17:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C47C979464
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 04:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C42ECB20D3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 02:17:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96E0E1C20C5F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 02:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FC2946F;
-	Sun, 15 Sep 2024 02:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3818C13;
+	Sun, 15 Sep 2024 02:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7qhRKc7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAzvOK1E"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA3418D;
-	Sun, 15 Sep 2024 02:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DBF8C0B;
+	Sun, 15 Sep 2024 02:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726366653; cv=none; b=qLJbsjXIal9wPgDKu0wmRiI/N3zTdcOvCrvBWiIOcV5vmLv3bXOJNNBxQAEJ01VafZm2JvnmMciEBE+BGtZxKrvyenRGpt3Vlsq22W2n0ZmvGWSVqR79SEWJUD0DLVze7O8ToBJSCtlWBDtpusbcLBI7LUBiWxt+6NKcpmSRpVA=
+	t=1726366898; cv=none; b=EtJBO1NPfkUCpmP6H8FQ3WketBOFlgi4tT0YRR7MYMgMlntYF9D3hdgzxtQ/+NwQlGE3pcZGtCBxuNWhpaNNsEQrm8YdNJixCSKIhuqYxqNEcXP69vKatXNmA/3VEf+3+SiPexQUzfczWv2EcOh0QjowJvoWWvEJA6byZWiVPOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726366653; c=relaxed/simple;
-	bh=Cu9oogNUDp0JyK3aZ5kSKAt7MkSWd0QBhKX3Dlldovw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dR3Y9zAFF1Gvo+/c3mO8ZkMVTaLAop6sTLEILz+k6dIIKCwFdQ3Ucs6s6SniLF9CWCiAWJVF8+uwKYQjmzM7stLUrnQxxADMPORkXgyqElhlnYHw6+ZFvRuAW5M8OTYkNLYU0QArJSxh7Dcvw/Ppar681ZYqp82n/XcG5JEqxoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7qhRKc7; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726366652; x=1757902652;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Cu9oogNUDp0JyK3aZ5kSKAt7MkSWd0QBhKX3Dlldovw=;
-  b=R7qhRKc7fpzgotfGvmFF4/GpZJHUB9vHbD/dH3TaPSqR/rrDu/AcVKm6
-   men4O8z5pUFXGp1WgLqfbwA9sAh5KUZKGh8IE/aO2lPnFRp75DMws5Vsf
-   1tbtE5+opeWJJnemEOMSGNqEL7E4PPQJ+Y+p/bDS6zNmyAx2TMX758O/n
-   Ss7MQSpeTgVaxtwhHslD6tXngIGmX5jxz94QdxmWSpYGs/57ihb119pSo
-   VP28M+4pSDRVwTDR+CbZVjNDHa5mbUUlpE1q9sPJCs0JcC1T7HbYXsgda
-   XKYlzeUw7P1EhCqvL1OV9g0Qi6oHFic+72QAMf4hXIeScKHCRtBgTuDXj
-   A==;
-X-CSE-ConnectionGUID: Wlv2Fn/PQA2EgP99glS2tA==
-X-CSE-MsgGUID: cfjUHxunSomgzani2vJIiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="25171852"
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="25171852"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 19:17:31 -0700
-X-CSE-ConnectionGUID: yIV5O7oxSyCqb9SiViWT1Q==
-X-CSE-MsgGUID: f5nxJ5p8R02TjB12H+h/Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="68608885"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 14 Sep 2024 19:17:27 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spepI-0008L0-30;
-	Sun, 15 Sep 2024 02:17:24 +0000
-Date: Sun, 15 Sep 2024 10:16:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, netdev@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, bryan.whitehead@microchip.com,
-	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
-	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
-	andrew@lunn.ch, Steen.Hegelund@microchip.com,
-	Raju.Lakkaraju@microchip.com, daniel.machon@microchip.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next V2 3/5] net: lan743x: Register the platform
- device for sfp pluggable module
-Message-ID: <202409151058.rOgbMAJJ-lkp@intel.com>
-References: <20240911161054.4494-4-Raju.Lakkaraju@microchip.com>
+	s=arc-20240116; t=1726366898; c=relaxed/simple;
+	bh=/TFCcMuH3eFlHq9L3PNd9dVZtxS+2tNTLiYU/MynuPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EfJKSWQFd68jefvKPpMV+OCrzcR/D34BCuX1N6QYMoEpPHn6b8NT+eOTDXeE8kxqD5XHnfr+lw5g451xwOTTSO3Xw6CYBuYgp8uxxFSQrp19VAyjk81vDk3gKPBtN71NNE935PFaL1oncIJ9CaACGwVr+cNvRF2+EjNuEWks3RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAzvOK1E; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d873dc644dso2833220a91.3;
+        Sat, 14 Sep 2024 19:21:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726366896; x=1726971696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wlgq2n3Pu88VWjuj9DZNU9s2yQJKQNU/Scco8Aq+2xU=;
+        b=QAzvOK1E8/BYVPnuGKYkYApnlXiPX4pTYIatrGZiik+G7IfLCNAuv+mnjfSwSuIWww
+         1jYG4WPXsvQU8l6TRnR9CnqUjawQMV2XkJPleaqBK2hcFqO3yWUWAam2GFyOQKayLi+w
+         MQi2wIAvPNued9sF7maudvQqSZ1YQPtpTBGz3DxuqIyoKJsC07oFfS3tK1sL3rwcT2HU
+         /4CiXt4ToWBUH3tWgaCQZEmJ3WncIwy7xsw/zJx/KvhOSFCBjGSvSOOVgl1bHiCgRlS+
+         RPluK8dGdHVC5zImWDng5lFWK7fVzYfRbl1ryTvS5uEPs2ZXdvSUdtrFBvf1LlSj5wvM
+         It9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726366896; x=1726971696;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wlgq2n3Pu88VWjuj9DZNU9s2yQJKQNU/Scco8Aq+2xU=;
+        b=nZdAze4kRrqrhFqu6ZIsGiMPAlGMw0DKtpkrMANDNFQmXkRhEWGAxJr2z8SM13rsNI
+         UkhLqr/M+ctVbzOaAGEQTSEMT3883aiku4m/tAti58VAoRXlh1m+TK1FjxVH8wPYFCAW
+         0zZG1SBopmQx4cMbA6/vTnj4Ytz7wfyKqDKU0PbFdvs6KodNDU7iNRQov/wwCKYqhjak
+         ghkdgnnluLNXfXO5B9L1q1O6FbHOd7EJrEM0pPZ2t8XudJdp4oOh+OVl+cWPCFhBXUxE
+         svl1cgi1vKC1WUTHDyLQNCf85hlEAwnsLpyMWBW4jzeVVh3Yymd1oKiyQ+8S61zI83JM
+         /kVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1S3kQlRwdcXCPxnCFK1j1ft7lqATJ01o6gOHdCSARSOpgQXz+djC162cbL8mOpwILozwUfUuNz0uw@vger.kernel.org, AJvYcCV7YHtJY+7yQV2zMGVTPB+nHm2UgQuJYaUqkaigMNRKO+4OAT4Zyr0g14Eglo9mqecgGQ696spA/sm/+kFiceo=@vger.kernel.org, AJvYcCVMX/jPKHf0an1f7h2Oid6kUXz/gNnKFp5Pr7Ctjq4MP5WfusOV66XXOr1WDniHtP1WOwWcX91Bkdf7aA==@vger.kernel.org, AJvYcCX05Cvz5BjygfFAFjR+I+kAmcfvltY8kENXMgookvnUupDbGM2aRk/Ezp6KUkZXYQDGYcKNpwCIxYY=@vger.kernel.org, AJvYcCX5WMxuAzw/+pUxCPGB2omtgOqFMP78WU/iMg3mXIkntvro87yPXRH/vKeGZTk6yM9FONkF1V+YKJY8mdBl@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIwmlIVmwtHntwIAFPXdON+s77duXlFvU1xxXhIOXJZf827sSX
+	Fd8bV+1WkTWUyWkCS+tZv1sQrZaQtXsToQWQ0V7hdrWKB2C44yGu
+X-Google-Smtp-Source: AGHT+IGaD7u+NPj+qsxGjhpuYjsmHLBN+A4TI1iEQ+R9rpf75fx7e5oYIgQONG2M0UTX610QvqKYAA==
+X-Received: by 2002:a17:90b:4b8b:b0:2c2:df58:bb8c with SMTP id 98e67ed59e1d1-2db9ffef53bmr14156849a91.18.1726366895835;
+        Sat, 14 Sep 2024 19:21:35 -0700 (PDT)
+Received: from [172.20.10.2] ([182.153.180.44])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9d5c9c6sm4419363a91.46.2024.09.14.19.21.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Sep 2024 19:21:35 -0700 (PDT)
+Message-ID: <8a813234-71d3-49e7-9a2e-c950fe35be20@gmail.com>
+Date: Sun, 15 Sep 2024 10:21:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911161054.4494-4-Raju.Lakkaraju@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/22] arm64: dts: apple: Add A8X devices
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>
+References: <20240914052413.68177-1-towinchenmi@gmail.com>
+ <20240914052413.68177-19-towinchenmi@gmail.com>
+ <34c748fe-89d2-d3a5-599d-52972c10f688@gmail.com>
+Content-Language: en-MW
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <34c748fe-89d2-d3a5-599d-52972c10f688@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Raju,
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on net-next/main]
+On 15/9/2024 05:02, Ivaylo Ivanov wrote:
+> 
+> On 9/14/24 08:17, Nick Chan wrote:
+>> From: Konrad Dybcio <konradybcio@kernel.org>
+>>
+>> Add DTS files for the A8X SoC and the only device based on it, the iPad
+>> Air 2.
+>>
+>> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+>> [Ivalyo: system memory bits]
+> s/Ivalyo/Ivaylo/g
+oh...
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Raju-Lakkaraju/net-lan743x-Add-SFP-support-check-flag/20240912-002444
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240911161054.4494-4-Raju.Lakkaraju%40microchip.com
-patch subject: [PATCH net-next V2 3/5] net: lan743x: Register the platform device for sfp pluggable module
-config: x86_64-randconfig-003-20240914 (https://download.01.org/0day-ci/archive/20240915/202409151058.rOgbMAJJ-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409151058.rOgbMAJJ-lkp@intel.com/reproduce)
+>> Co-developed-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+For A7-A8X, the tags are from Konrad's linux fork from two years ago,
+though your tags in particular may no longer apply since as you can
+see, all memory related things are now /* To be filled by loader */.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409151058.rOgbMAJJ-lkp@intel.com/
+> 
+> You've confused me with Markuss Broks <markuss.broks@gmail.com>.
+> 
+> He was the one who brought up A8X. I brought up A8 (in particular
+> 
+> iPhone 6).
+> 
+> 
+> Regards, Ivo.
+> 
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> [Nick: SMP, m1n1 and gpio-keys support, pinctrl fixes]
+>> Co-developed-by: Nick Chan <towinchenmi@gmail.com>
+>> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+>> ---
+>>  arch/arm64/boot/dts/apple/Makefile        |   2 +
+>>  arch/arm64/boot/dts/apple/t7001-air2.dtsi |  46 +++++++
+>>  arch/arm64/boot/dts/apple/t7001-j81.dts   |  14 ++
+>>  arch/arm64/boot/dts/apple/t7001-j82.dts   |  14 ++
+>>  arch/arm64/boot/dts/apple/t7001.dtsi      | 154 ++++++++++++++++++++++
+>>  5 files changed, 230 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/apple/t7001-air2.dtsi
+> [snip]
+>> +			     <AIC_FIQ AIC_TMR_GUEST_VIRT IRQ_TYPE_LEVEL_HIGH>;
+>> +	};
+>> +};
 
-All errors (new ones prefixed by >>):
+Nick Chan
 
->> ld.lld: error: undefined symbol: i2c_get_adapter_by_fwnode
-   >>> referenced by sfp.c:2981 (drivers/net/phy/sfp.c:2981)
-   >>>               drivers/net/phy/sfp.o:(sfp_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: i2c_put_adapter
-   >>> referenced by sfp.c:2989 (drivers/net/phy/sfp.c:2989)
-   >>>               drivers/net/phy/sfp.o:(sfp_probe) in archive vmlinux.a
-   >>> referenced by sfp.c:2965 (drivers/net/phy/sfp.c:2965)
-   >>>               drivers/net/phy/sfp.o:(sfp_cleanup) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: hwmon_device_unregister
-   >>> referenced by sfp.c:1640 (drivers/net/phy/sfp.c:1640)
-   >>>               drivers/net/phy/sfp.o:(__sfp_sm_event) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: mdio_i2c_alloc
-   >>> referenced by sfp.c:707 (drivers/net/phy/sfp.c:707)
-   >>>               drivers/net/phy/sfp.o:(__sfp_sm_event) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: hwmon_sanitize_name
-   >>> referenced by sfp.c:1611 (drivers/net/phy/sfp.c:1611)
-   >>>               drivers/net/phy/sfp.o:(sfp_hwmon_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: hwmon_device_register_with_info
-   >>> referenced by sfp.c:1617 (drivers/net/phy/sfp.c:1617)
-   >>>               drivers/net/phy/sfp.o:(sfp_hwmon_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: i2c_transfer
-   >>> referenced by sfp.c:648 (drivers/net/phy/sfp.c:648)
-   >>>               drivers/net/phy/sfp.o:(sfp_i2c_read) in archive vmlinux.a
-   >>> referenced by sfp.c:680 (drivers/net/phy/sfp.c:680)
-   >>>               drivers/net/phy/sfp.o:(sfp_i2c_write) in archive vmlinux.a
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GP_PCI1XXXX
-   Depends on [n]: PCI [=y] && GPIOLIB [=y] && NVMEM_SYSFS [=n]
-   Selected by [y]:
-   - LAN743X [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
-   WARNING: unmet direct dependencies detected for SFP
-   Depends on [m]: NETDEVICES [=y] && PHYLIB [=y] && I2C [=m] && PHYLINK [=y] && (HWMON [=m] || HWMON [=m]=n [=n])
-   Selected by [y]:
-   - LAN743X [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
-   WARNING: unmet direct dependencies detected for I2C_PCI1XXXX
-   Depends on [m]: I2C [=m] && HAS_IOMEM [=y] && PCI [=y]
-   Selected by [y]:
-   - LAN743X [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
