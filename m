@@ -1,119 +1,188 @@
-Return-Path: <linux-kernel+bounces-329901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DC6979743
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:44:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C373C979746
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D2A281541
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:44:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F08D21F219F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186F51C7B66;
-	Sun, 15 Sep 2024 14:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47AA1C7B66;
+	Sun, 15 Sep 2024 14:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YFyFX2zC"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VkOU3+Xv"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E492D2CA6
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 14:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DDC2CA6;
+	Sun, 15 Sep 2024 14:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726411475; cv=none; b=nk1ws3u0SyvvqrWrMSAUXJ8SfmB5s5aOu20XYeBRVsLZn7WOVgLjD6bkx93sJIJHBkrYs1y2oPB3lBThrKmH9nxArhrpZjuA27qzid23fVSH9yrkWyIpXEky2G7cq5BJm7oW8E3IMNoRXMHrUYtpUBYN+DJZsA5Gp0MCqundy6Y=
+	t=1726411556; cv=none; b=b3ah0vGCzXQEUgfB64AgYQJg2CvvpSo5ejwsADO/e2eYoMBE0+umjoIWN23Z6m3V5mGwK3EbTJXsaZf5gzLv5KVQLN+CYApJfKFKXOl0/GZ2vxp0nc4Y62Ed/bCM2jypYY595uw5Td3+ZL71+wG55GjadfCEL0/Yy2Ol/mcsVK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726411475; c=relaxed/simple;
-	bh=P03z3/vk9tX66eDUKP1sZ+GOLBzjfiQP8T1pS0h8a10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eVeZ/2veRsm/oHdKKP1JJVKVnDP7hKKopljP1U0h9fKpwVHlDT3mL5jjtlErG5/ALf37yQRO77ex000byDC2lBd6s1FxK6f4tvzo9H9l2FJRotEwapETTOUckM4sS6g+ydBZgBPH6tXf3MPqehdUkmUDqqOgZzRzxlVGQPo1Mo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YFyFX2zC; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so35273475e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 07:44:33 -0700 (PDT)
+	s=arc-20240116; t=1726411556; c=relaxed/simple;
+	bh=XKlqn2qBPAQwB7FQy33H3UzWfqVd/zCG6tFfCMV4LuI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JDbpm40DSOQyyGxqNUKtZPFJrSHl+L1VDXaKuOfFp9h1Ahknhx9jM3ea6pEvX+1aK0yh83PJe+Nqipb861VNQ5V3R9mT6U7VPe0nKyhB4ygpvz071JL1sPvXWO1ELQuMpJGpFpizWx15WbL4RmfLKSZNJi+QZ/QeCU/JmYVS58w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VkOU3+Xv; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c358b72615so34387376d6.0;
+        Sun, 15 Sep 2024 07:45:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726411472; x=1727016272; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Im5mohdnvwzPYK1S2aukh0tGBmiMd0JUcK1Fzdmufzs=;
-        b=YFyFX2zCBYRN0N8kZ8zny3FacnzqDygQJvAdRz88Nyn4o9hl6QsT5NHpQIgOFf+bXT
-         Z+fvBrYwr73Q3jq0O7ywB7qiKfn0rZM3pjRyHkygna/fxKX3fg2GnxNFIsnLNk0SIrE8
-         WdLiHT9mggxQsgGaQmJL+m5pjh8/Dmsr+xfHHEqwr1Xg0/tmP2wxjFASFYKYe+p6/akA
-         QFVJqN6ze7W7mfgHQfZlGUv25o8f+nmz/OrI4wlMtC3XSz6VMpYwtQgCNDfYBZjFDhwH
-         OFwrWAkhZl0OV1N7fyG+p2vmr2v/g2/MkCsqDmPppOS9wAp5rSsji8D4hmP+ym2RvBlf
-         Tz9A==
+        d=gmail.com; s=20230601; t=1726411553; x=1727016353; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:reply-to:cc:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TaNRwlrs/nOlui6L6+29frsiLzSV0vI5EdNksEn8QUY=;
+        b=VkOU3+XvH4HfZhYIwb9L/6FBTnjvQtOuJE3tvFPT1n19zuSwsoFeSuLM+z83euhCiG
+         fozIzeP71vKS/0yO0E52vuMncOtvHqpFLX0UloVAMG7CmaN4+avvs2BzhHCvl3sLKr/G
+         AM8iJ+2DPOYVK8rRGTtgzH3QU4GGos6DwJBXmZ+y4u8J7THcUHm7BDpc4czIdDKjAFiK
+         Vwr+VeSATt5FXXv98M7/Pwc3JcVmYjib4McsvUbiiBEFIjr0+5X9HZlSIM5IIYeEIpBu
+         wcM1rxulIcqegzRCq7DcCYHkODuXm2ylo1F09OUl+tMM2sChA3MFb8UZuqCs85sNd4e3
+         0TNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726411472; x=1727016272;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Im5mohdnvwzPYK1S2aukh0tGBmiMd0JUcK1Fzdmufzs=;
-        b=dlQcTz5qjD+Qeo+cCtnjvsGyE/6MzsCQ0ErsE46VgJQPxGtPvysFwZpsOdSpT+FtNU
-         H9WvJSj/vKzUins6fAA6Hw6pHbBgQWHWNjT0CEa0qVh0rQgUR2cm/wErTe4NBDuqxOFG
-         /3EM8Rtq3fm8oTbk4EZVR7TVrqf0K77AnAtea0N0NEBeX44zYf2WQvN1rArvacaMTCI6
-         QgIUtzRrdCQ4GAm6Gi4JJ6FUG3EHdoKQkr9ccF1DdcE24v6KEIP1dpV3g2j9dSFQpZR1
-         xBJb7Hlf/+JjdtyKYavqdBKSEDpiWCAAevdpsC5tb5A0iK18jS5HFDbGlEIlX+tUyxVV
-         L0Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6zKrZf8U56TWKXDnXPZXipVSzZfmqMc/iFUyTHUWzT3xZy8Hl2wFZ4g09qPeXxl0TgUSlTwL4E7sqE9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa6BTLv1Wo6azmv+RcKDRc4XGHE1eVLaL8SmvIq+SHyGswUQ6b
-	fDsDChH8siCdHbq7tgWylHokmYfwLnGRy+RlAx7FMHaOgYj1VorbCSVKvIZ1BVoF1Nhkzv71qzz
-	V
-X-Google-Smtp-Source: AGHT+IFFIav3HQrjidyoF0GojUNGWBSCwS64zJ0ttCd35kkMnPXYBhdHgMnmP9VgeKOeeSDjeETmGw==
-X-Received: by 2002:a05:600c:1d1b:b0:42c:cdcf:2fef with SMTP id 5b1f17b1804b1-42cdb540484mr103275215e9.15.1726411471952;
-        Sun, 15 Sep 2024 07:44:31 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05d6fcsm83832645e9.15.2024.09.15.07.44.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 07:44:31 -0700 (PDT)
-Date: Sun, 15 Sep 2024 17:44:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/17] staging: rtl8723bs: Remove unused functions
- including read_cam
-Message-ID: <952106c1-e455-46bb-962a-a6f1ecc05f30@stanley.mountain>
-References: <cover.1726339782.git.philipp.g.hortmann@gmail.com>
+        d=1e100.net; s=20230601; t=1726411553; x=1727016353;
+        h=content-transfer-encoding:subject:from:reply-to:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TaNRwlrs/nOlui6L6+29frsiLzSV0vI5EdNksEn8QUY=;
+        b=wQ696I3PJWhhe0jcTnFDgGdcnr+z3kR37vW92JSZxHtfq19IcCNZHAhc9tUoQMiQeh
+         PQK9DCL/MUCPq7MZEowLjpNEcUQLakycKMduR8JvHRor6UInMgIthoDelH8qbWLViqzX
+         2SMAq+6kjEhIm+Q16jsMt6SfN9DVZDf9TKoO0awh1TfKHvVH2j+jF4v2POZvgx9rSk02
+         uDzuzzHltcOfRLVpXQmv+u//X2d9pIysgEUaYCpnLLlQrgyrGTC/pPIU/mf9/Kz/rO92
+         wL1qLShOx+M3JJgNzjasCEX1pVPp60xMZxGuxooD6adiZ5iczILp7+TJiRm6kixv0l/o
+         99FA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxAigwSc9XWHpUeGXudRTrLvzqiWmBOPLh0cO4bMvk5qehsDRW8fYoKZg2a0PILJwCHTaqDrpU3TtJ@vger.kernel.org, AJvYcCVtK1DBVCugJkiVQpFyIpJQtKOjeL94bPmwNo+DtLYNRd2XopbVCnTyiBvtneb+g+IIJurVFDjHXmGIDCUN@vger.kernel.org, AJvYcCXw17ha5YaFycEu4KT0rIc2sOwMdoSS21TbHsTV6Sc9A/MD5Ge6A55FY5KmnUha4u84r6jagsjpPniSCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQBWZmZRjrgRkwcvbFRBrZua6z9ANY0wrzRsQMgjNfSU0oI2HL
+	eJyzEhcEu9aIUrRS5I1tb0DFT01Iarc7g+asY1Bdc5W9iABMpX82
+X-Google-Smtp-Source: AGHT+IF0Ccu/apzaKszAgwuDU09i5bpQP/2PO0Ybjid8wUTXxRNJ0MJtie4khQMTSISV2Fa8X/CfoA==
+X-Received: by 2002:a05:6214:468a:b0:6c3:5db2:d999 with SMTP id 6a1803df08f44-6c573556d57mr178765296d6.9.1726411552883;
+        Sun, 15 Sep 2024 07:45:52 -0700 (PDT)
+Received: from [10.4.10.38] (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c58c626346sm16073526d6.29.2024.09.15.07.45.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Sep 2024 07:45:52 -0700 (PDT)
+Message-ID: <7ede7ca6-f8db-4b38-a1cc-8be3d0db7fae@gmail.com>
+Date: Sun, 15 Sep 2024 10:45:51 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1726339782.git.philipp.g.hortmann@gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>,
+ Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>,
+ Meng Zhang <zhangmeng.kevin@spacemit.com>, Meng Zhang
+ <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>
+Reply-To: 20240903-02-k1-pinctrl-v4-3-d76c00a33b2b@gentoo.org
+From: Jesse Taube <mr.bossman075@gmail.com>
+Subject: [PATCH v4 3/3] riscv: dts: spacemit: add pinctrl property to uart0 in
+ BPI-F3
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 15, 2024 at 08:38:14AM +0200, Philipp Hortmann wrote:
-> Remove unused functions, macros and one enum.
-> 
-> Tested with rtl8723bs in ODYS Trendbook Next 14
-> 
-> Philipp Hortmann (17):
->   staging: rtl8723bs: Remove unused function dvobj_get_port0_adapter
->   staging: rtl8723bs: Remove unused function rtw_search_max_mac_id
->   staging: rtl8723bs: Remove unused function read_cam
->   staging: rtl8723bs: Remove unused function rtw_get_oper_choffset
->   staging: rtl8723bs: Remove unused function rtw_get_oper_bw
->   staging: rtl8723bs: Remove unused function _ReadCAM
->   staging: rtl8723bs: Remove unused entries from struct hal_ops
->   staging: rtl8723bs: Remove unused function PHY_SetBWMode8723B
->   staging: rtl8723bs: Remove unused function PHY_GetTxPowerLevel8723B
->   staging: rtl8723bs: Remove unused function Hal_BT_EfusePowerSwitch
->   staging: rtl8723bs: Remove unused function rtl8723b_GetHalODMVar
->   staging: rtl8723bs: Remove unused function GetHalODMVar
->   staging: rtl8723bs: Remove unused function rtl8723bs_inirp_init
->   staging: rtl8723bs: Remove unused function rtl8723bs_inirp_deinit
->   staging: rtl8723bs: Remove constant result macro is_primary_adapter
->   staging: rtl8723bs: Remove constant result macro get_iface_type
->   staging: rtl8723bs: Remove unused enum with first entry IFACE_PORT0
 
-Thanks Philipp!
+Before pinctrl driver implemented, the uart0 controller reply on
+bootloader for setting correct pin mux and configurations.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Now, let's add pinctrl property to uart0 of Bananapi-F3 board.
 
-regards,
-dan carpenter
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts |  3 +++
+  arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi    | 20 ++++++++++++++++++++
+  arch/riscv/boot/dts/spacemit/k1.dtsi            |  5 +++++
+  3 files changed, 28 insertions(+)
 
+diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts 
+b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+index 023274189b492..bc88d4de25a62 100644
+--- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
++++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+@@ -4,6 +4,7 @@
+   */
+
+  #include "k1.dtsi"
++#include "k1-pinctrl.dtsi"
+
+  / {
+  	model = "Banana Pi BPI-F3";
+@@ -15,5 +16,7 @@ chosen {
+  };
+
+  &uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_2_cfg>;
+  	status = "okay";
+  };
+diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi 
+b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+new file mode 100644
+index 0000000000000..a8eac5517f857
+--- /dev/null
++++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: GPL-2.0 OR MIT
++/*
++ * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
++ */
++
++#include <dt-bindings/gpio/gpio.h>
++
++#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
+
+It would be nice to have a pinfunc header like
+arch/arm/boot/dts/nxp/imx/imx7ulp-pinfunc.h.
+It would reference and encode the data of "3.2 Pin Multiplex" in
+https://developer.spacemit.com/documentation?token=An1vwTwKaigaXRkYfwmcznTXned 
+, the document you attached in the summary.
+
+Otherwise,
+Acked-by: Jesse Taube <Mr.Bossman075@gmail.com>
+
++
++&pinctrl {
++	uart0_2_cfg: uart0-2-cfg {
++		uart0-2-pins {
++			pinmux = <K1_PADCONF(68, 2)>,
++				 <K1_PADCONF(69, 2)>;
++
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi 
+b/arch/riscv/boot/dts/spacemit/k1.dtsi
+index 0777bf9e01183..a2d5f7d4a942a 100644
+--- a/arch/riscv/boot/dts/spacemit/k1.dtsi
++++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+@@ -416,6 +416,11 @@ uart9: serial@d4017800 {
+  			status = "disabled";
+  		};
+
++		pinctrl: pinctrl@d401e000 {
++			compatible = "spacemit,k1-pinctrl";
++			reg = <0x0 0xd401e000 0x0 0x400>;
++		};
++
+  		plic: interrupt-controller@e0000000 {
+  			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
+  			reg = <0x0 0xe0000000 0x0 0x4000000>;
+
+-- 
+2.45.2
 
