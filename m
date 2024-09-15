@@ -1,262 +1,111 @@
-Return-Path: <linux-kernel+bounces-329713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD54F9794DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:50:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831529794E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1D91F225F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390F41F22A0B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00FA1A270;
-	Sun, 15 Sep 2024 06:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3131B208A0;
+	Sun, 15 Sep 2024 06:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nKBNXj5V"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZzD03Pke"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD241B85CD
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E30182C3
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726383008; cv=none; b=EYxFQjLUBI+D3i3nLgZrvz/2AznshT1lYP2mvQRoOPHDCGa3Q6D23pO92AY2sictgKNRWdi9CRWMe6i1Aio1TXfNb8lvjSvyDFrzazslkLsTxuOlYjRGMoDcDg+RG9TUNtbgRaEBKg7p16JgyPU8VG5mWgxEP9vz0fb8ebZhIEk=
+	t=1726383053; cv=none; b=Vbe5CCkwkTKexXv9KWyZd+ugmm8XGe9Zs8nESjalghor9QO+y6kbX9ZzynkvsH9MQeW8aydpqSwzY+rpZVNdclvN3TS58tIWEXQI3Ww3a63dnvUz584RqQKhUnsXHCC0Wt5VIRQhqrqS8f5FtIg3MgvnAq3waRex/iGL8BVsNDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726383008; c=relaxed/simple;
-	bh=vGwBqpQMeRzVz91v5wOwtZwL/8l7EfilXwAoFxOp7rY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CJmFjobWnKK56nmW6Z0xxvXr6MG+CSQ6XQZdId1UpX4sy+ENb2KXPJS9zWSRQeZX07BZRSF6RicWN9B9h66otKJoO4B/MBODJpOI30YVptIvdFeP1DLptG4/JyqrCJByzM7XpJ2/aKo6DjeMvWsgB9KlzbKnq7R61R428XDp3u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--maskray.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nKBNXj5V; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--maskray.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6886cd07673so121399267b3.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:50:06 -0700 (PDT)
+	s=arc-20240116; t=1726383053; c=relaxed/simple;
+	bh=rEmyIRyb8lQu1vOpOZTUou7zsVKMhNaTwYfuJI642tQ=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=Nt6k5NcopC14TUCgvDSBDZ/AOTTKiliFoHbkI3ApgNJhXhbs/TE4LuSMiV2ZU5jSCSxvqTb7mAk/p3Pb3uBq6Es80sJDv/N1k3rcHDSf4/K8hLvDiDdIG45/XSxLwPL1OeJD3Nct4oWwMtlRRdP0eby9VxY1xhrvQThrTwjMlZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZzD03Pke; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42e5e758093so1717605e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:50:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726383005; x=1726987805; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RZPfXwekQwda6LwC500fM8ZDrlyOnYAVczBGHGxiFOA=;
-        b=nKBNXj5VtnQwLAnGdPehG15insdWcib96WBk05cFT7bi80QculG+wA6o9+vni3Ap2T
-         ohlyJ36yq9SXyC0iQcXBUnaN41stCuIz/fF8BzuHv5jskCj1rvYSPZkwzXf1lxED7MOJ
-         upEG6KPkPxc/pIH9dyYX9PIalv+yKFH5TFZp+vwSYh74w/5s96Oaor0Tccl6wPQV0SU4
-         cU3/trBD/TY7uSw6rCX1AenmtW71bCiqo3TJ4cQ5zdn6B2p/pxt1zYsb9FsRqm+Gd9sZ
-         7MJ7yxbnKXzwuTAMuK4R02qtj2wQsIChYLV+I5wUXoWVCkGBK/wUn/OAzoy8QcOJsAMt
-         T7xA==
+        d=broadcom.com; s=google; t=1726383050; x=1726987850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ejmnS563WYTKFurKv1lXQZcHBOVkT0E+DS3cmoKMb24=;
+        b=ZzD03PkeIpvLEjRXj/m34K1air+8Xahcl0B6QMmVVRKkyElO3uKT8EdB7c0oj3almN
+         OfGQCbks4irLPrgxaKYwQGvA9A8QMc/CSn9UmwSoeOXAvqAdszvjd+DbNw+VL8IDwSiu
+         GpQf0exA1NYnpzSEwVIRyCYEpTzTpptJQe7nM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726383005; x=1726987805;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RZPfXwekQwda6LwC500fM8ZDrlyOnYAVczBGHGxiFOA=;
-        b=ZnlFw8ty+RmXaRJIEFFn2H33c4kiFgwCk+BfcuOnHHghK8G0iJku946liRsct0tGtG
-         KYuASACTPHEtIfGPVmyxPL3suLUlnd2M/W9GLAQTVL090cKhCP3NW0jZN2YCnbgMwhaw
-         LIkg3hpwtiXsqcoEvZB2VbK6yZuIOBOZSTJib2QeoPUldBp9qWsP7wx7OkO1d/lvZ5qn
-         dq4ZybLLXLK6sxsbLs/lOp7Or9FizEXAfaPA0Yi589Cudo73yyQBzvW3G7/DfS3StQoa
-         HJcP8Mwm7KDjRr0O/PrGecDCMy9vKC5oO8UpoqcqH8r7uo2flcxpdS1LbFeoX/yxDDuK
-         crCQ==
-X-Gm-Message-State: AOJu0YxL/PyZleCj0x7ZnQOXTeO2VoWPr2TVZAKim4OBgo4g7l/Znllz
-	rBLcX1PA8WMEy1F0uEAQ21GVkskEaqc38djiGC9KWRHog+xrBWxh5UEgUVIkIY+cnEksOZUUCxa
-	7IQ7dIg==
-X-Google-Smtp-Source: AGHT+IFy5saDk0q8GAnbGModaSuNEzwhm+wgHSr3ejmbNiEzEhzJDCLMP5dJytwyQ+fF3+cw2S/Ey80NwCSX
-X-Received: from maskray.svl.corp.google.com ([2620:15c:2d3:205:824b:94ca:e715:74ff])
- (user=maskray job=sendgmr) by 2002:a5b:18c:0:b0:e16:50d2:3d39 with SMTP id
- 3f1490d57ef6-e1d9dc530a4mr18080276.9.1726383005309; Sat, 14 Sep 2024 23:50:05
- -0700 (PDT)
-Date: Sat, 14 Sep 2024 23:49:44 -0700
+        d=1e100.net; s=20230601; t=1726383050; x=1726987850;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejmnS563WYTKFurKv1lXQZcHBOVkT0E+DS3cmoKMb24=;
+        b=PNuhzM4bT4u7Um60+EDoUTkZU/+qWJM+tvwlaf6xFYD6wl3Rt4FUGSkcOqWqIjkbGn
+         kJoGvouWbhvqDZO2INRiwhA6C9nZwt5yiXpm2K6NOtOnryo4tq0Dof3KcIxX8GH16qFr
+         PNi2rXY96YumGZ706sS5CLkq6Frb5lykzNI9Uo2yI6mme8DVUz/ca0hH+3zS3QB7J8Ng
+         c7DCVgo6WaX3EmtTRC5zXlqcXJTr5IYBRC3ljtYnGyG0lYzQJrDYjbNVEDLCR9k19E8R
+         LU866dSKxzoQmssdaqWMTSBEe5xIv0CJOTvwCHRHCQI8dNifrQGF+aMtZzUj6uC2IVqG
+         Sxeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWg46vCMZoQB/vhE/ffWuydZDTUYhYjvLmDCDD9wM0QF6KhfCxcA2bq/t46efeIsWCdv3JoYP0ii1ZslDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5rgXNmLUrXQ8E1PlpoPvjb5soM8ESPrTqbb3CAMABs0HjcEew
+	yX3tSNa9QA82BYbRPHlQCm20XmdRPE/KLwwM1l6ztdJOnNKY3xn3wHYpLx7B0A==
+X-Google-Smtp-Source: AGHT+IG0aRsTm0roi1/IpFCkRxMfzU7+pRgSHSnqGW1mXMvrSh6pQZImosBl0LPIOM0o8vJEQPGvMg==
+X-Received: by 2002:adf:ae5a:0:b0:371:8dbf:8c1b with SMTP id ffacd0b85a97d-378d61f16f2mr4146486f8f.34.1726383049620;
+        Sat, 14 Sep 2024 23:50:49 -0700 (PDT)
+Received: from [10.229.42.193] ([192.19.176.250])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78044dfsm3887658f8f.94.2024.09.14.23.50.48
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 14 Sep 2024 23:50:49 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Jacobe Zang <jacobe.zang@wesion.com>, Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, van Spriel <arend@broadcom.com>
+CC: <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <nick@khadas.com>, Ondrej Jirman <megi@xff.cz>, Sai Krishna <saikrishnag@marvell.com>
+Date: Sun, 15 Sep 2024 08:50:47 +0200
+Message-ID: <191f472c158.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <20240910-wireless-mainline-v14-3-9d80fea5326d@wesion.com>
+References: <20240910-wireless-mainline-v14-0-9d80fea5326d@wesion.com>
+ <20240910-wireless-mainline-v14-3-9d80fea5326d@wesion.com>
+User-Agent: AquaMail/1.52.0 (build: 105200518)
+Subject: Re: [PATCH v14 3/4] wifi: brcmfmac: Add optional lpo clock enable support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <20240915064944.2044066-1-maskray@google.com>
-Subject: [PATCH v2] selftests/vDSO: support DT_GNU_HASH
-From: Fangrui Song <maskray@google.com>
-To: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Xi Ruoyao <xry111@xry111.site>, 
-	Fangrui Song <maskray@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-glibc added support for DT_GNU_HASH in 2006 and DT_HASH has been
-obsoleted for more than one decade in many Linux distributions.
+On September 10, 2024 5:05:48 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
 
-Many vDSOs support DT_GNU_HASH. This patch adds selftests support.
+> WiFi modules often require 32kHz clock to function. Add support to
+> enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
+> to the top of brcmf_of_probe. Change function prototypes from void
+> to int and add appropriate errno's for return values that will be
+> send to bus when error occurred.
+>
+> Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> ---
+> .../wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c  |  4 ++--
+> .../wireless/broadcom/brcm80211/brcmfmac/common.c  |  3 ++-
+> .../net/wireless/broadcom/brcm80211/brcmfmac/of.c  | 25 ++++++++++++++++------
+> .../net/wireless/broadcom/brcm80211/brcmfmac/of.h  |  9 ++++----
+> .../wireless/broadcom/brcm80211/brcmfmac/pcie.c    |  3 +++
+> .../wireless/broadcom/brcm80211/brcmfmac/sdio.c    | 22 ++++++++++++-------
+> .../net/wireless/broadcom/brcm80211/brcmfmac/usb.c |  3 +++
+> 7 files changed, 47 insertions(+), 22 deletions(-)
 
-Signed-off-by: Fangrui Song <maskray@google.com>
-Tested-by: Xi Ruoyao <xry111@xry111.site>
---
-Changes from v1:
-* fix style of a multi-line comment. ignore false positive suggestions from checkpath.pl: `ELF(Word) *`
----
- tools/testing/selftests/vDSO/parse_vdso.c | 105 ++++++++++++++++------
- 1 file changed, 79 insertions(+), 26 deletions(-)
-
-diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selftests/vDSO/parse_vdso.c
-index 4ae417372e9e..dbc946dee4b1 100644
---- a/tools/testing/selftests/vDSO/parse_vdso.c
-+++ b/tools/testing/selftests/vDSO/parse_vdso.c
-@@ -47,6 +47,7 @@ static struct vdso_info
- 	/* Symbol table */
- 	ELF(Sym) *symtab;
- 	const char *symstrings;
-+	ELF(Word) *gnu_hash;
- 	ELF(Word) *bucket, *chain;
- 	ELF(Word) nbucket, nchain;
- 
-@@ -75,6 +76,16 @@ static unsigned long elf_hash(const char *name)
- 	return h;
- }
- 
-+static uint32_t gnu_hash(const char *name)
-+{
-+	const unsigned char *s = (void *)name;
-+	uint32_t h = 5381;
-+
-+	for (; *s; s++)
-+		h += h * 32 + *s;
-+	return h;
-+}
-+
- void vdso_init_from_sysinfo_ehdr(uintptr_t base)
- {
- 	size_t i;
-@@ -117,6 +128,7 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
- 	 */
- 	ELF(Word) *hash = 0;
- 	vdso_info.symstrings = 0;
-+	vdso_info.gnu_hash = 0;
- 	vdso_info.symtab = 0;
- 	vdso_info.versym = 0;
- 	vdso_info.verdef = 0;
-@@ -137,6 +149,11 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
- 				((uintptr_t)dyn[i].d_un.d_ptr
- 				 + vdso_info.load_offset);
- 			break;
-+		case DT_GNU_HASH:
-+			vdso_info.gnu_hash =
-+				(ELF(Word) *)((uintptr_t)dyn[i].d_un.d_ptr +
-+					      vdso_info.load_offset);
-+			break;
- 		case DT_VERSYM:
- 			vdso_info.versym = (ELF(Versym) *)
- 				((uintptr_t)dyn[i].d_un.d_ptr
-@@ -149,17 +166,26 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
- 			break;
- 		}
- 	}
--	if (!vdso_info.symstrings || !vdso_info.symtab || !hash)
-+	if (!vdso_info.symstrings || !vdso_info.symtab ||
-+	    (!hash && !vdso_info.gnu_hash))
- 		return;  /* Failed */
- 
- 	if (!vdso_info.verdef)
- 		vdso_info.versym = 0;
- 
- 	/* Parse the hash table header. */
--	vdso_info.nbucket = hash[0];
--	vdso_info.nchain = hash[1];
--	vdso_info.bucket = &hash[2];
--	vdso_info.chain = &hash[vdso_info.nbucket + 2];
-+	if (vdso_info.gnu_hash) {
-+		vdso_info.nbucket = vdso_info.gnu_hash[0];
-+		/* The bucket array is located after the header (4 uint32) and the bloom
-+		 * filter (size_t array of gnu_hash[2] elements). */
-+		vdso_info.bucket = vdso_info.gnu_hash + 4 +
-+				   sizeof(size_t) / 4 * vdso_info.gnu_hash[2];
-+	} else {
-+		vdso_info.nbucket = hash[0];
-+		vdso_info.nchain = hash[1];
-+		vdso_info.bucket = &hash[2];
-+		vdso_info.chain = &hash[vdso_info.nbucket + 2];
-+	}
- 
- 	/* That's all we need. */
- 	vdso_info.valid = true;
-@@ -203,6 +229,26 @@ static bool vdso_match_version(ELF(Versym) ver,
- 		&& !strcmp(name, vdso_info.symstrings + aux->vda_name);
- }
- 
-+static bool check_sym(ELF(Sym) *sym, ELF(Word) i, const char *name,
-+		      const char *version, unsigned long ver_hash)
-+{
-+	/* Check for a defined global or weak function w/ right name. */
-+	if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC)
-+		return false;
-+	if (ELF64_ST_BIND(sym->st_info) != STB_GLOBAL &&
-+	    ELF64_ST_BIND(sym->st_info) != STB_WEAK)
-+		return false;
-+	if (strcmp(name, vdso_info.symstrings + sym->st_name))
-+		return false;
-+
-+	/* Check symbol version. */
-+	if (vdso_info.versym &&
-+	    !vdso_match_version(vdso_info.versym[i], version, ver_hash))
-+		return false;
-+
-+	return true;
-+}
-+
- void *vdso_sym(const char *version, const char *name)
- {
- 	unsigned long ver_hash;
-@@ -210,29 +256,36 @@ void *vdso_sym(const char *version, const char *name)
- 		return 0;
- 
- 	ver_hash = elf_hash(version);
--	ELF(Word) chain = vdso_info.bucket[elf_hash(name) % vdso_info.nbucket];
-+	ELF(Word) i;
- 
--	for (; chain != STN_UNDEF; chain = vdso_info.chain[chain]) {
--		ELF(Sym) *sym = &vdso_info.symtab[chain];
-+	if (vdso_info.gnu_hash) {
-+		uint32_t h1 = gnu_hash(name), h2, *hashval;
- 
--		/* Check for a defined global or weak function w/ right name. */
--		if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC)
--			continue;
--		if (ELF64_ST_BIND(sym->st_info) != STB_GLOBAL &&
--		    ELF64_ST_BIND(sym->st_info) != STB_WEAK)
--			continue;
--		if (sym->st_shndx == SHN_UNDEF)
--			continue;
--		if (strcmp(name, vdso_info.symstrings + sym->st_name))
--			continue;
--
--		/* Check symbol version. */
--		if (vdso_info.versym
--		    && !vdso_match_version(vdso_info.versym[chain],
--					   version, ver_hash))
--			continue;
--
--		return (void *)(vdso_info.load_offset + sym->st_value);
-+		i = vdso_info.bucket[h1 % vdso_info.nbucket];
-+		if (i == 0)
-+			return 0;
-+		h1 |= 1;
-+		hashval = vdso_info.bucket + vdso_info.nbucket +
-+			  (i - vdso_info.gnu_hash[1]);
-+		for (;; i++) {
-+			ELF(Sym) *sym = &vdso_info.symtab[i];
-+			h2 = *hashval++;
-+			if (h1 == (h2 | 1) &&
-+			    check_sym(sym, i, name, version, ver_hash))
-+				return (void *)(vdso_info.load_offset +
-+						sym->st_value);
-+			if (h2 & 1)
-+				break;
-+		}
-+	} else {
-+		i = vdso_info.bucket[elf_hash(name) % vdso_info.nbucket];
-+		for (; i; i = vdso_info.chain[i]) {
-+			ELF(Sym) *sym = &vdso_info.symtab[i];
-+			if (sym->st_shndx != SHN_UNDEF &&
-+			    check_sym(sym, i, name, version, ver_hash))
-+				return (void *)(vdso_info.load_offset +
-+						sym->st_value);
-+		}
- 	}
- 
- 	return 0;
--- 
-2.46.0.662.g92d0881bb0-goog
 
 
