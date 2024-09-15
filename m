@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-329650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5764F97944D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 04:07:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01D597944F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 04:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4651F21C29
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 02:07:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A891F21BDE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 02:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E7E2F4A;
-	Sun, 15 Sep 2024 02:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DD2323D;
+	Sun, 15 Sep 2024 02:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gIe422QJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h+TQD6nZ"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D561C32
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 02:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F6DDDCD
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 02:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726366052; cv=none; b=brR9TzWu32fq6wSVyeg4uoMg5yy0DmL5epogX7pvqApb+SKpCCymQDXvfvesIqP9+r6HwQLlsb/vdXjxcUVn6tM+Wo+jojcrUWnuuz9nD/0cf2wX90FpBbbdVfxDg97grjTSUeWzp0qW8zXQ/LbgDnulA+2XK5EPzx7xlgaZahM=
+	t=1726366168; cv=none; b=anyUh1rrnnsr6OglN1uFuRWA6pC50BvzmvS4MVdsUm59r+e+bLqeIemJPPaIbTze0Tp3A40UGZPNwXQ8FL9Hzyd9yFKeX+AiohL1O3YMTx413HF9WcH/MqDlH7LHf5Gob3QdvCybMFaP0AeOCB7ucoFnAuFkii+uwlx56JKnOFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726366052; c=relaxed/simple;
-	bh=KpbGciaXOmeOh3W92Etpe7+xu4k9td+wCnPCoZABsd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWplFluXbWmSWegvVESuLll6VDfK3sAIBlaSL/Uwm02zd+wCVSf35qUFHKXjW+MV47BjbCHuJh1zbxltRj/XB2KBcWfH6k/Vnh9I6G5CuJNtMlbJ0kkCqWZ2MQePRAwfKTuQCd2FkhYFE0Ca+fs0hZtEjKEh50L5tfjf2uVuIR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gIe422QJ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726366050; x=1757902050;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KpbGciaXOmeOh3W92Etpe7+xu4k9td+wCnPCoZABsd0=;
-  b=gIe422QJjosIq2QW9sp3bRjTDazoQ6nP30DVxvzo/2lieMdjnRweWkBg
-   uLUb/r7gHarLcKPOR1M//YwOT21PYtuzNsa8fMGTHe2DMrEV8Zj2CvI6X
-   jKfpt7TBvpLI4bBkM2Ru9X8k2mTha70o0vTnlxsxCw4TqJ92H+OO4ccRr
-   IKQkVSZdQ2rWuz3D54pB3uJYiUAvXXvfKtWwPDf4iOyRR/06isPp1WYsY
-   sziVEVPG4uJ0iM7QDGaXZhWCY2AKGQMSH9iUFglz5rsG/+mcJcln9NnL/
-   xnHJr3pRM3Ajexl3gKBh94xWir2z12lsD3VuL1Wx9bNR0IGIvXuUeeXNf
-   g==;
-X-CSE-ConnectionGUID: DX5oOyQhSlWe6sWq3XmsvA==
-X-CSE-MsgGUID: 320QryZ+QpC2jCy8CBOm6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="42748808"
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="42748808"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 19:07:30 -0700
-X-CSE-ConnectionGUID: EX0/+ZlBRsKH6sW4r3Agow==
-X-CSE-MsgGUID: cpHkERcyRuWhtwOrmfJ5+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="73274066"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 14 Sep 2024 19:07:27 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spefc-0008KI-1t;
-	Sun, 15 Sep 2024 02:07:24 +0000
-Date: Sun, 15 Sep 2024 10:06:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Julius Werner <jwerner@chromium.org>,
-	Hugues Bruant <hugues.bruant@gmail.com>,
-	intel-gfx@lists.freedesktop.org,
-	Brian Norris <briannorris@chromium.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org, Borislav Petkov <bp@alien8.de>,
-	chrome-platform@lists.linux.dev,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>
-Subject: Re: [PATCH v3] firmware: coreboot: Don't register a pdev if
- screen_info data is present
-Message-ID: <202409150915.n7egvNYa-lkp@intel.com>
-References: <20240913213246.1549213-1-javierm@redhat.com>
+	s=arc-20240116; t=1726366168; c=relaxed/simple;
+	bh=zNcUu92O+CsHsDDRBkabwIsJ5Q3n32aLPUBYPt2rvJg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O+lN0SSRwIl+uNooJx8Jjo5iNOy/VVAjh+4dZkNrSPoz6H7qSEF6n5p7MakZ5cS0+374A2xbJ1cJ8ra1rZScjtSc+95YWXFyi37PPk2b8xZhj338Msnq2WDifEX735h4wEzo8c3U87xV6DHxPgbOSnlNK7QrIhFs6w+ZYmt8Qtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h+TQD6nZ; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726366164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IzRMxXd5ikdNUDyoBBzzoqxy/I4G7J8s+nsmc1Un8Wc=;
+	b=h+TQD6nZCYzb+m2lfzzpysJMGPgiQv6Z2Ri604MFzZCHHou2/ZYBHhHlTO2d+TVwBeXvut
+	vmMFiaUTluK8/6XXsCBb7xXBCZkMFA5PC30lC48s4NpHEBpyZNUN30ETyXM6n5VhM+gHR4
+	MM+JRk4uWgEKSctznkizor2ODsmB87k=
+From: Wen Yang <wen.yang@linux.dev>
+To: "Eric W . Biederman" <ebiederm@xmission.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Joel Granados <j.granados@samsung.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Wen Yang <wen.yang@linux.dev>
+Subject: [PATCH v3 0/5] sysctl: encode the min/max values directly in the table entry
+Date: Sun, 15 Sep 2024 10:08:26 +0800
+Message-Id: <cover.1726365007.git.wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913213246.1549213-1-javierm@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Javier,
+Many modules use these additional static/global variables (such as
+two_five_five, n_65535, ue_int_max, etc.) in the boundary checking of
+sysctl, and they are read-only and never changed.
 
-kernel test robot noticed the following build errors:
+Eric points out: "by turning .extra1 and .extra2 into longs instead of
+keeping them as pointers and needing constants to be pointed at somewhere
+.. The only people I can see who find a significant benefit by
+consolidating all of the constants into one place are people who know how
+to stomp kernel memory."
 
-[auto build test ERROR on chrome-platform/for-next]
-[also build test ERROR on chrome-platform/for-firmware-next linus/master v6.11-rc7 next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This patch series achieves direct encoding values in table entries and still
+maintains compatibility with existing extra1/extra2 pointers.
+Afterwards, we can remove these unnecessary static variables progressively and
+also gradually kill the shared const array.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Javier-Martinez-Canillas/firmware-coreboot-Don-t-register-a-pdev-if-screen_info-data-is-present/20240914-053323
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240913213246.1549213-1-javierm%40redhat.com
-patch subject: [PATCH v3] firmware: coreboot: Don't register a pdev if screen_info data is present
-config: csky-randconfig-002-20240915 (https://download.01.org/0day-ci/archive/20240915/202409150915.n7egvNYa-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409150915.n7egvNYa-lkp@intel.com/reproduce)
+Wen Yang (5):
+  sysctl: add helper functions to extract table->extra1/extra2
+  sysctl: support encoding values directly in the table entry
+  sysctl: add KUnit test code to check for encoding  min/max in table
+    entries
+  sysctl: delete mmap_rnd_bits_{min/max} and
+    mmap_rnd_compat_bits_{min/max} to save 16 bytes
+  sysctl: delete six_hundred_forty_kb to save 4 bytes
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409150915.n7egvNYa-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_simpleondemand.o
->> ERROR: modpost: "screen_info" [drivers/firmware/google/framebuffer-coreboot.ko] undefined!
+ fs/proc/proc_sysctl.c  |  29 +-
+ include/linux/mm.h     |   4 -
+ include/linux/sysctl.h |  95 ++++++-
+ kernel/sysctl-test.c   | 581 +++++++++++++++++++++++++++++++++++++++++
+ kernel/sysctl.c        |  45 ++--
+ mm/mmap.c              |   4 -
+ 6 files changed, 708 insertions(+), 50 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
