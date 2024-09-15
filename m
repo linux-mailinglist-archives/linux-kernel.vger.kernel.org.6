@@ -1,392 +1,368 @@
-Return-Path: <linux-kernel+bounces-329824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4A897966D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:23:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E24979670
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2575C1F21C38
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B660A1F21C44
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EB21C579C;
-	Sun, 15 Sep 2024 11:22:56 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2283F1C3F36;
+	Sun, 15 Sep 2024 11:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UodUE4+3"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9757946C;
-	Sun, 15 Sep 2024 11:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B01D12C7FB
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 11:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726399376; cv=none; b=rodpaqWQiQl+13n0t6+IA6bZRzn38LO370wtiaSFi1fyqunpiFvVXpC00MZW8Dhb3nxpa7gZcwfIa/ni3kirVZjtvZV8+HsOFHRA3K9Q9ID8TqSEegES8rUtjdmcDnb5xSCqjzXXPapXEM6pdpTpsKEyHKGSenRg04/Rcj8fIMc=
+	t=1726399968; cv=none; b=drImudFv9Emm+vevwfMwMqMUaEKLYafDIdOUJRP5JHb00fWtX3ZxTyG7OK6jh1e3bIN/eTVeIq/G7sGYtCcukF3wrh2uWMy53xMFf7glEySvgBXCiPriE/u6Nr6d9lO2cey1nDF7SyUpNhtp3ATuu5OcfrUs40POr5dunujP4d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726399376; c=relaxed/simple;
-	bh=uT7dYy8AvRHuggYm5OMjAWImOq1Oypr6/tBNhMKQexg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lbnH/NwWXzUOpR9sqvwaGwxf87WytXoYEmnpTWrcB4QtWe26enml5a4bul3bP2Z69HU0qXAqGr1TfslHWRjAhkXN8qsVrpS6Dnww3+RwII3JD4flrmwaO5OPIOP9jyQOR03GrUgndnoin1MvLA+le9YdUoNqqxeQ82X4e0DtETU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4X65HQ3gnDz4f3jcn;
-	Sun, 15 Sep 2024 19:22:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 2DC3C1A06D7;
-	Sun, 15 Sep 2024 19:22:42 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP2 (Coremail) with SMTP id Syh0CgB3q2CAw+ZmO5OJBQ--.64672S2;
-	Sun, 15 Sep 2024 19:22:41 +0800 (CST)
-Message-ID: <f9a89c7e-f4d5-4496-a15e-3a697fbc3ad4@huaweicloud.com>
-Date: Sun, 15 Sep 2024 19:22:40 +0800
+	s=arc-20240116; t=1726399968; c=relaxed/simple;
+	bh=c46WBt4I6sdCn0SYPgaVjETiUmgjWHfxAxiR+ZKleTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O7294kOHfOOdtt3gobbCqc1xcd/iMHBMeCwoM2lNaXKu6NteRl8GjdVsoGsliuW9UFq9pD4edBRoT61/3io75qmxi+SlY/RfbcFSd3osCClomWyHhiR/YX76PXPCE+jYBXi5yhZYykpqmzu/nWLPD/qxtykvAiJ5Zl/V21mw/hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UodUE4+3; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5365b71a6bdso2495046e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 04:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726399964; x=1727004764; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3jqgD7JGOh3XQ9WV2JGG8COEbPlsIIfrvC/7Hdf1d4I=;
+        b=UodUE4+3yLMYDRoPu77dDh2Hvzfpw4iBJMD//3V3aZ74moZvfrsdMlsj/tSTKNF8bO
+         CrZolWEMLANBreN3JgtM/YlQRyWt52ThRk0fk1e0Fqx5MLSueEM7lFmQf9PH1k3xgQft
+         pco6dyv/gZDmM1uicU9EBMB/Xz4hA6zIrskGc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726399964; x=1727004764;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3jqgD7JGOh3XQ9WV2JGG8COEbPlsIIfrvC/7Hdf1d4I=;
+        b=tPNMi1IA27z2hBVciUz8/XYyUUQg9wFm29VePR3Di/RTNRgopaDNz6G9NKqnc03tyb
+         2Cs+OhpOE+Q6vaMmb8c12yuDNIygbFnZRfnD75vhvCZDrv7e6NCDfsqZMn7Q9SvEUewq
+         86bE1Kk4LfzPck4ORsTNVN5uGcl8ZWgm13bI3rIu8yDZw9l/wu7NmDmBB0vCy2ST+dLX
+         Ya/Olow8bfxGcfIul0MWK8Wq3grkOfgnljmsxeyj0Cy+r62BDk9nyrh1u4VgcizVUfJK
+         NOjQfCpswVB3XaDdTh1U7sLZ8/fXpd/REkwIPS9RkvdLdWhFk5EX18FHxx6MxjBRXuEx
+         dAWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ693A7tL3mJhHxchtEsbIyJqVawuF0H05vDM2ZAv0vBVNIClizVFFzbO2RrhVGTaeZuWjz2JmoSgu36o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx087Z8zWQrj3qam48rgyN2v5E5jGdMC6baUKoKVdk13wXSvKrI
+	igy/Z2yjW/TcvzKh4eu+Qp3V9+c1ypIMj2HwBSgVzLMkfOsiaRdp6eLu4iVQ6OldLy6T4u6KsMl
+	ZODllie1PukrADoaiC/wjdc2Ar7i19Iuq5HV/
+X-Google-Smtp-Source: AGHT+IFwmiQcKMAA0cM4UP9yt10EN0wVUgbSokaKnMqT+tBazXs/fmJfvGPNeXWF3G9iOi3lB19695luyPtvvpRK0xc=
+X-Received: by 2002:a05:6512:a90:b0:535:3dae:a14b with SMTP id
+ 2adb3069b0e04-5367feba05emr4032845e87.2.1726399963747; Sun, 15 Sep 2024
+ 04:32:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v2 1/2] perf stat: Support inherit events during
- fork() for bperf
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20240905115918.772234-1-wutengda@huaweicloud.com>
- <20240905115918.772234-2-wutengda@huaweicloud.com>
- <ZuXPn-VIkmH7iitG@google.com>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <ZuXPn-VIkmH7iitG@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgB3q2CAw+ZmO5OJBQ--.64672S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3AF4UXr13Kry8uFyUJrWxtFb_yoWDJF4fpF
-	WkC3Wqkr4Fqry7Wwn0qw4DuFnav34xurW5urn3K3ySyF1kArn3K34xGFW293W3ZrnrCF1S
-	vr1jkw4UC3yDJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+References: <20240911072751.365361-1-wenst@chromium.org> <20240911072751.365361-7-wenst@chromium.org>
+ <CAD=FV=Udc9aP7bSzTWP82zsaztRD2YnVNpSDA54FC0dKQ-Nz2A@mail.gmail.com>
+In-Reply-To: <CAD=FV=Udc9aP7bSzTWP82zsaztRD2YnVNpSDA54FC0dKQ-Nz2A@mail.gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Sun, 15 Sep 2024 13:32:32 +0200
+Message-ID: <CAGXv+5FRoiv+TPyeFTcuRanRuSh2-xUo6ttVPkW6o3tktUmcFA@mail.gmail.com>
+Subject: Re: [PATCH v7 06/10] i2c: Introduce OF component probe function
+To: Doug Anderson <dianders@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
+	Jiri Kosina <jikos@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Sep 14, 2024 at 1:44=E2=80=AFAM Doug Anderson <dianders@chromium.or=
+g> wrote:
+>
+> Hi,
+>
+> On Wed, Sep 11, 2024 at 12:28=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org=
+> wrote:
+> >
+> > Some devices are designed and manufactured with some components having
+> > multiple drop-in replacement options. These components are often
+> > connected to the mainboard via ribbon cables, having the same signals
+> > and pin assignments across all options. These may include the display
+> > panel and touchscreen on laptops and tablets, and the trackpad on
+> > laptops. Sometimes which component option is used in a particular devic=
+e
+> > can be detected by some firmware provided identifier, other times that
+> > information is not available, and the kernel has to try to probe each
+> > device.
+> >
+> > This change attempts to make the "probe each device" case cleaner. The
+> > current approach is to have all options added and enabled in the device
+> > tree. The kernel would then bind each device and run each driver's prob=
+e
+> > function. This works, but has been broken before due to the introductio=
+n
+> > of asynchronous probing, causing multiple instances requesting "shared"
+> > resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
+> > time, with only one instance succeeding. Work arounds for these include
+> > moving the pinmux to the parent I2C controller, using GPIO hogs or
+> > pinmux settings to keep the GPIO pins in some fixed configuration, and
+> > requesting the interrupt line very late. Such configurations can be see=
+n
+> > on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
+> > Lenovo Thinkpad 13S.
+> >
+> > Instead of this delicate dance between drivers and device tree quirks,
+> > this change introduces a simple I2C component probe. function For a
+>
+> s/probe. function/probe function./
+
+Ack.
+
+> > +static int i2c_of_probe_enable_node(struct device *dev, struct device_=
+node *node)
+> > +{
+> > +       int ret;
+> > +
+> > +       dev_info(dev, "Enabling %pOF\n", node);
+> > +
+> > +       struct of_changeset *ocs __free(kfree) =3D kzalloc(sizeof(*ocs)=
+, GFP_KERNEL);
+> > +       if (!ocs)
+> > +               return -ENOMEM;
+>
+> I guess the kernel lets you mix code and declarations now? I'm still
+> used to all declarations being together but maybe I'm old school... I
+> would have put the "dev_info" below the allocation...
+
+AFAIK this is an exception. Excerpt from include/linux/cleanup.h:
+
+    When the unwind order matters it requires that variables be defined
+    mid-function scope rather than at the top of the file.
+
+and
+
+    Given that the "__free(...) =3D NULL" pattern for variables defined at
+    the top of the function poses this potential interdependency problem
+    the recommendation is to always define and assign variables in one
+    statement and not group variable definitions at the top of the
+    function when __free() is used.
 
 
+>
+> > +/**
+> > + * i2c_of_probe_component() - probe for devices of "type" on the same =
+i2c bus
+> > + * @dev: Pointer to the &struct device of the caller, only used for de=
+v_printk() messages.
+> > + * @cfg: Pointer to the &struct i2c_of_probe_cfg containing callbacks =
+and other options
+> > + *       for the prober.
+> > + * @ctx: Context data for callbacks.
+> > + *
+> > + * Probe for possible I2C components of the same "type" (&i2c_of_probe=
+_cfg->type)
+> > + * on the same I2C bus that have their status marked as "fail".
+>
+> I may have missed it, but originally this was ones marked
+> "fail-needs-probe", right? Now it tries all types of fail?
+>
+>
+> > + * Assumes that across the entire device tree the only instances of no=
+des
+> > + * prefixed with "type" are the ones that need handling for second sou=
+rce
+> > + * components. In other words, if "type" is "touchscreen", then all de=
+vice
+> > + * nodes named "touchscreen*" are the ones that need probing. There ca=
+nnot
+>
+> "touchscreen*" implies that it can have an arbitrary suffix. Can it?
 
-On 2024/9/15 2:02, Namhyung Kim wrote:
-> Hello,
-> 
-> On Thu, Sep 05, 2024 at 11:59:17AM +0000, Tengda Wu wrote:
->> bperf has a nice ability to share PMUs, but it still does not support
->> inherit events during fork(), resulting in some deviations in its stat
->> results compared with perf.
->>
->> perf stat result:
->>   $ ./perf stat -e cycles,instructions -- ./perf test -w sqrtloop
->>
->>    Performance counter stats for './perf test -w sqrtloop':
->>
->>        2,316,038,116      cycles
->>        2,859,350,725      instructions                     #    1.23  insn per cycle
->>
->>          1.009603637 seconds time elapsed
->>
->>          1.004196000 seconds user
->>          0.003950000 seconds sys
->>
->> bperf stat result:
->>   $ ./perf stat --bpf-counters -e cycles,instructions -- ./perf test -w sqrtloop
->>
->>    Performance counter stats for './perf test -w sqrtloop':
->>
->>           18,762,093      cycles
->>           23,487,766      instructions                     #    1.25  insn per cycle
->>
->>          1.008913769 seconds time elapsed
->>
->>          1.003248000 seconds user
->>          0.004069000 seconds sys
->>
->> In order to support event inheritance, two new bpf programs are added
->> to monitor the fork and exit of tasks respectively. When a task is
->> created, add it to the filter map to enable counting, and reuse the
->> `accum_key` of its parent task to count together with the parent task.
->> When a task exits, remove it from the filter map to disable counting.
->>
->> After support:
->>   $ ./perf stat --bpf-counters -e cycles,instructions -- ./perf test -w sqrtloop
->>
->>    Performance counter stats for './perf test -w sqrtloop':
->>
->>        2,316,543,537      cycles
->>        2,859,677,779      instructions                     #    1.23  insn per cycle
->>
->>          1.009566332 seconds time elapsed
->>
->>          1.004414000 seconds user
->>          0.003545000 seconds sys
->>
->> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
->> ---
->>  tools/perf/util/bpf_counter.c                 | 32 +++++++--
->>  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 70 +++++++++++++++++--
->>  tools/perf/util/bpf_skel/bperf_u.h            |  5 ++
->>  3 files changed, 94 insertions(+), 13 deletions(-)
->>
->> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
->> index 7a8af60e0f51..94aa46f50052 100644
->> --- a/tools/perf/util/bpf_counter.c
->> +++ b/tools/perf/util/bpf_counter.c
->> @@ -394,6 +394,7 @@ static int bperf_check_target(struct evsel *evsel,
->>  }
->>  
->>  static	struct perf_cpu_map *all_cpu_map;
->> +static __u32 filter_entry_cnt;
->>  
->>  static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
->>  				       struct perf_event_attr_map_entry *entry)
->> @@ -444,12 +445,31 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
->>  	return err;
->>  }
->>  
->> +/* Attach programs on demand according to filter types to reduce overhead */
->> +static int bperf_attach_follower_program(struct bperf_follower_bpf *skel,
->> +					 enum bperf_filter_type filter_type)
->> +{
->> +	struct bpf_link *link;
->> +	int err = 0;
->> +
->> +	if (filter_type == BPERF_FILTER_PID ||
->> +	    filter_type == BPERF_FILTER_TGID)
->> +		err = bperf_follower_bpf__attach(skel);
->> +	else {
->> +		link = bpf_program__attach(skel->progs.fexit_XXX);
->> +		if (IS_ERR(link))
->> +			err = PTR_ERR(link);
->> +	}
->> +
->> +	return err;
->> +}
->> +
->>  static int bperf__load(struct evsel *evsel, struct target *target)
->>  {
->>  	struct perf_event_attr_map_entry entry = {0xffffffff, 0xffffffff};
->>  	int attr_map_fd, diff_map_fd = -1, err;
->>  	enum bperf_filter_type filter_type;
->> -	__u32 filter_entry_cnt, i;
->> +	__u32 i;
->>  
->>  	if (bperf_check_target(evsel, target, &filter_type, &filter_entry_cnt))
->>  		return -1;
->> @@ -529,9 +549,6 @@ static int bperf__load(struct evsel *evsel, struct target *target)
->>  	/* set up reading map */
->>  	bpf_map__set_max_entries(evsel->follower_skel->maps.accum_readings,
->>  				 filter_entry_cnt);
->> -	/* set up follower filter based on target */
->> -	bpf_map__set_max_entries(evsel->follower_skel->maps.filter,
->> -				 filter_entry_cnt);
->>  	err = bperf_follower_bpf__load(evsel->follower_skel);
->>  	if (err) {
->>  		pr_err("Failed to load follower skeleton\n");
->> @@ -543,6 +560,7 @@ static int bperf__load(struct evsel *evsel, struct target *target)
->>  	for (i = 0; i < filter_entry_cnt; i++) {
->>  		int filter_map_fd;
->>  		__u32 key;
->> +		struct bperf_filter_value fval = { i, 0 };
->>  
->>  		if (filter_type == BPERF_FILTER_PID ||
->>  		    filter_type == BPERF_FILTER_TGID)
->> @@ -553,12 +571,12 @@ static int bperf__load(struct evsel *evsel, struct target *target)
->>  			break;
->>  
->>  		filter_map_fd = bpf_map__fd(evsel->follower_skel->maps.filter);
->> -		bpf_map_update_elem(filter_map_fd, &key, &i, BPF_ANY);
->> +		bpf_map_update_elem(filter_map_fd, &key, &fval, BPF_ANY);
->>  	}
->>  
->>  	evsel->follower_skel->bss->type = filter_type;
->>  
->> -	err = bperf_follower_bpf__attach(evsel->follower_skel);
->> +	err = bperf_attach_follower_program(evsel->follower_skel, filter_type);
->>  
->>  out:
->>  	if (err && evsel->bperf_leader_link_fd >= 0)
->> @@ -623,7 +641,7 @@ static int bperf__read(struct evsel *evsel)
->>  	bperf_sync_counters(evsel);
->>  	reading_map_fd = bpf_map__fd(skel->maps.accum_readings);
->>  
->> -	for (i = 0; i < bpf_map__max_entries(skel->maps.accum_readings); i++) {
->> +	for (i = 0; i < filter_entry_cnt; i++) {
->>  		struct perf_cpu entry;
->>  		__u32 cpu;
->>  
->> diff --git a/tools/perf/util/bpf_skel/bperf_follower.bpf.c b/tools/perf/util/bpf_skel/bperf_follower.bpf.c
->> index f193998530d4..32b944f28776 100644
->> --- a/tools/perf/util/bpf_skel/bperf_follower.bpf.c
->> +++ b/tools/perf/util/bpf_skel/bperf_follower.bpf.c
->> @@ -5,6 +5,8 @@
->>  #include <bpf/bpf_tracing.h>
->>  #include "bperf_u.h"
->>  
->> +#define MAX_ENTRIES 102400
->> +
->>  struct {
->>  	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
->>  	__uint(key_size, sizeof(__u32));
->> @@ -22,7 +24,9 @@ struct {
->>  struct {
->>  	__uint(type, BPF_MAP_TYPE_HASH);
->>  	__uint(key_size, sizeof(__u32));
->> -	__uint(value_size, sizeof(__u32));
->> +	__uint(value_size, sizeof(struct bperf_filter_value));
->> +	__uint(max_entries, MAX_ENTRIES);
->> +	__uint(map_flags, BPF_F_NO_PREALLOC);
->>  } filter SEC(".maps");
->>  
->>  enum bperf_filter_type type = 0;
->> @@ -33,14 +37,15 @@ int BPF_PROG(fexit_XXX)
->>  {
->>  	struct bpf_perf_event_value *diff_val, *accum_val;
->>  	__u32 filter_key, zero = 0;
->> -	__u32 *accum_key;
->> +	__u32 accum_key;
->> +	struct bperf_filter_value *fval;
->>  
->>  	if (!enabled)
->>  		return 0;
->>  
->>  	switch (type) {
->>  	case BPERF_FILTER_GLOBAL:
->> -		accum_key = &zero;
->> +		accum_key = zero;
->>  		goto do_add;
->>  	case BPERF_FILTER_CPU:
->>  		filter_key = bpf_get_smp_processor_id();
->> @@ -55,16 +60,20 @@ int BPF_PROG(fexit_XXX)
->>  		return 0;
->>  	}
->>  
->> -	accum_key = bpf_map_lookup_elem(&filter, &filter_key);
->> -	if (!accum_key)
->> +	fval = bpf_map_lookup_elem(&filter, &filter_key);
->> +	if (!fval)
->>  		return 0;
->>  
->> +	accum_key = fval->accum_key;
->> +	if (fval->exited)
->> +		bpf_map_delete_elem(&filter, &filter_key);
->> +
->>  do_add:
->>  	diff_val = bpf_map_lookup_elem(&diff_readings, &zero);
->>  	if (!diff_val)
->>  		return 0;
->>  
->> -	accum_val = bpf_map_lookup_elem(&accum_readings, accum_key);
->> +	accum_val = bpf_map_lookup_elem(&accum_readings, &accum_key);
->>  	if (!accum_val)
->>  		return 0;
->>  
->> @@ -75,4 +84,53 @@ int BPF_PROG(fexit_XXX)
->>  	return 0;
->>  }
->>  
->> +/* The program is only used for PID or TGID filter types. */
->> +SEC("tp_btf/task_newtask")
->> +int BPF_PROG(on_newtask, struct task_struct *task, __u64 clone_flags)
->> +{
->> +	__u32 parent_pid, child_pid;
->> +	struct bperf_filter_value *parent_fval;
->> +	struct bperf_filter_value child_fval = { 0 };
->> +
->> +	if (!enabled)
->> +		return 0;
->> +
->> +	parent_pid = bpf_get_current_pid_tgid() >> 32;
->> +	child_pid = task->pid;
-> 
-> Should it use pid or tgid depending on the filter type?
-> 
-> Thanks,
-> Namhyung
+That is the idea. The use case is for components that have conflicting
+addresses and need special probing. Such device nodes obviously can't
+have the same node name. This is planned but not implemented in this
+series.
 
-Oh, it should. I just find two issues here: 
-One is that the task pid added under the TGID type will not be used by sched_switch prog,
-causing memory waste in map.
-Another is that using tgid to search for tasks under the PID type may find nothing, which
-would miss some child task counts.
+> ...or can it just have a unit address?
 
-I'll fix them in the next version.
+IIUC in DT jargon the "node name" does not include the address. The name
+including the address is the "full name".
 
-Thank you for pointing this out.
-Tengda
+> > + * be another "touchscreen" node that is already enabled.
+> > + *
+> > + * Assumes that for each "type" of component, only one actually exists=
+. In
+> > + * other words, only one matching and existing device will be enabled.
+> > + *
+> > + * Context: Process context only. Does non-atomic I2C transfers.
+> > + *          Should only be used from a driver probe function, as the f=
+unction
+> > + *          can return -EPROBE_DEFER if the I2C adapter or other resou=
+rces
+> > + *          are unavailable.
+> > + * Return: 0 on success or no-op, error code otherwise.
+> > + *         A no-op can happen when it seems like the device tree alrea=
+dy
+> > + *         has components of the type to be probed already enabled. Th=
+is
+> > + *         can happen when the device tree had not been updated to mar=
+k
+> > + *         the status of the to-be-probed components as "fail". Or thi=
+s
+> > + *         function was already run with the same parameters and succe=
+eded
+> > + *         in enabling a component. The latter could happen if the use=
+r
+>
+> s/latter/later
 
-> 
->> +
->> +	/* Check if the current task is one of the target tasks to be counted */
->> +	parent_fval = bpf_map_lookup_elem(&filter, &parent_pid);
->> +	if (!parent_fval)
->> +		return 0;
->> +
->> +	/* Start counting for the new task by adding it into filter map,
->> +	 * inherit the accum key of its parent task so that they can be
->> +	 * counted together.
->> +	 */
->> +	child_fval.accum_key = parent_fval->accum_key;
->> +	child_fval.exited = 0;
->> +	bpf_map_update_elem(&filter, &child_pid, &child_fval, BPF_NOEXIST);
->> +
->> +	return 0;
->> +}
->> +
->> +/* The program is only used for PID or TGID filter types. */
->> +SEC("tp_btf/sched_process_exit")
->> +int BPF_PROG(on_exittask, struct task_struct *task)
->> +{
->> +	__u32 pid;
->> +	struct bperf_filter_value *fval;
->> +
->> +	if (!enabled)
->> +		return 0;
->> +
->> +	/* Stop counting for this task by removing it from filter map */
->> +	pid = task->pid;
->> +	fval = bpf_map_lookup_elem(&filter, &pid);
->> +	if (fval)
->> +		fval->exited = 1;
->> +
->> +	return 0;
->> +}
->> +
->>  char LICENSE[] SEC("license") = "Dual BSD/GPL";
->> diff --git a/tools/perf/util/bpf_skel/bperf_u.h b/tools/perf/util/bpf_skel/bperf_u.h
->> index 1ce0c2c905c1..4a4a753980be 100644
->> --- a/tools/perf/util/bpf_skel/bperf_u.h
->> +++ b/tools/perf/util/bpf_skel/bperf_u.h
->> @@ -11,4 +11,9 @@ enum bperf_filter_type {
->>  	BPERF_FILTER_TGID,
->>  };
->>  
->> +struct bperf_filter_value {
->> +	__u32 accum_key;
->> +	__u8 exited;
->> +};
->> +
->>  #endif /* __BPERF_STAT_U_H */
->> -- 
->> 2.34.1
->>
+Are you sure?
 
+> > + *         had multiple types of components to probe, and one of them =
+down
+> > + *         the list caused a deferred probe. This is expected behavior=
+.
+> > + */
+> > +int i2c_of_probe_component(struct device *dev, const struct i2c_of_pro=
+be_cfg *cfg, void *ctx)
+> > +{
+> > +       const struct i2c_of_probe_ops *ops;
+> > +       const char *type;
+> > +       struct device_node *i2c_node;
+> > +       struct i2c_adapter *i2c;
+> > +       int ret;
+> > +
+> > +       if (!cfg)
+> > +               return -EINVAL;
+>
+> Drop extra check of "!cfg". In general kernel conventions don't check
+> for NULL pointers passed by caller unless it's an expected case. You
+> don't check for a NULL "dev" and you shouldn't need to check for a
+> NULL "cfg". They are both simply required parameters.
+
+"dev" is only passed to dev_printk(), and that can handle "dev" being
+NULL. Same can't be said for "cfg".
+
+I don't know what the preference is though. Crashing is probably not the
+nicest thing, even if it only happens to developers.
+
+> There are a few other places in the patch series where it feels like
+> there are extra arg checks that aren't really needed...
+>
+>
+> > +       ops =3D cfg->ops ?: &i2c_of_probe_dummy_ops;
+> > +       type =3D cfg->type;
+> > +
+> > +       i2c_node =3D i2c_of_probe_get_i2c_node(dev, type);
+> > +       if (IS_ERR(i2c_node))
+> > +               return PTR_ERR(i2c_node);
+> > +
+> > +       for_each_child_of_node_with_prefix(i2c_node, node, type) {
+>
+> I wouldn't object to a comment before this for loop:
+>
+> /* If any devices of this type are already enabled then the function
+> is a noop */
+>
+> ...or it could be a helper function.
+
+That is what the commeet within the loop is trying to say. I'll move
+it before the loop and incorporate your words. The loop can then be
+rewritten to return early.
+
+> > +               if (!of_device_is_available(node))
+> > +                       continue;
+> > +
+> > +               /*
+> > +                * Device tree has component already enabled. Either th=
+e
+> > +                * device tree isn't supported or we already probed onc=
+e.
+> > +                */
+> > +               ret =3D 0;
+> > +               goto out_put_i2c_node;
+> > +       }
+> > +
+> > +       i2c =3D of_get_i2c_adapter_by_node(i2c_node);
+> > +       if (!i2c) {
+> > +               ret =3D dev_err_probe(dev, -EPROBE_DEFER, "Couldn't get=
+ I2C adapter\n");
+> > +               goto out_put_i2c_node;
+> > +       }
+> > +
+> > +       /* Grab resources */
+> > +       ret =3D 0;
+> > +       if (ops->get_resources)
+> > +               ret =3D ops->get_resources(dev, i2c_node, ctx);
+> > +       if (ret)
+> > +               goto out_put_i2c_adapter;
+> > +
+> > +       /* Enable resources */
+> > +       if (ops->enable)
+> > +               ret =3D ops->enable(dev, ctx);
+> > +       if (ret)
+> > +               goto out_release_resources;
+>
+> I won't insist, but a part of me wonders whether we should just
+> combine "get_resources" and "enable" and then combine "cleanup" and
+> "free_resources_late". They are always paired one after another and
+> I'm having a hard time seeing why they need to be separate. It's not
+> like you'll ever get the resources and then enable/disable multiple
+> times.
+
+Maybe. The structure was carried over from the original non-callback
+version. I think it's easier to reason about if they are kept separate,
+especially since the outgoing path is slightly different when no working
+component is found and one of the callbacks ends up not getting called.
+
+> > +/**
+> > + * struct i2c_of_probe_ops - I2C OF component prober callbacks
+> > + *
+> > + * A set of callbacks to be used by i2c_of_probe_component().
+> > + *
+> > + * All callbacks are optional. Callbacks are called only once per run,=
+ and are
+> > + * used in the order they are defined in this structure.
+> > + *
+> > + * All callbacks that have return values shall return %0 on success,
+> > + * or a negative error number on failure.
+> > + *
+> > + * The @dev parameter passed to the callbacks is the same as @dev pass=
+ed to
+> > + * i2c_of_probe_component(). It should only be used for dev_printk() c=
+alls
+> > + * and nothing else, especially not managed device resource (devres) A=
+PIs.
+> > + */
+> > +struct i2c_of_probe_ops {
+> > +       /** @get_resources: Retrieve resources for components. */
+> > +       int (*get_resources)(struct device *dev, struct device_node *bu=
+s_node, void *data);
+> > +
+> > +       /** @free_resources_early: Release exclusive resources prior to=
+ enabling component. */
+> > +       void (*free_resources_early)(void *data);
+>
+> It would be good if the doc here mentioned what happened if no
+> components were found and thus nothing was enabled. Is the function
+> still called? It looks like "no" and "cleanup" is in charge of
+> cleaning in this case. Feels like the docs need to be more explicit.
+
+Ack.
+
+
+Thanks
+ChenYu
 
