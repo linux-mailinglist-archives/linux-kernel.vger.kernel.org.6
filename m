@@ -1,195 +1,136 @@
-Return-Path: <linux-kernel+bounces-330067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E88979933
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:34:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DCB979935
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D98FCB213B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:34:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F661F21C7D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7386EB7C;
-	Sun, 15 Sep 2024 21:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F726F2F8;
+	Sun, 15 Sep 2024 21:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSMmt6rx"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQcgC3A+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22D545007;
-	Sun, 15 Sep 2024 21:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF36A4779F;
+	Sun, 15 Sep 2024 21:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726436067; cv=none; b=SDLCbnYFLk1SCj2ijC8MZbQmOXs4MTObR6Qq9lsydpY7X+qTcE5ifieVly9fCdVEilZcRZMpKAhQf0oCGiYF6XMOpftbRWYBplHVmNceK25jpj2429E/N0IlAlYxNTcNFOVHz3VI7lbLfp/7N7YviF984x6N0c9AGeDhSZy6V+I=
+	t=1726436267; cv=none; b=efHKTJGNdasW3R4Ey7yvEn+m6ZsJN247yE1/nlNunPzekJtYkdIfcGx/ovtYPnLTns0oco0UPTrqR/EGyDF+2d527zazQE70udVOZeW/dEHt3m0l6QYVM/QulpCFOsQc1P73U9gnRUIRoboyWeldglRWHIGgqFpZiid8WFUL8qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726436067; c=relaxed/simple;
-	bh=rOJ76WfIbDA0DYYgc87kBrKXHKwX2sCAia7OU6ePV1s=;
+	s=arc-20240116; t=1726436267; c=relaxed/simple;
+	bh=cFetZ0+pK2Z2v93rcqzXBuQ7IfsY3UoObSRCY2KoNlg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OhBFqX49x4/MGY0RJXglor+VCW7RCh525B/gCpm3zuZPNZ3POMSiqj6uXB1wPAHnki1O2SOSyC4sFSVhBFqIKFG45wu+cOja82GvlS4fCEWXXmWpM/Kb2Byi/CUcGl4OpUQH/BKrNH+ExBfrjokqE82xPBC/B85SquKg1SeYAEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KSMmt6rx; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75b13c2a8so42095151fa.3;
-        Sun, 15 Sep 2024 14:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726436063; x=1727040863; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hzKaPg24dkMcNByqeKWtBck9nkaK/5xO4axudwUtPbs=;
-        b=KSMmt6rxaTgJXqG//ogUDKmwCl/t2t+Gm7mm5BuTCgROO0/2A4mgmihLSnaMAqe1os
-         lXU6f+2r8TmK09U6R32A0HNenJxfYvolG/f5ZrWXHVRWM3s1NpRhkzpp9FKUffPlGuiN
-         JwH0kzsc+LdUMIkkUz3DI9aOzpUKX3MDZFD1FhgaVBcKeGn0RCXNcIHSdZg8m+GZ0PM/
-         aeJGoLQtQg/E1kIwx+NQnDM3NbuYtHmJMKcZPtSQVwbRld7lul6IrvZ7oVFcuAXSlwDT
-         zRBaGli1Q2l+tfRUCuLJgP7VHuK9003EisKjEz1Kjtc9I7x19GJObRZqpVwp9dcAUGI6
-         4/lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726436063; x=1727040863;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hzKaPg24dkMcNByqeKWtBck9nkaK/5xO4axudwUtPbs=;
-        b=s/e3ebJ4aOvKQDFUvxl0vCwVyl6uuwcpO2nNA3og8GrtOgq5duA4eNFa51UsnpF0Ag
-         eEX1iZrUgihMiOSGnzmIJsGXJrVcWbM9/XtG1vAEK73IAos5l5MhlqdJMKg/hjlka8yi
-         D7Jh6XQWJLCxnuGqEC5MOI4ipvk+l9JGohguAdJofK6nQL9mhCn3qvLcorvKVR3CyGZM
-         UJBs9KqPiziKhIPf82owzS7D8dhiSa0xh1lVyCIO+HJF0g3lObqU6XauPk0qajhq0dpK
-         /DB3w26JygDaMFu/sVOwN1EVNVwe4RknRTDS820CQ0EDXfZbPPyl7Jr3FUCod5NppPNp
-         LBWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1V1qAhQ3Hk02wEb3RVAJrfPzZWNaDJAHxyNuueZZ6U4RByIKsyP/QNoNBDxaMlOtr7gZMCaDFLVo=@vger.kernel.org, AJvYcCWnwP/DKRMLlhPhjEdPlGmB5NaWnlktHrOiUvYsnoaL7KZT5nMV2MTvzZXY+HcBJvhvyX4pfOpOPZGC5/ZR@vger.kernel.org, AJvYcCXTvc50gV5j4WSFgwBFAp2MPYTJHbSflMQMZQJrXQQyV+xoAWCTVC4ti6bnkgDIBKtuvnDmI0LaVS9Y+B6w@vger.kernel.org
-X-Gm-Message-State: AOJu0YylQSHU55vim1r7gi1o3pOMaeSwNq8HJwqFGWik06Pw0oX5h7sr
-	3vy0cy46IIYD5sHCP3faT5kEwQgwTl6olbqXpnBcIwjxH4Q/aaqErS3gCw==
-X-Google-Smtp-Source: AGHT+IGiRYX6/oipf0GNDJKT8kg6glNTU2U/MXZN/ippopO7njKupSh2cDfW701eVR5b8fKg51Q0Xg==
-X-Received: by 2002:a05:651c:506:b0:2f7:663c:48da with SMTP id 38308e7fff4ca-2f787f435b7mr65300551fa.42.1726436061862;
-        Sun, 15 Sep 2024 14:34:21 -0700 (PDT)
-Received: from mobilestation ([95.79.225.241])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d30130esm6283591fa.38.2024.09.15.14.34.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 14:34:21 -0700 (PDT)
-Date: Mon, 16 Sep 2024 00:34:19 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Ferry Toth <ftoth@exalondelft.nl>, Viresh Kumar <vireshk@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v4 0/6] dmaengine: dw: Fix src/dst addr width
- misconfig
-Message-ID: <635sp3moq2csr34yeut5tedmehpr5brejed5hlrj25u63hg5tw@6v36r2emdt7d>
-References: <20240802075100.6475-1-fancer.lancer@gmail.com>
- <CAHp75VcnfrOOC610JxAdTwJv8j1i_Abo72E0h1aqRbrYOWRrZw@mail.gmail.com>
- <rsy7z45nhl74nzvq5a2ij4eeqgzu3htje2xpparxgam7jowo6a@6l75wjh2dqll>
- <ZuXbCKUs1iOqFu51@black.fi.intel.com>
- <hp2n4efzoe5n5zvgaygv4pz4rwip2iwj5nwpaofdwgzv65735b@bp4hn4aqkwrk>
- <jsiriw6kumswijb6wxdcjqnq3tdu524hveh7dezqdzutduvt2d@5xcdjwd6aj3f>
- <CAHp75VfQP6Ta=TVLCCPyPxnVrh7jwmWPUTcOYaRf3kdVJPR_rA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQ2rnPYCAruIreInnBqJlRksTjpyUWsybvuNDxqA8qT3jX7+Eqe1Zb3zSlf2c4083FBwygD41pWv3Xvm1jVsC6uRaMFRefNObGMS+li3d9UYFBxW8Y1wf30UkZtPsjtYDlYxaKvcxO48vE9w7yhTJ1RTEbXLJi1dOMo4JSrS6PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQcgC3A+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92E7C4CEC4;
+	Sun, 15 Sep 2024 21:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726436266;
+	bh=cFetZ0+pK2Z2v93rcqzXBuQ7IfsY3UoObSRCY2KoNlg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PQcgC3A+5UyJfuiIQUzVgwzNMgU/GY/avkfzGcA4LaF2kdN0F3yUuBlxab5fEvQcl
+	 9XiIHi0tnp2vfwLrbQxZ+UwfqqXQCNsn5+nyi3PVBxs/z+YiLhhJP08V8WtgIyr3wg
+	 u2+UNkrLtI/zdTxgWuviGikO+pmx6hQcv/3tBFRW3dqMFTczaJnhSQTmhzjdkERJPh
+	 eGkUbQcdUfPqsih17gTrq+jnkeKjIkDF+x9BICgNfW3mRJEcJ/jGUIOxw5+ZMIKoZ7
+	 DF8zAONumxFHNHB9SV2WTygew7XC+VHhGAU4PzRoGVKxbvp/jZA/+H9KLu1szW4Vf/
+	 5rySmtahMopIQ==
+Date: Sun, 15 Sep 2024 23:37:38 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Gary Guo <gary@garyguo.net>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, akpm@linux-foundation.org,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 01/26] rust: alloc: add `Allocator` trait
+Message-ID: <ZudTon205iOCdQbq@pollux>
+References: <20240911225449.152928-1-dakr@kernel.org>
+ <20240911225449.152928-2-dakr@kernel.org>
+ <20240915162813.149e21f2.gary@garyguo.net>
+ <ZucTMDCcoVH4oGs1@pollux>
+ <20240915202242.7a16b3d3.gary@garyguo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VfQP6Ta=TVLCCPyPxnVrh7jwmWPUTcOYaRf3kdVJPR_rA@mail.gmail.com>
+In-Reply-To: <20240915202242.7a16b3d3.gary@garyguo.net>
 
-On Sun, Sep 15, 2024 at 02:43:19PM +0300, Andy Shevchenko wrote:
-> On Sat, Sep 14, 2024 at 10:08 PM Serge Semin <fancer.lancer@gmail.com> wrote:
-> >
-> > On Sat, Sep 14, 2024 at 10:06:16PM +0300, Serge Semin wrote:
-> > > Hi Andy
-> > >
-> > > On Sat, Sep 14, 2024 at 09:50:48PM +0300, Andy Shevchenko wrote:
-> > > > On Mon, Aug 05, 2024 at 03:25:35PM +0300, Serge Semin wrote:
-> > > > > On Sat, Aug 03, 2024 at 09:29:54PM +0200, Andy Shevchenko wrote:
-> > > > > > On Fri, Aug 2, 2024 at 9:51 AM Serge Semin <fancer.lancer@gmail.com> wrote:
-> > > > > > >
-> > > > > > > The main goal of this series is to fix the data disappearance in case of
-> > > > > > > the DW UART handled by the DW AHB DMA engine. The problem happens on a
-> > > > > > > portion of the data received when the pre-initialized DEV_TO_MEM
-> > > > > > > DMA-transfer is paused and then disabled. The data just hangs up in the
-> > > > > > > DMA-engine FIFO and isn't flushed out to the memory on the DMA-channel
-> > > > > > > suspension (see the second commit log for details). On a way to find the
-> > > > > > > denoted problem fix it was discovered that the driver doesn't verify the
-> > > > > > > peripheral device address width specified by a client driver, which in its
-> > > > > > > turn if unsupported or undefined value passed may cause DMA-transfer being
-> > > > > > > misconfigured. It's fixed in the first patch of the series.
-> > > > > > >
-> > > > > > > In addition to that three cleanup patches follow the fixes described above
-> > > > > > > in order to make the DWC-engine configuration procedure more coherent.
-> > > > > > > First one simplifies the CTL_LO register setup methods. Second and third
-> > > > > > > patches simplify the max-burst calculation procedure and unify it with the
-> > > > > > > rest of the verification methods. Please see the patches log for more
-> > > > > > > details.
-> > > > > > >
-> > > > > > > Final patch is another cleanup which unifies the status variables naming
-> > > > > > > in the driver.
-> > > > > >
-> > > > > > Acked-by: Andy Shevchenko <andy@kernel.org>
-> > > > >
-> > > > > Awesome! Thanks.
-> > > >
-> > > > Not really :-)
-> > > > This series broke iDMA32 + SPI PXA2xx on Intel Merrifield.
-> > >
-> > > Damn. Sorry to hear that.(
-> > >
-> > > > I haven't
-> > > > had time to investigate further, but rolling back all patches helps.
-> > > >
-> > > > +Cc: Ferry who might also test and maybe investigate as he reported the
-> > > > issue to me initially.
-> > >
-> > > Ferry, could you please roll back the series patch-by-patch to find
-> > > out the particular commit to blame?
-> >
-> > Plus to that it would be nice to have some log/info/details/etc about
-> > what exactly is happening.
+On Sun, Sep 15, 2024 at 08:22:42PM +0100, Gary Guo wrote:
+> On Sun, 15 Sep 2024 19:02:40 +0200
+> Danilo Krummrich <dakr@kernel.org> wrote:
+> > There is also 4.
+> > 
+> > Let `alloc` and `realloc` return a properly aligned dangling pointer for
+> > `size == 0` and don't accept dangling pointers in `realloc` and `free`.
 > 
+> I'll consider the API design to be bad if I can't pass allocated pointer to
+> free. If caller needs to handle ZST specially then we might as well
+> just ban it completely.
 
-> For me with patch
-> 
-> spitest -l -s1000000 -b128 /dev/spidev5.1
-> SPI: [mode 0x20, bits_per_word 8, speed 1000000 Hz]
-> [  164.525604] pxa2xx_spi_pci 0000:00:07.1: DMA slave config failed
-> [  164.536105] pxa2xx_spi_pci 0000:00:07.1: failed to get DMA TX descriptor
-> [  164.543213] spidev spi-SPT0001:00: SPI transfer failed: -16
-> [  164.550140] spi_master spi5: failed to transfer one message from queue
-> [  164.557126] spi_master spi5: noqueue transfer failed
-> spitest: SPI transfer failed in iteration #0: Device or resource busy
+Fine for me -- I don't see a need to support ZSTs with `Allocator`.
 
-Thanks for the log. As I suspected there is a safety-check failure,
-which prevents the client driver from using the DMA-controller with
-the specified transfer parameters.
-
-It would be helpful if you find out which conditional statement in the
-dwc_verify_p_buswidth(), dwc_verify_m_buswidth() methods cause the
-failure. Also it would be useful to get the max_width, mem_width,
-reg_width and reg_burst variables values.
-
--Serge(y)
+I think its main purpose is to give us an interface to actually allocate memory.
+We probably don't need it to be a "dangling pointer generator".
 
 > 
-> Without
+> > And 5.
+> > 
+> > Reject the combination of `None` and `size == 0` entirely, as earlier proposed
+> > by Benno.
+> > 
+> > I'm fine with both, 4. and 5. with a slight preference for 4.
+> > 
+> > I'd also go along with 1., as a mix of 4. and 5.
+> > 
+> > I really don't like making `alloc` unsafe, and I really don't want to have
+> > `old_layout` in `free`. Please let's not discuss this again. :-)
 > 
-> spitest -s 1000000 -b 128 -l /dev/spidev5.1
-> SPI: [mode 0x20, bits_per_word 8, speed 1000000 Hz]
-> SEND: [00000000] ff 97 d0 54 d5 69 85 6e ca e7 b3 e1 a1 e5 1a 9d
-> ...
-> RECV: [00000000] ff 97 d0 54 d5 69 85 6e ca e7 b3 e1 a1 e5 1a 9d
-> ...
+> I don't buy it.
 > 
-> `spitest` is our internal tool, so what it does there is:
-> 1) opens SPI device for speed 1MHz in loopback mode
-> 2) generates 128 byte of random data
-> 3) tries to send and receive them
-> 4) compares
+> Your argument for having `old_layout` is so that the caller doesn't
+> need to care about the size. But as demonstrated the caller *does* need
+> to care about whether the size is zero.
 > 
-> I believe the similar behaviour can be achieved with the one that is
-> in the kernel tree.
+> Our previous discussion doesn't cover the particular case of ZST and
+> you said that it reason arise that we need this extra parameter, then
+> it could be added. It feels to me that sane behaviour when it comes
+> to ZST allocation is a very good reason.
+
+I don't see why we should "optimize" the API for creating dangling pointers and
+be able to pass them to `free` (which does not serve any practical purpose).
+
+I don't want to add arguments that are meaningless for the actual backing
+allocators (such as Kmalloc, Vmalloc, etc.), only to be able to generate and
+"free" pointers for ZSTs with arbitrary alignment.
+
+Do we even have use cases for ZSTs with other alignments?
+
 > 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+> > 
+> > > 
+> > > Best,
+> > > Gary
+> > >   
+> > > > 
+> > > > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > > > ---
+> > > >  rust/kernel/alloc.rs | 112 +++++++++++++++++++++++++++++++++++++++++++
+> > > >  1 file changed, 112 insertions(+)
+> 
 
