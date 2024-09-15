@@ -1,149 +1,250 @@
-Return-Path: <linux-kernel+bounces-329821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98481979667
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:56:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B415979668
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA8B41C21147
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC04281D78
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98EA1C3F08;
-	Sun, 15 Sep 2024 10:56:29 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EC81C3F26;
+	Sun, 15 Sep 2024 11:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Be6VIb5n"
+Received: from mail-40141.protonmail.ch (mail-40141.protonmail.ch [185.70.40.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1BD184E
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 10:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8691B969
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 11:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726397789; cv=none; b=mcawFxDF/LU/0zIyAq/EGIyth3qKqXI7oNDjgMcL6dAE9fH31wN2rQ434TDVEEIN3ukBYasq6rNgUIkTiWM27hNPwi62CJuB91yqD0FDZLCAK/UYhVOU2xvhyq4kAZyFLCOVMouHPPVGPjG95jyZKDnhLioBn4Q4q7CdMYUadJ0=
+	t=1726398367; cv=none; b=nzEJyNzqQ6+bigt2p8YxyfYQ3Ex1rhTSgc+I25KnPXxgi/3SGvevJ0b6eDTunad5uQ2VN6p+UacLxDlXn+BB9iAfW7RlEeYFNqCrbqpm/oGk2jF1dt0CFO/U3hwFnOi7e1SeaGO1+Y+wVD7YCDd+FhPtaKtm0Szeu8IEGNWabX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726397789; c=relaxed/simple;
-	bh=ekkZSLgT8GBlupVzFvKzgHzMo6+PEhQJ4SayxBylpfE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uZOBu2rmV3pws+IasasenlqOQRMs8+LF7TU1esp0hyY1hvT3jye+9b+OFCdwAwzcYr2E8uKb4OLk1Iy0pAHZXuAWP8X7jWzWU/I7J1DPH1DEAMTKjLxkpFI6Ij3Kzz9+JSt5GHEGvsXo+4B5htL6CVtEzaEp3hXSnLq1X3svvI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0980547efso34740465ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 03:56:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726397787; x=1727002587;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCoDL4bGqu6MNdtjog0pKzofOJnEE3mfH4E8N0Dflak=;
-        b=Y5xfd84amQzsO7NrOy4hIPHho2aBfhO7uPYrg5mjaM6RAZ5O2TNK/ecuseG5sBHy9T
-         jVgBMhQ6A2pcI7k8vC8VKrf17NWq7VRRC3PfdnEE+RJVzhETUShhZNyjs1825GIYoJHs
-         gy1e/W/AoHTMuMxZ8zPu+h5y3JqL37oB4hsY12Z+gc0qf98h74zK78krIQyVJtR1b/kD
-         UJO127aLSd8mQ9/SFnLN9GELlNp3ndOCWJN6Yz1E1Cu6A+daEOJzIjXk5G0H5QWc6quD
-         udlEbOeRnq6G2Zks/ZK+bVwVYPyjShuqVOCAQFiqzQMtzln/NoZbh0xra+YTey/HdwXP
-         6yoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzlWn3tFjmTMda1LdzPxQiZftKr6y5X5qTvvVMLPd3P0oQzPGZ4z0qoZ96/bLrUZ4RDK4bpQrldKTct+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfN2qFHcjSOvLBWI5CX73x+OG3amvn46cCZMwSpKaNeJGMn33p
-	IVxZpuDbYfP+fUtn0K8X2fBLepORKnoFmusv9SVKj+OyG8XmJ1+Wk4zAQeaJ+sv9l4X39YjmfZv
-	uSTz+NOmURGghSiTp9CoXPt5jUtiTKz0YQgjbpMG4IKufGSOc0Zb7fGI=
-X-Google-Smtp-Source: AGHT+IE1Z8eMdn0P6e7EYxc8b2e0sVwR60adnak2pImyXJp+frv0RSaiKt98e8XAy3JOnrORYtdOJ4hECyq+ImicyzJaJgRT3kDR
+	s=arc-20240116; t=1726398367; c=relaxed/simple;
+	bh=DaZD5DW7LP1SPgv2j3v5co0ny011mKy30Z8qr5v7NUU=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=maJALOGa4gD3Db9kNfE28U3br6Q8kEWpzHNJhBHsL7yjvzoybZBJ6cbDCcB4GSAQAjfTQ6hO/mz0j2mC+5Jc7w5oMmiJG6xImpRIxGWjgKWn3LT5FoX/j6ZbNK0BRFSiCgpYWgQHMP3QRE2Dvxk93Up28cXohtkxS3oqMgno7MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Be6VIb5n; arc=none smtp.client-ip=185.70.40.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726398357; x=1726657557;
+	bh=McL4CZyYmX/FIwqVZ1rgPN1sN35XLWWWGC02YxHqiuA=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=Be6VIb5ni+M0xEMavEtZWb9FlZV4083PK5GuVgGlg4Vq6q+iho6yxdTdNbP3OwxRM
+	 Ax9kwWrWi8mEy3xDtAuG0X5f5y+nioeOxViXLWBpTXuCGDchVlz+QyHN6DS/Mb/8cE
+	 N0x8AER/cghM3ls4NoIZrUjVVkeCfNoT2sV+biM7o0XO63+n3dblsIyhU2+CAPXF6/
+	 AwexEGHWDk92UqUg9JcterQPQmo87z1m+a9xBD6E6ueJgQWcLA4NNhqr7ltBLO5cu/
+	 7BK6E3IUoDlF8iAwI+BcZ5yJS1bJnyXrUhKRIRPVBRyfJh2wiQO8zVnzslwv5ve4JT
+	 4wirYGbZoZhjA==
+Date: Sun, 15 Sep 2024 11:05:52 +0000
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: John <therealgraysky@proton.me>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] x86: add more x86-64 micro-architecture levels
+Message-ID: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me>
+Feedback-ID: 47473199:user:proton
+X-Pm-Message-ID: 52e6ef91b4c57b770a6cbb78a43e908dfbdc64eb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168e:b0:3a0:4df2:52e2 with SMTP id
- e9e14a558f8ab-3a0848e8395mr124889465ab.4.1726397787028; Sun, 15 Sep 2024
- 03:56:27 -0700 (PDT)
-Date: Sun, 15 Sep 2024 03:56:27 -0700
-In-Reply-To: <000000000000ea79f70621404a85@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d64ef20622264e82@google.com>
-Subject: Re: [syzbot] [mm?] kernel BUG in z3fold_page_migrate
-From: syzbot <syzbot+63f9ce7427394b75d9a3@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linmiaohe@huawei.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, vitaly.wool@konsulko.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+GCC 11.1 and Clang 12.0[1] allow for the following new generic
+64-bit levels: x86-64-v2, x86-64-v3, and x86-64-v4.  This commit
+adds them as options accessible under:
+ Processor type and features  --->
+  Processor family --->
 
-HEAD commit:    0babf683783d Merge tag 'pinctrl-v6.11-4' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=178ae407980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
-dashboard link: https://syzkaller.appspot.com/bug?extid=63f9ce7427394b75d9a3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163fbc77980000
+Users of glibc 2.33 and above can see which level is supported
+by running: /lib/ld-linux-x86-64.so.2 --help | grep supported
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-0babf683.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b153c86536a6/vmlinux-0babf683.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ef8726833cde/bzImage-0babf683.xz
+or: /lib64/ld-linux-x86-64.so.2 --help | grep supported
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+63f9ce7427394b75d9a3@syzkaller.appspotmail.com
+ACKNOWLEDGMENTS
+This patch builds on the seminal work by Jeroen.[2]
 
- try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4755
- shrink_one+0x3b9/0x850 mm/vmscan.c:4793
- shrink_many mm/vmscan.c:4856 [inline]
- lru_gen_shrink_node mm/vmscan.c:4934 [inline]
- shrink_node+0x3799/0x3de0 mm/vmscan.c:5914
- kswapd_shrink_node mm/vmscan.c:6742 [inline]
- balance_pgdat mm/vmscan.c:6934 [inline]
- kswapd+0x1cbc/0x3720 mm/vmscan.c:7203
-------------[ cut here ]------------
-kernel BUG at mm/z3fold.c:1293!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 29 Comm: kcompactd1 Not tainted 6.11.0-rc7-syzkaller-00149-g0babf683783d #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:z3fold_page_migrate+0xafd/0xf50 mm/z3fold.c:1293
-Code: ff 4c 89 f7 48 c7 c6 40 36 18 8c e8 9d 17 d7 ff 90 0f 0b e8 25 ba 8c ff 48 8b 7c 24 08 48 c7 c6 a0 36 18 8c e8 84 17 d7 ff 90 <0f> 0b f3 0f 1e fa 48 89 ee 48 81 e6 ff 0f 00 00 31 ff e8 dc be 8c
-RSP: 0018:ffffc900004fed98 EFLAGS: 00010246
-RAX: 2ac19587b3dc5700 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8c0ad560 RDI: 0000000000000001
-RBP: ffffea00012a6f80 R08: ffffffff9018766f R09: 1ffffffff2030ecd
-R10: dffffc0000000000 R11: fffffbfff2030ece R12: dffffc0000000000
-R13: ffffffff8c1834a8 R14: ffffea0001157580 R15: 1ffffd400022aeb0
-FS:  0000000000000000(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000003793000 CR3: 0000000011e16000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- move_to_new_folio+0x99e/0x12e0 mm/migrate.c:999
- migrate_folio_move mm/migrate.c:1288 [inline]
- migrate_pages_batch+0x2527/0x3560 mm/migrate.c:1818
- migrate_pages_sync mm/migrate.c:1911 [inline]
- migrate_pages+0x262b/0x3460 mm/migrate.c:1993
- compact_zone+0x3404/0x4af0 mm/compaction.c:2671
- compact_node+0x2de/0x460 mm/compaction.c:2935
- kcompactd+0x788/0x1530 mm/compaction.c:3233
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:z3fold_page_migrate+0xafd/0xf50 mm/z3fold.c:1293
-Code: ff 4c 89 f7 48 c7 c6 40 36 18 8c e8 9d 17 d7 ff 90 0f 0b e8 25 ba 8c ff 48 8b 7c 24 08 48 c7 c6 a0 36 18 8c e8 84 17 d7 ff 90 <0f> 0b f3 0f 1e fa 48 89 ee 48 81 e6 ff 0f 00 00 31 ff e8 dc be 8c
-RSP: 0018:ffffc900004fed98 EFLAGS: 00010246
-RAX: 2ac19587b3dc5700 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8c0ad560 RDI: 0000000000000001
-RBP: ffffea00012a6f80 R08: ffffffff9018766f R09: 1ffffffff2030ecd
-R10: dffffc0000000000 R11: fffffbfff2030ece R12: dffffc0000000000
-R13: ffffffff8c1834a8 R14: ffffea0001157580 R15: 1ffffd400022aeb0
-FS:  0000000000000000(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000003cf5010 CR3: 000000001f032000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+REFERENCES
+1.  https://gitlab.com/x86-psABIs/x86-64-ABI/-/commit/77566eb03bc6a326811cb=
+7e9
+2.  http://www.linuxforge.net/docs/linux/linux-gcc.php
 
-
+Signed-off-by: John Audia <therealgraysky@proton.me>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ arch/x86/Kconfig.cpu | 60 +++++++++++++++++++++++++++++++++++++++-----
+ arch/x86/Makefile    |  6 +++++
+ 2 files changed, 60 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 2a7279d80460..b09a764e6dd1 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -294,6 +294,54 @@ config GENERIC_CPU
+ =09  Generic x86-64 CPU.
+ =09  Run equally well on all x86-64 CPUs.
+
++config MAMD_CPU_V2
++=09bool "AMD x86-64-v2"
++=09depends on (CC_IS_GCC && GCC_VERSION > 110000) || (CC_IS_CLANG && CLANG=
+_VERSION >=3D 120000)
++=09depends on X86_64
++=09help
++=09  AMD x86-64 CPU with v2 instructions.
++=09  Run equally well on all AMD x86-64 CPUs with min support of -march=3D=
+x86-64-v2.
++
++config MAMD_CPU_V3
++=09bool "AMD x86-64-v3"
++=09depends on (CC_IS_GCC && GCC_VERSION > 110000) || (CC_IS_CLANG && CLANG=
+_VERSION >=3D 120000)
++=09depends on X86_64
++=09help
++=09  AMD x86-64-v3 CPU with v3 instructions.
++=09  Run equally well on all AMD x86-64 CPUs with min support of -march=3D=
+x86-64-v3.
++
++config MAMD_CPU_V4
++=09bool "AMD x86-64-v4"
++=09depends on (CC_IS_GCC && GCC_VERSION > 110000) || (CC_IS_CLANG && CLANG=
+_VERSION >=3D 120000)
++=09depends on X86_64
++=09help
++=09  AMD x86-64 CPU with v4 instructions.
++=09  Run equally well on all AMD x86-64 CPUs with min support of -march=3D=
+x86-64-v4.
++
++config MINTEL_CPU_V2
++=09bool "Intel x86-64-v2"
++=09depends on (CC_IS_GCC && GCC_VERSION > 110000) || (CC_IS_CLANG && CLANG=
+_VERSION >=3D 120000)
++=09depends on X86_64
++=09help
++=09  Intel x86-64 CPU with v2 instructions.
++=09  Run equally well on all Intel x86-64 CPUs with min support of -march=
+=3Dx86-64-v2.
++
++config MINTEL_CPU_V3
++=09bool "Intel x86-64-v3"
++=09depends on (CC_IS_GCC && GCC_VERSION > 110000) || (CC_IS_CLANG && CLANG=
+_VERSION >=3D 120000)
++=09depends on X86_64
++=09help
++=09  Intel x86-64 CPU with v3 instructions.
++=09  Run equally well on all Intel x86-64 CPUs with min support of -march=
+=3Dx86-64-v3.
++
++config MINTEL_CPU_V4
++=09bool "Intel x86-64-v4"
++=09depends on (CC_IS_GCC && GCC_VERSION > 110000) || (CC_IS_CLANG && CLANG=
+_VERSION >=3D 120000)
++=09depends on X86_64
++=09help
++=09  Intel x86-64 CPU with v4 instructions.
++=09  Run equally well on all Intel x86-64 CPUs with min support of -march=
+=3Dx86-64-v4.
++
+ endchoice
+
+ config X86_GENERIC
+@@ -318,7 +366,7 @@ config X86_INTERNODE_CACHE_SHIFT
+ config X86_L1_CACHE_SHIFT
+ =09int
+ =09default "7" if MPENTIUM4 || MPSC
+-=09default "6" if MK7 || MK8 || MPENTIUMM || MCORE2 || MATOM || MVIAC7 || =
+X86_GENERIC || GENERIC_CPU
++=09default "6" if MK7 || MK8 || MPENTIUMM || MCORE2 || MATOM || MVIAC7 || =
+X86_GENERIC || GENERIC_CPU || MAMD_CPU_V2 || MAMD_CPU_V3 || MAMD_CPU_V4 || =
+MINTEL_CPU_V2 || MINTEL_CPU_V3 || MINTEL_CPU_V4
+ =09default "4" if MELAN || M486SX || M486 || MGEODEGX1
+ =09default "5" if MWINCHIP3D || MWINCHIPC6 || MCRUSOE || MEFFICEON || MCYR=
+IXIII || MK6 || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || =
+M586 || MVIAC3_2 || MGEODE_LX
+
+@@ -336,11 +384,11 @@ config X86_ALIGNMENT_16
+
+ config X86_INTEL_USERCOPY
+ =09def_bool y
+-=09depends on MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M586M=
+MX || X86_GENERIC || MK8 || MK7 || MEFFICEON || MCORE2
++=09depends on MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M586M=
+MX || X86_GENERIC || MK8 || MK7 || MEFFICEON || MCORE2 || MINTEL_CPU_V2 || =
+MINTEL_CPU_V3 || MINTEL_CPU_V4
+
+ config X86_USE_PPRO_CHECKSUM
+ =09def_bool y
+-=09depends on MWINCHIP3D || MWINCHIPC6 || MCYRIXIII || MK7 || MK6 || MPENT=
+IUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC3_2 |=
+| MVIAC7 || MEFFICEON || MGEODE_LX || MCORE2 || MATOM
++=09depends on MWINCHIP3D || MWINCHIPC6 || MCYRIXIII || MK7 || MK6 || MPENT=
+IUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC3_2 |=
+| MVIAC7 || MEFFICEON || MGEODE_LX || MCORE2 || MATOM || MAMD_CPU_V2 || MAM=
+D_CPU_V3 || MAMD_CPU_V4 || MINTEL_CPU_V2 || MINTEL_CPU_V3 || MINTEL_CPU_V4
+
+ #
+ # P6_NOPs are a relatively minor optimization that require a family >=3D
+@@ -356,7 +404,7 @@ config X86_USE_PPRO_CHECKSUM
+ config X86_P6_NOP
+ =09def_bool y
+ =09depends on X86_64
+-=09depends on (MCORE2 || MPENTIUM4 || MPSC)
++=09depends on (MCORE2 || MPENTIUM4 || MPSC || MINTEL_CPU_V2 || MINTEL_CPU_=
+V3 || MINTEL_CPU_V4)
+
+ config X86_TSC
+ =09def_bool y
+@@ -364,7 +412,7 @@ config X86_TSC
+
+ config X86_HAVE_PAE
+ =09def_bool y
+-=09depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUMM =
+|| MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC7 || MCORE2 || MATOM ||=
+ X86_64
++=09depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUMM =
+|| MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC7 || MCORE2 || MATOM ||=
+ X86_64 || MAMD_CPU_V2 || MAMD_CPU_V3 || MAMD_CPU_V4 || MINTEL_CPU_V2 || MI=
+NTEL_CPU_V3 || MINTEL_CPU_V4
+
+ config X86_CMPXCHG64
+ =09def_bool y
+@@ -379,7 +427,7 @@ config X86_CMOV
+ config X86_MINIMUM_CPU_FAMILY
+ =09int
+ =09default "64" if X86_64
+-=09default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPEN=
+TIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MCORE2 || MK7=
+ || MK8)
++=09default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPEN=
+TIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MCORE2 || MK7=
+ || MK8 || MAMD_CPU_V2 || MAMD_CPU_V3 || MAMD_CPU_V4 || MINTEL_CPU_V2 || MI=
+NTEL_CPU_V3 || MINTEL_CPU_V4)
+ =09default "5" if X86_32 && X86_CMPXCHG64
+ =09default "4"
+
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 801fd85c3ef6..3d03e687eaac 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -179,6 +179,12 @@ else
+         cflags-$(CONFIG_MCORE2)=09=09+=3D -march=3Dcore2
+         cflags-$(CONFIG_MATOM)=09=09+=3D -march=3Datom
+         cflags-$(CONFIG_GENERIC_CPU)=09+=3D -mtune=3Dgeneric
++        cflags-$(CONFIG_MAMD_CPU_V2)=09+=3D -march=3Dx86-64-v2
++        cflags-$(CONFIG_MAMD_CPU_V3)=09+=3D -march=3Dx86-64-v3
++        cflags-$(CONFIG_MAMD_CPU_V4)=09+=3D -march=3Dx86-64-v4
++        cflags-$(CONFIG_MINTEL_CPU_V2)=09+=3D -march=3Dx86-64-v2
++        cflags-$(CONFIG_MINTEL_CPU_V3)=09+=3D -march=3Dx86-64-v3
++        cflags-$(CONFIG_MINTEL_CPU_V4)=09+=3D -march=3Dx86-64-v4
+         KBUILD_CFLAGS +=3D $(cflags-y)
+
+         rustflags-$(CONFIG_MK8)=09=09+=3D -Ctarget-cpu=3Dk8
+--
+2.46.1
+
 
