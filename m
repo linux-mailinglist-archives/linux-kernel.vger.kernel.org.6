@@ -1,294 +1,159 @@
-Return-Path: <linux-kernel+bounces-329660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D71D97945C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 04:12:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E84997945F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 04:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D627F2815C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 02:12:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C42ECB20D3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 02:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862F517BA3;
-	Sun, 15 Sep 2024 02:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FC2946F;
+	Sun, 15 Sep 2024 02:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="Y1F8qNed";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iXl8SMYr"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7qhRKc7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3EE10A0C;
-	Sun, 15 Sep 2024 02:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA3418D;
+	Sun, 15 Sep 2024 02:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726366294; cv=none; b=dZDXayB3nyYio/STAOlR9a2K2pz3ITP/EXQ4bgm0fuwhTDHi1LqjdYqBDkq8cxiDNLpHzIhtTIX7yUDnB+Ocj+QxCJ3g9JkuCzkRKc4w05LPxsoLGIuyFWVSSEQtsFBgDon0LGPWaJ8/sOtp547UGR8VnHKOYN8QNdt9a+eqIJw=
+	t=1726366653; cv=none; b=qLJbsjXIal9wPgDKu0wmRiI/N3zTdcOvCrvBWiIOcV5vmLv3bXOJNNBxQAEJ01VafZm2JvnmMciEBE+BGtZxKrvyenRGpt3Vlsq22W2n0ZmvGWSVqR79SEWJUD0DLVze7O8ToBJSCtlWBDtpusbcLBI7LUBiWxt+6NKcpmSRpVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726366294; c=relaxed/simple;
-	bh=g7juDejI7eJN79EEGNSXhjN9Y+JkFquiwa2q2bWnyKM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YoMzNo25aF1NaS1P9yV7NnWt0LpzAuCX4ahrDS7/loZzZ+bvR1oH8pV0SaeYGOWJ7NMJjSekhO86FztEgWBB69UdgiuvXK79vPS8PceE2+ldToZPUtm0cLZI1MX7AaAGqmBx1veAivlcLgTd/Q8dnqC/L0Cqa7tu5eoVY0HB9e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=Y1F8qNed; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iXl8SMYr; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1122E114008B;
-	Sat, 14 Sep 2024 22:11:32 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Sat, 14 Sep 2024 22:11:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1726366292; x=
-	1726452692; bh=x9ZpRYM8kHS0muDHL06dw8EZ3cVcPCsBaorwNhHXrgo=; b=Y
-	1F8qNedlpVN08nzHcuDs3jG6q+tBuVupSXBPCbIDbMT/sUQBdaYVGFsD+hrxPvVb
-	JVOTDumh3hjFSdpn5OcqlACjZVmZK4q03Jskd1qsqIU56/3GYy1aRBVwmpPbLZhl
-	7Ztvd9wXaSLwo3Mxy/D9iqrWyX6Z9AOVzMzP8jycjXO02u3v/NVjmcW0o/BTH3sc
-	hl9dfpuV214cnqVu6f2bFmHUMrkYAR2npio03f1YgP1Se4UE00i6nJFgo2PjIV2W
-	tEMzc/fE9ymjxNnaT/YtZaERlmDxFNyqQmVQaDSUR3wuFvPW4dcQ/nGNucZVSHR+
-	3itt7HFjJ2bYJfU6/6thw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726366292; x=
-	1726452692; bh=x9ZpRYM8kHS0muDHL06dw8EZ3cVcPCsBaorwNhHXrgo=; b=i
-	Xl8SMYryWT4WoauTDCvC2Rft4KffX4DW/oj2ncBXKMIN91KUSTmOU8i0p7Z88Bah
-	q6Mm7oNN0rTJMYXYYUfkpglwmMQAt+pqAXIrKYuwhk4qFI2eKqXDDPChhnXJOJoh
-	deFD28Og60wTF2/tGHhbIAj2ZLiaPvgvrmBMQPvrLBQ+ka3yA99ZwwCYkcqyGi55
-	v7mfElMBy6mDqIt2Z7gQlJt9CXoS/DONb8XgAfQotSgIBt7xSy/Ao0DOk8XMnqQZ
-	R/H4/2JW0mZi0qe1ibsY8aK/uTkkcIFHrfpgJn3hzFBm0hVEYrNoIFwOxtUypSTq
-	DD1nUzzBDQExADKL9Ixzw==
-X-ME-Sender: <xms:U0LmZjyGdZdzm5KpR6rH5L8Cufxo2GCMMkB_IlAE7VyfEII9gPP2kA>
-    <xme:U0LmZrQr6iI-njgI4Fdoe0Uj2ApWcL6Us8geYTfHAA89mcvEwMYHnpowCQ1Cmd4Uv
-    JfY-kn9bwl6hoKTTw>
-X-ME-Received: <xmr:U0LmZtWrSJrAXqdAH_fjj69tI7hThT2jCwHousl161e27nBAtgjwlBMltEPSCYhCnfQuNUJ8fkvTToOCjquB3WKCxDj-F3gJyOx9_s7K2hV7W8klVfeU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekuddgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlje
-    dtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeff
-    rghnihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnh
-    epgfefgfegjefhudeikedvueetffelieefuedvhfehjeeljeejkefgffeghfdttdetnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesug
-    iguhhuuhdrgiihiidpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurh
-    hiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepuggrnhhivghlsehiohhgvggrrhgsohigrdhnvghtpdhrtghpthhtoh
-    epvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehmhihkohhlrghlsehf
-    sgdrtghomhdprhgtphhtthhopehmrghrthhinhdrlhgruheslhhinhhugidruggvvhdprh
-    gtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihonhhghhho
-    nhhgrdhsohhngheslhhinhhugidruggvvh
-X-ME-Proxy: <xmx:U0LmZtjzkV7f-xzvOiufTdzVBnoXPaNgPkLFtQW4ZDZRqHiCB_rPzA>
-    <xmx:U0LmZlCnnLwPz_Ov3lQY9hKohxPskGhCATvO6FBH5MV4E3rVaFr_OA>
-    <xmx:U0LmZmK5qyuyevCEARgipSMFiM2tJqIEK_f99uaL-hiDknX1dKHxKQ>
-    <xmx:U0LmZkCMoTXVZR96s4kSu8C146H2o4ahCgbAsJW-K5Zuq0zuUzXOjw>
-    <xmx:VELmZt50oWC4Ka5-l2nVXfMR8MuR77HgWemDwd91RLApNaQdJa7f0p83>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 14 Sep 2024 22:11:28 -0400 (EDT)
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: shuah@kernel.org,
-	andrii@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com
-Cc: mykolal@fb.com,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH bpf-next 2/2] bpf: selftests: verifier: Add nullness elision tests
-Date: Sat, 14 Sep 2024 20:11:12 -0600
-Message-ID: <55d878b5b9ee0daef9e19f7c5e13cd78d96a59cd.1726366145.git.dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1726366145.git.dxu@dxuuu.xyz>
-References: <cover.1726366145.git.dxu@dxuuu.xyz>
+	s=arc-20240116; t=1726366653; c=relaxed/simple;
+	bh=Cu9oogNUDp0JyK3aZ5kSKAt7MkSWd0QBhKX3Dlldovw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dR3Y9zAFF1Gvo+/c3mO8ZkMVTaLAop6sTLEILz+k6dIIKCwFdQ3Ucs6s6SniLF9CWCiAWJVF8+uwKYQjmzM7stLUrnQxxADMPORkXgyqElhlnYHw6+ZFvRuAW5M8OTYkNLYU0QArJSxh7Dcvw/Ppar681ZYqp82n/XcG5JEqxoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7qhRKc7; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726366652; x=1757902652;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Cu9oogNUDp0JyK3aZ5kSKAt7MkSWd0QBhKX3Dlldovw=;
+  b=R7qhRKc7fpzgotfGvmFF4/GpZJHUB9vHbD/dH3TaPSqR/rrDu/AcVKm6
+   men4O8z5pUFXGp1WgLqfbwA9sAh5KUZKGh8IE/aO2lPnFRp75DMws5Vsf
+   1tbtE5+opeWJJnemEOMSGNqEL7E4PPQJ+Y+p/bDS6zNmyAx2TMX758O/n
+   Ss7MQSpeTgVaxtwhHslD6tXngIGmX5jxz94QdxmWSpYGs/57ihb119pSo
+   VP28M+4pSDRVwTDR+CbZVjNDHa5mbUUlpE1q9sPJCs0JcC1T7HbYXsgda
+   XKYlzeUw7P1EhCqvL1OV9g0Qi6oHFic+72QAMf4hXIeScKHCRtBgTuDXj
+   A==;
+X-CSE-ConnectionGUID: Wlv2Fn/PQA2EgP99glS2tA==
+X-CSE-MsgGUID: cfjUHxunSomgzani2vJIiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="25171852"
+X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
+   d="scan'208";a="25171852"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 19:17:31 -0700
+X-CSE-ConnectionGUID: yIV5O7oxSyCqb9SiViWT1Q==
+X-CSE-MsgGUID: f5nxJ5p8R02TjB12H+h/Ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
+   d="scan'208";a="68608885"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 14 Sep 2024 19:17:27 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spepI-0008L0-30;
+	Sun, 15 Sep 2024 02:17:24 +0000
+Date: Sun, 15 Sep 2024 10:16:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, netdev@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, bryan.whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
+	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
+	andrew@lunn.ch, Steen.Hegelund@microchip.com,
+	Raju.Lakkaraju@microchip.com, daniel.machon@microchip.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next V2 3/5] net: lan743x: Register the platform
+ device for sfp pluggable module
+Message-ID: <202409151058.rOgbMAJJ-lkp@intel.com>
+References: <20240911161054.4494-4-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911161054.4494-4-Raju.Lakkaraju@microchip.com>
 
-Test that nullness elision works for common use cases. For example, we
-want to check that both full and subreg stack slots recognized. As well
-as multiple lookups. And obviously some bound checks.
+Hi Raju,
 
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
----
- .../bpf/progs/verifier_array_access.c         | 143 ++++++++++++++++++
- 1 file changed, 143 insertions(+)
+kernel test robot noticed the following build errors:
 
-diff --git a/tools/testing/selftests/bpf/progs/verifier_array_access.c b/tools/testing/selftests/bpf/progs/verifier_array_access.c
-index 95d7ecc12963..85bf50750a8e 100644
---- a/tools/testing/selftests/bpf/progs/verifier_array_access.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_array_access.c
-@@ -28,6 +28,20 @@ struct {
- 	__uint(map_flags, BPF_F_WRONLY_PROG);
- } map_array_wo SEC(".maps");
- 
-+struct {
-+	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-+	__uint(max_entries, 2);
-+	__type(key, int);
-+	__type(value, struct test_val);
-+} map_array_pcpu SEC(".maps");
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__uint(max_entries, 2);
-+	__type(key, int);
-+	__type(value, struct test_val);
-+} map_array SEC(".maps");
-+
- struct {
- 	__uint(type, BPF_MAP_TYPE_HASH);
- 	__uint(max_entries, 1);
-@@ -526,4 +540,133 @@ l0_%=:	exit;						\
- 	: __clobber_all);
- }
- 
-+SEC("socket")
-+__description("valid map access into an array using constant without nullness")
-+__success
-+__retval(4)
-+__naked void an_array_with_a_constant_no_nullness(void)
-+{
-+	asm volatile ("					\
-+	r1 = 1;						\
-+	*(u64*)(r10 - 8) = r1;				\
-+	r2 = r10;					\
-+	r2 += -8;					\
-+	r1 = %[map_array] ll;				\
-+	call %[bpf_map_lookup_elem];			\
-+	r1 = %[test_val_foo];				\
-+	*(u64*)(r0 + 0) = r1;				\
-+	r0 = *(u64*)(r0 + 0);				\
-+	exit;						\
-+"	:
-+	: __imm(bpf_map_lookup_elem),
-+	  __imm_addr(map_array),
-+	  __imm_const(test_val_foo, offsetof(struct test_val, foo))
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("valid multiple map access into an array using constant without nullness")
-+__success
-+__retval(8)
-+__naked void multiple_array_with_a_constant_no_nullness(void)
-+{
-+	asm volatile ("					\
-+	r1 = 1;						\
-+	*(u64*)(r10 - 8) = r1;				\
-+	r2 = r10;					\
-+	r2 += -8;					\
-+	r1 = %[map_array] ll;				\
-+	call %[bpf_map_lookup_elem];			\
-+	r6 = %[test_val_foo];				\
-+	*(u64*)(r0 + 0) = r6;				\
-+	r7 = *(u64*)(r0 + 0);				\
-+	r1 = 0;						\
-+	*(u64*)(r10 - 16) = r1;				\
-+	r2 = r10;					\
-+	r2 += -16;					\
-+	r1 = %[map_array] ll;				\
-+	call %[bpf_map_lookup_elem];			\
-+	*(u64*)(r0 + 0) = r6;				\
-+	r1 = *(u64*)(r0 + 0);				\
-+	r7 += r1;					\
-+	r0 = r7;					\
-+	exit;						\
-+"	:
-+	: __imm(bpf_map_lookup_elem),
-+	  __imm_addr(map_array),
-+	  __imm_const(test_val_foo, offsetof(struct test_val, foo))
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("valid map access into an array using 32-bit constant without nullness")
-+__success
-+__retval(4)
-+__naked void an_array_with_a_32bit_constant_no_nullness(void)
-+{
-+	asm volatile ("					\
-+	r1 = 1;						\
-+	*(u32*)(r10 - 4) = r1;				\
-+	r2 = r10;					\
-+	r2 += -4;					\
-+	r1 = %[map_array] ll;				\
-+	call %[bpf_map_lookup_elem];			\
-+	r1 = %[test_val_foo];				\
-+	*(u64*)(r0 + 0) = r1;				\
-+	r0 = *(u64*)(r0 + 0);				\
-+	exit;						\
-+"	:
-+	: __imm(bpf_map_lookup_elem),
-+	  __imm_addr(map_array),
-+	  __imm_const(test_val_foo, offsetof(struct test_val, foo))
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("valid map access into a pcpu array using constant without nullness")
-+__success
-+__retval(4)
-+__naked void a_pcpu_array_with_a_constant_no_nullness(void)
-+{
-+	asm volatile ("					\
-+	r1 = 1;						\
-+	*(u64*)(r10 - 8) = r1;				\
-+	r2 = r10;					\
-+	r2 += -8;					\
-+	r1 = %[map_array_pcpu] ll;			\
-+	call %[bpf_map_lookup_elem];			\
-+	r1 = %[test_val_foo];				\
-+	*(u64*)(r0 + 0) = r1;				\
-+	r0 = *(u64*)(r0 + 0);				\
-+	exit;						\
-+"	:
-+	: __imm(bpf_map_lookup_elem),
-+	  __imm_addr(map_array_pcpu),
-+	  __imm_const(test_val_foo, offsetof(struct test_val, foo))
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("invalid map access into an array using constant without nullness")
-+__failure __msg("R0 invalid mem access 'map_value_or_null'")
-+__naked void an_array_with_a_constant_no_nullness_out_of_bounds(void)
-+{
-+	asm volatile ("					\
-+	r1 = 3;						\
-+	*(u64*)(r10 - 8) = r1;				\
-+	r2 = r10;					\
-+	r2 += -8;					\
-+	r1 = %[map_array] ll;				\
-+	call %[bpf_map_lookup_elem];			\
-+	r1 = %[test_val_foo];				\
-+	*(u64*)(r0 + 0) = r1;				\
-+	r0 = *(u64*)(r0 + 0);				\
-+	exit;						\
-+"	:
-+	: __imm(bpf_map_lookup_elem),
-+	  __imm_addr(map_array),
-+	  __imm_const(test_val_foo, offsetof(struct test_val, foo))
-+	: __clobber_all);
-+}
-+
- char _license[] SEC("license") = "GPL";
+[auto build test ERROR on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Raju-Lakkaraju/net-lan743x-Add-SFP-support-check-flag/20240912-002444
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240911161054.4494-4-Raju.Lakkaraju%40microchip.com
+patch subject: [PATCH net-next V2 3/5] net: lan743x: Register the platform device for sfp pluggable module
+config: x86_64-randconfig-003-20240914 (https://download.01.org/0day-ci/archive/20240915/202409151058.rOgbMAJJ-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409151058.rOgbMAJJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409151058.rOgbMAJJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: i2c_get_adapter_by_fwnode
+   >>> referenced by sfp.c:2981 (drivers/net/phy/sfp.c:2981)
+   >>>               drivers/net/phy/sfp.o:(sfp_probe) in archive vmlinux.a
+--
+>> ld.lld: error: undefined symbol: i2c_put_adapter
+   >>> referenced by sfp.c:2989 (drivers/net/phy/sfp.c:2989)
+   >>>               drivers/net/phy/sfp.o:(sfp_probe) in archive vmlinux.a
+   >>> referenced by sfp.c:2965 (drivers/net/phy/sfp.c:2965)
+   >>>               drivers/net/phy/sfp.o:(sfp_cleanup) in archive vmlinux.a
+--
+>> ld.lld: error: undefined symbol: hwmon_device_unregister
+   >>> referenced by sfp.c:1640 (drivers/net/phy/sfp.c:1640)
+   >>>               drivers/net/phy/sfp.o:(__sfp_sm_event) in archive vmlinux.a
+--
+>> ld.lld: error: undefined symbol: mdio_i2c_alloc
+   >>> referenced by sfp.c:707 (drivers/net/phy/sfp.c:707)
+   >>>               drivers/net/phy/sfp.o:(__sfp_sm_event) in archive vmlinux.a
+--
+>> ld.lld: error: undefined symbol: hwmon_sanitize_name
+   >>> referenced by sfp.c:1611 (drivers/net/phy/sfp.c:1611)
+   >>>               drivers/net/phy/sfp.o:(sfp_hwmon_probe) in archive vmlinux.a
+--
+>> ld.lld: error: undefined symbol: hwmon_device_register_with_info
+   >>> referenced by sfp.c:1617 (drivers/net/phy/sfp.c:1617)
+   >>>               drivers/net/phy/sfp.o:(sfp_hwmon_probe) in archive vmlinux.a
+--
+>> ld.lld: error: undefined symbol: i2c_transfer
+   >>> referenced by sfp.c:648 (drivers/net/phy/sfp.c:648)
+   >>>               drivers/net/phy/sfp.o:(sfp_i2c_read) in archive vmlinux.a
+   >>> referenced by sfp.c:680 (drivers/net/phy/sfp.c:680)
+   >>>               drivers/net/phy/sfp.o:(sfp_i2c_write) in archive vmlinux.a
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GP_PCI1XXXX
+   Depends on [n]: PCI [=y] && GPIOLIB [=y] && NVMEM_SYSFS [=n]
+   Selected by [y]:
+   - LAN743X [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
+   WARNING: unmet direct dependencies detected for SFP
+   Depends on [m]: NETDEVICES [=y] && PHYLIB [=y] && I2C [=m] && PHYLINK [=y] && (HWMON [=m] || HWMON [=m]=n [=n])
+   Selected by [y]:
+   - LAN743X [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
+   WARNING: unmet direct dependencies detected for I2C_PCI1XXXX
+   Depends on [m]: I2C [=m] && HAS_IOMEM [=y] && PCI [=y]
+   Selected by [y]:
+   - LAN743X [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
