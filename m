@@ -1,190 +1,123 @@
-Return-Path: <linux-kernel+bounces-329944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842C69797D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:22:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042759797CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48DBC281E5F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:22:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D899B20F57
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21131C9EB6;
-	Sun, 15 Sep 2024 16:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222CD1C9DD2;
+	Sun, 15 Sep 2024 16:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QfDlyRZl"
-Received: from msa.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpC6ELW6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF9838DD1
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 16:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E0618B04;
+	Sun, 15 Sep 2024 16:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726417336; cv=none; b=aKLCtAIXVzQKrqkZgkVZdTUdoPq76vHp/xIik78aFgt9giyI6nIwpPeE8CQIjGZnxbhsoQq+uju/8b4075ZTEV3eR4RKvCJLKXOxThplH/lS97KNyWXE8FCZRv1JFrgAqKv/+541A3JkcdJOiMhn8ovesxHq1CYk6bdXUfPMzXw=
+	t=1726417328; cv=none; b=XjlKIE6vit9d0U1gqCo7gPD/oJssLSp+s+GnY8PlhN5eRmlqKWoBZmAU1Vf0qSaH04+NAv8UEPNPTu4UbiEFZAvg8RFkyDysOQzIrSt7JYrZ7VnJ2rPhXP1yGPD1eO5k7swNxUDBmS64hiv9CzjHx2tAJgT6pgIvGoOrd5YWOaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726417336; c=relaxed/simple;
-	bh=iP5KDxcrGXOfBoGJGJ0pumZ3z5ExNyCE/KMQVZalkLk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PJ24vFZpeeEjjWwmf+2llU9Twyel/QjnPprulhVw865ic5jimLp1m4CYJv2Xjt8Xt66AFoBLykXCvuHnFlB2eD18b+7B3qqzGgNPiBwJz7N26chIO1aA2t17F2f3zE611McZHAZh14ccpCpD2TxW4VY7/Pib+D6MfTZH5lQHzLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QfDlyRZl; arc=none smtp.client-ip=193.252.22.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id ps0hs0twFsBGNps0hsCwLZ; Sun, 15 Sep 2024 18:22:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726417324;
-	bh=TkpQY2gkdM9Y4uSBD/xLgQaqvbdgPYywQWgtIu56p6w=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=QfDlyRZlRfeL1VuQOzwaFDgvuOr22XTTOBc2GzrHsNFsbdXmaAki92zGGU5D5IoQP
-	 EdGH8u9i+4AphxszaSbzBjBRQuRpq6anu7Gb1eAZQrLb4Ibzj5BK2F3q+AaPDeJqIR
-	 MjohFkRNSM1CYYiO9vl0nKWP3VCEoRjOJwC4lNCwjYRhDhSVkftodZo9mY1YhP1DhM
-	 KMF7/Bu9GWnIUuI7vckG3ABNTRdo4wUY1WWfAebQuIQuLBYJXNfcaNyoKCXSB8gbkA
-	 FKHqVbQ03Ytyx31bEmPEwvTfxNHNBOiaz2bgPOHwgW4YAUyrtP/4KvlGzDEQBbCfro
-	 zPG6AcA4Yac+A==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 15 Sep 2024 18:22:04 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Martin KaFai Lau <martin.lau@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	bpf@vger.kernel.org
-Subject: [PATCH] bpf: Constify struct btf_kind_operations
-Date: Sun, 15 Sep 2024 18:21:54 +0200
-Message-ID: <9192ab72b2e9c66aefd6520f359a20297186327f.1726417289.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726417328; c=relaxed/simple;
+	bh=Fq7ExgekfgiYR2Q2UUEbsFBFg9UlNjKP9oZ4jQg+N10=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=A4YGTHfsRZZoFm7GgxPVUi5UJn6EPwTo3ud1aLxIXZq8RKPUu6nXs3MMCUE8asFbbVQeaCyt2izBaHn88vvC+OnrtMH70xcJ20wY62/DJKIbISkmEfmoX9484goL5WKgGmLLYdqvql05StLR1pSO6V+zxD25glPj0nNqlmmINFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpC6ELW6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A47C4CEC3;
+	Sun, 15 Sep 2024 16:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726417327;
+	bh=Fq7ExgekfgiYR2Q2UUEbsFBFg9UlNjKP9oZ4jQg+N10=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=LpC6ELW61q80XTX72iF4DECJhAJ6/VBb2mr3poUPNGrgaIUMR/KQc+wrmmpce5l0N
+	 eMUxvCKup90GEtZZFT7UI1x2EOhIfRS5wlyQDhFY1gkIGGbTCCPWgW3q+wH6vJRzUS
+	 mvmGIw3C2eKrbJN190te3+5pqlJ91QL40gcYI8HpmjYLYrHutMh5h31xL1KkzOwTgp
+	 OQjIWa0Gx65nTBWqwQf7k+XLbzQy82IznPWbg8Sp9jnPONMHa43C+UL0U+faw7YJkc
+	 6Ylcu+imnuJW4NuB+HbiEJq7qKi+rdHvhyyMWvjBBRQqiRP6JWgX3AIWyBBeuZX/TI
+	 fAexa6X22Zy4A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 15 Sep 2024 19:22:04 +0300
+Message-Id: <D46ZV5RXW7Z9.26N1IRXNRLV9X@kernel.org>
+Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
+ "Pengyu Ma" <mapengyu@gmail.com>
+Subject: Re: [regression] significant delays when secureboot is enabled
+ since 6.10
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Roberto
+ Sassu" <roberto.sassu@huaweicloud.com>, "Linux regressions mailing list"
+ <regressions@lists.linux.dev>
+X-Mailer: aerc 0.18.2
+References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
+ <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
+ <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
+ <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
+ <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
+ <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
+ <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
+ <D43JXBFOOB2O.3U6ZQ7DASR1ZW@kernel.org>
+ <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
+ <D46RE2BWMGJ4.25VA7IVYTJ8MO@kernel.org>
+ <D46RWPQ211ZS.12EYKZY053BH@kernel.org>
+ <0b22c2c4b4a998fb44bb08be60a359acb9ecb8da.camel@HansenPartnership.com>
+ <D46XX6HNU686.50X57ZWI2GUX@kernel.org>
+ <7586c7e6e6028a734a8cac3d4b1a8504e6cd4b21.camel@HansenPartnership.com>
+In-Reply-To: <7586c7e6e6028a734a8cac3d4b1a8504e6cd4b21.camel@HansenPartnership.com>
 
-'struct btf_kind_operations' are not modified in this driver.
+On Sun Sep 15, 2024 at 6:00 PM EEST, James Bottomley wrote:
+> On Sun, 2024-09-15 at 17:50 +0300, Jarkko Sakkinen wrote:
+> > On Sun Sep 15, 2024 at 4:59 PM EEST, James Bottomley wrote:
+> > > On Sun, 2024-09-15 at 13:07 +0300, Jarkko Sakkinen wrote:
+> > > > On Sun Sep 15, 2024 at 12:43 PM EEST, Jarkko Sakkinen wrote:
+> > > > > When it comes to boot we should aim for one single
+> > > > > start_auth_session during boot, i.e. different phases would
+> > > > > leave that session open so that we don't have to load the
+> > > > > context every single time.=C2=A0 I think it should be doable.
+> > > >=20
+> > > > The best possible idea how to improve performance here would be
+> > > > to transfer the cost from time to space. This can be achieved by
+> > > > keeping null key permanently in the TPM memory during power
+> > > > cycle.
+> > >=20
+> > > No it's not at all.=C2=A0 If you look at it, the NULL key is only use=
+d
+> > > to encrypt the salt for the start session and that's the operating
+> > > taking a lot of time.=C2=A0 That's why the cleanest mitigation would =
+be
+> > > to save and restore the session.=C2=A0 Unfortunately the timings you
+> > > already complain about still show this would be about 10x longer
+> > > than a no-hmac extend so I'm still waiting to see if IMA people
+> > > consider that an acceptable tradeoff.
+> >=20
+> > The bug report does not say anything about IMA issues. Please read
+> > the bug reports before commenting ;-) I will ignore your comment
+> > because it is plain misleading information.
+> >=20
+> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
+>
+> Well, given that the kernel does no measured boot extends after the EFI
+> boot stub (which isn't session protected) finishes, what's your theory
+> for the root cause?
 
-Constifying this structures moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+I don't think there is a silver bullet. Based on benchmark which showed
+80% overhead from throttling the context reducing number of loads and
+saves will cut a slice of the fat.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
- 184320	   7091	    548	 191959	  2edd7	kernel/bpf/btf.o
+Since it is the low-hanging fruit I'll start with that. In other words,
+I'm not going touch session loading and saving. I'll start with null
+key loading and saving.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
- 184896	   6515	    548	 191959	  2edd7	kernel/bpf/btf.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- kernel/bpf/btf.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index d2f87db9131e..432eda0f6550 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -2808,7 +2808,7 @@ static void btf_ref_type_log(struct btf_verifier_env *env,
- 	btf_verifier_log(env, "type_id=%u", t->type);
- }
- 
--static struct btf_kind_operations modifier_ops = {
-+static const struct btf_kind_operations modifier_ops = {
- 	.check_meta = btf_ref_type_check_meta,
- 	.resolve = btf_modifier_resolve,
- 	.check_member = btf_modifier_check_member,
-@@ -2817,7 +2817,7 @@ static struct btf_kind_operations modifier_ops = {
- 	.show = btf_modifier_show,
- };
- 
--static struct btf_kind_operations ptr_ops = {
-+static const struct btf_kind_operations ptr_ops = {
- 	.check_meta = btf_ref_type_check_meta,
- 	.resolve = btf_ptr_resolve,
- 	.check_member = btf_ptr_check_member,
-@@ -2858,7 +2858,7 @@ static void btf_fwd_type_log(struct btf_verifier_env *env,
- 	btf_verifier_log(env, "%s", btf_type_kflag(t) ? "union" : "struct");
- }
- 
--static struct btf_kind_operations fwd_ops = {
-+static const struct btf_kind_operations fwd_ops = {
- 	.check_meta = btf_fwd_check_meta,
- 	.resolve = btf_df_resolve,
- 	.check_member = btf_df_check_member,
-@@ -3109,7 +3109,7 @@ static void btf_array_show(const struct btf *btf, const struct btf_type *t,
- 	__btf_array_show(btf, t, type_id, data, bits_offset, show);
- }
- 
--static struct btf_kind_operations array_ops = {
-+static const struct btf_kind_operations array_ops = {
- 	.check_meta = btf_array_check_meta,
- 	.resolve = btf_array_resolve,
- 	.check_member = btf_array_check_member,
-@@ -4185,7 +4185,7 @@ static void btf_struct_show(const struct btf *btf, const struct btf_type *t,
- 	__btf_struct_show(btf, t, type_id, data, bits_offset, show);
- }
- 
--static struct btf_kind_operations struct_ops = {
-+static const struct btf_kind_operations struct_ops = {
- 	.check_meta = btf_struct_check_meta,
- 	.resolve = btf_struct_resolve,
- 	.check_member = btf_struct_check_member,
-@@ -4353,7 +4353,7 @@ static void btf_enum_show(const struct btf *btf, const struct btf_type *t,
- 	btf_show_end_type(show);
- }
- 
--static struct btf_kind_operations enum_ops = {
-+static const struct btf_kind_operations enum_ops = {
- 	.check_meta = btf_enum_check_meta,
- 	.resolve = btf_df_resolve,
- 	.check_member = btf_enum_check_member,
-@@ -4456,7 +4456,7 @@ static void btf_enum64_show(const struct btf *btf, const struct btf_type *t,
- 	btf_show_end_type(show);
- }
- 
--static struct btf_kind_operations enum64_ops = {
-+static const struct btf_kind_operations enum64_ops = {
- 	.check_meta = btf_enum64_check_meta,
- 	.resolve = btf_df_resolve,
- 	.check_member = btf_enum_check_member,
-@@ -4534,7 +4534,7 @@ static void btf_func_proto_log(struct btf_verifier_env *env,
- 	btf_verifier_log(env, ")");
- }
- 
--static struct btf_kind_operations func_proto_ops = {
-+static const struct btf_kind_operations func_proto_ops = {
- 	.check_meta = btf_func_proto_check_meta,
- 	.resolve = btf_df_resolve,
- 	/*
-@@ -4592,7 +4592,7 @@ static int btf_func_resolve(struct btf_verifier_env *env,
- 	return 0;
- }
- 
--static struct btf_kind_operations func_ops = {
-+static const struct btf_kind_operations func_ops = {
- 	.check_meta = btf_func_check_meta,
- 	.resolve = btf_func_resolve,
- 	.check_member = btf_df_check_member,
--- 
-2.46.0
-
+BR, Jarkko
 
