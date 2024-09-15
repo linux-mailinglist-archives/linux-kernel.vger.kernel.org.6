@@ -1,87 +1,62 @@
-Return-Path: <linux-kernel+bounces-329874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1F29796EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 15:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770199796F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B13F41C20C33
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3756728218B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CE91C6890;
-	Sun, 15 Sep 2024 13:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B321C689D;
+	Sun, 15 Sep 2024 14:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="t+cL4B6W";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="t+cL4B6W"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="VIf2ikBA"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663781E4BE;
-	Sun, 15 Sep 2024 13:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EBD14286
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 14:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726408790; cv=none; b=uFhsOeyJfr1TTycAPCsZFgHK4xm+Q8i8E5MzLCewIGucEEQaD4A80yvjy4pQL2+xYUKC3P/cQUOjEOLtiIxNFhOSWgQkgfuUJjOxm8hNKJ7AoJmO/pYOM6drwk738xyrgHklCdqk28/7D6svRMi5ZSimDBlO+taeJK82RbuRGhI=
+	t=1726408913; cv=none; b=M8Gbm1q9YfscqpgNyPFHi8YMqi/NDQbhfPUlmh6qU04n7fhtGAAqzJTViagHkUn7mlSzGli4QvJi5y7ICZRQ5NblZhAZeJaMB3zcEO1WKo9fIMjkalXQIfUEoiPKNfnNR0MPV0koTjTEfxmtiELf7SwTbVxMFqLPjp46byM8UYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726408790; c=relaxed/simple;
-	bh=M7XTnKiOkvygMAVY45yPCdZxs3a5dEDlEj1iCP1KQKE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tkuKh4+fZpcVssYsRNmA0zuqj8bgbQXXY2yLPd6UpVckHtSVH1fHN8AH833e6+OH72HutZjPdZmxLg8fMe3ukzPFKpB2gfkLej8iYDG9+dmPFi6aYTROTgqDBk4xe45DGABghfw3r3e/f0tmzltYApN6vZPljTnqzS19pu2us8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=t+cL4B6W; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=t+cL4B6W; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1726408785;
-	bh=M7XTnKiOkvygMAVY45yPCdZxs3a5dEDlEj1iCP1KQKE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=t+cL4B6WaDuGcwfDgH3IKYaZ30ClKOZtEVeh3E64t3lH1yf6RczNsYdyIpCUMpBf8
-	 26gOsY+nsVKRgVBvy9ZYgUCk6+daispswtztoDzm1RbxQ/28wOHtZyr30x2emHYulw
-	 lBt1G04jjC407N0CtZOsFS4kNpsV8ryybv4vVNXw=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id D2A35128739B;
-	Sun, 15 Sep 2024 09:59:45 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id NqA8VVMp0qDd; Sun, 15 Sep 2024 09:59:45 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1726408785;
-	bh=M7XTnKiOkvygMAVY45yPCdZxs3a5dEDlEj1iCP1KQKE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=t+cL4B6WaDuGcwfDgH3IKYaZ30ClKOZtEVeh3E64t3lH1yf6RczNsYdyIpCUMpBf8
-	 26gOsY+nsVKRgVBvy9ZYgUCk6+daispswtztoDzm1RbxQ/28wOHtZyr30x2emHYulw
-	 lBt1G04jjC407N0CtZOsFS4kNpsV8ryybv4vVNXw=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 95CDF12872A6;
-	Sun, 15 Sep 2024 09:59:44 -0400 (EDT)
-Message-ID: <0b22c2c4b4a998fb44bb08be60a359acb9ecb8da.camel@HansenPartnership.com>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Roberto Sassu
-	 <roberto.sassu@huaweicloud.com>, Linux regressions mailing list
-	 <regressions@lists.linux.dev>
-Cc: keyrings@vger.kernel.org, "linux-integrity@vger.kernel.org"
-	 <linux-integrity@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Pengyu Ma <mapengyu@gmail.com>
-Date: Sun, 15 Sep 2024 09:59:43 -0400
-In-Reply-To: <D46RWPQ211ZS.12EYKZY053BH@kernel.org>
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
-	 <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
-	 <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
-	 <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
-	 <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
-	 <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
-	 <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
-	 <D43JXBFOOB2O.3U6ZQ7DASR1ZW@kernel.org>
-	 <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
-	 <D46RE2BWMGJ4.25VA7IVYTJ8MO@kernel.org>
-	 <D46RWPQ211ZS.12EYKZY053BH@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1726408913; c=relaxed/simple;
+	bh=V7IQH31Ik5N/F0jlqfEHHwtmEetCfORWixue3o5Pzg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jLIoGcbJmNG3ET/ubyQ2KSecWgKuNc4UAI8ltFA5YvundFzpf4xtPm8B1lLtFxZ8H/teLFVO1drlX3tX0TPUedUJb7XT1UM0W+Mcnid6/0K8oAOx+2OId/QvfcVjN7zI2QuY5WG9+oe3PUmbx24z6Pug5DAPUNmkZR5c0S/ZUro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=VIf2ikBA; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=i4QciZ0qftqS2o625zh2ldn6URyWZ5o9xpxLHJHHoNQ=; b=VIf2ikBAhNcb2Tyk
+	RWHpaEdkeaZMmZilE1zSXRMN803+iTI13vK6xJXXogb+DaJO6Zwcwc7vIg/QEisf+GmqBfEmuwjIA
+	o1zMtbn+vTDQyLfZbOJJn0ckRVbbA9c0vAIzxUSG2W395GOmV3f/Ndfy+jSdaosL5SpkYjlDixM1j
+	vvNqjV1+0YxnWJdbg/tMEkxhO26ioCZ8u44+qsB8bFkWYqpmujkNdmyDfhnGgP//aeEZElhn9XZ/U
+	LRZxCQK3eZcLK5KGcwIuFtIJBZNsQG00YBoqMPb+QWGxkMRW8KHp7sSUzhKsdmRtSE2l57iVp/Ots
+	9X/nV4Or4v5J3b5oSQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sppow-005pnU-1Z;
+	Sun, 15 Sep 2024 14:01:46 +0000
+From: linux@treblig.org
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] drm/amd/display: Remove unused function bios_get_vga_enabled_displays
+Date: Sun, 15 Sep 2024 15:01:44 +0100
+Message-ID: <20240915140144.36988-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,37 +65,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sun, 2024-09-15 at 13:07 +0300, Jarkko Sakkinen wrote:
-> On Sun Sep 15, 2024 at 12:43 PM EEST, Jarkko Sakkinen wrote:
-> > When it comes to boot we should aim for one single
-> > start_auth_session during boot, i.e. different phases would leave
-> > that session open so that we don't have to load the context every
-> > single time.  I think it should be doable.
-> 
-> The best possible idea how to improve performance here would be to
-> transfer the cost from time to space. This can be achieved by keeping
-> null key permanently in the TPM memory during power cycle.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-No it's not at all.  If you look at it, the NULL key is only used to
-encrypt the salt for the start session and that's the operating taking
-a lot of time.  That's why the cleanest mitigation would be to save and
-restore the session.  Unfortunately the timings you already complain
-about still show this would be about 10x longer than a no-hmac extend
-so I'm still waiting to see if IMA people consider that an acceptable
-tradeoff.
+bios_get_vga_enabled_displays has been unused since
+  commit 5a8132b9f606 ("drm/amd/display: remove dead dc vbios code")
 
-> It would give about 80% increase given Roberto's benchmark to all
-> in-kernel callers. There's no really other possible solution for this
-> to make any major improvements. So after opt-in kernel command line
-> option I might look into this.
-> 
-> This is already done locally in tpm2_get_random(), which uses
-> continueSession to keep session open for all calls.
+Remove it.
 
-The other problem if the session is context saved, as I already said,
-is that it becomes long lived and requires degapping the session
-manager.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c | 7 -------
+ drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.h | 1 -
+ 2 files changed, 8 deletions(-)
 
-James
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c
+index adc710fe4a45..8d2cf95ae739 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c
+@@ -78,10 +78,3 @@ void bios_set_scratch_critical_state(
+ 	uint32_t critial_state = state ? 1 : 0;
+ 	REG_UPDATE(BIOS_SCRATCH_6, S6_CRITICAL_STATE, critial_state);
+ }
+-
+-uint32_t bios_get_vga_enabled_displays(
+-	struct dc_bios *bios)
+-{
+-	return REG_READ(BIOS_SCRATCH_3) & 0XFFFF;
+-}
+-
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.h b/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.h
+index e1b4a40a353d..ab162f2fe577 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.h
++++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.h
+@@ -34,7 +34,6 @@ uint8_t *bios_get_image(struct dc_bios *bp, uint32_t offset,
+ bool bios_is_accelerated_mode(struct dc_bios *bios);
+ void bios_set_scratch_acc_mode_change(struct dc_bios *bios, uint32_t state);
+ void bios_set_scratch_critical_state(struct dc_bios *bios, bool state);
+-uint32_t bios_get_vga_enabled_displays(struct dc_bios *bios);
+ 
+ #define GET_IMAGE(type, offset) ((type *) bios_get_image(&bp->base, offset, sizeof(type)))
+ 
+-- 
+2.46.0
 
 
