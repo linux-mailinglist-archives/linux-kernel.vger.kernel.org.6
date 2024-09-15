@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-329868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812709796D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 15:38:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21DF9796E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 15:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B42891C20B62
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:38:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7638EB212A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951A81C6890;
-	Sun, 15 Sep 2024 13:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A531C6F73;
+	Sun, 15 Sep 2024 13:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="vBCsTFG2"
-Received: from pv50p00im-ztbu10021601.me.com (pv50p00im-ztbu10021601.me.com [17.58.6.57])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRkIar9R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC4712CDBE
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 13:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C3914286;
+	Sun, 15 Sep 2024 13:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726407504; cv=none; b=UejnOCc3BTRRLWyOnBG4qlPfL8Lik4FkHmMSPo8vgvJSQvRTzt8mkaUteN6n5FSE5juu1lrfv6TkGG7YRAMV5YEsCN3roPr1qws+iP/UZPnjWCF7KNUyLfGtEosizH68Xkli7v39vmdxplClVR76OUcMglXbJwBDUN7tqPM7f/Y=
+	t=1726408307; cv=none; b=l25oO3nSugrL4w2e8KRuJzjSDagayyv4pArfoylr8SXYNWOgCVvr/dUWsROBmkUOBbzBjHCaAmlVSyfO5ccPYqJ1NLl7uqoalE+j1SVLxYGUvh4zzcp6H7pu4C/uRXAu5tLyo2994tceLb5Kx7Mo3ynSGpOBwqw3m8IZaQfH1MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726407504; c=relaxed/simple;
-	bh=b4wbDKeIPkB4R7KB68UTrRBBEPPhkscsgNhWIRPiu4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VtOcYLtWysc43CH6sCYjXJyPDwH/JLi4FUMPXiPY+IjCzjyzCSNBxjErwQLEMCOY7jEc+pYoNtIYs8O6OYBZR4delvwpytJrOoCMNa7tqsJKgu7y5TpK+1VsRJ1YrN/wlxmpEQbMpVZg+W1xZkGFFEnealHe6V127SAjjzc+0Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=vBCsTFG2; arc=none smtp.client-ip=17.58.6.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1726407502;
-	bh=n93yyJ2Q2rBxJC7hwfIjWpftqeNHob55u4X+1khhzLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=vBCsTFG2krSgEfnbnhTUdAoWD82Z3jCYfeMNe8/5WzA3cLFHpNx2aLswTPm3oWPxs
-	 zR6Sg5rUzyDEcqNJM47UWOSx7UfHA3+26mKvnn097ZUA6uRGybdc3BjfabuJ9OrtA+
-	 aiVncBMFCPkwJvfu6neFBwXgF8HMrSce1sZKITIr211em8Pv41XH9Yyqv8m0M1JHQO
-	 0LtJy6tbDVsjjdnBLWVKSoNgaRGZWWcYc2heCIqvurFV62WJz+NlwJdbu8IV4rYf0Y
-	 H/Pq1jwqIAXMjmAGwUNx5QHXbe0oYSsRjgQXOe2uJB2ECWJdgJ1cpGZl/8kwgnQ+CQ
-	 Lsrm/4nrWejEg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztbu10021601.me.com (Postfix) with ESMTPSA id C3F268057D;
-	Sun, 15 Sep 2024 13:38:19 +0000 (UTC)
-Message-ID: <8620a8a6-9101-4f53-858f-2e09aa310d16@icloud.com>
-Date: Sun, 15 Sep 2024 21:38:15 +0800
+	s=arc-20240116; t=1726408307; c=relaxed/simple;
+	bh=q7WJquAI08+CAD5lP6bdNehob9Dq1wPKxQPjeFRtiiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rcnXow0D86xKJDLQFT7GN7xZvlyF4TJg5Y6ilnHy2FZbX8T72QS0DVTHPUNAni0VoaCwpXv6t6dXOMOd+Nxk/VHg8n+PRJ7GlwXKvRI8bejnK+W4qKLEHMR8bAUzXa5KzHXDJ5BkA5Zn4ErnysMN7aCKHY2PVumxjZyfzCnNOr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRkIar9R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 666C4C4CEC3;
+	Sun, 15 Sep 2024 13:51:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726408306;
+	bh=q7WJquAI08+CAD5lP6bdNehob9Dq1wPKxQPjeFRtiiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DRkIar9RFkBNG39Lg4VF36+C0l1NwYSaEE09Z1SxGxc6M4S+jx9O3QiS3XE0iEOXa
+	 dugg4+gux8cHvhMy415EwhG2oqeI29OZXErerIPWPPLxGdjDxioHvmSB5SFgMR8cmZ
+	 GF890/YHKLL0YWKx3z2y3nIavnufDvUSXph8DwoVC1aciO37Nuj9Dl/4U3xgMBW1Vr
+	 QqbWqbJwbZ+B8JLq+POjgebhgVzaYSVrG+oX+aypioA+ScnFYEAUCNxQIIMCRKMIR8
+	 1d75vfMvgyrvMLYGrv0O59GREHzSdXP1f5IYJf2XBPq1KtNNCfQ4hdGzn/h6TRc0iB
+	 7g69hrbWPmj5g==
+Date: Sun, 15 Sep 2024 16:48:27 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v3 7/8] execmem: add support for cache of large ROX pages
+Message-ID: <Zublq4tR0q7lvicK@kernel.org>
+References: <20240909064730.3290724-1-rppt@kernel.org>
+ <20240909064730.3290724-8-rppt@kernel.org>
+ <CAMj1kXG_Z=7B_eDAk3vhtDjfcnka3AoSKNzvFQDzpvYY2EyVfg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: bus: Mark an impossible error path with
- WARN_ON() in bus_add_driver()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240915-bus_add_driver_fix-v1-1-ce5cf1f66601@quicinc.com>
- <2024091530-antacid-magical-8302@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2024091530-antacid-magical-8302@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: ts05HrP8WDi_7iAB-eBMMbzikXVdp0Ar
-X-Proofpoint-GUID: ts05HrP8WDi_7iAB-eBMMbzikXVdp0Ar
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-15_05,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- clxscore=1015 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2409150104
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXG_Z=7B_eDAk3vhtDjfcnka3AoSKNzvFQDzpvYY2EyVfg@mail.gmail.com>
 
-On 2024/9/15 21:00, Greg Kroah-Hartman wrote:
-> On Sun, Sep 15, 2024 at 06:22:05PM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> driver_attach() called by bus_add_driver() always returns 0, so its
->> corresponding error path will never happen, hence mark the impossible
->> error path with WARN_ON() to remind readers to disregard it.
+Hi Ard,
+
+On Fri, Sep 13, 2024 at 05:00:42PM +0200, Ard Biesheuvel wrote:
+> Hi Mike,
 > 
-> So you just caused the machine to crash and reboot if that happens
-> (remember, panic-on-warn is enabled in a few billion Linux systems...)
+> On Mon, 9 Sept 2024 at 08:51, Mike Rapoport <rppt@kernel.org> wrote:
+
+...
+
+> > +static void execmem_fill_trapping_insns(void *ptr, size_t size, bool writable)
+> > +{
+> > +       if (execmem_info->fill_trapping_insns)
+> > +               execmem_info->fill_trapping_insns(ptr, size, writable);
+> > +       else
+> > +               memset(ptr, 0, size);
 > 
-are there good way to mark a if condition which is always or mostly
-evaluated to false currently without any side effect?
-
-i think this is a generic requirement since readers may not want to
-care about things which will never or rarely happen, below link
-involves such discussion:
-https://lore.kernel.org/all/2024090444-earmark-showpiece-b3dc@gregkh/
-
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  drivers/base/bus.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
->> index 657c93c38b0d..59a48edda267 100644
->> --- a/drivers/base/bus.c
->> +++ b/drivers/base/bus.c
->> @@ -673,7 +673,7 @@ int bus_add_driver(struct device_driver *drv)
->>  	klist_add_tail(&priv->knode_bus, &sp->klist_drivers);
->>  	if (sp->drivers_autoprobe) {
->>  		error = driver_attach(drv);
->> -		if (error)
->> +		if (WARN_ON(error))
+> Does this really have to be a function pointer with a runtime check?
 > 
-> What exactly are you trying to show here?  If this really can never
-> fail, then let's just remove the check entirely.
-> 
-what i want to show is that this error patch will never happen here
-currently, so readers can disregard it.
+> This could just be a __weak definition, with the arch providing an
+> override if the memset() is not appropriate.
 
-let me try to do it after discussion done.
+I prefer to keep this a method in execmem_info rather that have a __weak
+definition that architectures can override.
 
-> thanks,
-> 
-> greg k-h
+This is not on the hot path, so I don't think a runtime check here would
+matter. Still, I can fill in a default with memset at init time.
 
+-- 
+Sincerely yours,
+Mike.
 
