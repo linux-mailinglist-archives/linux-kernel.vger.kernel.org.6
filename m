@@ -1,161 +1,231 @@
-Return-Path: <linux-kernel+bounces-330037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477259798C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 22:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504C39798CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 22:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D410B21BB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:55:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE7D31F221DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D249F6EB7C;
-	Sun, 15 Sep 2024 20:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E618F7A15A;
+	Sun, 15 Sep 2024 20:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gk/i8tBs"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QNm3Vq/j"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598338C13
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 20:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354764965B;
+	Sun, 15 Sep 2024 20:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726433731; cv=none; b=J1+1hkbOsPpC+r/aTrAqTEdMxDzuQ/+bJ/lT6paHLy1WVP6Fmhau6cHp1upWa7MhvRUJ+U1zT3qzMi/caG0BuWlLHL2OTq8f68bGU4pC4XyZqgFy5f1bjFSpTe9spM23sFzbb79NeLB4tNlMrFdPe6R2/3DV6e7jLsh+KI6Jucs=
+	t=1726433852; cv=none; b=tJaQQIs9rYYK81K446VKLeddUc5kJV9hM8zTnC3QuWJqIXmxehp9dx4c7tD/24aGjDLulx+hMXOvUMRGJL2UtkZS4O6lyOqnWsJVD/N7ccC0FmcYhyZ3jU1ldkbNrTTiOcMQBmTdKy/ppVcayXpZFOIkGOF/AsfB6LLXlmLLldM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726433731; c=relaxed/simple;
-	bh=kbZNky2ukXvY0Uc/WKbVfKtB+125N5NWRZV5J8lxpnA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PEjz/ZERFCceXvC5b2lZ7LcCdzfSlDMy9UpjNFfk0YoVRTZFuxkoPWP/pW69B5+9FBsVIEWBlfgmvHUtPpN9TewKE0aKfr4hSoqjP4jne1Oc+WjmHKiV+/oG1XrRgWIhPFLPFqVtyn3qkkYZBsr4gZS70mP8kyiR2ezzv2b2n+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gk/i8tBs; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374c6187b6eso2901312f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 13:55:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726433727; x=1727038527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bfyOcCKII5XM0b+CTX5LMl9eYoo09Pc3xQQkicZRlpw=;
-        b=gk/i8tBsy71cOeQm258Fa49MCimEZtr28Vsw/bGbcx+0Uoc7w+aUgY5yK+PZj6MvhS
-         jw34RVlPRwWkkkEFALmWcwfVq5KAr5uKSLz2lZOOw2KhRAzCF0AWCfyE4QB4g+wSFYgA
-         HwtM9tAMAIgJeFlfPGESlhaePm01m729c6zT3GyK0LiEkIr5L71kSpKM24d2ZuDrTHCs
-         A3977eyMPLWwrUQpSTpLh/kmxKOqC/VMJAw6KqTozEULV8b1QgP9F79yZIvueHUr4rUZ
-         ibllM9wwHtJVM1tfsP5u25IqwVbZGEK+/MuO/MN0ZqMJAMr30JtbpO2CMHPJ7vxoulc/
-         uVDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726433727; x=1727038527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bfyOcCKII5XM0b+CTX5LMl9eYoo09Pc3xQQkicZRlpw=;
-        b=m7yYwVFNoJKIVhQGpwm7dZxoBiwRnD9Lv1LjI4ev0zP4Umhy+iFJmbV7YdZpATGXD3
-         DkdGxybS1Z3kbubRofn9vPerd5XZuxSwHZ51e2iNH/C8C7HXZhxEyBWj3jfaOpRPcWmJ
-         8iPxBL77Mr7aab09cgv45MsW2kLgCgcsxwlUopaADWQFcVPLgGrsQV+IqcziIXMfXGpk
-         4PeSwkmC9C53/R3TE7rkM5X388WlSzoO0pfKuuOqKYnEw0TYN2qmINYmlvWiwuRaoe7C
-         9BL8A1wGR24SUKWgIGHGeCcnx7XfGk+w8CLbq3W2yJgs0q//6/qO6mn9zqX+U7d8HEiK
-         6h+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXn4hPKPOuQr5tF5d/Xs7mYYfB2ppoHfJ52GhtNx+NUFxDJjbeRWkG/fJrvFXC0zr641JfKRL/Qybj3gP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPfYcV+O3oi06pGycPXeFd8Madh9Oq7L/9Gp6aSwiiiQoDjsh+
-	5UKmKtus/N9UYaEc1w3ERAquTRbcsLhma0Q7ffRNDUS3osFc4GTvgjDFuHdB01KO5hMZ3v8aLFr
-	y+FU5uLFWW2pkvUz0weuibG9cw9LGc3Nyn5Bm
-X-Google-Smtp-Source: AGHT+IGWQFeQZDzyxBRRhaH5iScrdOKBeEJq6VtM+ljzHFnbYqYR/PmkuUpSMTFjiniQmsfNYWGWBK53pTW4OLn7fX0=
-X-Received: by 2002:a05:6000:c86:b0:378:8aaa:9cd6 with SMTP id
- ffacd0b85a97d-378c2d62046mr7188675f8f.49.1726433726342; Sun, 15 Sep 2024
- 13:55:26 -0700 (PDT)
+	s=arc-20240116; t=1726433852; c=relaxed/simple;
+	bh=9vvZzvaxgDB7EqXwPGMCfPMU7CR+H6d5WfPna3OOidQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aGUxgbQ+khwNCC0+dAcCHr93+xY0XJu+CSn3XGGaTS/+IQm6NHYrlzT5o5IwkZrBwBLx/kzXp1ogxWmTsdK1/r3Rx9JXXbD6DPgK0jl82rhfwe0uHSLrcfTe4I/nw2BKBIsVbdczL4OBNr0qEnmISYACihufyV2RwgqvOlFdagw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QNm3Vq/j; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48FAFxU1023503;
+	Sun, 15 Sep 2024 20:56:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=Ugn0Yrgm2MUs+4SWHdqJV7bEgVdPTrB2iBhc/n6
+	ktso=; b=QNm3Vq/jFgJzWd03YPpdwMCG/qNKSrLXXewFhN+vLBus5PlVXBhTPcp
+	rNQAsq7XRfu0jmdiQslDgZJ9klDr3m/77QYUzKTuuamVl6P/ngxZzwElZ6fvMz2R
+	nEI3x/C0YKQMumwGkfe/rWqBHglnzemAIj6L7uF1uebuKW6BmBm0MNTd3nN5BjWP
+	1qMySkQLMZxxNgtkUl2plL2CTD8SeZaIqJ6J2QY+m+ZlSljp95L5rF3hoI0zvhzK
+	zdG17n8goDCOXBWFGmSRFxBid67Zo6dQek8nztzVGfLyPPqzWvtRVu3U8DwtojSR
+	Wpcunbgw46J9w+0CJjPnZ8nQpN771oA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n41a682j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 15 Sep 2024 20:56:58 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48FKuwvG010563;
+	Sun, 15 Sep 2024 20:56:58 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n41a682f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 15 Sep 2024 20:56:58 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48FIYSk6001906;
+	Sun, 15 Sep 2024 20:56:57 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41nmtubyc1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 15 Sep 2024 20:56:57 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48FKurua30737120
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 15 Sep 2024 20:56:53 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 75B2820049;
+	Sun, 15 Sep 2024 20:56:53 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A89D420040;
+	Sun, 15 Sep 2024 20:56:49 +0000 (GMT)
+Received: from li-bd3f974c-2712-11b2-a85c-df1cec4d728e.ibm.com.com (unknown [9.43.68.55])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 15 Sep 2024 20:56:49 +0000 (GMT)
+From: Hari Bathini <hbathini@linux.ibm.com>
+To: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, bpf@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: "Naveen N. Rao" <naveen@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Vishal Chourasia <vishalc@linux.ibm.com>,
+        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v5 00/17] powerpc: Core ftrace rework, support for ftrace direct and bpf trampolines
+Date: Mon, 16 Sep 2024 02:26:31 +0530
+Message-ID: <20240915205648.830121-1-hbathini@linux.ibm.com>
+X-Mailer: git-send-email 2.46.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 35M_0baBj8BwEKBy9x7HHGs_httRDY3b
+X-Proofpoint-ORIG-GUID: XPAIqLoa7QQeaeBB0FdvAy9EqwAgKZ8v
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-4-88484f7a3dcf@google.com> <202409151318.7985B253@keescook>
-In-Reply-To: <202409151318.7985B253@keescook>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Sun, 15 Sep 2024 22:55:14 +0200
-Message-ID: <CAH5fLgjRpY9vYWw0T0g3R_zndvj6AGKHeHw=H2yM+C5-SHt6BQ@mail.gmail.com>
-Subject: Re: [PATCH v10 4/8] rust: cred: add Rust abstraction for `struct cred`
-To: Kees Cook <kees@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-15_12,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 phishscore=0 priorityscore=1501 spamscore=0 clxscore=1011
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409150159
 
-On Sun, Sep 15, 2024 at 10:24=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
->
-> On Sun, Sep 15, 2024 at 02:31:30PM +0000, Alice Ryhl wrote:
-> > From: Wedson Almeida Filho <wedsonaf@gmail.com>
-> >
-> > Add a wrapper around `struct cred` called `Credential`, and provide
-> > functionality to get the `Credential` associated with a `File`.
-> >
-> > Rust Binder must check the credentials of processes when they attempt t=
-o
-> > perform various operations, and these checks usually take a
-> > `&Credential` as parameter. The security_binder_set_context_mgr functio=
-n
-> > would be one example. This patch is necessary to access these security_=
-*
-> > methods from Rust.
-> >
-> > This Rust abstraction makes the following assumptions about the C side:
-> > * `struct cred` is refcounted with `get_cred`/`put_cred`.
->
-> Yes
->
-> > * It's okay to transfer a `struct cred` across threads, that is, you do
-> >   not need to call `put_cred` on the same thread as where you called
-> >   `get_cred`.
->
-> Yes
->
-> > * The `euid` field of a `struct cred` never changes after
-> >   initialization.
->
-> "after initialization", yes. The bprm cred during exec is special in
-> that it gets updated (bprm_fill_uid) before it is installed into current
-> via commit_creds() in begin_new_exec() (the point of no return for
-> exec).
+This is v5 of the series posted here:
+https://lore.kernel.org/all/cover.1720942106.git.naveen@kernel.org/
 
-I think it will be pretty normal to need different Rust types for pre-
-and post-initialization of a C value. When a value is not yet fully
-initialized, you usually get some extra powers (modify otherwise
-immutable fields), but probably also lose some powers (you can't share
-it with other threads yet). I can document that this type should not
-be used with the bprm cred during exec.
+This series reworks core ftrace support on powerpc to have the function
+profiling sequence moved out of line. This enables us to have a single
+nop at kernel function entry virtually eliminating effect of the
+function tracer when it is not enabled. The function profile sequence is
+moved out of line and is allocated at two separate places depending on a
+new config option.
 
-> > * The `f_cred` field of a `struct file` never changes after
-> >   initialization.
->
-> Yes.
->
-> >
-> > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-> > Reviewed-by: Trevor Gross <tmgross@umich.edu>
-> > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> > Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-> > Reviewed-by: Gary Guo <gary@garyguo.net>
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> Reviewed-by: Kees Cook <kees@kernel.org>
+For 64-bit powerpc, the function profiling sequence is also updated to
+include an additional instruction 'mtlr r0' after the usual
+two-instruction sequence to fix link stack imbalance (return address
+predictor) when ftrace is enabled. This showed an improvement of ~10%
+in null_syscall benchmark (NR_LOOPS=10000000) on a Power 10 system
+with ftrace enabled.
 
-Thanks for the review!
+Finally, support for ftrace direct calls is added based on support for
+DYNAMIC_FTRACE_WITH_CALL_OPS. BPF Trampoline support is added atop this.
 
-Alice
+Support for ftrace direct calls is added for 32-bit powerpc. There is
+some code to enable bpf trampolines for 32-bit powerpc, but it is not
+complete and will need to be pursued separately.
+
+Patches 1 to 10 are independent of this series and can go in separately
+though. Rest of the patches depend on the series from Benjamin Gray
+adding support for patch_uint() and patch_ulong():
+https://lore.kernel.org/all/172474280311.31690.1489687786264785049.b4-ty@ellerman.id.au/
+
+Changelog v5:
+* Intermediate files named .vmlinux.arch.* instead of .arch.vmlinux.*
+* Fixed ftrace stack tracer failure due to inadvertent use of
+  'add r7, r3, MCOUNT_INSN_SIZE' instruction instead of
+  'addi r7, r3, MCOUNT_INSN_SIZE'
+* Fixed build error for !CONFIG_MODULES case.
+* .vmlinux.arch.* files compiled under arch/powerpc/tools
+* Made sure .vmlinux.arch.* files are cleaned with `make clean`
+* num_ool_stubs_text_end used for setting up ftrace_ool_stub_text_end
+  set to zero instead of computing to some random negative value when
+  not required.
+* Resolved checkpatch.pl warnings.
+* Dropped RFC tag.
+
+Changelog v4:
+- Patches 1, 10 and 13 are new.
+- Address review comments from Nick. Numerous changes throughout the
+  patch series.
+- Extend support for ftrace ool to vmlinux text up to 64MB (patch 13).
+- Address remaining TODOs in support for BPF Trampolines.
+- Update synchronization when patching instructions during trampoline
+  attach/detach.
+
+
+Naveen N Rao (17):
+  powerpc/trace: Account for -fpatchable-function-entry support by
+    toolchain
+  powerpc/kprobes: Use ftrace to determine if a probe is at function
+    entry
+  powerpc64/ftrace: Nop out additional 'std' instruction emitted by gcc
+    v5.x
+  powerpc32/ftrace: Unify 32-bit and 64-bit ftrace entry code
+  powerpc/module_64: Convert #ifdef to IS_ENABLED()
+  powerpc/ftrace: Remove pointer to struct module from dyn_arch_ftrace
+  powerpc/ftrace: Skip instruction patching if the instructions are the
+    same
+  powerpc/ftrace: Move ftrace stub used for init text before _einittext
+  powerpc64/bpf: Fold bpf_jit_emit_func_call_hlp() into
+    bpf_jit_emit_func_call_rel()
+  powerpc/ftrace: Add a postlink script to validate function tracer
+  kbuild: Add generic hook for architectures to use before the final
+    vmlinux link
+  powerpc64/ftrace: Move ftrace sequence out of line
+  powerpc64/ftrace: Support .text larger than 32MB with out-of-line
+    stubs
+  powerpc/ftrace: Add support for DYNAMIC_FTRACE_WITH_CALL_OPS
+  powerpc/ftrace: Add support for DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+  samples/ftrace: Add support for ftrace direct samples on powerpc
+  powerpc64/bpf: Add support for bpf trampolines
+
+ arch/Kconfig                                |   6 +
+ arch/powerpc/Kbuild                         |   2 +-
+ arch/powerpc/Kconfig                        |  23 +-
+ arch/powerpc/Makefile                       |   8 +
+ arch/powerpc/Makefile.postlink              |   8 +
+ arch/powerpc/include/asm/ftrace.h           |  33 +-
+ arch/powerpc/include/asm/module.h           |   5 +
+ arch/powerpc/include/asm/ppc-opcode.h       |  14 +
+ arch/powerpc/kernel/asm-offsets.c           |  11 +
+ arch/powerpc/kernel/kprobes.c               |  18 +-
+ arch/powerpc/kernel/module_64.c             |  66 +-
+ arch/powerpc/kernel/trace/Makefile          |  11 +-
+ arch/powerpc/kernel/trace/ftrace.c          | 298 ++++++-
+ arch/powerpc/kernel/trace/ftrace_64_pg.c    |  69 +-
+ arch/powerpc/kernel/trace/ftrace_entry.S    | 244 ++++--
+ arch/powerpc/kernel/vmlinux.lds.S           |   3 +-
+ arch/powerpc/net/bpf_jit.h                  |  12 +
+ arch/powerpc/net/bpf_jit_comp.c             | 847 +++++++++++++++++++-
+ arch/powerpc/net/bpf_jit_comp32.c           |   7 +-
+ arch/powerpc/net/bpf_jit_comp64.c           |  68 +-
+ arch/powerpc/tools/Makefile                 |  12 +
+ arch/powerpc/tools/ftrace-gen-ool-stubs.sh  |  52 ++
+ arch/powerpc/tools/ftrace_check.sh          |  50 ++
+ samples/ftrace/ftrace-direct-modify.c       |  85 +-
+ samples/ftrace/ftrace-direct-multi-modify.c | 101 ++-
+ samples/ftrace/ftrace-direct-multi.c        |  79 +-
+ samples/ftrace/ftrace-direct-too.c          |  83 +-
+ samples/ftrace/ftrace-direct.c              |  69 +-
+ scripts/Makefile.vmlinux                    |   7 +
+ scripts/link-vmlinux.sh                     |   7 +-
+ 30 files changed, 2098 insertions(+), 200 deletions(-)
+ create mode 100644 arch/powerpc/tools/Makefile
+ create mode 100755 arch/powerpc/tools/ftrace-gen-ool-stubs.sh
+ create mode 100755 arch/powerpc/tools/ftrace_check.sh
+
+-- 
+2.46.0
+
 
