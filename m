@@ -1,112 +1,98 @@
-Return-Path: <linux-kernel+bounces-330007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF4997985F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:16:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE77979862
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E906B21D18
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:16:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B82DF1F21C4E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CF61C9ED9;
-	Sun, 15 Sep 2024 19:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C1C1CA6A3;
+	Sun, 15 Sep 2024 19:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCPbIiO3"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Pc2zBNcm"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CFB38DC7;
-	Sun, 15 Sep 2024 19:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA531C7B86;
+	Sun, 15 Sep 2024 19:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726427759; cv=none; b=gPBoH19t8PCq/d6WCt47hEEpLP/VAPiKwK/CNgtm/4StFzuBEUP8aBdcsTuUAL7O0Qyeo2GX9IatNA0rx6GFFywZh1CuGkIOwU4rsUcMpGwBUVm1rHAukoyleDpCjLkKIcoIAUbKg7/XFvngIwRa8Ivp3QmNWjewak5wqo89niQ=
+	t=1726427802; cv=none; b=sry1N3ZoI456ESCk27JWVABliWa/XjwunUZDxtoSmNGPxyhtF3Hc5SjosMPFJx8/AF3h0XqHnL29xNJMc9woWzF643LtuG4XkajpTHAUiwoYBFWDEcmfhK32yDLu8t9YRWsGUjOBiTWK8k8F8kSMW9+rFLpxdPY4Onqng18Td3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726427759; c=relaxed/simple;
-	bh=lNRBqTKCLNDFBOpyROD/tyxwIsQ0nHuHbMhbWiuk2+A=;
+	s=arc-20240116; t=1726427802; c=relaxed/simple;
+	bh=1bISzRPoZuznX6FBm87E7EImUCqRsCXU+FTidvkRew4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KRHh+BNw7+RXsICuW3xYtQiYF4nb4wg5SZsFNgpmlJ5E7+Qv+GPEVosn8FmPexnt2U9jfuygW5z/zy4de74DULhGfyNO86Oy4TsJKuAkaE1CAytyumO3fBzpmTafRIQRMGrX1axIS78keBC958x1PAMXyb65khNYU0Y6FA92Hoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LCPbIiO3; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7d50ac2e3f8so578586a12.2;
-        Sun, 15 Sep 2024 12:15:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=LMBWRxOGEPCukF1jGhzBlw7xtq7stbBEhe9Kl0Bw8PWUmOuvmCzTY7md138b84BA8AZn0fjXFGDHjEPqG5u5KwN3DnQmaVp8PW6d+lumVuJOcvKM3zwiDnil+r7brmEp1lsrtsA985/A1pYrXHrnnrsaCFwoARHu7MA4geZAxjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Pc2zBNcm; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2057835395aso43784825ad.3;
+        Sun, 15 Sep 2024 12:16:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726427757; x=1727032557; darn=vger.kernel.org;
+        d=googlemail.com; s=20230601; t=1726427800; x=1727032600; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lNRBqTKCLNDFBOpyROD/tyxwIsQ0nHuHbMhbWiuk2+A=;
-        b=LCPbIiO3bk0OgaosmQqKm+7kItOkXIjKZsVSBxYicPDPOOLAXeI8XAJT1LLEn4HfAB
-         C5ApBhu7g+xqoMm10vtgRZkyb7QVzYMGad+ew4WT4zKrieyc7t4nSSA+pl5+2UQbjKcL
-         woJWfl8tteJKCGI5J6G17BJO5Pib23rJS1LsA/G3ydMP2MP9Ns39LLgjijvIJSqQvRSI
-         JP4rQTAJ0lyWrudq7DYEUP8yY+iY6C0DSRSOTY1x7ueuDhQRPaENu2d6+N18cyRPxWrg
-         ravk50bqLVaeSul9JqL3OgLVVrwZugt8O1Ch4F3goINULIeKBnPfXLwLy/73eDP6za/j
-         mAVQ==
+        bh=1bISzRPoZuznX6FBm87E7EImUCqRsCXU+FTidvkRew4=;
+        b=Pc2zBNcmGUdTM9ROe5cQREGIZarIpaDgj5RyBxbuXBDuHR7YNvv/lZ0IfbC5agYgns
+         LGEJN0gM2MsQuamHvUIDF+XLsWw2C3igZ9Rmq3d4/zK5pUjg7dB4aUbAj0UOOZTCgKBY
+         csxtIodaVGV70x3O1DngpjxI/oE3U8JiIpj9h/snHfyUPVu5dHkJ1w+jTBnDWemhYUtZ
+         7Is6xrSZg5n+gkU1Xrxcd+Ty/I0AV3f8xUujKpvV4ZCKc68A52KpmkUxl7ZDXtkllQKF
+         Dw5eMZITQR/NcgGV0KPOZPkLq/XL1YuX7649BVWSfQ7kBAA47d5cCSyfeJDszZxziwW6
+         4BjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726427757; x=1727032557;
+        d=1e100.net; s=20230601; t=1726427800; x=1727032600;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lNRBqTKCLNDFBOpyROD/tyxwIsQ0nHuHbMhbWiuk2+A=;
-        b=fY5JSLlAiCeUHoWC+UDINp32X0P7BoCs09WGOE8IJLm8O6I6EdI/lYlQ1r9zD4Y6aC
-         YilfvKgFddTEkkz1yzRZEhMn4NVoMCgRSI3eZTYrhBkOdoZAnVKUyp4TpI3IXZa+cKZ4
-         +O966+iElO+PagImro6shMzw3thtJsRfdE0epOhxjDzX+cdNn0GxUQ5CYB37EfghSrns
-         y23UpQe3mIRuXpgbhVlKU1h39gjtL62sVoYXIb2NF6TTPG1AjIap2Go6JoCsJWbH24vP
-         UvTxAIXt4u+6ks+ubErxTqvbFD3b2fO/vyVTCW/t1RPFLRP1pwgrAMrbhMuAwPTpEztZ
-         86JA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWn+J4ocIFlMJ4hFk2rY9LVswjPCjluKv1iN8h1hRNgnbPTAcZrveJ6/99JNASU5Fm9PfwBb/HEBD45TdDri4=@vger.kernel.org, AJvYcCX0reMrMG7ajvWJDiwBO3/S4aUmPo0w7LYH3LvMsd2wvn2h0B8eJNPl1UH8OW/1Rv25cALMo0aOABDf39vm@vger.kernel.org, AJvYcCXgi8iQu4EmnsNBrO/NwKecPAf1j5z0mvb0BHOIMtcKIxdrrDe+s4IpQ+LM7ZecquoC2wa2j3w6ydPg4LE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDUJay6aW3E1h6Q/BWIr4T1c4aQtc7fht8I+VtxpTNG4wSLdFJ
-	k0XmC7oVYiRXqc+XlToUK8fiRxs93rUJGGYsQ9ps1bWq/loTLD27+E21ESnulLqEqDDejRCWCbE
-	61G6do2xenLHktF7Gchj76VE1YsQ=
-X-Google-Smtp-Source: AGHT+IEZEaOGvWfSQ1PMkaaBAWgoGIZZWM1FWt0ex2FWLRyvw9E6qDkHeoNUZf9rNRieQOensoOlHkvZ8E1ihKB6Umk=
-X-Received: by 2002:a17:902:ecc1:b0:206:a027:8aa3 with SMTP id
- d9443c01a7336-2076d6141a0mr84892845ad.0.1726427756913; Sun, 15 Sep 2024
- 12:15:56 -0700 (PDT)
+        bh=1bISzRPoZuznX6FBm87E7EImUCqRsCXU+FTidvkRew4=;
+        b=u7lzEKNKXOn3UCgP4998unnzJ5BDDnd85PneKx4t/lVilJgPE7yzeWzOrCZ0OyzXSv
+         xnGeHGKV4e1pwUQPbSaC/CBVZak8GdTbrpabxWWIjbwXT/lFPjC7RTTeaWZ4oVKUJ0bL
+         w81bMgSBo2vvrYVVWlbqyp7KeyIenIsbd1sEaht2O1nhhAkhyEMu/pH/1oXE6Zf1ivza
+         l7ufHBOxKto0QMNKNW4OJBFWMQvKdPSLnxzi8JwIXawCcCs0LElIedOJZoNkEjEwK+Du
+         8xKcIVISRjldTKX4dFCrAVoKD5xsvs38PvEBDW4oTDByDmE/VYB6OeFZxSJEdL2WUlvm
+         fO3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWfWhLcAo4DdBE93YvoKfIB6MvriR8nbc57D2b1B2lp9g+Dsx0KkuNl3uOM3VhZ6IIYAq+YpuwLUFi73XDE@vger.kernel.org, AJvYcCWkzVeQ40k9BSryX9qh5ZjunPar54j4UaS8GMQvb/q0ieljV6XGFk631BeiXNpu4iCsjc+hJuu03zt6ng==@vger.kernel.org, AJvYcCXkExDbeZSWEfiol5kJ/e/vSTcNVk+KBhVQQVpTZ+3lT4V3h/gJnD61yHw4330//lO7kN+mJp7qqyQ6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdNk1hyj57QT/kth7/ulOfthPHkIgUZ6heMKSVp1rSKK+ra/jy
+	L3BSLgyDHIhyoiMVesbhJ86ci7lqGinngX5qHiwA3F2WVz89RWudH+MFZ8PrIDZ8brrOPqqqEMu
+	Og9+4xzNTVfn1VKqvJQ7SVhPweYM=
+X-Google-Smtp-Source: AGHT+IGKsOtUpIMhmuXU2ajV4HfqdCOucfhKlteJOKWh9G0QI2ecr3Wg/AUo4NExUndPm6QvKcwhbJFZp8UVHmKZG9A=
+X-Received: by 2002:a17:903:249:b0:205:3e68:7367 with SMTP id
+ d9443c01a7336-2076e34760dmr190006195ad.21.1726427799915; Sun, 15 Sep 2024
+ 12:16:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
- <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
- <20240913-shack-estate-b376a65921b1@spud> <20240914173037.422902b9.gary@garyguo.net>
- <20240914-jitters-barber-a0e51e7b83a8@spud> <20240914-romp-clothing-965a16cb4dd4@spud>
-In-Reply-To: <20240914-romp-clothing-965a16cb4dd4@spud>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 15 Sep 2024 21:15:44 +0200
-Message-ID: <CANiq72mb7UVbeH9R3t3s7U3tuJHT86FFdsEB=v_x1KKJV9uvgQ@mail.gmail.com>
-Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
-To: Conor Dooley <conor@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv <linux-riscv@lists.infradead.org>
+References: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-meson-pinctrl-gpio-line-names-v1-1-4345ba336ea4@linaro.org>
+In-Reply-To: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-meson-pinctrl-gpio-line-names-v1-1-4345ba336ea4@linaro.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 15 Sep 2024 21:16:29 +0200
+Message-ID: <CAFBinCABU5mM_==zfMxETAAxM8j1qXGYJhDj87-Qwvjc+NJPvg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: amlogic,meson-pinctrl: lower
+ gpio-line-names minItems for meson8b
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 15, 2024 at 12:15=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
-ote:
+On Wed, Sep 11, 2024 at 5:24=E2=80=AFPM Neil Armstrong
+<neil.armstrong@linaro.org> wrote:
 >
-> Turned it off, only to find out my board farm is non-functional! Looks
-> fine in QEMU however :)
-
-Thanks for checking that -- I have kept the patch in `rust-next`
-applied since it is unrelated.
-
-Cheers,
-Miguel
+> The Amlogic Meson8b SoC has 83 CBUS GPIOs, thus lower the minItems
+> for gpio-line-names to account for it, fixing DTBs check on Meson8b
+> based boards.
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
