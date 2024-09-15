@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-329920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D68C397976D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 17:16:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF8AF979770
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 17:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C20A282069
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 15:16:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF561F21909
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 15:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70AC1C7B8D;
-	Sun, 15 Sep 2024 15:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5DF1C8FA0;
+	Sun, 15 Sep 2024 15:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBErMRyW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EpEnEgeo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519FD1E481;
-	Sun, 15 Sep 2024 15:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC3EDDAB
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 15:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726413390; cv=none; b=fuFSq7dJBTl3ZDt215aLRJViQLth+Xi5IqqMQ6OhHq6wwVcNiQEq147Gm038KtzJWw7msRCdHttWaM7qEyuq7si6tk7SoXBpiMBs0CY4Q4N3RdbpK2VdLjHHfhep7UEEmx+gxYgc6yQnyKNUmhAEPABwfihG7dtIlNGOszLB8CA=
+	t=1726413509; cv=none; b=fVznBVgZ3E71T6sSmj8sHdYG2G4Ina8Bd2xkLMCPLQG/QpaOWBYoPhmtToZNqkH8Z8jfq33CvMLXQ0bJZx3++O3/rk53xEp8i+XV+OxuIubJPzMgd+3NvekM26zqHtpuWp3HTWEGeAmHX3/AeuGAZgypQBPizS15VLSot0K391I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726413390; c=relaxed/simple;
-	bh=FceSn3rmvE0R4UnpyAIvfZLdh7gW3qd+dDkyl0yogQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CsJHkbug9Q9wUzWchdnuGp/8hoeI8WyXU+pPsFGZ8QnV+PRMDwtPHdVQ04/21MnnBUEvMgXGhSoZuX07VQFPMmfFiwhneg00foPtq6GR/zGjrGUJcc12dH7dkEk1Dlw55pRpA4h9zT6URgAaHl9HSw6CIcXoYhDRdLiXk3xySJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBErMRyW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714F1C4CEC3;
-	Sun, 15 Sep 2024 15:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726413389;
-	bh=FceSn3rmvE0R4UnpyAIvfZLdh7gW3qd+dDkyl0yogQk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XBErMRyWWPgcb5aW1hB9Ek+6jBq044NDSaISyQq+XLp9QNz3TJH4if2g3HICXAHsG
-	 /CM32b1rLQt1QrrFAcDDYT7D3PzLDIRQtB53Z+8vuPE++aWOVIiVHISRmsIVqXtJJE
-	 WfDYObxp16W7BHzSsGB98X9xxO7MjUHcoanmKookWaG1+oPH74N0g2WtpC3Znm7hHk
-	 tD9QOUvhYvbZX7wyfwJKFom9Q8kSfOuPEL0r3wHj0W+2oBice6qoKAKz3ztQzoSUiE
-	 C6tJ3IxntFzwt7HwhZMGX+PGOu9pl/0owIiosYh46V6ETiI65gVGCVfNdf4pXVFTrZ
-	 Ei6+L+Cq6rlZQ==
-Date: Sun, 15 Sep 2024 17:16:22 +0200
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
- <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
- <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
- <shiyongbang@huawei.com>, <libaihan@huawei.com>, <andrew@lunn.ch>,
- <jdamato@fastly.com>, <horms@kernel.org>,
- <kalesh-anakkur.purayil@broadcom.com>, <jonathan.cameron@huawei.com>,
- <shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V10 net-next 06/10] net: hibmcge: Implement
- .ndo_start_xmit function
-Message-ID: <20240915171622.3ef8ff0e@kernel.org>
-In-Reply-To: <20240912025127.3912972-7-shaojijie@huawei.com>
-References: <20240912025127.3912972-1-shaojijie@huawei.com>
-	<20240912025127.3912972-7-shaojijie@huawei.com>
+	s=arc-20240116; t=1726413509; c=relaxed/simple;
+	bh=HEkOL+SIIOorjKmQLQpDyWskuma7P7RHDiNjkYWeAX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGlB1AOtwKor81IpnoyRPiEED/T8XY1cy1nhESWSGmvzVbSoDHk8ca4Fo6twOzMhlHlMcTydAZntsrcYVy0lZdMSkjIb5pFYrrvaOcbjZAR6boc0WDOYQvbBffTydK3BntbsnxLjkgehFdH+NxH7hYtD7u0Bn9RtijXqZQvaeq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EpEnEgeo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726413506;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HEkOL+SIIOorjKmQLQpDyWskuma7P7RHDiNjkYWeAX4=;
+	b=EpEnEgeoyYGsWdDIZDTMzLOMlVKt9jbQjDOs8kub9FoMw7mhSdho1r+MDvP40VV7wQtPXF
+	EIZ+fNjwJXf9VyC0F6PL8CVqxIjflI2M/0Sh4LIl/1R+SGaHREZ6w332wNnvWeEkXgqKTa
+	uWkpRvt7iLEmkJcq57PgzJei49JkEtY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-508-bfz7UB-uO_CIuHYov_OE5A-1; Sun,
+ 15 Sep 2024 11:18:23 -0400
+X-MC-Unique: bfz7UB-uO_CIuHYov_OE5A-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D93319560AB;
+	Sun, 15 Sep 2024 15:18:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.40])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A769119560AA;
+	Sun, 15 Sep 2024 15:18:17 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 15 Sep 2024 17:18:08 +0200 (CEST)
+Date: Sun, 15 Sep 2024 17:18:04 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH v3 0/2] uprobes: Improve scalability by reducing the
+ contention on siglock
+Message-ID: <20240915151803.GD27726@redhat.com>
+References: <20240815014629.2685155-1-liaochang1@huawei.com>
+ <cfa88a34-617b-9a24-a648-55262a4e8a4c@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cfa88a34-617b-9a24-a648-55262a4e8a4c@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, 12 Sep 2024 10:51:23 +0800 Jijie Shao wrote:
-> +static int hbg_napi_tx_recycle(struct napi_struct *napi, int budget)
-> +{
-> +	struct hbg_ring *ring = container_of(napi, struct hbg_ring, napi);
-> +	/* This smp_load_acquire() pairs with smp_store_release() in
-> +	 * hbg_start_xmit() called in xmit process.
-> +	 */
-> +	u32 ntu = smp_load_acquire(&ring->ntu);
-> +	struct hbg_priv *priv = ring->priv;
-> +	struct hbg_buffer *buffer;
-> +	u32 ntc = ring->ntc;
-> +	int packet_done = 0;
-> +
-> +	while (packet_done < budget) {
+Hi Liao,
 
-you should so some cleanup even if budget is 0
-in fact you can hardcode the amount of work Tx NAPI does to 128 and
-don't look at the budget as a limit. Per NAPI documentation budget
-is for Rx
+On 09/14, Liao, Chang wrote:
+>
+> Hi, Oleg
+>
+> Kindly ping.
+>
+> This series have been pending for a month. Is thre any issue I overlook?
 
-> +		if (unlikely(hbg_queue_is_empty(ntc, ntu, ring)))
-> +			break;
-> +
-> +		/* make sure HW write desc complete */
-> +		dma_rmb();
-> +
-> +		buffer = &ring->queue[ntc];
-> +		if (buffer->state != HBG_TX_STATE_COMPLETE)
-> +			break;
-> +
-> +		hbg_buffer_free(buffer);
-> +		ntc = hbg_queue_next_prt(ntc, ring);
-> +		packet_done++;
-> +	}
-> +
-> +	/* This smp_store_release() pairs with smp_load_acquire() in
-> +	 * hbg_start_xmit() called in xmit process.
-> +	 */
-> +	smp_store_release(&ring->ntc, ntc);
-> +	netif_wake_queue(priv->netdev);
-> +
-> +	if (likely(napi_complete_done(napi, packet_done)))
+Well, I have already acked both patches.
 
-if packet_done >= budget you should not call napi_complete_done()
-as you are not done
+Please resend them to Peter/Masami, with my acks included.
 
-> +		hbg_hw_irq_enable(priv, HBG_INT_MSK_TX_B, true);
+Oleg.
+
 
