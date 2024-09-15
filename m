@@ -1,242 +1,389 @@
-Return-Path: <linux-kernel+bounces-329817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E019597965E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:45:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CDF979659
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3BE32833A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:45:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5561F2193D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7FE1C5798;
-	Sun, 15 Sep 2024 10:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CDA1C4630;
+	Sun, 15 Sep 2024 10:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dMDuD4aC";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="n14gSQjo"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J/C3wCtJ"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB08D1C3F04
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 10:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726397123; cv=fail; b=jwLhIbtZoWdnoiPkw3lAGyMwdJan+91mPpfIwaW6eq6a0yV+MFC+NKY8rBZw2YRzsYXo9rKy90GXkr97rT9h2fFUIrW1ZVepZFZivzD7Zhd19D3geqCjPWloIkiUrPsPBiSSNjRyTX05qI77Z8tOp2rghLIqhsWVBBjq7Y99d98=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726397123; c=relaxed/simple;
-	bh=s70zvr1i1uV430tlHc4XUzi+C/gGo1WkyNixy2bELLg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PVbWDYoXBTP5nbeeEcNBlTLvseyJI5GPUK/y8ZqSnxoyCeL9FVywC0wJ/bmZsRGMsQGfQKX7ibZApcmoEvhlMF2ZW+boFz8aN4bFNTUl0eA4a48+pMGXI68JXmglBQG9vHYIPoBSivY6HCl0S28AZ2rYSG7SWsJ21jPhZw7HZOE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dMDuD4aC; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=n14gSQjo; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7fa410ba734d11ef8b96093e013ec31c-20240915
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=s70zvr1i1uV430tlHc4XUzi+C/gGo1WkyNixy2bELLg=;
-	b=dMDuD4aCxfEwEpjeIeGezNXJSIzZTebKAaHibVsiU8wjDIe6ZWyrFjEn/XSVQPAiIje5h5RlUMkeixykt9sFddOoSbQc0PSmPEdzhiVmJfQY4mAlzqwC3MM+FNPPptFJQA4f4e0IWbhBkdwW/kpFHAylGDPIf7RqwjUeUkmJG+M=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:215cc2b5-99c0-4091-9250-0b98cbe57947,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:9f500ab7-8c4d-4743-b649-83c6f3b849d4,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 7fa410ba734d11ef8b96093e013ec31c-20240915
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <shawn.sung@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 339611838; Sun, 15 Sep 2024 18:30:16 +0800
-Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sun, 15 Sep 2024 18:30:15 +0800
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sun, 15 Sep 2024 18:30:14 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pjt7/dug1/DMG/qeOk0gDR++BQnzb+zOqbpPGtRdhtTx0Rw11sJPcHll4gBDWf79ugJQDh9BNbpyVG5nqTcytkzBkcLDp7nNdH9XYlQxY2CGiSsZPUbKiq7kQpUkRHb7sL+tasCSoFdyOt63DoEvbCrkB1srTVDr+hDo9L3OtIHd94lZbOHxrzXxb06Yep3Cne5mnDvQ0gcwa5upRa0FmgEDtEAmoVUB8Bgr2mZyNUhvGojX7jkDC/ct7T2uSF7ACeLHZpHXTQ+6knomtVby+NzaGGAiRwzMBwTsHM4Vi3VA1GfiB0YueqMcsj/dLtanlWh+Rh+E6k9IYSeMqHkwYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s70zvr1i1uV430tlHc4XUzi+C/gGo1WkyNixy2bELLg=;
- b=Wlx5zOr8pUOFNdxRXjK2x82o9QA9AaRwBPfNr6+Y/PVPav/BmFMV4VEXOrTqThp4ONDV51Ai/DMz0R7hU/t6JpXc0eb5BUfD55UPq9bUq1NoRKJyButwqQwBnUAnltIBAso1RMnN7WNvqxZZSyQm0Ch4HjRbjTqnTxh1BHR3hztIvBzjPVBSvXLLuV4NjvPp+lbE3+Fci6r7rfN6KicttAQKMRNW/KNmn1Lh3tJKGDPOlZdA0Jp31J59Ovd7MvTRoB0R6iCCDjXqykyBISCAEVtFxsgWte4Af2eGo9NTzW1EiR/OGCJRtueGTgtM119xaaXcQqHEptZcvlPIk3ugAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE1F13A26B
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 10:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726397070; cv=none; b=GJ118GNrin9j14NemclBsyuCOzgMcbVC1DZelfErx2wha9390xd8pmqRDQy1y8HOuAuMRTtbW5kpjLvep+lzqquAalpY5qxhLXaeHh/JWj8VR0rfX1e7E89HNLesmE+Yg4URNaSbNJI1VVx361tpN8270LUf8w6cMZCxE5fpdZs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726397070; c=relaxed/simple;
+	bh=0G+q0savsd9CgjN1TA4CDbl18pXbiLhoyFmeO5zGzvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IpZXY7G3LIkLJSAEnDzJSwqmWVed7EYV//P9GHcLaEXp6Y0FdKsRCfFEOg3K37UswjJMgeWXJlUeIBXxssNU44g3JeilH0zlDeJ/ieB1l1zCBKRRLJ3vV2I0UA9dV20222WuvVnQSwD6hT08jp6iLXlCpl9rdGkjf8bKd1oLMlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J/C3wCtJ; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53653682246so4036720e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 03:44:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s70zvr1i1uV430tlHc4XUzi+C/gGo1WkyNixy2bELLg=;
- b=n14gSQjop8UbcZ+kG52tDnfdm08/DYeugkli+hIxLKL1hQgTM5Ezza9rSMwfSI9X6fmdp1hIwl6WmdxY+yNS9eYdfNlJNEpTN6yeA9gEaM2zeErx/CaqyXyC/jO0v10nhD28qKEokAjY1a946N4zQI2CJLW8z9mmwCNEgXfv2yE=
-Received: from SEYPR03MB6627.apcprd03.prod.outlook.com (2603:1096:101:82::5)
- by SEZPR03MB8016.apcprd03.prod.outlook.com (2603:1096:101:181::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Sun, 15 Sep
- 2024 10:30:09 +0000
-Received: from SEYPR03MB6627.apcprd03.prod.outlook.com
- ([fe80::587b:ac7c:f8aa:9220]) by SEYPR03MB6627.apcprd03.prod.outlook.com
- ([fe80::587b:ac7c:f8aa:9220%7]) with mapi id 15.20.7962.022; Sun, 15 Sep 2024
- 10:30:09 +0000
-From: =?utf-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>
-To: =?utf-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
-	"alpernebiyasak@gmail.com" <alpernebiyasak@gmail.com>,
-	"angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"wenst@chromium.org" <wenst@chromium.org>, "chunkuang.hu@kernel.org"
-	<chunkuang.hu@kernel.org>, "daniel@ffwll.ch" <daniel@ffwll.ch>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	=?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
-	"shawn.sung@mediatek.corp-partner.google.com"
-	<shawn.sung@mediatek.corp-partner.google.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>
-Subject: Re: [PATCH v4 0/5] Support alpha blending in MTK display driver
-Thread-Topic: [PATCH v4 0/5] Support alpha blending in MTK display driver
-Thread-Index: AQHbBuPDCSlO4tZ8BUut6vTVhgd0GbJYprEA
-Date: Sun, 15 Sep 2024 10:30:09 +0000
-Message-ID: <e63ff4bc247f798d03d93979b15786e2246f29ee.camel@mediatek.com>
-References: <20240717-alpha-blending-v4-0-4b1c806c0749@mediatek.com>
-	 <CAAOTY_8ThuusfHk9Gd5pFP8VhJkG2seuJmkFiruK1rPQFZGBzg@mail.gmail.com>
-	 <6c9b7f85-f92d-44ed-ae9d-00f6d55ea614@gmail.com>
-	 <a2cf4e9b9c3343a7398521760934f1740505aa13.camel@mediatek.com>
-	 <13f6dbc5d460e746352f68b001e85f870c89993d.camel@mediatek.com>
-	 <69776448-0328-4880-9108-54466e40ddd9@gmail.com>
-	 <01020191ea9dface-81c48f9d-4cf2-4f96-a1cd-59c11fa810ff-000000@eu-west-1.amazonses.com>
-	 <a34c16613f66b293b54eb6815c8bea80db08d885.camel@mediatek.com>
-In-Reply-To: <a34c16613f66b293b54eb6815c8bea80db08d885.camel@mediatek.com>
-Accept-Language: en-US, zh-TW
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR03MB6627:EE_|SEZPR03MB8016:EE_
-x-ms-office365-filtering-correlation-id: 42e32878-1e40-49fd-984e-08dcd5715f9b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?d2pJSkw1Z3FOYUppY3lPOUEwSG1abGx3ZW1OaUlWampZbzdaRGtBcVQ0eWVk?=
- =?utf-8?B?UnJpWUNiUkl5WHJ2N1MxVUpuSE9Db3lHQ3l2ZGExeU1Tb2VJSGgxTHI2bHdG?=
- =?utf-8?B?Q0NFckNzQ0ZtOFl5M2dZWUlvM0xTVW1UbFhKQnB6MXlwdXgzVG1OTFV0WXor?=
- =?utf-8?B?TGY1ZUdpMUk1eWtvSTNhcVk1aHpPUHJkQ2tSNkVsMEJ4NmJDd1d5a1VGRFhl?=
- =?utf-8?B?Sjk3ZndRaFNOTjVvSEpaeUtqTkFPVlhiUDlUdFVVVjBKdjllZGNlQmtMeGJE?=
- =?utf-8?B?Y2lnendJbWFRcWhwaXdJUnJnVlV4Mm5nTURrYUgvRWN1RmNuUWZhbXFVTXVy?=
- =?utf-8?B?ZHRHT2pHbGcxV2d1R1JwOGpWVWN1SCtXcmsvRDJ4STJkQmZjQ3hocFpML3NI?=
- =?utf-8?B?RWk1bDhud2JrVlRMZEo2Q0NWdVNpM3YzVGtDK3BFaFpHcFBIdEpjVWY0Sklw?=
- =?utf-8?B?Y2JaVUlVMWJ4cVV5RGYxU1hya0U4czNDbGIrQytYc09nNSs1ZXRNbVNSWDV2?=
- =?utf-8?B?TlJxQitOeWZGU3M2SSs5RHRmek5aRytUazBPNzdrSDFSaUFGOVlVdno5WXdI?=
- =?utf-8?B?NG5qemxkWnE1NVc5OCtGMlJKbXNyQjhmNkxpVnlTS1pIQWhRUUxjZWYwcmFL?=
- =?utf-8?B?clpDYjZGOTBtbjJzMjBWbkNDZGowRkY5Tkk4QzhzRWZldEw3dzJSQXdvZWJX?=
- =?utf-8?B?eTN4cml1UW4rV0dYVUV0N2kvM1pjcmsxNVAwYkJJTVFaTnp0NTFNSHE0Z2dI?=
- =?utf-8?B?aENXM1lyaXBsMjlSTkZRZlN0aUVvam5kMzZPVWlCaUFCeElPbUhMbk9GdTll?=
- =?utf-8?B?QTNkdFpzQlpodHdXcnMvb053S2pFQ0xJYjlBME1XQ0xqK21IRkZ5dXBDMFNG?=
- =?utf-8?B?UUhZT0pGVTMzcVVrSEJkWERzcmZNc3RGb0RTcGJWK3ltM0JGQjVwSlBkY3JK?=
- =?utf-8?B?MFp4cytRTUJWSXl0R0tQakxjSmh6YmN6Y295SWtFOGlaUnJWREtTcGo3cDBl?=
- =?utf-8?B?MnNaMTZQRGN6YU5IcXRmSzZZallzbXVwUDlYZXd3c01OaXEyNDhKc1Jzd0Nx?=
- =?utf-8?B?VVJpbVlLQzUwTUtxa1dFQ1Q5ZEZOVldib0Z3d00rM1ZLb1JZbjUwZ1JlK1R0?=
- =?utf-8?B?dVpXN0pObElablp2NjFOL1NEalNoRXhUeTI4YVJyLzZCbVdJNFFmUXBiVFcv?=
- =?utf-8?B?SG9BeVBOK3pSWjdpNURMSEdQVThwaWk3RldUK1ErMTJZNlJDbnRlSC9pZlBk?=
- =?utf-8?B?ekxWRzI3bDBCVUxhZGV4VTFaNVRmRXN6UDF5N1VsL3Urc2ZpbG1YN3ZFeTkw?=
- =?utf-8?B?eDlaR0VaN251U09UTFBiU3NrdEp5U1FFQllnSHNvRGQ2cCtlNHl6K0k4OXkw?=
- =?utf-8?B?c2YwdlpjTTRYRkdVdGt4MXhjNDlQTmkvcDQ2LyttMmUvZFd2Q3ErMjE1UkE1?=
- =?utf-8?B?aFZpVFNwK2N2cXovQ3o4S1NNanRVbWdDaE9tS1J4Z0hvaWZ2ZUJjQzkyQzZi?=
- =?utf-8?B?aVJLNXA5bHhYZk1oejdSeFk0cmwrK2VZZlA3T3UrR21ET3ZaYTZUektEY093?=
- =?utf-8?B?V3VNdVdYd3B0V21sNngxZkJPSWJNZnhYdEVaZitoUkNYLytHNmxYZys4Lzg2?=
- =?utf-8?B?Y1l1TkxsZmlHTzljOXhiY1RUMW9ESHNaTzZyL3dCUjN6eG5CZkRwRXM1UE5s?=
- =?utf-8?B?eEVrWjdwSmNIRkhMRGJBUWJwUkNMOWJtRWxSK2NLaDk4MWpSZnFpSFhUSThS?=
- =?utf-8?B?ZTRhUzN6QU1kaDRCdkFEZVVPQW8zMmVUYnozZlNxYzRHY1QxZHJqdk14UHVz?=
- =?utf-8?B?SFhEREo1cC9KRFR0NXJkZz09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR03MB6627.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?QXlRS0tQYlg1djRwRFNNZXJWb1BRMy9GNDk3eWtSZkZzVVQxUWxvempGRHdl?=
- =?utf-8?B?dERud3RKTG5GSndoT2VTWDFDNjhrbWhXemZwLzJpMHlnVjJ5U1NETm51QXN1?=
- =?utf-8?B?MjRxWi9pUnlPZ0F4akQzY2pOOHNWb0VqNUhMT0s4Uk5ZcksxYk43dzFLaXAr?=
- =?utf-8?B?MkwwZFQ4VnhGWTNXWnltbEIrNE1Sc1RDMER6clBhZjMwcG5pTnBXQWpoMXIz?=
- =?utf-8?B?amxFK2dveWs2a0JMUm8wMkgrTTkrUExVNTZDb3NrblF3eDN4Nm1XaEN5cHlT?=
- =?utf-8?B?VWdadGU2L2VmbDJwanpFUXVNY1FMMFB0V1drdWxrSmg2SlQyWXNFUE5XQUc2?=
- =?utf-8?B?VHNxN0dORjRKeEZRZ3kvamIxa1lIZk1zNjhLcmFRUldMc1ZEQ1BlMXc5TnFv?=
- =?utf-8?B?eHNHekY5WUx4dkFScFV6NU9sNG40QXlDeXZ3UXNpaFIrWnI5M1FkK290aVdp?=
- =?utf-8?B?MWlNd2tLbWZkNm9pZFJ2bXNLcnJQZXcwcGI2cmp1VlV1ZjRsOWxDZFdFV1gy?=
- =?utf-8?B?UTZWbFI0OTliWkVwUkNsb3ppRHNtNlBDQmErZThsUmdmK0lJL1pyTXczRndF?=
- =?utf-8?B?QWdnQUNkOCtFR2hyWjFoRWNGTzBaZjZVL1puYUJYWStIRDRFenByb2NZekor?=
- =?utf-8?B?cEFzSjhWY2lTWjNzbmREemFJSHNWQ0NZM2RNeUlvYm92Z0Y0andGcm41d1dY?=
- =?utf-8?B?SUNYcWNIRmtGR2V6V0NXWW1uR3hjeGljK0pQYUYwWEdjYlFXSWJVNFFET3ox?=
- =?utf-8?B?R2ZFNFZ0SUpVbmRoSExjYVgvd01YQW9Zb3dvRkNEbkdpcUY0SGhpdTc5VkVS?=
- =?utf-8?B?ZkgydWQvRlIwank2a2VhNFBvNGt3RDJZNVp6UzFlSmJWRytTYm1RMmxjUlpF?=
- =?utf-8?B?TjdWWDQxcWxRY3ltNnRiVzU4OXMyeEhwQlhTTDBVRVRGQ2xqdFpuZFhOak05?=
- =?utf-8?B?UWN4cTdNTWhJRTVnY1ZBSzVMSjhZc1V2alorY0o0end2dTRmVGlXbmdyMWhU?=
- =?utf-8?B?RzZmakdMbk1YZEZlQm1pVDdXb2FWQjlkNEJYSGQ0K2tXTlJEKzRrcndtZW9z?=
- =?utf-8?B?SzJxSEhWQkZFZWhMaEprNkRxYVF4emkzMmhLVGc0ejE4b0tuWFdGcW5ld2l1?=
- =?utf-8?B?NFE1bUg2dWlUQ3B1d2R6SHFhYWcvSlZRRVp4Q1R0KzZCL0hxZDliUHRaL0tE?=
- =?utf-8?B?T01vOUxsK3J5anBlemFjRU01Q2ZLS1F6NW1VbGNJanlUNEZNYzJBZENscmhp?=
- =?utf-8?B?dWpkeVlYRlZ3WmdOU0N3S3NraC9oZmY5MnF6dTVMem15UzBQS1R6MFA2T05R?=
- =?utf-8?B?UnhKSVZqZEhFbGVNalN2cjZ2aWVoRXArNTkreE96WDUraS9hemQ5SzI0YTlK?=
- =?utf-8?B?bGJTbGhFS0xTWktwR3NMYmpSNGxMVjhnRFl1cURCSkYzc1NoTCtyQ0dQeW5E?=
- =?utf-8?B?Z3U5Sm9CMHJ3dU1WNnFkV2hFM01KTWUrRHdmS1dzSTdidXljSFpKQW1lcDFq?=
- =?utf-8?B?eC80VHkxaituRk93Mmx6MVhJbnhYMURiL2hJL0NXZGRMZVNLWXRNTjJVWUFm?=
- =?utf-8?B?Lys5eXpmR3ArZHF4SEl2VnBWTDVKV2o0aVdjQWZ4WHpCTEFCWDlEbldzZyt5?=
- =?utf-8?B?bE5CN0RrOWtJajIybFMvN3dNdkVKMmQxaFdJdyszNDhiZnlTcUFZRjlQMUdo?=
- =?utf-8?B?WDBLdXJwZDVzOS8rc0NOdUtpMEdTN3lWL3E0RTZYamVGNG5MckFhWUF5cWhP?=
- =?utf-8?B?VkdSUVNzWU1DVldJZnBXQktkSnRsSXd4RmxyOHRmUE1LTWR0OEx1NDl1Qlcy?=
- =?utf-8?B?dWwvZStlamJNUGdTSWI4ajA5UHJuY3ZKSFozNGhDVzJSM3ZyOGZ6T2RIdmdr?=
- =?utf-8?B?cmRJeVZtRGVYbFdmeHVyZUgzaWpsT0pmeWU4c3RiNDJ0bUs2QmpjcThHWGhZ?=
- =?utf-8?B?Y2NBM1NmRU5jS2ZmM0FDOUZoZGlvN3dVNEp1L3JnU2hOT21nSmFCaXhVM3d4?=
- =?utf-8?B?Ny8xdy8xMHA4TkhQdThjWVVtcWMvSlBzSTZlNXc5Q09ZRmppQWJtUlZzcDJK?=
- =?utf-8?B?STkvbTF6NzBEbnY4b1BTQ1BLam5vdzNFQ1NaYUVRdlJnZ0JUV3JidUhJOExH?=
- =?utf-8?B?cEZRUzlNYXhPaDhYQUlKRGQ1SXc3U1JkQkxCWFdtbDVZTTdiTW1OR3lZY0M3?=
- =?utf-8?B?d3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C391C1FE176F6D4389E8B436D6C65756@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=chromium.org; s=google; t=1726397065; x=1727001865; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oqEt4ObuvSIR2+6CpLer5riNkJPNA32ELfGwazBXidc=;
+        b=J/C3wCtJcbjmx85GySbmNGFpvTuYWMFu9Ac4ez4uLi+QCAds0PtAZ0I6VNO+yboqpB
+         vOi2OVOj/wTqweMiAdA+7URQ5fdTHeM8C8pVFNMtnIAyJlSIuY4MYC7o2u0w9ew7/6pX
+         n2wSlEgXge71x2Uy327hkudbjvijSS8oEX260=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726397065; x=1727001865;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oqEt4ObuvSIR2+6CpLer5riNkJPNA32ELfGwazBXidc=;
+        b=ubKMr2xw/INO0H5yg+h1lbwy/k5V4nKHMT7uIPvp7z0qCgUFYF2+oTIERb9Mz6QQiq
+         DDKaI3/M2qV9IEvUOWJwpQ1Nn66bqW6sx2LJKiP8N/PLF12cKh3z2Sw0pvkeZzxnkhAp
+         0lMm32H1lXln+r/PIo3DW7m6NQPGiF8T3kVEinmtn5Bid856g4CvmkAWeaeq8AVdS3Vb
+         1O6HdXEDEMQEIu2ALY70tzRyh62Qz/LiapAAMex46cyVSgT0I+IoOKwKDcm0PAdQF02X
+         pzRDAFmTzim5bmuHITQjN4ZNro9NPaJHTJNWzaYBaH6eT4V+CmyZBV93Q1cK/4+jUlOj
+         V20g==
+X-Forwarded-Encrypted: i=1; AJvYcCU4YhoP/8yYj16Djs6I2QfRtTVXUnxtcpNy3EAtdVO2SazKLbr3bxEc83NsJlLbJJdpJTCdBnxkuiIbE6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT568p3pGbNd5YLAsWALVCcUMeILnYOwzh/pUhA5tY5DolcMwP
+	VJQwPWzoYd9IVyyUThYG2/O3owJQLgudru6x6XWjxIGfU164FT8MoFzBGJy/n1YgeYCZ6QCZYq7
+	vk11p7t3rX8VkOCmeEsF+rJmLeUWHo3jTxu08
+X-Google-Smtp-Source: AGHT+IFr4/sXzAGOOmgijyxrqonSXBFjq5blTMpRSCdxxETTOmw4Qq5yYRYsOEcGin1sOIvXRlqhOBJGRRV9Uex1j+8=
+X-Received: by 2002:a05:6512:1581:b0:533:4327:b4cc with SMTP id
+ 2adb3069b0e04-53678ff3092mr7398960e87.52.1726397064422; Sun, 15 Sep 2024
+ 03:44:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR03MB6627.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42e32878-1e40-49fd-984e-08dcd5715f9b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2024 10:30:09.1295
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8DxCJXJW4tX/88ZbMbvzMH5fJtWzSlP0DHJNBIKozrjEnFqnEYcFfFVrK9Werhx6SU5ry6BVedi+bqeCXT+dFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB8016
+References: <20240911072751.365361-1-wenst@chromium.org> <20240911072751.365361-7-wenst@chromium.org>
+ <ZuQTFTNTBLCziD05@smile.fi.intel.com>
+In-Reply-To: <ZuQTFTNTBLCziD05@smile.fi.intel.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Sun, 15 Sep 2024 12:44:13 +0200
+Message-ID: <CAGXv+5HgkCZ=vdHGgvCW1U-nid=cQrVaxC+V+H2Gknf2pnTbYA@mail.gmail.com>
+Subject: Re: [PATCH v7 06/10] i2c: Introduce OF component probe function
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgSmFzb24sDQoNCk9uIFNhdCwgMjAyNC0wOS0xNCBhdCAyMDoyMiArMDAwMCwgSmFzb24tSkgg
-TGluICjmnpfnnb/npaUpIHdyb3RlOg0KPiBPbiBGcmksIDIwMjQtMDktMTMgYXQgMDk6MDEgKzAw
-MDAsIEFuZ2Vsb0dpb2FjY2hpbm8gRGVsIFJlZ25vIHdyb3RlOg0KPiA+IElsIDEzLzA5LzI0IDA3
-OjQwLCBBbHBlciBOZWJpIFlhc2FrIGhhIHNjcml0dG86DQo+ID4gPiBIaSwNCj4gPiA+IA0KPiA+
-ID4gT24gMjAyNC0wOS0xMyAwNTo1NiArMDM6MDAsIEphc29uLUpIIExpbiAo5p6X552/56WlKSB3
-cm90ZToNCj4gPiA+ID4gSGkgQWxwZXIsDQo+ID4gPiA+IA0KPiA+ID4gPiBJIHRoaW5rIHRoYXQn
-cyBhIHBsYXRmb3JtIGlzc3VlIGJlY2F1c2UgaXQgd29ya3MgZmluZCBpbiBteQ0KPiA+ID4gPiBN
-VDgxODgNCj4gPiA+ID4gcGxhdGZvcm0sIGJ1dCBJIGRvbid0IGhhdmUgYW55IE1UODE3MyBwbGF0
-Zm9ybS4NCj4gPiA+ID4gDQo+ID4gPiA+IENhbiB5b3UgaGVscCBtZSB0ZXN0IHRoZSBmaXggcGF0
-Y2ggaW4geW91ciBNVDgxNzMgcGxhdGZvcm0/DQo+ID4gPiA+IEknbGwgcHJvdmlkZSBhIGZpeCBw
-YXRjaCBpbiAyIHdlZWtzIHZpYSBHb29nbGUgQ2hhdC4NCj4gPiANCj4gPiBKYXNvbiwgVHdvIHdl
-ZWtzIGlzIGEgYml0IHRvbyBsYXRlIGFzIENLIGFscmVhZHkgcGlja2VkIHlvdXINCj4gPiBzZXJp
-ZXM6DQo+ID4gcmV2ZXJ0aW5nDQo+ID4gYW5kIHJlYXBwbHlpbmcgY3JlYXRlcyBub2lzZSBpbiB0
-aGUgY29tbWl0IGxvZywgYW5kIHdoZW4gdGhpcyBjYW4NCj4gPiBiZQ0KPiA+IGF2b2lkZWQgaXQN
-Cj4gPiBzaG91bGQgYmUgYXZvaWRlZC4NCj4gPiANCj4gPiBTaW5jZSB1cHN0cmVhbSBpcyBicm9r
-ZW4sIHBsZWFzZSB1bmRlcnN0YW5kIHRoYXQgdGhpcyBmaXggc2hvdWxkIGJlDQo+ID4gZGV2ZWxv
-cGVkDQo+ID4gd2l0aCAqaGlnaGVzdCogcHJpb3JpdHkgKHNvLCBhcyBpbW1lZGlhdGUgYXMgcG9z
-c2libGUpLg0KPiA+IA0KPiANCj4gT0ssIEknbGwgc2VuZCB0aGUgZml4IHBhdGggcmlnaHQgYXdh
-eSENCg0KSSBub3RpY2UgdGhhdCBJJ20gdW5hYmxlIHRvIHNlZSByZXBsaWVzIGZyb20gZXh0ZXJu
-YWwgc291cmNlcy4gTm90IHN1cmUNCmlmIHRoaXMgaXMgcmVsYXRlZCB0byBCNCByZWxheSwgYnV0
-IEkgd2FudGVkIHRvIGJyaW5nIHRoaXMgdG8geW91cg0KYXR0ZW50aW9uIGFzIGZlZWRiYWNrIHdo
-aWxlIHlvdSBtYXkgd2FudCB0byBjb25zaWRlciBzZW5kaW5nIHRoZQ0KcGF0Y2hlcyB3aXRoIEI0
-IHJlbGF5IGFzIHdlbGwuDQoNClJlZ2FyZHMsDQpTaGF3bg0KDQo=
+On Fri, Sep 13, 2024 at 12:25=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Wed, Sep 11, 2024 at 03:27:44PM +0800, Chen-Yu Tsai wrote:
+> > Some devices are designed and manufactured with some components having
+> > multiple drop-in replacement options. These components are often
+> > connected to the mainboard via ribbon cables, having the same signals
+> > and pin assignments across all options. These may include the display
+> > panel and touchscreen on laptops and tablets, and the trackpad on
+> > laptops. Sometimes which component option is used in a particular devic=
+e
+> > can be detected by some firmware provided identifier, other times that
+> > information is not available, and the kernel has to try to probe each
+> > device.
+> >
+> > This change attempts to make the "probe each device" case cleaner. The
+> > current approach is to have all options added and enabled in the device
+> > tree. The kernel would then bind each device and run each driver's prob=
+e
+> > function. This works, but has been broken before due to the introductio=
+n
+> > of asynchronous probing, causing multiple instances requesting "shared"
+> > resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
+> > time, with only one instance succeeding. Work arounds for these include
+> > moving the pinmux to the parent I2C controller, using GPIO hogs or
+> > pinmux settings to keep the GPIO pins in some fixed configuration, and
+> > requesting the interrupt line very late. Such configurations can be see=
+n
+> > on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
+> > Lenovo Thinkpad 13S.
+> >
+> > Instead of this delicate dance between drivers and device tree quirks,
+> > this change introduces a simple I2C component probe. function For a
+> > given class of devices on the same I2C bus, it will go through all of
+> > them, doing a simple I2C read transfer and see which one of them respon=
+ds.
+> > It will then enable the device that responds.
+> >
+> > This requires some minor modifications in the existing device tree. The
+> > status for all the device nodes for the component options must be set
+> > to "failed-needs-probe". This makes it clear that some mechanism is
+> > needed to enable one of them, and also prevents the prober and device
+> > drivers running at the same time.
+>
+> ...
+>
+> > +static int i2c_of_probe_enable_node(struct device *dev, struct device_=
+node *node)
+> > +{
+> > +     int ret;
+>
+> > +     dev_info(dev, "Enabling %pOF\n", node);
+>
+> Is it important to be on INFO level?
+
+Not really.
+
+> > +     struct of_changeset *ocs __free(kfree) =3D kzalloc(sizeof(*ocs), =
+GFP_KERNEL);
+> > +     if (!ocs)
+> > +             return -ENOMEM;
+> > +
+> > +     of_changeset_init(ocs);
+> > +     ret =3D of_changeset_update_prop_string(ocs, node, "status", "oka=
+y");
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D of_changeset_apply(ocs);
+> > +     if (ret) {
+> > +             /* ocs needs to be explicitly cleaned up before being fre=
+ed. */
+> > +             of_changeset_destroy(ocs);
+> > +     } else {
+> > +             /*
+> > +              * ocs is intentionally kept around as it needs to
+> > +              * exist as long as the change is applied.
+> > +              */
+> > +             void *ptr __always_unused =3D no_free_ptr(ocs);
+> > +     }
+> > +
+> > +     return ret;
+> > +}
+>
+> ...
+>
+> > +int i2c_of_probe_component(struct device *dev, const struct i2c_of_pro=
+be_cfg *cfg, void *ctx)
+> > +{
+> > +     const struct i2c_of_probe_ops *ops;
+> > +     const char *type;
+> > +     struct device_node *i2c_node;
+> > +     struct i2c_adapter *i2c;
+> > +     int ret;
+> > +
+> > +     if (!cfg)
+> > +             return -EINVAL;
+> > +
+> > +     ops =3D cfg->ops ?: &i2c_of_probe_dummy_ops;
+> > +     type =3D cfg->type;
+> > +
+> > +     i2c_node =3D i2c_of_probe_get_i2c_node(dev, type);
+>
+>
+>         struct device_node *i2c_node __free(of_node_put) =3D
+>                 i2c_...;
+
+cleanup.h says to not mix the two styles (scoped vs goto). I was trying
+to follow that, though I realize now that with the scoped loops it
+probably doesn't help.
+
+I'll revert back to having __free().
+
+> > +     if (IS_ERR(i2c_node))
+> > +             return PTR_ERR(i2c_node);
+> > +
+> > +     for_each_child_of_node_with_prefix(i2c_node, node, type) {
+> > +             if (!of_device_is_available(node))
+> > +                     continue;
+> > +
+> > +             /*
+> > +              * Device tree has component already enabled. Either the
+> > +              * device tree isn't supported or we already probed once.
+> > +              */
+> > +             ret =3D 0;
+>
+> Shouldn't you drop reference count for "node"? (See also below)
+
+This for-each loop the "scoped". It just doesn't have the prefix anymore.
+I believe you asked if the prefix could be dropped and then Rob agreed.
+
+> > +             goto out_put_i2c_node;
+> > +     }
+> > +
+> > +     i2c =3D of_get_i2c_adapter_by_node(i2c_node);
+> > +     if (!i2c) {
+> > +             ret =3D dev_err_probe(dev, -EPROBE_DEFER, "Couldn't get I=
+2C adapter\n");
+> > +             goto out_put_i2c_node;
+> > +     }
+> > +
+> > +     /* Grab resources */
+> > +     ret =3D 0;
+> > +     if (ops->get_resources)
+> > +             ret =3D ops->get_resources(dev, i2c_node, ctx);
+> > +     if (ret)
+> > +             goto out_put_i2c_adapter;
+> > +
+> > +     /* Enable resources */
+> > +     if (ops->enable)
+> > +             ret =3D ops->enable(dev, ctx);
+> > +     if (ret)
+> > +             goto out_release_resources;
+> > +
+> > +     ret =3D 0;
+> > +     for_each_child_of_node_with_prefix(i2c_node, node, type) {
+> > +             union i2c_smbus_data data;
+> > +             u32 addr;
+> > +
+> > +             if (of_property_read_u32(node, "reg", &addr))
+> > +                     continue;
+> > +             if (i2c_smbus_xfer(i2c, addr, 0, I2C_SMBUS_READ, 0, I2C_S=
+MBUS_BYTE, &data) < 0)
+> > +                     continue;
+> > +
+> > +             /* Found a device that is responding */
+> > +             if (ops->free_resources_early)
+> > +                     ops->free_resources_early(ctx);
+> > +             ret =3D i2c_of_probe_enable_node(dev, node);
+>
+> Hmm... Is "node" reference count left bumped up for a reason?
+
+Same as above.
+
+> > +             break;
+> > +     }
+> > +
+> > +     if (ops->cleanup)
+> > +             ops->cleanup(dev, ctx);
+> > +out_release_resources:
+> > +     if (ops->free_resources_late)
+> > +             ops->free_resources_late(ctx);
+> > +out_put_i2c_adapter:
+> > +     i2c_put_adapter(i2c);
+> > +out_put_i2c_node:
+> > +     of_node_put(i2c_node);
+> > +
+> > +     return ret;
+> > +}
+>
+> ...
+>
+> > +/*
+> > + * i2c-of-prober.h - definitions for the Linux I2C OF component prober
+>
+> Please avoid putting filenames inside files. In the possible future event=
+ of
+> file renaming this may become a burden and sometimes even forgotten.
+
+Ack.
+
+> > + * Copyright (C) 2024 Google LLC
+> > + */
+> > +
+> > +#ifndef _LINUX_I2C_OF_PROBER_H
+> > +#define _LINUX_I2C_OF_PROBER_H
+>
+> > +#if IS_ENABLED(CONFIG_OF_DYNAMIC)
+>
+> Do you really need to hide data types with this? Wouldn't be enough to hi=
+de
+> APIs only?
+
+Ack. Will move the data types outside.
+
+
+Thanks
+ChenYu
+
+
+> > +struct device;
+> > +struct device_node;
+> > +
+> > +/**
+> > + * struct i2c_of_probe_ops - I2C OF component prober callbacks
+> > + *
+> > + * A set of callbacks to be used by i2c_of_probe_component().
+> > + *
+> > + * All callbacks are optional. Callbacks are called only once per run,=
+ and are
+> > + * used in the order they are defined in this structure.
+> > + *
+> > + * All callbacks that have return values shall return %0 on success,
+> > + * or a negative error number on failure.
+> > + *
+> > + * The @dev parameter passed to the callbacks is the same as @dev pass=
+ed to
+> > + * i2c_of_probe_component(). It should only be used for dev_printk() c=
+alls
+> > + * and nothing else, especially not managed device resource (devres) A=
+PIs.
+> > + */
+> > +struct i2c_of_probe_ops {
+> > +     /** @get_resources: Retrieve resources for components. */
+> > +     int (*get_resources)(struct device *dev, struct device_node *bus_=
+node, void *data);
+> > +
+> > +     /** @free_resources_early: Release exclusive resources prior to e=
+nabling component. */
+> > +     void (*free_resources_early)(void *data);
+> > +
+> > +     /**
+> > +      * @enable: Enable resources so that the components respond to pr=
+obes.
+> > +      *
+> > +      * Resources should be reverted to their initial state before ret=
+urning if this fails.
+> > +      */
+> > +     int (*enable)(struct device *dev, void *data);
+> > +
+> > +     /**
+> > +      * @cleanup: Opposite of @enable to balance refcounts after probi=
+ng.
+> > +      *
+> > +      * Can not operate on resources already freed in @free_resources_=
+early.
+> > +      */
+> > +     int (*cleanup)(struct device *dev, void *data);
+> > +
+> > +     /**
+> > +      * @free_resources_late: Release all resources, including those t=
+hat would have
+> > +      *                       been released by @free_resources_early.
+> > +      */
+> > +     void (*free_resources_late)(void *data);
+> > +};
+> > +
+> > +/**
+> > + * struct i2c_of_probe_cfg - I2C OF component prober configuration
+> > + * @ops: Callbacks for the prober to use.
+> > + * @type: A string to match the device node name prefix to probe for.
+> > + */
+> > +struct i2c_of_probe_cfg {
+> > +     const struct i2c_of_probe_ops *ops;
+> > +     const char *type;
+> > +};
+> > +
+> > +int i2c_of_probe_component(struct device *dev, const struct i2c_of_pro=
+be_cfg *cfg, void *ctx);
+> > +
+> > +#endif /* IS_ENABLED(CONFIG_OF_DYNAMIC) */
+> > +
+> > +#endif /* _LINUX_I2C_OF_PROBER_H */
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
