@@ -1,194 +1,138 @@
-Return-Path: <linux-kernel+bounces-329830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED7C97967B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:44:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6979979685
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F4191C20DCA
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:44:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 870171F21A11
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102411C5785;
-	Sun, 15 Sep 2024 11:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456381C462B;
+	Sun, 15 Sep 2024 11:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRGcH3ac"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AAeA4fs2"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF94D433AD;
-	Sun, 15 Sep 2024 11:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC62A194ACB;
+	Sun, 15 Sep 2024 11:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726400639; cv=none; b=bpfnP/jw+rV4ezwZK0z8lGOxcDd6XmbABfl1MUwhUu5ecMOyHYgF8ElvkTakhuuO6Lu/prYcWtIQrGmxLYBjTnAQYQvQFUEtekGEw9zjNkLOVLaWDsBhMQoTXLC9coGVTvtn1Hs8xUDXqZqOeJfIHytE5WJdnb43PC4M+gq0/HI=
+	t=1726400981; cv=none; b=m+cyfH0aJI2IH7xTDAReJc2q2mHNrkPu7maqvcyIbbPrPwvMyN4QUUlLzURuZBihM1TcKxSBwPdxPFpT9rTtVzMT70HPtJNakRLtYN04/uYHRXeuCJnUlPyhrD57fHKHEILnl9d6bD7uaIvTPZ0bsXLOZFdncVxLL93RJrDQV3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726400639; c=relaxed/simple;
-	bh=9gBezfe5utY0cPgQltriDtFHiRidNxdC12YbVydTmLo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nGYymBiDz6kzq+XVgURgzfFg56VTjxyHx69HmoRu05/kIcEc8SioiYh0Ebm21ynI3CJ5PXZsVtRIQGGc01Trl5U33c727eBOFDEHCdo5SfXbd4nCTjvmfMGKHT2pIVlPSNmWqs8xaCAU0So4zOJ5UvchuiXWm4aTD86re2HqynU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRGcH3ac; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so448403966b.2;
-        Sun, 15 Sep 2024 04:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726400636; x=1727005436; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1WabSCqMM6qQfnUzEgHytUCozRhZaEm21IN1ROnMooo=;
-        b=nRGcH3acUv1focu5xYadnd+S6/R832TdzxN6XX7GnOHhEGfUiJdyQFgxhLl2V+cj0W
-         YuNPz9yciovdhdA9yfN1jRooh9NwnrBYtLOJ8CprsrFis8iGlAUKz3S/jk8A8mbDZ1Zn
-         2UxVSAazfmoYVWbBt7yTRSyTwkvflI1dnNzK6W9O6P2Qpxz/V5z7hIKeDs6UMWybKWfp
-         X9r4R+WUMtYjg6NgxvHhg+9im6NZtvWYg2LzccN3dK42JM3SYfIsauIMIJBB38wNDToz
-         gMn2xBpkgerPNc6puaU5gBmPI/SzBftsdDOo/ao2sFY70lwZm6t85LOYF88h+laFug/K
-         YSOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726400636; x=1727005436;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1WabSCqMM6qQfnUzEgHytUCozRhZaEm21IN1ROnMooo=;
-        b=QWqyRYUVHFvtwEhn/emKqEVsKvz6+BJFvICTusPpcITwmGfgu5MG0IpsdfAlkqrPaU
-         G6wmEpSUoZbh8bS7dhynV/gPos028mgxQIczrATeRFm79xGGsJhGJnFQ/tQr3dveX+GO
-         qdjqN3gPBGny1JzftqXEdnGfXTGjNNnOin5/9+uu0yUCX4OD+4OoPTHRBBS6IiEPQyvu
-         KU8islTZ/CZCPOGiP2i3l2qeCILiZfOBzR75N3WvlALVeqt2vuJqCvK57OE0/8tXIq5d
-         BSElAn0gH23lI2R3wCIAzIw3z4JzAaxqX+hi+dyvizf30PoVZFDvcjbYwz0UE16KAc/A
-         j1/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUQJyl+LFUkUSNYhNbO0qlsranbRL5e19hZ5gUzQfSr9SvmmDVpp3ItwjO0DkM9MNNYlkljhP7kAu2uytEk@vger.kernel.org, AJvYcCWGOwJobTOVsOd1I3AJlm0ucbzbP+aSXBA3NDXff5Nq2GCUM5gq+CwIbb5pXpla0j4TCdx+c4RYp2j7WBI7@vger.kernel.org, AJvYcCWMt7lZTG+sFn2ZI4D0LXZlKzDylya4zx8gOTxxXSyrHjYOGuXRJ4o077ppscoBDrUNo6s0x84Hs60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYaB9x8R1EHnolJqt3BjjTnyHpbwSX7Mp1PInGfuHU+8DlKJ+4
-	zFZslHyE1EkSfkVMBUYB3DT0j7NS5vWHmCMXVFG+r2W09VqJNdfqigaarmmOEIDiJGLYbPgKIc6
-	drOL2kzy6hWfffZHksOLLBoPRyKE=
-X-Google-Smtp-Source: AGHT+IGE8WRlI9/zBnCunluyxYuf24XXBMOvlw61ulEQ8+gARNO6c+BIyafxB4U5G08/b2soKNiG1JJ72Po4K4tJVv4=
-X-Received: by 2002:a17:906:d550:b0:a86:963f:ea8d with SMTP id
- a640c23a62f3a-a9029671944mr1345294466b.64.1726400635613; Sun, 15 Sep 2024
- 04:43:55 -0700 (PDT)
+	s=arc-20240116; t=1726400981; c=relaxed/simple;
+	bh=SOWT7H8/0YJNIdQkDiiAu6PzGXTTeVlu5vTJPgyTytk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jXlOSv4XDZ79EZb58SH+qNB0yAr8SN0zhvjq9oOpmz3CWHqQlgYu6FVNupVCR2OhhOxoTP9lJi9bZK0OJ/v6tSkC5eMSM2yWtfsPocA64fzP/XB5M+K1Kl4reRZgnjUuVLRfgwWxI07BJmYUPBhowZeULzqOeXOiw0UV2GFkGvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AAeA4fs2; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726400965; x=1727005765; i=markus.elfring@web.de;
+	bh=/JziMUAx9DdLA+PFaPvm1xXijXoOH/QWJFYNeBwV2H4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=AAeA4fs2hU026GF84NZgJw6N+KD8V1TVoez1Lj/GbSjHQBUvpgBxUpr69ZcloO6+
+	 0auImSdUjafSwnbiT+Q/Q+MSgKvjberMSUimfzF4bcja+Tm4tpEH909HzVEvmR8kv
+	 Td41ywfyBBa4Xa0DYZdcwc1onv20ZJcCPsGt3MZjaaBg1mVttw1FbfhJZULnNj7XQ
+	 x3Bovllt8XKOlbkFg+1QuJKP7VMi5dlrLaRD6R774uqWnzeZ0FP+y9QeQ0GZiQu8m
+	 nYtMLhh8cmK1UgqbIPFKxEMb9e3Xz+7WOpO+MLQObSV9ZP4j+1TJdozLnO5iEjyZB
+	 gFP9mMsXLZ+i07B+nw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M2ggd-1sqche2ASl-00EJrb; Sun, 15
+ Sep 2024 13:49:25 +0200
+Message-ID: <641210ba-571b-43e7-9007-5633a6c7434c@web.de>
+Date: Sun, 15 Sep 2024 13:48:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802075100.6475-1-fancer.lancer@gmail.com>
- <CAHp75VcnfrOOC610JxAdTwJv8j1i_Abo72E0h1aqRbrYOWRrZw@mail.gmail.com>
- <rsy7z45nhl74nzvq5a2ij4eeqgzu3htje2xpparxgam7jowo6a@6l75wjh2dqll>
- <ZuXbCKUs1iOqFu51@black.fi.intel.com> <hp2n4efzoe5n5zvgaygv4pz4rwip2iwj5nwpaofdwgzv65735b@bp4hn4aqkwrk>
- <jsiriw6kumswijb6wxdcjqnq3tdu524hveh7dezqdzutduvt2d@5xcdjwd6aj3f>
-In-Reply-To: <jsiriw6kumswijb6wxdcjqnq3tdu524hveh7dezqdzutduvt2d@5xcdjwd6aj3f>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 15 Sep 2024 14:43:19 +0300
-Message-ID: <CAHp75VfQP6Ta=TVLCCPyPxnVrh7jwmWPUTcOYaRf3kdVJPR_rA@mail.gmail.com>
-Subject: Re: [PATCH RESEND v4 0/6] dmaengine: dw: Fix src/dst addr width misconfig
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Ferry Toth <ftoth@exalondelft.nl>, Viresh Kumar <vireshk@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	dmaengine@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] ALSA: i2c: cs8427: Use common code in
+ snd_cs8427_qsubcode_get()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6Gz+vawK1wJrtDmZxXyooYgxbHQCDwb7oAKyqWnSpzGh4qPAWrm
+ JkbJXRMlX7bh4URytpvlwlAHLMIF0S/3OFlY1PAnIrtwnb7aRfq5EqMB45cqt/h0Loa+h0H
+ Ptad8SAtWqS4k50CZJHLB/wH7DIi/agXRDx/2QEZDNVF+Kyvmhe7SBTxLiF0F95zS6sKkkR
+ Jvm2aHY+GX5W72jRY06nw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CB1niy/AYks=;UJ3I3d54o/v6N6YJjPqwBO7XE+S
+ hllowBAAowvrLCzRfz4QLbRaJZWvZkcTtAycRIOktYiV5fWOk2hSybJIaoiHOjOqL3TbfNfGh
+ BdZVj3Q4WnmcfIYbdvDr/bzZZgcoPK6ekHbS4lU8v+Z+WhwSLAy9m8kBrYYUgAOHZ6MxfkFJp
+ 4uc3wOCcvB06oJXZwftogafBpaCWNx96RHorySydYcpn+QbFN+ORZWQvRtS6zmSVk3HeB6SOg
+ cDNyBk9UHAcFXIfQbnHvuOuAskcHjUIs3uaVAYpIvGV1Id40zFpD5LWku/Hm0Njlxcu1pFU+B
+ 0+yPoV1RZcIYf1FulQ6zcV3xbV5o16C1eqA6VyFBgF1I335wrt7Ap2X4BakreuSQmV3S5T5DZ
+ v98w50Ny9n6BikiAvh9sJnMChBkspJ5+wBbCzLRzxzbFViSRz/DBavZssEyn9PDP8BZPd5a9G
+ ixQUvppjcX/FCaoVTJVK0f4SVmdaIuPRH9NR69QWTlDYzt70/OwfXcnG43efaMPVPJuf8fw8l
+ RTgkrcjWHglNT/+Ei2ruKV2/rWBlcDrxng/dJ+hvyQeSCtxrBr9pWvNkw8ghB7qwbhS3BP/HL
+ wql3j2rEHvXE7Nu72KqT5scNGIYcfa7TUU/vus6roF67yvRe/ZLOO4dVuLIZGBtRKB1baiVrY
+ F99iKYqZqONzs0X2Txzm3nU5pSAXkuZ2iL+Vm67ZU5nIrwGZiPRMo5ycjIJWWLwTQig+VDWod
+ OpS0P6GFPusQcI3bPma9h5R+yRLNXEdUJZkNCuwpKfpUmaoH8et21ebVMITYgCrMiQbfR8rAG
+ AYcPAw+kv8wK8nA+8rOcjV2g==
 
-On Sat, Sep 14, 2024 at 10:08=E2=80=AFPM Serge Semin <fancer.lancer@gmail.c=
-om> wrote:
->
-> On Sat, Sep 14, 2024 at 10:06:16PM +0300, Serge Semin wrote:
-> > Hi Andy
-> >
-> > On Sat, Sep 14, 2024 at 09:50:48PM +0300, Andy Shevchenko wrote:
-> > > On Mon, Aug 05, 2024 at 03:25:35PM +0300, Serge Semin wrote:
-> > > > On Sat, Aug 03, 2024 at 09:29:54PM +0200, Andy Shevchenko wrote:
-> > > > > On Fri, Aug 2, 2024 at 9:51=E2=80=AFAM Serge Semin <fancer.lancer=
-@gmail.com> wrote:
-> > > > > >
-> > > > > > The main goal of this series is to fix the data disappearance i=
-n case of
-> > > > > > the DW UART handled by the DW AHB DMA engine. The problem happe=
-ns on a
-> > > > > > portion of the data received when the pre-initialized DEV_TO_ME=
-M
-> > > > > > DMA-transfer is paused and then disabled. The data just hangs u=
-p in the
-> > > > > > DMA-engine FIFO and isn't flushed out to the memory on the DMA-=
-channel
-> > > > > > suspension (see the second commit log for details). On a way to=
- find the
-> > > > > > denoted problem fix it was discovered that the driver doesn't v=
-erify the
-> > > > > > peripheral device address width specified by a client driver, w=
-hich in its
-> > > > > > turn if unsupported or undefined value passed may cause DMA-tra=
-nsfer being
-> > > > > > misconfigured. It's fixed in the first patch of the series.
-> > > > > >
-> > > > > > In addition to that three cleanup patches follow the fixes desc=
-ribed above
-> > > > > > in order to make the DWC-engine configuration procedure more co=
-herent.
-> > > > > > First one simplifies the CTL_LO register setup methods. Second =
-and third
-> > > > > > patches simplify the max-burst calculation procedure and unify =
-it with the
-> > > > > > rest of the verification methods. Please see the patches log fo=
-r more
-> > > > > > details.
-> > > > > >
-> > > > > > Final patch is another cleanup which unifies the status variabl=
-es naming
-> > > > > > in the driver.
-> > > > >
-> > > > > Acked-by: Andy Shevchenko <andy@kernel.org>
-> > > >
-> > > > Awesome! Thanks.
-> > >
-> > > Not really :-)
-> > > This series broke iDMA32 + SPI PXA2xx on Intel Merrifield.
-> >
-> > Damn. Sorry to hear that.(
-> >
-> > > I haven't
-> > > had time to investigate further, but rolling back all patches helps.
-> > >
-> > > +Cc: Ferry who might also test and maybe investigate as he reported t=
-he
-> > > issue to me initially.
-> >
-> > Ferry, could you please roll back the series patch-by-patch to find
-> > out the particular commit to blame?
->
-> Plus to that it would be nice to have some log/info/details/etc about
-> what exactly is happening.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Sep 2024 13:38:29 +0200
 
-For me with patch
+Add two labels so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-spitest -l -s1000000 -b128 /dev/spidev5.1
-SPI: [mode 0x20, bits_per_word 8, speed 1000000 Hz]
-[  164.525604] pxa2xx_spi_pci 0000:00:07.1: DMA slave config failed
-[  164.536105] pxa2xx_spi_pci 0000:00:07.1: failed to get DMA TX descriptor
-[  164.543213] spidev spi-SPT0001:00: SPI transfer failed: -16
-[  164.550140] spi_master spi5: failed to transfer one message from queue
-[  164.557126] spi_master spi5: noqueue transfer failed
-spitest: SPI transfer failed in iteration #0: Device or resource busy
+This issue was detected by using the Coccinelle software.
 
-Without
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ sound/i2c/cs8427.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-spitest -s 1000000 -b 128 -l /dev/spidev5.1
-SPI: [mode 0x20, bits_per_word 8, speed 1000000 Hz]
-SEND: [00000000] ff 97 d0 54 d5 69 85 6e ca e7 b3 e1 a1 e5 1a 9d
-...
-RECV: [00000000] ff 97 d0 54 d5 69 85 6e ca e7 b3 e1 a1 e5 1a 9d
-...
+diff --git a/sound/i2c/cs8427.c b/sound/i2c/cs8427.c
+index 29a1a7a0d050..ee650006cac4 100644
+=2D-- a/sound/i2c/cs8427.c
++++ b/sound/i2c/cs8427.c
+@@ -397,18 +397,25 @@ static int snd_cs8427_qsubcode_get(struct snd_kcontr=
+ol *kcontrol,
+ 	if (err !=3D 1) {
+ 		dev_err(device->bus->card->dev,
+ 			"unable to send register 0x%x byte to CS8427\n", reg);
+-		snd_i2c_unlock(device->bus);
+-		return err < 0 ? err : -EIO;
++		goto recheck_err;
+ 	}
+ 	err =3D snd_i2c_readbytes(device, ucontrol->value.bytes.data, 10);
+ 	if (err !=3D 10) {
+ 		dev_err(device->bus->card->dev,
+ 			"unable to read Q-subcode bytes from CS8427\n");
+-		snd_i2c_unlock(device->bus);
+-		return err < 0 ? err : -EIO;
++		goto recheck_err;
+ 	}
++
++	err =3D 0;
++unlock:
+ 	snd_i2c_unlock(device->bus);
+-	return 0;
++	return err;
++
++recheck_err:
++	if (err >=3D 0)
++		err =3D -EIO;
++
++	goto unlock;
+ }
 
-`spitest` is our internal tool, so what it does there is:
-1) opens SPI device for speed 1MHz in loopback mode
-2) generates 128 byte of random data
-3) tries to send and receive them
-4) compares
+ static int snd_cs8427_spdif_info(struct snd_kcontrol *kcontrol,
+=2D-
+2.46.0
 
-I believe the similar behaviour can be achieved with the one that is
-in the kernel tree.
-
---=20
-With Best Regards,
-Andy Shevchenko
 
