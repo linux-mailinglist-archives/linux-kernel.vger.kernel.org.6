@@ -1,125 +1,273 @@
-Return-Path: <linux-kernel+bounces-329764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 979049795CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:47:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BC79795D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A08171C2033E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:47:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C273A1F22050
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6801E40879;
-	Sun, 15 Sep 2024 08:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QOFBF1lZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A50135A79;
+	Sun, 15 Sep 2024 08:49:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE984374F1
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 08:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CF010A0C;
+	Sun, 15 Sep 2024 08:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726390060; cv=none; b=GLGnnajX56ptytHTnJcb5SnlAeu8Ppg/HvvF5XfabhFV6ajSTZr9N88MpJ21Y24EEWli4lvnvwHMyF8Q+0iwU8hmpdP45UQ7wPiTe3kHxr9J67JjAEdO9/VT45UvEqKVKJcyd7ClqPz4kwFFl9ad3yeaxrg1oytTw/KUx+XCjaU=
+	t=1726390168; cv=none; b=nsBriFM9Q2SxlCZ66kD1v81WgrM66cq/Nq5UwiZJ7dB/U2Q4H8jMqyamoM6en4OQuVLlAone+Jsbm8jjw9m4Hfjx0mroNuouR5bole+w5haI8Nq6yfOPZqXZR/yTO56fkyb4ZiAp04mU43u//uc6jxdqJGw5bhxtwnr8ul99Ta0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726390060; c=relaxed/simple;
-	bh=D6GWGcMX7Zv9vf8VKlGKpdPxnM4BRSeoxRrsGiS7res=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pU5Z1HmO65rlowtivCGeNqqgB5xjLrKA+8ZixlaLF15s8Yj3flRr8y74H52kgw5lWMVmJekKHnmHx3PSrdc5xLuF1oh3qN8pyHc7YxS3xi+MnKNz8aqsoGqlGFz6Yz6wByxrCh0MHTRkJsFgJd1Hagyr6NVYnohU0IsyYB4+eBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QOFBF1lZ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726390059; x=1757926059;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=D6GWGcMX7Zv9vf8VKlGKpdPxnM4BRSeoxRrsGiS7res=;
-  b=QOFBF1lZ5Mvym73TWaJ4pYa2jy5LRhzjco3kyA3I7Cb2pFHFl28X21RD
-   yq0YF/56YnOiI2vRBPoQPsg8EWzvZ5tqwfFr1B/lL38wpx9OpF9g5In5k
-   w2+GiIzKkYQpqtzPrdQDe0iQuZgZYwhfI/sx0sYEI4fDhzX7aPBVtMH42
-   /dhgEkfur3gZOfYox/sbwj+k5TyiaT5pVfmA4JClYsZstxjji+0xCieCD
-   3jRk5CmsGrmFES/1JBBxxhluZ0q76fLUdlv1OzTq1SpVN+VGuM3ktGrpn
-   PXg+QW6mJ5rkrw46o+ZxOQfangLZXd7fO23ITVbNIuHvMrxXFZao99R6p
-   Q==;
-X-CSE-ConnectionGUID: vDCxZ4uvT96dgmnAUUsWsA==
-X-CSE-MsgGUID: W89rrgVBTXaqogm3tDg3+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="47757914"
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="47757914"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 01:47:38 -0700
-X-CSE-ConnectionGUID: fTGYWZOoRxKNiWTXtwxd5A==
-X-CSE-MsgGUID: sc0dm/VPSauHpq0YjwMZRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
-   d="scan'208";a="72967430"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 15 Sep 2024 01:47:37 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spkut-0008XS-10;
-	Sun, 15 Sep 2024 08:47:35 +0000
-Date: Sun, 15 Sep 2024 16:47:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: io_uring/io-wq.c:401:6-25: WARNING: atomic_dec_and_test variation
- before object free at line 408.
-Message-ID: <202409151605.9zKulYo3-lkp@intel.com>
+	s=arc-20240116; t=1726390168; c=relaxed/simple;
+	bh=AmDRGjQDkMvEN0zc8wBacHhZ+ofypUpYucWjR1xpXHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A0O8EDswrPzUnLRYm28SWJA/tpqy4N3zluFdgjp9Wm3nWNsDpjrsq0MlN6O1oa9ud7MaBiOyIllvbSxZGdUeqs2qX+qGJQP6YOG9pVwxwj2ciwxlazH1c1m5Sldby2McAVvfSCevm72S0c9GAS1VkZDTscRzWH2TH0q39Wg1NXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B7FC4CEC3;
+	Sun, 15 Sep 2024 08:49:24 +0000 (UTC)
+Date: Sun, 15 Sep 2024 04:49:20 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v14 05/19] function_graph: Pass ftrace_regs to retfunc
+Message-ID: <20240915044920.29a86d25@rorschach.local.home>
+In-Reply-To: <172615374207.133222.13117574733580053025.stgit@devnote2>
+References: <172615368656.133222.2336770908714920670.stgit@devnote2>
+	<172615374207.133222.13117574733580053025.stgit@devnote2>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0babf683783ddca06551537c6781e413cfe8d27b
-commit: ed29b0b4fd835b058ddd151c49d021e28d631ee6 io_uring: move to separate directory
-date:   2 years, 2 months ago
-config: i386-randconfig-052-20240915 (https://download.01.org/0day-ci/archive/20240915/202409151605.9zKulYo3-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409151605.9zKulYo3-lkp@intel.com/
+Can I get an Acked-by from the AARCH64 maintainers for this patch?
 
-cocci warnings: (new ones prefixed by >>)
->> io_uring/io-wq.c:401:6-25: WARNING: atomic_dec_and_test variation before object free at line 408.
+Thanks!
 
-vim +401 io_uring/io-wq.c
+-- Steve
 
-685fe7feedb967 fs/io-wq.c Jens Axboe 2021-03-08  392  
-958234d5ec9321 fs/io-wq.c Jens Axboe 2021-02-17  393  static void io_wqe_dec_running(struct io_worker *worker)
-c5def4ab849494 fs/io-wq.c Jens Axboe 2019-11-07  394  {
-958234d5ec9321 fs/io-wq.c Jens Axboe 2021-02-17  395  	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
-958234d5ec9321 fs/io-wq.c Jens Axboe 2021-02-17  396  	struct io_wqe *wqe = worker->wqe;
-c5def4ab849494 fs/io-wq.c Jens Axboe 2019-11-07  397  
-685fe7feedb967 fs/io-wq.c Jens Axboe 2021-03-08  398  	if (!(worker->flags & IO_WORKER_F_UP))
-685fe7feedb967 fs/io-wq.c Jens Axboe 2021-03-08  399  		return;
-685fe7feedb967 fs/io-wq.c Jens Axboe 2021-03-08  400  
-42abc95f05bff5 fs/io-wq.c Hao Xu     2022-02-06 @401  	if (!atomic_dec_and_test(&acct->nr_running))
-42abc95f05bff5 fs/io-wq.c Hao Xu     2022-02-06  402  		return;
-e13fb1fe1483f6 fs/io-wq.c Hao Xu     2022-02-06  403  	if (!io_acct_run_queue(acct))
-42abc95f05bff5 fs/io-wq.c Hao Xu     2022-02-06  404  		return;
-42abc95f05bff5 fs/io-wq.c Hao Xu     2022-02-06  405  
-685fe7feedb967 fs/io-wq.c Jens Axboe 2021-03-08  406  	atomic_inc(&acct->nr_running);
-685fe7feedb967 fs/io-wq.c Jens Axboe 2021-03-08  407  	atomic_inc(&wqe->wq->worker_refs);
-3146cba99aa284 fs/io-wq.c Jens Axboe 2021-09-01 @408  	io_queue_worker_create(worker, acct, create_worker_cb);
-c5def4ab849494 fs/io-wq.c Jens Axboe 2019-11-07  409  }
-c5def4ab849494 fs/io-wq.c Jens Axboe 2019-11-07  410  
+[ Note this is modifies the return side ]
 
-:::::: The code at line 401 was first introduced by commit
-:::::: 42abc95f05bff5180ac40c7ba5726b73c1d5e2f4 io-wq: decouple work_list protection from the big wqe->lock
+On Fri, 13 Sep 2024 00:09:02 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-:::::: TO: Hao Xu <haoxu@linux.alibaba.com>
-:::::: CC: Jens Axboe <axboe@kernel.dk>
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Pass ftrace_regs to the fgraph_ops::retfunc(). If ftrace_regs is not
+> available, it passes a NULL instead. User callback function can access
+> some registers (including return address) via this ftrace_regs.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  Changes in v8:
+>   - Pass ftrace_regs to retfunc, instead of adding retregfunc.
+>  Changes in v6:
+>   - update to use ftrace_regs_get_return_value() because of reordering
+>     patches.
+>  Changes in v3:
+>   - Update for new multiple fgraph.
+>   - Save the return address to instruction pointer in ftrace_regs.
+> ---
+>  include/linux/ftrace.h               |    3 ++-
+>  kernel/trace/fgraph.c                |   16 +++++++++++-----
+>  kernel/trace/ftrace.c                |    3 ++-
+>  kernel/trace/trace.h                 |    3 ++-
+>  kernel/trace/trace_functions_graph.c |    7 ++++---
+>  kernel/trace/trace_irqsoff.c         |    3 ++-
+>  kernel/trace/trace_sched_wakeup.c    |    3 ++-
+>  kernel/trace/trace_selftest.c        |    3 ++-
+>  8 files changed, 27 insertions(+), 14 deletions(-)
+> 
+> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> index 13987cd63553..e7c41d9988e1 100644
+> --- a/include/linux/ftrace.h
+> +++ b/include/linux/ftrace.h
+> @@ -1069,7 +1069,8 @@ struct fgraph_ops;
+>  
+>  /* Type of the callback handlers for tracing function graph*/
+>  typedef void (*trace_func_graph_ret_t)(struct ftrace_graph_ret *,
+> -				       struct fgraph_ops *); /* return */
+> +				       struct fgraph_ops *,
+> +				       struct ftrace_regs *); /* return */
+>  typedef int (*trace_func_graph_ent_t)(struct ftrace_graph_ent *,
+>  				      struct fgraph_ops *,
+>  				      struct ftrace_regs *); /* entry */
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 30bebe43607d..6a3e2db16aa4 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -297,7 +297,8 @@ static int entry_run(struct ftrace_graph_ent *trace, struct fgraph_ops *ops,
+>  }
+>  
+>  /* ftrace_graph_return set to this to tell some archs to run function graph */
+> -static void return_run(struct ftrace_graph_ret *trace, struct fgraph_ops *ops)
+> +static void return_run(struct ftrace_graph_ret *trace, struct fgraph_ops *ops,
+> +		       struct ftrace_regs *fregs)
+>  {
+>  }
+>  
+> @@ -491,7 +492,8 @@ int ftrace_graph_entry_stub(struct ftrace_graph_ent *trace,
+>  }
+>  
+>  static void ftrace_graph_ret_stub(struct ftrace_graph_ret *trace,
+> -				  struct fgraph_ops *gops)
+> +				  struct fgraph_ops *gops,
+> +				  struct ftrace_regs *fregs)
+>  {
+>  }
+>  
+> @@ -787,6 +789,9 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+>  	}
+>  
+>  	trace.rettime = trace_clock_local();
+> +	if (fregs)
+> +		ftrace_regs_set_instruction_pointer(fregs, ret);
+> +
+>  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+>  	trace.retval = ftrace_regs_get_return_value(fregs);
+>  #endif
+> @@ -796,7 +801,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+>  #ifdef CONFIG_HAVE_STATIC_CALL
+>  	if (static_branch_likely(&fgraph_do_direct)) {
+>  		if (test_bit(fgraph_direct_gops->idx, &bitmap))
+> -			static_call(fgraph_retfunc)(&trace, fgraph_direct_gops);
+> +			static_call(fgraph_retfunc)(&trace, fgraph_direct_gops, fregs);
+>  	} else
+>  #endif
+>  	{
+> @@ -806,7 +811,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+>  			if (gops == &fgraph_stub)
+>  				continue;
+>  
+> -			gops->retfunc(&trace, gops);
+> +			gops->retfunc(&trace, gops, fregs);
+>  		}
+>  	}
+>  
+> @@ -956,7 +961,8 @@ void ftrace_graph_sleep_time_control(bool enable)
+>   * Simply points to ftrace_stub, but with the proper protocol.
+>   * Defined by the linker script in linux/vmlinux.lds.h
+>   */
+> -void ftrace_stub_graph(struct ftrace_graph_ret *trace, struct fgraph_ops *gops);
+> +void ftrace_stub_graph(struct ftrace_graph_ret *trace, struct fgraph_ops *gops,
+> +		       struct ftrace_regs *fregs);
+>  
+>  /* The callbacks that hook a function */
+>  trace_func_graph_ret_t ftrace_graph_return = ftrace_stub_graph;
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 775040a9f541..fd6c5a50c5e5 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -840,7 +840,8 @@ static int profile_graph_entry(struct ftrace_graph_ent *trace,
+>  }
+>  
+>  static void profile_graph_return(struct ftrace_graph_ret *trace,
+> -				 struct fgraph_ops *gops)
+> +				 struct fgraph_ops *gops,
+> +				 struct ftrace_regs *fregs)
+>  {
+>  	struct ftrace_ret_stack *ret_stack;
+>  	struct ftrace_profile_stat *stat;
+> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> index 28d8ad5e31e6..f4a3f75bd916 100644
+> --- a/kernel/trace/trace.h
+> +++ b/kernel/trace/trace.h
+> @@ -682,7 +682,8 @@ void trace_latency_header(struct seq_file *m);
+>  void trace_default_header(struct seq_file *m);
+>  void print_trace_header(struct seq_file *m, struct trace_iterator *iter);
+>  
+> -void trace_graph_return(struct ftrace_graph_ret *trace, struct fgraph_ops *gops);
+> +void trace_graph_return(struct ftrace_graph_ret *trace, struct fgraph_ops *gops,
+> +			struct ftrace_regs *fregs);
+>  int trace_graph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+>  		      struct ftrace_regs *fregs);
+>  
+> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+> index b9785fc919c9..241407000109 100644
+> --- a/kernel/trace/trace_functions_graph.c
+> +++ b/kernel/trace/trace_functions_graph.c
+> @@ -240,7 +240,7 @@ void __trace_graph_return(struct trace_array *tr,
+>  }
+>  
+>  void trace_graph_return(struct ftrace_graph_ret *trace,
+> -			struct fgraph_ops *gops)
+> +			struct fgraph_ops *gops, struct ftrace_regs *fregs)
+>  {
+>  	unsigned long *task_var = fgraph_get_task_var(gops);
+>  	struct trace_array *tr = gops->private;
+> @@ -270,7 +270,8 @@ void trace_graph_return(struct ftrace_graph_ret *trace,
+>  }
+>  
+>  static void trace_graph_thresh_return(struct ftrace_graph_ret *trace,
+> -				      struct fgraph_ops *gops)
+> +				      struct fgraph_ops *gops,
+> +				      struct ftrace_regs *fregs)
+>  {
+>  	ftrace_graph_addr_finish(gops, trace);
+>  
+> @@ -283,7 +284,7 @@ static void trace_graph_thresh_return(struct ftrace_graph_ret *trace,
+>  	    (trace->rettime - trace->calltime < tracing_thresh))
+>  		return;
+>  	else
+> -		trace_graph_return(trace, gops);
+> +		trace_graph_return(trace, gops, fregs);
+>  }
+>  
+>  static struct fgraph_ops funcgraph_ops = {
+> diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+> index ad739d76fc86..504de7a05498 100644
+> --- a/kernel/trace/trace_irqsoff.c
+> +++ b/kernel/trace/trace_irqsoff.c
+> @@ -208,7 +208,8 @@ static int irqsoff_graph_entry(struct ftrace_graph_ent *trace,
+>  }
+>  
+>  static void irqsoff_graph_return(struct ftrace_graph_ret *trace,
+> -				 struct fgraph_ops *gops)
+> +				 struct fgraph_ops *gops,
+> +				 struct ftrace_regs *fregs)
+>  {
+>  	struct trace_array *tr = irqsoff_trace;
+>  	struct trace_array_cpu *data;
+> diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+> index 23360a2700de..9ffbd9326898 100644
+> --- a/kernel/trace/trace_sched_wakeup.c
+> +++ b/kernel/trace/trace_sched_wakeup.c
+> @@ -144,7 +144,8 @@ static int wakeup_graph_entry(struct ftrace_graph_ent *trace,
+>  }
+>  
+>  static void wakeup_graph_return(struct ftrace_graph_ret *trace,
+> -				struct fgraph_ops *gops)
+> +				struct fgraph_ops *gops,
+> +				struct ftrace_regs *fregs)
+>  {
+>  	struct trace_array *tr = wakeup_trace;
+>  	struct trace_array_cpu *data;
+> diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
+> index 89067f02094a..1ebd0899238f 100644
+> --- a/kernel/trace/trace_selftest.c
+> +++ b/kernel/trace/trace_selftest.c
+> @@ -807,7 +807,8 @@ static __init int store_entry(struct ftrace_graph_ent *trace,
+>  }
+>  
+>  static __init void store_return(struct ftrace_graph_ret *trace,
+> -				struct fgraph_ops *gops)
+> +				struct fgraph_ops *gops,
+> +				struct ftrace_regs *fregs)
+>  {
+>  	struct fgraph_fixture *fixture = container_of(gops, struct fgraph_fixture, gops);
+>  	const char *type = fixture->store_type_name;
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
