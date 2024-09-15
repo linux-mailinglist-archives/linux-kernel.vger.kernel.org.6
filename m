@@ -1,115 +1,170 @@
-Return-Path: <linux-kernel+bounces-329949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3919797DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:46:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96369797D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746FB1F21143
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:46:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86951C20B18
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB1C1C9DD5;
-	Sun, 15 Sep 2024 16:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919671C9DD3;
+	Sun, 15 Sep 2024 16:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hPtePnom"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W80Om2ef"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3BD1E871;
-	Sun, 15 Sep 2024 16:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD80F1C688E
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 16:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726418758; cv=none; b=cJTTNpxuYlLqL02jiaYDN1F86rubhHvPUUa6orZqa/VbH8H8kpINEmtbloArA+O2KDvAJ/wZqr1I6Sj/5xg6NET5MVLMThNleVGmgSskxaUiYT00BxYbwFmrccCifNzBQplh54gi5rOOLEOv12H05k5edU+MHoJsnBxSew76544=
+	t=1726418329; cv=none; b=kznrpn5+TS6Agvzg9DeuZt8viElLWNUU+bBdgrnTXs/LeHQjDuuD2G3wsGULgZ0GS8ZKTzyaOgjn8k7BY9fynpi848C/zAUoc/zIrEqhwLHa1Mr5NaS+8Kk1D/EDYsdvSh/nmolu0AxmXnL7fdhKMWP5CV6jnCQ43j3mH8aLL2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726418758; c=relaxed/simple;
-	bh=wNvsE+FHplx0TJKOaVb5HVTO0pNDzAhpOGFZaVayf8c=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fgtydkPu9YlaRva0kfUDZWD5GdMSubL8/5RD0uzXI8PjztFrdJ8PqWzFBRJt6Syzp3gjC92g6MLUCl8A2mHJQK6FNNgAvda1cA6+dWr48kCeUPEU+Kwa5GKIe2cgtdPhVZKSrsmXAW4hByVFp5sAikCeHT9FGaRlIcLYhV+q/DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hPtePnom; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48FGcFtn087256;
-	Sun, 15 Sep 2024 11:38:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726418295;
-	bh=YC9jkCMqYPYmO1ZYs+V2nydzlxwMhfDrDK4gThjF2vA=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date;
-	b=hPtePnomG3CePB8siS+4KcuYCOcMPdtutL8M3c164gYawcwXzt6Ag9HAruUC3LlOL
-	 Vcq5c35J0W0r75ZdmVhh2k54uDlqsDTsgvkJHFAjs0dCtZp4UvPAsd/vOkAynZwA3r
-	 7MrSHyqsH7IfKVKk7a2oQVX6Sgiee4RvYnjAuuBo=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48FGcF4b005574
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 15 Sep 2024 11:38:15 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 15
- Sep 2024 11:38:15 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 15 Sep 2024 11:38:15 -0500
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48FGcEHF108287;
-	Sun, 15 Sep 2024 11:38:14 -0500
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-To: Qianqiang Liu <qianqiang.liu@163.com>, <davem@davemloft.net>
-CC: <herbert@gondor.apana.org.au>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: lib/mpi - Fix an "Uninitialized scalar
- variable" issue
-In-Reply-To: <87y13sly2m.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
-References: <20240913140741.5944-1-qianqiang.liu@163.com>
- <ZuTeivSjXN_uP-dZ@iZbp1asjb3cy8ks0srf007Z>
- <87y13sly2m.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
-Date: Sun, 15 Sep 2024 22:08:14 +0530
-Message-ID: <87tteglvnt.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+	s=arc-20240116; t=1726418329; c=relaxed/simple;
+	bh=BYxn53eXh5mYSIch8yw2meXhZd/ieuZ0cJj1ScsxNVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=of2Tplt16nS2sLm+29TrwG6qQK0XjD537WbVYYGjc9ab+0T3BmidTj+UwxqPJ8lH+2pX7mr9tLPaaG0rr9QZY1sdDAljTVQm7UAPFzyCYmTZCGGzyFTyhhlCiVZxRp72etrUsq6Ice6lIT9q9FZQ58pwgv5/YDupDhMqyfaVto4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W80Om2ef; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726418325;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W7VzktdIxg3zaQqZTm+Yk186VqXUQn4e9GJhTx0JvPE=;
+	b=W80Om2efY+HLVUJ0wtWDBl8wdORqs5PjibH61L1xlkfqm5Swy56MPxEo69HFN6e8ojfueu
+	iHweoNaVG9agllgxgvegmLB7OQwO8EUqd3Z0WF/rTfNIiFquGy7aNcrh0NTZzMAVQQf5B3
+	3JQcRO0YnpcOoCRhcX7hZp55z5whX8k=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-K3IWdi7aOtGRPow19dKc9g-1; Sun,
+ 15 Sep 2024 12:38:39 -0400
+X-MC-Unique: K3IWdi7aOtGRPow19dKc9g-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E931219560A2;
+	Sun, 15 Sep 2024 16:38:37 +0000 (UTC)
+Received: from [10.2.16.6] (unknown [10.2.16.6])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1A2651956053;
+	Sun, 15 Sep 2024 16:38:35 +0000 (UTC)
+Message-ID: <9046c67d-0982-4386-b4f1-f42b6e9fd2db@redhat.com>
+Date: Sun, 15 Sep 2024 12:38:34 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fix spelling errors in file kernel/cgroup/cpuset.c
+To: "Everest K.C." <everestkc@everestkc.com.np>, lizefan.x@bytedance.com,
+ tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240915082935.9731-1-everestkc@everestkc.com.np>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240915082935.9731-1-everestkc@everestkc.com.np>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Kamlesh Gurudasani <kamlesh@ti.com> writes:
-
-> Qianqiang Liu <qianqiang.liu@163.com> writes:
+On 9/15/24 04:29, Everest K.C. wrote:
+> From: everestkc <everestkc@everestkc.com.np>
 >
->> On Fri, Sep 13, 2024 at 10:07:42PM +0800, Qianqiang Liu wrote:
->>> The "err" variable may be returned without an initialized value.
->>> 
->>> Fixes: 8e3a67f2de87 ("crypto: lib/mpi - Add error checks to extension")
->>> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
-> Thanks for the patch.
+> Corrected the spelling errors repoted by codespell as follows:
+> 	temparary ==> temporary
+>          Proprogate ==> Propagate
+>          constrainted ==> constrained
 >
-> You can update the commit message and subject line to be more specific.
+> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> ---
+>   kernel/cgroup/cpuset.c | 16 ++++++++--------
+>   1 file changed, 8 insertions(+), 8 deletions(-)
 >
-> ***
-> example
-> Subject: crypto: lib/mpi - Fix return of uninitailized variable err
->
-> If no error occurs, "err" variable will be returned with uninitialized
-> value, which is actually a success case scenario and return value should
-> have been zero.
-My bad when I looked in detail,
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 40ec4abaf440..205aabcd95f6 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1654,7 +1654,7 @@ static inline bool is_local_partition(struct cpuset *cs)
+>    * remote_partition_enable - Enable current cpuset as a remote partition root
+>    * @cs: the cpuset to update
+>    * @new_prs: new partition_root_state
+> - * @tmp: temparary masks
+> + * @tmp: temporary masks
+>    * Return: 1 if successful, 0 if error
+>    *
+>    * Enable the current cpuset to become a remote partition root taking CPUs
+> @@ -1698,7 +1698,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>   	update_unbound_workqueue_cpumask(isolcpus_updated);
+>   
+>   	/*
+> -	 * Proprogate changes in top_cpuset's effective_cpus down the hierarchy.
+> +	 * Propagate changes in top_cpuset's effective_cpus down the hierarchy.
+>   	 */
+>   	update_tasks_cpumask(&top_cpuset, tmp->new_cpus);
+>   	update_sibling_cpumasks(&top_cpuset, NULL, tmp);
+> @@ -1708,7 +1708,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>   /*
+>    * remote_partition_disable - Remove current cpuset from remote partition list
+>    * @cs: the cpuset to update
+> - * @tmp: temparary masks
+> + * @tmp: temporary masks
+>    *
+>    * The effective_cpus is also updated.
+>    *
+> @@ -1734,7 +1734,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+>   	update_unbound_workqueue_cpumask(isolcpus_updated);
+>   
+>   	/*
+> -	 * Proprogate changes in top_cpuset's effective_cpus down the hierarchy.
+> +	 * Propagate changes in top_cpuset's effective_cpus down the hierarchy.
+>   	 */
+>   	update_tasks_cpumask(&top_cpuset, tmp->new_cpus);
+>   	update_sibling_cpumasks(&top_cpuset, NULL, tmp);
+> @@ -1744,7 +1744,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+>    * remote_cpus_update - cpus_exclusive change of remote partition
+>    * @cs: the cpuset to be updated
+>    * @newmask: the new effective_xcpus mask
+> - * @tmp: temparary masks
+> + * @tmp: temporary masks
+>    *
+>    * top_cpuset and subpartitions_cpus will be updated or partition can be
+>    * invalidated.
+> @@ -1786,7 +1786,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *newmask,
+>   	update_unbound_workqueue_cpumask(isolcpus_updated);
+>   
+>   	/*
+> -	 * Proprogate changes in top_cpuset's effective_cpus down the hierarchy.
+> +	 * Propagate changes in top_cpuset's effective_cpus down the hierarchy.
+>   	 */
+>   	update_tasks_cpumask(&top_cpuset, tmp->new_cpus);
+>   	update_sibling_cpumasks(&top_cpuset, NULL, tmp);
+> @@ -1801,7 +1801,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *newmask,
+>    * @cs: the cpuset to be updated
+>    * @newmask: the new effective_xcpus mask
+>    * @delmask: temporary mask for deletion (not in tmp)
+> - * @tmp: temparary masks
+> + * @tmp: temporary masks
+>    *
+>    * This should be called before the given cs has updated its cpus_allowed
+>    * and/or effective_xcpus.
+> @@ -2534,7 +2534,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+>   			return -EINVAL;
+>   
+>   		/*
+> -		 * When exclusive_cpus isn't explicitly set, it is constrainted
+> +		 * When exclusive_cpus isn't explicitly set, it is constrained
+>   		 * by cpus_allowed and parent's effective_xcpus. Otherwise,
+>   		 * trialcs->effective_xcpus is used as a temporary cpumask
+>   		 * for checking validity of the partition root.
+Acked-by: Waiman Long <longman@redhat.com>
 
-   	if (!vsize)
-		wsize = 0;
-if this condition is true, mpihelp_mul will never be called, leaving err
-uninitialized, not sure if that is success case scenario or failure.
-
-If that is success case scenario, this fix will do the work, if it is
-failure case scenario, appropriate return value should also needed to be 
-err.
-
-In any case, the commit message that I have mentioned will not be
-correct, so please scratch that.
-
-Kamlesh
- 
 
