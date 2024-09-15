@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-330096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8860C9799A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:12:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132EF979997
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 01:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 517BD282837
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 00:12:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFE7B1F22BD1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37285A29;
-	Mon, 16 Sep 2024 00:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDDB1339B1;
+	Sun, 15 Sep 2024 23:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="QrJlEXB2"
-Received: from sonic308-21.consmr.mail.sg3.yahoo.com (sonic308-21.consmr.mail.sg3.yahoo.com [106.10.241.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rh/93whM"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAC61849
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 00:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A8E17BA7;
+	Sun, 15 Sep 2024 23:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726445547; cv=none; b=RjN2SI5bRxlnm/6afOhvvEKBJCr2QXusuuSDYgIODbt54QWcJ24IxppmCEfZB3HtZwxSgAAgDpMrqkRRSRw8GJLpDPEhXDYK+WlcKcqTilQpoanqduq7Ia/A4kxXuxOx+CwWEGQz6L8yWaQXGYtu+MsVkQ7ZBqHGz5QBJXUNsWI=
+	t=1726443729; cv=none; b=PNFwvjl9Ucykp2/9pz1wQGtnDlgNvU6n09p5V4uqtLlEgBtzmRlnt2dOJ0rvFvw/1t6qv/yBtjV063nbiD7jTgvRlw8yCP0kl8jh9y8OX5EY1T+M3irjXDVBt910S4B0YrbgPD+IZ/G91BWn96skjVsZVD93cuTyYt4a7hj2SFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726445547; c=relaxed/simple;
-	bh=JhF1+toXV3G2v4vEZXAzxyNXk8m1d+R/t9JppmZ7wTo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=ajosoHwmq3Uh3u1D/xmBltkCwlnthw3AR+BsQxO5j5h6fzJZbAsKu5DBN08mDT/g5UmrS9gpaowHqVrIQ60h1tY35Dv4ZrU8u4+4pXykZfRpdCJUbac0QkgIdxxU1cI1BFFwds9ZMtCbi1jdO4i6mUl5qOxYugujyf+1KxH6lZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=QrJlEXB2; arc=none smtp.client-ip=106.10.241.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1726445537; bh=5oNiWVZu9ZKL9lEl58ZCtsgJhu3V38tnkSoSEzwX1ps=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=QrJlEXB2sHLbdpVKkLJzZLGi4QQFJnajo6ZswG1eNpULa+WkeofM/4RCEP74Q9ozoSwZbS0VIDp6bJo9VJXwzxsi+/9Bac9YaFyBAtyCns2a6Catn17lj2zaHQfyIGRpaKyKgOMAzLGJIxSYZqqgxhKrzaHhtzHYjQ/ClvMo8Wh6c8XdG6/8FK50zlnBU9tWbfUZnVDPs9svQqe4ytBupgoqUkvmy0aoJTSOzwTkHjkxuHam+PBcjAdmjjCOO2mIoOfb6fQdN805TxiVLZgXmgndVUr8jwFlJjrlrhXmRKfzvm8ayHKpUdECSMmX4VEnV+OgJxe6C4m4hrpnPPePlw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726445537; bh=TqdQsxdhrwsWHWyv1CSaHXkY8rtgi/Eep62HVD6pPzS=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=t6EPKlgiavbbw+JIRn5DdtF+mt3RwFtd22JEf/e0nbOMxq2HAcrlq0S/yutXHksj8HFj0cDEbs4z4O/HXegzALvpiiU/P2loe6Ggz9ZMPWjD52W2JqaJG5OkZMKrrv3tIvf2DF/9wLdMUZmnk31rI9NVxfUea7J4X4pnlhCbpzwULU7j0q2cLwubqdEptqcT82l0JFASJkemq+dcQwngdS4v4tgX4AtJnbMnCj/1hshja0sPWiVZuy9ol4XrfjV/s25Oi/p6P7A0JoEu340ygul+ZfyTkGv77y5rjxLqJ+ZiSJu0bxae7pDJWNkPZ+K29O8Gb03HFlcYrxQ8QHBr8g==
-X-YMail-OSG: a6pW.YYVM1kY0k7DyG9COzp8d5y68xbKRdBg1py.BrYvsCRykSiFvUCGXBfYrpj
- dSDOyDRWj9UzQB49I7CEslXqumj2ZryoOKE8eJAVvUbZ_mA7BGmIf7NqsOAN98I90i6Cs6crneow
- ffMxzYfcfFDuHWZkWaBsQtz5wVPwpoUY75uLO4sVF3Kh0jjMswsdzImZl2TqtZ.jnX1aKk68fX0F
- ioAGCTUk.mRaVPMjm_J8DJk2T1rzVJEpHa1RY0n_sSKkGtb2HHa7ppESgvM1n6uG6agHY9YLkqjX
- kzpoQIPZAKoh5gK4lzn5Vmj1ea6AgP3qsAlHJofplecT_YwJN6yrPkVc7DO2yn.xm5XNihatoWaD
- ZtdzTsEqSkbqutCiRrOWMvaR08..XoC_CPdPoNmXM68bQm_jhlfvywaAJPnziI5mYvJUdTRHCwBC
- q12MtjdtoZuVF3MJz_I0ZB3PR4q_swaUq.56Pge5fs5rPwXUXs4pLPTLsXLeeuE95mfAHrVBpASj
- ptyOqqDAveJ5x_G83SMR3KRf8NmzBdRcoi3QLtKsOX2dV9ZuLH_HwjpMyKiLWc0QmHb2L7UX5Y3y
- gdCyFEhbwocdu0eGWb6fxUueWgi_bq_VqD09b3nPN7WB9hPlXjNShy4F4b9UIKnKAzDAaAXEgUHz
- FTR3j0GavGnNe5hIA6FCkaxwi4713pFOSvBeFEUpHW8TnYI3rnhraPgcIvnRn4MdUDVcbrKW85fO
- t8Q3K7IYUmBiYy1IvlKKsqd.0CZjHbCvqvg275MHCxjiPm.DjVSr2S8eIeigEOgtUN1Kq2WK5u5H
- eoMZeD7j3jdqk78_D1v7Ro7B5p_Uf5pti1yK_SIkv3qAlHV0aWdTHZaV4Vx3fGx_WRkfnL5USIax
- f284GL0KiSYWXenSB.gd0waPUEKjGAU0T9K_0QJiZ0CgQNXcl2QFTs9ICwwCaxvYnKOMXkfzpCW_
- ld0e3oZqZcu3Q5upxnV68fAA_dpgu2FGH1kY9CRL1j6tLtFryCZI3ehStDuzEr98QCfK4R9HKB_e
- JC7bD.RYlrPrJK6BSmBib7QxzcgQzUaJrPNMU_Gl9fVt0zkSj_s2vn1iQFC7GHThK23M.n3JrKAq
- HxChKxTPi4zb662a8XTik8GeiHfxBlKtjCsO.Pud22DYWhvysL6NZSIAubwunYin4IHgej9JCLdE
- 8LM1k7Ru6nQ1SljN5mRcqyz1.zE4ip1_.Px.d84pR5vE3aLy8dSg1Rs.ezNnVwOCs7ucCgQy6aO.
- OgrDzDG4JrzXa68edfY_gE66qefXb0gZTO3z5F4.t0LW_7UE8_59OryS97UfZIM9LLxie9J7O.Uk
- lvJPj5UBYPP.7y06xbTdZZyowUpVSP3aOLz0YCHO56aAomPdyHqfHmg636iXx8FjqCYE2xTkMKU.
- uMBOP0XaXkKnNusSaxw2nuuCcW44coY2v86QbrJccunc4YPxnnJEEIIDUaCM3zw2Zkf7yF96DuPY
- b0xsAeG1aFkfMwF9iV8.qqjuTAmVMeGCGAszgwmaoa9Pu9371tyF_vt6f7DGopRjHqft_9TUDOQY
- 995mG5qNu3OyIyo.lm_EMpcHER9IXl64j8Wr.5qTYIGVoRJCtA.zVBevv7POlbjf5CZmLtHs2zis
- ERz8Wy.TISPJtXtpMnFl1J96kFAhuRKNEI49WXOkTVlqSwB2NCNLhTwgbjiMZLk.j8clPb7Vzqjy
- UkCGIcXb_zWWGPYdWcT9olJa3AhEWp4tGFqiyZe45b.olZ8qz1KnzIH99DoQgq7UoKj_KSQ.93iB
- XMjCAgMVzxN7xWDUvtstTr.uM1DlfuEb966UeaGoZWcdMYlhjNZQHv56eByqwOsOelkB2BV.apT7
- JJ_p_1PMbmFeU.GkIk9TPkdExttG2KA9wplrnljdMff4EzjtJX_Wwj7tS2uQI6x7i4yPNrueu1KW
- fbt_Kbcn.WS1NmVNqzsqZDm6d2mx63CRtHf6DEZiIG1s_4BC3wZ4LsMJHANmSZ9F_KAU5qv.Kb18
- RbrHpz0sXEK_eiFlG40xNYqK_CC80yxSBnShpew_PIiVCYPRlL27yS982DXOgl27XhU_Q9La1dx9
- C4CPdB9uG.0e9NHJgln0a5tf_hY3nTE_72WGfvTa87bZrNbqXMMuKUeo6cJ9SS7y_3FBFpKTn4X_
- 7PZdj7c15eGG1cFQ_fZ6DNghcazd_bXWK7ZL23vTEdLzLqSmV.CGFrZS_rFgNk6fJfP7t1SqlzR7
- S8gCTphls30OKQfdWu.FxngKmd1pr11uKJdJDtduV1VvI9rK8uGwuA6huqsEIPFsIAeE-
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: 5ddb7eeb-6895-4716-a3fa-549a47eaf98c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.sg3.yahoo.com with HTTP; Mon, 16 Sep 2024 00:12:17 +0000
-Received: by hermes--production-sg3-fc85cddf6-6lk5x (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4bbec87ee6aafb942a1f782e8b166a4d;
-          Sun, 15 Sep 2024 23:41:48 +0000 (UTC)
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: perex@perex.cz,
-	tiwai@suse.com,
-	broonie@kernel.org,
-	shuah@kernel.org
-Cc: Abdul Rahim <abdul.rahim@myyahoo.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kselftest/alsa: add silent flag to reduce noise
-Date: Mon, 16 Sep 2024 05:11:30 +0530
-Message-ID: <20240915234131.61962-2-abdul.rahim@myyahoo.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726443729; c=relaxed/simple;
+	bh=R0GPPeKHAbFbXFW+ljpOdYlAFUC/6BJEokBZh4E9gB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qw7Ep/I+nkmX3+ba83OeGy76QDwuO/5RDBpcV4yDiYOToyTyoU6sVwnsPVci8g0SXbmEheKzV8nE/t1AsJR4/ThbIRpblCuCk2bAFk+M+pKyhAR8hXj1ceNPZP+zLwsCzO2mWYO0x/EOAQaKgnHu6YcFqHsYOfNPzPrJYf/XiPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rh/93whM; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726443723;
+	bh=N62nmdW/mIjLgwLjyQ9RXaf/g2kvV724xrfZkUHciBw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rh/93whMBR8iPEyWGJzyBu9wqjXpsq7y3VA4+hODh1AIJrS+Hd5MoNa1QcLFQy0kX
+	 7CBe7B2O7nPi3pHGSK8CJ44D7vNczODVnzWFcGCllqHwHceUpz3OkDhw1bhxoRmLce
+	 QwBgfRakRnzEfXYl4xykZxDRz9GlucoAZVQ6a8oW09D4VlaPYuBJTq0lZu5ueCn6TR
+	 XH4xdt5JG2/TjovRdm8T39h6DS6WX4NX00kQIh5MyvNWnVwOL8IWvHAIMhQw9sSxNt
+	 b2+W6U0kxyaK+XUJe25sDKtF1xu/dwkOgQh0alaoglDlruoHAxRMQwSWcAanTOXQO/
+	 /QacaJEjSSc0g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6Phn4Xw7z4x8H;
+	Mon, 16 Sep 2024 09:42:01 +1000 (AEST)
+Date: Mon, 16 Sep 2024 09:42:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Aleksa Sarai
+ <cyphar@cyphar.com>, bpf <bpf@vger.kernel.org>, Networking
+ <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the
+ vfs-brauner tree
+Message-ID: <20240916094201.212c3b23@canb.auug.org.au>
+In-Reply-To: <20240814105629.0ad9631b@canb.auug.org.au>
+References: <20240814105629.0ad9631b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20240915234131.61962-2-abdul.rahim.ref@myyahoo.com>
+Content-Type: multipart/signed; boundary="Sig_/Ed2Nn8F8WPVJvnATdGlcyLf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-When ALSA is not installed on the users system, the error:
+--Sig_/Ed2Nn8F8WPVJvnATdGlcyLf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-"Package alsa was not found in the pkg-config search path.
-Perhaps you should add the directory containing `alsa.pc'
-to the PKG_CONFIG_PATH environment variable
-Package 'alsa', required by 'virtual:world', not found"
+Hi all,
 
-is printed 3 times, which generates unnecessary noise.
-Hence, Remove unnecessary noise using `--silence-errors` on LDLIBS
-assignment, so the message is printed only once.
+On Wed, 14 Aug 2024 10:56:29 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+>=20
+>   fs/coda/inode.c
+>=20
+> between commit:
+>=20
+>   626c2be9822d ("coda: use param->file for FSCONFIG_SET_FD")
+>=20
+> from the vfs-brauner tree and commit:
+>=20
+>   1da91ea87aef ("introduce fd_file(), convert all accessors to it.")
+>=20
+> from the bpf-next tree.
+>=20
+> I fixed it up (the former removed the code modified by the latter, so I
+> used the former) and can carry the fix as necessary. This is now fixed
+> as far as linux-next is concerned, but any non trivial conflicts should
+> be mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
 
-Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
----
- tools/testing/selftests/alsa/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is now a conflict between the vfs tree and the vfs-branuer tree.
 
-diff --git a/tools/testing/selftests/alsa/Makefile b/tools/testing/selftests/alsa/Makefile
-index 25be68025290..cd022fc869fb 100644
---- a/tools/testing/selftests/alsa/Makefile
-+++ b/tools/testing/selftests/alsa/Makefile
-@@ -2,7 +2,7 @@
- #
- 
- CFLAGS += $(shell pkg-config --cflags alsa) $(KHDR_INCLUDES)
--LDLIBS += $(shell pkg-config --libs alsa)
-+LDLIBS += $(shell pkg-config --silence-errors --libs alsa)
- ifeq ($(LDLIBS),)
- LDLIBS += -lasound
- endif
--- 
-2.46.0
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/Ed2Nn8F8WPVJvnATdGlcyLf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbncMkACgkQAVBC80lX
+0GwuvQf/dvsPxheb2d2OlHJSqWC9TwnVGKJmNFVej4FdL3DNp08Ok6+Yj29PsP/2
+vnSGMQFxpZVEOSXnlSl5Yhk5UksSc91AWpdO6358xekh2vG2GvltByCc3JdkaCNn
+1jIDsvIXEkeRyKIT7XR3yrLvwe+yOsIcY7Q36/jjp8ndIl/Uo4ExSZuYGFRXPARh
+cUVLI0ROJGGWGr68WUoggHcEu1WaeekyQnpelYHTtP0p6m7MREBdDvLKfPiSfOMz
+Xoi5bWYcoJ2Hz+N7w6VZU9SxRFIpRVgb/BBkxQ7vMGOkHVXF139N4ZZoAA6z1rP1
+M0OZiYi0PHNlNA2x6/hWjW/s7eSM/w==
+=f/Ds
+-----END PGP SIGNATURE-----
+
+--Sig_/Ed2Nn8F8WPVJvnATdGlcyLf--
 
