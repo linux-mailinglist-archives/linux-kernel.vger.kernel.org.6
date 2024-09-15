@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-329697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739999794C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:41:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BB99794C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666361C2140E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:41:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50E941C210A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954EA49620;
-	Sun, 15 Sep 2024 06:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4EA3FB8B;
+	Sun, 15 Sep 2024 06:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lei3/Jgv"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="baEr3dih"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31B0224EA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042E6225D6
 	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726382464; cv=none; b=qL4/AhdLaDc5gGyrykQHS/Kiat/wIdwziCQmtFefIlz0/l1hXYIo2HpqGgjzTunNBetWYo8FUIVmKJ77mPZ6eH/Xl/cbyLoRLIujC5DOXrB/IOJfeXZezw4OASM1N35EugTZZGknKz1zGkTaXSmJnxuGhpCR6EgjaHNnvXw1dqQ=
+	t=1726382463; cv=none; b=YqKrWhto2tlDJVM0irqDl3R/r1Jlbd2Pe4qPO6AW41OYwUmusvQFC5bM9E45h5jAZHbfMXLG+WqTUbyhuoffEvlE7vtsJ6h9+U9zncW7wJ6W07LghzxU9+pMCrlXm63Hwl3gaAwq2PPrb+aik9WXMahF7riIwBPnVlp3gIrUhvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726382464; c=relaxed/simple;
-	bh=J1eaPEGXQTggxvrag31RjvbO/OZwnbWAvNuMWEu8Z1o=;
+	s=arc-20240116; t=1726382463; c=relaxed/simple;
+	bh=98wEUhIQg0oe7cqCfXtb9PvhfHYoR+LzgTdsHvJWDYI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WPCfqKODnxEqTEXR80/tM8ah5nyznw1x84yP0Elli6Za6tY1TPNgrSuqqSju/r8wYPv2cJU2yMh133uNs2Pd0NalRjoStoDa61p0ecESXNQNK4QgKyhTNr1cGHwx6i2gIY1Y3xt45hhngavUYWwmLnzNsF6J2t0RyXGuOIaJJE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lei3/Jgv; arc=none smtp.client-ip=209.85.218.46
+	 MIME-Version; b=UUhLaFpHG+g6Mqsjl9w9r+HCEwPk9FIPO7r9rfiFOqjMBeAvDAcPnDPhjW2zk897BMtYpUeIR8vPTRZQU9KZBm0HTP0BDoTx3rKoyDloWC+QkRf+Y4XtbQh9MjgX5dJrVNtXo3mJPjAYCHE3lFI9J0SlRhopgAZ6LJZePIpyTEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=baEr3dih; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a81bd549eso408076866b.3
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c423d496abso1356960a12.3
         for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1726382460; x=1726987260; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dtdv6H+0O9IYGXXcKB93eZPrd2Xv4iQ27EcAPr2FIFs=;
-        b=Lei3/Jgv7AVo9LyKjz41QHUOTmx65fcRuSQkwXMcel8nHPK2XiK00goVKoNs/Ni8wZ
-         iI5HEWldHpCffxazdJb44vf2msspN55tftYtuxa1QLXLoMGpf1koOEYw+AqZRC5xZZAg
-         x0QsrxxheGl+ngti67TJFM5XTmkp3jl6vlogIshow8ynBc1M7DqHeQm8Sf5KGd3ZSGeV
-         67qHsA/QaX554YDQLWdXX0G2ym8Ov0AZ6xil5TOXJdUo3MpYwZ1hvTlYs82vP2qxknXP
-         s+/GObBxSeuCC/FhiLHCLHq2IxG0yI8DubAHDp/YFqNbdomf11Q7JBYrYHn5ALJypaU8
-         mWRg==
+        bh=mytdCWz4Iuztl7wUallrWXgXAVacZn2drTPgnY2iPjQ=;
+        b=baEr3dihyVIMikfRnAFtK+JRUk95k0M6M+BB+8S9+Ot5GLLPr1RdNaMT9JzDiqNkXi
+         rqjE+9zS/O7O/Q7gL83g5XjmKcuu8v7CKawSMwvnHKsvY9tMkf1Hnmu3zqEGTXIU4LCb
+         eoXLPE8vG2kcJWyYP/S9gnQasFmlqvbGNv6fupG4YnUuNg2MQ01Jbtvh5o+5DlPTLcqc
+         xAuvNs2dXH2gw2UsL4CKnWo/Mg4oDW3IIt+AejV36vFPYBujHVInIINdt3caOjK50TpO
+         2yfkBc6Gq/MxW3E9ZNq+8pNUSjn5cl9JVGkKPeLT18UqF0WyLryYPm7AWcQyR7fef7Ba
+         wVHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1726382460; x=1726987260;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dtdv6H+0O9IYGXXcKB93eZPrd2Xv4iQ27EcAPr2FIFs=;
-        b=XL1fRIe/qzVXG9cBnXuuT4MaIQKr+5qyb8v2/QJbApMedocSy4X7QIElru96M8IaDC
-         VAn19hVbRUX5LFN2Hv9jVOdbsuTjjCpabEMXJP/H69OJ+oZ06TVAJ4uW6l9t1OjjUwCS
-         vdrx1fwql2XySBD7HBtHVwhOjUTj2YnaAtqMZ2Tk6NjOUAD5hAymx2FjWeeyAnrVzsIX
-         DvH7ScLUkziAl7AP2GYe9WEGRCSs9Iim1SPLmQfcdQHTfKoiItoljdTQYehF98Ow1Fp/
-         T5uLqZh5TjPhFhRYjcQgtrq2ASesd5U9+TpNawBCQ9IJcjpLGQJWZcd50LfiBVZCJf3Q
-         uQTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDJacltLSwFK0GQ/x3JK5ESNpQsvJyUuAiMRKBPeR+FVnw0rqRRMW9uQw78qxpd6PDYoMID4qA+cfiNw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7Pee1fri5UbZ5Qn2qr6fb/BpLAzbgpS39yW8Olza3l0FptBKz
-	20XucA4S6XdLrSy7YLWBgwztjTfUW4ZcPdVxow/5SOMzM/WsS5DCEf1KCw==
-X-Google-Smtp-Source: AGHT+IHuv4df+s1zPsWeAfo3P2ZQTG12QhiqcUEflqhuSA7TDxUiFuZoUXwvwMRMIOQBAySGfFt5Fw==
-X-Received: by 2002:a17:906:cadc:b0:a8a:7501:de21 with SMTP id a640c23a62f3a-a90294ab552mr1091979866b.12.1726382459810;
-        Sat, 14 Sep 2024 23:40:59 -0700 (PDT)
+        bh=mytdCWz4Iuztl7wUallrWXgXAVacZn2drTPgnY2iPjQ=;
+        b=QXL8Hkkxlb6FSEzSyNIfMYwTAaJBTRlknFtIP6KGoSXjiYqWdSzVRFqjrVmDfP3JxH
+         c9cNLObjuxVvFhqiqApGzZh4dA3uJOK6yBHt9KIdJP5EVTnxnKCS41HTcSa8gtB4YpUl
+         exed19VgGIsHni9AA4bjmlhV3k0xu0aPYjH4BJCiRFJ09WUuQpA3+JXH9wYvBo0Gt/C2
+         DH529CD3RieUC1EoFoCwUt/q1ULxyy65XXI2IAGYcJyBzbJINj5eeu9eGsVrBEHJB6/H
+         OZjlbFsVcg3H0ecg4D00/+/5jZXbpYBqbSB5xPKqJoaDycn0HEZXOn5YXgZSdEqfT1aY
+         U6bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDziHpmq7TOn5AapntYSJOnB/zS2CulyEuUigrn6wzESFwyro6cr3kLF1uyXf7G7g6vQ2WqVnGlT2BbAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4rjGc6RaIFAg8QePn7vEGxfAcO2fg3jsUdDIwm32hsVbJqNTX
+	1qUH9YtszYxfJZKvgPUQVCZPl9IQFJ/rXm4q3z5ZlvhOPrEKES+WDbtt7A==
+X-Google-Smtp-Source: AGHT+IHo9z81VjnaVgB+Goew5pVeM34br4ujYIIrCTB5Q4Wqd/Wut7NSV6Wcd+sQfylyH8FwfQX9LA==
+X-Received: by 2002:a05:6402:2687:b0:5c4:2448:87e9 with SMTP id 4fb4d7f45d1cf-5c424488a68mr12228752a12.0.1726382460360;
+        Sat, 14 Sep 2024 23:41:00 -0700 (PDT)
 Received: from kernel-710.speedport.ip (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610967bbsm160201066b.8.2024.09.14.23.40.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2024 23:40:59 -0700 (PDT)
+        Sat, 14 Sep 2024 23:41:00 -0700 (PDT)
 From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: [PATCH 04/17] staging: rtl8723bs: Remove unused function rtw_get_oper_choffset
-Date: Sun, 15 Sep 2024 08:38:18 +0200
-Message-ID: <23623deed7bb225c614693d9b871e2d6f49744a0.1726339782.git.philipp.g.hortmann@gmail.com>
+Subject: [PATCH 05/17] staging: rtl8723bs: Remove unused function rtw_get_oper_bw
+Date: Sun, 15 Sep 2024 08:38:19 +0200
+Message-ID: <5918320008abc9a14c00fd61f00b40f35f1a5bef.1726339782.git.philipp.g.hortmann@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1726339782.git.philipp.g.hortmann@gmail.com>
 References: <cover.1726339782.git.philipp.g.hortmann@gmail.com>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove unused function rtw_get_oper_choffset.
+Remove unused function rtw_get_oper_bw.
 
 Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 ---
@@ -94,33 +94,33 @@ Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
  2 files changed, 6 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-index 85215838a004..a4cc48989445 100644
+index a4cc48989445..4eee324385a3 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-@@ -300,11 +300,6 @@ inline void rtw_set_oper_bw(struct adapter *adapter, u8 bw)
- 	adapter_to_dvobj(adapter)->oper_bwmode = bw;
+@@ -290,11 +290,6 @@ inline void rtw_set_oper_ch(struct adapter *adapter, u8 ch)
+ 	dvobj->oper_channel = ch;
  }
  
--inline u8 rtw_get_oper_choffset(struct adapter *adapter)
+-inline u8 rtw_get_oper_bw(struct adapter *adapter)
 -{
--	return adapter_to_dvobj(adapter)->oper_ch_offset;
+-	return adapter_to_dvobj(adapter)->oper_bwmode;
 -}
 -
- inline void rtw_set_oper_choffset(struct adapter *adapter, u8 offset)
+ inline void rtw_set_oper_bw(struct adapter *adapter, u8 bw)
  {
- 	adapter_to_dvobj(adapter)->oper_ch_offset = offset;
+ 	adapter_to_dvobj(adapter)->oper_bwmode = bw;
 diff --git a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
-index ba39435d1a10..479e90ff336c 100644
+index 479e90ff336c..2080408743ef 100644
 --- a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
 +++ b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
-@@ -449,7 +449,6 @@ u8 rtw_get_oper_ch(struct adapter *adapter);
+@@ -447,7 +447,6 @@ void Set_MSR(struct adapter *padapter, u8 type);
+ 
+ u8 rtw_get_oper_ch(struct adapter *adapter);
  void rtw_set_oper_ch(struct adapter *adapter, u8 ch);
- u8 rtw_get_oper_bw(struct adapter *adapter);
+-u8 rtw_get_oper_bw(struct adapter *adapter);
  void rtw_set_oper_bw(struct adapter *adapter, u8 bw);
--u8 rtw_get_oper_choffset(struct adapter *adapter);
  void rtw_set_oper_choffset(struct adapter *adapter, u8 offset);
  u8 rtw_get_center_ch(u8 channel, u8 chnl_bw, u8 chnl_offset);
- unsigned long rtw_get_on_cur_ch_time(struct adapter *adapter);
 -- 
 2.43.0
 
