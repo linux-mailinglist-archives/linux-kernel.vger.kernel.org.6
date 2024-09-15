@@ -1,188 +1,121 @@
-Return-Path: <linux-kernel+bounces-329902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C373C979746
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:46:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B111B979748
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F08D21F219F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACB3281B07
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47AA1C7B66;
-	Sun, 15 Sep 2024 14:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FEF1C7B68;
+	Sun, 15 Sep 2024 14:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VkOU3+Xv"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Or0EBFTy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DDC2CA6;
-	Sun, 15 Sep 2024 14:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5191C6F55;
+	Sun, 15 Sep 2024 14:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726411556; cv=none; b=b3ah0vGCzXQEUgfB64AgYQJg2CvvpSo5ejwsADO/e2eYoMBE0+umjoIWN23Z6m3V5mGwK3EbTJXsaZf5gzLv5KVQLN+CYApJfKFKXOl0/GZ2vxp0nc4Y62Ed/bCM2jypYY595uw5Td3+ZL71+wG55GjadfCEL0/Yy2Ol/mcsVK4=
+	t=1726411614; cv=none; b=crMlaNcIAqv3abW3ZOjmahZKouVzW7Xzs35HGA+tLnGUAB/ITBO66ZqzqabSn74SlO7z8YCflgzVJWxo8MaCCau1XOnQL9F/WVeJk6DjeW9V4O39KGQjzQHZO1AuR/Xqv0/6x45/igSyiFpJArYE7oSHEgsKjJ1WKQAuKVTcfU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726411556; c=relaxed/simple;
-	bh=XKlqn2qBPAQwB7FQy33H3UzWfqVd/zCG6tFfCMV4LuI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JDbpm40DSOQyyGxqNUKtZPFJrSHl+L1VDXaKuOfFp9h1Ahknhx9jM3ea6pEvX+1aK0yh83PJe+Nqipb861VNQ5V3R9mT6U7VPe0nKyhB4ygpvz071JL1sPvXWO1ELQuMpJGpFpizWx15WbL4RmfLKSZNJi+QZ/QeCU/JmYVS58w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VkOU3+Xv; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c358b72615so34387376d6.0;
-        Sun, 15 Sep 2024 07:45:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726411553; x=1727016353; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:reply-to:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TaNRwlrs/nOlui6L6+29frsiLzSV0vI5EdNksEn8QUY=;
-        b=VkOU3+XvH4HfZhYIwb9L/6FBTnjvQtOuJE3tvFPT1n19zuSwsoFeSuLM+z83euhCiG
-         fozIzeP71vKS/0yO0E52vuMncOtvHqpFLX0UloVAMG7CmaN4+avvs2BzhHCvl3sLKr/G
-         AM8iJ+2DPOYVK8rRGTtgzH3QU4GGos6DwJBXmZ+y4u8J7THcUHm7BDpc4czIdDKjAFiK
-         Vwr+VeSATt5FXXv98M7/Pwc3JcVmYjib4McsvUbiiBEFIjr0+5X9HZlSIM5IIYeEIpBu
-         wcM1rxulIcqegzRCq7DcCYHkODuXm2ylo1F09OUl+tMM2sChA3MFb8UZuqCs85sNd4e3
-         0TNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726411553; x=1727016353;
-        h=content-transfer-encoding:subject:from:reply-to:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TaNRwlrs/nOlui6L6+29frsiLzSV0vI5EdNksEn8QUY=;
-        b=wQ696I3PJWhhe0jcTnFDgGdcnr+z3kR37vW92JSZxHtfq19IcCNZHAhc9tUoQMiQeh
-         PQK9DCL/MUCPq7MZEowLjpNEcUQLakycKMduR8JvHRor6UInMgIthoDelH8qbWLViqzX
-         2SMAq+6kjEhIm+Q16jsMt6SfN9DVZDf9TKoO0awh1TfKHvVH2j+jF4v2POZvgx9rSk02
-         uDzuzzHltcOfRLVpXQmv+u//X2d9pIysgEUaYCpnLLlQrgyrGTC/pPIU/mf9/Kz/rO92
-         wL1qLShOx+M3JJgNzjasCEX1pVPp60xMZxGuxooD6adiZ5iczILp7+TJiRm6kixv0l/o
-         99FA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxAigwSc9XWHpUeGXudRTrLvzqiWmBOPLh0cO4bMvk5qehsDRW8fYoKZg2a0PILJwCHTaqDrpU3TtJ@vger.kernel.org, AJvYcCVtK1DBVCugJkiVQpFyIpJQtKOjeL94bPmwNo+DtLYNRd2XopbVCnTyiBvtneb+g+IIJurVFDjHXmGIDCUN@vger.kernel.org, AJvYcCXw17ha5YaFycEu4KT0rIc2sOwMdoSS21TbHsTV6Sc9A/MD5Ge6A55FY5KmnUha4u84r6jagsjpPniSCw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQBWZmZRjrgRkwcvbFRBrZua6z9ANY0wrzRsQMgjNfSU0oI2HL
-	eJyzEhcEu9aIUrRS5I1tb0DFT01Iarc7g+asY1Bdc5W9iABMpX82
-X-Google-Smtp-Source: AGHT+IF0Ccu/apzaKszAgwuDU09i5bpQP/2PO0Ybjid8wUTXxRNJ0MJtie4khQMTSISV2Fa8X/CfoA==
-X-Received: by 2002:a05:6214:468a:b0:6c3:5db2:d999 with SMTP id 6a1803df08f44-6c573556d57mr178765296d6.9.1726411552883;
-        Sun, 15 Sep 2024 07:45:52 -0700 (PDT)
-Received: from [10.4.10.38] (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c58c626346sm16073526d6.29.2024.09.15.07.45.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Sep 2024 07:45:52 -0700 (PDT)
-Message-ID: <7ede7ca6-f8db-4b38-a1cc-8be3d0db7fae@gmail.com>
-Date: Sun, 15 Sep 2024 10:45:51 -0400
+	s=arc-20240116; t=1726411614; c=relaxed/simple;
+	bh=6ZjIhHpNkhQ25pPxsGDRzZKQrr3kva89/2JqklpBqqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LfAFjDRJDD9uY060g+Oij0MAe1YQcaS0PBsU1HzSs2U5+pAWK6ndXTOFV80Kcu76fiTnHIKNZ7pJ1AbYtE2nTWJ5xTf8bLbbmzf3Ms/LzoQkA3tTLM3wlmjIM4XAuV8Ufg+IDDKjOUvmPBIrCIFEpXeHMHSLQB9jRgOh5XAjsoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Or0EBFTy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 620DCC4CEC3;
+	Sun, 15 Sep 2024 14:46:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726411613;
+	bh=6ZjIhHpNkhQ25pPxsGDRzZKQrr3kva89/2JqklpBqqo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Or0EBFTyJ6vxxFgGjkBEJPt4sJJDOLxB+TW1iFRg0BvRVuFywgXKEPcrjO/0JO8QZ
+	 WWXiXGPepETxBl4/sGOuCvdiesF2IO3f/xc3+fYj5dyH2uYns/EOGt78IH5ySjN/h6
+	 ODdWaw5wjYxaf1Buy6YpaHpr/quJrjh/X48fYstHRmeSyttlk25c5ILbZH1k7NJsTC
+	 vmBBuS6ug/LYDGAwNgi1/KYIjJCOnpgEZs9wQNdAAcQzm7QGTvHC0val8svNf7NA+k
+	 CubH7AMcRYeq7unJsPdM5kQCMaJwidih4BiIpEVL6OUz0/zp+GHREL6pIvJBD187QS
+	 fVwB6uyBL+xWg==
+Date: Sun, 15 Sep 2024 16:46:47 +0200
+From: Jakub Kicinski <kuba@kernel.org>
+To: Willem de Bruijn <willemb@google.com>
+Cc: Anders Roxell <anders.roxell@linaro.org>, shuah@kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: Makefile: add missing 'net/lib' to targets
+Message-ID: <20240915164647.5b2e1db6@kernel.org>
+In-Reply-To: <CA+FuTSc15f=+zC_p3seVShGMW164Mi+_a-XiSONzx7A83tEPqw@mail.gmail.com>
+References: <20240912063119.1277322-1-anders.roxell@linaro.org>
+	<20240912082307.556db015@kernel.org>
+	<CADYN=9+OTGJtN-z_ffQx9C+UA=a_9rpF7bGtnunFJoq0BWL3vQ@mail.gmail.com>
+	<CA+FuTSc15f=+zC_p3seVShGMW164Mi+_a-XiSONzx7A83tEPqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>,
- Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>,
- Meng Zhang <zhangmeng.kevin@spacemit.com>, Meng Zhang
- <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>
-Reply-To: 20240903-02-k1-pinctrl-v4-3-d76c00a33b2b@gentoo.org
-From: Jesse Taube <mr.bossman075@gmail.com>
-Subject: [PATCH v4 3/3] riscv: dts: spacemit: add pinctrl property to uart0 in
- BPI-F3
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, 15 Sep 2024 09:36:10 +0200 Willem de Bruijn wrote:
+> > You=E2=80=99re right, the patch is incorrect, I could have explained be=
+tter.
+> > I=E2=80=99m seeing an issue with an out-of-tree cross compilation build=
+ of
+> > kselftest and can=E2=80=99t figure out what=E2=80=99s wrong.
+> >
+> > make --keep-going --jobs=3D32 O=3D/tmp/build
+> > INSTALL_PATH=3D/tmp/build/kselftest_install \
+> >      ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- \
+> >      CROSS_COMPILE_COMPAT=3Darm-linux-gnueabihf- kselftest-install
+> >
+> > [...]
+> > make[4]: Entering directory
+> > '/home/anders/src/kernel/linux/tools/testing/selftests/net/lib'
+> >   CC       csum
+> > /usr/lib/gcc-cross/aarch64-linux-gnu/13/../../../../aarch64-linux-gnu/b=
+in/ld:
+> > cannot open output file /tmp/build/kselftest/net/lib/csum: No such
+> > file or directory
+> > collect2: error: ld returned 1 exit status
+> > [...]
+> >
+> > Any thoughts on what might be causing this? =20
+>=20
+> I wonder if this is due to the O=3D argument.
+>=20
+> Last week I noticed that some TARGETs explicitly have support for
+> this, like x86. Added in 2016 in commit a8ba798bc8ec6 ("selftests:
+> enable O and KBUILD_OUTPUT"). But by now this support is hardly
+> universal. amd-pstate does not have this infra, for instance.
+>=20
+> Though if the only breakage is in net/lib, then that does not explain it =
+fully.
+
+Some funny business with this install target, I haven't investigated
+fully but the dependency on all doesn't seem to do its job, and the
+install target has a copy/paste of all with this line missing:
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Mak=
+efile
+index 3b7df5477317..3aee8e7b9993 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -261,6 +261,7 @@ ifdef INSTALL_PATH
+ 	@ret=3D1;	\
+ 	for TARGET in $(TARGETS) $(INSTALL_DEP_TARGETS); do \
+ 		BUILD_TARGET=3D$$BUILD/$$TARGET;	\
++		mkdir -p $$BUILD_TARGET;	\
+ 		$(MAKE) OUTPUT=3D$$BUILD_TARGET -C $$TARGET install \
+ 				INSTALL_PATH=3D$(INSTALL_PATH)/$$TARGET \
+ 				SRC_PATH=3D$(shell readlink -e $$(pwd)) \
 
 
-Before pinctrl driver implemented, the uart0 controller reply on
-bootloader for setting correct pin mux and configurations.
-
-Now, let's add pinctrl property to uart0 of Bananapi-F3 board.
-
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
----
-  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts |  3 +++
-  arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi    | 20 ++++++++++++++++++++
-  arch/riscv/boot/dts/spacemit/k1.dtsi            |  5 +++++
-  3 files changed, 28 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts 
-b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index 023274189b492..bc88d4de25a62 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -4,6 +4,7 @@
-   */
-
-  #include "k1.dtsi"
-+#include "k1-pinctrl.dtsi"
-
-  / {
-  	model = "Banana Pi BPI-F3";
-@@ -15,5 +16,7 @@ chosen {
-  };
-
-  &uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_2_cfg>;
-  	status = "okay";
-  };
-diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi 
-b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-new file mode 100644
-index 0000000000000..a8eac5517f857
---- /dev/null
-+++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
-
-It would be nice to have a pinfunc header like
-arch/arm/boot/dts/nxp/imx/imx7ulp-pinfunc.h.
-It would reference and encode the data of "3.2 Pin Multiplex" in
-https://developer.spacemit.com/documentation?token=An1vwTwKaigaXRkYfwmcznTXned 
-, the document you attached in the summary.
-
-Otherwise,
-Acked-by: Jesse Taube <Mr.Bossman075@gmail.com>
-
-+
-+&pinctrl {
-+	uart0_2_cfg: uart0-2-cfg {
-+		uart0-2-pins {
-+			pinmux = <K1_PADCONF(68, 2)>,
-+				 <K1_PADCONF(69, 2)>;
-+
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+};
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi 
-b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 0777bf9e01183..a2d5f7d4a942a 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -416,6 +416,11 @@ uart9: serial@d4017800 {
-  			status = "disabled";
-  		};
-
-+		pinctrl: pinctrl@d401e000 {
-+			compatible = "spacemit,k1-pinctrl";
-+			reg = <0x0 0xd401e000 0x0 0x400>;
-+		};
-+
-  		plic: interrupt-controller@e0000000 {
-  			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
-  			reg = <0x0 0xe0000000 0x0 0x4000000>;
-
--- 
-2.45.2
+Andres, please feel free to test / write commit message and submit this
+one liner, but even with that the build for some targets fails for me.
+"make [..] install" seems wobbly.
 
