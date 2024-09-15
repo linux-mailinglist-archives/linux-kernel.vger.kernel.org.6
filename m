@@ -1,122 +1,157 @@
-Return-Path: <linux-kernel+bounces-329839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BC0979696
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:25:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE37F979699
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C6C1C20F7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:25:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E7E0B21E61
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A038A1C57B8;
-	Sun, 15 Sep 2024 12:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205291C578B;
+	Sun, 15 Sep 2024 12:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XAZOisIj"
-Received: from mail-40141.protonmail.ch (mail-40141.protonmail.ch [185.70.40.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHKY2Lf/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F86D13DDA7
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 12:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5540611CAF;
+	Sun, 15 Sep 2024 12:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726403137; cv=none; b=Uk++xfVG1vQlzqhlfpla5Yk59XDeVzRdqxUoAU4s8jytK35ImGz5A6BKF9hyebYZI6/ILTm7wOl1sbQmej3tVbqATsK4MFu3qyApe4pbuOyfONqUVcnjkdrEkZ/xdhuop5cE1qZZQghMxOfUBAwD6TIcAwmbEC5DkqzDbW1AbCc=
+	t=1726403611; cv=none; b=Xl2rEmbx/2eaCrfZHan18B+EziVSquQcLVjp98RXSdYbtiOuxCGcBI/A42qy1ELSi4Fn7I7YuxzwecKl53yA2IpVYWNUw9MlbWGF3iX+P8W9YQXLrKhbMZIZQhY//SOcOBHDHiVuhBp8cMl/4pFaEjaTVIF7cilXjMP2jV1e5cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726403137; c=relaxed/simple;
-	bh=8PJTPIBa5bZwJbOzVWXJHDJMVVUpft1y4CUxWssOzs0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U8zamhiasnprerckIUzK7+io2QXDqaiPr/Tnyt+IJN973/NN870J9sbdiLwQwEROIPkenf8PDYuh/Vm+FZ6nkyP5tKLxV2k7yhdKg/CgI6vnHFDkG8In4MPNqomWdvrcSUHuIaZiVKogVeXkFm+abZxlfMNp7Fy9j9CK0eaXU8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XAZOisIj; arc=none smtp.client-ip=185.70.40.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726403130; x=1726662330;
-	bh=ohuHPs8uppnIZ5YHqXrpeVgM3lV+MvcBIFytkXKJ1jI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=XAZOisIj0RVAkX3upqZA77IxipbkfJFEHmEyT2O8QbcqluQTw0+e96PP9qWodle0A
-	 pVXjWc6vKxh8dV4wdCadDycjqeKtPpNGLLzOVYSWQ7yC/RdsjDtznwa2RKaduQAM8H
-	 ZGgHvDLHkb6/trZAPTaKih5Nca53g4uaDDL3H3BoLXlAv4wyT9a9DzV2ErmX8iaFLO
-	 YyOYAfmVf8Di4OqVpg9+tkHhzSWUYAaPqIlzITctws3HoufC8eNWrelSrWn52EbVps
-	 lSNWyzyt80eKdPNne9QZpo9kQTReba86ahkDxuFLY6Aq+YpVQa3Ot3afdeUhiZJyBb
-	 y2FZEcnDzsQeQ==
-Date: Sun, 15 Sep 2024 12:25:24 +0000
-To: Dave Hansen <dave.hansen@intel.com>
-From: John <therealgraysky@proton.me>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
-Message-ID: <OCPUzm9NO5UcsvzQfzIazzMh7nymvY5oz3pBojDqEOlhVrYTdYZ35Il0oi8WkwFN7N-1HpCIPXFgQ3MGT7108YhjiBWWv7RqrC40mlW4ak4=@proton.me>
-In-Reply-To: <e5081e3b-0f14-4e1e-975a-a4fd22944fc7@intel.com>
-References: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me> <e5081e3b-0f14-4e1e-975a-a4fd22944fc7@intel.com>
-Feedback-ID: 47473199:user:proton
-X-Pm-Message-ID: 6137b1e7108cd70a963505ea14e063583c153b0e
+	s=arc-20240116; t=1726403611; c=relaxed/simple;
+	bh=PVNncDVUwdveT1NbQPhjqULt1DuFVYIxtUHsC2r/QWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r0jHy9lUEa/0y/woGujSus/cZIbL8o4FiGOWs+Nv9mnz2cHZHaE1woQKtuFtF8vXjIC7LkeJS3WS/r7G/HVpS7X0+JV3oV0PM3/U8LiFvMYq5j5Pdspxtlfcrjc2BTo8HfGQauk+d+3bPdC0sA0QsQID8jR21F+pJSYbvXjgp98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHKY2Lf/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EBE2C4CEC3;
+	Sun, 15 Sep 2024 12:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726403610;
+	bh=PVNncDVUwdveT1NbQPhjqULt1DuFVYIxtUHsC2r/QWE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sHKY2Lf/mg9UIvwgGM/rdumD3Crd3CXaQX51z2X0TphCeP4JQlt4kycnejOmUEgRV
+	 OSXB7I9qMWozBbvodMOf4tJ5cGBiVfYf6YeCnAFKVQAglzIAZyXG57UzUpnH2r/7hD
+	 R67W1ZsiOpnY82G/k9JlzEeYqwheEtQnOhMvFFrjwGGXrTalXUWZeSS4Zan71/hdnW
+	 e7aci3ndxIeiGABt4TUDdTgYETPYioRN3Os+o35cYjY5zS+pDnWM+qC0Uxs0zIQefz
+	 SQ9gV0x0LJWrbP5NdEwbHA2WgRb3EcbkGsfoGRuBlK19BAKt96TEkKueki4m13Opni
+	 A0uqaFZ5JKw6A==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com,
+	roberto.sassu@huawei.com,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] tpm: remove file header documentation from tpm2-sessions.c
+Date: Sun, 15 Sep 2024 15:33:15 +0300
+Message-ID: <20240915123315.10999-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sunday, September 15th, 2024 at 7:40 AM, Dave Hansen <dave.hansen@intel.=
-com> wrote:
-> If these are going to be exposed to end users, we need some kind of
-> help text that helps end users select among these options and what the
-> pitfalls are.
->=20
-> I actually don't have the foggiest idea what an "AMD x86-64 CPU with v2
-> instructions" even is. Even saying "AMD x86-64 CPU" isn't super helpful
-> because "AMD x86_64" is kinda a generic way to refer to all the 64-bit
-> x86 CPUs, Intel included.
+The documentation in the file header is duplicate documentation, which
+is already addressed elsewhere (tpm-security.rs and function associated
+documentations). In addition remove the invalid newline character after
+the SPDX tag.
 
-> Why are there v4's for both AMD and Intel that do the exact same thing?
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+It is good time to remove this finally before doing anything else.
+Unless someone commits to maintain this part of the file, I will just
+take it away because I have neither intention nor motivation to maintain
+it. Came right on front when I started to look into kernel command-line
+and optimizations for session life-time so thus the patch. I'll include
+this later on to a larger patch set.
+ drivers/char/tpm/tpm2-sessions.c | 65 --------------------------------
+ 1 file changed, 65 deletions(-)
 
-I did it this way to selectively include the AMD-specific and Intel-specifi=
-c membership in the config options below.  For example, the AMD options sho=
-uld be included in the X86_INTEL_USERCOPY config.
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index 44f60730cff4..6cc1ea81c57c 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -1,71 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+-
+ /*
+  * Copyright (C) 2018 James.Bottomley@HansenPartnership.com
+- *
+- * Cryptographic helper routines for handling TPM2 sessions for
+- * authorization HMAC and request response encryption.
+- *
+- * The idea is to ensure that every TPM command is HMAC protected by a
+- * session, meaning in-flight tampering would be detected and in
+- * addition all sensitive inputs and responses should be encrypted.
+- *
+- * The basic way this works is to use a TPM feature called salted
+- * sessions where a random secret used in session construction is
+- * encrypted to the public part of a known TPM key.  The problem is we
+- * have no known keys, so initially a primary Elliptic Curve key is
+- * derived from the NULL seed (we use EC because most TPMs generate
+- * these keys much faster than RSA ones).  The curve used is NIST_P256
+- * because that's now mandated to be present in 'TCG TPM v2.0
+- * Provisioning Guidance'
+- *
+- * Threat problems: the initial TPM2_CreatePrimary is not (and cannot
+- * be) session protected, so a clever Man in the Middle could return a
+- * public key they control to this command and from there intercept
+- * and decode all subsequent session based transactions.  The kernel
+- * cannot mitigate this threat but, after boot, userspace can get
+- * proof this has not happened by asking the TPM to certify the NULL
+- * key.  This certification would chain back to the TPM Endorsement
+- * Certificate and prove the NULL seed primary had not been tampered
+- * with and thus all sessions must have been cryptographically secure.
+- * To assist with this, the initial NULL seed public key name is made
+- * available in a sysfs file.
+- *
+- * Use of these functions:
+- *
+- * The design is all the crypto, hash and hmac gunk is confined in this
+- * file and never needs to be seen even by the kernel internal user.  To
+- * the user there's an init function tpm2_sessions_init() that needs to
+- * be called once per TPM which generates the NULL seed primary key.
+- *
+- * These are the usage functions:
+- *
+- * tpm2_start_auth_session() which allocates the opaque auth structure
+- *	and gets a session from the TPM.  This must be called before
+- *	any of the following functions.  The session is protected by a
+- *	session_key which is derived from a random salt value
+- *	encrypted to the NULL seed.
+- * tpm2_end_auth_session() kills the session and frees the resources.
+- *	Under normal operation this function is done by
+- *	tpm_buf_check_hmac_response(), so this is only to be used on
+- *	error legs where the latter is not executed.
+- * tpm_buf_append_name() to add a handle to the buffer.  This must be
+- *	used in place of the usual tpm_buf_append_u32() for adding
+- *	handles because handles have to be processed specially when
+- *	calculating the HMAC.  In particular, for NV, volatile and
+- *	permanent objects you now need to provide the name.
+- * tpm_buf_append_hmac_session() which appends the hmac session to the
+- *	buf in the same way tpm_buf_append_auth does().
+- * tpm_buf_fill_hmac_session() This calculates the correct hash and
+- *	places it in the buffer.  It must be called after the complete
+- *	command buffer is finalized so it can fill in the correct HMAC
+- *	based on the parameters.
+- * tpm_buf_check_hmac_response() which checks the session response in
+- *	the buffer and calculates what it should be.  If there's a
+- *	mismatch it will log a warning and return an error.  If
+- *	tpm_buf_append_hmac_session() did not specify
+- *	TPM_SA_CONTINUE_SESSION then the session will be closed (if it
+- *	hasn't been consumed) and the auth structure freed.
+  */
+ 
+ #include "tpm.h"
+-- 
+2.46.0
 
-> Why is this copied and pasted six times?
->=20
-> + depends on (CC_IS_GCC && GCC_VERSION > 110000)...
-
-I believe the version requirement is needed for each of these new options. =
- Please correct me if I am mistaken.
-
-> Alternatively, anyone wanting to do this could just hack their makefile
-> or (I assume) pass CFLAGS=3D into the build command-line. Why is
-> something like that insufficient.
-
-I believe this would work:
-export KCFLAGS=3D' -march=3Dx86-64-v3'
-export KCPPFLAGS=3D' -march=3Dx86-64-v3'
-
-> > config X86_HAVE_PAE
-> > def_bool y
-> > - depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUM=
-M || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC7 || MCORE2 || MATOM =
-|| X86_64
-> > + depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUM=
-M || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC7 || MCORE2 || MATOM =
-|| X86_64 || MAMD_CPU_V2 || MAMD_CPU_V3 || MAMD_CPU_V4 || MINTEL_CPU_V2 || =
-MINTEL_CPU_V3 || MINTEL_CPU_V4
->=20
->=20
-> is rather silly when M*_CPU_V* all:
->=20
-> depends on X86_64
->=20
-> right?
-
-True!
-=20
-> So, taking a step back: Please convince us that this is something we
-> want to expose to end users in the first place, as opposed to having
-> them hack makefiles or just allowing users a string instead of using the
-> existing CONFIG_M* Kconfig options.
-
-This was just the logical extension of the already included and now antiqua=
-ted options, for example pentium-mmx, k6, etc.
 
