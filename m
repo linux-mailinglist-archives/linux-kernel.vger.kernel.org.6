@@ -1,102 +1,106 @@
-Return-Path: <linux-kernel+bounces-329737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A0E979557
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 907A09795B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 10:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5FB2837D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A5F28925C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB137D405;
-	Sun, 15 Sep 2024 08:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C972954757;
+	Sun, 15 Sep 2024 08:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Q56alLRj"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="eLxnXmj+"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A443EA83;
-	Sun, 15 Sep 2024 08:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D163A1C4
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 08:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726387703; cv=none; b=tMrWIeIA+t2byC1Zz6i0M9Q6laWV4tOAjYa7pyzT9cXAkW082du56YOqFTQbB8XCvhYC6lxa8ZdrsQVhshMIkL5YWrNluRMRE7wYjtdmGkbWy9hSLcEbbq6aK5fslJXJG9kXck5aYcQrRpdR1vxrPmDnm0hmk70Wub7F2nitN9Q=
+	t=1726387851; cv=none; b=Tsd3p3X/udXkSvdKN5A4PTfnSn3J+NR2NYV9xhbtkOMGGeBhh1TOaLhS0ecNOV41CPiu28gYIl5xQ0tufxqLNn7B+IHnZVV1j4+aS+TqBkn1TnWufOwYfsYmbU3VhKSxER6fWgcJA2MpHK1L6JkQSgZfwh5IOhfd4X8D+K6aOec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726387703; c=relaxed/simple;
-	bh=r92Bf7xVtngzQHui2J95febW1US8tRSTwQNcYBrkL8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dFLp3pQ/4jwjBGRMsLeAa3fpiqFTpfcQiT+t5w0JIb/5qmhXoJQtngl5mjfcPZHhTSVFeQsvcaFo9IPAOsHux6hyIyRzawkIONSFFOtuPir4eQF1tHc91PcVOoRFx8Hd7CxvI3p+I0yQrvHRmqBXUGONq+YDxbNWNxsBYTKWk2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Q56alLRj; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=tmmYr7AUv+WyGTIFQO0zZ+SlHsGUZCWusRU4ymvvKec=; b=Q56alLRjfdJQXvhTz2ZuTxLFO8
-	We8liIyQouHmCyvHCuGoRb7A05ROGYXAryVOwBFAxpNQ0iQGkpG/wwko8gELPjeHr7z6zg20yv1AX
-	vKDiUIMRpTfgJ8uuzzmcH4NnS8/cWz7PAVGgaLru/HJQd9x/Hl9aZHBW7PFymF/nuPdMU1BElNw6y
-	4+HqKlMNnKu8HAZhTti4biUrKiMo7ESvnyNsg08kIIVGtzmHsh03+j4MrDui2fv/KjX3O2BhkBEfd
-	IzYeGm48EnzjqhyAfdlGETMnymHBCkpinpIHiTegHRrbE1V8hSIqb6OhqQed6OyOAgxd7+DB5Yx6I
-	N6dkNamA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1spk8N-002b6A-1N;
-	Sun, 15 Sep 2024 16:07:42 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 15 Sep 2024 16:07:41 +0800
-Date: Sun, 15 Sep 2024 16:07:41 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com,
-	dwmw2@infradead.org, davem@davemloft.net,
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, zohar@linux.ibm.com,
-	linux-integrity@vger.kernel.org, roberto.sassu@huawei.com,
-	linux-security-module@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-Message-ID: <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
- <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
- <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
+	s=arc-20240116; t=1726387851; c=relaxed/simple;
+	bh=ppLS5iL+qdtNfGmI67dkrKMyU77zgQ3o/IWThvEsL74=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=uJyhdLmhqP2yt47x57DRlTcVauHkyNpRgfl03awjsueIV482dRrWTNZBLOL+1DH68BYVjQsTE7njqLmAzDFClSAfiu+NuGKQt/iWBBfbMnWwgOnqRiktEIXxx6DKw5GWGyGgyDiHxwCfFAw/0bZGfKFBVD1HYedcYgOKi5pNbnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=eLxnXmj+; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-717880daae7so443290b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 01:10:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1726387849; x=1726992649; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ZyUzb3Mdq8sdR0kQgQ7St7N5IVlDEl1Zqsb226N1tk=;
+        b=eLxnXmj+CHfL8Gl+O4afEVOzIQhSoCAtwlLcmlG8Fhe2Cv1Wm3o/soe3FZYhex9hRY
+         SJK+qSU4p7BaONUfx1VtY3w/cQJ50C5JHUDPd40XMee8l3//1Spq3Ut94DOuodDfqSeS
+         XyrR2WtsAPdeeM1a4tdySNgF5iaHlZTCwjN4rb7kZSc8XQXcrkl58rzlY8hr5zyoh6u3
+         PROyjLkngvmpMohZKeLlVehZKZFqIcG2YYMMgEZwK5mpJxQjUj2dlH9dVkds37x+DK7S
+         o7agrz9fPs18hTLlI1ECJ5UNgkdzO/u5/BNvgZfLTHY1ihSWNDwcRfp4q5I73u2J2FUO
+         zipg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726387849; x=1726992649;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9ZyUzb3Mdq8sdR0kQgQ7St7N5IVlDEl1Zqsb226N1tk=;
+        b=NIlQ+iaW13ycbG7XLZswvxOyHSEbnLUmqk7LR0IoAGCX6lNCwzTJcoEGh3QNepaYYp
+         5EvJW+BBrMzdoBuEIwtNbqhIl2OoHjzPRuTGbiwtECY1SE8MD+DFrPSrMiStJn+8RVRG
+         VLr8t72ILAGdjhj2OKU5cYuEkQH9gxm1zdqnLDtGODTEHYDOlNLkth1bL2Q9WIz+8QOl
+         LN0PQRJM7V/vRvad7sXHQx93t5Il6WZUtGxGu/7ninpmFLtcPO23SWAwCcE2x3uVVmK3
+         W+DwTPoYp4Goo72y3xXToDsiXGRHRZ/kjjCa5txXYRCzOFKuYjJJAey5qo3BUAl6jXCj
+         ndXA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8O7XajM9G2TUwS5x7lJ1HXyAZY1BMbxXg4okzYvJvqUH/AINqYl3K2ZXh05suxbhfe/oal0mBaWJaqec=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+p+6TO4tkBoqa6F4mr0BuRWn/cA4BPIij8e87+0ZTInuMBwaE
+	PdHhiM8WsT4U54xw38aCh6cgdmHLL12BnMMT7/5TQi96VKdUi8rZjXkR7mydOEA=
+X-Google-Smtp-Source: AGHT+IFqciYuNSxruvSjidW3BBxJEjz4Bx90EoR3MufHRD+vxKmEg+WY2TuKBqEmigxpyQQrEMr9nA==
+X-Received: by 2002:a17:90a:f2cd:b0:2ca:7e67:d11e with SMTP id 98e67ed59e1d1-2db9ff7d413mr5718453a91.2.1726387848770;
+        Sun, 15 Sep 2024 01:10:48 -0700 (PDT)
+Received: from lvzhaoxiong-KLVC-WXX9.huaqin.com ([116.66.212.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbcfd26f2csm2662672a91.31.2024.09.15.01.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 01:10:48 -0700 (PDT)
+From: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+To: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	sam@ravnborg.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dianders@chromium.org,
+	hsinyi@google.com,
+	awarnecke002@hotmail.com,
+	dmitry.baryshkov@linaro.org
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Subject: [PATCH v1 0/2] Modify the timing of three panels
+Date: Sun, 15 Sep 2024 16:08:28 +0800
+Message-Id: <20240915080830.11318-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
 
-On Sun, Sep 15, 2024 at 09:11:04AM +0200, Linus Torvalds wrote:
->
-> So honestly, just the series adding pgp key verification I have no
-> objection to. The use case where some firmware uses pgp to validate
-> allowed keys in EFI variables etc sounds like a "ok, then we need to
-> parse them".
+Modify the power-off sequence of the Kingdisplay/Starry/Melfas panel.
 
-The use-case for EFI variables appears to be invalid:
+Zhaoxiong Lv (2):
+  drm/panel: jd9365da: Modify Kingdisplay and  Melfas panel timing
+  drm/panel: boe-th101mb31ig002: Modify Starry panel timing
 
-https://lore.kernel.org/all/CAMj1kXH8nWtAzX+9xc2tLyy5d0w==JNQCMJBAbL=LdcF+XrYkw@mail.gmail.com/
+ drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c | 11 +++++------
+ drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c     |  6 ------
+ 2 files changed, 5 insertions(+), 12 deletions(-)
 
-> The objections I had were against the whole "start doing policy in
-> kernel", with what sounded like actually parsing and unpacking rpm
-> contents and verifying them with a pgp key. *That* still sounds like a
-> disaster to me, and is the part that made me go "why isn't that done
-> in user space together with then generating the fsverifty
-> information"?
-
-If the aformentioned EFI use-case is bogus, then distro package
-verification is going to be the only application for PGP keys in
-the kernel.  
-
-Cheers,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
+
 
