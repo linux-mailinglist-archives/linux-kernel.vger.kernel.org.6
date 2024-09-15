@@ -1,154 +1,88 @@
-Return-Path: <linux-kernel+bounces-329988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4E0979837
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:41:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB78597983A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD258B21CBB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E04E2824FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00AC1CA681;
-	Sun, 15 Sep 2024 18:41:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA7B1C9ECC;
+	Sun, 15 Sep 2024 18:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QcjOzvSa"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1211C9DFF
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 18:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51752F4A;
+	Sun, 15 Sep 2024 18:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726425665; cv=none; b=QCrx1gW6HJxHQ+Fg9Np6GL9Uml/7A0BE/dd2lcdYHHzhfVJL7tsKzr69/MCdCrQsXnwgcGbbr6ADDG48Jmgy0sw0oqnVRZO6IN3DZu0dhGr5aeGyBnJdpdhpsOCCNuruotnbvF5LW1RbUVBQNdndb4olJtLTbWS3VI7GKxgHfFk=
+	t=1726425728; cv=none; b=Yl0nTOhbHJpLWoOAGjZ8aTJ5V1ZW0vf4m6Hwfxl7+6jBYTkuz9JR2sFjirhy0ueAc+VRXE8ufaUxa+RBAqjzE9f3HqAND2kZRZYgoqWPebAy2y6fnmJ3EJsP5MpAe7iIIomW21Zvm2dH6uDcXhH0vguICqSjNpE3gOjUwJ3jr2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726425665; c=relaxed/simple;
-	bh=iAirVr/PDoQbjcJ3UWzFf81sxQF57szPJR1tu8UljmA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ulArnKo4GcY8VcLEhc3aDrrfR5cQI+bcFiyCylZZK6NAthX5NUFqcjRpuF6f984WIdT2O2Bj1UBVCD4tr7u+0g13F4tuxIorDZjO8xJtLziyKgPg6wcQHKR5NI7/nRu7rb/Ld5kr1LalTzNy4oScJp+YfmGKo9nLihr+ZxDRYbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0629ed658so82315135ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 11:41:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726425663; x=1727030463;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=axSYlTik1BW5U6rzNQvrcq+UMpeJRDIHWIjkI85cetw=;
-        b=gzkHj5AJjFzOaRF8BwQsO4T13TLmQDLyvpJa64pKJIjCUCJNP6DRMtvQakA6rzl/pI
-         CCnZkmWz4DjFqz4ge8JNU535lC4jQRdchLYFh5ASptNCA+Bx/tJb2Xrq60BBZmJNvUP7
-         znig91XeMq9KRvFQbV2F15Q/aMX86v9Eb3CLUs7H8Z6ue6OyOQBDKVU69uEqSuKJk4aF
-         Rfcw6PvpmEH+dQeEEPwIITVft8zYWUuCAz31LiBz6wrecfpy61W/48KmStg3af0ZPwu3
-         KVnKiFk4gsZo/ghfpWRBjO0FERqSxXZ7TTxC0t9tHqoCap2AF1qHE54Js2cTvrv9YvGK
-         jMqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlidfvWy51GgfbMwgM+m1qvtd+/L8oEY/KEtKPonkTgAYg2IQDb3k/0ykickN+Z5ejM3hhR6Y9EYEjdyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLWxJ1P9xCxBerBgqdtD9VihGvKoNPOlJvldYA5rn6XjR6ZLXf
-	80cw5C5O+3otH5XKRugzw5o3PMEC8L1Z3e9q92EGbEzLhvDJ4wF4JykZU/X1Go6eEaQ3mTUFYG8
-	/GbNpjl5ck58SHRpAnSPp68YvYW9Te1sTyUlizMsJ5gDbiIPMZPGdNnQ=
-X-Google-Smtp-Source: AGHT+IGZiuusz9APmkDNUZ/S4dbJO1p5/YEgUvKNRBfCnp+6wbvkccstA736bOpip64D46BTrL0DHrZSpdT74Wt6gBBCb03RVjMx
+	s=arc-20240116; t=1726425728; c=relaxed/simple;
+	bh=4WArnAgFZ1RsLIBejZ3FEo5KQ80z/6WM43E5FcPoh3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I032N+lxwD/KBeLYg8P+oKQMfpBtoucCshGVkvIZRJ1CWSFzeWeLDati7jd3lcR6S++N3l9sQNUi53ICHPjLL33cOkBQDj+EhMtRCqpsMRPPsN1I7AQ2qblkjhBn+og3xrAXlgvgddyuE+C3QY8LvPJK5BdZw3n3gkDK/MVfovk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QcjOzvSa; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=U8/tbEdFoHXqOiG/YLXzy2LtmW2ImDT55zt0J4tQrQM=; b=QcjOzvSadaNeNzBskCn7dhZ30O
+	aYvA4v7g0XRZqhjidD50J7t0FL+6RzSOKWnrqGh9oF0wcqEdPSuRMxnOd/lPL0/toyoOAdJo+qgAA
+	ko9ZhRc1AHHJXSxDacCZf0R6w1hAlMTfWUhM2q+EWmuyIapTw6oYKvV9gYpH0sFLbyig=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1spuBq-007Vte-HA; Sun, 15 Sep 2024 20:41:42 +0200
+Date: Sun, 15 Sep 2024 20:41:42 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org
+Subject: Re: [PATCH net-next v3 0/2] net: phy: Support master-slave config
+ via device tree
+Message-ID: <5befa01e-f52d-44de-b356-bc7e1946777a@lunn.ch>
+References: <20240913084022.3343903-1-o.rempel@pengutronix.de>
+ <20240915180630.613433aa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1a:b0:3a0:97fe:e89e with SMTP id
- e9e14a558f8ab-3a097fee929mr47819725ab.18.1726425663029; Sun, 15 Sep 2024
- 11:41:03 -0700 (PDT)
-Date: Sun, 15 Sep 2024 11:41:03 -0700
-In-Reply-To: <20240915181301.18904-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000060587d06222ccca6@google.com>
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-infoleak in iowarrior_read
-From: syzbot <syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240915180630.613433aa@kernel.org>
 
-Hello,
+On Sun, Sep 15, 2024 at 06:06:30PM +0200, Jakub Kicinski wrote:
+> On Fri, 13 Sep 2024 10:40:20 +0200 Oleksij Rempel wrote:
+> > This patch series adds support for configuring the master/slave role of
+> > PHYs via the device tree. A new `master-slave` property is introduced in
+> > the device tree bindings, allowing PHYs to be forced into either master
+> > or slave mode. This is particularly necessary for Single Pair Ethernet
+> > (SPE) PHYs (1000/100/10Base-T1), where hardware strap pins may not be
+> > available or correctly configured, but it is applicable to all PHY
+> > types.
+> 
+> I was hoping we'd see some acks here in time, but now Linus cut the 6.11
+> final so the 6.12 game is over now:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: kernel-infoleak in iowarrior_read
+The device tree binding is not decided on yet. So deferred is correct.
 
-=====================================================
-BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
-BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:180 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:26
- instrument_copy_to_user include/linux/instrumented.h:114 [inline]
- _inline_copy_to_user include/linux/uaccess.h:180 [inline]
- _copy_to_user+0xbc/0x110 lib/usercopy.c:26
- copy_to_user include/linux/uaccess.h:209 [inline]
- iowarrior_read+0xb02/0xdc0 drivers/usb/misc/iowarrior.c:326
- vfs_read+0x2a1/0xf60 fs/read_write.c:474
- ksys_read+0x20f/0x4c0 fs/read_write.c:619
- __do_sys_read fs/read_write.c:629 [inline]
- __se_sys_read fs/read_write.c:627 [inline]
- __x64_sys_read+0x93/0xe0 fs/read_write.c:627
- x64_sys_call+0x3055/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3998 [inline]
- slab_alloc_node mm/slub.c:4041 [inline]
- __do_kmalloc_node mm/slub.c:4161 [inline]
- __kmalloc_noprof+0x661/0xf30 mm/slub.c:4174
- kmalloc_noprof include/linux/slab.h:685 [inline]
- kmalloc_array_noprof include/linux/slab.h:726 [inline]
- iowarrior_probe+0x10ea/0x1b90 drivers/usb/misc/iowarrior.c:836
- usb_probe_interface+0xd6f/0x1350 drivers/usb/core/driver.c:399
- really_probe+0x4db/0xd90 drivers/base/dd.c:657
- __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
- driver_probe_device+0x72/0x890 drivers/base/dd.c:829
- __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
- bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
- __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
- device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
- bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
- device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
- usb_set_configuration+0x31c9/0x38d0 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0x109/0x2a0 drivers/usb/core/generic.c:254
- usb_probe_device+0x3a7/0x690 drivers/usb/core/driver.c:294
- really_probe+0x4db/0xd90 drivers/base/dd.c:657
- __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
- driver_probe_device+0x72/0x890 drivers/base/dd.c:829
- __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
- bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
- __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
- device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
- bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
- device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
- usb_new_device+0x15f4/0x2470 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x4ffb/0x72d0 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3393
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Bytes 0-72 of 73 are uninitialized
-Memory access of size 73 starts at ffff88811889e000
-Data copied to user address 0000000020000000
-
-CPU: 1 UID: 0 PID: 6520 Comm: syz.0.143 Not tainted 6.11.0-syzkaller-g98f7e32f20d2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
-
-
-Tested on:
-
-commit:         98f7e32f Linux 6.11
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=117b97c7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3ab8d456be59dad9
-dashboard link: https://syzkaller.appspot.com/bug?extid=b8080cbc8d286a5fa23a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+    Andrew
 
