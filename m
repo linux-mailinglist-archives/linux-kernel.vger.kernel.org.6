@@ -1,107 +1,116 @@
-Return-Path: <linux-kernel+bounces-329719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C577E9794F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:06:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C878D9794F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 09:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34671C2212C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:05:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0734B1C222FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 07:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761151EEF9;
-	Sun, 15 Sep 2024 07:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B7F22087;
+	Sun, 15 Sep 2024 07:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gLpgA12c"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JdRRxYYS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BC91C32;
-	Sun, 15 Sep 2024 07:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC931B85D2;
+	Sun, 15 Sep 2024 07:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726383952; cv=none; b=T+hUzm4e0hvphZA2okOmlmA1x1QHbspy4dg/GN+XMnoJNb9dBaflFxKkV6srqwD3tb9f0fJqqSv/Xnmyq6qLyJGM8lzqMGXWdcOTLvD2MVWhlePcA0v+mu5VwWPr18G+zM5E+fXYIW1isXawaaYnmFkl9rIsMaF/Un76URmDXSs=
+	t=1726384060; cv=none; b=DjYQA//RQzdiCnStmDHtXhjWM6NjN275f4HAOJjz17/Q7opxd1Z1H/HhcJKP4iPVFrNP9xJfRa0Ssmnu7+wrQKLvzPzdZRe5AYpEtD+EDA3FmxfY3jaYPjSvIg0iV9d3bZj5mH8hHh9QwQ6i2YFJK6Gcg6eSNQn/uwvZM2ar+Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726383952; c=relaxed/simple;
-	bh=BCpW3FL3ObgSdc8xUJBM+CvF4qGFi6TFsA9dNJ/nDO4=;
+	s=arc-20240116; t=1726384060; c=relaxed/simple;
+	bh=OvaWSLmV9n/J8UD5CWPpidMx2yonWfDSmW1beCrCATM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lW4rB/gHYbQbPb91Db3TeEW1lybiLUS+jBfPaIuU24+Tcylzs091/cGJVwEqUTkfkJsJAb8LzeAKccQPty+ghEsym+NAJa3Xa//JqloDXL1f8Ar0yvGqiV3SkBrnJuAQwbU2msqwiw/d6NZd1ES63u0hjLpk3FM99IT/kjZ1bCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gLpgA12c; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fvWAWtTHygul7ymfGTDYchhp2R61y/v6Tz+FNotitns=; b=gLpgA12cLHuHPnGCfb5KEhZvI2
-	xF3qxf2TkHGMKR6gibFT4XUP/D6ZaDArH82tq9qFBpg0h7Gd9Ru3fkJmfrSPIbzM5HgZP92r3WKSv
-	6XnHvF2ZaBZ1NxsQpZoCVBwvZmH2e+URMzbYks636WQ2jsVRuNG7kIsk1kyALoSDC8ek0LhC/xKdi
-	GofJ3izyqYM5vwZOpn2erdqXk4uC+wBJ7hxJ8SzKlhbcttjvJ2zdw9xAad8jgpDsDvGqeo5dP1+a5
-	bTPYav2hvxLMl66pyvGmdGtUN4Z9RbqlusQ5j422qJ21dcqsoDW+LMDwljxR/mCgMcGw9AZG4WpkU
-	1hzLvDKg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1spjKM-0000000Ccbm-2O5r;
-	Sun, 15 Sep 2024 07:05:46 +0000
-Date: Sun, 15 Sep 2024 08:05:46 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Daniel Yang <danielyangkang@gmail.com>
-Cc: Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
-Subject: Re: [PATCH] fs/exfat: resolve memory leak from
- exfat_create_upcase_table()
-Message-ID: <20240915070546.GE2825852@ZenIV>
-References: <20240915064404.221474-1-danielyangkang@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fsOf/znNsHRre6G9SkyrYAt6J5X4EcFcQHgss48xA93oRj2wFeuOkrPbMdjKo0UrzskGSqz2oz+wd/SAR7C3UaLChFAN/4ZLoppeymjj3taECDkorazHvhagIwcS4M8KQ5sV0PXUsFfLLa5XEWNJVa0Y8j7UE5EG3tgSeLJIe4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JdRRxYYS; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726384059; x=1757920059;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OvaWSLmV9n/J8UD5CWPpidMx2yonWfDSmW1beCrCATM=;
+  b=JdRRxYYShabDfuiNJ5J+buxnDyDibVzUL9pB+tXqLsrrMxP/KqWS5uNT
+   6RaoElUuCvynA1js/8NZx8L/xaU1+swOeoq3//NN1bXP14a1SVo166XVM
+   RJReqOwLu3QWLVlc4zuNQ09/5IioukixJjYeI4z/AsOYhjqpkiFHRwIWn
+   7IjnQFYnGMG5LySfXUeGVcZorSX1GzsfN9V/c7op1pdtehvYigamjplR7
+   frbU0JpdzNBhqBGlWVYUF+30a70NyAVt3I5WH6FLGDAjdkIZawh25spYI
+   Id98Cja06NH73kiKTsufnA9FnJesavs3MFv7inZWMkmwn/mqL4dfug1Fp
+   A==;
+X-CSE-ConnectionGUID: weuzQiowQLmul9vcv0f0pg==
+X-CSE-MsgGUID: pnbW/2YTRDO9xgJFtxY3cw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="24726511"
+X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
+   d="scan'208";a="24726511"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 00:07:38 -0700
+X-CSE-ConnectionGUID: HQ7ym2p/QUaZLDUC0xhH+A==
+X-CSE-MsgGUID: ftO/H9SWS/6Qw66ZfIF45w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,230,1719903600"; 
+   d="scan'208";a="69061663"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 15 Sep 2024 00:07:35 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id AD7D818F; Sun, 15 Sep 2024 10:07:33 +0300 (EEST)
+Date: Sun, 15 Sep 2024 10:07:33 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Gary Li <Gary.Li@amd.com>,
+	Mario Limonciello <superm1@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in
+ pci_dev_wait()
+Message-ID: <20240915070733.GQ275077@black.fi.intel.com>
+References: <525214d1-793e-412c-b3b2-b7e20645b9cf@amd.com>
+ <20240904120545.GF1532424@black.fi.intel.com>
+ <2bf715fb-509b-4b00-a28d-1cc83c0bb588@amd.com>
+ <20240905093325.GJ1532424@black.fi.intel.com>
+ <b4237bef-809f-4d78-8a70-d962e7eb467b@amd.com>
+ <20240910091329.GI275077@black.fi.intel.com>
+ <66019fa3-2f02-4b03-9eb7-7b0bed0fd044@amd.com>
+ <20240913045807.GM275077@black.fi.intel.com>
+ <20240913072356.GO275077@black.fi.intel.com>
+ <dabbd8fa-f5ec-46fe-994b-695058195d47@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240915064404.221474-1-danielyangkang@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <dabbd8fa-f5ec-46fe-994b-695058195d47@amd.com>
 
-On Sat, Sep 14, 2024 at 11:44:03PM -0700, Daniel Yang wrote:
->     If exfat_load_upcase_table reaches end and returns -EINVAL,
->     allocated memory doesn't get freed and while
->     exfat_load_default_upcase_table allocates more memory, leading to a    
->     memory leak.
->     
->     Here's link to syzkaller crash report illustrating this issue:
->     https://syzkaller.appspot.com/text?tag=CrashReport&x=1406c201980000
+Hi,
+
+On Fri, Sep 13, 2024 at 03:56:46PM -0500, Mario Limonciello wrote:
+> > One more suggestion though ;-) I realized that my hack patch to disable
+> > I/O and MMIO did not actually do that because it looks like we don't
+> > clear those bits ever. I wonder if you could still check if the below
+> > changes anything? At least it should now "disable" the device to follow
+> > the spec.
 > 
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> Reported-by: syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
-> ---
->  fs/exfat/nls.c | 1 +
->  1 file changed, 1 insertion(+)
+> This actually causes the system to fail to boot.  I guess some deadlock from
+> other callers to pci_disable_device().
 > 
-> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> index afdf13c34..ec69477d0 100644
-> --- a/fs/exfat/nls.c
-> +++ b/fs/exfat/nls.c
-> @@ -699,6 +699,7 @@ static int exfat_load_upcase_table(struct super_block *sb,
->  
->  	exfat_err(sb, "failed to load upcase table (idx : 0x%08x, chksum : 0x%08x, utbl_chksum : 0x%08x)",
->  		  index, chksum, utbl_checksum);
-> +	exfat_free_upcase_table(sbi);
->  	return -EINVAL;
->  }
+> We also double checked putting the PCI_COMMAND writes just into the runtime
+> suspend call backs instead (to narrow down if that is part of the issue
+> here).  Putting it there fixed the boot hang, but no change to the actual
+> issue behavior.
 
-	Interesting...  How does the mainline manage to avoid the
-call of exfat_kill_sb(), which should call_rcu() delayed_free(), which
-calls exfat_free_upcase_table()?
-
-	Could you verify that your reproducer does *NOT* hit that
-callchain?  AFAICS, the only caller of exfat_load_upcase_table()
-is exfat_create_upcase_table(), called by __exfat_fill_super(),
-called by exfat_fill_super(), passed as callback to get_tree_bdev().
-And if that's the case, ->kill_sb() should be called on failure and
-with non-NULL ->s_fs_info...
-
-	Something odd is going on there.
+Okay, thanks again for checking!
 
