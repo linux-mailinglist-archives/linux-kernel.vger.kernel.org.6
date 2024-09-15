@@ -1,102 +1,137 @@
-Return-Path: <linux-kernel+bounces-329847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CAA9796AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:53:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FD59796AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C05F51C20E96
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:53:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748CA1F21CE1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF701C6898;
-	Sun, 15 Sep 2024 12:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5CD1C68A0;
+	Sun, 15 Sep 2024 12:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMxf6mYI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ihi6WfG2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700C01CF93;
-	Sun, 15 Sep 2024 12:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69231C462B
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 12:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726404832; cv=none; b=F1NWDLBtUlruQEy72h737VLFyYQeQWg0A4NclPLKaadsig24BlpifOf451C6Xc8ZnX73E8smMPam++ocYbqgMXR235XJruMInWRFueMgDFo8y7pZPj0Lv6fz860dw+3aoywkMttAXbhNeXrke/JKaUmD7sRXPufzJHRdtZJMEVY=
+	t=1726404859; cv=none; b=XL/nbVTfzYIhPeUX4yCgNcmQ98WheNN4k3Framjzrv1j+Uj182XzxjhCPaASYB4M/WMI0pYvMXkxD7dJY8ExebfWtzbd1DoacSIOJ6lCLH5DDyeHP1NiLhjSzaYnv9pqK5uUNZIt4tcFuFzwXZ71gF3ZGLtJAeToX8GqQiKX58U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726404832; c=relaxed/simple;
-	bh=LPJ5SATag2i0d8UFpP+hkORo0mZC23PbErfvFGCVqJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o9nUJ7JZaMvSS0EyIW3JZfAZoQu0r8PLPy81KkZuSdMa1UaUbwF3cltRZgVuBm77ePQcrwdf/2mraX3boY+7n+kAkSSdENSN2Fcg/ecE2oTB9QOagwa7aj00r8B+de2mdmupSz1dY+xOGQAMIWleA/3pWGAsyl9/zUr9PlAwhzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMxf6mYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 717F5C4CEC3;
-	Sun, 15 Sep 2024 12:53:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726404832;
-	bh=LPJ5SATag2i0d8UFpP+hkORo0mZC23PbErfvFGCVqJU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hMxf6mYI3/Svo9TsCtzjNWE1vej95mXh2wk9matrrdRv3nG7QqtYJPKpEKeRjhEmI
-	 oKgfYRkJcVVCg9cZrDz6rgbKMdpfLkpcu3mSPBDaU3kdAgjHs+917hso7w3eRDHsye
-	 BJxcjCQk1n7xj8TApOhO+OXve7noX8QgmxAw02nfpX3i7n09SV9hvmqbayEu3xcW+4
-	 NzMugVQ3ji3NOemBG3qibn9zG0CliflB9sTx/nyRY9cZAmENsjRfeD1QD6LOq38Rf5
-	 BszHw+9SaApfNT6NDik/aTV5dCJji76rZ5K5e9WD+0fy9x+mP6hXVa+x0h7VkmaMvp
-	 0IXuKrkctidCQ==
-Date: Sun, 15 Sep 2024 12:53:48 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Julius Werner <jwerner@chromium.org>,
-	Hugues Bruant <hugues.bruant@gmail.com>,
-	intel-gfx@lists.freedesktop.org,
-	Brian Norris <briannorris@chromium.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org, Borislav Petkov <bp@alien8.de>,
-	chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v3] firmware: coreboot: Don't register a pdev if
- screen_info data is present
-Message-ID: <ZubY3NtRJWWTS1ON@google.com>
-References: <20240913213246.1549213-1-javierm@redhat.com>
+	s=arc-20240116; t=1726404859; c=relaxed/simple;
+	bh=47vWe0iOx6JM/7k/adcZt+8OEqSfgHGXATWiIfg/HpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SDzQbK+n+sJfK+tOwf6uWwM1pKZLH3CTHDAlWhBJAORo3Ie28kq4xA1UC07bdC2bEpt2j2vFhZW04tAmRqLkSu8wQgPjmG/5WDMbiXo4OUlP1WevfUrYUl5pZ+UJnxfWKkG/eJgnOCkHBnWl/MRN9BpzGselIsIlcHP4OoxfOCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ihi6WfG2; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726404858; x=1757940858;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=47vWe0iOx6JM/7k/adcZt+8OEqSfgHGXATWiIfg/HpE=;
+  b=ihi6WfG2+udSJmvbHDEA9v1R6bLh3d3kIJfRWY+F6OG2c+O53BQ7YXxt
+   sheem9uND1DAStIiHyfl35fVlOom0yUxYU08ivdJkBQ+IBBGCjGq3pG8Z
+   mVwumSNsqeCJHBqo8vd6wbil5nw05l1G0fbq6uiYWeW+e9MVMD6con4Pm
+   fELY0L5dlcHwhHA+cHbKoPz9gX0i9IJdoFHyl9YEh/DJ0HUR6Vy5/1HWW
+   O4xl0HrvryfwDxEkuY140zwKc5ErF0FRRjveLeL4zNtQRBz5+Bj8l6nug
+   H51hEkMi5xj85nYa/VOuaS9+zM8rLWBn/n29C5/n4C81ZJ61CXs+GLZxk
+   w==;
+X-CSE-ConnectionGUID: j30wN4BcRU+VH4VbCzZcAQ==
+X-CSE-MsgGUID: EBUV9YjlQm2WXaoHgI8+ew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="25348293"
+X-IronPort-AV: E=Sophos;i="6.10,231,1719903600"; 
+   d="scan'208";a="25348293"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 05:54:17 -0700
+X-CSE-ConnectionGUID: TG2AlYjQS1C++oXb4bClQg==
+X-CSE-MsgGUID: PUGhhFFhTMKPOJtjHVDuKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,231,1719903600"; 
+   d="scan'208";a="91898174"
+Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.221.130]) ([10.124.221.130])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 05:54:16 -0700
+Message-ID: <7760553a-6410-4017-be7b-feda4109c0d5@intel.com>
+Date: Sun, 15 Sep 2024 05:53:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913213246.1549213-1-javierm@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
+To: Borislav Petkov <bp@alien8.de>, John <therealgraysky@proton.me>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>
+References: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me>
+ <20240915124944.GAZubX6LAcjQjN-yEb@fat_crate.local>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240915124944.GAZubX6LAcjQjN-yEb@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 11:32:29PM +0200, Javier Martinez Canillas wrote:
-> @@ -27,8 +28,10 @@ static int framebuffer_probe(struct coreboot_device *dev)
->  	int i;
->  	u32 length;
->  	struct lb_framebuffer *fb = &dev->framebuffer;
-> +	const struct screen_info *si = &screen_info;
->  	struct platform_device *pdev;
->  	struct resource res;
-> +	unsigned int type;
->  	struct simplefb_platform_data pdata = {
->  		.width = fb->x_resolution,
->  		.height = fb->y_resolution,
-> @@ -36,6 +39,20 @@ static int framebuffer_probe(struct coreboot_device *dev)
->  		.format = NULL,
->  	};
->  
-> +	/*
-> +	 * On coreboot systems, the advertised LB_TAG_FRAMEBUFFER entry
-> +	 * in the coreboot table should only be used if the payload did
-> +	 * not pass a framebuffer information to the Linux kernel.
-> +	 *
-> +	 * If the global screen_info data has been filled, the Generic
-> +	 * System Framebuffers (sysfb) will already register a platform
-> +	 * device and pass that screen_info as platform_data to a driver
-> +	 * that can scan-out using the system provided framebuffer.
-> +	 */
-> +	type = screen_info_video_type(si);
-> +	if (type)
-> +		return -ENODEV;
+On 9/15/24 05:49, Borislav Petkov wrote:
+> So this is not going anywhere. But hey, I'm always open to nice
+> surprises...
 
-Given that `type` and `si` aren't used in otherwhere, the local variables can
-be dropped.
+Oh, gah, and I just realized that this is doing "-march" and not
+"-mtune".  So this really can build binaries that won't even run on
+older CPUs.
 
-I haven't had chance to see how to fix the 0-day build errors properly.  If you
-have chance to send the next versions, please drop the local variables.
+That's just mean.
+
+So there needs to be a lot more justification before we go down this road.
 
