@@ -1,192 +1,155 @@
-Return-Path: <linux-kernel+bounces-329671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7A1979481
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 04:44:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9949979483
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 04:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C34D51C21731
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 02:44:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7FB284DF8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 02:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7EF10A0C;
-	Sun, 15 Sep 2024 02:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="RuuzTrnD"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A988A101EE;
+	Sun, 15 Sep 2024 02:58:27 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CD62CA6
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 02:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C469B184E
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 02:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726368260; cv=none; b=TS9+mMvQl8ozvN9knb/8g9RhSRL7fdRj4gHQ+hBTaoCTrrFQh418oXsjkTUVsHLX/YvdehlQ6c5AVMvdX5Od2NGCx/DMIoVMLZprq62mxWASGwwzHYgeZiZzfm+ieS4c6OL22LdPX0lVVJr+JmtzkrblEPRL3T9SmhP7hNnm/Os=
+	t=1726369107; cv=none; b=WWzH2R630v61z6vmj0/VzOaKybtzQ1nHJStuXql5d6X287+pX9OMRAwdHm62M03XbiAiO3wAVvfCFd/GI1SVro0ypjMS1LLfHZy/Oh+aMer0vkMlL8Q3R/1jzxe7q2azHXa4TvXrM94crJ8FxZBMLZXUYn5tAYo5Sh9IVD+kT8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726368260; c=relaxed/simple;
-	bh=RHt/CuEImmNnG/8VOU+K/H1jEiWMV+ZSHNrD1hvj2cM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bF8gX15iL9hSKpPvt5uM8pXwTYWEmSzG+R3NSoH6xRIv64pT/pIJULBhOdBWolu0I/0sOtCSxOabxK23aYegvMMX0DdHLMba3Z56hK2qJQmQfwsZV46KSQFfPU6yYsruS1f8kED9Eyk7fY+z/iCJ+qesFZbH3xNNzo2P7a1c8F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=RuuzTrnD; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e1da3677ca7so2664429276.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 19:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1726368257; x=1726973057; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nq2qwoQ8fGvyakSE32KyqUjWPDGD9IAug2eijzHwHho=;
-        b=RuuzTrnDv57rErXTLd25zDpe4fCV1bQMJiux+7rjrbeO9G8VOjOTGuoaDGEZ+x06ub
-         m3peAX7XBU84EKfBnJQ9A7cyQg59sZ6viy0ggrbVw8GCUTy/iDNb2/q1WZhAdTiBGTQ4
-         n8MMhtA/fy2zYQzRiRAZvtAfcV4LE7W+YM1w5NF7+KOHWzFZZ27RiLVi5erip3uoD0Ks
-         GAY33hhUcYPUqfWlV9YSGPvyn9i+uA3ljZVNuqOJx1M6PhNEFoVIbeMa8LSb1OwVdiTk
-         gNgU8bAxYzGEe0AHPz+cQ4Y16vgfXfp+sjZTGDd6++/Ys9WdKWxoj7GFlkqu0uWQRLj+
-         KCQA==
+	s=arc-20240116; t=1726369107; c=relaxed/simple;
+	bh=z+UqE0U/RSUElanrubdF3dIn6xXTrATxDHndfWc1KTA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MD1w0b6vfWNgBTsfUNtqVjPYuXoJ9rRbwJK1/B+ApyQxk4erjdwDGoaPS/5g0lePLJP5O1gCcRQAp3DgWY3zQXuHtcvHCSUqkT+NMInBMPrWKhwH+EN/VNZShWHqmFMZAd3T9TvZnu1RoFtG/Ngq/FBXDiMVJDfrhfKpz3k9IDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cfa70028fso766639039f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 19:58:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726368257; x=1726973057;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nq2qwoQ8fGvyakSE32KyqUjWPDGD9IAug2eijzHwHho=;
-        b=BckBNWV2QrRNVFNw6VHvNsYvuGZfdXy+fE/eCZuR4qyIuxWo7PE+wesicvZ1i72g7/
-         IQz7NlgUyPmBZWXnIk9xry88/lY7pVgBeNZr6DwkTgRs4QmjT5xO/bv42ZU8KIRHCAuT
-         3RirYamGy0CUF57GR4lBgOzl0HJMfsdBtkg2aO89XQo3mBZ3c+ptUEw+1gmpNgRk+njA
-         rOX0hMqNnU9Q49ed27rr6DCj8Va9PHztr2beRyeMcjNnp8brPQIwhX6Tnjj2zuGJPm/1
-         xqWdr+YifF+qkbiuuWAKqZWaPNRUfkj5ba+T9eRVPMBx4AlvXT8rzg52+takwR2OPG89
-         bxnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwhtFKCOqX4J0KPvgn9bI9WMwj9Iv8Su8jdaQmXnHxIvfYC0g80m8Zwi+vzJLwauwust9t9A6VeYjzFOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYQY481oaIhY4R78WrlYnCZgX1DJny15R6VRixV5AVu1nEjtah
-	3wTOV4lfE4n1CNbCSC5tmLa4coteQJiBb1sdCVyKDiON9xUo6vxOZAELmkMtVPo=
-X-Google-Smtp-Source: AGHT+IEClZ21Xn2I0tdDO6eQz5l4CSj9mqsoGgEda3xSmNTjGf1KEuzvGBfrhopXDCp2Yb4bN/rIaQ==
-X-Received: by 2002:a05:6902:1881:b0:e0b:e47d:ccc9 with SMTP id 3f1490d57ef6-e1d9db98c66mr11206546276.8.1726368256818;
-        Sat, 14 Sep 2024 19:44:16 -0700 (PDT)
-Received: from [127.0.1.1] ([216.139.163.245])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6dbe2e0d924sm4129097b3.41.2024.09.14.19.44.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2024 19:44:16 -0700 (PDT)
-From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Sat, 14 Sep 2024 19:40:56 -0700
-Subject: [PATCH v2 8/8] riscv: dtb: thead: Add BeagleV Ahead LEDs
+        d=1e100.net; s=20230601; t=1726369105; x=1726973905;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hjLUsKGeoVoPKJ3al0/Nz3RmDdv0R6NiXx4KuJWRwHc=;
+        b=o+RHmYvPKYsqRiGqeMVfAkzPQB99cb/4cxpGvmqJenm8xckS+V3nzTn1B26RQ8fpYc
+         7rjVhYNitP7h7hSgcZ7VNa5Hv/khhLWACBAoLXo8+gZIkQJmHS1eensvmVJLUpVAnSld
+         b+kjsocqV10/oQaYRsLTomqKxLMXPYvjsbRPtLU4/as94IwDmDQohA6WaPmjvIPDdq3R
+         uthPwa8/ORaFbEdOZ4nEtwPRiCbpzTMizjgcohRjnOijKawKYT2staN2OmJzIO38sIeW
+         psqMgEIe5k0kZ8UaPYid06xJqTewAMZ8ucg26/bD0vvrRg/Ysl6AwsB8zTY3Cof5LPi/
+         XTuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzfW6dQoASB2s+WT3uXwC+fMVnRG8kVjy2SIB5fBLNs0ywSEais2gP+67Ag5ozCY0+7B1J0LziLxYCtvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkn88ALQbI3a3Y8EMwrwVJXb6WpiXOfEVwEsocMRQLNe1RSgJ5
+	9t5mJWq3+tmxQyTl39oR1UFtrTLmpvjIDWvh7Pn6zyx5OQRvKi1SahCbo7KZf4Ax8EhI2UpxmG8
+	X0Xi+HBQi0RWF78M9O7qpgRhNcJU2+LXf7Xxd+RBrN29fhU4wUDkZOdI=
+X-Google-Smtp-Source: AGHT+IESevztk4HmfitvDcTuYMhISYTTN0df7RIpThqtZPTssyZEyA3esCJB2Wm5A9txuzZtra60G1M7IJe02e6OwMyuB5UPqmPD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240914-th1520-pinctrl-v2-8-3ba67dde882c@tenstorrent.com>
-References: <20240914-th1520-pinctrl-v2-0-3ba67dde882c@tenstorrent.com>
-In-Reply-To: <20240914-th1520-pinctrl-v2-0-3ba67dde882c@tenstorrent.com>
-To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Drew Fustini <dfustini@tenstorrent.com>
-X-Mailer: b4 0.14.1
+X-Received: by 2002:a05:6e02:505:b0:3a0:9c04:8047 with SMTP id
+ e9e14a558f8ab-3a09c048195mr14619655ab.6.1726369104872; Sat, 14 Sep 2024
+ 19:58:24 -0700 (PDT)
+Date: Sat, 14 Sep 2024 19:58:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003f5a0c06221fa127@google.com>
+Subject: [syzbot] [acpi?] [nvdimm?] WARNING in to_nfit_bus_uuid
+From: syzbot <syzbot+c80d8dc0d9fa81a3cd8c@syzkaller.appspotmail.com>
+To: dan.j.williams@intel.com, dave.jiang@intel.com, ira.weiny@intel.com, 
+	lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, rafael@kernel.org, syzkaller-bugs@googlegroups.com, 
+	vishal.l.verma@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Hello,
 
-Add nodes for the 5 user controllable LEDs on the BeagleV Ahead board.
+syzbot found the following issue on:
 
-Tested-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+HEAD commit:    8d8d276ba2fb Merge tag 'trace-v6.11-rc6' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17987f29980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
+dashboard link: https://syzkaller.appspot.com/bug?extid=c80d8dc0d9fa81a3cd8c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10be6797980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13386100580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-8d8d276b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d23708af23a4/vmlinux-8d8d276b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1aed2837c105/bzImage-8d8d276b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c80d8dc0d9fa81a3cd8c@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+only secondary bus families can be translated
+WARNING: CPU: 0 PID: 15821 at drivers/acpi/nfit/core.c:80 to_nfit_bus_uuid+0x6f/0x90 drivers/acpi/nfit/core.c:79
+Modules linked in:
+CPU: 0 UID: 0 PID: 15821 Comm: syz-executor579 Not tainted 6.11.0-rc7-syzkaller-00020-g8d8d276ba2fb #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:to_nfit_bus_uuid+0x6f/0x90 drivers/acpi/nfit/core.c:79
+Code: 01 75 0d e8 23 74 76 fc 31 c0 5b c3 cc cc cc cc e8 16 74 76 fc c6 05 4d 34 e5 0a 01 90 48 c7 c7 40 92 6a 8c e8 32 98 38 fc 90 <0f> 0b 90 90 eb d8 e8 f6 73 76 fc 48 c7 c7 40 9d 0e 8f 48 89 de e8
+RSP: 0018:ffffc9000b6cfa90 EFLAGS: 00010246
+RAX: 48f74db0fdd0b300 RBX: 0000000000000000 RCX: ffff88801e0e8000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc9000b6cfc90 R08: ffffffff8155b372 R09: 1ffff11003fc519a
+R10: dffffc0000000000 R11: ffffed1003fc519b R12: ffff88801df22000
+R13: 000000000000000a R14: ffffc9000b6cfc20 R15: 1ffff920016d9f6c
+FS:  00007fb39f5416c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb39f546d30 CR3: 00000000377e2000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ acpi_nfit_ctl+0x8a9/0x24a0 drivers/acpi/nfit/core.c:489
+ __nd_ioctl drivers/nvdimm/bus.c:1186 [inline]
+ nd_ioctl+0x184d/0x1fe0 drivers/nvdimm/bus.c:1264
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb39f590b29
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb39f541228 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb39f590b29
+RDX: 0000000020000180 RSI: 00000000c008640a RDI: 0000000000000003
+RBP: 00007fb39f6143c8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb39f6143c0
+R13: 63646e2f7665642f R14: 00007ffd8b32c140 R15: 00007ffd8b32c228
+ </TASK>
+
+
 ---
- arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-index c5356f674f85..823aa5b44efb 100644
---- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-@@ -7,6 +7,8 @@
- /dts-v1/;
- 
- #include "th1520.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
- 
- / {
- 	model = "BeagleV Ahead";
-@@ -34,7 +36,42 @@ chosen {
- 	memory@0 {
- 		device_type = "memory";
- 		reg = <0x0  0x00000000  0x1 0x00000000>;
-+	};
-+
-+	leds {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&led_pins>;
-+		compatible = "gpio-leds";
-+
-+		led-1 {
-+			gpios = <&gpio4 8 GPIO_ACTIVE_LOW>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			label = "led1";
-+		};
-+
-+		led-2 {
-+			gpios = <&gpio4 9 GPIO_ACTIVE_LOW>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			label = "led2";
-+		};
-+
-+		led-3 {
-+			gpios = <&gpio4 10 GPIO_ACTIVE_LOW>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			label = "led3";
-+		};
-+
-+		led-4 {
-+			gpios = <&gpio4 11 GPIO_ACTIVE_LOW>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			label = "led4";
-+		};
- 
-+		led-5 {
-+			gpios = <&gpio4 12 GPIO_ACTIVE_LOW>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			label = "led5";
-+		};
- 	};
- };
- 
-@@ -82,6 +119,24 @@ &sdio0 {
- 	status = "okay";
- };
- 
-+&padctrl_aosys {
-+	led_pins: led-0 {
-+		led-pins {
-+			pins = "AUDIO_PA8",  /* GPIO4_8 */
-+			       "AUDIO_PA9",  /* GPIO4_9 */
-+			       "AUDIO_PA10", /* GPIO4_10 */
-+			       "AUDIO_PA11", /* GPIO4_11 */
-+			       "AUDIO_PA12"; /* GPIO4_12 */
-+			function = "gpio";
-+			bias-disable;
-+			drive-strength = <3>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+};
-+
- &padctrl0_apsys {
- 	uart0_pins: uart0-0 {
- 		tx-pins {
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.34.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
