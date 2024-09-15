@@ -1,340 +1,342 @@
-Return-Path: <linux-kernel+bounces-329950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B1A89797DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 18:56:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99CBA9797E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4B81C20C32
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8491F21672
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 17:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA071C9DCE;
-	Sun, 15 Sep 2024 16:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303B41C9DEF;
+	Sun, 15 Sep 2024 17:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="OFt/KO26"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qxAD4kir"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0BB17BA7
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 16:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C66913DDA7;
+	Sun, 15 Sep 2024 17:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726419374; cv=none; b=Fdd5Hc//QTvaNQsnpmNA+0XnnAFpJPuXhMYVRxudonzygl1++72BOysHKksgN6gAtKWNlqFNF06pDS0jnT9ZO3lved1PYkT3QvwGiApZJN7hTRbdIoM8fEO5vy6Y560aqsSZtfKjpwn1MrHjJm1rtykHeh08Lq0eHPAPjHjmxXQ=
+	t=1726419770; cv=none; b=FZMY/4ZT+qUp8GrDTV05HPbvYNv6tdymdB8MniMRc/PUtFZgU2n80ET+8DAf7euIlC0JvjPjzeodMcoqD5FEOcxHZfsv948RcIGAKS41VLgyX+bKhBYXGWI0jQcslkgAAfd2MtB6xmLgCGMwD9U0q9mqDzsvSPWGudTnR2GSX9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726419374; c=relaxed/simple;
-	bh=Hc0OgOxoYGGFjBVPDg84kNnAPJI/CfIuupDMDx0KGq4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=E4lETh5BTg/D1ZulrEeUeHF9o7txR3/6Ko9ohgR6sCpqPoHB6/D3Cpk6hzoZhQpeg/bxtg0TtJ/ZFcyAC7oappar0FPxNVl8Quj5KEtzp/cxVErRKHd/OwsDeXosBIfiQ4HdNZjRbTg9rJZh0qfOFu3DZ5edJLVqJx8v7/NgXL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=OFt/KO26; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=zYjFOxhIc6gg0NkYVM/96e0omPWTOB1ufw2hZ+jyrUc=;
-	t=1726419373; x=1727628973; b=OFt/KO26FCUCux9NFnL5oNAw2IMJ5aMys9af/H8Dq8uVwns
-	q482vfzj94/EBVxD1I3NRF156wyDClncctiLUHZKTINiCkzq8CxoIXvxNnrJ9poX26YYPWPhk3tAE
-	w+XcCEBXT5E9Rg9gvA3E5bGiUTgK61PC9hN1kyP4s+i5wWQZ3ihFCi1m27B1hGIc+lyTPWCfMILvk
-	xF5cRQxzfIVARQdUu6M8T6qaAr3CloGN63mhu9mmFxMsU05yx8Bsqxdqtf3zIM2YHwMg36VNSZbWv
-	k6S4HgOYfOv7CuiUrMsWfE6xOZWb2GTG53a23UM1Z76U8Ssoj2LHspPUvlGjyqdg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <benjamin@sipsolutions.net>)
-	id 1spsXX-00000007VaX-0alN;
-	Sun, 15 Sep 2024 18:55:59 +0200
-Message-ID: <56a679e9ea6a6e6c7d9316608f25fd691001e8dc.camel@sipsolutions.net>
-Subject: Re: [PATCH 2/3] um: Remove highmem leftovers
-From: Benjamin Berg <benjamin@sipsolutions.net>
-To: Tiwei Bie <tiwei.btw@antgroup.com>, richard@nod.at, 
-	anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Sun, 15 Sep 2024 18:55:49 +0200
-In-Reply-To: <20240913142137.248245-3-tiwei.btw@antgroup.com>
-References: <20240913142137.248245-1-tiwei.btw@antgroup.com>
-	 <20240913142137.248245-3-tiwei.btw@antgroup.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1726419770; c=relaxed/simple;
+	bh=WZPk9opx1LCJC7OYBNPeFY2ZfjHr6lwUOVaXxUc2F7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cz2/CLeupFd+LEs787YwN2fDBG4De5pwFbn8YmnrEWnRzzN0Y48iTyA74gPFsxfFaemlIxTgxGvQcQJuktg2Du5lSU+LX6AEsABpBEoUyyJFX04xc9KBwjJrBJxQuJGHV7AUCboEgBB6HDy4ssmyPaByq/0hewFp6tyO4FpY77k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qxAD4kir; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46ACC4CEC3;
+	Sun, 15 Sep 2024 17:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726419769;
+	bh=WZPk9opx1LCJC7OYBNPeFY2ZfjHr6lwUOVaXxUc2F7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qxAD4kirRf0SB3OWr5tAIElLJ+h/srBrqfqxiF9IbMY3xLtbqVBmUYKYsKcyHEaaS
+	 CqfvJ5yp7GUpXw9mfNND4M+1n6eNkIYKIz529VjyAcPMvp+1K9iYqdJqxA46DoVDFU
+	 K5pY9upd5kang/dd1cLjrr6+A9X+km9WwgyD/K57dVBIMItaTGrYo3jVYYlsP3pG/C
+	 bOV9KShXS4jIuHfdRMm+xBLBzrGydy5QK4cjLaZYowqA+vdBb+Ie+dzZI/Ccjl9ko6
+	 DtgKYgWgu/bjQbzFhoB6tni1l+3AEFYoMLNtxMdFJubdUzaz/b3QyDlu+Vp/9KQyVq
+	 UbQZ6TcTWE6gQ==
+Date: Sun, 15 Sep 2024 19:02:40 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Gary Guo <gary@garyguo.net>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, akpm@linux-foundation.org,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 01/26] rust: alloc: add `Allocator` trait
+Message-ID: <ZucTMDCcoVH4oGs1@pollux>
+References: <20240911225449.152928-1-dakr@kernel.org>
+ <20240911225449.152928-2-dakr@kernel.org>
+ <20240915162813.149e21f2.gary@garyguo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240915162813.149e21f2.gary@garyguo.net>
 
-Hi,
+Hi Gary,
 
-does that mean we can also drop the 3-level page table support on i386?
-It seems like the two level page table is entirely sufficient on a
-system without high memory (i.e. only 32bit physical addresses).
+thanks for taking a look.
 
-When I took a look at it for the 4-level page table support on 64 bit I
-got a bit confused. But I had not realized that highmem support had
-been removed.
+On Sun, Sep 15, 2024 at 04:28:13PM +0100, Gary Guo wrote:
+> On Thu, 12 Sep 2024 00:52:37 +0200
+> Danilo Krummrich <dakr@kernel.org> wrote:
+> 
+> > Add a kernel specific `Allocator` trait, that in contrast to the one in
+> > Rust's core library doesn't require unstable features and supports GFP
+> > flags.
+> > 
+> > Subsequent patches add the following trait implementors: `Kmalloc`,
+> > `Vmalloc` and `KVmalloc`.
+> 
+> Hi Danilo,
+> 
+> I think the current design is unsound regarding ZST.
+> 
+> Let's say that `Allocator::alloc` gets called with a ZST type with
+> alignment of 4096. Your implementation will call into `krelloc` with
+> new_size of 0, which gets turned into of `kfree` of null pointer, which
+> is no-op. Everything is fine so far. Krealloc returns `ZERO_SIZE_PTR`,
+> and then implementation of `<Kmalloc as Allocator>::realloc` throws it
+> away and returns `NonNull::dangling`.
+> 
+> Since `NonNull::dangling` is called with T=u8, this means the pointer
+> returns is 1, and it's invalid for ZSTs with larger alignments.
 
-Benjamin
+Right, this interface is not meant to handle "allocations" for ZSTs.
 
-On Fri, 2024-09-13 at 22:21 +0800, Tiwei Bie wrote:
-> Highmem was only supported on UML/i386. And the support has been
-> removed by commit a98a6d864d3b ("um: Remove broken highmem support").
-> Remove the leftovers and stop UML from trying to setup highmem when
-> the sum of physmem_size and iomem_size exceeds max_physmem.
->=20
-> Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
-> ---
-> =C2=A0arch/um/drivers/virtio_uml.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 9 +--------
-> =C2=A0arch/um/include/shared/as-layout.h |=C2=A0 1 -
-> =C2=A0arch/um/include/shared/mem_user.h=C2=A0 |=C2=A0 5 ++---
-> =C2=A0arch/um/kernel/mem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ---
-> =C2=A0arch/um/kernel/physmem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 30 +++++++++++-----------------
-> --
-> =C2=A0arch/um/kernel/um_arch.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 17 +++++++----------
-> =C2=A06 files changed, 21 insertions(+), 44 deletions(-)
->=20
-> diff --git a/arch/um/drivers/virtio_uml.c
-> b/arch/um/drivers/virtio_uml.c
-> index 2b6e701776b6..e7f5556e3c96 100644
-> --- a/arch/um/drivers/virtio_uml.c
-> +++ b/arch/um/drivers/virtio_uml.c
-> @@ -72,7 +72,7 @@ struct virtio_uml_vq_info {
-> =C2=A0	bool suspended;
-> =C2=A0};
-> =C2=A0
-> -extern unsigned long long physmem_size, highmem;
-> +extern unsigned long long physmem_size;
-> =C2=A0
-> =C2=A0#define vu_err(vu_dev, ...)	dev_err(&(vu_dev)->pdev->dev,
-> ##__VA_ARGS__)
-> =C2=A0
-> @@ -673,13 +673,6 @@ static int vhost_user_set_mem_table(struct
-> virtio_uml_device *vu_dev)
-> =C2=A0
-> =C2=A0	if (rc < 0)
-> =C2=A0		return rc;
-> -	if (highmem) {
-> -		msg.payload.mem_regions.num++;
-> -		rc =3D vhost_user_init_mem_region(__pa(end_iomem),
-> highmem,
-> -				&fds[1],
-> &msg.payload.mem_regions.regions[1]);
-> -		if (rc < 0)
-> -			return rc;
-> -	}
-> =C2=A0
-> =C2=A0	return vhost_user_send(vu_dev, false, &msg, fds,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 msg.payload.mem_regions.num=
-);
-> diff --git a/arch/um/include/shared/as-layout.h
-> b/arch/um/include/shared/as-layout.h
-> index 06292fca5a4d..61965a06c18a 100644
-> --- a/arch/um/include/shared/as-layout.h
-> +++ b/arch/um/include/shared/as-layout.h
-> @@ -41,7 +41,6 @@ extern unsigned long uml_physmem;
-> =C2=A0extern unsigned long uml_reserved;
-> =C2=A0extern unsigned long end_vm;
-> =C2=A0extern unsigned long start_vm;
-> -extern unsigned long long highmem;
-> =C2=A0
-> =C2=A0extern unsigned long brk_start;
-> =C2=A0
-> diff --git a/arch/um/include/shared/mem_user.h
-> b/arch/um/include/shared/mem_user.h
-> index 11a723a58545..adfa08062f88 100644
-> --- a/arch/um/include/shared/mem_user.h
-> +++ b/arch/um/include/shared/mem_user.h
-> @@ -47,10 +47,9 @@ extern int iomem_size;
-> =C2=A0#define ROUND_4M(n) ((((unsigned long) (n)) + (1 << 22)) & ~((1 <<
-> 22) - 1))
-> =C2=A0
-> =C2=A0extern unsigned long find_iomem(char *driver, unsigned long
-> *len_out);
-> -extern void mem_total_pages(unsigned long physmem, unsigned long
-> iomem,
-> -		=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long highmem);
-> +extern void mem_total_pages(unsigned long physmem, unsigned long
-> iomem);
-> =C2=A0extern void setup_physmem(unsigned long start, unsigned long usable=
-,
-> -			=C2=A0 unsigned long len, unsigned long long
-> highmem);
-> +			=C2=A0 unsigned long len);
-> =C2=A0extern void map_memory(unsigned long virt, unsigned long phys,
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long len, int r, in=
-t w, int x);
-> =C2=A0
-> diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
-> index a5b4fe2ad931..5026668dc054 100644
-> --- a/arch/um/kernel/mem.c
-> +++ b/arch/um/kernel/mem.c
-> @@ -6,7 +6,6 @@
-> =C2=A0#include <linux/stddef.h>
-> =C2=A0#include <linux/module.h>
-> =C2=A0#include <linux/memblock.h>
-> -#include <linux/highmem.h>
-> =C2=A0#include <linux/mm.h>
-> =C2=A0#include <linux/swap.h>
-> =C2=A0#include <linux/slab.h>
-> @@ -51,8 +50,6 @@ EXPORT_SYMBOL(empty_zero_page);
-> =C2=A0pgd_t swapper_pg_dir[PTRS_PER_PGD];
-> =C2=A0
-> =C2=A0/* Initialized at boot time, and readonly after that */
-> -unsigned long long highmem;
-> -EXPORT_SYMBOL(highmem);
-> =C2=A0int kmalloc_ok =3D 0;
-> =C2=A0
-> =C2=A0/* Used during early boot */
-> diff --git a/arch/um/kernel/physmem.c b/arch/um/kernel/physmem.c
-> index fb2adfb49945..cc5238c1bf1e 100644
-> --- a/arch/um/kernel/physmem.c
-> +++ b/arch/um/kernel/physmem.c
-> @@ -24,17 +24,14 @@ EXPORT_SYMBOL(high_physmem);
-> =C2=A0
-> =C2=A0extern unsigned long long physmem_size;
-> =C2=A0
-> -void __init mem_total_pages(unsigned long physmem, unsigned long
-> iomem,
-> -		=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long highmem)
-> +void __init mem_total_pages(unsigned long physmem, unsigned long
-> iomem)
-> =C2=A0{
-> -	unsigned long phys_pages, highmem_pages;
-> -	unsigned long iomem_pages, total_pages;
-> +	unsigned long phys_pages, iomem_pages, total_pages;
-> =C2=A0
-> -	phys_pages=C2=A0=C2=A0=C2=A0 =3D physmem >> PAGE_SHIFT;
-> -	iomem_pages=C2=A0=C2=A0 =3D iomem=C2=A0=C2=A0 >> PAGE_SHIFT;
-> -	highmem_pages =3D highmem >> PAGE_SHIFT;
-> +	phys_pages=C2=A0 =3D physmem >> PAGE_SHIFT;
-> +	iomem_pages =3D iomem=C2=A0=C2=A0 >> PAGE_SHIFT;
-> =C2=A0
-> -	total_pages=C2=A0=C2=A0 =3D phys_pages + iomem_pages + highmem_pages;
-> +	total_pages =3D phys_pages + iomem_pages;
-> =C2=A0
-> =C2=A0	max_mapnr =3D total_pages;
-> =C2=A0}
-> @@ -64,13 +61,12 @@ void map_memory(unsigned long virt, unsigned long
-> phys, unsigned long len,
-> =C2=A0 * @reserve_end:	end address of the physical kernel memory.
-> =C2=A0 * @len:	Length of total physical memory that should be
-> mapped/made
-> =C2=A0 *		available, in bytes.
-> - * @highmem:	Number of highmem bytes that should be mapped/made
-> available.
-> =C2=A0 *
-> - * Creates an unlinked temporary file of size (len + highmem) and
-> memory maps
-> + * Creates an unlinked temporary file of size (len) and memory maps
-> =C2=A0 * it on the last executable image address (uml_reserved).
-> =C2=A0 *
-> =C2=A0 * The offset is needed as the length of the total physical memory
-> - * (len + highmem) includes the size of the memory used be the
-> executable image,
-> + * (len) includes the size of the memory used be the executable
-> image,
-> =C2=A0 * but the mapped-to address is the last address of the executable
-> image
-> =C2=A0 * (uml_reserved =3D=3D end address of executable image).
-> =C2=A0 *
-> @@ -78,19 +74,19 @@ void map_memory(unsigned long virt, unsigned long
-> phys, unsigned long len,
-> =C2=A0 * of all user space processes/kernel tasks.
-> =C2=A0 */
-> =C2=A0void __init setup_physmem(unsigned long start, unsigned long
-> reserve_end,
-> -			=C2=A0 unsigned long len, unsigned long long
-> highmem)
-> +			=C2=A0 unsigned long len)
-> =C2=A0{
-> =C2=A0	unsigned long reserve =3D reserve_end - start;
-> =C2=A0	long map_size =3D len - reserve;
-> =C2=A0	int err;
-> =C2=A0
-> -	if(map_size <=3D 0) {
-> +	if (map_size <=3D 0) {
-> =C2=A0		os_warn("Too few physical memory! Needed=3D%lu,
-> given=3D%lu\n",
-> =C2=A0			reserve, len);
-> =C2=A0		exit(1);
-> =C2=A0	}
-> =C2=A0
-> -	physmem_fd =3D create_mem_file(len + highmem);
-> +	physmem_fd =3D create_mem_file(len);
-> =C2=A0
-> =C2=A0	err =3D os_map_memory((void *) reserve_end, physmem_fd,
-> reserve,
-> =C2=A0			=C2=A0=C2=A0=C2=A0 map_size, 1, 1, 1);
-> @@ -109,7 +105,7 @@ void __init setup_physmem(unsigned long start,
-> unsigned long reserve_end,
-> =C2=A0	os_write_file(physmem_fd, __syscall_stub_start, PAGE_SIZE);
-> =C2=A0	os_fsync_file(physmem_fd);
-> =C2=A0
-> -	memblock_add(__pa(start), len + highmem);
-> +	memblock_add(__pa(start), len);
-> =C2=A0	memblock_reserve(__pa(start), reserve);
-> =C2=A0
-> =C2=A0	min_low_pfn =3D PFN_UP(__pa(reserve_end));
-> @@ -137,10 +133,6 @@ int phys_mapping(unsigned long phys, unsigned
-> long long *offset_out)
-> =C2=A0			region =3D region->next;
-> =C2=A0		}
-> =C2=A0	}
-> -	else if (phys < __pa(end_iomem) + highmem) {
-> -		fd =3D physmem_fd;
-> -		*offset_out =3D phys - iomem_size;
-> -	}
-> =C2=A0
-> =C2=A0	return fd;
-> =C2=A0}
-> diff --git a/arch/um/kernel/um_arch.c b/arch/um/kernel/um_arch.c
-> index 8e594cda6d77..8f86aa468b50 100644
-> --- a/arch/um/kernel/um_arch.c
-> +++ b/arch/um/kernel/um_arch.c
-> @@ -366,18 +366,15 @@ int __init linux_main(int argc, char **argv)
-> =C2=A0
-> =C2=A0	setup_machinename(init_utsname()->machine);
-> =C2=A0
-> -	highmem =3D 0;
-> +	physmem_size =3D (physmem_size + PAGE_SIZE - 1) & PAGE_MASK;
-> =C2=A0	iomem_size =3D (iomem_size + PAGE_SIZE - 1) & PAGE_MASK;
-> +
-> =C2=A0	max_physmem =3D TASK_SIZE - uml_physmem - iomem_size -
-> MIN_VMALLOC;
-> =C2=A0
-> -	/*
-> -	 * Zones have to begin on a 1 << MAX_PAGE_ORDER page
-> boundary,
-> -	 * so this makes sure that's true for highmem
-> -	 */
-> -	max_physmem &=3D ~((1 << (PAGE_SHIFT + MAX_PAGE_ORDER)) - 1);
-> =C2=A0	if (physmem_size + iomem_size > max_physmem) {
-> -		highmem =3D physmem_size + iomem_size - max_physmem;
-> -		physmem_size -=3D highmem;
-> +		physmem_size =3D max_physmem - iomem_size;
-> +		os_info("Physical memory size shrunk to %llu
-> bytes\n",
-> +			physmem_size);
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	high_physmem =3D uml_physmem + physmem_size;
-> @@ -413,8 +410,8 @@ void __init setup_arch(char **cmdline_p)
-> =C2=A0	u8 rng_seed[32];
-> =C2=A0
-> =C2=A0	stack_protections((unsigned long) &init_thread_info);
-> -	setup_physmem(uml_physmem, uml_reserved, physmem_size,
-> highmem);
-> -	mem_total_pages(physmem_size, iomem_size, highmem);
-> +	setup_physmem(uml_physmem, uml_reserved, physmem_size);
-> +	mem_total_pages(physmem_size, iomem_size);
-> =C2=A0	uml_dtb_init();
-> =C2=A0	read_initrd();
-> =C2=A0
+But you're right, since `alloc` is a safe function, we should return a properly
+aligned pointer.
 
+> 
+> And this is unfixable even if the realloc implementation is changed.
+> Let's say the realloc now returns a dangling pointer that is suitable
+> aligned. Now let's see what happens when the `Allocator::free` is
+> called. `kfree` would be trying to free a Rust-side ZST pointer, but it
+> has no way to know that it's ZST!
+
+Right, that's why it's not valid to call `free` with dangling pointers.
+
+From the safety comment of `free`:
+
+"`ptr` must point to an existing and valid memory allocation created by this
+`Allocator` and must not be a dangling pointer."
+
+We still need the same in `realloc` though.
+
+> 
+> I can see 3 ways of fixing this:
+> 1. Reject ZSTs that have larger alignment than 16 and fix the realloc
+> implementation to return suitable aligned ZST pointer. I don't
+> particularly like the idea of allocating ZST can fail though.
+> 2. Say ZST must be handled by the caller, and make alloc function
+> unsafe. This means that we essentially revert to the `GlobalAlloc`
+> design of Rust, and all callers have to check for ZST.
+> 3. Accept the `old_layout` and use it to check whether the allocation
+> is ZST allocation.
+> 
+> My personal preference is 3.
+
+There is also 4.
+
+Let `alloc` and `realloc` return a properly aligned dangling pointer for
+`size == 0` and don't accept dangling pointers in `realloc` and `free`.
+
+And 5.
+
+Reject the combination of `None` and `size == 0` entirely, as earlier proposed
+by Benno.
+
+I'm fine with both, 4. and 5. with a slight preference for 4.
+
+I'd also go along with 1., as a mix of 4. and 5.
+
+I really don't like making `alloc` unsafe, and I really don't want to have
+`old_layout` in `free`. Please let's not discuss this again. :-)
+
+> 
+> Best,
+> Gary
+> 
+> > 
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  rust/kernel/alloc.rs | 112 +++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 112 insertions(+)
+> > 
+> > diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> > index 1966bd407017..6c21bd2edad9 100644
+> > --- a/rust/kernel/alloc.rs
+> > +++ b/rust/kernel/alloc.rs
+> > @@ -11,6 +11,7 @@
+> >  /// Indicates an allocation error.
+> >  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+> >  pub struct AllocError;
+> > +use core::{alloc::Layout, ptr::NonNull};
+> >  
+> >  /// Flags to be used when allocating memory.
+> >  ///
+> > @@ -86,3 +87,114 @@ pub mod flags {
+> >      /// small allocations.
+> >      pub const GFP_NOWAIT: Flags = Flags(bindings::GFP_NOWAIT);
+> >  }
+> > +
+> > +/// The kernel's [`Allocator`] trait.
+> > +///
+> > +/// An implementation of [`Allocator`] can allocate, re-allocate and free memory buffers described
+> > +/// via [`Layout`].
+> > +///
+> > +/// [`Allocator`] is designed to be implemented as a ZST; [`Allocator`] functions do not operate on
+> > +/// an object instance.
+> 
+> I think whether the Allocator is ZST or not doesn't matter anymore
+> since we say that functions do not operate on an instance.
+
+IMO, It's still valid to say that it's designed to be implemented as ZST,
+especially since it's never instantiated.
+
+> 
+> > +///
+> > +/// In order to be able to support `#[derive(SmartPointer)]` later on, we need to avoid a design
+> > +/// that requires an `Allocator` to be instantiated, hence its functions must not contain any kind
+> > +/// of `self` parameter.
+> 
+> 
+> nit: this is the reason for `Allocator` to not have instances, so
+> should be merged together with the preceding sentence into one
+> paragraph.
+> 
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// - A memory allocation returned from an allocator must remain valid until it is explicitly freed.
+> > +///
+> > +/// - Any pointer to a valid memory allocation must be valid to be passed to any other [`Allocator`]
+> > +///   function of the same type.
+> > +///
+> > +/// - Implementers must ensure that all trait functions abide by the guarantees documented in the
+> > +///   `# Guarantees` sections.
+> > +//
+> > +// Note that `Allocator::{realloc,free}` don't have an `old_layout` argument (like stdlib's
+> > +// corresponding `Allocator` trait functions have), since the implemented (kernel) allocators
+> > +// neither need nor honor such an argument. Thus, it would be misleading to make this API require it
+> > +// anyways.
+> 
+> I would drop the "honor" part, and drop the sentence saying it's
+> misleading to require it. The documentation should say why we don't
+> have the `old_layout` argument (because we don't need it for now), and
+> shouldn't be trying to dissuade it from being added if it ends up being
+> useful in the future.
+
+But the honor part is the crucial one for me. Just because it's not needed it
+could still be optional (and honored). But that's not the case. And because of
+that it would indeed be misleading to have the argument.
+
+That's really just my reason, I'm not trying to dissuade anyone from adding it
+if it's actually needed.
+
+If there's a good reason to add it, and it's honored by (other) implementations,
+it wouldn't be generally misleading anymore.
+
+> 
+> > +//
+> > +// More generally, this trait isn't intended for implementers to encode a lot of semantics, but
+> > +// rather provide a thin generalization layer for the kernel's allocators.
+> > +//
+> > +// Depending on future requirements, the requirements for this trait may change as well and
+> > +// implementing allocators that need to encode more semantics may become desirable.
+> 
+> Not sure what's the purpose of these two paragraphs. They sound
+> contradictory to each other.
+
+I tried to articulate what it is currently intended for, but, depending on
+future requirements, this may change.
+
+I was asked by Benno to somehow add that we're open for changes...
+
+> 
+> > +pub unsafe trait Allocator {
+> > +    /// Allocate memory based on `layout` and `flags`.
+> > +    ///
+> > +    /// On success, returns a buffer represented as `NonNull<[u8]>` that satisfies the layout
+> > +    /// constraints (i.e. minimum size and alignment as specified by `layout`).
+> > +    ///
+> > +    /// This function is equivalent to `realloc` when called with `None`.
+> > +    ///
+> > +    /// # Guarantees
+> > +    ///
+> > +    /// When the return value is `Ok(ptr)`, then `ptr` is
+> > +    /// - valid for reads and writes for `layout.size()` bytes, until it is passed to
+> > +    ///   [`Allocator::free`] or [`Allocator::realloc`],
+> > +    /// - aligned to `layout.align()`,
+> > +    ///
+> > +    /// Additionally, `Flags` are honored as documented in
+> > +    /// <https://docs.kernel.org/core-api/mm-api.html#mm-api-gfp-flags>.
+> > +    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
+> > +        // SAFETY: Passing `None` to `realloc` is valid by it's safety requirements and asks for a
+> > +        // new memory allocation.
+> > +        unsafe { Self::realloc(None, layout, flags) }
+> > +    }
+> > +
+> > +    /// Re-allocate an existing memory allocation to satisfy the requested `layout`.
+> > +    ///
+> > +    /// If the requested size is zero, `realloc` behaves equivalent to `free`.
+> > +    ///
+> > +    /// If the requested size is larger than the size of the existing allocation, a successful call
+> > +    /// to `realloc` guarantees that the new or grown buffer has at least `Layout::size` bytes, but
+> > +    /// may also be larger.
+> > +    ///
+> > +    /// If the requested size is smaller than the size of the existing allocation, `realloc` may or
+> > +    /// may not shrink the buffer; this is implementation specific to the allocator.
+> > +    ///
+> > +    /// On allocation failure, the existing buffer, if any, remains valid.
+> > +    ///
+> > +    /// The buffer is represented as `NonNull<[u8]>`.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// If `ptr == Some(p)`, then `p` must point to an existing and valid memory allocation created
+> 
+> nit: maybe
+> 
+> 	If `ptr` is `Some(p)`?
+> 
+> because `ptr` carries the provenance not only addresses.
+
+I don't mind either versions, this one was proposed by Benno.
+
+> 
+> > +    /// by this allocator. The alignment encoded in `layout` must be smaller than or equal to the
+> > +    /// alignment requested in the previous `alloc` or `realloc` call of the same allocation.
+> > +    ///
+> > +    /// Additionally, `ptr` is allowed to be `None`; in this case a new memory allocation is
+> > +    /// created.
+> > +    ///
+> > +    /// # Guarantees
+> > +    ///
+> > +    /// This function has the same guarantees as [`Allocator::alloc`]. When `ptr == Some(p)`, then
+> > +    /// it additionally guarantees that:
+> > +    /// - the contents of the memory pointed to by `p` are preserved up to the lesser of the new
+> > +    ///   and old size,
+> > +    ///   and old size, i.e.
+> > +    ///   `ret_ptr[0..min(layout.size(), old_size)] == p[0..min(layout.size(), old_size)]`, where
+> > +    ///   `old_size` is the size of the allocation that `p` points at.
+> > +    /// - when the return value is `Err(AllocError)`, then `p` is still valid.
+> > +    unsafe fn realloc(
+> > +        ptr: Option<NonNull<u8>>,
+> > +        layout: Layout,
+> > +        flags: Flags,
+> > +    ) -> Result<NonNull<[u8]>, AllocError>;
+> > +
+> > +    /// Free an existing memory allocation.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// `ptr` must point to an existing and valid memory allocation created by this `Allocator` and
+> > +    /// must not be a dangling pointer.
+> > +    ///
+> > +    /// The memory allocation at `ptr` must never again be read from or written to.
+> > +    unsafe fn free(ptr: NonNull<u8>) {
+> > +        // SAFETY: The caller guarantees that `ptr` points at a valid allocation created by this
+> > +        // allocator. We are passing a `Layout` with the smallest possible alignment, so it is
+> > +        // smaller than or equal to the alignment previously used with this allocation.
+> > +        let _ = unsafe { Self::realloc(Some(ptr), Layout::new::<()>(), Flags(0)) };
+> > +    }
+> > +}
+> 
 
