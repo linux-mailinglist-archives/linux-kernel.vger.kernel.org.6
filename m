@@ -1,93 +1,126 @@
-Return-Path: <linux-kernel+bounces-329844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E3D9796A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B276B9796A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F5E1C20C5F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E27AA1C20F11
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E158D1C57A6;
-	Sun, 15 Sep 2024 12:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDEB1C579D;
+	Sun, 15 Sep 2024 12:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koV0K5od"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JjMqU2h4"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C73184E;
-	Sun, 15 Sep 2024 12:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FE9184E
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 12:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726404441; cv=none; b=Q/bBabOU3Q9h6mpPnBrsJ0OEH8g21fLDz8SawZuChCOWS0EqiGC+9gOgnR+K4Y4BekfH8TNQoB/Q5XHD8xIeT73aHEM/e3yl2IMUL/BNeM2ckixWnaIQGOhODQnCZqmbAe2tN88fnlDc6r6UWA6KFvoeK+DEeoaHCE+A/9iD6TA=
+	t=1726404541; cv=none; b=c++0UXxQTtPouVYG0JDboA7M/DM5D3sZI8DmBSTc5U2StUZgZN9g7B7MfyTdpUTLFtyLWZ4XzSLv4lqu7IUPE3ZjhLbQP3xvyrpk9Kxtw5pDn5T11JBqgLu/FI4FlvcT6zEWXQKTbann2G4QyAkRlp2wOonnoeO6mExgWmC7rZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726404441; c=relaxed/simple;
-	bh=1ywnZf3g9854z7KIjcCmWdr5jWxssc890jorZeCzGO4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=nDNbZOfAbLIVazlHKOFvoQM5S5Mx5E+VkPdL7xnZl7yDY4Z6az27F4ynZweLTAEyFZ2lDdS9GnEInA6bdbe3kXpQmnWi0iLAD0KIetphNCZlU7PXBFvFRWWSbocYyqOZ4Z/X9/mPgRE0pVHvmNLN/UyxyIB4Ob5lGb22uKxNo8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koV0K5od; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C73C4CEC3;
-	Sun, 15 Sep 2024 12:47:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726404440;
-	bh=1ywnZf3g9854z7KIjcCmWdr5jWxssc890jorZeCzGO4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=koV0K5odSTK2uIwaVE5THLKLkFCCDaUfMdCc+0gZN1vE6jrO98R+4v21tFh/LlA9T
-	 vUWmPoD6RR3MA6cNNwRUNsS4VqPMRh/iqIZlymBCpn+Xitzzqpk162oCtUcYQri9wC
-	 /U39yTiICNFr5DLzXYefGHgXkUXdJFx0+HcfTHjs3ilf4iH4hPVGvVufyHx5HcrCEm
-	 lsUPi4oJbdWsxh/C3FgiUTS9oJNrZ6g+KI0siIP5yKzPcHqueJOflxlfDt65Dn+TI6
-	 DTac0MXTlFuEY/80gKXxLtDomUQuTV0Xd+uH/HNS8nqznR5saMF3FAgL97Ms3o1sXy
-	 wGJxu/zx4Kl5w==
+	s=arc-20240116; t=1726404541; c=relaxed/simple;
+	bh=qVRP/dgmh6U4Hg5y3CGOE++A5+kvwiVLlE8hoiQFl+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FOQMsERzBFIT0/A7dfKuA3BLQ6gHgj9SPfBlQqFwXxYfJSX/UcdlHhA6sXi0E4nIxReVbZoI899rrU1g2D0ZHM7xk7UFxXSZjHxKq1B695sFUrFkB1wF+BPOPy6Ozpir6KfoxZi//PXluT9vnL2WyGpnjjxum2Ojq4DUUJCfE4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JjMqU2h4; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2697C40E0289;
+	Sun, 15 Sep 2024 12:48:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id t8wrKQS7D4WO; Sun, 15 Sep 2024 12:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1726404524; bh=twWhhJv2IWqN+i3BOP1ACMclSg7Wkbfm6L0PuPo6+X4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JjMqU2h4X2E0f0w2RHFQ1MY0Om2YxUNsfJJVrgzlUoTcfG09IzV9RYPAl9g22tsGd
+	 6gSKdsLs0oDurNFHm9A5GwMvxf4gGImkQNSXKKKid7TlAmSOxRmz+mWDtaR/i+1ib0
+	 eSDCeU3QMqriUIHGH7v9OX9TZ48em8PH5TcWo/y1mHcp3v9+0TFT9s8ComoMvuTC0L
+	 XXfCdNfmSnIMed28KWaGhlc/9840kCEd6lAiqOxCK4jXiQo6kCVSWQQzTShu+hoC43
+	 DbbXLXUjxPfod3hT15dF6R6Ww35i1Go9vJ2oJjCUXv5CUYaYAVzf9l/AbQay92kYRu
+	 /gZE0Jt8xDhu5t8hnpe1x+pvFxcxSYcvUWKNcN3rKCKeTqJrWzGXuO4w8/jC1THbeh
+	 +EG0D0lotRrVe37RlmacXU77H2bEs+BARQufSj2q92VZBQefkDDSoljIa9zQEZXCAL
+	 S7jGa8NPMn0wHyTCAk0Pthtc5JacI/MF0CfTQ08i5xXqBvYjdKoqRexjb8f5oiDBWh
+	 D0CHqYKTgcsxuFYRzzSobHGhKdEocwrhffTAfiJks7lYOIl8ZIaVswaNeqx6ufWNqD
+	 P2mXm3LtYNuW4EE74lA+zK2fnuqDJSLab18MpWZxxuM1l/wc0gFLziUwxXeLJaEqMY
+	 fVH3hM6x7xLtJKpvmurpsIJo=
+Received: from nazgul.tnic (unknown [88.128.88.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ADD0040E021C;
+	Sun, 15 Sep 2024 12:48:36 +0000 (UTC)
+Date: Sun, 15 Sep 2024 14:49:44 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: John <therealgraysky@proton.me>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
+Message-ID: <20240915124944.GAZubX6LAcjQjN-yEb@fat_crate.local>
+References: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 15 Sep 2024 15:47:17 +0300
-Message-Id: <D46VAPJWL4XT.DDHV1DEB4ATO@kernel.org>
-Cc: <James.Bottomley@HansenPartnership.com>, <roberto.sassu@huawei.com>,
- "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "open
- list" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: remove file header documentation from
- tpm2-sessions.c
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240915123315.10999-1-jarkko@kernel.org>
-In-Reply-To: <20240915123315.10999-1-jarkko@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me>
 
-On Sun Sep 15, 2024 at 3:33 PM EEST, Jarkko Sakkinen wrote:
-> The documentation in the file header is duplicate documentation, which
-> is already addressed elsewhere (tpm-security.rs and function associated
-> documentations). In addition remove the invalid newline character after
-> the SPDX tag.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Sun, Sep 15, 2024 at 11:05:52AM +0000, John wrote:
+> GCC 11.1 and Clang 12.0[1] allow for the following new generic
+> 64-bit levels: x86-64-v2, x86-64-v3, and x86-64-v4.  This commit
+> adds them as options accessible under:
+>  Processor type and features  --->
+>   Processor family --->
+> 
+> Users of glibc 2.33 and above can see which level is supported
+> by running: /lib/ld-linux-x86-64.so.2 --help | grep supported
+> 
+> or: /lib64/ld-linux-x86-64.so.2 --help | grep supported
+> 
+> ACKNOWLEDGMENTS
+> This patch builds on the seminal work by Jeroen.[2]
+> 
+> REFERENCES
+> 1.  https://gitlab.com/x86-psABIs/x86-64-ABI/-/commit/77566eb03bc6a326811cb7e9
+> 2.  http://www.linuxforge.net/docs/linux/linux-gcc.php
+> 
+> Signed-off-by: John Audia <therealgraysky@proton.me>
 > ---
-> It is good time to remove this finally before doing anything else.
-> Unless someone commits to maintain this part of the file, I will just
-> take it away because I have neither intention nor motivation to maintain
-> it. Came right on front when I started to look into kernel command-line
-> and optimizations for session life-time so thus the patch. I'll include
-> this later on to a larger patch set.
+>  arch/x86/Kconfig.cpu | 60 +++++++++++++++++++++++++++++++++++++++-----
+>  arch/x86/Makefile    |  6 +++++
+>  2 files changed, 60 insertions(+), 6 deletions(-)
 
-Moving forward to actual fixes is to fixup tpm_chip_boostrap() as
-follows:
+Patches like this one appear off and on on the mailing list and each
+time I ask what's the upside of maintaining this complexity?
 
-1. Saving the handle and not saving the context in the null key
-   creation. I.e. rip of create_primary_null() or whatever the
-   function was called.
-2. Use that handle to go through selftest.
-3. Save the context in the end of the bootstrap.
+And everytime I get no reply or random handwaving. That's because -march
+settings have no noticeable effect on kernel code generation. Because
+the kernel code is already pretty much optimized when generated by the
+compiler and all those flavors don't bring anything additional.
 
-That cuts out unnecessary overhead of saving and loading context
-between null key creation and selftest. I'll do this fix and see
-how much it affects the boot time.
+So this is not going anywhere. But hey, I'm always open to nice
+surprises...
 
-BR, Jarkko
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
