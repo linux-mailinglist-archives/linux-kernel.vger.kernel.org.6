@@ -1,173 +1,246 @@
-Return-Path: <linux-kernel+bounces-329881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47DD979712
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 459B797971C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 16:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F3C91C20B5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:24:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B16A1C20C61
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B05D1C6F69;
-	Sun, 15 Sep 2024 14:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5BA1C7B68;
+	Sun, 15 Sep 2024 14:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qhQJbK8d"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="ffXkUTi0"
+Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020099.outbound.protection.outlook.com [52.101.195.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66321C68A2
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 14:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726410253; cv=none; b=QeX88sTzw0R4ZJU+O527E53NuHEdo/awTvb1enxFHdNX+B0qZLgq24zLAdN4qhwkhpcW8hji5QjyatimaKl3yrtfwFXKURrI2kwLRXiYjeGuUtVHsiKPdjBnwOxi9rtriKkEYQ1w6W/dx5FzhoFu46X4E2g2FjECYCaQb9DsplY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726410253; c=relaxed/simple;
-	bh=5boAO4ENTuFT2KbnTyArdZtpGbazoY5AnmGUXqzrW7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C+oY/2ldPXojJIh8rcAJLfLlkJs+44Logwy9gZyapSiy1p2agEc6q60UeRHQ3Z6ELMrsY7yDvmgpGth/N+6cUsU9uQm7a05JffMzqf454331mNsPrRMhvvxDK6eWuGWn/IWimHoYv3q6PFMxj9+mAl+GQUmTC/WPSCnhcJVYnSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qhQJbK8d; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso31715615e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 07:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726410249; x=1727015049; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j4CPKp3QZnMID8pkfud1N26aKpa0RCQYMk9K3q+I9pY=;
-        b=qhQJbK8dfhirHYQG9kNWQ3EMF0HgeLReFgHz2aRJ51x4ymdg+4ZzorNCOOZQL9v6ce
-         EOyig6QpQTPuP4zJ4fRG1HxO5YD8HExjOE7sbz/wzk5PN0PvY27vkM9NbvWL3TDxct1U
-         MOaRrwJdsL7YRmbF0vXdNQdaoBzxhMKAr23PGS2O4yqWRou1o4KagsgWPKrF1oUp8vAc
-         8WHuC8nNeq4Uz4Z+Vdf08GdId+Ka3cXf/Xr7mCEA7fHJvAyY2ACAf6g3Bb4VMcCCmkvX
-         DnPEy6K9XD2si0tuFOGuytUtQnCenJGt65su4/QP+8zi4hctOtKqseuYyl1pPBxf9qUj
-         O9nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726410249; x=1727015049;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j4CPKp3QZnMID8pkfud1N26aKpa0RCQYMk9K3q+I9pY=;
-        b=ivCfXl7NzK3hdh3Q3d5dpobZJguxKjcm3XzFqAv5+zgQ/jNIdjeT01YSkq2Z2dD/VE
-         H0GTwJ5kO88qZIIqc3Gpku5XuwTnQRhNfyJ9YkU2ov5x3KG05WRrXH9kyUY/yb4RRqLP
-         Krdo+5hRz07kdK+RCtTa2dBINZCRE9uXvSd7jzInl4mv9+cuaLO1bH3VBpPghAqCSKfa
-         fktvSC25CzpATX8QHwadtLJLCKXSR6wU5G93kZ2AeKWPFE6OI+kb+Zwims4ixHSpN95Z
-         B67e19doeB7aRymaSQPyf5Ws8Cs+dGCNHqLpcYI+oGMBWq8JWps1kCIhSjmVvviddU2L
-         FUdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXuJu5QKuZjwJrHuM6eGRrfdvazomZ9BWpmvimUU6oGtZK4q4EsCHW19OuKj0rTHJ6YPuYoHwMwadiOTS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/rQc9FybMFlxyFULBIyhjYmgEpTJ0cELFcwOx2SsFRUQ8+oDP
-	WsNTJU6s3N8OTxh+iHgDD5R8BLjwhPuzmWWAR3XW+pYE5C9IQbGaHDMO5vZg2NI=
-X-Google-Smtp-Source: AGHT+IHx7SmWR6pQnPw+/xqWuo+2jZh8WmUQyoBC4qc/MdwJU5vbCj64Og/BQ5muAEGyIUTMA4mPOQ==
-X-Received: by 2002:a5d:58d4:0:b0:374:c7a5:d610 with SMTP id ffacd0b85a97d-378d6236b9cmr7343556f8f.43.1726410248866;
-        Sun, 15 Sep 2024 07:24:08 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f62dasm4759980f8f.49.2024.09.15.07.24.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 07:24:08 -0700 (PDT)
-Date: Sun, 15 Sep 2024 17:24:04 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Johannes Berg <johannes.berg@intel.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Subject: drivers/net/wireless/intel/iwlwifi/mvm/mld-mac80211.c:612
- iwl_mvm_mld_start_ap_ibss() warn: missing error code 'ret'
-Message-ID: <de8ae132-a7b7-4e4a-b8f3-b507a75a670d@stanley.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FD61C6F62;
+	Sun, 15 Sep 2024 14:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.99
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726410366; cv=fail; b=GEtwRIL+aN9ludzPFr317gvaJuEXaonFFxkwxzNBZQ2ZtFHod5goJmvbz7y1vFuJDfSSq9QwpV92SdS4z+V3RrwfThumR7IpQvEk0lHN/SSD28D+Y5wOmA9WOcTlAgeDItjJ73Y93KXFMRq8ydyt8dgAt4xjRvQFtKVTzCWZsKo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726410366; c=relaxed/simple;
+	bh=Z4iRfYI4sxlzAOc0A7pS26qJlR8VltLflm+w6bhJ8qU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=r7y/ErsiSsv2/J3zg3mPucH0JXt0Ve8Ty2Vsxe6yKSpRFuLrEpc8l48FKO0lzMBEVbobGpOiyqJRgt1PxAUE1qYdPDKa/PR/xV7r7ZxvYhBZtlPl7tAOr5x1DCk4344RspyjB8HlKFXCD2H1uHMKZJtG4P2AAAr/KrwqA5X0zB0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=ffXkUTi0; arc=fail smtp.client-ip=52.101.195.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QKS8R+ip5r+PxfK1w4VHZZdtj16vc+MBT8k/XvXInqB1SNrzz8Tv4oysfyffDF25GbDf8WNfLl1y2qG0qhUqRsrovgXnaZZtWHW69Diby8EDQroNxGWFmEvv520eIIVEsWwvSr7p0FGb/bq7dz02mJHahG3tuzhbbFNrJKd23YzcJVOlIItI0sUjiZUIwETZHrwPSpWw1wcMvEv3YrNVSZMirzwU6To3cGpvgT0hXeDZ+d68JcSSfhRjgAhd3phLhNBc9inXd+i8zf6v4/65EQnMWSaP+I/N8uUUFJVw2Y6Qh2G2a5LUiXLoTIZR+zEIvdfagtH2+71i8RFTzBOWEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J1XruB9OQ7WHv7k6ijkrb4ZL7CJf5Pw56L3BZ+QMv2w=;
+ b=f8Ob273PykzvGXOPSLeOELHm7oLuEN644juQgoFJ0sSTrAdLutUfDoSME/2MzljeOAnMBLMB+GcmY0aOoEq/wpGL0UAPtNhn2IqZMSAM9gE+9HgtvlJOmVf2Zpsz9DEjqxelJkesozqkK0zS3+p6zrtTtnfjODGUd5uiGl9Hw8ymK3aDfTcPl1eXTa9yk6KPWGKXeVo+24TG1/4qtqFwaIi52vyCe22nXouBlXvSYwocQO0lh06jrv1ZTZDAa+Sl/VLmep5lGRd9d2VUtjX8fPG19XQcm38Sn4yDnUNfXI7I06vIhALYZ4z+Ky5YkJoQuT7WF+tL8WQu0om3QNDcwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J1XruB9OQ7WHv7k6ijkrb4ZL7CJf5Pw56L3BZ+QMv2w=;
+ b=ffXkUTi0NBn3pr5YBtQkVtOPZ69THmzg++3QS3mDbBCtrQPseqPEAojLIZxph8+43DgKIwAxO2KsDJxOOwNt6HUhXd3R0YXc5Ekq7ESN3RKGZEernFJrDOh8Lma9WNrab+yEH9EzObYSEr8whqKeJuSEMEnErB/M8djVX8TXqVo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by CWXP265MB2808.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:c6::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.22; Sun, 15 Sep
+ 2024 14:26:01 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.7962.022; Sun, 15 Sep 2024
+ 14:26:00 +0000
+Date: Sun, 15 Sep 2024 15:25:58 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+ =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Trevor
+ Gross <tmgross@umich.edu>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] rust: sync: fix incorrect Sync bounds for LockedBy
+Message-ID: <20240915152558.68ff5675.gary@garyguo.net>
+In-Reply-To: <CAH5fLggoz5gdgOpEiXu7u9hPXjLLeSv9An6jaq0am0-dG7+ohw@mail.gmail.com>
+References: <20240912-locked-by-sync-fix-v1-1-26433cbccbd2@google.com>
+	<ZuSIPIHn4gDLm4si@phenom.ffwll.local>
+	<ZuUtFQ9zs6jJkasD@boqun-archlinux>
+	<20240915144853.7f85568a.gary@garyguo.net>
+	<CAH5fLggoz5gdgOpEiXu7u9hPXjLLeSv9An6jaq0am0-dG7+ohw@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: LO4P265CA0027.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ae::17) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWXP265MB2808:EE_
+X-MS-Office365-Filtering-Correlation-Id: caac1f00-5401-40ce-8f67-08dcd592528f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cDBpZ2ZzV2treUZxQVNQUkNscFQzM0tnVDZRVDJhVlFpMjJ0VG1OaDlDRVNM?=
+ =?utf-8?B?ZWs2eEt1d2dMQ3MraUJFeHhrNEtnSGl0bVhPd21ZMUNkUEQ0WWlMSWVTQXVI?=
+ =?utf-8?B?eVUvam5DTDJmeFVTaTgrc0EzMUdWczRSV2I1QWRyOW91bCtiNHVsV0h0KzA3?=
+ =?utf-8?B?emlwZTlGWUF4R21LSnhnaEtnNmx3Vll6TzhUUi9Hem5rMzgzYjM2Z1NyRlVX?=
+ =?utf-8?B?MDV5cjBkbUtzbG1QL3drK3FiYVRvRGdLNWFjd3R1VEozc0swZ0x4cEdvYVp4?=
+ =?utf-8?B?dTJjZG5SN25MOGx1M29QdjFsMDlwcFZIRlRKYzBxVmxqRC9RZksyQ29Cemta?=
+ =?utf-8?B?N29qbkpMbHdFZytpbzVBc3pDK3FKYnpsZm1vRmJQU1BjL1hoanJJOCsyNGpr?=
+ =?utf-8?B?dTJMRGlSVzVRcW9VOHVUb3p0a015aGZ1dmZ3SlVZUWN6dzl4akptRm1XWlBM?=
+ =?utf-8?B?ZmFLSURFYVNXd2pxVGtBVE1qL204d3NxYWpKOXZLVjlweWgreWJjRVM5dmpX?=
+ =?utf-8?B?T0JqK1F3VlE1ZEI1NVlIVnd1VmVROTVZbGltYWJLeEVWdVRhdWk2NDAvV3hm?=
+ =?utf-8?B?M2kwR1R0VFJRdlNQNE1GRzdYZ3Z6Y1RSbVcySUVaaVFKdiswNWNuK09BZzJi?=
+ =?utf-8?B?dmI4TFJ4NERoV0xOMFdsT3kvcFlDQTl6a3Q0Sy8zdWlTaGJNWkltcUxjY0Mv?=
+ =?utf-8?B?a1Q5LzFtVVhiSEM4Y1Q2bFUxRjVNc3FLb1g0b0xrWmxTRlRUWUd1YkdhUDVD?=
+ =?utf-8?B?c05JZ2M2SW5MSTFpNTI4QjFQcTlXZEVtUHlOQzFaaHFlb0EreUl2cVlrdHZ4?=
+ =?utf-8?B?clRRSzJMUi80eFEyVC9sY2NYMzVYRkNUS0drNUlIYThVcjV2NlRoMUcrR0xK?=
+ =?utf-8?B?R1ZFNlFaaGIyL3dEd1NqWm10ZWJleTZCd2d6QU5xczA1M0QxSXBaTFNZRG9Q?=
+ =?utf-8?B?NGxIYW1iamZBd3duUWdqTWJXMVMzdmVmUjFEcWZWdU5BaUNtYkgvMjQrbXdP?=
+ =?utf-8?B?MnAwbStkTm4xVjhNNllvL3VtUyt5VWc4NzR5UVMxVFowd0pSY2FZRVZvSWQ1?=
+ =?utf-8?B?b0REWlU5NWxqL3JPUjM5aThUR2FyajJ2N2xVNGE0SFFhZFUvWTkzOXMwZGR4?=
+ =?utf-8?B?Q0JhTnZjMUQxSi96LytxSE5PRVBLNXhWQkFZQlBndElNaG1jbUJvWTdZRWFo?=
+ =?utf-8?B?ektNL2g2b3JpUWNNVHFVNHNWTkpWWlpBWis5YlgxcGdUSThrNEwySFF3OHpM?=
+ =?utf-8?B?cU03c05ZdSs1Wlk0dW5YVGlyTEJ2M0JYUE11aVdBZTh2RUt2THZrYjdDaU94?=
+ =?utf-8?B?cWZvK1lyMWpCNDBneGYwaTVoTWcrYXlHeEwrV2dyQVhJVEVaV0owVnlnbTg3?=
+ =?utf-8?B?QUdaRjIvMTVFa0ptRTlLTU1zZ1M2akYwSGRpdFZtdVdJRGpDTUlnWGduWWFZ?=
+ =?utf-8?B?dzBkNjJRaVhjKzJvSzFwRGwrTWZ5bFM0Q3NveGN2WHZuQXlWRE1CQmNiZzJI?=
+ =?utf-8?B?R1FwUUNLTXpYZVlmM2ROL1psOE5RN01mMVNnUHh6R09XWEVBNTdpMzNIMkM1?=
+ =?utf-8?B?TlJ2aGpOVyt6eWthVis4R1RjcWRmdUpoWVBHYjE5N2lQd2pETWJ2ZTBEaEFl?=
+ =?utf-8?B?aUMyQitUbWxRanRKa2FOSHpGV1YxTi9STEtEUCtkUkxZS2hnZEoyVjR2SjJU?=
+ =?utf-8?B?clE0QnB5WVNBOTdPSlplTW40NW5Xa2ExQWh0ZE1nSE1ERXRHNUY2OUt4SmxP?=
+ =?utf-8?B?YXZRaUtoK2ZSRGJZcFRaR0tSNERhcThvNlVrYXd3Y1pJdzRzMStDNWVDNDlr?=
+ =?utf-8?B?Zm9kaDlrT05WUEpLZlROZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S0JZTjJzcTBKT2pMVWNGUVdRY05TRVFNdU5aNTZwOHpDc2lNdWJKeVRLcGZH?=
+ =?utf-8?B?bHBkaFRNaURwMGp1R005YnNpTjVRcGFuRzVKaDRvTitwR2lWendlZ3ZodXB2?=
+ =?utf-8?B?Q05tUlFveGZiUDBQcmxRakVNSUZzYXZyNm56Qy9teXkrMDZOdXRXNld3U3V6?=
+ =?utf-8?B?OTdKSTlEME90VmdESnZiei82dU14ck1lM3g5c2FpdTRZaXBhVlBVSUlReFla?=
+ =?utf-8?B?bkY4bmZDakthTUV1MzBUNTEzTllmdUQ4cUR1NkVzOHZWRWdKOW1saFhCcG5v?=
+ =?utf-8?B?TlBOVXFZeDAxbW9ub1JnNHpnZ2IwcVFiTXNKMUlXODUzblg4aXVsaVdyRm96?=
+ =?utf-8?B?Nk9LSmtRekVRUEd2bTQ3dzNPOU1iOWwyU1ZLS0pvNGlhMHpWNUtlcExTOU1W?=
+ =?utf-8?B?TGd2K3JmZUVWS1ZmQXR6LzBlMEV4UFhSSXZ5VldJQ2JkWHA4dnAyc2VXbkxu?=
+ =?utf-8?B?amxYUDg5QUlVQ1VVRzRVZWRSbUlabzM2aFJqRU0rc041Y3gwZG9EZEJTZmVr?=
+ =?utf-8?B?a3JvNUVJWUY2Mm5hOWNVa0V2TTI5RFNUTlZ4RW9kQStmSEtCZ25Jd1g5K0ZS?=
+ =?utf-8?B?a3Nhb084UUJnMFdXd0V6cE9KQzlXcDAvWjY5YWpIekxQZHdZS2JHc3pkc1VN?=
+ =?utf-8?B?Y2JJbnVhcklkM3dCdG5yd1ZEWmVaenFBenJDN2VRai9OaU9TR3N1cThSZmZK?=
+ =?utf-8?B?MFRlTWV0TThmOXo4RlAwdzhiZlRjK1U0cjMxSGt0ZlJvWlRWVnpIVUZMSHVt?=
+ =?utf-8?B?cVVicG9aNnlmeWVzOWFQejdiYVRZRUdWRCtxY0E3SlhzRGJXVUh4Yjd5eVFj?=
+ =?utf-8?B?RmNDdlBNMjZXcDQzdmM1dy9mbFdLSlNHWmhzQUtGak5BeGUxVVE5cjMrU04r?=
+ =?utf-8?B?dmxoYks5NHE1RW96ckxFUHlVcFdqbFBIbEtJUjFzNCtrQm5tdHQyaGNLdlkr?=
+ =?utf-8?B?cEJuRzRQaFQ5bk9aZG52OHpPMURDbWJpMTVGclozQnRUbnJJRFFyd3FnRjky?=
+ =?utf-8?B?QUVTRVVES2g5TVFWT1cxaGZ2cUhSbUhzYUJHMjh0Z254aXZFbWNEQ0w3WEZ5?=
+ =?utf-8?B?VFJMNXdXS2RwQnlTRFdVL0EydkZ2R3NVZ0RuYjFPaEVJaVlqaVNLT0VNRHJW?=
+ =?utf-8?B?OXZDNExjNXQwckJvSnRGMTFOSzlZT3k3amUxb3NubncxZVAyNVRpWUlpQmhB?=
+ =?utf-8?B?NlVoTmZUR0tCWWlmbGM1M3k4aVlBUUk3SFFpbU9aWEl0ZnhURVJaQW5vSHdI?=
+ =?utf-8?B?SXZmeEl5b0JDWUU3NlhpVFBqSjBhTWFpWEk1VFRBL0pGRnkxWkZRa0tXclhG?=
+ =?utf-8?B?NzBGOUZFMnZuVFh1TWZtRU1GQTRWNTBQQktQeFNjc3FLOTBBenpyeEFBbGhm?=
+ =?utf-8?B?cnVndzBRR05BVkZkV3lERy9zNjMyNkJjS0dXUURyQVV2SjlUT29oM0VlcVRu?=
+ =?utf-8?B?dUJGSlBMZm9kaWNuV3JlUFR1MlpJcGcwQzBLbllNVmZVUGJLajJsN3VjRjV4?=
+ =?utf-8?B?dTRYWXhhVmdwckFVQjBGeEFuSnB2bm1HbG44QkprZFEyYXprRHppRkNXZ2Fa?=
+ =?utf-8?B?aDhGWkpzOWY3YXpxL1A2dXdoZWNyYjhRYXBlaUZSdFU4bDJRVU1MelVGcldD?=
+ =?utf-8?B?dDltSTVLNDhlSThNZnAxRjRDUDQvN3FBZkovcGRRYjI2SU9IUjljTUFPTElP?=
+ =?utf-8?B?RXk4V1Blb3Nqa3h2V2tYTStHUmhjZG1Ua2Fwb1JQQzFoZVBjcmkxMU12cG1x?=
+ =?utf-8?B?OFk3OFZWN0E1TTZpSmVHaWUwU08rOUpnYTBOeDhKNkxBb0hkM09uZTRyRnZy?=
+ =?utf-8?B?dlFHVXE1WGtqVSt4N3l2ZjcvbkxxeDNmTzdyY2tkSXVwNEttejRwWWxsejlZ?=
+ =?utf-8?B?cGdiL3dKbDhDTG5tOFY2b0NDTVF2VU9CMk9sdDNRZkloZ0N2UldzQzc3S1pI?=
+ =?utf-8?B?SlJqeGJ4Qk9VYU53K2hKcVg4YzlaRkNDbHd6cVl2aU1LQXlXSjRsMXhmWmls?=
+ =?utf-8?B?MTNIeTRxK3BMTDQxb2NpZXBBWWoyOStpSThVSFhUYkcreGk5SGMzT1dEKzlr?=
+ =?utf-8?B?M0lMbWpTVlF2TmVWcjFncHNqSEV1bW5EMnRLWWpHYldwSTFqdmJPR201MCtn?=
+ =?utf-8?B?dzRFZDh0dTVUOWZBWGt0SHFidkZGRjhhTHJsNW5aZUFHTTJvcVVjWnBoVlZj?=
+ =?utf-8?B?RXc9PQ==?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: caac1f00-5401-40ce-8f67-08dcd592528f
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2024 14:26:00.8711
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ykydYw1rPnQtgMB7vLgvG9gz67UMftSL7QbO5+Y60iSgg77h+bd0oUpLK1iiuQeUqal3AviqNCLbPtXP3bt+aQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP265MB2808
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d42f7708e27cc68d080ac9d3803d27e86821d775
-commit: 3f3126515fbee0e364f8218f6171c091d8e2555e wifi: iwlwifi: mvm: add mvm-specific guard
-config: csky-randconfig-r073-20240915 (https://download.01.org/0day-ci/archive/20240916/202409160031.caQ4LNOA-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
+On Sun, 15 Sep 2024 16:11:57 +0200
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202409160031.caQ4LNOA-lkp@intel.com/
+> On Sun, Sep 15, 2024 at 3:49=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote=
+:
+> >
+> > On Fri, 13 Sep 2024 23:28:37 -0700
+> > Boqun Feng <boqun.feng@gmail.com> wrote:
+> > =20
+> > > Hmm.. I think it makes more sense to make `access()` requires `where =
+T:
+> > > Sync` instead of the current fix? I.e. I propose we do:
+> > >
+> > >       impl<T, U> LockedBy<T, U> {
+> > >           pub fn access<'a>(&'a self, owner: &'a U) -> &'a T
+> > >           where T: Sync {
+> > >               ...
+> > >           }
+> > >       }
+> > >
+> > > The current fix in this patch disallows the case where a user has a
+> > > `Foo: !Sync`, but want to have multiple `&LockedBy<Foo, X>` in differ=
+ent
+> > > threads (they would use `access_mut()` to gain unique accesses), whic=
+h
+> > > seems to me is a valid use case.
+> > >
+> > > The where-clause fix disallows the case where a user has a `Foo: !Syn=
+c`,
+> > > a `&LockedBy<Foo, X>` and a `&X`, and is trying to get a `&Foo` with
+> > > `access()`, this doesn't seems to be a common usage, but maybe I'm
+> > > missing something? =20
+> >
+> > +1 on this. Our `LockedBy` type only works with `Lock` -- which
+> > provides mutual exclusion rather than `RwLock`-like semantics, so I
+> > think it should be perfectly valid for people to want to use `LockedBy`
+> > for `Send + !Sync` types and only use `access_mut`. So placing `Sync`
+> > bound on `access` sounds better. =20
+>=20
+> I will add the `where` bound to `access`.
+>=20
+> > There's even a way to not requiring `Sync` bound at all, which is to
+> > ensure that the owner itself is a `!Sync` type:
+> >
+> >         impl<T, U> LockedBy<T, U> {
+> >             pub fn access<'a, B: Backend>(&'a self, owner: &'a Guard<U,=
+ B>) -> &'a T {
+> >                 ...
+> >             }
+> >         }
+> >
+> > Because there's no way for `Guard<U, B>` to be sent across threads, we
+> > can also deduce that all caller of `access` must be from a single
+> > thread and thus the `Sync` bound is unnecessary. =20
+>=20
+> Isn't Guard Sync? Either way, it's inconvenient to make Guard part of
+> the interface. That prevents you from using it from within
+> `&self`/`&mut self` methods on the owner.
 
-smatch warnings:
-drivers/net/wireless/intel/iwlwifi/mvm/mld-mac80211.c:612 iwl_mvm_mld_start_ap_ibss() warn: missing error code 'ret'
+I stand corrected. It's not `Send` but is indeed `Sync`. Let's go with
+a bound on `access`.
 
-vim +/ret +612 drivers/net/wireless/intel/iwlwifi/mvm/mld-mac80211.c
+- Gary
 
-f947b62c03b15d Miri Korenblit   2023-03-20  574  static int iwl_mvm_mld_start_ap_ibss(struct ieee80211_hw *hw,
-cbce62a315f67e Miri Korenblit   2023-03-28  575  				     struct ieee80211_vif *vif,
-cbce62a315f67e Miri Korenblit   2023-03-28  576  				     struct ieee80211_bss_conf *link_conf)
-f947b62c03b15d Miri Korenblit   2023-03-20  577  {
-f947b62c03b15d Miri Korenblit   2023-03-20  578  	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
-f947b62c03b15d Miri Korenblit   2023-03-20  579  	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
-f947b62c03b15d Miri Korenblit   2023-03-20  580  	int ret;
-f947b62c03b15d Miri Korenblit   2023-03-20  581  
-3f3126515fbee0 Johannes Berg    2024-05-12  582  	guard(mvm)(mvm);
-bde2f9b420f692 Mukesh Sisodiya  2024-04-16  583  
-bde2f9b420f692 Mukesh Sisodiya  2024-04-16  584  	if (vif->type == NL80211_IFTYPE_AP)
-bde2f9b420f692 Mukesh Sisodiya  2024-04-16  585  		iwl_mvm_send_ap_tx_power_constraint_cmd(mvm, vif, link_conf);
-bde2f9b420f692 Mukesh Sisodiya  2024-04-16  586  
-36cf537798cb6c Gregory Greenman 2023-03-28  587  	/* Send the beacon template */
-36cf537798cb6c Gregory Greenman 2023-03-28  588  	ret = iwl_mvm_mac_ctxt_beacon_changed(mvm, vif, link_conf);
-36cf537798cb6c Gregory Greenman 2023-03-28  589  	if (ret)
-3f3126515fbee0 Johannes Berg    2024-05-12  590  		return ret;
-36cf537798cb6c Gregory Greenman 2023-03-28  591  
-bf976c814c864e Johannes Berg    2023-03-28  592  	/* the link should be already activated when assigning chan context */
-bf976c814c864e Johannes Berg    2023-03-28  593  	ret = iwl_mvm_link_changed(mvm, vif, link_conf,
-bf976c814c864e Johannes Berg    2023-03-28  594  				   LINK_CONTEXT_MODIFY_ALL &
-bf976c814c864e Johannes Berg    2023-03-28  595  				   ~LINK_CONTEXT_MODIFY_ACTIVE,
-f947b62c03b15d Miri Korenblit   2023-03-20  596  				   true);
-f947b62c03b15d Miri Korenblit   2023-03-20  597  	if (ret)
-3f3126515fbee0 Johannes Berg    2024-05-12  598  		return ret;
-f947b62c03b15d Miri Korenblit   2023-03-20  599  
-62e0ccb2170e7a Gregory Greenman 2023-03-28  600  	ret = iwl_mvm_mld_add_mcast_sta(mvm, vif, link_conf);
-f947b62c03b15d Miri Korenblit   2023-03-20  601  	if (ret)
-3f3126515fbee0 Johannes Berg    2024-05-12  602  		return ret;
-f947b62c03b15d Miri Korenblit   2023-03-20  603  
-f947b62c03b15d Miri Korenblit   2023-03-20  604  	/* Send the bcast station. At this stage the TBTT and DTIM time
-f947b62c03b15d Miri Korenblit   2023-03-20  605  	 * events are added and applied to the scheduler
-f947b62c03b15d Miri Korenblit   2023-03-20  606  	 */
-62e0ccb2170e7a Gregory Greenman 2023-03-28  607  	ret = iwl_mvm_mld_add_bcast_sta(mvm, vif, link_conf);
-f947b62c03b15d Miri Korenblit   2023-03-20  608  	if (ret)
-f947b62c03b15d Miri Korenblit   2023-03-20  609  		goto out_rm_mcast;
-f947b62c03b15d Miri Korenblit   2023-03-20  610  
-f947b62c03b15d Miri Korenblit   2023-03-20  611  	if (iwl_mvm_start_ap_ibss_common(hw, vif, &ret))
-f947b62c03b15d Miri Korenblit   2023-03-20 @612  		goto out_failed;
-
-ret = iwl_mvm_start_ap_ibss_common()
-if (ret)
-
-f947b62c03b15d Miri Korenblit   2023-03-20  613  
-f947b62c03b15d Miri Korenblit   2023-03-20  614  	/* Need to update the P2P Device MAC (only GO, IBSS is single vif) */
-f947b62c03b15d Miri Korenblit   2023-03-20  615  	if (vif->p2p && mvm->p2p_device_vif)
-f947b62c03b15d Miri Korenblit   2023-03-20  616  		iwl_mvm_mld_mac_ctxt_changed(mvm, mvm->p2p_device_vif, false);
-f947b62c03b15d Miri Korenblit   2023-03-20  617  
-f947b62c03b15d Miri Korenblit   2023-03-20  618  	iwl_mvm_bt_coex_vif_change(mvm);
-f947b62c03b15d Miri Korenblit   2023-03-20  619  
-f947b62c03b15d Miri Korenblit   2023-03-20  620  	/* we don't support TDLS during DCM */
-f947b62c03b15d Miri Korenblit   2023-03-20  621  	if (iwl_mvm_phy_ctx_count(mvm) > 1)
-f947b62c03b15d Miri Korenblit   2023-03-20  622  		iwl_mvm_teardown_tdls_peers(mvm);
-f947b62c03b15d Miri Korenblit   2023-03-20  623  
-fd940de72d493c Avraham Stern    2023-06-12  624  	iwl_mvm_ftm_restart_responder(mvm, vif, link_conf);
-f947b62c03b15d Miri Korenblit   2023-03-20  625  
-3f3126515fbee0 Johannes Berg    2024-05-12  626  	return 0;
-f947b62c03b15d Miri Korenblit   2023-03-20  627  
-f947b62c03b15d Miri Korenblit   2023-03-20  628  out_failed:
-f947b62c03b15d Miri Korenblit   2023-03-20  629  	iwl_mvm_power_update_mac(mvm);
-f947b62c03b15d Miri Korenblit   2023-03-20  630  	mvmvif->ap_ibss_active = false;
-62e0ccb2170e7a Gregory Greenman 2023-03-28  631  	iwl_mvm_mld_rm_bcast_sta(mvm, vif, link_conf);
-f947b62c03b15d Miri Korenblit   2023-03-20  632  out_rm_mcast:
-62e0ccb2170e7a Gregory Greenman 2023-03-28  633  	iwl_mvm_mld_rm_mcast_sta(mvm, vif, link_conf);
-f947b62c03b15d Miri Korenblit   2023-03-20  634  	return ret;
-f947b62c03b15d Miri Korenblit   2023-03-20  635  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>=20
+> Alice
 
 
