@@ -1,162 +1,80 @@
-Return-Path: <linux-kernel+bounces-330060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0915897991B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:07:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A30C979921
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E24E1C209FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:07:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35F81B21E1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E0A4965B;
-	Sun, 15 Sep 2024 21:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MHY4Pwzq"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBD47316E;
+	Sun, 15 Sep 2024 21:08:04 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C8B31A60
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 21:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBFB4644E;
+	Sun, 15 Sep 2024 21:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726434454; cv=none; b=EbrdjfqOIrJ2LjgpHhVZFGLu2hBnJ5zvTHLBsiBClkieaVcPSn/0YacFS+05y4I1XY1rbRBQwzbuk15Mwdk0diIIwgYyh1RuymP7NKfD+5uDPCPKThJ/I81vha08HLD5e1PPTAhiKC+aZxVnLZ40TEnNz3iyNQNwMDhnpQYBmOU=
+	t=1726434484; cv=none; b=lsyaPm7fWMZLNpvKaWbnJMzqEJ8l0xn+iCREqLtpTIU3VZ2PLUwgem77StTUy94mFPFbg2MB5unARqaAWCrt6sTE1VV4aXWxckNN+GqjPdLayP9K5SKmaPiFVzBCQbSBbVtSa/E5IQN9vopRHnxwUD+MK8GBUVpNGqPUVXEhtAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726434454; c=relaxed/simple;
-	bh=u0mauue4pFbpJvPlGNnG8KmtJCv5osrYKUh15cf2xQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ea1qTjYxrulf96sNyhlkc/q4o31b+oMQOLyUiVuSl9CRH1wyvA88N/QgKtyiFQpfX49xDWDE5PV6zuXUVmd6/TFATLBohcXErAXXsdOxSWPdPFyfwGZbgm0vrICVXFAIzRFliNemmaXZMBCeDig9Zubd/h6vg5b0K0UPX81+z2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MHY4Pwzq; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374bb08d011so2204458f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 14:07:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726434451; x=1727039251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aMSCaCClJjZ0q/vopdrKwBeXnkKAsPzQyB/3kJTnFhk=;
-        b=MHY4Pwzqh5CGlH4wC/IS77bKhiHWywWFmRUFNuzLfK2rzG7Kqgi7VQMs5Gew/tQ9PZ
-         RGfaDvvMg9OmGHo5mkpIZU3YfFTcOrrZbVH/XsseHfMpUTyO8vYXBzGSYyU3Hm/BYEJs
-         KYT5dqzf3twXemIzQWuG3YzWmMEvknhYadBkUYmj9FV6RU5E/EvUNuDDwHeYXRzrLLzl
-         washlT17OTkQnEkEl8+8lZmob7wU+TPq0bhhnpKzFGsUxYNgP0SCN8OxFfiP7C8ifuDk
-         zGSVV4x8rS80PF0Xa18SO69HK6vCOYyaX8hFhZUgIxsAHDjUzsvYsaKZFptHtvpa/Mtg
-         EATA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726434451; x=1727039251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aMSCaCClJjZ0q/vopdrKwBeXnkKAsPzQyB/3kJTnFhk=;
-        b=Gk5DpdTnm90MVcnDqRSGpwg9jLhd/PwAWvomU2bMpPdsisRjFRdQQWAR3YD25+nq47
-         dKR+KAgiE4BopwV3lfQIoo35Ch/Naj/ztZJRiz8nwpOt/jI0WnLB1O8ZJnp/9KxSrXfV
-         iAeZ3nLWdhpOed39zgF7xGA9t/PjzMYe9JZ5tJIJMNgvXsdBKf9h84Geuj4CbwLt89kc
-         dq/QUXRWk6Mq/RUFqKApmY4xAzu6T5icnXHky654me3p5LEu5SrG13xV1tWDaGkUXhl+
-         1+BsmxFFN9L9LwB3Mr4rPgwscM5yTtN8dt8bhCGt16RUxC2N6MnW3XNVFyvkZ3//oe/F
-         McfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/gk09BTlz8lHD850hGcRj3f05dUetTtQ8M4cxq/W456DJ7At4HxSinuF+v32Aud8E9f8BXyx5xUYQJGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP5J5rKZctXXBSoOpJtVOXUJB3ie178BKT4mh9LpwWDGfV5H2h
-	kg6QXR1qKjhGCk8rXcGOhXGGBGm1e+sQKnndqLkNmfhaw+q9WW4+8dK763dD2JxHTsAbhjn77Jj
-	ZAf0OUb0csRrw3mGskcMnm2u1KkVxC1nqLB1k
-X-Google-Smtp-Source: AGHT+IHHL9ci38l3QyRKB9ijCz+Na//ffly7AGZW2nAho4rRP9TW1RbmkTpcC/P3ssAUOSVor4hTQsXWMTlb9HHx0V4=
-X-Received: by 2002:a5d:4983:0:b0:374:c1f9:ea79 with SMTP id
- ffacd0b85a97d-378c2cd5e5fmr7840237f8f.5.1726434451067; Sun, 15 Sep 2024
- 14:07:31 -0700 (PDT)
+	s=arc-20240116; t=1726434484; c=relaxed/simple;
+	bh=3zgSFbu8PXX7ZYghpZqp4ia+Cb3a7UGY+xDKtliP2GE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kk1ORKARiVdpDaRdC6UD8JD+POEa1rc2kKV90k8pbBarJ6RoI8bE5np49d2kcr9k+rIGU2qaLVjByfPXKlU7fapTVzUxbEBtlmDy4MpNghPbxSJw983ZrUMm63lfOI0FJL/pgzOevNPCsEkTCapNONGlqXwHz1jxGRfDY1sqCR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=56300 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1spwTM-00EIaN-HT; Sun, 15 Sep 2024 23:07:58 +0200
+Date: Sun, 15 Sep 2024 23:07:55 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <ZudMq7TfC2CbNJyu@calendula>
+References: <20240909084620.3155679-1-leitao@debian.org>
+ <20240911-weightless-maize-ferret-5c23e1@devvm32600>
+ <ZuIVIDubGwLMh1RS@calendula>
+ <20240912-omniscient-imposing-lynx-2bf5ac@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-5-88484f7a3dcf@google.com> <202409151325.09E4F3C2F@keescook>
-In-Reply-To: <202409151325.09E4F3C2F@keescook>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Sun, 15 Sep 2024 23:07:19 +0200
-Message-ID: <CAH5fLghA0tLTwCDBRrm+GAEWhhY7Y8qLtpj0wwcvTK_ZRZVgBw@mail.gmail.com>
-Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
-To: Kees Cook <kees@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240912-omniscient-imposing-lynx-2bf5ac@leitao>
+X-Spam-Score: -1.9 (-)
 
-On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
->
-> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
-> > Add an abstraction for viewing the string representation of a security
-> > context.
->
-> Hm, this may collide with "LSM: Move away from secids" is going to happen=
-.
-> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-ca.com=
-/
->
-> This series is not yet landed, but in the future, the API changes should
-> be something like this, though the "lsmblob" name is likely to change to
-> "lsmprop"?
-> security_cred_getsecid()   -> security_cred_getlsmblob()
-> security_secid_to_secctx() -> security_lsmblob_to_secctx()
+On Thu, Sep 12, 2024 at 05:18:29AM -0700, Breno Leitao wrote:
+> On Thu, Sep 12, 2024 at 12:09:36AM +0200, Pablo Neira Ayuso wrote:
+> > On Wed, Sep 11, 2024 at 08:25:52AM -0700, Breno Leitao wrote:
+> > > Hello,
+> > > 
+> > > On Mon, Sep 09, 2024 at 01:46:17AM -0700, Breno Leitao wrote:
+> > > > These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
+> > > > Kconfigs user selectable, avoiding creating an extra dependency by
+> > > > enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
+> > > 
+> > > Any other feedback regarding this change? This is technically causing
+> > > user visible regression and blocks us from rolling out recent kernels.
+> > 
+> > What regressions? This patch comes with no Fixes: tag.
+> 
+> Sorry, I should have said "This is technically causing user lack of
+> flexibility when configuring the kernel"
 
-Thanks for the heads up. I'll make sure to look into how this
-interacts with those changes.
-
-> > This is needed by Rust Binder because it has a feature where a process
-> > can view the string representation of the security context for incoming
-> > transactions. The process can use that to authenticate incoming
-> > transactions, and since the feature is provided by the kernel, the
-> > process can trust that the security context is legitimate.
-> >
-> > This abstraction makes the following assumptions about the C side:
-> > * When a call to `security_secid_to_secctx` is successful, it returns a
-> >   pointer and length. The pointer references a byte string and is valid
-> >   for reading for that many bytes.
->
-> Yes. (len includes trailing C-String NUL character.)
-
-I suppose the NUL character implies that this API always returns a
-non-zero length? I could simplify the patch a little bit by not
-handling empty strings.
-
-It looks like the CONFIG_SECURITY=3Dn case returns -EOPNOTSUPP, so we
-don't get an empty string from that case, at least.
-
-> > * The string may be referenced until `security_release_secctx` is
-> >   called.
->
-> Yes.
->
-> > * If CONFIG_SECURITY is set, then the three methods mentioned in
-> >   rust/helpers are available without a helper. (That is, they are not a
-> >   #define or `static inline`.)
->
-> Yes.
->
-> >
-> > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> > Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-> > Reviewed-by: Trevor Gross <tmgross@umich.edu>
-> > Reviewed-by: Gary Guo <gary@garyguo.net>
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> Reviewed-by: Kees Cook <kees@kernel.org>
-
-Thanks for the review!
-
-Alice
+Sure, to allow for in-kernel iptables compilation but extensions as
+modules? How in the world is that ever used, really?
 
