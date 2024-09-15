@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-330017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A52797987D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:36:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63D0979884
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D1671C21B13
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:35:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8881D282AFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7381CA69E;
-	Sun, 15 Sep 2024 19:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88EF1CA6BB;
+	Sun, 15 Sep 2024 19:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="4GfNyVVs"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKo+X6r6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686A63D551;
-	Sun, 15 Sep 2024 19:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D55B1C8FA6;
+	Sun, 15 Sep 2024 19:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726428951; cv=none; b=emVLVPQJd211FhKtJg++bDfb6hV8tmXZTrqltyqpY1wMsRHmuoQnLGTicyKekSF75Y2FSz5MjFZW8elLVHmFdEcNYV3U5zNVx+ppXurC89z/TZ80Kgatuq1l4KmdJzeqmLWavm1B0TcrayOCM+iwfL+qNIBJfdvVDvRnGXNHo3o=
+	t=1726429556; cv=none; b=ojxZ2LAuQgBzVenEdeJYppaL67AGUMzSLfLPfT4vjldwFQOLqK4780wNqNrYj6NCZhXEZZgbREdM6800DZgp9toIMJfbmKWwFAdVfxY2/CcuNgkI07TJvNw+63tkzdb/jLxi6+AlS2WPvDWnHPdSYoQebBOWP2s5KcI0jsgs0rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726428951; c=relaxed/simple;
-	bh=tuVA2WxlehopaUYYIhQg6h1R4SWk601XYWtIMU3ROH8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=geylrb7TCElPH+3akeyOAzfQg7crGm+RdQ6xcskmMbGhba8HNUhkDsZXIo1LkBKSWGIQd4W3blEWrkhcYnlSRkvg76xOYug5T4LgIlVuV4aAJVwVCImDm3L2DVNSlKf/46kAZ9N6oYI5iM9nvUGoBzEB4e8jPrNkGQc9GR04Gbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=4GfNyVVs; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=45Z33l/RcutDajIr/YKmREB0obYUTwFgojxxwKicMXU=; b=4GfNyVVsrxdoIGrOJ0cXr9AlRB
-	penG2KpgmIVe81/fQB9BpURffzqCXhBUWOqnBQgylPYgbY+qj9HImhis3oRzImPnWvutgAntvBxs/
-	R7SkBa56djhDsvATwBiBhePM3lya9/O6yjLxO3u+D2h/ZaxzHlJ15+dgV5R+9SgldqGT+KOLV/reT
-	EZsmKv9T6Hb4+RoVTLqER8MT9CW1n+pbNCadzv+vb6Zr8wDOQ/N0unCS9ai+nT3nsz5XMyLF7Fe+J
-	NWP0+/ezePWwJuQ0toS67EmPFJJs5y+AdEur0a3r9OEuT2w/ESAjR1truIcYN4okPmdhtljWVOxqA
-	FVhh0n8Q==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: tony@atomide.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Andreas Kemnade <andreas@kemnade.info>,
-	Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH] ARM: dts: omap4-kc1: fix twl6030 power node
-Date: Sun, 15 Sep 2024 21:35:27 +0200
-Message-Id: <20240915193527.1071792-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726429556; c=relaxed/simple;
+	bh=HclElrmg3hy8k67tn/YH6FGa6YDj21hBYAJBNd6TKPY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kib2DrxxohYU59HAYiHUbMKZD4bcAqOiaDBbLLY7WO7XxcuTSMTTB5EbEbN9TSv2J/D1Ye3kbQMZRaAzggv9IimGzOYpAtQ/7apfc2lr7QmiURdAJbXoKU92FpYszdztxcb39BXRLw5BI3xkalWtn0fL9Oe1Lf5K4Vll95JDWqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKo+X6r6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD6CC4CEC3;
+	Sun, 15 Sep 2024 19:45:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726429555;
+	bh=HclElrmg3hy8k67tn/YH6FGa6YDj21hBYAJBNd6TKPY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MKo+X6r6vd11nrL+jV6DpVe7XuvSwsqan6Es7E9TyQq6lihH2YsHH6MCNJ8BUtFmp
+	 rD6AMlULQaq8DienUVQNSfJMP2NxMH2ykGrP5tiMkJFrjBO6QPLuDk5F4Tjy/TVa4V
+	 12VzAKW6BIJd0HfFzpwL6wZF+P9qIUmh9t209XKVKTrzdx1vs+LzSyUAeFW5gFqJBC
+	 S1LkuJ0ZJTabEesb5fyBHdYIYNmGGuiv/6LISGja1ZxEsoXdPnfjqfEcqe5wTmEi6x
+	 d7JF6rp+N+/kq25LrG0c3041EEGTEBvY4MSx+NpDBVgATMcavnAgyW6R14bEwWNfcI
+	 HaNbMFgcghk1Q==
+Received: by pali.im (Postfix)
+	id 2832A7BC; Sun, 15 Sep 2024 21:45:50 +0200 (CEST)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] cifs: Improve client SFU support for special files (2)
+Date: Sun, 15 Sep 2024 21:45:41 +0200
+Message-Id: <20240915194545.14779-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20240912120548.15877-7-pali@kernel.org>
+References: <20240912120548.15877-7-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-dtbs_check was moaning about twl6030-power, use the standard property
-instead.
-Apparently that twl6030 power snippet slipped in without the
-corresponding driver. Now it is handled by the standard property.
+Per Steve's request I'm re-sending changes from PATCH 6/7 and
+PATCH 7/7 from patch series "cifs: Improve client SFU support for
+special files" (Sep 12, 2024). There is no functional change, just split
+and reorder.
 
-CC: Paul Kocialkowski <contact@paulk.fr>
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/boot/dts/ti/omap/omap4-kc1.dts | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+All changes are:
+* Use ARRAY_SIZE() instead of magic value 2
+* Patch for SFU symlinks (original 6/7) is the first one
+* Patch for SFU fifo/sockets is after symlinks and is split into other
+  tree independent patches (socket, fifo and comments), so every one can
+  be applied separatetely or dropped if would not be acceptable.
 
-diff --git a/arch/arm/boot/dts/ti/omap/omap4-kc1.dts b/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
-index c6b79ba8bbc91..df874d5f5327f 100644
---- a/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
-+++ b/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
-@@ -112,11 +112,7 @@ twl: twl@48 {
- 		reg = <0x48>;
- 		/* IRQ# = 7 */
- 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* IRQ_SYS_1N cascaded to gic */
--
--		twl_power: power {
--			compatible = "ti,twl6030-power";
--			ti,system-power-controller;
--		};
-+		system-power-controller;
- 	};
- };
- 
+Pali Rohár (4):
+  cifs: Add support for creating SFU symlinks
+  cifs: Fix creating of SFU socket special files
+  cifs: Fix creating of SFU fifo special files
+  cifs: Update SFU comments about fifos and sockets
+
+ fs/smb/client/cifspdu.h    |  6 ---
+ fs/smb/client/cifsproto.h  |  4 ++
+ fs/smb/client/cifssmb.c    |  8 ++--
+ fs/smb/client/fs_context.c | 13 ++++---
+ fs/smb/client/link.c       |  3 ++
+ fs/smb/client/smb1ops.c    |  2 +-
+ fs/smb/client/smb2ops.c    | 79 +++++++++++++++++++++++++++++---------
+ 7 files changed, 80 insertions(+), 35 deletions(-)
+
 -- 
-2.39.2
+2.20.1
 
 
