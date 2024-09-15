@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-330035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B569798BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 22:41:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0909798BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 22:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B61228270B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:41:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18F12826BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 20:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DA53B1A4;
-	Sun, 15 Sep 2024 20:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27A0481DD;
+	Sun, 15 Sep 2024 20:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqWSZtDF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCS/mjQf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E825F171AA
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 20:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA45A2F855;
+	Sun, 15 Sep 2024 20:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726432861; cv=none; b=gcg9OeSIjtWux9nmFiN6CLF9BLrQjdbUq3c5i8wPf9mhLJuRzRABmm5bV8LHcVfWsh3WnuIpYNBZ8fyWvs9zy2WTgcC98UHGubk3dwbcP++Ie/RbeJyOVSjr1lhUa4Ufux69+j6SyWgJVnm2hRKZhN7irp/OUiz81YNwCypNooA=
+	t=1726432866; cv=none; b=PRHPf5tr6zLmnZldjotiH04OPA6yUDvpF3peARH7HSxqWRd6FfIqCCe6pK3TZx5cAc2sth8b8soBSqdAREXTlmEQJv6nqjqr++CTizhKdwjvhz2hk0AigOWIW3lxvZBigPwah3eSCW4aX1XtI1NYZrt2vR+4rkIXJGk4HclkeXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726432861; c=relaxed/simple;
-	bh=g285pEF9WsFiGi081/Ve50iWty2AyB6ySZodtIjFphc=;
+	s=arc-20240116; t=1726432866; c=relaxed/simple;
+	bh=qAhUw/C5p73M8nKgqGRDmurmz93DCyvEkK15cfvXW84=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YKgbIoYSRTLrGR56IN7c9To82XrqQJUfW/qnNYVEZ8Wu8DGa1Kd5/ZZ0dXkladdSFQYRthHr4ql+F2Xq/5OISr7r7t/IcQmYC79m8Z0e21fgsGGyaRYm4H+/jbs4qCDbya3LWN5acUAdmRCE6BVI7IS2XaokZ/yxDSOWWBX8Cq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqWSZtDF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4946FC4CEC3;
-	Sun, 15 Sep 2024 20:41:00 +0000 (UTC)
+	 Content-Disposition; b=peaI79F3/VLuQtcbuDR2xr/QJMKI/H7jTgOyPcRZrHqUe/Q2k0kIvQfH00Uf6HbKOqCEcyARhxYwKw1HvidgM2PtWSH81cCFmQdtmNfYfD0Nejjj95bjHxPxeeW1sgRw1XqQ4bwa3dXDH8VcgIoxZ1vhaLCFB2wA7Ia4dUpOWjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCS/mjQf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A1CDC4CEC3;
+	Sun, 15 Sep 2024 20:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726432860;
-	bh=g285pEF9WsFiGi081/Ve50iWty2AyB6ySZodtIjFphc=;
+	s=k20201202; t=1726432865;
+	bh=qAhUw/C5p73M8nKgqGRDmurmz93DCyvEkK15cfvXW84=;
 	h=Date:From:To:Cc:Subject:From;
-	b=qqWSZtDFXN7EB/tWN40anF8BRUKffVspGDz2Wi28FtKvmmEmXeAxXoAsf/P7vT5je
-	 lRXJgq2esToJkxfrq95DJDDeyZQLtl6uL0sLCvW3CoVEMHifNmRl0/lKX7Qlf9J9nu
-	 hN2LUwz/bWG54adZvUr+b2DWciIODS251NgQ0SoaHkv+vXUCsl6fJC3Hpqkr0FUcQL
-	 awzoBiyY0ZdzVTQR7Y0UyBRyap1QuE+qgPUoQmMKO1yxhxfoacYr3EoXbaCaZ0rabX
-	 Ntofy4O2hzvoYYxcjAvMNbIlswDs9lYmhKdAGHzqZqOmrMBq67UVZQICLJ6fiFK8ZV
-	 LQtliNjjlpiJQ==
+	b=fCS/mjQfzHQXunxuPB12gTNGLZrXII9ZXuz2eoc4JygvM0OsFVNAeNd6k8fwI09Od
+	 OqDM3mRTF0jmahy3M4Xy+l2i+M63MTuYt7sinYI7d+0cIEZAL9L/6r6hql1KOL2ECI
+	 exppzsU3RtMmkwHej5UCrA56UxKuVtY8EoNZuaod7F5xovodLgXxboHAqL3FTkKobK
+	 MU7/2ijuBrA1dE2Chez0VF0nHGDIYi7Z4GvB5X8msDa3GWaoiO9zl33boGDYb0g4gi
+	 RT0w2Kr4WkQgmKnw6soNeYSGlWhjKdnK+YEft2tju+aqJ8gYbsb223XU572B+mpSnW
+	 eQqcM3eVA3TZA==
 Received: by mercury (Postfix, from userid 1000)
-	id 9CB171060578; Sun, 15 Sep 2024 22:40:57 +0200 (CEST)
-Date: Sun, 15 Sep 2024 22:40:57 +0200
+	id C4F4E1060578; Sun, 15 Sep 2024 22:41:02 +0200 (CEST)
+Date: Sun, 15 Sep 2024 22:41:02 +0200
 From: Sebastian Reichel <sre@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hsi changes for 6.12
-Message-ID: <admkep5qycck3n6inbs52dytfojer5jddjjjzocxi25yirb246@33rwujlrfym5>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [GIT PULL] power-supply changes for 6.12
+Message-ID: <yzvnkktljfia7cuatut6nzbgt3rl2sxrewxfvufs3bffipqru7@owejanrgjppt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,15 +55,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nbhs5k7cbkf77ryp"
+	protocol="application/pgp-signature"; boundary="v5iyho5naygwzboo"
 Content-Disposition: inline
 
 
---nbhs5k7cbkf77ryp
-Content-Type: text/plain; charset=us-ascii
+--v5iyho5naygwzboo
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
+
+Lot's of small things this time. The pull contains two merges of
+immutable branches, one for the AXP717 support, which is shared
+with MFD and one for the usb_types change, which is shared with
+extcon to fix up a newly introduced driver using usb_types (also
+touching a couple of other subsystems). Everything but the last
+two commits have been in linux-next for at least 10 days. I only
+pushed the last two commits some minutes ago. Those two are fixes
+originally intended for 6.11. I received them a few days ago and
+gave them some testing while travelling to Vienna. I independently
+received a second patch fixing the issue, so it should be fixed
+soon and I will be on vacation with limited network access for 3
+weeks after LPC. Thus I think its better to have them included now
+even though they received limited testing.
+
+Greetings,
+
+-- Sebastian
+
 
 The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
@@ -71,43 +91,181 @@ The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi.git tags/hsi-for-6.12
+  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.gi=
+t tags/for-v6.12
 
-for you to fetch changes up to c3eddf5e8c30adb6f43fc0b149e88b9feb76f381:
+for you to fetch changes up to e50a57d16f897e45de1112eb6478577b197fab52:
 
-  HSI: omap-ssi: Remove unnecessary debugfs_create_dir() error check (2024-08-27 15:28:56 +0200)
-
-----------------------------------------------------------------
-HSI changes for the 6.12 series
-
- * omap-ssi: remove unnecessary debugfs_create_dir() error check
+  power: supply: hwmon: Fix missing temp1_max_alarm attribute (2024-09-14 1=
+1:06:07 +0200)
 
 ----------------------------------------------------------------
-Yang Ruibin (1):
-      HSI: omap-ssi: Remove unnecessary debugfs_create_dir() error check
+power supply and reset changes for the 6.12 series
 
- drivers/hsi/controllers/omap_ssi_core.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ * power-supply core
+   - introduce power_supply_show_enum_with_available() helper
+   - change usb_types from an array into a bitmask
+   - fix early usage of power_supply_property_is_writeable() resulting
+     in sysfs files not being writable
+   - fix missing temp1_max_alarm attribute in power-supply's hwmon devices
+ * drivers
+   - max1720x: expose nvmem device
+   - brcmstb: cleanup driver to use latest APIs
+   - max77693: expose input and charging current limit
+   - max17042_battery: fix state of charge reading for devices without
+     current sensing
+   - axp20x_battery: add AXP717 support
+   - axp20x_battery: fix min/max voltage properties
+   - axp20x_usb_power: add AXP717 support
+   - axp20x_usb_power: add DT based input current limit
+ * Documentation updates
+ * misc. minor cleanups and fixes
 
---nbhs5k7cbkf77ryp
+----------------------------------------------------------------
+Andres Salomon (1):
+      ABI: testing: sysfs-class-power: clarify charge_type documentation
+
+Andrew Davis (5):
+      power: reset: brcmstb: Use normal driver register function
+      power: reset: brcmstb: Use device_get_match_data() for matching
+      power: reset: brcmstb: Use syscon_regmap_lookup_by_phandle_args() hel=
+per
+      power: reset: brcmstb: Use devm_register_sys_off_handler()
+      power: reset: brcmstb: Do not go into infinite loop if reset fails
+
+Artur Weber (2):
+      power: supply: max17042_battery: Fix SOC threshold calc w/ no current=
+ sense
+      power: supply: max77693: Expose input current limit and CC current pr=
+operties
+
+Asmaa Mnebhi (1):
+      power: reset: pwr-mlxbf: support graceful shutdown
+
+Chen Ni (1):
+      power: supply: cpcap-charger: Convert comma to semicolon
+
+Chris Morgan (11):
+      power: supply: axp20x_battery: Remove design from min and max voltage
+      power: supply: axp20x_battery: Make iio and battery config per device
+      power: supply: axp20x_usb_power: Make VBUS and IIO config per device
+      dt-bindings: power: supply: axp20x: Add input-current-limit-microamp
+      power: supply: axp20x_usb_power: add input-current-limit-microamp
+      dt-bindings: power: supply: axp20x-battery: Add monitored-battery
+      mfd: axp20x: Add ADC, BAT, and USB cells for AXP717
+      dt-bindings: power: supply: axp20x: Add AXP717 compatible
+      dt-bindings: power: supply: axp20x: Add AXP717 compatible
+      power: supply: axp20x_usb_power: Add support for AXP717
+      power: supply: axp20x_battery: add support for AXP717
+
+Colin Ian King (1):
+      power: supply: axp20x_usb_power: Fix spelling mistake "reqested" -> "=
+requested"
+
+Dan Carpenter (1):
+      power: supply: max1720x: fix a double free on error in probe()
+
+Dimitri Fedrau (1):
+      power: supply: max1720x: add read support for nvmem
+
+Hans de Goede (8):
+      power: supply: "usb_type" property may be written to
+      power: supply: ucs1002: Adjust ucs1002_set_usb_type() to accept strin=
+g values
+      power: supply: rt9467-charger: Remove "usb_type" property write suppo=
+rt
+      power: supply: sysfs: Add power_supply_show_enum_with_available() hel=
+per
+      power: supply: sysfs: Move power_supply_show_enum_with_available() up
+      power: supply: Change usb_types from an array into a bitmask
+      power: supply: Drop use_cnt check from power_supply_property_is_write=
+able()
+      power: supply: hwmon: Fix missing temp1_max_alarm attribute
+
+Hongbo Li (1):
+      power: supply: ab8500: Constify struct kobj_type
+
+Jinjie Ruan (1):
+      power: supply: max8998_charger: Fix module autoloading
+
+Krzysztof Kozlowski (2):
+      power: supply: core: simplify with cleanup.h
+      power: supply: twl4030_charger: correct comparision with old current
+
+Sebastian Reichel (2):
+      Merge tag 'ib-psy-usb-types-signed' into psy-next
+      Merge tag 'tags/ib-mfd-for-iio-power-v6.12' into psy-next
+
+Stanislav Jakubek (1):
+      dt-bindings: power: supply: sc27xx-fg: add low voltage alarm IRQ
+
+Thomas Wei=DFschuh (1):
+      power: supply: core: constify psy_tzd_ops
+
+ Documentation/ABI/testing/sysfs-class-power        |  45 +-
+ .../bindings/power/supply/sc27xx-fg.yaml           |   6 +
+ .../x-powers,axp20x-battery-power-supply.yaml      |   7 +
+ .../supply/x-powers,axp20x-usb-power-supply.yaml   |  72 ++-
+ drivers/extcon/extcon-intel-cht-wc.c               |  15 +-
+ drivers/mfd/axp20x.c                               |  25 +-
+ drivers/phy/ti/phy-tusb1210.c                      |  11 +-
+ drivers/power/reset/brcmstb-reboot.c               |  59 +-
+ drivers/power/reset/pwr-mlxbf.c                    |  16 +-
+ drivers/power/supply/ab8500_fg.c                   |   2 +-
+ drivers/power/supply/axp20x_battery.c              | 591 +++++++++++++++++=
+++--
+ drivers/power/supply/axp20x_usb_power.c            | 368 +++++++++++--
+ drivers/power/supply/bq256xx_charger.c             |  15 +-
+ drivers/power/supply/cpcap-charger.c               |   2 +-
+ drivers/power/supply/cros_usbpd-charger.c          |  22 +-
+ drivers/power/supply/lenovo_yoga_c630_battery.c    |   7 +-
+ drivers/power/supply/max17042_battery.c            |   5 +-
+ drivers/power/supply/max1720x_battery.c            | 209 +++++++-
+ drivers/power/supply/max77693_charger.c            |  52 ++
+ drivers/power/supply/max8998_charger.c             |   1 +
+ drivers/power/supply/mp2629_charger.c              |  15 +-
+ drivers/power/supply/mt6360_charger.c              |  13 +-
+ drivers/power/supply/mt6370-charger.c              |  13 +-
+ drivers/power/supply/power_supply_core.c           |  19 +-
+ drivers/power/supply/power_supply_hwmon.c          |   3 +-
+ drivers/power/supply/power_supply_sysfs.c          |  66 +--
+ drivers/power/supply/qcom_battmgr.c                |  37 +-
+ drivers/power/supply/qcom_pmi8998_charger.c        |  13 +-
+ drivers/power/supply/rk817_charger.c               |   9 +-
+ drivers/power/supply/rn5t618_power.c               |  13 +-
+ drivers/power/supply/rt9467-charger.c              |  16 +-
+ drivers/power/supply/rt9471.c                      |  15 +-
+ drivers/power/supply/twl4030_charger.c             |   2 +-
+ drivers/power/supply/ucs1002_power.c               |  26 +-
+ drivers/usb/typec/anx7411.c                        |  11 +-
+ drivers/usb/typec/rt1719.c                         |  11 +-
+ drivers/usb/typec/tcpm/tcpm.c                      |  11 +-
+ drivers/usb/typec/tipd/core.c                      |   9 +-
+ drivers/usb/typec/ucsi/psy.c                       |  11 +-
+ include/linux/mfd/axp20x.h                         |  26 +
+ include/linux/mfd/max77693-private.h               |   5 +
+ include/linux/power_supply.h                       |   3 +-
+ 42 files changed, 1435 insertions(+), 442 deletions(-)
+
+--v5iyho5naygwzboo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbnRlYACgkQ2O7X88g7
-+prU9xAAi9WJgTUZ9Eutpsre5R77CoF71zVRF2my1jH+ciMfhVUV7r3BBcJmoWot
-uZehebzG75QOvlGQLi/y1bE05Z2idB6GSChIt2aj5+SL31qUhSyDbTZGrArEDlyt
-F5425J1+hp5a/MkkrA7Ao2Ulj29M+ULL3mG4ICLYLKnkG4GfvHJn7M58PvUePg6a
-+RzeRcIveu12J6hHvyuDPq4QdSusOMIO3eUSexzcSlgZg7lKPWG/VTJz/3iYRhNK
-FaENzea12z21tvZ5WurjWq5ew8yD4K1DCJsc5ZtexePYKo5wptytoUoGou0OvpwT
-TKeJgxQ8LkdpMYMX3kgN1UZDvrF/8i+5ATMkjt+2cAiAT05qRMLc8e/ix5BwNip/
-AE1LxiFI91zdR6LE5Yn1SQVHs5lHBbmiCirhSKz7gnblCokA4LeQ2fc14OEhl4KW
-1DLAjgi24xn3jgKfBnRGjLwhnMK2boEAUgCg8P8aCA6Dp+LfvHFGgsa+e6Rrdmsl
-kAb+Ivafgi0qviraOdgCWOs89Dhi4h5Yt+/0PCIqM0/0BG7/EoSv6wSGDrV8UWF/
-Q6a9xuIPJG1hO7NhD/VlG6Nw1E/oEMHBio2fG1pvxfkuUTX96KaNIcjCW2PBhHZ7
-eYEtbxUiHSsb/RN1Lk9BTDPVE+NQ7veG0Nj2VcVFO9YroeF6cGM=
-=2ULi
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbnRl4ACgkQ2O7X88g7
++powXg//Vf3fVIDf/G1bKemg7VNryDRxdlWp4Wv4He/odZESQvm71eedHrNTfHjH
+ySIVAPJbCIYcfpJVrNpJ08hGYkmO4MYAsG0faRtW9tL2dhnyQrcan1A9TS9RDvJl
+zaltwAOs118aNpZSNEWqT2iC8FJ/Sh/UK7NQORKn/tNx7/BkrA+w/LIY1iOj3LCq
+3jjowsy4U0Ha2K/az6MfrBFQlOuX3McrTpDSljb2zitlNTRhh3pAmdCwc4ts0jp3
+XFaIoZLv+dVBkEvCmkAcPG1gTTMpVe9hzZw4Wj2ZeRy+Yt7T0gQeD7ii7zkwcMbz
+fTe03KIRzlehdSj2qpzfml4wkwb9mOJiKqvgNTx5fs9vqXybY3Jk13T1uvCVwVwR
+5lTZpCZQXIS0xnz3EVLUs2lJWPesjKtjk88mbLkUDa3Xms8Z0S1f26dto6bGo35M
+6Sxj+RZ3ZHHVkvWdd05bed29seaTaJ8r1qp0Wu9K1JTZll+w+yq0jvIo0K1B5he8
+5fvruXT7M609a7Emb7n5HafxmN8pJJ47EtZlYGXgmbHNVzOlxz8e6Z09MG14dOof
+FlBoq4K1CoM5cECdqoDKFSxFH/2DFYJHg0Qnk4s09ESVveeSKv3ddCQKvEqKgqdU
+0nuoaljyc2y51A1NI7oflR+1caiCTaycV2eQo+Vlz3pudae/+RI=
+=QAp9
 -----END PGP SIGNATURE-----
 
---nbhs5k7cbkf77ryp--
+--v5iyho5naygwzboo--
 
