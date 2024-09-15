@@ -1,141 +1,328 @@
-Return-Path: <linux-kernel+bounces-329710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C8D9794D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BA59794D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97250281758
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F481F2237F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B03C1C69A;
-	Sun, 15 Sep 2024 06:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3606F182C3;
+	Sun, 15 Sep 2024 06:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iobofBEk"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RqirOMeC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF3C1F5FF
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176631B85D2
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726382711; cv=none; b=WzO00wlCvw4WJymywlQIrlB+pGoKGMHT8OH+HStSo5LczbTu8I4Em/c5AeHU3otW9FbE83vJek17pbUvg9Ao1NVnzBtSZIj/xheLq0kLVVoSwSznACSExY53ngQrOcakWfcaqu+RjZkCtguLOOoyCuYamO6mRH0Fu6gqBNlug3U=
+	t=1726382789; cv=none; b=QjOTI2/ejMKQBrrofpceF/42PiPt76G0kD4TMNcamga7Lh8t2gk6U8RvAl6+k9G7nvcHA2LZL3YBduvniyWbg0bOmhQxB/P0uFlM3WJeLGxaHoEKnNMIWgHqsqOQJbvZRSbG+WXNcUJ2AvrVWBg3oElPyyC8/zaw4g49PUBU4LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726382711; c=relaxed/simple;
-	bh=2cDl6WtLGXTvVPOzxG2CUri0osMteN44h5R/YVStwWI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IBskf+4vDjKWHtdwB5qDt5PBNSbGSIRtrj8f8J5qUQcHmougiLpWRoms0OIRdjhFavNHncLHibbfOak1bPY3r2GFFlTYEQvniywgQ0N2Zq5Wl+/Ysl+UW+Xe0wJhwTLkQvOPUhnrGpSTCPQvdEAkUrz2sAFb+O+srdAtrpMabiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iobofBEk; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6c3551505a0so4475046d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:45:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726382708; x=1726987508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6kb0CxTCYk7wgmKngYZCf/JDr8PtnKr7Ci97TV3E52U=;
-        b=iobofBEk3uO8tg12v8CtnMaVBVfjJtPYXX9I6gCfTkUeUMhZRKhsK3A33JEdUGQCwf
-         D8FlW77ioEimNfY8iOpK2euyKW3ZXHrfFpheFXlV2icRdbb9ZaZuJCJIOcz2M0qlHx4u
-         3jtcoMyXb64lLB/KRCpVaEzRAIojSo73ZfIWipuSiiZGI2+K3ckr45VBWabMhJ5UHxdc
-         I4GBUx2135K379VSHSI9OuRg5+KDIhoY5tx/FeOmp6ca+fEpitvW1ewUmqsxEJdybCEC
-         sYlbtMAlYjpSA4ASiwEhcQxOXLvMuQI5Ar6XvWcquDyl/Nr2xmLXum5av/869/MjHnS4
-         XA+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726382708; x=1726987508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6kb0CxTCYk7wgmKngYZCf/JDr8PtnKr7Ci97TV3E52U=;
-        b=eAvhegBYGClKyskMVnjIAbzsVZtGpxGEDLnFYksoUSBUODzz6iwA2vRBCh5u8qs1mQ
-         xWBqIJTd1o6Ld9slSIN6SJWviSnuyXzwIWxCe8QYjz1ydOGn/PaE3+bCPALWI8OFBt7z
-         d2GpRlR0m1iCHUWub26WmlJ7Q+0g7GlGJBjPKj6Roon+d5+fnXqPrlExDYJsM+uRZitv
-         Jubt8fNSe5A6LDSfORSjGqu2CEEMbQC+eQ9usVHmqatQ44zkeu3ol/cTKdUDHo0gLGQt
-         CR90SKCecSPC7ikGDA+K4UNDnLb4nCV3KkQgHkEKx4uHpM8fTmksXeeSgBwGVcjcZ4ae
-         8jIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMugknPzYOcuwqaAdxxac+stWvrk521xFJvPJ45Cz9eIgnG074D2u2ewSDl3g7mGeYrLtxwrMUJ0aAGN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGI+1KYAHjLT+/EgsnuDueLJFj0XRLVn4CZ1XcDVXvHJKoAMAg
-	CrKBedEQx9EBe+hTVMDHGHGXB6yRBEixMXEhKLbykqBLads+ZoDU1EuKYhdCpbVdwAa+lrAblgx
-	3IP5tZivRFPbidAE1dQ6aw8BMDZ+nCJMuJcZxOg==
-X-Google-Smtp-Source: AGHT+IF/ArzWzaDvqW1hMJiWIaZQtLFS3pCkl4+VCpIgUFNI2XO2aPdLmQayQukDhNtDDDF2Gf2lCPW4OZYIKEDHba0=
-X-Received: by 2002:ad4:4ee4:0:b0:6c5:1572:4423 with SMTP id
- 6a1803df08f44-6c57350a89dmr83197946d6.2.1726382708374; Sat, 14 Sep 2024
- 23:45:08 -0700 (PDT)
+	s=arc-20240116; t=1726382789; c=relaxed/simple;
+	bh=EHwV3Yvy7Uw3IF/j+DoDcJc+ZAhxWe5YCmrRnJgDsNk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U85TrbprS4wCk0VDpk5HiZu03lB529BGUBn0YRHXXOltIsamAdfE7icanR7TMCjjwDqd4zGxbB9Lb+1m6AutycUCQtLbGPi+FnONzJKQxWxGmjPc9O72NbpqPFawzJ7cADO3+5b2YZK3NhgPn7+BVmMja8PvLP+2qqwG2aFaMGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RqirOMeC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726382785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FiU6udXM9eCpZXE02YwzMsgBu5oQJjGB+q0lwtk1vYM=;
+	b=RqirOMeCGO+ErQvotxVZQHoIydT0BTz7MGn5yi4C97/zzJ//NCUpvOrdWiViyFNF6Z2NQ/
+	Of94ss3S+Ih72eVIGt90BJH4Nf7n1TwMcDt7o0L/Zh8LY/epu0RN/QEsFoYuZXmnnTdI+m
+	EqdLdfAsQ/irn/H68APKkflfrvq7kB4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-628-Ii7YeiwgNXui0WXzVmtkUA-1; Sun,
+ 15 Sep 2024 02:46:24 -0400
+X-MC-Unique: Ii7YeiwgNXui0WXzVmtkUA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EDAE81956077;
+	Sun, 15 Sep 2024 06:46:22 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5003C30001AB;
+	Sun, 15 Sep 2024 06:46:22 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [GIT PULL] First batch of KVM changes for Linux 6.12
+Date: Sun, 15 Sep 2024 02:46:21 -0400
+Message-ID: <20240915064621.5268-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912063119.1277322-1-anders.roxell@linaro.org> <20240912082307.556db015@kernel.org>
-In-Reply-To: <20240912082307.556db015@kernel.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Sun, 15 Sep 2024 08:44:57 +0200
-Message-ID: <CADYN=9+OTGJtN-z_ffQx9C+UA=a_9rpF7bGtnunFJoq0BWL3vQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests: Makefile: add missing 'net/lib' to targets
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: shuah@kernel.org, willemb@google.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, 12 Sept 2024 at 17:23, Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Thu, 12 Sep 2024 08:31:18 +0200 Anders Roxell wrote:
-> > Fixes: 1d0dc857b5d8 ("selftests: drv-net: add checksum tests")
-> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> > ---
-> >  tools/testing/selftests/Makefile | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests=
-/Makefile
-> > index 3b7df5477317..fc3681270afe 100644
-> > --- a/tools/testing/selftests/Makefile
-> > +++ b/tools/testing/selftests/Makefile
-> > @@ -64,6 +64,7 @@ TARGETS +=3D net
-> >  TARGETS +=3D net/af_unix
-> >  TARGETS +=3D net/forwarding
-> >  TARGETS +=3D net/hsr
-> > +TARGETS +=3D net/lib
-> >  TARGETS +=3D net/mptcp
-> >  TARGETS +=3D net/netfilter
-> >  TARGETS +=3D net/openvswitch
->
-> Please make sure you always include a commit message. Among other
-> things writing one would force you to understand the code, and
-> in this case understand that this target is intentionally left out.
-> Look around the Makefile for references to net/lib, you'll figure
-> it out.
->
-> The patch is incorrect.
+Linus,
 
-You=E2=80=99re right, the patch is incorrect, I could have explained better=
-.
-I=E2=80=99m seeing an issue with an out-of-tree cross compilation build of
-kselftest and can=E2=80=99t figure out what=E2=80=99s wrong.
+The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
 
-make --keep-going --jobs=3D32 O=3D/tmp/build
-INSTALL_PATH=3D/tmp/build/kselftest_install \
-     ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- \
-     CROSS_COMPILE_COMPAT=3Darm-linux-gnueabihf- kselftest-install
+  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
 
-[...]
-make[4]: Entering directory
-'/home/anders/src/kernel/linux/tools/testing/selftests/net/lib'
-  CC       csum
-/usr/lib/gcc-cross/aarch64-linux-gnu/13/../../../../aarch64-linux-gnu/bin/l=
-d:
-cannot open output file /tmp/build/kselftest/net/lib/csum: No such
-file or directory
-collect2: error: ld returned 1 exit status
-[...]
+are available in the Git repository at:
 
-Any thoughts on what might be causing this?
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus-non-x86
 
-Cheers,
-Anders
+for you to fetch changes up to 0cdcc99eeaedf2422c80d75760293fdbb476cec1:
+
+  Merge tag 'kvm-riscv-6.12-1' of https://github.com/kvm-riscv/linux into HEAD (2024-09-15 02:43:17 -0400)
+
+These are the non-x86 changes (mostly ARM, as is usually the case).
+The generic and x86 changes will come later, in the meanwhile
+here is what's ready in case it helps you intersecting the
+travelling and pulling schedule.  There is a trivial conflict in
+arch/arm64/include/asm/kvm_host.h with the arm64 tree.
+
+I'll also send a revert for 6.11 in a few minutes.
+
+Thanks,
+
+Paolo
+
+----------------------------------------------------------------
+ARM:
+
+* New Stage-2 page table dumper, reusing the main ptdump infrastructure
+
+* FP8 support
+
+* Nested virtualization now supports the address translation (FEAT_ATS1A)
+  family of instructions
+
+* Add selftest checks for a bunch of timer emulation corner cases
+
+* Fix multiple cases where KVM/arm64 doesn't correctly handle the guest
+  trying to use a GICv3 that wasn't advertised
+
+* Remove REG_HIDDEN_USER from the sysreg infrastructure, making
+  things little simpler
+
+* Prevent MTE tags being restored by userspace if we are actively
+  logging writes, as that's a recipe for disaster
+
+* Correct the refcount on a page that is not considered for MTE tag
+  copying (such as a device)
+
+* When walking a page table to split block mappings, synchronize only
+  at the end the walk rather than on every store
+
+* Fix boundary check when transfering memory using FFA
+
+* Fix pKVM TLB invalidation, only affecting currently out of tree
+  code but worth addressing for peace of mind
+
+LoongArch:
+
+* Revert qspinlock to test-and-set simple lock on VM.
+
+* Add Loongson Binary Translation extension support.
+
+* Add PMU support for guest.
+
+* Enable paravirt feature control from VMM.
+
+* Implement function kvm_para_has_feature().
+
+RISC-V:
+
+* Fix sbiret init before forwarding to userspace
+
+* Don't zero-out PMU snapshot area before freeing data
+
+* Allow legacy PMU access from guest
+
+* Fix to allow hpmcounter31 from the guest
+
+----------------------------------------------------------------
+Andrew Jones (1):
+      RISC-V: KVM: Fix sbiret init before forwarding to userspace
+
+Anup Patel (1):
+      RISC-V: KVM: Don't zero-out PMU snapshot area before freeing data
+
+Atish Patra (2):
+      RISC-V: KVM: Allow legacy PMU access from guest
+      RISC-V: KVM: Fix to allow hpmcounter31 from the guest
+
+Bibo Mao (6):
+      LoongArch: Revert qspinlock to test-and-set simple lock on VM
+      LoongArch: KVM: Add VM feature detection function
+      LoongArch: KVM: Add Binary Translation extension support
+      LoongArch: KVM: Add vm migration support for LBT registers
+      LoongArch: KVM: Enable paravirt feature control from VMM
+      LoongArch: KVM: Implement function kvm_para_has_feature()
+
+Colton Lewis (3):
+      KVM: arm64: Move data barrier to end of split walk
+      KVM: arm64: selftests: Ensure pending interrupts are handled in arch_timer test
+      KVM: arm64: selftests: Add arch_timer_edge_cases selftest
+
+Joey Gouly (1):
+      KVM: arm64: Make kvm_at() take an OP_AT_*
+
+Marc Zyngier (47):
+      KVM: arm64: Move SVCR into the sysreg array
+      KVM: arm64: Add predicate for FPMR support in a VM
+      KVM: arm64: Move FPMR into the sysreg array
+      KVM: arm64: Add save/restore support for FPMR
+      KVM: arm64: Honor trap routing for FPMR
+      KVM: arm64: Expose ID_AA64FPFR0_EL1 as a writable ID reg
+      KVM: arm64: Enable FP8 support when available and configured
+      KVM: arm64: Expose ID_AA64PFR2_EL1 to userspace and guests
+      Merge branch kvm-arm64/tlbi-fixes-6.12 into kvmarm-master/next
+      KVM: arm64: Move GICv3 trap configuration to kvm_calculate_traps()
+      KVM: arm64: Force SRE traps when SRE access is not enabled
+      KVM: arm64: Force GICv3 trap activation when no irqchip is configured on VHE
+      KVM: arm64: Add helper for last ditch idreg adjustments
+      KVM: arm64: Zero ID_AA64PFR0_EL1.GIC when no GICv3 is presented to the guest
+      KVM: arm64: Add ICH_HCR_EL2 to the vcpu state
+      KVM: arm64: Add trap routing information for ICH_HCR_EL2
+      KVM: arm64: Honor guest requested traps in GICv3 emulation
+      KVM: arm64: Make most GICv3 accesses UNDEF if they trap
+      KVM: arm64: Unify UNDEF injection helpers
+      KVM: arm64: Add selftest checking how the absence of GICv3 is handled
+      arm64: Add missing APTable and TCR_ELx.HPD masks
+      arm64: Add PAR_EL1 field description
+      arm64: Add system register encoding for PSTATE.PAN
+      arm64: Add ESR_ELx_FSC_ADDRSZ_L() helper
+      KVM: arm64: nv: Enforce S2 alignment when contiguous bit is set
+      KVM: arm64: nv: Turn upper_attr for S2 walk into the full descriptor
+      KVM: arm64: nv: Honor absence of FEAT_PAN2
+      KVM: arm64: nv: Add basic emulation of AT S1E{0,1}{R,W}
+      KVM: arm64: nv: Add basic emulation of AT S1E1{R,W}P
+      KVM: arm64: nv: Add basic emulation of AT S1E2{R,W}
+      KVM: arm64: nv: Add emulation of AT S12E{0,1}{R,W}
+      KVM: arm64: nv: Make ps_to_output_size() generally available
+      KVM: arm64: nv: Add SW walker for AT S1 emulation
+      KVM: arm64: nv: Sanitise SCTLR_EL1.EPAN according to VM configuration
+      KVM: arm64: nv: Make AT+PAN instructions aware of FEAT_PAN3
+      KVM: arm64: nv: Plumb handling of AT S1* traps from EL2
+      KVM: arm64: nv: Add support for FEAT_ATS1A
+      KVM: arm64: Simplify handling of CNTKCTL_EL12
+      KVM: arm64: Simplify visibility handling of AArch32 SPSR_*
+      KVM: arm64: Get rid of REG_HIDDEN_USER visibility qualifier
+      Merge branch kvm-arm64/mmu-misc-6.12 into kvmarm-master/next
+      Merge branch kvm-arm64/fpmr into kvmarm-master/next
+      Merge branch kvm-arm64/vgic-sre-traps into kvmarm-master/next
+      Merge branch kvm-arm64/selftests-6.12 into kvmarm-master/next
+      Merge branch kvm-arm64/nv-at-pan into kvmarm-master/next
+      Merge branch kvm-arm64/s2-ptdump into kvmarm-master/next
+      Merge branch kvm-arm64/visibility-cleanups into kvmarm-master/next
+
+Oliver Upton (1):
+      KVM: arm64: selftests: Cope with lack of GICv3 in set_id_regs
+
+Paolo Bonzini (3):
+      Merge tag 'kvmarm-6.12' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
+      Merge tag 'loongarch-kvm-6.12' of git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson into HEAD
+      Merge tag 'kvm-riscv-6.12-1' of https://github.com/kvm-riscv/linux into HEAD
+
+Sean Christopherson (2):
+      KVM: arm64: Release pfn, i.e. put page, if copying MTE tags hits ZONE_DEVICE
+      KVM: arm64: Disallow copying MTE to guest memory while KVM is dirty logging
+
+Sebastian Ene (5):
+      KVM: arm64: Move pagetable definitions to common header
+      arm64: ptdump: Expose the attribute parsing functionality
+      arm64: ptdump: Use the ptdump description from a local context
+      arm64: ptdump: Don't override the level when operating on the stage-2 tables
+      KVM: arm64: Register ptdump with debugfs on guest creation
+
+Snehal Koukuntla (1):
+      KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer
+
+Song Gao (1):
+      LoongArch: KVM: Add PMU support for guest
+
+Will Deacon (2):
+      KVM: arm64: Invalidate EL1&0 TLB entries for all VMIDs in nvhe hyp init
+      KVM: arm64: Ensure TLBI uses correct VMID after changing context
+
+ arch/arm64/include/asm/esr.h                       |    5 +-
+ arch/arm64/include/asm/kvm_arm.h                   |    1 +
+ arch/arm64/include/asm/kvm_asm.h                   |    6 +-
+ arch/arm64/include/asm/kvm_host.h                  |   22 +-
+ arch/arm64/include/asm/kvm_mmu.h                   |    6 +
+ arch/arm64/include/asm/kvm_nested.h                |   40 +-
+ arch/arm64/include/asm/kvm_pgtable.h               |   42 +
+ arch/arm64/include/asm/pgtable-hwdef.h             |    9 +
+ arch/arm64/include/asm/ptdump.h                    |   43 +-
+ arch/arm64/include/asm/sysreg.h                    |   22 +
+ arch/arm64/kvm/Kconfig                             |   17 +
+ arch/arm64/kvm/Makefile                            |    3 +-
+ arch/arm64/kvm/arm.c                               |   15 +-
+ arch/arm64/kvm/at.c                                | 1101 ++++++++++++++++++++
+ arch/arm64/kvm/emulate-nested.c                    |   81 +-
+ arch/arm64/kvm/fpsimd.c                            |    5 +-
+ arch/arm64/kvm/guest.c                             |    6 +
+ arch/arm64/kvm/hyp/include/hyp/fault.h             |    2 +-
+ arch/arm64/kvm/hyp/include/hyp/switch.h            |    3 +
+ arch/arm64/kvm/hyp/nvhe/ffa.c                      |   21 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-init.S                 |    2 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c                 |    9 +
+ arch/arm64/kvm/hyp/nvhe/switch.c                   |    9 +
+ arch/arm64/kvm/hyp/nvhe/tlb.c                      |    6 +-
+ arch/arm64/kvm/hyp/pgtable.c                       |   48 +-
+ arch/arm64/kvm/hyp/vgic-v3-sr.c                    |   97 +-
+ arch/arm64/kvm/hyp/vhe/switch.c                    |    3 +
+ arch/arm64/kvm/nested.c                            |   55 +-
+ arch/arm64/kvm/ptdump.c                            |  268 +++++
+ arch/arm64/kvm/sys_regs.c                          |  384 ++++---
+ arch/arm64/kvm/sys_regs.h                          |   23 +-
+ arch/arm64/kvm/vgic/vgic-v3.c                      |   12 +
+ arch/arm64/kvm/vgic/vgic.c                         |   14 +-
+ arch/arm64/kvm/vgic/vgic.h                         |    6 +-
+ arch/arm64/mm/ptdump.c                             |   70 +-
+ arch/loongarch/include/asm/Kbuild                  |    1 -
+ arch/loongarch/include/asm/kvm_csr.h               |    6 +
+ arch/loongarch/include/asm/kvm_host.h              |   37 +-
+ arch/loongarch/include/asm/kvm_para.h              |   12 +
+ arch/loongarch/include/asm/kvm_vcpu.h              |   11 +
+ arch/loongarch/include/asm/loongarch.h             |   11 +-
+ arch/loongarch/include/asm/paravirt.h              |    7 +
+ arch/loongarch/include/asm/qspinlock.h             |   41 +
+ arch/loongarch/include/uapi/asm/Kbuild             |    2 -
+ arch/loongarch/include/uapi/asm/kvm.h              |   20 +
+ arch/loongarch/include/uapi/asm/kvm_para.h         |   21 +
+ arch/loongarch/kernel/paravirt.c                   |   47 +-
+ arch/loongarch/kernel/setup.c                      |    2 +
+ arch/loongarch/kernel/smp.c                        |    4 +-
+ arch/loongarch/kvm/exit.c                          |   46 +-
+ arch/loongarch/kvm/vcpu.c                          |  340 +++++-
+ arch/loongarch/kvm/vm.c                            |   69 +-
+ arch/riscv/include/asm/kvm_vcpu_pmu.h              |   21 +-
+ arch/riscv/kvm/vcpu_pmu.c                          |   14 +-
+ arch/riscv/kvm/vcpu_sbi.c                          |    4 +-
+ tools/testing/selftests/kvm/Makefile               |    2 +
+ .../selftests/kvm/aarch64/arch_timer_edge_cases.c  | 1062 +++++++++++++++++++
+ tools/testing/selftests/kvm/aarch64/no-vgic-v3.c   |  175 ++++
+ tools/testing/selftests/kvm/aarch64/set_id_regs.c  |    1 +
+ tools/testing/selftests/kvm/aarch64/vgic_irq.c     |   11 +-
+ .../selftests/kvm/include/aarch64/arch_timer.h     |   18 +-
+ .../selftests/kvm/include/aarch64/processor.h      |    3 +
+ .../testing/selftests/kvm/lib/aarch64/processor.c  |    6 +
+ 63 files changed, 4041 insertions(+), 409 deletions(-)
+ create mode 100644 arch/arm64/kvm/at.c
+ create mode 100644 arch/arm64/kvm/ptdump.c
+ create mode 100644 arch/loongarch/include/asm/qspinlock.h
+ create mode 100644 arch/loongarch/include/uapi/asm/kvm_para.h
+ create mode 100644 tools/testing/selftests/kvm/aarch64/arch_timer_edge_cases.c
+ create mode 100644 tools/testing/selftests/kvm/aarch64/no-vgic-v3.c
+
 
