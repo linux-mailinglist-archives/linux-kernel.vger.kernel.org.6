@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-329698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A639794C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:42:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBE79794CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 08:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F198B21D46
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:42:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 527BF1C20B8C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 06:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB3D4965C;
-	Sun, 15 Sep 2024 06:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86ED873501;
+	Sun, 15 Sep 2024 06:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nY14MR6T"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERlNHqw0"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348D034CC4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1011BDCF
 	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 06:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726382465; cv=none; b=OKk4fT438hEczzKTKh+djMdkg2szZa67gzMT/dGdb4T07tBRR9AgZO0UnR6/Liqw1yi/vyUW9u/WXGQH+Y+t03UmPpOWWp5JEy8UB10bBGL8crtBPvzTEatoAGV0TRHKGOIXaKESm4IWkurBYxKGAHcCs9A9kGafSx1AvIIh3UM=
+	t=1726382465; cv=none; b=rLYOunIhtns7xz89ywdjVrbp/hqgzQhu6vV03kuIgaIG9bT7v79pAAk9POMUa4hu07WLCyrm3mvmMk1SozcuAWDld6kAT/pUDiOUE9gh9tikytGL1jPcQ4Pl6GPqbCzr6GBaX5/jx0ER8F94apfKlKc/xh436CYJQ2iOvkoHas0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726382465; c=relaxed/simple;
-	bh=iIJHHvD6hIi5F9NhuzxcrKHikYBlB626qDKDva4Vs+M=;
+	bh=x5sCgwLHh1A9huYqe0WPnMubIiLl4YyjkxXVTZFcEcg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NVKvt1vlNSTmgeQY7zbQ/Rydl+wx4FA72shmhsYGaehNfusqs31t5ALJozUEtj4KR8H8CZ3KlTxzMn2EG6IEwMnWRuIO89KpWZczLPBjiORgo3oEh7Hk2iGr3Zv129iM5UC7xsv3uqGVELY7o+OXZseh8BIgaNmfuBCCgsPW9jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nY14MR6T; arc=none smtp.client-ip=209.85.208.45
+	 MIME-Version; b=qSkrhSBXzJCny0upCQW2y8G6clxSIrx1PL9iava/EwmIxQmhabipCkln+zwp5U7/PIVgqTaCwKncQcOnCJT+MoBs2weHwU5+uU0tXDRsNu9f4/juVKG7W+rrDBlDVVpuzYIqwjlqh2M82rZGiP/0d+DUEEVUHd3gh1x9+80hEZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERlNHqw0; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c42bda005eso1264623a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:41:02 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d56155f51so438094666b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2024 23:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726382461; x=1726987261; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726382462; x=1726987262; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jPmn81t7YtWekA4/H4IxuxrNCjYcPu5ddDUh0iFq82M=;
-        b=nY14MR6TSCmXqq6C66wM2tiJCGhHoMEJV+wmPldIJYlf+OScOfEuMcygvMh6b8UeUE
-         Ek8Jga9Sa3N4SpLo7KSwwzn+ToH9m1/2Ps5gO+wXkIyCUWspyfJywcpWwAXmTqEXLBmG
-         fCf3uyl6Wvk9DIiQ++MuPtaWGEpzpWCIlLdJMcJfDFuRbj0ZQF0gWqgDXH101MyX9qE+
-         Y8mifRoUAaYrma3m+38/pwfSywg1zPbfm5vRY8BYqUANC1GDPsRQDMCHQbQ0+PsYpeYs
-         bKvu8WSVrIZ0t6JJ+7vPwQCRN6w0LCrNc0cmeUK9wwc21VLgcd8FLIbvsnE/NVh0pJQP
-         vgGg==
+        bh=UJboqtmrxph9K3PVRnau8dONXpRrIv6lutqIff5OCzE=;
+        b=ERlNHqw0wnewr3tEVTpV4ygCPLVqc7IzWHISs11NrNXdsOzdc0/9mKP+IsZ36qk3vl
+         gl3jEjk+xUBOuhHG5ifq2D0SocXxMlSAlFSwYaPR2D+cpQSUl5vGNP+PxtueZU7ZYMUd
+         OP/EYxV+CgcGUfKckZ9R2GnBi1Ov9v3AZgq8rewAzNEa+rC881T1Du8xgiEN569+FAAD
+         vwnwdZEKdHpnoQEgxBlSRPGqWGv5BcTZtiYH7WU08X79h4p+VNqTy+tjx7YC71aho8CB
+         dC3SS3TjR+YCSGYhmWjVgn817SLRFpZ/SzZ7B/FugmWOUVuY5d3UrSU+4hvd4lZYZcpj
+         hc9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726382461; x=1726987261;
+        d=1e100.net; s=20230601; t=1726382462; x=1726987262;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jPmn81t7YtWekA4/H4IxuxrNCjYcPu5ddDUh0iFq82M=;
-        b=ZcpIQQqZYgoLIU36KFDR2RPpSYXNTcoUWgqGBTcsmMIMrZgy8io/vdaALUYEKEVuB2
-         UKMdpWEi+6P/yhm0vsY72a9yOCQXinIyrVBOoHGFd+HaE5AkOHERExXW3EiBTRfpnsUN
-         yMzmpfX+v7uGQ01hTss9X19Pat0pF2DD64RlDzALiKouw+XEkhFZTuuJ/H9HrFCuFP37
-         b28O9aZ4lKFFelcA/ZCMtxzOwO2gHDaS4VwhtHg/vKqvNgozSpLoaVTI0Cc8QIYsh+FU
-         oT8BgLp00pOyZJXbYXfxIcghlNzx8cgoqMQ0a8bC9MIjs4TV/vf2vecVYLeKJD6ZUgGX
-         ENHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGEJIiGN5F1hnzJwCtKLKsTn7uPIC8j9S+LAI3pq0FmbO/5NACepSpfyYCZp88Gh+808cOqe/vxdWZvQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj8w4MxaWt+tYtqGhWzhaY4Bzek/Lu8xcUGczfCxAwpgzgao3o
-	bXDbr7nqfLFWHY7+U7zFj4l0jXlQnW4t7QCsvVWvcZ0ql9Vl1p41JIVcCQ==
-X-Google-Smtp-Source: AGHT+IGIPMBHHwl+qqJdNNx5j3unKolOg43JEhn416q+U6DhqpT5ZNykHewg7J6H35cxRA7qiM8JxA==
-X-Received: by 2002:a17:907:7ea1:b0:a86:ae95:eba3 with SMTP id a640c23a62f3a-a9029690d69mr1124959266b.62.1726382461511;
-        Sat, 14 Sep 2024 23:41:01 -0700 (PDT)
+        bh=UJboqtmrxph9K3PVRnau8dONXpRrIv6lutqIff5OCzE=;
+        b=EnsFRmiHvDcg2IAPnEwcsksXCj4us0s8ZGJeuc9lhZWFcqw46c1YgaF2teNzKAum78
+         7MoSutk1WKb8jOkZkra4qP/VS9dhsfvysJxLred94kKEiRCmrd6TInjXNcc9Zkhzyec6
+         Yrq9Vj5MTG43BwXr25gnveyXh+rC8981tKolW0YQo2PIQwByDJsJ6GQpojfL8sa4xbZ5
+         U5LpnfQf0uWAHR7J68D5UipF46EoD9r/QfhOyxHIBUfvERZMDlEVHeYlL1Wn4FrWVgMg
+         kZxaznZo/7Yr7rXE+9z3MFgC9XoYCkwEH0NLMDv82TUEt3HnoDx2L4NKoEuyOfN4jhs8
+         nq/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWrOTYg4pm2sCIz3DNdVeXI/H/6V9IYy29dG4GQInJeyXXxtXCDHz07xjTq3thAHvdQDKKdXVheWOB+AAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz33tmD+0FFgOubdGGkGoAm833Am15nXxpWZWlTbuQW3jCvLJhf
+	CYk8odyAbzu71BCgCVhUYcKeN8j7k+sITCylaOHlaWZpbC3mTuhW
+X-Google-Smtp-Source: AGHT+IHbsBoHDxfQcaBt/dZZWTkkFy+yzmgG3vfNRxAFyJj9u2P4jXYlDh4XR3q196DI7ZhpEf2IiQ==
+X-Received: by 2002:a17:907:d15:b0:a8b:6ee7:ba22 with SMTP id a640c23a62f3a-a90294ec2abmr1242653766b.39.1726382462111;
+        Sat, 14 Sep 2024 23:41:02 -0700 (PDT)
 Received: from kernel-710.speedport.ip (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610967bbsm160201066b.8.2024.09.14.23.41.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -71,9 +71,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: [PATCH 07/17] staging: rtl8723bs: Remove unused entries from struct hal_ops
-Date: Sun, 15 Sep 2024 08:38:21 +0200
-Message-ID: <d4c1f7b6765ec246c797f4d0ac4d429fe6826180.1726339782.git.philipp.g.hortmann@gmail.com>
+Subject: [PATCH 08/17] staging: rtl8723bs: Remove unused function PHY_SetBWMode8723B
+Date: Sun, 15 Sep 2024 08:38:22 +0200
+Message-ID: <4f3a76bce3dc309a179e588d184765e54816d3d9.1726339782.git.philipp.g.hortmann@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1726339782.git.philipp.g.hortmann@gmail.com>
 References: <cover.1726339782.git.philipp.g.hortmann@gmail.com>
@@ -85,52 +85,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove unused function pointers from struct hal_ops.
+Remove unused function PHY_SetBWMode8723B and belonging unused function
+pointer in struct hal_ops set_bwmode_handler.
 
 Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 ---
- drivers/staging/rtl8723bs/include/hal_intf.h | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c |  1 -
+ drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c   | 11 -----------
+ drivers/staging/rtl8723bs/include/hal_intf.h      |  1 -
+ drivers/staging/rtl8723bs/include/hal_phy_cfg.h   |  3 ---
+ 4 files changed, 16 deletions(-)
 
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+index 37ebbbf408ec..a44c1dd0f691 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+@@ -1884,7 +1884,6 @@ void rtl8723b_set_hal_ops(struct hal_ops *pHalFunc)
+ 
+ 	pHalFunc->UpdateRAMaskHandler = &UpdateHalRAMask8723B;
+ 
+-	pHalFunc->set_bwmode_handler = &PHY_SetBWMode8723B;
+ 	pHalFunc->set_channel_handler = &PHY_SwChnl8723B;
+ 	pHalFunc->set_chnl_bw_handler = &PHY_SetSwChnlBWMode8723B;
+ 
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c b/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c
+index 4ff092b7c9c9..a4ea124eb9ad 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c
+@@ -764,17 +764,6 @@ static void PHY_HandleSwChnlAndSetBW8723B(
+ 	}
+ }
+ 
+-void PHY_SetBWMode8723B(
+-	struct adapter *Adapter,
+-	enum channel_width Bandwidth, /*  20M or 40M */
+-	unsigned char Offset /*  Upper, Lower, or Don't care */
+-)
+-{
+-	struct hal_com_data *pHalData = GET_HAL_DATA(Adapter);
+-
+-	PHY_HandleSwChnlAndSetBW8723B(Adapter, false, true, pHalData->CurrentChannel, Bandwidth, Offset, Offset, pHalData->CurrentChannel);
+-}
+-
+ /*  Call after initialization */
+ void PHY_SwChnl8723B(struct adapter *Adapter, u8 channel)
+ {
 diff --git a/drivers/staging/rtl8723bs/include/hal_intf.h b/drivers/staging/rtl8723bs/include/hal_intf.h
-index efdd1f912b5d..f559a5c1fd16 100644
+index f559a5c1fd16..84da38c55d7e 100644
 --- a/drivers/staging/rtl8723bs/include/hal_intf.h
 +++ b/drivers/staging/rtl8723bs/include/hal_intf.h
-@@ -162,8 +162,6 @@ enum hal_intf_ps_func {
- typedef s32 (*c2h_id_filter)(u8 *c2h_evt);
- 
- struct hal_ops {
--	u32 (*hal_power_on)(struct adapter *padapter);
--	void (*hal_power_off)(struct adapter *padapter);
- 	u32 (*hal_init)(struct adapter *padapter);
- 	u32 (*hal_deinit)(struct adapter *padapter);
- 
-@@ -171,7 +169,6 @@ struct hal_ops {
- 
- 	u32 (*inirp_init)(struct adapter *padapter);
- 	u32 (*inirp_deinit)(struct adapter *padapter);
--	void (*irp_reset)(struct adapter *padapter);
- 
- 	s32	(*init_xmit_priv)(struct adapter *padapter);
- 	void (*free_xmit_priv)(struct adapter *padapter);
-@@ -192,8 +189,6 @@ struct hal_ops {
+@@ -189,7 +189,6 @@ struct hal_ops {
  	void (*enable_interrupt)(struct adapter *padapter);
  	void (*disable_interrupt)(struct adapter *padapter);
  	u8 (*check_ips_status)(struct adapter *padapter);
--	s32		(*interrupt_handler)(struct adapter *padapter);
--	void    (*clear_interrupt)(struct adapter *padapter);
- 	void (*set_bwmode_handler)(struct adapter *padapter, enum channel_width Bandwidth, u8 Offset);
+-	void (*set_bwmode_handler)(struct adapter *padapter, enum channel_width Bandwidth, u8 Offset);
  	void (*set_channel_handler)(struct adapter *padapter, u8 channel);
  	void (*set_chnl_bw_handler)(struct adapter *padapter, u8 channel, enum channel_width Bandwidth, u8 Offset40, u8 Offset80);
-@@ -224,8 +219,6 @@ struct hal_ops {
- 	void (*run_thread)(struct adapter *padapter);
- 	void (*cancel_thread)(struct adapter *padapter);
  
--	u8 (*interface_ps_func)(struct adapter *padapter, enum hal_intf_ps_func efunc_id, u8 *val);
+diff --git a/drivers/staging/rtl8723bs/include/hal_phy_cfg.h b/drivers/staging/rtl8723bs/include/hal_phy_cfg.h
+index ea494bcf830b..acf714946365 100644
+--- a/drivers/staging/rtl8723bs/include/hal_phy_cfg.h
++++ b/drivers/staging/rtl8723bs/include/hal_phy_cfg.h
+@@ -53,9 +53,6 @@ void PHY_GetTxPowerLevel8723B(struct adapter *Adapter, s32 *powerlevel);
+ 
+ void PHY_SetTxPowerLevel8723B(struct adapter *Adapter, u8 channel);
+ 
+-void PHY_SetBWMode8723B(struct adapter *Adapter, enum channel_width Bandwidth,
+-			unsigned char Offset);
 -
- 	s32	(*hal_xmit)(struct adapter *padapter, struct xmit_frame *pxmitframe);
- 	/*
- 	 * mgnt_xmit should be implemented to run in interrupt context
+ /*  Call after initialization */
+ void PHY_SwChnl8723B(struct adapter *Adapter, u8 channel);
+ 
 -- 
 2.43.0
 
