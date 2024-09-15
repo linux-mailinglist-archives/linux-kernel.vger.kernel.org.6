@@ -1,368 +1,226 @@
-Return-Path: <linux-kernel+bounces-329825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31E24979670
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC38979672
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B660A1F21C44
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:32:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD651F21BB6
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 11:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2283F1C3F36;
-	Sun, 15 Sep 2024 11:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974331C4617;
+	Sun, 15 Sep 2024 11:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UodUE4+3"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="jll0n45m"
+Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021117.outbound.protection.outlook.com [52.101.95.117])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B01D12C7FB
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 11:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726399968; cv=none; b=drImudFv9Emm+vevwfMwMqMUaEKLYafDIdOUJRP5JHb00fWtX3ZxTyG7OK6jh1e3bIN/eTVeIq/G7sGYtCcukF3wrh2uWMy53xMFf7glEySvgBXCiPriE/u6Nr6d9lO2cey1nDF7SyUpNhtp3ATuu5OcfrUs40POr5dunujP4d0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726399968; c=relaxed/simple;
-	bh=c46WBt4I6sdCn0SYPgaVjETiUmgjWHfxAxiR+ZKleTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7294kOHfOOdtt3gobbCqc1xcd/iMHBMeCwoM2lNaXKu6NteRl8GjdVsoGsliuW9UFq9pD4edBRoT61/3io75qmxi+SlY/RfbcFSd3osCClomWyHhiR/YX76PXPCE+jYBXi5yhZYykpqmzu/nWLPD/qxtykvAiJ5Zl/V21mw/hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UodUE4+3; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5365b71a6bdso2495046e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 04:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726399964; x=1727004764; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3jqgD7JGOh3XQ9WV2JGG8COEbPlsIIfrvC/7Hdf1d4I=;
-        b=UodUE4+3yLMYDRoPu77dDh2Hvzfpw4iBJMD//3V3aZ74moZvfrsdMlsj/tSTKNF8bO
-         CrZolWEMLANBreN3JgtM/YlQRyWt52ThRk0fk1e0Fqx5MLSueEM7lFmQf9PH1k3xgQft
-         pco6dyv/gZDmM1uicU9EBMB/Xz4hA6zIrskGc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726399964; x=1727004764;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3jqgD7JGOh3XQ9WV2JGG8COEbPlsIIfrvC/7Hdf1d4I=;
-        b=tPNMi1IA27z2hBVciUz8/XYyUUQg9wFm29VePR3Di/RTNRgopaDNz6G9NKqnc03tyb
-         2Cs+OhpOE+Q6vaMmb8c12yuDNIygbFnZRfnD75vhvCZDrv7e6NCDfsqZMn7Q9SvEUewq
-         86bE1Kk4LfzPck4ORsTNVN5uGcl8ZWgm13bI3rIu8yDZw9l/wu7NmDmBB0vCy2ST+dLX
-         Ya/Olow8bfxGcfIul0MWK8Wq3grkOfgnljmsxeyj0Cy+r62BDk9nyrh1u4VgcizVUfJK
-         NOjQfCpswVB3XaDdTh1U7sLZ8/fXpd/REkwIPS9RkvdLdWhFk5EX18FHxx6MxjBRXuEx
-         dAWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ693A7tL3mJhHxchtEsbIyJqVawuF0H05vDM2ZAv0vBVNIClizVFFzbO2RrhVGTaeZuWjz2JmoSgu36o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx087Z8zWQrj3qam48rgyN2v5E5jGdMC6baUKoKVdk13wXSvKrI
-	igy/Z2yjW/TcvzKh4eu+Qp3V9+c1ypIMj2HwBSgVzLMkfOsiaRdp6eLu4iVQ6OldLy6T4u6KsMl
-	ZODllie1PukrADoaiC/wjdc2Ar7i19Iuq5HV/
-X-Google-Smtp-Source: AGHT+IFwmiQcKMAA0cM4UP9yt10EN0wVUgbSokaKnMqT+tBazXs/fmJfvGPNeXWF3G9iOi3lB19695luyPtvvpRK0xc=
-X-Received: by 2002:a05:6512:a90:b0:535:3dae:a14b with SMTP id
- 2adb3069b0e04-5367feba05emr4032845e87.2.1726399963747; Sun, 15 Sep 2024
- 04:32:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D475725570;
+	Sun, 15 Sep 2024 11:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726400194; cv=fail; b=oPa8WQBZ9oAgw++qrFmiXPxji5z0RyrX5PWaQG1rpY8t1q7tpfz3EjySxx6XHRz3xfHh+2ULtAv+9BKrf5wttLzM7i1njnL2L/eT5gsSmWJULFt4XdQMMzFCj74pEizvClvVmB7O0ksYbcsEYH+WAedUo3aiARXKsUrbZNWsyM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726400194; c=relaxed/simple;
+	bh=L/j+hqYHiAW51JDufAPMqU4Hsey8ljPkDF1Bq2nWjSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FgtF4C9HeicYAX/3jlx2LCO53tf9+BpIhy43DWFcAEBKWgEleobdLRWxZZnd5auBE1DIDHunWRACu/EQ/RvmyEUNOX9H904XQyMxmhCsiy6tzJtc5pHhcFMSp/2YKEiOdD3AshwMyUvcw+N5qRFrZb3ED09iGNfn0u37dv92KJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=jll0n45m; arc=fail smtp.client-ip=52.101.95.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BDYC44T82BF3P0bIDu+AoxB436CwvwyxefGOAw+SlkUKac6P9TjvL5BSeEMBJ5b6RBVqYbSa6kvnvtBlxfw7PD8IxzWjK6HrcEiqk92gbgnftq69Ww6dA0TVXoeGWK9tVep7xKiQuUmt8B0MoFeGT1Fl6ijIcAgjzqz6WOs3Yyn36XQb12aTbkbsBWrzxVVmIuAgx4DHklpxMhyQpqoXBhGxZP+M1IfP0MtuEwN67XMgCYhYHr8B2kX1e7AjPQqN9kpBEudAb6DhMmKZnpLQ9WP95lMJi7s8o4bsHGagBfBYNRCUim5WbHfWRquhr3OzTxvUVFBMb6zxJ0WIQfwvkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vplj/AlF4e/0OqqFV8cOHA8JHT9DcEC7HzbjSBijD/U=;
+ b=P3T/z1jMiPdmkDXpKc4iYaBBnNd9lQQBFbRvT5Yb0MuyEWzCFMtEWOqlljn1s/H5y7urDkUQru6hYgliBPNUws8oud6rsdrrvG5SdtL4mKaVzg+5T2eiZCzkoNx++uyjQ+eyacH6Glr2+oQLUyExCvS8amnnIBGrrhduyQquiLXciGb+GeHNPQNouXJGXClL0tDzbvhBxD0CHSZ/x5lX6EJje8W1gHz3i5G8xh0FH1wL+cyLDxcuYVNXUBxdC2HA5zz20kjtca20qE+fOc3jpYH1z7OY2Foew/fBcu/pcW4R3lQ5V2yqIBAh8XakmHjljFbaH6t3rvqB7fYm1wg7Dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vplj/AlF4e/0OqqFV8cOHA8JHT9DcEC7HzbjSBijD/U=;
+ b=jll0n45m01bqoUjkXxXI4z/7rUCSk8k1JFGQ+DDRscafVA515/hlWtmm50arkucKSkr8Gzh4ZiLFwqyi+aSsvu99NLdHffeoKII6X2GYMSFFmAu+OiELemIe5itvCqtzSekAe44mE06noEkfKuIEjc4UKDp/o094eqHYySKsYlM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO8P265MB7450.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:3b2::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.22; Sun, 15 Sep
+ 2024 11:36:29 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.7962.022; Sun, 15 Sep 2024
+ 11:36:28 +0000
+Date: Sun, 15 Sep 2024 12:36:26 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Conor Dooley <conor@kernel.org>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Jamie Cunliffe
+ <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, Nathan
+ Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>, Masahiro
+ Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Marc
+ Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mark Brown
+ <broonie@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Miguel
+ Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson
+ Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ rust-for-linux@vger.kernel.org, linux-riscv
+ <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
+Message-ID: <20240915123626.1a170103.gary@garyguo.net>
+In-Reply-To: <c7c5a16b-d033-4b46-8994-259c55bfd8b1@gmail.com>
+References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
+	<CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
+	<20240913-shack-estate-b376a65921b1@spud>
+	<CAH5fLggX=Uw8T6EqyonJyOkjOVM7ELy4hK8NV80suvDEBnq_Lg@mail.gmail.com>
+	<c7c5a16b-d033-4b46-8994-259c55bfd8b1@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0296.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a5::20) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911072751.365361-1-wenst@chromium.org> <20240911072751.365361-7-wenst@chromium.org>
- <CAD=FV=Udc9aP7bSzTWP82zsaztRD2YnVNpSDA54FC0dKQ-Nz2A@mail.gmail.com>
-In-Reply-To: <CAD=FV=Udc9aP7bSzTWP82zsaztRD2YnVNpSDA54FC0dKQ-Nz2A@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Sun, 15 Sep 2024 13:32:32 +0200
-Message-ID: <CAGXv+5FRoiv+TPyeFTcuRanRuSh2-xUo6ttVPkW6o3tktUmcFA@mail.gmail.com>
-Subject: Re: [PATCH v7 06/10] i2c: Introduce OF component probe function
-To: Doug Anderson <dianders@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
-	Jiri Kosina <jikos@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO8P265MB7450:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d002efc-2305-4760-cc2a-08dcd57aa354
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?d0aq6IQynploul1+etuDdVfsjgPiZi/Lmb+OnbMKTaReAS6XaCEcotSmVzO1?=
+ =?us-ascii?Q?WugN4war74W+BSAitzPI8MrI82EuRD6ZaFr2kd7cwpWtKle58qKfkAS07r53?=
+ =?us-ascii?Q?ZrWbK8MLiJZKe4HsHh06UwjWSlf4rTLSAck5icm8VHUIRo5xBK6W2YoL9ANl?=
+ =?us-ascii?Q?aHVGT9U0jQckVpVixrKn+7G6aIhYE3zdBr4AnSYGUslsWVRHcD3EiZiOOwIH?=
+ =?us-ascii?Q?dMMVrOTWbHhBmKxIakHrypREeIqyx2u16HVIpvAXccDtlZn0JmvIY77sqbmx?=
+ =?us-ascii?Q?ixPk5zsJ5RImM9vrBoTW5gYY529wzs0id52Rr6qz+zPHBtXdfAYhdIHPehEo?=
+ =?us-ascii?Q?HzZhZoWonaN4TC5azqBVgAebH3l1s4MF07McRgUyhwcmGCm3ustyNqBS5vXx?=
+ =?us-ascii?Q?EH0KARikT+HI7mgSu6wzoO4rrp6G9Pmn75FkhH1nbdrC7OtOwPdSohtHpyLw?=
+ =?us-ascii?Q?n52vOeCXg+r5OZzSZXOTpQ64X0lV03Z2E8hwaSzGpIL5raM5nnG2VsktPGLn?=
+ =?us-ascii?Q?YtLCHoOJWFq5UbQSKCH70R1GQMCWpJIsZWo6TEMmqMHVnk4TYxoO2CIiyyIc?=
+ =?us-ascii?Q?olb3zeKFfW1i5igvcLNFgNS7MPmy1YRAZnMX0sxMSnWDicYyzblSpOEFDTKR?=
+ =?us-ascii?Q?oCy47eXs1hlVGi3l2aPDXiPkwDBwCPuFAN3RTabOOrHJlzEdRCwhV1+yMV2W?=
+ =?us-ascii?Q?qEC0ocie9oMZzCv83DEVMKhmsEOxxoacRzYfVu2idJHAZnxppmK/Q4qNZeyj?=
+ =?us-ascii?Q?5ZmRHlLNWegS2Txwf+FmYlz/PfIHXvald1I8zmrnATIdm20YMalaPbGO1tMW?=
+ =?us-ascii?Q?Iy1dStkVprvn55Yzj4gxSNQWXXg/AzZl7uh9FgE8mG5l3JA1eQ42YPz/raEY?=
+ =?us-ascii?Q?fR3E/cav9MEDPP6MppEGRLeCVvS9fCxfYhIBMgU9TbHYtUV7KEp59fdBPj5+?=
+ =?us-ascii?Q?sDWvKRxkIR2VNlbCwJ/h6xEdMHWg76gi4Fo5gtHtR1qTRUBUA5wFCa0WybTl?=
+ =?us-ascii?Q?OiD/aoEAwKtth9gbO6slT2sDRueFYQR0v7NDF/fdR19Y6sRuSUtTRfGICPOX?=
+ =?us-ascii?Q?ONe7ruUR4VCNh3YMkJRnMqCAwAHPz/gs1LEF8IxRwmvwQHMVF0BF6NHU7FHP?=
+ =?us-ascii?Q?S4GDrd1MClhYr+k0ilvfMG+FpBYwdX5JXobV8zQfvBbrt09eAgjac2dxPry3?=
+ =?us-ascii?Q?rDnZ0CuTNujwwX2Whk3iDi0AT3m66rTV0AxVPlRQYfia1TWmhQ/kVELQP3D8?=
+ =?us-ascii?Q?LpjUPUwroywXto3dHKTmKh67jfsTRNQ+JV1xPPTCTdD7FUlZuPh33yfkyYma?=
+ =?us-ascii?Q?B1UKvkWCedLL0JTL6x5wJSm2Iykv0cMR6LXzXzrEK6AbCjefqugrP4SV4HB7?=
+ =?us-ascii?Q?OcqL7Js=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MlZxSgADvAa7pYLO1cG8qUUr83GGUXRYxxrXv/Vb77mHffSaU05VbPqfYwB0?=
+ =?us-ascii?Q?6wcJCpB/N+2N2oC3AKk8HsjsQJpmvLrFnq4KVLfHxXOTz0cwW7k3tInXsJ9p?=
+ =?us-ascii?Q?TwehResb8JbpoSI3bHjRmyxzZNfwFUxcIebIDVhK07h+MpPGtWF3KCdCvLx2?=
+ =?us-ascii?Q?LhYURq1kGj71775UyImTn3+rmdUB6HfLGtgHAd60WYdHRRPnG93/Hc1/i6tY?=
+ =?us-ascii?Q?g/8x0TUr178nORjzjboFh5mUTqsYrqbmtfArkbMccy4z6a+pzAXgN65jCOAC?=
+ =?us-ascii?Q?x3p9At0JhquejH51UKlgdVjE9ZIXf2fasu505vrf3fy/+PD/3LOObe9rPbqQ?=
+ =?us-ascii?Q?QybdbsBJvGzHMSavRYijYkM0Nenir0Nu+ixi1R9aGqj0AaX71b2JzDuxrgJ8?=
+ =?us-ascii?Q?Wkb2IBkTDvDi1/6OrCrBcZggKWaDpX0n8nohEwn/0xGWOwDcAbSStiroKA1R?=
+ =?us-ascii?Q?POfE+bVbOZzPH4GrHvpSZ0R2S6hp2w+UQ/1Hr38sD+tPnCnj1yTaiMaENa3/?=
+ =?us-ascii?Q?ozhw9eDI08J0f3SIOaEee75cmU7CP38uSSPmH0veqH/14lqz25c6vA/M16RL?=
+ =?us-ascii?Q?QsGIaNa2sZ/q9mIfry3m4mIoj4/AnwyoSwE4l4Dx/xgbsnZBPamX8ECPjiJC?=
+ =?us-ascii?Q?KErrf3aZR9snWzB+0zoD2yOpuuyXcibglKlQYw6QGvt/6fLOYyRdZlZnJrZf?=
+ =?us-ascii?Q?ClivAaQ5Ntlg7Tccr4ucf9O4AYvsrXA7NI6rMxXYRrhwB1sA3nZiq5URgKbs?=
+ =?us-ascii?Q?ZOdRTNUCAtFxIeUryPvySVMW1erRUkAHYW0Hb3nqlugTZQaG3to1qkTAEP31?=
+ =?us-ascii?Q?WHfRxk1VJ8PuIjyTKKXjkV93AurEqdVK1YGtA4R1Ubix92lI4toEFNyfl5BM?=
+ =?us-ascii?Q?aKVwZZLY4bbiXmJnP7A4V7dRDFJrXGjl73aybpAypiHI/q94xctSshG93hOv?=
+ =?us-ascii?Q?3FeufXikhe/ueCs1UZQgz3m4Q7BNcHUWq5q4sEkIgyOgld67fsHSHixiEYJe?=
+ =?us-ascii?Q?oIDNlYf/SigzmKZvLxMmij1IHU9ZIUOJfNfZ7Qf61kj3CbxUwc8oE7fRYudC?=
+ =?us-ascii?Q?tFHSsY22DFd4uRmkeBnubHLUKZQMg+iii5LSKyXp0bmPAjvnlEpTlDqbhKD2?=
+ =?us-ascii?Q?IGIukjmZlw6KpZav48DCB7furZSEnCC1WjrUogyj3yUyXbLcRRf912BGhJov?=
+ =?us-ascii?Q?8IXGpEiq4lGrjCePRPX1RZ1FJhYRsGPUNIyWNEIyd5k0/3PJcZ5CopUOa+hO?=
+ =?us-ascii?Q?G3hbdXup9vUsm4EbmvquMe7spsXB4G7QgccFyZHOUu/yRvvCJLkl6lfDghdm?=
+ =?us-ascii?Q?gw1epfDPTNMo5HvCQxUVvTChO9nR9EUYHmTAosQnxDGKTLndKyMIxwT79YCB?=
+ =?us-ascii?Q?T1Cgi5uA99iqZsxeKzXOGs2qx7No3t1Bz8bihuMl6AoOcNtpFsuuxvJiPycF?=
+ =?us-ascii?Q?2DLZ/2NX0PJv9aN3h95e4DwxzugH1OsLTIOpYcxuDp7NeVZfLti87N2VhTGN?=
+ =?us-ascii?Q?Quj6FPT5gcpCrZQzmbn9aT/OUJYlwhSUGrG5rDGicr5tCMiAUR+dSqZjetV3?=
+ =?us-ascii?Q?rXEWZJHueOp/xQZyyZFSprya/9so9wdjG+ZEXf24+TwYc141hTGky2Mug0bW?=
+ =?us-ascii?Q?Gg=3D=3D?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d002efc-2305-4760-cc2a-08dcd57aa354
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2024 11:36:28.6861
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 901vbxLaMxcVZSaSdYD5UX15C4InlzcQg9evPZWVbU/57XUPbfpzVdEODYmi1GzmGa1s8QCHP+8elK17YWaemg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO8P265MB7450
 
-On Sat, Sep 14, 2024 at 1:44=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Wed, Sep 11, 2024 at 12:28=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org=
-> wrote:
-> >
-> > Some devices are designed and manufactured with some components having
-> > multiple drop-in replacement options. These components are often
-> > connected to the mainboard via ribbon cables, having the same signals
-> > and pin assignments across all options. These may include the display
-> > panel and touchscreen on laptops and tablets, and the trackpad on
-> > laptops. Sometimes which component option is used in a particular devic=
-e
-> > can be detected by some firmware provided identifier, other times that
-> > information is not available, and the kernel has to try to probe each
-> > device.
-> >
-> > This change attempts to make the "probe each device" case cleaner. The
-> > current approach is to have all options added and enabled in the device
-> > tree. The kernel would then bind each device and run each driver's prob=
-e
-> > function. This works, but has been broken before due to the introductio=
-n
-> > of asynchronous probing, causing multiple instances requesting "shared"
-> > resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
-> > time, with only one instance succeeding. Work arounds for these include
-> > moving the pinmux to the parent I2C controller, using GPIO hogs or
-> > pinmux settings to keep the GPIO pins in some fixed configuration, and
-> > requesting the interrupt line very late. Such configurations can be see=
-n
-> > on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
-> > Lenovo Thinkpad 13S.
-> >
-> > Instead of this delicate dance between drivers and device tree quirks,
-> > this change introduces a simple I2C component probe. function For a
->
-> s/probe. function/probe function./
+On Sun, 15 Sep 2024 09:32:44 +0200
+Dirk Behme <dirk.behme@gmail.com> wrote:
 
-Ack.
+> Yes, it is unrelated to this change. It is PREEMPT_RT usage related. I 
+> think we could add something like
+> 
+> #ifdef CONFIG_PREEMPT_RT
+> void rust_helper___mutex_init(struct mutex *mutex, const char *name,
+> 			 struct lock_class_key *key)
+> {
+> 	return __mutex_init(mutex, name, key);
+> }
+> #endif
 
-> > +static int i2c_of_probe_enable_node(struct device *dev, struct device_=
-node *node)
-> > +{
-> > +       int ret;
-> > +
-> > +       dev_info(dev, "Enabling %pOF\n", node);
-> > +
-> > +       struct of_changeset *ocs __free(kfree) =3D kzalloc(sizeof(*ocs)=
-, GFP_KERNEL);
-> > +       if (!ocs)
-> > +               return -ENOMEM;
->
-> I guess the kernel lets you mix code and declarations now? I'm still
-> used to all declarations being together but maybe I'm old school... I
-> would have put the "dev_info" below the allocation...
+There's no need to use `ifdef` here (we don't want to try replicate all
+ifdefs). Simply add a helper is sufficient. We have logic in
+rust/bindings/lib.rs to prefer externed function to helpers if an
+externed function exist.
 
-AFAIK this is an exception. Excerpt from include/linux/cleanup.h:
+Best,
+Gary
 
-    When the unwind order matters it requires that variables be defined
-    mid-function scope rather than at the top of the file.
+> 
+> to helpers to fix
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/rust/kernel/sync/lock/mutex.rs?&id=6d20d629c6d8575be98eeebe49a16fb2d7b32350
+> 
+> ?
+> 
+> Explanation: Looking at
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/mutex.h?#n52
+> 
+> we have (simplified)
+> 
+> #ifndef CONFIG_PREEMPT_RT
+> extern void __mutex_init(struct mutex *lock, const char *name,
+> 			 struct lock_class_key *key);
+> #else
+> #define __mutex_init(mutex, name, key)			\
+> do {							\
+> 	rt_mutex_base_init(&(mutex)->rtmutex);		\
+> 	__mutex_rt_init((mutex), name, key);		\
+> } while (0)
+> #endif
+> 
+> So in the CONFIG_PREEMPT_RT case bindgen doesn't resolve the macro 
+> what could be fixed by adding a helper.
+> 
+> Dirk
 
-and
-
-    Given that the "__free(...) =3D NULL" pattern for variables defined at
-    the top of the function poses this potential interdependency problem
-    the recommendation is to always define and assign variables in one
-    statement and not group variable definitions at the top of the
-    function when __free() is used.
-
-
->
-> > +/**
-> > + * i2c_of_probe_component() - probe for devices of "type" on the same =
-i2c bus
-> > + * @dev: Pointer to the &struct device of the caller, only used for de=
-v_printk() messages.
-> > + * @cfg: Pointer to the &struct i2c_of_probe_cfg containing callbacks =
-and other options
-> > + *       for the prober.
-> > + * @ctx: Context data for callbacks.
-> > + *
-> > + * Probe for possible I2C components of the same "type" (&i2c_of_probe=
-_cfg->type)
-> > + * on the same I2C bus that have their status marked as "fail".
->
-> I may have missed it, but originally this was ones marked
-> "fail-needs-probe", right? Now it tries all types of fail?
->
->
-> > + * Assumes that across the entire device tree the only instances of no=
-des
-> > + * prefixed with "type" are the ones that need handling for second sou=
-rce
-> > + * components. In other words, if "type" is "touchscreen", then all de=
-vice
-> > + * nodes named "touchscreen*" are the ones that need probing. There ca=
-nnot
->
-> "touchscreen*" implies that it can have an arbitrary suffix. Can it?
-
-That is the idea. The use case is for components that have conflicting
-addresses and need special probing. Such device nodes obviously can't
-have the same node name. This is planned but not implemented in this
-series.
-
-> ...or can it just have a unit address?
-
-IIUC in DT jargon the "node name" does not include the address. The name
-including the address is the "full name".
-
-> > + * be another "touchscreen" node that is already enabled.
-> > + *
-> > + * Assumes that for each "type" of component, only one actually exists=
-. In
-> > + * other words, only one matching and existing device will be enabled.
-> > + *
-> > + * Context: Process context only. Does non-atomic I2C transfers.
-> > + *          Should only be used from a driver probe function, as the f=
-unction
-> > + *          can return -EPROBE_DEFER if the I2C adapter or other resou=
-rces
-> > + *          are unavailable.
-> > + * Return: 0 on success or no-op, error code otherwise.
-> > + *         A no-op can happen when it seems like the device tree alrea=
-dy
-> > + *         has components of the type to be probed already enabled. Th=
-is
-> > + *         can happen when the device tree had not been updated to mar=
-k
-> > + *         the status of the to-be-probed components as "fail". Or thi=
-s
-> > + *         function was already run with the same parameters and succe=
-eded
-> > + *         in enabling a component. The latter could happen if the use=
-r
->
-> s/latter/later
-
-Are you sure?
-
-> > + *         had multiple types of components to probe, and one of them =
-down
-> > + *         the list caused a deferred probe. This is expected behavior=
-.
-> > + */
-> > +int i2c_of_probe_component(struct device *dev, const struct i2c_of_pro=
-be_cfg *cfg, void *ctx)
-> > +{
-> > +       const struct i2c_of_probe_ops *ops;
-> > +       const char *type;
-> > +       struct device_node *i2c_node;
-> > +       struct i2c_adapter *i2c;
-> > +       int ret;
-> > +
-> > +       if (!cfg)
-> > +               return -EINVAL;
->
-> Drop extra check of "!cfg". In general kernel conventions don't check
-> for NULL pointers passed by caller unless it's an expected case. You
-> don't check for a NULL "dev" and you shouldn't need to check for a
-> NULL "cfg". They are both simply required parameters.
-
-"dev" is only passed to dev_printk(), and that can handle "dev" being
-NULL. Same can't be said for "cfg".
-
-I don't know what the preference is though. Crashing is probably not the
-nicest thing, even if it only happens to developers.
-
-> There are a few other places in the patch series where it feels like
-> there are extra arg checks that aren't really needed...
->
->
-> > +       ops =3D cfg->ops ?: &i2c_of_probe_dummy_ops;
-> > +       type =3D cfg->type;
-> > +
-> > +       i2c_node =3D i2c_of_probe_get_i2c_node(dev, type);
-> > +       if (IS_ERR(i2c_node))
-> > +               return PTR_ERR(i2c_node);
-> > +
-> > +       for_each_child_of_node_with_prefix(i2c_node, node, type) {
->
-> I wouldn't object to a comment before this for loop:
->
-> /* If any devices of this type are already enabled then the function
-> is a noop */
->
-> ...or it could be a helper function.
-
-That is what the commeet within the loop is trying to say. I'll move
-it before the loop and incorporate your words. The loop can then be
-rewritten to return early.
-
-> > +               if (!of_device_is_available(node))
-> > +                       continue;
-> > +
-> > +               /*
-> > +                * Device tree has component already enabled. Either th=
-e
-> > +                * device tree isn't supported or we already probed onc=
-e.
-> > +                */
-> > +               ret =3D 0;
-> > +               goto out_put_i2c_node;
-> > +       }
-> > +
-> > +       i2c =3D of_get_i2c_adapter_by_node(i2c_node);
-> > +       if (!i2c) {
-> > +               ret =3D dev_err_probe(dev, -EPROBE_DEFER, "Couldn't get=
- I2C adapter\n");
-> > +               goto out_put_i2c_node;
-> > +       }
-> > +
-> > +       /* Grab resources */
-> > +       ret =3D 0;
-> > +       if (ops->get_resources)
-> > +               ret =3D ops->get_resources(dev, i2c_node, ctx);
-> > +       if (ret)
-> > +               goto out_put_i2c_adapter;
-> > +
-> > +       /* Enable resources */
-> > +       if (ops->enable)
-> > +               ret =3D ops->enable(dev, ctx);
-> > +       if (ret)
-> > +               goto out_release_resources;
->
-> I won't insist, but a part of me wonders whether we should just
-> combine "get_resources" and "enable" and then combine "cleanup" and
-> "free_resources_late". They are always paired one after another and
-> I'm having a hard time seeing why they need to be separate. It's not
-> like you'll ever get the resources and then enable/disable multiple
-> times.
-
-Maybe. The structure was carried over from the original non-callback
-version. I think it's easier to reason about if they are kept separate,
-especially since the outgoing path is slightly different when no working
-component is found and one of the callbacks ends up not getting called.
-
-> > +/**
-> > + * struct i2c_of_probe_ops - I2C OF component prober callbacks
-> > + *
-> > + * A set of callbacks to be used by i2c_of_probe_component().
-> > + *
-> > + * All callbacks are optional. Callbacks are called only once per run,=
- and are
-> > + * used in the order they are defined in this structure.
-> > + *
-> > + * All callbacks that have return values shall return %0 on success,
-> > + * or a negative error number on failure.
-> > + *
-> > + * The @dev parameter passed to the callbacks is the same as @dev pass=
-ed to
-> > + * i2c_of_probe_component(). It should only be used for dev_printk() c=
-alls
-> > + * and nothing else, especially not managed device resource (devres) A=
-PIs.
-> > + */
-> > +struct i2c_of_probe_ops {
-> > +       /** @get_resources: Retrieve resources for components. */
-> > +       int (*get_resources)(struct device *dev, struct device_node *bu=
-s_node, void *data);
-> > +
-> > +       /** @free_resources_early: Release exclusive resources prior to=
- enabling component. */
-> > +       void (*free_resources_early)(void *data);
->
-> It would be good if the doc here mentioned what happened if no
-> components were found and thus nothing was enabled. Is the function
-> still called? It looks like "no" and "cleanup" is in charge of
-> cleaning in this case. Feels like the docs need to be more explicit.
-
-Ack.
-
-
-Thanks
-ChenYu
 
