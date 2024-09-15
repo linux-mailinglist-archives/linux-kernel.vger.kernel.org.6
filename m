@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-329999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477DE97984E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:02:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F76979850
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 21:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FDF028225F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:02:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18CCB1C21322
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 19:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9F71C9EB0;
-	Sun, 15 Sep 2024 19:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CF11C9ECA;
+	Sun, 15 Sep 2024 19:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ItnhACcq"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="D5RQkV0S"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243271BC59;
-	Sun, 15 Sep 2024 19:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6941B85EC;
+	Sun, 15 Sep 2024 19:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726426956; cv=none; b=U6vm6TYPI8vi35fS5b1+mOd3+aeuXTFpdPNX/V9Ev9d4fidYM+qj6/x7iHMLEYNZYqjdMCOrhDjhZpgoSsdDZI6qjVQQJOYQPNQMZroL1z3hFoIYFuYk9TD4p/4Ou0EK9Q4aJt2nxj+1mI4xrbJh+yMHx17Trv8okgRu3ZSoxy8=
+	t=1726426978; cv=none; b=oXgxHEaIXyJMd1lfPgM6Hy+kltqquM+BIgDT2MiP8BvDAvHVwPlT8RGYoNT//CEHORdpNEq+GFqDcqTGuJYCqvJ1egt5UYF/cOXF+gH0Gx5rwB42QtF42GDmvtj4w3SgPNioft1i+nhsRtsWQ7arXLTTugzs5AJS2RzfupK/4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726426956; c=relaxed/simple;
-	bh=LRTm9QMs48zKJ6w3wCdNSSMFbJon0s3OK+Yc/61thl0=;
+	s=arc-20240116; t=1726426978; c=relaxed/simple;
+	bh=incBIIGh6/Nb8jqbKnb1w2E8rNeIc3tWZZuPGZv0P+c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GqtbYJASfmz4qTGy1RyG69Pw1qEwgaUAcfddoAFzZDGxu5T2Vakh2BXTP8efFnZ9H9wjbmihTjmIkhNQ6ZpBi2kuv5fE+HyW9f7QjP5D4LKwCySyHJrHfSDVmuxU3GvTJDQIKWb5HLM6W9+xp+xOwsJZ3C72XwPQ8vcNmhDB//g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ItnhACcq; arc=none smtp.client-ip=209.85.214.179
+	 To:Cc:Content-Type; b=iYW7JFN/rZuitfToPuM6rz0SbruS3lwbQ2v9EpNdHB1dz+QlLtPt36mPKuGB0ezU3PaquUhJlpK0DSkjsN+JsT7NsfOQRiZFVESrtDMp04qvvviN1jFyisfMqrJr4qQheuo9vaGvY8zFeXUipnAZRdc+GDoagN9TtVvNX6lVjEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=D5RQkV0S; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-205909afad3so39658615ad.2;
-        Sun, 15 Sep 2024 12:02:34 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20688fbaeafso29104055ad.0;
+        Sun, 15 Sep 2024 12:02:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1726426954; x=1727031754; darn=vger.kernel.org;
+        d=googlemail.com; s=20230601; t=1726426977; x=1727031777; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rl3JgxfsDEcMv93irGGWEQMK2kPdpMNmmbqbOCPjeeE=;
-        b=ItnhACcqhcjHMQ8+zVVHfAkWn9SjQWzLIt/okZ2LQRATrxA+mR/wuLpqZMl8W7PPHi
-         LaZVOFzrFZraJz1Ot1RVZUeb0oqeW1K0IabtydSaD/NYyU7JtLxR0HuxZqcPAYo5/Rbc
-         OJdzGm8AjTyShJ5OW3TNhY7RtcfZw5Jg7fIl5c1evo9OjBSCSmuwu2RigkDtX+3wEiNp
-         S+fDL68/GevofJdNtSEN7Y7dl8uFaejlHTKFlv1Y0SozBiYSXKWF17dwfADg/t4yxcTj
-         qmEIhursWPgD6wkIEqxMWJx8eOSOlwJ35Ed86zIRT7YNTR9gOedRh+g/Ng9miwKEqVWX
-         1a4w==
+        bh=I4UOvVGZ8GtKwRInuJIT2ch8XFkLj324WspKyPQ0xaw=;
+        b=D5RQkV0SxNk3csv51Jfs5cc6ctiv/zwAHLEYR5WJqifpno0ZY2macaBTLxcW2XsrM7
+         Prqw7jOSrJ84E2EwNfwZvt25fKTsshZsgoFWNW+G5WgVlq9VsGwZaaIRzhrCJcyOmwBx
+         SetW2k08rm5a4Dv7bK5qLumOJKtd2Ic2NmH4k2OSF+pNHlhBLk0vs6XnVdDdIRt93pGt
+         sU88oFu8EiS2cToFQaVfiMjpPzALWjOWlko6fCie7ae32bhQdy7f0EUIt/dkKc2Yp5ps
+         w9WD+dU5BZ0aOd5/vfVeBJU5EcMZ1KF11h240ZYJY3HpTiKMHFq7vqAM4rY+uT0Vwolg
+         RALg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726426954; x=1727031754;
+        d=1e100.net; s=20230601; t=1726426977; x=1727031777;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rl3JgxfsDEcMv93irGGWEQMK2kPdpMNmmbqbOCPjeeE=;
-        b=u1g2qn3iK+SmitskQZ+CwuhVelRnxyiXhmw8zgOMDaROpBVhnjM2pC5QbEDJSwK7d1
-         a/vUCSXVwOaFXhfRF90JEqY7TEi4e1/eDzhUKwU/nzLiKGCCFSaA99sYwTkwfMEhufht
-         VVBQSI2REwZ3+COxWoUm8ZWtjsHMe1yK97J8GOdTQGxQiCh+9t/4qWAsQnBS3IPr+jiq
-         7Ei05WuuBqMF6sj1DJ0Q8BePDZMqaF7wxZUg978sHfdTnwXGtg/GyHvlFA+wfuvFl7xC
-         2LLsqWq3KEj3de5v8eMrHEPjR/f6S9ijN6k/T3kcXCk1IawBIzrgP/gv5406xQaYtY0h
-         YPWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIMUdeLETFGinCltwZjS0Bp63jvbzaHXTkAoqJQrV5No/Yy5qSZbN/3kTfjoqwvD7+Vg1ndUIV1HMc@vger.kernel.org, AJvYcCWOI0wNNddUzafcd3k/1zwP1vI+rBc50Mfpa4AZfc8p8cM8caQYKUpLCrCy115MSoyqP9BYSb3zT+p/i3EL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp64kIYhBhi8OZdqTmw9zfO79EzuI9r5eb3tmZ4/5zjBAt1iHV
-	Ar8e82Ro8F+uNczL++cVrLn4lT+j/OVwn43T7aJymKSd2ggoZf/SYkcVv9tG0yrG9QVBgb5NZjo
-	0yT3t/pM1siRkzklSkncPX30p44A=
-X-Google-Smtp-Source: AGHT+IHUhNgb5CY73OVQ923HMu5EESIjBPBxS3vs2jfupJZ1tMBLM2XnsxoP/DNupYRnYP+/+zH2b2BjxO/nsut89FE=
-X-Received: by 2002:a17:902:e5c3:b0:205:709e:1949 with SMTP id
- d9443c01a7336-2076e421fd0mr213345945ad.57.1726426954359; Sun, 15 Sep 2024
- 12:02:34 -0700 (PDT)
+        bh=I4UOvVGZ8GtKwRInuJIT2ch8XFkLj324WspKyPQ0xaw=;
+        b=evYiGazhvM0svXlL52CzxWheP9DuMfXH6PMG7i5804UgFZauzJUFDROcQTCQPyTGVs
+         4LvjlklScXsEJnsMkKLXnXZX21XIsrwy1ynL8tnxyJVeTJUOqSnmLD1J5pbEWMnK1kUw
+         BhRu/R1mI9EevB7wD97aByAgytNX7FUp3bcwAcMzZVw/ZLCx/J2YwpQmDlKpMvqijTvA
+         NxKYxx+Rba/R86xyOpZUWQpc9/p9qJZriP+hi7jb31gMpb4XLYLx+WcygIumvi1XnY5C
+         TnpFxUKxhMH11Nu6vtQ8GfldaFuaJ5tXj9duhZ8IycKATxMlO2iWj/js93n3tkIKDsTs
+         YvhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9zjnUWtJFiWnystlf3u9fu6KdjWD5pOyxDxKE1YqFF0DEqeR3xLJVQfPHCu5edhlH0xrc0n38ENFvGkUR@vger.kernel.org, AJvYcCVX1NX6Ux+oim3OGtV20pkZd8dx7oldeudwttzSPG8HwfVBjmKSG8tddsNn94+YCCZ9kjU9TSIEEKyY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQUerhvENvWIQiOW6mt5VdIpaolybMM8BrJwU1GvLcIQ+OGtY5
+	J1CrIOJnGllJlFmN3GsAIDAAbx+wyhZiq4Md+YKFdzvPwl6VYt6x6Z4cN5qz0buPebMAuiY07tS
+	ljraRKM7jpTA4Ql4W9U6tcA9X7pK6DFI5
+X-Google-Smtp-Source: AGHT+IE7kheTN19zXbJRfYda2IivoITqgwqNICI/LYdA2vzUDioYop84RC1rbN/XaMWP5zvCukwcsh729j6RO0lWXnk=
+X-Received: by 2002:a17:903:2a8e:b0:205:5582:d650 with SMTP id
+ d9443c01a7336-20782b7d46dmr146275835ad.52.1726426976825; Sun, 15 Sep 2024
+ 12:02:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,12 +71,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-v1-0-feaabb45916b@linaro.org>
- <20240911-topic-amlogic-arm32-upstream-bindings-fixes-v1-3-feaabb45916b@linaro.org>
-In-Reply-To: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-v1-3-feaabb45916b@linaro.org>
+ <20240911-topic-amlogic-arm32-upstream-bindings-fixes-v1-5-feaabb45916b@linaro.org>
+In-Reply-To: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-v1-5-feaabb45916b@linaro.org>
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sun, 15 Sep 2024 21:02:23 +0200
-Message-ID: <CAFBinCBj5OoJ7DqwhfV0RGZjW681U3ELqm=LX13XY3RAO3S19Q@mail.gmail.com>
-Subject: Re: [PATCH 3/7] ARM: dts: amlogic: meson8: fix ao_arc_sram node name
+Date: Sun, 15 Sep 2024 21:02:46 +0200
+Message-ID: <CAFBinCAgm+OGnxDvYAWGU-hEgBgGqJwHESR3ivT66BNvTNo5Pw@mail.gmail.com>
+Subject: Re: [PATCH 5/7] ARM: dts: amlogic: meson8b-odroidc1: fix invalid reset-gpio
 To: Neil Armstrong <neil.armstrong@linaro.org>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
@@ -89,10 +89,10 @@ Content-Transfer-Encoding: quoted-printable
 On Wed, Sep 11, 2024 at 12:19=E2=80=AFPM Neil Armstrong
 <neil.armstrong@linaro.org> wrote:
 >
-> Use the proper node name for the sram, fixing:
-> sram@d9000000: 'ao-arc-sram@0' does not match any of the regexes: '^([a-z=
-0-9]*-)?sram(-section)?@[a-f0-9]+$', 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/sram/sram.yaml#
+> Use the proper "-gpios" property name, fixing:
+> hub@1: 'reset-gpio' does not match any of the regexes: 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/usb/genesys,gl850g=
+.yaml#
 >
 > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
