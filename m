@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-329861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282DB9796CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 15:21:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9D09796CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 15:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D991F217A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:21:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5211F216CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 13:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0791E1C6F43;
-	Sun, 15 Sep 2024 13:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCD11C68B1;
+	Sun, 15 Sep 2024 13:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CiLPXRR2"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ulfe+ng1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2E1433A0;
-	Sun, 15 Sep 2024 13:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B98E125DB;
+	Sun, 15 Sep 2024 13:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726406502; cv=none; b=p4v/0oMAdYhBJU/SxeD6l2+ZJdvquMGSHdma5rcX9QEn+M0h2EYeQq3gMwwANtIDkB0DCNoxJSZnmokg0N+GH7dKCKdciKUg1vxNT534aOo+Jt16efufs4cy/Q/lXtss7JWHTHdxpDuvhH1cKaoGOfMpOp8snoptQJLIyeJu2FE=
+	t=1726406629; cv=none; b=hOiN8n4YjcDGVI/02KL5R1ejS0GJkp+ej5VD1Rsa0KOTHRpwI3TqF/y17X/Ros5tlkxpkaXGHOy/Qw/SBCbbcBFF+Px1sbqxdHElm4c6lAQIT5dsUHqHGR5mkmQkEqVQq9Pi18afwYzCxwZfQomarnQEObg0ats56gW2S36VJ/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726406502; c=relaxed/simple;
-	bh=rPcG3DiKC0POFq3uDEREDUk8yp6MATjJh6MMHGkzhws=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ck51FBjchokoYdy4b8SXAC0w/BqFkci9KHYcKpV4NayEMfEVfja99lkPLQapynLL0CsLZVmyeHv9CsBP03ocvVQ+k9/2jZqK0Cpxsdu2YEUc6g7Sg4pMDdcJdjTZPOuutbtuNYBZ/YCpOUP/A2P+POltiVUtPVym5syElrr63fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CiLPXRR2; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb7a2e4d6so29775135e9.0;
-        Sun, 15 Sep 2024 06:21:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726406499; x=1727011299; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=idfczeylpw7MsiF2AYkY9wjK5lANtO3xiTFwo6El3Vs=;
-        b=CiLPXRR2wyEuu79yfSQFzIavMgPIl3D6KLLgMORGxHqR0N407X85m4JpgjK0Eol7XU
-         /f13nIM3d1rsNAJObo+qZ97Z3r8HmwL2cNorWcfEzdH2Y5jYQdFv5jxnRAHdEq2hxBwD
-         rTLmVGJuHXW0fHOa0cHnYXdaOKXon+9t8KDcD0wI3N39QQIsjNwGwrMaAmlevyf51NOe
-         iYy2rjul6xevMnPiMFhBrB4budJHKBrYJsv+RWaLW7UW6/MGKuXY3x6UBTcNTLMSJSlK
-         f3YmhwrKbGE2lgP5ynDuhnHgn07+0AwgwPAGp3G2hqqW6azinsV9icsBYyh9Q0DoLOsU
-         9lJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726406499; x=1727011299;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=idfczeylpw7MsiF2AYkY9wjK5lANtO3xiTFwo6El3Vs=;
-        b=Ohn9fSbsNwyr3hV9Y0qt+AFAyVU1u4UlpM5xmKaRNv4lNtiNmbPRwnaakznRe0du2f
-         uoWTu/9hsjiw9MM2JKza6kCXIl5nyvquLAp+OwCzkMRmPI92ObpWY/Muih16ytKVAUUH
-         PehA4bBqfG7tKLqcJupU5U2eR/8OeOx3XWuCMwFf6SHTzx7q/EW2vhlhELH3AHnzl8Co
-         D5+2MP7KbdXVsiRuEyBFy5a5uw2uEc+6y3mswdXDs3QfpqMIpnDbXvlUJuJGVr4VpYoo
-         9vkqpnizxQyk+AyzvR6qSv67U0tjDSBPl+obBRJElrWvDcqKxGbASFDe8YEmu/LO9JM0
-         T4HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKn3R/TdyN/2ktMsJBfYwUTo2gg28v0HWBCSkdhYGErLnCeZ4JOUS8S6b3niyqcCalD6pV7Z2rZ12x9Fl/@vger.kernel.org, AJvYcCWqZ9xQ7uodwnVDcD9HhvD1TtqM4TgmkG9RIpWAF9zGeTH37trm93u+NkLMcMRB8plyHL3TpskhX30v9sNGrFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX+/pBl2mgWzvZGvgxZ7AspjL7dyZbqGHBLyzc+XKbgQFeLL5J
-	T50+lr52ITAybWZHAfDb76A3k8UTssFdHipyMwxaOwrtVisqOd/s
-X-Google-Smtp-Source: AGHT+IEdu2PhHg9YVIjt7bz4TXO2DH+7s5JJg77yAikm7n7y3DdL7llEuZiHnUqGtBPPqexmNnElAg==
-X-Received: by 2002:a05:600c:4f51:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-42cdb487cfemr86339375e9.0.1726406498448;
-        Sun, 15 Sep 2024 06:21:38 -0700 (PDT)
-Received: from void.void ([141.226.169.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da242138bsm48815275e9.35.2024.09.15.06.21.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 06:21:38 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] ethernet: chelsio: fix a typo
-Date: Sun, 15 Sep 2024 16:21:32 +0300
-Message-Id: <20240915132133.109268-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1726406629; c=relaxed/simple;
+	bh=errKGCtfl+LxTRb3ZVsaTPvbepT+cXQro3oA5WbinyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d89gmQTp88xI2mkK5gUjMjvstg2DBRf1ZR5SbkHlskHYOvzSzEPbdM9X1wDzv28H5RTTvEobSsZRCZ1HwklO8LjtG1WZJhMRn7vRRmyBqr1zECPnGJgb5e8kF3fLj2CeixN1QWYGb1UeIMyTQyXKT4Nygw3AvoR8aCVJqPALFHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ulfe+ng1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54185C4CEC3;
+	Sun, 15 Sep 2024 13:23:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726406629;
+	bh=errKGCtfl+LxTRb3ZVsaTPvbepT+cXQro3oA5WbinyQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ulfe+ng10PVo28zS1mPF+MCYhNocOIbmpT5ZL5/HqEeGF92dOVsr7itz4iz3OPfkc
+	 AmKkpalgXM27a+EwtSeu38FUfrI7+IuvB7mvkoUXhZYFe+v2l8OXNAZqCtQqgNyjYw
+	 r205TCEAVT+Fo6eWSSSVfCJS/eiy/bOKPjzLs1IA=
+Date: Sun, 15 Sep 2024 15:23:44 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: =?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	yung-chuan.liao@linux.intel.com,
+	pierre-louis.bossart@linux.intel.com,
+	krzysztof.kozlowski@linaro.org, alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH stable-6.10 regression] Revert "soundwire: stream: fix
+ programming slave ports for non-continous port maps"
+Message-ID: <2024091555-untitled-bunkbed-8151@gregkh>
+References: <20240910124009.10183-1-peter.ujfalusi@linux.intel.com>
+ <febaa630-7bf4-4bb8-8bcf-a185f1b2ed65@linux.intel.com>
+ <2024091130-detail-remix-34f7@gregkh>
+ <ZuQnPnRsXaUEBv6X@vaman>
+ <ZuXgzRSPx7hN6ASO@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZuXgzRSPx7hN6ASO@vaman>
 
-Fix a typo in comments.
+On Sun, Sep 15, 2024 at 12:45:25AM +0530, Vinod Koul wrote:
+> On 13-09-24, 17:21, Vinod Koul wrote:
+> > On 11-09-24, 14:31, Greg KH wrote:
+> > > On Tue, Sep 10, 2024 at 04:02:29PM +0300, Péter Ujfalusi wrote:
+> > > > Hi,
+> > > > 
+> > > > On 10/09/2024 15:40, Peter Ujfalusi wrote:
+> > > > > The prop->src_dpn_prop and prop.sink_dpn_prop is allocated for the _number_
+> > > > > of ports and it is forced as 0 index based.
+> > > > > 
+> > > > > The original code was correct while the change to walk the bits and use
+> > > > > their position as index into the arrays is not correct.
+> > > > > 
+> > > > > For exmple we can have the prop.source_ports=0x2, which means we have one
+> > > > > port, but the prop.src_dpn_prop[1] is accessing outside of the allocated
+> > > > > memory.
+> > > > > 
+> > > > > This reverts commit 6fa78e9c41471fe43052cd6feba6eae1b0277ae3.
+> > > > 
+> > > > I just noticed that Krzysztof already sent the revert patch but it is
+> > > > not picked up for stable-6.10.y
+> > > > 
+> > > > https://lore.kernel.org/lkml/20240909164746.136629-1-krzysztof.kozlowski@linaro.org/
+> > > 
+> > > Is this in Linus's tree yet?  That's what we are waiting for.
+> > 
+> > Yes I was waiting for that as well, the pull request has been sent to
+> > Linus, this should be in his tree, hopefully tomorow..
+> 
+> It is in Linus's tree now. Greg would you like to drop commit
+> 6fa78e9c41471fe43052cd6feba6eae1b0277ae3 or carry it and the
+> revert...?
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
-Keep the layout intact.
+I can not "drop" a commit that is already in a realease for obvious
+reasons :(
 
- drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> What is the usual process for you to handle reverts?
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h b/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h
-index 4c883170683b..422e147f540b 100644
---- a/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h
-+++ b/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h
-@@ -49,7 +49,7 @@
- /******************************************************************************/
- /** S/UNI-1x10GE-XP REGISTER ADDRESS MAP                                     **/
- /******************************************************************************/
--/* Refer to the Register Bit Masks bellow for the naming of each register and */
-+/* Refer to the Register Bit Masks below for the naming of each register and  */
- /* to the S/UNI-1x10GE-XP Data Sheet for the signification of each bit        */
- /******************************************************************************/
- 
--- 
-2.39.5
+We just take them like normal.  What is the git id of the revert in
+Linus's tree?
 
+thanks,
+
+greg k-h
 
