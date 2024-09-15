@@ -1,70 +1,57 @@
-Return-Path: <linux-kernel+bounces-329838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-329839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8264F979694
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BC0979696
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 14:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B17901C20FCB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C6C1C20F7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 12:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5EC1C689D;
-	Sun, 15 Sep 2024 12:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A038A1C57B8;
+	Sun, 15 Sep 2024 12:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="I6iTjJPi"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XAZOisIj"
+Received: from mail-40141.protonmail.ch (mail-40141.protonmail.ch [185.70.40.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1063A1C3F38;
-	Sun, 15 Sep 2024 12:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F86D13DDA7
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 12:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726402815; cv=none; b=DRzGF7hnVbqxVDooO51BolwtNBXfbEKI0wHbSijprcn7mqG6JfmPLmzc0QuEyRIQ5HFb9JmrUhg62S0m/grwxWi1pwerd4qebptCuBgAforo+nDkXQYwKZVoNaej2qe0oNKF3vH96O+n5iY3g9nJrbhUHf037YXD97WfmA/9nAk=
+	t=1726403137; cv=none; b=Uk++xfVG1vQlzqhlfpla5Yk59XDeVzRdqxUoAU4s8jytK35ImGz5A6BKF9hyebYZI6/ILTm7wOl1sbQmej3tVbqATsK4MFu3qyApe4pbuOyfONqUVcnjkdrEkZ/xdhuop5cE1qZZQghMxOfUBAwD6TIcAwmbEC5DkqzDbW1AbCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726402815; c=relaxed/simple;
-	bh=Y9rDxiF0UiBCeEPN8lLxrJAUzoHXuLv/CJEpCJjpLvk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BE85gFYO0hgS2fw42ifpFFrUrzm3q+tvLUDRvHMaV+2+t24P5wUkSAjX48vUxfrr9kIUGasxOqKuON6wvSxSwo3OF+xY+W1oNbO9Xb34S847tRCK6aSrhQpZlrFG6+3Mot2PZVwn58dUx/ur9tX1wzT7axlm7Z/KfV3Amsuqh8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=I6iTjJPi; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1726402803;
-	bh=LcqIBVzHw0KnwXTko6FqDEVdGVv2zi2crglHm27G4d8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=I6iTjJPikupA477s76MI4hBQ6xsZn3ga+yalo4/iLaFuUS78Rj0BUT9N6AswrEcWT
-	 CDwMCJmusbYk6Ig8YpaBv5TvStzLHfR0phcE51BneSptcxhQVb8bv3K6hPrOBKlptG
-	 1UfGTiGjWzZFUZZLYMqNQW57tplBHAbAViNUfDkTIvlrnptU7I4eocj2KnCziNk0e7
-	 6IfgkTQIVGMzjExC5wmO7ZxNz3Y36+2ol2ZFq7bJg+HsE1vi4LhkzrdtnUbCjgOnuQ
-	 Nd3s3BtWeeQhGquc1UcaXLNsa+vwi8oiCdfS2d8yLNZue6Pfj0dUlHhqAsIDqnkza6
-	 L3vPXeZU7yhqQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X66Ys6GwTz4x8H;
-	Sun, 15 Sep 2024 22:20:00 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, Mina Almasry
- <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Stephen
- Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Matthew
- Wilcox <willy@infradead.org>
-Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
-In-Reply-To: <498e7990-2c81-4779-83e6-1ff072796dbd@csgroup.eu>
-References: <20240913213351.3537411-1-almasrymina@google.com>
- <87jzffq9ge.fsf@mail.lhotse>
- <498e7990-2c81-4779-83e6-1ff072796dbd@csgroup.eu>
-Date: Sun, 15 Sep 2024 22:19:58 +1000
-Message-ID: <87h6ahqfbl.fsf@mail.lhotse>
+	s=arc-20240116; t=1726403137; c=relaxed/simple;
+	bh=8PJTPIBa5bZwJbOzVWXJHDJMVVUpft1y4CUxWssOzs0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U8zamhiasnprerckIUzK7+io2QXDqaiPr/Tnyt+IJN973/NN870J9sbdiLwQwEROIPkenf8PDYuh/Vm+FZ6nkyP5tKLxV2k7yhdKg/CgI6vnHFDkG8In4MPNqomWdvrcSUHuIaZiVKogVeXkFm+abZxlfMNp7Fy9j9CK0eaXU8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XAZOisIj; arc=none smtp.client-ip=185.70.40.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726403130; x=1726662330;
+	bh=ohuHPs8uppnIZ5YHqXrpeVgM3lV+MvcBIFytkXKJ1jI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=XAZOisIj0RVAkX3upqZA77IxipbkfJFEHmEyT2O8QbcqluQTw0+e96PP9qWodle0A
+	 pVXjWc6vKxh8dV4wdCadDycjqeKtPpNGLLzOVYSWQ7yC/RdsjDtznwa2RKaduQAM8H
+	 ZGgHvDLHkb6/trZAPTaKih5Nca53g4uaDDL3H3BoLXlAv4wyT9a9DzV2ErmX8iaFLO
+	 YyOYAfmVf8Di4OqVpg9+tkHhzSWUYAaPqIlzITctws3HoufC8eNWrelSrWn52EbVps
+	 lSNWyzyt80eKdPNne9QZpo9kQTReba86ahkDxuFLY6Aq+YpVQa3Ot3afdeUhiZJyBb
+	 y2FZEcnDzsQeQ==
+Date: Sun, 15 Sep 2024 12:25:24 +0000
+To: Dave Hansen <dave.hansen@intel.com>
+From: John <therealgraysky@proton.me>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
+Message-ID: <OCPUzm9NO5UcsvzQfzIazzMh7nymvY5oz3pBojDqEOlhVrYTdYZ35Il0oi8WkwFN7N-1HpCIPXFgQ3MGT7108YhjiBWWv7RqrC40mlW4ak4=@proton.me>
+In-Reply-To: <e5081e3b-0f14-4e1e-975a-a4fd22944fc7@intel.com>
+References: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me> <e5081e3b-0f14-4e1e-975a-a4fd22944fc7@intel.com>
+Feedback-ID: 47473199:user:proton
+X-Pm-Message-ID: 6137b1e7108cd70a963505ea14e063583c153b0e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,37 +61,62 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Christophe Leroy <christophe.leroy@csgroup.eu> writes:
-> Le 14/09/2024 =C3=A0 04:02, Michael Ellerman a =C3=A9crit=C2=A0:
-...
->>=20
->> diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/as=
-m/atomic.h
->> index 5bf6a4d49268..0e41c1da82dd 100644
->> --- a/arch/powerpc/include/asm/atomic.h
->> +++ b/arch/powerpc/include/asm/atomic.h
->> @@ -23,6 +23,12 @@
->>   #define __atomic_release_fence()					\
->>   	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory")
->>=20=20=20
->> +#ifdef CONFIG_CC_IS_CLANG
->> +#define DS_FORM_CONSTRAINT "Z<>"
->> +#else
->> +#define DS_FORM_CONSTRAINT "YZ<>"
->> +#endif
->
-> I see we have the same in uaccess.h, added by commit 2d43cc701b96=20
-> ("powerpc/uaccess: Fix build errors seen with GCC 13/14")
+On Sunday, September 15th, 2024 at 7:40 AM, Dave Hansen <dave.hansen@intel.=
+com> wrote:
+> If these are going to be exposed to end users, we need some kind of
+> help text that helps end users select among these options and what the
+> pitfalls are.
+>=20
+> I actually don't have the foggiest idea what an "AMD x86-64 CPU with v2
+> instructions" even is. Even saying "AMD x86-64 CPU" isn't super helpful
+> because "AMD x86_64" is kinda a generic way to refer to all the 64-bit
+> x86 CPUs, Intel included.
 
-Yep.
+> Why are there v4's for both AMD and Intel that do the exact same thing?
 
-> Should that go in a common header, maybe ppc_asm.h ?
+I did it this way to selectively include the AMD-specific and Intel-specifi=
+c membership in the config options below.  For example, the AMD options sho=
+uld be included in the X86_INTEL_USERCOPY config.
 
-That would be the obvious place, but unfortunately including ppc_asm.h
-in atomic.h breaks the build due to header spaghetti.
+> Why is this copied and pasted six times?
+>=20
+> + depends on (CC_IS_GCC && GCC_VERSION > 110000)...
 
-For now I've put the defines in asm-compat.h, which is not ideal but
-seems to work.
+I believe the version requirement is needed for each of these new options. =
+ Please correct me if I am mistaken.
 
-cheers
+> Alternatively, anyone wanting to do this could just hack their makefile
+> or (I assume) pass CFLAGS=3D into the build command-line. Why is
+> something like that insufficient.
+
+I believe this would work:
+export KCFLAGS=3D' -march=3Dx86-64-v3'
+export KCPPFLAGS=3D' -march=3Dx86-64-v3'
+
+> > config X86_HAVE_PAE
+> > def_bool y
+> > - depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUM=
+M || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC7 || MCORE2 || MATOM =
+|| X86_64
+> > + depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUM=
+M || MPENTIUMIII || MPENTIUMII || M686 || MK8 || MVIAC7 || MCORE2 || MATOM =
+|| X86_64 || MAMD_CPU_V2 || MAMD_CPU_V3 || MAMD_CPU_V4 || MINTEL_CPU_V2 || =
+MINTEL_CPU_V3 || MINTEL_CPU_V4
+>=20
+>=20
+> is rather silly when M*_CPU_V* all:
+>=20
+> depends on X86_64
+>=20
+> right?
+
+True!
+=20
+> So, taking a step back: Please convince us that this is something we
+> want to expose to end users in the first place, as opposed to having
+> them hack makefiles or just allowing users a string instead of using the
+> existing CONFIG_M* Kconfig options.
+
+This was just the logical extension of the already included and now antiqua=
+ted options, for example pentium-mmx, k6, etc.
 
