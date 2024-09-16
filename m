@@ -1,75 +1,94 @@
-Return-Path: <linux-kernel+bounces-331025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA46297A75F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B7D97A766
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2DC1F26DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:41:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337D71F274DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A79B15B10C;
-	Mon, 16 Sep 2024 18:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7513B15B552;
+	Mon, 16 Sep 2024 18:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Jt6bRMeb"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="0GnU0Vd9"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAF539FC1;
-	Mon, 16 Sep 2024 18:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D55343ADE
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 18:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726512075; cv=none; b=rC1fP8hkqSIuzxcwIOd2VsRqWKvy8AAoNRmZU2QJE2FxQY3gVljJVSF/Ar0ZTZbcv9lI3ijbW6/nvPJ8ZcEi3CENa0AoNptGy8zY9LYHdODyTjkVyG4lL55QOA/fi78JpZ2IrP57+38WJxprr1dRDcHZHZ6zy4IhXnrK0nH4jLI=
+	t=1726512253; cv=none; b=RPEw2B3PRAdC3cZB3LFlFWaleJiDhVem/bHDFvN82+Btqi7o4J+r2ewgR85wxXcVAJcP3JrG9ZqQFyt7rcAA4mrgye+cfh8GOZDxuP+B27p75kHIx9WqRUFNa80YghXrXGjltCBSfIDQoDtoGjTmX/BTFvrW5C9eavh4TB2UVzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726512075; c=relaxed/simple;
-	bh=XpdhDl2amKTsW7cX44kPhzF8ygCTl7YLSEjyonexzFM=;
+	s=arc-20240116; t=1726512253; c=relaxed/simple;
+	bh=H3HlwZCZEQDhvatizrRzbggWa+HA/p1z1pp/lBdDDYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6FoiX4cC7yelkTyO04wz4ureqYyZWlWt7thoNBaE2DqWkuSKtDflG4aa79hfn8dSISc3ek79X/ygNPZXVCkKRMQX7wcEBDciImRxtUYPxqiYsxOScGL20PZ6v54P9Hydge6/pbzYkmJlMBFXnMj85LP7PwPUfdCRXnXFXD4VoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Jt6bRMeb; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2zkhXVqbGItk7W+miVPkM8oZ60eORRfKMCD7sTnjBZY=; b=Jt6bRMebc4csHFW4Fch7g0enFv
-	JQdTCFqUhwqhciFkJj5f284FDwV2m7+0HoccVYWLomP+Qsak9QVpAfpWLEI8haRAiq6X213Zb7ZVC
-	L0KEngX06zrcZoZ9etfMvZOR78rzZ0NcLYD7paMvaZ5TUOslQRsxYUHqG0mkq4p1FCx5YZYXmdU8P
-	sPINfb4tgWM+Pma4Kw6vJqWHM3NPViO669z7TM147JIl5laz9ZTJ78EpaUjYSO7DscaE2HeIRosz6
-	IUi+pNHoJadF3cDs9h2atVBBR+GfPl0V6udlOKiIRjYFbCcM6yOt3PeEPtZmootaEHucQWJBkqK1W
-	70XXxHjA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34824)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sqGer-0006I3-2M;
-	Mon, 16 Sep 2024 19:41:09 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sqGeo-0007CQ-0y;
-	Mon, 16 Sep 2024 19:41:06 +0100
-Date: Mon, 16 Sep 2024 19:41:06 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Ronnie.Kunin@microchip.com, Raju.Lakkaraju@microchip.com,
-	netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, Bryan.Whitehead@microchip.com,
-	UNGLinuxDriver@microchip.com, maxime.chevallier@bootlin.com,
-	rdunlap@infradead.org, Steen.Hegelund@microchip.com,
-	Daniel.Machon@microchip.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next V2 1/5] net: lan743x: Add SFP support check flag
-Message-ID: <Zuh7wtfajqRWoAFs@shell.armlinux.org.uk>
-References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
- <20240911161054.4494-2-Raju.Lakkaraju@microchip.com>
- <a40de4e3-28a9-4628-960c-894b6c912229@lunn.ch>
- <ZuKKMIz2OuL8UbgS@HYD-DK-UNGSW21.microchip.com>
- <e5e4659c-a9e2-472b-957b-9eee80741ccf@lunn.ch>
- <PH8PR11MB7965848234A8DF14466E49C095642@PH8PR11MB7965.namprd11.prod.outlook.com>
- <ad0813aa-1a11-4a26-8bc7-528ef51cf0c2@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pkXPmX0qwXjlWYBdewMKqESHJtyGqKe8YNQ09VERoYahH9UvrBamwOGlemEWKLTqwmfBSDi//iDtgLc9niydDkO/+8RY0D+ZFuvWpdIq5M8Vd6SEfqimBSYuydluz7Crupr/iWq89d1MBN+BIcxHdYvL/aB7b1dw3w67pOU6GUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=0GnU0Vd9; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2053525bd90so31445125ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:44:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726512250; x=1727117050; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JWRt0WDZ9DWFdEsHGfP3sRZRYldXkufLSIbgP8dWZKY=;
+        b=0GnU0Vd9IvsLq94GTOgkoUy/5qRtZMpyL18oo23qu3bQ79cZ6fWjGIoEoAAVuFiXNC
+         OHOBE1ctDOV4RMzLzfZJzwrLSJG5435Ld4xGk0J8QXYNH1pR7zVjzCCTl4Baj2+x8y5X
+         +ZrbJHqCLpJvrDf1ZVAIPqXIeuDRXcV5ntLSmaICB77uFlTHD7tmpPTwAQFjFMHbfBXq
+         Vd6j5ppm6yG3bsOUIwRWnKEXocHD+bb569/cKNH2Y2Q+zYYUiRR7e5bFESK+77M42rww
+         5vTTA5gAFvqsTLFhwTm70AgAjhC4vmk/NF63pxJq00LR1dvEfw6i1p0pNFgeJluRK+PF
+         J4Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726512250; x=1727117050;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JWRt0WDZ9DWFdEsHGfP3sRZRYldXkufLSIbgP8dWZKY=;
+        b=w71vc9R0bm7vtR+BXvegcjlF3JAHkkBhTpVZUvi8Ka2Z/HTRvUrrhYRVU0AvKbnrnv
+         csAY0V+SWQUhxDsQ9+jYQBO/am/8raMkVZUTOG0dBHMe9MPnj3CThw3KAJq5yjmTSayb
+         LVNPGlG5pDYNcGfCJUObItd2xH6FBelh4kpxJMYIYYdTZ42a2zH5LJlRI0Zf0VO3KNv1
+         8YNEFyfs2RZOA4RxCBs6jg9vwB3Q6KYyIVpK6hbldSilUZu7hwCVguRDA+4MNZGjMTLz
+         Jy1fP+Qs6anOa7jYZIttYVPxzyF0AwpTWeiqDUGXCaD65vGVDDQ4bRhAIwqZmvk4HrMC
+         7iUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLq0PKODDVXTSCOXpr2Sa07cBLpqRy+lRcJba0tV5m/xz++AT3tEi6hW6zSrQl10vS0B0kLV0+eJpaZmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn6/j0IXlbuXb5kqauFbSGabny8OTEVOUdgk1uxyAsmgmj/gj+
+	WBASsZqPA4zjp2OUo5NjhqRRrZhluG9C2Ir16u7f1Q7vjPW40E/XsAVL2g7VsN8=
+X-Google-Smtp-Source: AGHT+IF8dispIWAu4SBpBRXvJsNyO6F3tbYcZrnsVzU7MIvT/flk7KgGQY9i8SqZ41S7cO9LZnYSGg==
+X-Received: by 2002:a17:90b:1c81:b0:2d8:7307:3f74 with SMTP id 98e67ed59e1d1-2dbb9f31cf2mr13931669a91.27.1726512250018;
+        Mon, 16 Sep 2024 11:44:10 -0700 (PDT)
+Received: from ghost ([216.9.110.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbcfcf7f3fsm5689098a91.14.2024.09.16.11.44.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 11:44:09 -0700 (PDT)
+Date: Mon, 16 Sep 2024 11:44:04 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v10 14/14] riscv: Add ghostwrite vulnerability
+Message-ID: <Zuh8dLsA50IHXymz@ghost>
+References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com>
+ <20240911-xtheadvector-v10-14-8d3930091246@rivosinc.com>
+ <20240916-pretext-freehand-20dca1376cd4@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,71 +97,305 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ad0813aa-1a11-4a26-8bc7-528ef51cf0c2@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20240916-pretext-freehand-20dca1376cd4@spud>
 
-On Thu, Sep 12, 2024 at 05:58:14PM +0200, Andrew Lunn wrote:
-> > > > > > +     if (adapter->is_pci11x1x && !adapter->is_sgmii_en &&
-> > > > > > +         adapter->is_sfp_support_en) {
-> > > > > > +             netif_err(adapter, drv, adapter->netdev,
-> > > > > > +                       "Invalid eeprom cfg: sfp enabled with sgmii disabled");
-> > > > > > +             return -EINVAL;
-> > > > >
-> > > > > is_sgmii_en actually means PCS? An SFP might need 1000BaseX or
-> > > > > SGMII,
-> > > >
-> > > > No, not really.
-> > > > The PCI11010/PCI1414 chip can support either an RGMII interface or an
-> > > > SGMII/1000Base-X/2500Base-X interface.
-> > > 
-> > > A generic name for SGMII/1000Base-X/2500Base-X would be PCS, or maybe SERDES. To me, is_sgmii_en
-> > > means SGMII is enabled, but in fact it actually means SGMII/1000Base-X/2500Base-X is enabled. I just
-> > > think this is badly named. It would be more understandable if it was is_pcs_en.
-> > > 
-> > > > According to the datasheet,
-> > > > the "Strap Register (STRAP)" bit 6 is described as "SGMII_EN_STRAP"
-> > > > Therefore, the flag is named "is_sgmii_en".
-> > > 
-> > > Just because the datasheet uses a bad name does not mean the driver has to also use it.
-> > > 
-> > >         Andrew
+On Mon, Sep 16, 2024 at 06:12:04PM +0100, Conor Dooley wrote:
+> On Wed, Sep 11, 2024 at 10:55:22PM -0700, Charlie Jenkins wrote:
+> > Follow the patterns of the other architectures that use
+> > GENERIC_CPU_VULNERABILITIES for riscv to introduce the ghostwrite
+> > vulnerability and mitigation. The mitigation is to disable all vector
+> > which is accomplished by clearing the bit from the cpufeature field.
 > > 
-> > The hardware architect, who is a very bright guy (it's not me :-), just called the strap SGMII_EN in order not to make the name too long and to contrast it with the opposite polarity of the bit which means the interface is set to RGMII; but in the description of the strap he clearly stated what it is:
-> > 	SGMII_EN_STRAP
-> > 	0 = RGMII
-> > 	1 = SGMII / 1000/2500BASE-X
+> > Ghostwrite only affects thead c9xx CPUs that impelment xtheadvector, so
+> > the vulerability will only be mitigated on these CPUs.
 > > 
-> > I don't think PCS or Serdes (both of which get used in other technologies - some of which are also included in this chip and are therefore bound to create even more confusion if used) are good choices either.
+> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > ---
+> >  arch/riscv/Kconfig.errata            | 11 ++++++++
+> >  arch/riscv/errata/thead/errata.c     | 28 ++++++++++++++++++
+> >  arch/riscv/include/asm/bugs.h        | 22 +++++++++++++++
+> >  arch/riscv/include/asm/errata_list.h |  3 +-
+> >  arch/riscv/kernel/Makefile           |  2 ++
+> >  arch/riscv/kernel/bugs.c             | 55 ++++++++++++++++++++++++++++++++++++
+> >  arch/riscv/kernel/cpufeature.c       |  9 +++++-
+> >  drivers/base/cpu.c                   |  3 ++
+> >  include/linux/cpu.h                  |  1 +
+> >  9 files changed, 132 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
+> > index 2acc7d876e1f..e318119d570d 100644
+> > --- a/arch/riscv/Kconfig.errata
+> > +++ b/arch/riscv/Kconfig.errata
+> > @@ -119,4 +119,15 @@ config ERRATA_THEAD_PMU
+> >  
+> >  	  If you don't know what to do here, say "Y".
+> >  
+> > +config ERRATA_THEAD_GHOSTWRITE
+> > +	bool "Apply T-Head Ghostwrite errata"
+> > +	depends on ERRATA_THEAD && RISCV_ISA_XTHEADVECTOR
+> > +	default y
+> > +	help
+> > +	  The T-Head C9xx cores have a vulnerability in the xtheadvector
+> > +	  instruction set. When this errata is enabled, the CPUs will be probed
+> > +	  to determine if they are vulnerable and disable xtheadvector.
+> > +
+> > +	  If you don't know what to do here, say "Y".
+> > +
+> >  endmenu # "CPU errata selection"
+> > diff --git a/arch/riscv/errata/thead/errata.c b/arch/riscv/errata/thead/errata.c
+> > index f5120e07c318..5cc008ab41a8 100644
+> > --- a/arch/riscv/errata/thead/errata.c
+> > +++ b/arch/riscv/errata/thead/errata.c
+> > @@ -10,6 +10,7 @@
+> >  #include <linux/string.h>
+> >  #include <linux/uaccess.h>
+> >  #include <asm/alternative.h>
+> > +#include <asm/bugs.h>
+> >  #include <asm/cacheflush.h>
+> >  #include <asm/cpufeature.h>
+> >  #include <asm/dma-noncoherent.h>
+> > @@ -142,6 +143,31 @@ static bool errata_probe_pmu(unsigned int stage,
+> >  	return true;
+> >  }
+> >  
+> > +static bool errata_probe_ghostwrite(unsigned int stage,
+> > +				    unsigned long arch_id, unsigned long impid)
+> > +{
+> > +	if (!IS_ENABLED(CONFIG_ERRATA_THEAD_GHOSTWRITE))
+> > +		return false;
+> > +
+> > +	/*
+> > +	 * target-c9xx cores report arch_id and impid as 0
+> > +	 *
+> > +	 * While ghostwrite may not affect all c9xx cores that implement
+> > +	 * xtheadvector, there is no futher granularity than c9xx. Assume
+> > +	 * vulnerable for this entire class of processors when xtheadvector is
+> > +	 * enabled.
+> > +	 */
+> 
+> Is it not possible to use the cpu compatible string for this? Given that
+> we only know if xtheadvector is enabled once we are already parsing the
+> cpu node devicetree, it seems, to me, as if it should be possible to be
+> more granular. AFAIU, some T-Head c900 series devices are not venerable.
 
-While I can understand the desire to name stuff as documentation names
-it, just because documentation calls an apple a banana does not mean
-that everyone who doesn't have the documentation will understand that
-is_a_banana will be true for an apple.
+Sure we can do that. I figured that since T-Head didn't feel it was
+valuable to change the archid/implid between cores that Linux shouldn't
+go out of its way to fix the granularity issue. Since you think it is
+worthwhile though, I can try to work around this hardware issue.
 
-This is the problem here. SGMII has two meanings (and thanks to the
-network industry for creating this in the first place).
+- Charlie
 
-First, there is Cisco SGMII, an adaptation of IEEE 802.3 1000base-X.
-Secondly, there is its use as "Serial gigabit media independent
-interface" which various manufacturers seem to use to refer to their
-serial network interface supporting both Cisco SGMII, 1000base-X and
-2500base-X.
+> 
+> Cheers,
+> Conor.
+> 
+> > +	if (arch_id != 0 || impid != 0)
+> > +		return false;
+> > +
+> > +	if (stage != RISCV_ALTERNATIVES_EARLY_BOOT)
+> > +		return false;
+> > +
+> > +	ghostwrite_set_vulnerable();
+> > +
+> > +	return true;
+> > +}
+> > +
+> >  static u32 thead_errata_probe(unsigned int stage,
+> >  			      unsigned long archid, unsigned long impid)
+> >  {
+> > @@ -155,6 +181,8 @@ static u32 thead_errata_probe(unsigned int stage,
+> >  	if (errata_probe_pmu(stage, archid, impid))
+> >  		cpu_req_errata |= BIT(ERRATA_THEAD_PMU);
+> >  
+> > +	errata_probe_ghostwrite(stage, archid, impid);
+> > +
+> >  	return cpu_req_errata;
+> >  }
+> >  
+> > diff --git a/arch/riscv/include/asm/bugs.h b/arch/riscv/include/asm/bugs.h
+> > new file mode 100644
+> > index 000000000000..e294b15bf78e
+> > --- /dev/null
+> > +++ b/arch/riscv/include/asm/bugs.h
+> > @@ -0,0 +1,22 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Interface for managing mitigations for riscv vulnerabilities.
+> > + *
+> > + * Copyright (C) 2024 Rivos Inc.
+> > + */
+> > +
+> > +#ifndef __ASM_BUGS_H
+> > +#define __ASM_BUGS_H
+> > +
+> > +/* Watch out, ordering is important here. */
+> > +enum mitigation_state {
+> > +	UNAFFECTED,
+> > +	MITIGATED,
+> > +	VULNERABLE,
+> > +};
+> > +
+> > +void ghostwrite_set_vulnerable(void);
+> > +void ghostwrite_enable_mitigation(void);
+> > +enum mitigation_state ghostwrite_get_state(void);
+> > +
+> > +#endif /* __ASM_BUGS_H */
+> > diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/asm/errata_list.h
+> > index 7c8a71a526a3..6e426ed7919a 100644
+> > --- a/arch/riscv/include/asm/errata_list.h
+> > +++ b/arch/riscv/include/asm/errata_list.h
+> > @@ -25,7 +25,8 @@
+> >  #ifdef CONFIG_ERRATA_THEAD
+> >  #define	ERRATA_THEAD_MAE 0
+> >  #define	ERRATA_THEAD_PMU 1
+> > -#define	ERRATA_THEAD_NUMBER 2
+> > +#define	ERRATA_THEAD_GHOSTWRITE 2
+> > +#define	ERRATA_THEAD_NUMBER 3
+> >  #endif
+> >  
+> >  #ifdef __ASSEMBLY__
+> > diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> > index 06d407f1b30b..d7a54e34178e 100644
+> > --- a/arch/riscv/kernel/Makefile
+> > +++ b/arch/riscv/kernel/Makefile
+> > @@ -113,3 +113,5 @@ obj-$(CONFIG_COMPAT)		+= compat_vdso/
+> >  obj-$(CONFIG_64BIT)		+= pi/
+> >  obj-$(CONFIG_ACPI)		+= acpi.o
+> >  obj-$(CONFIG_ACPI_NUMA)	+= acpi_numa.o
+> > +
+> > +obj-$(CONFIG_GENERIC_CPU_VULNERABILITIES) += bugs.o
+> > diff --git a/arch/riscv/kernel/bugs.c b/arch/riscv/kernel/bugs.c
+> > new file mode 100644
+> > index 000000000000..0c19691b4cd5
+> > --- /dev/null
+> > +++ b/arch/riscv/kernel/bugs.c
+> > @@ -0,0 +1,55 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2024 Rivos Inc.
+> > + */
+> > +
+> > +#include <linux/cpu.h>
+> > +#include <linux/device.h>
+> > +#include <linux/sprintf.h>
+> > +
+> > +#include <asm/bugs.h>
+> > +#include <asm/vendor_extensions/thead.h>
+> > +
+> > +static enum mitigation_state ghostwrite_state;
+> > +
+> > +void ghostwrite_set_vulnerable(void)
+> > +{
+> > +	ghostwrite_state = VULNERABLE;
+> > +}
+> > +
+> > +/*
+> > + * Vendor extension alternatives will use the value set at the time of boot
+> > + * alternative patching, thus this must be called before boot alternatives are
+> > + * patched (and after extension probing) to be effective.
+> > + */
+> > +void ghostwrite_enable_mitigation(void)
+> > +{
+> > +	if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR) &&
+> > +	    ghostwrite_state == VULNERABLE && !cpu_mitigations_off()) {
+> > +		disable_xtheadvector();
+> > +		ghostwrite_state = MITIGATED;
+> > +	}
+> > +}
+> > +
+> > +enum mitigation_state ghostwrite_get_state(void)
+> > +{
+> > +	return ghostwrite_state;
+> > +}
+> > +
+> > +ssize_t cpu_show_ghostwrite(struct device *dev, struct device_attribute *attr, char *buf)
+> > +{
+> > +	if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR)) {
+> > +		switch (ghostwrite_state) {
+> > +		case UNAFFECTED:
+> > +			return sprintf(buf, "Not affected\n");
+> > +		case MITIGATED:
+> > +			return sprintf(buf, "Mitigation: xtheadvector disabled\n");
+> > +		case VULNERABLE:
+> > +			fallthrough;
+> > +		default:
+> > +			return sprintf(buf, "Vulnerable\n");
+> > +		}
+> > +	} else {
+> > +		return sprintf(buf, "Not affected\n");
+> > +	}
+> > +}
+> > diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> > index 56b5054b8f86..1f4329bb8a9d 100644
+> > --- a/arch/riscv/kernel/cpufeature.c
+> > +++ b/arch/riscv/kernel/cpufeature.c
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/of.h>
+> >  #include <asm/acpi.h>
+> >  #include <asm/alternative.h>
+> > +#include <asm/bugs.h>
+> >  #include <asm/cacheflush.h>
+> >  #include <asm/cpufeature.h>
+> >  #include <asm/hwcap.h>
+> > @@ -867,7 +868,13 @@ static int __init riscv_fill_hwcap_from_ext_list(unsigned long *isa2hwcap)
+> >  		riscv_fill_vendor_ext_list(cpu);
+> >  	}
+> >  
+> > -	if (has_xtheadvector_no_alternatives() && has_thead_homogeneous_vlenb() < 0) {
+> > +	/*
+> > +	 * Execute ghostwrite mitigation immediately after detecting extensions
+> > +	 * to disable xtheadvector if necessary.
+> > +	 */
+> > +	if (ghostwrite_get_state() == VULNERABLE) {
+> > +		ghostwrite_enable_mitigation();
+> > +	} else if (has_xtheadvector_no_alternatives() && has_thead_homogeneous_vlenb() < 0) {
+> >  		pr_warn("Unsupported heterogeneous vlenb detected, vector extension disabled.\n");
+> >  		disable_xtheadvector();
+> >  	}
+> > diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> > index fdaa24bb641a..a7e511849875 100644
+> > --- a/drivers/base/cpu.c
+> > +++ b/drivers/base/cpu.c
+> > @@ -599,6 +599,7 @@ CPU_SHOW_VULN_FALLBACK(retbleed);
+> >  CPU_SHOW_VULN_FALLBACK(spec_rstack_overflow);
+> >  CPU_SHOW_VULN_FALLBACK(gds);
+> >  CPU_SHOW_VULN_FALLBACK(reg_file_data_sampling);
+> > +CPU_SHOW_VULN_FALLBACK(ghostwrite);
+> >  
+> >  static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
+> >  static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
+> > @@ -614,6 +615,7 @@ static DEVICE_ATTR(retbleed, 0444, cpu_show_retbleed, NULL);
+> >  static DEVICE_ATTR(spec_rstack_overflow, 0444, cpu_show_spec_rstack_overflow, NULL);
+> >  static DEVICE_ATTR(gather_data_sampling, 0444, cpu_show_gds, NULL);
+> >  static DEVICE_ATTR(reg_file_data_sampling, 0444, cpu_show_reg_file_data_sampling, NULL);
+> > +static DEVICE_ATTR(ghostwrite, 0444, cpu_show_ghostwrite, NULL);
+> >  
+> >  static struct attribute *cpu_root_vulnerabilities_attrs[] = {
+> >  	&dev_attr_meltdown.attr,
+> > @@ -630,6 +632,7 @@ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
+> >  	&dev_attr_spec_rstack_overflow.attr,
+> >  	&dev_attr_gather_data_sampling.attr,
+> >  	&dev_attr_reg_file_data_sampling.attr,
+> > +	&dev_attr_ghostwrite.attr,
+> >  	NULL
+> >  };
+> >  
+> > diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+> > index bdcec1732445..6a0a8f1c7c90 100644
+> > --- a/include/linux/cpu.h
+> > +++ b/include/linux/cpu.h
+> > @@ -77,6 +77,7 @@ extern ssize_t cpu_show_gds(struct device *dev,
+> >  			    struct device_attribute *attr, char *buf);
+> >  extern ssize_t cpu_show_reg_file_data_sampling(struct device *dev,
+> >  					       struct device_attribute *attr, char *buf);
+> > +extern ssize_t cpu_show_ghostwrite(struct device *dev, struct device_attribute *attr, char *buf);
+> >  
+> >  extern __printf(4, 5)
+> >  struct device *cpu_device_create(struct device *parent, void *drvdata,
+> > 
+> > -- 
+> > 2.45.0
+> > 
 
-_That_ is exactly where the problem is. "SGMII" is ambiguous. One can
-not even use much in the way of context to separate out which it's
-referring to, and naming a variable "is_sgmii_en" just doesn't have
-the context. This ambiguous nature adds to the kernel maintenance
-burden for those of us who look after subsystems.
 
-It is unfortunate that people continue not to recognise this as the
-problem that it is, but everyone loves acronyms... and acronyms are
-a way of talking in code that excludes people from discussions or
-understanding.
-
-So, consider this a formal request _not_ to name your variable
-"is_sgmii_en" but something else.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
