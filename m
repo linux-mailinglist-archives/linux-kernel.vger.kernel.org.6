@@ -1,85 +1,79 @@
-Return-Path: <linux-kernel+bounces-330678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75F897A2A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:57:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE3897A2A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95621C21FE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:57:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 769FDB21A9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99191581F0;
-	Mon, 16 Sep 2024 12:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B3F155359;
+	Mon, 16 Sep 2024 12:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UU89tAMb"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aswC42Xo"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B7B156654;
-	Mon, 16 Sep 2024 12:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D70155392;
+	Mon, 16 Sep 2024 12:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726491437; cv=none; b=hPesSbsKBHxJIeJkCYfzkGUDY3Oq8SlAA1jVyjaI7xm3fiZabZxftncZwttU5cYONp/YnDk5P/dBIHi6LQ1ZMMAYo3v7MPY9zCWlT+FOgg0F+C81raqU6s+tRX8K57GEzxgp/Rp3QanmbpsHEVbz8PH1aUB0o+CuI/YWzcqSy64=
+	t=1726491458; cv=none; b=WrrctQtJRMmKQPdqPFaunBGqjh9dxQpq7cLG/l2inNjojCvVz/ZGo+qJuRwX8s46l1QT4Tip5z4jFVaKYB6hnCrS0DA9j7wYXC7XKdVIO/2+ebfO4g8I8rHm7Dk4ILN8aJKBYnHrwxePdK2hyjMxOuEYd/EoTsDVUrqoVbJieUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726491437; c=relaxed/simple;
-	bh=8uBllyDJlc4U/ldVink22w8oM+go5/KtiBhOC/MQGYw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X7ddsd9v0VFhILSXtuVWTvTyqo8T9oXottQ7XOF1IG7D4jujkKAS8M9lUGzQWppH9/LinkwKXEvUm3eVL4erM4x+Y7Lw+80YGxjOiI/OeTE08HLjt1JkgOlq/tmFDXvRGj0N2LrMiIBYQlJ3n/bodQ9IbC3InYx/PREe+KK5Ar0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UU89tAMb; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so43003145e9.0;
-        Mon, 16 Sep 2024 05:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726491434; x=1727096234; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F7maCUuqvqku5DtJPieBq8TjJIvVE/clAoBVWSpIBOg=;
-        b=UU89tAMbNGWQ9QYZII8HsxYVSK1/AZORX4sWZpxO/5Ff6lGemrzJhLo79N4RD4UYS5
-         6T8w7NKmbrbMqF0QFnntYSpwOZdRzyrlVcyk2f1EctHZsTZsLiwQSC1hojH6EdB5QGUt
-         wvItdWoI+bPuNZf5N1MIUzJjGxjVlAjyQw5VY6VMhvkC2QRgQ3TW/Xt2KaVZeZJWRWQE
-         RlAFKuEjNg3l4aEdTfuBQAeJV9g0TnX03P9ASovpyDNMaGxECkgLsbTN3yaw3KEsNUeV
-         /gmmb4YvkyonR7I8FaYcNRQUNKXd5uij03LXaXud4SfpsEKv7xubbu8DAZTCGtCbiH3R
-         kANg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726491434; x=1727096234;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F7maCUuqvqku5DtJPieBq8TjJIvVE/clAoBVWSpIBOg=;
-        b=vBCN1+OgSQvvjK3D987Mm0+1jfs2P3I2CEMum9VprxpleHwzxVxj8OQgrc6UTOS6d+
-         cmSaDQNXML+MFDb3BGUgUJ0lsBrU2VUtRZaXMbOhiDVCuo6vK0+0n/jSv5C1qoD/R5re
-         cXHylzK3XiLELwQVnieXrO6Ry5yOzqa+6sj61ezZ1Wx8fsNWcNdhrlQwfMiYpwq6Y7k0
-         I3bQvjeqJQ7fD3v6g+NxdK6wL2ANq646SeCDptPMzjrmqigUYWf+V0rGNQjAJBn3q11K
-         Fy/JU7l5uYHzmFfohNSMqyMyjKzkrmh73GPB6EESnaWLcQrXxPmHpjNKbIu87rIMWPYB
-         Ef9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU4bC1bnfHloNhdeFPNyOG0/R6u2xHw+R1fopzfCKhNl2eLqG8dKsOxNa+uk9R0AdniVPM6nz25T1wXOJ4P@vger.kernel.org, AJvYcCWHfTh3/nFzo944zw8i5Mhm6AkRUMnAeBkRRSQK8BXQI3FNhIGMeabcAqDgs/KbzKeyZW7PDwW5pN6WHw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzJoKKAZiwiQ5Umi7DwVaZACQLzftAmCywjEAtKz3o4qSls1bk
-	UzRkqLFxw5UbZ4m9TyjGgW7way7jsSo6I5UNyhWQzEa4fv/zjsSd
-X-Google-Smtp-Source: AGHT+IFbnk33wn5kbVw/+K328MOha5PalQj9pkuNKI8yYeCb6JBq2B98slV4gnbu7SHyy8BsQuasUQ==
-X-Received: by 2002:a05:600c:4f41:b0:42c:b950:6821 with SMTP id 5b1f17b1804b1-42d90829e60mr106135605e9.19.1726491433520;
-        Mon, 16 Sep 2024 05:57:13 -0700 (PDT)
-Received: from fedora-thinkpad.lan (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42da242741csm77129615e9.47.2024.09.16.05.57.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 05:57:13 -0700 (PDT)
-From: Luca Stefani <luca.stefani.ge1@gmail.com>
-To: 
-Cc: Luca Stefani <luca.stefani.ge1@gmail.com>,
-	Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] btrfs: Don't block system suspend during fstrim
-Date: Mon, 16 Sep 2024 14:56:15 +0200
-Message-ID: <20240916125707.127118-3-luca.stefani.ge1@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240916125707.127118-1-luca.stefani.ge1@gmail.com>
-References: <20240916125707.127118-1-luca.stefani.ge1@gmail.com>
+	s=arc-20240116; t=1726491458; c=relaxed/simple;
+	bh=gA89W1nynIjGy12J0nmJFgKEu5Encxd4oSRyP4WUHl0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fr6gGYuesW/gfC78nvpOaNOo9DummoKyrRNdMDBcJiu9bY4xu0mSLV4lbv9FjXZFg7cTWedQPY9RTReL6n8adXVIPhPs70rHWHJYfA/DfcV2QBaTzGbV94btlYLpD29hfAopF6ghIhCnNJkW6Sl11Dv6PSY50n42WBgboNAnfZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aswC42Xo; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GCb2jg005694;
+	Mon, 16 Sep 2024 12:57:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=jQ+8TPexO5T8e+V0qFd6/RpZSe
+	tZ9RkxOs8TOyfZ4xY=; b=aswC42XofSlRSLt6KVKa1e7g0dbLz91h7KEPySESl0
+	6W+O5MpbxzSJwjjCYUHGUEE/ONjnpvmuAOVon2DZlMLjimLY7rkpCN6fdubju9F2
+	gYsfRzy9582+yh4D+jnlkotF1zt1XpK7RcR7Q9azo5SUtfX7is7Zcq34guUWT7Lg
+	CQpV+L1d5zDXd3kjAwWugnSbjqnlgnO1TbT8TcbITl0r55mUnqejbbOiq11QgYbn
+	SNRpKu0dduIyn7tDpWWCksc8Pey67gJShJT9oNHuvjDuRjqxZQjt9rS4XhxVm64C
+	5HK1SHj6axPV6cAzrqQUUZ6VDC2xqLcdNvZMiBY0bJvw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3vnhs3u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 12:57:31 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48GCBAQj024627;
+	Mon, 16 Sep 2024 12:57:30 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41nq1mq756-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 12:57:30 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48GCvRfQ36372822
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Sep 2024 12:57:27 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1C36F20043;
+	Mon, 16 Sep 2024 12:57:27 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D2E9B20040;
+	Mon, 16 Sep 2024 12:57:26 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 16 Sep 2024 12:57:26 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf/test: perf test 86 fails on s390 repo linux-next
+Date: Mon, 16 Sep 2024 14:57:18 +0200
+Message-ID: <20240916125718.3024270-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,93 +81,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: T2Ld0KKiq2QoP3MDIZmQNJgTZCj_WLth
+X-Proofpoint-GUID: T2Ld0KKiq2QoP3MDIZmQNJgTZCj_WLth
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-16_09,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409160081
 
-Sometimes the system isn't able to suspend because the task
-responsible for trimming the device isn't able to finish in
-time, especially since we have a free extent discarding phase,
-which can trim a lot of unallocated space, and there is no
-limits on the trim size (unlike the block group part).
+Command perf test 86 fails on s390 using linux-next repository:
+ # perf test -F 86
+ ping 868299 [007] 28248.013596: probe_libc:inet_pton_1: (3ff95948020)
+ 3ff95948020 inet_pton+0x0 (inlined)
+ 3ff9595e6e7 text_to_binary_address+0x1007 (inlined)
+ 3ff9595e6e7 gaih_inet+0x1007 (inlined)
+ FAIL: expected backtrace entry \
+	 "main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+	 got "3ff9595e6e7 gaih_inet+0x1007 (inlined)"
+ 86: probe libc's inet_pton & backtrace it with ping  : FAILED!
+ #
 
-Since discard isn't a critical call it can be interrupted
-at any time, in such cases we stop the trim, report the amount
-of discarded bytes and return failure.
+The root cause is a new stack layout, some functions have been added
+as seen below. Add text_to_binary_address and friends to the
+list of expected functions.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
-Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
-Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+ # perf script | tac | grep -m1 '^ping' -B9 | tac
+ ping  866856 [007] 25979.494921: probe_libc:inet_pton: (3ff8ec48020)
+	     3ff8ec48020 inet_pton+0x0 (inlined)
+	     3ff8ec5e6e7 text_to_binary_address+0x1007 (inlined)
+	     3ff8ec5e6e7 gaih_inet+0x1007 (inlined)
+	     3ff8ec5e6e7 getaddrinfo+0x1007 (/usr/lib64/libc.so.6)
+	     2aa3fe04bf5 main+0xff5 (/usr/bin/ping)
+	     3ff8eb34a5b __libc_start_call_main+0x8b (/usr/lib64/libc.so.6)
+	     3ff8eb34b5d __libc_start_main@GLIBC_2.2+0xad (inlined)
+	     2aa3fe06a1f [unknown] (/usr/bin/ping)
+
+ #
+
+Output after:
+ # perf test -F 86
+ 86: probe libc's inet_pton & backtrace it with ping  : Ok
+ #
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
 ---
- fs/btrfs/extent-tree.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index 79b9243c9cd6..cef368a30731 100644
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -16,6 +16,7 @@
- #include <linux/percpu_counter.h>
- #include <linux/lockdep.h>
- #include <linux/crc32c.h>
-+#include <linux/freezer.h>
- #include "ctree.h"
- #include "extent-tree.h"
- #include "transaction.h"
-@@ -1235,6 +1236,11 @@ static int remove_extent_backref(struct btrfs_trans_handle *trans,
- 	return ret;
- }
- 
-+static bool btrfs_trim_interrupted(void)
-+{
-+	return fatal_signal_pending(current) || freezing(current);
-+}
-+
- static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
- 			       u64 *discarded_bytes)
- {
-@@ -1316,6 +1322,11 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
- 		start += bytes_to_discard;
- 		bytes_left -= bytes_to_discard;
- 		*discarded_bytes += bytes_to_discard;
-+
-+		if (btrfs_trim_interrupted()) {
-+			ret = -ERESTARTSYS;
-+			break;
-+		}
- 	}
- 
- 	return ret;
-@@ -6470,7 +6481,7 @@ static int btrfs_trim_free_extents(struct btrfs_device *device, u64 *trimmed)
- 		start += len;
- 		*trimmed += bytes;
- 
--		if (fatal_signal_pending(current)) {
-+		if (btrfs_trim_interrupted()) {
- 			ret = -ERESTARTSYS;
- 			break;
- 		}
-@@ -6519,6 +6530,11 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
- 
- 	cache = btrfs_lookup_first_block_group(fs_info, range->start);
- 	for (; cache; cache = btrfs_next_block_group(cache)) {
-+		if (btrfs_trim_interrupted()) {
-+			bg_ret = -ERESTARTSYS;
-+			break;
-+		}
-+
- 		if (cache->start >= range_end) {
- 			btrfs_put_block_group(cache);
- 			break;
-@@ -6558,6 +6574,11 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
- 
- 	mutex_lock(&fs_devices->device_list_mutex);
- 	list_for_each_entry(device, &fs_devices->devices, dev_list) {
-+		if (btrfs_trim_interrupted()) {
-+			dev_ret = -ERESTARTSYS;
-+			break;
-+		}
-+
- 		if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))
- 			continue;
- 
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index f38c8ead0b03..bc6e2fe1d999 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -40,6 +40,8 @@ trace_libc_inet_pton_backtrace() {
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf,max-stack=4'
++		echo "text_to_binary_address\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
++		echo "gaih_inet\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
+ 		echo "(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
+ 		echo "main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
+ 		;;
 -- 
 2.46.0
 
