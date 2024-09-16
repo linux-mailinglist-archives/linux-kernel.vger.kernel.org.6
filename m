@@ -1,134 +1,92 @@
-Return-Path: <linux-kernel+bounces-330440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D711E979E9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:43:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5332D979EAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166C71C22D4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7711C227E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F178614A4E7;
-	Mon, 16 Sep 2024 09:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC16314A0A3;
+	Mon, 16 Sep 2024 09:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPvHXqk/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5540B140E50;
-	Mon, 16 Sep 2024 09:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="ILGixXNO"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B099C38DC7;
+	Mon, 16 Sep 2024 09:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726479829; cv=none; b=sxkqgAZZdgx+cYL+ievEkcxhzWJe+83MdRHzwBBq2dMCz87wvwGGWentMKZbNgAh0Mu4Bh1eAxeBT/Ve+W7QiomyT67U2stSxJOhp++IFVBTTDTZgt5c4958raQg5YDjBMV9R9lqvBUGJvj1ceR1S7BjQr3LitPyXTjaE9HJDvs=
+	t=1726479987; cv=none; b=u47kg5KknLYzUHIM461UmM/2Nm6+4VL9JOHptLtAUk4II6xOAu8EdnKYb7JiwtFQlgvvya/fvIDGudNqHTJ5853a6tXJTSyRx5i9n4P7FEBjC7b2XjKVpOlN54ab7URQZfaxLWt88D+UlEa3HrmAy/HViSBlGw94DK8PHCtcGTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726479829; c=relaxed/simple;
-	bh=uSLjVMOFtjZ6RN5n2oEbfcv69+hcDB7RedYfY0m4J3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X1ZoqvhxNeEAlDm7PbNzCwh+q+UHXY99j1bPLO02lKWrv0akvPDhAgALizoSNF9mABD7jyMBZOiXjxHtbgS22j5xrL+tXwZQlC57fkw1ValIkQ+G5v6JVFBV2BibTTRyDjbp8AFhodwIzpvERD26hITYttfUbhodAi+Hr1JqGMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPvHXqk/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FAD8C4CEC4;
-	Mon, 16 Sep 2024 09:43:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726479828;
-	bh=uSLjVMOFtjZ6RN5n2oEbfcv69+hcDB7RedYfY0m4J3c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VPvHXqk/f8+eUm3LxYMPvdkcxy7SbCr6raEVx58xFF5uuoMAdjmOor+HmP+kpR4uQ
-	 S5rJi/E+pDizyB24Sdqd/VhkL5bvN1P+oLHkU8SJ/0aT+NBngwKxvyuycU3vsfBLOI
-	 2uq9egVifX2vRvfqUMgQjXf/q5X5nkrVAbo6nznPKKYl3KTUe7rcw3XOKZtFqzkeHQ
-	 GiUm7lkvEPgLkW8s6O0NhV/I1p5gP4rVYHoq1zRGODBIHW1/dANXaFqHzhrM4Qoz5V
-	 itDaOFF18Ft9W6Cj3+D73zeznIMWEsbAScczDZYMyfk/MvxqcTnqFt6AHCXvkdkUcY
-	 ON0dvyU0QobXQ==
-Date: Mon, 16 Sep 2024 11:43:44 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Yiting Deng <yiting.deng@amlogic.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: rtc: Add Amlogic A4 and A5 RTC
-Message-ID: <u5dtpbnnfrjwf5nmpxfug4fd5argwdu5oi4cogu2wiexkw3l5p@qxjxu52w3pea>
-References: <20240910-rtc-v3-0-1fa077a69a20@amlogic.com>
- <20240910-rtc-v3-1-1fa077a69a20@amlogic.com>
+	s=arc-20240116; t=1726479987; c=relaxed/simple;
+	bh=N0hSmsJ9SspBVIxg9LCiOaQ+R0TFE+D+mdPXzQN+nJ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=rLd0kaQTsG7eIzPOq86Y1sa/81PtHFxCyq4s0X/QqSvJCZgu8iZ19W9slipNmLIk44KYBIvAyKUVpCRTV8tMRAxN0QBtAU2KDMBszJ67O9mpV9HADaKz8sDRt3SjEYjpJUzdrd8wgY3Zmt1YaBBBeVSBr7M0vcodoD8PjsKIZTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=ILGixXNO reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=4yrTVGgIy8ST+hf/b9VptZkzz6CVN2HRxPnjWXf8szk=; b=I
+	LGixXNOnXrB2EpN6VeQmeGc0D2LktLGIlPpcho0GRaVdesWzd6jOd6TJC3EY1k1r
+	Hbj3Gmk/ghkkY6VZXktwzY91FAVp512FsrLDeYg6xaytOTmdLUKwpPL+88U3C3nb
+	FROqoIDnuIj17la+odVaWE860fVCaPdtJHLEdQORjI=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-132 (Coremail) ; Mon, 16 Sep 2024 17:44:37 +0800
+ (CST)
+Date: Mon, 16 Sep 2024 17:44:37 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Andrew Kreimer" <algonell@gmail.com>
+Cc: "Sandy Huang" <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	"Andy Yan" <andy.yan@rock-chips.com>, 
+	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, 
+	"Maxime Ripard" <mripard@kernel.org>, 
+	"Thomas Zimmermann" <tzimmermann@suse.de>, 
+	"David Airlie" <airlied@gmail.com>, 
+	"Simona Vetter" <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, 
+	"Matthew Wilcox" <willy@infradead.org>
+Subject: Re:[PATCH] drm/rockchip: Fix a typo
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240915123943.105118-1-algonell@gmail.com>
+References: <20240915123943.105118-1-algonell@gmail.com>
+X-NTES-SC: AL_Qu2ZBPictkAs4SmebOkXn0kXhec2W8Czvvgg34JRP5k0myXQ+AYEbXByEX7m/uioBASPvxeqVAdHxud8X7RnUJjQG8iUxgAelyfrXp/vh0iD
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240910-rtc-v3-1-1fa077a69a20@amlogic.com>
+Message-ID: <3516596d.2131.191fa38475a.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wDn7_QG_udmDhYPAA--.10499W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqRdcXmVOC6kEnAACsv
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Tue, Sep 10, 2024 at 06:14:18PM +0800, Xianwei Zhao wrote:
-> From: Yiting Deng <yiting.deng@amlogic.com>
-> 
-> Add documentation describing the Amlogic A4(A113L2) and A5(A113X2) RTC.
-> 
-> Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  .../devicetree/bindings/rtc/amlogic,a4-rtc.yaml    | 63 ++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml b/Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml
-> new file mode 100644
-> index 000000000000..eee994753a12
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2024 Amlogic, Inc. All rights reserved
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/amlogic,a4-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic A4 and A5 RTC
-> +
-> +maintainers:
-> +  - Yiting Deng <yiting.deng@amlogic.com>
-> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
-> +
-> +allOf:
-> +  - $ref: rtc.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - amlogic,a4-rtc
-> +      - amlogic,a5-rtc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: RTC clock source, available 24M or 32K crystal
-> +          oscillator source. when using 24M, need to divide 24M into 32K.
-> +      - description: RTC module accesses the clock of the apb bus.
-> +
-> +  clock-names:
-> +    items:
-> +      - const: osc
-> +      - const: sys
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-
-If there is going to be a new version, keep the same order as in
-properties: section.
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
-
+Ckhp77yMCgpBdCAyMDI0LTA5LTE1IDIwOjM5OjQzLCAiQW5kcmV3IEtyZWltZXIiIDxhbGdvbmVs
+bEBnbWFpbC5jb20+IHdyb3RlOgo+Rml4IGEgdHlwbyBpbiBjb21tZW50cy4KPgo+UmVwb3J0ZWQt
+Ynk6IE1hdHRoZXcgV2lsY294IDx3aWxseUBpbmZyYWRlYWQub3JnPgo+U2lnbmVkLW9mZi1ieTog
+QW5kcmV3IEtyZWltZXIgPGFsZ29uZWxsQGdtYWlsLmNvbT4KCkFja2VkLWJ5OiAgQW5keSBZYW48
+YW5keXNocmtAMTYzLmNvbT4KClRoYW5rcy4KCgo+LS0tCj4gZHJpdmVycy9ncHUvZHJtL3JvY2tj
+aGlwL2Nkbi1kcC1yZWcuaCB8IDIgKy0KPiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
+IDEgZGVsZXRpb24oLSkKPgo+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9j
+ZG4tZHAtcmVnLmggYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvY2RuLWRwLXJlZy5oCj5pbmRl
+eCA0NDEyNDhiN2E3OWUuLmM3NzgwYWUzMjcyYSAxMDA2NDQKPi0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9yb2NrY2hpcC9jZG4tZHAtcmVnLmgKPisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9j
+ZG4tZHAtcmVnLmgKPkBAIC03Nyw3ICs3Nyw3IEBACj4gI2RlZmluZSBTT1VSQ0VfUElGX1BLVF9B
+TExPQ19XUl9FTgkweDMwODMwCj4gI2RlZmluZSBTT1VSQ0VfUElGX1NXX1JFU0VUCQkweDMwODM0
+Cj4gCj4tLyogYmVsbG93IHJlZ2lzdGVycyBuZWVkIGFjY2VzcyBieSBtYWlsYm94ICovCj4rLyog
+YmVsb3cgcmVnaXN0ZXJzIG5lZWQgYWNjZXNzIGJ5IG1haWxib3ggKi8KPiAvKiBzb3VyY2UgY2Fy
+IGFkZHIgKi8KPiAjZGVmaW5lIFNPVVJDRV9IRFRYX0NBUgkJCTB4MDkwMAo+ICNkZWZpbmUgU09V
+UkNFX0RQVFhfQ0FSCQkJMHgwOTA0Cj4tLSAKPjIuMzkuNQo=
 
