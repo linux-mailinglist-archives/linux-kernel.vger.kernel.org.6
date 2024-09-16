@@ -1,129 +1,242 @@
-Return-Path: <linux-kernel+bounces-330225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4753979B2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:32:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494A6979B2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02D8B1C229D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:32:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09EB1F23373
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973C54084E;
-	Mon, 16 Sep 2024 06:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694C643158;
+	Mon, 16 Sep 2024 06:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="kKRVD98Q"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="fEab7XNw"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A562744E;
-	Mon, 16 Sep 2024 06:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726468371; cv=pass; b=PjwEXSzOgkQEr2HDa5wwss/gtcv0jIlMYSavZ7S/QpCiLhBLrqZwoGzVxtwRaa2QyFGOlurnyiWtLN2jLYb+LWPJjdvypz0Eog0jh4vV9oL0Hxlc0OPNVedpV+/IIdjAytUg1HWPBOnlJz47+WnD3Ct+XPEEQO0CRuwrNOeKLsI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726468371; c=relaxed/simple;
-	bh=NKgAJfLL2Qz3OGqs8RUyqaDTU72Y7lKocc08ZKevzgc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DSRpWziagEoghuy/k9PQ5NspN8fCPhEb4DbU99c379eQcxIse8PXZfn1EQQLGCfpwopWI7QfJyZncteh05Sjwr1bYMY4Z6YmZ73dzDoFHBXSFKOkA6up72vF9//1dlF0nIYCZt2w6F4JG07ykVAP+l7OkwgldqV83pSa1YFGUzI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=kKRVD98Q; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726468351; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=S8NTHwkOE1u6lfxkSptXXRdSSwvIN+gWBEUVLExRZfly56WRXNBuG9p96nm9bp4eOPCwNL7pKA6L+vfPAuEKG4+oSzyFyIJ03GyKmzBMdUELjXBt7fpgednbYNA1cO799MuEg19tDsVl01yu31n21NqznSZvAASqi88pmyrvd1g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726468351; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=2utergmwaDia08m6LN7t4dPgvnAwmwLOjnXGjzsRf7Q=; 
-	b=maQZW938tvN5JCYXToS01Hk2liEbUcEAMJydKy4e3+SaZTUdecC13I7yFq9nOecmRJThvuF3DUjw4ygPXiNSLypSSRLG1SpAJ0Zc1KxFrWy8kCZNdXWCRXQl1RNIhvbZ957gYBrGUkae72cCihTrox/NFVbf8d4Vcdx8McXIk6Y=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726468351;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=2utergmwaDia08m6LN7t4dPgvnAwmwLOjnXGjzsRf7Q=;
-	b=kKRVD98Q8L76jTz/4ykCP0cjACRAXAdgjCOjffSaVMdNQyCNQitoGVVnkcAmNAcu
-	J7CEKlQNjbLviTYu/s2onsaEtxx7WGEiVFu72Qv4YCdQyU349ydEsYD7FqFtwqjGLOG
-	EM+nzqFFK1uF6x+9URY+sKhCpcOoPYFXHm4D3ZJQ=
-Received: by mx.zohomail.com with SMTPS id 1726468348435996.2519911765199;
-	Sun, 15 Sep 2024 23:32:28 -0700 (PDT)
-Message-ID: <3cb9d266-4d4b-4031-8603-da7fd9e3ad47@collabora.com>
-Date: Mon, 16 Sep 2024 11:32:20 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4A5335C0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726468403; cv=none; b=e2v1qcdkQnqUIXw7HPBmKWtG0psP7GRzjbgMYHP7fkuwHTMSJNSD4EYcYytZF7IdpblVIr1Z8GmIVVxwUkoCn9z6N0wcXW43NK/8jBb4p1YXW6rxka9JXuBDc5uTRw8axtH7hwmRR9UIO2zrB5QmI0YjRbvbct/9+PSc3iNnZRI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726468403; c=relaxed/simple;
+	bh=DqUYrFG4Enz4+34W0+Vi1GhOjS3l28KXSdLtSsJa/4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/I8zjhbReOOKEMaq2Rrn4MG0XYYBy6kDgczZC7WqOnfVjFbe67xndOc/7b8XYG5xc6BS2CCzIcFsdzW0FSj8JjHccuvQGczp3XbMB7lp5uAh6lCAM45M7t2KE4b/uYE9OjBBlLxJdXEg2qIxTpx064VQvTj0E1PFU1b0IifMFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=fEab7XNw; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d87196ec9fso1951758a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 23:33:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726468401; x=1727073201; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XSZMwApg+gmjCJugiWkUy18xuz6LW9w5SgWcaqjuE8w=;
+        b=fEab7XNwBicl3kreywesAAHZfEk18jsD0/zz2Ua4qP2CIHVZYko2DvmMG0vUsiAqbh
+         RQRRbtlAWCvj7GuGZBMQzUgak5TniNUdaIoJYXlHS6jalMraRogG1KVnS/0SpTGvTdiD
+         AcwBvmjNZ9oANcoyQGrgXTMDjsKpwF7OCcWXMCwP2eSs2fXv8YwDXpatLT6jsaw4gEBC
+         rYS8uvYxso+UiHbF5wR0/OSlINnWUq6eReTZzba5I8bU+VRCEH0GsJkkbFmYtcMFXbQ2
+         gnOj00Xchz3s5QyxsBWcncovvYL+EWQu6roH96bzSC0Tucbj6Do8z+1/55imaMs11Wu5
+         mMfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726468401; x=1727073201;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XSZMwApg+gmjCJugiWkUy18xuz6LW9w5SgWcaqjuE8w=;
+        b=TOl0WYIt7K1EELOnl6Pnk37901JEjf4STTlHyW2dGfog3U69pXRJ/Y7k0kSBgZOkAe
+         P6vjjsK27sbs9mJmtQLiISV4dY+WTdS5zqE0Il6Aw/z5hIUaWBJ3PkrJZ+MgBX/RH4w1
+         BxioG98qwVoz6I9Bhtv9vwKbyUAcZqgvF4XSYMOuBKt/HCosq091OkT/F/SHifnTNL+O
+         92tCkUdfnqYaIajD52CuzckXj7EtcW/UwvQrMGNa6r8KswKgUFF7IiSWC4SUtpmK1ncL
+         UAnd7ARKLong5W70j6iF70rc442y9M/mC2Jyn6YkrUZ7YoffJP3cbbrzjXGGFgu3HrK6
+         mVEg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5/dkucOVqoBiT/Wigxp+0YK8zpVFp/dls0nnfxQcentwTfXY+JGq+oqPM1PajxGDmeyCnmqX7pllH+tU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhKx6vUVVW9R6M2JSVDI7sVP1MmVlXCMAEGymw/uiMnhrtuYx4
+	VWwSSpIETpv/FVeEguFq5UIJ4t0QmWqnd1AwdI5tTWyjxFHS1ik7r2Lij2v+5bU=
+X-Google-Smtp-Source: AGHT+IH4SEadADz/E/S4sALk5BvwV5RWIKEOxqYtfNoR4jCgfo646bDgJygGp2QyNxqm298HKo6Q6g==
+X-Received: by 2002:a17:90b:3758:b0:2da:88b3:d001 with SMTP id 98e67ed59e1d1-2dbb9e1d271mr13104116a91.18.1726468401331;
+        Sun, 15 Sep 2024 23:33:21 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9d5c9d1sm6465575a91.35.2024.09.15.23.33.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 23:33:20 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sq5IU-005oml-09;
+	Mon, 16 Sep 2024 16:33:18 +1000
+Date: Mon, 16 Sep 2024 16:33:18 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
+	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <ZufRLhUxhMn2HGYB@dread.disaster.area>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <87frqf2smy.fsf@gmail.com>
+ <ZtjrUI+oqqABJL2j@dread.disaster.area>
+ <877cbq3g9i.fsf@gmail.com>
+ <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
+ <877cbkgr04.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, kernel@collabora.com, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] kselftests: mm: Fix wrong __NR_userfaultfd value
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- John Hubbard <jhubbard@nvidia.com>, David Hildenbrand <david@redhat.com>
-References: <20240912103151.1520254-1-usama.anjum@collabora.com>
- <a9ae7dc4-275d-43c3-bf4c-b0090cb6bb12@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <a9ae7dc4-275d-43c3-bf4c-b0090cb6bb12@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877cbkgr04.fsf@gmail.com>
 
-On 9/12/24 8:44 PM, Shuah Khan wrote:
-> On 9/12/24 04:31, Muhammad Usama Anjum wrote:
->> The value of __NR_userfaultfd was changed to 282 when
->> asm-generic/unistd.h was included. It makes the test to fail every time
->> as the correct number of this syscall on x86_64 is 323. Fix the header
->> to asm/unistd.h.
->>
+On Tue, Sep 10, 2024 at 08:21:55AM +0530, Ritesh Harjani wrote:
+> Dave Chinner <david@fromorbit.com> writes:
 > 
-> "please elaborate every time" - I just built on my x86_64 and built
-> just fine.
-The build isn't broken.
+> > On Thu, Sep 05, 2024 at 09:26:25AM +0530, Ritesh Harjani wrote:
+> >> Dave Chinner <david@fromorbit.com> writes:
+> >> > On Wed, Sep 04, 2024 at 11:44:29PM +0530, Ritesh Harjani wrote:
+> >> >> 3. It is the FORCEALIGN feature which _mandates_ both allocation
+> >> >> (by using extsize hint) and de-allocation to happen _only_ in
+> >> >> extsize chunks.
+> >> >>
+> >> >>    i.e. forcealign mandates -
+> >> >>    - the logical and physical start offset should be aligned as
+> >> >>    per args->alignment
+> >> >>    - extent length be aligned as per args->prod/mod.
+> >> >>      If above two cannot be satisfied then return -ENOSPC.
+> >> >
+> >> > Yes.
+> >> >
+> >> >> 
+> >> >>    - Does the unmapping of extents also only happens in extsize
+> >> >>    chunks (with forcealign)?
+> >> >
+> >> > Yes, via use of xfs_inode_alloc_unitsize() in the high level code
+> >> > aligning the fsbno ranges to be unmapped.
+> >> >
+> >> > Remember, force align requires both logical file offset and
+> >> > physical block number to be correctly aligned,
+> >> 
+> >> This is where I would like to double confirm it again. Even the
+> >> extsize hint feature (w/o FORCEALIGN) will try to allocate aligned
+> >> physical start and logical start file offset and length right?
+> >
+> > No.
+> >
+> >> (Or does extsize hint only restricts alignment to logical start file
+> >> offset + length and not the physical start?)
+> >
+> > Neither.
+> >
+> 
+> Yes, thanks for the correction. Indeed extsize hint does not take care
+> of the physical start alignment at all.
+> 
+> > extsize hint by itself (i.e. existing behaviour) has no alignment
+> > effect at all. All it affects is -size- of the extent. i.e. once
+> > the extent start is chosen, extent size hints will trim the length
+> > of the extent to a multiple of the extent size hint. Alignment is
+> > not considered at all.
+> >
+> 
+> Please correct me I wrong here... but XFS considers aligning the logical
+> start and the length of the allocated extent (for extsize) as per below
+> code right? 
 
-> I am not saying this isn't a problem, it is good to
-> understand why and how it is failing before making the change.
-I mean to say that the test is failing at run time because the correct
-userfaultfd syscall isn't being found with __NR_userfaultfd = 282.
-_NR_userfaultfd's value depends on the header. When asm-generic/unistd.h
-is included, its value (282) is wrong. I've tested on x86_64.
-
-The fix is simple. Add the correct header which has _NR_userfaultfd = 323.
+Sorry, I was talking about physical alignment, not logical file
+offset alignment. The logical file offset alignment that is done
+for extent size hints is much more convoluted and dependent on
+certain preconditions existing for it to function as forced
+alignment/atomic writes require.
 
 > 
->> Fixes: a5c6bc590094 ("selftests/mm: remove local __NR_* definitions")
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>   tools/testing/selftests/mm/pagemap_ioctl.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c
->> b/tools/testing/selftests/mm/pagemap_ioctl.c
->> index fc90af2a97b80..bcc73b4e805c6 100644
->> --- a/tools/testing/selftests/mm/pagemap_ioctl.c
->> +++ b/tools/testing/selftests/mm/pagemap_ioctl.c
->> @@ -15,7 +15,7 @@
->>   #include <sys/ioctl.h>
->>   #include <sys/stat.h>
->>   #include <math.h>
->> -#include <asm-generic/unistd.h>
->> +#include <asm/unistd.h>
->>   #include <pthread.h>
->>   #include <sys/resource.h>
->>   #include <assert.h>
-> 
-> Also please generate a series with these two patches with cover-letter.
-> 
-> thanks,
-> -- Shuah
+> i.e.
+> 1) xfs_direct_write_iomap_begin()
+> {
+>     <...>
+>     if (offset + length > XFS_ISIZE(ip))
+> 		end_fsb = xfs_iomap_eof_align_last_fsb(ip, end_fsb);
+>                   => xfs_fileoff_t aligned_end_fsb = roundup_64(end_fsb, align);
+>                      return aligned_end_fsb
+> }
 
+That's calculating the file offset of the end of the extent for an
+extending write. It's not really an alignment - it's simply
+calculating the file offset the allocation needs to cover to allow
+for aligned allocation. This length needs to be fed into the
+transaction reservation (i.e. ENOSPC checks) before we start the
+allocation, so we have to have some idea of the extent size we are
+going to allocate here...
+
+
+> 2) xfs_bmap_compute_alignments()
+> {
+>     <...>
+>     	else if (ap->datatype & XFS_ALLOC_USERDATA)
+> 		     align = xfs_get_extsz_hint(ap->ip);
+> 
+>         if (align) {
+>             if (xfs_bmap_extsize_align(mp, &ap->got, &ap->prev, align, 0,
+>                         ap->eof, 0, ap->conv, &ap->offset,
+>                         &ap->length))
+>                 ASSERT(0);
+>             ASSERT(ap->length);
+> 
+>             args->prod = align;
+>             div_u64_rem(ap->offset, args->prod, &args->mod);
+>             if (args->mod)
+>                 args->mod = args->prod - args->mod;
+>         }
+>         <...>
+> }
+> 
+> So args->prod and args->mod... aren't they use to align the logical
+> start and the length of the extent?
+
+Nope. They are only used way down in xfs_alloc_fix_len(), which
+trims the length of the selected *physical* extent to the required
+length.
+
+Look further up - ap->offset is the logical file offset the
+allocation needs to cover.  Logical alignment of the offset (i.e.
+determining where in the file the physical extent will be placed) is
+done in xfs_bmap_extsize_align(). As i said above, it's not purely
+an extent size alignment calculation....
+
+> However, I do notice that when the file is closed XFS trims the length
+> allocated beyond EOF boundary (for extsize but not for forcealign from
+> the new forcealign series) i.e.
+> 
+> xfs_file_release() -> xfs_release() -> xfs_free_eofblocks()
+> 
+> I guess that is because xfs_can_free_eofblocks() does not consider
+> alignment for extsize in this function 
+
+Of course - who wants large chunks of space allocated beyond EOF
+when you are never going to write to the file again?
+
+i.e. If you have large extsize hints then the post-eof tail can
+consume a -lot- of space that won't otherwise get freed. This can
+lead to rapid, unexpected ENOSPC, and it's not clear to users what
+the cause is.
+
+Hence we don't care if extsz is set on the inode or not when we
+decide to remove post-eof blocks - reclaiming the unused space is
+much more important that an occasional unaligned or small extent.
+
+Forcealign changes that equation, but if you choose forcealign you
+are doing it for a specific reason and likely not applying it to the
+entire filesystem.....
+
+-Dave.
 -- 
-BR,
-Muhammad Usama Anjum
-
+Dave Chinner
+david@fromorbit.com
 
