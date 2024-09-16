@@ -1,153 +1,134 @@
-Return-Path: <linux-kernel+bounces-330443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F46979E9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:44:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D711E979E9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CAF428436A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:44:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166C71C22D4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8112414B94B;
-	Mon, 16 Sep 2024 09:44:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6D71487D6
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F178614A4E7;
+	Mon, 16 Sep 2024 09:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPvHXqk/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5540B140E50;
+	Mon, 16 Sep 2024 09:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726479847; cv=none; b=cC/gvczY6MIcUuyhQIAyo2xWo05UYHIQEHBdarQJSwPgkHo0oOBF+DXGpnI4DHeUsf3xDkDTnmFb+ADpjg4szp0M2wQQhfbkMDC655xJ+kY4HSg5fQwzYITw+tY7oWBgDznhsaFVI0TapAWSELh4Sq27r9BDLOuRXkdfNJDNWLQ=
+	t=1726479829; cv=none; b=sxkqgAZZdgx+cYL+ievEkcxhzWJe+83MdRHzwBBq2dMCz87wvwGGWentMKZbNgAh0Mu4Bh1eAxeBT/Ve+W7QiomyT67U2stSxJOhp++IFVBTTDTZgt5c4958raQg5YDjBMV9R9lqvBUGJvj1ceR1S7BjQr3LitPyXTjaE9HJDvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726479847; c=relaxed/simple;
-	bh=JavevD4WtkiYJRhBasQKRCF4dNtm7+H0PetEFO/ICRc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Jv5VSICeRXkfosmqAdhEQyJ9dOg+KAJjedF8QqlswwpHjAcGYfM204jSzFNm8wnuJoXArmweC+g0TGwVnVlTw5QjWc2BJdKKvcaSCS13az1fHsPbEkesu4pMu1GXwbsZ5HsVzsZU+EZ8LqcqneBlLcthgDD/scC6+n9oUBQjlaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 644371516;
-	Mon, 16 Sep 2024 02:44:34 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.11])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B4F903F66E;
-	Mon, 16 Sep 2024 02:43:56 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	willy@infradead.org,
-	kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	cl@gentwo.org,
-	vbabka@suse.cz,
-	mhocko@suse.com,
-	apopple@nvidia.com,
-	dave.hansen@linux.intel.com,
-	will@kernel.org,
-	baohua@kernel.org,
-	jack@suse.cz,
-	mark.rutland@arm.com,
-	hughd@google.com,
-	aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com,
-	peterx@redhat.com,
-	ioworker0@gmail.com,
-	jglisse@google.com,
-	wangkefeng.wang@huawei.com,
-	ziy@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v4 2/2] mm: Allocate THP on hugezeropage wp-fault
-Date: Mon, 16 Sep 2024 15:13:09 +0530
-Message-Id: <20240916094309.1226908-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240916094309.1226908-1-dev.jain@arm.com>
-References: <20240916094309.1226908-1-dev.jain@arm.com>
+	s=arc-20240116; t=1726479829; c=relaxed/simple;
+	bh=uSLjVMOFtjZ6RN5n2oEbfcv69+hcDB7RedYfY0m4J3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1ZoqvhxNeEAlDm7PbNzCwh+q+UHXY99j1bPLO02lKWrv0akvPDhAgALizoSNF9mABD7jyMBZOiXjxHtbgS22j5xrL+tXwZQlC57fkw1ValIkQ+G5v6JVFBV2BibTTRyDjbp8AFhodwIzpvERD26hITYttfUbhodAi+Hr1JqGMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPvHXqk/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FAD8C4CEC4;
+	Mon, 16 Sep 2024 09:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726479828;
+	bh=uSLjVMOFtjZ6RN5n2oEbfcv69+hcDB7RedYfY0m4J3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VPvHXqk/f8+eUm3LxYMPvdkcxy7SbCr6raEVx58xFF5uuoMAdjmOor+HmP+kpR4uQ
+	 S5rJi/E+pDizyB24Sdqd/VhkL5bvN1P+oLHkU8SJ/0aT+NBngwKxvyuycU3vsfBLOI
+	 2uq9egVifX2vRvfqUMgQjXf/q5X5nkrVAbo6nznPKKYl3KTUe7rcw3XOKZtFqzkeHQ
+	 GiUm7lkvEPgLkW8s6O0NhV/I1p5gP4rVYHoq1zRGODBIHW1/dANXaFqHzhrM4Qoz5V
+	 itDaOFF18Ft9W6Cj3+D73zeznIMWEsbAScczDZYMyfk/MvxqcTnqFt6AHCXvkdkUcY
+	 ON0dvyU0QobXQ==
+Date: Mon, 16 Sep 2024 11:43:44 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Yiting Deng <yiting.deng@amlogic.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: rtc: Add Amlogic A4 and A5 RTC
+Message-ID: <u5dtpbnnfrjwf5nmpxfug4fd5argwdu5oi4cogu2wiexkw3l5p@qxjxu52w3pea>
+References: <20240910-rtc-v3-0-1fa077a69a20@amlogic.com>
+ <20240910-rtc-v3-1-1fa077a69a20@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240910-rtc-v3-1-1fa077a69a20@amlogic.com>
 
-Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
-replace it with a PMD-mapped THP. Remember to flush TLB entry
-corresponding to the hugezeropage. In case of failure, fallback
-to splitting the PMD.
+On Tue, Sep 10, 2024 at 06:14:18PM +0800, Xianwei Zhao wrote:
+> From: Yiting Deng <yiting.deng@amlogic.com>
+> 
+> Add documentation describing the Amlogic A4(A113L2) and A5(A113X2) RTC.
+> 
+> Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  .../devicetree/bindings/rtc/amlogic,a4-rtc.yaml    | 63 ++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml b/Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml
+> new file mode 100644
+> index 000000000000..eee994753a12
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2024 Amlogic, Inc. All rights reserved
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/rtc/amlogic,a4-rtc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic A4 and A5 RTC
+> +
+> +maintainers:
+> +  - Yiting Deng <yiting.deng@amlogic.com>
+> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
+> +
+> +allOf:
+> +  - $ref: rtc.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - amlogic,a4-rtc
+> +      - amlogic,a5-rtc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: RTC clock source, available 24M or 32K crystal
+> +          oscillator source. when using 24M, need to divide 24M into 32K.
+> +      - description: RTC module accesses the clock of the apb bus.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: osc
+> +      - const: sys
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- mm/huge_memory.c | 44 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+If there is going to be a new version, keep the same order as in
+properties: section.
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index cdc632b8dc9c..eac7f58729b3 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1796,6 +1796,41 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
- 	spin_unlock(vmf->ptl);
- }
- 
-+static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf)
-+{
-+	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct mmu_notifier_range range;
-+	struct folio *folio;
-+	vm_fault_t ret = 0;
-+
-+	folio = vma_alloc_anon_folio_pmd(vma, vmf->address);
-+	if (unlikely(!folio)) {
-+		ret = VM_FAULT_FALLBACK;
-+		goto out;
-+	}
-+
-+	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
-+				haddr + HPAGE_PMD_SIZE);
-+	mmu_notifier_invalidate_range_start(&range);
-+	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-+	if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
-+		goto release;
-+	ret = check_stable_address_space(vma->vm_mm);
-+	if (ret)
-+		goto release;
-+	(void)pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
-+	map_anon_folio_pmd(folio, vmf->pmd, vma, haddr);
-+	goto unlock;
-+release:
-+	folio_put(folio);
-+unlock:
-+	spin_unlock(vmf->ptl);
-+	mmu_notifier_invalidate_range_end(&range);
-+out:
-+	return ret;
-+}
-+
- vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- {
- 	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
-@@ -1808,8 +1843,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- 	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
- 	VM_BUG_ON_VMA(!vma->anon_vma, vma);
- 
--	if (is_huge_zero_pmd(orig_pmd))
-+	if (is_huge_zero_pmd(orig_pmd)) {
-+		vm_fault_t ret = do_huge_zero_wp_pmd(vmf);
-+
-+		if (!(ret & VM_FAULT_FALLBACK))
-+			return ret;
-+
-+		/* Fallback to splitting PMD if THP cannot be allocated */
- 		goto fallback;
-+	}
- 
- 	spin_lock(vmf->ptl);
- 
--- 
-2.30.2
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
 
 
