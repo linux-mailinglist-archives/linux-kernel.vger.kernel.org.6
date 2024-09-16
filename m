@@ -1,115 +1,80 @@
-Return-Path: <linux-kernel+bounces-330377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F61979D47
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:53:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E53979D44
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192E01F23706
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:53:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB521F23698
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB071494A5;
-	Mon, 16 Sep 2024 08:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C83146D6A;
+	Mon, 16 Sep 2024 08:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="QCmkrWov"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="in3wcgtW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D823A146586;
-	Mon, 16 Sep 2024 08:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DBD145A07;
+	Mon, 16 Sep 2024 08:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726476817; cv=none; b=C925ldfxewSJEGHx6KN/EQp7foPEyLNsVp748bFJPI9hwW0x6K9QENVWmsFmCWRCqWVlgmG6VdAbvj4Ybl1udKjDlqut9ADF0lz46Ic2m/2okhBCQ/rT+9yHtJwLTN0MtIpGsTyDbgACL9i3IGs89pFbAcubNmg9LsBnm55OX5Y=
+	t=1726476786; cv=none; b=pqsKeJ4pE6KgFT0/i6BdkKs2Q5iIMe1RjpB3zDcoNPpypFZj46mCu8lCDkPEl/C0GJxShVAMZK0lvVN++GZjSn7qPQSY/gxtADwxS1LNdhIxDtdQaoJKEFYaZnudqtgEs2lHemL21S77feotZCaXWuXqLaRuPJFctD8lcCmJo7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726476817; c=relaxed/simple;
-	bh=wLNyCCa3uGukd/YUJXnpdJORp6fFs7Bh0HkU+aXmQck=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G4WyObsI1zPDFXJO4mf1Oc0xsAA8yZ0Frm/JoXA7g1Pv13pC+9ev2yrva48YeWR/QR+lixGMrAe6qENnAbrDrVNDwENBU5Phs/0I9vV21yhFe/5I84Wes2ALe56hdehTfHZ05qpK5t3NngGAj5aQksEu8CSpQGfTY8Mf7fqEMNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QCmkrWov; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726476816; x=1758012816;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wLNyCCa3uGukd/YUJXnpdJORp6fFs7Bh0HkU+aXmQck=;
-  b=QCmkrWovvqI6ZWimZhOmWs+4b7/HLomZy+Qp1OLnK8ft7b/735BcpeiX
-   W6u7eWRuvjIdhw5uW/iJZFLIqThq04d1Uh1peh3GKORj/MQzrNMPn8kLA
-   WPG3gKWIT1qjPXbMYVbzRoUlJpa+4apE6rH9U/tYT0sSRDsDHDVNLyea8
-   z2gtp291MBcOe1E3Y8Pgr0M64oHMYEOLzW1tST/efcwDihoNaNR0F+iLP
-   EeYKzJWum9EhHc9NH598feWxh+51+FOW0ONwgpYI1raXIfRBy/+oWkrYL
-   gdsT1bNpAgX4MCR9eSj3vNlaawuUdyChFsMrowosOvbjD8p4lXaqiJSNf
-   g==;
-X-CSE-ConnectionGUID: PamDwLmaS1u4auhQg+WCVA==
-X-CSE-MsgGUID: PUDmAxjDRdG9WOIsrMHnQA==
-X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
-   d="scan'208";a="32443041"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 01:53:33 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 16 Sep 2024 01:53:15 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 16 Sep 2024 01:53:12 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>
-CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Andrei Simion
-	<andrei.simion@microchip.com>
-Subject: [PATCH 2/2] ASoC: atmel: atmel_ssc_dai: Drop S24_LE support due to single channel limitation
-Date: Mon, 16 Sep 2024 11:52:15 +0300
-Message-ID: <20240916085214.11083-3-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240916085214.11083-1-andrei.simion@microchip.com>
-References: <20240916085214.11083-1-andrei.simion@microchip.com>
+	s=arc-20240116; t=1726476786; c=relaxed/simple;
+	bh=lpBsDPPu+DtRITXEEs1YvzNC853IEGPvRRrnFlGZ/Fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ig+ez/8aPf+cvy60illTbcqASlOQqn3LbE7pvHVSSmjxwYNj/YYE+eTqIH6K+iF4PUn+Iwej9VhsO/VvgE96Q+pDijOyvRDhzp9PoBCmJwvHUPDg1hFL088J24Zppi+FTEmrB2vYJtNAgp0/t4j228ATmAcYsa+ZpzsI372MnKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=in3wcgtW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D65C4CEC4;
+	Mon, 16 Sep 2024 08:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726476786;
+	bh=lpBsDPPu+DtRITXEEs1YvzNC853IEGPvRRrnFlGZ/Fg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=in3wcgtWWo5Ui1PxJkUCfXeWo8j074zXNqkYaZhTeDk1Wuha2h9aCXst+t4DB28O3
+	 fcjL8E8+CKGyRNW3B7wnGAec4jnAAKXZkOtR+a4dh7CkDRrOKm4EZHs7fh3tOS0dyk
+	 PkEYrlOCsjKXSKCkeOhmJz1gm6aP36FYpgbepXQW+FPrX5wuy61Hq6O5k51BpZ83bJ
+	 osnH7YjQV0EhGk5YEIW7ZuY6j9dKjeBlSDBHQToZryCe8C2O7SEdTbe/V+66S9Ysap
+	 zZPNfgMMT6BszhGNpPEecrK6rOs1DrN2PZt4rGMCd9mmcAg0xTPKlzijLe84JLM5sC
+	 VY4GDk0uiMIIA==
+Date: Mon, 16 Sep 2024 10:53:03 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: andersson@kernel.org, linus.walleij@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@quicinc.com, quic_psodagud@quicinc.com
+Subject: Re: [PATCH v4] dt-bindings: pinctrl: Add SA8255p TLMM
+Message-ID: <bzty5fgv4j3md6nnj5j3zq5562obwhd47hizdqodqlubf4zjoa@yjsvyqza7wlc>
+References: <20240910165026.2406338-1-quic_nkela@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240910165026.2406338-1-quic_nkela@quicinc.com>
 
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+On Tue, Sep 10, 2024 at 09:50:26AM -0700, Nikunj Kela wrote:
+> Add compatible for TLMM block representing support on SA8255p.
+> 
+> SA8255p uses the same TLMM block as SA8775p however the ownership
+> of pins are split between Firmware VM and Linux VM on SA8255p. For
+> example, pins used by UART are owned and configured by Firmware VM
+> while pins used by ethernet are owned and configured by Linux VM.
+> Therefore, adding a sa8255p specific compatible to mark the difference.
+> 
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+> ---
 
-Drop S24_LE format because it is not supported if more than 2 channels
-(of TDM slots) are used. This limitation makes it impractical for use cases
-requiring more than 2 TDM slots, leading to potential issues in
-multi-channel configurations.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[andrei.simion@microchip.com: Reword the commit title and the commit
-message.]
-
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
- sound/soc/atmel/atmel_ssc_dai.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index 7047f17fe7a8..475e7579c64c 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -822,7 +822,7 @@ static int atmel_ssc_resume(struct snd_soc_component *component)
- }
- 
- #define ATMEL_SSC_FORMATS (SNDRV_PCM_FMTBIT_S8     | SNDRV_PCM_FMTBIT_S16_LE |\
--			  SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
-+			   SNDRV_PCM_FMTBIT_S32_LE)
- 
- static const struct snd_soc_dai_ops atmel_ssc_dai_ops = {
- 	.startup	= atmel_ssc_startup,
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
