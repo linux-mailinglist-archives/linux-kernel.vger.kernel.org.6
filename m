@@ -1,105 +1,78 @@
-Return-Path: <linux-kernel+bounces-330998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B263397A710
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:57:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CC497A712
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A0AC1C275AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E30289652
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CFC166F14;
-	Mon, 16 Sep 2024 17:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2864165F0E;
+	Mon, 16 Sep 2024 17:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZsIA6MC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRA8QIgk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A1615C146;
-	Mon, 16 Sep 2024 17:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2171215FA72;
+	Mon, 16 Sep 2024 17:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726509430; cv=none; b=IAqe2XMDRe3I2dszxkKXx+rDpfRZJfCivd0Za5OCoD/ZSMoChYwd0ikz22i6TYfjMxHPThCDPZriNH2ScbrAYgO/tweqG7cgrD+l/RqL8EIy1m+ngw/RsUIsDfc/J4/vVJ58PtIxdU+ff5bTEoh9ooeKzZwDaNTQghK2NWyusiI=
+	t=1726509444; cv=none; b=ohEc3Z9AZDyRSz50EAsd62FZq3esUovY6Mja2x23P0VeIimc/ywM5Jx2LQ0A3f40eKaD5N6FpDCM2XSa9SsYN8nozcvzVlPV86lTCf2sN5AXMSXJCvl5LGZZnN1z1SoyFnM1rObOxWUjc6uBbY2n595kNGwNXytUUj/e1RnIbBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726509430; c=relaxed/simple;
-	bh=mQN9rGOjG8lSGvtdD6PLP3HyBy26FmNXdM6XxYgAXf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AixlnzpZE8OladUxWt+rbtx1Qpk5D0EfgCc42kJxyjtZGlkb/fVYUj7XP1sNEFBXY+n3aQxUKTUOlNbg2xUF26Q4YiWU2y/o+kb+qBs6sDEuo4F4uBJr4ZTF2IF6XsXYbKqlDzPhDje8IT1H/ismVKnZ+GyY2z1tgo0uHi43SYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZsIA6MC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCFC4C4CEC5;
-	Mon, 16 Sep 2024 17:57:09 +0000 (UTC)
+	s=arc-20240116; t=1726509444; c=relaxed/simple;
+	bh=jYON1/Uh1dpund13lEKuBwplR8H3orb9C6v8NDM/FTw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=X9oQ3jcbX8YNdb0MEvSncHHk1E0/jtGtmvuv3S3+s89XLBGJM8+GRlguHOMnjL/NwgPdTTXnT3kDftQtNg9wIqQYCWv775W9P8HQdFEfqcUEslAV7HpBEA48zNSnahD4MClPeAWFLf2yElaW/Z/yl+mJbpEgSfNJWytPDlLnUys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRA8QIgk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35DEC4CEC4;
+	Mon, 16 Sep 2024 17:57:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726509430;
-	bh=mQN9rGOjG8lSGvtdD6PLP3HyBy26FmNXdM6XxYgAXf0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HZsIA6MC9ymqn/1g3ln8l8r4xHIWBYfErq9GvoxD3YsgzI7PyowTt5hQy51pPTrKK
-	 Q8wDML49Am3Hkf6B0pRT8ONgM8uaVRDdgRbKMfYfLpDev31/naweyPT4RXf3ex0ptx
-	 kinTrao11wUFZz/8Uv80M+l+QDFP6LvO/fKgiw/Fqm/nK/ry1otItGaD2eqS2KA8Lt
-	 STLSPDyGagBvvB1zx5jhQhmBBN5k3GbvrljHU+nRXdsz+yqkUPimhQI+AG20c2jTKp
-	 UDOvBkkf28JvFZAWud537wm/1XP4WDAH9eN40aBRbiyuZeucnK5BsikcNI8JDe1DAb
-	 iDX1pW2gzoUng==
-Date: Mon, 16 Sep 2024 12:57:08 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Russell King <linux@armlinux.org.uk>, Jakub Kicinski <kuba@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Eric Dumazet <edumazet@google.com>, kernel@pengutronix.de,
-	"David S. Miller" <davem@davemloft.net>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH net-next v3 1/2] dt-bindings: net: ethernet-phy: Add
- timing-role role property for ethernet PHYs
-Message-ID: <172650942796.881251.17049262123032833023.robh@kernel.org>
-References: <20240913084022.3343903-1-o.rempel@pengutronix.de>
- <20240913084022.3343903-2-o.rempel@pengutronix.de>
+	s=k20201202; t=1726509443;
+	bh=jYON1/Uh1dpund13lEKuBwplR8H3orb9C6v8NDM/FTw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=uRA8QIgkGcVMHiGidybehuFxTgLfz33DffO1EVgLZoelxubzdaYXYfHt4govEwlI5
+	 oneNaY7J2nEsd6AacWGLnA+luHKvftEyNeRy3/5GGW1FcGW62Xh5YdQBSk8mB1vMei
+	 FCMu4WRjC56KAXAlS55keWeCDe+qBvQU67iHNhyuU2koTq8vKgJqJKg4so7nCHr03w
+	 av+py/DJOYCYgOhuhpUdhW4t/nk+jS6lSLQvhto5g+Oo6nP88Lg63XqmRRF3ZwyXSO
+	 DisbLa/hb96KfC9YxwEiAyQQfl8EZk58vsKgr/BGCOP6Lmn5TJHUqVTnLRGjzBn/BC
+	 hztSnGf5hNrrg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7120A3806644;
+	Mon, 16 Sep 2024 17:57:26 +0000 (UTC)
+Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com>
+References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240911
+X-PR-Tracked-Commit-Id: 19c9d55d72a9040cf9dc8de62633e6217381106b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a430d95c5efa2b545d26a094eb5f624e36732af0
+Message-Id: <172650944503.3778821.5013640579473720817.pr-tracker-bot@kernel.org>
+Date: Mon, 16 Sep 2024 17:57:25 +0000
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913084022.3343903-2-o.rempel@pengutronix.de>
 
+The pull request you sent on Thu, 12 Sep 2024 21:29:54 -0400:
 
-On Fri, 13 Sep 2024 10:40:21 +0200, Oleksij Rempel wrote:
-> This patch introduces a new `timing-role` property in the device tree
-> bindings for configuring the master/slave role of PHYs. This is
-> essential for scenarios where hardware strap pins are unavailable or
-> incorrectly configured.
-> 
-> The `timing-role` property supports the following values:
-> - `force-master`: Forces the PHY to operate as a master (clock source).
-> - `force-slave`: Forces the PHY to operate as a slave (clock receiver).
-> - `prefer-master`: Prefers the PHY to be master but allows negotiation.
-> - `prefer-slave`: Prefers the PHY to be slave but allows negotiation.
-> 
-> The terms "master" and "slave" are retained in this context to align
-> with the IEEE 802.3 standards, where they are used to describe the roles
-> of PHY devices in managing clock signals for data transmission. In
-> particular, the terms are used in specifications for 1000Base-T and
-> MultiGBASE-T PHYs, among others. Although there is an effort to adopt
-> more inclusive terminology, replacing these terms could create
-> discrepancies between the Linux kernel and the established standards,
-> documentation, and existing hardware interfaces.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
-> changes v3:
-> - rename "master-slave" to "timing-role"
-> changes v2:
-> - use string property instead of multiple flags
-> ---
->  .../devicetree/bindings/net/ethernet-phy.yaml | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240911
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a430d95c5efa2b545d26a094eb5f624e36732af0
 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
