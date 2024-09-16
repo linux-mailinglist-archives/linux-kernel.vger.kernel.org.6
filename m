@@ -1,85 +1,58 @@
-Return-Path: <linux-kernel+bounces-330481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA44979F1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:17:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCB9979F1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF755B2314D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:17:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 396C51F21124
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FD1154C14;
-	Mon, 16 Sep 2024 10:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9A714EC47;
+	Mon, 16 Sep 2024 10:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWsvn21f"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="zExUP4SA"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A03152E0C;
-	Mon, 16 Sep 2024 10:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAD25FB9C;
+	Mon, 16 Sep 2024 10:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726481791; cv=none; b=D2giG68cdvtEbtiPKW5oMGM/9j60IDHzRryizTE2WQEcqf/UF9ryX0Dy0+72LHXpbcsp6JzxAABG3eNU7dyOg5AJx/0FggTPeKbcG55Hlol1VOvkCmQJb+qxWrunbsimgoFHrt1jpT1jQRV36TF8L86OnNCzvma842r5PYLvIfI=
+	t=1726481942; cv=none; b=uCSDPR5daueRbb3WiGYKWm2nlSRZzvZjMGjwhahGxEHPzYou/6GvzilFJNBeloyqFUSPJBkeK9psJQPRxxEHHT4YkbVpCIio69vvQW1LIJJ4hSbHA6TnJ+E/Zg/divlBPq6d+3hp2CH9n3pulRAEUEwIhCZDSR+tajNekbXcn74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726481791; c=relaxed/simple;
-	bh=Qli+h/uXJqZx6B+dTAdfsruBtooNooToeUGYDRfRd80=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NWsFlWvDdiNnxDYJA1fNi30Istr0WVjRPBFeh7A23XS2mH800h8u0+B/qDNEAbacsQNLRxtGFExzpeHFnuVRO9mcCejGRyUU6jbDdQSL6osHHJRwFsA2jTtElU6O0EmTWwJuXg0uR231FvZSxVP3AuwHPczobP6SnO+soqRjbas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWsvn21f; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3787e067230so3049913f8f.1;
-        Mon, 16 Sep 2024 03:16:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726481788; x=1727086588; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+96dCE/RH3/NNKWNE9Y9s9N6w3czRGVtUhIxMgqQU3M=;
-        b=mWsvn21fJP7M5O7r/i9o05M7omERfFqi6FW6bQF5PQB3NdRARuZLmcemySVq4Rh2IT
-         xpz/jZ9501l8oY3L9OKjIrkLh3rDeeTEjTW62P5cUO4wAlSZWBmuChDMhQbqoTqfN4pP
-         vShL8C968CMdf5mooST6JFu6w/FMEY/fwNzyD6dDh2n8aIJGum+TdwoXAc4xfmUlGS8O
-         m+TgIN/iol5KbzbRNY6iGL61vgPy81kjx/K4XtjMIteT+C0wQYrsa/5AD9CkRA4JCb5l
-         IDdxbbDG/uQ2bCMVoz1UCP0qR2T4LQeTJIi3z6DQquFeNfdFobym2sfValQKXffc6Ou3
-         4fHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726481788; x=1727086588;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+96dCE/RH3/NNKWNE9Y9s9N6w3czRGVtUhIxMgqQU3M=;
-        b=n9HmVjHx/YcNcg6UPXzfG/SMavWoepXknRYQfsmkqwDI7nyq7N+5Lrvw85HXq5CkWe
-         gOt3+lmAEBAczgD2t6HKM2RsrhCDiooh5gBO7KYv6v/jP7OV/3Py/A8kA+7Vpf5IRs3+
-         i276eLpOshFc1/sfgxWMastIsY9QduxtDeZ15r8Rgl6LIkVTrjB2yYmWtZQ5HZM9AbBL
-         0soyAEP60hkIYBYfIHTH6J6TKvezHaspqUWv1w/lVZgxzn12dRq2GCCC7Mx6+qaKeYig
-         m7Y04g3+ZLgQuW8gixUOB7ymme8Oq1/EHavj9G+8E8xC7uGTeRLXjyLn++z3paz7dejt
-         qOqA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6R9+KnybpeY9+1Nu/+s8jFspZRJ+1O8HNO+q9OAav+pppGNHcBpgWTBtrW1Y4rqLTiv9anqrzQogr0MwT@vger.kernel.org, AJvYcCWHzJmqJZqTdRiMALpEL1AOsMV942FTQG9uzIYmsxawSaLXiiYqdA9BlXBR4RWi9dtirEaBiR6TgOAwAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA1wkaka0mwikusiXvvBrEvy1QXOk86QbzjXWlh3A6//tv8BRO
-	ECpN3DYeJZYoaEdLoNtp/K6uVmVgx9x4JozI1MhvmX1lJWz0CYmD/GiJiZb2
-X-Google-Smtp-Source: AGHT+IFl0F8VDK8TI+2SWw31p5UlBQYeCPPUv9AJyKtmv/4CMqWc25Im1+rPat3RplPVB4itghh46w==
-X-Received: by 2002:adf:f801:0:b0:374:c1de:5525 with SMTP id ffacd0b85a97d-378c2cfecefmr9223537f8f.6.1726481788461;
-        Mon, 16 Sep 2024 03:16:28 -0700 (PDT)
-Received: from fedora-thinkpad.lan (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-378e780015dsm6814201f8f.69.2024.09.16.03.16.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 03:16:28 -0700 (PDT)
-From: Luca Stefani <luca.stefani.ge1@gmail.com>
-To: 
-Cc: Luca Stefani <luca.stefani.ge1@gmail.com>,
-	Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] btrfs: Don't block system suspend during fstrim
-Date: Mon, 16 Sep 2024 12:16:09 +0200
-Message-ID: <20240916101615.116164-4-luca.stefani.ge1@gmail.com>
+	s=arc-20240116; t=1726481942; c=relaxed/simple;
+	bh=YONs79CHg94BdTBFdnTQkbFOUhcf3vOSybL4fqimPK0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QwzFk6FEo92pND2vdI8irsuhE7YjL1WXo7j1cRErFIcUD9KahRE/Ip0kfsc0dnLlXMhrehcA4g+iwXXEJtnYitXuzDEy9KOjVorUhybJlFSeGsKhkHeYCqRimHvmz7nfKr2rzYah01q7SAepValrt+UaL+sCFofw+nyGawG3dIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=zExUP4SA; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2678FDB259;
+	Mon, 16 Sep 2024 12:18:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1726481932; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=vEZF0nMlD2VC8XTumwqyx5LzxAmk5mEEC58K81DC2fM=;
+	b=zExUP4SAl2XSNW4EIAdEDg0t21+SmRLn3YlmzwoIN8pmOqgH0mfkZo+nZ/fjc06PmlUOAI
+	hvXR1vmhC2ln8XuIayfj4VeT+gOd3KO0AFTNHoSnkyoChv58tJrlVUav1k23vge3TiCg+/
+	mc4h/5DeAzFndlSUC9M7ZFkWDxIFzwNhVTVQdnId9zGy9Dx/Bydo8qOI6YYwsM8hGaxdVZ
+	oiro5peJeR0nwZp85WEh11fVklb0ToNen6OUYplI8prhwJO1HJfeZpizu20rLxvA0COSsa
+	szpjPUKLDtvBR+5K/prfTDzlr2VVp5JVvvHd5NlikdcC58oUkAGXHH93fXS0qQ==
+From: Daniel Wagner <wagi@monom.org>
+To: LKML <linux-kernel@vger.kernel.org>,
+	 <linux-rt-users@vger.kernel.org>,
+	 <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>
+Cc: Daniel Wagner <wagi@monom.org>
+Subject: [PATCH RT 0/1] Linux v4.19.322-rt138-rc1
+Date: Mon, 16 Sep 2024 12:18:43 +0200
+Message-ID: <20240916101844.280673-1-wagi@monom.org>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240916101615.116164-1-luca.stefani.ge1@gmail.com>
-References: <20240916101615.116164-1-luca.stefani.ge1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,89 +60,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Sometimes the system isn't able to suspend because the task
-responsible for trimming the device isn't able to finish in
-time, especially since we have a free extent discarding phase,
-which can trim a lot of unallocated space, and there is no
-limits on the trim size (unlike the block group part).
+Dear RT Folks,
 
-Since discard isn't a critical call it can be interrupted
-at any time, in such cases we stop the trim, report the amount
-of discarded bytes and return failure.
+This is the RT stable review cycle of patch 4.19.322-rt138-rc1.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
-Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
-Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
----
- fs/btrfs/extent-tree.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+Please scream at me if I messed something up. Please test the patches
+too.
 
-diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index cbe66d0acff8..ab2e5d366a3a 100644
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -16,6 +16,7 @@
- #include <linux/percpu_counter.h>
- #include <linux/lockdep.h>
- #include <linux/crc32c.h>
-+#include <linux/freezer.h>
- #include "ctree.h"
- #include "extent-tree.h"
- #include "transaction.h"
-@@ -1235,6 +1236,11 @@ static int remove_extent_backref(struct btrfs_trans_handle *trans,
- 	return ret;
- }
- 
-+static bool btrfs_trim_interrupted(void)
-+{
-+	return fatal_signal_pending(current) || freezing(current);
-+}
-+
- static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
- 			       u64 *discarded_bytes)
- {
-@@ -1319,6 +1325,11 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
- 		start += bytes_to_discard;
- 		bytes_left -= bytes_to_discard;
- 		*discarded_bytes += bytes_to_discard;
-+
-+		if (btrfs_trim_interrupted()) {
-+			ret = -ERESTARTSYS;
-+			break;
-+		}
- 	}
- 
- 	return ret;
-@@ -6473,7 +6484,7 @@ static int btrfs_trim_free_extents(struct btrfs_device *device, u64 *trimmed)
- 		start += len;
- 		*trimmed += bytes;
- 
--		if (fatal_signal_pending(current)) {
-+		if (btrfs_trim_interrupted()) {
- 			ret = -ERESTARTSYS;
- 			break;
- 		}
-@@ -6522,6 +6533,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
- 
- 	cache = btrfs_lookup_first_block_group(fs_info, range->start);
- 	for (; cache; cache = btrfs_next_block_group(cache)) {
-+		if (btrfs_trim_interrupted())
-+			break;
-+
- 		if (cache->start >= range_end) {
- 			btrfs_put_block_group(cache);
- 			break;
-@@ -6561,6 +6575,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
- 
- 	mutex_lock(&fs_devices->device_list_mutex);
- 	list_for_each_entry(device, &fs_devices->devices, dev_list) {
-+		if (btrfs_trim_interrupted())
-+			break;
-+
- 		if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))
- 			continue;
- 
+The -rc release is also available on kernel.org
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+on the v4.19-rt-next branch.
+
+If all goes well, this patch will be converted to the next main
+release on 2024-09-23.
+
+Signing key fingerprint:
+
+  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Daniel
+
+
+Changes from v4.19.317-rt137:
+
+There was a merge conflict due to the backport of d33d26036a02 ("rtmutex:
+Drop rt_mutex::wait_lock before scheduling"). This commit added the lock
+argument to rt_mutex_handle_deadlock function.
+
+
+diff --cc kernel/locking/rtmutex.c
+index fe5153fc7665,c552fb0b54bc..d012e35708c6
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@@ -1753,12 -1270,8 +1755,12 @@@ int __sched rt_mutex_slowlock_locked(st
+
+        if (unlikely(ret)) {
+                __set_current_state(TASK_RUNNING);
+ -              remove_waiter(lock, &waiter);
+ -              rt_mutex_handle_deadlock(ret, chwalk, lock, &waiter);
+ +              remove_waiter(lock, waiter);
+ +              /* ww_mutex wants to report EDEADLK/EALREADY, let it */
+ +              if (!ww_ctx)
+-                       rt_mutex_handle_deadlock(ret, chwalk, waiter);
+++                      rt_mutex_handle_deadlock(ret, chwalk, lock, waiter);
+ +      } else if (ww_ctx) {
+ +              ww_mutex_account_lock(lock, ww_ctx);
+        }
+
+        /*
+
+Daniel Wagner (1):
+  Linux 4.19.322-rt138
+
+ localversion-rt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 -- 
 2.46.0
 
