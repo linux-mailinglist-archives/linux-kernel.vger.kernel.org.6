@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-331019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC1697A752
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:31:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A994A97A755
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8441F2607A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:31:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7C57B2A178
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F314594D;
-	Mon, 16 Sep 2024 18:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB5114BFA3;
+	Mon, 16 Sep 2024 18:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Ws0IBRiw"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CACxILnd"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97835F4E7;
-	Mon, 16 Sep 2024 18:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F122C38FA1;
+	Mon, 16 Sep 2024 18:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726511457; cv=none; b=gpLY/1B9cJ+S71SdNo+6/oWZgHS0JuJDL0wjUanAqddE79lKrhfkJpq6HX+0Vr0YWk9rj4+43cOb3run8H8pPs2P2BAhj/Ktl77HlsNzVOx4eF9+Q+pIzWClYdEmTFGzh5X4sAN0pgyMzYKhFKUyvRG1J85r6GsXmHGA72DV8Vs=
+	t=1726511548; cv=none; b=Shk0EwdJF3qARbwURjwtND/DwaGRSs/d4ByK06XR8Ak0AeAKpRTVa183f0uyQ6QKiL2WCy48ZogJrl11jSljHH+CIpBChBoXtysX7/u4aBe7I7mVGiQ3jNDuIbpK1AUDTk6FiUYXmSTBI3v+uJAfUmO9Z0TgzHS+B5KvL9SQVlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726511457; c=relaxed/simple;
-	bh=DUd9WcMz0N6JqUgYIGzGsLNpdYVvSRcA8Vy4FpWVLHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4DSJeFWyKoooxzoURp5pacdoJxE779izTenMRLuSwBTfNfKqJcwKRNmm4xuss4+mCpl52dGObQqApvbDXI1OUiNXR67T7UifjlFRsiRw7PH6ZwgoLvvEjkLs/BIeS/tkaEYcfCyJo9isUIXOAeeYgiqrjq32jWVdgkxpvRjlx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Ws0IBRiw; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gAyI006SWlMSA59v//aeZLYRYdSo+/9azsJe9J8yl9Q=; b=Ws0IBRiw+dNalAZsQYhyl/kj7l
-	t69xyNCDPJRx5g0Vws3fEgIn4TrF5hPzXY5NJFv8SxieG7c2BhVYtMnIjweuOoA5MBQxkcdLEA0hv
-	PujIqfL6EV5xnBy4HQArVMFjb3NWuWpSbJVkJC24iCI/VoSsyWR9tzjZhFrpGyVVy9fpnqRP4VDW4
-	JJJO1YsA2bNEs5Z2unflfVxzbahkemKsMh6LVUpvyi4TzMv/830pfVD8aMUU3n192BxSgKpCIf0XE
-	TPvap8mGoz3zMkyMX4Ee7rY50jE2l47md5hnhmi00XCXWAGvMtIMAUgIgVa/WXMLeJ3MmqNo2kbri
-	rVv7RTrA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52784)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sqGUq-0006Ha-1I;
-	Mon, 16 Sep 2024 19:30:48 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sqGUm-0007BQ-1C;
-	Mon, 16 Sep 2024 19:30:44 +0100
-Date: Mon, 16 Sep 2024 19:30:44 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, bryan.whitehead@microchip.com,
-	UNGLinuxDriver@microchip.com, maxime.chevallier@bootlin.com,
-	rdunlap@infradead.org, andrew@lunn.ch, Steen.Hegelund@microchip.com,
-	daniel.machon@microchip.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next V2 1/5] net: lan743x: Add SFP support check flag
-Message-ID: <Zuh5VDvnwx868Iqx@shell.armlinux.org.uk>
-References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
- <20240911161054.4494-2-Raju.Lakkaraju@microchip.com>
+	s=arc-20240116; t=1726511548; c=relaxed/simple;
+	bh=U0kB/a/w5m1cWR4/u4c0+Uu5pOhQ2VpCVFKfWhFj3nI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lBX4JKVKXzWMJpAjxeFWy0suk0ILJr7tA7MvZy4WxdLGJJCGXis8Q3FHXv0IFA93DtCyt5WKtCpnavDewu/FYAuHdU3mTWIbfXPLV+dcWd3etXDtnDf+LHrpGTNqZHWD2TB4zDoOf+o/V5M9GCmaubbXDjdA9l0DIQ+/cqwfVGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CACxILnd; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so625243766b.3;
+        Mon, 16 Sep 2024 11:32:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726511545; x=1727116345; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=N++jJf1MNCR28pXLj/xzz/4s0nJnbeFi2VTpqhVj0xY=;
+        b=CACxILndFfkkVpH8EYGmrx/blpVcZCiALxUIPoaA2zkvymeYp9kKYfXAiZr4fxzYWF
+         OKvCy0aBbiXeLCsybBy1TZM/PrMUHyeRsMkCcFfreBNCMPsbghUGxL8EwEpuLkC3McLL
+         9rwRqrXYnpF3PthRbqt8Uurk4/KJr3GN4QA8nS3cuy/dO/eumSz/KVZjY9vHb8zY79+y
+         X3dCjXM7O/WYXwS7KAYAuqFlzKUNbpFs5MRSbHMu100V1KCO+vcQ5BaXUBv5xxNbRRs+
+         6nUaKEnQ1pQK+0ICcNngE2LXBqAS9SLbDwf6QatKU5OieO9awlx3sYANaLsiEFNiaZvM
+         Viaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726511545; x=1727116345;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N++jJf1MNCR28pXLj/xzz/4s0nJnbeFi2VTpqhVj0xY=;
+        b=Veot6kStmoyBqbjFJFsjk6sbPkFQfojB6g1mNl6vsfchI1MVJhgGj4heQaai+A+tpu
+         PnbL4dUw9YatKYFH0XjC03sRY8ZB8YFLrRz0qJ9kP71etLMiLKDUlkUHAKK8w9Z9om8C
+         jDayjbhhJg4CVoHREyWuv9DtZvMg2o0V7x0XR0gROs6OajT5AQP9pwadwVgLMoS/k1td
+         mn4TheY+rfUHaNuKfezzoJFNZYoUHJ8F9GwvdgVtlS0sghOBPZ5b50vU/anHY/yGkpAJ
+         jzqmUdjLUINaLNz7m3De8BUWE4j4jM6AwRH61OMaNWCQPiJtBDO8lzc0J8uDflZ4+7/7
+         +lCA==
+X-Forwarded-Encrypted: i=1; AJvYcCV70Aa/KWlZ96OfwF61NoXoogZSjmIZ2/NHidniYO4cqLyr8hM2QBg/BX2JUzHFXE3A+r2BLQa0JJU=@vger.kernel.org, AJvYcCW7CCeNb1nTOEgU4W140LL79U1h7FJGEkbT7FIprfs7hw23Of09rJYtjYyoZuaCz6HGcbm2GHJT7ln9umG0@vger.kernel.org, AJvYcCWV19O0ClJY6EyXTEu9NOaBuueWZpnDAOIsKJ1TZ5eIWSK+qyNRHfUevQIlczcjCB9tggffhD6mq3iSYZtbKgtm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/guE+q4AO5bMaJVvsQ7NmMBndpMSHy5xEAJ59SPVnyQYz2djI
+	JCsKhKRMKhmjTlBnr1lhpgydlM7TK3C82i3kIdv79nfX5YDfQEk+
+X-Google-Smtp-Source: AGHT+IG2bkFgI0St5jlbMoVCtTJAllqGSMBJmDSSn3KuFp377KkOkZ5iaD+a5l/Ft83eECi1XIMk3g==
+X-Received: by 2002:a17:907:86a2:b0:a8a:86a9:d6e2 with SMTP id a640c23a62f3a-a90294eda24mr1602504766b.37.1726511544796;
+        Mon, 16 Sep 2024 11:32:24 -0700 (PDT)
+Received: from tuxbook.home ([2a02:1210:861b:6f00:b2be:83ff:fe21:42e1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f4450sm348473866b.55.2024.09.16.11.32.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 11:32:24 -0700 (PDT)
+Message-ID: <75639e2d585a2d45e015e80044c0f88a3f5ec3b1.camel@gmail.com>
+Subject: Re: [PATCH] dmaengine: ep93xx: Fix NULL vs IS_ERR() check in
+ ep93xx_dma_probe()
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, Vinod Koul
+ <vkoul@kernel.org>, Nikita Shubin <nikita.shubin@maquefel.me>, Arnd
+ Bergmann <arnd@arndb.de>, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
+	error27@gmail.com
+Date: Mon, 16 Sep 2024 20:32:23 +0200
+In-Reply-To: <20240916182337.1986380-1-harshit.m.mogalapalli@oracle.com>
+References: <20240916182337.1986380-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911161054.4494-2-Raju.Lakkaraju@microchip.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Sep 11, 2024 at 09:40:50PM +0530, Raju Lakkaraju wrote:
->  {
-> -	u32 chip_rev;
-> +	u32 fpga_rev;
->  	u32 cfg_load;
->  	u32 hw_cfg;
->  	u32 strap;
+Hi Harshit,
 
-...
+thanks for looking into this!
 
->  	} else {
-> -		chip_rev = lan743x_csr_read(adapter, FPGA_REV);
-> -		if (chip_rev) {
-> -			if (chip_rev & FPGA_SGMII_OP)
-> +		fpga_rev = lan743x_csr_read(adapter, FPGA_REV);
-> +		if (fpga_rev) {
-> +			if (fpga_rev & FPGA_SGMII_OP)
+On Mon, 2024-09-16 at 11:23 -0700, Harshit Mogalapalli wrote:
+> ep93xx_dma_of_probe() returns error pointers on error. Change the NULL
+> check to IS_ERR() check instead.
+>=20
+> Fixes: 5313a72f7e11 ("dmaengine: cirrus: Convert to DT for Cirrus EP93xx"=
+)
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 
-This looks like an unrelated change.
+Dan has already fixed this though:
+https://lore.kernel.org/lkml/459a965f-f49c-45b1-8362-5ac27b56f5ff@stanley.m=
+ountain/
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> ---
+> This is based on static analysis with Smatch
+> ---
+> =C2=A0drivers/dma/ep93xx_dma.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
+> index d084bd123c1c..ca86b2b5a913 100644
+> --- a/drivers/dma/ep93xx_dma.c
+> +++ b/drivers/dma/ep93xx_dma.c
+> @@ -1504,7 +1504,7 @@ static int ep93xx_dma_probe(struct platform_device =
+*pdev)
+> =C2=A0	int ret;
+> =C2=A0
+> =C2=A0	edma =3D ep93xx_dma_of_probe(pdev);
+> -	if (!edma)
+> +	if (IS_ERR(edma))
+> =C2=A0		return PTR_ERR(edma);
+> =C2=A0
+> =C2=A0	dma_dev =3D &edma->dma_dev;
+
+--=20
+Alexander Sverdlin.
+
 
