@@ -1,107 +1,138 @@
-Return-Path: <linux-kernel+bounces-331085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C62797A835
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:19:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B75997A841
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AE001C21E9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:19:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0832EB28A5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600C215C15C;
-	Mon, 16 Sep 2024 20:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E666C16191E;
+	Mon, 16 Sep 2024 20:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVRbnsjG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QrriRmjV"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95D8219E0;
-	Mon, 16 Sep 2024 20:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B106161902
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 20:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726517961; cv=none; b=pnKTTJ4fo1ib0L9fkVn0XJfmzbZpA3pcvI6YztwBD6I27ngZ9i7iNzd2S8SMB7oX3P1HDz3FAyP1wEZkSWtptUvtIVi5f3YPlxVc2ssi8PYLwlPEnR1ayqVPu7XIrYE5wGtnnWUSswZ0noPF6LQ/NvAbwSO+VBSpxBMfMxAjh+I=
+	t=1726518098; cv=none; b=GidPggwKlfeDmZ5VkztcUx3NpTgdR6olFaodtNc2vH2CPXZcARDZe9jAdbFnHrLhQXRGkfjAQ0FTY6ZUhjDmSVbQBSOMyex4PJpAObaRfcNA+slUlEKcNdcMNWeVvQnTd0biFFsLKfBhGBCnfkmSWkQELsiH4q++Y5PZ7Q5FiIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726517961; c=relaxed/simple;
-	bh=9oMaMq4JbZsi++uRLE3HEFiboWVRs8H6S6Ee3vyo6ng=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=dQU8inTOvZUp/vO9YXts0SNk6WKwxpC/k0NrS1JlrHSg350Awu+Uat8MYGFXLtczLNMGwvxWqIsi3gCkFQme13u0HFVnUJOgDkdUcy/ovopwqb/DWv/kztPJ8TlL6c0TZF3L8yJ4Sr0kTrOAjrJ0THGj61px8vZEA4LJkP+hpI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVRbnsjG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 424B0C4CEC4;
-	Mon, 16 Sep 2024 20:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726517961;
-	bh=9oMaMq4JbZsi++uRLE3HEFiboWVRs8H6S6Ee3vyo6ng=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=OVRbnsjGRZj8KqNu89ASxv0qzGUd9UE5Dp9vi8lPma+XdHFJkEPelDXGH8UNAlznc
-	 thtUhqQsdlXK3g3yp1Waccqz+51v9KT0/0AVS8mQ1sNUd8HSJo8yPWk1wpTS2uz7zJ
-	 syMMFZhsOQGUDS8vBv3FEk/8xhwqyXxCNQpne0m3ZUDNSyVQi1uv519yL1jzN/8Mjh
-	 yPVKPcKVE2UtuipCI8E0IrMOmMDs+0IJlxTU14E9G/bpe1eeOUxQAFOlsTapFnYYaX
-	 0y43AzcGbNbDHtk6D21hPFGRWkZwh4Ju8AtDslfHOykOFyCkUKJ9tgychqJQKMV/X+
-	 6KsiKvkorXsBw==
-Date: Mon, 16 Sep 2024 13:19:18 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Juergen Gross <jgross@suse.com>
-cc: Jan Beulich <jbeulich@suse.com>, 
-    Stefano Stabellini <sstabellini@kernel.org>, 
-    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-    xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, 
-    iommu@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] xen/swiotlb: add alignment check for dma
- buffers
-In-Reply-To: <8866f8a6-e42c-47d2-af6f-c4bdda5a358f@suse.com>
-Message-ID: <alpine.DEB.2.22.394.2409161312000.1417852@ubuntu-linux-20-04-desktop>
-References: <20240916064748.18071-1-jgross@suse.com> <20240916064748.18071-2-jgross@suse.com> <d23c9af4-4a79-4300-891a-fba3ea9cbb1c@suse.com> <c2dd89b4-46c7-4a0a-a47b-70862294176b@suse.com> <8866f8a6-e42c-47d2-af6f-c4bdda5a358f@suse.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1726518098; c=relaxed/simple;
+	bh=AIia4lKEZbObyaFYhUbFcNZrhB13MUM4zPKIfR30Obo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MlzQ59ob5lbQvZAQ7SoDG47+kzzmpf4VuI8CY7hpaEy5oJDNCQX1/f5toonkuQ0BHcZBObRb9z9BBgfGx4ICW/fCq4LErxefqwQhqbmV1rGrl+rBz1eHqvwO4qcNOaO1lhy/l+ChBR6NxuFRCVcdoHbOM36AqBJX0+7nj87EBss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QrriRmjV; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id qICnsCJi7wFpSqICnsB9XJ; Mon, 16 Sep 2024 22:20:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726518025;
+	bh=3Knrr3RbC4JV3H2uQiTkpSAIzSvcPBfz3YbMOwmqzNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=QrriRmjVayvdZ9yvTrDorx9oh8DoqEJ9P43q3xnDcEZNreDtgqJE3mJ5HkFLby/Xx
+	 jyAeNmPyXwcG/0ceO29wqGO1fVfkmlk1m+a2ocC8mtq9sHA9PcQHat6bT7aUMIAPfu
+	 xyQzpH6ueoDHTTIWVUSR8dA3vMlIuJoP/Rrmxe3lVHgAJENm4GJBj6hLz3GeRvlfgW
+	 sQfLtTHbVfptWrMxz5esjpPqqVSHbo+NTWyg4ZzGQQHah8gi/ZidOtVZESucMZM+PV
+	 0Hrat1oFOHpBoWeQ5krLf+YsQelixQWf0T2GQqvdF2wNcVD388coEnvVe8JjJzYXeU
+	 E5ApLFFl6o2fQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 16 Sep 2024 22:20:25 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <c794b4a6-468d-4552-a6d6-8185f49339d3@wanadoo.fr>
+Date: Mon, 16 Sep 2024 22:20:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1816907758-1726517960=:1417852"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/15] timers: Cleanup delay/sleep related mess
+To: Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev,
+ linux-mm@kvack.org, SeongJae Park <sj@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+ Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Andy Whitcroft <apw@canonical.com>,
+ Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, netdev@vger.kernel.org,
+ linux-sound@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+ Nathan Lynch <nathanl@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1816907758-1726517960=:1417852
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-On Mon, 16 Sep 2024, Juergen Gross wrote:
-> On 16.09.24 08:56, Juergen Gross wrote:
-> > On 16.09.24 08:50, Jan Beulich wrote:
-> > > On 16.09.2024 08:47, Juergen Gross wrote:
-> > > > --- a/drivers/xen/swiotlb-xen.c
-> > > > +++ b/drivers/xen/swiotlb-xen.c
-> > > > @@ -78,9 +78,15 @@ static inline int
-> > > > range_straddles_page_boundary(phys_addr_t p, size_t size)
-> > > >   {
-> > > >       unsigned long next_bfn, xen_pfn = XEN_PFN_DOWN(p);
-> > > >       unsigned int i, nr_pages = XEN_PFN_UP(xen_offset_in_page(p) +
-> > > > size);
-> > > > +    phys_addr_t algn = 1ULL << (get_order(size) + PAGE_SHIFT);
-> > > >       next_bfn = pfn_to_bfn(xen_pfn);
-> > > > +    /* If buffer is physically aligned, ensure DMA alignment. */
-> > > > +    if (IS_ALIGNED(p, algn) &&
-> > > > +        !IS_ALIGNED(next_bfn << XEN_PAGE_SHIFT, algn))
-> > > 
-> > > And this shift is not at risk of losing bits on Arm LPAE?
-> > 
-> > For alignment check this just doesn't matter (assuming XEN_PAGE_SIZE is
-> > smaller than 4G).
+Le 11/09/2024 à 07:13, Anna-Maria Behnsen a écrit :
+> Hi,
 > 
-> Wait, that was nonsense.
+> a question about which sleeping function should be used in acpi_os_sleep()
+> started a discussion and examination about the existing documentation and
+> implementation of functions which insert a sleep/delay.
 > 
-> I'll change the check to:
+> The result of the discussion was, that the documentation is outdated and
+> the implemented fsleep() reflects the outdated documentation but doesn't
+> help to reflect reality which in turns leads to the queue which covers the
+> following things:
 > 
-> 	!IS_ALIGNED((phys_addr_t)next_bfn << XEN_PAGE_SHIFT, algn)
+> - Split out all timeout and sleep related functions from hrtimer.c and timer.c
+>    into a separate file
+> 
+> - Update function descriptions of sleep related functions
+> 
+> - Change fsleep() to reflect reality
+> 
+> - Rework all comments or users which obviously rely on the outdated
+>    documentation as they reference "Documentation/timers/timers-howto.rst"
+> 
+> - Last but not least (as there are no more references): Update the outdated
+>    documentation and move it into a file with a self explaining file name
+> 
+> The queue is available here and applies on top of tip/timers/core:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/anna-maria/linux-devel.git timers/misc
+> 
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-With this change:
+Hi,
 
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+not directly related to your serie, but some time ago I sent a patch to 
+micro-optimize Optimize usleep_range(). (See [1])
 
---8323329-1816907758-1726517960=:1417852--
+The idea is that the 2 parameters of usleep_range() are usually 
+constants and some code reordering could easily let the compiler compute 
+a few things at compilation time.
+
+There was consensus on the value of the change (see [2]), but as you are 
+touching things here, maybe it makes sense now to save a few cycles at 
+runtime and a few bytes of code?
+
+CJ
+
+[1]: 
+https://lore.kernel.org/all/f0361b83a0a0b549f8ec5ab8134905001a6f2509.1659126514.git.christophe.jaillet@wanadoo.fr/
+
+[2]: 
+https://lore.kernel.org/all/03c2bbe795fe4ddcab66eb852bae3715@AcuMS.aculab.com/
+
+
 
