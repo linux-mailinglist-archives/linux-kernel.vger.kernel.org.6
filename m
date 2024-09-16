@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-330751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BBE597A3C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:09:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025E897A3CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356C42864BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:09:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E280B29FC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2602C157493;
-	Mon, 16 Sep 2024 14:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF51159568;
+	Mon, 16 Sep 2024 14:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dYc0C88A"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sd30ag32"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C6F156654
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18987158DC0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495639; cv=none; b=b7ckqSo1pZWYK1m9G0k1tboU61yQhLAjZlZGlgaxl6Ly6x2M/IoqpLjOfalK6v8c1wpEJiNN5NG+fFNdYD6uSSS/l4RgZRo7UQOFFZlNhCYdq9rH55S6zx8CEfD5n3SPPIQs9l4eVi5e3W/kUam0ZYlYPkhDNtRpzPzUUekZeFY=
+	t=1726495654; cv=none; b=U8nplX+lGL6Eksi84lZO0MxKA+Dz1tx6N42BrGCvz1whbjn1hAqQNrckMzmr/UVfyqrxhFiywkoivLVh5LwA1agNMXd+ka0w+X5VNhEsZdyrnyWVsFdjBjejFZptf4OY8tQ1sEmv29EMYgUaHd1cSTnWoyh2BrDlDGB93LWBocs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495639; c=relaxed/simple;
-	bh=9fpsYcPjxb1uoqdMEAieb7ZKGURnWGooE/R/MtJt0rg=;
+	s=arc-20240116; t=1726495654; c=relaxed/simple;
+	bh=KIlSGzxo/MDPptr+t1NTnK2Jn3oq4bUlBAf09fCWur4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Mkz9i//uzv6Vdm6CIW7Mu+ywSGYx6DgW7k0TTC4ra4cLcjWGkiQwApYS4XtrNLbrPA6Yfce+XJ2P7xgSzapIS8Y9Z5ZGTRQuvtck7k6S+qA3d91dtROuhzsAZEO/RGuIj6ma/qIyESEjf+PAazII2wunsXHpmC8iYtGXqAkKGYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dYc0C88A; arc=none smtp.client-ip=209.85.208.46
+	 Content-Disposition; b=RlZ1Hr7CuX1JELsyBoSJu1adyTSpYb7cDfpEsCG3RLpG/iU73KKdA/DyoZcDOq2FA2q9sQKFpMr0r/zs5xDHtE6PX2ZxHAhchrTd1NhZ7yenX5s8Eg4AqP3VBdiIW95rzCohnhvS9h0o6VBitQ4Il5Y7afApHolq9p9lg72ubVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sd30ag32; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c255e3c327so5816322a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:07:16 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so888375766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:07:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726495635; x=1727100435; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726495651; x=1727100451; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+urhfmX0gEPcBzlVcIkRBv+Xc6c9XpUnmfqcLpG9k84=;
-        b=dYc0C88A+tEy+30aRTkY7qMmd66B2c1Ar0kzxevi+fe2LgQdGPO1SipDj+fbsYWyKR
-         WiKz8hYL71wMO6bKD1gqBvkhzv/Du3Vc0YZ3y84Jgon+OM+lSpXsuFDa0m4P8DNBxRDi
-         4D1BG+1/pHbvjinLPj6UM2BJIzjydAX9qkhfN+kGCCLx0jVLN1vvVRQ6uWKI7Q6IrobP
-         7S0TMFEMAy/6LmVun6Tmtj3Nl/gqLbvnALvJq2OEebcB5pnwDvO9PG9dG3trYTF3UKqR
-         PG0hMVIzgeHLOrjN2t6PNzHzsL0POwWpeIndbeQUx7b3g4aZ7S//BwM0R4gdZzbxvhRh
-         b/jQ==
+        bh=tbOarrswP9OaxV39MLEZPRWfgc+dC3wF/hGfHBmAnRk=;
+        b=Sd30ag32T/XfPW3uclgvryqiS2Akcb/QN4u7N/lKBVvQjSF9mJKXS+gWMFyfL9RS64
+         BsrhUwfyYIzduiVbqn7h94JVGHAIsWdFUuaO2JxLfKcnkqFleyG6gy4QXhUvcpsithNW
+         vSZIx0CP1JwsZX23NpF4xelKuuTOSWYRtU1TIVHFXQkpkf884S535hKVRmOpi62Dd6KF
+         IZU+DaGpBQTYXf7G57Z8x4bqugyEPf5YcgSEK5MGZxuohgKjAVsapEwl5aLTfQfddhdF
+         XA/DBumo/x0MBNDCRDfDjGXw//iwdHVi/52np0ZXsCyiMpAu/3mcufkHahP5LbVoedly
+         9pMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726495635; x=1727100435;
+        d=1e100.net; s=20230601; t=1726495651; x=1727100451;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+urhfmX0gEPcBzlVcIkRBv+Xc6c9XpUnmfqcLpG9k84=;
-        b=QOE0YbgcD73kRoI0R4vbREBTWJN5EyGUd4WZe0zG+vUhxFhjBYzSg0RaVPINlaqVTR
-         HEp56EZfIs+tP4RyPbsiIHYg9AsROeb535DJ9GVXPN9v8+CNjh9xDl1bifKyKxR12zcd
-         nKL8coDpck2ASn3W4toMPc2OCP1lTCp4ykkCQ/hCCmRwulFZBxKwqXZCv1YVmEytu2UV
-         WtH5rO6omZv7R6LdpDtiXVyfLSL0J0kup1GDjtQPfl5DXpMeTUz4Coy/FTTHktd8zXqC
-         L3fTMV245vCif5PaJw7cAg7zgZlyYP8XQJPY1V10fnT78gk3QrXv3I3YbtzMJt4H0jeB
-         eJVw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1//hiftxAfWj3XprbmSrZbRMZrVYNaBLavAePgYbXwcGX8h8MQnBKWJYwUjIfiZZFGzbt9RAr6HHiLFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXzbXeJtNqJ+cVgD0SnRokWGJbpALzd44MUSLStL0MktbOkias
-	ODqnuKCNUewEhwtAmp6biysbi0et3j5fhpOcUN+sHoFY1oFG5IuTOUdh0PPU5L8VRyP6uexcozS
-	p
-X-Google-Smtp-Source: AGHT+IGpdf/bVgk6BGObyyM95jOqlzvTJMhqTClXF6aSu3Wdslx9j/hss0XI+Ji9ZIWoH1+SkeVxYg==
-X-Received: by 2002:a05:6402:500c:b0:5c0:bba5:60d2 with SMTP id 4fb4d7f45d1cf-5c413e2cf48mr13620216a12.21.1726495635262;
-        Mon, 16 Sep 2024 07:07:15 -0700 (PDT)
+        bh=tbOarrswP9OaxV39MLEZPRWfgc+dC3wF/hGfHBmAnRk=;
+        b=J3tWDVYW9q17MpU3TWAj/+MqDGm5xbN8aWEahuX8irx8dcqhgPSZT0EbR/CTFG5gf7
+         j5sEJaKhJUtK10tScIRjQAtxWQQsuPT7xZyWwXzUS+cXjZjNeeFrNWAax0zaPON4uvFr
+         eC7XvnSQTjlKcawuZkVV+wGNTAnqTxVIYHa6UTUYie8oqRTtOcXd0ifkiX+oECNy3tUs
+         TqVpNrzxnYUvS/1N1w5PbWrEZRboDPo6uJhznPmM9P5js6qaQLW5af4VeA+dSrZUJNYd
+         3IxUKlgDID+JhYRFVFMhbmL96PSSZSvBzhYJq92/u6OCr0jVcQ/sh5W3yQ+v2PJktExl
+         7PTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVB/9JCRDTNiz0trf5qMahvcCcsvC1RzCnrOFzUBttHGmZx/Fh/+9hYACFl0GCg/3YIquJq7IzUIwu77ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvE9PotVJQHETXSLpvWcPz7kBOu+kHHGOl4bdy8ZgKgP6m5bs0
+	eCl6TW1+iEyCu5KACF2NJwMciCIt4UD3jUkAOkl2JTqLbBUd+S6d0KhcR8UtIyA=
+X-Google-Smtp-Source: AGHT+IFcPlAdhQmjMCR5iuakIdbXymFOOW4AFUZ6EEjquW4nK7DnOUFjYh41Bg7ivA6HeFQGNfx8Mg==
+X-Received: by 2002:a17:906:fd8b:b0:a75:7a8:d70c with SMTP id a640c23a62f3a-a902a3d186bmr1706169566b.4.1726495651386;
+        Mon, 16 Sep 2024 07:07:31 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89c4esm2608985a12.61.2024.09.16.07.07.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b3eb6sm322666766b.105.2024.09.16.07.07.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 07:07:14 -0700 (PDT)
-Date: Mon, 16 Sep 2024 17:07:10 +0300
+        Mon, 16 Sep 2024 07:07:30 -0700 (PDT)
+Date: Mon, 16 Sep 2024 17:07:26 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] io_uring: clean up a type in io_uring_register_get_file()
-Message-ID: <6f6cb630-079f-4fdf-bf95-1082e0a3fc6e@stanley.mountain>
+Subject: [PATCH] OPP: fix error code in dev_pm_opp_set_config()
+Message-ID: <3f3660af-4ea0-4a89-b3b7-58de7b16d7a5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,44 +83,34 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Originally "fd" was unsigned int but it was changed to int when we pulled
-this code into a separate function in commit 0b6d253e084a
-("io_uring/register: provide helper to get io_ring_ctx from 'fd'").  This
-doesn't really cause a runtime problem because the call to
-array_index_nospec() will clamp negative fds to 0 and nothing else uses
-the negative values.
+This is an error path so set the error code.  Smatch complains about the
+current code:
 
+    drivers/opp/core.c:2660 dev_pm_opp_set_config()
+    error: uninitialized symbol 'ret'.
+
+Fixes: e37440e7e2c2 ("OPP: Call dev_pm_opp_set_opp() for required OPPs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- io_uring/register.c | 2 +-
- io_uring/register.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/opp/core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/register.c b/io_uring/register.c
-index dab0f8024ddf..165f8661c12b 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -561,7 +561,7 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
-  * true, then the registered index is used. Otherwise, the normal fd table.
-  * Caller must call fput() on the returned file, unless it's an ERR_PTR.
-  */
--struct file *io_uring_register_get_file(int fd, bool registered)
-+struct file *io_uring_register_get_file(unsigned int fd, bool registered)
- {
- 	struct file *file;
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 494f8860220d..3aa18737470f 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -2630,8 +2630,10 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
  
-diff --git a/io_uring/register.h b/io_uring/register.h
-index cc69b88338fe..a5f39d5ef9e0 100644
---- a/io_uring/register.h
-+++ b/io_uring/register.h
-@@ -4,6 +4,6 @@
+ 	/* Attach genpds */
+ 	if (config->genpd_names) {
+-		if (config->required_devs)
++		if (config->required_devs) {
++			ret = -EINVAL;
+ 			goto err;
++		}
  
- int io_eventfd_unregister(struct io_ring_ctx *ctx);
- int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id);
--struct file *io_uring_register_get_file(int fd, bool registered);
-+struct file *io_uring_register_get_file(unsigned int fd, bool registered);
- 
- #endif
+ 		ret = _opp_attach_genpd(opp_table, dev, config->genpd_names,
+ 					config->virt_devs);
 -- 
 2.45.2
 
