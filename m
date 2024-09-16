@@ -1,400 +1,155 @@
-Return-Path: <linux-kernel+bounces-330958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8545697A682
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:12:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DC797A68F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40199280E66
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:12:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12380B23887
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E3F15AADB;
-	Mon, 16 Sep 2024 17:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A174A1591F1;
+	Mon, 16 Sep 2024 17:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3RBDNKq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="haUrOMrI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22082158870;
-	Mon, 16 Sep 2024 17:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5950D158A1F
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 17:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726506732; cv=none; b=VSUrmrvUe7tH2MJ7y2uPUZZdLdEZELQrZsaQh1D3lFTn2L/AsZ3DJlHX5t7C99BrD7Gghy86AiF79OCT7ewBwP1Lqrt7+2cbVBcl1fZeRj/AkG/Kd8QNNmRtod4pAZdOdFVCYbKsmXDIJNDIgEqBOlp09Xruq37LSzsmBoppXLA=
+	t=1726506903; cv=none; b=l3AuA/jQjCx8fGrG0AHgpo2K4ZMjBJaHvJpaVeOq+SZvZ00ZWCYDVgSrBHsxAqojjhRDJq92G5YjrAh4i+Mf23P0XkgS6wQTMWKiSLHC5vuNTOOaaUosaPFrgfhzjUqlAE7qSVmn7+4+BenCnSTfRero1uBAFo32ywwN+K4P/fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726506732; c=relaxed/simple;
-	bh=ESyQ19D7oY453VbqYsz3XtbEyH1pkWUw3SfThNLvBeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIayKTyWQxN107h+lVmflTFYT9CK8vJpWYU1OGKcenyGhjH+3hpX6aXynLyVNaqtuqFJrgvSTBkVHnH6tmBDn2Z2wnTH0p85FdfKLz8lsGj5nOUPX+rWnSjuQeAu37wlxGlut2spk1XaspydQy6xvBRtW9iR9gPOWNNAyh1230s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D3RBDNKq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F43DC4CEC4;
-	Mon, 16 Sep 2024 17:12:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726506731;
-	bh=ESyQ19D7oY453VbqYsz3XtbEyH1pkWUw3SfThNLvBeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D3RBDNKqnKDFIMG0mPW/j5cOna+tieuvNQzY5kyyq91/e9nzLStnQVM7rhf9MXQVr
-	 wj2z96u9fAtlMT2N+5Bb5rvUczabmv479ylyy957Xa8rhmLkSZr8a960AJalIKwb/Y
-	 uuEqmDiNjIYDix+MB1Vu12/cIDRNvT5TTZoc5H9glGHAMiijHo/ij20SmXxhQwnaY7
-	 x7P9QMJrD0ea2CuxOaVAXnKGYl28713NWryQED2HaluTPLvgQTzkUMX8iTWIp/lJ82
-	 yPpRjGwDNP4iUfak9BqkzQBpZ3TXtGmzWvbVQqB8NTHZd8+RY/QvQ+ca1mGw4rOYwh
-	 e5gREl43NaYxQ==
-Date: Mon, 16 Sep 2024 18:12:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v10 14/14] riscv: Add ghostwrite vulnerability
-Message-ID: <20240916-pretext-freehand-20dca1376cd4@spud>
-References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com>
- <20240911-xtheadvector-v10-14-8d3930091246@rivosinc.com>
+	s=arc-20240116; t=1726506903; c=relaxed/simple;
+	bh=XAEw1O4ypXbNAeQ8bJrLgeWVtDK++9rbiKHcfGsc+W4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ec09PPKiLfQ0qCLeRNSgxnAnFcscH8VebPrZgVyFIi2v3iGXPpIqaWwZ6AKwTSpekYuTlXKcxlWEWC5Gh2sJdrosM0mbyiSodidMKdHT068nQNSPS9J0JWDH2dd7ZqSKQUeRrQMlDJAojZvu1jkpc0wOu61+gwjoXwW/xWoa+vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=haUrOMrI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726506900;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MD/gbR/K562HjYAqjBfv2TN8nj9GE34IYQno6KvPYbo=;
+	b=haUrOMrIGzFFhSToMUFDudlAMTFYkOljIOlkiYpGRMZFMRp9Hbai6ZAUX/xslgvdH9JItq
+	8PCwsgBwCMmS/K7sT8U8iDFtW6H8fCUcGOgvbQTHq4XIa4+E1ol9IDBMdgiNnKHSREucaN
+	oTL9bfzdwDAMi6k1NR+xnYGsUBhaCNs=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-14-EN6YlCpaMA25jNtBh1s_SQ-1; Mon, 16 Sep 2024 13:14:56 -0400
+X-MC-Unique: EN6YlCpaMA25jNtBh1s_SQ-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7a9a95429c4so586065085a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:14:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726506894; x=1727111694;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MD/gbR/K562HjYAqjBfv2TN8nj9GE34IYQno6KvPYbo=;
+        b=GZ/ICurNa5Gp7f07f/wUhe0a4H7TwdpO8VMHJP64gwUGBB06p138BuDZn1KPO5PL4M
+         S+56wDtj1clLKJ08cUJx405IHp2mPOy0qF52vfpHLgCAIWPEYguZ6F6W3jVfex6ASgFh
+         1GfHhr1FvAQSf8RMh7Xi9ocpSRBkGQrBJTESg/d9+sR8Ms7k28QLb+xrqNNo6W9MRKsN
+         tPik6gC17S+6mPikDpW8HZpQhulAkq3N68W4/M1g2sNpWVXRNuUI9ggny85lIeIZUxML
+         cIeL1FY+u58TiMFpyXF5C5i+AocFtT0N0RWkGBffEUnwCbecCwcYMXdyRtp34WBI2ljU
+         66lA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdEkHIIEuB4fFOlu2OGqYdkBc4fF6FNur47wA54kvWTRLHZuqnnw1Cz5xa4Jv1uB6wVqIsKpcSUHBSzGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzN9VHbOJg1MphwSD45N5fvEATzqy1z8yXvkWR4Oeg7sEUCytm
+	D5OcVTBGH+K6AV0EouJsd2OneuFyxQdiM1F45AVxEVVe/4Xf8taOcQ+HbcUV76JYDwqezNicmyS
+	Y3tEck9y9OPHHfTP6lgHcpwxktig4UKKF/PQb5GWekJTrWfQre+G7NNSAdQQOHg==
+X-Received: by 2002:a05:6214:498a:b0:6c5:2797:f4c0 with SMTP id 6a1803df08f44-6c57df9ad48mr200405536d6.20.1726506894489;
+        Mon, 16 Sep 2024 10:14:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUfaeTxKssYTRqsixAXgs3eyrhnP6I6P7WPKLanNFYrSeTBYWKtg5eW/HG9SepEUdICcRnPg==
+X-Received: by 2002:a05:6214:498a:b0:6c5:2797:f4c0 with SMTP id 6a1803df08f44-6c57df9ad48mr200405096d6.20.1726506894061;
+        Mon, 16 Sep 2024 10:14:54 -0700 (PDT)
+Received: from x1gen2nano.local ([2600:1700:1ff0:d0e0::43])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c58c6262d9sm26342046d6.28.2024.09.16.10.14.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 10:14:53 -0700 (PDT)
+From: Andrew Halaney <ahalaney@redhat.com>
+Subject: [PATCH v3 0/2] arm64: dts: ti: k3-j784s4: Mark tps659413
+ regulators as bootph-all
+Date: Mon, 16 Sep 2024 12:14:50 -0500
+Message-Id: <20240916-j784s4-tps6594-bootph-v3-0-ab70da0de7bd@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BDWQktOaFXWzZKLA"
-Content-Disposition: inline
-In-Reply-To: <20240911-xtheadvector-v10-14-8d3930091246@rivosinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIpn6GYC/4XNvQ7CIBSG4VtpmMXwLzh5H8YBCggmSgOEaJreu
+ 7STDsbx/ZLznBkUl6Mr4DjMILsWS0yPHnQ3gDHox9XBaHsDgghDCgl4O0hWGKxTEVwxaFKqU4B
+ YWeoR8kZJDfrtlJ2Pz809X3qHWGrKr+1Nw+v6T2wYIjhyw6Vl1HjETtnZoOt+THewko18MBj/Y
+ khntKScCCKYNviLWZblDbqQJKYCAQAA
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Keerthy <j-keerthy@ti.com>, Neha Malcom Francis <n-francis@ti.com>, 
+ Eric Chanudet <echanude@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
+ Udit Kumar <u-kumar1@ti.com>, Beleswar Prasad Padhi <b-padhi@ti.com>, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>
+X-Mailer: b4 0.14.1
 
+This series marks tps659413's regulators as bootph-all in order for
+the nodes (and parent nodes) to be accessible during MCU's u-boot SPL.
 
---BDWQktOaFXWzZKLA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This in turn is desired since the tps659413 needs its MCU ESM
+state machine setup in order for the watchdog to reset the board.
 
-On Wed, Sep 11, 2024 at 10:55:22PM -0700, Charlie Jenkins wrote:
-> Follow the patterns of the other architectures that use
-> GENERIC_CPU_VULNERABILITIES for riscv to introduce the ghostwrite
-> vulnerability and mitigation. The mitigation is to disable all vector
-> which is accomplished by clearing the bit from the cpufeature field.
->=20
-> Ghostwrite only affects thead c9xx CPUs that impelment xtheadvector, so
-> the vulerability will only be mitigated on these CPUs.
->=20
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  arch/riscv/Kconfig.errata            | 11 ++++++++
->  arch/riscv/errata/thead/errata.c     | 28 ++++++++++++++++++
->  arch/riscv/include/asm/bugs.h        | 22 +++++++++++++++
->  arch/riscv/include/asm/errata_list.h |  3 +-
->  arch/riscv/kernel/Makefile           |  2 ++
->  arch/riscv/kernel/bugs.c             | 55 ++++++++++++++++++++++++++++++=
-++++++
->  arch/riscv/kernel/cpufeature.c       |  9 +++++-
->  drivers/base/cpu.c                   |  3 ++
->  include/linux/cpu.h                  |  1 +
->  9 files changed, 132 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
-> index 2acc7d876e1f..e318119d570d 100644
-> --- a/arch/riscv/Kconfig.errata
-> +++ b/arch/riscv/Kconfig.errata
-> @@ -119,4 +119,15 @@ config ERRATA_THEAD_PMU
-> =20
->  	  If you don't know what to do here, say "Y".
-> =20
-> +config ERRATA_THEAD_GHOSTWRITE
-> +	bool "Apply T-Head Ghostwrite errata"
-> +	depends on ERRATA_THEAD && RISCV_ISA_XTHEADVECTOR
-> +	default y
-> +	help
-> +	  The T-Head C9xx cores have a vulnerability in the xtheadvector
-> +	  instruction set. When this errata is enabled, the CPUs will be probed
-> +	  to determine if they are vulnerable and disable xtheadvector.
-> +
-> +	  If you don't know what to do here, say "Y".
-> +
->  endmenu # "CPU errata selection"
-> diff --git a/arch/riscv/errata/thead/errata.c b/arch/riscv/errata/thead/e=
-rrata.c
-> index f5120e07c318..5cc008ab41a8 100644
-> --- a/arch/riscv/errata/thead/errata.c
-> +++ b/arch/riscv/errata/thead/errata.c
-> @@ -10,6 +10,7 @@
->  #include <linux/string.h>
->  #include <linux/uaccess.h>
->  #include <asm/alternative.h>
-> +#include <asm/bugs.h>
->  #include <asm/cacheflush.h>
->  #include <asm/cpufeature.h>
->  #include <asm/dma-noncoherent.h>
-> @@ -142,6 +143,31 @@ static bool errata_probe_pmu(unsigned int stage,
->  	return true;
->  }
-> =20
-> +static bool errata_probe_ghostwrite(unsigned int stage,
-> +				    unsigned long arch_id, unsigned long impid)
-> +{
-> +	if (!IS_ENABLED(CONFIG_ERRATA_THEAD_GHOSTWRITE))
-> +		return false;
-> +
-> +	/*
-> +	 * target-c9xx cores report arch_id and impid as 0
-> +	 *
-> +	 * While ghostwrite may not affect all c9xx cores that implement
-> +	 * xtheadvector, there is no futher granularity than c9xx. Assume
-> +	 * vulnerable for this entire class of processors when xtheadvector is
-> +	 * enabled.
-> +	 */
+This took me a little while to track down, as enabling the ESM, TPS6594,
+etc in u-boot would result in the below boot failure:
 
-Is it not possible to use the cpu compatible string for this? Given that
-we only know if xtheadvector is enabled once we are already parsing the
-cpu node devicetree, it seems, to me, as if it should be possible to be
-more granular. AFAIU, some T-Head c900 series devices are not venerable.
+    U-Boot SPL 2024.10-rc4-00007-g44b12cbcd1b3-dirty (Sep 06 2024 - 14:25:52 -0500)
+    SYSFW ABI: 3.1 (firmware rev 0x0009 '9.2.4--v09.02.04 (Kool Koala)')
+    Initialized 4 DRAM controllers
+    SPL initial stack usage: 13408 bytes
+    ### ERROR ### Please RESET the board ###
 
-Cheers,
-Conor.
+Which turns out to actually have failed far earlier in spl_early_init(),
+due to these nodes not being accessible in u-boot. That's hard to tell
+though since console isn't setup until later (and for that reason I
+think spl_early_init()'s return value in j784s4_init.c isn't
+evaluated since a panic() at that point would leave a user with *no*
+information at all).
 
-> +	if (arch_id !=3D 0 || impid !=3D 0)
-> +		return false;
-> +
-> +	if (stage !=3D RISCV_ALTERNATIVES_EARLY_BOOT)
-> +		return false;
-> +
-> +	ghostwrite_set_vulnerable();
-> +
-> +	return true;
-> +}
-> +
->  static u32 thead_errata_probe(unsigned int stage,
->  			      unsigned long archid, unsigned long impid)
->  {
-> @@ -155,6 +181,8 @@ static u32 thead_errata_probe(unsigned int stage,
->  	if (errata_probe_pmu(stage, archid, impid))
->  		cpu_req_errata |=3D BIT(ERRATA_THEAD_PMU);
-> =20
-> +	errata_probe_ghostwrite(stage, archid, impid);
-> +
->  	return cpu_req_errata;
->  }
-> =20
-> diff --git a/arch/riscv/include/asm/bugs.h b/arch/riscv/include/asm/bugs.h
-> new file mode 100644
-> index 000000000000..e294b15bf78e
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/bugs.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Interface for managing mitigations for riscv vulnerabilities.
-> + *
-> + * Copyright (C) 2024 Rivos Inc.
-> + */
-> +
-> +#ifndef __ASM_BUGS_H
-> +#define __ASM_BUGS_H
-> +
-> +/* Watch out, ordering is important here. */
-> +enum mitigation_state {
-> +	UNAFFECTED,
-> +	MITIGATED,
-> +	VULNERABLE,
-> +};
-> +
-> +void ghostwrite_set_vulnerable(void);
-> +void ghostwrite_enable_mitigation(void);
-> +enum mitigation_state ghostwrite_get_state(void);
-> +
-> +#endif /* __ASM_BUGS_H */
-> diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/as=
-m/errata_list.h
-> index 7c8a71a526a3..6e426ed7919a 100644
-> --- a/arch/riscv/include/asm/errata_list.h
-> +++ b/arch/riscv/include/asm/errata_list.h
-> @@ -25,7 +25,8 @@
->  #ifdef CONFIG_ERRATA_THEAD
->  #define	ERRATA_THEAD_MAE 0
->  #define	ERRATA_THEAD_PMU 1
-> -#define	ERRATA_THEAD_NUMBER 2
-> +#define	ERRATA_THEAD_GHOSTWRITE 2
-> +#define	ERRATA_THEAD_NUMBER 3
->  #endif
-> =20
->  #ifdef __ASSEMBLY__
-> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-> index 06d407f1b30b..d7a54e34178e 100644
-> --- a/arch/riscv/kernel/Makefile
-> +++ b/arch/riscv/kernel/Makefile
-> @@ -113,3 +113,5 @@ obj-$(CONFIG_COMPAT)		+=3D compat_vdso/
->  obj-$(CONFIG_64BIT)		+=3D pi/
->  obj-$(CONFIG_ACPI)		+=3D acpi.o
->  obj-$(CONFIG_ACPI_NUMA)	+=3D acpi_numa.o
-> +
-> +obj-$(CONFIG_GENERIC_CPU_VULNERABILITIES) +=3D bugs.o
-> diff --git a/arch/riscv/kernel/bugs.c b/arch/riscv/kernel/bugs.c
-> new file mode 100644
-> index 000000000000..0c19691b4cd5
-> --- /dev/null
-> +++ b/arch/riscv/kernel/bugs.c
-> @@ -0,0 +1,55 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2024 Rivos Inc.
-> + */
-> +
-> +#include <linux/cpu.h>
-> +#include <linux/device.h>
-> +#include <linux/sprintf.h>
-> +
-> +#include <asm/bugs.h>
-> +#include <asm/vendor_extensions/thead.h>
-> +
-> +static enum mitigation_state ghostwrite_state;
-> +
-> +void ghostwrite_set_vulnerable(void)
-> +{
-> +	ghostwrite_state =3D VULNERABLE;
-> +}
-> +
-> +/*
-> + * Vendor extension alternatives will use the value set at the time of b=
-oot
-> + * alternative patching, thus this must be called before boot alternativ=
-es are
-> + * patched (and after extension probing) to be effective.
-> + */
-> +void ghostwrite_enable_mitigation(void)
-> +{
-> +	if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR) &&
-> +	    ghostwrite_state =3D=3D VULNERABLE && !cpu_mitigations_off()) {
-> +		disable_xtheadvector();
-> +		ghostwrite_state =3D MITIGATED;
-> +	}
-> +}
-> +
-> +enum mitigation_state ghostwrite_get_state(void)
-> +{
-> +	return ghostwrite_state;
-> +}
-> +
-> +ssize_t cpu_show_ghostwrite(struct device *dev, struct device_attribute =
-*attr, char *buf)
-> +{
-> +	if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR)) {
-> +		switch (ghostwrite_state) {
-> +		case UNAFFECTED:
-> +			return sprintf(buf, "Not affected\n");
-> +		case MITIGATED:
-> +			return sprintf(buf, "Mitigation: xtheadvector disabled\n");
-> +		case VULNERABLE:
-> +			fallthrough;
-> +		default:
-> +			return sprintf(buf, "Vulnerable\n");
-> +		}
-> +	} else {
-> +		return sprintf(buf, "Not affected\n");
-> +	}
-> +}
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
-e.c
-> index 56b5054b8f86..1f4329bb8a9d 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -17,6 +17,7 @@
->  #include <linux/of.h>
->  #include <asm/acpi.h>
->  #include <asm/alternative.h>
-> +#include <asm/bugs.h>
->  #include <asm/cacheflush.h>
->  #include <asm/cpufeature.h>
->  #include <asm/hwcap.h>
-> @@ -867,7 +868,13 @@ static int __init riscv_fill_hwcap_from_ext_list(uns=
-igned long *isa2hwcap)
->  		riscv_fill_vendor_ext_list(cpu);
->  	}
-> =20
-> -	if (has_xtheadvector_no_alternatives() && has_thead_homogeneous_vlenb()=
- < 0) {
-> +	/*
-> +	 * Execute ghostwrite mitigation immediately after detecting extensions
-> +	 * to disable xtheadvector if necessary.
-> +	 */
-> +	if (ghostwrite_get_state() =3D=3D VULNERABLE) {
-> +		ghostwrite_enable_mitigation();
-> +	} else if (has_xtheadvector_no_alternatives() && has_thead_homogeneous_=
-vlenb() < 0) {
->  		pr_warn("Unsupported heterogeneous vlenb detected, vector extension di=
-sabled.\n");
->  		disable_xtheadvector();
->  	}
-> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-> index fdaa24bb641a..a7e511849875 100644
-> --- a/drivers/base/cpu.c
-> +++ b/drivers/base/cpu.c
-> @@ -599,6 +599,7 @@ CPU_SHOW_VULN_FALLBACK(retbleed);
->  CPU_SHOW_VULN_FALLBACK(spec_rstack_overflow);
->  CPU_SHOW_VULN_FALLBACK(gds);
->  CPU_SHOW_VULN_FALLBACK(reg_file_data_sampling);
-> +CPU_SHOW_VULN_FALLBACK(ghostwrite);
-> =20
->  static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
->  static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
-> @@ -614,6 +615,7 @@ static DEVICE_ATTR(retbleed, 0444, cpu_show_retbleed,=
- NULL);
->  static DEVICE_ATTR(spec_rstack_overflow, 0444, cpu_show_spec_rstack_over=
-flow, NULL);
->  static DEVICE_ATTR(gather_data_sampling, 0444, cpu_show_gds, NULL);
->  static DEVICE_ATTR(reg_file_data_sampling, 0444, cpu_show_reg_file_data_=
-sampling, NULL);
-> +static DEVICE_ATTR(ghostwrite, 0444, cpu_show_ghostwrite, NULL);
-> =20
->  static struct attribute *cpu_root_vulnerabilities_attrs[] =3D {
->  	&dev_attr_meltdown.attr,
-> @@ -630,6 +632,7 @@ static struct attribute *cpu_root_vulnerabilities_att=
-rs[] =3D {
->  	&dev_attr_spec_rstack_overflow.attr,
->  	&dev_attr_gather_data_sampling.attr,
->  	&dev_attr_reg_file_data_sampling.attr,
-> +	&dev_attr_ghostwrite.attr,
->  	NULL
->  };
-> =20
-> diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-> index bdcec1732445..6a0a8f1c7c90 100644
-> --- a/include/linux/cpu.h
-> +++ b/include/linux/cpu.h
-> @@ -77,6 +77,7 @@ extern ssize_t cpu_show_gds(struct device *dev,
->  			    struct device_attribute *attr, char *buf);
->  extern ssize_t cpu_show_reg_file_data_sampling(struct device *dev,
->  					       struct device_attribute *attr, char *buf);
-> +extern ssize_t cpu_show_ghostwrite(struct device *dev, struct device_att=
-ribute *attr, char *buf);
-> =20
->  extern __printf(4, 5)
->  struct device *cpu_device_create(struct device *parent, void *drvdata,
->=20
-> --=20
-> 2.45.0
->=20
+I've tested this in conjunction with a u-boot series which I'll link in
+a follow-up response on the k3-j784s4-evm. I'd appreciate someone testing
+on the k3-am69-sk at a minimum, as it should suffer the same fate if things
+aren't setup appropriately.
 
---BDWQktOaFXWzZKLA
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+---
+Changes in v3:
+- Added Udit's Tested-by tags
+- Reordered bootph-all to align with dts-coding-style (Beleswar)
+- Link to v2: https://lore.kernel.org/r/20240911-j784s4-tps6594-bootph-v2-0-a83526264ab1@redhat.com
 
------BEGIN PGP SIGNATURE-----
+Changes in v2:
+- Only mark the regulator nodes as bootph-all since parents are implied
+- Link to v1: https://lore.kernel.org/r/20240906-j784s4-tps6594-bootph-v1-0-c5b58d43bf04@redhat.com
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuhm5AAKCRB4tDGHoIJi
-0o/8AP46nRHLzYJMf/Kn0ccLu8HgFMl06xA2uZNL2DRsNcsvYwEA6UAJp/+RMDFw
-Rn7EJEd5f5gEMcMAQ8ZT4ak2Y/t3kws=
-=fR+0
------END PGP SIGNATURE-----
+---
+Andrew Halaney (2):
+      arm64: dts: ti: k3-j784s4-evm: Mark tps659413 regulators as bootph-all
+      arm64: dts: ti: k3-am69-sk:  Mark tps659413 regulators as bootph-all
 
---BDWQktOaFXWzZKLA--
+ arch/arm64/boot/dts/ti/k3-am69-sk.dts    | 8 ++++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 8 ++++++++
+ 2 files changed, 16 insertions(+)
+---
+base-commit: 7083504315d64199a329de322fce989e1e10f4f7
+change-id: 20240906-j784s4-tps6594-bootph-19d3f00fb98a
+
+Best regards,
+-- 
+Andrew Halaney <ahalaney@redhat.com>
+
 
