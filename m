@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-330660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9CF97A269
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:38:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B9797A26C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC2628B067
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:38:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58FA1C24A8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D075E1553AB;
-	Mon, 16 Sep 2024 12:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CDCA95E;
+	Mon, 16 Sep 2024 12:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="c+q5vCko"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m3o/NVeE"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8327154C14;
-	Mon, 16 Sep 2024 12:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD3747A62;
+	Mon, 16 Sep 2024 12:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726490274; cv=none; b=buECpNMxdZt3JIy3K4tNklWDFrWm9K8lGa2yGmAKwiFR2Nb53m2QHI3mud6OVoekKIFcXpLwsdinThl141n1X1OU86p+WFdvYuetv+2+v/f9fQ8eCsARZE67J6SwOhR4WG97PwYqWiLdVljOvtnZyenyfo+80Nkrgjg1+WrihVc=
+	t=1726490282; cv=none; b=hf59Za5GOyZhehBqe0ez7Rx1TrbqqWDvwPZwMMvuqAowj/0+E4kktpsgMUAm1xHiP6qi64xgoFmNozuKhz8rGlwhZ8kmg1pThEKK6H0hmwDGhOAmfSC9BV1VW+xHWWyIRTPYJPXn5Js7Z8mb094lBVvKg9C/5v5bBkLRgkmYzPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726490274; c=relaxed/simple;
-	bh=y65NSrgbmh96g6Fzzy4doa1no9mY2zsJ/nVburEBCEQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BQQCP7+O3OAAAgHIyq0JUIBgXZeoMPIm9Zhzy/CCm6MprZ3+QvNxieA+E42GgfolurPeifzjzvbWzjQgm7akesPdvLTK2UN3c658UF6EYauyy967mzs2/I4HHKo5hIYSeRhK9bqSQvrax9SfAwUoMGEeuB1EE9sPYFwYWUrhOOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=c+q5vCko; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PLzXIHIxZWgoYaUEXDx3PwMb1pxlvF2RUqJddmVU4kw=; b=c+q5vCkowBNHuV4tex9LjcCmi3
-	braWOndU5d3d00Sbzf6scWHTZovCzaCH9BqZ6jpSrDCkWu80S94KSRhj5EO3xOH525BRQktlOZNoC
-	kTRy/bAQTAR8q8g+e0iqLSfUlRKX90ZIZZn95/4JdoplDQUcoaq11goen/MHt7B21MgtC+/XrieKX
-	XK/GlB7DeK7TIRWv9hBWoJXtwCuGiEIMRLW9LrdtTf6sJPcWGLJjvCrnapooGyOmXa9EvGfsZaWM7
-	7mbC4w99cOtVUW0mK7D0Z4bJhs3vEbYlOjTxNYZzBJu2XzDKE5axxXNjvgm/7cWrKJTSgu2BiY1iB
-	n1jivncg==;
-Received: from [83.68.141.146] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sqAyy-0000uk-5l; Mon, 16 Sep 2024 14:37:32 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>,
- =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
-Subject: Re: [PATCH v1 5/6] pmdomain: rockchip: add regulator support
-Date: Mon, 16 Sep 2024 14:37:31 +0200
-Message-ID: <2197494.irdbgypaU6@phil>
-In-Reply-To: <20240910180530.47194-6-sebastian.reichel@collabora.com>
-References:
- <20240910180530.47194-1-sebastian.reichel@collabora.com>
- <20240910180530.47194-6-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1726490282; c=relaxed/simple;
+	bh=wyhQ/1XhBKxhfcWBgJPyILbAjor07laWIT+0K4HTs1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdS9eXBQrIADhFGau4wso1s6F+PvpWNd8mxW71O0qgP+ePJzKEMIDXZ+PDoNmI9sc7Q/lHcpzqD1xprLPi5S1gabfyYOLaojlay/oMDmxjPnL8GpaPm3Lemb8R++Q01HfhovNY2a9G0B/gddak264eysSBQrf2nb3aPdPREj5sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m3o/NVeE; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BE8B240006;
+	Mon, 16 Sep 2024 12:37:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726490278;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uLkXpJT9dGCwpmHNqyKonZZcRd+WJrVd5CM3zLffLK8=;
+	b=m3o/NVeEvXK49KYFrO0OUF5UYvy9X8gvcsMc+8zXzqn2sSF2p1dW+z+djPjUuxoZ0daJc5
+	e6inRencX+z0xorrs8P70zs6CknIw7ZTGP4OEen0i9BXbGtjIExrwZipun6FdBbqKpukz0
+	5Cx8nsBwn7NVmo0gSUgc//qxLxdb/gscweUPEkTNmpD1oa6PqMzhPvKbscx9HGvvb15Tel
+	EkNRNCNWUHYa3lce6jZsqA84LNK+Yz2PsbdjL5A0DWTvEBadAmW5OCnOBU1KEXlLXl4Iw8
+	BdEjSXIKBzNkTrriGLUwVtqI/pUKp6dcYs2DlPueMQUwk4ZRMqlgRunX9SC3mg==
+Date: Mon, 16 Sep 2024 14:37:56 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heiko@sntech.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: rtc: microcrystal,rv3028: add
+ #clock-cells property
+Message-ID: <202409161237568b626ad7@mail.local>
+References: <20240912142451.2952633-1-karthikeyan@linumiz.com>
+ <20240912142451.2952633-4-karthikeyan@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912142451.2952633-4-karthikeyan@linumiz.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Am Dienstag, 10. September 2024, 19:57:14 CEST schrieb Sebastian Reichel:
-> Some power domains require extra voltages to be applied. For example
-> trying to enable the GPU domain on RK3588 fails when the SoC does not
-> have VDD GPU enabled.
+On 12/09/2024 19:54:48+0530, Karthikeyan Krishnasamy wrote:
+> RV3028 RTC has a clock out features, the clk out can be
+> controlled using clkout register, to consume the clock out
+> from rv3028 '#clock-cells' property is added.
 > 
-> The solution to temporarily change the device's device tree node has
-> been taken over from the Mediatek power domain driver.
-> 
-> The regulator is not acquired at probe time, since that creates circular
-> dependencies. The power domain driver must be probed early, since SoC
-> peripherals need it. Regulators on the other hand depend on SoC
-> peripherals like SPI, I2C or GPIO.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
 > ---
->  drivers/pmdomain/rockchip/pm-domains.c | 57 +++++++++++++++++++++++++-
->  1 file changed, 55 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-> index 663d390faaeb..ae6990897928 100644
-> --- a/drivers/pmdomain/rockchip/pm-domains.c
-> +++ b/drivers/pmdomain/rockchip/pm-domains.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_clk.h>
->  #include <linux/clk.h>
->  #include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/mfd/syscon.h>
->  #include <soc/rockchip/pm_domains.h>
->  #include <dt-bindings/power/px30-power.h>
-> @@ -89,6 +90,8 @@ struct rockchip_pm_domain {
->  	u32 *qos_save_regs[MAX_QOS_REGS_NUM];
->  	int num_clks;
->  	struct clk_bulk_data *clks;
-> +	struct device_node *node;
-> +	struct regulator *supply;
->  };
+> Notes:
+>     v3:
+>     - fix commit message
+>     
+>     v2:
+>     - fix commit message subject
+> 
+>  Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml b/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+> index 5ade5dfad048..cda8ad7c1203 100644
+> --- a/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+> @@ -22,6 +22,9 @@ properties:
+>    interrupts:
+>      maxItems: 1
 >  
->  struct rockchip_pmu {
-> @@ -571,18 +574,67 @@ static int rockchip_pd_power(struct rockchip_pm_domain *pd, bool power_on)
->  	return 0;
->  }
->  
-> +static int rockchip_pd_regulator_disable(struct rockchip_pm_domain *pd)
-> +{
-> +	return pd->supply ? regulator_disable(pd->supply) : 0;
-> +}
+> +  "#clock-cells":
+> +    const: 0
 > +
-> +
+>    trickle-resistor-ohms:
+>      enum:
+>        - 3000
+> -- 
+> 2.39.2
+> 
 
-nit: double-empty line
-
-other than that, this looks ok for the time being and as Sebastian
-mentioned in Vienna, this also blocks actually testing
-the Panthor-GPU driver right now.
-
-So while we will likely convert to the hopefully soon existing
-regulator stuff, this change is helpful for right now
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
