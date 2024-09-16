@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-330405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7295D979E0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:12:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A9E979E11
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CCC5283F28
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:12:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001BB1C22B42
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB2B14B946;
-	Mon, 16 Sep 2024 09:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F2D149C4D;
+	Mon, 16 Sep 2024 09:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Ql+hKkx8"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rb23xell"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6248D14A4F5;
-	Mon, 16 Sep 2024 09:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5B541C62;
+	Mon, 16 Sep 2024 09:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726477906; cv=none; b=VBC2cr1oJIbban9MCia2tyCFpzVn/rDsEQrG5RBuClQ0sdQbIgK1QWld1NZ7AK2VwH4kQwhx8YGAcNXYlY6eg+cERElQGdvHw7RMDK7dEWTH2wiHJX/40SiqZYsaAJys4t5uTmOKXo9cZ7w+GnIvTMPScG3h4hnAnfU2NHo+NKg=
+	t=1726478009; cv=none; b=GjyIH57m2yz+a935KBLHN6M5l3reulFdnWazqBctWyIXqSugipNqkWzpQgO9a9ubBjCjwl6dghdNqThjMFDPj9XOfI6OjSU+XEuBgkSrxZgrz7XCVtsHDL4nvgfk7ySEgNb2ra8FlPl7roxWCRVPjFCjzJ1UzxzPPvEZUPxi6/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726477906; c=relaxed/simple;
-	bh=WzMOI6uVh9ZS7Z0+9PLGOHkUmsJPm9EqL/liuVJiUEo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=avIPo4pKTZfSjMi18J28S+leSj05IYnkJFPYty5J//Vl3lxBCnQcnlox71wH8dIgL66dTD2GLUoVgy+kXlgvJ/CMmyGubiacpxa4dO4DajFcFLh1SafIVZuk0QUSpRllNhIxErd3Pbp3buZo3vV6osz/wu6I9cEuiNOUd82SJvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Ql+hKkx8; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726477905; x=1758013905;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WzMOI6uVh9ZS7Z0+9PLGOHkUmsJPm9EqL/liuVJiUEo=;
-  b=Ql+hKkx8TKRRy4lyKD7iWD0ibn0EU1knxHxUOTa3LhJkG4IPNZ3yX2Kc
-   TgtV/4tdMkKhve3kqMTlmOzsWb095Zu+1uli6twV2M5VtmEqBXM/7sjYJ
-   0YPWJR8SjEIH4TafJ/e+EjFYxjFeaKgMMlBfWzZ1lZHcOwIM0Tp/nWM6E
-   SsKGkYlbLCeIGODHpYWdbOzImL6p5vk6Y+Sf0Oe7eW+5ZPVl/KQMWxbNT
-   Bq4v1XJkztHAs2kAnRqlDkeN4zcbDoZk5OMP9V4ezJFRG6wiqcd4gyNTD
-   3yRurGd0JbKXIa56fWugTYXr9jCPwl8JOLnXIZqSKBWEWPgqhSThfSwde
-   g==;
-X-CSE-ConnectionGUID: zBJi05dESDObnv88EXzWcg==
-X-CSE-MsgGUID: rrPzMFViSc+h7i4e4hYxVA==
-X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
-   d="scan'208";a="34997192"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 02:11:41 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 16 Sep 2024 02:11:29 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 16 Sep 2024 02:11:26 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>
-CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Andrei Simion
-	<andrei.simion@microchip.com>
-Subject: [PATCH 2/2] ASoC: atmel: mchp-spdifrx: Remove interface name from stream_name
-Date: Mon, 16 Sep 2024 12:10:57 +0300
-Message-ID: <20240916091056.11910-3-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240916091056.11910-1-andrei.simion@microchip.com>
-References: <20240916091056.11910-1-andrei.simion@microchip.com>
+	s=arc-20240116; t=1726478009; c=relaxed/simple;
+	bh=6sVXcxnsKD5MARXwwHudhQw0IAw2eEJr68HonO55PlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIX2WGUYq+fGQXW0b7CTScHozDWlDheQWzCjc0QMdGv675e1zYGsaAmSl+nZ7avNaB4HtYKamRF8F3ip8iFeXTv139Sw+HwSzH/C+A3zaiLrqLtqAG1Esw+knWFBGhRrju3259IH/8f3Ky83G1HpEN2eflxyjoKVACQc7RlnEB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rb23xell; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB959C4CEC4;
+	Mon, 16 Sep 2024 09:13:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726478008;
+	bh=6sVXcxnsKD5MARXwwHudhQw0IAw2eEJr68HonO55PlA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rb23xellkWCUnryl+HIe7VRT+uziI7vqdcI0RhcGkCSK0lJPg/xG2kK0+S9tCxSU+
+	 yOrOkrApqId/zODjWqAkytr6IuF8m+CO8fxxJyeWcIqOydAl9iab2a6OSh/KvvBi2C
+	 UC+6qtMb0MQvHEm+hJHyhbUFYoo5rLc1lLXe7njrvVx7bKvbhYz3QDiB7HFlU5lR/1
+	 Fq5TO2nC77/hhJcXQt6hMnk7cT4BmiFBhGyvCUMuaGLPdOMFf/RjbFRgRq+h1exVuX
+	 QJkLnWj506SP0x8DRpW3GX/6GlELYYc8hB/zfDU20MAs4XZ++AYcbLjNLnyItSZaWs
+	 XlDWGOKFfLMdA==
+Date: Mon, 16 Sep 2024 12:13:23 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 for-next 2/2] RDMA/hns: Disassociate mmap pages for
+ all uctx when HW is being reset
+Message-ID: <20240916091323.GM4026@unreal>
+References: <20240913122955.1283597-1-huangjunxian6@hisilicon.com>
+ <20240913122955.1283597-3-huangjunxian6@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913122955.1283597-3-huangjunxian6@hisilicon.com>
 
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+On Fri, Sep 13, 2024 at 08:29:55PM +0800, Junxian Huang wrote:
+> From: Chengchang Tang <tangchengchang@huawei.com>
+> 
+> When HW is being reset, userspace should not ring doorbell otherwise
+> it may lead to abnormal consequence such as RAS.
+> 
+> Disassociate mmap pages for all uctx to prevent userspace from ringing
+> doorbell to HW. Since all resources will be destroyed during HW reset,
+> no new mmap is allowed after HW reset is completed.
+> 
+> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
+> Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
+> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+> ---
+>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 9 +++++++++
+>  drivers/infiniband/hw/hns/hns_roce_main.c  | 5 +++++
+>  2 files changed, 14 insertions(+)
+> 
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> index 24e906b9d3ae..4e374b2da101 100644
+> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> @@ -7017,6 +7017,12 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+>  
+>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
+>  }
+> +
+> +static void hns_roce_v2_reset_notify_user(struct hns_roce_dev *hr_dev)
+> +{
+> +	rdma_user_mmap_disassociate(&hr_dev->ib_dev);
+> +}
 
-Remove the interface name from the stream_name. The interface name (and the
-index of the interface) can be set in DT using the sound-name-prefix string
-property.
+There is no need in one line function, please inline it.
 
-[andrei.simion@microchip.com: Adjust the commit title.]
+> +
+>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+>  {
+>  	struct hns_roce_dev *hr_dev;
+> @@ -7035,6 +7041,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+>  
+>  	hr_dev->active = false;
+>  	hr_dev->dis_db = true;
+> +
+> +	hns_roce_v2_reset_notify_user(hr_dev);
+> +
+>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
+>  
+>  	return 0;
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
+> index 4cb0af733587..49315f39361d 100644
+> --- a/drivers/infiniband/hw/hns/hns_roce_main.c
+> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
+> @@ -466,6 +466,11 @@ static int hns_roce_mmap(struct ib_ucontext *uctx, struct vm_area_struct *vma)
+>  	pgprot_t prot;
+>  	int ret;
+>  
+> +	if (hr_dev->dis_db) {
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
- sound/soc/atmel/mchp-spdifrx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+How do you clear dis_db after calling to hns_roce_hw_v2_reset_notify_down()? Does it have any locking protection?
 
-diff --git a/sound/soc/atmel/mchp-spdifrx.c b/sound/soc/atmel/mchp-spdifrx.c
-index b2507a1491b7..fb820609c043 100644
---- a/sound/soc/atmel/mchp-spdifrx.c
-+++ b/sound/soc/atmel/mchp-spdifrx.c
-@@ -1014,7 +1014,7 @@ static const struct snd_soc_dai_ops mchp_spdifrx_dai_ops = {
- static struct snd_soc_dai_driver mchp_spdifrx_dai = {
- 	.name = "mchp-spdifrx",
- 	.capture = {
--		.stream_name = "S/PDIF Capture",
-+		.stream_name = "Capture",
- 		.channels_min = SPDIFRX_CHANNELS,
- 		.channels_max = SPDIFRX_CHANNELS,
- 		.rates = MCHP_SPDIF_RATES,
--- 
-2.34.1
-
+> +		atomic64_inc(&hr_dev->dfx_cnt[HNS_ROCE_DFX_MMAP_ERR_CNT]);
+> +		return -EPERM;
+> +	}
+> +
+>  	rdma_entry = rdma_user_mmap_entry_get_pgoff(uctx, vma->vm_pgoff);
+>  	if (!rdma_entry) {
+>  		atomic64_inc(&hr_dev->dfx_cnt[HNS_ROCE_DFX_MMAP_ERR_CNT]);
+> -- 
+> 2.33.0
+> 
 
