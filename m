@@ -1,66 +1,53 @@
-Return-Path: <linux-kernel+bounces-330907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5730897A5F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:29:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D1997A5F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F4681F27855
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:29:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA2CEB216AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D7A15B10A;
-	Mon, 16 Sep 2024 16:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lFb/OdII"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A441591E3;
+	Mon, 16 Sep 2024 16:29:38 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7125515AAD9;
-	Mon, 16 Sep 2024 16:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4AFA29;
+	Mon, 16 Sep 2024 16:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726504182; cv=none; b=UYTcfMFxYVYwucyyZWZA2BU1mYagbrCAQv7e9RDEG6+i3whCbbfIMBDiiixXrvhFxDLTLVIK9Hu5aKpNk8hfZqzzVmfEoNa4eh2Yf4rlOgHEnkenqtpT11FfHB7zFk2+ByqWO8kJmbqD0AuxO2190HsfuMyZRNCJNGheENNvhR0=
+	t=1726504178; cv=none; b=eLWYpTPkLe7PFL5ulk7t9pgtPiZk6K7R/+oG+g/VO/5KYJkTTQQIsfxubCm0uGWvgTsbJ+gAEipHi2bi4Djci3F2FZ1D3AiDFldqWjP/atbCU7tO4ViEyj693qoE9p2LB3PfvJ8A+mB0vb4Y9I0zG5wL7qH3EpujKlIi30fsQUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726504182; c=relaxed/simple;
-	bh=EXFcYU2rvBvGtvIDnjUL73iKbExlPtZBqcdmQ1tyH9Y=;
+	s=arc-20240116; t=1726504178; c=relaxed/simple;
+	bh=Nm+KjuDd/6vIz7azXq22szrifIq7ZmeKemLmdwemJwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C/y4PS9fK50+ZWTtKexff2ZeJXLNhJfN1TRNUDlCcKzHqsosoMyzREl3UXaknk+/qDMXuvMjuWzfMQee3QKZHA7DRjeCl41GRIbiJRg2XnqCVBd+RlKZIszTQtzJBN5nvgPv5O75KO+C15KdzTDjm3chzHmZMmxbjDw1rKOMoAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lFb/OdII; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5E65A60006;
-	Mon, 16 Sep 2024 16:29:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726504172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XD9je6kghiJn7GolaqKoMViTS66UJJpVrUl9PKf1GLw=;
-	b=lFb/OdII7ME1TPdWjQFCbxh+GESLEF/jlM7MhCS88jAkjxe39zeu+XijEHnIkNaBTn6d1D
-	OBHAk+FIJMr7Mqft7LU6hWVhxwGjO131YF7+4UJPcVLktdkC7sxauRrNs1sReqOc19fh3J
-	DI1A76ogBBUgS18WbpkMMwkNhSGGKMNqIAX2OdANNRmqI07+9O2AHawU3sQj1o/kXt08rb
-	ELv1szv8ZW21bkJwhHyXgNvDUMBZyIFj+pU/TdCKkVmW9mJfvobKKlOO1mCCxSLrXLghA8
-	aEJ25zgOQsg/e+ap3tCzHCPIoWu6Svt+GEear4pey3i5qqRjeKy8wa6aqX94lA==
-Date: Mon, 16 Sep 2024 18:29:29 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Daniel Golle <daniel@makrotopia.org>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>, Russell
- King <linux@armlinux.org.uk>, Kory Maincent <kory.maincent@bootlin.com>,
- Edward Cree <ecree.xilinx@gmail.com>, Paolo Abeni <pabeni@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- "David S. Miller" <davem@davemloft.net>, John Crispin <john@phrozen.org>
-Subject: Re: ethtool settings and SFP modules with PHYs
-Message-ID: <20240916182929.25cb6582@fedora.home>
-In-Reply-To: <ccf7ea15-203e-4860-a85d-31641a26c872@lunn.ch>
-References: <ZuhQjx2137ZC_DCz@makrotopia.org>
-	<20240916180224.39a6543c@fedora.home>
-	<ccf7ea15-203e-4860-a85d-31641a26c872@lunn.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=WOMWbZM9FY/3qwehvoc+z4SFQ8FRUYRIlep/cH+V/3MOVjN1KXFeVVAGNELBDKVUqhTorlSSIWD0R+1Md3c4WBnR0zfbSoVcojj9msXCM2FD1ScU7Qv2p78oyqzH7CIncayJEho0iwMdsnR2Ov4OypAXaxfLDih6kiQscIZW27w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B76A5C4CEC4;
+	Mon, 16 Sep 2024 16:29:34 +0000 (UTC)
+Date: Mon, 16 Sep 2024 12:29:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, linux-s390@vger.kernel.org, "Masami Hiramatsu
+ (Google)" <mhiramat@kernel.org>, Florent Revest <revest@chromium.org>,
+ linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v14 04/19] function_graph: Replace fgraph_ret_regs with
+ ftrace_regs
+Message-ID: <20240916122930.523af6c5@rorschach.local.home>
+In-Reply-To: <20240916121656.20933-B-hca@linux.ibm.com>
+References: <172615368656.133222.2336770908714920670.stgit@devnote2>
+	<172615373091.133222.1812791604518973124.stgit@devnote2>
+	<20240915051559.435abfcd@rorschach.local.home>
+	<20240916121656.20933-B-hca@linux.ibm.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,56 +56,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Mon, 16 Sep 2024 18:12:32 +0200
-Andrew Lunn <andrew@lunn.ch> wrote:
+On Mon, 16 Sep 2024 14:16:56 +0200
+Heiko Carstens <hca@linux.ibm.com> wrote:
 
-> > A notification would indeed be better, and is something I can prototype
-> > quickly. I was hesitating to add that, but as you show interest in
-> > this, I'm OK to move forward on that :)  
+> This does not pass the ftrace selftests. Please merge the patch below
+> into this patch. With that:
 > 
-> This might need further brainstorming. What are we actually interested
-> in?
-> 
-> The EEPROM has been read, we know what sort of SFP it is?
-> 
-> It happens to be a copper SFP, we know what MDIO over I2C protocol to
-> use, it responds, and the PHY device has been created? Does the SFP
-> layer actually know this? Are we actually adding a notification for
-> any PHY, not just an SFP PHY?
+> Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
-What I was refering to is to notify on a phy_link_topo_add_phy() call,
-which deals with both "regular" PHYs and SFP PHYs.
+Thank you very much, this is why I wanted arch maintainers acks before
+taking anything.
 
-I'm still not fully expert on the netlink aspect, but could
-ETHTOOL_A_PHY_NTF be emitted upon PHY addition to the topology,
-containing exactly the same info as a regular ETHTOOL_A_PHY_GET message
-?
+There may be other patches in this series that I didn't Cc everyone
+(yet). Did you look at the other patches? If not, I'll go and do the Cc.
+It's a manual process.
 
-At that time, we know what PHY it is, and that it's attached to the
-netdev, the eeprom has been read and phydev created.
-
-That covers the PHY aspect, but not the whole SFP aspect. We won't get
-that notif for Fibre modules, as there's no PHY.
-
-Triggering notifications upon SFP insertion will require extra
-plumbing. As of today, the sfp-bus itself doesn't know which netdev
-it's attached to (there's not sfp_bus.netdev pointer), so a notif won't
-help much as we don't know which interface the event concerns.
-
-That attachment can happen at link-up time or probe-time, so for example
-there might be no easy way to trigger that notification when a module
-is inserted while the link is down, that behaviour would depend on the
-driver(s) (wether or not it uses phylink, whether or not the SFP is
-driver by a PHY or directly by the MAC).
-
-I have prototype code here[1] (beware, one giant hard-to-read patch
-without commit log for now, will be split eventually) that deals with
-parts of that issue, the end-goal being to report the state of all
-front-facing ports (including SFP and their module) to users.
-
-Maxime
-
-[1] : https://github.com/minimaxwell/linux/tree/mc/main
+-- Steve
 
