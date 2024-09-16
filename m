@@ -1,188 +1,172 @@
-Return-Path: <linux-kernel+bounces-330365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463E0979D2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82DC5979D31
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E9B28396A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:48:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D3321F23593
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169334D8CC;
-	Mon, 16 Sep 2024 08:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0861C14600C;
+	Mon, 16 Sep 2024 08:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="c1uA90Ws"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Y29PE2Ey"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C8B13D61B;
-	Mon, 16 Sep 2024 08:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726476503; cv=pass; b=dalcUOGSQKZLRGbB9w+tFQb4hmPPrEJcW7j5JmAP7fXy6vXdQuZ228Siq1UHd/D+ENtYS1bg1SDuL4NOOuIjz/VcpP4PIHhrmJaXRA197YPkqQcW0FYo7wdH8RmUScCktn9cYjueQDxwI/0qozA6I37Ozya/tPIdh9feGSLToj8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726476503; c=relaxed/simple;
-	bh=lNk3OLyjwxyTfC7SkjUR1VpRljx6vHpl91jfzH32OBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DAnl+jMpy9FW9IXIsjp0S1ZmYwA4qDBMOjO4LMoHoFCff3rSn1Gi8ZUlHw5nyyDcEnPvaZnhaHF5RnLSBtqFN8Idy4D0tmLqz2JrfNxHoT8A3x+hzv1egrm7DNbUTuJPxFOXxrTW3CD3TsqxEvWyXyxMtxoV/4u6Wh/xCwlSQa4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=c1uA90Ws; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726476492; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DRLfK1ttIGsM8SyqW80jT9iIQwRkRlwbgX9jMSW5Ncw6YC1VmeY/xUp5N/o+v2AbLnWoKLgH6+xZs34neZViujp3x7kNqmGfOz4Z/ejr6Ehh80gPVRwNBKi5XRE01pH1bb39NLklArL5rYkFNidASdp53DX5+KIkVZl+JkcxBwU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726476492; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=46Ql7Sx91QiMZFhlAZ1LUlqI5yE8lHMmJR8Ysw/Aydc=; 
-	b=Dxu0IeoGGQaMEIzKBBMUHd15oxZ/iq0nX3EiDkpOv0kknUsU246+6/HchsQMjIGtf6iZwJfBSuofLb7jft2OPjuqKspJcjYquLFfSsEJ6WKLqn3U12IaUmoEqqJHc3CM4cjpQsr7/NA+BVCiPdck2eBApYEGaFNK35zVexzfICQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726476492;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=46Ql7Sx91QiMZFhlAZ1LUlqI5yE8lHMmJR8Ysw/Aydc=;
-	b=c1uA90WsRjWKRD1/mFOe5FsciaawjP3FhTw0cUIZG22mRYYdRVWjXYDYRGt9UCsZ
-	f1VgrDNemmaTG1pk9NH58PG2Ilb1auSjuvbxr3J1gL4ECVj4RL5OFXg+5x6144bXk26
-	rzKLaHjHDBGNOxz/U+xwFY7e+kVO1Jo+jz/h9xSU=
-Received: by mx.zohomail.com with SMTPS id 17264764913411012.8729125971017;
-	Mon, 16 Sep 2024 01:48:11 -0700 (PDT)
-Received: by mercury (Postfix, from userid 1000)
-	id BBEF2106045D; Mon, 16 Sep 2024 10:48:04 +0200 (CEST)
-Date: Mon, 16 Sep 2024 10:48:04 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	=?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Subject: Re: [PATCH 1/2] dt-bindings: power: supply: bq256xx: Add
- omit-battery-class property
-Message-ID: <52icxdwohfdiwjvjsbvpxvgaux7hedr6d63zkyhlvbg3t6ykrj@zm47trzk5l5k>
-References: <20240907-bq256xx-omit-battery-class-v1-0-45f6d8dbd1e5@mainlining.org>
- <20240907-bq256xx-omit-battery-class-v1-1-45f6d8dbd1e5@mainlining.org>
- <5bf9a142-05d9-4e02-bca0-f988726e2873@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B926D38DC7;
+	Mon, 16 Sep 2024 08:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726476525; cv=none; b=t0isVNUSksJiIc+d8IiUV4PbLDs9AkQRu+MM8gQxYRJrChUlutL/gSRw7ofI16Tid47QfgrHZSY3ku+UrDRWyVtVFeJcX8VxsFIk+PYiR8ldTdf5c9owDjsS5XQHBJQ9KnZsiB3YM6Kkt2+hnuReQjeRsTwc6A/lPnbExdJB+jI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726476525; c=relaxed/simple;
+	bh=J8UOI948OnWKs+xB+/aTA/QkwoSDFz2PUm4e+MA95+8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lPmruHU74VymdRJm+7uReMN6quFyJrvbOy4paR6umedsIMq6RVCHOE+wyjxojHm73V8drTWngDeDl4h766IwjwsNWt4AVcak1WXsApQYIf7mCTtb7h0ahmcGEjkEtKlWKIYAT9vodzt3mtBgVvvDR5fdRKZFnca/JcW8/9i7J94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Y29PE2Ey; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726476501; x=1727081301; i=markus.elfring@web.de;
+	bh=Ab2q8+aP9Waj4HBePxRO2QM9D8hRDpA/gAZWi0kJcZs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Y29PE2EyGcEdwpfkBO2kxl6hAr9YTu2Ol6HnU8A6v6qma9xVO/8oV1PQYoLKEOWz
+	 4Uj+U6ZzF/2hppw/IOgHam4SUjGb2YXLP5Ms4oa7dtLA6pV0l+u7x7H0KjBRLxoNo
+	 jHXDvbNwPiA1iBi7NtwXl4w2HRiGVXg06m2Dfg+vOfLBP5Du/pdZ1KecG9Dq1F4DR
+	 a7W9MblL2mc+ESAzJ2LI+SqlXEwLil7pKbLaM0X0vUbXSKZU4pf0arzYYqjwWZseN
+	 Aoj42SQ3cGzdmYu+ZNcZfnKNkH8VofX8xZ0n9msQn0q1vIAbOVC3uYDQVWGbqfcDe
+	 +K8mifZq8ZWezp0f+A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5j1q-1swA51028Y-009uIL; Mon, 16
+ Sep 2024 10:48:21 +0200
+Message-ID: <d3b37bcd-2d62-4a1c-b4a9-d47be271cdc6@web.de>
+Date: Mon, 16 Sep 2024 10:48:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="po3fnon6w37rqren"
-Content-Disposition: inline
-In-Reply-To: <5bf9a142-05d9-4e02-bca0-f988726e2873@kernel.org>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/223.982.64
-X-ZohoMailClient: External
-
-
---po3fnon6w37rqren
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 1/2] ASoC: tas5805m: Use scope-based resource management in
+ tas5805m_i2c_probe()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-sound@vger.kernel.org, Daniel Beer <daniel.beer@igorinstitute.com>,
+ Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Julia Lawall <julia.lawall@inria.fr>
+References: <a7ce512c-0f82-47f6-89fb-f7269e4fdfae@web.de>
+Content-Language: en-GB
+In-Reply-To: <a7ce512c-0f82-47f6-89fb-f7269e4fdfae@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:L6Nm2Bprgo6+Yuv52zM3x6fUbQwtIzeKwHMbTHtwYjFlASRENcY
+ YKWIo0XBuxKo8Df9xwmxOiyO5IWEd60WKVv3IFPlng8fSTPxEzH1qhADfNruIylwUPOcl9I
+ Ld2uruGAiuExayFvQsNPwXRFtykhmVSvFh4BIoGPZveY7if7vBgTBudBzeQP2MVwdHg2JaD
+ 0n+hH6KA02WoYabh6sjsw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dD+/aa3tqcY=;FhUY5rbxoKQk5olwezu74i1vYq7
+ lR85TcOFwU4ewjXv+kMq/PB7hR55/7lzf8u6lnsSQkdqaDKJtHwzX5O0fwXD/S1fNdroR/24d
+ l9rC5+A85qYhVrxFZ39Gch5puOm6NBptVnA2oaUsPMfdIal5PYqxVJZvjxtYxV5O2Yub+c+HM
+ tQq4w7sXvl92moe1k7jK/rteBe5SPiMP03Lbk5ayzRbDzyzU5lPHFxof0OZQ2P6YURD9R8mN8
+ b0x5CPF84QxAInUoURHC686OAi/iswHCifec99WM/j1rD8gj6vIWkZwQ2HwmpsOSZIDO+6xvF
+ tDITfQj5cOzNvN7xvpG42PPu7OXzKexUg2Mbb6DzdmkM38dh9CdqZmg3iUirSV1/AaIkDFpe+
+ DHWioQe2WdUDewN4Y/ZkyU9H+wJY3VPpkU43RjW4/hGpdoy0Xx9jQ7WNGcnwueQx9KBYAhE0d
+ MG9fzetDYcfXXcN/iON2xCsWH81Tfp1Lc87DlXW+tTVdoMfZcYJ2aX4PYECpRhsCdMeN8U1oz
+ se3xY+Hhyt/kTN2+fGEHGPsLYXDaT/d/DPhJ/IDEPd6vnu396OaybPmLzOj3v74GMcpZxNIUY
+ drRZED5VYyzxPFFaGYlLUlz62ySs/1DgSTocLCaUOM+5p/sJA41p5yYGp2sMYVdgZLvwAc5E7
+ yufuPhfwZ95sjyeGQ6b6sMuL1JXhNGnyJSPJN2lN3qzr/kvcRMK4mHmEuC/1IRClffa+zfYHM
+ +TT0yTPsexrsT1xwPteyfX50NfIzhVzeDaQH4arMiiV9UHholCWHq1VnHFerc8RDfKq8t22IQ
+ Faxfx3dDWEvMN1u/z9YPa77g==
 
-Hi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Sep 2024 10:11:59 +0200
 
-On Sat, Sep 07, 2024 at 01:11:57PM GMT, Krzysztof Kozlowski wrote:
-> On 07/09/2024 13:07, Barnab=E1s Cz=E9m=E1n wrote:
-> > Add omit-battery-class property for avoid system create a battery devic=
-e.
->=20
-> This does not help much, basically repeats commit subject. You need to
-> answer to "why?".
+Scope-based resource management became supported also for another
+programming interface by contributions of Dmitry Torokhov on 2024-01-17.
+See also the commit 8dde8fa0cc3edce73c050b9882d06c1a575f6402
+("firmware_loader: introduce __free() cleanup hanler").
 
-Exposing two battery devices for a single battery is a bug, since that
-means there are two distinct batteries. Also note, that platforms having
-multiple batteries is a real thing. e.g. some Thinkpads used to have an
-internal battery and a hot-swappable one.
+* Thus use the attribute =E2=80=9C__free(firmware)=E2=80=9D.
 
-> > Signed-off-by: Barnab=E1s Cz=E9m=E1n <barnabas.czeman@mainlining.org>
-> > ---
-> >  Documentation/devicetree/bindings/power/supply/bq256xx.yaml | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/power/supply/bq256xx.yam=
-l b/Documentation/devicetree/bindings/power/supply/bq256xx.yaml
-> > index a76afe3ca299..744f5782e8e7 100644
-> > --- a/Documentation/devicetree/bindings/power/supply/bq256xx.yaml
-> > +++ b/Documentation/devicetree/bindings/power/supply/bq256xx.yaml
-> > @@ -62,6 +62,12 @@ properties:
-> >      $ref: /schemas/types.yaml#/definitions/phandle
-> >      description: phandle to the battery node being monitored
-> > =20
-> > +  omit-battery-class:
-> > +    type: boolean
-> > +    description: |
-> > +      If this property is set, the operating system does not try to cr=
-eate a
-> > +      battery device.
->=20
-> You described the desired Linux feature or behavior, not the actual
-> hardware. The bindings are about the latter, so instead you need to
-> rephrase the property and its description to match actual hardware
-> capabilities/features/configuration etc.
+* Reduce the scope for the local variable =E2=80=9Cfw=E2=80=9D.
 
-Fully agreed. Also I think we already have the necessary information
-in the DT bindings. If there is a fuel-gauge in addition to the
-bq256xx charger, there should be a power-supplies link [0] between
-those two. Without the fuel-gauge obviously no such link exists. So
-the existance of this link can be used to decide wether a battery
-device should be registered or not.
+* Omit explicit release_firmware() calls accordingly.
 
-If the link exists, the charger driver should not create its own
-battery device. In the future the extension API might be used to
-let the charger extend the fuel gauge in case it is missing support
-for some battery properties, which can be provided by the charger.
 
-Note, that the link is going the other way around (from the battery
-to the charger). Also the fuel-gauge device will be registered after
-the charger device, so you cannot rely on power_supply_for_each_device
-when the charger probes. I see two options to solve that:
+This issue was detected by using the Coccinelle software.
 
-1. Create a new power-supply core function, which goes through all DT
-   nodes, check that the nodename is "battery" or "fuel-gauge" and have
-   a property "power-supplies" with a phandle pointing to the charger
-   node.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ sound/soc/codecs/tas5805m.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-2. Register the battery device at charger probe time and when the
-   fuel-gauge driver is registered, call a (to be introduced) callback
-   function in the charger driver, which unregisters the charger's
-   battery.
+diff --git a/sound/soc/codecs/tas5805m.c b/sound/soc/codecs/tas5805m.c
+index 3b53eba38a0b..f37eec960364 100644
+=2D-- a/sound/soc/codecs/tas5805m.c
++++ b/sound/soc/codecs/tas5805m.c
+@@ -464,7 +464,6 @@ static int tas5805m_i2c_probe(struct i2c_client *i2c)
+ 	struct tas5805m_priv *tas5805m;
+ 	char filename[128];
+ 	const char *config_name;
+-	const struct firmware *fw;
+ 	int ret;
 
-I have a slight preference for the second option, but I'm fine with
-either way. This does not create new ABI and can be easily changed
-in the future.
+ 	regmap =3D devm_regmap_init_i2c(i2c, &tas5805m_regmap);
+@@ -509,24 +508,24 @@ static int tas5805m_i2c_probe(struct i2c_client *i2c=
+)
 
-[0] Documentation/devicetree/bindings/power/supply/power-supply.yaml
+ 	snprintf(filename, sizeof(filename), "tas5805m_dsp_%s.bin",
+ 		 config_name);
+-	ret =3D request_firmware(&fw, filename, dev);
+-	if (ret)
+-		return ret;
 
-Greetings,
+-	if ((fw->size < 2) || (fw->size & 1)) {
+-		dev_err(dev, "firmware is invalid\n");
+-		release_firmware(fw);
+-		return -EINVAL;
+-	}
++	{
++		struct firmware const *fw __free(firmware) =3D NULL;
 
--- Sebastian
+-	tas5805m->dsp_cfg_len =3D fw->size;
+-	tas5805m->dsp_cfg_data =3D devm_kmemdup(dev, fw->data, fw->size, GFP_KER=
+NEL);
+-	if (!tas5805m->dsp_cfg_data) {
+-		release_firmware(fw);
+-		return -ENOMEM;
+-	}
++		ret =3D request_firmware(&fw, filename, dev);
++		if (ret)
++			return ret;
++
++		if ((fw->size < 2) || (fw->size & 1)) {
++			dev_err(dev, "firmware is invalid\n");
++			return -EINVAL;
++		}
 
---po3fnon6w37rqren
-Content-Type: application/pgp-signature; name="signature.asc"
+-	release_firmware(fw);
++		tas5805m->dsp_cfg_len =3D fw->size;
++		tas5805m->dsp_cfg_data =3D devm_kmemdup(dev, fw->data, fw->size, GFP_KE=
+RNEL);
++		if (!tas5805m->dsp_cfg_data)
++			return -ENOMEM;
++	}
 
------BEGIN PGP SIGNATURE-----
+ 	/* Do the first part of the power-on here, while we can expect
+ 	 * the I2S interface to be quiet. We must raise PDN# and then
+=2D-
+2.46.0
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbn8MAACgkQ2O7X88g7
-+pprIxAAk/vlq10XTcDhCuOyZV8T/BY1XlrmY/rdgqxeyu5BpG7NbwJ5aWtqYS0k
-B+1nCd3IhGqxl0qhSIA/2CHd+H/y4w6NZzqBYaNJy6J3BwUnGKLLBLoXw/5AuvIQ
-qf7sUIdZrl29j2L6LgpFo+aNN64XPDpKOPDG7ORcPQvk9B1xIHLDVOYXNGcUEScT
-izULCghqv1F+YUJl1JV13SQOqv9C+E5Oc4hG97FIj7aGCaGe/jwS2iaOKVxeZfwD
-C/bBWT4DFQVCeRJu/zeNpA5G4jcCKKZjtIZpg6TBKqi4B13ZBGpOmkwzvhBXs2j6
-qNB+62MvnSN5driQy5W8CgBLXHbB9qL+rW8F4tCMkotDMJGMWyTFMRZHPP43CoI5
-fwJXVhTeWTvp94iPc/9bUdjgzoPFyJFwNbtTY9almBPyrCd0DMJniEp6tevHB7aw
-g4aJeLvpNe6UPmHUGWFTXa0YrJ1N2v2wvgbYGqrHbB04h5tTif2HWl31FAcdKVBV
-ey6CrjxPqjlcL7DDI3dES3SThXX1XC4gyNJZc3dz/loXntMuZBc4neakOLSUCJTn
-G9cb8s6oJF5SDOjhwyoYIx1odbfgMv9E0HV2pzSpsf60M8ChyqX0tnR8wiqQoJyx
-XCntNvS+vesmZ0iTrCBDFsD9rLz+hVg59nJPWC8i0zGKfGwMCvc=
-=tDBl
------END PGP SIGNATURE-----
-
---po3fnon6w37rqren--
 
