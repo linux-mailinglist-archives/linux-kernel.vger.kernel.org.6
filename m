@@ -1,95 +1,206 @@
-Return-Path: <linux-kernel+bounces-331211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A5A97A9B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:46:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD8B97A9BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 752C1B208A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E29E41F21173
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18357158550;
-	Mon, 16 Sep 2024 23:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lhmtCyxd"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1206C15535A;
+	Mon, 16 Sep 2024 23:47:35 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBB05258;
-	Mon, 16 Sep 2024 23:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1FB5258;
+	Mon, 16 Sep 2024 23:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726530363; cv=none; b=ra1/c1c6sT/Qbrdm8bXGja/kxfVlpiRyS7un0yXSWs0BYlHonUxDINISIPKBRLXPF6g+AJL5CFuIwLzw+oHIBV6LO1lesD9VcMjVBZ2wRcmEPrg4frbt26s75R3Lj8WFsiKi0IPZB98zYe8K8dGBIOMCbyN6z0tPT5WKhcgXl0I=
+	t=1726530454; cv=none; b=Xc+5xG/yB0ZbwLV/9eSMpQAfy5QGpWb8f6YWFUOzj6C3IX9+/KXP5gUrjW0H6T4y4uZKHTPTci4c5j5sK+/PjyUbe32LGk15MZRkRwUUUG4YxKRsCFRHn7kashU0hYfXZD5b1Z5hu+/lIlIw87/Hdg9AizvPBttjA96EqK8Bn0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726530363; c=relaxed/simple;
-	bh=r42L6UXOT+vU5jSITTLDO85zvSoqYuh+K+N6qykrg2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mh+S+LlyydHg0s4+iSA4jhwTxGQSbWqg3nzt9yqr2GvGIJuvoAcVVF8BePyO7dkhSmZhOkkH792fxCeVokKTAOrrstoTkkrINpmTsJyWIYKV2MM8a/Dn81hdTxVrJSxJD/0M5+lhGpn4qjXM5KrNee5xU9pqaIi76oC0U+OWkes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lhmtCyxd; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726530352; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=B4rNWlBdjfL9smwu9MlwgNfDAPiZe3aLTcpYgp1odwM=;
-	b=lhmtCyxdXfBp0bpQdJmjzHzw9f+mvRS5lPNPaJ5vMYBvJyU0HgFWFNry5Yx/o9oVcbiUxqZ/atTxdJ1XF3IgULR4b9l6L7rvjjApsif/WadSgxgBQV5G7BojatxvRYhnO0cHGMwiembqDys4ZiFiRON2eUPO9hngpOyp8bUDUpg=
-Received: from 30.27.106.17(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WF9HTgY_1726530350)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Sep 2024 07:45:51 +0800
-Message-ID: <2948509e-f250-4723-b618-d737de5ddb56@linux.alibaba.com>
-Date: Tue, 17 Sep 2024 07:45:50 +0800
+	s=arc-20240116; t=1726530454; c=relaxed/simple;
+	bh=/I7qqZEcoU6y0kdp1g0RfS946oqSqX1ygCuHRLuwISw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfuf/vtpptNVguzsVlrBnfQBgWwiqiKBjba7n+S+oe/1/SAPzz9oWnxAMJTT3VUdmd+ANekNf1Pv+Fjf6fBRv80GtIsqA5MX/DwHLZY5oFi8n/EiHcopebPWMNHgSWBwqYJWhDjgic2jCOHUdqr0nfoJiLQy/RiWKgHT+692W5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Mon, 16 Sep 2024 23:47:25 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Jesse T <mr.bossman075@gmail.com>
+Cc: Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
+Subject: Re: [PATCH v4 3/3] riscv: dts: spacemit: add pinctrl property to
+ uart0 in BPI-F3
+Message-ID: <20240916234725-GYA2069032@gentoo>
+References: <7ede7ca6-f8db-4b38-a1cc-8be3d0db7fae@gmail.com>
+ <20240916024536-GYA2058951@gentoo>
+ <CAJFTR8QEwoJDANTgGOyMxX4d539ZjHUU2nzf-sB=Gu5bsHBfyQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
-To: Greg KH <gregkh@linuxfoundation.org>, Yiyang Wu <toolmanp@tlmp.cc>
-Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-4-toolmanp@tlmp.cc>
- <2024091602-bannister-giddy-0d6e@gregkh>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <2024091602-bannister-giddy-0d6e@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJFTR8QEwoJDANTgGOyMxX4d539ZjHUU2nzf-sB=Gu5bsHBfyQ@mail.gmail.com>
 
-Hi Greg,
+Hi Jesse:
 
-On 2024/9/17 01:51, Greg KH wrote:
-> On Mon, Sep 16, 2024 at 09:56:13PM +0800, Yiyang Wu wrote:
->> Introduce Errno to Rust side code. Note that in current Rust For Linux,
->> Errnos are implemented as core::ffi::c_uint unit structs.
->> However, EUCLEAN, a.k.a EFSCORRUPTED is missing from error crate.
->>
->> Since the errno_base hasn't changed for over 13 years,
->> This patch merely serves as a temporary workaround for the missing
->> errno in the Rust For Linux.
+On 10:18 Mon 16 Sep     , Jesse T wrote:
+> On Sun, Sep 15, 2024 at 10:45 PM Yixun Lan <dlan@gentoo.org> wrote:
+> >
+> > Hi Jesse
+> >
+> > On 10:45 Sun 15 Sep     , Jesse Taube wrote:
+> > >
+> > > Before pinctrl driver implemented, the uart0 controller reply on
+> > > bootloader for setting correct pin mux and configurations.
+> > >
+> > > Now, let's add pinctrl property to uart0 of Bananapi-F3 board.
+> > >
+> > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> > > ---
+> > >   arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts |  3 +++
+> > >   arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi    | 20 ++++++++++++++++++++
+> > >   arch/riscv/boot/dts/spacemit/k1.dtsi            |  5 +++++
+> > >   3 files changed, 28 insertions(+)
+> > >
+> > > diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > index 023274189b492..bc88d4de25a62 100644
+> > > --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > @@ -4,6 +4,7 @@
+> > >    */
+> > >
+> > >   #include "k1.dtsi"
+> > > +#include "k1-pinctrl.dtsi"
+> > >
+> > >   / {
+> > >       model = "Banana Pi BPI-F3";
+> > > @@ -15,5 +16,7 @@ chosen {
+> > >   };
+> > >
+> > >   &uart0 {
+> > > +     pinctrl-names = "default";
+> > > +     pinctrl-0 = <&uart0_2_cfg>;
+> > >       status = "okay";
+> > >   };
+> > > diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+> > > b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+> > > new file mode 100644
+> > > index 0000000000000..a8eac5517f857
+> > > --- /dev/null
+> > > +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+> > > @@ -0,0 +1,20 @@
+> > > +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> > > +/*
+> > > + * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
+> > > + */
+> > > +
+> > > +#include <dt-bindings/gpio/gpio.h>
+> > > +
+> > > +#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
+> > >
+> > > It would be nice to have a pinfunc header like
+> > > arch/arm/boot/dts/nxp/imx/imx7ulp-pinfunc.h.
+> > > It would reference and encode the data of "3.2 Pin Multiplex" in
+> > > https://developer.spacemit.com/documentation?token=An1vwTwKaigaXRkYfwmcznTXned
+> > > , the document you attached in the summary.
+> > Not sure if it's worth the effort..
 > 
-> Why not just add the missing errno to the core rust code instead?  No
-> need to define a whole new one for this.
-
-I've discussed with Yiyang about this last week.  I also tend to avoid
-our own errno.
-
-The main reason is that Rust errno misses EUCLEAN error number. TBH, I
-don't know why not just introduces all kernel supported errnos for Rust
-in one shot.
-
-I guess just because no Rust user uses other errno?  But for errno
-cases, I think it's odd for users to add their own errno.
-
-Thanks,
-Gao Xiang
-
+> I can send a future patch for this.
 > 
-> thanks,
-> 
-> greg k-h
+Ok, thanks, no objection from my side
+but, that gonna be a lot work as you need to list ALL the functions..
 
+> >
+> > I gave up of introducing another macro, as it's exactly one to one mapping to
+> > GPIO ID, which mean pin(x) -> GPIO_x
+> >
+> > maybe I could put a comment at K1_PADCONF() to document this?
+> 
+> I'm weary the Manual may not exist on the site in the future or
+> will change formats. But it would be nice otherwise.
+> 
+> >
+> > /* pin is same to the GPIO id according to 3.2 Pin Multiplex of User Manual */
+> > #define K1_PADCONF(pin, func) (((pin) << 16) | (func))
+> >
+> > does this sound good to you?
+> 
+> Sure, add it.
+> 
+> Also sorry for messing up the reply-to thing thunderbird is confusing.
+> 
+> Thanks,
+> Jesse Taube
+> 
+> >
+> > >
+> > > Otherwise,
+> > > Acked-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> > >
+> > thanks
+> >
+> > > +
+> > > +&pinctrl {
+> > > +     uart0_2_cfg: uart0-2-cfg {
+> > > +             uart0-2-pins {
+> > > +                     pinmux = <K1_PADCONF(68, 2)>,
+> > > +                              <K1_PADCONF(69, 2)>;
+> > > +
+> > > +                     bias-pull-up = <0>;
+> > > +                     drive-strength = <32>;
+> > > +             };
+> > > +     };
+> > > +};
+> > > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > index 0777bf9e01183..a2d5f7d4a942a 100644
+> > > --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > @@ -416,6 +416,11 @@ uart9: serial@d4017800 {
+> > >                       status = "disabled";
+> > >               };
+> > >
+> > > +             pinctrl: pinctrl@d401e000 {
+> > > +                     compatible = "spacemit,k1-pinctrl";
+> > > +                     reg = <0x0 0xd401e000 0x0 0x400>;
+> > > +             };
+> > > +
+> > >               plic: interrupt-controller@e0000000 {
+> > >                       compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
+> > >                       reg = <0x0 0xe0000000 0x0 0x4000000>;
+> > >
+> > > --
+> > > 2.45.2
+> >
+> > --
+> > Yixun Lan (dlan)
+> > Gentoo Linux Developer
+> > GPG Key ID AABEFD55
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
