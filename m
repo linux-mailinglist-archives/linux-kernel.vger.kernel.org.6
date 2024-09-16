@@ -1,154 +1,135 @@
-Return-Path: <linux-kernel+bounces-330115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB739799E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:04:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7F99799EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC125282A2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:04:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DD9A282D42
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AC48F70;
-	Mon, 16 Sep 2024 02:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB6BDF5B;
+	Mon, 16 Sep 2024 02:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/5zcmfi"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Od+lUWrZ"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A43C8E9;
-	Mon, 16 Sep 2024 02:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA4E2F5E;
+	Mon, 16 Sep 2024 02:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726452276; cv=none; b=IQvOXMvdUgr5bZL42D+Xjf9j6Ea4+Bdyanc9hIMR/t7MdtnezYxxnQ1LwRgOBd2OPaWAON1U4MqzjAbzwvv4ZGR20ke4qZjzIM8FfEG7gbyfWnkd5M9yEt+qeptI+9THjgPsKi7JFwPMxN4IwCFvAD/dDhmRh6t7+C4L+27hcJQ=
+	t=1726454008; cv=none; b=YQ6yELkdIbDft0AFBxAj1zWIKQ6DdacZBbpZw3n8Q9Toxny1mecURI+SBnPgZQ87ZhbOw7e7IdUhAA8QA6V40cyTpRB9ql6egJL84xEkiARDQ3aSpU+uIyGOQpdImYARmjccY/3oXb0uE6GUvRsNnxfqI7yqCoQKL2IGecb6ruk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726452276; c=relaxed/simple;
-	bh=WUYLE36L+WCT8uDtjp0Z6sx/J6FpuWUiwQ1JKa3K3do=;
+	s=arc-20240116; t=1726454008; c=relaxed/simple;
+	bh=MZ0NHCtipHHyGF/fEfMurW1Ve+iCzXkVDy+P5sxjk60=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DDhXfhiu1fJTK4bx8q2T6o5MJMLyBG4SmL6niespsx88af/UXE8C5ZHQjapgkNeyoAzgwhQy655CZ8C09wYjfJpcVnM0om+MXIT5WU+1iK4jPPyqvUBH1kwpqZHK5jueR8hToar7ioSLn+n92okU/WdM0zflDAZLPpuk/6ZXj3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/5zcmfi; arc=none smtp.client-ip=209.85.210.175
+	 To:Cc:Content-Type; b=oNa6bPHNCtvYl19g7AiWX3FlnyCL+nRo+20HjU6PQlwpo2yEjKaeNEr8rj+k/BzTcfnnn+HR8X0WtcJlE5gp42D6GpHG8YD8vv6abQLvoVRMQSKoFqrV65t3URF8wVaL+B+w6FR4jQnkETsunw7pbM20hkL0RqXMa4vX77RlI4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Od+lUWrZ; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7191df6b5f5so2739482b3a.0;
-        Sun, 15 Sep 2024 19:04:35 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53568ffc525so4492182e87.0;
+        Sun, 15 Sep 2024 19:33:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726452274; x=1727057074; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726454005; x=1727058805; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WUYLE36L+WCT8uDtjp0Z6sx/J6FpuWUiwQ1JKa3K3do=;
-        b=a/5zcmfi5TuAiynNyHarFHO6UGsX0xl1ZtKJn+3T9wlZ10kwAWPYzeJNfvdWf5NZGS
-         M0I9MHiwhgYr5sD/3ft57+5kKRD+HjySVJH/+NOkIQuKiric4q/QoAtZ3dqIG/+G+kSI
-         sV4LWHtFntJPNnq8vhqFTpJpu3IIZ2S2aHQymhxqBgwG9GOLucGYmMp+b3AeY4NkYoha
-         ZB2DmiSm0QKRbDFBkMsGNlDKZUT4ZoiheuozmnEFsxX8LfDLtB2mk46bwjGKPmJL1D+p
-         O1AYAvx85Wxto95WlJ38ZYZxUtjHbfXDri9K4ylownFKAcVdgdsMUJ1c61U3GmVyvEUo
-         RFxA==
+        bh=ggg4JtFM6ycNThd/2kQHdL3j4PMBkevtt6B9BIc3upo=;
+        b=Od+lUWrZZunXKJtvHFCNiF4nYqQvcTozzgNkLQKWvhjuZo5eOqOoI06c/ipjM7apcl
+         zkbT/DTKo17k0LYPeIH+PLH5/TQp6OYgM/ghz/feYWiyCIK9CR7+whTSYLjWmo6CPTes
+         t9qh/W1KuOCQZBJZ0CF5FK5bgdHdUsYRoGVCcqJ5Pzip2wkTKFVPL5ZwnesbshFOcMc6
+         AeCEkywS8bPB4e53uu8yJkdiAU6BY7I0pzWg5UyRmxaXzNw3pg1beTzUlsoOtncTi3fR
+         dUsx79HtOFGiHSJDLr5o75+KhK6T5z2gCDkZdb61mpIcVDK5x9svHj3e179KHLoFn+4B
+         6gyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726452274; x=1727057074;
+        d=1e100.net; s=20230601; t=1726454005; x=1727058805;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WUYLE36L+WCT8uDtjp0Z6sx/J6FpuWUiwQ1JKa3K3do=;
-        b=Er+Hq1Fwx9TsUYGEUbgkrK/pZGVJrILl6rHd1gg3MiRHhnLviWb40X2HzX95+juy9d
-         QE5NGTe4HO6vMaN8zmDs8CP/p4DhNNAoU1WGUANG6HQVCkrYOSTyUijaI0T5h9UIfRnQ
-         vhPBS828dtP+/u4g2emq4DOMZq03hEbQyDErSo9d+xigHvyKMjALQtwaYO5XvT/3mkFZ
-         +bEG4DTFqhE+7eoDzqE9cbyr2M6eFU6rjnbYeMcwkJxJqsPM9OA89TeRaClA61jrLWAv
-         Yp+da1rG839AhxSW7q28XT0X0EaSK5DraZak0LeJNyq3aX7/fhNgClmkUKiHXjsYXb85
-         Yu5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVpsHBvNLgap1Pkwl1ZTF9UY/iXQCA9tYh2Cgpk93EKYSdQnoYwz4INDxZHPV9SKvrDaILrTLkxnvJx@vger.kernel.org, AJvYcCXN74112CUPOjg5IqqHbIQ1lUoXD/yaUi51xUg8k+KhuwCOtOhhWAEI9jAPBB9Gh+sDj3kuvJmYG+iwDyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGm+CPD6NgvsmeY+4UPWsCwHfLm+E6IpZC7RplZhzaINJfAvAm
-	WRfeq0Irnx4TtrA78FO7wk6qeDZGGtOcvnB0IEzXfSmmNKWY7dBQ9rVx4xvu9wLGIfduBrQYS8D
-	I7VAi7U+4Mm1i/bCKHgHUngWohE8K2K+L
-X-Google-Smtp-Source: AGHT+IE1bMaUA+fWmy8vQqyozHauW12KHm7QnUONI2Y5N/KmorxOP48n87iqTLgiisx7W6UHIt+6q6B5v9YN4nWnOaY=
-X-Received: by 2002:a05:6a00:2e94:b0:706:6962:4b65 with SMTP id
- d2e1a72fcca58-719260915c1mr20491032b3a.14.1726452274382; Sun, 15 Sep 2024
- 19:04:34 -0700 (PDT)
+        bh=ggg4JtFM6ycNThd/2kQHdL3j4PMBkevtt6B9BIc3upo=;
+        b=BE88Pw8C2P7R3JKwK4LHN8UZqgRKdnbvnxyoSy28DwM+IvxKwZc/5xmb53cxBIxWqu
+         SM9CXSrdJST9QeOxzAxLUm2v4Mssnh0k4N+yv8GU5k+62pQ0VT0PiJ0HitjHtVykjpIR
+         KvD//YNjZ0K+XVvRAGV2pGHPhw79tgRPbIJ49r+VjEw/J96Q0elagzRuk91mqAzxeNBL
+         5dLNQQUUXyp4aXLOUkLvaXk+EVzMDXkcZeosAvDTD9a/WVrXHsDQpsljx6fXliZKen+g
+         k2R6TcTh3f3pYBoZhYoaBlfOFWm2q15TCtlM8kMhaKnkldHxj5BlMb7911oakqbt6onE
+         OH4A==
+X-Forwarded-Encrypted: i=1; AJvYcCX1bmPyX6szX5rtR+wqiNgch8NL3PeSd2TwcaZDYyVdOGwi5K9nmXQaf3JTUUj2aKhLyOqmJTUfopCfv1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsSdJPu5eAbBW1bwGhiwG69tbKVQGYg8xHPDs7PRiDo1ZMqq2N
+	dKk8XTfrLwTZqQRbluYtsEuDziveytw8V62ktLRCS7K4r5FzyLiqQQG89NLCBlWtxFQRT5JYFrU
+	wBvSQZsnoW3OLkF4DYSntbBkOKgg=
+X-Google-Smtp-Source: AGHT+IGeZY8Ra6ArZv5eqM8elTcbTLcBII9Rw/xiPZlwQLnWVfFQfMRKc3Xz/ZMUEZqddmaCaBV0/dSIYxnyqejs6pI=
+X-Received: by 2002:a05:6512:3d23:b0:52c:99c9:bef6 with SMTP id
+ 2adb3069b0e04-53678fb1929mr6907629e87.7.1726454004592; Sun, 15 Sep 2024
+ 19:33:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911051716.6572-4-ki.chiang65@gmail.com> <20240911093828.58129593@foxbook>
- <CAHN5xi235kgU8Xd0VYw6r5NeieCM8uqWjgPnLSP1haAFqgcFsw@mail.gmail.com> <20240912091203.3ac9b88a@foxbook>
-In-Reply-To: <20240912091203.3ac9b88a@foxbook>
-From: Kuangyi Chiang <ki.chiang65@gmail.com>
-Date: Mon, 16 Sep 2024 10:04:30 +0800
-Message-ID: <CAHN5xi1hwMi3v9j5OPJjWqtPwVHw_6AycyYeGBmApD+4RwtSZQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] xhci: Some improvement for Etron xHCI host
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, mathias.nyman@intel.com
+References: <20240915180448.2030115-1-jarkko@kernel.org> <CALSz7m0ehXM+dU3z0xYPLQkHbyfyMjoCOoMLdBgRcUu1pnT_ww@mail.gmail.com>
+In-Reply-To: <CALSz7m0ehXM+dU3z0xYPLQkHbyfyMjoCOoMLdBgRcUu1pnT_ww@mail.gmail.com>
+From: Pengyu Ma <mapengyu@gmail.com>
+Date: Mon, 16 Sep 2024 10:33:12 +0800
+Message-ID: <CALSz7m1WG7fZ9UuO0URgCZEDG7r_wB4Ev_4mOHJThH_d1Ed1nw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] tpm: lazy flush for the session null key
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, James.Bottomley@hansenpartnership.com, 
+	roberto.sassu@huawei.com, Peter Huewe <peterhuewe@gmx.de>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+After applied your patches, the boot time is ~15 seconds.
+Less than 20 sec, but still much more than 7 sec when disabling HMAC.
 
-Thank you for testing the patch.
+Send again in text mode.
 
-Micha=C5=82 Pecio <michal.pecio@gmail.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=
-=8812=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=883:12=E5=AF=AB=E9=81=93=
-=EF=BC=9A
->
-> Hi,
->
-> > > I'm aware of one more bug which affects my Etron: if an error occurs
-> > > on an isochronous TD, two events are generated: first the error,
-> > > then "success", even if the error is on the final TRB (the common
-> > > case). Then the "success" causes "TRB DMA not part of current TD"
-> > > warning. I suspect that all Etron chips are the same. This should
-> > > be easily reproducible by unpligging an audio/video device while
-> > > streaming.
-> >
-> > Hmm, I don't encounter this problem.
->
-> OK, I know what happened. This bug only affects SuperSpeed isochronous
-> endpoints. If you don't have this kind of device, you will not see it.
-> I checked that High-speed isochronous errors are reported correctly.
->
-> My motivation to develop a workaround for this bug has just decreased
-> another notch.
->
->
-> On the other hand, I was unable to reproduce the control transfer bug.
-> The exact chip I have is labeled "EtronTech EJ168A", for the record.
->
-> You are right, not all transfers have the data stage and transactions
-> get out of sync with segment boundaries. I modified the patch to only
-> print a warning instead of queuing a No-Op and then did various things
-> which use control transactions: setting baud rate on serial, changing
-> the volume on audio, starting video recording on a webcam, running
-> ethtool on a NIC.
->
-> The warning was printed a few times, but nothing interesting happened.
-> Dynamic debug was enabled on handle_tx_event() - no errors reported.
->
-> Maybe a different silicon/firmware revision, or maybe it's another
-> SuperSpeed-only bug, or other special conditions for it to happen?
 
-Do you see any "Transfer error for slot..." error message?
-What is the speed of your device? high speed?
-I try to downgrade my ethernet adapter to high speed and do some tests,
-no errors are reported in dmesg if dynamic debug is enabled.
-I think it is a super speed issue, however, it doesn't happen on the high
-speed device, I am not sure. So the patch will not check the speed of the
-device.
 
+On Mon, Sep 16, 2024 at 10:25=E2=80=AFAM Pengyu Ma <mapengyu@gmail.com> wro=
+te:
 >
-> > Ok, I will use one quirk XHCI_ETRON_HOST for these workarounds in the
-> > next patch revision.
-> That was just a suggestion, you should ask Mathias Nyman, I suppose.
-
-OK, thanks.
-
+> Hi Jarkko,
 >
-> But, again, my impression of this hardware is that it's pretty bad
-> and full of bugs, and they are bizarre enough to likely be unique.
+> After applied your patches, the boot time is ~15 seconds.
+> Less than 20 sec, but still much more than 7 sec when disabling HMAC.
 >
-> Regards,
-> Michal
-
-Thanks,
-Kuangyi Chiang
+> Thanks,
+> Aaron
+>
+>
+> On Mon, Sep 16, 2024 at 2:04=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.or=
+g> wrote:
+>>
+>> There is no load and flush the null key for every transaction. It only
+>> needs to be flushed when user space accesses TPM. This postpones the
+>> flush up to that point.
+>>
+>> The goal is to take the first step addressing [1]. Other performance
+>> improvements are needed too but this is the most obvious one and
+>> easiest to address.
+>>
+>> [1] https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
+>>
+>> Jarkko Sakkinen (4):
+>>   tpm: remove file header documentation from tpm2-sessions.c
+>>   tpm: address tpm2_create_null_primary() return value
+>>   tpm: address tpm2_create_primary() failure
+>>   tpm: flush the session null key only when required
+>>
+>>  drivers/char/tpm/tpm-chip.c       |  13 ++++
+>>  drivers/char/tpm/tpm-dev-common.c |   7 ++
+>>  drivers/char/tpm/tpm-interface.c  |   9 ++-
+>>  drivers/char/tpm/tpm2-cmd.c       |   3 +
+>>  drivers/char/tpm/tpm2-sessions.c  | 115 ++++++++++--------------------
+>>  include/linux/tpm.h               |   2 +
+>>  6 files changed, 68 insertions(+), 81 deletions(-)
+>>
+>> --
+>> 2.46.0
+>>
 
