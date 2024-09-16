@@ -1,114 +1,96 @@
-Return-Path: <linux-kernel+bounces-330698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F81197A2DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:22:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1BB97A2D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524AB1C21F6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FDD61F21AFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30671155741;
-	Mon, 16 Sep 2024 13:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC70156228;
+	Mon, 16 Sep 2024 13:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="Xa1xdy5w"
-Received: from smtp1.math.uni-bielefeld.de (smtp1.math.uni-bielefeld.de [129.70.45.10])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jjCVpIhQ"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101091862
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C189153BEE;
+	Mon, 16 Sep 2024 13:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726492938; cv=none; b=qs3WcUl7JKcUMrmwMNaoHsaDP1dQRKMs5e6/iWkStMjxCalV2Uu9RpRtE+5GOFpgHYCosqjL79EhSy+DYk5IT0fBcyn6i6C/rtUQ+0EPWoedvzfJqs24ytZD5Rge2vjAVm8ntrmnfdq3v+0GS1wpVgu2ntvlUqSLdEEJf2c0BuY=
+	t=1726492795; cv=none; b=Wbwj7ABEPri6jkQbsaOK4R33VrPoE49enHIIAZBKEgnoBzlHone3CYdMR21oeT6zC6TQL0+NjEYX6evgBJfpief2L4AV0ifL5REs6Y0fDqEsL4G5B1QdE3Vudr4e0fXFbzYldHotuvwuiRHQSxmG8ph+dcbhLMfTwKBXyeXNipw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726492938; c=relaxed/simple;
-	bh=ts4qHaRPC3o9DL2A8J29gR6K2XZT+maNirNuxok4Xh8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H1Pu9cUJ6OvOfEZuyApaBadoU/nVfUHf4Z51RM4SmrKsM+EXK6v6y5M4FrpJj0p2JVfYaVSXAj/AKAy+ZznJW2okh/gqEjFc9qwjGGVV9vZ6HUE1nXjfqtJQTHPBysCHrSsIOiXyQGgr50MD92AoWUAKT4jwfScRt/E1rtUoflw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=Xa1xdy5w; arc=none smtp.client-ip=129.70.45.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
+	s=arc-20240116; t=1726492795; c=relaxed/simple;
+	bh=ERdIfMR2uvWrz1IUsYwPvNndgl85YW06MtCLXaZa2bA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WI/jD28bkMCOFjcSeOkf+nUEv86Xuw5+K5WpxVD/5Q9rZkj4sjQKMIM8IHlmZY1EI1UXUsr9Dqr7YQDBbOBjXOO4sE8+G1+brFMjkOU6pCr8rOBxZszGhyb+DsWpZsBkmyW8w67wk7Kiox4prJG39RuZSCEF8SRpI8iqrTs3AeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jjCVpIhQ; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=math.uni-bielefeld.de; s=default; t=1726492934;
-	bh=ts4qHaRPC3o9DL2A8J29gR6K2XZT+maNirNuxok4Xh8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Xa1xdy5wZK4tT6o7LBudYT5N2YQ+ih2UT6Z5rTb7gkhwBAn6SmnKeoKHeBTAPa+jq
-	 /jwUqBaffXxJOHLhOnzBbcrXwYltjfL9uTDb4mj0ApeEt6gDJfjerHI7exHk1swC3t
-	 IYhWYd/tS1nunp2HVLTrC35mCgipHO4kCQqurVwUYwdTHTmcvywS4jfYh1omWgPjpq
-	 cwhzSptcYjfRDZhCY09ZR4CWpDlbNyp0MqkEFUIRTPHPGqpKH/ISwj58N/8u3h4Gbp
-	 pf7Asq2kz0pLcUm5pY63fGgZghZAqax69gzRUhgieH8JmxYA9pkmG1JZ2BVwvr6bH3
-	 LHHimzc04n15g==
-Received: from localhost (dslb-088-074-203-146.088.074.pools.vodafone-ip.de [88.74.203.146])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp1.math.uni-bielefeld.de (Postfix) with ESMTPSA id B986D2066F;
-	Mon, 16 Sep 2024 15:22:14 +0200 (CEST)
-From: tjakobi@math.uni-bielefeld.de
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: =?UTF-8?q?Joaqu=C3=ADn=20Ignacio=20Aramend=C3=ADa?= <samsagax@gmail.com>,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	Denis Benato <benato.denis96@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm: panel-orientation-quirks: Add quirk for AYA NEO GEEK
-Date: Mon, 16 Sep 2024 15:18:55 +0200
-Message-ID: <40350b0d63fe2b54e7cba1e14be50917203f0079.1726492131.git.tjakobi@math.uni-bielefeld.de>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <cover.1726492131.git.tjakobi@math.uni-bielefeld.de>
-References: <cover.1726492131.git.tjakobi@math.uni-bielefeld.de>
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726492793; x=1758028793;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ERdIfMR2uvWrz1IUsYwPvNndgl85YW06MtCLXaZa2bA=;
+  b=jjCVpIhQegne2sWTCnoFUZ7l0abrZaLsna77zmM10NiRMdkMycQuR5Xn
+   Yf4HaXIJd8F9AUS7fa13whZNyLqqXNIkmki7nafwIXFdN9TrA1fKo34AE
+   +gUQvTQcefZWz6lObXVN7CTPZVyxkS1f3AJbE6Xuxi+10MyX7zttxHtob
+   R+NvfzBw9y7m+zuhWZU1O/sUlpMXEPgjUmojrD2YEvhkfYXWki2KCXRxV
+   n4nak6qxJR7hdpXh1WbEaueMO4Y/kA118cvWdyz5AEX6C6TJcxrm+Ir2z
+   uh4IcW9CaH+whzqPLqmYVO4Yr1yEphJKn/VKtaVZ56o4Ith7pp6uX148M
+   g==;
+X-CSE-ConnectionGUID: oIAdU8ucQc2W5w/WcMunEw==
+X-CSE-MsgGUID: UzSuz8qSS7G2B7V5/I5gkQ==
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="31717729"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 06:19:52 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 16 Sep 2024 06:19:29 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 16 Sep 2024 06:19:26 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>
+CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Andrei Simion <andrei.simion@microchip.com>
+Subject: [PATCH v2 0/2] Updates for Atmel SSC DAI
+Date: Mon, 16 Sep 2024 16:19:08 +0300
+Message-ID: <20240916131910.22680-1-andrei.simion@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Joaquín Ignacio Aramendía <samsagax@gmail.com>
+This patch set includes two updates for the Atmel SSC DAI driver:
+- Address the limitation with the S24_LE format.
+- Add stream names for DPCM and future use-cases.
 
-Add quirk orientation for AYA NEO GEEK. The name appears without
-spaces in DMI strings. The board name is completely different to
-the previous models making it difficult to reuse their quirks
-despite being the same resolution and using the same orientation.
+Codrin Ciubotariu (2):
+  ASoC: atmel: atmel_ssc_dai: Add stream names
+  ASoC: atmel: atmel_ssc_dai: Drop S24_LE support due to single channel
+    limitation
 
-Tested by the JELOS team that has been patching their own kernel for a
-while now and confirmed by users in the AYA NEO and ChimeraOS discord
-servers.
+ sound/soc/atmel/atmel_ssc_dai.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Signed-off-by: Joaquín Ignacio Aramendía <samsagax@gmail.com>
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-index d1302123071e..1e556f9dd574 100644
---- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-+++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-@@ -208,6 +208,12 @@ static const struct dmi_system_id orientation_data[] = {
- 		  DMI_MATCH(DMI_PRODUCT_NAME, "AYA NEO Founder"),
- 		},
- 		.driver_data = (void *)&lcd800x1280_rightside_up,
-+	}, {	/* AYA NEO GEEK */
-+		.matches = {
-+		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYANEO"),
-+		  DMI_MATCH(DMI_PRODUCT_NAME, "GEEK"),
-+		},
-+		.driver_data = (void *)&lcd800x1280_rightside_up,
- 	}, {	/* AYA NEO NEXT */
- 		.matches = {
- 		  DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+base-commit: 7083504315d64199a329de322fce989e1e10f4f7
 -- 
-2.44.2
+2.34.1
 
 
