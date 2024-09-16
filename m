@@ -1,116 +1,84 @@
-Return-Path: <linux-kernel+bounces-330165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38563979A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:58:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7F3979A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A891F236C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:58:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A36A2B20E73
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08091CF93;
-	Mon, 16 Sep 2024 04:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A5E4C618;
+	Mon, 16 Sep 2024 05:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nMicJQhp"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="Lr3XnNI5"
+Received: from out0-210.mail.aliyun.com (out0-210.mail.aliyun.com [140.205.0.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C4B208CA;
-	Mon, 16 Sep 2024 04:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534DB50284
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726462690; cv=none; b=QmRcgQaggv1B0NEMkqF6WJ2J9vzwljF0tw0oMWhX2D4ZP5UnLtMSe/O+GYPwSu+Q4cYN8MLgU+aOoSJOT2SokxCEEV1nVC+1Tuifm/u1FjZ0YKRD1X4YUU3o0iPErcSu0tFahrtjVnA1s8UHOqIWnMaZzpxGTbxKgEZ3qPXWj7k=
+	t=1726462834; cv=none; b=NVxHi7s4hHLoez7tGAeBnLjN1/KRkb1spkwpMlT1N7LSGQAhCQOoK4mfA5AbqXk5dlc4nhoEfoJQBMJ/jJtY/VUkgliXhfQ0Hkna+IccjAxXIkdUxl63wzfsHXyc5DqwXhU9FQ04ZBp/mDZWDcKRNk3GLHDvBDJocuWjmNQezAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726462690; c=relaxed/simple;
-	bh=P/jTmtzlqvETKkHYXqQBskfiSEmsJUNd4ukE5yVznIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=E9DLqnCmpLsbWZmqJlkRfgWdkFUFwCEk+I3krqsGrJYsiyZQYYSNCrf1acoJWBufH25tahQqkhrd5bjdwblu1r3gu/sFbU//TtNxaNOfxpvTfHnfcsuqeagJK5dCi0ZITK67HHUXUEzHouETh+MWAxm4moVYX4dwvToX13R1t4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nMicJQhp; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726462684;
-	bh=SGvh2KrCSkdxgT9cqqyW72ZphrRxJSgV7dWMDYAvspI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nMicJQhpuC1K20IyWIyWvhpfHHPk1MXTMX/ZTGGfEoITpJMQ25Kat760Fd5Fj3+bg
-	 HICU3/2lIYJpEvRD7A9J36AVGn5LNRF2dIk7ilMw2lKakVZABcNCX4XD6wX1WkRD5d
-	 Kd8N+2pfJ1UceAtGGYtrXr+IrQPR1lFPrUUw/zKtU98V2196vfqEHdPZnPTC5UfVsg
-	 yBOWWN2jzltJvouu3ZQm9+zNV5OFc8/ETyHMO6QvM2xfCSuoK4QjWg1zR+YLl6oiUz
-	 DX6aoyAjt4E2N2pcj1klISM66bgCK1ALIu87u6LH/fNWnldBBsLoiUjEv8qjSrB3Hb
-	 +kmFX19p7nXBw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6XjP5Zddz4xCV;
-	Mon, 16 Sep 2024 14:58:01 +1000 (AEST)
-Date: Mon, 16 Sep 2024 14:58:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Takashi Iwai <tiwai@suse.de>, Olof Johansson <olof@lixom.net>, Arnd
- Bergmann <arnd@arndb.de>
-Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, ARM <linux-arm-kernel@lists.infradead.org>,
- Mark Brown <broonie@kernel.org>, Nikita Shubin <nikita.shubin@maquefel.me>,
- Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
-Subject: linux-next: manual merge of the sound tree with the arm-soc tree
-Message-ID: <20240916145800.743302ec@canb.auug.org.au>
+	s=arc-20240116; t=1726462834; c=relaxed/simple;
+	bh=ce4wRwk8gpNOXbsBFkbMo0/grK2bV8MLHmm8TrU5jbU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qvL6phSbeXnD+2jfnII253RvdexaispaJvIUspjz71ID3+uhus+3aKJNlhydEyxLvgWBpoFcMTLBicSeYaoCU/H3yTW6VPYts+ipgjK/Blcr4BWLcdANpU+Wp1WmQY11G6YPH0cY6bZEWVfOJy3veZvjsdVXVLYLZKcwlvtPGbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=Lr3XnNI5; arc=none smtp.client-ip=140.205.0.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1726462802; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=LqAz2DZDSQfpAEuQL5O51eFz4tgSk7iYOPQ8/l20hj0=;
+	b=Lr3XnNI5ZcjPlpd4ejrmAwx4V5IB7THn21Jv7pybaaf+Bf3QXSNm+AzSWhzOWrem8YWUqk/wfpQKZi5O8lXmqPPPj2H+tK/sIQ8Yi0YTLnjgbYZ49lMfmFlsCF41kfWGYD80Tzs1rePHPkZ1C6CDGsbSspjdCfOggiNtWyDEJ3w=
+Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.ZKOkLOT_1726462796)
+          by smtp.aliyun-inc.com;
+          Mon, 16 Sep 2024 13:00:02 +0800
+From: "Tiwei Bie" <tiwei.btw@antgroup.com>
+To: richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net
+Cc:  <linux-um@lists.infradead.org>,
+   <linux-kernel@vger.kernel.org>,
+   <benjamin@sipsolutions.net>,
+  "Tiwei Bie" <tiwei.btw@antgroup.com>
+Subject: [PATCH v2 0/4] Minor physmem cleanups/fixes
+Date: Mon, 16 Sep 2024 12:59:46 +0800
+Message-Id: <20240916045950.508910-1-tiwei.btw@antgroup.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9CVimmwn12Biz5BvpeTDfeD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/9CVimmwn12Biz5BvpeTDfeD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Changes in v2:
 
-Hi all,
+- Add "um: Fix potential integer overflow during physmem setup";
 
-Today's linux-next merge of the sound tree got a conflict in:
+v1: https://lore.kernel.org/all/20240913142137.248245-1-tiwei.btw@antgroup.com/
 
-  sound/soc/cirrus/edb93xx.c
+Tiwei Bie (4):
+  um: Remove the redundant declaration of high_physmem
+  um: Fix potential integer overflow during physmem setup
+  um: Remove highmem leftovers
+  um: Fix the definition for physmem_size
 
-between commit:
+ arch/um/drivers/virtio_uml.c       |  9 --------
+ arch/um/include/shared/as-layout.h |  3 ++-
+ arch/um/include/shared/mem_user.h  |  5 ++---
+ arch/um/kernel/mem.c               |  3 ---
+ arch/um/kernel/physmem.c           | 36 +++++++++++-------------------
+ arch/um/kernel/um_arch.c           | 19 +++++++---------
+ arch/um/os-Linux/main.c            |  5 +----
+ 7 files changed, 26 insertions(+), 54 deletions(-)
 
-  7a9a9110d765 ("ASoC: cirrus: edb93xx: Delete driver")
+-- 
+2.34.1
 
-from the arm-soc tree and commit:
-
-  130af75b5c05 ("ASoC: Switch back to struct platform_driver::remove()")
-
-from the sound tree.
-
-I fixed it up (I removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9CVimmwn12Biz5BvpeTDfeD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbnutgACgkQAVBC80lX
-0GwhNAf+L14dWyGJLxdRhRIHsGZigQ+1g5GW0KgRjOsdSytBn4eV68gVwh9Yy2yZ
-WvUrPBjyefc+kF5v5ZIN4LwWkr2ly7RA3HuFn/4Ioi/mpiSAZqC/cuaCrqKukXaM
-36eg2MtifWjt7dfVgN2t2YlWPuw6sHRlXzoy2YbmFIkN3pwuySnQhdVZYzdF54+r
-Cws8G3zB+U9sofomOFUFAUdrymAvmc9NKy0Ju8Ms1PgtXNhEgI9ex5n3yjkyzhT9
-gCmjfB/RLELpnNuTB6ico5Lx0HYhbNYvGemzXBI6rvnkqpBXfHrlAD7EPIbefNvy
-Q8Rg/I2Y7tvIXF8t26ukiaTyPo+MzQ==
-=dddB
------END PGP SIGNATURE-----
-
---Sig_/9CVimmwn12Biz5BvpeTDfeD--
 
