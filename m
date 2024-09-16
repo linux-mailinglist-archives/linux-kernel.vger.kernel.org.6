@@ -1,318 +1,116 @@
-Return-Path: <linux-kernel+bounces-330738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7495997A39F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:05:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A1697A3A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300D428B9F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:05:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CE58B28D11
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711F8192D84;
-	Mon, 16 Sep 2024 13:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A1F158D63;
+	Mon, 16 Sep 2024 13:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="OBq4tMd5"
-Received: from mail.tlmp.cc (unknown [148.135.17.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="auUZxqA5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175571925B6;
-	Mon, 16 Sep 2024 13:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15395158A3D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495047; cv=none; b=usfwa/6ZbdVHRj4zs44cIR1bRLIa+OY8+cYL4OTNRX53rS1uIOmKPl7fuLkjXB62y9bTjtlXKN5l3hTZ3kGfQWILoBcelomv2Me6cxSRmSU6SH+7/kVEX2yxoGGJdmlfCi5Q0ta+mzXG08Laoxb6NEv3AuYjU6NpCrR7qsWej8U=
+	t=1726495079; cv=none; b=rQOscUwGh/N2Ay3Ta4h23TpRsOMUHPdw5AsUhlEyw2trWxtOW4tH+ZkLdzIxxIP7HMnhbMvJuEegqo9eqqWHghC1EgTIj+Br4gS5d+36xkjwErNb9IBZ6GuhX2+ANMDsHxFk5e9Gki89HQwn7c6l9D9nYLoU4wjOq4CzLTyLrfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495047; c=relaxed/simple;
-	bh=IbqHVfFbye38HXIk4ja/9ILQ7+ASn23iwfedn4kSYa4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jUtIRtGyeAcL+1jxGaculGf42yhK8ZTT+7K3lI4N+AQdEpnj24HKBBiXQdstyLBFcgPjfyhNvX5+bDdT8vNIN5lzd+XsaVXhkeyvsd9O2bDlL/57GCL5gQe2BNrvUEftgybQ272lSyAx5IqyGbkk6DhpZbvhhuouiScDafK536I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=OBq4tMd5; arc=none smtp.client-ip=148.135.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4B6EF6984F;
-	Mon, 16 Sep 2024 09:57:24 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1726495045; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=1pC3X6eZfUmCLid8GeSOP4AYR2slkMfkaqDKXR4//jw=;
-	b=OBq4tMd5dYEC3VbRFlTrDgJ/lGksSk/7sMmAwQyZTzjoDd5wCgs9eVvUoWrXGTmzjl1gDa
-	TeDBQH3Afx9YA958Hdk4c3RXefxejPxbat5ZHuSEHNhhSfQSgFu9EC6oB3j8f91y78BDo+
-	AudCJOL23givZmhLYVNf/+WRgtxOGJ8hYdG+6PcUlex5iiIgm1aBqEUFuIK0MQtFM2AtB3
-	axd12VcnG+Jx9Q7SA02HMmKWEpnx1oZ0au7byoIDk5fCKwr40CF6x1RpwhEtT6NTZlYm5D
-	nEjXbsW8XwpE3XcSOicA6n0Cxj0XTGwa/1FU4hHB+3pVCxvNC0y3afs5M3yScg==
-From: Yiyang Wu <toolmanp@tlmp.cc>
-To: linux-erofs@lists.ozlabs.org
-Cc: rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 24/24] erofs: introduce xattrs replacement to C
-Date: Mon, 16 Sep 2024 21:56:34 +0800
-Message-ID: <20240916135634.98554-25-toolmanp@tlmp.cc>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240916135634.98554-1-toolmanp@tlmp.cc>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+	s=arc-20240116; t=1726495079; c=relaxed/simple;
+	bh=bhLUWtKpFgWNf+sO48JGdTVG5DI4mhzhIdCqbtGu7Is=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=caKq6C0CbscTu8MUKLMR5Y8k83qxuXXgCzEgqLb/roL0KOvdQUpy2x+sNG0z4uy/DWqnThbKy4tMR6apndoS1mRAFIsoZ2VgM1FX1jQivc5wD7nD/+y42ns1GOxyMubCklHqmyYWoenoahQ1/Mdnds3hBXN2Qh19wXvj8XVlMvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=auUZxqA5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726495077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=qSe9nFsajjGVrtPKEEXutUfChv6Aj3O/z4jWE4PSPPE=;
+	b=auUZxqA59MMUGgAKFn7D0T3xrVIB430hOb/u3SEbSsTC1we6s2q7O8Bvq+XWQAL1nFBvgp
+	AYziRZujx4S9+gkJLMXfW3ni41AIVM12+3G8NyXnA8ocIm4NPNaFDrDaM2pbDIK8Wn+NFu
+	kaKNaKirOF7N7wCB5CBBqOwq2O2DHQQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-583-zye9ehsvMAG4Fe_pf_1wSA-1; Mon,
+ 16 Sep 2024 09:57:51 -0400
+X-MC-Unique: zye9ehsvMAG4Fe_pf_1wSA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6FB6E19772F5;
+	Mon, 16 Sep 2024 13:56:59 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.82])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3143A19560AA;
+	Mon, 16 Sep 2024 13:56:56 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 16 Sep 2024 15:56:47 +0200 (CEST)
+Date: Mon, 16 Sep 2024 15:56:43 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] function_graph: remove unnecessary initialization in
+ ftrace_graph_ret_addr()
+Message-ID: <20240916135643.GA23958@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-This patch introduces erofs_getxattr_rust and erofs_listxattr_rust to C
-and can replace the original xattr logic entirely.
+After the commit 29c1c24a2707 ("function_graph: Fix up ftrace_graph_ret_addr()")
+ftrace_graph_ret_addr() doesn't need to initialize "int i" at the start.
 
-Note that the original acl implementation is tweaked with a lifted
-function called erofs_getxattr_nobuf, so that difference of the calling
-convention of Rust side code can be bridged.
+While at it, move the declaration of "ret_stack" into the main loop.
 
-Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
- fs/erofs/Makefile        |   3 ++
- fs/erofs/rust_bindings.h |   8 +++
- fs/erofs/xattr.c         |  31 +++++++++---
- fs/erofs/xattr.h         |   7 +++
- fs/erofs/xattr_rs.rs     | 106 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 148 insertions(+), 7 deletions(-)
- create mode 100644 fs/erofs/xattr_rs.rs
+ kernel/trace/fgraph.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
-index 219ddca0642e..ad0650698f4b 100644
---- a/fs/erofs/Makefile
-+++ b/fs/erofs/Makefile
-@@ -10,3 +10,6 @@ erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += decompressor_zstd.o
- erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
- erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
- erofs-$(CONFIG_EROFS_FS_RUST) += super_rs.o inode_rs.o namei_rs.o dir_rs.o data_rs.o rust_helpers.o
-+ifeq ($(CONFIG_EROFS_FS_XATTR),y)
-+erofs-$(CONFIG_EROFS_FS_RUST) += xattr_rs.o
-+endif
-diff --git a/fs/erofs/rust_bindings.h b/fs/erofs/rust_bindings.h
-index ad9aa75a7a2c..e5a879efd9e2 100644
---- a/fs/erofs/rust_bindings.h
-+++ b/fs/erofs/rust_bindings.h
-@@ -28,4 +28,12 @@ extern int erofs_readdir_rust(struct file *file, struct dir_context *ctx);
- struct erofs_map_blocks;
- extern int erofs_map_blocks_rust(struct inode *inode,
- 				 struct erofs_map_blocks *map);
-+extern int erofs_getxattr_rust(struct inode *inode, unsigned int flags,
-+			       const char *name, void *buffer, size_t size);
-+extern ssize_t erofs_listxattr_rust(struct dentry *dentry, char *buffer,
-+			       size_t buffer_size);
-+#ifdef CONFIG_EROFS_FS_POSIX_ACL
-+extern int erofs_getxattr_nobuf_rust(struct inode *inode, int prefix,
-+				 const char *name, char **value);
-+#endif
- #endif
-diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
-index a90d7d649739..0296c5809695 100644
---- a/fs/erofs/xattr.c
-+++ b/fs/erofs/xattr.c
-@@ -8,6 +8,7 @@
- #include <linux/xxhash.h>
- #include "xattr.h"
- 
-+#ifndef CONFIG_EROFS_FS_RUST
- struct erofs_xattr_iter {
- 	struct super_block *sb;
- 	struct erofs_buf buf;
-@@ -122,6 +123,7 @@ static int erofs_init_inode_xattrs(struct inode *inode)
- 	clear_and_wake_up_bit(EROFS_I_BL_XATTR_BIT, &vi->flags);
- 	return ret;
- }
-+#endif
- 
- static bool erofs_xattr_user_list(struct dentry *dentry)
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index d7d4fb403f6f..d45a8bc97997 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -890,9 +890,8 @@ ftrace_graph_get_ret_stack(struct task_struct *task, int idx)
+ unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
+ 				    unsigned long ret, unsigned long *retp)
  {
-@@ -175,6 +177,7 @@ const struct xattr_handler * const erofs_xattr_handlers[] = {
- 	NULL,
- };
+-	struct ftrace_ret_stack *ret_stack;
+ 	unsigned long return_handler = (unsigned long)dereference_kernel_function_descriptor(return_to_handler);
+-	int i = task->curr_ret_stack;
++	int i;
  
-+#ifndef CONFIG_EROFS_FS_RUST
- static int erofs_xattr_copy_to_buffer(struct erofs_xattr_iter *it,
- 				      unsigned int len)
- {
-@@ -509,8 +512,28 @@ int erofs_xattr_prefixes_init(struct super_block *sb)
- 		erofs_xattr_prefixes_cleanup(sb);
- 	return ret;
- }
-+#endif
+ 	if (ret != return_handler)
+ 		return ret;
+@@ -902,7 +901,7 @@ unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
  
- #ifdef CONFIG_EROFS_FS_POSIX_ACL
-+#ifndef CONFIG_EROFS_FS_RUST
-+static int erofs_getxattr_nobuf(struct inode *inode, int prefix,
-+				 const char *name, char **value)
-+{
-+	int rc;
-+	char *buf = NULL;
-+	rc = erofs_getxattr(inode, prefix, name, NULL, 0);
-+	if (rc > 0) {
-+		buf = kmalloc(rc, GFP_KERNEL);
-+		if (!value)
-+			return ENOMEM;
-+		rc = erofs_getxattr(inode, prefix, name, buf, rc);
-+	}
-+	*value = buf;
-+	return rc;
-+}
-+#else
-+#define erofs_getxattr_nobuf erofs_getxattr_nobuf_rust
-+#endif
- struct posix_acl *erofs_get_acl(struct inode *inode, int type, bool rcu)
- {
- 	struct posix_acl *acl;
-@@ -531,13 +554,7 @@ struct posix_acl *erofs_get_acl(struct inode *inode, int type, bool rcu)
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	rc = erofs_getxattr(inode, prefix, "", NULL, 0);
--	if (rc > 0) {
--		value = kmalloc(rc, GFP_KERNEL);
--		if (!value)
--			return ERR_PTR(-ENOMEM);
--		rc = erofs_getxattr(inode, prefix, "", value, rc);
--	}
-+	rc = erofs_getxattr_nobuf(inode, prefix, "", &value);
- 
- 	if (rc == -ENOATTR)
- 		acl = NULL;
-diff --git a/fs/erofs/xattr.h b/fs/erofs/xattr.h
-index b246cd0e135e..2b934c25e991 100644
---- a/fs/erofs/xattr.h
-+++ b/fs/erofs/xattr.h
-@@ -46,10 +46,17 @@ static inline const char *erofs_xattr_prefix(unsigned int idx,
- 
- extern const struct xattr_handler * const erofs_xattr_handlers[];
- 
-+#ifdef CONFIG_EROFS_FS_RUST
-+#define erofs_getxattr erofs_getxattr_rust
-+#define erofs_listxattr erofs_listxattr_rust
-+static inline int erofs_xattr_prefixes_init(struct super_block *sb) { return 0; }
-+static inline void erofs_xattr_prefixes_cleanup(struct super_block *sb) {}
-+#else
- int erofs_xattr_prefixes_init(struct super_block *sb);
- void erofs_xattr_prefixes_cleanup(struct super_block *sb);
- int erofs_getxattr(struct inode *, int, const char *, void *, size_t);
- ssize_t erofs_listxattr(struct dentry *, char *, size_t);
-+#endif
- #else
- static inline int erofs_xattr_prefixes_init(struct super_block *sb) { return 0; }
- static inline void erofs_xattr_prefixes_cleanup(struct super_block *sb) {}
-diff --git a/fs/erofs/xattr_rs.rs b/fs/erofs/xattr_rs.rs
-new file mode 100644
-index 000000000000..9429507089f6
---- /dev/null
-+++ b/fs/erofs/xattr_rs.rs
-@@ -0,0 +1,106 @@
-+// Copyright 2024 Yiyang Wu
-+// SPDX-License-Identifier: MIT or GPL-2.0-or-later
-+
-+//! EROFS Rust Kernel Module Helpers Implementation
-+//! This is only for experimental purpose. Feedback is always welcome.
-+
-+#[allow(dead_code)]
-+#[allow(missing_docs)]
-+pub(crate) mod rust;
-+use core::ffi::*;
-+use core::ptr::NonNull;
-+
-+use kernel::bindings::{dentry, inode};
-+use kernel::container_of;
-+
-+use rust::{erofs_sys::xattrs::*, kinode::*, ksuperblock::*};
-+
-+/// Used as a replacement for erofs_getattr.
-+#[no_mangle]
-+pub unsafe extern "C" fn erofs_getxattr_rust(
-+    k_inode: NonNull<inode>,
-+    index: c_uint,
-+    name: NonNull<u8>,
-+    buffer: NonNull<u8>,
-+    size: usize,
-+) -> c_int {
-+    // SAFETY: super_block and superblockinfo is always initialized in k_inode.
-+    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
-+    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
-+    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
-+    // SAFETY: buffer is always initialized in the caller and name is null terminated C string.
-+    unsafe {
-+        match sbi.filesystem.get_xattr(
-+            erofs_inode,
-+            index,
-+            core::ffi::CStr::from_ptr(name.as_ptr().cast()).to_bytes(),
-+            &mut Some(core::slice::from_raw_parts_mut(
-+                buffer.as_ptr().cast(),
-+                size,
-+            )),
-+        ) {
-+            Ok(value) => match value {
-+                XAttrValue::Buffer(x) => x as c_int,
-+                _ => unreachable!(),
-+            },
-+            Err(e) => i32::from(e) as c_int,
-+        }
-+    }
-+}
-+
-+/// Used as a replacement for erofs_getattr_nobuf.
-+#[no_mangle]
-+pub unsafe extern "C" fn erofs_getxattr_nobuf_rust(
-+    k_inode: NonNull<inode>,
-+    index: u32,
-+    name: NonNull<u8>,
-+    mut value: NonNull<*mut u8>,
-+) -> c_int {
-+    // SAFETY: super_block and superblockinfo is always initialized in k_inode.
-+    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
-+    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
-+    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
-+    // SAFETY: buffer is always initialized in the caller and name is null terminated C string.
-+    unsafe {
-+        match sbi.filesystem.get_xattr(
-+            erofs_inode,
-+            index,
-+            core::ffi::CStr::from_ptr(name.as_ptr().cast()).to_bytes(),
-+            &mut None,
-+        ) {
-+            Ok(xattr_value) => match xattr_value {
-+                XAttrValue::Vec(v) => {
-+                    let rc = v.len() as c_int;
-+                    *value.as_mut() = v.leak().as_mut_ptr().cast();
-+                    rc
-+                }
-+
-+                _ => unreachable!(),
-+            },
-+            Err(e) => i32::from(e) as c_int,
-+        }
-+    }
-+}
-+
-+/// Used as a replacement for erofs_getattr.
-+#[no_mangle]
-+pub unsafe extern "C" fn erofs_listxattr_rust(
-+    dentry: NonNull<dentry>,
-+    buffer: NonNull<u8>,
-+    size: usize,
-+) -> c_long {
-+    // SAFETY: dentry is always initialized in the caller.
-+    let k_inode = unsafe { dentry.as_ref().d_inode };
-+    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called.
-+    let erofs_inode = unsafe { &*container_of!(k_inode, KernelInode, k_inode) };
-+    // SAFETY: The super_block is initialized when the erofs_alloc_sbi_rust is called.
-+    let sbi = erofs_sbi(unsafe { NonNull::new((*k_inode).i_sb).unwrap() });
-+    match sbi.filesystem.list_xattrs(
-+        erofs_inode,
-+        // SAFETY: buffer is always initialized in the caller.
-+        unsafe { core::slice::from_raw_parts_mut(buffer.as_ptr().cast(), size) },
-+    ) {
-+        Ok(value) => value as c_long,
-+        Err(e) => i32::from(e) as c_long,
-+    }
-+}
+ 	i = *idx ? : task->curr_ret_stack;
+ 	while (i > 0) {
+-		ret_stack = get_ret_stack(task, i, &i);
++		struct ftrace_ret_stack *ret_stack = get_ret_stack(task, i, &i);
+ 		if (!ret_stack)
+ 			break;
+ 		/*
 -- 
-2.46.0
+2.25.1.362.g51ebf55
+
 
 
