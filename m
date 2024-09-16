@@ -1,95 +1,78 @@
-Return-Path: <linux-kernel+bounces-331079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3886397A823
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:10:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FD097A826
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD8C9286DD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:10:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458761C26DC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7D6161901;
-	Mon, 16 Sep 2024 20:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E01015D5CA;
+	Mon, 16 Sep 2024 20:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2I/J1tE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kExIBay3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EC015EFA0;
-	Mon, 16 Sep 2024 20:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EAE12C54B;
+	Mon, 16 Sep 2024 20:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726517430; cv=none; b=Q3orE2txitf/XV8082ln9967lkNXP1CgZowPPr5APiAmKfbI4MN7QUkBWsWC0jrfpGUbmVAz5qBNSlhaQfuSp89s/yPirRHbUisp3okEdFC5dqcjf680jD1B3zcpTrks9e6/7OfsRCADUI2j7p6BUnHSHDtM+QLo8cA3CinXJ18=
+	t=1726517473; cv=none; b=mM0YpSdCAg3BljIBJb+z1sAmFfDIAqxwFhNCYzu8iveARNuf56UkRV6KI3EDaZa+sy29lbKj2JvGWWOV9srGVdUa2pBd6TsqQ71nofhOwWxvEsisu4LOeBfeEfLZma6Cz1guS7H+umMvp8b5yTEliOeIBmQp9Z4+zsCBfQ05/pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726517430; c=relaxed/simple;
-	bh=TWaoST9YqXw/APpJJuJ57H+mU+KLsgnQjE2tpUzI7DI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=uubKzSYRmGUpylhfpSXIs/QLJVQy+vDGKxbUQlOxeiI5MV/un4/UCrgmbNjquq9BA0Fb3yaZsn84xaF6Uj0Vb6Hkm/gcNnZof5CNk9kMKzFLvdHzLMQzqtpuMya+/DvtHcsXy3VVWUZyH4YQA8N95v+aANpFOpy3gBkuY53einI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2I/J1tE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DBFC4CED5;
-	Mon, 16 Sep 2024 20:10:30 +0000 (UTC)
+	s=arc-20240116; t=1726517473; c=relaxed/simple;
+	bh=7xxeWsqRcrCxoadi3+koKT0WOIpuhPaRbtLyPtA77bs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rwBA7onQ9CuiU6vGpbl3ho3fzPHkF2Ll3Ia94rp1vgPP6e85wHzQkVdTMW+uisgeJGjLuKjDArKON1UGxnzZA480JZu6Gwu1OchuCRbxp+K314a40N0xDwLhiX2PCGL1ls8kI0Sck1IZsPKO/951Ed0A/1lSTFfcrm3SSb/0waM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kExIBay3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F1FC4CECD;
+	Mon, 16 Sep 2024 20:11:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726517430;
-	bh=TWaoST9YqXw/APpJJuJ57H+mU+KLsgnQjE2tpUzI7DI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=S2I/J1tEU5CGIZHHE1NMyQ44XxO9toOQgU1M4SRq2ZU+zQfFzBN8eQwtadk6MBwiH
-	 Jp/hligHnvsufMiDT6umKY8dVdkj0HpZc6aDZZ8GW6FaBrtKYUVgvnUHcu6kWQ+K7p
-	 wJ1Pa4fIi2+Qz0cZ3pBDEkUV+HZCAwi3wqp3H2lP5vru2Hm+VaADQhaxdeYzflAniI
-	 /XA58abz77Mw8o05f6B9mhbskCDzo9JFWQtrrSqrG220I6u4m03LUa1F/gEw2CyGPz
-	 EmM8wBIsnRIGxQJzP8/btsxeSazXnKK+X7qbgTPR2N+GUZE2L2coNtKpT010TpIf3c
-	 gnJJa2TyT8/gw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C6F3806644;
-	Mon, 16 Sep 2024 20:10:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1726517473;
+	bh=7xxeWsqRcrCxoadi3+koKT0WOIpuhPaRbtLyPtA77bs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=kExIBay3WywWDJXf4lrsk3I3J3fyBZjWFSUp2wll/2aYTJz2zyTblmY9kcagsPK5e
+	 huZ6uT6Fnb+M0JEgCRX9c5YSuwG8c2/z5trX+eLloC+tDDjD61sRL5Uw60BMUQO3wq
+	 G4fXlimhNjt5kXFJIJyENxLmOurRW7l48bvfA7NGoR7bCtnUMNFmP9j4llgblBWQXP
+	 Hu0BfdXIPMbrX0Fw1UKp1gTXzgeZw2XAjtUGqLxQ98NjDqT7V7Qf/3x48DbFW91E2y
+	 qqLcjQ+Q5FYvyr5WaGughNb1Sm23LpJmrkmSCSUnsu0d3wj6iukrPYlPS3vZsP+QdC
+	 jj6I7czhS1+KA==
+Date: Mon, 16 Sep 2024 13:11:10 -0700 (PDT)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
+To: Jan Beulich <jbeulich@suse.com>
+cc: Juergen Gross <jgross@suse.com>, 
+    Stefano Stabellini <sstabellini@kernel.org>, 
+    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
+    xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, 
+    iommu@lists.linux.dev
+Subject: Re: [PATCH v2 2/2] xen/swiotlb: fix allocated size
+In-Reply-To: <d0075562-6a21-4a87-b7f5-854f09c0743a@suse.com>
+Message-ID: <alpine.DEB.2.22.394.2409161311010.1417852@ubuntu-linux-20-04-desktop>
+References: <20240916064748.18071-1-jgross@suse.com> <20240916064748.18071-3-jgross@suse.com> <d0075562-6a21-4a87-b7f5-854f09c0743a@suse.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH ethtool-next v2] ethtool: Add missing clause 33 PSE manual
- description
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172651743176.3804981.2392553287465994474.git-patchwork-notify@kernel.org>
-Date: Mon, 16 Sep 2024 20:10:31 +0000
-References: <20240911-fix_missing_doc-v2-1-e2eade6886b9@bootlin.com>
-In-Reply-To: <20240911-fix_missing_doc-v2-1-e2eade6886b9@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: o.rempel@pengutronix.de, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, andrew@lunn.ch, mkubecek@suse.cz,
- thomas.petazzoni@bootlin.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 
-Hello:
-
-This patch was applied to ethtool/ethtool.git (master)
-by Michal Kubecek <mkubecek@suse.cz>:
-
-On Wed, 11 Sep 2024 14:22:04 +0200 you wrote:
-> Add missing descriptions for clause 33 options and return values for
-> the show-pse and set-pse commands.
+On Mon, 16 Sep 2024, Jan Beulich wrote:
+> On 16.09.2024 08:47, Juergen Gross wrote:
+> > The allocated size in xen_swiotlb_alloc_coherent() and
+> > xen_swiotlb_free_coherent() is calculated wrong for the case of
+> > XEN_PAGE_SIZE not matching PAGE_SIZE. Fix that.
+> > 
+> > Fixes: 7250f422da04 ("xen-swiotlb: use actually allocated size on check physical continuous")
+> > Reported-by: Jan Beulich <jbeulich@suse.com>
+> > Signed-off-by: Juergen Gross <jgross@suse.com>
 > 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
-> Changes in v2:
-> - Rebase on top of ethtool-next
-> - Link to v1: https://lore.kernel.org/r/20240520-fix_missing_doc-v1-1-965c7debfc0e@bootlin.com
-> 
-> [...]
+> Reviewed-by: Jan Beulich <jbeulich@suse.com>
 
-Here is the summary with links:
-  - [ethtool-next,v2] ethtool: Add missing clause 33 PSE manual description
-    https://git.kernel.org/pub/scm/network/ethtool/ethtool.git/commit/?id=feea0011ff04
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
 
