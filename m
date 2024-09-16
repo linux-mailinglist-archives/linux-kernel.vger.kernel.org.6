@@ -1,185 +1,129 @@
-Return-Path: <linux-kernel+bounces-330917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DFD97A612
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:33:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D244497A61A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EE771C26E20
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:33:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1072E1C24BCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4B5158D8B;
-	Mon, 16 Sep 2024 16:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D7915C125;
+	Mon, 16 Sep 2024 16:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Omy2mdbx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RwT2LOkE"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzksN/1y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1912E21340
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 16:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA3B15A868;
+	Mon, 16 Sep 2024 16:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726504398; cv=none; b=t8hZpRCoVbAhHipv9mfxq4P9nnMWEtgCG4koBQAGG0Io7S8pnZv7W8oCf2ZoiOsrA/GVU8Rs3DO5FcySJFnF7s3+JsVVpAwuIId4Cp/MYxypnkGGtojlg6/BDDZ2F4DowCXOkZQ4NfguHGTTtWaGleGGrkxYaqWQe1GGsfqGSJE=
+	t=1726504409; cv=none; b=iUjPchwUuvdgDlMcoQiT1qBCLuVQn5Fxm8i817ySxHn+E/2ow/lgPHo0Ufz+1nXy6rjA5SZdq14nn+Fx7oNPZCcK77T2kP0kAmRg023pclCvHfGjx4Bf2bijf/jvi1Di6fK4bLgkrV07PrIk9+w8G4ejlrHxC5BrKI24TDhESLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726504398; c=relaxed/simple;
-	bh=3BKT58+hQPxQZ0xlTp38ewfazRlSDW0RZvBc6idyQ/s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=fjVfbhjVXHMtaAbL+SyFrT5XhsxYal03lNBcCq31gH3DNTQNp12gyHLzJuZnBbwalUN+tiFLJr+rn8U/7uU7GCRowkd/5KQK5TIAgGW7LkrUWjg6sNMibap5aFlDQLLTzvVe6Fmp+rw6rp+I06ABfW047RIGc8Fp076hC1NEUQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Omy2mdbx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RwT2LOkE; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2D47711402C0;
-	Mon, 16 Sep 2024 12:33:16 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 16 Sep 2024 12:33:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726504396;
-	 x=1726590796; bh=vZIcbrAnjSA4s0p+zFS0c7vxQRLPVZtsGWABr76p9TM=; b=
-	Omy2mdbx6J6goCyiYQrovp/HecGw/tZLTLQzm2LFZ4oGGY4qnoBmS29abgnuITc2
-	IEUUiamm1/p4qPrMynfqSd/44x17lzYdQ/wL6GklDIb6LELrT4mjBDuGKj7BEBMX
-	bz6wFMTUUFHYDEQ8BYErcw+TBEkhgn7J9dkwMeNikNXeVL4pq1IJwoOdLiinTXMI
-	w2QZqPyE63iPuwUVtd1z4Xn3SD3F3K+XTnkvdAFnO1Jj/7+li+KgtuTPP+u5dSzu
-	4Aq3W2sFJTFyeb43uiZp8H1PSMUzFu8sM3F1NGpHyA6BQ8HwAhAK5w3xCRx8aWY2
-	xnpA5ZGm84/p0yDf6A0/NQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726504396; x=
-	1726590796; bh=vZIcbrAnjSA4s0p+zFS0c7vxQRLPVZtsGWABr76p9TM=; b=R
-	wT2LOkEIDa1rzyvQvZfkmxfwDwb7JLLygkgTMszEwpIBSwpxQ/a7OpoQVgUjfpRK
-	izoioPQDcTrd3tamZN4UDc/ikDkoXnj39Wzi/wWwWRuMpOMHjVA4lGHBb4sZUQAx
-	WnOfiG0PKyzqg+p7ZrzOF9FZMKOek7qqgNS+0S6kxyzIF+3qq+5xpwPaZJ7cZkOK
-	FH0zAo63hMCAemnKITP7Kd1HQcj/8AVcgJpPTaWs1jNWgCyVclFTsFbSs9x652Qf
-	YYF9bdHIaBGuUdKl3MIk4JgzYtgpnJgynWPHv+nvF7TjYQIbXbdpu5ThabOGnchN
-	7ZxhUBPwpmo6FODZhnSvQ==
-X-ME-Sender: <xms:y13oZjDxMKA-11zLBsST4FdmnGiNdVur_LBVDoKcFeFZqPu_FpIG7A>
-    <xme:y13oZpjtvW1w84AGbRBSAH38Xd4jhonvh6ODSPSjyGuRmx3U8BEIYQ288IFwovVPs
-    cI5nY0HAXaqyThbD_g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekhedguddttdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpeekvdeuhfeitdeuieejvedtieeijeefleevffef
-    leekieetjeffvdekgfetuefhgfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
-    rhhnuggsrdguvgdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepshhotgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhorhhvrghlughs
-    sehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    grrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:y13oZukR1SzPug3tf5XswXKO6kGdCtQebFHDH8Bwa2SaVBfGhiZZ-w>
-    <xmx:y13oZlxif1pGDGOzhEn18T4s1TxfvATCsdG3B9c9mIAKy5sbq2obSg>
-    <xmx:y13oZoRNr6tlua6TC5CMJeAixAS9SmpRZwNdBgcS-woGMat3UxD-Ng>
-    <xmx:y13oZoY13wexUpWikjKNfN8gNO9MSb480YJf4ZZYBG2DtXRIXd0waw>
-    <xmx:zF3oZueFCoK86f37f6LE03UgamHS4QmWegeM5Fw3naBsAl7c0ByGtrVb>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D37D5222006F; Mon, 16 Sep 2024 12:33:15 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726504409; c=relaxed/simple;
+	bh=LTV/SK281Cal42wiKOz53x0IXLkVChSABC/BP/VI3wQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FaUTIYDz1oPT4eHIlr9XTFvXEJueRgvkkD5taFTkuZYAWOf7vVNOZnSbBLHnjor7PMufG+MFt/AvkQ5wlKk2x8zLsf/4VYkJz2zM/ZTWv4gtmihDqnWvc9IVL695O9sBIPEwiajPuKK9f1c739PxrUp1lVGPRnG74dnUl8mYFtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzksN/1y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B802C4CEC4;
+	Mon, 16 Sep 2024 16:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726504409;
+	bh=LTV/SK281Cal42wiKOz53x0IXLkVChSABC/BP/VI3wQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SzksN/1yUwTTjiHJfNWPLZHQgGbkSr7E/90kQw06Xwe7N5Z2EZoLxJiVRJ31roHVI
+	 8utPbOyizgkAZI+5jt3cAAheM8RjiXHG6gpVBiNHhNA//R0iMZTVoj6n+WVpvmKy7V
+	 wpGe7iEsGCVW9v1q+tjZB5gk1gS6kwn3x45zAvC8YRP1tZ9IPkF3Vq9UYZZXdD9/q0
+	 29czTIzPvs1rJ9XW5dDq36WxGONwQBOP8Wt9jAvYm6z+2/LyPo9qdY51dBU4FZ5PtI
+	 QMuSiFs6Wt4AkdrErdQCvSEhfUAGhoUlegPPjEXclAo/URbH3l8SLW6a8t+tlsCmjx
+	 gFuMvCe28c7DA==
+Date: Mon, 16 Sep 2024 11:33:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Amit Sunil Dhamne <amitsd@google.com>,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, kyletso@google.com,
+	rdbabiera@google.com, Badhri Jagan Sridharan <badhri@google.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC 1/2] dt-bindings: connector: Add property to set pd timer
+ values
+Message-ID: <20240916163328.GA394032-robh@kernel.org>
+References: <20240911000715.554184-1-amitsd@google.com>
+ <20240911000715.554184-2-amitsd@google.com>
+ <5iakowhmqc3hbstmwbs6ixabr27hf2dfz2m4do4qvsrtgrdn72@r7xqawwgebla>
+ <dc323138-3bbb-4e23-91f1-d6b80cb7bb72@google.com>
+ <ascu5yztalk62fernydttkywnqemnmjlcflzdyfmt7dzuzngho@vvxrnvwhfdmk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 16 Sep 2024 16:32:53 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: soc@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Message-Id: <3618c698-8305-460f-bddb-67e4e06f524a@app.fastmail.com>
-In-Reply-To: <a40b4b3a-5d61-4bef-b367-745ba058be9e@app.fastmail.com>
-References: <a40b4b3a-5d61-4bef-b367-745ba058be9e@app.fastmail.com>
-Subject: [GIT PULL 3/4] soc: defconfig updates for 6.12
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ascu5yztalk62fernydttkywnqemnmjlcflzdyfmt7dzuzngho@vvxrnvwhfdmk>
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208=
-399:
+On Fri, Sep 13, 2024 at 07:34:27AM +0300, Dmitry Baryshkov wrote:
+> On Thu, Sep 12, 2024 at 04:26:25PM GMT, Amit Sunil Dhamne wrote:
+> > Hi Dmitry,
+> > 
+> > On 9/12/24 3:05 AM, Dmitry Baryshkov wrote:
+> > > On Tue, Sep 10, 2024 at 05:07:05PM GMT, Amit Sunil Dhamne wrote:
+> > > > This commit adds a new property "pd-timers" to enable setting of
+> > > > platform/board specific pd timer values for timers that have a range of
+> > > > acceptable values.
+> > > > 
+> > > > Cc: Badhri Jagan Sridharan <badhri@google.com>
+> > > > Cc: linux-usb@vger.kernel.org
+> > > > Cc: devicetree@vger.kernel.org
+> > > > Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> > > > ---
+> > > >   .../bindings/connector/usb-connector.yaml     | 23 +++++++++++++++++++
+> > > >   include/dt-bindings/usb/pd.h                  |  8 +++++++
+> > > >   2 files changed, 31 insertions(+)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> > > > index fb216ce68bb3..9be4ed12f13c 100644
+> > > > --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> > > > +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> > > > @@ -253,6 +253,16 @@ properties:
+> > > >       additionalProperties: false
+> > > > +  pd-timers:
+> > > > +    description: An array of u32 integers, where an even index (i) is the timer (referenced in
+> > > > +      dt-bindings/usb/pd.h) and the odd index (i+1) is the timer value in ms (refer
+> > > > +      "Table 6-68 Time Values" of "USB Power Delivery Specification Revision 3.0, Version 1.2 " for
+> > > > +      the appropriate value). For certain timers the PD spec defines a range rather than a fixed
+> > > > +      value. The timers may need to be tuned based on the platform. This dt property allows the user
+> > > > +      to assign specific values based on the platform. If these values are not explicitly defined,
+> > > > +      TCPM will use a valid default value for such timers.
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> > > Is it really necessary to use the array property? I think it's easier
+> > > and more logical to define corresponding individual properties, one per
+> > > the timer.
+> > 
+> > Thanks for the review. The reason I did it this way was for
+> > convenience. If in the future someone else wants add a new timer,
+> > it'd be convenient to just add it as a new macro definition in pd.h
+> > rather than having to define a new property each time, especially
+> > if folks want to add more timers (scales better).
+> > There are 3 timers already and I am working to add a fourth in a
+> > follow up patch if the current RFC gets accepted.
+> > 
+> > Please let me know what do you think?
+> 
+> I'd leave the decision to DT maintainers, but in my opinion multiple
+> properties scale better. Having a single value per property is easier to
+> handle rather than changing the tagged array.
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+I agree. And it avoids what looks like a made up number space with the 
+defines.
 
-are available in the Git repository at:
+And note that an array of tuples is a matrix in DT defined types, not 
+an array.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-d=
-efconfig-6.12
-
-for you to fetch changes up to 7eee0f8bbd1b6946236624d25a938cb34c1ba2a9:
-
-  Merge tag 'v6.11-next-defconfig' of https://git.kernel.org/pub/scm/lin=
-ux/kernel/git/mediatek/linux into soc/defconfig (2024-09-11 09:05:18 +00=
-00)
-
-----------------------------------------------------------------
-soc: defconfig updates for 6.12
-
-The updates to the defconfig files are fairly small, enabling
-drivers for eight of the arm and riscv based platforms.
-
-----------------------------------------------------------------
-Alexandre Mergnat (1):
-      arm64: defconfig: enable mt8365 sound
-
-Arnd Bergmann (8):
-      Merge tag 'at91-defconfig-6.12' of https://git.kernel.org/pub/scm/=
-linux/kernel/git/at91/linux into soc/defconfig
-      Merge tag 'renesas-arm-defconfig-for-v6.12-tag1' of https://git.ke=
-rnel.org/pub/scm/linux/kernel/git/geert/renesas-devel into soc/defconfig
-      Merge tag 'tegra-for-6.12-arm64-defconfig' of https://git.kernel.o=
-rg/pub/scm/linux/kernel/git/tegra/linux into soc/defconfig
-      Merge tag 'ti-k3-config-for-v6.12' of https://git.kernel.org/pub/s=
-cm/linux/kernel/git/ti/linux into soc/defconfig
-      Merge tag 'imx-defconfig-6.12' of https://git.kernel.org/pub/scm/l=
-inux/kernel/git/shawnguo/linux into soc/defconfig
-      Merge tag 'qcom-arm64-defconfig-for-6.12' of https://git.kernel.or=
-g/pub/scm/linux/kernel/git/qcom/linux into soc/defconfig
-      Merge tag 'riscv-config-for-v6.12' of https://git.kernel.org/pub/s=
-cm/linux/kernel/git/conor/linux into soc/defconfig
-      Merge tag 'v6.11-next-defconfig' of https://git.kernel.org/pub/scm=
-/linux/kernel/git/mediatek/linux into soc/defconfig
-
-Chen Wang (1):
-      riscv: defconfig: sophgo: enable clks for sg2042
-
-Devarsh Thakkar (1):
-      arm64: defconfig: Enable E5010 JPEG Encoder
-
-Dmitry Baryshkov (1):
-      arm64: defconfig: build CONFIG_REGULATOR_QCOM_REFGEN as module
-
-Geert Uytterhoeven (1):
-      ARM: shmobile: defconfig: Enable slab hardening and kmalloc buckets
-
-Inochi Amaoto (1):
-      riscv: defconfig: Enable pinctrl support for CV18XX Series SoC
-
-Jon Hunter (1):
-      arm64: defconfig: Enable Tegra194 PCIe Endpoint
-
-Kuninori Morimoto (1):
-      arm64: defconfig: Enable AK4619 codec support
-
-Liu Ying (1):
-      arm64: defconfig: Enable ADP5585 GPIO and PWM drivers
-
-Niklas S=C3=B6derlund (1):
-      arm64: defconfig: Enable R-Car Ethernet-TSN support
-
-Varshini Rajendran (1):
-      ARM: configs: at91: enable config flags for sam9x7 SoC family
-
- arch/arm/configs/at91_dt_defconfig  |  1 +
- arch/arm/configs/shmobile_defconfig |  1 +
- arch/arm64/configs/defconfig        | 10 ++++++++++
- arch/riscv/configs/defconfig        |  7 +++++++
- 4 files changed, 19 insertions(+)
+Rob
 
