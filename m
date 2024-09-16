@@ -1,274 +1,193 @@
-Return-Path: <linux-kernel+bounces-330469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A3C979EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:08:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8639979EF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF4921C2300D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404F51F23CCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A7B14B97D;
-	Mon, 16 Sep 2024 10:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298B014C59A;
+	Mon, 16 Sep 2024 10:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="JGUwL6xG"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F8414AD25
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726481277; cv=none; b=UZIo+6zbj+7mLtK7yo22nNqZdYsyepnfl0wrbJbjvNVWPI7+nXII5UF7ysFj6WGo55x6zsFXTzTHqReGFUgrsV3IwFKZ7ZXp99uBfvk7gjsxoFUlprrxnQs3bRzw/b9sW6qjAKHkThFQIsoXPYiS4jqzzjEsCYDy8gd2Vn+MSaw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726481277; c=relaxed/simple;
-	bh=XUufz/EGTz/ak13opRJLjwcPvJPBFSb4L67dqYi2UHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ELqycLndxMpfzS8ph0YbXhShX3GIAAEojhGZ6dN7egrl4hRmJNHxb8l8fAdhA7k8Svasvj+cfI0OBt6f82IQKXrPsywzlFtxwzR9cF33bfq2cljg9NeRnZU9LYqomnU1kGTJUAOBblWP6k/4JhC5rK97Wx7IlNGxd0U7jI+vhDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=JGUwL6xG; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p549211fd.dip0.t-ipconnect.de [84.146.17.253])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKCVaXHp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 2B3AD2A4E87;
-	Mon, 16 Sep 2024 12:07:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1726481268;
-	bh=XUufz/EGTz/ak13opRJLjwcPvJPBFSb4L67dqYi2UHs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JGUwL6xG7Z7Em8ZEFiZHoOcUeNBTY7MNX4pPensoFrD6W1u2nosEdxTztwFnsuqx1
-	 8VNElXqL5+chLr4PasEW3MLBoaxoQtpF0sfXTI83exsq0oKBooPK2lqVj930BNX5AS
-	 KuX8xGczeS3a5D5Q9svQrJYVmbFZthbEU4g3kaecji4KucAYLU20jf/w6HYFwxEseJ
-	 2ZxOiHV2pPUrLPy+A4QUAAwfEXtPBcGGaTIo/NI8xBlLX6ptBmbPc7QYamWGmHD1wv
-	 iNW8K2Z8FFelWHzxDIDqUZbWIMhxZn1uepf+UZ/1eeACz0BbAI3FKOjdWP3kd3WeAF
-	 KplCWO+bhKI+g==
-Date: Mon, 16 Sep 2024 12:07:47 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: [git pull] IOMMU Updates for Linux v6.12
-Message-ID: <ZugDc8ryLmadGXyp@8bytes.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713C441C62;
+	Mon, 16 Sep 2024 10:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726481338; cv=none; b=A2BANZvs9c8/AVg98w96G2sxZyFb5IjdKKFiOheZvW9NfalOX5bV9Gyu5yjnejS4pWMRk3KxEGzsbVTZ1fYvGbP/g0IG0gxLae9c7MXrYUD/fcGxhoTBOZVticCY/66cXKxvOdlpBTF2weTL7nfKc8jCyBdNn/Je033SI39snz0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726481338; c=relaxed/simple;
+	bh=T8PPk/YjtiwccMrPvJSUH0/CkXxHzepMK8YfYya0uIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KrTvdSbkT06o3UeTaiWEsQq00TAbEdDaRTJ5eCHJ6Da5HqVnk6GuL1pnuw4mebEC3ydz5QGF2XvZIibHg/LPp+hiZ1RcjoGWJ861JwpbvrJYxdYXhfvkb78TVBtpf82c/pkiRdpC1G9F31NSxubE06vhdBHSQYLcyudjRQS/8Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKCVaXHp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D7CC4CEC7;
+	Mon, 16 Sep 2024 10:08:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726481338;
+	bh=T8PPk/YjtiwccMrPvJSUH0/CkXxHzepMK8YfYya0uIY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=OKCVaXHpyuFTiSIHNJfFNzkEYZ61+i5SfGrDGnyySHLsCQYclH0uge3MRD1nczVug
+	 hUje13rPUBrxTGSiV2p0sCQYgw5JmGqp1qMRUFQroQK7E3IVXBCMGTFOsY5gIq43DE
+	 BY91V4O+kcwF0V0eB08/GAGjrFYwyPFSIVjvDENrSX2F0XD3ST/vo7GKLwGcbQ1BA2
+	 L3gErmdmvVhKYPaDQVBbwaVrzicGH0z6dCghSduxJCHfN36Q7s61HUferH5G/Gsi7+
+	 9wCxRUkINNPACPB0dC7Bn5cz0Moh3FHvYjdagkyctsS84q/UQRHZrU8ZumRR9G2i0Y
+	 FT36aGYd/t+Dg==
+Message-ID: <9b356379-907c-4112-8e24-1810cfa40ef6@kernel.org>
+Date: Mon, 16 Sep 2024 12:08:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: mfd: aspeed: support for AST2700
+To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org
+References: <20240916091039.3584505-1-ryan_chen@aspeedtech.com>
+ <20240916091039.3584505-2-ryan_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240916091039.3584505-2-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 16/09/2024 11:10, Ryan Chen wrote:
+> Add compatible support for AST2700 clk, reset, pinctrl, silicon-id for AST2700 scu.
 
-The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
+> 
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  .../devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> index 86ee69c0f45b..127a357051cd 100644
+> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> @@ -9,6 +9,8 @@ title: Aspeed System Control Unit
+>  description:
+>    The Aspeed System Control Unit manages the global behaviour of the SoC,
+>    configuring elements such as clocks, pinmux, and reset.
+> +  In AST2700 SOC which has two soc connection, each soc have its own scu
+> +  register control, ast2700-scu0 for soc0, ast2700-scu1 for soc1.
+>  
+>  maintainers:
+>    - Joel Stanley <joel@jms.id.au>
+> @@ -21,6 +23,8 @@ properties:
+>            - aspeed,ast2400-scu
+>            - aspeed,ast2500-scu
+>            - aspeed,ast2600-scu
+> +          - aspeed,ast2700-scu0
+> +          - aspeed,ast2700-scu1
+>        - const: syscon
+>        - const: simple-mfd
+>  
+> @@ -30,10 +34,12 @@ properties:
+>    ranges: true
+>  
+>    '#address-cells':
+> -    const: 1
+> +    minimum: 1
+> +    maximum: 2
+>  
+>    '#size-cells':
+> -    const: 1
+> +    minimum: 1
+> +    maximum: 2
 
-are available in the Git repository at:
+Why do the children have 64 bit addressing?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-updates-v6.12
+>  
+>    '#clock-cells':
+>      const: 1
+> @@ -56,6 +62,8 @@ patternProperties:
+>              - aspeed,ast2400-pinctrl
+>              - aspeed,ast2500-pinctrl
+>              - aspeed,ast2600-pinctrl
+> +            - aspeed,ast2700-soc0-pinctrl
+> +            - aspeed,ast2700-soc1-pinctrl
 
-for you to fetch changes up to 97162f6093d263aa1c2c7e883912f922ea633512:
+Are these devices different?
 
-  Merge branches 'fixes', 'arm/smmu', 'intel/vt-d', 'amd/amd-vi' and 'core' into next (2024-09-13 12:53:05 +0200)
+Where is this binding documented (fully)? Provide link to lore patch in
+the changelog.
 
-----------------------------------------------------------------
-IOMMU Updates for Linux v6.12
+>  
+>      required:
+>        - compatible
+> @@ -76,6 +84,7 @@ patternProperties:
+>                - aspeed,ast2400-silicon-id
+>                - aspeed,ast2500-silicon-id
+>                - aspeed,ast2600-silicon-id
+> +              - aspeed,ast2700-silicon-id
 
-Including:
+This one is fine.
 
-	- Core changes:
-	  - Allow ATS on VF when parent device is identity mapped.
-	  - Optimize unmap path on ARM io-pagetable implementation.
-	  - Use of_property_present().
+>            - const: aspeed,silicon-id
+>  
+>        reg:
 
-	- ARM-SMMU changes:
-	  - SMMUv2:
-	    - Devicetree binding updates for Qualcomm MMU-500 implementations.
-	    - Extend workarounds for broken Qualcomm hypervisor to avoid
-	      touching features that are not available (e.g. 16KiB page
-	      support, reserved context banks).
-	  - SMMUv3:
-	    - Support for NVIDIA's custom virtual command queue hardware.
-	    - Fix Stage-2 stall configuration and extend tests to cover this
-	      area.
-	    - A bunch of driver cleanups, including simplification of the
-	      master rbtree code.
-	  - Plus minor cleanups and fixes across both drivers.
+Best regards,
+Krzysztof
 
-	- Intel VT-d changes:
-	  - Retire si_domain and convert to use static identity domain.
-	  - Batched IOTLB/dev-IOTLB invalidation.
-	  - Small code refactoring and cleanups.
-
-	- AMD-Vi changes:
-	  - Cleanup and refactoring of io-pagetable code.
-	  - Add parameter to limit the used io-pagesizes.
-	  - Other cleanups and fixes.
-
-----------------------------------------------------------------
-Ashish Mhetre (1):
-      iommu/io-pgtable-arm: Optimise non-coherent unmap
-
-Dan Carpenter (2):
-      iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
-      iommu/tegra241-cmdqv: Fix ioremap() error handling in probe()
-
-Dmitry Baryshkov (1):
-      iommu/arm-smmu-qcom: apply num_context_bank fixes for SDM630 / SDM660
-
-Eliav Bar-ilan (1):
-      iommu/amd: Fix argument order in amd_iommu_dev_flush_pasid_all()
-
-Jason Gunthorpe (26):
-      iommu: Allow ATS to work on VFs when the PF uses IDENTITY
-      iommu/arm-smmu-v3: Add struct arm_smmu_impl_ops
-      iommu/amd: Move allocation of the top table into v1_alloc_pgtable
-      iommu/amd: Allocate the page table root using GFP_KERNEL
-      iommu/amd: Set the pgsize_bitmap correctly
-      iommu/amd: Remove amd_iommu_domain_update() from page table freeing
-      iommu/amd: Remove the amd_iommu_domain_set_pt_root() and related
-      iommu/amd: Rename struct amd_io_pgtable iopt to pgtbl
-      iommu/amd: Remove amd_io_pgtable::pgtbl_cfg
-      iommu/amd: Store the nid in io_pgtable_cfg instead of the domain
-      iommu/amd: Narrow the use of struct protection_domain to invalidation
-      iommu/amd: Remove conditions from domain free paths
-      iommu/amd: Fix typo of , instead of ;
-      iommu/amd: Remove the confusing dummy iommu_flush_ops tlb ops
-      iommu/amd: Correct the reported page sizes from the V1 table
-      iommu/amd: Do not set the D bit on AMD v2 table entries
-      iommu/arm-smmu-v3: Use the new rb tree helpers
-      iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()
-      iommu/arm-smmu-v3: Add types for each level of the 2 level stream table
-      iommu/arm-smmu-v3: Reorganize struct arm_smmu_strtab_cfg
-      iommu/arm-smmu-v3: Remove strtab_base/cfg
-      iommu/arm-smmu-v3: Do not use devm for the cd table allocations
-      iommu/arm-smmu-v3: Shrink the cdtab l1_desc array
-      iommu/arm-smmu-v3: Add types for each level of the CD table
-      iommu/arm-smmu-v3: Reorganize struct arm_smmu_ctx_desc_cfg
-      iommu/amd: Test for PAGING domains before freeing a domain
-
-Joerg Roedel (2):
-      iommu/amd: Add kernel parameters to limit V1 page-sizes
-      Merge branches 'fixes', 'arm/smmu', 'intel/vt-d', 'amd/amd-vi' and 'core' into next
-
-Konrad Dybcio (1):
-      iommu/arm-smmu-qcom: Work around SDM845 Adreno SMMU w/ 16K pages
-
-Lu Baolu (10):
-      iommu/vt-d: Require DMA domain if hardware not support passthrough
-      iommu/vt-d: Remove identity mappings from si_domain
-      iommu/vt-d: Always reserve a domain ID for identity setup
-      iommu/vt-d: Remove has_iotlb_device flag
-      iommu/vt-d: Factor out helpers from domain_context_mapping_one()
-      iommu/vt-d: Add support for static identity domain
-      iommu/vt-d: Cleanup si_domain
-      iommu/vt-d: Move PCI PASID enablement to probe path
-      iommu/vt-d: Unconditionally flush device TLB for pasid table updates
-      iommu/vt-d: Add qi_batch for dmar_domain
-
-Marc Gonzalez (1):
-      iommu/arm-smmu-qcom: hide last LPASS SMMU context bank from linux
-
-Mostafa Saleh (2):
-      iommu/arm-smmu-v3: Match Stall behaviour for S2
-      iommu/arm-smmu-v3-test: Test masters with stall enabled
-
-Nate Watterson (1):
-      iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV
-
-Nicolin Chen (11):
-      iommu/arm-smmu-v3: Issue a batch of commands to the same cmdq
-      iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_build_sync_cmd
-      iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_init
-      iommu/arm-smmu-v3: Make symbols public for CONFIG_TEGRA241_CMDQV
-      iommu/arm-smmu-v3: Add ARM_SMMU_OPT_TEGRA241_CMDQV
-      iommu/arm-smmu-v3: Add acpi_smmu_iort_probe_model for impl
-      iommu/arm-smmu-v3: Start a new batch if new command is not supported
-      iommu/tegra241-cmdqv: Limit CMDs for VCMDQs of a guest owned VINTF
-      iommu/tegra241-cmdqv: Fix -Wformat-truncation warnings in lvcmdq_error_header
-      iommu/tegra241-cmdqv: Drop static at local variable
-      iommu/tegra241-cmdqv: Do not allocate vcmdq until dma_set_mask_and_coherent
-
-Nikunj Kela (1):
-      dt-bindings: arm-smmu: document the support on SA8255p
-
-Rob Clark (1):
-      iommu/arm-smmu: Un-demote unhandled-fault msg
-
-Rob Herring (Arm) (1):
-      iommu: Use of_property_present()
-
-Sanjay K Kumar (1):
-      iommu/vt-d: Fix potential lockup if qi_submit_sync called with 0 count
-
-Suravee Suthikulpanit (1):
-      iommu/amd: Update PASID, GATS, GLX, SNPAVICSUP feature related macros
-
-Tina Zhang (3):
-      iommu/vt-d: Factor out invalidation descriptor composition
-      iommu/vt-d: Refactor IOTLB and Dev-IOTLB flush for batching
-      iommu/vt-d: Introduce batched cache invalidation
-
-Vasant Hegde (9):
-      iommu/amd: Add blocked domain support
-      iommu/amd: Update event log pointer as soon as processing is complete
-      iommu/amd: Make amd_iommu_is_attach_deferred() static
-      iommu/amd: Remove unused DTE_GCR3_INDEX_* macros
-      iommu/amd: Handle error path in amd_iommu_probe_device()
-      iommu/amd: Make amd_iommu_dev_flush_pasid_all() static
-      iommu/amd: Make amd_iommu_domain_flush_complete() static
-      iommu/amd: Rework amd_iommu_update_and_flush_device_table()
-      iommu/amd: Make amd_iommu_dev_update_dte() static
-
-Will Deacon (1):
-      Merge branch 'for-joerg/arm-smmu/bindings' into for-joerg/arm-smmu/updates
-
-Zhang Zekun (1):
-      iommu/arm-smmu-v3: Remove the unused empty definition
-
-Zhenhua Huang (1):
-      dt-bindings: arm-smmu: Add compatible for QCS8300 SoC
-
- Documentation/admin-guide/kernel-parameters.txt    |  17 +-
- .../devicetree/bindings/iommu/arm,smmu.yaml        |   5 +
- MAINTAINERS                                        |   1 +
- drivers/iommu/Kconfig                              |  11 +
- drivers/iommu/amd/amd_iommu.h                      |  26 +-
- drivers/iommu/amd/amd_iommu_types.h                |  35 +-
- drivers/iommu/amd/init.c                           |  16 +-
- drivers/iommu/amd/io_pgtable.c                     | 105 +--
- drivers/iommu/amd/io_pgtable_v2.c                  |  56 +-
- drivers/iommu/amd/iommu.c                          | 210 +++--
- drivers/iommu/amd/pasid.c                          |   2 +-
- drivers/iommu/arm/arm-smmu-v3/Makefile             |   1 +
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c   |  83 +-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c        | 578 +++++++------
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h        | 135 ++-
- drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c     | 909 +++++++++++++++++++++
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c         |  28 +
- drivers/iommu/arm/arm-smmu/arm-smmu.c              |   2 +-
- drivers/iommu/fsl_pamu_domain.c                    |   4 +-
- drivers/iommu/intel/cache.c                        | 239 ++++--
- drivers/iommu/intel/dmar.c                         | 109 +--
- drivers/iommu/intel/iommu.c                        | 504 +++++-------
- drivers/iommu/intel/iommu.h                        | 128 ++-
- drivers/iommu/intel/nested.c                       |   3 +-
- drivers/iommu/intel/pasid.c                        |  12 +-
- drivers/iommu/intel/svm.c                          |   7 +-
- drivers/iommu/io-pgtable-arm.c                     |  31 +-
- drivers/iommu/of_iommu.c                           |   2 +-
- drivers/pci/ats.c                                  |  33 +
- include/linux/io-pgtable.h                         |   4 +
- include/linux/pci-ats.h                            |   3 +
- 31 files changed, 2259 insertions(+), 1040 deletions(-)
- create mode 100644 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-
-Please pull.
-
-Thanks,
-
-	Joerg
 
