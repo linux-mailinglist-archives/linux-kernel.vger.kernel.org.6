@@ -1,168 +1,106 @@
-Return-Path: <linux-kernel+bounces-330342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD99979CDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:36:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525F3979CDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E18F3B21113
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 853D91C20BC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62A918E20;
-	Mon, 16 Sep 2024 08:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF4F1448C7;
+	Mon, 16 Sep 2024 08:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xz4OHicY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DU51Qo0I"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C717139CE2
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC175588E;
+	Mon, 16 Sep 2024 08:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726475789; cv=none; b=AK1hmAdtz1wD7l9hkaQMaavjrDkJlTbXxeRqfH1XOd5KPENjFycpmWc6isoQ0NTikFLxnX6fK50ROa0r/4rMUkYVUTfsalzKl6U1LqMKnb/aV/N+SVjCHJNlUjz/cxVBKw5wMTqX6NOUAD5FyLw0C8Y1E2gF6D5Q99h2WAcRPNk=
+	t=1726475790; cv=none; b=B9qKZ3EJVVpSj3/K5iBdGxMAIoKGsAqIEdsnIFfzT15wSsFxfEzfPZNO3BJsBX3rFUHEAeq31MC2F4azcayUJQ1Fv1iP123X/wcgFYA6929oTSYwQxrDbvcwUuFBM4bQ+Gv+/JjzVdDcyDCj2XVw/8ChZMgYhZHF2k+De7V/t4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726475789; c=relaxed/simple;
-	bh=ExwIcThVvO+7ZAUVFxCZRYWIdFsONsYB9CaICjRnUgU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=COERBqtV6olwq9CywRtdLCk2PMKBI9GJL5xXlqZ6nF39fvi/JIYojxu0/csVBRcEGByI/zqjec+Isfs2Fuk+UTeSkRI7vB1ic1jPEu4Lu6a9ddHGlMfzY/zFtwqQFrpVgAJS1azwwu6gBSXJClBMHbN1sbtuNDBp+/O/g2Kbbvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xz4OHicY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726475786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SZghuNl8RSxhnXryd0EQnOpNodf1ePXadDKLScPEidI=;
-	b=Xz4OHicYetMR0XuOwvwxsaRFx2F4xM6ynnukJWYqbxj0pA0NKZreD4uiZEIcY33io8jpvp
-	PR2a1vrmnhmNgK/cVnTTTUW8FEb4tWJso4Yww6CsdlRqy2plU5xi23L3f4RG2sCKjYP18X
-	Yrk6VjTgSljWs7eS28zbBnY/vOsHEls=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-43-r-GApPe-PH-lV8Y9VMy04g-1; Mon, 16 Sep 2024 04:36:24 -0400
-X-MC-Unique: r-GApPe-PH-lV8Y9VMy04g-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3787ea79dceso1020896f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 01:36:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726475784; x=1727080584;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZghuNl8RSxhnXryd0EQnOpNodf1ePXadDKLScPEidI=;
-        b=qTjdmLfxhQuautfHv0c7GfcK4LivBkuSEXPOT6E8V44EVBFCwrusk0afiK9aUci4PO
-         EcF3kf9a4Syi2wok6fWIMt9yBZF8dWgrdRha4b2uBnyJSU6vN9M/lxpbcDwwwTM4QK7Q
-         ngO+1Y+ICzp+/kmRds+wyAJ0tTBa4yYsJiDHLLkt7ITG1S/6h47L0ApWA3R9fHHDqSXH
-         YYInSI3zN/2AG3tSsGmPHEMcC6Ida12HbMVUlQ7ho1su4pT6/eC0BmhUYatYsjmCEBst
-         sRFMbAd27YduGSvxY15nFSAWeyQy+pOVSHxg4B/gRhauIweMNBlKDDGwxyiYNGZCOQ/Q
-         iO2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJVtVNCHO2urqbIqPHLhEgs15NnOKdinWQbCL4eQ2RcIXrlSnHsYPtDW0oQC7ctnlXvZuyezaBHBKHFdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZjjMUTEvhXMA6HT8OixnMQzBSY/sjzeR3G4UMdaJFzDxr/k7Z
-	sg0lzqng3R+ZJnTBTQy1BSCKUuL8OErbaDC+J8UjRrjAs9mN+6DzOqAYgYLI1G9Y28NexHmtoGx
-	o+4lnQDwOpG0S3sCsowsrnXHobAk/RN3dNYd5+kiylH+CK3QU0sTc2eG4Ca1XEg==
-X-Received: by 2002:adf:facb:0:b0:374:babf:ac4d with SMTP id ffacd0b85a97d-378d625360bmr4960095f8f.58.1726475783580;
-        Mon, 16 Sep 2024 01:36:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHeUS2MF6BwNmrHrtyITHuRjTmMKPOYmdWcd0GIjcbKqPN/sItyo4uvsPMndSeuH50X7fkZOA==
-X-Received: by 2002:adf:facb:0:b0:374:babf:ac4d with SMTP id ffacd0b85a97d-378d625360bmr4960068f8f.58.1726475783006;
-        Mon, 16 Sep 2024 01:36:23 -0700 (PDT)
-Received: from localhost (red-hat-inc.vlan560.asr1.mad1.gblx.net. [159.63.51.90])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e72e49d5sm6620646f8f.17.2024.09.16.01.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 01:36:22 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, kernel test robot
- <lkp@intel.com>, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, Julius Werner
- <jwerner@chromium.org>, Hugues Bruant <hugues.bruant@gmail.com>,
- intel-gfx@lists.freedesktop.org, Brian Norris <briannorris@chromium.org>,
- dri-devel@lists.freedesktop.org, Borislav Petkov <bp@alien8.de>,
- chrome-platform@lists.linux.dev, Tzung-Bi Shih <tzungbi@kernel.org>
-Subject: Re: [PATCH v3] firmware: coreboot: Don't register a pdev if
- screen_info data is present
-In-Reply-To: <eeac1c3c-4a21-4cd5-b513-8e55cffe0bae@suse.de>
-References: <20240913213246.1549213-1-javierm@redhat.com>
- <202409151528.CIWZRPBq-lkp@intel.com>
- <eeac1c3c-4a21-4cd5-b513-8e55cffe0bae@suse.de>
-Date: Mon, 16 Sep 2024 10:36:21 +0200
-Message-ID: <8734m0atbu.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1726475790; c=relaxed/simple;
+	bh=dl5Fjj5SFUWZt2QM0H3Nh3saRM/h63zGlLJDJwAn0h8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=miVFG/wMA6sc12jQ7jrnqvjJR0C1cLGUPYhJTRC9lVrbyFWeS6wSnRjaCzDRlMq6LCaM1eh7jHNt5EyL6vq23mJrdYwSAAhntxU1RUaRQYmDo87AeNIkKQuxTuqIvHV+bbrgyoEzJIbXbVX0aR6hlOoOB8sIIt3UJ09rvrC1XME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DU51Qo0I; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726475784;
+	bh=XuFgNe2g1nvtMH+06OaD4Ia//5rxVu0l9LKcP3JP4h0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DU51Qo0IdrrinUkyijQVyg+1vj/jB73Bo0VftLVyXrkxR+oKPLtHs6xfAAdEM18gM
+	 KIaq02VYoYIBDY2Qt5wp8j0RA6qvgvgclz24anvgG3BCB+J3Ppp1Q15dByG/V/rXI7
+	 RhDq7zKbcve6H2qxRp3EhhPwej7LnUl2bTfKlD0sa2J2gfxU3mOM2gRoUk7z5fNDGY
+	 pmqb6XMsbqLUdb/IuJ8mnaYM9lSECXu9ZnBV8osOZEbh0yV3tC3ug7UiFNptJxpuTl
+	 DPqeKxPPTnILcEwOron2WczTtHf7tZNsH3IMU6m5rVIGibuCETVFz/68JNX/rHTv9g
+	 fN5pWA7hQCn7A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6dYN43wMz4x7D;
+	Mon, 16 Sep 2024 18:36:23 +1000 (AEST)
+Date: Mon, 16 Sep 2024 18:36:22 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Keith Busch <kbusch@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the block tree
+Message-ID: <20240916183622.105641d8@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/66BZWF7FIUsx5Zn_.ckJFj5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Thomas Zimmermann <tzimmermann@suse.de> writes:
+--Sig_/66BZWF7FIUsx5Zn_.ckJFj5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hello Thomas and Tzung-Bi,
+Hi all,
 
-> Hi
->
-> Am 15.09.24 um 09:44 schrieb kernel test robot:
->> Hi Javier,
->>
->> kernel test robot noticed the following build errors:
->>
->> [auto build test ERROR on chrome-platform/for-next]
->> [also build test ERROR on chrome-platform/for-firmware-next linus/master v6.11-rc7 next-20240913]
->> [If your patch is applied to the wrong git tree, kindly drop us a note.
->> And when submitting patch, we suggest to use '--base' as documented in
->> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Javier-Martinez-Canillas/firmware-coreboot-Don-t-register-a-pdev-if-screen_info-data-is-present/20240914-053323
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
->> patch link:    https://lore.kernel.org/r/20240913213246.1549213-1-javierm%40redhat.com
->> patch subject: [PATCH v3] firmware: coreboot: Don't register a pdev if screen_info data is present
->> config: riscv-randconfig-001-20240915 (https://download.01.org/0day-ci/archive/20240915/202409151528.CIWZRPBq-lkp@intel.com/config)
->> compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
->> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409151528.CIWZRPBq-lkp@intel.com/reproduce)
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202409151528.CIWZRPBq-lkp@intel.com/
->>
->> All errors (new ones prefixed by >>):
->>
->>>> ld.lld: error: undefined symbol: screen_info
->>     >>> referenced by framebuffer-coreboot.c:27 (drivers/firmware/google/framebuffer-coreboot.c:27)
->>     >>>               drivers/firmware/google/framebuffer-coreboot.o:(framebuffer_probe) in archive vmlinux.a
->>     >>> referenced by framebuffer-coreboot.c:27 (drivers/firmware/google/framebuffer-coreboot.c:27)
->>     >>>               drivers/firmware/google/framebuffer-coreboot.o:(framebuffer_probe) in archive vmlinux.a
->
-> Not all platforms define screen_info. Maybe fix this by following
+After merging the block tree, today's linux-next build (htmldocs)
+produced these warnings:
 
-Yes, after reading the build errors reported by the robot I remembered
-that we had similar issues with sysfb, for example commit 1260b9a7020
-("drivers/firmware: fix SYSFB depends to prevent build failures") fixed
-one of those.
+block/blk-integrity.c:69: warning: Function parameter or struct member 'rq'=
+ not described in 'blk_rq_map_integrity_sg'
+block/blk-integrity.c:69: warning: Excess function parameter 'q' descriptio=
+n in 'blk_rq_map_integrity_sg'
+block/blk-integrity.c:69: warning: Excess function parameter 'bio' descript=
+ion in 'blk_rq_map_integrity_sg'
 
-> Tzung-Bi's advice of removing the local variables and then guard the
-> test by CONFIG_SYSFB. If SYSFB has been defined, screen_info has to be 
-> there. It's not a super pretty solution, though.
->
+Introduced by commit
 
-If possible I would prefer to avoid the ifdefery in the driver. I also
-believe that the local variables makes the code easier to read. But if
-you folks think that's better to drop them, I can do it in the next rev.
+  76c313f658d2 ("blk-integrity: improved sg segment mapping")
 
-Another option is to restrict the architectures where this driver could
-be build. As far as I understand it is mainly for x86 and ARM64 arches.
+--=20
+Cheers,
+Stephen Rothwell
 
-These two have a screen_info defined so the driver will build correctly.
-I can include a preparatory patch that adds a "depends on x86 || ARM64".
+--Sig_/66BZWF7FIUsx5Zn_.ckJFj5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> Best regards
-> Thomas
->
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Best regards,
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbn7gYACgkQAVBC80lX
+0Gx76Qf9FE2/jvjTKruk0/8kcfvJ+GurBhFwXBLGVZ4AnhyRC09RzUCQthEB3Z7g
+vw4x9qNGeP53ASNAwanUWQwYxKJvJK33naQHvVrAnjshanxqG2x/wldskoeB5Ph7
+OaG56z4I+r9dj+p0HHYswjN0AaoqbHbOfE5RltPLC30IKc41JNAvsYhRnS+o+gMX
+GjEsaYIjxA5QJ/MfCi5g+Np4DC9Owsr5oywlWS7wKL4+k9HZu/BolRQ4V/WoCv6j
+nE+4YWS9ihKWPXd5LK5LcMlSjp2XEo1LEY30TQqR+U1BCuuwqIUxwnlzomCGWrk0
+6JSpLtGtQp1EZc4JbTWdNW3OMfDkPQ==
+=ZPub
+-----END PGP SIGNATURE-----
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+--Sig_/66BZWF7FIUsx5Zn_.ckJFj5--
 
