@@ -1,109 +1,247 @@
-Return-Path: <linux-kernel+bounces-330419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04275979E5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D12E0979E57
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 373CE1C22866
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:22:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 021BC1C226CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E15314D6EB;
-	Mon, 16 Sep 2024 09:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D22E14AD3F;
+	Mon, 16 Sep 2024 09:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="KuNOC/Sg"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsPGQlYB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44CA14B942;
-	Mon, 16 Sep 2024 09:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442FB144304;
+	Mon, 16 Sep 2024 09:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726478526; cv=none; b=D8V2kfzK9FwE7nqr2J8NKA+5iXn+tcPWXoG8qIQcwh33W6JPmarwN4eN8CMss18+Oh53IP8oZwka1sXEO2TS7U2CnSsqGQXWrc6oi9D/NVmKjLXIAj57tbipgRgFyga7N+S4dM+QZvWdPW5/xPrjlSVzYXmWv3uilwpPh+vgeL4=
+	t=1726478521; cv=none; b=LnKiaiUPKDa4OxPWBBBaeXIRlDBFxwzoDrXUEa7ALPMZ8J/Dm/YFcDL7WPghgYK+SbZB332ilK52Pg3SB5zrp8hPjCyuJMMtQlYsUIi95atw5D5qReiQZc6oo/gDFFxWHR3NjxtCNPbIu8jHY3NQvh76mJ7AscnHI5MB6oJAh2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726478526; c=relaxed/simple;
-	bh=Pn4Mb45YuQUUz8lez6aSq4b1LZilNyAo+E6GTIEbwcI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KHnrmUMPM8Zp/bG0YeOh33DrRWf1y2nH0NsgH0B7ywr7tahPB2UN/GStYLzDdeQXWdm7o/y7Ls64qrzBxCvju319llHvz0WpeJGP1/Q0PhXpzO2GwiVuaRjRj8fNSmW8hq3C9iXZwHlr6c6peqVSZ2+UmfUY9FMZTeVJ77kJBv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=KuNOC/Sg; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1726478470;
-	bh=FF2mH2iaHnQrrYcfAju7qxAlGrPt1j84vZARlsclC5I=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=KuNOC/Sgj4Psd1ZV9gbpsNsknhiXwAt4DtWktvEaU0PHFQw2necj7H866Z5jQyeV4
-	 QLwD3I8AI/QmyzSMDMWEUkW5ltiuRYq7FAt3P+5ARFWp7tHl8K+VZYBa2YbR2x0sMY
-	 iqyjqfdNNmfwwjfpF7TCMpq1zmqeqoUZXVcrZc7I=
-X-QQ-mid: bizesmtpip4t1726478463t5ngxjr
-X-QQ-Originating-IP: BaCeIgj2n06C8T+oUrEoS915inZDaCMbjGl6EasPm5o=
-Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 16 Sep 2024 17:21:01 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 573196331074452442
-From: WangYuli <wangyuli@uniontech.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	maobibo@loongson.cn,
-	guanwentao@uniontech.com,
-	wangyuli@uniontech.com,
-	chenhuacai@loongson.cn
-Cc: zhaotianrui@loongson.cn,
-	kernel@xen0n.name,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6.10] LoongArch: KVM: Remove unnecessary definition of KVM_PRIVATE_MEM_SLOTS
-Date: Mon, 16 Sep 2024 17:20:52 +0800
-Message-ID: <796C6F09389EF61B+20240916092052.422948-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726478521; c=relaxed/simple;
+	bh=A5qBoko8pAMwveL+v901lMUwnWa5DeXCPvgTk3pPW/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQmml5eCETbDg17bidwTZAA8VDHoSR10kPGIFa95eMYkZPJmIqKFUEa1yQ98kUFfsd89Cf14LPUvpWgKykO8al05CnNhcwBGnxmAX9MF/4njxeFNIIgYQhd7x6aBJ9NUobuRljfFJim7tKA1/wm40j8vg4+yCV9cprBsDO5jvtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsPGQlYB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D82BC4CEC4;
+	Mon, 16 Sep 2024 09:22:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726478521;
+	bh=A5qBoko8pAMwveL+v901lMUwnWa5DeXCPvgTk3pPW/c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jsPGQlYBPSTiFJMXX9gAj5l7zVJTiyzJzXpksrqR1WURfgNlsR0edZrPFBFebfxPh
+	 1naZciVddWbs2v5+7UTUIxbnrMUVzYbF5ER+r4g7G90IE6v7I0XAKjcFMgpbg4pig/
+	 wQ1XSQ+SdxEj2650FQa2tjaQT0SoQ+ylNtYEqDp9dTqjaKiOECALJJSYA7VNitOgMh
+	 AjMnnhcHLCDsPFpPK6KW1AURzv0wx3qvnIOHepmhmYrEopdQjswknmjwCMOOKs1mS4
+	 TWRHOApsZFFUD1JA6Wcz85YIauCpiAwmve4uFw0m7r0nd+IqVpw4u51eyKxUASgxfI
+	 5W4F6EODAOv9w==
+Date: Mon, 16 Sep 2024 11:21:57 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
+	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 15/27] regulator: add s2dos05 regulator support
+Message-ID: <35liocltjuxv3gjueuvpaytx44crebbc4c63atztakuq5dfpax@bquve7tkrvtx>
+References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-15-2d2efd5c5877@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240913-starqltechn_integration_upstream-v4-15-2d2efd5c5877@gmail.com>
 
-From: Yuli Wang <wangyuli@uniontech.com>
+On Fri, Sep 13, 2024 at 06:07:58PM +0300, Dzmitry Sankouski wrote:
+> S2dos05 has 1 buck and 4 LDO regulators, used for powering
+> panel/touchscreen.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> 
 
-[ Upstream commit 296b03ce389b4f7b3d7ea5664e53d432fb17e745 ]
+...
 
-1. "KVM_PRIVATE_MEM_SLOTS" is renamed as "KVM_INTERNAL_MEM_SLOTS".
+> +#include <linux/bug.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/slab.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regulator/driver.h>
+> +#include <linux/regulator/machine.h>
+> +#include <linux/regulator/of_regulator.h>
+> +#include <linux/mfd/samsung/core.h>
+> +#include <linux/regulator/s2dos05.h>
+> +#include <linux/i2c.h>
+> +
+> +struct s2dos05_data {
+> +	struct regmap *regmap;
+> +	struct device *dev;
+> +};
+> +
+> +static const struct regulator_ops s2dos05_ops = {
 
-2. "KVM_INTERNAL_MEM_SLOTS" defaults to zero, so it is not necessary to
-define it in LoongArch's asm/kvm_host.h.
+Keep definitions together. This goes down, after all declarations and
+macros.
 
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=bdd1c37a315bc50ab14066c4852bc8dcf070451e
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=b075450868dbc0950f0942617f222eeb989cad10
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/include/asm/kvm_host.h | 2 --
- 1 file changed, 2 deletions(-)
+> +	.list_voltage		= regulator_list_voltage_linear,
+> +	.map_voltage		= regulator_map_voltage_linear,
+> +	.is_enabled		= regulator_is_enabled_regmap,
+> +	.enable			= regulator_enable_regmap,
+> +	.disable		= regulator_disable_regmap,
+> +	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
+> +	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+> +	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+> +	.set_active_discharge	= regulator_set_active_discharge_regmap,
+> +};
+> +
+> +#define _BUCK(macro)	S2DOS05_BUCK##macro
+> +#define _buck_ops(num)	s2dos05_ops##num
+> +
+> +#define _LDO(macro)	S2DOS05_LDO##macro
+> +#define _REG(ctrl)	S2DOS05_REG##ctrl
+> +#define _ldo_ops(num)	s2dos05_ops##num
+> +#define _MASK(macro)	S2DOS05_ENABLE_MASK##macro
+> +#define _TIME(macro)	S2DOS05_ENABLE_TIME##macro
+> +
 
-diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-index c87b6ea0ec47..d348005d143e 100644
---- a/arch/loongarch/include/asm/kvm_host.h
-+++ b/arch/loongarch/include/asm/kvm_host.h
-@@ -26,8 +26,6 @@
- 
- #define KVM_MAX_VCPUS			256
- #define KVM_MAX_CPUCFG_REGS		21
--/* memory slots that does not exposed to userspace */
--#define KVM_PRIVATE_MEM_SLOTS		0
- 
- #define KVM_HALT_POLL_NS_DEFAULT	500000
- 
--- 
-2.43.0
+...
+
+> +
+> +static struct regulator_desc regulators[S2DOS05_REGULATOR_MAX] = {
+
+This should be const.
+
+> +		// name, id, ops, min_uv, uV_step, vsel_reg, enable_reg
+> +		LDO_DESC("ldo1", _LDO(1), &_ldo_ops(), _LDO(_MIN1),
+> +			_LDO(_STEP1), _REG(_LDO1_CFG),
+> +			_REG(_EN), _MASK(_L1), _TIME(_LDO), _REG(_LDO1_CFG)),
+> +		LDO_DESC("ldo2", _LDO(2), &_ldo_ops(), _LDO(_MIN1),
+> +			_LDO(_STEP1), _REG(_LDO2_CFG),
+> +			_REG(_EN), _MASK(_L2), _TIME(_LDO), _REG(_LDO2_CFG)),
+> +		LDO_DESC("ldo3", _LDO(3), &_ldo_ops(), _LDO(_MIN2),
+> +			_LDO(_STEP1), _REG(_LDO3_CFG),
+> +			_REG(_EN), _MASK(_L3), _TIME(_LDO), _REG(_LDO3_CFG)),
+> +		LDO_DESC("ldo4", _LDO(4), &_ldo_ops(), _LDO(_MIN2),
+> +			_LDO(_STEP1), _REG(_LDO4_CFG),
+> +			_REG(_EN), _MASK(_L4), _TIME(_LDO), _REG(_LDO4_CFG)),
+> +		BUCK_DESC("buck1", _BUCK(1), &_buck_ops(), _BUCK(_MIN1),
+> +			_BUCK(_STEP1), _REG(_BUCK_VOUT),
+> +			_REG(_EN), _MASK(_B1), _TIME(_BUCK), _REG(_BUCK_CFG)),
+> +};
+> +
+> +static int s2dos05_pmic_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+> +	struct of_regulator_match *rdata = NULL;
+> +	struct s2dos05_data *s2dos05;
+> +	struct regulator_config config = { };
+> +	unsigned int rdev_num = ARRAY_SIZE(regulators);
+> +	int i, ret;
+> +
+> +	s2dos05 = devm_kzalloc(dev, sizeof(struct s2dos05_data),
+> +				GFP_KERNEL);
+
+sizeof(*)
+
+> +	if (!s2dos05)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, s2dos05);
+> +
+> +	rdata = devm_kcalloc(dev, rdev_num, sizeof(*rdata), GFP_KERNEL);
+> +	if (!rdata)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < rdev_num; i++)
+> +		rdata[i].name = regulators[i].name;
+> +
+> +	s2dos05->regmap = iodev->regmap_pmic;
+> +	s2dos05->dev = dev;
+> +	if (!dev->of_node)
+> +		dev->of_node = dev->parent->of_node;
+> +
+> +	for (i = 0; i < rdev_num; i++) {
+> +		struct regulator_dev *regulator;
+> +
+> +		config.init_data = rdata[i].init_data;
+> +		config.of_node = rdata[i].of_node;
+> +		config.dev = dev;
+> +		config.driver_data = s2dos05;
+> +		regulator = devm_regulator_register(&pdev->dev,
+> +						&regulators[i], &config);
+> +		if (IS_ERR(regulator)) {
+> +			ret = PTR_ERR(regulator);
+> +			dev_err(&pdev->dev, "regulator init failed for %d\n",
+> +				i);
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct platform_device_id s2dos05_pmic_id[] = {
+> +	{ "s2dos05-regulator" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(platform, s2dos05_pmic_id);
+> +
+> +static struct platform_driver s2dos05_platform_driver = {
+> +	.driver = {
+> +		.name = "s2dos05",
+> +	},
+> +	.probe = s2dos05_pmic_probe,
+> +	.id_table = s2dos05_pmic_id,
+> +};
+> +module_platform_driver(s2dos05_platform_driver);
+> +
+> +MODULE_AUTHOR("Dzmitry Sankouski <dsankouski@gmail.com>");
+> +MODULE_DESCRIPTION("SAMSUNG s2dos05 Regulator Driver");
+
+s/SAMSUNG/Samsung/
+
+Also, your Kconfig used different name, so please use one - probably
+Samsung.
+
+This applies to MFD patch as well.
+
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/regulator/s2dos05.h b/include/linux/regulator/s2dos05.h
+> new file mode 100644
+> index 000000000000..2e89fcbce769
+> --- /dev/null
+> +++ b/include/linux/regulator/s2dos05.h
+> @@ -0,0 +1,73 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+
+Are you sure that here (and other places) you want any newer GPL? This
+is quite odd. Does original code (from which you took 2016 copyrights)
+have this as well?
+
+Best regards,
+Krzysztof
 
 
