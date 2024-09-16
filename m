@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-330852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE3197A537
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:22:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C2097A53F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B84971F22503
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACCA928DBDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40500159209;
-	Mon, 16 Sep 2024 15:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3282159217;
+	Mon, 16 Sep 2024 15:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvyPPq4P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ktywi59N"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B26F1482ED;
-	Mon, 16 Sep 2024 15:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A885812E71;
+	Mon, 16 Sep 2024 15:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726500154; cv=none; b=HBttPWMBHo0Myl9F92ew2QeBLNTK/lpHeCiqKfYPBSEaH5dUGiHvHknPqCNArEjfZXUNS6DZ1VzHF7W9jjp6AH71XnbN1hV0X2eZLiBGXh8qDDfEtl9g1N+kHtw2vjYxsMAJPkXD3TDa57kdan6+d+zmb8VDPVmIc1wrv9RJkss=
+	t=1726500227; cv=none; b=PjPHjLdnzm+WqSECmBr9tNSYwe4lpI08oSf5drJF1y/pIzBw+KHwKdrJwUbH+WwscOYASkbaVvBGnp5PXlFDrmGDG6MqKqWlwEO42H9WMK7uaJL7+fu/Z6hp10k8WkHwEZsJd3K6JWXvUH9dzuYDvZt5lrUzq7I0KKCEiT+ONek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726500154; c=relaxed/simple;
-	bh=C9MlE4yODMM5mb6XjDjjfXwhm5Ed/UVERDpGQeMhzI4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L0AcJEdJGbhfBynxf5g12Bifp5KAxSp+Hkn/q8OYkfo3NelYjS3pz+V7jF5xpmR8WVYlCf8sbbJetk8KCQnEmNNEos6vU/Zq8l1OZjSo6l4QabD8Rh1S7lR9+awRSWAPwZZqV8uKfSrNTGKIrywLc0Gjlc3a3Qk4bMA9QbT23G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvyPPq4P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18086C4CEC5;
-	Mon, 16 Sep 2024 15:22:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726500154;
-	bh=C9MlE4yODMM5mb6XjDjjfXwhm5Ed/UVERDpGQeMhzI4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QvyPPq4PaX8U6jJA+NLsNZk82XFNX5LgSvfSbeeetrqB/4g6cwgPk1E2VLx7GoSfU
-	 Qvc4FanfUnRlaE4FdEvBIUYhJWhZF7fcWKA3aYJ7/1rhZu/6Pa75pGN1mgrjPbmO7+
-	 jdRe2fYMw/SsHRgzjdb8kCHMTxM+fO2YaPS/MLhY9sp1rUGYv17R/d7a7sK5fthxJj
-	 1KkV4uE6GSv/j4yqCZuCRip29Hu0beqfeSlfzF8ETCZ+koLgOrJCJx2Iy+IPR7Dm5o
-	 s/zGRaHOLtnn9AAU4qWnf8ChOtGRMfqL2COSzhcrmzx1EL2lsN7Vk7OZpPJElq9LLx
-	 J15/JjJxrLQMQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5365928acd0so5032716e87.2;
-        Mon, 16 Sep 2024 08:22:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVJWFRzmwuDCshCy9ywEeD+JjKkTxlRJ38VIZkHAa0S77utjedn1HZLtXvQw8KuzBXEFS1NCtqaw6/h@vger.kernel.org, AJvYcCXPfa59aB+oJO1Mwac2/+FQyjOpC4PAE612iu1NBBfnXeouTtNissGeU5gEYvDQ6N/mPR3UoyGtZypB@vger.kernel.org, AJvYcCXhOWFf77tC9OHybIhmg/mk3RoXNRaBWQvbbJe3C2lLP3uoeUUPJR3UHoVbXv37Uomng0g1hAtwU0tz8UwE@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlq+7SnEbSNF8P08q6xjcgd0WCA+GhUhJx3QHkitYcKmZLUXgW
-	sUB7bzT4cr+bSvWqDHUur6F1MLPJDRgSql15mKAcjAYGf2uzRJLeGF8d1toYrvePcS/3mT44NVB
-	+8hWFDtLl9lSRgpiqDpfKv0a+3w==
-X-Google-Smtp-Source: AGHT+IGdtTw/KSz+ewhmThokJhzQHLQtbmkjbMSGHd0sSEClAzNlgWwy0LVcgG/meO/bYpmv5im6I9R4MCOcEvebLO4=
-X-Received: by 2002:a05:6512:3195:b0:530:aa3f:7889 with SMTP id
- 2adb3069b0e04-53678ff4b11mr8342939e87.56.1726500152476; Mon, 16 Sep 2024
- 08:22:32 -0700 (PDT)
+	s=arc-20240116; t=1726500227; c=relaxed/simple;
+	bh=u1WK5mGbBpgkrsDPdh6PGHRYiqTBLU/04eRgolKlOW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SZ4Pk9oxmCE/VDKnaAiAVQmkPlhQWU4xbTQ3fyc0tlUBmFQB2gikhJHL95/u8UCIFnKc/Um5GnQfPF2ah+ey493Ir9i2XvOPvxOzSR14kbUyJLTBoBJvaoBuorRc9AmLCcwwQ48e+dIvkMrJZ7C4g6+UDhrceKpJP/Qd4tqjyMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ktywi59N; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726500226; x=1758036226;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=u1WK5mGbBpgkrsDPdh6PGHRYiqTBLU/04eRgolKlOW4=;
+  b=ktywi59Nc7s4xV7j0xiMbeTSL17JnBlw7Sr4wXzM7N7bQRu6beukUwRx
+   RuauZ7de1t84+A0c7GQjxX5kxKnkJ9WBaOaAkUbRh8kTrcq/hXF/Hxfj1
+   fFxBbUyF9LAfDiLSXjVo/aAqnJo5kv33W3djta34Zle8qSaId6E/hAR7/
+   809/0N4DeuTeB7hhRV4zn6cduAAyyVLAl6jsJ5sNffbpPSy6BHPxX9Ao/
+   Q4Ce7zNvm+Zp8QZ2R+hQKBp55IYUMVESmBZIz86UDAe4UOjZEcLn7zHlm
+   MVQXRaGMrBl040SdxH+2A+kTLk4pXWejNrFA/uV1huSDiHz/34nDgiycG
+   A==;
+X-CSE-ConnectionGUID: DE7C65MuSR6TZ+MM/cMl9g==
+X-CSE-MsgGUID: XZwAA8WYRYmzMO+o8Flzhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="24865269"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="24865269"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 08:22:29 -0700
+X-CSE-ConnectionGUID: 86rnqQMjR0mmCKUhs4Ik+g==
+X-CSE-MsgGUID: mBOuEq5nRZuNT1rp++px/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="69678112"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 08:22:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sqDYU-00000009VOi-2We2;
+	Mon, 16 Sep 2024 18:22:22 +0300
+Date: Mon, 16 Sep 2024 18:22:22 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v7 06/10] i2c: Introduce OF component probe function
+Message-ID: <ZuhNLuNvwXWjqRqT@smile.fi.intel.com>
+References: <20240911072751.365361-1-wenst@chromium.org>
+ <20240911072751.365361-7-wenst@chromium.org>
+ <ZuQTFTNTBLCziD05@smile.fi.intel.com>
+ <CAGXv+5HgkCZ=vdHGgvCW1U-nid=cQrVaxC+V+H2Gknf2pnTbYA@mail.gmail.com>
+ <ZugKHrzs5BWoDr1c@smile.fi.intel.com>
+ <CAGXv+5E09LH5UKXh0wHrsqAp-ps8xaGfSZ37GWZ6sbyoaOczfQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910234440.1045098-1-robh@kernel.org> <20240914151806.66c58bfd@jic23-huawei>
-In-Reply-To: <20240914151806.66c58bfd@jic23-huawei>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 16 Sep 2024 10:22:19 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+oJ71ncJOLH_ozyKgO8N0Dq85nvXM00cpOE24wUprXjQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+oJ71ncJOLH_ozyKgO8N0Dq85nvXM00cpOE24wUprXjQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: iio: dac: adi,ad56xx: Fix duplicate
- compatible strings
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Auchter <michael.auchter@ni.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5E09LH5UKXh0wHrsqAp-ps8xaGfSZ37GWZ6sbyoaOczfQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sat, Sep 14, 2024 at 9:18=E2=80=AFAM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Tue, 10 Sep 2024 18:44:39 -0500
-> "Rob Herring (Arm)" <robh@kernel.org> wrote:
->
-> > adi,ad5686.yaml and adi,ad5696.yaml duplicate all the I2C device
-> > compatible strings with the exception of "adi,ad5337r". Since
-> > adi,ad5686.yaml references spi-peripheral-props.yaml, drop the I2C
-> > devices from it making it only SPI devices. Update the titles to make
-> > the distinction clear.
-> >
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> Is this an urgent thing, or can it wait for the merge window after next?
-> For now I've queued it up for then in my testing branch but can yank it
-> out and send it as a fix after rc1 if that is useful.
+On Mon, Sep 16, 2024 at 04:59:59PM +0200, Chen-Yu Tsai wrote:
+> On Mon, Sep 16, 2024 at 12:36 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Sun, Sep 15, 2024 at 12:44:13PM +0200, Chen-Yu Tsai wrote:
 
-Sooner would be better. It's now a warning in dtschema main branch.
-The issue is not so much the duplication, but that which schema gets
-applied is not deterministic.
+...
 
-Rob
+> > Hmm... I have looked into the implementation and I haven't found the evidence
+> > that this is anyhow scoped. Can you point out what I have missed?
+> 
+> From patch 2:
+> 
+> +#define for_each_child_of_node_with_prefix(parent, child, prefix)      \
+> +       for (struct device_node *child __free(device_node) =            \
+> 
+>                                  ^^^^^^^^^^^^^^^^^^^^^^^^^ scoped here
+> 
+> +            of_get_next_child_with_prefix(parent, NULL, prefix);       \
+> +            child != NULL;                                             \
+> +            child = of_get_next_child_with_prefix(parent, child, prefix))
+> +
+> 
+> "node", or "child" in this snippet is scoped within the for loop.
+
+Ah, nice, that's what I missed, thanks!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
