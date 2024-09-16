@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-331123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8E197A8BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:30:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB3F97A8BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706561F26B3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392F81F26A62
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531DA15E5DC;
-	Mon, 16 Sep 2024 21:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2C315CD6E;
+	Mon, 16 Sep 2024 21:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5REh09/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C47j5NID"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CA91494AC
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 21:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159935588E
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 21:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726522230; cv=none; b=iHJoufZ/rBokvASsPgcEoWLv5XMN19BVKAbeY2q+mzvWqYRV01IYYU+Wss1YwNA3pZSI6ECvumVbCAjxCdcRQ0AO44yC+7XWyJYRCz4qc/WYa+rElMMxM3uxqAd/wk8D9hYS4d0OhdzCvnF0isUG1mnBKcGd4CLfB+M3eAJlDbY=
+	t=1726522232; cv=none; b=ZRn/INVeA/xgzi0Ph105GfnbTeDInJqqpyUQpK62lueaomqn9xOdcJPCF4RkICU94YEtBkujzBuIJJfNgvM/FvD2S9eDT+nb/RpLw0OzXjQcXfQS7IT6uUTKdlSVMQxeoO9qo+8s0yiARni40jSR0behwSRhor4I5ZvRTE1wn2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726522230; c=relaxed/simple;
-	bh=anl4DpoqqD9fIJF2b3yEUbmX6bTmHXeEKVEwgC0wq3o=;
+	s=arc-20240116; t=1726522232; c=relaxed/simple;
+	bh=f6cGudW8bpYB1h8dVvi/iSMGcZhutHcSIscuvvjHLEA=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CPgiiydteJ60d6P9IK/Q03a81t5NC4pTO3aXowy5HTpTnsyX4ZZbjQge3L/U2B7sW794m11b3Iyv09pbpXnxVgPxVbpc4JhCQ6sRPFaFFHrTx12x95dvt0m4vlkgmPufRnEsxFtk4LJqk97QUNCi+/G1Db3xX0qSZ2CBaTZWV6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5REh09/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28E51C4CEC4;
-	Mon, 16 Sep 2024 21:30:30 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=iIn9FYzyGmSzBczVK90e3bEzzjTPkuYyVl4Gt2x45xPR4JGH4pqZsS67oy1sZrhr4IGCkJeHaF7E82ofMlrzmkAe72qDmuF4hrcvEknOSwYA5ZTKulP1gozYIXzwcw5Rh1To34TGKfoZU9EaS1zsomWHMPnRVW146Z7XQ51eT/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C47j5NID; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA99C4CECF;
+	Mon, 16 Sep 2024 21:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726522230;
-	bh=anl4DpoqqD9fIJF2b3yEUbmX6bTmHXeEKVEwgC0wq3o=;
+	s=k20201202; t=1726522231;
+	bh=f6cGudW8bpYB1h8dVvi/iSMGcZhutHcSIscuvvjHLEA=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Z5REh09/c6QIhhYABIZhNRBLxGuekL9ILzwCRKqqWabrx/lYD4CDG9gpZKnecCFoV
-	 K0CvBQidTUAj2VD1jtxECKNPEPTzMbMP2vM2tE2XWqHveB2rdBwhwiWKrH0xLTCVjZ
-	 YnXA87pAgDmyaIrgPPqmXS/3pGgpZwpbY7uSX8iXWJn2inUtQ2Yl+HsvKZ4i/2Fk4l
-	 AhSqUaX2GGpbTxNn4OVxfYzsuEDOJ4KQT3j5tz9we+utXc5GmhFNV3LGPgE/QanIjf
-	 oe4Oi/M9aR/Wi9oC0rJA1Mq8TG8b4eXs4v/yVGUqLKqttupj9kzmH3mAgUACnvpj9o
-	 CmE64cki7pWEQ==
+	b=C47j5NIDmrzDc3lovwDrQdBL1QO4Nx3FaDGvG7rVGNTBZrMfIFVMip3Uv9kM/knkw
+	 0qcGEVvj9cFEC5exqZWJQiyzZyJJEAEZW3yj61EIm7D3o6bVqxstObxa7Qw8OuL4jJ
+	 wxqUvmupkGYa64lIzLFdpouQo9n6H2rR4k70qV5m2cY4NwPFQ807bwa1uON4rBP79v
+	 0zdE/umc3Eh6qwYQ8rLkHENLW45L3rc9gICSy3rLcZ5mPcBD3Jn4UPxWZjvuqhUkbn
+	 e8UIRKbkz3nnqcT5NunwS81eLpcPGZ7pA+wGzz0pW56TQxsWJwF5CP9OC6QuwPlQfc
+	 ekHCPJ34uVBhA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE0D3806644;
-	Mon, 16 Sep 2024 21:30:32 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C223806644;
+	Mon, 16 Sep 2024 21:30:34 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: forcibly migrate to secure space for
- zoned device file pinning
+Subject: Re: [f2fs-dev] [PATCH v2 1/7] f2fs: make BG GC more aggressive for
+ zoned devices
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <172652223176.3820990.6988007191062882745.git-patchwork-notify@kernel.org>
-Date: Mon, 16 Sep 2024 21:30:31 +0000
-References: <20240912165958.386947-1-daeho43@gmail.com>
-In-Reply-To: <20240912165958.386947-1-daeho43@gmail.com>
+ <172652223303.3820990.12818974880515327403.git-patchwork-notify@kernel.org>
+Date: Mon, 16 Sep 2024 21:30:33 +0000
+References: <20240909221946.2004046-1-daeho43@gmail.com>
+In-Reply-To: <20240909221946.2004046-1-daeho43@gmail.com>
 To: Daeho Jeong <daeho43@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  kernel-team@android.com, daehojeong@google.com
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 12 Sep 2024 09:59:58 -0700 you wrote:
+On Mon,  9 Sep 2024 15:19:40 -0700 you wrote:
 > From: Daeho Jeong <daehojeong@google.com>
 > 
-> We need to migrate data blocks even though it is full to secure space
-> for zoned device file pinning.
+> Since we don't have any GC on device side for zoned devices, need more
+> aggressive BG GC. So, tune the parameters for that.
 > 
 > Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: forcibly migrate to secure space for zoned device file pinning
-    https://git.kernel.org/jaegeuk/f2fs/c/5cc69a27abfa
+  - [f2fs-dev,v2,1/7] f2fs: make BG GC more aggressive for zoned devices
+    https://git.kernel.org/jaegeuk/f2fs/c/5062b5bed432
+  - [f2fs-dev,v2,2/7] f2fs: introduce migration_window_granularity
+    (no matching commit)
+  - [f2fs-dev,v2,3/7] f2fs: add reserved_segments sysfs node
+    https://git.kernel.org/jaegeuk/f2fs/c/4cdca5a904b1
+  - [f2fs-dev,v2,4/7] f2fs: increase BG GC migration window granularity when boosted for zoned devices
+    https://git.kernel.org/jaegeuk/f2fs/c/2223fe652f75
+  - [f2fs-dev,v2,5/7] f2fs: do FG_GC when GC boosting is required for zoned devices
+    https://git.kernel.org/jaegeuk/f2fs/c/9748c2ddea4a
+  - [f2fs-dev,v2,6/7] f2fs: create gc_no_zoned_gc_percent and gc_boost_zoned_gc_percent
+    https://git.kernel.org/jaegeuk/f2fs/c/9a481a1c16f4
+  - [f2fs-dev,v2,7/7] f2fs: add valid block ratio not to do excessive GC for one time GC
+    https://git.kernel.org/jaegeuk/f2fs/c/e791d00bd06c
 
 You are awesome, thank you!
 -- 
