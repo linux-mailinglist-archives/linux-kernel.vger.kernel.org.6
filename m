@@ -1,168 +1,92 @@
-Return-Path: <linux-kernel+bounces-330939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A48797A646
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:55:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9D297A648
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C5701C20B8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:55:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A6C71C20A7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE7015B0EB;
-	Mon, 16 Sep 2024 16:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBF115B0F4;
+	Mon, 16 Sep 2024 16:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwxhHVyx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kh0PPngC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDCD158A1F;
-	Mon, 16 Sep 2024 16:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9953210A18;
+	Mon, 16 Sep 2024 16:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726505752; cv=none; b=BF/iiiRDGe972OeIsr29voJ/i1XvODFlQr/dFKahl7XLb92SLS5xyfQWL7lTF2OLUE0UxBvSLB2lO/zWczyXydE1mcb7qB4ZeGSCrrI3rwBxWzfSCR3lsGYG4oJN3eUmDQ66u1Hgk/58i+ifqMI28FXLZqSrK/l5XhnpOmsM08Y=
+	t=1726505762; cv=none; b=nFdvi1IO7/7S+3H0t4dYrNrWNrH7ihFn3rXBmhC6udvY8ZZosJKZMcvJ9S/RJxhkIv9aVWRvkWmTgusXiZMUJGucXU3BRCMYvHYR6wJJUElnaFO2TzMMf+L68RMoxYnpBPjglv73tMqC8SBKgV6LCu6Of0iB+b0sMqv5pmVNYrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726505752; c=relaxed/simple;
-	bh=RYpfdNmKaTeXJbERjP90RBtpFHg2AYlXmWBqtQKGlVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o3kgtSfWASrjzbpPKbgwF00F0+z1HIVJjkBEhrUUuBY48oFhpoGtlQkJ4Hf8oQqjmth+JV203+c0S9qPymEO3UkZLGDye1zCHV2LvKLs81CoXhCyymuryLVdHXp6+neX12Ich7LDBT806xglSZieUdZ58FZh4pcCwkb/BZn3jVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwxhHVyx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A058BC4CEC4;
-	Mon, 16 Sep 2024 16:55:42 +0000 (UTC)
+	s=arc-20240116; t=1726505762; c=relaxed/simple;
+	bh=ppIg8LRzbyGQG9QXLZlYoEZ/7zPlqNNFEql//NfyhqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sza7urHOtI7OxnWF0/tS04xsCKEXCAy0632VVHGPoSpN7u08sIboxyPn0TRlKMmeFTP3JgfE+ko9J4zigvlEcW4+kGLLKkQYwMbqtl2YZOIyFtR/jeCCID4bny8/Z3iXNjUvzxpIy0SWC0SbmZ+ryxKlAdSqzpWYbr6oDIrQDtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kh0PPngC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10151C4CEC4;
+	Mon, 16 Sep 2024 16:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726505751;
-	bh=RYpfdNmKaTeXJbERjP90RBtpFHg2AYlXmWBqtQKGlVo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JwxhHVyx91Zp6uLhWlX7B4CpVwUAqb3iVL3N20Q5aH8g86CGt4rB6nkTwH24CyTvS
-	 yzHJJiMUWCzAqPKOtAtQ1dHjakp1tSrzAGva81+1Oe8HpK1Yd37K/3Y9uchMPzSdDC
-	 kTuAbdD77g+YZuffbbA4JE4z7ZTg8N1M6uE8FGpfAe9s/PKs5G+llAGYOISSayqBih
-	 eAv7bpxR1RADxDydqDoTwjsh5AUi6GvpuiubrwMKGb2yxRMY9zw5sWG3UNG1SOkfEQ
-	 jUSrKhU8na4qIkjgGR1QtQawzIFERBKI9c7hpBLbv783ZfB0+eYonLmFoiOxiSIbBO
-	 hiDuYb/CCE8DA==
-Message-ID: <94fa1f20-6bfa-4ae5-8f96-cf0d8ed9b3ac@kernel.org>
-Date: Tue, 17 Sep 2024 01:55:27 +0900
+	s=k20201202; t=1726505762;
+	bh=ppIg8LRzbyGQG9QXLZlYoEZ/7zPlqNNFEql//NfyhqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kh0PPngCUSz5LHP93IoBz2VkMwvPdVpSFJMWrPOh/c1mKAxpEc/QtRPkTkn3HyP6H
+	 qiv0GFRki5WHb56DdopLeO9WrTuln4tEue1n1w9lL5Ltd6bBbHKdOBjJl+aIyhb0VY
+	 8p7/VFi0QnsRnJ68vD2k7Ysb1j47hoB2YIEBnsQFDlMEO6MJc7Fo68AVay04VwdxHq
+	 tf6NcT6fEyiYQ8vjJ2SUegq6MAL4IfxDnRtcRN880vYuGUgPSOdqGLnKFV6oEttQTe
+	 ynu/0ODJfLPC+ntgQGzHgo0dvn3A+7CK0vAFqWksvPt0UZc0T8Sn9hfABRPjc3TmwH
+	 WgLfKezRSUb8Q==
+Date: Mon, 16 Sep 2024 09:56:01 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: chandan.babu@oracle.com, aalbersh@redhat.com, willy@infradead.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: convert comma to semicolon
+Message-ID: <20240916165601.GB182194@frogsfrogsfrogs>
+References: <20240903073931.781113-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ata: libata-eh: Fix the low data link negotiation
-To: Guoliang Zhang <zhangguoliang@zspace.cn>
-Cc: cassel@kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240916074232.2584182-1-zhangguoliang@zspace.cn>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240916074232.2584182-1-zhangguoliang@zspace.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903073931.781113-1-nichen@iscas.ac.cn>
 
-On 2024/09/16 16:42, Guoliang Zhang wrote:
-> large capacity hard drives, such as the 16TB Seagate hard drive in hotplug,
-> have data link negotiations that only reach 3.0 Gbps.
-> The reason for the issue is that after powering on, the hardware reset time
-> of the hard drive is relatively long.
-> In the driver, after the hardreset signal is sent, the waiting time for the
-> first two tries is too short,
-> causing the hardware reset to fall into a vicious cycle.
+On Tue, Sep 03, 2024 at 03:39:31PM +0800, Chen Ni wrote:
+> Replace a comma between expression statements by a semicolon.
 > 
-> log is as follows:
-> [ 959.461875] ata7: found unknown device (class 0)
-> [ 963.686830] ata7: softreset failed (1st FIS failed)
-> [ 969.442516] ata7: found unknown device (class 0)
-> [ 973.686229] ata7: softreset failed (1st FIS failed)
-> [ 979.426704] ata7: found unknown device (class 0)
-> [1008.687432] ata7: softreset failed (1st FIS failed)
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-These messages are not normal and do not correspond to a drive that is slow to
-spinup. These are generally indicative of bad communication with the device.
-I ran into this the other day and solved the issue by using a better SATA cable...
+Looks good,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-If the drive is slow to spinup and takes time to start responding to commands,
-you should see the message:
+--D
 
-"link is slow to respond, please be patient "
-
-which is issued by ata_wait_after_reset() -> ata_wait_ready(). The "1st FIS
-failed" error indicates that the first H2D FIS sent to the device with the SRST
-bit set does not give the correct answer, that is, the SRST bit is NOT set to
-one in the Device Control register. Software reset should work always regardless
-of the power state of the drive (spun down or not). So this error has nothing to
-do with the timeout length, which is used for this first phase of the reset
-sequence as a convenience but is really intended as a timeout value for waiting
-for the link to become ready, which may take time if the device is spinning up.
-
-> [1008.687447] ata7: limiting SATA link speed to 3.0 Gbps
-> [1009.566733] ata7: SATA link up 3.0 Gbps (SStatus 123 SControl 320)
-
-This is the result of the sofreset failing due to the "1st FIS failed" errors,
-and NOT due to the fact that the drive is slow to spin up.
-
-> [1009.567405] ata7.00: ATA-11: ST16000NT001-3LV101, EN01, max UDMA/133
-> [10009.613694] ata7.00: 31251759104 sectors,
-> multi 16: LBA48 NCQ (depth32), AA
-> [10009.614223] ata7.00: Features: NCQ-sndrcv
-> [10009.639149] ata7.00: configured for UDMA/133
-> [10009.639366] scsi 6:0:0:0: Direct-Access  ATA ST16000NT001-3LVEN01
->  PQ: 0 ANSI: 5
-> [10009.639779] sd 6:0:0:0: Attached scsi generic sg2 type 0
-> [10009.639989] sd 6:0:0:0: [sdc] 31251759104 512-byte logical blocks:
-> (16.0 TB/14.6 TiB)
-> [10009.639999] sd 6:0:0:0: [sdc] 4096-byte physical blocks
-> [10009.640028] sd 6:0:0:0: [sdc] Write Protect is off
-> [10009.640038] sd 6:0:0:0: [sdc] Mode Sense: 00 3a 00 00
-> [10009.640082] sd 6:0:0:0: [sdc] Write cache: enabled, read cache:enabled,
-> doesn't support DPO or FUA
-> [10009.717866]  sdc: sdc1 sdc2 sdc3 sdc4
-> [10009.739038] sd 6:0:0:0: [sdc] Attached SCSI disk
-> ========
-> Logs after modify:
-> [  661.023298] ata7: found unknown device (class 0)
-> [  675.253714] ata7: softreset failed (1st FIS failed)
-> [  680.996545] ata7: found unknown device (class 0)
-> [  695.251101] ata7: softreset failed (1st FIS failed)
-
-The errors are still here... So either you have a bad SATA cable, or the drive
-reset sequence is not per specs. Changing the timeouts to a longer interval is
-not removing these errors, so you are not actually fixing anything here.
-
-Please check your cable. If that does nothing, I suggest contacting the drive
-vendor about this.
-
-I have plenty of drives that are slow to spin up and they do NOT generate that
-FIS error.
-
-> [  696.131404] ata7: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
-> [  696.132140] ata7.00: ATA-11: ST16000NT001-3LV101, EN01, max UDMA/133
-> [  696.172742] ata7.00: 31251759104 sectors, multi 16: LBA48 NCQ (depth
-> 32), AA
-> [  696.173327] ata7.00: Features: NCQ-sndrcv
-> [  696.198155] ata7.00: configured for UDMA/133
-> 
-> Signed-off-by: Guoliang Zhang <zhangguoliang@zspace.cn>
 > ---
->  drivers/ata/libata-eh.c | 2 +-
+>  fs/xfs/libxfs/xfs_attr_remote.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
-> index 214b935c2ced..9e0f17e93e73 100644
-> --- a/drivers/ata/libata-eh.c
-> +++ b/drivers/ata/libata-eh.c
-> @@ -80,7 +80,7 @@ enum {
->   */
->  static const unsigned int ata_eh_reset_timeouts[] = {
->  	10000,	/* most drives spin up by 10sec */
-> -	10000,	/* > 99% working drives spin up before 20sec */
-> +	20000,	/* > 99% working drives spin up before 30sec */
->  	35000,	/* give > 30 secs of idleness for outlier devices */
->  	 5000,	/* and sweet one last chance */
->  	UINT_MAX, /* > 1 min has elapsed, give up */
-
--- 
-Damien Le Moal
-Western Digital Research
-
+> diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
+> index 4c44ce1c8a64..5a55819f50f3 100644
+> --- a/fs/xfs/libxfs/xfs_attr_remote.c
+> +++ b/fs/xfs/libxfs/xfs_attr_remote.c
+> @@ -525,7 +525,7 @@ xfs_attr_rmtval_set_value(
+>  		ASSERT((map.br_startblock != DELAYSTARTBLOCK) &&
+>  		       (map.br_startblock != HOLESTARTBLOCK));
+>  
+> -		dblkno = XFS_FSB_TO_DADDR(mp, map.br_startblock),
+> +		dblkno = XFS_FSB_TO_DADDR(mp, map.br_startblock);
+>  		dblkcnt = XFS_FSB_TO_BB(mp, map.br_blockcount);
+>  
+>  		error = xfs_buf_get(mp->m_ddev_targp, dblkno, dblkcnt, &bp);
+> -- 
+> 2.25.1
+> 
+> 
 
