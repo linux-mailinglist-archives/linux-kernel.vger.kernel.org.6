@@ -1,131 +1,218 @@
-Return-Path: <linux-kernel+bounces-330525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989E0979FBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:50:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F45C979FBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0311F22141
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:50:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF29BB20B96
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2E5153BF6;
-	Mon, 16 Sep 2024 10:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="s2W1mORA"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4EB1547D5;
+	Mon, 16 Sep 2024 10:50:24 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7731494BB;
-	Mon, 16 Sep 2024 10:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DAE153BF6;
+	Mon, 16 Sep 2024 10:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726483798; cv=none; b=KHoGzVOOUZqhUBpOHGbAiC6LeTL9aKUXrRJqZL1R75ySgmA63LkUvaSCIVDAfg5uEQqyLU/ahbj3rMo3tX9ytqsB6g88HoRTKiCtKPi+bjb4QUR0bwc8J0fnt6fXe2uDilbSO2kJJzTW9Jr5uJp5Vx8GbDG6GE6LynoEzreYIY8=
+	t=1726483824; cv=none; b=n9WCcyqtdMj8MT8j9j7tap0k/vxUeSBDqTPl5kl2916eRXZaBdValT3gBrAx6D29Jav/wovZ4Nj8FHHxJfCvapZh/oNJBuGob0Y1cF9fdXQ5OZ1Lyh25PPVv0ah9nBT+rPoMGW+sOZmoKRnQgRlKguZ4vKl0IHgVV62Y6fmL3+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726483798; c=relaxed/simple;
-	bh=SprNo69rdVdRczSHmsJdPUw60b99yXY36JLopcB/Bq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=W5HaQHInZ8sSFitf8z1DxIc02Th368eZXc4HAdUcrKxIzmRbidpg/KbercSsDB2cZ7n24izipdDvWE1V42boT2pwAK1O8qdSXxONggefpB8HHFh8KXPnUAjZP/ulzyo1SKumU4vCeJBO4xH911upaq7fEZcDWbZq2ke6v1SKIeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=s2W1mORA; arc=none smtp.client-ip=212.227.17.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1726483775; x=1727088575; i=christian@heusel.eu;
-	bh=5hzAWYY/NEknJFwWKGv/E8u8GFLlfQeAYhbo9E7ZVyg=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=s2W1mORAYIsMpGpyPrze4wdA2mqmHCwJWijIfcuAQXpAcTai8+EcSsOfvfNEiy68
-	 EBkrFUBD9l3UamuiOvV1IvHJeZLVWKv54LZ3t575d83qmR/SEpTpy6mUHwBSCEQOD
-	 Uh8Fv3MbbCZ8Wn6a0svaLSkkdQdRqQRMOrbddp0hKHvscd64d8rqCAUckkLHSRjAm
-	 VOjfgEQU0Hgchs21+P4BP+jCt9bBhC6E+hNy1kU2f3VVAR/R1aCjVyLdvJDYfprQ6
-	 htUsa/fmrNbh/wOIpqGzZbEMcXvBYxlBc8cAfw29DThndzvBR3Nt29Gl2GjTEZYNT
-	 GuL45aNhYt7OE15MYQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue106
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1Msqpq-1rxLok2fwe-00xpRZ; Mon, 16
- Sep 2024 12:49:35 +0200
-Date: Mon, 16 Sep 2024 12:49:33 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: linux-firmware@kernel.org, Kalle Valo <kvalo@qca.qualcomm.com>
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [REGRESSION] Update of linux-firmware breaks wifi on Thinkpad T14
-Message-ID: <44ae68d2-24b6-49d2-a4f9-ae9cbf6f9950@heusel.eu>
+	s=arc-20240116; t=1726483824; c=relaxed/simple;
+	bh=c4YWO/0EFiYQanN9XvQuPPIasnvzcVAiaTGY/zs6NBI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aDAAzgCSxOkpp87/0eo0wD+P1TMnZ6Kxd+aujCx6xXBjgreTjjoSEWTahhJUwmTLKDbOv2yHjALjkoslBvnXo757LOW4dAHo2YaD7uggLqRhkryBZuGFcFmdzfOXlwBRWqJwQRMg55htAOQgHT5vwTDZSNgA+BCkRkZ/wQYo0As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X6hWp1XDXz6K5xQ;
+	Mon, 16 Sep 2024 18:50:14 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 06083140F5E;
+	Mon, 16 Sep 2024 18:50:18 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Sep
+ 2024 12:50:16 +0200
+Date: Mon, 16 Sep 2024 11:50:14 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Shiju Jose <shiju.jose@huawei.com>
+CC: Borislav Petkov <bp@alien8.de>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
+	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
+	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "mike.malvestuto@intel.com"
+	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "jgroves@micron.com"
+	<jgroves@micron.com>, "vsalve@micron.com" <vsalve@micron.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
+ Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: Re: [PATCH v12 01/17] EDAC: Add support for EDAC device features
+ control
+Message-ID: <20240916115014.000064bf@Huawei.com>
+In-Reply-To: <c31c733bb6e742f580721ec9d0e2f3b2@huawei.com>
+References: <20240911090447.751-1-shiju.jose@huawei.com>
+	<20240911090447.751-2-shiju.jose@huawei.com>
+	<20240913164041.GKZuRrCeoFZBapVYaU@fat_crate.local>
+	<c31c733bb6e742f580721ec9d0e2f3b2@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qtwz73t4edjtsbyg"
-Content-Disposition: inline
-X-Provags-ID: V03:K1:QsWglT6DP2QQ6QNSnZTOoWt5LXUFxyBEcnz36034CXpymEqk5Fr
- Y/ksxIb7uuIgqg/81rErmJgB2g74gxP9ihktXYXku4V3Xvm4bGlFQ8/FL0HQsHTzOqk5qWy
- HActdzqPpAv86Q30Dgr3yPNEoo5H5tFiQl4JS3SSt3AETJqewX+uxnLIJiPVGe0VuW6wZU1
- physKz9GvuEc4cnsAuiIA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gkH3q8Bu69c=;2jv/yQBSGIGFJozcIV6797HCfDW
- qzJm4vcMpm4Qaw7C+9aWJa8rEEZqA5xyAX6ALyXqK3gMMftrz/8npsj/bc1iW8hu0OvA/7sSD
- JxBslIEJiVSp755thVNTGrn17ZjZ72vLtR9O/owuSvkEzIVeAfzWTSFex24okOdTRTWPIGrN+
- h2A1nET4wh+syZZ2hyh8HNygyVydzNfY+HtVQJEBnBWbL89vDO9zV8NLbTr9x5HB6fT/cE00O
- 1ZmPnArK+3uHaorxKRWpAvOC0LhLI+84HhTU/UbKP4UbjS83OGwpIwNnNDxDfoc5dXLh39KHe
- sHOPQsyxF/G4vduggrADk0+wsXk6KC1x9cPzXrNtdzxFuHSuAqSwaLM66bq0jx0rtBWF7mTXd
- ZbUrLgZ4q2dDA+EC4aLMfj+DMNnpHOw7KaSsv4q7Xv2HKH7fHle6mEaE4c6QrAA7s0u9szp6q
- tSucKP/NZeEHTXiPNw/gWgT9v60ABfXHFPMms7Hunc0ewxttzB5jOSR+FZ1XzVOSQ2oBFN9+b
- tR4CjR3dHmbMT5MZacui1kbys5+xooBVx1QkX9gLyJc60MH1Ve3eHe7AyuYwhw9TkoFjbbIxN
- AqLS1Twl3nzMeqZkbn01fknOB4Px+IaF/3yAWFtaCvF0YGJwFyRjriHLT3W3Ndx+0kKdkxjER
- FKtLrirsh+1zG/Gy/zuu1uTZ/pFxu+Nm5IKavpnFo0up+VzR8acFh004eaNTyyQpvgxU1CzGy
- VKQ1Qvj3PezOM9aTryIEseKjhMsmgykOg==
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Mon, 16 Sep 2024 10:21:58 +0100
+Shiju Jose <shiju.jose@huawei.com> wrote:
 
---qtwz73t4edjtsbyg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Thanks for reviewing.
+> 
+> >-----Original Message-----
+> >From: Borislav Petkov <bp@alien8.de>
+> >Sent: 13 September 2024 17:41
+> >To: Shiju Jose <shiju.jose@huawei.com>
+> >Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
+> >acpi@vger.kernel.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org;
+> >tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
+> >mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net; Jonathan
+> >Cameron <jonathan.cameron@huawei.com>; dave.jiang@intel.com;
+> >alison.schofield@intel.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
+> >david@redhat.com; Vilas.Sridharan@amd.com; leo.duran@amd.com;
+> >Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
+> >Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
+> >naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
+> >somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
+> >duenwen@google.com; mike.malvestuto@intel.com; gthelen@google.com;
+> >wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+> >wbs@os.amperecomputing.com; nifan.cxl@gmail.com; jgroves@micron.com;
+> >vsalve@micron.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
+> ><prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
+> >kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
+> >Linuxarm <linuxarm@huawei.com>
+> >Subject: Re: [PATCH v12 01/17] EDAC: Add support for EDAC device features
+> >control
+> >
+> >On Wed, Sep 11, 2024 at 10:04:30AM +0100, shiju.jose@huawei.com wrote:  
+> >> +/**
+> >> + * edac_dev_feature_init - Init a RAS feature
+> >> + * @parent: client device.
+> >> + * @dev_data: pointer to the edac_dev_data structure, which contains
+> >> + * client device specific info.
+> >> + * @feat: pointer to struct edac_dev_feature.
+> >> + * @attr_groups: pointer to attribute group's container.
+> >> + *
+> >> + * Returns number of scrub features attribute groups on success,  
+> >
+> >Not "scrub" - this is an interface initializing a generic feature.  
+> Will correct.
+> >  
+> >> + * error otherwise.
+> >> + */
+> >> +static int edac_dev_feat_init(struct device *parent,
+> >> +			      struct edac_dev_data *dev_data,
+> >> +			      const struct edac_dev_feature *ras_feat,
+> >> +			      const struct attribute_group **attr_groups) {
+> >> +	int num;
+> >> +
+> >> +	switch (ras_feat->ft_type) {
+> >> +	case RAS_FEAT_SCRUB:
+> >> +		dev_data->scrub_ops = ras_feat->scrub_ops;
+> >> +		dev_data->private = ras_feat->ctx;
+> >> +		return 1;
+> >> +	case RAS_FEAT_ECS:
+> >> +		num = ras_feat->ecs_info.num_media_frus;
+> >> +		dev_data->ecs_ops = ras_feat->ecs_ops;
+> >> +		dev_data->private = ras_feat->ctx;
+> >> +		return num;
+> >> +	case RAS_FEAT_PPR:
+> >> +		dev_data->ppr_ops = ras_feat->ppr_ops;
+> >> +		dev_data->private = ras_feat->ctx;
+> >> +		return 1;
+> >> +	default:
+> >> +		return -EINVAL;
+> >> +	}
+> >> +}  
+> >
+> >And why does this function even exist and has kernel-doc comments when all it
+> >does is assign a couple of values? And it gets called exactly once?
+> >
+> >Just merge its body into the call site. There you can reuse the switch-case there
+> >too. No need for too much noodling around.  
+> edac_dev_feat_init () function is updated with feature specific function call() etc in subsequent
+> EDAC feature specific patches. Thus added a separate function.   
+> >  
+> >> diff --git a/include/linux/edac.h b/include/linux/edac.h index
+> >> b4ee8961e623..b337254cf5b8 100644
+> >> --- a/include/linux/edac.h
+> >> +++ b/include/linux/edac.h
+> >> @@ -661,4 +661,59 @@ static inline struct dimm_info
+> >> *edac_get_dimm(struct mem_ctl_info *mci,
+> >>
+> >>  	return mci->dimms[index];
+> >>  }
+> >> +
+> >> +/* EDAC device features */
+> >> +
+> >> +#define EDAC_FEAT_NAME_LEN	128
+> >> +
+> >> +/* RAS feature type */
+> >> +enum edac_dev_feat {
+> >> +	RAS_FEAT_SCRUB,
+> >> +	RAS_FEAT_ECS,
+> >> +	RAS_FEAT_PPR,
+> >> +	RAS_FEAT_MAX  
+> >
+> >I still don't know what ECS or PPR is.  
+> I will add comment/documentation here with a short explanation of features
+> if that make sense?
+> Each feature is described in the subsequent EDAC feature specific patches. 
+Can you bring the enum entries in with those patches?
+That way there is no reference to them before we have the information
+on what they are.
 
-Hello Kalle,
+J
+> >
+> >--
+> >Regards/Gruss,
+> >    Boris.
+> >
+> >https://people.kernel.org/tglx/notes-about-netiquette  
+> 
+> Thanks,
+> Shiju
+> 
 
-the commit 82318c96 ("ath12k: WCN7850 hw2.0: update board-2.bin") in the
-linux firmware repository apparently breaks card recognition in Thinkpad
-T14 laptops with the following journal entries:
-
-    Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: failed to fetch board data for bus=pci,vendor=17cb,device=1107,subsystem-vendor=17aa,subsystem>
-    Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: failed to fetch board.bin from WCN7850/hw2.0
-    Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: qmi failed to load bdf:
-    Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: qmi failed to load board data file:-2
-
-Is there any more information you would need to debug this issue or does
-the above already tell you enough?
-
-This issue was discovered by Arch Linux Forum user "Mezzy12" with
-debugging help from user "loqs" and me.
-
-Regards,
-Chris
-
-[0]: https://bbs.archlinux.org/viewtopic.php?id=299286
-
---qtwz73t4edjtsbyg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmboDT0ACgkQwEfU8yi1
-JYXn7hAAy4QCSRzmKXEmAbMIKZaG0C3VjzePWedQqNpzFw66FWxIsjSGrqs+p2Qy
-/jYWJ7OL0UgHAXtHwFEaAv4oidWrSXTwgNTI216Valdm3vijffyFyPOp0lbJ6Iuq
-GH4mW7ogHAZgUqyhvoK9HmZugaufCVi/BACBF8hz4cTbKY5i7HAa5CNkJ0jfWheX
-PbvMNS6lEA6xdVfyv0ot7TZYeudfIGZcaDcyyGQeGm655iyHhJTjnhhr+iOUvi0P
-3IStoZ52p0t4xw/Li0scBIhenrHIguDLzqHiwOpSeZUG4a1zvPlm0GPMO//lfWvF
-j/XNTDCjUhsyiD3geVX4k0V3rhbiQS5LCHL0OSLD6Um+yyv4jFKY6sv5dzxorCDq
-nul3digeUItTbvSopt8CuN+Pu0S01I7Hdhczw/p5cWCHxj2Pjwf5SduPOZgpKYjl
-qPL2q0EogLYEh61Txi6V7qrHL3krofEmbBpXFBmpA80iuw4OJ6N3+Vn0xBpmCL6n
-S/6aplzFV2in4USIYmqIy82eT2me0aDR3P7W4lj7P20HKqE5vIsXE6eifSL04x0z
-hHfBYYnuKld56D7xXSnFhyFDqWTihznU+ektVIHpHtxpObyt8ikZQkU9gLgWyNb9
-9rQ9KZDpLmrcUVChgho4VLxjE5XjqhcVQRF2tAM9724kQW91a2s=
-=ekkO
------END PGP SIGNATURE-----
-
---qtwz73t4edjtsbyg--
 
