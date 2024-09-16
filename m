@@ -1,119 +1,133 @@
-Return-Path: <linux-kernel+bounces-330761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C393A97A3E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:12:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709C297A3E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F2281C26E27
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:12:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E18E1F2A114
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3344A15FA72;
-	Mon, 16 Sep 2024 14:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E8C158A18;
+	Mon, 16 Sep 2024 14:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K7QZmDpG"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="inLTVKAC"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D2D15E5D4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9557B15852B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495765; cv=none; b=F6CSuIsbKpM0SrLrCCmlBJOVWYbs7enPSAhNYrdE4/KvTaDdrrC3e6i2EKEQ0i9hluFNoAXv4y3iMH2PGyjbA+N0+hUhQg58yZ7kb6r0nWewo8qL2eUox0Tr1o8zNF27TAf08fajsqClsEhIQxXPh6y1kF2H/VLnVq+AL5xM8+s=
+	t=1726495825; cv=none; b=U/05WSM8jKWn7/MdDV+SgkZVc9o1jMocAqr1eJeYaGtV97HcYAfh7ubq4LaJNJwPkU998KzE/l1dyGAeqPvSy/LE2Z1GbLIZ5C0XlwUhgiliV76luJuCbHIWXhS3UJdAbDbn+IaQUpIZIMUR7CNp3XB3wX2T/LhzNFD7O6F5lg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495765; c=relaxed/simple;
-	bh=NX5kItBI6qWChtIaNT2kylD3MQKq9w7BzjD6DZoxbDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kwfP3MEIL3xhW4vfEULjXG3wWSv5eMm2v/d4vpT5taFBoVK5Kg/QV8p8Sak0FNSQxndPE3RbJxY+Z0CnOO69FefZwUjxudSMFDWLckEK0TKsJgRI6xGp0KTAX681OD3bCdiN95oi6grXwEcB/DsMS6rF9jNh8vEh5eiyEwjOQjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K7QZmDpG; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d4979b843so627924266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:09:23 -0700 (PDT)
+	s=arc-20240116; t=1726495825; c=relaxed/simple;
+	bh=Z+VVMYEinWZISnatS9m7WZOCo5cTANY4O5vrS2RyMg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BJp9INxOzZEqd5Hk1skHZ/TDkWdEEZZfpB7CrMUuahYWngImvvnPXhZks/UHWpeqFZFnUgS7YkIguuF8sns1ZBA0YsRX3jEic8i3BbeSLS06ddy9WXMu3S2fknN1GEMiWEtXTzODxhMTYDJA1XOUZwmyfCULxtHOz2cvj/9NjNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=inLTVKAC; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37747c1d928so2138807f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:10:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726495762; x=1727100562; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZhWdIDXVnRhjARMzfOhbCyFUIgcuuqCXLNl4MzBeIg0=;
-        b=K7QZmDpGgmVdiqSOXak4dnBieT/pxEi2ZAZxwaCUDbXxeN9InFgXzap3gkmkbB5ghB
-         MHrjg2v3nP52uBgUxBl8cgi3UGUM2w71AeCj/lwnVap0PtKRYEaEzlM+N2ATlesCEl05
-         wpiRYCBErB8GXyRn4SNXWqlL8xXwztcYeqS9xWh6qDJZfSx4FJ07Ql+d6UrTWezHX+CX
-         3T4CLevock6cufZ2yH37wTarUHaGsLmN04Y3FRzhZ4VSSBQbt6kCP83BUr9yNMYJPrBA
-         xvnDHdvBRItD9nHD0NSA9F6qSu+VfyhccVxSLrD5tapBSyhvCDMng5jz6BywLik/Jxj4
-         T1gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726495762; x=1727100562;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1726495821; x=1727100621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZhWdIDXVnRhjARMzfOhbCyFUIgcuuqCXLNl4MzBeIg0=;
-        b=HKWWxO/GONt0DIOzKvngw2MR+yEfAIUjTzRvE7DgQQRUSQ29hiHppCTHdvV0ar7QMl
-         Zf0j5Ub3FMPoPirfELctNKUl8Z7KQyO9oMpvSUhMXxzFYs/+pbeGf496cT/SiIz8osRY
-         Tg9XTSRHtvG1Ss0T/7ga/qqFrBBAvMRzZmd3lVFxBOE17mIaFJlIzw0stn7oZAaqLWAZ
-         c7Gz2U6r2eAD+AGyCmfzAThVHMUSMlvxGS1K/VbKac1RZvkeLI9Eg6F0NatgvecWN2tC
-         FOfBAQrnbkYBTZl0d+TAfaMfJIfvyIjB2yo6v6jXPHCWsiWmxLh1OzBr5c/X+6SKrGIN
-         q6Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnju+MzY50l2kLxUWJoXFO+qrapU2i49fPCQMYScDqeojyrEgOou1sQcLRTLux91hFDov1t4BKe29O+Wc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJuMhV6EZm+cJdxQHsaV7ICA3ecj49OUlSVuJH94TSLuP/kx4P
-	zE45WTEUM+PzBUczJ1BQf4uO+DydyWAvIXJBLs1CvAuScgLxU8D6Z0YRCRxMx/8=
-X-Google-Smtp-Source: AGHT+IEZzIM9A+aqMP7t3V0EP26ZH1dlD/AwzLiHQs10yeXD8zAfdCjeoGV4RvP6VJWRp8ORItjbaA==
-X-Received: by 2002:a17:907:72ca:b0:a8d:2d2e:90e6 with SMTP id a640c23a62f3a-a9029674fb4mr1717029766b.60.1726495762282;
-        Mon, 16 Sep 2024 07:09:22 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061096a29sm322687466b.41.2024.09.16.07.09.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 07:09:21 -0700 (PDT)
-Date: Mon, 16 Sep 2024 17:09:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Denis Benato <benato.denis96@gmail.com>
-Cc: Jagath Jog J <jagathjog1996@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] iio: bmi323: fix reversed if statement in
- bmi323_core_runtime_resume()
-Message-ID: <689a2122-6e2f-4b0c-9a1c-39a98621c6c1@stanley.mountain>
-References: <cover.1726333044.git.dan.carpenter@linaro.org>
+        bh=Qf3XwMadpbdi02w8khiprAJxJ2YHAsadcr9JrJBY/mQ=;
+        b=inLTVKAC56/XHmk+0+A2f4WAAcg4+PErkLUxJaKiGQwJlFofqdpT7Z65XSP+aqisnS
+         OycB1C4JTjoMKz5U52mZ4FymUoSeqpKG7clqwHrwRl1Sy3wU27pODzYqj0yhxd5gwSq+
+         oM8S8nsQ2V3Ny6mKExf7aEeW+Xa5UyX72k+JUwxwOx6VGaVgxKDep8OBw9G1k5En/0HT
+         eUCvk8r9+k+1/qwZwpgQXCMEXVUx6dFTbI+9ZTMaOmmgqLUpSGKJST+KzgJwh/LtQVPD
+         RiEryr6Nq/ho00N7oMLgdMXWj5su1eBX2mrVYJ7IMJ+0AaQT3kmkqZrMg4n5PKFg7MRL
+         LPfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726495821; x=1727100621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qf3XwMadpbdi02w8khiprAJxJ2YHAsadcr9JrJBY/mQ=;
+        b=PSgexbNoJKj/bOe4fH1JG7KoZ/wgaXnvmTI7xFHqrWrQyh/VQxyYyntIq97lx36vy2
+         V48nsqkBH0gfafEe4YEVIjcrIlfqoVZDLb7gg1J5V7KLTkW2HHNEWZjp2JLBNuIPQjIN
+         s0+WntTisT4x12B61EWOgDk76sEuCCRfbL4x6CQ0h+hzRnkBBO4xQ1/CrCqXPAdesnui
+         Y1wsnsFk0Lrh1D+fVnlR5cWVjnoEKscMQFKu01U2z+3kRwwhX9err3yBS7fwO8bFaXgC
+         qcCVGvpTay6wYYTaol0hAIxuJYbxRzK/WfIfQCReeLfXeWZqV4MfzxSE0dDo4wG+iTV5
+         Tglg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQJec4I+LTwn7YRuzpM1zV0t2YfKKrKm37VbC0jwVxrzGd9KZYpZSCiM0r2mA+JEavoaZNb1nRlyrivMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXKTL8E+AgRgvocFio0p7FAQeBwqyrI56/eb5dGRFLaJ0+9pSV
+	BYlTUizl649nTOHCOW/B0wDUZ9EJ22N+UBJ8F7DlY6rzg9FFmPaUzUulGSMOeb1VL4Wd6K1sAev
+	i5R2jxQiigD3Cxyrs2phN5vkENI8VV8R0XdbkqA==
+X-Google-Smtp-Source: AGHT+IGNe9zsNe9IEEFt6FK/qfeqEqaQ+brEvCCBY98xBgyALI4wNUeQsrdsVTt0cieNkT1+Kekc7iDWS736YTEtFyQ=
+X-Received: by 2002:a5d:58d4:0:b0:36b:aa9d:785c with SMTP id
+ ffacd0b85a97d-378d625a662mr6649923f8f.52.1726495820589; Mon, 16 Sep 2024
+ 07:10:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1726333044.git.dan.carpenter@linaro.org>
+References: <20240916114224.509743970@linuxfoundation.org>
+In-Reply-To: <20240916114224.509743970@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Mon, 16 Sep 2024 23:10:08 +0900
+Message-ID: <CAKL4bV4JAGKpTZ_=jOX2npUwe598AbSM9gOekgzRVAhaa0xgLw@mail.gmail.com>
+Subject: Re: [PATCH 6.6 00/91] 6.6.52-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This reversed if statement means that the function just returns success
-without writing to the registers.
+Hi Greg
 
-Fixes: 16531118ba63 ("iio: bmi323: peripheral in lowest power state on suspend")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: Added the dev_err() message
+On Mon, Sep 16, 2024 at 9:09=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.52 release.
+> There are 91 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.52-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
- drivers/iio/imu/bmi323/bmi323_core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+6.6.52-rc1 tested.
 
-diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
-index f6ff07ba98cd..527d6c321ab3 100644
---- a/drivers/iio/imu/bmi323/bmi323_core.c
-+++ b/drivers/iio/imu/bmi323/bmi323_core.c
-@@ -2226,8 +2226,10 @@ static int bmi323_core_runtime_resume(struct device *dev)
- 	 * after being reset in the lower power state by runtime-pm.
- 	 */
- 	ret = bmi323_init(data);
--	if (!ret)
-+	if (ret) {
-+		dev_err(data->dev, "Device power-on and init failed: %d", ret);
- 		return ret;
-+	}
- 
- 	/* Register must be cleared before changing an active config */
- 	ret = regmap_write(data->regmap, BMI323_FEAT_IO0_REG, 0);
--- 
-2.45.2
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+
+[    0.000000] Linux version 6.6.52-rc1rv
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU
+Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Mon Sep 16 22:24:01 JST 2024
+
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
