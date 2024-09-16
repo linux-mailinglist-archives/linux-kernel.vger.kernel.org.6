@@ -1,181 +1,124 @@
-Return-Path: <linux-kernel+bounces-331153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B9697A935
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:25:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F2397A939
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40C912837BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:25:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0F2286319
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78FF15E5BB;
-	Mon, 16 Sep 2024 22:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782B115FA72;
+	Mon, 16 Sep 2024 22:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WKBMHyJD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WP5VPPXK"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B571494C9;
-	Mon, 16 Sep 2024 22:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEB25258;
+	Mon, 16 Sep 2024 22:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726525504; cv=none; b=QXRT9Etr97jdb+Vztd3ar6ikutxxL389SZsgtbQ/OMJEhRgJZR6RNg8ya+NXeYyNnNXde7JGlvezKvQCs4kcSymADojT3+cp1y9XIUyM9J0Pj2q4PJ5AvDgTgWf7m6PX69gUvcIjuITY42giDboIAP6ZeE7Ajvu+ajp61TFTbIg=
+	t=1726525659; cv=none; b=G4XKW1BCk4tesaMQ0n4fo9giWoJIc/QJ79sq7CzFwMyZKUUrjWncyVO50+5jad7skmDssKYZC2ikEGBQpQBWSGP5IUZ03EWE78qDCVzvIOBLHrxNIPSKuUPdgEhGIbbrh2CAANjhO0UHzcAiDbhCiIn+p+hVSTm96FU+w4k2o5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726525504; c=relaxed/simple;
-	bh=fjeKevU5pVM24mh9eZCoCtILAo2Dy7dBXlxve85iv/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V6Ls96vgVUA4ZXL3LOKJSvz+2KGviuXwXjNh43vtWvfDrewhPzpmD4IeuE0T+zcOX/bwtQAWpvByOQoFCbqr5/Zym7fCbJLVMwEDIHS9JS6WPhHsVCOSyYLkCa9vWkJe7vjy7OJ/JSLT6BHbE6eY/tF6tMk84ZDagKhJPJ3tGe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WKBMHyJD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726525500;
-	bh=MVpY8XWmhiWfAP8CkLE+kDPP7vyEKdkO0Ne/L+Z0adg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WKBMHyJDV9bJZWsqMOP9Ly7xk6rQmQcSFNCC4q4eQ3FRKAoWoYlOCTbrT9EgQmrxu
-	 kZxAx4q7O7XbX3JugFTR+WV7o9olylmff55/IaZddCGCc3URFN6XXB4PvGIkjDEBSG
-	 duYPUeLa1pYXJ0JOXZ6pHS541kOt4IgvssIp+I8jzkBmP3KjVaCCCtfyPThJqYNpLF
-	 w3Vho2WD1cuql6UfsH3/Ufu4CItDqtpqgHsnKWkVz0ZUWLQ7WkSy8i4Nxo5nItiZhN
-	 ZVeadq0oyMQspaDudLSesBmZ0QC8pxr4mYlHkwzhGg3JAve+FxduIVR2ySMvtiRngj
-	 lYFrS0cXmxU1Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6zxR6cGTz4x8f;
-	Tue, 17 Sep 2024 08:24:59 +1000 (AEST)
-Date: Tue, 17 Sep 2024 08:24:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Chao Yu <chao@kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the f2fs
- tree
-Message-ID: <20240917082459.0f9f3dee@canb.auug.org.au>
-In-Reply-To: <20240905101845.0a47926a@canb.auug.org.au>
-References: <20240902092405.7c26e742@canb.auug.org.au>
-	<20240905101845.0a47926a@canb.auug.org.au>
+	s=arc-20240116; t=1726525659; c=relaxed/simple;
+	bh=nIlagFSn66DD4L/tj9LXtTHlW6lnx6yFHMKMSPiIPZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=scDaB2pB+iKnn3At9jSOeLBrJLXJN+jW19cgRwJjAE60uUS8Z2F7rS5CMx2lPWBkSTxYoq51vOH6C3T9RONNVz1O8WxK8gp3MHtsD/9NFDyeje/F5FtSGRatFQ1R4CnuObzB6nKua9upq/JPjukbPI2wdzyBGvguwpMPgnaeENc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WP5VPPXK; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d889ba25f7so2607911a91.0;
+        Mon, 16 Sep 2024 15:27:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726525658; x=1727130458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p871//Fs+/qO7+7cwFPvh1c0mSeuK8ASkkcU0dmqUPs=;
+        b=WP5VPPXK0lOyfeXPmz0ghYwRKjzRozHHs97BjOsPbDZurbk3Z+YJtLHujwikndS7H0
+         ZR84p0+sIsQvYwWuy3tGC4PaZDaohFtF2EBpHrhs6X3ik4NbegRSUAsGAf5m5zLDgdO2
+         L7dfSdI1R3Q60NFLg7twnKhPlBs3MbxBDAN8S7h/f5KD2NmRu4bLi3XE4KM3lMBDXa2X
+         p3vM9q5n1YMrHiibxLZCrNRDPw1+Ru+0JmguMKwVxLWHC5Z9SaDEIIXGWFbJdQ432W/1
+         dVV9htlYL20nGUmnpVwrj14fNf7Gdkaiu2pcTgZ7Mmuob5zM0/kAyFNIsCiSEXWoz8kx
+         +BiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726525658; x=1727130458;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p871//Fs+/qO7+7cwFPvh1c0mSeuK8ASkkcU0dmqUPs=;
+        b=vwyvZd7tM46b6wd5DeIiP5HkW4jsyfyUisndcf6Xd2u1KHnGk4Ur37bz+J5+Z7Kcpx
+         iMpOxDl1iQcOZ5DRSwG2adlEQiC2sqY9E6mECuDYBlCXdaEXFVuAlu7hPQ4v5kNq8mvi
+         RQbafaXjei7MTN3KDrLlGv/EgVKVXBkRMWjG4IWPOHZZO0CmmzDhXG5IuoPduUb8ujHC
+         L0ZlpIlDvSsrNs6ORRnkb3Aef9HujVvFaP0tAzQWjAcshDLGCQ/OVO+2sOPvv4e41F4J
+         kGvOgkJuO3LfXL9qn66i+HXbXvfbdsnxQZ6pacVLJotWP0U7PsQvZW0pqztZQlBy9BYQ
+         gNfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUU5ok5sApEGJpTrGA2zRgac4B4Mt+ri2CiRa3slweC7MboziHsNoK2h63eHadt8mC+cbM+ZPuzFNOUhAwr@vger.kernel.org, AJvYcCVjB7spUg4QeiYDd87Ug4tJz0Yms76cgZuiAOqbwbc1r4G4o8vJUggiclM3YYhK/OHj5LHdxBO+De2M@vger.kernel.org, AJvYcCVp++vwDrPV4Je7y63u7Awel4hEcCLSjNiTnsq+jDZCYh374JL1HpwDtnmk2PS8d8hWPM3NRbJYoHM47whZuG2c5Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza+v9dfhnGHDDVUqRsjkQuqI3Fo8d3eIB8v+NTdt7HQstx2Rrk
+	6c7sE9gPjgVGTXEG1Sw2+JXV/Y6DrqoMs2REn9gi3krH9ChzXMPN
+X-Google-Smtp-Source: AGHT+IHOIOa4uoJrvmJHVtqFy1kUCeyLXVe0HcxyEv6ClDTP9rAgSTpgUwY80v38ijtmEJ/ROq/SPg==
+X-Received: by 2002:a17:90b:2344:b0:2d8:816a:69c5 with SMTP id 98e67ed59e1d1-2dbb9e1ed42mr16825361a91.23.1726525656975;
+        Mon, 16 Sep 2024 15:27:36 -0700 (PDT)
+Received: from [0.0.0.0] (ec2-54-193-105-225.us-west-1.compute.amazonaws.com. [54.193.105.225])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9caafc4sm8017188a91.30.2024.09.16.15.27.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2024 15:27:36 -0700 (PDT)
+Message-ID: <fe87c66d-e5f6-46bd-828a-6fac2b0aa0ac@gmail.com>
+Date: Mon, 16 Sep 2024 15:28:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TKjPBJxhctQ5tJv3svup2+z";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/5] Add Microchip IPC mailbox and remoteproc support
+To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ peterlin@andestech.com, dminus@andestech.com, conor.dooley@microchip.com,
+ conor+dt@kernel.org, ycliang@andestech.com, jassisinghbrar@gmail.com,
+ robh@kernel.org, krzk+dt@kernel.org, andersson@kernel.org,
+ mathieu.poirier@linaro.org
+References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+Content-Language: en-US
+From: Bo Gan <ganboing@gmail.com>
+In-Reply-To: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/TKjPBJxhctQ5tJv3svup2+z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Valentina,
 
-Hi all,
+On 9/12/24 10:00, Valentina Fernandez wrote:
+> Additional details on the Microchip vendor extension and the IPC
+> function IDs described in the driver can be found in the following
+> documentation:
+> 
+> https://github.com/linux4microchip/microchip-sbi-ecall-extension
+> 
+> The IPC remoteproc platform driver allows for starting and stopping
+> firmware on the remote cluster(s) and facilitates RPMsg communication.
+> The remoteproc attach/detach operations are also supported for use cases
+> where the firmware is loaded by the Hart Software Services
+> (zero-stage bootloader) before Linux boots.
 
-On Thu, 5 Sep 2024 10:18:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> On Mon, 2 Sep 2024 09:24:05 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> >
-> > Today's linux-next merge of the vfs-brauner tree got a conflict in:
-> >=20
-> >   fs/f2fs/data.c
-> >=20
-> > between commits:
-> >=20
-> >   f13c7184e62e ("f2fs: convert f2fs_write_begin() to use folio")
-> >   357dd8479f8b ("f2fs: convert f2fs_write_end() to use folio")
-> > (and maybe others)
-> >=20
-> > from the f2fs tree and commits:
-> >=20
-> >   a0f858d450ce ("f2fs: Convert f2fs_write_end() to use a folio")
-> >   dfd2e81d37e1 ("f2fs: Convert f2fs_write_begin() to use a folio")
-> >   a225800f322a ("fs: Convert aops->write_end to take a folio")
-> >   1da86618bdce ("fs: Convert aops->write_begin to take a folio")
-> >=20
-> > from the vfs-brauner tree.
-> >=20
-> > This was too much for me to fix up, so I just used the f2fs tree from
-> > next-20240830 for today.  Please discuss this and fix things up. =20
->=20
-> I took another shot at this and *I think* I figured it out - see below
-> and I have also attached the final version of this file.  Please check
-> and advise.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc fs/f2fs/data.c
-> index c6d688208f8b,5dfa0207ad8f..000000000000
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@@ -3626,17 -3617,16 +3627,16 @@@ repeat
->  =20
->   	/* TODO: cluster can be compressed due to race with .writepage */
->  =20
-> - 	*pagep =3D page;
-> - 	folio =3D page_folio(page);
-> + 	*foliop =3D folio;
->  =20
->   	if (f2fs_is_atomic_file(inode))
->  -		err =3D prepare_atomic_write_begin(sbi, &folio->page, pos, len,
->  +		err =3D prepare_atomic_write_begin(sbi, folio, pos, len,
->   					&blkaddr, &need_balance, &use_cow);
->   	else
->  -		err =3D prepare_write_begin(sbi, &folio->page, pos, len,
->  +		err =3D prepare_write_begin(sbi, folio, pos, len,
->   					&blkaddr, &need_balance);
->   	if (err)
-> - 		goto fail;
-> + 		goto put_folio;
->  =20
->   	if (need_balance && !IS_NOQUOTA(inode) &&
->   			has_not_enough_free_secs(sbi, 0, 0)) {
-> @@@ -3668,13 -3659,13 +3669,13 @@@
->   		if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
->   				DATA_GENERIC_ENHANCE_READ)) {
->   			err =3D -EFSCORRUPTED;
-> - 			goto fail;
-> + 			goto put_folio;
->   		}
->   		err =3D f2fs_submit_page_read(use_cow ?
->  -				F2FS_I(inode)->cow_inode : inode, &folio->page,
->  -				blkaddr, 0, true);
->  +				F2FS_I(inode)->cow_inode : inode,
->  +				folio, blkaddr, 0, true);
->   		if (err)
-> - 			goto fail;
-> + 			goto put_folio;
->  =20
->   		folio_lock(folio);
->   		if (unlikely(folio->mapping !=3D mapping)) {
+Would you mind help clarifying the need for SBI_EXT_RPROC_STATE/STOP/...?
+If I'm not mistaken, the HW you are targeting is described in
+https://ww1.microchip.com/downloads/aemDocuments/documents/MPU64/ProductDocuments/SupportingCollateral/Asymmetric_Multi-Processing_on_PIC64GX_White_Paper.pdf
+(typo in the page 4, U51 -> E51)
+In SBI, do you put hart1-3 and hart4 into 2 separate domains? If not,
+I don't see why you can't just use HSM extension from SBI to kick rproc.
+Also, how stable is this microchip-sbi-ecall-extension? Is it subject
+to changes down the road? I don't see a probe() like SBI function, so
+the kernel kind of assume it can call those microchip extensions without
+causing unintended effects. This means those extension FIDs must be
+stable and can no longer change once this code is in. Perhaps checking-in
+the microchip SBI extensions to major SBI implementations such as openSBI
+first would be better?
 
-This is now a conflict between the f2fs tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TKjPBJxhctQ5tJv3svup2+z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbosDsACgkQAVBC80lX
-0GzmIgf+PhBIg6LxBk9SBQ5GDGjk24qUqgUFqIYdOzR2ertfw5XAQCobqH/a74Tb
-Bdmflalmso12xnLLLjHyvKv2WXNCta1Us8gdsX55G/G2c44ZQEX9DmVvUCw87C4H
-VKwMq/VibmzLyGjzVESRY6jCpjwf8OwSny4c9VyDLh8qa2thGFz4YNACVVew156i
-s7leEG555cSAVlHJpuAPMTuPU6g+iAI8xvSNnr8p/ASFFa7QCFNiSW//9Y5zCg8s
-5gZTdq6FgxE+RVyHPP+naU1MQwXc3E/E4r5fpzGzZvhv7Q4imhsYSSGPSmKm7uIW
-Kq9BtcKIxBa4A17P7JGzTCAMTep8EQ==
-=2zQ9
------END PGP SIGNATURE-----
-
---Sig_/TKjPBJxhctQ5tJv3svup2+z--
+Bo
 
