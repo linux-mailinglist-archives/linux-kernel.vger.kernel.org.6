@@ -1,152 +1,146 @@
-Return-Path: <linux-kernel+bounces-330452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA59979EBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:50:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C86979EC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381821F23C0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:50:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7FB1C23015
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018E314EC62;
-	Mon, 16 Sep 2024 09:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ADF14B94C;
+	Mon, 16 Sep 2024 09:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="piRD7OgD"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BYJfDJW/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEECC14B967;
-	Mon, 16 Sep 2024 09:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D52D14A095
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726480233; cv=none; b=tXa6ofZF8eYhAOYvkvq0TRDl8kTtTdo5GL2emsTUlnSeygowRUHtNvCXV+grVVSC5ShEuZCXQuqOo5k7EQH4owly14PkefWzxmNxu45cFpLUo+B5uP0wvLm689lnVTa0EFbz1beuPYW1wH+eRtRhwByk56w4hxmmLW7sAqaf2uM=
+	t=1726480281; cv=none; b=DuWZd13kRq2ByEOTKSez/3xgeR4rP8O2pM7iNxETA33pGtYv2OOt/lpyx4BH6BugfJlCPWtAZWZlvU4nPz+qG8YEITPBJpGbs6CC38lcfmFNLFZ9fh559vENM5rw7rFUptZxjQmQt58555VxhCr3y8Q76FR/ZSqs4d6liU8tooo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726480233; c=relaxed/simple;
-	bh=H6Nu1y3r53qFCPxeekFdxSYffwC7CBXCt9G5Ob+GsR0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=jGiIhSAmQFxy4SyCZ3xqPxoHFLGoyYfjedV480gGy3pxR8K0lRQZ5Wd6zJZKV9vhqZ8qYlKxz9X4/ubqZ5nL5RduoJel5EyH7LvfDYM9YRnue9qR317SFt35VFb9Mh0TDG9bnC6jfEiLanWICTMhM8Ij4w1ctPOKrWOoCsc/okI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=piRD7OgD; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1726480281; c=relaxed/simple;
+	bh=FMJEhBEVfrGmWhEdCvi6KeEFMm+PB3xGrghjFAYz9I4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lah43tF2zjwnVeT2wbP5r5ktj+iV4oz1CAjmeu2c0DxwuoPm0/yUz3L79XZkZDmKkJ94BLHJZBDO81gPLjJHVf+t+Z6M+3uNvFrTloEIyddl2mw8jVtBuvTgP5LlFp8y9vFTEAEbYHeJxVkgeyu7WBX6BRP4+mP6j+AD6zcL5jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BYJfDJW/; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726480233; x=1758016233;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=H6Nu1y3r53qFCPxeekFdxSYffwC7CBXCt9G5Ob+GsR0=;
-  b=piRD7OgD2eHxSDDdPXgV3tXO9haKac/LksPjHTPgEkuofH1kOJajOZfy
-   SYONLQdOz4KpILVhRInfkxfVsrEMQftHB2ftyhg9ZhsvA1W8CSHtbRAG/
-   kBzeoZBQlJCk4q0h/7Qdhi/DMXV9e2Y/Bh/k51X7DxNoUmL94knT20txh
-   YZD2d8UI9r80Evg3c0MAHKu3js7L05FWq/ZVAMNw/dLtBQDjhHRxbbFI8
-   g8SfeUsLe56CMHksRbcTyHbFP2rSvwTn1e1EmKGqQjUNmgFyzrngB/n4b
-   r4eqT5NJhhNJV/KX4o31h7+RzyQhYg/2SLQuKSzxweTfI/cfw8nWKv7yw
-   Q==;
-X-CSE-ConnectionGUID: As66prBtTYKW6R/VrMccAw==
-X-CSE-MsgGUID: J4pw1vvcTTqwz1VwMuEp6Q==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726480280; x=1758016280;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=FMJEhBEVfrGmWhEdCvi6KeEFMm+PB3xGrghjFAYz9I4=;
+  b=BYJfDJW/ZFFhfqlLIpQSNLJ2WpJ3PVoMkA8hT8iEwQv9h2NdoYbZMNe0
+   O7Q2xTgEURWNzhZb8LSd2Ab6HVi4eHd3wU+MLhbktTDnL5x6rKaxbJC79
+   uIVO9vLwENFH0O3WpaOGSNOsiuRK9yYYofPFmV4zbuGdZufEPwqzvwl/I
+   /LOBj1A9VyiNmCjz09kjqDQVa3vujnAI9j1WDFmY05//VQj7kEOYsdNap
+   6srpMqttrzgK78QmULusVTFvuzxHhd+kSerp7ZlJTnHop9bwghW4j2i7M
+   K5FA5iTjfEpU7WEePjxho2mFBJmhu5C6Bpy9b74osRzAUyn42CSGPtSy8
+   w==;
+X-CSE-ConnectionGUID: CTwMDqQHQTulWdPcilI2lQ==
+X-CSE-MsgGUID: P7TLm+U3RI2g7S7ELjl5Ow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="25128995"
 X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="262821349"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 02:50:29 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 16 Sep 2024 02:50:23 -0700
-Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 16 Sep 2024 02:50:21 -0700
-From: Daniel Machon <daniel.machon@microchip.com>
-Date: Mon, 16 Sep 2024 11:49:22 +0200
-Subject: [PATCH 4/4] clk: lan966x: add support for lan969x SoC clock driver
+   d="scan'208";a="25128995"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:51:20 -0700
+X-CSE-ConnectionGUID: C3FmMEZvR2yOYE5/fGyZ9A==
+X-CSE-MsgGUID: B5GwJZwbTb2mHRsjHf9uEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="69128767"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:51:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sq8O3-00000009PZn-1Sj4;
+	Mon, 16 Sep 2024 12:51:15 +0300
+Date: Mon, 16 Sep 2024 12:51:15 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rijo Thomas <Rijo-john.Thomas@amd.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+	Sumit Garg <sumit.garg@linaro.org>
+Subject: Re: [PATCH v1 1/1] tee: amdtee: Use %pUl printk() format specifier
+ to print GUIDs
+Message-ID: <Zuf_k3z4DBiiMoSp@smile.fi.intel.com>
+References: <20240911204136.2887858-1-andriy.shevchenko@linux.intel.com>
+ <CAHUa44G4O0JgqN=BwvshRXzUeEE1oXD1o8Yn-5X6p5qY8vkDQA@mail.gmail.com>
+ <ZuQF_w7G1A90tYG3@smile.fi.intel.com>
+ <5c95cbc6-48b6-9cf4-8682-fc6469cb9c81@amd.com>
+ <Zuf8fw1MM0jaisUh@smile.fi.intel.com>
+ <Zuf8wQEwsAX_1hI0@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240916-lan969x-clock-v1-4-0e150336074d@microchip.com>
-References: <20240916-lan969x-clock-v1-0-0e150336074d@microchip.com>
-In-Reply-To: <20240916-lan969x-clock-v1-0-0e150336074d@microchip.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Kavyasree Kotagiri
-	<kavyasree.kotagiri@microchip.com>, Steen Hegelund
-	<Steen.Hegelund@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-X-Mailer: b4 0.14-dev
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zuf8wQEwsAX_1hI0@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Add support for the lan969x SoC clock driver in the existing lan966x
-driver. The lan969x clock controller contains 3 PLLs - cpu_clk, ddr_clk
-and sys_clk (same as lan966x) which generates and supplies the clock to
-various peripherals within the SoC.
+On Mon, Sep 16, 2024 at 12:39:14PM +0300, Andy Shevchenko wrote:
+> On Mon, Sep 16, 2024 at 12:38:08PM +0300, Andy Shevchenko wrote:
+> > On Mon, Sep 16, 2024 at 01:38:27PM +0530, Rijo Thomas wrote:
+> > > On 9/13/2024 2:59 PM, Andy Shevchenko wrote:
+> > > > On Thu, Sep 12, 2024 at 07:50:08AM +0200, Jens Wiklander wrote:
+> > > >> On Wed, Sep 11, 2024 at 10:41 PM Andy Shevchenko
+> > > >> <andriy.shevchenko@linux.intel.com> wrote:
+> > > >>>
+> > > >>> Replace the custom approach with the %pUl printk() format specifier.
+> > > >>> No functional change intended.
+> > > > 
+> > > >> Thanks, the patch looks like a nice simplificatrion.
+> > > > 
+> > > > Thank you for the review.
+> > > > 
+> > > >> Rijo, Devaraj, does this work for you?
+> > > > 
+> > > > Yes, please test, because seems others use uuid_t (UUID BE) for TEE,
+> > > > but in this driver IIUC it's guid_t (UUID LE).
+> > > 
+> > > No, this does not work for us. I tested this patch, it does not work as expected.
+> > > 
+> > > %pUl gives output in uuid format (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x).
+> > > But, what we need, is a name with the format %08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x.
+> > > 
+> > > Endian-ness is not an issue here. uuid generates name with 4 hypens (-).
+> > > While, in our TA naming we are using 3 hyphens (-).
+> > 
+> > Ah, good catch! Can somebody add a comment there to explain that this uses
+> > non-standard human-readable representation of GUID/UUID?
+> > 
+> > P.S. Thank you for testing!
+> 
+> Alternatively we may get rid of that hyphen. I can send a patch.
 
-Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
----
- drivers/clk/clk-lan966x.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Something like this on top of this patch (meaning squashed at the end):
 
-diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
-index b25330159446..9b928e4a1c62 100644
---- a/drivers/clk/clk-lan966x.c
-+++ b/drivers/clk/clk-lan966x.c
-@@ -31,6 +31,13 @@ static const char * const lan966x_clk_names[] = {
- 	"flexcom4", "timer1", "usb_refclk",
- };
- 
-+static const char * const lan969x_clk_names[] = {
-+	"qspi0", "qspi2", "sdmmc0", "sdmmc1",
-+	"mcan0", "mcan1", "flexcom0",
-+	"flexcom1", "flexcom2", "flexcom3",
-+	"timer1", "usb_refclk",
-+};
++	/*
++	 * Firmware name uses non-standard human-readable GUID representation:
++	 * %08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x (no last hyphen).
++	 */
++	p = strrchr(fw_name, '-');
++	memmove(p, p + 1, strlen(p + 1));
 +
- struct lan966x_gck {
- 	struct clk_hw hw;
- 	void __iomem *reg;
-@@ -61,6 +68,13 @@ static const struct clk_gate_soc_desc lan966x_clk_gate_desc[] = {
- 	{ }
- };
- 
-+static const struct clk_gate_soc_desc lan969x_clk_gate_desc[] = {
-+	{ "usb_drd", 10 },
-+	{ "mcramc", 9 },
-+	{ "hmatrix", 8 },
-+	{ }
-+};
-+
- struct lan966x_match_data {
- 	char *name;
- 	const char * const *clk_name;
-@@ -77,6 +91,14 @@ static struct lan966x_match_data lan966x_desc = {
- 	.num_generic_clks = 14,
- };
- 
-+static struct lan966x_match_data lan969x_desc = {
-+	.name = "lan969x",
-+	.clk_name = lan969x_clk_names,
-+	.clk_gate_desc = lan969x_clk_gate_desc,
-+	.num_total_clks = 15,
-+	.num_generic_clks = 12,
-+};
-+
- static DEFINE_SPINLOCK(clk_gate_lock);
- static void __iomem *base;
- 
-@@ -282,6 +304,7 @@ static int lan966x_clk_probe(struct platform_device *pdev)
- 
- static const struct of_device_id lan966x_clk_dt_ids[] = {
- 	{ .compatible = "microchip,lan966x-gck", .data = &lan966x_desc },
-+	{ .compatible = "microchip,lan9691-gck", .data = &lan969x_desc },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, lan966x_clk_dt_ids);
+ 	mutex_lock(&drv_mutex);
+ 	n = request_firmware(&fw, fw_name, &ctx->teedev->dev);
+
+What do you think?
 
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
