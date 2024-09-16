@@ -1,293 +1,132 @@
-Return-Path: <linux-kernel+bounces-330393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6A1979DD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:06:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17F8979DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969301F2430E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:06:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D41571C20D34
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B5514831F;
-	Mon, 16 Sep 2024 09:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9471487F6;
+	Mon, 16 Sep 2024 09:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b="ftLgKsVM"
-Received: from us-smtp-delivery-162.mimecast.com (us-smtp-delivery-162.mimecast.com [170.10.129.162])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Er+xHMC9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE97148304
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.162
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0B8146589;
+	Mon, 16 Sep 2024 09:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726477567; cv=none; b=Puwl1XSL6wVa3KsEefL9aVhvA0vCKc4FGViikWb9gSMYGJrsYKOnWdMb/4G98dq6EfLsWMMuTks6FMbgfMdFTsAIhlMZifZeDMNdgRYFdqEv9odhnUtdduaK82wDQBrEEh93yyRDbTKBic0S8fYF2S9ys2CUvgbjjApowsaHqdw=
+	t=1726477656; cv=none; b=vAB4ZN3X7wMVmD+LmAqMrwBt/npTOQkntPlnqobWKPXRYp6TSIOdjqPtaxN5pSr7PP4VQEPeKkL9jpr5lhzvnf71ezyrCchZf1Vcx6WhKUjHJdlGOSCscC6c5DexviLkPLiwadRtFPCjFo3VZGB0piBemDh+aaT9fUPkFgSMpaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726477567; c=relaxed/simple;
-	bh=XnSJ7nwiV++WH7h/weW60AsMWZHn39CemEXH7P6KMkU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=P4X21dqmex+bx4h1vdYoJLiirUD2xiadomrZ5rOaGpobxOYONfY5M8NQsd7CSFl86Rlm+IN8L7dLdfWMOdu56++hHV/uNXZQepxAUGhMpGnv0pbP8hZRk+ANEfLTjYEozkXRd7zN/lKC6ml2K64TdXzj6gLeR3tS1AH5Xm9Invg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com; spf=pass smtp.mailfrom=hp.com; dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b=ftLgKsVM; arc=none smtp.client-ip=170.10.129.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hp.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hp.com; s=mimecast20180716;
-	t=1726477564;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fc+7K3orTpcMfJXPpo7vMGCpQC3kEfmLWjRKwjYgOhM=;
-	b=ftLgKsVM//32ZApVzrzpZslSEKkxEkDbOWRQq3Oeu9K9EBRRDzSUb1TBaPXcmpdYLOJdkW
-	69xPYEIkeMlB6KM+V9dYhaWfmmyka5k7RrAZzZNbyMTwqUDGkkIdkXTwdBScX1CYoiaE8w
-	s89P1chiAqcOXVxh40iiAV5jld/VEc4=
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com
- (mail-bn1nam02lp2041.outbound.protection.outlook.com [104.47.51.41]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-609-xzLHaF1jNGymKVBmlfCPew-1; Mon, 16 Sep 2024 05:06:02 -0400
-X-MC-Unique: xzLHaF1jNGymKVBmlfCPew-1
-Received: from EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM (2603:10b6:303:25b::18)
- by PH7PR84MB3552.NAMPRD84.PROD.OUTLOOK.COM (2603:10b6:510:300::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.23; Mon, 16 Sep
- 2024 09:06:00 +0000
-Received: from EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::af88:ed17:72c3:3f4e]) by EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::af88:ed17:72c3:3f4e%4]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
- 09:06:00 +0000
-From: "Wang, Wade" <wade.wang@hp.com>
-To: Benjamin Tissoires <bentiss@kernel.org>
-CC: "jikos@kernel.org" <jikos@kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH] HID: plantronics: Additional PID for double volume key
- presses quirk
-Thread-Topic: [PATCH] HID: plantronics: Additional PID for double volume key
- presses quirk
-Thread-Index: AQHbBeVuSs8Dt1e4A0a1MKmzfli3SrJaIwWQ
-Date: Mon, 16 Sep 2024 09:06:00 +0000
-Message-ID: <EA2PR84MB37804670F5042A839E87CAC08B602@EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM>
-References: <20240913060710.1325640-1-wade.wang@hp.com>
- <kn7ykebpcapwnwhof2wlquko6zzjtfgn3xdwcfd2e6eyytzu32@wh3tck74weut>
-In-Reply-To: <kn7ykebpcapwnwhof2wlquko6zzjtfgn3xdwcfd2e6eyytzu32@wh3tck74weut>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: EA2PR84MB3780:EE_|PH7PR84MB3552:EE_
-x-ms-office365-filtering-correlation-id: 2f16e3d4-e124-4183-9ca1-08dcd62ec8c2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018
-x-microsoft-antispam-message-info: =?us-ascii?Q?Fwpq4nDU5wiLP5xZPqCgQQJ78v+7HnzJDBu1+ZhD3CV7yL6qxQyehHmRVP7z?=
- =?us-ascii?Q?hkWOPJxYM7fpi3/dlspJXPHhNC164Pm/gkE8WgWku9O9fCvENHCUCgBT48bA?=
- =?us-ascii?Q?MDAgI6oZOgrXU7M+HyQYTVz4bEWsleKYirDD5A0lXLjmsi6EdmnEV+TkEOZf?=
- =?us-ascii?Q?RibP5zcNoR/8POjGii5W71dd/IYxA3lw4zi76tXI5Y+fRUj6WWytr7tP7ZpR?=
- =?us-ascii?Q?Cjg1VpHLKohTW7MJLgKc3kNMHxGzSz0TBMdd32CURqjJLh+5NFl4YHLHbOyL?=
- =?us-ascii?Q?37fyBMQ0Ge1oqIfwL8fvqMww76P3cCKjvHki/NQcq82p+G/mpC7zIz0CFZQC?=
- =?us-ascii?Q?KiKRDSVKMH9c8nsZDqlEIcV0rsaXUxHIAxmORbUBGTtPO4pkSgGl1tAe49lD?=
- =?us-ascii?Q?hvYPctUdtQjDfol1cHWkMgYJJBwNC3mMk62+94YHEbEUYwGZHXoKBeefAC+3?=
- =?us-ascii?Q?2uL4EPNA9HlGSK6f8SJJVMpnokNeZ9SjXcRapwEoBJQBINrU8InvyB3//Wz6?=
- =?us-ascii?Q?vRLcdkIMXuBCM16pYgiFuC7NAdxryn1mtYH+Z0QGi2tf14JEeWsbUOYQKQ7k?=
- =?us-ascii?Q?9IaxCjrL85/4WIzeRkbkOwgreaVk7CG9n9nIP4jCT48PJvZ9vnO3W+rofzDB?=
- =?us-ascii?Q?WzYCPs7N0VtAAqIrZI88pYUVaFmd7lRNnIbShsaLJG5VpdiApKok+eSHHK2z?=
- =?us-ascii?Q?t5GZADSDidgN/Z+yJaJ4MwrCu8EtairnBhoBP0/KnRbFZo1Gu2a/m7UI3xa1?=
- =?us-ascii?Q?zaNnzlRHcGidp/f4TebTfs2YPFNxhQsgo2+cddRoc1R2S5bXq9ZIihmDkHf2?=
- =?us-ascii?Q?HgqVFqThPdqgdymBstcAq+47os5mhfGL7dJ0GlrSjP6Hp26vmStKuzxcamg5?=
- =?us-ascii?Q?VE81dDioB36WCHRSwEJKFwU/xlsiwQhfZjs3U2nFOUOGc+D56eQqXvAi9fVj?=
- =?us-ascii?Q?ZjoMi+hbLEwSYWV7xJyptp3KfZMOgOZ5fSc6X3kNOMxClAaufiZUPHJGhfA4?=
- =?us-ascii?Q?esE8kiRO49ABNbztqldov68DacuU/KwZnF37gYLhnLKWT3Onk44NDUm0DgEa?=
- =?us-ascii?Q?qq9x62BMdA3jcYCUpa+eimw6KYsjoC5/4K+W+9IJiy4gb4nmmndrqSilFp6J?=
- =?us-ascii?Q?xeBeodX958tWJJtAYzzh7ShhtP7Egj27o+h5GdFSN1JZUOVgDzWSfDS29TTm?=
- =?us-ascii?Q?cYGQ2dMuzQlG2x1/XOLmwozK3pJ9zPEdvZICiwD204hmUxZ6zAQx3ccoEQii?=
- =?us-ascii?Q?bynu3UjW/mZKUjdDEuUI4wp62M152FHP+5NfQrdxo4iDyzI0FDJ1b9pVM1Kq?=
- =?us-ascii?Q?J4QtatEk99ac/PJ7Lsvby5pWeNx+3HRG4b8HEeP6LnpLcrIklTHJNaOFLybk?=
- =?us-ascii?Q?+JNltdeq8ukrPZvas1zLAzLgFyTehTDOFGQkNGfDFJSRN2y7Cg=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?QQSSuJD2Y9TgGXwiItBUXa88GAlFM0k5td1aVgqt5T4auV6tnUrLSbd+jLKP?=
- =?us-ascii?Q?3caKB9rxzUW9qdUrhq/QeQR8JnBM8pM1kmbfrxEvBW4iuedjyAiufq98gqij?=
- =?us-ascii?Q?Epj65LxNwF6mmyqIzBmgm1RjS0tsV1hhpoektlYOE6i197Q6AT5LPDXtIHiq?=
- =?us-ascii?Q?T5uriI0wPdZmDBe6uWpSgvfbrHoBUfERxSiJWZXj27SZ2JGF4S0EYZrY8xff?=
- =?us-ascii?Q?J3A/JbgZQLDFPZ5WnGgkVJLv1fct3NTcpBOqtEMer81RgB2WUPJrXcmH97Iw?=
- =?us-ascii?Q?hjg3XjMOihPaHKdAiVnWnmS4ToZXjxdBwmkvojqmq/rn5bRCcmGhmNAJJRU7?=
- =?us-ascii?Q?JVqAvJHtQCuy5AKPe1GwKuDfMHMofZowvi3Y345tZz3ssafrAU4KWJkeNj0M?=
- =?us-ascii?Q?3Py9qD9B4kLzXLQ15x+K4MKndd3akGT9WXBZjghiR4qgy6Bnv9pkQv9Y8W3k?=
- =?us-ascii?Q?V3YH5N+vgaWmzSSHK5YcpFIxG2ZD17kIyRbPiE2y/Q423tWtXHxZI3Wz/eNf?=
- =?us-ascii?Q?WTWXoe8f92HyKYJYtoS9Lwe2Lv7thfXRD8TJ7I4Kr36c3u79ExJM+bRwNLl+?=
- =?us-ascii?Q?ETNcV7yNOMnWxKlEshFiNcUS33ZvrUpm77EzYRfQvCXFJ1eJQYc7lzyjLF2F?=
- =?us-ascii?Q?yEdEd2otlB/gW25ApVzwyEIgf4Dat3XcoypO+TTRqy4a8d8klKZw361FsTzL?=
- =?us-ascii?Q?Dv0XwzK8dmVqRphDe5hH6ZrcKcg1qjZkcwZW2klEE73gDJ48cRLQdh7sPu/x?=
- =?us-ascii?Q?rrDfaktiyDV0u17+8TufbysGBhx3ngrxh1XKFcPyqUWZpG26zZ+i45uc4apA?=
- =?us-ascii?Q?po99IP6yG6qBvrCYf437FXDKX93l78/1tr85QHDv4SqArDaGj96oqaAwQMqh?=
- =?us-ascii?Q?kSI571DETwrMa4zFpllpBiGN4G8c5tWEqM2yxe+733WHPtuZ5uFP7i3KnpzR?=
- =?us-ascii?Q?YY94JSqyjiLblOHSIK12ZwikB90aaq9zd9cKYEnrWtrMFs5TLic6GTyb3HL6?=
- =?us-ascii?Q?oDLtUYvl3zFZuz/tI6rCNrWavnVYhAQEQ9k2G/AkGfS9P4YDieYQ1QA3dZV+?=
- =?us-ascii?Q?6JXnpDcWvpMzwlNV7XChT6vLoat3CU0Ouun0qmHYFhKhi86suBFC7kr+EdhA?=
- =?us-ascii?Q?XUuMSz9wW3i+U4MpSfqzbYhOLjDp2wF/A+OGyBkY2Llh7IyNHrEjyB6b9TIa?=
- =?us-ascii?Q?kIOQARyQ3j5RLItYhu4j8EARpqhXpolzyA+mY5lNgsIBegJQm1e8aW3d6E+E?=
- =?us-ascii?Q?pmJUpu7BDOMPBeonPKW0g1cJagCFpbchRE8nsovyIusNTYS80kPtDcRag+a8?=
- =?us-ascii?Q?Qe2OhSNg0MDXdp+ULaDs4yNZ9TA/KxCqIqjqC0IxsFl5GQptCq45SP5w661J?=
- =?us-ascii?Q?lqKyjk4NjIUfdv9jwLcMNi/A/j+YnwZbGXx8VFiIMXATsFkXwpqw4cd3zZQy?=
- =?us-ascii?Q?HRRKTwau4eksqGt9ED1zs/EVGdxDA2rQ9MPmG8fYVtz0tOsZfPAal8i9Nlt8?=
- =?us-ascii?Q?6u9/hcZZaavFUGvA5N7lFTPHhFyJsVud7M+QF7i+Wqk1jojg3vqAh4H8ZGKe?=
- =?us-ascii?Q?+q7p2kicvAYSD4W0G7c=3D?=
+	s=arc-20240116; t=1726477656; c=relaxed/simple;
+	bh=L50wy+tAu4DOyf+okYw3YZmUGRAaAhSs/1v8IlfCwG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TOuQiAaijVio1ciKMKkU4/31747BU24ObLwtomQY7LzkjMEvm1kcBUGVjiSRsf2ZnsgCa3jhOdcQvzAVoyIWJTS6y07W5Cr7F3XdZzmHm7VhcgLV9vNL4ogd6Bfc3k+ylwERzAWfbC+9VF7skU11TPCIEChhLHzvcDfO7n4b0Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Er+xHMC9; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726477654; x=1758013654;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L50wy+tAu4DOyf+okYw3YZmUGRAaAhSs/1v8IlfCwG0=;
+  b=Er+xHMC99yxp1VTEjEfw5ZvXR5E83mXDmNh9mTMxV2hMsuWkXv3JrYPb
+   zXR4J1OXYPjc8kvavJfB/fdQ188PCXhtt4TOt5aagdWU7AixazqufcgO9
+   r7YJr5sKmvGSEHsU7r+kXeycyp0kLNMqL7JCa60BcRgr2lJWiSDQ4oEP7
+   OHwnXri5e7J13Is8GZZUnAG/GvAB6ddT8qF5hdr7xdFiBKY5Zfn+s06aW
+   Lv1jy0w22SJkApCjw+Hhqc9D0eI+qwy2hv/cjlmkDUeIXVjnddHll01DN
+   oK6QFcTsdeRyK68LTq08U5tuiHR7Kzd2Gn6Wz0LO+kE7Q1UPNabYRYCOF
+   g==;
+X-CSE-ConnectionGUID: EszyffxVSlOmCPO87b0r+Q==
+X-CSE-MsgGUID: onR0mg7KR6GAO7DTs/Q+BQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="25230141"
+X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
+   d="scan'208";a="25230141"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:07:34 -0700
+X-CSE-ConnectionGUID: nNK2Ty/iQv6cTp5fnrL/tQ==
+X-CSE-MsgGUID: 1DzcSEIoSuu30S7TbdAJRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
+   d="scan'208";a="73581715"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:07:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sq7hh-00000009Oqd-0keg;
+	Mon, 16 Sep 2024 12:07:29 +0300
+Date: Mon, 16 Sep 2024 12:07:28 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: kernel test robot <lkp@intel.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev, Jean Delvare <jdelvare@suse.com>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Re: [PATCH v1 04/12] i2c: isch: Switch to memory mapped IO accessors
+Message-ID: <Zuf1UJ6K_8hL5x5U@smile.fi.intel.com>
+References: <20240911154820.2846187-5-andriy.shevchenko@linux.intel.com>
+ <202409141436.QFCDQrRF-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: hp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f16e3d4-e124-4183-9ca1-08dcd62ec8c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Sep 2024 09:06:00.4542
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: ca7981a2-785a-463d-b82a-3db87dfc3ce6
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Sw6vBC8C7ZQ/EDnbv4Y1351txBp3zp8zhB6wYMEn2Td1Kt4x4beOd6E8dJ4gOnlYJmW+u+tYBNlp6IN8PoE8TA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR84MB3552
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: hp.com
-Content-Language: en-US
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202409141436.QFCDQrRF-lkp@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Benjamin,
+On Sat, Sep 14, 2024 at 02:56:19PM +0800, kernel test robot wrote:
+> Hi Andy,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on andi-shyti/i2c/i2c-host]
+> [also build test WARNING on linus/master v6.11-rc7]
+> [cannot apply to next-20240913]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/i2c-isch-Add-missed-else/20240912-002224
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+> patch link:    https://lore.kernel.org/r/20240911154820.2846187-5-andriy.shevchenko%40linux.intel.com
+> patch subject: [PATCH v1 04/12] i2c: isch: Switch to memory mapped IO accessors
+> config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240914/202409141436.QFCDQrRF-lkp@intel.com/config)
+> compiler: alpha-linux-gcc (GCC) 13.3.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141436.QFCDQrRF-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409141436.QFCDQrRF-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    drivers/i2c/busses/i2c-isch.c: In function 'smbus_sch_probe':
+> >> drivers/i2c/busses/i2c-isch.c:296:42: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t' {aka 'long long unsigned int'} [-Wformat=]
+>      296 |                 "SMBus SCH adapter at %04x", res->start);
+>          |                                       ~~~^   ~~~~~~~~~~
+>          |                                          |      |
+>          |                                          |      resource_size_t {aka long long unsigned int}
+>          |                                          unsigned int
+>          |                                       %04llx
 
-I have sent 3rd patch per your comments. And this patch does not depend on =
-other patch, and can be applied directly by "git am -3"\
+Yeah, this should be something like %pa, but the problem with that that it
+always uses the same, fixed-width format with a prefix. We don't want this. But
+to make sure we have proper specifier we need to introduce a temporary variable
+and assign the resource start address to it and then use that variable in here.
+I'll update this in v2 and send it after we have v6.12-rc1 is out.
 
-Thanks
-Wade
+-- 
+With Best Regards,
+Andy Shevchenko
 
------Original Message-----
-From: Benjamin Tissoires <bentiss@kernel.org>=20
-Sent: Friday, September 13, 2024 10:01 PM
-To: Wang, Wade <wade.wang@hp.com>
-Cc: jikos@kernel.org; linux-input@vger.kernel.org; linux-kernel@vger.kernel=
-.org; stable@vger.kernel.org
-Subject: Re: [PATCH] HID: plantronics: Additional PID for double volume key=
- presses quirk
-
-CAUTION: External Email
-
-On Sep 13 2024, Wade Wang wrote:
-> Add the below headsets for double volume key presses quirk
->         Plantronics EncorePro 500 Series  (047f:431e)
->         Plantronics Blackwire_3325 Series (047f:430c)
->
-> Quote from previous patch by Maxim Mikityanskiy and Terry Junge
->       'commit f567d6ef8606 ("HID: plantronics: Workaround for double volu=
-me
->        key presses")'
->       'commit 3d57f36c89d8 ("HID: plantronics: Additional PIDs for double
->        volume key presses quirk")'
-> These Plantronics Series headset sends an opposite volume key following
-> each volume key press. This patch adds a quirk to hid-plantronics for thi=
-s
-> product ID, which will ignore the second opposite volume key press if it
-> happens within 250 ms from the last one that was handled.
-
-This commit message is very confusing:
-- you mention that you are quoting 2 commits,
-- but then you don't quote them but slightly reword the content
-- and then, and most of all, you insert in the driver a new timeout of
-  250 ms, which seems to not be with the same bases than f567d6ef8606
-  where it is mentioned that "Auto-repeat (when a key is held pressed)
-  is not affected, because the rate is about 3 times per second, which
-  is far less frequent than once in 5 ms." -> 250 ms gets in the roughly
-  same range than 3 times per seconds, so some more explanations is
-  required
-
-Please also follow Greg's advice and, as you replied in your last message
-that didn't made the list (HTML), please resubmit the series with a
-clear v3 indicator and a description of changes.
-
-Ideally, I'd like to also have the other plantronics patch you sent
-today in the same series, so I know which order I should apply them, in
-case one rely on the other.
-
-Cheers,
-Benjamin
-
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wade Wang <wade.wang@hp.com>
-> ---
->  drivers/hid/hid-ids.h         |  2 ++
->  drivers/hid/hid-plantronics.c | 11 +++++++++++
->  2 files changed, 13 insertions(+)
->
-> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> index 781c5aa29859..a0aaac98a891 100644
-> --- a/drivers/hid/hid-ids.h
-> +++ b/drivers/hid/hid-ids.h
-> @@ -1050,6 +1050,8 @@
->  #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3220_SERIES      0xc056
->  #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3215_SERIES      0xc057
->  #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES      0xc058
-> +#define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES      0x430c
-> +#define USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES               0x4=
-31e
->
->  #define USB_VENDOR_ID_PANASONIC              0x04da
->  #define USB_DEVICE_ID_PANABOARD_UBT780       0x1044
-> diff --git a/drivers/hid/hid-plantronics.c b/drivers/hid/hid-plantronics.=
-c
-> index 3d414ae194ac..2a19f3646ecb 100644
-> --- a/drivers/hid/hid-plantronics.c
-> +++ b/drivers/hid/hid-plantronics.c
-> @@ -38,8 +38,10 @@
->                           (usage->hid & HID_USAGE_PAGE) =3D=3D HID_UP_CON=
-SUMER)
->
->  #define PLT_QUIRK_DOUBLE_VOLUME_KEYS BIT(0)
-> +#define PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS BIT(1)
->
->  #define PLT_DOUBLE_KEY_TIMEOUT 5 /* ms */
-> +#define PLT_FOLLOWED_KEY_TIMEOUT 250 /* ms */
->
->  struct plt_drv_data {
->       unsigned long device_type;
-> @@ -134,6 +136,9 @@ static int plantronics_event(struct hid_device *hdev,=
- struct hid_field *field,
->               cur_ts =3D jiffies;
->               if (jiffies_to_msecs(cur_ts - prev_ts) <=3D PLT_DOUBLE_KEY_=
-TIMEOUT)
->                       return 1; /* Ignore the repeated key. */
-> +             if ((drv_data->quirks & PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEY=
-S)
-> +              && jiffies_to_msecs(cur_ts - prev_ts) <=3D PLT_FOLLOWED_KE=
-Y_TIMEOUT)
-> +                     return 1; /* Ignore the followed volume key. */
->
->               drv_data->last_volume_key_ts =3D cur_ts;
->       }
-> @@ -210,6 +215,12 @@ static const struct hid_device_id plantronics_device=
-s[] =3D {
->       { HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
->                                        USB_DEVICE_ID_PLANTRONICS_BLACKWIR=
-E_3225_SERIES),
->               .driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS },
-> +     { HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
-> +                                      USB_DEVICE_ID_PLANTRONICS_BLACKWIR=
-E_3325_SERIES),
-> +             .driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOL=
-LOWED_VOLUME_UP_DN_KEYS },
-> +     { HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
-> +                                      USB_DEVICE_ID_PLANTRONICS_ENCOREPR=
-O_500_SERIES),
-> +             .driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOL=
-LOWED_VOLUME_UP_DN_KEYS },
->       { HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
->       { }
->  };
-> --
-> 2.34.1
->
 
 
