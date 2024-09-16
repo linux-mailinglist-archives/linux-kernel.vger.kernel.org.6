@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-330684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91AB997A2B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:05:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86E597A2B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48E1E1F2349B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E58628595C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5474155741;
-	Mon, 16 Sep 2024 13:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA65915574D;
+	Mon, 16 Sep 2024 13:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CU2xkLNb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWkDfEF0"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A466A1804E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823B155392
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726491925; cv=none; b=Y6HJim2aGsdKDxcrN0R0m0e+OTKK8qYHSicClALOTSwx0iCRognwytG1RwjmALEotmzh9HgjBe3dYIAhjz966N7+zjyHoMa9nuIcJBulzdiFcTco7wtQ5sI5y20QkzrAFJ8FKI8oIYcyV5LUcD4ZqWwv9/v/sPcpZ2MjHyqVNoU=
+	t=1726492017; cv=none; b=eB5Hh4LLMrYqAU65RTEKF74SARQCSm2rcf9UepFmdMZdRNfdMteirO7Q9F6ymL3Na2KrqvH0FsjTlwbP8igt0r0fDJfkL1xTSr5EWcYQ/ioQRzyEJvFmjaK+mBl3F6kSxqfT+Ey/IrlvMQvoyEN6s6G5mQQX2fknTtuBDqcmp4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726491925; c=relaxed/simple;
-	bh=ONx8YG4EZm4Q6G1dXYvromV/PbnD7ffLh1Yg/eiRXoU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=AXpwIXGUyKyHELUKOSSgdmbGf3BBk+4HaN5lAxtoCU1Iry+tcUNCGpUsiKmmMQHgdiINzFNlLirMZUaPnp7c42+QUPO9bN8PglUOd0wNDLyCIwINB6O7MVDHD0xBplJE0Ps+8KrnXQnoCAc/N+ZTyK1+8HSlJDPoN2rG6A1P0gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CU2xkLNb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726491922;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Fz2Otqr1x0kPcbKDKf2bmB2iDmlHXr2EPIDX2kJglM=;
-	b=CU2xkLNbU4BV5XRpdLGFzj+CfBx/vVbI2vIwGQ1h7tg0bMLyU+qMTiVAynC0E1b7+dy9qX
-	MpxoBrZsAdlYzkDzLD8uoCmQvYl0VvWFl0VsAyJb+ZiO9L5UzN2Am7c2J9gkKC6E3AY/XQ
-	1JTPYIrAcU+iDOGyt+tltI4nZmw6Sjg=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-670-U_07DsiXMa2szt0yLJCLvg-1; Mon,
- 16 Sep 2024 09:05:19 -0400
-X-MC-Unique: U_07DsiXMa2szt0yLJCLvg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 748921955DC8;
-	Mon, 16 Sep 2024 13:05:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9AC4D1956088;
-	Mon, 16 Sep 2024 13:05:10 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240829083409.3788142-1-libaokun@huaweicloud.com>
-References: <20240829083409.3788142-1-libaokun@huaweicloud.com>
-To: libaokun@huaweicloud.com
-Cc: dhowells@redhat.com, netfs@lists.linux.dev, jlayton@kernel.org,
-    brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-    hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
-    linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-    yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
-    wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
-    stable@kernel.org
-Subject: Re: [PATCH v2] cachefiles: fix dentry leak in cachefiles_open_file()
+	s=arc-20240116; t=1726492017; c=relaxed/simple;
+	bh=/qByNaWuoWPrxkM4E1LPgkTruxDhfDNAmxwqNdq0w34=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPiJAMrSAzXMZ8OmOcaq1fczOfQ9AgqTTKi9Tde++Ly4GLRzh+EbU5M0NEQX7tNYzbgsUULgvmydh2Tus0iXO/VLWXR29UiFRx9OMY3SOozdF+KvjesZa36w6eXMZ+Ael937OzxXqmmnjqiYt9qIUEVMerRQ2uPOkWqHygZo6LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWkDfEF0; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42e5e758093so10181835e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:06:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726492014; x=1727096814; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=01bA3eQ87yxP1v3+Sup0Pli/I9MSO00Bs20nRBnUXkc=;
+        b=gWkDfEF0ciQomIc04qPnDAzQ3YqQAmXxwW0A7CXWxxmvsQghfrkD9f6Ydxt7yWyXZP
+         VvxMI4PuOPhj043ArZhABgQUMo4xYwxYXqz+cW2x+nwnIb3W2R9YCvB6dFTQ48SsMnHz
+         02OLEwWtgHb4dy31/vx+J4/QoLLjCP5bvffkoCQj029n5EjyeBtyk8+hvtuZQb8X/7v3
+         Nw2ndgYBr7VBgQNZt59mFefCYxVqLXYiTvc0bwtLYgp2q9wyrNx8SHlOn2Wmvcn+LupE
+         i8nGf3AsyH6aZvvOfxOR/wvepA53B9OyO60T/TLhW/+1kQe88MfYQ9v5/hj68qf5KL29
+         V0Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726492014; x=1727096814;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=01bA3eQ87yxP1v3+Sup0Pli/I9MSO00Bs20nRBnUXkc=;
+        b=mRGWEMYdm0hTTWvPd75ug5J3VnYukgW0ArpjB8TGaU3YP1mo8GuHSWXGHdbl8S1T6f
+         3tQxO14jeS3UVbfvBXvzg39EZ2Ufr1WnwW97BN8nenOUWBDM5PnFjqYofCNR5UtzwQoh
+         DqSppz1DhqzizdRSyklaGEr2J9n6D0gs/RdqKgLIGIjbBO7PKLsMSK7PRzDuw0qZG0OI
+         1dpP3jo8SZuCeH1F/N/fyjnGNPPlawV3Sg9TtNzqOdPpUXdK/gK/yFSXLjytps69iFiX
+         Dx1IMyZEsUuSgIqwZ7S2gKoBaDA8Ls9VwfSXgl3kNhoH3W1TUZH5WPU0PaPeNp0q233Q
+         LgIg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1ki3F1VOS1Yla4qgWaUnRQ9insk7sbs8ByW4HY43qawsqPTIzC2Cm75Jw48p2qpwpjlisiQK3qnh83As=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGALtz2dPuMuJtxX4shJpwrdC0K/YJARjK/PUBKp5dNTnWa0g8
+	6ZLap4p5xWHEdH0D28k/gYOPGmxQiAtjcf5F4agw9f8kj/UNl9aZ
+X-Google-Smtp-Source: AGHT+IEF/v1FQr6cAoRIjMFaNFemDgNbaga8/q9Ynq8knT4+1+VPiX+WoZ0EGxemZfJ7NBx1xzBzHg==
+X-Received: by 2002:a05:600c:34c2:b0:42c:bad0:6c16 with SMTP id 5b1f17b1804b1-42d9070baa1mr73819815e9.2.1726492013673;
+        Mon, 16 Sep 2024 06:06:53 -0700 (PDT)
+Received: from wheatley.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b194c57sm110569465e9.48.2024.09.16.06.06.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 06:06:53 -0700 (PDT)
+Received: by wheatley.localdomain (Postfix, from userid 1000)
+	id 8C3B024B44AE; Mon, 16 Sep 2024 15:06:52 +0200 (CEST)
+Date: Mon, 16 Sep 2024 15:06:52 +0200
+From: Martin Kletzander <nert.pinx@gmail.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/resctrl: Avoid overflow in MB settings in
+ bw_validate()
+Message-ID: <ZugtbMDP0AiPVrmt@wheatley.k8r.cz>
+References: <f828f3177982a9cfe803d2aa8eb7602b70fcba50.1726482307.git.nert.pinx@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1899864.1726491909.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Sep 2024 14:05:09 +0100
-Message-ID: <1899865.1726491909@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <f828f3177982a9cfe803d2aa8eb7602b70fcba50.1726482307.git.nert.pinx@gmail.com>
+X-Clacks-Overhead: GNU Terry Pratchett
 
-libaokun@huaweicloud.com wrote:
+On Mon, Sep 16, 2024 at 12:37:13PM +0200, Martin Kletzander wrote:
+>When resctrl is mounted with the "mba_MBps" option the default (maximum)
+>bandwidth is the maximum unsigned value for the type.  However when
+>using the same value that already exists in the schemata file it is then
+>rounded up to the bandwidth granularity and overflows to a small number
+>instead, making it difficult to reset memory bandwidth allocation value
+>back to its default.
+>
+>Since the granularity and minimum bandwidth are not used when the
+>software controller is used (resctrl is mounted with the "mba_MBps"),
+>skip the rounding up as well and return early from bw_validate().
+>
+>Signed-off-by: Martin Kletzander <nert.pinx@gmail.com>
+>---
+> arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 7 +++++--
+> 1 file changed, 5 insertions(+), 2 deletions(-)
+>
+>diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>index 50fa1fe9a073..7e6014176a29 100644
+>--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>@@ -48,8 +48,11 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+> 		return false;
+> 	}
+>
+>-	if ((bw < r->membw.min_bw || bw > r->default_ctrl) &&
+>-	    !is_mba_sc(r)) {
+>+	/* Nothing else to do if software controller is enabled */
+>+	if (is_mba_sc(r))
+>+		return true;
 
-> From: Baokun Li <libaokun1@huawei.com>
-> =
+I'm so sorry, I sent an incomplete patch.  This still needs to modify
+the *data argument.  I'll send a v2 shortly.
 
-> A dentry leak may be caused when a lookup cookie and a cull are concurre=
-nt:
-> =
-
->             P1             |             P2
-> -----------------------------------------------------------
-> cachefiles_lookup_cookie
->   cachefiles_look_up_object
->     lookup_one_positive_unlocked
->      // get dentry
->                             cachefiles_cull
->                               inode->i_flags |=3D S_KERNEL_FILE;
->     cachefiles_open_file
->       cachefiles_mark_inode_in_use
->         __cachefiles_mark_inode_in_use
->           can_use =3D false
->           if (!(inode->i_flags & S_KERNEL_FILE))
->             can_use =3D true
-> 	  return false
->         return false
->         // Returns an error but doesn't put dentry
-> =
-
-> After that the following WARNING will be triggered when the backend fold=
-er
-> is umounted:
-> =
-
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: Dentry 000000008ad87947{i=3D7a,n=3DDx_1_1.img}  still in use (1) [u=
-nmount of ext4 sda]
-> WARNING: CPU: 4 PID: 359261 at fs/dcache.c:1767 umount_check+0x5d/0x70
-> CPU: 4 PID: 359261 Comm: umount Not tainted 6.6.0-dirty #25
-> RIP: 0010:umount_check+0x5d/0x70
-> Call Trace:
->  <TASK>
->  d_walk+0xda/0x2b0
->  do_one_tree+0x20/0x40
->  shrink_dcache_for_umount+0x2c/0x90
->  generic_shutdown_super+0x20/0x160
->  kill_block_super+0x1a/0x40
->  ext4_kill_sb+0x22/0x40
->  deactivate_locked_super+0x35/0x80
->  cleanup_mnt+0x104/0x160
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =
-
-> Whether cachefiles_open_file() returns true or false, the reference coun=
-t
-> obtained by lookup_positive_unlocked() in cachefiles_look_up_object()
-> should be released.
-> =
-
-> Therefore release that reference count in cachefiles_look_up_object() to
-> fix the above issue and simplify the code.
-> =
-
-> Fixes: 1f08c925e7a3 ("cachefiles: Implement backing file wrangling")
-> Cc: stable@kernel.org
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-
-Acked-by: David Howells <dhowells@redhat.com>
-
+>+
+>+	if (bw < r->membw.min_bw || bw > r->default_ctrl) {
+> 		rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
+> 				    r->membw.min_bw, r->default_ctrl);
+> 		return false;
+>-- 
+>2.46.0
+>
 
