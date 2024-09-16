@@ -1,249 +1,265 @@
-Return-Path: <linux-kernel+bounces-330383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C19C979DA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96916979DAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651721C223CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EB601C22ABC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE65482EF;
-	Mon, 16 Sep 2024 08:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582EE146D7E;
+	Mon, 16 Sep 2024 08:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hz7PPh4v"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="frTuRnnf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="38rp8gRZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="frTuRnnf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="38rp8gRZ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0068814900B;
-	Mon, 16 Sep 2024 08:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEA0482EF
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726477125; cv=none; b=NcDQKx8oX2gl381uzpiCENOaxkq0iiLtSI54C5KTYUZeH1XEwFv9yDJCKu0nvYCmFFnf5phFfXuLQsWPQIqUbVuyr4NanSXqs2mu/hgxo8Y13f4vftHjF4x4FUGkknHLAGIB1hxQsroB3NUq+zj5YyUspQpcBHV8z6N6Ie4ntqk=
+	t=1726477195; cv=none; b=dgPleJVwHH3dPzuX5ZvNh/HFrfxN8K8QrSIij+cJGtGjPLIBjYgfCHgdhy6c1uKBpICZOxAlaq4AQNrWG8RoskyGQI+ilWm/VhuDZEfzxWqh2AETeErPkUc3Oqo7w8V3y/y7u3PC5bHw4lDVnaNf8l2VE8nvgWMXMarUeiktcu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726477125; c=relaxed/simple;
-	bh=Ifc+Z515nGmOJfijfj91jhXJWyi8xFaVLjBUFszzRFA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d/VGmOm09heyO17j9MzIMidzskslDsvHT+x9+tS8U5/X41MjVGz1RSgwgMazgwSwwxGl0/TaVjLTZ6k9jedpKq4T842I4+sygJmgyK+fFtFnH9VQST2L2QVy+W82B8Pga0adzt1WLqsx/lqREpuGXBJRt1nx6HlUc7xp5kD2+W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hz7PPh4v; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48FM94rG020571;
-	Mon, 16 Sep 2024 08:58:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/g1y7Oa6pAXIOYx5tbG1L7nPwwl90J1rUk/TLSvAG9Y=; b=hz7PPh4vgzUcjzQ4
-	KdN7oRcLcVJ9UJenmH1DWX8bPbJ5TeirdCpg+aQI5BRbdV5cxhKZGcC9DuTqXmdQ
-	XstQG2jsEDdyKEu4etylr5JcCdtYILD+pwv2LhXb2tp3dkrmJT7dssQDPYPg17Fz
-	7nIs4cn9/huxxqz9cqEKmD6IOYba5LLA6xMRy8r1aoN5cf1YsHizMPMGLzgDyqAU
-	4mBGT+XN1VTgCBEekaRFJmvlL5OCyJaw1QfoObLXYTG8iT4OVXUBgjFbqfl7JXLx
-	y9UdGRNOhRMo/V5v/KPJDAdfhuh4CV2s1tMg202qcz1kIicS2fbMAOyj0/OFlPMh
-	ZHD4Fw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4heud71-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 08:58:25 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48G8wNNu006762
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 08:58:23 GMT
-Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 16 Sep 2024 01:58:17 -0700
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: <axboe@kernel.dk>, <song@kernel.org>, <yukuai3@huawei.com>,
-        <agk@redhat.com>, <snitzer@kernel.org>, <mpatocka@redhat.com>,
-        <adrian.hunter@intel.com>, <quic_asutoshd@quicinc.com>,
-        <ritesh.list@gmail.com>, <ulf.hansson@linaro.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <kees@kernel.org>,
-        <gustavoars@kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
-        <dm-devel@lists.linux.dev>, <linux-mmc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_mdalam@quicinc.com>
-Subject: [PATCH v2 3/3] mmc: sdhci-msm: Add additional algo mode for inline encryption
-Date: Mon, 16 Sep 2024 14:27:41 +0530
-Message-ID: <20240916085741.1636554-4-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
-References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1726477195; c=relaxed/simple;
+	bh=KL/PsSssqc7U1/1Rp3iH3Qq/vk9rdJwkItOjc0eL/jc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dKu67xAg3l/7K31VZBMfwMkIY0gbxqRKCw5TdTkS2lO+li4UmFonOtNCwMuZm9EmXxzZ/2IHD2SYHdc7MJOxsAwsFQ+8TO5annEjJoS6IUtVF/ShKC1AOJw8Cp7ZCVO9kIVq5kwxn9VU6IQWx/viLAW4tJDGd0PCfXEguHnU4Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=frTuRnnf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=38rp8gRZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=frTuRnnf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=38rp8gRZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BB86621B6E;
+	Mon, 16 Sep 2024 08:59:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726477191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xGlCCk23+ylh6UCK8ZOT65N0+I1J7PVtY1facXDNYVg=;
+	b=frTuRnnfZBdPu+dLZXZFuCCrDaxG7pMyD/l90TwR/xg7pcx+crXB0qGK7GetGMyFEM9nMW
+	QjdSkmxCO3acxoWQHKYkpcxHRnXu/t8IfSkH/hzlUzynuZ99Cb7lM0ILmrQjjdL96KQPIx
+	kfpNp9dgIKHANZa98C0u1PbIBuL7l8I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726477191;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xGlCCk23+ylh6UCK8ZOT65N0+I1J7PVtY1facXDNYVg=;
+	b=38rp8gRZ6TxLAS6d5cNInmvy5yl911mUfxhbJTmliM/ABEJ0onSKbf+wiwSH7XKbS2wHLf
+	P+DLUzHns0rDSsBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726477191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xGlCCk23+ylh6UCK8ZOT65N0+I1J7PVtY1facXDNYVg=;
+	b=frTuRnnfZBdPu+dLZXZFuCCrDaxG7pMyD/l90TwR/xg7pcx+crXB0qGK7GetGMyFEM9nMW
+	QjdSkmxCO3acxoWQHKYkpcxHRnXu/t8IfSkH/hzlUzynuZ99Cb7lM0ILmrQjjdL96KQPIx
+	kfpNp9dgIKHANZa98C0u1PbIBuL7l8I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726477191;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xGlCCk23+ylh6UCK8ZOT65N0+I1J7PVtY1facXDNYVg=;
+	b=38rp8gRZ6TxLAS6d5cNInmvy5yl911mUfxhbJTmliM/ABEJ0onSKbf+wiwSH7XKbS2wHLf
+	P+DLUzHns0rDSsBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 69733139CE;
+	Mon, 16 Sep 2024 08:59:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id I3VwGIfz52blSAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 16 Sep 2024 08:59:51 +0000
+Message-ID: <a6a994b0-5021-49e5-b853-a1b2abe3af2f@suse.de>
+Date: Mon, 16 Sep 2024 10:59:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] firmware: coreboot: Don't register a pdev if
+ screen_info data is present
+To: Javier Martinez Canillas <javierm@redhat.com>,
+ kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ Julius Werner <jwerner@chromium.org>, Hugues Bruant
+ <hugues.bruant@gmail.com>, intel-gfx@lists.freedesktop.org,
+ Brian Norris <briannorris@chromium.org>, dri-devel@lists.freedesktop.org,
+ Borislav Petkov <bp@alien8.de>, chrome-platform@lists.linux.dev,
+ Tzung-Bi Shih <tzungbi@kernel.org>
+References: <20240913213246.1549213-1-javierm@redhat.com>
+ <202409151528.CIWZRPBq-lkp@intel.com>
+ <eeac1c3c-4a21-4cd5-b513-8e55cffe0bae@suse.de>
+ <8734m0atbu.fsf@minerva.mail-host-address-is-not-set>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <8734m0atbu.fsf@minerva.mail-host-address-is-not-set>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hdI8lqcDWWvvLB46JeOU4II4fRasrJTo
-X-Proofpoint-GUID: hdI8lqcDWWvvLB46JeOU4II4fRasrJTo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- suspectscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
- mlxlogscore=999 adultscore=0 malwarescore=0 phishscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409160056
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.linux.dev,chromium.org,gmail.com,lists.freedesktop.org,alien8.de,kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,suse.de:email,suse.de:mid,intel.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-Add support for AES-XTS-128, AES-CBC-128 and AES-CBS-256 modes for
-inline encryption. Since ICE (Inline Crypto Engine) supports these
-all modes
+Hi Javier
 
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
+Am 16.09.24 um 10:36 schrieb Javier Martinez Canillas:
+> Thomas Zimmermann <tzimmermann@suse.de> writes:
+>
+> Hello Thomas and Tzung-Bi,
+>
+>> Hi
+>>
+>> Am 15.09.24 um 09:44 schrieb kernel test robot:
+>>> Hi Javier,
+>>>
+>>> kernel test robot noticed the following build errors:
+>>>
+>>> [auto build test ERROR on chrome-platform/for-next]
+>>> [also build test ERROR on chrome-platform/for-firmware-next linus/master v6.11-rc7 next-20240913]
+>>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>>> And when submitting patch, we suggest to use '--base' as documented in
+>>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>>
+>>> url:    https://github.com/intel-lab-lkp/linux/commits/Javier-Martinez-Canillas/firmware-coreboot-Don-t-register-a-pdev-if-screen_info-data-is-present/20240914-053323
+>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+>>> patch link:    https://lore.kernel.org/r/20240913213246.1549213-1-javierm%40redhat.com
+>>> patch subject: [PATCH v3] firmware: coreboot: Don't register a pdev if screen_info data is present
+>>> config: riscv-randconfig-001-20240915 (https://download.01.org/0day-ci/archive/20240915/202409151528.CIWZRPBq-lkp@intel.com/config)
+>>> compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+>>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240915/202409151528.CIWZRPBq-lkp@intel.com/reproduce)
+>>>
+>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>>> the same patch/commit), kindly add following tags
+>>> | Reported-by: kernel test robot <lkp@intel.com>
+>>> | Closes: https://lore.kernel.org/oe-kbuild-all/202409151528.CIWZRPBq-lkp@intel.com/
+>>>
+>>> All errors (new ones prefixed by >>):
+>>>
+>>>>> ld.lld: error: undefined symbol: screen_info
+>>>      >>> referenced by framebuffer-coreboot.c:27 (drivers/firmware/google/framebuffer-coreboot.c:27)
+>>>      >>>               drivers/firmware/google/framebuffer-coreboot.o:(framebuffer_probe) in archive vmlinux.a
+>>>      >>> referenced by framebuffer-coreboot.c:27 (drivers/firmware/google/framebuffer-coreboot.c:27)
+>>>      >>>               drivers/firmware/google/framebuffer-coreboot.o:(framebuffer_probe) in archive vmlinux.a
+>> Not all platforms define screen_info. Maybe fix this by following
+> Yes, after reading the build errors reported by the robot I remembered
+> that we had similar issues with sysfb, for example commit 1260b9a7020
+> ("drivers/firmware: fix SYSFB depends to prevent build failures") fixed
+> one of those.
+>
+>> Tzung-Bi's advice of removing the local variables and then guard the
+>> test by CONFIG_SYSFB. If SYSFB has been defined, screen_info has to be
+>> there. It's not a super pretty solution, though.
+>>
+> If possible I would prefer to avoid the ifdefery in the driver. I also
+> believe that the local variables makes the code easier to read. But if
+> you folks think that's better to drop them, I can do it in the next rev.
+>
+> Another option is to restrict the architectures where this driver could
+> be build. As far as I understand it is mainly for x86 and ARM64 arches.
+>
+> These two have a screen_info defined so the driver will build correctly.
+> I can include a preparatory patch that adds a "depends on x86 || ARM64".
 
-Change in [v2]
+That feels arbitrary, as the dependency is not really in coreboot, but 
+in sysbf. What you'd want is a HAVE_SCREEN_INFO define on the 
+architectures that provide it. IIRC earlier attempts to add this have 
+failed. :/
 
-* No change
+If you don't want the ifdef-ery in coreboot.c, you could add a helper to 
+sysfb. Let's say
 
-Change in [v1]
+   bool sysfb_handles_screen_info(void)
 
-* Added AES-XTS-128, AES-CBC-128, AES-CBS-256 algo mode support
+returns the result of the test. If you put it next to sysfb_disable(), 
+you could add an empty wrapper into the sysfb.h header as well. [1]
 
- drivers/mmc/host/sdhci-msm.c | 10 ++----
- drivers/soc/qcom/ice.c       | 65 +++++++++++++++++++++++++++++++-----
- 2 files changed, 58 insertions(+), 17 deletions(-)
+(There's still the possibility that screen_info is available, but sysfb 
+has been disabled. But that's not different from how it currently works.)
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index e113b99a3eab..fc1db58373ce 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -1867,17 +1867,11 @@ static int sdhci_msm_program_key(struct cqhci_host *cq_host,
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
- 	union cqhci_crypto_cap_entry cap;
- 
--	/* Only AES-256-XTS has been tested so far. */
- 	cap = cq_host->crypto_cap_array[cfg->crypto_cap_idx];
--	if (cap.algorithm_id != CQHCI_CRYPTO_ALG_AES_XTS ||
--		cap.key_size != CQHCI_CRYPTO_KEY_SIZE_256)
--		return -EINVAL;
- 
- 	if (cfg->config_enable & CQHCI_CRYPTO_CONFIGURATION_ENABLE)
--		return qcom_ice_program_key(msm_host->ice,
--					    QCOM_ICE_CRYPTO_ALG_AES_XTS,
--					    QCOM_ICE_CRYPTO_KEY_SIZE_256,
--					    cfg->crypto_key,
-+		return qcom_ice_program_key(msm_host->ice, cap.algorithm_id,
-+					    cap.key_size, cfg->crypto_key,
- 					    cfg->data_unit_size, slot);
- 	else
- 		return qcom_ice_evict_key(msm_host->ice, slot);
-diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
-index 50be7a9274a1..da0c1dfa6594 100644
---- a/drivers/soc/qcom/ice.c
-+++ b/drivers/soc/qcom/ice.c
-@@ -20,6 +20,9 @@
- 
- #include <soc/qcom/ice.h>
- 
-+#define AES_128_CBC_KEY_SIZE			16
-+#define AES_256_CBC_KEY_SIZE			32
-+#define AES_128_XTS_KEY_SIZE			32
- #define AES_256_XTS_KEY_SIZE			64
- 
- /* QCOM ICE registers */
-@@ -162,36 +165,80 @@ int qcom_ice_suspend(struct qcom_ice *ice)
- }
- EXPORT_SYMBOL_GPL(qcom_ice_suspend);
- 
-+static int qcom_ice_get_algo_mode(struct qcom_ice *ice, u8 algorithm_id,
-+				  u8 key_size, enum qcom_scm_ice_cipher *cipher,
-+				  u32 *key_len)
-+{
-+	struct device *dev = ice->dev;
-+
-+	switch (key_size) {
-+	case QCOM_ICE_CRYPTO_KEY_SIZE_128:
-+		fallthrough;
-+	case QCOM_ICE_CRYPTO_KEY_SIZE_256:
-+		break;
-+	default:
-+		dev_err(dev, "Unhandled crypto key size %d\n", key_size);
-+		return -EINVAL;
-+	}
-+
-+	switch (algorithm_id) {
-+	case QCOM_ICE_CRYPTO_ALG_AES_XTS:
-+		if (key_size == QCOM_ICE_CRYPTO_KEY_SIZE_256) {
-+			*cipher = QCOM_SCM_ICE_CIPHER_AES_256_XTS;
-+			*key_len = AES_256_XTS_KEY_SIZE;
-+		} else {
-+			*cipher = QCOM_SCM_ICE_CIPHER_AES_128_XTS;
-+			*key_len = AES_128_XTS_KEY_SIZE;
-+		}
-+		break;
-+	case QCOM_ICE_CRYPTO_ALG_BITLOCKER_AES_CBC:
-+		if (key_size == QCOM_ICE_CRYPTO_KEY_SIZE_256) {
-+			*cipher = QCOM_SCM_ICE_CIPHER_AES_256_CBC;
-+			*key_len = AES_256_CBC_KEY_SIZE;
-+		} else {
-+			*cipher = QCOM_SCM_ICE_CIPHER_AES_128_CBC;
-+			*key_len = AES_128_CBC_KEY_SIZE;
-+		}
-+		break;
-+	default:
-+		dev_err_ratelimited(dev, "Unhandled crypto capability; algorithm_id=%d, key_size=%d\n",
-+				    algorithm_id, key_size);
-+		return -EINVAL;
-+	}
-+
-+	dev_info(dev, "cipher: %d key_size: %d", *cipher, *key_len);
-+
-+	return 0;
-+}
-+
- int qcom_ice_program_key(struct qcom_ice *ice,
- 			 u8 algorithm_id, u8 key_size,
- 			 const u8 crypto_key[], u8 data_unit_size,
- 			 int slot)
- {
- 	struct device *dev = ice->dev;
-+	enum qcom_scm_ice_cipher cipher;
- 	union {
- 		u8 bytes[AES_256_XTS_KEY_SIZE];
- 		u32 words[AES_256_XTS_KEY_SIZE / sizeof(u32)];
- 	} key;
- 	int i;
- 	int err;
-+	u32 key_len;
- 
--	/* Only AES-256-XTS has been tested so far. */
--	if (algorithm_id != QCOM_ICE_CRYPTO_ALG_AES_XTS ||
--	    key_size != QCOM_ICE_CRYPTO_KEY_SIZE_256) {
--		dev_err_ratelimited(dev,
--				    "Unhandled crypto capability; algorithm_id=%d, key_size=%d\n",
--				    algorithm_id, key_size);
-+	if (qcom_ice_get_algo_mode(ice, algorithm_id, key_size, &cipher, &key_len)) {
-+		dev_err(dev, "Unhandled crypto capability; algorithm_id=%d, key_size=%d\n",
-+			algorithm_id, key_size);
- 		return -EINVAL;
- 	}
- 
--	memcpy(key.bytes, crypto_key, AES_256_XTS_KEY_SIZE);
-+	memcpy(key.bytes, crypto_key, key_len);
- 
- 	/* The SCM call requires that the key words are encoded in big endian */
- 	for (i = 0; i < ARRAY_SIZE(key.words); i++)
- 		__cpu_to_be32s(&key.words[i]);
- 
--	err = qcom_scm_ice_set_key(slot, key.bytes, AES_256_XTS_KEY_SIZE,
--				   QCOM_SCM_ICE_CIPHER_AES_256_XTS,
-+	err = qcom_scm_ice_set_key(slot, key.bytes, key_len, cipher,
- 				   data_unit_size);
- 
- 	memzero_explicit(&key, sizeof(key));
+[1] 
+https://elixir.bootlin.com/linux/v6.10.10/source/include/linux/sysfb.h#L65
+
+Best regards
+Thomas
+
+>
+>> Best regards
+>> Thomas
+>>
+
 -- 
-2.34.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
