@@ -1,172 +1,153 @@
-Return-Path: <linux-kernel+bounces-330646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B3497A23C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:26:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E195C97A241
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7011F24832
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6823287287
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C6A149E0B;
-	Mon, 16 Sep 2024 12:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AA51482FE;
+	Mon, 16 Sep 2024 12:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZgaCTtNx"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bEg348KV"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269B1156C72
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01F914F9D5
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726489506; cv=none; b=jb26t3b9LW7YkEBmaBLXZYHEW/sBLWiHenQa0ZT55lZprDpYvthW/8lW3YV9tvYeXHigbHaI9dgVAu/ebQYsZNTz7E97uCbmaBBy3viSaL2Sit4BrHL0l/B5qtgkGWTUJnBhP6L2mplh07pOvSWJOlLUUFPRmAZ6xObrsuLFh7c=
+	t=1726489623; cv=none; b=IWqcSXoJYbH8iUJkPtiJpJphP4gjRtcypoAL4NnlEV0TftnVN85TScK+rPb03m/3PGLnsdvB7B+nSDLRzp47sWEJ/CtjWC3ZBn/t0+ROS0XHbsqOSJDEtbz71xBsC9raLVZpdZ4pQ4t/UHMmkSbOx56QxnvtaphZgUn67R3Co9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726489506; c=relaxed/simple;
-	bh=o9EnbdwllzhNTbJpj69Z9Kw1ccdl7ftBqQM5447Z5PE=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=YwUPEBHc9ciL/Gf/y9E2OS/z+pqN3sFpci9iAWQWCnD94mzBqlXhxK8n4TcdBUa1C0ZcMmhtJ950nJcQt63Ueo+m8n4ty6SQQXLY1+P2GrUuWcEFHFd7MoQMMSUoOf2EAXAMyEtJDnwhQUvYBOztZ14eZZpk0qtdaa9mO+ljwhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZgaCTtNx; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240916122502euoutp0278694f330bb60db84a32bf881de28dc5~1uQ4UbfxI0815308153euoutp02h
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:25:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240916122502euoutp0278694f330bb60db84a32bf881de28dc5~1uQ4UbfxI0815308153euoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726489502;
-	bh=YG451YJHsgVJn8e6zQFyXx78G1vI5JSdgFvQqBcmLVE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=ZgaCTtNxBSMPpKAZ2R7UQku2LUm+3/p5aTqe4anb7xB+oUJuOmd6CnLSQxGxa8zzv
-	 bew9EM9Xfr+RTC8PQMN6ENaZMjOodrlUPU8r+5Ex++yvmL8ElCT+NLDUDcVrhfp0fD
-	 5R1UXPnYGWQB09y6jIiL75AJJzNzXe11obJibFKw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240916122501eucas1p254275e22abdaf7df9a77e7954d2c44e3~1uQ37SlYK2892628926eucas1p2D;
-	Mon, 16 Sep 2024 12:25:01 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 4B.49.09624.D9328E66; Mon, 16
-	Sep 2024 13:25:01 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240916122501eucas1p1372c5ce0f8988b2e3a313971452c187b~1uQ3eKInq0914009140eucas1p1f;
-	Mon, 16 Sep 2024 12:25:01 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240916122501eusmtrp15995193d78df13a67b4938b962ca3e89~1uQ3bbTJZ1937519375eusmtrp1L;
-	Mon, 16 Sep 2024 12:25:01 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-86-66e8239d2b5a
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 9D.F4.14621.D9328E66; Mon, 16
-	Sep 2024 13:25:01 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240916122501eusmtip267fbebe6a98e60ad221a30ac23e11cc1~1uQ3OTPji2645126451eusmtip2X;
-	Mon, 16 Sep 2024 12:25:01 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Mon, 16 Sep 2024 13:25:00 +0100
-Date: Mon, 16 Sep 2024 14:24:56 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: David Woodhouse <dwmw2@infradead.org>, Lu Baolu
-	<baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
-	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin Tian
-	<kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-Subject: Re: [PATCH 3/6] iommu: kconfig: Move IOMMU_IOPF into INTEL_IOMMU
-Message-ID: <20240916122456.gzb5oukf5m3ehh6q@joelS2.panther.com>
+	s=arc-20240116; t=1726489623; c=relaxed/simple;
+	bh=DFPhNfr7hYwKA9cyov4Ik6Y18sTDWCejmluJKi2Yt2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kN3KYWkzfMqYF8k7fMCVwDA3ND/roZmG5CesjKDmCkAUEr/Ncvd6sxrcG42u/oeJe2s2MGbBGyzHcqEeSU+z5ijgIc5iQkbh9IOK/FcO1RuP9ZmTauz/i9E0BT9sWHdZ7Mrt6FIvTUYOZESVT1WpvXXCjqOkWo2RFu5x7hZKvp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bEg348KV; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so43328435e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726489620; x=1727094420; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=15A8yM/DyPjFL6/g9+SQPBBqxk8J5Uf7zhxTAVeSYR0=;
+        b=bEg348KVd2LM99eSTbZi/S6MP8ilTtTJcGluI6+T+HzuF8WNK0EYSYefVwjR250Ch9
+         7tvEykyORDENtx/hZfDSFtwHcnn0YJ4fjJpPCKIyT6hjM1jnGTUqsDe+DCex0lT5+l+2
+         wTS9mCLKB/mkeqd30aQqKM58fFCZuM06Nx7x5uakG+nIHNBldsDgUAg//BohEA4YZJBZ
+         tlbRErtvUjDn1AZCQvKvhEMxyJL79yfSgtQQ4JC4SDaR12jceHx6GYDZLYFytMICKhwT
+         kBHu+v8vZ2nw8eT2HZcNb9a/U8g8ST8gB1pfnTVVMQszLribDT4/r6fYg3krkLYyyiVG
+         88Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726489620; x=1727094420;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=15A8yM/DyPjFL6/g9+SQPBBqxk8J5Uf7zhxTAVeSYR0=;
+        b=urc5Y3rzcq9Fmt41CZFFup821kVxELoiom1mSJI9Eng8s7Vo03k2JR/Fe+V/fmsUst
+         h3Nwg0ywtxJ7VLyiPAjx7zm+q1x4ljNHeRDMh2+zs4auedsTuiBjbt2Aig19Numi20TW
+         dqQLDV1f2zXgFerY5hCHPpsv97qgKAkLnJ2zhuYXgJzzrjNX2IQUjmADSXJjIJFO6+HI
+         FrctfYzFYX+41oNy9dXGUWbZX+/L99ITwV1GV0ktUfK/xPB4330L+XLinwMUzcsHaImO
+         +0jAYJfjG9aqRrfywsD9kUbtaOILNHJlopm1JXoJ9b8m1E+coxeGl5qUm9hf/FOgHMUV
+         E7aA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAadZNXPzrZND2PCZsB5uq87MaLwnPX6B2UqDzTiEd7mBWNarQHbsKU5I/HT8KrvK+rh0kSwiZse4E7a8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx70wpFWE29HcgIBBWmeRZDE61u8SAfhhdnry6J8pq0tdlobsKL
+	6vDJoqJITVABcpwCE4ihORoFtjx64backoHKEnvvGlmgoE4e8uIMsl7BD/78mg==
+X-Google-Smtp-Source: AGHT+IFXXqArRaKN8lGBqGMZxuy2MN0d1q9ekHi709FhVqk+dt+tqGTyO5rnafncd8Z5Mm4RnI1h8g==
+X-Received: by 2002:a05:600c:46c3:b0:42c:b16e:7a0a with SMTP id 5b1f17b1804b1-42cdb5486c4mr92830385e9.20.1726489619782;
+        Mon, 16 Sep 2024 05:26:59 -0700 (PDT)
+Received: from google.com (109.36.187.35.bc.googleusercontent.com. [35.187.36.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b189acasm109513545e9.37.2024.09.16.05.26.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 05:26:59 -0700 (PDT)
+Date: Mon, 16 Sep 2024 13:26:55 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: John Stultz <jstultz@google.com>, g@google.com
+Cc: rostedt@goodmis.org, mhiramat@kernel.org,
+	linux-trace-kernel@vger.kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, kvmarm@lists.linux.dev, will@kernel.org,
+	qperret@google.com, kernel-team@android.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/13] KVM: arm64: Add clock support in the nVHE hyp
+Message-ID: <ZugkDxmBGTJwjFXb@google.com>
+References: <20240911093029.3279154-1-vdonnefort@google.com>
+ <20240911093029.3279154-7-vdonnefort@google.com>
+ <CANDhNCr8ptL+JbCTFwtkRx+=yLscqrTQ=P0dmu3rGStuZiBeuw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240915133734.GC869260@ziepe.ca>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djP87pzlV+kGVw/Z2CxeeJWNouJKycz
-	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRXDYpqTmZZalF+nYJ
-	XBm/TjxlKujgrvh/5TFzA+Ntji5GTg4JAROJ270LmUFsIYEVjBK/rph0MXIB2V8YJSY/+ccI
-	4XxmlPjYNYURpmPBiedMEInljBL3vixgg2gHqpo9WRcisZlR4vq7i2AdLAKqEtM3bATbwSag
-	I3H+zR0wW0RASWLfronsIA3MAjuYJPpmTwKbJCzgKfGw7RuYzSvgIHFm1n8oW1Di5MwnLCA2
-	M9CgBbs/AcU5gGxpieX/wP7hFNCXeL3qOjPEpYoSXxffY4GwayVObbkFdrWEwHxOiX/Xb0EV
-	uUi87X3PDmELS7w6vgXKlpE4PbmHBaJhMqPE/n8f2CGc1YwSyxq/MkFUWUu0XHkC1eEo8e3J
-	O1aQiyQE+CRuvBWEOJRPYtK26cwQYV6JjjYhiGo1idX33rBMYFSeheS1WUhem4Xw2gJG5lWM
-	4qmlxbnpqcWGeanlesWJucWleel6yfm5mxiBaev0v+OfdjDOffVR7xAjEwfjIUYJDmYlEV7b
-	30/ThHhTEiurUovy44tKc1KLDzFKc7AoifOqpsinCgmkJ5akZqemFqQWwWSZODilGpjmp0yK
-	OSPr0Vj0OetYheaXOJuEC7XfpqxfWNjmsyGMl8/H8vwnttIDfwsympdGyCz3s7jG082xY2P0
-	qW8Ba1ZtWWrO7R3HdDR4zk3O5SsWtEvM/HR79nuxc8UtCjzLzszquxLIOanuTrBFitVjVaHb
-	dYGcEfeYls3/1sU2+8mJ00X1Wfsu2U95c80jufCwvVW0lkaZutxcx5KibK5fwXVn+yTEol+c
-	8czMOvvH1/7sLNn/PVZxCbPK7voLH0ibInTt/Lp/STzVbh4d8jH79jQv+eRfVDlJXuFC2UPD
-	G0lRj2/vm/l1yUrON45NLtaf727N3iFZtV1RptntTPISgdW/WDrOLGcy1Y26mV5sZ6jEUpyR
-	aKjFXFScCABNOgmQygMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xe7pzlV+kGfy8xG+xeeJWNouJKycz
-	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
-	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehm/TjxlKujgrvh/5TFzA+Nt
-	ji5GTg4JAROJBSeeM4HYQgJLGSWOTQmBiMtIbPxylRXCFpb4c62LrYuRC6jmI6PEjq0tTBDO
-	ZkaJKXf2sINUsQioSkzfsJEZxGYT0JE4/+YOmC0ioCSxb9dEdpAGZoEdTBJ9syexgSSEBTwl
-	HrZ9A7N5BRwkzsz6D7XiMJPEhjNfWSESghInZz5hAbGZgaYu2P0JqIgDyJaWWP4P7AVOAX2J
-	16uuM0OcqijxdfE9Fgi7VuLz32eMExiFZyGZNAvJpFkIkxYwMq9iFEktLc5Nzy021CtOzC0u
-	zUvXS87P3cQIjN5tx35u3sE479VHvUOMTByMhxglOJiVRHhtfz9NE+JNSaysSi3Kjy8qzUkt
-	PsRoCgyLicxSosn5wPSRVxJvaGZgamhiZmlgamlmrCTO63b5fJqQQHpiSWp2ampBahFMHxMH
-	p1QDU7ZR9NlZwgWidjX+xUk27g/jI8pDr0/uP2MToL7/2KpMV9UtoQFrlDPnmjT+UpN6e/WL
-	cViw/501TJqlp+V8Nu0t+lS3/9hFhZKPXEeW1YcH3E77tnXV4f1PVX/U7GBxDD3SoSMotPqs
-	4wcnAaEPGQG/mkqWr3Pd8veE/cG8NZF8smdvv17S5M7Y6349S1x6+YJ5XGufHr235uu8oslX
-	rLVv1xs5XdkR9FzrfqSq1BPP3fdjH66a8TzQSy9fT8e/xu33zmrXxybP90pq6r74X2jenBX2
-	5JFA7tPX7Rp6WTumhew8tLDj6IODH1/9iTyT/2ODw7WPk6u3Mx+xFncWa8vd5T1z6Zq9Cp++
-	hp/5vUSJpTgj0VCLuag4EQDhxHDnZwMAAA==
-X-CMS-MailID: 20240916122501eucas1p1372c5ce0f8988b2e3a313971452c187b
-X-Msg-Generator: CA
-X-RootMTR: 20240907122025eucas1p26776e1be9713e21ecd4ee612e470d5ba
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240907122025eucas1p26776e1be9713e21ecd4ee612e470d5ba
-References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
-	<20240904-jag-iopfv8-v1-3-e3549920adf3@samsung.com>
-	<CGME20240907122025eucas1p26776e1be9713e21ecd4ee612e470d5ba@eucas1p2.samsung.com>
-	<ZtxFAxM6QQBYVSJp@ziepe.ca>
-	<20240911074059.f3i22vso6g6payrj@joelS2.panther.com>
-	<20240915133734.GC869260@ziepe.ca>
+In-Reply-To: <CANDhNCr8ptL+JbCTFwtkRx+=yLscqrTQ=P0dmu3rGStuZiBeuw@mail.gmail.com>
 
-On Sun, Sep 15, 2024 at 10:37:34AM -0300, Jason Gunthorpe wrote:
-> On Wed, Sep 11, 2024 at 09:40:59AM +0200, Joel Granados wrote:
-> > On Sat, Sep 07, 2024 at 09:20:19AM -0300, Jason Gunthorpe wrote:
-> > > On Wed, Sep 04, 2024 at 03:17:14PM +0200, Joel Granados via B4 Relay wrote:
-> > > > @@ -51,7 +52,6 @@ config INTEL_IOMMU_SVM
-> > > >  	depends on X86_64
-> > > >  	select MMU_NOTIFIER
-> > > >  	select IOMMU_SVA
-> > > > -	select IOMMU_IOPF
-> > > 
+[...]
 
-Will answer this based on https://lore.kernel.org/20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com
-as there are small differences with the current version of this patch.
-
-> > > Does patch 1 still compile if INTEL_IOMMU_SVM=n?
-> > It does for me. With and without INTEL_IOMMU_SVM. Is there a config that
-> > is not compiling for you? You can send that you to me and I can give it
-> > a try, to see if I get the same issue.
+> > +static struct clock_data {
+> > +       struct {
+> > +               u32 mult;
+> > +               u32 shift;
+> > +               u64 epoch_ns;
+> > +               u64 epoch_cyc;
+> > +       } data[2];
+> > +       u64 cur;
+> > +} trace_clock_data;
+> > +
+> > +/* Does not guarantee no reader on the modified bank. */
+> > +void trace_clock_update(u32 mult, u32 shift, u64 epoch_ns, u64 epoch_cyc)
+> > +{
+> > +       struct clock_data *clock = &trace_clock_data;
+> > +       u64 bank = clock->cur ^ 1;
+> > +
+> > +       clock->data[bank].mult          = mult;
+> > +       clock->data[bank].shift         = shift;
+> > +       clock->data[bank].epoch_ns      = epoch_ns;
+> > +       clock->data[bank].epoch_cyc     = epoch_cyc;
+> > +
+> > +       smp_store_release(&clock->cur, bank);
+> > +}
 > 
-> Okay, it compiles, but it is broken right? This hunk just can't be
-> correct, SVM needs IOPF to work
+> Can't see from the context in this patch how it's called, but with
+> timekeeping there can be multiple updaters (settimeofday, timer tick,
+> etc).
+> So would it be smart to have some serialization here to avoid you
+> don't get parallel updates here?
 
-AFAIK Yes: SVM *does* need IOPF to work. But IOMMU_IOPF *will* be
-selected if INTEL_IOMMU_SVM is selected because INTEL_IOMMU_SVM is
-covered by the `if INTEL_IOMMU` condition. Its the same way that the
-relation between INTEL_IOMMU_SVM and PCI_PASID is handled: PCI_PASID
-will be set if INTEL_IOMMU_SVM is set.
+Yeah, it is serialized later by the trace_rb_lock spinlock. 
+ 
+> 
+> > +
+> > +/* Using host provided data. Do not use for anything else than debugging. */
+> > +u64 trace_clock(void)
+> > +{
+> > +       struct clock_data *clock = &trace_clock_data;
+> > +       u64 bank = smp_load_acquire(&clock->cur);
+> > +       u64 cyc, ns;
+> > +
+> > +       cyc = __arch_counter_get_cntpct() - clock->data[bank].epoch_cyc;
+> > +
+> > +       ns = cyc * clock->data[bank].mult;
+> > +       ns >>= clock->data[bank].shift;
+> > +
+> > +       return (u64)ns + clock->data[bank].epoch_ns;
+> > +}
+> 
+> You might want some overflow protection on the mult?  See the
+> max_cycles value we use in timekeeping_cycles_to_ns()
 
-Please let me know if I'm misreading or have missed something.
+In the RFC, I was doing a 128-bits mult. Now as I have the __hyp_clock_work() in
+the kernel that keeps the epoch up-to-date, I do not expect this overflow ever.
 
-Best
+But then I could combine both to fallback on a slower 128-bits in case the
+64-bits overflowed.
 
--- 
-
-Joel Granados
+> 
+> -john
 
