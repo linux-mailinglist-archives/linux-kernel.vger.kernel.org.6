@@ -1,63 +1,88 @@
-Return-Path: <linux-kernel+bounces-330856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 937C197A545
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07FC997A548
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0141F21DB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24101F24EC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE6C1591EA;
-	Mon, 16 Sep 2024 15:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAF61591F0;
+	Mon, 16 Sep 2024 15:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCSYIdJ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JNfbNhI2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D0115854A;
-	Mon, 16 Sep 2024 15:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACDA158548;
+	Mon, 16 Sep 2024 15:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726500239; cv=none; b=JdHF/rLrl5knRkUec7x+OyIOOfpjoH2H4WL+MEJ5jZqxVUTy74aj9TkK69hlvQyydOF+GFaAE3TgqXQXLsTodwvOCZaXsdyOkYmRN7Zodpdak7WBRsRBrihLgYTg9pqXx3o9x59Cs4KEMi2Wp7rNLCYqbu4Qy97nnCgI3wvI/1s=
+	t=1726500245; cv=none; b=X+DBv2D4r3SVyHlEKyPEZHxa9T9gyB6ipeFrQbDTIR0AYzNADvzxAKaRAILLFWbJdoPNAxDtmegKN99XAPznJUUsM3sodmFcxzFUYbNyDEbRWyB3+L5EPnBiOkMdzRy1M5IAx42Hql7YrN5YN5fNV+W4wz6j3UwTdG/uHknGHB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726500239; c=relaxed/simple;
-	bh=qD4ujfWspewbmLI96zIOIwR+FCHU3GJLIZW/IsoDLFQ=;
+	s=arc-20240116; t=1726500245; c=relaxed/simple;
+	bh=X867kVY3mwLewmvWQEQaqmOpFkKVgamKi/gS36af2Uo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s25iAa2hvbGMEST+0PJJ7lsDK4Z0EteUDPX/i1YJdc+6kYL4L6sfo6ETa5xtUir+uGJ46QGvgLMTJcDUYGcqf5bTWMt4Cy2jUGmGykz3vfMXPc7ZBzx2Tyg7Qa26ny+kDzK+MemFNBYvH6YsTDA2K8jBSTp4M+rCsRlEEx6BJrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCSYIdJ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9645C4CEC4;
-	Mon, 16 Sep 2024 15:23:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726500238;
-	bh=qD4ujfWspewbmLI96zIOIwR+FCHU3GJLIZW/IsoDLFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iCSYIdJ2R+jEL8qu1nVKJBsW7jCgmQs5cI9Y5u8/Rdvzt9tlTuPysbpyuuhcIUoZe
-	 UNAgJYN1dLkgYF9EnKhnJfo9XR9xCdQRUtuVp0qqvOmCDa14lH1FWjLUMb6eGiDkxA
-	 0QAvQr2+JKAA1ZEyx2DNMWXuhMHqtHm7/7rHgxrL2zqWOMQgN01TFWE6yX2u9gqNnT
-	 1cirZm6IuULvnnJsw7c4OYtXiLQkyG/ncfu8uWYN2IRvP91kt9IlWcUWvqgWih4tWg
-	 FaoqRG1UjZfUFnd96G6GEGkVskI0iZoFOmK7vnMwpEmWu8Yj7av7oMVxf+lCoUkuYw
-	 5WVHbeMZCQEXg==
-Date: Mon, 16 Sep 2024 17:23:55 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org, 
-	andersson@kernel.org, simona@ffwll.ch, dmitry.baryshkov@linaro.org, 
-	abel.vesa@linaro.org, robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
-	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quic_khsieh@quicinc.com, 
-	konrad.dybcio@linaro.org, quic_parellan@quicinc.com, quic_bjorande@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	quic_riteshk@quicinc.com, quic_vproddut@quicinc.com
-Subject: Re: [PATCH v2 1/5] dt-bindings: phy: Add eDP PHY compatible for
- sa8775p
-Message-ID: <2hv2hcpbanduw4wg2wbza4jkze4sgilrtyc7zack23uygwsjol@ckskl2rkd5xp>
-References: <20240913103755.7290-1-quic_mukhopad@quicinc.com>
- <20240913103755.7290-2-quic_mukhopad@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfIH0Bl9PTVQCNDikw8Y8TU0/aIuqmvABkLL29hPbQsZYyNW1iDpxwKkP9TIccYct+vPOTofo9ZkeaNKqOUjewnP1uIV9PJHuWeHGoJy948M4SSNMxU3vhZGDn9vMXXSem9HZN3Ym5DSorLWEz12M3mlzr++iNL/jZy4NSQwkyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JNfbNhI2; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726500245; x=1758036245;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=X867kVY3mwLewmvWQEQaqmOpFkKVgamKi/gS36af2Uo=;
+  b=JNfbNhI2HkpFadDLnzdKVbwSlBa7Slf2zq8rmI9fwXSBjHiK2YG51mmw
+   pvViBjrVnsLcJUivx9zhWfUETbn3e9JKdbJw0xG3F4u9OgE9g0HaMqvLU
+   M8+rgFj8nddKxsJ/4Ee3DRM7DFl/VvT6deg/aA7u+n67Bp0rbJV8pnW+M
+   XbePNFVUFSvY39RkSog34RdW+OUdOZkAj8DEfrhdoyPQ6M+w3Jr77KbhF
+   jbm+LJ0VpmCmsjblAuwmKbVBtyLbsQGIsyQu+VQac52e/+1DT1RbraH9o
+   bvFE75EMkKQ3YZTlybtqfKttjdfSawsWCaB0tafzqkgOzfgxtm0B2AIq4
+   A==;
+X-CSE-ConnectionGUID: wQoCl39kQZS3hZeWKRMEJg==
+X-CSE-MsgGUID: zDxqU2xGRHChTWYzS0rgRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="47839801"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="47839801"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 08:24:04 -0700
+X-CSE-ConnectionGUID: NHqN84/5RaOVIOHMXmdfhA==
+X-CSE-MsgGUID: NSzwDnfoTNWZlhN5umqf1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="69380965"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 08:23:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sqDa0-00000009VQS-1MWw;
+	Mon, 16 Sep 2024 18:23:56 +0300
+Date: Mon, 16 Sep 2024 18:23:56 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v7 09/10] platform/chrome: Introduce device tree hardware
+ prober
+Message-ID: <ZuhNjHwwluF2wfoU@smile.fi.intel.com>
+References: <20240911072751.365361-1-wenst@chromium.org>
+ <20240911072751.365361-10-wenst@chromium.org>
+ <CAD=FV=WtVSQ5GX6H5CtxNPTdOAJVMj_xNRvG9siZB6_ePZr7CQ@mail.gmail.com>
+ <CAGXv+5HRLHV2tDZxiqFRhz1p+_bhMzMXoJMBnhy-R=8C4hBjnQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,19 +91,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240913103755.7290-2-quic_mukhopad@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5HRLHV2tDZxiqFRhz1p+_bhMzMXoJMBnhy-R=8C4hBjnQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Sep 13, 2024 at 04:07:51PM +0530, Soutrik Mukhopadhyay wrote:
-> Add compatible string for the supported eDP PHY on sa8775p platform.
+On Mon, Sep 16, 2024 at 04:58:51PM +0200, Chen-Yu Tsai wrote:
+> On Sat, Sep 14, 2024 at 1:43 AM Doug Anderson <dianders@chromium.org> wrote:
+> > On Wed, Sep 11, 2024 at 12:29 AM Chen-Yu Tsai <wenst@chromium.org> wrote:
+
+...
+
+> > >  obj-$(CONFIG_CHROMEOS_LAPTOP)          += chromeos_laptop.o
+> > >  obj-$(CONFIG_CHROMEOS_PRIVACY_SCREEN)  += chromeos_privacy_screen.o
+> > >  obj-$(CONFIG_CHROMEOS_PSTORE)          += chromeos_pstore.o
+> > > +obj-$(CONFIG_CHROMEOS_OF_HW_PROBER)    += chromeos_of_hw_prober.o
+> >
+> > "o" sorts before "p" so "of" should sort before "privacy"?
+> >
+> > I guess it's not exactly all sorted, but this small section is. Since
+> > it's arbitrary you could preserve the existing sorting. :-P
 > 
-> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-> ---
-> v2: No change
->  
+> To me it seemed more like they are just sorted in the order they were
+> added.
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+If we can make it more ordered I'm for it.
 
-Best regards,
-Krzysztof
+Just my 2c.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
