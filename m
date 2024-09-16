@@ -1,103 +1,105 @@
-Return-Path: <linux-kernel+bounces-330484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE0A979F23
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:19:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0EC979F2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 251D01C21E94
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03251C20A36
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8D815359A;
-	Mon, 16 Sep 2024 10:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1BD13DB9F;
+	Mon, 16 Sep 2024 10:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OsXs00T4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="18QLzLTo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="gSi1StDn"
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C85314A60C;
-	Mon, 16 Sep 2024 10:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74A47641E
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726481987; cv=none; b=Iq8zJGaxtMyfwqXf1rBAtFTx2tImUTIZupjdhYDYK7adzJ+sUlUPjU4HKTm84SddmQM6Up+7rJBs972ph5p80Nx0axhFrX+Ttj8J5BoK/2qMb/VHJTuKwhCkKTjOmMJUxXzvgmUf9lJOcZBpId+5JM815ynYJXGYNIvasV2UXEM=
+	t=1726482056; cv=none; b=rofnkqvQS4IvM0R50kUtYC1PfO+SSmWTAHSeWsHtG9IRY9yTuRoGPXEUKqzQCy/w9LX2IYyymVYqq6dJwOxkIBbYitK12krNBDLvPap+EuLwSxq3gdPH9u8T1pke8Hkf6n/cjiV/5mpUNrCXVXm1+cS2FthSmbOWDSwqZd9Ty48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726481987; c=relaxed/simple;
-	bh=xEY4iXHQyxQ5TEy5yUB0lFoOwfozOkxuoIir1tq/NwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l9yvXHnO1zmD048NP71mQAgzHnrER6FoIiTHl6ggTXpAafmLr9GGKYBLKPkh8BeqDRXsi+2skfA0zgFPusP15URm/C+iXNHj9ymG/3OqjRtE7aGqJYTLlhdyB5ZX32X47T2IM1uVK+/7o70FVKBvnCKd/Xs1x9Pf0UTbNDMxv5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OsXs00T4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=18QLzLTo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 16 Sep 2024 12:19:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726481984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pZy5VfM0VgVYUQhNzkZHTWn2e+O6Pz/2EXmQN0vnal4=;
-	b=OsXs00T4j6uZTwh5uE8gFL9b8Tfkw1tWURw07F5Mzgy9887Pxa003jXbzAGuPMsIzWr9iC
-	CHfUNC46T+kqEDHyTt0QOGzpYa3di7AsWxqHZ5ML/AEzDsiepBiZdczFTVjhWqI2YqHjQu
-	708JyyZGT5HQGTggLQalBxjPpZ/vOjZFV6yP2rPpMv4IiotDsg70liisgAxxIWQbnBrBg3
-	k+WviKqiP4w71YIWlscmT/uUxWiiVpCfcffvwrJs6rJAaWXgHdsS3iDGOuA3uqXSkD/seb
-	K52AZlaK4EW/oBcu969XHh0mEwBRhA6+1YPouwy5W4S+DK4qM81NcgqPOXgnOA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726481984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pZy5VfM0VgVYUQhNzkZHTWn2e+O6Pz/2EXmQN0vnal4=;
-	b=18QLzLTofgaZcyR16Y2UDAgkAFAHIFnQS+p09RQVOmSqhFHLDbMGe95vJN6PKD9MiWLciy
-	jGZM8bfK+d9KpDBA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>,
-	razor@blackwall.org, andrii@kernel.org, ast@kernel.org,
-	syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
-	bpf@vger.kernel.org, davem@davemloft.net, eddyz87@gmail.com,
-	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com,
-	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
-	song@kernel.org, syzkaller-bugs@googlegroups.com,
-	yonghong.song@linux.dev
-Subject: Re: [PATCH net-net] tun: Assign missing bpf_net_context.
-Message-ID: <20240916101942.ZJP2h0NM@linutronix.de>
-References: <000000000000adb970061c354f06@google.com>
- <20240702114026.1e1f72b7@kernel.org>
- <20240703122758.i6lt_jii@linutronix.de>
- <20240703120143.43cc1770@kernel.org>
- <20240912-simple-fascinating-mackerel-8fe7c0@devvm32600>
- <20240912122847.x70_LgN_@linutronix.de>
- <20240912-hypnotic-messy-leopard-f1d2b0@leitao>
- <ccd708bf-580a-3d24-e5be-4e7dc12e7b39@iogearbox.net>
+	s=arc-20240116; t=1726482056; c=relaxed/simple;
+	bh=jyWTd70aUid0L/ibBCDPUmK2+OdlUOj4lVkRmGycrNE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tzjUyXGC8LIIC+kWPhBHVjN/nIGkeBSUKkXpOU7VP7KhUVPB946TSQTBPAJeZO6XBLFGT8x3R1wpekGgVJ7JXMGLMCRbFcGxv3wHGCfFFoZMlb4utXN4k0yONKwdOPFH3VvX4R9e7nv02xsivaZAuoSr3agWP5BSF/1GMR0uI3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=gSi1StDn; arc=none smtp.client-ip=185.136.65.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 2024091610204166e8379d660285e727
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 16 Sep 2024 12:20:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=BSl0/QvxZoEgIZ9APQNn+s5fdp/vuFsHN6mIfZo5dHE=;
+ b=gSi1StDnDWGSjE1H9MahJHKtJpO3aYGP15MwSFkFR12tJR5VtC10xNtbniU79EniSWpIzz
+ z7sxDk8UmjNe393gsKroOqg77o3XoLAHBgqlGLMxokO+S//LAuMYjAvMDkQsF0sn+mwNDqkg
+ OaAgQrWSx7votf7pTK8P+exlgT45qFiPTHQIb9tU5G7+rWmuoJDV0iRk6BlCe7OEpt5pMFqU
+ X862jzW5mKtc1jt3gujPiJijOJd8pvAHRP7ohjaX1JVvLWJkETuQ31+B901Y4kDEBNcsLy2Z
+ Edx46HlyRxdW4ekMECC4ipB4ien/2d3vvtCY8dFkOMuZ3F4HtndFxXEQ==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring <io-uring@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [PATCH 1/1] io_uring/sqpoll: do not put cpumask on stack
+Date: Mon, 16 Sep 2024 12:20:29 +0200
+Message-Id: <20240916102029.1252958-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ccd708bf-580a-3d24-e5be-4e7dc12e7b39@iogearbox.net>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
-On 2024-09-12 17:03:15 [+0200], Daniel Borkmann wrote:
-> 
-> Oh well, quite annoying that we need this context now everywhere also outside of XDP :(
-> Sebastian, do you see any way where this could be noop for !PREEMPT_RT?
+Putting the cpumask on the stack is deprecated for a long time (since
+2d3854a37e8), as the masks can be big. Given that, we port-over the
+stack allocated mask to the cpumask allocation api.
 
-This isn't related to XDP but to the redirect part of BPF which is (or
-was) using per-CPU variables.
-I don't know how much pain it causes here for you and how much of this
-is actually helping and not making anything worse:
-- If netkit::active is likely to be NULL you could limit assigning the
-  context only if it != NULL
+Fixes: f011c9cf04c0 ("io_uring/sqpoll: do not allow pinning outside of cpuset")
+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+---
+ io_uring/sqpoll.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-- If you can ensure (via verifier) that netkit_run() won't access the
-  redirect helper (such as bpf_redirect()) and won't return
-  NETKIT_REDIRECT (as a consequence) then the assignment could be
-  avoided in this case.
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index 7adfcf6818ff..004740d6577e 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -461,15 +461,22 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 			return 0;
+ 
+ 		if (p->flags & IORING_SETUP_SQ_AFF) {
+-			struct cpumask allowed_mask;
++			cpumask_var_t allowed_mask;
+ 			int cpu = p->sq_thread_cpu;
+ 
+ 			ret = -EINVAL;
++			if (!alloc_cpumask_var(&allowed_mask, GFP_KERNEL)) {
++				ret = -ENOMEM;
++				goto err_sqpoll;
++			}
+ 			if (cpu >= nr_cpu_ids || !cpu_online(cpu))
+ 				goto err_sqpoll;
+-			cpuset_cpus_allowed(current, &allowed_mask);
+-			if (!cpumask_test_cpu(cpu, &allowed_mask))
++			cpuset_cpus_allowed(current, allowed_mask);
++			if (!cpumask_test_cpu(cpu, allowed_mask)) {
++				free_cpumask_var(allowed_mask);
+ 				goto err_sqpoll;
++			}
++			free_cpumask_var(allowed_mask);
+ 			sqd->sq_cpu = cpu;
+ 		} else {
+ 			sqd->sq_cpu = -1;
+-- 
+2.39.2
 
-Sebastian
 
