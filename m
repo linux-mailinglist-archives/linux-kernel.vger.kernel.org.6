@@ -1,91 +1,138 @@
-Return-Path: <linux-kernel+bounces-330659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863B997A265
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:37:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB9CF97A269
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30D681F23C76
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:37:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC2628B067
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F91154BEB;
-	Mon, 16 Sep 2024 12:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D075E1553AB;
+	Mon, 16 Sep 2024 12:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="LOq0VcC6"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="c+q5vCko"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00A94C70;
-	Mon, 16 Sep 2024 12:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8327154C14;
+	Mon, 16 Sep 2024 12:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726490243; cv=none; b=FoilA5ItSCjaS2b+cDEjfaoN/Za5Xw05g8ARhw9q+x4jEP89pcsOZV8sksMTz19ZaGMsBFccFjgQ6FBBAg8zzPtWYGi95P0KvTFmze2fC3Bhf6JcKmFscT28Ij2mTg3xnJLpNb9onKGSayjGTQqOqbq62hH5xqsNb12FGkiN2Js=
+	t=1726490274; cv=none; b=buECpNMxdZt3JIy3K4tNklWDFrWm9K8lGa2yGmAKwiFR2Nb53m2QHI3mud6OVoekKIFcXpLwsdinThl141n1X1OU86p+WFdvYuetv+2+v/f9fQ8eCsARZE67J6SwOhR4WG97PwYqWiLdVljOvtnZyenyfo+80Nkrgjg1+WrihVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726490243; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=I6f1oysyBZ7SPa3B30685FTFtbJaBtNaccn1sck242UQEvEEXyzizd6e3U+b8QT+3hhpwer1gIu5xP8STV/UROZMUx4Dzrf8R/tChKrhRQQomnxQWqtg8BPxHFvSa5KCJrJ1GJ3WFPNjWyinZrhPKzg9It30f0f0Y0JCugA0zyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=LOq0VcC6; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1726490238; x=1727095038; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LOq0VcC6QZr8ESrHfEYicdpyrwLLNTYYGgmNqY7YKfKVDNHGxbNkRTkTKxEpzq18
-	 oLrZJU7UUY/8kLdC7RPKJHRVz/fJ7Fsebrg4ErtXHk12TJXv6bstDO8OIUTAgCBdq
-	 sRhYFMiyk0tnXTOcS+oG9Jh9H4Zs1kRy3765rG8aXp2MxQIPJ16Y+blRFxV7pdTcQ
-	 ypgW0Xy2jFLnbEBBInb9P2uu/KMuGPGCKH8BlAaG0aRN3VZ6uYuO6c27vnNzmlE0f
-	 UxEipsqYCbxB6AiOT6p2Al6/7Tdhjv+IcOqS7FM8pUqTcdMruQOE0nRDits+mVss+
-	 1aqW5sh5c9ameID6Lg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([46.142.34.123]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MHoNC-1snP0i0ZJG-00Ez7O; Mon, 16
- Sep 2024 14:37:18 +0200
-Message-ID: <e2e85b44-237e-4700-93ae-c5d932378989@gmx.de>
-Date: Mon, 16 Sep 2024 14:37:17 +0200
+	s=arc-20240116; t=1726490274; c=relaxed/simple;
+	bh=y65NSrgbmh96g6Fzzy4doa1no9mY2zsJ/nVburEBCEQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BQQCP7+O3OAAAgHIyq0JUIBgXZeoMPIm9Zhzy/CCm6MprZ3+QvNxieA+E42GgfolurPeifzjzvbWzjQgm7akesPdvLTK2UN3c658UF6EYauyy967mzs2/I4HHKo5hIYSeRhK9bqSQvrax9SfAwUoMGEeuB1EE9sPYFwYWUrhOOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=c+q5vCko; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PLzXIHIxZWgoYaUEXDx3PwMb1pxlvF2RUqJddmVU4kw=; b=c+q5vCkowBNHuV4tex9LjcCmi3
+	braWOndU5d3d00Sbzf6scWHTZovCzaCH9BqZ6jpSrDCkWu80S94KSRhj5EO3xOH525BRQktlOZNoC
+	kTRy/bAQTAR8q8g+e0iqLSfUlRKX90ZIZZn95/4JdoplDQUcoaq11goen/MHt7B21MgtC+/XrieKX
+	XK/GlB7DeK7TIRWv9hBWoJXtwCuGiEIMRLW9LrdtTf6sJPcWGLJjvCrnapooGyOmXa9EvGfsZaWM7
+	7mbC4w99cOtVUW0mK7D0Z4bJhs3vEbYlOjTxNYZzBJu2XzDKE5axxXNjvgm/7cWrKJTSgu2BiY1iB
+	n1jivncg==;
+Received: from [83.68.141.146] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sqAyy-0000uk-5l; Mon, 16 Sep 2024 14:37:32 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>,
+ =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
+Subject: Re: [PATCH v1 5/6] pmdomain: rockchip: add regulator support
+Date: Mon, 16 Sep 2024 14:37:31 +0200
+Message-ID: <2197494.irdbgypaU6@phil>
+In-Reply-To: <20240910180530.47194-6-sebastian.reichel@collabora.com>
+References:
+ <20240910180530.47194-1-sebastian.reichel@collabora.com>
+ <20240910180530.47194-6-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:tXt/CCYVRQ1C/vyh/3KmDQeGYAltTJT++XusGSNU5KK7TUPlkiE
- vFHB9T7xwbxWlaA6DM8ifZNYyQWaJU58+JexaEdqBVz6O1i0I1I5YzijX+K1nen3l1U7OcC
- VTHZH2gPcIn0B1nk5f9icOG2+gRehBGTVRql99WSC3qSgrVpy9ebSCFDs8Rli2L0KFmio+r
- kNny0YwIMDpsqOoeGud8A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:IOLTS/fKtDc=;2S4wdv95JCEPSHiofMzrFB2zG9g
- Tw/W533lm1RXC5pfgCp4hvMtdt6OgJ3gZb0Ps3Ixe/RYmfwehgJzgLsEUlh6ocEaU5oZV7v7C
- NnwcvIaXRNXcXsuCN0lhb3h6v/K5Xv3IQ9nFEppNuE0LpmPP1TId8Ad5jHSf1ILQXDdTXAQra
- jb1r4WbAJoebTfX6W0Ezx6EmA3T/QUsJrvgb/we2Ldvb6nmsrlBKYwrC7HLPk/AdMACd0zD5R
- xfNzN2/TdKCfrknYk0JIWsL8wIVQASFgHSXd5Vf8MkYrFWHDw1OH7mvk9yxpQi4qxg4Zdt7xC
- Z2C/o9oMJR0k9KLKL9N5rYsuCdD3a8CsqUeOT2R5dt4YnkKetaj2hIWq3Qv2M8RWyKDkxeSPv
- vIZufnWwBtLtIlBG5fheydm7rMVGL7WpTVJRl0WXj1LJwVsl9pV4+jjjVpjGuJSGKf//75C8a
- x6g+8RYeRFUkZGcNmkWqIQZBngOrepYX4iQCEDNR2ipoJzX5QDacI3hmeClxLB761UqF3IVNK
- +I6QR9/+sRQ0E8Ti9345FYYfMY1MxdciG2qMyXI0wU7G49Ccco+fu4P5on72E/KGTCTDNooj2
- N7LeyLZdFDW9ew7V47CpQ5YKNkCEc8CVTW9gufOkK9n3bwzklgYphbGy6UfMIMcpwMDhuLEH/
- 4JsnJu2xLB58iNtrOPWI+j6Ro1QzR1x8ceZ6+tfft74XcHz7gxPUmtPQEE49OZ5S1OmIHniCT
- QzXZhZ58dfzEFRLwtp4SdeL7O+5aYMFf9Ek9p+H1bPYsCbUGV+I3iysgiALUvDAh9XN9XYStO
- qv9tP2/+tUFWbBOffdPFu2cg==
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Greg
+Am Dienstag, 10. September 2024, 19:57:14 CEST schrieb Sebastian Reichel:
+> Some power domains require extra voltages to be applied. For example
+> trying to enable the GPU domain on RK3588 fails when the SoC does not
+> have VDD GPU enabled.
+> 
+> The solution to temporarily change the device's device tree node has
+> been taken over from the Mediatek power domain driver.
+> 
+> The regulator is not acquired at probe time, since that creates circular
+> dependencies. The power domain driver must be probed early, since SoC
+> peripherals need it. Regulators on the other hand depend on SoC
+> peripherals like SPI, I2C or GPIO.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  drivers/pmdomain/rockchip/pm-domains.c | 57 +++++++++++++++++++++++++-
+>  1 file changed, 55 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
+> index 663d390faaeb..ae6990897928 100644
+> --- a/drivers/pmdomain/rockchip/pm-domains.c
+> +++ b/drivers/pmdomain/rockchip/pm-domains.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/of_clk.h>
+>  #include <linux/clk.h>
+>  #include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <soc/rockchip/pm_domains.h>
+>  #include <dt-bindings/power/px30-power.h>
+> @@ -89,6 +90,8 @@ struct rockchip_pm_domain {
+>  	u32 *qos_save_regs[MAX_QOS_REGS_NUM];
+>  	int num_clks;
+>  	struct clk_bulk_data *clks;
+> +	struct device_node *node;
+> +	struct regulator *supply;
+>  };
+>  
+>  struct rockchip_pmu {
+> @@ -571,18 +574,67 @@ static int rockchip_pd_power(struct rockchip_pm_domain *pd, bool power_on)
+>  	return 0;
+>  }
+>  
+> +static int rockchip_pd_regulator_disable(struct rockchip_pm_domain *pd)
+> +{
+> +	return pd->supply ? regulator_disable(pd->supply) : 0;
+> +}
+> +
+> +
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+nit: double-empty line
 
-Thanks
+other than that, this looks ok for the time being and as Sebastian
+mentioned in Vienna, this also blocks actually testing
+the Panthor-GPU driver right now.
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+So while we will likely convert to the hopefully soon existing
+regulator stuff, this change is helpful for right now
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
 
