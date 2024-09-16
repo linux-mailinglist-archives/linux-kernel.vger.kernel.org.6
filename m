@@ -1,60 +1,79 @@
-Return-Path: <linux-kernel+bounces-330464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89259979ED9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:00:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28A9979EDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ED791F23BF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2BC284046
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E85914E2C2;
-	Mon, 16 Sep 2024 10:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911B714B094;
+	Mon, 16 Sep 2024 10:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O4ETYETg"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VSd9Ue99"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D4A14F9FB;
-	Mon, 16 Sep 2024 10:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CAE41C62;
+	Mon, 16 Sep 2024 10:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726480820; cv=none; b=be0fYYGMWP4S1TlW0/lMA2X948Vx8Ye7MyXfkK96OZQtqQdhFqNA4/Rwa4i40or6LIYi01ZAVu6LxZE5njYJEPvv2ike+t4vG9oAlLhazxPPBR5NqkRoalyj/oq0Zj0xCh+osCROVRvMyz5U5f+5qHv1Wb5dLEiGzbM1/6hh/RY=
+	t=1726480839; cv=none; b=l0h0J+oc8ltdSk2DiXOEi238P8iWkSwaDIjogfUf15FGTv44BmkdHdaiWnU1o5BJ5wEGA6EP45pHh9AXj9hQXxzQYnn6w3VNifMSb6E1VIaRx9M7MsfczYQqcKZiefa5PG9CHY5VEbQb6Bxguu40f1gq8kdcL309zKf+BSKddkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726480820; c=relaxed/simple;
-	bh=UkkJhVmPZRFzZAuAcyiy2i8RwGIpDoJ5oqfQ2KdcAd8=;
+	s=arc-20240116; t=1726480839; c=relaxed/simple;
+	bh=zkSAZIyyTSIOeweFiticyRcWayN4rbOIhMx+j9mFudU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FMmU9wHiWdp+3HDsqKbgjH90SoxaYilwbtE8I37IVNwaI98euc+NOHFDBkveci5F1XCxbGGUd/HUq+YQF5YQis8K0sXsu9aZ+XgXBNIy3z2aKND1lc35IsimTrpZNH+yCIsvlgXqg3VUwvtpU2HIrJrKkuCNKQd0wGjHDhrZv1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O4ETYETg; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CF3B51BF208;
-	Mon, 16 Sep 2024 10:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726480809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PVcKgmtsHiY6zmy9L9WXJLjM0R6FE0qNoX99Did6GQM=;
-	b=O4ETYETgxUUfpMvCpGK0TLhjTTodnCl3fjQh1P7pEW+3zQqfh8d6XdMLf9WLIoOYAS68RE
-	vMc2GkAH78QTrgbizmeJyIw0nRLXkrhK2MMgfndA4tVpHq0lp4HEBiI4A/0JNbCknYfZDv
-	2+9y994TBls8TJDXetU4jwuToRmSGKJ2rtMTnOd5sTvjDt93KM/JGppcR48QPpoGOGAsE7
-	1dz3eHHhjdMhjGGQr+jYjzrQ6PqnzODM6CrU1LDkQcPRdGii1SzENOFIm5VY0hjAiKP11m
-	CysVURAD7KhecdypD9YKtsvljbA33yR++yVQ4Gz/VEpKefuePHWjQoA6bWkMiA==
-Date: Mon, 16 Sep 2024 12:00:06 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Andrei Simion <andrei.simion@microchip.com>
-Cc: claudiu.beznea@tuxon.dev, lgirdwood@gmail.com, broonie@kernel.org,
-	perex@perex.cz, tiwai@suse.com, nicolas.ferre@microchip.com,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Subject: Re: [PATCH 1/2] ASoC: atmel: atmel_ssc_dai: Add stream names
-Message-ID: <20240916100006f2db7b06@mail.local>
-References: <20240916085214.11083-1-andrei.simion@microchip.com>
- <20240916085214.11083-2-andrei.simion@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t2mQleOA24oRI0SKNZCar0L9sk9U/XKSFKDrq9Xeto5vE3mQFCbO56u6GkKVpeU6O/b3xD1mDal0SCUsOrpAvm1FWiHwovyDMAU6lS8578unjjNqQylyBtw4jJl/vvIwb6II03CmNpwAV58k4OOnIfvLl3QzvF18FYO2HEWtGCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VSd9Ue99; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726480837; x=1758016837;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zkSAZIyyTSIOeweFiticyRcWayN4rbOIhMx+j9mFudU=;
+  b=VSd9Ue991lfdX17dawoCoB7eMP9gzZAD65zfST0+kdlu0SAcchxdIYbx
+   0+jc6hPfEzl+FUkx8+VgT4h0y3Hq1Ii49CBkLYPeMRmBsckKo2aGORS3B
+   AY8mdFOYr40CpzXG4ygP25RmWPifVq89IReaYthEnIs7SufQrdSTuwW8q
+   qX4ac5gjL/fjM98vVMMYvGI1I2Gl2+u3dGtOIqPWmU/eK8f12uY7bepIa
+   qZrZV3P6BUkmlMoRrTspP+/mOg9s6csHQdSUkwMEsihQIc0Amg0+obXjq
+   +mMrO+ImLNDvRU5CvEfVWZCBuJ34XztlOhQtb/xu389P6lZPVk/MNFhwO
+   w==;
+X-CSE-ConnectionGUID: 9LmSh1kOR9GSnjgRYku9/g==
+X-CSE-MsgGUID: RiOVv59xQAKDqdDgSu62Ag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="25394429"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="25394429"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:00:36 -0700
+X-CSE-ConnectionGUID: hSnrBmB+TnWxbiGjioST9w==
+X-CSE-MsgGUID: hptvynkLTJaLXu7Ol+SmaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="68775523"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:00:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sq8X1-00000009PkY-1Sb1;
+	Mon, 16 Sep 2024 13:00:31 +0300
+Date: Mon, 16 Sep 2024 13:00:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] iio: light: ltr501: Drop most likely fake ACPI ID
+Message-ID: <ZugBvySTBehR57mb@smile.fi.intel.com>
+References: <20240911212202.2892451-1-andriy.shevchenko@linux.intel.com>
+ <c45dd21c-493a-4e56-809e-85d6d7201254@redhat.com>
+ <9cdda3e0-d56e-466f-911f-96ffd6f602c8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,50 +82,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240916085214.11083-2-andrei.simion@microchip.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <9cdda3e0-d56e-466f-911f-96ffd6f602c8@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 16/09/2024 11:52:14+0300, Andrei Simion wrote:
-> From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+On Sat, Sep 14, 2024 at 03:45:58PM +0200, Hans de Goede wrote:
+> On 9/12/24 3:51 PM, Hans de Goede wrote:
+> > On 9/11/24 11:22 PM, Andy Shevchenko wrote:
+> On 9/13/24 11:31 AM, Andy Shevchenko wrote:
+> > Have you grepped over your collection of real DSDTs?
 > 
-> Add required stream names for DPCM and future use-cases.
+> Yes I did, but I just double-checked looking for only LTER and there
+> are several DSDTs using LTER0303 for an ambient light sensor.
 > 
-> [andrei.simion@microchip.com: Adjust commit title. Reword commit message.]
+> duckduckgo-ing for LTER0303 finds:
 > 
-> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+> https://www.catalog.update.microsoft.com/Search.aspx?q=lter0303
+> 
+> which is actually quite an interesting URL to search for ACPI
+> HID-s used in any Windows drivers.
 
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  sound/soc/atmel/atmel_ssc_dai.c | 2 ++
->  1 file changed, 2 insertions(+)
+Very good finding! Bookmarked to check any other ACPI ID case with that as well.
+
+> Checking for LTER0301:
 > 
-> diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-> index 3763454436c1..7047f17fe7a8 100644
-> --- a/sound/soc/atmel/atmel_ssc_dai.c
-> +++ b/sound/soc/atmel/atmel_ssc_dai.c
-> @@ -836,6 +836,7 @@ static const struct snd_soc_dai_ops atmel_ssc_dai_ops = {
->  
->  static struct snd_soc_dai_driver atmel_ssc_dai = {
->  		.playback = {
-> +			.stream_name = "Playback",
->  			.channels_min = 1,
->  			.channels_max = 2,
->  			.rates = SNDRV_PCM_RATE_CONTINUOUS,
-> @@ -843,6 +844,7 @@ static struct snd_soc_dai_driver atmel_ssc_dai = {
->  			.rate_max = 384000,
->  			.formats = ATMEL_SSC_FORMATS,},
->  		.capture = {
-> +			.stream_name = "Capture",
->  			.channels_min = 1,
->  			.channels_max = 2,
->  			.rates = SNDRV_PCM_RATE_CONTINUOUS,
-> -- 
-> 2.34.1
+> https://www.catalog.update.microsoft.com/Search.aspx?q=lter0301
 > 
+> Shows that that HID is also actually used, so:
+> 
+> > Thanks, patch looks good to me:
+> > 
+> > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> Correction, at least the LTER0301 ACPI id seems to actually be real:
+> 
+> https://www.catalog.update.microsoft.com/Search.aspx?q=lter0301
+> 
+> So NACK for dropping all 3 HIDs.
+> 
+> It seems to me that the LTER05xx HIDs can be dropped and
+> a LTER0303 HID should be added instead of dropping all HIDs.
+
+I'll update the patch with reference to that catalog.
+
+> Note I do not have any hw with a ltr303 light sensor, so
+> I cannot test this.
+
+Neither can I. So, let's drop 'LTER05' and add a comment WRT the 0x01.
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With Best Regards,
+Andy Shevchenko
+
+
 
