@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-331214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 847ED97A9CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97ACC97A9CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8B0F1C22E4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:52:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21811C22EA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D7214F9EA;
-	Mon, 16 Sep 2024 23:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C1915A865;
+	Mon, 16 Sep 2024 23:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MW1pMfep"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bUAOLGKm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3B014D43D
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 23:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0FA14A4D6;
+	Mon, 16 Sep 2024 23:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726530747; cv=none; b=Qh4FoTKug59fdvp6BkBBAhvjyUMmsctFi7r3HR9o3aOr24ueT9GjdvRGHvBuRex59cb8sv0Tq5I9yxsTH5+pLmi10NQze3rNn0lpUQZgL/BbsdLlTUEmPVYEZdFjGw9MbX93cyE//93Yw0Z7N+kLug0fOl5KfgN0eHG6787GYXA=
+	t=1726531039; cv=none; b=jh4VUGNDc2LhlcExjPxW5dc4z4Gp2BHV9nOCMDVweMJbPZbVMrW/oFIOmG6cba+D7FgssCkpnDEb/FMBKgLFP/Yh3NBp7fpwlCxPQWe0etEzhwc83AhpRh5kEu2d9HHyu1FgABfcDEJs5c9BVCRkzfXIwnWLD9GFZXUYxkpKAR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726530747; c=relaxed/simple;
-	bh=iSw57K47VCkqhnLMo83NOu7bewfvRAA5tpz0HXWaZDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PmGVcA8/STaLK/3vy1pCmUE+O39n2kVwezq4kyRKSY/Sncpv2ZNR62dwrszUWUEQIuP0zUFGcNPZXRbJhqnZ60q0JcfsSrCr6k0A8pStgCUcGw5YUT+8atBxeDjeoQwgX1sB0Fz2JKMJksUKhBFZ9i/VB3CUKJOvK4YlHehhBG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MW1pMfep; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71971d20a95so304367b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 16:52:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726530746; x=1727135546; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jhmI1munFkauKvxlDNOHjZGlilZQzed2TX2YAHV/fM0=;
-        b=MW1pMfepjjs7G0XgD0CF3Pn8HunyXwShtRC4aQn7wuc0coE0Heo5Gt3X/CwZB0jPUO
-         23Bq3kVmaBBV9lmBQASWektr3aTwiDfEEHs7PtB1eg5ObGLuH5aX5jDf5IHy83qx+o+z
-         qHUbUoRMhe6mHrK8ETWtDxPCEBf5pc1MFoEJp4BCEYAsbIshuskGLMCx0fUnhzfnIxFe
-         pmoKl4e3qSdggdJVdEBcizhMadGAi9rba8QikMtUGSMGa1qXTAk0ZcgwHdqjHstvjaBr
-         nODq/LNjmhBF8kW34SYMYtdIEJKBSddbxz4ROvfqknbA7PQQ8V6Nny4dIA0GDxRcjDGo
-         yotA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726530746; x=1727135546;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jhmI1munFkauKvxlDNOHjZGlilZQzed2TX2YAHV/fM0=;
-        b=sKPqnb8j6LP2MVUgSigw5pJ2kOrhJ1UtqFq13cI8RhcSaiguGj4BsTUdCo/mYZvRrF
-         vDgUmpL3+SqccdEoyCfffHoCzjUWlFvmAefhFig4AtUESA7Wdttz7iRpySfICA4FfLZu
-         vc0OygvK76vB5/j0Vc1uMFXm/LrqUqitZwWf3MnsUHcTHIW8GUxiLglztNkQqWvVTh2g
-         iupIQIcBMrlBzLmm3lg9eSIhlorxmjprEEx33kY9rfbT8V2B1P5YzWmT17RB4RzFgj7p
-         00FGOJrJnAvdiDeqIL72AZWt75lz6kCe0f2tyZglhtExO1beWeYGqdky3NaqWnXfbhwk
-         s/qA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWwixDknfPSkE8XIbE5kjQgLYsRgeR3pDmeFsZrI5QiJi/lmBILfHELqcJrYuEU3RQtkY4anZJfWqDD0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEDTw7t5d3b706mcgIhMEfCKzirtomdqszdnghsIxDMrNRoDG1
-	MYHlPeliUYVKk7m4tjuo4lF68xKbhgl8rLV1yu5yKBScmaFYihci60aRoox2EA==
-X-Google-Smtp-Source: AGHT+IEFm5GbBV7eGS959qNUFceX3m6BxPtuPlzC44s9RWgt7WTQmWJWLiMigsTz8a+GlSr3zKoSaA==
-X-Received: by 2002:a05:6a00:2d10:b0:717:9462:8bda with SMTP id d2e1a72fcca58-71936a5fb10mr19503102b3a.12.1726530745295;
-        Mon, 16 Sep 2024 16:52:25 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e14:7:e1f6:9f31:2c3f:1500? ([2a00:79e0:2e14:7:e1f6:9f31:2c3f:1500])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944ae41dbsm4395563b3a.96.2024.09.16.16.52.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 16:52:24 -0700 (PDT)
-Message-ID: <7ad81408-ee33-4b4a-b70e-0cebd8b46880@google.com>
-Date: Mon, 16 Sep 2024 16:52:23 -0700
+	s=arc-20240116; t=1726531039; c=relaxed/simple;
+	bh=TrlAOEEOnjmBU08apRAnP9M+pLZpdYovn6wn2WroKNQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=hVr8mUSnVDGaDM0pkfK5uDJQYESCih7uRGqN5nKy5D+vg1NluP4wUEnLRDeaQkMYbuv45JKtCKBJB/25qXKHL7UaBTk5HPAQ6A9IEWPuV6Yh/duZVG4pbK2NO0+HeqXUO2sz/w/YsUQqTV0nKraGMhLwpNApD1HfiLms7EkxLX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bUAOLGKm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GCjfxi012443;
+	Mon, 16 Sep 2024 23:57:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mVfTJEr5F/tJ+is7JKXfugyHyOYSUxSoW7m7bMm3VTM=; b=bUAOLGKm0IBDEinZ
+	iWW2SPMxxoGdtOK+ZrQyABi7ZHZ1jxw+H37ot2iNmNV9nP5zJQ0VRoZpkQ7nzs2Q
+	RXKFH5QPoEfSsINHb1w2o+PxNSPj8pI6mwA3lMmRQ44JpdoO3Y0szKB6XbikVkf4
+	mzf4M7kdyE9DhGLB+YsEJKDnZhYLwmkYJkOwrj1v74q3M7ENHREsRXHwzrsjpwme
+	aL4d9tQC+njIsem8EzptmHeAuvYh+rTuq4dZREiTkh2FKto1ONm/PuU3FaYaiP3A
+	UDbnB8C1QcwQFnCfRLpCxYDefshJvKgp/akSu1sxfEaktuQ67mqfMXxq6ByDvUAb
+	9JyhcQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jhnheh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 23:57:13 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48GNvBQW021047
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 23:57:12 GMT
+Received: from [10.71.108.138] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Sep
+ 2024 16:57:08 -0700
+Message-ID: <218d3e02-2d2b-4ec2-93b3-5936f84cf41c@quicinc.com>
+Date: Mon, 16 Sep 2024 16:57:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,91 +64,264 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 1/2] dt-bindings: connector: Add property to set pd timer
- values
-To: Rob Herring <robh@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, kyletso@google.com, rdbabiera@google.com,
- Badhri Jagan Sridharan <badhri@google.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240911000715.554184-1-amitsd@google.com>
- <20240911000715.554184-2-amitsd@google.com>
- <5iakowhmqc3hbstmwbs6ixabr27hf2dfz2m4do4qvsrtgrdn72@r7xqawwgebla>
- <dc323138-3bbb-4e23-91f1-d6b80cb7bb72@google.com>
- <ascu5yztalk62fernydttkywnqemnmjlcflzdyfmt7dzuzngho@vvxrnvwhfdmk>
- <20240916163328.GA394032-robh@kernel.org>
+From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+Subject: Re: [PATCH v2 2/2] firmware: qcom_scm: Support multiple waitq
+ contexts
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <cover.1724968351.git.quic_uchalich@quicinc.com>
+ <b736ba58b4a4164f7232de7e075102cd2818b1e7.1724968351.git.quic_uchalich@quicinc.com>
+ <q4tb7muqjef2hc2laodybghxesriaq5oxca45xmaqpxv3xnmav@eolhk75eolkt>
 Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <20240916163328.GA394032-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <q4tb7muqjef2hc2laodybghxesriaq5oxca45xmaqpxv3xnmav@eolhk75eolkt>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: dkL5tZamEWrDwamlIiiBJsrBg8uiQPlj
+X-Proofpoint-GUID: dkL5tZamEWrDwamlIiiBJsrBg8uiQPlj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 phishscore=0 impostorscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409160164
 
-Hi Rob,
+On 9/4/2024 2:54 PM, Bjorn Andersson wrote:
+> On Thu, Aug 29, 2024 at 03:15:55PM GMT, Unnathi Chalicheemala wrote:
+>> Currently, only a single waitqueue context exists, with waitqueue id zero.
+>> Multi-waitqueue mechanism is added in firmware to support the case when
+>> multiple VMs make SMC calls or single VM making multiple calls on same CPU.
+>>
+>> When VMs make SMC call, firmware will allocate waitqueue context assuming
+>> the SMC call to be a blocking call. SMC calls that cannot acquire resources
+>> are returned to sleep in the calling VM. When resource is available, VM
+>> will be notified to wake sleeping thread and resume SMC call.
+>> SM8650 firmware can allocate two such waitq contexts so create these two
+>> waitqueue contexts.
+>>
+>> Unique waitqueue contexts are supported by a dynamically sized array where
+>> each unique wq_ctx is associated with a struct completion variable for easy
+>> lookup. To get the number of waitqueue contexts directly from firmware,
+>> qcom_scm_query_waitq_cnt() is introduced. On older targets which support
+>> only a single waitqueue, wq_cnt is set to 1 as SCM call for
+>> query_waitq_cnt() is not implemented for single waitqueue case.
+>>
+>> Signed-off-by: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+>> ---
+>>  drivers/firmware/qcom/qcom_scm.c | 82 +++++++++++++++++++++++---------
+>>  1 file changed, 60 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+>> index ed51fbb1c065..b2c5505de681 100644
+>> --- a/drivers/firmware/qcom/qcom_scm.c
+>> +++ b/drivers/firmware/qcom/qcom_scm.c
+>> @@ -44,12 +44,13 @@ static bool download_mode = IS_ENABLED(CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT);
+>>  module_param(download_mode, bool, 0);
+>>  
+>>  struct qcom_scm {
+>> +	int wq_cnt;
+> 
+> Does it make sense for this to be negative? Please make it unsigned.
+> 
+> Also, might not be the most significant member of this struct, so
+> perhaps you can move it further down?
+> 
+Ack.
+>>  	struct device *dev;
+>>  	struct clk *core_clk;
+>>  	struct clk *iface_clk;
+>>  	struct clk *bus_clk;
+>>  	struct icc_path *path;
+>> -	struct completion waitq_comp;
+>> +	struct completion *waitq;
+>>  	struct reset_controller_dev reset;
+>>  
+>>  	/* control access to the interconnect path */
+>> @@ -1850,6 +1851,31 @@ static int qcom_scm_fill_irq_fwspec_params(struct irq_fwspec *fwspec, u32 virq)
+>>  	return 0;
+>>  }
+>>  
+>> +static int qcom_scm_query_waitq_count(void)
+>> +{
+>> +	bool avail;
+>> +	int count;
+>> +	int ret;
+>> +	struct qcom_scm_desc desc = {
+>> +		.svc = QCOM_SCM_SVC_WAITQ,
+>> +		.cmd = QCOM_SCM_WAITQ_GET_INFO,
+>> +		.owner = ARM_SMCCC_OWNER_SIP
+>> +	};
+>> +	struct qcom_scm_res res;
+>> +
+>> +	avail = __qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_WAITQ, QCOM_SCM_WAITQ_GET_INFO);
+>> +	if (!avail) {
+>> +		count = 1;
+>> +		return count;
+> 
+> count is a local variable, so just return count; and drop the {} please.
+> 
+> 
+> Perhaps even drop the local boolean variable:
+> 
+> 	if (!__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_WAITQ, QCOM_SCM_WAITQ_GET_INFO))
+> 		return 1;
+> 
+Ack.
+>> +	}
+>> +
+>> +	ret = qcom_scm_call_atomic(__scm->dev, &desc, &res);
+>> +	if (ret)
+> 
+> (Keep this local variable, as that's in line with the style...)
+> 
+>> +		return ret;
+>> +	count = res.result[0] & 0xff;
+>> +	return count;
+> 
+> Again, return res.result[0] & 0xff; should be sufficient, no need for a
+> local variable immediately followed by a return statement.
+> 
+Ack.
+>> +}
+>> +
+>>  static int qcom_scm_get_waitq_irq(void)
+>>  {
+>>  	int ret;
+>> @@ -1876,42 +1902,40 @@ static int qcom_scm_get_waitq_irq(void)
+>>  	return ret;
+>>  }
+>>  
+>> -static int qcom_scm_assert_valid_wq_ctx(u32 wq_ctx)
+>> +static struct completion *qcom_scm_get_completion(u32 wq_ctx)
+>>  {
+>> -	/* FW currently only supports a single wq_ctx (zero).
+>> -	 * TODO: Update this logic to include dynamic allocation and lookup of
+>> -	 * completion structs when FW supports more wq_ctx values.
+>> -	 */
+>> -	if (wq_ctx != 0) {
+>> -		dev_err(__scm->dev, "Firmware unexpectedly passed non-zero wq_ctx\n");
+>> -		return -EINVAL;
+>> -	}
+>> +	struct completion *wq;
+>>  
+>> -	return 0;
+>> +	if (wq_ctx >= __scm->wq_cnt)
+> 
+> I'm guessing that we're not expecting to ever hit this, but if we do, we
+> will fail a qcom_scm_call() or qcom_scm_call_atomic() call, giving
+> someone down the road a bad week of debugging...
+> 
+> How about wrapping the conditional in a WARN_ON_ONCE()?
+> 
+Yes understood, ack.
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	wq = &__scm->waitq[wq_ctx];
+>> +
+>> +	return wq;
+>>  }
+>>  
+>>  int qcom_scm_wait_for_wq_completion(u32 wq_ctx)
+>>  {
+>> -	int ret;
+>> +	struct completion *wq;
+>>  
+>> -	ret = qcom_scm_assert_valid_wq_ctx(wq_ctx);
+>> -	if (ret)
+>> -		return ret;
+>> +	wq = qcom_scm_get_completion(wq_ctx);
+>> +	if (IS_ERR(wq))
+>> +		return PTR_ERR(wq);
+>>  
+>> -	wait_for_completion(&__scm->waitq_comp);
+>> +	wait_for_completion(wq);
+>>  
+>>  	return 0;
+>>  }
+>>  
+>>  static int qcom_scm_waitq_wakeup(unsigned int wq_ctx)
+>>  {
+>> -	int ret;
+>> +	struct completion *wq;
+>>  
+>> -	ret = qcom_scm_assert_valid_wq_ctx(wq_ctx);
+>> -	if (ret)
+>> -		return ret;
+>> +	wq = qcom_scm_get_completion(wq_ctx);
+>> +	if (IS_ERR(wq))
+>> +		return PTR_ERR(wq);
+>>  
+>> -	complete(&__scm->waitq_comp);
+>> +	complete(wq);
+>>  
+>>  	return 0;
+>>  }
+>> @@ -1948,6 +1972,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
+>>  	struct qcom_tzmem_pool_config pool_config;
+>>  	struct qcom_scm *scm;
+>>  	int irq, ret;
+>> +	int i;
+>>  
+>>  	scm = devm_kzalloc(&pdev->dev, sizeof(*scm), GFP_KERNEL);
+>>  	if (!scm)
+>> @@ -1958,7 +1983,6 @@ static int qcom_scm_probe(struct platform_device *pdev)
+>>  	if (ret < 0)
+>>  		return ret;
+>>  
+>> -	init_completion(&scm->waitq_comp);
+>>  	mutex_init(&scm->scm_bw_lock);
+>>  
+>>  	scm->path = devm_of_icc_get(&pdev->dev, NULL);
+>> @@ -1993,6 +2017,20 @@ static int qcom_scm_probe(struct platform_device *pdev)
+>>  	/* Let all above stores be available after this */
+>>  	smp_store_release(&__scm, scm);
+> 
+> Should have spotted this earlier... But if any code below this point
+> takes an error path (i.e. we return non-0 from hereon) devres will free
+> __scm and anyone calling the qcom_scm API will hit a use-after-free.
+> 
+> Add to that it doesn't seem like a good idea to have
+> qcom_scm_is_available() return true until we have setup the wait queue
+> count or setup tzmem at least.
+> 
+Would the other calls that go through error path below need to be before the smp_store_release?
+Just wondering if that needs to be fixed in a separate patch..
 
-On 9/16/24 9:33 AM, Rob Herring wrote:
-> On Fri, Sep 13, 2024 at 07:34:27AM +0300, Dmitry Baryshkov wrote:
->> On Thu, Sep 12, 2024 at 04:26:25PM GMT, Amit Sunil Dhamne wrote:
->>> Hi Dmitry,
->>>
->>> On 9/12/24 3:05 AM, Dmitry Baryshkov wrote:
->>>> On Tue, Sep 10, 2024 at 05:07:05PM GMT, Amit Sunil Dhamne wrote:
->>>>> This commit adds a new property "pd-timers" to enable setting of
->>>>> platform/board specific pd timer values for timers that have a range of
->>>>> acceptable values.
->>>>>
->>>>> Cc: Badhri Jagan Sridharan <badhri@google.com>
->>>>> Cc: linux-usb@vger.kernel.org
->>>>> Cc: devicetree@vger.kernel.org
->>>>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->>>>> ---
->>>>>    .../bindings/connector/usb-connector.yaml     | 23 +++++++++++++++++++
->>>>>    include/dt-bindings/usb/pd.h                  |  8 +++++++
->>>>>    2 files changed, 31 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
->>>>> index fb216ce68bb3..9be4ed12f13c 100644
->>>>> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
->>>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
->>>>> @@ -253,6 +253,16 @@ properties:
->>>>>        additionalProperties: false
->>>>> +  pd-timers:
->>>>> +    description: An array of u32 integers, where an even index (i) is the timer (referenced in
->>>>> +      dt-bindings/usb/pd.h) and the odd index (i+1) is the timer value in ms (refer
->>>>> +      "Table 6-68 Time Values" of "USB Power Delivery Specification Revision 3.0, Version 1.2 " for
->>>>> +      the appropriate value). For certain timers the PD spec defines a range rather than a fixed
->>>>> +      value. The timers may need to be tuned based on the platform. This dt property allows the user
->>>>> +      to assign specific values based on the platform. If these values are not explicitly defined,
->>>>> +      TCPM will use a valid default value for such timers.
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->>>> Is it really necessary to use the array property? I think it's easier
->>>> and more logical to define corresponding individual properties, one per
->>>> the timer.
->>> Thanks for the review. The reason I did it this way was for
->>> convenience. If in the future someone else wants add a new timer,
->>> it'd be convenient to just add it as a new macro definition in pd.h
->>> rather than having to define a new property each time, especially
->>> if folks want to add more timers (scales better).
->>> There are 3 timers already and I am working to add a fourth in a
->>> follow up patch if the current RFC gets accepted.
->>>
->>> Please let me know what do you think?
->> I'd leave the decision to DT maintainers, but in my opinion multiple
->> properties scale better. Having a single value per property is easier to
->> handle rather than changing the tagged array.
-> I agree. And it avoids what looks like a made up number space with the
-> defines.
->
-> And note that an array of tuples is a matrix in DT defined types, not
-> an array.
-Thanks for the review! I will incorporate the suggested comments in the
-next revision by creating a "single value per timer" property.
+And I think the waitq initialization before the smp_store_release should be okay.
+>>  
+>> +	platform_set_drvdata(pdev, scm);
+> 
+> I believe this is a leftover from previous versions of this patch?
+> 
+Yes, will remove this.
+> Regards,
+> Bjorn
+> 
+>> +	ret = qcom_scm_query_waitq_count();
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	scm->wq_cnt = ret;
+>> +
+>> +	scm->waitq = devm_kcalloc(&pdev->dev, scm->wq_cnt, sizeof(*scm->waitq), GFP_KERNEL);
+>> +	if (!scm->waitq)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = 0; i < scm->wq_cnt; i++)
+>> +		init_completion(&scm->waitq[i]);
+>> +
+>>  	irq = qcom_scm_get_waitq_irq();
+>>  	if (irq < 0) {
+>>  		if (irq != -ENXIO)
+>> -- 
+>> 2.34.1
+>>
+> 
 
-Regards,
-
-Amit
-
->
-> Rob
 
