@@ -1,162 +1,77 @@
-Return-Path: <linux-kernel+bounces-330433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6E8979E8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C728979E8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C8F42839D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:36:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C85DF283BF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FB3149C7B;
-	Mon, 16 Sep 2024 09:36:51 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710B038DC7;
-	Mon, 16 Sep 2024 09:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3877D14A09C;
+	Mon, 16 Sep 2024 09:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ja+hxe/u"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8CE1487D6;
+	Mon, 16 Sep 2024 09:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726479410; cv=none; b=RWEYNC9jwtzxPPO0ZdOVFsdObmjW6HuFwJz7ldFIZpGaPX4ef1frnIjlrr+hhp+eo1oH/AutZtG9ErjeUpUI37J2c3xKYcqM3vLdS72cwmeity0HVecZagcaLmf99ThkcsCa6J7Oez3dfh1ZACeg1XluFgt3kTIvzl3xJPLnwvQ=
+	t=1726479436; cv=none; b=YIuLo5y4EfCz7C2wKSrzc0uO7UVt2zkhhqW7KSugAmg9EOxP0lh2y+NKVTFZ3YmfMYlOcckNFFOZkBha1yIvR5TIEUFYA9OdyhImXD0vEGb3g8nC4Kn37rmG9L76du++66yqEq0Nj1Mlz1pQCox0aluu05anh9KxPQkreQeoA1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726479410; c=relaxed/simple;
-	bh=/xxnoLY/T+x+hTyqnRjeE/EJ1Q1QT+KLxGzGkBAyl7U=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TU5pjgw7OuWq74cgtsz1JPgaJJOhMbQkcx15MxHc+Q6vmnV2/xbNPkfEuINjAztCkkC+o5E+9cY6+8eh78vjmrkMVizPsIIPPrQIRDL7NJt02pygL6RL0KLLwM3gCJ5ku/SPJ2M67Nvaz+ZXpP43qbIWS7TjgzHNrkWEfEPPVu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X6ftx10HSz6K5ww;
-	Mon, 16 Sep 2024 17:36:41 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C3C451400F4;
-	Mon, 16 Sep 2024 17:36:44 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Sep
- 2024 11:36:44 +0200
-Date: Mon, 16 Sep 2024 10:36:42 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Ying Huang <ying.huang@intel.com>, Dave Jiang <dave.jiang@intel.com>, Dan
- Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>, "Vishal Verma"
-	<vishal.l.verma@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] cxl/region: Remove lock from memory notifier
- callback
-Message-ID: <20240916103642.00007c8a@Huawei.com>
-In-Reply-To: <66e48742afe0f_e45da29448@iweiny-mobl.notmuch>
-References: <20240904-fix-notifiers-v3-1-576b4e950266@intel.com>
-	<20240913141322.000037e0@Huawei.com>
-	<66e48742afe0f_e45da29448@iweiny-mobl.notmuch>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1726479436; c=relaxed/simple;
+	bh=LFyg6f6lnBdABg4ydokv21eDsJGTPr+Bw9Q7CKk6GY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cuIyGEPnttkm25XJR1qvYTuVE3MJHt78LpEAYjQbn1TF2Exs84ptP2Y2aUKEQ+X+tF77OtUG7WVihHt/ARP56F+V6Jg5tyDY+RZOt2iJjC+1dGaHGiXealpnVVMSZguLVd02ATIkx0KdbVg/eEJsCdJeA6hDCUKQ+lj7K9Mqoqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ja+hxe/u; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=Jy/uSXxDhY1rKDVJ6z7Vux15OXIdWeFq0dxU2LqcSNI=;
+	b=Ja+hxe/u5pB6NuFBpfWoOCeRrL8KnVjOUAgPRfQvfKmublO8YX/8D+AGsWwUmw
+	z6AAjHYc3FsYdQzYESfWoB5KZocCOkxcYKh1OM07lXVTyneiP5IkQezv7kAOKG6v
+	IDy7DthgJ7pTV4un+3gW/mV7XCiTg0hI+sGJ4a6Zl53AM=
+Received: from localhost (unknown [36.56.252.231])
+	by gzga-smtp-mta-g2-5 (Coremail) with SMTP id _____wDnCDs1_Odm2FQdHg--.28295S2;
+	Mon, 16 Sep 2024 17:36:53 +0800 (CST)
+Date: Mon, 16 Sep 2024 17:36:51 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Ahmed Zaki <ahmed.zaki@intel.com>, intel-wired-lan@lists.osuosl.org,
+	anthony.l.nguyen@intel.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [Intel-wired-lan] Is this an out-of-bounds issue?
+Message-ID: <Zuf8M0eh7AuQ0Zks@debian.debian.local>
+References: <ZuQ6aCn7QlVymj62@iZbp1asjb3cy8ks0srf007Z>
+ <c9c582a2-2d72-4258-ad67-8d159cf256d6@intel.com>
+ <b7dabc2d-19a4-42f4-ba5c-31e1803d821a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7dabc2d-19a4-42f4-ba5c-31e1803d821a@intel.com>
+X-CM-TRANSID:_____wDnCDs1_Odm2FQdHg--.28295S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVs2aDUUUU
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiRRtcamXAo9AW6gAAsC
 
-On Fri, 13 Sep 2024 13:41:06 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+On Mon, Sep 16, 2024 at 11:19:32AM +0200, Przemek Kitszel wrote:
+> ugh, sorry, it's already public:
+> https://lore.kernel.org/all/20240823230847.172295-1-ahmed.zaki@intel.com/
+> 
+> awaits our VAL
 
-> Jonathan Cameron wrote:
-> > On Wed, 04 Sep 2024 09:47:54 -0500
-> > Ira Weiny <ira.weiny@intel.com> wrote:
-> >   
-> 
-> [snip]
-> 
-> > > 
-> > > Link: https://lore.kernel.org/all/66b4cf539a79b_a36e829416@iweiny-mobl.notmuch/ [0]
-> > > Cc: Ying Huang <ying.huang@intel.com>
-> > > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > > Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-> > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > Reviewed-by: Ying Huang <ying.huang@intel.com>
-> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>  
-> > A few comments on looking at this again, but all things that apply equally to old
-> > code so maybe things for another day.  
-> 
-> Yea this was solely a move of existing code to fix the locking issue.  I
-> did not evaluate the original code.  However...
-> 
-> [snip]
-> 
-> > >  }
-> > >  
-> > > +static void shutdown_notifiers(void *_cxlr)
-> > > +{
-> > > +	struct cxl_region *cxlr = _cxlr;
-> > > +
-> > > +	unregister_memory_notifier(&cxlr->memory_notifier);
-> > > +	unregister_mt_adistance_algorithm(&cxlr->adist_notifier);  
-> > Flip order.
-> > 
-> > Makes zero real difference, but if we later end up with more to do
-> > here for some reason there may be ordering requirements that will
-> > care that this doesn't tear down in reverse of setup.  
-> 
-> Generally I agree with you however, the memory and adist notifiers are
-> unrelated.  So failing to unwind in reverse order is a matter of taste and
-> is not required even if some other logic was introduced between the
-> registrations I don't see how this backwards order would be an issue.
+OK, thanks!
 
-Not an issue as such, but if it requires a tiny bit of thinking
-that we've engaged in here then it was worth the obviously correct
-ordering. Not worth churn of a patch though.
-
-> 
-> > 
-> > Mind you, see below.
-> >   
-> > > +}
-> > > +
-> > >  static int cxl_region_probe(struct device *dev)
-> > >  {
-> > >  	struct cxl_region *cxlr = to_cxl_region(dev);
-> > > @@ -3418,6 +3412,18 @@ static int cxl_region_probe(struct device *dev)
-> > >  out:
-> > >  	up_read(&cxl_region_rwsem);
-> > >  
-> > > +	if (rc)
-> > > +		return rc;
-> > > +
-> > > +	cxlr->memory_notifier.notifier_call = cxl_region_perf_attrs_callback;
-> > > +	cxlr->memory_notifier.priority = CXL_CALLBACK_PRI;
-> > > +	register_memory_notifier(&cxlr->memory_notifier);  
-> > Can in theory fail.  Today that is EEXIST only but who knows in future.
-> > I think we should handle that and do two devm_add_action_or_reset() perhaps?
-> >   
-> 
-> First we should not fail the probe if this fails.
-> 
-> Second, nothing bad happens in unregister if the registration failed.
-> Therefore, register failing is benign and I don't see a need for the extra
-> action callback.
-
-It's probably a case of print a warning only I guess.
-Might be useful to know it's going wrong even though impact is not huge.
-Personally I'd argue in favor of always failing to probe on a 'software issue'
-like this where we don't expect to fail.  Things get less clear if we
-fail on an optional hardware related part where carrying on may be
-the reasonable thing to do.
-
-Jonathan
-
-> 
-> Ira
-> 
-> [snip]
-> 
+-- 
+Best,
+Qianqiang Liu
 
 
