@@ -1,131 +1,96 @@
-Return-Path: <linux-kernel+bounces-330775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875D797A420
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C185297A427
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AF57B2C07A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:26:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EF2EB2C31C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C8F157E61;
-	Mon, 16 Sep 2024 14:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1D41581F3;
+	Mon, 16 Sep 2024 14:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AE+97GVe"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="tHWMNXDx"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C551DFE4;
-	Mon, 16 Sep 2024 14:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37F415687D;
+	Mon, 16 Sep 2024 14:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726496757; cv=none; b=bfVjVrX5+hI7oHHt11pvHSQCmKx/wzIcL+VzsAujxxGiXDxBfb0du5q5dpewFx7IOxeKufR2mCWN0vJFXPgS8KaFMxVYyoWUKI484IP3DDuvDHcvaxrP2lJgAvWPOVOPx6DlP3vedVx1CiohAyMXzfr9CxTqPF8Oiu6gqWEoSRk=
+	t=1726496799; cv=none; b=a7czZjZPU/4RIU2aavN/Q+Nb4oSrVlgTtrYGZdn3sgbCe+ejAwgrM+QZ5cSt7HpIlXKVTM99UeZy0mZWSybzKMmP3D2RgYOdlddmL2AQ701Vs7idU0zk8vwHUaJGr85GGpAszCBsqhfClslPJ9sPPUGYd5NFWEZ6fEQ5fNVc01s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726496757; c=relaxed/simple;
-	bh=7ShsPPhbY5HL1n40ArcVjEAe+waZaadrqNGiEJAZz5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RXS4nfEX6gvy5nEzdsl7wNtT5a9DPNxwk4ba6Ek3WvRpOee8yyChEQ8Sg8MJsIjm4qb3cZ6lOB1cRlBPvs06F+aWxe8idZ76w6aoqL799Nfxir5OqHbsVuFJml7dT2IhTf31AasTN0f7MJdwSkY3l8NTAxygccErEb2Q1NgXino=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AE+97GVe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GE94sL025497;
-	Mon, 16 Sep 2024 14:25:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nDo/fDh+eQnAfCrUVc5hF3G+HfBZzLi/x9TlSAvFYZw=; b=AE+97GVepbuJ0T7U
-	oILe42CRldSKHs8C/ilqnwHrmKlD17WRnpxq2SXyvAw3sBuxdVRfdp8XBou6GM2+
-	cQoEvcN02vGdxfmjax9AlnDKlclb3dk6x0QbIZRsp77xlTleF7v3MsBEiNjIDu6Y
-	BfDmrBoUXGqlohQql8kwdCMS07JJixQsa/udmWuRSKjnuZbee0v1JJrqtYip3hr+
-	AokQ7BsClH+HW7IF2MRCgsHHbs8nOjVFERyiUDL+RCvVHxn/vXIJEpUkLt38ZZQm
-	STVdVHn6mxf4HcHxRJ1sLWoN0LGG6zH4ZdwWLbLkmkwBy98ECk+Ha0x2fwdpm4nx
-	hjEAIQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4k0m69q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 14:25:51 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48GEPow8022966
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 14:25:50 GMT
-Received: from [10.110.0.24] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Sep
- 2024 07:25:47 -0700
-Message-ID: <edb25f16-aa9a-4d44-9eb5-63f509f80fde@quicinc.com>
-Date: Mon, 16 Sep 2024 07:25:46 -0700
+	s=arc-20240116; t=1726496799; c=relaxed/simple;
+	bh=sdE/vlXA3Dv4BZnCEsNQTh5kC84YwuF1zvQmdGRZ21Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d6xY/r8Rvmysmc7R0WzwRU62GNZduvg7xtyuuEaL49bxtqmIAuYEl5tBQFjinFDkErNyvXZxY1GK6RYjbjLWUuGJ+wVcythvNsHNeIJLuDfybYObiv+vje0EqNDvYponu/8SEyWUi3mD3dVx6vTkpz47xA571L6PFobC/J9a0hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=tHWMNXDx; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=DfX2+Ab8IkMho2T+sds4RcOFof34oFEmvaQShESSX7c=; b=tHWMNXDxYJsp+gQT5Npy/xJx2d
+	g4ruBQrtyviheDnr/ELd6FSBHE1lBTHmrzhMXqfjjYbUT8VLyfVYxrgTjj7oP8dTFOj0VODidfNwq
+	mgIyzFz5e+D1kDa5QQaGue4i3K0m1+wb+xlOVnMhOig9z3XWdKoIOxsO51wY6Cmyr8tgLmknnMnOd
+	C8CL7TqRHEcnr2V6po0PCSERqLv38DAHnhTjTsJyGP7XsRdqFLoMvnqEfSKySTQ3hKAmG7KHcg1DV
+	VakCJRbQYhk7fdKVs3qKeAPQ+V+WPO76Geyb8ksHgz7V0E5VSnGFzdmLSiB6cjMNN5nvAXAvTsUVZ
+	F+7SwmYg==;
+Received: from [83.68.141.146] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sqCgK-0001Qr-J4; Mon, 16 Sep 2024 16:26:24 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+Subject:
+ Re: [PATCH v3 3/6] dt-bindings: rtc: microcrystal,rv3028: add #clock-cells
+ property
+Date: Mon, 16 Sep 2024 16:26:23 +0200
+Message-ID: <2955009.e9J7NaK4W3@phil>
+In-Reply-To: <202409161237568b626ad7@mail.local>
+References:
+ <20240912142451.2952633-1-karthikeyan@linumiz.com>
+ <20240912142451.2952633-4-karthikeyan@linumiz.com>
+ <202409161237568b626ad7@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] dt-bindings: mfd: qcom,tcsr: document support for
- SA8255p
-To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Shazad Hussain <quic_shazhuss@quicinc.com>
-References: <20240905194741.3803345-1-quic_nkela@quicinc.com>
-Content-Language: en-US
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <20240905194741.3803345-1-quic_nkela@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 7hx6TF2lanK2CPvLvChckodGJOPZ5tql
-X-Proofpoint-GUID: 7hx6TF2lanK2CPvLvChckodGJOPZ5tql
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 phishscore=0 spamscore=0 malwarescore=0
- bulkscore=0 impostorscore=0 mlxlogscore=999 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409160092
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Gentle ping...
+Hi Alexandre,
 
-On 9/5/2024 12:47 PM, Nikunj Kela wrote:
-> Add compatible for tcsr representing support on SA8255p SoC.
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
-> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> ---
->
-> Changes in v3:
-> 	- Removed the patch from original series[1]
->
-> Changes in v2:
-> 	- Added Reviewed-by tag
->
-> [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
-> ---
->  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> index c6bd14ec5aa0..88f804bd7581 100644
-> --- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> @@ -21,6 +21,7 @@ properties:
->            - qcom,msm8998-tcsr
->            - qcom,qcm2290-tcsr
->            - qcom,qcs404-tcsr
-> +          - qcom,sa8255p-tcsr
->            - qcom,sc7180-tcsr
->            - qcom,sc7280-tcsr
->            - qcom,sc8280xp-tcsr
+Am Montag, 16. September 2024, 14:37:56 CEST schrieb Alexandre Belloni:
+> On 12/09/2024 19:54:48+0530, Karthikeyan Krishnasamy wrote:
+> > RV3028 RTC has a clock out features, the clk out can be
+> > controlled using clkout register, to consume the clock out
+> > from rv3028 '#clock-cells' property is added.
+> > 
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+just for my understanding, does this mean that you expect this change
+to get applied together with the others?
+
+No preference, just making sure I understand :-)
+
+Thanks
+Heiko
+
+
 
