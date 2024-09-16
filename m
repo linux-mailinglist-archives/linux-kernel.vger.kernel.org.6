@@ -1,368 +1,421 @@
-Return-Path: <linux-kernel+bounces-331073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF7397A80D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:02:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8D297A809
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB6F2B250C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C281B285AE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874FF15CD7C;
-	Mon, 16 Sep 2024 20:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2CD15D5B8;
+	Mon, 16 Sep 2024 20:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HbLcQeEo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="FXhc38gF"
+Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2113.outbound.protection.outlook.com [40.107.121.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8D91332A1;
-	Mon, 16 Sep 2024 20:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726516906; cv=none; b=k98auruHZ8LxnFRRiXVjp5w18gS/HQd/gmxqz0a75pBXdtcLWqOYR54EaMm2hdgkkWCSNpv5KDvRDS+eW4yVcWE9Ws1xwo6p19/sjMNAFHdF+mBSIfnwg5rem1p+hYw7H87L4K6AUXEY2gjT20KZw8VYrZ0Qx+CVDoSiNCaxIx4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726516906; c=relaxed/simple;
-	bh=Sf+Hn132fza0R0vtqH1OQGCq1kXlKEVpDBbwxp1eT+8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6b0Tx8BilgLGk6lda0rj9uTUtyUgqDaTjY3nFM3g/BM4T1esE4DZjiXaPfs9omiHnuW66YAjxIG7PjK7Mqe2wTANIHBFscCJDCzqr1OyG/ycpxyjL5MB+T9DQkFsbZ14yygsLX3YTLjNLVHfi4GBLU5nYJlzQVwP63iEFdEmow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HbLcQeEo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GDfEBn010049;
-	Mon, 16 Sep 2024 20:01:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=6a4Rc1uDD13K09q2r/9hzOt+
-	olsP8onR0t5S2DFb6Tg=; b=HbLcQeEoysyR2X1zA0MrWO+S4Cx/x+Qbk1qDNzON
-	5bgjrGCnqjY7Nc4dW7tG44dwVcg4/g/KO+PeYBQhK68SNoKrMhLJaSOhockKG+s1
-	t3ZoQ8NtIaE284v9smJFRWPx2VCdZXDqKCp/TpEbB/MAsH91nGLcWsvsqONknApX
-	lUewp4a8MDn5rSpakMP4OLe+ne2FL9L0bROW83ZbKgzeFO7cuJaJclc1emnbKc5S
-	Z01shC8sgRl9bIT6+9wuazDiVvhM4PK+9PbpC4la96AwnBU9jCqbRH8Br3j2VXOH
-	DpigjyQUG9braJNJuMGI5gbTnC/QEswp9JZQ7Ik3nICTEw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jdn42g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 20:01:04 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48GK0v6f032508
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 20:00:57 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 16 Sep 2024 13:00:56 -0700
-Date: Mon, 16 Sep 2024 13:00:56 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Ackerley Tng <ackerleytng@google.com>
-CC: <tabba@google.com>, <roypat@amazon.co.uk>, <jgg@nvidia.com>,
-        <peterx@redhat.com>, <david@redhat.com>, <rientjes@google.com>,
-        <fvdl@google.com>, <jthoughton@google.com>, <seanjc@google.com>,
-        <pbonzini@redhat.com>, <zhiquan1.li@intel.com>, <fan.du@intel.com>,
-        <jun.miao@intel.com>, <isaku.yamahata@intel.com>,
-        <muchun.song@linux.dev>, <mike.kravetz@oracle.com>,
-        <erdemaktas@google.com>, <vannapurve@google.com>, <qperret@google.com>,
-        <jhubbard@nvidia.com>, <willy@infradead.org>, <shuah@kernel.org>,
-        <brauner@kernel.org>, <bfoster@redhat.com>,
-        <kent.overstreet@linux.dev>, <pvorel@suse.cz>, <rppt@kernel.org>,
-        <richard.weiyang@gmail.com>, <anup@brainfault.org>,
-        <haibo1.xu@intel.com>, <ajones@ventanamicro.com>,
-        <vkuznets@redhat.com>, <maciej.wieczor-retman@intel.com>,
-        <pgonda@google.com>, <oliver.upton@linux.dev>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-fsdevel@kvack.org>
-Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
- guest_memfd mmap
-Message-ID: <20240916120939512-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <cover.1726009989.git.ackerleytng@google.com>
- <24cf7a9b1ee499c4ca4da76e9945429072014d1e.1726009989.git.ackerleytng@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A804813FF6;
+	Mon, 16 Sep 2024 20:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.113
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726516878; cv=fail; b=B14ehF+eudcP1zIm/0Ynf3Ml39E6IB3qXmluvs82McrfwAMhUlyoGFEzpysw8P28Yd+DHkaT0sXGOKDIglPP42giX4UPtFqbm+6+49em+zcNPMDtJ/iVhdZ0z7xiAGSbo1zhZLnAhI7TfwzdZfg4y4IedP4qRtOAMjcbQri3Hx8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726516878; c=relaxed/simple;
+	bh=6ApPmfCCj+D5Moulxj9dwEeM6CNmn/+wwg6q/+P8Lh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oUXJOw5ti2eUkcs/hjB3tfGQu506PHnt1QK9A07dRMAaEhtlbZfT49MTs+ZoB/BOm2yq7N9OTGU4Gu7pduOsUUYROaJ1pse/0AoNeI2jcR2uCGKtU4srVsQAFKKzMAnuZtt5B5YG4lGxU8r/7VYMdI/v6YPY1UlkgiZ63DHUwOw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=FXhc38gF; arc=fail smtp.client-ip=40.107.121.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A4BCI8P5GGdW252tvZi/IE6qcXk+5kGncet5HyYuw9C73QxHiLHZ75P0ufXIWcfTb0QtAQ21E87LlU4L4nKZguWmHIkI8Z9gEI+Y46WytifrG5EzQEHU5U6u4UjlRLIddb0DjPgnqGb+6DGkp/ALMB74McYCWtstFC0P/9nobEFN37HSStvutg2wj+K/j/ZHgHD+fda2s/WaeddGjnSYa4LcLSGAXT3FxmROUsSkEN4UM2akfWecLVIpSfA7s72/3OoEN30JxycSoqCaQ/P4uVmpEd5ulRQkDrepPqiA10BEaIFaIJbEDrSSPIp0UYPEObAVdaouUwBoVatGC/+3Ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uW6BEn5rgiy4X5SCKgYysAaUNyj8jHXNWNR4h6vaMc8=;
+ b=mntjA7fcw0iupTPqxHI9B5cgf5AHhoRi7GaGZhSUC5Ua87gNd2x5U1NxCwNiWXjgoApIepDcC2p7xJGcFhqJsQ3OZ+ula8Yr9RoAg6B1dV70IWT2+jck2EkaeVe7YpgtX2aeAwXQ2/tM3oz/+VDKAOCD4TTqUoX20zUw+ojsybBk6oKp/vrG1IZ1tiBB7f6rPNn7w1h9yBhqektL/G+O8oF1QUIiD/njxU0Zt6VAwyozPw2glVctpd163z2YWcUAqwEgSiZWXczxF46Tkl8JtVTDWBiNNz3oAHr2eA5eb+zNQXoaUiFjhV6l3TC9OQZHyS/3uLdZNgUVk+Yz1Yu32g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uW6BEn5rgiy4X5SCKgYysAaUNyj8jHXNWNR4h6vaMc8=;
+ b=FXhc38gF1LQ+KxDAXF486cMytiZABsq1yMDO5++0cdnZIN2WzRMTUNxuLdwbZ/lDLTK9B3bhH0HP4d68GEGZLkSYro0DobKOuIj13fzydVn4QqbyoXu3hi05fkv2JRkOPeEFRe9l0xlZmj4pFwZg+lGunTtBuIzoy5055sMKqBQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO0P265MB2588.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:14f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Mon, 16 Sep
+ 2024 20:01:13 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
+ 20:01:13 +0000
+Date: Mon, 16 Sep 2024 21:01:11 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Yiyang Wu <toolmanp@tlmp.cc>
+Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+Message-ID: <20240916210111.502e7d6d.gary@garyguo.net>
+In-Reply-To: <20240916135634.98554-4-toolmanp@tlmp.cc>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+	<20240916135634.98554-4-toolmanp@tlmp.cc>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PR3P195CA0022.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:102:b6::27) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <24cf7a9b1ee499c4ca4da76e9945429072014d1e.1726009989.git.ackerleytng@google.com>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VtC6e3CZiXM64-CbxbBhxJzIwiUeMQt5
-X-Proofpoint-GUID: VtC6e3CZiXM64-CbxbBhxJzIwiUeMQt5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- clxscore=1015 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 bulkscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409160136
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO0P265MB2588:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71a6eac9-7cab-43e5-e02e-08dcd68a5140
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dECuKr2xZfp5rAJ3acSIMPkOXRbItvZaCEYNnxgvudiEJDNpWoJuuHfuuC10?=
+ =?us-ascii?Q?PuKsdxV46rPKdyP5ZA7AFhCJ8YoCG5KL9TCNPnGiG6pdKbMkUhvG+MTNaFYB?=
+ =?us-ascii?Q?UXXMWPdob2/cT0hzYimTi/fkz1535vejK4w+T3tIyeVb5cfZg5vco0/hD1rm?=
+ =?us-ascii?Q?dYkmDxIjnecXey1f9CqsBbsClYqOOev2TZSQVKEl2VQWz52yEpNugRQEdQLc?=
+ =?us-ascii?Q?ZROyRDk7iVThUZioW+4NiddYg3Ail3X5geKYze41ZkMJC449HnxBDrna8JkM?=
+ =?us-ascii?Q?BKH5P3Az7hYsGCDfTz/eUoMnLt68JiLte47jQEv3s//TbbDHPRd+CfJR1i7M?=
+ =?us-ascii?Q?CvmZnYqvcK1u7LwvF62P0cuWbkaiTQWBDO+XkOpb2BClb165Js5Ek20IdeHQ?=
+ =?us-ascii?Q?eW/rskusLvGc8pSTq4mJg+77Qcwp4EH+hHc2kxhgbc3xFEWhp9yBCtdMEHrM?=
+ =?us-ascii?Q?3jiXBBSWUYmqD3Smjx7VCuSyFf/dKT4jpFKqJrb/jkzZ5NBq+Ih5hxm3y/mk?=
+ =?us-ascii?Q?jnTuabrRhyh95rELtXvGUAWQNefl5cX2Gtqa311zmclER1XLJkuVuoKeGrWx?=
+ =?us-ascii?Q?sFe5xczYoVc8wyyiecwrX/CowJXoS3VHpgSPi8idRYQl+1VPtgURtOHqlj5U?=
+ =?us-ascii?Q?loIPOLdUzqkZ4epW9AElEYYFzJ8A4d1wdgdaacWkkcnJFOhRsZYq+45Xlsp3?=
+ =?us-ascii?Q?0Hd8XUDGdTljiLHP7EuMiIA1K4QVOHhez5/LH/AtLsY3qFYaYU2uYe9Tvart?=
+ =?us-ascii?Q?pydHaoyKVEZFPM8lRtOnltAaILeob5kGDsn3ozI7+jQvdxsM20J/YKPLKA8G?=
+ =?us-ascii?Q?iQv9zf3Uf/Gyq4fSbVsfZ1wWcDFy9aX4sGtOW0qJsQKXqTchkkuLwJiks8Vl?=
+ =?us-ascii?Q?8SBHQExb5ja/R8Wvy27EFD1XqMdLXr5YR0L+epYZP/5AAiwbMyPtxu2TkosU?=
+ =?us-ascii?Q?aTR29adVmoNRR1uQSmZlUtsm/e6+HqXapvTKHE0OMu0dk7u8zJpu2JPpOxT5?=
+ =?us-ascii?Q?PoZCpwS6n/DPqjHAXW3yX4uURgfdaf1/wTE3zCNvlpqvqHd41gSTdJUOQX6b?=
+ =?us-ascii?Q?Ls1Gzjo+Ml/j2+6y2mS5snKxiYjShAm1rpUbh/K3ttMlQXn82xGG3J1MEil7?=
+ =?us-ascii?Q?gnKVMZUxHwPW9cd3aGTH1qKWmpkLV3YcoRpm4fqan2LTsM2Uy0Z2Tkzj+b6A?=
+ =?us-ascii?Q?LHEKD5BZhiYunDDTwMpjykrBm0YGh7V8Bux+ab7YI63cQLs8R/46Vrnnqq6L?=
+ =?us-ascii?Q?5nyxnf1lSETVCRV+wEzf4t/28pKt31bSXijWG/MTd53iFKQkqTeK314YcVYB?=
+ =?us-ascii?Q?VNMbwmx9YmrZtIBHUacBtwuuH+WMT+JFX4zZkXIwej+SaA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sxTTL9Rpbi1G5IUESt1pcNxrxembmGWUFvVEJdTJwsmdaR/ySh9dJLJthLlv?=
+ =?us-ascii?Q?8HpVKpVCQci9gndznQ5TB8sKvKYIGrBooe8dNOSyIq4T4QQg7DyyQb/9boul?=
+ =?us-ascii?Q?R0msLHfu7oaN6xf+6yCwXRLliK2jiuNIQrjqhFWYv1fmbu4LxImv1uTRQYkP?=
+ =?us-ascii?Q?YeiSPSzSqTAvgijIAj3i6Y532QAB9zpoqQZs6K3mjls+G+jCwFs7p/jA0YR0?=
+ =?us-ascii?Q?hVrzV0Hod/9Fi30bLGhUJkynULh5V+8luyJ27+4nkjMVcYIgXtHbf+Pa7A5V?=
+ =?us-ascii?Q?dvXKtFphM1+uQIZqMqkY8TLv8+N6u/D4ZYQCpY7um/3+xRI87O/NpYnYw+bd?=
+ =?us-ascii?Q?YPIVGvM1OzXsTyyjEHBunAiyGZeLfwsg0AHXxhOoS4JW4pZl82vlErcDcRXw?=
+ =?us-ascii?Q?buqrtJbKzqsCfbTzASxN/GgLk4ATG5rFp0jChxWwodo93nhrfmXQx/v1sVXu?=
+ =?us-ascii?Q?Q47eFv3Qa5rDVenqAxZtZjT4j+cccJ7ZxtG0tyJ9sRSQwH9s6sW1sbncU2p+?=
+ =?us-ascii?Q?KA0YPLg2OmrdvCYSsRO5QpZsVimLgZnRf5BlnNRxQ9a/M1MATRzsuYpYBi1w?=
+ =?us-ascii?Q?5B2VZVEzSYPQWCXJCCrTetu+Hyp7U8E19IbEdtrAntVrDB8XlrAta2jMQ3+f?=
+ =?us-ascii?Q?bG4Kyr/OtOc5NY6knLDZuSkvI2ZUHObPw7rIBHagoLYf48KihuwpaoVtGYH5?=
+ =?us-ascii?Q?qPXt9srgACi9nK+Q1hz95g5hxlH3TCA7dEiF8vSDMUHV3YVCc8FgA9T+u+XY?=
+ =?us-ascii?Q?0Z0Y3IdsNISMNKA4yewUEc83eeuNBefEH8Ii9YugfGNhus04542Xfml7iLsC?=
+ =?us-ascii?Q?68KbADVu9mbp/88SBl7dsAKcV6h9+mWYqXBVFTXnpJRMeQ2XKkgPDekd1Pwa?=
+ =?us-ascii?Q?S2AuMeWXrq/JNcou8yAz89fNiiuUiJDBLyQbMrQ3KwFLw45ty2s4SjQwRBqd?=
+ =?us-ascii?Q?cjAvdjEgRG7XwxdQrswrdZ8/zZ71vn5PQR/NCvyO7k7n0Cn5ZU/6r1z2wpAW?=
+ =?us-ascii?Q?lISpPfrjlesYmtMYiSy8KMTZl6nRKARUcHyp/LwAYbXGtLwNE0IgycjzAlUO?=
+ =?us-ascii?Q?YwHj59G7GtgnFDb0dkj41Gpm5Fg2PkN7Jx8qUyay48KleOCBJ8qSJITyt4p8?=
+ =?us-ascii?Q?+WM+mky51O0RJ8fv1adPjf2urz9AsHot/k/GNrPdyxcHmNH8uha65XPknOd6?=
+ =?us-ascii?Q?X8+/hNSoxgENRTcxAcqajYCvCV5KuiR9BBcBGf5QxGuvu3UGRQRHAO0QDQSV?=
+ =?us-ascii?Q?nqesrPjBW5AOCvg2bH0aSp/pRWiI6f5zOdW2e+6qPZ8iRMcvKpwKCEe6Cs9b?=
+ =?us-ascii?Q?arwpfE/mzufmVSb/tnquT48nwN0jWh55wtALwiT5H3q2vgSxrQWVncbQHOQn?=
+ =?us-ascii?Q?Vm55y3bN3dkGmeN7/UoVgvmgA2HXlBBck7ixQDqmsTAyuV8pE2Zw3nBink9J?=
+ =?us-ascii?Q?Tf5+aKvf4qLHukuSFzyfmJ79vur/oIyB8meozQBoswg8VNDKoX1A4C87vK9U?=
+ =?us-ascii?Q?kbISaUNndhvOS9SgiEXbU06Wo+gGz5xi7YGfKZ77bSLHPLWc3nzUrVb35h9G?=
+ =?us-ascii?Q?qWJH9OdEBhTUerc2IErS3DSMGVlZT3jMApt2dmpS87vhuipzPFpSUj5LcTmW?=
+ =?us-ascii?Q?Bg=3D=3D?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71a6eac9-7cab-43e5-e02e-08dcd68a5140
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 20:01:13.8120
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Y6vwypF6y0ryfD/8cP/+KotIr0jm6jf47fXG7gbQr1RsxrcfFE7Ng9HKbjEeVWJGqKkuA+H9TRaeiM8r0YsHjQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB2588
 
-On Tue, Sep 10, 2024 at 11:44:01PM +0000, Ackerley Tng wrote:
-> Since guest_memfd now supports mmap(), folios have to be prepared
-> before they are faulted into userspace.
+On Mon, 16 Sep 2024 21:56:13 +0800
+Yiyang Wu <toolmanp@tlmp.cc> wrote:
+
+> Introduce Errno to Rust side code. Note that in current Rust For Linux,
+> Errnos are implemented as core::ffi::c_uint unit structs.
+> However, EUCLEAN, a.k.a EFSCORRUPTED is missing from error crate.
 > 
-> When memory attributes are switched between shared and private, the
-> up-to-date flags will be cleared.
+> Since the errno_base hasn't changed for over 13 years,
+> This patch merely serves as a temporary workaround for the missing
+> errno in the Rust For Linux.
 > 
-> Use the folio's up-to-date flag to indicate being ready for the guest
-> usage and can be used to mark whether the folio is ready for shared OR
-> private use.
+> Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 
-Clearing the up-to-date flag also means that the page gets zero'd out
-whenever it transitions between shared and private (either direction).
-pKVM (Android) hypervisor policy can allow in-place conversion between
-shared/private.
+As Greg said, please add missing errno that you need to kernel crate
+instead.
 
-I believe the important thing is that sev_gmem_prepare() needs to be
-called prior to giving page to guest. In my series, I had made a
-->prepare_inaccessible() callback where KVM would only do this part.
-When transitioning to inaccessible, only that callback would be made,
-besides the bookkeeping. The folio zeroing happens once when allocating
-the folio if the folio is initially accessible (faultable).
+Also, it seems that you're building abstractions into EROFS directly
+without building a generic abstraction. We have been avoiding that. If
+there's an abstraction that you need and missing, please add that
+abstraction. In fact, there're a bunch of people trying to add FS
+support, please coordinate instead of rolling your own.
 
-From x86 CoCo perspective, I think it also makes sense to not zero
-the folio when changing faultiblity from private to shared:
- - If guest is sharing some data with host, you've wiped the data and
-   guest has to copy again.
- - Or, if SEV/TDX enforces that page is zero'd between transitions,
-   Linux has duplicated the work that trusted entity has already done.
+You also have been referencing `kernel::bindings::` directly in various
+places in the patch series. The module is marked as `#[doc(hidden)]`
+for a reason -- it's not supposed to referenced directly. It's only
+exposed so that macros can reference them. In fact, we have a policy
+that direct reference to raw bindings are not allowed from drivers.
 
-Fuad and I can help add some details for the conversion. Hopefully we
-can figure out some of the plan at plumbers this week.
+There're a few issues with this patch itself that I pointed out below,
+although as already said this would require big changes so most points
+are probably moot anyway.
 
 Thanks,
-Elliot
+Gary
 
-> 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> 
 > ---
->  virt/kvm/guest_memfd.c | 131 ++++++++++++++++++++++++++++++++++++++++-
->  virt/kvm/kvm_main.c    |   2 +
->  virt/kvm/kvm_mm.h      |   7 +++
->  3 files changed, 139 insertions(+), 1 deletion(-)
+>  fs/erofs/rust/erofs_sys.rs        |   6 +
+>  fs/erofs/rust/erofs_sys/errnos.rs | 191 ++++++++++++++++++++++++++++++
+>  2 files changed, 197 insertions(+)
+>  create mode 100644 fs/erofs/rust/erofs_sys/errnos.rs
 > 
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 110c4bbb004b..fb292e542381 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -129,13 +129,29 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
->  }
->  
->  /**
-> - * Use the uptodate flag to indicate that the folio is prepared for KVM's usage.
-> + * Use folio's up-to-date flag to indicate that this folio is prepared for usage
-> + * by the guest.
-> + *
-> + * This flag can be used whether the folio is prepared for PRIVATE or SHARED
-> + * usage.
->   */
->  static inline void kvm_gmem_mark_prepared(struct folio *folio)
->  {
->  	folio_mark_uptodate(folio);
->  }
->  
-> +/**
-> + * Use folio's up-to-date flag to indicate that this folio is not yet prepared for
-> + * usage by the guest.
-> + *
-> + * This flag can be used whether the folio is prepared for PRIVATE or SHARED
-> + * usage.
-> + */
-> +static inline void kvm_gmem_clear_prepared(struct folio *folio)
-> +{
-> +	folio_clear_uptodate(folio);
+> diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
+> index 0f1400175fc2..2bd1381da5ab 100644
+> --- a/fs/erofs/rust/erofs_sys.rs
+> +++ b/fs/erofs/rust/erofs_sys.rs
+> @@ -19,4 +19,10 @@
+>  pub(crate) type Nid = u64;
+>  /// Erofs Super Offset to read the ondisk superblock
+>  pub(crate) const EROFS_SUPER_OFFSET: Off = 1024;
+> +/// PosixResult as a type alias to kernel::error::Result
+> +/// to avoid naming conflicts.
+> +pub(crate) type PosixResult<T> = Result<T, Errno>;
+> +
+> +pub(crate) mod errnos;
+>  pub(crate) mod superblock;
+> +pub(crate) use errnos::Errno;
+> diff --git a/fs/erofs/rust/erofs_sys/errnos.rs b/fs/erofs/rust/erofs_sys/errnos.rs
+> new file mode 100644
+> index 000000000000..40e5cdbcb353
+> --- /dev/null
+> +++ b/fs/erofs/rust/erofs_sys/errnos.rs
+> @@ -0,0 +1,191 @@
+> +// Copyright 2024 Yiyang Wu
+> +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
+> +
+> +#[repr(i32)]
+> +#[non_exhaustive]
+> +#[allow(clippy::upper_case_acronyms)]
+> +#[derive(Debug, Copy, Clone, PartialEq)]
+> +pub(crate) enum Errno {
+> +    NONE = 0,
+
+Why is NONE an error? No "error: operation completed successfully"
+please.
+
+> +    EPERM,
+> +    ENOENT,
+> +    ESRCH,
+> +    EINTR,
+> +    EIO,
+> +    ENXIO,
+> +    E2BIG,
+> +    ENOEXEC,
+> +    EBADF,
+> +    ECHILD,
+> +    EAGAIN,
+> +    ENOMEM,
+> +    EACCES,
+> +    EFAULT,
+> +    ENOTBLK,
+> +    EBUSY,
+> +    EEXIST,
+> +    EXDEV,
+> +    ENODEV,
+> +    ENOTDIR,
+> +    EISDIR,
+> +    EINVAL,
+> +    ENFILE,
+> +    EMFILE,
+> +    ENOTTY,
+> +    ETXTBSY,
+> +    EFBIG,
+> +    ENOSPC,
+> +    ESPIPE,
+> +    EROFS,
+> +    EMLINK,
+> +    EPIPE,
+> +    EDOM,
+> +    ERANGE,
+> +    EDEADLK,
+> +    ENAMETOOLONG,
+> +    ENOLCK,
+> +    ENOSYS,
+> +    ENOTEMPTY,
+> +    ELOOP,
+> +    ENOMSG = 42,
+
+This looks very fragile way to maintain an enum.
+
+> +    EIDRM,
+> +    ECHRNG,
+> +    EL2NSYNC,
+> +    EL3HLT,
+> +    EL3RST,
+> +    ELNRNG,
+> +    EUNATCH,
+> +    ENOCSI,
+> +    EL2HLT,
+> +    EBADE,
+> +    EBADR,
+> +    EXFULL,
+> +    ENOANO,
+> +    EBADRQC,
+> +    EBADSLT,
+> +    EBFONT = 59,
+> +    ENOSTR,
+> +    ENODATA,
+> +    ETIME,
+> +    ENOSR,
+> +    ENONET,
+> +    ENOPKG,
+> +    EREMOTE,
+> +    ENOLINK,
+> +    EADV,
+> +    ESRMNT,
+> +    ECOMM,
+> +    EPROTO,
+> +    EMULTIHOP,
+> +    EDOTDOT,
+> +    EBADMSG,
+> +    EOVERFLOW,
+> +    ENOTUNIQ,
+> +    EBADFD,
+> +    EREMCHG,
+> +    ELIBACC,
+> +    ELIBBAD,
+> +    ELIBSCN,
+> +    ELIBMAX,
+> +    ELIBEXEC,
+> +    EILSEQ,
+> +    ERESTART,
+> +    ESTRPIPE,
+> +    EUSERS,
+> +    ENOTSOCK,
+> +    EDESTADDRREQ,
+> +    EMSGSIZE,
+> +    EPROTOTYPE,
+> +    ENOPROTOOPT,
+> +    EPROTONOSUPPORT,
+> +    ESOCKTNOSUPPORT,
+> +    EOPNOTSUPP,
+> +    EPFNOSUPPORT,
+> +    EAFNOSUPPORT,
+> +    EADDRINUSE,
+> +    EADDRNOTAVAIL,
+> +    ENETDOWN,
+> +    ENETUNREACH,
+> +    ENETRESET,
+> +    ECONNABORTED,
+> +    ECONNRESET,
+> +    ENOBUFS,
+> +    EISCONN,
+> +    ENOTCONN,
+> +    ESHUTDOWN,
+> +    ETOOMANYREFS,
+> +    ETIMEDOUT,
+> +    ECONNREFUSED,
+> +    EHOSTDOWN,
+> +    EHOSTUNREACH,
+> +    EALREADY,
+> +    EINPROGRESS,
+> +    ESTALE,
+> +    EUCLEAN,
+> +    ENOTNAM,
+> +    ENAVAIL,
+> +    EISNAM,
+> +    EREMOTEIO,
+> +    EDQUOT,
+> +    ENOMEDIUM,
+> +    EMEDIUMTYPE,
+> +    ECANCELED,
+> +    ENOKEY,
+> +    EKEYEXPIRED,
+> +    EKEYREVOKED,
+> +    EKEYREJECTED,
+> +    EOWNERDEAD,
+> +    ENOTRECOVERABLE,
+> +    ERFKILL,
+> +    EHWPOISON,
+> +    EUNKNOWN,
 > +}
 > +
->  /*
->   * Process @folio, which contains @gfn, so that the guest can use it.
->   * The folio must be locked and the gfn must be contained in @slot.
-> @@ -148,6 +164,12 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
->  	pgoff_t index;
->  	int r;
->  
-> +	/*
-> +	 * Defensively zero folio to avoid leaking kernel memory in
-> +	 * uninitialized pages. This is important since pages can now be mapped
-> +	 * into userspace, where hardware (e.g. TDX) won't be clearing those
-> +	 * pages.
-> +	 */
->  	if (folio_test_hugetlb(folio)) {
->  		folio_zero_user(folio, folio->index << PAGE_SHIFT);
->  	} else {
-> @@ -1017,6 +1039,7 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
->  {
->  	struct inode *inode;
->  	struct folio *folio;
-> +	bool is_prepared;
->  
->  	inode = file_inode(vmf->vma->vm_file);
->  	if (!kvm_gmem_is_faultable(inode, vmf->pgoff))
-> @@ -1026,6 +1049,31 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
->  	if (!folio)
->  		return VM_FAULT_SIGBUS;
->  
-> +	is_prepared = folio_test_uptodate(folio);
-> +	if (!is_prepared) {
-> +		unsigned long nr_pages;
-> +		unsigned long i;
-> +
-> +		if (folio_test_hugetlb(folio)) {
-> +			folio_zero_user(folio, folio->index << PAGE_SHIFT);
-> +		} else {
-> +			/*
-> +			 * Defensively zero folio to avoid leaking kernel memory in
-> +			 * uninitialized pages. This is important since pages can now be
-> +			 * mapped into userspace, where hardware (e.g. TDX) won't be
-> +			 * clearing those pages.
-> +			 *
-> +			 * Will probably need a version of kvm_gmem_prepare_folio() to
-> +			 * prepare the page for SHARED use.
-> +			 */
-> +			nr_pages = folio_nr_pages(folio);
-> +			for (i = 0; i < nr_pages; i++)
-> +				clear_highpage(folio_page(folio, i));
-> +		}
-> +
-> +		kvm_gmem_mark_prepared(folio);
-> +	}
-> +
->  	vmf->page = folio_file_page(folio, vmf->pgoff);
->  	return VM_FAULT_LOCKED;
->  }
-> @@ -1593,6 +1641,87 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
->  }
->  EXPORT_SYMBOL_GPL(kvm_gmem_populate);
->  
-> +static void kvm_gmem_clear_prepared_range(struct inode *inode, pgoff_t start,
-> +					  pgoff_t end)
-> +{
-> +	pgoff_t index;
-> +
-> +	filemap_invalidate_lock_shared(inode->i_mapping);
-> +
-> +	/* TODO: replace iteration with filemap_get_folios() for efficiency. */
-> +	for (index = start; index < end;) {
-> +		struct folio *folio;
-> +
-> +		/* Don't use kvm_gmem_get_folio to avoid allocating */
-> +		folio = filemap_lock_folio(inode->i_mapping, index);
-> +		if (IS_ERR(folio)) {
-> +			++index;
-> +			continue;
-> +		}
-> +
-> +		kvm_gmem_clear_prepared(folio);
-> +
-> +		index = folio_next_index(folio);
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	}
-> +
-> +	filemap_invalidate_unlock_shared(inode->i_mapping);
+> +impl From<i32> for Errno {
+> +    fn from(value: i32) -> Self {
+> +        if (-value) <= 0 || (-value) > Errno::EUNKNOWN as i32 {
+> +            Errno::EUNKNOWN
+> +        } else {
+> +            // Safety: The value is guaranteed to be a valid errno and the memory
+> +            // layout is the same for both types.
+> +            unsafe { core::mem::transmute(value) }
+
+This is just unsound. As evident from the fact that you need to manually
+specify a few constants, the errno enum doesn't cover all values from 1
+to EUNKNOWN.
+
+> +        }
+> +    }
 > +}
 > +
-> +/**
-> + * Clear the prepared flag for all folios in gfn range [@start, @end) in memslot
-> + * @slot.
-> + */
-> +static void kvm_gmem_clear_prepared_slot(struct kvm_memory_slot *slot, gfn_t start,
-> +					 gfn_t end)
-> +{
-> +	pgoff_t start_offset;
-> +	pgoff_t end_offset;
-> +	struct file *file;
-> +
-> +	file = kvm_gmem_get_file(slot);
-> +	if (!file)
-> +		return;
-> +
-> +	start_offset = start - slot->base_gfn + slot->gmem.pgoff;
-> +	end_offset = end - slot->base_gfn + slot->gmem.pgoff;
-> +
-> +	kvm_gmem_clear_prepared_range(file_inode(file), start_offset, end_offset);
-> +
-> +	fput(file);
+> +impl From<Errno> for i32 {
+> +    fn from(value: Errno) -> Self {
+> +        -(value as i32)
+> +    }
 > +}
 > +
-> +/**
-> + * Clear the prepared flag for all folios for any slot in gfn range
-> + * [@start, @end) in @kvm.
-> + */
-> +void kvm_gmem_clear_prepared_vm(struct kvm *kvm, gfn_t start, gfn_t end)
-> +{
-> +	int i;
-> +
-> +	lockdep_assert_held(&kvm->slots_lock);
-> +
-> +	for (i = 0; i < kvm_arch_nr_memslot_as_ids(kvm); i++) {
-> +		struct kvm_memslot_iter iter;
-> +		struct kvm_memslots *slots;
-> +
-> +		slots = __kvm_memslots(kvm, i);
-> +		kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
-> +			struct kvm_memory_slot *slot;
-> +			gfn_t gfn_start;
-> +			gfn_t gfn_end;
-> +
-> +			slot = iter.slot;
-> +			gfn_start = max(start, slot->base_gfn);
-> +			gfn_end = min(end, slot->base_gfn + slot->npages);
-> +
-> +			if (iter.slot->flags & KVM_MEM_GUEST_MEMFD)
-> +				kvm_gmem_clear_prepared_slot(iter.slot, gfn_start, gfn_end);
-> +		}
-> +	}
+> +/// Replacement for ERR_PTR in Linux Kernel.
+> +impl From<Errno> for *const core::ffi::c_void {
+> +    fn from(value: Errno) -> Self {
+> +        (-(value as core::ffi::c_long)) as *const core::ffi::c_void
+> +    }
 > +}
 > +
->  /**
->   * Returns true if pages in range [@start, @end) in inode @inode have no
->   * userspace mappings.
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 1a7bbcc31b7e..255d27df7f5c 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -2565,6 +2565,8 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
->  		KVM_BUG_ON(r, kvm);
->  	}
->  
-> +	kvm_gmem_clear_prepared_vm(kvm, start, end);
-> +
->  	kvm_handle_gfn_range(kvm, &post_set_range);
->  
->  out_unlock:
-> diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
-> index d8ff2b380d0e..25fd0d9f66cc 100644
-> --- a/virt/kvm/kvm_mm.h
-> +++ b/virt/kvm/kvm_mm.h
-> @@ -43,6 +43,7 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
->  void kvm_gmem_unbind(struct kvm_memory_slot *slot);
->  int kvm_gmem_should_set_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
->  				   unsigned long attrs);
-> +void kvm_gmem_clear_prepared_vm(struct kvm *kvm, gfn_t start, gfn_t end);
->  #else
->  static inline void kvm_gmem_init(struct module *module)
->  {
-> @@ -68,6 +69,12 @@ static inline int kvm_gmem_should_set_attributes(struct kvm *kvm, gfn_t start,
->  	return 0;
->  }
->  
-> +static inline void kvm_gmem_clear_prepared_slots(struct kvm *kvm,
-> +						 gfn_t start, gfn_t end)
-> +{
-> +	WARN_ON_ONCE(1);
+> +impl From<Errno> for *mut core::ffi::c_void {
+> +    fn from(value: Errno) -> Self {
+> +        (-(value as core::ffi::c_long)) as *mut core::ffi::c_void
+> +    }
 > +}
 > +
->  #endif /* CONFIG_KVM_PRIVATE_MEM */
->  
->  #endif /* __KVM_MM_H__ */
-> -- 
-> 2.46.0.598.g6f2099f65c-goog
-> 
+> +/// Replacement for PTR_ERR in Linux Kernel.
+> +impl From<*const core::ffi::c_void> for Errno {
+> +    fn from(value: *const core::ffi::c_void) -> Self {
+> +        (-(value as i32)).into()
+> +    }
+> +}
+> +
+> +impl From<*mut core::ffi::c_void> for Errno {
+> +    fn from(value: *mut core::ffi::c_void) -> Self {
+> +        (-(value as i32)).into()
+> +    }
+> +}
+> +/// Replacement for IS_ERR in Linux Kernel.
+> +#[inline(always)]
+> +pub(crate) fn is_value_err(value: *const core::ffi::c_void) -> bool {
+> +    (value as core::ffi::c_ulong) >= (-4095 as core::ffi::c_long) as core::ffi::c_ulong
+> +}
+
 
