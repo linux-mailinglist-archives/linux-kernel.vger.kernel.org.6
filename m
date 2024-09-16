@@ -1,169 +1,159 @@
-Return-Path: <linux-kernel+bounces-330767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4613B97A3F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:14:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FDA97A3ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 076982869DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A5E1C274F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD6914D439;
-	Mon, 16 Sep 2024 14:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1AB14D439;
+	Mon, 16 Sep 2024 14:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="A91WpKxz";
-	dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b="5GaanhQN"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JqY2Aif0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08ED314AD19;
-	Mon, 16 Sep 2024 14:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726496076; cv=pass; b=hu88uYgAAKE7FtZIbgoa8N9foUmK1FTlTV+1v4IqylOvK/iISmbq2ALq9dHAKE+GhslxdMEJOk+UeH7bTOTxDjMWj7lWgGZ6fsssOFBYCe+Xc71avtwmYA0pzoYNYS922OtZkVSnIB2SrKCXnG8BGcj4AiqTG/fxddp+Hds540I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726496076; c=relaxed/simple;
-	bh=skH25LvHsTqztpm/r8mdNPrTJ1+bQ/eoLeZ3B8TbupM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GA8eiP0me/nD3se7+r1NHYXFQqKk9Tpl8+jTf6anGMOjbjK/7WPf6LJzowncWE7ZeN2VnaXmN4yIfiHQHcDxHC8mlPt+R5ey5Td5DJv2y9xy8VMQwYlD08iHWg2YrdmA1u6MUF9ynkWcNAcY2XsLYjgzRE4+14l1A6qnFETL1yQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=A91WpKxz; dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b=5GaanhQN; arc=pass smtp.client-ip=81.169.146.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chronox.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
-ARC-Seal: i=1; a=rsa-sha256; t=1726496061; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=kAaTLva/k5mSlM5MKfxSK63ef33iGzd6jWhN4HM6QnbIQrH5mJtkw50RCqsaSitoZ8
-    i48tIIihgmLeKQ+WK4b2vpxJprxF2IyHuznSyKpxqh9ExaKwi5hqtC4DfoM0JmJJ4GWa
-    o+4k13HPv/iMwlg3zQmlPp8aYBx/wE2x8R8hNlM9uQKIzracG0nAwLdCj+O46Ottj2b9
-    UoXw0UlwBySS3lgC2uYHUNqm3Ini3Ll4QwWI0YhsVhaDKFUPHU0d8hKbh2z1zEMqfmYC
-    13mTYNBw9xftnj/WcSSTnsTTj8lTNkidBESUW1Vpe43IWmbJN0qx0M4/5Dp4cl/2l0O7
-    w7Xw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1726496061;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=Sxh+iOlD0w2POThuxYJOde+V6I0gj91hpazRapcc3hU=;
-    b=d45HjlH1mtlL/LHsaguenoyNX65ZZjH4z3dDsFuYxejEGkC3oa2IQ8a1d3j3wczvO1
-    U1SLUUa1Qi8K9+6suGCzGlv4xnlhjzHAuZ5G42ykb3XhWub7NXgyvmLwiZtVcVftBaLN
-    lfION95HV8jbUzKO+ROqqyOLLvaKXkSNLj/qJ/R18Vu7k8Tk0eHP+bwtO2h+qJmpxQiG
-    G5t9S9/ylfQ2WNq5hiC8IfsL6aPLNZ5KCe5g/ZJFac8GVX3b/w0sJlB/7TK9GZp7RA41
-    3JLu6Z6vD++yrSvehAAQ8cTjubExOJwni752TM9Rs3OFkgk7kQlljlH5Rp4xz3aIs3IZ
-    z1ug==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1726496061;
-    s=strato-dkim-0002; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=Sxh+iOlD0w2POThuxYJOde+V6I0gj91hpazRapcc3hU=;
-    b=A91WpKxzdwx+El7mkI7nYHj2q/7lUbT2ECR0uCcRAAgEyyzJFjuFXSk11OS5SLMEtb
-    dIjpGPOs/BtSDZbUBNx3qwwYGA5ZgFfJG0wfEizYQGiSpETDfb38sY+M4vzHiSUII/mz
-    dbGXMblxUv3Aeas2JOXnqirDyEEkK55/aTdPeeit40y4cNgaid4S6BZzskmmZxRPOEmQ
-    f8Su17RRD6F23CSqEyZfz1vjGqM5YjyA8aEk1OAVw+8DKff0KSFH3Mn5LhOXko7YKAlA
-    vaPlYCfJt/dCThGfiiq1BCDtCJrIC03YKqfaVIfoxW2t0Dotq/x0/Jo2SJRQaqphOH8D
-    K5Fg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1726496061;
-    s=strato-dkim-0003; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=Sxh+iOlD0w2POThuxYJOde+V6I0gj91hpazRapcc3hU=;
-    b=5GaanhQNL4ohUuMLovC2+syxnMlgg0ld3YrLkRGpNWgiC4J0MJhSvJd/37cefjL2Vo
-    DUdFZOYU+2fJOqtCTqBw==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9yWodMSN5uOHqK69ZzQ=="
-Received: from tauon.atsec.com
-    by smtp.strato.de (RZmta 51.2.3 AUTH)
-    with ESMTPSA id f958be08GEEHIZk
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 16 Sep 2024 16:14:17 +0200 (CEST)
-From: Stephan Mueller <smueller@chronox.de>
-To: George Rurikov <g.ryurikov@securitycode.ru>,
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: MrRurikov <grurikovsherbakov@yandex.ru>,
- "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH] crypto: Fix logical operator in _aead_recvmsg()
-Date: Mon, 16 Sep 2024 09:14:13 -0500
-Message-ID: <1749031.NF6adcYWfa@tauon.atsec.com>
-In-Reply-To: <ZufuoJC8sFi9ETqZ@gondor.apana.org.au>
-References:
- <20240916074422.503645-1-g.ryurikov@securitycode.ru>
- <ZufuoJC8sFi9ETqZ@gondor.apana.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16260175AD
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726496064; cv=none; b=eTxP01Lre6m5Vd+KcYnq62yjGglUM3cruaFCmKNODfnaUqKOhnml+0XujdMrlScAR/ghMiqJ/jzlV21TqVKsSES2jpO1b5xx+0D55GOWk0kmWcwnOLZrgnwi3fzSIoD/tBFtxwkO21w1oIJ4yg4kYu7dH349po8rL6RaSDX+LSY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726496064; c=relaxed/simple;
+	bh=p8Qw/Z3EWptB753IvVwwQTS7CehLpJ7ecSD0INIPXEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DS2sucHnUx1UiKNfLF0mASvIThOuXobyvb0q+ADpUBqSGz2APO9u55N9X1UZnlILosd835u0pjoWIa1uyCC3hmLr4V7GqPUYxt/FAT6vYlposCQtCjZaHFVkFKqcD8QeCRe2w69LzSR2ImqYSuf9/ahqla+HBWEXAvjgpZt0uOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JqY2Aif0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726496061;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AcF8APrk91tCbcYltqs1GD/SqMXA9dDCBkUimLG4iT0=;
+	b=JqY2Aif012GWq4HUeJc77KmCsutesJpEsjq7FyDOjhyJe2trZkx5glkN4eoA/pAFRs3KPZ
+	D8Xtc0ZctaxcDa41od7qIyIFPvUTzCw6m6hC/bOwXXnlaUy8kNPKo5a2vuynXJgS1vCVDB
+	ZJv+uCzP1LY6W1NYbx3xtaSne2BADwY=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-gvMfnx9dOkudKSBoBIo-Aw-1; Mon, 16 Sep 2024 10:14:20 -0400
+X-MC-Unique: gvMfnx9dOkudKSBoBIo-Aw-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6c366f8b1ebso102835076d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:14:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726496060; x=1727100860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AcF8APrk91tCbcYltqs1GD/SqMXA9dDCBkUimLG4iT0=;
+        b=a3SBZhXR7Omjp92GlN0xPYnkxnD1DFfeJwWyplbjUekDWY+JUJ8xXZdW/wpoEhimi4
+         mOytDVVpo7ux6a/CRBuwVyF1EnB9A4E6QRT0n445K1CruzQ0OUbX5KOwmctkgodenCW8
+         fkmoxllGGAi1oRDlP1aizrkc+2JgYq9nj+gON43bk3p7+01m+xDnQnxmR0ikDBpfT6zc
+         kUpCEr4sBS8PykmtGwJKF5lBYjBq75k15eL/w+YLQkBKuDtRvXMVZ7tdvHCoH6yOszPF
+         9kB66An1Lp6eM2vYyVsgamgnR5QovmTotJ/kRcTHS2TGp8Ad3uh4IxcnpdC4gmZ7fsq1
+         vusQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU90IIitOvSzqSSrHx6QAXt46nC4H9+Ll/M/Nw4Y7VYA/YGkKrbLVcwK/qvZNlWi/+V7xJ41qZ4d0e8TQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEX1avXH+s8FUQV+64ePGhkr1eG4j/Ps6cnJ+n+taysHiXP5Ah
+	rntddLZFnreq7eGRnDiYfL+MIurTxH2NQMU9CZWepSfAD6U3esVT991zzz5KTGlCvDmnAv5fwbL
+	5uWC/72lw0q8HElRW6L2Ni0VO9GL1fnLshldlJp7PimSpfq96kiZum3JAiGcvQw==
+X-Received: by 2002:a05:6214:1ccb:b0:6b5:1d2f:1d3 with SMTP id 6a1803df08f44-6c554b1cdddmr398070486d6.0.1726496059816;
+        Mon, 16 Sep 2024 07:14:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqL/oYOimlYmlJ6CYNue/wCoB+Q5zjZ6hGSjMzwDsJkqgqG7vOoSeuPSCijo4hPmZayqJz8Q==
+X-Received: by 2002:a05:6214:1ccb:b0:6b5:1d2f:1d3 with SMTP id 6a1803df08f44-6c554b1cdddmr398070036d6.0.1726496059363;
+        Mon, 16 Sep 2024 07:14:19 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::43])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c58c625f50sm24683996d6.3.2024.09.16.07.14.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 07:14:18 -0700 (PDT)
+Date: Mon, 16 Sep 2024 09:14:16 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Beleswar Prasad Padhi <b-padhi@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Keerthy <j-keerthy@ti.com>, 
+	Neha Malcom Francis <n-francis@ti.com>, Eric Chanudet <echanude@redhat.com>, 
+	Enric Balletbo <eballetb@redhat.com>, Udit Kumar <u-kumar1@ti.com>, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] arm64: dts: ti: k3-j784s4-evm: Mark tps659413
+ regulators as bootph-all
+Message-ID: <rjc2cbkzg6zjsue66cvy7lk7qc7vn6yjdqcjzrbzcsf7c2jdo5@lcy7dntjvzau>
+References: <20240911-j784s4-tps6594-bootph-v2-0-a83526264ab1@redhat.com>
+ <20240911-j784s4-tps6594-bootph-v2-1-a83526264ab1@redhat.com>
+ <c4ace228-ea32-4760-b6af-f7555b68063a@ti.com>
+ <zlgo4e5qwg352tsadvw43oj7vlekefuqe66ckokyo6aba47z6o@2wwbyrfjkstz>
+ <9aedf384-207a-4eb7-a371-70bbe76ab5af@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9aedf384-207a-4eb7-a371-70bbe76ab5af@ti.com>
 
-Am Montag, 16. September 2024, 03:38:56 GMT-5 schrieb Herbert Xu:
-
-Hi George,
-
-> On Mon, Sep 16, 2024 at 10:44:22AM +0300, George Rurikov wrote:
-> > From: MrRurikov <grurikovsherbakov@yandex.ru>
-> > 
-> > After having been compared to a NULL value at algif_aead.c:191, pointer
-> > 'tsgl_src' is passed as 2nd parameter in call to function
-> > 'crypto_aead_copy_sgl' at algif_aead.c:244, where it is dereferenced at
-> > algif_aead.c:85.
-> > 
-> > Change logical operator from && to || because pointer 'tsgl_src' is NULL,
-> > then 'proccessed' will still be non-null
-> > 
-> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 2d97591ef43d ("crypto: af_alg - consolidation of duplicate code")
-> > Signed-off-by: MrRurikov <grurikovsherbakov@yandex.ru>
-> > ---
-> > 
-> >  crypto/algif_aead.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Sep 16, 2024 at 04:14:43PM GMT, Beleswar Prasad Padhi wrote:
 > 
-> Cc Stephan.
+> On 14/09/24 00:27, Andrew Halaney wrote:
+> > On Fri, Sep 13, 2024 at 04:27:47PM GMT, Beleswar Prasad Padhi wrote:
+> > > Hi Andrew,
+> > > 
+> > > On 11/09/24 22:49, Andrew Halaney wrote:
+> > > > In order for the MCU domain to access this PMIC, a regulator
+> > > > needs to be marked appropriately otherwise it is not seen by SPL and
+> > > > therefore not configured.
+> > > > 
+> > > > This is necessary if the MCU domain is to program the TPS6594 MCU ESM
+> > > > state machine, which is required to wire up the watchdog in a manner
+> > > > that will reset the board.
+> > > > 
+> > > > Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+> > > > ---
+> > > >    arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 8 ++++++++
+> > > >    1 file changed, 8 insertions(+)
+> > > > 
+> > > > diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+> > > > index 6695ebbcb4d0..6ed628c2884e 100644
+> > > > --- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+> > > > +++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+> > > > @@ -663,6 +663,7 @@ tps659413: pmic@48 {
+> > > >    		regulators {
+> > > >    			bucka12: buck12 {
+> > > > +				bootph-all;
+> > > >    				regulator-name = "vdd_ddr_1v1";
+> > > >    				regulator-min-microvolt = <1100000>;
+> > > >    				regulator-max-microvolt = <1100000>;
+> > > 
+> > > In my opinion, bootph-all property should come after other standard
+> > > properties like regulator-name etc., as it is least important to Linux. Same
+> > > comment for other nodes wherever applicable. What is your opinion?
+> > > 
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n130
+> > I think that does align better with the dts-coding-style doc!
+> > 
+> > Looking at the tree though, the standard currently in the TI folder
+> > is to put it first. In my opinion if changing the ordering is desired
+> > it should be done in one fell swoop (outside this series). I'd do
+> 
+> 
+> There is a series[0] under review which takes care of this bootph- addition
+> and order correction. In that series, looks like bootph- is placed at the
+> end of the list of all standard properties. So, it is better if we align
+> these patches to follow the same.
+> 
+> [0]: https://lore.kernel.org/all/20240814-b4-upstream-bootph-all-v4-2-f2b462000f25@ti.com/
+> 
 
-I am not sure that this is a valid finding. An issue exists when there is 
-processed != 0 and TSGL is NULL. Otherwise, the subsequent copy operation for 
-this part will simply copy nothing: even if TSGL is NULL, the processed value 
-is 0 and this is uses as the length parameter in the copy operation. 
-Technically any copy operation is prevented in the following code that is 
-invoked by the used crypto_null cipher:
+Ahh, ok. I'll post v3 with things ordered in that fashion!
 
-static int skcipher_walk_skcipher(struct skcipher_walk *walk,
-                                  struct skcipher_request *req)
-{
-...
-	/* here we have the value of processed */
-        walk->total = req->cryptlen;
-
-...
-	/* here we stop processing */
-        if (unlikely(!walk->total))
-                return 0;
-
-	/* here we dereference the TSGL */
-	scatterwalk_start(&walk->in, req->src);
-
-You see, the processing stops before the dereferencing.
-
-In any case, the check as it currently is, allows the use of, say, you request 
-a tag from just the key without any AAD or input data. Mathematically this is 
-a valid operation.
-
-Thus, as of now I do not see (a) a technical issue and (b) a mathematical 
-issue.
-
-Could you please help me understand the issue you think you are seeing?
-
-Ciao
-Stephan
-
+Thanks,
+Andrew
 
 
