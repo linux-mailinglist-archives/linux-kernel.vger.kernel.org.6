@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-330549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F4197A007
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:09:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F0997A008
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B0E2833C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7C91F21531
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A7615625A;
-	Mon, 16 Sep 2024 11:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BAA15852E;
+	Mon, 16 Sep 2024 11:08:18 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8004155C97
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9B8156669
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726484892; cv=none; b=uvmwG2YSOqxfmGgCmoOtUCHNL8VvgvBxSg3azbEfKaX4z8ZFgGLrynuvlV1SJR5K9qxy4Eo3pNaicZW9IQKvVhZZkpNLOz8u+/5+rztZ0BCGgpx/qIIrTgbJ2xTmoeIK71Q4/zU9d5NPzzcGVEaVTS2bGJRC9fyj1kAo67xlz9w=
+	t=1726484897; cv=none; b=AgrKVr9QX9KDyGP+LfpmtHFwS5cEcN1wk2lIvlDxL3BMgE02KpRAZlcXTi03/UBy9+0rUti2BqdYD69/60KwgWbu+oC+tEwiaX4L/4hE+Y7wVoWsp+e8nk+O+GtNGGNGNqEpkMSYks8L6IoLkG/fSU11TDGgEcs67YcuVnEvlQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726484892; c=relaxed/simple;
-	bh=SlxPPXkO/fNfzVA5uO56YUKVgem7p+wES/1xBe8JqeY=;
+	s=arc-20240116; t=1726484897; c=relaxed/simple;
+	bh=V6IxSOPgjarAnGow85o/zhAKZ9XcJUJ0lh689/3MORk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QPKR1fIe4wZ9RMnVDBk1IUHphKLNH7KUmujqyd5xPdj1e18QXE/KiZ7wfCFOC998znMjk4LtLlcEEKHaerMVyUyvOBsMtMAgCwf49wbh+w44D178IdzX8gi+yKODKYTYJvyaGQnzlm+/TtYt1m81SWoTyzk0+qe14AJFRJ0vR0U=
+	 MIME-Version; b=kure7b/oDCQilohuuu+x32zuANQEbwOEa5UIXzEEs8+6fEW/Cbkbu7vaA/Pt6X8Abfe57HeI8zQWDCDyvSqQSQmjBtaDgjCsZw4H9r+cT1tpAg/c+oV5pdoSy7rmCEDKAJUU10wqaPYslnIdWzmcHph1x00Iq7uxdVgkX9CmZZs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AAE812FC;
-	Mon, 16 Sep 2024 04:08:39 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F8571516;
+	Mon, 16 Sep 2024 04:08:44 -0700 (PDT)
 Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.11])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DF6683F64C;
-	Mon, 16 Sep 2024 04:08:04 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8E6013F64C;
+	Mon, 16 Sep 2024 04:08:10 -0700 (PDT)
 From: Dev Jain <dev.jain@arm.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -47,9 +47,9 @@ Cc: ryan.roberts@arm.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v2 1/2] mm: Make pte_range_none() return number of empty PTEs
-Date: Mon, 16 Sep 2024 16:37:53 +0530
-Message-Id: <20240916110754.1236200-2-dev.jain@arm.com>
+Subject: [PATCH v2 2/2] mm: Compute first_set_pte to eliminate evaluating redundant ranges
+Date: Mon, 16 Sep 2024 16:37:54 +0530
+Message-Id: <20240916110754.1236200-3-dev.jain@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240916110754.1236200-1-dev.jain@arm.com>
 References: <20240916110754.1236200-1-dev.jain@arm.com>
@@ -61,65 +61,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for the second patch, make pte_range_none() return
-the number of contiguous empty PTEs.
+For an mTHP allocation, we need to check, for every order, whether for
+that order, we have enough number of contiguous PTEs empty. Instead of
+iterating the while loop for every order, use some information, which
+is the first set PTE found, from the previous iteration to eliminate
+some cases. The key to understanding the correctness of the patch
+is that the ranges we want to examine form a strictly decreasing
+sequence of nested intervals.
 
+Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
 Signed-off-by: Dev Jain <dev.jain@arm.com>
 ---
- mm/memory.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ mm/memory.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
 diff --git a/mm/memory.c b/mm/memory.c
-index 6469ac99f2f7..8bb1236de93c 100644
+index 8bb1236de93c..e81c6abe09ce 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -4617,16 +4617,16 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	return ret;
- }
- 
--static bool pte_range_none(pte_t *pte, int nr_pages)
-+static int pte_range_none(pte_t *pte, int nr_pages)
+@@ -4633,10 +4633,11 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
  {
- 	int i;
+ 	struct vm_area_struct *vma = vmf->vma;
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	pte_t *first_set_pte = NULL, *align_pte, *pte;
+ 	unsigned long orders;
+ 	struct folio *folio;
+ 	unsigned long addr;
+-	pte_t *pte;
++	int max_empty;
+ 	gfp_t gfp;
+ 	int order;
  
- 	for (i = 0; i < nr_pages; i++) {
- 		if (!pte_none(ptep_get_lockless(pte + i)))
--			return false;
-+			return i;
- 	}
- 
--	return true;
-+	return nr_pages;
- }
- 
- static struct folio *alloc_anon_folio(struct vm_fault *vmf)
-@@ -4671,7 +4671,7 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
+@@ -4671,8 +4672,23 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
  	order = highest_order(orders);
  	while (orders) {
  		addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
--		if (pte_range_none(pte + pte_index(addr), 1 << order))
-+		if (pte_range_none(pte + pte_index(addr), 1 << order) == 1 << order)
+-		if (pte_range_none(pte + pte_index(addr), 1 << order) == 1 << order)
++		align_pte = pte + pte_index(addr);
++
++		/* Range to be scanned known to be empty */
++		if (align_pte + (1 << order) <= first_set_pte)
++			break;
++
++		/* Range to be scanned contains first_set_pte */
++		if (align_pte <= first_set_pte)
++			goto repeat;
++
++		/* align_pte > first_set_pte, so need to check properly */
++		max_empty = pte_range_none(align_pte, 1 << order);
++		if (max_empty == 1 << order)
  			break;
++
++		first_set_pte = align_pte + max_empty;
++repeat:
  		order = next_order(&orders, order);
  	}
-@@ -4787,7 +4787,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
- 	if (nr_pages == 1 && vmf_pte_changed(vmf)) {
- 		update_mmu_tlb(vma, addr, vmf->pte);
- 		goto release;
--	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
-+	} else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) != nr_pages) {
- 		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
- 		goto release;
- 	}
-@@ -5121,7 +5121,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
- 		update_mmu_tlb(vma, addr, vmf->pte);
- 		ret = VM_FAULT_NOPAGE;
- 		goto unlock;
--	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
-+	} else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) != nr_pages) {
- 		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
- 		ret = VM_FAULT_NOPAGE;
- 		goto unlock;
+ 
 -- 
 2.30.2
 
