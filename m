@@ -1,137 +1,131 @@
-Return-Path: <linux-kernel+bounces-330524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D65C979FB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 989E0979FBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C680F1F2353A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0311F22141
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BF81514EE;
-	Mon, 16 Sep 2024 10:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2E5153BF6;
+	Mon, 16 Sep 2024 10:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwbqEI51"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="s2W1mORA"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C607B34CC4;
-	Mon, 16 Sep 2024 10:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7731494BB;
+	Mon, 16 Sep 2024 10:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726483654; cv=none; b=Sgz4ihet8mT8xzzEzAmRbLhnqOeem1CchSYs3Di70kAl5fYRovEe9LdQeqzs1jNl0iCzjP70ojnMYog537wLiHUKcaIv5cpaUxXmSd4ko/n0mhGTlSrEdYnDN72McPWAotGl3mt9ubOA62jeF3Zrk+vSZ5PYm+iMwfGqapm37H0=
+	t=1726483798; cv=none; b=KHoGzVOOUZqhUBpOHGbAiC6LeTL9aKUXrRJqZL1R75ySgmA63LkUvaSCIVDAfg5uEQqyLU/ahbj3rMo3tX9ytqsB6g88HoRTKiCtKPi+bjb4QUR0bwc8J0fnt6fXe2uDilbSO2kJJzTW9Jr5uJp5Vx8GbDG6GE6LynoEzreYIY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726483654; c=relaxed/simple;
-	bh=LwPMTDOEgB8HyD450hSuRIBCkam14G4uFTnIfXIGh7s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TLHTjXgQZ+kmEuNZL34UKR5w44OtjkfW2OtDHYC0zSgNS4y3sjcExhjdYVjULtiDvNzn4ZC/Lq92dTf3nbdvPSYl/Ron0b68BIlFJ6hWxijgm9v1An4ggbB3/3kV9foVJIxFRTX/U/qldcWPTZL9D+PgTITsLEAq9A9Oi3g+Lck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OwbqEI51; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-375e5c12042so2319359f8f.3;
-        Mon, 16 Sep 2024 03:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726483651; x=1727088451; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FUfSPTxRR+PneERlzFcQtWtgSIwzFTWRZQHaHy/Sf94=;
-        b=OwbqEI510dGSlRWDDj5clhnAOBwijvE+AnCbjYxFqyGFQh2ywgyZJ7MtBsnEpPYR70
-         IzswH/MPLmP82z4eVdjN9qxFwUSdj3ueRSEur3l9D8OjopM0u//u+cGW9h7iWQOlsKVW
-         S2RDLnhIQVFXe9yKIW7TbVii2yxUBBNTUVxzWB9+H6JGF9fcZINI+cwwss6moO0gv0A0
-         v55fFCbkVd/enPbgLzpeboyqfgX0cK9+1dWuhXf47dxnfrjEnpJ5J/4DbyDSOoHX526A
-         7Vq3sbGh3C+0D1uRMYV5xq0MnZMT8EkZxQwW4+Laq6G8stBD0G49/toi/OWDOYUhB8Bm
-         OnxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726483651; x=1727088451;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FUfSPTxRR+PneERlzFcQtWtgSIwzFTWRZQHaHy/Sf94=;
-        b=NibTpsylZeFwM78x4Dd7GByEOKmtp/oFAcWdhYNjQbK3kKQGB47ptyKo1vy0dmzEwv
-         TRWwN5XbiB4lRxAFcSmJcbpib1Uj2MHZOY9TPLwldkueI5H+gm/H8zvDnwvcAWkEzN6P
-         ZpCChgA4ULxkGvDyAgXT3XaMtV9bTxpbheDjcRzkrmYX6/W0iDJXDHuE3pfGXXy8fZTw
-         olAC/GmO7rN7u7RJRFKGpkCkKA48WmhYGXLwu7ACoGC9rB1kQXsaiw/BEls11ysbk8Z/
-         3V7S22jINK9CUFL6tYGZOA9RdgEhZ+DUO0iOLUulQ1jOEk287gyJsPcTT/6xS9nP7Oec
-         cSGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOgLVE3NrBVgTrhp8QY8QzfvmNGemDt9IIxo+zMASESeCOsQM10gBSOVn9XknZQVwl4Fpq96JXQW3zx30=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy20AhkifntGmWJxJ90CI7KMeRmN7LN/Nm9UAAD6rxsLXQLUVUG
-	Q+ga0T92bqsUWlJNGbXB5YwlNnIvhIrHp1wR/iAe9NhW+WPjjYN7
-X-Google-Smtp-Source: AGHT+IH9HrOfNBxvdg4E0kJYcBtVVCCv1F4onM6EWVNYOWevwv05LUffHKOcwAF/sp4lve9y0JIT4Q==
-X-Received: by 2002:adf:fbc3:0:b0:374:cb5c:2966 with SMTP id ffacd0b85a97d-378c2d5a6f5mr8415481f8f.40.1726483650173;
-        Mon, 16 Sep 2024 03:47:30 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e750:7600:c5:51ce:2b5:970b? ([2a02:6b6f:e750:7600:c5:51ce:2b5:970b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e8388sm6881772f8f.32.2024.09.16.03.47.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 03:47:29 -0700 (PDT)
-Message-ID: <c23b8ec6-117f-4843-af37-507961520482@gmail.com>
-Date: Mon, 16 Sep 2024 11:47:29 +0100
+	s=arc-20240116; t=1726483798; c=relaxed/simple;
+	bh=SprNo69rdVdRczSHmsJdPUw60b99yXY36JLopcB/Bq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=W5HaQHInZ8sSFitf8z1DxIc02Th368eZXc4HAdUcrKxIzmRbidpg/KbercSsDB2cZ7n24izipdDvWE1V42boT2pwAK1O8qdSXxONggefpB8HHFh8KXPnUAjZP/ulzyo1SKumU4vCeJBO4xH911upaq7fEZcDWbZq2ke6v1SKIeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=s2W1mORA; arc=none smtp.client-ip=212.227.17.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1726483775; x=1727088575; i=christian@heusel.eu;
+	bh=5hzAWYY/NEknJFwWKGv/E8u8GFLlfQeAYhbo9E7ZVyg=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=s2W1mORAYIsMpGpyPrze4wdA2mqmHCwJWijIfcuAQXpAcTai8+EcSsOfvfNEiy68
+	 EBkrFUBD9l3UamuiOvV1IvHJeZLVWKv54LZ3t575d83qmR/SEpTpy6mUHwBSCEQOD
+	 Uh8Fv3MbbCZ8Wn6a0svaLSkkdQdRqQRMOrbddp0hKHvscd64d8rqCAUckkLHSRjAm
+	 VOjfgEQU0Hgchs21+P4BP+jCt9bBhC6E+hNy1kU2f3VVAR/R1aCjVyLdvJDYfprQ6
+	 htUsa/fmrNbh/wOIpqGzZbEMcXvBYxlBc8cAfw29DThndzvBR3Nt29Gl2GjTEZYNT
+	 GuL45aNhYt7OE15MYQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue106
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1Msqpq-1rxLok2fwe-00xpRZ; Mon, 16
+ Sep 2024 12:49:35 +0200
+Date: Mon, 16 Sep 2024 12:49:33 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: linux-firmware@kernel.org, Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [REGRESSION] Update of linux-firmware breaks wifi on Thinkpad T14
+Message-ID: <44ae68d2-24b6-49d2-a4f9-ae9cbf6f9950@heusel.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] tpm: do not ignore memblock_reserve return value
-To: Ard Biesheuvel <ardb@kernel.org>, Gregory Price <gourry@gourry.net>,
- Dave Young <dyoung@redhat.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- leitao@debian.org, sathyanarayanan.kuppuswamy@linux.intel.com,
- ilias.apalodimas@linaro.org
-References: <20240913231954.20081-1-gourry@gourry.net>
- <20240913231954.20081-3-gourry@gourry.net>
- <CAMj1kXH+QE+C78n84jRUn6ACUPbO9pU_EeeTcTa-nWitCKpt-Q@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAMj1kXH+QE+C78n84jRUn6ACUPbO9pU_EeeTcTa-nWitCKpt-Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qtwz73t4edjtsbyg"
+Content-Disposition: inline
+X-Provags-ID: V03:K1:QsWglT6DP2QQ6QNSnZTOoWt5LXUFxyBEcnz36034CXpymEqk5Fr
+ Y/ksxIb7uuIgqg/81rErmJgB2g74gxP9ihktXYXku4V3Xvm4bGlFQ8/FL0HQsHTzOqk5qWy
+ HActdzqPpAv86Q30Dgr3yPNEoo5H5tFiQl4JS3SSt3AETJqewX+uxnLIJiPVGe0VuW6wZU1
+ physKz9GvuEc4cnsAuiIA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gkH3q8Bu69c=;2jv/yQBSGIGFJozcIV6797HCfDW
+ qzJm4vcMpm4Qaw7C+9aWJa8rEEZqA5xyAX6ALyXqK3gMMftrz/8npsj/bc1iW8hu0OvA/7sSD
+ JxBslIEJiVSp755thVNTGrn17ZjZ72vLtR9O/owuSvkEzIVeAfzWTSFex24okOdTRTWPIGrN+
+ h2A1nET4wh+syZZ2hyh8HNygyVydzNfY+HtVQJEBnBWbL89vDO9zV8NLbTr9x5HB6fT/cE00O
+ 1ZmPnArK+3uHaorxKRWpAvOC0LhLI+84HhTU/UbKP4UbjS83OGwpIwNnNDxDfoc5dXLh39KHe
+ sHOPQsyxF/G4vduggrADk0+wsXk6KC1x9cPzXrNtdzxFuHSuAqSwaLM66bq0jx0rtBWF7mTXd
+ ZbUrLgZ4q2dDA+EC4aLMfj+DMNnpHOw7KaSsv4q7Xv2HKH7fHle6mEaE4c6QrAA7s0u9szp6q
+ tSucKP/NZeEHTXiPNw/gWgT9v60ABfXHFPMms7Hunc0ewxttzB5jOSR+FZ1XzVOSQ2oBFN9+b
+ tR4CjR3dHmbMT5MZacui1kbys5+xooBVx1QkX9gLyJc60MH1Ve3eHe7AyuYwhw9TkoFjbbIxN
+ AqLS1Twl3nzMeqZkbn01fknOB4Px+IaF/3yAWFtaCvF0YGJwFyRjriHLT3W3Ndx+0kKdkxjER
+ FKtLrirsh+1zG/Gy/zuu1uTZ/pFxu+Nm5IKavpnFo0up+VzR8acFh004eaNTyyQpvgxU1CzGy
+ VKQ1Qvj3PezOM9aTryIEseKjhMsmgykOg==
 
 
+--qtwz73t4edjtsbyg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 16/09/2024 09:29, Ard Biesheuvel wrote:
-> (cc Dave)
-> 
-> On Sat, 14 Sept 2024 at 15:26, Gregory Price <gourry@gourry.net> wrote:
->>
->> tpm code currently ignores a relevant failure case silently.
->> Add an error to make this failure non-silent.
->>
->> Signed-off-by: Gregory Price <gourry@gourry.net>
->> ---
->>  drivers/firmware/efi/tpm.c | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
->> index 9c3613e6af15..b0cc2cc11d7e 100644
->> --- a/drivers/firmware/efi/tpm.c
->> +++ b/drivers/firmware/efi/tpm.c
->> @@ -61,7 +61,12 @@ int __init efi_tpm_eventlog_init(void)
->>         }
->>
->>         tbl_size = sizeof(*log_tbl) + log_tbl->size;
->> -       memblock_reserve(efi.tpm_log, tbl_size);
->> +       if (memblock_reserve(efi.tpm_log, tbl_size)) {
->> +               pr_err("TPM Event Log memblock reserve fails (0x%lx, 0x%x)\n",
->> +                      efi.tpm_log, tbl_size);
->> +               ret = -ENOMEM;
->> +               goto out;
->> +       }
->>
-> 
-> Given the discussion in the other thread, I wonder if this should be
-> efi_mem_reserve() instead - might as well fix that too.
-> 
-> Dave?
+Hello Kalle,
 
-I dont believe efi_mem_reserve is needed after your patch in
-https://lore.kernel.org/all/20240912155159.1951792-2-ardb+git@google.com/
+the commit 82318c96 ("ath12k: WCN7850 hw2.0: update board-2.bin") in the
+linux firmware repository apparently breaks card recognition in Thinkpad
+T14 laptops with the following journal entries:
 
-which will cover both kexec_load and kexec_file_load cases.
+    Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: failed to fetch board data for bus=pci,vendor=17cb,device=1107,subsystem-vendor=17aa,subsystem>
+    Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: failed to fetch board.bin from WCN7850/hw2.0
+    Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: qmi failed to load bdf:
+    Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: qmi failed to load board data file:-2
 
-Thanks,
-Usama
+Is there any more information you would need to debug this issue or does
+the above already tell you enough?
+
+This issue was discovered by Arch Linux Forum user "Mezzy12" with
+debugging help from user "loqs" and me.
+
+Regards,
+Chris
+
+[0]: https://bbs.archlinux.org/viewtopic.php?id=299286
+
+--qtwz73t4edjtsbyg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmboDT0ACgkQwEfU8yi1
+JYXn7hAAy4QCSRzmKXEmAbMIKZaG0C3VjzePWedQqNpzFw66FWxIsjSGrqs+p2Qy
+/jYWJ7OL0UgHAXtHwFEaAv4oidWrSXTwgNTI216Valdm3vijffyFyPOp0lbJ6Iuq
+GH4mW7ogHAZgUqyhvoK9HmZugaufCVi/BACBF8hz4cTbKY5i7HAa5CNkJ0jfWheX
+PbvMNS6lEA6xdVfyv0ot7TZYeudfIGZcaDcyyGQeGm655iyHhJTjnhhr+iOUvi0P
+3IStoZ52p0t4xw/Li0scBIhenrHIguDLzqHiwOpSeZUG4a1zvPlm0GPMO//lfWvF
+j/XNTDCjUhsyiD3geVX4k0V3rhbiQS5LCHL0OSLD6Um+yyv4jFKY6sv5dzxorCDq
+nul3digeUItTbvSopt8CuN+Pu0S01I7Hdhczw/p5cWCHxj2Pjwf5SduPOZgpKYjl
+qPL2q0EogLYEh61Txi6V7qrHL3krofEmbBpXFBmpA80iuw4OJ6N3+Vn0xBpmCL6n
+S/6aplzFV2in4USIYmqIy82eT2me0aDR3P7W4lj7P20HKqE5vIsXE6eifSL04x0z
+hHfBYYnuKld56D7xXSnFhyFDqWTihznU+ektVIHpHtxpObyt8ikZQkU9gLgWyNb9
+9rQ9KZDpLmrcUVChgho4VLxjE5XjqhcVQRF2tAM9724kQW91a2s=
+=ekkO
+-----END PGP SIGNATURE-----
+
+--qtwz73t4edjtsbyg--
 
