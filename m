@@ -1,302 +1,129 @@
-Return-Path: <linux-kernel+bounces-330598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D4897A08C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:52:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1071797A090
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1BEA1F24911
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:52:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93EC0B20F37
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDE914F9FB;
-	Mon, 16 Sep 2024 11:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5C1149C57;
+	Mon, 16 Sep 2024 11:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="TLUXOxz1"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SJ4uTYFX"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68563CF65
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C467914E2ED
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726487530; cv=none; b=jl/ZVzdXRDfF6lKDbudCTGxeRMkscZgrF3K1vu7aklxoyMSK+7FnYn2Twr/q2YB7m1hz7R/OwUZf/IRsn67sXD9BDMQhIVkSshznbd2EDnFP+naUoOm4mMHhkyVoi7UggFF1sWz4YPHNJrkxv9fk6tHiYl7RZ4sgILPbOKadgDI=
+	t=1726487566; cv=none; b=eyhxOYxTxDF4dyjCUn2J80bRaNr1Tu/sYfAouoYyR5fooz0qJQ2AtSpQPxF+DNR8u/64ixt5wN2ZheFyE4K+0sO/4VvIDVDIULdWiH0I9tpHNSoaoKEgOo61X3Scr+suSiApqAsm1o3SteOjK5KZgwqrqLRKSb9tUIU+blCuyJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726487530; c=relaxed/simple;
-	bh=8Z0mx9HFE6odIXTBYRaap6wUjdbwB3/lK6WqTJRvVaI=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=Lu/SXjErI5BYFw0msyo8cY+mDSaj1fYciePFT05MEcDAVJRrEt8azM6NEDEclEQrixpOphHOaJQ/oU4Wga0h1vY81oU8mfuczVm+WklvaWVjeqHW17t5KNE1UhDz1bpeS4HqWxL9fDvltv8/NPPaY+eCfmER6tXUrd3CpjlUn3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=TLUXOxz1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A81F1496;
-	Mon, 16 Sep 2024 13:50:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1726487440;
-	bh=8Z0mx9HFE6odIXTBYRaap6wUjdbwB3/lK6WqTJRvVaI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TLUXOxz1Miyete0AGUltE7piTcLKbsVTjkDQh+eH6T9UBlDRbSQhYp1onBRZ6XY1m
-	 MAjUfVpjPdEVnmggMwe2c5M15CIoIom9RtHEmeqxkL1MViKnHRXq9HZ/RKkoSKiPv4
-	 6qw4Mc/m/rXXtD/R+zGGGKMTXaRbjrvlCVjijTKs=
-Message-ID: <1a1ab663-d068-40fb-8c94-f0715403d276@ideasonboard.com>
-Date: Mon, 16 Sep 2024 14:51:57 +0300
+	s=arc-20240116; t=1726487566; c=relaxed/simple;
+	bh=iM6Elp/sm3jXr84spvTro9yvti0Z6xFLw//7YQzRUs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZDlwvVYFEyzUKmOpVB3BFyYA0bY6AdwYbIRhRY8BRpJ/wvYb1MEZd4Q0kYsVm+/IqYfbqOkT+H4s+n0jkadCvlMxIiimM9MVsKVe5t/Cb1dKzk/4N0iHP0zh6c1N/HXHTgLpcbq/2Rg+SYiLQhVpqryH1VgYprk5Fcr/FqTUmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SJ4uTYFX; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso43145175e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 04:52:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726487563; x=1727092363; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Nnm0NJxECZsYKIxc66BOTbDGAWNLQfv5K6G4LcFfNA=;
+        b=SJ4uTYFX0Zh2r1Vv45Q5qpWhroKBTnXtb6kbmHrYxALyKbX7Dgkw5toBv4jQAxN4fc
+         9WWJwvD47I03nP36UNLHK2eYFVo8kmJqMLhGuysJ2hxqGy03mGiIdHeEjdfWX5Tvak2q
+         smwz4tke9sZAJiVtXsfaWb8W2k9K8n/7+H0keWMOYlKGcpJOLupuTNr1AHa3545uHVox
+         YRBCtnrec1XOOHzxbHe7cwC/Hwi2n0DIemUKyNZrc5rQnRf3wsFZYtF3n4gS513Al8ro
+         yM+SqFwZ7hXQ+6fPfbHgbpM2yTUQwi0d0zBEL3pw7EKuckPfH/DtiJ0MMvGjhaJoP+d0
+         4DKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726487563; x=1727092363;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Nnm0NJxECZsYKIxc66BOTbDGAWNLQfv5K6G4LcFfNA=;
+        b=HtHnxjgRn1P470F049mPZeEWeH3aAab/orm9iI9iGqJ0Dq5qhvXdofUNwHHR6JRyI7
+         WPL/oxeYXHAnYK6KM0E8uQoC5TV9ILJ0kuFHtpKb7gsUwqIKSnM0tSuLQ0lrPmiji4ik
+         0k31/1SWaisvTNPLban9Dl2+ZM5XNI3OsFoHU/K9K2sEdgeqHp1ivqwgRXs5sAuy679l
+         LdPInrYY8uvbW6cuXoVmcGddNefyOjPnxbISkZKOeIMgm+XQxbxAUnEORMinT0U3pofr
+         MHW6AI1iBdAnugOeUXL/TwcHKVwq88zrUFu9W4YLS4KtECr3AqohUCzeHSgclIawEbqw
+         GRSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWGNHWX9PgqzqTscXH63cPN2BnUluvVMJlwUh/vGhxOXW2cMFABSK53Z4WiX6/XGGVMQD4L3Ux5NiND8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxXhiCyMQgSyB50MTt5qL/Up4rMSlou6OBM300J8vncKTyztdc
+	VlQrilm/EuZMGWaM6oZu1yvkYixaDme4obXO0KSnroZoMIZmVz//MaPt/GvDcjQ=
+X-Google-Smtp-Source: AGHT+IG+nB/JdmngCxxwK51J6HLRZl6BCx93nl5weA40RhBfhLNEyVA/mVGYlSIHIPjNtSUAWAfihA==
+X-Received: by 2002:a05:600c:4709:b0:426:647b:1bfc with SMTP id 5b1f17b1804b1-42cdb59148emr112642275e9.30.1726487562944;
+        Mon, 16 Sep 2024 04:52:42 -0700 (PDT)
+Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e71f068esm7128543f8f.3.2024.09.16.04.52.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 04:52:42 -0700 (PDT)
+Date: Mon, 16 Sep 2024 13:52:40 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Trevor Gamblin <tgamblin@baylibre.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v5 0/3] iio: adc: add new ad7625 driver
+Message-ID: <6f5sqahnu6nxmzzxfj56432eogjcgell7c5sth5c2arvekl4sx@ndf2tdl73glx>
+References: <20240909-ad7625_r1-v5-0-60a397768b25@baylibre.com>
+ <20240914182848.34edc5e3@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>,
- Saravana Kannan <saravanak@google.com>
-Cc: Aradhya Bhatia <aradhya.bhatia@linux.dev>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Devarsh Thakkar <devarsht@ti.com>
-Subject: fw_devlinks preventing a panel driver from probing
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hi,
-
-We have an issue where two devices have dependencies to each other, 
-according to drivers/base/core.c's fw_devlinks, and this prevents them 
-from probing. I've been adding debugging to the core.c, but so far I 
-don't quite grasp the issue, so I thought to ask. Maybe someone can 
-instantly say that this just won't work...
-
-So, we have two devices, DSS (display subsystem) and an LVDS panel. The 
-DSS normally outputs parallel video from its video ports (VP), but it 
-has an integrated LVDS block (OLDI, Open LVDS Display Interface). The 
-OLDI block takes input from DSS's parallel outputs. The OLDI is not 
-modeled as a separate device (neither in the DT nor in the Linux device 
-model) as it has no register space, and is controlled fully by the DSS.
-
-To support dual-link LVDS, the DSS has two OLDI instances. They both 
-take their input from the same parallel video port, but each OLDI sends 
-alternate lines forward. So for a dual-link setup the connections would 
-be like this:
-
-+-----+-----+         +-------+         +----------+
-|     |     |         |       |         |          |
-|     | VP1 +----+--->| OLDI0 +-------->|          |
-|     |     |    |    |       |         |          |
-| DSS +-----+    |    +-------+         |  Panel   |
-|     |     |    |    |       |         |          |
-|     | VP2 |    +--->| OLDI1 +-------->|          |
-|     |     |         |       |         |          |
-+-----+-----+         +-------+         +----------+
-
-As the OLDI is not a separate device, it also does not have an 
-independent device tree node, but rather it's inside DSS's node. The DSS 
-parallel outputs are under a normal "ports" node, but OLDI ports are 
-under "oldi-txes/ports" (see below for dts to clarify this).
-
-And I think (guess...) this is the root of the issue we're seeing, as it 
-means the following, one or both of which might be the reason for this 
-issue:
-
-- OLDI fwnodes don't have an associated struct device *. I think the 
-reason is that the OLDI media graph ports are one level too deep in the 
-hierarchy. So while the DSS ports are associated with the DSS device, 
-OLDI ports are not.
-
-- The VP ports inside the DSS point to OLDI ports, which are also inside 
-DSS. So ports from a device point to ports in the same device (and back).
-
-If I understand the fw_devlink code correctly, in a normal case the 
-links formed with media graphs are marked as a cycle 
-(FWLINK_FLAG_CYCLE), and then ignored as far as probing goes.
-
-What we see here is that when using a single-link OLDI panel, the panel 
-driver's probe never gets called, as it depends on the OLDI, and the 
-link between the panel and the OLDI is not a cycle.
-
-The DSS driver probes, but the probe fails as it requires all the panel 
-devices to have been probed (and thus registered to the DRM framework) 
-before it can finish its setup.
-
-With dual-link, probing does happen and the drivers work. But I believe 
-this is essentially an accident, in the sense that the first link 
-between the panel and the OLDI still blocks the probing, but the second 
-links allows the driver core to traverse the devlinks further, causing 
-it to mark the links to the panel as FWLINK_FLAG_CYCLE (or maybe it only 
-marks one of those links, and that's enough).
-
-If I set fw_devlink=off as a kernel parameter, the probing proceeds 
-successfully in both single- and dual-link cases.
-
-Now, my questions is, is this a bug in the driver core, a bug in the DT 
-bindings, or something in between (DT is fine-ish, but the structure is 
-something that won't be supported by the driver core).
-
-And a follow-up question, regardless of the answer to the first one: 
-which direction should I go from here =).
-
-The device tree data (simplified) for this is as follows, first the 
-dual-link case, then the single-link case:
-
-/* Dual-link */
-
-dss: dss@30200000 {
-	compatible = "ti,am625-dss";
-
-	oldi-txes {
-		oldi0: oldi@0 {
-			oldi0_ports: ports {
-				port@0 {
-					oldi_0_in: endpoint {
-						remote-endpoint = <&dpi0_out0>;
-					};
-				};
-
-				port@1 {
-					oldi_0_out: endpoint {
-						remote-endpoint = <&lcd_in0>;
-					};
-				};
-			};
-		};
-
-		oldi1: oldi@1 {
-			oldi1_ports: ports {
-				port@0 {
-					oldi_1_in: endpoint {
-						remote-endpoint = <&dpi0_out1>;
-					};
-				};
-
-				port@1 {
-					oldi_1_out: endpoint {
-						remote-endpoint = <&lcd_in1>;
-					};
-				};
-			};
-		};
-	};
-
-	dss_ports: ports {
-		port@0 {
-			dpi0_out0: endpoint@0 {
-				remote-endpoint = <&oldi_0_in>;
-			};
-			dpi0_out1: endpoint@1 {
-				remote-endpoint = <&oldi_1_in>;
-			};
-		};
-	};
-};
-
-display {
-	compatible = "microtips,mf-101hiebcaf0", "panel-simple";
-
-	ports {
-		port@0 {
-			lcd_in0: endpoint {
-				remote-endpoint = <&oldi_0_out>;
-			};
-		};
-
-		port@1 {
-			lcd_in1: endpoint {
-				remote-endpoint = <&oldi_1_out>;
-			};
-		};
-	};
-};
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cxgr57ac724varkl"
+Content-Disposition: inline
+In-Reply-To: <20240914182848.34edc5e3@jic23-huawei>
 
 
-/* Single-link */
+--cxgr57ac724varkl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-dss: dss@30200000 {
-	compatible = "ti,am625-dss";
+Hello Jonathan,
 
-	oldi-txes {
-		oldi0: oldi@0 {
-			oldi0_ports: ports {
-				port@0 {
-					oldi_0_in: endpoint {
-						remote-endpoint = <&dpi0_out0>;
-					};
-				};
+On Sat, Sep 14, 2024 at 06:28:48PM +0100, Jonathan Cameron wrote:
+> Uwe: From a quick look at [1], looks like you plan to queue that lot up
+> after the merge window.  Would you mind doing an immutable branch for
+> me to pull into IIO?
 
-				port@1 {
-					oldi_0_out: endpoint {
-						remote-endpoint = <&lcd_in0>;
-					};
-				};
-			};
-		};
-	};
+Yeah, I intend to put the changes that are necessary for Trevor's series
+into next after the merge window closes. I'll let them cook a bit there
+in case some issue pops up, but then I can create an immutable branch
+for you of course.
 
-	dss_ports: ports {
-		port@0 {
-			dpi0_out0: endpoint@0 {
-				remote-endpoint = <&oldi_0_in>;
-			};
-		};
-	};
-};
+Best regards
+Uwe
 
-display {
-	compatible = "microtips,mf-101hiebcaf0", "panel-simple";
+--cxgr57ac724varkl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	ports {
-		port@0 {
-			lcd_in0: endpoint {
-				remote-endpoint = <&oldi_0_out>;
-			};
-		};
-	};
-};
+-----BEGIN PGP SIGNATURE-----
 
-  Tomi
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmboHAYACgkQj4D7WH0S
+/k502Qf9HWLuQ3QzDMRhm1T2ncwqa6goKIw+Re/Bc9REUzdTrbP12nnNzS4elX5L
+qrrNMwWiIjR/r1wlUYEanG96TZ14Znfjh21TkCMfFbMXlH470Q2SyWmSuorltMPe
+wqyYx221eZ1vJnDfHted0R/zZj14nGLoXS9hwYNDagPaQ0Qaxi6fvrqf82TU0MeW
+gKI+FYp8Gx8Tx4XOVAnxVIUaEcPfEDlq7BpD39WqwsyvN2Iu3Cg4Gs67igZunYaZ
+Lgyb90e4lVDOH3cqycTDE3zt6ZAczriM9Q3Sa+rDssSGx+hs9yBxPjtUEztywTKk
+8A0QJgrIo+TVEbAule7yiCkyALxAiA==
+=zCsY
+-----END PGP SIGNATURE-----
 
+--cxgr57ac724varkl--
 
