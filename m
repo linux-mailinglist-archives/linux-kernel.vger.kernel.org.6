@@ -1,160 +1,263 @@
-Return-Path: <linux-kernel+bounces-330900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC5F97A5CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:16:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A459797A5D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12281F293EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:16:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68ECF28AA78
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93829158DC2;
-	Mon, 16 Sep 2024 16:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BEhzjcBW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E61015A87A;
+	Mon, 16 Sep 2024 16:16:34 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C1818B1A;
-	Mon, 16 Sep 2024 16:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C398B154C14;
+	Mon, 16 Sep 2024 16:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726503376; cv=none; b=eIiTJRrMDqLBsgVDdiDBGqSt2ezHNU4w0OHj53qHahfcxmg9eFUMmpVlaYXXIRr0QRQmqjPgFD7qMD+SrRs+rdZ16a4slZJCFZp7XzP+dWy1HIYes13flIpPROV3PoLwCmevvCRhHaUn/CkgcL4oJB/BRyo3GI8pn1z5cXtqkOk=
+	t=1726503394; cv=none; b=Dw9iWX6mSF1PhnTGokZ/ASu2aSFcLu02AB8Il2AcruHKFqoEJ8JDVGa9O4SVDcP7j7nkhsy2uxDJDADtlCfpY2Wn5ojD7YiUkjYEs6x/TG4cIYXHOyKVrVQCYN+j/IVNI/1h3r+QbTdTS0HKi9t1duDMSYo6CTAjafR+aOp1Q6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726503376; c=relaxed/simple;
-	bh=K34CM7v91MrOP/VOs4CdQOMD/QAJ0bF/76bOsSlY7gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dMDRIkBpLjhsZNP8Bw32lqCeRYFIkW7dOcj4durc7c5PNjJCo6++LIdT/CO6b6kg1LKpjA09BTkFgOHgo0vyc72RNxSwUQEDiHb8YMls9PaPr9DSp59xtDJ9a/zntg6CxPPkgnmMue1AoL/pOlk6PZukU3D0xDpoLMO2dHMvREk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BEhzjcBW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23320C4CEC4;
-	Mon, 16 Sep 2024 16:16:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726503375;
-	bh=K34CM7v91MrOP/VOs4CdQOMD/QAJ0bF/76bOsSlY7gg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BEhzjcBWnc1GRWfR5v9RHrp6pqg9+Vuld0ZVGaq0tQpOS4ffTSeM9ywI2ctto6pnt
-	 uERfYaHT1+wtIRm8SoeBZRj21a8cXB177Kgm7MsYQ7M9mMLHSDQSOalmen7yI3luCW
-	 /bAZwFtx2795r5zmLBb2gemmhM6lWFraKz4tkOXnqtf9Kcl+zREi0EDV7r/++H7fS9
-	 IXWzSm2nWpqYgDyPp8GVq35Egd+wU8YANGKEC7Z7h/IHQ6bqyB/1p63e5Ie3ehMtJN
-	 DZdRv63DvsQnsN3SMqsZ5jN9RfvqukuK4GSpTY22axpOGnOVEeCbgCkiZZ38kh4yhH
-	 DrwzolMvjsPbw==
-Date: Mon, 16 Sep 2024 17:16:11 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Daniel Machon <daniel.machon@microchip.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: ocelot: document lan969x-pinctrl
-Message-ID: <20240916-uncut-badge-f31b97d7c375@spud>
-References: <20240914-lan969x-pinctrl-v1-0-1b3a4d454b0d@microchip.com>
- <20240914-lan969x-pinctrl-v1-1-1b3a4d454b0d@microchip.com>
+	s=arc-20240116; t=1726503394; c=relaxed/simple;
+	bh=vqzYyA10Ra+Ue2aMyu+n6htlVt6+PdHenejO+zV5cVE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rDbG8tQgukTmR0n3VaQZvlMCEHkZx7SlIUJ5hn1b5g3Lb+2BXxQXYczTsFDVbDajW+Wh30xpiwmwAt0orwgSQSBZNwi9e9uEwvyrI0x94OQeqRg1emfEzsddvHjq/nknxjrwAEiddMIg/8N1eXLTAljdkwfRWEunh5hYksX1190=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X6qgM6yfmz6K9Cj;
+	Tue, 17 Sep 2024 00:12:15 +0800 (CST)
+Received: from frapeml100005.china.huawei.com (unknown [7.182.85.132])
+	by mail.maildlp.com (Postfix) with ESMTPS id F271E140C98;
+	Tue, 17 Sep 2024 00:16:27 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100005.china.huawei.com (7.182.85.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 16 Sep 2024 18:16:27 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Mon, 16 Sep 2024 18:16:27 +0200
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+CC: Borislav Petkov <bp@alien8.de>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
+	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
+	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "mike.malvestuto@intel.com"
+	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "jgroves@micron.com"
+	<jgroves@micron.com>, "vsalve@micron.com" <vsalve@micron.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
+ Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH v12 01/17] EDAC: Add support for EDAC device features
+ control
+Thread-Topic: [PATCH v12 01/17] EDAC: Add support for EDAC device features
+ control
+Thread-Index: AQHbBCn2X0FlmKPPaUWpEENlHZJn/rJVzXyAgARPCJCAAAYMAIAAfGFw
+Date: Mon, 16 Sep 2024 16:16:27 +0000
+Message-ID: <518da468c15047c0b78781784688f4f5@huawei.com>
+References: <20240911090447.751-1-shiju.jose@huawei.com>
+	<20240911090447.751-2-shiju.jose@huawei.com>
+	<20240913164041.GKZuRrCeoFZBapVYaU@fat_crate.local>
+	<c31c733bb6e742f580721ec9d0e2f3b2@huawei.com>
+ <20240916115014.000064bf@Huawei.com>
+In-Reply-To: <20240916115014.000064bf@Huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IYnUTUTB/ln/uSn4"
-Content-Disposition: inline
-In-Reply-To: <20240914-lan969x-pinctrl-v1-1-1b3a4d454b0d@microchip.com>
+
+>-----Original Message-----
+>From: Jonathan Cameron <jonathan.cameron@huawei.com>
+>Sent: 16 September 2024 11:50
+>To: Shiju Jose <shiju.jose@huawei.com>
+>Cc: Borislav Petkov <bp@alien8.de>; linux-edac@vger.kernel.org; linux-
+>cxl@vger.kernel.org; linux-acpi@vger.kernel.org; linux-mm@kvack.org; linux=
+-
+>kernel@vger.kernel.org; tony.luck@intel.com; rafael@kernel.org;
+>lenb@kernel.org; mchehab@kernel.org; dan.j.williams@intel.com;
+>dave@stgolabs.net; dave.jiang@intel.com; alison.schofield@intel.com;
+>vishal.l.verma@intel.com; ira.weiny@intel.com; david@redhat.com;
+>Vilas.Sridharan@amd.com; leo.duran@amd.com; Yazen.Ghannam@amd.com;
+>rientjes@google.com; jiaqiyan@google.com; Jon.Grimm@amd.com;
+>dave.hansen@linux.intel.com; naoya.horiguchi@nec.com;
+>james.morse@arm.com; jthoughton@google.com; somasundaram.a@hpe.com;
+>erdemaktas@google.com; pgonda@google.com; duenwen@google.com;
+>mike.malvestuto@intel.com; gthelen@google.com;
+>wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+>wbs@os.amperecomputing.com; nifan.cxl@gmail.com; jgroves@micron.com;
+>vsalve@micron.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
+><prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
+>kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
+>Linuxarm <linuxarm@huawei.com>
+>Subject: Re: [PATCH v12 01/17] EDAC: Add support for EDAC device features
+>control
+>
+>On Mon, 16 Sep 2024 10:21:58 +0100
+>Shiju Jose <shiju.jose@huawei.com> wrote:
+>
+>> Thanks for reviewing.
+>>
+>> >-----Original Message-----
+>> >From: Borislav Petkov <bp@alien8.de>
+>> >Sent: 13 September 2024 17:41
+>> >To: Shiju Jose <shiju.jose@huawei.com>
+>> >Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
+>> >acpi@vger.kernel.org; linux-mm@kvack.org;
+>> >linux-kernel@vger.kernel.org; tony.luck@intel.com; rafael@kernel.org;
+>> >lenb@kernel.org; mchehab@kernel.org; dan.j.williams@intel.com;
+>> >dave@stgolabs.net; Jonathan Cameron <jonathan.cameron@huawei.com>;
+>> >dave.jiang@intel.com; alison.schofield@intel.com;
+>> >vishal.l.verma@intel.com; ira.weiny@intel.com; david@redhat.com;
+>> >Vilas.Sridharan@amd.com; leo.duran@amd.com;
+>Yazen.Ghannam@amd.com;
+>> >rientjes@google.com; jiaqiyan@google.com; Jon.Grimm@amd.com;
+>> >dave.hansen@linux.intel.com; naoya.horiguchi@nec.com;
+>> >james.morse@arm.com; jthoughton@google.com;
+>somasundaram.a@hpe.com;
+>> >erdemaktas@google.com; pgonda@google.com; duenwen@google.com;
+>> >mike.malvestuto@intel.com; gthelen@google.com;
+>> >wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+>> >wbs@os.amperecomputing.com; nifan.cxl@gmail.com; jgroves@micron.com;
+>> >vsalve@micron.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
+>> ><prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
+>> >kangkang.shen@futurewei.com; wanghuiqiang
+><wanghuiqiang@huawei.com>;
+>> >Linuxarm <linuxarm@huawei.com>
+>> >Subject: Re: [PATCH v12 01/17] EDAC: Add support for EDAC device
+>> >features control
+>> >
+>> >On Wed, Sep 11, 2024 at 10:04:30AM +0100, shiju.jose@huawei.com wrote:
+>> >> +/**
+>> >> + * edac_dev_feature_init - Init a RAS feature
+>> >> + * @parent: client device.
+>> >> + * @dev_data: pointer to the edac_dev_data structure, which
+>> >> +contains
+>> >> + * client device specific info.
+>> >> + * @feat: pointer to struct edac_dev_feature.
+>> >> + * @attr_groups: pointer to attribute group's container.
+>> >> + *
+>> >> + * Returns number of scrub features attribute groups on success,
+>> >
+>> >Not "scrub" - this is an interface initializing a generic feature.
+>> Will correct.
+>> >
+>> >> + * error otherwise.
+>> >> + */
+>> >> +static int edac_dev_feat_init(struct device *parent,
+>> >> +			      struct edac_dev_data *dev_data,
+>> >> +			      const struct edac_dev_feature *ras_feat,
+>> >> +			      const struct attribute_group **attr_groups) {
+>> >> +	int num;
+>> >> +
+>> >> +	switch (ras_feat->ft_type) {
+>> >> +	case RAS_FEAT_SCRUB:
+>> >> +		dev_data->scrub_ops =3D ras_feat->scrub_ops;
+>> >> +		dev_data->private =3D ras_feat->ctx;
+>> >> +		return 1;
+>> >> +	case RAS_FEAT_ECS:
+>> >> +		num =3D ras_feat->ecs_info.num_media_frus;
+>> >> +		dev_data->ecs_ops =3D ras_feat->ecs_ops;
+>> >> +		dev_data->private =3D ras_feat->ctx;
+>> >> +		return num;
+>> >> +	case RAS_FEAT_PPR:
+>> >> +		dev_data->ppr_ops =3D ras_feat->ppr_ops;
+>> >> +		dev_data->private =3D ras_feat->ctx;
+>> >> +		return 1;
+>> >> +	default:
+>> >> +		return -EINVAL;
+>> >> +	}
+>> >> +}
+>> >
+>> >And why does this function even exist and has kernel-doc comments
+>> >when all it does is assign a couple of values? And it gets called exact=
+ly once?
+>> >
+>> >Just merge its body into the call site. There you can reuse the
+>> >switch-case there too. No need for too much noodling around.
+>> edac_dev_feat_init () function is updated with feature specific function=
+ call()
+>etc in subsequent
+>> EDAC feature specific patches. Thus added a separate function.
+>> >
+>> >> diff --git a/include/linux/edac.h b/include/linux/edac.h index
+>> >> b4ee8961e623..b337254cf5b8 100644
+>> >> --- a/include/linux/edac.h
+>> >> +++ b/include/linux/edac.h
+>> >> @@ -661,4 +661,59 @@ static inline struct dimm_info
+>> >> *edac_get_dimm(struct mem_ctl_info *mci,
+>> >>
+>> >>  	return mci->dimms[index];
+>> >>  }
+>> >> +
+>> >> +/* EDAC device features */
+>> >> +
+>> >> +#define EDAC_FEAT_NAME_LEN	128
+>> >> +
+>> >> +/* RAS feature type */
+>> >> +enum edac_dev_feat {
+>> >> +	RAS_FEAT_SCRUB,
+>> >> +	RAS_FEAT_ECS,
+>> >> +	RAS_FEAT_PPR,
+>> >> +	RAS_FEAT_MAX
+>> >
+>> >I still don't know what ECS or PPR is.
+>> I will add comment/documentation here with a short explanation of
+>> features if that make sense?
+>> Each feature is described in the subsequent EDAC feature specific patche=
+s.
+>Can you bring the enum entries in with those patches?
+>That way there is no reference to them before we have the information on w=
+hat
+>they are.
+Will do.
+>
+>J
+>> >
+>> >--
+>> >Regards/Gruss,
+>> >    Boris.
+>> >
+>> >https://people.kernel.org/tglx/notes-about-netiquette
+>>
+Thanks,
+Shiju
 
 
---IYnUTUTB/ln/uSn4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 14, 2024 at 09:10:08PM +0200, Daniel Machon wrote:
-> Lan969x is going to reuse the existing Ocelot pinctrl driver - document
-> that by adding compatible strings for the different SKU's that we
-> support.
->=20
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-> ---
->  .../bindings/pinctrl/mscc,ocelot-pinctrl.yaml      | 32 ++++++++++++++++=
-------
->  1 file changed, 24 insertions(+), 8 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctr=
-l.yaml b/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.yaml
-> index dbb3e1bd58c1..45e9dfc50660 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.yaml
-> @@ -12,14 +12,24 @@ maintainers:
-> =20
->  properties:
->    compatible:
-> -    enum:
-> -      - microchip,lan966x-pinctrl
-> -      - microchip,sparx5-pinctrl
-> -      - mscc,jaguar2-pinctrl
-> -      - mscc,luton-pinctrl
-> -      - mscc,ocelot-pinctrl
-> -      - mscc,serval-pinctrl
-> -      - mscc,servalt-pinctrl
-> +    oneOf:
-> +      - enum:
-> +          - microchip,lan966x-pinctrl
-> +          - microchip,lan9691-pinctrl
-> +          - microchip,sparx5-pinctrl
-> +          - mscc,jaguar2-pinctrl
-> +          - mscc,luton-pinctrl
-> +          - mscc,ocelot-pinctrl
-> +          - mscc,serval-pinctrl
-> +          - mscc,servalt-pinctrl
-> +      - items:
-> +          - enum:
-> +              - microchip,lan9698-pinctrl
-> +              - microchip,lan9696-pinctrl
-> +              - microchip,lan9694-pinctrl
-> +              - microchip,lan9693-pinctrl
-> +              - microchip,lan9692-pinctrl
-> +          - const: microchip,lan9691-pinctrl
-> =20
->    reg:
->      items:
-> @@ -85,6 +95,12 @@ allOf:
->            contains:
->              enum:
->                - microchip,lan966x-pinctrl
-> +              - microchip,lan9698-pinctrl
-> +              - microchip,lan9696-pinctrl
-> +              - microchip,lan9694-pinctrl
-> +              - microchip,lan9693-pinctrl
-> +              - microchip,lan9692-pinctrl
-
-> +              - microchip,lan9691-pinctrl
-
-This should work on its own, since the other devices here have it as a
-fallback.
-
->                - microchip,sparx5-pinctrl
->      then:
->        properties:
->=20
-> --=20
-> 2.34.1
->=20
-
---IYnUTUTB/ln/uSn4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuhZygAKCRB4tDGHoIJi
-0lvIAP9yXS9mxfQMiq2EvDb/VAlg1TMwKuRYTDX2CWAlWJTn7gEA3mWlUXnWsVeM
-qL5BqrO2CQbFP11rJt1Lf2GFYFlK5wM=
-=a8O1
------END PGP SIGNATURE-----
-
---IYnUTUTB/ln/uSn4--
 
