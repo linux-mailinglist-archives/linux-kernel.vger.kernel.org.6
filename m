@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-330821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3DE97A4B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:02:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832E197A4C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E891D1F29F93
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:02:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B63741C2779A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A274517ADE3;
-	Mon, 16 Sep 2024 15:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15319158DDC;
+	Mon, 16 Sep 2024 15:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MA/TEC45"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4Wdqfok"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5CD15C136;
-	Mon, 16 Sep 2024 15:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545FD158DC1;
+	Mon, 16 Sep 2024 15:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726498804; cv=none; b=bdeK302GttJ63N+vgGqkFcdfApi4BiA8uOjXOKEk0CZyUmqLbHkZW6A28+VvCa/z4XVHtaK7X4d1VGAyLQQc0itwv1qshEd8ZNu13lKH0p8b19MfhnkeNdnPAVtcv/yyQoObdkzX6kMVSI9yN3lUZhuA3G8FD+x9H/8Vo+JXG7k=
+	t=1726498868; cv=none; b=YM9DP7jAVY7tF9mXAC/PGVbRwg0vlGlOI3nFhh6UCRrhIATF5A1MEISwlsCvVdp2TdXDofJ+V/M1UCOq63eWeV+CayGSpCUl5afUAEqHe8eypRpePrzD9yw4mlJFId5Pd2IqacM52zVxKTQu90xRkGd9gzwpwGqfIdixGSNOVIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726498804; c=relaxed/simple;
-	bh=ArcKy7p+aNHWxMNwnVx9b5KAI21+dDhFyAlyVicgLWI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=U2zaZNUSHEgmsvqzR25Ecz8tOkX+lIREceM/Bp2aR0OPDF0S9fYDGrgaBOix5tago02FR6oP3gbciCi6dylqn+1KI3777rssB5eiwNEbn2RpJCgx/d9XS7Qw9Qa4Kx437sVa7GiBzsOV51u5QR/FXEJTBXAIbLm/CVmhT+9MC4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MA/TEC45; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3EE6C4CEC4;
-	Mon, 16 Sep 2024 15:00:03 +0000 (UTC)
+	s=arc-20240116; t=1726498868; c=relaxed/simple;
+	bh=s8GNz6yq4x6llzuvN75IwgJtEQqGUgBW3FvNeeZyizM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f/rrxpEcy/rl1w4hpbCUgogyV62jZ4KRdurkFl45w78anAocceYtu2765A7OBkw7KiazSB7DpqYvhGjNF0gT6VEmwvBzP8YS/5gXE+GptRNo+PXnvgk0oqFzYG/xvcfZKwf+bakUBj+pZeE1wGXTCVwBcJG0WW3gxZBMhSpMM4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4Wdqfok; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0814C4CEC4;
+	Mon, 16 Sep 2024 15:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726498803;
-	bh=ArcKy7p+aNHWxMNwnVx9b5KAI21+dDhFyAlyVicgLWI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=MA/TEC457NaQN2R+q515ATJjr7Gt21Q4+vudtahue7GNbw2EKGYliZx5c/5vvj8XZ
-	 +E2hKeGHW3ya52AIESH3uPovKqwTYiIRhI//hrJujv3z9CRNU5ZVJgY7qUrgKQFRTj
-	 Z1EaW3+Ej7HSaKdMI9W+KC4zkMxeNFsrKiuc9Jb52XBOUXU/+90KWWfy+ueiFiRdBy
-	 md/M02J8gkUU46BJnN4fMDxLi9VsqAx1EM1yeWZsANR1IGHtLvRyAPWzqxandTz6Mq
-	 SiMcyTpq46NQa8ExNuCmzCpGrwrAUyEtcDpu841aVPfRDZ5e1VBYBDmxRZOtfzgHyL
-	 Wey3vGQZ9AYpg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id C24C73806651;
-	Mon, 16 Sep 2024 15:00:06 +0000 (UTC)
-Subject: Re: [GIT PULL] audit/audit-pr-20240911
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <5b03d15a5ff1840820e59d41ba1fc9c1@paul-moore.com>
-References: <5b03d15a5ff1840820e59d41ba1fc9c1@paul-moore.com>
-X-PR-Tracked-List-Id: <audit.vger.kernel.org>
-X-PR-Tracked-Message-Id: <5b03d15a5ff1840820e59d41ba1fc9c1@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git tags/audit-pr-20240911
-X-PR-Tracked-Commit-Id: 8c1867a2f0fd4235b84da6b204519e830b551988
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dc644fba3cf837f22d14991cab3c4c65af37ae21
-Message-Id: <172649880565.3724525.14709311663316097457.pr-tracker-bot@kernel.org>
-Date: Mon, 16 Sep 2024 15:00:05 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, audit@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1726498867;
+	bh=s8GNz6yq4x6llzuvN75IwgJtEQqGUgBW3FvNeeZyizM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A4Wdqfok42vkqCSzxBQAZpGStYdzgNhbPxcl9CT1Tc/2JytfjrJCSmZRMvOdc3zMN
+	 x0t+wqr9lY+TKgR2pp5jk7VTEv6Z/Dz01/m4kX4Lv4u7E+7OurQ18Scx88h6CjIZtA
+	 LzBAZPEZZ2Inr3wThQc7dlmb4aKnpuNEVF/tNBSUMHWCDJZvUiMFlIbePgupLNp/o+
+	 PSTjTIUB4CfVxmzAKBc6vYj8Zx9AU9jLAniun9g/kRfgkmkQ5l4aNAxENIVj27Jw+h
+	 Zpq12qLyeRRzmXo88WYb7SznnIKtSZFmevv4ycml8mb9GT5J8+2SnuGRR8+sJ5NChL
+	 ND8i+fph69ccg==
+Date: Mon, 16 Sep 2024 17:01:04 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com, 
+	quic_aiquny@quicinc.com
+Subject: Re: [PATCH v2] dt-bindings: mfd: qcom,tcsr: Add compatible for
+ QCS8300
+Message-ID: <7xagsq4uxzl7l37a424bbzyv75dsesdgnxolowpqwwz7mbrtnc@uhs5t7q35l3y>
+References: <20240911-qcs8300_tcsr_binding-v2-1-66eb5336b8d1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240911-qcs8300_tcsr_binding-v2-1-66eb5336b8d1@quicinc.com>
 
-The pull request you sent on Thu, 12 Sep 2024 21:15:46 -0400:
+On Wed, Sep 11, 2024 at 03:44:25PM +0800, Jingyi Wang wrote:
+> Document the qcom,qcs8300-tcsr compatible, tcsr will provide various
+> control and status functions for their peripherals.
+> 
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
+> Changes in v2:
+> - decoupled from the original series.
+> - Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
+> ---
+>  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git tags/audit-pr-20240911
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dc644fba3cf837f22d14991cab3c4c65af37ae21
+Best regards,
+Krzysztof
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
