@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-331015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E682197A746
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:24:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C45D97A749
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5A21F22839
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:24:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 669F82857AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F25A15B547;
-	Mon, 16 Sep 2024 18:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B375315D5C1;
+	Mon, 16 Sep 2024 18:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hcTaswU4"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ELtUFwHD"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E24B1757D;
-	Mon, 16 Sep 2024 18:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D73F15B10C;
+	Mon, 16 Sep 2024 18:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726511036; cv=none; b=jTejQ3l6qrpUH7iTZAmvw+OCoCvbiMOzjubHkdror/mR8IGLCoTYiQq1yEvqfpkO/b0tP9YBmhcnQ/JtmhpzP/pqEpUx0F0jYOixRZs5IJoldrPSGx3gRDmBXdC+TowZUXouiHEaFDULbMRX22ik96vPrtqDx69nmOqlr92+M4c=
+	t=1726511040; cv=none; b=UfWFTxgHgAfzUDVUI8vL2ONqOdR1CcgiIndNCIAqtR9FbrDI3TjbTAZ4W5dzoLDky8C6cehMiUs1aS4yE55ZUdbWAfytIVvZ3iBg4CM+YXpg8SqZ39OV8jNDkQbI6gxiSeQ64Nirs+6kDmu90mjp+/y/G4bZAcuzNxv/wwE1a5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726511036; c=relaxed/simple;
-	bh=lvG7GKZGlAtbIh7LO1HbNQHCIqQDmvFvHfX5CH6r8ts=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AYUaCTUPPSPFLzAT/i/xe1tq1AlyvCWv4oeWCwVYHmn5bu2wQVqKTZNbl4soJiA9uwKuIvmL/OU2WbVISCtgYQYBbePL4l8Ohs8Mqqi2Mj4ZNHvSKJ8gwgbE5lXGptaoot4gHcboEw9maOfu7BJlsa+y68CpYrd8b8DznV7s/rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hcTaswU4; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GEMYhU030175;
-	Mon, 16 Sep 2024 18:23:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=corp-2023-11-20; bh=GLRHOEqG7Q7gtr
-	JcCO7ITSfTUx6B8imW3hvbaVdUOnQ=; b=hcTaswU42iyygXfAx2SP7klBqh33xb
-	o/R3/cMKf7qPutA976cfY3zOXb0w88Upok1h5d0zM7j7hhGyziP3VJ5Zh8nLWUiZ
-	DmF7VqOsHUjamQyzf+eN8qIYrO6xhsINXW+pJlkkSpcclpyK6Fi+3biFkuYD9dzE
-	RwNhtnGUJBfRRKWQPF2vhSQTOakZL6Lv4vN6al9oiWDZ2sC9NZHEnIRkMC7EwQ+/
-	QXMS3AfHHNAsVEVZXNG2RaHL0e3wIstfmgIspTWa3cXpiH/t4eo6JYsVpWJe//J9
-	QeFEAwwBMi+2v3cj2UpBHMk/k7Va1oHhTZDZk9dDMzdDbhusXKTAk6XA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41n3n3c4q3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Sep 2024 18:23:41 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48GGWfXa017899;
-	Mon, 16 Sep 2024 18:23:41 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41nycvpye6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Sep 2024 18:23:41 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48GIN8ib000333;
-	Mon, 16 Sep 2024 18:23:40 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 41nycvpyds-1;
-	Mon, 16 Sep 2024 18:23:40 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Vinod Koul <vkoul@kernel.org>, Nikita Shubin <nikita.shubin@maquefel.me>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH] dmaengine: ep93xx: Fix NULL vs IS_ERR() check in ep93xx_dma_probe()
-Date: Mon, 16 Sep 2024 11:23:37 -0700
-Message-ID: <20240916182337.1986380-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726511040; c=relaxed/simple;
+	bh=vSu8t8Qbu000oREFKVL1jU2sAeGEYw6cm8ooSW1AZhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oRC8WUjTw/rEQGld5/rDIRTXz+pUrE92WZN2wbQGI2p8ydwoYbKa5ldi17J1gA+dQm6MA4laBA9ILR7owVdRIsMwLzEwDnp/lsLKkAzFXFM8zdB1j8dbUjuM3No4ko9oMA+dHAkU1v1GADGh9I2/MiMK+4aRmIbRtzfkH6bTLro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ELtUFwHD; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1726511027;
+	bh=vSu8t8Qbu000oREFKVL1jU2sAeGEYw6cm8ooSW1AZhs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ELtUFwHDSFx5eeDybuOOUSW5DVL2JFuGivZAJKCNg2PY8iT9wneukXOqoxdxog5rv
+	 Rzzlw/nFfvCPKWhuL+gOXOx/oIniHI9Bqk1PvtSStac2w6SQpNaTYTHxm2SY2LGFt5
+	 HKdq3dQJMz8y4ePhYYsZA/VtMDnTE8fHPhT0dOTk=
+Date: Mon, 16 Sep 2024 20:23:47 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, 
+	Hans de Goede <hdegoede@redhat.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, Jonathan Corbet <corbet@lwn.net>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] drm: Minimum backlight overrides and
+ implementation for amdgpu
+Message-ID: <cfec358a-ff42-49c3-a174-149bee7a461c@t-8ch.de>
+References: <20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-16_14,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- spamscore=0 mlxscore=0 phishscore=0 malwarescore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409160123
-X-Proofpoint-GUID: x1HgqPN8Iuz8wE03qSc3AmQkG-X1VSBv
-X-Proofpoint-ORIG-GUID: x1HgqPN8Iuz8wE03qSc3AmQkG-X1VSBv
+In-Reply-To: <20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net>
 
-ep93xx_dma_of_probe() returns error pointers on error. Change the NULL
-check to IS_ERR() check instead.
+Hi Harry, Leo and other amdgpu maintainers,
 
-Fixes: 5313a72f7e11 ("dmaengine: cirrus: Convert to DT for Cirrus EP93xx")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis with Smatch
----
- drivers/dma/ep93xx_dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2024-08-24 20:33:53+0000, Thomas Weißschuh wrote:
+> The value of "min_input_signal" returned from ATIF on a Framework AMD 13
+> is "12". This leads to a fairly bright minimum display backlight.
+> 
+> Introduce a quirk to override "min_input_signal" to "0" which leads to a
+> much lower minimum brightness, which is still readable even in daylight.
 
-diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
-index d084bd123c1c..ca86b2b5a913 100644
---- a/drivers/dma/ep93xx_dma.c
-+++ b/drivers/dma/ep93xx_dma.c
-@@ -1504,7 +1504,7 @@ static int ep93xx_dma_probe(struct platform_device *pdev)
- 	int ret;
- 
- 	edma = ep93xx_dma_of_probe(pdev);
--	if (!edma)
-+	if (IS_ERR(edma))
- 		return PTR_ERR(edma);
- 
- 	dma_dev = &edma->dma_dev;
--- 
-2.39.3
+could you take another look at the series?
+The issues around panel power are not specific to the low pwm values,
+so shouldn't have an impact on this series.
+(And are nearly imperceptible anyways)
 
+> One solution would be a fixed firmware version, which was announced but
+> has no timeline.
+> 
+> ---
+> Changes in v6:
+> - Clean up cover letter and commit messages
+> - Add my S-o-b to patch from Dustin
+> - Mention testing in combination with "panel_power_savings"
+> - Link to v5: https://lore.kernel.org/r/20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net
+> 
+> Changes in v5:
+> - Forward-declare struct drm_edid
+> - Reorder patches, quirk entries are last
+> - Add patch from Dustin for additional quirk entries
+> - Link to v4: https://lore.kernel.org/r/20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net
+> 
+> Changes in v4:
+> - Switch back to v2 implementation
+> - Add MODULE_DESCRIPTION()
+> - Simplify quirk infrastructure to only handle min backlight quirks.
+>   It can be extended if necessary.
+> - Expand documentation.
+> - Link to v3: https://lore.kernel.org/r/20240731-amdgpu-min-backlight-quirk-v3-0-46d40bb21a62@weissschuh.net
+> 
+> Changes in v3:
+> - Switch to cmdline override parameter
+> - Link to v2: https://lore.kernel.org/r/20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net
+> 
+> Changes in v2:
+> - Introduce proper drm backlight quirk infrastructure
+> - Quirk by EDID and DMI instead of only DMI
+> - Limit quirk to only single Framework 13 matte panel
+> - Link to v1: https://lore.kernel.org/r/20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net
+> 
+> ---
+> Dustin L. Howett (1):
+>       drm: panel-backlight-quirks: Add Framework 13 glossy and 2.8k panels
+> 
+> Thomas Weißschuh (3):
+>       drm: Add panel backlight quirks
+>       drm/amd/display: Add support for minimum backlight quirk
+>       drm: panel-backlight-quirks: Add Framework 13 matte panel
+> 
+>  Documentation/gpu/drm-kms-helpers.rst             |  3 +
+>  drivers/gpu/drm/Kconfig                           |  4 +
+>  drivers/gpu/drm/Makefile                          |  1 +
+>  drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 +++
+>  drivers/gpu/drm/drm_panel_backlight_quirks.c      | 94 +++++++++++++++++++++++
+>  include/drm/drm_utils.h                           |  4 +
+>  7 files changed, 117 insertions(+)
+> ---
+> base-commit: d2bafcf224f3911b183113b2fcb536c9e90684a3
+> change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
+> 
+> Best regards,
+> -- 
+> Thomas Weißschuh <linux@weissschuh.net>
+> 
 
