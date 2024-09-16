@@ -1,112 +1,298 @@
-Return-Path: <linux-kernel+bounces-330902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7911A97A5F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:25:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C0F97A5E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB224B2C97C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:16:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC6CE1C231EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A0B1598E9;
-	Mon, 16 Sep 2024 16:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCA115A84E;
+	Mon, 16 Sep 2024 16:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fF3GdZ9V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHJw3yq6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1A325632;
-	Mon, 16 Sep 2024 16:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3404B158A3D;
+	Mon, 16 Sep 2024 16:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726503413; cv=none; b=SZELmhEIiP2eHY7JHUTDF6ccOwxlG7GAJzpH65lNaZOMoqdEzdmRPcUwnBhFpo0MluCJT/wMrvWaIKPrrN7TOqgvueBYddyOWNniQEKwa72orWNfvtJ1YM4/44BXpMCx1f80zn0VJb1vlLwK65Ryv9jS/DzH11RAJ/CMoaRqRJY=
+	t=1726503792; cv=none; b=EMB9IahKA5HU1HS4ynDlE1X4Mijn/1Vi41Sjlizff2tAO6wTk0cJzzL+mK6qhzcumRLk+2ImXnuxdjF/rR6X98hybAc2Oa7H/yTJp+4uod5iguin/p/PtHiWqhbUR4T/Dabn3Qnvfmtf4BDuK+00g6inXfw/pA/no2awUaeFbAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726503413; c=relaxed/simple;
-	bh=2dsZBfxZCUqU/13rLMlr/WEcj9x8SDSF+0rUunk94SA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=I26aFXYYg6m57TrPV+apDpQiX3GDTnhJ9wZ1hVm4gPvBHbFz6KrlS1Ytv9W+yk97Ifk8CHmYdZxjWoXnxdXV/bAoj1bhJoerIkoOshffMQ+/WFods07pfTW0A106Pq/pCDLJVDIPTQo7umKaT8Wlm+TnFeV7hqPnA1Pwn0S589k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fF3GdZ9V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D052AC4CEC4;
-	Mon, 16 Sep 2024 16:16:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1726503412;
-	bh=2dsZBfxZCUqU/13rLMlr/WEcj9x8SDSF+0rUunk94SA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fF3GdZ9VPlwX4lesAiC7ZTq+3jJVRReGiVPIE5MBjJjMuHp9YbwAPzXF2tTkLFElo
-	 TJgqOzPMiGiU97WBpr6fxBRv+DHZ2o1/XXWoLwJR+lgADYSfBC58Xff6kkpwVK6KyW
-	 2mwInN+pTnD6WfCSXT+gQ8kDot3Qefo6x5a7LMAY=
-Date: Mon, 16 Sep 2024 09:16:47 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
-Cc: joseph.qi@linux.alibaba.com, junxiao.bi@oracle.com,
- rajesh.sivaramasubramaniom@oracle.com, ocfs2-devel@lists.linux.dev,
- stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC V4 1/1] ocfs2: reserve space for inline xattr before
- attaching reflink tree
-Message-Id: <20240916091647.dbcca9d29f081c7a4c5cd2ea@linux-foundation.org>
-In-Reply-To: <20240912064720.898600-1-gautham.ananthakrishna@oracle.com>
-References: <20240912064720.898600-1-gautham.ananthakrishna@oracle.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726503792; c=relaxed/simple;
+	bh=Qsjt7qD0LhRUGBiRx6aQesuI8S2gzTyu+mazC8eGZs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t09Ig/roTC0r9Sk/0vg4a+cvgsSvXHO+/SOy7hiG9xYbxpyr2h5NM6r+GjbshBjcdY2G9X9jWH7In/2XDm6buZX/O9KK1zKHm7PqaoiEAq++KysKe8aRbah4xMMEjLDfhHpKiVMxPw2piyQz5e1GJUFpRdU0EyJ4uDVC/KnUkMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHJw3yq6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59EBEC4CEC4;
+	Mon, 16 Sep 2024 16:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726503791;
+	bh=Qsjt7qD0LhRUGBiRx6aQesuI8S2gzTyu+mazC8eGZs4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oHJw3yq6Du6a8THTjfBM+d4m2hAUqlngMFKVz1fCpmofXGfcNpyjxyCITKIUV/LcF
+	 vDAd7NewiVOEKfcIL15Gkvu1I2dtnOMIl0CER0YobvTBOQaPmYZxLnDoOT3l46L3ks
+	 VTUVBMIyL5i5pePB21R6KzMt+j2u46qIFjSTA64Qhs8nzfWTKEN/JsptKgU0MScBE3
+	 pYEvxlWs6r3MKaeZrzctVpngytmau3LMFcXBhuILGqEgHQmdXSljPZfJJRzrKlR+4N
+	 RiMxLtay1lIna7S9koivdPpTXPx2RFSlw6fDJ3L9xwA8LJiw/xXa1MPd2faQ6euVK4
+	 dshdwQD0Bnwvg==
+Received: by pali.im (Postfix)
+	id CE16468B; Mon, 16 Sep 2024 18:23:05 +0200 (CEST)
+Date: Mon, 16 Sep 2024 18:23:05 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	CIFS <linux-cifs@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/7] cifs: Fix creating of SFU fifo and socket special
+ files
+Message-ID: <20240916162305.vy5w5albdpuvtk2x@pali>
+References: <20240912120548.15877-1-pali@kernel.org>
+ <20240912120548.15877-7-pali@kernel.org>
+ <20240913200721.7egunkwp76qo5yy7@pali>
+ <CAH2r5mvEa8mUrK7mEKFiimkb1asTWA0p7ADz4937yoxM916RAw@mail.gmail.com>
+ <20240913224248.k5tn2le3gau2prmo@pali>
+ <CAH2r5mtgV=NkZVChDY-apdqkvM9KFkraRGy_jDCpLmFU6PFMAA@mail.gmail.com>
+ <20240914081742.wlldjjlogrmk533i@pali>
+ <20240915174126.ilxwoxlsfakgnl7d@pali>
+ <CAH2r5muXcyMxc=F2WsTtwQyKZ9TL64TWEBzX7bXJqZky2g0TzA@mail.gmail.com>
+ <20240915174824.ykabgcwujtjh6lub@pali>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240915174824.ykabgcwujtjh6lub@pali>
+User-Agent: NeoMutt/20180716
 
-On Thu, 12 Sep 2024 06:47:20 +0000 Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com> wrote:
+Now I have tested this behavior against one Windows Server 2019 instance
+and it works too. So confirmed, it is the case also for 2019 version.
 
-> One of our customers reported a crash and a corrupted ocfs2 filesystem.
-> +++ b/fs/ocfs2/refcounttree.c
-> @@ -25,6 +25,7 @@
->  #include "namei.h"
->  #include "ocfs2_trace.h"
->  #include "file.h"
-> +#include "symlink.h"
->  
->  #include <linux/bio.h>
->  #include <linux/blkdev.h>
-> @@ -4155,8 +4156,9 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
->  	int ret;
->  	struct inode *inode = d_inode(old_dentry);
->  	struct buffer_head *new_bh = NULL;
-> +	struct ocfs2_inode_info *oi = OCFS2_I(inode);
->  
-> -	if (OCFS2_I(inode)->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
-> +	if (oi->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
->  		ret = -EINVAL;
->  		mlog_errno(ret);
->  		goto out;
-> @@ -4182,6 +4184,26 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
->  		goto out_unlock;
->  	}
->  
-> +	if ((oi->ip_dyn_features & OCFS2_HAS_XATTR_FL) &&
-> +	    (oi->ip_dyn_features & OCFS2_INLINE_XATTR_FL)) {
-> +		/*
-> +		 * Adjust extent record count to reserve space for extended attribute.
-> +		 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
-> +		 */
-> +		struct ocfs2_inode_info *new_oi = OCFS2_I(new_inode);
-> +
-> +		if (!(new_oi->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
-> +		    !(ocfs2_inode_is_fast_symlink(new_inode))) {
-> +			struct ocfs2_dinode *new_di = new_bh->b_data;
-> +			struct ocfs2_dinode *old_di = old_bh->b_data;
-
-fs/ocfs2/refcounttree.c: In function '__ocfs2_reflink':
-fs/ocfs2/refcounttree.c:4190:55: error: initialization of 'struct ocfs2_dinode *' from incompatible pointer type 'char *' [-Werror=incompatible-pointer-types]
- 4190 |                         struct ocfs2_dinode *new_di = new_bh->b_data;
-      |                                                       ^~~~~~
-fs/ocfs2/refcounttree.c:4191:55: error: initialization of 'struct ocfs2_dinode *' from incompatible pointer type 'char *' [-Werror=incompatible-pointer-types]
- 4191 |                         struct ocfs2_dinode *old_di = old_bh->b_data;
-      |                                                       ^~~~~~
-cc1: all warnings being treated as errors
-
-I could just add the typecasts, but that doesn't give me a tested patch :(
-
+On Sunday 15 September 2024 19:48:24 Pali Rohár wrote:
+> It works for this new 2022 version and also for old 2012 version. So my
+> personal guess is yes, that it would work also for 2019 (I do not see
+> reason why something would not work for version in-the-middle). If
+> needed, I may try to do this test against 2019 version during next or
+> another weekend.
+> 
+> On Sunday 15 September 2024 12:42:27 Steve French wrote:
+> > Do you know if this is the case for windows server 2019
+> > 
+> > On Sun, Sep 15, 2024, 12:41 PM Pali Rohár <pali@kernel.org> wrote:
+> > 
+> > > Hello Steve,
+> > >
+> > > I have another argument for the empty system file as fifo over the
+> > > file with "LnxFIFO" content.
+> > >
+> > > Now I have figured out that even the latest Windows Server 2022 version
+> > > provides interoperability of FIFOs in SFU format with Windows NFS 4.1
+> > > Server. So if you configure on Windows Server 2022 one share which is
+> > > exported over SMB and also NFS at the same time, and over SMB you create
+> > > SFU-style fifo, then Windows NFS4.1 server recognize it and properly
+> > > reports nfs4type as NFS4FIFO for NFSv4.1 client.
+> > >
+> > > So this SFU FIFO style is not only for old clients and servers, but
+> > > still relevant and useful even for latest Windows Server.
+> > >
+> > > And same applies for named sockets.
+> > >
+> > > For testing this scenario it is enough to use just trial version of
+> > > latest Windows Server from:
+> > > https://go.microsoft.com/fwlink/p/?linkid=2208182
+> > > https://go.microsoft.com/fwlink/p/?Linkid=2195280
+> > >
+> > > For setting NFS4.1 and SMB share named "test" I used these cmd commands:
+> > >
+> > >   dism /Online /Enable-Feature /All
+> > > /FeatureName:ServerForNFS-Infrastructure
+> > >   md C:\test
+> > >   icacls C:\test /grant Everyone:(OI)(CI)F /T
+> > >   nfsshare test=C:\test -o rw unmapped=yes
+> > >   net share test=C:\test /grant:Everyone,FULL
+> > >
+> > > (for everyone who is going to reproduce this scenario, beware that new
+> > > Windows servers use by default powershell, so first launch cmd.exe then
+> > > copy+paste those commands)
+> > >
+> > > Pali
+> > >
+> > > On Saturday 14 September 2024 10:17:42 Pali Rohár wrote:
+> > > > On Saturday 14 September 2024 01:21:17 Steve French wrote:
+> > > > > On Fri, Sep 13, 2024 at 5:42 PM Pali Rohár <pali@kernel.org> wrote:
+> > > > > >
+> > > > > > On Friday 13 September 2024 17:14:22 Steve French wrote:
+> > > > > > > How did you find the format of the FIFO and SOCK file types?  I
+> > > > > >
+> > > > > > For fifo there are multiple sources on internet, but none of them is
+> > > > > > normative. Everything is just what people have tried. For example
+> > > this
+> > > > > > old email on samba list:
+> > > > > >
+> > > https://lists.samba.org/archive/linux-cifs-client/2005-May/000856.html
+> > > > > >
+> > > > > > Format of the socket I have figured out by creating it in Interix
+> > > > > > subsystem and then dumped content of the file from Win32 subsystem.
+> > > > > > Then I checked that it has also same format over older MS NFS server.
+> > > > > > It was easier than trying to search for some documentation (which I
+> > > have
+> > > > > > not found).
+> > > > > >
+> > > > > > > couldn't find any references to those so added two new types to
+> > > allow
+> > > > > > > current Linux to be able to create these (especially since they are
+> > > > > > > opaque to the server and thus low risk).
+> > > > > >
+> > > > > > I was searching over internet again and now I have found patent
+> > > > > > https://patents.google.com/patent/US20090049459 which describe
+> > > symlink
+> > > > > > content:
+> > > > > >
+> > > > > > #define NFS_SPECFILE_LNK_V1 0x014b4e4c78746e49 /* “IntxLNK” */
+> > > > > >
+> > > > > > But does not describe other types.
+> > > > > >
+> > > > > > > > +     case S_IFSOCK:
+> > > > > > > > -             strscpy(pdev.type, "LnxSOCK");
+> > > > > > > > +             /* SFU socket is system file with one zero byte */
+> > > > > > > > +             pdev_len = 1;
+> > > > > > > > +             pdev.type[0] = '\0';
+> > > > > > > >               break;
+> > > > > > > >       case S_IFIFO:
+> > > > > > > > -             strscpy(pdev.type, "LnxFIFO");
+> > > > > > > > +             /* SFU fifo is system file which is empty */
+> > > > > > > > +             pdev_len = 0;
+> > > > > > >
+> > > > > > > My worry about the suggested change above is that it is possible
+> > > that
+> > > > > > > we could accidentally match to an empty file.
+> > > > > >
+> > > > > > I fully understand your concerns, but code in this patch is for
+> > > creating
+> > > > > > new fifos. Not recognizing existing fifos.
+> > > > > >
+> > > > > > Code for recognizing existing fifos (=empty file with system
+> > > attribute)
+> > > > > > was not changed and is in Linux cifs client for a very long time.
+> > > > > <>
+> > > > > > > We intentionally added
+> > > > > > > the two new dev.type fields for these to avoid collisions with
+> > > other
+> > > > > > > things (and since they are Linux specific).  It seems risky to
+> > > have an
+> > > > > > > empty file with the system attribute marked as a FIFO, and
+> > > similarly a
+> > > > > > > file with one byte null as Socket.   Since this is for only the
+> > > Linux
+> > > > > > > client to recognize, I wanted to do something safe for those file
+> > > > > > > types less likely to be confusing (ie strings for Socket and FIFO
+> > > that
+> > > > > > > were similar in length and format to the other special files seemed
+> > > > > > > intuitive) and "LnxFIFO" and LnxSOCK" were used as the tags in the
+> > > > > > > file to reduce confusion ie the tags for those two start with
+> > > "Lnx" -
+> > > > > > > ie "something used for Linux client" not related to the original
+> > > > > > > Interix (those begin with "Intx").
+> > > > > >
+> > > > > > I see. Now I understand what are those types (as I have not seen them
+> > > > > > before). It is somehow misleading if such "LnxFIFO" and LnxSOCK"
+> > > > > > functionality is provided by SFU option, but is incompatible with MS
+> > > SFU
+> > > > > > and also with MS NFS server. And is also incompatible with older
+> > > Linux
+> > > > > > cifs clients (as they do not understand those Lnx types).
+> > > > >
+> > > > > I am not as worried about FIFO and SOCK type being recognized by
+> > > > > older servers (since almost every use case for them would be for them
+> > > > > to be seen (only) by the client - e.g. for mounts to servers that
+> > > > > don't implement reparse points yet), and since they are less
+> > > > > common file types I am willing to let them be unrecognized by
+> > > > > old clients (we can tag them for stable if older distros don't have
+> > > > > them),
+> > > >
+> > > > This is quite pity for old clients, to break existing interoperability.
+> > > > At least I see sfu as an compatibility option either for ecosystem with
+> > > > old clients, or option where server itself does not support reparse
+> > > > points.
+> > > >
+> > > > > but I am concerned about allowing "current clients" to
+> > > > > create empty files for an unusual purpose which could be
+> > > > > confusing/non-intuitive.
+> > > >
+> > > > I understand this concern. I thought that this should not be an issue
+> > > > because files are created with system attribute which is not common for
+> > > > normal/ordinary usage (system attribute could be less confusing) and
+> > > > also because this format, at least for fifo is used and understood by
+> > > > many SW for about 30 years.
+> > > >
+> > > > > And since this change (at least the one to allow FIFOs to be created
+> > > with "sfu"
+> > > > > has been in mainline for a year and also since it uses a more
+> > > intuitive tag
+> > > > > ("LnxFIFO") than the empty one used by very old Windows) the only
+> > > > > clients who would have created these would be already using this newer
+> > > tag
+> > > > > (older Linux clients couldn't have created such files - there seems
+> > > more
+> > > > > risk of regression with reverting the change than with continuing with
+> > > > > the Linux client specific tag (at least to the one for FIFOs
+> > > > > since that has been in much longer than the socket one which is recent)
+> > > >
+> > > > This kind of stuff is lot of times used on LTS/stable linux
+> > > > distributions and new kernel to these users/admins do not have to be
+> > > > delivered yet. Mostly it takes 2-3 years after release. Look for example
+> > > > at RHEL cycles.
+> > > >
+> > > > I'm looking on this from opposite perspective. I see this an regression
+> > > > in -o sfu option that after upgrading from previous LTS version to new,
+> > > > -o sfu stopped to be compatible with SFU-style fifos.
+> > > >
+> > > > But your point is valid. But maybe it is not an issue because users
+> > > > do not have updated yet to new version?
+> > > >
+> > > > > Will discuss with others - opinions welcome.
+> > > > >
+> > > > > There is an upcoming SMB3.1.1 test event coming up next week (and the
+> > > annual
+> > > > > Storage Developer Conference too) so I can see if others have opinions
+> > > one
+> > > > > way or another on whether to move to empty (or 1 byte) files for
+> > > > > creating fifos/sockets
+> > > >
+> > > > Ok, perfect, let me know then about the result.
+> > > >
+> > > > > > > Note that in the long run we hope to use reparse points by default
+> > > in
+> > > > > > > more servers to store special files like this but there are a few
+> > > > > > > cases for unusual workloads that need special file support that
+> > > would
+> > > > > > > have to use sfu still.  The newer reparse tags that Windows uses
+> > > "WSL"
+> > > > > > > have the advantage that they require fewer roundtrips to query
+> > > (since
+> > > > > > > the file type is in the reparse tag).
+> > > > > >
+> > > > > > Yes, new WSL tags seems to be better. Also SFU mount option is not
+> > > > > > activated by default.
+> > > > > >
+> > > > > > > Also noticed an interesting problem when mounted with "sfu" -
+> > > > > > > "smbgetinfo filebasicinfo /mnt/fifo1" will hang (in sys_open).  Is
+> > > > > > > that expected for a FIFO?
+> > > > > >
+> > > > > > Reading from fifo sleep reading process until some other process
+> > > write
+> > > > > > data to fifo. This is how fifos are working. You can try it on local
+> > > > > > filesystem (e.g. ext4 or tmpfs).
+> > > > >
+> > > > > makes sense - thx
+> > >
 
