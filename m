@@ -1,116 +1,81 @@
-Return-Path: <linux-kernel+bounces-330951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513E797A66A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E595797A689
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C0E1F2225F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA271F27E36
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A9C155CBA;
-	Mon, 16 Sep 2024 17:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA591159598;
+	Mon, 16 Sep 2024 17:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ONHj/8w+"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EFB1CA85
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 17:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	dkim=pass (1024-bit key) header.d=iguana.be header.i=@iguana.be header.b="urL8RVFW"
+Received: from infomag.iguana.be (infomag.iguana.be [185.87.124.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFAE15852F;
+	Mon, 16 Sep 2024 17:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.124.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726506088; cv=none; b=XethqA6TV528x52u3Ud/rQzA1s9aSGRWrWaBmvTWsFAVr17ej44c0aZO677qoKIoSKPaeL4SfSgmjIoMYLMyQc39Ba3mzG8GuthqhKmavsxh/FkB4ashqAHc8/vJkhmMMQtLI3DYu7EpgfsUqzay4ulIxhAInEAFGhbnNuPTyIo=
+	t=1726506831; cv=none; b=Csjf+qTR+30VpcA/9ZO/MUijvnIpel904Ih2yIoBld/P0fN6fYnKV0cUVWleIhKvlGWe4Y7MHTkKbKmrQ7Q+gfwHOaaJ7fuTwZKB/qXNOmWCGkEoST999oMnP3F0hbAC2/6IK/YSJnO1zQEOAUtm/7s+XgY8zoaQENN6X7giNdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726506088; c=relaxed/simple;
-	bh=48e6Kxirghoxt/50oW26tPAHg2OJLSQ3Ti0IeTafAPQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BQRuDH2oynOgzY8yUS8SQAQLJpqIHSxQxTY1kHSj3f3AkIIhwLV2cKx91ADx7G/8LQcvanRuBJmYI/Y/9X+DzgGxiRsCj4ePPxxPA7mgDLSGOtH3X/5mH9vjJW4ZOwvZoiKKJsv4t1M4QXN6XfEzikRmjj0/UoCwpltxVla8oTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ONHj/8w+; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a843bef98so459853266b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726506084; x=1727110884; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=48e6Kxirghoxt/50oW26tPAHg2OJLSQ3Ti0IeTafAPQ=;
-        b=ONHj/8w+3WLaTJxBab6E0nedoScCQmG5huM/R4oH9NJtJcsIMnptjetDAbCx0suCcF
-         JKnld82j3jZsIfLS2diouFHmUgVr2qq1RgZl2KDoF6IrHe7oyMjcTc/JLb4B65Eqfinm
-         hKfRpiCZlGlTzcfQUUHmxBaLW+lhBmssx7FyN0IOYkY04rJ3ox3CGKQWDZxdEhb+yDNW
-         kutZTcp3kpqPqcAkC7iSZt5Jfs+75ZOYFdZ8iJaDFwm99wslrKEtmByuT+yPAuaTYUaB
-         kWHALzuqatYR2jaw2J1qd365yXcIIxjI5r7HhNJAobnavqu376XVJkvb3w0nEvz41mpy
-         REiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726506084; x=1727110884;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=48e6Kxirghoxt/50oW26tPAHg2OJLSQ3Ti0IeTafAPQ=;
-        b=BrAZmSN7lsgbJGk/fFBJr7ewPhcB+DGExLuX+T9gy/n6pboEdtnWyLMrYqnQmyNhtD
-         ngO3ZGR/rymnKLG74RpgTB/yGvXUoUkdLjEusw91myEMW3wQuseZtCrS6pdXmfZ+axK5
-         IQ+8l0HCOBM/7PGVGVmpCPmfv0MgFcuT9SEvF28OauvPar9l1Bfo2OkNNNm1fnneSH8H
-         n5ZX9HxoEiBi9y38lNpJdv1bR/PmSD/ywkTbuShSvgMXpPDH1kCelXJdwqs5AyMU262x
-         JwNlRo4GYWPH2WSRKx143cwyJMfeA8hlXsEGe9SYl5yrcSlQEztHm7LJA2hHBr+BoFFA
-         YqVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGanQoAhRXFRwaTV7jpmzYHotbG3B+TV9D1hTNNLPEkWlwHxxQz1iYq2NNtQXvXSJYWhELerhVRX7sBIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7hDxqMrI728QUn+qQ4t6qRYNDXkRC7XJ4WdIlUIGpvH+fWkqG
-	qplq9trS2fL2gM08fhLxsnDC/GcpNL9zFFvd3VFiqqOHs2XTBmsjqgWbi/uvjYQ=
-X-Google-Smtp-Source: AGHT+IGe1TfoP2o2Ws9yKVCIHm4ikg6tF6P50uYijZWW42Vu7qlvA6T51QZHhAyvGZGYqDh7YI/JJg==
-X-Received: by 2002:a17:906:d54a:b0:a8d:439d:5c3c with SMTP id a640c23a62f3a-a9047b4750cmr1204277866b.8.1726506083760;
-        Mon, 16 Sep 2024 10:01:23 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b38desm340386566b.121.2024.09.16.10.01.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 10:01:22 -0700 (PDT)
-Message-ID: <1ab324b0702c87371b9e92a72dc639d49ec055d0.camel@linaro.org>
-Subject: Re: [PATCH 0/2] Maxim MAX20339 regulator driver
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Michael Walle <mwalle@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Date: Mon, 16 Sep 2024 18:01:21 +0100
-In-Reply-To: <20240916-max20339-v1-0-b04ce8e8c471@linaro.org>
-References: <20240916-max20339-v1-0-b04ce8e8c471@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	s=arc-20240116; t=1726506831; c=relaxed/simple;
+	bh=bs6H9LVoKvWDPryXbzuVFI1ASqkGV4XKUggrjo3zfiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQ142duhRaX9Mf7+zzTwOay+qKbl5Qy2VdpMtiTi7vNFFA80gtW6H0TgByI4qVH/PKoLjtECKwnPNnfM7LQCsu8+QY/bmJ8AXu4Q8vHhs93MkfPUrBWJhpz9HiCrbw6mclkFPju9/qtjbl30KDuU1owHkFteqcC+WePXuJkAWjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iguana.be; spf=none smtp.mailfrom=iguana.be; dkim=pass (1024-bit key) header.d=iguana.be header.i=@iguana.be header.b=urL8RVFW; arc=none smtp.client-ip=185.87.124.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iguana.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iguana.be
+Received: by infomag.iguana.be (Postfix, from userid 1001)
+	id 7045F603CACE; Mon, 16 Sep 2024 19:04:29 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 infomag.iguana.be 7045F603CACE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iguana.be;
+	s=infomag-20180602; t=1726506269;
+	bh=bs6H9LVoKvWDPryXbzuVFI1ASqkGV4XKUggrjo3zfiA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=urL8RVFWwZBSYYBubkVtaJaoukvFNMA0k+tDNNxUixT17/Fl63ksNXcAiG2WgKXHk
+	 90/txqQl78F+T4Up2uOASzJ9VP9MtBveoj/HPSS8Sj5Kk+HwDACZzuYfwAiQweHZpZ
+	 rxnYNOGWRHb/l3jIcLeJiWQ/9WlZpuLtoWFCIQts=
+Date: Mon, 16 Sep 2024 19:04:29 +0200
+From: Wim Van Sebroeck <wim@iguana.be>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rob Herring <robh@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the devicetree tree
+Message-ID: <20240916170429.GA16395@infomag.iguana.be>
+References: <20240916160127.60a93bdf@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916160127.60a93bdf@canb.auug.org.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Mon, 2024-09-16 at 17:48 +0100, Andr=C3=A9 Draszik wrote:
-> Hi,
->=20
-> This series adds a regulator driver for the Maxim MAX20339 overvoltage
-> protector with load switches.
->=20
-> The MAX20339 is an overvoltage protection (OVP) device with integrated
-> load switches and ESD Protection for USB Type-C applications. It
-> protects low voltage systems against voltage faults and surges. It also
-> integrates two load switches with current limiting, configurable by
-> hard- and software.
->=20
-> It is used on the Google Pixel 6 (oriole).
->=20
-> To make maintainers' work easier, the relevant DTS and defconfig
-> changes will be sent via a different series.
+Hi Stephen,
 
-For reference, DTS and related changes for Pixel 6 are in
-https://lore.kernel.org/all/20240916-max20339-dts-v1-0-2f7ed7c24e83@linaro.=
-org/
+> Hi all,
+> 
+> The following commit is also in the watchdog tree as a different commit
+> (but the same patch):
+> 
+>   0a543ac529fe ("dt-bindings: watchdog: qcom-wdt: document support on SA8255p")
+> 
+> This is commit
+> 
+>   f051e2e409d6 ("dt-bindings: watchdog: qcom-wdt: document support on SA8255p")
+> 
+> in the watchdog tree.
 
-Cheers,
-Andre'
+Patch removed from the linux-watchdog-next tree.
+
+Kind regards,
+Wim.
 
 
