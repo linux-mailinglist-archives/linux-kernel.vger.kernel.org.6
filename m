@@ -1,227 +1,154 @@
-Return-Path: <linux-kernel+bounces-330558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AFE297A024
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:18:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D18597A028
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FC201C21B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:18:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3582F283636
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43EF14F126;
-	Mon, 16 Sep 2024 11:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="gEIhxDSb"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28E113A89B;
-	Mon, 16 Sep 2024 11:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E77153824;
+	Mon, 16 Sep 2024 11:19:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BAD13A89B;
+	Mon, 16 Sep 2024 11:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726485518; cv=none; b=cDsSZZ7ksG+ZsVqczLZPMFEwfzHEXAa4TvykOZX39HjONbdSNLBzHufFmmnsc026dhQqQ27De/TqSKcQOnI7FIMOYFe5Xe5XzwVwifG2/11uG89cDdPdTit2BbocNLQ681elYk2/wrbsJ9HvGoTnRQNWj8ZeETa5UAhKkq58EMI=
+	t=1726485594; cv=none; b=o2doxUmiul2dwQlkVcKnyJ8Isn8XdOJ6/myT4BrbsADvearY3iD7s/9aCpz4q/pHTR++a/dEjxJQ3ThYz/qZMliGI2R5II6ZpsS9rBzPXWw7WGjJzqUxVp9DEytfZHn1hIm7/B9Kmi8dgymDISJ8/v09JNgQOqz6Lwc2N0pREF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726485518; c=relaxed/simple;
-	bh=MplaQvoiPNLVBFxKT82dzAIR+YzcNVzY78B5f9SeNCI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJR5VKAwA6xFtMqhKMM/JP0NNhaHttan5aH7ydEE1UiZ7V5I9rUIazcmtzFg56FdHJb96TQ9o+/pCb9wnRlxRc11BY6mKc5LmPk6gi4AkBZxB0o9+6lmOCgqDJ73JW5yaQy5iVt+CfncmZIDLA+qI40TWXXxIN7fpbiYIZNj7uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=gEIhxDSb; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 190AC120012;
-	Mon, 16 Sep 2024 14:18:17 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 190AC120012
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1726485497;
-	bh=d6bOVb21gpYmK70zPvijjIAYgU/fptSjrdK2mV/ria0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=gEIhxDSb7jkJ2bv9HXpfbiSIDQrq1ytfQ2prM55e9YN0uYwvYg/XjbGNExKaiXmuy
-	 MlE65eGRKKclKIo/TI56VE6yjwQQymH014OlkhwzSEAG51OjsmocJeEG3pjbygUPzZ
-	 3WnpatVZu5gaRN5Yxj1ypxr5ZJYkg+CdS1v8tBOgAxR5hpVAH5Tjo1ZuYQWIj4DXaP
-	 UxE5GCeMCOebNqeuKDnEi1VX0Tf0VKu8rkzCkylfMeCOfnFun6iUhLEr+Bv0tXxTUW
-	 GgkJHv9/Pug03L3s7C13b199yD/kvDf1Kc9c4S/wt5NiEzkL8xOl+6pW2KNPE18V5R
-	 gjQuZXmRULdLA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 16 Sep 2024 14:18:14 +0300 (MSK)
-Date: Mon, 16 Sep 2024 14:18:02 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: <pavel@ucw.cz>, <lee@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-	<kernel@salutedevices.com>, <rockosov@gmail.com>, Alexey Romanov
-	<avromanov@salutedevices.com>
-Subject: Re: [PATCH v2] leds: introduce ordered workqueue for leds events
- instead of system_wq
-Message-ID: <20240916111733.c5rp4l666rtdz7bt@CAB-WSD-L081021>
-References: <20240903223936.21292-1-ddrokosov@salutedevices.com>
+	s=arc-20240116; t=1726485594; c=relaxed/simple;
+	bh=ZoK3q31s4/59pAlwuI5842tk/+O0v/TuLdfdgn6gGvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eI6g2yfw1KN4J6AwipEm+TpAGd2U/ZUUeNscu0pJqL1jNkFhCeCj3tKHe9gKGPJBLCu8ck3fWEHZrz5r4tRVu7dVoVlQqnP5zjM0abNw2GA9F8CL+2Y3sCleJiqnnE2XjKvuxDFitavn75tAPl0Yu8r2/RXcrFN+6rwK6boORmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4991311FB;
+	Mon, 16 Sep 2024 04:20:21 -0700 (PDT)
+Received: from [10.57.76.90] (unknown [10.57.76.90])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF9533F64C;
+	Mon, 16 Sep 2024 04:19:48 -0700 (PDT)
+Message-ID: <0b748c7d-0800-4352-97b9-4940f115cec9@arm.com>
+Date: Mon, 16 Sep 2024 12:19:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240903223936.21292-1-ddrokosov@salutedevices.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187764 [Sep 16 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/09/16 10:09:00
-X-KSMG-LinksScanning: Clean, bases: 2024/09/16 10:10:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/16 05:22:00 #26594998
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/5] drm/panthor: record current and maximum device
+ clock frequencies
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+References: <20240913124857.389630-1-adrian.larumbe@collabora.com>
+ <20240913124857.389630-3-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240913124857.389630-3-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Lee!
-
-What are the next steps? Should I make any changes, or are we waiting
-for test results from the mailing list members?
-
-Sorry for the ping.
-
-On Wed, Sep 04, 2024 at 01:39:30AM +0300, Dmitry Rokosov wrote:
-> This allows to setup ordered workqueue for leds events. This may be
-> useful, because default 'system_wq' does not guarantee execution order
-> of each work_struct, thus for several brightness update requests (for
-> multiple leds), real brightness switch could be in random order.
+On 13/09/2024 13:42, Adrián Larumbe wrote:
+> In order to support UM in calculating rates of GPU utilisation, the current
+> operating and maximum GPU clock frequencies must be recorded during device
+> initialisation, and also during OPP state transitions.
 > 
-> Yes, for sysfs-based leds we have flush_work() call inside
-> brightness_store() operation, but it's blocking call, so userspace
-> caller can be blocked at a long time, which means leds animation stream
-> can be broken.
-> 
-> Ordered workqueue has the same behaviour as system_wq + flush_work(),
-> but all scheduled works are async and userspace caller is not blocked,
-> which it better for userspace animation scheduling.
-> 
-> Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
-> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+
+Reviewed-by: Steven Price <steven.price@arm.com>
+
 > ---
-> Changes v2 since v1 at [1]:
->     - replace "leds" with "LEDs" in the log message
+>  drivers/gpu/drm/panthor/panthor_devfreq.c | 18 +++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_device.h  |  6 ++++++
+>  2 files changed, 23 insertions(+), 1 deletion(-)
 > 
-> Links:
->     [1] https://lore.kernel.org/all/20240820155407.32729-1-ddrokosov@salutedevices.com/
-> ---
->  drivers/leds/led-class.c | 12 +++++++++++-
->  drivers/leds/led-core.c  |  6 +++---
->  include/linux/leds.h     |  1 +
->  3 files changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index c66d1bead0a4..b5e28ad54f7f 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -25,6 +25,8 @@
->  static DEFINE_MUTEX(leds_lookup_lock);
->  static LIST_HEAD(leds_lookup_list);
->  
-> +static struct workqueue_struct *leds_wq;
-> +
->  static ssize_t brightness_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
+> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
+> index c6d3c327cc24..9d0f891b9b53 100644
+> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
+> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
+> @@ -62,14 +62,20 @@ static void panthor_devfreq_update_utilization(struct panthor_devfreq *pdevfreq)
+>  static int panthor_devfreq_target(struct device *dev, unsigned long *freq,
+>  				  u32 flags)
 >  {
-> @@ -57,7 +59,6 @@ static ssize_t brightness_store(struct device *dev,
->  	if (state == LED_OFF)
->  		led_trigger_remove(led_cdev);
->  	led_set_brightness(led_cdev, state);
-> -	flush_work(&led_cdev->set_brightness_work);
+> +	struct panthor_device *ptdev = dev_get_drvdata(dev);
+>  	struct dev_pm_opp *opp;
+> +	int err;
 >  
->  	ret = size;
->  unlock:
-> @@ -548,6 +549,8 @@ int led_classdev_register_ext(struct device *parent,
+>  	opp = devfreq_recommended_opp(dev, freq, flags);
+>  	if (IS_ERR(opp))
+>  		return PTR_ERR(opp);
+>  	dev_pm_opp_put(opp);
 >  
->  	led_update_brightness(led_cdev);
->  
-> +	led_cdev->wq = leds_wq;
+> -	return dev_pm_opp_set_rate(dev, *freq);
+> +	err = dev_pm_opp_set_rate(dev, *freq);
+> +	if (!err)
+> +		ptdev->current_frequency = *freq;
 > +
->  	led_init_core(led_cdev);
->  
->  #ifdef CONFIG_LEDS_TRIGGERS
-> @@ -666,12 +669,19 @@ EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
->  
->  static int __init leds_init(void)
->  {
-> +	leds_wq = alloc_ordered_workqueue("leds", 0);
-> +	if (!leds_wq) {
-> +		pr_err("failed to create LEDs ordered workqueue\n");
-> +		return -ENOMEM;
-> +	}
-> +
->  	return class_register(&leds_class);
+> +	return err;
 >  }
 >  
->  static void __exit leds_exit(void)
->  {
->  	class_unregister(&leds_class);
-> +	destroy_workqueue(leds_wq);
->  }
+>  static void panthor_devfreq_reset(struct panthor_devfreq *pdevfreq)
+> @@ -130,6 +136,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>  	struct panthor_devfreq *pdevfreq;
+>  	struct dev_pm_opp *opp;
+>  	unsigned long cur_freq;
+> +	unsigned long freq = ULONG_MAX;
+>  	int ret;
 >  
->  subsys_initcall(leds_init);
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 89c9806cc97f..9769ac49be20 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -266,7 +266,7 @@ void led_blink_set_nosleep(struct led_classdev *led_cdev, unsigned long delay_on
->  		led_cdev->delayed_delay_on = delay_on;
->  		led_cdev->delayed_delay_off = delay_off;
->  		set_bit(LED_SET_BLINK, &led_cdev->work_flags);
-> -		schedule_work(&led_cdev->set_brightness_work);
-> +		queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
->  		return;
->  	}
+>  	pdevfreq = drmm_kzalloc(&ptdev->base, sizeof(*ptdev->devfreq), GFP_KERNEL);
+> @@ -161,6 +168,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>  		return PTR_ERR(opp);
 >  
-> @@ -297,7 +297,7 @@ void led_set_brightness(struct led_classdev *led_cdev, unsigned int brightness)
->  		 */
->  		if (!brightness) {
->  			set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
-> -			schedule_work(&led_cdev->set_brightness_work);
-> +			queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
->  		} else {
->  			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
->  				&led_cdev->work_flags);
-> @@ -333,7 +333,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
->  		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
->  	}
+>  	panthor_devfreq_profile.initial_freq = cur_freq;
+> +	ptdev->current_frequency = cur_freq;
 >  
-> -	schedule_work(&led_cdev->set_brightness_work);
-> +	queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
->  }
->  EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
+>  	/* Regulator coupling only takes care of synchronizing/balancing voltage
+>  	 * updates, but the coupled regulator needs to be enabled manually.
+> @@ -204,6 +212,14 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
 >  
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 6300313c46b7..7c9f1cb12ab9 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -169,6 +169,7 @@ struct led_classdev {
->  	int			 new_blink_brightness;
->  	void			(*flash_resume)(struct led_classdev *led_cdev);
+>  	dev_pm_opp_put(opp);
 >  
-> +	struct workqueue_struct *wq; /* LED workqueue */
->  	struct work_struct	set_brightness_work;
->  	int			delayed_set_value;
->  	unsigned long		delayed_delay_on;
-> -- 
-> 2.43.0
-> 
+> +	/* Find the fastest defined rate  */
+> +	opp = dev_pm_opp_find_freq_floor(dev, &freq);
+> +	if (IS_ERR(opp))
+> +		return PTR_ERR(opp);
+> +	ptdev->fast_rate = freq;
+> +
+> +	dev_pm_opp_put(opp);
+> +
+>  	/*
+>  	 * Setup default thresholds for the simple_ondemand governor.
+>  	 * The values are chosen based on experiments.
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index a48e30d0af30..2109905813e8 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -184,6 +184,12 @@ struct panthor_device {
+>  
+>  	/** @profile_mask: User-set profiling flags for job accounting. */
+>  	u32 profile_mask;
+> +
+> +	/** @current_frequency: Device clock frequency at present. Set by DVFS*/
+> +	unsigned long current_frequency;
+> +
+> +	/** @fast_rate: Maximum device clock frequency. Set by DVFS */
+> +	unsigned long fast_rate;
+>  };
+>  
+>  /**
 
--- 
-Thank you,
-Dmitry
 
