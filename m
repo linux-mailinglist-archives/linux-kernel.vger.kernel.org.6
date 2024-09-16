@@ -1,91 +1,107 @@
-Return-Path: <linux-kernel+bounces-330397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A686979DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:10:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F05979DF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A692812DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 203CD1C21FBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B7114A095;
-	Mon, 16 Sep 2024 09:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ifszd/5b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909021494BB;
+	Mon, 16 Sep 2024 09:10:52 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F195476B;
-	Mon, 16 Sep 2024 09:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0801A28C;
+	Mon, 16 Sep 2024 09:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726477801; cv=none; b=WoC71f60Ctiar25nNcrwvaZlaIVBQ8JWBMzoLM0RTXPusplpHioQ3dekmneHXKG5hoaULEYFra5bS6pHwksBsOGi6k+kUntuvpCDxxvTle1Ssr3Spm0zTYUbifLQeQgCUjWKSpdYsfyo9qjPWKQUHZ3oMWypZgcOP+iajHDQI+I=
+	t=1726477852; cv=none; b=SRPZIoBxIlqJ0WnnjKeUqRmexJ3JOMDqvI+hZHPIOnInAN4hk0gfrVdHswpz/x6SjAdu/Mi7nrp2Lq+qaNrBskNVusNJZ2jwl7wneaaCYzApe6ORpsXKVVM+SHRtbNfsRE1/L2B4q1GOAzSX7DRQtWeszc5/DV7cU+pgi8hLvXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726477801; c=relaxed/simple;
-	bh=ONqZl6C9+SC1X648huCoHAghc9uia2nzJ+bhJls5Sds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F7Mj5IFBzwHODj1ETVLYSD084ZdkS9cYA7zTQ9Wp10CnbXi6ebhZZH3aVYQ1vC+7qecGor+9RwLFYX0o1b4M+i/I2Rio10nm1kjwvaIGYVSiDjvqZE4el2TZ1M9r+Vid2MDWVMvTXm370i48Vv6hZ8hbrPBaJrhBSzarEj1Ggpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ifszd/5b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DCDAC4CEC4;
-	Mon, 16 Sep 2024 09:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726477800;
-	bh=ONqZl6C9+SC1X648huCoHAghc9uia2nzJ+bhJls5Sds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ifszd/5bBzotwBrw9X54H47h4CDgIg0rfIXAvpXq43kD8mGl7Mee/Wbszn1Ce5o/H
-	 D2fSN1NVAUS+hRqIiCiVT1Id+C/tjEQA4psHvyF5yUzdJkTi2RA+84xsqo5Sud2lR+
-	 KTpQ8A5XbcHPEnetz+bXsjkgF+p+RjaoVVr3nwFcctFiUhmcgGeArtF4RS+bzcJ1fx
-	 oAmRuYIh0zPK251BpzdomeAoM7GqINOltXYvAg5y/VxrLQfgKDan84ZQchnGn+SDff
-	 kWgNgsolsrztSSM3BXj8zFZYasn7EE5Mj9gS3gp59szQ1P3HaGmHBXT+QuQoGHrbqs
-	 Rhhdd6Jyidv8Q==
-Date: Mon, 16 Sep 2024 11:09:57 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 08/27] mfd: max77693: remove unused declarations
-Message-ID: <wywp6vj2pqqe7to55k7ssh5sbqrmy7emvwruvm2waytancf3r4@aygtw3y6huwx>
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-8-2d2efd5c5877@gmail.com>
+	s=arc-20240116; t=1726477852; c=relaxed/simple;
+	bh=HhVA/UfFZpsHqsd2nCV7wZbaAQSuck3g1WZ5ATB/m/U=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CiAWyrSbz/534yQLpLlprl4t58nazA8CrahLawbkO7VLG7YGuspzHTez16XsFQ0505CAsqa/M9y6S2ug2Ha0kbRC4Y0aaNZazCPxOvH5X9K+X1j18HAATaJLWg9Xb1iTvM7e7F9m3+OyahTIpZ3k9vJvX5Vu3kdhN2Ld3WQMmfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 16 Sep
+ 2024 17:10:39 +0800
+Received: from twmbx02.aspeed.com (192.168.10.152) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Mon, 16 Sep 2024 17:10:39 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: <ryan_chen@aspeedtech.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <p.zabel@pengutronix.de>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>
+Subject: [PATCH v3 0/4] Add support for AST2700 clk driver
+Date: Mon, 16 Sep 2024 17:10:35 +0800
+Message-ID: <20240916091039.3584505-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240913-starqltechn_integration_upstream-v4-8-2d2efd5c5877@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, Sep 13, 2024 at 06:07:51PM +0300, Dzmitry Sankouski wrote:
-> Remove `enum max77693_irq_source` declaration because unused.
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
->  include/linux/mfd/max77693-private.h | 11 -----------
->  1 file changed, 11 deletions(-)
+This patch series is add clk driver for AST2700.
 
-Please split your patchset per subsystems. There is no dependency on MFD
-bits from your DTS... (if there is, this needs to be fixed anyway)
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+v3:
+-yaml: v2 missing send yaml patch, v3 add.
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number.
+-dt-bindings: merge clk and reset to be one patch.
+-reset-aspeed: add auxiliary device for reset driver.
+-clk-ast2700: modify reset to be auxiliary add.
+-clk-ast2700: modify to be platform driver.
+-clk-ast2700: modify each clk to const clk array.
 
-Best regards,
-Krzysztof
+v2:
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number
+-clk-ast2700: drop WARN_ON, weird comment.
+
+Ryan Chen (4):
+  dt-bindings: mfd: aspeed: support for AST2700
+  dt-bindings: Add AST2700 bindings
+  reset: aspeed: register AST2700 reset auxiliary bus device
+  clk: aspeed: add AST2700 clock driver.
+
+ .../bindings/mfd/aspeed,ast2x00-scu.yaml      |   13 +-
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1548 +++++++++++++++++
+ drivers/reset/Kconfig                         |    6 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-aspeed.c                  |  259 +++
+ .../dt-bindings/clock/aspeed,ast2700-clk.h    |  163 ++
+ .../dt-bindings/reset/aspeed,ast2700-reset.h  |  124 ++
+ 9 files changed, 2121 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 drivers/reset/reset-aspeed.c
+ create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+ create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
+
+-- 
+2.34.1
 
 
