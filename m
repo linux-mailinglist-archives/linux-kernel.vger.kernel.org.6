@@ -1,94 +1,62 @@
-Return-Path: <linux-kernel+bounces-330776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE9797A42A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:31:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FBE97A41E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ED10B2C343
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:26:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E16428507B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE15158214;
-	Mon, 16 Sep 2024 14:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E02157E78;
+	Mon, 16 Sep 2024 14:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m2gKqMgj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EKhfiyhS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m2gKqMgj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EKhfiyhS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m93KnN4r"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A845155316
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDC015699D;
+	Mon, 16 Sep 2024 14:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726496799; cv=none; b=CKeqc7O5o0iTejCuRtisee0FClOLYg4fGmSn7ZYo6/7hU9qRUzvRlHj4UYqvIu6tum0VyUQYYXIDuGW+6AOYpAOQDDPlXiuwWn47/pVa5BK1En44vF+udwRDp9w1EIfMqfJ4KOHOpBf1AIyUQRLJ/mQ8WxSUlgY5bSi6qJdUE1U=
+	t=1726496926; cv=none; b=VfKcy2Jut4N1CfSQWP6YQQM6gJCVIARKFnlQItknCVNovjeTaG/XtVozFgdPEeAQmM1R2Ovpfp0Su9OU79pxNe8AmmKeQIwQRvXfDFV3jIMDQ8Xc15R895Sf+0pVKg5iTfUPYHr3124a7ou3z2unBxUwNdNL34qZs1200kTw3a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726496799; c=relaxed/simple;
-	bh=Xp+xzKfFXjpviSuvbp+1Re+ja2rmbXEvf6Y8ruodjBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bgl3QfWzm6FDw9bDk5OH1Vi4iFVvHlaCkB2QXDGUe4P4hqKRTjkoAfRQ4ySOQRJnwNbGr7TSuANtROE0DOzOOCOXOKtQj5rjGeKFdqKL4VcF6Il6dFj2KUHt8j8xwKbwJiSnR4F7+yPYmN5P8sO9vrnba4oAofwXnV6FyoftU8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m2gKqMgj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EKhfiyhS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m2gKqMgj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EKhfiyhS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6C73F1F8B3;
-	Mon, 16 Sep 2024 14:26:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726496795; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ULX/X/H4MvKux29L3rZwwsvXm/hVCb9CdayrIqYvNCU=;
-	b=m2gKqMgj/AeSsWfUhsmC5wFkkOmR4WEkiwIoodkwu4aTV9poOfsXqIBTVFEx8rUPgCskN+
-	hqA8BTA70rSe4aR4mnq1QkJPw7o+X1LMCX9NSyWIloXKvMmTLyH9DM+gWSaP6eAB/U2kUt
-	WU701qgRAKTEosecGLpoIT7ENQAHi/Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726496795;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ULX/X/H4MvKux29L3rZwwsvXm/hVCb9CdayrIqYvNCU=;
-	b=EKhfiyhSws94l6Z7tpwVAb0mvpaWWTtQcna15VcFo0Ex48RfsFqw4AwnkQJOzMyTLeHMBc
-	P1Bsjgxu023RZkBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726496795; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ULX/X/H4MvKux29L3rZwwsvXm/hVCb9CdayrIqYvNCU=;
-	b=m2gKqMgj/AeSsWfUhsmC5wFkkOmR4WEkiwIoodkwu4aTV9poOfsXqIBTVFEx8rUPgCskN+
-	hqA8BTA70rSe4aR4mnq1QkJPw7o+X1LMCX9NSyWIloXKvMmTLyH9DM+gWSaP6eAB/U2kUt
-	WU701qgRAKTEosecGLpoIT7ENQAHi/Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726496795;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ULX/X/H4MvKux29L3rZwwsvXm/hVCb9CdayrIqYvNCU=;
-	b=EKhfiyhSws94l6Z7tpwVAb0mvpaWWTtQcna15VcFo0Ex48RfsFqw4AwnkQJOzMyTLeHMBc
-	P1Bsjgxu023RZkBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 152B5139CE;
-	Mon, 16 Sep 2024 14:26:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CRO6AxtA6Ga7MwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 16 Sep 2024 14:26:35 +0000
-Message-ID: <510bd1a2-bccb-4f80-980f-1a6eed5b683e@suse.de>
-Date: Mon, 16 Sep 2024 16:26:34 +0200
+	s=arc-20240116; t=1726496926; c=relaxed/simple;
+	bh=PcNilg+fnu88HeDhHg2m/R5SL/aTlRAXqoGfaeIls+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fgChdFgdv9zOxhwHS7+8QdSksXdddhz0BtLHLo85w0tqFLTwoJys1vwFQS3pq8+JBNRCxSsMuAxmm8bNAG2T03YjZE5TiJMM3ZOUxEpqe6tiPytta3ZgeqwVZHJQdjqvSb01pxyCTdSpF1SUUyEq2b1GcITTaRLFu75n1Tlyg5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m93KnN4r; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GE33ig030850;
+	Mon, 16 Sep 2024 14:28:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	otb2KN9QQ5PSH9usOoKH0Pku75aDOofhJqaO5p/tP9c=; b=m93KnN4rsnM5Tz4h
+	u9LDYePh6uj6R3GS1dcimAOP+pKuuq8TR815zv+8oK/rT5q7AOsdmbo9QxnU6/fA
+	vyjBs1XbUHOmvgV+4HlijIrlyFWVVIeYVdAVlAxcPBQD2z9ZbjNElVm2/ZN26+Fi
+	Q7o0SXemr6E+/D9AbQYEXuPL9umvuZc8kOlQbE93I/DenJD1hNO7xtjaHNylWpIj
+	m19y1vtHivjfp48umf/1UJrfZsmoHlovUzHPAwvXXBPbsgmkmgDoZZAiTSRAOT5y
+	Gbyk8VHEj/ER3YZisfRLXzq8Wpqo3Z4Rh3nxXIGeMmdl9zpOTUX/waLeIvTsgT+D
+	z0KTVw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hh45ff-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 14:28:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48GEScsK026135
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 14:28:38 GMT
+Received: from [10.110.0.24] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Sep
+ 2024 07:28:35 -0700
+Message-ID: <5849a5d4-5e32-49f9-aee5-8130027d063f@quicinc.com>
+Date: Mon, 16 Sep 2024 07:28:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,160 +64,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] firmware: sysfb: Add a sysfb_handles_screen_info()
- helper function
-To: Javier Martinez Canillas <javierm@redhat.com>,
- linux-kernel@vger.kernel.org
-Cc: Brian Norris <briannorris@chromium.org>, dri-devel@lists.freedesktop.org,
- Borislav Petkov <bp@alien8.de>, Julius Werner <jwerner@chromium.org>,
- chrome-platform@lists.linux.dev, intel-gfx@lists.freedesktop.org,
- Hugues Bruant <hugues.bruant@gmail.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Helge Deller <deller@gmx.de>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20240916110040.1688511-1-javierm@redhat.com>
- <20240916110040.1688511-2-javierm@redhat.com>
+Subject: Re: [PATCH v4 0/3] Add support for Qualcomm SA8255p SoC
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240916110040.1688511-2-javierm@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>
+References: <20240910171534.2412263-1-quic_nkela@quicinc.com>
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <20240910171534.2412263-1-quic_nkela@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[chromium.org,lists.freedesktop.org,alien8.de,lists.linux.dev,gmail.com,amd.com,linaro.org,gmx.de,intel.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0MdRULhfH1lQFtmPbU6P8msNE-SVJYiJ
+X-Proofpoint-ORIG-GUID: 0MdRULhfH1lQFtmPbU6P8msNE-SVJYiJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 phishscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=616 mlxscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409160092
 
+Gentle ping...
 
-
-Am 16.09.24 um 13:00 schrieb Javier Martinez Canillas:
-> That can be used by drivers to check if the Generic System Framebuffers
-> (sysfb) support can handle the data contained in the global screen_info.
+On 9/10/2024 10:15 AM, Nikunj Kela wrote:
+> This series adds support for Qualcomm SA8255p SoC.
 >
-> Drivers might need this information to know if have to setup the system
-> framebuffer, or if they have to delegate this action to sysfb instead.
+> These patches were originally sent with other patches in series[1],
+> which was advised to be split per subsystem basis.
 >
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
+> [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+>
 > ---
->
 > Changes in v4:
-> - New patch to add sysfb_handles_screen_info() helper (Thomas Zimmermann).
+> 	- Included AOSS QMP dt-binding patch
+> Changes in v3:
+>         - Removed the patches from original series
+> Changes in v2:
+>         - Added Reviewed-by tag
 >
->   drivers/firmware/sysfb.c | 19 +++++++++++++++++++
->   include/linux/sysfb.h    |  7 +++++++
->   2 files changed, 26 insertions(+)
+> Nikunj Kela (3):
+>   dt-bindings: arm: qcom: add the SoC ID for SA8255P
+>   soc: qcom: socinfo: add support for SA8255P
+>   dt-bindings: soc: qcom: aoss-qmp: document support for SA8255p
 >
-> diff --git a/drivers/firmware/sysfb.c b/drivers/firmware/sysfb.c
-> index 02a07d3d0d40..770e74be14f3 100644
-> --- a/drivers/firmware/sysfb.c
-> +++ b/drivers/firmware/sysfb.c
-> @@ -77,6 +77,25 @@ void sysfb_disable(struct device *dev)
->   }
->   EXPORT_SYMBOL_GPL(sysfb_disable);
->   
-> +/**
-> + * sysfb_handles_screen_info() - reports if sysfb handles the global screen_info
-> + *
-> + * Callers can use sysfb_handles_screen_info() to determine whether the Generic
-> + * System Framebuffers (sysfb) can handle the global screen_info data structure
-> + * or not. Drivers might need this information to know if they have to setup the
-> + * system framebuffer, or if they have to delegate this action to sysfb instead.
-> + *
-> + * Returns:
-> + * True if sysfb handles the global screen_info data structure.
-> + */
-> +bool sysfb_handles_screen_info(void)
-> +{
-> +	const struct screen_info *si = &screen_info;
-> +
-> +	return !!screen_info_video_type(si);
-> +}
-> +EXPORT_SYMBOL_GPL(sysfb_handles_screen_info);
-> +
->   #if defined(CONFIG_PCI)
->   static bool sysfb_pci_dev_is_enabled(struct pci_dev *pdev)
->   {
-> diff --git a/include/linux/sysfb.h b/include/linux/sysfb.h
-> index bef5f06a91de..07cbab516942 100644
-> --- a/include/linux/sysfb.h
-> +++ b/include/linux/sysfb.h
-> @@ -60,12 +60,19 @@ struct efifb_dmi_info {
->   
->   void sysfb_disable(struct device *dev);
->   
-> +bool sysfb_handles_screen_info(void);
-> +
->   #else /* CONFIG_SYSFB */
->   
->   static inline void sysfb_disable(struct device *dev)
->   {
->   }
->   
-> +static inline bool sysfb_handles_screen_info(void)
-> +{
-> +	return false;
-> +}
-> +
->   #endif /* CONFIG_SYSFB */
->   
->   #ifdef CONFIG_EFI
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+>  Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
+>  drivers/soc/qcom/socinfo.c                                    | 1 +
+>  include/dt-bindings/arm/qcom,ids.h                            | 1 +
+>  3 files changed, 3 insertions(+)
+>
 
