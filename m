@@ -1,117 +1,253 @@
-Return-Path: <linux-kernel+bounces-330756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7EB97A3D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:11:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A4DE97A3EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 490B11F29118
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:11:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2730128D258
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A3515C15D;
-	Mon, 16 Sep 2024 14:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14756156C65;
+	Mon, 16 Sep 2024 14:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LTR0hKBU"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="iKUdTEdz"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE63215ADB8
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677925258;
+	Mon, 16 Sep 2024 14:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495713; cv=none; b=n8lRdWggpRlNGqYYkDxFXdHtyrc5S4l0q2TLpBAXWtxCNcmZbz9jP6suolfBbGnUvp3V2e/YYsbfuTAs3+VtHYXbBlPzORtd6mpYLJ7siou5FbjziKUR4dOeE7E+xsMdkW39WBKbdE9LwU1E9fRrozksOWS0M01aKb/7fwRNW6s=
+	t=1726495920; cv=none; b=Q8QUxbOrNhyIfF8ObYzjFN4oH5OIQyY1N4FJDWBm+IghmCpiir7O5UZ5HcciiQV4LzGsvg/3p/eoe679XlLOzRGqx3qn62ZJa80/NUXarWpqabO+aRg8YzlPPORfOjKMdpnqCc18AbYou31ifjC5qLp4kvD/OdKbznYgypNDF7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495713; c=relaxed/simple;
-	bh=q8U5kapnvPe+kOauR5iQm9N3ZQpVBSaRPSAKBVrq7g8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cdYUa6LUcsba4qaVtP0b7WK4keEQAyY3gY4br9FqkxVlV/kfDRzncEyc2u3oo4EZF06FkHim1SRxtXLr8mRX93oJg+1t460OZ3rr8QtoBiOcpnZvCQzvfVaFcYLOAJvd5ftkxd42xBKjLrGni8ciqCvVRcYP64IEcX/FpAsizDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LTR0hKBU; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c25f01879fso5257633a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1726495710; x=1727100510; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QAADtAg3pKG46cUtxD35BjgID9lOK4j2QBKH3zg5m6Q=;
-        b=LTR0hKBUh0VlpAKuyFHUwe98BsSrWM/Wd8yiNy5IlE0lwcpjJ8zmQBNU8mo6Ie6iT3
-         eMjr+302IpdTvIsWY97Tjmo9GHvJzj+BkK3gakZBDUuNNg7IC5h+kHkbFrwKASV7Zxys
-         KZYTw2mgxupq/soDjPlyuEfgBPbS+DvSUuPFY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726495710; x=1727100510;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QAADtAg3pKG46cUtxD35BjgID9lOK4j2QBKH3zg5m6Q=;
-        b=lNEO6mTSdT2Rcyr15rrvl9bPpOnkQB3v4Fv8yCCn3iOOrBpFhmPIRqbXu9fFjd1/b7
-         8KIc/IAKlDIOSxsP4dBvVOGFk37Hy5XoJi1EuzgAYTonFohxMhtIWsEaZjheSlAZ/BYb
-         Kr+VTbmI4KMugt9cHQ6es2FMSPqmSDpXD34aPfdLQPcFlB9+7XjBryVGXizJnwlTEWFF
-         8nLLQndKw+INs5dgoBQ90Bvr0vWoK+Q7pw10xKx84zQJ0fKY7tEEV/iDOFRwZYgklbzO
-         wUCyFXcL3JNLTk99BoZpqYHKbSppoXJ76akwcUrFN3OuXoTMnGMwDeX06l8KMIKZTNBA
-         rl3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUGhlEhaVq+o84irwYN3t9JUzaGxkWECc9szofHcFsO5K3R4lakJHvcjQ+Qq3nrh0mqGgWwB2UmS+rnM14=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8fweYenyqCw/evJ3tFCuSjdDK0i59wmMDY8bymjUf9A7ll8Jt
-	N/N5nFMCNWpc7zLxB8e0e022cMC36241SF8AewNCQJTtDTt48jTLJEBqSLmK6zgMmhqPG0DATEA
-	wBpOe9g==
-X-Google-Smtp-Source: AGHT+IEm92EDmHZgq3jiqohk78lA0orx97ob26O8Y9dMZvcc6wspjUvl0eg6NfHzF5cHxI6LcIaXHA==
-X-Received: by 2002:a17:907:3e9e:b0:a8a:7d13:297e with SMTP id a640c23a62f3a-a902966f405mr1578232566b.55.1726495709479;
-        Mon, 16 Sep 2024 07:08:29 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061328e61sm321832666b.196.2024.09.16.07.08.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 07:08:28 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c3ed267a7bso5727983a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:08:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXgWVAJmv8peFMShXCdqawi6kkvH3Qu8Zk8yNeVzqILEoPevpDDHBknFYiXlNYFvBXwUqadRRyyjDUOc74=@vger.kernel.org
-X-Received: by 2002:a05:6402:3209:b0:5c2:53a1:c209 with SMTP id
- 4fb4d7f45d1cf-5c413e4c638mr14300449a12.25.1726495708331; Mon, 16 Sep 2024
- 07:08:28 -0700 (PDT)
+	s=arc-20240116; t=1726495920; c=relaxed/simple;
+	bh=jfiFvJL5ZnAzIVubRnSClMYcUCZgnxJ9RWuVjcuFWjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WAI87SlkGKeLd5hOudk6tCEbHtFyTCE+9/7dW/rrA2NJJaSR4F70Bu9ltBi5JJdNpLc47gejP04SXyyFxZEWh+MexlRf8xXUsToBFg7blnoshHiiKDQ/e+Kpm+agOTUs8zEtJx28cquUMX5CviGAfYghOOgj5IpSAmxhykSNOv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=iKUdTEdz; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GDXKnT001947;
+	Mon, 16 Sep 2024 16:11:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	pzKlTlaaDl0uaMzQRGAamPumS6bIJxxB/Zfn3DyAQMY=; b=iKUdTEdzQ4hsCQum
+	AqWADdayCY5NFPNlCvPknH44LxEHc9xXzQumfRKrEIELuk7tMdsCG+disGQfg+ME
+	yjOfOsBL8sz11Bh5fRE0wGcglK5T8VRVeovY9jA0IQ22MGWqxUHx3N7tCR1T227d
+	pQ+Bzc4fvO09tf/nDGqGBCsKUHS2QQV9Mx5O85w05NHNxBjBZaWnXXrSPMdwGonV
+	+vIixuMR50mAkK2N35HxASWo3VPUj80S/jz27J/OrdqJYHySTvp2YzHjko2FS5tW
+	GY0IH5YZT/H0TS0gJwekum9/r6O4oOT05w4n6+8qTDCD0eDmPNMzFsFsTYv8ns8g
+	VfIq4w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41nnehcv74-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 16:11:23 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id EA9E94004A;
+	Mon, 16 Sep 2024 16:10:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DFAB5278270;
+	Mon, 16 Sep 2024 16:08:12 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 16 Sep
+ 2024 16:08:12 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 16 Sep
+ 2024 16:08:11 +0200
+Message-ID: <28d02c1f-967b-4384-9c0a-e05fc7f237ed@foss.st.com>
+Date: Mon, 16 Sep 2024 16:08:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913-vfs-netfs-39ef6f974061@brauner> <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com>
- <1947793.1726494616@warthog.procyon.org.uk>
-In-Reply-To: <1947793.1726494616@warthog.procyon.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 16 Sep 2024 16:08:10 +0200
-X-Gmail-Original-Message-ID: <CAHk-=wiVC5Cgyz6QKXFu6fTaA6h4CjexDR-OV9kL6Vo5x9v8=A@mail.gmail.com>
-Message-ID: <CAHk-=wiVC5Cgyz6QKXFu6fTaA6h4CjexDR-OV9kL6Vo5x9v8=A@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix cifs readv callback merge resolution issue
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Steve French <stfrench@microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 7/7] remoteproc: stm32: Add support of an OP-TEE TA to
+ load the firmware
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
+ <20240830095147.3538047-8-arnaud.pouliquen@foss.st.com>
+ <ZuRiTxDN7+UO42H+@p14s>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <ZuRiTxDN7+UO42H+@p14s>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Mon, 16 Sept 2024 at 15:50, David Howells <dhowells@redhat.com> wrote:
->
-> Fix this so that it is "false".  The callback to netfslib in both SMB1 and
-> SMB2/3 now gets offloaded from the network message thread to a separate
-> worker thread and thus it's fine to do the slow work in this thread.
+Hello Mathieu,
 
-Note that with this fixed, now *every* direct call of
-netfs_read_subreq_terminated() has that 'was_aync' as false.
+On 9/13/24 18:03, Mathieu Poirier wrote:
+> On Fri, Aug 30, 2024 at 11:51:47AM +0200, Arnaud Pouliquen wrote:
+>> The new TEE remoteproc driver is used to manage remote firmware in a
+>> secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
+>> introduced to delegate the loading of the firmware to the trusted
+>> execution context. In such cases, the firmware should be signed and
+>> adhere to the image format defined by the TEE.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>>  drivers/remoteproc/stm32_rproc.c | 63 ++++++++++++++++++++++++++++++--
+>>  1 file changed, 60 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+>> index 79c638936163..400a7a93b1c9 100644
+>> --- a/drivers/remoteproc/stm32_rproc.c
+>> +++ b/drivers/remoteproc/stm32_rproc.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/pm_wakeirq.h>
+>>  #include <linux/regmap.h>
+>>  #include <linux/remoteproc.h>
+>> +#include <linux/remoteproc_tee.h>
+>>  #include <linux/reset.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/workqueue.h>
+>> @@ -257,6 +258,19 @@ static int stm32_rproc_release(struct rproc *rproc)
+>>  	return 0;
+>>  }
+>>  
+>> +static int stm32_rproc_tee_stop(struct rproc *rproc)
+>> +{
+>> +	int err;
+>> +
+>> +	stm32_rproc_request_shutdown(rproc);
+>> +
+>> +	err = tee_rproc_stop(rproc);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	return stm32_rproc_release(rproc);
+>> +}
+>> +
+>>  static int stm32_rproc_prepare(struct rproc *rproc)
+>>  {
+>>  	struct device *dev = rproc->dev.parent;
+>> @@ -693,8 +707,20 @@ static const struct rproc_ops st_rproc_ops = {
+>>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>>  };
+>>  
+>> +static const struct rproc_ops st_rproc_tee_ops = {
+>> +	.prepare	= stm32_rproc_prepare,
+>> +	.start		= tee_rproc_start,
+>> +	.stop		= stm32_rproc_tee_stop,
+>> +	.kick		= stm32_rproc_kick,
+>> +	.load		= tee_rproc_load_fw,
+>> +	.parse_fw	= tee_rproc_parse_fw,
+>> +	.find_loaded_rsc_table = tee_rproc_find_loaded_rsc_table,
+>> +
+>> +};
+>> +
+>>  static const struct of_device_id stm32_rproc_match[] = {
+>>  	{ .compatible = "st,stm32mp1-m4" },
+>> +	{ .compatible = "st,stm32mp1-m4-tee" },
+>>  	{},
+>>  };
+>>  MODULE_DEVICE_TABLE(of, stm32_rproc_match);
+>> @@ -853,17 +879,42 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>>  	struct device *dev = &pdev->dev;
+>>  	struct stm32_rproc *ddata;
+>>  	struct device_node *np = dev->of_node;
+>> +	struct tee_rproc *trproc = NULL;
+>>  	struct rproc *rproc;
+>>  	unsigned int state;
+>> +	u32 proc_id;
+>>  	int ret;
+>>  
+>>  	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
+>> -	if (!rproc)
+>> -		return -ENOMEM;
+>> +	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
+>> +		/*
+>> +		 * Delegate the firmware management to the secure context.
+>> +		 * The firmware loaded has to be signed.
+>> +		 */
+>> +		ret = of_property_read_u32(np, "st,proc-id", &proc_id);
+>> +		if (ret) {
+>> +			dev_err(dev, "failed to read st,rproc-id property\n");
+>> +			return ret;
+>> +		}
+>> +
+>> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
+>> +		if (!rproc)
+>> +			return -ENOMEM;
+>> +
+>> +		trproc = tee_rproc_register(dev, rproc, proc_id);
+>> +		if (IS_ERR(trproc)) {
+>> +			dev_err_probe(dev, PTR_ERR(trproc),
+>> +				      "signed firmware not supported by TEE\n");
+>> +			return PTR_ERR(trproc);
+>> +		}
+>> +	} else {
+>> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
+>> +		if (!rproc)
+>> +			return -ENOMEM;
+>> +	}
+>>  
+>>  	ddata = rproc->priv;
+>>  
+>> @@ -915,6 +966,9 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>>  		dev_pm_clear_wake_irq(dev);
+>>  		device_init_wakeup(dev, false);
+>>  	}
+>> +	if (trproc)
+> 
+>         if (rproc->tee_interface)
+> 
+> I am done reviewing this set.
 
-The exception ends up being the netfs_read_cache_to_pagecache() thing,
-which does that 'cres->ops->read()' with
-netfs_read_subreq_terminated() as a callback function. And that
-callback ends up being done with ki->was_async, which is actually set
-unconditionally to 'true' (except for the immediate failure case which
-then sets it to false after all).
+Thanks for the review, I will sent a V10 ASAP to fix this set.
+Extra information: the OP-TEE that introduces the new
+PTA_REMOTEPROC_RELEASE command has been merged.
 
-Could we please just remove that whole 'was_async' case entirely, and
-just make the cres->ops->read() path just do a workqueue (which seems
-to be what the true case does anyway)?
+Regards,
+Arnaud
 
-So then the netfs_read_subreq_terminated() wouldn't need to take that
-pointless argument, with the only case of async use just fixing
-itself? Wouldn't that be cleaner?
-
-             Linus
+> 
+>> +		tee_rproc_unregister(trproc);
+>> +
+>>  	return ret;
+>>  }
+>>  
+>> @@ -935,6 +989,9 @@ static void stm32_rproc_remove(struct platform_device *pdev)
+>>  		dev_pm_clear_wake_irq(dev);
+>>  		device_init_wakeup(dev, false);
+>>  	}
+>> +	if (rproc->tee_interface)
+>> +		tee_rproc_unregister(rproc->tee_interface);
+>> +
+>>  }
+>>  
+>>  static int stm32_rproc_suspend(struct device *dev)
+>> -- 
+>> 2.25.1
+>>
 
