@@ -1,122 +1,158 @@
-Return-Path: <linux-kernel+bounces-330778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94FBE97A41E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:28:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E8097A425
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E16428507B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:28:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 077561C250B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E02157E78;
-	Mon, 16 Sep 2024 14:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0F2156C73;
+	Mon, 16 Sep 2024 14:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m93KnN4r"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3KRdDHS"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDC015699D;
-	Mon, 16 Sep 2024 14:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E94145341;
+	Mon, 16 Sep 2024 14:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726496926; cv=none; b=VfKcy2Jut4N1CfSQWP6YQQM6gJCVIARKFnlQItknCVNovjeTaG/XtVozFgdPEeAQmM1R2Ovpfp0Su9OU79pxNe8AmmKeQIwQRvXfDFV3jIMDQ8Xc15R895Sf+0pVKg5iTfUPYHr3124a7ou3z2unBxUwNdNL34qZs1200kTw3a4=
+	t=1726497060; cv=none; b=KPPbfES6qfq904vHMB668hoC1fvgPhOAPmYx01/fDFdu0aPE8DaMdhUN8Y04RNZmyuHyOXVZ7SZvgrLMEd1XOOBylK4k0eQgSV6b0udR73Xh3eQvDBNULVVU6QlD74OMuhWuvKU5K08Dn/g6VMeiGbNQSRCRBXwrT4dXmQFu5dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726496926; c=relaxed/simple;
-	bh=PcNilg+fnu88HeDhHg2m/R5SL/aTlRAXqoGfaeIls+o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fgChdFgdv9zOxhwHS7+8QdSksXdddhz0BtLHLo85w0tqFLTwoJys1vwFQS3pq8+JBNRCxSsMuAxmm8bNAG2T03YjZE5TiJMM3ZOUxEpqe6tiPytta3ZgeqwVZHJQdjqvSb01pxyCTdSpF1SUUyEq2b1GcITTaRLFu75n1Tlyg5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m93KnN4r; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GE33ig030850;
-	Mon, 16 Sep 2024 14:28:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	otb2KN9QQ5PSH9usOoKH0Pku75aDOofhJqaO5p/tP9c=; b=m93KnN4rsnM5Tz4h
-	u9LDYePh6uj6R3GS1dcimAOP+pKuuq8TR815zv+8oK/rT5q7AOsdmbo9QxnU6/fA
-	vyjBs1XbUHOmvgV+4HlijIrlyFWVVIeYVdAVlAxcPBQD2z9ZbjNElVm2/ZN26+Fi
-	Q7o0SXemr6E+/D9AbQYEXuPL9umvuZc8kOlQbE93I/DenJD1hNO7xtjaHNylWpIj
-	m19y1vtHivjfp48umf/1UJrfZsmoHlovUzHPAwvXXBPbsgmkmgDoZZAiTSRAOT5y
-	Gbyk8VHEj/ER3YZisfRLXzq8Wpqo3Z4Rh3nxXIGeMmdl9zpOTUX/waLeIvTsgT+D
-	z0KTVw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hh45ff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 14:28:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48GEScsK026135
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 14:28:38 GMT
-Received: from [10.110.0.24] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Sep
- 2024 07:28:35 -0700
-Message-ID: <5849a5d4-5e32-49f9-aee5-8130027d063f@quicinc.com>
-Date: Mon, 16 Sep 2024 07:28:34 -0700
+	s=arc-20240116; t=1726497060; c=relaxed/simple;
+	bh=HCrmuW3dR9M02oUBEsakxjUb6fYvC4XD7LtHBzobUfE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B3QBZnkZYIe+wQL/VY5olTI96a9Ws5iXbg2Cw4E8phZAkVerDlW+Z+FW2s194czdJDbkHi8BJefygr94zvsLNoqc6dIxk5mZMRoYYG1WSrm0l7gCZjSHmbK6MlNtGlt9riFRo0v7HrwjQMTyT40B9Yc+NeTOloQx9etEbt0IhIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3KRdDHS; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso4349397276.3;
+        Mon, 16 Sep 2024 07:30:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726497058; x=1727101858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JPqv6Sz3zjpMesSKmef2fhFRmwMP8B3HlSiukgAgFqw=;
+        b=I3KRdDHSspdiCmHN5cs2dMihA2YlSkQr/gLF36ej4odyaFIxBAaQSMW1//vpdxRswm
+         x2hO0BfN/7cBHVhQWgBHgBxK68xEihgApstZWXlwd528Tb3O6tqrrt+iIJbJdkJ4Xz3s
+         7Agt42NAfstajnJSz9X/tFdiYHLxU+E7ewrksYfO1na2wntT7NXWPn3J2q92pzbtBvC2
+         7qmuv4i+AWc7piJk/NQSg4O73ZeSFhNA593hkEFDAsiBhNuOEQgqX6WlumNj2II2alz/
+         8CrjTVo1kLkGRgQWfINdtYHCLm8FIoSiWSOG4suJezDepLQHpZUZIVVXQ3ppv0xLBfme
+         KR8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726497058; x=1727101858;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JPqv6Sz3zjpMesSKmef2fhFRmwMP8B3HlSiukgAgFqw=;
+        b=Rya7wbvEA/z2Ar2xhbLiwpQnDqIRuguvtBfpG24PABIEl9qD7hHTQOXCcoyYu0zUp3
+         y/KSSTrivwk2X4pshIOpnLPcC5xnVUVkzyqreU7WKrrWJRJ3Tj4NeXJkE51UiWpot7Dn
+         DHL0M/a7E0YeuF3rzFIHEQZa2e9hsrRU900705MUbdp4Kra8cOclrGZiT/p469KBMGE7
+         PgWF6F26MNThlR+1JD96y/fialegOr9TCfc737ZT+30mrZzzVz4SFYkjy9Kb5tCJgtFa
+         RVTBBXDBgqwuxk1NYcNXFNm7lXiMWr1h/t6Bwg/9dhDOZx1LVefm+nUagRSoaXaKt/E4
+         8zrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDqC03DIHNmoM9S9KYk1qM3p9Lw0FP35dlEISCFyeavlgLGABwtl/toncDupKI/j674KSe0ytoisOwcT4=@vger.kernel.org, AJvYcCWpVKilkCh6hR+7jhNkq9qvXp2H2GjamwBBLxB+iF0QFXDyAxt7Ubj+9FOeEfSsphwzl69esNKKEmnN50SP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw84iB6HP8VwymsKJN4cOw0LcXyJqmkJ8T3D1NvBAlQEP/+WgiN
+	4J9x4Z8TfELmpCd2ag7yJWK0KIrGfU9z21v95n2H16kUiTWu23/yGPBWvw==
+X-Google-Smtp-Source: AGHT+IFWqgB/T7rpaUcfqLhHRzirRihOVgXtwiGm08nFHbjF+jQJmLL6l3AQoC2D4ZzcuuGuNMuthA==
+X-Received: by 2002:a05:6902:1502:b0:e1f:a30:2f59 with SMTP id 3f1490d57ef6-e1f0a3030d9mr6050510276.32.1726497055281;
+        Mon, 16 Sep 2024 07:30:55 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1dc139f8afsm984101276.64.2024.09.16.07.30.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 07:30:54 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: David Hunter <david.hunter.linux@gmail.com>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	javier.carrasco.cruz@gmail.com
+Subject: [PATCH v2 0/7] linux-kbuild: fix: process configs set to "y"
+Date: Mon, 16 Sep 2024 10:29:37 -0400
+Message-ID: <20240916142939.754911-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] Add support for Qualcomm SA8255p SoC
-Content-Language: en-US
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>
-References: <20240910171534.2412263-1-quic_nkela@quicinc.com>
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <20240910171534.2412263-1-quic_nkela@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 0MdRULhfH1lQFtmPbU6P8msNE-SVJYiJ
-X-Proofpoint-ORIG-GUID: 0MdRULhfH1lQFtmPbU6P8msNE-SVJYiJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- adultscore=0 impostorscore=0 phishscore=0 priorityscore=1501 clxscore=1015
- mlxlogscore=616 mlxscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409160092
+Content-Transfer-Encoding: 8bit
 
-Gentle ping...
+An assumption made in this script is that the config options do not need
+to be processed because they will simply be in the new config file. This
+assumption is incorrect. 
 
-On 9/10/2024 10:15 AM, Nikunj Kela wrote:
-> This series adds support for Qualcomm SA8255p SoC.
->
-> These patches were originally sent with other patches in series[1],
-> which was advised to be split per subsystem basis.
->
-> [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
->
-> ---
-> Changes in v4:
-> 	- Included AOSS QMP dt-binding patch
-> Changes in v3:
->         - Removed the patches from original series
-> Changes in v2:
->         - Added Reviewed-by tag
->
-> Nikunj Kela (3):
->   dt-bindings: arm: qcom: add the SoC ID for SA8255P
->   soc: qcom: socinfo: add support for SA8255P
->   dt-bindings: soc: qcom: aoss-qmp: document support for SA8255p
->
->  Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
->  drivers/soc/qcom/socinfo.c                                    | 1 +
->  include/dt-bindings/arm/qcom,ids.h                            | 1 +
->  3 files changed, 3 insertions(+)
->
+Process the config entries set to "y" because those config entries might
+have dependencies set to "m". If a config entry is set to "m" and is not
+loaded directly into the machine, the script will currently turn off
+that config entry; however, if that turned off config entry is a
+dependency for a "y" option. that means the config entry set to "y"
+will also be turned off later when the conf executive file is called. 
+
+Here is a model of the problem (arrows show dependency): 
+
+Original config file
+Config_1 (m) <-- Config_2 (y) 
+
+Config_1 is not loaded in this example, so it is turned off. 
+After scripts/kconfig/streamline_config.pl, but before scripts/kconfig/conf
+Config_1 (n) <-- Config_2 (y) 
+
+After  scripts/kconfig/conf
+Config_1 (n) <-- Config_2 (n) 
+
+
+It should also be noted that any module in the dependency chain will
+also be turned off, even if that module is loaded directly onto the
+computer. Here is an example: 
+
+Original config file
+Config_1 (m) <-- Config_2 (y) <-- Config_3 (m)
+
+Config_3 will be loaded in this example.
+After scripts/kconfig/streamline_config.pl, but before scripts/kconfig/conf
+Config_1 (n) <-- Config_2 (y) <-- Config_3 (m)
+
+After scripts/kconfig/conf
+Config_1 (n) <-- Config_2 (n) <-- Config_3 (n)
+
+
+I discovered this problem when I ran "make localmodconfig" on a generic
+Ubuntu config file. Many hardware devices were not recognized once the
+kernel was installed and booted. Another way to reproduced the error I
+had is to run "make localmodconfig" twice. The standard error might display
+warnings that certain modules should be selected but no config files are
+turned on that select that module. 
+
+With the changes in this series patch, all modules are loaded properly
+and all of the hardware is loaded when the kernel is installed and
+booted.  
+
+
+David Hunter (7):
+  linux-kbuild: fix: config option can be bool
+  linux-kbuild: fix: missing variable operator
+  linux-kbuild: fix: ensure all defaults are tracked
+  linux-kbuild: fix: ensure selected configs were turned on in original
+  linux-kbuild: fix: implement choice for kconfigs
+  linux-kbuild: fix: configs with defaults do not need a prompt
+  linux-kbuild: fix: process config options set to "y"
+
+--- 
+V2: 
+	- Put in subject. 
+V1:
+	- https://lore.kernel.org/all/20240913171205.22126-1-david.hunter.linux@gmail.com/
+
+--- 
+ scripts/kconfig/streamline_config.pl | 77 ++++++++++++++++++++++++----
+ 1 file changed, 66 insertions(+), 11 deletions(-)
+
+ 
+
 
