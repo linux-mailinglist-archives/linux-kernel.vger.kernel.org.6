@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-330885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5924197A5AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:05:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 571FF97A5B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3931C26AAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:05:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8CD1C26B49
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EFD15ADB1;
-	Mon, 16 Sep 2024 16:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0101598EE;
+	Mon, 16 Sep 2024 16:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VvsTzWos"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lp7vlN7K"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165F7155A3C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 16:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01B8155A3C
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 16:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726502710; cv=none; b=BdQlLlMSLiVfzqwUryB9FOuAo7d99XUAfsJXpSuHNtiXCSU0T0MW3oZRbw35JLYyR9l75JnRNTAXQruKdRTLvADwxcgYLVcjLY6EgK1oPFSEBmqSb86AZmQQ3Zrq8F1VaFGSrjFeum4zCvzVCm5mqSD0+4zb4S9Qu+bSs9gRGcs=
+	t=1726502750; cv=none; b=KqsBbcALPrP3YkSLAhnym/u8mEBMDfpxPiQHfqzQo/cY+RX7I0yMpd+9pxLqpT52cGTaa789gpDCHdMIVNlIxr2GliyznMv7+x0E7Xc07Tqy2xQ4cNyATbvM/HIOfWtY1ltWLUy7NfP/S6Tvnuqd4QIcsMnWveUj5khhkg6FJsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726502710; c=relaxed/simple;
-	bh=zixPpdyKuqV9m6GpyB+YO7Bf14JsP024FkbBSTKNP44=;
+	s=arc-20240116; t=1726502750; c=relaxed/simple;
+	bh=+hulRIncmZYwX6AbjLI7q+5ZTyeCTbMLFoW0OYJzYbo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L5nlakvokhXczBRSIgitObGBiSHsbTnkraFdFYK+CExvKF3Ync0TY1zsJdZhqHhsyZtg2WPFJy8u3E+ogkTfQs3R9tsGCH4uotCYsX0DLkX6jIxMg7kmYZEKltqF/NcVmTcFWGtKc4RF1f5MwxhnXEnM/Qj0BVLi0LGCdnmB/Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VvsTzWos; arc=none smtp.client-ip=209.85.221.47
+	 In-Reply-To:Content-Type; b=kQNTby98Yy91CMYUNwv1oW7IlrDjxqb/AMVuZ4ar9jYUvpD3Euf0MxSCQqU8cy+Ofi6PQI1cBs5WO02yHXHerkg6kdxlGLmtWDgqV8JfsYeX3OTmNfqNlhoYzNmrQ1UDoL1GwgcloLKIR96MbnsFNJx+CqO3RN47UPa1rPwpYnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lp7vlN7K; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-378e902cde8so119245f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:05:08 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cae563348so7882205e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:05:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726502707; x=1727107507; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726502746; x=1727107546; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=BiJHqI/Fdle6XXJtaWDnTKJvQT9GxBWgyR71PRODTyo=;
-        b=VvsTzWosM9BW0Y4KcADeJ3eSz5p/lsAmfUQPFWLEhwHyewLG2kTcwQcrOLwzdNXRc8
-         Q7QV7bOShrmaFhfRU5spjfWAX/S2qgQwcRkba0+wxroEIpmlMe1O8eGbl2KJkRRret+0
-         edo+U75KieW6yy37Lok5qasBp9+didZ/qCEiiUByD5Wu7t/XWGArhLtuk7BAVOrXmxc2
-         Pdoqz5FUa9mRF+gRD+UyiRBczJSQirV+cfbOc3BYo34VfP8OCifZ1ePaWwgF1noB7Nkd
-         H59TZpPUuT9LwOhSwevih5zZiIZG+p+utJ7uSEII/L1LKQ2BYUjb8ActQi/EhGtOIUrv
-         DxXg==
+        bh=RFt9a3w/ePwIdDqIIrubu40TRnzaXtPMT/2pFLElACw=;
+        b=lp7vlN7KKN3So2FVGTWnPWHxxa6JfYNY1+GrtXttcb4yOy+KQckwa5katfYIRM9osr
+         WvjehQDZP/BDkwcXgZ8A93Otr5fGWUcOJrFu6ojt6JBPcoKAHPd7inuoloJ4lAFPkBTe
+         NzNFA4Dya9nIQ5K6eh20flhKzChYASSHMD8Tjoq+nhlC89LBjp2STbOO5D+wOPXr5MYQ
+         rRNEddv0LkYBX8+ff0sCIW/+K0n7AXt7XmCzsgPmR4MU411Aaa0bB889BWegmw53GrXj
+         XhWOTOgXN9cz6Y1V8Oya0AWg8xeeAZhoRs9uQeV5v8dV7BkXWFotV4FkX7Pnny/gdi9G
+         Rfhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726502707; x=1727107507;
+        d=1e100.net; s=20230601; t=1726502746; x=1727107546;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BiJHqI/Fdle6XXJtaWDnTKJvQT9GxBWgyR71PRODTyo=;
-        b=bFtTy/iRCAh+XSw5CtDKetAWL/ER/NO+Ba7ZHVkuIb1Q+ozHva58zTiOD9dwzn/Rsi
-         43of7jU8/MIHs8NsQuFYYNpyv5MbQZ7RfLEjLhTl4lpXIS2nA+aFjW/cA9VKYjwgj2rI
-         tQtjxaNfBxc50AlCwFgPN8hlmPQ7M4/r/UOsABvk4F2PleUbIyK3dWBUFYlWcaEV8XmP
-         wA5fqJCR86RQSecqvJ+UN3Ut3FTud/GqFXUapj0q/wHTOith5zhFB32y7eF//qrFkX/b
-         dYah9o6xUdAC5kstLGW2vHLcrHORsezoLVxyqelBNFheisEUNl3oFqXtGzjgflim8iVE
-         jGfA==
-X-Gm-Message-State: AOJu0YxRfRpFSwDGIkQKfAaERL7iEjluflFx1dyURn5JWvt2132PorK0
-	HnOKvBUYtFaYuVWo+07ZBl5U0ak3YFeCVUm45GYByeHBGHK0IgJ/oWf5nIhLt8U=
-X-Google-Smtp-Source: AGHT+IHTofxDdZaPYmu9EVlvoy3KHhpEgUyPOdWNJhFxR2wvA2TB0Algt2hIHbvSAsuhCzlGMzUx9w==
-X-Received: by 2002:a5d:5f87:0:b0:374:bebd:e714 with SMTP id ffacd0b85a97d-378c2cfedc0mr5752907f8f.4.1726502707090;
-        Mon, 16 Sep 2024 09:05:07 -0700 (PDT)
+        bh=RFt9a3w/ePwIdDqIIrubu40TRnzaXtPMT/2pFLElACw=;
+        b=HXL91QhSD1eX6pv4db1XVb6Zj7n4y6X62ERDIW3GJPlvLXMZP0wOrt20Ee3EEE21Gh
+         krS2XL/C/aUtnZ0Fb6juYUj8Kk8HfUda2HbhiMbQlKKN5c+2Ew6J1NzVBn3Yw/aJI0t9
+         qfYc54OivDw2xx90D03c3kX0I2kfHhd5n4EILNahL69W93EMQl40XAy7YpEasxTScMUL
+         rZ/p7idV2NbofBDWDvrXIe5KYCODGsqpQuIsVawP/6P4zHkNoA1/XHcbr93AshJE2Y5P
+         MBWHjFBiqZ7Z+nBdcsg3nZTMiEpt6zHoVUyYLSz+o8gLOEv7aAPT1jTPQrQsn6Ii5VcP
+         H2HA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEa0FXQFE1GyEwryOK5F90MooxLgY1kiZCpF95Fd5asICuy80UKj7WQmHWf20UZrj96Imqf1bNu6EoHwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylNE2q8Lj/Do9w6OzrQbpHl3YH6Ol0X5SggXWhYdLezGwauQfx
+	S/8xby62U1/5Q5Dnd8rbdWsrK3uvauqPuyhCGIV3u4LtJot9EagbkRbcxghSoXU=
+X-Google-Smtp-Source: AGHT+IFMbsPuBPKcyYlNFQnL82lKpSnFEz+gTmak+bL0oHIs7OuvsUlzJL5rM6bwOAsGgusTrHcxpA==
+X-Received: by 2002:a05:600c:600a:b0:42c:aeee:da87 with SMTP id 5b1f17b1804b1-42cdb66c943mr52095185e9.9.1726502745851;
+        Mon, 16 Sep 2024 09:05:45 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78054c3sm7629484f8f.105.2024.09.16.09.05.05
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da2427227sm80656885e9.44.2024.09.16.09.05.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 09:05:06 -0700 (PDT)
-Message-ID: <ae520641-38a4-405e-89d0-e0921dfc7cff@linaro.org>
-Date: Mon, 16 Sep 2024 18:05:04 +0200
+        Mon, 16 Sep 2024 09:05:45 -0700 (PDT)
+Message-ID: <c858c534-98d6-4603-819e-9134dbed94cf@linaro.org>
+Date: Mon, 16 Sep 2024 18:05:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,14 +78,18 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC 1/2] dt-bindings: connector: Add property to set pd timer
  values
-To: Amit Sunil Dhamne <amitsd@google.com>, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, kyletso@google.com, rdbabiera@google.com,
+To: Amit Sunil Dhamne <amitsd@google.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, heikki.krogerus@linux.intel.com,
+ gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ kyletso@google.com, rdbabiera@google.com,
  Badhri Jagan Sridharan <badhri@google.com>, linux-usb@vger.kernel.org,
  devicetree@vger.kernel.org
 References: <20240911000715.554184-1-amitsd@google.com>
  <20240911000715.554184-2-amitsd@google.com>
+ <5iakowhmqc3hbstmwbs6ixabr27hf2dfz2m4do4qvsrtgrdn72@r7xqawwgebla>
+ <dc323138-3bbb-4e23-91f1-d6b80cb7bb72@google.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -131,106 +136,60 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240911000715.554184-2-amitsd@google.com>
+In-Reply-To: <dc323138-3bbb-4e23-91f1-d6b80cb7bb72@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/09/2024 02:07, Amit Sunil Dhamne wrote:
-> This commit adds a new property "pd-timers" to enable setting of
-> platform/board specific pd timer values for timers that have a range of
-> acceptable values.
+On 13/09/2024 01:26, Amit Sunil Dhamne wrote:
+> Hi Dmitry,
 > 
-> Cc: Badhri Jagan Sridharan <badhri@google.com>
-> Cc: linux-usb@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-
-Please work on mainline, not ancient tree. You cannot get my CC address
-like that from mainline. It's not possible. So either you don't develop
-on mainline or you don't use get_maintainers.pl/b4/patman.
-
-
-> ---
->  .../bindings/connector/usb-connector.yaml     | 23 +++++++++++++++++++
->  include/dt-bindings/usb/pd.h                  |  8 +++++++
->  2 files changed, 31 insertions(+)
+> On 9/12/24 3:05 AM, Dmitry Baryshkov wrote:
+>> On Tue, Sep 10, 2024 at 05:07:05PM GMT, Amit Sunil Dhamne wrote:
+>>> This commit adds a new property "pd-timers" to enable setting of
+>>> platform/board specific pd timer values for timers that have a range of
+>>> acceptable values.
+>>>
+>>> Cc: Badhri Jagan Sridharan <badhri@google.com>
+>>> Cc: linux-usb@vger.kernel.org
+>>> Cc: devicetree@vger.kernel.org
+>>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>>> ---
+>>>   .../bindings/connector/usb-connector.yaml     | 23 +++++++++++++++++++
+>>>   include/dt-bindings/usb/pd.h                  |  8 +++++++
+>>>   2 files changed, 31 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>>> index fb216ce68bb3..9be4ed12f13c 100644
+>>> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>>> @@ -253,6 +253,16 @@ properties:
+>>>   
+>>>       additionalProperties: false
+>>>   
+>>> +  pd-timers:
+>>> +    description: An array of u32 integers, where an even index (i) is the timer (referenced in
+>>> +      dt-bindings/usb/pd.h) and the odd index (i+1) is the timer value in ms (refer
+>>> +      "Table 6-68 Time Values" of "USB Power Delivery Specification Revision 3.0, Version 1.2 " for
+>>> +      the appropriate value). For certain timers the PD spec defines a range rather than a fixed
+>>> +      value. The timers may need to be tuned based on the platform. This dt property allows the user
+>>> +      to assign specific values based on the platform. If these values are not explicitly defined,
+>>> +      TCPM will use a valid default value for such timers.
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> Is it really necessary to use the array property? I think it's easier
+>> and more logical to define corresponding individual properties, one per
+>> the timer.
 > 
-> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> index fb216ce68bb3..9be4ed12f13c 100644
-> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> @@ -253,6 +253,16 @@ properties:
->  
->      additionalProperties: false
->  
-> +  pd-timers:
-> +    description: An array of u32 integers, where an even index (i) is the timer (referenced in
-> +      dt-bindings/usb/pd.h) and the odd index (i+1) is the timer value in ms (refer
+> Thanks for the review. The reason I did it this way was for
+> convenience. If in the future someone else wants add a new timer,
+> it'd be convenient to just add it as a new macro definition in pd.h
+> rather than having to define a new property each time, especially
+> if folks want to add more timers (scales better).
+> There are 3 timers already and I am working to add a fourth in a
+> follow up patch if the current RFC gets accepted.
+> 
+> Please let me know what do you think?
 
-timer of what? OS behavior?
-
-> +      "Table 6-68 Time Values" of "USB Power Delivery Specification Revision 3.0, Version 1.2 " for
-> +      the appropriate value). For certain timers the PD spec defines a range rather than a fixed
-> +      value. The timers may need to be tuned based on the platform. This dt property allows the user
-
-Do not describe what DT is. We all know what DT properties allow.
-Instead describe how this relates to hardware or boards.
-
-All this is wrongly wrapped. See Coding style (and I am not telling you
-the value on purpose, so you will read the coding style) .
-
-> +      to assign specific values based on the platform. If these values are not explicitly defined,
-> +      TCPM will use a valid default value for such timers.
-
-And what is the default?
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-
-I guess you want matrix here.
-
-> +
->  dependencies:
->    sink-vdos-v1: [ sink-vdos ]
->    sink-vdos: [ sink-vdos-v1 ]
-> @@ -478,3 +488,16 @@ examples:
->              };
->          };
->      };
-> +
-> +  # USB-C connector with PD timers
-> +  - |
-> +    #include <dt-bindings/usb/pd.h>
-> +    usb {
-> +        connector {
-> +            compatible = "usb-c-connector";
-> +            label = "USB-C";
-> +            pd-timers =
-> +                <PD_TIMER_SINK_WAIT_CAP 600>,
-> +                <PD_TIMER_CC_DEBOUNCE 170>;
-
-Incorporate it into existing example.
-
-> +        };
-> +    };
-> diff --git a/include/dt-bindings/usb/pd.h b/include/dt-bindings/usb/pd.h
-> index e6526b138174..6c58c30f3f39 100644
-> --- a/include/dt-bindings/usb/pd.h
-> +++ b/include/dt-bindings/usb/pd.h
-> @@ -465,4 +465,12 @@
->  	 | ((vbm) & 0x3) << 15 | (curr) << 14 | ((vbi) & 0x3f) << 7	\
->  	 | ((gi) & 0x3f) << 1 | (ct))
->  
-> +/* PD Timer definitions */
-> +/* tTypeCSinkWaitCap (Table 6-68 Time Values, USB PD3.1 Spec) */
-
-Please expand this a bit, so we won't have to reach to external sources.
-
-> +#define PD_TIMER_SINK_WAIT_CAP		0
-> +/* tPSSourceOff (Table 6-68 Time Values, USB PD3.1 Spec) */
-> +#define PD_TIMER_PS_SOURCE_OFF		1
-> +/* tCCDebounce (Table 4-33 CC Timing, USB Type-C Cable & Connector Spec Rel2.2) */
-> +#define PD_TIMER_CC_DEBOUNCE		2
-
+Binding is supposed to be complete. You already know this is not complete...
 
 Best regards,
 Krzysztof
