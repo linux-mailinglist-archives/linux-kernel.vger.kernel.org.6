@@ -1,174 +1,133 @@
-Return-Path: <linux-kernel+bounces-330189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2C3979AB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:20:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146D0979AB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C931F21B1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:20:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F81EB21F11
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96BD224FD;
-	Mon, 16 Sep 2024 05:20:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8192F5B
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8799E2868B;
+	Mon, 16 Sep 2024 05:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lsq2KmeB"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A614623A9;
+	Mon, 16 Sep 2024 05:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726464053; cv=none; b=MyAakWCLCR7QjYe02nY5FYaeXZis9ARRlUaGeW0eX+COgABMQit5Ob5UpO19vUvfbq3xRM0MCSFiv6gxo243wyp3qS2SIw+y0K3WLaKdDRRiritPfB3tHcLmrbJEZSDMyFjNkwg1hTnhmOz5z1SavbWaiI4GPteJ51c7q06fmq8=
+	t=1726464093; cv=none; b=uFKZvjIE6ce1allmuQSdo8fmRxrO2ViVgbEFeUiOWykLPijnHE2dfEmIr9NKwHkYtp1sBbwYdKhSh8WSbe/DBNsh3lVEQLalhkfXGTq9pXWN3XOPDxn+E0Q7WKk1Hm6m15K/RJQU7YGyGcVEFoOBly00P03DLCooK67v4vk0a9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726464053; c=relaxed/simple;
-	bh=WNSkQd4GNL0HT1acuZgMy/6rKqd3G297EujVu+T7teE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ahONK4hKXzRIw3inY4ebIBJbG+S+TMxih9Z1xjvm+rReNQrm9YYAPMv5yV3EZZzGvHhg0q3xnLKMM+g5OJtjJKXX7taGic1tn81zPkQcLxxzoCoBlbFcLKX5Ug6Zc56b1aThaiUnenzk9oEF37RJ46DwpOkBSjNjlasKaupmtwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8FD61476;
-	Sun, 15 Sep 2024 22:21:18 -0700 (PDT)
-Received: from [10.162.42.11] (e116581.arm.com [10.162.42.11])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70DD93F64C;
-	Sun, 15 Sep 2024 22:20:45 -0700 (PDT)
-Message-ID: <ba7594d4-5d3c-4950-a1bb-e50b68a74832@arm.com>
-Date: Mon, 16 Sep 2024 10:50:42 +0530
+	s=arc-20240116; t=1726464093; c=relaxed/simple;
+	bh=6BSWlbShZI6FKCL+zCzIx1gPc3gWvUY+0MVQjYwSloQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UK2uB2S0fuOTBwvsHMTGdajmlJe0yI7OHmoRMIvNMS0pmJxY39/6LqkppTuR0O4veSLA0iPC0SraqUH3ajUN4CRRj77U1X51CBlqIsqJmHDASoE8dXLQ13Gt8YWGjyFnv/xXrfU+mVKRTegP9564VNkMfScMj7wsQG+jaKKo4Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lsq2KmeB; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d889ba25f7so1932258a91.0;
+        Sun, 15 Sep 2024 22:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726464091; x=1727068891; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZPn/+H1ASm7qkxU/tBBk3TPehptgKtNICy+pHBy4t4=;
+        b=Lsq2KmeB/YRjptOC8fivjzPCk1WKoLGy1QVxVK4x5LyPQeD8/LnO6E29pvEVzsma9v
+         2heihrKj2UKBVZOKONmqqUXIySBq6zVRuAn9P6hIWK69QB1BvnrcOxUe9euyQ9OiXf0k
+         TdcWWKqCQtXRaTZhT+I+qciYy4gyatqK8lAzgKABKFb6dO4yquTNjUh/MOI+hu3F0Phg
+         Z5lhFzIzDoI1f9MG/sHCqpEEUr4J3wiWiKrAYNGDLdTDew760MAjrOe2J8LtFD5KxA0V
+         Nk+Feni7ZfeqJ+JbRytPoRxi26fHy4lvqjp0pquXh1G7b73YNksuCrhK+eHSqDhvlGaX
+         OjsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726464091; x=1727068891;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MZPn/+H1ASm7qkxU/tBBk3TPehptgKtNICy+pHBy4t4=;
+        b=IgoAAEGH5dQSlYvonbodco2r1BT82UV4F0vNu0NoCmhb9InNiHYCwufqurShqKCqfJ
+         dTwjZKGM4N1oXBAMNwCDinXnx5g0g9wFjNPaN/jCZEvb1VnG4zZQTA/seJi3gMZ1LLhQ
+         4c7ffhMHnTIA87czkrAd2zKbpMBrER3UpHOIPU3lZ3V1tulOxAjdbMhSiswRpnwxjTVB
+         KkcL+I5RIjzpVNslMhfzgWyTnVfhiSjn3+WKli+GdrClHVSgkQUmVqgg5is1r0qBybX+
+         vmyfA0CnfJoJ6YnnWRzG87/pL0mMANfmEV6TwDrARvBtiI1OqILEth1LaguyVZEQ/8kd
+         bm+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVeuN++nqDHe2jb8otsZfhJxXMqe1P22cHRHagNztyBTAw0Gkx7J70ElpH9eoTbkQIkKcF0CYROjKkX0wt0@vger.kernel.org, AJvYcCXbW/Q0e5mSx1eKT0sw8nX+xsILaJpExBMYcYbHtTJW5W3HnvxslXrOa5pFSnHAhSVOpDTmkkgqTes3R+me@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXA4nWlhUfpnRhPSpN8cZNmMVsiKUnqdz+IJ3XP1OpaLkc9ycU
+	qr/vK8k3Sg9YSTsyb+MGCr96jj+rfH/UqsmtkBkoZANk8OA1C/15
+X-Google-Smtp-Source: AGHT+IGIAev7q4EhRphohWsMsUIEQhAipsPoO2zMLEYpKFlAbc/5WIy3Q9fd+3+buaY+vt+c9Fj0cw==
+X-Received: by 2002:a17:90a:c697:b0:2d8:6f66:1ebf with SMTP id 98e67ed59e1d1-2dbb9e1d090mr13285136a91.20.1726464090813;
+        Sun, 15 Sep 2024 22:21:30 -0700 (PDT)
+Received: from localhost.localdomain (syn-076-088-006-086.res.spectrum.com. [76.88.6.86])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2079470f179sm29624525ad.230.2024.09.15.22.21.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 22:21:30 -0700 (PDT)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Daniel Yang <danielyangkang@gmail.com>,
+	syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
+Subject: [PATCH v2] fs/exfat: resolve memory leak from exfat_create_upcase_table()
+Date: Sun, 15 Sep 2024 22:21:27 -0700
+Message-Id: <20240916052128.225475-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Compute mTHP order efficiently
-To: Barry Song <baohua@kernel.org>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org,
- ryan.roberts@arm.com, anshuman.khandual@arm.com, hughd@google.com,
- ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- baolin.wang@linux.alibaba.com, gshan@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240913091902.1160520-1-dev.jain@arm.com>
- <CAGsJ_4yRadEPiO5H7Nd1jXQ1Gydt43VtUjfQDEp5Q+U9yddTnA@mail.gmail.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <CAGsJ_4yRadEPiO5H7Nd1jXQ1Gydt43VtUjfQDEp5Q+U9yddTnA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+    If exfat_load_upcase_table reaches end and returns -EINVAL,
+    allocated memory doesn't get freed and while
+    exfat_load_default_upcase_table allocates more memory, leading to a    
+    memory leak.
+    
+    Here's link to syzkaller crash report illustrating this issue:
+    https://syzkaller.appspot.com/text?tag=CrashReport&x=1406c201980000
 
-On 9/16/24 10:42, Barry Song wrote:
-> On Fri, Sep 13, 2024 at 5:19 PM Dev Jain <dev.jain@arm.com> wrote:
->> We use pte_range_none() to determine whether contiguous PTEs are empty
->> for an mTHP allocation. Instead of iterating the while loop for every
->> order, use some information, which is the first set PTE found, from the
->> previous iteration, to eliminate some cases. The key to understanding
->> the correctness of the patch is that the ranges we want to examine
->> form a strictly decreasing sequence of nested intervals.
->>
->> Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> I like this patch, but could we come up with a better subject for
-> pte_range_none()?
-> The subject is really incorrect.
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+Reported-by: syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
+---
+V1 -> V2: Moved the mem free to create_upcase_table
 
-Are you asking me to change "Compute mTHP order efficiently" to
-something else?
+ fs/exfat/nls.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
->
-> Also, I'd prefer the change for alloc_anon_folio() to be separated
-> into its own patch.
-> So, one patchset with two patches, please.
+diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+index afdf13c34..8828f9d29 100644
+--- a/fs/exfat/nls.c
++++ b/fs/exfat/nls.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
+  */
+ 
++#include <cerrno>
+ #include <linux/string.h>
+ #include <linux/slab.h>
+ #include <linux/buffer_head.h>
+@@ -779,8 +780,13 @@ int exfat_create_upcase_table(struct super_block *sb)
+ 				le32_to_cpu(ep->dentry.upcase.checksum));
+ 
+ 			brelse(bh);
+-			if (ret && ret != -EIO)
++			if (ret && ret != -EIO) {
++				/* free memory from exfat_load_upcase_table call */
++				if (ret == -EINVAL) {
++					exfat_free_upcase_table(sbi);
++				}
+ 				goto load_default;
++			}
+ 
+ 			/* load successfully */
+ 			return ret;
+-- 
+2.39.2
 
-Fine by me.
-
->
->> ---
->>   mm/memory.c | 30 +++++++++++++++++++++++-------
->>   1 file changed, 23 insertions(+), 7 deletions(-)
->>
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 3c01d68065be..ffc24a48ef15 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -4409,26 +4409,27 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->>          return ret;
->>   }
->>
->> -static bool pte_range_none(pte_t *pte, int nr_pages)
->> +static int pte_range_none(pte_t *pte, int nr_pages)
->>   {
->>          int i;
->>
->>          for (i = 0; i < nr_pages; i++) {
->>                  if (!pte_none(ptep_get_lockless(pte + i)))
->> -                       return false;
->> +                       return i;
->>          }
->>
->> -       return true;
->> +       return nr_pages;
->>   }
->>
->>   static struct folio *alloc_anon_folio(struct vm_fault *vmf)
->>   {
->>          struct vm_area_struct *vma = vmf->vma;
->>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +       pte_t *first_set_pte = NULL, *align_pte, *pte;
->>          unsigned long orders;
->>          struct folio *folio;
->>          unsigned long addr;
->> -       pte_t *pte;
->> +       int max_empty;
->>          gfp_t gfp;
->>          int order;
->>
->> @@ -4463,8 +4464,23 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
->>          order = highest_order(orders);
->>          while (orders) {
->>                  addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
->> -               if (pte_range_none(pte + pte_index(addr), 1 << order))
->> +               align_pte = pte + pte_index(addr);
->> +
->> +               /* Range to be scanned known to be empty */
->> +               if (align_pte + (1 << order) <= first_set_pte)
->>                          break;
->> +
->> +               /* Range to be scanned contains first_set_pte */
->> +               if (align_pte <= first_set_pte)
->> +                       goto repeat;
->> +
->> +               /* align_pte > first_set_pte, so need to check properly */
->> +               max_empty = pte_range_none(align_pte, 1 << order);
->> +               if (max_empty == 1 << order)
->> +                       break;
->> +
->> +               first_set_pte = align_pte + max_empty;
->> +repeat:
->>                  order = next_order(&orders, order);
->>          }
->>
->> @@ -4579,7 +4595,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
->>          if (nr_pages == 1 && vmf_pte_changed(vmf)) {
->>                  update_mmu_tlb(vma, addr, vmf->pte);
->>                  goto release;
->> -       } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
->> +       } else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) != nr_pages) {
->>                  update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
->>                  goto release;
->>          }
->> @@ -4915,7 +4931,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>                  update_mmu_tlb(vma, addr, vmf->pte);
->>                  ret = VM_FAULT_NOPAGE;
->>                  goto unlock;
->> -       } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
->> +       } else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) != nr_pages) {
->>                  update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
->>                  ret = VM_FAULT_NOPAGE;
->>                  goto unlock;
->> --
->> 2.30.2
->>
-> Thanks
-> Barry
 
