@@ -1,103 +1,99 @@
-Return-Path: <linux-kernel+bounces-331110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2558697A894
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:09:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0F397A896
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2F5B2839CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:09:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3A88B21ED7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2094015B119;
-	Mon, 16 Sep 2024 21:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C88015D5B9;
+	Mon, 16 Sep 2024 21:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="yWEpc4Mx"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FK5sE+r2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E04517753
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 21:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91D0241E7
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 21:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726520944; cv=none; b=gcUWfVHRaa/ZajVah/woMJRWxFKvyksjJUrAV7ZITAVtdC7Y9LwIfskJaF9xC2VabVJH4tLo1zwE+r2eBEV2et8Qe2XGColdIzNQu9Z9MeBqqpro+4cIY7nZOkpsJPCiGB5SZphj9GiDcAsMRiJORKROENXqCAbv1Pul8kSoMWk=
+	t=1726520987; cv=none; b=gxHbnFS9+EmhZgi1s0S+jXyMFzUnzcv68EmaygM0zjdpfYuaFNnTWRWTTSov/9g/FcyUTLB/BOcLvBCElLsVJ2Jw+Qr/DwmFYx7IyumafKpf6mIuBggflRLXoGAbXLncyNGL1fLBpKqKkImqGvPaZnnQSJd1nIDvN8jq0dXbWBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726520944; c=relaxed/simple;
-	bh=XxHAzuzTBnI5+iA9KB4svNMS3G+AiWxXLZfSvGHjSsk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=tr9kWHDibkGBYxLcjPGub+ftnMOpB6vBRExnbGOZQZ08KnRGwVfBW/3FkBbvkHl+Thzs8SPVQXfcJFWxPRnF9VEKGcdiRvlEhz6cFXVSj7MeENpwv7FiI1/obgd/zNlyHffPEAbPaGphLCT06Ttt51Dp3uvRSKFr2E3ezCH3Le4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=yWEpc4Mx; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1726520987; c=relaxed/simple;
+	bh=xLpYm/Rb1xCBeSImFbP0p3JrCkPA0Jclh/I1JB/dxSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6PvBqb4PXLkjNbOKDZU+cvkIlxSsbSUhSq1sA6007l7AoLpCc6QqRVMxPPHUE7OTolzoYHyTtNQN4IfVuPDSq6L6YWUAvLjSuzu4LOy9OBam3mwlpfQqwUymaiNCPwS9oBJGbVcpKarjmugvzE7kMpBZaAc5KliQKSK17i9Odc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FK5sE+r2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8201C4CEC4;
+	Mon, 16 Sep 2024 21:09:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726520986;
+	bh=xLpYm/Rb1xCBeSImFbP0p3JrCkPA0Jclh/I1JB/dxSU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FK5sE+r2gySnnrXf/sfxIG7dM7wtHRpf3BxaoO6TzH9dLsdQS22yTy2b4bUTVjtLm
+	 5OZ1Aq6hvEuSLvrSW7wAA814u3+f0j0C5Tbu12N467kK1NRiZVx+P7L8muKZ/DEtbG
+	 OQ0guaEoX/Uk9hkQEqPH/cBsYVZXjY2Oy64oEtUU/g2a1rwCynranEXyonPwLeFMIG
+	 /q8l6HGmgHh8EB99NXeLzrWUB9UzKVDJUtuKxVXt15yxZla8lHtq1GIEF8lLUvuDJS
+	 I4leuN5wOCkttpKzODVh6HJvUsMJFvUd5JRbBr0p3DeBfMgKzZblZ+dcJikq41s3RS
+	 N5sPeK6ZO5qIg==
+Date: Mon, 16 Sep 2024 23:09:41 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Luben Tuikov <ltuikov89@gmail.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Subject: Re: [PATCH] MAINTAINERS: drm/sched: Add new maintainers
+Message-ID: <ZuielQSr-1zI-GhD@pollux>
+References: <20240916185159.35727-3-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1726520932;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YLi7styXVTGwuulx+I+C4Q/VsEp7/nuBRguC7NX3Iyc=;
-	b=yWEpc4MxBG2Jma2/Wb7G1Mu7zsAxnPzsj/UgMq65kTbw4qi7W+oNb7EhKwj+SGqJDnAo4e
-	gBbecq6n84cDJ1mzPlR8LIYRWiK1Wag0fC/YbNrDGoaJopM9UDyF6LkaMDfejibvRevO5o
-	FN4rrstZJEKkoRXWb2XxCqpuP/8XqRQMMeBV4LzTBp9iN2Vn27iiUbUYwHD6gNdzaSP0gR
-	aRVIBKzMCxzDmHOTAIDn8iCTL6JlowFcyl1wsVGGxBC/l9FFboBJdBiVYY3/CY9wse9eii
-	QLFFhLqANy//67VQbZrqXLBkUecv+X8Qp4TlwfE9y0fmTQ9QBA68oclFq1xKwQ==
-Date: Mon, 16 Sep 2024 23:08:51 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>
-Subject: Re: [PATCH] arm64: dts: sun50i-a64-pinephone: Add mount matrix for
- accelerometer
-In-Reply-To: <20240916204521.2033218-1-andrej.skvortzov@gmail.com>
-References: <20240916204521.2033218-1-andrej.skvortzov@gmail.com>
-Message-ID: <6e5d0e9978bff30559c17f30d1495b59@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+In-Reply-To: <20240916185159.35727-3-pstanner@redhat.com>
 
-Hello Andrey,
-
-On 2024-09-16 22:45, Andrey Skvortsov wrote:
-> From: OndÅ™ej Jirman <megi@xff.cz>
+On Mon, Sep 16, 2024 at 08:52:00PM +0200, Philipp Stanner wrote:
+> DRM's GPU scheduler is arguably in need of more intensive maintenance.
+> Danilo and Philipp volunteer to help with the maintainership.
 > 
-> accelerometer is mounted the way x and z-axis are invereted, x and y
-> axis have to be spawed to match device orientation.
-> The mount matrix is based on PCB drawing and was tested on the device.
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> Cc: Christian König <christian.koenig@amd.com>
+> Cc: Luben Tuikov <ltuikov89@gmail.com>
+> Cc: Matthew Brost <matthew.brost@intel.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 
-This commit summary should be copyedited for grammar and style.  If
-you want, I can provide a copyedited version?
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
-> Signed-off-by: Ondrej Jirman <megi@xff.cz>
-> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+> 
 > ---
->  arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
+>  MAINTAINERS | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> index bc6af17e9267a..1da7506c38cd0 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> @@ -229,6 +229,9 @@ accelerometer@68 {
->  		interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
->  		vdd-supply = <&reg_dldo1>;
->  		vddio-supply = <&reg_dldo1>;
-> +		mount-matrix = "0", "1", "0",
-> +				"-1", "0", "0",
-> +				"0", "0", "-1";
->  	};
->  };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 10430778c998..fc2d8bf3ee74 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7710,6 +7710,8 @@ F:	drivers/gpu/drm/xlnx/
+>  DRM GPU SCHEDULER
+>  M:	Luben Tuikov <ltuikov89@gmail.com>
+>  M:	Matthew Brost <matthew.brost@intel.com>
+> +M:	Danilo Krummrich <dakr@kernel.org>
+> +M:	Philipp Stanner <pstanner@redhat.com>
+>  L:	dri-devel@lists.freedesktop.org
+>  S:	Maintained
+>  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> -- 
+> 2.46.0
+> 
 
