@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-330215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBD3979B07
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:14:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DE4979B0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21231285251
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:14:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1641F23E7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED7643ACB;
-	Mon, 16 Sep 2024 06:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZVdNDIvN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB84381B1;
-	Mon, 16 Sep 2024 06:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9BB8288F;
+	Mon, 16 Sep 2024 06:15:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC55482EB;
+	Mon, 16 Sep 2024 06:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726467281; cv=none; b=fLwNY72CYGHa11EOocfaOboPGPERKJmAIkRpIyzvmklp2dkyyFQh0/mtrHAyLjdFW/FamRJV1t9hG+hRNCKEUb/AqEQtvD17kYxZUSCGEPnkkyUUAIZKH1qcvXrUrVurbeQ55J/u1i1kOUPRqbv1IrnX8j384HOIbQAUmiBbeKc=
+	t=1726467315; cv=none; b=dxPjaZOka7cjxkyIasKFyPF+vDKfTTxm3FLaqw2z/3Dhu9VW3vRmhNWsXmDVSBPlnTL6GQhQS43IQkHrkhFTavCI4iZqrSBcqEbefbiIjiHlQ9ovOecRuTrwCq22l0RaQyNikBptNaHB67AzL9YMuXu1geKt7k7D9XVyR8VxuhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726467281; c=relaxed/simple;
-	bh=u9HtB7G1aej2/1qKTIOY/GVnpLPVCv89gNSFOJl/2tI=;
+	s=arc-20240116; t=1726467315; c=relaxed/simple;
+	bh=D8j5Hk0CkaLEX7dXTn/2QhcETJs4MStq2/5OBrQQL24=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YiduLn1XSd7Qm0xSLzRAUCS7VxrayR391JNsTg/iOjxMdHSBWTfAbqmhAz8uih5k+bIWj3uqv4XRZUt4M+PKtkFM1/Ofowu0c5SerM2y/tYqb8RSxbbhAcL/L8XrH1YQRr03oB1Ee4lhZGjN0HAW1ym/1p+CbyjowoYiYa7om+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZVdNDIvN; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726467279; x=1758003279;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=u9HtB7G1aej2/1qKTIOY/GVnpLPVCv89gNSFOJl/2tI=;
-  b=ZVdNDIvNVo1fabt1r3rNnG3U7nk4WHePFpWDGRF1SlNGKn+4uPrplrF3
-   A/Qmiik3Fj1I5UBEKYvzyUjlJJwR3atozQ4zBq/9yBxGx8EDI0+emRW6J
-   1Aah2moCWyJlQqxo2aJTejuH6SSvHKdddLodWt28ObXcm6zgBZKiTF3H/
-   4ELSdApq1Uns4AWR5ImJWivL5JW5qt46stibOh48W3t9g4YguWqKO+30O
-   NRMPgbApqWfeN50eFEaZBQDOkWoRRANaGWsb6jd8BG+4ZQWflmu6lyomM
-   v4aCzwCJUFEjxZVCQ6SBaMjF3L/y2ycEQxrZ4Dqw7lE7Rra6usIxswj0P
-   w==;
-X-CSE-ConnectionGUID: okjPL7WIRCmF25LEACqFAA==
-X-CSE-MsgGUID: cLQYKkS1T1ifs4w8EyD6zQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="25381533"
-X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
-   d="scan'208";a="25381533"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 23:14:39 -0700
-X-CSE-ConnectionGUID: Gqz0449aTfarOfCAqvWr1A==
-X-CSE-MsgGUID: RyykI/LeQHu0KE6QgMXlHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
-   d="scan'208";a="73158561"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 23:14:37 -0700
-Message-ID: <7d3fb0a8-96a1-48cc-97ce-c25d19ded4e7@intel.com>
-Date: Mon, 16 Sep 2024 09:14:33 +0300
+	 In-Reply-To:Content-Type; b=Nl1Bu0x95fDp0zOdJmfXyQSqq681xcLcRp+oO+VzV8pzRnJayYr6Ka7luEeIprlthj/PW+6l/b58xK4iUB37yFmnOQBZ4EKg4SkP3D/QrUY6ONTxbAcXfoIg7y0tz56DSrwSfVkBHSFINzovls9Skj/UCgElSx3+akqYInyhLpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DF0D11FB;
+	Sun, 15 Sep 2024 23:15:40 -0700 (PDT)
+Received: from [10.162.16.84] (a077893.blr.arm.com [10.162.16.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7AD03F66E;
+	Sun, 15 Sep 2024 23:15:04 -0700 (PDT)
+Message-ID: <61dafb6a-6212-40a6-8382-0d1b0dae57ac@arm.com>
+Date: Mon, 16 Sep 2024 11:45:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,107 +41,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mmc: sdhci_am654: Add
- sdhci_am654_start_signal_voltage_switch
-To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240913185403.1339115-1-jm@ti.com>
+Subject: Re: [PATCH 4/7] mm: Use pmdp_get() for accessing PMD entries
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dimitri Sivanich
+ <dimitri.sivanich@hpe.com>, Muchun Song <muchun.song@linux.dev>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ Naoya Horiguchi <nao.horiguchi@gmail.com>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, Dennis Zhou <dennis@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>
+References: <20240913084433.1016256-1-anshuman.khandual@arm.com>
+ <20240913084433.1016256-5-anshuman.khandual@arm.com>
+ <f918bd00-c6a4-498a-bd17-9f5b32f7d6a7@arm.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240913185403.1339115-1-jm@ti.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <f918bd00-c6a4-498a-bd17-9f5b32f7d6a7@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/09/24 21:54, Judith Mendez wrote:
-> The sdhci_start_signal_voltage_switch function sets
-> V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
-> V1P8_SIGNAL_ENA determines whether to launch cmd/data on neg
-> edge or pos edge of clock.
-> 
-> Due to some eMMC and SD failures seen across am62x platform,
-> do not set V1P8_SIGNAL_ENA by default, only enable the bit
-> for devices that require this bit in order to switch to 1v8
-> voltage for uhs modes.
-> 
-> Signed-off-by: Judith Mendez <jm@ti.com>
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-> ---
-> Changes since v1:
-> - Invert quirk logic
-> - Simplify sdhci_am654_start_signal_voltage_switch() and call
->   sdhci_start_signal_voltage_switch() when the quirk does not apply
-> - Simply logic when detecting when quirk should be applied
-> ---
->  drivers/mmc/host/sdhci_am654.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+On 9/13/24 16:08, Ryan Roberts wrote:
+> On 13/09/2024 09:44, Anshuman Khandual wrote:
+>> Convert PMD accesses via pmdp_get() helper that defaults as READ_ONCE() but
+>> also provides the platform an opportunity to override when required.
+>>
+>> Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
+>> Cc: Muchun Song <muchun.song@linux.dev>
+>> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+>> Cc: Miaohe Lin <linmiaohe@huawei.com>
+>> Cc: Naoya Horiguchi <nao.horiguchi@gmail.com>
+>> Cc: Pasha Tatashin <pasha.tatashin@soleen.com>
+>> Cc: Dennis Zhou <dennis@kernel.org>
+>> Cc: Tejun Heo <tj@kernel.org>
+>> Cc: Christoph Lameter <cl@linux.com>
+>> Cc: Uladzislau Rezki <urezki@gmail.com>
+>> Cc: Christoph Hellwig <hch@infradead.org>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-fsdevel@vger.kernel.org
+>> Cc: linux-mm@kvack.org
+>> Cc: kasan-dev@googlegroups.com
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  drivers/misc/sgi-gru/grufault.c |  4 +--
+>>  fs/proc/task_mmu.c              | 26 +++++++-------
+>>  include/linux/huge_mm.h         |  3 +-
+>>  include/linux/mm.h              |  2 +-
+>>  include/linux/pgtable.h         | 14 ++++----
+>>  mm/gup.c                        | 14 ++++----
+>>  mm/huge_memory.c                | 60 ++++++++++++++++-----------------
+>>  mm/hugetlb_vmemmap.c            |  4 +--
+>>  mm/kasan/init.c                 | 10 +++---
+>>  mm/kasan/shadow.c               |  4 +--
+>>  mm/khugepaged.c                 |  4 +--
+>>  mm/madvise.c                    |  6 ++--
+>>  mm/memory-failure.c             |  6 ++--
+>>  mm/memory.c                     | 25 +++++++-------
+>>  mm/mempolicy.c                  |  4 +--
+>>  mm/migrate.c                    |  4 +--
+>>  mm/migrate_device.c             | 10 +++---
+>>  mm/mlock.c                      |  6 ++--
+>>  mm/mprotect.c                   |  2 +-
+>>  mm/mremap.c                     |  4 +--
+>>  mm/page_table_check.c           |  2 +-
+>>  mm/pagewalk.c                   |  4 +--
+>>  mm/percpu.c                     |  2 +-
+>>  mm/pgtable-generic.c            | 16 ++++-----
+>>  mm/ptdump.c                     |  2 +-
+>>  mm/rmap.c                       |  2 +-
+>>  mm/sparse-vmemmap.c             |  4 +--
+>>  mm/vmalloc.c                    | 12 +++----
+>>  28 files changed, 129 insertions(+), 127 deletions(-)
+>>
+>> diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
+>> index 3557d78ee47a..f3d6249b7dfb 100644
+>> --- a/drivers/misc/sgi-gru/grufault.c
+>> +++ b/drivers/misc/sgi-gru/grufault.c
+>> @@ -224,10 +224,10 @@ static int atomic_pte_lookup(struct vm_area_struct *vma, unsigned long vaddr,
+>>  		goto err;
+>>  
+>>  	pmdp = pmd_offset(pudp, vaddr);
+>> -	if (unlikely(pmd_none(*pmdp)))
+>> +	if (unlikely(pmd_none(pmdp_get(pmdp))))
+>>  		goto err;
+>>  #ifdef CONFIG_X86_64
+>> -	if (unlikely(pmd_leaf(*pmdp)))
+>> +	if (unlikely(pmd_leaf(pmdp_get(pmdp))))
+> Just a general comment about multiple gets; before, the compiler most likely
+> turned multiple '*pmdp' dereferences into a single actual load. But READ_ONCE()
+> inside pmdp_get() ensures you get a load for every call to pmdp_get(). This has
+> 2 potential problems:
 > 
-> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-> index 0aa3c40ea6ed8..9ff07aadb2d91 100644
-> --- a/drivers/mmc/host/sdhci_am654.c
-> +++ b/drivers/mmc/host/sdhci_am654.c
-> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
->  	u32 tuning_loop;
->  
->  #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
-> +#define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
->  };
->  
->  struct window {
-> @@ -356,6 +357,29 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
->  	sdhci_set_clock(host, clock);
->  }
->  
-> +static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-> +	int ret;
-> +
-> +	if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
-> +	    ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
-> +		if (!IS_ERR(mmc->supply.vqmmc)) {
-> +			ret = mmc_regulator_set_vqmmc(mmc, ios);
-> +			if (ret < 0) {
-> +				pr_err("%s: Switching to 1.8V signalling voltage failed,\n",
-> +				       mmc_hostname(mmc));
-> +				return -EIO;
-> +			}
-> +		}
-> +		return 0;
-> +	}
-> +
-> +	return sdhci_start_signal_voltage_switch(mmc, ios);
-> +}
-> +
->  static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
->  {
->  	writeb(val, host->ioaddr + reg);
-> @@ -844,6 +868,11 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
->  	if (device_property_read_bool(dev, "ti,fails-without-test-cd"))
->  		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_FORCE_CDTEST;
->  
-> +	/* Suppress v1p8 ena for eMMC and SD with vqmmc supply */
-> +	if (!!of_parse_phandle(dev->of_node, "vmmc-supply", 0) ==
-> +	    !!of_parse_phandle(dev->of_node, "vqmmc-supply", 0))
-> +		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
-> +
->  	sdhci_get_of_property(pdev);
->  
->  	return 0;
-> @@ -940,6 +969,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
->  		goto err_pltfm_free;
->  	}
->  
-> +	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
->  	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
->  
->  	pm_runtime_get_noresume(dev);
+>  - More loads could potentially regress speed in some hot paths
 > 
-> base-commit: cf6444ba528f043398b112ac36e041a4d8685cb1
+>  - In paths that don't hold an appropriate PTL the multiple loads could race
+> with a writer, meaning each load gets a different value. The intent of the code
+> is usually that each check is operating on the same value.
 
+Makes sense, above two concerns are potential problems I guess.
+
+> 
+> For the ptep_get() conversion, I solved this by reading into a temporary once
+> then using the temporary for the comparisons.
+
+Alright.
+
+> 
+> I'm not sure if these are real problems in practice, but seems safest to
+> continue to follow this established pattern?
+
+Yes, will make the necessary changes across the series which might create some
+amount of code churn but seems like it would be worth. Planning to add old_pxd
+local variables when required and load them from the address, as soon as 'pxd'
+pointer becomes valid.
 
