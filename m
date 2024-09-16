@@ -1,100 +1,154 @@
-Return-Path: <linux-kernel+bounces-331065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2380997A7EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FEC97A7EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5623D1C2621C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75DB5280FB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAB813A3F4;
-	Mon, 16 Sep 2024 19:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A924915C144;
+	Mon, 16 Sep 2024 19:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="GDIW3Sjp"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKyZzvZZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B79B1DFE4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 19:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061611DFE4;
+	Mon, 16 Sep 2024 19:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726516147; cv=none; b=Fb4MOriosTFPVp18cOAefoeeFf81Dx/J/8pDnzq5W+fqG4AzAQgyOtCQU3nZ7Y+Ig0o/OaVapMRxtn42MT3W+HWdXkIrk+u2OWQCvyBhq1wpBMnOhXW1R50p0Fm3Rmt4UfPJJTwlvIHFTLFVqPxTgH7vOGX0i0ERVibR2hTdU98=
+	t=1726516165; cv=none; b=kx6CVoXpCzCsjBk3nhsWNiYRGgx4/yMcqILPTupaKodChUK1ZE2YVMQc+O6ufHlLhBXD3QAoVqvrVStWhd9EBrOEnehab6HySM+MEzJ+AvwBd4Wwk7D/gpK8YugLchviq6C9C5jrRWHk9xZ8d76DnMBhsZ2bl56HL65rLEXveCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726516147; c=relaxed/simple;
-	bh=zPjHfQdvpqs4TfgpQHEOptnUrlJ+kxZazWeYFpu76r8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BukfRJ7h0M5FWp17KSsCMCcjnFU6RQpWwexnHI8n2Wx5us26aMiT84GigEP0+PDIDc/GS6eRScpd49NgmHbrkDVlviop+G3lgPY3G41qf8fGGzLBglFh+iMYBGZf9bymC61aKs0fsfzE7c0Uvmn19v/bQDL3RskMtDPNQ8W4Y+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=GDIW3Sjp; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1726516136; x=1726775336;
-	bh=8j1OBoEq93yzihCTZoTOGp8S4edGbr7k85rO/0srWEw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=GDIW3SjpRZoye586ZrXv/+XV7/DLswdYwq/x/1/OrHNMlHpWpQln9jqUQDhbQAphW
-	 TZHWVJTs2KgiKyg41HlEwThjWrxWuUvh9JoT9fEKxZF91OjUJijM+Z3qYGNp1yGr79
-	 bD5OpMo3rGzTgF5JaGjZrxqOVBbP51/pEXcTIO9fahq7WZNhvn6orT9g3/M1PC349e
-	 El9SxH1/GwHAGFDoo0EJP1wrqYaOy8LavX7qDVqAhXf5Iuc91M4d3BkTUuIX6Z216d
-	 w8DYZX2mJkbMJzYZ5TYZAuYhZlnrIRMAU5a1afgnia8TiR3kePD1Vt+ixweO3wJ9gj
-	 skPjyF3rpsQAQ==
-Date: Mon, 16 Sep 2024 19:48:54 +0000
-To: Peter Zijlstra <peterz@infradead.org>
-From: Michael Pratt <mcpratt@pm.me>
-Cc: Ingo Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [RESEND PATCH] sched/syscalls: Allow setting niceness using sched_param struct
-Message-ID: <rdEqY1XYnE6kLSvXRjXReSAey0SEwMDUvqQRqLheIM99LpGH8pmv1ngZsNAkW1-DEHQhERga-rxGfTbuhL6FW_aEdo1DvWaOgncii1KmupY=@pm.me>
-In-Reply-To: <e6KW_ypfbIVbenvwbBwGgnxX700e-A68oVmCn1pdJ0834U4wtIWXhh5zfHrQF2dvSL_Vc_heC4KZ0XRzNZ-w7QfF70W0epxCzpph55reOls=@pm.me>
-References: <20240916050741.24206-1-mcpratt@pm.me> <20240916111323.GX4723@noisy.programming.kicks-ass.net> <e6KW_ypfbIVbenvwbBwGgnxX700e-A68oVmCn1pdJ0834U4wtIWXhh5zfHrQF2dvSL_Vc_heC4KZ0XRzNZ-w7QfF70W0epxCzpph55reOls=@pm.me>
-Feedback-ID: 27397442:user:proton
-X-Pm-Message-ID: 2ea0a1b247a658765daeb7e72ca0ee54c8445048
+	s=arc-20240116; t=1726516165; c=relaxed/simple;
+	bh=McvvxzRP1A7708isAh7bwsxm3tBEaTW9AN2krh/AmvA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=AZ2K5IESiuCfxdkfMszAei4eG7fbt0Qw3qXHbGIvicyLj1L346sn1AML9OluHDVGbCrDVYm9IoliKU3qTmsAa/KETSLicuKpALgdxnuODFixGKLR8Y/59uUbu/K9bfdKjCuWZis382WNdLKjNJXLFpdVO+vWB1fv0/gsEbvGDj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKyZzvZZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB40C4CEC4;
+	Mon, 16 Sep 2024 19:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726516164;
+	bh=McvvxzRP1A7708isAh7bwsxm3tBEaTW9AN2krh/AmvA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uKyZzvZZ1Jd4KscVOwGwGJiJPydODCJg5MhxYf+DNQKbGYXXz6Up4b4VBbX7B89XW
+	 7IQbPHvszOFAuebbQM1iZugwsGLh2DbKPd8nnoxiRidb/8ayT4PuDKF7CApgI3kxGU
+	 1xI9NKkar7tProD5gHbWKCz5P7NoM7Ip96FkNXacWzCMbDo8Z02gx85N/yUNT2VOSG
+	 rsWfMBrQZfaW+RFSfaKTCd70Bpq44yZ6eWAIT9iltZtPQ/4GmSegRRD6F0tGJWs/9w
+	 jIqtrxqd1TtOHBkSq67HLChfJE/UZthB2WO2oQY0yMIWf+wSIdlYSt6KHa2imeMcUp
+	 P8BFHdZY4sOYA==
+Date: Tue, 17 Sep 2024 04:49:16 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, Joel
+ Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] tracing: Allow system call tracepoints to handle
+ page faults
+Message-Id: <20240917044916.c615d25eb4fecc9818d3d376@kernel.org>
+In-Reply-To: <20240909201652.319406-1-mathieu.desnoyers@efficios.com>
+References: <20240909201652.319406-1-mathieu.desnoyers@efficios.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-one more detail I forgot:
-it actually would not be compliant for niceness as the input...
+On Mon,  9 Sep 2024 16:16:44 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-On Monday, September 16th, 2024 at 15:23, Michael Pratt <mcpratt@pm.me> wro=
-te:
+> Wire up the system call tracepoints with Tasks Trace RCU to allow
+> the ftrace, perf, and eBPF tracers to handle page faults.
+> 
+> This series does the initial wire-up allowing tracers to handle page
+> faults, but leaves out the actual handling of said page faults as future
+> work.
+> 
+> This series was compile and runtime tested with ftrace and perf syscall
+> tracing and raw syscall tracing, adding a WARN_ON_ONCE() in the
+> generated code to validate that the intended probes are used for raw
+> syscall tracing. The might_fault() added within those probes validate
+> that they are called from a context where handling a page fault is OK.
 
-> On Monday, September 16th, 2024 at 07:13, Peter Zijlstra <peterz@infradea=
-d.org> wrote:
->
-> > Worse, you're proposing a nice ABI that is entirely different from the
-> > normal [-20,19] range.
->=20
-> ...
-> ...
-> ...
->=20
-> Otherwise, we have a confusing conflation between the meaning of the two =
-values,
-> where a value of 19 makes sense for niceness, but is obviously invalid fo=
-r priority
-> for SCHED_NORMAL, and a negative value makes sense for niceness, but is o=
-bviously invalid
-> for priority in any policy.
->=20
+I think this series itself is valuable.
+However, I'm still not sure that why ftrace needs to handle page faults.
+This allows syscall trace-event itself to handle page faults, but the
+raw-syscall/syscall events only accesses registers, right?
 
-POSIX doesn't allow a negative value for the ABI at all:
+I think that the page faults happen only when dereference those registers
+as a pointer to the data structure, and currently that is done by probes
+like eprobe and fprobe. In order to handle faults in those probes, we
+need to change how those writes data in per-cpu ring buffer.
 
-  If successful, the sched_get_priority_max() and sched_get_priority_min() =
-functions return
-  the appropriate maximum or minimum values, respectively.
-  If unsuccessful, they return a value of -1 and set errno to indicate the =
-error.
+Currently, those probes reserves an entry on ring buffer and writes the
+dereferenced data on the entry, and commits it. So during this reserve-
+write-commit operation, this still disables preemption. So we need a
+another buffer for dereference on the stack and copy it.
+
+Thank you,
 
 
---
-MCP
+> 
+> For ebpf, this series is compile-tested only.
+> 
+> This series replaces the "Faultable Tracepoints v6" series found at [1].
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+> Link: https://lore.kernel.org/lkml/20240828144153.829582-1-mathieu.desnoyers@efficios.com/ # [1]
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Yonghong Song <yhs@fb.com>
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: bpf@vger.kernel.org
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: linux-trace-kernel@vger.kernel.org
+> 
+> Mathieu Desnoyers (8):
+>   tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL
+>   tracing/ftrace: guard syscall probe with preempt_notrace
+>   tracing/perf: guard syscall probe with preempt_notrace
+>   tracing/bpf: guard syscall probe with preempt_notrace
+>   tracing: Allow system call tracepoints to handle page faults
+>   tracing/ftrace: Add might_fault check to syscall probes
+>   tracing/perf: Add might_fault check to syscall probes
+>   tracing/bpf: Add might_fault check to syscall probes
+> 
+>  include/linux/tracepoint.h      | 87 +++++++++++++++++++++++++--------
+>  include/trace/bpf_probe.h       | 13 +++++
+>  include/trace/define_trace.h    |  5 ++
+>  include/trace/events/syscalls.h |  4 +-
+>  include/trace/perf.h            | 43 ++++++++++++++--
+>  include/trace/trace_events.h    | 61 +++++++++++++++++++++--
+>  init/Kconfig                    |  1 +
+>  kernel/entry/common.c           |  4 +-
+>  kernel/trace/trace_syscalls.c   | 36 ++++++++++++--
+>  9 files changed, 218 insertions(+), 36 deletions(-)
+> 
+> -- 
+> 2.39.2
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
