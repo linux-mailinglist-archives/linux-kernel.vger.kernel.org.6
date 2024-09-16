@@ -1,108 +1,102 @@
-Return-Path: <linux-kernel+bounces-330586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB38197A069
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B278497A093
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6BB4281880
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7BA283C2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B05415534E;
-	Mon, 16 Sep 2024 11:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34831547FF;
+	Mon, 16 Sep 2024 11:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GOYAGf+O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jhxDCcUQ"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7505F145B0C;
-	Mon, 16 Sep 2024 11:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067E54962E;
+	Mon, 16 Sep 2024 11:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726486747; cv=none; b=fr9rTpSYN18tyBY2wuiHsh5FNaMpV5tsqyv3Hhf6N774b5nkhLtZj8aTQN8BZkpFQeDn6BFgsY7i7jgHC9CczJYdKIVYzCW64LAPRlrUe9Q6wQWQl+xKwEY3fi3qsqc6gb7uMK2DDAhQZp4fttV2gVB/u5d0e9n0RWSfi3e4sEM=
+	t=1726487692; cv=none; b=mbQkluoFNehLXQD8BhzCShy8WGLQ8btu9Iktsw5hSACfTfQM6lI516EMOQtmJBoliUB+510rTLk4P2go8zHvivnB03TriZFOWW5dhbwgobQBH/skou+XMBtTJqlYZgBSA9kIfFOWJmozodH65eXCW05U2HHQa2RyLmNoxitrn1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726486747; c=relaxed/simple;
-	bh=B4POFSJV8VB5Kr5o010X/Du2R1CtR5kqeZrqDxL9QAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=edfYT3IRVtOOPdkUTuiAa6j+flp84ke5IJIIRqCF4Kd8ZKkUo5O8nDQABMXZFbAcBi3ieilPW36ACOQlEcjeqU3lfPNvrgcN3D96VFXN/yngSIQRzmnW/fC+guM8jtLV/TPe0/BKfyrwaJ7BLFGTx0QLAyMHqUvxNIwu7gZsuos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GOYAGf+O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD19EC4CEC4;
-	Mon, 16 Sep 2024 11:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726486747;
-	bh=B4POFSJV8VB5Kr5o010X/Du2R1CtR5kqeZrqDxL9QAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GOYAGf+ODsqdkGZubVl7Qn6eUqZPb1IpeIPywRU9/1AyxQBOL3gBWR4cdxUmyaPUt
-	 O4yqnFs0kgFKdQ2WcN7xzSSrmnA7plQsEYR0ePZb2iR6X4lMpxFsTSfdI7iwmPIEZc
-	 oGQbHF/c73S/1K7fPmbz4T7Rwla9xXfMWfLsrAW0=
-Date: Mon, 16 Sep 2024 13:39:04 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: stable@vger.kernel.org, sashal@kernel.org, maobibo@loongson.cn,
-	guanwentao@uniontech.com, zhangdandan@uniontech.com,
-	chenhuacai@loongson.cn, zhaotianrui@loongson.cn, kernel@xen0n.name,
-	kvm@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6.10] LoongArch: KVM: Remove undefined a6 argument
- comment for kvm_hypercall()
-Message-ID: <2024091647-absolve-wharf-f271@gregkh>
-References: <5B13B2AF7C2779A7+20240916092857.433334-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1726487692; c=relaxed/simple;
+	bh=Hjcj1TGJjgWgp9A03PePIin+64eYkNyZdQQE86sW2MI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bRQTXXVFGRD9CF9D9D7OzbT2Y2MAVxCWNeibAoUk5jp0rzZ7EKQT9h2itTcJdTSVthYjPR0NTzSSXbGU99njhjh5r1R1Z9h2UODJQjaJjLAezGlqOY5iepNls0ZApF/YnMPyT26XDqUcqnduB4YON6JDfhpfB/zJ+UqHm8e0g5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=jhxDCcUQ; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 5d87228c742011efb66947d174671e26-20240916
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=38IMJE5WIH2ScTHkA+IUKdspIObV4usS2GG6oZTIqTY=;
+	b=jhxDCcUQfj8x1AKi4hfzAODBlr8VP2hVuJ/6phat2W4ZkOQMQ5eYNpqQrTUULMLD3K8f55nmec3VfvdqAKHuRbhtl82MumcyCuOQag8bP966h52AMdMXNZoXyaSObwlv0AHBA2MkiedNQlzAG/hNpubbeqWga7anHYDOO//1h9g=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:27932da2-6919-4645-9469-0f9583d5e65e,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:4e6317b7-8c4d-4743-b649-83c6f3b849d4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5d87228c742011efb66947d174671e26-20240916
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 715248476; Mon, 16 Sep 2024 19:39:42 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 16 Sep 2024 19:39:41 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 16 Sep 2024 19:39:41 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH 0/4] Bluetooth: btusb: Mediatek ISO interface cliam/release adjustment
+Date: Mon, 16 Sep 2024 19:39:34 +0800
+Message-ID: <20240916113938.30285-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B13B2AF7C2779A7+20240916092857.433334-1-wangyuli@uniontech.com>
+Content-Type: text/plain
 
-On Mon, Sep 16, 2024 at 05:28:57PM +0800, WangYuli wrote:
-> From: Dandan Zhang <zhangdandan@uniontech.com>
-> 
-> [ Upstream commit 494b0792d962e8efac72b3a5b6d9bcd4e6fa8cf0 ]
-> 
-> The kvm_hypercall() set for LoongArch is limited to a1-a5. So the
-> mention of a6 in the comment is undefined that needs to be rectified.
-> 
-> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
-> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-> Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> --
-> Changlog:
->  *v1 -> v2: Correct the commit-msg format.
-> ---
->  arch/loongarch/include/asm/kvm_para.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/include/asm/kvm_para.h
-> index 4ba2312e5f8c..6d5e9b6c5714 100644
-> --- a/arch/loongarch/include/asm/kvm_para.h
-> +++ b/arch/loongarch/include/asm/kvm_para.h
-> @@ -28,9 +28,9 @@
->   * Hypercall interface for KVM hypervisor
->   *
->   * a0: function identifier
-> - * a1-a6: args
-> + * a1-a5: args
->   * Return value will be placed in a0.
-> - * Up to 6 arguments are passed in a1, a2, a3, a4, a5, a6.
-> + * Up to 5 arguments are passed in a1, a2, a3, a4, a5.
->   */
->  static __always_inline long kvm_hypercall0(u64 fid)
->  {
-> -- 
-> 2.43.0
-> 
-> 
+MediaTek performs some test on the platform which can support LE audio and
+ISO data transmission with kernel driver. We found the additional interface
+claim and release flow issue need some adjustment.
 
-Again, why is this needed?
+These patches mainly add a callback function within the usb_disconnect function
+to prevent a kernel panic caused by interfaces not being released when the BT USB
+dongle is physically removed. Additionally, the condition for claiming/releasing
+ISO usb interface have also been adjusted to make driver works as expected.
 
-thanks,
+Chris Lu (4):
+  Bluetooth: btusb: mediatek: move Bluetooth power off in
+    btusb_mtk_shutdown
+  Bluetooth: btusb: add callback function in btusb_disconnect
+  Bluetooth: btusb: mediatek: add intf release flow in usb disconnect
+  Bluetooth: btusb: mediatek: change the conditions for
+    claiming/releasing iso interface
 
-greg k-h
+ drivers/bluetooth/btusb.c | 32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
+
+-- 
+2.18.0
+
 
