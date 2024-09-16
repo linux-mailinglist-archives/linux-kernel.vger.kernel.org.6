@@ -1,81 +1,68 @@
-Return-Path: <linux-kernel+bounces-330190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146D0979AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:21:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5D1979AB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F81EB21F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:21:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC225B2212E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8799E2868B;
-	Mon, 16 Sep 2024 05:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9A9282FA;
+	Mon, 16 Sep 2024 05:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lsq2KmeB"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DCjgtWhY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A614623A9;
-	Mon, 16 Sep 2024 05:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3413923A9
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726464093; cv=none; b=uFKZvjIE6ce1allmuQSdo8fmRxrO2ViVgbEFeUiOWykLPijnHE2dfEmIr9NKwHkYtp1sBbwYdKhSh8WSbe/DBNsh3lVEQLalhkfXGTq9pXWN3XOPDxn+E0Q7WKk1Hm6m15K/RJQU7YGyGcVEFoOBly00P03DLCooK67v4vk0a9Q=
+	t=1726464309; cv=none; b=dao9L9CvAdYxG79HxMxTvq2VGLg/TJo0vWPwbxGhM9DeX0wur50RBNj+PYHn+OA4wpsQGFNtz57Ysb1MGr3fKoMa1i+gqBs0dBJ0qfTLF7Yx645f5cTZDLDT2RiZbZgr4XqQ6HMQtZ9jx5VhoAz82N2dSZxoweDVaIMwOvZHb3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726464093; c=relaxed/simple;
-	bh=6BSWlbShZI6FKCL+zCzIx1gPc3gWvUY+0MVQjYwSloQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UK2uB2S0fuOTBwvsHMTGdajmlJe0yI7OHmoRMIvNMS0pmJxY39/6LqkppTuR0O4veSLA0iPC0SraqUH3ajUN4CRRj77U1X51CBlqIsqJmHDASoE8dXLQ13Gt8YWGjyFnv/xXrfU+mVKRTegP9564VNkMfScMj7wsQG+jaKKo4Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lsq2KmeB; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d889ba25f7so1932258a91.0;
-        Sun, 15 Sep 2024 22:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726464091; x=1727068891; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MZPn/+H1ASm7qkxU/tBBk3TPehptgKtNICy+pHBy4t4=;
-        b=Lsq2KmeB/YRjptOC8fivjzPCk1WKoLGy1QVxVK4x5LyPQeD8/LnO6E29pvEVzsma9v
-         2heihrKj2UKBVZOKONmqqUXIySBq6zVRuAn9P6hIWK69QB1BvnrcOxUe9euyQ9OiXf0k
-         TdcWWKqCQtXRaTZhT+I+qciYy4gyatqK8lAzgKABKFb6dO4yquTNjUh/MOI+hu3F0Phg
-         Z5lhFzIzDoI1f9MG/sHCqpEEUr4J3wiWiKrAYNGDLdTDew760MAjrOe2J8LtFD5KxA0V
-         Nk+Feni7ZfeqJ+JbRytPoRxi26fHy4lvqjp0pquXh1G7b73YNksuCrhK+eHSqDhvlGaX
-         OjsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726464091; x=1727068891;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MZPn/+H1ASm7qkxU/tBBk3TPehptgKtNICy+pHBy4t4=;
-        b=IgoAAEGH5dQSlYvonbodco2r1BT82UV4F0vNu0NoCmhb9InNiHYCwufqurShqKCqfJ
-         dTwjZKGM4N1oXBAMNwCDinXnx5g0g9wFjNPaN/jCZEvb1VnG4zZQTA/seJi3gMZ1LLhQ
-         4c7ffhMHnTIA87czkrAd2zKbpMBrER3UpHOIPU3lZ3V1tulOxAjdbMhSiswRpnwxjTVB
-         KkcL+I5RIjzpVNslMhfzgWyTnVfhiSjn3+WKli+GdrClHVSgkQUmVqgg5is1r0qBybX+
-         vmyfA0CnfJoJ6YnnWRzG87/pL0mMANfmEV6TwDrARvBtiI1OqILEth1LaguyVZEQ/8kd
-         bm+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVeuN++nqDHe2jb8otsZfhJxXMqe1P22cHRHagNztyBTAw0Gkx7J70ElpH9eoTbkQIkKcF0CYROjKkX0wt0@vger.kernel.org, AJvYcCXbW/Q0e5mSx1eKT0sw8nX+xsILaJpExBMYcYbHtTJW5W3HnvxslXrOa5pFSnHAhSVOpDTmkkgqTes3R+me@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXA4nWlhUfpnRhPSpN8cZNmMVsiKUnqdz+IJ3XP1OpaLkc9ycU
-	qr/vK8k3Sg9YSTsyb+MGCr96jj+rfH/UqsmtkBkoZANk8OA1C/15
-X-Google-Smtp-Source: AGHT+IGIAev7q4EhRphohWsMsUIEQhAipsPoO2zMLEYpKFlAbc/5WIy3Q9fd+3+buaY+vt+c9Fj0cw==
-X-Received: by 2002:a17:90a:c697:b0:2d8:6f66:1ebf with SMTP id 98e67ed59e1d1-2dbb9e1d090mr13285136a91.20.1726464090813;
-        Sun, 15 Sep 2024 22:21:30 -0700 (PDT)
-Received: from localhost.localdomain (syn-076-088-006-086.res.spectrum.com. [76.88.6.86])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2079470f179sm29624525ad.230.2024.09.15.22.21.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 22:21:30 -0700 (PDT)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Daniel Yang <danielyangkang@gmail.com>,
-	syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
-Subject: [PATCH v2] fs/exfat: resolve memory leak from exfat_create_upcase_table()
-Date: Sun, 15 Sep 2024 22:21:27 -0700
-Message-Id: <20240916052128.225475-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726464309; c=relaxed/simple;
+	bh=BUSFThMO3Mu+TcoBwbC8zVaB94l5qpU6Mt8QaG4WyeY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C0fW0+kvyhyhk8tWDE4jue25OC9QDST3dQQTpQTSgIDdXgQiubgHtUkGru0T1QoqDFp2b2VAl82GRUx9yvUna2DigDET23M5chBp+RYVG6KTATJmT6nhP5BIpUHmCSVxfLRFG3p/XvHDUVwCkfdOyWzPJrjwq+NfbtLfGsw5DkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DCjgtWhY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48FNRlaw021652;
+	Mon, 16 Sep 2024 05:24:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=qPIKHtCATPFfayOVL2cKvL
+	YvGOFDgdbb/LAn4LZ4h1Q=; b=DCjgtWhYbuzOhtHei3mpBoMhamSMrFakYf3rmM
+	daLBlXR2tzm3BP6xMpOERu3ti0jiLuZXhtJFcxjqQxC1X7c+ck7UKHogQcBqjV7T
+	UPwD0aTo4SXAmM2vLYnpc82W9I9keNOeglQiY1WVdO8eoZRmiqv/+2y91vvZiG9E
+	YkCjrXAYsAckYOVeTn8zr/d/JMaMmXfoCLKiSUPK02BuJpxCO/KoQXSpdFAdqwCu
+	vabmpqNPohdpc9lKq5udIGHHiBxZaYvqCdhb8ja1ZNjS4DkeyCaEjStLDkJ+zxMa
+	yMQeoqmDS8h42bvwDiWSq93lYLCAOM02suvpwEGnyYJoJBbw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4k0jvrb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 05:24:47 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48G5OkLF023019
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 05:24:46 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 15 Sep 2024 22:24:40 -0700
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>, <kernel@quicinc.com>,
+        Mohammad Rafi Shaik
+	<quic_mohs@quicinc.com>
+Subject: [PATCH v1] arm64: defconfig: enable WCD937x driver as module
+Date: Mon, 16 Sep 2024 10:53:52 +0530
+Message-ID: <20240916052352.1819088-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,51 +70,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: XvIb2t79OSkhBrHnTV_mEBpVVS2zFiR5
+X-Proofpoint-GUID: XvIb2t79OSkhBrHnTV_mEBpVVS2zFiR5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 phishscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 impostorscore=0 mlxlogscore=614 clxscore=1011
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409160032
 
-    If exfat_load_upcase_table reaches end and returns -EINVAL,
-    allocated memory doesn't get freed and while
-    exfat_load_default_upcase_table allocates more memory, leading to a    
-    memory leak.
-    
-    Here's link to syzkaller crash report illustrating this issue:
-    https://syzkaller.appspot.com/text?tag=CrashReport&x=1406c201980000
+Enable the Qualcomm WCD937x codec driver as module as
+is now used on the QCM6490 platform.
 
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-Reported-by: syzbot+e1c69cadec0f1a078e3d@syzkaller.appspotmail.com
+Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
 ---
-V1 -> V2: Moved the mem free to create_upcase_table
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
- fs/exfat/nls.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-index afdf13c34..8828f9d29 100644
---- a/fs/exfat/nls.c
-+++ b/fs/exfat/nls.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
-  */
- 
-+#include <cerrno>
- #include <linux/string.h>
- #include <linux/slab.h>
- #include <linux/buffer_head.h>
-@@ -779,8 +780,13 @@ int exfat_create_upcase_table(struct super_block *sb)
- 				le32_to_cpu(ep->dentry.upcase.checksum));
- 
- 			brelse(bh);
--			if (ret && ret != -EIO)
-+			if (ret && ret != -EIO) {
-+				/* free memory from exfat_load_upcase_table call */
-+				if (ret == -EINVAL) {
-+					exfat_free_upcase_table(sbi);
-+				}
- 				goto load_default;
-+			}
- 
- 			/* load successfully */
- 			return ret;
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5fdbfea7a5b2..c4746e3412f8 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1036,6 +1036,8 @@ CONFIG_SND_SOC_TLV320AIC32X4_I2C=m
+ CONFIG_SND_SOC_TLV320AIC3X_I2C=m
+ CONFIG_SND_SOC_WCD9335=m
+ CONFIG_SND_SOC_WCD934X=m
++CONFIG_SND_SOC_WCD937X=m
++CONFIG_SND_SOC_WCD937X_SDW=m
+ CONFIG_SND_SOC_WCD939X=m
+ CONFIG_SND_SOC_WCD939X_SDW=m
+ CONFIG_SND_SOC_WM8524=m
 -- 
-2.39.2
+2.25.1
 
 
