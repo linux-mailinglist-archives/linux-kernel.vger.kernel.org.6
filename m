@@ -1,150 +1,186 @@
-Return-Path: <linux-kernel+bounces-330687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726A397A2BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:08:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB1497A2A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8321F23B6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959C41C2261D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD7E156F53;
-	Mon, 16 Sep 2024 13:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E75155CBD;
+	Mon, 16 Sep 2024 12:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="echudXlO"
-Received: from smtp2.math.uni-bielefeld.de (smtp2.math.uni-bielefeld.de [129.70.45.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A7kfhLBd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E4B155A59;
-	Mon, 16 Sep 2024 13:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E4914F9E2
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726492114; cv=none; b=qNgj4VebWTnmSEVkl7yi68XqaxO631Mp5lwAoCNlNTunOVC5pLCzo9cPEPf4FarUf3+WNHNRvCFMDlABdpKccbLfI3AmYUaiQXiv68+aenYaVe8EFVwcbgLJNUWyTbEHFVNTyFaAWwelyCUVhQIbRUAR15nsHwoqctTQEKcq7oY=
+	t=1726491517; cv=none; b=c0NqcuSpDKi3UMnorp9X1OwkJmpySmbBCzUQbXgnSkjfnPz5zZyroe+fwOwzMLsW22Og/zXJMvheE8HpCqgyUfKyyCX3I7d7XTJEMaVCSl47paY5csnBJe1KwSPHipnVr4IO0AdbxX3MCTk81pjer8FNLD9XMY+V7LuO+avMk7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726492114; c=relaxed/simple;
-	bh=xN5mmjcCpHBK9DyxsmdP/tUgRnYkamPvNBmf0U77C7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NxQOhUW7uW7sDFhvPnwmq/Vb0rAmlgA4Dz3oJwfWXAUAXo2/aYk7d2l/hcwtyI1Fk4NM8JnPcNHbO56FfL4FWjrbE8Zukrzt5oXfVGLVjOTs2X9m5k5qwgro2DHvYidMo5GRBiCTdG0VmPm4+YAEZ3/3d+yCJYEy4BppDUZ9pQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=echudXlO; arc=none smtp.client-ip=129.70.45.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=math.uni-bielefeld.de; s=default; t=1726491506;
-	bh=xN5mmjcCpHBK9DyxsmdP/tUgRnYkamPvNBmf0U77C7E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=echudXlO8miH2TOw9Z5GQW+uMBfWfL3DvRDhPZ79ibl+f2Q0Vde+TzTgtHAjb03Va
-	 63tqmlS/HHezkWMcItLR8WvhVJecZjOoKH+vl4TbcBcd5EdYMtGxo216F0Xgruetf/
-	 d89zB5rNpzChJVpcEduuvhy6KkVXhXf2yCHTDmxToowM1uuCZ3oNgAWDXb6nto88/p
-	 QvetRQGa5btOh1K9918O45vLA+9qEJvjuhNIt4Kc28QwEJXBiCPQCVDrltxorVsUB4
-	 yVvbxAVYOlJb49V8lqKkjTjUeJIxgu+6lVYeZHicqJh31PXOwSjfjWOiXlHq7WGvJg
-	 GT7Lq7+bVN9OQ==
-Received: from [192.168.0.106] (dslb-088-074-203-146.088.074.pools.vodafone-ip.de [88.74.203.146])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp2.math.uni-bielefeld.de (Postfix) with ESMTPSA id 5AC2A2080C;
-	Mon, 16 Sep 2024 14:58:25 +0200 (CEST)
-Message-ID: <4d69172b-dd12-433c-a030-3d48f2716e0a@math.uni-bielefeld.de>
-Date: Mon, 16 Sep 2024 14:58:25 +0200
+	s=arc-20240116; t=1726491517; c=relaxed/simple;
+	bh=h3sLzb8LXY+1Ol7dqUDWPx3SM3yVad4ZVFv6RUD6glc=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=k6KWtbQ3tfvgk3yPP7Wyw1dqe6zvhhUhfOHZyj+/zYA/U0c8VvAlpZWpJ4Gg2hchgH73g4U37NhvCfskHqXhOvzq+WQzgBjZ0rZgKizqQnrYfvZDnndmNVZVAXF5t26Lr2arp/Htu8vIo3iHdTJLIOC3J/1RmPDX+WWbseeI77s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A7kfhLBd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726491515;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WIBKqR7iqf54nrpAIRkWMa8rG8OEKUO9fqyOJE5H9js=;
+	b=A7kfhLBdDj8/t8uihLeo4gIBoCC3xLk2nFV6GJVbI039puDBbJ9uHrD+2xm3oG+rfI4lLr
+	QEcR/NHfB0vgxbmsV0RzApEQEKrZnIK6UtIpbd791he/3gOPMvgosOtdPXc1urOOk5sGwK
+	66B6uSkCCg15MLAbNGPlkgD4Km1mLLw=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-679-FTLfvMa7NJKenNwExI0-Pw-1; Mon,
+ 16 Sep 2024 08:58:32 -0400
+X-MC-Unique: FTLfvMa7NJKenNwExI0-Pw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC0391954B16;
+	Mon, 16 Sep 2024 12:58:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 244A430001A4;
+	Mon, 16 Sep 2024 12:58:28 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com>
+References: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com> <20240913-vfs-netfs-39ef6f974061@brauner>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    Steve French <stfrench@microsoft.com>
+Subject: Re: [GIT PULL] vfs netfs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@redhat.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Jerry Zuo <jerry.zuo@amd.com>,
- DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Sung Joon Kim <sungjoon.kim@amd.com>
-References: <20240916141517.3ef8b349@canb.auug.org.au>
-Content-Language: en-US
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Autocrypt: addr=tjakobi@math.uni-bielefeld.de; keydata=
- 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
- JRHWPGCL3BhOxQ==
-In-Reply-To: <20240916141517.3ef8b349@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1888009.1726491507.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 16 Sep 2024 13:58:27 +0100
+Message-ID: <1888010.1726491507@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 9/16/24 06:15, Stephen Rothwell wrote:
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> Hi all,
->
-> Today's linux-next merge of the drm tree got a conflict in:
->
->    drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c
->
-> between commit:
->
->    e835d5144f5e ("drm/amd/display: Avoid race between dcn35_set_drr() and dc_state_destruct()")
->
-> from Linus' tree and commit:
->
->    be7a6a517164 ("drm/amd/display: Check stream pointer is initialized before accessing")
->
-> from the drm tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-On close inspection it might be worthwhile to take the same precautions 
-that we now take with tg, also with pipe_ctx[i]->stream.
+> > ++      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, fa=
+lse);
+> =
 
-@Alex: What do you think?
+> So here, I have
+> =
 
-With best wishes,
-Tobias
+> ++      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, true=
+);
+> =
+
+> with the third argument being 'true' instead of 'false' as in yours.
+> =
+
+> The reason? That's what commit a68c74865f51 ("cifs: Fix SMB1
+> readv/writev callback in the same way as SMB2/3") did when it moved
+> the (originally) netfs_subreq_terminated() into the worker, and it
+> changed the 'was_async' argument from "false" to a "true".
+
+As part of these changes, the callback to netfslib from the SMB1 transport
+variant is now delegated to a separate worker thread by cifs_readv_callbac=
+k()
+rather than being done in the cifs network processing thread (e.g. as is d=
+one
+by the SMB2/3 smb2_readv_worker() in smb2pdu.c), so it's better to pass
+"false" here.
+
+All that argument does is tell netfslib whether it can do cleanup processi=
+ng
+and retrying in the calling thread (if "false") or whether it needs to
+offload it to another thread (if "true").  I should probably rename the
+argument from "was_async" to something more explanatory.
+
+By putting "true" here, it causes the already offloaded processing to furt=
+her
+offload unnecessarily.  It shouldn't break things though.
+
+> > +       rdata->subreq.transferred +=3D rdata->got_bytes;
+> >  -      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, fa=
+lse);
+> > ++      trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress)=
+;
+> =
+
+> where did this trace_netfs_sreq() come from?
+
+It got copied across with other lines when sync'ing the code with
+smb2_readv_callback() whilst attempting the merge resolution.  It's someth=
+ing
+that got missed out when porting the changes I'd made to SMB2/3 to SMB1.  =
+It
+should have been deferred to a follow up patch.
+
+> > --- a/fs/smb/client/smb2pdu.c
+> > +++ b/fs/smb/client/smb2pdu.c
+> > @@@ -4614,6 -4613,10 +4613,8 @@@ smb2_readv_callback(struct mid_q_entr=
+y
+> >                               server->credits, server->in_flight,
+> >                               0, cifs_trace_rw_credits_read_response_c=
+lear);
+> >         rdata->credits.value =3D 0;
+> > +       rdata->subreq.transferred +=3D rdata->got_bytes;
+> >  -      if (rdata->subreq.start + rdata->subreq.transferred >=3D rdata=
+->subreq.rreq->i_size)
+> >  -              __set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+> > +       trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress)=
+;
+> =
+
+> And where did this conflict resolution come from? I'm not seeing why
+> it removes that NETFS_SREQ_HIT_EOF bit logic..
+
+A fix that went upstream via SteveF's tree rather than Christian's tree ad=
+ded
+NETFS_SREQ_HIT_EOF separately:
+
+	1da29f2c39b67b846b74205c81bf0ccd96d34727
+	netfs, cifs: Fix handling of short DIO read
+
+The code that added to twiddle NETFS_SREQ_HIT_EOF is in the source, just a=
+bove
+the lines in the hunk above:
+
+	if (rdata->result =3D=3D -ENODATA) {
+		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+		rdata->result =3D 0;
+	} else {
+		size_t trans =3D rdata->subreq.transferred + rdata->got_bytes;
+		if (trans < rdata->subreq.len &&
+		    rdata->subreq.start + trans =3D=3D ictx->remote_i_size) {
+			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+			rdata->result =3D 0;
+		}
+	}
+
+The two lines removed in the example resolution are therefore redundant an=
+d
+should have been removed, but weren't.
+
+David
 
 
