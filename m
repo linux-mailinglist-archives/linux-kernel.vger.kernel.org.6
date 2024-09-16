@@ -1,148 +1,104 @@
-Return-Path: <linux-kernel+bounces-330146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1130979A47
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:15:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADCFD979A46
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D62C71C21AE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4803F1F21FA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099123A28B;
-	Mon, 16 Sep 2024 04:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010CB38DE4;
+	Mon, 16 Sep 2024 04:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bMsTXyvy"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0wFdXFLz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BD52744E;
-	Mon, 16 Sep 2024 04:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AA521340;
+	Mon, 16 Sep 2024 04:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726460132; cv=none; b=Bp0r0IKyLdZiyS2DG0nKf0++vErkPR6Yb5g30KGBx4TiDsW10tV5M77pGts/SmYih/HOp/OvrJhTyVpSDG44DD20r6Es3KgAPTlBXQ8AwXPtAuFff2kl6a2/MxGTOrwZbBMA0A1faaFKGCbgoIf5DCfKEGWK4GW8mAlGfsEe9LI=
+	t=1726460125; cv=none; b=jGchs0cF38t1v8WJPNe8a4sou1VyaBaUMZwqOBuBUk4DFSX6RPCfqZvlXgYMGz2fWdFgacGhw3dPUOAG5KuUAuUVJl7A/C9ozJ7SUsg79OUkotCpVWp8lsj9QGVgFnEljRwL8dSU0kX0xduGSb2fDxJJdyC22Luv62DbJK4HQrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726460132; c=relaxed/simple;
-	bh=cWC/o0z8XuWOrHZdOiv1ekPVTkurNuZea+JPVQx1FGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GBpFfa1J2KG87sAN/eyUHe6Bf2bU7mMR2zZsm9YtUlW2uNK1kH7ZDFEE/ZR5ABB2ctPyq99trPd2Kzy0Qf7VsGXpKxBsDPGqOpj6Kl4qnokkXdFScEN/b/eEp0vXHV8wx9mpBvTMLfBKIvVfIlftJQT+Q+JWCFChiGMgCq9BvQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bMsTXyvy; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726460121;
-	bh=aSMGNOW8vImcRzjGRzIsVUvVAA6VLJ9IpG/L1pmcNJw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bMsTXyvyjD60NmFjP3DNMjJRGM2GSjWfWj9cAop6UPf1SExGyqBCSvbEeJ2oMYlpq
-	 LPg/SH5Bn9C08Qc8he9wXuvpGfuJRtELI4Z+tqw2mLIQEcEWy6A89HKJLiLSV3eiKY
-	 YPbnrWWDaqJHfLQSH/83RTVRAyIpKVvRH0EuTqZcHLDlPuaHvt0uPsxNvzmNhfaA4B
-	 y+BzViOp3e8AcjcAx9n0M8hs5MtCbV7dvGRvmFGoqbwnUpnoeeuvwJAbxSmkuExRWw
-	 eEPC3q0YfURp9q/MieKoB0XmXh5T8swsdB91ibbmwuyZJqy/8vYgLzarxrVWFNhbIP
-	 X8vyLAi9jIF3g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6Wm65Bglz4x8F;
-	Mon, 16 Sep 2024 14:15:18 +1000 (AEST)
-Date: Mon, 16 Sep 2024 14:15:17 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@redhat.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Jerry Zuo <jerry.zuo@amd.com>,
- DRI <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Mario Limonciello
- <mario.limonciello@amd.com>, Sung Joon Kim <sungjoon.kim@amd.com>, Tobias
- Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Message-ID: <20240916141517.3ef8b349@canb.auug.org.au>
+	s=arc-20240116; t=1726460125; c=relaxed/simple;
+	bh=a5hgv+YgAEVp5ILOEpcTymGTtUAKiZp8dVDg618Ildw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UKpPZPRUIbp/akVZZqJ3MneGsAMR9e+Gm0S0lXqa5onzN4JavH8gemsnITO9qdDRnvJ5dxxvrfQEMiaaTStLDuNG53qYR8EiK4c+WjlJXDVjXJ3tT2DF01KeAcpwi7vQc6PTIPOfmVxr3ncrzwRTepPbQNREuidBEp+FflP2ZRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0wFdXFLz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79356C4CEC5;
+	Mon, 16 Sep 2024 04:15:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726460123;
+	bh=a5hgv+YgAEVp5ILOEpcTymGTtUAKiZp8dVDg618Ildw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0wFdXFLzqVMdpbc6VAb7dIkGi8q3ZVXnm9QMKclwMI3e5vJvWeqXkO81XmKkWztce
+	 aAg/TPQAwt6fuV2IyWX8TQR7T6Q8hgpbgvztQL0anmaOsNePdsjK8W2PZHN3C4iYu4
+	 rWG2RwwUcbBhci2E0DbfpAB1g119UUd9ah4dA6gE=
+Date: Mon, 16 Sep 2024 06:15:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: colin.i.king@gmail.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: use mutex_lock in iowarrior_read()
+Message-ID: <2024091648-excusable-unfilled-83de@gregkh>
+References: <20240916040629.28750-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/HvdUI/1MpsauEbBmWYRX.8l";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916040629.28750-1-aha310510@gmail.com>
 
---Sig_/HvdUI/1MpsauEbBmWYRX.8l
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 16, 2024 at 01:06:29PM +0900, Jeongjun Park wrote:
+> Currently, iowarrior_read() does not provide any protection for the
+> iowarrior structure, so the iowarrior structure is vulnerable to data-race.
+> 
+> Therefore, I think it is appropriate to protect the structure using
+> mutex_lock in iowarrior_read().
+> 
+> Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>  drivers/usb/misc/iowarrior.c | 42 +++++++++++++++++++++++++++---------
+>  1 file changed, 32 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+> index 6d28467ce352..7f3d37b395c3 100644
+> --- a/drivers/usb/misc/iowarrior.c
+> +++ b/drivers/usb/misc/iowarrior.c
+> @@ -277,28 +277,41 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
+>  	struct iowarrior *dev;
+>  	int read_idx;
+>  	int offset;
+> +	int retval = 0;
+>  
+>  	dev = file->private_data;
+>  
+> +	if (!dev) {
 
-Hi all,
+How can this happen?  How was this tested?
 
-Today's linux-next merge of the drm tree got a conflict in:
+And you didn't mention this in your changelog, why?
 
-  drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c
+> +		retval = -ENODEV;
+> +		goto exit;
+> +	}
 
-between commit:
+What prevents dev from becoming invalid after it is checked here?
 
-  e835d5144f5e ("drm/amd/display: Avoid race between dcn35_set_drr() and dc=
-_state_destruct()")
+> +
+> +	mutex_lock(&dev->mutex);
 
-from Linus' tree and commit:
+Please use the guard() form here, it makes the change much simpler and
+easier to review and maintain.
 
-  be7a6a517164 ("drm/amd/display: Check stream pointer is initialized befor=
-e accessing")
+thanks,
 
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c
-index d5e9aec52a05,a4c6decee0f8..000000000000
---- a/drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c
-+++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c
-@@@ -1462,17 -1414,10 +1414,17 @@@ void dcn35_set_drr(struct pipe_ctx **pi
-  	params.vertical_total_mid_frame_num =3D adjust.v_total_mid_frame_num;
- =20
-  	for (i =3D 0; i < num_pipes; i++) {
- -		if ((pipe_ctx[i]->stream_res.tg !=3D NULL) && pipe_ctx[i]->stream_res.t=
-g->funcs) {
- +		/* dc_state_destruct() might null the stream resources, so fetch tg
- +		 * here first to avoid a race condition. The lifetime of the pointee
- +		 * itself (the timing_generator object) is not a problem here.
- +		 */
- +		struct timing_generator *tg =3D pipe_ctx[i]->stream_res.tg;
- +
- +		if ((tg !=3D NULL) && tg->funcs) {
-- 			struct dc_crtc_timing *timing =3D &pipe_ctx[i]->stream->timing;
-- 			struct dc *dc =3D pipe_ctx[i]->stream->ctx->dc;
- +
-- 			if (dc->debug.static_screen_wait_frames) {
-+ 			if (pipe_ctx[i]->stream && pipe_ctx[i]->stream->ctx->dc->debug.static_=
-screen_wait_frames) {
-+ 				struct dc_crtc_timing *timing =3D &pipe_ctx[i]->stream->timing;
-+ 				struct dc *dc =3D pipe_ctx[i]->stream->ctx->dc;
-  				unsigned int frame_rate =3D timing->pix_clk_100hz / (timing->h_total =
-* timing->v_total);
- =20
-  				if (frame_rate >=3D 120 && dc->caps.ips_support &&
-
---Sig_/HvdUI/1MpsauEbBmWYRX.8l
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbnsNUACgkQAVBC80lX
-0GxHvQgAj60CcQjHqGW9DeZwTLnIAkTkI69oWMob4SjNdxTfMq92EvdjZosF+QCL
-jGq217kLdUlrpABe0xGyswi3oGjDR1H7fFnDr7yQeVsmrSgSMuDjIL52ypLEDhJ+
-P9hMXZ1q0ZKJ4loRFuPXZujaWsGz2woZvGxfG/XNBLiOtyX9k+zkSrXVZb8fiZCa
-ygtyYsHb6OmXVe6+w/UMeaOKPK7HyvA6gB1Xy8kUx1SCIA2qNsgSamKvv5h3DzPt
-wj+cuzzvGIHgy8TApcQ+uuyJ6/hBTVI9j4SOJfujKPr8rX1YFCKbAK9M/RwZAh2x
-N6Zi4qBdaKv+WZWx6+6BlDBc7bOpkg==
-=fI6z
------END PGP SIGNATURE-----
-
---Sig_/HvdUI/1MpsauEbBmWYRX.8l--
+greg k-h
 
