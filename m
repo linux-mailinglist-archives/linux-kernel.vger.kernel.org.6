@@ -1,72 +1,76 @@
-Return-Path: <linux-kernel+bounces-330694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1BB97A2D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:20:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9023997A2D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FDD61F21AFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:20:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25BA9B211E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC70156228;
-	Mon, 16 Sep 2024 13:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D4315574C;
+	Mon, 16 Sep 2024 13:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jjCVpIhQ"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mFYv1Au9"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C189153BEE;
-	Mon, 16 Sep 2024 13:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46B9153BEE;
+	Mon, 16 Sep 2024 13:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726492795; cv=none; b=Wbwj7ABEPri6jkQbsaOK4R33VrPoE49enHIIAZBKEgnoBzlHone3CYdMR21oeT6zC6TQL0+NjEYX6evgBJfpief2L4AV0ifL5REs6Y0fDqEsL4G5B1QdE3Vudr4e0fXFbzYldHotuvwuiRHQSxmG8ph+dcbhLMfTwKBXyeXNipw=
+	t=1726492785; cv=none; b=i4lcQLEBR1BVajc294b3212Xu52KPUkXoLzZiQT5VryovfjCXODVCowi929C312wSPjXcEi+IQN9ypq5vUgDeoeV5yDeN87UTeRvUBdFTM8yG9LOMU9enfWWdK7wUOm1UKbHbSVXBbq4ReKJ6/vz1Xo4TSmqoSgnFLdQeNJ1tY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726492795; c=relaxed/simple;
-	bh=ERdIfMR2uvWrz1IUsYwPvNndgl85YW06MtCLXaZa2bA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WI/jD28bkMCOFjcSeOkf+nUEv86Xuw5+K5WpxVD/5Q9rZkj4sjQKMIM8IHlmZY1EI1UXUsr9Dqr7YQDBbOBjXOO4sE8+G1+brFMjkOU6pCr8rOBxZszGhyb+DsWpZsBkmyW8w67wk7Kiox4prJG39RuZSCEF8SRpI8iqrTs3AeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jjCVpIhQ; arc=none smtp.client-ip=68.232.154.123
+	s=arc-20240116; t=1726492785; c=relaxed/simple;
+	bh=u4Do+N2Ea5j3qFHQaToclHAxoELiSMZ8zNaCm7eJIwY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fThLsdXc1fmOHiijt7NnU5gTEFrgYNIiHk13h/bSijnrDNcb+I3VkOoGzf1oEKqqjieu3Hd/qqlSIQwM28gvAFdj+ChzySzlGIpHoRIcB9ylcvVCL/v10hZNWJQwMurG52RIjbfyBPM/xMNGm12DCgfp0rV8nWfYF1fjJnaW4YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mFYv1Au9; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726492793; x=1758028793;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ERdIfMR2uvWrz1IUsYwPvNndgl85YW06MtCLXaZa2bA=;
-  b=jjCVpIhQegne2sWTCnoFUZ7l0abrZaLsna77zmM10NiRMdkMycQuR5Xn
-   Yf4HaXIJd8F9AUS7fa13whZNyLqqXNIkmki7nafwIXFdN9TrA1fKo34AE
-   +gUQvTQcefZWz6lObXVN7CTPZVyxkS1f3AJbE6Xuxi+10MyX7zttxHtob
-   R+NvfzBw9y7m+zuhWZU1O/sUlpMXEPgjUmojrD2YEvhkfYXWki2KCXRxV
-   n4nak6qxJR7hdpXh1WbEaueMO4Y/kA118cvWdyz5AEX6C6TJcxrm+Ir2z
-   uh4IcW9CaH+whzqPLqmYVO4Yr1yEphJKn/VKtaVZ56o4Ith7pp6uX148M
-   g==;
-X-CSE-ConnectionGUID: oIAdU8ucQc2W5w/WcMunEw==
-X-CSE-MsgGUID: UzSuz8qSS7G2B7V5/I5gkQ==
+  t=1726492783; x=1758028783;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=u4Do+N2Ea5j3qFHQaToclHAxoELiSMZ8zNaCm7eJIwY=;
+  b=mFYv1Au9Ht5z34jnyNiYqKEW4WSGLytzaOHT28T0vk8/hzgKUcFbew+W
+   uX11GdKC7g+d3XMfyFw98BWnj83lS20PAYp86NiAI75w7zkFGs9wmoobz
+   w5NLvnmO6RkYRM5iu/t+Dzo3XBu9ctO/S856yH1rSFGJYgHd20gVPH3gh
+   4aUrWYMl3tsza8DZLhn1uLryBY1rO8Sxf1GjcvLGwaYqcdBdjwMvH0Abz
+   E6oviSffuKWiJCOB7Vz/kS1kfbHljyqevJCW6jcFDyWKWsktJCW+dKBgg
+   fa5FGVSQhtSWqIpx7uusie5F3uQbj+Ut+P9C8kuw0aJaGc1cg9mW4u1L4
+   A==;
+X-CSE-ConnectionGUID: eEp7On7+SIiSQUXcJYfpmQ==
+X-CSE-MsgGUID: G1Q9K5xbT6qTVD8dcFEO6w==
 X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="31717729"
+   d="scan'208";a="32452553"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 06:19:52 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 06:19:42 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 16 Sep 2024 06:19:29 -0700
+ 15.1.2507.35; Mon, 16 Sep 2024 06:19:32 -0700
 Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 16 Sep 2024 06:19:26 -0700
+ 15.1.2507.35 via Frontend Transport; Mon, 16 Sep 2024 06:19:29 -0700
 From: Andrei Simion <andrei.simion@microchip.com>
 To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
 	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
 	<alexandre.belloni@bootlin.com>
 CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Andrei Simion <andrei.simion@microchip.com>
-Subject: [PATCH v2 0/2] Updates for Atmel SSC DAI
-Date: Mon, 16 Sep 2024 16:19:08 +0300
-Message-ID: <20240916131910.22680-1-andrei.simion@microchip.com>
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Andrei Simion
+	<andrei.simion@microchip.com>
+Subject: [PATCH v2 1/2] ASoC: atmel: atmel_ssc_dai: Add stream names
+Date: Mon, 16 Sep 2024 16:19:09 +0300
+Message-ID: <20240916131910.22680-2-andrei.simion@microchip.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240916131910.22680-1-andrei.simion@microchip.com>
+References: <20240916131910.22680-1-andrei.simion@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,20 +80,42 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-This patch set includes two updates for the Atmel SSC DAI driver:
-- Address the limitation with the S24_LE format.
-- Add stream names for DPCM and future use-cases.
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 
-Codrin Ciubotariu (2):
-  ASoC: atmel: atmel_ssc_dai: Add stream names
-  ASoC: atmel: atmel_ssc_dai: Drop S24_LE support due to single channel
-    limitation
+Add required stream names for DPCM and future use-cases.
 
- sound/soc/atmel/atmel_ssc_dai.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+[andrei.simion@microchip.com: Adjust commit title. Reword commit message.]
 
+Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+---
+v1 -> v2:
+- add Reviewed-by tag
+---
+ sound/soc/atmel/atmel_ssc_dai.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-base-commit: 7083504315d64199a329de322fce989e1e10f4f7
+diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+index 3763454436c1..7047f17fe7a8 100644
+--- a/sound/soc/atmel/atmel_ssc_dai.c
++++ b/sound/soc/atmel/atmel_ssc_dai.c
+@@ -836,6 +836,7 @@ static const struct snd_soc_dai_ops atmel_ssc_dai_ops = {
+ 
+ static struct snd_soc_dai_driver atmel_ssc_dai = {
+ 		.playback = {
++			.stream_name = "Playback",
+ 			.channels_min = 1,
+ 			.channels_max = 2,
+ 			.rates = SNDRV_PCM_RATE_CONTINUOUS,
+@@ -843,6 +844,7 @@ static struct snd_soc_dai_driver atmel_ssc_dai = {
+ 			.rate_max = 384000,
+ 			.formats = ATMEL_SSC_FORMATS,},
+ 		.capture = {
++			.stream_name = "Capture",
+ 			.channels_min = 1,
+ 			.channels_max = 2,
+ 			.rates = SNDRV_PCM_RATE_CONTINUOUS,
 -- 
 2.34.1
 
