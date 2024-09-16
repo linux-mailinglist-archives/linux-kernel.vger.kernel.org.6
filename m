@@ -1,210 +1,198 @@
-Return-Path: <linux-kernel+bounces-330519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97901979F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E0C979F95
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A42285266
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3328B2855B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172DD1514FB;
-	Mon, 16 Sep 2024 10:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE789155303;
+	Mon, 16 Sep 2024 10:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DEgA0Jy7"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ozU29vl5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P782iKJW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ozU29vl5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P782iKJW"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AD01494BB
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6656C154452;
+	Mon, 16 Sep 2024 10:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726483304; cv=none; b=MUBqQ/t4Gy/jdWSZldgxFibBEtJ/ObAFXVOoaY1oXQpG5g+2aXOtSrNVHi1m5yB7/3y0DqISiq7cz43E0VqBGXAf+S73PNfpYmuIVKcDMXA8JVhKeIqJd+dkApcZD7uWW2U4PSMGzy86zDXQG5b0XOmLMkx+bjL4DIS3OxSLt3g=
+	t=1726483307; cv=none; b=sf34sP6Yq64Bko3Vbt+gI/GGt5Ne/OAVbEw1NPGW5ns+I1F97RdP80lSWmK8NvhWVB7CpQP8ujr0YtwBDccZ6V2+i6jVtlSZPr3Nf3z0nHQtzvYV24HiDbYmk73MaI6NLqaaRwOSSUghjn5pfx/e2Lp4HYgrXthlBsutu2uoKT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726483304; c=relaxed/simple;
-	bh=M6qt0MqEg21tDFsnU0kxYsYOzFeuxCiE9c4uNlwuuyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HvOZjsG5w4GOVMrel8RAcdhAOWMRV7zTMETmJ65rQYwh1PeJM/kAD2KIBKxi9ZOHCR3aIDuK6cqLpzfuKXykL2kGIsr6iSIMBr9fKbeMsAbPIKDLQbr3mF3OMXozXIPnuVLRdLBwo8PF6/ihdAjpZTQHldnEsJMrcYo5TEBB5NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DEgA0Jy7; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c326c638so1751496f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 03:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726483301; x=1727088101; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ra8/pqRfP7A8W4Sg1b45pf3BbARdFe/KatE6of4jnNM=;
-        b=DEgA0Jy7YJ4CFPxbHsucK8pBU2PDOnGdbv3aRhNbIZ+g/2fTRU23gm494BbL+2WlPg
-         mvLBqeJ8zf30v5ybDHo8w3tg23Nilq73g60lSGxx68JdGrdwPCXZl4LmFqwLYmEx5Yw+
-         +PNY82hxrbGrIO371SVh8JFlpnoGt6o5pDuIM+EbDI2XwiWn4/rWH25i3KEZfnDnobW3
-         R1I3oytSQ9z92jXgicjpud2EvckpHyOyINttrC8EmfBLI/ZxwGnSy4KppipC03mhlqp2
-         fv3NQNN5ncSLlLFC4EfBxpDFVBcqayiGFVQiXw+AqIPUz7bbianVUag5oEYBLgBkzyCD
-         6YeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726483301; x=1727088101;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ra8/pqRfP7A8W4Sg1b45pf3BbARdFe/KatE6of4jnNM=;
-        b=gWuJogDbjvZAaLhMyFDLvAHqpDpwFkWC2DjFEskrTk27CCVPRWgxBtTUQuP/eZqwU3
-         wn/KYjx8UkryPzxGtFKlhsn60BembTJiZ0mOzj++Yj+P+t8s1E30nY2Jh/TW0MudMv1r
-         WOWWct3AyaAlE2UBMlrOqn1wbT90UPnUIQ+60Mt5Kqo+lfKwn3kST1MKErc3m9zpn/bE
-         v9prc6nvyfDejn8lHM/h4aenZqRFwepUXf9zAp0CeY9bMIFW9t3Cikf1xpJg6nw9hema
-         UQVEa3FQiK4YD/nw0h6EwHAaUDWy1mgIVGVVNsLyHv2ig+BTzS9OSZXjQKlPtNXIMb8w
-         4Eow==
-X-Forwarded-Encrypted: i=1; AJvYcCVpFn7oeQNK3yeuK3Ak6YyCXfTh741zdvhYCrBItxLnlne6RFlrKIBRGXUOtsYL7lU+4jMnJovaZ84d23M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwscJ4mKSTmkXrfQPIs2i2BUsdyUqSHpSJXA1AeBo3TE3JGSgv6
-	3I+w/gMRsYpfivT17ybC0pbJJAmv9hpFlq0Jnd0RGtlakMa5Kv761fiNPi/pqeZf1siIJRVvS48
-	P
-X-Google-Smtp-Source: AGHT+IEmR93xh2og4ZQJtp1ucu8ZW4W/zfBvMfoRdORmexaCQuJzT7M8tUl3c1DLK5WZSD+CB9sFJA==
-X-Received: by 2002:a05:6000:c89:b0:374:b9a0:ddee with SMTP id ffacd0b85a97d-378d625a9d0mr5502398f8f.56.1726483299927;
-        Mon, 16 Sep 2024 03:41:39 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d2933sm33627785ad.155.2024.09.16.03.41.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 03:41:39 -0700 (PDT)
-Message-ID: <44534dea-0baf-420b-a2c2-0ee15db7298a@suse.com>
-Date: Mon, 16 Sep 2024 20:11:34 +0930
+	s=arc-20240116; t=1726483307; c=relaxed/simple;
+	bh=+eAUe1ZWABJhNJlB37hWU1XZqWNeqT/0ac9DwLkeS34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dMyU6ufp2JHAHXlFaEgmxRrXnjBXzzq3MWd6hZn4+DXOd3mKA599NG9oXPWwuJVrHrrkKqAK6D0VxNVNmkCmuSmjRqeGTNP8WX1HZpPNC6pLVccRwmXDbgcYcXBRDISjjtDs4oLtHd8ALB6sZ2o7CUqKqRXdc8TTO+jdnPm5t+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ozU29vl5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P782iKJW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ozU29vl5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P782iKJW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 900CB21B89;
+	Mon, 16 Sep 2024 10:41:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726483303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p6N3aOGLH423G/wEEHTy7fM4jmCXgglLmwd1qlb5YIg=;
+	b=ozU29vl5gK1sNFAtjZDsHYPZJK3MaYwcT4LbyRWubGVvq3IL6rsQzi00/v97cSfvDQyR8r
+	iYxUXKHve+x1clM5OAz98G0mbZIDz4GuJMb0QLwx5X+92uYZDNhYKvWZ+sQYmGdm685VnH
+	F0PvcpWjzTT1KOLm9q1Ty1E9wdp9edQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726483303;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p6N3aOGLH423G/wEEHTy7fM4jmCXgglLmwd1qlb5YIg=;
+	b=P782iKJWrVmFxfPRrldNvRMyNYW7+9SgwWth7Boufeht3mUClyMS1Eb67YIPGcny3EeJKL
+	SGo6NYHrC9Ky5cDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ozU29vl5;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=P782iKJW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726483303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p6N3aOGLH423G/wEEHTy7fM4jmCXgglLmwd1qlb5YIg=;
+	b=ozU29vl5gK1sNFAtjZDsHYPZJK3MaYwcT4LbyRWubGVvq3IL6rsQzi00/v97cSfvDQyR8r
+	iYxUXKHve+x1clM5OAz98G0mbZIDz4GuJMb0QLwx5X+92uYZDNhYKvWZ+sQYmGdm685VnH
+	F0PvcpWjzTT1KOLm9q1Ty1E9wdp9edQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726483303;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p6N3aOGLH423G/wEEHTy7fM4jmCXgglLmwd1qlb5YIg=;
+	b=P782iKJWrVmFxfPRrldNvRMyNYW7+9SgwWth7Boufeht3mUClyMS1Eb67YIPGcny3EeJKL
+	SGo6NYHrC9Ky5cDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80D6B13A91;
+	Mon, 16 Sep 2024 10:41:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OcxmH2cL6GZMaQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 16 Sep 2024 10:41:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1EB3FA08B3; Mon, 16 Sep 2024 12:41:39 +0200 (CEST)
+Date: Mon, 16 Sep 2024 12:41:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH v2] timekeeping: move multigrain timestamp floor handling
+ into timekeeper
+Message-ID: <20240916104139.exqiayn2o7uniw2p@quack3>
+References: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org>
+ <20240913112602.xrfdn7hinz32bhso@quack3>
+ <bfc8fc016aa16a757f264010fdb8e525513379ce.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] btrfs: Don't block system suspend during fstrim
-To: Luca Stefani <luca.stefani.ge1@gmail.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240916101615.116164-1-luca.stefani.ge1@gmail.com>
- <20240916101615.116164-4-luca.stefani.ge1@gmail.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
- Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
- p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
- ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
- dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
- RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
- rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
- 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
- bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
- AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
- ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
-In-Reply-To: <20240916101615.116164-4-luca.stefani.ge1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bfc8fc016aa16a757f264010fdb8e525513379ce.camel@kernel.org>
+X-Rspamd-Queue-Id: 900CB21B89
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-
-在 2024/9/16 19:46, Luca Stefani 写道:
-> Sometimes the system isn't able to suspend because the task
-> responsible for trimming the device isn't able to finish in
-> time, especially since we have a free extent discarding phase,
-> which can trim a lot of unallocated space, and there is no
-> limits on the trim size (unlike the block group part).
+On Fri 13-09-24 08:01:28, Jeff Layton wrote:
+> On Fri, 2024-09-13 at 13:26 +0200, Jan Kara wrote:
+> > On Thu 12-09-24 14:02:52, Jeff Layton wrote:
+> > > +/**
+> > > + * ktime_get_real_ts64_mg - attempt to update floor value and return result
+> > > + * @ts:		pointer to the timespec to be set
+> > > + * @cookie:	opaque cookie from earlier call to ktime_get_coarse_real_ts64_mg()
+> > > + *
+> > > + * Get a current monotonic fine-grained time value and attempt to swap
+> > > + * it into the floor using @cookie as the "old" value. @ts will be
+> > > + * filled with the resulting floor value, regardless of the outcome of
+> > > + * the swap.
+> > > + */
+> > > +void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
+> > > +{
+> > > +	struct timekeeper *tk = &tk_core.timekeeper;
+> > > +	ktime_t offset, mono, old = (ktime_t)cookie;
+> > > +	unsigned int seq;
+> > > +	u64 nsecs;
+> > 
+> > So what would be the difference if we did instead:
+> > 
+> > 	old = atomic64_read(&mg_floor);
+> > 
+> > and not bother with the cookie? AFAIU this could result in somewhat more
+> > updates to mg_floor (the contention on the mg_floor cacheline would be the
+> > same but there would be more invalidates of the cacheline). OTOH these
+> > updates can happen only if max(current_coarse_time, mg_floor) ==
+> > inode->i_ctime which is presumably rare? What is your concern that I'm
+> > missing?
+> > 
 > 
-> Since discard isn't a critical call it can be interrupted
-> at any time, in such cases we stop the trim, report the amount
-> of discarded bytes and return failure.
+> My main concern is the "somewhat more updates to mg_floor". mg_floor is
+> a global variable, so one of my main goals is to minimize the updates
+> to it. There is no correctness issue in doing what you're saying above
+> (AFAICT anyway), but the window of time between when we fetch the
+> current floor and try to do the swap will be smaller, and we'll end up
+> doing more swaps as a result.
 > 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
-> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
-> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
-> ---
->   fs/btrfs/extent-tree.c | 19 ++++++++++++++++++-
->   1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-> index cbe66d0acff8..ab2e5d366a3a 100644
-> --- a/fs/btrfs/extent-tree.c
-> +++ b/fs/btrfs/extent-tree.c
-> @@ -16,6 +16,7 @@
->   #include <linux/percpu_counter.h>
->   #include <linux/lockdep.h>
->   #include <linux/crc32c.h>
-> +#include <linux/freezer.h>
->   #include "ctree.h"
->   #include "extent-tree.h"
->   #include "transaction.h"
-> @@ -1235,6 +1236,11 @@ static int remove_extent_backref(struct btrfs_trans_handle *trans,
->   	return ret;
->   }
->   
-> +static bool btrfs_trim_interrupted(void)
-> +{
-> +	return fatal_signal_pending(current) || freezing(current);
-> +}
-> +
->   static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
->   			       u64 *discarded_bytes)
->   {
-> @@ -1319,6 +1325,11 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
->   		start += bytes_to_discard;
->   		bytes_left -= bytes_to_discard;
->   		*discarded_bytes += bytes_to_discard;
-> +
-> +		if (btrfs_trim_interrupted()) {
-> +			ret = -ERESTARTSYS;
-> +			break;
-> +		}
->   	}
->   
->   	return ret;
-> @@ -6473,7 +6484,7 @@ static int btrfs_trim_free_extents(struct btrfs_device *device, u64 *trimmed)
->   		start += len;
->   		*trimmed += bytes;
->   
-> -		if (fatal_signal_pending(current)) {
-> +		if (btrfs_trim_interrupted()) {
->   			ret = -ERESTARTSYS;
->   			break;
->   		}
-> @@ -6522,6 +6533,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
->   
->   	cache = btrfs_lookup_first_block_group(fs_info, range->start);
->   	for (; cache; cache = btrfs_next_block_group(cache)) {
-> +		if (btrfs_trim_interrupted())
-> +			break;
-> +
+> Do you have any objection to adding the cookie to this API?
 
-Please update @bg_ret return value.
+No objection as such but as John said, I had also some trouble
+understanding what the cookie value is about and what are the constraints
+in using it. So if we can live without cookie, it would be a simplification
+of the API. If the cooking indeed brings noticeable performance benefit, we
+just need to document that the cookie is about performance and how to use
+it to get good performance.
 
->   		if (cache->start >= range_end) {
->   			btrfs_put_block_group(cache);
->   			break;
-> @@ -6561,6 +6575,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
->   
->   	mutex_lock(&fs_devices->device_list_mutex);
->   	list_for_each_entry(device, &fs_devices->devices, dev_list) {
-> +		if (btrfs_trim_interrupted())
-> +			break;
-> +
-
-The same here, please update @dev_ret.
-
-Thanks,
-Qu
->   		if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))
->   			continue;
->   
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
