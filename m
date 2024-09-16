@@ -1,191 +1,112 @@
-Return-Path: <linux-kernel+bounces-330529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655F2979FC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:53:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FB2979FCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFA981F21EFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:53:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92F151C218E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0604014F9FB;
-	Mon, 16 Sep 2024 10:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1511F153BF6;
+	Mon, 16 Sep 2024 10:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQQM+O+E"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="WlHJvKZ3"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19AC34CC4;
-	Mon, 16 Sep 2024 10:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE6F14F9FB
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726484029; cv=none; b=W58y1GbmKave3HUiGUQCo+cdxBbkTApY3cHYjMUayAeBh8oRa/dFANal98D/l09x2NQ6Vudb43ZoAP4rcX0Y6ETRe2fHwbw3nYEnskIm5mItMSAeEf+z9Nme26kSf9j1fDBlmTh1DyL27RRJYzmh7eRJXsVjjWgjwHzCJTQ3dek=
+	t=1726484134; cv=none; b=elBdXgvA+XLYwK+frKTBWdkiy4UZD/RJFPFFpk7wCOJDJi1C47dKVXQF0lplfoZXhLo+/DavA0cgJs8r60lMq6cXUIlXf/Z652Mf7X1jp+X9QOsItPe2k6AQX9fg97gGbzOSM1HWHpFbAfrsDcJUuxHk0rxzdLbHQgDldvcvWYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726484029; c=relaxed/simple;
-	bh=M27tFy/xv/lhL1/N8YSf0pQW80kUKOu5QV22hqDaR54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CECJkmj7P6WlCSxie7mEaf/VdO7N38JmpR3z+g5ErNHGqo9MJeYMlCLwZGRoSYiBWiBGJ+osRkiboElFG4rCfLgvUuExmrwC+NQ05G+E3TRY+jjMTtKgYVv1gMqkBu9Ubro71cHYfLBsj/uA2J6yCqJJ1qcDwfskIPDb6bkdIbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQQM+O+E; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c8cef906so3369120f8f.2;
-        Mon, 16 Sep 2024 03:53:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726484026; x=1727088826; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kkGRs00oiR9JbeMAEVVxz3k2WHxYFEfv+hngD8++RO8=;
-        b=FQQM+O+Er8og8sxnHntGr1u+nLU8gwTr9e54Fyvx08UVbTMgdyF5CXksqOBWzT6HFz
-         c30BlaX4Dbf8pOVigdEX1KSfJS/bppelKcmpnwlGmnK2PmfIPJx6Nr8Y/M3G7mg8bqRe
-         /6OT/I4CzhQXErVY0+9Rwr+wX37bT0qkcMXa6F8j14QwvYqb5FQAbW51SjPfCG+1+EkB
-         gbJxDUDKii8eW/d11xy+R4cXSQxCtAQLyoNT0Weoi9VfiZOJ5xGxBtIgQ6eh6XKjmRr0
-         md7Eg5KdIrasIz0Kh1cn98YlR8GGfR08o6l4dgQBpthpAfe2qRepuK/yjnhKbCZHg9ZS
-         0tDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726484026; x=1727088826;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kkGRs00oiR9JbeMAEVVxz3k2WHxYFEfv+hngD8++RO8=;
-        b=cpM1/E8inJuYiREcAjVtrbqE1XuqJ1LZGSW4hDZsQsm/pVV/0rf5rWJCpeb9UxWQSF
-         UGDmtDylZA/7GDk9DplajaaZ2dQrbxYv7DwYKY5EimdagIIgPW3Gj5QRFa/sw7YyOMjV
-         1b5T3UUa+OlZUBKLcsHzzfBavmGETWpfU6g9TMKPatVcOgTL9rKz/kWKWscdh8MctfDy
-         8aXLmUYAfZ9PZAX44qWNeMyiG/24Xe4+OVyGcuVVandeHvIh7+D3So8k2QHlsXCKoaWe
-         WZFnfzdsLPruyhrDJSoIAmMVUqj7FdyLzUg29XpSsweCCYpjmeq78mGKeNB3iOT6fhQX
-         fY/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUksnBkY8z7zMCGMWYy6fkZvzkJS1gqAPhU9TzggNH3o8ruH6obOQQMKv+8w4ZGaWA0GCi0Z/CU6tt73Q==@vger.kernel.org, AJvYcCWa+pyiLc99gghiy3K9hbfTP4Wa490UgWtFwkn90J4t0QEUnaxbHQoMQ4o87QE1CG5f2V8sOAb1zDG9CZnC@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywame+jIixa9gH3YsjBcPf+ViRkNLUszenC3mfzqo85S781zz5E
-	Ul7pRWAqLqZC6B2W99p9plcdcqvTIO4jMA1JsEscGyOi3hoXRI8W
-X-Google-Smtp-Source: AGHT+IGwRpO/cnzdEcp+wf02AYfwOz65YQtdLdvBBH+Ncrth4XHsYfEeHDAW8JtirFCNytUIoAhCQw==
-X-Received: by 2002:a05:6000:18a9:b0:374:c6af:165f with SMTP id ffacd0b85a97d-378c2cfec9fmr11364665f8f.12.1726484025734;
-        Mon, 16 Sep 2024 03:53:45 -0700 (PDT)
-Received: from [192.168.50.7] (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e62989024sm26270725e9.36.2024.09.16.03.53.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 03:53:45 -0700 (PDT)
-Message-ID: <9d81c1b9-60d2-419d-ae9b-96dbb92442b9@gmail.com>
-Date: Mon, 16 Sep 2024 12:53:44 +0200
+	s=arc-20240116; t=1726484134; c=relaxed/simple;
+	bh=CCYg0/Uk4gW56XH7U1TdvhS/BJpcfK4bOlOpozm22ZI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SCiW5CXLGwYDWUOVDqFzmo+nAIK2aXnzew1/B+KT2x7R8dKABe6jjcu66nMHa+wxlMWjgN3p77ncx9+o8VfXCDZOsF8gvecCo+UoWJkCKoZAKKj2wjinJMq+Ghou1EVhxa2beWQHnWJ1nvornI6NChCSqjnIpXtxVIbT/5CAlfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=WlHJvKZ3; arc=none smtp.client-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20240916105522e2a48c4b37a81738ae
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 16 Sep 2024 12:55:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=R/SUc/IHdBroo59dmHywFnBZXxDwf6HMJYKLu7JQhuQ=;
+ b=WlHJvKZ3en1MpP8tPshYCSXTIfePFwvHa6MUzxnv5BaleLJMQF8Bs7EKYCrgadTh9vIXBX
+ s+4TOPoreeWITYJYK448BdlQEcM0u1NTJIEtmklGDBBvKdOuS4z8v8dkPDxxh35PYEaW20yw
+ 7ZCB2LADATZzPHNnGc7Pf/SutuvY8VgdSIo4UEjjrHeSeDsp44a7WSPX9eqRMxQcyrlnmU6b
+ ZWIwsEdaNb7nP3hvLPETBqQR0B2UmezxJb4WjlbjwxFe0soSih11zkOrJu2QpqL++16HDdh3
+ HqBSbZsXk+mLMVNgw9hNlwlu+f9Y4abrLCc1XRphbFRU0lTFiiYA8sVg==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring <io-uring@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [PATCH v2 1/1] io_uring/sqpoll: do not put cpumasks on stack
+Date: Mon, 16 Sep 2024 12:55:14 +0200
+Message-Id: <20240916105514.1260506-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] btrfs: Don't block system suspend during fstrim
-To: Qu Wenruo <wqu@suse.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240916101615.116164-1-luca.stefani.ge1@gmail.com>
- <20240916101615.116164-4-luca.stefani.ge1@gmail.com>
- <44534dea-0baf-420b-a2c2-0ee15db7298a@suse.com>
-Content-Language: en-US
-From: Luca Stefani <luca.stefani.ge1@gmail.com>
-In-Reply-To: <44534dea-0baf-420b-a2c2-0ee15db7298a@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
+Putting the cpumask on the stack is deprecated for a long time (since
+2d3854a37e8), as these can be big. Given that, we port-over the stack
+allocated mask to the cpumask allocation api.
 
+Fixes: f011c9cf04c0 ("io_uring/sqpoll: do not allow pinning outside of cpuset")
+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+---
+Changes since v1:
 
-On 16/09/24 12:41, Qu Wenruo wrote:
-> 
-> 
-> 在 2024/9/16 19:46, Luca Stefani 写道:
->> Sometimes the system isn't able to suspend because the task
->> responsible for trimming the device isn't able to finish in
->> time, especially since we have a free extent discarding phase,
->> which can trim a lot of unallocated space, and there is no
->> limits on the trim size (unlike the block group part).
->>
->> Since discard isn't a critical call it can be interrupted
->> at any time, in such cases we stop the trim, report the amount
->> of discarded bytes and return failure.
->>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
->> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
->> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
->> ---
->>   fs/btrfs/extent-tree.c | 19 ++++++++++++++++++-
->>   1 file changed, 18 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
->> index cbe66d0acff8..ab2e5d366a3a 100644
->> --- a/fs/btrfs/extent-tree.c
->> +++ b/fs/btrfs/extent-tree.c
->> @@ -16,6 +16,7 @@
->>   #include <linux/percpu_counter.h>
->>   #include <linux/lockdep.h>
->>   #include <linux/crc32c.h>
->> +#include <linux/freezer.h>
->>   #include "ctree.h"
->>   #include "extent-tree.h"
->>   #include "transaction.h"
->> @@ -1235,6 +1236,11 @@ static int remove_extent_backref(struct 
->> btrfs_trans_handle *trans,
->>       return ret;
->>   }
->> +static bool btrfs_trim_interrupted(void)
->> +{
->> +    return fatal_signal_pending(current) || freezing(current);
->> +}
->> +
->>   static int btrfs_issue_discard(struct block_device *bdev, u64 start, 
->> u64 len,
->>                      u64 *discarded_bytes)
->>   {
->> @@ -1319,6 +1325,11 @@ static int btrfs_issue_discard(struct 
->> block_device *bdev, u64 start, u64 len,
->>           start += bytes_to_discard;
->>           bytes_left -= bytes_to_discard;
->>           *discarded_bytes += bytes_to_discard;
->> +
->> +        if (btrfs_trim_interrupted()) {
->> +            ret = -ERESTARTSYS;
->> +            break;
->> +        }
->>       }
->>       return ret;
->> @@ -6473,7 +6484,7 @@ static int btrfs_trim_free_extents(struct 
->> btrfs_device *device, u64 *trimmed)
->>           start += len;
->>           *trimmed += bytes;
->> -        if (fatal_signal_pending(current)) {
->> +        if (btrfs_trim_interrupted()) {
->>               ret = -ERESTARTSYS;
->>               break;
->>           }
->> @@ -6522,6 +6533,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, 
->> struct fstrim_range *range)
->>       cache = btrfs_lookup_first_block_group(fs_info, range->start);
->>       for (; cache; cache = btrfs_next_block_group(cache)) {
->> +        if (btrfs_trim_interrupted())
->> +            break;
->> +
-> 
-> Please update @bg_ret return value.
-Done in v5.
-> 
->>           if (cache->start >= range_end) {
->>               btrfs_put_block_group(cache);
->>               break;
->> @@ -6561,6 +6575,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, 
->> struct fstrim_range *range)
->>       mutex_lock(&fs_devices->device_list_mutex);
->>       list_for_each_entry(device, &fs_devices->devices, dev_list) {
->> +        if (btrfs_trim_interrupted())
->> +            break;
->> +
-> 
-> The same here, please update @dev_ret.
-ditto.
-> 
-> Thanks,
-> Qu
->>           if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))
->>               continue;
+- don't leak mask in case CPU is not online or too big
+
+Best regards,
+Felix
+
+ io_uring/sqpoll.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index 7adfcf6818ff..44b9f58e11b6 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -461,15 +461,22 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 			return 0;
+ 
+ 		if (p->flags & IORING_SETUP_SQ_AFF) {
+-			struct cpumask allowed_mask;
++			cpumask_var_t allowed_mask;
+ 			int cpu = p->sq_thread_cpu;
+ 
+ 			ret = -EINVAL;
+ 			if (cpu >= nr_cpu_ids || !cpu_online(cpu))
+ 				goto err_sqpoll;
+-			cpuset_cpus_allowed(current, &allowed_mask);
+-			if (!cpumask_test_cpu(cpu, &allowed_mask))
++			if (!alloc_cpumask_var(&allowed_mask, GFP_KERNEL)) {
++				ret = -ENOMEM;
+ 				goto err_sqpoll;
++			}
++			cpuset_cpus_allowed(current, allowed_mask);
++			if (!cpumask_test_cpu(cpu, allowed_mask)) {
++				free_cpumask_var(allowed_mask);
++				goto err_sqpoll;
++			}
++			free_cpumask_var(allowed_mask);
+ 			sqd->sq_cpu = cpu;
+ 		} else {
+ 			sqd->sq_cpu = -1;
+-- 
+2.39.2
 
 
