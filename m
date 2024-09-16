@@ -1,139 +1,248 @@
-Return-Path: <linux-kernel+bounces-330878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF5497A59F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:00:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF00597A5A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26C57B22DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:00:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C559DB29027
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A0315AAB1;
-	Mon, 16 Sep 2024 16:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkqd7Mao"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DA5158D8B;
+	Mon, 16 Sep 2024 16:00:33 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7B015A876
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 16:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131921CAAF
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 16:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726502422; cv=none; b=QAlKZDqTuIxGW2vxBKz6s8q67PsOg8YyXAO7KsuY/s0KH3MYdobY7jwVh2LD9b5DSl5AQdUwUjzLVKhM9UHc59F5NZZcreklzZV3MN5sLHBnVYYlLA7VzHrDOMHMpV0pYC9SaYCzhaTjoJCqVt9TLy8/2fYjEEjokmp+2jxAvB0=
+	t=1726502432; cv=none; b=VvtJaA9OkISwQ7PIbx9wLMxGi5RyRvI9QtfLn3V/9gZt72uesNsTsgdKrDwJ7GylezBUgm999Rxdce/sSR4/4+SrhTXBsa6OpdQSAQqa3v7OHmF7WcN8z+AUWT5MjCMtoSiw/8CrcdptzW732JsfGEnNQ2tKsHKVY248Rj9obXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726502422; c=relaxed/simple;
-	bh=9NtX4Akc6P2gDDZtOLnCEw3gaI01Mq2PLcNOJQNeNek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kvzqCxvqx+6QrAqUYOFQ+SQWo/bAamiLtnD0oPhVk/yzRWBQBxEvdVPrHk2+5vxQFsD6EE+AWpdGZAvUzVdavb8YeL5TW5mbA0/DcrtkrN/YBPZWd/EB3+6+K+ZLRITijAZJ0H2+G2H9xhHukqd8nwKvgX8fGL/LlN1n4Gs49s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nkqd7Mao; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3dd16257b7bso1650260b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:00:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726502418; x=1727107218; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QNGAscY89spos90KeV3lVrKQOCpirqeeQdiGtvmiPzE=;
-        b=nkqd7Mao07aloSUiyDTYSdQkZsDA6UHXB6Hz/sSyBhshI0Y/UXTPLCPV+kcmAjnxFK
-         xw/nbHR8uIZzZbRY587ASfuvDS01oZXpkcmkhNsTmnDWjMewjUe8/YWF6zs+x63e+MZ0
-         etwgBJTEojLEu8tk8JoRdORT36/Dh/d7U/Ha2qanrDKvJkmog+ugbkBfEW6g9C0NVOn2
-         g6lMhpWWbE/6YLsaPHM45Tk5R+mv0UiIXGr7m1FNmNyDiMAZbSwsS1J0VijworKSf/fG
-         J81jhlD1ovH/DBqXsCe/K3YCsH+2/WSi6lFxv67Ma/2O7S3EGPQWZoNgIwO44uT5bMAG
-         LCeQ==
+	s=arc-20240116; t=1726502432; c=relaxed/simple;
+	bh=62G1+mqEHEqQpxNcakNzfYevsjKL2LCmIKFWiov7ujA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bacaHD5ZZ8PXOvea+POTnR+gOoMIdyOiiuxiearBOX5PxcCcP9z6J7BaqoLIJQDgCnQuMSs/f7Bo5G8U8F1kl4ZexcfPi1ITl0KHVotv/wfSm2ZSP8qSjHaA2v25Zj6Uvbgd4AtH4r8+D9GcNDO1UVX0f4klsxfgncNGhK+Kt6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0987c35f2so45719305ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:00:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726502418; x=1727107218;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1726502429; x=1727107229;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QNGAscY89spos90KeV3lVrKQOCpirqeeQdiGtvmiPzE=;
-        b=GUm5QxarNvWcvwwD+f3FBfs3pfg7Im3A6tXusDfxyojOQgC22iXgV1YA0OSqtUqg8d
-         P8Jg916GE2JA7/yasDRxqhKWbj6QuEq8VkPbWnkH69cg1UrMZtN3N8cRt7MKLmMZ4oVR
-         2PcuVYHqEV+y+JD+N/J5SK50GvkjqkkDqkxtnmaQDvJnrJuQjmu1R+EJB5PieIo+cs5A
-         pokGWmREEyz1IAHQavQqRKGNasFFIhNkIVTmU9sPiFOvcZWyYjAs+fKzzWmmIUD+4lcL
-         treKLV9NvFmrT+8gdaScBQD4Huw554d35t4ATZYrerGgaeeSFLnsi181KOGqiqF9bj2o
-         IXqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIy5ab3JPMlNMEGWX5r4QPydx2hRbJW9wy76rSpcfXVPHn7YYo0kSFvsA7vkniPV94j6h+cNK40oJOj+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4WOXIECkcCLX4cbj34dfOxxa3I8x6FUTb7zCvMw0h9AaqfyIR
-	Jq/Y1RlQ/aSCiPb617nPRnOprtlqfZlHoBB7d+7CDdXG6hhvAtS7
-X-Google-Smtp-Source: AGHT+IEGKIXuDbJQCCB5TuWpGJZvTObpH6f7clkm5fgDiOimQFedACIetFrXdE6vcQkAOCKT02LUSQ==
-X-Received: by 2002:a05:6871:3a06:b0:260:fb01:5651 with SMTP id 586e51a60fabf-27c3f253ae6mr10872804fac.12.1726502418233;
-        Mon, 16 Sep 2024 09:00:18 -0700 (PDT)
-Received: from [192.168.0.101] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b97581sm3875919b3a.151.2024.09.16.09.00.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 09:00:17 -0700 (PDT)
-Message-ID: <110df06f-a598-4ffc-97c9-372a0fb858dc@gmail.com>
-Date: Tue, 17 Sep 2024 00:00:10 +0800
+        bh=QrR0bm5K+FVGNxR55W2u/i22rkNMsWxBtqV+k/wx2zE=;
+        b=Nf5BsX4/1xLjqg1SM51705Vm9S3Sn2K8I4uIqKQbm9uRfRrJgRRl7jtdc8gWX1zcRg
+         qg8UMQFf9ObcdCQ2W+TgZs+VMh6BwjzK/mKCLQOw579CPKvOBSLfMzJ7myh4uLNMoQqq
+         9KUEbsb+V41+tQSYM/N8a/HN/NBjwZDyQB9XSOf4T1+/wC3LErrFkdR7bMO1RhJo9vcY
+         Q8UXAEFim+QLanjCoQshaZJwb5WoxIW7pyRnwxPzkWzq2pmPT7ZeRji40+Ur+zdNf4zt
+         TzKHS1xa7lkl6W2/1rMWMstqzMYQBw+es3KOXzHO0w5rEyUEfaD0kAty2p8hhEI8I9BZ
+         A/YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFmdmgBfCsmBLD/M4cbaORzaMv+Hd6AYfCL+M3chKauggIu6XM2nIf08nR4Bnb4IwrkVzKR73InONQrAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMCKvj2IM+vApTio7gPTNEwkTyWvKTYP6usN4fyXxJSUxy9Kx0
+	CCTXnjZ/23AWTky2rhzmPtaTKwJ8V7tXL0flcbAb3kRT1rLeO/B1XjkjKhG6LsIyzLArvxwp96q
+	GCbx9ed6yXtIhtjYsICfl0RkeEEO6/nf91HKFcWg+kgnPZlcxRJhZ80k=
+X-Google-Smtp-Source: AGHT+IFsT8GSHNZ2SmY9QxODQu+6/2hoO42R9sWdiFVVVfT6VS3rxnoZUzSXUivPo3MTK2Baqoyu8aD93TllRD+4Rbisvesqdrry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: cpufeature: Pretend that Apple A10 family
- does not support 32-bit EL0
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
- Marc Zyngier <maz@kernel.org>
-References: <20240909091425.16258-1-towinchenmi@gmail.com>
- <20240909091425.16258-3-towinchenmi@gmail.com>
- <f908c9ca-8063-44f4-b534-ddfc067b98c2@gmail.com> <ZuhPIdnx36yXJhHi@arm.com>
-Content-Language: en-US
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <ZuhPIdnx36yXJhHi@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a04:b0:3a0:a1d7:791d with SMTP id
+ e9e14a558f8ab-3a0a1d77ab5mr29200585ab.25.1726502428839; Mon, 16 Sep 2024
+ 09:00:28 -0700 (PDT)
+Date: Mon, 16 Sep 2024 09:00:28 -0700
+In-Reply-To: <0000000000003bc82506223d9c64@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f9aad406223eabff@google.com>
+Subject: Re: [syzbot] [btrfs?] KASAN: slab-use-after-free Read in btrfs_cleanup_defrag_inodes
+From: syzbot <syzbot+ad7966ca1f5dd8b001b3@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, fdmanana@kernel.org, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    adfc3ded5c33 Merge tag 'for-6.12/io_uring-discard-20240913..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=152fa29f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=71033c66cc4b01c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=ad7966ca1f5dd8b001b3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d79c07980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=160ca8a9980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-adfc3ded.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/14d8d89edd95/vmlinux-adfc3ded.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/77b35977c15b/bzImage-adfc3ded.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/16dc3a6129eb/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ad7966ca1f5dd8b001b3@syzkaller.appspotmail.com
+
+BTRFS info (device loop0 state EA): last unmount of filesystem c9fe44da-de57-406a-8241-57ec7d4412cf
+==================================================================
+BUG: KASAN: slab-use-after-free in rb_left_deepest_node lib/rbtree.c:595 [inline]
+BUG: KASAN: slab-use-after-free in rb_first_postorder+0x69/0x90 lib/rbtree.c:628
+Read of size 8 at addr ffff888047515010 by task syz-executor245/5095
+
+CPU: 0 UID: 0 PID: 5095 Comm: syz-executor245 Not tainted 6.11.0-syzkaller-02520-gadfc3ded5c33 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ rb_left_deepest_node lib/rbtree.c:595 [inline]
+ rb_first_postorder+0x69/0x90 lib/rbtree.c:628
+ btrfs_cleanup_defrag_inodes+0x2f/0x80 fs/btrfs/defrag.c:212
+ close_ctree+0x2af/0xd20 fs/btrfs/disk-io.c:4256
+ generic_shutdown_super+0x139/0x2d0 fs/super.c:642
+ kill_anon_super+0x3b/0x70 fs/super.c:1237
+ btrfs_kill_super+0x41/0x50 fs/btrfs/super.c:2121
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x24f/0x310 kernel/task_work.c:228
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xa2f/0x27f0 kernel/exit.c:882
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1031
+ __do_sys_exit_group kernel/exit.c:1042 [inline]
+ __se_sys_exit_group kernel/exit.c:1040 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
+ x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f37d0596809
+Code: Unable to access opcode bytes at 0x7f37d05967df.
+RSP: 002b:00007ffd0eed81f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f37d0596809
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
+RBP: 00007f37d0618390 R08: ffffffffffffffb8 R09: 0000000000000000
+R10: 0000000000001000 R11: 0000000000000246 R12: 00007f37d0618390
+R13: 0000000000000000 R14: 00007f37d0619100 R15: 00007f37d05647a0
+ </TASK>
+
+Allocated by task 5098:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3989 [inline]
+ slab_alloc_node mm/slub.c:4038 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4045
+ btrfs_add_inode_defrag+0x15c/0x790 fs/btrfs/defrag.c:136
+ inode_should_defrag fs/btrfs/inode.c:888 [inline]
+ cow_file_range+0x380/0x11f0 fs/btrfs/inode.c:1382
+ btrfs_run_delalloc_range+0x33d/0xf70 fs/btrfs/inode.c:2334
+ writepage_delalloc+0x482/0x7d0 fs/btrfs/extent_io.c:1192
+ extent_writepage fs/btrfs/extent_io.c:1454 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2130 [inline]
+ btrfs_writepages+0x1157/0x2370 fs/btrfs/extent_io.c:2261
+ do_writepages+0x35d/0x870 mm/page-writeback.c:2683
+ filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
+ __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+ filemap_fdatawrite_range+0x120/0x180 mm/filemap.c:448
+ btrfs_fdatawrite_range+0x53/0xe0 fs/btrfs/file.c:3799
+ btrfs_direct_write+0x565/0xa70 fs/btrfs/direct-io.c:961
+ btrfs_do_write_iter+0x2a0/0x760 fs/btrfs/file.c:1505
+ new_sync_write fs/read_write.c:590 [inline]
+ vfs_write+0xa6d/0xc90 fs/read_write.c:683
+ ksys_pwrite64 fs/read_write.c:798 [inline]
+ __do_sys_pwrite64 fs/read_write.c:808 [inline]
+ __se_sys_pwrite64 fs/read_write.c:805 [inline]
+ __x64_sys_pwrite64+0x1aa/0x230 fs/read_write.c:805
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 5098:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2250 [inline]
+ slab_free mm/slub.c:4474 [inline]
+ kmem_cache_free+0x145/0x350 mm/slub.c:4549
+ btrfs_cleanup_defrag_inodes+0x51/0x80 fs/btrfs/defrag.c:214
+ btrfs_remount_cleanup fs/btrfs/super.c:1263 [inline]
+ btrfs_reconfigure+0x269c/0x2d40 fs/btrfs/super.c:1555
+ reconfigure_super+0x445/0x880 fs/super.c:1083
+ vfs_cmd_reconfigure fs/fsopen.c:263 [inline]
+ vfs_fsconfig_locked fs/fsopen.c:292 [inline]
+ __do_sys_fsconfig fs/fsopen.c:473 [inline]
+ __se_sys_fsconfig+0xb68/0xf70 fs/fsopen.c:345
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888047515000
+ which belongs to the cache btrfs_inode_defrag of size 56
+The buggy address is located 16 bytes inside of
+ freed 56-byte region [ffff888047515000, ffff888047515038)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x47515
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+page_type: 0xfdffffff(slab)
+raw: 04fff00000000000 ffff88803d4678c0 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000802e002e 00000001fdffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5098, tgid 5098 (syz-executor245), ts 85167218149, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1500
+ prep_new_page mm/page_alloc.c:1508 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3446
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4702
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2319
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2482
+ new_slab mm/slub.c:2535 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3721
+ __slab_alloc+0x58/0xa0 mm/slub.c:3811
+ __slab_alloc_node mm/slub.c:3864 [inline]
+ slab_alloc_node mm/slub.c:4026 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4045
+ btrfs_add_inode_defrag+0x15c/0x790 fs/btrfs/defrag.c:136
+ inode_should_defrag fs/btrfs/inode.c:888 [inline]
+ cow_file_range+0x380/0x11f0 fs/btrfs/inode.c:1382
+ btrfs_run_delalloc_range+0x33d/0xf70 fs/btrfs/inode.c:2334
+ writepage_delalloc+0x482/0x7d0 fs/btrfs/extent_io.c:1192
+ extent_writepage fs/btrfs/extent_io.c:1454 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2130 [inline]
+ btrfs_writepages+0x1157/0x2370 fs/btrfs/extent_io.c:2261
+ do_writepages+0x35d/0x870 mm/page-writeback.c:2683
+ filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
+ __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+ filemap_fdatawrite_range+0x120/0x180 mm/filemap.c:448
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888047514f00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888047514f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888047515000: fa fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc
+                         ^
+ ffff888047515080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888047515100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
 
-
-Catalin Marinas 於 2024/9/16 晚上11:30 寫道:
-> On Mon, Sep 16, 2024 at 09:41:12PM +0800, Nick Chan wrote:
->> On 9/9/2024 17:10, Nick Chan wrote:
->>> The Apple A10 family consists of physical performance and efficiency
->>> cores, and only one of them can be active at a given time depending on
->>> the current p-state. However, only the performance cores can execute
->>> 32-bit EL0. This results in logical cores that can only execute 32-bit
->>> EL0 in high p-states.
->>
->> Further research shows that the MPIDR_EL1 values between the two core
->> types are different. And whether the two core type have any extra
->> differences is anyone's guess right now. So far, nothing seems to break
->> horribly without special workarounds for the MPIDR value (with cpufreq
->> enabled downstream) as:
->> 1. There are no KVM, GIC, ACPI, PSCI or cpuidle
->> 2. All CPUs switch P-mode and E-mode together
->>
->> However, all of this is broken enough that this piece of code should go
->> into arch/arm64/kernel/cpu_errata.c, and also generate a
->> TAINT_CPU_OUT_OF_SPEC for these cursed CPUs.
-> 
-> I wouldn't carry any additional logic in the kernel for such
-> configuration (long time ago Arm had something similar, the big.LITTLE
-> switcher, but the CPUs were fairly similar from a feature perspective).
-This is fine from a functionality perspective, currently nothing that
-accesses MPIDR after boot is used on A10(X). However, it does not sound
-right either to not note that the kernel is running on a cursed CPU.
-
-> 
->>> Trying to support 32-bit EL0 on a CPU that can only execute it in certain
->>> states is a bad idea. The A10 family only supports 16KB page size anyway
->>> so many AArch32 executables won't run anyways. Pretend that it does not
->>> support 32-bit EL0 at all.
-> 
-> CONFIG_COMPAT depends on ARM64_4K_PAGES || EXPERT. Do we really need
-> these patches in case one enables EXPERT and tries to run 32-bit
-> binaries that never ran on 16K pages before?
-The worst thing that can happen is the 32-bit process crashes with illegal
-instruction, the kernel will still be fine.
-
-> 
-
-Nick Chan
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
