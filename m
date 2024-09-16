@@ -1,242 +1,300 @@
-Return-Path: <linux-kernel+bounces-330226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494A6979B2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:33:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E1A979B34
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09EB1F23373
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:33:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E15282C2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694C643158;
-	Mon, 16 Sep 2024 06:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F72D3D97F;
+	Mon, 16 Sep 2024 06:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="fEab7XNw"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hQguIjp4";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hQguIjp4"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4A5335C0
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAE53EA7B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726468403; cv=none; b=e2v1qcdkQnqUIXw7HPBmKWtG0psP7GRzjbgMYHP7fkuwHTMSJNSD4EYcYytZF7IdpblVIr1Z8GmIVVxwUkoCn9z6N0wcXW43NK/8jBb4p1YXW6rxka9JXuBDc5uTRw8axtH7hwmRR9UIO2zrB5QmI0YjRbvbct/9+PSc3iNnZRI=
+	t=1726468420; cv=none; b=ryHxpf6hBSlYic2ciCMY5E3ih7ZjIyVkyGf+q/pDmeAB15gvR5ltvzWg3EWPJaMOQc1t7i3aBAN8iy0H4ima7EjJsVF/Ju2SNXtLvI1T5qm3UHKh21alfvnjuI8zl2h/A0/GSy6Lj+umCkOtiWk6AI1brYX3Ifa0qNkZaMcZvs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726468403; c=relaxed/simple;
-	bh=DqUYrFG4Enz4+34W0+Vi1GhOjS3l28KXSdLtSsJa/4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/I8zjhbReOOKEMaq2Rrn4MG0XYYBy6kDgczZC7WqOnfVjFbe67xndOc/7b8XYG5xc6BS2CCzIcFsdzW0FSj8JjHccuvQGczp3XbMB7lp5uAh6lCAM45M7t2KE4b/uYE9OjBBlLxJdXEg2qIxTpx064VQvTj0E1PFU1b0IifMFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=fEab7XNw; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d87196ec9fso1951758a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 23:33:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726468401; x=1727073201; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XSZMwApg+gmjCJugiWkUy18xuz6LW9w5SgWcaqjuE8w=;
-        b=fEab7XNwBicl3kreywesAAHZfEk18jsD0/zz2Ua4qP2CIHVZYko2DvmMG0vUsiAqbh
-         RQRRbtlAWCvj7GuGZBMQzUgak5TniNUdaIoJYXlHS6jalMraRogG1KVnS/0SpTGvTdiD
-         AcwBvmjNZ9oANcoyQGrgXTMDjsKpwF7OCcWXMCwP2eSs2fXv8YwDXpatLT6jsaw4gEBC
-         rYS8uvYxso+UiHbF5wR0/OSlINnWUq6eReTZzba5I8bU+VRCEH0GsJkkbFmYtcMFXbQ2
-         gnOj00Xchz3s5QyxsBWcncovvYL+EWQu6roH96bzSC0Tucbj6Do8z+1/55imaMs11Wu5
-         mMfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726468401; x=1727073201;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XSZMwApg+gmjCJugiWkUy18xuz6LW9w5SgWcaqjuE8w=;
-        b=TOl0WYIt7K1EELOnl6Pnk37901JEjf4STTlHyW2dGfog3U69pXRJ/Y7k0kSBgZOkAe
-         P6vjjsK27sbs9mJmtQLiISV4dY+WTdS5zqE0Il6Aw/z5hIUaWBJ3PkrJZ+MgBX/RH4w1
-         BxioG98qwVoz6I9Bhtv9vwKbyUAcZqgvF4XSYMOuBKt/HCosq091OkT/F/SHifnTNL+O
-         92tCkUdfnqYaIajD52CuzckXj7EtcW/UwvQrMGNa6r8KswKgUFF7IiSWC4SUtpmK1ncL
-         UAnd7ARKLong5W70j6iF70rc442y9M/mC2Jyn6YkrUZ7YoffJP3cbbrzjXGGFgu3HrK6
-         mVEg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5/dkucOVqoBiT/Wigxp+0YK8zpVFp/dls0nnfxQcentwTfXY+JGq+oqPM1PajxGDmeyCnmqX7pllH+tU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhKx6vUVVW9R6M2JSVDI7sVP1MmVlXCMAEGymw/uiMnhrtuYx4
-	VWwSSpIETpv/FVeEguFq5UIJ4t0QmWqnd1AwdI5tTWyjxFHS1ik7r2Lij2v+5bU=
-X-Google-Smtp-Source: AGHT+IH4SEadADz/E/S4sALk5BvwV5RWIKEOxqYtfNoR4jCgfo646bDgJygGp2QyNxqm298HKo6Q6g==
-X-Received: by 2002:a17:90b:3758:b0:2da:88b3:d001 with SMTP id 98e67ed59e1d1-2dbb9e1d271mr13104116a91.18.1726468401331;
-        Sun, 15 Sep 2024 23:33:21 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9d5c9d1sm6465575a91.35.2024.09.15.23.33.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 23:33:20 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sq5IU-005oml-09;
-	Mon, 16 Sep 2024 16:33:18 +1000
-Date: Mon, 16 Sep 2024 16:33:18 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <ZufRLhUxhMn2HGYB@dread.disaster.area>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
- <87frqf2smy.fsf@gmail.com>
- <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <877cbq3g9i.fsf@gmail.com>
- <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
- <877cbkgr04.fsf@gmail.com>
+	s=arc-20240116; t=1726468420; c=relaxed/simple;
+	bh=Qt2Js0oK9N0t27amZL8az7WyZr3O7bBGtujJ+Czjw5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=icPaJ3Itvl1kT3B8ksVn9loBvCl5hY6M4IkmGQ7n791T6MVKW+zefeeRjbPfrhCCrnJvbPE1yPVSceN/dB7ihL+gWvmT37YYgaLR1ej0qd+0TQJ5/0oib53IWZ3MCcStmzjbE4KzQ+2pF7RkQ7BWM5TxSYg/45b1rxVMM7Xz+0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hQguIjp4; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hQguIjp4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 99CFF1FD55;
+	Mon, 16 Sep 2024 06:33:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1726468415; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Qt2Js0oK9N0t27amZL8az7WyZr3O7bBGtujJ+Czjw5c=;
+	b=hQguIjp4RIXyBSK7wwtoo+C3hToIxl1SPXVtFUwiwCiKQSs67HZxK5NuaE8rGqzVrUQD7j
+	WeVqt6tmGJUom5AtQ+DwKQCCsALOyhAcRAHIypHxi33a6+cz5gvJVNN28T9IwvroSImqEi
+	1aIdkjTWdrawkYs8FsoVWHJu+84zUsE=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=hQguIjp4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1726468415; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Qt2Js0oK9N0t27amZL8az7WyZr3O7bBGtujJ+Czjw5c=;
+	b=hQguIjp4RIXyBSK7wwtoo+C3hToIxl1SPXVtFUwiwCiKQSs67HZxK5NuaE8rGqzVrUQD7j
+	WeVqt6tmGJUom5AtQ+DwKQCCsALOyhAcRAHIypHxi33a6+cz5gvJVNN28T9IwvroSImqEi
+	1aIdkjTWdrawkYs8FsoVWHJu+84zUsE=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2DB32139CE;
+	Mon, 16 Sep 2024 06:33:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KLJYCT/R52aRHAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 16 Sep 2024 06:33:35 +0000
+Message-ID: <daf28e5b-61ba-42ff-97ba-aaaeaac81c09@suse.com>
+Date: Mon, 16 Sep 2024 08:33:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877cbkgr04.fsf@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] x86/pvh: Add 64bit relocation page tables
+To: Jason Andryuk <jason.andryuk@amd.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Brian Gerst <brgerst@gmail.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20240823193630.2583107-1-jason.andryuk@amd.com>
+ <20240823193630.2583107-6-jason.andryuk@amd.com>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20240823193630.2583107-6-jason.andryuk@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------hpv5xaLFXzDbQ0xO0C1sQmW9"
+X-Rspamd-Queue-Id: 99CFF1FD55
+X-Spam-Score: -5.41
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-5.41 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	MIME_BASE64_TEXT(0.10)[];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FREEMAIL_TO(0.00)[amd.com,oracle.com,linutronix.de,redhat.com,alien8.de,linux.intel.com,kernel.org,zytor.com,epam.com,gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.com:+];
+	HAS_ATTACHMENT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Sep 10, 2024 at 08:21:55AM +0530, Ritesh Harjani wrote:
-> Dave Chinner <david@fromorbit.com> writes:
-> 
-> > On Thu, Sep 05, 2024 at 09:26:25AM +0530, Ritesh Harjani wrote:
-> >> Dave Chinner <david@fromorbit.com> writes:
-> >> > On Wed, Sep 04, 2024 at 11:44:29PM +0530, Ritesh Harjani wrote:
-> >> >> 3. It is the FORCEALIGN feature which _mandates_ both allocation
-> >> >> (by using extsize hint) and de-allocation to happen _only_ in
-> >> >> extsize chunks.
-> >> >>
-> >> >>    i.e. forcealign mandates -
-> >> >>    - the logical and physical start offset should be aligned as
-> >> >>    per args->alignment
-> >> >>    - extent length be aligned as per args->prod/mod.
-> >> >>      If above two cannot be satisfied then return -ENOSPC.
-> >> >
-> >> > Yes.
-> >> >
-> >> >> 
-> >> >>    - Does the unmapping of extents also only happens in extsize
-> >> >>    chunks (with forcealign)?
-> >> >
-> >> > Yes, via use of xfs_inode_alloc_unitsize() in the high level code
-> >> > aligning the fsbno ranges to be unmapped.
-> >> >
-> >> > Remember, force align requires both logical file offset and
-> >> > physical block number to be correctly aligned,
-> >> 
-> >> This is where I would like to double confirm it again. Even the
-> >> extsize hint feature (w/o FORCEALIGN) will try to allocate aligned
-> >> physical start and logical start file offset and length right?
-> >
-> > No.
-> >
-> >> (Or does extsize hint only restricts alignment to logical start file
-> >> offset + length and not the physical start?)
-> >
-> > Neither.
-> >
-> 
-> Yes, thanks for the correction. Indeed extsize hint does not take care
-> of the physical start alignment at all.
-> 
-> > extsize hint by itself (i.e. existing behaviour) has no alignment
-> > effect at all. All it affects is -size- of the extent. i.e. once
-> > the extent start is chosen, extent size hints will trim the length
-> > of the extent to a multiple of the extent size hint. Alignment is
-> > not considered at all.
-> >
-> 
-> Please correct me I wrong here... but XFS considers aligning the logical
-> start and the length of the allocated extent (for extsize) as per below
-> code right? 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------hpv5xaLFXzDbQ0xO0C1sQmW9
+Content-Type: multipart/mixed; boundary="------------ZLs5DE85JGEISZnCt1WAkccQ";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Jason Andryuk <jason.andryuk@amd.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Brian Gerst <brgerst@gmail.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Message-ID: <daf28e5b-61ba-42ff-97ba-aaaeaac81c09@suse.com>
+Subject: Re: [PATCH v3 5/5] x86/pvh: Add 64bit relocation page tables
+References: <20240823193630.2583107-1-jason.andryuk@amd.com>
+ <20240823193630.2583107-6-jason.andryuk@amd.com>
+In-Reply-To: <20240823193630.2583107-6-jason.andryuk@amd.com>
 
-Sorry, I was talking about physical alignment, not logical file
-offset alignment. The logical file offset alignment that is done
-for extent size hints is much more convoluted and dependent on
-certain preconditions existing for it to function as forced
-alignment/atomic writes require.
+--------------ZLs5DE85JGEISZnCt1WAkccQ
+Content-Type: multipart/mixed; boundary="------------g9Ojvj4oeSJWKbqgFIcQ87R4"
 
-> 
-> i.e.
-> 1) xfs_direct_write_iomap_begin()
-> {
->     <...>
->     if (offset + length > XFS_ISIZE(ip))
-> 		end_fsb = xfs_iomap_eof_align_last_fsb(ip, end_fsb);
->                   => xfs_fileoff_t aligned_end_fsb = roundup_64(end_fsb, align);
->                      return aligned_end_fsb
-> }
+--------------g9Ojvj4oeSJWKbqgFIcQ87R4
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-That's calculating the file offset of the end of the extent for an
-extending write. It's not really an alignment - it's simply
-calculating the file offset the allocation needs to cover to allow
-for aligned allocation. This length needs to be fed into the
-transaction reservation (i.e. ENOSPC checks) before we start the
-allocation, so we have to have some idea of the extent size we are
-going to allocate here...
+T24gMjMuMDguMjQgMjE6MzYsIEphc29uIEFuZHJ5dWsgd3JvdGU6DQo+IFRoZSBQVkggZW50
+cnkgcG9pbnQgaXMgMzJiaXQuICBGb3IgYSA2NGJpdCBrZXJuZWwsIHRoZSBlbnRyeSBwb2lu
+dCBtdXN0DQo+IHN3aXRjaCB0byA2NGJpdCBtb2RlLCB3aGljaCByZXF1aXJlcyBhIHNldCBv
+ZiBwYWdlIHRhYmxlcy4gIEluIHRoZSBwYXN0LA0KPiBQVkggdXNlZCBpbml0X3RvcF9wZ3Qu
+DQo+IA0KPiBUaGlzIHdvcmtzIGZpbmUgd2hlbiB0aGUga2VybmVsIGlzIGxvYWRlZCBhdCBM
+T0FEX1BIWVNJQ0FMX0FERFIsIGFzIHRoZQ0KPiBwYWdlIHRhYmxlcyBhcmUgcHJlYnVpbHQg
+Zm9yIHRoaXMgYWRkcmVzcy4gIElmIHRoZSBrZXJuZWwgaXMgbG9hZGVkIGF0IGENCj4gZGlm
+ZmVyZW50IGFkZHJlc3MsIHRoZXkgbmVlZCB0byBiZSBhZGp1c3RlZC4NCj4gDQo+IF9fc3Rh
+cnR1cF82NCgpIGFkanVzdHMgdGhlIHByZWJ1aWx0IHBhZ2UgdGFibGVzIGZvciB0aGUgcGh5
+c2ljYWwgbG9hZA0KPiBhZGRyZXNzLCBidXQgaXQgaXMgNjRiaXQgY29kZS4gIFRoZSAzMmJp
+dCBQVkggZW50cnkgY29kZSBjYW4ndCBjYWxsIGl0DQo+IHRvIGFkanVzdCB0aGUgcGFnZSB0
+YWJsZXMsIHNvIGl0IGNhbid0IHJlYWRpbHkgYmUgcmUtdXNlZC4NCj4gDQo+IDY0Yml0IFBW
+SCBlbnRyeSBuZWVkcyBwYWdlIHRhYmxlcyBzZXQgdXAgZm9yIGlkZW50aXR5IG1hcCwgdGhl
+IGtlcm5lbA0KPiBoaWdoIG1hcCBhbmQgdGhlIGRpcmVjdCBtYXAuICBwdmhfc3RhcnRfeGVu
+KCkgZW50ZXJzIGlkZW50aXR5IG1hcHBlZC4NCj4gSW5zaWRlIHhlbl9wcmVwYXJlX3B2aCgp
+LCBpdCBqdW1wcyB0aHJvdWdoIGEgcHZfb3BzIGZ1bmN0aW9uIHBvaW50ZXINCj4gaW50byB0
+aGUgaGlnaG1hcC4gIFRoZSBkaXJlY3QgbWFwIGlzIHVzZWQgZm9yIF9fdmEoKSBvbiB0aGUg
+aW5pdHJhbWZzDQo+IGFuZCBvdGhlciBndWVzdCBwaHlzaWNhbCBhZGRyZXNzZXMuDQo+IA0K
+PiBBZGQgYSBkZWRpY2F0ZWQgc2V0IG9mIHByZWJ1aWxkIHBhZ2UgdGFibGVzIGZvciBQVkgg
+ZW50cnkuICBUaGV5IGFyZQ0KPiBhZGp1c3RlZCBpbiBhc3NlbWJseSBiZWZvcmUgbG9hZGlu
+Zy4NCj4gDQo+IEFkZCBYRU5fRUxGTk9URV9QSFlTMzJfUkVMT0MgdG8gaW5kaWNhdGUgc3Vw
+cG9ydCBmb3IgcmVsb2NhdGlvbg0KPiBhbG9uZyB3aXRoIHRoZSBrZXJuZWwncyBsb2FkaW5n
+IGNvbnN0cmFpbnRzLiAgVGhlIG1heGltdW0gbG9hZCBhZGRyZXNzLA0KPiBLRVJORUxfSU1B
+R0VfU0laRSAtIDEsIGlzIGRldGVybWluZWQgYnkgYSBzaW5nbGUgcHZoX2xldmVsMl9pZGVu
+dF9wZ3QNCj4gcGFnZS4gIEl0IGNvdWxkIGJlIGxhcmdlciB3aXRoIG1vcmUgcGFnZXMuDQo+
+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKYXNvbiBBbmRyeXVrIDxqYXNvbi5hbmRyeXVrQGFtZC5j
+b20+DQoNClJldmlld2VkLWJ5OiBKdWVyZ2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+DQoN
+Cg0KSnVlcmdlbg0KDQo=
+--------------g9Ojvj4oeSJWKbqgFIcQ87R4
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-> 2) xfs_bmap_compute_alignments()
-> {
->     <...>
->     	else if (ap->datatype & XFS_ALLOC_USERDATA)
-> 		     align = xfs_get_extsz_hint(ap->ip);
-> 
->         if (align) {
->             if (xfs_bmap_extsize_align(mp, &ap->got, &ap->prev, align, 0,
->                         ap->eof, 0, ap->conv, &ap->offset,
->                         &ap->length))
->                 ASSERT(0);
->             ASSERT(ap->length);
-> 
->             args->prod = align;
->             div_u64_rem(ap->offset, args->prod, &args->mod);
->             if (args->mod)
->                 args->mod = args->prod - args->mod;
->         }
->         <...>
-> }
-> 
-> So args->prod and args->mod... aren't they use to align the logical
-> start and the length of the extent?
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-Nope. They are only used way down in xfs_alloc_fix_len(), which
-trims the length of the selected *physical* extent to the required
-length.
+--------------g9Ojvj4oeSJWKbqgFIcQ87R4--
 
-Look further up - ap->offset is the logical file offset the
-allocation needs to cover.  Logical alignment of the offset (i.e.
-determining where in the file the physical extent will be placed) is
-done in xfs_bmap_extsize_align(). As i said above, it's not purely
-an extent size alignment calculation....
+--------------ZLs5DE85JGEISZnCt1WAkccQ--
 
-> However, I do notice that when the file is closed XFS trims the length
-> allocated beyond EOF boundary (for extsize but not for forcealign from
-> the new forcealign series) i.e.
-> 
-> xfs_file_release() -> xfs_release() -> xfs_free_eofblocks()
-> 
-> I guess that is because xfs_can_free_eofblocks() does not consider
-> alignment for extsize in this function 
+--------------hpv5xaLFXzDbQ0xO0C1sQmW9
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-Of course - who wants large chunks of space allocated beyond EOF
-when you are never going to write to the file again?
+-----BEGIN PGP SIGNATURE-----
 
-i.e. If you have large extsize hints then the post-eof tail can
-consume a -lot- of space that won't otherwise get freed. This can
-lead to rapid, unexpected ENOSPC, and it's not clear to users what
-the cause is.
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmbn0T4FAwAAAAAACgkQsN6d1ii/Ey/7
+UAf/R1CUxfEgxEDcNfqejydAcbCMdN5PrgwULwP1RGGOtN8l56BuWx5zGzVE8Z4iHg7gWSaaMsN1
+sVxB2iyXA/3eiDSo9eWaqsMVU9StQiwPLI6bA/svDh9v/qu9VH7gqWuKgOOcWd7bY3FwYXrawB6s
+ouXUfSysEtlwrY5otfbZAFrxYEyTPagPKd7mm3qj71/YNOhOqK4w1UpWQ9JnWzoU9PpToE+k1K2t
+4g2X9GNnfTv8cxF2Hb+wJJTHJHvhIT0yHQYCeVLSqYJpmW0HLMyBlTXWSZyECp37PUWW/UbrLd/T
+JFgKG59xMOG4ixu9ARbN73yqfkgMlZn+B1GCFEobEA==
+=TsvH
+-----END PGP SIGNATURE-----
 
-Hence we don't care if extsz is set on the inode or not when we
-decide to remove post-eof blocks - reclaiming the unused space is
-much more important that an occasional unaligned or small extent.
-
-Forcealign changes that equation, but if you choose forcealign you
-are doing it for a specific reason and likely not applying it to the
-entire filesystem.....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--------------hpv5xaLFXzDbQ0xO0C1sQmW9--
 
