@@ -1,143 +1,148 @@
-Return-Path: <linux-kernel+bounces-330690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF58B97A2C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:16:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6AE97A2CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8259F1F2382C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:16:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC314B21017
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADF1155322;
-	Mon, 16 Sep 2024 13:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925CF155322;
+	Mon, 16 Sep 2024 13:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Sr5pdGeU"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bx1igH/m"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA8874C1B
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172B6347B4
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726492563; cv=none; b=tzy2Dsqx4+lfPR8Tfgp0dCy0GWiBoQmN3ijtGzCUbCuS5HQw45HKnZ3fLq7SPvUwHzuum6U18Eje6VvwbT4TyTmUShEKTyMDlRauEAdi+iQq7cJDnQXf393RL+R6pt4N5U1Bc73exGx0aNaV1YqoK0jzqVjjhlg24bXe8G5+PNY=
+	t=1726492741; cv=none; b=RIRh56q7QmATJ1/OreMO2/vhaa6PvtPGhRrW/NXhXwyqCPYSxu9/dvlcc111odwxJ1Uxi9RtlAsof8SGyaaa40Dt2PveAjhKkAU97qZb97u1osnL1O3kY6VCo22VrERy+ffFdQas0LGqcWQQJYem5VqpgkdrBkM7FqHovWl2a1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726492563; c=relaxed/simple;
-	bh=2shiFns4AIRKhTvk4uVTiC/091P8kqg35b89Q1fiQYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eDXmbtgIuutPXnC3GEa252SLnpyNTru/STOo8v62Puvh8Y8zIWGNRXXdAYEf5+C4J+9gd1SUozZsvPwhSSn+5YEDfIggXs/kyfIvq/aaCRaDFakjgUSJcQTKGFOKj50jDvXDrtIfK0PbsBEH6PWAsK2u6o84K7YSz7wSwhZWpGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Sr5pdGeU; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5365c512b00so5176337e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726492559; x=1727097359; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ls9W+JYpgNy7T22J8TYpc1bbB5LzQvlCFI+QGPISCHA=;
-        b=Sr5pdGeUYyGL8gOGZuj057KThUPAJpVDdtozCgm5DLU8Sp95W5LqxVa0/VWi014j1k
-         t9l8hGPXuOTMtkq9WwSqjvfWtwkezJ2DAFp2SfmYrZyQMkiOVjIV7PeCB+uszYohNwKW
-         nQyrTZmNw4u5kX9L7Kc6pVCLSxiIqlhSZDh3iqIdwFL9fUjlexFziy0cM+rSJ1HCsGXX
-         mbSlnpr0Tb8iHxgXDXy/qI9pyIlxLXXxV2ny4RwgWNXpqFrfBxoFxaV5qGd1HLxri4WU
-         2GRq8JLb82ts/cVUeV1iWWu7JgVwSofNa08uCatB5kDYLShemFyacr8CZQFXrwXpvOOt
-         4yZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726492559; x=1727097359;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ls9W+JYpgNy7T22J8TYpc1bbB5LzQvlCFI+QGPISCHA=;
-        b=JCjqO4nLowJ8DsrX67ZAvEeGJvnhLby9TH7e8+sex0VG1KyVX8nsJKCNJOsJnjlPnC
-         RNEVwMLEqbLTqQsWJAuWyzVjGeHOrRS1PSnc+3kBfbVL9WPGdNjDmx3KxpihRFpLAPjA
-         neIkCbDKadPpgW8UwZSVBZQ/qXU8cHXT7/7pbZ10aRklhwxMj+qRtVN0pVUj+2zp0nbd
-         Rj5EtacmIlXaAc5h/x6FR2jCX/tjSGHCfcvWe6IF5Ky1eyguXj2OnHuUWL+qjcSuDLI0
-         krqezWOQRg3qlMf/zyAJABex/LHqEzKYW6ZrymhS/PjLWE647lKcVDDdeV6U42v5eeUn
-         d5IA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSCJ27lSM1QhngaIH2EZIqKowGMYbNuM1Pmj+MCw81O2D3nwpPt9yHslwYCTku/Kq6KM6ikefNRmnFWfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU9Sq3xo9xB/lctuIWle8kN7eUdWMT4EjG0OdikfeTE5jTMVuO
-	ne3kSM3elTavzWD5HzHtt4t9Xa9ay1kT7hG1UTRxqke+ePqLiBrdpnnq+fgyHgM=
-X-Google-Smtp-Source: AGHT+IH4vg0e3jbvOI9X3gkE9iKT9Vuk7SRP55iyuY6GatZZovt69UcnZ9L7Aq8MNfu1NO+yj3b15w==
-X-Received: by 2002:a05:6512:2c0f:b0:536:7b56:6b90 with SMTP id 2adb3069b0e04-5367b566c40mr6711840e87.56.1726492558598;
-        Mon, 16 Sep 2024 06:15:58 -0700 (PDT)
-Received: from ?IPV6:2001:a61:13e7:b801:321e:ca35:2127:23e6? ([2001:a61:13e7:b801:321e:ca35:2127:23e6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b189d0dsm111485525e9.33.2024.09.16.06.15.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 06:15:58 -0700 (PDT)
-Message-ID: <bf971924-9d91-40a3-a4c2-5b518e2ce2fd@suse.com>
-Date: Mon, 16 Sep 2024 15:15:57 +0200
+	s=arc-20240116; t=1726492741; c=relaxed/simple;
+	bh=4AlkVEbRyvSZZWxOGnkfUlIpYC47Uto9L8Y8hy4UWUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AoPqYbblIvKECzt9lORKpFtSJD0NAGlSEiz31a5ijaZEJ9gO3uZWUvsuLDj45nDc+iBb9xu3mS/vV0tw1IgYpa8InVEAZxrdxiBSETdsXgL6QKyz/VTUs5r0+ZB/lMqL1tA3rAmK1VGqYUnHyx5PIKqKnoWXPUHjxrCGQS/o5nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bx1igH/m; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48GDHj68034329;
+	Mon, 16 Sep 2024 08:17:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726492665;
+	bh=fopSDGdPLqn2TJrk+i+f5DpYXQwN1AJ1daawf2krZlU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=bx1igH/mAVw4z932uzNDuWd7aUmtXqNEAJK6D2ULfdfRJq06w+QcvWz0OBXDM9ma6
+	 RnA3ODJ/iZVYIF5xICF1b6BrfYByFxCQXvoP7sZ0ooWoLC1v24o86c7rMM5fx+xmDe
+	 P1IoebG8HnLmf+KvEuko8Onj+nCV4myDRlfvq+FE=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48GDHjnJ111991
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 16 Sep 2024 08:17:45 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 16
+ Sep 2024 08:17:45 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 16 Sep 2024 08:17:45 -0500
+Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48GDHaHH055734;
+	Mon, 16 Sep 2024 08:17:37 -0500
+Message-ID: <e5ea93f7-b21b-8a8e-bc74-f4d81fa27b8d@ti.com>
+Date: Mon, 16 Sep 2024 18:47:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: use mutex_lock in iowarrior_read()
-To: Jeongjun Park <aha310510@gmail.com>, Oliver Neukum <oneukum@suse.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, colin.i.king@gmail.com,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240916040629.28750-1-aha310510@gmail.com>
- <2024091648-excusable-unfilled-83de@gregkh>
- <15bc0f3a-5433-43e0-b0b0-8b9c26dec165@suse.com>
- <CAO9qdTHrbG-aWetpM_e7zHUhrwPD=7uCHPbWSMoorgnwjKEOmA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] drm/tidss: Add MIT license along with GPL-2.0
 Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <CAO9qdTHrbG-aWetpM_e7zHUhrwPD=7uCHPbWSMoorgnwjKEOmA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: <jyri.sarha@iki.fi>, <tomi.valkeinen@ideasonboard.com>,
+        <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <r-ravikumar@ti.com>, <j-choudhary@ti.com>,
+        <grandmaster@al2klimov.de>, <caihuoqing@baidu.com>,
+        <ahalaney@redhat.com>, <cai.huoqing@linux.dev>,
+        <colin.i.king@gmail.com>, <javierm@redhat.com>,
+        <dmitry.baryshkov@linaro.org>, <geert+renesas@glider.be>,
+        <dakr@redhat.com>, <u.kleine-koenig@pengutronix.de>, <robh@kernel.org>,
+        <sam@ravnborg.org>, <simona.vetter@ffwll.ch>,
+        <ville.syrjala@linux.intel.com>, <wangxiaojun11@huawei.com>,
+        <yuanjilin@cdjrlc.com>, <yuehaibing@huawei.com>
+References: <20240912171142.3241719-1-devarsht@ti.com>
+ <20240913082428.GD25276@pendragon.ideasonboard.com>
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <20240913082428.GD25276@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi,
+Hi Laurent,
 
-On 16.09.24 14:44, Jeongjun Park wrote:
-> Oliver Neukum <oneukum@suse.com> wrote:
->>
->>
->>
->> On 16.09.24 06:15, Greg KH wrote:
->>> On Mon, Sep 16, 2024 at 01:06:29PM +0900, Jeongjun Park wrote:
+Thanks for the quick review.
 
->>> Please use the guard() form here, it makes the change much simpler and
->>> easier to review and maintain.
->>
->> That would break the O_NONBLOCK case.
->>
->> Looking at the code it indeed looks like iowarrior_read() can race
->> with itself. Strictly speaking it always could happen if a task used
->> fork() after open(). The driver tries to restrict its usage to one
->> thread, but I doubt that the logic is functional.
->>
->> It seems to me the correct fix is something like this:
+On 13/09/24 13:54, Laurent Pinchart wrote:
+> Hi Devarsh,
 > 
-> Well, I don't know why it's necessary to modify it like this.
-> I think it would be more appropriate to patch it to make it
-> more maintainable by using guard() as Greg suggested.
+> On Thu, Sep 12, 2024 at 10:41:42PM +0530, Devarsh Thakkar wrote:
+>> Modify license to include dual licensing as GPL-2.0-only OR MIT license for
+>> tidss display driver. This allows other operating system ecosystems such as
+>> Zephyr and also the commercial firmwares to refer and derive code from this
+> 
+> GPL-2.0 isn't incompatible with "commercial". I think you mean
+> "proprietary" here.
+> 
 
-Allow me to explain detail.
+Yes, GPL-2.0 is not incompatible to commercial but there is an enforecement
+that derivative code needs to be GPL-2.0 licensed which may not fit well for
+projects which are not using GPL-2.0 license. But yes MIT will also help
+proprietary code, so I agree it is good to mention the same in commit message.
 
-guard() internally uses mutex_lock(). That means that
+>> display driver in a more permissive manner.
+> 
+> How do you envision that to work ? Zephyr doesn't have KMS, so you can't
+> use the driver as-is. What exactly would TI want to use from the Linux
+> kernel driver ?
+> 
 
-a) it will block
-b) having blocked it will sleep in the state TASK_UNINTERRUPTIBLE
+Not the DRM/KMS part, but the tidss specific display controller programming is
+the main point of interest. For e.g. At this point, mostly I see that the TI
+customers are interested to re-use/derive code from u-boot tidss driver [1]
+which is quite simple and use it in their test application or RTOS based
+offerring which is non-GPL code. Since their test application has much more
+code apart from the display part, which is non-GPL, they can't use GPL license.
 
-The driver itself uses TASK_INTERRUPTIBLE in iowarrior_read(),
-when it waits for IO. That is entirely correct, as it waits for
-an external device doing an operation that may never occur. You
-must use TASK_INTERRUPTIBLE.
+Now since the u-boot tidss driver is derived from kernel tidss driver, my
+understanding was that we need to change the license of kernel tidss driver
+first before changing the u-boot tidss driver.
 
-Now, if you use mutex_lock() to wait for a task waiting for IO
-to occur in the state TASK_INTERRUPTIBLE, you are indirectlywaiting for
-an event that you must wait for in TASK_INTERRUPTIBLE in the state
-TASK_UNINTERRUPTIBLE.
-That is a bug. You have created a task that cannot be killed (uid may not match),
-but may have to be killed. Furthermore you block even in case the
-device has been opened with O_NONBLOCK, which is a second bug.
+> Personally, there's a reason why I contribute code to the kernel under
+> the GPL-2.0 license, it is to make sure the code will remain open. While
+> I can accept other licenses on a case-by-case basis, I don't like the
+> casual approach of this patch that seem (to me) to imply that the
+> license is a mere detail. For a start I would like to know what
+> "commercial firmwares" you're thinking about.
+> 
 
-These limitations are inherent in guard(). Therefore you cannot use
-guard here.
+Understood, let me know if above information suffice or any further
+information is needed.
 
-	Regards
-		Oliver
+[1]:
+https://gitlab.com/u-boot/u-boot/-/blob/master/drivers/video/tidss/tidss_drv.c?ref_type=heads
+
+Regards
+Devarsh
 
