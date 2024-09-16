@@ -1,123 +1,78 @@
-Return-Path: <linux-kernel+bounces-330550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F0997A008
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:09:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A9297A00D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7C91F21531
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:09:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB45E283E4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BAA15852E;
-	Mon, 16 Sep 2024 11:08:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9B8156669
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360CB1586C8;
+	Mon, 16 Sep 2024 11:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZGvsDAfl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7DF156880;
+	Mon, 16 Sep 2024 11:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726484897; cv=none; b=AgrKVr9QX9KDyGP+LfpmtHFwS5cEcN1wk2lIvlDxL3BMgE02KpRAZlcXTi03/UBy9+0rUti2BqdYD69/60KwgWbu+oC+tEwiaX4L/4hE+Y7wVoWsp+e8nk+O+GtNGGNGNqEpkMSYks8L6IoLkG/fSU11TDGgEcs67YcuVnEvlQQ=
+	t=1726484992; cv=none; b=nK5KYwAK1eoBa/MrW2tnjFEHYV1mCzMcizHyESQy28ZC25RPjgDJ5icl70tDY2BlttqOECzZkZ5LtQnkH7T9P1OphPt4zpx4Moc/XAlfInEoSmO1LvlhLkytITAdZ2s8nqtSOJ/VanUpRt/yv3hn9/Hlgm3ILdF5t/90CjAnVhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726484897; c=relaxed/simple;
-	bh=V6IxSOPgjarAnGow85o/zhAKZ9XcJUJ0lh689/3MORk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kure7b/oDCQilohuuu+x32zuANQEbwOEa5UIXzEEs8+6fEW/Cbkbu7vaA/Pt6X8Abfe57HeI8zQWDCDyvSqQSQmjBtaDgjCsZw4H9r+cT1tpAg/c+oV5pdoSy7rmCEDKAJUU10wqaPYslnIdWzmcHph1x00Iq7uxdVgkX9CmZZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F8571516;
-	Mon, 16 Sep 2024 04:08:44 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.11])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8E6013F64C;
-	Mon, 16 Sep 2024 04:08:10 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	willy@infradead.org
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	baohua@kernel.org,
-	hughd@google.com,
-	ioworker0@gmail.com,
-	wangkefeng.wang@huawei.com,
-	baolin.wang@linux.alibaba.com,
-	gshan@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v2 2/2] mm: Compute first_set_pte to eliminate evaluating redundant ranges
-Date: Mon, 16 Sep 2024 16:37:54 +0530
-Message-Id: <20240916110754.1236200-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240916110754.1236200-1-dev.jain@arm.com>
-References: <20240916110754.1236200-1-dev.jain@arm.com>
+	s=arc-20240116; t=1726484992; c=relaxed/simple;
+	bh=BZ5kgsi8htM5PzdZMROoo68JZDp20VmrEgCDYXY1iLc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UdsGS9YzXrwdOW9YerQDu+BJBlJzjzPSDTdqJyhbPTsXoRJgj5hoSkWGyL2RSdvwg52n0jRMwXalddCODO/GrJBvswYMKXkbeqik79q5j6V8V7e1FLttDSZSV167DuccAGeASsPr3OTBjCvKITRfCHxVP3aWwLPNeazCcqowKFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZGvsDAfl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7008CC4CEC4;
+	Mon, 16 Sep 2024 11:09:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726484992;
+	bh=BZ5kgsi8htM5PzdZMROoo68JZDp20VmrEgCDYXY1iLc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ZGvsDAflL1ile19Oz8uyBz63geETbe9NNofZdANotQuXFygtJ+ZXLtIRzOFQYEPEO
+	 g5lJZAPJ9+UHj7xUJ7ksefgqvkkhYU6hINZK5DX+LY93j2EHiSr1PNRL1PcM0KNlWf
+	 1kH741zlv7URt1O9gx4RB36vrPOJj5qgV5FPdjKdHIXq5Ch/HJ4p9uNdyg9MQ9PePC
+	 RbRq/9dlQtZe+JfAZ7q+eGMA4MGZIIIXa0hRRPRRYNeNygzYgVRvsIeGLJMqlb2GI6
+	 t0ElWcLWngq+1Yk8SRX4dTmW4VNKuTSJiNWMfdrMpSgDuT3d3tdyGZ097pvrtaEg85
+	 9vRHE5vY4fwvQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3413E3809A80;
+	Mon, 16 Sep 2024 11:09:55 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs mount
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240913-vfs-mount-ff71ba96c312@brauner>
+References: <20240913-vfs-mount-ff71ba96c312@brauner>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240913-vfs-mount-ff71ba96c312@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.mount
+X-PR-Tracked-Commit-Id: 49224a345c488a0e176f193a60a2a76e82349e3e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9020d0d844ad58a051f90b1e5b82ba34123925b9
+Message-Id: <172648499374.3648068.12784728682209297567.pr-tracker-bot@kernel.org>
+Date: Mon, 16 Sep 2024 11:09:53 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-For an mTHP allocation, we need to check, for every order, whether for
-that order, we have enough number of contiguous PTEs empty. Instead of
-iterating the while loop for every order, use some information, which
-is the first set PTE found, from the previous iteration to eliminate
-some cases. The key to understanding the correctness of the patch
-is that the ranges we want to examine form a strictly decreasing
-sequence of nested intervals.
+The pull request you sent on Fri, 13 Sep 2024 16:41:58 +0200:
 
-Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- mm/memory.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.mount
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 8bb1236de93c..e81c6abe09ce 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4633,10 +4633,11 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	pte_t *first_set_pte = NULL, *align_pte, *pte;
- 	unsigned long orders;
- 	struct folio *folio;
- 	unsigned long addr;
--	pte_t *pte;
-+	int max_empty;
- 	gfp_t gfp;
- 	int order;
- 
-@@ -4671,8 +4672,23 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
- 	order = highest_order(orders);
- 	while (orders) {
- 		addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
--		if (pte_range_none(pte + pte_index(addr), 1 << order) == 1 << order)
-+		align_pte = pte + pte_index(addr);
-+
-+		/* Range to be scanned known to be empty */
-+		if (align_pte + (1 << order) <= first_set_pte)
-+			break;
-+
-+		/* Range to be scanned contains first_set_pte */
-+		if (align_pte <= first_set_pte)
-+			goto repeat;
-+
-+		/* align_pte > first_set_pte, so need to check properly */
-+		max_empty = pte_range_none(align_pte, 1 << order);
-+		if (max_empty == 1 << order)
- 			break;
-+
-+		first_set_pte = align_pte + max_empty;
-+repeat:
- 		order = next_order(&orders, order);
- 	}
- 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9020d0d844ad58a051f90b1e5b82ba34123925b9
+
+Thank you!
+
 -- 
-2.30.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
