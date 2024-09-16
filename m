@@ -1,128 +1,121 @@
-Return-Path: <linux-kernel+bounces-330498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0CE979F5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:33:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10536979F5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17A11B2382B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:33:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92B97B23B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A250154C18;
-	Mon, 16 Sep 2024 10:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA79815535B;
+	Mon, 16 Sep 2024 10:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y3CGWADL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WXteRppa"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oGFMZkij"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB4E149C57;
-	Mon, 16 Sep 2024 10:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF80155A3C;
+	Mon, 16 Sep 2024 10:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726482767; cv=none; b=bLVNFPISSqdn2QXiLs8CQoSeKbHqx3ZyPGp9onTJgdHb1t0qJdJ+wbwcp3rAz4ntHbz8BzlRXdxOa2Hnfjx5tTDIhYC9vByDwnBdG5YF6l6JzZv2ZxxsXyf9JPwXeLFArn1z41jw+zjy6N3GekglboIapi/1/06tOC8sbwX3Aas=
+	t=1726482774; cv=none; b=uz7SOaXZR6KO6EBWwExLAQZL6BgoCId6GcV+pvdCJdLmfXNfYRu4Eghgbdm0jPtW2fTsRoUwzzf0Un32F+qqB4p9/HiWZ+kouwzMkl5gDv32BzPl/ZB4QxbgyI2K6QgDWH9/NS7QIz32VstupDzBjZh30C8sxLG4oxErlxsYu7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726482767; c=relaxed/simple;
-	bh=Zpz37HkUvrAbwT+DO7KcNA1oH1DGcUUR3N3ma8234+U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CbbWlfqqq3gL/oA0TIFisGZEt4iE6mCnSl/d2tn+CtTj14cHcD1PsiaNZ6dn9l5tJumtQRECFPtAdxoUSLb8uU3D3oNhCCFHnqiEkKVNk+izholKEl8+Xmd2AJnHdY/CR9KUHVbPrnRBLyaVtSqAogg6XMu1R/UxBle+w0YcOHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y3CGWADL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WXteRppa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726482764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TgTtLOOHYrCqvUwF7dfP7WkadfDMZDQpzcSpIj2VBFo=;
-	b=y3CGWADLhxRdskU+nFNiS1vGNZ3BWsHvf1LllzZqUfQ1U4IJjSquxqiwWbVH3rtZKn5e1n
-	v51XNqEfW1+cdqFzN4XRE3rWmWce4dI0q57b4Rkip7Wn1vODnJ+amPCNGf5ng0QRYpgJul
-	0r/9S14Qohf8HlPNkYQWntaqKUgOwfoadwnKpXl5IS+ItPRScN2iNhIyFRHwwccQVCdPip
-	O7UvNkFfXyLBYOumwd8J+Pn+WcwF77Qnk37zeAWif27Tvl8NUushqMxPrX53/3USpoAAGW
-	cJUbmLwvIzUa6RTlH3Mp/TBsERyPhaH5Uh0cC4aDIRuFj5RtqU5lELKVAGChWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726482764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TgTtLOOHYrCqvUwF7dfP7WkadfDMZDQpzcSpIj2VBFo=;
-	b=WXteRppaW9d3WJvS9/9s5wPnliTnVEYb5H5kAFYm3vjgMmg8IRelC6h8tWHC1sHrRFdcsS
-	kS28JHisBM727RDA==
-To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
- <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
- Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
- <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-mm@kvack.org, Jeff Layton
- <jlayton@kernel.org>
-Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
- handling into timekeeper
-In-Reply-To: <87a5g79aag.ffs@tglx>
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
- <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87a5g79aag.ffs@tglx>
-Date: Mon, 16 Sep 2024 12:32:43 +0200
-Message-ID: <874j6f99dg.ffs@tglx>
+	s=arc-20240116; t=1726482774; c=relaxed/simple;
+	bh=/OqrmRhJnc+bPv7HEDZGjIkvsQTtCUcSiuZC5hrqqAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QAlMM9LnYKR8vSK78Lx80Hlea/3iAWPn7LImlR9jY1HXNWO3QizL5kazBHhDMtAuLzwIGBCoE4jIS5hl5snH3rWqPsY4MDkSghD2fJqhWAduYcVjnTxtIFzeNB08ebPITJxFGNpurayiwiFtRMX/d7qgCePF3vmgdBS9sI2hGuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oGFMZkij; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726482772; x=1758018772;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/OqrmRhJnc+bPv7HEDZGjIkvsQTtCUcSiuZC5hrqqAw=;
+  b=oGFMZkijRdJ8BMMkw8gsU7+dToD/lEQUjTKkoiCWOCo79mmzHmsYb26a
+   bAD+XqynOA3A/UOH6ZYmyW+AaKwnmfa1deC6eROCe32EwWh2bzN49oh7l
+   1p1Q2oX5kdf5s6FX2vCHUrM7/MzO2WKShMqI9i9wp1OSxBckC8l2LHEqn
+   2FJl+MAkFw9Pi5IjRYPDcsArZQDdVGCttWYj454f6fwTgPnVbDo5oipqx
+   NV44E/4hULEoTXvpTmFeugTFMSwlqydkSCH1sz7jKEtuSY0vK1jbf/zhQ
+   S/UP3zNbtY6dSMZKUwdm6G5e0eJ5vHjzalPi+n0UOFxnIzTdjX6UHEPs1
+   w==;
+X-CSE-ConnectionGUID: Pe+Z3NXgQfWoTaZXgS0Png==
+X-CSE-MsgGUID: N9tkBMSmQZy5vZBwkbSEIQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="25429020"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="25429020"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:32:52 -0700
+X-CSE-ConnectionGUID: NIYG7K5AQCSQ0bFORY9oeg==
+X-CSE-MsgGUID: n98MMR8oTXKxWdXm8hXrtA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="72922504"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:32:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sq92F-00000009QKi-2R4Q;
+	Mon, 16 Sep 2024 13:32:47 +0300
+Date: Mon, 16 Sep 2024 13:32:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Parker Newman <parker@finest.io>, Jiri Slaby <jirislaby@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
+ printk(KERN_ERR ...) with pr_err()
+Message-ID: <ZugJT4nl1l04biJd@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+ <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
+ <2024091438-charity-borough-54b3@gregkh>
+ <ZugAeVWeMZGtjYme@smile.fi.intel.com>
+ <2024091632-oboe-subfloor-afc8@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024091632-oboe-subfloor-afc8@gregkh>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 16 2024 at 12:12, Thomas Gleixner wrote:
-> On Sat, Sep 14 2024 at 13:07, Jeff Layton wrote:
->> +	do {
->> +		seq = read_seqcount_begin(&tk_core.seq);
->> +
->> +		ts->tv_sec = tk->xtime_sec;
->> +		mono = tk->tkr_mono.base;
->> +		nsecs = timekeeping_get_ns(&tk->tkr_mono);
->> +		offset = *offsets[TK_OFFS_REAL];
->> +	} while (read_seqcount_retry(&tk_core.seq, seq));
->> +
->> +	mono = ktime_add_ns(mono, nsecs);
->> +
->> +	if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
->> +		ts->tv_nsec = 0;
->> +		timespec64_add_ns(ts, nsecs);
->> +	} else {
->> +		/*
->> +		 * Something has changed mg_floor since "old" was
->> +		 * fetched. "old" has now been updated with the
->> +		 * current value of mg_floor, so use that to return
->> +		 * the current coarse floor value.
->
-> 'Something has changed' is a truly understandable technical
-> explanation.
+On Mon, Sep 16, 2024 at 12:25:52PM +0200, Greg Kroah-Hartman wrote:
+> On Mon, Sep 16, 2024 at 12:55:05PM +0300, Andy Shevchenko wrote:
+> > On Sat, Sep 14, 2024 at 08:58:50PM +0200, Greg Kroah-Hartman wrote:
+> > > On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
 
-     old = mg_floor
-                                mono = T1;
-                                mg_floor = mono
-preemption
+...
 
-     do {
-        mono = T2;
-     }
+> > > > -			printk(KERN_ERR "%s: timeout\n", __func__);
+> > > > +			pr_err("%s: timeout\n", __func__);
+> > > 
+> > > It's a device, please use dev_err().
+> > 
+> > The problem is that this library doesn't know about this fact. I.e. it would
+> > need a new member just for this message. Instead, maybe drop the message as we
+> > anyway get a unique enough error code?
+> 
+> Fair enough, although adding real device pointers would be good to do in
+> the future...
 
-     cmpxchg fails and the function returns a value based on T1
+Let's then do it when it will be the real need? Because I don't think this
+message is _so_ important. I believe one of the upper layers (whichever calls
+this function) should propagate the error code up to the user space. If it's
+not the case _that_ has to be fixed.
 
-No?
+TL;DR: Let's remove the message for now.
 
-Thanks,
+-- 
+With Best Regards,
+Andy Shevchenko
 
-        tglx
+
 
