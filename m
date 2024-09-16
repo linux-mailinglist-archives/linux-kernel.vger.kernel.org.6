@@ -1,120 +1,281 @@
-Return-Path: <linux-kernel+bounces-330496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0B7979F4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:31:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A08D979F55
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012ED1F228F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:31:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E4511C2225C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA3414EC62;
-	Mon, 16 Sep 2024 10:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E5E13D508;
+	Mon, 16 Sep 2024 10:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QtlU5QUm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GgSKh/iM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qf5/5sEW";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GgSKh/iM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qf5/5sEW"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E7614A4E9;
-	Mon, 16 Sep 2024 10:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B739E1CF83;
+	Mon, 16 Sep 2024 10:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726482655; cv=none; b=CTlwNT4wHDj6Vu1P+6Cv2tKHTedK454kJJYRKTBjwVWgcErlRerZj7wyE8wM1M0ToQvsd7qXpJ6w7Wk+ZsDg6bNI5WmXfPAvv06Jw3FpXC6ujMFp9pJfYOBBm21zGy9pjoKFZvAzX6ZpQlyHPIdJowtmIZOPGmX93ZVE4ZN5Eto=
+	t=1726482766; cv=none; b=nvrZA2qbRRaejRPYBSCrqEHEW+ZINm07yUvGNsus2/WgwqFjcP3JExIAiYLfr8iAtv6BDPErh7t3Ohmt3NmxLeh2Q1TM9iJ3AdE1HpdVCvcMCaeTyieP8xP3PsKb16Nv1IqdrATejUcueNUqq1gG0+fatDrc0cInSG4jNtnvSOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726482655; c=relaxed/simple;
-	bh=wFKfXga0UFnDlHx5OfUVMM6dkkUS8wk3gZy7iYHJugk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qngbxSWEE9FPZAoPQxqA4bJ8Dk1aLxa4B3q3JMYy1DtbYf4rqcULyumqCuzA1l6D8ilEYzXjGmq9XvmkHFwolwivL3TPpGk7A+KpGOH2LfvhS/IC6+6LvB3Qb4qd7cYzc6TVyqgRmMOvp3m9lDuQq9u70SEsQU0tOiymdKAlwqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QtlU5QUm; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726482654; x=1758018654;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wFKfXga0UFnDlHx5OfUVMM6dkkUS8wk3gZy7iYHJugk=;
-  b=QtlU5QUmVGO3UTzkKu8iJYzaRjimVytVieeBIw0ATKGZeBMGNUNvVtPJ
-   CjVBsYQD4qa2Wt9MfOXfcU29FY8weWZl1fEIMGTx10TD4ru1OreBOzShW
-   mJzDCPF2VL9uTlXUzVFzc1P2WwxsbnkyGaT8R7gF4/CwO5Ldj1o6j3Ygu
-   UOCGFAGMnxkx6Vz4i7I+YZoeim/mzESnVwKpRzvb2MOcVQObkclGCHRlB
-   3X3bTnLVzDxz6WgHhsUAPIAIj9s2Ytnn3gWS9q0Cn4YMUaNfArW2w7L3g
-   TKvkKMYFlVY4UKFKFR9YMWdeKSzjKJ9SV6xo0LOotF2+REz1x6WPGUeKI
-   w==;
-X-CSE-ConnectionGUID: FRJkYLHrT8OQCUHx8JQoiA==
-X-CSE-MsgGUID: Sf25N+YaQEiKwH+xlp7D2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="25397744"
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="25397744"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:30:53 -0700
-X-CSE-ConnectionGUID: xgsvsBEtRhOxHk4jGIWexQ==
-X-CSE-MsgGUID: 7nEyrY8hSlaO6PndDy92eQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="73206767"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:30:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sq90K-00000009QIl-42YM;
-	Mon, 16 Sep 2024 13:30:48 +0300
-Date: Mon, 16 Sep 2024 13:30:48 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-	Jean Delvare <jdelvare@suse.com>
-Subject: Re: [PATCH v1 04/12] i2c: isch: Switch to memory mapped IO accessors
-Message-ID: <ZugI2NCtaWKgcgh5@smile.fi.intel.com>
-References: <20240911154820.2846187-5-andriy.shevchenko@linux.intel.com>
- <202409141436.QFCDQrRF-lkp@intel.com>
- <Zuf1UJ6K_8hL5x5U@smile.fi.intel.com>
- <leoyop42s4qmaytvwhwhpgfwfrkpm2xxabskz645r337jdjfml@zg5ql73tqidk>
+	s=arc-20240116; t=1726482766; c=relaxed/simple;
+	bh=kN2tLmTwtAeLvHdpahKB+hx/wXDn+ABywghAx+yQqJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GQrdGYAg0WGVudvSC+yhtLw6gqzWlBp7MMmMQtyWYfY6G/7vwRmi0o7iYgxQRjoq6WRDPFN/3IPQszvOAWeaJJO1u3GeGVmEA4jHUljUrpcJsxruUTq8tnJfiTM7ejNUHl6K1+GDp076bmYgf2cwb71LLg6S0hJBBakysaH6qRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GgSKh/iM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qf5/5sEW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GgSKh/iM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qf5/5sEW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BE41C21AAD;
+	Mon, 16 Sep 2024 10:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726482762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QDZPsOE8S64OUNNvCNuXXFuZs9RSJRdgavt14Vqc3VI=;
+	b=GgSKh/iMk38I8lb4va9XfGNDQy5jJrpUivlIRurq+Rx7OvUp3JCiJzBcjjQsaJaBteH+ka
+	U41zwuaWawdNqIQyGEaKnALoourFjvJS0tIEgqAq6tIX1pqQD2g7DmPGavM4UBaMBava8n
+	HIAqzMon2KOq7VmYxaKhrUZdnPHjSGc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726482762;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QDZPsOE8S64OUNNvCNuXXFuZs9RSJRdgavt14Vqc3VI=;
+	b=qf5/5sEWREeZzAgtseDbWfe5WoRPt13aDIVz+oAZQeOOxDELy9mrwzhhx4h908xLn1U132
+	4fLsRpxht5FKjlCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726482762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QDZPsOE8S64OUNNvCNuXXFuZs9RSJRdgavt14Vqc3VI=;
+	b=GgSKh/iMk38I8lb4va9XfGNDQy5jJrpUivlIRurq+Rx7OvUp3JCiJzBcjjQsaJaBteH+ka
+	U41zwuaWawdNqIQyGEaKnALoourFjvJS0tIEgqAq6tIX1pqQD2g7DmPGavM4UBaMBava8n
+	HIAqzMon2KOq7VmYxaKhrUZdnPHjSGc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726482762;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QDZPsOE8S64OUNNvCNuXXFuZs9RSJRdgavt14Vqc3VI=;
+	b=qf5/5sEWREeZzAgtseDbWfe5WoRPt13aDIVz+oAZQeOOxDELy9mrwzhhx4h908xLn1U132
+	4fLsRpxht5FKjlCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D216139CE;
+	Mon, 16 Sep 2024 10:32:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4S9pD0kJ6GaYZgAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Mon, 16 Sep 2024 10:32:41 +0000
+Message-ID: <a22e095c-d0fb-4414-8a4b-eea86bb90d02@suse.de>
+Date: Mon, 16 Sep 2024 13:32:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <leoyop42s4qmaytvwhwhpgfwfrkpm2xxabskz645r337jdjfml@zg5ql73tqidk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next 01/11] dt-bindings: interrupt-controller: Add
+ bcm2712 MSI-X DT bindings
+To: Rob Herring <robh@kernel.org>, Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20240910151845.17308-1-svarbanov@suse.de>
+ <20240910151845.17308-2-svarbanov@suse.de>
+ <20240911165611.GA897131-robh@kernel.org>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20240911165611.GA897131-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[dt];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.infradead.org,broadcom.com,linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On Mon, Sep 16, 2024 at 12:10:32PM +0200, Andi Shyti wrote:
-> On Mon, Sep 16, 2024 at 12:07:28PM GMT, Andy Shevchenko wrote:
-> > On Sat, Sep 14, 2024 at 02:56:19PM +0800, kernel test robot wrote:
+Hi Rob,
 
-...
+Thank you for the review comments!
 
-> > >    drivers/i2c/busses/i2c-isch.c: In function 'smbus_sch_probe':
-> > > >> drivers/i2c/busses/i2c-isch.c:296:42: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t' {aka 'long long unsigned int'} [-Wformat=]
-> > >      296 |                 "SMBus SCH adapter at %04x", res->start);
-> > >          |                                       ~~~^   ~~~~~~~~~~
-> > >          |                                          |      |
-> > >          |                                          |      resource_size_t {aka long long unsigned int}
-> > >          |                                          unsigned int
-> > >          |                                       %04llx
-> > 
-> > Yeah, this should be something like %pa, but the problem with that that it
-> > always uses the same, fixed-width format with a prefix. We don't want this. But
-> > to make sure we have proper specifier we need to introduce a temporary variable
-> > and assign the resource start address to it and then use that variable in here.
-> > I'll update this in v2 and send it after we have v6.12-rc1 is out.
+On 9/11/24 19:56, Rob Herring wrote:
+> On Tue, Sep 10, 2024 at 06:18:35PM +0300, Stanimir Varbanov wrote:
+>> Adds DT bindings for bcm2712 MSI-X interrupt peripheral controller.
+>>
+>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+>> ---
+>>  .../brcm,bcm2712-msix.yaml                    | 69 +++++++++++++++++++
+>>  1 file changed, 69 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+>> new file mode 100644
+>> index 000000000000..2b53dfa7c25e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+>> @@ -0,0 +1,69 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2712-msix.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Broadcom bcm2712 MSI-X Interrupt Peripheral support
+>> +
+>> +maintainers:
+>> +  - Stanimir Varbanov <svarbanov@suse.de>
+>> +
+>> +description: >
 > 
-> Feel free to send it, I will apply it in i2c/i2c-host-for-6.12,
-> that's where I'm collecting the next patches.
+> Don't need '>' here.
 
-But I believe it's a material for v6.13, no?
-From the whole series the first patch is only a fix, the rest is pure
-refactoring and cleanup.
+OK.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+>> +  This interrupt controller is used to provide interrupt vectors to the
+>> +  generic interrupt controller (GIC) on bcm2712. It will be used as
+>> +  external MSI-X controller for PCIe root complex.
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: brcm,bcm2712-mip
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: base registers address
+>> +      - description: pcie message address
+>> +
+>> +  interrupt-controller: true
+>> +
+>> +  "#interrupt-cells":
+>> +    const: 2
+> 
+> What goes in these cells?
+> 
+> But really, what interrupts does an MSI controller handle? Or are we 
+> just putting "interrupt-controller" in here so that kernel handles this 
+> with IRQCHIP_DECLARE()?
+> 
 
+Yes, looks like interrupt-controller property is need by IRQCHIP_DECLARE().
 
+I will drop interrupt-controller/cells and convert the driver to use
+IRQCHIP_PLATFORM_DRIVER_BEGIN/END().
+
+>> +
+>> +  msi-controller: true
+> 
+> Drop and use 'unevaluatedProperties'.
+
+OK.
+
+> 
+>> +
+>> +  "#msi-cells":
+>> +    enum: [0]
+> 
+> const: 0
+
+OK.
+
+> 
+>> +
+>> +  msi-ranges: true
+> 
+> Drop.
+
+OK.
+
+> 
+>> +
+>> +additionalProperties: false
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupt-controller
+>> +  - "#interrupt-cells"
+>> +  - msi-controller
+>> +  - msi-ranges
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    axi {
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +
+>> +        msi-controller@1000130000 {
+>> +            compatible = "brcm,bcm2712-mip";
+>> +            reg = <0x10 0x00130000 0x00 0xc0>,
+>> +                  <0xff 0xfffff000 0x00 0x1000>;
+>> +            msi-controller;
+>> +            #msi-cells = <0>;
+>> +            interrupt-controller;
+>> +            #interrupt-cells = <2>;
+>> +            msi-ranges = <&gicv2 GIC_SPI 128 IRQ_TYPE_EDGE_RISING 64>;
+>> +        };
+>> +    };
+>> -- 
+>> 2.35.3
+>>
 
