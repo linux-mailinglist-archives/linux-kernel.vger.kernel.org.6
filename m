@@ -1,79 +1,76 @@
-Return-Path: <linux-kernel+bounces-330583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F66197A05F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F9597A055
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E55A1F21419
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:36:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 671111F20631
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD9615531B;
-	Mon, 16 Sep 2024 11:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDF2155CB3;
+	Mon, 16 Sep 2024 11:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="bhcvRyiv"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HMushXji"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA07153824;
-	Mon, 16 Sep 2024 11:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2941509B3;
+	Mon, 16 Sep 2024 11:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726486563; cv=none; b=BmM3mkinPyqKdzbVb5fPohXHNh7xkxPS8mf40oyzb7TQo/tfD1VSr4cZf1nNZDmWgwXhQm76XTid3UejBZNsdSnO7267viSs5e1oVDZN3+ZtzDR/F5DIb7KexK8fE3NsbexBLEXQaSDK76dBy87Ukfh40on/XBAlLl5P246ucOY=
+	t=1726486454; cv=none; b=K2Tidaw2bX0XaRsXuJnHhVb7wBwAbHj1HqlEPd2UiCxv9u0iRuhAErOyKJ2g+UYzI7Rl1w1qmn+4hLJr0DRHdrkOrN3mGpXl7bKnKLBFsAgfgDLBtcoM6nAfrNAwA0lCyr5O4n4FHRGUm2SgmxsjadfZ2PNCKpzvwcb8ixtGDB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726486563; c=relaxed/simple;
-	bh=z++L0nDgK3j/I2EneGkWSR3NrEn1uaVrc2KHU+a8SjE=;
+	s=arc-20240116; t=1726486454; c=relaxed/simple;
+	bh=04M62AnevvKOpl+yrEWkhUipAMKBwSj5m1kfSIBHe7E=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ux2igA/LJ2tRAkwUR8eURPRzru23ffgea1prj/3ji7ZZjyTqRUAfmX6r18gsqUuf8QvNcqJmyQ6/nPkyOUk7xSrHGs2gen4CST+RDGP21MLBMVzxMsFEZSmLrj/D3K6d1Um6wdnHix8+1ztJt/TcI3hQsIlYbRTO8y9ltI0uQJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=bhcvRyiv; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1726486562; x=1758022562;
+	 MIME-Version:Content-Type; b=grbU77yu8nVdYN4vZxFaI4JqaDVYBcUnnJIApe5dsS8/C6J83uKOr+BiJJDuaXx7ovUd7J5E4Oh6Bj+J62xJV0u18YRi8PqRC/h65FMuBmk+3RnX2V7bAhHnIsy69c4MKov+Dof/gnTDCqbmarf1AvRBCU9KXoMDOqOh07DiIFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HMushXji; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726486453; x=1758022453;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=rmNCEgTiIn0/HSF3qLDtBAVvZlJga9Hix4MGZ1qplug=;
-  b=bhcvRyiva1xKjfbilWeVGQ1oQWNQTk2uj0h+xIozd1mGvUGsTSdokN2q
-   H9H9F3KYZD3+cd57mQmD0kEoVMdvfcCM45uleNG7mnHsyQwC4ZFlnWz9S
-   s+c8gLKdFlsgZ/0yTNapUiKeNr/jcfEalDWflVOCEsZiy1l57Tc6/7ER0
-   o=;
-X-IronPort-AV: E=Sophos;i="6.10,233,1719878400"; 
-   d="scan'208";a="424150549"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 11:36:00 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:6208]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.35.229:2525] with esmtp (Farcaster)
- id 64b5d967-c00c-45a6-8975-b19cfe456119; Mon, 16 Sep 2024 11:35:58 +0000 (UTC)
-X-Farcaster-Flow-ID: 64b5d967-c00c-45a6-8975-b19cfe456119
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 16 Sep 2024 11:35:57 +0000
-Received: from u5d18b891348c5b.ant.amazon.com (10.146.13.221) by
- EX19D014EUC004.ant.amazon.com (10.252.51.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 16 Sep 2024 11:35:47 +0000
-From: James Gowans <jgowans@amazon.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, "Joerg
- Roedel" <joro@8bytes.org>, =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?=
-	<kw@linux.com>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Mike Rapoport <rppt@kernel.org>, "Madhavan T.
- Venkataraman" <madvenka@linux.microsoft.com>, <iommu@lists.linux.dev>, "Sean
- Christopherson" <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
-	<kvm@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu
-	<baolu.lu@linux.intel.com>, Alexander Graf <graf@amazon.de>,
-	<anthony.yznaga@oracle.com>, <steven.sistare@oracle.com>,
-	<nh-open-source@amazon.com>, "Saenz Julienne, Nicolas" <nsaenz@amazon.es>
-Subject: [RFC PATCH 13/13] iommufd, guestmemfs: Pin files when mapped for persistent DMA
-Date: Mon, 16 Sep 2024 13:31:02 +0200
-Message-ID: <20240916113102.710522-14-jgowans@amazon.com>
+  bh=04M62AnevvKOpl+yrEWkhUipAMKBwSj5m1kfSIBHe7E=;
+  b=HMushXjitH3FzxCc8QzM5BhBRohMOGr1x3af4g5e3bGB372WbBoHEAUr
+   znbB1wTcJd4o38YFcec4DGx8ITzb0uO+7HJCg3in63UrL7Cihayh7KeIW
+   vBWfN8cfas7B9z9942230W2TlySkjkwZo+ERgCyvSqnjHIADRbYpiJq56
+   eI5z9oIeEytt0inmNPPEN0EaqD8rSIHHvGeBjakSASKuUVnEgQWFQx0x3
+   oLXHe82C4/IoDnqwfT5YbTOe+DJVgvGuxLjGu4IEOfXDenz0ylLTCLxER
+   jY2oZAWSqFgffo4RSbOF7nwOmm9Smbh/CBN4Ex3f3i4LJ/kVZomltw7dh
+   A==;
+X-CSE-ConnectionGUID: Onkqnjp3T4uu7VkYLySsmg==
+X-CSE-MsgGUID: DF5Odg+jTkKSP28grZCI6g==
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="32447859"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 04:34:11 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 16 Sep 2024 04:34:05 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 16 Sep 2024 04:34:03 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <alexandre.belloni@bootlin.com>
+CC: <alsa-devel@alsa-project.org>, <andrei.simion@microchip.com>,
+	<broonie@kernel.org>, <claudiu.beznea@tuxon.dev>,
+	<codrin.ciubotariu@microchip.com>, <lgirdwood@gmail.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+	<perex@perex.cz>, <tiwai@suse.com>
+Subject: Re: [PATCH 2/2] ASoC: atmel: atmel_ssc_dai: Drop S24_LE support due to single channel limitation
+Date: Mon, 16 Sep 2024 14:32:05 +0300
+Message-ID: <20240916113203.17871-1-andrei.simion@microchip.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240916113102.710522-1-jgowans@amazon.com>
-References: <20240916113102.710522-1-jgowans@amazon.com>
+In-Reply-To: <20240916100006f2db7b06@mail.local>
+References: <20240916100006f2db7b06@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,190 +79,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWA004.ant.amazon.com (10.13.139.19) To
- EX19D014EUC004.ant.amazon.com (10.252.51.182)
 
-Ordinarily after kexec the new kernel would have no idea that some files
-are still actually in use as DMA targets, this could allow the files to
-be deleted while still actually in use behind the scenes. This would
-allow use-after-frees of the persistent memory.
+On 16.09.2024 12:59, Alexandre Belloni wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> On 16/09/2024 11:52:15+0300, Andrei Simion wrote:
+>> From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>>
+>> Drop S24_LE format because it is not supported if more than 2 channels
+>> (of TDM slots) are used. This limitation makes it impractical for use cases
+>> requiring more than 2 TDM slots, leading to potential issues in
+>> multi-channel configurations.
+>>
+>> [andrei.simion@microchip.com: Reword the commit title and the commit
+>> message.]
+>>
+>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+>> ---
+>>  sound/soc/atmel/atmel_ssc_dai.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+>> index 7047f17fe7a8..475e7579c64c 100644
+>> --- a/sound/soc/atmel/atmel_ssc_dai.c
+>> +++ b/sound/soc/atmel/atmel_ssc_dai.c
+>> @@ -822,7 +822,7 @@ static int atmel_ssc_resume(struct snd_soc_component *component)
+>>  }
+>>
+>>  #define ATMEL_SSC_FORMATS (SNDRV_PCM_FMTBIT_S8     | SNDRV_PCM_FMTBIT_S16_LE |\
+>> -                       SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
+>> +                        SNDRV_PCM_FMTBIT_S32_LE)
+>
+> I believe this requires a comment. Else someone may add it back later
+> on.
+>
 
-To prevent this, add the ability to do long term (across kexec) pinning
-of files in guestmemfs. Iommufd is updated to use this when mapping a
-file into a persistent domain. As long as the file has pins it cannot be
-deleted.
+It is unclear to me. Would it be good to send v2 with this update?
 
-A hand-wavy alternative would be to use something like the iommufd's
-storage domain and actually do this at the PFN level.
----
- drivers/iommu/iommufd/ioas.c            |  4 ++++
- drivers/iommu/iommufd/iommufd_private.h |  5 +++++
- drivers/iommu/iommufd/serialise.c       |  9 ++++++++-
- fs/guestmemfs/file.c                    | 20 ++++++++++++++++++++
- fs/guestmemfs/guestmemfs.h              |  1 +
- fs/guestmemfs/inode.c                   |  4 ++++
- include/linux/guestmemfs.h              |  8 ++++++++
- 7 files changed, 50 insertions(+), 1 deletion(-)
+>>
+>>  static const struct snd_soc_dai_ops atmel_ssc_dai_ops = {
+>>       .startup        = atmel_ssc_startup,
+>> --
+>> 2.34.1
+>>
+>
+> --
+> Alexandre Belloni, co-owner and COO, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
-diff --git a/drivers/iommu/iommufd/ioas.c b/drivers/iommu/iommufd/ioas.c
-index ce76b41d2d72..8b7fa3d17e8a 100644
---- a/drivers/iommu/iommufd/ioas.c
-+++ b/drivers/iommu/iommufd/ioas.c
-@@ -233,6 +233,7 @@ int iommufd_ioas_map(struct iommufd_ucmd *ucmd)
- 			mmap_read_unlock(mm);
- 			return -EFAULT;
- 		}
-+		ioas->pinned_file_handle = guestmemfs_pin_file(vma->vm_file);
- 		mmap_read_unlock(mm);
- #else
- 		return -EFAULT;
-@@ -331,6 +332,9 @@ int iommufd_ioas_unmap(struct iommufd_ucmd *ucmd)
- 				     &unmapped);
- 		if (rc)
- 			goto out_put;
-+
-+		if (ioas->pinned_file_handle)
-+			guestmemfs_unpin_file(ioas->pinned_file_handle);
- 	}
- 
- 	cmd->length = unmapped;
-diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-index 94612cec2814..597a54a1adf3 100644
---- a/drivers/iommu/iommufd/iommufd_private.h
-+++ b/drivers/iommu/iommufd/iommufd_private.h
-@@ -260,12 +260,17 @@ struct iommufd_object *_iommufd_object_alloc(struct iommufd_ctx *ictx,
-  * An iommu_domain & iommfd_hw_pagetable will be automatically selected
-  * for a device based on the hwpt_list. If no suitable iommu_domain
-  * is found a new iommu_domain will be created.
-+ *
-+ * If this IOAS is pinning a file for persistent DMA, pinned_file_handle will
-+ * be set to a non-zero value. When unmapping this IOAS the file will be
-+ * unpinned.
-  */
- struct iommufd_ioas {
- 	struct iommufd_object obj;
- 	struct io_pagetable iopt;
- 	struct mutex mutex;
- 	struct list_head hwpt_list;
-+	unsigned long pinned_file_handle;
- };
- 
- static inline struct iommufd_ioas *iommufd_get_ioas(struct iommufd_ctx *ictx,
-diff --git a/drivers/iommu/iommufd/serialise.c b/drivers/iommu/iommufd/serialise.c
-index baac7d6150cb..d95e150c3dd9 100644
---- a/drivers/iommu/iommufd/serialise.c
-+++ b/drivers/iommu/iommufd/serialise.c
-@@ -16,6 +16,7 @@
-  *       account_mode = u8
-  *       ioases = [
-  *         {
-+ *           pinned_file_handle = u64
-  *           areas = [
-  *           ]
-  *         }
-@@ -48,6 +49,9 @@ static int serialise_iommufd(void *fdt, struct iommufd_ctx *ictx)
- 		snprintf(name, sizeof(name), "%lu", obj_idx);
- 		err |= fdt_begin_node(fdt, name);
- 
-+		err |= fdt_property(fdt, "pinned-file-handle",
-+				&ioas->pinned_file_handle, sizeof(ioas->pinned_file_handle));
-+
- 		for (area = iopt_area_iter_first(&ioas->iopt, 0, ULONG_MAX); area;
- 				area = iopt_area_iter_next(area, 0, ULONG_MAX)) {
- 			unsigned long iova_start, iova_len;
-@@ -119,15 +123,18 @@ static int rehydrate_iommufd(char *iommufd_name)
- 	snprintf(kho_path, sizeof(kho_path), "/iommufd/iommufds/%s/ioases", iommufd_name);
- 	fdt_for_each_subnode(off, fdt, fdt_path_offset(fdt, kho_path)) {
- 	    struct iommufd_ioas *ioas;
-+	    int len;
- 	    int range_off;
-+	    const unsigned long *pinned_file_handle;
- 
- 	    ioas = iommufd_ioas_alloc(ictx);
-+	    pinned_file_handle = fdt_getprop(fdt, off, "pinned-file-handle", &len);
-+	    ioas->pinned_file_handle = *pinned_file_handle;
- 	    iommufd_object_finalize(ictx, &ioas->obj);
- 
- 	    fdt_for_each_subnode(range_off, fdt, off) {
- 		    const unsigned long *iova_start, *iova_len;
- 		    const int *iommu_prot;
--		    int len;
- 		    struct iopt_area *area = iopt_area_alloc();
- 
- 		    iova_start = fdt_getprop(fdt, range_off, "iova-start", &len);
-diff --git a/fs/guestmemfs/file.c b/fs/guestmemfs/file.c
-index ecacaf200a31..d7840831df03 100644
---- a/fs/guestmemfs/file.c
-+++ b/fs/guestmemfs/file.c
-@@ -109,3 +109,23 @@ bool is_guestmemfs_file(struct file const *file)
- {
- 	return file && file->f_op == &guestmemfs_file_fops;
- }
-+
-+unsigned long guestmemfs_pin_file(struct file *file)
-+{
-+	struct guestmemfs_inode *inode =
-+		guestmemfs_get_persisted_inode(file->f_inode->i_sb,
-+				file->f_inode->i_ino);
-+
-+	atomic_inc(&inode->long_term_pins);
-+	return file->f_inode->i_ino;
-+}
-+
-+void guestmemfs_unpin_file(unsigned long pin_handle)
-+{
-+	struct guestmemfs_inode *inode =
-+		guestmemfs_get_persisted_inode(guestmemfs_sb, pin_handle);
-+	int new;
-+
-+	new = atomic_dec_return(&inode->long_term_pins);
-+	WARN_ON(new < 0);
-+}
-diff --git a/fs/guestmemfs/guestmemfs.h b/fs/guestmemfs/guestmemfs.h
-index 91cc06ae45a5..d107ad0e3323 100644
---- a/fs/guestmemfs/guestmemfs.h
-+++ b/fs/guestmemfs/guestmemfs.h
-@@ -42,6 +42,7 @@ struct guestmemfs_inode {
- 	char filename[GUESTMEMFS_FILENAME_LEN];
- 	void *mappings;
- 	int num_mappings;
-+	atomic_t long_term_pins;
- };
- 
- void guestmemfs_initialise_inode_store(struct super_block *sb);
-diff --git a/fs/guestmemfs/inode.c b/fs/guestmemfs/inode.c
-index d521b35d4992..6bc0abbde8d1 100644
---- a/fs/guestmemfs/inode.c
-+++ b/fs/guestmemfs/inode.c
-@@ -151,6 +151,10 @@ static int guestmemfs_unlink(struct inode *dir, struct dentry *dentry)
- 
- 	ino = guestmemfs_get_persisted_inode(dir->i_sb, dir->i_ino)->child_ino;
- 
-+	inode = guestmemfs_get_persisted_inode(dir->i_sb, dentry->d_inode->i_ino);
-+	if (atomic_read(&inode->long_term_pins))
-+		return -EBUSY;
-+
- 	/* Special case for first file in dir */
- 	if (ino == dentry->d_inode->i_ino) {
- 		guestmemfs_get_persisted_inode(dir->i_sb, dir->i_ino)->child_ino =
-diff --git a/include/linux/guestmemfs.h b/include/linux/guestmemfs.h
-index c5cd7b6a5630..c2018b4f38fd 100644
---- a/include/linux/guestmemfs.h
-+++ b/include/linux/guestmemfs.h
-@@ -20,4 +20,12 @@ inline bool is_guestmemfs_file(struct file const *filp)
- }
- #endif
- 
-+/*
-+ * Ensure that the file cannot be deleted or have its memory changed
-+ * until it is unpinned. The returned value is a handle which can be
-+ * used to un-pin the file.
-+ */
-+unsigned long guestmemfs_pin_file(struct file *file);
-+void guestmemfs_unpin_file(unsigned long pin_handle);
-+
- #endif
--- 
-2.34.1
-
+Best regards,
+Andrei Simion
 
