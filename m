@@ -1,95 +1,117 @@
-Return-Path: <linux-kernel+bounces-330099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBF09799B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:46:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C581D9799B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0232831A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 00:46:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D720283928
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 00:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03242F52;
-	Mon, 16 Sep 2024 00:46:48 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCA479F3;
+	Mon, 16 Sep 2024 00:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XCCOuZw7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EA636B
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 00:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC2523BF
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 00:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726447608; cv=none; b=kVVQ7DDd4IDUypnNudy4yMe02RwZ+ocHRHqPTDrEbAPsNhOKkY/i2qK75OMdpfGzwbvdX9GAFXe62h8UtsuSRF/8D/B/lQi/DgRzehQ2a/Dcd94sRtTEUXv12QEPbInUBRR+/fSdre6Sdgb09e9wbc2CpcUrMv73BDfdxoWcHKc=
+	t=1726447991; cv=none; b=hX2eFhEYfrSUmvrPbAuadTD0MVASVgxr4svgP7NOe63TxpXayvqWWfMyNGDyCA4+7fSOToVPAJFhJH6NM51lcmxyBczIrvw8s1rl+QgyHqvbF9i7MquHp2mFdVBzv97jzdkGdJ2ExNJJXxGJF9XQw3fiS7ISCITqC1Y9EuBQTvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726447608; c=relaxed/simple;
-	bh=Kj8AFoyZqUe74w0nZtLRjcnDA34VkrhiKAF/VJcvQjQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=knn4+z0ZHT+bgcUdG8rBXHhySkQvlGvKeqgCFp/16RkkEhI/G1B6LsBr5TtDN7n5TbFNUN3HCAgftyZI3R14mA1wPUCDtv8+RJ3XcbeWxfESO0/vJTq2yA+z6iQch6plV8DWmwwnYzUIxSXj+xezvT2iPL+/1oHYSJs1yc1KYqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0a54fb476so4133015ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 17:46:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726447606; x=1727052406;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwyjdXOUVlYdlwbeTWqF+oHpRNDQxsR1BZgZziSd9K8=;
-        b=N4DsuHBeqJK/I45nUTZMMahZuvE+CEmnDLw3kiVIJPVMPw7wbTYQHgteE4poVFPwHg
-         AqUnmh+CjCWLe3TosGI3TGtp8nhznfi9MkrMJ7LYH2K/G4IKBVl5bnem1ucxE0QTs906
-         cEKMweAjhFoNyMM91QcE+p+t9nZ1jOZPCKXivpKZ4DSvXHYIuvVM8BP6TS1iaF+bS7FA
-         2Ypx1mPR5HCwPP1aRTtNihMDLNLBvZzpmTID6RWRW4CchzsmSO9doPWi24UjBcGHqGgo
-         maDfoKeGQNnYYrXfZnH/H7Xstlkfuw5PDzutgd/g7VlxehMbymadbcS2xK6IcIQ0sHTA
-         MZaA==
-X-Gm-Message-State: AOJu0YwKZyMZCoJWGFDfoiC1zWD1MnhTviigSnzV7+6vf5c6oTG5eusN
-	C5zY+6vIcunhcPDOOkiEAkT5AsCneN6C8q3Dg73UW5+smxanGGrZskTHvK++rLeBri4KZDu7ea2
-	q+PfkbgdoBD22Cx96DLwy3479AJWDpdBJQ3nwKZKbnhwo8L8jvKt5ys0=
-X-Google-Smtp-Source: AGHT+IHL7vPBsa4v0938A8JtvaAYwCys6S+3YA27RjmSCbJ0sppqAVf5XOQ4cS7OAzrRxC9cCXWfWJYcx6kYz2nN3JYE8lVB8MI9
+	s=arc-20240116; t=1726447991; c=relaxed/simple;
+	bh=7ptS4d+Kez5x/n0q5w9Xw6UVDUrwFHouEupdqfSrkns=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=d38GpmB5aXUOvESYfR5A3npHJH4z2afYbNfejZ0ltmXLVfn4nGlAJWs/U6Ytbd+H1vY956kEZnI12IaWPpTZBrGTZJXQUKMvsydXfN4I32m8PvWSLQdy5jH+ZFVrSskoWGsbveHi20S4fw56bd+e9QTTfJKkIOwi+SbQuG3BewM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XCCOuZw7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726447988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=W9xeun1rS2VIHMtxn2PXsiferWGfZ34revYU+3HcvLM=;
+	b=XCCOuZw7YqbZxVa0R4twq1SCakmgqggFSGzf6HXLqPYNFizpcGEFKD8txC2ClexhxElml3
+	+RygtJsAZWWtqWvndJNh2gK6NCt3m6JLFmg+NfRDUJIkqNkTkfB3+R8ZgGDg8azvF7IMh0
+	5o+oOeBwUn/B4tRVyZsUVVdMrIhRCkc=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-it04YT9wP_mV3SPFkoRLJQ-1; Sun,
+ 15 Sep 2024 20:53:05 -0400
+X-MC-Unique: it04YT9wP_mV3SPFkoRLJQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9240019560A7;
+	Mon, 16 Sep 2024 00:53:02 +0000 (UTC)
+Received: from localhost (unknown [10.22.16.50])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C3B2D1956086;
+	Mon, 16 Sep 2024 00:53:00 +0000 (UTC)
+Date: Sun, 15 Sep 2024 21:52:59 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	stable-rt <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Carsten Emde <C.Emde@osadl.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Wagner <daniel.wagner@suse.com>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
+	Jeff Brady <jeffreyjbrady@gmail.com>,
+	Luis Goncalves <lgoncalv@redhat.com>
+Subject: [ANNOUNCE] 5.10.225-rt117
+Message-ID: <ZueA_L6tsYyy7MT6@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:144e:b0:39b:3894:9298 with SMTP id
- e9e14a558f8ab-3a0847cd5e8mr135920535ab.0.1726447606304; Sun, 15 Sep 2024
- 17:46:46 -0700 (PDT)
-Date: Sun, 15 Sep 2024 17:46:46 -0700
-In-Reply-To: <00000000000002df770621bf81d9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004c2375062231e807@google.com>
-Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference in fbcon_putcs
-From: syzbot <syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Hello RT-list!
 
-***
+I'm pleased to announce the 5.10.225-rt117 stable release.
 
-Subject: BUG: unable to handle kernel NULL pointer dereference in fbcon_putcs
-Author: qianqiang.liu@163.com
+This release is just an update to the new stable 5.10.225 version and
+no RT-specific changes have been made.
 
-#syz test
+You can get this release via the git tree at:
 
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index 3f7333dca508..96c1262cc981 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -1284,7 +1284,7 @@ static void fbcon_putcs(struct vc_data *vc, const u16 *s, unsigned int count,
- 	struct fbcon_display *p = &fb_display[vc->vc_num];
- 	struct fbcon_ops *ops = info->fbcon_par;
- 
--	if (!fbcon_is_inactive(vc, info))
-+	if (!fbcon_is_inactive(vc, info) && ops->putcs)
- 		ops->putcs(vc, info, s, count, real_y(p, ypos), xpos,
- 			   get_color(vc, info, scr_readw(s), 1),
- 			   get_color(vc, info, scr_readw(s), 0));
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
--- 
-Best,
-Qianqiang Liu
+  branch: v5.10-rt
+  Head SHA1: 144317400e6c514f3bee1da73d940149e3a7b882
+
+Or to build 5.10.225-rt117 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.225.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.225-rt117.patch.xz
+
+Signing key fingerprint:
+
+  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Luis
 
 
