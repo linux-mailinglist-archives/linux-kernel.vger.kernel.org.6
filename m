@@ -1,92 +1,81 @@
-Return-Path: <linux-kernel+bounces-330787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BFA97A44B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:39:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9D697A44D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E91C728378B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:39:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE431C25D26
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63E415854F;
-	Mon, 16 Sep 2024 14:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E5415852F;
+	Mon, 16 Sep 2024 14:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOYm4rO1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="saTJ0Vx2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF3C1DFCF;
-	Mon, 16 Sep 2024 14:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB7E15699D;
+	Mon, 16 Sep 2024 14:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726497585; cv=none; b=oHGDDoTEvl7v6Hb1YFOqjuLhvzKPJbrkmv4KIoVKWEmYRkfi0fSH+SWELxaPAsBSV3j7dsOV1psvA2t6M5CNmfLonHt3NJbEjQnhJsy5U3QlPBdyZbX3lwMSQhmpcQT1yclXdrKkErXU30FNCG7enJlm66BcuCYuFAlbr62YbPc=
+	t=1726497614; cv=none; b=oMe6XBgijbwa0mWGLFk4V3eP1NQeEwCqC8bmCWKiFZPct3NYO8VR15sEvWa65F7YKJuwouj55o+yUaqE0ZzSjXdNUmOuAvRbdq7F1RccqL0eVazTh7yMC1oSWtGnAOMSQmueI3/K0EGkit9rsukcD/zm8HtolA3D/tljZem39Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726497585; c=relaxed/simple;
-	bh=+g5/8z+N7p1/vFynIT3SDk63WDBI02Y/qPQf/9fcmEE=;
+	s=arc-20240116; t=1726497614; c=relaxed/simple;
+	bh=ase2EtK58dnbqX+XHGgnnZ7iGG7Dh9FkcUnUJomep6U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcX6IBAn44sc2B8sreAqKcfE19zL9h4u/ZkoIxUW1wxrWhyfHJbO1gnRf2JgRy/9yHzTIMWfPbiwaZ25Dh1q0gNrEW9Z3ST5osCUir06Hlv8O5/9XFmu/bV3FsiqkBcpNcmXjyH3G3d3IBLJHXMk+KFyFKFHE66cq4bU6642/nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOYm4rO1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B60C4CEC5;
-	Mon, 16 Sep 2024 14:39:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cuP0uMsjsoTHFB16ZJSVfkyoc3B+ch39hSdvadAFvNwy0+Y5FmHYZJVlo8jUenycMoj8d9exhmtBAPnOVdRhZUghTO/ip0knRyKl0EY6V/mc3ccMTajyn6LRvttQGwUEJXJznmMVnghg1SPbYVGwYPCBYuJH8WXExjelcpC2eiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=saTJ0Vx2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77B16C4CEC4;
+	Mon, 16 Sep 2024 14:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726497584;
-	bh=+g5/8z+N7p1/vFynIT3SDk63WDBI02Y/qPQf/9fcmEE=;
+	s=k20201202; t=1726497613;
+	bh=ase2EtK58dnbqX+XHGgnnZ7iGG7Dh9FkcUnUJomep6U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QOYm4rO1eidzqhAUbbchlDXiD11CrL+bMTekPVvaX/mcikU/7eSqcoV6KBRDGD/j9
-	 S6RlCV2qlMMfQ2J9tfszb//dUJ4wDWXyEOsLJqp/fz1elfwTdPquHmwCJL0J3O26i+
-	 c3ZJCm9SObkFDfiXmhar9g6OcmCMVuSXZt9V4K+hdctaxgI61Pl+EDZmgAB2ApLZQb
-	 Un+bxnoAoZwK6ehUZ7YAXRKW0SklZcGLqGNoPVmP4eBQ3QMpmELFKKiF31gP816RKQ
-	 zkelIScxmLVMlWHF7wPC1qRrjLHMgAD6pRHCqbAicxjYIp+9Y+vtF3nLrn70IHAN9b
-	 f6hBaV2YnWo2Q==
-Date: Mon, 16 Sep 2024 16:39:41 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v3 18/20] arm64: dts: apple: Add A10X devices
-Message-ID: <ntl53bla2qwueycbffta5ytmmm7hxrthbfz2677mltldgu6roi@3f3pz6644vb5>
-References: <20240915080733.3565-1-towinchenmi@gmail.com>
- <20240915080733.3565-19-towinchenmi@gmail.com>
+	b=saTJ0Vx2drn9LMFWyT9D5tgGkbNWBTUYWYrCPVmkOA443m24xG5qIZRcTxuw3Rya1
+	 IoNIZhV+ITAOfDMwdPCbot/UShrbdePk4QtAH1zldxEKT7MZSm4eqxz2U33Qho7phS
+	 630Rj6fDzPkPzmjTINORmiasrZmBzQHwOL1jMFvnA5ZZTL69I1X5ZX5X7sjJVqLSLu
+	 sPv/2Hwf4mdOgXQWLDFk9tlKc7I/DBncDZfWZDsYbiyRzBnrqZWUoe+i02+CMqnuAO
+	 Id43YqSoKntIWtR9rDV0Pp2BSNuB86gDc22pemlEgFv1pcryJfXCS1e8/PMfUH5wrm
+	 PDtuGAJfPY25g==
+Date: Mon, 16 Sep 2024 16:40:09 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>
+Subject: Re: [PATCH v2 00/11] i2c: isch: Put the driver into shape
+Message-ID: <hhn6u5q2gmrolhygs33d36odpszueq3qtmv77tz37lhxmc7sjl@ndohkc6czrpt>
+References: <20240916120237.1385982-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240915080733.3565-19-towinchenmi@gmail.com>
+In-Reply-To: <20240916120237.1385982-1-andriy.shevchenko@linux.intel.com>
 
-On Sun, Sep 15, 2024 at 03:59:03PM +0800, Nick Chan wrote:
-> From: Konrad Dybcio <konradybcio@kernel.org>
-> 
-> Add DTS files for the A10X SoC and the following devices based on it:
-> 
-> - Apple TV 4K
-> - iPad Pro (2nd Generation) (10.5 Inch)
-> - iPad Pro (2nd Generation) (12.9 Inch)
-> 
-> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
-> [Nick: SMP, m1n1 and Apple TV 4K support, uart interrupt and pinctrl fixes]
-> Co-developed-by: Nick Chan <towinchenmi@gmail.com>
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
->  .../devicetree/bindings/arm/apple.yaml        |   8 +-
+Hi Andy,
 
-You need to split bindings.
+> Andy Shevchenko (11):
+>   i2c: isch: Pass pointer to struct i2c_adapter down
+>   i2c: isch: Use string_choices API instead of ternary operator
+>   i2c: isch: Switch to memory mapped IO accessors
+>   i2c: isch: Use custom private data structure
+>   i2c: isch: switch i2c registration to devm functions
+>   i2c: isch: Utilize temporary variable to hold device pointer
+>   i2c: isch: Use read_poll_timeout()
+>   i2c: isch: Unify the name of the variable to hold an error code
+>   i2c: isch: Don't use "proxy" headers
+>   i2c: isch: Prefer to use octal permission
+>   i2c: isch: Convert to kernel-doc
 
-Best regards,
-Krzysztof
+Applied to i2c/i2c-host-for-6.13. These patches will be moved
+into i2c/i2c-host after the merge window.
 
+Thanks,
+Andi
 
