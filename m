@@ -1,180 +1,110 @@
-Return-Path: <linux-kernel+bounces-330874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E3697A581
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:52:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5217997A593
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6EAF2846E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:52:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E602B298A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86655158D80;
-	Mon, 16 Sep 2024 15:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BD8158DC0;
+	Mon, 16 Sep 2024 15:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ML353vGv"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="sHtQeF5k"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BAB12E71
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 15:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AD82B9AA;
+	Mon, 16 Sep 2024 15:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726501951; cv=none; b=My4AilBHxSJM5MQe18xCQtk/aI3n2Zb00+uj0gUMxhwo/fkXYsCWoLAy4N+5xMHp3dape0DF8LdEkLueFtaFyuS5GqsjyGeW2IhGWwzx0jrNxnhvpxwhvT58Yi14FCLPUu4uw+j9bb/jFsQA5LkizbsT55ScX+kjWCwLc9oF09c=
+	t=1726502034; cv=none; b=LTbYDXZwIw19xSh7qqxdYGSiQgsH+EJXP/NaMq+XCUuXmuAESdHXq/Mo5JJOgba/MSX9F78ytuz2zkVRzrnb7wBd7LzaI03KdxJGTz0u6ueFauCq4LTQIGJRVCxWLDnMX2SvkHtVA8IsREG6cR0gqqHvatOkhYlBWr3HuoC4XgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726501951; c=relaxed/simple;
-	bh=nwgwHvVqhIE+uU0XgZJ3u2IpKeWEKwoZ9hoBrP26Yj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rUHyowXpjDhP4iewX6tgz5I7v9F4+TfRjdlvarXlPNeBrP/hZUd85Mt1tjam2S05VwL/MV7qsR6IBRVBZMt18IC+xHylATatmB5bMSrewgECIuK8sbZL2tMXkyo78xKCXcKsuabMtFUWYNiBOQPExkTSTqx1jK9vewoppeAkMPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ML353vGv; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cb3c6c353so7839125e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:52:29 -0700 (PDT)
+	s=arc-20240116; t=1726502034; c=relaxed/simple;
+	bh=uw0Xybb7UQONV7AUP+zdNBOTaZYJ9vHM92tdymSzwgg=;
+	h=Subject:MIME-Version:Content-Type:Date:Message-ID:To:CC:From:
+	 References:In-Reply-To; b=HA7fPKbcg+qZMb+3P0IISagbJf5Oi5IjK0LON8VajcTxgHuS35Z+TC1LDN7dl9dIvq0b5L9+pKQPJ1/bFS+C4/XNS5jXUnz7PgJiWKQOOAdEDfoiI1wutcg5JkwBgt2q4TRlMaMGiVOjGpIm0QuRHlyu4CVshhXYLdHOnqV0g+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=sHtQeF5k; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726501948; x=1727106748; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=N8aHEEbX13A4PIQj2A95kRBvOppHaVkvAUdHxfVghGU=;
-        b=ML353vGvCwFtNc6qggNsZJLlUtMvPDFZK+xinsxw+AilUBA+TNZRUw7MWz84uHKJiB
-         mNVN2OLm7+9r42Olwj6B7LKHtpuYSgMuoov6M+L8t608BOlF1p7+8D1POtDW9lRG/7YW
-         66Ttl0t6+smuKj4pyFH/g7mWEUDqX0td+aiLY2BmXGpJCIEjiPLsvvwzAwgcPI6WS/Yo
-         Q63Zn0h4xsDc2S64BI6mZYfF1aTkIO/YHhSrj7HGEe/NufZoVDR/IRxz9r+KRVsv5GoA
-         XNKJxatSPsjf8VGzMGHgWNuWRaM/m8mCQjeXLmzUV9JgFjxY0BlTowBn8ZjSwKAGGJCj
-         Z19g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726501948; x=1727106748;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N8aHEEbX13A4PIQj2A95kRBvOppHaVkvAUdHxfVghGU=;
-        b=gS+3X5sT1hv54NbKgqhPkBcZ80bog0KbSl6LCEPbrHTsjsUGw9+1ySuJP9cWwa6hu+
-         9jOaU+p0MUb7gCxclPzub+yizJtsY2SnQ3XXi6HW1nXsGhAcbM8ueF8uBJN5fVoKnhe+
-         AEEs7ys0oQxB+Y3b6BxmcUHBQjjtlVhvSgPR8n4w6IJQG+4Vv8UMbg3xj1pC+p+AXNPu
-         Boxb/kJESXMRY+mm5hAMfTbWlUAUK4LNY+uKixCSFbY1eowwdCOA+Ndoh1lGdp9zpRcM
-         4g4W+ie0hPTEkBFol66D9eLOQLIDOW+sugH5FNMiOZoX27p5A+kZC9T234eXicUx5UBR
-         K6yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEJ5scdujuMOhVjzCS/1MVGrwIMq1fV/4AHqPs/uvDrhwGjgsu0tnvWqIlXkuHGOA8AR517giOr6UGEnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSc1DWFZr9goBcpNjSiaTe74pMQLMRV6k5b/nRc1jexRia5CId
-	qQdZxxOvYAvszZGDkoQNU5+F5qO4rcoU202lHzd++5Y1C75tX4CqoQxEjq1N4yQma5WCM8bm9Gi
-	/
-X-Google-Smtp-Source: AGHT+IFXKeWX8H92ZUOExoo7GiM0cHbGXQLb4DOto6YZsFYJuXY0eIDw9GJAYpn4oZFS8AcvVCCL6w==
-X-Received: by 2002:a5d:64ae:0:b0:374:ca15:e7b1 with SMTP id ffacd0b85a97d-378c2d4e3a0mr5218996f8f.10.1726501947597;
-        Mon, 16 Sep 2024 08:52:27 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb532a8sm2767254a12.28.2024.09.16.08.52.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 08:52:27 -0700 (PDT)
-Message-ID: <1d57b766-0db1-4266-9aa5-11c131a636df@linaro.org>
-Date: Mon, 16 Sep 2024 17:52:25 +0200
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1726502033; x=1758038033;
+  h=mime-version:content-transfer-encoding:date:message-id:
+   to:cc:from:references:in-reply-to:subject;
+  bh=uw0Xybb7UQONV7AUP+zdNBOTaZYJ9vHM92tdymSzwgg=;
+  b=sHtQeF5kndNn+pIlBdjos1k+Q5FzIBWC/HXSDqk59+xK5xHEk8eA4reJ
+   8jXuSq/cmG/KWq4iIO1EBLBlXtvwMDfKu11Jtzs2X8uWSfljTlJ4fAqoE
+   Aq6yT+nPeU0b1rMtczJ+2hwScH3qfu3k8p7ZFOxLBfnqGBRrZ0Zg0vu9L
+   g=;
+X-IronPort-AV: E=Sophos;i="6.10,233,1719878400"; 
+   d="scan'208";a="126308750"
+Subject: Re: [PATCH 11/18] KVM: x86: Pass the instruction length on memory fault
+ user-space exits
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 15:53:49 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.10.100:54655]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.43.112:2525] with esmtp (Farcaster)
+ id 2d162f68-8f74-48a2-9420-8f12008a1ef2; Mon, 16 Sep 2024 15:53:48 +0000 (UTC)
+X-Farcaster-Flow-ID: 2d162f68-8f74-48a2-9420-8f12008a1ef2
+Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 16 Sep 2024 15:53:48 +0000
+Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
+ (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Mon, 16 Sep 2024
+ 15:53:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 3/3] riscv: dts: canaan: Add k230's pinctrl node
-To: Ze Huang <18771902331@163.com>, Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Yangyu Chen <cyy@cyyself.name>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20240916063021.311721-1-18771902331@163.com>
- <20240916064706.318793-2-18771902331@163.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240916064706.318793-2-18771902331@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 16 Sep 2024 15:53:39 +0000
+Message-ID: <D47TVY7H7E3C.3V3RA9GPJGT6E@amazon.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+	<pbonzini@redhat.com>, <vkuznets@redhat.com>, <linux-doc@vger.kernel.org>,
+	<linux-hyperv@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <graf@amazon.de>,
+	<dwmw2@infradead.org>, <mlevitsk@redhat.com>, <jgowans@amazon.com>,
+	<corbet@lwn.net>, <decui@microsoft.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <amoorthy@google.com>
+From: Nicolas Saenz Julienne <nsaenz@amazon.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049-dirty
+References: <20240609154945.55332-1-nsaenz@amazon.com>
+ <20240609154945.55332-12-nsaenz@amazon.com> <ZuSOaTw1vgwquqTE@google.com>
+In-Reply-To: <ZuSOaTw1vgwquqTE@google.com>
+X-ClientProxiedBy: EX19D045UWC002.ant.amazon.com (10.13.139.230) To
+ EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-On 16/09/2024 08:47, Ze Huang wrote:
-> Add pinctrl device, containing default config for uart, pwm, iis, iic and
-> mmc.
-> 
-> Signed-off-by: Ze Huang <18771902331@163.com>
-> ---
->  arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi | 316 +++++++++++++++++++
->  arch/riscv/boot/dts/canaan/k230-pinctrl.h    |  18 ++
->  arch/riscv/boot/dts/canaan/k230.dtsi         |   2 +
->  3 files changed, 336 insertions(+)
->  create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
->  create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.h
-> 
-> diff --git a/arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi b/arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
-> new file mode 100644
-> index 000000000000..0737f50d2868
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
-> @@ -0,0 +1,316 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +/*
-> + * Copyright (C) 2024 Ze Huang <18771902331@163.com>
-> + */
-> +#include "k230-pinctrl.h"
-> +
-> +/ {
-> +	soc {
-> +		pinctrl: pinctrl@91105000 {
+On Fri Sep 13, 2024 at 7:11 PM UTC, Sean Christopherson wrote:
+> On Sun, Jun 09, 2024, Nicolas Saenz Julienne wrote:
+> > In order to simplify Hyper-V VSM secure memory intercept generation in
+> > user-space (it avoids the need of implementing an x86 instruction
+> > decoder and the actual decoding). Pass the instruction length being run
+> > at the time of the guest exit as part of the memory fault exit
+> > information.
+>
+> Why does userspace need the instruction length, but not the associated co=
+de stream?
 
-That's odd style - defining SoC nodes outside of SoC DTSI. Are you sure
-that's preferred coding style in RISC-V or Canaan?
+Since the fault already provides the GPA it's trivial to read it from
+the VMM. Then again, now that I've dug deeper into the RWX memory
+attributes's edge cases, this doesn't always work. For example when
+getting a fault during a page walk (the CPU being unable to access the
+page that contains the next GPTE due to it being marked non-readable by
+a memattr). The fault exit GPA will not point to the code stream.
 
-> +			compatible = "canaan,k230-pinctrl";
-> +			reg = <0x0 0x91105000 0x0 0x100>;
-> +
+I will rework/rethink this once I have the complete memattrs story.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Nicolas
 
