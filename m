@@ -1,403 +1,154 @@
-Return-Path: <linux-kernel+bounces-330298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A7D979C4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:51:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB4C979C4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD571C22B2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBABFB225CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6147113D243;
-	Mon, 16 Sep 2024 07:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1B513B5AF;
+	Mon, 16 Sep 2024 07:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LxF5/PLI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l4zd0qIB"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C191339B1;
-	Mon, 16 Sep 2024 07:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D03113698F
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726473065; cv=none; b=XKrAP/GfDmc5S6mdVahGmMxTzrsO9i9wmSfo7feVBMxhjmEGodG+HApNNTahFsYgnGaCWQPasl8ljJlDxv9NIwJ8L0pZwPxC+XIFLaqLQXvPtUviLb3H3FCoi3vDWEFUMvWO9j0QeOf5M0NJJW5emx7aKEMjh46Rkfhdh4xPx7E=
+	t=1726473225; cv=none; b=LTvbYnq/nYdz+lIRqEBZ1REz0LpxeurGXHOO7n9x++koye+Ts9m1nNQnEDUrtqMxfyFx/NCuf0QFXgMNSowcbAR9uwe+U/cbOYSFXKe2d7RSPDKvw8zRETaucnbOR0Qewn0LQ1HwIXwu+UQiEgrHGc/g7BHoIEKUQpVGfodkbC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726473065; c=relaxed/simple;
-	bh=Z9uIWG2PKf2KyhsARs6C+a8hCyFUNF7z+oDNfDWyUlI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X30wxTdhmpOySvugy7czh9QD45L9AVgwds0DhSqTZTBB2bwOVaVwgEITid+Lykq6nAzR/pQ+8apLiFyLVxheAVY/tFJ5EOGN9GRZcMKRP4UsKe9iAz+ZIHKY1gJBX3YjvlYfMXqHaiOg4gkLhaFD31OdU2/YY7faH0+bLwYzywA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LxF5/PLI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48FNmwBA024426;
-	Mon, 16 Sep 2024 07:50:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gBgmFYIDtjCkjwPRAQZ3OnNLyodUiCbqaDvzxqA+Jog=; b=LxF5/PLIqnNscV1V
-	h5fsKk2lNKyAB+/1ODBuwJa29nB1U10CeqfixNcxascuUhmI7KAzaphLLU43jtBb
-	4MENoySc0b7apl5JuzSo5LADUyYXKsptKy64B/iMkCXPBDEK6yzUcjY5hb35QWip
-	4NcICcQYFSvDSWYREEpsvvlsb/sFdRV8OwZBTb7/D3f+zbwIgyoGWpKj7O7el10e
-	PFVF2OT7fhJrZakDFjJkkRTJCQ8IY22EX/rZ2ROVA1glSOAMfPF0h+i6qQiI16ww
-	vaDQpJJzet2nDxk94/4iu/Adr+uZA0LXvTkTSjmTTCMDY8nxVuu848nJiD2UnfNU
-	bSJ4Zg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4gcu60a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 07:50:34 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48G7oXGF012618
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 07:50:33 GMT
-Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Sep
- 2024 00:50:27 -0700
-Message-ID: <f9126534-3a46-4d01-9026-58e0b65c08d2@quicinc.com>
-Date: Mon, 16 Sep 2024 13:20:24 +0530
+	s=arc-20240116; t=1726473225; c=relaxed/simple;
+	bh=UESzZbWJagDjGAm6yzO3qfkMGoY/KtJI5SPqHZ1LKT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QonRiijzr+nGnPznBWvZX7U1Dmi8svFrX18s9s/qbKdb0PIZAcS2oS2qMcJKMbKrL48dY8TjTfcPmmBA+XTj+rlK77Ii9bFIwe0NkcKJnll2x11A9ZGl0dI3MUBVVBmmK8Ew8+0sJY/XEL6q23rhBa+eE6qGvr1Ye1qevYMiSvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l4zd0qIB; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-45833a3c8d1so3907511cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 00:53:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726473222; x=1727078022; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z1+Fzx+4YrRS/cKJGxzXlTeMMFWc7wgTxgXJnmtIXTc=;
+        b=l4zd0qIBkLsjI6M9jSIIYOX6N+NYM/jUovYDaGSsyDtehC8UFrgW15C00EL+QuuMg6
+         BS8Q5+UeR43tcfUiWDV8U9x1AmLGDx5kaDlKLKTXN/kiAn0S6+DPcZwJtKQt/iIoz5da
+         Z58owTHfZz9tPxzxxh8lg47pUOZVWnuiA8Xk7iaiSipZvGmrFgNMX4exIL9PnKjn3Ryy
+         2LGIh1b9L+d2eyJ4EDd3JsF4zSQa9JYfCEqdIhlbQjixmzn8+IoHWcmq7entJdJYH/UK
+         dO+qqrxlMvs9soWoY0YFr84ILKu/fqKBCiDRRUDG5HDC7d7jfirIadIr7azTy04+9n4n
+         0VDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726473222; x=1727078022;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z1+Fzx+4YrRS/cKJGxzXlTeMMFWc7wgTxgXJnmtIXTc=;
+        b=fJUEMXwjafLPzXz3CiikA6aaPZVY/eGXg5Qj7cdg/YRfors5hN4CFhvO02nmJH+gfW
+         SxdzZWAh+W6A0LZJbujNPIdOXlvPW6mXPuZ2G36oxTURGp+mgwQHb/zWYIFJlcFby71D
+         U4xrGFhBo7mxCM84/MBn11QcK8Wrrc7h8kxzEXXa4HeNWsw+UcteE5ZnvJ2dAKnv1FH5
+         jKZcXhe8/fvz0/HOrSdBTRY4oEHsHrHFLhUlm4P3LTktyr3YFwHd06zBsou85Y6fK6xJ
+         QXTeMtBlFIN5iMWpN7I6OFyRGZtsdJB4KlHl5cZIC/gzO5+mGESAUA0LybGBJNoLf2Jq
+         e54g==
+X-Forwarded-Encrypted: i=1; AJvYcCXyc6nEjmmlb3HGdt0egEmLLpWZt9WZxmgmYC55itO11e4BUDMzDPOU8eeljxzl+0H9dcSN/Yoo7h0HBaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrg7KgFsP1pDmMGT/nAwvx/15dYsd72Hu5bq6F/OZ2YbZLmp8q
+	K7PcZzElQP4ZjaL/5eFRO0OSnG7p0FtEbxVzKGoGMhr9i9O3TdyU9cClbckc3ikq4Fs8IdvpRaP
+	uC+ph/0p5EtgLZnFvk0Yl1+aYWxK+7P+JvMIfgA==
+X-Google-Smtp-Source: AGHT+IHxUau9anaJf1ecbZc35ylzAAq9bwuRCagPe+N6PScWK4XORKbbig1m48BoE7NqdnM3NpVT2ckSm3d6Uho1LdE=
+X-Received: by 2002:a05:6214:b69:b0:6c5:258f:26c1 with SMTP id
+ 6a1803df08f44-6c5736ea7eamr101669646d6.7.1726473222478; Mon, 16 Sep 2024
+ 00:53:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] clk: qcom: add Global Clock controller (GCC) driver
- for IPQ5424 SoC
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_varada@quicinc.com>
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-6-quic_srichara@quicinc.com>
- <glkvcne5eius5l7dro7gzd7hyztc6vc4eekcbbxz6c4wwolwqy@aoj66qbrxezg>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <glkvcne5eius5l7dro7gzd7hyztc6vc4eekcbbxz6c4wwolwqy@aoj66qbrxezg>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: lGQJOmdExYP4olx6XnTSFvayGnhWWGDd
-X-Proofpoint-GUID: lGQJOmdExYP4olx6XnTSFvayGnhWWGDd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- bulkscore=0 clxscore=1015 spamscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409160048
+References: <20240912063119.1277322-1-anders.roxell@linaro.org>
+ <20240912082307.556db015@kernel.org> <CADYN=9+OTGJtN-z_ffQx9C+UA=a_9rpF7bGtnunFJoq0BWL3vQ@mail.gmail.com>
+ <CA+FuTSc15f=+zC_p3seVShGMW164Mi+_a-XiSONzx7A83tEPqw@mail.gmail.com> <20240915164647.5b2e1db6@kernel.org>
+In-Reply-To: <20240915164647.5b2e1db6@kernel.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Mon, 16 Sep 2024 09:53:31 +0200
+Message-ID: <CADYN=9KsjS0sK7rzuQKuAR8U3+wF2-azNvJrr-EE8Pf7nAKpnw@mail.gmail.com>
+Subject: Re: [PATCH] selftests: Makefile: add missing 'net/lib' to targets
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Willem de Bruijn <willemb@google.com>, shuah@kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, 15 Sept 2024 at 16:46, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Sun, 15 Sep 2024 09:36:10 +0200 Willem de Bruijn wrote:
+> > > You=E2=80=99re right, the patch is incorrect, I could have explained =
+better.
+> > > I=E2=80=99m seeing an issue with an out-of-tree cross compilation bui=
+ld of
+> > > kselftest and can=E2=80=99t figure out what=E2=80=99s wrong.
+> > >
+> > > make --keep-going --jobs=3D32 O=3D/tmp/build
+> > > INSTALL_PATH=3D/tmp/build/kselftest_install \
+> > >      ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- \
+> > >      CROSS_COMPILE_COMPAT=3Darm-linux-gnueabihf- kselftest-install
+> > >
+> > > [...]
+> > > make[4]: Entering directory
+> > > '/home/anders/src/kernel/linux/tools/testing/selftests/net/lib'
+> > >   CC       csum
+> > > /usr/lib/gcc-cross/aarch64-linux-gnu/13/../../../../aarch64-linux-gnu=
+/bin/ld:
+> > > cannot open output file /tmp/build/kselftest/net/lib/csum: No such
+> > > file or directory
+> > > collect2: error: ld returned 1 exit status
+> > > [...]
+> > >
+> > > Any thoughts on what might be causing this?
+> >
+> > I wonder if this is due to the O=3D argument.
+> >
+> > Last week I noticed that some TARGETs explicitly have support for
+> > this, like x86. Added in 2016 in commit a8ba798bc8ec6 ("selftests:
+> > enable O and KBUILD_OUTPUT"). But by now this support is hardly
+> > universal. amd-pstate does not have this infra, for instance.
+> >
+> > Though if the only breakage is in net/lib, then that does not explain i=
+t fully.
+>
+> Some funny business with this install target, I haven't investigated
+> fully but the dependency on all doesn't seem to do its job, and the
+> install target has a copy/paste of all with this line missing:
+>
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/M=
+akefile
+> index 3b7df5477317..3aee8e7b9993 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -261,6 +261,7 @@ ifdef INSTALL_PATH
+>         @ret=3D1; \
+>         for TARGET in $(TARGETS) $(INSTALL_DEP_TARGETS); do \
+>                 BUILD_TARGET=3D$$BUILD/$$TARGET;  \
+> +               mkdir -p $$BUILD_TARGET;        \
+>                 $(MAKE) OUTPUT=3D$$BUILD_TARGET -C $$TARGET install \
+>                                 INSTALL_PATH=3D$(INSTALL_PATH)/$$TARGET \
+>                                 SRC_PATH=3D$(shell readlink -e $$(pwd)) \
+>
+>
+> Andres, please feel free to test / write commit message and submit this
+> one liner, but even with that the build for some targets fails for me.
 
+Thank you Jakub, that solved this issue, I'll send a patch shortly.
 
-On 9/13/2024 6:16 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 13, 2024 at 05:42:47PM GMT, Sricharan R wrote:
->> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> Add support for the global clock controller found on IPQ5424 SoC.
->>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> 
-> Same comment regarding tags.
-> 
-ok
->> ---
->>   drivers/clk/qcom/Kconfig       |    7 +
->>   drivers/clk/qcom/Makefile      |    1 +
->>   drivers/clk/qcom/gcc-ipq5424.c | 3333 ++++++++++++++++++++++++++++++++
->>   3 files changed, 3341 insertions(+)
->>   create mode 100644 drivers/clk/qcom/gcc-ipq5424.c
->>
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index a3e2a09e2105..c41e3318c2a7 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -213,6 +213,13 @@ config IPQ_GCC_5332
->>   	  Say Y if you want to use peripheral devices such as UART, SPI,
->>   	  i2c, USB, SD/eMMC, etc.
->>   
->> +config IPQ_GCC_5424
->> +	tristate "IPQ5424 Global Clock Controller"
->> +	help
->> +	  Support for the global clock controller on ipq5424 devices.
->> +	  Say Y if you want to use peripheral devices such as UART, SPI,
->> +	  i2c, USB, SD/eMMC, etc.
->> +
->>   config IPQ_GCC_6018
->>   	tristate "IPQ6018 Global Clock Controller"
->>   	help
->> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
->> index 2b378667a63f..d58ba0f9a482 100644
->> --- a/drivers/clk/qcom/Makefile
->> +++ b/drivers/clk/qcom/Makefile
->> @@ -32,6 +32,7 @@ obj-$(CONFIG_IPQ_APSS_6018) += apss-ipq6018.o
->>   obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
->>   obj-$(CONFIG_IPQ_GCC_5018) += gcc-ipq5018.o
->>   obj-$(CONFIG_IPQ_GCC_5332) += gcc-ipq5332.o
->> +obj-$(CONFIG_IPQ_GCC_5424) += gcc-ipq5424.o
->>   obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
->>   obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
->>   obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
->> diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
->> new file mode 100644
->> index 000000000000..72d2c9bfa986
->> --- /dev/null
->> +++ b/drivers/clk/qcom/gcc-ipq5424.c
->> @@ -0,0 +1,3333 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018,2020 The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +
->> +#include <dt-bindings/clock/qcom,ipq5424-gcc.h>
->> +#include <dt-bindings/reset/qcom,ipq5424-gcc.h>
->> +
->> +#include "clk-alpha-pll.h"
->> +#include "clk-branch.h"
->> +#include "clk-rcg.h"
->> +#include "clk-regmap.h"
->> +#include "clk-regmap-divider.h"
->> +#include "clk-regmap-mux.h"
->> +#include "clk-regmap-phy-mux.h"
->> +#include "common.h"
->> +#include "reset.h"
->> +
->> +enum {
->> +	DT_XO,
->> +	DT_SLEEP_CLK,
->> +	DT_PCIE30_PHY0_PIPE_CLK,
->> +	DT_PCIE30_PHY1_PIPE_CLK,
->> +	DT_PCIE30_PHY2_PIPE_CLK,
->> +	DT_PCIE30_PHY3_PIPE_CLK,
->> +	DT_USB_PCIE_WRAPPER_PIPE_CLK,
-> 
-> This doesn't seem to match bindings.
-> 
-ok, will fix
->> +};
->> +
->> +enum {
->> +	P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC,
->> +	P_GPLL0_OUT_AUX,
->> +	P_GPLL0_OUT_MAIN,
->> +	P_GPLL2_OUT_AUX,
->> +	P_GPLL2_OUT_MAIN,
->> +	P_GPLL4_OUT_AUX,
->> +	P_GPLL4_OUT_MAIN,
->> +	P_SLEEP_CLK,
->> +	P_XO,
->> +	P_USB3PHY_0_PIPE,
->> +};
->> +
->> +static const struct clk_parent_data gcc_parent_data_xo = { .index = DT_XO };
->> +
->> +static struct clk_alpha_pll gpll0 = {
->> +	.offset = 0x20000,
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
->> +	.clkr = {
->> +		.enable_reg = 0xb000,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gpll0",
->> +			.parent_data = &gcc_parent_data_xo,
->> +			.num_parents = 1,
->> +			.ops = &clk_alpha_pll_ops,
->> +			.flags = CLK_IS_CRITICAL,
-> 
-> This deserves a comment
-> 
-ok will add
->> +		},
->> +	},
->> +};
->> +
->> +static struct clk_fixed_factor gpll0_div2 = {
->> +	.mult = 1,
->> +	.div = 2,
->> +	.hw.init = &(const struct clk_init_data) {
->> +		.name = "gpll0_div2",
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&gpll0.clkr.hw
->> +		},
->> +		.num_parents = 1,
->> +		.ops = &clk_fixed_factor_ops,
->> +	},
->> +};
->> +
->> +static struct clk_alpha_pll gpll2 = {
->> +	.offset = 0x21000,
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->> +	.clkr = {
->> +		.enable_reg = 0xb000,
->> +		.enable_mask = BIT(1),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gpll2",
->> +			.parent_data = &gcc_parent_data_xo,
->> +			.num_parents = 1,
->> +			.ops = &clk_alpha_pll_ops,
->> +		},
->> +	},
->> +};
->> +
->> +static const struct clk_div_table post_div_table_gpll2_out_main[] = {
->> +	{ 0x1, 2 },
->> +	{ }
->> +};
->> +
->> +static struct clk_alpha_pll_postdiv gpll2_out_main = {
->> +	.offset = 0x21000,
->> +	.post_div_table = post_div_table_gpll2_out_main,
->> +	.num_post_div = ARRAY_SIZE(post_div_table_gpll2_out_main),
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->> +	.clkr.hw.init = &(const struct clk_init_data) {
->> +		.name = "gpll2_out_main",
->> +		.parent_hws = (const struct clk_hw*[]) {
->> +			&gpll2.clkr.hw,
->> +		},
->> +		.num_parents = 1,
->> +		.ops = &clk_alpha_pll_postdiv_ro_ops,
->> +	},
->> +};
->> +
->> +static struct clk_alpha_pll gpll4 = {
->> +	.offset = 0x22000,
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
->> +	.clkr = {
->> +		.enable_reg = 0xb000,
->> +		.enable_mask = BIT(2),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gpll4",
->> +			.parent_data = &gcc_parent_data_xo,
->> +			.num_parents = 1,
->> +			.flags = CLK_IS_CRITICAL,
-> 
-> Comment, please.
-> 
-ok, will add
->> +			.ops = &clk_alpha_pll_ops,
->> +		},
->> +	},
->> +};
->> +
-> 
-> [skipped]
-> 
->> +
->> +static struct clk_rcg2 gcc_pcnoc_bfdcd_clk_src = {
->> +	.cmd_rcgr = 0x31004,
->> +	.mnd_width = 0,
->> +	.hid_width = 5,
->> +	.parent_map = gcc_parent_map_0,
->> +	.freq_tbl = ftbl_gcc_pcnoc_bfdcd_clk_src,
->> +	.clkr.hw.init = &(const struct clk_init_data) {
->> +		.name = "gcc_pcnoc_bfdcd_clk_src",
->> +		.parent_data = gcc_parent_data_0,
->> +		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->> +		.flags = CLK_IS_CRITICAL,
-> 
-> Comment
-> 
-ok
->> +		.ops = &clk_rcg2_ops,
->> +	},
->> +};
->> +
-> 
-> [skipped]
-> 
->> +
->> +static struct clk_branch gcc_qdss_dap_clk = {
->> +	.halt_reg = 0x2d058,
->> +	.clkr = {
->> +		.enable_reg = 0x2d058,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gcc_qdss_dap_clk",
->> +			.parent_hws = (const struct clk_hw *[]) {
->> +				&gcc_qdss_dap_sync_clk_src.hw
->> +			},
->> +			.num_parents = 1,
->> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> 
-> Comment
-> 
-ok
->> +			.ops = &clk_branch2_ops,
->> +		},
->> +	},
->> +};
->> +
->> +static struct clk_branch gcc_qdss_at_clk = {
->> +	.halt_reg = 0x2d034,
->> +	.clkr = {
->> +		.enable_reg = 0x2d034,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gcc_qdss_at_clk",
->> +			.parent_hws = (const struct clk_hw *[]) {
->> +				&gcc_qdss_at_clk_src.clkr.hw
->> +			},
->> +			.num_parents = 1,
->> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> 
-> Comment
-> 
-ok
->> +			.ops = &clk_branch2_ops,
->> +		},
->> +	},
->> +};
->> +
-> 
-> [skipped]
-> 
->> +
->> +static int gcc_ipq5424_probe(struct platform_device *pdev)
->> +{
->> +	struct regmap *regmap;
->> +	struct qcom_cc_desc ipq5424_desc = gcc_ipq5424_desc;
->> +	int ret;
->> +
->> +	regmap = qcom_cc_map(pdev, &ipq5424_desc);
->> +	if (IS_ERR(regmap))
->> +		return PTR_ERR(regmap);
->> +
->> +	ret = qcom_cc_really_probe(&pdev->dev, &ipq5424_desc, regmap);
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "Failed to register GCC clocks ret=%d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	dev_info(&pdev->dev, "Registered GCC clocks\n");
->> +
->> +	return ret;
-> 
-> Drop all the cruft and use qcom_cc_probe() directly.
-> 
-ok
+> "make [..] install" seems wobbly.
 
-Regards,
-  Sricharan
+Yes it is.
 
+Cheers,
+Anders
 
