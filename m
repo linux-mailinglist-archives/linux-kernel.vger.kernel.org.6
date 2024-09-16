@@ -1,101 +1,133 @@
-Return-Path: <linux-kernel+bounces-330884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF1497A5AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:05:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAC5197A56D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44C9D1F294E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:05:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3342B28FC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC1C1591E3;
-	Mon, 16 Sep 2024 16:05:00 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D66158D6A;
+	Mon, 16 Sep 2024 15:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4RmNnW3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C796157472;
-	Mon, 16 Sep 2024 16:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EBA13B2B6;
+	Mon, 16 Sep 2024 15:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726502700; cv=none; b=of5bfX9IKfueMzIOTg3qiM0KTGCpK18063tQVbDCH2GWStD72XiDtpoYCNGX7ry/jws9wgs8DgthfgRejVgqNRD4KTxi84b8vxZ7umGigEcTPGBdXjqeak6Y40Wo0QAFjFseLmTSIgH89nSDpae+CMPpdt8+U5LQlp2cNS9Krvc=
+	t=1726501201; cv=none; b=Z10ztU3KETLBP8HbInCnubJHzPKTaRFyYzVVBx9z1RhS+1L9hokTa40kCeY1ASsSgY4aBJutrGEco7GbDSOSTGLPhU3I/sxXIGlS2MFYkKKPCTQh6z71p/rnKq1/+XO/s8iHGgABWO2Wskj05e1bZmelmH9AJEjfjgy+bcwrbUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726502700; c=relaxed/simple;
-	bh=C2HMx6GYdzwY259ykoR2BfXds/Dm1pRMuSSpPnZ9Awo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DS/LS7dgOfslmOBQ6GYEbXQAXtsXn0tgVhbsePGfWBMbDogBxau1cEiny1+Am3rjGfNDmM1/GBSXj57aduNuwRH6SHBu7Jr2ZLGu8R9woIFHfbWoYK7xhS58A6nV5s20ZspTmmZO1B7z4KQNG3TdNXEikv22hWEMChVgexqVgL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sqDma-000000006ml-0EUv;
-	Mon, 16 Sep 2024 15:36:56 +0000
-Date: Mon, 16 Sep 2024 16:36:47 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Edward Cree <ecree.xilinx@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: John Crispin <john@phrozen.org>
-Subject: ethtool settings and SFP modules with PHYs
-Message-ID: <ZuhQjx2137ZC_DCz@makrotopia.org>
+	s=arc-20240116; t=1726501201; c=relaxed/simple;
+	bh=1AFbJegPKrMyVrzc1W5LFPXXqbB6e75NAfjEJqtL+xE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKv6Q0okui2Th88qH27z8NKIQtz+tqTNT7CqPQd15GXvgb6fG8wRO3bJ/ghNKq4I0pygARD+LdvduK6hpD2ZifWuCDhwBEY0T0Mc8kyAeBd9p+9Dj+Qn4BM81TjCVmtHtjbiAW9DWC/SrDawG2OpOlBKmQLL7BaKPnL6gir7lnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4RmNnW3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF1C1C4CEC4;
+	Mon, 16 Sep 2024 15:39:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726501201;
+	bh=1AFbJegPKrMyVrzc1W5LFPXXqbB6e75NAfjEJqtL+xE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G4RmNnW3y/RFemeTShTKwQN15IQqor0H05FEMBPI00n14/PF6sXMwJCPEj2lSO4l7
+	 YB/MlObmVbPjC3uQLNTB6wAxzW9U0dWvUMvbQpovEIbhThFBqRAgkaTiheYEvj7IJM
+	 DObFx3HufN6g5rPyWTGuume8kbflJZY6P6RC8c/Ttlr9XC1zoB4IHbfjzMLKcFd2Hu
+	 1/wXv44pK+xCOIA+fBTyhnDxAbaZyB5SeXvelPJHHg1vpNi7ckwntZgV0Laz1cL1kV
+	 wFB8p7m3gBAb/fjY3nkzbaXNopRrb3Ssc8hWTHajWVqueZNVv0jenez0vDrwooIZyV
+	 BCCLNkYglrgMg==
+Date: Mon, 16 Sep 2024 17:39:53 +0200
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v2 00/11] unwind, perf: sframe user space unwinding,
+ deferred perf callchains
+Message-ID: <20240916153953.7fq5fmch5uqg7tjj@treble>
+References: <cover.1726268190.git.jpoimboe@kernel.org>
+ <20240914081246.1e07090c@rorschach.local.home>
+ <20240915111111.taq3sb5xzqamhb7f@treble>
+ <20240916140856.GB4723@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20240916140856.GB4723@noisy.programming.kicks-ass.net>
 
-Hi,
+On Mon, Sep 16, 2024 at 04:08:56PM +0200, Peter Zijlstra wrote:
+> On Sun, Sep 15, 2024 at 01:11:11PM +0200, Josh Poimboeuf wrote:
+> > On Sat, Sep 14, 2024 at 08:12:46AM -0400, Steven Rostedt wrote:
+> > > I think the unwinder should have an interface itself that provides the
+> > > deferred unwinding, instead of having all the tracers to implement
+> > > their own.
+> > > 
+> > > The user space unwinder (regardless of sframe or not) should provide a
+> > > way to say "I want a user space stack trace for here, but don't do it
+> > > yet. Just give me a cookie and then call my callback function with the
+> > > stack and cookie before going back to user space".
+> > 
+> > We (Steven, Mathieu and I) have been discussing this at GNU Cauldron and
+> > I think we're in basic agreement on this.
+> > 
+> > I think the biggest tweak we decided on is that the context id (aka
+> > "cookie") would be percpu.  Its initial value is (cpuid << 48).  It gets
+> > incremented for every entry from user space.
+> 
+> Why? What's the purpose of the cookie?
 
-I'm wondering how (or rahter: when?) one is supposed to apply ethtool
-settings, such as modifying advertisement of speed, duplex, ..., with
-SFP modules containing a PHY.
+The cookie is incremented once per entry from userspace, when needed.
 
-My first approach was to try catching the event of the PHY being
-attached and then re-applying ethtool settings[1]. As there isn't a
-dedicated event for that, I found that IFF_UP && !IFF_LOWER_UP is as
-close as it gets.
+It's a unique id used by the tracers which is emitted with both kernel
+and user stacktrace samples so the userspace tool can stitch them back
+together.  Even if you have multiple tracers triggering at the same time
+they can all share a single user trace.
 
-However, that doesn't go well with some PHY drivers and the result seems
-to depend on a race condition.
+Completely untested patch here that I hacked up today:
 
-Simply ignoring the supported link modes and assuming the kernel would
-filter them also doesn't work as also the advertised modes get reset
-every time the SFP module is removed or inserted.
+ git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git sframe-2.1
 
-Do you think it would make sense to keep the user selection of
-advertised modes for each networking device accross removal or insertion
-of an SFP module?
+To avoid races, unwind_user_deferred() can't be called from NMI.  The
+tracers will need to trigger irq_work to call it.
 
-The user selection would by default select all known link modes, using
-ethtool (ioctl or nl) would modify it, while the actually advertised
-modes would always be the intersection of user-selected modes and
-supported modes.
+> This scheme seems unsound
 
-Alternatively we could of course also introduce a dedicated NETLINK_ROUTE
-event which fires exactly one time once a new is PHY attached.
+It may not be communicated well in this thread.  We had much discussion
+at Cauldron the last few days.  The patch may be the best way to
+communicate it at this point, though I'm sure I missed some details.
 
-If there is any way to automically apply user-configured ethtool
-settings without any of the above, please be so kind and let me know how
-that would work also for PHYs on SFP modules.
+> pin yourself on CPU0 and trigger 1<<48 unwinds while keeping CPU1 idle.
 
-Thank you!
+Hm???
 
-With Best Regards
+> > > That is, we should have an interface like:
+> > > 
+> > > typedef void (unwinder_callback_t)(struct user_space_stack *, u64 cookie);
+> 
+> Just make it a void* and let the consumer figure it out.
 
-Daniel
+I think it makes sense to manage the cookie in the deferred unwinder
+since the need to correlate the stack traces is an inherent part of the
+deferral.
 
-[1]: https://git.openwrt.org/?p=project/netifd.git;a=commitdiff;h=68c8a4f94cd3cfd654a52cbc8b57c5c9d99640dd
+-- 
+Josh
 
