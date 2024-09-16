@@ -1,119 +1,126 @@
-Return-Path: <linux-kernel+bounces-330304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88243979C5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:00:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB14979C65
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C105284466
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:00:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0FC4B229AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F1E13D613;
-	Mon, 16 Sep 2024 08:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="COUQRoBX"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF64913DDDF;
+	Mon, 16 Sep 2024 08:02:01 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F811411EE
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9D6136357;
+	Mon, 16 Sep 2024 08:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726473619; cv=none; b=OZQNfdyfa6XnYqNZ8tMf5bEBW4uaRzqT6EQkbsl+vz3wYYIMJCYhhwgMpq5OiU5s+KMmDBs4b4pDs69GY4LxZyg424DRZWWbIggQ2q4+/B+/DLCRhUTSgJI91sR3u3vBYPnuTDHI67x/2DbacSv6BZ5DhFFefHDXH36AxQnavYI=
+	t=1726473721; cv=none; b=CVzIdlVXw8d2ExT2gQkW0Rgn0QXbEbLetufACW8XgrAIKxR0IoEhweiaDy3RgSKcgkSxF9DhVP7uwk6LCLqAQKT2jKaZpV3FQSYWMrzPB5qBPG+DeOXl44dzRks3Daz8r4hisuV9QsRCGgBamUTvu/6vpkuCJZy/xDEX+pSaIlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726473619; c=relaxed/simple;
-	bh=bJcXbdXi/bBMjFx84WzwakUtCeMe/SHb2HmqPvKtDhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YdxyMVBgw/+doUtE+sosOCVUoeN3xuq8QQXd1Zkn613x+Wsu1tpXKYcrDg+sSe3RjEDDTfYpaapHLycSf3qf+PeEcCYCr7gvBoW9X9826wF2g6Z73A/8Zg0g1S+PbrRkhTK+KAX4X+VymNnTw9SWMa2Yp+CeBKIbIk1rCfFHw1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=COUQRoBX; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f75aa08a96so41868291fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 01:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726473600; x=1727078400; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qudf2MQ3UZQreuuw4+jXlv16vEaaWx0V0RrDsu0g1yU=;
-        b=COUQRoBXB35m+pP4WNR2faXckZDal+QkNmmWw/KnXs6cHl67Cdhuv+ubK4Y0CBaxPR
-         I2DTdIMHFp3rl7SVConXn7FfZistrynd73BUnRLEdzYJl/uLqnsUOQXg00/B/EnDbWZH
-         wPYK7zugaRQkZffrGhI7j2QGdVK4iD5A83BAY9EFn+Rod2XPuGHqnb5Szcs7faESVMSp
-         aED0gtbtYV9thwkCID65sm5tVAL4Gk161BjAEkhAx7YHAlMvKMsVKoe1i6yvC69Z96ht
-         718yQrk+SXgQ8h6EKe1MvC7BOsKE+RW/St61pK0l3aKiNyCSvSrJkuMBoI46Nljh8V3V
-         YMNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726473600; x=1727078400;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qudf2MQ3UZQreuuw4+jXlv16vEaaWx0V0RrDsu0g1yU=;
-        b=wGPhq2qRPFbFXLlVXtl1ofLN6YR059a/n7peebCj/b/0KdeJh+9lxEYn5UTN2F6YXa
-         mUnoTrXDA/6Rhtv3qHsoa/04ZZoQ9c2KTAVeEuYl6AA8TzIOH2/GGqT0vB8An4utfjhB
-         N6NBUhjPIhOE9aATLCr5RL/IR/ECcI/56CoXU3dxsFnacdB7OpnDhWb5gdSBTzVj+8pL
-         EHvHlojaX2aDplEl0aYRvtdDyqlHV3g2Wi5pt2dV7mamLsoFepwkPwKjcOJiakd7vf/7
-         GWz87Zg44cAiRKatcJFNaaLCVWVOStRO3x7oRWDCUFLnoBGVZs4+PU3z5jqtTXuq2l4+
-         dOCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrracJ+hq8n496XSwLn3zypboA06fcA8r9+/Ir2/SRDeeKiP5sH5Psy/FFhXHy1UmLbjINRXvT8dBdqo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3ZLfCbF7YnQLJ8gm/xENQijuXBn+2vgciXZLFk8iFKW5UfbnQ
-	l+61dnKsOiNPnJwZy1aUmjkkT8YoIR3N96nrkaPQh4KKAFwJDhcDqpVPqmCp9w==
-X-Google-Smtp-Source: AGHT+IHdIkWMQR3aesRlGasdjYBJwe3tel2LE9D2ZWT2mM68cxw2NsWVmqtGdan6xXJwpw0uQcQ4aA==
-X-Received: by 2002:a2e:611:0:b0:2f3:cd4e:b929 with SMTP id 38308e7fff4ca-2f787f1cbe0mr55700981fa.34.1726473599876;
-        Mon, 16 Sep 2024 00:59:59 -0700 (PDT)
-Received: from [10.9.6.216] (vpn-konference.ms.mff.cuni.cz. [195.113.20.101])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89e1fsm2395943a12.72.2024.09.16.00.59.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 00:59:59 -0700 (PDT)
-Message-ID: <d0075562-6a21-4a87-b7f5-854f09c0743a@suse.com>
-Date: Mon, 16 Sep 2024 09:59:59 +0200
+	s=arc-20240116; t=1726473721; c=relaxed/simple;
+	bh=46/KW6t/Ri9qLs83dZwNcfB7QL78F1lTLAYCmSjs+g4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BZsoAN/4Q9akuHMERpLQghLMBprtHLqX4oL+xf0b4EimlIjhOrdyVbOH38VkD+Gr2nKhy+PikL5W34bsRjqePlHZrP/ItEbOKzDm1asCjLbBDOT00Crq+SaU1rsktdCvOVUdnk9g5YEYTSknAUi44siKMX/W5W6CA5a6tbLdvYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X6cjH0kRmz6L6ww;
+	Mon, 16 Sep 2024 15:58:11 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 827341400CB;
+	Mon, 16 Sep 2024 16:01:55 +0800 (CST)
+Received: from china (10.221.233.88) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Sep
+ 2024 10:01:46 +0200
+From: <gur.stavi@huawei.com>
+To: <gur.stavi@huawei.com>
+CC: <akihiko.odaki@daynix.com>, <andrew@daynix.com>, <corbet@lwn.net>,
+	<davem@davemloft.net>, <edumazet@google.com>, <jasowang@redhat.com>,
+	<kuba@kernel.org>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<mst@redhat.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<shuah@kernel.org>, <virtualization@lists.linux-foundation.org>,
+	<willemdebruijn.kernel@gmail.com>, <xuanzhuo@linux.alibaba.com>,
+	<yuri.benditovich@daynix.com>
+Subject: [PATCH RFC v3 2/9] virtio_net: Add functions for hashing
+Date: Mon, 16 Sep 2024 11:01:36 +0300
+Message-ID: <20240916080137.508-1-gur.stavi@huawei.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240916071253.462-1-gur.stavi@huawei.com>
+References: <20240916071253.462-1-gur.stavi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] xen/swiotlb: fix allocated size
-To: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev
-References: <20240916064748.18071-1-jgross@suse.com>
- <20240916064748.18071-3-jgross@suse.com>
-Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-In-Reply-To: <20240916064748.18071-3-jgross@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-On 16.09.2024 08:47, Juergen Gross wrote:
-> The allocated size in xen_swiotlb_alloc_coherent() and
-> xen_swiotlb_free_coherent() is calculated wrong for the case of
-> XEN_PAGE_SIZE not matching PAGE_SIZE. Fix that.
+> +
+> +static inline void virtio_net_toeplitz(struct virtio_net_toeplitz_state *state,
+> +				       const __be32 *input, size_t len)
 > 
-> Fixes: 7250f422da04 ("xen-swiotlb: use actually allocated size on check physical continuous")
-> Reported-by: Jan Beulich <jbeulich@suse.com>
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+> The function calculates a hash value but its name does not make it
+> clear. Consider adding a 'calc'.
+> 
+> +{
+> +	u32 key;
+> +
+> +	while (len) {
+> +		state->key++;
+> +		key = be32_to_cpu(*state->key);
+> 
+> You perform be32_to_cpu to support both CPU endianities.
+> If you will follow with an unconditional swab32, you could run the
+> following loop on a more natural 0 to 31 always referring to bit 0
+> and avoiding !!(key & bit):
+> 
+> key = swab32(be32_to_cpu(*state->key));
+> for (i = 0; i < 32; i++, key >>= 1) {
+> 	if (be32_to_cpu(*input) & 1)
+> 		state->hash ^= state->key_buffer;
+> 	state->key_buffer = (state->key_buffer << 1) | (key & 1);
+> }
+> 
 
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
+Fixing myself, in previous version 'input' was tested against same bit.
+Advantage is less clear now, replacing !! with extra shift.
+However, since little endian CPUs are more common, the combination of
+swab32(be32_to_cpu(x) will actually become a nop.
+Similar tactic may be applied to 'input' by assigning it to local
+variable. This may produce more efficient version but not necessary
+easier to understand.
 
-> --- a/drivers/xen/swiotlb-xen.c
-> +++ b/drivers/xen/swiotlb-xen.c
-> @@ -147,7 +147,7 @@ xen_swiotlb_alloc_coherent(struct device *dev, size_t size,
->  	void *ret;
->  
->  	/* Align the allocation to the Xen page size */
-> -	size = 1UL << (order + XEN_PAGE_SHIFT);
-> +	size = ALIGN(size, XEN_PAGE_SIZE);
+key = bswap32(be32_to_cpu(*state->key));
+for (u32 bit = BIT(31); bit; bit >>= 1, key >>= 1) {
+	if (be32_to_cpu(*input) & bit)
+		state->hash ^= state->key_buffer;
+	state->key_buffer =
+		(state->key_buffer << 1) | (key & 1);
+}
 
-The way you're doing it has further positive effects, as the size
-is now also no longer needlessly over-aligned. May want mentioning
-in the description. Hope of course is that no-one came to rely on
-the up-to-next-power-of-2 allocation anywhere (which of course
-would be a bug there, yet might end in a perceived regression).
-
-Jan
+> 
+> +
+> +		for (u32 bit = BIT(31); bit; bit >>= 1) {
+> +			if (be32_to_cpu(*input) & bit)
+> +				state->hash ^= state->key_buffer;
+> +
+> +			state->key_buffer =
+> +				(state->key_buffer << 1) | !!(key & bit);
+> +		}
+> +
+> +		input++;
+> +		len--;
+> +	}
+> +}
+> +
 
