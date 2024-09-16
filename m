@@ -1,67 +1,55 @@
-Return-Path: <linux-kernel+bounces-330547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BF697A005
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:08:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60EBB97A006
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B9728337D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169E21F22789
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9776157A55;
-	Mon, 16 Sep 2024 11:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AY0jUZP5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3992714E2DA;
-	Mon, 16 Sep 2024 11:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B88E153824;
+	Mon, 16 Sep 2024 11:08:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE7914E2DA
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726484868; cv=none; b=hc2F81Pc0xW8UXNpyawjJzPxGC6b8fG4TatzCC8aF5/OT8WOCByOFcJSXemIvvhP6gZop3HDzp+lvdWYA+rLUh/x6LZHhrvMYB9Yi2INmK1udi63LAhqrg6ACMfB5TMqOWj2ycUxGRw5GtNicGkKnw65bt6prFeptEdDE8N5pZk=
+	t=1726484890; cv=none; b=JbwRB8Pcete//VtEVTJAJkeDwtBeNpsdkLLJ9jRPciEIr3nzvUiBR0PQxG0LZiXX+2bqESC0sKRGZBw5De0uVT4NcK6Bp34cjCE7evbVcKJiOUKx5kSJ05NXqLKhzCiImQF85RLfqgBPeZcoH9FLvYCvDXHj8FLtv+s3dIUPSdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726484868; c=relaxed/simple;
-	bh=xD2s5On1ZCWWzafhSszKhanrFM8TIDWSq6PdNHlzYy0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nANs7SNLPQr/lvGKp2aRioyHycv1Qaw3ozC4Ycen5TpIBO7VPZVQ6gqJ8IlGzph+uKbjRyK3DJcTZaT9O0mlnJfTMqopEB47ZYPiCtFxjldh25ACiS6jtI1VpKxtxQm5LO8QCNa0DVK2wGNoH6esmjCYrwWZtfzX8avTC9OrCvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AY0jUZP5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7251C4CEC4;
-	Mon, 16 Sep 2024 11:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726484868;
-	bh=xD2s5On1ZCWWzafhSszKhanrFM8TIDWSq6PdNHlzYy0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AY0jUZP5uKNbnY5Z8u9a6VGpH+29Fu+8WquuEtw3+rXhKUC7QWKx2b4USwVrhInDH
-	 m/EbDH33kcy2drqRApYKAZTe7ccQGnXeWmMAsmYA2sMJ4D6o7Wtqb2/Tum+9+s58iF
-	 fhixB1bh2UNfyZ4TaE0F4FJFDBVrWqBkssb0W9jyuMxAskhzveCqLsBT/+tW4qx11E
-	 ZoU8MpjO0zqw7/66DE7H0fvQxemxbwsMzbjiYVXvx3OhMc4STH8fkZme24iBdzH7n1
-	 gQRI4Co0YUDx9z26/Ny/DsuJ1RCDoKrcRQ6s5gQUw9667/G+r5r6YxFFR9zeXC6DfC
-	 uLzUK1ql7nIlQ==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com,
-	roberto.sassu@huawei.com,
-	mapengyu@gmail.com,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v2 6/6] tpm: flush the auth session only when /dev/tpm0 is open
-Date: Mon, 16 Sep 2024 14:07:11 +0300
-Message-ID: <20240916110714.1396407-7-jarkko@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240916110714.1396407-1-jarkko@kernel.org>
-References: <20240916110714.1396407-1-jarkko@kernel.org>
+	s=arc-20240116; t=1726484890; c=relaxed/simple;
+	bh=uaEZ1MbpwYgSroam1wjoGjSbo4ur6XhSd2/N4jHG8pQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H7YVVcc5Wx+34/CToMVdb4H54Rb5g5RXAmzbHZVhGEf4GmfN2n8gBkTZJYmFejbfWE117CrG1R1yjTqEUjnoWG4LsnIoZklNCNcHW0xnhFukFqbsW5aE7vXe+b8Po98JeIoDa8D4lvK0NDZjo2RmvKLoh57W7HWCbxZjRv8OKy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AEF4711FB;
+	Mon, 16 Sep 2024 04:08:33 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.11])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 44EA23F64C;
+	Mon, 16 Sep 2024 04:07:58 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	willy@infradead.org
+Cc: ryan.roberts@arm.com,
+	anshuman.khandual@arm.com,
+	baohua@kernel.org,
+	hughd@google.com,
+	ioworker0@gmail.com,
+	wangkefeng.wang@huawei.com,
+	baolin.wang@linux.alibaba.com,
+	gshan@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v2 0/2] Compute contiguous empty PTEs for mTHP efficiently
+Date: Mon, 16 Sep 2024 16:37:52 +0530
+Message-Id: <20240916110754.1236200-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,71 +58,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of flushing and reloading the auth session for every single
-transaction, keep the session open unless /dev/tpm0 is open. In practice
-this means applying TPM2_SA_CONTINUE_SESSION to the session attributes.
-Flush the session always when /dev/tpm0 is written.
+We use pte_range_none() to determine whether contiguous PTEs are empty
+for an mTHP allocation. Instead of iterating the while loop for every
+order, use some information from the previous iteration to eliminate
+some cases.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- drivers/char/tpm/tpm-chip.c       | 1 +
- drivers/char/tpm/tpm-dev-common.c | 1 +
- drivers/char/tpm/tpm-interface.c  | 1 +
- drivers/char/tpm/tpm2-sessions.c  | 4 ++++
- 4 files changed, 7 insertions(+)
+v1->v2:
+ - Break into two patches
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 0ea00e32f575..7a6bb30d1f32 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -680,6 +680,7 @@ void tpm_chip_unregister(struct tpm_chip *chip)
- 	rc = tpm_try_get_ops(chip);
- 	if (!rc) {
- 		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+			tpm2_end_auth_session(chip);
- 			tpm2_flush_context(chip, chip->null_key);
- 			chip->null_key = 0;
- 		}
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 4bc07963e260..c6fdeb4feaef 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -29,6 +29,7 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 
- #ifdef CONFIG_TCG_TPM2_HMAC
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+		tpm2_end_auth_session(chip);
- 		tpm2_flush_context(chip, chip->null_key);
- 		chip->null_key = 0;
- 	}
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index bfa47d48b0f2..2363018fa8fb 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -381,6 +381,7 @@ int tpm_pm_suspend(struct device *dev)
- 	if (!rc) {
- 		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
- #ifdef CONFIG_TCG_TPM2_HMAC
-+			tpm2_end_auth_session(chip);
- 			tpm2_flush_context(chip, chip->null_key);
- 			chip->null_key = 0;
- #endif
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index f7746a165695..efe4b0017a83 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -268,6 +268,10 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- 	}
- 
- #ifdef CONFIG_TCG_TPM2_HMAC
-+	/* The first write to /dev/tpm{rm0} will flush the session. */
-+	if (!chip->is_open)
-+		attributes |= TPM2_SA_CONTINUE_SESSION;
-+
- 	/*
- 	 * The Architecture Guide requires us to strip trailing zeros
- 	 * before computing the HMAC
+v1: https://lore.kernel.org/all/20240913091902.1160520-1-dev.jain@arm.com/
+
+Dev Jain (2):
+  mm: Make pte_range_none() return number of empty PTEs
+  mm: Compute first_set_pte to eliminate evaluating redundant ranges
+
+ mm/memory.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
+
 -- 
-2.46.0
+2.30.2
 
 
