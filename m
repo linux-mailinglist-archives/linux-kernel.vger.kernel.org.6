@@ -1,92 +1,83 @@
-Return-Path: <linux-kernel+bounces-330631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8285A97A20E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:17:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FB897A20F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13A4C285A32
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:17:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97501C2183D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6498F14F9E2;
-	Mon, 16 Sep 2024 12:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D921527A7;
+	Mon, 16 Sep 2024 12:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bBQotW0F"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Df/SYPum"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4FC4962E;
-	Mon, 16 Sep 2024 12:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D23F4087C;
+	Mon, 16 Sep 2024 12:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726489043; cv=none; b=K87h7NF7rYwn1yTaeSeobMeNmeQJUqFPf79bSWWeOb3ljY9gvHAfLlKV/ce4b+HUhdGCBMMbYIQlkh77yw9D4swRHhwQWJpvzeZ8+MNxeautPgjva0M91nOhVuyXHwAr64yEcalOezpZW3lisBNkfxKtTyapMPPsa54o4B8ASA8=
+	t=1726489111; cv=none; b=GNOA3LTvP7TOgvHFP8/u07LjiW2BWbCaNGm7v+lyxlC/so0gjAc24m29cOWGlsx9gGYf2BHh+4F3K6xkw+xX6a8vUEmR0/f8p73Khz8V66+0GutTFe04IL6HCGhd3a7mPp5ws/cdUuL/pB7SXCN31AH0DJ4L86zbm7pesH2Z/qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726489043; c=relaxed/simple;
-	bh=dvlYiOpY5g2NVdxzbAje45G4DZQio7EFYusrXzQAzV8=;
+	s=arc-20240116; t=1726489111; c=relaxed/simple;
+	bh=bih7NtWKBsW8pZ2uAhBjyl1V2gWQzF6yEOi2em21bDM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kud6qLWApkdjemi/UL+jzSkFDPmUaNY7OgySyp9L2qQtUErmXN8b19U3Nm0rrfeNr1hW3xjiodVdy0CQCH8aTS5e+4fz6Z9a1CPw/b1BwWK4C7pmbwGt2xJcumlI6k4+5C3Psad23pbMqrV6eC2cqp8JjqLbF1t/cjOa/WtMdOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bBQotW0F; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48G1CZVA011227;
-	Mon, 16 Sep 2024 12:17:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=1D6pu5yAl2FG8jgwnGi4Bkydcfa
-	djCRMdlp2xLBpljw=; b=bBQotW0FZeXPBH78AtvSm/j3cQzU8irmAhiYZ59R0Wh
-	MOiXBFc7K3D4xdBgy0fD76fSVVY3ZnqSgGDB3QRGKgis84v8+4VIfYuOF37c6hlJ
-	U9ZDP/eywFBydk4cxXs9W2/05KW0g5Pc+Zqg3y+vmnycdpVC3M08rCArgl6eCTN+
-	ZH+Qfd0kkG/dTlgZV0l7mQgvhqaZH9e4xkhnCYU5Im3O3sl/7QgDIlSl5WBoglqs
-	Pkyhuwf6GVO8RbNM4w+p7s3UWXhGs7zQVFiOb3ePBVrSfCnOLjxKIbU/JNdmWJnW
-	nWbHLKtRn5hwrUci946WuuwXOXqmfbRylBs0G+xZbmw==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3uj1tcv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 12:17:03 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48GAhS2K001915;
-	Mon, 16 Sep 2024 12:17:01 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41nmtufhwd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 12:17:01 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48GCGwHa54329708
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Sep 2024 12:16:58 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4DF052004D;
-	Mon, 16 Sep 2024 12:16:58 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B6D6920043;
-	Mon, 16 Sep 2024 12:16:57 +0000 (GMT)
-Received: from osiris (unknown [9.171.58.79])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 16 Sep 2024 12:16:57 +0000 (GMT)
-Date: Mon, 16 Sep 2024 14:16:56 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        linux-s390@vger.kernel.org,
-        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        linux-trace-kernel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v14 04/19] function_graph: Replace fgraph_ret_regs with
- ftrace_regs
-Message-ID: <20240916121656.20933-B-hca@linux.ibm.com>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
- <172615373091.133222.1812791604518973124.stgit@devnote2>
- <20240915051559.435abfcd@rorschach.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HkxN2q6CSchnc2c+OaPGhhqNgRmPQ8YHTwz/xJCYOrICLnMzTtGUDXL6P9+oLlvBLHBT9O3/wHEiww6M37U3KRKYs9KZHBXGp3PY4eX38M54fPw/0bIsl5zBmuDPr1D/wJZqr90egkq5tLLzg5s3GQv03PpwIlkmJyYktf+CPDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Df/SYPum; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726489109; x=1758025109;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bih7NtWKBsW8pZ2uAhBjyl1V2gWQzF6yEOi2em21bDM=;
+  b=Df/SYPumej73Rnn1N6Pr4O4pQWEL/vF86PrDeZEGSoF9qvXFhd9X0Ueo
+   Uw+4ZZ0aEmiMVsDenTx5I6xUdIe0TztYXeIEDWYpSzG01NecOR0GFxZqx
+   vLJa+iRuHuwDvtX02o9UgAhfzGyurKrQxUb90VrX00miZTJW1G0y/UIZv
+   jkNPcIhIOIx6Obt37ZC6MUVtyDtkag71r9Yl7X0QZbF/jDl4/EPsWSLpl
+   7UZo0x+uFZD6iwpjHTF3Ap8cMW2WJozojj8CLLEH63Trq2OTraBgpE5uF
+   QMGDyN0Ron1l8mpArk3O+rNfJtCuc84qjFNUiZKEYh+SznVrpoiv5XgPl
+   w==;
+X-CSE-ConnectionGUID: 390A4T3uToCo1iijxxD3Aw==
+X-CSE-MsgGUID: SbSdTwBcR5KpdZywbEPVLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="25511733"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="25511733"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 05:18:20 -0700
+X-CSE-ConnectionGUID: x3dG418tQQeFLCVpqq8lig==
+X-CSE-MsgGUID: cYx9rhtHSdiy00idnX8UEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="106304318"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 05:18:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sqAgJ-00000009S9y-237A;
+	Mon, 16 Sep 2024 15:18:15 +0300
+Date: Mon, 16 Sep 2024 15:18:15 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
+ printk(KERN_ERR ...) with pr_err()
+Message-ID: <ZugiB0GoNF50OdYC@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+ <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
+ <2024091438-charity-borough-54b3@gregkh>
+ <ZugAeVWeMZGtjYme@smile.fi.intel.com>
+ <2024091632-oboe-subfloor-afc8@gregkh>
+ <ZugJT4nl1l04biJd@smile.fi.intel.com>
+ <20240916080410.464c2b5f@SWDEV2.connecttech.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,100 +86,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240915051559.435abfcd@rorschach.local.home>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: hn8g-7rXOsw8rZzdW_yoBnCJwpudOsHo
-X-Proofpoint-GUID: hn8g-7rXOsw8rZzdW_yoBnCJwpudOsHo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-16_08,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=22 priorityscore=1501
- mlxlogscore=56 adultscore=0 phishscore=0 spamscore=22 lowpriorityscore=0
- clxscore=1011 bulkscore=0 suspectscore=0 mlxscore=22 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409160075
+In-Reply-To: <20240916080410.464c2b5f@SWDEV2.connecttech.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, Sep 15, 2024 at 05:15:59AM -0400, Steven Rostedt wrote:
+On Mon, Sep 16, 2024 at 08:04:10AM -0400, Parker Newman wrote:
+> On Mon, 16 Sep 2024 13:32:47 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Mon, Sep 16, 2024 at 12:25:52PM +0200, Greg Kroah-Hartman wrote:
+> > > On Mon, Sep 16, 2024 at 12:55:05PM +0300, Andy Shevchenko wrote:
+> > > > On Sat, Sep 14, 2024 at 08:58:50PM +0200, Greg Kroah-Hartman wrote:
+> > > > > On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
+
+...
+
+> > > > > > -			printk(KERN_ERR "%s: timeout\n", __func__);
+> > > > > > +			pr_err("%s: timeout\n", __func__);
+> > > > >
+> > > > > It's a device, please use dev_err().
+> > > >
+> > > > The problem is that this library doesn't know about this fact. I.e. it would
+> > > > need a new member just for this message. Instead, maybe drop the message as we
+> > > > anyway get a unique enough error code?
+> > >
+> > > Fair enough, although adding real device pointers would be good to do in
+> > > the future...
+> >
+> > Let's then do it when it will be the real need? Because I don't think this
+> > message is _so_ important. I believe one of the upper layers (whichever calls
+> > this function) should propagate the error code up to the user space. If it's
+> > not the case _that_ has to be fixed.
+> >
+> > TL;DR: Let's remove the message for now.
 > 
-> Can I get an Acked-by from the S390 maintainers for this patch?
+> I can remove the message or leave it as is and drop this patch from the series.
+> One could make the argument that any error indication it is better than none
+> in this case.
 
-...
+I think you can drop the message and make the patch to be last in the series,
+so it can be easily abandoned (in case that decision will be made) without
+throttling the rest. At the same time in the commit message explain that with
+move to read_poll_timeout() we drop the seems redundant message. I'm fine with
+that approach. But at the end of the day it's not that critical to the main
+purpose, i.e. cleaning up the Exar serial driver.
 
-> > +static __always_inline unsigned long
-> > +ftrace_regs_get_frame_pointer(struct ftrace_regs *fregs)
-> > +{
-> > +	unsigned long *sp;
-> > +
-> > +	sp = (void *)ftrace_regs_get_stack_pointer(fregs);
-> > +	return sp[0];	/* return backchain */
-> > +}
-> > +
+-- 
+With Best Regards,
+Andy Shevchenko
 
-...
 
-> > diff --git a/arch/s390/kernel/mcount.S b/arch/s390/kernel/mcount.S
-> > index ae4d4fd9afcd..cda798b976de 100644
-> > --- a/arch/s390/kernel/mcount.S
-> > +++ b/arch/s390/kernel/mcount.S
-> > @@ -133,14 +133,15 @@ SYM_CODE_END(ftrace_common)
-> >  SYM_FUNC_START(return_to_handler)
-> >  	stmg	%r2,%r5,32(%r15)
-> >  	lgr	%r1,%r15
-> > -	aghi	%r15,-(STACK_FRAME_OVERHEAD+__FGRAPH_RET_SIZE)
-> > +# Allocate ftrace_regs + backchain on the stack
-> > +	aghi	%r15,-STACK_FRAME_SIZE_FREGS
-> >  	stg	%r1,__SF_BACKCHAIN(%r15)
-> >  	la	%r3,STACK_FRAME_OVERHEAD(%r15)
-> > -	stg	%r1,__FGRAPH_RET_FP(%r3)
-> > -	stg	%r2,__FGRAPH_RET_GPR2(%r3)
-> > +	stg	%r2,(__SF_GPRS+2*8)(%r15)
-> > +	stg	%r15,(__SF_GPRS+15*8)(%r15)
-> >  	lgr	%r2,%r3
-> >  	brasl	%r14,ftrace_return_to_handler
-> > -	aghi	%r15,STACK_FRAME_OVERHEAD+__FGRAPH_RET_SIZE
-> > +	aghi	%r15,STACK_FRAME_SIZE_FREGS
-
-This does not pass the ftrace selftests. Please merge the patch below
-into this patch. With that:
-
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
-
-diff --git a/arch/s390/include/asm/ftrace.h b/arch/s390/include/asm/ftrace.h
-index 7b80ff4d3386..df5a0f8d3445 100644
---- a/arch/s390/include/asm/ftrace.h
-+++ b/arch/s390/include/asm/ftrace.h
-@@ -78,10 +78,7 @@ ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
- static __always_inline unsigned long
- ftrace_regs_get_frame_pointer(struct ftrace_regs *fregs)
- {
--	unsigned long *sp;
--
--	sp = (void *)ftrace_regs_get_stack_pointer(fregs);
--	return sp[0];	/* return backchain */
-+	return ftrace_regs_get_stack_pointer(fregs);
- }
- 
- static __always_inline unsigned long
-diff --git a/arch/s390/kernel/mcount.S b/arch/s390/kernel/mcount.S
-index cda798b976de..10b08e617306 100644
---- a/arch/s390/kernel/mcount.S
-+++ b/arch/s390/kernel/mcount.S
-@@ -133,13 +133,12 @@ SYM_CODE_END(ftrace_common)
- SYM_FUNC_START(return_to_handler)
- 	stmg	%r2,%r5,32(%r15)
- 	lgr	%r1,%r15
--# Allocate ftrace_regs + backchain on the stack
-+	# allocate ftrace_regs and stack frame for ftrace_return_to_handler
- 	aghi	%r15,-STACK_FRAME_SIZE_FREGS
- 	stg	%r1,__SF_BACKCHAIN(%r15)
--	la	%r3,STACK_FRAME_OVERHEAD(%r15)
--	stg	%r2,(__SF_GPRS+2*8)(%r15)
--	stg	%r15,(__SF_GPRS+15*8)(%r15)
--	lgr	%r2,%r3
-+	stg	%r2,(STACK_FREGS_PTREGS_GPRS+2*8)(%r15)
-+	stg	%r1,(STACK_FREGS_PTREGS_GPRS+15*8)(%r15)
-+	la	%r2,STACK_FRAME_OVERHEAD(%r15)
- 	brasl	%r14,ftrace_return_to_handler
- 	aghi	%r15,STACK_FRAME_SIZE_FREGS
- 	lgr	%r14,%r2
 
