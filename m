@@ -1,55 +1,79 @@
-Return-Path: <linux-kernel+bounces-330460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496DE979ECF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:55:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3921979ED1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 018691F23D56
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D90D283A7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4E814EC4B;
-	Mon, 16 Sep 2024 09:54:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A29714E2E3;
-	Mon, 16 Sep 2024 09:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E72B1CF83;
+	Mon, 16 Sep 2024 09:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ipiij/ay"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B75114A4E2;
+	Mon, 16 Sep 2024 09:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726480494; cv=none; b=JvlyHFYkYKNcAkxnkgtQAVo082Hw1c17mFC315Go0KAmz7sqe0NuwKftIULfF0FmLKU6xmZXH/r+hSAwVFgoyhGDdFAcT83tmpImAieopqIHpBZgckGCWapUlSi5TN6XEk39TB4lUT32AgQ228XKzuliDRfrULDdN00CbRHE74s=
+	t=1726480513; cv=none; b=AXsxVP2qUyKCpiMea8BCu2M6BTz8bxwUub+B0YShsl3jvz4XnhoBIXpXO3gVYeqphMV7J27k9wzpvuC5TVZkD49FS3dYFg8E70iTP8qz1pi1lTb2huVBzUn/y5P5ywkXTgLp/y92lkZipPCcqLLQLgXfuJY/YrDarOYt+ZueTy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726480494; c=relaxed/simple;
-	bh=3zhFERW+ABv2xBeqqfsJmsFaCIsJm9felNo1s/sH2Nk=;
+	s=arc-20240116; t=1726480513; c=relaxed/simple;
+	bh=/WFKC3SoO7nnl0ody5g+rBvMFJbQKowrTvuCU4rEXK4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJW9tdvTWLRYqX39/NzSTWY2q8LbzzU9WnRaEfobvyL14y2E0o1NCCmADIWAeSnJb5jt+Ktqc0WlOE3GUWWPGOq/3JwsDFE8M6Zw6y1k5ZHwUpuJbAOlbHqFr8ZHpnMUfB1RNuioQB66QU8/5oWbpUp2ZCgdH3mayy/ihvatX5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C28211FB;
-	Mon, 16 Sep 2024 02:55:21 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6DA363F64C;
-	Mon, 16 Sep 2024 02:54:49 -0700 (PDT)
-Date: Mon, 16 Sep 2024 10:54:40 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, devicetree@vger.kernel.org,
-	sudeep.holla@arm.com, james.quinlan@broadcom.com,
-	vincent.guittot@linaro.org, etienne.carriere@st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
-	quic_nkela@quicinc.com, dan.carpenter@linaro.org,
-	souvik.chakravarty@arm.com, robh@kernel.org, krzk+dt@kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v1 3/6] firmware: arm_scmi: Use max-rx-timeout-ms from
- devicetree
-Message-ID: <Zuf_3D636c3JXypF@pluto>
-References: <20240730144707.1647025-1-cristian.marussi@arm.com>
- <20240730144707.1647025-4-cristian.marussi@arm.com>
- <1ea7fff0-149d-408a-b5a7-1b223e8509d0@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MyhLY3QUZm8zQBWH/E7c6sSECd8ndcPRv3LvSRIA6+upm48fQW9gPgue3NKxM3gDvRiT3p15kfhE9u5cOmV84eet3TFMfgNpuvneKp0FbojL3HV1u/mnZ64/cmVeD7N2gKoMGgvSdH8YGZODIPrB/mLpg/1o0uh+G1aU9Ht06WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ipiij/ay; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726480512; x=1758016512;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/WFKC3SoO7nnl0ody5g+rBvMFJbQKowrTvuCU4rEXK4=;
+  b=Ipiij/ayEK8afb6kIU4aaojVr+9CZpYnnTD4CFrrxKJPWY0oGesxBTTk
+   jEfBgg6B1yaDWC+yUujmJCW4moj3TUwvDiLcipGMXVQPXuVT85cRjbNEz
+   GLOvxXhuTDQpQ8dn8/Yva5jr4V10VXemXZhOdEsENogluv8GC4r+y7LaE
+   QvZ3KwFtdQ01EgMgP5fkXvccUQMt/tckbQEUT+eB7MbgGLfpdBT50JVzm
+   rg4vL7M8S0lRno7rjDamKcYQV+blErAJFAh4M6Yxk95XQJI6gNUuu/qd2
+   f36/AvE+Bin8BmT4J2xm9hyDKNmdo0OwVvSifwhCD/MmUpb8BwKJbJtVI
+   Q==;
+X-CSE-ConnectionGUID: 0y8ZCWAJT1im7eltVOv5Xg==
+X-CSE-MsgGUID: Bb2sifChQmOrPPOclar5JQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="42774824"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="42774824"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:55:11 -0700
+X-CSE-ConnectionGUID: HBZnngcETzKM3OIs32/ToA==
+X-CSE-MsgGUID: b1OfRFM3QdmSW2Eh4EZ6WQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="68699289"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:55:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sq8Rm-00000009PeS-1LiL;
+	Mon, 16 Sep 2024 12:55:06 +0300
+Date: Mon, 16 Sep 2024 12:55:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Parker Newman <parker@finest.io>, Jiri Slaby <jirislaby@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
+ printk(KERN_ERR ...) with pr_err()
+Message-ID: <ZugAeVWeMZGtjYme@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+ <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
+ <2024091438-charity-borough-54b3@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,77 +82,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1ea7fff0-149d-408a-b5a7-1b223e8509d0@gmail.com>
+In-Reply-To: <2024091438-charity-borough-54b3@gregkh>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Sep 12, 2024 at 02:05:53PM -0700, Florian Fainelli wrote:
-> On 7/30/24 07:47, Cristian Marussi wrote:
-> > Override default maximum RX timeout with the value picked from the
-> > devicetree, when provided.
-> > 
-> > Suggested-by: Peng Fan <peng.fan@nxp.com>
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> > ---
-> >   drivers/firmware/arm_scmi/driver.c | 9 +++++++++
-> >   1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> > index 332cd5207bbc..e7dab0eea540 100644
-> > --- a/drivers/firmware/arm_scmi/driver.c
-> > +++ b/drivers/firmware/arm_scmi/driver.c
-> > @@ -2964,6 +2964,7 @@ static int scmi_debugfs_raw_mode_setup(struct scmi_info *info)
-> >   static const struct scmi_desc *scmi_transport_setup(struct device *dev)
-> >   {
-> >   	struct scmi_transport *trans;
-> > +	int ret;
-> >   	trans = dev_get_platdata(dev);
-> >   	if (!trans || !trans->desc || !trans->supplier || !trans->core_ops)
-> > @@ -2980,6 +2981,14 @@ static const struct scmi_desc *scmi_transport_setup(struct device *dev)
-> >   	dev_info(dev, "Using %s\n", dev_driver_string(trans->supplier));
-> > +	ret = of_property_read_u32(dev->of_node, "max-rx-timeout-ms",
-> > +				   &trans->desc->max_rx_timeout_ms);
-> > +	if (ret && ret != -EINVAL)
-> > +		dev_err(dev, "Malformed max-rx-timeout-ms DT property.\n");
-> > +
-> > +	dev_info(dev, "SCMI max-rx-timeout: %dms\n",
-> > +		 trans->desc->max_rx_timeout_ms);
->
+On Sat, Sep 14, 2024 at 08:58:50PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
 
-Hi Florian,
- 
-> I am bit on the fence on that change, it is useful, and we have done similar
-> things before using a command line parameter.
+...
+
+> > -			printk(KERN_ERR "%s: timeout\n", __func__);
+> > +			pr_err("%s: timeout\n", __func__);
 > 
+> It's a device, please use dev_err().
 
-I think the requirement around this as it came from from NXP/Peng was that,
-depending on the design (HW/FW) of the SCMI platform at hand it can be that
-the same default transport timeout (that is by itself much larger than
-usually needed) could still be not enough for the transport: I think the
-example was mentioning a system with many agents, so that your request
-could end-up been "bootle-necked" in the execution queue of the server (AFAIU)
+The problem is that this library doesn't know about this fact. I.e. it would
+need a new member just for this message. Instead, maybe drop the message as we
+anyway get a unique enough error code?
 
-In such a case (if you cannot avoid the issue at first by reviewing your
-design...) you have the effective need of describing that specific
-platform/transport timeout characteristic and override the built-in default....
+-- 
+With Best Regards,
+Andy Shevchenko
 
-...it was not meant to be usead as a plain configuration....even though I
-suppose this is sort of a matter of interepretation (and that can be
-abused downstream...)
 
-> This is definitively useful when bringing up new systems where you might be
-> sprinkling enough debugging messages that this pushes your message
-> processing logic too close to the default 30ms timeout. For normal use
-> cases, we really want the message timeout to be as small as possible for
-> most SCMI traffic but if we want the timeout to be configurable, that might
-> have have to be on a per-message basis.
-
-A per-message timeout would need a lot of re-design, but how would you tune
-then all the possibly different timeouts across different platforms and/or
-transports combinations...this seems something that could need a lot of
-runtime calibration and re-configuration on a live system....
-
-...have you specifically seen the need for such varying per-message
-timeout in some specific case ?
-
-Thanks,
-Cristian
 
