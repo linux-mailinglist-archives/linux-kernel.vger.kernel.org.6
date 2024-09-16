@@ -1,64 +1,55 @@
-Return-Path: <linux-kernel+bounces-330881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034DA97A5A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7574597A5A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E0F1C26D63
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:02:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A78751C21530
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465DB158D8B;
-	Mon, 16 Sep 2024 16:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="htgeAxRB"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796861598F4;
+	Mon, 16 Sep 2024 16:03:12 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC02017BBE;
-	Mon, 16 Sep 2024 16:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160391591E3;
+	Mon, 16 Sep 2024 16:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726502553; cv=none; b=PzmR5sYpw2c5Y6cc03VlXvADfM72G+bi39Eg5BZyqWv6O9svcjjHVxT7mMHnVhkKL2Rq4fMZBQ56vtRJp7RV/jQwpy+CGFCWVbsQ9pPjisMCzoluPLm968Eg8k44lzB57HJw3V8ZO9kTg1W5q3ASahc5P44WtcUKnItks2qu9EQ=
+	t=1726502592; cv=none; b=YUgrCQ68decKDrA3DTeKRK950i6u8SFEQAjTKEXww7N2dN3m7zeaSNhxB8B8NEI0Bng3kiM14VbAkWo80njq1d+pax1RjcyeWNG+I44sVK9NJHW6hmK8bHZhw5h1CSlIqBK6456l0zgMwYdvX9wZiXGnJudSDf9HPMuK+D9xXpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726502553; c=relaxed/simple;
-	bh=VZlVOuY55Uwha8jbHpFBDh8CI6nnxWJZFJUh3f72mE4=;
+	s=arc-20240116; t=1726502592; c=relaxed/simple;
+	bh=u1662HiCda+ve3938ZUL5Loi0C7HfAACBcd9KXaPmjI=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CaOt+qLhT+bNNPtt5VfQFpIs77jP3DpO0uuef127D9esd1/8tdDOx2JT46oAE/baYPso4uOFLmvfC1ZWPjoyZtdTHWFUCXnWV9LCYKujr1iYORmIaB3+h9dFa7tTPopLlZBNRt5ek/jyk8fzoX0I+s5qKa/rCDwmPqpzX1gpwt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=htgeAxRB; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BD8601C0003;
-	Mon, 16 Sep 2024 16:02:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726502548;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQHeSPJDt1F5HuxussnlWPGoLt9OS1n1VetyeQjzbPQ=;
-	b=htgeAxRB74MW6DqqY8w9AcbzOzCx4b3hsxVYuMe5mb1n4Mz2B0RsaaQG5qhQrSfJ3Y+DtB
-	JlYTErK5/vB8yX8iRAq1nmawTBt503hODlZ9JciuAsHdWAHMWMDNW0fWkZ3zniIhNLrTdG
-	718iZAyXsTc8PRJRf/w0LjGAOqz70nYAYRS5tr62gZr3PBgL4iyPjxlHvWksA0OP/7gkYt
-	ukNi97kKBx9Y0w1fOnF+WPvCplDgVxCGZyRrJh3ReYBzQCtyN32xz++/h+OWTHzLUU2C/w
-	/ZTWRQHoOY1Ipwr2v7VKaEhItMBTs0CYeGQtD8Y3EULKa/Tq/0HmMfP79Ck4fA==
-Date: Mon, 16 Sep 2024 18:02:24 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Kory Maincent
- <kory.maincent@bootlin.com>, Edward Cree <ecree.xilinx@gmail.com>, Andrew
- Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, "David S. Miller"
- <davem@davemloft.net>, John Crispin <john@phrozen.org>
-Subject: Re: ethtool settings and SFP modules with PHYs
-Message-ID: <20240916180224.39a6543c@fedora.home>
-In-Reply-To: <ZuhQjx2137ZC_DCz@makrotopia.org>
-References: <ZuhQjx2137ZC_DCz@makrotopia.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=QHpXdMmNhS0ONG39jWOVf0u8PNEjYmeOGbMgszcym/rqe+DU8ZReiwth1kFuPHSWJn4wxf7MVLgWY2ynfYa95dhMvCe12kaW0rkCK/zC1k0sQKMFzRShui3NCDPgfY8lwxXWfMb/oxlPDV8EdtuEagcKM/4YOXqQ5ypt8dnz0lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F008C4CEC4;
+	Mon, 16 Sep 2024 16:03:07 +0000 (UTC)
+Date: Mon, 16 Sep 2024 12:03:02 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org, Ingo Molnar
+ <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>, Mark
+ Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian
+ Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, Mark
+ Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, Jordan Rome
+ <jordalgo@meta.com>, Sam James <sam@gentoo.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v2 00/11] unwind, perf: sframe user space unwinding,
+ deferred perf callchains
+Message-ID: <20240916120302.0005b499@rorschach.local.home>
+In-Reply-To: <20240916140856.GB4723@noisy.programming.kicks-ass.net>
+References: <cover.1726268190.git.jpoimboe@kernel.org>
+	<20240914081246.1e07090c@rorschach.local.home>
+	<20240915111111.taq3sb5xzqamhb7f@treble>
+	<20240916140856.GB4723@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,75 +58,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hello Daniel,
+On Mon, 16 Sep 2024 16:08:56 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-On Mon, 16 Sep 2024 16:36:47 +0100
-Daniel Golle <daniel@makrotopia.org> wrote:
-
-> Hi,
+> > 
+> > I think the biggest tweak we decided on is that the context id (aka
+> > "cookie") would be percpu.  Its initial value is (cpuid << 48).  It gets
+> > incremented for every entry from user space.  
 > 
-> I'm wondering how (or rahter: when?) one is supposed to apply ethtool
-> settings, such as modifying advertisement of speed, duplex, ..., with
-> SFP modules containing a PHY.
+> Why? What's the purpose of the cookie? This scheme seems unsound, pin
+> yourself on CPU0 and trigger 1<<48 unwinds while keeping CPU1 idle.
 > 
-> My first approach was to try catching the event of the PHY being
-> attached and then re-applying ethtool settings[1]. As there isn't a
-> dedicated event for that, I found that IFF_UP && !IFF_LOWER_UP is as
-> close as it gets.
+> > > That is, we should have an interface like:
+> > > 
+> > > typedef void (unwinder_callback_t)(struct user_space_stack *, u64 cookie);  
 > 
-> However, that doesn't go well with some PHY drivers and the result seems
-> to depend on a race condition.
-> 
-> Simply ignoring the supported link modes and assuming the kernel would
-> filter them also doesn't work as also the advertised modes get reset
-> every time the SFP module is removed or inserted.
-> 
-> Do you think it would make sense to keep the user selection of
-> advertised modes for each networking device accross removal or insertion
-> of an SFP module?
-> 
-> The user selection would by default select all known link modes, using
-> ethtool (ioctl or nl) would modify it, while the actually advertised
-> modes would always be the intersection of user-selected modes and
-> supported modes.
+> Just make it a void* and let the consumer figure it out.
 
-The problem I see is that the modes can change completely depending on
-the SFP module that's inserted. If say, you plug a Copper module,
-filter advertising to 100BaseT, unplug it, then plug a Fiber module,
-you end-up with nothing in the intersection.
+Let me try to explain the rationale for the "cookie". It's actually a "context_cookie".
+The cookie is unique for every time user space enters the kernel.
 
-Same goes for speed limitation. You can plug a copper SFP, limit the
-speed to 100M, switch it with a Fiber SFP that does 1000BaseX, and here
-100Mbps isn't possible, and you have an invalid setting.
+Basically it's a "tag" (we could call it that too, but "cookie" seemed
+more appropriate as it follows what web browsers do). The idea is this:
 
-> 
-> Alternatively we could of course also introduce a dedicated NETLINK_ROUTE
-> event which fires exactly one time once a new is PHY attached.
+ * You're in interrupt context and want a user space back trace, and
+   request to have a user stack trace when the task goes back to user
+   space. Now the unwinder will return the current context cookie" and
+   will use that same cookie when it creates the user stack on exit
+   back to user space.
 
-That could be done. We have netlink messages in ethtool that report the
-PHYs existing on the link (ETHTOOL_A_PHY_GET), that's new and still in
-net-next. There's no notification yet, but this is something doable,
-adding a netlink notification to indicate that a new PHY was attached.
+* If this happens in a long system call that does many stack traces
+  (records the kernel stack and also wants the user stack), it does not
+  record the user trace at the time it is requested. But we need a way
+  to tag this event with the user stack trace that will happen when the
+  user stack is recorded when going back to user space. We can't pin
+  the task to the CPU when we want to profile it. The cookie/tag needs
+  to be the same for every request that happens with a single entry
+  into the kernel. It must be different for another entry into the
+  kernel as the user stack will be different then.
 
-While this doesn't exist yet, you can take a look at the recent
-phy_link_topology work, that allows you to list the PHYs attached to a
-netdev, including the ones in SFP modules [1].
+  Basically think that each cookie represents a single user stack.
 
-A workaround for you can be to wait until the SFP PHY show up in
-ethtool --show-phys ethX (it's parent SFP bus name will be populated,
-you can filter on that), then re-apply your settings. You'll need a
-recent ethtool [2].
+* When going back to user space, the ptrace path is taken and the user
+  stack trace is recorded. It will then call the tracers that requested
+  it with the stack trace and the cookie that represents it.
 
-A notification would indeed be better, and is something I can prototype
-quickly. I was hesitating to add that, but as you show interest in
-this, I'm OK to move forward on that :)
+Here's an example:
 
-[1]: https://lore.kernel.org/netdev/20240821151009.1681151-1-maxime.chevallier@bootlin.com/
-[2]: https://git.kernel.org/pub/scm/network/ethtool/ethtool.git/commit/?h=next&id=b3ee7c0fa87032dec614dcc716c08a3b77d80fb0
+system_call() {
 
-Thanks,
+	<interrupt> trigger user stack trace: assign cookie 123
+		tracer records kernel stack trace and adds cookie 123.
 
-Maxime
+	<interrupt> trigger user stack trace: assign cookie 123
+		tracer records kernel stack trace and adds cookie 123.
+
+	<interrupt> trigger user stack trace: assign cookie 123
+		tracer records kernel stack trace and adds cookie 123.
+
+
+	<return to user space, take ptrace path>
+
+	<record user stack trace>
+	call all the tracers with user stack trace with cookie 123.
+}
+
+system_call() {
+
+	<interrupt> trigger user stack trace: assign cookie 124
+		tracer records kernel stack trace and adds cookie 124.
+
+	<return to user space, take ptrace path>
+
+	<record user stack trace>
+	call all the tracers with user stack trace with cookie 124.
+}
+
+
+Then the tracers can post process the events and append the user stack
+trace with cookie 123 on top of the kernel stack events that had cookie
+123, and append the user stack trace with cookie 124 on top of the
+kernel stack events that had cookie 124.
+
+-- Steve
 
