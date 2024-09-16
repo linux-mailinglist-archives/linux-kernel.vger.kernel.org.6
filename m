@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-330658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FC197A261
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:35:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863B997A265
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532011C24AD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:35:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30D681F23C76
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEF4154BEB;
-	Mon, 16 Sep 2024 12:35:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F91154BEB;
+	Mon, 16 Sep 2024 12:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="LOq0VcC6"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09204C70
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00A94C70;
+	Mon, 16 Sep 2024 12:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726490128; cv=none; b=cveTA6S+KcHtKQKCxXJGm6sRLxcS9AMidP4y43rNESjeJRbbmLm4fDaj+Tb9hKRNZADVtrOGh8Q9HBVsQy3w5lIrkdFsnANBqEEq+viI0iQfi3OhAKra/IVKtZ4mNjw6DOcvkLv38KhD4kUFns6Z5RPNoNQJG2C/Qn7pSQV7WUM=
+	t=1726490243; cv=none; b=FoilA5ItSCjaS2b+cDEjfaoN/Za5Xw05g8ARhw9q+x4jEP89pcsOZV8sksMTz19ZaGMsBFccFjgQ6FBBAg8zzPtWYGi95P0KvTFmze2fC3Bhf6JcKmFscT28Ij2mTg3xnJLpNb9onKGSayjGTQqOqbq62hH5xqsNb12FGkiN2Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726490128; c=relaxed/simple;
-	bh=7ihM5m4xYiXXJMVZ6qnBaJ2jDCZdGGV/4+zxwGcADT0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=e0z6PmdqpeICNJWn6iPtw8YPW8jZ6PIiGmavcjut9CTEjxORtwcZNsEe9m5QQ9GBqm9cytbMKLVw5FSLGtiWvHdzxWm9z5YE6yGNuY4zOdxq9pJQ+ZEuB/DTumowtSd3JharY10C7pJDmETuUe3koqC2KTROMDpDIzTHrlUyg2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f53b1932aso74191385ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:35:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726490126; x=1727094926;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dwY9h5Q5x6R+zn5FfpHHLLD1pG8RAJIsVnvThQ4msJ8=;
-        b=W6GPHiNjnJV8pTvF8Mug0gAKGAgDndpFeM7WW05hIUPhkOmhBzCehnBP4213WHQgsT
-         H5ss1OHpn33YvOOBv2ZHXSbtBLrEZMU4DOqB53g1i2a1vQ6vn835LPHDaMf6eq3/GdYy
-         FjKZjS8hnFOLoPrUue3VPq6ew8bxmY9eXCvBRKLsq0D6dPbSlzVDYe0Dmx15dicYV/Me
-         yKyisco16RpFLjOrtj8+l9eb+yHi3rbw7VuhbtbLPJRlRb+kez8FbKSWzep+Si7grmuz
-         twuNE+OlgnImfqEWSiXqlwhbOFVLBvuS0P25dvP6ZmJ7PQANyyzpX3N7TUTbD6a9Pkmf
-         +CMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBcoSI/APwzKB/asyzKxO6uf71JrgbWXeq0vZwmgGNCus9uKLF6NOuTMQU+w7A3WD8R5rAvg8eYvHity4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZChXqUjXl+FkDt7XdXxOM6POHMeRzF0hRfw6MwMhk066fY4NL
-	XRsqQEYK8hJwW2Fv9rIQtdCEHBhysZGgMH/+MOKmo8x6jFtJR7tveYNmY/Cpw3QIcRxDx8edzVC
-	KzD5HLCwtfjw7sqg49kX2DVC5sG95CIR5/45Xbo6XsJu6IGfK5CgmG58=
-X-Google-Smtp-Source: AGHT+IEqSamn73OAR8wii+icocxFfo8TX+A/fJcNjvyIr/koS2bA4c+aRXkcl0Ydw3NjKK2ngwtXsky0jQtb4WoiiL9QxMXZIQkB
+	s=arc-20240116; t=1726490243; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=I6f1oysyBZ7SPa3B30685FTFtbJaBtNaccn1sck242UQEvEEXyzizd6e3U+b8QT+3hhpwer1gIu5xP8STV/UROZMUx4Dzrf8R/tChKrhRQQomnxQWqtg8BPxHFvSa5KCJrJ1GJ3WFPNjWyinZrhPKzg9It30f0f0Y0JCugA0zyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=LOq0VcC6; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1726490238; x=1727095038; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=LOq0VcC6QZr8ESrHfEYicdpyrwLLNTYYGgmNqY7YKfKVDNHGxbNkRTkTKxEpzq18
+	 oLrZJU7UUY/8kLdC7RPKJHRVz/fJ7Fsebrg4ErtXHk12TJXv6bstDO8OIUTAgCBdq
+	 sRhYFMiyk0tnXTOcS+oG9Jh9H4Zs1kRy3765rG8aXp2MxQIPJ16Y+blRFxV7pdTcQ
+	 ypgW0Xy2jFLnbEBBInb9P2uu/KMuGPGCKH8BlAaG0aRN3VZ6uYuO6c27vnNzmlE0f
+	 UxEipsqYCbxB6AiOT6p2Al6/7Tdhjv+IcOqS7FM8pUqTcdMruQOE0nRDits+mVss+
+	 1aqW5sh5c9ameID6Lg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.100.20] ([46.142.34.123]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MHoNC-1snP0i0ZJG-00Ez7O; Mon, 16
+ Sep 2024 14:37:18 +0200
+Message-ID: <e2e85b44-237e-4700-93ae-c5d932378989@gmx.de>
+Date: Mon, 16 Sep 2024 14:37:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdaa:0:b0:3a0:ab86:9293 with SMTP id
- e9e14a558f8ab-3a0ab86a6b5mr6662125ab.26.1726490125861; Mon, 16 Sep 2024
- 05:35:25 -0700 (PDT)
-Date: Mon, 16 Sep 2024 05:35:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a918c606223bce75@google.com>
-Subject: [syzbot] Monthly f2fs report (Sep 2024)
-From: syzbot <syzbot+list1835a579772406839600@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Ronald Warsow <rwarsow@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-US
+Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:tXt/CCYVRQ1C/vyh/3KmDQeGYAltTJT++XusGSNU5KK7TUPlkiE
+ vFHB9T7xwbxWlaA6DM8ifZNYyQWaJU58+JexaEdqBVz6O1i0I1I5YzijX+K1nen3l1U7OcC
+ VTHZH2gPcIn0B1nk5f9icOG2+gRehBGTVRql99WSC3qSgrVpy9ebSCFDs8Rli2L0KFmio+r
+ kNny0YwIMDpsqOoeGud8A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IOLTS/fKtDc=;2S4wdv95JCEPSHiofMzrFB2zG9g
+ Tw/W533lm1RXC5pfgCp4hvMtdt6OgJ3gZb0Ps3Ixe/RYmfwehgJzgLsEUlh6ocEaU5oZV7v7C
+ NnwcvIaXRNXcXsuCN0lhb3h6v/K5Xv3IQ9nFEppNuE0LpmPP1TId8Ad5jHSf1ILQXDdTXAQra
+ jb1r4WbAJoebTfX6W0Ezx6EmA3T/QUsJrvgb/we2Ldvb6nmsrlBKYwrC7HLPk/AdMACd0zD5R
+ xfNzN2/TdKCfrknYk0JIWsL8wIVQASFgHSXd5Vf8MkYrFWHDw1OH7mvk9yxpQi4qxg4Zdt7xC
+ Z2C/o9oMJR0k9KLKL9N5rYsuCdD3a8CsqUeOT2R5dt4YnkKetaj2hIWq3Qv2M8RWyKDkxeSPv
+ vIZufnWwBtLtIlBG5fheydm7rMVGL7WpTVJRl0WXj1LJwVsl9pV4+jjjVpjGuJSGKf//75C8a
+ x6g+8RYeRFUkZGcNmkWqIQZBngOrepYX4iQCEDNR2ipoJzX5QDacI3hmeClxLB761UqF3IVNK
+ +I6QR9/+sRQ0E8Ti9345FYYfMY1MxdciG2qMyXI0wU7G49Ccco+fu4P5on72E/KGTCTDNooj2
+ N7LeyLZdFDW9ew7V47CpQ5YKNkCEc8CVTW9gufOkK9n3bwzklgYphbGy6UfMIMcpwMDhuLEH/
+ 4JsnJu2xLB58iNtrOPWI+j6Ro1QzR1x8ceZ6+tfft74XcHz7gxPUmtPQEE49OZ5S1OmIHniCT
+ QzXZhZ58dfzEFRLwtp4SdeL7O+5aYMFf9Ek9p+H1bPYsCbUGV+I3iysgiALUvDAh9XN9XYStO
+ qv9tP2/+tUFWbBOffdPFu2cg==
 
-Hello f2fs maintainers/developers,
+Hi Greg
 
-This is a 31-day syzbot report for the f2fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/f2fs
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 8 issues are still open and 41 have been fixed so far.
+Thanks
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 903     Yes   INFO: task hung in f2fs_balance_fs
-                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
-<2> 55      No    INFO: task hung in f2fs_file_open
-                  https://syzkaller.appspot.com/bug?extid=6b03a52da637aa5db978
-<3> 5       Yes   KASAN: null-ptr-deref Write in f2fs_stop_gc_thread
-                  https://syzkaller.appspot.com/bug?extid=1a8e2b31f2ac9bd3d148
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
