@@ -1,86 +1,105 @@
-Return-Path: <linux-kernel+bounces-330897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7969297A5C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:12:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E94D097A5C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF9C1C20C1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:12:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C45283082
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728A915B0FA;
-	Mon, 16 Sep 2024 16:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D5E15957E;
+	Mon, 16 Sep 2024 16:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TSw9iQYE"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZuwtuZX"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF72115A86A;
-	Mon, 16 Sep 2024 16:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0457C17BBE;
+	Mon, 16 Sep 2024 16:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726503156; cv=none; b=j/qIArJ3bZgLeOckg2J2BKGdp76Jx5iVd+MjsbUcs84y242lSK0ZRiHo8exRyXPfysWTKxX62XCtBniEdfKXv0sY6t/06JFfJQlDvI+zvNyAdaWVYiNzZYf5a2ztusaIzEBbSyvuLqrxFQgrSjA83yM6fZeN7LhMp3uU+JXk5IE=
+	t=1726503284; cv=none; b=oCygWCn5kk26KTmk9DejMbaZcvsYB363VYiWzS3SCgFRrwEWXCD00FxJ+/3cCHwMjFrRflarIpj473prJP3bH7/a7K/jwiLcSz3X73U9p1No5JfCHxetk/twDZNJzNJlok1g4OenvhCAylaWdiGvofUiv+s0HBJXIS8zeOaDeIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726503156; c=relaxed/simple;
-	bh=OWHALRxsDAhwA9MWEDNc0g4EDGEUWclSAU/zrZ8JBfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xx2Yb2sGYq7O265IsCTDU4BjLD16M+9HckIH+db6bMmNA650MgEEf6XliBIX/hnBshyKzbbGXFsX4lHc5YCxtdtPJEFKumS0UO/cWyesWGip6rHficAaw1QsUHcNyr9Chh0X9z0DyofDUyv+FEyV7tuErMxv1v+6+flabT5olJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TSw9iQYE; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=n8HF5c5PNO9o6nzRymPyEzlV6lHywqHBIQya8yOQMyQ=; b=TSw9iQYETGvMPBuveRzwTG+6gU
-	RwTGb8jxFLSbW7th6IJRgLjKInqzzdEOFS1NCJDa3DCQcvgFBEtLhdnLp7mU2pRQUu+K5Yyqhp7wv
-	5ZWkfq+m+fkih8JKFbKxqribvjB7AkR2YXVjeQ8NVCwDQ6sN+X1ncBewVYjatSsABtGM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sqEL2-007Zl6-Ce; Mon, 16 Sep 2024 18:12:32 +0200
-Date: Mon, 16 Sep 2024 18:12:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Daniel Golle <daniel@makrotopia.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Edward Cree <ecree.xilinx@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	John Crispin <john@phrozen.org>
-Subject: Re: ethtool settings and SFP modules with PHYs
-Message-ID: <ccf7ea15-203e-4860-a85d-31641a26c872@lunn.ch>
-References: <ZuhQjx2137ZC_DCz@makrotopia.org>
- <20240916180224.39a6543c@fedora.home>
+	s=arc-20240116; t=1726503284; c=relaxed/simple;
+	bh=3qUEcfaK4/ka9sFDUJuHN+W1k5GDQiQOOzJa4BmEGh0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aAzRG+/YDVL2fSqndEN0EDfupQ481LbVdL0uwHXR3V+xSW5wOpfHnvaCKYs5pIYfXBl+kDSndYLBBC+poVrJqiCoX5YwelTaiAE08/X0RocWnxedETekb05su1CqMLwE1dK2u8fzTaBYC3kXep2OZX129+UEVV2F6n3RWFKi4I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kZuwtuZX; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-717839f9eb6so894168b3a.3;
+        Mon, 16 Sep 2024 09:14:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726503282; x=1727108082; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiIXMBq5XTutSIjV4NConN4WgPc3djgc12b0ziG7diY=;
+        b=kZuwtuZXmqfiVGiPwSiWR2FBkaNvDTwzFuoogdFujuVHnZvvL9lJulvG0z4EvN5I7d
+         6MoYi4UFBKj7tuGoL5+LYvLhfBoM6Ry5QbfIyHOQHskZZVwY8Kbhr6jOmcXtP4bOMPKk
+         qFMxUmgcG6CqddddPeIWTvSG6+rCEzgB6rjzJ3PlLoKsVA5RPmLOGruEQY6nhKMGYX1+
+         y1eLab669Tk64YPWaxwOrs40EfDCbCXO1x/Lxd91093NhQN+9EZqOSLYP+PVQ+LlR8qf
+         2RHxEsZyYDsadVMxb6ZgoP0p7hwJQOYRe0CWXEqNvv3DZyuROAXpLyF26UimqwkdT8h7
+         /n0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726503282; x=1727108082;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aiIXMBq5XTutSIjV4NConN4WgPc3djgc12b0ziG7diY=;
+        b=a0YtSOhUjnmff5X8NEZbU1hzup0iBRK7gDfxht1drjt52Jy5VOKSGgwOCcyZkN26gk
+         2h7aEvx38neyo6HitC2WvO4tfJ5FEigxa1Uq5ddYuAhOfm36RkjEwQxKBBtmWd263loB
+         AoPIoWTZZimef2d1VaHP+6oFA5DXO5ZjIW9H3nQjKx27Iiff8QLoSo6sVDAG9bRzaM+T
+         PrzubtMqnE42K2Nzgilsceq/+N3CIpyBS7SEXCI0SrqwTkb7gw9yx6VlFih+sjAE83XM
+         pmjNSkrIHehSL3+KjzmHYgACpq4LyqUXoUZB0UMoFgjvjgWKnlzuHPerrLqYhu+LYGH7
+         Dihw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHGW3943ZxCVygAx1Pf2Ynf83SpwNooQqAyPMqThV6i1MePMzcbzAYTMzfBrb6eplFNkzJM90zi7aYXtyneBw=@vger.kernel.org, AJvYcCVSvRwmbPEWfplIBK7UDAnlGFJ2mhX0rbc+r4UZSsHAoCj7qQf/WsEtBMfP3DWVujicV/NwGsTFwF5dNqc=@vger.kernel.org, AJvYcCW28kVyaReRWjhThy2AHtWrjws/fUpI/q7yw4UzYGKSrCHYY0mX7EKV8ckR8nymZAzVcUFFomzcihN1+V7d@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr1tcNG/BNly71pt7Wzbh18ELZNyC0+klOLmhKBxhLMO3S3JMN
+	6dQ3HFE7cI92zX8RXZhyJKG+Ih3TAIjwnZTxs+oKNpcPCc+NUrDx0UOb7muKOnE767qBo1xdZlz
+	e6tQAVZFcDzG4TD7rIlLO+EydBxI=
+X-Google-Smtp-Source: AGHT+IHNBDz7/fdjLPwJLc6uvykq4pFaJyTiJPPGBGRYb3y/6qXG+SIzr/7QALlDqgIS3UAoxwL7IvBnhervlWoySYY=
+X-Received: by 2002:a05:6a00:ccb:b0:718:e49f:246e with SMTP id
+ d2e1a72fcca58-7192620091cmr9723769b3a.6.1726503282171; Mon, 16 Sep 2024
+ 09:14:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916180224.39a6543c@fedora.home>
+References: <20240801-kcfi-v2-2-c93caed3d121@google.com> <20240801-kcfi-v2b-2-c93caed3d121@google.com>
+ <CANiq72=B9NmC=1eSaOrg7XutjueQsSXGcBQb7dQFPuL0SFjPsA@mail.gmail.com>
+In-Reply-To: <CANiq72=B9NmC=1eSaOrg7XutjueQsSXGcBQb7dQFPuL0SFjPsA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 16 Sep 2024 18:14:29 +0200
+Message-ID: <CANiq72miDK-Z3v46QX9MQTT_raJTz+ja-Qx5j1qBmptHXkhY+A@mail.gmail.com>
+Subject: Re: [PATCH v2b] rust: cfi: add support for CFI_CLANG with Rust
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, benno.lossin@proton.me, 
+	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	kees@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	masahiroy@kernel.org, mmaurer@google.com, nathan@kernel.org, 
+	nicolas@fjasle.eu, ojeda@kernel.org, peterz@infradead.org, 
+	rust-for-linux@vger.kernel.org, samitolvanen@google.com, wedsonaf@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> A notification would indeed be better, and is something I can prototype
-> quickly. I was hesitating to add that, but as you show interest in
-> this, I'm OK to move forward on that :)
+On Mon, Sep 16, 2024 at 4:07=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> It is possible to have CALL_PADDING && !FINEIBT, which means one can
+> trigger a build error if the compiler is not recent enough. Should we
+> test for CALL_PADDING here?
 
-This might need further brainstorming. What are we actually interested
-in?
+Alice confirmed offline that she agrees, so I just changed the
+requirement in `rust-next`.
 
-The EEPROM has been read, we know what sort of SFP it is?
+    [ Replaced `!FINEIBT` requirement with `!CALL_PADDING` to prevent
+      a build error on older Rust compilers. Fixed typo. - Miguel ]
 
-It happens to be a copper SFP, we know what MDIO over I2C protocol to
-use, it responds, and the PHY device has been created? Does the SFP
-layer actually know this? Are we actually adding a notification for
-any PHY, not just an SFP PHY?
-
-	Andrew
-
+Cheers,
+Miguel
 
