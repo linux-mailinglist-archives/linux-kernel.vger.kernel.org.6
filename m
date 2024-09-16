@@ -1,74 +1,54 @@
-Return-Path: <linux-kernel+bounces-330997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85BAD97A709
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:49:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F3C97A772
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3151C1F2364D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAA1E2864C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF77315B135;
-	Mon, 16 Sep 2024 17:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249D715B96C;
+	Mon, 16 Sep 2024 18:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Lz56ntB8"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Lifo9BR2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF552E646;
-	Mon, 16 Sep 2024 17:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E5F10A18;
+	Mon, 16 Sep 2024 18:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726508984; cv=none; b=QTFKPi+CCAl8f42K8ndoCzHgK0OB+tyZ74Od1slc8Tkt9EOklxqAWW789s42FWFUj4Ug6HfcVRt98W1MDhGtMa27N64fl0MIwlVC0zR6sYz6zBFH73f3UKb9C0fVvHdI/8Q7cv9ymyBLt4ospWrNdZOX12GgswrW4SUHCZ47xKs=
+	t=1726512656; cv=none; b=n2g1NY1EX1l9r664WTbOECe+kKuX5+V97uMn+Q/41elEC1wYJfd8lwujpQgiDZ6awjvgmmSjUjbXEIsk5eWUXBWneAULMWMwYYMQVEW2VTsDLMTtrg4/WuCzPFaPL29B5AWCwLKMGMJtSt179clz+MUb4s73IPvkIIGX2Y6HGMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726508984; c=relaxed/simple;
-	bh=FAkdbfBEpHa/VNwdzAS1q8vl8bKy+r0ZzWEdVRDH+1U=;
+	s=arc-20240116; t=1726512656; c=relaxed/simple;
+	bh=O+mfiB1pmzz6ripwzHmYnZ8Q24RFf3pX8vmnQWQSX6M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WRLwB4CV5oo1cCMZbQv1qs1xwR0fQmNgH/OZlCzJ/xLxrs1r5jWf5gRg5wzCFqSHw1x22DvJQIadyY8FG/wJ8975SPM2lX2w8dgS0LWrl5NZZXBWh3FiQuTh13yEYyl2+06JCdsQIsIJvYgS7AeAXLHBp4psvy17hDeg8944uK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Lz56ntB8; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=SbEcTwTiZECfedSamHPXD2T6PDmIOEI7aJtQ5uqY4i4=; b=Lz56ntB8+9y7vM0XQ6VRkP4Gne
-	yz7GbtAcc6mdafpNcoT44OAYl1GkrpFHkqkntHaxt6Nr+aR12f1n4MCSeRpdo3M6Lzz+OLGd2qZlK
-	nmMww7Iplk/cUYDv/V1pAVeZVMUGp+AjiJow1QoEvxJfiIz9XyfrrreUYvphKgdAsHy73nXPA1vSN
-	gF8YD4P+2h5633/EFAF2WQ/2+2yrwTryRA5AOd8nuytOjNF7o7AGbA8RcsIRuFuBrEJ1WZ9zWsflc
-	5oMBUDTCq9YOStps6zVMKaivD0rHJ42nS/VD65WrpMQf8TciWVjH0DkQ1bjWs5UpnM48A90umfM9P
-	PdDKRoZQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49730)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sqFqt-0006G8-30;
-	Mon, 16 Sep 2024 18:49:31 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sqFqp-00079e-2c;
-	Mon, 16 Sep 2024 18:49:27 +0100
-Date: Mon, 16 Sep 2024 18:49:27 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Herve Codina <herve.codina@bootlin.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next v3 4/8] net: ethernet: fs_enet: only protect the
- .restart() call in .adjust_link
-Message-ID: <Zuhvp5Y3w5Ukdb0C@shell.armlinux.org.uk>
-References: <20240904171822.64652-1-maxime.chevallier@bootlin.com>
- <20240904171822.64652-5-maxime.chevallier@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L30Zbn1RFbU0HJ4svxckuC/pzA7SJmxYuCvvn5033OTHhmSZSvVMrPmEQFemtdSUVFY9ZdJ6ohICCr0KdSlTWRi//YVktG/r0W6z7TrydIJwPp4ma8lvb3uV23V991GiuFjaVRdjyX4PkSEKeGSFYusEkm4ssVa5rvU7spRF4k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Lifo9BR2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89B83C4CEC4;
+	Mon, 16 Sep 2024 18:50:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726512655;
+	bh=O+mfiB1pmzz6ripwzHmYnZ8Q24RFf3pX8vmnQWQSX6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lifo9BR2epRRlEgGQOxvaycrYC9UX+GETfdD7D5x4WWdYGIf40TF5IqIeKd8bKlQs
+	 UVEZ8v4cZxJ4R3CDEsgCuus0Id5qqaYyZMShLyMKOeTkvqr8B+Uv6aHTaAhaAD0iRs
+	 zknIY81Y6tVbhNZSo2ktgWeJAu0y18e58kMUuZn4=
+Date: Mon, 16 Sep 2024 19:49:44 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] driver core: Don't try to create links if they are not
+ needed
+Message-ID: <2024091627-online-favored-7a9f@gregkh>
+References: <20240910130019.35081-1-jonathanh@nvidia.com>
+ <2024091152-impound-salt-c748@gregkh>
+ <d89c89f8-0036-44a4-8ffa-ea89ed576a9f@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,24 +57,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240904171822.64652-5-maxime.chevallier@bootlin.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <d89c89f8-0036-44a4-8ffa-ea89ed576a9f@nvidia.com>
 
-On Wed, Sep 04, 2024 at 07:18:17PM +0200, Maxime Chevallier wrote:
->  /* generic link-change handler - should be sufficient for most cases */
-> -static void generic_adjust_link(struct  net_device *dev)
-> +static void fs_adjust_link(struct  net_device *dev)
+On Mon, Sep 16, 2024 at 03:50:34PM +0100, Jon Hunter wrote:
+> 
+> On 11/09/2024 15:32, Greg Kroah-Hartman wrote:
+> > On Tue, Sep 10, 2024 at 02:00:19PM +0100, Jon Hunter wrote:
+> > > The following error messages are observed on boot with the Tegra234
+> > > Jetson AGX Orin board ...
+> > > 
+> > >   tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180)
+> > >     with 1-0008
+> > >   tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180)
+> > >     with 1-0008
+> > >   tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180)
+> > >     with 1-0008
+> > > 
+> > > In the above case, device_link_add() intentionally returns NULL because
+> > > these are SYNC_STATE_ONLY links and the device is already probed.
+> > > Therefore, the above messages are not actually errors. Fix this by
+> > > replicating the test from device_link_add() in the function
+> > > fw_devlink_create_devlink() and don't call device_link_add() if there
+> > > are no links to create.
+> > > 
+> > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > 
+> > What commit id does this fix?
+> 
+> 
+> Hard to say exactly. The above error message was first added with commit
+> 3fb16866b51d ("driver core: fw_devlink: Make cycle detection more robust")
+> but at this time we did not have the support in place for Tegra234 USB. I am
+> guessing we first started seeing this when I enabled support for the type-c
+> controller in commit 16744314ee57 ("arm64: tegra: Populate USB Type-C
+> Controller for Jetson AGX Orin"). I can confirm if that is helpful?
+> 
 
-As you're changing the function name, I think getting rid of the double
-space in 'struct  net_device' would be worthwhile.
+That helps, I'll look at this after -rc1 is out, thanks!
 
-Thanks.
-
--- 
-*** please note that I probably will only be occasionally responsive
-*** for an unknown period of time due to recent eye surgery making
-*** reading quite difficult.
-
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+greg k-h
 
