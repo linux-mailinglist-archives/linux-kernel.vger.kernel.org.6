@@ -1,176 +1,172 @@
-Return-Path: <linux-kernel+bounces-330216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D41CD979B09
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:15:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CBD3979B07
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62EFA1F23A3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21231285251
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C121843ABD;
-	Mon, 16 Sep 2024 06:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED7643ACB;
+	Mon, 16 Sep 2024 06:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZLLKUBBX"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2079.outbound.protection.outlook.com [40.107.101.79])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZVdNDIvN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723174962C;
-	Mon, 16 Sep 2024 06:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726467308; cv=fail; b=e/rcVdEH/Aoiz6Cd5trVj/oBQ+q64fMCNwh0AkG/2VGhljxgoDLi2UHkT4L5a0t888RKXEdYkUe12LFkUPFWQZYI/DM/dgp/3jeIsXnQTuEGo7vV8X8azz/vbHPrJ5NVXINtr6yylkCUEpiCtNxZrO/vkviyq+UGLIs2vJqGe1c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726467308; c=relaxed/simple;
-	bh=QLW6vuKgACG0iXNvva5vMFlfQhIUD354C6HZ67AlXs8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DAMFqtWwpNMig+u8ltMBTajP6f+coXdaGAHxRlBikFMpWKkJs+XBSEjrsv0rdbwFuID/Ybh0sBBymTPi4BYwvJpd33RTsEYnIUCtG66bLPNRGQOD02dJ4Nw1QuBRrkUOPuqs7WhkO5u7VH/ajfhtxZZ0I0Y+CHNR7DIoMfavDFA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZLLKUBBX; arc=fail smtp.client-ip=40.107.101.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KGpxruq0AqNEYYuXaGAWgGWi7tM481YmP+V2PzW6jUWdvUL0oYwShohShwEwirimsk3JX2IptRtab2UW7L7AkR3fznZVijC8S+FoVktb7gwnXWarGiGcCQC8AOgkfZfhpDkjnlZENlSWgaaTuE7gnVbURPv5Fc7zh+frwkX3uipDYS8itfXJs+sJI9Alq7uIZx8w1H9cmQJSyX22Bkx5lqGYHBMPI05rYcZy3QNWRJUpdtIu9eAXFooCTL2nPaw4ZcG362emmO2qw31Jx/737PLhG1ErR02lI/4Xf1EbWnPUbqGI9mFkxydV9x+isYukrXLPI3wlGSGM7IFlWNHbuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jlx3PnYfTh7yzkk0FktCj7DkfzHVDHr0+3oWxLS+oGU=;
- b=uLZX9S4atum5ikyvx2KsIDe2VjrOS50karrIfUO7hj1Tmx5egmc+hjUSbINK96vZACP0lfd2PvIdeF7MJcakYlUF6The+o4GAMjpzG80PhZIvAZjyFJXW+2QEfKVNtneDSnK4GVv9wLTsUSMvqdi5i9EeHbc7lxLVuBV6Dakpt3UBOn3GziIxljFu16sxU5B7y/ZI+UYTiT0fEE0VnY2f9W2dx3oHMfzlSTcTq6fPtauSa0SKIHUicRp+olvJ8LOvwHSvt/UfcMfgObUomAgQEKwr/TS6DB0j6Hxo8LlVF7qStkpUlEslcPv8K4lCc0qMUHn0J94lt+wmGa0rruX7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jlx3PnYfTh7yzkk0FktCj7DkfzHVDHr0+3oWxLS+oGU=;
- b=ZLLKUBBXn3RT1ADFh/uEqREpbFiKlx+5QD1mmftlecNSU5zITdM5TXaGAUSQIJg1c8qt/dhJ7s3jGnL5ZWc7lVNdSF7BJbPtYEpBAUFoylqA0qmDp8svi7HCwKNH2hH4LocNkdJFymzsyXLwu6sF5TavZGp5wWuKyPdivrjaqD0=
-Received: from CH2PR15CA0005.namprd15.prod.outlook.com (2603:10b6:610:51::15)
- by DM4PR12MB7551.namprd12.prod.outlook.com (2603:10b6:8:10d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Mon, 16 Sep
- 2024 06:15:02 +0000
-Received: from CH3PEPF00000015.namprd21.prod.outlook.com
- (2603:10b6:610:51:cafe::d8) by CH2PR15CA0005.outlook.office365.com
- (2603:10b6:610:51::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.29 via Frontend
- Transport; Mon, 16 Sep 2024 06:15:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH3PEPF00000015.mail.protection.outlook.com (10.167.244.120) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8005.1 via Frontend Transport; Mon, 16 Sep 2024 06:15:02 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 16 Sep 2024 01:13:49 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <pierre-louis.bossart@linux.intel.com>,
-	<yung-chuan.liao@linux.intel.com>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-	<tiwai@suse.com>, <Basavaraj.Hiregoudar@amd.com>,
-	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
- Mukunda" <Vijendar.Mukunda@amd.com>
-Subject: [PATCH] ASoC: amd: acp: don't set card long_name
-Date: Mon, 16 Sep 2024 11:43:18 +0530
-Message-ID: <20240916061318.3147988-1-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB84381B1;
+	Mon, 16 Sep 2024 06:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726467281; cv=none; b=fLwNY72CYGHa11EOocfaOboPGPERKJmAIkRpIyzvmklp2dkyyFQh0/mtrHAyLjdFW/FamRJV1t9hG+hRNCKEUb/AqEQtvD17kYxZUSCGEPnkkyUUAIZKH1qcvXrUrVurbeQ55J/u1i1kOUPRqbv1IrnX8j384HOIbQAUmiBbeKc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726467281; c=relaxed/simple;
+	bh=u9HtB7G1aej2/1qKTIOY/GVnpLPVCv89gNSFOJl/2tI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YiduLn1XSd7Qm0xSLzRAUCS7VxrayR391JNsTg/iOjxMdHSBWTfAbqmhAz8uih5k+bIWj3uqv4XRZUt4M+PKtkFM1/Ofowu0c5SerM2y/tYqb8RSxbbhAcL/L8XrH1YQRr03oB1Ee4lhZGjN0HAW1ym/1p+CbyjowoYiYa7om+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZVdNDIvN; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726467279; x=1758003279;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=u9HtB7G1aej2/1qKTIOY/GVnpLPVCv89gNSFOJl/2tI=;
+  b=ZVdNDIvNVo1fabt1r3rNnG3U7nk4WHePFpWDGRF1SlNGKn+4uPrplrF3
+   A/Qmiik3Fj1I5UBEKYvzyUjlJJwR3atozQ4zBq/9yBxGx8EDI0+emRW6J
+   1Aah2moCWyJlQqxo2aJTejuH6SSvHKdddLodWt28ObXcm6zgBZKiTF3H/
+   4ELSdApq1Uns4AWR5ImJWivL5JW5qt46stibOh48W3t9g4YguWqKO+30O
+   NRMPgbApqWfeN50eFEaZBQDOkWoRRANaGWsb6jd8BG+4ZQWflmu6lyomM
+   v4aCzwCJUFEjxZVCQ6SBaMjF3L/y2ycEQxrZ4Dqw7lE7Rra6usIxswj0P
+   w==;
+X-CSE-ConnectionGUID: okjPL7WIRCmF25LEACqFAA==
+X-CSE-MsgGUID: cLQYKkS1T1ifs4w8EyD6zQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="25381533"
+X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
+   d="scan'208";a="25381533"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 23:14:39 -0700
+X-CSE-ConnectionGUID: Gqz0449aTfarOfCAqvWr1A==
+X-CSE-MsgGUID: RyykI/LeQHu0KE6QgMXlHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
+   d="scan'208";a="73158561"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2024 23:14:37 -0700
+Message-ID: <7d3fb0a8-96a1-48cc-97ce-c25d19ded4e7@intel.com>
+Date: Mon, 16 Sep 2024 09:14:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000015:EE_|DM4PR12MB7551:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33e08e23-8a6a-4b48-9385-08dcd616e67a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cX67xDwURB0ryWIVRlY4IQ9ROScY30IaasPgbDQkd8tr4hEuAfSMw/ARcISj?=
- =?us-ascii?Q?YTWKLpqRWso9bizSgViX8xNAKWMhUjChp6Fl9wvJeZOU8fd/czQnIkhk457l?=
- =?us-ascii?Q?+vxoWLkwOVyT0GeCvOzZuuAgMXML71LZN2ebTpZ8MWRpm2zBI0BtClZBgNa5?=
- =?us-ascii?Q?ugBmIWXxZor1GNTgW9QQOd0nVjaO2Ow1gKY3EB8RK4O8ihrFjywrvA/V/NcP?=
- =?us-ascii?Q?nksvh2KFmmyaSk2cia22G5uRQ5Ur1psB9bfP7kGvlQDFF0ZRFXGlrvGBdkVv?=
- =?us-ascii?Q?g9lrhv5O7K6nOVLA6ktQwWhHusCkLXTWXK+49tqU87eoKKC6bOPgRCX6tr52?=
- =?us-ascii?Q?SSmBG/dyWrmAsTvg+ENx9UMgBKLg26onqh8+GIM7+qNa+C2Gy5Wa93rBmvek?=
- =?us-ascii?Q?aUmp9is1jpmZ7l+snFoWz+QdhvXqPs13qoYEfNiiiptC4/PnlnQYkRSEzvtS?=
- =?us-ascii?Q?wV+MtZ86JxkqyD6mdL4waPni4MkG+C7SrBqFZNZzu2y4nkUz7/lFI7X76YWj?=
- =?us-ascii?Q?WCUUQeTuydtA1ALueXUHTGHoYZ8hXOR986dzxbzuhbMVcoMCbKbfPCPqX7pX?=
- =?us-ascii?Q?6XGLbJxnI7P3sBiMCjwTMNelwfp97hG/pgrs6CZQ26NojVELBDc1Na9MsJ2K?=
- =?us-ascii?Q?e9v9r7cGcKyLg88qeARIspGuyCKE3iUdxwFWtqb/sDyl/Ml2CSchAphFDwpA?=
- =?us-ascii?Q?W5bmFFgcCDMRzqr3iA5Nh/6/aWEJO7Sn5QNC1DIyPrc1vnMnaORG+t5OrM36?=
- =?us-ascii?Q?l+qupglsHhCC3yCpwG4dwbR4m+g7vDQGhDCPaEnwCsVs5PDUTt1/cSB5yLba?=
- =?us-ascii?Q?mx+AUjWpe4txQG4M9u3/ZIlmWzAKa+m7ZJovV1XYVwxoIVtd1VQl2ZUcgPZ1?=
- =?us-ascii?Q?Jz6AZln+VgNzM9j0dUu3PhmEKwi+qWCM2zTKqFtMlUGgVOOqhi9VbKsjvHYk?=
- =?us-ascii?Q?Y6Q/yiZjrLhHL0dqRnRo+I6Tk4Tt1FN+cqhVoe7bgMBcqdROSDtfHag97R2G?=
- =?us-ascii?Q?PkFrVQEMfL6rvB6w+HXFbE/jdOjLHS9SBk+Uvl4M3i9oUhF8Kr17Z24POR1s?=
- =?us-ascii?Q?IdSPdi6/4A8gsiXPys1rCoX8m+ZrHp2upjGaZnc5frTujlp+iJaYfK0H2OVz?=
- =?us-ascii?Q?q79x2Mt+Onkv3CqEpYFZvcSTpclws2kJKJ5RAiIVLR8D1ef5ERfsHtEjiWBa?=
- =?us-ascii?Q?XqhHruKcILgmBFhHYWXapbo1QuJwFSr7Od7mZ9PRI/JGCbvf8F9Eai8xoMkI?=
- =?us-ascii?Q?POnM6nHejG5wcR9bozgT+yLZL9Iir/rPj8Guia1v875HnxESOAU9P3fq3k3+?=
- =?us-ascii?Q?+/jBhyAoObzF3webdJuvU83mHw8pbXzBVhSW4IwGBgVc8TKhYJ7EsO6cz1Hk?=
- =?us-ascii?Q?v5eYas01TCBQCBcD1l5k4qZUe8QDW5fuDvymeve8jfJqnGt58M3S+F9mI1Su?=
- =?us-ascii?Q?yX6usDpEZxMNtCZk6RA/By7pBl3yucFs?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 06:15:02.3247
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33e08e23-8a6a-4b48-9385-08dcd616e67a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000015.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7551
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mmc: sdhci_am654: Add
+ sdhci_am654_start_signal_voltage_switch
+To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240913185403.1339115-1-jm@ti.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240913185403.1339115-1-jm@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-UCM can load a board-specific file based on the card long_name. Remove
-the constant "AMD Soundwire SOF" long_name so that the ASoC core can
-set the long_name based on DMI information.
+On 13/09/24 21:54, Judith Mendez wrote:
+> The sdhci_start_signal_voltage_switch function sets
+> V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
+> V1P8_SIGNAL_ENA determines whether to launch cmd/data on neg
+> edge or pos edge of clock.
+> 
+> Due to some eMMC and SD failures seen across am62x platform,
+> do not set V1P8_SIGNAL_ENA by default, only enable the bit
+> for devices that require this bit in order to switch to 1v8
+> voltage for uhs modes.
+> 
+> Signed-off-by: Judith Mendez <jm@ti.com>
 
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/amd/acp/acp-sdw-sof-mach.c | 5 -----
- 1 file changed, 5 deletions(-)
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-diff --git a/sound/soc/amd/acp/acp-sdw-sof-mach.c b/sound/soc/amd/acp/acp-sdw-sof-mach.c
-index 6c50c8276538..306854fb08e3 100644
---- a/sound/soc/amd/acp/acp-sdw-sof-mach.c
-+++ b/sound/soc/amd/acp/acp-sdw-sof-mach.c
-@@ -400,9 +400,6 @@ static int sof_card_dai_links_create(struct snd_soc_card *card)
- 	return ret;
- }
- 
--/* SoC card */
--static const char sdw_card_long_name[] = "AMD Soundwire SOF";
--
- static int mc_probe(struct platform_device *pdev)
- {
- 	struct snd_soc_acpi_mach *mach = dev_get_platdata(&pdev->dev);
-@@ -463,8 +460,6 @@ static int mc_probe(struct platform_device *pdev)
- 	if (!card->components)
- 		return -ENOMEM;
- 
--	card->long_name = sdw_card_long_name;
--
- 	/* Register the card */
- 	ret = devm_snd_soc_register_card(card->dev, card);
- 	if (ret) {
--- 
-2.34.1
+> ---
+> Changes since v1:
+> - Invert quirk logic
+> - Simplify sdhci_am654_start_signal_voltage_switch() and call
+>   sdhci_start_signal_voltage_switch() when the quirk does not apply
+> - Simply logic when detecting when quirk should be applied
+> ---
+>  drivers/mmc/host/sdhci_am654.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+> index 0aa3c40ea6ed8..9ff07aadb2d91 100644
+> --- a/drivers/mmc/host/sdhci_am654.c
+> +++ b/drivers/mmc/host/sdhci_am654.c
+> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
+>  	u32 tuning_loop;
+>  
+>  #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+> +#define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
+>  };
+>  
+>  struct window {
+> @@ -356,6 +357,29 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
+>  	sdhci_set_clock(host, clock);
+>  }
+>  
+> +static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+> +	int ret;
+> +
+> +	if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
+> +	    ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
+> +		if (!IS_ERR(mmc->supply.vqmmc)) {
+> +			ret = mmc_regulator_set_vqmmc(mmc, ios);
+> +			if (ret < 0) {
+> +				pr_err("%s: Switching to 1.8V signalling voltage failed,\n",
+> +				       mmc_hostname(mmc));
+> +				return -EIO;
+> +			}
+> +		}
+> +		return 0;
+> +	}
+> +
+> +	return sdhci_start_signal_voltage_switch(mmc, ios);
+> +}
+> +
+>  static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
+>  {
+>  	writeb(val, host->ioaddr + reg);
+> @@ -844,6 +868,11 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
+>  	if (device_property_read_bool(dev, "ti,fails-without-test-cd"))
+>  		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_FORCE_CDTEST;
+>  
+> +	/* Suppress v1p8 ena for eMMC and SD with vqmmc supply */
+> +	if (!!of_parse_phandle(dev->of_node, "vmmc-supply", 0) ==
+> +	    !!of_parse_phandle(dev->of_node, "vqmmc-supply", 0))
+> +		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
+> +
+>  	sdhci_get_of_property(pdev);
+>  
+>  	return 0;
+> @@ -940,6 +969,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+>  		goto err_pltfm_free;
+>  	}
+>  
+> +	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
+>  	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+>  
+>  	pm_runtime_get_noresume(dev);
+> 
+> base-commit: cf6444ba528f043398b112ac36e041a4d8685cb1
 
 
