@@ -1,116 +1,168 @@
-Return-Path: <linux-kernel+bounces-330938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C672197A643
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:53:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A48797A646
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0489F1C20A90
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:53:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C5701C20B8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D816415921D;
-	Mon, 16 Sep 2024 16:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE7015B0EB;
+	Mon, 16 Sep 2024 16:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="igTNmv0e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tW/54+4Y"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwxhHVyx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDCE3BBE3;
-	Mon, 16 Sep 2024 16:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDCD158A1F;
+	Mon, 16 Sep 2024 16:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726505611; cv=none; b=k1HfUaOzPDCrrt+ur3K7iwhPRVW5QtSz/6eup1k3n+YSZ6UfxyHAe2SmN1Fpi7MwBWuhchjQ8oG2tsrEMZw6ynDEHohg3ljoZX4NsyAR1isLvF/eJVyIyVBnWQ+HqPj0joOEzUF5ng9WD25sQyzUYlCdryHBqsd2R3rtIgJNFzs=
+	t=1726505752; cv=none; b=BF/iiiRDGe972OeIsr29voJ/i1XvODFlQr/dFKahl7XLb92SLS5xyfQWL7lTF2OLUE0UxBvSLB2lO/zWczyXydE1mcb7qB4ZeGSCrrI3rwBxWzfSCR3lsGYG4oJN3eUmDQ66u1Hgk/58i+ifqMI28FXLZqSrK/l5XhnpOmsM08Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726505611; c=relaxed/simple;
-	bh=nTnSmO9VlvKKC0VIvRYqcVsu/5jJUIWC8KVuxznwDCk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tXgQQ66+3z4NPwRaR4DQubo1wzuPaYTVSv5Dy2GbDBdg3HTuycBf2K/x2Mpc7S7gPzL23L6///2uao8W8pOGn6Xh1umk4/JpeNTMXfxf5iq5g2S+5uQt+DFGtsZ+N8hfGNay9HZ9G0KfFtDcJrwX//CfwsaKGGgNUo0SEggqE1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=igTNmv0e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tW/54+4Y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726505607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DP9L8R9dfjl9npOnRUoByPj1u4QRso5d4fxqPmGEEkk=;
-	b=igTNmv0e5J+V0Urs6oleGqIiLugtfhk3vmo0ox9LxyEBefKn+TTqaq8Ei3rwUe/Pt9Kvju
-	B1trXN8tXCbzZOcaO76wBmgmn2KZrr7Slhv+kRiivvC++xZcN88iQC7DZbhmBScdZOmxDP
-	rxFeg+ssf0LyW9v3365j8aEK1A1KQiy4TfGNz5I7FnS2shWk4BMffgokPJS6imAXfVnUv3
-	ECXwEP++XlTc1Rvjs/psqjVKWqs+ki1R3Vcrn0EyNxeAHqKOJJNcI6QaLJTt6Y6tnWyi/M
-	WTpt0l+EVnGgFrVA6L0IKGvxQFKg62GPIvjiXToCN15cU0UYriXG+w/dKB1Wdg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726505607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DP9L8R9dfjl9npOnRUoByPj1u4QRso5d4fxqPmGEEkk=;
-	b=tW/54+4Ylm1CO10q4FXbIOS1nPnDLqhXSVSd4Gud/LeTzKLkPswsjgy7hRdoIC1G47bCBI
-	CkjRS49eT+93q/Ag==
-Date: Mon, 16 Sep 2024 18:53:15 +0200
-Subject: [PATCH net] net: ipv6: select DST_CACHE from IPV6_RPL_LWTUNNEL
+	s=arc-20240116; t=1726505752; c=relaxed/simple;
+	bh=RYpfdNmKaTeXJbERjP90RBtpFHg2AYlXmWBqtQKGlVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o3kgtSfWASrjzbpPKbgwF00F0+z1HIVJjkBEhrUUuBY48oFhpoGtlQkJ4Hf8oQqjmth+JV203+c0S9qPymEO3UkZLGDye1zCHV2LvKLs81CoXhCyymuryLVdHXp6+neX12Ich7LDBT806xglSZieUdZ58FZh4pcCwkb/BZn3jVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwxhHVyx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A058BC4CEC4;
+	Mon, 16 Sep 2024 16:55:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726505751;
+	bh=RYpfdNmKaTeXJbERjP90RBtpFHg2AYlXmWBqtQKGlVo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JwxhHVyx91Zp6uLhWlX7B4CpVwUAqb3iVL3N20Q5aH8g86CGt4rB6nkTwH24CyTvS
+	 yzHJJiMUWCzAqPKOtAtQ1dHjakp1tSrzAGva81+1Oe8HpK1Yd37K/3Y9uchMPzSdDC
+	 kTuAbdD77g+YZuffbbA4JE4z7ZTg8N1M6uE8FGpfAe9s/PKs5G+llAGYOISSayqBih
+	 eAv7bpxR1RADxDydqDoTwjsh5AUi6GvpuiubrwMKGb2yxRMY9zw5sWG3UNG1SOkfEQ
+	 jUSrKhU8na4qIkjgGR1QtQawzIFERBKI9c7hpBLbv783ZfB0+eYonLmFoiOxiSIbBO
+	 hiDuYb/CCE8DA==
+Message-ID: <94fa1f20-6bfa-4ae5-8f96-cf0d8ed9b3ac@kernel.org>
+Date: Tue, 17 Sep 2024 01:55:27 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240916-ipv6_rpl_lwtunnel-dst_cache-v1-1-c34d5d7ba7f3@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAHti6GYC/x3M0QqDIBQA0F+J+5yQbtnqV2JI2LUuyJ2oc4Po3
- 5Mez8s5IGEkTDA1B0QslOjDFbJtwO4LbyhorQbVqWc3Si0oFG1i8Mb/8pcZvVhTNnaxOwqlei3
- H4eUevYM6hIiO/vc+A2OG93lerT2mbnIAAAA=
-To: "David S. Miller" <davem@davemloft.net>, 
- David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Alexander Aring <alex.aring@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726505604; l=1022;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=nTnSmO9VlvKKC0VIvRYqcVsu/5jJUIWC8KVuxznwDCk=;
- b=QHzjF8bsEuc/pKcyoCxlrEioNIvSPRAMHfoMNIu+/4FgawtpdEDmLmozxtMwcq78t1Op+u5Eb
- 7yohygmRL62BYHH/eUR0JYXzNY6lZmqcrOeQI5N2Lu2cJ+s2YupLQa3
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ata: libata-eh: Fix the low data link negotiation
+To: Guoliang Zhang <zhangguoliang@zspace.cn>
+Cc: cassel@kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240916074232.2584182-1-zhangguoliang@zspace.cn>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20240916074232.2584182-1-zhangguoliang@zspace.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The rpl sr tunnel code contains calls to dst_cache_*() which are
-only present when the dst cache is built.
-Select DST_CACHE to build the dst cache, similar to other kconfig
-options in the same file.
+On 2024/09/16 16:42, Guoliang Zhang wrote:
+> large capacity hard drives, such as the 16TB Seagate hard drive in hotplug,
+> have data link negotiations that only reach 3.0 Gbps.
+> The reason for the issue is that after powering on, the hardware reset time
+> of the hard drive is relatively long.
+> In the driver, after the hardreset signal is sent, the waiting time for the
+> first two tries is too short,
+> causing the hardware reset to fall into a vicious cycle.
+> 
+> log is as follows:
+> [ 959.461875] ata7: found unknown device (class 0)
+> [ 963.686830] ata7: softreset failed (1st FIS failed)
+> [ 969.442516] ata7: found unknown device (class 0)
+> [ 973.686229] ata7: softreset failed (1st FIS failed)
+> [ 979.426704] ata7: found unknown device (class 0)
+> [1008.687432] ata7: softreset failed (1st FIS failed)
 
-Fixes: a7a29f9c361f ("net: ipv6: add rpl sr tunnel")
-Cc: stable@vger.kernel.org
----
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- net/ipv6/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+These messages are not normal and do not correspond to a drive that is slow to
+spinup. These are generally indicative of bad communication with the device.
+I ran into this the other day and solved the issue by using a better SATA cable...
 
-diff --git a/net/ipv6/Kconfig b/net/ipv6/Kconfig
-index 08d4b7132d4c..1c9c686d9522 100644
---- a/net/ipv6/Kconfig
-+++ b/net/ipv6/Kconfig
-@@ -323,6 +323,7 @@ config IPV6_RPL_LWTUNNEL
- 	bool "IPv6: RPL Source Routing Header support"
- 	depends on IPV6
- 	select LWTUNNEL
-+	select DST_CACHE
- 	help
- 	  Support for RFC6554 RPL Source Routing Header using the lightweight
- 	  tunnels mechanism.
+If the drive is slow to spinup and takes time to start responding to commands,
+you should see the message:
 
----
-base-commit: ad060dbbcfcfcba624ef1a75e1d71365a98b86d8
-change-id: 20240916-ipv6_rpl_lwtunnel-dst_cache-22561978f35f
+"link is slow to respond, please be patient "
 
-Best regards,
+which is issued by ata_wait_after_reset() -> ata_wait_ready(). The "1st FIS
+failed" error indicates that the first H2D FIS sent to the device with the SRST
+bit set does not give the correct answer, that is, the SRST bit is NOT set to
+one in the Device Control register. Software reset should work always regardless
+of the power state of the drive (spun down or not). So this error has nothing to
+do with the timeout length, which is used for this first phase of the reset
+sequence as a convenience but is really intended as a timeout value for waiting
+for the link to become ready, which may take time if the device is spinning up.
+
+> [1008.687447] ata7: limiting SATA link speed to 3.0 Gbps
+> [1009.566733] ata7: SATA link up 3.0 Gbps (SStatus 123 SControl 320)
+
+This is the result of the sofreset failing due to the "1st FIS failed" errors,
+and NOT due to the fact that the drive is slow to spin up.
+
+> [1009.567405] ata7.00: ATA-11: ST16000NT001-3LV101, EN01, max UDMA/133
+> [10009.613694] ata7.00: 31251759104 sectors,
+> multi 16: LBA48 NCQ (depth32), AA
+> [10009.614223] ata7.00: Features: NCQ-sndrcv
+> [10009.639149] ata7.00: configured for UDMA/133
+> [10009.639366] scsi 6:0:0:0: Direct-Access  ATA ST16000NT001-3LVEN01
+>  PQ: 0 ANSI: 5
+> [10009.639779] sd 6:0:0:0: Attached scsi generic sg2 type 0
+> [10009.639989] sd 6:0:0:0: [sdc] 31251759104 512-byte logical blocks:
+> (16.0 TB/14.6 TiB)
+> [10009.639999] sd 6:0:0:0: [sdc] 4096-byte physical blocks
+> [10009.640028] sd 6:0:0:0: [sdc] Write Protect is off
+> [10009.640038] sd 6:0:0:0: [sdc] Mode Sense: 00 3a 00 00
+> [10009.640082] sd 6:0:0:0: [sdc] Write cache: enabled, read cache:enabled,
+> doesn't support DPO or FUA
+> [10009.717866]  sdc: sdc1 sdc2 sdc3 sdc4
+> [10009.739038] sd 6:0:0:0: [sdc] Attached SCSI disk
+> ========
+> Logs after modify:
+> [  661.023298] ata7: found unknown device (class 0)
+> [  675.253714] ata7: softreset failed (1st FIS failed)
+> [  680.996545] ata7: found unknown device (class 0)
+> [  695.251101] ata7: softreset failed (1st FIS failed)
+
+The errors are still here... So either you have a bad SATA cable, or the drive
+reset sequence is not per specs. Changing the timeouts to a longer interval is
+not removing these errors, so you are not actually fixing anything here.
+
+Please check your cable. If that does nothing, I suggest contacting the drive
+vendor about this.
+
+I have plenty of drives that are slow to spin up and they do NOT generate that
+FIS error.
+
+> [  696.131404] ata7: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+> [  696.132140] ata7.00: ATA-11: ST16000NT001-3LV101, EN01, max UDMA/133
+> [  696.172742] ata7.00: 31251759104 sectors, multi 16: LBA48 NCQ (depth
+> 32), AA
+> [  696.173327] ata7.00: Features: NCQ-sndrcv
+> [  696.198155] ata7.00: configured for UDMA/133
+> 
+> Signed-off-by: Guoliang Zhang <zhangguoliang@zspace.cn>
+> ---
+>  drivers/ata/libata-eh.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
+> index 214b935c2ced..9e0f17e93e73 100644
+> --- a/drivers/ata/libata-eh.c
+> +++ b/drivers/ata/libata-eh.c
+> @@ -80,7 +80,7 @@ enum {
+>   */
+>  static const unsigned int ata_eh_reset_timeouts[] = {
+>  	10000,	/* most drives spin up by 10sec */
+> -	10000,	/* > 99% working drives spin up before 20sec */
+> +	20000,	/* > 99% working drives spin up before 30sec */
+>  	35000,	/* give > 30 secs of idleness for outlier devices */
+>  	 5000,	/* and sweet one last chance */
+>  	UINT_MAX, /* > 1 min has elapsed, give up */
+
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Damien Le Moal
+Western Digital Research
 
 
