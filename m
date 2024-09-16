@@ -1,117 +1,172 @@
-Return-Path: <linux-kernel+bounces-330983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D215F97A6C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:28:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E768297A6F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011011C245D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:28:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B4161F2850F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9962A15B13C;
-	Mon, 16 Sep 2024 17:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3289315B963;
+	Mon, 16 Sep 2024 17:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="i+Z50gHi"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="iTQF4lK7"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687E918B1A;
-	Mon, 16 Sep 2024 17:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E91F143C63;
+	Mon, 16 Sep 2024 17:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726507702; cv=none; b=e4RXzk2qkYrNWa2plMyYONt0YQxGDhr+Bd70XM2q+VkSFSzfeJ447EC0KwlpkaVBMilQjNaOT+y6msEsnNBCTFZvvnCBasoWz5bO0R57I4EA13uC0Wsiis3OWrHdA+ENwhKQv1Do24hkHH/MbmmHS0MzRO6o1ACSmhuBeS84q4E=
+	t=1726508628; cv=none; b=PqxVAwgEK2P1+ibNN/C8Qk4y25e77uVphDmakel/HHR4mJVW+wJa2uhCURSg5Dc3LRwrpth50/yHsAblJi0pt6jf+01WKGnyyRtHRAzT5Lbg/nYdq7cRAs2bSMB+XVek9Ee7dCm2MzrI4XfAdwV+FgYSjB2zDrC0JV+ZkNyuIho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726507702; c=relaxed/simple;
-	bh=2HAfSjZ0rksb6UX+rVql7xe64h/WufpvrJQUuwP8Ei0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T9UGECNvVL4wTAiKjyeh+dpWObISCpSD/HglW4p5HVxgrqe8Z5PpaTOh1/FztDM4fwZMS3fmFMWa5fYFBWcOCbTc1nfYyXzNH6PYCNf9xGnz55QitUUAULk3r/D0O/q+aLhQVLnOPPBW4TLESnk64txm2uOctgp6CF9w+W20Lz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=i+Z50gHi; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-378f90ad32dso692245f8f.0;
-        Mon, 16 Sep 2024 10:28:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1726507699; x=1727112499; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SqLo/dEBUfpp1Lh4uLJBd7I7zW9+divCoFNdtfvd0Io=;
-        b=i+Z50gHi0OoXWurSGDCW2kWELVblGrEd7rbwxswUf3hmTJ/gvAkw3lJTzI3hjNkad6
-         LcMzbgotrT5j463naFtVy5z8FFTYjPHM9aUQwLBoQxzyrtFX6CZx01d9Wl9SnLV5XJSn
-         joP4am5bXsmDU4VhtuC1HwEmwaW6I3LcSIgLr/ZUFKzHxfbThdXgdwLgI3MwWpexdUdv
-         MCeFJcKD68SJf9EQcYgvdWvnP0Vo1CPPUFi0gpNzfDVakepFVRcQu1GYtfbY1v2uV5Po
-         hxvDRNmqE+whdLthPJiyHcrYo4BZWhl1+mSDexJ0e31tEhJExCi1WfmKJQ/7eWpUAEtP
-         61EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726507699; x=1727112499;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SqLo/dEBUfpp1Lh4uLJBd7I7zW9+divCoFNdtfvd0Io=;
-        b=UnDrDzTlzBbvjwfSfc10utmsf3/vH8UJQPPeVtlS1mbQJ/8ZwKyun7CJxejlh7z42c
-         xkbBQCQQKSl8e7SVs8Ts9N8r7sgZhI4AlC9SEjsSy3+JvMGEqDn9S1zbHwcgiVUoLdyp
-         Rx3+tWIwIuiY1+GwOwZBec1mxV8ztuvq0xn1STLYx19dTcwv2Ci8O2INvu0M42Sg99R5
-         5E4BtaVto1UInet5SxLE1/Dd33wUe9lKqBMNKd6P7F3BChJZYDYUcIB2TBG72wMhErWp
-         Fos5pQun+LyVp7EL5GkPr2Ez0bDL/ZGeOW55fZztFcGjn7eyhsDYq4oqb9GXJ8lC82B4
-         tNhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUGHwhAZNoNDt4cuGkDqWEpqcKPiyv52XD0OARthVsY8nwAyknfbS7de9WwMD7vST4t2PLs3yK8+YuYm4=@vger.kernel.org, AJvYcCWYUPH0wgRRcBIHy9Ht3djZrSlqNwtHeG5OQ1oBTFj5Njud9MRfsov/7/qwgzcHokAPR2n9TXs5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6hi+mm2qQDJpBUWEMR6+zuk5NvOz1Ih00+xugHY7HWlzl2a2g
-	TqrZypsGDQOf2ftGxV5moxKJOcAemmoK8LapELJ2Rf8BfGGHEGc=
-X-Google-Smtp-Source: AGHT+IGPWSlU7J4r4K/9tm5G3UvJ73+6azKqU0ph7RCHLSGhOJB741tGiPQbKbvdefwpIoquatygBA==
-X-Received: by 2002:adf:ec07:0:b0:374:c07c:a49 with SMTP id ffacd0b85a97d-378c2d04c73mr9324752f8f.28.1726507698263;
-        Mon, 16 Sep 2024 10:28:18 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2acc3a.dip0.t-ipconnect.de. [91.42.204.58])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b1948fasm115960175e9.43.2024.09.16.10.28.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 10:28:17 -0700 (PDT)
-Message-ID: <f3a5272d-2105-4e11-bfe9-d04b0626a7ef@googlemail.com>
-Date: Mon, 16 Sep 2024 19:28:14 +0200
+	s=arc-20240116; t=1726508628; c=relaxed/simple;
+	bh=KOrj1glTVkqZfzN7jpQeoOXrqtcK+L4YVkbuaoHF4xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VgZF02xcGc2vPkYvujOr1X8g3RgP0PHC4D3bCS83i6j8WB9hEF54kbah7aXpHWumWoX10dW55d/+qc++cV1OjIq4HRfTzNG6IHqdYn8oLooGRHZBF7/7Xq6RGng/sijpfNnK5y9mTk501WceR/WQWA0OsKGgqjDnRI8+IWZnqi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=iTQF4lK7; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=mm+bDHmUaq8HaKf0sURJ3ejU1UzGZC0kfOb+q2zY2Lw=; b=iTQF4lK7F5r4s+UX/zLu+v5WRQ
+	gHfAV3qH4nLwBBxnt/SA1mKfBhFuoh2liVnnOGCRttwZF++ZTS6WGzezvvWdchKPrGvqVrK/95/jt
+	api0irbjh+Ns75tOnrXnYwJuG6rpsjZ/5EW23ZN4ckT9vZLPZCYYYKsI784sfp4hfa0pN+gOcwIq3
+	9HLBkoIVbRvX2o8MjvFzjwBDkWMYpwzBsjEnf1t3DPE+orDWP2YeM7FTI3DuPInjUlVaHfytxiLhE
+	5vqyHVxP/cq+vyCrjROLIc83NcvKQX/T5VyrNJpsUxEAeecVjQRsHxFn9h/BE1mSFZOhp8xAK/369
+	ayJoYNUA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44830)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sqFcu-0006F4-1R;
+	Mon, 16 Sep 2024 18:35:04 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sqFcp-00078Y-1R;
+	Mon, 16 Sep 2024 18:34:59 +0100
+Date: Mon, 16 Sep 2024 18:34:59 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Daniel Golle <daniel@makrotopia.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Edward Cree <ecree.xilinx@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	John Crispin <john@phrozen.org>
+Subject: Re: ethtool settings and SFP modules with PHYs
+Message-ID: <ZuhsQxHA+SJFPa5S@shell.armlinux.org.uk>
+References: <ZuhQjx2137ZC_DCz@makrotopia.org>
+ <ebfeeabd-7f4a-4a80-ba76-561711a9d776@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 00/63] 6.1.111-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240916114221.021192667@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240916114221.021192667@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ebfeeabd-7f4a-4a80-ba76-561711a9d776@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Am 16.09.2024 um 13:43 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.111 release.
-> There are 63 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Sep 16, 2024 at 06:03:35PM +0200, Andrew Lunn wrote:
+> On Mon, Sep 16, 2024 at 04:36:47PM +0100, Daniel Golle wrote:
+> > Hi,
+> > 
+> > I'm wondering how (or rahter: when?) one is supposed to apply ethtool
+> > settings, such as modifying advertisement of speed, duplex, ..., with
+> > SFP modules containing a PHY.
+> 
+> It should actually be more generic than that. You might also want to
+> change the settings for Fibre modules. You have a 2.5G capable module
+> and MAC, but the link partner can only do 1G. You need to force it
+> down to 1G in order to get link.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Exactly. If the SFP gets changed, what it's connected to could be
+something radically different.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+There's also a _big_ problem here - there are SFPs that auto-detect
+what the host is doing when they are inserted, and they adapt to
+that. At least some *PON SFPs do this. Changing the settings (by any
+method) of the link after the module has successfully established
+synchronisation on the host side likely would result in the link
+going down.
 
+> > Do you think it would make sense to keep the user selection of
+> > advertised modes for each networking device accross removal or insertion
+> > of an SFP module?
+> 
+> No, you have no idea if the same module has been inserted, at least
+> with the current code. You could maybe stash the EEPROM contents and
+> see if it is the same, but that does not seem reliable to me, what do
+> you do when it is different?
 
-Beste Grüße,
-Peter Schneider
+Quite. I think if we had a way to notify userspace that something with
+the netdev hardware has changed, userspace could e.g. read the SFP
+EEPROM itself and decide what settings it wishes to use - thereby
+putting the policy decisions about what to do when a SFP is inserted
+squarely in userspace's court.
+
+The problem, as we all know, is that SFP EEPROM contents are a law to
+themselves, and I wouldn't even think of trying to detect "has a
+different module been plugged in from the previous module" by looking
+for different EEPROM contents. Yes, the EEPROM has a serial number.
+You can bet that there are vendors who program their modules with a
+standard content that's the same for each module.
+
+> > Alternatively we could of course also introduce a dedicated NETLINK_ROUTE
+> > event which fires exactly one time once a new is PHY attached.
+> 
+> Something like that. I would probably also do it on remove.
+> 
+> It does not seem too unreasonable to call netdev_state_change() on
+> module insert/remove. But maybe also add an additional property
+> indicating if the SFP cage is empty/occupied. The plumbing for that is
+> a bit more interesting.
+
+Remember that the SFP code itself doesn't have visibility of the
+netdev - that's handled at the higher levels by the PHY driver (if
+the network connectivity is via a PHY) or via phylink if it's direct
+to the MAC/PCS.
+
+However, things get very complicated. We can't simply just change
+configuration when the SFP is inserted.
+
+In order to keep the laser/transmitter in fibre SFPs turned off, we
+ensure that TX_DISABLE is asserted when the socket is inactive. I
+view this as a safety measure as it avoids the potential for eye
+sight damage by reflections.
+
+However, for many copper SFPs, TX_DISABLE seems to be used to hold
+the PHY in reset, making it unresponsive via I2C. So, at "module
+insert" we don't even know if we have a PHY or not - we can only
+take a best guess at whether the module _may_ have a PHY. Remember
+that there are modules which do have a PHY, but the PHY is
+completely inaccessible.
+
+So, triggering userspace to do something when a module is inserted
+is too early - we don't know at that point whether it has a PHY or
+what the PHY is, what the capabilities of that PHY are, or anything
+like that.
+
+The best place to decide to notify userspace would be at the
+module_start() callback - this happens when a module is present,
+and the netdev has been brought up. Note that this call will happen
+each and every time the netdev is brought up.
+
+module_stop() is module_start()'s opposite method.
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
