@@ -1,105 +1,150 @@
-Return-Path: <linux-kernel+bounces-330858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFD297A54B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:24:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33AF697A54D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB5B1C25BAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:24:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA214B20CE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E983B158D92;
-	Mon, 16 Sep 2024 15:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE4A1591E3;
+	Mon, 16 Sep 2024 15:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz2AiclI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QcMBgl88"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEE01547D5;
-	Mon, 16 Sep 2024 15:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99AC1581F2;
+	Mon, 16 Sep 2024 15:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726500287; cv=none; b=c79zYRRjmFiMUuz0aRWhvdi9AMT4zSCBbADo7ft7k86E0EurT0FCZmjIlirc9EOUvUOZCNpcyoXcfkGFYjs7INO7sWaGagE6l6dNAyWEvAOyeUeUTfu2sRmxEVGI6R3/LEgDDQfh5zH/m4qn+l4gv17McMkw7RWSNIbyiGGQCI4=
+	t=1726500455; cv=none; b=NEDcojTtvxYjUnCMleakpIB67jyZyU+M3nL/Amob2co6CO1itgEBcpQWXm6+jTgifqf13q8v5fOh6ZCEpo6EkXWwYxWV/OpKuFRgzCmyCLPLSBrFsbhXN7Kw3mAGyYQy/na62YqGOMyvR35iuKzPmRp4D7hgHpJjghdx26lrjzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726500287; c=relaxed/simple;
-	bh=iH6HjIrJbuL6jnQ4qIITYIVkexIlvUJC8T1Az4wwhjg=;
+	s=arc-20240116; t=1726500455; c=relaxed/simple;
+	bh=ybn60viRg3GivcawU0AcW2NTeCsVAOOgH7XfXF/QLs4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NZJ3dx+sBU72m5x2HUDvb+LvXDU+tioKmg3CoM6ZN4Ap5uSylbYb+azZG5nwT3foql85hw8RsUnl3byce99xgSVte6jzkHsZ71M/eZB0BSYoSJ5VB/cUPVjbp693A7NY3TNDPXoy/2EXmWzqy41D9CXM9Be2IPii0GDGw2sO9G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz2AiclI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3D37C4CEC4;
-	Mon, 16 Sep 2024 15:24:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726500286;
-	bh=iH6HjIrJbuL6jnQ4qIITYIVkexIlvUJC8T1Az4wwhjg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mz2AiclI964HImlglHIM8ury/P0qXWLBOE1XegMCjyGpljfEpHwnrlGTN9usM0C99
-	 gWAuRO6/JIovFWM1AxIwl8dAUKXBpYljfV1PYDMkM7RF9MM4bjDBZkgR8EUXiHHcfQ
-	 1t3C99U0fwX4Lay8Yg3OK4nsIpksx4YcHYkPlATuLWJnuxG6JSotX1mduORwzArXzZ
-	 SDzyT6ouBsGOFQhYYHXwe1PTSGN64BayU0ItSFRs15fFygOVKj8qdjxRp6Xetj7KWf
-	 o9MZc3BFsWcfPtWv6Ut2HsY/lz+l80FdTSkw3UQIwFTfV52pE1/S/VUMNrkSL1UU5G
-	 JC9W8GEnHZpVw==
-Date: Mon, 16 Sep 2024 16:24:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Emil Gedenryd <emil.gedenryd@axis.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andreas Dannenberg <dannenberg@ti.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@axis.com
-Subject: Re: [PATCH v3 2/3] dt-bindings: iio: light: opt3001: add compatible
- for opt3002
-Message-ID: <20240916-hardcover-vertebrae-1ca1fd387daf@spud>
-References: <20240916-add_opt3002-v3-0-984b190cd68c@axis.com>
- <20240916-add_opt3002-v3-2-984b190cd68c@axis.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkDIzGM2ixwBX34ZVdB3UIWnFcvT2wJczt4LiSkMMEAF7+snmzO2mChpYtYJXVTsvmi1lL78VQms4iMXiQwp28Nb4leHBCCxEREMhSjxC3mJntAhTVQTpJhMhVcMZ7Uq0SBRgZpc0u4XvPTEh3utEK6gqLID2a9Zd+LBeRB06U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QcMBgl88; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726500454; x=1758036454;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ybn60viRg3GivcawU0AcW2NTeCsVAOOgH7XfXF/QLs4=;
+  b=QcMBgl88aJtWkYA8pFjoC1Xx9NVVk0UZrZiIVId6XHr95jzh/X4TePzR
+   0HOYv+1l89nNNA4qWxG8s8tdkcqMvEVgdWFx3LI7cAtIg71JnB3p9AcfB
+   H7K0nDT6/f/BtatCmmZk7zE37cKYfD2/Zg6euZgnADvpoUDPJQn13lmgR
+   S6uDL/HniFPa0NXloCLVswKfbFIuke5sl/4YDykJn7chhCEIP+VoKkDAq
+   dKSKF6FQ+MtzKM+KOq+YGTAaxd9EP3sXMa92GD9biYPI5eYD/6vAFwLgo
+   HM7HIKwHRCuFHmsAeRrqGjcFTHZ99hQ0gr7sTBHqJv8ke+I+V7fr2yN8J
+   w==;
+X-CSE-ConnectionGUID: jpHBCUUeTcySpbBymtMQUA==
+X-CSE-MsgGUID: f4V7hz3FTwOofqwX6014wQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="42848112"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="42848112"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 08:27:33 -0700
+X-CSE-ConnectionGUID: 5sCWBK5QT+6icFZNaoTSpA==
+X-CSE-MsgGUID: ckvy+jtoQbOE0TVStyhSJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="73258548"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 08:27:31 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sqDdQ-00000009VTc-3Cu1;
+	Mon, 16 Sep 2024 18:27:28 +0300
+Date: Mon, 16 Sep 2024 18:27:28 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
+ printk(KERN_ERR ...) with pr_err()
+Message-ID: <ZuhOYFx5ZvzkvG2o@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+ <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
+ <2024091438-charity-borough-54b3@gregkh>
+ <ZugAeVWeMZGtjYme@smile.fi.intel.com>
+ <2024091632-oboe-subfloor-afc8@gregkh>
+ <ZugJT4nl1l04biJd@smile.fi.intel.com>
+ <20240916080410.464c2b5f@SWDEV2.connecttech.local>
+ <ZugiB0GoNF50OdYC@smile.fi.intel.com>
+ <20240916112056.25193a17@SWDEV2.connecttech.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QevM+ap8IyTxCOXc"
-Content-Disposition: inline
-In-Reply-To: <20240916-add_opt3002-v3-2-984b190cd68c@axis.com>
-
-
---QevM+ap8IyTxCOXc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240916112056.25193a17@SWDEV2.connecttech.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 16, 2024 at 04:56:38PM +0200, Emil Gedenryd wrote:
-> The opt3002 is a Light-to-Digital Sensor by TI with support for wide-range
-> spectrum light. It shares most properties with their opt3001 model with
-> the exception of having a wide spectral bandwidth, ranging from 300 nm
-> to 1000 nm.
->=20
-> Add the compatible string of opt3002.
->=20
-> Signed-off-by: Emil Gedenryd <emil.gedenryd@axis.com>
+On Mon, Sep 16, 2024 at 11:20:56AM -0400, Parker Newman wrote:
+> On Mon, 16 Sep 2024 15:18:15 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Mon, Sep 16, 2024 at 08:04:10AM -0400, Parker Newman wrote:
+> > > On Mon, 16 Sep 2024 13:32:47 +0300
+> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Mon, Sep 16, 2024 at 12:25:52PM +0200, Greg Kroah-Hartman wrote:
+> > > > > On Mon, Sep 16, 2024 at 12:55:05PM +0300, Andy Shevchenko wrote:
+> > > > > > On Sat, Sep 14, 2024 at 08:58:50PM +0200, Greg Kroah-Hartman wrote:
+> > > > > > > On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
 
-Pretty sure I gave you an ack for this already, provided you added the
-a description of the differences, which you have.
+...
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > > > > > -			printk(KERN_ERR "%s: timeout\n", __func__);
+> > > > > > > > +			pr_err("%s: timeout\n", __func__);
+> > > > > > >
+> > > > > > > It's a device, please use dev_err().
+> > > > > >
+> > > > > > The problem is that this library doesn't know about this fact. I.e. it would
+> > > > > > need a new member just for this message. Instead, maybe drop the message as we
+> > > > > > anyway get a unique enough error code?
+> > > > >
+> > > > > Fair enough, although adding real device pointers would be good to do in
+> > > > > the future...
+> > > >
+> > > > Let's then do it when it will be the real need? Because I don't think this
+> > > > message is _so_ important. I believe one of the upper layers (whichever calls
+> > > > this function) should propagate the error code up to the user space. If it's
+> > > > not the case _that_ has to be fixed.
+> > > >
+> > > > TL;DR: Let's remove the message for now.
+> > >
+> > > I can remove the message or leave it as is and drop this patch from the series.
+> > > One could make the argument that any error indication it is better than none
+> > > in this case.
+> >
+> > I think you can drop the message and make the patch to be last in the series,
+> > so it can be easily abandoned (in case that decision will be made) without
+> > throttling the rest. At the same time in the commit message explain that with
+> > move to read_poll_timeout() we drop the seems redundant message. I'm fine with
+> > that approach. But at the end of the day it's not that critical to the main
+> > purpose, i.e. cleaning up the Exar serial driver.
+> 
+> I don't think read_poll_timeout() will work directly because eeprom->register_read()
+> does not return a value. I could add a "is write complete" wrapper function
+> to work around that I guess. However, I think I will just drop this patch from
+> the series as fixing it properly will be a big change and like you said its not
+> critical to the main patch.
 
-Cheers,
-Conor.
+Sure, fine with me.
 
---QevM+ap8IyTxCOXc
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+With Best Regards,
+Andy Shevchenko
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuhNugAKCRB4tDGHoIJi
-0lX0AP42UtqigGmWrT7AHNuUBXtWG4giT+clsA+e5E56NY2bmgD/YpiqeJCwB+Tf
-NhhceJ1/GKShyX9h7NmtxRS3u3ZrNgI=
-=ZFvF
------END PGP SIGNATURE-----
-
---QevM+ap8IyTxCOXc--
 
