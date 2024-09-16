@@ -1,167 +1,185 @@
-Return-Path: <linux-kernel+bounces-330918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5C397A616
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:33:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DFD97A612
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B95981F2373A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:33:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EE771C26E20
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEA515B115;
-	Mon, 16 Sep 2024 16:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4B5158D8B;
+	Mon, 16 Sep 2024 16:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Lt8/AirC"
-Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Omy2mdbx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RwT2LOkE"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5841C28E;
-	Mon, 16 Sep 2024 16:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1912E21340
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 16:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726504400; cv=none; b=qGDrbB3Cv+9thSdplZrLXtd8DeTNem7fV6zYNDQw7+x7eBrRMH5yRK0ynAfNEu61gQ5RnUzlA+DVrHUYIMIt6Dkdc39JFk2xKbLi73Y4fW8I5WgABm4nEMhP4fBlYH5UNRewp/H+dGj6NPOh4H0mgoRuYKhpY6M+zQovl62AJEU=
+	t=1726504398; cv=none; b=t8hZpRCoVbAhHipv9mfxq4P9nnMWEtgCG4koBQAGG0Io7S8pnZv7W8oCf2ZoiOsrA/GVU8Rs3DO5FcySJFnF7s3+JsVVpAwuIId4Cp/MYxypnkGGtojlg6/BDDZ2F4DowCXOkZQ4NfguHGTTtWaGleGGrkxYaqWQe1GGsfqGSJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726504400; c=relaxed/simple;
-	bh=2BbvgXonCHBHnrI9Z7+Ify0OIb25BwJ33TpYDlTYK6g=;
-	h=Subject:MIME-Version:Content-Type:Date:Message-ID:To:CC:From:
-	 References:In-Reply-To; b=VGwx/dRKcfX045xm+40A5vYWC2d74uwhvqGCI68mXjcheD+rRwv6Sue7L6TKhtZ1bsF4U1Cnm5ZQx8iuFJPoFISXox6I+qQ0N3lzcAlNM2NLJfG7r1oMgOxKiZh6nSZG5bEUAJUGytGlkRH+yTr030B9g2mECcAkqyvSF/e97DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Lt8/AirC; arc=none smtp.client-ip=207.171.190.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1726504399; x=1758040399;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   to:cc:from:references:in-reply-to:subject;
-  bh=vaEcfC/w1S3Egx7r/IoKG6EaTpC7QKbehfqIGwBFT84=;
-  b=Lt8/AirCPdhFrfkziewRPjLqIpjhAqr9qSwFjMcFm6wuiK4DBGi5z+YQ
-   4QWqYy5iuQRQZB5DrifKt6CMajY+lqHFouBLEm2YmofPlgzs+4NLoeiQL
-   VLQSZcv2HTbSqhvUxAIf3aLb8TOyONJgJMQ2lNziPfzoIDheg/hzaHWV2
-   Q=;
-X-IronPort-AV: E=Sophos;i="6.10,233,1719878400"; 
-   d="scan'208";a="368416637"
-Subject: Re: [PATCH 00/18] Introducing Core Building Blocks for Hyper-V VSM Emulation
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 16:32:56 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.43.254:23051]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.9.8:2525] with esmtp (Farcaster)
- id 2fbf8d00-c6e4-4567-9513-91621abe81cc; Mon, 16 Sep 2024 16:32:52 +0000 (UTC)
-X-Farcaster-Flow-ID: 2fbf8d00-c6e4-4567-9513-91621abe81cc
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 16 Sep 2024 16:32:52 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Mon, 16 Sep 2024
- 16:32:46 +0000
+	s=arc-20240116; t=1726504398; c=relaxed/simple;
+	bh=3BKT58+hQPxQZ0xlTp38ewfazRlSDW0RZvBc6idyQ/s=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=fjVfbhjVXHMtaAbL+SyFrT5XhsxYal03lNBcCq31gH3DNTQNp12gyHLzJuZnBbwalUN+tiFLJr+rn8U/7uU7GCRowkd/5KQK5TIAgGW7LkrUWjg6sNMibap5aFlDQLLTzvVe6Fmp+rw6rp+I06ABfW047RIGc8Fp076hC1NEUQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Omy2mdbx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RwT2LOkE; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 2D47711402C0;
+	Mon, 16 Sep 2024 12:33:16 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 16 Sep 2024 12:33:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1726504396;
+	 x=1726590796; bh=vZIcbrAnjSA4s0p+zFS0c7vxQRLPVZtsGWABr76p9TM=; b=
+	Omy2mdbx6J6goCyiYQrovp/HecGw/tZLTLQzm2LFZ4oGGY4qnoBmS29abgnuITc2
+	IEUUiamm1/p4qPrMynfqSd/44x17lzYdQ/wL6GklDIb6LELrT4mjBDuGKj7BEBMX
+	bz6wFMTUUFHYDEQ8BYErcw+TBEkhgn7J9dkwMeNikNXeVL4pq1IJwoOdLiinTXMI
+	w2QZqPyE63iPuwUVtd1z4Xn3SD3F3K+XTnkvdAFnO1Jj/7+li+KgtuTPP+u5dSzu
+	4Aq3W2sFJTFyeb43uiZp8H1PSMUzFu8sM3F1NGpHyA6BQ8HwAhAK5w3xCRx8aWY2
+	xnpA5ZGm84/p0yDf6A0/NQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726504396; x=
+	1726590796; bh=vZIcbrAnjSA4s0p+zFS0c7vxQRLPVZtsGWABr76p9TM=; b=R
+	wT2LOkEIDa1rzyvQvZfkmxfwDwb7JLLygkgTMszEwpIBSwpxQ/a7OpoQVgUjfpRK
+	izoioPQDcTrd3tamZN4UDc/ikDkoXnj39Wzi/wWwWRuMpOMHjVA4lGHBb4sZUQAx
+	WnOfiG0PKyzqg+p7ZrzOF9FZMKOek7qqgNS+0S6kxyzIF+3qq+5xpwPaZJ7cZkOK
+	FH0zAo63hMCAemnKITP7Kd1HQcj/8AVcgJpPTaWs1jNWgCyVclFTsFbSs9x652Qf
+	YYF9bdHIaBGuUdKl3MIk4JgzYtgpnJgynWPHv+nvF7TjYQIbXbdpu5ThabOGnchN
+	7ZxhUBPwpmo6FODZhnSvQ==
+X-ME-Sender: <xms:y13oZjDxMKA-11zLBsST4FdmnGiNdVur_LBVDoKcFeFZqPu_FpIG7A>
+    <xme:y13oZpjtvW1w84AGbRBSAH38Xd4jhonvh6ODSPSjyGuRmx3U8BEIYQ288IFwovVPs
+    cI5nY0HAXaqyThbD_g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekhedguddttdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpeekvdeuhfeitdeuieejvedtieeijeefleevffef
+    leekieetjeffvdekgfetuefhgfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
+    rhhnuggsrdguvgdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepshhotgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhorhhvrghlughs
+    sehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    grrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:y13oZukR1SzPug3tf5XswXKO6kGdCtQebFHDH8Bwa2SaVBfGhiZZ-w>
+    <xmx:y13oZlxif1pGDGOzhEn18T4s1TxfvATCsdG3B9c9mIAKy5sbq2obSg>
+    <xmx:y13oZoRNr6tlua6TC5CMJeAixAS9SmpRZwNdBgcS-woGMat3UxD-Ng>
+    <xmx:y13oZoY13wexUpWikjKNfN8gNO9MSb480YJf4ZZYBG2DtXRIXd0waw>
+    <xmx:zF3oZueFCoK86f37f6LE03UgamHS4QmWegeM5Fw3naBsAl7c0ByGtrVb>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D37D5222006F; Mon, 16 Sep 2024 12:33:15 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Mon, 16 Sep 2024 16:32:53 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: soc@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <3618c698-8305-460f-bddb-67e4e06f524a@app.fastmail.com>
+In-Reply-To: <a40b4b3a-5d61-4bef-b367-745ba058be9e@app.fastmail.com>
+References: <a40b4b3a-5d61-4bef-b367-745ba058be9e@app.fastmail.com>
+Subject: [GIT PULL 3/4] soc: defconfig updates for 6.12
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Mon, 16 Sep 2024 16:32:43 +0000
-Message-ID: <D47UPV0JIIMY.35CRZ8ZNZCGA1@amazon.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<pbonzini@redhat.com>, <vkuznets@redhat.com>, <linux-doc@vger.kernel.org>,
-	<linux-hyperv@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <graf@amazon.de>,
-	<dwmw2@infradead.org>, <paul@amazon.com>, <mlevitsk@redhat.com>,
-	<jgowans@amazon.com>, <corbet@lwn.net>, <decui@microsoft.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <amoorthy@google.com>
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049-dirty
-References: <20240609154945.55332-1-nsaenz@amazon.com>
- <ZuSQNZYWfeHTpAKN@google.com>
-In-Reply-To: <ZuSQNZYWfeHTpAKN@google.com>
-X-ClientProxiedBy: EX19D046UWB002.ant.amazon.com (10.13.139.181) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-On Fri Sep 13, 2024 at 7:19 PM UTC, Sean Christopherson wrote:
-> On Sun, Jun 09, 2024, Nicolas Saenz Julienne wrote:
-> > This series introduces core KVM functionality necessary to emulate Hype=
-r-V's
-> > Virtual Secure Mode in a Virtual Machine Monitor (VMM).
->
-> ...
->
-> > As discussed at LPC2023 and in our previous RFC [2], we decided to mode=
-l each
-> > VTL as a distinct KVM VM. With this approach, and the RWX memory attrib=
-utes
-> > introduced in this series, we have been able to implement VTL memory
-> > protections in a non-intrusive way, using generic KVM APIs. Additionall=
-y, each
-> > CPU's VTL is modeled as a distinct KVM vCPU, owned by the KVM VM tracki=
-ng that
-> > VTL's state. VTL awareness is fully removed from KVM, and the responsib=
-ility
-> > for VTL-aware hypercalls, VTL scheduling, and state transfer is delegat=
-ed to
-> > userspace.
-> >
-> > Series overview:
-> > - 1-8: Introduce a number of Hyper-V hyper-calls, all of which are VTL-=
-aware and
-> >        expected to be handled in userspace. Additionally an new VTL-spe=
-cifc MP
-> >        state is introduced.
-> > - 9-10: Pass the instruction length as part of the userspace fault exit=
- data
-> >         in order to simplify VSM's secure intercept generation.
-> > - 11-17: Introduce RWX memory attributes as well as extend userspace fa=
-ults.
-> > - 18: Introduces the main VSM CPUID bit which gates all VTL configurati=
-on and
-> >       runtime hypercalls.
->
-> Aside from the RWX attributes, which to no one's surprise will need a lot=
- of work
-> to get them performant and functional, are there any "big" TODO items tha=
-t you see
-> in KVM?
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208=
+399:
 
-Aside from VTLs and VTL switching, there is bunch of KVM features we
-still need to be fully compliant with the VSM spec:
-- KVM_TRANSLATE2, which Nikolas Wipper posted a week ago [1].
-  Technically we can do this in user-space, but it's way simpler to
-  re-use KVM's page-walker.
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
 
-- Hv's TlbFlushInhibit, it allows VTL1 to block VTL0 vCPUs from issuing
-  TLB Flushes, and blocks them until uninhibited. Note this only applies
-  to para-virtualized TLB flushes:
-  HvFlushVirtualAddress{Space,SpaceEx,List,ListEx}, so it's 100% Hyper-V
-  specific.
+are available in the Git repository at:
 
-- CPU register pinning/intecepting, we plan on reusing what HEKI
-  proposed some time ago, and expose it through an IOCTL using ONE_REG
-  to represent registers.
+  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-d=
+efconfig-6.12
 
-- MBEC aware memory attributes, we don't plan on enabling support for
-  these with the first RWX memattrs submission. We'll do it as a follow
-  up, especially as not every Windows VBS feature requires it
-  (Credential Guard doesn't need it, HVCI does).
+for you to fetch changes up to 7eee0f8bbd1b6946236624d25a938cb34c1ba2a9:
 
-> If this series is more or less code complete, IMO modeling VTLs as distin=
-ct VM
-> structures is a clear win.
+  Merge tag 'v6.11-next-defconfig' of https://git.kernel.org/pub/scm/lin=
+ux/kernel/git/mediatek/linux into soc/defconfig (2024-09-11 09:05:18 +00=
+00)
 
-I agree.
+----------------------------------------------------------------
+soc: defconfig updates for 6.12
 
-> Except for the "idle VTL" stuff, which I think we can simplify, this
-> series is quite boring, and I mean that in the best possible way :-)
+The updates to the defconfig files are fairly small, enabling
+drivers for eight of the arm and riscv based platforms.
 
-:)
+----------------------------------------------------------------
+Alexandre Mergnat (1):
+      arm64: defconfig: enable mt8365 sound
 
-Thanks,
-Nicolas
+Arnd Bergmann (8):
+      Merge tag 'at91-defconfig-6.12' of https://git.kernel.org/pub/scm/=
+linux/kernel/git/at91/linux into soc/defconfig
+      Merge tag 'renesas-arm-defconfig-for-v6.12-tag1' of https://git.ke=
+rnel.org/pub/scm/linux/kernel/git/geert/renesas-devel into soc/defconfig
+      Merge tag 'tegra-for-6.12-arm64-defconfig' of https://git.kernel.o=
+rg/pub/scm/linux/kernel/git/tegra/linux into soc/defconfig
+      Merge tag 'ti-k3-config-for-v6.12' of https://git.kernel.org/pub/s=
+cm/linux/kernel/git/ti/linux into soc/defconfig
+      Merge tag 'imx-defconfig-6.12' of https://git.kernel.org/pub/scm/l=
+inux/kernel/git/shawnguo/linux into soc/defconfig
+      Merge tag 'qcom-arm64-defconfig-for-6.12' of https://git.kernel.or=
+g/pub/scm/linux/kernel/git/qcom/linux into soc/defconfig
+      Merge tag 'riscv-config-for-v6.12' of https://git.kernel.org/pub/s=
+cm/linux/kernel/git/conor/linux into soc/defconfig
+      Merge tag 'v6.11-next-defconfig' of https://git.kernel.org/pub/scm=
+/linux/kernel/git/mediatek/linux into soc/defconfig
 
-[1] https://lore.kernel.org/kvm/20240910152207.38974-1-nikwip@amazon.de
+Chen Wang (1):
+      riscv: defconfig: sophgo: enable clks for sg2042
+
+Devarsh Thakkar (1):
+      arm64: defconfig: Enable E5010 JPEG Encoder
+
+Dmitry Baryshkov (1):
+      arm64: defconfig: build CONFIG_REGULATOR_QCOM_REFGEN as module
+
+Geert Uytterhoeven (1):
+      ARM: shmobile: defconfig: Enable slab hardening and kmalloc buckets
+
+Inochi Amaoto (1):
+      riscv: defconfig: Enable pinctrl support for CV18XX Series SoC
+
+Jon Hunter (1):
+      arm64: defconfig: Enable Tegra194 PCIe Endpoint
+
+Kuninori Morimoto (1):
+      arm64: defconfig: Enable AK4619 codec support
+
+Liu Ying (1):
+      arm64: defconfig: Enable ADP5585 GPIO and PWM drivers
+
+Niklas S=C3=B6derlund (1):
+      arm64: defconfig: Enable R-Car Ethernet-TSN support
+
+Varshini Rajendran (1):
+      ARM: configs: at91: enable config flags for sam9x7 SoC family
+
+ arch/arm/configs/at91_dt_defconfig  |  1 +
+ arch/arm/configs/shmobile_defconfig |  1 +
+ arch/arm64/configs/defconfig        | 10 ++++++++++
+ arch/riscv/configs/defconfig        |  7 +++++++
+ 4 files changed, 19 insertions(+)
 
