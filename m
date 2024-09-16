@@ -1,181 +1,220 @@
-Return-Path: <linux-kernel+bounces-330391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07568979DC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD81A979D5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B3E5B22961
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BC8E1F23455
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FB51A28C;
-	Mon, 16 Sep 2024 09:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C55B1474BF;
+	Mon, 16 Sep 2024 08:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b="F/j5Xpck"
-Received: from us-smtp-delivery-162.mimecast.com (us-smtp-delivery-162.mimecast.com [170.10.133.162])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzIE8eaz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3EE146D7E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.162
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF3343ABD;
+	Mon, 16 Sep 2024 08:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726477439; cv=none; b=kyopgInTFJT6yVIZDBPRxUzciNY3p/aJpud8/I5dQ2KG6HCu5H2M64qndRuwJAiZUl7AcVgF13F0FV/uC+3gIF5BhITTPsNK0quD13NW+F6k7PXUtOuKg8pa+3WDxDvbB/p8ApimA7dcTZQg9ImF69lILvDAwjcWDe5dx27tTJw=
+	t=1726477009; cv=none; b=sNzEUMzA+pwd3M/t+Et9V/2TK3Uf807wHAbthwSMn3EI5y8Fc5nyesaw/7LU1UCIVYJcG3syuHabKm/eiLsvBvokcTcmRYo/u0FyiTSJ3d9PoBwEixDtWrpuabo9Nah2ymDk7CZoXBO6vYzb5gknJguySlbT0eZr4SxkDfZlgJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726477439; c=relaxed/simple;
-	bh=5oPEPxx3btISiu2HKpOI8h4G0Mq5rcLQYI86wc46wgA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=JauQBN/UW0uoR6s0VhzGH7B0TxRb6VZ4NCGiowm5CzYdGwmnU9Ic8nCcSlFhtIGmoEvflAS4MNs1BXL82kXvZdFZnwq40q0blncO8HqGX2S/OTBfEhzpPcUaPiG0GZWPOLder+vwOKEW8V6y24xhFIsLRK48dCQqgpPND77JMfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com; spf=pass smtp.mailfrom=hp.com; dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b=F/j5Xpck; arc=none smtp.client-ip=170.10.133.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hp.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hp.com; s=mimecast20180716;
-	t=1726477436;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gx4WAWn0gDdOn3D6kua7ErNP0JPsHujFHwToAOT0YXM=;
-	b=F/j5Xpck4u6A+Oumay3OIbBf+iTLBwpYBynQi3BVMyIcudQQ8N6YZiiYFF1fLRWG+2hIW/
-	ZaajR6IwogVRb8vFLeI2W+Pt/Rz4GI/y58QsZ2hV65f0miveooQsdfC2zGcO/sRAiOg4SC
-	Jg34GERng49xAiyz8JIyWrPeIHeVTA8=
-Received: from g7t16454g.inc.hp.com (hpifallback.mail.core.hp.com
- [15.73.128.143]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-446-dfc8iAKPMvqdM8G5pCHtmg-1; Mon, 16 Sep 2024 05:03:49 -0400
-X-MC-Unique: dfc8iAKPMvqdM8G5pCHtmg-1
-Received: from g8t13021g.inc.hpicorp.net (g8t13021g.inc.hpicorp.net [15.60.27.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by g7t16454g.inc.hp.com (Postfix) with ESMTPS id ECD0E60010EF;
-	Mon, 16 Sep 2024 09:03:48 +0000 (UTC)
-Received: from mail.hp.com (unknown [15.32.134.51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by g8t13021g.inc.hpicorp.net (Postfix) with ESMTPS id 3DB4260000B6;
-	Mon, 16 Sep 2024 09:03:47 +0000 (UTC)
-Received: from cdc-linux-buildsrv17.. (localhost [127.0.0.1])
-	by mail.hp.com (Postfix) with ESMTP id 2ACAFA401C6;
-	Mon, 16 Sep 2024 16:56:03 +0800 (CST)
-From: Wade Wang <wade.wang@hp.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wade.wang@hp.com
-Cc: stable@vger.kernel.org
-Subject: [PATCH] HID: plantronics: Workaround for an unexcepted opposite volume key
-Date: Mon, 16 Sep 2024 16:56:00 +0800
-Message-Id: <20240916085600.1387418-1-wade.wang@hp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726477009; c=relaxed/simple;
+	bh=6PG9+yFv0G0z38SfyC4Tpo7NjQfaUQZR7EYLAmj8bOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TLGU+cPTwEO3xSZbp8w+Tfbmg/Mg5y/+2/yPKbdd4eLFtTipuaBtHP1W14bmPF7R2PS6zBSkW4H4UYSS8e+PevPEgun2DsfzciiOAY/P1HE0gSZlSAPsSjnhsuwrigymdxt0RuLmh60yJ3mrCVcFsDGIOqAUAaY4055WPJJn2qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzIE8eaz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC9E0C4CEC4;
+	Mon, 16 Sep 2024 08:56:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726477008;
+	bh=6PG9+yFv0G0z38SfyC4Tpo7NjQfaUQZR7EYLAmj8bOY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dzIE8eazLfbc0sYSALaK9vXRgfht+Oiz/qZoTdvMN6Q7/j+QnnC+3XPBGY8ZQN6VQ
+	 7uXwdLEVfH0S7VXfIjGncAX+/Hw91RQAanoksZEDJLX2VK53xCdmQMDpu6kTcqRGLi
+	 05biWkqns/m7LPOz8xfaVXKVrAmQLJ+yRGGlYXP7uZfEHq36aeQSDOcNfEVeSsKcAH
+	 17NyDezyaO7nbUekR631EC4VeFY+CTQ5i6W5N17dxk6JoOswtoLs7dUpApsFW8yXJh
+	 miXnUWW9alFu8XEtkuGlmow1pM6hiyTCG590sExjb+LHNEAHLUpkKg70tWghGLo/dg
+	 j85KkTtxZ9Haw==
+Message-ID: <1d0ba3fc-1504-4af3-a0bc-fba86abe41e8@kernel.org>
+Date: Mon, 16 Sep 2024 10:56:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: hp.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=WINDOWS-1252; x-default=true
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/9] dt-bindings: x86: Add a binding for x86 wakeup
+ mailbox
+To: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, kys@microsoft.com,
+ haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+ rafael@kernel.org, lenb@kernel.org, kirill.shutemov@linux.intel.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org
+References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
+ <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
+ <ujfqrllrii6iijlhbwx3bltpjogiosw4xx5pqbcddgpxjobrzh@xqqrfxi5lv3i>
+ <20240827204549.GA4545@yjiang5-mobl.amr.corp.intel.com>
+ <20240910061227.GA76@yjiang5-mobl.amr.corp.intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240910061227.GA76@yjiang5-mobl.amr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Some Plantronics headset as the below send an unexcept opposite
-volume key's HID report for each volume key press after 200ms, like
-unecepted Volume Up Key following Volume Down key pressed by user.
-This patch adds a quirk to hid-plantronics for these devices, which
-will ignore the second unexcepted opposite volume key if it happens
-within 220ms from the last one that was handled.
-    Plantronics EncorePro 500 Series  (047f:431e)
-    Plantronics Blackwire_3325 Series (047f:430c)
+On 10/09/2024 08:13, Yunhong Jiang wrote:
+> On Tue, Aug 27, 2024 at 01:45:49PM -0700, Yunhong Jiang wrote:
+>> On Sun, Aug 25, 2024 at 09:10:01AM +0200, Krzysztof Kozlowski wrote:
+>>> On Fri, Aug 23, 2024 at 04:23:20PM -0700, Yunhong Jiang wrote:
+>>>> Add the binding to use mailbox wakeup mechanism to bringup APs.
+>>>>
+>>>> Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+>>>> ---
+>>>>  .../devicetree/bindings/x86/wakeup.yaml       | 64 +++++++++++++++++++
+>>>>  1 file changed, 64 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/x86/wakeup.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/x86/wakeup.yaml b/Documentation/devicetree/bindings/x86/wakeup.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..cb84e2756bca
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/x86/wakeup.yaml
+>>>> @@ -0,0 +1,64 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +# Copyright (C) 2024 Intel Corporation
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/x86/wakeup.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: x86 mailbox wakeup
+>>>> +maintainers:
+>>>> +  - Yunhong Jiang <yunhong.jiang@linux.intel.com>
+>>>> +
+>>>> +description: |
+>>>> +  The x86 mailbox wakeup mechanism defines a mechanism to let the bootstrap
+>>>> +  processor (BSP) to wake up application processors (APs) through a wakeup
+>>>> +  mailbox.
+>>>> +
+>>>> +  The "wakeup-mailbox-addr" property specifies the wakeup mailbox address. The
+>>>> +  wakeup mailbox is a 4K-aligned 4K-size memory block allocated in the reserved
+>>>> +  memory.
+>>>> +
+>>>> +  The wakeup mailbox structure is defined as follows.
+>>>> +
+>>>> +    uint16_t command;
+>>>> +    uint16_t reserved;
+>>>> +    uint32_t apic_id;
+>>>> +    uint64_t wakeup_vector;
+>>>> +    uint8_t  reservedForOs[2032];
+>>>> +
+>>>> +  The memory after reservedForOs field is reserved and OS should not touch it.
+>>>> +
+>>>> +  To wakes up a AP, the BSP prepares the wakeup routine, fills the wakeup
+>>>> +  routine's address into the wakeup_vector field, fill the apic_id field with
+>>>> +  the target AP's APIC_ID, and write 1 to the command field. After receiving the
+>>>> +  wakeup command, the target AP will jump to the wakeup routine.
+>>>> +
+>>>> +  For each AP, the mailbox can be used only once for the wakeup command. After
+>>>> +  the AP jumps to the wakeup routine, the mailbox will no longer be checked by
+>>>> +  this AP.
+>>>> +
+>>>> +  The wakeup mailbox structure and the wakeup process is the same as
+>>>> +  the Multiprocessor Wakeup Mailbox Structure defined in ACPI spec version 6.5,
+>>>> +  section 5.2.12.19 [1].
+>>>> +
+>>>> +  References:
+>>>> +
+>>>> +  [1] https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
+>>>> +
+>>>> +select: false
+>>>
+>>> This schema is still a no-op because of this false.
+>>>
+>>> What is the point of defining one property if it is not placed anywhere?
+>>> Every device node can have it? Seems wrong...
+>>>
+>>> You need to come with proper schema. Lack of an example is another thing
+>>> - this cannot be even validated by the tools. 
+>>>
+>>> Best regards,
+>>> Krzysztof
+> 
+> Hi, Krzysztof, I'm working to address your comments and have some questions.
+> Hope to get help/guide from your side.
+> 
+> For the select, the writing-schema.rst describes it as "A json-schema used to
+> match nodes for applying the schema" but I'm a bit confused. In my case, should
+> it be "cpus" node? Is there any code/tools that uses this property, so that I
+> can have a better understanding?
 
-The patch was tested on the mentioned model, it shouldn't affect
-other models, however, this quirk might be needed for them too.
-Auto-repeat (when a key is held pressed) is not affected per test
-result.
+Usually we expect matching by compatible, but it does not seem suitable
+here because it is not related to any specific device, right? That is
+the problem with all this DT-reuse-for-virtual-stuff work. It just does
+not follow usual expectations and guidelines - you do not describe a device.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Wade Wang <wade.wang@hp.com>
----
- drivers/hid/hid-ids.h         |  2 ++
- drivers/hid/hid-plantronics.c | 23 +++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+You can still match by nodes. See all top-level bindings.
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 781c5aa29859..b72d70bc5628 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -1050,6 +1050,8 @@
- #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3220_SERIES=090xc056
- #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3215_SERIES=090xc057
- #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES=090xc058
-+#define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES=090x430c
-+#define USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES=09=090x431e
-=20
- #define USB_VENDOR_ID_PANASONIC=09=090x04da
- #define USB_DEVICE_ID_PANABOARD_UBT780=090x1044
-diff --git a/drivers/hid/hid-plantronics.c b/drivers/hid/hid-plantronics.c
-index 3d414ae194ac..25cfd964dc25 100644
---- a/drivers/hid/hid-plantronics.c
-+++ b/drivers/hid/hid-plantronics.c
-@@ -38,8 +38,10 @@
- =09=09=09    (usage->hid & HID_USAGE_PAGE) =3D=3D HID_UP_CONSUMER)
-=20
- #define PLT_QUIRK_DOUBLE_VOLUME_KEYS BIT(0)
-+#define PLT_QUIRK_FOLLOWED_OPPOSITE_VOLUME_KEYS BIT(1)
-=20
- #define PLT_DOUBLE_KEY_TIMEOUT 5 /* ms */
-+#define PLT_FOLLOWED_OPPOSITE_KEY_TIMEOUT 220 /* ms */
-=20
- struct plt_drv_data {
- =09unsigned long device_type;
-@@ -137,6 +139,21 @@ static int plantronics_event(struct hid_device *hdev, =
-struct hid_field *field,
-=20
- =09=09drv_data->last_volume_key_ts =3D cur_ts;
- =09}
-+=09if (drv_data->quirks & PLT_QUIRK_FOLLOWED_OPPOSITE_VOLUME_KEYS) {
-+=09=09unsigned long prev_ts, cur_ts;
-+
-+=09=09/* Usages are filtered in plantronics_usages. */
-+
-+=09=09if (!value) /* Handle key presses only. */
-+=09=09=09return 0;
-+
-+=09=09prev_ts =3D drv_data->last_volume_key_ts;
-+=09=09cur_ts =3D jiffies;
-+=09=09if (jiffies_to_msecs(cur_ts - prev_ts) <=3D PLT_FOLLOWED_OPPOSITE_KE=
-Y_TIMEOUT)
-+=09=09=09return 1; /* Ignore the followed opposite volume key. */
-+
-+=09=09drv_data->last_volume_key_ts =3D cur_ts;
-+=09}
-=20
- =09return 0;
- }
-@@ -210,6 +227,12 @@ static const struct hid_device_id plantronics_devices[=
-] =3D {
- =09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
- =09=09=09=09=09 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES),
- =09=09.driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS },
-+=09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
-+=09=09=09=09=09 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES),
-+=09=09.driver_data =3D PLT_QUIRK_FOLLOWED_OPPOSITE_VOLUME_KEYS },
-+=09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
-+=09=09=09=09=09 USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES),
-+=09=09.driver_data =3D PLT_QUIRK_FOLLOWED_OPPOSITE_VOLUME_KEYS },
- =09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
- =09{ }
- };
---=20
-Change log:
-1. 2nd patch submission:
-   Add one Cc mail aoount in patch comment, per kernel test robot
-   required
-2. 3rd patch submission:
-   Code and comment change to Separate this patch with previous patch
-   'commit f567d6ef8606 ("HID: plantronics: Workaround for double
-   volume key presses")'
-2.34.1
+> 
+> For your "validated by the tools", can you please share the tools you used to
+> validate the schema? I used "make dt_binding_check" per the
+> submitting-patches.rst but I think your comments is about another tool.
+
+See writing-schema document.
+
+
+Best regards,
+Krzysztof
 
 
