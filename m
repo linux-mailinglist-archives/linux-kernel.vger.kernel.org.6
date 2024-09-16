@@ -1,141 +1,136 @@
-Return-Path: <linux-kernel+bounces-331016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C45D97A749
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:24:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E19897A74A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 669F82857AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB181C22816
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B375315D5C1;
-	Mon, 16 Sep 2024 18:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8539815B572;
+	Mon, 16 Sep 2024 18:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ELtUFwHD"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PhDmi8QY"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D73F15B10C;
-	Mon, 16 Sep 2024 18:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE813211F
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 18:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726511040; cv=none; b=UfWFTxgHgAfzUDVUI8vL2ONqOdR1CcgiIndNCIAqtR9FbrDI3TjbTAZ4W5dzoLDky8C6cehMiUs1aS4yE55ZUdbWAfytIVvZ3iBg4CM+YXpg8SqZ39OV8jNDkQbI6gxiSeQ64Nirs+6kDmu90mjp+/y/G4bZAcuzNxv/wwE1a5M=
+	t=1726511069; cv=none; b=oY+BBMY0aWvwFQUF3++tZ2iJp8nSMNl0ijoatGVvLm0nZ7ywN8PFaAc7kvDLRzf4qUk+AfLts3F97S351yhc0msC7emrxyxl4hxQru+S07qxlSQLUW374ZODSyav9Z/fC/Ai7GGZCcJQicLqDRPxQjGuVKcjrT85puLHdWFjQSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726511040; c=relaxed/simple;
-	bh=vSu8t8Qbu000oREFKVL1jU2sAeGEYw6cm8ooSW1AZhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oRC8WUjTw/rEQGld5/rDIRTXz+pUrE92WZN2wbQGI2p8ydwoYbKa5ldi17J1gA+dQm6MA4laBA9ILR7owVdRIsMwLzEwDnp/lsLKkAzFXFM8zdB1j8dbUjuM3No4ko9oMA+dHAkU1v1GADGh9I2/MiMK+4aRmIbRtzfkH6bTLro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ELtUFwHD; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1726511027;
-	bh=vSu8t8Qbu000oREFKVL1jU2sAeGEYw6cm8ooSW1AZhs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ELtUFwHDSFx5eeDybuOOUSW5DVL2JFuGivZAJKCNg2PY8iT9wneukXOqoxdxog5rv
-	 Rzzlw/nFfvCPKWhuL+gOXOx/oIniHI9Bqk1PvtSStac2w6SQpNaTYTHxm2SY2LGFt5
-	 HKdq3dQJMz8y4ePhYYsZA/VtMDnTE8fHPhT0dOTk=
-Date: Mon, 16 Sep 2024 20:23:47 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, 
-	Hans de Goede <hdegoede@redhat.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, Jonathan Corbet <corbet@lwn.net>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] drm: Minimum backlight overrides and
- implementation for amdgpu
-Message-ID: <cfec358a-ff42-49c3-a174-149bee7a461c@t-8ch.de>
-References: <20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net>
+	s=arc-20240116; t=1726511069; c=relaxed/simple;
+	bh=KyN8GKvHoP6oAAePFJM111cdcf+1s0w20NMicGPpf5o=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dcOvg75V5lpOhP7EhnFmAph6Aemq//NNIJPxocf5Y130B6P0hkFUDo/QHD/p4I5St5pW0Id1qKmJwslmCdEPHWY7icZkKQynNTlyf4f9yz4wnR0TivMsqiqBXGYJxReD+B9o75/TN8Y5z6UngP5Co6dlgcOPlXGrYL2aFKr7CYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PhDmi8QY; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e17bb508bb9so7928674276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:24:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726511067; x=1727115867; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PWVVert/0duLgr8lppMjlBcvaVlhn5CV2P73SctPY5A=;
+        b=PhDmi8QY8HXvWeZDVLCDmpjTTaxYVgf3GoXVan3Qim27iF9p3KG+odLNLZwNB5WOTd
+         EvnBVSKt3lZ7/PSSMsLs8/y7OcXPsfiAyylEQt8KESVWflKzdbcMtVjxvL7GNYQpMRWJ
+         QHCCqzf0NidZ27O8zNMBZZMGNSa44LAFz56kzDWstcWxIc3Lqi10TpIhn4gNQlXvo5qp
+         tgt8410g4gkdZ1HRExxHOWOn4MFZte8qEDzAwPJ+AiaabGVjC4hVwqncbgWCxDqbmA4W
+         VpOsuytOtojxEwfHDGkp4ivWF4B/ym4813pmIp7DTjIY8sxuUMHXEGWgVcXQ4fEJzmJj
+         VYMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726511067; x=1727115867;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PWVVert/0duLgr8lppMjlBcvaVlhn5CV2P73SctPY5A=;
+        b=I4ZWf6pLHhdx1elAUnVKFzbBs0+8XgqtFcTLLRlJUaR13mIo+j2rknsFuO3lc0MRe0
+         D8/JhjHl63AVrSeyaQDHZWjGaL7Q3yZQ6B3k5Am+8Y5T+HtZW7VnICALXdyFqRrF08o0
+         k+cCdOmiTwLB0BVveKLWhgzExzFasTVoogqDSxhDduNlr7L4djlazI8fiZPBBjrkfu3g
+         3+FpiMvudinjXTExuK5bpE4FLi6Luq29uR8N/j4kFzwuzFzpm3Jba6x5TBNVM50yldq2
+         9dVeuFxf18Wc1f28obYq9ML9gMHYNQO2FnclB0Ipv1pNC7F7qCJOoOU6tT6D2Y/G4OTZ
+         oU2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXTou+hZ03Cx4MfmtEan8Vy97Cvmir3pjNMs+wG8tZjr4pWdzXNjVptAqvZ9VjKF5U4efTbFzkTITU4mPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr/FJTPJcYlByLO6PhJRe4zIhqbKt9O3lZvY4jlBLH/Ix/2h0M
+	iW3SvhyOh/RQiNvdssfp6P1bQcIzJcMOZa2NT7CsTVVWf3mtIjpTAgUz6qGnk0wu2/R64SPlWRC
+	bnQ==
+X-Google-Smtp-Source: AGHT+IGw6+fTdMMlTRPuPFeoq64qFkHtSG8aeQPj9JG0eFHtNo93fBF43eoD6YBxvGRG6q4NAAC5M9oExS0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a5b:c4a:0:b0:e17:c4c5:bcb2 with SMTP id
+ 3f1490d57ef6-e1db00d2b9dmr49146276.7.1726511067380; Mon, 16 Sep 2024 11:24:27
+ -0700 (PDT)
+Date: Mon, 16 Sep 2024 11:24:25 -0700
+In-Reply-To: <CABgObfZ1oZHU+9LKc_uiPZs1uwqxczcknspCD=BJCFZd5+-yyw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net>
+Mime-Version: 1.0
+References: <20240914011348.2558415-1-seanjc@google.com> <CABgObfbV0HOAPA-4XjdUR2Q-gduEQhgSdJb1SzDQXd08M_pD+A@mail.gmail.com>
+ <CABgObfZ1oZHU+9LKc_uiPZs1uwqxczcknspCD=BJCFZd5+-yyw@mail.gmail.com>
+Message-ID: <Zuh32evWMcs8hTAM@google.com>
+Subject: Re: [GIT PULL] KVM: x86 pull requests for 6.12
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Harry, Leo and other amdgpu maintainers,
+On Sun, Sep 15, 2024, Paolo Bonzini wrote:
+> On Sat, Sep 14, 2024 at 4:54=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.co=
+m> wrote:
+> >
+> > On Sat, Sep 14, 2024 at 3:13=E2=80=AFAM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > > There's a trivial (and amusing) conflict with KVM s390 in the selftes=
+ts pull
+> > > request (we both added "config" to the .gitignore, within a few days =
+of each
+> > > other, after the goof being around for a good year or more).
+> > >
+> > > Note, the pull requests are relative to v6.11-rc4.  I got a late star=
+t, and for
+> > > some reason thought kvm/next would magically end up on rc4 or later.
+> > >
+> > > Note #2, I had a brainfart and put the testcase for verifying KVM's f=
+astpath
+> > > correctly exits to userspace when needed in selftests, whereas the ac=
+tual KVM
+> > > fix is in misc.  So if you run KVM selftests in the middle of pulling=
+ everything,
+> > > expect the debug_regs test to fail.
+> >
+> > Pulled all, thanks. Due to combination of being recovering from flu +
+> > preparing to travel I will probably spend not be able to run tests for
+> > a few days, but everything should be okay for the merge window.
+>=20
+> Hmm, I tried running tests in a slightly non-standard way (compiling
+> the will-be-6.12 code on a 6.10 kernel and installing the module)
+> because that's what I could do for now, and I'm getting system hangs
+> in a few tests. The first ones that hung were
+>=20
+> hyperv_ipi
+> hyperv_tlb_flush
 
-On 2024-08-24 20:33:53+0000, Thomas Weißschuh wrote:
-> The value of "min_input_signal" returned from ATIF on a Framework AMD 13
-> is "12". This leads to a fairly bright minimum display backlight.
-> 
-> Introduce a quirk to override "min_input_signal" to "0" which leads to a
-> much lower minimum brightness, which is still readable even in daylight.
+This one failing gives me hope that it's some weird combination of 6.10 and=
+ the
+for-6.12 code.  Off the top of my head, I can't think of any relevant chang=
+es.
 
-could you take another look at the series?
-The issues around panel power are not specific to the low pwm values,
-so shouldn't have an impact on this series.
-(And are nearly imperceptible anyways)
+FWIW, I haven't been able to reproduce any failures with kvm/next+kvm-x86/n=
+ext,
+on AMD or Intel.
 
-> One solution would be a fixed firmware version, which was announced but
-> has no timeline.
-> 
-> ---
-> Changes in v6:
-> - Clean up cover letter and commit messages
-> - Add my S-o-b to patch from Dustin
-> - Mention testing in combination with "panel_power_savings"
-> - Link to v5: https://lore.kernel.org/r/20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net
-> 
-> Changes in v5:
-> - Forward-declare struct drm_edid
-> - Reorder patches, quirk entries are last
-> - Add patch from Dustin for additional quirk entries
-> - Link to v4: https://lore.kernel.org/r/20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net
-> 
-> Changes in v4:
-> - Switch back to v2 implementation
-> - Add MODULE_DESCRIPTION()
-> - Simplify quirk infrastructure to only handle min backlight quirks.
->   It can be extended if necessary.
-> - Expand documentation.
-> - Link to v3: https://lore.kernel.org/r/20240731-amdgpu-min-backlight-quirk-v3-0-46d40bb21a62@weissschuh.net
-> 
-> Changes in v3:
-> - Switch to cmdline override parameter
-> - Link to v2: https://lore.kernel.org/r/20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net
-> 
-> Changes in v2:
-> - Introduce proper drm backlight quirk infrastructure
-> - Quirk by EDID and DMI instead of only DMI
-> - Limit quirk to only single Framework 13 matte panel
-> - Link to v1: https://lore.kernel.org/r/20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net
-> 
-> ---
-> Dustin L. Howett (1):
->       drm: panel-backlight-quirks: Add Framework 13 glossy and 2.8k panels
-> 
-> Thomas Weißschuh (3):
->       drm: Add panel backlight quirks
->       drm/amd/display: Add support for minimum backlight quirk
->       drm: panel-backlight-quirks: Add Framework 13 matte panel
-> 
->  Documentation/gpu/drm-kms-helpers.rst             |  3 +
->  drivers/gpu/drm/Kconfig                           |  4 +
->  drivers/gpu/drm/Makefile                          |  1 +
->  drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 +++
->  drivers/gpu/drm/drm_panel_backlight_quirks.c      | 94 +++++++++++++++++++++++
->  include/drm/drm_utils.h                           |  4 +
->  7 files changed, 117 insertions(+)
-> ---
-> base-commit: d2bafcf224f3911b183113b2fcb536c9e90684a3
-> change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
-> 
-> Best regards,
-> -- 
-> Thomas Weißschuh <linux@weissschuh.net>
-> 
+> xapic_ipi_test
+>=20
+> And of course, this is on a machine that doesn't have serial
+> console... :( I think for now I'll push the non-x86 stuff to kvm/next
+> and then either bisect or figure out how to run tests normally.
 
