@@ -1,153 +1,214 @@
-Return-Path: <linux-kernel+bounces-331089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 956B197A844
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:22:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E68E97A84A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3AB61F22229
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:22:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5D25B2A81C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095FA15F3FF;
-	Mon, 16 Sep 2024 20:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8EA15DBC1;
+	Mon, 16 Sep 2024 20:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AC3q+ryq"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdFWBWb2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E7115C144
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 20:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751714174A;
+	Mon, 16 Sep 2024 20:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726518125; cv=none; b=Ee9Y1M6FBcL8eLdbH/kp5qEb8NpTQ3vJ012r9OpIyO02cdSJn7gJClJmfWESNeS5KOJJlst7UbjUXM4/tqWeywx8pY1aoL79J+AFblp3SWF6zlXGgd2htGUvhNgPgSWV1aFDBrd5EjPFI9SV1D8EfdmRd/GIC7E+N03Uop/kd/s=
+	t=1726518203; cv=none; b=WVpntj6l2RIU/fabvwVpXHA07Ohx/9AMDyPOXK1tewOnR9gu2csyKmx15mkGstKNTvld12HXDWVCGAr8pUovgDN/VnRZ2mOFIpsg4IwyHt33YgWqM7a51ILNl8RLYR/C7suG664QuOgZ9tdrpfyvOnYVTcbSnqLE0ZMTfNB/SZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726518125; c=relaxed/simple;
-	bh=YmvTSXeFpvg1WiuPNN+DU79epp+KvBjGoefbthLwZos=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aIjNND1QGYLOs8z8H68Awg//WYnNkYIJsNJ0Ea6HWHZ4AUQAk/fVUTzQab20qLoPg2tykVBY7/6zzNlEcv3Cqlr25h9ErmkVdhzwjrWka8yE8OkMVwKg6rWi3U8YkStyu7Uy9Uv5VEEBSl2f47aYgQDoFJQZdQzhPnTDw5dH7/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AC3q+ryq; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a098a4796dso15875ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:22:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726518123; x=1727122923; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/tWU9dYH0Wg588rEdTckjBcZ0hitcl6WMmt+VKANOBg=;
-        b=AC3q+ryqUjohN9sQjFo0XpN4XAMcw2G/1ax3xUNETGn81ySV4Hc3ijoOSki0MklzyX
-         ZGJc2IcKZ7vpLUi5i8uxPGiYY4whecGArv15+qjrTb8lmwDgTI6xQD3/MIRpX7fWZvFI
-         yMu/wpE0k19IgKiNMsPkOyUX2PJ7MvG+FLl391lfvnwL3Vc+uV9TNYUZuMAxB30LfqsV
-         Uw1MNF9STTjFWoDm7YBEDVDpVsXY1bn5854v98QwlQz+50iUuCt0zbCJIb/UjLFxfXjN
-         nFEqS3/IBgyOrIPnEQqpWpW1Vd0r8SY2d2JedTinibVz6Mea6vpTxr4/EHt6L68nRLLn
-         yizQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726518123; x=1727122923;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/tWU9dYH0Wg588rEdTckjBcZ0hitcl6WMmt+VKANOBg=;
-        b=OZUyyf++EMSSh7bgF8iZg++HxTwdusgw4Ija5+7zPax0ar1bCZdmwDnZ5kCp6NmwcZ
-         B8BJVnSQTo4GU0ANYd4AT9GIXKhIj2pisH8F+cTlqOBqYkaTrOgKEFjvvqf+4UAq19zE
-         GzDqObdrVfuw4Vzsxc1/90I3Ymn5g7JtV8gW/U4cxoFbRyBG6sCWmN3U34tYP0tyOQaN
-         LBtIhxXVhcON6/94FogRCzsSHcGiJI3GhXJ5ZL+aaR7oDLGySGnu+g0CTp80kNKWxchC
-         eej5pq8gffrdbV5Nc+hbMqY3ytSHurBlSEmI4/rXemydQeUzS3/O1Vh1mhkT8/cMhexF
-         5tvg==
-X-Gm-Message-State: AOJu0YwF6wMw0WMA9FuBAF7wZ2HOX4oyqKETkg9dusT3UErEmh58/LND
-	jQs9JF9dq3NPWvqd5G6e183nElRVhoEATL3dzW6Njex0ZU77Sd3vmZpV6DuKKRvSbTSOEFmeZh8
-	KGiGVHQppmT6a3ebhuKHbjyW8/Wo1hKCkvrNi
-X-Google-Smtp-Source: AGHT+IHRhtIj7Meb+xM9gMbaLW0KsjhV9BlWquFJg3yGPP749YUK4dUV+I53y7tBSsOQZiylyGsC+uGU13MPsAYC1Ik=
-X-Received: by 2002:a92:cb46:0:b0:39d:1b64:3551 with SMTP id
- e9e14a558f8ab-3a0b1581565mr564545ab.19.1726518122934; Mon, 16 Sep 2024
- 13:22:02 -0700 (PDT)
+	s=arc-20240116; t=1726518203; c=relaxed/simple;
+	bh=I+eYB9/iGpjy2fwoJ4YmiqEzyB8jdfZHLMIS00A1aRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s8miRLaHykjUfoPUcT/bVyZ4/Knt+Aid5/EwoYot5bujAgfo4r+kj3vxbymVywhPKi6a5Jft1g63f3klk9PC0GcdesagwSCU0xqDMd8AEE6Jixr3iOAh+mJwnMc1Avo1MmhNFSS8nKLT62vz0g/qgLTGPgcEgsd9l3YlT7cHs94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdFWBWb2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFDC5C4CEC4;
+	Mon, 16 Sep 2024 20:23:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726518202;
+	bh=I+eYB9/iGpjy2fwoJ4YmiqEzyB8jdfZHLMIS00A1aRQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pdFWBWb20FdS4V997/xrw9O1dpeTWn7iVg3EaG0bBJlp641TvOOE9FodW2tSb2kNn
+	 5WWRTQJqDGEWmzDb7/v5CWX79JqENsMOi5bgzGebQHgAr6OlSnjWpYIgjKKn2rs5OK
+	 /emFMkVJBR8sZjQLDOvnRks5qvU7TSsh0SQLY1fZHkRDmLBB9pnLgxMy2FAwuvbW/F
+	 +YBPZA1Lk5tcRx+W/q2nRtpx7aqvX+1hRfeqWlYDt3AaFXc+AegdozvcOnolpc4iE/
+	 iTCeU/fAYiC5OUYeOzUetev+mLlykWKN/MGBYDs/cnPzRqFRHcTLZ5ecWi2Bz2BeTT
+	 Q+C9zLXgUfTgQ==
+Message-ID: <eb3ec7f1-388c-4613-b995-69b8ad6ef2c0@kernel.org>
+Date: Mon, 16 Sep 2024 22:23:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731150811.156771-1-nikunj@amd.com> <20240731150811.156771-21-nikunj@amd.com>
- <CALMp9eRZtg126iSZ4zzH_SjEz2V+-FRJfkw7=fLxSoVL1NTp_g@mail.gmail.com> <7fe54097-20d8-fb9c-e79d-b62910b50154@amd.com>
-In-Reply-To: <7fe54097-20d8-fb9c-e79d-b62910b50154@amd.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 16 Sep 2024 13:21:50 -0700
-Message-ID: <CALMp9eQGdwun8NSgJC07VpN_TRMWZ=hsMLO1F7hojh5vz4bquQ@mail.gmail.com>
-Subject: Re: [PATCH v11 20/20] x86/cpu/amd: Do not print FW_BUG for Secure TSC
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, bp@alien8.de, 
-	x86@kernel.org, kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de, 
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com, 
-	pbonzini@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: imx8: Fix lvds0 device tree
+To: Diogo Silva <diogompaissilva@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ aisheng.dong@nxp.com, Frank.Li@nxp.com
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240916200255.2566209-1-diogo.pais@ttcontrol.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240916200255.2566209-1-diogo.pais@ttcontrol.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 16, 2024 at 4:41=E2=80=AFAM Nikunj A. Dadhania <nikunj@amd.com>=
- wrote:
->
->
->
-> On 9/13/2024 11:12 PM, Jim Mattson wrote:
-> > On Wed, Jul 31, 2024 at 8:16=E2=80=AFAM Nikunj A Dadhania <nikunj@amd.c=
-om> wrote:
-> >>
-> >> When Secure TSC is enabled and TscInvariant (bit 8) in CPUID_8000_0007=
-_edx
-> >> is set, the kernel complains with the below firmware bug:
-> >>
-> >> [Firmware Bug]: TSC doesn't count with P0 frequency!
-> >>
-> >> Secure TSC does not need to run at P0 frequency; the TSC frequency is =
-set
-> >> by the VMM as part of the SNP_LAUNCH_START command. Skip this check wh=
-en
-> >> Secure TSC is enabled
-> >>
-> >> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> >> Tested-by: Peter Gonda <pgonda@google.com>
-> >> ---
-> >>  arch/x86/kernel/cpu/amd.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-> >> index be5889bded49..87b55d2183a0 100644
-> >> --- a/arch/x86/kernel/cpu/amd.c
-> >> +++ b/arch/x86/kernel/cpu/amd.c
-> >> @@ -370,7 +370,8 @@ static void bsp_determine_snp(struct cpuinfo_x86 *=
-c)
-> >>
-> >>  static void bsp_init_amd(struct cpuinfo_x86 *c)
-> >>  {
-> >> -       if (cpu_has(c, X86_FEATURE_CONSTANT_TSC)) {
-> >> +       if (cpu_has(c, X86_FEATURE_CONSTANT_TSC) &&
-> >> +           !cc_platform_has(CC_ATTR_GUEST_SECURE_TSC)) {
-> >
-> > Could we extend this to never complain in a virtual machine? i.e.
->
-> Let me get more clarity on the below and your commit[1]
->
-> > ...
-> > -       if (cpu_has(c, X86_FEATURE_CONSTANT_TSC)) {
-> > +       if (cpu_has(c, X86_FEATURE_CONSTANT_TSC) &&
-> > +           !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
-> > ...
->
-> Or do this for Family 15h and above ?
+On 16/09/2024 22:02, Diogo Silva wrote:
+> From: Diogo Silva <diogompaissilva@gmail.com>
+> 
+> Some clock output names on lvds0 device tree were duplicated from mipi1,
+> which caused an -EEXIST when registering these clocks during probe.
+> Also fixed the device naming to be consistent with lvds1.
+> 
+> Fixes: 0fba24b3b956 ("arm64: dts: imx8: add basic lvds0 and lvds1 subsystem")
+> subsystem")
 
-I don't think there exists a virtual firmware that sets this bit on
-older CPU families. In fact, before my referenced commit, it wasn't
-possible.
+Broken tags. They do not line-brake, BTW.
 
-> Regards
-> Nikunj
->
-> 1. https://github.com/torvalds/linux/commit/8b0e00fba934
+> Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
+> ---
+>  .../boot/dts/freescale/imx8-ss-lvds0.dtsi     | 22 +++++++++----------
+>  arch/arm64/boot/dts/freescale/imx8qm-mek.dts  |  4 ++--
+>  .../boot/dts/freescale/imx8qm-ss-lvds.dtsi    | 20 ++++++++---------
+>  3 files changed, 23 insertions(+), 23 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-lvds0.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-lvds0.dtsi
+> index d00036204a8c..a4d94467039f 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8-ss-lvds0.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8-ss-lvds0.dtsi
+> @@ -10,34 +10,34 @@ lvds0_subsys: bus@56240000 {
+>  	#size-cells = <1>;
+>  	ranges = <0x56240000 0x0 0x56240000 0x10000>;
+>  
+> -	qm_lvds0_lis_lpcg: qxp_mipi1_lis_lpcg: clock-controller@56243000 {
+> +	lvds0_lis_lpcg: clock-controller@56243000 {
+>  		compatible = "fsl,imx8qxp-lpcg";
+>  		reg = <0x56243000 0x4>;
+>  		#clock-cells = <1>;
+> -		clock-output-names = "mipi1_lis_lpcg_ipg_clk";
+> +		clock-output-names = "lvds0_lis_lpcg_ipg_clk";
+>  		power-domains = <&pd IMX_SC_R_MIPI_1>;
+>  	};
+>  
+> -	qm_lvds0_pwm_lpcg: qxp_mipi1_pwm_lpcg: clock-controller@5624300c {
+> +	lvds0_pwm_lpcg: clock-controller@5624300c {
+>  		compatible = "fsl,imx8qxp-lpcg";
+>  		reg = <0x5624300c 0x4>;
+>  		#clock-cells = <1>;
+> -		clock-output-names = "mipi1_pwm_lpcg_clk",
+> -				     "mipi1_pwm_lpcg_ipg_clk",
+> -				     "mipi1_pwm_lpcg_32k_clk";
+> +		clock-output-names = "lvds0_pwm_lpcg_clk",
+> +				     "lvds0_pwm_lpcg_ipg_clk",
+> +				     "lvds0_pwm_lpcg_32k_clk";
+>  		power-domains = <&pd IMX_SC_R_MIPI_1_PWM_0>;
+>  	};
+>  
+> -	qm_lvds0_i2c0_lpcg: qxp_mipi1_i2c0_lpcg: clock-controller@56243010 {
+> +	lvds0_i2c0_lpcg: clock-controller@56243010 {
+>  		compatible = "fsl,imx8qxp-lpcg";
+>  		reg = <0x56243010 0x4>;
+>  		#clock-cells = <1>;
+> -		clock-output-names = "mipi1_i2c0_lpcg_clk",
+> -				     "mipi1_i2c0_lpcg_ipg_clk";
+> +		clock-output-names = "lvds0_i2c0_lpcg_clk",
+> +				     "lvds0_i2c0_lpcg_ipg_clk";
+>  		power-domains = <&pd IMX_SC_R_MIPI_1_I2C_0>;
+>  	};
+>  
+> -	qm_pwm_lvds0: qxp_pwm_mipi_lvds1: pwm@56244000 {
+> +	pwm_lvds0: pwm@56244000 {
+>  		compatible = "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
+>  		reg = <0x56244000 0x1000>;
+>  		clock-names = "ipg", "per";
+> @@ -48,7 +48,7 @@ qm_pwm_lvds0: qxp_pwm_mipi_lvds1: pwm@56244000 {
+>  		status = "disabled";
+>  	};
+>  
+> -	qm_i2c0_lvds0: qxp_i2c0_mipi_lvds1: i2c@56246000 {
+> +	i2c0_lvds0: i2c@56246000 {
+>  		compatible = "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+>  		reg = <0x56246000 0x1000>;
+>  		#address-cells = <1>;
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qm-mek.dts b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
+> index 62203eed6a6c..f7b9b319a58a 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
+> @@ -96,7 +96,7 @@ vdevbuffer: memory@90400000 {
+>  
+>  	lvds_backlight0: backlight-lvds0 {
+>  		compatible = "pwm-backlight";
+> -		pwms = <&qm_pwm_lvds0 0 100000 0>;
+> +		pwms = <&pwm_lvds0 0 100000 0>;
+>  		brightness-levels = <0 100>;
+>  		num-interpolated-steps = <100>;
+>  		default-brightness-level = <80>;
+> @@ -541,7 +541,7 @@ &fec2 {
+>  	status = "okay";
+>  };
+>  
+> -&qm_pwm_lvds0 {
+> +&pwm_lvds0 {
 
-Something like this is necessary for existing versions of Linux. I
-would like to have set HW_CR.TscFreqSel[bit 24] at VCPU creation, but
-Sean would not let me. So, now userspace has to do it right after VCPU
-creation. I don't have any intention of adding the code to qemu, but
-maybe someone will.
+Why this cannot stay qm_pwm_lvds0? Are you sure nodes now have correct
+order?
+
+
+
+Best regards,
+Krzysztof
+
 
