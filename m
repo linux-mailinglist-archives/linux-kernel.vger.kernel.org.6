@@ -1,161 +1,121 @@
-Return-Path: <linux-kernel+bounces-331098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1BC97A868
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:44:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE77397A869
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0711928B4C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE501F261DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C09015B119;
-	Mon, 16 Sep 2024 20:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C854813E03E;
+	Mon, 16 Sep 2024 20:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gd7eFRP4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Kc79pJ0Z";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ONyxBSDC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MowPGmCp"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxibS1t/"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D623EF9FE;
-	Mon, 16 Sep 2024 20:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9DA156CA
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 20:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726519469; cv=none; b=OE3HzFhxHHYiagJLXEvBeEK6X1YOebJ9Cx3zsxrSno8gVCzleOP6NCdLm8WR4lHJh8fkW1Mx2msWtpWgksLEdGlPX8+E5PP40fXki3Y6hjoIQxWUyauAutFUaLLbnkcy6mY3Krdc7frur8bY/TWrW/cORl91+B3XZ3Q7e6lMGHw=
+	t=1726519543; cv=none; b=XMq+12PvCSXlDuNLCOosy6cGJSnPRLigy1Ga2LsODYxosNsIt6MgkFND0vgQAz7ffoGDLEy6z05/49QkOB4tDoWnFvn35oqteUDLrd48Rz4oQxmb+0F5LhN+TeQEVptrSAH96AEiHiS0xZYCfFsm8aYd90fb1EAU9c7okptCJto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726519469; c=relaxed/simple;
-	bh=+vCLiYPOUQQcc83vltqTxE5+acjZZ+wFzRZBPezyw5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uXiExpVVnPxNB6/VakeMpBRveTMt3Ki8dsyLsO7V0USLO8LvyF5CucAYCdknPLnhgxVgYWJ7ewYDMhgxHAfjGauszznctPMjaUo7tMuP5SLqvBo9PSRrHmJoZgZYXThoIh1dsZBEsY8vD09VNsjh/i+LaeheunXjH5qqA3z7Cow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gd7eFRP4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Kc79pJ0Z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ONyxBSDC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MowPGmCp; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ECF9D21C4B;
-	Mon, 16 Sep 2024 20:44:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726519466; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYB1BzjBJYR3QZfgkjjXkNSuaJnu7Ab3AL2Hwq3V4cs=;
-	b=gd7eFRP4GtCb49kCy0vzhDXTmyE2zY8BOHejcxnJ4XrT3AEnTMjU0mFbrOSpmSEsPExZck
-	wwrY8MMbsM3sEb8C1nZE1J2oDv/dZtK5BZ5H17GHLQj2R1z78siFziSR8TbvPmNMKcriub
-	j0TV+7UFsAHDU2V0FOo1DBvp6N6PsJ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726519466;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYB1BzjBJYR3QZfgkjjXkNSuaJnu7Ab3AL2Hwq3V4cs=;
-	b=Kc79pJ0ZvUypSyJi/tU/v3I/idf4V3BMkcHtBnMjzE/b03b3WdF5xKNvwHgXcFvkvJd6Qs
-	mXcd0XYvz6tDEhBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726519464; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYB1BzjBJYR3QZfgkjjXkNSuaJnu7Ab3AL2Hwq3V4cs=;
-	b=ONyxBSDCXP8qFh9Rx9BBeaE0T4YYXiVHuWtW+eCV0DYE8Z/kHSq9JXeJAzv88PVE2aYsbU
-	8ReYEGSbt324nbeUU7N40KJF/QO+vhFxh8gUMY/6hDxmbfUoUR+hVsbbZ8CCNAQqkOIA4N
-	fFpSfZxb43oqU6Gg7As/qRPl3gsst50=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726519464;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYB1BzjBJYR3QZfgkjjXkNSuaJnu7Ab3AL2Hwq3V4cs=;
-	b=MowPGmCpp9QLZNtpmYQBvQ1WeFmGy3WMQJ/dAZYaBAiSFynNa3yCsTxJUBI+Q1/xWR2P0l
-	TG8QDZXyWz5//6Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B9D03139CE;
-	Mon, 16 Sep 2024 20:44:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XPqRLKiY6GYOIAAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 16 Sep 2024 20:44:24 +0000
-Message-ID: <721f6543-1bf7-4b6f-8656-b5d84248e56f@suse.de>
-Date: Mon, 16 Sep 2024 22:44:23 +0200
+	s=arc-20240116; t=1726519543; c=relaxed/simple;
+	bh=IEMrAmiBjvKw8O8F9JUIZi0o8LPAuOjEEr2hekilUOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UiZrcBERWcNTpa6KxP3bsTMIzfxih7j3OZqfusjVpnjyrxS/1Z6P1YvNN2J+0d//uVByghDiR1Jc8Lra62KKuboipxUPmunetsFrjKhOcLviQ1Q5O4gm8Tw1znlHkvhws/VRFdi0U5uoxSzFUmoHeDO4czZRfU/QWuCaYhACfPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxibS1t/; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-536584f6c84so6095930e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726519540; x=1727124340; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=07RrCbel2n57k5JkA+rd7wEQD1Pp3W7MwcNJcieDSAA=;
+        b=gxibS1t/Me4W5t5a5wJ96dIh6xe9sRaynOJhsuO0vWOKEB/JdgHRKp/RoOIbPEoVBo
+         ezXfCGvVWfcbsYF9QfDxCYLF/Bs1gDg/knKXRFmeLKsnwV2azo3BMsyuDm2g7q/06yql
+         mv3c6IHl/HNctVjP/8R13XEhnwXdqJ3qDG44CvBIyhEghkY6QokSTwzRdvYBcXLnHPka
+         7VTI1gRrMpL6d3+jWdNNyfvfDadtVBt964BMNXsVFh0vMyvBUcRzsizi0LZrCGdSXc9u
+         bGVLirDuVoBKb9qYB8eTxY+YENqI80hKg9ASu3TFANGZh6JWtiuz560xHp9wQvRw5IAu
+         9CnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726519540; x=1727124340;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=07RrCbel2n57k5JkA+rd7wEQD1Pp3W7MwcNJcieDSAA=;
+        b=PnLl8S8I9WM2GEEprFLM9Ocf7gzOyliVMsUyCE8YZVq58MVAleKIGsE05IOTtkrsBp
+         etecO2WGszgwvRuD5rDfWt4TqpEFeBn0vTKU/KXIYxGnJro7rak4g8+6j38axke897u0
+         fbd+XOlNCRa1uF8gXy9JvWntuHSj0RfOBA9sIhzeAcYQ1Tk5JFg2QDlexJDZGjU32502
+         4SWomnp7xl8YAlIZ7ss0UuLKjZIqWZroR1Um2OHArmYMy5fk2ZMsVMNDvd75unhs4tuU
+         1YPJQgtuAX2oALa6NzNjLrYjUQO4U6nORUrbKC6T0P0KoiEsSNynQD1tPpldzVV9/81d
+         GxVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAFJyyAlTwIIW1POIbgEieTxiD3KImVPtq/fyThIm+U7a/3YPVHVhG53kAMx85Panb+i8PMPRielnpr3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEBR/w9ITfIXoCMH06ep0SdQ7RpLTdCnQx1Jt7kC4cMecdEqgi
+	stlx+BgjBWFxb/7RSMwub1k1Knhbbn6BhThLAjrJ1Jni1dB7QOMj
+X-Google-Smtp-Source: AGHT+IGBoVGZktyfnJSc0q/3ib+Kll8oaCcvG9CIVVKc1VXar2Wf+ks+DR12B2Ikz4FXjCJJmsrGKQ==
+X-Received: by 2002:a05:6512:b03:b0:52f:244:206f with SMTP id 2adb3069b0e04-53678ff5e1cmr8511739e87.53.1726519538654;
+        Mon, 16 Sep 2024 13:45:38 -0700 (PDT)
+Received: from localhost.localdomain ([94.19.228.143])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870ad17dsm990738e87.241.2024.09.16.13.45.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 13:45:37 -0700 (PDT)
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>,
+	Andrey Skvortsov <andrej.skvortzov@gmail.com>
+Subject: [PATCH] arm64: dts: sun50i-a64-pinephone: Add mount matrix for accelerometer
+Date: Mon, 16 Sep 2024 23:45:21 +0300
+Message-ID: <20240916204521.2033218-1-andrej.skvortzov@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmet-auth: assign dh_key to NULL after kfree_sensitive
-To: Vitaliy Shevtsov <v.shevtsov@maxima.ru>, stable@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240916174139.1182-1-v.shevtsov@maxima.ru>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240916174139.1182-1-v.shevtsov@maxima.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linuxtesting.org:url,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo,maxima.ru:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On 9/16/24 19:41, Vitaliy Shevtsov wrote:
-> ctrl->dh_key might be used across multiple calls to nvmet_setup_dhgroup()
-> for the same controller. So it's better to nullify it after release on
-> error path in order to avoid double free later in nvmet_destroy_auth().
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Svace.
-> 
-> Fixes: 7a277c37d352 ("nvmet-auth: Diffie-Hellman key exchange support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
-> ---
->   drivers/nvme/target/auth.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-Now that is obviously correct.
+From: Ondřej Jirman <megi@xff.cz>
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+accelerometer is mounted the way x and z-axis are invereted, x and y
+axis have to be spawed to match device orientation.
+The mount matrix is based on PCB drawing and was tested on the device.
 
-Cheers,
+Signed-off-by: Ondrej Jirman <megi@xff.cz>
+Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Hannes
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+index bc6af17e9267a..1da7506c38cd0 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+@@ -229,6 +229,9 @@ accelerometer@68 {
+ 		interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
+ 		vdd-supply = <&reg_dldo1>;
+ 		vddio-supply = <&reg_dldo1>;
++		mount-matrix = "0", "1", "0",
++				"-1", "0", "0",
++				"0", "0", "-1";
+ 	};
+ };
+ 
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.45.2
 
 
