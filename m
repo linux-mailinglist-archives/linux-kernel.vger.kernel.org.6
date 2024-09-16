@@ -1,157 +1,219 @@
-Return-Path: <linux-kernel+bounces-330230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE52979B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:38:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C5E979B58
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27D7FB23119
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA0E2812DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A96645C14;
-	Mon, 16 Sep 2024 06:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3FA6088F;
+	Mon, 16 Sep 2024 06:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mfKtvdJQ"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E07B80C0A
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ELcD2D9i"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32CB4120B;
+	Mon, 16 Sep 2024 06:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726468716; cv=none; b=afZ/a4olKBI5QFR1SkxY/iR01XMYU8j0hZ8i/w9UZa2S5PaHb+Moc+VXYReZE91kQq08YGoFbIrb3vM+PyivIuVrrFqoEXxLgneVViWG1pZpMgyPeqnMd75G9e7/xqx9Svez8SBrRL5jeEDqyNq/N6P36Bb0u11gNxpHhoRSL0o=
+	t=1726469145; cv=none; b=gOztd+T559jPv6UkNacN1mdLsvl3dd4bUNSaJIX6gytSj7gMwJn4zUhUyXOFQpOmP5OnOLlmt25+zMmg7pfLgsqhSP/YZbQhRtWMfuXVzCPE79cYj8dJYM1arSu0FIBnF0f+1zQMMnTbIhuOzSAy7ZrJ73r8fS5jsrvYEg1pvb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726468716; c=relaxed/simple;
-	bh=oig6OXmQgvNTyN0YeW/XhB+rJsuKLxXsCUs6pJ0VQV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tB3xSPvf3IwSPl6lFrGo+cZ7f7/PTC7+8CXcdWy2S+XeFxJWDvXbgytNQUwlEIp3PD7U5cIMyS7gbsjk1qRqZl5OuMYp+PyuIZGxWtd0PF7u7Z9hQ8msgvOdntsyyHAaf7mDpijfrskSRtUoNH3Yx/Th2mto5yupaUbxcLiaL1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mfKtvdJQ; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-49bcfbc732eso893419137.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 23:38:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726468713; x=1727073513; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=10j703qh//5/vCeG2Vxz+iNKLUAfZSd9B8Dsv2NLu0s=;
-        b=mfKtvdJQ8+UpjuiJb+iUdhhD7B6Z90qGkk0TlQJbImAxfqSwSvtj4jKMxWLxaXi1rG
-         IEHZaQF+/6kjBtjdS05zkKvTut4QPeFUUmRl3qXSTKM5tA0/ofRl82dtBmgC8byYG6NR
-         e0LUfaW54WsdH6VL3l3XZVOaA9EMYr9iTUFb+1alg8VBhl4SPXCmfH+DudyHM9OtIMhK
-         CCP8rYmAzw+pMIxSRoEKTKOq0Q3bR6EjasFtKshHWKQpmX/3v6sUT1Pr8y4uERndDUcX
-         zEUO5Us7v1S+buMqs7wvYR94shHuqpem8/UVH9E1OZx88M5nUbflSHm0m/Gfb847F9LQ
-         SlTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726468713; x=1727073513;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=10j703qh//5/vCeG2Vxz+iNKLUAfZSd9B8Dsv2NLu0s=;
-        b=iZ50LzMhDiDwQBnQabdW/LVQMdUKi4JQ5/6EjwyUWFbPMBe+lfqpCW8fm8TZWXG2c7
-         y1IOmijIZu36/JMtbHCdsW7hr0tBf9hy8982bqirszTIs21N5IZUgH2lE1/yN4OdktnN
-         l8aOIsBLhSFWcysdplm6q8W9/dLatjp2gm+Y38KCOHNFtre4/aiEGAC3iEwXTYb6e2Du
-         E/lqSph1T163MRTiNFYZ5e6UFmwOOiy1S7d6xoIO+rXS2JqS7OqAeim+R+Rr8ethzwkf
-         Ee2yageQICBQTLzU0z/rL4v10M3udtNnycoZofJbw0/6b5jRx0EI1FJbPiRyYg4qhEUR
-         9/gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+7mqiEKCZZ7QNralkh395J7tWV6gFvlBCBQ+fk6QfJeaYkqJi4XRcEmzRHucXF3tK3pHKMmlAmyTqPoo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpMe2eVF6/aYRQtAHv0nHGKycnpI7G+1fFw2E8EYtgosjByaI5
-	ZjcMnmZLmTafinaZi+05tJPTJq0L3BTCifO7xakPB00sz+Wtp1lDsHIS0z+GTsvj2eHdrIZN3IP
-	HrsLHutU/GFv9ASvUuz6v9cfPcERFQAbDi2FNPQ==
-X-Google-Smtp-Source: AGHT+IGtd0SK9AEqDNAuLnHCjyOPOiPAieSmbNE5lyxyJmSOIeTqsd9D4ZiH8UMYGHfxo8r0SBQHAvZPHYjlCrnqlsQ=
-X-Received: by 2002:a05:6102:304c:b0:49d:4812:913f with SMTP id
- ada2fe7eead31-49d4f6b2837mr6684015137.23.1726468712746; Sun, 15 Sep 2024
- 23:38:32 -0700 (PDT)
+	s=arc-20240116; t=1726469145; c=relaxed/simple;
+	bh=jAwSw4LEIfXT39XmNvQkkX3/1clNMqBMeMdEHqSLLuc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XwLrVYJQO9ckb7UN33sI/4EAf9kCDL2BvWHsQmSYAMhqoo3C5e+OHO+1QMkhzkSaZD+av2OprpNsCOMtRu51rRiRYN9gkdg41XDvGUvFWRd0XvPin02pALDwGxXDH/Wj4hQdzLruQstSriXr0vff798gafxwGGqPJ5ZJWl27lis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ELcD2D9i; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=H5SO/
+	a1hfbyVpeTzy2AAy5aKvwSqfgsGs2lOMb5bsec=; b=ELcD2D9iTL4cSN5SxjBh6
+	BXgHtcjXd3q1Snt6RNk4YaZOuu2naSd+v2aGVrwlnyZTvk4kirg61qdU9m2/J6bd
+	WHwF+zo+k9Z/u6AEiRrnVJRe/mY9XlCJVCu5W9h85pwJhnwxN7fme/EkWBGbZUcX
+	4hclGhEXcFJ5oq7C1CoeVY=
+Received: from jean.localdomain (unknown [27.18.168.209])
+	by gzga-smtp-mta-g3-3 (Coremail) with SMTP id _____wDXX36b0+dmVfTnDg--.31141S2;
+	Mon, 16 Sep 2024 14:43:39 +0800 (CST)
+From: Ze Huang <18771902331@163.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Ze Huang <18771902331@163.com>,
+	Yangyu Chen <cyy@cyyself.name>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [RESEND PATCH 1/3] dt-bindings: pinctrl: Add support for canaan,k230 SoC
+Date: Mon, 16 Sep 2024 14:42:23 +0800
+Message-ID: <20240916064225.316863-1-18771902331@163.com>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <20240916063021.311721-1-18771902331@163.com>
+References: <20240916063021.311721-1-18771902331@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913135744.152669-9-aardelean@baylibre.com>
- <202409140416.KWHXjFSv-lkp@intel.com> <20240914154150.6ce9c1b6@jic23-huawei>
-In-Reply-To: <20240914154150.6ce9c1b6@jic23-huawei>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Mon, 16 Sep 2024 09:38:23 +0300
-Message-ID: <CA+GgBR_OE3E7FwcAVy+hD51OPP4wcrSuEWh_9YCtH+fwTwAQLQ@mail.gmail.com>
-Subject: Re: [PATCH v6 8/8] iio: adc: ad7606: add support for AD7606C-{16,18} parts
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, oe-kbuild-all@lists.linux.dev, krzk+dt@kernel.org, 
-	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
-	gstols@baylibre.com, dlechner@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXX36b0+dmVfTnDg--.31141S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuF17Cr1xuw1rZr4rAryfXrb_yoWrJFyxpF
+	ZxKa98KF1rWF47K3yfta18uF13Xa1kArsagw1Utry7tw45WF18Kr1akr4IvF4DWFn7J3Wa
+	qFWIgry7KF47Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piL0ePUUUUU=
+X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJwBcomXAn1YeJAAAsP
 
-On Sat, Sep 14, 2024 at 5:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Sat, 14 Sep 2024 04:30:42 +0800
-> kernel test robot <lkp@intel.com> wrote:
->
-> > Hi Alexandru,
-> >
-> > kernel test robot noticed the following build warnings:
-> >
-> > [auto build test WARNING on jic23-iio/togreg]
-> > [also build test WARNING on next-20240913]
-> > [cannot apply to linus/master v6.11-rc7]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Alexandru-Ardele=
-an/iio-adc-ad7606-add-bits-parameter-to-channels-macros/20240913-220501
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git t=
-ogreg
-> > patch link:    https://lore.kernel.org/r/20240913135744.152669-9-aardel=
-ean%40baylibre.com
-> > patch subject: [PATCH v6 8/8] iio: adc: ad7606: add support for AD7606C=
--{16,18} parts
-> > config: arm-randconfig-001-20240914 (https://download.01.org/0day-ci/ar=
-chive/20240914/202409140416.KWHXjFSv-lkp@intel.com/config)
-> > compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
-hive/20240914/202409140416.KWHXjFSv-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202409140416.KWHXjFSv-l=
-kp@intel.com/
-> >
-> > All warnings (new ones prefixed by >>):
-> >
-> > >> drivers/iio/adc/ad7606.c:39:27: warning: 'ad7606_18bit_hw_scale_avai=
-l' defined but not used [-Wunused-const-variable=3D]
-> >       39 | static const unsigned int ad7606_18bit_hw_scale_avail[2] =3D=
- {
-> >          |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >
-> >
-> > vim +/ad7606_18bit_hw_scale_avail +39 drivers/iio/adc/ad7606.c
-> >
-> >     38
-> >   > 39        static const unsigned int ad7606_18bit_hw_scale_avail[2] =
-=3D {
-> >     40                38147, 76294
-> >     41        };
-> >     42
-> Hmm. Seems like there is no code that would use this, so what is it
-> and where did the numbers come from?
+Add device tree binding details for Canaan K230 pinctrl device.
 
-Oh that's a good catch from the CI bot.
-While reworking the SW scales for AD7606C-{16,18} I dropped the HW scales.
-Oddly enough, I don't get the error building locally, I may need to
-add more flags to the build.
-Will re-spin.
+Signed-off-by: Ze Huang <18771902331@163.com>
+---
+ .../bindings/pinctrl/canaan,k230-pinctrl.yaml | 128 ++++++++++++++++++
+ 1 file changed, 128 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
 
->
-> Jonathan
->
-> >
->
+diff --git a/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+new file mode 100644
+index 000000000000..979c5bd71e3d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+@@ -0,0 +1,128 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/canaan,k230-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Canaan Kendryte K230 Pin Controller
++
++maintainers:
++  - Ze Huang <18771902331@163.com>
++
++description:
++  The Canaan Kendryte K230 platform includes 64 IO pins, each capable of
++  multiplexing up to 5 different functions. Pin function configuration is
++  performed on a per-pin basis.
++
++properties:
++  compatible:
++    const: canaan,k230-pinctrl
++
++  reg:
++    maxItems: 1
++
++patternProperties:
++  '-pins$':
++    type: object
++    additionalProperties: false
++    description:
++      A pinctrl node should contain at least one subnode representing the
++      pinctrl groups available on the machine.
++
++    patternProperties:
++      '-cfg$':
++        type: object
++        $ref: /schemas/pinctrl/pincfg-node.yaml
++        additionalProperties: false
++        description:
++          Each subnode will list the pins it needs, and how they should
++          be configured, with regard to muxer configuration, bias, input
++          enable/disable, input schmitt trigger, slew-rate enable/disable,
++          slew-rate, drive strength.
++
++        properties:
++          pinmux:
++            $ref: /schemas/types.yaml#/definitions/uint32-array
++            description:
++              The list of GPIOs and their mux settings that properties in
++              the node apply to. This should be set with the macro
++              'K230_PINMUX(pin, mode)'
++
++          bias-disable: true
++
++          bias-pull-up: true
++
++          bias-pull-down: true
++
++          drive-strength:
++            minimum: 0
++            maximum: 15
++
++          input-enable: true
++
++          output-enable: true
++
++          input-schmitt-enable: true
++
++          slew-rate:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            description: |
++              slew rate control enable
++              0: disable
++              1: enable
++
++            enum: [0, 1]
++
++          power-source:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            description: |
++              Specifies the power source voltage for the IO bank that the
++              pin belongs to. Each bank of IO pins operate at a specific,
++              fixed voltage levels. Incorrect voltage configuration can
++              damage the chip. The defined constants represent the
++              possible voltage configurations:
++
++              - K230_MSC_3V3 (value 0): 3.3V power supply
++              - K230_MSC_1V8 (value 1): 1.8V power supply
++
++              The following banks have the corresponding voltage
++              configurations:
++
++              - bank IO0 to IO1: Fixed at 1.8V
++              - bank IO2 to IO13: Fixed at 1.8V
++              - bank IO14 to IO25: Fixed at 1.8V
++              - bank IO26 to IO37: Fixed at 1.8V
++              - bank IO38 to IO49: Fixed at 1.8V
++              - bank IO50 to IO61: Fixed at 3.3V
++              - bank IO62 to IO63: Fixed at 1.8V
++
++            enum: [0, 1]
++
++        required:
++          - pinmux
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    pinctrl: pinctrl@91105000 {
++        compatible = "canaan,k230-pinctrl";
++        reg = <0x91105000 0x100>;
++
++        uart2_pins: uart2-pins {
++            uart2-pins-cfg {
++                pinmux = <0x503>, /* uart2 txd */
++                         <0x603>; /* uart2 rxd */
++                slew-rate = <0>;
++                drive-strength = <4>;
++                power-source = <1>;
++                input-enable;
++                output-enable;
++                bias-disable;
++            };
++        };
++    };
+-- 
+2.46.1
+
 
