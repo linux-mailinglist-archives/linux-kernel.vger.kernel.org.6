@@ -1,170 +1,168 @@
-Return-Path: <linux-kernel+bounces-331148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362E897A928
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:22:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEEA97A926
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 685BC1C27701
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BAAF284F16
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FAA1662E5;
-	Mon, 16 Sep 2024 22:22:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27975258;
-	Mon, 16 Sep 2024 22:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAD515DBC1;
+	Mon, 16 Sep 2024 22:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GduExZPv"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25E115C123;
+	Mon, 16 Sep 2024 22:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726525356; cv=none; b=g004wUCaTD4ChD6y8o/YfpZey/gMysSeTj5sAcbfluKmpikTDCcc0Ghkxl5L5go2Ebw5yHdkvzIBZu7KsXSGx4HzVvffPmWdreg1czWlbgx/w0r4WuJsVvnBpDo/s8weDzPDAWfjZBmGS6371JPsMByfilEnSR5ZXM38kImmKMk=
+	t=1726525353; cv=none; b=bI1hUUXOstCxz0qU8RyXU3BVItCz8MShyF5B/xVHz1/dSDBl82tcsmMPnfkoDBqEJ9/UAlSGgQ1K6U1Y/V3niimWflcz2py9gG2UOKTCkHi0fHxIujVObZxeDyukDX49P/BvVoeC29yIx2pMKkNivR+gNFgDBsKkd6Y+n6nZQzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726525356; c=relaxed/simple;
-	bh=auBgNEBcAMKWNFC3hweH8p3LS9IGL2A17duVFRN5WYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tqtAenLkBUwk3XZQ+7qzvD8pDkceplN6CfteUO66XEwn0oMw877H8qbW7FAf54OoReBN0j/RXscr/0kWpi84aHYFw/EtYig0ZG/yyfaHcUMGSdL9r52BHPm2gFTNnRp2syeG27QZBQyMuxn6+VJg76DumxeGNK4zwq/ePN9+X8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F6F81063;
-	Mon, 16 Sep 2024 15:23:01 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 463D23F71A;
-	Mon, 16 Sep 2024 15:22:29 -0700 (PDT)
-Message-ID: <c55339cd-85d6-4777-beec-41c4d9931b9a@arm.com>
-Date: Tue, 17 Sep 2024 00:22:15 +0200
+	s=arc-20240116; t=1726525353; c=relaxed/simple;
+	bh=88z1pS1SBfOoYvatR7vnx9K7BaMboS9eXDT1yrNhV8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZLg8fc55IyKVdvCe6BUTz+kLHrdaUykKKkIRhi++4FwMKbqhidDIyENEZqL4OO+CWchEyvEXgL7SCjCerX677TTw6SxQmDe7QEdbV6L2FYFGKr0v8lP68UzeAVAG6vofoUXN8dUfyhMC5T3aj1BGeiXjxXU9YrF5ICbCCbsYVwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GduExZPv; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726525341;
+	bh=xYLt5HCNuQUCe7iyAXz68X57BxYyGkUeHM1y1wJa034=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GduExZPvuKUTCnDnYDv6+7mxZwX0AS+pmOPGaC8ePA89JTlAVWMczLwzcp8bj/DAX
+	 d+zG6O0IpbFmQMRo2poR3Zbj7skTmuyMTScfV32pppdd5Ku6RIvFEf9GI6leNAHwfP
+	 SF5PaySybrulqQy2Dgb0oCv9F8HI0wcbAWRTKOqPHwHzR2yHgIGUfr72PNjfgfF1wr
+	 ZOwngr0OQ1Mg8JfFZXYBw/eL0y/ToEQszALbMXV8QQ7DORSZdpmsqwxbUMW1sDYQQ5
+	 3gKXCyGdeH/qe4NiQ+DHUjGfKjptUj01b+Oy+M49o5Gy5Rgd9eNTKq0eGGvV3oZuW/
+	 KFCR3rzdSty2Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6ztN5P48z4x9G;
+	Tue, 17 Sep 2024 08:22:20 +1000 (AEST)
+Date: Tue, 17 Sep 2024 08:22:19 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Dongliang Cui
+ <dongliang.cui@unisoc.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Yuezhang Mo <Yuezhang.Mo@sony.com>, Zhiguo Niu
+ <zhiguo.niu@unisoc.com>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the exfat
+ tree
+Message-ID: <20240917082219.736ce016@canb.auug.org.au>
+In-Reply-To: <20240812081046.369bbba5@canb.auug.org.au>
+References: <20240812081046.369bbba5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 06/16] sched/schedutil: Add a new tunable to dictate
- response time
-To: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
- John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240820163512.1096301-1-qyousef@layalina.io>
- <20240820163512.1096301-7-qyousef@layalina.io>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240820163512.1096301-7-qyousef@layalina.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/nUyiXBz_m.Q+fN3GG+Olily";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 20/08/2024 18:35, Qais Yousef wrote:
-> The new tunable, response_time_ms,  allow us to speed up or slow down
-> the response time of the policy to meet the perf, power and thermal
-> characteristic desired by the user/sysadmin. There's no single universal
-> trade-off that we can apply for all systems even if they use the same
-> SoC. The form factor of the system, the dominant use case, and in case
-> of battery powered systems, the size of the battery and presence or
-> absence of active cooling can play a big role on what would be best to
-> use.
-> 
-> The new tunable provides sensible defaults, but yet gives the power to
-> control the response time to the user/sysadmin, if they wish to.
-> 
-> This tunable is applied before we apply the DVFS headroom.
-> 
-> The default behavior of applying 1.25 headroom can be re-instated easily
-> now. But we continue to keep the min required headroom to overcome
-> hardware limitation in its speed to change DVFS. And any additional
-> headroom to speed things up must be applied by userspace to match their
-> expectation for best perf/watt as it dictates a type of policy that will
-> be better for some systems, but worse for others.
-> 
-> There's a whitespace clean up included in sugov_start().
-> 
-> Signed-off-by: Qais Yousef <qyousef@layalina.io>
-> ---
->  Documentation/admin-guide/pm/cpufreq.rst |  17 +++-
->  drivers/cpufreq/cpufreq.c                |   4 +-
->  include/linux/cpufreq.h                  |   3 +
->  kernel/sched/cpufreq_schedutil.c         | 115 ++++++++++++++++++++++-
->  4 files changed, 132 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/pm/cpufreq.rst b/Documentation/admin-guide/pm/cpufreq.rst
-> index 6adb7988e0eb..fa0d602a920e 100644
-> --- a/Documentation/admin-guide/pm/cpufreq.rst
-> +++ b/Documentation/admin-guide/pm/cpufreq.rst
-> @@ -417,7 +417,7 @@ is passed by the scheduler to the governor callback which causes the frequency
->  to go up to the allowed maximum immediately and then draw back to the value
->  returned by the above formula over time.
->  
-> -This governor exposes only one tunable:
-> +This governor exposes two tunables:
->  
->  ``rate_limit_us``
->  	Minimum time (in microseconds) that has to pass between two consecutive
-> @@ -427,6 +427,21 @@ This governor exposes only one tunable:
->  	The purpose of this tunable is to reduce the scheduler context overhead
->  	of the governor which might be excessive without it.
->  
-> +``respone_time_ms``
-> +	Amount of time (in milliseconds) required to ramp the policy from
-> +	lowest to highest frequency. Can be decreased to speed up the
-                  ^^^^^^^^^^^^^^^^^
+--Sig_/nUyiXBz_m.Q+fN3GG+Olily
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This has changed IMHO. Should be the time from lowest (or better 0) to
-second highest frequency.
+Hi all,
 
-https://lkml.kernel.org/r/20230827233203.1315953-6-qyousef@layalina.io
+On Mon, 12 Aug 2024 08:10:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the vfs-brauner tree got a conflict in:
+>=20
+>   fs/exfat/inode.c
+>=20
+> between commits:
+>=20
+>   3e491faa7648 ("exfat: do not fallback to buffered write")
+>   98ad7b9012b5 ("exfat: Implement sops->shutdown and ioctl")
+>=20
+> from the exfat tree and commits:
+>=20
+>   a225800f322a ("fs: Convert aops->write_end to take a folio")
+>   1da86618bdce ("fs: Convert aops->write_begin to take a folio")
+>=20
+> from the vfs-brauner tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc fs/exfat/inode.c
+> index 7d43a0942911,05f0e07b01d0..000000000000
+> --- a/fs/exfat/inode.c
+> +++ b/fs/exfat/inode.c
+> @@@ -428,11 -452,7 +428,10 @@@ static int exfat_write_begin(struct fil
+>   {
+>   	int ret;
+>  =20
+>  +	if (unlikely(exfat_forced_shutdown(mapping->host->i_sb)))
+>  +		return -EIO;
+>  +
+> - 	*pagep =3D NULL;
+> - 	ret =3D block_write_begin(mapping, pos, len, pagep, exfat_get_block);
+> + 	ret =3D block_write_begin(mapping, pos, len, foliop, exfat_get_block);
+>  =20
+>   	if (ret < 0)
+>   		exfat_write_failed(mapping, pos+len);
+> @@@ -448,7 -468,15 +447,7 @@@ static int exfat_write_end(struct file=20
+>   	struct exfat_inode_info *ei =3D EXFAT_I(inode);
+>   	int err;
+>  =20
+> - 	err =3D generic_write_end(file, mapping, pos, len, copied, pagep, fsda=
+ta);
+> + 	err =3D generic_write_end(file, mapping, pos, len, copied, folio, fsda=
+ta);
+>  -
+>  -	if (ei->i_size_aligned < i_size_read(inode)) {
+>  -		exfat_fs_error(inode->i_sb,
+>  -			"invalid size(size(%llu) > aligned(%llu)\n",
+>  -			i_size_read(inode), ei->i_size_aligned);
+>  -		return -EIO;
+>  -	}
+>  -
+>   	if (err < len)
+>   		exfat_write_failed(mapping, pos+len);
+>  =20
 
-[...]
+This is now a conflict between the exfat tree and Linus' tree.
 
-> @@ -59,6 +63,70 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
->  
->  /************************ Governor internals ***********************/
->  
-> +static inline u64 sugov_calc_freq_response_ms(struct sugov_policy *sg_policy)
-> +{
-> +	int cpu = cpumask_first(sg_policy->policy->cpus);
-> +	unsigned long cap = arch_scale_cpu_capacity(cpu);
-> +	unsigned int max_freq, sec_max_freq;
-> +
-> +	max_freq = sg_policy->policy->cpuinfo.max_freq;
-> +	sec_max_freq = __resolve_freq(sg_policy->policy,
-> +				      max_freq - 1,
-> +				      CPUFREQ_RELATION_H);
-> +
-> +	/*
-> +	 * We will request max_freq as soon as util crosses the capacity at
-> +	 * second highest frequency. So effectively our response time is the
-> +	 * util at which we cross the cap@2nd_highest_freq.
-> +	 */
-> +	cap = sec_max_freq * cap / max_freq;
-> +
-> +	return approximate_runtime(cap + 1);
-> +}
+--=20
+Cheers,
+Stephen Rothwell
 
-Still uses the CPU capacity value based on dt-entry
+--Sig_/nUyiXBz_m.Q+fN3GG+Olily
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-  capacity-dmips-mhz = <578> (CPU0 on juno-r0)
-                        ^^^
+-----BEGIN PGP SIGNATURE-----
 
-i.e. frequency invariance is not considered.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbor5sACgkQAVBC80lX
+0Gy4WQf/YhhEKohR1ztog2q9r94G8eEo8/M/VT3SM5BshrN95AP5ivSHy/Le+0Wh
+lWGeloERnxYJt18wsfPlUWIU0kiW6YLWo9Nk3jYmFx8S7ot3Ws2/e/kNvtsnGN46
+59LzhgszgUqNV/8UcbL94Fwh8rs+diIyzO1MPT4pCzX26y5k2JOHJmfsYguKIwjb
+psfdYNaesLqtnqKVMs65np98Wo5j7y1zxxj2CpRmXhbnrmAV4Sx8AvdXgItxTkDd
+lDENqdoXi9IP6M/KFqh0Husz8GyaPwQ7/OL6UoH3Emi4YZz8cpeQ5BuSJMdaCO1W
+9rx88Ls65aAbLj50xirXUrjFbYb1Lg==
+=hN7c
+-----END PGP SIGNATURE-----
 
-[    1.943356] CPU0 max_freq=850000 sec_max_freq=775000 cap=578 cap_at_sec_max_opp=527 runtime=34
-                                                        ^^^^^^^    
-[    1.957593] CPU1 max_freq=1100000 sec_max_freq=950000 cap=1024 cap_at_sec_max_opp=884 runtime=92
-
-
-# cat /sys/devices/system/cpu/cpu*/cpu_capacity
-446
-^^^
-1024
-1024
-446
-446
-446
-
-[...]
+--Sig_/nUyiXBz_m.Q+fN3GG+Olily--
 
