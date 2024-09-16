@@ -1,50 +1,49 @@
-Return-Path: <linux-kernel+bounces-331227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3767497A9FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 02:34:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F39A9799B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B307E1F28ACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:34:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F771F230D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 00:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC87DBA3D;
-	Tue, 17 Sep 2024 00:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="SRwbW1Lw"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2806125;
+	Mon, 16 Sep 2024 00:39:16 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C0279CD;
-	Tue, 17 Sep 2024 00:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9275C33FD;
+	Mon, 16 Sep 2024 00:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726533278; cv=none; b=dldrW+JqwrWMKNbbwJJ0ilRyZfgXSJK3hu43x3qhQP20uSeTNb7ZdpL/bmKrgAVYH0TvXadIoCBh/VBPfO8R0BR/h3m93s4F3W3plGCDkF0fKaC4zWL5vGWbUeTXAvX2GmNRdn5HYqB5KQdFEXpk2dAleB4Q0CHXYBPzEFDcq34=
+	t=1726447156; cv=none; b=BVpbgpdu5v/w+EDuAYWtaVo6REgpi77msidA1zeNkPWMMxQ4yewO6R2Ar7q8+E1WccvrLVg+YCvAYk2ErAckr7CB/Z6xpC1/TRC5oTd5hQgG41V/03DR4zgwaNDfq+biwTxGwTzEhNis9wnWLmeqTdBXkjXJPRzGXmUehL1uBqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726533278; c=relaxed/simple;
-	bh=Sr+Kyc75B0ipZ0/2iN96n2ESqpcNHWuJWcqTEjmW/b4=;
+	s=arc-20240116; t=1726447156; c=relaxed/simple;
+	bh=kEeOLLovFT4pOdm53DvzxP4C8corA25kyqKlihlz4AE=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZcwrjN7hHT9zJ/BRnMhQoEUAYw6CK3qWnMNf/NpSPIXp5qDDmClcBdgCa3Uckm+evP0uOKwERxh0/OYchULzTsRgSSOMC1sRn5Gt0fN5izmI4dP/nmjtaSCD1SaVdM8CF5VOGSz+WLbAHCaxEVIcJaJ1SfugNtAFpVUHZoW03nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=SRwbW1Lw; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1726533274;
-	bh=Sr+Kyc75B0ipZ0/2iN96n2ESqpcNHWuJWcqTEjmW/b4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=SRwbW1Lwu/7etfbjQkAmN0eVIZqXpVjEsorshRteH96ukYZmOqiQDxyTLkZXmk90c
-	 Okft1IpWKERvR6XIVK6dx6r238JkjeyfD8TnIlty3hAlMVOGSbQJ8lc5Ys0oFlmL7Q
-	 qnyghvU00WysUyy0pqg9LeMfRAne6uQZNgVQeCXVommmZjz0Phob9EgTsusS9HcPtw
-	 d58IQx0jD7b2Fqh6pPS7IwcPfZ7HZYU+JrTZ43LzmiojMoZ3o/ctmfnXtuyCGmaFBR
-	 6nn+eMp/gfcxpbmtqSGIrFoZrwz4jjv0hFBFGChAWHlHMZZeTN3xpQUFYYBN2EEvVF
-	 kZKEOP2xIbjYQ==
-Received: from [IPV6:2001:4bc9:a47:b4b6:50af:bb4c:5411:8fdd] (unknown [IPv6:2001:4bc9:a47:b4b6:50af:bb4c:5411:8fdd])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X72pt0nC2z1L91;
-	Mon, 16 Sep 2024 20:34:29 -0400 (EDT)
-Message-ID: <790edc54-97b9-462d-90e1-067662b561a9@efficios.com>
-Date: Mon, 16 Sep 2024 02:33:47 +0200
+	 In-Reply-To:Content-Type; b=V4egx3I4tNMu+6nsvd/uzta82K7EAxUdCd7UlJfpFNHYr/zVi9TSawYa749gj+98gV38cK+HE6wqzbODR7h2haM5Tnn1VOWm2OUrvbFllJbNRr/ONWeHb5beXTYncGa7Km35ba9Zv1MwXkCEWaLc8mzp7NwDZdNmoXMeiklYd54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 48G0chip073317;
+	Mon, 16 Sep 2024 09:38:43 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Mon, 16 Sep 2024 09:38:43 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 48G0ch68073314
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 16 Sep 2024 09:38:43 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <69e4014e-0a34-4fde-8080-4850a52b0a94@I-love.SAKURA.ne.jp>
+Date: Mon, 16 Sep 2024 09:38:42 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,85 +51,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] unwind, perf: sframe user space unwinding,
- deferred perf callchains
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, x86@kernel.org,
- Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
- Sam James <sam@gentoo.org>
-References: <cover.1726268190.git.jpoimboe@kernel.org>
- <20240914081246.1e07090c@rorschach.local.home>
- <20240915111111.taq3sb5xzqamhb7f@treble>
- <20240916140856.GB4723@noisy.programming.kicks-ass.net>
- <20240916153953.7fq5fmch5uqg7tjj@treble>
- <20240916181545.GD4723@noisy.programming.kicks-ass.net>
- <36f32c27-3cab-48ea-b8de-8df91b91836d@efficios.com>
+Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Paul Moore <paul@paul-moore.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com>
+ <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
 Content-Language: en-US
-In-Reply-To: <36f32c27-3cab-48ea-b8de-8df91b91836d@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024-09-16 02:15, Mathieu Desnoyers wrote:
-> On 2024-09-16 20:15, Peter Zijlstra wrote:
-> [...]
->> The point being that it is possible to wrap one CPU into the id space of
->> another CPU. It is not trivial, but someone who wants to can make it
->> happen.
-> 
-> I agree that the overflow of the free-running counter bleeding into the
-> CPU numbers is something we want to prevent. We don't care if this
-> counter overflows after day/months/years for sake of correlation
-> within a system call, but we do care about the fact that this
-> free-running counter could be made to overflow after a very long
-> time while the system runs, and then we reach a state where the
-> CPU numbers are mixed up, which leads to short-term correlation
-> issues.
-> 
-> I would recommend this layout for this 64-bit value instead:
-> 
-> low-bits: cpu number
-> high-bits: free-running counter
-> 
-> This way, we eliminate any carry from overflow into the cpu number bits.
+On 2024/09/14 0:28, Paul Moore wrote:
+> I find it somewhat amusing that you are complaining about the LSM
+> framework not accepting new LSMs in the same pull request where we are
+> adding a new LSM (IPE).  As a reminder, we have documented guidelines
+> regarding the addition of new LSMs:
+>
+> https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+(...snipped...)
+> While I have no intention to negatively impact out-of-tree LSMs,
 
-Even better: AFAIR from the discussion I had with Steven and Josh, we intend
-to have the cookie stored to/read from the task struct with interrupts off,
-we can simply do:
+What I call "patent examination" is "New LSM Guidelines" section within
+that link. That section includes "here are a list of requirements for
+new LSM submissions:" and "The new LSM must be sufficiently unique", and
+out-of-tree LSMs which cannot satisfy it won't be able to become in-tree.
+If we apply this requirement to userspace program, this requirement means
+you are declaring that "postfix" (or anything except "sendmail") cannot
+become in-tree because "sendmail" is already in-tree. This is a clear
+intention of negatively impact out-of-tree LSMs. People have the right to
+use whatever subsets/alternatives. Even if a new LSM has were completely a
+subset of existing in-tree LSMs, people have the right to use such LSM.
 
-struct stackwalk_cookie {
-	uint64_t counter;	/* free running per-cpu counter value */
-	int cpu;		/* cpu on which the counter was snapshot. */
-};
+While I consider that some of out-of-tree LSMs being unable to become in-tree
+is inevitable, the requirement that any LSM has to be built-in is a barrier
+for LSMs which cannot be built-in. The "static call" changes in this pull
+request is saying something like "any kernel code has to be built into vmlinux,
+for CONFIG_MODULES=y is harmful", similar to "any software which is not included
+in this distribution must not be run, for software which is not included in
+this distribution is harmful".
 
-So we don't have to deal with any overflow trickiness, there is no need for
-bit-shifting, and we get a full 64-bit free-running counter independently of
-the number of CPUs.
+People have the right to install whatever userspace software / kernel modules
+they need. Making it difficult to use userspace software / kernel modules
+which the in-tree and built-in kernel code cannot provide is an abuse of
+dominant position, as well as removing CONFIG_MODULES=y support from the kernel.
 
-Thanks,
+> My focus is on the upstream Linux kernel and ensuring that the upstream,
+> in-tree LSMs have the best framework possible to ensure their proper
+> operation and ease of development/maintenance.  While I have no
+> intention to negatively impact out-of-tree LSMs, I will not harm the
+> upstream code base solely to support out-of-tree LSMs.  Further, if
+> improvements to the upstream LSM framework are determined to harm
+> out-of-tree LSMs, that shall be no reason to reject the upstream
+> improvements.
 
-Mathieu
+I have been asking you for a solution for "in-tree but not built-in" LSM
+(namely TOMOYO). You are refusing to provide a solution for the sake of
+"in-tree and built-in" LSMs. The "static call" changes fails to ensure that
+the upstream, in-tree TOMOYO to have the best framework. The "static call"
+changes makes the upstream, in-tree TOMOYO to have a worse framework than
+now.
 
+I'm not against "static call" changes itself as long as "in-tree but not
+built-in" LSMs can remain as easily usable as now.
+https://lkml.kernel.org/r/caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp
+is a recovery for avoid having worse framework than now.
 
+> We've discussed this many times before, obtaining stable magic numbers
+> (e.g. syscall numbers, LSM IDs, etc.) isn't possible until the
+> associated code appears in a tagged released from Linus' tree. 
 
-> 
-> Thanks,
-> 
-> Mathieu
-> 
-> 
+Think about a hardware device. A stable device ID (e.g. PCI device ID) is
+assigned as soon as a new hardware device is developed; whether a device
+driver for Windows, Linux, MacOS are provided by upstream OS manufactures
+is irrelevant.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Stable LSM ID has to be a property of any LSM. Not allowing out-of-tree LSMs
+to have stable LSM ID makes it difficult to use userspace software which
+depends on LSM ID. Again, this is an abuse of dominant position.
+
+> I believe this policy is not only consistent with that
+> of previous LSM maintainers, but of the general Linux kernel as well.
+
+The Linux kernel is a servant for users and userspace programs.
+Your policy is based on "benefits for in-tree and built-in Linux kernel
+code". Your policy lacks "benefits for users and userspace programs".
 
 
