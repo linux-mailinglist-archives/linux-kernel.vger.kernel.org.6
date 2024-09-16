@@ -1,180 +1,92 @@
-Return-Path: <linux-kernel+bounces-330554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D454497A014
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:13:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5538F97A016
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12DB41C2184E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:13:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3FD3B212C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF4014B94C;
-	Mon, 16 Sep 2024 11:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889AC14B97D;
+	Mon, 16 Sep 2024 11:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="bAkDwGPx"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c3zSB9y3"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F254D8C1
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEFC14E2DA;
+	Mon, 16 Sep 2024 11:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726485186; cv=none; b=mUdWA2s6WvCRIBVGnbVzfYYiRw78mzkQGbhe4K/x2sT34Aa7Km0w0be3hhmg+A1bicuiu2pswu8fRKTshcBi7KjV4CzYY+pdAoqCd011wIvnDNR/mWrQtqOsv7OV6AbbSCeGVHA/yvhX+C8/pjKuvkmb/YsACS/zYRco3DxfmiI=
+	t=1726485211; cv=none; b=p9tlvXjfTupAYR2flQmMEpsk9z67J2gaO177oUhELH5LTLmIJNz9B65mnyo9bV8DxzufV5aoLuSGVJhRH6gEHqjykPTIWT72PiXNv2tjOfwDElz1q9skW1xfBihZOD5bqX0ezzdyi9lLN6j8Rf6eWcFCZgBmUgjJmi9YkwPim4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726485186; c=relaxed/simple;
-	bh=bYd0WkktXWILmdHEr7/n4AePAmpjHleyf7hXLz7ISLw=;
+	s=arc-20240116; t=1726485211; c=relaxed/simple;
+	bh=EzoZWZaUvRz0LpS1ExKERZU6KL0YSPNyxZqKuLFI8iI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IRVR3dhvFNKFgUoRBkiMZZuMLnRJ2KJeTqpcMxl3m2EeQRE1rJ2p0b3WllHxaM2fqnO4fEM02vMNTdheKI67de1GRPi6FhdmTkGu1Nh1MEQ+8HdKj1iIdgjhpgugvGTOMLZBZ/m3sKnJx3x68UKFq6S2i2tQSGJWvkoYZYpIJ24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=bAkDwGPx; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=jIjlG3JWvYxItnNfDKKGYD5uMeq6hDLaQ9Ki3wJz/5k=; b=bAkDwGPx2to7Ctep
-	EOe2egZhCojhvmQjUCLAivjavi2Mm+KwbniUiB17E3N8BgOII2gay8h0kHxzPj13WjRpoZ74xnyvv
-	JW64fclcUBrm+X2LSP0aEAqATYjJHOuhTv1RyqoKbqC1l57/Hg9s2RxXI5aseggAQ5nI6yOYmNyYT
-	2L7iGXe7hJrjlT9H1KJjX6TlHkMdkH3oaH+9QiWCH1Av8HZMAiSdacz6yG2a+O7spseNqyw7ixceB
-	IEfXrCuwo7XwYmXwJAVxWL9dXjAX/aSXEEfORwiTrnT1Q1ey8q/ivo2G5u7z3dYM/f/qZG61tEYbL
-	0PZ78tbBE5UST4WIgw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sq9f5-005wLj-01;
-	Mon, 16 Sep 2024 11:12:55 +0000
-Date: Mon, 16 Sep 2024 11:12:54 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Bob Gill <gillb5@telus.net>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: 6.11.0 crash on X startup
-Message-ID: <ZugStvRPjdmQmMUx@gallifrey>
-References: <96030dde-6c02-4308-b41b-48aeeba670f3@telus.net>
- <b955ec60-081d-4194-8688-b49ff206ea1d@telus.net>
- <aae5a0a4-4d65-43a0-a793-b95096e9ed98@telus.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HXtQj//APbTquo95gPd1KQXW/SBuaPARYXelgXvvVikh+GrrYATdAwPXRwCsS/raxjeJekUb3o9F4geBhC9JSB6SByE0n43nDdg5tpd2ZFo9Uvg6IWtugnA6y5olaDbLIfvkIPud1Ayl09FVTsnQP+lZubOv7N9wSWNoW51zFgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c3zSB9y3; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sWQo08nNykXt5tP+ATjSDBh3iUttS1j5lm5pZenyIB0=; b=c3zSB9y3INdC32zFauW9lrJttf
+	Mpwtwm5Wy9eOb4aUEYrFMSgowQQg8+Tv+eSpvJXUOmYyQWlUH/XGemsGpQHLgVmhedugR/SSeck+k
+	9SDSveK05auR36/5YScKmWqKDNaIdQO6KXrmSSqeQ+cHd/B3u8P3EyFS3GcjFllchNTzbEZahr9+m
+	2Z7iNkjga4rWXzkgcEv6XITHm6lZXeFOJN/sDTUGc8l4nL/NRkJ/pVK20qNmygZbksMvX9acSNREZ
+	eIX1fowTT6aG72F8TwIxPOLZa4o3DqYnEbr/x9BFYyka18nKD5n+HcwWEGLEmJhrIyar3kXSkRhKU
+	DzahQ4qg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sq9fY-00000000NaH-0Fdc;
+	Mon, 16 Sep 2024 11:13:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2C59A300777; Mon, 16 Sep 2024 13:13:23 +0200 (CEST)
+Date: Mon, 16 Sep 2024 13:13:23 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Michael Pratt <mcpratt@pm.me>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [RESEND PATCH] sched/syscalls: Allow setting niceness using
+ sched_param struct
+Message-ID: <20240916111323.GX4723@noisy.programming.kicks-ass.net>
+References: <20240916050741.24206-1-mcpratt@pm.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aae5a0a4-4d65-43a0-a793-b95096e9ed98@telus.net>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 11:12:06 up 130 days, 22:26,  1 user,  load average: 0.00, 0.01,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20240916050741.24206-1-mcpratt@pm.me>
 
-* Bob Gill (gillb5@telus.net) wrote:
-> Addendum: I have a portion of /var/log/syslog of the 6.11-rc7 kernel, which
-> contains a coredump, and
+On Mon, Sep 16, 2024 at 05:08:49AM +0000, Michael Pratt wrote:
+> From userspace, spawning a new process with, for example,
+> posix_spawn(), only allows the user to work with
+> the scheduling priority value defined by POSIX
+> in the sched_param struct.
 > 
-> another line: Sep  8 20:13:06 freedom kernel: [  566.359456] ACPI:
-> \_SB_.PCI0.SBRG.ASOC: Device cannot be configured due to a frequency
-> mismatch
-> 
-> any takers?
+> However, sched_setparam() and similar syscalls lead to
+> __sched_setscheduler() which rejects any new value
+> for the priority other than 0 for non-RT schedule classes,
+> a behavior kept since Linux 2.6 or earlier.
 
-Not my field specifically; but I think a dmesg from the working one
-and the failing one to compare would help people.
+Right, and the current behaviour is entirely in-line with the POSIX
+specs.
 
-Dave
+I realize this might be a pain, but why should be change this spec
+conforming and very long standing behaviour?
 
-> 
-> On 2024-09-15 14:59, Bob Gill wrote:
-> > So 6.10.0 runs ok.  6.11.0-rc1 was the first kernel that started
-> > crashing.  Every rc after, including 6.11.0 all crash.
-> > 
-> > By that I mean it seems the startup is ok, but when it comes to the X
-> > server, when it tries to start, it crashes (and takes everything else
-> > along with it).
-> > 
-> > I ran recovery kernel, enabled networking, dropped into terminal.
-> > 
-> > service --status-all | grep lightdm gave:
-> > 
-> > [ - ]  lightdm
-> > 
-> > Portions of Xorg.0.log:
-> > 
-> > cat Xorg.0.log | grep EE
-> > 
-> > [    61.679] Current Operating System: Linux freedom 6.11.0 #1 SMP
-> > PREEMPT_DYNAMIC Sun Sep 15 13:10:55 MDT 2024 x86_64
-> >     (WW) warning, (EE) error, (NI) not implemented, (??) unknown.
-> > [    61.809] (EE) systemd-logind: failed to get session: PID 2028 does
-> > not belong to any known session
-> > [    61.913] (EE) open /dev/dri/card0: No such file or directory
-> > [    61.913] (EE) open /dev/dri/card0: No such file or directory
-> > [    61.914] (EE) Unable to find a valid framebuffer device
-> > [    61.914] (EE) open /dev/fb0: No such file or directory
-> > [    61.914] (EE) Screen 0 deleted because of no matching config section.
-> > [    61.914] (EE) Screen 0 deleted because of no matching config section.
-> > 
-> > 
-> > From the terminal, I can't run 'service lightdm start' and get back to
-> > any state.  pressing ctrl-alt-(f1-f9) does nothing. Pressing the
-> > caps-lock button on/off on the keyboard stops responding immediately. 
-> > Even the power/reset buttons on the case do nothing.  I have to hit the
-> > power switch.  The kernel crashes hard.
-> > 
-> > My graphics hardware (taken from 6.10.0):
-> > 
-> > inxi -G
-> > 
-> > Graphics:
-> >   Device-1: AMD driver: amdgpu v: kernel
-> >   Device-2: Conexant Systems CX23887/8 PCIe Broadcast Audio and Video
-> >     Decoder with 3D Comb
-> >     driver: cx23885 v: 0.0.4
-> >   Device-3: Razer USA Kiyo Pro type: USB driver: snd-usb-audio,uvcvideo
-> >   Device-4: Realtek RTL2838 DVB-T type: USB driver: N/A
-> >   Display: x11 server: X.Org v: 1.21.1.4 driver: X: loaded: amdgpu,ati
-> >     unloaded: fbdev,modesetting,radeon,vesa gpu: amdgpu resolution:
-> >     1: 1920x1080~60Hz 2: 1920x1080~60Hz
-> >   OpenGL:
-> >     renderer: AMD Radeon RX 6500 XT (navi24 LLVM 15.0.7 DRM 3.57
-> > 6.10.0-rc7+)
-> >     v: 4.6 Mesa 23.2.1-1ubuntu3.1~22.04.2
-> > 
-> > 
-> > There is a weird line from /var/log/Xorg.0.log.old:
-> > 
-> > [   299.900] (++) using VT number 7
-> > 
-> > [   299.900] (II) systemd-logind: logind integration requires -keeptty
-> > and -keeptty was not provided, disabling logind integration
-> > [   299.908] (--) PCI:*(4@0:0:0) 1002:743f:148c:2415 rev 193, Mem @
-> > 0xd0000000/268435456, 0xcfe00000/2097152, 0xfb700000/1048576, I/O @
-> > 0x0000a000/256, B
-> > IOS @ 0x????????/131072
-> > [   299.908] (--) PCI: (9@0:0:0) 14f1:8880:0070:7801 rev 15, Mem @
-> > 0xfbc00000/2097152
-> > [   299.908] (II) LoadModule: "glx"
-> > 
-> > I don't know why the BIOS line looks like: BIOS @ 0x????????/131072
-> > 
-> > Is that normal or did it not find it?
-> > 
-> > 
-> > Sure, its a corner case.  I might be the only one on the planet with
-> > this problem.  Or maybe not.
-> > 
-> > I have been using a standard .config for building kernels for a while
-> > now.  Please reply to me directly as I'm not on the list.
-> > 
-> > Bob
-> > 
-> > 
-> > 
-> > 
-> > 
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Worse, you're proposing a nice ABI that is entirely different from the
+normal [-20,19] range.
+
+Why do you feel this is the best way forward? Would not adding
+POSIX_SPAWN_SETSCHEDATTR be a more future proof mechanism?
 
