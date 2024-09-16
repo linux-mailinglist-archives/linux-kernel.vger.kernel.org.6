@@ -1,175 +1,239 @@
-Return-Path: <linux-kernel+bounces-330467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1BE979EE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:03:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26139979F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68B2BB22870
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:03:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86F528509E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD9414B945;
-	Mon, 16 Sep 2024 10:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmCKTdx4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D21517C8D;
-	Mon, 16 Sep 2024 10:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F52E155741;
+	Mon, 16 Sep 2024 10:36:50 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC7E15445E;
+	Mon, 16 Sep 2024 10:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726480974; cv=none; b=g1cfv91faWG7R2Dy2AnlyS3LGeUfAWBE1mRtUOKdIcLow4xDbALRbKgbI+HWZQFw87+TEcip3K3joWN8upIAol3WGY5R8r2FmGD/3J+rrOvChWnAbLwsGxDXJoCRwcRV+uXTzh0bRlyabGlIo9ey9B8aQT0OXnUFIPPxzxB+XQQ=
+	t=1726483010; cv=none; b=tpV1/h/hnn/WZgiaykUL/lqHKvDY/il2vwEBR5oTz8c3QQa3ed3/wqQDEKIZqMOh3lKOkBjc9EaFqJ56Y0BQEL5y5IEgnzavIjC2+8XMnnEcddjqTMZhzgkI2XnqHvTL+ChBHA1yMvJiGadqg+r1H4RIXwKcAkaQOcQLPjM/1qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726480974; c=relaxed/simple;
-	bh=2JAcUazpILyjWEBfKP9J2vMMoWzkdvtOE73YS/HthaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TFtXKk6ZvvVQBJs70mkozsFPZNCPlewoZrBONZAxo8Z1P2mchBiB2F8Q7W8ZvmC33BE2PG1UOaATtccWEWIlIdK3Ccv0rEt/hvCKxmAM5Al5pnVJGtZgMjRt7qewUYUaCQQPkREfZE6inGtiZSOPRrF4/oSy9OWLl0xLngk9lL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmCKTdx4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8E07C4CEC7;
-	Mon, 16 Sep 2024 10:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726480973;
-	bh=2JAcUazpILyjWEBfKP9J2vMMoWzkdvtOE73YS/HthaQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SmCKTdx4BqPrZ9VjlAHhbQRyex+r4GiqztP/6IvBFfAy4strRwH3ZMUzxbr9E+YKz
-	 GcnaQ2bgwtWgQRYvgU097TVr3MxD94YrzwCdO/Z/sRyHYKG2KzF+9e71PzqNIS0rMg
-	 TzFEOu7KodZ6FAdIVWr3cVmBM7LSenM8qk3LNmHxfWcPETC0cu3h/XtCR9TTxKezLa
-	 mK7b32Z/67G46n1xMcRAgMScpVZ5UqTeD8OuZfxULJ/kCwAosbCsk7JrqnYuth8q1W
-	 4JgYiGiY0xQorr6MM0KxGjSorKnfznieJcNF9uVxY8kz+onWNrEYZquD0VMGa/4gbE
-	 NY/vM+m5dovDw==
-Message-ID: <a9a7038c-4478-4366-831a-81dca8fa5afc@kernel.org>
-Date: Mon, 16 Sep 2024 12:02:46 +0200
+	s=arc-20240116; t=1726483010; c=relaxed/simple;
+	bh=OQzx1VY3FA53WmYJxavNHFf3H1NYy38Zj5pmYpMWFGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lFlLS2XakK9Af6Np703XWd63O64MN62RmpTdB5Ia3+ZlAI6u1RtWFYEcnv6+ahzYtnkekZbvJRp6HZ5X5TZQHlQCX60+CZb1eIB2w4ZHspB9BL803N3928sg4KaH39fLivBrnV4GtB/BKHNHtZmIIulCvJFixHFeYcXLGEaedvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48GA5wMY005315;
+	Mon, 16 Sep 2024 05:05:58 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48GA5plc005314;
+	Mon, 16 Sep 2024 05:05:51 -0500
+Date: Mon, 16 Sep 2024 05:05:51 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        corbet@lwn.net, akpm@linux-foundation.org, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
+        pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,
+        mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
+        dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com,
+        ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de,
+        kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH v5 00/14] integrity: Introduce the Integrity Digest Cache
+Message-ID: <20240916100551.GA5059@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240905150543.3766895-1-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/13] arm64: dts: mediatek: mt8188: Update VPPSYS node
- name and compatible
-To: Fei Shao <fshao@chromium.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-References: <20240909111535.528624-1-fshao@chromium.org>
- <20240909111535.528624-7-fshao@chromium.org>
- <11bc2522-bc10-4dcf-8142-708b57d181cf@kernel.org>
- <CAC=S1nhiJ=7yAucJsaYKUUBrwrxOVBMB2CF=bFwyLa2o-5RmWw@mail.gmail.com>
- <64cc35c8-30df-4882-a933-f42119270f48@kernel.org>
- <CAC=S1ni+pJJZhbjvVqhba5u1JqGv=dZTv8+KH4xburea2AG4Qg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAC=S1ni+pJJZhbjvVqhba5u1JqGv=dZTv8+KH4xburea2AG4Qg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905150543.3766895-1-roberto.sassu@huaweicloud.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 16 Sep 2024 05:05:58 -0500 (CDT)
 
-On 10/09/2024 13:06, Fei Shao wrote:
-> On Tue, Sep 10, 2024 at 3:19 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 10/09/2024 07:12, Fei Shao wrote:
->>> On Mon, Sep 9, 2024 at 7:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>> On 09/09/2024 13:14, Fei Shao wrote:
->>>>> Use and add "syscon" in VPPSYS node names and compatible to fix errors
->>>>> from `make CHECK_DTBS=y mediatek/mt8188-evb.dtb`.
->>>>>
->>>>> Signed-off-by: Fei Shao <fshao@chromium.org>
->>>>> ---
->>>>>
->>>>>  arch/arm64/boot/dts/mediatek/mt8188.dtsi | 8 ++++----
->>>>>  1 file changed, 4 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
->>>>> index 2900d78b7ceb..14e51a11f688 100644
->>>>> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
->>>>> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
->>>>> @@ -1799,8 +1799,8 @@ mfgcfg: clock-controller@13fbf000 {
->>>>>                       #clock-cells = <1>;
->>>>>               };
->>>>>
->>>>> -             vppsys0: clock-controller@14000000 {
->>>>> -                     compatible = "mediatek,mt8188-vppsys0";
->>>>> +             vppsys0: syscon@14000000 {
->>>>> +                     compatible = "mediatek,mt8188-vppsys0", "syscon";
->>>>
->>>> If this was working before, it looks like this is not a syscon and
->>>> bindings need to be fixed.
->>>
->>> I guess it's because the binding was later updated in commit
->>> 26bcd8a53098 ("dt-bindings: arm: mediatek: mmsys: Add VPPSYS
->>> compatible for MT8188"), and the corresponding DT update was unnoticed
->>> at the time.
->>> If that makes sense then this should be a valid fix.
->>
->> Not necessarily. Why not fixing bindings? Prove that bindings are
->> correct, not DTS, first.
+On Thu, Sep 05, 2024 at 05:05:29PM +0200, Roberto Sassu wrote:
+
+Good morning, I hope the week is starting well for everyone
+
+Apologies for the delay in getting these thoughts out, scrambling to
+catch up on my e-mail backlog.
+
+I looped Linus in, secondary to the conversations surrounding the PGP
+verification infrastructure in the kernel, given that the primary use
+case at this time appears to be the digest cache and his concerns
+regarding that use.
+
+Our proposed TSEM LSM, most recent submission here:
+
+https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
+
+Is a superset of IMA functionality and depends heavily on file
+checksums, hence our interest and reflections in your efforts with
+this.
+
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> MediaTek's mmsys doesn't merely control clocks, it also provides
-> display pipeline routing control and other misc control registers, so
-> it's appropriate to categorize it as a system controller over a clock
-> controller.
-> As for vdosys and vppsys, they are likely variants or aliases of mmsys
-> introduced in their newer SoCs.
-
-Nothing like that was in the commit msg...
-
+> Integrity detection and protection has long been a desirable feature, to
+> reach a large user base and mitigate the risk of flaws in the software
+> and attacks.
 > 
-> That description was updated in commit 1a680aa888d6 ("dt-bindings:
-> mediatek: Update mmsys binding to reflect it is a system controller"),
-> so I just assumed it's correct without thinking much...
+> However, while solutions exist, they struggle to reach a large user base,
+> due to requiring higher than desired constraints on performance,
+> flexibility and configurability, that only security conscious people are
+> willing to accept.
 
+No argument here, inherent in better and more effective security
+architectures is better useability, pure and simple.
 
-Best regards,
-Krzysztof
+> For example, IMA measurement requires the target platform to collect
+> integrity measurements, and to protect them with the TPM, which
+> introduces a noticeable overhead (up to 10x slower in a
+> microbenchmark) on frequently used system calls, like the open().
 
+The future for trusted systems will not be in TPM's, as unpopular a
+notion as that may be in some circles.  They represent a design from a
+quarter century ago that struggles to have relevance with our current
+system architectures.
+
+If a TPM is present, TSEM will extend the security coefficients for
+the root modeling namespace into a PCR to establish a root of trust
+that the rest of the trust orchestration system can be built on.  Ours
+is a worst case scenario beyond IMA since there is a coefficient
+generated for each LSM call that is being modeled.
+
+We had to go to asynchronous updates through an ordered workqueue in
+order to have something less than abysmal performance, even with
+vTPM's running in a Xen hypervisor domain.  This is without the
+current performance impacts being discussed with respect to HMAC based
+TPM session authentication.
+
+> IMA Appraisal currently requires individual files to be signed and
+> verified, and Linux distributions to rebuild all packages to include
+> file signatures (this approach has been adopted from Fedora
+> 39+). Like a TPM, also signature verification introduces a
+> significant overhead, especially if it is used to check the
+> integrity of many files.
+>
+> This is where the new Integrity Digest Cache comes into play, it
+> offers additional support for new and existing integrity solutions,
+> to make them faster and easier to deploy.
+>
+> The Integrity Digest Cache can help IMA to reduce the number of TPM
+> operations and to make them happen in a deterministic way. If IMA
+> knows that a file comes from a Linux distribution, it can measure
+> files in a different way: measure the list of digests coming from
+> the distribution (e.g. RPM package headers), and subsequently
+> measure a file if it is not found in that list.
+>
+> The performance improvement comes at the cost of IMA not reporting
+> which files from installed packages were accessed, and in which
+> temporal sequence. This approach might not be suitable for all use
+> cases.
+
+That, in and of itself, is certainly not the end of the world.
+
+With TSEM we offer the notion of the 'state' of a security namespace,
+which is the extension sum of the security coefficients after they
+have been sorted in natural (big-endian) hash order.  In this model
+you know what files have been accessed but you do not have a statement
+on temporal ordering of access.
+
+Given scheduling artifacts, let alone the almost absolute ubiquity of
+multi-core, the simple TPM/TCG linear extension model seems to
+struggle with respect to any relevancy as a security metric.
+
+> The Integrity Digest Cache can also help IMA for appraisal. IMA can simply
+> lookup the calculated digest of an accessed file in the list of digests
+> extracted from package headers, after verifying the header signature. It is
+> sufficient to verify only one signature for all files in the package, as
+> opposed to verifying a signature for each file.
+> 
+> The same approach can be followed by other LSMs, such as Integrity Policy
+> Enforcement (IPE), and BPF LSM.
+
+As we've noted above, TSEM would also be a potential consumer, which
+is why we wanted to seek clarifications on the architecture.
+
+We've reviewed the patch set and the documentation, and will freely
+admit that we may still misunderstand all of this, but it would seem
+that the architecture, as it stands, would be subject to Time Of
+Measurement Time Of Use (TOMTOU) challenges.
+
+The Time Of Measurement will be when the distribution generates an
+RPM, or equivalent construct, ie. .deb, and signs the digest list with
+their packaging key.  What is elusive to us is how can their be an
+expectation that the file, on medium, when accessed (Time Of Use),
+matches the digest of the file that was signed by the distribution?
+
+At a minimum, there would seem to be a need to have the kernel read
+and validate the on medium checksum of the file, as the in-kernel RPM
+parser reads each signature from the package list.  At that point, as
+long as the kernel is running, the digest cache will represent a valid
+statement on the cryptographic checksum of a file held in the digest
+cache, as your patch series seem to have invalidation support well in
+hand.
+
+After a system reboot, it would seem to be that all bets are off, and
+from a security perspective, there would be a need to re-verify that
+the on medium file checksums match those from a signed digest list.
+IMA has the ability to do protection against offline modification but
+you are then back to a possibly expensive operation on each file
+access.
+
+We see in the thread on PGP infrastructure in the kernel you make the
+following statement:
+
+"If the calculated digest of a file being accessed matches one
+extracted from the RPM header, access is granted otherwise it is
+denied."
+
+Which would seem to imply that you do compute the on-medium checksum
+of each file and verify it against a reference value from the RPM
+header, but it isn't clear where that happens in the patch series.
+The only kernel based file read operation we could find is what
+appears to be a call to read the digest list files.
+
+IMA already has the concept of a digest cache, as does TSEM.  If you
+need to read a file in order to match its medium based checksum
+against the value from a package list, in order to avoid a TOMTOU
+condition, it is unclear how one gains a performance improvement.
+Unless of course the objective is to prime the digest cache at boot so
+that all subsequent integrity verifications are answered from cache
+rather than by computing the checksum at file access time.
+
+In the thread on PGP access you indicate that all of this needs to be
+in the kernel in order to be tamper proof.  FWIW, the kernel has the
+ability to know if kernel + userspace should be trusted at any given
+time, that is one of the security statements that we seek to offer
+with TSEM.
+
+If the kernel can make a judgement, that in a limited execution
+context, such as system boot and initialization, that userspace has
+not acted in an untrusted manner, it can punt verification and parsing
+of RPM headers and priming of something like the digest cache to
+userspace.
+
+Again, apologies if we misunderstand the architecture, any
+clarifications would be appreciated.
+
+Have a good week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
