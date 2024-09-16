@@ -1,78 +1,89 @@
-Return-Path: <linux-kernel+bounces-330926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF9297A62D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:45:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7412D97A638
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12F3BB23BF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:45:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36CCE28541F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C588158A3D;
-	Mon, 16 Sep 2024 16:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5295F15C137;
+	Mon, 16 Sep 2024 16:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JIL3fDAc"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qY299KsI"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2058.outbound.protection.outlook.com [40.107.223.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCFA1CAAC;
-	Mon, 16 Sep 2024 16:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726505132; cv=none; b=tK2PxPfp6KB62jXALNLwwGnSDo7y9WoXnmjfe3SMKXfBZPeWztSwOSK7iNrpa1hkLyniDeIfrAqUa9ZGpruIkf3/9vYLNnvEEk/p3cITz++Hepvz0fVT1tgoULtUTDo82n2r76KEN63XFU/GJmw1e6Q3NPJSA+pNivlJ9x38ZOE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726505132; c=relaxed/simple;
-	bh=OvIxlpe8ikMzpVdHb8rBDe7URqZFOOlM1jBnV0YAe/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X+e+uga7t4R9lEyPpGph6vHke8hu4sM05Cz2Qx9la16yo+QA80CtCOEUDyJ9ODIkxN84/D5tnDiPPqr68JMPkMyUShfh9fPnUrI5dAi5hjlIO7ceILZIS6g7yN0pd7iFZ4UXivBSre7fLu3+Vrdwm2UwULfVkr+QSJ+t/Fx0ah4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JIL3fDAc; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d87f34a650so3188410a91.1;
-        Mon, 16 Sep 2024 09:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726505129; x=1727109929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=oSHt8ilshuMDwX3QcOoNb5eX0HzVZtUBnNZ4jBi3hts=;
-        b=JIL3fDAczzPcEsfhoMPm1YnfJA9NivUhXPCLm3YqXoaKwXmDcmhMkDsruxqcpgBD0B
-         01R/UvX3nKls9BoeOxQ9NY9DgQmcn8Tb5k/bf6b/efF/80MBXhbdkFJSZSTExrTDH1Fn
-         VdTWCbXGhN/TxLSeFXnboBFDDuYj5RfrC6mLFXTBZMwaBNRejoOeeTS/AFxutl2y6RSM
-         /1TFX39jnFfy48I+6e2PzPipbyS5dZFnidx+YQ8MyVchDfm61VObjVxlpCPNwWWHVP9K
-         vtXjrBPgYfq7EnFSf6V15NmCSdJAQp5yxVfl26ltAy2SgQsxGMKGzcOfUwEwmLcK+4OC
-         Xdqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726505129; x=1727109929;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oSHt8ilshuMDwX3QcOoNb5eX0HzVZtUBnNZ4jBi3hts=;
-        b=GtR2KqGp5+M79ckIDm7yPIl59850qzEkATWp9bgUTpC9T2c4KK+FLkRtmv0Unto8bV
-         HInlx+IQwaGzJzwDSC0UGoW5sfihgNLXh/XGa8l8AO9PxCsppi11SmZZHquBmTTN2LMZ
-         bD9qDVo9o7Y944HmvRb/uQ00QcPukZgEId63fOu4Fj57ScqBpJDDOdxt3V8TaTRw+5rH
-         alSVT8oDLVTRi17hcCdMK0PdfxBu16Dnc8SH+fCGcfceZm5e2Xz4Q3UsCL6J5lJAy0VM
-         sMTGQkbtFgDV7+wYL1bGULB9mzCPyWr7j9mUO+BV6/G7jEp4ovuU2l0pquDVyLW3qozd
-         JRhg==
-X-Forwarded-Encrypted: i=1; AJvYcCULVgIZM6DsaI/kho0RxO377BA+lRSDtdQo9YTO0RzRZeovvSMvFcptuPd3vHa48WT36JP9YK7YUZyMWew=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0a2E8wf0jPXcePXDEoB+ozCVj86FK/vgA42bbeOdaZb4hRTc+
-	14/aHUNh3UcgvZTyQd1hg2BAV/OrBEkwzXNi5E9ImAJoomXlMAnjcXlNpA==
-X-Google-Smtp-Source: AGHT+IEI7y/E+mGWgiRqdf5lRu/uApUotJ4tgFoLu1wq010TM1ISDLnHNbugqFDfQbIVbWLD7H5/Gw==
-X-Received: by 2002:a17:90b:17c6:b0:2c9:7343:71f1 with SMTP id 98e67ed59e1d1-2db9fcb941cmr25917291a91.14.1726505128608;
-        Mon, 16 Sep 2024 09:45:28 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbcfdc0850sm5408019a91.57.2024.09.16.09.45.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 09:45:27 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hwmon updates for v6.12
-Date: Mon, 16 Sep 2024 09:45:26 -0700
-Message-ID: <20240916164526.1161583-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16EF15B984;
+	Mon, 16 Sep 2024 16:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726505347; cv=fail; b=iEYyvq1vqOgxU1ZPPWamnkobXk7pA+7QZmT/o88DqpKODERfIST2Co3ua9NU2UUqobCAM433g8tz9aiBji61bmqi6lGPh+pJuoTpnCpkphtljx8YslMBpJ5/xZRc3L5mg9wUYoZh1J493P86chyK2rT2loCGPPcjD26Zx2kflBk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726505347; c=relaxed/simple;
+	bh=qsiYyigcFRl92gy3GRi5I9YUUrX+3IDv+ouBjOQ2ntg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fE0J5npTXxOFLr+GymLPpDIBeA0Jxb+Rlg0Qw3qf7Ufeii6HydnBnZ6DajzrD8i1DC+egr6HYLfztIt0QjH/LvREpmXeC7yF87vQmgMza1iV1TtyuDpFDJt0lyQMWK7Emxik2AYa27GEl7KHoQx01kZUOmOkQb4Y6aUl8tzaTIU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qY299KsI; arc=fail smtp.client-ip=40.107.223.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ImlRIaJMeT96c+BURALZaFT35so7qCoDFqWs4dBQQdg9YqiTGt2nnicSuG67J9VRJYIr/pRg1Mq9+3V968FadrEGXoogX7PMzf2ucFA6C44iF92fcd1Knn2e1RZX5GyfK0sB2BPeF0DBJYk65+1e4OgTOEGyCDNdDTNRf9jNv5O3Pguck5+PJd3Mvl8x/srLaGXcLuQqzCXsR5p92gpW9iSYkbvRAelBNQ5wjrFr/uppH4xL6U/nW4oDyUDVqhZsu3GDA/lmJHJ46wMrZVJOV57Meb1eFMuwybTv2vd7t4RJUl+jR1xZhkt5KJub3/vePG7hF+XayMBbkQcX+uLhSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ptna+Fw00BndPfA60LOKKfjp8ZCOawWqhlukSzVX0sM=;
+ b=pXKM+TKcCdwCZMW2KRleRH2cYgt0CVBtqlhoWp6D25xgQeY+3x6v2OA8FInwSulpbOG4zq/axgke9p84Cpbuv4TDpjJ2822NJS1Sux+nAB0DuhWd/SOjMdKoyoX2vHxUWUUu/W+KlJM1XFZEj44362v+EAb26qsz4K+fu054PA5E1QbcOkSdtWv5/+QE4KcbNyuAyhkjpRfACqXSWB+8DKenEGJ3pYWlBfhchW+nc1Ar2DLPncBmz7ymGv/Bm3nWd68Nb8uK31gd/KTUiVgVBNsHKrPqrKcHhMJB38Ea7+mp2wG/+uXAPDsnj5OZeWMx100RoE5CArIEJVjYtmw8ZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ptna+Fw00BndPfA60LOKKfjp8ZCOawWqhlukSzVX0sM=;
+ b=qY299KsIi6kXh1s2R1z17nmPg1pccCYGbDTKxqR3QyqaVZt4v18mjBJ4TSaSarOyWoHL5r4Yymy19BdmqaiF7rYHiFgEwMXqYhrYimefxn1F7Lgx4Fg9K6g/QUMkV6egSlMmbZl9TYVir7EtsJRP6VjXwmJbzOPtI5jAVybqDA0=
+Received: from SJ0PR13CA0129.namprd13.prod.outlook.com (2603:10b6:a03:2c6::14)
+ by DS0PR12MB8785.namprd12.prod.outlook.com (2603:10b6:8:14c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Mon, 16 Sep
+ 2024 16:49:00 +0000
+Received: from SJ1PEPF0000231F.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c6:cafe::b1) by SJ0PR13CA0129.outlook.office365.com
+ (2603:10b6:a03:2c6::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
+ Transport; Mon, 16 Sep 2024 16:49:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF0000231F.mail.protection.outlook.com (10.167.242.235) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Mon, 16 Sep 2024 16:49:00 +0000
+Received: from BLR-L-RBANGORI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Sep
+ 2024 11:48:50 -0500
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <irogers@google.com>
+CC: <ravi.bangoria@amd.com>, <swapnil.sapkal@amd.com>, <yu.c.chen@intel.com>,
+	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+	<jolsa@kernel.org>, <rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
+	<bristot@redhat.com>, <adrian.hunter@intel.com>, <james.clark@arm.com>,
+	<kan.liang@linux.intel.com>, <gautham.shenoy@amd.com>,
+	<kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
+	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<santosh.shukla@amd.com>, <ananth.narayan@amd.com>, <sandipan.das@amd.com>
+Subject: [PATCH 0/5] perf sched: Introduce stats tool
+Date: Mon, 16 Sep 2024 16:47:17 +0000
+Message-ID: <20240916164722.1838-1-ravi.bangoria@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,299 +91,287 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231F:EE_|DS0PR12MB8785:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e9efdef-241c-4078-a533-08dcd66f76f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3la2f6/VcjslLeKs+8c86SxCwPRINerXVEd3bMKmh+yaVSLiljXzEiBfRIp3?=
+ =?us-ascii?Q?XlO5IxQaN8Al9zCXV0rw5GNOcfvtuMxt7BWeNzA1/OT6dyQyzKeWQc9QM4DS?=
+ =?us-ascii?Q?pHbJEWDEeeJbsM/8qoRw3yqcG6rxgJtO9oj/M17nsxWcByihxUiUiokOoQTg?=
+ =?us-ascii?Q?JewBXFF79lu7GwO73RuEMh13Ac/zTNY/3QVUvfcS5AoA0J1rr/YEgz6c0Op4?=
+ =?us-ascii?Q?UXi2HCdT62dYq5El4xv0iDGucdljk/H16+eC3Fx9slTZk0auUcoXa5EURH5d?=
+ =?us-ascii?Q?lxeFw7vmsmsd+g1IvvGH/Qtvn954mEcV7IORlcN4vNrEIAbEJyE0FImDjzL2?=
+ =?us-ascii?Q?Cx/0AaYI1ganzBbEtpyaB+Lm/zkf7/7U8WlttmYXpWMiT2S5E+x2HZTJG9mM?=
+ =?us-ascii?Q?8sr2TqpfstV4EcM9qZvBYeoplfgRqYVuMnRGuHh3JfH7CaoJADj/meprt8Nj?=
+ =?us-ascii?Q?IBF0jnM7IxHHkRteEasJefXzrZamGIuCvOTby0YIXT3CjNZOLYVBUjk45Yhn?=
+ =?us-ascii?Q?VfCmBZTeCuoH2NQT06xuswqsQaghvWj2qg9/OTxk4j6s/YJ6oTVdF97pPPTZ?=
+ =?us-ascii?Q?xE/YngC1dIWCyFZYoteskK7pvMr1r767fe3t5t9KA2fK5n4/jhfNHh6DaJiJ?=
+ =?us-ascii?Q?uBlUKJR6goaP1xIZ8H+yEqo03brkdSbFEGaWneREPvGED6maQUsVYrkEQCuj?=
+ =?us-ascii?Q?k8g+sUYURTDWKr957+0Z9qG5z8RK1/RLVrpsTrsl+j6K1aR7ET5MNue4RsIX?=
+ =?us-ascii?Q?oUyMJfY3faEh6lbtMBGrCDIl8ibCaKrolZ2eQZ4z3HIXRpDjb7Vfj2rPID4w?=
+ =?us-ascii?Q?2hbTYzdeaR5LgeklfWppjUu900yxh7qfdITJJAwl8elYniORX8CPS1gXEHIo?=
+ =?us-ascii?Q?/TynjqjMYTRSNPE5EClbaVTCw/QyakIuWOHgUyMBNGdtdH2/RkRiqXpUIrc5?=
+ =?us-ascii?Q?Un5A7+JB5qmzA0/mFDBbg3143o0HRNPjxRgrrQhax2/qy0NtRo/rkiT1yQux?=
+ =?us-ascii?Q?e0pX2azGbarsP1GWeDc2T4Wg7jo5VkOg/bEjTJULUlJffjGcbNCxDa1qq3mL?=
+ =?us-ascii?Q?FmTlkE2t0sv1U/4Q5NKAPoRQZ52m6vZskbmYhyxXjkJdDoR9uSHeAAyfKq1A?=
+ =?us-ascii?Q?w1mdoYatabZWZpxsOkEpp2suM7X0HKAg2ns05BV8dNyrDQxlmOMNnx5LjDU2?=
+ =?us-ascii?Q?J/EHMykJ1UftkRAK0q2dRgfTvnVtHOtEud1wWa0CliBtgz0c63Cv4OyuMXdY?=
+ =?us-ascii?Q?3++YuVOo8YZBjUZ2VkW0bVk8//aFAIGJDps94noNO76AyzYuBS8JIrWnc9Lx?=
+ =?us-ascii?Q?bL358FuAIJWUdAcbIJ99tqzNMU8dUB8I1w30SurXZW3Z3EMOBAzQtKzJq7k7?=
+ =?us-ascii?Q?Geso3xXVNm7TKRx8iiWzy32VDNxnM4FSF9U2URZayOcYD10+IaXUJu6SEvP0?=
+ =?us-ascii?Q?YtbY6j76A2PAFZncXEL20VmcrhzxWczZ?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 16:49:00.4016
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e9efdef-241c-4078-a533-08dcd66f76f7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF0000231F.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8785
 
-Hi Linus,
+MOTIVATION
+----------
 
-Please pull hwmon updates for Linux v6.12 from signed tag:
+Existing `perf sched` is quite exhaustive and provides lot of insights
+into scheduler behavior but it quickly becomes impractical to use for
+long running or scheduler intensive workload. For ex, `perf sched record`
+has ~7.77% overhead on hackbench (with 25 groups each running 700K loops
+on a 2-socket 128 Cores 256 Threads 3rd Generation EPYC Server), and it
+generates huge 56G perf.data for which perf takes ~137 mins to prepare
+and write it to disk [1].
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.12
+Unlike `perf sched record`, which hooks onto set of scheduler tracepoints
+and generates samples on a tracepoint hit, `perf sched stats record` takes
+snapshot of the /proc/schedstat file before and after the workload, i.e.
+there is almost zero interference on workload run. Also, it takes very
+minimal time to parse /proc/schedstat, convert it into perf samples and
+save those samples into perf.data file. Result perf.data file is much
+smaller. So, overall `perf sched stats record` is much more light weight
+compare to `perf sched record`.
 
-Thanks,
-Guenter
-------
+We, internally at AMD, have been using this (a variant of this, known as
+"sched-scoreboard"[2]) and found it to be very useful to analyse impact
+of any scheduler code changes[3][4].
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+Please note that, this is not a replacement of perf sched record/report.
+The intended users of the new tool are scheduler developers, not regular
+users.
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+USAGE
+-----
 
-are available in the Git repository at:
+  # perf sched stats record
+  # perf sched stats report
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v6.12
+Note: Although `perf sched stats` tool supports workload profiling syntax
+(i.e. -- <workload> ), the recorded profile is still systemwide since the
+/proc/schedstat is a systemwide file.
 
-for you to fetch changes up to 2cb4acf2140be8a4f299c0b887cc314845ef6ec8:
+HOW TO INTERPRET THE REPORT
+---------------------------
 
-  hwmon: Remove devm_hwmon_device_unregister() API function (2024-09-13 07:27:36 -0700)
+The `perf sched stats report` starts with total time profiling was active
+in terms of jiffies:
 
-----------------------------------------------------------------
-hwmon updates for v6.12
+  ----------------------------------------------------------------------------------------------------
+  Time elapsed (in jiffies)                                   :       24537
+  ----------------------------------------------------------------------------------------------------
 
-* New drivers
+Next is CPU scheduling statistics. These are simple diffs of
+/proc/schedstat CPU lines along with description. The report also
+prints % relative to base stat.
 
-  - Driver for Sophgo SG2042 external hardware monitor
+In the example below, schedule() left the CPU0 idle 98.19% of the time.
+16.54% of total try_to_wake_up() was to wakeup local CPU. And, the total
+waittime by tasks on CPU0 is 0.49% of the total runtime by tasks on the
+same CPU.
 
-  - Thermal sensor driver for Surface Aggregator Module
+  ----------------------------------------------------------------------------------------------------
+  CPU 0
+  ----------------------------------------------------------------------------------------------------
+  sched_yield() count                                         :           0
+  Legacy counter can be ignored                               :           0
+  schedule() called                                           :       17138
+  schedule() left the processor idle                          :       16827 ( 98.19% )
+  try_to_wake_up() was called                                 :         508
+  try_to_wake_up() was called to wake up the local cpu        :          84 ( 16.54% )
+  total runtime by tasks on this processor (in jiffies)       :  2408959243
+  total waittime by tasks on this processor (in jiffies)      :    11731825 ( 0.49% )
+  total timeslices run on this cpu                            :         311
+  ----------------------------------------------------------------------------------------------------
 
-* Added support to existing drivers
+Next is load balancing statistics. For each of the sched domains
+(eg: `SMT`, `MC`, `DIE`...), the scheduler computes statistics under
+the following three categories:
 
-  - oxp-sensors: Support for multiple new devices.
+  1) Idle Load Balance: Load balancing performed on behalf of a long
+                        idling CPU by some other CPU.
+  2) Busy Load Balance: Load balancing performed when the CPU was busy.
+  3) New Idle Balance : Load balancing performed when a CPU just became
+                        idle.
 
-  - nct6775: Added G15CF to ASUS WMI monitoring list
+Under each of these three categories, sched stats report provides
+different load balancing statistics. Along with direct stats, the
+report also contains derived metrics prefixed with *. Example:
 
-* Modernizations
+  ----------------------------------------------------------------------------------------------------
+  CPU 0 DOMAIN SMT CPUS <0, 64>
+  ----------------------------------------- <Category idle> ------------------------------------------
+  load_balance() count on cpu idle                                 :          50   $      490.74 $
+  load_balance() found balanced on cpu idle                        :          42   $      584.21 $
+  load_balance() move task failed on cpu idle                      :           8   $     3067.12 $
+  imbalance sum on cpu idle                                        :           8
+  pull_task() count on cpu idle                                    :           0
+  pull_task() when target task was cache-hot on cpu idle           :           0
+  load_balance() failed to find busier queue on cpu idle           :           0   $        0.00 $
+  load_balance() failed to find busier group on cpu idle           :          42   $      584.21 $
+  *load_balance() success count on cpu idle                        :           0
+  *avg task pulled per successful lb attempt (cpu idle)            :        0.00
+  ----------------------------------------- <Category busy> ------------------------------------------
+  load_balance() count on cpu busy                                 :           2   $    12268.50 $
+  load_balance() found balanced on cpu busy                        :           2   $    12268.50 $
+  load_balance() move task failed on cpu busy                      :           0   $        0.00 $
+  imbalance sum on cpu busy                                        :           0
+  pull_task() count on cpu busy                                    :           0
+  pull_task() when target task was cache-hot on cpu busy           :           0
+  load_balance() failed to find busier queue on cpu busy           :           0   $        0.00 $
+  load_balance() failed to find busier group on cpu busy           :           1   $    24537.00 $
+  *load_balance() success count on cpu busy                        :           0
+  *avg task pulled per successful lb attempt (cpu busy)            :        0.00
+  ---------------------------------------- <Category newidle> ----------------------------------------
+  load_balance() count on cpu newly idle                           :         427   $       57.46 $
+  load_balance() found balanced on cpu newly idle                  :         382   $       64.23 $
+  load_balance() move task failed on cpu newly idle                :          45   $      545.27 $
+  imbalance sum on cpu newly idle                                  :          48
+  pull_task() count on cpu newly idle                              :           0
+  pull_task() when target task was cache-hot on cpu newly idle     :           0
+  load_balance() failed to find busier queue on cpu newly idle     :           0   $        0.00 $
+  load_balance() failed to find busier group on cpu newly idle     :         382   $       64.23 $
+  *load_balance() success count on cpu newly idle                  :           0
+  *avg task pulled per successful lb attempt (cpu newly idle)      :        0.00
+  ----------------------------------------------------------------------------------------------------
 
-  - ina2xx: Driver cleanup and update to use with_info API
+Consider following line:
 
-  - lm92: Driver cleanup and update to use regmap and with_info API
+  load_balance() found balanced on cpu newly idle                  :         382    $      64.23 $
 
-  - lm95234: Driver cleanup and update to use regmap and with_info API
+While profiling was active, the load-balancer found 382 times the load
+needs to be balanced on a newly idle CPU 0. Following value encapsulated
+inside $ is average jiffies between two events (24537 / 382 = 64.23).
 
-  - max1619: Driver cleanup and update to use regmap and with_info API
+Next are active_load_balance() stats. alb did not trigger while the 
+profiling was active, hence it's all 0s.
 
-  - max1668: Driver cleanup and update to use regmap and with_info API
+  --------------------------------- <Category active_load_balance()> ---------------------------------
+  active_load_balance() count                                      :           0
+  active_load_balance() move task failed                           :           0
+  active_load_balance() successfully moved a task                  :           0
+  ----------------------------------------------------------------------------------------------------
 
-  - max6697: Driver cleanup and update to use regmap and with_info API
+Next are sched_balance_exec() and sched_balance_fork() stats. They are
+not used but we kept it in RFC just for legacy purpose. Unless opposed,
+we plan to remove them in next revision.
 
-* API updates
+Next are wakeup statistics. For every domain, the report also shows
+task-wakeup statistics. Example:
 
-  - Removed unused devm_hwmon_device_unregister() API function
+  ------------------------------------------- <Wakeup Info> ------------------------------------------
+  try_to_wake_up() awoke a task that last ran on a diff cpu       :       12070
+  try_to_wake_up() moved task because cache-cold on own cpu       :        3324
+  try_to_wake_up() started passive balancing                      :           0
+  ----------------------------------------------------------------------------------------------------
 
-* Other notable changes
+Same set of stats are reported for each CPU and each domain level.
 
-  - Implement and use generic bus access delay for pmbus drivers
+RFC: https://lore.kernel.org/r/20240508060427.417-1-ravi.bangoria@amd.com
+RFC->v1:
+ - [Kernel] Print domain name along with domain number in /proc/schedstat
+   file.
+ - s/schedstat/stats/ for the subcommand.
+ - Record domain name and cpumask details, also show them in report.
+ - Add CPU filtering capability at record and report time.
+ - Add /proc/schedstat v16 support.
+ - Live mode support. Similar to perf stat command, live mode prints the
+   sched stats on the stdout.
+ - Add pager support in `perf sched stats report` for better scrolling.
+ - Some minor cosmetic changes in report output to improve readability.
+ - Rebase to latest perf-tools-next/perf-tools-next (1de5b5dcb835).
 
-  - Use with scoped for each OF child loop in several drivers
+TODO:
+ - Add perf unit tests to test basic sched stats functionalities
+ - Describe new tool, it's usage and interpretation of report data in the
+   perf-sched man page.
+ - Currently sched stats tool provides statistics of only one run but we
+   are planning to add `perf sched stats diff` which can compare the data
+   of two different runs (possibly good and bad) and highlight where
+   scheduler decisions are impacting workload performance.
+ - perf sched stats records /proc/schedstat which is a CPU and domain
+   level scheduler statistic. We are planning to add taskstat tool which
+   reads task stats from procfs and generate scheduler statistic report
+   at task granularity. this will probably a standalone tool, something
+   like `perf sched taskstat record/report`.
+ - Except pre-processor related checkpatch warnings, we have addressed
+   most of the other possible warnings.
 
-  - Module unloading fixes for gsc-hwmon and ntc_thermistor drivers
+Patches are prepared on perf-tools-next/perf-tools-next (1de5b5dcb835).
 
-  - Converted various drivers to use multi-byte regmap operations
+Apologies for the long delay in respin. sched-ext was proposed while we
+were working on next revision. So, we held on for a moment to settle down
+dusts and get a clear idea of whether the new tool will be useful or not.
 
-  - adt7475: Improved devicetree based configuration
+[1] https://youtu.be/lg-9aG2ajA0?t=283
+[2] https://github.com/AMDESE/sched-scoreboard
+[3] https://lore.kernel.org/lkml/c50bdbfe-02ce-c1bc-c761-c95f8e216ca0@amd.com/
+[4] https://lore.kernel.org/lkml/3e32bec6-5e59-c66a-7676-7d15df2c961c@amd.com/
 
-  - ltc2947: Move to firmware agnostic API
 
-  - ltc2978: Converted devicetree description to yaml
+K Prateek Nayak (1):
+  sched/stats: Print domain name in /proc/schedstat
 
-  - max16065: Addressed overflows when writing limit attributes
+Swapnil Sapkal (4):
+  perf sched stats: Add record and rawdump support
+  perf sched stats: Add schedstat v16 support
+  perf sched stats: Add support for report subcommand
+  perf sched stats: Add support for live mode
 
-* Various other minor cleanups, fixes and improvements
+ Documentation/scheduler/sched-stats.rst       |   8 +-
+ kernel/sched/stats.c                          |   6 +-
+ tools/lib/perf/Documentation/libperf.txt      |   2 +
+ tools/lib/perf/Makefile                       |   2 +-
+ tools/lib/perf/include/perf/event.h           |  56 ++
+ .../lib/perf/include/perf/schedstat-cpu-v15.h |  22 +
+ .../lib/perf/include/perf/schedstat-cpu-v16.h |  22 +
+ .../perf/include/perf/schedstat-domain-v15.h  | 121 +++
+ .../perf/include/perf/schedstat-domain-v16.h  | 121 +++
+ tools/perf/builtin-inject.c                   |   2 +
+ tools/perf/builtin-sched.c                    | 778 +++++++++++++++++-
+ tools/perf/util/event.c                       | 104 +++
+ tools/perf/util/event.h                       |   2 +
+ tools/perf/util/session.c                     |  20 +
+ tools/perf/util/synthetic-events.c            | 255 ++++++
+ tools/perf/util/synthetic-events.h            |   3 +
+ tools/perf/util/tool.c                        |  20 +
+ tools/perf/util/tool.h                        |   4 +-
+ 18 files changed, 1542 insertions(+), 6 deletions(-)
+ create mode 100644 tools/lib/perf/include/perf/schedstat-cpu-v15.h
+ create mode 100644 tools/lib/perf/include/perf/schedstat-cpu-v16.h
+ create mode 100644 tools/lib/perf/include/perf/schedstat-domain-v15.h
+ create mode 100644 tools/lib/perf/include/perf/schedstat-domain-v16.h
 
-----------------------------------------------------------------
-Andy Shevchenko (2):
-      hwmon: (sht21) Use %*ph to print small buffer
-      hwmon: (sch5636) Print unknown ID in error string via %*pE
+-- 
+2.46.0
 
-Armin Wolf (1):
-      hwmon: (dell-smm) Add Dell Latitude 7320 to fan control whitelist
-
-Chanh Nguyen (1):
-      dt-bindings: hwmon: Add maxim max31790
-
-Chris Packham (3):
-      dt-bindings: hwmon: Add adt7475 fan/pwm properties
-      dt-bindings: hwmon: adt7475: Deprecate adi,pwm-active-state
-      hwmon: (adt7475) Add support for configuring initial PWM state
-
-Christophe JAILLET (1):
-      hwmon: (pmbus/mpq7932) Constify struct regulator_desc
-
-Cryolitia PukNgae (1):
-      hwmon: (oxp-sensors) Fix typo in driver documentation
-
-Denis Pauk (1):
-      hwmon: (nct6775) add G15CF to ASUS WMI monitoring list
-
-Derek J. Clark (1):
-      hwmon: (oxp-sensors) Add support for multiple new devices.
-
-Frank Li (1):
-      dt-bindings: hwmon: Convert ltc2978.txt to yaml
-
-Guenter Roeck (56):
-      hwmon: (adt7470) Use multi-byte regmap operations
-      hwmon: (tmp401) Use multi-byte regmap operations
-      hwmon: (lm95245) Use multi-byte regmap operations
-      hwmon: (nct7802) Use multi-byte regmap operations
-      hwmon: (adt7x10) Use multi-byte regmap operations
-      hwmon: (tmp464) Use multi-byte regmap operations
-      hwmon: (max6639) Use multi-byte regmap operations
-      hwmon: (amc6821) Use multi-byte regmap operations
-      hwmon: (lm95234) Reorder include files to be in alphabetic order
-      hwmon: (lm95234) Use find_closest to find matching update interval
-      hwmon: (lm95234) Convert to use regmap
-      hwmon: (lm95234) Convert to with_info hwmon API
-      hwmon: (lm95234) Add support for tempX_enable attribute
-      hwmon: (lm95234) Use multi-byte regmap operations
-      hwmon: (max16065) Fix overflows seen when writing limits
-      hwmon: (max16065) Fix alarm attributes
-      hwmon: (max6697) Reorder include files
-      hwmon: (max6697) Drop platform data support
-      hwmon: (max6697) Use bit operations where possible
-      hwmon: (max6697) Convert to use regmap
-      hwmon: (max6697) Convert to with_info hwmon API
-      hwmon: (max6697) Add support for tempX_min and tempX_min_alarm
-      hwmon: (max1668) Reorder include files to alphabetic order
-      hwmon: (max1668) Use BIT macro
-      hwmon: (max1668) Convert to use regmap
-      hwmon: (max1668) Replace chip type with number of channels
-      hwmon: (max1668) Convert to use with_info hwmon API
-      hwmon: (max6697) Document discrepancy in overtemperature status bit values
-      hwmon: (max1619) Clamp temperature range when writing limits
-      hwmon: (max1619) Reorder include files to alphabetic order
-      hwmon: (max1619) Mask valid alarm bits
-      hwmon: (max1619) Convert to use regmap
-      hwmon: (max1619) Convert to with_info API
-      hwmon: (max1619) Add support for update_interval attribute
-      hwmon: (max1619) Improve chip detection code
-      hwmon: (lm92) Improve auto-detection accuracy
-      hwmon: (lm92) Reorder include files to alphabetic order
-      hwmon: (lm92) Replace chip IDs with limit register resolution
-      hwmon: (lm92) Convert to use regmap
-      hwmon: (lm92) Convert to with_info hwmon API
-      hwmon: (lm92) Update documentation
-      hwmon: (ina2xx) Reorder include files to alphabetic order
-      hwmon: (ina2xx) Replace platform data with device properties
-      hwmon: (ina2xx) Use bit operations
-      hwmon: (ina2xx) Mark regmap_config as const
-      hwmon: (ina2xx) Use local regmap pointer if used more than once
-      hwmon: (ina2xx) Re-initialize chip using regmap functions
-      hwmon: (ina2xx) Fix various overflow issues
-      hwmon: (ina2xx) Consolidate chip initialization code
-      hwmon: (ina2xx) Set alert latch
-      hwmon: (ina2xx) Move ina2xx_get_value()
-      hwmon: (ina2xx) Convert to use with_info hwmon API
-      hwmon: (ina2xx) Pass register to alert limit write functions
-      hwmon: (ina2xx) Add support for current limits
-      hwmon: (ina2xx) Use shunt voltage to calculate current
-      hwmon: Remove devm_hwmon_device_unregister() API function
-
-Inochi Amaoto (2):
-      dt-bindings: hwmon: Add Sophgo SG2042 external hardware monitor support
-      hwmon: Add sophgo SG2042 external hardware monitor support
-
-Javier Carrasco (2):
-      hwmon: (ltc2992) use device_for_each_child_node_scoped() to access child nodes
-      hwmon: (chipcap2) Drop cc2_disable() in the probe and return dev_err_probe()
-
-Jinjie Ruan (8):
-      hwmon: (aspeed-g6-pwm-tacho): Simplify with scoped for each OF child loop
-      hwmon: (aspeed-pwm-tacho): Simplify with scoped for each OF child loop
-      hwmon: (ina3221): Simplify with scoped for each OF child loop
-      hwmon: (lm90): Simplify with scoped for each OF child loop
-      hwmon: (nct7802): Simplify with scoped for each OF child loop
-      hwmon: (npcm750-pwm-fan): Simplify with scoped for each OF child loop
-      hwmon: (tmp421): Simplify with scoped for each OF child loop
-      hwmon: (tmp464): Simplify with scoped for each OF child loop
-
-Johannes Kirchmair (1):
-      hwmon: (pwmfan) Do not force disable pwm controller
-
-Liao Chen (1):
-      hwmon: (gsc-hwmon) fix module autoloading
-
-Mario Limonciello (1):
-      hwmon: (k10temp): Use cpu_feature_enabled() for detecting zen
-
-Maximilian Luz (1):
-      hwmon: Add thermal sensor driver for Surface Aggregator Module
-
-Nathan Chancellor (1):
-      hwmon: (oxp-sensors) Add missing breaks to fix -Wimplicit-fallthrough with clang
-
-Nuno Sa (1):
-      hwmon: (ltc2947) Move to firmware agnostic API
-
-Patrick Rudolph (5):
-      hwmon: pmbus: Implement generic bus access delay
-      hwmon: pmbus: max15301: Use generic code
-      hwmon: pmbus: ucd9000: Use generic code
-      hwmon: pmbus: zl6100: Use generic code
-      hwmon: pmbus: pli12096bc: Add write delay
-
-Rob Herring (Arm) (2):
-      hwmon: (vexpress) Use of_property_present()
-      hwmon: (stts751) Add "st" vendor prefix to "stts751" compatible string
-
-Shen Lichuan (1):
-      hwmon: (pc87360) Use min() macro
-
-Yue Haibing (1):
-      hwmon: (sch5627) Remove unused declaration sch56xx_watchdog_unregister()
-
-Yuntao Liu (1):
-      hwmon: (ntc_thermistor) fix module autoloading
-
- .../devicetree/bindings/hwmon/adt7475.yaml         |  37 +-
- .../devicetree/bindings/hwmon/lltc,ltc2978.yaml    |  94 +++
- .../devicetree/bindings/hwmon/ltc2978.txt          |  62 --
- .../devicetree/bindings/hwmon/maxim,max31790.yaml  |  70 ++
- .../bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml    |  43 +
- Documentation/hwmon/hwmon-kernel-api.rst           |   7 -
- Documentation/hwmon/ina2xx.rst                     |   4 +
- Documentation/hwmon/index.rst                      |   1 +
- Documentation/hwmon/lm92.rst                       |  26 +-
- Documentation/hwmon/max1619.rst                    |   4 -
- Documentation/hwmon/oxp-sensors.rst                |  56 +-
- Documentation/hwmon/sg2042-mcu.rst                 |  78 ++
- MAINTAINERS                                        |   6 +
- drivers/hwmon/Kconfig                              |  26 +-
- drivers/hwmon/Makefile                             |   2 +
- drivers/hwmon/adt7470.c                            |  22 +-
- drivers/hwmon/adt7475.c                            | 130 +++
- drivers/hwmon/adt7x10.c                            |  18 +-
- drivers/hwmon/amc6821.c                            |  30 +-
- drivers/hwmon/aspeed-g6-pwm-tach.c                 |   4 +-
- drivers/hwmon/aspeed-pwm-tacho.c                   |   8 +-
- drivers/hwmon/chipcap2.c                           |  33 +-
- drivers/hwmon/dell-smm-hwmon.c                     |   8 +
- drivers/hwmon/gsc-hwmon.c                          |   1 +
- drivers/hwmon/hwmon.c                              |  18 -
- drivers/hwmon/ina2xx.c                             | 895 +++++++++++---------
- drivers/hwmon/ina3221.c                            |   7 +-
- drivers/hwmon/k10temp.c                            |  26 +-
- drivers/hwmon/lm90.c                               |   7 +-
- drivers/hwmon/lm92.c                               | 457 +++++++----
- drivers/hwmon/lm95234.c                            | 869 ++++++++------------
- drivers/hwmon/lm95245.c                            | 110 +--
- drivers/hwmon/ltc2947-core.c                       |  20 +-
- drivers/hwmon/ltc2992.c                            |  19 +-
- drivers/hwmon/max16065.c                           |  17 +-
- drivers/hwmon/max1619.c                            | 495 ++++++-----
- drivers/hwmon/max1668.c                            | 487 ++++-------
- drivers/hwmon/max6639.c                            |  40 +-
- drivers/hwmon/max6697.c                            | 907 +++++++++------------
- drivers/hwmon/nct6775-platform.c                   |   1 +
- drivers/hwmon/nct7802.c                            |  69 +-
- drivers/hwmon/npcm750-pwm-fan.c                    |   5 +-
- drivers/hwmon/ntc_thermistor.c                     |   1 +
- drivers/hwmon/oxp-sensors.c                        | 301 ++++++-
- drivers/hwmon/pc87360.c                            |   2 +-
- drivers/hwmon/pmbus/max15301.c                     |  92 +--
- drivers/hwmon/pmbus/mpq7932.c                      |   2 +-
- drivers/hwmon/pmbus/pli1209bc.c                    |  26 +-
- drivers/hwmon/pmbus/pmbus.h                        |  10 +
- drivers/hwmon/pmbus/pmbus_core.c                   |  92 ++-
- drivers/hwmon/pmbus/ucd9000.c                      |  64 +-
- drivers/hwmon/pmbus/zl6100.c                       |  66 +-
- drivers/hwmon/pwm-fan.c                            |  11 +-
- drivers/hwmon/sch5636.c                            |   3 +-
- drivers/hwmon/sch56xx-common.h                     |   1 -
- drivers/hwmon/sg2042-mcu.c                         | 388 +++++++++
- drivers/hwmon/sht21.c                              |   5 +-
- drivers/hwmon/stts751.c                            |   2 +-
- drivers/hwmon/surface_temp.c                       | 235 ++++++
- drivers/hwmon/tmp401.c                             |  17 +-
- drivers/hwmon/tmp421.c                             |   7 +-
- drivers/hwmon/tmp464.c                             |  40 +-
- drivers/hwmon/vexpress-hwmon.c                     |   2 +-
- include/linux/hwmon.h                              |   1 -
- include/linux/platform_data/max6697.h              |  33 -
- 65 files changed, 3740 insertions(+), 2880 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/hwmon/lltc,ltc2978.yaml
- delete mode 100644 Documentation/devicetree/bindings/hwmon/ltc2978.txt
- create mode 100644 Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
- create mode 100644 Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
- create mode 100644 Documentation/hwmon/sg2042-mcu.rst
- create mode 100644 drivers/hwmon/sg2042-mcu.c
- create mode 100644 drivers/hwmon/surface_temp.c
- delete mode 100644 include/linux/platform_data/max6697.h
 
