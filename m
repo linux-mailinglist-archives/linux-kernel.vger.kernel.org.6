@@ -1,186 +1,121 @@
-Return-Path: <linux-kernel+bounces-330680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB1497A2A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:58:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D038E97A2AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959C41C2261D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 934F1282C99
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E75155CBD;
-	Mon, 16 Sep 2024 12:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4137D1553AB;
+	Mon, 16 Sep 2024 13:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A7kfhLBd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TNj0vtnW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E4914F9E2
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F99B5258;
+	Mon, 16 Sep 2024 13:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726491517; cv=none; b=c0NqcuSpDKi3UMnorp9X1OwkJmpySmbBCzUQbXgnSkjfnPz5zZyroe+fwOwzMLsW22Og/zXJMvheE8HpCqgyUfKyyCX3I7d7XTJEMaVCSl47paY5csnBJe1KwSPHipnVr4IO0AdbxX3MCTk81pjer8FNLD9XMY+V7LuO+avMk7s=
+	t=1726491675; cv=none; b=TW4wUJQp9ZgtYnhjvxc7Svdx8+uNEgfOCm57q/oEVRsihA94RG0n3yGnGCq4qqrusiGzs2z749sNRMtkyVwDIRP1Q8mIbYk6OF4AkyK9ubigtib/pQSlahZ9t2l6hNLJYDZmnTHnivS8IxoEsdNMnNoYq6DwXaByFHB8dc1KfPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726491517; c=relaxed/simple;
-	bh=h3sLzb8LXY+1Ol7dqUDWPx3SM3yVad4ZVFv6RUD6glc=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=k6KWtbQ3tfvgk3yPP7Wyw1dqe6zvhhUhfOHZyj+/zYA/U0c8VvAlpZWpJ4Gg2hchgH73g4U37NhvCfskHqXhOvzq+WQzgBjZ0rZgKizqQnrYfvZDnndmNVZVAXF5t26Lr2arp/Htu8vIo3iHdTJLIOC3J/1RmPDX+WWbseeI77s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A7kfhLBd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726491515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WIBKqR7iqf54nrpAIRkWMa8rG8OEKUO9fqyOJE5H9js=;
-	b=A7kfhLBdDj8/t8uihLeo4gIBoCC3xLk2nFV6GJVbI039puDBbJ9uHrD+2xm3oG+rfI4lLr
-	QEcR/NHfB0vgxbmsV0RzApEQEKrZnIK6UtIpbd791he/3gOPMvgosOtdPXc1urOOk5sGwK
-	66B6uSkCCg15MLAbNGPlkgD4Km1mLLw=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-679-FTLfvMa7NJKenNwExI0-Pw-1; Mon,
- 16 Sep 2024 08:58:32 -0400
-X-MC-Unique: FTLfvMa7NJKenNwExI0-Pw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC0391954B16;
-	Mon, 16 Sep 2024 12:58:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 244A430001A4;
-	Mon, 16 Sep 2024 12:58:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com>
-References: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com> <20240913-vfs-netfs-39ef6f974061@brauner>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    Steve French <stfrench@microsoft.com>
-Subject: Re: [GIT PULL] vfs netfs
+	s=arc-20240116; t=1726491675; c=relaxed/simple;
+	bh=j7bSUys93ObWt3OtvDUnT0xDtlaBv+KVRugKt1kf19g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i8rbhfGorH7teCbULNxBobNHrgzgJl+1+PDUPdTRtluWUagqW1v57mJ71rS9F/1XEIp+k9BXVytEG97fGwvm7aFWJCcqlCaBfZE0mMN8QxXHP4KZIY/+9ZU740lXEo+T+ZhRyZpbzYcWmoRsEDpsvgnxIezMCgr4+FwDqsssmO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TNj0vtnW; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726491674; x=1758027674;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j7bSUys93ObWt3OtvDUnT0xDtlaBv+KVRugKt1kf19g=;
+  b=TNj0vtnWZUldXWcHLosR3h40OvvM8SdXQc7KsXLYIblB3HpWIweuSy1Q
+   31INbAYuyUffbiy77nonPLzoQavUsqnBkl9GXO8lwyWG7z0TJqU7nycIq
+   Ia+/lMrv1HXsh7L4AJzp0VgDZB+ABLldRKMTHBRAjHdMERuIKTCKrAbIT
+   kj85mGB0+GtRI8fU1Yehn7/lOS1BqAUuIno8wy+UsizWd7TWADv8kPYDI
+   96BfVHqWsnG9xegY4pyY1qSeiaptWpryRU4JVjvSGgCVnaWEjd67l57oo
+   w6T9i0ijyMo7EIt5YRwjXaWSotc1kin0Bhm2VhJEBhGDK9fr9dWfBHt6J
+   Q==;
+X-CSE-ConnectionGUID: +wS5mDScTJisbZ4rFLLUww==
+X-CSE-MsgGUID: YM6dGbKYTUalHRfzQT9F/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="25515162"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="25515162"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 06:01:13 -0700
+X-CSE-ConnectionGUID: 6OyAobFTRV+Fx5THtpB0rw==
+X-CSE-MsgGUID: xIK6dYO9Sbaf6Rw/pl9pmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="68966109"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 06:01:11 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sqBLo-00000009SuL-2gGh;
+	Mon, 16 Sep 2024 16:01:08 +0300
+Date: Mon, 16 Sep 2024 16:01:08 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Serge Semin <fancer.lancer@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] dmaengine: dw: Fix sys freeze and XFER-bit set error
+ for UARTs
+Message-ID: <ZugsFPWRZQnH9RaS@smile.fi.intel.com>
+References: <20240911184710.4207-1-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1888009.1726491507.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Sep 2024 13:58:27 +0100
-Message-ID: <1888010.1726491507@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911184710.4207-1-fancer.lancer@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, Sep 11, 2024 at 09:46:08PM +0300, Serge Semin wrote:
+> The main goal of the series is to fix the DW DMAC driver to be working
+> better with the serial 8250 device driver implementation. In particular it
+> was discovered that there is a random system freeze (caused by a
+> deadlock) and an occasional "BUG: XFER bit set, but channel not idle"
+> error printed to the log when the DW APB UART interface is used in
+> conjunction with the DW DMA controller. Although I guess the problem can
+> be found for any 8250 device using DW DMAC for the Tx/Rx-transfers
+> execution. Anyway this short series contains two patches fixing these
+> bugs. Please see the respective patches log for details.
+> 
+> Link: https://lore.kernel.org/dmaengine/20240802080756.7415-1-fancer.lancer@gmail.com/
+> Changelog RFC:
+> - Add a new patch:
+>   [PATCH 2/2] dmaengine: dw: Fix XFER bit set, but channel not idle error
+>   fixing the "XFER bit set, but channel not idle" error.
+> - Instead of just dropping the dwc_scan_descriptors() method invocation
+>   calculate the residue in the Tx-status getter.
 
-> > ++      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, fa=
-lse);
-> =
+FWIW, this series does not regress on Intel Merrifield (SPI case),
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> So here, I have
-> =
+P.S.
+However it might need an additional tests for the DW UART based platforms.
+Cc'ed to Hans just in case (it might that he can add this to his repo for
+testing on Bay Trail and Cherry Trail that may have use of DW UART for BT
+operations).
 
-> ++      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, true=
-);
-> =
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> with the third argument being 'true' instead of 'false' as in yours.
-> =
-
-> The reason? That's what commit a68c74865f51 ("cifs: Fix SMB1
-> readv/writev callback in the same way as SMB2/3") did when it moved
-> the (originally) netfs_subreq_terminated() into the worker, and it
-> changed the 'was_async' argument from "false" to a "true".
-
-As part of these changes, the callback to netfslib from the SMB1 transport
-variant is now delegated to a separate worker thread by cifs_readv_callbac=
-k()
-rather than being done in the cifs network processing thread (e.g. as is d=
-one
-by the SMB2/3 smb2_readv_worker() in smb2pdu.c), so it's better to pass
-"false" here.
-
-All that argument does is tell netfslib whether it can do cleanup processi=
-ng
-and retrying in the calling thread (if "false") or whether it needs to
-offload it to another thread (if "true").  I should probably rename the
-argument from "was_async" to something more explanatory.
-
-By putting "true" here, it causes the already offloaded processing to furt=
-her
-offload unnecessarily.  It shouldn't break things though.
-
-> > +       rdata->subreq.transferred +=3D rdata->got_bytes;
-> >  -      netfs_read_subreq_terminated(&rdata->subreq, rdata->result, fa=
-lse);
-> > ++      trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress)=
-;
-> =
-
-> where did this trace_netfs_sreq() come from?
-
-It got copied across with other lines when sync'ing the code with
-smb2_readv_callback() whilst attempting the merge resolution.  It's someth=
-ing
-that got missed out when porting the changes I'd made to SMB2/3 to SMB1.  =
-It
-should have been deferred to a follow up patch.
-
-> > --- a/fs/smb/client/smb2pdu.c
-> > +++ b/fs/smb/client/smb2pdu.c
-> > @@@ -4614,6 -4613,10 +4613,8 @@@ smb2_readv_callback(struct mid_q_entr=
-y
-> >                               server->credits, server->in_flight,
-> >                               0, cifs_trace_rw_credits_read_response_c=
-lear);
-> >         rdata->credits.value =3D 0;
-> > +       rdata->subreq.transferred +=3D rdata->got_bytes;
-> >  -      if (rdata->subreq.start + rdata->subreq.transferred >=3D rdata=
-->subreq.rreq->i_size)
-> >  -              __set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
-> > +       trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress)=
-;
-> =
-
-> And where did this conflict resolution come from? I'm not seeing why
-> it removes that NETFS_SREQ_HIT_EOF bit logic..
-
-A fix that went upstream via SteveF's tree rather than Christian's tree ad=
-ded
-NETFS_SREQ_HIT_EOF separately:
-
-	1da29f2c39b67b846b74205c81bf0ccd96d34727
-	netfs, cifs: Fix handling of short DIO read
-
-The code that added to twiddle NETFS_SREQ_HIT_EOF is in the source, just a=
-bove
-the lines in the hunk above:
-
-	if (rdata->result =3D=3D -ENODATA) {
-		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
-		rdata->result =3D 0;
-	} else {
-		size_t trans =3D rdata->subreq.transferred + rdata->got_bytes;
-		if (trans < rdata->subreq.len &&
-		    rdata->subreq.start + trans =3D=3D ictx->remote_i_size) {
-			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
-			rdata->result =3D 0;
-		}
-	}
-
-The two lines removed in the example resolution are therefore redundant an=
-d
-should have been removed, but weren't.
-
-David
 
 
