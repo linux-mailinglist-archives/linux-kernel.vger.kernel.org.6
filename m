@@ -1,114 +1,136 @@
-Return-Path: <linux-kernel+bounces-330620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1215397A11E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:05:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD7D97A13C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD441285EFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:05:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 762C21F245CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFEA154BFB;
-	Mon, 16 Sep 2024 12:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AC0158DA3;
+	Mon, 16 Sep 2024 12:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZO14zwsA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="a39UXvGC"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABDD156F4C;
-	Mon, 16 Sep 2024 12:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC088155CBA;
+	Mon, 16 Sep 2024 12:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726488206; cv=none; b=P0Ru/vK1I5WFAzWfPS3WTrE2tArXpx6DmGAacDNo/tK/O45Ucio0PMEe7Ct0V+lGSKEBNWVBHYGBVz5fWvxSv1O3NxFXedBq+wt6RcbTn2auMtTTTQeeVHpsKRLneZ5QUaarLDFxpY+GQY5nLbEIQu7kZX16pAAS1RfesfCmnk8=
+	t=1726488276; cv=none; b=Zj99WtuhjdeuAIYOfpEKzEb/eFx3yxBBeACrG93fY7Yedq64iwvK8nuc3wbRox5NvthNV8twLIEZrEX700XbtwWaveyHIBMLfNL2Z+/8jpNIv5jYURoZmg5ixEToPVuThuQYD7Z7dU5OOFej7g3b76tUpZCpZSMBib1fYlLfYYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726488206; c=relaxed/simple;
-	bh=0sePlQ6v8SDrzxFHDtEPRg3gT5Tv1CqKdfBCdG5rw/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sNilYVhMcqBV8rik1vQgVlM60YtlPmTsgUAbkEhm7qCbzhgpodud43SC7zQ4ouWkyLNr7Uykn4QsVTdKUyMKDIOwbxJB2NfQlO80b+VLFNPkNFTuuwtcKzEtdGxeJ35v0c8V7/dmroTUKxuxL4GnBAUPpWwun99ejZTF6q/VBwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZO14zwsA; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726488206; x=1758024206;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0sePlQ6v8SDrzxFHDtEPRg3gT5Tv1CqKdfBCdG5rw/s=;
-  b=ZO14zwsAlbnI+Lq7STlq+fcDNDebZfWLtJOvMoRqDu3DcnUPcd/zla17
-   NWoHFHqhcjPd5vxUysgBeQ01THs6+F9VAeOadqeH1TFvgm+HX1svuYMf3
-   sNAiGtv6eTgEUvTHq82/6EDuQtbOWHniUK1kxhJKFh2zvOGN8Sg0pEvFI
-   ZCeDpGXVD1AHpp05XUqFdddK8JdczxeJvsDQ1ALBLf58quMdV+asV0nlo
-   7s6L9TdzU1MWFfgabaJPqXH3bLY7yu/QDRU4p7NC2GHQTTep+4G7N1upX
-   CQzPKNXMj0xSHPYHp60z9Q1CoKl8O9QXA+/c007dCeSN7JloIZJlIk9DZ
-   g==;
-X-CSE-ConnectionGUID: 75yP99IQS263ZdACdkup5A==
-X-CSE-MsgGUID: CsapTDD+T66RyhfeupyypA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="24794233"
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="24794233"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 05:03:25 -0700
-X-CSE-ConnectionGUID: 2NPTtz0FRT+IiDPT9K5Qvg==
-X-CSE-MsgGUID: UR0g2S9DS6OTn5/rndSTXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="73221867"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 05:03:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sqARs-00000009RtK-3CxY;
-	Mon, 16 Sep 2024 15:03:20 +0300
-Date: Mon, 16 Sep 2024 15:03:20 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-	Jean Delvare <jdelvare@suse.com>
-Subject: Re: [PATCH v1 04/12] i2c: isch: Switch to memory mapped IO accessors
-Message-ID: <ZugeiJ96VHwg-pl0@smile.fi.intel.com>
-References: <20240911154820.2846187-5-andriy.shevchenko@linux.intel.com>
- <202409141436.QFCDQrRF-lkp@intel.com>
- <Zuf1UJ6K_8hL5x5U@smile.fi.intel.com>
- <leoyop42s4qmaytvwhwhpgfwfrkpm2xxabskz645r337jdjfml@zg5ql73tqidk>
- <ZugI2NCtaWKgcgh5@smile.fi.intel.com>
- <uikfb52qduifmhnlkc43tgvmw2ok67eclqpokyrkp7sftetz3v@bs64p6aga6s3>
+	s=arc-20240116; t=1726488276; c=relaxed/simple;
+	bh=7S18rPoiPzvusuGS+kyFYp8/T/kXDOTuobzJSRRHYKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XDDoh+Z0mz32rgBjtIxV26wVpjdAGIVnTqOFlnmtFi/6I5xO1XVnCG14DMf4mxCYMph51PguvNCRCznt7B482KuAMAF9UR3Ek4Of09rapnC+7nrxJbEphjTsGfs2CpHeZN4tfT6oQ3pPaOocMv3PXB+qVoAY1dTtneWWkd54QG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=a39UXvGC; arc=none smtp.client-ip=74.208.4.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1726488253; x=1727093053; i=parker@finest.io;
+	bh=ALJDs8SGNjtmUFTDPZD0bOpnICbMntRY7CN0EI99nFM=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=a39UXvGCqJNxsIwacRvGI9/PYjaIhxl6SuXR41MLW+t8NHCijxwud74YL9yCNb5J
+	 jvznNVnyCuIk/OThNATEn6MBRdNSy5i4eMEitpOkpe7LPxU73LRcczoLT+48g6BWl
+	 +atzVVGn4FNHmT14HUhj9xMcrwxz0BW3wCD/uKN8vjTSmupRH0PvGC0wqCWc5F9av
+	 t44BQfbcy8KMjU+4PiGmdJQGlj+oN3knyboYC/PKQNABDxpGsBB8UA4FAOcDhE4lS
+	 lqxP3QVhh6YhdjufhdF6XS5upMIqgyG4+VUzswic0SB5/Pi6R6YOeF0EGGZgXe7dk
+	 HuCXFE56+s9PUigu4g==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0MCKxT-1shg8T3UFV-006dOE; Mon, 16 Sep 2024 14:04:12 +0200
+Date: Mon, 16 Sep 2024 08:04:10 -0400
+From: Parker Newman <parker@finest.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Parker Newman
+ <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
+ printk(KERN_ERR ...) with pr_err()
+Message-ID: <20240916080410.464c2b5f@SWDEV2.connecttech.local>
+In-Reply-To: <ZugJT4nl1l04biJd@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+	<127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
+	<2024091438-charity-borough-54b3@gregkh>
+	<ZugAeVWeMZGtjYme@smile.fi.intel.com>
+	<2024091632-oboe-subfloor-afc8@gregkh>
+	<ZugJT4nl1l04biJd@smile.fi.intel.com>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <uikfb52qduifmhnlkc43tgvmw2ok67eclqpokyrkp7sftetz3v@bs64p6aga6s3>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DuWs3EKfDrQtfvu6F+LpRP/HGSHQxGtwQBS9GkF5FMxlIG61Mw2
+ ONRmfSYx+otrPfHOVNZ37/1vb1vAwtfJBbIn4PIMtoJkC0zjPleRX/ed4F511dNQYpJmV80
+ ua030qVBa9LeB3CzDPfJoOUAASY+An4KkhXHVhK7trezYqfd8M8MKlSyU07aRweuYfUUWkf
+ qhC82mYZrPnpH64FLWUPg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BfvrrlymyrU=;WNS6KeBH1Kylzip7C/ijKSR+rJO
+ 7YNSAytIiZ2UbLd524u+TCDXPROiurE8mK3DbRiClvQU6nYycp65f1Q1e3YLv/Nz/vxZBDE/O
+ YzC0SN7gkn4P049wCD8rFmm/xPoofUFCsNu9UN9M1UKiuzc4/VpBIGFQEO95Olna1xuMIKHqB
+ CBfiNctgfu9dtPbtwjvPNvPePa4zLaZcggNlsqnXAy6aBiA/siPBzomBVqqC6yjXhkIrAhxTP
+ yI8RLrpgEr+Vho8NDWN6dTWlJFQ5H2LnxYJ+bgCjpx7L7xBWANA75ZkyMgCAxJ5cE0y+ogMnj
+ liI/vTFXqXtlFywXR5FYH7QWU4uvuxX4LUcB84xeqZFkXgNbh/JECjhXzVyQGFwjJb6eu811o
+ yi3oLfbB+tt+nDHcwZMxBMn45bSDG1reutqdwd2tW4tB2VVmwl+mOBxwT1WI0YWjTF2nnrPBz
+ hMWNN1oME6l9wpaUKdnHPeQPWZu1IYnQFv4lHWevkXEuZMJR8o96CuFul6rr7eX/i5nW2oKyI
+ NKxOQCxEUo0vCdbANt+A2NGmfGJFcdCF0QDgb0PqRHBq0PAtP3S0nBpxCOciT/ga9YjhTOJtX
+ T0Q4nE3Yw4lDYaIFRe57FUlEoNB4qa+83Hd/tGvLvDAp0ze8062EwFeeHlvXJtHDNqY9cer5k
+ vYW7cpiHscuK1Q6sgbfwpvArUaKpkZ6vypVcOg1Cksj/dvQDgJAbagtiw7dXmEFbncgOPMvTA
+ MDMBqsl1hBMXJJtZO6uE+g30t3Mt1CD1Q==
 
-On Mon, Sep 16, 2024 at 01:58:06PM +0200, Andi Shyti wrote:
-> On Mon, Sep 16, 2024 at 01:30:48PM GMT, Andy Shevchenko wrote:
-> > On Mon, Sep 16, 2024 at 12:10:32PM +0200, Andi Shyti wrote:
-> > > On Mon, Sep 16, 2024 at 12:07:28PM GMT, Andy Shevchenko wrote:
+On Mon, 16 Sep 2024 13:32:47 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-...
+> On Mon, Sep 16, 2024 at 12:25:52PM +0200, Greg Kroah-Hartman wrote:
+> > On Mon, Sep 16, 2024 at 12:55:05PM +0300, Andy Shevchenko wrote:
+> > > On Sat, Sep 14, 2024 at 08:58:50PM +0200, Greg Kroah-Hartman wrote:
+> > > > On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
+>
+> ...
+>
+> > > > > -			printk(KERN_ERR "%s: timeout\n", __func__);
+> > > > > +			pr_err("%s: timeout\n", __func__);
+> > > >
+> > > > It's a device, please use dev_err().
+> > >
+> > > The problem is that this library doesn't know about this fact. I.e. =
+it would
+> > > need a new member just for this message. Instead, maybe drop the mes=
+sage as we
+> > > anyway get a unique enough error code?
+> >
+> > Fair enough, although adding real device pointers would be good to do =
+in
+> > the future...
+>
+> Let's then do it when it will be the real need? Because I don't think th=
+is
+> message is _so_ important. I believe one of the upper layers (whichever =
+calls
+> this function) should propagate the error code up to the user space. If =
+it's
+> not the case _that_ has to be fixed.
+>
+> TL;DR: Let's remove the message for now.
+>
 
-> > > Feel free to send it, I will apply it in i2c/i2c-host-for-6.12,
-> > > that's where I'm collecting the next patches.
-> > 
-> > But I believe it's a material for v6.13, no?
-> 
-> yes, I gave it the wrong name :-)
-> I renamed it now to i2c/i2c-host-for-6.13(*).
-> 
-> But it doesn't matter. It will become the next i2c/i2c-host after
-> Linus has taken the actual for-6.12 patches into mainline.
-
-v2 has just been sent out.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+I can remove the message or leave it as is and drop this patch from the se=
+ries.
+One could make the argument that any error indication it is better than no=
+ne
+in this case.
 
