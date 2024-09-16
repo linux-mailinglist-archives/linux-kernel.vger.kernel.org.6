@@ -1,225 +1,106 @@
-Return-Path: <linux-kernel+bounces-331081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5160597A82A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:11:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDB897A82C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D3628C089
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87DBA286855
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEA515E5BB;
-	Mon, 16 Sep 2024 20:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54A915ECC5;
+	Mon, 16 Sep 2024 20:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RPLmTAB5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DgutY9Y/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RPLmTAB5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DgutY9Y/"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fYscjDsX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A81C5258;
-	Mon, 16 Sep 2024 20:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BAA5258;
+	Mon, 16 Sep 2024 20:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726517492; cv=none; b=ldvhsU0S/r6BLBbh3Vd/cMJ18bAek0o1GR1QzECPHuZQB1cN8UStYVKT/U0UmapAGPh4+OK+bFW/uQI0j0AJ/zegXnlshu0BuFbaNufeQs6srjH/MLGyM9p3jQcOwOhL3YJbKA8+C2mfAiwwf98GAJvRlZUjpcvSGa1LWQO/wIc=
+	t=1726517627; cv=none; b=tbSY/aJ3O1XMrQm0/K09rqPfy+9OMKM/ZFKQXaVEgRJ3HKmhlY8DnZAt3QWhd3HIf1q6dK6nWj80f0kCG9TWkH958Ey9vWgPi+4Pdk8RuOKnkzREcdK4Zwq41DmuGh1jCP9Axqca3zLoKJbmMfAHnGoshAPot4oXVkeerjQbK7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726517492; c=relaxed/simple;
-	bh=cWmkW6p+a48CvQupsSoBxjReqvjHAeV4x0TqfyT00Cw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6NsDXir9hCMoN82QduLyzEKFhDnVqAm8emN6MxLt1eEEBUH6kEPSkYt23k2wCafffpRHx+dhD1xxiVZdbwYZkWMapuKkY/wReVbkT0TUOPUYu57AoTRj0gLiLBGBmySP6RBaEfRVP5wjAGXGcvDkLikvh2qsiSiqLuAABEzXn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RPLmTAB5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DgutY9Y/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RPLmTAB5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DgutY9Y/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from lion.mk-sys.cz (unknown [10.100.225.114])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AC53421C29;
-	Mon, 16 Sep 2024 20:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726517488; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QksCJ97Q9Tn4Z+mI0GvL5/7ruXlE99v0+oGl+RXvOfU=;
-	b=RPLmTAB5a9Ck+ZB/hxLGJ6gmwK88R93He0Ix6m1h/54LBc8dbSLkycdWE2Gjz1XP2nMEWN
-	gNq/SvxKPE0JjTJN3+p9jjPoWhAXSGuoE+pejgeZkyZ3sNsstztKtNBMSFGkQYWGvGj3+e
-	q2JP6ua6uFivQNQ5Svu4nQjdLMFr43U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726517488;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QksCJ97Q9Tn4Z+mI0GvL5/7ruXlE99v0+oGl+RXvOfU=;
-	b=DgutY9Y/sO2V8WtW/L/dyMbUt3UzA9nu49p+pfcIbpiOXvFq4nKPdX5I7ngPCn3luz9IwL
-	CBcxXcs+hDTvQFBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726517488; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QksCJ97Q9Tn4Z+mI0GvL5/7ruXlE99v0+oGl+RXvOfU=;
-	b=RPLmTAB5a9Ck+ZB/hxLGJ6gmwK88R93He0Ix6m1h/54LBc8dbSLkycdWE2Gjz1XP2nMEWN
-	gNq/SvxKPE0JjTJN3+p9jjPoWhAXSGuoE+pejgeZkyZ3sNsstztKtNBMSFGkQYWGvGj3+e
-	q2JP6ua6uFivQNQ5Svu4nQjdLMFr43U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726517488;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QksCJ97Q9Tn4Z+mI0GvL5/7ruXlE99v0+oGl+RXvOfU=;
-	b=DgutY9Y/sO2V8WtW/L/dyMbUt3UzA9nu49p+pfcIbpiOXvFq4nKPdX5I7ngPCn3luz9IwL
-	CBcxXcs+hDTvQFBg==
-Received: by lion.mk-sys.cz (Postfix, from userid 1000)
-	id 98F402012C; Mon, 16 Sep 2024 22:11:28 +0200 (CEST)
-Date: Mon, 16 Sep 2024 22:11:28 +0200
-From: Michal Kubecek <mkubecek@suse.cz>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Kyle Swenson <kyle.swenson@est.tech>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH ethtool-next 0/3] Add support for new features in C33 PSE
-Message-ID: <ohcflwsvztqatsaudheougap3sxkdah5lagtyzr6d55u2nzcwq@iaaoyutqdbj7>
-References: <20240912-feature_poe_power_cap-v1-0-499e3dd996d7@bootlin.com>
+	s=arc-20240116; t=1726517627; c=relaxed/simple;
+	bh=EL2GC+EVnH4hG0TVJqU9Xm6YeNRmTuxF8OIy2Gbj43g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ui7J+X04pqs+W4jz65fuvgTXD2cFyQwTNu625gidTuDK/Gt84vIo0ZlHu0yGYIzKEEdGESNKDzfqF1lMVC45BIVtCk76FlCZiAItybTIostG8opIVAYM/+jtBQQ0ogfsxOTrpkXJ+Oljsx1yiwjIo+vbsXAakx8M1NtARbVPWvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fYscjDsX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GCrcJK021686;
+	Mon, 16 Sep 2024 20:13:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/6yALasju2uq3je/QLaKeykXUSA0Q3NbSVO1huNH8ik=; b=fYscjDsXYd5abmlt
+	vPNy/hwRAaNrEXqIE6xNJeH3KtrlXCvN7ft4POEg+AaPoFBXc556+2/ytPUY/nUk
+	FnzXFT1N0qDVJaqBkDuF5w4hKJ2V1FBh/r2twRsRpsoFtUwo+Rvowe7/zRWOdfOP
+	FuoSt+TF5eBn0KQ4SgYikjdlOkVw22EzpVeldR5fAKBsDzLX/W6lEIp10r1AAtVv
+	U5c7UvgqnjpOpYUqpRlVABZiUt4f8i+f94l1PZZsCeItmDnrZZE9pZakYuLsfuNA
+	2/UvHrgjuz1vOi60Pff94hrIkzfhHzAGc4FwgBzrDVyZvyeKgnTEL9VUI2393IaD
+	RUSK4Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hfd3q1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 20:13:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48GKDe2e027823
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 20:13:40 GMT
+Received: from [10.111.182.118] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Sep
+ 2024 13:13:39 -0700
+Message-ID: <137975fe-7ae9-4cc3-8871-abd632ff4800@quicinc.com>
+Date: Mon, 16 Sep 2024 13:13:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="edbgzcd7rbqkl4fn"
-Content-Disposition: inline
-In-Reply-To: <20240912-feature_poe_power_cap-v1-0-499e3dd996d7@bootlin.com>
-X-Spam-Score: -5.90
-X-Spamd-Result: default: False [-5.90 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	RCVD_COUNT_ONE(0.00)[1];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] wifi: mac80211: make read-only array svc_id static
+ const
+To: Colin Ian King <colin.i.king@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <ath12k@lists.infradead.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240912144456.591494-1-colin.i.king@gmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240912144456.591494-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vedNDR5-6EA31g_RG3RYgMZ-Kd3m0yLQ
+X-Proofpoint-ORIG-GUID: vedNDR5-6EA31g_RG3RYgMZ-Kd3m0yLQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1011 phishscore=0 malwarescore=0 mlxlogscore=714 mlxscore=0
+ impostorscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409160137
 
+On 9/12/2024 7:44 AM, Colin Ian King wrote:
 
---edbgzcd7rbqkl4fn
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+subject prefix should be wifi: ath12k:
 
-On Thu, Sep 12, 2024 at 11:20:01AM +0200, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
->=20
-> This series adds support for several new features to the C33 PSE commands:
-> - Get the Class negotiated between the Powered Device and the PSE
-> - Get Extended state and substate
-> - Get the Actual power
-> - Configure the power limit
-> - Get the Power limit ranges available
->=20
-> It also updates the manual accordingly.
->=20
-> Example:
-> $ ethtool --set-pse eth1 c33-pse-avail-pw-limit 18000
-> $ ethtool --show-pse eth1
-> PSE attributes for eth1:
-> Clause 33 PSE Admin State: enabled
-> Clause 33 PSE Power Detection Status: disabled
-> Clause 33 PSE Extended State: Group of mr_mps_valid states
-> Clause 33 PSE Extended Substate: Port is not connected
-> Clause 33 PSE Available Power Limit: 18000
-> Clause 33 PSE Power Limit Ranges:
->         range:
->                 min 15000
->                 max 18100
->         range:
->                 min 30000
->                 max 38000
->         range:
->                 min 60000
->                 max 65000
->         range:
->                 min 90000
->                 max 97500
->=20
-> This series requisites the c33 PSE documentation support patch sent
-> mainline:
-> https://lore.kernel.org/r/20240911-fix_missing_doc-v2-1-e2eade6886b9@boot=
-lin.com
->=20
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+but no need to re-send; Kalle can fix this in the pending branch
 
-The series looks good, except for minor detail: the new parameter
-c33-pse-avail-pw-limit is documented in the manual page but is not shown
-in the "ethtool --help" output.
+> Don't populate the read-only array svc_id on the stack at run time,
+> instead make it static const.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-As far as I can see, the kernel counterpart is present in 6.11 so that
-this series could technically go into ethtool 6.11 but as it was
-submitted so shortly before the release, I would rather leave it for the
-next cycle. As you submitted it against next branch, I assume you are OK
-with that but I better ask.
-
-For now I applied patch 2/3 which is a simple fix independent of the
-rest. Is it OK to apply the rest (with added help text) after the 6.11
-release?
-
-Michal
-
-
-> ---
-> Kory Maincent (3):
->       ethtool: pse-pd: Expand C33 PSE with several new features
->       ethtool.8: Fix small documentation nit
->       ethtool.8: Add documentation for new C33 PSE features
->=20
->  ethtool.8.in     |  37 +++++++-
->  netlink/pse-pd.c | 275 +++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 311 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 1675c9c8df2e13c2c800ef4d86cfc5a37ddeaa3e
-> change-id: 20240709-feature_poe_power_cap-56bd976dd237
->=20
-> Best regards,
-> --=20
-> K=F6ry Maincent, Bootlin
-> Embedded Linux and kernel engineering
-> https://bootlin.com
->=20
->=20
-
---edbgzcd7rbqkl4fn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEWN3j3bieVmp26mKO538sG/LRdpUFAmbokOoACgkQ538sG/LR
-dpWUfAf/ZQNDYXxtfiII2wIU7W9kdU0foKTbmfiEMhfA2WfJhCCQFAylo98RTCF3
-iWRoTdpcfJxCI9ygRGiWZD7OcYOIK8zm+EZ/1K4SPd9jxjnVZO32MvXOUG4hQMUR
-z0OJgAIQug423RBxBYUN4f2RGcIDoouM2rV22X1fM3sL5E1bwrRq+5Gyl/kSvn7S
-vlJeXbo5e4JvvXJsXU4iVdzsb7KgUoxW+dXUxgZzk0+h9lKfD7K/faXGRfl+8Wjf
-Ug8BEAmFVO88SEuIfmtHzvfkiXCRUJQkpbKcRiLv7V6CgkXk6e6zDRr3/VxsMBDe
-oBctYGFoiKYgDplZ1J/OuMvzk+muzA==
-=hI7K
------END PGP SIGNATURE-----
-
---edbgzcd7rbqkl4fn--
 
