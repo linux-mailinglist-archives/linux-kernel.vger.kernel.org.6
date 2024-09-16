@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-331038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACBB97A788
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:57:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC2A97A78A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15685B2A414
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:57:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3023D286617
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B571A15C146;
-	Mon, 16 Sep 2024 18:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D01515C14F;
+	Mon, 16 Sep 2024 18:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYjquCjV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MZnn4ipV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0Ne+l08m"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E47F10A18;
-	Mon, 16 Sep 2024 18:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5829B2628C;
+	Mon, 16 Sep 2024 18:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726513025; cv=none; b=Ub4sVzYPflXjWuWdz3q48eWtwKMTlx7/mtz+27O2y1zKlF77GuvR9GApqBDFOAfZny+oWHzF3wffYgkcELGMIkx6hTgm2S2hgb/qPTbwAnmYbsj8bupTBnqKfwqa1HmEJ4j5SLGjgK83q9poMquS/+w/vPHuu2GtZaenWe1NGAg=
+	t=1726513061; cv=none; b=Sscud5lJdkure2ad2yUYHCtdUDfBM8H1oNo2V8zqgzXxrP8Ty3CRUOjY25Lt4y/iFtD/7HJGnsVr0V8dsKzb5fJHHSZxd6tWOX0GqvK4O6zg5LgcwX+HLCZYehaw71QmgDmb/UR5TdTIz39wqxtNwiOCCh7Ywz0GwFIZ1ndzfco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726513025; c=relaxed/simple;
-	bh=2rOpEhNpvCP5tv41uT2H58Pziu7pmFrgPvj3jAcIgk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rUFEHr2fj5n+GbmLdf42RSUgNVAq/45OIH65Uy5GoFQPEusaorwXF3CNUWKep74JZhvco7qLa8+ADvP++PsEiwTFQ8xDE7AihD0mqIgxICDXEMHzyZ3rLokU0IgRpZMcB4SQiKPLF2vcPDdO8cQMgZOJ+Im8G0OWHGq3GykB81U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYjquCjV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 619BFC4CEC4;
-	Mon, 16 Sep 2024 18:57:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726513024;
-	bh=2rOpEhNpvCP5tv41uT2H58Pziu7pmFrgPvj3jAcIgk8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lYjquCjVo93Cjg6pRa3FlOisSx9MJ0vXCu4xMq2Xjz4aidkOJMUNj+MnONJfY8OLP
-	 7aOsfYtBLdwKewXDfHgrowYJe2tuR/BgBKovwDNM7AEMfIx1n/eW0BPKaqfaXCEztm
-	 6frSYxvTmE7M70IH/+kpaw4Kc5GrGDjOH8AGqTb+F+vdcO1KAHBsqQcnoGfHBTyMDg
-	 lTMiQKecGCgTJGbUi/FX4GXOHoVZ7Cf0Fq6nPUOSd8yhBT+oGBA8h8qT/UAxAA+rxM
-	 NTITXtsr6HwaVyrryQY59zZmbjucqRJGzixpHDF0y0Q7EFaB5tZfp4rCnTp7iJCSTO
-	 Fm0LLPVS95KnA==
-Date: Mon, 16 Sep 2024 19:56:58 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v10 14/14] riscv: Add ghostwrite vulnerability
-Message-ID: <20240916-profanity-superjet-33a08a8b0b3f@spud>
-References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com>
- <20240911-xtheadvector-v10-14-8d3930091246@rivosinc.com>
- <20240916-pretext-freehand-20dca1376cd4@spud>
- <Zuh8dLsA50IHXymz@ghost>
+	s=arc-20240116; t=1726513061; c=relaxed/simple;
+	bh=Acz1KDzvC3yGxPaMfyzhFHnrbE2hmHZcdquVdNRdSdc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L4ryfo0AvfjJqSYnVHPPbOmsS9IU9gT//XW8M3UT8G+G7JlE7ONZOzn2LIgjUuSHpoLyp3ykVc/VimmLHsRvI1JBC8jdSzj2BZxgsUolhwagNccPr8OlHIZ8KqJWCA9wa4MR2pz0Uli6oZ0qhhV9+VEwMCud/IRnRCR0i/WZhCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MZnn4ipV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0Ne+l08m; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726513057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=uCmN/cZCPzCftbZp8I+nP+HMZCAR3HVMPzJ6bFU94XI=;
+	b=MZnn4ipV7Q5r5blo2CqdYGgJBHFKN2DpLKekZMzZW5qs8vN/OS2MrV9iy55W9TMTgTGzGn
+	RVUyRKCdT5vuAoLEnKP0TWLw0WykH7L/aG0YZfQYBl+yCthv0q/76lQQCY+J6lVyj/RYZn
+	tm83EFoyFLH1zxC9MdVfIf19eh/IjTh9T6B4E95lOvPzC61/xB3hG4ZCd/QwM2+1pUUV6O
+	tS4EVeQVXCHxQ1l65rHP8vcTy6UBxgnWps7YP/lUbPhNGAqJZ4E1ojwT7k8t3fXC0PLgc7
+	nYEF4A6uat9pv6kLTzWKO37hvLwUBftmexyHssgVWSNsO6iC99HOCi5HEMT7ng==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726513057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=uCmN/cZCPzCftbZp8I+nP+HMZCAR3HVMPzJ6bFU94XI=;
+	b=0Ne+l08mxA4rujqSaP8wr0JJtpD7J1nFZrH14AGm18+P+l1dGusWpwuc7Sq/1pTTJwT1Y0
+	bER9pMq4wmyqb7BA==
+Date: Mon, 16 Sep 2024 20:57:13 +0200
+Subject: [PATCH net v2] net: ipv6: select DST_CACHE from IPV6_RPL_LWTUNNEL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="1W3qJ42zpxTLHb35"
-Content-Disposition: inline
-In-Reply-To: <Zuh8dLsA50IHXymz@ghost>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240916-ipv6_rpl_lwtunnel-dst_cache-v2-1-e36be2c3a437@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAIh/6GYC/42NWw6DIBBFt2LmuzSCr9qv7qMxxsJQJyFgAKmNc
+ e8lrqCf59zk3B0CesIA92IHj4kCOZtBXAqQ82TfyEhlBlGKuux5y2hJ7egXM5pPXK1Fw1SIo5z
+ kjEyIpuV9d9NVoyEXFo+atrP+BIsRhixnCtH57/mY+Dn9FU+ccSarWjWqe02drh6G7Bq9s7RdF
+ cJwHMcPODuCW88AAAA=
+To: "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Alexander Aring <alex.aring@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Simon Horman <horms@kernel.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726513057; l=1527;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=Acz1KDzvC3yGxPaMfyzhFHnrbE2hmHZcdquVdNRdSdc=;
+ b=vbR78kapKhOE21VGUPvp/TfXRpOF1XT6E3ujb6uefg5kh0VBL/y0WgtZBobSbFUEapnSay0ea
+ GEM4YWTfuhSBPUUcV3T/kHQRu+rntjyto+aN76rpzdIHyK4Yl4MYlaS
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
+The rpl sr tunnel code contains calls to dst_cache_*() which are
+only present when the dst cache is built.
+Select DST_CACHE to build the dst cache, similar to other kconfig
+options in the same file.
+Compiling the rpl sr tunnel without DST_CACHE will lead to linker
+errors.
 
---1W3qJ42zpxTLHb35
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: a7a29f9c361f ("net: ipv6: add rpl sr tunnel")
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Tested-by: Simon Horman <horms@kernel.org> # build-tested
+---
+Changes in v2:
+- Fix Signed-off-by
+- Remove Cc stable as per net/ rules
+- Add Simons tags
+- Expand commit message a bit
+- Link to v1: https://lore.kernel.org/r/20240916-ipv6_rpl_lwtunnel-dst_cache-v1-1-c34d5d7ba7f3@linutronix.de
+---
+This is currently affecting the s390 defconfig.
+In my opinion this patch should also be backported to stable.
+---
+ net/ipv6/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Mon, Sep 16, 2024 at 11:44:04AM -0700, Charlie Jenkins wrote:
-> I figured that since T-Head didn't feel it was
-> valuable to change the archid/implid between cores that Linux shouldn't
-> go out of its way to fix the granularity issue.
+diff --git a/net/ipv6/Kconfig b/net/ipv6/Kconfig
+index 08d4b7132d4c..1c9c686d9522 100644
+--- a/net/ipv6/Kconfig
++++ b/net/ipv6/Kconfig
+@@ -323,6 +323,7 @@ config IPV6_RPL_LWTUNNEL
+ 	bool "IPv6: RPL Source Routing Header support"
+ 	depends on IPV6
+ 	select LWTUNNEL
++	select DST_CACHE
+ 	help
+ 	  Support for RFC6554 RPL Source Routing Header using the lightweight
+ 	  tunnels mechanism.
 
-I mean, when you put it like that, I'm not particularly inclined to
-disagree...
+---
+base-commit: ad060dbbcfcfcba624ef1a75e1d71365a98b86d8
+change-id: 20240916-ipv6_rpl_lwtunnel-dst_cache-22561978f35f
 
---1W3qJ42zpxTLHb35
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuh/egAKCRB4tDGHoIJi
-0m9ZAP4p4x2mD8mK/6PbASnwkCkRX6uLXgKlb3Og6pl+CuOYXQD+Pot5fkAszZBn
-jOtHr1hp7qBYQvOX0qqA+aF3UF/INAc=
-=rRd0
------END PGP SIGNATURE-----
-
---1W3qJ42zpxTLHb35--
 
