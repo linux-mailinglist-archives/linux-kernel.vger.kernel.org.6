@@ -1,112 +1,197 @@
-Return-Path: <linux-kernel+bounces-330472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D4D979EF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:10:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48138979F00
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB148B22E8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:10:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B0C32841C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06CD14C5BE;
-	Mon, 16 Sep 2024 10:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AC114F126;
+	Mon, 16 Sep 2024 10:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+0KzIPN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v1sVvDod";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ft94qdf3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0383E41C62;
-	Mon, 16 Sep 2024 10:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542DD14BFB0;
+	Mon, 16 Sep 2024 10:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726481439; cv=none; b=QmSZT2srw4ont9ARpL34tbpipb4efk29Jo6qiKWFCo7MmyQGMSafD9lPfyXqhWVXc5xpu3C0+jAu6LfTDWEVhyRc+zRN00Oeovqt/CUCCn4X3YJb34Gz6lfhdF67QNPDrQqMwK19LZtBcX7IEVr1YoSCJ+3jJkPEeUKRYYSZ8aY=
+	t=1726481581; cv=none; b=PpixcNevIYC8HE6xL65nbcSMlvo04w3Zh0Ttiq5XmzgmHVsIask1/9Ha8cvrAhbg1N5xgY86WMQZmcHnIHbte+CffDOJNAxEC4KV+Kvsn+TpAxTlsLOAClPXasIJEnYfQ8df7lLa0WAQ8heEFX4GFC8hO4SUWlQ8337TCgr0TY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726481439; c=relaxed/simple;
-	bh=LI7wZuh42fAwju0tPspJd7QzbD5no/IBHZKeuX8sJGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WYIuYf2zx10wETXxQcyKSctpKihDcA1vRssnl1IroBb5jsg4Oy6fqTm32+u2DTWqxy+xPFz2LBFBYRhLN0fbYOs+AYZUmm1lb8k8PpOlh8l5R1jxcKx+q9q1nNPrbDbslZ9VzVW9xtpuhBzQYecBbgKMtCNAeH5ZW01oA0JZYwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+0KzIPN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6EC6C4CEC4;
-	Mon, 16 Sep 2024 10:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726481438;
-	bh=LI7wZuh42fAwju0tPspJd7QzbD5no/IBHZKeuX8sJGE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p+0KzIPNMFWWT42nmOAxkuJsfva0INihi25v2TlJnUqFmX5Y6A0MS6txJL08ZH7Ac
-	 FlqGKeLhKG0v046i9TH30NMiFReg1OhAK6y6z0JwKMByYkKpv7Rs+Dbp1RViWQvJfo
-	 8aQuClQxbBbOOYjvVZwABKqbKjWw7dKLt/nw6JogY4r5NBu0cWcvZIL5ipQEee7Nsp
-	 R5Lf+9tGGqBqhiPv4XCGE6TVpQYwD0LdMjkQcfdWldK5yKJjnVtzMvbfHg2F/+BXze
-	 TgwFLqbOvnk4RY0bDik3KiW/c6l3S950iGvACCs1QkC7gwVy/JYCiNPC6IgdU+vBO8
-	 zCx9K/xYCRJcA==
-Date: Mon, 16 Sep 2024 12:10:32 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: kernel test robot <lkp@intel.com>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, Jean Delvare <jdelvare@suse.com>
-Subject: Re: [PATCH v1 04/12] i2c: isch: Switch to memory mapped IO accessors
-Message-ID: <leoyop42s4qmaytvwhwhpgfwfrkpm2xxabskz645r337jdjfml@zg5ql73tqidk>
-References: <20240911154820.2846187-5-andriy.shevchenko@linux.intel.com>
- <202409141436.QFCDQrRF-lkp@intel.com>
- <Zuf1UJ6K_8hL5x5U@smile.fi.intel.com>
+	s=arc-20240116; t=1726481581; c=relaxed/simple;
+	bh=7f22G+6r66QEwau72pU8x4w4ZuPvjQGUXc8asSZd1lI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UaOQMJm1JaeMiVU4tSZDBhKKOVC8Npq/iseFUs9P0hqGQnXuAzTS0QaMYDLAm2KtGr8cahzyH8fEGuRkvV0J877xTTfvcJmOHCEpYbxjKRVrqrTLSc5bKKLGBtdVqG9lmJW64aTDVViwW/x3tfl6Gbg58ZjoGEFdwqn5/Lr9qgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v1sVvDod; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ft94qdf3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726481577;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v3ll6KO8H5UrZC6yCuHnxrKwZc40QeoVwfA712SGpCg=;
+	b=v1sVvDodszPQaC6MYGfaSe4O0YiaY1fze0PmCKJ6c2G23tPz7qhE8S1B1sLtwUgWIXMmak
+	lcl5g5XiApkWPI1SCVyw7s9z1iO9KN6mpCWlZuVUdZluKI8O4fUF6eIdjm1NesbAgwTjm9
+	L5r8Exaw6kxoLg3DrFsWi8+mp8bsCM3zkFSSojxJ6whDP0q0k1EnEEodbLafdu9xFs6uaz
+	8eHdofzdFoTnlGmddqeYRaFKXUxsd24x8fzw0LItUenj5KjkqN5heAotraD7Uf01iomULo
+	x3kKNZ67/a7jl0TuyFLafUFm2vFpo2t7LtFrG+RNKJkiP8/m8yTSt9sPqggSzw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726481577;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v3ll6KO8H5UrZC6yCuHnxrKwZc40QeoVwfA712SGpCg=;
+	b=ft94qdf3mKKez4Fq6giUKHTG2x5ATRcMmRN9N6Lxg1hlqvpyZTzutygIeaN9KywFwHwHHJ
+	c1DaKC+nUT0MDZDQ==
+To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
+ <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
+ Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+ <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
+ <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
+ <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-mm@kvack.org, Jeff Layton
+ <jlayton@kernel.org>
+Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
+ handling into timekeeper
+In-Reply-To: <20240914-mgtime-v8-1-5bd872330bed@kernel.org>
+References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+ <20240914-mgtime-v8-1-5bd872330bed@kernel.org>
+Date: Mon, 16 Sep 2024 12:12:55 +0200
+Message-ID: <87a5g79aag.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zuf1UJ6K_8hL5x5U@smile.fi.intel.com>
+Content-Type: text/plain
 
-Hi Andy,
+On Sat, Sep 14 2024 at 13:07, Jeff Layton wrote:
+> For multigrain timestamps, we must keep track of the latest timestamp
 
-On Mon, Sep 16, 2024 at 12:07:28PM GMT, Andy Shevchenko wrote:
-> On Sat, Sep 14, 2024 at 02:56:19PM +0800, kernel test robot wrote:
-> > Hi Andy,
-> > 
-> > kernel test robot noticed the following build warnings:
-> > 
-> > [auto build test WARNING on andi-shyti/i2c/i2c-host]
-> > [also build test WARNING on linus/master v6.11-rc7]
-> > [cannot apply to next-20240913]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > 
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/i2c-isch-Add-missed-else/20240912-002224
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-> > patch link:    https://lore.kernel.org/r/20240911154820.2846187-5-andriy.shevchenko%40linux.intel.com
-> > patch subject: [PATCH v1 04/12] i2c: isch: Switch to memory mapped IO accessors
-> > config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240914/202409141436.QFCDQrRF-lkp@intel.com/config)
-> > compiler: alpha-linux-gcc (GCC) 13.3.0
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141436.QFCDQrRF-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202409141436.QFCDQrRF-lkp@intel.com/
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> >    drivers/i2c/busses/i2c-isch.c: In function 'smbus_sch_probe':
-> > >> drivers/i2c/busses/i2c-isch.c:296:42: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t' {aka 'long long unsigned int'} [-Wformat=]
-> >      296 |                 "SMBus SCH adapter at %04x", res->start);
-> >          |                                       ~~~^   ~~~~~~~~~~
-> >          |                                          |      |
-> >          |                                          |      resource_size_t {aka long long unsigned int}
-> >          |                                          unsigned int
-> >          |                                       %04llx
-> 
-> Yeah, this should be something like %pa, but the problem with that that it
-> always uses the same, fixed-width format with a prefix. We don't want this. But
-> to make sure we have proper specifier we need to introduce a temporary variable
-> and assign the resource start address to it and then use that variable in here.
-> I'll update this in v2 and send it after we have v6.12-rc1 is out.
+What is a multgrain timestamp? Can you please describe the concept
+behind it? I'm not going to chase random documentation or whatever
+because change logs have to self contained.
 
-Feel free to send it, I will apply it in i2c/i2c-host-for-6.12,
-that's where I'm collecting the next patches.
+And again 'we' do nothing. Describe the problem in technical terms and
+do not impersonate code.
 
-Andi
+> To maximize the window of this occurring when multiple tasks are racing
+> to update the floor, ktime_get_coarse_real_ts64_mg returns a cookie
+> value that represents the state of the floor tracking word, and
+> ktime_get_real_ts64_mg accepts a cookie value that it uses as the "old"
+> value when calling cmpxchg().
+
+Clearly:
+
+> +void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
+
+Can you please get your act together?
+
+> +/**
+> + * ktime_get_coarse_real_ts64_mg - get later of coarse grained time or floor
+> + * @ts: timespec64 to be filled
+> + *
+> + * Adjust floor to realtime and compare it to the coarse time. Fill
+> + * @ts with the latest one.
+
+This explains nothing.
+
+>      Note that this is a filesystem-specific
+> + * interface and should be avoided outside of that context.
+> + */
+> +void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
+> +{
+> +	struct timekeeper *tk = &tk_core.timekeeper;
+> +	u64 floor = atomic64_read(&mg_floor);
+> +	ktime_t f_real, offset, coarse;
+> +	unsigned int seq;
+> +
+> +	WARN_ON(timekeeping_suspended);
+> +
+> +	do {
+> +		seq = read_seqcount_begin(&tk_core.seq);
+> +		*ts = tk_xtime(tk);
+> +		offset = *offsets[TK_OFFS_REAL];
+
+Why this indirection? What's wrong with using
+tk_core.timekeeper.offs_real directly?
+
+> +	} while (read_seqcount_retry(&tk_core.seq, seq));
+> +
+> +	coarse = timespec64_to_ktime(*ts);
+> +	f_real = ktime_add(floor, offset);
+
+How is any of this synchronized against concurrent updates of the floor
+value or the offset? I'm failing to see anything which keeps this
+consistent. If this is magically consistent then it wants a big fat
+comment in the code which explains it.
+
+> +void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
+
+What is this cookie argument for and how does that match the
+declaration?
+
+> +extern void ktime_get_real_ts64_mg(struct timespec64 *ts);
+
+This does not even build.
+
+> +{
+> +	struct timekeeper *tk = &tk_core.timekeeper;
+> +	ktime_t old = atomic64_read(&mg_floor);
+> +	ktime_t offset, mono;
+> +	unsigned int seq;
+> +	u64 nsecs;
+> +
+> +	WARN_ON(timekeeping_suspended);
+
+WARN_ON_ONCE() if at all.
+
+> +	do {
+> +		seq = read_seqcount_begin(&tk_core.seq);
+> +
+> +		ts->tv_sec = tk->xtime_sec;
+> +		mono = tk->tkr_mono.base;
+> +		nsecs = timekeeping_get_ns(&tk->tkr_mono);
+> +		offset = *offsets[TK_OFFS_REAL];
+> +	} while (read_seqcount_retry(&tk_core.seq, seq));
+> +
+> +	mono = ktime_add_ns(mono, nsecs);
+> +
+> +	if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
+> +		ts->tv_nsec = 0;
+> +		timespec64_add_ns(ts, nsecs);
+> +	} else {
+> +		/*
+> +		 * Something has changed mg_floor since "old" was
+> +		 * fetched. "old" has now been updated with the
+> +		 * current value of mg_floor, so use that to return
+> +		 * the current coarse floor value.
+
+'Something has changed' is a truly understandable technical
+explanation.
+
+I'm not going to accept this voodoo which makes everyone scratch his
+head who wasn't involved in this.
+
+Thanks,
+
+        tglx
 
