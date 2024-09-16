@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-331130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40EB997A8CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:31:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5441B97A8CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7277B1C273C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:31:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84EB61C25D9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7974A16B75B;
-	Mon, 16 Sep 2024 21:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0125F158527;
+	Mon, 16 Sep 2024 21:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/M6sjY1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3eZyCaE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC8F4D8CC
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 21:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6484217ADE0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 21:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726522240; cv=none; b=SaRdodavMEtyl2MKkyMhwLFUl2W0J4LEhzKhJSasdHhtes1P5B9P3EixKHEl+VUlBYpg53L1e8mZVpNwZ7FWYadKh0FPLPOi96/Z5H3NZt682Vrzv20qFix+CaZF4rOMqAyHyda45p9/KFIRW8lcbEFSNe2py+RKVG/CmHs/TH8=
+	t=1726522242; cv=none; b=EUemkxkBs1qeYJJNQQH1Tz/HjlYW6IjVcPwEnxtmzNVSojg8YgQX3aan0vJ1u/nmv8Ay19hd5ihfsGJm+ap+Fg07h9SnjRKxDvUZa8bL5tHRVjQIYSOIVIDk7LQQS97GFOnwbilRPPN2vk8c+g6C+5tQMDOrAN7mSxoRBPWESSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726522240; c=relaxed/simple;
-	bh=3NTGL5Cin2LOXypSVr1CXsAKRF3Z9wMPuJj538dnpCc=;
+	s=arc-20240116; t=1726522242; c=relaxed/simple;
+	bh=tSD8XJAuZN/iamujVj5Yupc0eKiuu2Cf1U7jWiweoN4=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=FgoUFSo503kQqaK1su4ARNAmCweXmjiYQ66Ac08DTEkBYwD8PU4BHgu0L0I+9XMz/JAqX2Mhpew8eQQkgfkVuaXEq2lk4qME6ojEtrJ3qsH7Hw30AAL+Ly4TSgORy/yQUvze1VhZOm1Uf+F5WVNbBNbERjHR/3H9gJjVlJu6ynU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/M6sjY1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78CE7C4CEC4;
-	Mon, 16 Sep 2024 21:30:40 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Vl0iOXwtoQcUu+JCsMO/E1szc5j18Ld2B/etcO7Al3yp9un8MC1H7wwiHeev0PyeHTQotZlpNvr/YFe3TtnGS/Rqkvlky+AXfnG0G9iwfIuC77ab7rjeoMy1WT5WXGqavzh3zbA7BR5Q5T/d/BWmn00NDHKn56pH9O4iRLuDet0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3eZyCaE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2678C4CECF;
+	Mon, 16 Sep 2024 21:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726522240;
-	bh=3NTGL5Cin2LOXypSVr1CXsAKRF3Z9wMPuJj538dnpCc=;
+	s=k20201202; t=1726522241;
+	bh=tSD8XJAuZN/iamujVj5Yupc0eKiuu2Cf1U7jWiweoN4=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=D/M6sjY1jAkPWst5/YqvqJwSg1grIKHAkQeFCo26GQN5pFtYqu/83QpJcea42Rnno
-	 SR7IhpIPz5N/rjNkv7xls+GmU3b8hogs7iSDbD7OO4e9T9SEJvBllvwxca3OTrZ9Z8
-	 YFQaEKtZMalJc6LR5gdJ0JBUxyo36ACB/nVtSYPp1ADNmgKL03PpInihfoI6Lf6ctK
-	 ZafwtpF3r2qy4J1uiUPkbYPT81ReETqliaCJSICJbpJtSYP91RteszDWmnBpH8QeCm
-	 1D5PxAncF1nZ7izjZwuFJVx5t6Cvtni6sPyugrkDtrdrl84yiXd80QffH73fZgJCJV
-	 JPol7If1CbdBg==
+	b=m3eZyCaE3qsmseZJ+YPEJmlcxBLgn3LxeJuehfAvzApu50uYhurgbaVvPoOQ3Dg9M
+	 FKCsDNkfWXELYsPo/SsWDWWLkkLeuIesVWFPshhuWwDp75Wwd/YqnypJIaQH6MoJ86
+	 2KQEPqE56lwAOlYsUfyvQLz5jH4OcyOi14ypBNm8sxpI5pvjDsY3jHt3BLmKG21qKR
+	 ZwK32vmjkkvCM70stdaa6+suEsFR/5/MexNyIjIhGBpFoN5wCF+5iwoJHFErSXk6hm
+	 9h+UVdJUhHtz0JJIGKH8gnT/wL6lZun5ohEHwxnuoS87IG8f5+7JXxNp+FGazZrb0K
+	 RmPugBKisanng==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F933806644;
-	Mon, 16 Sep 2024 21:30:43 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD123806644;
+	Mon, 16 Sep 2024 21:30:44 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: avoid unused block when dio write in
- LFS mode
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to don't set SB_RDONLY in
+ f2fs_handle_critical_error()
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <172652224174.3820990.5790897572991749927.git-patchwork-notify@kernel.org>
-Date: Mon, 16 Sep 2024 21:30:41 +0000
-References: <20240905052433epcms2p1dac78dff43776cc158bac5ae9d118160@epcms2p1>
-In-Reply-To: <20240905052433epcms2p1dac78dff43776cc158bac5ae9d118160@epcms2p1>
-To: Daejun Park <daejun7.park@samsung.com>
-Cc: chao@kernel.org, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- nayeoni.kim@samsung.com, siu.jung@samsung.com, sukka.kim@samsung.com,
- dongjin_.kim@samsung.com
+ <172652224325.3820990.5977903925076414761.git-patchwork-notify@kernel.org>
+Date: Mon, 16 Sep 2024 21:30:43 +0000
+References: <20240910030713.3716318-1-chao@kernel.org>
+In-Reply-To: <20240910030713.3716318-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, brauner@kernel.org, jack@suse.cz,
+ linux-kernel@vger.kernel.org,
+ syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com,
+ linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 05 Sep 2024 14:24:33 +0900 you wrote:
-> This patch addresses the problem that when using LFS mode, unused blocks
-> may occur in f2fs_map_blocks() during block allocation for dio writes.
+On Tue, 10 Sep 2024 11:07:13 +0800 you wrote:
+> syzbot reports a f2fs bug as below:
 > 
-> If a new section is allocated during block allocation, it will not be
-> included in the map struct by map_is_mergeable() if the LBA of the
-> allocated block is not contiguous. However, the block already allocated
-> in this process will remain unused due to the LFS mode.
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 58 at kernel/rcu/sync.c:177 rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
+> CPU: 1 UID: 0 PID: 58 Comm: kworker/1:2 Not tainted 6.10.0-syzkaller-12562-g1722389b0d86 #0
+> Workqueue: events destroy_super_work
+> RIP: 0010:rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
+> Call Trace:
+>  percpu_free_rwsem+0x41/0x80 kernel/locking/percpu-rwsem.c:42
+>  destroy_super_work+0xec/0x130 fs/super.c:282
+>  process_one_work kernel/workqueue.c:3231 [inline]
+>  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+>  worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: avoid unused block when dio write in LFS mode
-    https://git.kernel.org/jaegeuk/f2fs/c/0638a3197c19
+  - [f2fs-dev] f2fs: fix to don't set SB_RDONLY in f2fs_handle_critical_error()
+    https://git.kernel.org/jaegeuk/f2fs/c/930c6ab93492
 
 You are awesome, thank you!
 -- 
