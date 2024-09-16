@@ -1,108 +1,63 @@
-Return-Path: <linux-kernel+bounces-330291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6714979C26
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:41:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89014979C27
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AA01B223D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:41:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 339F11F210C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8E413B2B6;
-	Mon, 16 Sep 2024 07:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DYB1wE3t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474D4132103;
+	Mon, 16 Sep 2024 07:40:57 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F36132103;
-	Mon, 16 Sep 2024 07:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5200613D28F;
+	Mon, 16 Sep 2024 07:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726472452; cv=none; b=HDJHwOV9tSh5775GEtv/eU4Py9UlbEATWmYTabZIwSBKJsT6P2aMUXhJFi6ExJYvTLb9tWxb5nyx2tzU5c4NgU3I0/fEjJcG3sww3/6MaIzQIIWk6IrIEk2+hABtx2U+7G/7gs1TuPMuh1ejHq+m5rQ0foF6Zl5upGl50YKDCG8=
+	t=1726472456; cv=none; b=CMtqiuSeZOu5+8OU+gu+UmajO4AgLRAPY8yrACyymrVkCcK4/sOwAsagcv88WuZAsMwv5phzdu+nG7TVqpaWETPMFhjy5SgtLIsaZVH/+BCKmxcOaifuOwOBPJwfARCbdCteR7BFPjBwCJqw/c3hYuiAYcgrZxNUAT3moW6jOh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726472452; c=relaxed/simple;
-	bh=N1S4qn058a7rzx9R4IDM2YiSFwwswkfDmvXpwFuQN1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0lYhL3lEnSko7fe3NDb31fAx8iMeQS9vPs9moZ3SK6xMc/7VnMMgGgCV540RyyToI2nPXsw6folEoHlxJAgww/xzu7Zknyh+xBrnqTJEQ5OtIqKOJQBmFRXtsiSzi/65FfgZjmWnLY3BTE2VTc5bBG30LgXatWC/zi++5Jpm/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DYB1wE3t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59285C4CEC4;
-	Mon, 16 Sep 2024 07:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726472451;
-	bh=N1S4qn058a7rzx9R4IDM2YiSFwwswkfDmvXpwFuQN1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DYB1wE3t6Zk871L+eS5mmsbDWVfK2zHFS4evqO6iIC4QSwkM9lRrW1Zi4RPQrPR/d
-	 Li8SDiqzotqMVjbckBGYIQAwaf+5gMW00EgJWbSuzXWmQUKee4lVJX7m4W1CYyHQZc
-	 Mu+rgEFx/QjUEImP2EcaK0OC/jsRW5auhxC8Bu8Q=
-Date: Mon, 16 Sep 2024 09:40:45 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Fix spelling errors in file
- drivers/usb/gadget/udc/m66592-udc.c
-Message-ID: <2024091606-armoire-lyrics-5bf8@gregkh>
-References: <2024091626-trailside-grandkid-5f86@gregkh>
- <20240916052357.6487-1-everestkc@everestkc.com.np>
- <2024091639-tasty-relay-5082@gregkh>
- <CAEO-vhEYdfJ=zLQPPWv7eD6K=G28b_cjog+qBn+QHuQ2dp0u7Q@mail.gmail.com>
+	s=arc-20240116; t=1726472456; c=relaxed/simple;
+	bh=j6sU9uDfg4k4A6QoHxtT3rJK5j+RZDSfsuYqBWiRX0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=H5A4SPX7DqQ1y7gRAg7sxwziPtf1tDwkHHHR2+J+sZUGPat+y2RpP/DpZsWSB/lezWlV1ujTUw2z6zYFH7bQMssDlirpckCQYdEpPjRB0Hjf0otTJAAJvc/d8COEMoShBokJakmkpR6Wrj+gYcECetq1QSChptM5pxlzaUtxHdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id C7EAA227AAD; Mon, 16 Sep 2024 09:40:51 +0200 (CEST)
+Date: Mon, 16 Sep 2024 09:40:51 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Vinod Koul <vkoul@kernel.org>, Nishad Saraf <nishads@amd.com>,
+	Lizhi Hou <lizhi.hou@amd.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Please revert the addition of the AMD QDMA driver
+Message-ID: <20240916074051.GA18902@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEO-vhEYdfJ=zLQPPWv7eD6K=G28b_cjog+qBn+QHuQ2dp0u7Q@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Sep 16, 2024 at 01:35:19AM -0600, Everest K.C. wrote:
-> On Mon, Sep 16, 2024 at 12:52 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Sun, Sep 15, 2024 at 11:23:56PM -0600, Everest K.C. wrote:
-> > > Fixed spelling errors in error message and comments that
-> > > were reported by codespell as follows:
-> > >       unexpect  --> unexpected
-> > >       workaound --> workaround
-> > >
-> > > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> > > ---
-> > >  v1 --> v2: Removed the coding style fix. This patch now only
-> > >           fixes spelling errors. The coding style will be fixed
-> > >           in a separate patch.
-> > >
-> > >  drivers/usb/gadget/udc/m66592-udc.c | 18 +++++++++---------
-> >
-> > If you do:
-> >         git log --oneline drivers/usb/gadget/udc/m66592-udc.c
-> > you will see the format for how to properly write the Subject: line
-> > here.
-> >
-> > As this is your first kernel contributions, I recommend working in an
-> > area that is designed for new developers to help work through these
-> > types of issues, drivers/staging/  Get some experience there before
-> > moving out into other areas of the kernel.  Also note that many
-> > subsystems do not care about things like spelling fixes, so be careful.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> Hi Greg,
-> Thank you for pointing out my mistake with the subject line. I have noted
-> and will keep that in mind when I submit my next patch.
-> Also, do you mean the fixes like this need to be done in gregkh/staging.git
-> repo? Do you recommend that I resubmit this patch with corrections or
-> discard it ?
+Hi Vinod,
 
-I mean start working in drivers/staging/ on issues there, not in
-drivers/usb/, until you get the process working well for you, then worry
-about moving to other portions of the kernel.
+I just noticed you added the AMD QDMA driver for this merge window,
+which is completely broken in terms of DMA API usage by using the
+private get/set_dma_ops APIs.  These were never for driver use (
+and I've been working for years to fix the few abusers), but with the
+DMA changes in 6.12 it actually can't work at all, as the dma-iommu
+driver now also sets NULL DMA ops in addition to dma-direct.
 
-good luck!
-
-greg k-h
+As a reminder drivers must never try to inherit dma settings from
+one device or another, instead pass the actual DMA device to whatever
+layer does the DMA mapping.  Without that you break all kinds of
+thing.
 
