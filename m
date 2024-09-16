@@ -1,381 +1,669 @@
-Return-Path: <linux-kernel+bounces-330876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B0097A595
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:54:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F380397A59C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF7B281F9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:54:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B81742825C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7757B1591ED;
-	Mon, 16 Sep 2024 15:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AAA158D8B;
+	Mon, 16 Sep 2024 15:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WQPalHz2"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wLvI7ITA"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149C9158DB9;
-	Mon, 16 Sep 2024 15:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF05155C98
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 15:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726502064; cv=none; b=LHQ5mOmokaDcvJnu414XVzamXd5GqZW4HpBGP25JRIzfUkIfw6EzoeVZ3ZVcIn9mJV6TLVvcxUsCq1KkIcMcl+ECcvEVwGALdRBp9JJwMUXoUt5QZbfpblJwHKiRL6OGJZaNwvawCmqJo2m+zUNMD2djYEeP1cz75zzzN87HAng=
+	t=1726502305; cv=none; b=GuUi/ru7zE1TK3YCVOIl+kKud2BWh/QpgyHaoswNeLM6xtug2gFBQIS0oRlT+a65T3lKDdqY6wb4efWPBWG69Z4SabLVIZ8SEM+PsmCYQFHIwNWP8AIXZt471hp8L/pgXDHMKw4RWcMs9ZIs+FItaEI6AiHhxuCgkoYTm231b94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726502064; c=relaxed/simple;
-	bh=pj4nO8M9/zqKQUo6iwmUIIeCcIS6vn38pTu+H8zW/Rw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DVrHjmyQ5Xw0ej0PKg/TERCjaFlluBbJNwSGRYQWPFB9OYsKF6i6FVXkt7sB7UAC7VNZ602RGs3NJM4rNcpDux1EV9Xa01CbfnKOXfMQ3DAn0mcpA3jhIn8erUkyKtmhxU4Krb/cO4XyNNlR6Bu8ePtPveQfCOc7e5jlRUggL7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WQPalHz2; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GCbcKK008931;
-	Mon, 16 Sep 2024 15:54:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	+1/iU5JB0W3zG/2RHRZyL77/sORNzhX3vUAlVJXyzbU=; b=WQPalHz2EtZoFDM2
-	yNqkZ0zwbKW7HssVBBKGW0EbmWtF9Ez9iRS3D2ANLTw8NPUF3oR1Z4xiLa3381Hh
-	oAHttnMAx0lVq2zJDs4osCYojvL69vJpqCnmxDjqTyq1gsn0KuUgRA1LTMXwf/fj
-	iUDLWQSFciSy1yoshyr0dgmKclAYrhx0/E+xHAlS1yAiBGWUOj/2Tu4hYkArDE8m
-	QaXOHvT/K3x53a0MmkKOvn72gIoqRpSl0qqEkOt9500ccFe9FZFMgX2TtZs2kLqt
-	IydqUVtRLDSGpTmYgRasX/57OkHZasXb6kxIfvdb+/Jv15GtcbQCU7bzWh5AJhPN
-	iav1FQ==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3vnjq0j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 15:54:02 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48GEus98030642;
-	Mon, 16 Sep 2024 15:54:02 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41npan0698-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 15:54:02 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48GFs0rb12059202
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Sep 2024 15:54:01 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 906EA58059;
-	Mon, 16 Sep 2024 15:54:00 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EEEFD58053;
-	Mon, 16 Sep 2024 15:53:57 +0000 (GMT)
-Received: from oc-fedora.boeblingen.de.ibm.com (unknown [9.152.212.119])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 16 Sep 2024 15:53:57 +0000 (GMT)
-Message-ID: <27ba11cf6cb60c7a0056a00e71f22a3ea1e61714.camel@linux.ibm.com>
-Subject: Re: [PATCH v4] iommu/s390: Implement blocking domain
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Matthew Rosato <mjrosato@linux.ibm.com>, joro@8bytes.org, will@kernel.org,
-        robin.murphy@arm.com, gerald.schaefer@linux.ibm.com
-Cc: jgg@ziepe.ca, baolu.lu@linux.intel.com, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com, svens@linux.ibm.com,
-        jroedel@suse.de, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Date: Mon, 16 Sep 2024 17:53:57 +0200
-In-Reply-To: <20240910211516.137933-1-mjrosato@linux.ibm.com>
-References: <20240910211516.137933-1-mjrosato@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1726502305; c=relaxed/simple;
+	bh=V1bGj3O1SfFbsV0RdhuFidYAvn752ivttpCHlQKboTc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qxKmpuPJBgJfOfkiAzdfBao6LrSb6Gn7K2SA9EUX0iFHxYOfZ6I55NoPrMlQ0DE7d7yJaem93XVyRmtw7ewKWLVQnjL/7tEZ+ZXACkqWpylHIUGQav3ihY5KEA9J3TUgUQtbaHPBvEOa0Jo4SkcctbwwbgbDwohaFhoG541Tx4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wLvI7ITA; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-374be2ad12dso290576f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:58:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726502301; x=1727107101; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=0t60P5ZqLqg2MtjA5Bvwv2zO4oojdDJcgVZYNhdexko=;
+        b=wLvI7ITAEK5YzS2Vdd7Pcs1pCYomsD8lkOjjqk/flYZ9olJyUp1d2iQc7BpdAlvam6
+         x6059Oxdfd3CoODYdbifYlA+jhJnrrW0gCRI51Ld0P7F5deqeRBKERgbeBYd7i5enSDw
+         hJz3PkslvbuZTGdFWGIsQTfVDu6gYp5f7n8DB1nQZNORc3glxScOYIH/NQ8pd/TKDvw1
+         25D26rgqJi2HnimTYvbhwcnOaHDd0JBbD863hAmwZNKelWW83G0gR+DqluZRA5wWcR8J
+         xbsbUJc602i1YmfhXnFNNfO0+gkadiOj36v3HN+0XbZasNk9cxtgY+hGU1cEk5y7cq8H
+         Nlug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726502301; x=1727107101;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0t60P5ZqLqg2MtjA5Bvwv2zO4oojdDJcgVZYNhdexko=;
+        b=at+81+aFXo0z5tp5BIwB8l9eOR5fTDcaSGZcI4H45R5S6zTzurApDCYfeaJBUvfUZC
+         CU7ew5sKDESyp3VPMRD/qsxusoszN8I+XhpU4t0JEkiCAnwmetqOmRs9SRcaEahy+Ik6
+         I/df/hOI8+vpXcJQs7IBLDexO9Fcl4Ofo6uGEd2cp05TTHBZU1QzdWzzLD0CEUv0F3wJ
+         cRO1VDCmTsAsGQdghnhDbCrjHN5A5kcsB13nBo7zASh2CzBrHG1AokkwLEnf/q4PisGP
+         ZSZQd2+pLgxRR0fqYb0erPpKZKFA2wo0xB5IzWaQFN0GzwopuvlMpuuscdnoWwqgO1Aw
+         EQAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXH5855y1MHaBme3Bo4vpasTfSXrhvjX2+2r4IYbXDoCr0eFZlY0skG/rX1JLdjTQyg2lnD6Y+abmREuXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxixWxOVgiUR9KiuXhAE+LvuCV+b+Vr8Nq2PZFRgviLnds0ZDnW
+	IkZDikUYiFj9kyMPfGBBdOuDlZwvRCgYsxIITr+Y9Okc0VPM9K8Xpba5EXK2NHE=
+X-Google-Smtp-Source: AGHT+IEc7zjhsHSNFRGYBfN1+bzCPF1pORkR1KEH3eJPhhGM1fHN3iYEh1QjfkmDSka4aoU3vpubng==
+X-Received: by 2002:a05:6000:4011:b0:378:9560:330 with SMTP id ffacd0b85a97d-378c2d5a04amr4624689f8f.13.1726502300552;
+        Mon, 16 Sep 2024 08:58:20 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78002a4sm7624573f8f.78.2024.09.16.08.58.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2024 08:58:19 -0700 (PDT)
+Message-ID: <1488e936-d906-41d7-ae97-ffdbcc53b08c@linaro.org>
+Date: Mon, 16 Sep 2024 17:58:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 21Qtgwd_VkHn9EwJ_lHjyEdWhNV8cl1I
-X-Proofpoint-GUID: 21Qtgwd_VkHn9EwJ_lHjyEdWhNV8cl1I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-16_12,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 phishscore=0 clxscore=1011 malwarescore=0 bulkscore=0
- impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409160103
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 2/3] pinctrl: canaan: Add support for k230 SoC
+To: Ze Huang <18771902331@163.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Yangyu Chen <cyy@cyyself.name>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20240916063021.311721-1-18771902331@163.com>
+ <20240916064706.318793-1-18771902331@163.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240916064706.318793-1-18771902331@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-09-10 at 17:15 -0400, Matthew Rosato wrote:
-> This fixes a crash when surprise hot-unplugging a PCI device. This crash
-> happens because during hot-unplug __iommu_group_set_domain_nofail()
-> attaching the default domain fails when the platform no longer
-> recognizes the device as it has already been removed and we end up with
-
-Just to clarify my original wording here based on Jason's comments. The
-device is already removed from the point of view of the platform
-hypervisor not from the point of view of Linux that's why I phrased it
-as the platform no longer recognizing it.
-
-> a NULL domain pointer and UAF. This is exactly the case referred to in
-> the second comment in __iommu_device_set_domain() and just as stated
-> there if we can instead attach the blocking domain the UAF is prevented
-> as this can handle the already removed device. Implement the blocking
-> domain to use this handling.  With this change, the crash is fixed but
-> we still hit a warning attempting to change DMA ownership on a blocked
-> device.
->=20
-> Fixes: c76c067e488c ("s390/pci: Use dma-iommu layer")
-> Co-developed-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
+On 16/09/2024 08:47, Ze Huang wrote:
+> Configuration of the K230 is similar to that of the K210. However, in K210,
+> the 256 functions for each pin are shared, whereas in K230, multiplex
+> functions are different for every pin.
+> 
+> Signed-off-by: Ze Huang <18771902331@163.com>
 > ---
-> Changes for v4:
-> - fix lockdep assert
-> Changes for v3:
-> - make blocking_domain type iommu_domain
-> - change zdev->s390_domain to type iommu_domain and remove most uses
-> - remove s390_iommu_detach_device, use blocking domain attach
-> - add spinlock to serialize zdev->s390_domain change / access to counters
-> ---
->  arch/s390/include/asm/pci.h |  4 +-
->  arch/s390/pci/pci.c         |  3 ++
->  arch/s390/pci/pci_debug.c   | 10 ++++-
->  drivers/iommu/s390-iommu.c  | 73 +++++++++++++++++++++++--------------
->  4 files changed, 59 insertions(+), 31 deletions(-)
->=20
-> diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
-> index 30820a649e6e..a60a291fbd58 100644
-> --- a/arch/s390/include/asm/pci.h
-> +++ b/arch/s390/include/asm/pci.h
-> @@ -96,7 +96,6 @@ struct zpci_bar_struct {
->  	u8		size;		/* order 2 exponent */
->  };
-> =20
-> -struct s390_domain;
->  struct kvm_zdev;
-> =20
->  #define ZPCI_FUNCTIONS_PER_BUS 256
-> @@ -181,9 +180,10 @@ struct zpci_dev {
->  	struct dentry	*debugfs_dev;
-> =20
->  	/* IOMMU and passthrough */
-> -	struct s390_domain *s390_domain; /* s390 IOMMU domain data */
-> +	struct iommu_domain *s390_domain; /* attached IOMMU domain */
->  	struct kvm_zdev *kzdev;
->  	struct mutex kzdev_lock;
-> +	spinlock_t dom_lock;		/* protect s390_domain change */
->  };
-> =20
->=20
----8<---
-> =20
-> +static struct iommu_domain blocking_domain;
-> +
+>  drivers/pinctrl/Kconfig        |  10 +
+>  drivers/pinctrl/Makefile       |   1 +
+>  drivers/pinctrl/pinctrl-k230.c | 674 +++++++++++++++++++++++++++++++++
+>  3 files changed, 685 insertions(+)
+>  create mode 100644 drivers/pinctrl/pinctrl-k230.c
 
-I originally looked at using struct iommu_domain for the blocking
-domain when I started on this as well but got scared away by having to
-change it in more places. Turns out it's not actually that bad. And as
-Jason said this better matches the other IOMMU drivers and overall
-design.
+...
 
->  static inline unsigned int calc_rtx(dma_addr_t ptr)
->  {
->  	return ((unsigned long)ptr >> ZPCI_RT_SHIFT) & ZPCI_INDEX_MASK;
-> @@ -369,20 +371,36 @@ static void s390_domain_free(struct iommu_domain *d=
-omain)
->  	call_rcu(&s390_domain->rcu, s390_iommu_rcu_free_domain);
->  }
-> =20
-> -static void s390_iommu_detach_device(struct iommu_domain *domain,
-> -				     struct device *dev)
-> +static void zdev_s390_domain_update(struct zpci_dev *zdev,
-> +				    struct iommu_domain *domain)
-> +{
-> +	unsigned long flags;
 > +
-> +	spin_lock_irqsave(&zdev->dom_lock, flags);
-> +	zdev->s390_domain =3D domain;
-> +	spin_unlock_irqrestore(&zdev->dom_lock, flags);
-> +}
-> +
-> +static int blocking_domain_attach_device(struct iommu_domain *domain,
-> +					 struct device *dev)
->  {
-> -	struct s390_domain *s390_domain =3D to_s390_domain(domain);
->  	struct zpci_dev *zdev =3D to_zpci_dev(dev);
-> +	struct s390_domain *s390_domain;
->  	unsigned long flags;
-> =20
-> +	if (zdev->s390_domain->type =3D=3D IOMMU_DOMAIN_BLOCKED)
-> +		return 0;
-> +
-> +	s390_domain =3D to_s390_domain(zdev->s390_domain);
->  	spin_lock_irqsave(&s390_domain->list_lock, flags);
->  	list_del_rcu(&zdev->iommu_list);
->  	spin_unlock_irqrestore(&s390_domain->list_lock, flags);
-> =20
->  	zpci_unregister_ioat(zdev, 0);
-> -	zdev->s390_domain =3D NULL;
->  	zdev->dma_table =3D NULL;
-> +	zdev_s390_domain_update(zdev, domain);
-> +
-> +	return 0;
->  }
-
-I like that we get rid of s390_iommu_detach_device() really makes it
-simpler to think of the DMA as blocked rather than no IOMMU being
-attached.
-
-> =20
->  static int s390_iommu_attach_device(struct iommu_domain *domain,
-> @@ -401,20 +419,15 @@ static int s390_iommu_attach_device(struct iommu_do=
-main *domain,
->  		domain->geometry.aperture_end < zdev->start_dma))
->  		return -EINVAL;
-> =20
-> -	if (zdev->s390_domain)
-> -		s390_iommu_detach_device(&zdev->s390_domain->domain, dev);
-> +	blocking_domain_attach_device(&blocking_domain, dev);
-> =20
-> +	/* If we fail now DMA remains blocked via blocking domain */
->  	cc =3D zpci_register_ioat(zdev, 0, zdev->start_dma, zdev->end_dma,
->  				virt_to_phys(s390_domain->dma_table), &status);
-> -	/*
-> -	 * If the device is undergoing error recovery the reset code
-> -	 * will re-establish the new domain.
-> -	 */
->  	if (cc && status !=3D ZPCI_PCI_ST_FUNC_NOT_AVAIL)
->  		return -EIO;
-> -
->  	zdev->dma_table =3D s390_domain->dma_table;
-> -	zdev->s390_domain =3D s390_domain;
-> +	zdev_s390_domain_update(zdev, domain);
-> =20
->  	spin_lock_irqsave(&s390_domain->list_lock, flags);
->  	list_add_rcu(&zdev->iommu_list, &s390_domain->devices);
-> @@ -466,19 +479,11 @@ static struct iommu_device *s390_iommu_probe_device=
-(struct device *dev)
->  	if (zdev->tlb_refresh)
->  		dev->iommu->shadow_on_flush =3D 1;
-> =20
-> -	return &zdev->iommu_dev;
-> -}
-> +	/* Start with DMA blocked */
-> +	spin_lock_init(&zdev->dom_lock);
-> +	zdev_s390_domain_update(zdev, &blocking_domain);
-
-Thanks for incorporating this suggestion from Jason, makes sense to
-start out as blocked especially since that matches the platform
-behavior too.
-
-> =20
-> -static void s390_iommu_release_device(struct device *dev)
-> -{
-> -	struct zpci_dev *zdev =3D to_zpci_dev(dev);
-> -
-> -	/*
-> -	 * release_device is expected to detach any domain currently attached
-> -	 * to the device, but keep it attached to other devices in the group.
-> -	 */
-> -	if (zdev)
-> -		s390_iommu_detach_device(&zdev->s390_domain->domain, dev);
-> +	return &zdev->iommu_dev;
->  }
-> =20
->  static int zpci_refresh_all(struct zpci_dev *zdev)
-> @@ -697,9 +702,15 @@ static size_t s390_iommu_unmap_pages(struct iommu_do=
-main *domain,
-> =20
->  struct zpci_iommu_ctrs *zpci_get_iommu_ctrs(struct zpci_dev *zdev)
->  {
-> -	if (!zdev || !zdev->s390_domain)
-> +	struct s390_domain *s390_domain;
-> +
-> +	lockdep_assert_held(&zdev->dom_lock);
-> +
-> +	if (zdev->s390_domain->type =3D=3D IOMMU_DOMAIN_BLOCKED)
->  		return NULL;
-> -	return &zdev->s390_domain->ctrs;
-> +
-> +	s390_domain =3D to_s390_domain(zdev->s390_domain);
-> +	return &s390_domain->ctrs;
->  }
-> =20
->  int zpci_init_iommu(struct zpci_dev *zdev)
-> @@ -776,11 +787,19 @@ static int __init s390_iommu_init(void)
->  }
->  subsys_initcall(s390_iommu_init);
-> =20
-> +static struct iommu_domain blocking_domain =3D {
-> +	.type =3D IOMMU_DOMAIN_BLOCKED,
-> +	.ops =3D &(const struct iommu_domain_ops) {
-> +		.attach_dev	=3D blocking_domain_attach_device,
-> +	}
+> +struct k230_pinctrl {
+> +	struct pinctrl_desc	pctl;
+> +	struct pinctrl_dev	*pctl_dev;
+> +	struct regmap		*regmap_base;
+> +	void __iomem		*base;
+> +	struct k230_pin_group	*groups;
+> +	unsigned int		ngroups;
+> +	struct k230_pmx_func	*functions;
+> +	unsigned int		nfunctions;
 > +};
 > +
->  static const struct iommu_ops s390_iommu_ops =3D {
-> +	.blocked_domain		=3D &blocking_domain,
-> +	.release_domain		=3D &blocking_domain,
->  	.capable =3D s390_iommu_capable,
->  	.domain_alloc_paging =3D s390_domain_alloc_paging,
->  	.probe_device =3D s390_iommu_probe_device,
-> -	.release_device =3D s390_iommu_release_device,
->  	.device_group =3D generic_device_group,
->  	.pgsize_bitmap =3D SZ_4K,
->  	.get_resv_regions =3D s390_iommu_get_resv_regions,
+> +static struct regmap_config k230_regmap_config = {
 
-Thanks for taking care of the suggestions I agree these are all useful
-improvements over my original patch.
+Why is this not a const?
 
-Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> +	.reg_bits	= 32,
+> +	.val_bits	= 32,
+> +	.max_register	= 0x100,
+> +	.reg_stride	= 4,
+> +};
+> +
+> +static int k230_get_groups_count(struct pinctrl_dev *pctldev)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	return info->ngroups;
+> +}
+> +
+> +static const char *k230_get_group_name(struct pinctrl_dev *pctldev,
+> +				       unsigned int selector)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	return info->groups[selector].name;
+> +}
+> +
+> +static int k230_get_group_pins(struct pinctrl_dev *pctldev,
+> +			       unsigned int selector,
+> +			       const unsigned int **pins,
+> +			       unsigned int *num_pins)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	if (selector >= info->ngroups)
+> +		return -EINVAL;
+> +
+> +	*pins = info->groups[selector].pins;
+> +	*num_pins = info->groups[selector].num_pins;
+> +
+> +	return 0;
+> +}
+> +
+> +static inline const struct k230_pmx_func *k230_name_to_funtion(
+> +		const struct k230_pinctrl *info, const char *name)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < info->nfunctions; i++) {
+> +		if (!strcmp(info->functions[i].name, name))
+> +			return &info->functions[i];
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static int k230_pinctrl_parse_groups(struct device_node *np,
+> +				     struct k230_pin_group *grp,
+> +				     struct k230_pinctrl *info,
+> +				     unsigned int index)
+> +{
+> +	struct device *dev = info->pctl_dev->dev;
+> +	const __be32 *list;
+> +	int size, i, ret;
+> +
+> +	grp->name = np->name;
+> +
+> +	list = of_get_property(np, "pinmux", &size);
+> +	size /= sizeof(*list);
+> +
+> +	grp->num_pins = size;
+> +	grp->pins = devm_kcalloc(dev, grp->num_pins, sizeof(*grp->pins),
+> +				 GFP_KERNEL);
+> +	grp->data = devm_kcalloc(dev, grp->num_pins, sizeof(*grp->data),
+> +				 GFP_KERNEL);
+> +	if (!grp->pins || !grp->data)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < size; i++) {
+> +		unsigned int mux_data = be32_to_cpu(*list++);
+> +
+> +		grp->pins[i] = (mux_data >> 8);
+> +		grp->data[i].func = (mux_data & 0xff);
+> +
+> +		ret = pinconf_generic_parse_dt_config(np, NULL,
+> +						      &grp->data[i].configs,
+> +						      &grp->data[i].nconfigs);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	of_node_put(np);
+> +
+
+This looks like double free. There is no get in this scope.
+
+> +	return 0;
+> +}
+> +
+> +static void k230_pinctrl_child_count(struct k230_pinctrl *info,
+> +				     struct device_node *np)
+> +{
+> +	struct device_node *child;
+> +
+> +	for_each_child_of_node(np, child) {
+> +		info->nfunctions++;
+> +		info->ngroups += of_get_child_count(child);
+> +	}
+> +}
+> +
+> +static int k230_pinctrl_parse_functions(struct device_node *np,
+> +					struct k230_pinctrl *info,
+> +					unsigned int index)
+> +{
+> +	struct device *dev = info->pctl_dev->dev;
+> +	struct k230_pmx_func *func;
+> +	struct k230_pin_group *grp;
+> +	struct device_node *child;
+> +	static unsigned int idx, i;
+> +	int ret;
+> +
+> +	func = &info->functions[index];
+> +
+> +	func->name = np->name;
+> +	func->ngroups = of_get_child_count(np);
+> +	if (func->ngroups <= 0)
+> +		return 0;
+> +
+> +	func->groups = devm_kcalloc(dev, func->ngroups,
+> +				    sizeof(*func->groups), GFP_KERNEL);
+> +	func->group_idx = devm_kcalloc(dev, func->ngroups,
+> +				       sizeof(*func->group_idx), GFP_KERNEL);
+> +	if (!func->groups || !func->group_idx)
+> +		return -ENOMEM;
+> +
+> +	i = 0;
+> +
+> +	for_each_child_of_node(np, child) {
+> +		func->groups[i] = child->name;
+> +		func->group_idx[i] = idx;
+> +		grp = &info->groups[idx];
+> +		idx++;
+> +		ret = k230_pinctrl_parse_groups(child, grp, info, i++);
+> +		if (ret) {
+> +			of_node_put(child);
+
+Use scoped loop instead.
+
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int k230_pinctrl_parse_dt(struct platform_device *pdev,
+> +				 struct k230_pinctrl *info)
+
+Please keep all probe related code next to each other. That's quite
+confusing to find probe code far away from the probe().
+
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct device_node *child;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	k230_pinctrl_child_count(info, np);
+> +
+> +	info->functions = devm_kcalloc(dev, info->nfunctions,
+> +				       sizeof(*info->functions), GFP_KERNEL);
+> +	info->groups = devm_kcalloc(dev, info->ngroups,
+> +				    sizeof(*info->groups), GFP_KERNEL);
+> +	if (!info->functions || !info->groups)
+> +		return -ENOMEM;
+> +
+> +	i = 0;
+> +
+> +	for_each_child_of_node(np, child) {
+> +		ret = k230_pinctrl_parse_functions(child, info, i++);
+> +		if (ret) {
+> +			dev_err(dev, "failed to parse function\n");
+> +			of_node_put(child);
+
+Use scoped loop instead.
+
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct pinctrl_pin_desc k230_pins[] = {
+
+Why is this not a const?
+
+> +	PINCTRL_PIN(0,  "IO0"),  PINCTRL_PIN(1,  "IO1"),  PINCTRL_PIN(2,  "IO2"),
+> +	PINCTRL_PIN(3,  "IO3"),  PINCTRL_PIN(4,  "IO4"),  PINCTRL_PIN(5,  "IO5"),
+> +	PINCTRL_PIN(6,  "IO6"),  PINCTRL_PIN(7,  "IO7"),  PINCTRL_PIN(8,  "IO8"),
+> +	PINCTRL_PIN(9,  "IO9"),  PINCTRL_PIN(10, "IO10"), PINCTRL_PIN(11, "IO11"),
+> +	PINCTRL_PIN(12, "IO12"), PINCTRL_PIN(13, "IO13"), PINCTRL_PIN(14, "IO14"),
+> +	PINCTRL_PIN(15, "IO15"), PINCTRL_PIN(16, "IO16"), PINCTRL_PIN(17, "IO17"),
+> +	PINCTRL_PIN(18, "IO18"), PINCTRL_PIN(19, "IO19"), PINCTRL_PIN(20, "IO20"),
+> +	PINCTRL_PIN(21, "IO21"), PINCTRL_PIN(22, "IO22"), PINCTRL_PIN(23, "IO23"),
+> +	PINCTRL_PIN(24, "IO24"), PINCTRL_PIN(25, "IO25"), PINCTRL_PIN(26, "IO26"),
+> +	PINCTRL_PIN(27, "IO27"), PINCTRL_PIN(28, "IO28"), PINCTRL_PIN(29, "IO29"),
+> +	PINCTRL_PIN(30, "IO30"), PINCTRL_PIN(31, "IO31"), PINCTRL_PIN(32, "IO32"),
+> +	PINCTRL_PIN(33, "IO33"), PINCTRL_PIN(34, "IO34"), PINCTRL_PIN(35, "IO35"),
+> +	PINCTRL_PIN(36, "IO36"), PINCTRL_PIN(37, "IO37"), PINCTRL_PIN(38, "IO38"),
+> +	PINCTRL_PIN(39, "IO39"), PINCTRL_PIN(40, "IO40"), PINCTRL_PIN(41, "IO41"),
+> +	PINCTRL_PIN(42, "IO42"), PINCTRL_PIN(43, "IO43"), PINCTRL_PIN(44, "IO44"),
+> +	PINCTRL_PIN(45, "IO45"), PINCTRL_PIN(46, "IO46"), PINCTRL_PIN(47, "IO47"),
+> +	PINCTRL_PIN(48, "IO48"), PINCTRL_PIN(49, "IO49"), PINCTRL_PIN(50, "IO50"),
+> +	PINCTRL_PIN(51, "IO51"), PINCTRL_PIN(52, "IO52"), PINCTRL_PIN(53, "IO53"),
+> +	PINCTRL_PIN(54, "IO54"), PINCTRL_PIN(55, "IO55"), PINCTRL_PIN(56, "IO56"),
+> +	PINCTRL_PIN(57, "IO57"), PINCTRL_PIN(58, "IO58"), PINCTRL_PIN(59, "IO59"),
+> +	PINCTRL_PIN(60, "IO60"), PINCTRL_PIN(61, "IO61"), PINCTRL_PIN(62, "IO62"),
+> +	PINCTRL_PIN(63, "IO63")
+> +};
+> +
+> +static void k230_pinctrl_pin_dbg_show(struct pinctrl_dev *pctldev,
+> +				      struct seq_file *s, unsigned int offset)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +	u32 val, mode, bias, drive, input, output, slew, schmitt, power;
+> +	struct k230_pin_group *grp = k230_pins[offset].drv_data;
+> +	static const char * const biasing[] = {
+> +			"pull none", "pull down", "pull up", "" };
+> +	static const char * const enable[] = {
+> +			"disable", "enable" };
+> +	static const char * const power_source[] = {
+> +			"3V3", "1V8" };
+> +	int ret;
+> +
+> +	ret = regmap_read(info->regmap_base, offset * 4, &val);
+> +	if (ret) {
+> +		dev_err(info->pctl_dev->dev,
+> +			"failed to read offset 0x%x\n", offset * 4);
+> +		return;
+> +	}
+> +
+> +	mode	= (val & K230_PC_SEL) >> K230_SHIFT_SEL;
+> +	drive	= (val & K230_PC_DS) >> K230_SHIFT_DS;
+> +	bias	= (val & K230_PC_BIAS) >> K230_SHIFT_BIAS;
+> +	input	= (val & K230_PC_IE) >> K230_SHIFT_IE;
+> +	output	= (val & K230_PC_OE) >> K230_SHIFT_OE;
+> +	slew	= (val & K230_PC_SL) >> K230_SHIFT_SL;
+> +	schmitt	= (val & K230_PC_ST) >> K230_SHIFT_ST;
+> +	power	= (val & K230_PC_MSC) >> K230_SHIFT_MSC;
+> +
+> +	seq_printf(s, "%s - strength %d - %s - %s - slewrate %s - schmitt %s - %s",
+> +		   grp ? grp->name : "unknown",
+> +		   drive,
+> +		   biasing[bias],
+> +		   input ? "input" : "output",
+> +		   enable[slew],
+> +		   enable[schmitt],
+> +		   power_source[power]);
+> +}
+> +
+> +static int k230_dt_node_to_map(struct pinctrl_dev *pctldev,
+> +			       struct device_node *np_config,
+> +			       struct pinctrl_map **map,
+> +			       unsigned int *num_maps)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +	struct device *dev = info->pctl_dev->dev;
+> +	const struct k230_pmx_func *func;
+> +	const struct k230_pin_group *grp;
+> +	struct pinctrl_map *new_map;
+> +	int map_num, i, j, idx;
+> +	unsigned int grp_id;
+> +
+> +	func = k230_name_to_funtion(info, np_config->name);
+> +	if (!func) {
+> +		dev_err(dev, "function %s not found\n", np_config->name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	map_num = 0;
+> +	for (i = 0; i < func->ngroups; ++i) {
+> +		grp_id = func->group_idx[i];
+> +		/* npins of config map plus a mux map */
+> +		map_num += info->groups[grp_id].num_pins + 1;
+> +	}
+> +
+> +	new_map = kcalloc(map_num, sizeof(*new_map), GFP_KERNEL);
+> +	if (!new_map)
+> +		return -ENOMEM;
+> +	*map = new_map;
+> +	*num_maps = map_num;
+> +
+> +	idx = 0;
+> +	for (i = 0; i < func->ngroups; ++i) {
+> +		grp_id = func->group_idx[i];
+> +		grp = &info->groups[grp_id];
+> +		new_map[idx].type = PIN_MAP_TYPE_MUX_GROUP;
+> +		new_map[idx].data.mux.group = grp->name;
+> +		new_map[idx].data.mux.function = np_config->name;
+> +		idx++;
+> +
+> +		for (j = 0; j < grp->num_pins; ++j) {
+> +			new_map[idx].type = PIN_MAP_TYPE_CONFIGS_PIN;
+> +			new_map[idx].data.configs.group_or_pin =
+> +				pin_get_name(pctldev, grp->pins[j]);
+> +			new_map[idx].data.configs.configs =
+> +				grp->data[j].configs;
+> +			new_map[idx].data.configs.num_configs =
+> +				grp->data[j].nconfigs;
+> +			idx++;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +
+> +	ret = regmap_write(info->regmap_base, pin * 4, val);
+> +	if (ret) {
+> +		dev_err(dev, "failed to write offset 0x%x\n", pin * 4);
+
+Isn't regmap an MMIO? If so, drop all of such messages. This just makes
+unlikely error paths too big.
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int k230_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+> +			    unsigned long *configs, unsigned int num_configs)
+> +{
+> +	enum pin_config_param param;
+> +	unsigned int arg, i;
+> +	int ret;
+> +
+> +	if (WARN_ON(pin >= K230_NPINS))
+
+Drop WARN_ON. No need to panic kernel. Instead, handle correctly the error.
+
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < num_configs; i++) {
+> +		param = pinconf_to_config_param(configs[i]);
+> +		arg = pinconf_to_config_argument(configs[i]);
+> +		ret = k230_pinconf_set_param(pctldev, pin, param, arg);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void k230_pconf_dbg_show(struct pinctrl_dev *pctldev,
+> +				struct seq_file *s, unsigned int pin)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	ret = regmap_read(info->regmap_base, pin * 4, &val);
+> +	if (ret) {
+> +		dev_err(info->pctl_dev->dev, "failed to read offset 0x%x\n", pin * 4);
+> +		return;
+> +	}
+> +
+> +	seq_printf(s, " 0x%08x", val);
+> +}
+> +
+> +static const struct pinconf_ops k230_pinconf_ops = {
+> +	.is_generic		= true,
+> +	.pin_config_get		= k230_pinconf_get,
+> +	.pin_config_set		= k230_pinconf_set,
+> +	.pin_config_dbg_show	= k230_pconf_dbg_show,
+> +};
+> +
+> +static int k230_get_functions_count(struct pinctrl_dev *pctldev)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	return info->nfunctions;
+> +}
+> +
+> +static const char *k230_get_fname(struct pinctrl_dev *pctldev,
+> +				  unsigned int selector)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	return info->functions[selector].name;
+> +}
+> +
+> +static int k230_get_groups(struct pinctrl_dev *pctldev, unsigned int selector,
+> +			   const char * const **groups, unsigned int *num_groups)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	*groups = info->functions[selector].groups;
+> +	*num_groups = info->functions[selector].ngroups;
+> +
+> +	return 0;
+> +}
+> +
+> +static int k230_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
+> +			unsigned int group)
+> +{
+> +	struct k230_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+> +	const struct k230_pin_conf *data = info->groups[group].data;
+> +	struct k230_pin_group *grp = &info->groups[group];
+> +	const unsigned int *pins = grp->pins;
+> +	struct regmap *regmap;
+> +	unsigned int value, mask;
+> +	int cnt, reg;
+> +
+> +	regmap = info->regmap_base;
+> +
+> +	for (cnt = 0; cnt < grp->num_pins; cnt++) {
+> +		reg = pins[cnt] * 4;
+> +		value = data[cnt].func << K230_SHIFT_SEL;
+> +		mask = K230_PC_SEL;
+> +		regmap_update_bits(regmap, reg, mask, value);
+> +		k230_pins[pins[cnt]].drv_data = grp;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct pinmux_ops k230_pmxops = {
+> +	.get_functions_count	= k230_get_functions_count,
+> +	.get_function_name	= k230_get_fname,
+> +	.get_function_groups	= k230_get_groups,
+> +	.set_mux		= k230_set_mux,
+> +	.strict			= true,
+> +};
+> +
+> +static int k230_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct k230_pinctrl *info;
+> +	struct pinctrl_desc *pctl;
+> +
+> +	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
+> +	if (!info)
+> +		return -ENOMEM;
+> +
+> +	pctl = &info->pctl;
+> +
+> +	pctl->name	= "k230-pinctrl";
+> +	pctl->owner	= THIS_MODULE;
+> +	pctl->pins	= k230_pins;
+> +	pctl->npins	= ARRAY_SIZE(k230_pins);
+> +	pctl->pctlops	= &k230_pctrl_ops;
+> +	pctl->pmxops	= &k230_pmxops;
+> +	pctl->confops	= &k230_pinconf_ops;
+> +
+> +	info->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(info->base))
+> +		return PTR_ERR(info->base);
+> +
+> +	k230_regmap_config.name = "canaan,pinctrl";
+
+Why this is not part of definition?
+
+> +	info->regmap_base = devm_regmap_init_mmio(dev, info->base,
+> +						  &k230_regmap_config);
+> +	if (IS_ERR(info->regmap_base))
+> +		return dev_err_probe(dev, PTR_ERR(info->regmap_base),
+> +				     "failed to init regmap\n");
+> +
+> +	info->pctl_dev = devm_pinctrl_register(dev, pctl, info);
+> +	if (IS_ERR(info->pctl_dev))
+> +		return dev_err_probe(dev, PTR_ERR(info->pctl_dev),
+> +				     "devm_pinctrl_register failed\n");
+> +
+> +	k230_pinctrl_parse_dt(pdev, info);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id k230_dt_ids[] = {
+> +	{ .compatible = "canaan,k230-pinctrl", },
+> +	{ /* sintenel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, k230_dt_ids);
+> +
+> +static struct platform_driver k230_pinctrl_driver = {
+> +	.probe = k230_pinctrl_probe,
+> +	.driver = {
+> +		.name = "k230-pinctrl",
+> +		.of_match_table = k230_dt_ids,
+> +	},
+> +};
+> +module_platform_driver(k230_pinctrl_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Ze Huang <18771902331@163.com>");
+> +MODULE_DESCRIPTION("Canaan K230 pinctrl driver");
+
+Best regards,
+Krzysztof
+
 
