@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-330671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC9F97A28A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:48:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EA897A28F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C1E1B21A25
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:48:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C7E1F22A0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BC3155CA5;
-	Mon, 16 Sep 2024 12:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45753155A25;
+	Mon, 16 Sep 2024 12:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FU017zB9"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="BjqVUNxJ"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E11152517
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B7D175AD;
+	Mon, 16 Sep 2024 12:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726490877; cv=none; b=IQo97M8Ty+jYZ3+o9IV3O/5MKMIMGuEjLNO3hxeM6fVM1mk0KqqTvzpC34r4JzRN8vprziP7QfuuMopL20q/ZZtGNhzbtsCZzDqUspG10qlvzpiGLrlEap1DHXid/up91XXMg2VO4rR1Ha4dUIE50gUb8Dow3L5iW8atXsuqswQ=
+	t=1726491214; cv=none; b=IGx0xrUyi1/q+s0InfMAI5FwNAb1qBaYcdsd6QjUhWSmHBQkq668gBQzT1H7mHigz/zvWbFm+fFU9NYBVVkCplHYiyXMlff0QythyX/ajAaDwhz/whbNKVOCMwgCaLEjyr1F0Pny6mVoODAB3NbbbQ36laPv6G3Ce7/d4I/xu5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726490877; c=relaxed/simple;
-	bh=jsbn+WmVH0Dzf5lO8SflvbPNnk9/a0RI84FKIQmQlCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SnRRzDFG0yxV9dUEfK0RvAkACSop1eHcHERMrabI8ShjBhB6rpYtdOTBtmv9HMZIrHQMk9OKnS2sgiPV7TNsEiAuQPxwqDSTiI0GhJFiilUbJPLXo3hwkCSG/U/S1IlTskG2+N9bAcgNNMESRvSkYDscE212A4rcgUt2G8JD7j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FU017zB9; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f759b87f83so47008261fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726490873; x=1727095673; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EwFsfsQ8QQ5I+uPaTEJavUH1NqV2xVXw1sAB8RhWP0w=;
-        b=FU017zB9cfUmAbtzi99jHnd0XYxfo8Pzb27vqAuZ8HBpWRTXFi1DuNYuF4f7iMc7rP
-         LZL6WKxMBeJTtR0pU5FOVIvOhvxp5FxiePSNCgNa1iVxTuizuveRzuL9u7xTOMwYdtmd
-         qyTJ3UjlLUTM8NmpSIEURKhj6VoFBFeuCk5SrWSSk434rVl6ipYjZmqP8tnYJiHerUBW
-         MG4HZgrGPt0sWJcxliTDUBEMA8eWqfARf+PTJy/7j07GMBv3epjQvUsWRkV9rl65bCsf
-         ZxV3YJQK7ywFZ6yvH070nhSu3hyXUM6Ks+W/jH3F3xtRZSueYhGcLh3Fu7YRWPZ1AWvn
-         0TXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726490873; x=1727095673;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EwFsfsQ8QQ5I+uPaTEJavUH1NqV2xVXw1sAB8RhWP0w=;
-        b=Kuz1djjh1WDEYeOXGXeCD0o5wdPb5RrDF4eKPYHGMGP6BauL8uOXAm49nrG2rFJgyk
-         lBIoUYcQxxUW/fXFYiBKOYplMyD0oIHH14fQ7LdcgKNBBzEh25uJHy0be27Oc9U0iuiO
-         p8+m/SW+2nNdwWWnmjv8MoH+/gplFa6RcG60p0SIiysZmRBI7MheZveMM6CT3RXLrrJS
-         cK2EpJ/T0oSKNfvRGCL37OmoRI/WeUNG1+sOKFvFIogkuvq16DFKGY6ZuCh3SGUeJ90Q
-         YWcz/xJXE2nxEVzDp5CsUW6tYcNYZJqPNh1ym584mdZdxqyTOdh2gMFANTPRc4wZiGn/
-         4BTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2/b5SNfvbyCxoh73Ch4+usCAy9EBjL0awu2YWjga5lLeOnJZyWKvwizatd7+Kj/aUqtABd4yYpk1cszk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx470Gf0MLj9W/qL1nWHADFO9ksK4logh89F3kW6SD9m2dT9K45
-	30Wo26jlFCBPIOoE9e/NHXtzvCv6zY2htFSmUA0K7C5nBCjRCKdAJbBgg6m/vjFk+tT9Zk971XO
-	blKv7EwLg+WGjEIzXXluNrQqlVNa4bZD8Ik1F
-X-Google-Smtp-Source: AGHT+IEJz/yX7vNGeXW9Mog5agAdXl6T4dtywfGdJ5ErW57HcTLB8Ws2OuR13PMxIldSMbIKSszIGMk8XbZ3BK5iOkY=
-X-Received: by 2002:a2e:bc0a:0:b0:2f3:b078:84bc with SMTP id
- 38308e7fff4ca-2f787dad3bamr83585811fa.4.1726490873175; Mon, 16 Sep 2024
- 05:47:53 -0700 (PDT)
+	s=arc-20240116; t=1726491214; c=relaxed/simple;
+	bh=HLymNuqFjZnzeoeHsrCrtSxnI2YrAArO6Tsir3ExCnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EN75Pv874B32LM5M4dPGiM981/8v11YlEWIs7QKsv6T0rt1FDJaCW4rpLyDIcvlJL4GM1Cw6klr+grjrS41MBAztcof3fIWg5I4hnvt7QLrT8QcOfn7pPMg5roE/Gr5BEtvaNVJMXORvw2VESuzSHDc95nw0sekUa3/YkvtKsOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=BjqVUNxJ; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=tMiUCsbSqV0wJLr8aEI7gjZHztOn8RrLSIUojGSjbP4=;
+	t=1726491212; x=1726923212; b=BjqVUNxJSuzvWtiUXwFVxGQiKKTMd5drK2SDh8vXdx5v5DF
+	e1jof6x60TsYMeZiF5z0g/NbCwAlSuGB3MyTl8Y0y2ef0QmdjchuDyZuftVh9ckbToyh7f6zzmfVe
+	rBdBhRXa6qUiX6IqP7YyErxhyEWkuE2g3wFo+8rVHHzV8MLKBZp439TjksYt1sFTyyD+yaYoJzbjL
+	9/5PRdxara4+dltXqZveF3gHT8p7yoU50MHfjxnN57fLyb1QlnNO8Gu4Qh28nf/WqeSsnOXydjv81
+	eq+eVbGZ11IloLCBqvIfSIQHWZNPDqrkIfHCYD/nY73GFLDmDFTkOppUSNRgcDfA==;
+Received: from [88.128.88.10] (helo=[10.226.192.63]); authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sqBEG-0003cI-Ux; Mon, 16 Sep 2024 14:53:22 +0200
+Message-ID: <a6ea491c-f238-4c84-a51a-3304f6781468@leemhuis.info>
+Date: Mon, 16 Sep 2024 14:53:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000060476705f07bbba5@google.com> <20221223120350.7af6afa2@kernel.org>
-In-Reply-To: <20221223120350.7af6afa2@kernel.org>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 16 Sep 2024 14:47:41 +0200
-Message-ID: <CACT4Y+YqsCqyWVYDgaEkW0DfUAVtq5sqK4vcvCLfW_6xY-DMEg@mail.gmail.com>
-Subject: Re: [syzbot] net-next build error (5)
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: syzbot <syzbot+e5341b984215b66e5b19@syzkaller.appspotmail.com>, 
-	davem@davemloft.net, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] Update of linux-firmware breaks wifi on Thinkpad T14
+To: Christian Heusel <christian@heusel.eu>, linux-firmware@kernel.org,
+ Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <44ae68d2-24b6-49d2-a4f9-ae9cbf6f9950@heusel.eu>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <44ae68d2-24b6-49d2-a4f9-ae9cbf6f9950@heusel.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1726491212;44e6644d;
+X-HE-SMSGID: 1sqBEG-0003cI-Ux
 
-On Fri, 23 Dec 2022 at 21:03, Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Fri, 23 Dec 2022 01:51:38 -0800 syzbot wrote:
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    1d330d4fa8ba net: alx: Switch to DEFINE_SIMPLE_DEV_PM_OPS(..
-> > git tree:       net-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=16c71ba3880000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=b0e91ad4b5f69c47
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=e5341b984215b66e5b19
-> > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+e5341b984215b66e5b19@syzkaller.appspotmail.com
-> >
-> > failed to run ["make" "-j" "64" "ARCH=x86_64" "bzImage"]: exit status 2
->
-> This is syzbot ooming during build or such? I don't see any error.
+On 16.09.24 12:49, Christian Heusel wrote:
+> 
+> the commit 82318c96 ("ath12k: WCN7850 hw2.0: update board-2.bin") in the
+> linux firmware repository apparently breaks card recognition in Thinkpad
+> T14 laptops with the following journal entries:
 
-Yes, it looks like it OOMed:
+TWIMC, another report (that is 5 minutes older :-D ) about this can be
+found here: https://lore.kernel.org/all/87bk0nc1yb.wl-tiwai%40suse.de
 
-  LD      vmlinux.o
-Killed
-make[1]: *** [scripts/Makefile.vmlinux_o:61: vmlinux.o] Error 137
+Ciao, Thorsten
 
-Filed https://github.com/google/syzkaller/issues/5317 for this.
+>     Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: failed to fetch board data for bus=pci,vendor=17cb,device=1107,subsystem-vendor=17aa,subsystem>
+>     Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: failed to fetch board.bin from WCN7850/hw2.0
+>     Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: qmi failed to load bdf:
+>     Sep 10 12:34:01 gdb-arch-t14-5 kernel: ath12k_pci 0000:02:00.0: qmi failed to load board data file:-2
+> 
+> Is there any more information you would need to debug this issue or does
+> the above already tell you enough?
+> 
+> This issue was discovered by Arch Linux Forum user "Mezzy12" with
+> debugging help from user "loqs" and me.
+> 
+> Regards,
+> Chris
+> 
+> [0]: https://bbs.archlinux.org/viewtopic.php?id=299286
+
 
