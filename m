@@ -1,447 +1,854 @@
-Return-Path: <linux-kernel+bounces-330117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4478D9799F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7D09799F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02DCA282FA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C71282FD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7F117BB7;
-	Mon, 16 Sep 2024 02:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EB9125BA;
+	Mon, 16 Sep 2024 02:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlweSP4g"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Wc5O+hWx"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838DB2F5E;
-	Mon, 16 Sep 2024 02:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84012A94F;
+	Mon, 16 Sep 2024 02:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726454478; cv=none; b=X06mYHXnSESC5ppOcR8T3jHoY4JJnH/913DJCJjZZgywMrJso9tEUOyaJfiR73hNWsa2Zd/p8xO40QxyZb5nOJEr59wQQaTspyDBMHgfbm4lqPYh0WIlq/J4EOmRRy9zHx1D76MfIn4uFLMM/Q8A1YydWztIGmpFf/aUCfhQGCE=
+	t=1726454603; cv=none; b=IZqwB3ZUCmAmpL770PAbBakjQ+H2XqPSZ6uyPLak4lU2CQom4rTXTUQx5KCfl2LaoZznbxZz5zw5blZNG1e8dLB9ea/8AmyMSvWhX2Fo0YI8X2llWjZlSgrFfvJAAIyTAHg+eGQtGvgvJmiNvJBKswcMo562FS4gjkkw+Ia6vzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726454478; c=relaxed/simple;
-	bh=WPv4EHBABijpb+Zm84aFlDpeJrBmPt126XFbkXi3p5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIsGAqM7xRAeMAYwxa8u0aTwdF325y6ddqC9bE6VCYkDvbo4XyRd5CLa0QdrgJ0XEpFpj0rdU+JCkqgnbAIxTdRiqlxugSz96XKh3D80pqAIBwTZ+RTSwz0nrUgQgTLtNKz5XcamarZVDiA1N9rNu3N4Gt+2EKKqw1n1fieOyaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlweSP4g; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-206e614953aso39451385ad.1;
-        Sun, 15 Sep 2024 19:41:16 -0700 (PDT)
+	s=arc-20240116; t=1726454603; c=relaxed/simple;
+	bh=nbEtqhZSTQ4in4Rf1xAWEnNPzyU6SIw/MXFbSU2ulYg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=egqMc30nX0kt/7YhnmpvOGXm8EKrgC9UQVTGvv0rdcclXGWKQalLYz0e3wEt2xyRw3OY7T3Hi2mn8oOuk3b6Sdkqf6Vg9v8iNAVWzAbXthSU4seNPo4O38vudsJziH/+uhWtgrMEO6FQ9WX69xxi+wsyK4f50awtwRL+2a+5VEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Wc5O+hWx; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726454476; x=1727059276; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mQ7bc5SqcE0TyYrB+t+d7+/GZbyQXftQ6Hsj5bON1WY=;
-        b=XlweSP4gX3PaOryaTBjIfil9imo7uVW4gLq0RRi7nmz2eUEN6AREWywkxsn0wMCZs9
-         LUxEg0aPc/2pCtf3NVhTe79QEQj0ScRfJT1oZ/Vb2DnIIw5MIU0LSkeLrJglg5s1Zq9b
-         e/69+s5dt2R6u0si2fm7c7c3FUcJRcahsMzgxS0ODKsMqQu/XwO0L7scooroou1hi3pu
-         arpVshWFEjqGStudGdHGoawI9a6d4ltPFhuzBuYjh0J5zW/Rhsmde9w8eQ7Ys1pecM8E
-         NnZzkz410OUT87S6WDQrn+qdG1N30aYkIlytwj+0STucrhmQD33McrQNZQTeFJOrgUHb
-         KkWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726454476; x=1727059276;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mQ7bc5SqcE0TyYrB+t+d7+/GZbyQXftQ6Hsj5bON1WY=;
-        b=b8bZzvRjEgvuRoETvQTOgpdQmoxZv+/q5I8P4drgfs3GWmJuoqFIGjS0EB2Y2O32w+
-         0Z7yGDZZAIEpf58/1RB0PGem2CBjDyl6dIHx6yRfi6fgQgvihb1JrA09vUgtPLal32Sq
-         TsZIZlzqL37UODvKLVFcWksQUDWavbou87pKx+TFc/88Us/koR56RoIFrmw3hdreLJ3v
-         RvzNucWYavn/pms1xSy4duF6ZYZjyWQUjRuqx2lPlMz0YtTtfDBuPcDoO6vTRChLsanh
-         mbyGtnFM1Vt9Qdt2Wbj5DKyda6XuW/88kqvoBvs2lfo5JxrDQEiKx60NHhJ+V3M/AHSL
-         YSgg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5y/RaobjCf8amN3VSo6BtgWkP8yzNADIHOPLE4fhXvEiF8GwzNtO11KUOklOJS6ZqSWTExiOrAG3S@vger.kernel.org, AJvYcCV9wWkckLoy7gGH0MElR1GGmGuCg6brFeYU5jN/ct4pY0e7NL1RJM/R5v7d+ltvzp7baeRuYezhLGTpew==@vger.kernel.org, AJvYcCVE3n3f/HbVfYM/Cyp7A+TUAOkfMqba86YdGcBGuYe+I0UJbwLb/xseOKydMkh3cSsdXbABuLJ368BXL7M5@vger.kernel.org, AJvYcCVUyIIy6vsk+t9IzVkKbAinFl5KILsTm99zzE4C02QqsEZC3Ro6mPEBGQxOBZqh6RZQmc1oc1jA+wVE@vger.kernel.org, AJvYcCVu4mHz54yhSsgkYiINm49yMYJb5yPJ/tCEj3w2dnRpP4doUrRm2NGtxLX7S/acicrEaFqTHl73FmEHKA2ZDQ==@vger.kernel.org, AJvYcCWwjT1PqYraab8fOJmSyvSH/zTTtjqnBNkjir2XHvO13cIDKN6swf4WhQt7X5sBz5g+PEVHTfznJUltRatF2rCa@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIrhLfEKTse1mBGDB5mhHgUl8UWdoZBbUQwYgdsT3uh7ZojLF3
-	oY4QgMI3TWpxey0zgOfXADuyxegS51Gm+wyT6appD76QiPODOAAq
-X-Google-Smtp-Source: AGHT+IHyg9ETyOh3qGNV5xRv1vfyKKfn6VYgML/Wb5aCl5WICkNwHMDNERLYbO7fqElfy2DB6QBQgw==
-X-Received: by 2002:a17:902:fc47:b0:205:94df:e087 with SMTP id d9443c01a7336-2076e31eb57mr193154645ad.9.1726454475246;
-        Sun, 15 Sep 2024 19:41:15 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db498f7073sm3277198a12.20.2024.09.15.19.41.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 19:41:14 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id D32814A358AE; Mon, 16 Sep 2024 09:41:09 +0700 (WIB)
-Date: Mon, 16 Sep 2024 09:41:09 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Deepak Gupta <debug@rivosinc.com>, paul.walmsley@sifive.com,
-	palmer@sifive.com, conor@kernel.org, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: corbet@lwn.net, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	robh@kernel.org, krzk+dt@kernel.org, oleg@redhat.com,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	peterz@infradead.org, akpm@linux-foundation.org, arnd@arndb.de,
-	ebiederm@xmission.com, kees@kernel.org, Liam.Howlett@oracle.com,
-	vbabka@suse.cz, lorenzo.stoakes@oracle.com, shuah@kernel.org,
-	brauner@kernel.org, samuel.holland@sifive.com, andy.chiu@sifive.com,
-	jerry.shih@sifive.com, greentime.hu@sifive.com,
-	charlie@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
-	xiao.w.wang@intel.com, ajones@ventanamicro.com, anup@brainfault.org,
-	mchitale@ventanamicro.com, atishp@rivosinc.com, sameo@rivosinc.com,
-	bjorn@rivosinc.com, alexghiti@rivosinc.com, david@redhat.com,
-	libang.li@antgroup.com, jszhang@kernel.org, leobras@redhat.com,
-	guoren@kernel.org, samitolvanen@google.com,
-	songshuaishuai@tinylab.org, costa.shul@redhat.com, bhe@redhat.com,
-	zong.li@sifive.com, puranjay@kernel.org, namcaov@gmail.com,
-	antonb@tenstorrent.com, sorear@fastmail.com,
-	quic_bjorande@quicinc.com, ancientmodern4@gmail.com,
-	ben.dooks@codethink.co.uk, quic_zhonhan@quicinc.com,
-	cuiyunhui@bytedance.com, yang.lee@linux.alibaba.com,
-	ke.zhao@shingroup.cn, sunilvl@ventanamicro.com,
-	tanzhasanwork@gmail.com, schwab@suse.de, dawei.li@shingroup.cn,
-	rppt@kernel.org, willy@infradead.org, usama.anjum@collabora.com,
-	osalvador@suse.de, ryan.roberts@arm.com, andrii@kernel.org,
-	alx@kernel.org, catalin.marinas@arm.com, broonie@kernel.org,
-	revest@chromium.org, bgray@linux.ibm.com, deller@gmx.de,
-	zev@bewilderbeest.net
-Subject: Re: [PATCH v4 28/30] riscv: Documentation for landing pad / indirect
- branch tracking
-Message-ID: <ZueaxRZgIf0crs4a@archie.me>
-References: <20240912231650.3740732-1-debug@rivosinc.com>
- <20240912231650.3740732-29-debug@rivosinc.com>
+	d=codeconstruct.com.au; s=2022a; t=1726454597;
+	bh=hdDo0nRy5KeTUYj4WS1cNjtgE/PFkXYuX36K9Cxx4nM=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=Wc5O+hWxmup7FbWK2VXMbpB1hPChZ2sySusjs8cyQJe7+sKRK2OLrpkdhMqAE6IUb
+	 uczABc24Pd6JSJJ3KQsDPAk4Quh+buJbPxRbaQ2frurrBnnXv4APF5Qf6aiaBxsy5Q
+	 ldpwZmHLG+1ZHjdZQU6nU/ntIwcpfvI6ae1VPx4uTSipES75P/TvTeh5tFpuN4IyJ3
+	 b71qGGu79c4BmrDMbfmKH/ZNBw1Nu6PfEwselMz0YforyyPvbWyUFvo7u9MtopM/GR
+	 dEdlrS87+oMCSKPs7bg5VlHXbhEawHlUgt+93b97MaQphV1HhMqpoT/Q3MDXN9eZff
+	 kAEyzsj+2unzw==
+Received: from [192.168.68.112] (ppp118-210-161-36.adl-adc-lon-bras34.tpg.internode.on.net [118.210.161.36])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7217665027;
+	Mon, 16 Sep 2024 10:43:16 +0800 (AWST)
+Message-ID: <07fd6855ef46f4815940187bd85c9b191e9054c2.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v3 3/6] gpio: aspeed: Create llops to handle hardware
+ access
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org, 
+	brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	joel@jms.id.au, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com, Peter.Yin@quantatw.com
+Date: Mon, 16 Sep 2024 12:13:15 +0930
+In-Reply-To: <20240913074325.239390-4-billy_tsai@aspeedtech.com>
+References: <20240913074325.239390-1-billy_tsai@aspeedtech.com>
+	 <20240913074325.239390-4-billy_tsai@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IJXqtcSEhuPy+P+r"
-Content-Disposition: inline
-In-Reply-To: <20240912231650.3740732-29-debug@rivosinc.com>
 
-
---IJXqtcSEhuPy+P+r
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Sep 12, 2024 at 04:16:47PM -0700, Deepak Gupta wrote:
-> Adding documentation on landing pad aka indirect branch tracking on riscv
-> and kernel interfaces exposed so that user tasks can enable it.
+On Fri, 2024-09-13 at 15:43 +0800, Billy Tsai wrote:
+> Add low-level operations (llops) to abstract the register access for GPIO
+> registers and the coprocessor request/release. With this abstraction
+> layer, the driver can separate the hardware and software logic, making it
+> easier to extend the driver to support different hardware register
+> layouts.
 >=20
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 > ---
->  Documentation/arch/riscv/zicfilp.rst | 104 +++++++++++++++++++++++++++
->  1 file changed, 104 insertions(+)
->  create mode 100644 Documentation/arch/riscv/zicfilp.rst
+>  drivers/gpio/gpio-aspeed.c | 366 ++++++++++++++++++-------------------
+>  1 file changed, 178 insertions(+), 188 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+> index d20e15b2079d..40ca308054c6 100644
+> --- a/drivers/gpio/gpio-aspeed.c
+> +++ b/drivers/gpio/gpio-aspeed.c
+> @@ -39,6 +39,10 @@ struct aspeed_bank_props {
+>  struct aspeed_gpio_config {
+>  	unsigned int nr_gpios;
+>  	const struct aspeed_bank_props *props;
+> +	const struct aspeed_gpio_llops *llops;
+> +	const int *debounce_timers_array;
+> +	int debounce_timers_num;
+> +	bool cmd_source_supoort;
 
-Don't forget to add toctree entry:
+Typo: s/cmd_source_supoort/cmd_source_support/
 
----- >8 ----
-diff --git a/Documentation/arch/riscv/index.rst b/Documentation/arch/riscv/=
-index.rst
-index eecf347ce84944..be7237b6968213 100644
---- a/Documentation/arch/riscv/index.rst
-+++ b/Documentation/arch/riscv/index.rst
-@@ -14,6 +14,7 @@ RISC-V architecture
-     uabi
-     vector
-     cmodx
-+    zicfilp
+However, this is a derived value. It can be inferred like:
 
-     features
+   static bool aspeed_gpio_supports_cmd_source(const struct aspeed_gpio_con=
+fig *config)
+   {
+       return config->llops->copro_request && config->llops->coproc_release=
+;
+   }
 
+Can we do that instead? That removes the opportunity for the member
+values to become unsynchronised in bad ways.
 
-> +Function pointers live in read-write memory and thus are susceptible to =
-corruption
-> +and allows an adversary to reach any program counter (PC) in address spa=
-ce. On
-> +RISC-V zicfilp extension enforces a restriction on such indirect control=
- transfers
+>  };
+> =20
+>  /*
+> @@ -178,6 +182,15 @@ enum aspeed_gpio_reg {
+>  	reg_cmdsrc1,
+>  };
+> =20
+> +struct aspeed_gpio_llops {
+> +	bool (*copro_request)(struct aspeed_gpio *gpio, unsigned int offset);
+> +	void (*copro_release)(struct aspeed_gpio *gpio, unsigned int offset);
+> +	void (*reg_bits_set)(struct aspeed_gpio *gpio, unsigned int offset,
+> +			     const enum aspeed_gpio_reg reg, u32 val);
+> +	u32 (*reg_bits_read)(struct aspeed_gpio *gpio, unsigned int offset,
+
+Guess I should have commented on this on v2, but maybe call this
+`reg_bits_get()` for symmetry with `reg_bits_set()`?
+
+I also have a comment on the use of "bits" in the member names below.
+
+> +			     const enum aspeed_gpio_reg reg);
+> +};
 > +
-> +	- indirect control transfers must land on a landing pad instruction `lp=
-ad`.
-> +	  There are two exception to this rule
-> +		- rs1 =3D x1 or rs1 =3D x5, i.e. a return from a function and returns =
-are
-> +		  protected using shadow stack (see zicfiss.rst)
+>  #define GPIO_VAL_VALUE	0x00
+>  #define GPIO_VAL_DIR	0x04
+> =20
+> @@ -237,10 +250,6 @@ static inline void __iomem *bank_reg(struct aspeed_g=
+pio *gpio,
+>  #define GPIO_OFFSET(x)	((x) & 0x1f)
+>  #define GPIO_BIT(x)	BIT(GPIO_OFFSET(x))
+> =20
+> -#define _GPIO_SET_DEBOUNCE(t, o, i) ((!!((t) & BIT(i))) << GPIO_OFFSET(o=
+))
+> -#define GPIO_SET_DEBOUNCE1(t, o) _GPIO_SET_DEBOUNCE(t, o, 1)
+> -#define GPIO_SET_DEBOUNCE2(t, o) _GPIO_SET_DEBOUNCE(t, o, 0)
+> -
+>  static const struct aspeed_gpio_bank *to_bank(unsigned int offset)
+>  {
+>  	unsigned int bank =3D GPIO_BANK(offset);
+> @@ -296,107 +305,56 @@ static inline bool have_output(struct aspeed_gpio =
+*gpio, unsigned int offset)
+>  }
+> =20
+>  static void aspeed_gpio_change_cmd_source(struct aspeed_gpio *gpio,
+> -					  const struct aspeed_gpio_bank *bank,
+> -					  int bindex, int cmdsrc)
+> +					  unsigned int offset,
+> +					  int cmdsrc)
+>  {
+> -	void __iomem *c0 =3D bank_reg(gpio, bank, reg_cmdsrc0);
+> -	void __iomem *c1 =3D bank_reg(gpio, bank, reg_cmdsrc1);
+> -	u32 bit, reg;
+> -
+>  	/*
+> -	 * Each register controls 4 banks, so take the bottom 2
+> -	 * bits of the bank index, and use them to select the
+> -	 * right control bit (0, 8, 16 or 24).
+> +	 * The command source register is only valid in bits 0, 8, 16, and 24, =
+so we use
+> +	 * (offset & ~(0x7)) to ensure that reg_bits_set always targets a valid=
+ bit.
+>  	 */
+> -	bit =3D BIT((bindex & 3) << 3);
+> -
+>  	/* Source 1 first to avoid illegal 11 combination */
+> -	reg =3D ioread32(c1);
+> -	if (cmdsrc & 2)
+> -		reg |=3D bit;
+> -	else
+> -		reg &=3D ~bit;
+> -	iowrite32(reg, c1);
+> -
+> +	gpio->config->llops->reg_bits_set(gpio, offset & ~(0x7), reg_cmdsrc1, !=
+!(cmdsrc & BIT(1)));
+>  	/* Then Source 0 */
+> -	reg =3D ioread32(c0);
+> -	if (cmdsrc & 1)
+> -		reg |=3D bit;
+> -	else
+> -		reg &=3D ~bit;
+> -	iowrite32(reg, c0);
+> +	gpio->config->llops->reg_bits_set(gpio, offset & ~(0x7), reg_cmdsrc0, !=
+!(cmdsrc & BIT(0)));
+>  }
+> =20
+>  static bool aspeed_gpio_copro_request(struct aspeed_gpio *gpio,
+>  				      unsigned int offset)
+>  {
+> -	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> -
+> -	if (!copro_ops || !gpio->cf_copro_bankmap)
+> -		return false;
+> -	if (!gpio->cf_copro_bankmap[offset >> 3])
+> -		return false;
+> -	if (!copro_ops->request_access)
+> -		return false;
+> +	if (gpio->config->llops->copro_request)
+> +		return gpio->config->llops->copro_request(gpio, offset);
+> =20
+> -	/* Pause the coprocessor */
+> -	copro_ops->request_access(copro_data);
+> -
+> -	/* Change command source back to ARM */
+> -	aspeed_gpio_change_cmd_source(gpio, bank, offset >> 3, GPIO_CMDSRC_ARM)=
+;
+> -
+> -	/* Update cache */
+> -	gpio->dcache[GPIO_BANK(offset)] =3D ioread32(bank_reg(gpio, bank, reg_r=
+data));
+> -
+> -	return true;
+> +	return false;
+>  }
+> =20
+>  static void aspeed_gpio_copro_release(struct aspeed_gpio *gpio,
+>  				      unsigned int offset)
+>  {
+> -	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> -
+> -	if (!copro_ops || !gpio->cf_copro_bankmap)
+> -		return;
+> -	if (!gpio->cf_copro_bankmap[offset >> 3])
+> -		return;
+> -	if (!copro_ops->release_access)
+> -		return;
+> -
+> -	/* Change command source back to ColdFire */
+> -	aspeed_gpio_change_cmd_source(gpio, bank, offset >> 3,
+> -				      GPIO_CMDSRC_COLDFIRE);
+> -
+> -	/* Restart the coprocessor */
+> -	copro_ops->release_access(copro_data);
+> +	if (gpio->config->llops->copro_release)
+> +		gpio->config->llops->copro_release(gpio, offset);
+>  }
+> =20
+>  static int aspeed_gpio_get(struct gpio_chip *gc, unsigned int offset)
+>  {
+>  	struct aspeed_gpio *gpio =3D gpiochip_get_data(gc);
+> -	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> =20
+> -	return !!(ioread32(bank_reg(gpio, bank, reg_val)) & GPIO_BIT(offset));
+> +	return gpio->config->llops->reg_bits_read(gpio, offset, reg_val);
+>  }
+> =20
+>  static void __aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
+>  			      int val)
+>  {
+>  	struct aspeed_gpio *gpio =3D gpiochip_get_data(gc);
+> -	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> -	void __iomem *addr;
+>  	u32 reg;
+> =20
+> -	addr =3D bank_reg(gpio, bank, reg_val);
+>  	reg =3D gpio->dcache[GPIO_BANK(offset)];
+> -
+>  	if (val)
+>  		reg |=3D GPIO_BIT(offset);
+>  	else
+>  		reg &=3D ~GPIO_BIT(offset);
+>  	gpio->dcache[GPIO_BANK(offset)] =3D reg;
+> =20
+> -	iowrite32(reg, addr);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_val, val);
+>  }
+> =20
+>  static void aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
+> @@ -404,7 +362,7 @@ static void aspeed_gpio_set(struct gpio_chip *gc, uns=
+igned int offset,
+>  {
+>  	struct aspeed_gpio *gpio =3D gpiochip_get_data(gc);
+>  	unsigned long flags;
+> -	bool copro;
+> +	bool copro =3D 0;
+
+Isn't this a dead store? If it's not, can we use `false` instead to
+align with the `bool` type?
+
+If it is a dead store can you please address the rest of the instances
+throughout the patch?
+
+> =20
+>  	raw_spin_lock_irqsave(&gpio->lock, flags);
+>  	copro =3D aspeed_gpio_copro_request(gpio, offset);
+> @@ -419,22 +377,16 @@ static void aspeed_gpio_set(struct gpio_chip *gc, u=
+nsigned int offset,
+>  static int aspeed_gpio_dir_in(struct gpio_chip *gc, unsigned int offset)
+>  {
+>  	struct aspeed_gpio *gpio =3D gpiochip_get_data(gc);
+> -	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> -	void __iomem *addr =3D bank_reg(gpio, bank, reg_dir);
+>  	unsigned long flags;
+> -	bool copro;
+> -	u32 reg;
+> +	bool copro =3D 0;
+> =20
+>  	if (!have_input(gpio, offset))
+>  		return -ENOTSUPP;
+> =20
+>  	raw_spin_lock_irqsave(&gpio->lock, flags);
+> =20
+> -	reg =3D ioread32(addr);
+> -	reg &=3D ~GPIO_BIT(offset);
+> -
+>  	copro =3D aspeed_gpio_copro_request(gpio, offset);
+> -	iowrite32(reg, addr);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_dir, 0);
+>  	if (copro)
+>  		aspeed_gpio_copro_release(gpio, offset);
+> =20
+> @@ -447,23 +399,17 @@ static int aspeed_gpio_dir_out(struct gpio_chip *gc=
+,
+>  			       unsigned int offset, int val)
+>  {
+>  	struct aspeed_gpio *gpio =3D gpiochip_get_data(gc);
+> -	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> -	void __iomem *addr =3D bank_reg(gpio, bank, reg_dir);
+>  	unsigned long flags;
+> -	bool copro;
+> -	u32 reg;
+> +	bool copro =3D 0;
+> =20
+>  	if (!have_output(gpio, offset))
+>  		return -ENOTSUPP;
+> =20
+>  	raw_spin_lock_irqsave(&gpio->lock, flags);
+> =20
+> -	reg =3D ioread32(addr);
+> -	reg |=3D GPIO_BIT(offset);
+> -
+>  	copro =3D aspeed_gpio_copro_request(gpio, offset);
+>  	__aspeed_gpio_set(gc, offset, val);
+> -	iowrite32(reg, addr);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_dir, 1);
+> =20
+>  	if (copro)
+>  		aspeed_gpio_copro_release(gpio, offset);
+> @@ -475,7 +421,6 @@ static int aspeed_gpio_dir_out(struct gpio_chip *gc,
+>  static int aspeed_gpio_get_direction(struct gpio_chip *gc, unsigned int =
+offset)
+>  {
+>  	struct aspeed_gpio *gpio =3D gpiochip_get_data(gc);
+> -	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+>  	unsigned long flags;
+>  	u32 val;
+> =20
+> @@ -487,7 +432,7 @@ static int aspeed_gpio_get_direction(struct gpio_chip=
+ *gc, unsigned int offset)
+> =20
+>  	raw_spin_lock_irqsave(&gpio->lock, flags);
+> =20
+> -	val =3D ioread32(bank_reg(gpio, bank, reg_dir)) & GPIO_BIT(offset);
+> +	val =3D gpio->config->llops->reg_bits_read(gpio, offset, reg_dir);
+> =20
+>  	raw_spin_unlock_irqrestore(&gpio->lock, flags);
+> =20
+> @@ -496,8 +441,7 @@ static int aspeed_gpio_get_direction(struct gpio_chip=
+ *gc, unsigned int offset)
+> =20
+>  static inline int irqd_to_aspeed_gpio_data(struct irq_data *d,
+>  					   struct aspeed_gpio **gpio,
+> -					   const struct aspeed_gpio_bank **bank,
+> -					   u32 *bit, int *offset)
+> +					   int *offset)
+>  {
+>  	struct aspeed_gpio *internal;
+> =20
+> @@ -510,32 +454,25 @@ static inline int irqd_to_aspeed_gpio_data(struct i=
+rq_data *d,
+>  		return -ENOTSUPP;
+> =20
+>  	*gpio =3D internal;
+> -	*bank =3D to_bank(*offset);
+> -	*bit =3D GPIO_BIT(*offset);
+> =20
+>  	return 0;
+>  }
+> =20
+>  static void aspeed_gpio_irq_ack(struct irq_data *d)
+>  {
+> -	const struct aspeed_gpio_bank *bank;
+>  	struct aspeed_gpio *gpio;
+>  	unsigned long flags;
+> -	void __iomem *status_addr;
+>  	int rc, offset;
+> -	bool copro;
+> -	u32 bit;
+> +	bool copro =3D 0;
+> =20
+> -	rc =3D irqd_to_aspeed_gpio_data(d, &gpio, &bank, &bit, &offset);
+> +	rc =3D irqd_to_aspeed_gpio_data(d, &gpio, &offset);
+>  	if (rc)
+>  		return;
+> =20
+> -	status_addr =3D bank_reg(gpio, bank, reg_irq_status);
+> -
+>  	raw_spin_lock_irqsave(&gpio->lock, flags);
+>  	copro =3D aspeed_gpio_copro_request(gpio, offset);
+> =20
+> -	iowrite32(bit, status_addr);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_irq_status, 1);
+> =20
+>  	if (copro)
+>  		aspeed_gpio_copro_release(gpio, offset);
+> @@ -544,20 +481,15 @@ static void aspeed_gpio_irq_ack(struct irq_data *d)
+> =20
+>  static void aspeed_gpio_irq_set_mask(struct irq_data *d, bool set)
+>  {
+> -	const struct aspeed_gpio_bank *bank;
+>  	struct aspeed_gpio *gpio;
+>  	unsigned long flags;
+> -	u32 reg, bit;
+> -	void __iomem *addr;
+>  	int rc, offset;
+> -	bool copro;
+> +	bool copro =3D 0;
+> =20
+> -	rc =3D irqd_to_aspeed_gpio_data(d, &gpio, &bank, &bit, &offset);
+> +	rc =3D irqd_to_aspeed_gpio_data(d, &gpio, &offset);
+>  	if (rc)
+>  		return;
+> =20
+> -	addr =3D bank_reg(gpio, bank, reg_irq_enable);
+> -
+>  	/* Unmasking the IRQ */
+>  	if (set)
+>  		gpiochip_enable_irq(&gpio->chip, irqd_to_hwirq(d));
+> @@ -565,12 +497,7 @@ static void aspeed_gpio_irq_set_mask(struct irq_data=
+ *d, bool set)
+>  	raw_spin_lock_irqsave(&gpio->lock, flags);
+>  	copro =3D aspeed_gpio_copro_request(gpio, offset);
+> =20
+> -	reg =3D ioread32(addr);
+> -	if (set)
+> -		reg |=3D bit;
+> -	else
+> -		reg &=3D ~bit;
+> -	iowrite32(reg, addr);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_irq_enable, set);
+> =20
+>  	if (copro)
+>  		aspeed_gpio_copro_release(gpio, offset);
+> @@ -596,34 +523,31 @@ static int aspeed_gpio_set_type(struct irq_data *d,=
+ unsigned int type)
+>  	u32 type0 =3D 0;
+>  	u32 type1 =3D 0;
+>  	u32 type2 =3D 0;
+> -	u32 bit, reg;
+> -	const struct aspeed_gpio_bank *bank;
+>  	irq_flow_handler_t handler;
+>  	struct aspeed_gpio *gpio;
+>  	unsigned long flags;
+> -	void __iomem *addr;
+>  	int rc, offset;
+> -	bool copro;
+> +	bool copro =3D 0;
+> =20
+> -	rc =3D irqd_to_aspeed_gpio_data(d, &gpio, &bank, &bit, &offset);
+> +	rc =3D irqd_to_aspeed_gpio_data(d, &gpio, &offset);
+>  	if (rc)
+>  		return -EINVAL;
+> =20
+>  	switch (type & IRQ_TYPE_SENSE_MASK) {
+>  	case IRQ_TYPE_EDGE_BOTH:
+> -		type2 |=3D bit;
+> +		type2 =3D 1;
+>  		fallthrough;
+>  	case IRQ_TYPE_EDGE_RISING:
+> -		type0 |=3D bit;
+> +		type0 =3D 1;
+>  		fallthrough;
+>  	case IRQ_TYPE_EDGE_FALLING:
+>  		handler =3D handle_edge_irq;
+>  		break;
+>  	case IRQ_TYPE_LEVEL_HIGH:
+> -		type0 |=3D bit;
+> +		type0 =3D 1;
+>  		fallthrough;
+>  	case IRQ_TYPE_LEVEL_LOW:
+> -		type1 |=3D bit;
+> +		type1 =3D 1;
+>  		handler =3D handle_level_irq;
+>  		break;
+>  	default:
+> @@ -633,20 +557,9 @@ static int aspeed_gpio_set_type(struct irq_data *d, =
+unsigned int type)
+>  	raw_spin_lock_irqsave(&gpio->lock, flags);
+>  	copro =3D aspeed_gpio_copro_request(gpio, offset);
+> =20
+> -	addr =3D bank_reg(gpio, bank, reg_irq_type0);
+> -	reg =3D ioread32(addr);
+> -	reg =3D (reg & ~bit) | type0;
+> -	iowrite32(reg, addr);
+> -
+> -	addr =3D bank_reg(gpio, bank, reg_irq_type1);
+> -	reg =3D ioread32(addr);
+> -	reg =3D (reg & ~bit) | type1;
+> -	iowrite32(reg, addr);
+> -
+> -	addr =3D bank_reg(gpio, bank, reg_irq_type2);
+> -	reg =3D ioread32(addr);
+> -	reg =3D (reg & ~bit) | type2;
+> -	iowrite32(reg, addr);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_irq_type0, type0);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_irq_type1, type1);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_irq_type2, type2);
+> =20
+>  	if (copro)
+>  		aspeed_gpio_copro_release(gpio, offset);
+> @@ -661,7 +574,6 @@ static void aspeed_gpio_irq_handler(struct irq_desc *=
+desc)
+>  {
+>  	struct gpio_chip *gc =3D irq_desc_get_handler_data(desc);
+>  	struct irq_chip *ic =3D irq_desc_get_chip(desc);
+> -	struct aspeed_gpio *data =3D gpiochip_get_data(gc);
+>  	unsigned int i, p, banks;
+>  	unsigned long reg;
+>  	struct aspeed_gpio *gpio =3D gpiochip_get_data(gc);
+> @@ -670,9 +582,7 @@ static void aspeed_gpio_irq_handler(struct irq_desc *=
+desc)
+> =20
+>  	banks =3D DIV_ROUND_UP(gpio->chip.ngpio, 32);
+>  	for (i =3D 0; i < banks; i++) {
+> -		const struct aspeed_gpio_bank *bank =3D &aspeed_gpio_banks[i];
+> -
+> -		reg =3D ioread32(bank_reg(data, bank, reg_irq_status));
+> +		reg =3D gpio->config->llops->reg_bits_read(gpio, i, reg_irq_status);
+> =20
+>  		for_each_set_bit(p, &reg, 32)
+>  			generic_handle_domain_irq(gc->irq.domain, i * 32 + p);
+> @@ -711,23 +621,12 @@ static int aspeed_gpio_reset_tolerance(struct gpio_=
+chip *chip,
+>  {
+>  	struct aspeed_gpio *gpio =3D gpiochip_get_data(chip);
+>  	unsigned long flags;
+> -	void __iomem *treg;
+> -	bool copro;
+> -	u32 val;
+> -
+> -	treg =3D bank_reg(gpio, to_bank(offset), reg_tolerance);
+> +	bool copro =3D 0;
+> =20
+>  	raw_spin_lock_irqsave(&gpio->lock, flags);
+>  	copro =3D aspeed_gpio_copro_request(gpio, offset);
+> =20
+> -	val =3D readl(treg);
+> -
+> -	if (enable)
+> -		val |=3D GPIO_BIT(offset);
+> -	else
+> -		val &=3D ~GPIO_BIT(offset);
+> -
+> -	writel(val, treg);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_tolerance, enable);
+> =20
+>  	if (copro)
+>  		aspeed_gpio_copro_release(gpio, offset);
+> @@ -821,21 +720,11 @@ static inline bool timer_allocation_registered(stru=
+ct aspeed_gpio *gpio,
+>  static void configure_timer(struct aspeed_gpio *gpio, unsigned int offse=
+t,
+>  		unsigned int timer)
+>  {
+> -	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> -	const u32 mask =3D GPIO_BIT(offset);
+> -	void __iomem *addr;
+> -	u32 val;
+> -
+>  	/* Note: Debounce timer isn't under control of the command
+>  	 * source registers, so no need to sync with the coprocessor
+>  	 */
+> -	addr =3D bank_reg(gpio, bank, reg_debounce_sel1);
+> -	val =3D ioread32(addr);
+> -	iowrite32((val & ~mask) | GPIO_SET_DEBOUNCE1(timer, offset), addr);
+> -
+> -	addr =3D bank_reg(gpio, bank, reg_debounce_sel2);
+> -	val =3D ioread32(addr);
+> -	iowrite32((val & ~mask) | GPIO_SET_DEBOUNCE2(timer, offset), addr);
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_debounce_sel1, !!(t=
+imer & BIT(1)));
+> +	gpio->config->llops->reg_bits_set(gpio, offset, reg_debounce_sel2, !!(t=
+imer & BIT(0)));
+>  }
+> =20
+>  static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
+> @@ -866,15 +755,15 @@ static int enable_debounce(struct gpio_chip *chip, =
+unsigned int offset,
+>  	}
+> =20
+>  	/* Try to find a timer already configured for the debounce period */
+> -	for (i =3D 1; i < ARRAY_SIZE(debounce_timers); i++) {
+> +	for (i =3D 1; i < gpio->config->debounce_timers_num; i++) {
+>  		u32 cycles;
+> =20
+> -		cycles =3D ioread32(gpio->base + debounce_timers[i]);
+> +		cycles =3D ioread32(gpio->base + gpio->config->debounce_timers_array[i=
+]);
+>  		if (requested_cycles =3D=3D cycles)
+>  			break;
+>  	}
+> =20
+> -	if (i =3D=3D ARRAY_SIZE(debounce_timers)) {
+> +	if (i =3D=3D gpio->config->debounce_timers_num) {
+>  		int j;
+> =20
+>  		/*
+> @@ -888,8 +777,8 @@ static int enable_debounce(struct gpio_chip *chip, un=
+signed int offset,
+> =20
+>  		if (j =3D=3D ARRAY_SIZE(gpio->timer_users)) {
+>  			dev_warn(chip->parent,
+> -					"Debounce timers exhausted, cannot debounce for period %luus\n",
+> -					usecs);
+> +				 "Debounce timers exhausted, cannot debounce for period %luus\n",
+> +				 usecs);
+> =20
+>  			rc =3D -EPERM;
+> =20
+> @@ -905,7 +794,7 @@ static int enable_debounce(struct gpio_chip *chip, un=
+signed int offset,
+> =20
+>  		i =3D j;
+> =20
+> -		iowrite32(requested_cycles, gpio->base + debounce_timers[i]);
+> +		iowrite32(requested_cycles, gpio->base + gpio->config->debounce_timers=
+_array[i]);
+>  	}
+> =20
+>  	if (WARN(i =3D=3D 0, "Cannot register index of disabled timer\n")) {
+> @@ -1008,6 +897,9 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *de=
+sc,
+>  	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+>  	unsigned long flags;
+> =20
+> +	if (!gpio->config->cmd_source_supoort)
+> +		return -EOPNOTSUPP;
 > +
-> +		- rs1 =3D x7. On RISC-V compiler usually does below to reach function
-> +		  which is beyond the offset possible J-type instruction.
+>  	if (!gpio->cf_copro_bankmap)
+>  		gpio->cf_copro_bankmap =3D kzalloc(gpio->chip.ngpio >> 3, GFP_KERNEL);
+>  	if (!gpio->cf_copro_bankmap)
+> @@ -1027,7 +919,7 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *de=
+sc,
+> =20
+>  	/* Switch command source */
+>  	if (gpio->cf_copro_bankmap[bindex] =3D=3D 1)
+> -		aspeed_gpio_change_cmd_source(gpio, bank, bindex,
+> +		aspeed_gpio_change_cmd_source(gpio, offset,
+>  					      GPIO_CMDSRC_COLDFIRE);
+> =20
+>  	if (vreg_offset)
+> @@ -1051,9 +943,11 @@ int aspeed_gpio_copro_release_gpio(struct gpio_desc=
+ *desc)
+>  	struct gpio_chip *chip =3D gpiod_to_chip(desc);
+>  	struct aspeed_gpio *gpio =3D gpiochip_get_data(chip);
+>  	int rc =3D 0, bindex, offset =3D gpio_chip_hwgpio(desc);
+> -	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+>  	unsigned long flags;
+> =20
+> +	if (!gpio->config->cmd_source_supoort)
+> +		return -EOPNOTSUPP;
 > +
-> +			"auipc x7, <imm>"
-> +			"jalr (x7)"
+>  	if (!gpio->cf_copro_bankmap)
+>  		return -ENXIO;
+> =20
+> @@ -1072,7 +966,7 @@ int aspeed_gpio_copro_release_gpio(struct gpio_desc =
+*desc)
+> =20
+>  	/* Switch command source */
+>  	if (gpio->cf_copro_bankmap[bindex] =3D=3D 0)
+> -		aspeed_gpio_change_cmd_source(gpio, bank, bindex,
+> +		aspeed_gpio_change_cmd_source(gpio, offset,
+>  					      GPIO_CMDSRC_ARM);
+>   bail:
+>  	raw_spin_unlock_irqrestore(&gpio->lock, flags);
+> @@ -1082,12 +976,10 @@ EXPORT_SYMBOL_GPL(aspeed_gpio_copro_release_gpio);
+> =20
+>  static void aspeed_gpio_irq_print_chip(struct irq_data *d, struct seq_fi=
+le *p)
+>  {
+> -	const struct aspeed_gpio_bank *bank;
+>  	struct aspeed_gpio *gpio;
+> -	u32 bit;
+>  	int rc, offset;
+> =20
+> -	rc =3D irqd_to_aspeed_gpio_data(d, &gpio, &bank, &bit, &offset);
+> +	rc =3D irqd_to_aspeed_gpio_data(d, &gpio, &offset);
+>  	if (rc)
+>  		return;
+> =20
+> @@ -1104,6 +996,78 @@ static const struct irq_chip aspeed_gpio_irq_chip =
+=3D {
+>  	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+>  };
+> =20
+> +static void aspeed_g4_reg_bits_set(struct aspeed_gpio *gpio, unsigned in=
+t offset,
+> +				   const enum aspeed_gpio_reg reg, u32 val)
+> +{
+> +	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> +	void __iomem *addr =3D bank_reg(gpio, bank, reg);
+> +	u32 temp;
 > +
-> +		  Such form of indirect control transfer are still immutable and don't=
- rely
-> +		  on memory and thus rs1=3Dx7 is exempted from tracking and considered=
- software
-> +		  guarded jumps.
+> +	temp =3D ioread32(addr);
+> +	if (val)
+> +		temp |=3D GPIO_BIT(offset);
+> +	else
+> +		temp &=3D ~GPIO_BIT(offset);
 
-Sphinx reports new htmldocs warnings:
-
-Documentation/arch/riscv/zicfilp.rst:30: ERROR: Unexpected indentation.
-Documentation/arch/riscv/zicfilp.rst:96: ERROR: Unexpected indentation.=09
-
-I have to fix up the lists:
-
----- >8 ----
-diff --git a/Documentation/arch/riscv/zicfilp.rst b/Documentation/arch/risc=
-v/zicfilp.rst
-index 23013ee711ac2c..c0fad1b5caa3d8 100644
---- a/Documentation/arch/riscv/zicfilp.rst
-+++ b/Documentation/arch/riscv/zicfilp.rst
-@@ -23,22 +23,24 @@ flow integrity (CFI) of the program.
-
- Function pointers live in read-write memory and thus are susceptible to co=
-rruption
- and allows an adversary to reach any program counter (PC) in address space=
-=2E On
--RISC-V zicfilp extension enforces a restriction on such indirect control t=
-ransfers
-+RISC-V zicfilp extension enforces a restriction on such indirect control
-+transfers:
-
--	- indirect control transfers must land on a landing pad instruction `lpad=
-`.
--	  There are two exception to this rule
--		- rs1 =3D x1 or rs1 =3D x5, i.e. a return from a function and returns are
--		  protected using shadow stack (see zicfiss.rst)
-+- indirect control transfers must land on a landing pad instruction `lpad`.
-+  There are two exception to this rule:
-
--		- rs1 =3D x7. On RISC-V compiler usually does below to reach function
--		  which is beyond the offset possible J-type instruction.
-+  - rs1 =3D x1 or rs1 =3D x5, i.e. a return from a function and returns are
-+    protected using shadow stack (see zicfiss.rst)
-
--			"auipc x7, <imm>"
--			"jalr (x7)"
-+  - rs1 =3D x7. On RISC-V compiler usually does below to reach function
-+    which is beyond the offset possible J-type instruction.
-
--		  Such form of indirect control transfer are still immutable and don't r=
-ely
--		  on memory and thus rs1=3Dx7 is exempted from tracking and considered s=
-oftware
--		  guarded jumps.
-+      "auipc x7, <imm>"
-+      "jalr (x7)"
-+
-+    Such form of indirect control transfer are still immutable and don't r=
-ely
-+    on memory and thus rs1=3Dx7 is exempted from tracking and considered s=
-oftware
-+    guarded jumps.
-
- `lpad` instruction is pseudo of `auipc rd, <imm_20bit>` with `rd=3Dx0`` an=
-d is a HINT
- nop. `lpad` instruction must be aligned on 4 byte boundary and compares 20=
- bit
-@@ -92,10 +94,11 @@ to lock current settings.
- --------------------------------------------------
-
- Pertaining to indirect branch tracking, CPU raises software check exceptio=
-n in
--following conditions
--	- missing `lpad` after indirect call / jmp
--	- `lpad` not on 4 byte boundary
--	- `imm_20bit` embedded in `lpad` instruction doesn't match with `x7`
-+following conditions:
-+
-+- missing `lpad` after indirect call / jmp
-+- `lpad` not on 4 byte boundary
-+- `imm_20bit` embedded in `lpad` instruction doesn't match with `x7`
-
- In all 3 cases, `*tval =3D 2` is captured and software check exception is =
-raised
- (cause=3D18)
-
+Perhaps the type of `val` should be `bool` for now to indicate it can
+only handle a single bit? Maybe "_bits_" in the function names is
+unhelpful too, and that should be just "_bit_"?
 
 > +
-> +`lpad` instruction is pseudo of `auipc rd, <imm_20bit>` with `rd=3Dx0`` =
-and is a HINT
-> +nop. `lpad` instruction must be aligned on 4 byte boundary and compares =
-20 bit
-> +immediate withx7. If `imm_20bit` =3D=3D 0, CPU don't perform any compari=
-sion with x7. If
-> +`imm_20bit` !=3D 0, then `imm_20bit` must match x7 else CPU will raise
-> +`software check exception` (cause=3D18)with `*tval =3D 2`.
+> +	iowrite32(temp, addr);
+> +}
+> +
+> +static u32 aspeed_g4_reg_bits_read(struct aspeed_gpio *gpio, unsigned in=
+t offset,
+> +				   const enum aspeed_gpio_reg reg)
+> +{
+> +	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> +	void __iomem *addr =3D bank_reg(gpio, bank, reg);
+> +
+> +	if (reg =3D=3D reg_rdata)
+> +		return ioread32(addr);
+> +	return !!(ioread32(addr) & GPIO_BIT(offset));
+> +}
+> +
+> +static bool aspeed_g4_copro_request(struct aspeed_gpio *gpio, unsigned i=
+nt offset)
+> +{
+> +	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> +
+> +	if (!copro_ops || !gpio->cf_copro_bankmap)
+> +		return false;
+> +	if (!gpio->cf_copro_bankmap[offset >> 3])
+> +		return false;
+> +	if (!copro_ops->request_access)
+> +		return false;
+> +
+> +	/* Pause the coprocessor */
+> +	copro_ops->request_access(copro_data);
+> +
+> +	/* Change command source back to ARM */
+> +	aspeed_gpio_change_cmd_source(gpio, offset, GPIO_CMDSRC_ARM);
+> +
+> +	/* Update cache */
+> +	gpio->dcache[GPIO_BANK(offset)] =3D ioread32(bank_reg(gpio, bank, reg_r=
+data));
+> +
+> +	return true;
+> +}
+> +
+> +static void aspeed_g4_copro_release(struct aspeed_gpio *gpio, unsigned i=
+nt offset)
+> +{
+> +	if (!copro_ops || !gpio->cf_copro_bankmap)
+> +		return;
+> +	if (!gpio->cf_copro_bankmap[offset >> 3])
+> +		return;
+> +	if (!copro_ops->release_access)
+> +		return;
+> +
+> +	/* Change command source back to ColdFire */
+> +	aspeed_gpio_change_cmd_source(gpio, offset, GPIO_CMDSRC_COLDFIRE);
+> +
+> +	/* Restart the coprocessor */
+> +	copro_ops->release_access(copro_data);
+> +}
+> +
+> +static const struct aspeed_gpio_llops aspeed_g4_llops =3D {
+> +	.copro_request =3D aspeed_g4_copro_request,
+> +	.copro_release =3D aspeed_g4_copro_release,
+> +	.reg_bits_set =3D aspeed_g4_reg_bits_set,
+> +	.reg_bits_read =3D aspeed_g4_reg_bits_read,
+> +};
+>  /*
+>   * Any banks not specified in a struct aspeed_bank_props array are assum=
+ed to
+>   * have the properties:
+> @@ -1120,7 +1084,14 @@ static const struct aspeed_bank_props ast2400_bank=
+_props[] =3D {
+> =20
+>  static const struct aspeed_gpio_config ast2400_config =3D
+>  	/* 220 for simplicity, really 216 with two 4-GPIO holes, four at end */
+> -	{ .nr_gpios =3D 220, .props =3D ast2400_bank_props, };
+> +	{
+> +		.nr_gpios =3D 220,
+> +		.props =3D ast2400_bank_props,
+> +		.llops =3D &aspeed_g4_llops,
+> +		.debounce_timers_array =3D debounce_timers,
+> +		.debounce_timers_num =3D ARRAY_SIZE(debounce_timers),
+> +		.cmd_source_supoort =3D true,
+> +	};
+> =20
+>  static const struct aspeed_bank_props ast2500_bank_props[] =3D {
+>  	/*     input	  output   */
+> @@ -1132,7 +1103,14 @@ static const struct aspeed_bank_props ast2500_bank=
+_props[] =3D {
+> =20
+>  static const struct aspeed_gpio_config ast2500_config =3D
+>  	/* 232 for simplicity, actual number is 228 (4-GPIO hole in GPIOAB) */
+> -	{ .nr_gpios =3D 232, .props =3D ast2500_bank_props, };
+> +	{
+> +		.nr_gpios =3D 232,
+> +		.props =3D ast2500_bank_props,
+> +		.llops =3D &aspeed_g4_llops,
+> +		.debounce_timers_array =3D debounce_timers,
+> +		.debounce_timers_num =3D ARRAY_SIZE(debounce_timers),
+> +		.cmd_source_supoort =3D true,
+> +	};
+> =20
+>  static const struct aspeed_bank_props ast2600_bank_props[] =3D {
+>  	/*     input	  output   */
+> @@ -1148,7 +1126,14 @@ static const struct aspeed_gpio_config ast2600_con=
+fig =3D
+>  	 * We expect ngpio being set in the device tree and this is a fallback
+>  	 * option.
+>  	 */
+> -	{ .nr_gpios =3D 208, .props =3D ast2600_bank_props, };
+> +	{
+> +		.nr_gpios =3D 208,
+> +		.props =3D ast2600_bank_props,
+> +		.llops =3D &aspeed_g4_llops,
+> +		.debounce_timers_array =3D debounce_timers,
+> +		.debounce_timers_num =3D ARRAY_SIZE(debounce_timers),
+> +		.cmd_source_supoort =3D true,
+> +	};
+> =20
+>  static const struct of_device_id aspeed_gpio_of_table[] =3D {
+>  	{ .compatible =3D "aspeed,ast2400-gpio", .data =3D &ast2400_config, },
+> @@ -1191,6 +1176,9 @@ static int __init aspeed_gpio_probe(struct platform=
+_device *pdev)
+> =20
+>  	gpio->config =3D gpio_id->data;
+> =20
+> +	if (!gpio->config->llops->reg_bits_set || !gpio->config->llops->reg_bit=
+s_read)
+> +		return -EOPNOTSUPP;
 > +
 
-Also inline identifiers/keywords to be consistent with rest of riscv docs:
+Hmm, not quite sure about -EOPNOTSUPP. -EINVAL might be better. Given
+it's a programming error I think it deserves a log message as well, as
+ultimately it should never be hit, and if it is we want to clear up the
+confusion quickly.
 
----- >8 ----
-diff --git a/Documentation/arch/riscv/zicfilp.rst b/Documentation/arch/risc=
-v/zicfilp.rst
-index c0fad1b5caa3d8..b0a766098f2335 100644
---- a/Documentation/arch/riscv/zicfilp.rst
-+++ b/Documentation/arch/riscv/zicfilp.rst
-@@ -26,38 +26,38 @@ and allows an adversary to reach any program counter (P=
-C) in address space. On
- RISC-V zicfilp extension enforces a restriction on such indirect control
- transfers:
-
--- indirect control transfers must land on a landing pad instruction `lpad`.
-+- indirect control transfers must land on a landing pad instruction ``lpad=
-``.
-   There are two exception to this rule:
-
-   - rs1 =3D x1 or rs1 =3D x5, i.e. a return from a function and returns are
-     protected using shadow stack (see zicfiss.rst)
-
-   - rs1 =3D x7. On RISC-V compiler usually does below to reach function
--    which is beyond the offset possible J-type instruction.
-+    which is beyond the offset possible J-type instruction::
-
--      "auipc x7, <imm>"
--      "jalr (x7)"
-+      auipc x7, <imm>
-+      jalr (x7)
-
-     Such form of indirect control transfer are still immutable and don't r=
-ely
-     on memory and thus rs1=3Dx7 is exempted from tracking and considered s=
-oftware
-     guarded jumps.
-
--`lpad` instruction is pseudo of `auipc rd, <imm_20bit>` with `rd=3Dx0`` an=
-d is a HINT
--nop. `lpad` instruction must be aligned on 4 byte boundary and compares 20=
- bit
--immediate withx7. If `imm_20bit` =3D=3D 0, CPU don't perform any comparisi=
-on with x7. If
--`imm_20bit` !=3D 0, then `imm_20bit` must match x7 else CPU will raise
--`software check exception` (cause=3D18)with `*tval =3D 2`.
-+``lpad`` instruction is pseudo of ``auipc rd, <imm_20bit>`` with ``rd=3Dx0=
-`` and
-+is a HINT nop. ``lpad`` instruction must be aligned on 4 byte boundary and
-+compares 20 bit immediate with x7. If ``imm_20bit`` =3D=3D 0, CPU don't pe=
-rform any
-+comparision with x7. If ``imm_20bit`` !=3D 0, then ``imm_20bit`` must matc=
-h x7
-+else CPU will raise software check exception (cause=3D18) with ``*tval =3D=
- 2``.
-
- Compiler can generate a hash over function signatures and setup them (trun=
-cated
--to 20bit) in x7 at callsites and function prologues can have `lpad` with s=
-ame
-+to 20bit) in x7 at callsites and function prologues can have ``lpad`` with=
- same
- function hash. This further reduces number of program counters a call site=
- can
- reach.
-
- 2. ELF and psABI
- -----------------
-
--Toolchain sets up `GNU_PROPERTY_RISCV_FEATURE_1_FCFI` for property
--`GNU_PROPERTY_RISCV_FEATURE_1_AND` in notes section of the object file.
-+Toolchain sets up ``GNU_PROPERTY_RISCV_FEATURE_1_FCFI`` for property
-+``GNU_PROPERTY_RISCV_FEATURE_1_AND`` in notes section of the object file.
-
- 3. Linux enabling
- ------------------
-@@ -70,25 +70,26 @@ indirect branch tracking for the program.
- 4. prctl() enabling
- --------------------
-
--`PR_SET_INDIR_BR_LP_STATUS` / `PR_GET_INDIR_BR_LP_STATUS` /
--`PR_LOCK_INDIR_BR_LP_STATUS` are three prctls added to manage indirect bra=
-nch
-+``PR_SET_INDIR_BR_LP_STATUS`` / ``PR_GET_INDIR_BR_LP_STATUS`` /
-+``PR_LOCK_INDIR_BR_LP_STATUS`` are three prctls added to manage indirect b=
-ranch
- tracking. prctls are arch agnostic and returns -EINVAL on other arches.
-
--`PR_SET_INDIR_BR_LP_STATUS`: If arg1 `PR_INDIR_BR_LP_ENABLE` and if CPU su=
-pports
--`zicfilp` then kernel will enabled indirect branch tracking for the task.
--Dynamic loader can issue this `prctl` once it has determined that all the =
-objects
--loaded in address space support indirect branch tracking. Additionally if =
-there is
--a `dlopen` to an object which wasn't compiled with `zicfilp`, dynamic load=
-er can
--issue this prctl with arg1 set to 0 (i.e. `PR_INDIR_BR_LP_ENABLE` being cl=
-ear)
-+``PR_SET_INDIR_BR_LP_STATUS``: If arg1 ``PR_INDIR_BR_LP_ENABLE`` and if CPU
-+supports ``zicfilp`` then kernel will enabled indirect branch tracking for=
- the
-+task. Dynamic loader can issue this ``prctl`` once it has determined that =
-all
-+the objects loaded in address space support indirect branch tracking.
-+Additionally if there is a ``dlopen`` to an object which wasn't compiled w=
-ith
-+``zicfilp``, dynamic loader can issue this prctl with arg1 set to 0 (i.e.
-+``PR_INDIR_BR_LP_ENABLE`` being clear)
-
--`PR_GET_INDIR_BR_LP_STATUS`: Returns current status of indirect branch tra=
-cking.
--If enabled it'll return `PR_INDIR_BR_LP_ENABLE`
-+``PR_GET_INDIR_BR_LP_STATUS``: Returns current status of indirect branch
-+tracking. If enabled it'll return ``PR_INDIR_BR_LP_ENABLE``
-
--`PR_LOCK_INDIR_BR_LP_STATUS`: Locks current status of indirect branch trac=
-king on
--the task. User space may want to run with strict security posture and woul=
-dn't want
--loading of objects without `zicfilp` support in it and thus would want to =
-disallow
--disabling of indirect branch tracking. In that case user space can use thi=
-s prctl
--to lock current settings.
-+``PR_LOCK_INDIR_BR_LP_STATUS``: Locks current status of indirect branch
-+tracking on the task. User space may want to run with strict security post=
-ure
-+and wouldn't want loading of objects without ``zicfilp`` support in it and=
- thus
-+would want to disallow disabling of indirect branch tracking. In that case=
- user
-+space can use this prctl to lock current settings.
-
- 5. violations related to indirect branch tracking
- --------------------------------------------------
-@@ -96,12 +97,12 @@ to lock current settings.
- Pertaining to indirect branch tracking, CPU raises software check exceptio=
-n in
- following conditions:
-
--- missing `lpad` after indirect call / jmp
--- `lpad` not on 4 byte boundary
--- `imm_20bit` embedded in `lpad` instruction doesn't match with `x7`
-+- missing ``lpad`` after indirect call / jmp
-+- ``lpad`` not on 4 byte boundary
-+- ``imm_20bit`` embedded in ``lpad`` instruction doesn't match with x7
-
--In all 3 cases, `*tval =3D 2` is captured and software check exception is =
-raised
-+In all 3 cases, ``*tval =3D 2`` is captured and software check exception i=
-s raised
- (cause=3D18)
-
--Linux kernel will treat this as `SIGSEV`` with code =3D `SEGV_CPERR` and f=
-ollow
-+Linux kernel will treat this as ``SIGSEV`` with code =3D ``SEGV_CPERR`` an=
-d follow
- normal course of signal delivery.
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---IJXqtcSEhuPy+P+r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZueawQAKCRD2uYlJVVFO
-o72rAP0f2qcQlNSisvlhhZn9AoKwhyuBcmQUB3iNJOvDWNAp/gD7BxOWxP3cyxbX
-Y3SfLQ1Amz7nw/R2vuD/vMlR498G6Ak=
-=GJtS
------END PGP SIGNATURE-----
-
---IJXqtcSEhuPy+P+r--
+Andrew
 
