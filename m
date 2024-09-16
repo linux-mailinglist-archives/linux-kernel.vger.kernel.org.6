@@ -1,253 +1,433 @@
-Return-Path: <linux-kernel+bounces-330192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F78979ABA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:25:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B169979ABF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DDE21C21DAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C2F282715
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9283E47B;
-	Mon, 16 Sep 2024 05:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="DDyNIUed"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBA1200A3;
+	Mon, 16 Sep 2024 05:27:27 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159151F61C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AF31C6A1
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726464311; cv=none; b=soVnCE/JaM6GAKDbPMbkjRHu/UIKMRjaVxKH4J5ncddyWQzzcgBVOB2WnejiGC1634LXSIUmTf7vQ7rH4HUAgczyFVYsVq3e6bVAWT6Wqgo4KwBmwirWWLAkHtIoxRId9fVWk1+bp0PYLClMLH/bq3KxkGykEK1ro9jmypI+2sc=
+	t=1726464446; cv=none; b=IE1gF3BWebHzjR0z2t+c+AycAhglG8zJ4osdTw+GYmhEW5nW0vXfAY7+RvlIGYO9lG4hpjFrOnD2mAI+mzQHDMdyuALa50/xmB2G19HOG80sN5jhtEL8WpxK8XebuyXkbDgzPdAuYz1SYwZaK0Uf5FI1Iu+Errhpwzwz5/oXDJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726464311; c=relaxed/simple;
-	bh=PhJ/SoT4Su2eCZ3H9ERTVVKe4Gr+MBCEFQis4hJXPUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dMXh2e0w45DzRNDpXsP9EvagJI0zEWUYkwwS2df/826FhgzLTt11K+Lq0N1Tuy1SvphZZvHvYzUa1YxJw6aPfS9MRRUwacIA+WhujcnwBTqboUEgQkFBkNbxWOxAXV4fWd7HKDEBDV0100n/uKlUcSh/t/krSkX2saLBA3aEYVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=DDyNIUed; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7db637d1e4eso56326a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 22:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726464309; x=1727069109; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t95e1qcO4+iPyF80N5QwYplS3cfQKDQlUQ1sYj2roR8=;
-        b=DDyNIUedvasIB61jCxDVj6dfDkDxTgW5krMgI0ALuUs9549+f4N8VA2tnaiJQB6d7q
-         zfFaU+oJvVUovpt6JyHFZEvUq/S4ehh1waCO7PzMebt7UHL4ke62xZhsNy0eERCVEdbR
-         bRwu3xWE4ERi5iNG3rbZEkTjkO30WVlfx/nBqsuazpT0Vap8suUG8YdqXmw5N3eSm0Tu
-         mk6QhcW3AUD4tcbgOMM+7ttNBHBfmpX8n2QXizJGbrkOcB6uEs3P7/vDtsOWpfa3A/el
-         /CXuhTJgQ/DsWKhGpJhsfKLiR+c7MxvJxMtN9EgZgbiWalqWRx0/uaDQuQml6cIOZtiU
-         dW6g==
+	s=arc-20240116; t=1726464446; c=relaxed/simple;
+	bh=TsTXms7Oaem88xMbZkhnJUWIscJd+QE/qIKPYMcNNuY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kv8qLBMpyMTltrGta65I3AfYplqyHMNViK+7fwxWGU/Ofj+WT626hsj7JDjBa3RyDFIo9xE3h+0NqcVZdRHzrEzwx0v4Upv90zM3vUFExOnXd7zYEX61HwB1bsRsesN8NGE0wi+1jP9g66SMmSTAZfIqF75ak7B5+tT2eg6BqpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a099015de4so33651695ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 22:27:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726464309; x=1727069109;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t95e1qcO4+iPyF80N5QwYplS3cfQKDQlUQ1sYj2roR8=;
-        b=t4d/T3P2xSFpe62t+RFNTuW9jAqF/rGbYgEd92I1nPvEqEn/DhF8g73PeWK6ZUEd7s
-         uMNvobA8jsqBQYP9d34r6EK5pYxBftqvYyu9VqN8Bf/vt+qGSXlzc8NuiQtdMJ6UcD0e
-         ASO+p/QuGRNiP33WwfOq2oH9xzbAx16nhkV6EtIsxvv0x9+MdYfWWC2FUs6rLh5yXAmG
-         TNlt97hpMjS83Gkkk3kgoQJWbox3qp09kByk9SN0TS1NVLXmxycXunMFLCfkYJ2CLN8j
-         0kTJWeZUNpmWmMeQYITGNF12XM7XVE0+hgcTGcH1MmM0BFOEWIUX5/DhAIbyk5qek6/O
-         AjXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIDvZz2RBRoK0CmEk21sPIRTxFfMbHQyCj+GkjWAJu67FaCUMkzCNHDsIV6OAujVhBcXp2u4PzMHBPkuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzL33ul8C8un7HkHIgdSsqEoueI4JU6mAny4di7C/GA7Kb7Sxb
-	KWf6/ZX4BF+VRSR4hOGvY4CIqrxlN6/ouRzrPJVIWwUDGReg7f4nMT6G0W6ycxA=
-X-Google-Smtp-Source: AGHT+IEHGbm4xNdN5V7XtNCeTolX7s6jFjSEe/NND3t9+4BGW16UNLZLW4kw1PWvx4PK910j+Os2uQ==
-X-Received: by 2002:a05:6a21:e97:b0:1cf:337e:9919 with SMTP id adf61e73a8af0-1cf75ebadf6mr18034189637.16.1726464309278;
-        Sun, 15 Sep 2024 22:25:09 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4998fb22sm3455524a12.65.2024.09.15.22.25.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 22:25:08 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sq4EU-005nVa-1M;
-	Mon, 16 Sep 2024 15:25:06 +1000
-Date: Mon, 16 Sep 2024 15:25:06 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <ZufBMioqpwjSFul+@dread.disaster.area>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
- <87frqf2smy.fsf@gmail.com>
- <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
- <Ztom6uI0L4uEmDjT@dread.disaster.area>
- <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
- <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
- <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
+        d=1e100.net; s=20230601; t=1726464444; x=1727069244;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VAkV9PjxebjmDBJ8IWui3MW5TyFqC24e/YDUGMyA/PQ=;
+        b=m4OnDoO2Y9ffIH5NVEu8hZbEwf2t6Xxf8frET+eLlEmjYQJPQoEyqD2h+cT7QBblHJ
+         +iP49sfS0cpR3ABgD3NhUzHYtUm3n6rFyUHYTcZPOf5nnnolg9TIJhdrZ07U/2k4pRdz
+         D/kNZLy9K1C+kgFsmbNQyJ0BIrJKTeAArqvTvfye1TvOuGogOh1AHjjTaYl8JBzNIzz4
+         jQZxJ8lnat/cdktmIp4CnOSMZZVWKPruLyRHMd6IdxqZJ6sIQEmfMnnZ0QxzPAnIryKC
+         8ARgZC1hD4TaSE/G1H3nVLh9osp8cNgxBv2nVpDNtbjDiuT1UH7B2kK4QliirohSjJvj
+         wm5Q==
+X-Gm-Message-State: AOJu0YyVqBz/2xpRXgP5/dcr3llAU2OugSj+DAxBS+/mN3X/8A9tSFaC
+	UvOxRr3b0Es+FFtuW97ZnpSiBXY9XI2vcGMTsqhuV9P2LIdJERsViN1ZpLDL1sJIKkLfbzyjCE4
+	I/OldAQBL+ZHJicYnwtstKk+P1U16OMI52ZEi9vbJ66639vf1WuarUko=
+X-Google-Smtp-Source: AGHT+IHXMSmZigDem6EyJCy/a2rFy3is3EZTeyCUrO7fgLeR7n9rYjqeMubWG1jx7iXns3zDJgw+NiJ7hhghnTmPiSsqby97DpZ3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
+X-Received: by 2002:a05:6e02:505:b0:3a0:9c04:8047 with SMTP id
+ e9e14a558f8ab-3a09c048195mr30261255ab.6.1726464443649; Sun, 15 Sep 2024
+ 22:27:23 -0700 (PDT)
+Date: Sun, 15 Sep 2024 22:27:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e1a626062235d385@google.com>
+Subject: [syzbot] [kernel?] possible deadlock in __schedule (3)
+From: syzbot <syzbot+7202b8bae7c5b11493e7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 09, 2024 at 05:18:43PM +0100, John Garry wrote:
-> > > > Patch 10 also modifies xfs_can_free_eofblocks() to take alignment
-> > > > into account for the post-eof block removal, but doesn't change
-> > > > xfs_free_eofblocks() at all. i.e  it also relies on
-> > > > xfs_itruncate_extents_flags() to do the right thing for force
-> > > > aligned inodes.
-> > > 
-> > > What state should the blocks post-EOF blocks be? A simple example of
-> > > partially truncating an alloc unit is:
-> > > 
-> > > $xfs_io -c "extsize" mnt/file
-> > > [16384] mnt/file
-> > > 
-> > > 
-> > > $xfs_bmap -vvp mnt/file
-> > > mnt/file:
-> > >   EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-> > >     0: [0..20479]:      192..20671        0 (192..20671)     20480 000000
-> > > 
-> > > 
-> > > $truncate -s 10461184 mnt/file # 10M - 6FSB
-> > > 
-> > > $xfs_bmap -vvp mnt/file
-> > > mnt/file:
-> > >   EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-> > >     0: [0..20431]:      192..20623        0 (192..20623)     20432 000000
-> > >     1: [20432..20447]:  20624..20639      0 (20624..20639)      16 010000
-> > >   FLAG Values:
-> > >      0010000 Unwritten preallocated extent
-> > > 
-> > > Is that incorrect state?
-> > 
-> > Think about it: what happens if you now truncate it back up to 10MB
-> > (i.e. aligned length) and then do an aligned atomic write on it.
-> > 
-> > First: What happens when you truncate up?
-> > 
-> > ......
-> > 
-> > Yes, iomap_zero_range() will see the unwritten extent and skip it.
-> > i.e. The unwritten extent stays as an unwritten extent, it's now
-> > within EOF. That written->unwritten extent boundary is not on an
-> > aligned file offset.
-> 
-> Right
-> 
-> > 
-> > Second: What happens when you do a correctly aligned atomic write
-> > that spans this range now?
-> > 
-> > ......
-> > 
-> > Iomap only maps a single extent at a time, so it will only map the
-> > written range from the start of the IO (aligned) to the start of the
-> > unwritten extent (unaligned).  Hence the atomic write will be
-> > rejected because we can't do the atomic write to such an unaligned
-> > extent.
-> 
-> It was being considered to change this handling for atomic writes. More
-> below at *.
+Hello,
 
-I don't think that this is something specific to atomic writes -
-forced alignment means -alignment is guaranteed- regardless of what
-ends up using it.
+syzbot found the following issue on:
 
-Yes, we can track unwritten extents on an -unaligned- boundary, but
-that doesn't mean that we should allow it when we are trying to
-guarantee logical and physical alignment of the file offset and
-extent boundaries. i.e. The definition of forced alignment behaviour
-is that all file offsets and extents in the file are aligned to the
-same alignment.
+HEAD commit:    b831f83e40a2 Merge tag 'bpf-6.11-rc7' of git://git.kernel...
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c2a0a9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
+dashboard link: https://syzkaller.appspot.com/bug?extid=7202b8bae7c5b11493e7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-I don't see an exception that allows for unaligned unwritten
-extents in that definition.
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c7085e50cff6/disk-b831f83e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/19c50c855380/vmlinux-b831f83e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/80936012b998/bzImage-b831f83e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7202b8bae7c5b11493e7@syzkaller.appspotmail.com
+
+FAULT_INJECTION: forcing a failure.
+name fail_usercopy, interval 1, probability 0, space 0, times 0
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc6-syzkaller-00183-gb831f83e40a2 #0 Not tainted
+------------------------------------------------------
+syz.3.84/5592 is trying to acquire lock:
+ffffffff8e92c400 (console_owner){-...}-{0:0}, at: console_trylock_spinning kernel/printk/printk.c:1997 [inline]
+ffffffff8e92c400 (console_owner){-...}-{0:0}, at: vprintk_emit+0x405/0x7c0 kernel/printk/printk.c:2347
+
+but task is already holding lock:
+ffff8880b8828948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
+
+which lock already depends on the new lock.
 
 
-> > That's not a bug in the atomic write path - this failure occurs
-> > because of the truncate behaviour doing post-eof unwritten extent
-> > conversion....
-> > 
-> > Yes, I agree that the entire -physical- extent is still correctly
-> > aligned on disk so you could argue that the unwritten conversion
-> > that xfs_bunmapi_range is doing is valid forced alignment behaviour.
-> > However, the fact is that breaking the aligned physical extent into
-> > two unaligned contiguous extents in different states in the BMBT
-> > means that they are treated as two seperate unaligned extents, not
-> > one contiguous aligned physical extent.
-> 
-> Right, this is problematic.
-> 
-> * I guess that you had not been following the recent discussion on this
-> topic in the latest xfs atomic writes series @ https://lore.kernel.org/linux-xfs/20240817094800.776408-1-john.g.garry@oracle.com/
-> and also mentioned earlier in
-> https://lore.kernel.org/linux-xfs/20240726171358.GA27612@lst.de/
-> 
-> There I dropped the sub-alloc unit zeroing. The concept to iter for a single
-> bio seems sane, but as Darrick mentioned, we have issue of non-atomically
-> committing all the extent conversions.
+the existing dependency chain (in reverse order) is:
 
-Yes, I understand these problems exist.  My entire point is that the
-forced alignment implemention should never allow such unaligned
-extent patterns to be created in the first place. If we avoid
-creating such situations in the first place, then we never have to
-care about about unaligned unwritten extent conversion breaking
-atomic IO.
+-> #5 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       do_write_seqcount_begin_nested include/linux/seqlock.h:469 [inline]
+       do_write_seqcount_begin include/linux/seqlock.h:495 [inline]
+       psi_group_change+0x1c3/0x11c0 kernel/sched/psi.c:791
+       psi_task_change+0xfd/0x280 kernel/sched/psi.c:913
+       psi_enqueue kernel/sched/stats.h:143 [inline]
+       enqueue_task+0x2aa/0x300 kernel/sched/core.c:1975
+       activate_task kernel/sched/core.c:2009 [inline]
+       wake_up_new_task+0x563/0xc30 kernel/sched/core.c:4689
+       kernel_clone+0x4ee/0x8f0 kernel/fork.c:2812
+       user_mode_thread+0x132/0x1a0 kernel/fork.c:2859
+       rest_init+0x23/0x300 init/main.c:712
+       start_kernel+0x47a/0x500 init/main.c:1103
+       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
+       x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
+       common_startup_64+0x13e/0x147
 
-FWIW, I also understand things are different if we are doing 128kB
-atomic writes on 16kB force aligned files. However, in this
-situation we are treating the 128kB atomic IO as eight individual
-16kB atomic IOs that are physically contiguous. Hence in this
-situation it doesn't matter if we have a mix of 16kB aligned
-written/unwritten/hole extents as each 16kB chunks is independent of
-the others.
+-> #4 (&rq->__lock){-.-.}-{2:2}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+       raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
+       raw_spin_rq_lock kernel/sched/sched.h:1415 [inline]
+       rq_lock kernel/sched/sched.h:1714 [inline]
+       task_fork_fair+0x61/0x1e0 kernel/sched/fair.c:12710
+       sched_cgroup_fork+0x37c/0x410 kernel/sched/core.c:4633
+       copy_process+0x2217/0x3dc0 kernel/fork.c:2483
+       kernel_clone+0x226/0x8f0 kernel/fork.c:2781
+       user_mode_thread+0x132/0x1a0 kernel/fork.c:2859
+       rest_init+0x23/0x300 init/main.c:712
+       start_kernel+0x47a/0x500 init/main.c:1103
+       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
+       x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
+       common_startup_64+0x13e/0x147
 
-What matters is that each indivudal 16kB chunk shows either the old
-data or the new data - we are not guaranteeing that the entire 128kB
-write is atomic. Hence in this situation we can both submit and
-process each 16kB shunk as independent IOs with independent IO
-compeltion transactions. All that matters is that we don't signal
-completion to userspace until all the IO is complete, and we already
-do that for fragmented DIO writes...
+-> #3 (&p->pi_lock){-.-.}-{2:2}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+       class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
+       try_to_wake_up+0xb0/0x1470 kernel/sched/core.c:4051
+       __wake_up_common kernel/sched/wait.c:89 [inline]
+       __wake_up_common_lock+0x130/0x1e0 kernel/sched/wait.c:106
+       tty_port_default_wakeup+0xa6/0xf0 drivers/tty/tty_port.c:69
+       serial8250_tx_chars+0x6e2/0x930 drivers/tty/serial/8250/8250_port.c:1821
+       serial8250_handle_irq+0x558/0x710 drivers/tty/serial/8250/8250_port.c:1929
+       serial8250_default_handle_irq+0xd1/0x1f0 drivers/tty/serial/8250/8250_port.c:1949
+       serial8250_interrupt+0xa9/0x1f0 drivers/tty/serial/8250/8250_core.c:86
+       __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
+       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+       handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
+       handle_edge_irq+0x25f/0xc20 kernel/irq/chip.c:831
+       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+       handle_irq arch/x86/kernel/irq.c:247 [inline]
+       call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+       __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
+       common_interrupt+0xa5/0xd0 arch/x86/kernel/irq.c:278
+       asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+       native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
+       arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
+       acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:111
+       acpi_idle_enter+0xe4/0x140 drivers/acpi/processor_idle.c:702
+       cpuidle_enter_state+0x112/0x480 drivers/cpuidle/cpuidle.c:267
+       cpuidle_enter+0x5d/0xa0 drivers/cpuidle/cpuidle.c:388
+       call_cpuidle kernel/sched/idle.c:155 [inline]
+       cpuidle_idle_call kernel/sched/idle.c:230 [inline]
+       do_idle+0x375/0x5d0 kernel/sched/idle.c:326
+       cpu_startup_entry+0x42/0x60 kernel/sched/idle.c:424
+       __pfx_ap_starting+0x0/0x10 arch/x86/kernel/smpboot.c:313
+       common_startup_64+0x13e/0x147
 
-> > Again, this is different to the traditional RT file behaviour - it
-> > can use unwritten extents for sub-alloc-unit alignment unmaps
-> > because the RT device can align file offset to any physical offset,
-> > and issue unaligned sector sized IO without any restrictions. Forced
-> > alignment does not have this freedom, and when we extend forced
-> > alignment to RT files, it will not have the freedom to use
-> > unwritten extents for sub-alloc-unit unmapping, either.
-> > 
-> So how do you think that we should actually implement
-> xfs_itruncate_extents_flags() properly for forcealign? Would it simply be
-> like:
-> 
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -1050,7 +1050,7 @@ xfs_itruncate_extents_flags(
->                 WARN_ON_ONCE(first_unmap_block > XFS_MAX_FILEOFF);
->                 return 0;
->         }
-> +	if (xfs_inode_has_forcealign(ip))
-> +	       first_unmap_block = xfs_inode_roundup_alloc_unit(ip,
-> first_unmap_block);
->         error = xfs_bunmapi_range(&tp, ip, flags, first_unmap_block,
+-> #2 (
+&tty->write_wait){-.-.}-{2:2}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+       __wake_up_common_lock+0x25/0x1e0 kernel/sched/wait.c:105
+       tty_port_default_wakeup+0xa6/0xf0 drivers/tty/tty_port.c:69
+       serial8250_tx_chars+0x6e2/0x930 drivers/tty/serial/8250/8250_port.c:1821
+       serial8250_handle_irq+0x558/0x710 drivers/tty/serial/8250/8250_port.c:1929
+       serial8250_default_handle_irq+0xd1/0x1f0 drivers/tty/serial/8250/8250_port.c:1949
+       serial8250_interrupt+0xa9/0x1f0 drivers/tty/serial/8250/8250_core.c:86
+       __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
+       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+       handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
+       handle_edge_irq+0x25f/0xc20 kernel/irq/chip.c:831
+       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+       handle_irq arch/x86/kernel/irq.c:247 [inline]
+       call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+       __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
+       common_interrupt+0xa5/0xd0 arch/x86/kernel/irq.c:278
+       asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+       __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+       _raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
+       spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+       uart_port_unlock_irqrestore include/linux/serial_core.h:669 [inline]
+       uart_write+0x15d/0x380 drivers/tty/serial/serial_core.c:634
+       process_output_block drivers/tty/n_tty.c:574 [inline]
+       n_tty_write+0xd6a/0x1230 drivers/tty/n_tty.c:2389
+       iterate_tty_write drivers/tty/tty_io.c:1021 [inline]
+       file_tty_write+0x54f/0x9c0 drivers/tty/tty_io.c:1096
+       new_sync_write fs/read_write.c:497 [inline]
+       vfs_write+0xa72/0xc90 fs/read_write.c:590
+       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Yes, it would be something like that, except it would have to be
-done before first_unmap_block is verified.
+-> #1 (&port_lock_key){-.-.}-{2:2}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+       uart_port_lock_irqsave include/linux/serial_core.h:618 [inline]
+       serial8250_console_write+0x1a8/0x1770 drivers/tty/serial/8250/8250_port.c:3352
+       console_emit_next_record kernel/printk/printk.c:2983 [inline]
+       console_flush_all+0x867/0xfd0 kernel/printk/printk.c:3049
+       console_unlock+0x13b/0x4d0 kernel/printk/printk.c:3118
+       vprintk_emit+0x5dc/0x7c0 kernel/printk/printk.c:2348
+       _printk+0xd5/0x120 kernel/printk/printk.c:2373
+       register_console+0x727/0xcf0 kernel/printk/printk.c:3654
+       univ8250_console_init+0x52/0x90 drivers/tty/serial/8250/8250_core.c:513
+       console_init+0x1b8/0x6f0 kernel/printk/printk.c:3800
+       start_kernel+0x2d3/0x500 init/main.c:1038
+       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
+       x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
+       common_startup_64+0x13e/0x147
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+-> #0 (console_owner){-...}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       console_trylock_spinning kernel/printk/printk.c:1997 [inline]
+       vprintk_emit+0x422/0x7c0 kernel/printk/printk.c:2347
+       _printk+0xd5/0x120 kernel/printk/printk.c:2373
+       fail_dump lib/fault-inject.c:45 [inline]
+       should_fail_ex+0x391/0x4e0 lib/fault-inject.c:153
+       strncpy_from_user+0x36/0x2e0 lib/strncpy_from_user.c:118
+       strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+       bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:216 [inline]
+       ____bpf_probe_read_compat_str kernel/trace/bpf_trace.c:311 [inline]
+       bpf_probe_read_compat_str+0xe9/0x180 kernel/trace/bpf_trace.c:307
+       bpf_prog_29e826963d3c3848+0x40/0x44
+       bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+       __bpf_prog_run include/linux/filter.h:691 [inline]
+       bpf_prog_run include/linux/filter.h:698 [inline]
+       bpf_prog_run_array include/linux/bpf.h:2104 [inline]
+       trace_call_bpf+0x369/0x8a0 kernel/trace/bpf_trace.c:147
+       perf_trace_run_bpf_submit+0x82/0x180 kernel/events/core.c:10304
+       perf_trace_lock+0x388/0x490 include/trace/events/lock.h:50
+       trace_lock_release include/trace/events/lock.h:69 [inline]
+       lock_release+0x9cc/0xa30 kernel/locking/lockdep.c:5770
+       do_write_seqcount_end include/linux/seqlock.h:515 [inline]
+       psi_account_irqtime+0x49f/0x750 kernel/sched/psi.c:1032
+       __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
+       preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:6801
+       preempt_schedule_notrace_thunk+0x1a/0x30 arch/x86/entry/thunk.S:13
+       trace_lock_release include/trace/events/lock.h:69 [inline]
+       lock_release+0x9f0/0xa30 kernel/locking/lockdep.c:5770
+       rcu_lock_release include/linux/rcupdate.h:336 [inline]
+       rcu_read_unlock include/linux/rcupdate.h:869 [inline]
+       __fget_files+0x3f1/0x470 fs/file.c:1033
+       __fget_light fs/file.c:1147 [inline]
+       __fdget+0x16c/0x1e0 fs/file.c:1155
+       fdget include/linux/file.h:66 [inline]
+       sockfd_lookup_light net/socket.c:555 [inline]
+       __sys_sendmsg+0xe7/0x3a0 net/socket.c:2676
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  console_owner --> &rq->__lock --> &per_cpu_ptr(group->pcpu, cpu)->seq
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&per_cpu_ptr(group->pcpu, cpu)->seq);
+                               lock(&rq->__lock);
+                               lock(&per_cpu_ptr(group->pcpu, cpu)->seq);
+  lock(console_owner);
+
+ *** DEADLOCK ***
+
+4 locks held by syz.3.84/5592:
+ #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: __fget_files+0x29/0x470 fs/file.c:1031
+ #1: ffff8880b883e9d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
+ #2: ffff8880b8828948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
+ #3: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: trace_call_bpf+0xbc/0x8a0
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5592 Comm: syz.3.84 Not tainted 6.11.0-rc6-syzkaller-00183-gb831f83e40a2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+ __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ console_trylock_spinning kernel/printk/printk.c:1997 [inline]
+ vprintk_emit+0x422/0x7c0 kernel/printk/printk.c:2347
+ _printk+0xd5/0x120 kernel/printk/printk.c:2373
+ fail_dump lib/fault-inject.c:45 [inline]
+ should_fail_ex+0x391/0x4e0 lib/fault-inject.c:153
+ strncpy_from_user+0x36/0x2e0 lib/strncpy_from_user.c:118
+ strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+ bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:216 [inline]
+ ____bpf_probe_read_compat_str kernel/trace/bpf_trace.c:311 [inline]
+ bpf_probe_read_compat_str+0xe9/0x180 kernel/trace/bpf_trace.c:307
+ bpf_prog_29e826963d3c3848+0x40/0x44
+ bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+ __bpf_prog_run include/linux/filter.h:691 [inline]
+ bpf_prog_run include/linux/filter.h:698 [inline]
+ bpf_prog_run_array include/linux/bpf.h:2104 [inline]
+ trace_call_bpf+0x369/0x8a0 kernel/trace/bpf_trace.c:147
+ perf_trace_run_bpf_submit+0x82/0x180 kernel/events/core.c:10304
+ perf_trace_lock+0x388/0x490 include/trace/events/lock.h:50
+ trace_lock_release include/trace/events/lock.h:69 [inline]
+ lock_release+0x9cc/0xa30 kernel/locking/lockdep.c:5770
+ do_write_seqcount_end include/linux/seqlock.h:515 [inline]
+ psi_account_irqtime+0x49f/0x750 kernel/sched/psi.c:1032
+ __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
+ preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:6801
+ preempt_schedule_notrace_thunk+0x1a/0x30 arch/x86/entry/thunk.S:13
+ trace_lock_release include/trace/events/lock.h:69 [inline]
+ lock_release+0x9f0/0xa30 kernel/locking/lockdep.c:5770
+ rcu_lock_release include/linux/rcupdate.h:336 [inline]
+ rcu_read_unlock include/linux/rcupdate.h:869 [inline]
+ __fget_files+0x3f1/0x470 fs/file.c:1033
+ __fget_light fs/file.c:1147 [inline]
+ __fdget+0x16c/0x1e0 fs/file.c:1155
+ fdget include/linux/file.h:66 [inline]
+ sockfd_lookup_light net/socket.c:555 [inline]
+ __sys_sendmsg+0xe7/0x3a0 net/socket.c:2676
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1432b7def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f14339b6038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f1432d35f80 RCX: 00007f1432b7def9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000009
+RBP: 00007f14339b6090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007f1432d35f80 R15: 00007ffef36b3a38
+ </TASK>
+CPU: 0 UID: 0 PID: 5592 Comm: syz.3.84 Not tainted 6.11.0-rc6-syzkaller-00183-gb831f83e40a2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ fail_dump lib/fault-inject.c:52 [inline]
+ should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:153
+ strncpy_from_user+0x36/0x2e0 lib/strncpy_from_user.c:118
+ strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+ bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:216 [inline]
+ ____bpf_probe_read_compat_str kernel/trace/bpf_trace.c:311 [inline]
+ bpf_probe_read_compat_str+0xe9/0x180 kernel/trace/bpf_trace.c:307
+ bpf_prog_29e826963d3c3848+0x40/0x44
+ bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+ __bpf_prog_run include/linux/filter.h:691 [inline]
+ bpf_prog_run include/linux/filter.h:698 [inline]
+ bpf_prog_run_array include/linux/bpf.h:2104 [inline]
+ trace_call_bpf+0x369/0x8a0 kernel/trace/bpf_trace.c:147
+ perf_trace_run_bpf_submit+0x82/0x180 kernel/events/core.c:10304
+ perf_trace_lock+0x388/0x490 include/trace/events/lock.h:50
+ trace_lock_release include/trace/events/lock.h:69 [inline]
+ lock_release+0x9cc/0xa30 kernel/locking/lockdep.c:5770
+ do_write_seqcount_end include/linux/seqlock.h:515 [inline]
+ psi_account_irqtime+0x49f/0x750 kernel/sched/psi.c:1032
+ __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
+ preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:6801
+ preempt_schedule_notrace_thunk+0x1a/0x30 arch/x86/entry/thunk.S:13
+ trace_lock_release include/trace/events/lock.h:69 [inline]
+ lock_release+0x9f0/0xa30 kernel/locking/lockdep.c:5770
+ rcu_lock_release include/linux/rcupdate.h:336 [inline]
+ rcu_read_unlock include/linux/rcupdate.h:869 [inline]
+ __fget_files+0x3f1/0x470 fs/file.c:1033
+ __fget_light fs/file.c:1147 [inline]
+ __fdget+0x16c/0x1e0 fs/file.c:1155
+ fdget include/linux/file.h:66 [inline]
+ sockfd_lookup_light net/socket.c:555 [inline]
+ __sys_sendmsg+0xe7/0x3a0 net/socket.c:2676
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1432b7def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f14339b6038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f1432d35f80 RCX: 00007f1432b7def9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000009
+RBP: 00007f14339b6090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007f1432d35f80 R15: 00007ffef36b3a38
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
