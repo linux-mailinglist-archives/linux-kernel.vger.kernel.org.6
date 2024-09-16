@@ -1,148 +1,144 @@
-Return-Path: <linux-kernel+bounces-330092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96D09799A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 01:58:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FC19799A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB4642835C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2024 23:58:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7AB8B21370
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 00:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE6B129E93;
-	Sun, 15 Sep 2024 23:58:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBE913AA35;
+	Mon, 16 Sep 2024 00:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="vzqR1C31"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC142BCF5
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 23:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7464139580
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 00:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726444708; cv=none; b=hyITg8qiKZgYyAYYKsFcI/2L8Shk/6KHeJKtgdg3BXQA7PDRMvaTuDK/Z4nq6vgUIQ2b9oNRAZxegNyWt7PSF7vQ5mvqcjlL3dQXTfJGXjcvAewb3M3Ovmdz3IiadSKOf/dcFPst/ZNCId0Wn7euScigAMGPiWFlTffi0goxgM0=
+	t=1726444825; cv=none; b=amzJzQ9qDiNCRoAd2EP5zOz6qOPKtXZA+t+AyuRXIIKyqhO1UISvWruLOMavbCQAvVlA0s0uy6DSrudzKNlHysb8kbbs0CZO9vG4rsV3u0U65IFuEkbsqLmPPEIIB1e90F09SeYQEdUHu9wh+0dgsrJp8/J5A+CHclo+m5BU514=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726444708; c=relaxed/simple;
-	bh=YT6W8xPPORdTQDKc+9s6VglfSmHQVltTpx+L7vxGzF4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ggmnvq3iVYQr0Fo1lt44hnEWeolsAw47HiJlZaoHi1BBgnuDfQQlPx34zMLd3UhhQVmUirGb69sLKdE7YidsucT7A/Q6iYxPUm6fOOc4q0bVV7xzndEeUXuoA9bypukPAedKbII2iouHEvpEncYBvd/btmJEzOgG5KbrZDptZOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a093440d95so43526945ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 16:58:26 -0700 (PDT)
+	s=arc-20240116; t=1726444825; c=relaxed/simple;
+	bh=Bk6VaLA8U1o7y/shFK8tVIvvxwhrWjMjA7XJdgB4N/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5QZrZQ/Ta6bUmHZXW0B2M9Qc0NuWsQZBZazBz4uWc6WlZ84NaCDsZxF/rZ5SsgjE1G5GDpQezqNA25e6FF9VshXjNdDIoInMvlolKRuOf4xXQqPdTwUF5fFZHOyo68i5yYiCqzFI73IHbA5JYiNHabOydtlA/NsBN/ekjpeemQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=vzqR1C31; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2057c6c57b5so23061705ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 17:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726444823; x=1727049623; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yiTneBRUQz0c7oUx85pbwoHLabaV+URnFTxx3H0XSE8=;
+        b=vzqR1C31Sg/hV/NjWigbAilwrJmsR5cWrqtjxhcEV0xyDmEm8cO/ObzAmNkKZmVLrp
+         Zqd/GIe/AANdpQuocF9looSLsZxMxxrgImVK4jawbg0uYlTMDCx6yWddS1L+7LoMbBqh
+         X2MQX+m5tGMUjyOrzDxA5m21JiiAUvIDEan8lZJKYss5RN1nT8GLN95OmLr586jiNA4c
+         cvxbgOhs0nxZBJSqvuHOWd+TIKPWfSNk/mhlpMYC4pgYPxIAXqHlokgd3tZbzCVNAVfz
+         Um5smzbm87vsfOcmz/lqiA/GWbl9P5Uz+xC/BdWw83Q4jPFMlvcVxjvcZwgKbktJJFaf
+         qUig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726444706; x=1727049506;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rzuOqO4wqEv+PtD0PaWI9Fw6/V+K3rI/dC13ElCW4XU=;
-        b=Jx0dLcnvj+UJWatmNsYuRUZaBv2yR++xcbZqjjuoMTEiqESH/Z4SwqbXFERlTHwr1f
-         J50ZgqdMbyksSzg3sDCsRYJtb//jDDKZznXKa9MFFY5wJc/w3yvU/nVxE0JHDvoYDqjx
-         mm4K2MwsZuHPmWZyBOU4ds1sKFkObb20828gveejiqq3iGfsIrhdUuMlfQvG05/h5E5S
-         sLOQEG2uwKfLeKOFxT1D+aMCX+mCnyfVkAEtKy2V4TkFYWmelo5TSEsGvlPVRVqM9fNL
-         Refuz6Bw+AdTusyjHwxHJ0k5fjRV0OFAa0Zkw19HgpfouO1VKfEYh24Q1Zzik78Wrwwp
-         TZEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjrRL1+HpuTw8p0WA33A1mEv1c+kWS+7BDfLd4bPfhVoLpXaS64WwHbzzXP0CeIIuBLtOGjh3HlKbaFf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+QLafKBQUqi04CfWtzociJ87S0558pbd3+oDay/KAUKV4uy8A
-	CEhuBFPTGNBQBl41KSi3HhSGfCvBa6fwj4dQKrSLfZYNuEPZpCPJjW3On6pBYK3PPrtP911E7j5
-	nzAvJxiJh0sUo6zY+pRkBdFhkGeUdcCdr5IYwSPC78T8h8dk/S1Wxsns=
-X-Google-Smtp-Source: AGHT+IE50g+BqsF8wZ9q/VbWre86oQ6vYUZTw9ILbOLxq3XUOBStl7kwSwXSahjF1sH7Vr0lIniSHSbuHSEATN9U9U39C3LG9lkg
+        d=1e100.net; s=20230601; t=1726444823; x=1727049623;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yiTneBRUQz0c7oUx85pbwoHLabaV+URnFTxx3H0XSE8=;
+        b=qkf4a1g3BcR9vy9wlTY00ny256SWr/+HRyTwp+2y/cvUy+HpDHTp1YNLnrTS1povT7
+         bDxhJD2xjlfbRT+g3oajClzR2/fFe6CPi97vCT/J8yE8Xbj3izmD+tGK++3nx4UK0HRu
+         hwaq1xHm4hvthmEwhqiigjF/huwz9sU9G1pE4nH4MI9Tw2qPLAzjl1uVqFL/tOy/1pYE
+         O4tONZie09il3FoIpwMDesSbJvY/EfKw26DkeXxkFclVRADE4/QJMr6VTxIsFvfIr/gd
+         epvAZFkuTyRX3mB4vi0I3Q2V19P5A/WkSkYdDMvVVe7zF8NWHSjEBlBQMSkciQMhR/+F
+         +BUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWL2L8oHTR73q4O1p45OUd8OxOxLohLn4vYoL2p+koov+tr3POjWutXQO7AKHVH7uG0LnB6svVcqs4V/20=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg6/fzBB4kSrCpNRcBsf3wSMge7qLaU9aSXET2nJqOUZPj/MC5
+	B9hHK9O3DxF4dFPAmBylJwu0jvKfnITYOtzhD6+8/rb82Fd/C5T02K3+LnXmuGI=
+X-Google-Smtp-Source: AGHT+IEL1eQKv3NuUXB18zqkV0UW1Ie5TJSdwTXsRLrQ2G5lCXlhwJhgyjhFRZZ66d6/+lADVVDKkA==
+X-Received: by 2002:a17:902:ce92:b0:207:6d2:1aa5 with SMTP id d9443c01a7336-2076e591737mr218814085ad.13.1726444822748;
+        Sun, 15 Sep 2024 17:00:22 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945dc76asm26908985ad.42.2024.09.15.17.00.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 17:00:22 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1spzAA-005hUa-2C;
+	Mon, 16 Sep 2024 10:00:18 +1000
+Date: Mon, 16 Sep 2024 10:00:18 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
+	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Dao <dqminh@cloudflare.com>, clm@meta.com,
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <Zud1EhTnoWIRFPa/@dread.disaster.area>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1cad:b0:3a0:9fc6:5437 with SMTP id
- e9e14a558f8ab-3a09fc656cfmr18347855ab.18.1726444705949; Sun, 15 Sep 2024
- 16:58:25 -0700 (PDT)
-Date: Sun, 15 Sep 2024 16:58:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006c3f660622313b3c@google.com>
-Subject: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in jfs_statfs (2)
-From: syzbot <syzbot+bb0aa125eb8d70475ebd@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
 
-Hello,
+On Thu, Sep 12, 2024 at 03:25:50PM -0700, Linus Torvalds wrote:
+> On Thu, 12 Sept 2024 at 15:12, Jens Axboe <axboe@kernel.dk> wrote:
+> Honestly, the fact that it hasn't been reverted after apparently
+> people knowing about it for months is a bit shocking to me. Filesystem
+> people tend to take unknown corruption issues as a big deal. What
+> makes this so special? Is it because the XFS people don't consider it
+> an XFS issue, so...
 
-syzbot found the following issue on:
+I don't think this is a data corruption/loss problem - it certainly
+hasn't ever appeared that way to me.  The "data loss" appeared to be
+in incomplete postgres dump files after the system was rebooted and
+this is exactly what would happen when you randomly crash the
+system. i.e. dirty data in memory is lost, and application data
+being written at the time is in an inconsistent state after the
+system recovers. IOWs, there was no clear evidence of actual data
+corruption occuring, and data loss is definitely expected when the
+page cache iteration hangs and the system is forcibly rebooted
+without being able to sync or unmount the filesystems...
 
-HEAD commit:    7c6a3a65ace7 minmax: reduce min/max macro expansion in ato..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15105807980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1c9e296880039df9
-dashboard link: https://syzkaller.appspot.com/bug?extid=bb0aa125eb8d70475ebd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+All the hangs seem to be caused by folio lookup getting stuck
+on a rogue xarray entry in truncate or readahead. If we find an
+invalid entry or a folio from a different mapping or with a
+unexpected index, we skip it and try again.  Hence this does not
+appear to be a data corruption vector, either - it results in a
+livelock from endless retry because of the bad entry in the xarray.
+This endless retry livelock appears to be what is being reported.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+IOWs, there is no evidence of real runtime data corruption or loss
+from this pagecache livelock bug.  We also haven't heard of any
+random file data corruption events since we've enabled large folios
+on XFS. Hence there really is no evidence to indicate that there is
+a large folio xarray lookup bug that results in data corruption in
+the existing code, and therefore there is no obvious reason for
+turning off the functionality we are already building significant
+new functionality on top of.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/06208dec0174/disk-7c6a3a65.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bd09f189e9df/vmlinux-7c6a3a65.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/25e56ca1462d/bzImage-7c6a3a65.xz
+It's been 10 months since I asked Christain to help isolate a
+reproducer so we can track this down. Nothing came from that, so
+we're still at exactly where we were at back in november 2023 -
+waiting for information on a way to reproduce this issue more
+reliably.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bb0aa125eb8d70475ebd@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/jfs/super.c:140:14
-shift exponent 770 is too large for 64-bit type 's64' (aka 'long long')
-CPU: 0 UID: 0 PID: 8224 Comm: syz.2.276 Not tainted 6.11.0-rc7-syzkaller-00021-g7c6a3a65ace7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- jfs_statfs+0x503/0x510 fs/jfs/super.c:140
- statfs_by_dentry fs/statfs.c:66 [inline]
- vfs_statfs+0x13b/0x2c0 fs/statfs.c:90
- ovl_check_namelen fs/overlayfs/super.c:375 [inline]
- ovl_lower_dir fs/overlayfs/super.c:391 [inline]
- ovl_get_lowerstack fs/overlayfs/super.c:1132 [inline]
- ovl_fill_super+0x8ed/0x3560 fs/overlayfs/super.c:1392
- vfs_get_super fs/super.c:1280 [inline]
- get_tree_nodev+0xb7/0x140 fs/super.c:1299
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f54f4d7def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f54f5b25038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f54f4f35f80 RCX: 00007f54f4d7def9
-RDX: 0000000020000180 RSI: 0000000020000140 RDI: 0000000000000000
-RBP: 00007f54f4df0b76 R08: 00000000200001c0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f54f4f35f80 R15: 00007fff0587cfb8
- </TASK>
----[ end trace ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
