@@ -1,471 +1,119 @@
-Return-Path: <linux-kernel+bounces-330645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5577397A23B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 186FA97A238
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79F3A1C22C78
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:26:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46FEC1C227A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F411591ED;
-	Mon, 16 Sep 2024 12:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBA0158DAC;
+	Mon, 16 Sep 2024 12:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="NaABqBJz"
-Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Sa1eoe5U"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDD9157A59;
-	Mon, 16 Sep 2024 12:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE02157E9F;
+	Mon, 16 Sep 2024 12:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726489490; cv=none; b=Knj4OgUdPzdRYmjRMbzwe4yImDuc/kh6VvfB96G7L0taFKo1tk6vl064jBKl5P51kcZkS1BdunaRJYpOYvbEA8c+WmD3Zvax9r/mBsK+8f/h/OfMj+QFaSXR4yBsgJYmMFawaiAvyElpJ1HNzv0JWAfqmoQEXJo1aUJF+2QJ9DQ=
+	t=1726489483; cv=none; b=Y8KHoovseQ4G2WwrCsGT1iwzQ7JVFMq6xGD3zfrLE7PxI0mggJegxYHGjGR3RMUVYPcswdXs4Nfp3+hNZKvWAlR9bvEaP3lPVe9ClLioSH0Xrk4MNJjQ6z72JQFLJ/9B4elmDrjaR6ysBISsRv/HIzW4Qi8UCJUbcflzdGwDJ6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726489490; c=relaxed/simple;
-	bh=/nlkhYDvi+9HmkfXRBtJwlHe7UqktCDrqO0xluC8jmE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ncFKY8J/zxiZbxJdjY/bCcSPwLDNte60pBbYXFRUJNVeiDeFsSmJ/NQ97umLkqdii1vSRmfpQBf0BXwwPqiJ3hC3C4KifzIPHBAVOS+YdCfYskWy0NWW/bIqyEFBZW/MOsitdDlgM5SkKhuWQqGTmRkvof3VFq1JzOUahNLb6Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=NaABqBJz; arc=none smtp.client-ip=51.83.41.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
-	t=1726489482; bh=/nlkhYDvi+9HmkfXRBtJwlHe7UqktCDrqO0xluC8jmE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NaABqBJz2w4jm41sthqemUp58qwbkCYa8yT5nN2RPmNaj3CIkgEyHyPh97oKPLVII
-	 jaSpc3BEx9p6M2MBkVepC/ZEeyYchba5jjq/YkDWzLNo0pt5QUT4vbb+bvU1cIyy8Q
-	 +Iwrq3DX8VyBo8MIivyC9T07fffdb0JR16vMxDA2zOiinAY9PcyNvdU3xpFEThQjR0
-	 0wB/LGA+/vbD+0MCRnOzjfcQyQYqxL6UNERwWYWWsJGbDYvvWXuKUqI/+eqmMnb4Cx
-	 QFiYcYH1HTV4VQ5FRsq+nukz8B5bmaoW02hTIEBBGIURlfBASln6+3ha1KA/0ZLcXK
-	 BjsM337mXu0pQ==
-Received: from localhost.localdomain (unknown [10.0.1.3])
-	by mx1.buffet.re (Postfix) with ESMTPA id CE5F21230C2;
-	Mon, 16 Sep 2024 14:24:41 +0200 (CEST)
-From: Matthieu Buffet <matthieu@buffet.re>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Matthieu Buffet <matthieu@buffet.re>
-Subject: [RFC PATCH v1 7/7] selftests/landlock: Add UDP sendmsg/recvmsg tests
-Date: Mon, 16 Sep 2024 14:22:30 +0200
-Message-Id: <20240916122230.114800-8-matthieu@buffet.re>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240916122230.114800-1-matthieu@buffet.re>
-References: <20240916122230.114800-1-matthieu@buffet.re>
+	s=arc-20240116; t=1726489483; c=relaxed/simple;
+	bh=s4Jnygxo1kk2vkxv9gdBlOVwmBGwWmyXKspjhMrqHpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qSUbD1nTARax6Hwju2yhMoWJNdcsarilLclHFUBmlwu7zi3N38Yt8+5i/T5JzeTHY9/ccBYIqpWtLFV9tjAF+J4afgQqo1OrG5aFS8BfjtlSc3HARb+zsj6v+Eb/O7ApjJMsFs1SvVmRBdLg0+65kH5GBVDaQq/yR2zUQoXMCaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Sa1eoe5U; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GAFgCA025501;
+	Mon, 16 Sep 2024 12:24:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=s
+	4Jnygxo1kk2vkxv9gdBlOVwmBGwWmyXKspjhMrqHpg=; b=Sa1eoe5UrBCLeDq4X
+	oNFygXKO1qxvnPyfRGZ9ArUbnIZLEvqpBxg1pzVLp5Q8fiGOJFSi/QFGC9/NVqsU
+	dj0kPQlwc1osSyV7dg10i4ELHiS+2v/bmMVnG0a0bBF2gUJJaJLlEOH4ZLMqhzLW
+	WRLlnFLorVJOnUdkQVB+k/VH8YFX7JxWtDWwKTdzWDeX/xhHh8U3ZGua7aA7zsDX
+	lXMnPHgfnIYYKdKmLM22rsWmllFCUjKrSAc3Q/u0zTAWhw/lUGcAI/vHFr/BCh0k
+	lTwt4P2++mnPQWxH9mx8u7WKgE9JAotE6hGSAOSTYV1eOwnYXdqy7IU7D7sh6MAs
+	1v6NA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3uj1uh3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 12:24:40 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48GBDxFf000723;
+	Mon, 16 Sep 2024 12:24:37 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41nntpyads-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 12:24:37 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48GCOatV48234832
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Sep 2024 12:24:36 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 40AA75805C;
+	Mon, 16 Sep 2024 12:24:36 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5EE9658054;
+	Mon, 16 Sep 2024 12:24:34 +0000 (GMT)
+Received: from [9.171.5.142] (unknown [9.171.5.142])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 16 Sep 2024 12:24:34 +0000 (GMT)
+Message-ID: <27aa2d1b-985f-41b0-9e2e-566e17aeb620@linux.ibm.com>
+Date: Mon, 16 Sep 2024 14:24:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] s390/dasd: Fix typo in comment
+To: Yu Jiaoliang <yujiaoliang@vivo.com>,
+        Jan Hoeppner
+ <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240911064213.3891052-1-yujiaoliang@vivo.com>
+Content-Language: en-US
+From: Stefan Haberland <sth@linux.ibm.com>
+In-Reply-To: <20240911064213.3891052-1-yujiaoliang@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: tmhWMX5ZGjEe2psZAfV4YQlY5s-w1EKF
+X-Proofpoint-GUID: tmhWMX5ZGjEe2psZAfV4YQlY5s-w1EKF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-16_08,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=335 adultscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409160077
 
-Add tests specific to send/recv, orthogonal to whether the process
-is allowed to bind/connect.
+Am 11.09.24 um 08:42 schrieb Yu Jiaoliang:
+> Fix typo in comment:
+> requeust->request,
+> Removve->Remove,
+> notthing->nothing.
+>
+> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+> ---
+>
 
-Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
----
- tools/testing/selftests/landlock/net_test.c | 373 ++++++++++++++++++++
- 1 file changed, 373 insertions(+)
-
-diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index 883e6648e79a..a02307ba069c 100644
---- a/tools/testing/selftests/landlock/net_test.c
-+++ b/tools/testing/selftests/landlock/net_test.c
-@@ -285,6 +285,29 @@ static int connect_variant(const int sock_fd,
- 	return connect_variant_addrlen(sock_fd, srv, get_addrlen(srv, false));
- }
- 
-+static int get_msg_addr_variant(struct msghdr *msg,
-+				const struct service_fixture *const srv)
-+{
-+	switch (srv->protocol.domain) {
-+	case AF_UNSPEC:
-+	case AF_INET:
-+		msg->msg_name = (void *)&srv->ipv4_addr;
-+		break;
-+	case AF_INET6:
-+		msg->msg_name = (void *)&srv->ipv6_addr;
-+		break;
-+	case AF_UNIX:
-+		msg->msg_name = (void *)&srv->unix_addr;
-+		break;
-+	default:
-+		errno = -EAFNOSUPPORT;
-+		return -errno;
-+	}
-+
-+	msg->msg_namelen = get_addrlen(srv, false);
-+	return 0;
-+}
-+
- FIXTURE(protocol)
- {
- 	struct service_fixture srv0, srv1, srv2, unspec_any0, unspec_srv0;
-@@ -927,6 +950,356 @@ TEST_F(protocol, connect_unspec)
- 	EXPECT_EQ(0, close(bind_fd));
- }
- 
-+FIXTURE(udp_send_recv)
-+{
-+	struct service_fixture srv_allowed;
-+	struct service_fixture srv_denied;
-+	struct service_fixture srv_ephemeral;
-+	struct service_fixture addr_unspec0, addr_unspec1;
-+	int srv_allowed_fd, srv_denied_fd, srv_ephemeral_fd, client_fd;
-+	char read_buf[1];
-+	struct iovec testmsg_contents;
-+	struct msghdr testmsg;
-+};
-+
-+FIXTURE_VARIANT(udp_send_recv)
-+{
-+	const struct protocol_variant prot;
-+};
-+
-+FIXTURE_SETUP(udp_send_recv)
-+{
-+	const struct timeval read_timeout = {
-+		.tv_sec = 0,
-+		.tv_usec = 100000,
-+	};
-+	const struct protocol_variant prot_unspec = {
-+		.domain = AF_UNSPEC,
-+		.type = SOCK_STREAM,
-+	};
-+
-+	disable_caps(_metadata);
-+
-+	ASSERT_EQ(0, set_service(&self->addr_unspec0, prot_unspec, 0));
-+	ASSERT_EQ(0, set_service(&self->addr_unspec1, prot_unspec, 1));
-+
-+	/* Prepare one server socket to be denied */
-+	ASSERT_EQ(0, set_service(&self->srv_denied, variant->prot, 0));
-+	self->srv_denied_fd = socket_variant(&self->srv_denied);
-+	ASSERT_LE(0, self->srv_denied_fd);
-+	ASSERT_EQ(0, bind_variant(self->srv_denied_fd, &self->srv_denied));
-+
-+	/* Prepare one server socket on specific port to be allowed */
-+	ASSERT_EQ(0, set_service(&self->srv_allowed, variant->prot, 1));
-+	self->srv_allowed_fd = socket_variant(&self->srv_allowed);
-+	ASSERT_LE(0, self->srv_allowed_fd);
-+	ASSERT_EQ(0, bind_variant(self->srv_allowed_fd, &self->srv_allowed));
-+
-+	/* Prepare one server socket on ephemeral port to be allowed */
-+	ASSERT_EQ(0, set_service(&self->srv_ephemeral, variant->prot, 0));
-+	if (variant->prot.domain == AF_INET)
-+		self->srv_ephemeral.ipv4_addr.sin_port = 0;
-+	else if (variant->prot.domain == AF_INET6)
-+		self->srv_ephemeral.ipv6_addr.sin6_port = 0;
-+	self->srv_ephemeral_fd  = socket_variant(&self->srv_ephemeral);
-+	ASSERT_LE(0, self->srv_ephemeral_fd);
-+	ASSERT_EQ(0, bind_variant(self->srv_ephemeral_fd,
-+				  &self->srv_ephemeral));
-+	self->srv_ephemeral.port = get_binded_port(self->srv_ephemeral_fd,
-+						   &variant->prot);
-+	ASSERT_NE(0, self->srv_ephemeral.port);
-+	if (variant->prot.domain == AF_INET)
-+		self->srv_ephemeral.ipv4_addr.sin_port = htons(self->srv_ephemeral.port);
-+	else if (variant->prot.domain == AF_INET6)
-+		self->srv_ephemeral.ipv6_addr.sin6_port = htons(self->srv_ephemeral.port);
-+
-+	/* We must absolutely avoid blocking other tests indefinitely */
-+	EXPECT_EQ(0, setsockopt(self->srv_allowed_fd, SOL_SOCKET,
-+				SO_RCVTIMEO,
-+				&read_timeout, sizeof(read_timeout)));
-+	EXPECT_EQ(0, setsockopt(self->srv_denied_fd, SOL_SOCKET,
-+				SO_RCVTIMEO,
-+				&read_timeout, sizeof(read_timeout)));
-+	EXPECT_EQ(0, setsockopt(self->srv_ephemeral_fd, SOL_SOCKET,
-+				SO_RCVTIMEO,
-+				&read_timeout, sizeof(read_timeout)));
-+
-+	self->client_fd = socket_variant(&self->srv_denied);
-+	ASSERT_LE(0, self->client_fd);
-+
-+	self->read_buf[0] = 0;
-+
-+	self->testmsg_contents.iov_len = 1;
-+	memset(&self->testmsg, 0, sizeof(self->testmsg));
-+	self->testmsg.msg_iov = &self->testmsg_contents;
-+	self->testmsg.msg_iovlen = 1;
-+}
-+
-+FIXTURE_TEARDOWN(udp_send_recv)
-+{
-+	EXPECT_EQ(0, close(self->srv_allowed_fd));
-+	EXPECT_EQ(0, close(self->srv_denied_fd));
-+	EXPECT_EQ(0, close(self->client_fd));
-+}
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(udp_send_recv, ipv4) {
-+	.prot = {
-+		.domain = AF_INET,
-+		.type = SOCK_DGRAM,
-+	},
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(udp_send_recv, ipv6) {
-+	.prot = {
-+		.domain = AF_INET6,
-+		.type = SOCK_DGRAM,
-+	},
-+};
-+
-+TEST_F(udp_send_recv, sendmsg)
-+{
-+	const struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_SENDMSG_UDP,
-+	};
-+	const struct landlock_net_port_attr allow_one_server = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_SENDMSG_UDP,
-+		.port = self->srv_allowed.port,
-+	};
-+	const int ruleset_fd = landlock_create_ruleset(
-+		&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
-+				       LANDLOCK_RULE_NET_PORT,
-+				       &allow_one_server, 0));
-+
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	/* Send without bind nor explicit address */
-+	EXPECT_EQ(-1, write(self->client_fd, "A", 1));
-+	EXPECT_EQ(EDESTADDRREQ, errno);
-+
-+	/* Send with an explicit denied address */
-+	self->testmsg_contents.iov_base = "B";
-+	EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->srv_denied));
-+	EXPECT_EQ(-1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(EACCES, errno);
-+	EXPECT_EQ(-1, read(self->srv_denied_fd, self->read_buf, sizeof(self->read_buf)));
-+	EXPECT_EQ(EAGAIN, errno);
-+
-+	/* Send with an explicit allowed address */
-+	self->testmsg_contents.iov_base = "C";
-+	EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->srv_allowed));
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0))
-+	{
-+		TH_LOG("sendmsg failed: %s", strerror(errno));
-+	}
-+	EXPECT_EQ(1, read(self->srv_allowed_fd, self->read_buf, sizeof(self->read_buf)));
-+	EXPECT_EQ(self->read_buf[0], 'C');
-+
-+	/*
-+	 * Sending to (AF_UNSPEC, port) should be equivalent to not specifying
-+	 * a destination in IPv6, and equivalent to (AF_INET, port) in IPv4.
-+	 */
-+	if (variant->prot.domain == AF_INET) {
-+		self->testmsg_contents.iov_base = "D";
-+		EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->addr_unspec0));
-+		EXPECT_EQ(-1, sendmsg(self->client_fd, &self->testmsg, 0));
-+		EXPECT_EQ(EACCES, errno);
-+
-+		self->testmsg_contents.iov_base = "E";
-+		EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->addr_unspec1));
-+		EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0));
-+		EXPECT_EQ(1, read(self->srv_allowed_fd, self->read_buf,
-+				  sizeof(self->read_buf)));
-+		EXPECT_EQ(self->read_buf[0], 'E');
-+	} else if (variant->prot.domain == AF_INET6) {
-+		EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->addr_unspec0));
-+		EXPECT_EQ(-1, sendmsg(self->client_fd, &self->testmsg, 0));
-+		EXPECT_EQ(EDESTADDRREQ, errno);
-+	}
-+
-+	/* Send without an address, after connect()ing to an allowed address */
-+	self->testmsg.msg_name = NULL;
-+	self->testmsg.msg_namelen = 0;
-+	self->testmsg_contents.iov_base = "F";
-+	ASSERT_EQ(0, connect_variant(self->client_fd, &self->srv_allowed));
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0))
-+	{
-+		TH_LOG("sendmsg failed: %s", strerror(errno));
-+	}
-+	EXPECT_EQ(1, read(self->srv_allowed_fd, self->read_buf,
-+		  sizeof(self->read_buf)));
-+	EXPECT_EQ(self->read_buf[0], 'F');
-+
-+	/*
-+	 * Sending to AF_UNSPEC should be equivalent to not specifying an
-+	 * address (in IPv6 only) and falling back to the allowed address.
-+	 */
-+	if (variant->prot.domain == AF_INET6) {
-+		self->testmsg_contents.iov_base = "G";
-+		EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->addr_unspec0));
-+		EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0)) {
-+			TH_LOG("sendmsg failed: %s", strerror(errno));
-+		}
-+		EXPECT_EQ(1, read(self->srv_allowed_fd, self->read_buf,
-+			sizeof(self->read_buf)));
-+		EXPECT_EQ(self->read_buf[0], 'G');
-+	}
-+
-+	/* Send without an address, after connect()ing to a denied address */
-+	self->testmsg_contents.iov_base = "H";
-+	ASSERT_EQ(0, connect_variant(self->client_fd, &self->srv_denied));
-+	EXPECT_EQ(-1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(EACCES, errno);
-+	EXPECT_EQ(-1, read(self->srv_denied_fd, self->read_buf, sizeof(self->read_buf)));
-+	EXPECT_EQ(EAGAIN, errno);
-+
-+	/*
-+	 * Sending to AF_UNSPEC should be equivalent to not specifying an
-+	 * address (in IPv6 only) and falling back to the denied address.
-+	 */
-+	if (variant->prot.domain == AF_INET6) {
-+		self->testmsg_contents.iov_base = "I";
-+		EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->addr_unspec0));
-+		EXPECT_EQ(-1, sendmsg(self->client_fd, &self->testmsg, 0));
-+		EXPECT_EQ(EACCES, errno);
-+	}
-+
-+	/* Send with an explicit allowed address, should overrule connect() */
-+	self->testmsg_contents.iov_base = "J";
-+	ASSERT_EQ(0, connect_variant(self->client_fd, &self->srv_denied));
-+	EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->srv_allowed));
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0))
-+	{
-+		TH_LOG("sendmsg failed: %s", strerror(errno));
-+	}
-+	EXPECT_EQ(1, read(self->srv_allowed_fd, self->read_buf, sizeof(self->read_buf)));
-+	EXPECT_EQ(self->read_buf[0], 'J');
-+
-+	/* Send with an explicit denied address, should overrule connect() */
-+	self->testmsg_contents.iov_base = "K";
-+	ASSERT_EQ(0, connect_variant(self->client_fd, &self->srv_allowed));
-+	EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->srv_denied));
-+	EXPECT_EQ(-1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(EACCES, errno);
-+	EXPECT_EQ(-1, read(self->srv_allowed_fd,
-+			   self->read_buf, sizeof(self->read_buf)));
-+	EXPECT_EQ(EAGAIN, errno);
-+	EXPECT_EQ(-1, read(self->srv_denied_fd, self->read_buf, sizeof(self->read_buf)));
-+	EXPECT_EQ(EAGAIN, errno);
-+}
-+
-+TEST_F(udp_send_recv, recvmsg_on_fixed_port)
-+{
-+	struct sockaddr_storage from = {0};
-+	socklen_t from_len = sizeof(from);
-+	const struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_RECVMSG_UDP,
-+	};
-+	const struct landlock_net_port_attr allow_one_server = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_RECVMSG_UDP,
-+		.port = self->srv_allowed.port,
-+	};
-+	const int ruleset_fd = landlock_create_ruleset(
-+		&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
-+					LANDLOCK_RULE_NET_PORT,
-+					&allow_one_server, 0));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	/* Receive on an allowed port with read() */
-+	EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->srv_allowed));
-+	self->testmsg_contents.iov_base = "A";
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(1, read(self->srv_allowed_fd, self->read_buf,
-+			  sizeof(self->read_buf))) {
-+		TH_LOG("read failed: %s", strerror(errno));
-+	}
-+	EXPECT_EQ(self->read_buf[0], 'A');
-+
-+	/* Receive on an allowed port with recv() */
-+	self->testmsg_contents.iov_base = "B";
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(1, recv(self->srv_allowed_fd,
-+			  self->read_buf, sizeof(self->read_buf), 0)) {
-+		TH_LOG("recv failed: %s", strerror(errno));
-+	}
-+	EXPECT_EQ(self->read_buf[0], 'B');
-+
-+	/* Receive on an allowed port with recvfrom() */
-+	self->testmsg_contents.iov_base = "C";
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(1, recvfrom(self->srv_allowed_fd,
-+			      self->read_buf, sizeof(self->read_buf), 0,
-+			      (struct sockaddr *)&from, &from_len)) {
-+		TH_LOG("recv failed: %s", strerror(errno));
-+	}
-+	EXPECT_EQ(self->read_buf[0], 'C');
-+
-+	/* Receive on a denied port with read() */
-+	EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg, &self->srv_allowed));
-+	self->testmsg_contents.iov_base = "D";
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(-1, read(self->srv_denied_fd, self->read_buf, sizeof(self->read_buf)));
-+	EXPECT_EQ(EACCES, errno);
-+	EXPECT_EQ(self->read_buf[0], 'C');
-+
-+	/* Receive on an denied port with recv() */
-+	self->testmsg_contents.iov_base = "B";
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(-1, recv(self->srv_denied_fd, self->read_buf,
-+			   sizeof(self->read_buf), 0));
-+	EXPECT_EQ(EACCES, errno);
-+	EXPECT_EQ(self->read_buf[0], 'C');
-+
-+	/* Receive on an denied port with recvfrom() */
-+	self->testmsg_contents.iov_base = "C";
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(-1, recvfrom(self->srv_denied_fd, self->read_buf,
-+			       sizeof(self->read_buf), 0,
-+			       (struct sockaddr *)&from, &from_len));
-+	EXPECT_EQ(EACCES, errno);
-+	EXPECT_EQ(self->read_buf[0], 'C');
-+}
-+
-+TEST_F(udp_send_recv, recvmsg_on_ephemeral_port)
-+{
-+	const struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_RECVMSG_UDP,
-+	};
-+	const struct landlock_net_port_attr allow_one_server = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_RECVMSG_UDP,
-+		.port = 0,
-+	};
-+	const int ruleset_fd = landlock_create_ruleset(
-+		&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
-+				       LANDLOCK_RULE_NET_PORT,
-+				       &allow_one_server, 0));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	EXPECT_EQ(0, get_msg_addr_variant(&self->testmsg,
-+					  &self->srv_ephemeral));
-+
-+	self->testmsg_contents.iov_base = "A";
-+	EXPECT_EQ(1, sendmsg(self->client_fd, &self->testmsg, 0));
-+	EXPECT_EQ(1, read(self->srv_ephemeral_fd, self->read_buf,
-+			  sizeof(self->read_buf))) {
-+		TH_LOG("read failed: %s", strerror(errno));
-+	}
-+	EXPECT_EQ(self->read_buf[0], 'A');
-+}
-+
- FIXTURE(ipv4)
- {
- 	struct service_fixture srv0, srv1;
--- 
-2.39.5
-
+applied, thanks.
 
