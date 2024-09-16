@@ -1,73 +1,78 @@
-Return-Path: <linux-kernel+bounces-330759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B2897A3DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:11:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DD297A3D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E397D1F299D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8FFF28AFA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7B715B54E;
-	Mon, 16 Sep 2024 14:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kjAF6Tr0"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02691586CF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D36E5258;
 	Mon, 16 Sep 2024 14:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eKtpv3ks"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D762B156228
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495754; cv=none; b=E5+iTkRPYB8aA892qUZ6J9629vCKXPM+1e+9xS6PvUOwInhSVSBalm3j7iKXsLZEbp9mLRxnxv8d/xSyy2cwRmJNKHpKheUWcZTnOFxPCseh8/vjUPAEB+T2hh4GYeJHUIVyLapgpU5DXeXIL+uXa2uC61GGYi2JXigopMft3YA=
+	t=1726495751; cv=none; b=B56XoP4sS3pHnWdshaj2poHIUa8NMp1/zFwSGwoG+Cxtk5EzStqlH8kLQyk+uDgI2YQrBTId9ckTpI+z9mNXFPTjln3V36/tYNikzieeAbAQUuoqvCXoh8kbEGC4yUDPCK6/rBLP9MR/Vg96XUcUa3qi+JVSHG/NqmrN+J9j0lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495754; c=relaxed/simple;
-	bh=BDCYCMhbdeG1alA51XeFp/8kl4MzKsdoUxUf2SaAFQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PRJlsCkHR0Mk9s62Af5ct6IkKCR2wIn0NxDQ6U3SiWIw1TPALyyD/y5BR0PYWTet48372+DE971fWdZfkOV2aQC5hNQztqaTAMmJdNnT/hsJ68XS+LdyPFcSOJHhxLxFen/OlSjPfkyrVQtzhTyRSzaHAKJHVxml9xYAjeMIZZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kjAF6Tr0; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZX5Ajj3jHf8WXguBa7KMbRkbGIupmkxkkRbafLZCYCY=; b=kjAF6Tr0lgCh2VUOb3ba0m/DlW
-	OdPOVRrrXsBiiV8GFsultX7ADqhK+XwqPkLvmBljNIpHeMoSz5Heccy9fybsMvbP2gs/9efr7kItk
-	pmEOA7KAIfcfEcTJScCBuiRIpNa3SYrMrp4tcPwd6FnKrm+44shC8DsChNXg1IrTbpS7EtjgUW1mS
-	pbbi3wmeriA7eetLCUFIITz3Azq69pqFzNZfBUcSfgCYMLvYnQOELuSWhbLag22d23hho9su9sEUC
-	8y7JjI+nQmN/VZZS/7YRkC/pCMGo4s3FSbQ3yImkU06V1SS+m8aZFevqacnGnHkRBQNRDv6PGEE2K
-	EZHUVM1g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sqCPR-00000000OiX-2ell;
-	Mon, 16 Sep 2024 14:08:57 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AB64930049D; Mon, 16 Sep 2024 16:08:56 +0200 (CEST)
-Date: Mon, 16 Sep 2024 16:08:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v2 00/11] unwind, perf: sframe user space unwinding,
- deferred perf callchains
-Message-ID: <20240916140856.GB4723@noisy.programming.kicks-ass.net>
-References: <cover.1726268190.git.jpoimboe@kernel.org>
- <20240914081246.1e07090c@rorschach.local.home>
- <20240915111111.taq3sb5xzqamhb7f@treble>
+	s=arc-20240116; t=1726495751; c=relaxed/simple;
+	bh=HmAK7CniaJQtMmxMwrtBOeKPih2cvAldTIyclY21mRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eLIXugb1TbPNYIvWApxZNKeYWPSB0AkCveU/DHJ9xbfz04kJHlK0+g+AVgJT0jLJlbzb3TpmvEY7g2hv4iB4nLdogAohvDIBK366wd2lK7xazotfwZZua6UEmzLvbSl5DxmmiIaNaQ/Jblhf0nVmFWMHcPAo3eZR4O7fFT0MavE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eKtpv3ks; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c255e3c327so5819475a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726495748; x=1727100548; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N1Z+SmDWQl+ToljrRXHidOzvuWiHEmYlCJkt0VHonRE=;
+        b=eKtpv3ksAYZmDex8k5JLNxRPf+lqwwl3CvLK/kW5fuRyfURT7vbMBlF98J9J64VGa7
+         uxU9A8YuMJCxGuT6NED4mfO0z3JxgILPSQxOXfXxhSayHf9PFilm8B8l6VtHyQc6VoRC
+         sQKiQlIAzSB1ApZa4x6T3klDPQUMdRyYbG7esqiazVxLhAOaMthCK07KpCn72Qf/aGPh
+         LySCZi+yPfctRdyEiD7rB1BpbGP/kGfuyvoJu/ejG07EJnJ1mTBs4sb4c2ZJdi+djNKc
+         LxrYO5S7SVqkzuxdULnQDUCSmsH0uTKJM7efq7G96ClNl5hVAqueZZbBdBukRQECmwhd
+         z6uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726495748; x=1727100548;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N1Z+SmDWQl+ToljrRXHidOzvuWiHEmYlCJkt0VHonRE=;
+        b=th2EZEnlnO9n0XjIh9GCxSH1qnvx/CBd6/mD0xCVxV4yJg1tu+UbSjvngTaBcx4lzU
+         aersUwN7hnDoLWzRUAEggSmSe5ZWdaHHoq+IdVxnKsusfDUu2GLHnldzUNHmY/HP/TNT
+         Ys/DqcDA8vV91b3XwK5M3qyC4aFr+bfFKZ3AkA8Mj01BZT83y208bOFBaAYtkWp12g3j
+         uW/uSitjnc6ePvvbZUUkUa5WY0tujbUez/yiiLoAmeUVgJTegimAz8CYb+Az6B4BYaJn
+         FJBxP/641a8qlCv13Gc7lOFS8LkXBAvNzW0kuqepPMEoleJL6k44wDRRGnmxNMu+KNJn
+         u6VA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBNHKyNNItn1fW+YYzk1KvIkR7p57TNBvyMD6Ao3Cr+mRVuYFM0BqaHVNkxLlrkUIvASI2e7Q+Bu9EtYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc678s7vZpRBN4r35TYubLOr+Nay+x6agdYFWd3gHsq4X6iEeg
+	qEEoHdBwhct/rPmd8xjdeGQqGg/7AxiAOi3j8xM6C+bic2cZdqnfrVeAtbk2lHk=
+X-Google-Smtp-Source: AGHT+IGTIuoTiYSqzwlejafPpW/Fd3fLJblO19bLyEiOs75IO8kJfKTL0OQanRC2moMSY/TIko+L/A==
+X-Received: by 2002:a17:906:f5a9:b0:a86:7924:11bd with SMTP id a640c23a62f3a-a90296178c9mr1737460966b.41.1726495747986;
+        Mon, 16 Sep 2024 07:09:07 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610966aasm322014566b.26.2024.09.16.07.09.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 07:09:07 -0700 (PDT)
+Date: Mon, 16 Sep 2024 17:09:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: Jagath Jog J <jagathjog1996@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] iio: bmi323: Fix some bugs in suspend resume
+Message-ID: <e5a7bfc4-7c30-4d68-a522-1d780e910da1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,32 +81,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240915111111.taq3sb5xzqamhb7f@treble>
 
-On Sun, Sep 15, 2024 at 01:11:11PM +0200, Josh Poimboeuf wrote:
-> On Sat, Sep 14, 2024 at 08:12:46AM -0400, Steven Rostedt wrote:
-> > I think the unwinder should have an interface itself that provides the
-> > deferred unwinding, instead of having all the tracers to implement
-> > their own.
-> > 
-> > The user space unwinder (regardless of sframe or not) should provide a
-> > way to say "I want a user space stack trace for here, but don't do it
-> > yet. Just give me a cookie and then call my callback function with the
-> > stack and cookie before going back to user space".
-> 
-> We (Steven, Mathieu and I) have been discussing this at GNU Cauldron and
-> I think we're in basic agreement on this.
-> 
-> I think the biggest tweak we decided on is that the context id (aka
-> "cookie") would be percpu.  Its initial value is (cpuid << 48).  It gets
-> incremented for every entry from user space.
+These were a couple bugs I found using static analysis.
 
-Why? What's the purpose of the cookie? This scheme seems unsound, pin
-yourself on CPU0 and trigger 1<<48 unwinds while keeping CPU1 idle.
+Changes in v2:
+Added an error message in patch 2.
 
-> > That is, we should have an interface like:
-> > 
-> > typedef void (unwinder_callback_t)(struct user_space_stack *, u64 cookie);
+Dan Carpenter (2):
+  iio: bmi323: fix copy and paste bugs in suspend resume
+  iio: bmi323: fix reversed if statement in bmi323_core_runtime_resume()
 
-Just make it a void* and let the consumer figure it out.
+ drivers/iio/imu/bmi323/bmi323_core.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+-- 
+2.45.2
+
 
