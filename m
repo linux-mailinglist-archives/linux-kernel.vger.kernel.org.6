@@ -1,71 +1,73 @@
-Return-Path: <linux-kernel+bounces-330842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BEC197A51A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:17:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF8BC97A51D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133C22860AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C62C284D9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F728159565;
-	Mon, 16 Sep 2024 15:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F3E158A3C;
+	Mon, 16 Sep 2024 15:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7e/1De9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQFqd53J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702131CF96;
-	Mon, 16 Sep 2024 15:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C54158535;
+	Mon, 16 Sep 2024 15:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726499835; cv=none; b=K1pfPrrsPpYvqCEWRsgj2MPhpzTi6DBmymJ2AX8pFT3S6QwTcKm0MFkjkwlReCAV2yYxGx8MVOpgXIdX5xU8c/z3nWHUJMBb6OOFd9GxgUKdCtVqXokJYYksXjoRKZ/+CXN+8yXeoGl1Vjk7K0SMDJaICsFZsHx1PHVVew2VBmk=
+	t=1726499963; cv=none; b=Kk9q8jgk6fYhqkfAXsApxyAoI5u8sA/am5MroarAouOh30ksdiRk58T+T/W9BxjdWuv/uK6nByQIF0BlbORgrH0QQTWl1tvxQir+PRd1BQ1929BvqZkhDO5Yb+dnnmXM4f76a5sYEXGpPlFqo1PT8yUb7RJD4w1FNGm4conloeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726499835; c=relaxed/simple;
-	bh=Txos53pr9kE2IW0nRmQNNcz3mfPHCrcGkTRcAyiWRcI=;
+	s=arc-20240116; t=1726499963; c=relaxed/simple;
+	bh=JZ3BFYtDh8YO27fqrqRAy5T61ZDm3ETJXvi4DTu5xJw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Unf5BKmWCUA+Ne1tpBxqTFshfnlgOgAbEbDdK1+gAXG+W2wMDPlwpBS4IqG9wzH/UnQJ53+xChilExIMoFYk1ZQpg4CwO7bHINKG79NePMwXwmPPhaMT0F16I+8AVfjCJUtLDWRoHsfuoYAHysycFft1ugyJBFOZ4odPJ2GN1fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7e/1De9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3F8FC4CEC4;
-	Mon, 16 Sep 2024 15:17:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726499835;
-	bh=Txos53pr9kE2IW0nRmQNNcz3mfPHCrcGkTRcAyiWRcI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t7e/1De98VNxJR837qITwW4ItAVFGPYHwxe6UyjVUKlUfyGkIpMngPdz4AaTBhUyp
-	 ADTt8UJCYPVEkrc08tttOOZbSQeva8aCQjVwyvEarbjjL0egjDad6wjyV1/jPJOMfC
-	 9PL5ZIj4B/Q1LmxPjqUX8ZLpoTYovcbQB0sZZRnUehHqybUXErHq6e+M5nWJsNClh0
-	 0iMCJqgwfV2qWvtjr19bE8VtnnetRcQu9o5CLOAvldj31krDUE2ISkdWS2YGzp11gZ
-	 p3HZBtmvpOeM1aQadmgvMdlJsMylKxUqyLRHw+6CmHDJAj4/OAZdStnA7FXC1nV01S
-	 TsHgAABn1PG2A==
-Date: Mon, 16 Sep 2024 16:17:09 +0100
-From: Simon Horman <horms@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Felix Huettner <felix.huettner@mail.schwarz>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH net v1 1/1] netfilter: conntrack: Guard possoble unused
- functions
-Message-ID: <20240916151709.GA396300@kernel.org>
-References: <20240905203612.333421-1-andriy.shevchenko@linux.intel.com>
- <20240906162938.GH2097826@kernel.org>
- <Zt7B79Q3O7mNqrOl@smile.fi.intel.com>
- <20240909151712.GZ2097826@kernel.org>
- <Zt8V5xjrZaEvR8K5@smile.fi.intel.com>
- <20240909183043.GE2097826@kernel.org>
- <Zt__ZT-P0kUY909z@smile.fi.intel.com>
- <20240910094520.GB572255@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EaFq0iUc8c9sOrvbvSOXrHhcza4GjE0aiukecBfTkcYKrEn9RKlA3xFXoNnTKcNs9gmD/0ITRl7/Y1hidFFr9T9NWjHHXyvfbzHlkk0qDvFxsoKu9tRKa503UnQtMOBDn4QgUIUXJsp3EWLgVY/SDHBsFsR4be2mryUmrqX1XmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQFqd53J; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726499961; x=1758035961;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JZ3BFYtDh8YO27fqrqRAy5T61ZDm3ETJXvi4DTu5xJw=;
+  b=hQFqd53JFoMMHioyXir5ef/VKGb2Uz3DAvJbpCk9lu8MW6aBh0kny1hu
+   2FoqafR6LkwknEdD2x5wlRPf60CbNwtwJiI9cf2Ei8R27FiCPyr/Pa5H3
+   EedLYl9pIQ9DYSDyds113h04vupAsujiqTEBxbuaXGBPZXhHEXilqm2JH
+   ZaKwke5zpWHcWshrd+e69WtfjMgme0Ao+7IZymyTfugR3OhRhoZ2qKnRm
+   QlTfi972L21C8hTtS4XiKLF93gZqPLA3UHcRv/d+ThXtuGMSUuUtgXhok
+   2PqxqrQ40PGdwUBAtkPKDRSxvdOEK0lvAr0Y5qNtL7lfVAYksjk/gkn7c
+   g==;
+X-CSE-ConnectionGUID: 4InGTeALTHSG5S+G+lvJCQ==
+X-CSE-MsgGUID: No4Fl18HTuav4wLO2FSfBQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="35910161"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="35910161"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 08:19:20 -0700
+X-CSE-ConnectionGUID: 13bJ/0fbTWmNrlD8HcMaqg==
+X-CSE-MsgGUID: nugNF5T/TCCZZRqthX91LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="69380367"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 16 Sep 2024 08:19:19 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id E9FF13CB; Mon, 16 Sep 2024 18:19:17 +0300 (EEST)
+Date: Mon, 16 Sep 2024 18:19:17 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Riyan Dhiman <riyandhiman14@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: core: convert simple_stroul to kstroul
+Message-ID: <ZuhMdXFhhVUXh8Il@black.fi.intel.com>
+References: <20240901182244.45543-1-riyandhiman14@gmail.com>
+ <CAPDyKFqdu07MwGyoJ8oMmpFw2u2=1zc8m6LCais8Wva58uTcug@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,36 +76,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910094520.GB572255@kernel.org>
+In-Reply-To: <CAPDyKFqdu07MwGyoJ8oMmpFw2u2=1zc8m6LCais8Wva58uTcug@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Sep 10, 2024 at 10:45:20AM +0100, Simon Horman wrote:
-> On Tue, Sep 10, 2024 at 11:12:21AM +0300, Andy Shevchenko wrote:
-> > On Mon, Sep 09, 2024 at 07:30:43PM +0100, Simon Horman wrote:
-> > > On Mon, Sep 09, 2024 at 06:36:07PM +0300, Andy Shevchenko wrote:
-> > > > On Mon, Sep 09, 2024 at 04:17:12PM +0100, Simon Horman wrote:
-> > > > > On Mon, Sep 09, 2024 at 12:37:51PM +0300, Andy Shevchenko wrote:
-> > > > > > On Fri, Sep 06, 2024 at 05:29:38PM +0100, Simon Horman wrote:
-> > > > > > > On Thu, Sep 05, 2024 at 11:36:12PM +0300, Andy Shevchenko wrote:
-> > > > > > 
-> > > > > > > Local testing seems to show that the warning is still emitted
-> > > > > > > for ctnetlink_label_size if CONFIG_NETFILTER_NETLINK_GLUE_CT is enabled
-> > > > 
-> > > > Hold on, this is not related to the patch.
-> > > > It might be another issue.
-> > > 
-> > > Yes, sorry, I see that now too.
-> > > 
-> > > Perhaps it can be fixed separately, something like this:
-> > 
-> > If you make a patch, it will help somebody who has that in their configuration
-> > files enabled (with the other one being disabled). Note, I use x86_64_defconfig
-> > which doesn't have this specific issue to be occurred.
-> 
-> Thanks, I'll plan to submit a patch.
+On Tue, Sep 03, 2024 at 02:37:25PM +0200, Ulf Hansson wrote:
+> On Sun, 1 Sept 2024 at 20:22, Riyan Dhiman <riyandhiman14@gmail.com> wrote:
+> >
+> > simple_strtoul() is obsolete and lacks proper error handling, making it
+> > unsafe for converting strings to unsigned long values. Replace it with
+> > kstrtoul(), which provides robust error checking and better safety.
+> >
+> > This change improves the reliability of the string-to-integer conversion
+> > and aligns with current kernel coding standards. Error handling is added
+> > to catch conversion failures, returning -EINVAL when input is invalid.
+> >
+> > Issue reported by checkpatch:
+> > - WARNING: simple_strtoul is obsolete, use kstrtoul instead
 
-The patch grew into two, I've posted them here:
+In rare cases this is a false positive, here seems to be okay.
 
-- [PATCH nf-next 0/2] netfilter: conntrack: label helpers conditional compilation updates
-  https://lore.kernel.org/netfilter-devel/20240916-ct-ifdef-v1-0-81ef1798143b@kernel.org/
+...
+
+> > +       if (kstrtoul(buf, 0, &set)) {
+> >                 ret = -EINVAL;
+> >                 goto out;
+> >         }
+
+Now you shadow the error code of kstrtox(), this has to be as simple as
+
+       ret = kstrtoul(buf, 0, &set);
+       if (ret)
+               goto out;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
