@@ -1,79 +1,61 @@
-Return-Path: <linux-kernel+bounces-330461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3921979ED1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:55:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD6B979ED8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D90D283A7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFD501F23B5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E72B1CF83;
-	Mon, 16 Sep 2024 09:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D3B14BFA3;
+	Mon, 16 Sep 2024 09:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ipiij/ay"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CLlx0Gqp"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B75114A4E2;
-	Mon, 16 Sep 2024 09:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A0A149005;
+	Mon, 16 Sep 2024 09:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726480513; cv=none; b=AXsxVP2qUyKCpiMea8BCu2M6BTz8bxwUub+B0YShsl3jvz4XnhoBIXpXO3gVYeqphMV7J27k9wzpvuC5TVZkD49FS3dYFg8E70iTP8qz1pi1lTb2huVBzUn/y5P5ywkXTgLp/y92lkZipPCcqLLQLgXfuJY/YrDarOYt+ZueTy8=
+	t=1726480799; cv=none; b=HTodIMEZ1fF8BnoAhjiPxD9ka2cDjBwVp0JneuMN9tnT3QMdKsLGhG6v12FzHETHP23WXG8zLgCpmTBu1EyQcpdrcLrMy2UQgKZpldYp8UFsmKRhuuBlu0PIo/X51e+XU/0UL0h9yYjNHiYIA63O1NnCpBWNF1Gjpa0GdDycCJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726480513; c=relaxed/simple;
-	bh=/WFKC3SoO7nnl0ody5g+rBvMFJbQKowrTvuCU4rEXK4=;
+	s=arc-20240116; t=1726480799; c=relaxed/simple;
+	bh=LDr+l0/sdiG7ICkrF18qyErx3fYlYj8AjwcSGwUpmHY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyhLY3QUZm8zQBWH/E7c6sSECd8ndcPRv3LvSRIA6+upm48fQW9gPgue3NKxM3gDvRiT3p15kfhE9u5cOmV84eet3TFMfgNpuvneKp0FbojL3HV1u/mnZ64/cmVeD7N2gKoMGgvSdH8YGZODIPrB/mLpg/1o0uh+G1aU9Ht06WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ipiij/ay; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726480512; x=1758016512;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/WFKC3SoO7nnl0ody5g+rBvMFJbQKowrTvuCU4rEXK4=;
-  b=Ipiij/ayEK8afb6kIU4aaojVr+9CZpYnnTD4CFrrxKJPWY0oGesxBTTk
-   jEfBgg6B1yaDWC+yUujmJCW4moj3TUwvDiLcipGMXVQPXuVT85cRjbNEz
-   GLOvxXhuTDQpQ8dn8/Yva5jr4V10VXemXZhOdEsENogluv8GC4r+y7LaE
-   QvZ3KwFtdQ01EgMgP5fkXvccUQMt/tckbQEUT+eB7MbgGLfpdBT50JVzm
-   rg4vL7M8S0lRno7rjDamKcYQV+blErAJFAh4M6Yxk95XQJI6gNUuu/qd2
-   f36/AvE+Bin8BmT4J2xm9hyDKNmdo0OwVvSifwhCD/MmUpb8BwKJbJtVI
-   Q==;
-X-CSE-ConnectionGUID: 0y8ZCWAJT1im7eltVOv5Xg==
-X-CSE-MsgGUID: Bb2sifChQmOrPPOclar5JQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="42774824"
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="42774824"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:55:11 -0700
-X-CSE-ConnectionGUID: HBZnngcETzKM3OIs32/ToA==
-X-CSE-MsgGUID: b1OfRFM3QdmSW2Eh4EZ6WQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="68699289"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:55:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sq8Rm-00000009PeS-1LiL;
-	Mon, 16 Sep 2024 12:55:06 +0300
-Date: Mon, 16 Sep 2024 12:55:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Parker Newman <parker@finest.io>, Jiri Slaby <jirislaby@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
- printk(KERN_ERR ...) with pr_err()
-Message-ID: <ZugAeVWeMZGtjYme@smile.fi.intel.com>
-References: <cover.1726237379.git.pnewman@connecttech.com>
- <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
- <2024091438-charity-borough-54b3@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I582Z7HyHmwAY9GtlgrIbe9m2Yg3HIOshGJGsNVyTLTTZlZHsYu7LiGBEMHCg+PFN9dA8lK8/p9YiSl08qhFYW/lonqJow/f0O3aTvQ9LzUnEWEC+OKt7/PpDfKiTWVNskCi+eTZYXi+eb5/MUjuod7dXguf0XrvHpdrl6FDIf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CLlx0Gqp; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BAB121C0002;
+	Mon, 16 Sep 2024 09:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726480788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S/GA9yRiwtcFQ7dDPsBs3vafpeHgegXdK3i5eFOjlrE=;
+	b=CLlx0GqpFLOoKOsTbqczn9UjiUC6hFcUmGm3nmVJDV771RcVNJIocsC0521z8vtTrypv2w
+	aAoq9AeAc7RZgcByh7Blu/jp/7pvG5FsYB9EIAC1ydODZReuSKuXu9ufsnfmL6BHDzZ/pk
+	Am6ec45fockeSiloFkGig26k0HF912tDPlQNZ0QwwMQDxooB8c1lFnbijsx6S/OsOJoRKM
+	Vd+RhsnQGGQGRgXUJxquG2+NQaOj85qSs6HLUmgibD2l9dcsRCundb6V5uuwXizD+nLvD9
+	l3SCOXvYnLa2kvcwcz17u6CjmztORgoub61SVAvtQo8cRgswcx+73cn37m5AQA==
+Date: Mon, 16 Sep 2024 11:59:47 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Andrei Simion <andrei.simion@microchip.com>
+Cc: claudiu.beznea@tuxon.dev, lgirdwood@gmail.com, broonie@kernel.org,
+	perex@perex.cz, tiwai@suse.com, nicolas.ferre@microchip.com,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Subject: Re: [PATCH 2/2] ASoC: atmel: atmel_ssc_dai: Drop S24_LE support due
+ to single channel limitation
+Message-ID: <202409160959473da37eea@mail.local>
+References: <20240916085214.11083-1-andrei.simion@microchip.com>
+ <20240916085214.11083-3-andrei.simion@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,26 +64,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024091438-charity-borough-54b3@gregkh>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240916085214.11083-3-andrei.simion@microchip.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Sat, Sep 14, 2024 at 08:58:50PM +0200, Greg Kroah-Hartman wrote:
-> On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
-
-...
-
-> > -			printk(KERN_ERR "%s: timeout\n", __func__);
-> > +			pr_err("%s: timeout\n", __func__);
+On 16/09/2024 11:52:15+0300, Andrei Simion wrote:
+> From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 > 
-> It's a device, please use dev_err().
+> Drop S24_LE format because it is not supported if more than 2 channels
+> (of TDM slots) are used. This limitation makes it impractical for use cases
+> requiring more than 2 TDM slots, leading to potential issues in
+> multi-channel configurations.
+> 
+> [andrei.simion@microchip.com: Reword the commit title and the commit
+> message.]
+> 
+> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+> ---
+>  sound/soc/atmel/atmel_ssc_dai.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+> index 7047f17fe7a8..475e7579c64c 100644
+> --- a/sound/soc/atmel/atmel_ssc_dai.c
+> +++ b/sound/soc/atmel/atmel_ssc_dai.c
+> @@ -822,7 +822,7 @@ static int atmel_ssc_resume(struct snd_soc_component *component)
+>  }
+>  
+>  #define ATMEL_SSC_FORMATS (SNDRV_PCM_FMTBIT_S8     | SNDRV_PCM_FMTBIT_S16_LE |\
+> -			  SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
+> +			   SNDRV_PCM_FMTBIT_S32_LE)
 
-The problem is that this library doesn't know about this fact. I.e. it would
-need a new member just for this message. Instead, maybe drop the message as we
-anyway get a unique enough error code?
+I believe this requires a comment. Else someone may add it back later
+on.
+
+>  
+>  static const struct snd_soc_dai_ops atmel_ssc_dai_ops = {
+>  	.startup	= atmel_ssc_startup,
+> -- 
+> 2.34.1
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
