@@ -1,263 +1,112 @@
-Return-Path: <linux-kernel+bounces-330901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A459797A5D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:16:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7911A97A5F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68ECF28AA78
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB224B2C97C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E61015A87A;
-	Mon, 16 Sep 2024 16:16:34 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A0B1598E9;
+	Mon, 16 Sep 2024 16:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fF3GdZ9V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C398B154C14;
-	Mon, 16 Sep 2024 16:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1A325632;
+	Mon, 16 Sep 2024 16:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726503394; cv=none; b=Dw9iWX6mSF1PhnTGokZ/ASu2aSFcLu02AB8Il2AcruHKFqoEJ8JDVGa9O4SVDcP7j7nkhsy2uxDJDADtlCfpY2Wn5ojD7YiUkjYEs6x/TG4cIYXHOyKVrVQCYN+j/IVNI/1h3r+QbTdTS0HKi9t1duDMSYo6CTAjafR+aOp1Q6Y=
+	t=1726503413; cv=none; b=SZELmhEIiP2eHY7JHUTDF6ccOwxlG7GAJzpH65lNaZOMoqdEzdmRPcUwnBhFpo0MluCJT/wMrvWaIKPrrN7TOqgvueBYddyOWNniQEKwa72orWNfvtJ1YM4/44BXpMCx1f80zn0VJb1vlLwK65Ryv9jS/DzH11RAJ/CMoaRqRJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726503394; c=relaxed/simple;
-	bh=vqzYyA10Ra+Ue2aMyu+n6htlVt6+PdHenejO+zV5cVE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rDbG8tQgukTmR0n3VaQZvlMCEHkZx7SlIUJ5hn1b5g3Lb+2BXxQXYczTsFDVbDajW+Wh30xpiwmwAt0orwgSQSBZNwi9e9uEwvyrI0x94OQeqRg1emfEzsddvHjq/nknxjrwAEiddMIg/8N1eXLTAljdkwfRWEunh5hYksX1190=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X6qgM6yfmz6K9Cj;
-	Tue, 17 Sep 2024 00:12:15 +0800 (CST)
-Received: from frapeml100005.china.huawei.com (unknown [7.182.85.132])
-	by mail.maildlp.com (Postfix) with ESMTPS id F271E140C98;
-	Tue, 17 Sep 2024 00:16:27 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100005.china.huawei.com (7.182.85.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 16 Sep 2024 18:16:27 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Mon, 16 Sep 2024 18:16:27 +0200
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: Borislav Petkov <bp@alien8.de>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
-	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
-	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
-	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
-	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
-	<duenwen@google.com>, "mike.malvestuto@intel.com"
-	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "jgroves@micron.com"
-	<jgroves@micron.com>, "vsalve@micron.com" <vsalve@micron.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
- Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
-	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH v12 01/17] EDAC: Add support for EDAC device features
- control
-Thread-Topic: [PATCH v12 01/17] EDAC: Add support for EDAC device features
- control
-Thread-Index: AQHbBCn2X0FlmKPPaUWpEENlHZJn/rJVzXyAgARPCJCAAAYMAIAAfGFw
-Date: Mon, 16 Sep 2024 16:16:27 +0000
-Message-ID: <518da468c15047c0b78781784688f4f5@huawei.com>
-References: <20240911090447.751-1-shiju.jose@huawei.com>
-	<20240911090447.751-2-shiju.jose@huawei.com>
-	<20240913164041.GKZuRrCeoFZBapVYaU@fat_crate.local>
-	<c31c733bb6e742f580721ec9d0e2f3b2@huawei.com>
- <20240916115014.000064bf@Huawei.com>
-In-Reply-To: <20240916115014.000064bf@Huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1726503413; c=relaxed/simple;
+	bh=2dsZBfxZCUqU/13rLMlr/WEcj9x8SDSF+0rUunk94SA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=I26aFXYYg6m57TrPV+apDpQiX3GDTnhJ9wZ1hVm4gPvBHbFz6KrlS1Ytv9W+yk97Ifk8CHmYdZxjWoXnxdXV/bAoj1bhJoerIkoOshffMQ+/WFods07pfTW0A106Pq/pCDLJVDIPTQo7umKaT8Wlm+TnFeV7hqPnA1Pwn0S589k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fF3GdZ9V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D052AC4CEC4;
+	Mon, 16 Sep 2024 16:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1726503412;
+	bh=2dsZBfxZCUqU/13rLMlr/WEcj9x8SDSF+0rUunk94SA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fF3GdZ9VPlwX4lesAiC7ZTq+3jJVRReGiVPIE5MBjJjMuHp9YbwAPzXF2tTkLFElo
+	 TJgqOzPMiGiU97WBpr6fxBRv+DHZ2o1/XXWoLwJR+lgADYSfBC58Xff6kkpwVK6KyW
+	 2mwInN+pTnD6WfCSXT+gQ8kDot3Qefo6x5a7LMAY=
+Date: Mon, 16 Sep 2024 09:16:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
+Cc: joseph.qi@linux.alibaba.com, junxiao.bi@oracle.com,
+ rajesh.sivaramasubramaniom@oracle.com, ocfs2-devel@lists.linux.dev,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC V4 1/1] ocfs2: reserve space for inline xattr before
+ attaching reflink tree
+Message-Id: <20240916091647.dbcca9d29f081c7a4c5cd2ea@linux-foundation.org>
+In-Reply-To: <20240912064720.898600-1-gautham.ananthakrishna@oracle.com>
+References: <20240912064720.898600-1-gautham.ananthakrishna@oracle.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
->-----Original Message-----
->From: Jonathan Cameron <jonathan.cameron@huawei.com>
->Sent: 16 September 2024 11:50
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: Borislav Petkov <bp@alien8.de>; linux-edac@vger.kernel.org; linux-
->cxl@vger.kernel.org; linux-acpi@vger.kernel.org; linux-mm@kvack.org; linux=
--
->kernel@vger.kernel.org; tony.luck@intel.com; rafael@kernel.org;
->lenb@kernel.org; mchehab@kernel.org; dan.j.williams@intel.com;
->dave@stgolabs.net; dave.jiang@intel.com; alison.schofield@intel.com;
->vishal.l.verma@intel.com; ira.weiny@intel.com; david@redhat.com;
->Vilas.Sridharan@amd.com; leo.duran@amd.com; Yazen.Ghannam@amd.com;
->rientjes@google.com; jiaqiyan@google.com; Jon.Grimm@amd.com;
->dave.hansen@linux.intel.com; naoya.horiguchi@nec.com;
->james.morse@arm.com; jthoughton@google.com; somasundaram.a@hpe.com;
->erdemaktas@google.com; pgonda@google.com; duenwen@google.com;
->mike.malvestuto@intel.com; gthelen@google.com;
->wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
->wbs@os.amperecomputing.com; nifan.cxl@gmail.com; jgroves@micron.com;
->vsalve@micron.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
-><prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
->kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
->Linuxarm <linuxarm@huawei.com>
->Subject: Re: [PATCH v12 01/17] EDAC: Add support for EDAC device features
->control
->
->On Mon, 16 Sep 2024 10:21:58 +0100
->Shiju Jose <shiju.jose@huawei.com> wrote:
->
->> Thanks for reviewing.
->>
->> >-----Original Message-----
->> >From: Borislav Petkov <bp@alien8.de>
->> >Sent: 13 September 2024 17:41
->> >To: Shiju Jose <shiju.jose@huawei.com>
->> >Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
->> >acpi@vger.kernel.org; linux-mm@kvack.org;
->> >linux-kernel@vger.kernel.org; tony.luck@intel.com; rafael@kernel.org;
->> >lenb@kernel.org; mchehab@kernel.org; dan.j.williams@intel.com;
->> >dave@stgolabs.net; Jonathan Cameron <jonathan.cameron@huawei.com>;
->> >dave.jiang@intel.com; alison.schofield@intel.com;
->> >vishal.l.verma@intel.com; ira.weiny@intel.com; david@redhat.com;
->> >Vilas.Sridharan@amd.com; leo.duran@amd.com;
->Yazen.Ghannam@amd.com;
->> >rientjes@google.com; jiaqiyan@google.com; Jon.Grimm@amd.com;
->> >dave.hansen@linux.intel.com; naoya.horiguchi@nec.com;
->> >james.morse@arm.com; jthoughton@google.com;
->somasundaram.a@hpe.com;
->> >erdemaktas@google.com; pgonda@google.com; duenwen@google.com;
->> >mike.malvestuto@intel.com; gthelen@google.com;
->> >wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
->> >wbs@os.amperecomputing.com; nifan.cxl@gmail.com; jgroves@micron.com;
->> >vsalve@micron.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
->> ><prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
->> >kangkang.shen@futurewei.com; wanghuiqiang
-><wanghuiqiang@huawei.com>;
->> >Linuxarm <linuxarm@huawei.com>
->> >Subject: Re: [PATCH v12 01/17] EDAC: Add support for EDAC device
->> >features control
->> >
->> >On Wed, Sep 11, 2024 at 10:04:30AM +0100, shiju.jose@huawei.com wrote:
->> >> +/**
->> >> + * edac_dev_feature_init - Init a RAS feature
->> >> + * @parent: client device.
->> >> + * @dev_data: pointer to the edac_dev_data structure, which
->> >> +contains
->> >> + * client device specific info.
->> >> + * @feat: pointer to struct edac_dev_feature.
->> >> + * @attr_groups: pointer to attribute group's container.
->> >> + *
->> >> + * Returns number of scrub features attribute groups on success,
->> >
->> >Not "scrub" - this is an interface initializing a generic feature.
->> Will correct.
->> >
->> >> + * error otherwise.
->> >> + */
->> >> +static int edac_dev_feat_init(struct device *parent,
->> >> +			      struct edac_dev_data *dev_data,
->> >> +			      const struct edac_dev_feature *ras_feat,
->> >> +			      const struct attribute_group **attr_groups) {
->> >> +	int num;
->> >> +
->> >> +	switch (ras_feat->ft_type) {
->> >> +	case RAS_FEAT_SCRUB:
->> >> +		dev_data->scrub_ops =3D ras_feat->scrub_ops;
->> >> +		dev_data->private =3D ras_feat->ctx;
->> >> +		return 1;
->> >> +	case RAS_FEAT_ECS:
->> >> +		num =3D ras_feat->ecs_info.num_media_frus;
->> >> +		dev_data->ecs_ops =3D ras_feat->ecs_ops;
->> >> +		dev_data->private =3D ras_feat->ctx;
->> >> +		return num;
->> >> +	case RAS_FEAT_PPR:
->> >> +		dev_data->ppr_ops =3D ras_feat->ppr_ops;
->> >> +		dev_data->private =3D ras_feat->ctx;
->> >> +		return 1;
->> >> +	default:
->> >> +		return -EINVAL;
->> >> +	}
->> >> +}
->> >
->> >And why does this function even exist and has kernel-doc comments
->> >when all it does is assign a couple of values? And it gets called exact=
-ly once?
->> >
->> >Just merge its body into the call site. There you can reuse the
->> >switch-case there too. No need for too much noodling around.
->> edac_dev_feat_init () function is updated with feature specific function=
- call()
->etc in subsequent
->> EDAC feature specific patches. Thus added a separate function.
->> >
->> >> diff --git a/include/linux/edac.h b/include/linux/edac.h index
->> >> b4ee8961e623..b337254cf5b8 100644
->> >> --- a/include/linux/edac.h
->> >> +++ b/include/linux/edac.h
->> >> @@ -661,4 +661,59 @@ static inline struct dimm_info
->> >> *edac_get_dimm(struct mem_ctl_info *mci,
->> >>
->> >>  	return mci->dimms[index];
->> >>  }
->> >> +
->> >> +/* EDAC device features */
->> >> +
->> >> +#define EDAC_FEAT_NAME_LEN	128
->> >> +
->> >> +/* RAS feature type */
->> >> +enum edac_dev_feat {
->> >> +	RAS_FEAT_SCRUB,
->> >> +	RAS_FEAT_ECS,
->> >> +	RAS_FEAT_PPR,
->> >> +	RAS_FEAT_MAX
->> >
->> >I still don't know what ECS or PPR is.
->> I will add comment/documentation here with a short explanation of
->> features if that make sense?
->> Each feature is described in the subsequent EDAC feature specific patche=
-s.
->Can you bring the enum entries in with those patches?
->That way there is no reference to them before we have the information on w=
-hat
->they are.
-Will do.
->
->J
->> >
->> >--
->> >Regards/Gruss,
->> >    Boris.
->> >
->> >https://people.kernel.org/tglx/notes-about-netiquette
->>
-Thanks,
-Shiju
+On Thu, 12 Sep 2024 06:47:20 +0000 Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com> wrote:
 
+> One of our customers reported a crash and a corrupted ocfs2 filesystem.
+> +++ b/fs/ocfs2/refcounttree.c
+> @@ -25,6 +25,7 @@
+>  #include "namei.h"
+>  #include "ocfs2_trace.h"
+>  #include "file.h"
+> +#include "symlink.h"
+>  
+>  #include <linux/bio.h>
+>  #include <linux/blkdev.h>
+> @@ -4155,8 +4156,9 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
+>  	int ret;
+>  	struct inode *inode = d_inode(old_dentry);
+>  	struct buffer_head *new_bh = NULL;
+> +	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+>  
+> -	if (OCFS2_I(inode)->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
+> +	if (oi->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
+>  		ret = -EINVAL;
+>  		mlog_errno(ret);
+>  		goto out;
+> @@ -4182,6 +4184,26 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
+>  		goto out_unlock;
+>  	}
+>  
+> +	if ((oi->ip_dyn_features & OCFS2_HAS_XATTR_FL) &&
+> +	    (oi->ip_dyn_features & OCFS2_INLINE_XATTR_FL)) {
+> +		/*
+> +		 * Adjust extent record count to reserve space for extended attribute.
+> +		 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
+> +		 */
+> +		struct ocfs2_inode_info *new_oi = OCFS2_I(new_inode);
+> +
+> +		if (!(new_oi->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
+> +		    !(ocfs2_inode_is_fast_symlink(new_inode))) {
+> +			struct ocfs2_dinode *new_di = new_bh->b_data;
+> +			struct ocfs2_dinode *old_di = old_bh->b_data;
 
+fs/ocfs2/refcounttree.c: In function '__ocfs2_reflink':
+fs/ocfs2/refcounttree.c:4190:55: error: initialization of 'struct ocfs2_dinode *' from incompatible pointer type 'char *' [-Werror=incompatible-pointer-types]
+ 4190 |                         struct ocfs2_dinode *new_di = new_bh->b_data;
+      |                                                       ^~~~~~
+fs/ocfs2/refcounttree.c:4191:55: error: initialization of 'struct ocfs2_dinode *' from incompatible pointer type 'char *' [-Werror=incompatible-pointer-types]
+ 4191 |                         struct ocfs2_dinode *old_di = old_bh->b_data;
+      |                                                       ^~~~~~
+cc1: all warnings being treated as errors
+
+I could just add the typecasts, but that doesn't give me a tested patch :(
 
 
