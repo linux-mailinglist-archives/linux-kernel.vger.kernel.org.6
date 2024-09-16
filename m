@@ -1,137 +1,151 @@
-Return-Path: <linux-kernel+bounces-330632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FB897A20F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:18:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D25F97A218
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97501C2183D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:18:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBD0AB22B02
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D921527A7;
-	Mon, 16 Sep 2024 12:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Df/SYPum"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED1615531A;
+	Mon, 16 Sep 2024 12:22:48 +0000 (UTC)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D23F4087C;
-	Mon, 16 Sep 2024 12:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C815E446D1;
+	Mon, 16 Sep 2024 12:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726489111; cv=none; b=GNOA3LTvP7TOgvHFP8/u07LjiW2BWbCaNGm7v+lyxlC/so0gjAc24m29cOWGlsx9gGYf2BHh+4F3K6xkw+xX6a8vUEmR0/f8p73Khz8V66+0GutTFe04IL6HCGhd3a7mPp5ws/cdUuL/pB7SXCN31AH0DJ4L86zbm7pesH2Z/qg=
+	t=1726489368; cv=none; b=K2BQTaysKGqdxwB9WWGeudg/HLF8vhKp4KSqnTaN4mxDDsqUxkhR9sDp+74/wgDSmn9Ggbfbs/7KlwRpQQpqmsJy/1FiVZ2Qj06mwlsfxatTeDIFbbJDKQ028ZYeC9MJTf7dpAOYjThp1C8qd25eD6NmyyUTNWIp/fGQucKbPGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726489111; c=relaxed/simple;
-	bh=bih7NtWKBsW8pZ2uAhBjyl1V2gWQzF6yEOi2em21bDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HkxN2q6CSchnc2c+OaPGhhqNgRmPQ8YHTwz/xJCYOrICLnMzTtGUDXL6P9+oLlvBLHBT9O3/wHEiww6M37U3KRKYs9KZHBXGp3PY4eX38M54fPw/0bIsl5zBmuDPr1D/wJZqr90egkq5tLLzg5s3GQv03PpwIlkmJyYktf+CPDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Df/SYPum; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726489109; x=1758025109;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bih7NtWKBsW8pZ2uAhBjyl1V2gWQzF6yEOi2em21bDM=;
-  b=Df/SYPumej73Rnn1N6Pr4O4pQWEL/vF86PrDeZEGSoF9qvXFhd9X0Ueo
-   Uw+4ZZ0aEmiMVsDenTx5I6xUdIe0TztYXeIEDWYpSzG01NecOR0GFxZqx
-   vLJa+iRuHuwDvtX02o9UgAhfzGyurKrQxUb90VrX00miZTJW1G0y/UIZv
-   jkNPcIhIOIx6Obt37ZC6MUVtyDtkag71r9Yl7X0QZbF/jDl4/EPsWSLpl
-   7UZo0x+uFZD6iwpjHTF3Ap8cMW2WJozojj8CLLEH63Trq2OTraBgpE5uF
-   QMGDyN0Ron1l8mpArk3O+rNfJtCuc84qjFNUiZKEYh+SznVrpoiv5XgPl
-   w==;
-X-CSE-ConnectionGUID: 390A4T3uToCo1iijxxD3Aw==
-X-CSE-MsgGUID: SbSdTwBcR5KpdZywbEPVLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="25511733"
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="25511733"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 05:18:20 -0700
-X-CSE-ConnectionGUID: x3dG418tQQeFLCVpqq8lig==
-X-CSE-MsgGUID: cYx9rhtHSdiy00idnX8UEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="106304318"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 05:18:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sqAgJ-00000009S9y-237A;
-	Mon, 16 Sep 2024 15:18:15 +0300
-Date: Mon, 16 Sep 2024 15:18:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
- printk(KERN_ERR ...) with pr_err()
-Message-ID: <ZugiB0GoNF50OdYC@smile.fi.intel.com>
-References: <cover.1726237379.git.pnewman@connecttech.com>
- <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
- <2024091438-charity-borough-54b3@gregkh>
- <ZugAeVWeMZGtjYme@smile.fi.intel.com>
- <2024091632-oboe-subfloor-afc8@gregkh>
- <ZugJT4nl1l04biJd@smile.fi.intel.com>
- <20240916080410.464c2b5f@SWDEV2.connecttech.local>
+	s=arc-20240116; t=1726489368; c=relaxed/simple;
+	bh=c9AiiezAPdeJA/5W/KzoQlDGuhF8uWLafjZpQwETSnE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=IoEK5zTFugiQo4GiBxB2rueeT/g/C5uqmSrJxgP/+mgFgCdq1HgcY9jv4L3BI0GxUTiBrH46p14JpCJGfSI2p/17yRJTCMRzI4RUtq5KIRc4+XJFn7FNE+tQ7C/dNYhWy+4hdH9PHCKC7A+sWQAri8fqvB6T9v1iX/BF4toeyAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374c3eef39eso2655454f8f.0;
+        Mon, 16 Sep 2024 05:22:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726489365; x=1727094165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GZBGRbBIGV5X5xLZ+rni4rJi5KtmpNZvI6X54qPGr6M=;
+        b=HUyqhj/Voty/DWOpvvuDaIwUOV0AF7u7mWQG9fMd+bQ89lzaxk0dcUcEq55nk1dS1q
+         FxSmGr5loYyRB32skUDRkhX0hhCOYRRZg0yAJhKdANAz8rVw0Gu/sz4NP2ASH9vXq/oQ
+         /k185IgQP4aYFdWZUWIN7blHufBOCvfNzC0h9Kxncby0DP8X//mWeexbopTmu8+F5em4
+         vgbG5Ix3s5arIWa5s8FEDYX7+YHuojrygy6Ad+4m0kdxYRDHz54UUTR+qF0ppjJnnNQH
+         IQNPeO7WCnwqLYqfw7xdjL+XorCtr/Cv8P5SpGySDToSAfFMej4FFp4WnEsDnOVth5VQ
+         vrOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUh0Vd4/1y5Y64O4m1X0J4NRM8A0ZkPoCwxkjFH7t1tdQC8W42GGNc+vLSmwxrNj5mEGBRcUXwmwLaJ2KiD@vger.kernel.org, AJvYcCVgcmM1W1CZHFwLXFspSCp8KJ5svFm0IBEyo8p66+usF/aFHOkxiAFBTFaLcVxV5Z1p+ah8wc6C@vger.kernel.org
+X-Gm-Message-State: AOJu0YykBUU/HU0xb2+sw967bzCog8mM7WVa90hkYZzW/K7CdNadauFu
+	G8MDJUG8/bAp+IYTyYDGgrbtNEJPE4kwOEeo8l4tABP/GPA9GHDA
+X-Google-Smtp-Source: AGHT+IGnUnioaOxDZX1BUgvxFZDQXINgpAKMfpUC4aZJf56RSiMwVoLkPknPemhA8R9PyXrbvWBA7w==
+X-Received: by 2002:a5d:5747:0:b0:374:c4e2:3cad with SMTP id ffacd0b85a97d-378c2d5b237mr7952757f8f.52.1726489364668;
+        Mon, 16 Sep 2024 05:22:44 -0700 (PDT)
+Received: from costa-tp.. ([2a00:a041:e281:f300:ddd7:8878:b93d:7c0b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7800243sm7117272f8f.86.2024.09.16.05.22.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 05:22:43 -0700 (PDT)
+From: Costa Shulyupin <costa.shul@redhat.com>
+To: longman@redhat.com,
+	ming.lei@redhat.com,
+	pauld@redhat.com,
+	juri.lelli@redhat.com,
+	vschneid@redhat.com,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org
+Subject: [RFC PATCH v3 0/3] genirq/cpuhotplug: Adjust managed interrupts according to change of housekeeping cpumask
+Date: Mon, 16 Sep 2024 15:20:41 +0300
+Message-ID: <20240916122044.3056787-1-costa.shul@redhat.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916080410.464c2b5f@SWDEV2.connecttech.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 16, 2024 at 08:04:10AM -0400, Parker Newman wrote:
-> On Mon, 16 Sep 2024 13:32:47 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Mon, Sep 16, 2024 at 12:25:52PM +0200, Greg Kroah-Hartman wrote:
-> > > On Mon, Sep 16, 2024 at 12:55:05PM +0300, Andy Shevchenko wrote:
-> > > > On Sat, Sep 14, 2024 at 08:58:50PM +0200, Greg Kroah-Hartman wrote:
-> > > > > On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
+The housekeeping CPU masks, set up by the "isolcpus" and "nohz_full"
+boot command line options, are used at boot time to exclude selected
+CPUs from running some kernel housekeeping subsystems to minimize
+disturbance to latency sensitive userspace applications such as DPDK.
+This options can only be changed with a reboot. This is a problem for
+containerized workloads running on OpenShift/Kubernetes where a
+mix of low latency and "normal" workloads can be created/destroyed
+dynamically and the number of CPUs allocated to each workload is often
+not known at boot time.
 
-...
+Theoretically, complete CPU offlining/onlining could be used for
+housekeeping adjustments, but this approach is not practical.
+Telco companies use Linux to run DPDK in OpenShift/Kubernetes containers.
+DPDK requires isolated cpus to run real-time processes.
+Kubernetes manages allocation of resources for containers.
+Unfortunately Kubernetes doesn't support dynamic CPU offlining/onlining:
+https://github.com/kubernetes/kubernetes/issues/67500
+and is not planning to support it.
+Addressing this issue at the application level appears to be even
+less straightforward than addressing it at the kernel level.
 
-> > > > > > -			printk(KERN_ERR "%s: timeout\n", __func__);
-> > > > > > +			pr_err("%s: timeout\n", __func__);
-> > > > >
-> > > > > It's a device, please use dev_err().
-> > > >
-> > > > The problem is that this library doesn't know about this fact. I.e. it would
-> > > > need a new member just for this message. Instead, maybe drop the message as we
-> > > > anyway get a unique enough error code?
-> > >
-> > > Fair enough, although adding real device pointers would be good to do in
-> > > the future...
-> >
-> > Let's then do it when it will be the real need? Because I don't think this
-> > message is _so_ important. I believe one of the upper layers (whichever calls
-> > this function) should propagate the error code up to the user space. If it's
-> > not the case _that_ has to be fixed.
-> >
-> > TL;DR: Let's remove the message for now.
-> 
-> I can remove the message or leave it as is and drop this patch from the series.
-> One could make the argument that any error indication it is better than none
-> in this case.
+This series of patches is based on series
+isolation: Exclude dynamically isolated CPUs from housekeeping masks:
+https://lore.kernel.org/lkml/20240821142312.236970-1-longman@redhat.com/
+Its purpose is to exclude dynamically isolated CPUs from some
+housekeeping masks so that subsystems that check the housekeeping masks
+at run time will not use those isolated CPUs.
 
-I think you can drop the message and make the patch to be last in the series,
-so it can be easily abandoned (in case that decision will be made) without
-throttling the rest. At the same time in the commit message explain that with
-move to read_poll_timeout() we drop the seems redundant message. I'm fine with
-that approach. But at the end of the day it's not that critical to the main
-purpose, i.e. cleaning up the Exar serial driver.
+However, some of subsystems can use obsolete housekeeping CPU masks.
+Therefore, to prevent the use of these isolated CPUs, it is necessary to
+explicitly propagate changes of the housekeeping masks to all subsystems
+depending on the mask.
+
+Changes in v2:
+- Focusing in this patch series on interrupts only.
+
+v1:
+- https://lore.kernel.org/lkml/20240516190437.3545310-1-costa.shul@redhat.com/
+
+References:
+- Linux Kernel Dynamic CPU Isolation: https://pretalx.com/devconf-us-2024/talk/AZBQLE/
+
+Costa Shulyupin (3):
+  sched/isolation: Add infrastructure for dynamic CPU isolation
+  genirq/cpuhotplug: Adjust managed irqs according to change of
+    housekeeping CPU
+  DO NOT MERGE: test for managed irqs adjustment
+
+ include/linux/irq.h      |   2 +
+ kernel/cgroup/cpuset.c   |   1 +
+ kernel/irq/cpuhotplug.c  |  95 ++++++++++++++++++++++++++++++++
+ kernel/sched/isolation.c |  46 ++++++++++++++--
+ tests/managed_irq.sh     | 113 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 254 insertions(+), 3 deletions(-)
+ create mode 100755 tests/managed_irq.sh
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.0
 
 
