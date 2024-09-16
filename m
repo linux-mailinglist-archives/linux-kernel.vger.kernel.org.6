@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-330606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C9D97A0D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:01:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC29597A0F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FCCF1C22FCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771EBB2223C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC99B155C8A;
-	Mon, 16 Sep 2024 12:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5DA156222;
+	Mon, 16 Sep 2024 12:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="B6QtEIaO"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nk0pZ6kd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B7B1534FB;
-	Mon, 16 Sep 2024 12:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85810145B0C;
+	Mon, 16 Sep 2024 12:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726488092; cv=none; b=u3x5vha8FF58Tg0gAHgSS8EUJ/z3STxPek2qfAI22ACSbFVsR7unX648fHLfC0fzCnaKJA/149d/bhnqG73dJo6o0S4IYitwv1KWSJXdt4F+WDP/anSLEqfeszyaEIX1qz+U8TLL7ZEpEl2cdRwPgC/uOzGdLp8kjFykqSg29qA=
+	t=1726488166; cv=none; b=T1rqVEVQrbr5+0mKTGN3jQMJE1dq68sUy/Bs6jaCV5/kKpZFbYijZA/l5/ShWnxlcKqlvjwXjtWkQfaXQZ30iIwDjNuVI08I21OH1zAHlV7StCNyT2tO4BCAkIauHqVHp9NRLEGj5XJ/O2kVOxIsbuJk0KnZu7jH1fADTN0BO5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726488092; c=relaxed/simple;
-	bh=gr9yUSmOKcD1PH6L1wZ4eKMngyFNW7EkqL7p7uwVDIg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IhgemfICb+NQkjta2eyns9lLczp8EH0UrXNuGaZW25iCF6v3rICblPgD3ws2b8mjAcgnBkRW3Adrp46U/p3mdtGyM17MCb+DqjkDrtNCbtBIpsKOZcFCBx7gsE+13m0BVI82mP5FbM2RmJKyv18l/oXCtiTV75p7zrsoynwQEuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=B6QtEIaO; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GBwCTX021168;
-	Mon, 16 Sep 2024 12:01:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=/O8zEZJunPnQEdA6gOLkhL6v1s
-	LdhwVUtgSjcf/pT+w=; b=B6QtEIaOpXidNx4YHDhwta+LGavwX08V7o1MtIM3yR
-	WPGVhwkJxvLXYbPgMbHhab5xVe0N9352+rF/3eQk0o3merjWDixp9kr7WIPdv7qi
-	XdXs6gzUJe4DwR2BCFYmUEqKmegTkEmRuvTQ5oDZd0n5Aarsyxd1xIIHe1EKPS5/
-	hgZfWCBrvyFKOok1sW9ktzd5URPqI/i/ldzqDTtYOZ5TvG854e5MmDfRziOc9Odl
-	UMPhmRvGoH138D+J69UscPCDw8Y9ye+skR+h3RwE0fov4c6t3SAFdfqueriF08Xk
-	MvueEzhOY5C5NXY4AF5964U6VUG9LxZwbH8BxHzOAlyw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3vnhfqx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 12:01:28 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48GB3T1H000612;
-	Mon, 16 Sep 2024 12:01:27 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41nn70yd95-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 12:01:27 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48GC1Ogb20906552
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Sep 2024 12:01:24 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 322305805E;
-	Mon, 16 Sep 2024 12:01:24 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8628158061;
-	Mon, 16 Sep 2024 12:01:23 +0000 (GMT)
-Received: from jason-laptop.home.arpa (unknown [9.61.14.174])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 16 Sep 2024 12:01:23 +0000 (GMT)
-From: "Jason J. Herne" <jjherne@linux.ibm.com>
-To: linux-s390@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, fiuczy@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, agordeev@linux.ibm.com, gor@linux.ibm.com,
-        hca@linux.ibm.com, "Jason J. Herne" <jjherne@linux.ibm.com>
-Subject: [PATCH v3] s390/vfio-ap: Driver feature advertisement
-Date: Mon, 16 Sep 2024 08:01:23 -0400
-Message-ID: <20240916120123.11484-1-jjherne@linux.ibm.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726488166; c=relaxed/simple;
+	bh=Y2lSt+eudlUwNyz9FeX7T1GcsSKRwJJXpwQOFA2Qpp8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kvRa86seN0ZUhQG4U+WmnDp2k1JBrbUiVpR2pnEcEfZ1pEwlqQVhWRnmzHaXZTMyTyCZ6eZONH3yl2+ALig0ScNzq+Uo3aCNd1f96aViUQXLl52iynleoxlonzldayycMBY4GD7+F80PT6Xhac4EbHBRdUICs0FcWSaXpXvKmaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nk0pZ6kd; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726488165; x=1758024165;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Y2lSt+eudlUwNyz9FeX7T1GcsSKRwJJXpwQOFA2Qpp8=;
+  b=Nk0pZ6kdIQ9BoIrchsSpa8gyuKY6SXyfC4JTMyrrhRBC4x569otdPTJ1
+   Sg6Y4GJ69tetq6UO/3xxmuPo1EStapxMP7OfQrUjaCMyzQm9RKPB5o0YC
+   mCA+o+6vRJyN7kwHBIyK/FO/yhuQE0k7Qgh4jHKkuWKsAYRCVAFkWTN3i
+   2MAdPUZAvWEDG0K5VJXfXdRf+q6C6uHW4N+YDVXO1BFsRqWDnZTXE3S3Q
+   pkfPUN/C3yZ058G6EEDemLPbM7xxPvGgwFcA/kQX1WnldFSEJMlwV1scG
+   Hv48pA0O+HU9Mkuy2kFXVWm66L6Q+vxVKYqxXo0YpHyjL50feCxnMnuXV
+   Q==;
+X-CSE-ConnectionGUID: 1q8rXOF7QZug5kcIFufx0w==
+X-CSE-MsgGUID: sTI5/IjLQX+TjcwXpF70MA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="24842795"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="24842795"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 05:02:42 -0700
+X-CSE-ConnectionGUID: b48UdI+RQ/SeWSleeKpDBA==
+X-CSE-MsgGUID: lF/pWoZSQvqcdifGb54hCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="68540769"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 16 Sep 2024 05:02:39 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id A2AF9481; Mon, 16 Sep 2024 15:02:38 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 00/11] i2c: isch: Put the driver into shape
+Date: Mon, 16 Sep 2024 15:01:27 +0300
+Message-ID: <20240916120237.1385982-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,102 +76,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: LUtdNeLaPaCYZfh8AyM9jUhCdeEgqvC7
-X-Proofpoint-GUID: LUtdNeLaPaCYZfh8AyM9jUhCdeEgqvC7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-16_08,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=849
- priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409160075
 
-Advertise features of the driver for the benefit of automated tooling
-like Libvirt and mdevctl.
+Driver code is quite outdated WRT modern in-kernel APIs and
+also has one non-critival bug.
 
-Signed-off-by: Jason J. Herne <jjherne@linux.ibm.com>
-Reviewed-by: Anthony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Boris Fiuczynski <fiuczy@linux.ibm.com>
----
- Documentation/arch/s390/vfio-ap.rst | 30 +++++++++++++++++++++++++++++
- drivers/s390/crypto/vfio_ap_drv.c   | 13 +++++++++++++
- 2 files changed, 43 insertions(+)
+The series is to address the above. Has been tested on
+Minnowboard (Intel Tunnel Creek platform) with connected
+LM95245 HW monitor chip.
 
-diff --git a/Documentation/arch/s390/vfio-ap.rst b/Documentation/arch/s390/vfio-ap.rst
-index ea744cbc8687..eba1991fbdba 100644
---- a/Documentation/arch/s390/vfio-ap.rst
-+++ b/Documentation/arch/s390/vfio-ap.rst
-@@ -999,6 +999,36 @@ the vfio_ap mediated device to which it is assigned as long as each new APQN
- resulting from plugging it in references a queue device bound to the vfio_ap
- device driver.
- 
-+Driver Features
-+===============
-+The vfio_ap driver exposes a sysfs file containing supported features.
-+This exists so third party tools (like Libvirt and mdevctl) can query the
-+availability of specific features.
-+
-+The features list can be found here: /sys/bus/matrix/devices/matrix/features
-+
-+Entries are space delimited. Each entry consists of a combination of
-+alphanumeric and underscore characters.
-+
-+Example:
-+cat /sys/bus/matrix/devices/matrix/features
-+guest_matrix dyn ap_config
-+
-+the following features are advertised:
-+
-+---------------+---------------------------------------------------------------+
-+| Flag         | Description                                                   |
-++==============+===============================================================+
-+| guest_matrix | guest_matrix attribute exists. It reports the matrix of       |
-+|              | adapters and domains that are or will be passed through to a  |
-+|              | guest when the mdev is attached to it.                        |
-++--------------+---------------------------------------------------------------+
-+| dyn          | Indicates hot plug/unplug of AP adapters, domains and control |
-+|              | domains for a guest to which the mdev is attached.            |
-++------------+-----------------------------------------------------------------+
-+| ap_config    | ap_config interface for one-shot modifications to mdev config |
-++--------------+---------------------------------------------------------------+
-+
- Limitations
- ===========
- Live guest migration is not supported for guests using AP devices without
-diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-index 4aeb3e1213c7..67a807e2e75b 100644
---- a/drivers/s390/crypto/vfio_ap_drv.c
-+++ b/drivers/s390/crypto/vfio_ap_drv.c
-@@ -26,6 +26,18 @@ MODULE_LICENSE("GPL v2");
- struct ap_matrix_dev *matrix_dev;
- debug_info_t *vfio_ap_dbf_info;
- 
-+static ssize_t features_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "guest_matrix hotplug ap_config\n");
-+}
-+static DEVICE_ATTR_RO(features);
-+
-+static struct attribute *matrix_dev_attrs[] = {
-+	&dev_attr_features.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(matrix_dev);
-+
- /* Only type 10 adapters (CEX4 and later) are supported
-  * by the AP matrix device driver
-  */
-@@ -68,6 +80,7 @@ static struct device_driver matrix_driver = {
- 	.name = "vfio_ap",
- 	.bus = &matrix_bus,
- 	.suppress_bind_attrs = true,
-+	.dev_groups = matrix_dev_groups,
- };
- 
- static int vfio_ap_matrix_dev_create(void)
+v2:
+- dropped applied patch
+- fixed format specifier (LKP)
+
+Andy Shevchenko (11):
+  i2c: isch: Pass pointer to struct i2c_adapter down
+  i2c: isch: Use string_choices API instead of ternary operator
+  i2c: isch: Switch to memory mapped IO accessors
+  i2c: isch: Use custom private data structure
+  i2c: isch: switch i2c registration to devm functions
+  i2c: isch: Utilize temporary variable to hold device pointer
+  i2c: isch: Use read_poll_timeout()
+  i2c: isch: Unify the name of the variable to hold an error code
+  i2c: isch: Don't use "proxy" headers
+  i2c: isch: Prefer to use octal permission
+  i2c: isch: Convert to kernel-doc
+
+ drivers/i2c/busses/i2c-isch.c | 321 +++++++++++++++++-----------------
+ 1 file changed, 164 insertions(+), 157 deletions(-)
+
 -- 
-2.46.0
+2.43.0.rc1.1336.g36b5255a03ac
 
 
