@@ -1,118 +1,146 @@
-Return-Path: <linux-kernel+bounces-330712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4CA797A31C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7AA97A320
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02AE81C21C6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:55:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7372C1C21CA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2127155359;
-	Mon, 16 Sep 2024 13:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931F0156F30;
+	Mon, 16 Sep 2024 13:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EdB26Zai"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jdmvRJLs"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7140914D2B9;
-	Mon, 16 Sep 2024 13:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA2F155A59
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726494896; cv=none; b=WQvEt5RV5ztZMsr68+vllkazFoA1b7qWuXudO9ukhB8GnDIy9izZeUT7L+J9xlyy1EHgggtP/oa0NVuMyvl9+6TgxtP1OV2KM+7DEpXrhSDTh7olzb4i93E1LV3SGVeOyNcoEzMtBe27zVk71D35rBbFb/WeOY5msvZxuDdeZg4=
+	t=1726494920; cv=none; b=O37PcYmn1Qo0uG6EX7WQLEi9o1AJSlSvSUwsPSMxnWs8lDUmTzaz+JnoSeeCmte+Tugxvn5ATyc98wa8Wz+XOiAtXst/vo2kw8cpKw3jj3M6Ti4A36rKX+LwegBcnoVO4ENGWE9v+NGr0sExDcVdaXku065yDqlM/FtWIGXlOmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726494896; c=relaxed/simple;
-	bh=ShMh19eXn66OfcNsR+Um9oEAVTm7WA6a0G4IW6j2g3c=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ipX2yHSVghP/tmFiEBe6kRh75IXHZmNudXTEkdl5rA5mAMMNHOAFYFjc9z94gMJDKh4rWjvf6uzPePJxWMsJfMRmJROQy4PzkI7qEXsUUiNVFSFOQ8pM8u+nEsDcqHE0RCySGpquqDJ/Hs99VnSP0mnwnMpAjWRmPJ7ChBf0rSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EdB26Zai; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-536748c7e9aso5268458e87.0;
-        Mon, 16 Sep 2024 06:54:54 -0700 (PDT)
+	s=arc-20240116; t=1726494920; c=relaxed/simple;
+	bh=TQ9Z28VrXmhpoS/+5Enj8vZt41wK2AKLp3BMB68Uvjg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MTXtYL3fL5jbBLFZupF6pUB6gMVeJGrykw+8+LkqjYzx+IGXs50ougsor1HunlyUiLEmVA2rRUDyXZgbNNM2YcdyKd2EKZ/TWpaYTLwTw69nhkx8ZbbUhLcZqjK/26yYFVbjwn40I4phQFFXjTXPd7BcSxkXN+TQBYem0vtzDCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jdmvRJLs; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75c0b78fbso46871601fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:55:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726494892; x=1727099692; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hn06ZJYaDUFnJPnf4C6Ys+vZTzawbTYLPbDQNaOjMFM=;
-        b=EdB26ZaiUU7uZ25D1AHV+VOTWrwxl7eGBmT0fEPDLFN0iOC3woNONanSFsHHYzPDpG
-         zj9ujrIZ6xK/bD2U2J71dSzv6Z5sMMcvGHq7kWdUH0knBIhTaVHBs9Og+QkQe4XbCEIW
-         9YWm/3n/v4BkAQzPGeuWDaxE9n53wqY9ozie6QqlehrGJG02zL8Tnpc+n24Eadf6sU9j
-         VJUVH+vChpfEYrb5g3tthyeBlsl4SGyiypmxyR4c4227iX3vc2P6oNtXgPSLnIjuqPLA
-         pSiWDerh63/0IsNlcyqy6B8uoYi79Rjdx7rL1wXqnz6Hlu4x6o2LtTKfGhAsrPPJkis4
-         rEbg==
+        d=google.com; s=20230601; t=1726494917; x=1727099717; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TnAR93o+K7zzH5nWKB/vrO+A6k82QdGsUv8h9VnrLk4=;
+        b=jdmvRJLsJCJxVVKdgHF0DVDTx3zZE3kBbYdqDEZeTOdl4x+eK1MhPeTt3sGXGtxCLM
+         jv9KHMZIiqD/9JCrUjruclHxsBQnjS2W66LerIe22dFe2qYQcQZe3zBYxWQeDjmaLuQM
+         /7n7OsbySDH3MOjc3W0WzNJOBPeK/n74HhFnyyo0tIEYuUMtN1k9i/DTWIuZhAtasCe9
+         KGr+41/+lVWziTSd/9QumbVt0c9UAH3/Sbzw92d179XG6jHONH9RUdvWWXGRAPH4E0Bz
+         AmMv/1+z/HQ/dJLk0yZhFRv9SL+nvz09uUOxukbfGq1L8CaLZBhwQcJ/zh1wOLmeYtfa
+         0jrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726494892; x=1727099692;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hn06ZJYaDUFnJPnf4C6Ys+vZTzawbTYLPbDQNaOjMFM=;
-        b=t3aO//bqfPTZSl6PnAUEc/ZzyoYukdADwEWfPc6YwPcvw6B6xfVQ1ndKtghV0vIU2i
-         v3weV36k7INGibc9XbexP1kW8Gweq6E7uI61CzwDQWNJn7riMzvgcvRJQ9dMZlmAtSkT
-         leJlHGJsxpkijktK6ERdRBYXTzIeT0Vze45ukk/srhdCSYyAoNlpOfXv43jNHQCxmu5V
-         jGHey5k4GzYFA848Nvf0t1HDuTnEDoGyQxZWHrQUi1fU0rnKk1rvdgUx47PD352OJVN/
-         mQySE4iwMJBUbZzqpAsSSa7zsxxXHa5qSkJONb/vXd1BHSyfwJGOQQ4F+WFAu3N5khvg
-         p4lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgqpWgFcEnFQHUHC1JWzcdAGEVkVPa3XFihANTpqBCb1JIK2Qm6qv4EgAS9g/qqtWKxJw6GMFbRoirhaU=@vger.kernel.org, AJvYcCWitELBrgF6L6SvxGuNhKHAGGLnYNqCB64x0pbBt23NtMddALwUoqwIbWWOM15jDeTuQq3e@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOYRfmW5MzS6DzVLNyB3oOtuBwXJ/7TmPuJwBT/IsTGX15MWKI
-	JNJ9Hj9bpK9rDXoDqxeDz5sEZWZUhPrWziwmH9QiAKtqgRFyynpl
-X-Google-Smtp-Source: AGHT+IEN253EXuKFClro3EtlnTNScTiUUEMnDfcaa1PG7dnUutGKmtG3YIxEskz9uEghs1Sk+TsPZw==
-X-Received: by 2002:a05:6512:b8e:b0:536:55a9:4b6c with SMTP id 2adb3069b0e04-53678fbb03fmr9060454e87.13.1726494891548;
-        Mon, 16 Sep 2024 06:54:51 -0700 (PDT)
-Received: from pc636 (host-95-194-217-125.mobileonline.telia.com. [95.194.217.125])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704677fsm883002e87.36.2024.09.16.06.54.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 06:54:50 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 16 Sep 2024 15:54:45 +0200
-To: Juefei Pu <juefei.pu@email.ucr.edu>
-Cc: Xingyu Li <xli399@ucr.edu>, Uladzislau Rezki <urezki@gmail.com>,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org, josh@joshtriplett.org, boqun.feng@gmail.com,
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
-	rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yu Hao <yhao016@ucr.edu>
-Subject: Re: BUG: WARNING in kvfree_rcu_bulk
-Message-ID: <Zug4pQjdWtR0ToMn@pc636>
-References: <CALAgD-7JNKw5m0wpGAN+ezCL-qn7LcTL5vgyBmQZKbf5BTNUCw@mail.gmail.com>
- <ZtAunXBPC4WElcez@pc636>
- <CALAgD-4kr9MLE6jSF7pXFX9msd-NWFL8mrscvJAOecNWAYL4RQ@mail.gmail.com>
- <ZtieQFsSiALVVGld@pc636>
- <CALAgD-7WAY6FwTNGdt0BQ2S99Nr+yJ5XyWhA_L_SsbkKsHBrFw@mail.gmail.com>
- <ZuMR_U5JfZTIeG30@pc636>
- <CALAgD-5-Y1S34XqqGkNaO-fFiYAFODkDGiDrshaVLxGLcAYvYQ@mail.gmail.com>
- <CANikGpd-rkQh8EpygeLxcHrO1r+72G2bHA_MQ2CFExDK_KDe_Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1726494917; x=1727099717;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TnAR93o+K7zzH5nWKB/vrO+A6k82QdGsUv8h9VnrLk4=;
+        b=cHIXU2aPd4CUhOo1V+AKSO+OV3+LH/xG/kAS4FM2QVJDM1VPqF4pYMRlHv+OIimMyN
+         Jvh8zkNQhFFMwTDqZCeLITg/+lPH3bWQitTHAvoGRq5d5+NZcbjlO/FSzJajAjqumy+A
+         fiOCelvdWYX4sVFFibQrHQWRYFZogolaappLQGjCzeprBwbRcbI2JmKTp5Kh8YGViib9
+         mGVd4vsmXAEJT/B1osWRQRyo46t2mdnVca46oi28P+OS8cABB9jvwRUUmcx432yS4UX9
+         gZCPOChtGprX4iuAiLhQ9XBPl4mWwTg68osZ2sIPMJeWbryTuasog+xcVcxi3B4qW3sh
+         A8rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUCd8JvGf101DtxPrg4XBjyP1iONcEFCcT+QIS7ywDthVb2W7QqPbDfePt6Z6wWrMAIMB37vkc8qb+PGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj4kTzqCkAWT2JlLVqYhaNwDK6pLaO3xn7Pcl71x5rTlFE6hdI
+	/EMuei3aHFDo3GyTb7pKN58WbiY5mdy5CaRfbrgkV4VT9y6JxS7+Sgd4Sjut19Mzhr8elwC4x7t
+	tD6Lr+DY+NteBxnPbc0zDTiOYU6e9drw0HuMm
+X-Google-Smtp-Source: AGHT+IESKzBfl8rPNdiysY8g7h5xJa5N0rTSdQ0+gs1+b7V0l+3gMcjbyAmed0AAQW8lIUuMnSOAF7oIevPTu4bOqwI=
+X-Received: by 2002:a05:651c:b22:b0:2f7:65b0:ff28 with SMTP id
+ 38308e7fff4ca-2f787f5098dmr80304861fa.39.1726494916930; Mon, 16 Sep 2024
+ 06:55:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANikGpd-rkQh8EpygeLxcHrO1r+72G2bHA_MQ2CFExDK_KDe_Q@mail.gmail.com>
+References: <00000000000039fb2d05f3c7d0ed@google.com> <8e13233a-2eb6-6d92-e94f-b94db8b518ed@acm.org>
+ <CACT4Y+ZvEjpX8a9VW4tS1YSP8RE6xjb8C9ae6PcSa0rr-q+62g@mail.gmail.com> <da2d3fb8-b4b0-457a-80fa-a3eae5c8e1fc@acm.org>
+In-Reply-To: <da2d3fb8-b4b0-457a-80fa-a3eae5c8e1fc@acm.org>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 16 Sep 2024 15:55:05 +0200
+Message-ID: <CACT4Y+bmJAKw8J=oJgp5gh_-Tz1e-VkgtvKF4QFGcD-Ovffm8Q@mail.gmail.com>
+Subject: Re: [syzbot] [ext4?] INFO: task hung in ext4_evict_ea_inode
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: syzbot <syzbot+38e6635a03c83c76297a@syzkaller.appspotmail.com>, 
+	adilger.kernel@dilger.ca, alim.akhtar@samsung.com, avri.altman@wdc.com, 
+	beanhuo@micron.com, hdanton@sina.com, jejb@linux.ibm.com, 
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, martin.petersen@oracle.com, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
+	wsa+renesas@sang-engineering.com, syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 
-> After several tests, I found that the same PoC can cause multiple
-> different crashes for some unknown reason. Thus, I suspect that the
-> bug is capable of performing unintended memory writing without being
-> caught by KASAN.
-> I tested the PoC on the latest kernel, Linux 6.11 rc7 and it can still
-> cause crashes.
-> For reproducibility, I've created a GitHub repo at
-> https://github.com/TomAPU/Linux611BugReport, which contains the
-> software versions we used, the QEMU arguments we used to boot up the
-> kernel, the kernel config we used,  the pre-compiled kernel image,
-> Dockerfile that can be used to compile the kernel.
-> I hope this repo will be helpful for analyzing the bug.
-> 
-Could you please help to bisect this bug then?
+On Mon, 16 Sept 2024 at 15:41, 'Bart Van Assche' via syzkaller
+<syzkaller@googlegroups.com> wrote:
+>
+> On 9/16/24 6:28 AM, Dmitry Vyukov wrote:
+> > On Fri, 3 Feb 2023 at 19:11, Bart Van Assche <bvanassche@acm.org> wrote:
+> >>
+> >> On 2/3/23 00:53, syzbot wrote:
+> >>> syzbot has bisected this issue to:
+> >>>
+> >>> commit 82ede9c19839079e7953a47895729852a440080c
+> >>> Author: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >>> Date:   Tue Jun 21 14:46:53 2022 +0000
+> >>>
+> >>>       scsi: ufs: core: Fix typos in error messages
+> >>
+> >> To the syzbot maintainers: I think this is a good example of a bisection
+> >> result that is wrong. It is unlikely that fixing typos in kernel
+> >> messages would affect whether or not the kernel hangs. Additionally, as
+> >> far as I know, the systems used by syzbot (Google Compute Engine virtual
+> >> machines) do trigger any code in the UFS driver.
+> >
+> > Hi Bart,
+> >
+> > syzbot has logic to detect commits that don't affect builds.
+> > It hashes SHF_ALLOC vmlinux sections to check if the commit actually
+> > has any effect on the binary:
+> > https://github.com/google/syzkaller/blob/c673ca06b23cea94091ab496ef62c3513e434585/pkg/build/linux.go#L253-L286
+> >
+> > Bug CONFIG_UFS_FS is enabled on syzbot, it has some coverage for it,
+> > and strings affect the binary (can actually be the root cause for
+> > bugs). So I don't see what else can be done here automatically.
+>
+> CONFIG_UFS_FS controls whether or not the UFS filesystem is enabled
+> (fs/ufs/). The UFS driver is unrelated to the UFS filesystem and is
+> controlled by CONFIG_SCSI_UFSHCD. Support for the UFS driver has been
+> added recently in Qemu. Does that mean that it should be possible to
+> test the UFS driver with syzbot? See also
+> https://patchew.org/QEMU/20230616065816epcms2p82787f1aeb410ec4b8ab6ffedb6edf4d2@epcms2p8/
 
-Thanks!
+Oh, I see. Added this example to the issue:
+https://github.com/google/syzkaller/issues/2297#issuecomment-2352986387
 
---
-Uladzislau Rezki
+I've tried to follow all guidelines from reproducible builds:
+https://docs.kernel.org/kbuild/reproducible-builds.html
+
+https://github.com/google/syzkaller/blob/c673ca06b23cea94091ab496ef62c3513e434585/pkg/build/linux.go#L165-L176
+https://github.com/google/syzkaller/blob/c673ca06b23cea94091ab496ef62c3513e434585/pkg/build/linux.go#L85-L102
+
+Yet this commit still somehow affected the build:
+culprit signature:
+c1512384fd0e6d2bd48b3a1ce2034eb5c0de195562eca27cd2c0c6ac58cd4863
+parent  signature:
+1f86ef314029ed6e1f240aae874259f4bb0f7978f8b38b29d6c184b82965b331
+
+I've debugged and fixed some of these non-determinism bugs, but it
+seems something is still broken (not sure if it's the compiler, or
+kbuild, or how we do deterministic build).
 
