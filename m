@@ -1,181 +1,88 @@
-Return-Path: <linux-kernel+bounces-330860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78EC397A54F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:28:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850F897A556
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D92A28941B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:28:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37CBFB20F68
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84AC159209;
-	Mon, 16 Sep 2024 15:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dqtLX7p6"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CF9156861;
+	Mon, 16 Sep 2024 15:30:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AFC158D92
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 15:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A82D1BF24;
+	Mon, 16 Sep 2024 15:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726500498; cv=none; b=hvigvRCu9NitZcPHCXMkm6qrKNFctoHO4aV+sAXTj2oXw9ZVhi0PRaRs6sRftHnAwyraJlPLiguRwL7WKXpadnQgCi4tqtWAMhVbGEoq9EZ8Wa/jbZxg60BTo0Xvt/X3rNw89xfspjCapnkxpAFctXjDk43/IknkZs4KOw8XSW8=
+	t=1726500645; cv=none; b=Cw+Wcl3auQAWa/Vg4xEV+vuZt7xDiCh36MtI+aukCIKJ5PzTFMmqHyOO0zMVlH6fLBO1m0SznbiJdZ9KJUfLDgeyXINrZ4VBf0nxtllf8xl3/QW3ooptQFZVm2hCjwh/tqkYVArWHCXO0HkVF4alDvWjfuiBv6pEVQdx09BRJr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726500498; c=relaxed/simple;
-	bh=WlODueikdE8iNg+YcFfV4D9fBjO+4Cw1pzynCIM+K+k=;
+	s=arc-20240116; t=1726500645; c=relaxed/simple;
+	bh=WCXq8/m0f0eY3CA7UHZc/7PY/9TzlMuVY6/oBP5vKl4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cRx2JIPciKJt68YUSSiu8qMzqWBPdpWhWJOUrFVDpROY52NYGOxKh0U8mBHQfDTOQqccVAdAuqMiDlDyYPCy02WIGQKAh/HCmqqw0DEehYAKhs/LISIb9R6/oSaSRtO/ij8kkmwChlvtiWDG96PhRRVg2nB8JMIChE483PSGtxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=dqtLX7p6; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3787f30d892so2264050f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1726500495; x=1727105295; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7m4daR3wtHlZl9dcuxcFnv3RNISgqsCBz2X/zdmjlr4=;
-        b=dqtLX7p65/y7sBWF6zXxus+TD1RMiLVoqiWv/2oloaZUaAARl4liz+ESOOgouOpiWN
-         aHEa9rIXBvPhhaaojmpJebhlcmKw/Wj+1cK7afP8xurOYyrb6dh4k+AVIRLZBs0wXgc3
-         GmpqJTelWqyvUKv35J/NaRAAHtViTliLWkKho=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726500495; x=1727105295;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7m4daR3wtHlZl9dcuxcFnv3RNISgqsCBz2X/zdmjlr4=;
-        b=MlLEbJxoPT9sUHK2BSRzFV0aq/+MHcdK39gWmbmuEbaWJ3HDBImHsWZsLuSJ2xuj0F
-         NMpz+AR8iPhnSGPAHMqR8z4A9h9VjZHcVa/tRrHaVlkUW0feeGeRxK6Pygzt2f5LOve5
-         dXXEJXaLVpiwmA2sufr1Wp4pjUOAqiCUQjBfo4LmDh39p7md2nKIPOqlKZMGjjV8Se+7
-         qGH36A/DX7XZwK0wQ8WsE92SK0YVHgxO3llgN60pWdc0R+76JQbzZaYkhVkhX56U0s+p
-         1tgYBRV9ze786aOBGgeKZzzpIJGnL153yaqzZEY711/NCOo1z5xODsmRTvTkOagPynOi
-         y4eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxa5R0T69yDvH81n0GyEQj7sM9KNFfpt2+7qlDKIoKHbMtwzO45TW/BauNntJpgPMWEXXi+rhAkkh8mkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV8E1I0HaTRfsNbEvqOnDmdbJJogfWA/H3aIqgEhLQfr/0h5RQ
-	/66chKkxGAuRAEYANHl9n/10YNm6nUN9YT1s0bvRUeRVfv3S/81qkrWS8r4nAx0=
-X-Google-Smtp-Source: AGHT+IGWvzNIRGqBC8AGUY8qiZPWMwcVmKXq3jZ8qz07XXarJ1ziKNdbe2x93+v1ko+aFpHXY3tsYw==
-X-Received: by 2002:a05:6000:120d:b0:371:82ec:206f with SMTP id ffacd0b85a97d-378d61e2871mr6466145f8f.16.1726500494626;
-        Mon, 16 Sep 2024 08:28:14 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78052efsm7470228f8f.97.2024.09.16.08.28.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 08:28:14 -0700 (PDT)
-Date: Mon, 16 Sep 2024 17:28:11 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] rust: sync: fix incorrect Sync bounds for LockedBy
-Message-ID: <ZuhOi1xFBNtfGxn5@phenom.ffwll.local>
-Mail-Followup-To: Alice Ryhl <aliceryhl@google.com>,
-	Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-References: <20240912-locked-by-sync-fix-v1-1-26433cbccbd2@google.com>
- <ZuSIPIHn4gDLm4si@phenom.ffwll.local>
- <ZuUtFQ9zs6jJkasD@boqun-archlinux>
- <20240915144853.7f85568a.gary@garyguo.net>
- <CAH5fLggoz5gdgOpEiXu7u9hPXjLLeSv9An6jaq0am0-dG7+ohw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZF0dk2Gz4ed5VEo+JATzorybYvnUVKowLswi53C/tvh2HcRDvLOhJOK7NZoZXrP/ksaMRLCxWjn+DoeRVh24MD07mgDvJQXHxRcvLz7+kLhu3IF6jrHyLysNH03tzvnOoS6ufpNppDpknFky9tU3CxXagS9yYMz0z5rBRllI1u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DA1C4CEC4;
+	Mon, 16 Sep 2024 15:30:43 +0000 (UTC)
+Date: Mon, 16 Sep 2024 16:30:41 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v2 2/2] arm64: cpufeature: Pretend that Apple A10 family
+ does not support 32-bit EL0
+Message-ID: <ZuhPIdnx36yXJhHi@arm.com>
+References: <20240909091425.16258-1-towinchenmi@gmail.com>
+ <20240909091425.16258-3-towinchenmi@gmail.com>
+ <f908c9ca-8063-44f4-b534-ddfc067b98c2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLggoz5gdgOpEiXu7u9hPXjLLeSv9An6jaq0am0-dG7+ohw@mail.gmail.com>
-X-Operating-System: Linux phenom 6.9.12-amd64 
+In-Reply-To: <f908c9ca-8063-44f4-b534-ddfc067b98c2@gmail.com>
 
-On Sun, Sep 15, 2024 at 04:11:57PM +0200, Alice Ryhl wrote:
-> On Sun, Sep 15, 2024 at 3:49 PM Gary Guo <gary@garyguo.net> wrote:
-> >
-> > On Fri, 13 Sep 2024 23:28:37 -0700
-> > Boqun Feng <boqun.feng@gmail.com> wrote:
-> >
-> > > Hmm.. I think it makes more sense to make `access()` requires `where T:
-> > > Sync` instead of the current fix? I.e. I propose we do:
-> > >
-> > >       impl<T, U> LockedBy<T, U> {
-> > >           pub fn access<'a>(&'a self, owner: &'a U) -> &'a T
-> > >           where T: Sync {
-> > >               ...
-> > >           }
-> > >       }
-> > >
-> > > The current fix in this patch disallows the case where a user has a
-> > > `Foo: !Sync`, but want to have multiple `&LockedBy<Foo, X>` in different
-> > > threads (they would use `access_mut()` to gain unique accesses), which
-> > > seems to me is a valid use case.
-> > >
-> > > The where-clause fix disallows the case where a user has a `Foo: !Sync`,
-> > > a `&LockedBy<Foo, X>` and a `&X`, and is trying to get a `&Foo` with
-> > > `access()`, this doesn't seems to be a common usage, but maybe I'm
-> > > missing something?
-> >
-> > +1 on this. Our `LockedBy` type only works with `Lock` -- which
-> > provides mutual exclusion rather than `RwLock`-like semantics, so I
-> > think it should be perfectly valid for people to want to use `LockedBy`
-> > for `Send + !Sync` types and only use `access_mut`. So placing `Sync`
-> > bound on `access` sounds better.
+On Mon, Sep 16, 2024 at 09:41:12PM +0800, Nick Chan wrote:
+> On 9/9/2024 17:10, Nick Chan wrote:
+> > The Apple A10 family consists of physical performance and efficiency
+> > cores, and only one of them can be active at a given time depending on
+> > the current p-state. However, only the performance cores can execute
+> > 32-bit EL0. This results in logical cores that can only execute 32-bit
+> > EL0 in high p-states.
 > 
-> I will add the `where` bound to `access`.
-
-Yeah I considered but it felt a bit icky to put constraints on the
-functions. But I didn't come up with a real use-case that would be
-prevented, so I think it's fine.
-
-Even the use-case below where a shared references only gives you the
-guarantee something is valid you likely have additional locks to protected
-the data if it's mutable.
-
-> > There's even a way to not requiring `Sync` bound at all, which is to
-> > ensure that the owner itself is a `!Sync` type:
-> >
-> >         impl<T, U> LockedBy<T, U> {
-> >             pub fn access<'a, B: Backend>(&'a self, owner: &'a Guard<U, B>) -> &'a T {
-> >                 ...
-> >             }
-> >         }
-> >
-> > Because there's no way for `Guard<U, B>` to be sent across threads, we
-> > can also deduce that all caller of `access` must be from a single
-> > thread and thus the `Sync` bound is unnecessary.
+> Further research shows that the MPIDR_EL1 values between the two core
+> types are different. And whether the two core type have any extra
+> differences is anyone's guess right now. So far, nothing seems to break
+> horribly without special workarounds for the MPIDR value (with cpufreq
+> enabled downstream) as:
+> 1. There are no KVM, GIC, ACPI, PSCI or cpuidle
+> 2. All CPUs switch P-mode and E-mode together
 > 
-> Isn't Guard Sync? Either way, it's inconvenient to make Guard part of
-> the interface. That prevents you from using it from within
-> `&self`/`&mut self` methods on the owner.
+> However, all of this is broken enough that this piece of code should go
+> into arch/arm64/kernel/cpu_errata.c, and also generate a
+> TAINT_CPU_OUT_OF_SPEC for these cursed CPUs.
 
-I think there's also plenty of patterns where just having reference is
-enoug to guarantee access and exclusive ownership gives exclusive access.
-E.g. in drm we have some objects that are generally attached to a File,
-but get independently destroyed. But some of the fields/values are only
-valid as long as the corresponding File is still around. Lockedby as-is
-can perfectly encode these kind of rules.
+I wouldn't carry any additional logic in the kernel for such
+configuration (long time ago Arm had something similar, the big.LITTLE
+switcher, but the CPUs were fairly similar from a feature perspective).
 
-So I don't think tying LockedBy to Guard, or even a specific Lock type is
-a good idea.
--Sima
+> > Trying to support 32-bit EL0 on a CPU that can only execute it in certain
+> > states is a bad idea. The A10 family only supports 16KB page size anyway
+> > so many AArch32 executables won't run anyways. Pretend that it does not
+> > support 32-bit EL0 at all.
+
+CONFIG_COMPAT depends on ARM64_4K_PAGES || EXPERT. Do we really need
+these patches in case one enables EXPERT and tries to run 32-bit
+binaries that never ran on 16K pages before?
+
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Catalin
 
