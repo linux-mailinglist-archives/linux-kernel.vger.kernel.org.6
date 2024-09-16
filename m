@@ -1,119 +1,172 @@
-Return-Path: <linux-kernel+bounces-330644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 186FA97A238
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:26:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B3497A23C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46FEC1C227A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:26:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7011F24832
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBA0158DAC;
-	Mon, 16 Sep 2024 12:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C6A149E0B;
+	Mon, 16 Sep 2024 12:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Sa1eoe5U"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZgaCTtNx"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE02157E9F;
-	Mon, 16 Sep 2024 12:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269B1156C72
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726489483; cv=none; b=Y8KHoovseQ4G2WwrCsGT1iwzQ7JVFMq6xGD3zfrLE7PxI0mggJegxYHGjGR3RMUVYPcswdXs4Nfp3+hNZKvWAlR9bvEaP3lPVe9ClLioSH0Xrk4MNJjQ6z72JQFLJ/9B4elmDrjaR6ysBISsRv/HIzW4Qi8UCJUbcflzdGwDJ6Y=
+	t=1726489506; cv=none; b=jb26t3b9LW7YkEBmaBLXZYHEW/sBLWiHenQa0ZT55lZprDpYvthW/8lW3YV9tvYeXHigbHaI9dgVAu/ebQYsZNTz7E97uCbmaBBy3viSaL2Sit4BrHL0l/B5qtgkGWTUJnBhP6L2mplh07pOvSWJOlLUUFPRmAZ6xObrsuLFh7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726489483; c=relaxed/simple;
-	bh=s4Jnygxo1kk2vkxv9gdBlOVwmBGwWmyXKspjhMrqHpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qSUbD1nTARax6Hwju2yhMoWJNdcsarilLclHFUBmlwu7zi3N38Yt8+5i/T5JzeTHY9/ccBYIqpWtLFV9tjAF+J4afgQqo1OrG5aFS8BfjtlSc3HARb+zsj6v+Eb/O7ApjJMsFs1SvVmRBdLg0+65kH5GBVDaQq/yR2zUQoXMCaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Sa1eoe5U; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GAFgCA025501;
-	Mon, 16 Sep 2024 12:24:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=s
-	4Jnygxo1kk2vkxv9gdBlOVwmBGwWmyXKspjhMrqHpg=; b=Sa1eoe5UrBCLeDq4X
-	oNFygXKO1qxvnPyfRGZ9ArUbnIZLEvqpBxg1pzVLp5Q8fiGOJFSi/QFGC9/NVqsU
-	dj0kPQlwc1osSyV7dg10i4ELHiS+2v/bmMVnG0a0bBF2gUJJaJLlEOH4ZLMqhzLW
-	WRLlnFLorVJOnUdkQVB+k/VH8YFX7JxWtDWwKTdzWDeX/xhHh8U3ZGua7aA7zsDX
-	lXMnPHgfnIYYKdKmLM22rsWmllFCUjKrSAc3Q/u0zTAWhw/lUGcAI/vHFr/BCh0k
-	lTwt4P2++mnPQWxH9mx8u7WKgE9JAotE6hGSAOSTYV1eOwnYXdqy7IU7D7sh6MAs
-	1v6NA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3uj1uh3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 12:24:40 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48GBDxFf000723;
-	Mon, 16 Sep 2024 12:24:37 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41nntpyads-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 12:24:37 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48GCOatV48234832
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Sep 2024 12:24:36 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 40AA75805C;
-	Mon, 16 Sep 2024 12:24:36 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5EE9658054;
-	Mon, 16 Sep 2024 12:24:34 +0000 (GMT)
-Received: from [9.171.5.142] (unknown [9.171.5.142])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 16 Sep 2024 12:24:34 +0000 (GMT)
-Message-ID: <27aa2d1b-985f-41b0-9e2e-566e17aeb620@linux.ibm.com>
-Date: Mon, 16 Sep 2024 14:24:33 +0200
+	s=arc-20240116; t=1726489506; c=relaxed/simple;
+	bh=o9EnbdwllzhNTbJpj69Z9Kw1ccdl7ftBqQM5447Z5PE=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=YwUPEBHc9ciL/Gf/y9E2OS/z+pqN3sFpci9iAWQWCnD94mzBqlXhxK8n4TcdBUa1C0ZcMmhtJ950nJcQt63Ueo+m8n4ty6SQQXLY1+P2GrUuWcEFHFd7MoQMMSUoOf2EAXAMyEtJDnwhQUvYBOztZ14eZZpk0qtdaa9mO+ljwhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZgaCTtNx; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240916122502euoutp0278694f330bb60db84a32bf881de28dc5~1uQ4UbfxI0815308153euoutp02h
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:25:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240916122502euoutp0278694f330bb60db84a32bf881de28dc5~1uQ4UbfxI0815308153euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726489502;
+	bh=YG451YJHsgVJn8e6zQFyXx78G1vI5JSdgFvQqBcmLVE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=ZgaCTtNxBSMPpKAZ2R7UQku2LUm+3/p5aTqe4anb7xB+oUJuOmd6CnLSQxGxa8zzv
+	 bew9EM9Xfr+RTC8PQMN6ENaZMjOodrlUPU8r+5Ex++yvmL8ElCT+NLDUDcVrhfp0fD
+	 5R1UXPnYGWQB09y6jIiL75AJJzNzXe11obJibFKw=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240916122501eucas1p254275e22abdaf7df9a77e7954d2c44e3~1uQ37SlYK2892628926eucas1p2D;
+	Mon, 16 Sep 2024 12:25:01 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 4B.49.09624.D9328E66; Mon, 16
+	Sep 2024 13:25:01 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240916122501eucas1p1372c5ce0f8988b2e3a313971452c187b~1uQ3eKInq0914009140eucas1p1f;
+	Mon, 16 Sep 2024 12:25:01 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240916122501eusmtrp15995193d78df13a67b4938b962ca3e89~1uQ3bbTJZ1937519375eusmtrp1L;
+	Mon, 16 Sep 2024 12:25:01 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-86-66e8239d2b5a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 9D.F4.14621.D9328E66; Mon, 16
+	Sep 2024 13:25:01 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240916122501eusmtip267fbebe6a98e60ad221a30ac23e11cc1~1uQ3OTPji2645126451eusmtip2X;
+	Mon, 16 Sep 2024 12:25:01 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Mon, 16 Sep 2024 13:25:00 +0100
+Date: Mon, 16 Sep 2024 14:24:56 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: David Woodhouse <dwmw2@infradead.org>, Lu Baolu
+	<baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin Tian
+	<kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+Subject: Re: [PATCH 3/6] iommu: kconfig: Move IOMMU_IOPF into INTEL_IOMMU
+Message-ID: <20240916122456.gzb5oukf5m3ehh6q@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] s390/dasd: Fix typo in comment
-To: Yu Jiaoliang <yujiaoliang@vivo.com>,
-        Jan Hoeppner
- <hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240911064213.3891052-1-yujiaoliang@vivo.com>
-Content-Language: en-US
-From: Stefan Haberland <sth@linux.ibm.com>
-In-Reply-To: <20240911064213.3891052-1-yujiaoliang@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: tmhWMX5ZGjEe2psZAfV4YQlY5s-w1EKF
-X-Proofpoint-GUID: tmhWMX5ZGjEe2psZAfV4YQlY5s-w1EKF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-16_08,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=335 adultscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- clxscore=1011 bulkscore=0 suspectscore=0 mlxscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409160077
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240915133734.GC869260@ziepe.ca>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djP87pzlV+kGVw/Z2CxeeJWNouJKycz
+	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
+	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRXDYpqTmZZalF+nYJ
+	XBm/TjxlKujgrvh/5TFzA+Ntji5GTg4JAROJ270LmUFsIYEVjBK/rph0MXIB2V8YJSY/+ccI
+	4XxmlPjYNYURpmPBiedMEInljBL3vixgg2gHqpo9WRcisZlR4vq7i2AdLAKqEtM3bATbwSag
+	I3H+zR0wW0RASWLfronsIA3MAjuYJPpmTwKbJCzgKfGw7RuYzSvgIHFm1n8oW1Di5MwnLCA2
+	M9CgBbs/AcU5gGxpieX/wP7hFNCXeL3qOjPEpYoSXxffY4GwayVObbkFdrWEwHxOiX/Xb0EV
+	uUi87X3PDmELS7w6vgXKlpE4PbmHBaJhMqPE/n8f2CGc1YwSyxq/MkFUWUu0XHkC1eEo8e3J
+	O1aQiyQE+CRuvBWEOJRPYtK26cwQYV6JjjYhiGo1idX33rBMYFSeheS1WUhem4Xw2gJG5lWM
+	4qmlxbnpqcWGeanlesWJucWleel6yfm5mxiBaev0v+OfdjDOffVR7xAjEwfjIUYJDmYlEV7b
+	30/ThHhTEiurUovy44tKc1KLDzFKc7AoifOqpsinCgmkJ5akZqemFqQWwWSZODilGpjmp0yK
+	OSPr0Vj0OetYheaXOJuEC7XfpqxfWNjmsyGMl8/H8vwnttIDfwsympdGyCz3s7jG082xY2P0
+	qW8Ba1ZtWWrO7R3HdDR4zk3O5SsWtEvM/HR79nuxc8UtCjzLzszquxLIOanuTrBFitVjVaHb
+	dYGcEfeYls3/1sU2+8mJ00X1Wfsu2U95c80jufCwvVW0lkaZutxcx5KibK5fwXVn+yTEol+c
+	8czMOvvH1/7sLNn/PVZxCbPK7voLH0ibInTt/Lp/STzVbh4d8jH79jQv+eRfVDlJXuFC2UPD
+	G0lRj2/vm/l1yUrON45NLtaf727N3iFZtV1RptntTPISgdW/WDrOLGcy1Y26mV5sZ6jEUpyR
+	aKjFXFScCABNOgmQygMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xe7pzlV+kGfy8xG+xeeJWNouJKycz
+	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
+	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
+	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehm/TjxlKujgrvh/5TFzA+Nt
+	ji5GTg4JAROJBSeeM4HYQgJLGSWOTQmBiMtIbPxylRXCFpb4c62LrYuRC6jmI6PEjq0tTBDO
+	ZkaJKXf2sINUsQioSkzfsJEZxGYT0JE4/+YOmC0ioCSxb9dEdpAGZoEdTBJ9syexgSSEBTwl
+	HrZ9A7N5BRwkzsz6D7XiMJPEhjNfWSESghInZz5hAbGZgaYu2P0JqIgDyJaWWP4P7AVOAX2J
+	16uuM0OcqijxdfE9Fgi7VuLz32eMExiFZyGZNAvJpFkIkxYwMq9iFEktLc5Nzy021CtOzC0u
+	zUvXS87P3cQIjN5tx35u3sE479VHvUOMTByMhxglOJiVRHhtfz9NE+JNSaysSi3Kjy8qzUkt
+	PsRoCgyLicxSosn5wPSRVxJvaGZgamhiZmlgamlmrCTO63b5fJqQQHpiSWp2ampBahFMHxMH
+	p1QDU7ZR9NlZwgWidjX+xUk27g/jI8pDr0/uP2MToL7/2KpMV9UtoQFrlDPnmjT+UpN6e/WL
+	cViw/501TJqlp+V8Nu0t+lS3/9hFhZKPXEeW1YcH3E77tnXV4f1PVX/U7GBxDD3SoSMotPqs
+	4wcnAaEPGQG/mkqWr3Pd8veE/cG8NZF8smdvv17S5M7Y6349S1x6+YJ5XGufHr235uu8oslX
+	rLVv1xs5XdkR9FzrfqSq1BPP3fdjH66a8TzQSy9fT8e/xu33zmrXxybP90pq6r74X2jenBX2
+	5JFA7tPX7Rp6WTumhew8tLDj6IODH1/9iTyT/2ODw7WPk6u3Mx+xFncWa8vd5T1z6Zq9Cp++
+	hp/5vUSJpTgj0VCLuag4EQDhxHDnZwMAAA==
+X-CMS-MailID: 20240916122501eucas1p1372c5ce0f8988b2e3a313971452c187b
+X-Msg-Generator: CA
+X-RootMTR: 20240907122025eucas1p26776e1be9713e21ecd4ee612e470d5ba
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240907122025eucas1p26776e1be9713e21ecd4ee612e470d5ba
+References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
+	<20240904-jag-iopfv8-v1-3-e3549920adf3@samsung.com>
+	<CGME20240907122025eucas1p26776e1be9713e21ecd4ee612e470d5ba@eucas1p2.samsung.com>
+	<ZtxFAxM6QQBYVSJp@ziepe.ca>
+	<20240911074059.f3i22vso6g6payrj@joelS2.panther.com>
+	<20240915133734.GC869260@ziepe.ca>
 
-Am 11.09.24 um 08:42 schrieb Yu Jiaoliang:
-> Fix typo in comment:
-> requeust->request,
-> Removve->Remove,
-> notthing->nothing.
->
-> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
-> ---
->
+On Sun, Sep 15, 2024 at 10:37:34AM -0300, Jason Gunthorpe wrote:
+> On Wed, Sep 11, 2024 at 09:40:59AM +0200, Joel Granados wrote:
+> > On Sat, Sep 07, 2024 at 09:20:19AM -0300, Jason Gunthorpe wrote:
+> > > On Wed, Sep 04, 2024 at 03:17:14PM +0200, Joel Granados via B4 Relay wrote:
+> > > > @@ -51,7 +52,6 @@ config INTEL_IOMMU_SVM
+> > > >  	depends on X86_64
+> > > >  	select MMU_NOTIFIER
+> > > >  	select IOMMU_SVA
+> > > > -	select IOMMU_IOPF
+> > > 
 
-applied, thanks.
+Will answer this based on https://lore.kernel.org/20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com
+as there are small differences with the current version of this patch.
+
+> > > Does patch 1 still compile if INTEL_IOMMU_SVM=n?
+> > It does for me. With and without INTEL_IOMMU_SVM. Is there a config that
+> > is not compiling for you? You can send that you to me and I can give it
+> > a try, to see if I get the same issue.
+> 
+> Okay, it compiles, but it is broken right? This hunk just can't be
+> correct, SVM needs IOPF to work
+
+AFAIK Yes: SVM *does* need IOPF to work. But IOMMU_IOPF *will* be
+selected if INTEL_IOMMU_SVM is selected because INTEL_IOMMU_SVM is
+covered by the `if INTEL_IOMMU` condition. Its the same way that the
+relation between INTEL_IOMMU_SVM and PCI_PASID is handled: PCI_PASID
+will be set if INTEL_IOMMU_SVM is set.
+
+Please let me know if I'm misreading or have missed something.
+
+Best
+
+-- 
+
+Joel Granados
 
