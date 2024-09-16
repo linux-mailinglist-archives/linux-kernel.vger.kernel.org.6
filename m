@@ -1,316 +1,136 @@
-Return-Path: <linux-kernel+bounces-330749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F06697A3BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27BC897A3BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 246C528D7EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:09:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCBC428BFCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DA915B15D;
-	Mon, 16 Sep 2024 14:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAA415B963;
+	Mon, 16 Sep 2024 14:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FfFGLVGX"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VBgKRvrm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3570915B135
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FD915886C
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495305; cv=none; b=XQ80lEUzbJq+yuJ7dwY0rHAF8QfxRBgaHRMwhhSDwrx+ENoEdNiDWbkc8Lf46d5Va5h2UxSAaDVh0D++rC85urpWn9ZKk2o1w/2/m8Uf4rNSpe4dFGtmwJJg4QTPEqURe3GeFWGmlahg7EjLxcCiUYa0LXG9ZXtAcjkiSWzj++o=
+	t=1726495358; cv=none; b=K9TDHJXwMqpeqbKZh8YbjUJW5/ZF8r5xOQNVfmS+ZQuvBxwaA7tJVlAWq/QE7M+oTm1C3ngqGXHg3Oa0reouWoPuSRoz4hivaICO+m0HvdTjH/FvNXmois+qO1K4FMIA0mIpiWzcGuajwleHfKpNGXzxpp70dfnObV0/rRNGnp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495305; c=relaxed/simple;
-	bh=4XZIIM24aLHamEa/bTQSWXBtB5sFrjDpG1Gb7kSqWVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A9bqEeH90f7PUiutoQKkIqm/LCZ6cRB3DAQiwo4qZzeaAD9Xvd8c1Io4eLn0UtoMUNaHN0jr3MexP0eZ9iC0IDFyqG2Jzl1ohC5HJ8aaGCdsSs9JYthq4rRilVRZfp13cJHQ/sa1Cy3uS1Ta+OMVyzwgOUQX5lWDMgV2DIsDCBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FfFGLVGX; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-535694d67eeso4330443e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:01:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726495301; x=1727100101; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMlMT+B8deIK9qAsz5RzoKJhcSIicRL6O2d2Qw8WeUM=;
-        b=FfFGLVGXUr1aW2Fj2BXBxhf8Os/w4CyHee/3cfqYRUoNvkVPE0wjx8r7iZZfihusqT
-         WHfseYN2wZQDQ88NffkmrdtOQR1GsdPEBoBICA0w+faA62rJBKL/uvlNLeV6IYFnWAYK
-         mxn+2Ke8o+Qr41JJmRtq6CXayeZ1F0OLdEOmaOYCBj9It892gvq0xvqrtBxTUptGzzcu
-         In31o49A46iFMuo6S72BYLj2UBHJtGVn829pV3a7+rWyUx6aTWiwv1jQh8CRoTlqvcpg
-         Iv5ZQDSBWcAG1rVKLcXpNtpswwydWFtvNb1CcGvNRXlfIE+sw+HWfQZ+daiIId8QVA8O
-         krzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726495301; x=1727100101;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cMlMT+B8deIK9qAsz5RzoKJhcSIicRL6O2d2Qw8WeUM=;
-        b=w9ZSrZ3kG6AtY67KDVM/t3osfVbTEWoucJ6YHpAwc5LjGHbXBGNRCE97t0u+/BGPyi
-         BbAPOP2QjiXGRwVOzAXODUTIPt+e7FmztLOPBfA21OzXpiAw0eyF6yw1z+PcNZa4GDD0
-         z+wRiGNAcYbyXhICpcw/rrJijy6pOeWLtjdozdAFpQnzYIccXx9PnIFNYyC0t/67o+jn
-         lG5MSIJHW/DuQITlJs+/0bXMBSNjKvHiU6pPI1hxYws/3xpiyXW0tYLPuO5IRzqW1qN3
-         tQI8O2el7s3hsIByYmH8bu6TctBpphf5pXLBxZb6/9gWF1G9opDIwOatho7GKMOgiGJe
-         +Xrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnt2U2RHxHZmEoN6+VGCh2Nefo3n/kAJEdR40ZiBo2sK47nB4ENNrpj/NJJYTjeegbkoyakCJ/wbTRi4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzvBlEQP6Besb+z+c35jKxUKx8cXBjhiy27JiJcx9iPEP2lN2b
-	x2XaMQ5HYYvkshiBlIo/TCr4+sn21CgpqW/3P2zqTHuX2TK4SvmuENQbNyTAHiY=
-X-Google-Smtp-Source: AGHT+IEwCi4h0gOcjJ2J7PtEto/0FYri5a2pwjVMPIpg1KFvHkVKQSJnPO78DdIo2pyTdxnG3Wmhlg==
-X-Received: by 2002:a05:6512:ba0:b0:52f:c281:72de with SMTP id 2adb3069b0e04-5367907b3d6mr4942303e87.15.1726495300202;
-        Mon, 16 Sep 2024 07:01:40 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870c57bfsm885316e87.307.2024.09.16.07.01.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 07:01:39 -0700 (PDT)
-Date: Mon, 16 Sep 2024 17:01:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com, 
-	quic_vproddut@quicinc.com, quic_abhinavk@quicinc.com
-Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: add DisplayPort device node
-Message-ID: <ivbohyezb57mcqgfnjot3j2olgj4kvyoq2fjstgugscagsmlg7@vav3cbokzg7q>
-References: <20240916091344.27607-1-quic_mukhopad@quicinc.com>
+	s=arc-20240116; t=1726495358; c=relaxed/simple;
+	bh=jRmoMLzJDRmAiB+MllfoXeztQ21k50HP3WqcoMN0Xtk=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=bWcfzYbGLH3xj7SbQAz4GHV7qAnEY4z6+Y+E8Ekf8OHwNsW+8niy6M0eg2iYwNOUbh2/zFvJJJ4oDrbRBr5GYlMMxiZ3IZt6hbAg8yg1DJJZaq8P34lfQlSsU+EiOCME9o7jUd4Jo8XOXnnjsatglyc74qSNN1ku2kOmtfmhMYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VBgKRvrm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726495356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k+mprIRV46hMblWx82Pdc4iP4AoNlwhtFb8YLRZUAS0=;
+	b=VBgKRvrm9L3TZU+B+G5n314CdmCMJ3M31vRZceueUxg7AHGjTGhtrzLtQuxHjfH0/5hdD7
+	eVzeK9HGY2k+teGEJzv9KVpRcPNyeANhYeQz5Mb6SjW2SJkLVtM6VlqLQhW4ulIqCcVVO6
+	bWwBaaz8mOAEACo/JrRCPvpkr25GJ+8=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-203-2u-LM4ykO8GB2_b7iC0xqg-1; Mon,
+ 16 Sep 2024 10:02:33 -0400
+X-MC-Unique: 2u-LM4ykO8GB2_b7iC0xqg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ADB4D1903085;
+	Mon, 16 Sep 2024 14:02:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 015C319560AB;
+	Mon, 16 Sep 2024 14:02:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com>
+References: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com> <20240913-vfs-netfs-39ef6f974061@brauner>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
+    Steve French <stfrench@microsoft.com>,
+    Paulo Alcantara <pc@manguebit.com>, Jeff Layton <jlayton@kernel.org>,
+    linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Remove redundant setting of NETFS_SREQ_HIT_EOF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916091344.27607-1-quic_mukhopad@quicinc.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1948330.1726495326.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 16 Sep 2024 15:02:06 +0100
+Message-ID: <1948331.1726495326@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Sep 16, 2024 at 02:43:44PM GMT, Soutrik Mukhopadhyay wrote:
-> Add device tree node for the DisplayPort controller
-> and eDP PHY found on the Qualcomm SA8775P SoC.
+Fix an upstream merge resolution issue[1].  The NETFS_SREQ_HIT_EOF flag,
+and code to set it, got added via two different paths.  The original path
+saw it added in the netfslib read improvements[2], but it was also added,
+and slightly differently, in a fix that was committed before v6.11:
 
-Not quite. You are also enabling it for the RIDE platforms, not just the
-SA8775p SoC.
+        1da29f2c39b67b846b74205c81bf0ccd96d34727
+        netfs, cifs: Fix handling of short DIO read
 
-> 
-> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-> ---
-> This patch depends on following series:
-> https://lore.kernel.org/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com/
-> https://lore.kernel.org/all/20240912071437.1708969-1-quic_mahap@quicinc.com/
-> https://lore.kernel.org/all/20240913103755.7290-1-quic_mukhopad@quicinc.com/
+However, the code added to smb2_readv_callback() to set the flag in didn't
+get removed when the netfs read improvements series was rebased to take
+account of the cifs fixes.  The proposed merge resolution[2] deleted it
+rather than rebase the patches.
 
-Also please provide mdss_dp1 device nodes, you have documented them in
-the patch "drm/msm/dp: Add DisplayPort controller for SA8775P"
+Fix this by removing the redundant lines.  Code to set the bit that derive=
+s
+from the fix patch is still there, a few lines above in the source.
 
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  23 +++++
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 114 ++++++++++++++++++++-
->  2 files changed, 136 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> index 0c1b21def4b6..728b4cda8353 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> @@ -421,6 +421,23 @@
->  	status = "okay";
->  };
->  
-> +&mdss0 {
-> +	status = "okay";
-> +};
-> +
-> +&mdss0_dp0 {
-> +	status = "okay";
-> +};
-> +
-> +&mdss0_dp0_out {
-> +	data-lanes = <0 1 2 3>;
-> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-> +};
-> +
-> +&mdss0_edp_phy0 {
-> +	status = "okay";
-> +};
-> +
->  &pmm8654au_0_gpios {
->  	gpio-line-names = "DS_EN",
->  			  "POFF_COMPLETE",
-> @@ -527,6 +544,12 @@
->  };
->  
->  &tlmm {
-> +	dp_hot_plug_det: dp-hot-plug-det-state {
-> +		pins = "gpio101";
-> +		function = "edp0_hot";
-> +		bias-disable;
-> +	};
-> +
->  	ethernet0_default: ethernet0-default-state {
->  		ethernet0_mdc: ethernet0-mdc-pins {
->  			pins = "gpio8";
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 7747965e7e46..a04150c29565 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -3339,6 +3339,18 @@
->  				interrupt-parent = <&mdss0>;
->  				interrupts = <0>;
->  
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +						dpu_intf0_out: endpoint {
-> +							remote-endpoint = <&mdss0_dp0_in>;
-> +						};
-> +					};
-> +				};
-> +
->  				mdss0_mdp_opp_table: opp-table {
->  					compatible = "operating-points-v2";
->  
-> @@ -3363,6 +3375,106 @@
->  					};
->  				};
->  			};
-> +
-> +			mdss0_edp_phy0: phy@aec2a00 {
-> +				compatible = "qcom,sa8775p-edp-phy";
-> +
-> +				reg = <0x0 0xaec2a00 0x0 0x200>,
-> +					<0x0 0xaec2200 0x0 0xd0>,
-> +					<0x0 0xaec2600 0x0 0xd0>,
-> +					<0x0 0xaec2000 0x0 0x1c8>;
+Fixes: 35219bc5c71f ("Merge tag 'vfs-6.12.netfs' of git://git.kernel.org/p=
+ub/scm/linux/kernel/git/vfs/vfs")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Steve French <stfrench@microsoft.com>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/CAHk-=3Dwjr8fxk20-wx=3D63mZruW1LTvBvAKya1G=
+Q1EhyzXb-okMA@mail.gmail.com/ [1]
+Link: https://lore.kernel.org/linux-fsdevel/20240913-vfs-netfs-39ef6f97406=
+1@brauner/ [2]
+---
+ fs/smb/client/smb2pdu.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-Please ident on the angle bracket.
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index 95377bb91950..bb8ecbbe78af 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -4614,8 +4614,6 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 			      0, cifs_trace_rw_credits_read_response_clear);
+ 	rdata->credits.value =3D 0;
+ 	rdata->subreq.transferred +=3D rdata->got_bytes;
+-	if (rdata->subreq.start + rdata->subreq.transferred >=3D rdata->subreq.r=
+req->i_size)
+-		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ 	trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
+ 	INIT_WORK(&rdata->subreq.work, smb2_readv_worker);
+ 	queue_work(cifsiod_wq, &rdata->subreq.work);
 
-> +
-> +				clocks = <&rpmhcc RPMH_CXO_CLK>,
-
-It it really CXO?
-
-> +					 <&gcc GCC_EDP_REF_CLKREF_EN>;
-
-And this isn't cfg_ahb.
-
-> +				clock-names = "aux",
-> +					      "cfg_ahb";
-> +
-> +				vdda-phy-supply = <&vreg_l1c>;
-> +				vdda-pll-supply = <&vreg_l4a>;
-
-regulators are not a part of the SoC
-
-> +				#clock-cells = <1>;
-> +				#phy-cells = <0>;
-> +
-> +				status = "disabled";
-> +			};
-> +
-> +			mdss0_dp0: displayport-controller@af54000 {
-> +				compatible = "qcom,sa8775p-dp";
-> +
-> +				pinctrl-0 = <&dp_hot_plug_det>;
-> +				pinctrl-names = "default";
-> +
-> +				reg = <0x0 0xaf54000 0x0 0x104>,
-> +					<0x0 0xaf54200 0x0 0x0c0>,
-> +					<0x0 0xaf55000 0x0 0x770>,
-> +					<0x0 0xaf56000 0x0 0x09c>;
-
-Wrong indentation.
-
-> +
-> +				interrupt-parent = <&mdss0>;
-> +				interrupts = <12>;
-> +
-> +				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK>,
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-> +				clock-names = "core_iface",
-> +						"core_aux",
-> +						"ctrl_link",
-> +						"ctrl_link_iface",
-> +						"stream_pixel";
-
-And here.
-
-> +				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
-> +						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-> +				assigned-clock-parents = <&mdss0_edp_phy0 0>, <&mdss0_edp_phy0 1>;
-> +				phys = <&mdss0_edp_phy0>;
-> +				phy-names = "dp";
-> +
-> +				operating-points-v2 = <&dp_opp_table>;
-> +				power-domains = <&rpmhpd SA8775P_MMCX>;
-> +
-> +				#sound-dai-cells = <0>;
-> +
-> +				status = "disabled";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +						mdss0_dp0_in: endpoint {
-> +							remote-endpoint = <&dpu_intf0_out>;
-> +						};
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +						mdss0_dp0_out: endpoint { };
-> +					};
-> +				};
-> +
-> +				dp_opp_table: opp-table {
-> +					compatible = "operating-points-v2";
-> +
-> +					opp-160000000 {
-> +						opp-hz = /bits/ 64 <160000000>;
-> +						required-opps = <&rpmhpd_opp_low_svs>;
-> +					};
-> +
-> +					opp-270000000 {
-> +						opp-hz = /bits/ 64 <270000000>;
-> +						required-opps = <&rpmhpd_opp_svs>;
-> +					};
-> +
-> +					opp-540000000 {
-> +						opp-hz = /bits/ 64 <540000000>;
-> +						required-opps = <&rpmhpd_opp_svs_l1>;
-> +					};
-> +
-> +					opp-810000000 {
-> +						opp-hz = /bits/ 64 <810000000>;
-> +						required-opps = <&rpmhpd_opp_nom>;
-> +					};
-> +				};
-> +			};
->  		};
->  
->  		dispcc0: clock-controller@af00000 {
-> @@ -3372,7 +3484,7 @@
->  				 <&rpmhcc RPMH_CXO_CLK>,
->  				 <&rpmhcc RPMH_CXO_CLK_A>,
->  				 <&sleep_clk>,
-> -				 <0>, <0>, <0>, <0>,
-> +				 <&mdss0_edp_phy0 0>, <&mdss0_edp_phy0 1>, <0>, <0>,
->  				 <0>, <0>, <0>, <0>;
->  			power-domains = <&rpmhpd SA8775P_MMCX>;
->  			#clock-cells = <1>;
-> -- 
-> 2.17.1
-> 
-
--- 
-With best wishes
-Dmitry
 
