@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-330744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AE797A3AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:07:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F96197A3AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEB22B22374
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:07:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A8D1F28319
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D72015ADA1;
-	Mon, 16 Sep 2024 13:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3C7194083;
+	Mon, 16 Sep 2024 13:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DkZi46vq"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IAKisCmk"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF483193401
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59F415ADB8
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495125; cv=none; b=dDbP9WVzyKgSLmaF3/vaEAAdp1wOuKXLJfW+m2KgJuCZAAgUhWtnaOqYEFOjXsOF61bclgVfFW/qzVFKubBdJfU6HMVsvHpLZA/XaeNZn5X7i9mMRWupngIH424WBSrLnxDshAuuDynis+KZCwGvp7R73Fp+Vz98d14ib3nzvMs=
+	t=1726495133; cv=none; b=FtKrIsEgwIRukk0bsnHvuxnKtN4/6D8ssJh/IfhL55eGj0gHdhncWmTq9DuVGsjpsdCUlH5bucgwEV3TI0YFc3pPDcRxLwqGsuysgn6ihaUyTrUT9RNtxwStIYGbZShZsAcWA4EG6zuQjx9SSprRgJphN6lk1HOKI9xUYjhFHYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495125; c=relaxed/simple;
-	bh=7C8D26xIfSeu12DrQ5Nvi9yW1AADGqbli210vQMd9w0=;
+	s=arc-20240116; t=1726495133; c=relaxed/simple;
+	bh=bVkb9Wm6MnZrus/WrNLvL0MJT/HE5RVP/22d/aiAs40=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KIYmidZJuAkNdEjFwLLC55cUXGm1Nmq/PLlYSJgfTneRnMlyzB8pwZz0FSxR/ntWH4RZYiRbYHhfexgR+BRQlVaGccrFyFCff8cvEEZn3MOc5nu8rXvdBpKOiwwq4gqIMKgYoPfUiY1OIOYT/nZ2EJBQQh1BaKpLvh6cBJEYl8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DkZi46vq; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version; b=IuuNdPG2GhmzQom94aV2uWtBs0L8NfyGJTVLUB5xd6z4Q7haiFkwccNSofHA3q2a7RNf6x6f5dVoJBXkyJjBjXngRdZX4qjYkKpdw4fzHIMQR31TN1oc/7D1etuVYpe3g8BV0DnvEO2ECE/ZA7dE1wFNu6Be11zS58rqX+KcaQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IAKisCmk; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374c962e5adso2837817f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:58:43 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so26662495e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:58:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726495122; x=1727099922; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726495130; x=1727099930; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lWq/62mWpUAFEk/gBjzNeVY0NoKYK+5WXUTV/6v1tA0=;
-        b=DkZi46vqpHBdHfOn/TWX9vowjdlwFxiEYlpZYoes3uFiLMXA2YoHK8EbE+4vbgopM4
-         1uPHxOL7hslKINTXrlaQfclPe5cqYjBVTq4JhAiBllsDq/fmOENZBFTJVpkCzad54f4/
-         zxEDc5ow1r2C/fiQxdTHIIeVQ+Aog6jP2xsqAvl716GRC/88NNKYQJvR7aZhSJ4ddFol
-         2iHSLmP2A3RSNaRA08wovge7nozXUuzG216LG8ZVxc7TZeBY/7eEgFcPb8otKWVsp+db
-         AJMEIqqHitil7BY/vqJmVA+FDj9a+AtPk2pZWrDJdJx5mUXF3CBN3TBpDz6epg/Kzlsh
-         gxHA==
+        bh=wQSiMvQctmr2VbpvZ7u0ZKPRwr2TQbe0lgGJUjSaHZ0=;
+        b=IAKisCmkI6ef90IbnPr006ECpc03SsIfM1cRWs/0vfQD52qYJVCfw04b4QQhx/A8n2
+         jv+tFQepRDok6+rP6adaXkVrOaNwT7aB7AR5YwvzQzDldUj2GZR/Iw8B6C5WBrgNP/aD
+         +ocO3VhhBtK8IpkgKKajwEOZNufNpEtf/nZ40j7yILJ8P39vzPd5lvA0P+ui7V0OkoSl
+         FQElDsrTEj7R9X9+s8XtgIX4VfLaWpO7uMTZkm8YFxWpwCaMOTDBvJu3C46Qvs7IucWo
+         H6ha0h26QKRwpzIxAde/sgnSMPpBelwj8oW6dh8FidhmvZ/w6uNeZ73ELZmWWOLSJv9t
+         K4iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726495122; x=1727099922;
+        d=1e100.net; s=20230601; t=1726495130; x=1727099930;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lWq/62mWpUAFEk/gBjzNeVY0NoKYK+5WXUTV/6v1tA0=;
-        b=r0H2OSRNa1abBBevGpl/YV0xbtBsq1xGdMfXRHZUD/lVXhoAFy+iekP6x109jxyjy3
-         Mk4UweA7FuM4dsQL1py6v701uTOaXixoTQngGjNW0MOEW0dyqY1QwErRkegZa7itPpqT
-         EG4PPdNyfF1f2xI+vK1UV6qPMHLkgyEKyNu01CENLioE2waMfL6yYj+uMi6UuA+VtKUm
-         hDI6rm3WyxM66ovuTDE6Gl47ofh3/MNGF8L5bV7KWQUBLJfdyn9VqzaCsirrP4ejEMu2
-         qxJFPgWeedKLlgCGol1P8NmuqmGG6mtx/GQHmfurDlQxCS51hGs5dVOhi1+g2HK9Oips
-         DFTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe73hQKuReJ4t2Xf3E5dIlp/ovF6IFtyuklKRIsXrSFZFIAPWvqKLtzmPBb7OkfZhn2OgRhq/ErbrTVDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFahf+YP7XuqVrSHFoErkKbK+5P/MO3vdcEhOxDOgLuM6G7XXk
-	FVb+1SKSLoQxo1DGES8Fq8Lgt1e/WYy5qpjoND6TJ5aam2aANv4L0be5naT1Tqc=
-X-Google-Smtp-Source: AGHT+IGbvS6CYBCK4iQeg7G3Wj+J1fYZmYFe88jcm4ZQhuvkb+pN16rQGuWduTfP0xBqRl59dJ+Uyg==
-X-Received: by 2002:adf:b50a:0:b0:374:d130:a43b with SMTP id ffacd0b85a97d-378c27a12cdmr9347404f8f.4.1726495121954;
-        Mon, 16 Sep 2024 06:58:41 -0700 (PDT)
+        bh=wQSiMvQctmr2VbpvZ7u0ZKPRwr2TQbe0lgGJUjSaHZ0=;
+        b=APOhgNkLn3a+duiiOtHB2gpncAsxa9fEob/rT+OCxOkYL0fwOzycMn2LXeNzKKAzBu
+         76KvZaxWmVtPaqH1NbgVvgSvzDdApv5R4zl/EaRsE5zqAhNywLoOvW6Iq8f/0vRRmqIA
+         kkLhAK80kVqmVbjcaa/BQ5IeKK12ENRyAGFM3yV5KIQ2Qg55GV+cnjiRHGsOu+ewfkX8
+         YsLUFxgd6VkLA9QP71UffMZdB2K+QULigCo06IvK+lPj01Xx4Zqaq2pntW5uVEGrcQD2
+         wFu1N9laL7wF8Jpg1ar7izkzzlYE13791w+0a18ggLvX9NfWkKxsKSu7BwTSHPybXwYU
+         zm6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVNVuTewkYZ6Xnk5J5j7eirj8ftKO69fdQIbs+Y6TQbwPYkiEgn7Jd24vg4wVRzrNAe1kx6QOiHjBa/8pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL7a1qqgVaCwdtkMJZ9KDFLphkD0yi/o33UuarxWTf+j1WyMuF
+	eNyhywUEx7tf3P5NA9cotV+DQQp2WYfzqgfsw2NmP1iHwlScll5kLteG5zTX48Y=
+X-Google-Smtp-Source: AGHT+IE63Rq5/cOxy2xm9RDFbt82etcAarWy5LN2E8qI6q5tX0ZkjrRI0pxkuOxkKIyNRSiiiK0lrw==
+X-Received: by 2002:a05:600c:1c29:b0:42c:ba0d:c766 with SMTP id 5b1f17b1804b1-42d9070a5e1mr83851605e9.6.1726495128349;
+        Mon, 16 Sep 2024 06:58:48 -0700 (PDT)
 Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f62dasm7285098f8f.49.2024.09.16.06.58.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f62dasm7285098f8f.49.2024.09.16.06.58.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 06:58:41 -0700 (PDT)
+        Mon, 16 Sep 2024 06:58:48 -0700 (PDT)
 From: James Clark <james.clark@linaro.org>
 To: linux-perf-users@vger.kernel.org,
 	gankulkarni@os.amperecomputing.com,
@@ -94,9 +94,9 @@ Cc: James Clark <james.clark@linaro.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 4/7] perf scripts python cs-etm: Update to use argparse
-Date: Mon, 16 Sep 2024 14:57:35 +0100
-Message-Id: <20240916135743.1490403-5-james.clark@linaro.org>
+Subject: [PATCH v3 5/7] perf scripts python cs-etm: Improve arguments
+Date: Mon, 16 Sep 2024 14:57:36 +0100
+Message-Id: <20240916135743.1490403-6-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240916135743.1490403-1-james.clark@linaro.org>
 References: <20240916135743.1490403-1-james.clark@linaro.org>
@@ -108,81 +108,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-optparse is deprecated and less flexible than argparse so update it.
+Make vmlinux detection automatic and use Perf's default objdump
+when -d is specified. This will make it easier for a test to use the
+script without having to provide arguments. And similarly for users.
 
 Reviewed-by: Leo Yan <leo.yan@arm.com>
 Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- .../scripts/python/arm-cs-trace-disasm.py     | 28 +++++++------------
- 1 file changed, 10 insertions(+), 18 deletions(-)
+ .../scripts/python/arm-cs-trace-disasm.py     | 63 ++++++++++++++++---
+ 1 file changed, 55 insertions(+), 8 deletions(-)
 
 diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py b/tools/perf/scripts/python/arm-cs-trace-disasm.py
-index 7aff02d84ffb..45f682a8b34d 100755
+index 45f682a8b34d..02e957d037ea 100755
 --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
 +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
-@@ -11,7 +11,7 @@ import os
- from os import path
+@@ -12,25 +12,48 @@ from os import path
  import re
  from subprocess import *
--from optparse import OptionParser, make_option
-+import argparse
+ import argparse
++import platform
  
- from perf_trace_context import perf_set_itrace_options, \
- 	perf_sample_insn, perf_sample_srccode
-@@ -28,19 +28,11 @@ from perf_trace_context import perf_set_itrace_options, \
+-from perf_trace_context import perf_set_itrace_options, \
+-	perf_sample_insn, perf_sample_srccode
++from perf_trace_context import perf_sample_srccode, perf_config_get
+ 
+ # Below are some example commands for using this script.
++# Note a --kcore recording is required for accurate decode
++# due to the alternatives patching mechanism. However this
++# script only supports reading vmlinux for disassembly dump,
++# meaning that any patched instructions will appear
++# as unpatched, but the instruction ranges themselves will
++# be correct. In addition to this, source line info comes
++# from Perf, and when using kcore there is no debug info. The
++# following lists the supported features in each mode:
++#
++# +-----------+-----------------+------------------+------------------+
++# | Recording | Accurate decode | Source line dump | Disassembly dump |
++# +-----------+-----------------+------------------+------------------+
++# | --kcore   | yes             | no               | yes              |
++# | normal    | no              | yes              | yes              |
++# +-----------+-----------------+------------------+------------------+
++#
++# Output disassembly with objdump and auto detect vmlinux
++# (when running on same machine.)
++#  perf script -s scripts/python/arm-cs-trace-disasm.py -d
+ #
+-# Output disassembly with objdump:
+-#  perf script -s scripts/python/arm-cs-trace-disasm.py \
+-#		-- -d objdump -k path/to/vmlinux
+ # Output disassembly with llvm-objdump:
+ #  perf script -s scripts/python/arm-cs-trace-disasm.py \
+ #		-- -d llvm-objdump-11 -k path/to/vmlinux
++#
+ # Output only source line and symbols:
  #  perf script -s scripts/python/arm-cs-trace-disasm.py
  
++def default_objdump():
++	config = perf_config_get("annotate.objdump")
++	return config if config else "objdump"
++
  # Command line parsing.
--option_list = [
--	# formatting options for the bottom entry of the stack
--	make_option("-k", "--vmlinux", dest="vmlinux_name",
--		    help="Set path to vmlinux file"),
--	make_option("-d", "--objdump", dest="objdump_name",
--		    help="Set path to objdump executable file"),
--	make_option("-v", "--verbose", dest="verbose",
--		    action="store_true", default=False,
--		    help="Enable debugging log")
--]
--
--parser = OptionParser(option_list=option_list)
--(options, args) = parser.parse_args()
-+args = argparse.ArgumentParser()
-+args.add_argument("-k", "--vmlinux", help="Set path to vmlinux file")
-+args.add_argument("-d", "--objdump", help="Set path to objdump executable file"),
-+args.add_argument("-v", "--verbose", action="store_true", help="Enable debugging log")
-+options = args.parse_args()
+ args = argparse.ArgumentParser()
+-args.add_argument("-k", "--vmlinux", help="Set path to vmlinux file")
+-args.add_argument("-d", "--objdump", help="Set path to objdump executable file"),
++args.add_argument("-k", "--vmlinux",
++		  help="Set path to vmlinux file. Omit to autodetect if running on same machine")
++args.add_argument("-d", "--objdump", nargs="?", const=default_objdump(),
++		  help="Show disassembly. Can also be used to change the objdump path"),
+ args.add_argument("-v", "--verbose", action="store_true", help="Enable debugging log")
+ options = args.parse_args()
  
- # Initialize global dicts and regular expression
- disasm_cache = dict()
-@@ -65,8 +57,8 @@ def get_offset(perf_dict, field):
+@@ -45,6 +68,17 @@ glb_source_file_name	= None
+ glb_line_number		= None
+ glb_dso			= None
  
++kver = platform.release()
++vmlinux_paths = [
++	f"/usr/lib/debug/boot/vmlinux-{kver}.debug",
++	f"/usr/lib/debug/lib/modules/{kver}/vmlinux",
++	f"/lib/modules/{kver}/build/vmlinux",
++	f"/usr/lib/debug/boot/vmlinux-{kver}",
++	f"/boot/vmlinux-{kver}",
++	f"/boot/vmlinux",
++	f"vmlinux"
++]
++
+ def get_optional(perf_dict, field):
+        if field in perf_dict:
+                return perf_dict[field]
+@@ -55,12 +89,25 @@ def get_offset(perf_dict, field):
+ 		return "+%#x" % perf_dict[field]
+ 	return ""
+ 
++def find_vmlinux():
++	if hasattr(find_vmlinux, "path"):
++		return find_vmlinux.path
++
++	for v in vmlinux_paths:
++		if os.access(v, os.R_OK):
++			find_vmlinux.path = v
++			break
++	else:
++		find_vmlinux.path = None
++
++	return find_vmlinux.path
++
  def get_dso_file_path(dso_name, dso_build_id):
  	if (dso_name == "[kernel.kallsyms]" or dso_name == "vmlinux"):
--		if (options.vmlinux_name):
--			return options.vmlinux_name;
-+		if (options.vmlinux):
-+			return options.vmlinux;
+ 		if (options.vmlinux):
+ 			return options.vmlinux;
  		else:
- 			return dso_name
+-			return dso_name
++			return find_vmlinux() if find_vmlinux() else dso_name
  
-@@ -92,7 +84,7 @@ def read_disam(dso_fname, dso_start, start_addr, stop_addr):
- 	else:
- 		start_addr = start_addr - dso_start;
- 		stop_addr = stop_addr - dso_start;
--		disasm = [ options.objdump_name, "-d", "-z",
-+		disasm = [ options.objdump, "-d", "-z",
- 			   "--start-address="+format(start_addr,"#x"),
- 			   "--stop-address="+format(stop_addr,"#x") ]
- 		disasm += [ dso_fname ]
-@@ -256,7 +248,7 @@ def process_event(param_dict):
- 		print("Stop address 0x%x is out of range [ 0x%x .. 0x%x ] for dso %s" % (stop_addr, int(dso_start), int(dso_end), dso))
- 		return
- 
--	if (options.objdump_name != None):
-+	if (options.objdump != None):
- 		# It doesn't need to decrease virtual memory offset for disassembly
- 		# for kernel dso and executable file dso, so in this case we set
- 		# vm_start to zero.
+ 	if (dso_name == "[vdso]") :
+ 		append = "/vdso"
 -- 
 2.34.1
 
