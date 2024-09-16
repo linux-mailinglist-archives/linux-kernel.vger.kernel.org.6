@@ -1,129 +1,85 @@
-Return-Path: <linux-kernel+bounces-330977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C197C97A6BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:27:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A396497A6C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53B34B21742
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:27:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21641C26FF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F7115C15F;
-	Mon, 16 Sep 2024 17:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA7215B13C;
+	Mon, 16 Sep 2024 17:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gszUH7vQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzsQ9o9c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C83157A59;
-	Mon, 16 Sep 2024 17:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA28C165F0F;
+	Mon, 16 Sep 2024 17:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726507623; cv=none; b=dHWV3pUxx6IGCNHYmut/CFhafyGt7CY7EJhp+sRWPJ9qMQBi1UnE92vvjo4vk/tGESc+i+UYkaoljViNybcuTQgBjOoJ7fU61Z47ioNRW+R8vGLArV5NhhwCen1q+u5GMl1t1x5xXmfg4ZXm6qOzaf5TwQSc8n39T2pnNqII/pY=
+	t=1726507639; cv=none; b=HtAbC972vO8gUnB9aIZdEQ6NheqmvZAJ2DK6NdRh/yd5kA4ZUmfuoAabhRf4EkIoKrIfaBzNskAu0B8kCGmHDFJduCirJ6xXxrOFojEGbpXW7KnHEos+qdkc8xr+0uuWk18eAP7ni4xmp6zzTtBPwYczPc3818TXklM2kEfx5YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726507623; c=relaxed/simple;
-	bh=wbyyvVbAwK0TTkdf+yzuQfBYJwErlMDyLPtz/JPez44=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fDfFkqXPEUuFILXZREd9aU4YPh2lWl99PtX8/EAhGIoRuuf1Pz6CTdpT2XC84pSPwxuRJPi3DdPzHccoTkkfHktfQd9Yzgxln5fkDW8jRU1eyjeJqBLs3PWRGHawpMSVgeY9/nf3Qnjlk9ngA7nB26v81jBTUtDulOXnyc+cmDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gszUH7vQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25933C4CEC5;
-	Mon, 16 Sep 2024 17:27:03 +0000 (UTC)
+	s=arc-20240116; t=1726507639; c=relaxed/simple;
+	bh=lQO6b2IwHknDJ/0CJjtpfNa7FR3z+58cxqjvSgqUy/M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fQJKbuwk/b7+IMk7GuDTC6GKbALB+cwO9xXrmYK+iKgApRQhuHoFDtP/BBYAYPfASD7tRl8FkgqJ6gql8C08w+LVt24lHXxkxpQ1vy38L/RSmv6rOo79DHSaLUE66VHyT63e5DoVPN66XQ0ITk/6Ie58m3vRBEuU13OaG7doF4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzsQ9o9c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 085F5C4CEC4;
+	Mon, 16 Sep 2024 17:27:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726507623;
-	bh=wbyyvVbAwK0TTkdf+yzuQfBYJwErlMDyLPtz/JPez44=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gszUH7vQP6plBOSjalJjSiurW/X6SUQPWF3kSYXfLj30TsVpQ3z3Q7/9Vk/3vrc5F
-	 xsq7lzQomUKt3CGg/7hABYasWsNDdQTLw8VyXV+xkq6T+r0zhguAMR8cjO4IZWSQdk
-	 +0oLxzPWPbhJcfghdVyJOmayfETaheMqwAzeoCJPMpIDgD8jcy7sTXilsgJ0xdVIvQ
-	 cXSSrikfHWmTCwqJLMRGYXI20AHxPBoqYkUhfKfEaQ21W08HUtn3ICh1qjg8h8WjNb
-	 C9vMj50xwm2Rktwz91c7VkZys80EO8WcWhBKLPm60dWl1JqIROz0WUtPi7rMFRo6bH
-	 Vj7vx8bkg5LUw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sqFVT-00000000238-02yb;
-	Mon, 16 Sep 2024 19:27:23 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 3/3] serial: qcom-geni: fix receiver enable
-Date: Mon, 16 Sep 2024 19:26:42 +0200
-Message-ID: <20240916172642.7814-4-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <20240916172642.7814-1-johan+linaro@kernel.org>
-References: <20240916172642.7814-1-johan+linaro@kernel.org>
+	s=k20201202; t=1726507639;
+	bh=lQO6b2IwHknDJ/0CJjtpfNa7FR3z+58cxqjvSgqUy/M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=IzsQ9o9ccbAQh7WwRQfsytzS/1t6ckT/ssd+UxcgrBacVFVkeO9MEy0+Ogkgfz7w6
+	 Pb70mYsxvbKvmTGKKIST2BKt3xDvkNhRw/jji5G5thoxL9vV4OJT6rLRhqKp5VwDok
+	 rIwo0vqJwe6MFNT5fMJOGu10/kW5zt1lU3liMEZ0PPusldbvARsmsffC9SCX/O+1Hv
+	 S7YfY5LTbleAbonw5EvNpNYgZH5dBKzOBjTmCmVDIOUNMXANZ3hO0tjvkDJFppbWIH
+	 FF6f/XnjHZXIE5xcu3iIkj/B6DLFO6ojv7g31MWNpDFFf6yvVW1qvrghNn5OEAE9lh
+	 gBblrUwkD8rqw==
+From: Leon Romanovsky <leon@kernel.org>
+To: Potnuri Bharat Teja <bharat@chelsio.com>, 
+ Mikhail Lobanov <m.lobanov@rosalinux.ru>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Roland Dreier <rolandd@cisco.com>, 
+ Steve Wise <larrystevenwise@gmail.com>, linux-rdma@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+In-Reply-To: <20240912145844.77516-1-m.lobanov@rosalinux.ru>
+References: <20240912145844.77516-1-m.lobanov@rosalinux.ru>
+Subject: Re: [PATCH] RDMA/cxgb4: Added NULL check for lookup_atid
+Message-Id: <172650763520.4296.4110173004963203253.b4-ty@kernel.org>
+Date: Mon, 16 Sep 2024 20:27:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-The receiver should be enabled in the startup() callback and there is no
-need to stop it on every termios update.
 
-Since commit 6f3c3cafb115 ("serial: qcom-geni: disable interrupts during
-console writes") the calls to manipulate the secondary interrupts, which
-were done without holding the port lock, can lead to the receiver being
-left disabled when set_termios() races with the console code (e.g. when
-init opens the tty during boot).
+On Thu, 12 Sep 2024 10:58:39 -0400, Mikhail Lobanov wrote:
+> The lookup_atid() function can return NULL if the ATID is
+> invalid or does not exist in the identifier table, which
+> could lead to dereferencing a null pointer without a
+> check in the `act_establish()` and `act_open_rpl()` functions.
+> Add a NULL check to prevent null pointer dereferencing.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> [...]
 
-Fixes: 6f3c3cafb115 ("serial: qcom-geni: disable interrupts during console writes")
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/tty/serial/qcom_geni_serial.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 88ad5a6e7de2..85c2742e6cc4 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -1167,6 +1167,11 @@ static int qcom_geni_serial_startup(struct uart_port *uport)
- 		if (ret)
- 			return ret;
- 	}
-+
-+	uart_port_lock_irq(uport);
-+	qcom_geni_serial_start_rx(uport);
-+	uart_port_unlock_irq(uport);
-+
- 	enable_irq(uport->irq);
- 
- 	return 0;
-@@ -1252,7 +1257,6 @@ static void qcom_geni_serial_set_termios(struct uart_port *uport,
- 	unsigned int avg_bw_core;
- 	unsigned long timeout;
- 
--	qcom_geni_serial_stop_rx(uport);
- 	/* baud rate */
- 	baud = uart_get_baud_rate(uport, termios, old, 300, 4000000);
- 
-@@ -1268,7 +1272,7 @@ static void qcom_geni_serial_set_termios(struct uart_port *uport,
- 		dev_err(port->se.dev,
- 			"Couldn't find suitable clock rate for %u\n",
- 			baud * sampling_rate);
--		goto out_restart_rx;
-+		return;
- 	}
- 
- 	dev_dbg(port->se.dev, "desired_rate = %u, clk_rate = %lu, clk_div = %u\n",
-@@ -1359,8 +1363,6 @@ static void qcom_geni_serial_set_termios(struct uart_port *uport,
- 	writel(stop_bit_len, uport->membase + SE_UART_TX_STOP_BIT_LEN);
- 	writel(ser_clk_cfg, uport->membase + GENI_SER_M_CLK_CFG);
- 	writel(ser_clk_cfg, uport->membase + GENI_SER_S_CLK_CFG);
--out_restart_rx:
--	qcom_geni_serial_start_rx(uport);
- }
- 
- #ifdef CONFIG_SERIAL_QCOM_GENI_CONSOLE
+[1/1] RDMA/cxgb4: Added NULL check for lookup_atid
+      https://git.kernel.org/rdma/rdma/c/e766e6a92410ca
+
+Best regards,
 -- 
-2.44.2
+Leon Romanovsky <leon@kernel.org>
 
 
