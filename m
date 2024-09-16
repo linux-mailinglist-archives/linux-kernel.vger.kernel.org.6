@@ -1,138 +1,156 @@
-Return-Path: <linux-kernel+bounces-330804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A0197A483
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB0797A488
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB2A31C21E4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70D2A28125A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F861591F1;
-	Mon, 16 Sep 2024 14:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BED158A1F;
+	Mon, 16 Sep 2024 14:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QsH3YxVx"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzYPAk6v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2EF158DC2;
-	Mon, 16 Sep 2024 14:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC420157E6B;
+	Mon, 16 Sep 2024 14:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726498345; cv=none; b=RLsc/0TfLmqWSfwGGk5K5xFiB/djVqqgG3zwqQxAvD1zzelPevyXt0SjQFJOoJ2Zgl0zJ7qP2eGfd/2lfJdkzZWKq9+bddvfif1XvSVvEX+bpWpfDeh9wxv9woclHY7iV/APlFY46EegJyTbSLqAwhQebHyaP+pxkMTkEgqQSs8=
+	t=1726498386; cv=none; b=GqFcDwNZ0BP37NaADj6ZkNY1wjslNz1nav4o3eOxi4isW/13RJ8qfsLLVNBw+N1iNustpnMiY2/AC5McoQakLXQ+TmdyFu1aSxv882jCl6DvccgfMEdXipbind4epvX197yhrpoW9jQxKc5oJgSQwylgChfQBABN8NjJo8X0NLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726498345; c=relaxed/simple;
-	bh=RhkHx3KEvVHKaUXYhsthTx+OT78125g8JMWGtokDp6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yl1vNUcsQ0wVz5UQVNbs5cCdQfWgfSQSXij7BtXc53AU+zoScwZOZJall90/sMYjXW3XLqMbamnSdu+VjD8aYxlW97TDZX46SBCGRil2TJuXP/YnyTZiYKC3Nd3rbLWgBwX5N3skIHYty82tFX5PyYzXv1OVED11sOkglJ23ODg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QsH3YxVx; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-205909afad3so46883735ad.2;
-        Mon, 16 Sep 2024 07:52:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726498343; x=1727103143; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7O8aY6B3ufOpgcpOy0X8Q8VSRJdIp5sZRAiS7dUBXy4=;
-        b=QsH3YxVxlB6fCbf842CQqkrx/5SPKc/QVGsVCf0Q7d0UoessYshDtkUXg7E5JsSFUv
-         xodhm9loq5J88QQWdB2R9JPqa0OuB2ZB/viKJx+9X4nN69i7ChQdxwaM9suX+Kn4b28x
-         75f9Qg3PFQdkxYbfxcOVDwKn5J99wTntyfktRGpb7SmfeYHcX39sAukIfBBlCfXsrAJV
-         gYIW1PKuTo0hQFykFOHIl5Jc5/zXTwffFt5mqUSQaFmTLjAlApZjEHK2u27P8/Z7W/6f
-         oqMoIHmKL6+1bWuP7BbvQ+RZnzw1UGZHY5x8H+ClmnyBCjby4tZ/EuCxFcq71ZQJmLup
-         ydnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726498343; x=1727103143;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7O8aY6B3ufOpgcpOy0X8Q8VSRJdIp5sZRAiS7dUBXy4=;
-        b=M1oa0nLf1jBoEHIERtL95Te44NjeZAIEUqIbwPw0TpIWBeGBzG4FLQX/0JsezHO+94
-         d+xSaqpFbh/1Y1lwhIiyaHDx1UCwrhZSA+pzywhMW6NFzKx09AIlTZDPmLbb9uusKJNI
-         H3pK9uldBuzZBbr4f/dT1EeJ/zEIkUbjFJ9jIbomN7imBZMdouzFKvZ7lb2SSF1Spa1o
-         0f8mdMKdJMpvpPwv+RNickVawkqZvf6jgQy1rKNblabMUBmkGLxjONFrfOo1pk7bvPBD
-         qZEsY3Di0HuzJIR3bM0epWRQUwHC+4VVY3k/fR4u7NQybR6JLxy1OKq+0W7qy/2G0CIA
-         9lEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV0Ukm5cS4Tq9bPJe/uIf7B58LohQ7HKYhaQxhJjb0tAqAkME98hVfiWd7MF081Xs7SuAlElfFSv3Q/XiJ@vger.kernel.org, AJvYcCUj7/LuMAuJqFq+B05USoOCkRKo55/p0OK9UCeOZ6FhenaVgLjQOHoa7Wk8cQduWCiK0Cpwz0ZMiLg4jPU2gOM=@vger.kernel.org, AJvYcCUpp0FMdEL161MXVj/Orc8UluNrcPfrv6dDnbg9VdxONUVfuyb8i57tLT82t7F0AXFbvHg56sKsswo=@vger.kernel.org, AJvYcCXA23rVEugU6+3MCYx433GPMYaN9pW4PVr1qrfZAHhAspoNX/zB+X2pnOczk4KVcvuuN6H+ZgO/mlqx@vger.kernel.org, AJvYcCXyOQl2ZshFjM5L+VRnTZ7+HJ/8i3bh4y+h3W06e7U2ZVRWdqumXKtVoeXjH3fSJLyDHssUgA7WAxZSjg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLCxypgojy9q6n89PiTtXomThz+qOjyZ643BIV32s9H9WqztH5
-	GIfH54zg2D4zPPCCMR6OBPFa88XkZB28LNp3FB4aSIMKWk0WRLPA
-X-Google-Smtp-Source: AGHT+IHtQAbZITE1JFKfdxFWo2AvjAaAUQc9iG32G/Pn0bWjgrwustAbaqgNo9r+B5kDEpyamDKB/g==
-X-Received: by 2002:a17:903:32c7:b0:207:2697:da17 with SMTP id d9443c01a7336-2076e355eb2mr225599265ad.23.1726498342899;
-        Mon, 16 Sep 2024 07:52:22 -0700 (PDT)
-Received: from [172.20.10.2] ([182.153.8.248])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794601022sm37092445ad.74.2024.09.16.07.52.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 07:52:22 -0700 (PDT)
-Message-ID: <a7f2c1fd-bd50-4d04-a2da-67bda6f7d55c@gmail.com>
-Date: Mon, 16 Sep 2024 22:52:15 +0800
+	s=arc-20240116; t=1726498386; c=relaxed/simple;
+	bh=ctZwLzZwC/S01hY87aaTXyQxeQL1P/gwLYvLGpwJ9ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQIZ48+pjpU12VBtOf0qyJq4pRfStXNaojnjbgFxVTEOK9MGtJ6uxgiXyWD91n2YMgHoanDxPK5vxK+7M8n8TCFG/R3AJ2KcQp6qz9WZINnUYE2HUhYz+1UxI7tshVmAuw+MsGMQuszBtsXudRx76YALPaVUPhnsfAKgtnnSbQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzYPAk6v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56461C4CEC4;
+	Mon, 16 Sep 2024 14:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726498385;
+	bh=ctZwLzZwC/S01hY87aaTXyQxeQL1P/gwLYvLGpwJ9ak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CzYPAk6vU0dptH0UPZ7h+cKXnSR27tIxN6AzthzifB2bvw+U38KVuOX1ZzHumkhd2
+	 P+E1PVKkXedgw0oJXY3T6nZfUEBrE0Gj5MOPRpwMOHVbEFm5fTY/4/GKg1jCJlrVZi
+	 +mvh4Gz3TbgbiJgzR8Ua7kRxOXL09ODDu8R084FX+AYzOw9vtLZTL8KSIViFuyACN1
+	 APHGWmCD1yG3UnebYl9SdaszcSHQMjs6vMrSzH9pbq7r5bSfh0h7sBVzGW1BQga6e8
+	 gJkvJpLLWCy6pc/AyK8ZLwoV0hvr9aBJLgc1M8uonFXm7UdrkrSxOodM1AVEU2r3Vc
+	 1lNAPMsxTK8GQ==
+Date: Mon, 16 Sep 2024 16:53:01 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Xin Liu <quic_liuxin@quicinc.com>
+Subject: Re: [PATCH v2] dt-bindings: phy: Add QMP UFS PHY comptible for
+ QCS8300
+Message-ID: <ztpetznwid2om6vylyl2boi665ch3wnkprkmzcq6bem6cqhqtf@ogsi657y4kex>
+References: <20240911-qcs8300_ufs_phy_binding-v2-1-c801a2d27a84@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 18/20] arm64: dts: apple: Add A10X devices
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-References: <20240915080733.3565-1-towinchenmi@gmail.com>
- <20240915080733.3565-19-towinchenmi@gmail.com>
- <ntl53bla2qwueycbffta5ytmmm7hxrthbfz2677mltldgu6roi@3f3pz6644vb5>
-Content-Language: en-MW
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <ntl53bla2qwueycbffta5ytmmm7hxrthbfz2677mltldgu6roi@3f3pz6644vb5>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240911-qcs8300_ufs_phy_binding-v2-1-c801a2d27a84@quicinc.com>
 
-
-
-On 16/9/2024 22:39, Krzysztof Kozlowski wrote:
-> On Sun, Sep 15, 2024 at 03:59:03PM +0800, Nick Chan wrote:
->> From: Konrad Dybcio <konradybcio@kernel.org>
->>
->> Add DTS files for the A10X SoC and the following devices based on it:
->>
->> - Apple TV 4K
->> - iPad Pro (2nd Generation) (10.5 Inch)
->> - iPad Pro (2nd Generation) (12.9 Inch)
->>
->> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
->> [Nick: SMP, m1n1 and Apple TV 4K support, uart interrupt and pinctrl fixes]
->> Co-developed-by: Nick Chan <towinchenmi@gmail.com>
->> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
->> ---
->>  .../devicetree/bindings/arm/apple.yaml        |   8 +-
+On Wed, Sep 11, 2024 at 02:56:16PM +0800, Jingyi Wang wrote:
+> From: Xin Liu <quic_liuxin@quicinc.com>
 > 
-> You need to split bindings.
-Good catch. The bindings part needs to be squashed into the commit
-adding the
-bindings. This is a miscommited style fix up to not mention "Apple" when
-we are
-already in Apple ARM Machine bindings, unless it is part of the offical name
-(like Apple TV).
-
+> Document the QMP UFS PHY compatible for Qualcomm QCS8300 to support
+> physical layer functionality for UFS found on the SoC. Use fallback to
+> indicate the compatibility of the QMP UFS PHY on the QCS8300 with that
+> on the SA8775P.
 > 
-> Best regards,
-> Krzysztof
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
+> Changes in v2:
+> - decoupled from the original series.
+> - Use fallback to indicate compatibility with SA8775P.
+> - typo fixup
+> - Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
+> ---
+>  .../bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml    | 46 ++++++++++++----------
+>  1 file changed, 26 insertions(+), 20 deletions(-)
 > 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+> index f9cfbd0b2de6..626a2039e177 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+> @@ -15,26 +15,31 @@ description:
+>  
+>  properties:
+>    compatible:
+> -    enum:
+> -      - qcom,msm8996-qmp-ufs-phy
+> -      - qcom,msm8998-qmp-ufs-phy
+> -      - qcom,sa8775p-qmp-ufs-phy
+> -      - qcom,sc7180-qmp-ufs-phy
+> -      - qcom,sc7280-qmp-ufs-phy
+> -      - qcom,sc8180x-qmp-ufs-phy
+> -      - qcom,sc8280xp-qmp-ufs-phy
+> -      - qcom,sdm845-qmp-ufs-phy
+> -      - qcom,sm6115-qmp-ufs-phy
+> -      - qcom,sm6125-qmp-ufs-phy
+> -      - qcom,sm6350-qmp-ufs-phy
+> -      - qcom,sm7150-qmp-ufs-phy
+> -      - qcom,sm8150-qmp-ufs-phy
+> -      - qcom,sm8250-qmp-ufs-phy
+> -      - qcom,sm8350-qmp-ufs-phy
+> -      - qcom,sm8450-qmp-ufs-phy
+> -      - qcom,sm8475-qmp-ufs-phy
+> -      - qcom,sm8550-qmp-ufs-phy
+> -      - qcom,sm8650-qmp-ufs-phy
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - qcom,qcs8300-qmp-ufs-phy
+> +          - const: qcom,sa8775p-qmp-ufs-phy
+> +      - enum:
+> +          - qcom,msm8996-qmp-ufs-phy
+> +          - qcom,msm8998-qmp-ufs-phy
+> +          - qcom,sa8775p-qmp-ufs-phy
+> +          - qcom,sc7180-qmp-ufs-phy
+> +          - qcom,sc7280-qmp-ufs-phy
+> +          - qcom,sc8180x-qmp-ufs-phy
+> +          - qcom,sc8280xp-qmp-ufs-phy
+> +          - qcom,sdm845-qmp-ufs-phy
+> +          - qcom,sm6115-qmp-ufs-phy
+> +          - qcom,sm6125-qmp-ufs-phy
+> +          - qcom,sm6350-qmp-ufs-phy
+> +          - qcom,sm7150-qmp-ufs-phy
+> +          - qcom,sm8150-qmp-ufs-phy
+> +          - qcom,sm8250-qmp-ufs-phy
+> +          - qcom,sm8350-qmp-ufs-phy
+> +          - qcom,sm8450-qmp-ufs-phy
+> +          - qcom,sm8475-qmp-ufs-phy
+> +          - qcom,sm8550-qmp-ufs-phy
+> +          - qcom,sm8650-qmp-ufs-phy
+>  
+>    reg:
+>      maxItems: 1
+> @@ -85,6 +90,7 @@ allOf:
+>            contains:
+>              enum:
+>                - qcom,msm8998-qmp-ufs-phy
+> +              - qcom,qcs8300-qmp-ufs-phy
 
-Nick Chan
+Not needed.
+
+BTW, please be sure you organize your patchsets per subsystem. IOW, that
+you do not split same subsystem bindings patches into separate
+patchsets.
+
+Best regards,
+Krzysztof
 
 
