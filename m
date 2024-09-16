@@ -1,134 +1,242 @@
-Return-Path: <linux-kernel+bounces-330655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA1197A257
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:31:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E93697A25B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F28CE1C24B27
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:31:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 033BE2898CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D11146A79;
-	Mon, 16 Sep 2024 12:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E0E154BEB;
+	Mon, 16 Sep 2024 12:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pzyO8VcD"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHZeGzGa"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F141862;
-	Mon, 16 Sep 2024 12:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDDE19BBC;
+	Mon, 16 Sep 2024 12:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726489857; cv=none; b=lXDkdOF+3RLNpx478vREgL2H9Kj/FW1rB41zrW520CwRiiMCQiPIpYNdC2snSpNIjaqNYaerhilQtB5qnSWEDtbIzuiLBmU/H+e/SkhGxpDrbKdz9xidnRQV8NZsC40b6wc3ifpZmGM+edE9Ihhp42IdXMYkeXpULb+MMs+eN6M=
+	t=1726489953; cv=none; b=OVLkmIPq5rTi33/xHoTNdePN//ZBPPSCYiJyfQaJ0Rd9PB6QGpVwa5Yipx7oL7SXXw5ya5qJBx2TSTJJUR1Ff03cbvMYG2pDn+obzfOYBHia8QuM7QcrDR2IgVEhMPbFGAVN1FkL3/Mg/3uKW4ilYI8I35bip+2sFCgBN6XUEN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726489857; c=relaxed/simple;
-	bh=XlofpYMtyVQKy2CQEZ9vtgpMy0tI2NYSeC/qF+i14OQ=;
+	s=arc-20240116; t=1726489953; c=relaxed/simple;
+	bh=BBZ4oW2A9GpeSP/yb9umtm+fkmRQ9Bjb/uUApp3m0fk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jtUmzF0iYQ56NTR0OPutnJb7D6e0hNPrbVfrfM0WRjFugPfyoTz9KB1YhFafZxQI9kQ+B4CcBwYAXWO1iykJVMN4fEYb3r6P4tZm2zyc3hbhonMawi2/53vA7qUFj2vOKFv3eQksKnauD9HAThuJVPCyNbG64j9N5V5p/eGBxsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pzyO8VcD; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 649CCE0002;
-	Mon, 16 Sep 2024 12:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726489847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tFf33Dr3Av9cjGRxcivDJ7jSpxWV5p1tiUMWvEOn8Fs=;
-	b=pzyO8VcD5eOWNbaF6y5cYWnDO6KCPDjbQFX46CYw8eVowhXH+FOzUJRqgXamOzGtfCk8o+
-	l9agNcz7sCkPqj9f/VpFUBciP8le0nMok+7c6gWmjxRoAVSTt5kS+pGT4DyJAm4nq1qzvU
-	YPXxSOLi6bDJIb75NFS3QBdz7qsJ/4ghANlb+/daht7GxJIbeEL8eFZKQrqeJeXqlGRd1r
-	acaUGZhe1/4tJf2C16Y3y06gDaX1e6g14hbOhuwFAOxW4BsuzFBRK6GeLMsulNNu15tItF
-	f6DnNB9CfFndwYLdF8aeREWLYE9slv6onfb91NryaQQJpTZi2/SnDrgLwzEEBg==
-Date: Mon, 16 Sep 2024 14:30:45 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Andrei Simion <andrei.simion@microchip.com>
-Cc: alsa-devel@alsa-project.org, broonie@kernel.org,
-	claudiu.beznea@tuxon.dev, codrin.ciubotariu@microchip.com,
-	lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-	nicolas.ferre@microchip.com, perex@perex.cz, tiwai@suse.com
-Subject: Re: [PATCH 2/2] ASoC: atmel: atmel_ssc_dai: Drop S24_LE support due
- to single channel limitation
-Message-ID: <2024091612304529f5ebe1@mail.local>
-References: <20240916100006f2db7b06@mail.local>
- <20240916113203.17871-1-andrei.simion@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XT4WX5AbpRUkEHXbAynSKXzANt2IZfphGIkdRX9UmRZ1jwBZoWlFKYWll4hQurHHEaY17wEc5sf9wZhWAZOccnnIjhxY75i+m/xquFnASSlfSGafdN0gU1TwLXGjNAVmAdGWBCSBnb4P+ODY1RoYlxtV3uxiJ3CAm3g2Dqe3qCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHZeGzGa; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20551eeba95so27507705ad.2;
+        Mon, 16 Sep 2024 05:32:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726489951; x=1727094751; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oykc0XNUZ2U9di3dFTc+iIQRMLcm/D4KvDGsPvtFBVA=;
+        b=eHZeGzGadcNQAmCkB+x77UC8Ljzdiwlx90MfafshW3s6CQBs9tPMKvXk7NjgOm27JH
+         BsZ19oxcGQiDu0U299g0fcWmSSpm12L4kpCashSdHa5xnLYkCGTm2vZelNkZ7TMQVBKI
+         nDZRBAarXeZUBDD/CF8aeFswOxSsHF80tYB0xH9RDQUOCUCjqUZHTHeMUcz82FSf5iGD
+         8mmF1G2lYDpjJMFjdkWW7AHD153rc7J9dnSjV0N/tePfdKbpW+1jau7PpHSPKmb0N5j3
+         k08JR7qEOa36xHi+YobC54HvuSQpGhnHMC+Llmpl9TtU6L82SolO1eBv8eHDQLeYCzxB
+         fH/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726489951; x=1727094751;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oykc0XNUZ2U9di3dFTc+iIQRMLcm/D4KvDGsPvtFBVA=;
+        b=L1uihKEHk45NVcABMQ2IgdqJGF/vF1q9gLzb4XBQm7F6zkV+V1HtrUqJ1Q1L3fKuLP
+         2HswK7Uz/rU2DkB4raZZuIvF3NIBKZF4Tw2bq/e7T6XzMU0FA2P2AZ4jyMDLMVYq7wmL
+         KfXuJGvWKRCKLntkl7bPwtjL3G1tBZUXJ2rJyfzkgfH0fXEvT7XQLs/YdWmu1TlI0lXG
+         9GsPH7Py4k3tQlT7egBDfl9nPsq4jvDUgHINwy+Gw1rdNuKODSWUZJVLKq23CBxEIMqQ
+         ee+5ct3En6Ro1J3gGDHJyiV/uV+bwX0b8bjlnGAk2PWjXOApNOKHyE1814p1JgtvErJy
+         3swg==
+X-Forwarded-Encrypted: i=1; AJvYcCU76KQU590tCsEOSTrN9DYtzO7gpID94Y9LA4SvRfC6tKWbLL1KmUN/SF2kogLjOWXpqBV7pxcwLaeGY4U=@vger.kernel.org, AJvYcCV2cdlEqFDyIQWlYzZZwPbTzij+1KM0bGljx4r0YKfMATHB/BHAoqti2YxRDWaAoclQb75ucfPXPWn+zj1uFayP+FciXmeZ@vger.kernel.org, AJvYcCVjdXN/gkhEiKpFAfYT1wD+p/Uz9Y5oRZcWaxJM1Hfii4/F7psUjcqNfUfzNqd2x0Nia3VxVUYZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq8XErB0dOnuRqE6bqIyIs8XQixS9Gai6u3/YIiSamS1A9m64f
+	ezRBLqMJJsTG5wtJTFujwB5MvObLdbzJRRlQIE0gk2PV0Nz+1QJw
+X-Google-Smtp-Source: AGHT+IFts4nnZqQTc5USJdj9JGXLmyuh67enW6i4PHhte5UX080Zn5yVqDdpBBdawrwHK8xCZGfQRQ==
+X-Received: by 2002:a17:90b:278b:b0:2cf:c9ab:e747 with SMTP id 98e67ed59e1d1-2dbb9dbd720mr14614413a91.1.1726489950395;
+        Mon, 16 Sep 2024 05:32:30 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9cadb0bsm7164027a91.27.2024.09.16.05.32.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 05:32:29 -0700 (PDT)
+Date: Mon, 16 Sep 2024 06:32:27 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com, jannh@google.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v11 1/8] Landlock: Add abstract UNIX socket restriction
+Message-ID: <ZuglWy71qvgEhJQ4@tahera-OptiPlex-5000>
+References: <cover.1725494372.git.fahimitahera@gmail.com>
+ <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
+ <20240913.AmeeLo0aeheD@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240916113203.17871-1-andrei.simion@microchip.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240913.AmeeLo0aeheD@digikod.net>
 
-On 16/09/2024 14:32:05+0300, Andrei Simion wrote:
-> On 16.09.2024 12:59, Alexandre Belloni wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+On Fri, Sep 13, 2024 at 03:32:59PM +0200, Mickaël Salaün wrote:
+> On Wed, Sep 04, 2024 at 06:13:55PM -0600, Tahera Fahimi wrote:
+> > This patch introduces a new "scoped" attribute to the
+> > landlock_ruleset_attr that can specify
+> > "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope abstract UNIX sockets
+> > from connecting to a process outside of the same Landlock domain. It
+> > implements two hooks, unix_stream_connect and unix_may_send to enforce
+> > this restriction.
 > > 
-> > On 16/09/2024 11:52:15+0300, Andrei Simion wrote:
-> >> From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> >>
-> >> Drop S24_LE format because it is not supported if more than 2 channels
-> >> (of TDM slots) are used. This limitation makes it impractical for use cases
-> >> requiring more than 2 TDM slots, leading to potential issues in
-> >> multi-channel configurations.
-> >>
-> >> [andrei.simion@microchip.com: Reword the commit title and the commit
-> >> message.]
-> >>
-> >> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> >> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
-> >> ---
-> >>  sound/soc/atmel/atmel_ssc_dai.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-> >> index 7047f17fe7a8..475e7579c64c 100644
-> >> --- a/sound/soc/atmel/atmel_ssc_dai.c
-> >> +++ b/sound/soc/atmel/atmel_ssc_dai.c
-> >> @@ -822,7 +822,7 @@ static int atmel_ssc_resume(struct snd_soc_component *component)
-> >>  }
-> >>
-> >>  #define ATMEL_SSC_FORMATS (SNDRV_PCM_FMTBIT_S8     | SNDRV_PCM_FMTBIT_S16_LE |\
-> >> -                       SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
-> >> +                        SNDRV_PCM_FMTBIT_S32_LE)
-> >
-> > I believe this requires a comment. Else someone may add it back later
-> > on.
-> >
+> > Closes: https://github.com/landlock-lsm/linux/issues/7
+> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > 
+> > ---
+> > v11:
+> > - For a connected abstract datagram socket, the hook_unix_may_send
+> >   allows the socket to send a data. (it is treated as a connected stream
+> >   socket)
+> > - Minor comment revision.
+> > v10:
+> > - Minor code improvement based on reviews on v9.
+> > v9:
+> > - Editting inline comments.
+> > - Major refactoring in domain_is_scoped() and is_abstract_socket
+> > v8:
+> > - Code refactoring (improve code readability, renaming variable, etc.)
+> >   based on reviews by Mickaël Salaün on version 7.
+> > - Adding warn_on_once to check (impossible) inconsistencies.
+> > - Adding inline comments.
+> > - Adding check_unix_address_format to check if the scoping socket is an
+> >   abstract UNIX sockets.
+> > v7:
+> > - Using socket's file credentials for both connected(STREAM) and
+> >   non-connected(DGRAM) sockets.
+> > - Adding "domain_sock_scope" instead of the domain scoping mechanism
+> >   used in ptrace ensures that if a server's domain is accessible from
+> >   the client's domain (where the client is more privileged than the
+> >   server), the client can connect to the server in all edge cases.
+> > - Removing debug codes.
+> > v6:
+> > - Removing curr_ruleset from landlock_hierarchy, and switching back to
+> >   use the same domain scoping as ptrace.
+> > - code clean up.
+> > v5:
+> > - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
+> > - Adding curr_ruleset to hierarachy_ruleset structure to have access
+> >   from landlock_hierarchy to its respective landlock_ruleset.
+> > - Using curr_ruleset to check if a domain is scoped while walking in the
+> >   hierarchy of domains.
+> > - Modifying inline comments.
+> > v4:
+> > - Rebased on Günther's Patch:
+> >   https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
+> >   so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is
+> >   removed.
+> > - Adding get_scope_accesses function to check all scoped access masks in
+> >   a ruleset.
+> > - Using socket's file credentials instead of credentials stored in
+> >   peer_cred for datagram sockets. (see discussion in [1])
+> > - Modifying inline comments.
+> > V3:
+> > - Improving commit description.
+> > - Introducing "scoped" attribute to landlock_ruleset_attr for IPC
+> >   scoping purpose, and adding related functions.
+> > - Changing structure of ruleset based on "scoped".
+> > - Removing rcu lock and using unix_sk lock instead.
+> > - Introducing scoping for datagram sockets in unix_may_send.
+> > V2:
+> > - Removing wrapper functions
+> > 
+> > [1]https://lore.kernel.org/all/20240610.Aifee5ingugh@digikod.net/
+> > ---
+> >  include/uapi/linux/landlock.h                |  28 ++++
+> >  security/landlock/limits.h                   |   3 +
+> >  security/landlock/ruleset.c                  |   7 +-
+> >  security/landlock/ruleset.h                  |  24 +++-
+> >  security/landlock/syscalls.c                 |  17 ++-
+> >  security/landlock/task.c                     | 136 +++++++++++++++++++
+> >  tools/testing/selftests/landlock/base_test.c |   2 +-
+> >  7 files changed, 208 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index 2c8dbc74b955..dfd48d722834 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -44,6 +44,12 @@ struct landlock_ruleset_attr {
+> >  	 * flags`_).
+> >  	 */
+> >  	__u64 handled_access_net;
+> > +	/**
+> > +	 * @scoped: Bitmask of scopes (cf. `Scope flags`_)
+> > +	 * restricting a Landlock domain from accessing outside
+> > +	 * resources(e.g. IPCs).
+> > +	 */
+> > +	__u64 scoped;
+> >  };
+> >  
+> >  /*
+> > @@ -274,4 +280,26 @@ struct landlock_net_port_attr {
+> >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+> >  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+> >  /* clang-format on */
+> > +
+> > +/**
+> > + * DOC: scope
+> > + *
+> > + * Scope flags
+> > + * ~~~~~~~~~~~
+> > + *
+> > + * These flags enable to restrict a sandboxed process from a set of IPC
+> > + * actions. Setting a flag for a ruleset will isolate the Landlock domain
+> > + * to forbid connections to resources outside the domain.
+> > + *
+> > + * IPCs with scoped actions:
+> > + *
+> > + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandboxed process
+> > + *   from connecting to an abstract unix socket created by a process
+> > + *   outside the related Landlock domain (e.g. a parent domain or a
+> > + *   non-sandboxed process).
+> > + */
+> > +/* clang-format off */
+> > +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
 > 
-> It is unclear to me. Would it be good to send v2 with this update?
+> Thinking more about it, it makes more sense to rename it to
+> LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET (s/SCOPED/SCOPE/) because it
+> express a scope (not a "scoped") and it allign with the current
+> LANDLOCK_ACCESS_* and other internal variables such as
+> LANDLOCK_LAST_SCOPE...
 > 
+> However, it still makes sense to keep the "scoped" ruleset's field,
+> which is pretty similar to the "handled_*" semantic: it describes what
+> will be *scoped* by the ruleset.
+The proposed changes make sense. They are applied in commit
+[0b365024c726277eb73e461849709605d1819977]/next branch, and look good
+to me.
 
-Yes, please send a new version. My point is that it is explained in the
-commit log. This is fine when you are adding something because then
-people will easily use git blame and find the commit and log. However,
-because you are removing code, it is not obvious there is a reason why
-it isn't there;
-
-> >>
-> >>  static const struct snd_soc_dai_ops atmel_ssc_dai_ops = {
-> >>       .startup        = atmel_ssc_startup,
-> >> --
-> >> 2.34.1
-> >>
-> >
-> > --
-> > Alexandre Belloni, co-owner and COO, Bootlin
-> > Embedded Linux and Kernel engineering
-> > https://bootlin.com
-> 
-> Best regards,
-> Andrei Simion
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> > +/* clang-format on*/
+> > +
+> >  #endif /* _UAPI_LINUX_LANDLOCK_H */
+> > diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> > index 4eb643077a2a..eb01d0fb2165 100644
+> > --- a/security/landlock/limits.h
+> > +++ b/security/landlock/limits.h
+> > @@ -26,6 +26,9 @@
+> >  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+> >  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+> >  
+> > +#define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
+> > +#define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
+> > +#define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
+> >  /* clang-format on */
 
