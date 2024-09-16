@@ -1,107 +1,144 @@
-Return-Path: <linux-kernel+bounces-330709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B5097A314
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:49:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0917697A316
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7443D1C21AB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:49:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AB821C20966
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE18714A60C;
-	Mon, 16 Sep 2024 13:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0545515624D;
+	Mon, 16 Sep 2024 13:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JkHk4k8Z"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TQcUuR54"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1D41494B5
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D746714D2B9
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726494590; cv=none; b=PcwczyehhPyZ3qKjgh8dalydb9OZHjdCXvNw3K1Lo/9mJIEHWbxiZHaQFR0qE3///9VkLCQ3LOKd79hRIKASFsbhpJWad0/mGOAYRdjtb8se0l4Ae6JgY/OfiVr5dcNkZ/P+rKomBy3KCQx6z6dTa+xIA8DULw04+vik2mxZsck=
+	t=1726494624; cv=none; b=WXDZOvOdz9ybcHYoiTFyzEWGzF/JKdNyjDR5KtVz4FD/f/+KdLoQtkRv+GI+R2RroCx4yFlIN2Jw5Gi9Eh0+tMf7FZ/7YXLZa18NfDwUE7DwcrObXwNgi4n6ibswJqyK6zqwZrwPYGo3SuWhAUdb0vMjrPaXdUBTJ7a4c9C7IQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726494590; c=relaxed/simple;
-	bh=mTYLlhgJFyLCJFiquQhXbDJFC9KNkU16Jqo0fhCn7Mk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aDCgt34Ur2KSg7VnYvBsjZPxdf1H/TGxGY54iAfBVFGHdbK1FgUUNtlv8uy9tvLX8sYNXNC6RXRghCQLPLUX8W39pWfwCxB4CNoCa11DH++EE5usXvnpVzuCBsgA1icFlQnKuRlL0J26Bf3sKY79CRAUBM6KBx4rL+9lRdovCFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JkHk4k8Z; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374ca65cafdso2207630f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:49:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726494586; x=1727099386; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NhrGkzepf/7gkzfLnNo1SUYJoz3hCDltEutlMFgBtEY=;
-        b=JkHk4k8Z5Kwht73EaZOwmRiD4q1lZhFTaon+lgrc+irA92oS2AgclFY7TQIrBMqivh
-         DRQKLSxmJ+FmX0x66KmjZ+VPfVPaSAlYxzk1KlQgXEj4+W/zyPGiHXnwRl6t4OtA0Bke
-         LzBiTGELaUB2Ujmuf4dPg0K/v3+RyidiuXry9qQwvWWkZ4PRB8f5zZTaNWPSJX9x4117
-         xTS6L23anWzNZmpDb5D4yaTU5jzdW5AZLrKdOYs4Sxi3cynnpkrWzKZWcqjLCc8lSiaW
-         34tmv8y1FG/CsP3wOwU/bMyOJ7a/mKPcjzTxBzDB19IzwNcWySFtptsJ4eI/QHJ4O691
-         TMtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726494586; x=1727099386;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NhrGkzepf/7gkzfLnNo1SUYJoz3hCDltEutlMFgBtEY=;
-        b=Cc4E7e9+MqjwSwrko/yicfmFTUNwmRvqGZEfwNdtQ6PljOikWtid6Kv2S1QaJWSVD/
-         j06ScrECPE8G5kXjeVr174kc1PXuQ8q5VYpSgUF5OHidl0siHHz/noosbtv+wtbUI6k1
-         fd37tfq7gs+nkqXvjI8qw4Nkd1+nT4I2y11srZvU4iIy7dgsPnRZEVM4BcdKWqh+aTN1
-         ApzuVeEneUTdXl8grbZ/AtJfNyvKf2p1QP2GeQVnqfpg9gNZ4nn65vEu+HsmAgb6R2GD
-         Hm4wPUGlkGowyL0Nuwi9Lq3dPOK5dUKNf4IGCdTm7fhAOEBuRxLuisjhKrEinbsYjAQz
-         8jTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqbhE5q9kxmoeraFZIqBEl2JI81aaV2nLCdXxlG+RS3UoFob5DKtD0cYVeJxeLyO++BWOwASYFO9Kw8Rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdB5fPWsZn3NjZmcM8mYKLvg36TojpqKJNu7YJSQhHaE7T0mlB
-	l0Pvzct1NHPMLkVCij1lccoPOKAIQApqlE3ZjlJ3C8oaUcMRw2dPqo0NIZxK/N+fJfWMrQFmN2X
-	u4s/WGSAB
-X-Google-Smtp-Source: AGHT+IEFd+n3pMJxR417Q9zcx0oWXZFwDVePmgPghEM7qSB/XlIsd7vjIXUULvkasjnBv/6HrG/WoQ==
-X-Received: by 2002:adf:ea46:0:b0:374:c712:507a with SMTP id ffacd0b85a97d-378d61f125fmr5809960f8f.32.1726494585856;
-        Mon, 16 Sep 2024 06:49:45 -0700 (PDT)
-Received: from [127.0.0.1] ([194.2.69.69])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e85ccsm7266248f8f.42.2024.09.16.06.49.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 06:49:45 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Felix Moessbauer <felix.moessbauer@siemens.com>
-Cc: io-uring <io-uring@vger.kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20240916111150.1266191-1-felix.moessbauer@siemens.com>
-References: <20240916111150.1266191-1-felix.moessbauer@siemens.com>
-Subject: Re: [PATCH v3 1/1] io_uring/sqpoll: do not put cpumask on stack
-Message-Id: <172649458122.10114.15596316527978537875.b4-ty@kernel.dk>
-Date: Mon, 16 Sep 2024 07:49:41 -0600
+	s=arc-20240116; t=1726494624; c=relaxed/simple;
+	bh=3G6nNUn1bMKAqYxa+NGBPYz7gridnax2Iqq1Mfv1v34=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=ipOhaF7qFHoJjqANYYQNFLYzQgLlkeVGT9TtW6GiL0mh1Zd04s53cFzdFeIvQrNZvCi5sAg46rvBY9VqrnbO1lUP26ongcPHnmpT2ynFVmi87WsJddhuTb32UPqukWXOM/AKp3CFBg4NJuvWop7AIstEPlcEQnfLjeLypGwKwN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TQcUuR54; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726494621;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bceaz3QXs0DKbabxrfpiWtFXiUoEB+2UhAh7kLlHFog=;
+	b=TQcUuR54poWMZutdHe7ifX+2LjU2n+VPfL7IGGfTH+8J1d2AN7jY/1xiapyWvqssE2v++r
+	h9CwcAzpJCp3iEfF44rZ+G2evzkIUUC2ZWiSfddXApxVnoH+UK8LsXBP+Ul7I7QZi6m18m
+	eg3YUN6c/XkF+goQNiNdUOM/60a2yRk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-98-ok2uxF2SM2Kr6B62Z9z6NQ-1; Mon,
+ 16 Sep 2024 09:50:20 -0400
+X-MC-Unique: ok2uxF2SM2Kr6B62Z9z6NQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 55BF91955E9F;
+	Mon, 16 Sep 2024 13:50:19 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8E1021956086;
+	Mon, 16 Sep 2024 13:50:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com>
+References: <CAHk-=wjr8fxk20-wx=63mZruW1LTvBvAKya1GQ1EhyzXb-okMA@mail.gmail.com> <20240913-vfs-netfs-39ef6f974061@brauner>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    Steve French <stfrench@microsoft.com>
+Subject: [PATCH] cifs: Fix cifs readv callback merge resolution issue
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1947792.1726494616.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 16 Sep 2024 14:50:16 +0100
+Message-ID: <1947793.1726494616@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+Fix an upstream merge resolution issue[1].  Prior to the netfs read
+healpers, the SMB1 asynchronous read callback, cifs_readv_worker()
+performed the cleanup for the operation in the network message processing
+loop, potentially slowing down the processing of incoming SMB messages.
 
-On Mon, 16 Sep 2024 13:11:50 +0200, Felix Moessbauer wrote:
-> Putting the cpumask on the stack is deprecated for a long time (since
-> 2d3854a37e8), as these can be big. Given that, change the on-stack
-> allocation of allowed_mask to be dynamically allocated.
-> 
-> 
+With commit a68c74865f51 ("cifs: Fix SMB1 readv/writev callback in the sam=
+e
+way as SMB2/3"), this was moved to a worker thread (as is done in the
+SMB2/3 transport variant).  However, the "was_async" argument to
+netfs_subreq_terminated (which was originally incorrectly "false" got
+flipped to "true" - which was then incorrect because, being in a kernel
+thread, it's not in an async context).
 
-Applied, thanks!
+This got corrected in the sample merge[2], but Linus, not unreasonably,
+switched it back to its previous value.
 
-[1/1] io_uring/sqpoll: do not put cpumask on stack
-      commit: 7f44beadcc11adb98220556d2ddbe9c97aa6d42d
+Note that this value tells netfslib whether or not it can run sleepable
+stuff or stuff that takes a long time, such as retries and cleanups, in th=
+e
+calling thread, or whether it should offload to a worker thread.
 
-Best regards,
--- 
-Jens Axboe
+Fix this so that it is "false".  The callback to netfslib in both SMB1 and
+SMB2/3 now gets offloaded from the network message thread to a separate
+worker thread and thus it's fine to do the slow work in this thread.
 
+Fixes: 35219bc5c71f ("Merge tag 'vfs-6.12.netfs' of git://git.kernel.org/p=
+ub/scm/linux/kernel/git/vfs/vfs")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Steve French <stfrench@microsoft.com>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/CAHk-=3Dwjr8fxk20-wx=3D63mZruW1LTvBvAKya1G=
+Q1EhyzXb-okMA@mail.gmail.com/ [1]
+Link: https://lore.kernel.org/linux-fsdevel/20240913-vfs-netfs-39ef6f97406=
+1@brauner/ [2]
+---
+ fs/smb/client/cifssmb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+index d81da161d3ed..7f3b37120a21 100644
+--- a/fs/smb/client/cifssmb.c
++++ b/fs/smb/client/cifssmb.c
+@@ -1266,7 +1266,7 @@ static void cifs_readv_worker(struct work_struct *wo=
+rk)
+ 	struct cifs_io_subrequest *rdata =3D
+ 		container_of(work, struct cifs_io_subrequest, subreq.work);
+ =
+
+-	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, true);
++	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
+ }
+ =
+
+ static void
 
 
