@@ -1,533 +1,226 @@
-Return-Path: <linux-kernel+bounces-331075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8B897A812
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:06:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F1497A81E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7455428723F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:06:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1BA91C2353F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CCA15C15D;
-	Mon, 16 Sep 2024 20:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2B415C13B;
+	Mon, 16 Sep 2024 20:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epNn7lfI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CbZG4EE4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6741BDC8;
-	Mon, 16 Sep 2024 20:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726517205; cv=none; b=mbJxkmwybHS2VHGb8MIGYCgFvmZJErFFfDWgcQAQtlNDrg8drVflw3aK4tjFrfTg//hFyrMiJ9I5SCGQewHhQpXCpW50Z2qWLfdmkkZqEVdl7ta465Ui7hDxv65dz11oEWn9CqBEeWpg73A9PH2I/GImYG5YhApx8oiFLYJK8xU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726517205; c=relaxed/simple;
-	bh=042xKiugapJc43LxR42bMaAA6xbM9HZQ6BCxpTlaGDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b3AFQwAjbvKrXPOUUo3HLjKO0vcUTJfU5WWABBN8YzmwFxKA6pb54mGCbLIcNbMl8KqEsbsADEwvyt76FIePSQ1TvhU2ub/Iq0+z1hTbreiZVvBELhdBXiQ0aK4FwryI3Wn5+y5F7uIVcBlvgdAjKCKwLUukntTlST/vhiTDfXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epNn7lfI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5AF6C4CEC4;
-	Mon, 16 Sep 2024 20:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726517204;
-	bh=042xKiugapJc43LxR42bMaAA6xbM9HZQ6BCxpTlaGDQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=epNn7lfIsL4lQZP2Rb7q/TSy+MEdH3jq5a1fvdxmco2JjE2igLqjWxbR+rj31kSqA
-	 dNz4vtV8ESXn9QZgtfGcPSSgj2P/K7VAbmXLLbqSuk5SwWpduLOeyN09+hUX1c/xqX
-	 dC8FvGK0OLtguB4GTDFiAemxv8ABapPfjDNnS9eLdJy1No/ZqkjE4M3+xGzqLdsh9s
-	 GIBSQh2Xiq5lQQMeq7XKs23rV3UX++NRaGF3GDJsh4sCTz6UR7JhXuR7XKt4BF6pXF
-	 U2l1/3bNapVkhEtP6CqfnTEwBEtQOMJQ45JLsGZGdEkecIwYiSJfZuPOfTOt/0J2ew
-	 QpFYyVCGozQNg==
-Message-ID: <29f30aae-ffad-4a42-909e-b05f9cf360b5@kernel.org>
-Date: Mon, 16 Sep 2024 22:06:37 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D61813B588
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 20:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726517361; cv=fail; b=eGVrj8c21depNWTyZCCE76Yli2ihZLKwNSfz6J8PrZtvKX8ey9yfr/7OQyJ7jNvHPviETT9VpQdj2aRwhT6euDCiQgDT714OIhqvrfV9sOv4f1T1z2UIdl5J0d7hfWH+Y2HVHg1xSkvzEm1FBkDV+KjwHmmV3q80vmEdAHxxEhE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726517361; c=relaxed/simple;
+	bh=ZmweyN7sEe7y0UOgkCnbJrYkWfAp26btl2sXJWJjaAY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nElh9EXQn5N/PSRPqvhr4EhmDfXaASCRQ9X7K95sLiQNAHzzVW69LdjIbFx0jCSExjhkeHZV0mxOTljcJ6iDkAxLPw8rC/QaSFDlhOHcux668jQ22pCLKG4H4pQvtDwzGGcebScFoj7vJYTeEWkGiNQSsVHrciLvgmSjQz5ZJy0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CbZG4EE4; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726517359; x=1758053359;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=ZmweyN7sEe7y0UOgkCnbJrYkWfAp26btl2sXJWJjaAY=;
+  b=CbZG4EE4lIZncenJLLBxCBc0+t0iedWvI4QVd9So3oIIJYyhLuNM4kcJ
+   8KigcE/ULtuwk6YKh38ttzsX0U+HGerMfvE4kM+gUXkBUu1iPPH2WP5+3
+   XfMC84Kh/sHp6JDPOGmCPXqqBB0No80/GaOHxmxF7MeE9L+S6LzUpV1HX
+   6mjhSCQYwGOCQANP1dDS+V32656xg0rw4FU95eS821LdDxPYyWUekIYhE
+   JnVfklgBC5dPIR15Xtj2NkoiwvbLLYVnA+R0xhfrugaUxUw+hhqyj+a3Z
+   /lMDF/eAsnpm4LD1H7Z8AKHKdnvUynSVDvx92eBCDVcFc+cxZ2DkbZxfY
+   Q==;
+X-CSE-ConnectionGUID: wMNugrHzQUiq7EuYEF7Jdw==
+X-CSE-MsgGUID: YB6FMAvVSRGI3QSGVkopMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="36738249"
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="36738249"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 13:09:19 -0700
+X-CSE-ConnectionGUID: nKMljjJ9TkCDpXDKze/Cmg==
+X-CSE-MsgGUID: HP2tXxO4ROe/nVY20IX7Og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
+   d="scan'208";a="73328872"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Sep 2024 13:09:19 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 16 Sep 2024 13:09:18 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 16 Sep 2024 13:09:17 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 16 Sep 2024 13:09:17 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.43) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 16 Sep 2024 13:09:17 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WVW6FwG4e665wb85mcC2r/7PL7lh8op6elbKlgGStMVRyTuFrYwHJlahn/xIVTi36A4SxjXVS5YBeVnDjMx3BbzYfcEjvW2q6OvI0eRuQZJo6u3k/4nzAXTBZKRrkL5omnz56VsQzEhTr9/LeQ4k0bvWthPoVoOXpt22MRAM5ZEWNMaNrqc28+/3mb3684MI73gm8j1hDOOVZ6r4gHoHNakPh4/NNAfhrB2n+YPBCXDWPURSYtH+kGmls/r1LFqNHobMUVHKKJ84a1OP4sGFGAbfEJeOTylFqDrZBQspSyx2qdeMPaaTUBijDoDpq2vXa/uOCxSM10Nwupm0vz3nbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+cBDlJx4KsJxZ33z2e8ESbGS31CW3DLhB3F7PtQASyo=;
+ b=vt+WcXu5xS2xjF1kvBk16N7RTM2OD5VLteNf0ur44seNaQQWwlLlqNjvNy3k89BfQ3p7fmXt6AO9klgo1a/gJVofGKIBXzqLCm/+Td5NmzN62ZDDlI/p6KKoSFe2enByaiwiXaxAK1OAjx35TfdSbvERh0NPtDUNdfpVQ2BIcn5mv6Eb97JnXExZl9lClrVxBe0IZEjrSEaCOUOHtJCOMCn2e/20zYNyjrqq9Anh45NRHdWIJrbjfzHhjRtFt2NYmbG1N0kfGbBPoSH4UDC+rtPU5PpzrC+BZLxy+PpeIn0N9DSQfEORlCETdvfPFJAsgO0pgVCSDXJkke5VNrTNSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by SJ0PR11MB6792.namprd11.prod.outlook.com (2603:10b6:a03:485::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.23; Mon, 16 Sep
+ 2024 20:09:15 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%5]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
+ 20:09:15 +0000
+Date: Mon, 16 Sep 2024 20:07:27 +0000
+From: Matthew Brost <matthew.brost@intel.com>
+To: Philipp Stanner <pstanner@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Luben Tuikov
+	<ltuikov89@gmail.com>, Danilo Krummrich <dakr@kernel.org>, Tvrtko Ursulin
+	<tvrtko.ursulin@igalia.com>
+Subject: Re: [PATCH] MAINTAINERS: drm/sched: Add new maintainers
+Message-ID: <ZuiP/4AzCNnoaDZ/@DUT025-TGLU.fm.intel.com>
+References: <20240916185159.35727-3-pstanner@redhat.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240916185159.35727-3-pstanner@redhat.com>
+X-ClientProxiedBy: SJ0PR13CA0124.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c6::9) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] regulator: max20339: add Maxim MAX20339 regulator
- driver
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Michael Walle <mwalle@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240916-max20339-v1-0-b04ce8e8c471@linaro.org>
- <20240916-max20339-v1-2-b04ce8e8c471@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240916-max20339-v1-2-b04ce8e8c471@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SJ0PR11MB6792:EE_
+X-MS-Office365-Filtering-Correlation-Id: d32de636-8c8a-48e5-bb53-08dcd68b64e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?8kydfaBwfDtdIpwHP4Xj2eAYmJhdhDvHXoqBi7j/oj79BvLPOKbwM/lWKz?=
+ =?iso-8859-1?Q?Wb9Kb07Px+zV1qpd4pQzpO4GHO0LKp3SX2bwRaQCSVH+EYd1talh+oAvOb?=
+ =?iso-8859-1?Q?2gsFwTlgTTEG69ZMJzO8OdCYKV9rk2ctGd1WAHFQmh5zwpP36WXP5XnWKt?=
+ =?iso-8859-1?Q?fWQVktPwuLMdd5fpUQYbXW5o67Fd9WVXMWfcHigO5sdCRLrv9mLKoe9C59?=
+ =?iso-8859-1?Q?/oHxwZlloIWD8uJcl8U5/h1iu1Wj4w/TAc2cg1H/+MrxxqFIIhGTKkG8O1?=
+ =?iso-8859-1?Q?HzgVL7jAQzu07ShyMoEcexMcn/LTrY3OVE+/DN0Z4sMQ2HO/IpcweBrjxZ?=
+ =?iso-8859-1?Q?RumYFunTU/vJTxgaBTglwoJxaoIUVuoluFRQFbhrIfNH4DLryjMNYsCve2?=
+ =?iso-8859-1?Q?X4kkqBDjGNkl32enb/+r+nAgEWe/sOw7l+26g0APUTiiK7itFHHhkxUG1u?=
+ =?iso-8859-1?Q?S7rCfSMA0r+8CRQVf+PGJviHl3TX4l1vrEtiOncO2eVTcan7Th8H0Oso8V?=
+ =?iso-8859-1?Q?0x9kLCYpvPXZiJm5BxOjbYZyuNLFwfdJFeG2ghVs5qqRhHyPd2+E2cdCau?=
+ =?iso-8859-1?Q?98LZ5bOFqDtMfsMsA5Jb4D+kLypvl2vw3tgydxtOplXgXojIkzoR044s9L?=
+ =?iso-8859-1?Q?FB+H2GwxhO3o+/qo4zscEGYWqle8aTiDbm95se5G/tVl+SBmQS8ObPt/Ed?=
+ =?iso-8859-1?Q?fts5k6UMneKERDFZfsZU0Y5S0SxWhyTphhnANXoEKqqkOc7K707Sdt7EBw?=
+ =?iso-8859-1?Q?T4fPM+0AULompItYUNs3jp57HYe/2oQI09uuHB17Xbx3ZRFRY00TdKO5j2?=
+ =?iso-8859-1?Q?MeTfDgD3KKi+U7iEapF6E7prqw6EcenRSMOQbpFgStLBjhEEP5IVvsD9/Y?=
+ =?iso-8859-1?Q?N137e9OLU26FmMtEAtSIwvCxjC+UY1lHycXpbxuIQXRdZA7oadvWiaJId4?=
+ =?iso-8859-1?Q?TGPP0JF/BCM5B6S0cACriKsB4E4mcAsLGev4rfovHNcBJRfQbq99SnSwuX?=
+ =?iso-8859-1?Q?ICQKCGiwPZYuV6YArxVAXnGLyl8l6eGSqNBpc7eli6Jv1IxjVCfUeA8sLm?=
+ =?iso-8859-1?Q?CzZdHUGFSwVwMb+VLNYgHSMWz1Z43Tnhxbk65Au+duqMlXNHL79pYxrXnI?=
+ =?iso-8859-1?Q?pTjFAD5R1PpgeNuQD3sQ/a7HlVZ3p+QTCbm4fa95qMChNu1/cLpDaZyDeH?=
+ =?iso-8859-1?Q?VKh++Y+GXrvqT4lj7GJ11nR5UkXUkxH7CkZJryMBa4tUSqLl+MUncZ/Wh0?=
+ =?iso-8859-1?Q?Tzkh2QiVcBeGkCiyxpKA7lnNeH5XbNuB1KeSc8o4lKV/V9Ad4F9yIQfFmx?=
+ =?iso-8859-1?Q?OyDBEdXktzDvvAmzikQykpE5OFEzggtNXlH/Pehw6vbIxc4=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?GgmPnUMXJ4CMK2IQGQ/pdQ9kyGlJvHVXyfngfXQriqEQXLYYylT82NqRtL?=
+ =?iso-8859-1?Q?lmweO8sLYA6/XNQS3jsw4wXRf4ZN/dGzh45aKBK3YfAnMPZQCLeoG9boE7?=
+ =?iso-8859-1?Q?D7MRrA3stqFcahI1Td6HFk/5VUgbaRjd2SbAy+ZIKkZssTuCgSCrivZ259?=
+ =?iso-8859-1?Q?8U0lqVglDPiHKpllyIUIrGXeTvEEsH4R2Kp0JfWlpit+E8whNoKFbJfyiB?=
+ =?iso-8859-1?Q?fx4MPmyXBuPk/LDbU/zBnHZOnySm8cADWLiVVZjHse+GeJTzmHfgpO/ojg?=
+ =?iso-8859-1?Q?VQJHIjabkTCuWwHnPKSvBboHav4OXf1YGl/w6XKaSh4Dy4tNLJdaGva/c/?=
+ =?iso-8859-1?Q?ej5qbTwpboM5A8qIz29mLBQPFcjQch6bZ7ZBCPyT0HFHe+PupRknQg7bcW?=
+ =?iso-8859-1?Q?6TvPUTkp7xmk4rJHLgohUZfL3y12orzl7Rf8KB8BEA6BKIvn4iCGAqwv3L?=
+ =?iso-8859-1?Q?FrXe3aGUAUXcPwZTxj7vadPHd+hYvgF9cw9ceLiX8nraz3EzI60IqhIItR?=
+ =?iso-8859-1?Q?ZIntW8AJlYf4kafUK2wkKU69Jd7O+vZH/+AWUqu4PV1ov6IlUY48MrKPXl?=
+ =?iso-8859-1?Q?MTvWryvBMGFMZw8fvMKQV+FGY+b4ufR7M2k8oiz4XgZ7rrbpeRzVV+u3us?=
+ =?iso-8859-1?Q?IHFvHp3N8MJW8xyJY+16bkLmhuLY2EywaMJ/HBNsT3WXZJLvpJMy0lExVE?=
+ =?iso-8859-1?Q?1FhZzDXGio2Ogx4oEwKDi5W52BGWS3bgx7tVJbBzbfM5VgayPbKd1PA2G8?=
+ =?iso-8859-1?Q?cS0T69Ld5eIB8s2R/oX29ZG/fT4m2JRVqQhmdQL4AzTeoqO7maLaOsTVnU?=
+ =?iso-8859-1?Q?DTUSxyP7YLpJd1FFR3DMrQHge7vLxgA7nV3bjON85nb2xAMYYnsKFwLgC9?=
+ =?iso-8859-1?Q?hgBZrXfqHKVdzOSSzcdGYqIxB22umnBGBaXgkfcrf/ygIwlsVFglX/pLUC?=
+ =?iso-8859-1?Q?vTYQm2BDD2aBAO1VamJNfygmiGlXMFlCVhOCQMynKumdfEtSA/72AESDDq?=
+ =?iso-8859-1?Q?s+zKtMxOOg9wFKmi9KLLBa+jDscVNLj1VYcpsKqWnBrs/ojr1iK8Q/mXIT?=
+ =?iso-8859-1?Q?SMA90ZMyHT0B6UY90LmMlsAVVn1ibESUkbFEhYmDaeL4k8g7hQuipB+rme?=
+ =?iso-8859-1?Q?IMy4OO++GySxulmj/kZNIPQTkI4ldtrUiyPHcbU2R89WWftnuOhZtEq+Z+?=
+ =?iso-8859-1?Q?vhXxJ/Apq8thJ07H96LD+mbdDfuC1GWeKgdkcqtJnylOyrfDp2aNoef+oC?=
+ =?iso-8859-1?Q?k9GXkpYytZ45oMqFZpJIXl/vcnqx3J0SaNDgXOAzpW+EmzZNYqWN2pJRja?=
+ =?iso-8859-1?Q?mP21IIK1Ks+JQkuvSJxSsvTFAmtCt1vu6nnV+Y+ypN+wZ2/uqC5r3EFxFh?=
+ =?iso-8859-1?Q?uPxTJi5fUy92F78BBQgtEaRr9EjqusNi5XtYoYoN8wepMx78uMgNYmRhN2?=
+ =?iso-8859-1?Q?zNjPC3rhtq0Ql+Ef2jTPmXVITFdGw9IfY8VnPHMUocKHfxsHJ/7yDLBTAQ?=
+ =?iso-8859-1?Q?rKtFWiNdjinw1BrWWFoWbZIwfLapOAqMk1afBepwUNu12x+k306Ztuqckr?=
+ =?iso-8859-1?Q?Zc7UQ9q55VEuw53W3g1GgshVZ71hChYFdmVtnnsfCm5cxrzXZoWOnUkv6y?=
+ =?iso-8859-1?Q?wv0EtLtjzBLKoJoPwYj1qzwDH19t8ZRl6bi0mo8Ve5lwkMhbDyeBN+YQ?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d32de636-8c8a-48e5-bb53-08dcd68b64e0
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 20:08:56.2236
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8yWD6pZVr7cBx4vwRjob47ferNNFMwHb+ouM2+ih5bcflPGOohHH1KwEZXcFLSzkA/uhfXWzNUvhBfQJqGEUMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6792
+X-OriginatorOrg: intel.com
 
-On 16/09/2024 18:48, AndrÃ© Draszik wrote:
-> The MAX20339 is an overvoltage protection (OVP) device which also
-> integrates two load switches with resistor programmable current
-> limiting and includes ESD protection for the USB Type-C signal pins.
+On Mon, Sep 16, 2024 at 08:52:00PM +0200, Philipp Stanner wrote:
+> DRM's GPU scheduler is arguably in need of more intensive maintenance.
+> Danilo and Philipp volunteer to help with the maintainership.
 > 
-> This driver exposes the main path and the two the load switches via the
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> Cc: Christian König <christian.koenig@amd.com>
+> Cc: Luben Tuikov <ltuikov89@gmail.com>
+> Cc: Matthew Brost <matthew.brost@intel.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> 
 
-...
+Acked-by: Matthew Brost <matthew.brost@intel.com>
 
-> +
-> +
-> +static irqreturn_t max20339_irq(int irqno, void *data)
-> +{
-> +	struct max20339_irq_data *max20339 = data;
-> +	struct device *dev = max20339->dev;
-> +	struct regmap *regmap = max20339->regmap;
-> +	u8 status[6];
-> +	int ret;
-> +
-> +	ret = regmap_bulk_read(regmap, MAX20339_STATUS1, status,
-> +			       ARRAY_SIZE(status));
-> +	if (ret) {
-> +		dev_err(dev, "Failed to read IRQ status: %d\n", ret);
-> +		return IRQ_NONE;
-> +	}
-> +
-> +	dev_dbg(dev,
-> +		"INT1 2 3: %#.2x %#.2x %#.2x STATUS1 2 3: %#.2x %#.2x %#.2x\n",
-> +		status[3], status[4], status[5], status[0], status[1],
-> +		status[2]);
-
-You should not have prints, even debugs, in interrupt handlers. This can
-flood the dmesg.
-
-> +
-> +	if (!status[3] && !status[4] && !status[5])
-> +		return IRQ_NONE;
-> +
-> +	/* overall status */
-> +	if (status[3] & status[0] & MAX20339_THMFAULT) {
-> +		dev_warn(dev, "Thermal fault\n");
-> +		for (int i = 0; i < ARRAY_SIZE(max20339->rdevs); ++i)
-> +			regulator_notifier_call_chain(max20339->rdevs[i],
-> +						      REGULATOR_EVENT_OVER_TEMP,
-> +						      NULL);
-> +	}
-> +
-> +	/* INSW status */
-> +	if ((status[3] & MAX20339_VINVALID)
-> +	    && !(status[0] & MAX20339_VINVALID)) {
-> +		dev_warn(dev, "Vin over- or undervoltage\n");
-
-Same with all these. What happens if interrupt is triggered constantly?
-
-
-> +		regulator_notifier_call_chain(max20339->rdevs[MAX20339_REGULATOR_INSW],
-> +					      (REGULATOR_EVENT_UNDER_VOLTAGE_WARN
-> +					       | REGULATOR_EVENT_OVER_VOLTAGE_WARN),
-> +					      NULL);
-> +	}
-> +
-> +	if (status[3] & status[0] & MAX20339_INOVFAULT) {
-> +		dev_warn(dev, "Over voltage on INput\n");
-> +		regulator_notifier_call_chain(max20339->rdevs[MAX20339_REGULATOR_INSW],
-> +					      REGULATOR_EVENT_OVER_VOLTAGE_WARN,
-> +					      NULL);
-> +	}
-> +
-
-
-...
-
-> +
-> +static int max20339_lsw_get_error_flags(struct regulator_dev *rdev,
-> +					unsigned int *flags)
-> +{
-> +	struct max20339_regulator *data = rdev_get_drvdata(rdev);
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	ret = regmap_read(rdev_get_regmap(rdev), data->status_reg, &val);
-> +	if (ret) {
-> +		dev_err(rdev_get_dev(rdev),
-> +			"Failed to read MAX20339_STATUS%d: %d\n",
-> +			data->status_reg, ret);
-> +		return ret;
-> +	}
-> +
-> +	*flags = 0;
-> +
-> +	if (val & MAX20339_LSWxSHORTFAULT)
-> +		*flags |= REGULATOR_ERROR_OVER_CURRENT;
-> +
-> +	if (val & MAX20339_LSWxOVFAULT)
-> +		*flags |= REGULATOR_ERROR_OVER_VOLTAGE_WARN;
-> +
-> +	if (val & MAX20339_LSWxOCFAULT)
-> +		*flags |= REGULATOR_ERROR_OVER_CURRENT;
-> +
-> +	return 0;
-> +}
-> +
-> +static int max20339_lsw_dt_parse(struct device_node *np,
-> +				 const struct regulator_desc *desc,
-> +				 struct regulator_config *cfg)
-> +{
-> +	struct max20339_regulator *data = cfg->driver_data;
-> +
-> +	/* we turn missing properties into a fatal issue during probe() */
-
-Your binding does not look in sync with above.
-
-> +	return of_property_read_u32(np, "shunt-resistor-micro-ohms",
-> +				    &data->shunt_micro_ohm);
-> +}
-> +
-> +static const struct regulator_ops max20339_lsw_ops = {
-> +	.enable = regulator_enable_regmap,
-> +	.disable = regulator_disable_regmap,
-> +	.is_enabled = max20339_lsw_is_enabled,
-> +
-> +	.set_over_current_protection = max20339_lsw_set_ocp,
-> +	.set_over_voltage_protection = max20339_lsw_set_ovp,
-> +
-> +	.get_error_flags = max20339_lsw_get_error_flags,
-> +};
-> +
-> +#define MAX20339_LSW_DESC(_sfx, _enable_mask, _csel_mask, _ovp_mask, _status_reg) { \
-> +	.desc = {                                                 \
-> +		.name = "max20339-" _sfx,                         \
-> +		\
-> +		.ops = &max20339_lsw_ops,                         \
-> +		.type = REGULATOR_VOLTAGE,                        \
-> +		.supply_name = _sfx,                              \
-> +		\
-> +		.enable_reg = MAX20339_SWCNTL,                    \
-> +		.enable_mask = _enable_mask,                      \
-> +		\
-> +		.csel_reg = MAX20339_SWILIMDIV,                   \
-> +		.csel_mask = _csel_mask,                          \
-> +		\
-> +		.regulators_node = of_match_ptr("regulators"),    \
-> +		.of_match = of_match_ptr(_sfx),                   \
-> +		.of_parse_cb = max20339_lsw_dt_parse,             \
-> +		\
-> +		.enable_time = 11000 + 1100,                      \
-> +		.off_on_delay = 13,                               \
-> +		.poll_enabled_time = 2420,                        \
-> +		\
-> +		.owner = THIS_MODULE,                             \
-> +	},                                                        \
-> +	.ovp_mask = _ovp_mask,                                    \
-> +	.status_reg = _status_reg,                                \
-> +}
-> +
-> +
-
-Here and in few other places - just one blank line.
-
-> +static struct max20339_regulator max20339_regulators[MAX20339_N_REGULATORS] = {
-
-This can be const and then use container_of instead of rdev_get_drvdata().
-
-See:
-https://lore.kernel.org/all/20240909-regulator-const-v1-17-8934704a5787@linaro.org/
-
-> +	[MAX20339_REGULATOR_INSW] = {
-> +		.desc = {
-> +			.name = "max20339-insw",
-> +
-> +			.ops = &max20339_insw_ops,
-> +			.type = REGULATOR_VOLTAGE,
-> +			.supply_name = "insw",
-> +
-> +			.volt_table = max20339_insw_volt_table,
-> +			.n_voltages = ARRAY_SIZE(max20339_insw_volt_table),
-> +
-> +			.enable_reg = MAX20339_IN_CTR,
-> +			.enable_mask = MAX20339_IN_CTR_INSWEN,
-> +			.enable_val = FIELD_PREP_CONST(MAX20339_IN_CTR_INSWEN,
-> +						  MAX20339_IN_CTR_INSWEN_AUTO),
-> +
-> +			.active_discharge_reg = MAX20339_IN_CTR,
-> +			.active_discharge_mask = MAX20339_IN_CTR_INDISEN,
-> +			.active_discharge_on = MAX20339_IN_CTR_INDISEN,
-> +			.active_discharge_off = 0,
-> +
-> +			.regulators_node = of_match_ptr("regulators"),
-> +			.of_match = of_match_ptr("insw"),
-> +
-> +			.enable_time = 15000,
-> +			.off_on_delay = 1,
-> +			.poll_enabled_time = 3000,
-> +
-> +			.owner = THIS_MODULE,
-> +		}
-> +	},
-> +	[MAX20339_REGULATOR_LSW1] = MAX20339_LSW_DESC("lsw1",
-> +						MAX20339_SWCNTL_LSW1EN,
-> +						MAX20339_SWILIMDIV_LSW1ILIMDIV,
-> +						MAX20339_SWCNTL_LSW1OVEN,
-> +						MAX20339_STATUS2),
-> +	[MAX20339_REGULATOR_LSW2] = MAX20339_LSW_DESC("lsw2",
-> +						MAX20339_SWCNTL_LSW2EN,
-> +						MAX20339_SWILIMDIV_LSW2ILIMDIV,
-> +						MAX20339_SWCNTL_LSW2OVEN,
-> +						MAX20339_STATUS3),
-> +};
-> +
-> +static int max20339_setup_irq(struct i2c_client *client,
-> +			      struct regmap *regmap,
-> +			      struct regulator_dev *rdevs[])
-> +{
-> +	u8 enabled_irqs[3];
-> +	struct max20339_irq_data *max20339;
-> +	int ret;
-> +	unsigned long irq_flags;
-> +
-> +	/* the IRQ is optional */
-> +	if (!client->irq) {
-> +		enabled_irqs[0] = enabled_irqs[1] = enabled_irqs[2] = 0;
-> +	} else {
-> +		enabled_irqs[0] = (MAX20339_VINVALID | MAX20339_THMFAULT
-> +				   | MAX20339_INOVFAULT);
-> +		enabled_irqs[1] = (MAX20339_LSWxSHORTFAULT
-> +				   | MAX20339_LSWxOVFAULT
-> +				   | MAX20339_LSWxOCFAULT);
-> +		enabled_irqs[2] = (MAX20339_LSWxSHORTFAULT
-> +				   | MAX20339_LSWxOVFAULT
-> +				   | MAX20339_LSWxOCFAULT);
-> +
-> +		max20339 = devm_kzalloc(&client->dev, sizeof(*max20339),
-> +					GFP_KERNEL);
-> +		if (!max20339)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	ret = regmap_bulk_write(regmap, MAX20339_INTMASK1,
-> +				enabled_irqs, ARRAY_SIZE(enabled_irqs));
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +				     "error configuring INTMASK1..3\n");
-> +
-> +	if (!client->irq)
-> +		return 0;
-> +
-> +	max20339->dev = &client->dev;
-> +	max20339->regmap = regmap;
-> +	memcpy(max20339->rdevs, rdevs, sizeof(max20339->rdevs));
-> +
-> +	irq_flags = IRQF_ONESHOT | IRQF_SHARED;
-
-Why shared?
-
-> +	irq_flags |= irqd_get_trigger_type(irq_get_irq_data(client->irq));
-> +
-> +	ret = devm_request_threaded_irq(&client->dev, client->irq,
-
-Shared interrupts should not be devm. It leads to tricky cases during
-removal. If you investigated the code and you are 100% sure there is no
-issue, please write a short comment in the code confirming that. Or just
-don't use devm.
-
-> +					NULL, max20339_irq, irq_flags,
-> +					"max20339", max20339);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +				     "IRQ setup failed\n");
-> +
-> +	return 0;
-> +}
-> +
-> +#if IS_ENABLED(CONFIG_GPIO_REGMAP)
-> +static int max20339_gpio_regmap_xlate(struct gpio_regmap *const gpio,
-> +				      unsigned int base, unsigned int offset,
-> +				      unsigned int *const reg,
-> +				      unsigned int *const mask)
-> +{
-> +	if (offset != 0)
-> +		return -EINVAL;
-> +
-> +	*reg = base;
-> +	*mask = MAX20339_VINVALID;
-> +	return 0;
-> +}
-> +
-> +static int max20339_setup_gpio(struct i2c_client *client,
-> +			       struct regmap *regmap)
-> +{
-> +	struct fwnode_handle *fwnode;
-> +	static const char * const names[] = { "vin" };
-> +	int ret;
-> +
-> +	fwnode = gpiochip_node_get_first(&client->dev);
-> +	if (!fwnode) {
-> +		dev_info(&client->dev, "Skipping gpio chip initialization\n");
-> +		return 0;
-> +	}
-> +
-> +	ret = PTR_ERR_OR_ZERO(devm_gpio_regmap_register(&client->dev,
-> +			&(struct gpio_regmap_config) {
-> +				.parent = &client->dev,
-> +				.regmap = regmap,
-> +				.fwnode = fwnode,
-> +				.ngpio = ARRAY_SIZE(names),
-> +				.names = names,
-> +				.reg_dat_base = MAX20339_STATUS1,
-> +				.reg_mask_xlate = max20339_gpio_regmap_xlate
-> +			}));
-
-That's not really readable. Please split PTR_ERR_OR_ZERO.
-
-> +	fwnode_handle_put(fwnode);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +				     "failed to initialize gpio chip\n");
-> +
-> +	return 0;
-> +}
-> +#else /* CONFIG_GPIO_REGMAP */
-> +static int max20339_setup_gpio(struct i2c_client *client,
-> +			       struct regmap *regmap)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_GPIO_REGMAP */
-> +
-> +static int max20339_probe(struct i2c_client *client)
-> +{
-> +	int ret;
-> +	struct regmap *regmap;
-> +	struct regulator_config config = {};
-> +	struct regulator_dev *rdev;
-> +	struct regulator_dev *rdevs[MAX20339_N_REGULATORS];
-> +
-> +	/*
-> +	 * either "dig-supply" is needed, or alternatively "in-supply" will
-> +	 * supply power
-> +	 */
-> +	ret = devm_regulator_get_enable_optional(&client->dev, "dig");
-> +	if (ret) {
-> +		if (ret == -ENODEV)
-> +			ret = devm_regulator_get_enable_optional(&client->dev,
-> +								 "insw");
-> +		if (ret)
-> +			return dev_err_probe(&client->dev, ret,
-> +					     "failed to get regulator");
-> +	}
-> +
-> +	regmap = devm_regmap_init_i2c(client, &max20339_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		dev_err_probe(&client->dev, PTR_ERR(regmap),
-
-return dev_err_probe
-
-> +			      "regmap init failed\n");
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	for (int i = 0; i < ARRAY_SIZE(max20339_regulators); ++i) {
-> +		config.dev = &client->dev;
-> +		config.regmap = regmap;
-> +		config.driver_data = &max20339_regulators[i];
-> +
-> +		rdev = devm_regulator_register(config.dev,
-> +					       &max20339_regulators[i].desc,
-> +					       &config);
-> +		if (IS_ERR(rdev))
-> +			return dev_err_probe(&client->dev, PTR_ERR(rdev),
-> +					     "failed to register MAX20339 regulator %s\n",
-> +					     max20339_regulators[i].desc.name);
-> +
-> +		/*
-> +		 * For the LSWs, we really need to know the shunts' values
-> +		 * (from DT). Fail if missing.
-> +		 */
-> +		if (max20339_regulators[i].desc.csel_mask
-> +		    && !max20339_regulators[i].shunt_micro_ohm)
-> +			return dev_err_probe(&client->dev, -EINVAL,
-> +					     "property 'shunt-resistor-micro-ohms' not found\n");
-> +
-> +		rdevs[i] = rdev;
-> +
-> +		dev_info(&client->dev, "registered MAX20339 regulator %s\n",
-> +			 max20339_regulators[i].desc.name);
-> +	}
-> +
-> +	ret = max20339_setup_irq(client, regmap, rdevs);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return max20339_setup_gpio(client, regmap);
-> +}
-> +
-> +static const struct i2c_device_id max20339_i2c_id[] = {
-> +	{ "max20339", 0 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, max20339_i2c_id);
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id max20339_of_id[] = {
-> +	{ .compatible = "maxim,max20339", },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, max20339_of_id);
-> +#endif
-> +
-> +static struct i2c_driver max20339_i2c_driver = {
-> +	.driver = {
-> +		.name = "max20339",
-> +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-> +		.of_match_table = of_match_ptr(max20339_of_id),
-
-Drop of_match_ptr and earlier #ifdef. Not much benefits and limits usage
-to OF-systems.
-
-Best regards,
-Krzysztof
-
+> ---
+>  MAINTAINERS | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 10430778c998..fc2d8bf3ee74 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7710,6 +7710,8 @@ F:	drivers/gpu/drm/xlnx/
+>  DRM GPU SCHEDULER
+>  M:	Luben Tuikov <ltuikov89@gmail.com>
+>  M:	Matthew Brost <matthew.brost@intel.com>
+> +M:	Danilo Krummrich <dakr@kernel.org>
+> +M:	Philipp Stanner <pstanner@redhat.com>
+>  L:	dri-devel@lists.freedesktop.org
+>  S:	Maintained
+>  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> -- 
+> 2.46.0
+> 
 
