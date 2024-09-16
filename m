@@ -1,87 +1,107 @@
-Return-Path: <linux-kernel+bounces-331030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2138997A770
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:49:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43CD97A77A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0319282F4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA62F286500
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AC715C131;
-	Mon, 16 Sep 2024 18:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6D5165F1D;
+	Mon, 16 Sep 2024 18:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZCGFs6s"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="msfx8BMF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA6810A18;
-	Mon, 16 Sep 2024 18:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1C3165EFE;
+	Mon, 16 Sep 2024 18:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726512536; cv=none; b=LhaiZlCdQXtvo6egPo/Q6GCpGxkzxHghuCupoFkjA0ymapBzBX1nViHKVXf3U1vaPZaoLybiKSxRArCcD/uQ912k1j994iV8LRvWwYHmM2aY7FM7uEeJVzWq8HCsbJgPmtvvRl4Q/9dq/9jzlH9QeYPWRYrzagoRLxlDJkUgJa4=
+	t=1726512665; cv=none; b=nq3rOWjrnui0bHlkywq8t6BEtaxfKThjRBlw7wzgfVAvnTenL+YNd/ANqvZtr66Z1rtE1sZaS+mBSV5F56dK/sChnKroyVrWO4xKoZ5UBRstYt143wASJDdGXHmMzyIsPogbtcsxb3QpM7ilFuQZiUDdfRGbDdktWqGA5Rgg/1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726512536; c=relaxed/simple;
-	bh=3VFv/zWrSisLpDzIWFHA15d2bpwzJzlBd+b9/du9r1w=;
+	s=arc-20240116; t=1726512665; c=relaxed/simple;
+	bh=Nv63AinJ6rLovkHXFWEsHdyEwEF6WfG3BMXI/rjmgvM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZYu+f1HPJ3+R01eU6+xPEm7Bnez6taMa/pxNripgZHlTpBlUvPK0LAf398YOT8c+ugQL2yfEnXouDBkSWfRUsGH1/1tlH55CPCb4O8VkPa38ZYAaMg2W2pO7Ke12637u8fhSGOU+xELFd+J3N4M8FeC1pVtDig+TQshgWKE1XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZCGFs6s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C02CC4CEC4;
-	Mon, 16 Sep 2024 18:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726512536;
-	bh=3VFv/zWrSisLpDzIWFHA15d2bpwzJzlBd+b9/du9r1w=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=iceGfVeGx8UHGAKLvpzqvpxUPG1zK9lag/+NoiElbtd8mvps7KXTeEBEQrFkUW0P9O9oW4QeA9kUC/b8rJuqKCGp0+vCKPTCqGq256pheP5LowW3miiuGaR69aONBFURY3//tYGjRizZ6k/doml9a+GCiO0CoFqmE+g52Ri3A08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=msfx8BMF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18BCCC4CEC5;
+	Mon, 16 Sep 2024 18:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726512664;
+	bh=Nv63AinJ6rLovkHXFWEsHdyEwEF6WfG3BMXI/rjmgvM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aZCGFs6sZYp6PmL7WuXolGSY7O9LtSI0HVW9jpvaxIlqJd0mrpA+ykMtEKbyAraZt
-	 pyISlamNCM0GDtT/mM2nOwBRPM5LGZ0Y6zbqUrKvaGUaTB5KoTGFDQi0g+HFYkCHMG
-	 OZHAWM/DMVcaDu/YV2zfO/UvMp8XLR5E/2NuEnI6+PDEOAba9JtnG+znWk6ccrG7MN
-	 4oA+pN+Hpjy60b/G7ibTBf8uCfcVHryMluFmjL5zOR07Q2eq+Eo5CZA/gyOO9e9Y38
-	 7c/1EUy/YpBzTtqRLiQULydHPCRGRRibu+FSElSYDgQ3F4uonygQhzXF+2cIV1AAeD
-	 Ic9NVD3UXsqoQ==
-Date: Mon, 16 Sep 2024 19:48:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexander Aring <alex.aring@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net] net: ipv6: select DST_CACHE from IPV6_RPL_LWTUNNEL
-Message-ID: <20240916184851.GD396300@kernel.org>
-References: <20240916-ipv6_rpl_lwtunnel-dst_cache-v1-1-c34d5d7ba7f3@linutronix.de>
- <20240916184443.GC396300@kernel.org>
+	b=msfx8BMFERfG2Jub8AyaHLgQzOBaw4ZLe7C6UfC9Io3/uSkBNAxGiZr2C/zTKZzZv
+	 dnLRbH4sHgv847s1yFcA2cMvEFMjHhTftaXBWMVshZ9PAEb5fwRZQwXpGkejEdBlpr
+	 yH93QV88V/kU7dA66r58sEeIrmGUZJctDGMzwmOU=
+Date: Mon, 16 Sep 2024 20:50:16 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Amit Shah <amit@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Rusty Russell <rusty@rustcorp.com.au>,
+	virtualization@lists.linux.dev
+Subject: Re: [PATCH] virtio_console: fix misc probe bugs
+Message-ID: <2024091606-unsteady-cesarean-094b@gregkh>
+References: <ad982e975a6160ad110c623c016041311ca15b4f.1726511547.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240916184443.GC396300@kernel.org>
+In-Reply-To: <ad982e975a6160ad110c623c016041311ca15b4f.1726511547.git.mst@redhat.com>
 
-On Mon, Sep 16, 2024 at 07:44:43PM +0100, Simon Horman wrote:
-> On Mon, Sep 16, 2024 at 06:53:15PM +0200, Thomas Weißschuh wrote:
-> > The rpl sr tunnel code contains calls to dst_cache_*() which are
-> > only present when the dst cache is built.
-> > Select DST_CACHE to build the dst cache, similar to other kconfig
-> > options in the same file.
-> > 
-> > Fixes: a7a29f9c361f ("net: ipv6: add rpl sr tunnel")
-> > Cc: stable@vger.kernel.org
-> > ---
-> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+On Mon, Sep 16, 2024 at 02:32:56PM -0400, Michael S. Tsirkin wrote:
+> This fixes the following issue discovered by code review:
 > 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Tested-by: Simon Horman <horms@kernel.org> # build-tested
+> after vqs have been created, a buggy device can send an interrupt.
+> 
+> A control vq callback will then try to schedule control_work which has
+> not been initialized yet. Similarly for config interrupt.  Further, in
+> and out vq callbacks invoke find_port_by_vq which attempts to take
+> ports_lock which also has not been initialized.
+> 
+> To fix, init all locks and work before creating vqs.
+> 
+> Fixes: 17634ba25544 ("virtio: console: Add a new MULTIPORT feature, support for generic ports")
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>  drivers/char/virtio_console.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
 
-Sorry Thomas, I missed one important thing:
+Hi,
 
-Your Signed-off-by line needs to go above the scissors ('---')
-because when git applies your patch nothing below the scissors
-is included in the patch description.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
