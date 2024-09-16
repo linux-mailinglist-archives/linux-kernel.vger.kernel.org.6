@@ -1,264 +1,217 @@
-Return-Path: <linux-kernel+bounces-330214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61DCC979B03
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:13:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACCC4979AEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869561C22CE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:13:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68367283AD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A158E5336B;
-	Mon, 16 Sep 2024 06:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD723B796;
+	Mon, 16 Sep 2024 06:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="WsTtGOZP"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="WT2X9Rce"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456954174C;
-	Mon, 16 Sep 2024 06:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE67381B1
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726467184; cv=none; b=fui3ZkOFJqS+udXFr34FPQ9NCnOBKo8W8Xud2+YP9Dc3IHHVxpur2evJsoSi6am3Wnf+/7h6MpxHOKze3xlsZ78JvFEpKgjC28YrtLyoVxocXyW1NFGv29f1WPjR0QhrAV1L651+5dtoIgajD+sL1To+rpRTNa7OWgbvTO7/5Sw=
+	t=1726467005; cv=none; b=U8hulfJYgqM0ClEGYuul788x/remc4QvcDJRkCtXJUHNUObssTeDsNiSXz+8pp3qY+A+5OdiDRWoaEjCQ09aNCn2xTn/uk6Z4mG8oaIMz5NzM7xuhSWfo1P5scNVgoVPQm9213jCwuc6RqQQcagc+4a9JtNdqauPjYcCSfqMiFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726467184; c=relaxed/simple;
-	bh=qH47oae7xV799PY1O9ArLGWv47UZIj6mX/xyhBn5P0A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WkkavmbwbVYcw4GJshwEEj3+dX+qJ8Ax6yzq+o2bLUMtdNcr5H8yG9jru3exB810mggxGL/mV7XkTi0uIbW6BLe0SZO6/vQwyc5dh/8+IzvV9l1EC9yrpQtLjxTq6g1vSi2aSLiP1v/2p08JASmyb5dkcUWS9WqneVWMy04cubQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=WsTtGOZP; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 049D1100002;
-	Mon, 16 Sep 2024 09:04:26 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1726466666; bh=aMvX9QVU5OXaxXIFkw06V1Szly2/pKcrmasnSySGh9w=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=WsTtGOZPPTQd8/R9/KLizfBPugXGboCX3TloqoTmTI8ZaWTCn5CkJK6TXX/ngLgZQ
-	 KkfdhF4TxZmHozcAlXYkN855wqmVNy4+Sk2Iph5HtzFt1v8km2myZj2XurWXWawlM7
-	 +ismKjxvsZT3rXiZre8Dn98WRx6PoIA2OCHcB2Ug70q7bt78SOYGTEHAgix8qvZbic
-	 oluJAYHyrimN5E6woP8Kv84am+mzS2HAAanOmJuOmZ6j7u8wRywX33ur8AoSw6TqF6
-	 zHwtM6jiiHhlyQ/Qzeo7MMzDEEjzDL7tPPRjpRW8mGB9DwQIGp1qW1/HZ2FaGrtA5B
-	 dJIWDW3Hb029g==
-Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Mon, 16 Sep 2024 09:03:13 +0300 (MSK)
-Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 16 Sep
- 2024 09:02:53 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Veerasenareddy Burru <vburru@marvell.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Sathesh Edara <sedara@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Abhijit
- Ayarekar <aayarekar@marvell.com>, Satananda Burla <sburla@marvell.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH net v2] octeon_ep: Add SKB allocation failures handling in __octep_oq_process_rx()
-Date: Mon, 16 Sep 2024 09:02:12 +0300
-Message-ID: <20240916060212.12393-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1726467005; c=relaxed/simple;
+	bh=mCDMZtNJOo6xRBtcL3MU946yWGoACKA6TxVv86RGU0Q=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PHfTvG9RDEFm7LBc9IRx0aL9QIY3B12WaP3RiygH10yB0W6XbYiWFtufPkeXqy7rBLH7bWLZdO4NiMzWYkHooNiWA5duz4DZy+e8QI8J8R3bScYllkuX9M1fu+l1xL/kBoFwIEEZIet0ZkHXaakzy99RGf/84H9iD79Xog9+1mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=WT2X9Rce; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
+	by cmsmtp with ESMTPS
+	id pmz8s7RaviA19q4vwsqf0a; Mon, 16 Sep 2024 06:10:00 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id q4vvsCN8byhfgq4vvs3uAJ; Mon, 16 Sep 2024 06:09:59 +0000
+X-Authority-Analysis: v=2.4 cv=U+WUD/ru c=1 sm=1 tr=0 ts=66e7cbb7
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=KKAkSRfTAAAA:8 a=pGLkceISAAAA:8 a=4wIeQxAJSnUt7UKOCtYA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:
+	Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=BPRUcNg/CdKy6c0htTAEtda7PXWeXWX6j6CF6eawafs=; b=WT2X9RceGB/cwaf13LEn73C4U2
+	25h/x2UxLN1KrfCM7/MHBszvw2RB8Z7qVg+3269ywDfZM8Dhe12CmDF54wMfprHKCeqjXHCSb/fgo
+	n83XVjuVsGbrgqC/KzL7ePU9S4T2/950efZqKkxSz+hvs4LK+Uto9jcfQ0J2eFUjyjpA7LCWXH52K
+	9M1KngqRu1KvWz3E3oEBO3sm5MFXpXxyrBrnVxMo3RUufswLNgk58SCje8LIlCyNpj+ODKX5N/HCy
+	yS78ztQHiSiy+azp8BUWGCUnwdWP76AX0/P2+oSUPOX2cwlPJH+w51Sxk9FyZV9w8wlrV2kprFPQG
+	IF0cresA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:40654 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sq4vu-004CJQ-0m;
+	Mon, 16 Sep 2024 00:09:58 -0600
+Subject: Re: [PATCH] mmc: dw_mmc: Fix IDMAC operation with pages bigger than
+ 4K
+To: Sam Protsenko <semen.protsenko@linaro.org>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Christoph Hellwig <hch@lst.de>
+Cc: Chris Ball <cjb@laptop.org>, Will Newton <will.newton@gmail.com>,
+ Matt Fleming <matt@console-pimps.org>, Christian Brauner
+ <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>, linux-mmc@vger.kernel.org,
+ linux-block <linux-block@vger.kernel.org>, linux-kernel@vger.kernel.org
+References: <20240306232052.21317-1-semen.protsenko@linaro.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <614692b4-1dbe-31b8-a34d-cb6db1909bb7@w6rz.net>
+Date: Sun, 15 Sep 2024 23:09:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187753 [Sep 15 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1;mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2;lore.kernel.org:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/09/16 05:23:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/09/16 00:21:00 #26593326
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <20240306232052.21317-1-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sq4vu-004CJQ-0m
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:40654
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 17
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKqG9BFmlumGo4OF0bNq7RP51tcYhKbHT7MKQerq4V/8Sj68YfAosajBbfyR/TyPmWLQR84bmJyx2ygd1TOiHnUPLIc5SNSUlPDZHmP4uJvFhN6D80OY
+ hnP6yIg+D0tZxluJ8Z+OELpPUBUfGXdd60gxaY4o9P/pe1fBLFQYos2hqhMOQWrB05TyRMce4Dq3lIw6WhaELwTyWPRYfUs8QA4=
 
-build_skb() returns NULL in case of a memory allocation failure so handle
-it inside __octep_oq_process_rx() to avoid NULL pointer dereference.
+On 3/6/24 3:20 PM, Sam Protsenko wrote:
+> Commit 616f87661792 ("mmc: pass queue_limits to blk_mq_alloc_disk") [1]
+> revealed the long living issue in dw_mmc.c driver, existing since the
+> time when it was first introduced in commit f95f3850f7a9 ("mmc: dw_mmc:
+> Add Synopsys DesignWare mmc host driver."), also making kernel boot
+> broken on platforms using dw_mmc driver with 16K or 64K pages enabled,
+> with this message in dmesg:
+>
+>      mmcblk: probe of mmc0:0001 failed with error -22
+>
+> That's happening because mmc_blk_probe() fails when it calls
+> blk_validate_limits() consequently, which returns the error due to
+> failed max_segment_size check in this code:
+>
+>      /*
+>       * The maximum segment size has an odd historic 64k default that
+>       * drivers probably should override.  Just like the I/O size we
+>       * require drivers to at least handle a full page per segment.
+>       */
+>      ...
+>      if (WARN_ON_ONCE(lim->max_segment_size < PAGE_SIZE))
+>          return -EINVAL;
+>
+> In case when IDMAC (Internal DMA Controller) is used, dw_mmc.c always
+> sets .max_seg_size to 4 KiB:
+>
+>      mmc->max_seg_size = 0x1000;
+>
+> The comment in the code above explains why it's incorrect. Arnd
+> suggested setting .max_seg_size to .max_req_size to fix it, which is
+> also what some other drivers are doing:
+>
+>     $ grep -rl 'max_seg_size.*=.*max_req_size' drivers/mmc/host/ | \
+>       wc -l
+>     18
+>
+> This change is not only fixing the boot with 16K/64K pages, but also
+> leads to a better MMC performance. The linear write performance was
+> tested on E850-96 board (eMMC only), before commit [1] (where it's
+> possible to boot with 16K/64K pages without this fix, to be able to do
+> a comparison). It was tested with this command:
+>
+>      # dd if=/dev/zero of=somefile bs=1M count=500 oflag=sync
+>
+> Test results are as follows:
+>
+>    - 4K pages,  .max_seg_size = 4 KiB:                   94.2 MB/s
+>    - 4K pages,  .max_seg_size = .max_req_size = 512 KiB: 96.9 MB/s
+>    - 16K pages, .max_seg_size = 4 KiB:                   126 MB/s
+>    - 16K pages, .max_seg_size = .max_req_size = 2 MiB:   128 MB/s
+>    - 64K pages, .max_seg_size = 4 KiB:                   138 MB/s
+>    - 64K pages, .max_seg_size = .max_req_size = 8 MiB:   138 MB/s
+>
+> Unfortunately, SD card controller is not enabled in E850-96 yet, so it
+> wasn't possible for me to run the test on some cheap SD cards to check
+> this patch's impact on those. But it's possible that this change might
+> also reduce the writes count, thus improving SD/eMMC longevity.
+>
+> All credit for the analysis and the suggested solution goes to Arnd.
+>
+> [1] https://lore.kernel.org/all/20240215070300.2200308-18-hch@lst.de/
+>
+> Fixes: f95f3850f7a9 ("mmc: dw_mmc: Add Synopsys DesignWare mmc host driver.")
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Closes: https://lore.kernel.org/all/CA+G9fYtddf2Fd3be+YShHP6CmSDNcn0ptW8qg+stUKW+Cn0rjQ@mail.gmail.com/
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>   drivers/mmc/host/dw_mmc.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 8e2d676b9239..cccd5633ff40 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -2951,8 +2951,8 @@ static int dw_mci_init_slot(struct dw_mci *host)
+>   	if (host->use_dma == TRANS_MODE_IDMAC) {
+>   		mmc->max_segs = host->ring_size;
+>   		mmc->max_blk_size = 65535;
+> -		mmc->max_seg_size = 0x1000;
+> -		mmc->max_req_size = mmc->max_seg_size * host->ring_size;
+> +		mmc->max_req_size = DW_MCI_DESC_DATA_LENGTH * host->ring_size;
+> +		mmc->max_seg_size = mmc->max_req_size;
+>   		mmc->max_blk_count = mmc->max_req_size / 512;
+>   	} else if (host->use_dma == TRANS_MODE_EDMAC) {
+>   		mmc->max_segs = 64;
 
-__octep_oq_process_rx() is called during NAPI polling by the driver. If
-skb allocation fails, keep on pulling packets out of the Rx DMA queue: we
-shouldn't break the polling immediately and thus falsely indicate to the
-octep_napi_poll() that the Rx pressure is going down. As there is no
-associated skb in this case, don't process the packets and don't push them
-up the network stack - they are skipped.
+Unfortunately, this patch creates side effects for the RISC-V StarFive 
+VisionFive2 board (which uses the DesignWare controller). The following 
+swiotlb buffer warnings are produced at boot:
 
-The common code with skb and some index manipulations is extracted to make
-the fix more readable and avoid code duplication. Also helper function is
-implemented to unmmap/flush all the fragment buffers used by the dropped
-packet. 'alloc_failures' counter is incremented to mark the skb allocation
-error in driver statistics.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 37d79d059606 ("octeon_ep: add Tx/Rx processing and interrupt support")
-Suggested-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
-A similar situation is present in the __octep_vf_oq_process_rx() of the
-Octeon VF driver. First we want to try the fix on __octep_oq_process_rx().
-
-There are some doubts about increasing the 'rx_bytes'. On the one hand,
-the data has not been processed, therefore, the counter does not need to
-be increased. On the other hand, this counter is used to estimate the
-bandwidth at the card's input.
-In octeon_droq_fast_process_packet() from the Liquidio driver in
-'droq->stats.bytes_received += total_len' everything that was received
-from the device is considered.
-/* Output Queue statistics. Each output queue has four stats fields. */
-struct octep_oq_stats {
-	/* Number of packets received from the Device. */
-	u64 packets;
-	/* Number of bytes received from the Device. */
-	u64 bytes;
-	/* Number of times failed to allocate buffers. */
-	u64 alloc_failures;
-};
-
-Compile tested only.
-
-v2: 
-  - Implement helper instead of adding multiple checks for '!skb' and
-    remove 'rx_bytes' increasing in case of packet dropping as suggested
-    by Paolo
-    (https://lore.kernel.org/all/ba514498-3706-413b-a09f-f577861eef28@redhat.com/)
-v1: https://lore.kernel.org/all/20240906063907.9591-1-amishin@t-argos.ru/
-
- .../net/ethernet/marvell/octeon_ep/octep_rx.c | 80 +++++++++++++++----
- 1 file changed, 64 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
-index 4746a6b258f0..6b665263b9be 100644
---- a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
-@@ -336,6 +336,51 @@ static int octep_oq_check_hw_for_pkts(struct octep_device *oct,
- 	return new_pkts;
- }
- 
-+/**
-+ * octep_oq_drop_rx() - Free the resources associated with a packet.
-+ *
-+ * @oq: Octeon Rx queue data structure.
-+ * @buff_info: Current packet buffer info.
-+ * @read_idx: Current packet index in the ring.
-+ * @desc_used: Current packet descriptor number.
-+ *
-+ */
-+static void octep_oq_drop_rx(struct octep_oq *oq,
-+			     struct octep_rx_buffer *buff_info,
-+			     u32 *read_idx, u32 *desc_used)
-+{
-+	dma_unmap_page(oq->dev, oq->desc_ring[*read_idx].buffer_ptr,
-+		       PAGE_SIZE, DMA_FROM_DEVICE);
-+	buff_info->page = NULL;
-+	(*read_idx)++;
-+	(*desc_used)++;
-+	if (*read_idx == oq->max_count)
-+		*read_idx = 0;
-+
-+	if (buff_info->len > oq->max_single_buffer_size) {
-+		u16 data_len;
-+		/* Head fragment includes response header(s);
-+		 * subsequent fragments contains only data.
-+		 */
-+		data_len = buff_info->len - oq->max_single_buffer_size;
-+		while (data_len) {
-+			dma_unmap_page(oq->dev, oq->desc_ring[*read_idx].buffer_ptr,
-+				       PAGE_SIZE, DMA_FROM_DEVICE);
-+			buff_info = (struct octep_rx_buffer *)
-+				     &oq->buff_info[*read_idx];
-+			if (data_len < oq->buffer_size)
-+				data_len = 0;
-+			else
-+				data_len -= oq->buffer_size;
-+			buff_info->page = NULL;
-+			(*read_idx)++;
-+			(*desc_used)++;
-+			if (*read_idx == oq->max_count)
-+				*read_idx = 0;
-+		}
-+	}
-+}
-+
- /**
-  * __octep_oq_process_rx() - Process hardware Rx queue and push to stack.
-  *
-@@ -367,10 +412,7 @@ static int __octep_oq_process_rx(struct octep_device *oct,
- 	desc_used = 0;
- 	for (pkt = 0; pkt < pkts_to_process; pkt++) {
- 		buff_info = (struct octep_rx_buffer *)&oq->buff_info[read_idx];
--		dma_unmap_page(oq->dev, oq->desc_ring[read_idx].buffer_ptr,
--			       PAGE_SIZE, DMA_FROM_DEVICE);
- 		resp_hw = page_address(buff_info->page);
--		buff_info->page = NULL;
- 
- 		/* Swap the length field that is in Big-Endian to CPU */
- 		buff_info->len = be64_to_cpu(resp_hw->length);
-@@ -394,31 +436,37 @@ static int __octep_oq_process_rx(struct octep_device *oct,
- 			data_offset = OCTEP_OQ_RESP_HW_SIZE;
- 			rx_ol_flags = 0;
- 		}
-+
-+		skb = build_skb((void *)resp_hw, PAGE_SIZE);
-+		if (!skb) {
-+			octep_oq_drop_rx(oq, buff_info,
-+					 &read_idx, &desc_used);
-+			oq->stats.alloc_failures++;
-+			continue;
-+		}
-+		skb_reserve(skb, data_offset);
-+
-+		dma_unmap_page(oq->dev, oq->desc_ring[read_idx].buffer_ptr,
-+			       PAGE_SIZE, DMA_FROM_DEVICE);
-+		buff_info->page = NULL;
-+
-+		read_idx++;
-+		desc_used++;
-+		if (read_idx == oq->max_count)
-+			read_idx = 0;
-+
- 		rx_bytes += buff_info->len;
- 
- 		if (buff_info->len <= oq->max_single_buffer_size) {
--			skb = build_skb((void *)resp_hw, PAGE_SIZE);
--			skb_reserve(skb, data_offset);
- 			skb_put(skb, buff_info->len);
--			read_idx++;
--			desc_used++;
--			if (read_idx == oq->max_count)
--				read_idx = 0;
- 		} else {
- 			struct skb_shared_info *shinfo;
- 			u16 data_len;
- 
--			skb = build_skb((void *)resp_hw, PAGE_SIZE);
--			skb_reserve(skb, data_offset);
- 			/* Head fragment includes response header(s);
- 			 * subsequent fragments contains only data.
- 			 */
- 			skb_put(skb, oq->max_single_buffer_size);
--			read_idx++;
--			desc_used++;
--			if (read_idx == oq->max_count)
--				read_idx = 0;
--
- 			shinfo = skb_shinfo(skb);
- 			data_len = buff_info->len - oq->max_single_buffer_size;
- 			while (data_len) {
--- 
-2.30.2
+2024-09-15T17:54:27.194101-07:00 visionfive kernel: dwmmc_starfive 
+16020000.mmc: swiotlb buffer is full (sz: 352256 bytes), total 32768 
+(slots), used 222 (slots)
+2024-09-15T17:54:27.194107-07:00 visionfive kernel: dwmmc_starfive 
+16020000.mmc: swiotlb buffer is full (sz: 352256 bytes), total 32768 
+(slots), used 222 (slots)
+2024-09-15T17:54:27.194123-07:00 visionfive kernel: dwmmc_starfive 
+16020000.mmc: swiotlb buffer is full (sz: 524288 bytes), total 32768 
+(slots), used 110 (slots)
+2024-09-15T17:54:27.194129-07:00 visionfive kernel: dwmmc_starfive 
+16020000.mmc: swiotlb buffer is full (sz: 524288 bytes), total 32768 
+(slots), used 110 (slots)
 
 
