@@ -1,129 +1,98 @@
-Return-Path: <linux-kernel+bounces-330409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F2A979E28
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:15:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF44979E2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3EF1C22B60
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D0B1F213E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698EA149C5B;
-	Mon, 16 Sep 2024 09:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojSHmGni"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC0D14885D;
+	Mon, 16 Sep 2024 09:16:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1635E14AD24;
-	Mon, 16 Sep 2024 09:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2994C12F5B1;
+	Mon, 16 Sep 2024 09:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726478121; cv=none; b=ugWmZbgsjEK+QuGfAYP0fS+ZcwTBovjMLFA3d7helwNpPkt/mYdka+j1bUPi/GJxscKEuA6nBqFkDXXeZNPH41CI1jMAgGIZCkPRrD4BYnm5V9bCAGmhYu7O/7ZvupoWJDY7dEJAYvAk4q3X6lU3ZkGMyzVgj2VSTDzvpWBNyts=
+	t=1726478165; cv=none; b=G23rQkqSkIGHGySqgeb82SFP4HYrmcXMJVW+fgdWDwo2ZYzPbs9i3MSNSjRB69uYuNCve7/s91fv4oVSs+Nchqs62rIGqly+76iLI2qg1LtBlgIynAVqQZI6ggcuDI+UICrMnIDgrkeLHa63ChuntyL9Y722SPUk8YqvqjhhCpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726478121; c=relaxed/simple;
-	bh=fnAPuBUu0/tTI7HoyZunJlTeMOKUsprJK+29sxMVwYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZ8jmf1UbxJECfHIBufy4XDzR2Oh4nu9rE2p/F7bTxn0073dAmAl4/cLBIA3UFVIxi0/yAb0UCFN5HKyqxjDywHR/ua3NWXb+dIY1wgbgdXzHjk+BBbQgGbtsMM7SRvTRAl8B9mYweMjU7ewWphr+dsNR+T/dV4WdSfvJ1NDVCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojSHmGni; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20BD4C4CEC4;
-	Mon, 16 Sep 2024 09:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726478120;
-	bh=fnAPuBUu0/tTI7HoyZunJlTeMOKUsprJK+29sxMVwYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ojSHmGni3OGFIo7vnOCzqgHL0on0uhCTGQ91p/OyZ0gOs3O7l6ZurMGkGXB7dVVAF
-	 CwxpFZxFfb2CIuVFDU9gKjMofYfKcsmxS84cZ6o9ExrXvt3sCQDJCpTBwhKkXmngK/
-	 XVNyaKI5TXDzaxQXCBUtpsouMDwuTe/6jhKRNHZxY80MiRjXgwZAH0aiSg7E0iM6/A
-	 FTkSBqwe4qQLxbg8vdiwOaW16KvQ9ejeSGamh875/C1zPnXt3lSZ5OpNtX5aP3308I
-	 rgHfQkOIX839Icqxqkq5O2znrKoJSx9EZl96CGAYEWDDar5BgxxH1KM5gO+4nxYUqE
-	 lPhQQYLL3sSiw==
-Date: Mon, 16 Sep 2024 11:15:16 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 23/27] arm64: dts: qcom: starqltechn: add display PMIC
-Message-ID: <rfoxnd4axyqxvexgq3mm2zntzvpihv4g424hepkoh7bfr2izjz@htjeqbfuq2gu>
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-23-2d2efd5c5877@gmail.com>
+	s=arc-20240116; t=1726478165; c=relaxed/simple;
+	bh=jtdwfYadaYYw0XauKl0wZWfekoNSA9U3l0za1HkbZJw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SWhhsuv4752GOGIR0ubBYLCMaLhPfsdkn532q/N5yVpuYicWBERsp/7kv5oi+YODzGNqbuE18pVDxKRS3NSzoEZxOUnML9AgxPxePjFl+48/bVhi4IWTGWU8UNFdRIxuUxBsxewGvckUE2nxJfgPKpjDCexuLllm6HioY4h8wAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X6fQz3psDz6K5X3;
+	Mon, 16 Sep 2024 17:15:55 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 24E56140158;
+	Mon, 16 Sep 2024 17:15:59 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Sep
+ 2024 11:15:58 +0200
+Date: Mon, 16 Sep 2024 10:15:57 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>
+CC: Gregory Price <gourry@gourry.net>, <linux-pci@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bhelgaas@google.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<vishal.l.verma@intel.com>, <lukas@wunner.de>
+Subject: Re: [PATCH] pci/doe: add a 1 second retry window to pci_doe
+Message-ID: <20240916101557.00007b3a@Huawei.com>
+In-Reply-To: <66e51febbab99_ae212949d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+References: <20240913183241.17320-1-gourry@gourry.net>
+	<66e51febbab99_ae212949d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240913-starqltechn_integration_upstream-v4-23-2d2efd5c5877@gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Sep 13, 2024 at 06:08:06PM +0300, Dzmitry Sankouski wrote:
-> Add support for s2dos05 display / touchscreen PMIC
+On Fri, 13 Sep 2024 22:32:28 -0700
+Dan Williams <dan.j.williams@intel.com> wrote:
+
+> [ add linux-pci and Lukas ]
 > 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
->  .../boot/dts/qcom/sdm845-samsung-starqltechn.dts   | 77 ++++++++++++++++++++++
->  1 file changed, 77 insertions(+)
+> Gregory Price wrote:
+> > Depending on the device, sometimes firmware clears the busy flag
+> > later than expected.  This can cause the device to appear busy when
+> > calling multiple commands in quick sucession. Add a 1 second retry
+> > window to all doe commands that end with -EBUSY.  
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-> index 865253d8f0c7..5e5684f84ffb 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-> @@ -39,6 +39,9 @@ framebuffer: framebuffer@9d400000 {
->  			height = <2960>;
->  			stride = <(1440 * 4)>;
->  			format = "a8r8g8b8";
-> +			vci-supply = <&s2dos05_ldo4>;
-> +			vddr-supply = <&s2dos05_buck1>;
-> +			vdd3-supply = <&s2dos05_ldo1>;
->  		};
->  	};
->  
-> @@ -101,6 +104,66 @@ key-wink {
->  		};
->  	};
->  
-> +	i2c21 {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&tlmm 127 GPIO_ACTIVE_HIGH>;
-> +		scl-gpios = <&tlmm 128 GPIO_ACTIVE_HIGH>;
-> +		i2c-gpio,delay-us = <2>;
-> +		pinctrl-0 = <&i2c21_sda_state &i2c21_scl_state>;
-> +		pinctrl-names = "default";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		pmic@60 {
-> +			compatible = "samsung,s2dos05";
-> +			reg = <0x60>;
-> +
-> +			regulators {
-> +				s2dos05_ldo1: ldo1 {
-> +					regulator-active-discharge = <1>;
-> +					regulator-enable-ramp-delay = <12000>;
-> +					regulator-min-microvolt = <1500000>;
-> +					regulator-max-microvolt = <2000000>;
-> +					regulator-name = "s2dos05-ldo1";
+> I would have expected this to be handled as part of finishing off
+> pci_doe_recv_resp() not retrying on a new submission.
+> 
+> It also occurs to me that instead of warning "another entity is sending conflicting
+> requests" message, the doe core should just ensure that it is the only
+> agent using the mailbox. Something like hold the PCI config lock over
+> DOE transactions. Then it will remove ambiguity of "conflicting agent"
+> vs "device is slow to clear BUSY".
+> 
 
-Useless name. Please use rather names from the schematics, but I guess
-you might not have them, so maybe downstream has reasonable name?
+I believe we put that dance in to not fail too horribly
+if a firmware was messing with the DOE behind our backs rather than
+another OS level actor was messing with it.
 
-Best regards,
-Krzysztof
+We wouldn't expect firmware to be using a DOE that Linux wants, but
+the problem is the discovery protocol which the firmware might run
+to find the DOE it does want to use.
 
+My memory might be wrong though as this was a while back.
+
+Jonathan
 
