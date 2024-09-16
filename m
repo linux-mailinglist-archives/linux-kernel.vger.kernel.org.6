@@ -1,68 +1,67 @@
-Return-Path: <linux-kernel+bounces-330395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D36979DDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:09:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E712979DEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40BBEB22B4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 108B92813B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138EF14883B;
-	Mon, 16 Sep 2024 09:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68CE14A0B7;
+	Mon, 16 Sep 2024 09:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="farORbg5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWEPET8G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ED9146589;
-	Mon, 16 Sep 2024 09:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8932148304;
+	Mon, 16 Sep 2024 09:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726477736; cv=none; b=JmNxG90gDBb49iIGpHEYnow+lNSS5x8PvGqZVl5Plio2J7NnRQF9UPAPmTy23cerkaoSkm2I3RXjOeKaQmb5fOIGTcbrQ9guOZiu+UHCu+Q+iIGjdFy/0gc6NxRZ6bdNTwF5KfWfRwIYLotFWkSZYEA8nR4b94naz5gTYpIhntA=
+	t=1726477755; cv=none; b=ks2S40liodGUCBgAwOQDZOJfmqR0Nspt8DCjOWisteGqmwAUmAh3Fl8uYtttZQT1F0xHdLYUj20zSWh3BuBcitwPiEJIapZFGEP91wZqPBPWCrxR03fHeWng6FzIE7ks4FxoxfkNKdyItdufhrz5HtmoBNKF6hLyhU3nXJyFRV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726477736; c=relaxed/simple;
-	bh=SS2UTjyJdke6ooDSmfvCarEKipraJ3+u/4qYonYH5dA=;
+	s=arc-20240116; t=1726477755; c=relaxed/simple;
+	bh=6bAu07qqR/oy28Hk63f8SgDGRZgodwoDApVLtXIhnKU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXpJSjUe16mDOCD6HGICQtO6V3SAidRquhUoKSut7smYm8Mnxyun8ZzmWoIe4DXZ7N8QbtyksbQy4IUfobaA83pdvaqaHPEy+onpaQDzKFZPWp4a5ljYe65EBl4brQkcX+pjjOJEVx7O5+vN1OFq93FzjAj9ZOBEglc8r5uegnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=farORbg5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81B2DC4CEC4;
-	Mon, 16 Sep 2024 09:08:54 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="farORbg5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1726477732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SS2UTjyJdke6ooDSmfvCarEKipraJ3+u/4qYonYH5dA=;
-	b=farORbg5vciCFv1ykjbviQvYU1myLSJ/FW/oRd3/20NYz2gx4FFqaYeXQMlz6d8FRXMTfq
-	pENtLvIfTy84kqnOczIRNYvi3eRfGdufWiez4MzkjxYMGLjhC3envyQPlbRTTE8brM3SFw
-	b7+jTN2I8jfS3515wBmetsg9esQgCf4=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 00ff19f8 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 16 Sep 2024 09:08:51 +0000 (UTC)
-Date: Mon, 16 Sep 2024 11:08:49 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
-Message-ID: <Zuf1oYveC0rryg_6@zx2c4.com>
-References: <20240913130544.2398678-1-hca@linux.ibm.com>
- <20240913130544.2398678-8-hca@linux.ibm.com>
- <ZuRWmJTWqmD92D8d@zx2c4.com>
- <ZuRYoVIrg28kBKqb@zx2c4.com>
- <20240913173206.30385-C-hca@linux.ibm.com>
- <ZuSRKLFdYI1gCHh9@zx2c4.com>
- <20240914174246.8394-A-hca@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jh5r38Ox5cEBfGy568TCGNWyvQE5ofmf5Tl8mBcLPleVUZywEW4Iug2L+TjGURBRCqF3IjBLZZ6NcV1DSOzxwKPfL8Zzy5skwQOiHofvSCbiLPEK9c9HXZFnqM/55kffiSsKXskmxOGBBEFgDEta9kj3OO5405GJjc2DypJID2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWEPET8G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A20F3C4CEC4;
+	Mon, 16 Sep 2024 09:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726477754;
+	bh=6bAu07qqR/oy28Hk63f8SgDGRZgodwoDApVLtXIhnKU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jWEPET8GkRDhZlgwScXUjeqyarWO78GNRYSkz/w8ZpRRjHhDg/XQPWVoclsA0hYkW
+	 43B9rmTeVO5JALDYDUutwRRZlkYiPuHA7uh4MFiDsNjD9rsrkldQS9EQ22TUVhGMcB
+	 2KYpxXEdqqs/fIUpwTSHAJV0V2lW8QHCBC6VEgnUY58JJJenIgWHYXVdHrS/N9KvNV
+	 QvZJYvNXyVXO/B/csMhAztgdAD5RW4jz0EjaEB/3de/xQ07rsOqVTVZ/Yl1gAJrR1J
+	 XyR/AaG/dFz0Wt4jqE+QmPLDXu2sZcqPkoXrEOYRoemvRnBf1B2cJPPU5LWecB+Jrc
+	 dEjtkixUyXY6w==
+Date: Mon, 16 Sep 2024 11:09:11 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
+	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 14/27] mfd: sec-core: add s2dos05 support
+Message-ID: <konn3okav5pzval7cjbuhjgesvhhf7a2cmuz3cxsob4nn6sxgq@nz2bc3i3acx6>
+References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-14-2d2efd5c5877@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,15 +70,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240914174246.8394-A-hca@linux.ibm.com>
+In-Reply-To: <20240913-starqltechn_integration_upstream-v4-14-2d2efd5c5877@gmail.com>
 
-Hi Heiko,
+On Fri, Sep 13, 2024 at 06:07:57PM +0300, Dzmitry Sankouski wrote:
+> S2dos05 is a panel/touchscreen PMIC, often found in
+> Samsung phones. We define 2 sub-devices for which drivers will
+> be added in subsequent patches.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+>  drivers/mfd/sec-core.c           | 11 +++++++++++
+>  include/linux/mfd/samsung/core.h |  1 +
+>  2 files changed, 12 insertions(+)
 
-On Sat, Sep 14, 2024 at 07:42:46PM +0200, Heiko Carstens wrote:
-> Please feel free to change the code in whatever way you like.
-> If you prefer separate patches, I will provide them.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Just wanted to make sure you saw https://lore.kernel.org/all/20240914231241.3647749-1-Jason@zx2c4.com/
+Best regards,
+Krzysztof
 
-Jason
 
