@@ -1,80 +1,135 @@
-Return-Path: <linux-kernel+bounces-330439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DDF4979E95
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:41:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EB6979E9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B531C22E14
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D07A62842AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC11114A4C1;
-	Mon, 16 Sep 2024 09:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mt3OgTZE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207F650284;
-	Mon, 16 Sep 2024 09:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD7014B077;
+	Mon, 16 Sep 2024 09:43:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3EB12C7FD
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726479699; cv=none; b=XPUGIVPXtgb2wAseySh9KxtN9dTWJIIVAHkaZSmyl6F8x37UVH8+++HwsKAUqIVkBs1ahOhwQ0/YVupf3fRHMprMxXwr0PN68d/oVT1yJdrtyVRtlNwgooZsyJa6PF8IF3dJUE5UGf2/XxQNHaOhil0TSmwMiV4Xx82pDvMa++s=
+	t=1726479830; cv=none; b=Cglmf1BXHHWYdOAsXPuuAEVM+Mz1aBGcOewrhMpQSCj6qKOwIhXlZR4xQhMUD46z6rlLNxbPxFl7eJeVo39SHSXrUH6ctuGZVjwBj1xjwXUlhWIAG3JRIUxo0tBZ85YbnBaCRsy8eb/ku6hZfVkrZcQO76whn0PNRmwLHu4QjBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726479699; c=relaxed/simple;
-	bh=ZreA9/HkQ19nX8Nid+x7G27Z9GlPOZY3UgUMemLERXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NcthGzn+ZaG2tnbey+zv6YCEBQlomb+3r685nJEHXN6HRxmq9JGIzK5zkjGjHjk/r7pceH0nWNcZLe7GDlO6JtHxlNaKaBbe0fjG+MPvaWCmJOtQrDnwcyqaDa/QuWxGswcGbIW3oz6J4QkVfpRr32Pi7GIjqa0uSTWFKZisjYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mt3OgTZE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56B75C4CEC4;
-	Mon, 16 Sep 2024 09:41:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726479698;
-	bh=ZreA9/HkQ19nX8Nid+x7G27Z9GlPOZY3UgUMemLERXc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mt3OgTZEmz4P+RQTuoAnnr1Fe0y1u8PkRvx1TlYb/aNRg1m/exKbENsy3Ckq8WvDM
-	 tDYcEpTyWNS7gEqR383vYhwUH7ngGaSq76oRbwg5MgBfQ6RO+zuBTEu9oECAMi0KcJ
-	 fM9fzuFE8qEWTAzSw7V9KV5LdTrUf9B3GnstwCRnZmRCh+fHcGfTdfiBEJDP+GM4S3
-	 1jmVjUHlAEKUlr3pQcJtP0ilm9PFZLCmJj4Xg7/rdVW7XVUoV/lcw1/pjz8gGxx69q
-	 8+B5FEBegtIaENA+GfouUFAjo7GQPXBUUO/urX4fNqoo/VMIHBP0aHIrPmALWMkDHK
-	 VgyUDsM3HiPJQ==
-Date: Mon, 16 Sep 2024 11:41:35 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Liu Ying <victor.liu@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: reset: add schema for imx8ulp SIM
- reset
-Message-ID: <dmfqq6osoaun34dasbdzhzf4sj6t3npx6ujzhuu73227qhc4hq@rd2skytkm2dh>
-References: <20240915114311.75496-1-laurentiu.mihalcea@nxp.com>
- <20240915114311.75496-2-laurentiu.mihalcea@nxp.com>
+	s=arc-20240116; t=1726479830; c=relaxed/simple;
+	bh=UMfROnT2E/A1FyTsyqmypfmltizd/z8u5dLO1oXJNJo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R0KgWSH/jPELad8uP/U+Pt5aM4WN2DaSrRcYb8JMNY8/zT89NI7ziJIDdzf6aM9pCE1vbrACapeUojlAwkoOa4pJXhKWYgm3gvaZTyFKwZ1467p+cpzkWVg++aaMBlA21p2hWI1gbf+9ErRicFRCPGAcaolGH7hPP/ep5cnTfmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5CEE911FB;
+	Mon, 16 Sep 2024 02:44:16 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.11])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 747EE3F66E;
+	Mon, 16 Sep 2024 02:43:38 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	willy@infradead.org,
+	kirill.shutemov@linux.intel.com
+Cc: ryan.roberts@arm.com,
+	anshuman.khandual@arm.com,
+	catalin.marinas@arm.com,
+	cl@gentwo.org,
+	vbabka@suse.cz,
+	mhocko@suse.com,
+	apopple@nvidia.com,
+	dave.hansen@linux.intel.com,
+	will@kernel.org,
+	baohua@kernel.org,
+	jack@suse.cz,
+	mark.rutland@arm.com,
+	hughd@google.com,
+	aneesh.kumar@kernel.org,
+	yang@os.amperecomputing.com,
+	peterx@redhat.com,
+	ioworker0@gmail.com,
+	jglisse@google.com,
+	wangkefeng.wang@huawei.com,
+	ziy@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v4 0/2] Do not shatter hugezeropage on wp-fault
+Date: Mon, 16 Sep 2024 15:13:07 +0530
+Message-Id: <20240916094309.1226908-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240915114311.75496-2-laurentiu.mihalcea@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 15, 2024 at 07:43:09AM -0400, Laurentiu Mihalcea wrote:
-> Add schema for imx8ulp's SIM reset controller.
-> 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+It was observed at [1] and [2] that the current kernel behaviour of
+shattering a hugezeropage is inconsistent and suboptimal. For a VMA with
+a THP allowable order, when we write-fault on it, the kernel installs a
+PMD-mapped THP. On the other hand, if we first get a read fault, we get
+a PMD pointing to the hugezeropage; subsequent write will trigger a
+write-protection fault, shattering the hugezeropage into one writable
+page, and all the other PTEs write-protected. The conclusion being, as
+compared to the case of a single write-fault, applications have to suffer
+512 extra page faults if they were to use the VMA as such, plus we get
+the overhead of khugepaged trying to replace that area with a THP anyway.
 
-Fix checkpatch errors. You have SoB mismatch.
+Instead, replace the hugezeropage with a THP on wp-fault.
 
-This applies to all your patches.
+v3->v4:
+ - Renames: pmd_thp_fault_alloc -> vma_alloc_anon_folio_pmd,
+   map_pmd_thp -> map_anon_folio_pmd
+ - Instead of passing around, compute haddr at various places, similar
+   with gfp flags
+ - Pass haddr to update_mmu_cache_pmd() instead of unaligned address
+ - Do not pass vmf to map_anon_folio_pmd
+ - Do declarations in reverse xmas tree order
+ - Drop a new line which was introduced accidentally
+ - Call __pmd_thp_fault_success_stats from map_anon_folio_pmd
+ - Correctly return NULL from vma_alloc_anon_folio_pmd
+ - Initialize pgtable to NULL in __do_huge_pmd_anonymous_page, to
+   prevent freeing pgtable when not even allocated
+ - Drop if conditions from map_anon_folio_pmd, let the caller handle that
 
-Best regards,
-Krzysztof
+v2->v3:
+ - Drop foliop and order parameters, prefix the thp functions with pmd_
+ - First allocate THP, then pgtable, not vice-versa
+ - Move pgtable_trans_huge_deposit() from map_pmd_thp() to caller
+ - Drop exposing functions in include/linux/huge_mm.h
+ - Open code do_huge_zero_wp_pmd_locked()
+ - Release folio in case of pmd change after taking the lock, or
+   check_stable_address_space() returning VM_FAULT_SIGBUS
+ - Drop uffd-wp preservation. Looking at page_table_check_pmd_flags(), 
+   preserving uffd-wp on a writable entry is invalid. Looking at
+   mfill_atomic(), uffd_copy() is a null operation when pmd is marked
+   uffd-wp.
+
+v1->v2:
+ - Wrap do_huge_zero_wp_pmd_locked() around lock and unlock
+ - Call thp_fault_alloc() before do_huge_zero_wp_pmd_locked() to avoid
+ - calling sleeping function from spinlock context
+
+[1]: https://lore.kernel.org/all/3743d7e1-0b79-4eaf-82d5-d1ca29fe347d@arm.com/
+[2]: https://lore.kernel.org/all/1cfae0c0-96a2-4308-9c62-f7a640520242@arm.com/
+
+The patchset has been rebased on the mm-unstable branch.
+
+Dev Jain (2):
+  mm: Abstract THP allocation
+  mm: Allocate THP on hugezeropage wp-fault
+
+ mm/huge_memory.c | 152 +++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 109 insertions(+), 43 deletions(-)
+
+-- 
+2.30.2
 
 
