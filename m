@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-331215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97ACC97A9CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:57:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C37597A9D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21811C22EA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:57:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D3D028A4E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C1915A865;
-	Mon, 16 Sep 2024 23:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0D415B141;
+	Mon, 16 Sep 2024 23:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bUAOLGKm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qrBvKWwL"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0FA14A4D6;
-	Mon, 16 Sep 2024 23:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA0514D43D;
+	Mon, 16 Sep 2024 23:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726531039; cv=none; b=jh4VUGNDc2LhlcExjPxW5dc4z4Gp2BHV9nOCMDVweMJbPZbVMrW/oFIOmG6cba+D7FgssCkpnDEb/FMBKgLFP/Yh3NBp7fpwlCxPQWe0etEzhwc83AhpRh5kEu2d9HHyu1FgABfcDEJs5c9BVCRkzfXIwnWLD9GFZXUYxkpKAR8=
+	t=1726531119; cv=none; b=am+4SJXP2i8TafBBnyi2i+Orc8klMFeT6msd8c8ifOo2rvQiKsU813UzWdTRrja2e1IEbVIzPr1z/4HyuVOy0EUk7ImkjM1zcSxeb7ycwqpgO5s9kajX4qtJCL2iEvkUJqbH7mi5jNyqSgUawtIxonPzGn6MnMbfIOauhMVDdiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726531039; c=relaxed/simple;
-	bh=TrlAOEEOnjmBU08apRAnP9M+pLZpdYovn6wn2WroKNQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=hVr8mUSnVDGaDM0pkfK5uDJQYESCih7uRGqN5nKy5D+vg1NluP4wUEnLRDeaQkMYbuv45JKtCKBJB/25qXKHL7UaBTk5HPAQ6A9IEWPuV6Yh/duZVG4pbK2NO0+HeqXUO2sz/w/YsUQqTV0nKraGMhLwpNApD1HfiLms7EkxLX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bUAOLGKm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GCjfxi012443;
-	Mon, 16 Sep 2024 23:57:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mVfTJEr5F/tJ+is7JKXfugyHyOYSUxSoW7m7bMm3VTM=; b=bUAOLGKm0IBDEinZ
-	iWW2SPMxxoGdtOK+ZrQyABi7ZHZ1jxw+H37ot2iNmNV9nP5zJQ0VRoZpkQ7nzs2Q
-	RXKFH5QPoEfSsINHb1w2o+PxNSPj8pI6mwA3lMmRQ44JpdoO3Y0szKB6XbikVkf4
-	mzf4M7kdyE9DhGLB+YsEJKDnZhYLwmkYJkOwrj1v74q3M7ENHREsRXHwzrsjpwme
-	aL4d9tQC+njIsem8EzptmHeAuvYh+rTuq4dZREiTkh2FKto1ONm/PuU3FaYaiP3A
-	UDbnB8C1QcwQFnCfRLpCxYDefshJvKgp/akSu1sxfEaktuQ67mqfMXxq6ByDvUAb
-	9JyhcQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jhnheh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 23:57:13 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48GNvBQW021047
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 23:57:12 GMT
-Received: from [10.71.108.138] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Sep
- 2024 16:57:08 -0700
-Message-ID: <218d3e02-2d2b-4ec2-93b3-5936f84cf41c@quicinc.com>
-Date: Mon, 16 Sep 2024 16:57:08 -0700
+	s=arc-20240116; t=1726531119; c=relaxed/simple;
+	bh=jOPX79pQYTa+acSPRfSWzxYnVrqvjkdmS2IYO5zjv+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KfPkehvf1YZXbkndPw9rRgUD53XeM8Gxk8lZIxqY6C9vfKp6SsC1KKSBgzHwrhV5YKBHQ9MsCRhlJrtehJgl+SwCo5dI5ZBCbOJtxH3+Rm8PtI+u3XbN9SrCoJF2WCjFvU78m5rN+2XxxaL967pBEfyGJ0nPdalfF5UA3hfA9o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qrBvKWwL; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726531108; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=yLAj4r6pPBKpE+85JctjglgVpEkYjcC6fvMHSgvTiHQ=;
+	b=qrBvKWwLGQdAVVqD2uCtMmWGr3fMkF6jPWqBweC5HV50hxYxJOr3B9iuz/EPgEUwT4LGbhQOTjauQhi9BO+xO8nhTDGS7WKx5AE5JLh6I2eLTRdHEIOlnHSZxVmU0viqbI4IXI2/ALVsOhBSdVPeE7nz6QUMXkdjPFFpCLJiZC4=
+Received: from 30.27.106.17(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WF9MKgN_1726531106)
+          by smtp.aliyun-inc.com;
+          Tue, 17 Sep 2024 07:58:27 +0800
+Message-ID: <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
+Date: Tue, 17 Sep 2024 07:58:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,264 +47,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
-Subject: Re: [PATCH v2 2/2] firmware: qcom_scm: Support multiple waitq
- contexts
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Konrad Dybcio <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
-References: <cover.1724968351.git.quic_uchalich@quicinc.com>
- <b736ba58b4a4164f7232de7e075102cd2818b1e7.1724968351.git.quic_uchalich@quicinc.com>
- <q4tb7muqjef2hc2laodybghxesriaq5oxca45xmaqpxv3xnmav@eolhk75eolkt>
-Content-Language: en-US
-In-Reply-To: <q4tb7muqjef2hc2laodybghxesriaq5oxca45xmaqpxv3xnmav@eolhk75eolkt>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+To: Gary Guo <gary@garyguo.net>, Yiyang Wu <toolmanp@tlmp.cc>
+Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-4-toolmanp@tlmp.cc>
+ <20240916210111.502e7d6d.gary@garyguo.net>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240916210111.502e7d6d.gary@garyguo.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: dkL5tZamEWrDwamlIiiBJsrBg8uiQPlj
-X-Proofpoint-GUID: dkL5tZamEWrDwamlIiiBJsrBg8uiQPlj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 phishscore=0 impostorscore=0 bulkscore=0 adultscore=0
- suspectscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409160164
 
-On 9/4/2024 2:54 PM, Bjorn Andersson wrote:
-> On Thu, Aug 29, 2024 at 03:15:55PM GMT, Unnathi Chalicheemala wrote:
->> Currently, only a single waitqueue context exists, with waitqueue id zero.
->> Multi-waitqueue mechanism is added in firmware to support the case when
->> multiple VMs make SMC calls or single VM making multiple calls on same CPU.
->>
->> When VMs make SMC call, firmware will allocate waitqueue context assuming
->> the SMC call to be a blocking call. SMC calls that cannot acquire resources
->> are returned to sleep in the calling VM. When resource is available, VM
->> will be notified to wake sleeping thread and resume SMC call.
->> SM8650 firmware can allocate two such waitq contexts so create these two
->> waitqueue contexts.
->>
->> Unique waitqueue contexts are supported by a dynamically sized array where
->> each unique wq_ctx is associated with a struct completion variable for easy
->> lookup. To get the number of waitqueue contexts directly from firmware,
->> qcom_scm_query_waitq_cnt() is introduced. On older targets which support
->> only a single waitqueue, wq_cnt is set to 1 as SCM call for
->> query_waitq_cnt() is not implemented for single waitqueue case.
->>
->> Signed-off-by: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
->> ---
->>  drivers/firmware/qcom/qcom_scm.c | 82 +++++++++++++++++++++++---------
->>  1 file changed, 60 insertions(+), 22 deletions(-)
->>
->> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
->> index ed51fbb1c065..b2c5505de681 100644
->> --- a/drivers/firmware/qcom/qcom_scm.c
->> +++ b/drivers/firmware/qcom/qcom_scm.c
->> @@ -44,12 +44,13 @@ static bool download_mode = IS_ENABLED(CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT);
->>  module_param(download_mode, bool, 0);
->>  
->>  struct qcom_scm {
->> +	int wq_cnt;
-> 
-> Does it make sense for this to be negative? Please make it unsigned.
-> 
-> Also, might not be the most significant member of this struct, so
-> perhaps you can move it further down?
-> 
-Ack.
->>  	struct device *dev;
->>  	struct clk *core_clk;
->>  	struct clk *iface_clk;
->>  	struct clk *bus_clk;
->>  	struct icc_path *path;
->> -	struct completion waitq_comp;
->> +	struct completion *waitq;
->>  	struct reset_controller_dev reset;
->>  
->>  	/* control access to the interconnect path */
->> @@ -1850,6 +1851,31 @@ static int qcom_scm_fill_irq_fwspec_params(struct irq_fwspec *fwspec, u32 virq)
->>  	return 0;
->>  }
->>  
->> +static int qcom_scm_query_waitq_count(void)
->> +{
->> +	bool avail;
->> +	int count;
->> +	int ret;
->> +	struct qcom_scm_desc desc = {
->> +		.svc = QCOM_SCM_SVC_WAITQ,
->> +		.cmd = QCOM_SCM_WAITQ_GET_INFO,
->> +		.owner = ARM_SMCCC_OWNER_SIP
->> +	};
->> +	struct qcom_scm_res res;
->> +
->> +	avail = __qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_WAITQ, QCOM_SCM_WAITQ_GET_INFO);
->> +	if (!avail) {
->> +		count = 1;
->> +		return count;
-> 
-> count is a local variable, so just return count; and drop the {} please.
-> 
-> 
-> Perhaps even drop the local boolean variable:
-> 
-> 	if (!__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_WAITQ, QCOM_SCM_WAITQ_GET_INFO))
-> 		return 1;
-> 
-Ack.
->> +	}
->> +
->> +	ret = qcom_scm_call_atomic(__scm->dev, &desc, &res);
->> +	if (ret)
-> 
-> (Keep this local variable, as that's in line with the style...)
-> 
->> +		return ret;
->> +	count = res.result[0] & 0xff;
->> +	return count;
-> 
-> Again, return res.result[0] & 0xff; should be sufficient, no need for a
-> local variable immediately followed by a return statement.
-> 
-Ack.
->> +}
->> +
->>  static int qcom_scm_get_waitq_irq(void)
->>  {
->>  	int ret;
->> @@ -1876,42 +1902,40 @@ static int qcom_scm_get_waitq_irq(void)
->>  	return ret;
->>  }
->>  
->> -static int qcom_scm_assert_valid_wq_ctx(u32 wq_ctx)
->> +static struct completion *qcom_scm_get_completion(u32 wq_ctx)
->>  {
->> -	/* FW currently only supports a single wq_ctx (zero).
->> -	 * TODO: Update this logic to include dynamic allocation and lookup of
->> -	 * completion structs when FW supports more wq_ctx values.
->> -	 */
->> -	if (wq_ctx != 0) {
->> -		dev_err(__scm->dev, "Firmware unexpectedly passed non-zero wq_ctx\n");
->> -		return -EINVAL;
->> -	}
->> +	struct completion *wq;
->>  
->> -	return 0;
->> +	if (wq_ctx >= __scm->wq_cnt)
-> 
-> I'm guessing that we're not expecting to ever hit this, but if we do, we
-> will fail a qcom_scm_call() or qcom_scm_call_atomic() call, giving
-> someone down the road a bad week of debugging...
-> 
-> How about wrapping the conditional in a WARN_ON_ONCE()?
-> 
-Yes understood, ack.
->> +		return ERR_PTR(-EINVAL);
->> +
->> +	wq = &__scm->waitq[wq_ctx];
->> +
->> +	return wq;
->>  }
->>  
->>  int qcom_scm_wait_for_wq_completion(u32 wq_ctx)
->>  {
->> -	int ret;
->> +	struct completion *wq;
->>  
->> -	ret = qcom_scm_assert_valid_wq_ctx(wq_ctx);
->> -	if (ret)
->> -		return ret;
->> +	wq = qcom_scm_get_completion(wq_ctx);
->> +	if (IS_ERR(wq))
->> +		return PTR_ERR(wq);
->>  
->> -	wait_for_completion(&__scm->waitq_comp);
->> +	wait_for_completion(wq);
->>  
->>  	return 0;
->>  }
->>  
->>  static int qcom_scm_waitq_wakeup(unsigned int wq_ctx)
->>  {
->> -	int ret;
->> +	struct completion *wq;
->>  
->> -	ret = qcom_scm_assert_valid_wq_ctx(wq_ctx);
->> -	if (ret)
->> -		return ret;
->> +	wq = qcom_scm_get_completion(wq_ctx);
->> +	if (IS_ERR(wq))
->> +		return PTR_ERR(wq);
->>  
->> -	complete(&__scm->waitq_comp);
->> +	complete(wq);
->>  
->>  	return 0;
->>  }
->> @@ -1948,6 +1972,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
->>  	struct qcom_tzmem_pool_config pool_config;
->>  	struct qcom_scm *scm;
->>  	int irq, ret;
->> +	int i;
->>  
->>  	scm = devm_kzalloc(&pdev->dev, sizeof(*scm), GFP_KERNEL);
->>  	if (!scm)
->> @@ -1958,7 +1983,6 @@ static int qcom_scm_probe(struct platform_device *pdev)
->>  	if (ret < 0)
->>  		return ret;
->>  
->> -	init_completion(&scm->waitq_comp);
->>  	mutex_init(&scm->scm_bw_lock);
->>  
->>  	scm->path = devm_of_icc_get(&pdev->dev, NULL);
->> @@ -1993,6 +2017,20 @@ static int qcom_scm_probe(struct platform_device *pdev)
->>  	/* Let all above stores be available after this */
->>  	smp_store_release(&__scm, scm);
-> 
-> Should have spotted this earlier... But if any code below this point
-> takes an error path (i.e. we return non-0 from hereon) devres will free
-> __scm and anyone calling the qcom_scm API will hit a use-after-free.
-> 
-> Add to that it doesn't seem like a good idea to have
-> qcom_scm_is_available() return true until we have setup the wait queue
-> count or setup tzmem at least.
-> 
-Would the other calls that go through error path below need to be before the smp_store_release?
-Just wondering if that needs to be fixed in a separate patch..
+Hi Gary,
 
-And I think the waitq initialization before the smp_store_release should be okay.
->>  
->> +	platform_set_drvdata(pdev, scm);
+On 2024/9/17 04:01, Gary Guo wrote:
+> On Mon, 16 Sep 2024 21:56:13 +0800
+> Yiyang Wu <toolmanp@tlmp.cc> wrote:
 > 
-> I believe this is a leftover from previous versions of this patch?
-> 
-Yes, will remove this.
-> Regards,
-> Bjorn
-> 
->> +	ret = qcom_scm_query_waitq_count();
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	scm->wq_cnt = ret;
->> +
->> +	scm->waitq = devm_kcalloc(&pdev->dev, scm->wq_cnt, sizeof(*scm->waitq), GFP_KERNEL);
->> +	if (!scm->waitq)
->> +		return -ENOMEM;
->> +
->> +	for (i = 0; i < scm->wq_cnt; i++)
->> +		init_completion(&scm->waitq[i]);
->> +
->>  	irq = qcom_scm_get_waitq_irq();
->>  	if (irq < 0) {
->>  		if (irq != -ENXIO)
->> -- 
->> 2.34.1
+>> Introduce Errno to Rust side code. Note that in current Rust For Linux,
+>> Errnos are implemented as core::ffi::c_uint unit structs.
+>> However, EUCLEAN, a.k.a EFSCORRUPTED is missing from error crate.
 >>
+>> Since the errno_base hasn't changed for over 13 years,
+>> This patch merely serves as a temporary workaround for the missing
+>> errno in the Rust For Linux.
+>>
+>> Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 > 
+> As Greg said, please add missing errno that you need to kernel crate
+> instead.
 
+I've answered Greg about this in another email.
+
+> 
+> Also, it seems that you're building abstractions into EROFS directly
+> without building a generic abstraction. We have been avoiding that. If
+> there's an abstraction that you need and missing, please add that
+> abstraction. In fact, there're a bunch of people trying to add FS
+
+No, I'd like to try to replace some EROFS C logic first to Rust (by
+using EROFS C API interfaces) and try if Rust is really useful for
+a real in-tree filesystem.  If Rust can improve EROFS security or
+performance (although I'm sceptical on performance), As an EROFS
+maintainer, I'm totally fine to accept EROFS Rust logic landed to
+help the whole filesystem better.
+
+For Rust VFS abstraction, that is a different and indepenent story,
+Yiyang don't have any bandwidth on this due to his limited time.
+And I _also_ don't think an incomplete ROFS VFS Rust abstraction
+is useful to Linux community (because IMO for generic interface
+design, we need a global vision for all filesystems instead of
+just ROFSes.  No existing user is not an excuse for an incomplete
+abstraction.)
+
+If a reasonble Rust VFS abstraction landed, I think we will switch
+to use that, but as I said, they are completely two stories.
+
+> support, please coordinate instead of rolling your own.
+> 
+> You also have been referencing `kernel::bindings::` directly in various
+> places in the patch series. The module is marked as `#[doc(hidden)]`
+> for a reason -- it's not supposed to referenced directly. It's only
+> exposed so that macros can reference them. In fact, we have a policy
+> that direct reference to raw bindings are not allowed from drivers.
+
+This patch can be avoided if EUCLEAN is added to errno.
+
+Thanks,
+Gao Xiang
 
