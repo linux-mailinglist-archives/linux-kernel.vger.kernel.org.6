@@ -1,196 +1,182 @@
-Return-Path: <linux-kernel+bounces-330682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F1F97A2AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:02:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE7497A2B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577361F2273E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837031F22DEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5A01552EB;
-	Mon, 16 Sep 2024 13:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2088D14E2C2;
+	Mon, 16 Sep 2024 13:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cieuSILB"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="l4Ey8fL5"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B861D555
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748435258
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726491739; cv=none; b=ds1uKJnlk/wkdUGZ9n3PxqA+Gujv709nXIydKDYCTi5m9DEbhZXtp9qhk8VtWVjRfZAi3+Mx+KpHOAbP0n2jg78Vgd14TyaxiuXPZbvPULnQJXjKkuHJFnrwOBFZgpzUD8UR1otjZ2HRhkyBAUcCEWrbeZUVctDt/CKsgkhpKJI=
+	t=1726491794; cv=none; b=AcTxyUT3gYvs0YCPLfrajQyhF18fM4AMMkdidgabX0Oenr8vKspOHfmKMvwcS4nS/5mblZxr8Cj86vtlEG6p1grKo1Sg6JjaxJ8XhaOR+6i74gIvsrKqwTSs5xdpeVMTmEgrSUrDPSLw8w3n1r82nz26qLKN27D4s0Yyz30hh9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726491739; c=relaxed/simple;
-	bh=FQtOdAadtJgxB15TMtnZ1MxtNBTYTLRHpvSphzowYPA=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=UWwEcbrpUi8w5usTOfb+O4L20G/t1lC3+uQYtS0d+wSXWobK256kIyH5lV88Yc6r5233EWyfsL+X1HuR4EiFRrOUpfaIpWhZL/aQVVUvKcQba65mm+c76IBsuPNDg4rUsYo0K7BB50gLlrH0YA6sqU03TnAjqwuLt0dh70CtkzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cieuSILB; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240916130214euoutp0156bfb90cbc7997822c4e1f62368dec1d~1uxXdL9uJ0517205172euoutp01F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:02:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240916130214euoutp0156bfb90cbc7997822c4e1f62368dec1d~1uxXdL9uJ0517205172euoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726491734;
-	bh=Oh5AZ/A0I1IDwcZK/pV36EkdX2y9NmYlY6RctXXQcnE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=cieuSILBmmCaGMH6JIDeeWjDpYQgVsuBJfjZBJUixBn5XLEjk7Oq+Ftt1v/Sg8ex2
-	 xbi00lZIqhgBZXiqSH8J1tbyulXvDD86RMGhODWUrpb0g4rXQHMV/npX/mCScWw27e
-	 gzZFn07aRAnwLAEYz4lRKtog0JE63r+Jv+FBc8/4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240916130214eucas1p1a342e3ed5fecdeb5519555a2400d0b5d~1uxXMjCGT1987919879eucas1p1H;
-	Mon, 16 Sep 2024 13:02:14 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id EA.52.09875.65C28E66; Mon, 16
-	Sep 2024 14:02:14 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240916130213eucas1p14bcfea10fff9a689e138a576d94e1560~1uxWrmGVj2332223322eucas1p17;
-	Mon, 16 Sep 2024 13:02:13 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240916130213eusmtrp19d08b0ff4cba97e7132c5e5c709bda8b~1uxWqnxco0912309123eusmtrp14;
-	Mon, 16 Sep 2024 13:02:13 +0000 (GMT)
-X-AuditID: cbfec7f4-9acd8a8000002693-1c-66e82c567579
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id E7.9E.19096.55C28E66; Mon, 16
-	Sep 2024 14:02:13 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240916130213eusmtip274db698c54c972a1986f16d67d3c778f~1uxWcv1ip2259722597eusmtip2a;
-	Mon, 16 Sep 2024 13:02:13 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Mon, 16 Sep 2024 14:02:13 +0100
-Date: Mon, 16 Sep 2024 15:02:08 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Baolu Lu <baolu.lu@linux.intel.com>, "Tian, Kevin"
-	<kevin.tian@intel.com>, David Woodhouse <dwmw2@infradead.org>, Joerg Roedel
-	<joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Klaus Jensen <its@irrelevant.dk>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v2 1/5] iommu/vt-d: Separate page request queue from SVM
-Message-ID: <20240916130208.g7a7isdby6ujpykh@joelS2.panther.com>
+	s=arc-20240116; t=1726491794; c=relaxed/simple;
+	bh=m35dDssCabVJuMRlGOZTc6qI+dzsKKWYeM0JmQhFPcg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=kJ0aSAdVVscnmBbSB7hovcdQtgvyCe9m2E8r0oC1/+OL7hnMIX2ntge+ofEbEGSc8jzf7cURFYmaFd0MzkqBRk+N75BoBRh4xsmm0ag2cibZ5HWH1fdkIvREYC/wnY4Gy31L7QUtrF2HFEnD9P9YIKKy4BiRXYdi9tj0jQK/O2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=l4Ey8fL5; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42bbffe38e6so34208775e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726491791; x=1727096591; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fZskt6RQWwBKvf8VCH4bF9IdkeZRhcjl5ETFLty+q4k=;
+        b=l4Ey8fL5OhzB2JmN8LwLNK2VZocHDAOYBBudBRQ+9c58kRH34mOoyTbm0csm8BQ78X
+         33nGWf/MnJpsDzPHnluoiNfqwIRqeKITIXB81rdyvkl5Sv0kpGbzjFRk5f1ULTg+wrwk
+         2J/Gm2Zsw2BamcCNlazeMFFeutz+uB2ikroh5cG/HOVZMfAMYH5hdf7R0PG60d4OZ7JB
+         fDhWSoL1wy6n3e+9vRrBsJRhpwT2gafRo0ESECGE+3tVwYNlzgftx/8fqyKvK3ChpmKh
+         I8X/wftNYTWFzLoUMC7UChQMHfJ4O8SF7LwNSAYbshfPGkm9fNnBfz5kBl/qFgTlBZq2
+         ErNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726491791; x=1727096591;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fZskt6RQWwBKvf8VCH4bF9IdkeZRhcjl5ETFLty+q4k=;
+        b=X4UicJ91vHyGiAFv/XLxKHDhqI1dPgIO9sKFWHsqqE8WFnu/zr+L1WWlAnp8AZPaN/
+         iJqlzspsPbjyNwOeUm+WzySLkLDZFCrL4l89FkdCK1R7+kdiEyoTwQ63q1ro4DPWDfQ6
+         HFd+RVNn7kM+yGyas6ZlMqwHQbSgauwqMgz8/aUH9Xj4ncPpG2ZH9D6hjiwRxrVkLsXa
+         4qiSThPQWg3jy6JxqU2gjgop3hga5BUYZNDSyHiqDkN/BQQ6CDOBUSdauWcB9ZyRA2Jv
+         7A9aGOlc1FVDgNe1yhXMpNp+iLWnzTEzwtorTXYAiao6K/+jtIM1NUiID5zBnKaQUHjY
+         oqMA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5jA0ny/K5S4/dowU5s5ha58ztImC3VaCJUXfgxEs441WBcWIVAvMXKfDcGpTx2xWBsbOdQW9IQ1OpBhE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1zFSZ1z7kiW5ORax2IgEctWerEom9w6uyJtKY8X1Fxr2d+5hE
+	UWuMAcTIb5eSpreI++RrKHbxIN7GU0qqp/wXsJVD6+hngDiBwUc1Ov9oezQ7hdo=
+X-Google-Smtp-Source: AGHT+IG2nrplOfj3/5iWG04x2nhwLzDmV7EDuTH5ottx1vDxjUFR2VnB7SicdyNXc/hTI5mX9cPsJg==
+X-Received: by 2002:a05:6000:459f:b0:374:c0c5:3c05 with SMTP id ffacd0b85a97d-378c2d4d802mr7925015f8f.42.1726491790471;
+        Mon, 16 Sep 2024 06:03:10 -0700 (PDT)
+Received: from localhost (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da22b87a9sm78564735e9.6.2024.09.16.06.03.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2024 06:03:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240915134928.GD869260@ziepe.ca>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djP87phOi/SDNqXiVtsnriVzWLiysnM
-	Fr++WFjsP/iN1WLmjBOMFp2zN7BbLH27ld3i8q45bBYHPzxhtWi5Y+rA5fHk4DwmjzXz1jB6
-	bF6h5bF4z0smj3M7zrN7bFrVyeYx72Sgx4vNMxk9Pm+S89j6+TZLAFcUl01Kak5mWWqRvl0C
-	V8bJK6fZChpFKi53zWFuYNzM38XIySEhYCJx/9435i5GLg4hgRWMEs+XbWeFcL4wSkycv5Ed
-	wvnMKNH77RJjFyMHWMuXrQ4Q8eWMEus+3GCEK2pcfRFq1mZGifYXIBlODhYBVYlDq1rYQWw2
-	AR2J82/uMIPYIgJKEvt2TQRbwSzwhUnix7tmNpCEsICPxPe2MywgNq+Ag8SPPU+YIWxBiZMz
-	n4DFmYEGLdj9iQ3kJGYBaYnl/zhAwpwC+hK39m9hgXhOUeLr4ntQdq3EqS23mEB2SQjM55To
-	n/+WHSLhItEwZxIjhC0s8er4Fqi4jMTpyT0sEA2TGSX2//vADuGsZpRY1viVCaLKWqLlyhOo
-	DkeJq99OMUECiU/ixltBiEP5JCZtm84MEeaV6GgTgqhWk1h97w3LBEblWUhem4XktVkIry1g
-	ZF7FKJ5aWpybnlpslJdarlecmFtcmpeul5yfu4kRmLhO/zv+ZQfj8lcf9Q4xMnEwHmKU4GBW
-	EuG1/f00TYg3JbGyKrUoP76oNCe1+BCjNAeLkjivaop8qpBAemJJanZqakFqEUyWiYNTqoEp
-	9/rdOr/y95pW385272aW+bT8hLTPt0j5f3LPj52XE+YJnzNZdIfennu6vzZ27HFcxPteJfKu
-	V8+bhzF5W1u1FPWYWh8fOB5nsa2vu1zvpCP7sTlXF4jG3n4UxB94LTh94jT1O+yXy999Ettc
-	KhAnzGC5gccvyn6KUfZUpcbM6zn7Y2Ua9iru9Ak8nLFsxrFrZw5w9ZWwxftlh0msa5i9JcFk
-	b/HDsC8fVQ+4G4Z867mz1CqVMbfCxlPR3sjm8zmmWxtfh3w/7N7/8MUPk71MrtFHmf26nPTy
-	5bOeBUyx8gmRmmPUGOMUL63gxeTQ8D7x4OeuWUdv1x78knh3q+fG8k2ZJ3b4WD4yPVT65LES
-	S3FGoqEWc1FxIgBXQz2tywMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xe7qhOi/SDBavN7DYPHErm8XElZOZ
-	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
-	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oPZui/NKSVIWM/OIS
-	W6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYyTV06zFTSKVFzumsPcwLiZ
-	v4uRg0NCwETiy1aHLkYuDiGBpYwSjU+bGLsYOYHiMhIbv1xlhbCFJf5c62KDKPrIKLHzwSQo
-	ZzOjxL81U1lAqlgEVCUOrWphB7HZBHQkzr+5wwxiiwgoSezbNZEdpIFZ4AuTxJdXF8ESwgI+
-	Et/bzoA18wo4SPzY84QZYmobi8TsO+fYIBKCEidnPgErYgaaumD3JzaQu5kFpCWW/+MACXMK
-	6Evc2r+FBeJURYmvi+9B2bUSn/8+Y5zAKDwLyaRZSCbNQpi0gJF5FaNIamlxbnpusZFecWJu
-	cWleul5yfu4mRmD0bjv2c8sOxpWvPuodYmTiYDzEKMHBrCTCa/v7aZoQb0piZVVqUX58UWlO
-	avEhRlNgWExklhJNzgemj7ySeEMzA1NDEzNLA1NLM2MlcV62K+fThATSE0tSs1NTC1KLYPqY
-	ODilGpjK5z5onO1meu3ClScppvIVS9nNE1QSPT6t2xq1YG/plPkTpAy+XJjEN8+4/YzEi507
-	KxRu27veW7WhfYLixKCkxVYPupsf511VVFvbarXAIndSR4r+klCVrq9LX72+d/8W25Z7h7p2
-	z+Nta9i089Q20yNftK/dXXZ7V1nBpMzmuSrzL4SXXsq5+2K2Bce5sDzdtOfia3sDwj+t6Ns+
-	aYPc6tnKn3u59upLSezVZz2zlVFGVrRWdNt0tc0l7AsS8lYKZrhO779zVDTW+KHE0iO3VA2V
-	KoRuLGS7mr3Xase/6xcNDsTmyDfIMRz/t8Ls3bazzdyyKmH68bXhL1SXXReuKKnz+TA7WIch
-	rO/MDlZ7JZbijERDLeai4kQAvGkvk2cDAAA=
-X-CMS-MailID: 20240916130213eucas1p14bcfea10fff9a689e138a576d94e1560
-X-Msg-Generator: CA
-X-RootMTR: 20240915134935eucas1p264b4d0955ac93f2192dd29cef7a573aa
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240915134935eucas1p264b4d0955ac93f2192dd29cef7a573aa
-References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
-	<20240913-jag-iopfv8-v2-1-dea01c2343bc@samsung.com>
-	<BL1PR11MB52713D3D5947C66AE463FA4B8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
-	<e0a1347f-877e-445c-9158-7584ae200bff@linux.intel.com>
-	<BN9PR11MB527611131A808B78C8E0E8388C662@BN9PR11MB5276.namprd11.prod.outlook.com>
-	<c8708b95-14b9-4545-84f7-6f45161456cc@linux.intel.com>
-	<CGME20240915134935eucas1p264b4d0955ac93f2192dd29cef7a573aa@eucas1p2.samsung.com>
-	<20240915134928.GD869260@ziepe.ca>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 16 Sep 2024 13:03:08 +0000
+Message-Id: <D47Q9E5EW08V.2JP0X6EFQMFBT@baylibre.com>
+Cc: "Lars-Peter Clausen" <lars@metafoo.de>, "Michael Hennerich"
+ <Michael.Hennerich@analog.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Nuno Sa" <nuno.sa@analog.com>, "Jonathan Corbet" <corbet@lwn.net>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "David Lechner" <dlechner@baylibre.com>,
+ <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH 4/6] iio: adc: ad4030: add support for ad4630-24 and
+ ad4630-16
+From: "Esteban Blanc" <eblanc@baylibre.com>
+To: "Esteban Blanc" <eblanc@baylibre.com>, "Jonathan Cameron"
+ <jic23@kernel.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20240822-eblanc-ad4630_v1-v1-0-5c68f3327fdd@baylibre.com>
+ <20240822-eblanc-ad4630_v1-v1-4-5c68f3327fdd@baylibre.com>
+ <20240826102748.4be0b642@jic23-huawei>
+ <D452E2M75XCM.13OQGAPJ7JJ4A@baylibre.com>
+In-Reply-To: <D452E2M75XCM.13OQGAPJ7JJ4A@baylibre.com>
 
-On Sun, Sep 15, 2024 at 10:49:28AM -0300, Jason Gunthorpe wrote:
-> On Sat, Sep 14, 2024 at 01:49:44PM +0800, Baolu Lu wrote:
-> > On 2024/9/14 10:53, Tian, Kevin wrote:
-> > > > From: Baolu Lu<baolu.lu@linux.intel.com>
-> > > > Sent: Saturday, September 14, 2024 9:18 AM
-> > > > 
-> > > > On 9/14/24 8:52 AM, Tian, Kevin wrote:
-> > > > > > From: Joel Granados via B4 Relay
-> > > > > > <devnull+j.granados.samsung.com@kernel.org>
-> > > > > > 
-> > > > > > From: Joel Granados<j.granados@samsung.com>
-> > > > > > 
-> > > > > > IO page faults are no longer dependent on CONFIG_INTEL_IOMMU_SVM.
-> > > > > > Move
-> > > > > > all Page Request Queue (PRQ) functions that handle prq events to a new
-> > > > > > file in drivers/iommu/intel/prq.c. The page_req_des struct is now
-> > > > > > declared in drivers/iommu/intel/prq.c.
-> > > > > > 
-> > > > > > No functional changes are intended. This is a preparation patch to
-> > > > > > enable the use of IO page faults outside the SVM/PASID use cases.
-> > > > > Do we want to guard it under a new config option e.g.
-> > > > > CONFIG_INTEL_IOMMU_IOPF? it's unnecessary to allocate resources
-> > > > > for the majority usages which don't require IOPF.
-> > > > > 
-> > > > > Baolu?
-> > > > The OS builder doesn't know if Linux will run on a platform with PRI-
-> > > > capable devices. They'll probably always enable this option if we
-> > > > provide it.
-> > > hmm then why do we need a SVM option? In reality I haven't seen
-> > > a platform which supports IOPF but no pasid/SVM. so the reason
-> > > for whether to have an option should be same between IOPF/SVM.
-> > > 
-> > > IMHO the point of options is to allow reducing footprint of the kernel
-> > > image and many options are probably always enabled in distributions...
-> > 
-> > To be honest, I would hope to remove the SVM option some day. It's
-> > nothing special except listening to an external notification and
-> > synchronize the caches when the page table is updated. It's common to
-> > all cases where a page table is shared between the IOMMU and another
-> > component.
-> > 
-> > As for CONFIG_INTEL_IOMMU_IOPF, my suggestion is that we don't need to
-> > add any unnecessary options unless we see a real need.
-> 
-> You could possibly bundle the SVA and IOPF options together
-> 
-> I called the new option on the ARM side CONFIG_ARM_SMMU_V3_IOMMUFD
-> which seems like a reasonable cut point against embedded vs server.
+On Fri Sep 13, 2024 at 9:55 AM UTC, Esteban Blanc wrote:
+> On Mon Aug 26, 2024 at 9:27 AM UTC, Jonathan Cameron wrote:
+> > On Thu, 22 Aug 2024 14:45:20 +0200
+> > Esteban Blanc <eblanc@baylibre.com> wrote:
+> > > @@ -460,12 +517,21 @@ static int ad4030_conversion(struct ad4030_stat=
+e *st,
+> > >  	if (ret)
+> > >  		return ret;
+> > > =20
+> > > -	if (st->mode !=3D AD4030_OUT_DATA_MD_24_DIFF_8_COM)
+> > > +	if (st->chip->num_channels =3D=3D 2)
+> > > +		ad4030_extract_interleaved(st->rx_data.raw,
+> > > +					   &st->rx_data.diff[0],
+> > > +					   &st->rx_data.diff[1]);
+> > > +
+> > > +	if (st->mode !=3D AD4030_OUT_DATA_MD_16_DIFF_8_COM &&
+> > > +	    st->mode !=3D AD4030_OUT_DATA_MD_24_DIFF_8_COM)
+> > >  		return 0;
+> > > =20
+> > >  	byte_index =3D BITS_TO_BYTES(chan->scan_type.realbits);
+> > > -	for (i =3D 0; i < st->chip->num_channels; i++)
+> > > -		st->rx_data.buffered[i].common =3D ((u8 *)&st->rx_data.buffered[i]=
+.val)[byte_index];
+> > > +	/* Doing it backward to avoid overlap when reordering */
+> > > +	for (i =3D st->chip->num_channels - 1; i > 0; i--) {
+> > > +		st->rx_data.buffered_common[i].diff =3D st->rx_data.diff[i];
+> > > +		st->rx_data.buffered_common[i].common =3D ((u8 *)&st->rx_data.diff=
+[i])[byte_index];
+> > > +	}
+> >
+> > I wonder if doing it in place is actually worthwhile.  Maybe unpack int=
+o a second
+> > array? That is still fairly small and may make code easier to read.
+>
+> Okay sure
 
-I'll go with Baolu's suggestion of leaving as is for my V3.
+Actually I can't consolidate the differential only mode and the common
+byte mode without having to create a bunch of if/else or having a
+memcpy. The best I can do is this, but I don't like it:
 
-Thx for the review
+```
+static int ad4030_conversion(struct ad4030_state *st,
+			     const struct iio_chan_spec *chan)
+{
+	...
+	u32 tmp[AD4030_MAX_HARDWARE_CHANNEL_NB];
+	u32 *diff;
 
--- 
+	...
 
-Joel Granados
+	if (st->mode !=3D AD4030_OUT_DATA_MD_16_DIFF_8_COM &&
+	    st->mode !=3D AD4030_OUT_DATA_MD_24_DIFF_8_COM) {
+		if (st->chip->num_voltage_inputs =3D=3D 2)
+			ad4030_extract_interleaved(st->rx_data.raw,
+						   &st->rx_data.diff[0],
+						   &st->rx_data.diff[1]);
+		return 0;
+	}
+
+	if (st->chip->num_voltage_inputs =3D=3D 2) {
+		ad4030_extract_interleaved(st->rx_data.raw,
+					   &tmp[0],
+					   &tmp[1]);
+		diff =3D tmp;
+	} else {
+		diff =3D st->rx_data.diff;
+	}
+
+	common_byte_mask =3D BITS_TO_BYTES(chan->scan_type.realbits);
+	for (i =3D 0; i < st->chip->num_voltage_inputs; i++) {
+		st->rx_data.buffered[i].val =3D diff[i];
+		st->rx_data.buffered[i].common =3D
+			((u8 *)(diff + i))[common_byte_mask];
+	}
+
+	return 0;
+```
+
+The root cause is that when we are in a differential only mode we are
+leaving before the for loop and we want the data to be in the rx_data.
+
+It fells clunky and brain consuming IMAO, I prefer a reversed loop with
+a good comment (the one we have now is not explicit enough, I will
+update it).
 
