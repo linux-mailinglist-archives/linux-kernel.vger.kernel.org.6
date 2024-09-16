@@ -1,100 +1,161 @@
-Return-Path: <linux-kernel+bounces-331115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4262097A8A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:14:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3336097A8A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 23:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B222846E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:14:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3263F1C2506C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2FB15FD16;
-	Mon, 16 Sep 2024 21:14:17 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F08160884;
+	Mon, 16 Sep 2024 21:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jlu1YcLz"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE9B1311A7;
-	Mon, 16 Sep 2024 21:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06046161B43
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 21:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726521256; cv=none; b=c3wmq0Wsj5xdSCL+8zassxaHRAZuCgeRL4LKDd8f4o2oSl4upTRSKoglSpjHuixmLkN2N8R3elwpItWXajaKSYdesIaxqLkSrHWigSUH4M00XQpC0rVYmNbW4RZ0xPjkvbqI3X+LrMRiDMxz/bGxdlC39F6M6YN4XUVhXLXDhDM=
+	t=1726521314; cv=none; b=tyIxizL54crtRBR4otkZwjj96w0Q+2ZZr8WCA1w9kaZyCN3cB1SfMHxJseC9zhTfIZLDp7DlGi+5y/4N1vK7PleBnsw9bQ9XsZ9XY04O+poA4BFhuy2yxmg8fzoSVWfzm1KCvFGT/xyPERGXXzFckOidGcaTfGAyD2zm8ydGM6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726521256; c=relaxed/simple;
-	bh=5IpUJ+P9FLCecTIxh8N96RSfCvX1rwd5L8hBRG35KPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dewicRK9D1LHqV6i+zAmrOPYCsQD4RIIN6G/AnAQdUuY6+BiooANuNMtgCoxxaJ1nCWgS/yd8V1fX94WrDnddAF2Gviir/WUjzL95Kh+mig+Nn/PjjBMDFx0UsLL6eM6vJ8ussNjFS/Z7CaEM4Gc+Rjc5VJDId6XgRDncTwDTQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 53ADC1C009B; Mon, 16 Sep 2024 23:14:06 +0200 (CEST)
-Date: Mon, 16 Sep 2024 23:13:38 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
-Message-ID: <Zuifgl+Zs84Mt7nd@duo.ucw.cz>
-References: <20240916114228.914815055@linuxfoundation.org>
+	s=arc-20240116; t=1726521314; c=relaxed/simple;
+	bh=jsP4BpefWGxRC1SsETIlVv45lPzMhi8m9W79ZBrx1F0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J21vjfT/E8xTbQ5qr9Oy9/9GRvQoZdmQKEUp0YWw4PjGC/L5jhXhXpXAaSUGrRTRKQ2EvMpW6fhACGs5AFgFk46VQsHZspUYSBuiC+Qg4e2b0cypWA4M65olqCOpnspNJg7lK2/fkKJbJMlZnivVXh5PD2uRcM+X6vSrwJrvQh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jlu1YcLz; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c2460e885dso8364a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:15:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726521310; x=1727126110; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9leef1lP79QdzQSlMu20RvsBQRhUgfHGz+v151OddCM=;
+        b=Jlu1YcLzmx45LjdHR6gqD+YPMYTOLGbeoySXwl34ODW2tfzjiu8+RvB2MjdYZW6n6K
+         3azYz/kdJ7LSWtAkef00K+c8ZL08/NAMcLxJxP4hM6/u8DIfuj0mu8tqmf9xDP+AKM3f
+         v4fzrCwFx9nPzTO40ljd1W9ypQjXn44T6yZtZlfiMnEV1tu01TAi2Os3Jd1HonqBG/65
+         ovlKRS6OUNBD/YFKa4og7UYYBrvwOSbE/7g1iFHiruKC5AN2NVNNryKuUGuv5Mz0o+Q+
+         dYX4GMaHBw/728lNDkVesyvH9G9NqWG2L7EiNJl4VDgsQF50yD/m1pFMNaxhSsCo8aqy
+         3J2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726521310; x=1727126110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9leef1lP79QdzQSlMu20RvsBQRhUgfHGz+v151OddCM=;
+        b=FXmFZCqFJ3M/QZpf/TSAxfCvnAnZizo9wkz0UsyVv+2gU2fEsHENM4hxTJHXZiEq9j
+         +rTlfmKdVi166tVfeym7VxWzeCkEYa5mZWHaIYbvly7LeTiq023gckI7EOFO9ztTHDKf
+         yzyhD+HaRQsAI+1O+TyQGuKBGF1D+SArVY6CkkhrijsKmgluyOqejwKa5I1Lgiov/6Ro
+         S2AHBOLh5E8L69yoQfhRStq9TavwsT59sDG0M9LxZYp7HyBQ8LMTBpi62lvKTXXzocFa
+         Z+zOneexJLKjbiAQ7AQutMuM1XOu0vjWaXLybPLYESp8Mv5wi6z8Qvw9rHCcrf1yoT+K
+         yIeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjRvAeHm2Pk1mJLXFApcuKBH9pCy5YGZfs2hMtf3o2D0HGRGs/jIpIFQfmdz/5fqL/sHV6zQI7gmpFHZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJaEgOvgrPmwlNRAgfQitFJ/yUJUK5Tti849JuyXRk3eFqP/C4
+	oDL/xq4jg4goElBqNxylvUEB4GSkM/AmUO8gBulOWwozYkeEsfQUMAepTzmph17mVnsfXR3dAEB
+	Lu2WqUpqvUHfnE5OyX9oFKetO6xbAtE5xbflW
+X-Google-Smtp-Source: AGHT+IF6dyyQJaSHZbZwngVDJVdsJApUMqXalKKi0actzWHOX8EqkqUTgpJ77CsgYsbI+x2vL0Ykn2Y5eGpt5/BHf5s=
+X-Received: by 2002:a05:6402:348c:b0:5c4:2c6f:e265 with SMTP id
+ 4fb4d7f45d1cf-5c4478072b6mr15387a12.1.1726521309278; Mon, 16 Sep 2024
+ 14:15:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Jdx0XYfleK5lv4lu"
-Content-Disposition: inline
-In-Reply-To: <20240916114228.914815055@linuxfoundation.org>
-
-
---Jdx0XYfleK5lv4lu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
+ <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
+ <2494949.1723751188@warthog.procyon.org.uk> <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
+ <CAHC9VhSPcy-xZ=X_CF8PRsAFMSeP8-VppxKr3Sz3EqMWTEs-Cw@mail.gmail.com> <CAHC9VhS5ar0aU8Q6Ky133o=zYMHYRf=wxzTpxP+dtA=qunhcmw@mail.gmail.com>
+In-Reply-To: <CAHC9VhS5ar0aU8Q6Ky133o=zYMHYRf=wxzTpxP+dtA=qunhcmw@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 16 Sep 2024 23:14:30 +0200
+Message-ID: <CAG48ez2hhu8AXgBR=ze9RRLDpB0V1rzUX2Xr2e45giV6ebTxMA@mail.gmail.com>
+Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
+ [PATCH v2 1/2] KEYS: use synchronous task work for changing parent credentials
+To: Paul Moore <paul@paul-moore.com>
+Cc: David Howells <dhowells@redhat.com>, Jeffrey Altman <jaltman@auristor.com>, openafs-devel@openafs.org, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	John Johansen <john.johansen@canonical.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, linux-afs@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Mon, Sep 16, 2024 at 12:46=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> On Tue, Sep 10, 2024 at 4:49=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Thu, Aug 15, 2024 at 4:00=E2=80=AFPM Jann Horn <jannh@google.com> wr=
+ote:
+> > > On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redha=
+t.com> wrote:
+> > > > Jann Horn <jannh@google.com> wrote:
+> > > >
+> > > > > Rewrite keyctl_session_to_parent() to run task work on the parent
+> > > > > synchronously, so that any errors that happen in the task work ca=
+n be
+> > > > > plumbed back into the syscall return value in the child.
+> > > >
+> > > > The main thing I worry about is if there's a way to deadlock the ch=
+ild and the
+> > > > parent against each other.  vfork() for example.
+> > >
+> > > Yes - I think it would work fine for scenarios like using
+> > > KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
+> > > launched the helper (which I think is the intended usecase?), but
+> > > there could theoretically be constellations where it would cause an
+> > > (interruptible) hang if the parent is stuck in
+> > > uninterruptible/killable sleep.
+> > >
+> > > I think vfork() is rather special in that it does a killable wait for
+> > > the child to exit or execute; and based on my understanding of the
+> > > intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
+> > > KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
+> > > through execve?
+> >
+> > Where did we land on all of this?  Unless I missed a thread somewhere,
+> > it looks like the discussion trailed off without any resolution on if
+> > we are okay with a potentially (interruptible) deadlock?
+>
+> As a potential tweak to this, what if we gave up on the idea of
+> returning the error code so we could avoid the signal deadlock issue?
 
-> This is the start of the stable review cycle for the 6.10.11 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+I'm still not convinced that there is a real danger of deadlocking
+here if the only way to deadlock involves the parent being in an
+uninterruptible wait. There aren't many places in the kernel that
+involve a parent uninterruptibly waiting for the child without locks
+being involved, especially when the parent is a shell that spawns the
+child with execve, as seems to be the intended use here.
+
+I really dislike the idea of silently ignoring an error - I kinda feel
+like if we give up on returning an error to the child that issued the
+keyctl, the next-best option is to SIGKILL the parent, so that we can
+say "hey, we technically ensured that all future syscalls in the
+parent will use the new creds, because the parent will no longer do
+_any_ syscalls".
+
+> I suppose there could be an issue if the parent was
+> expecting/depending on keyring change from the child, but honestly, if
+> the parent is relying on the kernel keyring and spawning a child
+> process without restring the KEYCTL_SESSION_TO_PARENT then the parent
+> really should be doing some sanity checks on the keyring after the
+> child returns anyway.
 
 
-CIP testing did not find any problems here:
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.10.y
-
-6.6 passes our testing, too:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---Jdx0XYfleK5lv4lu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZuifggAKCRAw5/Bqldv6
-8sjAAKC4vLLVpztmbHeKinnoRlN7i1b8sACeOe7+LU7DCebu1KwuOo5fWelPPXI=
-=n0Hb
------END PGP SIGNATURE-----
-
---Jdx0XYfleK5lv4lu--
+> I'm conflicted on the best way to solve this problem, but I think we
+> need to fix this somehow as I believe the current behavior is broken
+> ...
 
