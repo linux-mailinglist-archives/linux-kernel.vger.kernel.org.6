@@ -1,198 +1,158 @@
-Return-Path: <linux-kernel+bounces-330520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E0C979F95
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:42:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE09979FC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3328B2855B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1001C218C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE789155303;
-	Mon, 16 Sep 2024 10:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C888153BF7;
+	Mon, 16 Sep 2024 10:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ozU29vl5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P782iKJW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ozU29vl5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P782iKJW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="gbV6jSE2"
+Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6656C154452;
-	Mon, 16 Sep 2024 10:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC53414F9FB;
+	Mon, 16 Sep 2024 10:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726483307; cv=none; b=sf34sP6Yq64Bko3Vbt+gI/GGt5Ne/OAVbEw1NPGW5ns+I1F97RdP80lSWmK8NvhWVB7CpQP8ujr0YtwBDccZ6V2+i6jVtlSZPr3Nf3z0nHQtzvYV24HiDbYmk73MaI6NLqaaRwOSSUghjn5pfx/e2Lp4HYgrXthlBsutu2uoKT4=
+	t=1726483840; cv=none; b=FJfeoMpEbD2IOEYMu/B725Div8On6Aa8Qiccpkq1dmYDtuVbb71vFuzWsK/ujkz2A6ZfAZeEwtV764twwwCCRoGl7NeQ5ToKH0unyNWsI8j6Q4rk1/ngq1mhQnvr2EtQAzsdT2ZylrTFyHDG6jlODW4ntLyXY2FaOqOwHoQ8Vbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726483307; c=relaxed/simple;
-	bh=+eAUe1ZWABJhNJlB37hWU1XZqWNeqT/0ac9DwLkeS34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dMyU6ufp2JHAHXlFaEgmxRrXnjBXzzq3MWd6hZn4+DXOd3mKA599NG9oXPWwuJVrHrrkKqAK6D0VxNVNmkCmuSmjRqeGTNP8WX1HZpPNC6pLVccRwmXDbgcYcXBRDISjjtDs4oLtHd8ALB6sZ2o7CUqKqRXdc8TTO+jdnPm5t+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ozU29vl5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P782iKJW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ozU29vl5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P782iKJW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 900CB21B89;
-	Mon, 16 Sep 2024 10:41:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726483303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p6N3aOGLH423G/wEEHTy7fM4jmCXgglLmwd1qlb5YIg=;
-	b=ozU29vl5gK1sNFAtjZDsHYPZJK3MaYwcT4LbyRWubGVvq3IL6rsQzi00/v97cSfvDQyR8r
-	iYxUXKHve+x1clM5OAz98G0mbZIDz4GuJMb0QLwx5X+92uYZDNhYKvWZ+sQYmGdm685VnH
-	F0PvcpWjzTT1KOLm9q1Ty1E9wdp9edQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726483303;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p6N3aOGLH423G/wEEHTy7fM4jmCXgglLmwd1qlb5YIg=;
-	b=P782iKJWrVmFxfPRrldNvRMyNYW7+9SgwWth7Boufeht3mUClyMS1Eb67YIPGcny3EeJKL
-	SGo6NYHrC9Ky5cDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ozU29vl5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=P782iKJW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726483303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p6N3aOGLH423G/wEEHTy7fM4jmCXgglLmwd1qlb5YIg=;
-	b=ozU29vl5gK1sNFAtjZDsHYPZJK3MaYwcT4LbyRWubGVvq3IL6rsQzi00/v97cSfvDQyR8r
-	iYxUXKHve+x1clM5OAz98G0mbZIDz4GuJMb0QLwx5X+92uYZDNhYKvWZ+sQYmGdm685VnH
-	F0PvcpWjzTT1KOLm9q1Ty1E9wdp9edQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726483303;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p6N3aOGLH423G/wEEHTy7fM4jmCXgglLmwd1qlb5YIg=;
-	b=P782iKJWrVmFxfPRrldNvRMyNYW7+9SgwWth7Boufeht3mUClyMS1Eb67YIPGcny3EeJKL
-	SGo6NYHrC9Ky5cDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80D6B13A91;
-	Mon, 16 Sep 2024 10:41:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OcxmH2cL6GZMaQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 16 Sep 2024 10:41:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1EB3FA08B3; Mon, 16 Sep 2024 12:41:39 +0200 (CEST)
-Date: Mon, 16 Sep 2024 12:41:39 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH v2] timekeeping: move multigrain timestamp floor handling
- into timekeeper
-Message-ID: <20240916104139.exqiayn2o7uniw2p@quack3>
-References: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org>
- <20240913112602.xrfdn7hinz32bhso@quack3>
- <bfc8fc016aa16a757f264010fdb8e525513379ce.camel@kernel.org>
+	s=arc-20240116; t=1726483840; c=relaxed/simple;
+	bh=oNw8Deyr6aFEIEOV8LMP0ghfVKW8akh1YqccHHry+DQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZEVvHxjvOY0eYpg6bNsY7OPjUdSMEmO0kRcfmxHY/MB74imiANMWITTY2W7Dzi5dZ7GVT0Fuj3q7GfZplZ3Rp+rIobA7/WPtEr7X3Ke+OTEZYmO8a/9OV+/IvLteFJKWKIavc2c+YJj6KJ3owjQ8XyTp3Vy9NGTaehtaU4a7Ogo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=gbV6jSE2; arc=none smtp.client-ip=81.200.124.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
+Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
+	by ksmg02.maxima.ru (Postfix) with ESMTP id 0CE481E0004;
+	Mon, 16 Sep 2024 13:44:04 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru 0CE481E0004
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
+	t=1726483444; bh=ThbJ6N0R8e00LokNP2VgWULnWOsZlMXMwlpzar1AU8c=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=gbV6jSE2Ssz1pyhMQKepO3iiL6sbXccEtWhqWaybBv62a4g5UyV/wrB5Nk+9Tdn4g
+	 KdEi5+Pr6fiCD5v1DtC4vXjDIqYeUFHvnYrJSqW0BLPCuSqVxEi6d441IHuy66AHxX
+	 n0RL8gEqmniCAW6OjaydzYguaYXeFXOjqz8DrMVcm3xpxhDyI6De3ne2+98UGo3zbG
+	 4Sj1251IHUb1ZP7uVAoKsGh23odgIrDL4wOpqy8ujwuckm/hxcRniZxDi0WWdRhcqj
+	 KHJ5S5p7kWH33JYtXnS4yDo18m+/+sH5Cbz9fp8DkTNrEhl2EqTjHdkhjdoqZRnQem
+	 D9/y0JR9ACMNw==
+Received: from ksmg02.maxima.ru (unknown [81.200.124.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg02.maxima.ru (Postfix) with ESMTPS;
+	Mon, 16 Sep 2024 13:44:03 +0300 (MSK)
+Received: from GS-NOTE-190.mt.ru (10.0.247.10) by mmail-p-exch02.mt.ru
+ (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Mon, 16 Sep
+ 2024 13:44:00 +0300
+From: Murad Masimov <m.masimov@maxima.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Murad Masimov <m.masimov@maxima.ru>, Harry Wentland
+	<harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira
+	<Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, "Pan, Xinhui"
+	<Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter
+	<daniel@ffwll.ch>, Alvin Lee <alvin.lee2@amd.com>, Sasha Levin
+	<sashal@kernel.org>, Chaitanya Dhere <chaitanya.dhere@amd.com>, Tom Chung
+	<chiahsuan.chung@amd.com>, Sohaib Nadeem <sohaib.nadeem@amd.com>, Hersen Wu
+	<hersenxs.wu@amd.com>, Wenjing Liu <wenjing.liu@amd.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Daniel
+ Wheeler <daniel.wheeler@amd.com>, Rodrigo Siqueira
+	<rodrigo.siqueira@amd.com>, Samson Tam <samson.tam@amd.com>
+Subject: [PATCH 6.1] drm/amd/display: Fix subvp+drr logic errors
+Date: Mon, 16 Sep 2024 13:43:23 +0300
+Message-ID: <20240916104325.1532-1-m.masimov@maxima.ru>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bfc8fc016aa16a757f264010fdb8e525513379ce.camel@kernel.org>
-X-Rspamd-Queue-Id: 900CB21B89
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
+ (81.200.124.62)
+X-KSMG-Rule-ID: 7
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187760 [Sep 16 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.5
+X-KSMG-AntiSpam-Envelope-From: m.masimov@maxima.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, maxima.ru:7.1.1;81.200.124.62:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg02.maxima.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.62, {DNS response errors}
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/16 05:22:00 #26594998
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Fri 13-09-24 08:01:28, Jeff Layton wrote:
-> On Fri, 2024-09-13 at 13:26 +0200, Jan Kara wrote:
-> > On Thu 12-09-24 14:02:52, Jeff Layton wrote:
-> > > +/**
-> > > + * ktime_get_real_ts64_mg - attempt to update floor value and return result
-> > > + * @ts:		pointer to the timespec to be set
-> > > + * @cookie:	opaque cookie from earlier call to ktime_get_coarse_real_ts64_mg()
-> > > + *
-> > > + * Get a current monotonic fine-grained time value and attempt to swap
-> > > + * it into the floor using @cookie as the "old" value. @ts will be
-> > > + * filled with the resulting floor value, regardless of the outcome of
-> > > + * the swap.
-> > > + */
-> > > +void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
-> > > +{
-> > > +	struct timekeeper *tk = &tk_core.timekeeper;
-> > > +	ktime_t offset, mono, old = (ktime_t)cookie;
-> > > +	unsigned int seq;
-> > > +	u64 nsecs;
-> > 
-> > So what would be the difference if we did instead:
-> > 
-> > 	old = atomic64_read(&mg_floor);
-> > 
-> > and not bother with the cookie? AFAIU this could result in somewhat more
-> > updates to mg_floor (the contention on the mg_floor cacheline would be the
-> > same but there would be more invalidates of the cacheline). OTOH these
-> > updates can happen only if max(current_coarse_time, mg_floor) ==
-> > inode->i_ctime which is presumably rare? What is your concern that I'm
-> > missing?
-> > 
-> 
-> My main concern is the "somewhat more updates to mg_floor". mg_floor is
-> a global variable, so one of my main goals is to minimize the updates
-> to it. There is no correctness issue in doing what you're saying above
-> (AFAICT anyway), but the window of time between when we fetch the
-> current floor and try to do the swap will be smaller, and we'll end up
-> doing more swaps as a result.
-> 
-> Do you have any objection to adding the cookie to this API?
+From: Alvin Lee <alvin.lee2@amd.com>
 
-No objection as such but as John said, I had also some trouble
-understanding what the cookie value is about and what are the constraints
-in using it. So if we can live without cookie, it would be a simplification
-of the API. If the cooking indeed brings noticeable performance benefit, we
-just need to document that the cookie is about performance and how to use
-it to get good performance.
+commit 8a0f02b7beed7b2b768dbdf3b79960de68f460c5 upstream.
 
-								Honza
+[Why]
+There is some logic error where the wrong variable was used to check for
+OTG_MASTER and DPP_PIPE.
+
+[How]
+Add booleans to confirm that the expected pipes were found before
+validating schedulability.
+
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Acked-by: Rodrigo Siqueira <rodrigo.siqueira@amd.com>
+Reviewed-by: Samson Tam <samson.tam@amd.com>
+Reviewed-by: Chaitanya Dhere <chaitanya.dhere@amd.com>
+Signed-off-by: Alvin Lee <alvin.lee2@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+[m.masimov@maxima.ru: In order to adapt this patch to branch 6.1
+only changes related to finding the SubVP pipe were applied
+as in 6.1 drr_pipe is passed as a function argument.]
+Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
+---
+ drivers/gpu/drm/amd/display/dc/dml/dcn32/dcn32_fpu.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn32/dcn32_fpu.c b/drivers/gpu/drm/amd/display/dc/dml/dcn32/dcn32_fpu.c
+index 85e0d1c2a908..4b0719392d28 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml/dcn32/dcn32_fpu.c
++++ b/drivers/gpu/drm/amd/display/dc/dml/dcn32/dcn32_fpu.c
+@@ -862,6 +862,7 @@ static bool subvp_drr_schedulable(struct dc *dc, struct dc_state *context, struc
+ 	int16_t stretched_drr_us = 0;
+ 	int16_t drr_stretched_vblank_us = 0;
+ 	int16_t max_vblank_mallregion = 0;
++	bool subvp_found = false;
+ 
+ 	// Find SubVP pipe
+ 	for (i = 0; i < dc->res_pool->pipe_count; i++) {
+@@ -873,10 +874,15 @@ static bool subvp_drr_schedulable(struct dc *dc, struct dc_state *context, struc
+ 			continue;
+ 
+ 		// Find the SubVP pipe
+-		if (pipe->stream->mall_stream_config.type == SUBVP_MAIN)
++		if (pipe->stream->mall_stream_config.type == SUBVP_MAIN) {
++			subvp_found = true;
+ 			break;
++		}
+ 	}
+ 
++	if (!subvp_found)
++		return false;
++
+ 	main_timing = &pipe->stream->timing;
+ 	phantom_timing = &pipe->stream->mall_stream_config.paired_stream->timing;
+ 	drr_timing = &drr_pipe->stream->timing;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.2
+
 
