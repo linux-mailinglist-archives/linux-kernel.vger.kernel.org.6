@@ -1,106 +1,76 @@
-Return-Path: <linux-kernel+bounces-330343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525F3979CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:36:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261CB979CE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 853D91C20BC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:36:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D064D1F23A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF4F1448C7;
-	Mon, 16 Sep 2024 08:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1B813EFFB;
+	Mon, 16 Sep 2024 08:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DU51Qo0I"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="Jo6dH85z"
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC175588E;
-	Mon, 16 Sep 2024 08:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EA413BC1E
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726475790; cv=none; b=B9qKZ3EJVVpSj3/K5iBdGxMAIoKGsAqIEdsnIFfzT15wSsFxfEzfPZNO3BJsBX3rFUHEAeq31MC2F4azcayUJQ1Fv1iP123X/wcgFYA6929oTSYwQxrDbvcwUuFBM4bQ+Gv+/JjzVdDcyDCj2XVw/8ChZMgYhZHF2k+De7V/t4I=
+	t=1726475901; cv=none; b=DgL1ccg30D7JWRI0ha8QwZRlxOOkb8zAwKfGNZqerP94GzyYINEhbhsjuCAYjIP68U/BS5sWMxmJrk3+NmjtLGOuSw5E8qILzqXHWH7DExJmvJGkWBTRwAYkjYmZVHeDfncKXFO3VNKUAY0GoO7HnqkhXYlcKQLDuG+0d/20X4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726475790; c=relaxed/simple;
-	bh=dl5Fjj5SFUWZt2QM0H3Nh3saRM/h63zGlLJDJwAn0h8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=miVFG/wMA6sc12jQ7jrnqvjJR0C1cLGUPYhJTRC9lVrbyFWeS6wSnRjaCzDRlMq6LCaM1eh7jHNt5EyL6vq23mJrdYwSAAhntxU1RUaRQYmDo87AeNIkKQuxTuqIvHV+bbrgyoEzJIbXbVX0aR6hlOoOB8sIIt3UJ09rvrC1XME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DU51Qo0I; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726475784;
-	bh=XuFgNe2g1nvtMH+06OaD4Ia//5rxVu0l9LKcP3JP4h0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DU51Qo0IdrrinUkyijQVyg+1vj/jB73Bo0VftLVyXrkxR+oKPLtHs6xfAAdEM18gM
-	 KIaq02VYoYIBDY2Qt5wp8j0RA6qvgvgclz24anvgG3BCB+J3Ppp1Q15dByG/V/rXI7
-	 RhDq7zKbcve6H2qxRp3EhhPwej7LnUl2bTfKlD0sa2J2gfxU3mOM2gRoUk7z5fNDGY
-	 pmqb6XMsbqLUdb/IuJ8mnaYM9lSECXu9ZnBV8osOZEbh0yV3tC3ug7UiFNptJxpuTl
-	 DPqeKxPPTnILcEwOron2WczTtHf7tZNsH3IMU6m5rVIGibuCETVFz/68JNX/rHTv9g
-	 fN5pWA7hQCn7A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6dYN43wMz4x7D;
-	Mon, 16 Sep 2024 18:36:23 +1000 (AEST)
-Date: Mon, 16 Sep 2024 18:36:22 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Keith Busch <kbusch@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the block tree
-Message-ID: <20240916183622.105641d8@canb.auug.org.au>
+	s=arc-20240116; t=1726475901; c=relaxed/simple;
+	bh=3f9bLd9PwryjScgQDzUs/haQ4ZJ5r0q83rdRMs/72HE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bHI+e71pVditFZctn4rrF9db39KfBUDw7B84F173XGTiFgfYMgTdiXcJAhgpKYbyHR+iLVpdRzhKjqMkhZjJxHy3FLiVQHcTTz/pLjGMJqAgk52H0RSGRtp+6v0+rhQc3A9Dlm4gmfcBrQ3Rc7XhlyoJC2sFaI2rycQiWdr3/mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=Jo6dH85z; arc=none smtp.client-ip=185.136.65.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20240916083809f4f439e014ab5d47c3
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 16 Sep 2024 10:38:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=3f9bLd9PwryjScgQDzUs/haQ4ZJ5r0q83rdRMs/72HE=;
+ b=Jo6dH85zJfwk8VUNVa+Fy5jyD5xLseSV8FH7INZcWn4opk73/+UGhtMmYmIzZS5JuLvfFx
+ NgtsmGqA4qEeVElWySNYH54HoKMIV55mQEgMCkEmximpoPF+NJSzdh5AkHaY3m+RZo7A8h4J
+ bqDu6UJ33aQUwPXYvglXnpr6w9pyJttfEnsbnFuFm7b3u7BQPJnE3UZjsLJoW3fRLlYKIUlw
+ Cf3hKvIVLQKuWGJqKit1AMYFVPwUceCNveueHK4Ao0SEzKAmWDQOLBzuDn+d62SBstvr56XB
+ Ry//7lqVIE1q96YzPpN8eUGZBD7FxRiQr/5XlaLf7mSqF1DFVdgO13Sw==;
+From: Diogo Ivo <diogo.ivo@siemens.com>
+To: diogo.ivo@tecnico.ulisboa.pt
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	jonathanh@nvidia.com,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	robh@kernel.org,
+	thierry.reding@gmail.com
+Subject: Re: [PATCH 0/2] arm64: tegra: add wp-gpio to P2957 board
+Date: Mon, 16 Sep 2024 09:38:03 +0100
+Message-ID: <20240916083803.12364-1-diogo.ivo@siemens.com>
+In-Reply-To: <kbz72jma3bj7dnfnvdjo6m5yqrvjwkvz2gtt6bxpezkslwt3kh@a7wqzkssdfvf>
+References: <kbz72jma3bj7dnfnvdjo6m5yqrvjwkvz2gtt6bxpezkslwt3kh@a7wqzkssdfvf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/66BZWF7FIUsx5Zn_.ckJFj5";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1320519:519-21489:flowmailer
 
---Sig_/66BZWF7FIUsx5Zn_.ckJFj5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Thierry,
 
-Hi all,
+Gentle ping on this topic.
 
-After merging the block tree, today's linux-next build (htmldocs)
-produced these warnings:
-
-block/blk-integrity.c:69: warning: Function parameter or struct member 'rq'=
- not described in 'blk_rq_map_integrity_sg'
-block/blk-integrity.c:69: warning: Excess function parameter 'q' descriptio=
-n in 'blk_rq_map_integrity_sg'
-block/blk-integrity.c:69: warning: Excess function parameter 'bio' descript=
-ion in 'blk_rq_map_integrity_sg'
-
-Introduced by commit
-
-  76c313f658d2 ("blk-integrity: improved sg segment mapping")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/66BZWF7FIUsx5Zn_.ckJFj5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbn7gYACgkQAVBC80lX
-0Gx76Qf9FE2/jvjTKruk0/8kcfvJ+GurBhFwXBLGVZ4AnhyRC09RzUCQthEB3Z7g
-vw4x9qNGeP53ASNAwanUWQwYxKJvJK33naQHvVrAnjshanxqG2x/wldskoeB5Ph7
-OaG56z4I+r9dj+p0HHYswjN0AaoqbHbOfE5RltPLC30IKc41JNAvsYhRnS+o+gMX
-GjEsaYIjxA5QJ/MfCi5g+Np4DC9Owsr5oywlWS7wKL4+k9HZu/BolRQ4V/WoCv6j
-nE+4YWS9ihKWPXd5LK5LcMlSjp2XEo1LEY30TQqR+U1BCuuwqIUxwnlzomCGWrk0
-6JSpLtGtQp1EZc4JbTWdNW3OMfDkPQ==
-=ZPub
------END PGP SIGNATURE-----
-
---Sig_/66BZWF7FIUsx5Zn_.ckJFj5--
+Thanks,
+Diogo
 
