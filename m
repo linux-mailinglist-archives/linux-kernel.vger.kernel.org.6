@@ -1,141 +1,95 @@
-Return-Path: <linux-kernel+bounces-330098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F39A9799B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:39:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBF09799B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F771F230D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 00:39:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0232831A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 00:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2806125;
-	Mon, 16 Sep 2024 00:39:16 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03242F52;
+	Mon, 16 Sep 2024 00:46:48 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9275C33FD;
-	Mon, 16 Sep 2024 00:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EA636B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 00:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726447156; cv=none; b=BVpbgpdu5v/w+EDuAYWtaVo6REgpi77msidA1zeNkPWMMxQ4yewO6R2Ar7q8+E1WccvrLVg+YCvAYk2ErAckr7CB/Z6xpC1/TRC5oTd5hQgG41V/03DR4zgwaNDfq+biwTxGwTzEhNis9wnWLmeqTdBXkjXJPRzGXmUehL1uBqA=
+	t=1726447608; cv=none; b=kVVQ7DDd4IDUypnNudy4yMe02RwZ+ocHRHqPTDrEbAPsNhOKkY/i2qK75OMdpfGzwbvdX9GAFXe62h8UtsuSRF/8D/B/lQi/DgRzehQ2a/Dcd94sRtTEUXv12QEPbInUBRR+/fSdre6Sdgb09e9wbc2CpcUrMv73BDfdxoWcHKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726447156; c=relaxed/simple;
-	bh=kEeOLLovFT4pOdm53DvzxP4C8corA25kyqKlihlz4AE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=V4egx3I4tNMu+6nsvd/uzta82K7EAxUdCd7UlJfpFNHYr/zVi9TSawYa749gj+98gV38cK+HE6wqzbODR7h2haM5Tnn1VOWm2OUrvbFllJbNRr/ONWeHb5beXTYncGa7Km35ba9Zv1MwXkCEWaLc8mzp7NwDZdNmoXMeiklYd54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 48G0chip073317;
-	Mon, 16 Sep 2024 09:38:43 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
- Mon, 16 Sep 2024 09:38:43 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 48G0ch68073314
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 16 Sep 2024 09:38:43 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <69e4014e-0a34-4fde-8080-4850a52b0a94@I-love.SAKURA.ne.jp>
-Date: Mon, 16 Sep 2024 09:38:42 +0900
+	s=arc-20240116; t=1726447608; c=relaxed/simple;
+	bh=Kj8AFoyZqUe74w0nZtLRjcnDA34VkrhiKAF/VJcvQjQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=knn4+z0ZHT+bgcUdG8rBXHhySkQvlGvKeqgCFp/16RkkEhI/G1B6LsBr5TtDN7n5TbFNUN3HCAgftyZI3R14mA1wPUCDtv8+RJ3XcbeWxfESO0/vJTq2yA+z6iQch6plV8DWmwwnYzUIxSXj+xezvT2iPL+/1oHYSJs1yc1KYqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0a54fb476so4133015ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 17:46:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726447606; x=1727052406;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwyjdXOUVlYdlwbeTWqF+oHpRNDQxsR1BZgZziSd9K8=;
+        b=N4DsuHBeqJK/I45nUTZMMahZuvE+CEmnDLw3kiVIJPVMPw7wbTYQHgteE4poVFPwHg
+         AqUnmh+CjCWLe3TosGI3TGtp8nhznfi9MkrMJ7LYH2K/G4IKBVl5bnem1ucxE0QTs906
+         cEKMweAjhFoNyMM91QcE+p+t9nZ1jOZPCKXivpKZ4DSvXHYIuvVM8BP6TS1iaF+bS7FA
+         2Ypx1mPR5HCwPP1aRTtNihMDLNLBvZzpmTID6RWRW4CchzsmSO9doPWi24UjBcGHqGgo
+         maDfoKeGQNnYYrXfZnH/H7Xstlkfuw5PDzutgd/g7VlxehMbymadbcS2xK6IcIQ0sHTA
+         MZaA==
+X-Gm-Message-State: AOJu0YwKZyMZCoJWGFDfoiC1zWD1MnhTviigSnzV7+6vf5c6oTG5eusN
+	C5zY+6vIcunhcPDOOkiEAkT5AsCneN6C8q3Dg73UW5+smxanGGrZskTHvK++rLeBri4KZDu7ea2
+	q+PfkbgdoBD22Cx96DLwy3479AJWDpdBJQ3nwKZKbnhwo8L8jvKt5ys0=
+X-Google-Smtp-Source: AGHT+IHL7vPBsa4v0938A8JtvaAYwCys6S+3YA27RjmSCbJ0sppqAVf5XOQ4cS7OAzrRxC9cCXWfWJYcx6kYz2nN3JYE8lVB8MI9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Paul Moore <paul@paul-moore.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com>
- <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:144e:b0:39b:3894:9298 with SMTP id
+ e9e14a558f8ab-3a0847cd5e8mr135920535ab.0.1726447606304; Sun, 15 Sep 2024
+ 17:46:46 -0700 (PDT)
+Date: Sun, 15 Sep 2024 17:46:46 -0700
+In-Reply-To: <00000000000002df770621bf81d9@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004c2375062231e807@google.com>
+Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference in fbcon_putcs
+From: syzbot <syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/09/14 0:28, Paul Moore wrote:
-> I find it somewhat amusing that you are complaining about the LSM
-> framework not accepting new LSMs in the same pull request where we are
-> adding a new LSM (IPE).  As a reminder, we have documented guidelines
-> regarding the addition of new LSMs:
->
-> https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
-(...snipped...)
-> While I have no intention to negatively impact out-of-tree LSMs,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-What I call "patent examination" is "New LSM Guidelines" section within
-that link. That section includes "here are a list of requirements for
-new LSM submissions:" and "The new LSM must be sufficiently unique", and
-out-of-tree LSMs which cannot satisfy it won't be able to become in-tree.
-If we apply this requirement to userspace program, this requirement means
-you are declaring that "postfix" (or anything except "sendmail") cannot
-become in-tree because "sendmail" is already in-tree. This is a clear
-intention of negatively impact out-of-tree LSMs. People have the right to
-use whatever subsets/alternatives. Even if a new LSM has were completely a
-subset of existing in-tree LSMs, people have the right to use such LSM.
+***
 
-While I consider that some of out-of-tree LSMs being unable to become in-tree
-is inevitable, the requirement that any LSM has to be built-in is a barrier
-for LSMs which cannot be built-in. The "static call" changes in this pull
-request is saying something like "any kernel code has to be built into vmlinux,
-for CONFIG_MODULES=y is harmful", similar to "any software which is not included
-in this distribution must not be run, for software which is not included in
-this distribution is harmful".
+Subject: BUG: unable to handle kernel NULL pointer dereference in fbcon_putcs
+Author: qianqiang.liu@163.com
 
-People have the right to install whatever userspace software / kernel modules
-they need. Making it difficult to use userspace software / kernel modules
-which the in-tree and built-in kernel code cannot provide is an abuse of
-dominant position, as well as removing CONFIG_MODULES=y support from the kernel.
+#syz test
 
-> My focus is on the upstream Linux kernel and ensuring that the upstream,
-> in-tree LSMs have the best framework possible to ensure their proper
-> operation and ease of development/maintenance.  While I have no
-> intention to negatively impact out-of-tree LSMs, I will not harm the
-> upstream code base solely to support out-of-tree LSMs.  Further, if
-> improvements to the upstream LSM framework are determined to harm
-> out-of-tree LSMs, that shall be no reason to reject the upstream
-> improvements.
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index 3f7333dca508..96c1262cc981 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -1284,7 +1284,7 @@ static void fbcon_putcs(struct vc_data *vc, const u16 *s, unsigned int count,
+ 	struct fbcon_display *p = &fb_display[vc->vc_num];
+ 	struct fbcon_ops *ops = info->fbcon_par;
+ 
+-	if (!fbcon_is_inactive(vc, info))
++	if (!fbcon_is_inactive(vc, info) && ops->putcs)
+ 		ops->putcs(vc, info, s, count, real_y(p, ypos), xpos,
+ 			   get_color(vc, info, scr_readw(s), 1),
+ 			   get_color(vc, info, scr_readw(s), 0));
 
-I have been asking you for a solution for "in-tree but not built-in" LSM
-(namely TOMOYO). You are refusing to provide a solution for the sake of
-"in-tree and built-in" LSMs. The "static call" changes fails to ensure that
-the upstream, in-tree TOMOYO to have the best framework. The "static call"
-changes makes the upstream, in-tree TOMOYO to have a worse framework than
-now.
-
-I'm not against "static call" changes itself as long as "in-tree but not
-built-in" LSMs can remain as easily usable as now.
-https://lkml.kernel.org/r/caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp
-is a recovery for avoid having worse framework than now.
-
-> We've discussed this many times before, obtaining stable magic numbers
-> (e.g. syscall numbers, LSM IDs, etc.) isn't possible until the
-> associated code appears in a tagged released from Linus' tree. 
-
-Think about a hardware device. A stable device ID (e.g. PCI device ID) is
-assigned as soon as a new hardware device is developed; whether a device
-driver for Windows, Linux, MacOS are provided by upstream OS manufactures
-is irrelevant.
-
-Stable LSM ID has to be a property of any LSM. Not allowing out-of-tree LSMs
-to have stable LSM ID makes it difficult to use userspace software which
-depends on LSM ID. Again, this is an abuse of dominant position.
-
-> I believe this policy is not only consistent with that
-> of previous LSM maintainers, but of the general Linux kernel as well.
-
-The Linux kernel is a servant for users and userspace programs.
-Your policy is based on "benefits for in-tree and built-in Linux kernel
-code". Your policy lacks "benefits for users and userspace programs".
+-- 
+Best,
+Qianqiang Liu
 
 
