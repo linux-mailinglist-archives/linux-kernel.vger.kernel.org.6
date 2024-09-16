@@ -1,142 +1,128 @@
-Return-Path: <linux-kernel+bounces-330521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2D3979F99
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE177979F84
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FC11C226CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:43:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CCEB1C23208
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC7C1514EE;
-	Mon, 16 Sep 2024 10:43:22 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EEB38DC7;
+	Mon, 16 Sep 2024 10:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dAK0DOnz"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC0013C67C;
-	Mon, 16 Sep 2024 10:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4753C14D29B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726483402; cv=none; b=AcaYDJP48LetIl/0hJvt8VZ4IVJh2a9sR6GruaLlDKtLyCHsoK+T/6KgppF/6O7lhe5BO1pjYeIsFx3vcviaIq+cwDiy8fdOQL9mlkdQahvUUY8jCP2QHThcM4MhXuEZcNNuo/+z39UEKqqG027ab4U6kn2H2eZYi8/w8PDlqEc=
+	t=1726483050; cv=none; b=qAKx7AU4c/sOfua63aGV8C8JDww2eNXoBAPfVVh2S1oUCtAqgbLYJwNKaH4uSq1NCx+WMx2Q04JN0cvgzsqTnyjZr0MNZlAX/VERnkOZX/sL0vUFpYorbt1szkOaAK3W/N1J1KTW5Ydq+mzf5AX0R2qLeen1wEhI+tzDiHLGunE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726483402; c=relaxed/simple;
-	bh=LjXZHDqq+VcA7YGoQC7ydES3vWftp0cOoDMUTSIpG60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQ0Si7oS6ixk0juxn90HCk2hK07ht7tdubEQ+rRSgTCFJ4SlauNoIARdRtbEhlbZyY5saxWHD3C13lUnRF10xcheTly5p5M+6o5YbDV4tNLRSpj9po7Xvi++TrNAr27vKtDQWFlcDVB3rKTzhwTLJirQ/9HsFtBw85q35xpUPZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 7AE501F0004B;
-	Mon, 16 Sep 2024 10:36:35 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id D6057A1E15C; Mon, 16 Sep 2024 10:36:33 +0000 (UTC)
-X-Spam-Level: 
-Received: from collins (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id AC280A1E154;
-	Mon, 16 Sep 2024 10:36:32 +0000 (UTC)
-Date: Mon, 16 Sep 2024 12:36:30 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: tony@atomide.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>,
-	Paul Kocialkowski <contact@paulk.fr>
-Subject: Re: [PATCH] ARM: dts: omap4-kc1: fix twl6030 power node
-Message-ID: <ZugKLiRZrrDpdI_W@collins>
-References: <20240915193527.1071792-1-andreas@kemnade.info>
+	s=arc-20240116; t=1726483050; c=relaxed/simple;
+	bh=e8EbIE7xK/lTkq0pT/z9NkUn0axjRZxvEdG/rOuuflY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=gEwl280jpHbaYNrymLCbfTNEDa+LjrY8sDjUyR3sFsWn3mRLPFZBHHO+5DIsmQGdySd23LPhXpNo9ozZl3vrYCNq/LTHjUMDXL7Q/CtevxFdhI1+Ib8n1KqTvIPO5nnZYBTkjeH8bUQUUgpN8g6QBs4XC4gnV8YYfqr3kIJiKac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dAK0DOnz; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so42196655e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 03:37:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726483047; x=1727087847; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCa5ueRIGjnyNr/huNPBEXq3DR7C/bUT92dAtDRDGj0=;
+        b=dAK0DOnzFa34uw4HJIh+vO9v+oL+0Aifkw6zB8ODAAXwBA1Ntj7FP4aJFcGJNqpp0x
+         bGRT0hczsSdBJRjGWJtp19uDGzdGKWko6tQYxsccDBxJjZn1BFWMH1eFC/wdSbGmQ8CE
+         160bRwQMqdM0bT4tTX1WnmU6Jhb9NYirRAQxMkOp4U7hMVqvMBkRJUZVsB7twO1mdzJ2
+         R6WxesZ9rfZVFago/9fUOZQmeP5gyAZw6hD6Ch1FvQTOEhGS1O8qB2b/tNUDmm07Cgkg
+         rwJ90/Ym/PqSoKbD5hyZGpjNtxlGP7Bv9zes3S7v1dKbDRHOy28tos2cRZzDqp5vNeGE
+         pprQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726483047; x=1727087847;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCa5ueRIGjnyNr/huNPBEXq3DR7C/bUT92dAtDRDGj0=;
+        b=lL6lwd4PDyGJFA9eaFH/zTMnva1nXW80BVT6Q2LYpBqfPc/2Z+2BWfZCuC0fwJLT9/
+         F7OK5l0ajrDtmi2RhKBfuvwF+mRft7IvnQMeVu4Srq275GiNqjTcj7tCGiq02rBrHiKx
+         YJHbsvaQNgIumvRENXSOVsuNSWy7GfbnIDH+BurLbZWMhhVj9IwlejgBbiR/E3WfN+/N
+         b5sQBKNuVMeOBAWBLsRpDrSJpMCIA2O9cKtF3p7UoK4KpjIQNYG01eRs/zpgS7PjzgNa
+         9pOIsHXRIck9KEw+gD7fKHj+qcc8+Idxa/qpKu5T4z3qziB30OKOcjr/h/tPtM8e8AY4
+         SnrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQDHnltMOy8IPUpzEzzfgvQf/4OUcIRiw1v+NPyMiZ12ga/EG7I8OOyg3SPJ4i3MOGBheoXuw3l5VN6L8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0c0sm/CzRjseAcA+46svx4D4paAXG9jZjgAS/SEBcJKnhEOTG
+	j+WXiOHS5QlYx7yHLG/mE9+wMeEUxPV/PVSyrRpufORbZotSJf/R
+X-Google-Smtp-Source: AGHT+IFxvPDIeIHJoeU66/O4f5oN/yiQmU3Kh54cHdZxg+b9cYP8oIDNBU4Pjc+zr6fZbV4dQgDr/A==
+X-Received: by 2002:a05:600c:4fc2:b0:42c:af2a:dcf4 with SMTP id 5b1f17b1804b1-42cdb56ae3dmr89967765e9.27.1726483047185;
+        Mon, 16 Sep 2024 03:37:27 -0700 (PDT)
+Received: from wheatley.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b055018sm107029575e9.10.2024.09.16.03.37.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 03:37:26 -0700 (PDT)
+Received: from wheatley.brq.redhat.com (wheatley.k8r.cz [127.0.0.1])
+	by wheatley.localdomain (Postfix) with ESMTP id 0AAF424B2A4C;
+	Mon, 16 Sep 2024 12:37:26 +0200 (CEST)
+From: Martin Kletzander <nert.pinx@gmail.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/resctrl: Avoid overflow in MB settings in bw_validate()
+Date: Mon, 16 Sep 2024 12:37:13 +0200
+Message-ID: <f828f3177982a9cfe803d2aa8eb7602b70fcba50.1726482307.git.nert.pinx@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0EOYwvdTGuWUqxoA"
-Content-Disposition: inline
-In-Reply-To: <20240915193527.1071792-1-andreas@kemnade.info>
+Content-Transfer-Encoding: 8bit
 
+When resctrl is mounted with the "mba_MBps" option the default (maximum)
+bandwidth is the maximum unsigned value for the type.  However when
+using the same value that already exists in the schemata file it is then
+rounded up to the bandwidth granularity and overflows to a small number
+instead, making it difficult to reset memory bandwidth allocation value
+back to its default.
 
---0EOYwvdTGuWUqxoA
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Since the granularity and minimum bandwidth are not used when the
+software controller is used (resctrl is mounted with the "mba_MBps"),
+skip the rounding up as well and return early from bw_validate().
 
-Hi Andreas,
+Signed-off-by: Martin Kletzander <nert.pinx@gmail.com>
+---
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Le Sun 15 Sep 24, 21:35, Andreas Kemnade a =C3=A9crit :
-> dtbs_check was moaning about twl6030-power, use the standard property
-> instead.
-> Apparently that twl6030 power snippet slipped in without the
-> corresponding driver. Now it is handled by the standard property.
+diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+index 50fa1fe9a073..7e6014176a29 100644
+--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
++++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+@@ -48,8 +48,11 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+ 		return false;
+ 	}
+ 
+-	if ((bw < r->membw.min_bw || bw > r->default_ctrl) &&
+-	    !is_mba_sc(r)) {
++	/* Nothing else to do if software controller is enabled */
++	if (is_mba_sc(r))
++		return true;
++
++	if (bw < r->membw.min_bw || bw > r->default_ctrl) {
+ 		rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
+ 				    r->membw.min_bw, r->default_ctrl);
+ 		return false;
+-- 
+2.46.0
 
-Thanks for the fix! LGTM.
-
-Reviewed-by: Paul Kocialkowski <contact@paulk.fr>
-
-Cheers,
-
-Paul
-
-> CC: Paul Kocialkowski <contact@paulk.fr>
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  arch/arm/boot/dts/ti/omap/omap4-kc1.dts | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/ti/omap/omap4-kc1.dts b/arch/arm/boot/dts/=
-ti/omap/omap4-kc1.dts
-> index c6b79ba8bbc91..df874d5f5327f 100644
-> --- a/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
-> +++ b/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
-> @@ -112,11 +112,7 @@ twl: twl@48 {
->  		reg =3D <0x48>;
->  		/* IRQ# =3D 7 */
->  		interrupts =3D <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* IRQ_SYS_1N cascaded=
- to gic */
-> -
-> -		twl_power: power {
-> -			compatible =3D "ti,twl6030-power";
-> -			ti,system-power-controller;
-> -		};
-> +		system-power-controller;
->  	};
->  };
-> =20
-> --=20
-> 2.39.2
->=20
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expertise in multimedia, graphics and embedded hardware support with Linux.
-
---0EOYwvdTGuWUqxoA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmboCi4ACgkQhP3B6o/u
-lQy80Q/+K61+Btb+NzT9ug0gX53/mlmAYW3LI2hAjlVUf/yWar5eirKSTJV+5AGi
-DpIKlROtOoiyGd2ikz6yInLYYc5IdDJHXuLsxJZB6+mLdF2zKm2O+lnMtW8f0LG/
-Xsyn7/qiGClG5a+tKn+RHKB4oHp3/xVT/u+fLJUZpwB35FuVw8ZK+Tc82Ax+QROH
-rFC/mdZQQJKHLkRnptunZlDJcOmbXDAzGCoSccuat79KUVEPIVQg/CjNt45xaDDy
-xUdKfjiBNcMfv6Egpk1BWtlheQeAVk2kIV7E8MfPtPQAWdBQiKwcTfbx6kur3zqC
-jE/AguUvb6uZsObqEBG9Z9YkOfMccK3ZLyCYH1AF8J0oypbfooZF4qkJpchA8gEy
-WpnPVkkgsrGBpzkZ2jXXj+Jx1jYxbVCfeVVh/uzw24ziwXr436DUVZWvpdYrFXvQ
-u2JX/4o7ELverZfWLAd42FqY/YRcn11Ajw7yLUNjz9hXhfGbz3E8SNYBt28+FrHx
-A03LvZN+FhANl+ZgPYtzCqg3tPvqUNrZoFycYscDD0xbpBLsO9GnwvFn5nvJePds
-oMrFIqO/tI8CRr1taY15twxFmYo3am3pM0FLhDl9DNa/6hEHU9vnE5jVAA3a4nHu
-fuO8Wxh7RKeStBgCxYmB3hD/Y3jX7w89+ohVYbobYIhTic78THs=
-=ihYs
------END PGP SIGNATURE-----
-
---0EOYwvdTGuWUqxoA--
 
