@@ -1,120 +1,186 @@
-Return-Path: <linux-kernel+bounces-330140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CB9979A3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:59:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8236979A37
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3881283AC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 03:59:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12F351C21F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 03:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3711CF93;
-	Mon, 16 Sep 2024 03:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="b9uVfDF0"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1AB1CA85;
-	Mon, 16 Sep 2024 03:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E303D1BDC3;
+	Mon, 16 Sep 2024 03:59:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52FB17C8D;
+	Mon, 16 Sep 2024 03:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726459186; cv=none; b=i3aNkO7G5mNYM99cW61693c5fSKfjzEiMIeRP+UUJwkjSdiC8cpNzudhvJq37TjK5avQz7cmdNW11I90kRH95hEW3CJSuppgB6/kguVkzuV6UlLaDCYL/p6Li15Bjv4ohvt74DYRJgviS4gA6fsRGOHWUAbpuSSwaHGN2J5vOc0=
+	t=1726459152; cv=none; b=GKlSBlFQYWtAJ6tMh64y9zOPR3BjADW2GTjQD7KEI2wOeOC+HLDwPaQfaU1x/RLiV1/lDm7av8TkQlxnmhj6206Ru+B6rWrvwPzWcL6rJtYxyDejxDsn9VRgvtWurKqIyoFLcnu7pOOiDu0YP2WorT3ILwXsTK8dpLifKsNmrAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726459186; c=relaxed/simple;
-	bh=Jm9CVHT6Nki6sfPskZNpOtxETbbWb6rDe8kRKEGe3m0=;
+	s=arc-20240116; t=1726459152; c=relaxed/simple;
+	bh=uJQPleVZwAlnSKL/KeNGM617WQ91uCTrqknJ5n28PEI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NzLTsKVxp0XSWwSh6cQrNOvaXRN7xDzsjMBKti2IKPFUVtYdD6ilWYg5EvHBXWEtPJ16X5pPhfGPWWJqtFqr/C7A/RJuamdQ/9pxc9hA3kpK8KXmnb747RgQfGtP9J08TX+dvTnjNjXto3mcvHm+IrZMS+TpuzDAWyvpFBbS+rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=b9uVfDF0; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=mj2XNLHRDudyI5E50DFBA5B0CTYLSBZ5eydMr4cy/Jo=;
-	b=b9uVfDF0Npalzi0Nsul2KQn6zyiSzgHNpB9pId3AU3ofKAf3Cee/EJBPbZJI3g
-	wZOzgC0cuZpgMegl2gPWXUnrHPD7QTF8sV6TTeJX4Q+oLhm79XeOZY1Lsf4fZrcH
-	uA/JpozC90+m4m+RkPG8nphIBC5LoM2665qPmLV7HZTaw=
-Received: from [10.79.243.159] (unknown [113.57.237.78])
-	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wDnb1LMrOdm2ADKBg--.14234S2;
-	Mon, 16 Sep 2024 11:58:04 +0800 (CST)
-Message-ID: <d0daa272-91ac-4e02-9b07-2d3141c3b7de@163.com>
-Date: Mon, 16 Sep 2024 11:58:04 +0800
+	 In-Reply-To:Content-Type; b=YUKN71Z7XzePpVlHHI+/p2jwSnzxWdNKpnKK6zqdJf7W/BCnwhAVf6qg9E7tmNP+0Nb4twoqnZT2NM865YJ+vEI7a1FdwAZnMqreX5GOWWwoucdoJyuvCHVk5FRBZnhEzQPPWyxvGNez4qcHzP9NsGjXIC+r0aiv7pfXJZpNPx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 748C91476;
+	Sun, 15 Sep 2024 20:59:38 -0700 (PDT)
+Received: from [10.162.42.11] (e116581.arm.com [10.162.42.11])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DCB63F71A;
+	Sun, 15 Sep 2024 20:59:02 -0700 (PDT)
+Message-ID: <e497c022-549f-4adf-83f8-8f8c54d7c998@arm.com>
+Date: Mon, 16 Sep 2024 09:28:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: [PATCH 0/3] Add initial support for Canaan Kendryte K230 pinctrl
-To: Inochi Amaoto <inochiama@gmail.com>, linus.walleij@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- conor@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- jesse@rivosinc.com, cyy@cyyself.name, inochiama@outlook.com,
- jszhang@kernel.org, kevin.z.m@hotmail.com
-References: <ZubtZKlxqejnCFx_@jean.localdomain>
- <qecfx4gepop65xivvnk2w7waikvadrl2bp4evyehp4kgaegsdp@dmluqpj3xune>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
+To: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org, oleg@redhat.com
+Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
+ ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
+ Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
+ aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sj@kernel.org, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org
+References: <20240822121415.3589190-1-dev.jain@arm.com>
+ <20240822121415.3589190-2-dev.jain@arm.com>
+ <714f8eb4-b226-48f6-ab0d-75bdfbf83364@linuxfoundation.org>
+ <42d0fa4b-eb67-42fd-a8e1-05d159d0d52f@arm.com>
+ <806e4be0-4b1f-4818-806f-a844d952d54e@arm.com>
+ <fff2b685-a7a5-4260-a293-f2abf55d9ce4@linuxfoundation.org>
+ <514713eb-235c-40ee-8c25-f1f3e1ca7f7a@arm.com>
+ <d5dc1bd9-4473-405f-99fc-192691f41c4f@linuxfoundation.org>
+ <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
+ <fcdbd8bc-9986-497e-8de4-86d3e619ca73@linuxfoundation.org>
+ <03c5b10d-b81c-4074-9c27-8ffc8c7fc84a@arm.com>
+ <cb2f88e0-8e31-43a0-a5ea-03f0ab05417e@linuxfoundation.org>
 Content-Language: en-US
-From: Ze Huang <18771902331@163.com>
-In-Reply-To: <qecfx4gepop65xivvnk2w7waikvadrl2bp4evyehp4kgaegsdp@dmluqpj3xune>
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <cb2f88e0-8e31-43a0-a5ea-03f0ab05417e@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDnb1LMrOdm2ADKBg--.14234S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AFW3AF4DXF18tw1DJFWkWFg_yoW8trWxpw
-	4fCF9IkF17Gr4fJFWftwn5WFyavan3Jr1jg3Waq347WF43ZFyDGrnxGFW8Xr4DGr47Wr4j
-	vr45W348u3W5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRCkskUUUUU=
-X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJw5comXAn1RRvAAAsU
 
 
-On 9/16/24 6:56 AM, Inochi Amaoto wrote:
-> On Sun, Sep 15, 2024 at 10:21:24PM GMT, Ze Huang wrote:
->> This patch series introduces support for the pinctrl driver of the Canaan
->> K230 SoC. The K230 SoC features 64 IO pins, each of which can be configured
->> for up to five different functions.
->> 							
->> The controller manages the entire pin configuration and multiplexing
->> through a single register, which control features such as schmitt trigger,
->> drive strength, bias pull-up/down, input/output enable, power source, and
->> mux mode.
+On 9/9/24 23:24, Shuah Khan wrote:
+> On 9/8/24 23:16, Dev Jain wrote:
 >>
->> The changes have been tested on the K230 development board.
->> 							
->> The pin function definition can be found here [1], and most of the DTS data
->> was converted from the vendor's code [2].
+>> On 9/7/24 01:29, Shuah Khan wrote:
+>>> On 9/4/24 23:56, Dev Jain wrote:
+>>>>
+>>>> On 9/4/24 22:35, Shuah Khan wrote:
+>>>>> On 9/3/24 22:52, Dev Jain wrote:
+>>>>>>
+>>>>>> On 9/4/24 03:14, Shuah Khan wrote:
+>>>>>>> On 8/30/24 10:29, Dev Jain wrote:
+>>>>>>>>
+>>>>>>>> On 8/27/24 17:16, Dev Jain wrote:
+>>>>>>>>>
+>>>>>>>>> On 8/27/24 17:14, Shuah Khan wrote:
+>>>>>>>>>> On 8/22/24 06:14, Dev Jain wrote:
+>>>>>>>>>>> Rename sigaltstack to generic signal directory, to allow 
+>>>>>>>>>>> adding more
+>>>>>>>>>>> signal tests in the future.
+>>>>>>>>>>
+>>>>>>>>>> Sorry - I think I mentioned I don't like this test renamed. 
+>>>>>>>>>> Why are you sending
+>>>>>>>>>> this rename still included in the patch series?
+>>>>>>>>>
+>>>>>>>>> I am not renaming the test, just the directory. The directory 
+>>>>>>>>> name
+>>>>>>>>> is changed to signal, and I have retained the name of the test -
+>>>>>>>>> sas.c.
+>>>>>>>>
+>>>>>>>> Gentle ping: I guess there was a misunderstanding; in v5, I was
+>>>>>>>> also changing the name of the test, to which you objected, and
+>>>>>>>> I agreed. But, we need to change the name of the directory since
+>>>>>>>> the new test has no relation to the current directory name,
+>>>>>>>> "sigaltstack". The patch description explains that the directory
+>>>>>>>> should be generically named.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Right. You are no longer changing the test name. You are still
+>>>>>>> changing the directory name. The problem I mentioned stays the
+>>>>>>> same. Any fixes to the existing tests in this directory can no
+>>>>>>> longer auto applied to stables releases.
+>>>>>>
+>>>>>> I understand your point, but commit baa489fabd01 (selftests/vm: 
+>>>>>> rename
+>>>>>> selftests/vm to selftests/mm) is also present. That was a lot 
+>>>>>> bigger change;
+>>>>>> sigaltstack contains just one test currently, whose fixes 
+>>>>>> possibly would have
+>>>>>> to be backported, so I guess it should not be that much of a big 
+>>>>>> problem?
+>>>>>>
+>>>>>>>
+>>>>>
+>>>>> So who does the backports whenevenr something changes? You are adding
+>>>>> work where as the automated process would just work without this
+>>>>> change. It doesn't matter if there is another test that changed
+>>>>> the name.
+>>>>>
+>>>>>>> Other than the desire to rename the directory to generic, what
+>>>>>>> other value does this change bring?
+>>>>>>
+>>>>>> Do you have an alternative suggestion as to where I should put my 
+>>>>>> new test then;
+>>>>>> I do not see what is the value of creating another directory to 
+>>>>>> just include
+>>>>>> my test. This will unnecessarily clutter the selftests/ directory 
+>>>>>> with
+>>>>>> directories containing single tests. And, putting this in 
+>>>>>> "sigaltstack" is just
+>>>>>> wrong since this test has no relation with sigaltstack.
+>>>>>>
+>>>>>
+>>>>> If this new test has no relation to sigaltstack, then why are you 
+>>>>> changing
+>>>>> and renaming the sigaltstack directory?
+>>>>
+>>>> Because the functionality I am testing is of signals, and signals 
+>>>> are a superset
+>>>> of sigaltstack. Still, I can think of a compromise, if semantically 
+>>>> you want to
+>>>> consider the new test as not testing signals, but a specific 
+>>>> syscall "sigaction"
+>>>> and its interaction with blocking of signals, how about naming the 
+>>>> new directory "sigaction"?
+>>>>> Adding a new directory is much better
+>>>>> than going down a path that is more confusing and adding backport 
+>>>>> overhead.
+>>>>>
+>>>
+>>> Okay - they are related except that you view signalstack as a subset
+>>> of signals. I saw Mark's response as well saying sigaction isn't
+>>> a good name for this.
+>>>
+>>> Rename usually wipe out git history as well based on what have seen
+>>> in the past.
+>>>
+>>> My main concern is backports. Considering sigstack hasn't changed
+>>> 2021 (as Mark's email), let's rename it.
+>>>
+>>> I am reluctantly agreeing to the rename as it seems to make sense
+>>> in this case.
 >>
->> Link: https://developer.canaan-creative.com/k230/dev/_downloads/a53655a81951bc8a440ae647be286e75/K230_PINOUT_V1.1_20230321.xlsx [1]
->> Link: https://github.com/kendryte/k230_sdk/blob/main/src/little/uboot/arch/riscv/dts/k230_canmv.dts [2]
->>
->> Ze Huang (3):
->>    dt-bindings: pinctrl: Add support for canaan,k230 SoC
->>    pinctrl: canaan: Add support for k230 SoC
->>    riscv: dts: canaan: Add k230's pinctrl node
->>
->>   .../bindings/pinctrl/canaan,k230-pinctrl.yaml | 128 ++++
->>   arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi  | 318 +++++++++
->>   arch/riscv/boot/dts/canaan/k230-pinctrl.h     |  18 +
->>   arch/riscv/boot/dts/canaan/k230.dtsi          |   2 +
->>   drivers/pinctrl/Kconfig                       |  10 +
->>   drivers/pinctrl/Makefile                      |   1 +
->>   drivers/pinctrl/pinctrl-k230.c                | 674 ++++++++++++++++++
->>   7 files changed, 1151 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
->>   create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
->>   create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.h
->>   create mode 100644 drivers/pinctrl/pinctrl-k230.c
->>
->> -- 
->> 2.46.1
-> You should send your patched as a thread. I think you
-> forgot to set (or set wrong) in-reply-to?
-
-Thank you for pointing that out. I apologize for the oversight. I will
-resend the patch series as a thread and ensure that the in-reply-to headers
-are set correctly.
-
-Thank you for your patience.
-
+>> Thanks! I guess there is no update required from my side, and you can
+>> pull this series?
+>>>
+>
+> I can pull this with x86v maintainer ack.
+>
+> Or to go through x86 tree:
+>
+> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+>
+>
+Gentle ping, adding all x86 maintainers and the x86 list, in case they 
+missed.
 
