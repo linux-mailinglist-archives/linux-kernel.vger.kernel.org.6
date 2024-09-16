@@ -1,154 +1,95 @@
-Return-Path: <linux-kernel+bounces-330559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D18597A028
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:20:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF8AF97A02F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3582F283636
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:20:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8950C28367A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E77153824;
-	Mon, 16 Sep 2024 11:19:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BAD13A89B;
-	Mon, 16 Sep 2024 11:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E439153BF7;
+	Mon, 16 Sep 2024 11:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="LtE70Y6o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D540414A62E;
+	Mon, 16 Sep 2024 11:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726485594; cv=none; b=o2doxUmiul2dwQlkVcKnyJ8Isn8XdOJ6/myT4BrbsADvearY3iD7s/9aCpz4q/pHTR++a/dEjxJQ3ThYz/qZMliGI2R5II6ZpsS9rBzPXWw7WGjJzqUxVp9DEytfZHn1hIm7/B9Kmi8dgymDISJ8/v09JNgQOqz6Lwc2N0pREF4=
+	t=1726485844; cv=none; b=YCoOmPSCo7qtUP6vJGKBh1iR+w5BgJS/mugt3Z70oPsMBBlLfL5u/+VWsb2cA3ju3ga1vFS3yAL334dHLj+tSE/cTbWuKYELr86tALwAUwlNe0yvjds1B8aVOXsy3bAohCAybPD9eCQnM9NXIjtCLTxXJcju4Jbc7tIVcubVgg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726485594; c=relaxed/simple;
-	bh=ZoK3q31s4/59pAlwuI5842tk/+O0v/TuLdfdgn6gGvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eI6g2yfw1KN4J6AwipEm+TpAGd2U/ZUUeNscu0pJqL1jNkFhCeCj3tKHe9gKGPJBLCu8ck3fWEHZrz5r4tRVu7dVoVlQqnP5zjM0abNw2GA9F8CL+2Y3sCleJiqnnE2XjKvuxDFitavn75tAPl0Yu8r2/RXcrFN+6rwK6boORmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4991311FB;
-	Mon, 16 Sep 2024 04:20:21 -0700 (PDT)
-Received: from [10.57.76.90] (unknown [10.57.76.90])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF9533F64C;
-	Mon, 16 Sep 2024 04:19:48 -0700 (PDT)
-Message-ID: <0b748c7d-0800-4352-97b9-4940f115cec9@arm.com>
-Date: Mon, 16 Sep 2024 12:19:46 +0100
+	s=arc-20240116; t=1726485844; c=relaxed/simple;
+	bh=Wz135zrKOqcehDlCtIoMWVe0zViljMgxjrKPTo1q+s4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=neB2JPED4cIaECCWxAnMhBMB3gi8q2QTUg/LLZENDJqWbkUgST8/6R5/AbX2NAPoM5vIn7fT8RgHPViGgote1rUGWxqfSqo1fjfCbMvrfEdiBPmzok+pv0hZxVhkZEfeO51v6frLc/8sa2mZ6oHYCJmYOLJ+eeXSZR1vCtEuYI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=LtE70Y6o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F73C4CEC7;
+	Mon, 16 Sep 2024 11:24:02 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="LtE70Y6o"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1726485839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9p2M90j/wEeRkSmvHw/p+Br0CA14kYcSjCfs9P4fkC8=;
+	b=LtE70Y6oDQq0NSQ2Rb0nSKz4CWfcF6pa9zn0turKfHnFLij4UWPN/1W9pORiFQfp8As4Dv
+	Q8nyjZx844X3t5HnLgdkwKP11yLWUYxGJyToCqzx1ATTaomLTdo+SA2+1ZnkO5hclYvLMV
+	nDzfB6/MBNiktnkXOxEBEbTvjVz0Ot0=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id bcbeea86 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 16 Sep 2024 11:23:58 +0000 (UTC)
+Date: Mon, 16 Sep 2024 13:23:56 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
+Message-ID: <ZugVTNJT9SVBOxvI@zx2c4.com>
+References: <20240913130544.2398678-1-hca@linux.ibm.com>
+ <20240913130544.2398678-8-hca@linux.ibm.com>
+ <ZuRWmJTWqmD92D8d@zx2c4.com>
+ <ZuRYoVIrg28kBKqb@zx2c4.com>
+ <20240913173206.30385-C-hca@linux.ibm.com>
+ <ZuSRKLFdYI1gCHh9@zx2c4.com>
+ <20240914174246.8394-A-hca@linux.ibm.com>
+ <Zuf1oYveC0rryg_6@zx2c4.com>
+ <20240916110108.20933-A-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] drm/panthor: record current and maximum device
- clock frequencies
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <20240913124857.389630-1-adrian.larumbe@collabora.com>
- <20240913124857.389630-3-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240913124857.389630-3-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240916110108.20933-A-hca@linux.ibm.com>
 
-On 13/09/2024 13:42, Adrián Larumbe wrote:
-> In order to support UM in calculating rates of GPU utilisation, the current
-> operating and maximum GPU clock frequencies must be recorded during device
-> initialisation, and also during OPP state transitions.
+On Mon, Sep 16, 2024 at 01:01:08PM +0200, Heiko Carstens wrote:
+> Hi Jason,
 > 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-> ---
->  drivers/gpu/drm/panthor/panthor_devfreq.c | 18 +++++++++++++++++-
->  drivers/gpu/drm/panthor/panthor_device.h  |  6 ++++++
->  2 files changed, 23 insertions(+), 1 deletion(-)
+> > On Sat, Sep 14, 2024 at 07:42:46PM +0200, Heiko Carstens wrote:
+> > > Please feel free to change the code in whatever way you like.
+> > > If you prefer separate patches, I will provide them.
+> > 
+> > Just wanted to make sure you saw https://lore.kernel.org/all/20240914231241.3647749-1-Jason@zx2c4.com/
 > 
-> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> index c6d3c327cc24..9d0f891b9b53 100644
-> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
-> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> @@ -62,14 +62,20 @@ static void panthor_devfreq_update_utilization(struct panthor_devfreq *pdevfreq)
->  static int panthor_devfreq_target(struct device *dev, unsigned long *freq,
->  				  u32 flags)
->  {
-> +	struct panthor_device *ptdev = dev_get_drvdata(dev);
->  	struct dev_pm_opp *opp;
-> +	int err;
->  
->  	opp = devfreq_recommended_opp(dev, freq, flags);
->  	if (IS_ERR(opp))
->  		return PTR_ERR(opp);
->  	dev_pm_opp_put(opp);
->  
-> -	return dev_pm_opp_set_rate(dev, *freq);
-> +	err = dev_pm_opp_set_rate(dev, *freq);
-> +	if (!err)
-> +		ptdev->current_frequency = *freq;
-> +
-> +	return err;
->  }
->  
->  static void panthor_devfreq_reset(struct panthor_devfreq *pdevfreq)
-> @@ -130,6 +136,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  	struct panthor_devfreq *pdevfreq;
->  	struct dev_pm_opp *opp;
->  	unsigned long cur_freq;
-> +	unsigned long freq = ULONG_MAX;
->  	int ret;
->  
->  	pdevfreq = drmm_kzalloc(&ptdev->base, sizeof(*ptdev->devfreq), GFP_KERNEL);
-> @@ -161,6 +168,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  		return PTR_ERR(opp);
->  
->  	panthor_devfreq_profile.initial_freq = cur_freq;
-> +	ptdev->current_frequency = cur_freq;
->  
->  	/* Regulator coupling only takes care of synchronizing/balancing voltage
->  	 * updates, but the coupled regulator needs to be enabled manually.
-> @@ -204,6 +212,14 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  
->  	dev_pm_opp_put(opp);
->  
-> +	/* Find the fastest defined rate  */
-> +	opp = dev_pm_opp_find_freq_floor(dev, &freq);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +	ptdev->fast_rate = freq;
-> +
-> +	dev_pm_opp_put(opp);
-> +
->  	/*
->  	 * Setup default thresholds for the simple_ondemand governor.
->  	 * The values are chosen based on experiments.
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> index a48e30d0af30..2109905813e8 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -184,6 +184,12 @@ struct panthor_device {
->  
->  	/** @profile_mask: User-set profiling flags for job accounting. */
->  	u32 profile_mask;
-> +
-> +	/** @current_frequency: Device clock frequency at present. Set by DVFS*/
-> +	unsigned long current_frequency;
-> +
-> +	/** @fast_rate: Maximum device clock frequency. Set by DVFS */
-> +	unsigned long fast_rate;
->  };
->  
->  /**
+> Yes, looks good to me. I just gave it also a quick test.
+> 
+> FWIW, I think the tags for the commit message should be
+> 
+> Co-developed-by: Heiko Carstens <hca@linux.ibm.com>
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
 
+Thanks, fixed.
 
