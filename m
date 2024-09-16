@@ -1,226 +1,160 @@
-Return-Path: <linux-kernel+bounces-330970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2738E97A69D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:20:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9718C97A69F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F14B1F21804
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:20:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F3D328C3FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260E915CD4A;
-	Mon, 16 Sep 2024 17:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ECA15B12B;
+	Mon, 16 Sep 2024 17:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5LI7bwtq"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2083.outbound.protection.outlook.com [40.107.94.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6jCs0jK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF1915C142
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 17:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726507196; cv=fail; b=p8/k5+j71nLwWufKiB5UWjulA7wmravuR5T8mi1k+faC5ehalVbA3pAMsiHQgu/lw5Ge/1foaUVVqt+uZerAkMI/q+jZm4DX6MCtxH6SOk+MMkQ4ch4t/B8iXvFXhGr4HlafwWmS2MjWGnbKTKDzhep/6aulwTRN8jT44GriXxw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726507196; c=relaxed/simple;
-	bh=p5Xn6GTMlt948KLVxqs71DXSceiULpCiyDI7/NrUtn4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WVsPDg2iiDKWJYqfKTx3H1QqfM5GCXF08vwxioUcq+1/7HChY6KnGA7UOVl8jedZ182dORIYfTicKySeOhQ+YVLePbIB1QHOXQ5mRrScpgi2xVibNIccAMWyvZx9r2LujerI5yb2pfGmkKp1aXsj+V4xF2v7KvEFyNGd4z6qsew=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5LI7bwtq; arc=fail smtp.client-ip=40.107.94.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zTKfrGJifoqSjagMKUcTbaJ02Ue3HwpJobuRbsLrhA46ExsM6Y3icw7bBhTnhVsLis5BO5bh2UI/AK1m0ejUUi1cJ8RRVtykq3tPUAlCvGPq+slO0sPOuL/4GLMT7fH9UYpJ7wXs59Qf+lhizEohV6xegjPw8nhq6UlhYqOTpWPKbKn0QLGnILdsxSyRi/v8L39ibvODuXaqxH3jtToxz9fT91sUJ4StEArnrhRoBiZRdNaGBt1iVnuZkwGj/H+z6JNfAouHjB9H2N+O/zOpx+RsR2AUDX4a7gAnmCBpYRiWMHiZLc/n4AxtQyfrDO4uDXTctH9NNRVOXZGI4q7o8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VYjYOlNA3kf39eUBW97p0r+8uyho72eF3aa8/A9ibVw=;
- b=oTke8Tjoqib5JXDRpj2QxkojEL4u9uJyWBczSBuv5p5rbLHzEn/X4+MfS1PF4mEQf/WU41eXl6vfYMDBegCafL4vQ1+GJ8MakbxI6t5gYaGZ8Xy4lyxpgfccUl1vjWwt6YKjHWw5hJ2axcI/GRFK1gXuza8ng0mgcxuX6CQCbZyF+uCfkMFadfxYCyMVNKeYSu3CohkR+V/5sR1s8nML1TV3F5lFC8vdFJY77rNxjI2NPZJai7qZ3I9V23njRQ4c3dYdF/6h9UyRTBy0WK9E7FhWGhtDYU2zZWk/IdRtvpf33zjn4OPfbDr6rP+K/y3i/uWYU8AKqUJ/mUpcyRZWww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VYjYOlNA3kf39eUBW97p0r+8uyho72eF3aa8/A9ibVw=;
- b=5LI7bwtqKPiXFZTW06qF/cDZszVOVYR3GmHIUdzm1ZaituxJt+U6mdD+dfZAmPXHGHQgO+b0xDNvzmUfqnhP3XXP32BjFJKMfRk6koR3Ft+lewd5Qje/JDfyVSmHzM+rfIrtxD2XP20T2JKqYcGOXhtsZKjFo1MDdusXki+Zo20=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
- IA1PR12MB6556.namprd12.prod.outlook.com (2603:10b6:208:3a0::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.23; Mon, 16 Sep
- 2024 17:19:52 +0000
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6%5]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
- 17:19:52 +0000
-Message-ID: <6fc21210-53ba-4b76-82b1-833a4eaf6614@amd.com>
-Date: Tue, 17 Sep 2024 00:19:43 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] iommu/amd: Disable AMD IOMMU if CMPXCHG16B feature
- is not supported
-Content-Language: en-US
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
- robin.murphy@arm.com, vasant.hegde@amd.com, ubizjak@gmail.com,
- jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
- kumaranand@google.com
-References: <20240906121308.5013-1-suravee.suthikulpanit@amd.com>
- <20240906121308.5013-2-suravee.suthikulpanit@amd.com>
- <20240906163818.GK1358970@nvidia.com> <20240909151641.GC105117@ziepe.ca>
-From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-In-Reply-To: <20240909151641.GC105117@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR01CA0007.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::11) To DM8PR12MB5445.namprd12.prod.outlook.com
- (2603:10b6:8:24::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B85215CD42;
+	Mon, 16 Sep 2024 17:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726507201; cv=none; b=Lxlnfdqe8BV/QKe2wZ+y9vSaA5k7rfClu6Sqb8T8tv0XS6642bUcUQO/vD3FkpCz2R5rDJf9J9vick7HCYc8BeFQ4QFKKNkxcEzsafNjDT5EmbNAMngUTz4q5uh9pmgXjjM5w7FzSQR/G8BVpM1Xqwz+YYsrJNTBsIk/C6Hvn1s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726507201; c=relaxed/simple;
+	bh=HEVyZN8Y1qi8flRxY88Etdy1tq7GDjdM0Kqg/1HQTFo=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Fzld4jPElZSlaYv7+NIY9iPuC+P7+/ir2LzcPaKn8XttJbduYIQMKk48cptZ3wwCbh/GVHZiHJMRQ/WnX+1VUbtH7rGImsX5NonXIzNVA1Piv8TucNG19gEv7ab2X90q6RLLh3zc/88P8g49yK0/lwmk+rRVkidWCVX7rzbe3ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q6jCs0jK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B610EC4CEC5;
+	Mon, 16 Sep 2024 17:20:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726507201;
+	bh=HEVyZN8Y1qi8flRxY88Etdy1tq7GDjdM0Kqg/1HQTFo=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=q6jCs0jKJWHlgV1CBh/9eypvIKNLL9lM4L3Vxjo2tlav5+FGs2fv0YTSwusR4l0bQ
+	 8hNcvmdD9inmvcKqFLh1o7H1/aKyNS26x4SK18nskKrGLIxh965HFnYo7gxJZuTnJS
+	 ViwsZilkaYU4ECImAnl18Spzz4MTqu+HJ9ncxJIN3z+zvZa4+m8Vbzn78bo9MVzhSS
+	 10SAiS6YhNYARECOnFbLDK/54Jtfk8PpV1C6sSYCIIEQk4T/lovkSnW8bzB9uE8hfq
+	 ZNEP1Bd3n326xAqGIy0lXpKWjbgP+0q081Aioj0x+VkRTPrz45VfvK1XHfSomPGl1v
+	 jQnh4WUIr7iSQ==
+Date: Mon, 16 Sep 2024 12:19:59 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|IA1PR12MB6556:EE_
-X-MS-Office365-Filtering-Correlation-Id: ace6adf7-6921-4b16-c36c-08dcd673c66e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MkVpeTFXaHVpQ0V2S1lWU3BaaXpMV1l4elZrQWF3c3ZWTnJBTXNzMEZkRm1S?=
- =?utf-8?B?N002QnhLcnRJNHJ3Y0FmbDJkSFcrMS9OMVJNaXF5RENXV0poME1YOG5VU2pO?=
- =?utf-8?B?a0YvOE1oNFpnYzJjWGdSZy92RTlwQ1lwT1JDaXl3Vm1YV1pBWWFad0xkN3VQ?=
- =?utf-8?B?WllQRGV0SHZPYVB3UE1nY0p4Q3VNNU8vc2ZBTVNReWk3bHA5cWttU3BKU2pz?=
- =?utf-8?B?ZXN6L0VRQmg3eXdqWHJIYVdGL1BDdFJCWlBNNkdSMW9kQ2lNNjBkMjBJQit1?=
- =?utf-8?B?WmhlYnh3am9nVVcvVmFkNkNjUzJaYTZvTEdIOHptMFlDdnpKRU1hYXo0WVNw?=
- =?utf-8?B?aVh3QWNhT1Q1RWRUc2N0cmFXQ1RzNDVpRUtnTm00K0xPai96bWNFcWN0Q01o?=
- =?utf-8?B?RHJiTVJoMG8wNVlvT3dPYVN4UDB6bHRNMEFEWHZad1BsdlJQdEZyYmt2SE9y?=
- =?utf-8?B?RHRGdXZvZ3V4SkxtUzV6OWhJMGRwUXZvT29KRzh4eUo5dXRRSmU5MDJRakhT?=
- =?utf-8?B?d2VQTk40bzJjaUNiRUtUL25iR3hiLzhjZDlrbWYvV0JVS1g2YWpSNUx2QkJv?=
- =?utf-8?B?aHNMaWl6akhSNzhTODd4OXdsVFA5UUdyQ3NmbDEwVGwvdktiR3JLeXhOTkxO?=
- =?utf-8?B?d0NMYmZlY2ZrNWJ0a0U5dHJpOU5XeWkvbmRKVU1pNEdXcVZ6SHpTSXBGN2NN?=
- =?utf-8?B?bzh1QWFjcko1YnEzN1Y1SG1iVm9qODVhMVJrV1ZuL3Jpd0RqRXI4aTkyMGZO?=
- =?utf-8?B?dEhmKzE3RHVNeUJPMGxKQU1xWmluN1BzU3cveXZsR2hCeWc2SEtyL1lNMDhq?=
- =?utf-8?B?cTFQVHdvZDJBYW5CUmRCNlhqcDE1dHUxMTdhT0xsRy9iNHNMa2dmNTRzZmhk?=
- =?utf-8?B?NmtDem1oVkNhb0VwRFJreCtqR1NqaW1Mc3hTbmpxMC9JcGRLM0FpbDdEMmJG?=
- =?utf-8?B?MG9XajR0QXNPemt2N3R0eXlpRzdJam1IU2UrTGVYUktsclUwbnNXN0E5aFZj?=
- =?utf-8?B?MG8zejBUS3kxa1dpYnhYTmFvN1hjMHBEaEtTa0hCYmtMZnpWNisyOWNzcDBS?=
- =?utf-8?B?dEIwNDlMb2c1RWJjaTJzMHptb2FsZFhLeUVrMFE2YWlUQVhSZy9RODNJNkNx?=
- =?utf-8?B?SEhONVVpVE52ejRMaGRHWFdPa3U1U0RWN3dnMVN6aUdJN05iU1pQQUYxUFJN?=
- =?utf-8?B?UEF0a1BMYVp6QUE4M01mekNDN01aOEEzb1ZvY0xjTWRqTDdnTWVGa0ZDSElk?=
- =?utf-8?B?Rk1MVVkvcHNWRGVMSlcvN25sbkhKZlQrZGNQWWpDU25LUkVrcFVqSzlXMUl2?=
- =?utf-8?B?blJ6RERheWVyNStnUGFLUHNJU2pteG1YTlFKY1c1bkxpT0FKVkt5M1R2WXNF?=
- =?utf-8?B?WkxDZGZKbE5DTGJVMnMwWVRmNkkzUkF1ODZuQ3VCaktTSFU0YU4yTUVBUnN4?=
- =?utf-8?B?Nk9rYkQxb3dVVjdNeUFrYUJyS0VoRTFLRE16K1o1M1puaHBLVkZDN1UvNk9m?=
- =?utf-8?B?VkxTRXMxbk90ZE51dFBOSjdJMjFjOEpJa0crWEdVYmtGSFhEVWM0Tnd6djMw?=
- =?utf-8?B?Q0trUEZ2MmVxWENCd3VUSS9yYUtnY3pjMzlLWVZpYmlSS2VIcFhnSWJmak14?=
- =?utf-8?B?SXZOWnNOUG90OVNoSWoyemdvMk1Rc3BldmNpSS8xZkRJdnRDSEx2L05COHFx?=
- =?utf-8?B?RW56eEhveFVETFV6NXBtNWpHVTh2WFlCck9FbDVUZk1XTnNUdDZMOGFLSGs1?=
- =?utf-8?B?VW0xRGJsQmhldG52blpuZnFqVGdUYnJwRkhrYXhaVGdtWFlGV25tM3plKzB6?=
- =?utf-8?B?SEp3cG9ybWtUSHU3M296QT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?czYwcGFhSWJPNmxRYUVlVFVXcUhUTXFmckFZQjZ4RWZ5RGh6YXhIeUJPTUxN?=
- =?utf-8?B?eER2Zk1QRWxqbTlTc3RhK3FpTHJ1T0dzaE9nUkNuNW02OTJrRjdBRTdtQW5K?=
- =?utf-8?B?TGRDektCL3hxVlZTazF4QldYYkRNUjlMd1lSSE1HcU0xVjVHNDd4NlNTeHE3?=
- =?utf-8?B?MkVIY3FzdmdtUDhBYVVKcm5NUE12eFM2TFRXQ21BQlYwM3puOTJ2Mk5xb3dy?=
- =?utf-8?B?NytVeVFLam9PU2c2VGw3VDVxY1lxUGNYSmVsd0Z5UncrRXdORWdaZWkzQ0NI?=
- =?utf-8?B?Tk1tMnp6RmsrV3FvS2duTHhicEJtL2FCb2tVeFVkVy9CNUJpUXEzS2dNdjZi?=
- =?utf-8?B?dFhlc2ZVVWlHeVVqUWRIdlNrK0I1dDVNT3kzTFVLL1pTNVJaSEsrc2M0Z1di?=
- =?utf-8?B?bFNHRGhRZHpicEd6OXMxSmVpeCtSWjJRME9JOXkvZHJtaWw0d2x0Mk5vRXBi?=
- =?utf-8?B?d2FKemR2Z2hOT0o5ckFFVHllMDVvdTc4UEh6Qjg0SlBpb3c0ZGxrWHJVamln?=
- =?utf-8?B?SHVzSUMzeEJMOURGSnlIc2ExVWNueGl2djg3V2RFbmw2M1M5dGRpYnQrZGFl?=
- =?utf-8?B?ejllZGdSRVpFa0JzVDBnSkJ3WTVJQ3JRYlhjMXpZQk15czBJMkZ1MWNEcXUy?=
- =?utf-8?B?RUhxS1Z4dTdNZDFTbldOV0hZNFdvQzJETnZDQ0JZSHc5VTNzZGs4QjF0QzZn?=
- =?utf-8?B?Uk5IbFVhYk9VWnNSZDZTei92Y05GWS9zeWpKQjZZTUNyUjBrUDd6TGNoeGNZ?=
- =?utf-8?B?QWlTbm9yV3dzZFcrODlYNFN1Y21rM1NXVHNWbkhUNkNxT0crN21ac1piUnh5?=
- =?utf-8?B?aFpNNHpraXJLZ1RvS2lhWEl4eWhMZGFYbnZYaHM0RzdiMkNQRnoxdG02NlUy?=
- =?utf-8?B?VTN4YXpOT0V3SjUyNjJZdUNHQjgvZW1VZVQwL3grdWVzMjFlL1NDeXVUUzVY?=
- =?utf-8?B?YTFDTDlPd3huNHNSdHU5RFdsdTZoTEpsMkdWUURrZnNUd09nTm5jVWlZQ0tn?=
- =?utf-8?B?ZjN0NnhPOXR0ZnlOUmJzVnROd3BYQ1JIV3YxdVViZEZkeEFSZCtOY1VYdDMr?=
- =?utf-8?B?VHlQVncyY3pTNkdUWXlaTmNHMHhTbTNrSzFXTmFsWTF2WTlLVXI4NXVacG1M?=
- =?utf-8?B?ZVh3M1NyNHVxemNKUHZNY2pkNTlpREx5R3RpUDRzMkVuc2lIU2ZsbWRpNE9G?=
- =?utf-8?B?a2hYcUwvVk15VFdCNUs3NzFlNHpXeVpraklLS0xTQjZCYVZ6MGNyMmM2SHF0?=
- =?utf-8?B?ZXV3QWNac0pEZ0pjNWJlcisvTFFFa1I2MnMvYlgzc3Z5RWU1eG5jSy82T1Rs?=
- =?utf-8?B?RUdWUjY3ZVBHWXVyTGIvbWl3aTN1YWJ2ODFEeWt5MnRBTnhXRkUwaHZWbW9m?=
- =?utf-8?B?NTRSMlNnakh5QmlNa3VNMDRZMzAxbklOdEFmWXVFMjEyRnV6NTY3MkZadHN3?=
- =?utf-8?B?VEVuR2pScFJYVGhyb1FxM2RQekxZdHN1QnRzL3lNeHBDZjVWNjBXdFBUMExT?=
- =?utf-8?B?ZXRlZ3kySTVEQ2ZtMGR0elNZdGJUakNWeTVyVUtLTlpXNDgrWlVLWjJJNSti?=
- =?utf-8?B?YjZnSXRINFQxRUtVcHdlemxrR3g0a1AvSGRVenF2TjJkanNUcGQrRzcrSFVa?=
- =?utf-8?B?REpMYVB2bEtpVVFHdGFMOWRiMUg4OFpXRzBSeWhTLzJRbWUzb2RvTmJPVGFJ?=
- =?utf-8?B?RXlIV1RMbXAwMXhvODJ0VWpscmh6d0xVR0U1QklLcFpBRENuZWZIUTFIQlZs?=
- =?utf-8?B?SExwcGxPR1ZGZ3ZnN3FaZGdKeFZGbUw5SXY4MEV2angyWXNKcEozOExocldR?=
- =?utf-8?B?a0dqdy9MNnEwS0hpdTJ0dmo1Y0pCWXRWMlhZUEZ6Q0kxbnVlSWMvTE5Xd0tX?=
- =?utf-8?B?U050Sm50djBwQ2JMSFB0WVVGaVFtWk5hVmt1SG1PTjlkN3BVRnZrWjMxc3dx?=
- =?utf-8?B?QW9VQjYwZUJsbll5b2VQRittYXZZSE9zWXMrWnVRbXhxeWQ2WStKdkQwamIx?=
- =?utf-8?B?ellNNkI0TlFPZnNGK1I2Q3lCazJPR1dxZXNxNFBuQ1JOOWNaeXlLVW9RdjhD?=
- =?utf-8?B?OWdwa2N4UVU1aUlvK0ltMk5rUE1aQlljVzlibVRQdlQ4d1FWaGhwZU92Qkhx?=
- =?utf-8?Q?WNyGuxL9PMXk/w6bBYseVvtfG?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ace6adf7-6921-4b16-c36c-08dcd673c66e
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 17:19:52.1764
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JBjjFWVgkyLqDNU7F6Gox1zKyDNsMOTkEwV4RlpnIw1oGBUD9hiKFAUNh/JwJ50PeriZ3VPEba+ZXyDj5LJElA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6556
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
+Cc: linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ hsinyi@google.com, dri-devel@lists.freedesktop.org, conor+dt@kernel.org, 
+ angelogioacchino.delregno@collabora.com, matthias.bgg@gmail.com, 
+ knoxchiou@google.com, devicetree@vger.kernel.org, krzk+dt@kernel.org
+In-Reply-To: <20240914063122.1622196-1-cengjianeng@huaqin.corp-partner.google.com>
+References: <20240914063122.1622196-1-cengjianeng@huaqin.corp-partner.google.com>
+Message-Id: <172650686036.806282.435049873625711480.robh@kernel.org>
+Subject: Re: [PATCH v8 0/2] arm64: dts: mediatek: Add MT8186 Ponyta
+
+
+On Sat, 14 Sep 2024 14:31:20 +0800, Jianeng Ceng wrote:
+> This is v8 of the MT8186 Chromebook device tree series.
+> ---
+> Changes in v8:
+> - PATCH 1/2: Remove custom label.
+> - PATCH 2/2: Change the commit about ponyta.
+> - Link to v7:https://lore.kernel.org/all/20240913031505.372868-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Changes in v7:
+> - PATCH 2/2: Remove prototype sku.
+> - PATCH 2/2: Disable the other trackpad to enable one of them.
+> - Link to v5:https://lore.kernel.org/all/20240913015503.4192806-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Changes in v6:
+> - No change.
+> 
+> Changes in v5:
+> - PATCH 1/2: Remove sku2147483647.
+> - PATCH 2/2: Remove sku2147483647.
+> - Link to v4:https://lore.kernel.org/all/20240906085739.1322676-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Changes in v4:
+> - PATCH 1/2: Add more info for Ponyta custom label in commit.
+> - Link to v3:https://lore.kernel.org/all/20240904081501.2060933-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Changes in v3:
+> - PATCH 0/2: Add the modify records.
+> - PATCH 1/2: Modify lable to label.
+> - Link to v2:https://lore.kernel.org/all/20240903061603.3007289-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Changes in v2:
+> - PATCH 2/2: Modify the dtb name without rev2.
+> - Link to v1:https://lore.kernel.org/all/20240902125502.1844374-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Jianeng Ceng (2):
+>   dt-bindings: arm: mediatek: Add MT8186 Ponyta Chromebook
+>   arm64: dts: mediatek: Add MT8186 Ponyta Chromebooks
+> 
+>  .../devicetree/bindings/arm/mediatek.yaml     | 10 +++++
+>  arch/arm64/boot/dts/mediatek/Makefile         |  2 +
+>  .../mediatek/mt8186-corsola-ponyta-sku0.dts   | 18 ++++++++
+>  .../mediatek/mt8186-corsola-ponyta-sku1.dts   | 22 ++++++++++
+>  .../dts/mediatek/mt8186-corsola-ponyta.dtsi   | 44 +++++++++++++++++++
+>  5 files changed, 96 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
+> 
+> --
+> 2.34.1
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y mediatek/mt8186-corsola-ponyta-sku0.dtb mediatek/mt8186-corsola-ponyta-sku1.dtb' for 20240914063122.1622196-1-cengjianeng@huaqin.corp-partner.google.com:
+
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: dp-bridge@5c: 'extcon' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6505.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: dp-bridge@5c: 'extcon' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6505.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: sound: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/sound/mt8186-mt6366-rt1019-rt5682s.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: sound: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/sound/mt8186-mt6366-rt1019-rt5682s.yaml#
 
 
 
-On 9/9/2024 10:16 PM, Jason Gunthorpe wrote:
-> On Fri, Sep 06, 2024 at 01:38:18PM -0300, Jason Gunthorpe wrote:
->> On Fri, Sep 06, 2024 at 12:13:04PM +0000, Suravee Suthikulpanit wrote:
->>> According to the AMD IOMMU spec, the IOMMU reads the entire DTE either
->>> in two 128-bit transactions or a single 256-bit transaction.
->>
->> .. if two 128-bit transaction on the read side is possible then you
->> need flushing! :(
->>
->> For instance this:
->>
->>    IOMMU         CPU
->> Read [0]
->>                Write [0]
->>                Write [1]
->> Read [1]
->>
->> Will result in the iommu seeing torn incorrect data - the Guest paging
->> mode may not match the page table pointer, or the VIOMMU data may
->> become mismatched to the host translation.
->>
->> Avoiding flushing is only possible if the full 256 bits are read
->> atomically.
-> 
-> Also, please think about what qemu does when paravirtualizing
-> this. qemu will read the DTE entry using the CPU.
-> 
-> For your above remark it should be reading using two 128 bit loads.
-> 
-> However, it doesn't seem to be doing that:
-> 
-> static bool amdvi_get_dte(AMDVIState *s, int devid, uint64_t *entry)
-> {
->      uint32_t offset = devid * AMDVI_DEVTAB_ENTRY_SIZE;
-> 
->      if (dma_memory_read(&address_space_memory, s->devtab + offset, entry,
->                          AMDVI_DEVTAB_ENTRY_SIZE, MEMTXATTRS_UNSPECIFIED)) {
-> 
-> 
-> The dma_memory_read eventually boils down to memcpy()
-> 
-> So qemu looks wrong to me.
-> 
-> Jason
 
-Thanks for pointing out. Let me check QEMU and see how to update the code.
 
-Thanks,
-Suravee
 
