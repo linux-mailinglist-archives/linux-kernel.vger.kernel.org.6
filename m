@@ -1,175 +1,101 @@
-Return-Path: <linux-kernel+bounces-330120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A93D9799F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:45:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31EAA9799FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AD4283089
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771601C21ABE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 02:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752B2134D1;
-	Mon, 16 Sep 2024 02:45:49 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DFB1B85F7;
-	Mon, 16 Sep 2024 02:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3E617BA7;
+	Mon, 16 Sep 2024 02:54:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61EA12E71;
+	Mon, 16 Sep 2024 02:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726454749; cv=none; b=GhoAlSdSiDOxRtVm8Za410uwqxeBcyOCa3yPtLGNaAdA6ctno1Xf46J0tbm3oW23M6Q7UafI+ZPoMmfebsXa7aPM0crceGq3+onjdgsB6/e6dNibXzqB2aYxyYQDghs3sgsAuGREJq1W+Na0NLZM+ifnJ/WhZB3KOqhPcRIwB2o=
+	t=1726455273; cv=none; b=cgT+on6wiEsbvmgsqryeF8GXarCWICaiLWLlqdAs297zGvZgHlJJ9FxbzTNDqsy+ghXsVFwD/KkhCK2F37IX2IU+e3FnY+WEZaV5JJl1VDw/xEPaoKhi/cR4MlcAXVqY9fXutiRXt721j45VzIAPVDFQ4B6mQGHzVXBAno34uS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726454749; c=relaxed/simple;
-	bh=rc/3CKCUelZq6HVK53edCM+ujGTjZNmJoslZNISA2kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i49JPqH3bT9ty5go11allgp11rjbo+IBQJIG49NRZiDHiinVQEeVLOXX/jToxk1DY04x34kh+zAcQFo3v1IgoCkpA701wTJdgOzaAZOUS5lJCJoJyHZL27GJGFGrKRg+wSHH8V2hH4Zu1ZRoCE2QWKy+AVwp6v+v9UxVOYPSk3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Mon, 16 Sep 2024 02:45:36 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Jesse Taube <Mr.Bossman075@gmail.com>
-Cc: Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>,
-	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
-Subject: Re: [PATCH v4 3/3] riscv: dts: spacemit: add pinctrl property to
- uart0 in BPI-F3
-Message-ID: <20240916024536-GYA2058951@gentoo>
-References: <7ede7ca6-f8db-4b38-a1cc-8be3d0db7fae@gmail.com>
+	s=arc-20240116; t=1726455273; c=relaxed/simple;
+	bh=4SY9/3+US2zm+crDDfzr5lKhaNSjQwLU5DcGcU1LpiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GFPXl3/ZhYPLtIeVK6FRS+0QjFB4jwUZ4X0+nUyvejZtoCfYVP6CoblrJ1X1kbwpdBZJmKPBshhVHvuHUuVUoevps0cK2EgkO0z+VD8B+G819Rh6YpJtRmYr0BeqmMYEwUeZCftRm0WwuVm4QFyUPawJwQd+9A3stWrV7Bm2d9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85C611476;
+	Sun, 15 Sep 2024 19:54:54 -0700 (PDT)
+Received: from [10.162.16.84] (a077893.blr.arm.com [10.162.16.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DAB73F64C;
+	Sun, 15 Sep 2024 19:54:20 -0700 (PDT)
+Message-ID: <9d3286bd-7ad4-4472-aa26-2fb7d166fceb@arm.com>
+Date: Mon, 16 Sep 2024 08:24:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ede7ca6-f8db-4b38-a1cc-8be3d0db7fae@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] x86/mm: Drop page table entry address output from
+ pxd_ERROR()
+To: Dave Hansen <dave.hansen@intel.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ x86@kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-fsdevel@vger.kernel.org, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+References: <20240913084433.1016256-1-anshuman.khandual@arm.com>
+ <20240913084433.1016256-3-anshuman.khandual@arm.com>
+ <8e8a94d4-39fe-4c34-9f5d-5b347ca8fe9a@intel.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <8e8a94d4-39fe-4c34-9f5d-5b347ca8fe9a@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jesse
 
-On 10:45 Sun 15 Sep     , Jesse Taube wrote:
-> 
-> Before pinctrl driver implemented, the uart0 controller reply on
-> bootloader for setting correct pin mux and configurations.
-> 
-> Now, let's add pinctrl property to uart0 of Bananapi-F3 board.
-> 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
->   arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts |  3 +++
->   arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi    | 20 ++++++++++++++++++++
->   arch/riscv/boot/dts/spacemit/k1.dtsi            |  5 +++++
->   3 files changed, 28 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts 
-> b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> index 023274189b492..bc88d4de25a62 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> @@ -4,6 +4,7 @@
->    */
-> 
->   #include "k1.dtsi"
-> +#include "k1-pinctrl.dtsi"
-> 
->   / {
->   	model = "Banana Pi BPI-F3";
-> @@ -15,5 +16,7 @@ chosen {
->   };
-> 
->   &uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart0_2_cfg>;
->   	status = "okay";
->   };
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi 
-> b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> new file mode 100644
-> index 0000000000000..a8eac5517f857
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> @@ -0,0 +1,20 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +/*
-> + * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
-> + */
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +
-> +#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
-> 
-> It would be nice to have a pinfunc header like
-> arch/arm/boot/dts/nxp/imx/imx7ulp-pinfunc.h.
-> It would reference and encode the data of "3.2 Pin Multiplex" in
-> https://developer.spacemit.com/documentation?token=An1vwTwKaigaXRkYfwmcznTXned 
-> , the document you attached in the summary.
-Not sure if it's worth the effort..
 
-I gave up of introducing another macro, as it's exactly one to one mapping to
-GPIO ID, which mean pin(x) -> GPIO_x
+On 9/13/24 22:51, Dave Hansen wrote:
+> On 9/13/24 01:44, Anshuman Khandual wrote:
+>> This drops page table entry address output from all pxd_ERROR() definitions
+>> which now matches with other architectures. This also prevents build issues
+>> while transitioning into pxdp_get() based page table entry accesses.
+> 
+> Could you be a _little_ more specific than "build issues"?  Is it that
+> you want to do:
+> 
+>  void pmd_clear_bad(pmd_t *pmd)
+>  {
+> -        pmd_ERROR(*pmd);
+> +        pmd_ERROR(pmdp_get(pmd));
+>          pmd_clear(pmd);
+>  }
+> 
+> But the pmd_ERROR() macro would expand that to:
+> 
+> 	&pmdp_get(pmd)
+> 
+> which is nonsense?
 
-maybe I could put a comment at K1_PADCONF() to document this?
+Yes, that's the one which fails the build with the following warning.
 
-/* pin is same to the GPIO id according to 3.2 Pin Multiplex of User Manual */
-#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
+error: lvalue required as unary '&' operand
 
-does this sound good to you?
+Will update the commit message with these details about the build problem.
 
 > 
-> Otherwise,
-> Acked-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> 
-thanks
+> Having the PTEs' kernel addresses _is_ handy, but I guess they're
+> scrambled on most end users' systems now and anybody that's actively
+> debugging can just use a kprobe or something to dump the pmd_clear_bad()
+> argument directly.
 
-> +
-> +&pinctrl {
-> +	uart0_2_cfg: uart0-2-cfg {
-> +		uart0-2-pins {
-> +			pinmux = <K1_PADCONF(68, 2)>,
-> +				 <K1_PADCONF(69, 2)>;
-> +
-> +			bias-pull-up = <0>;
-> +			drive-strength = <32>;
-> +		};
-> +	};
-> +};
-> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi 
-> b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> index 0777bf9e01183..a2d5f7d4a942a 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> @@ -416,6 +416,11 @@ uart9: serial@d4017800 {
->   			status = "disabled";
->   		};
-> 
-> +		pinctrl: pinctrl@d401e000 {
-> +			compatible = "spacemit,k1-pinctrl";
-> +			reg = <0x0 0xd401e000 0x0 0x400>;
-> +		};
-> +
->   		plic: interrupt-controller@e0000000 {
->   			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
->   			reg = <0x0 0xe0000000 0x0 0x4000000>;
-> 
-> -- 
-> 2.45.2
-
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Right.
 
