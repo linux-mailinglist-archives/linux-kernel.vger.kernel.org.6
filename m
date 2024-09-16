@@ -1,105 +1,116 @@
-Return-Path: <linux-kernel+bounces-331014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E841C97A73F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:20:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E682197A746
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD000289577
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5A21F22839
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E3B172760;
-	Mon, 16 Sep 2024 18:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F25A15B547;
+	Mon, 16 Sep 2024 18:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qFXl2F/5"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hcTaswU4"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E2F172BA9;
-	Mon, 16 Sep 2024 18:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E24B1757D;
+	Mon, 16 Sep 2024 18:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726510706; cv=none; b=mIYnmrQJXmRw1ajwTePgKEEv906yDMj+wYyYYTcIeLEFnENIW8sNhMS0QZxRFelt4b+cBuIf2qpj0S+sPBYQBNTFECig4LaIsFmiAk6u7vGdPGVNed0spr1QhR7/8l1O14pxp8Tp6JeVmIBGzsoOQmI2t53zFeYA7xBzM/uDAvc=
+	t=1726511036; cv=none; b=jTejQ3l6qrpUH7iTZAmvw+OCoCvbiMOzjubHkdror/mR8IGLCoTYiQq1yEvqfpkO/b0tP9YBmhcnQ/JtmhpzP/pqEpUx0F0jYOixRZs5IJoldrPSGx3gRDmBXdC+TowZUXouiHEaFDULbMRX22ik96vPrtqDx69nmOqlr92+M4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726510706; c=relaxed/simple;
-	bh=xaEoZ3CYNprlKmLfLiCt//14ZkCN0OXDW4GXr+mON3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uF693sjMtl+yTHNROP6kMF6Ke9CwUdaUStip9nka3bAtnS64wuyF1+K60KIL2H5ipbTBpDmmob2Kiv8aac0sHRl3MxgpLQFHsMFGpgaoLMApH7B1Z+dVqZ/rWys9t/YUN/OWTRRCCFSmVHnYprKPxS4N4uo0QlsvymE/swWnAVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qFXl2F/5; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KU1yM8DVM8wX9QSGYYRoSr68iddFXvJxEb2ckeWkU8M=; b=qFXl2F/5scIuOsVdpRBQY3SFNn
-	vFe/6lceo8Ea2OIjH1B48dNbwvLG1iFnN0AAer5LEoQRabpT/7PNo1xW3AICwdaPctDssbHz67p5F
-	4fip2Vx1vzLmqxOpqBJcM37+8jt2TIxg2ZnzP5udgAlUXj5IsKjhowJREJZtL1ERDwy2akAEBZPsd
-	H7p2dkCAvDl9Crhi3s082RK3TWM9qKv6f5ayHoSg5U+D4aPEetvNPsH4cDwXOO0ExOcSShTb1++t/
-	q3bfkKlgEzN/nJG8gdleK3IDbPW0vVs/sKOGv4vRKwdH5JyfVQBvZV7q1Nm38fP4wuG5vWRADkdAb
-	rFJ8pLpA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sqGIj-00000002FH5-2SPE;
-	Mon, 16 Sep 2024 18:18:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C9DD8300777; Mon, 16 Sep 2024 20:18:17 +0200 (CEST)
-Date: Mon, 16 Sep 2024 20:18:17 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 2/7] sched: change wake_up_bit() and related function to
- expect unsigned long *
-Message-ID: <20240916181817.GF4723@noisy.programming.kicks-ass.net>
-References: <>
- <20240916112810.GY4723@noisy.programming.kicks-ass.net>
- <172648729127.17050.15543415823867299910@noble.neil.brown.name>
+	s=arc-20240116; t=1726511036; c=relaxed/simple;
+	bh=lvG7GKZGlAtbIh7LO1HbNQHCIqQDmvFvHfX5CH6r8ts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AYUaCTUPPSPFLzAT/i/xe1tq1AlyvCWv4oeWCwVYHmn5bu2wQVqKTZNbl4soJiA9uwKuIvmL/OU2WbVISCtgYQYBbePL4l8Ohs8Mqqi2Mj4ZNHvSKJ8gwgbE5lXGptaoot4gHcboEw9maOfu7BJlsa+y68CpYrd8b8DznV7s/rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hcTaswU4; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GEMYhU030175;
+	Mon, 16 Sep 2024 18:23:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=corp-2023-11-20; bh=GLRHOEqG7Q7gtr
+	JcCO7ITSfTUx6B8imW3hvbaVdUOnQ=; b=hcTaswU42iyygXfAx2SP7klBqh33xb
+	o/R3/cMKf7qPutA976cfY3zOXb0w88Upok1h5d0zM7j7hhGyziP3VJ5Zh8nLWUiZ
+	DmF7VqOsHUjamQyzf+eN8qIYrO6xhsINXW+pJlkkSpcclpyK6Fi+3biFkuYD9dzE
+	RwNhtnGUJBfRRKWQPF2vhSQTOakZL6Lv4vN6al9oiWDZ2sC9NZHEnIRkMC7EwQ+/
+	QXMS3AfHHNAsVEVZXNG2RaHL0e3wIstfmgIspTWa3cXpiH/t4eo6JYsVpWJe//J9
+	QeFEAwwBMi+2v3cj2UpBHMk/k7Va1oHhTZDZk9dDMzdDbhusXKTAk6XA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41n3n3c4q3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Sep 2024 18:23:41 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48GGWfXa017899;
+	Mon, 16 Sep 2024 18:23:41 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41nycvpye6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Sep 2024 18:23:41 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48GIN8ib000333;
+	Mon, 16 Sep 2024 18:23:40 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 41nycvpyds-1;
+	Mon, 16 Sep 2024 18:23:40 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Vinod Koul <vkoul@kernel.org>, Nikita Shubin <nikita.shubin@maquefel.me>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] dmaengine: ep93xx: Fix NULL vs IS_ERR() check in ep93xx_dma_probe()
+Date: Mon, 16 Sep 2024 11:23:37 -0700
+Message-ID: <20240916182337.1986380-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172648729127.17050.15543415823867299910@noble.neil.brown.name>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-16_14,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ spamscore=0 mlxscore=0 phishscore=0 malwarescore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409160123
+X-Proofpoint-GUID: x1HgqPN8Iuz8wE03qSc3AmQkG-X1VSBv
+X-Proofpoint-ORIG-GUID: x1HgqPN8Iuz8wE03qSc3AmQkG-X1VSBv
 
-On Mon, Sep 16, 2024 at 09:48:11PM +1000, NeilBrown wrote:
-> On Mon, 16 Sep 2024, Peter Zijlstra wrote:
-> > On Mon, Aug 26, 2024 at 04:30:59PM +1000, NeilBrown wrote:
-> > > wake_up_bit() currently allows a "void *".  While this isn't strictly a
-> > > problem as the address is never dereferenced, it is inconsistent with
-> > > the corresponding wait_var_event() which requires "unsigned long *" and
-> > > does dereference the pointer.
-> > 
-> > I'm having trouble parsing this. The way I read it, you're contradicting
-> > yourself. Where does wait_var_event() require 'unsigned long *' ?
-> 
-> Sorry, that is meant so as "the corresponding wait_on_bit()".
-> 
-> 
-> > 
-> > > And code that needs to wait for a change in something other than an
-> > > unsigned long would be better served by wake_up_var().
-> > 
-> > This, afaict the whole var thing is size invariant. It only cares about
-> > the address.
-> > 
-> 
-> Again - wake_up_bit().  Sorry - bits are vars were swimming around my
-> brain and I didn't proof-read properly.
-> 
-> This patch is all "bit", no "var".
+ep93xx_dma_of_probe() returns error pointers on error. Change the NULL
+check to IS_ERR() check instead.
 
-OK :-)
+Fixes: 5313a72f7e11 ("dmaengine: cirrus: Convert to DT for Cirrus EP93xx")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is based on static analysis with Smatch
+---
+ drivers/dma/ep93xx_dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Anyway, other than that the patches look fine, but given we're somewhat
-in the middle of the merge window and all traveling to get into Vienna
-and have a few beers, I would much prefer merging these patches after
--rc1, that okay?
+diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
+index d084bd123c1c..ca86b2b5a913 100644
+--- a/drivers/dma/ep93xx_dma.c
++++ b/drivers/dma/ep93xx_dma.c
+@@ -1504,7 +1504,7 @@ static int ep93xx_dma_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	edma = ep93xx_dma_of_probe(pdev);
+-	if (!edma)
++	if (IS_ERR(edma))
+ 		return PTR_ERR(edma);
+ 
+ 	dma_dev = &edma->dma_dev;
+-- 
+2.39.3
+
 
