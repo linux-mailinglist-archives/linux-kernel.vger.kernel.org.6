@@ -1,94 +1,120 @@
-Return-Path: <linux-kernel+bounces-330137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF37979A34
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:56:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CB9979A3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3458DB22A64
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 03:56:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3881283AC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 03:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55011CD31;
-	Mon, 16 Sep 2024 03:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3711CF93;
+	Mon, 16 Sep 2024 03:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="NHg2Onyp"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C58EEDD;
-	Mon, 16 Sep 2024 03:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="b9uVfDF0"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1AB1CA85;
+	Mon, 16 Sep 2024 03:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726458990; cv=none; b=hoPW1WMEklFzcIyXS45n2VoJmuJlnkRRWxairq9AeAGUc5McBo6EkCIBdaHed1TZyshdnYqSshyn2xEflnVI5NLq9yow8fwvJzfXaJdsQBs81YvAHusYk/uDPi1vThpIHCBH/6CZJJxaJAAZbPMXlzPP/CgU94wkhnjkOcQrTdE=
+	t=1726459186; cv=none; b=i3aNkO7G5mNYM99cW61693c5fSKfjzEiMIeRP+UUJwkjSdiC8cpNzudhvJq37TjK5avQz7cmdNW11I90kRH95hEW3CJSuppgB6/kguVkzuV6UlLaDCYL/p6Li15Bjv4ohvt74DYRJgviS4gA6fsRGOHWUAbpuSSwaHGN2J5vOc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726458990; c=relaxed/simple;
-	bh=uQeCiuqofbp7VBgWJBHIBiFbeaUu9Qm1y9Nz4rNP4v0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AybFnbjNMjHD2azlJv0t6U2+lrI77QYJ0rZk6Ks2Q9YEMvNhEjyvgFehcvb9bunqAEB5SsYkxJsBQfw8JPLyU5dFK2ngyel+SWIXXZ5XqD6P6pwzz9yTUFsjI3B1UuOs9hwgeG3MJi7G3FR2wWWaBM9O+7/wt83EIaNwXYxhy1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=NHg2Onyp; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1726458979;
-	bh=uQeCiuqofbp7VBgWJBHIBiFbeaUu9Qm1y9Nz4rNP4v0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=NHg2OnyplKoc7xXZNOiUMEJzcbsEPOJLA/PJqG9lqcXBGyxNXE3SmR7ZhH7fZOglv
-	 QnPT/kHapnE5NEzaclkEswaYMnWcrryllvn/tOM1jqitmpxbLcU5QEHh9h8l/Sk98t
-	 W7dPOzuRHSJlXhQyAiwq0/57UqGgeTVOjaLhZNqo=
-X-QQ-mid: bizesmtpip2t1726458973t9xfue2
-X-QQ-Originating-IP: 4+X9rNC0rfWCVm+jTaZrmC9K3XSZNEdwwr0L1XVgKWM=
-Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 16 Sep 2024 11:56:10 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14186944467596871158
-From: WangYuli <wangyuli@uniontech.com>
-To: christophe.jaillet@wanadoo.fr
-Cc: aou@eecs.berkeley.edu,
-	conor+dt@kernel.org,
-	conor.dooley@microchip.com,
-	devicetree@vger.kernel.org,
-	emil.renner.berthing@canonical.com,
-	gregkh@linuxfoundation.org,
-	hal.feng@starfivetech.com,
-	kernel@esmil.dk,
-	krzysztof.kozlowski+dt@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	richardcochran@gmail.com,
-	robh+dt@kernel.org,
-	robh@kernel.org,
-	sashal@kernel.org,
-	stable@vger.kernel.org,
-	walker.chen@starfivetech.com,
-	wangyuli@uniontech.com,
-	william.qiu@starfivetech.com,
-	xingyu.wu@starfivetech.com
-Subject: Re: [PATCH 6.6 v2 1/4] riscv: dts: starfive: add assigned-clock* to limit frquency
-Date: Mon, 16 Sep 2024 11:56:10 +0800
-Message-ID: <87764635B0614447+20240916035610.64002-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <e2d7ed77-827b-4b7c-800c-9c8f3bcb6b5a@wanadoo.fr>
-References: <e2d7ed77-827b-4b7c-800c-9c8f3bcb6b5a@wanadoo.fr>
+	s=arc-20240116; t=1726459186; c=relaxed/simple;
+	bh=Jm9CVHT6Nki6sfPskZNpOtxETbbWb6rDe8kRKEGe3m0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NzLTsKVxp0XSWwSh6cQrNOvaXRN7xDzsjMBKti2IKPFUVtYdD6ilWYg5EvHBXWEtPJ16X5pPhfGPWWJqtFqr/C7A/RJuamdQ/9pxc9hA3kpK8KXmnb747RgQfGtP9J08TX+dvTnjNjXto3mcvHm+IrZMS+TpuzDAWyvpFBbS+rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=b9uVfDF0; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=mj2XNLHRDudyI5E50DFBA5B0CTYLSBZ5eydMr4cy/Jo=;
+	b=b9uVfDF0Npalzi0Nsul2KQn6zyiSzgHNpB9pId3AU3ofKAf3Cee/EJBPbZJI3g
+	wZOzgC0cuZpgMegl2gPWXUnrHPD7QTF8sV6TTeJX4Q+oLhm79XeOZY1Lsf4fZrcH
+	uA/JpozC90+m4m+RkPG8nphIBC5LoM2665qPmLV7HZTaw=
+Received: from [10.79.243.159] (unknown [113.57.237.78])
+	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wDnb1LMrOdm2ADKBg--.14234S2;
+	Mon, 16 Sep 2024 11:58:04 +0800 (CST)
+Message-ID: <d0daa272-91ac-4e02-9b07-2d3141c3b7de@163.com>
+Date: Mon, 16 Sep 2024 11:58:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+User-Agent: Betterbird (Linux)
+Subject: Re: [PATCH 0/3] Add initial support for Canaan Kendryte K230 pinctrl
+To: Inochi Amaoto <inochiama@gmail.com>, linus.walleij@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ conor@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jesse@rivosinc.com, cyy@cyyself.name, inochiama@outlook.com,
+ jszhang@kernel.org, kevin.z.m@hotmail.com
+References: <ZubtZKlxqejnCFx_@jean.localdomain>
+ <qecfx4gepop65xivvnk2w7waikvadrl2bp4evyehp4kgaegsdp@dmluqpj3xune>
+Content-Language: en-US
+From: Ze Huang <18771902331@163.com>
+In-Reply-To: <qecfx4gepop65xivvnk2w7waikvadrl2bp4evyehp4kgaegsdp@dmluqpj3xune>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wDnb1LMrOdm2ADKBg--.14234S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AFW3AF4DXF18tw1DJFWkWFg_yoW8trWxpw
+	4fCF9IkF17Gr4fJFWftwn5WFyavan3Jr1jg3Waq347WF43ZFyDGrnxGFW8Xr4DGr47Wr4j
+	vr45W348u3W5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRCkskUUUUU=
+X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJw5comXAn1RRvAAAsU
 
-Since this commit is already in 'linux/master', changing its title for the backport might just make things more confusing.
 
-Thanks,
---
-WangYuli
+On 9/16/24 6:56 AM, Inochi Amaoto wrote:
+> On Sun, Sep 15, 2024 at 10:21:24PM GMT, Ze Huang wrote:
+>> This patch series introduces support for the pinctrl driver of the Canaan
+>> K230 SoC. The K230 SoC features 64 IO pins, each of which can be configured
+>> for up to five different functions.
+>> 							
+>> The controller manages the entire pin configuration and multiplexing
+>> through a single register, which control features such as schmitt trigger,
+>> drive strength, bias pull-up/down, input/output enable, power source, and
+>> mux mode.
+>>
+>> The changes have been tested on the K230 development board.
+>> 							
+>> The pin function definition can be found here [1], and most of the DTS data
+>> was converted from the vendor's code [2].
+>>
+>> Link: https://developer.canaan-creative.com/k230/dev/_downloads/a53655a81951bc8a440ae647be286e75/K230_PINOUT_V1.1_20230321.xlsx [1]
+>> Link: https://github.com/kendryte/k230_sdk/blob/main/src/little/uboot/arch/riscv/dts/k230_canmv.dts [2]
+>>
+>> Ze Huang (3):
+>>    dt-bindings: pinctrl: Add support for canaan,k230 SoC
+>>    pinctrl: canaan: Add support for k230 SoC
+>>    riscv: dts: canaan: Add k230's pinctrl node
+>>
+>>   .../bindings/pinctrl/canaan,k230-pinctrl.yaml | 128 ++++
+>>   arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi  | 318 +++++++++
+>>   arch/riscv/boot/dts/canaan/k230-pinctrl.h     |  18 +
+>>   arch/riscv/boot/dts/canaan/k230.dtsi          |   2 +
+>>   drivers/pinctrl/Kconfig                       |  10 +
+>>   drivers/pinctrl/Makefile                      |   1 +
+>>   drivers/pinctrl/pinctrl-k230.c                | 674 ++++++++++++++++++
+>>   7 files changed, 1151 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+>>   create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
+>>   create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.h
+>>   create mode 100644 drivers/pinctrl/pinctrl-k230.c
+>>
+>> -- 
+>> 2.46.1
+> You should send your patched as a thread. I think you
+> forgot to set (or set wrong) in-reply-to?
+
+Thank you for pointing that out. I apologize for the oversight. I will
+resend the patch series as a thread and ensure that the in-reply-to headers
+are set correctly.
+
+Thank you for your patience.
+
 
