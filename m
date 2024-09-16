@@ -1,253 +1,146 @@
-Return-Path: <linux-kernel+bounces-330237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F0D979B64
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:47:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9598979B66
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FE528317C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:47:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06DC51C2209F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A71E69D2B;
-	Mon, 16 Sep 2024 06:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C1512C54B;
+	Mon, 16 Sep 2024 06:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iajKLxqA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZornDbVh"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1481F5F6;
-	Mon, 16 Sep 2024 06:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968388289A;
+	Mon, 16 Sep 2024 06:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726469266; cv=none; b=JdVo+o7lGQn4cYAT38fRgclNt8djbw2hxW+r4ilBNa8G04RRqRNmxucGJ5YRCfL07IflmD1LuCg7ocIfSeAz0MWwzroWl35bCs1Ik/Nxh4OI5ByRIXgOfXtMm1OfN4vVHxGo0Iqn5HrEsOgUxtJdtUp83ljpwyaB5pkP2ald3+g=
+	t=1726469272; cv=none; b=Yq823v47yqkxj4Gy4ZrrUoEa1ulAEXu9EiBKmAOMmnit0/o3Fg3yqoOLcCA+Ta7Nr0fIE8KVMhABl/Ka9y9ss2+xhORof99drmrhoEDwluGHez8l+UkvwibIuJKGTn9zxZECmK3xZmSh8pzl4tdea8v7CjYx+gzfKZfap8ZiCEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726469266; c=relaxed/simple;
-	bh=X+Df26JHczAuZOXyuIo4Gw81bNTKkhzqpqkGPSwKLpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QVSOZnrWoUmo6tj7nNn82kZ2IhGBMMtIncHdDVLO0o+v/Q7Z6hKlz4aHJy9+SAQwvju9+D0be8ko4E9j/02a6UCrlNuYC9sfbTi8jKIbXoUKXi9q+1b9bGICXwr1SrrOMT1iVEHD3gmSEjmRYMgmQHX+el8pPzODIIiwf6aLRMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iajKLxqA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B267EC4CEC4;
-	Mon, 16 Sep 2024 06:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726469265;
-	bh=X+Df26JHczAuZOXyuIo4Gw81bNTKkhzqpqkGPSwKLpE=;
-	h=Date:Subject:List-Id:To:Cc:References:From:In-Reply-To:From;
-	b=iajKLxqAJ3kAKVWntWkvz/7e94s6mbY87ErViZ8LKRzbYP9r5qo8GmVU6Vv0g2u8l
-	 2EyXX7CYc842v/9SNd6Rfw3gls/0JT5S8SUsL5h87gr8i0twHut+mjIjNj7n6lYsZ8
-	 OacEvHD/znRHRZjVZoT6SYHhioP1PN0H1z0POIiV9BHY7xYoqmX7m0pZ0Q9x2UfR0D
-	 SQdMxqjjQRTeJTS0FilPQnAJS8UnDCpWfBnNzGpH3FnhegRbnN/gcTaMctnbkUfq2d
-	 opBzCXDXZRpHBUt062LsKelBBeA5aZPlvqeR9fX//n8/hsQC+doxXnp7pmz9BppTSP
-	 OyT6BHL2PxQHw==
-Message-ID: <271128c9-cb32-499c-88ab-dcae588a1569@kernel.org>
-Date: Mon, 16 Sep 2024 08:47:34 +0200
+	s=arc-20240116; t=1726469272; c=relaxed/simple;
+	bh=S4jMHUX9poTfb9e19DedP3LkgtIDcRFffjCHS3w0WtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JQgDz/xrkK46CjvJ7l5m33VeH7FPAJHtIzvabrYLAUxqCmnzP8KLOpNd8Ap+WxWujGCySIqD2tJUkBBIevZecatrA22RcbXhnGf86w/bwogtP8pO1RH/tZxJtEUCsOlpu4Optw/qmwhsW5PVZUlDMj+0HsaDR7pHuL3gaPYJWdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZornDbVh; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726469267;
+	bh=KL6isrVmkMEDbrBMR12kIHoCDfymdOx4DGl2Qk5z6O0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZornDbVhUA0GBvna7IjKIgdFowRTLi6P2rLUCgWE+TNai5Eg+QVTzRvZKfAhnc2jC
+	 4nn13K7lQpT3YmvEdoSm/wg1wlxPaprbmF+thOwjbKAYGO8PEcFzMOGN8MA351x0pb
+	 Hh2+BDcgH3HGYpREIfBfXjDz0fXIK5isMUQW5cUMKOXWzGMKPDlpg4iAmoiMgPQyAI
+	 1B/W6ZdnPPyFhGji8uXdM1q6FjjnK0SWqwwQGZ7agjrHsW/G4CQoIWCgZbZcxBUttM
+	 +Uj3NxV15gE7cf02y1il2Jz0pSxy9Na0rgUJz+kli6Z6fBsX8yEd3rQrc6j18vuoRP
+	 vvy7gMgv9xR+A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6b821l3pz4x8C;
+	Mon, 16 Sep 2024 16:47:45 +1000 (AEST)
+Date: Mon, 16 Sep 2024 16:47:44 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Joey Gouly <joey.gouly@arm.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64
+ tree
+Message-ID: <20240916164744.3ecf283d@canb.auug.org.au>
+In-Reply-To: <20240905160856.14e95d14@canb.auug.org.au>
+References: <20240905160856.14e95d14@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/21] include: dt-binding: clock: add adi clock header
- file
-To: arturs.artamonovs@analog.com, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Greg Malysa <greg.malysa@timesys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Utsav Agarwal <Utsav.Agarwal@analog.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>,
- Andi Shyti <andi.shyti@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Olof Johansson <olof@lixom.net>, soc@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-serial@vger.kernel.org, adsp-linux@analog.com,
- Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
- <20240912-test-v1-6-458fa57c8ccf@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240912-test-v1-6-458fa57c8ccf@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/ta6sSh.Z0zISF5r92HD6ugV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 12/09/2024 20:24, Arturs Artamonovs via B4 Relay wrote:
-> From: Arturs Artamonovs <arturs.artamonovs@analog.com>
-> 
-> Add adi clock driver header file
+--Sig_/ta6sSh.Z0zISF5r92HD6ugV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Useless on its own. This must be part of bindings patch.
+Hi all,
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+On Thu, 5 Sep 2024 16:08:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the kvm-arm tree got a conflict in:
+>=20
+>   arch/arm64/include/asm/kvm_host.h
+>=20
+> between commit:
+>=20
+>   b86c9bea6349 ("KVM: arm64: Save/restore POE registers")
+>=20
+> from the arm64 tree and commits:
+>=20
+>   b55688943597 ("KVM: arm64: Move SVCR into the sysreg array")
+>   7d9c1ed6f4bf ("KVM: arm64: Move FPMR into the sysreg array")
+>=20
+> from the kvm-arm tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc arch/arm64/include/asm/kvm_host.h
+> index d5857452a1ec,b9ca899041db..000000000000
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@@ -446,8 -446,10 +446,12 @@@ enum vcpu_sysreg=20
+>   	GCR_EL1,	/* Tag Control Register */
+>   	TFSRE0_EL1,	/* Tag Fault Status Register (EL0) */
+>  =20
+>  +	POR_EL0,	/* Permission Overlay Register 0 (EL0) */
+>  +
+> + 	/* FP/SIMD/SVE */
+> + 	SVCR,
+> + 	FPMR,
+> +=20
+>   	/* 32bit specific registers. */
+>   	DACR32_EL2,	/* Domain Access Control Register */
+>   	IFSR32_EL2,	/* Instruction Fault Status Register */
 
-> 
-> Signed-off-by: Arturs Artamonovs <Arturs.Artamonovs@analog.com>
-> Co-developed-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Signed-off-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Co-developed-by: Greg Malysa <greg.malysa@timesys.com>
-> Signed-off-by: Greg Malysa <greg.malysa@timesys.com>
-> ---
->  include/dt-bindings/clock/adi-sc5xx-clock.h | 93 +++++++++++++++++++++++++++++
->  1 file changed, 93 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/adi-sc5xx-clock.h b/include/dt-bindings/clock/adi-sc5xx-clock.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..723c11dc44f9741cff49dc2cb6c5232022abf00c
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/adi-sc5xx-clock.h
-> @@ -0,0 +1,93 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * ADSP SC5xx clock device tree bindings
-> + *
-> + * Copyright 2022-2024 - Analog Devices Inc.
-> + */
-> +
-> +#ifndef DT_BINDINGS_CLOCK_ADI_SC5XX_CLOCK_H
-> +#define DT_BINDINGS_CLOCK_ADI_SC5XX_CLOCK_H
-> +
-> +#define ADSP_SC598_CLK_DUMMY 0
-> +#define ADSP_SC598_CLK_SYS_CLKIN0 1
-> +#define ADSP_SC598_CLK_SYS_CLKIN1 2
-> +#define ADSP_SC598_CLK_CGU0_PLL_IN 3
-> +#define ADSP_SC598_CLK_CGU0_VCO_OUT 4
-> +#define ADSP_SC598_CLK_CGU0_PLLCLK 5
+This is now a conflict between the kvm tree and Linus' tree.
 
-That's quite unreadable code. Indent after define name.
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/ta6sSh.Z0zISF5r92HD6ugV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> +#define ADSP_SC598_CLK_CGU1_IN 6
-> +#define ADSP_SC598_CLK_CGU1_PLL_IN 7
-> +#define ADSP_SC598_CLK_CGU1_VCO_OUT 8
-> +#define ADSP_SC598_CLK_CGU1_PLLCLK 9
-> +#define ADSP_SC598_CLK_CGU0_CDIV 10
-> +#define ADSP_SC598_CLK_CGU0_SYSCLK 11
-> +#define ADSP_SC598_CLK_CGU0_DDIV 12
-> +#define ADSP_SC598_CLK_CGU0_ODIV 13
-> +#define ADSP_SC598_CLK_CGU0_S0SELDIV 14
-> +#define ADSP_SC598_CLK_CGU0_S1SELDIV 15
-> +#define ADSP_SC598_CLK_CGU0_S1SELEXDIV 16
-> +#define ADSP_SC598_CLK_CGU0_S1SEL 17
-> +#define ADSP_SC598_CLK_CGU1_CDIV 18
-> +#define ADSP_SC598_CLK_CGU1_SYSCLK 19
-> +#define ADSP_SC598_CLK_CGU1_DDIV 20
-> +#define ADSP_SC598_CLK_CGU1_ODIV 21
-> +#define ADSP_SC598_CLK_CGU1_S0SELDIV 22
-> +#define ADSP_SC598_CLK_CGU1_S1SELDIV 23
-> +#define ADSP_SC598_CLK_CGU1_S0SELEXDIV 24
-> +#define ADSP_SC598_CLK_CGU1_S1SELEXDIV 25
-> +#define ADSP_SC598_CLK_CGU1_S0SEL 26
-> +#define ADSP_SC598_CLK_CGU1_S1SEL 27
-> +#define ADSP_SC598_CLK_CGU0_CCLK2 28
-> +#define ADSP_SC598_CLK_CGU0_CCLK0 29
-> +#define ADSP_SC598_CLK_CGU0_OCLK 30
-> +#define ADSP_SC598_CLK_CGU0_DCLK 31
-> +#define ADSP_SC598_CLK_CGU0_SCLK1 32
-> +#define ADSP_SC598_CLK_CGU0_SCLK0 33
-> +#define ADSP_SC598_CLK_CGU1_CCLK0 34
-> +#define ADSP_SC598_CLK_CGU1_OCLK 35
-> +#define ADSP_SC598_CLK_CGU1_DCLK 36
-> +#define ADSP_SC598_CLK_CGU1_SCLK1 37
-> +#define ADSP_SC598_CLK_CGU1_SCLK0 38
-> +#define ADSP_SC598_CLK_CGU1_CCLK2 39
-> +#define ADSP_SC598_CLK_DCLK0_HALF 40
-> +#define ADSP_SC598_CLK_DCLK1_HALF 41
-> +#define ADSP_SC598_CLK_CGU1_SCLK1_HALF 42
-> +#define ADSP_SC598_CLK_SHARC0_SEL 43
-> +#define ADSP_SC598_CLK_SHARC1_SEL 44
-> +#define ADSP_SC598_CLK_ARM_SEL 45
-> +#define ADSP_SC598_CLK_CDU_DDR_SEL 46
-> +#define ADSP_SC598_CLK_CAN_SEL 47
-> +#define ADSP_SC598_CLK_SPDIF_SEL 48
-> +#define ADSP_SC598_CLK_SPI_SEL 49
-> +#define ADSP_SC598_CLK_GIGE_SEL 50
-> +#define ADSP_SC598_CLK_LP_SEL 51
-> +#define ADSP_SC598_CLK_LP_DDR_SEL 52
-> +#define ADSP_SC598_CLK_OSPI_REFCLK_SEL 53
-> +#define ADSP_SC598_CLK_TRACE_SEL 54
-> +#define ADSP_SC598_CLK_EMMC_SEL 55
-> +#define ADSP_SC598_CLK_EMMC_TIMER_QMC_SEL 56
-> +#define ADSP_SC598_CLK_SHARC0 57
-> +#define ADSP_SC598_CLK_SHARC1 58
-> +#define ADSP_SC598_CLK_ARM 59
-> +#define ADSP_SC598_CLK_CDU_DDR 60
-> +#define ADSP_SC598_CLK_CAN 61
-> +#define ADSP_SC598_CLK_SPDIF 62
-> +#define ADSP_SC598_CLK_SPI 63
-> +#define ADSP_SC598_CLK_GIGE 64
-> +#define ADSP_SC598_CLK_LP 65
-> +#define ADSP_SC598_CLK_LP_DDR 66
-> +#define ADSP_SC598_CLK_OSPI_REFCLK 67
-> +#define ADSP_SC598_CLK_TRACE 68
-> +#define ADSP_SC598_CLK_EMMC 69
-> +#define ADSP_SC598_CLK_EMMC_TIMER_QMC 70
-> +#define ADSP_SC598_CLK_3PLL_PLL_IN 71
-> +#define ADSP_SC598_CLK_3PLL_VCO_OUT 72
-> +#define ADSP_SC598_CLK_3PLL_PLLCLK 73
-> +#define ADSP_SC598_CLK_3PLL_DDIV 74
-> +#define ADSP_SC598_CLK_DDR_SEL 75
-> +#define ADSP_SC598_CLK_DDR 76
-> +#define ADSP_SC598_CLK_CGU0_VCO_2_OUT 77
-> +#define ADSP_SC598_CLK_CGU1_VCO_2_OUT 78
-> +#define ADSP_SC598_CLK_3PLL_VCO_2_OUT 79
-> +#define ADSP_SC598_CLK_END 80
+-----BEGIN PGP SIGNATURE-----
 
-Drop this one. Not a binding.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbn1JAACgkQAVBC80lX
+0GzdYwf/REGn+MeTjYFX1zvkPcJjXSOkiT3MmIPxjimEjI1IWMbxhmyVYFNEtv61
+5go/hXS4Iyp97ZeGqxYOL3iey5YfVjlAvW1Qwf5BrI4tjy0qvyVZaZAKPQnjP7tP
+quJSyPk0iE/EdlwZ13Z2ccLirZMimqTVB9DdQ6cVMs0DevQrIwl6ZhXaITVG75hr
+2pFVbZsL5HVDtNOXmuTNB+pbCAa558AyGUtYhFTxR27ctoLHSAqV1UZm4xDQZebf
+x62JNlDyJA7YgqlNIkVOD7m+SzVQRu+wwS6QKcLooWLwKFpEfBzi7TgCM/Pk4pWQ
+Xy/layxDlVdUPDSeFN4ymjJ3HN1Vog==
+=8hLL
+-----END PGP SIGNATURE-----
 
-
-Best regards,
-Krzysztof
-
+--Sig_/ta6sSh.Z0zISF5r92HD6ugV--
 
