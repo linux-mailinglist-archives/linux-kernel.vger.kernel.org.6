@@ -1,87 +1,116 @@
-Return-Path: <linux-kernel+bounces-330164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5DDE979A85
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:56:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38563979A87
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E050B21E1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A891F236C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFA03CF74;
-	Mon, 16 Sep 2024 04:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08091CF93;
+	Mon, 16 Sep 2024 04:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cd+LMHGx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nMicJQhp"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4246613AA5F;
-	Mon, 16 Sep 2024 04:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C4B208CA;
+	Mon, 16 Sep 2024 04:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726462523; cv=none; b=tWgj13HLg3BxJgY2aENCy6fBbcflnyb2bhQwv2kcdr6nZl5GvH4rlBtI9ap8kcFm4PnzwnBiFxr2mGR0DNhiuBnIvVR8eLbUeRnHskgqPgOie0nThmL2vb2W2CX6lOpLFXfO+dl2piP+J6+8tg+tTERnhlTsFoGN/9gj7ydBzIM=
+	t=1726462690; cv=none; b=QmRcgQaggv1B0NEMkqF6WJ2J9vzwljF0tw0oMWhX2D4ZP5UnLtMSe/O+GYPwSu+Q4cYN8MLgU+aOoSJOT2SokxCEEV1nVC+1Tuifm/u1FjZ0YKRD1X4YUU3o0iPErcSu0tFahrtjVnA1s8UHOqIWnMaZzpxGTbxKgEZ3qPXWj7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726462523; c=relaxed/simple;
-	bh=Q96zhx1qwnoxMs9+rsd3+/0l/tJnp0elMcZ1aR1HwwQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oLcDQb+sOCqa2Sq8wNlzDATx5tDD9HL7kwr90sBCcAGfxoabRmNpi2ZkpxW1og52YNLRvrX7eGV98pzshEzaqNAvEvOmhpjc1KyckrrDegDRwoqOaN3MDlUDowClwp/tO4W2df4WJ46sla7RIXe6OEU8sAlSwNG8jEVbPUY8BJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cd+LMHGx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E24A5C4CEC4;
-	Mon, 16 Sep 2024 04:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726462522;
-	bh=Q96zhx1qwnoxMs9+rsd3+/0l/tJnp0elMcZ1aR1HwwQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Cd+LMHGxcA5psAZ670+Fx4rsIIXY0HLU3GqACWyOb1/CSWpSAKzUc6boMib+kB+G0
-	 HoaQq5wZBxgEHr3+vD1hTrp3gu9sboBJ5pwkIWeLwHlFKbFMv/3M/hMi/wA52PXmM4
-	 xr85RmCo/LjFGsLYY+aJdYGCVzN9KJIHs+pnTgQJT6n936RuWO9+c0FKKm7jh8VXd5
-	 jMgTp3f42ehr6ACHo0kK6NJG948qrXneNCqzktVQWt2jT5w0qNbvEOTpKZS8eS3E09
-	 zyCecWwY9f1O9kAFdqHqXTW8UudrhwMjqKDRFQ+iE23NH9RaIMFINTZIXFhZ4Kmo3t
-	 0N3ZCd1edqIEQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE01B3809A80;
-	Mon, 16 Sep 2024 04:55:25 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Update for 6.12
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
-References: <Y5mGGrBJaDL6mnQJ@gondor.apana.org.au>
- <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
- <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
- <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
- <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
- <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
- <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
- <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
- <ZkGN64ulwzPVvn6-@gondor.apana.org.au>
- <ZpkdZopjF9/9/Njx@gondor.apana.org.au> <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p1
-X-PR-Tracked-Commit-Id: ce212d2afca47acd366a2e74c76fe82c31f785ab
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 85ffc6e4ed3712f8b3fedb3fbe42afae644a699c
-Message-Id: <172646252417.3235832.759034537058096675.pr-tracker-bot@kernel.org>
-Date: Mon, 16 Sep 2024 04:55:24 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+	s=arc-20240116; t=1726462690; c=relaxed/simple;
+	bh=P/jTmtzlqvETKkHYXqQBskfiSEmsJUNd4ukE5yVznIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=E9DLqnCmpLsbWZmqJlkRfgWdkFUFwCEk+I3krqsGrJYsiyZQYYSNCrf1acoJWBufH25tahQqkhrd5bjdwblu1r3gu/sFbU//TtNxaNOfxpvTfHnfcsuqeagJK5dCi0ZITK67HHUXUEzHouETh+MWAxm4moVYX4dwvToX13R1t4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nMicJQhp; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726462684;
+	bh=SGvh2KrCSkdxgT9cqqyW72ZphrRxJSgV7dWMDYAvspI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nMicJQhpuC1K20IyWIyWvhpfHHPk1MXTMX/ZTGGfEoITpJMQ25Kat760Fd5Fj3+bg
+	 HICU3/2lIYJpEvRD7A9J36AVGn5LNRF2dIk7ilMw2lKakVZABcNCX4XD6wX1WkRD5d
+	 Kd8N+2pfJ1UceAtGGYtrXr+IrQPR1lFPrUUw/zKtU98V2196vfqEHdPZnPTC5UfVsg
+	 yBOWWN2jzltJvouu3ZQm9+zNV5OFc8/ETyHMO6QvM2xfCSuoK4QjWg1zR+YLl6oiUz
+	 DX6aoyAjt4E2N2pcj1klISM66bgCK1ALIu87u6LH/fNWnldBBsLoiUjEv8qjSrB3Hb
+	 +kmFX19p7nXBw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X6XjP5Zddz4xCV;
+	Mon, 16 Sep 2024 14:58:01 +1000 (AEST)
+Date: Mon, 16 Sep 2024 14:58:00 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Takashi Iwai <tiwai@suse.de>, Olof Johansson <olof@lixom.net>, Arnd
+ Bergmann <arnd@arndb.de>
+Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, ARM <linux-arm-kernel@lists.infradead.org>,
+ Mark Brown <broonie@kernel.org>, Nikita Shubin <nikita.shubin@maquefel.me>,
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
+Subject: linux-next: manual merge of the sound tree with the arm-soc tree
+Message-ID: <20240916145800.743302ec@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/9CVimmwn12Biz5BvpeTDfeD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The pull request you sent on Mon, 16 Sep 2024 11:59:01 +0800:
+--Sig_/9CVimmwn12Biz5BvpeTDfeD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p1
+Hi all,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/85ffc6e4ed3712f8b3fedb3fbe42afae644a699c
+Today's linux-next merge of the sound tree got a conflict in:
 
-Thank you!
+  sound/soc/cirrus/edb93xx.c
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+between commit:
+
+  7a9a9110d765 ("ASoC: cirrus: edb93xx: Delete driver")
+
+from the arm-soc tree and commit:
+
+  130af75b5c05 ("ASoC: Switch back to struct platform_driver::remove()")
+
+from the sound tree.
+
+I fixed it up (I removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9CVimmwn12Biz5BvpeTDfeD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbnutgACgkQAVBC80lX
+0GwhNAf+L14dWyGJLxdRhRIHsGZigQ+1g5GW0KgRjOsdSytBn4eV68gVwh9Yy2yZ
+WvUrPBjyefc+kF5v5ZIN4LwWkr2ly7RA3HuFn/4Ioi/mpiSAZqC/cuaCrqKukXaM
+36eg2MtifWjt7dfVgN2t2YlWPuw6sHRlXzoy2YbmFIkN3pwuySnQhdVZYzdF54+r
+Cws8G3zB+U9sofomOFUFAUdrymAvmc9NKy0Ju8Ms1PgtXNhEgI9ex5n3yjkyzhT9
+gCmjfB/RLELpnNuTB6ico5Lx0HYhbNYvGemzXBI6rvnkqpBXfHrlAD7EPIbefNvy
+Q8Rg/I2Y7tvIXF8t26ukiaTyPo+MzQ==
+=dddB
+-----END PGP SIGNATURE-----
+
+--Sig_/9CVimmwn12Biz5BvpeTDfeD--
 
