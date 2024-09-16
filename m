@@ -1,80 +1,113 @@
-Return-Path: <linux-kernel+bounces-330430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F6E979E7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:28:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC1A979E7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6453928320C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250A91C22AA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AAB14BFA2;
-	Mon, 16 Sep 2024 09:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A8714AD29;
+	Mon, 16 Sep 2024 09:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2V+2BTJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="E/IcgTSG"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC9014B962
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4291B85C1;
+	Mon, 16 Sep 2024 09:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726478924; cv=none; b=f+xthZiIDTmhayrOZU8Jv9WzXaYM+cbrjhzE7gFuYuoBTTUI4IqRbE9iM3ZgtMsP3bZqOgC0Kwnct+9LG4B3pnppkTA4x2Fi6BCVuWHAOjAzjGJK0GVLcE6UGuzuQGiJlfsO2aKMf+p3bfMDst9R4Uql2B3knTGxmdaU0hOGAaI=
+	t=1726478948; cv=none; b=CqE4xm/8cUfJsSSbiu9KwpDOnfKs0X6JjKrotlWnoKj7FHYwJCU65y5s8SoeR5nVwbc5Qm1QGhZE8q0gLaECM+eIyWdnfRYhhZgj+bFtmbUj/p8h8dURZvjO0anWT026Lhb1Xfnr2gdp7ZslIQMby+OVFr3SslW80TPrVqrLxVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726478924; c=relaxed/simple;
-	bh=HHUgW1boYFxsRq7ez/mJftbzVuWDocQVG+uAfB4jUpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QmbRxqT5PCQz+SAzLrAJVYY24fobUwyw5Bb0cKqdw7ylKS2leTwcufHBxWeYqDrOCayhS2HFTgYe2ZdA+SXd+eolUjBx3QCzLobgvYyx9lfciqJIrOwbhqho9H1+/vImf5lTsFFT/g8YjsWQWd6NvKZYA0agxHdpFCs8Q3bKNEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2V+2BTJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E4BC4CECD;
-	Mon, 16 Sep 2024 09:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726478924;
-	bh=HHUgW1boYFxsRq7ez/mJftbzVuWDocQVG+uAfB4jUpg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o2V+2BTJYV3NhsJTPZR0edYF0TIE5JqINAzERFaJWLuAbj1GVVCzzHgW7e21Bs9MS
-	 MW50QT88ifdVFoDKkDgEH9ksLco0WTiM4uXWVwcvwjQlFRf4vVfeni/ijF2pPjjo0B
-	 H6Rtu4Ew0GRAGsYxfjfKkhg5IcNXOb0t4GXDKXiUMt6ABfQNHtdo9tSIZso3qNt9dn
-	 zPsFgF5uqq9JeCnvPlDjCBHuurszTYKSljTOwWbeEjpse9OsONC+gigw+HlPqElOB4
-	 1nLnTj912VaGn0jHMUqvY3NyuBL+iF4W9LAWvOU4RdwnUsCW8Cl8I+87Nl+tlr7UOQ
-	 mus1sRdlVEwww==
-Date: Mon, 16 Sep 2024 11:28:38 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Yan Zhen <yanzhen@vivo.com>
-Cc: jani.nikula@linux.intel.com, rodrigo.vivi@intel.com, 
-	joonas.lahtinen@linux.intel.com, tursulin@ursulin.net, airlied@gmail.com, simona@ffwll.ch, 
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	opensource.kernel@vivo.com, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v1] drm/i915/display: fix typo in the comment
-Message-ID: <hl7izclcyvkwi3z42iud3fv6aolzrmvilcd6gt4f2uyf7cefdz@2wswztqazz3g>
-References: <20240913061727.170198-1-yanzhen@vivo.com>
+	s=arc-20240116; t=1726478948; c=relaxed/simple;
+	bh=LurvBMAZgV5vSM0HyPmLqsMnwdCNy2bUJ7ttWHTaj4E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KLp9pcKalVRtnklipE7NKL5i6Fn+RxgMrrp6iBtcjmGVp5koveKBtrqMUVXLEkPIQXSFfWwnXKD8wVGmzcT2dK8z/zFj9wrRTYcQY4jLjeA011raK0wi3PRJhAevwyswF1Xdk4To0xmS4C9EG2el6+Q+V9OsZWTf+IJ5+q89d8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=E/IcgTSG; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1726478944;
+	bh=/J9ycsKmev+JnOkYZ8ZrOJcZ2sdXEpc0VMnSBiYWn1k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=E/IcgTSGguDWfkqGBfqxNrPHBSsS4fQBAx2hdXAwZhPVFJ/vX1r9N4IQUKwk+i2S9
+	 xS/Mu20mRtueSIa6Wu8UiOWqFzmfF51gndv1VSLvnLVn5yjeBM13WAgopCiniDXOgt
+	 9tScvnpEliFXJ3MArv1isjxpq6veS5ioDc4eDoHg=
+X-QQ-mid: bizesmtpip3t1726478942tk58g1r
+X-QQ-Originating-IP: +2qEEGnAhCVxuAAwv4tZUJOrInBum+BnrvEqM8e9iaw=
+Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 16 Sep 2024 17:29:00 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 13749986778819452041
+From: WangYuli <wangyuli@uniontech.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	maobibo@loongson.cn,
+	guanwentao@uniontech.com,
+	zhangdandan@uniontech.com,
+	wangyuli@uniontech.com,
+	chenhuacai@loongson.cn
+Cc: zhaotianrui@loongson.cn,
+	kernel@xen0n.name,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 6.10] LoongArch: KVM: Remove undefined a6 argument comment for kvm_hypercall()
+Date: Mon, 16 Sep 2024 17:28:57 +0800
+Message-ID: <5B13B2AF7C2779A7+20240916092857.433334-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913061727.170198-1-yanzhen@vivo.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Hi Yan,
+From: Dandan Zhang <zhangdandan@uniontech.com>
 
-On Fri, Sep 13, 2024 at 02:17:27PM GMT, Yan Zhen wrote:
-> Correctly spelled comments make it easier for the reader to understand
-> the code.
-> 
-> Replace 'platformas' with 'platforms' in the comment &
-> replace 'prefere' with 'prefer' in the comment &
-> replace 'corresponsding' with 'corresponding' in the comment &
-> replace 'harizontal' with 'horizontal' in the comment.
-> 
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+[ Upstream commit 494b0792d962e8efac72b3a5b6d9bcd4e6fa8cf0 ]
 
-reviewed and merged to drm-intel-next.
+The kvm_hypercall() set for LoongArch is limited to a1-a5. So the
+mention of a6 in the comment is undefined that needs to be rectified.
 
-Thanks,
-Andi
+Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+--
+Changlog:
+ *v1 -> v2: Correct the commit-msg format.
+---
+ arch/loongarch/include/asm/kvm_para.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/include/asm/kvm_para.h
+index 4ba2312e5f8c..6d5e9b6c5714 100644
+--- a/arch/loongarch/include/asm/kvm_para.h
++++ b/arch/loongarch/include/asm/kvm_para.h
+@@ -28,9 +28,9 @@
+  * Hypercall interface for KVM hypervisor
+  *
+  * a0: function identifier
+- * a1-a6: args
++ * a1-a5: args
+  * Return value will be placed in a0.
+- * Up to 6 arguments are passed in a1, a2, a3, a4, a5, a6.
++ * Up to 5 arguments are passed in a1, a2, a3, a4, a5.
+  */
+ static __always_inline long kvm_hypercall0(u64 fid)
+ {
+-- 
+2.43.0
+
 
