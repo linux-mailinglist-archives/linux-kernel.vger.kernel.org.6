@@ -1,107 +1,137 @@
-Return-Path: <linux-kernel+bounces-331000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5B397A716
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:58:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D5C97A71F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816C71C2090D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 17:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A4428A2DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01B315B10A;
-	Mon, 16 Sep 2024 17:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E2715B149;
+	Mon, 16 Sep 2024 18:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JbmHrc6M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVgevNiV"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B3D15958A
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 17:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17477158A1F
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 18:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726509524; cv=none; b=GRXbJledvV3CtVV8hVTe/39wkXymqxHzjSYqc0NyQr54jIaKn1YZG029fJUSvKIHoOguJKqnQ9jtq6qPBwHW0YNlZZtYXxN16GulG3HBPX3eQAERhQS8qA0Of1cgdVYShOu/lLVlidV/yIhcYQRMFiADpJI1CsEgQme+wq5mZhA=
+	t=1726509708; cv=none; b=lEtiKWiY/jPnEWoXkyb6GT5BqYWp3ZHqo/U2RhNXOWVKzYe/7D/MVtsV1eF4+snrCWeD61s12ZzoTM6s6Ff8XDEcXI7CwWQk1WvZTlnFMzXt5jIoBvTlpj+1eyeLIVpR5vPeiNJqS6o9B5f7UeMWxT1+88f1T19gPkNnE/gCelI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726509524; c=relaxed/simple;
-	bh=bJPhYjV1Ia+Z2638ng73cI1m7y7FpPcRshmyKsgcsrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fC74S6mrdCE3vSCcLJaHquYR5mFNke6E1nDfEs8xWvpxmjFgeSBlxfdHRk3HZ7JIaU7dmj+OutHVYdQ33Nkb94imNuuJN7bdegVse8JjcJo13JVQKhCTj0w8PNA9KuRTUgcwEkqJ7bk16ZQdQPvorQkeMO9BM1zLpbUdX/tS/l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JbmHrc6M; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726509521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g83vBmJfBn8qhZUpht5ADDtAOeCHq/XCkkkKewo9hDw=;
-	b=JbmHrc6MgrYwqzI/NbYK8k7sMdwEKvwcTFg446SoukC8XlbyRppNgF5Fxo9+gs993pNsNw
-	iWQ6Y/9r37yUn3misSLmeyVNRREfZOF6YThgzHE7W9m+qW5JgkRbnmxdkO3YfkOiyQJL0G
-	fUse2f0om+rxK+2/9EQ5XsFPw4U+Nvo=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-37-2QkwuvQxPeaBODy0SoxaWg-1; Mon,
- 16 Sep 2024 13:58:36 -0400
-X-MC-Unique: 2QkwuvQxPeaBODy0SoxaWg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AECBA1955DC4;
-	Mon, 16 Sep 2024 17:58:34 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.93])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 633123001FEF;
-	Mon, 16 Sep 2024 17:58:31 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 16 Sep 2024 19:58:22 +0200 (CEST)
-Date: Mon, 16 Sep 2024 19:58:19 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2] function_graph: remove unnecessary initialization in
- ftrace_graph_ret_addr()
-Message-ID: <20240916175818.GA28944@redhat.com>
-References: <20240916135643.GA23958@redhat.com>
- <20240916123925.5398abdf@rorschach.local.home>
+	s=arc-20240116; t=1726509708; c=relaxed/simple;
+	bh=NRNz8ssAHhhm2oXxnE/h1hUFTmTpqIVzh4uHfbMY4sE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XiPyDhfylY+EyUCdrOdkPYSX92QOMc6ZoBfJYG5XN1OtnEAfmDclNjdCyk8+AGkXLR8I70wUhY8XVaqo6IIzMr/npWC9VUvFTG+sBYNMOr09fJHeSrXJdGm4S9cUZthe1NBGZ7bQuvU09KA2bAfFegMjDXFRXyCq/VhsKNGQBnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OVgevNiV; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fee6435a34so41304455ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:01:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726509705; x=1727114505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HM7yZDstT32KnRF5TqsXhuhE8I3k19PJmZPriUtEwCM=;
+        b=OVgevNiVq+LW6K8C8GVv6g961DgHTK+OKDzIw45BRZXUtOS3w/AGA1YMgT5UdfyX26
+         +7l121GMuONCJB540pbgBlJJ29I9pzqzZk4QknwcMAu0xTy7wWAcjImG9qiBDvO/yN0t
+         FHxUgaPVbzeZIUMkUV97fdUuXJNygi0/uwAqShGa3oSLg1gogU9dyVL0TlTjwOj+JFEt
+         QXA+GJQ1ZdxYi50ZsyFDeCPbO8AOGf2iAvSPGWm3XUqOxZ600vAd6/XKOCTZ8scv6Hs4
+         Ancj8Z5VnpxlykZQNNLTNLs0++VdysOyD84t0CRZXPJgZRIg2FXkUyNldT47Lq4Qaxm4
+         6V5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726509705; x=1727114505;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HM7yZDstT32KnRF5TqsXhuhE8I3k19PJmZPriUtEwCM=;
+        b=WgIvX/eUspZqnNAUHFXAccV3ovfIdfHJ7Gbm8Y8TU0iqZoYpl4kyqPF1b95tUfRJ+P
+         9Gi8i6/vsBUjwG3X50jtAks9soEBoDKJlFvNlnfq4xA7QcCNVcYLYqCvryFDFp8rADDt
+         3BhmHgXrTHuSdHDBDJVC4xn2qXO7Q+v+EPlf8vnTNWQZkF+Qclucn3BNNPB9r8X7fsB4
+         YGXQt2c2qGvRLnMW0jGo8VjbSoKG5V9mlitS/0l8NPxiv6E0gnFFmFymBjaXW28LzNAP
+         t8+btmUVrf4d5jilSovmTXOYaTlgQO3OtYj5kEFb6Fg5x7WsgwTbSCPM+HUs5ME92qX8
+         KAcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ3DNpOK0wLY7FrgCXdN162rUZ8RQm5dEFGDXd9HT513VvhJdK9tQQF0XKPVDzpbxZZ1FCJDhSIOWIGlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwRvupvKJfdrAJgRUbdBrG3pG4RK+qLlsorV1LiMz8MMnb0ccJ
+	N/LAiZlQIVf6Cr8uiYb6p1f/vTvlZgCPf7wBO3GBdFWO5d9FmkVV
+X-Google-Smtp-Source: AGHT+IF/+A6mrgl6Ock23OiKbg4Cer/TYYH0w02Pdbq5FW/ya8TUeOPtqQhk7tXeYaNhDI1b5GUG3Q==
+X-Received: by 2002:a17:902:face:b0:205:3e6d:9949 with SMTP id d9443c01a7336-2076e42e171mr181216255ad.52.1726509704832;
+        Mon, 16 Sep 2024 11:01:44 -0700 (PDT)
+Received: from fedora.. ([2405:201:d007:50c2:4888:86b4:6f32:9ae])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945da788sm38868525ad.18.2024.09.16.11.01.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 11:01:44 -0700 (PDT)
+From: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
+To: gustavo.sousa@intel.com,
+	jani.nikula@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	joonas.lahtinen@linux.intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: skhan@linuxfoundation.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/i915/cx0: Set power state to ready only on owned PHY lanes
+Date: Mon, 16 Sep 2024 23:31:37 +0530
+Message-ID: <20240916180137.9203-1-vamsikrishna.brahmajosyula@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916123925.5398abdf@rorschach.local.home>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
 
-After the commit 29c1c24a2707 ("function_graph: Fix up ftrace_graph_ret_addr()")
-ftrace_graph_ret_addr() doesn't need to initialize "int i" at the start.
+In DP alt mode, when pin assignment is D, only one PHY lane is owned
+by the display. intel_cx0pll_enable currently performs a power cycle
+ready on both the lanes in all cases.
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Address the todo to perfom power state ready on owned lanes.
+
+Tested on Meteor Lake-P [Intel Arc Graphics] with DP alt mode.
+
+v1 -> v2: Address comments from Gustavo Sousa
+
+Signed-off-by: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
 ---
- kernel/trace/fgraph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/i915/display/intel_cx0_phy.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index d7d4fb403f6f..45c02bf18304 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -892,7 +892,7 @@ unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
- {
- 	struct ftrace_ret_stack *ret_stack;
- 	unsigned long return_handler = (unsigned long)dereference_kernel_function_descriptor(return_to_handler);
--	int i = task->curr_ret_stack;
-+	int i;
+diff --git a/drivers/gpu/drm/i915/display/intel_cx0_phy.c b/drivers/gpu/drm/i915/display/intel_cx0_phy.c
+index 4a6c3040ca15..cbed53d3b250 100644
+--- a/drivers/gpu/drm/i915/display/intel_cx0_phy.c
++++ b/drivers/gpu/drm/i915/display/intel_cx0_phy.c
+@@ -2934,6 +2934,7 @@ static void intel_cx0pll_enable(struct intel_encoder *encoder,
+ 	enum phy phy = intel_encoder_to_phy(encoder);
+ 	struct intel_digital_port *dig_port = enc_to_dig_port(encoder);
+ 	bool lane_reversal = dig_port->saved_port_bits & DDI_BUF_PORT_REVERSAL;
++	u8 owned_lane_mask = intel_cx0_get_owned_lane_mask(encoder);
+ 	u8 maxpclk_lane = lane_reversal ? INTEL_CX0_LANE1 :
+ 					  INTEL_CX0_LANE0;
+ 	intel_wakeref_t wakeref = intel_cx0_phy_transaction_begin(encoder);
+@@ -2948,10 +2949,9 @@ static void intel_cx0pll_enable(struct intel_encoder *encoder,
+ 	intel_cx0_phy_lane_reset(encoder, lane_reversal);
  
- 	if (ret != return_handler)
- 		return ret;
--- 
-2.25.1.362.g51ebf55
+ 	/*
+-	 * 3. Change Phy power state to Ready.
+-	 * TODO: For DP alt mode use only one lane.
++	 * 3. Change Phy power state to Ready on owned lanes.
+ 	 */
+-	intel_cx0_powerdown_change_sequence(encoder, INTEL_CX0_BOTH_LANES,
++	intel_cx0_powerdown_change_sequence(encoder, owned_lane_mask,
+ 					    CX0_P2_STATE_READY);
+ 
+ 	/*
 
+base-commit: ad060dbbcfcfcba624ef1a75e1d71365a98b86d8
+-- 
+2.46.0
 
 
