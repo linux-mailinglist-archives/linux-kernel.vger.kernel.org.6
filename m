@@ -1,148 +1,164 @@
-Return-Path: <linux-kernel+bounces-330198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33B9979AD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:34:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2AEB979AD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D5362828FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:34:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3116E1C2287C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3302334CC4;
-	Mon, 16 Sep 2024 05:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE093B298;
+	Mon, 16 Sep 2024 05:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="JvIlPtB+"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCSceZ70"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1930134BD;
-	Mon, 16 Sep 2024 05:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726464850; cv=pass; b=OjvldgrYYIapUFwHqLf3eraCUjXJFUwoHMSPxmpyRlersfZRtljLrkohv8afr6DGbgzuz2dYfYJOJNTNqbf57aghiCl2QBX4vQW7uRlV+o/92GpsI9g4Y0VdNhaAVbLM7u27Z4FNNCUpIMAdTaTABnSM2J48tZ2sWfJnglE+zj4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726464850; c=relaxed/simple;
-	bh=34qGeTO/Y/p11RVt+zifaL0yAYJNxE+WVf8jP/6JUU8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=n+pJRynkYCHNq1xfZWfK3Y/LI4NQnNGZPtV67nzbE5PIuxqwI8yMab885p3y9dRDoH799WdlpOMjBBTWic5K32SefAnr5Y2hTzz/3WWllh0gdC96FJea27kbdS1tr3G25BP7IRvy5e6gvYEGVrSkDtXi6Kf/gZ9KEIpy5GsQGKU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=JvIlPtB+; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726464837; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BJ8Tt0yZ0UbVwR9RthmcNPkW990Cht2xUd/LKwpvhXv6pEU7yB/kGXHgTVWcqDM5C2nLsqOQLXVcGvPYLK7lzU5g4vUtHTC2RBrQPNUjATqnv4nv+KbQaGwFhyGAasFbpYG5muUPmnoo8uQWf2L0o44yb4d1ok1M6AlUbBY6B04=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726464837; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=XbjH4XBzgY2HoXkpITtf/KzqoIar+GVTSpiIDHcPY9U=; 
-	b=oFwkU1zEpTvOfKFOlrrgE/NX8rmK4s3qwSbFKNToOyyIK1NGJLa3clbUIWmbAgO0xEznrbkS/61mX+usWuBbomfoGg7s8Jj65aWAYpi1dMfaJQ9ZB+wAe0jQ6tpBSIwSSQ1zRGLurIR5v/Sod1vtGMPtJ6Nr8OorMABLVTNPgX0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726464837;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=XbjH4XBzgY2HoXkpITtf/KzqoIar+GVTSpiIDHcPY9U=;
-	b=JvIlPtB+n8nRZuU5mnm2/vXPcKElZ9juqgz1EEh7d05JFPlLRHgoiI8SynylAva6
-	RURWuiYXaZZlYJMyG0Yw6ry0EtZuIAKn3USMqBN0yybD9L9vS/ROFNb81t9JNDbhqpi
-	oE/7GwmCWmWpZ82RDszBlBjM8KWTI/A9s/6DNf74=
-Received: by mx.zohomail.com with SMTPS id 1726464835114940.5451116990921;
-	Sun, 15 Sep 2024 22:33:55 -0700 (PDT)
-Message-ID: <a7977fd3-2c48-4f31-be64-8d8007824f8c@collabora.com>
-Date: Mon, 16 Sep 2024 10:33:47 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0691E381B1;
+	Mon, 16 Sep 2024 05:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726465849; cv=none; b=MpB9svhlkR7voShYT5OvINSndMmwUthd8s7bFsLL1o+CZuNlTCd7a4hbt75MmDKGd1IB/0C9lDczRW8nA8fwmUL2zWKq0rcIQW06bZ7dOtsflB9gLlCkOEq5hLu3KZ1byW5drO2cbl1mVrRBb5/5CsPtbTv7Fo+7O/85r6SmDOY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726465849; c=relaxed/simple;
+	bh=0MMgHpKY0KowvzcMMNMhX5Z0T14qk8y//2PRBRL99nM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dDR1AmrHzYnCmuj+t/ocPyvYxep+Q3jqCLU2xxC50HRXm4FBwTfMo+N/iclIrNmyTrS6/akg+0aj1wJnnsCozPTlSSGQS7vDj1KhYxXQRox7o+OpnMPq0O0uucyUqpGeTN3pbf00cK5yXV3AeeJIfxwD/CzDX6TsG5RvPeZSbFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GCSceZ70; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso2899668a12.0;
+        Sun, 15 Sep 2024 22:50:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726465847; x=1727070647; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIrxZybZ0XitsIay3aIhX8lKiy24xzgBw1Qc3hSqjyU=;
+        b=GCSceZ70tfnd+zQTEVSlH5DkpPh8jRJjH/Bbct3WeH0NQ7g4e3OmIR3tldsxRqcKIu
+         ZbkiIEVq/5f7Oa0kMZtKlkG9BcJbah8niUrsxI5UM1gYncf4MvRpR1HixNmJ+vH6lAeV
+         6UI1Uy8Vmgnhmk4nK/ns1MIk6lOMwrtM57Dn9WO49WvOJhsKEZweXgoNHIqMclxv3kiY
+         NENX4lDWhJCV1JWRf1qrZvWdIhl6YTRBYsto9UhYZBYQLmlRqeVIdrlUVqknVDEKP9F/
+         gL5ZHV5stGkFrFYl+5gb4YzN2Kzl3uWwydqzPxm3kUe6Li6n9XgklcWTx2CqDdaY6QK8
+         eeMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726465847; x=1727070647;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zIrxZybZ0XitsIay3aIhX8lKiy24xzgBw1Qc3hSqjyU=;
+        b=ghNBE+jm1jHdqfGVa7qfCTXoE0b/7v16Ay/ovaiY8KaXNdIUj5bJXnB6f17g9imwcS
+         uPs5fUAXbACxFhFidKL0InukqEnEvbOBT+iaCuoQE4Ou0PeUAMOkyajJ4qtYKHHCDFzL
+         8qaWaXBOhsCyvUF5QHtCP2zNevOvskmSEaZfPgJUTWh8BoHo6tUm/QlGRksVe6HnvyTi
+         +fGr4X7rOcddL1N5USAzqCSog9YeWd2gsrUmt0goMz9orXsuzzJQYF3OjON3OoFIJRWJ
+         obUkMExMEuAFknAB601v4O3vvXcJIoH/L1uUcYOmUI1EfWp6sqh+T0Rry+AMdZST9zpK
+         7fKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQtw5maPlQDuChPKl/6pUIxUrf8S4Kxam6BVOWxLRbTuDZc1uFjYJtWxR7XBjl6wmb89Q=@vger.kernel.org, AJvYcCVVHL/1kB2WZPY/C5AAFwhAdvxW3BZ7lx40gQXdLMikMbO01RUZUCmXsegIyJqSbEojQcX6kb+him8/x79/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRvgBcX2fScB+TNRoKs7pm0fKbgPtBEEyG4YV4E79R5YioYQrn
+	Cly0Xd9SVJSCWDr9QmAtfuwtrwelQaEL15hFuk53lB1YlrjrlN7Z
+X-Google-Smtp-Source: AGHT+IE+4KpUczX0+BmIT2L40g/6KCkXEbsX0oILt0QtdXDIA6jH7bEkKi+a1RLWQMBSuVSizj9S/g==
+X-Received: by 2002:a05:6a21:3a96:b0:1d0:3a32:c3f8 with SMTP id adf61e73a8af0-1d03a32c3fdmr18116352637.39.1726465846938;
+        Sun, 15 Sep 2024 22:50:46 -0700 (PDT)
+Received: from x64.ju1vahqoe01uzkzduuiatpjzgc.syx.internal.cloudapp.net ([52.231.91.142])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944bcae34sm3074216b3a.220.2024.09.15.22.50.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 22:50:46 -0700 (PDT)
+From: Jiwon Kim <jiwonaid0@gmail.com>
+To: jv@jvosburgh.net,
+	andy@greyhouse.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	joamaki@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Jiwon Kim <jiwonaid0@gmail.com>,
+	syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
+Subject: [PATCH net] bondig: Add bond_xdp_check for bond_xdp_xmit in bond_main.c
+Date: Mon, 16 Sep 2024 05:50:11 +0000
+Message-ID: <20240916055011.16655-1-jiwonaid0@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, Steven Rostedt <rostedt@goodmis.org>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Daniel Bristot de Oliveira <bristot@kernel.org>, kernel@collabora.com,
- gustavo.padovan@collabora.com, helen.koike@collabora.com
-Subject: Re: [Report] rtla: Failed to set runtime and/or period
-To: Daniel Wagner <wagi@monom.org>
-References: <d3468fce-088c-45d0-8543-a2bc9fef07c9@collabora.com>
- <5b7e6aa4-8fe1-4ba3-b5e9-80bfa710afb9@flourine.local>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <5b7e6aa4-8fe1-4ba3-b5e9-80bfa710afb9@flourine.local>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-Thanks you Daniel for replying!
+Add bond_xdp_check to ensure the bond interface is in a valid state.
 
-On 9/13/24 6:47 PM, Daniel Wagner wrote:
-> On Thu, Sep 12, 2024 at 06:58:02PM GMT, Muhammad Usama Anjum wrote:
->> We are running rt-tests on KernelCI. I'm looking at failures and I found
->> out that rtla osnoise and rtla timerlat are failing. We have just
->> enabled these tests and they are failing from day one.
-> 
-> Thanks a lot on working on this!
-> 
->> The first thing I fixed in my local setup is to sync the version of rtla
->> with that of the running kernel from the source. It resolves the Tracer
->> timerlat not found!" error as we had installed the older rtla package
->> from Debian on CI.
-> 
-> There is some dependency between kernel version and the rtla tool suite.
-> I suppose there is a window of version which you can differ but I
-> suppose the Debian packaged version is way too old for recent kernels.
-> 
->> I'll update it. Is the version of rtla dependent on
->> the exact kernel version or any recent rtla version is acceptable?
-> 
-> I have to figure this out. It could be that we need to build/provide
-> matching rtla versions to the kernel. In theory the API should be stable
-> etc but I suspect the APIs got broken (not on purpose) in the early
-> days. Anyway, we have to figure this out as we can't ask Daniel sadly.
-> 
->> The other errors are persistent:
->>
->> ➜  sudo ./rtla osnoise hist -r 900000
->> Failed to set runtime and/or period
->> Could not apply config
-> 
-> This works on my Tumbleweed kernel (pretty much a vanila kernel)
-> 6.10.9-1-default with the matching rtla version 6.10.9.
-> 
-> What version do you use?
-I'll report back the version.
+syzbot reported WARNING in bond_xdp_get_xmit_slave.
+In bond_xdp_get_xmit_slave, the comment says
+/* Should never happen. Mode guarded by bond_xdp_check() */.
+However, it does not check the status when entering bond_xdp_xmit.
 
-> 
->> I thought maybe some argument are wrong. I ran the example from man page:
->>
->> ➜  sudo ./rtla osnoise hist -P F:1 -c 0-11 -r 900000 -d 1M -b 10 -E 25
->> Failed to apply CPUs config
->> Could not apply config
-> 
-> Same here. This works on my local kernel.
-> 
->> Is there some configuration which is missing for running rtla? Please
->> let me know.
-> 
-> Are these
-> 
->     CONFIG_OSNOISE_TRACER
->     CONFIG_TIMERLAT_TRACER
-> 
-> config option enabled in your kernel?
-I'd missed these configurations. I'm trying with them now. I think this
-is the root cause. I'll test with them. Hopefully problem would be gone
-after it. Otherwise I'll look into installing the matching rtla binary
-as well.
+Reported-by: syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c187823a52ed505b2257
+Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
+Signed-off-by: Jiwon Kim <jiwonaid0@gmail.com>
+---
+ drivers/net/bonding/bond_main.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
-> 
-> Thanks,
-> Daniel
-> 
-
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index bb9c3d6ef435..078c85070b86 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -5551,27 +5551,30 @@ bond_xdp_get_xmit_slave(struct net_device *bond_dev, struct xdp_buff *xdp)
+ static int bond_xdp_xmit(struct net_device *bond_dev,
+ 			 int n, struct xdp_frame **frames, u32 flags)
+ {
+-	int nxmit, err = -ENXIO;
++	struct bonding *bond = netdev_priv(bond_dev);
++	int nxmit = 0, err = -ENXIO;
+ 
+ 	rcu_read_lock();
+ 
+-	for (nxmit = 0; nxmit < n; nxmit++) {
+-		struct xdp_frame *frame = frames[nxmit];
+-		struct xdp_frame *frames1[] = {frame};
+-		struct net_device *slave_dev;
+-		struct xdp_buff xdp;
++	if (bond_xdp_check(bond)) {
++		for (nxmit = 0; nxmit < n; nxmit++) {
++			struct xdp_frame *frame = frames[nxmit];
++			struct xdp_frame *frames1[] = {frame};
++			struct net_device *slave_dev;
++			struct xdp_buff xdp;
+ 
+-		xdp_convert_frame_to_buff(frame, &xdp);
++			xdp_convert_frame_to_buff(frame, &xdp);
+ 
+-		slave_dev = bond_xdp_get_xmit_slave(bond_dev, &xdp);
+-		if (!slave_dev) {
+-			err = -ENXIO;
+-			break;
+-		}
++			slave_dev = bond_xdp_get_xmit_slave(bond_dev, &xdp);
++			if (!slave_dev) {
++				err = -ENXIO;
++				break;
++			}
+ 
+-		err = slave_dev->netdev_ops->ndo_xdp_xmit(slave_dev, 1, frames1, flags);
+-		if (err < 1)
+-			break;
++			err = slave_dev->netdev_ops->ndo_xdp_xmit(slave_dev, 1, frames1, flags);
++			if (err < 1)
++				break;
++		}
+ 	}
+ 
+ 	rcu_read_unlock();
 -- 
-BR,
-Muhammad Usama Anjum
+2.43.0
 
 
