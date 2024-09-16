@@ -1,79 +1,226 @@
-Return-Path: <linux-kernel+bounces-331028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B01B97A769
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:44:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D691997A76D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD91F1C21E6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:44:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51D98B20A8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E21715B548;
-	Mon, 16 Sep 2024 18:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B13815B984;
+	Mon, 16 Sep 2024 18:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGZIHWSU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABtgotaV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9699C168DA;
-	Mon, 16 Sep 2024 18:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E58614264A;
+	Mon, 16 Sep 2024 18:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726512288; cv=none; b=p70o7qT2QfTJEBFjZb0T+cs73wTRc8Rrzinc+kDpy+rQYDc9rvM0KOoCMvgQbwx9+rIFAxsxglRpuZjWCtFXgPM6XHckR39nemNc5+vXJ2Nt2VworefC36llt0vBbBzi4rFCo+kza9CSjm6oMKEr33asuSNvyWfWlCaAgra6WQQ=
+	t=1726512463; cv=none; b=ibF/lI1TmbNF+fVVb1GG11Rr0mXtOnASdTfxTelp13TtOxvD6ogJ+yRjWYFYWXAtyQSHebIa0yepIHMwLECtsahrgqglaXlE5fCW8grgVGmLUmvmHFyMsNWV4v09DX+JXIUepFMyRlwD9U7UMp3flJ8MvtvFc3z0NWdMl4EkCR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726512288; c=relaxed/simple;
-	bh=dISbbvHmGqx42WhRvhAuosf+zG38HM57MieCseV03VM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RMB1rONJFEHaZRzJ5i/I5OOQyjfr8x8BFqzbOWkffFh7ZEaJaNyTPZQI8ab6pjQwWx/9I3BVRShnHfGNMWDbsBo3X+YQQfpZt7StWm2aqTc/qaYJ2oXVEGVgX5ufFn727kJcInug5Jq0Q8VbHUZItUXdmj2ACzrwmvG/UJ8mBqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGZIHWSU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F730C4CEC4;
-	Mon, 16 Sep 2024 18:44:45 +0000 (UTC)
+	s=arc-20240116; t=1726512463; c=relaxed/simple;
+	bh=YONIu19JZeROs0DNZfx7fAzpgVhaKHDQf+Xd3Y0Y7jw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=clH/61lZ9FLh95KCwoqdBq733MYSiomPYzrHT2Ol1XX/KvpM4XtznwwuyvY08Q0ishsahj/LdBzgcij28I1XWOcU+BcGX4aX3F+IDXLvFCjMmN31wO/IQ21N35JlVnMxw+7ELOKeXumbpkqvo6yHOr/zE3taMQZ5NpomHms70L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABtgotaV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30299C4CEC4;
+	Mon, 16 Sep 2024 18:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726512288;
-	bh=dISbbvHmGqx42WhRvhAuosf+zG38HM57MieCseV03VM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eGZIHWSUpBrO/9dBhEZrpz3JLP1orNjuR8/LGD00vQuz6hl8o3FztyRFi4evCZAuM
-	 yVHhiRuVFboh9OxfJHtZm5OBW/0SXfMHmiwDoG0tmgqc2jFHvo+yLDP2cNXBoMUYFT
-	 YcCrOf/DR+QqzIxlzynv22HVzDT7ls/9DVDXm/WfQdsPFS7vyKRaVm/wNyOZ9ZU32J
-	 cD77aNIFWJtKh6kgFXAH4W9RyYwLpyGpExfKOvRZF1ZFpbnpu85aCFjs8ICGoXdUGC
-	 jD4fWn6aChHWgFgnWFbTcd3D2mrelbdjuyr1dFhXcOKguqBSNNoTWg6HTtsUG9VA3/
-	 fW/D4kOMr3lFA==
-Date: Mon, 16 Sep 2024 19:44:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexander Aring <alex.aring@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net] net: ipv6: select DST_CACHE from IPV6_RPL_LWTUNNEL
-Message-ID: <20240916184443.GC396300@kernel.org>
-References: <20240916-ipv6_rpl_lwtunnel-dst_cache-v1-1-c34d5d7ba7f3@linutronix.de>
+	s=k20201202; t=1726512463;
+	bh=YONIu19JZeROs0DNZfx7fAzpgVhaKHDQf+Xd3Y0Y7jw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ABtgotaVgCYOmMXISzBoxSvfF476n8+kLCfxtoSgQhtz5c4K6gBVrEmzHUQWOqe5+
+	 jXO6Mk8V+sE+dqNgNFjg7IQD1dZ+0vKMUjul15ZkSz0RS92YUclRdSwqSVAHdkRMWF
+	 X4xgAnw33lEZJsk+N8Rp5l+Xo32sK7zAtUby7Lti6ccllCU2qW+3JEht/h8xoGKevW
+	 bVQm6TSM7ruQ92ef17SSV69c5A5CAn7Vry97UE6zJYK8PS6N06Kn4HTJ7idZB9L/Sl
+	 CE2f5M846jUQxnAa3PiIg7SGXcp0146XaJA3wPx1HzL6Ukw7fsLJfXN9bjzzFoK7MZ
+	 2fG+yB0LjTVEQ==
+Date: Tue, 17 Sep 2024 03:47:32 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, Joel
+ Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
+ Michael Jeanson <mjeanson@efficios.com>
+Subject: Re: [PATCH 2/8] tracing/ftrace: guard syscall probe with
+ preempt_notrace
+Message-Id: <20240917034732.67af2533dec577f96bdb36f8@kernel.org>
+In-Reply-To: <20240909201652.319406-3-mathieu.desnoyers@efficios.com>
+References: <20240909201652.319406-1-mathieu.desnoyers@efficios.com>
+	<20240909201652.319406-3-mathieu.desnoyers@efficios.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240916-ipv6_rpl_lwtunnel-dst_cache-v1-1-c34d5d7ba7f3@linutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 16, 2024 at 06:53:15PM +0200, Thomas Weißschuh wrote:
-> The rpl sr tunnel code contains calls to dst_cache_*() which are
-> only present when the dst cache is built.
-> Select DST_CACHE to build the dst cache, similar to other kconfig
-> options in the same file.
+On Mon,  9 Sep 2024 16:16:46 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+
+> In preparation for allowing system call enter/exit instrumentation to
+> handle page faults, make sure that ftrace can handle this change by
+> explicitly disabling preemption within the ftrace system call tracepoint
+> probes to respect the current expectations within ftrace ring buffer
+> code.
 > 
-> Fixes: a7a29f9c361f ("net: ipv6: add rpl sr tunnel")
-> Cc: stable@vger.kernel.org
-> ---
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> This change does not yet allow ftrace to take page faults per se within
+> its probe, but allows its existing probes to adapt to the upcoming
+> change.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-Tested-by: Simon Horman <horms@kernel.org> # build-tested
+OK, this looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you,
+
+> 
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Michael Jeanson <mjeanson@efficios.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Yonghong Song <yhs@fb.com>
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: bpf@vger.kernel.org
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> ---
+>  include/trace/trace_events.h  | 38 ++++++++++++++++++++++++++++-------
+>  kernel/trace/trace_syscalls.c | 12 +++++++++++
+>  2 files changed, 43 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+> index 8bcbb9ee44de..0228d9ed94a3 100644
+> --- a/include/trace/trace_events.h
+> +++ b/include/trace/trace_events.h
+> @@ -263,6 +263,9 @@ static struct trace_event_fields trace_event_fields_##call[] = {	\
+>  	tstruct								\
+>  	{} };
+>  
+> +#undef DECLARE_EVENT_SYSCALL_CLASS
+> +#define DECLARE_EVENT_SYSCALL_CLASS DECLARE_EVENT_CLASS
+> +
+>  #undef DEFINE_EVENT_PRINT
+>  #define DEFINE_EVENT_PRINT(template, name, proto, args, print)
+>  
+> @@ -396,11 +399,11 @@ static inline notrace int trace_event_get_offsets_##call(		\
+>  
+>  #include "stages/stage6_event_callback.h"
+>  
+> -#undef DECLARE_EVENT_CLASS
+> -#define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print)	\
+> -									\
+> +
+> +#undef __DECLARE_EVENT_CLASS
+> +#define __DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print) \
+>  static notrace void							\
+> -trace_event_raw_event_##call(void *__data, proto)			\
+> +do_trace_event_raw_event_##call(void *__data, proto)			\
+>  {									\
+>  	struct trace_event_file *trace_file = __data;			\
+>  	struct trace_event_data_offsets_##call __maybe_unused __data_offsets;\
+> @@ -425,15 +428,34 @@ trace_event_raw_event_##call(void *__data, proto)			\
+>  									\
+>  	trace_event_buffer_commit(&fbuffer);				\
+>  }
+> +
+> +#undef DECLARE_EVENT_CLASS
+> +#define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print)	\
+> +__DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+> +		      PARAMS(assign), PARAMS(print))			\
+> +static notrace void							\
+> +trace_event_raw_event_##call(void *__data, proto)			\
+> +{									\
+> +	do_trace_event_raw_event_##call(__data, args);			\
+> +}
+> +
+> +#undef DECLARE_EVENT_SYSCALL_CLASS
+> +#define DECLARE_EVENT_SYSCALL_CLASS(call, proto, args, tstruct, assign, print) \
+> +__DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+> +		      PARAMS(assign), PARAMS(print))			\
+> +static notrace void							\
+> +trace_event_raw_event_##call(void *__data, proto)			\
+> +{									\
+> +	guard(preempt_notrace)();					\
+> +	do_trace_event_raw_event_##call(__data, args);			\
+> +}
+> +
+>  /*
+>   * The ftrace_test_probe is compiled out, it is only here as a build time check
+>   * to make sure that if the tracepoint handling changes, the ftrace probe will
+>   * fail to compile unless it too is updated.
+>   */
+>  
+> -#undef DECLARE_EVENT_SYSCALL_CLASS
+> -#define DECLARE_EVENT_SYSCALL_CLASS DECLARE_EVENT_CLASS
+> -
+>  #undef DEFINE_EVENT
+>  #define DEFINE_EVENT(template, call, proto, args)			\
+>  static inline void ftrace_test_probe_##call(void)			\
+> @@ -443,6 +465,8 @@ static inline void ftrace_test_probe_##call(void)			\
+>  
+>  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+>  
+> +#undef __DECLARE_EVENT_CLASS
+> +
+>  #include "stages/stage7_class_define.h"
+>  
+>  #undef DECLARE_EVENT_CLASS
+> diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+> index 067f8e2b930f..abf0e0b7cd0b 100644
+> --- a/kernel/trace/trace_syscalls.c
+> +++ b/kernel/trace/trace_syscalls.c
+> @@ -299,6 +299,12 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+>  	int syscall_nr;
+>  	int size;
+>  
+> +	/*
+> +	 * Syscall probe called with preemption enabled, but the ring
+> +	 * buffer and per-cpu data require preemption to be disabled.
+> +	 */
+> +	guard(preempt_notrace)();
+> +
+>  	syscall_nr = trace_get_syscall_nr(current, regs);
+>  	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
+>  		return;
+> @@ -338,6 +344,12 @@ static void ftrace_syscall_exit(void *data, struct pt_regs *regs, long ret)
+>  	struct trace_event_buffer fbuffer;
+>  	int syscall_nr;
+>  
+> +	/*
+> +	 * Syscall probe called with preemption enabled, but the ring
+> +	 * buffer and per-cpu data require preemption to be disabled.
+> +	 */
+> +	guard(preempt_notrace)();
+> +
+>  	syscall_nr = trace_get_syscall_nr(current, regs);
+>  	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
+>  		return;
+> -- 
+> 2.39.2
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
