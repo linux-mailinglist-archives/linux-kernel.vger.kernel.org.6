@@ -1,137 +1,157 @@
-Return-Path: <linux-kernel+bounces-330228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17BD979B36
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE52979B3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 395C5B23044
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:34:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27D7FB23119
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337722744E;
-	Mon, 16 Sep 2024 06:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A96645C14;
+	Mon, 16 Sep 2024 06:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="XPMjxyGx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mfKtvdJQ"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD4C522A;
-	Mon, 16 Sep 2024 06:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726468461; cv=pass; b=QPzJ/pp6IHp//f1tSWeIJe9bIKpuv/UQMT/i29i88eN1Lj7k4lvdDtD8wmGwO0ifvrPVVAliVWRF9whCchCc9OmfHLucnpkopncr00bj4u0i363wDLPRnei2jNFA1XhcS66P92VZCtu8kJPzXZk5hfpqx2BUdbKPjCBUScABQ0s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726468461; c=relaxed/simple;
-	bh=QBK85ORC+DlGDLML6QniSDfNtTcwsDXZAQ8tT4dJpJ8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uWGDpN+qqpUhU0jZ8lI2iVRjpVBLTibpmnZfmXzaRxQIJZ91fiKAN7Bj/UVDGMUDaFlXOBNICWbbRyWe9obE9CUwEo4CY5JZyErh2scYNM0YcRxa7MI086VKDvOaIcy5Xhv2leaTOIOPpRqptBnBMJTSdvM+MvryHVXgY/XnlmU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=XPMjxyGx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726468447; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OGvm7ygvNmrVcMUH3uk/1Ygh3LpR+kRy9v3hEP5a6stjVmEdIiDJDGxkRahnXF0y/ynakkv1s7aW9/UfP3dIIwnHoh2kvlXYZimvf36nJEosLXum9tA3A0SJ3pa0/YEtnGnC1WnZrb7wIm988Oce/ODsZl/5LQ2Arxlu1s0Rjxc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726468447; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=43RYhMal7eFWDuospxEJRYGHTyjhRWaw1O4eSzjv+Zk=; 
-	b=HLH8GeLCiQUMGzT2IUbSDAUCxN2Yv05AtbeO++lgcTifwz+xA/MOGGZF5G051GM8AzHlePopRxbznSVHOgf1NsxauBHyGYhvkwtl1L7GPo3X2YCbuVIu4anyLx+W27l1JpxCgXy4No6AupnUks34xn9r1h1UiaX6EchZbriSIN4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726468447;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=43RYhMal7eFWDuospxEJRYGHTyjhRWaw1O4eSzjv+Zk=;
-	b=XPMjxyGxnAy9z6Czv46dQNk07NPfKnuQEF13B4wcGAHKvMSnxDS9N8xYdk0KayQr
-	8sM4XHLweL4+BrPyoPK6xSyUQwoiNs30NauhM7XKYxhKSuOKWwP9DV78LNb276b7pC+
-	LXuPPO6Xr/XYyhImxAtJKPBDm/8trc+q6vXzFGPY=
-Received: by mx.zohomail.com with SMTPS id 1726468445372886.5813772455704;
-	Sun, 15 Sep 2024 23:34:05 -0700 (PDT)
-Message-ID: <2f6cfc9b-4f3b-4f64-9c4d-63e3453b3105@collabora.com>
-Date: Mon, 16 Sep 2024 11:33:58 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E07B80C0A
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726468716; cv=none; b=afZ/a4olKBI5QFR1SkxY/iR01XMYU8j0hZ8i/w9UZa2S5PaHb+Moc+VXYReZE91kQq08YGoFbIrb3vM+PyivIuVrrFqoEXxLgneVViWG1pZpMgyPeqnMd75G9e7/xqx9Svez8SBrRL5jeEDqyNq/N6P36Bb0u11gNxpHhoRSL0o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726468716; c=relaxed/simple;
+	bh=oig6OXmQgvNTyN0YeW/XhB+rJsuKLxXsCUs6pJ0VQV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tB3xSPvf3IwSPl6lFrGo+cZ7f7/PTC7+8CXcdWy2S+XeFxJWDvXbgytNQUwlEIp3PD7U5cIMyS7gbsjk1qRqZl5OuMYp+PyuIZGxWtd0PF7u7Z9hQ8msgvOdntsyyHAaf7mDpijfrskSRtUoNH3Yx/Th2mto5yupaUbxcLiaL1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mfKtvdJQ; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-49bcfbc732eso893419137.3
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 23:38:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726468713; x=1727073513; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=10j703qh//5/vCeG2Vxz+iNKLUAfZSd9B8Dsv2NLu0s=;
+        b=mfKtvdJQ8+UpjuiJb+iUdhhD7B6Z90qGkk0TlQJbImAxfqSwSvtj4jKMxWLxaXi1rG
+         IEHZaQF+/6kjBtjdS05zkKvTut4QPeFUUmRl3qXSTKM5tA0/ofRl82dtBmgC8byYG6NR
+         e0LUfaW54WsdH6VL3l3XZVOaA9EMYr9iTUFb+1alg8VBhl4SPXCmfH+DudyHM9OtIMhK
+         CCP8rYmAzw+pMIxSRoEKTKOq0Q3bR6EjasFtKshHWKQpmX/3v6sUT1Pr8y4uERndDUcX
+         zEUO5Us7v1S+buMqs7wvYR94shHuqpem8/UVH9E1OZx88M5nUbflSHm0m/Gfb847F9LQ
+         SlTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726468713; x=1727073513;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=10j703qh//5/vCeG2Vxz+iNKLUAfZSd9B8Dsv2NLu0s=;
+        b=iZ50LzMhDiDwQBnQabdW/LVQMdUKi4JQ5/6EjwyUWFbPMBe+lfqpCW8fm8TZWXG2c7
+         y1IOmijIZu36/JMtbHCdsW7hr0tBf9hy8982bqirszTIs21N5IZUgH2lE1/yN4OdktnN
+         l8aOIsBLhSFWcysdplm6q8W9/dLatjp2gm+Y38KCOHNFtre4/aiEGAC3iEwXTYb6e2Du
+         E/lqSph1T163MRTiNFYZ5e6UFmwOOiy1S7d6xoIO+rXS2JqS7OqAeim+R+Rr8ethzwkf
+         Ee2yageQICBQTLzU0z/rL4v10M3udtNnycoZofJbw0/6b5jRx0EI1FJbPiRyYg4qhEUR
+         9/gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+7mqiEKCZZ7QNralkh395J7tWV6gFvlBCBQ+fk6QfJeaYkqJi4XRcEmzRHucXF3tK3pHKMmlAmyTqPoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpMe2eVF6/aYRQtAHv0nHGKycnpI7G+1fFw2E8EYtgosjByaI5
+	ZjcMnmZLmTafinaZi+05tJPTJq0L3BTCifO7xakPB00sz+Wtp1lDsHIS0z+GTsvj2eHdrIZN3IP
+	HrsLHutU/GFv9ASvUuz6v9cfPcERFQAbDi2FNPQ==
+X-Google-Smtp-Source: AGHT+IGtd0SK9AEqDNAuLnHCjyOPOiPAieSmbNE5lyxyJmSOIeTqsd9D4ZiH8UMYGHfxo8r0SBQHAvZPHYjlCrnqlsQ=
+X-Received: by 2002:a05:6102:304c:b0:49d:4812:913f with SMTP id
+ ada2fe7eead31-49d4f6b2837mr6684015137.23.1726468712746; Sun, 15 Sep 2024
+ 23:38:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, kernel@collabora.com, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] kselftests: mm: Fail the test if userfaultfd syscall
- isn't found
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-References: <20240912103151.1520254-1-usama.anjum@collabora.com>
- <20240912103151.1520254-2-usama.anjum@collabora.com>
- <3b700650-159d-45ad-91a3-59fca3019766@linuxfoundation.org>
- <35f21581-71f3-4234-9b03-dd3e3bda664f@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <35f21581-71f3-4234-9b03-dd3e3bda664f@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20240913135744.152669-9-aardelean@baylibre.com>
+ <202409140416.KWHXjFSv-lkp@intel.com> <20240914154150.6ce9c1b6@jic23-huawei>
+In-Reply-To: <20240914154150.6ce9c1b6@jic23-huawei>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Mon, 16 Sep 2024 09:38:23 +0300
+Message-ID: <CA+GgBR_OE3E7FwcAVy+hD51OPP4wcrSuEWh_9YCtH+fwTwAQLQ@mail.gmail.com>
+Subject: Re: [PATCH v6 8/8] iio: adc: ad7606: add support for AD7606C-{16,18} parts
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, oe-kbuild-all@lists.linux.dev, krzk+dt@kernel.org, 
+	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
+	gstols@baylibre.com, dlechner@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/12/24 10:28 PM, Shuah Khan wrote:
-> On 9/12/24 10:10, Shuah Khan wrote:
->> On 9/12/24 04:31, Muhammad Usama Anjum wrote:
->>> The userfaultfd is enabled in the config fragment of mm selftest suite.
->>> It must always be present. If it isn't present, we should throw error
->>> and not just skip. This would have helped us catch the test breakage.
->>
->> Please elaborate on this to help understand the what breakage was
->> missed.
->>
->> Also this commit log doesn't look right to me. syscall() could
->> fail for any reason. Do you mean to see skip is incorrect in this
->> error leg? Please see comments below.
->>
->>> Adding this now to catch the future breakages.
->>>
->>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->>> ---
->>>   tools/testing/selftests/mm/pagemap_ioctl.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c
->>> b/tools/testing/selftests/mm/pagemap_ioctl.c
->>> index bcc73b4e805c6..d83dda8edf62c 100644
->>> --- a/tools/testing/selftests/mm/pagemap_ioctl.c
->>> +++ b/tools/testing/selftests/mm/pagemap_ioctl.c
->>> @@ -95,7 +95,7 @@ int init_uffd(void)
->>>       uffd = syscall(__NR_userfaultfd, O_CLOEXEC | O_NONBLOCK |
->>> UFFD_USER_MODE_ONLY);
->>>       if (uffd == -1)
->>> -        return uffd;
->>> +        ksft_exit_fail_perror("Userfaultfd syscall failed");
->>
->> This looks wrong to me - Is missing config the only reason this syscall
->> would fail?
-> 
-> It should still skip if __NR_userfaultfd isn't supported on a release
-> or an architecture.
-> 
-> The real problem seems to be in main():
-> 
-> if (init_uffd())
->                 ksft_exit_pass();
-> 
-> 
-> Why is this ksft_exit_pass()? Looks like further investigation is
-> necessary to understand the problem and fix.
-Let's skip this patch as it'll create more noise on unsupported
-architectures than catching failures on supported architectures.
+On Sat, Sep 14, 2024 at 5:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+>
+> On Sat, 14 Sep 2024 04:30:42 +0800
+> kernel test robot <lkp@intel.com> wrote:
+>
+> > Hi Alexandru,
+> >
+> > kernel test robot noticed the following build warnings:
+> >
+> > [auto build test WARNING on jic23-iio/togreg]
+> > [also build test WARNING on next-20240913]
+> > [cannot apply to linus/master v6.11-rc7]
+> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > And when submitting patch, we suggest to use '--base' as documented in
+> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Alexandru-Ardele=
+an/iio-adc-ad7606-add-bits-parameter-to-channels-macros/20240913-220501
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git t=
+ogreg
+> > patch link:    https://lore.kernel.org/r/20240913135744.152669-9-aardel=
+ean%40baylibre.com
+> > patch subject: [PATCH v6 8/8] iio: adc: ad7606: add support for AD7606C=
+-{16,18} parts
+> > config: arm-randconfig-001-20240914 (https://download.01.org/0day-ci/ar=
+chive/20240914/202409140416.KWHXjFSv-lkp@intel.com/config)
+> > compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
+hive/20240914/202409140416.KWHXjFSv-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202409140416.KWHXjFSv-l=
+kp@intel.com/
+> >
+> > All warnings (new ones prefixed by >>):
+> >
+> > >> drivers/iio/adc/ad7606.c:39:27: warning: 'ad7606_18bit_hw_scale_avai=
+l' defined but not used [-Wunused-const-variable=3D]
+> >       39 | static const unsigned int ad7606_18bit_hw_scale_avail[2] =3D=
+ {
+> >          |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >
+> >
+> > vim +/ad7606_18bit_hw_scale_avail +39 drivers/iio/adc/ad7606.c
+> >
+> >     38
+> >   > 39        static const unsigned int ad7606_18bit_hw_scale_avail[2] =
+=3D {
+> >     40                38147, 76294
+> >     41        };
+> >     42
+> Hmm. Seems like there is no code that would use this, so what is it
+> and where did the numbers come from?
 
-> 
-> thanks,
-> -- Shuah
+Oh that's a good catch from the CI bot.
+While reworking the SW scales for AD7606C-{16,18} I dropped the HW scales.
+Oddly enough, I don't get the error building locally, I may need to
+add more flags to the build.
+Will re-spin.
 
--- 
-BR,
-Muhammad Usama Anjum
-
+>
+> Jonathan
+>
+> >
+>
 
