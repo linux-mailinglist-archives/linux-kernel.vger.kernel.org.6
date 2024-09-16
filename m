@@ -1,157 +1,104 @@
-Return-Path: <linux-kernel+bounces-331164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765A797A94F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:47:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B7697A950
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECED41F28972
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2581F28995
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 22:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D443614D43D;
-	Mon, 16 Sep 2024 22:47:31 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE29214D282;
+	Mon, 16 Sep 2024 22:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="HMs+FpiF"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC428248C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 22:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE714594D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 22:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726526851; cv=none; b=mUbLnXsBqSoK5FgohcxCpPov5inn0Dts4XE4oZlpLz5bMpPlDeHyQNoGJA4dV4I7KpJf5GyoYkrfZ5wq79/iaYAz+qqkWRfbs+gcSaoyNg5iNG44IyQE0uwru8L0zRKbk44LgwH8RwD9k+sANcJw/wYX79piu+P6GmZ9bqXMUkw=
+	t=1726526884; cv=none; b=hElGAREq6uty5zitZaGA9DFKN/vHoaPcqxrghSjTjbcGEpqsbTnTheQdFCQfLrIEKSYDQPUoCrN4dUNC3Pn3EwcmQ5iSsBopAEjCdNAB/b0bDFsXYLoeTp9h6+sFHtLpvNeHnnJkMaaPCGZ3AlWMEmvreVHFKPbqrgzkGyt+nEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726526851; c=relaxed/simple;
-	bh=41Ybt8dNS9KycTHyJBL1FKkrujB8ri1h9w/FQGcqRrg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PEfsZvmYFzZsevEZBJqq4A7kTltupL5kxqtMoLvz619RdMz3jwviF7nDaOcogVzz5jVRH8IYG7HkX1s6vCTU0/3CxrCaMG4YxVY+UugYITZc7+b+MQbCf9NijFEodxkvG9z5iSONz651LtKmLNXj7wYK76bwHQFrxRq5ElD5NM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82aa499f938so902038539f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 15:47:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726526849; x=1727131649;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+U/UV4SyzRkEESoWYzGS9RxixgPfLq0YizcwZSgxfNA=;
-        b=s9S5ZqP/IMuq196jP3wIRupCNibtvZ3woeQ+Uq+hyWhqxqAUbNJSXReuF9rmrWwdsJ
-         //EN1xk3zUYuHTUV+B9WdsA52/hna/tg6O6Kp24voHY3oanVaMgRd/+tHZVQWqnTZzwr
-         2FTrxuftoZKWINH355i2JEIfCLz9f82awCrBXQNHEdw+ucvJHOujS7i+wzKDKzj1EXBl
-         YY/XbTtLExkXIxvTmrTfed8VbU8aOXAzxSqbic/VYZcDS1GmQUuTrlEfHZDGA0/Ide20
-         do1SoFKLMBoSMF6KhM4mRqQJvCcxQTPmiPTrPxxGkzd5gH3z3Zn1CzznDrNDn2F+ajkU
-         9t2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXWlVUNILygdB/cGKTfQ9WysDVG0Zp5stlw1xF9whdCG5Tvbcxr0miFgdJS/mUleuz1EIv3sT0YlixnD/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTGs11c5Z6+7txUSp66ciooPFfV4IKvHXVLPDluDDGJKHB8m6t
-	NJAlf8GJSfTehckjni1s2myCUJymeZKS9bG4PmXJH8KJiwPK5TNu+2rHmFI8cA950F3At2lyHpY
-	FkdNxH7t34aTSoD2zIXLJS9UxHYc9W5AP1N2t35O14m+fS7to/jydfa4=
-X-Google-Smtp-Source: AGHT+IFmTK6OY5rLLPTuEKv2PGFM2Vk+PG/0p9ljO5RS5zqaROfGKOD7zY3ghyhnr4nLWaVCSXor0PUVcHyw1/OEKyYVqoSNwDXe
+	s=arc-20240116; t=1726526884; c=relaxed/simple;
+	bh=ThItjMszJ9i/A9tdAMi/YBdMUn/8JQNKAh1bvpVs7uk=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EIsuHg8k1ZmYl7qV3sJiiSAli8WqjghRFp9nL2Jxy55sNr6Ikp60Z2lXZ0WuDdq1yU7iaFFWPJbXNWtT9iQWKmM8TKsgbsPCkKgLyqTBW/oXZVB8PTqnpD5tvQycPYRB56n1T+jAd/bklWN+r4+XU4i+VakYnh9rVbx8I0gJrYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=HMs+FpiF; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=4g6nhvjwt5cdlp654twaomoow4.protonmail; t=1726526880; x=1726786080;
+	bh=ThItjMszJ9i/A9tdAMi/YBdMUn/8JQNKAh1bvpVs7uk=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=HMs+FpiFNp796OsqOK5Y8i7prLB+e5BSfcO/o9BOvlvl7dopQEO8Dx9jyJg6izPig
+	 9f0rXBTFFKPok6/M4SaF6BJNf/I/0XAQejF0xGeYTBt6/Yi197ApdbD6nfS1fQgW7T
+	 xAcCvbD0O/himPjFkRWO4dIbJFW8noInOUUn04nVHFuccyEP9g0lG1ytNyo+Ae43Ly
+	 VI9hmiaqFiWrwPG4aJA8ITxiOOLMRVbkkst/9aHIcw87garUCglpUdH6ljlQU0LTZ8
+	 tUsXYvK8Q20nfAqPEO7iAy4kOx7YhHqk24LC8QQENYhglSNJR0VmmhGkDWNjS+OCiX
+	 tZirdqHB69sOA==
+Date: Mon, 16 Sep 2024 22:47:57 +0000
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>
+Subject: [PATCH] bcachefs: add GFP_ZERO flag in btree_bounce_alloc
+Message-ID: <20240916224746.692973-1-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 2aa1de423e1f5afeabaf56fb3170c153b965b5a3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d88:b0:395:e85e:f2fa with SMTP id
- e9e14a558f8ab-3a084611b38mr133380235ab.1.1726526849054; Mon, 16 Sep 2024
- 15:47:29 -0700 (PDT)
-Date: Mon, 16 Sep 2024 15:47:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000088906d0622445beb@google.com>
-Subject: [syzbot] [net?] UBSAN: shift-out-of-bounds in xfrm_selector_match (2)
-From: syzbot <syzbot+cc39f136925517aed571@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Add __GFP_ZERO flag to kvmalloc call in btree_bounce_alloc to mitigate
+later uinit-value use KMSAN warning[1].
 
-syzbot found the following issue on:
+After applying the patch reproducer still triggers stack overflow[2] but
+it seems unrelated to the uninit-value use warning. After further
+investigation it was found that stack overflow occurs because KMSAN adds
+additional function calls. Backtrace of where the stack magic number gets=
+=20
+smashed was added as a reply to syzkaller thread[3].
 
-HEAD commit:    3561373114c8 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a36a8b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=be4832509d93a86b
-dashboard link: https://syzkaller.appspot.com/bug?extid=cc39f136925517aed571
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+I confirmed that task's stack magic number gets smashed after the code path
+where KSMAN detects uninit-value use is executed, so it can be assumed that
+it doesn't contribute in any way to uninit-value use detection.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+[1] https://syzkaller.appspot.com/bug?extid=3D6f655a60d3244d0c6718
+[2] https://lore.kernel.org/lkml/66e57e46.050a0220.115905.0002.GAE@google.c=
+om
+[3] https://lore.kernel.org/all/rVaWgPULej8K7HqMPNIu8kVNyXNjjCiTB-QBtItLFBm=
+k0alH6fV2tk4joVPk97Evnuv4ZRDd8HB5uDCkiFG6u81xKdzDj-KrtIMJSlF6Kt8=3D@proton.=
+me
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/494b5ef0e99e/disk-35613731.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2ec90c91c7b4/vmlinux-35613731.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/59a0684dc747/bzImage-35613731.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cc39f136925517aed571@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in ./include/net/xfrm.h:900:23
-shift exponent -96 is negative
-CPU: 1 UID: 0 PID: 12120 Comm: syz.1.1258 Not tainted 6.11.0-rc7-syzkaller-01543-g3561373114c8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- addr4_match include/net/xfrm.h:900 [inline]
- __xfrm4_selector_match net/xfrm/xfrm_policy.c:222 [inline]
- xfrm_selector_match+0xe9b/0x1030 net/xfrm/xfrm_policy.c:247
- xfrm_state_look_at+0xe8/0x480 net/xfrm/xfrm_state.c:1172
- xfrm_state_find+0x199f/0x4d70 net/xfrm/xfrm_state.c:1280
- xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2481 [inline]
- xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2532 [inline]
- xfrm_resolve_and_create_bundle+0x6d2/0x2c90 net/xfrm/xfrm_policy.c:2826
- xfrm_lookup_with_ifid+0x334/0x1ee0 net/xfrm/xfrm_policy.c:3160
- xfrm_lookup net/xfrm/xfrm_policy.c:3289 [inline]
- xfrm_lookup_route+0x3c/0x1c0 net/xfrm/xfrm_policy.c:3300
- ip_route_connect include/net/route.h:333 [inline]
- __ip4_datagram_connect+0x96c/0x1260 net/ipv4/datagram.c:49
- __ip6_datagram_connect+0x194/0x1230
- ip6_datagram_connect net/ipv6/datagram.c:279 [inline]
- ip6_datagram_connect_v6_only+0x63/0xa0 net/ipv6/datagram.c:291
- __sys_connect_file net/socket.c:2067 [inline]
- __sys_connect+0x2df/0x310 net/socket.c:2084
- __do_sys_connect net/socket.c:2094 [inline]
- __se_sys_connect net/socket.c:2091 [inline]
- __x64_sys_connect+0x7a/0x90 net/socket.c:2091
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe6d677def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe6d751f038 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00007fe6d6936130 RCX: 00007fe6d677def9
-RDX: 000000000000001c RSI: 0000000020000000 RDI: 0000000000000007
-RBP: 00007fe6d67f0b76 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007fe6d6936130 R15: 00007ffcce438838
- </TASK>
----[ end trace ]---
-
-
+Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/bcachefs/btree_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
+index 56ea9a77cd4a..3ac8b37f97d7 100644
+--- a/fs/bcachefs/btree_io.c
++++ b/fs/bcachefs/btree_io.c
+@@ -121,7 +121,7 @@ static void *btree_bounce_alloc(struct bch_fs *c, size_=
+t size,
+ =09BUG_ON(size > c->opts.btree_node_size);
+=20
+ =09*used_mempool =3D false;
+-=09p =3D kvmalloc(size, __GFP_NOWARN|GFP_NOWAIT);
++=09p =3D kvmalloc(size, __GFP_ZERO|__GFP_NOWARN|GFP_NOWAIT);
+ =09if (!p) {
+ =09=09*used_mempool =3D true;
+ =09=09p =3D mempool_alloc(&c->btree_bounce_pool, GFP_NOFS);
+--=20
+2.46.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
