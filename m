@@ -1,62 +1,58 @@
-Return-Path: <linux-kernel+bounces-330235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C5E979B58
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:45:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F031979B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA0E2812DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:45:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1121AB211B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3FA6088F;
-	Mon, 16 Sep 2024 06:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C203F446D1;
+	Mon, 16 Sep 2024 06:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ELcD2D9i"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32CB4120B;
-	Mon, 16 Sep 2024 06:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="ABc0NoJ3"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4222D047;
+	Mon, 16 Sep 2024 06:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726469145; cv=none; b=gOztd+T559jPv6UkNacN1mdLsvl3dd4bUNSaJIX6gytSj7gMwJn4zUhUyXOFQpOmP5OnOLlmt25+zMmg7pfLgsqhSP/YZbQhRtWMfuXVzCPE79cYj8dJYM1arSu0FIBnF0f+1zQMMnTbIhuOzSAy7ZrJ73r8fS5jsrvYEg1pvb8=
+	t=1726468971; cv=none; b=c0gdTJd+aKcodKlA3v1WhQMUdrI9j/m31VXyFSUmzPBwmI87FaqztpZaJqGkB9albAn6wCkpprzSzIA9/O4rxhzWTVGqJIr5O5Dyl+FjiWUxLEiPcJ8x9Ec2Psnj55toQmyTfE3xHG/1E8xLQNM9bWhOpB/UWMKFJ/YegQQ2L7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726469145; c=relaxed/simple;
-	bh=jAwSw4LEIfXT39XmNvQkkX3/1clNMqBMeMdEHqSLLuc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XwLrVYJQO9ckb7UN33sI/4EAf9kCDL2BvWHsQmSYAMhqoo3C5e+OHO+1QMkhzkSaZD+av2OprpNsCOMtRu51rRiRYN9gkdg41XDvGUvFWRd0XvPin02pALDwGxXDH/Wj4hQdzLruQstSriXr0vff798gafxwGGqPJ5ZJWl27lis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ELcD2D9i; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=H5SO/
-	a1hfbyVpeTzy2AAy5aKvwSqfgsGs2lOMb5bsec=; b=ELcD2D9iTL4cSN5SxjBh6
-	BXgHtcjXd3q1Snt6RNk4YaZOuu2naSd+v2aGVrwlnyZTvk4kirg61qdU9m2/J6bd
-	WHwF+zo+k9Z/u6AEiRrnVJRe/mY9XlCJVCu5W9h85pwJhnwxN7fme/EkWBGbZUcX
-	4hclGhEXcFJ5oq7C1CoeVY=
-Received: from jean.localdomain (unknown [27.18.168.209])
-	by gzga-smtp-mta-g3-3 (Coremail) with SMTP id _____wDXX36b0+dmVfTnDg--.31141S2;
-	Mon, 16 Sep 2024 14:43:39 +0800 (CST)
-From: Ze Huang <18771902331@163.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Ze Huang <18771902331@163.com>,
-	Yangyu Chen <cyy@cyyself.name>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [RESEND PATCH 1/3] dt-bindings: pinctrl: Add support for canaan,k230 SoC
-Date: Mon, 16 Sep 2024 14:42:23 +0800
-Message-ID: <20240916064225.316863-1-18771902331@163.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240916063021.311721-1-18771902331@163.com>
-References: <20240916063021.311721-1-18771902331@163.com>
+	s=arc-20240116; t=1726468971; c=relaxed/simple;
+	bh=acmHz7viakAbVQ5XSqj/oDtOIQpt7a4aUGaN043kfCc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ipdVekWsdVeGUglbhxLuc8yGS5zJrjWA5qicVoYQfAeoQIXa4RGEOccO3f0ki6OFugc4jQBs8VAUgov0ZVkSpAyw+VK5GcuQVQFF4v/SjSz+gIZ6OrXv4UgspQD85fznGqSW5CkdtazXzWe0zi+W790vOzcUBmPNWRjf69frAwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=ABc0NoJ3; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3A0D01489674;
+	Mon, 16 Sep 2024 08:42:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1726468959; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=tGte9B0qtik8uIU9EEhLnC03OKDoHN27OfxODB6xwnk=;
+	b=ABc0NoJ3ZFz+wQTrtP1AMU0Jmkmmvez2QOej1pRbaR3KegmYCQqhNlbBBSo1uvFT3GoyXX
+	8Z8bhq/wQSQpySfay9QHKhYKN2wl7VubU99TXTAL4IqaPw7ANoBNRWe0l14UHr4TpIj7yL
+	MyEWn+JO7K1dFdqXU9ryohBL7suJXqikcrY6+KHmTyTI6xvYGSKpEV5cJiBnOtitPm4/uV
+	CeW4El/5O3K8FCIOYtqj98sE5jklqU55s+97E3ZfhtARdkSItP74leJGh9TjpicuPYTW91
+	SSmuwayaZkRQabRLI27kf3nyBjIn48ab7KALVS7KOTbDjiTl+cqyTVlzyyPoNg==
+From: Alexander Dahl <ada@thorsis.com>
+To: Conor Dooley <conor+dt@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip (AT91) SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ARM: dts: microchip: Add trng labels for all at91 SoCs
+Date: Mon, 16 Sep 2024 08:42:32 +0200
+Message-Id: <20240916064233.697215-1-ada@thorsis.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,156 +60,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXX36b0+dmVfTnDg--.31141S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuF17Cr1xuw1rZr4rAryfXrb_yoWrJFyxpF
-	ZxKa98KF1rWF47K3yfta18uF13Xa1kArsagw1Utry7tw45WF18Kr1akr4IvF4DWFn7J3Wa
-	qFWIgry7KF47Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piL0ePUUUUU=
-X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJwBcomXAn1YeJAAAsP
+X-Last-TLS-Session-Version: TLSv1.3
 
-Add device tree binding details for Canaan K230 pinctrl device.
+SAM9X60 and SAMA7G5 already have those labels.  Add it for the other SoC
+families so it can be referenced in board files.
 
-Signed-off-by: Ze Huang <18771902331@163.com>
+Signed-off-by: Alexander Dahl <ada@thorsis.com>
 ---
- .../bindings/pinctrl/canaan,k230-pinctrl.yaml | 128 ++++++++++++++++++
- 1 file changed, 128 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+ arch/arm/boot/dts/microchip/at91sam9g45.dtsi | 2 +-
+ arch/arm/boot/dts/microchip/sama5d2.dtsi     | 2 +-
+ arch/arm/boot/dts/microchip/sama5d3.dtsi     | 2 +-
+ arch/arm/boot/dts/microchip/sama5d4.dtsi     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
-new file mode 100644
-index 000000000000..979c5bd71e3d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
-@@ -0,0 +1,128 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/canaan,k230-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Canaan Kendryte K230 Pin Controller
-+
-+maintainers:
-+  - Ze Huang <18771902331@163.com>
-+
-+description:
-+  The Canaan Kendryte K230 platform includes 64 IO pins, each capable of
-+  multiplexing up to 5 different functions. Pin function configuration is
-+  performed on a per-pin basis.
-+
-+properties:
-+  compatible:
-+    const: canaan,k230-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    additionalProperties: false
-+    description:
-+      A pinctrl node should contain at least one subnode representing the
-+      pinctrl groups available on the machine.
-+
-+    patternProperties:
-+      '-cfg$':
-+        type: object
-+        $ref: /schemas/pinctrl/pincfg-node.yaml
-+        additionalProperties: false
-+        description:
-+          Each subnode will list the pins it needs, and how they should
-+          be configured, with regard to muxer configuration, bias, input
-+          enable/disable, input schmitt trigger, slew-rate enable/disable,
-+          slew-rate, drive strength.
-+
-+        properties:
-+          pinmux:
-+            $ref: /schemas/types.yaml#/definitions/uint32-array
-+            description:
-+              The list of GPIOs and their mux settings that properties in
-+              the node apply to. This should be set with the macro
-+              'K230_PINMUX(pin, mode)'
-+
-+          bias-disable: true
-+
-+          bias-pull-up: true
-+
-+          bias-pull-down: true
-+
-+          drive-strength:
-+            minimum: 0
-+            maximum: 15
-+
-+          input-enable: true
-+
-+          output-enable: true
-+
-+          input-schmitt-enable: true
-+
-+          slew-rate:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            description: |
-+              slew rate control enable
-+              0: disable
-+              1: enable
-+
-+            enum: [0, 1]
-+
-+          power-source:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            description: |
-+              Specifies the power source voltage for the IO bank that the
-+              pin belongs to. Each bank of IO pins operate at a specific,
-+              fixed voltage levels. Incorrect voltage configuration can
-+              damage the chip. The defined constants represent the
-+              possible voltage configurations:
-+
-+              - K230_MSC_3V3 (value 0): 3.3V power supply
-+              - K230_MSC_1V8 (value 1): 1.8V power supply
-+
-+              The following banks have the corresponding voltage
-+              configurations:
-+
-+              - bank IO0 to IO1: Fixed at 1.8V
-+              - bank IO2 to IO13: Fixed at 1.8V
-+              - bank IO14 to IO25: Fixed at 1.8V
-+              - bank IO26 to IO37: Fixed at 1.8V
-+              - bank IO38 to IO49: Fixed at 1.8V
-+              - bank IO50 to IO61: Fixed at 3.3V
-+              - bank IO62 to IO63: Fixed at 1.8V
-+
-+            enum: [0, 1]
-+
-+        required:
-+          - pinmux
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pinctrl: pinctrl@91105000 {
-+        compatible = "canaan,k230-pinctrl";
-+        reg = <0x91105000 0x100>;
-+
-+        uart2_pins: uart2-pins {
-+            uart2-pins-cfg {
-+                pinmux = <0x503>, /* uart2 txd */
-+                         <0x603>; /* uart2 rxd */
-+                slew-rate = <0>;
-+                drive-strength = <4>;
-+                power-source = <1>;
-+                input-enable;
-+                output-enable;
-+                bias-disable;
-+            };
-+        };
-+    };
+diff --git a/arch/arm/boot/dts/microchip/at91sam9g45.dtsi b/arch/arm/boot/dts/microchip/at91sam9g45.dtsi
+index 325c63a53118..02bd5a1833e8 100644
+--- a/arch/arm/boot/dts/microchip/at91sam9g45.dtsi
++++ b/arch/arm/boot/dts/microchip/at91sam9g45.dtsi
+@@ -753,7 +753,7 @@ macb0: ethernet@fffbc000 {
+ 				status = "disabled";
+ 			};
+ 
+-			trng@fffcc000 {
++			trng: trng@fffcc000 {
+ 				compatible = "atmel,at91sam9g45-trng";
+ 				reg = <0xfffcc000 0x100>;
+ 				interrupts = <6 IRQ_TYPE_LEVEL_HIGH 0>;
+diff --git a/arch/arm/boot/dts/microchip/sama5d2.dtsi b/arch/arm/boot/dts/microchip/sama5d2.dtsi
+index 5f8e297e19ed..2fefe3efa769 100644
+--- a/arch/arm/boot/dts/microchip/sama5d2.dtsi
++++ b/arch/arm/boot/dts/microchip/sama5d2.dtsi
+@@ -1019,7 +1019,7 @@ AT91_XDMAC_DT_PER_IF(1) |
+ 				};
+ 			};
+ 
+-			trng@fc01c000 {
++			trng: trng@fc01c000 {
+ 				compatible = "atmel,at91sam9g45-trng";
+ 				reg = <0xfc01c000 0x100>;
+ 				interrupts = <47 IRQ_TYPE_LEVEL_HIGH 0>;
+diff --git a/arch/arm/boot/dts/microchip/sama5d3.dtsi b/arch/arm/boot/dts/microchip/sama5d3.dtsi
+index d4fc0c1dfc10..8335e0c8066f 100644
+--- a/arch/arm/boot/dts/microchip/sama5d3.dtsi
++++ b/arch/arm/boot/dts/microchip/sama5d3.dtsi
+@@ -419,7 +419,7 @@ tdes: crypto@f803c000 {
+ 				clock-names = "tdes_clk";
+ 			};
+ 
+-			trng@f8040000 {
++			trng: trng@f8040000 {
+ 				compatible = "atmel,at91sam9g45-trng";
+ 				reg = <0xf8040000 0x100>;
+ 				interrupts = <45 IRQ_TYPE_LEVEL_HIGH 0>;
+diff --git a/arch/arm/boot/dts/microchip/sama5d4.dtsi b/arch/arm/boot/dts/microchip/sama5d4.dtsi
+index 58ceed997889..20b8a9b123e1 100644
+--- a/arch/arm/boot/dts/microchip/sama5d4.dtsi
++++ b/arch/arm/boot/dts/microchip/sama5d4.dtsi
+@@ -658,7 +658,7 @@ macb1: ethernet@fc028000 {
+ 				status = "disabled";
+ 			};
+ 
+-			trng@fc030000 {
++			trng: trng@fc030000 {
+ 				compatible = "atmel,at91sam9g45-trng";
+ 				reg = <0xfc030000 0x100>;
+ 				interrupts = <53 IRQ_TYPE_LEVEL_HIGH 0>;
+
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
 -- 
-2.46.1
+2.39.5
 
 
