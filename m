@@ -1,144 +1,87 @@
-Return-Path: <linux-kernel+bounces-330101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2264C9799BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 03:01:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F779799BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 03:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4556C1C226A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 01:01:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319A0283939
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 01:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CD5D520;
-	Mon, 16 Sep 2024 01:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmL+WM2g"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196FF7483;
+	Mon, 16 Sep 2024 01:07:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970C9256D;
-	Mon, 16 Sep 2024 01:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F76A2F32
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 01:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726448489; cv=none; b=Yz+g5pMxahac/X813kLmJRDdHdRBLMKW/ebPFphE0SD6z1FGeMYl0ieTMZRCE4jtt8mTvRrdc/IDZknrmBUgmCoHDQ5pRoD1AkPg2l0n4N4ly4J6t8RIRVIrTW/CGruRnnIVd/Iy5S/kq/98SLUC945h93HuJc8O+bj95tFnr44=
+	t=1726448825; cv=none; b=mYsXpAMzdsoh/y35QlHSNNxjWIZiglR+nfo/iqaqjNe2UvxWYF+Ct8tbLiF65DaJVTwf1X7pxKhMv2GiYT7u21lJQ5umyuoE0otZdhcmFihTdYN3ppyp4iEGbx2bQvihencB7E8Uh+s03Xb+FObDfPFMKKL2cg//MGcJl2j/Klg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726448489; c=relaxed/simple;
-	bh=7D/C5zl6x2ll3AyrS76fk4gpdsq3I5CMMCG+mMI8Elo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FOP8JcKzVXqDJrdMzufjF9Y0dGi5t19iYu60anZG8fkv3aD1t5aqjJRry//UUmWYe9v8I7r4cAUWvhDbH/OK8HPGB/CZP4cYCANaxfqluIGbBCPYlMAZYI8liPiPybReVxZ/FeS2Xj2iK1gS7INmuCK3N2NhPVPS1lw034c4lS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmL+WM2g; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7db12af2f31so3492658a12.1;
-        Sun, 15 Sep 2024 18:01:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726448487; x=1727053287; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7D/C5zl6x2ll3AyrS76fk4gpdsq3I5CMMCG+mMI8Elo=;
-        b=cmL+WM2gDuP4O+bn690YwmFhQ0vXL4n+Be4FXT+6NrMbMwJNsOaHCVSbLsB5bVCFJx
-         BoykbxIOQC/tyxrPBwl5hd28pQ7453AMb7wKDMRvidhChCLiodiG/Q0BVIMXGtMskbP6
-         4P++jFgGMx4wUmT0eCHLQY484hbjkJsbk1ZnbzjhFaSNM0nmAd/4WWRWXEGdU7O8jNhO
-         gBL/Y+tMU5V1dE4gQ1NjG2kI677N7CTb6gI/q8LnACmUw+/50q4KXVpnT6nqfzeR0kyN
-         cD0yYIKFaxwn/ySnatFQtmYJzfl0ZMvI5mJe3ihqMZu3L2uioZkdPiF4tSh/ljuUrwIx
-         q2og==
+	s=arc-20240116; t=1726448825; c=relaxed/simple;
+	bh=p5nvkdkGT5y5UB37vxXTjcQRv7DqcPt9YGfs71y7KcQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WIGJlSMUzSJO61rniDwzBcM/hvRqkNGKFihUhGAVsQbtBJpewUuZXCHJFCuFWFpLMDOVnz4ZUwyBpMhIE6LyktxLOeTPX5IwTDxDNKCk5S8SjILC6bn3Lv03TVze3Vh1v0JNKAoKCUphWqBN2qwYpTUVXG0w0ZNohqkPUcSKtQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a09e96b72eso17437915ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 18:07:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726448487; x=1727053287;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7D/C5zl6x2ll3AyrS76fk4gpdsq3I5CMMCG+mMI8Elo=;
-        b=hfW4uY9AHq2FrjNEzDvRlq8d3/HgJ3Rnv6JBCwYqaYZ+7+v5ojnLJkRGX0/A8gJ1Tl
-         D9SJuCpwJ/wzj+ZykfhyhZikww6ju9902U7NRu4b10RGG2qvH+me0TRbix7E4QlXDk3s
-         BXYU/gwtPLTvvIHs46gVnacrMEguPXiHjLz2gztt0ZePKIBMdMf/1llR7NTtKeYVTuyF
-         jwouKQs8mVPcn/65WODXRlC9wULPUQ9VKBI34VYiUMgQL+rn7LTLSx+4iuPSwxCzuGte
-         Ro+GjV6fCi0Od6HKUXXA+gw1CY2FYzDdzGMHeWsD7wSGaq+POWmUWLpAV6UaTZGRpIMJ
-         w1nw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6gPr6GZiCCWvt87JPJZVop2HKVTWtmVfHW75j87HPwqWOE5Q/h1pObTZ/Yr29Buo05MyMLiLq3Yi5dw==@vger.kernel.org, AJvYcCV+ef29yjCDReIQSI1xZTFW2FLbDMTdERqTZe+N9+YV19U2tExX5UUudVu5TFOd0o59XCm/YQJHoIcEpg==@vger.kernel.org, AJvYcCV1KfMhFRPYeB5wR2w0hVRrYO9VuCVX4fz7Gte9MsQan4vgya3oDBTjCGcF8G5uX2x8ogZ3xtmULzgo1SSRq38Zx/QK@vger.kernel.org, AJvYcCWHfzt861yQB6PRHHjgspZWyNtMHHeSLOxEQHB+dJE70zlhLOP/0Gsqy/NFRHYUMG7yXMR7VFDAlxsM@vger.kernel.org, AJvYcCXUWmz5+px2CjpNev7KKw47RQ8WCx22TjafwAgk+eWFfUgalQcefImg5fefHP6jZbytlNcVC2aR4SRQ@vger.kernel.org, AJvYcCXUbzumcfbGFuHyCoQ8Ryt6l5sYnpUc54wX1SVTXcrM8tCSs6JcFb9vYVmpC6LIJ4ciRKa8Xf1E+IBJKqt+RQ==@vger.kernel.org, AJvYcCXbP1nbH+5Tuh6XuD2Tcnv1agPva2WVUpkrkE/xO2vZ9QHVnFL0F9aarFtoz5UbyY20LHFWWbvHOJJ5@vger.kernel.org, AJvYcCXcS83TFyAh+8dHwtvClGNdMmaYs53fi5jSd+2GuqwPk2TKk+AFoghdtmOWXUk59WXmY90IDUmgkPbdQiER@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgf38IRsysiWk+NNSdQQB6MN94TiM5M+zWiK/dfv1ZAZP0EZdI
-	WGaTyYeu+27E7ua+8xEBkhDODMA33TixslZEhkOMudLyHKkIsSfz
-X-Google-Smtp-Source: AGHT+IHeKKZs+OQSLFWh2p0zJ8126QggRcFIs3Yl9qB6SRWRR42B+47A+pkLNPsEo9M1k9q1ghVFtw==
-X-Received: by 2002:a17:902:da84:b0:206:adc8:2dcb with SMTP id d9443c01a7336-2076e35b147mr249054285ad.25.1726448486481;
-        Sun, 15 Sep 2024 18:01:26 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079473d05dsm27143635ad.287.2024.09.15.18.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 18:01:25 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 8220D4A358AE; Mon, 16 Sep 2024 08:01:22 +0700 (WIB)
-Date: Mon, 16 Sep 2024 08:01:22 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v8 07/11] Documentation: add a new file documenting
- multigrain timestamps
-Message-ID: <ZueDYmduQtlAnX_5@archie.me>
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
- <20240914-mgtime-v8-7-5bd872330bed@kernel.org>
+        d=1e100.net; s=20230601; t=1726448823; x=1727053623;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8K09Tra3E/hJDku0IB8+NUKRch0wNFu+R/T0Dq0Bc2I=;
+        b=HkDEstQlH5AaaawWgrNDWU96aH1O2AEzEg/tyuAVBF4VR+Ptwt66Rfe3GWijiErcIw
+         HFMHeJCNaWIs9SlkSV/yqvTwnxL8EblyE6mP/h3o9DZDsDVZZKIB7w+GgW2vNpPIkGL7
+         Fl9B4Q5L/wLnu7dZBl16p7x9vsrjTwdrkCDF3+lEU0zlNckYYjHMqMCKy/wOqNf2YRux
+         qZ5lKsLhenhPsfXnSvH/NNFJ8+oV7fGCUAteCYTglQPdKp9G9gASIub7G8H+q0AZ5UYu
+         tKYCT2o+8XQsWLiW7b8vZ0ZHA8Jy5LjPr6o6KDrZHf6k5hnUMeMBL8SKxN6/5XM+ZS42
+         5KEg==
+X-Gm-Message-State: AOJu0YwQn54aX3xFxyYxDLAyDxrrvhvUxk61QNceCo5HZDXCABq8QE4b
+	tbfEPp52u1Dr6JajnKI1JYESHPD3ljFyZ1G1SUwysnVDBRbHP3L6lni2fAlj5vW3snYnhYLAwzW
+	zQZE8YyOHhQhMi/pTXWs/aT8joaMHo/hPx/veIu1z974okidZ6wBu4Dw=
+X-Google-Smtp-Source: AGHT+IHvmEs4G6D29+XnlbrYZ9pPwuOtAAJ8We5wCAgzvnX7eg7aEXEKa215B9s8NlROsiETjc6JwRq4NTf2sN9duHfSexItcjEM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kwvsaHxP9Dj4QI8r"
-Content-Disposition: inline
-In-Reply-To: <20240914-mgtime-v8-7-5bd872330bed@kernel.org>
+X-Received: by 2002:a05:6e02:148f:b0:3a0:98ab:793e with SMTP id
+ e9e14a558f8ab-3a098ab7cccmr44521735ab.23.1726448823546; Sun, 15 Sep 2024
+ 18:07:03 -0700 (PDT)
+Date: Sun, 15 Sep 2024 18:07:03 -0700
+In-Reply-To: <Zud_7s__fu1aVw_u@debian.debian.local>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d9c6880622323052@google.com>
+Subject: Re: [syzbot] [btrfs?] [fbdev?] BUG: unable to handle kernel NULL
+ pointer dereference in fbcon_putcs (3)
+From: syzbot <syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, qianqiang.liu@163.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---kwvsaHxP9Dj4QI8r
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Sat, Sep 14, 2024 at 01:07:20PM -0400, Jeff Layton wrote:
-> +Multigrain timestamps aim to remedy this by selectively using fine-grain=
-ed
-> +timestamps when a file has had its timestamps queried recently, and the =
-current
-> +coarse-grained time does not cause a change.
+Reported-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
+Tested-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
 
-Do you mean using fine-grained timestamps when timestamps of a file has been
-recently queried/modified BUT its coarse-grained timestamps aren't changed?
+Tested on:
 
-Confused...
+commit:         98f7e32f Linux 6.11
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1003e797980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cb52fa3eae0757f1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3d613ae53c031502687a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1596f407980000
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---kwvsaHxP9Dj4QI8r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZueDXQAKCRD2uYlJVVFO
-o9i4AP0T1JkEX2kwhV2+holu89lH/60QVNXUO2Lay3YffP3/dQD9G4CUoLWZ82Xp
-x8Jx3+7J66rerRpl5waFiihhu7wbiQ0=
-=tXkm
------END PGP SIGNATURE-----
-
---kwvsaHxP9Dj4QI8r--
+Note: testing is done by a robot and is best-effort only.
 
