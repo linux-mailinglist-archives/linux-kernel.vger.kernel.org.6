@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-330782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344B297A42B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:31:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31B697A42F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDE5528DD3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:31:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6AAC28E125
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935F4155359;
-	Mon, 16 Sep 2024 14:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292BA157E61;
+	Mon, 16 Sep 2024 14:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BHbjGyh2"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U+PaxkZg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C94146588;
-	Mon, 16 Sep 2024 14:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA3F14EC47;
+	Mon, 16 Sep 2024 14:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726497098; cv=none; b=F9uBvyD938lU5xi6EfjlK26aHda8tATDqQ4nuLsfJFByc2Z6RfsEc0ZgtybuP4zC9n8RC3rpTC8eem9x2FkFK2T+uFj/CDS9wfv5q3Mt0UDI1ToOkkhsTYnkSW6SgVkY6Q4+bWQrb3HTWWb85Gabetp+CizNnxP5I5lMh8HzVWo=
+	t=1726497125; cv=none; b=k3PeX/YGhnFnmmaF49iABOGLFAAzeQ5ejh8jWpo12uZd58pcQwgBNQV2q6S8MrGEwhY5bVhSI+wTSVHrGJWyOcduZiO+ziHHpp73w79UhLYqSpiQ5wREJlkmu40KdzTIQDyhR1s2TKnUdSTKz/qJqdO3RtOQD+Mt+p/vbUs9x64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726497098; c=relaxed/simple;
-	bh=BkNqGrNJ3t46F7Xl1BYz61Tm9LXflIUC4aRap28qLVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z9QVGORa2+b7RfMZuR/nihaunGnMkrT9UkCQFOwLJ3CkquX0pBg7aIdSXuyB6A2Frkq3UuFznkNJ9tAZkDekHkyo1DVEGrfV/U8K62kjUA7N6IVAy2GpLj5Evae30m4TM0Pzy6Vin3pl7RHJlmmPz8gkkxSGccYSgDgoUb4N7b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BHbjGyh2; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E8DBC20007;
-	Mon, 16 Sep 2024 14:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726497092;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QloBWWiiQvJ9odjtbk/ZDUQVWAaXV9wS+D1Lf/XH/qc=;
-	b=BHbjGyh2V5W711FYpda4uynjp9Pj7IzPDyskiBG+W33xrLTe4hJGafNYQ2BkZUdzN7ftwR
-	MKNQPQrkh7rvh1McVuzovwb5SGe3qZU55e/i+nq3VUJyaT2xRkcyf/w7QhgMTfxbrkXdtT
-	D9CppqOIjE+yv2ITa1z4fLQCk/TALo7kZSJHF+bDv2pGIEH+XAU86aXLK9Ej1otx8IdIkV
-	HJv/3VsiYZ3hkmcrS2jSB08bDnpHag2L9lVW6g2bN/C1NXCnZnoTMdhqzZtqTD0pYhxp1T
-	y06RDUJYQNdUjPFF8EsNQkjPlLKkzkj41Z0J0YXmoiiFk7N3VrHoIi+MVVYp0g==
-Date: Mon, 16 Sep 2024 16:31:30 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Andrei Simion <andrei.simion@microchip.com>
-Cc: claudiu.beznea@tuxon.dev, lgirdwood@gmail.com, broonie@kernel.org,
-	perex@perex.cz, tiwai@suse.com, nicolas.ferre@microchip.com,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Subject: Re: [PATCH v2 2/2] ASoC: atmel: atmel_ssc_dai: Drop S24_LE support
- due to single channel limitation
-Message-ID: <20240916143130835e72b4@mail.local>
-References: <20240916131910.22680-1-andrei.simion@microchip.com>
- <20240916131910.22680-3-andrei.simion@microchip.com>
+	s=arc-20240116; t=1726497125; c=relaxed/simple;
+	bh=FNKagr8fgT2UuOBtN5mFu5V6NQIr1s6QD15dfSvCMfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z/ocJvu00BnVdRfpKD9TlsfwbPjhnsP9FTYWk+wkcvgmc1K9a+quTAl29wdNVLhw321qV8fTFbTW4FPDLpAZkRw4D+MOMxwMiMJKy9O8NM5jBe1y4l30fKTsMtqNidAI2m6/lasPhAmTCc9YpnT3WirOc2myPetPJKpUHJqDmDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U+PaxkZg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GEBHSo019341;
+	Mon, 16 Sep 2024 14:32:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rV+gZObA7zqyq+elv/MNQSpTmnsg0cKcpZcE22qis3M=; b=U+PaxkZgtX9amyue
+	mx/R9de/bPEaBekjoV81PUltv/M00YrFdB0CIu5i8Gq/oqLgrW3F0UKSq8fWnLka
+	Kb8jsxijdiOUtu40uT43Tr0gBXPZlQQqc7D3C4gFXJRmEbcnQMAv7xHchzL4CyIi
+	2i38QPglu41sP6kCrCypQuyW8f5P3yc7aI8A97DdgzRZmnJgILubIdLGQcSadIcK
+	GcyklR22ymlwviRaPlHUPzfmmWq8WLYGfBG8ZWew/rYFMY1SBj6DYRo/ebDKO1lu
+	y9SEA3+JGsUVJiE+vxzecTB7J0eRxDNVZGqV4QlHMC8ALGn0SSQmM92JVjfLV6Go
+	aoQWhg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hev6ga-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 14:32:00 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48GEVwMh011918
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 14:31:58 GMT
+Received: from [10.110.0.24] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Sep
+ 2024 07:31:55 -0700
+Message-ID: <849913f2-eb77-49ef-bab0-86f84d0a435e@quicinc.com>
+Date: Mon, 16 Sep 2024 07:31:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916131910.22680-3-andrei.simion@microchip.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: firmware: qcom,scm: document support for
+ SA8255p
+Content-Language: en-US
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+References: <20240905183016.3742735-1-quic_nkela@quicinc.com>
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <20240905183016.3742735-1-quic_nkela@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YBhpvBgRFO2_IHCxUJwiZdRnwkImxnj9
+X-Proofpoint-GUID: YBhpvBgRFO2_IHCxUJwiZdRnwkImxnj9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 adultscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409160093
 
-On 16/09/2024 16:19:10+0300, Andrei Simion wrote:
-> From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> 
-> Drop S24_LE format because it is not supported if more than 2 channels
-> (of TDM slots) are used. This limitation makes it impractical for use cases
-> requiring more than 2 TDM slots, leading to potential issues in
-> multi-channel configurations.
-> 
-> [andrei.simion@microchip.com: Reword the commit title and the commit
-> message. Add code comment to explain the removed code.]
-> 
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Gentle ping...
 
-> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+On 9/5/2024 11:30 AM, Nikunj Kela wrote:
+> Add a compatible for the SA8255p platform's Secure Channel Manager
+> firmware interface.
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
 > ---
-> v1 -> v2:
-> - add code comment to explain why S24_LE is dropped.
+>
+> Changes in v3:
+> 	- Removed the patch from original series[1]
+>
+> Changes in v2:
+> 	- Added Reviewed-by tag
+>
+> [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
 > ---
->  sound/soc/atmel/atmel_ssc_dai.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-> index 7047f17fe7a8..89098f41679c 100644
-> --- a/sound/soc/atmel/atmel_ssc_dai.c
-> +++ b/sound/soc/atmel/atmel_ssc_dai.c
-> @@ -821,8 +821,9 @@ static int atmel_ssc_resume(struct snd_soc_component *component)
->  	return 0;
->  }
->  
-> +/* S24_LE is not supported if more than 2 channels (of TDM slots) are used. */
->  #define ATMEL_SSC_FORMATS (SNDRV_PCM_FMTBIT_S8     | SNDRV_PCM_FMTBIT_S16_LE |\
-> -			  SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
-> +			   SNDRV_PCM_FMTBIT_S32_LE)
->  
->  static const struct snd_soc_dai_ops atmel_ssc_dai_ops = {
->  	.startup	= atmel_ssc_startup,
-> -- 
-> 2.34.1
-> 
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>  Documentation/devicetree/bindings/firmware/qcom,scm.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.yaml b/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
+> index 2cc83771d8e7..65057f5c8972 100644
+> --- a/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
+> +++ b/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
+> @@ -43,6 +43,7 @@ properties:
+>            - qcom,scm-msm8998
+>            - qcom,scm-qcm2290
+>            - qcom,scm-qdu1000
+> +          - qcom,scm-sa8255p
+>            - qcom,scm-sa8775p
+>            - qcom,scm-sc7180
+>            - qcom,scm-sc7280
+> @@ -204,6 +205,7 @@ allOf:
+>            compatible:
+>              contains:
+>                enum:
+> +                - qcom,scm-sa8255p
+>                  - qcom,scm-sa8775p
+>      then:
+>        properties:
 
