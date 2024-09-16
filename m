@@ -1,209 +1,212 @@
-Return-Path: <linux-kernel+bounces-330204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9D6979AE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:58:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE309979AE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 030BCB21355
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B112E2835E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB51381B1;
-	Mon, 16 Sep 2024 05:58:47 +0000 (UTC)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C50A39AD6;
+	Mon, 16 Sep 2024 06:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="guP7ReCZ"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2082.outbound.protection.outlook.com [40.107.241.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349AE22EF0
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726466326; cv=none; b=tUOd4cuL9cOwewrFWiSzaZrdxO0EhpwCcW3pOElLpaaHS2dAThhioq1PxTd+HBmKNrlwA7gNqJl6AQfcQ7uD6VwdWbu568QNLDdcUjvmXfecM+8IGfPh6tG4GUbPLzerIUJO9b77D2npDTxklo5Id6k3MZBdnCHwuAMYWu24gsA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726466326; c=relaxed/simple;
-	bh=9sFED27O6fj7biJ0aw62eljD9hPAsb3QPnccmrtr8gU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=len342unXPm35ZTWYUUtQW0j0HnJ8+jhJpPaFpnSzWTvwGFHRTSwDb4F1eU1VHse492vPA9WNmto7Q1IalVsRLmgYg10Vw4EzDVB7H90Os90KkPTi3T51xC9M9IzFTUJYuDTfmI1zlWhabym24y73Xe2ytI+lH2AE5hapLJCWeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-49bd27b3507so1279600137.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 22:58:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726466324; x=1727071124;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1hJT+txCRKjGC9WhGmri/YkmrtjflyDminSTQplDjCY=;
-        b=wvPQkUJJSCm95mtA5h3WrsibbmdbAi97iNfzHsBZEDZ38UEQSe+JdrYOK1iqIfunHO
-         TDS8Pgxkysz23MiFa/euJV51l5c2OJVYnATHGwg6KCKVjpQzML7LJ55YCsJcW5xDQlFm
-         1zdBfAhaobEuBciZmAaLFURUK+KPZHe3/BOADk1pF6K2eAX86rOLsBfLyWDl2VvalP57
-         MYreWypBf11GtkgFfqSOdBUU6icKYJXwKprGsUlKS8YTmYkg1jjQC2DNNz1ZILQYbndI
-         YD1xpZJtE98Flr+GAf3xkyLs7TNXqj8E3B4ay1cUyZXrfKz9EvHoc2I7wM2I6QV8P39M
-         XHQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpA9cUeWh3BUbVSltY9e73lQsw9RqlZd5WXER5L7bUVpRmyZUQ1d/ljC1Meh4U83wMrksbPBFxywQe8Ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDefp+eK9xUjuvOQBBILa/XjO3BDv2qB0jLKGMM+QhoyWGaAmg
-	INBHqN5VLicswLP/SLfQ/swmb66xNsCOnAG9iNvxaBVLLSH9yZt9OaawTw5yuJHXnnMe/JrM4BC
-	Fu9N0na+Qls8lninzQp8Ffdfuhc8=
-X-Google-Smtp-Source: AGHT+IH/1DWYerKzMUk0aLOXExkBU6NhlheCwfrs4h435JiREB/QhRSZ98tJF30z5gGWeJM1ceXkTBqVNaciY6wOr84=
-X-Received: by 2002:a05:6102:3052:b0:48f:cb62:231a with SMTP id
- ada2fe7eead31-49d41563d9emr9792525137.23.1726466324039; Sun, 15 Sep 2024
- 22:58:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1813B43ABD;
+	Mon, 16 Sep 2024 06:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726466504; cv=fail; b=FRTtc2HrUFWzifFsulOQMluwwmhJGktneNPzuJ5D2PssOmOLg1QiYWJG6E3+8vwF/trxneSpvjQkJK1ZKscFvpvj3aqxoSQpfXEakct0p2ZBF6RUJMVcrEZ6Z7aYhpbPDFFMSyFbq60Px4CSZ/eiQ23BV9LC7oCXkqLWL7Sr8qc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726466504; c=relaxed/simple;
+	bh=CiGEJ1BR2k7z6mSaBZKS7A/5tA5wIdL7n/f/2uLtIlE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QP5z+50lzIjM8zBfylVZvFME300rMvaVXDygxqmuLfDvRCgkU30gIkPEY9Vez2ITZ7CMDFQwilZEncVAmgendeLcuQ9K+9lTKvqHQaSiVNozBmbtIsLeN0zEvNfozPKttKh2AKvDgK2BR7h0GcJCW4GR1mrO2MolOpOBNvb6V0Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=guP7ReCZ; arc=fail smtp.client-ip=40.107.241.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yl13R6NtHm7G3dXI/aeza787xHtdsIWV8Tl12hHXol08VLW4OXT372bFopeErYdYY+/7eLue97P7NOtGgEdNPLjcf79vHurnB45uDncNan7JIsgsfos4NgVg81Ff4Slu4ABLJAAjEBbl/VMZ9kQDqzEjwN5mprNvy3Mrrw1mA+uMJ8xPoRmyIgAOChQqfL/PiwWpAZQhtdVTioqw+/ug3mtRno0zeKEuduswQxBIZy+7SdC69qThBKf2P1hDKWmrj/EjOggKoNrWwvJCmgpqOZVzV38VZp2vQjzIx0VylY8oPHiLKfP2dA214GzhM8yqyl3VpirEEI6n7NuVo/kCcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZkqpK/V0vwUaP9C32jybsz68lTfKlEHcv2BM7B8eMKI=;
+ b=IZU6n7x5d2AH+dNocFh6TfGrCZ7TcGPpnrKneHlWBK5QyibeX8XPg1NOLGQ9QuyaozIzE7Y9az4SQA03mGyL1WCxFAVhwq3dbi+dO6ZyeVh7JNKESHhuDFEcCo4V2UPzOWVoeLFqv+neNF16+qJ+T8LzLCWlkZb5/+lQgqsmxYkPYY/aNbIQltsTKv1HFHARRV2hrhGfNm0gmO4OwDMrAZkY6ccVCHBWJ9jiU5PPRtOh6TJYWF7KC9Kkhy83HbJ1qRCZ3mZdAUMDeyGhpJ/fFp+pQm5b53MGdWhzDWjYty98k//wjEhZOlUaHGPF2hHEaHkNpXi2OIINFKOO84PBKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZkqpK/V0vwUaP9C32jybsz68lTfKlEHcv2BM7B8eMKI=;
+ b=guP7ReCZs0JY4gcpqT4dPKZHrz8fvEqacGLpl+DqwtW00sDVoQdOEoL460Q2w4M5WYhCTWwBXnwzTt6tIWFmQdb+fjSOZmKvi8AjDjS9VyOGZWuO4inO5SKLzREw2FFt39GkaK4h2HAd5BXHZqNm0fIBbinMzqdCB19/kY3cO9DqySsOp/2CbBiA3FLPNkTl7bB/U0RMpFLL6oAY13tWdTnFz335Cz7l3QIZStNmbSyllfGwDy4mg4xmRWOjAhRaZsbQ60h4cta8zmvkIkcIVT7Z6n/34gJbCKFPjneRZl+RPcoEVTG3J9kH7vV3RlQBqsW2/zJzAFcO/jA9wMmnkA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
+ by GV1PR04MB10559.eurprd04.prod.outlook.com (2603:10a6:150:20b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.23; Mon, 16 Sep
+ 2024 06:01:37 +0000
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
+ 06:01:37 +0000
+Message-ID: <464742a3-2aae-4980-ad33-28142d98abd4@oss.nxp.com>
+Date: Mon, 16 Sep 2024 09:01:11 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] dt-bindings: gpio: add support for NXP S32G2/S32G3
+ SoCs
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>
+References: <20240913082937.444367-1-andrei.stefanescu@oss.nxp.com>
+ <20240913082937.444367-3-andrei.stefanescu@oss.nxp.com>
+ <20240913141348.GA3927538-robh@kernel.org>
+Content-Language: en-US
+From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+In-Reply-To: <20240913141348.GA3927538-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4P195CA0029.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d6::19) To AM9PR04MB8487.eurprd04.prod.outlook.com
+ (2603:10a6:20b:41a::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913091902.1160520-1-dev.jain@arm.com> <CAGsJ_4yRadEPiO5H7Nd1jXQ1Gydt43VtUjfQDEp5Q+U9yddTnA@mail.gmail.com>
- <ba7594d4-5d3c-4950-a1bb-e50b68a74832@arm.com>
-In-Reply-To: <ba7594d4-5d3c-4950-a1bb-e50b68a74832@arm.com>
-From: Barry Song <baohua@kernel.org>
-Date: Mon, 16 Sep 2024 13:58:32 +0800
-Message-ID: <CAGsJ_4z9Bus2=A7bdyEGx+aNake9Le-a7f8=rJZQoGT+9Gn3ZQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: Compute mTHP order efficiently
-To: Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org, 
-	ryan.roberts@arm.com, anshuman.khandual@arm.com, hughd@google.com, 
-	ioworker0@gmail.com, wangkefeng.wang@huawei.com, 
-	baolin.wang@linux.alibaba.com, gshan@redhat.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|GV1PR04MB10559:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82c26659-63ce-418e-573b-08dcd6150658
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dWh5dCtqTE5aV09kMm9QNThXTVpEeTB4dms0N0xBSXcrNTAxWWNiT1lUV3VG?=
+ =?utf-8?B?ckgwbjhSMkcyQnA2QkhqMjc3aVZaZy95UGlsOG9ScDQ5THo5elNsVHRNMll3?=
+ =?utf-8?B?dVA0Q1o2U3FpazU0ejZtODFDVXNGL3Y3eDVnK0E2RCt4TzB0NEh5WFJObHdo?=
+ =?utf-8?B?VEhBYmVjME5mTElaa1N6MmJtWWlLVUgyb0xDUzlOdGtYRjh0ME4xYzA2OVRW?=
+ =?utf-8?B?MU5RMUplZWhjck13YTJXdG5jRmR6SVBhL0N6T1pZSVBXeWlWQ1ZaMEgzREJW?=
+ =?utf-8?B?bnNwSnRsWGxJSWdZY1FFd2YwdEFyVTQzWnlEaWE2Rno4aUVCenVrb2dnRGZr?=
+ =?utf-8?B?UzRkY2w0amNUc0lDRjNGa01IdjhiQ3JyalMrdThkOXZwMVFha1JpUHpUNG9X?=
+ =?utf-8?B?N09EajUxVURLMWFzZldMRFBnSG9GUXZMOFliVUwwZ2NFZlJYMDk5QmRlcHFx?=
+ =?utf-8?B?Vk9Zb042cFB2ZkpPZ3hBejhCOXhEckljZXdtd1doN1FkUklwaEp0L0w1YStk?=
+ =?utf-8?B?QXNNMStGdm1vYkc3ODNVb2RoVklhcEhhclM3SThWS1dQdk1WM1BrdTFteXdL?=
+ =?utf-8?B?R1djMjFNQmFaNDlwRkFzbEtNN0F1WHU1enhvdWR6ZkRuZUVGcW9NU1loQmg3?=
+ =?utf-8?B?TGUzNzNlSk5FdTJNVjlTSzNpU3luK2RMdi9FZTlNbGhrVlpoSTNaU1NKSkp2?=
+ =?utf-8?B?dHRsSVlkM0lLM1ErQThsRG1Eb1Q3TmlOWG91UXBMOURlQnQ1UnBWOFR5UlJq?=
+ =?utf-8?B?RXlFYTA1clNMQXR0TUtzbE5zSzZCRmZDaGdVZFpsZ0dQcHFyL2FQeGNBSlVU?=
+ =?utf-8?B?Z0ZXaHlwWHFFMjdUOE9CVWJqOG1XTVBUbHl5b3VOR0pnZVE1ZU0xNTNWTWE0?=
+ =?utf-8?B?WEh6aHY2QW9abnppaWM1UGRtWUMzVlhyTWhCcWVyeTV4UlhHNWZBRllMT1lJ?=
+ =?utf-8?B?U2x0aWFQVlQwOWdOWkN5OVAxUGZoeVJUQWpYTFprWUNiM1JxVE11azhXZ2Zp?=
+ =?utf-8?B?OVdZaGFVblc2VGM0RG5VUy9oV2M4bE84THpKNlZEN2xtUkRpT3pJTnZNbndv?=
+ =?utf-8?B?OXVpSWdRS2k2Q3FxamFYYVVsNUtwQnNrUzZSMHhiTWQrTWVxcGJ4LzZDclVj?=
+ =?utf-8?B?TzdycGhjSmEyaWVGaVhiOWRvQ05oZEdURW8xM2JpMENURmpDRG9ZdUVwbWRL?=
+ =?utf-8?B?RmczZEdOKzJLNHpGdU1QTXpzMENmODN1QWFMcllIdmV3cG5OcEtONWFRT1Rm?=
+ =?utf-8?B?TEo4WWpSSkRBMlFZSVBGMmVBY1czeDh1Y3lMLzhrN0lxK1ZZVHhORVU4QUZv?=
+ =?utf-8?B?RUVvOE4xanQrRnB5U3hSTFVOeHBlMlhlQmN0dURuWlhaTU9kN3hUN3Axbitw?=
+ =?utf-8?B?ZnBVbURCYkN5ZG1YdlYwRWpRMS9hQkZnTTZ0NWNEdDl1eXFjTkprb0lYT1Y4?=
+ =?utf-8?B?YmlDUW1oWDNCQ2c1VVV2ZmoxSC93SmM5cFpQMHFIT2ZjOTZuYmtLaTJHK3Qz?=
+ =?utf-8?B?R2Njb2c3R1dKK1pyMVowSm43bDZRVFR0QlE2S1krWGtrUkVGVGpzSGhBMTAw?=
+ =?utf-8?B?Z0Y2Tm12ZmpZU1Q1YlIrV2lJd2dkSUN1am5GNFNRNzR6NUFNbis1bkdVL2xm?=
+ =?utf-8?B?alNVblcwK3ltTVNESjRVaXFzNDVsQzl2NnZDc1hlV1FaanFiUXR1bE8rQUJM?=
+ =?utf-8?B?WTNOQXhEZFJXZ2hhZ0Y0NXZyZ3l2QUliUDhET1I0ZFI0MWtyTVYyWWVMa2dD?=
+ =?utf-8?B?RGNVaDBqU3ZXRmUvNlEwKzFhVU14KzRaczZPd1VXUG5jcmFjVEFuZ2pIWWpa?=
+ =?utf-8?B?bjZtR2lhclNvTVoxRThFUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R0lNL3JQSXRianFjTlNpNXNNeEhwblFDTXV5OXlXeTNJMkFYc0FtWkNORmw4?=
+ =?utf-8?B?Zm9sMzhaU0lVaGoxWlNsd2R6c3Z3akdNWkFEVFYyaUtLLzlmNUoxR3lPdlFF?=
+ =?utf-8?B?MjZzeFBFa0YwSFR0NE92T2RleGNDZ2Z2akFoSXVoTHRrb3BSekh6VkhyUXVp?=
+ =?utf-8?B?WS9JbHd0ZkVJb2Iyc2prd3hoREQ3dlhlWHp2azJMUjhHMjZzc3VlUTNTVHZ3?=
+ =?utf-8?B?ODdxR1hYMXZYcC9iTmRmd2xBb3pFQ2dLM2gxVXVKd1Z6ZXRMQXdDR3hwYTQ4?=
+ =?utf-8?B?QlEzbDQvYTZaVFdFVDQxRXd4MDk1NEJCNjB3NjdQREg2KzlpaC9GbVBETXFS?=
+ =?utf-8?B?ZUd0YWh4bVdlZUFyQWgySGR4VGlsS1kwZlVCNy9wbGFaM1JVSDN0R1M4ZlJK?=
+ =?utf-8?B?M1dXQ2toeC83QVZmRlBIU0JMQmYwdVV6N3pNbmNQb01LZ2FRNDRwWCtoTXFp?=
+ =?utf-8?B?QmRpVnJNMHY3V0llUVJNQVdocE5DKzVORms4emkvWHFVWDRtK1hSQjdZc0VG?=
+ =?utf-8?B?Sks4R0E1YlNTdFNvSTA4enlCaW00S2dVdDdvVkwvcWRIVVRDYWlUM3hKb2Jk?=
+ =?utf-8?B?dnBHbnlIVk5lZzdybVlHNVJBM05ic3FHTjZtNmc2Z1BZVkM4Q2JyTENCZVNK?=
+ =?utf-8?B?Y0ZzRlZnMkJHVGg5Zi9XS0dkVklhbmVwbkwrY2t6Q0c0L0h4TTZOdm9nVkJp?=
+ =?utf-8?B?NjR3ZFVVblVTTDRYMCs0bThveTR5aDJZaENtNGVoQVoxa2l5enZDYzZDdGRF?=
+ =?utf-8?B?RFZtZHFnR3haUnZPbC9YNm5tazZJV3BXUVVyUUVKQW9vZXNYVjZBMUxQT1ov?=
+ =?utf-8?B?SkR1emE4Z3lqMFdyWjBoVmRrWHFNK01qRis0WVRZRkNMY2RhZWZVam15Vk1x?=
+ =?utf-8?B?K1NoYTBaS282T3JhQlhBVnZ2M0p1dEFGUVpsVVZZaGFaL1Q1SFIzeHplUkc1?=
+ =?utf-8?B?QTBuSE9nZmFKVEt2Nk5NQnVkT2t3aGhjSXZYUUJSRmVSYTBCNEk5cmNSa2RR?=
+ =?utf-8?B?WDNSMFU5NHZQaUQ2Z0Roa1Q1YjVtcytPR3hYNEFuaFNTbGZ0NEVLZ3RyVW9m?=
+ =?utf-8?B?Y1VVY28rU21BUGxrK05OYTV5N25iWkc1UkN4bWlNQVVpRUQrdnduVzZvbG5x?=
+ =?utf-8?B?MURHSFIvdzh4Y28rSEwzU0F1ODUrZk5jWWNXS05KV3hZUk1sTEZ3Vmh4TDlT?=
+ =?utf-8?B?dGFRQzdWakhvMnFTQWUxbVlBUit1UE0zOXNjRFFsdW9LSERtVGpCWnBrZ3NR?=
+ =?utf-8?B?bnBrTlorNTBORWFsWG9UZk1QMUhjU2FhNGpCQUFJQmVsSWhnWVZDZGhPaXhy?=
+ =?utf-8?B?Vm0rZnpaYkpiSGV2NEJIY1MvNEp4V1AyY29UdHdSWWZ2Ui93WmJjZXZOUFJk?=
+ =?utf-8?B?cVRzTXlFdVV2Y2o3NEtDb2oxb2RrQ2swY3hhVWhFQThzbzBSK2sxVndKSXpy?=
+ =?utf-8?B?WHdMUDdGMFljS2swZHZjUWJRRDBwWkMySXVYV3hWM2piNkQyQ2ZmTHAyMmhQ?=
+ =?utf-8?B?enQycjgwaThWS1hlM1BMZW5lWmZ4TjVvYjFwN21xM1BVSzl1dEl0SG5WVmdT?=
+ =?utf-8?B?N1hha1JneTdBWHAyV2hkVVhqQ3dRWjRrVkxZWW0rNGEzWFppcGwrVWNrMmdX?=
+ =?utf-8?B?YndSTGliV01KOCs4VlR1L3dabmpveThIZWJ6ODQ2U0E2Slp1UjRIaUtOUno1?=
+ =?utf-8?B?NVpJSU5CQ21EU2EwNUptWSs2cjVmMWRVSlVtNTcyOS84ZlJ4dVFTN1dkVERV?=
+ =?utf-8?B?OWMwRkpKL0I4MHNkMERwSmQwTXVOUUprNUhjaTJBYlRPanBtZTRMd2lHV3Yx?=
+ =?utf-8?B?ZVpQVUtzaGs5YWpycW9HZFFNL1hwZjFpQVgxV0pUeElhbzZYT2UxOWxuZ0dV?=
+ =?utf-8?B?dXNsUC9OLzg1Q29uaEo3UWdiMDR3YXBjM0Z2RHAzc1hURnZGYkFSbmFVUjI3?=
+ =?utf-8?B?WGdWUlhtTnJFRDhCcVdkTWgySEJzL2dhckdZUHMzSExLNThYYlVTbW1PcUNr?=
+ =?utf-8?B?aDdtRXpQaDlZMHRFcEljZGduMXJ6QmhHKzB2M3EyRFZBbEVWWDFmd1JhVkpj?=
+ =?utf-8?B?SHI5ODRWN3hoaExhRnR2VzlYM1NKQmpsOTIzSDB1QU9SV0dxeXlWaC9INW52?=
+ =?utf-8?B?bEVPYnV6NFdad1dNUFBYWVdCTmNEckNNb3hFT3JUNlNHcjNJL1JoenZrUTA5?=
+ =?utf-8?B?VWc9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82c26659-63ce-418e-573b-08dcd6150658
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 06:01:37.7061
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xvT4hPIPkiKmnv1N44749iJxz/nx15jLqG12fKIUga4gfJ0FkGbEeToKcjTYFwz0YNVG9NQddN/EWReMAMGf2MP4iGTcxE6nI6PxLPN6VSc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10559
 
-On Mon, Sep 16, 2024 at 1:20=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
->
->
-> On 9/16/24 10:42, Barry Song wrote:
-> > On Fri, Sep 13, 2024 at 5:19=E2=80=AFPM Dev Jain <dev.jain@arm.com> wro=
-te:
-> >> We use pte_range_none() to determine whether contiguous PTEs are empty
-> >> for an mTHP allocation. Instead of iterating the while loop for every
-> >> order, use some information, which is the first set PTE found, from th=
-e
-> >> previous iteration, to eliminate some cases. The key to understanding
-> >> the correctness of the patch is that the ranges we want to examine
-> >> form a strictly decreasing sequence of nested intervals.
-> >>
-> >> Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
-> >> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> > I like this patch, but could we come up with a better subject for
-> > pte_range_none()?
-> > The subject is really incorrect.
->
-> Are you asking me to change "Compute mTHP order efficiently" to
-> something else?
+Hi Rob,
 
-Right.
+Thank you very much for the review!
 
-Adjust the subject to more accurately reflect the specific changes
-being made.
+>> +
+>> +  gpio-ranges:
+>> +    minItems: 2
+> 
+> This gets expanded to 'maxItems: 2'. Is that what you want? If not, 
+> maxItems should be explicit.
 
->
-> >
-> > Also, I'd prefer the change for alloc_anon_folio() to be separated
-> > into its own patch.
-> > So, one patchset with two patches, please.
->
-> Fine by me.
->
-> >
-> >> ---
-> >>   mm/memory.c | 30 +++++++++++++++++++++++-------
-> >>   1 file changed, 23 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/mm/memory.c b/mm/memory.c
-> >> index 3c01d68065be..ffc24a48ef15 100644
-> >> --- a/mm/memory.c
-> >> +++ b/mm/memory.c
-> >> @@ -4409,26 +4409,27 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >>          return ret;
-> >>   }
-> >>
-> >> -static bool pte_range_none(pte_t *pte, int nr_pages)
-> >> +static int pte_range_none(pte_t *pte, int nr_pages)
-> >>   {
-> >>          int i;
-> >>
-> >>          for (i =3D 0; i < nr_pages; i++) {
-> >>                  if (!pte_none(ptep_get_lockless(pte + i)))
-> >> -                       return false;
-> >> +                       return i;
-> >>          }
-> >>
-> >> -       return true;
-> >> +       return nr_pages;
-> >>   }
-> >>
-> >>   static struct folio *alloc_anon_folio(struct vm_fault *vmf)
-> >>   {
-> >>          struct vm_area_struct *vma =3D vmf->vma;
-> >>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >> +       pte_t *first_set_pte =3D NULL, *align_pte, *pte;
-> >>          unsigned long orders;
-> >>          struct folio *folio;
-> >>          unsigned long addr;
-> >> -       pte_t *pte;
-> >> +       int max_empty;
-> >>          gfp_t gfp;
-> >>          int order;
-> >>
-> >> @@ -4463,8 +4464,23 @@ static struct folio *alloc_anon_folio(struct vm=
-_fault *vmf)
-> >>          order =3D highest_order(orders);
-> >>          while (orders) {
-> >>                  addr =3D ALIGN_DOWN(vmf->address, PAGE_SIZE << order)=
-;
-> >> -               if (pte_range_none(pte + pte_index(addr), 1 << order))
-> >> +               align_pte =3D pte + pte_index(addr);
-> >> +
-> >> +               /* Range to be scanned known to be empty */
-> >> +               if (align_pte + (1 << order) <=3D first_set_pte)
-> >>                          break;
-> >> +
-> >> +               /* Range to be scanned contains first_set_pte */
-> >> +               if (align_pte <=3D first_set_pte)
-> >> +                       goto repeat;
-> >> +
-> >> +               /* align_pte > first_set_pte, so need to check properl=
-y */
-> >> +               max_empty =3D pte_range_none(align_pte, 1 << order);
-> >> +               if (max_empty =3D=3D 1 << order)
-> >> +                       break;
-> >> +
-> >> +               first_set_pte =3D align_pte + max_empty;
-> >> +repeat:
-> >>                  order =3D next_order(&orders, order);
-> >>          }
-> >>
-> >> @@ -4579,7 +4595,7 @@ static vm_fault_t do_anonymous_page(struct vm_fa=
-ult *vmf)
-> >>          if (nr_pages =3D=3D 1 && vmf_pte_changed(vmf)) {
-> >>                  update_mmu_tlb(vma, addr, vmf->pte);
-> >>                  goto release;
-> >> -       } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)=
-) {
-> >> +       } else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) =
-!=3D nr_pages) {
-> >>                  update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
-> >>                  goto release;
-> >>          }
-> >> @@ -4915,7 +4931,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
-> >>                  update_mmu_tlb(vma, addr, vmf->pte);
-> >>                  ret =3D VM_FAULT_NOPAGE;
-> >>                  goto unlock;
-> >> -       } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)=
-) {
-> >> +       } else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) =
-!=3D nr_pages) {
-> >>                  update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
-> >>                  ret =3D VM_FAULT_NOPAGE;
-> >>                  goto unlock;
-> >> --
-> >> 2.30.2
-> >>
-> > Thanks
-> > Barry
->
+Yes, 'maxItems: 2' is what I want but I can also add 'maxItems: 2' in v3 to be
+explicit/more clear about it. 
+
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +
+>> +    gpio: siul2-gpio@4009d700 {
+> 
+> gpio@...
+> 
+> Drop unused label.
+
+I will fix in v3.
+
+Best regards,
+Andrei
+
 
