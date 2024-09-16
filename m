@@ -1,120 +1,86 @@
-Return-Path: <linux-kernel+bounces-331069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A64F97A7F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:53:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B50397A7F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44DB81F23E94
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:53:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7589BB21608
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88F015C15D;
-	Mon, 16 Sep 2024 19:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b="erybvQEg"
-Received: from us-smtp-delivery-162.mimecast.com (us-smtp-delivery-162.mimecast.com [170.10.133.162])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8EB15B10C;
+	Mon, 16 Sep 2024 19:52:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD0E2E659
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 19:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.162
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC492E659
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 19:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726516386; cv=none; b=c4MUywtxv/cKJ4lyFP9punAoGwZmn+G7bvl9dP+pBToKQ4rBDecCXCGfvsdZx+v4zQGKRXe/t8TFphfOjG1IbqJAhWlB0ll3clVJj2h9xdN5FdMtqCbAytmpRRWOz0iE+fhqY9rkoCPzKpoltmHsDIdfT8Bcy71pdTGVjNLouU0=
+	t=1726516326; cv=none; b=VJ7Bl18EZkqdwZNkjbmguwome4jimWnvPuvWlV6k7B0aybnhGZE3+IP+GMv4k8pgWx/ncWtjgXvvoocMAyFPGrDHtzgopazw3jBJeNwc/S7naYH2eXgT2cRx2PyxA0X3t0WkFiEGrGOJtSzYGeU8n/k/Aryw8n88geFwA6beTN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726516386; c=relaxed/simple;
-	bh=MA2ipLhTcZA7vIZAwQ9F3rY4FTOpS7BrXQ7wWgPpTtE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TeFFIFKiDMqt+yuOW5LcXfjE+Krn46xy8eyYi9bGaEp6pgciUTp0n1CpMVnSppMxJ21HfxLLSL7Uk4UYP5PfMdQ39OPwzUtoD2wohdijjsT4c2bvN2ekVW+9klzXuObyTkQHi0o4LUVDJHjPGsg452xtj0qBNYhE5Hn3/rsVHdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com; spf=pass smtp.mailfrom=hp.com; dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b=erybvQEg; arc=none smtp.client-ip=170.10.133.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hp.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hp.com; s=mimecast20180716;
-	t=1726516383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MA2ipLhTcZA7vIZAwQ9F3rY4FTOpS7BrXQ7wWgPpTtE=;
-	b=erybvQEgDQPumf0de4VEzDxfBBlI0Q1u+B2Rb4/HksKur0l58EZshwStPM16bglrDRpRgl
-	VmkeVgI8kDsceDsQ/qb8HUTiBx0y9UzgyP57D+c7NXkef3tIDEOV2Sc0y8uuGoQByp5IQQ
-	dGoE1Y6diSiVRVCEIk+9Tu7geoMAr5E=
-Received: from g7t16451g.inc.hp.com (hpifallback.mail.core.hp.com
- [15.73.128.137]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-512--iqLqW0tM3GD7IwAkHPVfg-1; Mon, 16 Sep 2024 15:53:02 -0400
-X-MC-Unique: -iqLqW0tM3GD7IwAkHPVfg-1
-Received: from g7t14407g.inc.hpicorp.net (g7t14407g.inc.hpicorp.net [15.63.19.131])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by g7t16451g.inc.hp.com (Postfix) with ESMTPS id 659EF6000CBF;
-	Mon, 16 Sep 2024 19:53:00 +0000 (UTC)
-Received: from niko-jammy.localdomain (unknown [15.52.90.21])
-	by g7t14407g.inc.hpicorp.net (Postfix) with ESMTP id F32DC18;
-	Mon, 16 Sep 2024 19:52:55 +0000 (UTC)
-From: nikolai.afanasenkov@hp.com
-To: tiwai@suse.com
-Cc: perex@perex.cz,
-	kailang@realtek.com,
-	sbinding@opensource.cirrus.com,
-	simont@opensource.cirrus.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nikolai Afanasenkov <nikolai.afanasenkov@hp.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ALSA: hda/realtek: fix mute/micmute LED for HP mt645 G8
-Date: Mon, 16 Sep 2024 13:50:42 -0600
-Message-Id: <20240916195042.4050-1-nikolai.afanasenkov@hp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726516326; c=relaxed/simple;
+	bh=Lqb20Iw6DxcEneSZ02a5YRSnY6pZY+MlRkDtZn/qA6c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AR66s4W9aHfnCK6NBDwlKoLnnnJoSXG32icAOQttEMbcPwFAMDORyzhVQxUYutkBSZWrvQqB7Nzt9NXhRnjwjr2VkSdrIAw2WG0oWm341Q2pNTgkaSPjdNhFrWpEWBW1Ak0AttL7s+neFpLrEepYvEVp1wkDfN9HY/Nz1Tyl7p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a08f88aeceso49159935ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 12:52:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726516324; x=1727121124;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yMTcCK/TKOvRRaJgzia5piux23XuIMyubVFnG5iKmdM=;
+        b=cJFFA1BwJOX2mdibq2GwHLMWStALASNW9YePHnWrLDtjciG0YMqrQN89GzxlmsCwkZ
+         w2T9vG1I+imqm1hnwCW5+bh5HIEP8xCdKfEAgvyhCXwdxmBb7uCHzS5d62Yc1HAbQZMn
+         +JiZUE07gud+mxsIeeWPMB9xYsCb6sHo+VMGdBc8UyCaKi4Q5dEF33/9LgWAP8ALUgtX
+         X+M8XF8tK2r5d4wllu+NA7U1JT1Tco07hTQ5n/VrtBL+jjBNcSybMW4Ar2SOj/Hr3ZuG
+         BN0w8na6Swih1YlU2Ckl47nxESFHLf6AAMe+FjGPRUSTjmdSkLtYNG3hIFSlmE2NjQ/K
+         otCg==
+X-Gm-Message-State: AOJu0YwmkJjpLzFgQLjY+4A1Ujrb/DOqwbngjvyj6g2cGfRnAlOVj/DD
+	9J7Xdq8R6yFb2h1jPe9v2x1lIZweizsvy+JtTjbMB4Q2RGVF5wdyiMEE0lRzEfWHVBqg4CqEXnH
+	VBHT3Jm51bup8pJJhT/Msu0PJG8bcyMf7bj6SKMoi7FpfOFNFeIJJ360=
+X-Google-Smtp-Source: AGHT+IFQQWHyo6g9HC1U6R9mw9oNN7TVFl299ajgscJ/Pzo6I4IjksZ+OJ+rtXWPRmA/4M3kLI0FOsK2OupDXYE8q2G5fAG2fFgS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: hp.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=WINDOWS-1252; x-default=true
+X-Received: by 2002:a05:6e02:216a:b0:3a0:a08a:a0d3 with SMTP id
+ e9e14a558f8ab-3a0a08aa209mr42039025ab.18.1726516324252; Mon, 16 Sep 2024
+ 12:52:04 -0700 (PDT)
+Date: Mon, 16 Sep 2024 12:52:04 -0700
+In-Reply-To: <CAABpPxRkKzeNYJJTvXTPBtwCkB63=NN5y4Eh1ED98o8TWLDO4A@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000034ce8b062241e831@google.com>
+Subject: Re: [syzbot] [bcachefs?] general protection fault in prt_str
+From: syzbot <syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, pvmohammedanees2003@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Nikolai Afanasenkov <nikolai.afanasenkov@hp.com>
+Hello,
 
-The HP Elite mt645 G8 Mobile Thin Client uses an ALC236 codec
-and needs the ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF quirk
-to enable the mute and micmute LED functionality.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-This patch adds the system ID of the HP Elite mt645 G8
-to the `alc269_fixup_tbl` in `patch_realtek.c`
-to enable the required quirk.
+Reported-by: syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
+Tested-by: syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikolai Afanasenkov <nikolai.afanasenkov@hp.com>
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+Tested on:
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 452c6e7c20e2..5ad5a901f9b6 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10396,6 +10396,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[=
-] =3D {
- =09SND_PCI_QUIRK(0x103c, 0x8ca2, "HP ZBook Power", ALC236_FIXUP_HP_GPIO_LE=
-D),
- =09SND_PCI_QUIRK(0x103c, 0x8ca4, "HP ZBook Fury", ALC245_FIXUP_CS35L41_SPI=
-_2_HP_GPIO_LED),
- =09SND_PCI_QUIRK(0x103c, 0x8ca7, "HP ZBook Fury", ALC245_FIXUP_CS35L41_SPI=
-_2_HP_GPIO_LED),
-+=09SND_PCI_QUIRK(0x103c, 0x8caf, "HP Elite mt645 G8 Mobile Thin Client", A=
-LC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
- =09SND_PCI_QUIRK(0x103c, 0x8cbd, "HP Pavilion Aero Laptop 13-bg0xxx", ALC2=
-45_FIXUP_HP_X360_MUTE_LEDS),
- =09SND_PCI_QUIRK(0x103c, 0x8cdd, "HP Spectre", ALC287_FIXUP_CS35L41_I2C_2)=
-,
- =09SND_PCI_QUIRK(0x103c, 0x8cde, "HP Spectre", ALC287_FIXUP_CS35L41_I2C_2)=
-,
---=20
-2.34.1
+commit:         a430d95c Merge tag 'lsm-pr-20240911' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=138a629f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9ab5893ec5191eb
+dashboard link: https://syzkaller.appspot.com/bug?extid=37186860aa7812b331d5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14abd7c7980000
 
+Note: testing is done by a robot and is best-effort only.
 
