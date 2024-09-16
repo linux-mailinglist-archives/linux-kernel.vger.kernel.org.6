@@ -1,126 +1,166 @@
-Return-Path: <linux-kernel+bounces-330435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3D8979E8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:38:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE89979E90
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF43C1C22D52
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2341B21906
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456E11494BB;
-	Mon, 16 Sep 2024 09:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1BB14A095;
+	Mon, 16 Sep 2024 09:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c7t9/noA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGwIAlvt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65487BB15
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0391A1487D6
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726479494; cv=none; b=buGTTpRBUXTQy4Mrt1IKRodcweog5yRKFfc9B4jZIJrgn0fYI5qo/I7WZ1eJk7eGaYA8F934LXaMVVUiq/z33MnbyVl7eMJ1sVZQvCrMKIB1fM2/jcc9mcCY7hZ6WNlZYEbrJ+HjZ5SP+diyDOhzLy371k1Prs/NVSDEhl6nVNE=
+	t=1726479554; cv=none; b=CxicqGQaJvePtvZTGXRbELZRj82fAxJhwZ14Rb3dTuEF2f1TOSD8oWXFA81Dn4gBFhCWXIHEj3sWC9J5eYEjUeR59hdY1NTIMrT2otMW3AImFv0Cbw8bfQOLmUq1ka4zsj+iJCD/++21M4ZJFqu8FPpwD2UI5apOiyYJc+AstRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726479494; c=relaxed/simple;
-	bh=g2thI+DV+li3hwhTtS+AuQRCD96skA1S5l4K8wuGXsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ww3mLpO5IcmiSvRaCSo4HChOc5YjckK7LXDLulQSNZyFhulPsQnLwBuo5aSZv+ZPAjkl3OxRvOWE7VboDSlAI3UZLpH9jfTTQ3yYnlBVBd6UtlbEgz1XVZGgbu7M2GLVaOLI4/xA7bumEvKTtZdcEYmOzDb86xM928t7+3PPEqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c7t9/noA; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726479493; x=1758015493;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=g2thI+DV+li3hwhTtS+AuQRCD96skA1S5l4K8wuGXsk=;
-  b=c7t9/noAo9DG1Msw3uT603qdznIqP9klGP2tSoJPPZiO00qIsyXrsllb
-   5RrcUmIXfk3bk4tNQQ4hvNtESKxgVErfhAW+8o1a4TCCsEEUth9OfLtNl
-   GLcM70591geSt5NUhiRhuP14PKLI2zvyNSoIfgq0yUDTZYy+r77uWIRim
-   /3BWEp10+Or88fPqgPH+VLVm/tx75DCW5985h9SYbKyaBndrglXimIFUh
-   KyCUiDBrtHvvJkA02CJy7vHtvsr8ifShFksS1CzyAO8j3Kzstvmvipi1u
-   9HDfqtDYDw9jMrOG7Cb4IVn7hmTHBra32o7+eMjUGs8kBXeP/1scpy2Dn
-   A==;
-X-CSE-ConnectionGUID: svouYsjvQLaALWAZLPvEBg==
-X-CSE-MsgGUID: Kn+yWP9dSU68/XzVzrPzeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="36431487"
-X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
-   d="scan'208";a="36431487"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:38:12 -0700
-X-CSE-ConnectionGUID: 9O/5w+V6SEy2Ju/e85QoOA==
-X-CSE-MsgGUID: l/OGRKCBSauay9Y0SUGXsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,232,1719903600"; 
-   d="scan'208";a="68511675"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 02:38:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sq8BM-00000009PMS-06c8;
-	Mon, 16 Sep 2024 12:38:08 +0300
-Date: Mon, 16 Sep 2024 12:38:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Rijo Thomas <Rijo-john.Thomas@amd.com>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>,
-	Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@linaro.org>
-Subject: Re: [PATCH v1 1/1] tee: amdtee: Use %pUl printk() format specifier
- to print GUIDs
-Message-ID: <Zuf8fw1MM0jaisUh@smile.fi.intel.com>
-References: <20240911204136.2887858-1-andriy.shevchenko@linux.intel.com>
- <CAHUa44G4O0JgqN=BwvshRXzUeEE1oXD1o8Yn-5X6p5qY8vkDQA@mail.gmail.com>
- <ZuQF_w7G1A90tYG3@smile.fi.intel.com>
- <5c95cbc6-48b6-9cf4-8682-fc6469cb9c81@amd.com>
+	s=arc-20240116; t=1726479554; c=relaxed/simple;
+	bh=lHlNVBvig/pgfgHgHRU/PkbsKZHNyb87BjkgNDIW6QE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jzgMgf2dvfVfvn1uQeC/lFMftjtynEusdhKuXLLidVd9X8pgn9AdVs4mopdZVZH3+GKkxKYQ8qv1gXy4WsHpyGjgTQ6j27VSfWwA5aLdmyRyQZiGjhypIHrvoidJQD0vSlsvHnngAGXdr557TQAElGjRFplbWLm8PwrtKcy5drE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGwIAlvt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BDB6C4CEC4;
+	Mon, 16 Sep 2024 09:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726479553;
+	bh=lHlNVBvig/pgfgHgHRU/PkbsKZHNyb87BjkgNDIW6QE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IGwIAlvtZgOxe5pkyWwGlf9aNCeghOAVcYhE2BBdlCklqJHX/4TUt5sEmbvvSCAZr
+	 YfwF4THCVj+IHaeibbxBlGBNbz6ptj27DDotWzVZJvlVQCqHmHs93Z4nSEVhBTWOlX
+	 9jCwkQtpZv2J08Mo0KnnF31XBP9QMdbAdeLIswc96W0FyA2wjttvO6BEBU8egOuvvl
+	 E1k1JElGzHiW9abs0D67cEzJu8NHlGq1VktKA1IP1jDYSokJ/TwlOaB32W8eXQP5qY
+	 oBZ8k/IqVdhQ8RnL3MuHHKPmi35HYawf+kJREEYCjXXgcr6cKiO9Fbb2H6LwT+r1C7
+	 ehCNeJ5N1/IOw==
+Date: Mon, 16 Sep 2024 02:39:12 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>
+Subject: [GIT PULL] hardening updates for v6.12-rc1
+Message-ID: <202409160146.2E6CDE4C2@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5c95cbc6-48b6-9cf4-8682-fc6469cb9c81@amd.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 16, 2024 at 01:38:27PM +0530, Rijo Thomas wrote:
-> On 9/13/2024 2:59 PM, Andy Shevchenko wrote:
-> > On Thu, Sep 12, 2024 at 07:50:08AM +0200, Jens Wiklander wrote:
-> >> On Wed, Sep 11, 2024 at 10:41 PM Andy Shevchenko
-> >> <andriy.shevchenko@linux.intel.com> wrote:
-> >>>
-> >>> Replace the custom approach with the %pUl printk() format specifier.
-> >>> No functional change intended.
-> > 
-> >> Thanks, the patch looks like a nice simplificatrion.
-> > 
-> > Thank you for the review.
-> > 
-> >> Rijo, Devaraj, does this work for you?
-> > 
-> > Yes, please test, because seems others use uuid_t (UUID BE) for TEE,
-> > but in this driver IIUC it's guid_t (UUID LE).
-> 
-> No, this does not work for us. I tested this patch, it does not work as expected.
-> 
-> %pUl gives output in uuid format (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x).
-> But, what we need, is a name with the format %08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x.
-> 
-> Endian-ness is not an issue here. uuid generates name with 4 hypens (-).
-> While, in our TA naming we are using 3 hyphens (-).
+Hi Linus,
 
-Ah, good catch! Can somebody add a comment there to explain that this uses
-non-standard human-readable representation of GUID/UUID?
+Please pull these hardening updates for v6.12-rc1. Most of this is
+string_choice additions, with some more straggling flexible array fixes,
+selftest build improvements, and a new check for nonstring arguments.
 
-P.S. Thank you for testing!
+A notable conflict is that str_up_down() got defined in drm too. So it
+needs to be removed during the merge, which is rather awkward. It was
+solved in linux-next with this:
+https://lore.kernel.org/linux-next/20240909195939.067c1c13@canb.auug.org.au/
+
+Thanks!
+
+-Kees
+
+The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
+
+  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.12-rc1
+
+for you to fetch changes up to c121d5cc3a993cdbfab46a152bdd50227a4d5e8c:
+
+  lib/string_choices: Add some comments to make more clear for string choices helpers. (2024-09-05 09:50:16 -0700)
+
+----------------------------------------------------------------
+hardening updates for v6.12-rc1
+
+- lib/string_choices: Add str_up_down() helper (Michal Wajdeczko)
+
+- lib/string_choices: Add str_true_false()/str_false_true() helper
+  (Hongbo Li)
+
+- lib/string_choices: Introduce several opposite string choice helpers
+  (Hongbo Li)
+
+- lib/string_helpers: rework overflow-dependent code (Justin Stitt)
+
+- fortify: refactor test_fortify Makefile to fix some build problems
+  (Masahiro Yamada)
+
+- string: Check for "nonstring" attribute on strscpy() arguments
+
+- virt: vbox: Replace 1-element arrays with flexible arrays
+
+- media: venus: hfi_cmds: Replace 1-element arrays with flexible arrays
+
+----------------------------------------------------------------
+Hongbo Li (3):
+      lib/string_choices: Add str_true_false()/str_false_true() helper
+      lib/string_choices: Introduce several opposite string choice helpers
+      lib/string_choices: Add some comments to make more clear for string choices helpers.
+
+Justin Stitt (1):
+      lib/string_helpers: rework overflow-dependent code
+
+Kees Cook (6):
+      string_choices: Add wrapper for str_down_up()
+      coccinelle: Add rules to find str_down_up() replacements
+      virt: vbox: struct vmmdev_hgcm_pagelist: Replace 1-element array with flexible array
+      media: venus: hfi_cmds: struct hfi_session_release_buffer_pkt: Replace 1-element array with flexible array
+      media: venus: hfi_cmds: struct hfi_session_release_buffer_pkt: Add __counted_by annotation
+      string: Check for "nonstring" attribute on strscpy() arguments
+
+Masahiro Yamada (3):
+      fortify: refactor test_fortify Makefile to fix some build problems
+      fortify: move test_fortify.sh to lib/test_fortify/
+      fortify: use if_changed_dep to record header dependency in *.cmd files
+
+Michal Wajdeczko (2):
+      lib/string_choices: Add str_up_down() helper
+      coccinelle: Add rules to find str_up_down() replacements
+
+ MAINTAINERS                                   |  1 -
+ drivers/media/platform/qcom/venus/hfi_cmds.h  |  2 +-
+ include/linux/compiler.h                      |  3 ++
+ include/linux/compiler_types.h                |  7 ++++
+ include/linux/string.h                        | 12 ++++---
+ include/linux/string_choices.h                | 29 +++++++++++++++++
+ include/uapi/linux/vbox_vmmdev_types.h        |  5 ++-
+ lib/.gitignore                                |  2 --
+ lib/Makefile                                  | 38 +---------------------
+ lib/string_helpers.c                          |  3 ++
+ lib/test_fortify/.gitignore                   |  2 ++
+ lib/test_fortify/Makefile                     | 28 ++++++++++++++++
+ {scripts => lib/test_fortify}/test_fortify.sh |  0
+ scripts/coccinelle/api/string_choices.cocci   | 46 +++++++++++++++++++++++++++
+ scripts/remove-stale-files                    |  2 ++
+ 15 files changed, 134 insertions(+), 46 deletions(-)
+ create mode 100644 lib/test_fortify/.gitignore
+ create mode 100644 lib/test_fortify/Makefile
+ rename {scripts => lib/test_fortify}/test_fortify.sh (100%)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Kees Cook
 
