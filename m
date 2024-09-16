@@ -1,121 +1,185 @@
-Return-Path: <linux-kernel+bounces-330370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA51979D3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:50:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 457D4979D40
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BF47B238FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:50:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648811C2305F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8141B146586;
-	Mon, 16 Sep 2024 08:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5F7148853;
+	Mon, 16 Sep 2024 08:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Pzd199Zt"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y5XCUWus"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB27D13C8E8;
-	Mon, 16 Sep 2024 08:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1BA13C8E8
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726476641; cv=none; b=uAosv+DkSfwBz5mU9+q2CiUJiREMyBFglou2s/a1XlwR+Yf5rPbB0xFVIAKHVRaDKm9jtAwWTzqDlRbg4Q6JeeG5QZ9b86v6HIu0SFF/Rb+KnZPj5JMR/WzSly0iam3Xubh0lz1ja9LKGSZW+KFQfl7bR/QwVLARFFUWwWiLqrA=
+	t=1726476699; cv=none; b=U98EYzMg9r2hGvBl6HcfZntv/Qrz+La4CvMPxLvaqgT9Ztw4b/hZmJftipDIgtJXQXaF4ZFqLiV7c45NXQfBHF3JPBYoCmEpjlsvVCqXf3IqtuP5Axd3rck8+bf7POA5yPTYtJ0w6nGBidyYGgs5/WoQ7XpUwrwBOZQnLi4rl0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726476641; c=relaxed/simple;
-	bh=t+IQ9RTWxdzVYuVdIhvfKJXVAtXQvpZ4skDYvaDknGU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=s+ffUbluFKxq3C63pHHryaTaYESx4FhQo8c3dZaU9cTH4HWi53ltad9fFY2yPiqDJK5JHS/ydhnJyoWcFSbe0kGxvQSqUkX9l3hR2lSJEpunpUaKsbeS57mpIX+h6HPxVVmU19X6+Zu8xpROTA4MX+gdJPS0rdB2vpeAlkJEwAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Pzd199Zt; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726476627; x=1727081427; i=markus.elfring@web.de;
-	bh=Cdh2sCthxJLXSaRFkitknB67DXkRE1TaqYOdeu6G4HA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Pzd199ZtFvk5zroQrvRvsWBon6K6Qg0OoRt1Q/jxMBViCdHVcvuUSW75j0lufMHK
-	 Kc5B7hxeK010ar7xQVnYA3E2r1PLezddPbTfIxijHD9BE4XMUobMZJVHuxxo6ZOSp
-	 ZvW42L8oolv0oAEhJuxPFko5PRFDvdLQzaivTy4H9D1hkNEbGIMh+Tfw9Zd08MAC/
-	 kY1lWgofEUaJmg9R4q3+h7G5pAQCWRW1cip1QtObBwFMr2m8p8F21T2x6wz+Kze7e
-	 P3ZR+YAxO5efpFPqGsXY4pPIyPTSFiiUcLfQc76dOHjgnGm5n0B4inb19SSU5OByM
-	 FJAs/ppsXZmIaCZ17Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mf3qY-1sMpMP1V0c-00jF6P; Mon, 16
- Sep 2024 10:50:27 +0200
-Message-ID: <6a6c87d3-9e4f-4980-ae06-b0d5e16dd0c0@web.de>
-Date: Mon, 16 Sep 2024 10:50:26 +0200
+	s=arc-20240116; t=1726476699; c=relaxed/simple;
+	bh=sIi6lGnRDmnpWsFor1oMST/ypdc8o4B5UfnJGrhMCEA=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=TKBeVqOS1X0pt/Ci/h8Z4cjgp8hc9+HJxAP+ynAOXbkU1mDEfXz4U5SRvBjO2m7wK4nhopuCSOgUf0SjLCUi+e2JkYCOrIiEdMx/qMgARXaR9I7O1qp6T+USGL9Y1xSCU37vFigl5y1geXEW9+5/yvlUG/TERdfr/7waxgbO/io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Y5XCUWus; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240916085129euoutp020be484d8c84a4ff14a1020681e2c5224~1rWbciQWS2846628466euoutp02Q
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:51:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240916085129euoutp020be484d8c84a4ff14a1020681e2c5224~1rWbciQWS2846628466euoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726476689;
+	bh=00zyv8CQAfu2svO5KB8AB1uhDRFJkT8EwN1UnOCwONY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Y5XCUWusG+eMa/zKSvNH1oQ904PEahK3o99SgsVLK4KXV8hexryzMmI7EcaJFKAm5
+	 Q1YMh3uOqZvbNkZgnHhb96WKv5nGSGml+Rt/oTluJsgzRwyUwnDs3XIw2rV5amFOOq
+	 sPG0MBLEYpYqAQhWUajopUvSVuBexQn0n2HFxxPk=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240916085129eucas1p1bbfe0f5e1670d7e87510212b07bb5c6e~1rWbInLq72956929569eucas1p1Z;
+	Mon, 16 Sep 2024 08:51:29 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 2D.0A.09624.191F7E66; Mon, 16
+	Sep 2024 09:51:29 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240916085128eucas1p1ac5a0605409839e99064198547ab1eb3~1rWanEuGe0804508045eucas1p1f;
+	Mon, 16 Sep 2024 08:51:28 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240916085128eusmtrp12725bf46fa341d77854fdc1e0b7b65f3~1rWamOqL51596415964eusmtrp1j;
+	Mon, 16 Sep 2024 08:51:28 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-d3-66e7f191dfaa
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 59.51.19096.091F7E66; Mon, 16
+	Sep 2024 09:51:28 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240916085128eusmtip11f7e18116a28e61705840777542ff39e~1rWaW3Tr93124331243eusmtip1d;
+	Mon, 16 Sep 2024 08:51:28 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Mon, 16 Sep 2024 09:51:26 +0100
+Date: Mon, 16 Sep 2024 10:50:54 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: David Woodhouse <dwmw2@infradead.org>, Lu Baolu
+	<baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe
+	<jgg@ziepe.ca>, Klaus Jensen <its@irrelevant.dk>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, Klaus Jensen
+	<k.jensen@samsung.com>
+Subject: Re: [PATCH v2 0/5] iommu: Enable user space IOPFs in non-PASID and
+ non-svm cases
+Message-ID: <20240916085054.gpan37ds7ea45pgh@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/2] ASoC: tas5805m: Improve a size determination in
- tas5805m_i2c_probe()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-sound@vger.kernel.org, Daniel Beer <daniel.beer@igorinstitute.com>,
- Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Julia Lawall <julia.lawall@inria.fr>
-References: <a7ce512c-0f82-47f6-89fb-f7269e4fdfae@web.de>
-Content-Language: en-GB
-In-Reply-To: <a7ce512c-0f82-47f6-89fb-f7269e4fdfae@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:eDizXtHr60xTMZBo2z3uuH8kBSZwS0zyTfYJUn0VJ9XiL/Ihu3X
- BAvRLOycnnhnzi6YcJGjLCXTEOjpX8+dsInfgQNrh2V4p2fSzF9FGOYJznToZaFQhlXlbGe
- v1f+Cx3PexFNN51Tlrn8aOwLLqEkCR3mkX/fiS9xEk7ClGSMySOqetUERytbELJG6ClZ4Jk
- rddQ5osIBoihXEtMGdIww==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GYJePe2PaRQ=;OXTG5OmtR568fIFs5X4a5WyJS0a
- LbP1Vfd+u5n7ZAVnJY+JEc1E6UMpERU1o6qdMJfOzi9Va7nl0bg3lhkEt6SFPwiUDx7sTzaqr
- LRqf8g4sCEyQsqi7KogTTJx/OXb4WEXCPrAS3Zg4LZhk0EW9TVAg4dqqtKWSy15hHz1tmixR6
- cR6/F7OaYttkgY1shPJSFt8f7fCgXUwSptw9BCdGMP8t2l4G0xWFi9t69fCeKiW15RgSqx8KD
- LlDHPPxHOy47UO0Fp2hONg9Qh5DquVAejDsBtnlu7E5HP8J4z4Dv6MOiFjHFanJP5dywz7Wc1
- /h5aYswwRLRYKYwvH4Yx9FFq6ucF3ohvrG3MlUAvZIW7JpMgx2sPZbfwBYKezexd71JZmQeOY
- hb5d1VsK57/27R5a1XJDt/7cYyTPAsmOsJhkrIavbv00oikQLxaNOgac3PMvHdryJHiiHdJH0
- waDvQqp3Q7HvMH8fN7pXZImp8M84QWmhO8Fa92E8v2APMH2F0tF04uoGQ0TqHJRDjDWzOhREb
- SJyfFj9GzE9QBX6gdD/Z9XAPwt8L91nx12vJtit7GdobMXe2DyVr3DeNYJn9pViWjjEnTuP/U
- 979+DZMBYeGadeLT57FTa5veGdG2SF70jwaEirNiFmAY8Ifn7iWXsGAUlTrMNvgwlp6fuJjmm
- ZpQIlQ5xZrdGirbaRo/+hFoRdynMIVgJJVdqgJusTXfIAky3uIROBHjJ/99lf0qulx79RYFGN
- ZoWOxbzrvS+5vZ5cNMbz47sa+JKY71WHVxl4nMs9lrHvWLKl0OoxWBrMpAMxXaUkO3eMuJLdp
- j4+tYiAZyE68Gp5AQgztbVuA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BL1PR11MB5271994848066586A098327F8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7djP87oTPz5PM7i8hNli88StbBYTV05m
+	tvj1xcJi/8FvrBYzZ5xgtOicvYHdYunbrewWl3fNYbM4+OEJq0XLHVMHLo8nB+cxeayZt4bR
+	Y/MKLY/Fe14yeZzbcZ7dY9OqTjaPeScDPV5snsno8XmTnMfWz7dZAriiuGxSUnMyy1KL9O0S
+	uDLar/5mK1jEVzGlMa6BcTp3FyMnh4SAicSXIxfYQWwhgRWMEpsmeXYxcgHZXxglZrzZwAzh
+	fGaUeNn9lgmm42vba2aIjuWMEns3VcIVfVt7nh3C2cwosf3AQxaQKhYBVYlfS96CdbAJ6Eic
+	f3MHzBYR0JD48X0G2ApmganMEg+OvGAESQgLREs0/7oGVsQr4CAx5+wcKFtQ4uTMJ2BDmYEG
+	Ldj9ia2LkQPIlpZY/o8DJMwpECtx4+JEqEsVJb4uvscCYddKnNpyiwlkl4TAbE6JiW+eMUIk
+	XCSeHNrBDGELS7w6voUdwpaROD25hwWiYTKjxP5/H9ghnNWMEssav0KtsJZoufIEqsNRYtXB
+	lUwgF0kI8EnceCsIcSifxKRt05khwrwSHW1CENVqEqvvvWGZwKg8C8lrs5C8NgvhtQWMzKsY
+	xVNLi3PTU4sN81LL9YoTc4tL89L1kvNzNzECk9bpf8c/7WCc++qj3iFGJg7GQ4wSHMxKIry2
+	v5+mCfGmJFZWpRblxxeV5qQWH2KU5mBREudVTZFPFRJITyxJzU5NLUgtgskycXBKNTBFBRoy
+	X9p9001fvJPzl2Ljm8onHKFvlh29bVazzuqT6excQ25HnaTlcdxLs0/fkLxdNiH/a4BwmOLL
+	cqt/6/4cvX5/ZWlLI5/R9tMGRnv6X5ToMiwqUFAx+5fYwhX4U7s8TIlzc41UV4FU56pvpo/Y
+	BAv02bJVXyxKEa1It7j23HKZQIvCv2mRiVq9F39fat82aadjcO++ZXpf+Bfo55tx6Pn8LTJg
+	N1wi8erTZbM7VocznhlkPe42zazOMxLK/7DLN01h/dcwf/d77dGFQunKsVMceoQkwh0n6W5h
+	UJ4vO6Mv3Thc3sKP95vfFM6Xba9fOhk9v+E1PX/h8mOnZpVMWnwl+cL8ypiF4dwGSizFGYmG
+	WsxFxYkAVclkvskDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xu7oTPj5PMzi2Wcpi88StbBYTV05m
+	tvj1xcJi/8FvrBYzZ5xgtOicvYHdYunbrewWl3fNYbM4+OEJq0XLHVMHLo8nB+cxeayZt4bR
+	Y/MKLY/Fe14yeZzbcZ7dY9OqTjaPeScDPV5snsno8XmTnMfWz7dZArii9GyK8ktLUhUy8otL
+	bJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DLar/5mK1jEVzGlMa6BcTp3
+	FyMnh4SAicTXttfMXYxcHEICSxklWn+uYIRIyEhs/HKVFcIWlvhzrYsNougjo8T1l9OgnM2M
+	EreeH2EDqWIRUJX4teQtM4jNJqAjcf7NHTBbREBD4sf3GWArmAWmMks8OPICbIWwQLRE869r
+	YEW8Ag4Sc87OAbOFBJ4xStyeEgwRF5Q4OfMJC4jNDDR0we5PQMs4gGxpieX/OEDCnAKxEjcu
+	TmSCuFRR4uvieywQdq3E57/PGCcwCs9CMmkWkkmzECYtYGRexSiSWlqcm55bbKRXnJhbXJqX
+	rpecn7uJERi724793LKDceWrj3qHGJk4GA8xSnAwK4nw2v5+mibEm5JYWZValB9fVJqTWnyI
+	0RQYFBOZpUST84HJI68k3tDMwNTQxMzSwNTSzFhJnJftyvk0IYH0xJLU7NTUgtQimD4mDk6p
+	BiaLJyE5/8t7f/JUrTNfpbP/ucmpqZcUY7vvLlp384jIJgUVo96IxXZCW37MuKG4QcfwgueE
+	OcfYQiWYHiYdWHloyss7MsIctW9+Mral5Rnu6D42z9Gz2TYv3u+bwdTVBUxOG0MnfTeZ8W9/
+	3a6GYsOLy2rPmuxZyn3on+msWKni1mzNqMsG56NPX55Tfn7W2ym9n61FPTr2Tf7c6Oi0ym+/
+	dNO8tZt3vfudK6izYt0ejW3NkXv6TNZu2vM6ylAl4taXPLNJnzz/nD/K+X4H74rYz9xGPzIf
+	We7UeuN5OKvtkUBpmMYagyVax9c+M1AUXnQ+xGlrn+oeo2+CH+osFxaKdtpNmSDApGuYpJXC
+	9jBciaU4I9FQi7moOBEA30/pHmYDAAA=
+X-CMS-MailID: 20240916085128eucas1p1ac5a0605409839e99064198547ab1eb3
+X-Msg-Generator: CA
+X-RootMTR: 20240914004847eucas1p23af12d7ea9f70f0de6a9a900072bdad8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240914004847eucas1p23af12d7ea9f70f0de6a9a900072bdad8
+References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
+	<CGME20240914004847eucas1p23af12d7ea9f70f0de6a9a900072bdad8@eucas1p2.samsung.com>
+	<BL1PR11MB5271994848066586A098327F8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Sep 2024 10:20:12 +0200
+On Sat, Sep 14, 2024 at 12:48:31AM +0000, Tian, Kevin wrote:
+> > From: Joel Granados via B4 Relay
+> > <devnull+j.granados.samsung.com@kernel.org>
+> > 
+> > This series makes use of iommufd_hwpt_replace_device to execute
+> > non-pasid/non-svm user space IOPFs. Our main motivation is to enable
+> > user-space driver driven device verification without SVM/PASID.
+> 
+> can you elaborate why IOPFs are necessary to help verify such usage?
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+In retrospect "enable" might not be the best word to use here. We are not
+"enabling" user-space driver driven device verification as it is already
+enabled; you could already poke a device from user space. But the whole poke
+space was not available, you could not test IOPF without having an SVM/PASID
+capable IOMMU. Therefore a better wording would be "Our main motivation is to
+expand or facilitate user-space driver driven device verification by enabling
+IOPF without SMV/PASID".
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- sound/soc/codecs/tas5805m.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Does this address your concern?
 
-diff --git a/sound/soc/codecs/tas5805m.c b/sound/soc/codecs/tas5805m.c
-index f37eec960364..d4f028451071 100644
-=2D-- a/sound/soc/codecs/tas5805m.c
-+++ b/sound/soc/codecs/tas5805m.c
-@@ -473,7 +473,7 @@ static int tas5805m_i2c_probe(struct i2c_client *i2c)
- 		return ret;
- 	}
+> 
+> > 
+> > What?
+> >   * Enable IO page fault handling in user space for a non-pasid, non-svm
+> >     and non-virtualised use case.
+> >   * Move IOMMU_IOPF configuration from INTEL_IOMMU_SVM into
+> > INTEL_IOMMU.
+> >   * Move all page request queue related logic to a new (prq.c) file.
+> >   * Remove PASID checks from PRQ event handling as well as PRQ
+> >     initialization.
+> >   * Allow execution of IOMMU_HWPT_ALLOC with a valid fault id
+> >     (IOMMU_HWPT_FAULT_ID_VALID)
+> >   * Insert a zero handle into the PASID array in dev->iommu_group when
+> >     replacing the old HWPT with an IOPF enabled HWPT.
+> 
+> the last bullet is stale now.
+oops. Missed that one; will correct in next version 
 
--	tas5805m =3D devm_kzalloc(dev, sizeof(struct tas5805m_priv), GFP_KERNEL)=
-;
-+	tas5805m =3D devm_kzalloc(dev, sizeof(*tas5805m), GFP_KERNEL);
- 	if (!tas5805m)
- 		return -ENOMEM;
+> 
+> btw a selftest is expected too.
+I'll figure this out for the next version.
 
-=2D-
-2.46.0
+Thx for the review
 
+Best
+-- 
+
+Joel Granados
 
