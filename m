@@ -1,433 +1,398 @@
-Return-Path: <linux-kernel+bounces-330194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B169979ABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:27:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C011C979AC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C2F282715
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:27:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D4E6B20BA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 05:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBA1200A3;
-	Mon, 16 Sep 2024 05:27:27 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF6D38F83;
+	Mon, 16 Sep 2024 05:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NkAm5drf"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AF31C6A1
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790E01BF58
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 05:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726464446; cv=none; b=IE1gF3BWebHzjR0z2t+c+AycAhglG8zJ4osdTw+GYmhEW5nW0vXfAY7+RvlIGYO9lG4hpjFrOnD2mAI+mzQHDMdyuALa50/xmB2G19HOG80sN5jhtEL8WpxK8XebuyXkbDgzPdAuYz1SYwZaK0Uf5FI1Iu+Errhpwzwz5/oXDJQ=
+	t=1726464589; cv=none; b=HogAAuNzlzEiaq7UGC9MqxU5LbmlqZ2B5v8dND57gJcVT6bBYViR0vSkQbQ1a9G3bZ6K/OUVkoWyiPJHX9fUCFzfMCgmdDVA6e07D/QSXK97s0dBZv9XdpCkXV3CTz8dpeRBhJetoH6vdnTI4KRK2liCk5Ks4OSZhlMtGF6sPRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726464446; c=relaxed/simple;
-	bh=TsTXms7Oaem88xMbZkhnJUWIscJd+QE/qIKPYMcNNuY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kv8qLBMpyMTltrGta65I3AfYplqyHMNViK+7fwxWGU/Ofj+WT626hsj7JDjBa3RyDFIo9xE3h+0NqcVZdRHzrEzwx0v4Upv90zM3vUFExOnXd7zYEX61HwB1bsRsesN8NGE0wi+1jP9g66SMmSTAZfIqF75ak7B5+tT2eg6BqpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a099015de4so33651695ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 22:27:24 -0700 (PDT)
+	s=arc-20240116; t=1726464589; c=relaxed/simple;
+	bh=YlngQhXsz9XMm4gwYpAC99X0rDnNoWUaEjAWKKnja6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LJVgqL/PgpXnGaf2g1eQ7i8ZmCkfcD1eCw5GCCKBdzJRU5WDVZ92oQZxVLksOfdA92EW4NKT5b1RWdHmr4bfXAoEF3MuFaQ3IWYO5coYMPpWxEJGIntrXiWb+4K2iC3x8Xiprn3BgbGRlNjw0/nlrqKlUS7oBvj6to62f/YxYUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NkAm5drf; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6dbb24ee2ebso34474827b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2024 22:29:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726464586; x=1727069386; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ee0cDtGE5u+y2+k+wmeH/b6bPYytWbs2Gx4nJ7mANiw=;
+        b=NkAm5drf5tsJsSUpscxFwCw2yu0fFsUlrW7uMdKeLGXo7wew2gtqzgccTUmwRFxl9/
+         96HHkb4ZjTuBHEltI3OHQg216ApGfsPebR6enZXC70rwOalrsTUBcZfr2GUruf9Qvggp
+         7nfX7vplxiXp/SLwGHMd/XDt9iUakZ8kqN6szfqsydeRKgp8PVEV87nvHRtteH/vPNQz
+         e44KrXJGd2q2UHE8FCWpn73LZbSJKJkzrs0SRGYNfMd39dl0SP4peGgg/6kIrEHsucvy
+         kiYJQ9h7It5U3Aq5hreSd0iux9blgI81/x58P0ZGjhQYQoRAVJ29Tql26IwnGotXMstD
+         Hyxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726464444; x=1727069244;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VAkV9PjxebjmDBJ8IWui3MW5TyFqC24e/YDUGMyA/PQ=;
-        b=m4OnDoO2Y9ffIH5NVEu8hZbEwf2t6Xxf8frET+eLlEmjYQJPQoEyqD2h+cT7QBblHJ
-         +iP49sfS0cpR3ABgD3NhUzHYtUm3n6rFyUHYTcZPOf5nnnolg9TIJhdrZ07U/2k4pRdz
-         D/kNZLy9K1C+kgFsmbNQyJ0BIrJKTeAArqvTvfye1TvOuGogOh1AHjjTaYl8JBzNIzz4
-         jQZxJ8lnat/cdktmIp4CnOSMZZVWKPruLyRHMd6IdxqZJ6sIQEmfMnnZ0QxzPAnIryKC
-         8ARgZC1hD4TaSE/G1H3nVLh9osp8cNgxBv2nVpDNtbjDiuT1UH7B2kK4QliirohSjJvj
-         wm5Q==
-X-Gm-Message-State: AOJu0YyVqBz/2xpRXgP5/dcr3llAU2OugSj+DAxBS+/mN3X/8A9tSFaC
-	UvOxRr3b0Es+FFtuW97ZnpSiBXY9XI2vcGMTsqhuV9P2LIdJERsViN1ZpLDL1sJIKkLfbzyjCE4
-	I/OldAQBL+ZHJicYnwtstKk+P1U16OMI52ZEi9vbJ66639vf1WuarUko=
-X-Google-Smtp-Source: AGHT+IHXMSmZigDem6EyJCy/a2rFy3is3EZTeyCUrO7fgLeR7n9rYjqeMubWG1jx7iXns3zDJgw+NiJ7hhghnTmPiSsqby97DpZ3
+        d=1e100.net; s=20230601; t=1726464586; x=1727069386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ee0cDtGE5u+y2+k+wmeH/b6bPYytWbs2Gx4nJ7mANiw=;
+        b=t2QKIwg2+GojcIkxhoYY/hD1Pmeda6RdZTYlYANsR4SNNAGwpIs7Nvp6MK0w1g6UEE
+         uabPrNcL8YPP1bhszIfIP1i5x4+dBXcvHKKUA1Df/b8PW0l3EuBp6Kx3CN2Sf+SQSloT
+         PvAOD+j25nFzi+nF89JpcsMU3b3VFd4+WJzLf0Q91ZhWjfOPOLE/BxyeAq+TRmmW2OES
+         pcVN+9rwOjdWwn0H363WT0NvOjF5mdMcMi5JOrUEDhgjx44AFEFdyJvsFPdMByv7YR6R
+         NHhP/3j2N5ZU07Ai62mLv7R9bIfPU7wBniuN2M81RIW/wx2uxnLY+Zg5BTuTwYnGwgRu
+         dEmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWukkDiMo/zyw8iruwbcLwrUW59wMlOIJO/j9HnH0POHh7e/rWe8wHuWXYvX0vFMNP8hzjYfzu9M9R3Kvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdcxaVFQyvno4lKIRr6tApBqRCxpp4G6YQxTAD5UE6pyLHff9N
+	ad3iSctuJE7U7RYxXb8QuhqkS4HP0c3Vlqm0NDY9FFNzhHDVB+GNLMZQC6FLAfBtW43lZVuEyH3
+	8pl2Qqp2eivySIudUXTpe7y0j4D5yiTHpAiZHKQ==
+X-Google-Smtp-Source: AGHT+IFDkQKoJlgZEgnRuo6gyvtTIbWXlWt6sK8BFmy+M9HJocvVWMY5H8oxKmosTB0PuutrBkAkoT0AnTg43NbHajw=
+X-Received: by 2002:a05:690c:45c1:b0:647:7782:421a with SMTP id
+ 00721157ae682-6dbb6bbb427mr100754317b3.45.1726464586201; Sun, 15 Sep 2024
+ 22:29:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:505:b0:3a0:9c04:8047 with SMTP id
- e9e14a558f8ab-3a09c048195mr30261255ab.6.1726464443649; Sun, 15 Sep 2024
- 22:27:23 -0700 (PDT)
-Date: Sun, 15 Sep 2024 22:27:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e1a626062235d385@google.com>
-Subject: [syzbot] [kernel?] possible deadlock in __schedule (3)
-From: syzbot <syzbot+7202b8bae7c5b11493e7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+References: <cover.1719903904.git.Sandor.yu@nxp.com> <359914108b879e995d4a39de32a33310009f0fab.1719903904.git.Sandor.yu@nxp.com>
+ <20240702-quartz-salamander-of-culture-eec264@houat> <PAXPR04MB94480AB0490BBF00D2BA17BBF4932@PAXPR04MB9448.eurprd04.prod.outlook.com>
+ <20240903-gay-capable-hound-3cbef2@houat> <PAXPR04MB9448EF507CB5C18A43239A80F49E2@PAXPR04MB9448.eurprd04.prod.outlook.com>
+ <20240912-zippy-mongoose-of-domination-2ebc1d@houat> <PAXPR04MB94484D86A71A7527ADD42EA4F4652@PAXPR04MB9448.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB94484D86A71A7527ADD42EA4F4652@PAXPR04MB9448.eurprd04.prod.outlook.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 16 Sep 2024 07:29:35 +0200
+Message-ID: <CAA8EJpphegHmBFgH1-n9PEkrr-Ys+HCvekKGNYRp=xQxgmC0Cw@mail.gmail.com>
+Subject: Re: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add MHDP8501
+ DP/HDMI driver
+To: Sandor Yu <sandor.yu@nxp.com>
+Cc: Maxime Ripard <mripard@kernel.org>, "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"festevam@gmail.com" <festevam@gmail.com>, "vkoul@kernel.org" <vkoul@kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, 
+	Oliver Brown <oliver.brown@nxp.com>, 
+	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>, "sam@ravnborg.org" <sam@ravnborg.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, 13 Sept 2024 at 11:46, Sandor Yu <sandor.yu@nxp.com> wrote:
+>
+>
+> > Subject: Re: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add MHDP85=
+01
+> > DP/HDMI driver
+> >
+> > On Fri, Sep 06, 2024 at 02:50:08AM GMT, Sandor Yu wrote:
+> > > > On Tue, Sep 03, 2024 at 06:07:25AM GMT, Sandor Yu wrote:
+> > > > > > -----Original Message-----
+> > > > > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On
+> > > > > > Behalf Of Maxime Ripard
+> > > > > > Sent: 2024=E5=B9=B47=E6=9C=882=E6=97=A5 21:25
+> > > > > > To: Sandor Yu <sandor.yu@nxp.com>
+> > > > > > Cc: dmitry.baryshkov@linaro.org; andrzej.hajda@intel.com;
+> > > > > > neil.armstrong@linaro.org; Laurent Pinchart
+> > > > > > <laurent.pinchart@ideasonboard.com>; jonas@kwiboo.se;
+> > > > > > jernej.skrabec@gmail.com; airlied@gmail.com; daniel@ffwll.ch;
+> > > > > > robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
+> > > > > > shawnguo@kernel.org; s.hauer@pengutronix.de;
+> > festevam@gmail.com;
+> > > > > > vkoul@kernel.org; dri-devel@lists.freedesktop.org;
+> > > > > > devicetree@vger.kernel.org;
+> > > > > > linux-arm-kernel@lists.infradead.org;
+> > > > > > linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org;
+> > > > > > kernel@pengutronix.de; dl-linux-imx <linux-imx@nxp.com>; Oliver
+> > > > > > Brown <oliver.brown@nxp.com>; alexander.stein@ew.tq-group.com;
+> > > > > > sam@ravnborg.org
+> > > > > > Subject: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add
+> > > > > > MHDP8501 DP/HDMI driver
+> > > > > >
+> > > > > > Hi,
+> > > > > >
+> > > > > > There's still the scrambler issue we discussed on v15, but I
+> > > > > > have some more comments.
+> > > > > >
+> > > > > > On Tue, Jul 02, 2024 at 08:22:36PM GMT, Sandor Yu wrote:
+> > > > > > > +enum drm_connector_status cdns_mhdp8501_detect(struct
+> > > > > > > +cdns_mhdp8501_device *mhdp) {
+> > > > > > > +   u8 hpd =3D 0xf;
+> > > > > > > +
+> > > > > > > +   hpd =3D cdns_mhdp8501_read_hpd(mhdp);
+> > > > > > > +   if (hpd =3D=3D 1)
+> > > > > > > +           return connector_status_connected;
+> > > > > > > +   else if (hpd =3D=3D 0)
+> > > > > > > +           return connector_status_disconnected;
+> > > > > > > +
+> > > > > > > +   dev_warn(mhdp->dev, "Unknown cable status, hdp=3D%u\n",
+> > hpd);
+> > > > > > > +   return connector_status_unknown; }
+> > > > > > > +
+> > > > > > > +static void hotplug_work_func(struct work_struct *work) {
+> > > > > > > +   struct cdns_mhdp8501_device *mhdp =3D container_of(work,
+> > > > > > > +                                                struct cdns_=
+mhdp8501_device,
+> > > > > > > +                                                hotplug_work=
+.work);
+> > > > > > > +   enum drm_connector_status status =3D
+> > > > cdns_mhdp8501_detect(mhdp);
+> > > > > > > +
+> > > > > > > +   drm_bridge_hpd_notify(&mhdp->bridge, status);
+> > > > > > > +
+> > > > > > > +   if (status =3D=3D connector_status_connected) {
+> > > > > > > +           /* Cable connected  */
+> > > > > > > +           DRM_INFO("HDMI/DP Cable Plug In\n");
+> > > > > > > +           enable_irq(mhdp->irq[IRQ_OUT]);
+> > > > > > > +   } else if (status =3D=3D connector_status_disconnected) {
+> > > > > > > +           /* Cable Disconnected  */
+> > > > > > > +           DRM_INFO("HDMI/DP Cable Plug Out\n");
+> > > > > > > +           enable_irq(mhdp->irq[IRQ_IN]);
+> > > > > > > +   }
+> > > > > > > +}
+> > > > > >
+> > > > > > You shouldn't play with the interrupt being enabled here:
+> > > > > > hotplug interrupts should always enabled.
+> > > > > >
+> > > > > > If you can't for some reason, the reason should be documented i=
+n
+> > > > > > your
+> > > > driver.
+> > > > >
+> > > > > iMX8MQ have two HPD interrupters, one for plugout and the other
+> > > > > for plugin, because they could not be masked, so we have to enabl=
+e
+> > > > > one and
+> > > > disable the other.
+> > > > > I will add more comments here.
+> > > >
+> > > > Right, but why do you need to enable and disable them? Do you get
+> > > > spurious interrupts?
+> > >
+> > > They don't have status registers and cannot be masked. If they are no=
+t
+> > > disabled, they will continuously generate interrupts. Therefore, I ha=
+ve to
+> > disable one and enable the other.
+> >
+> > Sorry, I still don't get it. How can it be useful to detect hotplug int=
+errupts if it
+> > constantly sends spurious interrupts when it's enabled?
+>
+> Yes, this interrupt is different from a normal one; it's likely a design =
+flaw.
+> For instance, the plugin interrupt is continuously generated as long as t=
+he cable is plugged in,
+> only stopping when the cable is unplugged.
+> That's why two interrupts are used to detect cable plugout and plugin sep=
+arately.
+> If interrupts aren't used, the only option is polling.
 
-syzbot found the following issue on:
+I think I've seen such strange design on other platforms, level
+interrupt for HPD, which needs to be disabled via disable_irq().
 
-HEAD commit:    b831f83e40a2 Merge tag 'bpf-6.11-rc7' of git://git.kernel...
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c2a0a9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=7202b8bae7c5b11493e7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>
+> >
+> > > > > > > +   /* Mailbox protect for HDMI PHY access */
+> > > > > > > +   mutex_lock(&mhdp->mbox_mutex);
+> > > > > > > +   ret =3D phy_init(mhdp->phy);
+> > > > > > > +   mutex_unlock(&mhdp->mbox_mutex);
+> > > > > > > +   if (ret) {
+> > > > > > > +           dev_err(dev, "Failed to initialize PHY: %d\n", re=
+t);
+> > > > > > > +           goto clk_disable;
+> > > > > > > +   }
+> > > > > > > +
+> > > > > > > +   /* Mailbox protect for HDMI PHY access */
+> > > > > > > +   mutex_lock(&mhdp->mbox_mutex);
+> > > > > > > +   ret =3D phy_set_mode(mhdp->phy, phy_mode);
+> > > > > > > +   mutex_unlock(&mhdp->mbox_mutex);
+> > > > > > > +   if (ret) {
+> > > > > > > +           dev_err(dev, "Failed to configure PHY: %d\n", ret=
+);
+> > > > > > > +           goto clk_disable;
+> > > > > > > +   }
+> > > > > >
+> > > > > > Why do you need a shared mutex between the phy and HDMI
+> > controller?
+> > > > >
+> > > > > Both PHY and HDMI controller could access to the HDMI firmware by
+> > > > > mailbox, So add mutex to avoid race condition.
+> > > >
+> > > > That should be handled at either the phy or mailbox level, not in
+> > > > your hdmi driver.
+> > >
+> > > In both HDMI driver and PHY driver, every mailbox access had protecte=
+d
+> > > by its owns mutex. However, this mutex can only protect each mailbox
+> > > access within their respective drivers, and it cannot provide
+> > > protection for access between the HDMI and PHY drivers.
+> > >
+> > > The PHY driver only provides two API functions, and these functions
+> > > are only called in the HDMI driver. Therefore, when accessing these
+> > > functions, we use a mutex to protect them. This ensures that mailbox
+> > > access is protected across different PHY and HDMI drivers.
+> >
+> > It's really about abstraction. You're using a publicly defined API, and=
+ change
+> > the semantics for your driver only, and that's not ok.
+> >
+> > Why can't the mailbox driver itself serialize the accesses from any use=
+r, HDMI
+> > and PHY drivers included?
+> >
+>
+> In the current code implementation, cdns-mhdp-helper.c isn't a standalone=
+ driver but rather a library.
+> It provides fundamental mailbox access functions and basic register read/=
+write operations that rely on the mailbox.
+> These functions are highly reusable across MHDP8501 and MHDP8546 and can =
+be leveraged by future MHDP versions.
+>
+> However, most MHDP firmware interactions involve a sequence of mailbox ac=
+cesses, including sending commands and receiving firmware responses.
+> These commands constitute a significant portion of all firmware interacti=
+ons, encompassing operations like EDID reading and DP link training.
+> Unfortunately, these commands cannot be reused between MHDP8501 and MHDP8=
+546.
+>
+> Creating a dedicated mailbox driver with its own mutex would effectively =
+address race conditions.
+> However, this would necessitate relocating all mailbox-related functions =
+to this driver.
+> Including these non-reusable functions would defeat the purpose of code r=
+euse.
+>
+> To strike a balance between code reusability and race condition mitigatio=
+n, adding mutexes to PHY access functions seems like a reasonable solution.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+You seem to have two kinds of scenarios when talking to MHDP: just
+cdns_mhdp_mailbox_send(), no response needed and then the
+cdns_mhdp_mailbox_send() /  cdns_mhdp_mailbox_recv_header() /
+cdns_mhdp_mailbox_recv_data() sequence. Extract those + the mutex
+access to separate functions, add a mutex to those sequences and use
+them as a high-level API for your HDMI and PHY drivers.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c7085e50cff6/disk-b831f83e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/19c50c855380/vmlinux-b831f83e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/80936012b998/bzImage-b831f83e.xz
+Adding mutexes around phy_foo() calls doesn't look like a proper
+solution _at_ _all_.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7202b8bae7c5b11493e7@syzkaller.appspotmail.com
+>
+> Sandor
+>
+> > > > > >
+> > > > > > > +static enum drm_mode_status
+> > > > > > > +cdns_hdmi_tmds_char_rate_valid(const struct drm_bridge *brid=
+ge,
+> > > > > > > +                          const struct drm_display_mode *mod=
+e,
+> > > > > > > +                          unsigned long long tmds_rate) {
+> > > > > > > +   struct cdns_mhdp8501_device *mhdp =3D
+> > bridge->driver_private;
+> > > > > > > +   union phy_configure_opts phy_cfg;
+> > > > > > > +   int ret;
+> > > > > > > +
+> > > > > > > +   phy_cfg.hdmi.tmds_char_rate =3D tmds_rate;
+> > > > > > > +
+> > > > > > > +   /* Mailbox protect for HDMI PHY access */
+> > > > > > > +   mutex_lock(&mhdp->mbox_mutex);
+> > > > > > > +   ret =3D phy_validate(mhdp->phy, PHY_MODE_HDMI, 0,
+> > &phy_cfg);
+> > > > > > > +   mutex_unlock(&mhdp->mbox_mutex);
+> > > > > > > +   if (ret < 0)
+> > > > > > > +           return MODE_CLOCK_RANGE;
+> > > > > > > +
+> > > > > > > +   return MODE_OK;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +static enum drm_mode_status
+> > > > > > > +cdns_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
+> > > > > > > +                       const struct drm_display_info *info,
+> > > > > > > +                       const struct drm_display_mode *mode) =
+{
+> > > > > > > +   unsigned long long tmds_rate;
+> > > > > > > +
+> > > > > > > +   /* We don't support double-clocked and Interlaced modes *=
+/
+> > > > > > > +   if (mode->flags & DRM_MODE_FLAG_DBLCLK ||
+> > > > > > > +       mode->flags & DRM_MODE_FLAG_INTERLACE)
+> > > > > > > +           return MODE_BAD;
+> > > > > > > +
+> > > > > > > +   /* MAX support pixel clock rate 594MHz */
+> > > > > > > +   if (mode->clock > 594000)
+> > > > > > > +           return MODE_CLOCK_HIGH;
+> > > > > >
+> > > > > > This needs to be in the tmds_char_rate_valid function
+> > > > > This clock rate check is covered by function
+> > > > > tmds_char_rate_valid() It could be removed if keep function
+> > > > > tmds_char_rate_valid() be called by
+> > > > mode_valid.
+> > > >
+> > > > Yeah, it's not something you should have to duplicate.
+> > > >
+> > > > > >
+> > > > > > > +   if (mode->hdisplay > 3840)
+> > > > > > > +           return MODE_BAD_HVALUE;
+> > > > > > > +
+> > > > > > > +   if (mode->vdisplay > 2160)
+> > > > > > > +           return MODE_BAD_VVALUE;
+> > > > > > > +
+> > > > > > > +   tmds_rate =3D mode->clock * 1000ULL;
+> > > > > > > +   return cdns_hdmi_tmds_char_rate_valid(bridge, mode,
+> > > > > > > +tmds_rate);
+> > > > > >
+> > > > > > It will already be called by the core so this is redundant.
+> > > > >
+> > > > > mode_valid function is use to filter the mode list in
+> > > > > drm_helper_probe_single_connector_modes(),
+> > > > > if function cdns_hdmi_tmds_char_rate_valid() is not called,
+> > > > > unsupported
+> > > > modes will in mode list.
+> > > >
+> > > > It's probably something we should deal with in the core somehow. I'=
+m
+> > > > not entirely sure how to reconcile drm_bridge_connector and the hdm=
+i
+> > > > framework there, but we should at the very least provide a
+> > > > mode_valid helper for bridges.
+> > >
+> > > I agree with that. In fact, I'm a bit confused about the current
+> > > mode_valid and tmds_char_rate_valid functions. Ideally, we should fin=
+d
+> > > a way to make tmds_char_rate_valid also work for filtering out the
+> > > mode list, rather than just during atomic_check.
+> >
+> > Yeah, definitely. The way we did so on vc4 for example was to compute t=
+he
+> > rate for a 8bpc, RGB, output and try to validate that. I think it would=
+ be
+> > reasonable to start with that.
 
-FAULT_INJECTION: forcing a failure.
-name fail_usercopy, interval 1, probability 0, space 0, times 0
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc6-syzkaller-00183-gb831f83e40a2 #0 Not tainted
-------------------------------------------------------
-syz.3.84/5592 is trying to acquire lock:
-ffffffff8e92c400 (console_owner){-...}-{0:0}, at: console_trylock_spinning kernel/printk/printk.c:1997 [inline]
-ffffffff8e92c400 (console_owner){-...}-{0:0}, at: vprintk_emit+0x405/0x7c0 kernel/printk/printk.c:2347
++1, please extract this code as a helper. You can even submit it
+separately, reworking sun4i and vc4 to use a new helper.
 
-but task is already holding lock:
-ffff8880b8828948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #5 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       do_write_seqcount_begin_nested include/linux/seqlock.h:469 [inline]
-       do_write_seqcount_begin include/linux/seqlock.h:495 [inline]
-       psi_group_change+0x1c3/0x11c0 kernel/sched/psi.c:791
-       psi_task_change+0xfd/0x280 kernel/sched/psi.c:913
-       psi_enqueue kernel/sched/stats.h:143 [inline]
-       enqueue_task+0x2aa/0x300 kernel/sched/core.c:1975
-       activate_task kernel/sched/core.c:2009 [inline]
-       wake_up_new_task+0x563/0xc30 kernel/sched/core.c:4689
-       kernel_clone+0x4ee/0x8f0 kernel/fork.c:2812
-       user_mode_thread+0x132/0x1a0 kernel/fork.c:2859
-       rest_init+0x23/0x300 init/main.c:712
-       start_kernel+0x47a/0x500 init/main.c:1103
-       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
-       x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
-       common_startup_64+0x13e/0x147
-
--> #4 (&rq->__lock){-.-.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
-       raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
-       raw_spin_rq_lock kernel/sched/sched.h:1415 [inline]
-       rq_lock kernel/sched/sched.h:1714 [inline]
-       task_fork_fair+0x61/0x1e0 kernel/sched/fair.c:12710
-       sched_cgroup_fork+0x37c/0x410 kernel/sched/core.c:4633
-       copy_process+0x2217/0x3dc0 kernel/fork.c:2483
-       kernel_clone+0x226/0x8f0 kernel/fork.c:2781
-       user_mode_thread+0x132/0x1a0 kernel/fork.c:2859
-       rest_init+0x23/0x300 init/main.c:712
-       start_kernel+0x47a/0x500 init/main.c:1103
-       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
-       x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
-       common_startup_64+0x13e/0x147
-
--> #3 (&p->pi_lock){-.-.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
-       class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
-       try_to_wake_up+0xb0/0x1470 kernel/sched/core.c:4051
-       __wake_up_common kernel/sched/wait.c:89 [inline]
-       __wake_up_common_lock+0x130/0x1e0 kernel/sched/wait.c:106
-       tty_port_default_wakeup+0xa6/0xf0 drivers/tty/tty_port.c:69
-       serial8250_tx_chars+0x6e2/0x930 drivers/tty/serial/8250/8250_port.c:1821
-       serial8250_handle_irq+0x558/0x710 drivers/tty/serial/8250/8250_port.c:1929
-       serial8250_default_handle_irq+0xd1/0x1f0 drivers/tty/serial/8250/8250_port.c:1949
-       serial8250_interrupt+0xa9/0x1f0 drivers/tty/serial/8250/8250_core.c:86
-       __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
-       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
-       handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
-       handle_edge_irq+0x25f/0xc20 kernel/irq/chip.c:831
-       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
-       handle_irq arch/x86/kernel/irq.c:247 [inline]
-       call_irq_handler arch/x86/kernel/irq.c:259 [inline]
-       __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
-       common_interrupt+0xa5/0xd0 arch/x86/kernel/irq.c:278
-       asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
-       native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-       arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
-       acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:111
-       acpi_idle_enter+0xe4/0x140 drivers/acpi/processor_idle.c:702
-       cpuidle_enter_state+0x112/0x480 drivers/cpuidle/cpuidle.c:267
-       cpuidle_enter+0x5d/0xa0 drivers/cpuidle/cpuidle.c:388
-       call_cpuidle kernel/sched/idle.c:155 [inline]
-       cpuidle_idle_call kernel/sched/idle.c:230 [inline]
-       do_idle+0x375/0x5d0 kernel/sched/idle.c:326
-       cpu_startup_entry+0x42/0x60 kernel/sched/idle.c:424
-       __pfx_ap_starting+0x0/0x10 arch/x86/kernel/smpboot.c:313
-       common_startup_64+0x13e/0x147
-
--> #2 (
-&tty->write_wait){-.-.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
-       __wake_up_common_lock+0x25/0x1e0 kernel/sched/wait.c:105
-       tty_port_default_wakeup+0xa6/0xf0 drivers/tty/tty_port.c:69
-       serial8250_tx_chars+0x6e2/0x930 drivers/tty/serial/8250/8250_port.c:1821
-       serial8250_handle_irq+0x558/0x710 drivers/tty/serial/8250/8250_port.c:1929
-       serial8250_default_handle_irq+0xd1/0x1f0 drivers/tty/serial/8250/8250_port.c:1949
-       serial8250_interrupt+0xa9/0x1f0 drivers/tty/serial/8250/8250_core.c:86
-       __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
-       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
-       handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
-       handle_edge_irq+0x25f/0xc20 kernel/irq/chip.c:831
-       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
-       handle_irq arch/x86/kernel/irq.c:247 [inline]
-       call_irq_handler arch/x86/kernel/irq.c:259 [inline]
-       __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
-       common_interrupt+0xa5/0xd0 arch/x86/kernel/irq.c:278
-       asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
-       __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-       _raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
-       spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
-       uart_port_unlock_irqrestore include/linux/serial_core.h:669 [inline]
-       uart_write+0x15d/0x380 drivers/tty/serial/serial_core.c:634
-       process_output_block drivers/tty/n_tty.c:574 [inline]
-       n_tty_write+0xd6a/0x1230 drivers/tty/n_tty.c:2389
-       iterate_tty_write drivers/tty/tty_io.c:1021 [inline]
-       file_tty_write+0x54f/0x9c0 drivers/tty/tty_io.c:1096
-       new_sync_write fs/read_write.c:497 [inline]
-       vfs_write+0xa72/0xc90 fs/read_write.c:590
-       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&port_lock_key){-.-.}-{2:2}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
-       uart_port_lock_irqsave include/linux/serial_core.h:618 [inline]
-       serial8250_console_write+0x1a8/0x1770 drivers/tty/serial/8250/8250_port.c:3352
-       console_emit_next_record kernel/printk/printk.c:2983 [inline]
-       console_flush_all+0x867/0xfd0 kernel/printk/printk.c:3049
-       console_unlock+0x13b/0x4d0 kernel/printk/printk.c:3118
-       vprintk_emit+0x5dc/0x7c0 kernel/printk/printk.c:2348
-       _printk+0xd5/0x120 kernel/printk/printk.c:2373
-       register_console+0x727/0xcf0 kernel/printk/printk.c:3654
-       univ8250_console_init+0x52/0x90 drivers/tty/serial/8250/8250_core.c:513
-       console_init+0x1b8/0x6f0 kernel/printk/printk.c:3800
-       start_kernel+0x2d3/0x500 init/main.c:1038
-       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
-       x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
-       common_startup_64+0x13e/0x147
-
--> #0 (console_owner){-...}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       console_trylock_spinning kernel/printk/printk.c:1997 [inline]
-       vprintk_emit+0x422/0x7c0 kernel/printk/printk.c:2347
-       _printk+0xd5/0x120 kernel/printk/printk.c:2373
-       fail_dump lib/fault-inject.c:45 [inline]
-       should_fail_ex+0x391/0x4e0 lib/fault-inject.c:153
-       strncpy_from_user+0x36/0x2e0 lib/strncpy_from_user.c:118
-       strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
-       bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:216 [inline]
-       ____bpf_probe_read_compat_str kernel/trace/bpf_trace.c:311 [inline]
-       bpf_probe_read_compat_str+0xe9/0x180 kernel/trace/bpf_trace.c:307
-       bpf_prog_29e826963d3c3848+0x40/0x44
-       bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
-       __bpf_prog_run include/linux/filter.h:691 [inline]
-       bpf_prog_run include/linux/filter.h:698 [inline]
-       bpf_prog_run_array include/linux/bpf.h:2104 [inline]
-       trace_call_bpf+0x369/0x8a0 kernel/trace/bpf_trace.c:147
-       perf_trace_run_bpf_submit+0x82/0x180 kernel/events/core.c:10304
-       perf_trace_lock+0x388/0x490 include/trace/events/lock.h:50
-       trace_lock_release include/trace/events/lock.h:69 [inline]
-       lock_release+0x9cc/0xa30 kernel/locking/lockdep.c:5770
-       do_write_seqcount_end include/linux/seqlock.h:515 [inline]
-       psi_account_irqtime+0x49f/0x750 kernel/sched/psi.c:1032
-       __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
-       preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:6801
-       preempt_schedule_notrace_thunk+0x1a/0x30 arch/x86/entry/thunk.S:13
-       trace_lock_release include/trace/events/lock.h:69 [inline]
-       lock_release+0x9f0/0xa30 kernel/locking/lockdep.c:5770
-       rcu_lock_release include/linux/rcupdate.h:336 [inline]
-       rcu_read_unlock include/linux/rcupdate.h:869 [inline]
-       __fget_files+0x3f1/0x470 fs/file.c:1033
-       __fget_light fs/file.c:1147 [inline]
-       __fdget+0x16c/0x1e0 fs/file.c:1155
-       fdget include/linux/file.h:66 [inline]
-       sockfd_lookup_light net/socket.c:555 [inline]
-       __sys_sendmsg+0xe7/0x3a0 net/socket.c:2676
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  console_owner --> &rq->__lock --> &per_cpu_ptr(group->pcpu, cpu)->seq
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&per_cpu_ptr(group->pcpu, cpu)->seq);
-                               lock(&rq->__lock);
-                               lock(&per_cpu_ptr(group->pcpu, cpu)->seq);
-  lock(console_owner);
-
- *** DEADLOCK ***
-
-4 locks held by syz.3.84/5592:
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: __fget_files+0x29/0x470 fs/file.c:1031
- #1: ffff8880b883e9d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
- #2: ffff8880b8828948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
- #3: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: trace_call_bpf+0xbc/0x8a0
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5592 Comm: syz.3.84 Not tainted 6.11.0-rc6-syzkaller-00183-gb831f83e40a2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- console_trylock_spinning kernel/printk/printk.c:1997 [inline]
- vprintk_emit+0x422/0x7c0 kernel/printk/printk.c:2347
- _printk+0xd5/0x120 kernel/printk/printk.c:2373
- fail_dump lib/fault-inject.c:45 [inline]
- should_fail_ex+0x391/0x4e0 lib/fault-inject.c:153
- strncpy_from_user+0x36/0x2e0 lib/strncpy_from_user.c:118
- strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
- bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:216 [inline]
- ____bpf_probe_read_compat_str kernel/trace/bpf_trace.c:311 [inline]
- bpf_probe_read_compat_str+0xe9/0x180 kernel/trace/bpf_trace.c:307
- bpf_prog_29e826963d3c3848+0x40/0x44
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- bpf_prog_run_array include/linux/bpf.h:2104 [inline]
- trace_call_bpf+0x369/0x8a0 kernel/trace/bpf_trace.c:147
- perf_trace_run_bpf_submit+0x82/0x180 kernel/events/core.c:10304
- perf_trace_lock+0x388/0x490 include/trace/events/lock.h:50
- trace_lock_release include/trace/events/lock.h:69 [inline]
- lock_release+0x9cc/0xa30 kernel/locking/lockdep.c:5770
- do_write_seqcount_end include/linux/seqlock.h:515 [inline]
- psi_account_irqtime+0x49f/0x750 kernel/sched/psi.c:1032
- __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
- preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:6801
- preempt_schedule_notrace_thunk+0x1a/0x30 arch/x86/entry/thunk.S:13
- trace_lock_release include/trace/events/lock.h:69 [inline]
- lock_release+0x9f0/0xa30 kernel/locking/lockdep.c:5770
- rcu_lock_release include/linux/rcupdate.h:336 [inline]
- rcu_read_unlock include/linux/rcupdate.h:869 [inline]
- __fget_files+0x3f1/0x470 fs/file.c:1033
- __fget_light fs/file.c:1147 [inline]
- __fdget+0x16c/0x1e0 fs/file.c:1155
- fdget include/linux/file.h:66 [inline]
- sockfd_lookup_light net/socket.c:555 [inline]
- __sys_sendmsg+0xe7/0x3a0 net/socket.c:2676
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1432b7def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f14339b6038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f1432d35f80 RCX: 00007f1432b7def9
-RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000009
-RBP: 00007f14339b6090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000000 R14: 00007f1432d35f80 R15: 00007ffef36b3a38
- </TASK>
-CPU: 0 UID: 0 PID: 5592 Comm: syz.3.84 Not tainted 6.11.0-rc6-syzkaller-00183-gb831f83e40a2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- fail_dump lib/fault-inject.c:52 [inline]
- should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:153
- strncpy_from_user+0x36/0x2e0 lib/strncpy_from_user.c:118
- strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
- bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:216 [inline]
- ____bpf_probe_read_compat_str kernel/trace/bpf_trace.c:311 [inline]
- bpf_probe_read_compat_str+0xe9/0x180 kernel/trace/bpf_trace.c:307
- bpf_prog_29e826963d3c3848+0x40/0x44
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- bpf_prog_run_array include/linux/bpf.h:2104 [inline]
- trace_call_bpf+0x369/0x8a0 kernel/trace/bpf_trace.c:147
- perf_trace_run_bpf_submit+0x82/0x180 kernel/events/core.c:10304
- perf_trace_lock+0x388/0x490 include/trace/events/lock.h:50
- trace_lock_release include/trace/events/lock.h:69 [inline]
- lock_release+0x9cc/0xa30 kernel/locking/lockdep.c:5770
- do_write_seqcount_end include/linux/seqlock.h:515 [inline]
- psi_account_irqtime+0x49f/0x750 kernel/sched/psi.c:1032
- __schedule+0x8f1/0x4a60 kernel/sched/core.c:6523
- preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:6801
- preempt_schedule_notrace_thunk+0x1a/0x30 arch/x86/entry/thunk.S:13
- trace_lock_release include/trace/events/lock.h:69 [inline]
- lock_release+0x9f0/0xa30 kernel/locking/lockdep.c:5770
- rcu_lock_release include/linux/rcupdate.h:336 [inline]
- rcu_read_unlock include/linux/rcupdate.h:869 [inline]
- __fget_files+0x3f1/0x470 fs/file.c:1033
- __fget_light fs/file.c:1147 [inline]
- __fdget+0x16c/0x1e0 fs/file.c:1155
- fdget include/linux/file.h:66 [inline]
- sockfd_lookup_light net/socket.c:555 [inline]
- __sys_sendmsg+0xe7/0x3a0 net/socket.c:2676
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1432b7def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f14339b6038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f1432d35f80 RCX: 00007f1432b7def9
-RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000009
-RBP: 00007f14339b6090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000000 R14: 00007f1432d35f80 R15: 00007ffef36b3a38
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--=20
+With best wishes
+Dmitry
 
