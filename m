@@ -1,196 +1,149 @@
-Return-Path: <linux-kernel+bounces-330701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591D397A2E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:25:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0140297A2E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23B31F23B89
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:25:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88842829DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B60F155741;
-	Mon, 16 Sep 2024 13:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCD7155741;
+	Mon, 16 Sep 2024 13:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MUxhvWx/"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="crLBi+ze"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4C31514C6
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC88AA95E
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726493130; cv=none; b=hm4NP/7JXN/vasJ2/PE+jrjU3Asxk08xeTYR49I94FhjznYSXE03/W+Umm7GvzxOel/WlCULQHYQ26w+2idIiLKOd/EbIM+MFYFs2V0TfjTx9aZJUefPZin3Y98kBYKTAte+Tj7GPUmBDRygEfRzjbB9y+y9T4ZhVwLvKEYchNw=
+	t=1726493194; cv=none; b=SsaCn307o3iVtPXZztQJWzQrsedPnE678XaxJ1FuBoRK4Zc6kvvJzxSqS7lVzuOWO408x08cSWXscIyCoE9i+dLyPxmbIutOeSVFej5WHuVHZzAktwI2fIRd/Vtg4QK2UXe0QtzrlaSnSBCp7vqb0+lJFeAHVk+I+UMpZsptJ74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726493130; c=relaxed/simple;
-	bh=ZanOQ7fxVG2v5lnmIvjWTUPTsKGJpUbNU8ioyEFy5/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yxrp4Sezm60TzWg6MqMAqE0mydUQrH54yUXi3FK/3r47I3wYE7F5zSLTUOYmrsaJ1oBz6rMjN2y6PXv2vyfKBtcSXx1GIhY9CUwoaM4pya2+UyxDTP7HDWqhfiN3GX0CI5Py+uSJlClS9E3OA9BBNFmgSaYVkkkh0kWgmd/lvC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MUxhvWx/; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so28536335e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:25:28 -0700 (PDT)
+	s=arc-20240116; t=1726493194; c=relaxed/simple;
+	bh=RWSKthHXcgYgDTHbLg+omrUCQ0QGAZ0RfFAwB5QyQ3w=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=gYtbXxU4jS0E54+AA7hTmjCU9iPZx9J8C7Iwkz8LjB2k1CVnkMOQSFyE5IXjCq2873jQXFSnmi9zNXZKAJsz0WZrN15UW3qbBJDX9bQzrOExfpaLLUTdY+42zxEi64P0l793ECPbF0Lcn1s7LwBRB/n2LtPDc1k4des37H6PNj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=crLBi+ze; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c275491c61so5954082a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 06:26:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726493127; x=1727097927; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=amijeL/TCbPsHkmGl+LwlZVIAn7Sx+a74wDY8RvXPq8=;
-        b=MUxhvWx/vhZGYi3H+TknMJZlToPnPNz+hh1dK+AD5kbg4WJFcHoKO0k0tBRlgy75QK
-         UWcuVo0RV+mW8/15+jHdwE7o0w3b0uWiLTKdNQLZP2T5kmT8aPgczWQ6OoEZpa++ZFIj
-         BV6sruVCUo63k3IFWEXI2wsPkQKLcVXWtb0dKFPZNy9ebMU0MTMX7g/8JZbbnzt5PCv4
-         ZVXkWUfMnpgBez5DfHpnM4PGl/uKwI3TynnGilop/Loss8VOnYBPBuJhQXFi0lBXWz8v
-         0iFBWSRa/c3tFhod0Qg6zgM1FUqIhRpnZHIwZ7mP7tuR/ZiDGIudhqbcfN08IiRytI7x
-         RocA==
+        d=gmail.com; s=20230601; t=1726493191; x=1727097991; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nAjp2XTl4oA3d7pN0FBG+hHNIEDrI8wcf5PIp4RC68w=;
+        b=crLBi+zejNfwWbuN0ifoY6rZaSh01/k0Xi/DvEpuSsTEcLb0XRuDS4tgr1IU5WeA3x
+         xo11yHghswyMIWWfgxKInwQ/KWtec613VNHSwS+M41dMFtSK+VyUEOGKQK396rlsKcG9
+         YznB/ojTIwIxYQKrM9Ly+c2YsVH365fP0di5tre6ngTVgUFwlreRoBshlvo2T6GTCx/Q
+         Z4Vqf6EdDAXGp0X0y0tZCRYq4lj9NWPsJFPpS9s7nNfweRKV3nI3Dh27tzdF9SggkzfO
+         I9tP6DesrfFA/ZLhYPapWktIArGQRDbxq+40yw11Nl18N6IAj+llqLm4pI88wfCHWDiI
+         74fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726493127; x=1727097927;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=amijeL/TCbPsHkmGl+LwlZVIAn7Sx+a74wDY8RvXPq8=;
-        b=T1uPr13/hUfWeGiTfcOPfwWBJvhUI3mASEd0gcrBTAWabH3KdSFdDyPvhao0li6xK8
-         8Cl/nqLSHXRvfSxNm1FLm0nYERbD7bhCOOwtI8NksrDmglRLsMMhlms5zx3h0sJersQc
-         mu45bxVdIC7ryHGJfKxYiiUfk+9gEco3uofwy0fljbUQ5JhXRH3A4nk0K4o6Hsy646V0
-         6GpM1qmqBhwRq9hak5WWTxMWDclo+eKHnEOCO6s9q/JNaKM6tJay7HJlaHRqA45SEhqH
-         ZbQxhgJJMjPidjsA1VeZrhkiCYvPUOOvDUx7nY5X0CU/LEKbl/VCaS3qa9jY+Ri5B9Ge
-         1m4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXoFWk45GkHQJmh/gl7J4RZcAhb3/derDA+5fbWFZIW+1TGjwSKnPtFlk5v+iMv+DH3I3OEX8o5y3auCCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFj3pbx5qGIR4RuftF1HJUV1O6xEKO2p5GQA5jr/1nn4Z8fAvr
-	pJLuF+nw5RWfXFc/sDXoPLxaBwQvCT6fUh+84o5EiV88qmdqRjSnptjFLAvRz4w=
-X-Google-Smtp-Source: AGHT+IF5WAZRXrYe5Pw+AJJxBDVICVTt/E7UBZ3F1B2MctTYbKsQaRqIAZGCV0D8+zd824FShZfWlw==
-X-Received: by 2002:a05:600c:1c25:b0:42c:ae1d:ea4b with SMTP id 5b1f17b1804b1-42cbde1a51emr128680565e9.13.1726493126628;
-        Mon, 16 Sep 2024 06:25:26 -0700 (PDT)
-Received: from [192.168.1.61] ([84.67.228.188])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da22bd30esm77377355e9.10.2024.09.16.06.25.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 06:25:26 -0700 (PDT)
-Message-ID: <f3f143f2-408c-4632-991a-ff0de53349d8@linaro.org>
-Date: Mon, 16 Sep 2024 14:25:45 +0100
+        d=1e100.net; s=20230601; t=1726493191; x=1727097991;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nAjp2XTl4oA3d7pN0FBG+hHNIEDrI8wcf5PIp4RC68w=;
+        b=emZOgegkDs4BGDdnkPgjcKONc7Z+0OLsUsHg0AZltPftMYaoRzaErBD3OZtEELXXyD
+         jIr8j6L6Vy1k8WU1fKWsPZvM/M97zsBzHsxhYJ4aMopiy3EYchtAJ6j/1Zlw7PeIB9kz
+         N3zTSFyLQ7cs9CpoQzzfZDb2ha8X6bQXQJNiXvNLsSXbNTrcBIPVKMKzeKxSl2/1uhRR
+         icFzkhHI1Qpum/PRaNhY+g9SVZRfb0pUEe1YNC8QiNjc+i+i4OwRGS8O6wCzmrFXkG5+
+         a1QR/axBeyfuoO85z4xOrW/VLp6nvKn2Zle1+t4XrcMqk8jtNI7W7RljyEMSpEf+MWAH
+         eEpg==
+X-Gm-Message-State: AOJu0YzbpbVMHUaSLHPE8QSy/7udA01Xqe44ESkZqyWhh058T6hhpKx0
+	A0IgdhtEbZ6nss6qJCHvHhTFsp72TnMAy/XkH53PX1Gyv7z7Jt+Hfmib8fcktcNoEZ8228mO5uh
+	NCOBYkX56ckjP/JUZeffpRCGRh+T7THAF
+X-Google-Smtp-Source: AGHT+IHdEsrRqGjAzgftNpSGnqwTywQU8GapY7QmzjEjE7vlFiVzc6nFMXPCrxQo+btATVSDsTv3Db+6FPof1G3Heqc=
+X-Received: by 2002:a05:6402:2707:b0:5c2:467a:185b with SMTP id
+ 4fb4d7f45d1cf-5c413e1220emr14504388a12.9.1726493190582; Mon, 16 Sep 2024
+ 06:26:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/7] perf test: cs-etm: Test Coresight disassembly
- script
-To: Leo Yan <leo.yan@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
- Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
- <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- gankulkarni@os.amperecomputing.com, coresight@lists.linaro.org,
- scclevenger@os.amperecomputing.com
-References: <20240912151143.1264483-1-james.clark@linaro.org>
- <20240912151143.1264483-8-james.clark@linaro.org>
- <42bfbda0-3b4a-496f-a96a-8f16d3e108f7@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <42bfbda0-3b4a-496f-a96a-8f16d3e108f7@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Vimal Agrawal <avimalin@gmail.com>
+Date: Mon, 16 Sep 2024 18:56:18 +0530
+Message-ID: <CALkUMdT_Q9o-NDKhAk=v_ARSe541y6yeg8hacYJ2iZ5PGjjRVw@mail.gmail.com>
+Subject: misc_deregister() throwing warning in ida_free()
+To: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	D Scott Phillips <scott@os.amperecomputing.com>, Vimal Agrawal <vimal.agrawal@sophos.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Scott/ Greg and all,
 
+We recently upgraded kernel from 6.1 to 6.6.49 and started seeing
+following WARNING during misc_deregister():
 
-On 13/09/2024 14:35, Leo Yan wrote:
-> 
-> 
-> On 9/12/24 16:11, James Clark wrote:
->>
->> Run a few samples through the disassembly script and check to see that
->> at least one branch instruction is printed.
->>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   .../tests/shell/test_arm_coresight_disasm.sh  | 63 +++++++++++++++++++
->>   1 file changed, 63 insertions(+)
->>   create mode 100755 tools/perf/tests/shell/test_arm_coresight_disasm.sh
->>
->> diff --git a/tools/perf/tests/shell/test_arm_coresight_disasm.sh 
->> b/tools/perf/tests/shell/test_arm_coresight_disasm.sh
->> new file mode 100755
->> index 000000000000..6d004bf29f80
->> --- /dev/null
->> +++ b/tools/perf/tests/shell/test_arm_coresight_disasm.sh
->> @@ -0,0 +1,63 @@
->> +#!/bin/sh
->> +# Check Arm CoreSight disassembly script completes without errors
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +# The disassembly script reconstructs ranges of instructions and 
->> gives these to objdump to
->> +# decode. objdump doesn't like ranges that go backwards, but these 
->> are a good indication
->> +# that decoding has gone wrong either in OpenCSD, Perf or in the 
->> range reconstruction in
->> +# the script. Test all 3 parts are working correctly by running the 
->> script.
->> +
->> +skip_if_no_cs_etm_event() {
->> +       perf list | grep -q 'cs_etm//' && return 0
->> +
->> +       # cs_etm event doesn't exist
->> +       return 2
->> +}
->> +
->> +skip_if_no_cs_etm_event || exit 2
->> +
->> +# Assume an error unless we reach the very end
->> +set -e
->> +glb_err=1
->> +
->> +perfdata_dir=$(mktemp -d /tmp/__perf_test.perf.data.XXXXX)
->> +perfdata=${perfdata_dir}/perf.data
->> +file=$(mktemp /tmp/temporary_file.XXXXX)
->> +
->> +cleanup_files()
->> +{
->> +       set +e
->> +       rm -rf ${perfdata_dir}
->> +       rm -f ${file}
->> +       trap - EXIT TERM INT
->> +       exit $glb_err
->> +}
->> +
->> +trap cleanup_files EXIT TERM INT
->> +
->> +# Ranges start and end on branches, so check for some likely branch 
->> instructions
->> +sep="\s\|\s"
->> +branch_search="\sbl${sep}b${sep}b.ne${sep}b.eq${sep}cbz\s"
->> +
->> +## Test kernel ##
->> +if [ -e /proc/kcore ]; then
->> +       echo "Testing kernel disassembly"
->> +       perf record -o ${perfdata} -e cs_etm//k --kcore -- touch $file 
->> > /dev/null 2>&1
->> +       perf script -i ${perfdata} -s 
->> python:tools/perf/scripts/python/arm-cs-trace-disasm.py -- \
->> +               -d --stop-sample=30 2> /dev/null > ${file}
-> 
-> This is fine for self test. But for a CI test in a distro, will it fail to
-> find script with prefix 'tools/perf/...'?
-> 
-> Thanks,
-> Leo
-> 
+------------[ cut here ]------------
 
-Nice catch, it should be this:
+WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
+ida_free called for id=127 which is not allocated.
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Modules linked in: ust(O-) [last unloaded: fastpath_dummy(O)]
+CPU: 0 PID: 159 Comm: modprobe Tainted: G        W  O     N 6.6.49+ #11
+Stack:
+818bfb70 6093f8d3 0000020d 61381660
+61381630 60c1ee6a 00000001 60068c0f
+818bfbb0 60983ee6 60983e5c 61381680
+Call Trace:
+[<60973831>] ? _printk+0x0/0xc2
+[<6004b2e6>] show_stack+0x35c/0x382
+[<6093f8d3>] ? dump_stack_print_info+0x1af/0x1ec
+[<60068c0f>] ? um_set_signals+0x0/0x43
+[<60983ee6>] dump_stack_lvl+0x8a/0xa9
+[<60983e5c>] ? dump_stack_lvl+0x0/0xa9
+[<60068c0f>] ? um_set_signals+0x0/0x43
+[<60983f32>] dump_stack+0x2d/0x35
+[<60983f05>] ? dump_stack+0x0/0x35
+[<6007aad8>] __warn+0x20c/0x294
+[<60068c0f>] ? um_set_signals+0x0/0x43
+[<60971d98>] warn_slowpath_fmt+0x164/0x189
+[<60222128>] ? __update_cpu_freelist_fast+0x96/0xbc
+[<60971c34>] ? warn_slowpath_fmt+0x0/0x189
+[<6022d2fe>] ? __kmem_cache_free+0x16a/0x1be
+[<60068c4a>] ? um_set_signals+0x3b/0x43
+[<60941eb4>] ida_free+0x3e0/0x41f
+[<605ac993>] misc_minor_free+0x3e/0xbc
+[<605acb82>] misc_deregister+0x171/0x1b3
+[<81aa7af2>] ustdev_exit+0xa8/0xc1 [ust]
 
-   # Relative path works whether it's installed or running from repo
-   script_path=$(dirname "$0")/../../scripts/python/arm-cs-trace\
-     -disasm.py
+basic code of calling misc_register()/misc_register() is following:
+
+static struct miscdevice ust_dev = {
+        0,
+        "ustdev",
+        &ustdev_ops,
+};
+
+int ustdev_init(void)
+{
+        misc_register(&ust_dev);
+        return 0;
+}
+
+void ustdev_exit(void)
+{
+        misc_deregister(&ust_dev);
+}
+
+Note that this was working fine without any warning earlier on kernel 6.1.
+
+I suspect it is due to
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=v6.6.51&id=ab760791c0cfbb1d7a668f46a135264f56c8f018.
+It seems misc_register() is not calling any ida_allocxxx() api for
+static minor value of 0 but misc_deregister() for the same is calling
+ida_free() and hence ida_free() is warning in our case.
+
+Please let me know if I am missing something or some of our
+assumptions are not valid anymore in newer kernel versions.
+
+Thanks,
+
+Vimal Agrawal
 
