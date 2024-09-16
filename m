@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-330503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BAE7979F6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:35:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F446979F6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E22921F2361A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:35:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D1A9B23619
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE7014A4E9;
-	Mon, 16 Sep 2024 10:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AA8156644;
+	Mon, 16 Sep 2024 10:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="NITbfeAE"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="PnUnOb5w"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4558154C19;
-	Mon, 16 Sep 2024 10:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74242155756;
+	Mon, 16 Sep 2024 10:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726482918; cv=none; b=dZjhKZqxgDqzaoER3/2c9gEm5la1z1fuXYQOcyWXCnxaqlDtvu6P744JMeaft1KZ8ZOjCvROzV3T8pumFFD7PYrsLxyCY/TWhP/wM8E6t/2u+VYTrpLHlDy+zyBIV9rx8jLB/czN+sn+goIMdC5wFKFJwR0XChaA8m0Ii67HWXc=
+	t=1726482921; cv=none; b=Agm/I7yne6ruEZGRT/LzJn8V94OUMkSk5TJDIgzsoOVOPCleMirlRxzKqh0IOUk4hXjE0W1mMRjkqzlf7cHi4Z1KW/BxMo0nBQCr6yU/xClyYbxh+dOrm8btvcoKCDAsaEXyZVK8/4WHJeMhYsC8d0PrggXoej4BO6o5dzxWRLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726482918; c=relaxed/simple;
-	bh=NxKKtKJ/uLY0tGbkd9ReoyC9hHLsinm0enE7v5/D7QI=;
+	s=arc-20240116; t=1726482921; c=relaxed/simple;
+	bh=b0KzoQ2VmTlDGqrXBNlHSc59HkENnBjN7sGgQPMIudA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hvczWc7dhkFTshXFbKJsVVBU/ddL4jZIBpUV5eHScAcrPN420qjA8Gk4jhf7yCU/2z1c6hms6CUklFEy4+CaGLbr/bvDSPxJ/nhm5RbGd2TmZ2Hff4M8GXMgAZZOPJfvG3ZxuZFuGpcxjQS62t7wrTbGEoNR49pgWu6eTd3c9L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=NITbfeAE; arc=none smtp.client-ip=67.231.148.174
+	 MIME-Version:Content-Type; b=kkoeIkrgct18sANCRN3A9RPsAGZpy5EYCoYtmU2tVp6AN3S3eB/sVtCfmYZhO1T/hNR9sABdsSzPeG/dEX3M4xdPHajhq19dLRUrD16Pas3UJH5W5p4F2V9SNKX99TPRgk8NsXTteZEXadRjFWnsUTUHyBnFipQYXKRg6nJdh2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=PnUnOb5w; arc=none smtp.client-ip=67.231.156.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GA0QaF024628;
-	Mon, 16 Sep 2024 03:35:04 -0700
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48G1OcQn029773;
+	Mon, 16 Sep 2024 03:35:10 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=M
-	XVL17DCIvBohMJtRPyN7CqL3YFzs6RfI/8MqlmHLxM=; b=NITbfeAETZRq8lSg9
-	iPS8dRK3kBGFfl6SR4Bds6ADmNkg7+cb27T2QG0AM33THJ/IvcUeE4cMNYJbveu2
-	naUIh5oeKJYcNP32sRku+MovLsSnhurmLiTqn+SC3ubPMVyxKjkuMMhliAbsLUHo
-	NBu239/FMpybs2Jc4Q/+/pmQCV4BsnStGfakwiGDUMtnO1zsyadHsz8gZMu3Iw2D
-	+XBoCtWe2wKNZwX6sV6urn+1wwbW8Jsquv1f8WZkw5C8IKhcVHgGtx3iqk14m7yU
-	A/SixqOZJQbrqlOgL4N7rj1c0MqI1Dc5KCCT35EYRJNxkW802O1WIjRlcW24+m44
-	bnZ/A==
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=T
+	0nopJT5NwOGkf3CpEENsi6BOrquhFSM8kxVeGHuHbo=; b=PnUnOb5wZO4H80C1V
+	0yCwJ2UuH/9OcX4H3h7HLSa86B1j2pHSN+k88z0mKAxcrEv60vHYvk2cn+tkwu4U
+	N0iuOMWlkSPqKsgGc4DE+NLnoozHadSTdf08gXoTWiHS52ZbyxhspdhTOyNPGKTE
+	dOYgKASODV9wJ02m/RoJJ9YgcEbOm2/WNdTreio6vISScdJmpki0vt5dOeS1BcJQ
+	VL7mn5bdZxggXqPmAD6NzuebZIWwE7O0qFzySynzauqtSjBcY+7nA9+g7IIbTCXt
+	S478YJU7YlxqWxKERMP8tMHK4B4i8Z3WRME4q4tqXkLO8mJrVWL4XcF6Nxmc7XWn
+	RvluA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 41n7ujndae-2
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41na0fw3qh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 03:35:03 -0700 (PDT)
+	Mon, 16 Sep 2024 03:35:09 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 16 Sep 2024 03:35:03 -0700
+ 15.2.1544.4; Mon, 16 Sep 2024 03:35:07 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 16 Sep 2024 03:35:03 -0700
+ Transport; Mon, 16 Sep 2024 03:35:07 -0700
 Received: from virtx40.. (unknown [10.28.34.196])
-	by maili.marvell.com (Postfix) with ESMTP id 34E8C3F704A;
-	Mon, 16 Sep 2024 03:34:58 -0700 (PDT)
+	by maili.marvell.com (Postfix) with ESMTP id BEC2A3F7054;
+	Mon, 16 Sep 2024 03:35:03 -0700 (PDT)
 From: Linu Cherian <lcherian@marvell.com>
 To: <suzuki.poulose@arm.com>, <mike.leach@linaro.org>, <james.clark@arm.com>
 CC: <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
@@ -64,9 +64,9 @@ CC: <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
         <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
         <corbet@lwn.net>, <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
         <gcherian@marvell.com>, Linu Cherian <lcherian@marvell.com>
-Subject: [PATCH v10 3/8] coresight: core: Add provision for panic callbacks
-Date: Mon, 16 Sep 2024 16:04:32 +0530
-Message-ID: <20240916103437.226816-4-lcherian@marvell.com>
+Subject: [PATCH v10 4/8] coresight: tmc: Enable panic sync handling
+Date: Mon, 16 Sep 2024 16:04:33 +0530
+Message-ID: <20240916103437.226816-5-lcherian@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240916103437.226816-1-lcherian@marvell.com>
 References: <20240916103437.226816-1-lcherian@marvell.com>
@@ -78,141 +78,383 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: gp4lbiOlu3kkIT3zAe_AQOrjANyMrq2B
-X-Proofpoint-ORIG-GUID: gp4lbiOlu3kkIT3zAe_AQOrjANyMrq2B
+X-Proofpoint-ORIG-GUID: hXcD1kT1iDAdEUZfhM5CTDx14Okvfi8U
+X-Proofpoint-GUID: hXcD1kT1iDAdEUZfhM5CTDx14Okvfi8U
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Panic callback handlers allows coresight device drivers to sync
-relevant trace data and trace metadata to reserved memory
-regions so that they can be retrieved later in the subsequent
-boot or in the crashdump kernel.
+- Get reserved region from device tree node for metadata
+- Define metadata format for TMC
+- Add TMC ETR panic sync handler that syncs register snapshot
+  to metadata region
+- Add TMC ETF panic sync handler that syncs register snapshot
+  to metadata region and internal SRAM to reserved trace buffer
+  region.
 
 Signed-off-by: Linu Cherian <lcherian@marvell.com>
-Reviewed-by: James Clark <james.clark@arm.com>
 ---
 Changelog from v9:
-- Added return checks atomic_notifier_chain_register
+- Add common helper function of_tmc_get_reserved_resource_by_name
+  for better code reuse
+- Inorder to keep the reserved buffer validity and crashdata validity
+  independent, is_tmc_reserved_region_valid renamed to tmc_has_reserved_buffer
+- drvdata->crash_tbuf renamed to drvdata->resrv_buf
+- New fields added to crash metadata: version, ffcr, ffsr, mode
+- Defined crashdata version with Major version 1, Minor version 0
+- Set version while creating crashdata record
+- Removed Reviewed-by tag due to the above changes
+   
+ .../hwtracing/coresight/coresight-tmc-core.c  | 14 ++++
+ .../hwtracing/coresight/coresight-tmc-etf.c   | 77 ++++++++++++++++++
+ .../hwtracing/coresight/coresight-tmc-etr.c   | 78 +++++++++++++++++++
+ drivers/hwtracing/coresight/coresight-tmc.h   | 66 ++++++++++++++++
+ 4 files changed, 235 insertions(+)
 
- drivers/hwtracing/coresight/coresight-core.c | 42 ++++++++++++++++++++
- include/linux/coresight.h                    | 12 ++++++
- 2 files changed, 54 insertions(+)
-
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index ea38ecf26fcb..8c5fb66911a5 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -19,6 +19,7 @@
- #include <linux/property.h>
- #include <linux/delay.h>
- #include <linux/pm_runtime.h>
-+#include <linux/panic_notifier.h>
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+index 0764c21aba0f..54bf8ae2bff8 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-core.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+@@ -445,6 +445,20 @@ static void tmc_get_reserved_region(struct device *parent)
  
- #include "coresight-etm-perf.h"
- #include "coresight-priv.h"
-@@ -1378,6 +1379,36 @@ const struct bus_type coresight_bustype = {
- 	.name	= "coresight",
- };
- 
-+static int coresight_panic_sync(struct device *dev, void *data)
-+{
-+	int mode;
-+	struct coresight_device *csdev;
+ 	drvdata->resrv_buf.paddr = res.start;
+ 	drvdata->resrv_buf.size  = resource_size(&res);
 +
-+	/* Run through panic sync handlers for all enabled devices */
-+	csdev = container_of(dev, struct coresight_device, dev);
-+	mode = coresight_get_mode(csdev);
++	if (of_tmc_get_reserved_resource_by_name(parent, "metadata", &res))
++		return;
 +
-+	if ((mode == CS_MODE_SYSFS) || (mode == CS_MODE_PERF)) {
-+		if (panic_ops(csdev))
-+			panic_ops(csdev)->sync(csdev);
++	drvdata->crash_mdata.vaddr = memremap(res.start,
++					       resource_size(&res),
++					       MEMREMAP_WC);
++	if (IS_ERR_OR_NULL(drvdata->crash_mdata.vaddr)) {
++		dev_err(parent, "Metadata memory mapping failed\n");
++		return;
 +	}
 +
-+	return 0;
-+}
-+
-+static int coresight_panic_cb(struct notifier_block *self,
-+			       unsigned long v, void *p)
-+{
-+	bus_for_each_dev(&coresight_bustype, NULL, NULL,
-+				 coresight_panic_sync);
-+
-+	return 0;
-+}
-+
-+static struct notifier_block coresight_notifier = {
-+	.notifier_call = coresight_panic_cb,
-+};
-+
- static int __init coresight_init(void)
- {
- 	int ret;
-@@ -1390,11 +1421,20 @@ static int __init coresight_init(void)
- 	if (ret)
- 		goto exit_bus_unregister;
- 
-+	/* Register function to be called for panic */
-+	ret = atomic_notifier_chain_register(&panic_notifier_list,
-+					     &coresight_notifier);
-+	if (ret)
-+		goto exit_perf;
-+
- 	/* initialise the coresight syscfg API */
- 	ret = cscfg_init();
- 	if (!ret)
- 		return 0;
- 
-+	atomic_notifier_chain_unregister(&panic_notifier_list,
-+					     &coresight_notifier);
-+exit_perf:
- 	etm_perf_exit();
- exit_bus_unregister:
- 	bus_unregister(&coresight_bustype);
-@@ -1404,6 +1444,8 @@ static int __init coresight_init(void)
- static void __exit coresight_exit(void)
- {
- 	cscfg_exit();
-+	atomic_notifier_chain_unregister(&panic_notifier_list,
-+					     &coresight_notifier);
- 	etm_perf_exit();
- 	bus_unregister(&coresight_bustype);
++	drvdata->crash_mdata.paddr = res.start;
++	drvdata->crash_mdata.size  = resource_size(&res);
  }
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index c13342594278..2e63f7614551 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -335,6 +335,7 @@ enum cs_mode {
- #define link_ops(csdev)		csdev->ops->link_ops
- #define helper_ops(csdev)	csdev->ops->helper_ops
- #define ect_ops(csdev)		csdev->ops->ect_ops
-+#define panic_ops(csdev)	csdev->ops->panic_ops
  
- /**
-  * struct coresight_ops_sink - basic operations for a sink
-@@ -404,11 +405,22 @@ struct coresight_ops_helper {
- 	int (*disable)(struct coresight_device *csdev, void *data);
+ /* Detect and initialise the capabilities of a TMC ETR */
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+index d4f641cd9de6..d77ec9307e98 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+@@ -590,6 +590,78 @@ static unsigned long tmc_update_etf_buffer(struct coresight_device *csdev,
+ 	return to_read;
+ }
+ 
++static int tmc_panic_sync_etf(struct coresight_device *csdev)
++{
++	u32 val;
++	struct csdev_access *csa;
++	struct tmc_crash_metadata *mdata;
++	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
++
++	csa = &drvdata->csdev->access;
++	mdata = (struct tmc_crash_metadata *)drvdata->crash_mdata.vaddr;
++
++	/* Make sure we have valid reserved memory */
++	if (!tmc_has_reserved_buffer(drvdata) ||
++	    !tmc_has_crash_mdata_buffer(drvdata))
++		return 0;
++
++	tmc_crashdata_set_invalid(drvdata);
++
++	CS_UNLOCK(drvdata->base);
++
++	/* Proceed only if ETF is enabled or configured as sink */
++	val = readl(drvdata->base + TMC_CTL);
++	if (!(val & TMC_CTL_CAPT_EN))
++		goto out;
++
++	val = readl(drvdata->base + TMC_MODE);
++	if (val != TMC_MODE_CIRCULAR_BUFFER)
++		goto out;
++
++	val = readl(drvdata->base + TMC_FFSR);
++	/* Do manual flush and stop only if its not auto-stopped */
++	if (!(val & TMC_FFSR_FT_STOPPED)) {
++		dev_info(&csdev->dev,
++			 "%s: Triggering manual flush\n", __func__);
++		tmc_flush_and_stop(drvdata);
++	} else
++		tmc_wait_for_tmcready(drvdata);
++
++	/* Sync registers from hardware to metadata region */
++	mdata->sts = csdev_access_relaxed_read32(csa, TMC_STS);
++	mdata->mode = csdev_access_relaxed_read32(csa, TMC_MODE);
++	mdata->ffcr = csdev_access_relaxed_read32(csa, TMC_FFCR);
++	mdata->ffsr = csdev_access_relaxed_read32(csa, TMC_FFSR);
++	mdata->trace_paddr = drvdata->resrv_buf.paddr;
++
++	/* Sync Internal SRAM to reserved trace buffer region */
++	drvdata->buf = drvdata->resrv_buf.vaddr;
++	tmc_etb_dump_hw(drvdata);
++	/* Store as per RSZ register convention */
++	mdata->size = drvdata->len >> 2;
++	mdata->version = CS_CRASHDATA_VERSION;
++
++	/*
++	 * Make sure all previous writes are completed,
++	 * before we mark valid
++	 */
++	dsb(sy);
++	mdata->valid = true;
++	/*
++	 * Below order need to maintained, since crc of metadata
++	 * is dependent on first
++	 */
++	mdata->crc32_tdata = find_crash_tracedata_crc(drvdata, mdata);
++	mdata->crc32_mdata = find_crash_metadata_crc(mdata);
++
++	tmc_disable_hw(drvdata);
++
++	dev_info(&csdev->dev, "%s: success\n", __func__);
++out:
++	CS_UNLOCK(drvdata->base);
++	return 0;
++}
++
+ static const struct coresight_ops_sink tmc_etf_sink_ops = {
+ 	.enable		= tmc_enable_etf_sink,
+ 	.disable	= tmc_disable_etf_sink,
+@@ -603,6 +675,10 @@ static const struct coresight_ops_link tmc_etf_link_ops = {
+ 	.disable	= tmc_disable_etf_link,
  };
  
-+
-+/**
-+ * struct coresight_ops_panic - Generic device ops for panic handing
-+ *
-+ * @sync	: Sync the device register state/trace data
-+ */
-+struct coresight_ops_panic {
-+	int (*sync)(struct coresight_device *csdev);
++static const struct coresight_ops_panic tmc_etf_sync_ops = {
++	.sync		= tmc_panic_sync_etf,
 +};
 +
- struct coresight_ops {
- 	const struct coresight_ops_sink *sink_ops;
- 	const struct coresight_ops_link *link_ops;
- 	const struct coresight_ops_source *source_ops;
- 	const struct coresight_ops_helper *helper_ops;
-+	const struct coresight_ops_panic *panic_ops;
+ const struct coresight_ops tmc_etb_cs_ops = {
+ 	.sink_ops	= &tmc_etf_sink_ops,
+ };
+@@ -610,6 +686,7 @@ const struct coresight_ops tmc_etb_cs_ops = {
+ const struct coresight_ops tmc_etf_cs_ops = {
+ 	.sink_ops	= &tmc_etf_sink_ops,
+ 	.link_ops	= &tmc_etf_link_ops,
++	.panic_ops	= &tmc_etf_sync_ops,
  };
  
- static inline u32 csdev_access_relaxed_read32(struct csdev_access *csa,
+ int tmc_read_prepare_etb(struct tmc_drvdata *drvdata)
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index 8bca5b36334a..8228d7aaa361 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -1814,6 +1814,79 @@ static int tmc_disable_etr_sink(struct coresight_device *csdev)
+ 	return 0;
+ }
+ 
++static int tmc_panic_sync_etr(struct coresight_device *csdev)
++{
++	u32 val;
++	struct csdev_access *csa;
++	struct tmc_crash_metadata *mdata;
++	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
++
++	csa = &drvdata->csdev->access;
++	mdata = (struct tmc_crash_metadata *)drvdata->crash_mdata.vaddr;
++
++	if (!drvdata->etr_buf)
++		return 0;
++
++	/* Being in RESRV mode implies valid reserved memory as well */
++	if (drvdata->etr_buf->mode != ETR_MODE_RESRV)
++		return 0;
++
++	if (!tmc_has_reserved_buffer(drvdata) ||
++	    !tmc_has_crash_mdata_buffer(drvdata))
++		return 0;
++
++	tmc_crashdata_set_invalid(drvdata);
++
++	CS_UNLOCK(drvdata->base);
++
++	/* Proceed only if ETR is enabled */
++	val = readl(drvdata->base + TMC_CTL);
++	if (!(val & TMC_CTL_CAPT_EN))
++		goto out;
++
++	val = readl(drvdata->base + TMC_FFSR);
++	/* Do manual flush and stop only if its not auto-stopped */
++	if (!(val & TMC_FFSR_FT_STOPPED)) {
++		dev_info(&csdev->dev,
++			 "%s: Triggering manual flush\n", __func__);
++		tmc_flush_and_stop(drvdata);
++	} else
++		tmc_wait_for_tmcready(drvdata);
++
++	/* Sync registers from hardware to metadata region */
++	mdata->size = csdev_access_relaxed_read32(csa, TMC_RSZ);
++	mdata->sts = csdev_access_relaxed_read32(csa, TMC_STS);
++	mdata->mode = csdev_access_relaxed_read32(csa, TMC_MODE);
++	mdata->ffcr = csdev_access_relaxed_read32(csa, TMC_FFCR);
++	mdata->ffsr = csdev_access_relaxed_read32(csa, TMC_FFSR);
++	mdata->rrp = tmc_read_rrp(drvdata);
++	mdata->rwp = tmc_read_rwp(drvdata);
++	mdata->dba = tmc_read_dba(drvdata);
++	mdata->trace_paddr = drvdata->resrv_buf.paddr;
++	mdata->version = CS_CRASHDATA_VERSION;
++
++	/*
++	 * Make sure all previous writes are completed,
++	 * before we mark valid
++	 */
++	dsb(sy);
++	mdata->valid = true;
++	/*
++	 * Below order need to maintained, since crc of metadata
++	 * is dependent on first
++	 */
++	mdata->crc32_tdata = find_crash_tracedata_crc(drvdata, mdata);
++	mdata->crc32_mdata = find_crash_metadata_crc(mdata);
++
++	tmc_disable_hw(drvdata);
++
++	dev_info(&csdev->dev, "%s: success\n", __func__);
++out:
++	CS_UNLOCK(drvdata->base);
++
++	return 0;
++}
++
+ static const struct coresight_ops_sink tmc_etr_sink_ops = {
+ 	.enable		= tmc_enable_etr_sink,
+ 	.disable	= tmc_disable_etr_sink,
+@@ -1822,8 +1895,13 @@ static const struct coresight_ops_sink tmc_etr_sink_ops = {
+ 	.free_buffer	= tmc_free_etr_buffer,
+ };
+ 
++static const struct coresight_ops_panic tmc_etr_sync_ops = {
++	.sync		= tmc_panic_sync_etr,
++};
++
+ const struct coresight_ops tmc_etr_cs_ops = {
+ 	.sink_ops	= &tmc_etr_sink_ops,
++	.panic_ops	= &tmc_etr_sync_ops,
+ };
+ 
+ int tmc_read_prepare_etr(struct tmc_drvdata *drvdata)
+diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+index d2261eddab71..75e504e51956 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc.h
++++ b/drivers/hwtracing/coresight/coresight-tmc.h
+@@ -12,6 +12,7 @@
+ #include <linux/miscdevice.h>
+ #include <linux/mutex.h>
+ #include <linux/refcount.h>
++#include <linux/crc32.h>
+ 
+ #define TMC_RSZ			0x004
+ #define TMC_STS			0x00c
+@@ -76,6 +77,9 @@
+ #define TMC_AXICTL_AXCACHE_OS	(0xf << 2)
+ #define TMC_AXICTL_ARCACHE_OS	(0xf << 16)
+ 
++/* TMC_FFSR - 0x300 */
++#define TMC_FFSR_FT_STOPPED	BIT(1)
++
+ /* TMC_FFCR - 0x304 */
+ #define TMC_FFCR_FLUSHMAN_BIT	6
+ #define TMC_FFCR_EN_FMT		BIT(0)
+@@ -94,6 +98,9 @@
+ 
+ #define TMC_AUTH_NSID_MASK	GENMASK(1, 0)
+ 
++/* Major version 1 Minor version 0 */
++#define CS_CRASHDATA_VERSION	(1 << 16)
++
+ enum tmc_config_type {
+ 	TMC_CONFIG_TYPE_ETB,
+ 	TMC_CONFIG_TYPE_ETR,
+@@ -131,6 +138,25 @@ enum tmc_mem_intf_width {
+ #define CORESIGHT_SOC_600_ETR_CAPS	\
+ 	(TMC_ETR_SAVE_RESTORE | TMC_ETR_AXI_ARCACHE)
+ 
++/* TMC metadata region for ETR and ETF configurations */
++struct tmc_crash_metadata {
++	uint32_t crc32_mdata;	/* crc of metadata */
++	uint32_t crc32_tdata;	/* crc of tracedata */
++	uint32_t version;	/* 31:16 Major version, 15:0 Minor version */
++	uint32_t valid;         /* Indicate if this ETF/ETR was enabled */
++	uint32_t size;          /* Ram Size register */
++	uint32_t sts;           /* Status register */
++	uint32_t mode;		/* Mode register */
++	uint64_t ffcr;		/* Formatter and flush control register */
++	uint64_t ffsr;		/* Formatter and flush status register */
++	uint32_t reserved32[3];
++	uint64_t rrp;           /* Ram Read pointer register */
++	uint64_t rwp;           /* Ram Write pointer register */
++	uint64_t dba;		/* Data buffer address register */
++	uint64_t trace_paddr;	/* Phys address of trace buffer */
++	uint64_t reserved64[3];
++};
++
+ enum etr_mode {
+ 	ETR_MODE_FLAT,		/* Uses contiguous flat buffer */
+ 	ETR_MODE_ETR_SG,	/* Uses in-built TMC ETR SG mechanism */
+@@ -205,6 +231,8 @@ struct tmc_resrv_buf {
+  *		retention (after crash) only when ETR_MODE_RESRV buffer
+  *		mode is enabled. Used by ETF for trace data retention
+  *		(after crash) by default.
++ * @crash_mdata: Reserved memory for storing tmc crash metadata.
++ *		 Used by ETR/ETF.
+  */
+ struct tmc_drvdata {
+ 	struct clk		*pclk;
+@@ -231,6 +259,7 @@ struct tmc_drvdata {
+ 	struct etr_buf		*sysfs_buf;
+ 	struct etr_buf		*perf_buf;
+ 	struct tmc_resrv_buf	resrv_buf;
++	struct tmc_resrv_buf	crash_mdata;
+ };
+ 
+ struct etr_buf_operations {
+@@ -356,6 +385,43 @@ static inline bool tmc_has_reserved_buffer(struct tmc_drvdata *drvdata)
+ 	return false;
+ }
+ 
++static inline bool tmc_has_crash_mdata_buffer(struct tmc_drvdata *drvdata)
++{
++	if (drvdata->crash_mdata.vaddr &&
++	    drvdata->crash_mdata.size)
++		return true;
++	return false;
++}
++
++static inline void tmc_crashdata_set_invalid(struct tmc_drvdata *drvdata)
++{
++	struct tmc_crash_metadata *mdata;
++
++	mdata = (struct tmc_crash_metadata *)drvdata->crash_mdata.vaddr;
++
++	if (tmc_has_crash_mdata_buffer(drvdata))
++		mdata->valid = false;
++}
++
++static inline uint32_t find_crash_metadata_crc(struct tmc_crash_metadata *md)
++{
++	unsigned long crc_size;
++
++	crc_size = sizeof(struct tmc_crash_metadata) -
++		offsetof(struct tmc_crash_metadata, crc32_tdata);
++	return crc32_le(0, (void *)&md->crc32_tdata, crc_size);
++}
++
++static inline uint32_t find_crash_tracedata_crc(struct tmc_drvdata *drvdata,
++						struct tmc_crash_metadata *md)
++{
++	unsigned long crc_size;
++
++	/* Take CRC of configured buffer size to keep it simple */
++	crc_size = md->size << 2;
++	return crc32_le(0, (void *)drvdata->resrv_buf.vaddr, crc_size);
++}
++
+ struct coresight_device *tmc_etr_get_catu_device(struct tmc_drvdata *drvdata);
+ 
+ void tmc_etr_set_catu_ops(const struct etr_buf_operations *catu);
 -- 
 2.34.1
 
