@@ -1,74 +1,83 @@
-Return-Path: <linux-kernel+bounces-330163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3526979A84
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:56:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DDE979A85
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D866283C8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:56:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E050B21E1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 04:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCEF13BAC6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFA03CF74;
 	Mon, 16 Sep 2024 04:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvP6ytxS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cd+LMHGx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0D5139CE2;
-	Mon, 16 Sep 2024 04:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4246613AA5F;
+	Mon, 16 Sep 2024 04:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726462521; cv=none; b=SMLoOmq+sBRWZ2/UJRagQcdUoo95SVvx1FTexRgJemb5BciWdrUvyjYr97PkOEK5tBH+B0fMBRROmqQaTF5f2RTcuHAme0AjPVXowx3uTUji4fcAbio6pRHdUFxrhlH0+8hgb6cR22b4ETmhof+iPsK5ws6vHP5uY0K9FjvNyCY=
+	t=1726462523; cv=none; b=tWgj13HLg3BxJgY2aENCy6fBbcflnyb2bhQwv2kcdr6nZl5GvH4rlBtI9ap8kcFm4PnzwnBiFxr2mGR0DNhiuBnIvVR8eLbUeRnHskgqPgOie0nThmL2vb2W2CX6lOpLFXfO+dl2piP+J6+8tg+tTERnhlTsFoGN/9gj7ydBzIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726462521; c=relaxed/simple;
-	bh=b1qVr8d2s32L8Sv65HKfnvuHztBHEh/jZIlav4kU+B0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=h4Mz+IVCAmVlO4qbZYz2ye71wiGa+wnIsDqpfltDaTyiwE0Pp6M4/ORcgomkDyLQG0gXV95I1UR1HYEVsMTKzkPsY1Mrl3H2fWyiABIkF96hl8dwgtfe2BOzDnzcTQgaU/xQO664JVDkBKdkhLRcOQ9smxTIYeCk5cHp7UIDrqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvP6ytxS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C1F1C4CEC4;
-	Mon, 16 Sep 2024 04:55:21 +0000 (UTC)
+	s=arc-20240116; t=1726462523; c=relaxed/simple;
+	bh=Q96zhx1qwnoxMs9+rsd3+/0l/tJnp0elMcZ1aR1HwwQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oLcDQb+sOCqa2Sq8wNlzDATx5tDD9HL7kwr90sBCcAGfxoabRmNpi2ZkpxW1og52YNLRvrX7eGV98pzshEzaqNAvEvOmhpjc1KyckrrDegDRwoqOaN3MDlUDowClwp/tO4W2df4WJ46sla7RIXe6OEU8sAlSwNG8jEVbPUY8BJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cd+LMHGx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E24A5C4CEC4;
+	Mon, 16 Sep 2024 04:55:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726462521;
-	bh=b1qVr8d2s32L8Sv65HKfnvuHztBHEh/jZIlav4kU+B0=;
+	s=k20201202; t=1726462522;
+	bh=Q96zhx1qwnoxMs9+rsd3+/0l/tJnp0elMcZ1aR1HwwQ=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=SvP6ytxSvdzVlX4FLUu/LAkrPBLaAGtFY9oq5w/DUap8K23jb60S0EeOBMFEho5tI
-	 Okn1c4mHqYyu32aN2ZZnEyv/2xwRprs8R3PLoqUGW0T+aNRT8U/vhW0mK/QJfrsFi4
-	 /sYylBbWZ9WDHabVLfg/eHFfubXJiF9kkU6YkWtAnEAXZ9c/A4HI+AEJ4HwrpeUbfv
-	 9c7SJczWyUSWHuWW46LPf1DuhjovjENBkW2dsH+lYrckmAV1zxoaPF6vZL3VnwJnG7
-	 MjkXnyqiG9z+EeND7/rtr1ClP6HjxMNfWdbnokM8JOZx6hzjBQl47WuQRIjrTCluxZ
-	 kS/P8BA4ozLeA==
+	b=Cd+LMHGxcA5psAZ670+Fx4rsIIXY0HLU3GqACWyOb1/CSWpSAKzUc6boMib+kB+G0
+	 HoaQq5wZBxgEHr3+vD1hTrp3gu9sboBJ5pwkIWeLwHlFKbFMv/3M/hMi/wA52PXmM4
+	 xr85RmCo/LjFGsLYY+aJdYGCVzN9KJIHs+pnTgQJT6n936RuWO9+c0FKKm7jh8VXd5
+	 jMgTp3f42ehr6ACHo0kK6NJG948qrXneNCqzktVQWt2jT5w0qNbvEOTpKZS8eS3E09
+	 zyCecWwY9f1O9kAFdqHqXTW8UudrhwMjqKDRFQ+iE23NH9RaIMFINTZIXFhZ4Kmo3t
+	 0N3ZCd1edqIEQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF3E3809A80;
-	Mon, 16 Sep 2024 04:55:23 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.12
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE01B3809A80;
+	Mon, 16 Sep 2024 04:55:25 +0000 (UTC)
+Subject: Re: [GIT PULL] Crypto Update for 6.12
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240915172730.2697972-1-kuba@kernel.org>
-References: <20240915172730.2697972-1-kuba@kernel.org>
+In-Reply-To: <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
+References: <Y5mGGrBJaDL6mnQJ@gondor.apana.org.au>
+ <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
+ <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
+ <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
+ <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
+ <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
+ <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
+ <ZkGN64ulwzPVvn6-@gondor.apana.org.au>
+ <ZpkdZopjF9/9/Njx@gondor.apana.org.au> <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240915172730.2697972-1-kuba@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git tags/net-next-6.12
-X-PR-Tracked-Commit-Id: 3561373114c8b3359114e2da27259317dc51145a
+X-PR-Tracked-Message-Id: <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p1
+X-PR-Tracked-Commit-Id: ce212d2afca47acd366a2e74c76fe82c31f785ab
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9410645520e9b820069761f3450ef6661418e279
-Message-Id: <172646252248.3235832.6161202011008318742.pr-tracker-bot@kernel.org>
-Date: Mon, 16 Sep 2024 04:55:22 +0000
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
+X-PR-Merge-Commit-Id: 85ffc6e4ed3712f8b3fedb3fbe42afae644a699c
+Message-Id: <172646252417.3235832.759034537058096675.pr-tracker-bot@kernel.org>
+Date: Mon, 16 Sep 2024 04:55:24 +0000
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Sun, 15 Sep 2024 10:27:30 -0700:
+The pull request you sent on Mon, 16 Sep 2024 11:59:01 +0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git tags/net-next-6.12
+> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9410645520e9b820069761f3450ef6661418e279
+https://git.kernel.org/torvalds/c/85ffc6e4ed3712f8b3fedb3fbe42afae644a699c
 
 Thank you!
 
