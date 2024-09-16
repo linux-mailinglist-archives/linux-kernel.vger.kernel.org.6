@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-331017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E19897A74A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE1697A74F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB181C22816
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DF21F21D79
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8539815B572;
-	Mon, 16 Sep 2024 18:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB2C15B548;
+	Mon, 16 Sep 2024 18:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PhDmi8QY"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avePzGF0"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE813211F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 18:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C0513211F;
+	Mon, 16 Sep 2024 18:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726511069; cv=none; b=oY+BBMY0aWvwFQUF3++tZ2iJp8nSMNl0ijoatGVvLm0nZ7ywN8PFaAc7kvDLRzf4qUk+AfLts3F97S351yhc0msC7emrxyxl4hxQru+S07qxlSQLUW374ZODSyav9Z/fC/Ai7GGZCcJQicLqDRPxQjGuVKcjrT85puLHdWFjQSU=
+	t=1726511177; cv=none; b=Emd6hlJ9gKEx3YZEk3aHxRHStJxgzpIT9QvJlnhw4imhjSdfxtU6YtCv71wY3VDj/tyrD7f0pXhiK5vGb4W7LqFoXkj0VGxa4bLqFF/2mUfbCsz0XTVHQngkOuHcS/J7ijvSKdwbjZ07+Kgkk+zEJ+Uv3voOplTTVvzc7zbzjyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726511069; c=relaxed/simple;
-	bh=KyN8GKvHoP6oAAePFJM111cdcf+1s0w20NMicGPpf5o=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dcOvg75V5lpOhP7EhnFmAph6Aemq//NNIJPxocf5Y130B6P0hkFUDo/QHD/p4I5St5pW0Id1qKmJwslmCdEPHWY7icZkKQynNTlyf4f9yz4wnR0TivMsqiqBXGYJxReD+B9o75/TN8Y5z6UngP5Co6dlgcOPlXGrYL2aFKr7CYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PhDmi8QY; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e17bb508bb9so7928674276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 11:24:28 -0700 (PDT)
+	s=arc-20240116; t=1726511177; c=relaxed/simple;
+	bh=v56YRJJZy/wRNHZbG1ywnyqgE0PluUV7/SsL50AVYqw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZqeA9MpHtYYDiFgObDLmzQjJldDfnQC/0pf/igGQjO1hkbAUNOh12NTGGy99NjtFWWf7OSE2xMxH07NfkTux+bd+gOXuNPjbzlW+4qA6JPgafBFY18KTrpPXk+leS7wBRfUvIu0HIF3HFnfnYIUru1GqO3mXWmmh1mgV5MeWdlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avePzGF0; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8ce5db8668so832611666b.1;
+        Mon, 16 Sep 2024 11:26:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726511067; x=1727115867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PWVVert/0duLgr8lppMjlBcvaVlhn5CV2P73SctPY5A=;
-        b=PhDmi8QY8HXvWeZDVLCDmpjTTaxYVgf3GoXVan3Qim27iF9p3KG+odLNLZwNB5WOTd
-         EvnBVSKt3lZ7/PSSMsLs8/y7OcXPsfiAyylEQt8KESVWflKzdbcMtVjxvL7GNYQpMRWJ
-         QHCCqzf0NidZ27O8zNMBZZMGNSa44LAFz56kzDWstcWxIc3Lqi10TpIhn4gNQlXvo5qp
-         tgt8410g4gkdZ1HRExxHOWOn4MFZte8qEDzAwPJ+AiaabGVjC4hVwqncbgWCxDqbmA4W
-         VpOsuytOtojxEwfHDGkp4ivWF4B/ym4813pmIp7DTjIY8sxuUMHXEGWgVcXQ4fEJzmJj
-         VYMQ==
+        d=gmail.com; s=20230601; t=1726511174; x=1727115974; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aIKV/f4fmNN+xl9ScoTPdS6tXhDJDmlBWNBiM5jjZOk=;
+        b=avePzGF0ni1+fZ9BsQrzpcUdAtONSXLWU62BnQJ+kSsa8nmhZcExmk6py0FsKe2wgj
+         N37LDVq1fcgyMSsihdYTZZy4wICmjUncVeqi9sSrqcl4/uQe/RYCnRa8eumQgWifRUxH
+         YZA/G0stIohZvJpXfvtb+PKhpfy/9kv9ZqJqMOfx/S6oKzsftFD3Q82f7BjqIBsMfK2h
+         GMS3M5NVBGuFhH6gwwISrEA8sjx+VCKnPXS6V8WWqqyNpgIq9esNlPAYbZDWj4vGD0Q7
+         TNICaXT3Ixiz0z5vy1j2D9m1wD5GUHPGUPH70cLMP0KEdhXmvHeTUd65FdR0qp+DES36
+         JsHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726511067; x=1727115867;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PWVVert/0duLgr8lppMjlBcvaVlhn5CV2P73SctPY5A=;
-        b=I4ZWf6pLHhdx1elAUnVKFzbBs0+8XgqtFcTLLRlJUaR13mIo+j2rknsFuO3lc0MRe0
-         D8/JhjHl63AVrSeyaQDHZWjGaL7Q3yZQ6B3k5Am+8Y5T+HtZW7VnICALXdyFqRrF08o0
-         k+cCdOmiTwLB0BVveKLWhgzExzFasTVoogqDSxhDduNlr7L4djlazI8fiZPBBjrkfu3g
-         3+FpiMvudinjXTExuK5bpE4FLi6Luq29uR8N/j4kFzwuzFzpm3Jba6x5TBNVM50yldq2
-         9dVeuFxf18Wc1f28obYq9ML9gMHYNQO2FnclB0Ipv1pNC7F7qCJOoOU6tT6D2Y/G4OTZ
-         oU2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXTou+hZ03Cx4MfmtEan8Vy97Cvmir3pjNMs+wG8tZjr4pWdzXNjVptAqvZ9VjKF5U4efTbFzkTITU4mPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr/FJTPJcYlByLO6PhJRe4zIhqbKt9O3lZvY4jlBLH/Ix/2h0M
-	iW3SvhyOh/RQiNvdssfp6P1bQcIzJcMOZa2NT7CsTVVWf3mtIjpTAgUz6qGnk0wu2/R64SPlWRC
-	bnQ==
-X-Google-Smtp-Source: AGHT+IGw6+fTdMMlTRPuPFeoq64qFkHtSG8aeQPj9JG0eFHtNo93fBF43eoD6YBxvGRG6q4NAAC5M9oExS0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a5b:c4a:0:b0:e17:c4c5:bcb2 with SMTP id
- 3f1490d57ef6-e1db00d2b9dmr49146276.7.1726511067380; Mon, 16 Sep 2024 11:24:27
- -0700 (PDT)
-Date: Mon, 16 Sep 2024 11:24:25 -0700
-In-Reply-To: <CABgObfZ1oZHU+9LKc_uiPZs1uwqxczcknspCD=BJCFZd5+-yyw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1726511174; x=1727115974;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aIKV/f4fmNN+xl9ScoTPdS6tXhDJDmlBWNBiM5jjZOk=;
+        b=cmm+n6AHW0DNxAl+Km0Z6A+6X2DafANhDJeaIZBR6w2yqPKlrK4wYY/gqEIdcOcsKY
+         bw0EheJOzZcVY8e2IFaI4uiv3B8AtcpR3RdyIABPFe3twApTYEocPC5zXji7uo6Kd2GU
+         RLzlvRH0TEM6/mSe94Xa8ONoezl8D4bFS4BwlLnN1BxAXRaPgw4tdVQUUGBX5FuoUtmM
+         sEfd5CnvStanfNv8GLBAkIWrM2m25r/hUnEelVlobGM0eazXXQHmw6DNkT17orAFnZQv
+         fmxxAYW6tbPqgcPhHmq6NflY2n7afGi29eWCtm0/vbKasUJS/6NIVKUdC5jB9GyioP6I
+         iFEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVejVcOnOJ/p4EtEbotH/WlPe7BcaTlUXAzs44MLtvMG8WL2z8KiXFub2O3dYfQ3RWj4sd+ueETJFQ82JU@vger.kernel.org, AJvYcCVellwzOaSIjijxTJUkwQS1kVKqUr4qYul6YMFkqUfFzWsxQCH6m05AV17M7XZ6PU84gFmw7g/ieXyc2Kf8Aw==@vger.kernel.org, AJvYcCXKRlbz0P99/VqFoeCqrt59IL/7VPxYSInGUnt7oJxBGVtEnwlvwiYSqB37xuSURSSO00UzyTQnx43+qTyh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6C198udoPbdUasdHzZmDXdY+/9LO1V8f4V1X/flrRBguVngME
+	9QMkMWzkQ3T2UIoIKrtODdoEcv6CmkcFRPYB/2nDFPZ4QrHEZDcc
+X-Google-Smtp-Source: AGHT+IHZP5bpH5qlg2I9OOJbzFLfW3myCBjFcT869tCQtqCK3mxPDp7nmlTfLNMEnVpsMHcaCRBxoA==
+X-Received: by 2002:a17:907:e214:b0:a86:c1ff:c973 with SMTP id a640c23a62f3a-a902961ded5mr1657274866b.47.1726511172823;
+        Mon, 16 Sep 2024 11:26:12 -0700 (PDT)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061096aa2sm348392666b.35.2024.09.16.11.26.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 11:26:12 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs updates for 6.12
+Date: Mon, 16 Sep 2024 20:26:08 +0200
+Message-Id: <20240916182608.1532691-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240914011348.2558415-1-seanjc@google.com> <CABgObfbV0HOAPA-4XjdUR2Q-gduEQhgSdJb1SzDQXd08M_pD+A@mail.gmail.com>
- <CABgObfZ1oZHU+9LKc_uiPZs1uwqxczcknspCD=BJCFZd5+-yyw@mail.gmail.com>
-Message-ID: <Zuh32evWMcs8hTAM@google.com>
-Subject: Re: [GIT PULL] KVM: x86 pull requests for 6.12
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 15, 2024, Paolo Bonzini wrote:
-> On Sat, Sep 14, 2024 at 4:54=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.co=
-m> wrote:
-> >
-> > On Sat, Sep 14, 2024 at 3:13=E2=80=AFAM Sean Christopherson <seanjc@goo=
-gle.com> wrote:
-> > > There's a trivial (and amusing) conflict with KVM s390 in the selftes=
-ts pull
-> > > request (we both added "config" to the .gitignore, within a few days =
-of each
-> > > other, after the goof being around for a good year or more).
-> > >
-> > > Note, the pull requests are relative to v6.11-rc4.  I got a late star=
-t, and for
-> > > some reason thought kvm/next would magically end up on rc4 or later.
-> > >
-> > > Note #2, I had a brainfart and put the testcase for verifying KVM's f=
-astpath
-> > > correctly exits to userspace when needed in selftests, whereas the ac=
-tual KVM
-> > > fix is in misc.  So if you run KVM selftests in the middle of pulling=
- everything,
-> > > expect the debug_regs test to fail.
-> >
-> > Pulled all, thanks. Due to combination of being recovering from flu +
-> > preparing to travel I will probably spend not be able to run tests for
-> > a few days, but everything should be okay for the merge window.
->=20
-> Hmm, I tried running tests in a slightly non-standard way (compiling
-> the will-be-6.12 code on a 6.10 kernel and installing the module)
-> because that's what I could do for now, and I'm getting system hangs
-> in a few tests. The first ones that hung were
->=20
-> hyperv_ipi
-> hyperv_tlb_flush
+Hi Linus,
 
-This one failing gives me hope that it's some weird combination of 6.10 and=
- the
-for-6.12 code.  Off the top of my head, I can't think of any relevant chang=
-es.
+Please pull overlayfs updates for 6.12.
 
-FWIW, I haven't been able to reproduce any failures with kvm/next+kvm-x86/n=
-ext,
-on AMD or Intel.
+This branch has been sitting in linux-next for over a week and
+it has gone through the usual overlayfs test routines.
 
-> xapic_ipi_test
->=20
-> And of course, this is on a machine that doesn't have serial
-> console... :( I think for now I'll push the non-x86 stuff to kvm/next
-> and then either bisect or figure out how to run tests normally.
+The branch merges cleanly with master branch of the moment.
+
+Thanks,
+Amir.
+
+----------------------------------------------------------------
+The following changes since commit 3e9bff3bbe1355805de919f688bef4baefbfd436:
+
+  Merge tag 'vfs-6.11-rc6.fixes' of gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs (2024-08-27 16:57:35 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-update-6.12
+
+for you to fetch changes up to 6c4a5f96450415735c31ed70ff354f0ee5cbf67b:
+
+  ovl: fail if trusted xattrs are needed but caller lacks permission (2024-09-08 15:36:59 +0200)
+
+----------------------------------------------------------------
+overlayfs updates for 6.12
+
+- Increase robustness of overlayfs to crashes in the case of underlying
+  filesystems that to not guarantee metadata ordering to persistent storage
+  (problem was reported with ubifs).
+
+- Deny mount inside container with features that require root privileges
+  to work properly, instead of failing operations later.
+
+- Some clarifications to overlayfs documentation.
+
+----------------------------------------------------------------
+Amir Goldstein (1):
+      ovl: fsync after metadata copy-up
+
+Haifeng Xu (1):
+      ovl: don't set the superblock's errseq_t manually
+
+Mike Baynton (1):
+      ovl: fail if trusted xattrs are needed but caller lacks permission
+
+Yuriy Belikov (1):
+      overlayfs.rst: update metacopy section in overlayfs documentation
+
+ Documentation/filesystems/overlayfs.rst |  7 ++++--
+ fs/overlayfs/copy_up.c                  | 43 ++++++++++++++++++++++++++++++---
+ fs/overlayfs/params.c                   | 38 +++++++++++++++++++++++++----
+ fs/overlayfs/super.c                    | 10 ++------
+ 4 files changed, 79 insertions(+), 19 deletions(-)
 
