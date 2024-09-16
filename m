@@ -1,218 +1,183 @@
-Return-Path: <linux-kernel+bounces-330526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F45C979FBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:50:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88EDF979FC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF29BB20B96
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DAED2853BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4EB1547D5;
-	Mon, 16 Sep 2024 10:50:24 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81042154435;
+	Mon, 16 Sep 2024 10:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q2uvM/ul"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DAE153BF6;
-	Mon, 16 Sep 2024 10:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311FB34CC4;
+	Mon, 16 Sep 2024 10:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726483824; cv=none; b=n9WCcyqtdMj8MT8j9j7tap0k/vxUeSBDqTPl5kl2916eRXZaBdValT3gBrAx6D29Jav/wovZ4Nj8FHHxJfCvapZh/oNJBuGob0Y1cF9fdXQ5OZ1Lyh25PPVv0ah9nBT+rPoMGW+sOZmoKRnQgRlKguZ4vKl0IHgVV62Y6fmL3+Y=
+	t=1726483879; cv=none; b=r7qKF2Dl6xRQnivp1lbxuBdngnwhLwyMhu0qogoCa9tSKTkDS31wd6XREwoJAFoatZErzRZ+1Tu7GWSJ+0NjZLgOmROOvwLYDsbYVWbd+Kb98hxDxAXkTMFQ6iiEu3Ci923jO6QALPCt8znZO9ZibcTdDSkdcR81EKuXhhQb2oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726483824; c=relaxed/simple;
-	bh=c4YWO/0EFiYQanN9XvQuPPIasnvzcVAiaTGY/zs6NBI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aDAAzgCSxOkpp87/0eo0wD+P1TMnZ6Kxd+aujCx6xXBjgreTjjoSEWTahhJUwmTLKDbOv2yHjALjkoslBvnXo757LOW4dAHo2YaD7uggLqRhkryBZuGFcFmdzfOXlwBRWqJwQRMg55htAOQgHT5vwTDZSNgA+BCkRkZ/wQYo0As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X6hWp1XDXz6K5xQ;
-	Mon, 16 Sep 2024 18:50:14 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 06083140F5E;
-	Mon, 16 Sep 2024 18:50:18 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Sep
- 2024 12:50:16 +0200
-Date: Mon, 16 Sep 2024 11:50:14 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Shiju Jose <shiju.jose@huawei.com>
-CC: Borislav Petkov <bp@alien8.de>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
-	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
-	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
-	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
-	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
-	<duenwen@google.com>, "mike.malvestuto@intel.com"
-	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "jgroves@micron.com"
-	<jgroves@micron.com>, "vsalve@micron.com" <vsalve@micron.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
- Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
-	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH v12 01/17] EDAC: Add support for EDAC device features
- control
-Message-ID: <20240916115014.000064bf@Huawei.com>
-In-Reply-To: <c31c733bb6e742f580721ec9d0e2f3b2@huawei.com>
-References: <20240911090447.751-1-shiju.jose@huawei.com>
-	<20240911090447.751-2-shiju.jose@huawei.com>
-	<20240913164041.GKZuRrCeoFZBapVYaU@fat_crate.local>
-	<c31c733bb6e742f580721ec9d0e2f3b2@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1726483879; c=relaxed/simple;
+	bh=0lRSPxsT9IzVJy7fyz17j7cnS4eIGCPkad4z5jh6uY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TKCulTjKu0Te1ZJt7ca7QnUyfL8V2uSEJ0a7C7ZanHdM0NRNv7LYLUbY+T2KS3yKS4H4FxlsHIk5rX/MzwoXx5eapqMkuOinHHKD3FEoeE+wkiJ7KtUpJXXRfijS09SBYWGSCCL+XtLRQnDbACKwaJbGK7GSnXtN8cKjE6/L9pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q2uvM/ul; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374c1963cb6so2949197f8f.3;
+        Mon, 16 Sep 2024 03:51:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726483876; x=1727088676; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/xhyzobQT8oY8lvw8wg2epKpXu0kbMbMHlKQEvlRZmM=;
+        b=Q2uvM/ulOGL2VKfUSB8UqAB06IpGsW+/8Not1VymRrAT8QGV4mzz8ArIWRUD3jPRvg
+         RX0OBH039sO6vvDgvIbOyYkc3c4CpJ2wiAHxnQfyy48LkX8oo7p+JbWc6/kY+A3r56r9
+         BubhL096i8b84lZ2vaU+8ObzjI47M0U+Qg8aMDcbuXXPg+4BRtDdI/VksSA06H8DnoRT
+         4GLBmQo/8ks6EQONQsEWVUKaAROIKvxyKW8WY7aGpOFy8layquO4AxXFCrs9UK6JRAfR
+         EqKmD4qPYDADv7Tp2SaebPV4LOC4CbgI0QNyBGF238qK1594dgnBFhRLyQIO1GatJFMV
+         vXOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726483876; x=1727088676;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/xhyzobQT8oY8lvw8wg2epKpXu0kbMbMHlKQEvlRZmM=;
+        b=Kh+8OPh8h/Go3XHuDTziawqdCf7RxlCrn3KLdTzXSTv41GtdrYDQ4gm5/zHwPaxODi
+         j9jfGr3wtg/Kvmr6uqcWTWvEBWp7R5IXq/9HeAp3ObT+CO8eXcVila0M9E66906AjrWT
+         mno4oqcJS1SpKqjP96XVPvbV6mxQyRBj8fSl+nQLzIOj131qHVKn/rd5VguvfEskPlP7
+         +19H2bE3PLZ+r+WF0wvNBevLvb9o6EyeL2kXbvmGyj8nLJNH0GZZQuJSuApZztFFVPqc
+         AriR8Pa8uf6/Tv/oAIDgQ1Gn1DIUVPP3w9f0QKt+2uNEOQWv6E6qCeW0ghuUSt41PyHg
+         Z6Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi/F1S0hhbKOPnULNAdUYaMUB3d/pj/x8FskxO7lAHHVkk2RBo416ey8f86X9Z/5YECOPZs2Nh95d7MQ==@vger.kernel.org, AJvYcCW8ve8hpE8nbekKE5CPqquEVzlw9ShRSTp5s7KJKEEd5tMocxtKWqSm/kUyTluztofoUugbBp73OBky9f4p@vger.kernel.org
+X-Gm-Message-State: AOJu0YwANuyROx60Cc3JtH99pTdQnwrSDvnb85XYTdKtmDR9TFnnhlPp
+	3aDOwKpTjIfHdvy9pXgr5FuBz+8xydFUc07Fm/WnJOyw93MkOedM
+X-Google-Smtp-Source: AGHT+IH7QxzHW89rg/kQB35L3ZwlK2RGhGIdw3qzSwFe6sx6n3jdVH2YXu/gJ91HKnVgqif6YV/AwA==
+X-Received: by 2002:adf:fb85:0:b0:374:ba73:a90b with SMTP id ffacd0b85a97d-378c2cfed2bmr8333094f8f.3.1726483876230;
+        Mon, 16 Sep 2024 03:51:16 -0700 (PDT)
+Received: from [192.168.50.7] (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f9999sm6870236f8f.58.2024.09.16.03.51.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2024 03:51:15 -0700 (PDT)
+Message-ID: <cf8647d2-aa92-466d-8f79-494f9bd3e114@gmail.com>
+Date: Mon, 16 Sep 2024 12:51:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] btrfs: Split remaining space to discard in chunks
+To: Qu Wenruo <wqu@suse.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240916101615.116164-1-luca.stefani.ge1@gmail.com>
+ <20240916101615.116164-3-luca.stefani.ge1@gmail.com>
+ <98991e9d-cce0-48ad-b77c-b7d3eff71dca@suse.com>
+Content-Language: en-US
+From: Luca Stefani <luca.stefani.ge1@gmail.com>
+In-Reply-To: <98991e9d-cce0-48ad-b77c-b7d3eff71dca@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 16 Sep 2024 10:21:58 +0100
-Shiju Jose <shiju.jose@huawei.com> wrote:
 
-> Thanks for reviewing.
+
+On 16/09/24 12:39, Qu Wenruo wrote:
 > 
-> >-----Original Message-----
-> >From: Borislav Petkov <bp@alien8.de>
-> >Sent: 13 September 2024 17:41
-> >To: Shiju Jose <shiju.jose@huawei.com>
-> >Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
-> >acpi@vger.kernel.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org;
-> >tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
-> >mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net; Jonathan
-> >Cameron <jonathan.cameron@huawei.com>; dave.jiang@intel.com;
-> >alison.schofield@intel.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
-> >david@redhat.com; Vilas.Sridharan@amd.com; leo.duran@amd.com;
-> >Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
-> >Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
-> >naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
-> >somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
-> >duenwen@google.com; mike.malvestuto@intel.com; gthelen@google.com;
-> >wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
-> >wbs@os.amperecomputing.com; nifan.cxl@gmail.com; jgroves@micron.com;
-> >vsalve@micron.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
-> ><prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
-> >kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
-> >Linuxarm <linuxarm@huawei.com>
-> >Subject: Re: [PATCH v12 01/17] EDAC: Add support for EDAC device features
-> >control
-> >
-> >On Wed, Sep 11, 2024 at 10:04:30AM +0100, shiju.jose@huawei.com wrote:  
-> >> +/**
-> >> + * edac_dev_feature_init - Init a RAS feature
-> >> + * @parent: client device.
-> >> + * @dev_data: pointer to the edac_dev_data structure, which contains
-> >> + * client device specific info.
-> >> + * @feat: pointer to struct edac_dev_feature.
-> >> + * @attr_groups: pointer to attribute group's container.
-> >> + *
-> >> + * Returns number of scrub features attribute groups on success,  
-> >
-> >Not "scrub" - this is an interface initializing a generic feature.  
-> Will correct.
-> >  
-> >> + * error otherwise.
-> >> + */
-> >> +static int edac_dev_feat_init(struct device *parent,
-> >> +			      struct edac_dev_data *dev_data,
-> >> +			      const struct edac_dev_feature *ras_feat,
-> >> +			      const struct attribute_group **attr_groups) {
-> >> +	int num;
-> >> +
-> >> +	switch (ras_feat->ft_type) {
-> >> +	case RAS_FEAT_SCRUB:
-> >> +		dev_data->scrub_ops = ras_feat->scrub_ops;
-> >> +		dev_data->private = ras_feat->ctx;
-> >> +		return 1;
-> >> +	case RAS_FEAT_ECS:
-> >> +		num = ras_feat->ecs_info.num_media_frus;
-> >> +		dev_data->ecs_ops = ras_feat->ecs_ops;
-> >> +		dev_data->private = ras_feat->ctx;
-> >> +		return num;
-> >> +	case RAS_FEAT_PPR:
-> >> +		dev_data->ppr_ops = ras_feat->ppr_ops;
-> >> +		dev_data->private = ras_feat->ctx;
-> >> +		return 1;
-> >> +	default:
-> >> +		return -EINVAL;
-> >> +	}
-> >> +}  
-> >
-> >And why does this function even exist and has kernel-doc comments when all it
-> >does is assign a couple of values? And it gets called exactly once?
-> >
-> >Just merge its body into the call site. There you can reuse the switch-case there
-> >too. No need for too much noodling around.  
-> edac_dev_feat_init () function is updated with feature specific function call() etc in subsequent
-> EDAC feature specific patches. Thus added a separate function.   
-> >  
-> >> diff --git a/include/linux/edac.h b/include/linux/edac.h index
-> >> b4ee8961e623..b337254cf5b8 100644
-> >> --- a/include/linux/edac.h
-> >> +++ b/include/linux/edac.h
-> >> @@ -661,4 +661,59 @@ static inline struct dimm_info
-> >> *edac_get_dimm(struct mem_ctl_info *mci,
-> >>
-> >>  	return mci->dimms[index];
-> >>  }
-> >> +
-> >> +/* EDAC device features */
-> >> +
-> >> +#define EDAC_FEAT_NAME_LEN	128
-> >> +
-> >> +/* RAS feature type */
-> >> +enum edac_dev_feat {
-> >> +	RAS_FEAT_SCRUB,
-> >> +	RAS_FEAT_ECS,
-> >> +	RAS_FEAT_PPR,
-> >> +	RAS_FEAT_MAX  
-> >
-> >I still don't know what ECS or PPR is.  
-> I will add comment/documentation here with a short explanation of features
-> if that make sense?
-> Each feature is described in the subsequent EDAC feature specific patches. 
-Can you bring the enum entries in with those patches?
-That way there is no reference to them before we have the information
-on what they are.
-
-J
-> >
-> >--
-> >Regards/Gruss,
-> >    Boris.
-> >
-> >https://people.kernel.org/tglx/notes-about-netiquette  
+> 
+> 在 2024/9/16 19:46, Luca Stefani 写道:
+>> Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
+>> mostly empty although we will do the split according to our super block
+>> locations, the last super block ends at 256G, we can submit a huge
+>> discard for the range [256G, 8T), causing a super large delay.
+>>
+>> We now split the space left to discard based on BTRFS_MAX_DATA_CHUNK_SIZE
+>> in preparation of introduction of cancellation signals handling.
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
+>> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
+>> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+>> ---
+>>   fs/btrfs/extent-tree.c | 24 +++++++++++++++++++-----
+>>   1 file changed, 19 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+>> index a5966324607d..cbe66d0acff8 100644
+>> --- a/fs/btrfs/extent-tree.c
+>> +++ b/fs/btrfs/extent-tree.c
+>> @@ -1239,7 +1239,7 @@ static int btrfs_issue_discard(struct 
+>> block_device *bdev, u64 start, u64 len,
+>>                      u64 *discarded_bytes)
+>>   {
+>>       int j, ret = 0;
+>> -    u64 bytes_left, end;
+>> +    u64 bytes_left, bytes_to_discard, end;
+>>       u64 aligned_start = ALIGN(start, 1 << SECTOR_SHIFT);
+>>       /* Adjust the range to be aligned to 512B sectors if necessary. */
+>> @@ -1300,13 +1300,27 @@ static int btrfs_issue_discard(struct 
+>> block_device *bdev, u64 start, u64 len,
+>>           bytes_left = end - start;
+>>       }
+>> -    if (bytes_left) {
+>> +    while (bytes_left) {
+>> +        if (bytes_left > BTRFS_MAX_DATA_CHUNK_SIZE)
+>> +            bytes_to_discard = BTRFS_MAX_DATA_CHUNK_SIZE;
+> 
+> That MAX_DATA_CHUNK_SIZE is only possible for RAID0/RAID10/RAID5/RAID6, 
+> by spanning the device extents across multiple devices.
+> 
+> For each device, the maximum size is limited to 1G (check 
+> init_alloc_chunk_ctl_policy_regular()).
+> 
+> So you can just limit it to 1G instead.
+> (If you want, you can also extract that into a macro as a cleanup).
+I think SZ_1G is enough for now.
+> 
+> Furthermore, you can use min() instead of a if ().
+> 
+> So you only need:
+> 
+>          bytes_to_discard = min(SZ_1G, bytes_left);
+> 
+> Otherwise this looks good enough to me.
+> If the 1G size is not good enough, we can later tune it to smaller values.
+> 
+> Personally speaking I think 1G would be enough.
 > 
 > Thanks,
-> Shiju
-> 
+> Qu
+Ack, done in v5
+>> +        else
+>> +            bytes_to_discard = bytes_left;
+>> +
+>>           ret = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
+>> -                       bytes_left >> SECTOR_SHIFT,
+>> +                       bytes_to_discard >> SECTOR_SHIFT,
+>>                          GFP_NOFS);
+>> -        if (!ret)
+>> -            *discarded_bytes += bytes_left;
+>> +
+>> +        if (ret) {
+>> +            if (ret != -EOPNOTSUPP)
+>> +                break;
+>> +            continue;
+>> +        }
+>> +
+>> +        start += bytes_to_discard;
+>> +        bytes_left -= bytes_to_discard;
+>> +        *discarded_bytes += bytes_to_discard;
+>>       }
+>> +
+>>       return ret;
+>>   }
 
 
