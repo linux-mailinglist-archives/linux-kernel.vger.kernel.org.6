@@ -1,126 +1,83 @@
-Return-Path: <linux-kernel+bounces-330476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFEE979F07
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:14:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA8E979F14
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBA671F24150
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:14:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71D181C231FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68BC1509A5;
-	Mon, 16 Sep 2024 10:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC73E14B965;
+	Mon, 16 Sep 2024 10:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bOuRtlLU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEzADLZ4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AF314D6EB;
-	Mon, 16 Sep 2024 10:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189FF14AA9;
+	Mon, 16 Sep 2024 10:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726481620; cv=none; b=E50RjU8Ea2GEsaK/2qr3xSPY9Gd+DQQSNkpmSGiaMnkk1909FSGDdmyDyPlaGSZd4wHHPm8wh0iyMA7SG8AJNnKIYanSUUPAkqEBLrhzNgpavByDwcUEt5VoT+31fidGWEFyorxU8pCKKYbrENiS9A02Ym2UGLSiDK/1jS15KJg=
+	t=1726481739; cv=none; b=As4i6rSg9CiVUQQD6M3b22MUXtrDpLBMSsGRr0f1dyP2C8zC5XaJrsKhpYXM+4KswsSRJQ5uJqu4Gu13byUrMov3JTxtOqmbchkWKrXJ2kAukMVdO85spYtQ1Uinic0Y4N8h4qYKIjOevXGa7nW/OIaFakKGGI0H5AOff2q65Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726481620; c=relaxed/simple;
-	bh=AJClUZHkcOc0nIkFKgtMeGqAt/Ij2O5DgRNhQvRHDw4=;
+	s=arc-20240116; t=1726481739; c=relaxed/simple;
+	bh=0TWt/E9h071v0SXzRGXM9nnf0J/m4R13yaLwwe6bf10=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pkLaseQ4YHy4xkPRuo9Oi+lks8TRGpEQ3voQkXnHf+yhBUKKEx8MXHfluQLko3gIhhPDj2iTA5tYJdf1MtEDPx0tjPS2BlTCDrKHnxNqN4RNNL4oISn9wdMNUzUkM8KbIAbngOMWiLyo43crOPNKxXm2LKmZGm+1iwP3GCdW1NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bOuRtlLU; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726481619; x=1758017619;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=AJClUZHkcOc0nIkFKgtMeGqAt/Ij2O5DgRNhQvRHDw4=;
-  b=bOuRtlLUsg7H7Ys2pM0yG01NHRH6cFKKxaDVBWkVIurdUk53CenG1sbp
-   dRuZCKyACY8x1LEi/xLbGM+dxIS1xwRpW1Vh3SifXPcPyKViCQBZ11KfK
-   nONWkQdgORIR1TanGzPTl1D8bfnwMGlDiP1siALLjrCT6q+CbFYZv1RjG
-   RPn+FmaoU6vZdtL9Do9txA2GgAN99JRrCN7CdZ5/mW117V5OpBNQXCLHN
-   torSDAkAgSTblIQPNZi3279luKgagWvpOI64qOYkXHXc23h/hkrqe+EHn
-   cMqxHXE+6hhoZcgQAeKZUYCDBcHX1ZcooM1T/IprBpOAu0mz8QebmLkL/
-   w==;
-X-CSE-ConnectionGUID: rssQSRwsTzCa8AR/cyXRRQ==
-X-CSE-MsgGUID: /FY4BnfhRNSSWaB2zM9uHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="42815758"
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="42815758"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:13:38 -0700
-X-CSE-ConnectionGUID: 6/QFDO/ZT/CAOga95eN+gA==
-X-CSE-MsgGUID: 9nXYsiyvTTC1+eAvvYp/Xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="73419425"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:13:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sq8jb-00000009Pyj-0z7J;
-	Mon, 16 Sep 2024 13:13:31 +0300
-Date: Mon, 16 Sep 2024 13:13:30 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v7 06/10] i2c: Introduce OF component probe function
-Message-ID: <ZugEyqg-2ZL2VVEd@smile.fi.intel.com>
-References: <20240911072751.365361-1-wenst@chromium.org>
- <20240911072751.365361-7-wenst@chromium.org>
- <CAD=FV=Udc9aP7bSzTWP82zsaztRD2YnVNpSDA54FC0dKQ-Nz2A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+7kzz6O9KfEz0M/QNS/gv/YF9DYWw3h14EVO2YW7MTZkto+HMaVg3sxwE5ZGyBTBssAJzUqPNTV18pDRL6dMAGUNyuz11pyZ785RmRH5DrqvpFoqg5djTSGl1xGNL5+l9/zWWmOLAaSNAIrejz6Q8tsp4UkRQ3jSmD6cp0msKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dEzADLZ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC5AC4CEC4;
+	Mon, 16 Sep 2024 10:15:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726481738;
+	bh=0TWt/E9h071v0SXzRGXM9nnf0J/m4R13yaLwwe6bf10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dEzADLZ4RGCV0L+G+Czd2Xd5vHF6iwN2UjHqi6a0RWxck6/GVtjtyJytxOUXYAZgI
+	 RVq9FGPCuNz7fMzCfziql9jlUXZxovU3wl4PRQknhuzdv3iecp6sMRXKFBypyBL1xs
+	 gi9kpVI2+DoiKDz9LHQQ34nqYFJXMCocl8PRGALFkrk+fzUXClvR87gfuL6a7asDJZ
+	 2I2yHLU6Q2t6yxs9C8rXY+geuDoexSKSFVuKehzuPQEULVrtyxdZzZ6lD5Qwi1rBhn
+	 9azIrJbRenzWIXAcAaAYPWaIoElENeqbCqfj5T2m2QtsrVTSfz+Y4T5nNEYUJER/HL
+	 WQWEP+5Gr2FMQ==
+Date: Mon, 16 Sep 2024 12:15:32 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] drm/i915: Fix typos
+Message-ID: <gamwfgmreryzvy6fazduxs4z3sfjxck7xmsho4elpemcf7llpl@epzlqmudvrzx>
+References: <20240915120155.101395-1-algonell@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=Udc9aP7bSzTWP82zsaztRD2YnVNpSDA54FC0dKQ-Nz2A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240915120155.101395-1-algonell@gmail.com>
 
-On Fri, Sep 13, 2024 at 04:43:04PM -0700, Doug Anderson wrote:
-> On Wed, Sep 11, 2024 at 12:28 AM Chen-Yu Tsai <wenst@chromium.org> wrote:
+Hi Andrew,
 
-...
-
-> > +static int i2c_of_probe_enable_node(struct device *dev, struct device_node *node)
-> > +{
-> > +       int ret;
-> > +
-> > +       dev_info(dev, "Enabling %pOF\n", node);
-> > +
-> > +       struct of_changeset *ocs __free(kfree) = kzalloc(sizeof(*ocs), GFP_KERNEL);
-> > +       if (!ocs)
-> > +               return -ENOMEM;
+On Sun, Sep 15, 2024 at 03:01:55PM GMT, Andrew Kreimer wrote:
+> Fix typos in documentation.
 > 
-> I guess the kernel lets you mix code and declarations now? I'm still
-> used to all declarations being together but maybe I'm old school... I
-> would have put the "dev_info" below the allocation...
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 
-In general yes, but we don't allow it everywhere for everything,
-we have two exceptions:
-1) for-loops;
-2) __free() RAII.
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 
+Because we are receiving lots of typos patches in this period,
+it's nice to have the context written in the subject, e.g., in
+this case, Fix "bellow" -> "below" typo.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Don't worry, I will take care of it.
 
-
+Thanks,
+Andi
 
