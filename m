@@ -1,230 +1,225 @@
-Return-Path: <linux-kernel+bounces-330894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5932897A5C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:11:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F09C97A5C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D915E1F22CD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:11:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F1BEB2BAF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F200B15920B;
-	Mon, 16 Sep 2024 16:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3414158A1F;
+	Mon, 16 Sep 2024 16:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3iNCp2Ww"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zdI8MWaK"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA96158A1F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 16:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726503083; cv=none; b=hmIxQ3BTYR26jCvCzo0BmsQ/PkuAWguquW6UoNRNNahXOPgtm2nwU6cIzT0h6FIchshWxguMQm2ki+QzuPr5jtcFzpl3g7wcBeRk5wzh6BqfzaCZVILf66DeUa8B+6pSOj5kPCMXi8Ci9t6ThWwAViNWrJ26aoB4wkUR2PCWA2E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726503083; c=relaxed/simple;
-	bh=juiViXrpR3GA3MTg+3FQnCytbqe+phi2i4TFd9RH7SI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aAmy+5G7g01DBjd1Mdt/o6dc69N6h+byegwQ0gFboAacipva3/sDB5mLnK1vL/sTZC+RKW80N+EbMK9uLINIWpQOVCNsMTtnfrAPws8O3FnIuLzarSbg45s/xn6LkbmVLljktgH9RtFBHuZrsPWDSEKrsqBKi4kMPh8w84Ff+6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3iNCp2Ww; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e040388737so2288293b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 09:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726503081; x=1727107881; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=werckLu2qABNnMsCoJq0wayuYhQhq8fQBYHljQK5Yds=;
-        b=3iNCp2WwZtLLCR4VQAZiTDw98o4dJ6dCFkZzp7iTO1sovT4BhjSeJZOYiGp1+9uNuM
-         xTrb0v6flVrn32lEw5z4LH2mUeN8hWnZTr0Rh1UhjM2d/DfYQxNCmZkoDwJJm5MPOXtr
-         TntYEM/zAOgPP/+FMh1/wOXkjmawhYtkkETLWz9gl4n9Qf82PzLNQrOCNYneTUu/s68M
-         4lKdjkruKaXkWE/28pCJYCwvFnhoOqsjjkOpRmn9OMA8Kc0vFaml+M9dfs6rMw7cbHmL
-         or/cA9trT3cl+VAT53Ru9y+cEN3pWqO9aoAoaSHUfilzp2T2cqTYgZH8ChISQJGDaRt5
-         JScw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726503081; x=1727107881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=werckLu2qABNnMsCoJq0wayuYhQhq8fQBYHljQK5Yds=;
-        b=LU1mkY1GsT4k+TNqm7fS4sKtvNd/zUMGeYu17IudYjeyP3l4Na54TTHfqnSdXD2KQD
-         LHcNuCiLebJsuWtEYFKsZ60TFdM1njfdWYrqbQF/Uf2TltDMx1kfDbQFwL2vY/6dZfsr
-         S7eFxyB3CPomDgOg0IqCW/vHpLRGfwapBr9bYNQYBjXUdROwF9qeQccjLW2w1LPQiBu4
-         IjM0wn9mKNw9uesDmmcu05RjFac4TjlxtooJGHm42q8DFdUYYpJi1k/RRhg7zn36qGyn
-         krcSRkJoNFugodMp1mjGfKHTg5hlveZx7VF+e3A/NsDChscKDiIGkZwVA5+aLgYXfWl/
-         1Dlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBrS3oxdM5LXG6AL7SFEAlIuJoaofdE0+ag3CtqYChB2qbFQbtlHlzGXYU5mM21NTgmZ0Ud3ctkuEs24Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNSD45dmon+fubAjXZsvVSTCueVQ+9WT1nUO/qmMwannW0ekro
-	T+mg4i589io9TrQbRuM8chX4yUjDM2TPlujY6PQ/wTpzp0MeRcFgEEQWyb+Eus7Y+/9s602RShr
-	cGKxJqVNcGICel/PZZ5cB9E908HYTA+emq/ov
-X-Google-Smtp-Source: AGHT+IG2paECrHCwX7g5IwKKYKo3FCiS9Keilpk2/8MMysEQ09W4ONACdDMzunXhFuD2rjnRQo8ev2HDFlwqsLIDb8g=
-X-Received: by 2002:a05:6808:3994:b0:3e0:3946:b92 with SMTP id
- 5614622812f47-3e071b28ccbmr8946972b6e.45.1726503080489; Mon, 16 Sep 2024
- 09:11:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5220D15957D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 16:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726503120; cv=fail; b=RYBunyuScg1msQ8hMQsL3TOoFKrEaBlovcQx+DPohyBuvvOQHoXTa0HgfLuInObfsn9P8X9B6VvvV7/+id7adKTC6fh7i9/xwS/LNEjUioqZ5u11RQSLQybVkCtGrnaSc/X9d87RXfJ2gpsYx8FLh4/CBHzApfq7NVuOLgO9hmk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726503120; c=relaxed/simple;
+	bh=+uN9ld4OeoPLCWgWtPqaxS6RJEHvV0wP3aF36PXs7UM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=R7+qNp3MbWpURN2SS2fykflnj3DI0xLM6hWQh0r24a5NJ9kELyke2/OE8Z92AKycT/YzFIfd1nv3/3X6dArHtTv/ElzfxkX5opQkD+wlDwvat9uCkX2Y9F46nxfrJy2YG8htjfME30u5xjx+fGQiSH2+AMGlOw/q1SgAbtgL9Sg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zdI8MWaK; arc=fail smtp.client-ip=40.107.220.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EY0mJB6rowjMtMoXDlgLm7J6ZtYndyoWGOhL/vSvlvLbWfxig52smnxER7rcpF+rPoRtqsfKTVHNrVW6cXzfj5ZTQggoGCty9H69CNIWh+Bt+g141IKs0gZ2LUfcm9qzYG2ttQGCgLFU1cZTNA6q+NIg2wPvULgdOd03KZVU7Y+gAcffHYvuUZ7VWJpXgb6dTrrH+S/ncQxwnmeeIpQ0xBqNTNupoUvj9DVAXemjUQBvG/QL4xhEOu1fLMAnlSU99/KNfyLGIwqa2xaogMOP2k5ScDmWudA8ioYiIAnisMRzaPW13E5YnbyD4+7WJHnwULukA7wBCp4P+aKn5nJ/4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ts9Y6o9P6bjLFDf8AhpS+QcKDyxX/j2k9ffRoA7jEo8=;
+ b=N2YZg36sFCUFtjvYnHuLkMsAZJMeslJUC1hXaWG52NSCSoN5L6kw7qup9neZVGPPNhkSwAwy6Gz5CA6NKKNp6DkwK82JbEd1wbLaXNsLTNLsZWwbe0eWI2ZrVzIZsLVTPlOBreDhFdAw6tfmlPjH2qWzGXw1zapg6o1hSzrfUuD59BhkdVZecrqpjxyA8dSn2Ano63QK13kP9ZnPXGRrMt1V5vc3CnScWEc1oE3fWPgnBUnTjz7iLwHixhyZ7aMn02GrRYJPFBlPxqeFvvtE6uYJxZ3UHq+BMSxgqupxn+e4PKEhbuNOEOmTiaroTD1UEVORU8qxvD6I/USWSPu/Yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ts9Y6o9P6bjLFDf8AhpS+QcKDyxX/j2k9ffRoA7jEo8=;
+ b=zdI8MWaKvdEmtOy1Uono0m45pCXqKMtd7qVNiMMclEldVEVQiDKIv2xWwo3aUkT050E/+C+tuPPrbnpMgyHa+z9HjOuGnIrzFTWIezsL79wQiKKfP1QWwGMGruLQ+hZiABSwDjba2eMoIeYydvlfpyS3tGf8wKpUKku9te2tue0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
+ DS0PR12MB6582.namprd12.prod.outlook.com (2603:10b6:8:d2::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7962.24; Mon, 16 Sep 2024 16:11:56 +0000
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6%5]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
+ 16:11:56 +0000
+Message-ID: <5ff8adab-42c9-403e-9822-8f4fbc259d07@amd.com>
+Date: Mon, 16 Sep 2024 23:11:46 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] iommu/amd: Disable AMD IOMMU if CMPXCHG16B feature
+ is not supported
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+ robin.murphy@arm.com, vasant.hegde@amd.com, ubizjak@gmail.com,
+ jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
+ kumaranand@google.com
+References: <20240906121308.5013-1-suravee.suthikulpanit@amd.com>
+ <20240906121308.5013-2-suravee.suthikulpanit@amd.com>
+ <20240906163818.GK1358970@nvidia.com>
+From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+In-Reply-To: <20240906163818.GK1358970@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0015.apcprd02.prod.outlook.com
+ (2603:1096:4:194::16) To DM8PR12MB5445.namprd12.prod.outlook.com
+ (2603:10b6:8:24::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <linuszeng@tencent.com> <20240913084506.3606292-1-jingxiangzeng.cas@gmail.com>
-In-Reply-To: <20240913084506.3606292-1-jingxiangzeng.cas@gmail.com>
-From: Wei Xu <weixugc@google.com>
-Date: Mon, 16 Sep 2024 09:11:08 -0700
-Message-ID: <CAAPL-u8s+mc1bY-DJ_zDJ1PLrhP_2w2MQXxdteN4z_U=qE6jfw@mail.gmail.com>
-Subject: Re: [PATCH V2] mm/vmscan: wake up flushers conditionally to avoid
- cgroup OOM
-To: Jingxiang Zeng <jingxiangzeng.cas@gmail.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, kasong@tencent.com, 
-	linuszeng@tencent.com, linux-kernel@vger.kernel.org, tjmercier@google.com, 
-	yuzhao@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|DS0PR12MB6582:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e51be1c-bc25-45a4-2b74-08dcd66a4804
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OHN2Y3FqT3VRTWV2VVdndlg3ZmxZWGhMZlVOTURLZDhwSGdEd21ZZGpFVXZG?=
+ =?utf-8?B?RC8vQXNWcUFta0lNR3dyek02NWF5ZnVzQ2hRNk1PQWlZMVdFaks1V1NiTG5l?=
+ =?utf-8?B?UlNyMDBsajBTdENET1JmSTdHdG4vdEhKM2dweVEwUTNxNVhKZWtHZlBpekt2?=
+ =?utf-8?B?TVZtSUZXakZtZnNTRndMMTdqSWVzUHdGY2ZaamRrWXlNU2p0dG1BZUoySG9R?=
+ =?utf-8?B?VmRJdmVWanRuY1RRenhvV3FGd29laGRDLy9jL0svSUZITkxFVXJxNm5OOCta?=
+ =?utf-8?B?Zy9RVE9GRFMyUDN2a29vcEt1d3IrbkhBTkt0QklueVdaOWR6cjZQa2E1Y3gw?=
+ =?utf-8?B?dlJiSkpYTitMM3ZBWXVWNHFMWmUvR3lDbDdMM2JnN2pGMnRZR1hiS0ltR3ZF?=
+ =?utf-8?B?MXNtOVJ6bGFCMDJaRHZqSk53cnYwV3BycXlNU1E5bVM2Mkp0alQxYUIreE9y?=
+ =?utf-8?B?UDE4Vi94ZVBNaUdmOGFENm4raWwyelBTZm5sMkh5MjVwR0dBc3JGSGRoL2p5?=
+ =?utf-8?B?ZDhNSkNwOEVtMDJTTW9hZ2F0U3EvZXZOVW4vMzBzaXkrcENCbXJlcWhxRW5H?=
+ =?utf-8?B?WTFVdkxNM052TzVFbzdRWVVtVDJPMnE3bWVCT0o4WEF3ZVphQ3Eva3hvdklT?=
+ =?utf-8?B?dXl2TVplZk53M2JsZ1NJRW8wczFMbEdVVlpBNTY2VllGL01CY1pmWmVUUi81?=
+ =?utf-8?B?ZzhwVllNMTZlMlNJOGVNQll5emtaL1NNNGdEMEtNdUpDRXRhclllaW5rMXRq?=
+ =?utf-8?B?NVVHK1grc2M1MWlvRnZNK0J6bmNVTE0vL2xTdW1zOTBieFlpdmpLWGdXOHBs?=
+ =?utf-8?B?dlhRMU1LVUtURE5tMi9IekQyTUxVK2V1L3NqUFd2YWc3VUREQ0gvN1Q4bWlz?=
+ =?utf-8?B?b2hNY1BxaEcxNlVwdEdnVVZkMi9RYXc3dUZzMmowS1VSSXFaVFhtekRoUWRR?=
+ =?utf-8?B?cVJkUTdVc1hVOXZ4UmhZbVh3WmMvWk9rbGZTZHk2dHVONW4yMndiNHE0Wndm?=
+ =?utf-8?B?VEF6NWRQWUx0WW5aelU5eXBqYUlScWwxOUxhZUhnNHpRZG4xZm1KbmZ1bmcy?=
+ =?utf-8?B?aWI0bUNoVjFtWWNqWEF4ZU1EMURrQW5FSDAxOE5CNUpSN1JYMFo5dHJISElU?=
+ =?utf-8?B?M0o2V2QzSGk2L0pHL0hNWXExT2pmcktaRk9vWXZUYllWQnFKYVAraE84SnJi?=
+ =?utf-8?B?VDVKRHhtQlBuUjZZbU9WbVpENU9hY0pVUlpmYWEyUnRQK2RSQXJDZWpzR1FO?=
+ =?utf-8?B?bTFCYVVTWTMzUHl5Yks2SE8zVzdRUkFlYjkxcG0zU2VMUXRYYXAvRDJsYXVP?=
+ =?utf-8?B?RC84VXE5VTJORlVmQnVvVTVvL09TN1o0VGdBejhPYURNZ25zdXhYZXVXMWky?=
+ =?utf-8?B?ZWRJZlR1eHM5dGlEbGtxUkZCZmJHZ3BKK1ZJQjZOQktpMXFOaVIyOTJtU1V1?=
+ =?utf-8?B?eGowVU9NRCt5eEM2NFRtbEdTZ1ZhMHVGbGZZS3EzN0pvejlwdlpMZ0VXckF4?=
+ =?utf-8?B?TXRzdzZwNDFHRisyZFIreXhjWmlDQm1idUlBK0tBeXdNNDh6Wjk5UHFBeVM4?=
+ =?utf-8?B?VXd5VFVkOWhkbXNTV2VEQVZzcDNsNEQ1NzNpbUJ0Wmp3bWVUekllSHlWK2lJ?=
+ =?utf-8?B?R0VWdjFGT3RJNU5OZTNLZjExcG5mNFd2QnVtalN0T2VvT29xRmVUN0g2aDkv?=
+ =?utf-8?B?V2lBMUtReEErdVdYNGxMdVVlZFVsMEE3OEdzOXRjTnFjQ1pvUmRIMzlHZ3RT?=
+ =?utf-8?B?UWVuTnpIVXoyQ0dzZUtRRTFpY25oQzB6MWRoYnY5ZGhqL0hOelFpMHRVakRY?=
+ =?utf-8?B?UDRnL3lCNE04TWZpL1pOdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cVlsNTNDa3Izc3NHWExZR3hIcFFaM0pCYk9kbXBFYnp0UTJ2b2owSXVnTUtV?=
+ =?utf-8?B?RDhvRW9SUXY2alNRRWw3eUk3VVRHRnRhQ3QxR2w4QTF3R2lsenEybVZMY0Nr?=
+ =?utf-8?B?OVoydi9oSllJRVZ1c0lXRkhsKzRVV2t6UlNKMittYU16aTRzRVlpdVJJdVVx?=
+ =?utf-8?B?TlhMQ21KK2l5RUtwbk1OYit0V3dheTRMQjZzRVpzZWo4RG1Ecnd4L3lPeGpO?=
+ =?utf-8?B?bFd2M2YxbG9JWWl1K25nbGtqZE1xSXhUaEtLT0lTak1BUE1YclRsWGtybExV?=
+ =?utf-8?B?WVUyR2ZBVmV1T1hSRXhKSVpsKzdXd1hHVncyTjZtOXllTVVPLy9wU2ZQL0ZS?=
+ =?utf-8?B?ajBMYXFjWXBONUdSRWdGUTZrb2R6OXlUbmNtd1RSVDhJQ2Y1dVVEaS9oTTRJ?=
+ =?utf-8?B?TzZxV3VlWDV3Y1JjcHpOa05nZlFFV3RBNDE0SUN6NlJKSGUzRzNQU2hIaE44?=
+ =?utf-8?B?WnhGNVhMZlArQ1ZSWW9yZkhibUZFbUs0WEwzZ09qRldUblRyRjBwRnBjZ1Q4?=
+ =?utf-8?B?ZnZLTldFRUo3SWxuVW5DcGcvVHVtMHhUOHJHTCtDaFN3cDlXSXRQYVRKVjB2?=
+ =?utf-8?B?SGpPK3BYQ1VHTVhJTjN4TU04dVlFUGJVS2JwU1YwbGd1LzZlRjRaQXFCdTY1?=
+ =?utf-8?B?cC92U0hzY2tYTmNTS0lTK1hSd2JPcGFVTHNtSUFGUjQzUVh6M0VRaVJZUmd1?=
+ =?utf-8?B?c1Q1c0E1Yk5rUERIYW1hVi91OGM2RnpNSm4ycG1JSVM5bzVHTXQzNCtKMTJp?=
+ =?utf-8?B?NVRYbW9qSDhhbVVja2h5bGFaUXhrUmxhcHhBL3ZJblRRR2doTXpXVEtIN0I5?=
+ =?utf-8?B?U1FRK3dHblJpT2NYQXgxT0lyUC9RWlppVXNSVFlDZmxmK1NxOGRPOFRvN2pY?=
+ =?utf-8?B?MjZlbW94Mnh1KzBvQVRIbTB0N3ZUcVFpWVo5Y21CbnZZMXhnTGhDTVFuTkJY?=
+ =?utf-8?B?YVIrTFd4KytPWWo2R0QzU01veXYzUzVtYjFEMUdoL2ZhTnB0czFUVlRRZE10?=
+ =?utf-8?B?S2tnN1k1M1NmQUdXK0RsSnU1am81ajJyaTdkZUwzSnVUUGhTVjJ0QmxXVHpI?=
+ =?utf-8?B?N1dUb29oU0h6Wk0yLythNnhrTGVHWFVOVmYwVk1xOWVYbnAvZktHVEI4TWRM?=
+ =?utf-8?B?a0M5NnJaM3dHQThQL2hDRzA5NmNLTjV0TDdsNnZxeG5MM0N3OXB1R1NwcWdz?=
+ =?utf-8?B?cmNwenkwZHRpaXpsTVMySkwxTUovaEJsNU4zTUpzTVZWUXcrU3RpaXAvSWZP?=
+ =?utf-8?B?Q1JwK3BMdHYwdXVtTzZBU2l0TkFaVFlYK2t6RnV1KzhqSENPTFMzeXl5ZWJB?=
+ =?utf-8?B?ZXMzS2RVbXl5RlQwOHJSS2V5aVl6SDM1RDRHeDQ3bXVqcHFwM3BIbVdrSUV6?=
+ =?utf-8?B?cnhFeUNqY2VBOW1NemxucHkwNm84emhITVhPQlNoQ1V4eHJ3SzJPQ2VjQmtu?=
+ =?utf-8?B?SVJaOWxSY3JTcHJ3OCt0Sm03czAvWkhhd3AxbEtDU2hIcGxZYTJjOWRieDRJ?=
+ =?utf-8?B?eVVZSkowSjVkTytBeklhSERsVjJuZTRPNlhGKy9VNTJFa0RBUFdmNmVIYWNa?=
+ =?utf-8?B?bndRYytUTzJlbnZqZGdyb0RuQnQxWGRLV1JTdGNGNG5NczJuV2xSOW5QSHBh?=
+ =?utf-8?B?ZGFPUGxPemVYUm9GLzNHdWQzcEJoT28vN0xaMS9tZW8xTE03Q3Y5YnNmNEtZ?=
+ =?utf-8?B?TGxodk45c3ZLdk9wWTBpK2EyL0xodm02Zklwa1RacGRHZkVKaEVwQ28vcW5C?=
+ =?utf-8?B?eStOTEdCdithdnJBNkpjNkt0RmpuNGZ5eU5ncm85NE1iNlAzd00xZDdibDE5?=
+ =?utf-8?B?OVllcmI2cmVXTzJvbGVFTFJZNFBXcUdlZGZVSGJacmJTcXV1cVRreVlQZkwr?=
+ =?utf-8?B?b2VDM0phMkZ0cFhkdDgvR1NJV2d1TUV1VGVIWVh2Y0RiZUh2c3FhMHJQT0Rr?=
+ =?utf-8?B?YUtNVGo5WXYyTEQwTm1Uanc1Y1hVVXhVVWZlY0g4K3crWFppV29KYm5xWWdE?=
+ =?utf-8?B?TTVCMEhOM3hOQlE1cHdDVzlvRHVEbEpoSUpGRlVNMk5HMExHaUZJSnFXSTc4?=
+ =?utf-8?B?ejFvcytSQlRnWUNnbGwwUWlzRmNiQ05iUndPQ0RlUVpaSGkvSlpvVEFnWHpZ?=
+ =?utf-8?Q?gkuQ=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e51be1c-bc25-45a4-2b74-08dcd66a4804
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 16:11:56.2305
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mFQ/baXg40Eb9WRVRRXdPY3C0uEgjwHLaO3sDq0gkIq9re1j7FPs+UmK2Pn546M4lwdRBlH0hE4SRZ9oo7FnyQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6582
 
-On Fri, Sep 13, 2024 at 1:45=E2=80=AFAM Jingxiang Zeng
-<jingxiangzeng.cas@gmail.com> wrote:
->
-> From: Zeng Jingxiang <linuszeng@tencent.com>
->
-> Commit 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> removed the opportunity to wake up flushers during the MGLRU page
-> reclamation process can lead to an increased likelihood of triggering OOM
-> when encountering many dirty pages during reclamation on MGLRU.
->
-> This leads to premature OOM if there are too many dirty pages in cgroup:
-> Killed
->
-> dd invoked oom-killer: gfp_mask=3D0x101cca(GFP_HIGHUSER_MOVABLE|__GFP_WRI=
-TE),
-> order=3D0, oom_score_adj=3D0
->
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0x5f/0x80
->   dump_stack+0x14/0x20
->   dump_header+0x46/0x1b0
->   oom_kill_process+0x104/0x220
->   out_of_memory+0x112/0x5a0
->   mem_cgroup_out_of_memory+0x13b/0x150
->   try_charge_memcg+0x44f/0x5c0
->   charge_memcg+0x34/0x50
->   __mem_cgroup_charge+0x31/0x90
->   filemap_add_folio+0x4b/0xf0
->   __filemap_get_folio+0x1a4/0x5b0
->   ? srso_return_thunk+0x5/0x5f
->   ? __block_commit_write+0x82/0xb0
->   ext4_da_write_begin+0xe5/0x270
->   generic_perform_write+0x134/0x2b0
->   ext4_buffered_write_iter+0x57/0xd0
->   ext4_file_write_iter+0x76/0x7d0
->   ? selinux_file_permission+0x119/0x150
->   ? srso_return_thunk+0x5/0x5f
->   ? srso_return_thunk+0x5/0x5f
->   vfs_write+0x30c/0x440
->   ksys_write+0x65/0xe0
->   __x64_sys_write+0x1e/0x30
->   x64_sys_call+0x11c2/0x1d50
->   do_syscall_64+0x47/0x110
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
->  memory: usage 308224kB, limit 308224kB, failcnt 2589
->  swap: usage 0kB, limit 9007199254740988kB, failcnt 0
->
->   ...
->   file_dirty 303247360
->   file_writeback 0
->   ...
->
-> oom-kill:constraint=3DCONSTRAINT_MEMCG,nodemask=3D(null),cpuset=3Dtest,
-> mems_allowed=3D0,oom_memcg=3D/test,task_memcg=3D/test,task=3Ddd,pid=3D440=
-4,uid=3D0
-> Memory cgroup out of memory: Killed process 4404 (dd) total-vm:10512kB,
-> anon-rss:1152kB, file-rss:1824kB, shmem-rss:0kB, UID:0 pgtables:76kB
-> oom_score_adj:0
->
-> The flusher wake up was removed to decrease SSD wearing, but if we are
-> seeing all dirty folios at the tail of an LRU, not waking up the flusher
-> could lead to thrashing easily. So wake it up when a mem cgroups is
-> about to OOM due to dirty caches.
->
-> Link: https://lkml.kernel.org/r/20240829102543.189453-1-jingxiangzeng.cas=
-@gmail.com
-> Fixes: 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Cc: T.J. Mercier <tjmercier@google.com>
-> Cc: Wei Xu <weixugc@google.com>
-> Cc: Yu Zhao <yuzhao@google.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  mm/vmscan.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 749cdc110c74..ce471d686a88 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -4284,6 +4284,7 @@ static bool sort_folio(struct lruvec *lruvec, struc=
-t folio *folio, struct scan_c
->                        int tier_idx)
->  {
->         bool success;
-> +       bool dirty, writeback;
->         int gen =3D folio_lru_gen(folio);
->         int type =3D folio_is_file_lru(folio);
->         int zone =3D folio_zonenum(folio);
-> @@ -4332,6 +4333,9 @@ static bool sort_folio(struct lruvec *lruvec, struc=
-t folio *folio, struct scan_c
->         /* waiting for writeback */
->         if (folio_test_locked(folio) || folio_test_writeback(folio) ||
->             (type =3D=3D LRU_GEN_FILE && folio_test_dirty(folio))) {
-> +               folio_check_dirty_writeback(folio, &dirty, &writeback);
 
-We cannot simply call folio_check_dirty_writeback() here because
-folio_check_dirty_writeback() assumes that the folio is locked (e.g.
-see buffer_check_dirty_writeback()).
 
-> +               if (dirty && !writeback)
-> +                       sc->nr.unqueued_dirty +=3D delta;
->                 gen =3D folio_inc_gen(lruvec, folio, true);
->                 list_move(&folio->lru, &lrugen->folios[gen][type][zone]);
->                 return true;
-> @@ -4448,6 +4452,7 @@ static int scan_folios(struct lruvec *lruvec, struc=
-t scan_control *sc,
->                                 scanned, skipped, isolated,
->                                 type ? LRU_INACTIVE_FILE : LRU_INACTIVE_A=
-NON);
->
-> +       sc->nr.taken +=3D isolated;
->         /*
->          * There might not be eligible folios due to reclaim_idx. Check t=
-he
->          * remaining to prevent livelock if it's not making progress.
-> @@ -4920,6 +4925,14 @@ static void lru_gen_shrink_lruvec(struct lruvec *l=
-ruvec, struct scan_control *sc
->         if (try_to_shrink_lruvec(lruvec, sc))
->                 lru_gen_rotate_memcg(lruvec, MEMCG_LRU_YOUNG);
->
-> +       /*
-> +        * If too many pages failed to evict due to page being dirty,
-> +        * memory pressure have pushed dirty pages to oldest gen,
-> +        * wake up flusher.
-> +        */
-> +       if (sc->nr.unqueued_dirty > sc->nr.taken)
-> +               wakeup_flusher_threads(WB_REASON_VMSCAN);
-> +
+On 9/6/2024 11:38 PM, Jason Gunthorpe wrote:
+> On Fri, Sep 06, 2024 at 12:13:04PM +0000, Suravee Suthikulpanit wrote:
+>> According to the AMD IOMMU spec, the IOMMU reads the entire DTE either
+>> in two 128-bit transactions or a single 256-bit transaction.
+> 
+> .. if two 128-bit transaction on the read side is possible then you
+> need flushing! :(
+> 
+> For instance this:
+> 
+>    IOMMU         CPU
+> Read [0]
+>                Write [0]
+>                Write [1]
+> Read [1]
+> 
+> Will result in the iommu seeing torn incorrect data - the Guest paging
+> mode may not match the page table pointer, or the VIOMMU data may
+> become mismatched to the host translation.
+> 
+> Avoiding flushing is only possible if the full 256 bits are read
+> atomically.
 
-The wakeups will be much more often than intended because
-sc->nr.unqueued_dirty includes the drity file pages now, but
-sc->nr.taken doesn't.
+I have verified with the hardware designer, and they have now confirmed 
+that the IOMMU hardware has always been implemented with 256-bit read. 
+The next revision of the IOMMU spec will be updated to correctly 
+describe this part. Therefore, I will update the commit message and 
+implement the code accordingly.
 
->         clear_mm_walk();
->
->         blk_finish_plug(&plug);
-> --
-> 2.43.5
->
+>> It is recommended to update DTE using 128-bit operation followed by
+>> an INVALIDATE_DEVTAB_ENTYRY command when the IV=1b or V=1b.
+> 
+> This advice only works when going from non-valid to valid.
+
+Actually, if we change the DTE when IV=1 or V=1, we would need to 
+invalidate as well.
+
+>> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+>> ---
+>>   drivers/iommu/amd/init.c | 23 +++++++++--------------
+>>   1 file changed, 9 insertions(+), 14 deletions(-)
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> 
+> Jason
+
+Thanks,
+Suravee
 
