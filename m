@@ -1,116 +1,96 @@
-Return-Path: <linux-kernel+bounces-330456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8174979EC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:52:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE26979EC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3AA1F23CA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF3941C22E26
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AE414B94C;
-	Mon, 16 Sep 2024 09:52:07 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A591B14BF8A;
+	Mon, 16 Sep 2024 09:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBVpgO24"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FBD14900B;
-	Mon, 16 Sep 2024 09:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F212813A863;
+	Mon, 16 Sep 2024 09:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726480326; cv=none; b=SrcVmuhheYenayJkZOlHmzBO1BYGku4/0YNgDyRd1U7x9bxpw+qxP7cDeot/9cylPsUG06YPBbay0/k0NCgVzbrvOPAYoSi1OQwu+DQfG/a1WLh5fPfL8HZBxM0MsQWatyCdXqfFvqOjHk8Y7T8P5H+SbaywxE9aYNzyZ0XVGig=
+	t=1726480385; cv=none; b=G3Lybe8MEYiMjSJlm4Cq86vCi/Of9zljqRHAWSvq8doEcK+1ltQPh6nIovI4r/DApGxB1iGtG0/HQpYBNzE70vclHfGdj/3cd3atzEXlRTtb0nhXWFtVa0H9bkwPsS1s06QAzytyibB4bCUj0gGz8chVC/ivG3UUIPm6fZTZjLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726480326; c=relaxed/simple;
-	bh=X2icocNhBXEuMZHjuTgfDcq3XClpztmChHcpGvDoJXE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M6YSq1WDy4ANyUdfNMA4MWr7dlbFPM7R0QQrmCB4ttlJTxTAtgPuQSjUlxPsNtVGnJWhASslHFq0NTF93sLzVmMVFIpfKJ9/UMXrfiHEf0WnT2mJ9hhNf5wDv7N4XN43Tt7cuV852ijjgZ9EoJnZWoxI8M1U5NV/RjPE0obQIRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X6gDX3jWYz67JQP;
-	Mon, 16 Sep 2024 17:51:56 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 346621400CB;
-	Mon, 16 Sep 2024 17:52:00 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Sep
- 2024 11:51:59 +0200
-Date: Mon, 16 Sep 2024 10:51:57 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>
-CC: <admiyo@os.amperecomputing.com>, Sudeep Holla <sudeep.holla@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Robert Moore
-	<robert.moore@intel.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Jeremy Kerr <jk@codeconstruct.com.au>, "Matt
- Johnston" <matt@codeconstruct.com.au>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Huisong Li
-	<lihuisong@huawei.com>
-Subject: Re: [PATCH v5 1/3] mctp pcc: Check before sending MCTP PCC response
- ACK
-Message-ID: <20240916105157.00001204@Huawei.com>
-In-Reply-To: <a3f91c94-e829-4942-abde-193462769cba@amperemail.onmicrosoft.com>
-References: <20240712023626.1010559-1-admiyo@os.amperecomputing.com>
-	<20240712023626.1010559-2-admiyo@os.amperecomputing.com>
-	<20240801124126.00007a57@Huawei.com>
-	<a3f91c94-e829-4942-abde-193462769cba@amperemail.onmicrosoft.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1726480385; c=relaxed/simple;
+	bh=Y0wEGA/CDTJ9bQYXykDNZV2VklFOjcmqGNqmmUYxrxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mA3rK9Rb9s8tI5bTekb3zGppE/QJYmA917yXXE4p0HeW5imv5UQiVdZpswT2CUblFAQ5CX6c2R9TGkFLkw5GPUOkL6cUxEtjjvvjvCLk1E3YJOJvccz66QkBoo4WxLY8o28LBclvo2G6w1j84vy4gAQoikk7HB6l1kZBvLCHy5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBVpgO24; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 004D6C4CEC4;
+	Mon, 16 Sep 2024 09:53:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726480384;
+	bh=Y0wEGA/CDTJ9bQYXykDNZV2VklFOjcmqGNqmmUYxrxE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FBVpgO24Jw0W7UijYP9XiQi6LcBD8000hE6krlw6QC/jeC5oFhu8w+3pt0VmZeDzA
+	 9KrBwLFvegudgVk07Dzoc4SNOpKLwb2ZBrUNvFduvF1M0xBNS1d4keSxHUmIwr/kWS
+	 nyqfc2SA/iLmf3KoiER8jjb4z9oP2mmCmCKBWbKNDdhxrd7Y6+nB54NuxkAkB/vkBo
+	 GqpTckxLUTaPGfAbrNSiL7iLz6GuleVGxmSb0X1+TSPe/gAqY0dhTcyqB1cqmulEdG
+	 94u2OKZDTBM8R86C3q8jZUbX2NkDZ/yOaMnHl1IjoKl0ygGnDrUI0ZUYsrFIUYg3QT
+	 CTM5uaBjvKlMQ==
+Date: Mon, 16 Sep 2024 10:52:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH net v1 1/1] netfilter: nf_reject: Fix build error when
+ CONFIG_BRIDGE_NETFILTER=n
+Message-ID: <20240916095258.GG167971@kernel.org>
+References: <20240906145513.567781-1-andriy.shevchenko@linux.intel.com>
+ <20240907134837.GP2097826@kernel.org>
+ <ZudP-mkhquCJJPXv@calendula>
+ <20240916073201.GF167971@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916073201.GF167971@kernel.org>
 
-On Fri, 13 Sep 2024 17:21:06 -0400
-Adam Young <admiyo@amperemail.onmicrosoft.com> wrote:
+On Mon, Sep 16, 2024 at 08:32:01AM +0100, Simon Horman wrote:
+> On Sun, Sep 15, 2024 at 11:22:02PM +0200, Pablo Neira Ayuso wrote:
+> > Hi Simon,
+> > 
+> > This proposed update to address this compile time warning LGTM.
+> > 
+> > Would you submit it?
+> 
+> Hi Pablo,
+> 
+> Yes, it is on my todo list for today.
+> Sorry for not getting to it sooner.
+> 
+> I plan to post a patch for this to nf-next.
+> But let me know if you prefer a patch for nf, net,
+> or some other course of action.
 
-> >>+ * @shmem_base_addr: the virtual memory address of the shared buffer =
-=20
->=20
-> >If you are only going to map this from this pointer for the
-> >initiator/responder shared memory region, maybe it would benefit
-> >from a more specific name? =20
->=20
->=20
-> I am not certain what would be more correct.
->=20
->=20
-> On 8/1/24 07:41, Jonathan Cameron wrote:
->=20
-> >> +	pchan->shmem_base_addr =3D devm_ioremap(chan->mbox->dev,
-> >> +					      pchan->chan.shmem_base_addr,
-> >> +					      pchan->chan.shmem_size); =20
-> > devm doesn't seem appropriate here given we have manual management
-> > of other resources, so the ordering will be different in remove
-> > vs probe.
-> >
-> > So I'd handle release of this manually in mbox_free_channel() =20
->=20
->=20
-> How fixed are you on this?=A0 mbox_free_channel is the parent code, and=20
-> knows nothing about this resource.=A0 It does no specific resource cleanu=
-p.
-
-
-I've lost context on this unfortunately and don't have time to look
-back at it this week. Maybe right answer is a cleanup callback?
-
->=20
-> The only place we could release it is in the pcc_mbox_free, but that is=20
-> essentially a call to the parent function.
->=20
-> All other comments should be addressed in the next version.
->=20
->=20
-
+Patch posted here:
+- [PATCH nf-next] netfilter: nf_reject: Fix build warning when CONFIG_BRIDGE_NETFILTER=n
+  https://lore.kernel.org/netfilter-devel/20240916-nf-reject-v1-1-24b6dd651c83@kernel.org/
 
