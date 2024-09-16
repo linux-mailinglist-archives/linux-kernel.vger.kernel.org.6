@@ -1,141 +1,101 @@
-Return-Path: <linux-kernel+bounces-331018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE1697A74F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:26:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC1697A752
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 20:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DF21F21D79
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8441F2607A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 18:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB2C15B548;
-	Mon, 16 Sep 2024 18:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F314594D;
+	Mon, 16 Sep 2024 18:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avePzGF0"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Ws0IBRiw"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C0513211F;
-	Mon, 16 Sep 2024 18:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97835F4E7;
+	Mon, 16 Sep 2024 18:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726511177; cv=none; b=Emd6hlJ9gKEx3YZEk3aHxRHStJxgzpIT9QvJlnhw4imhjSdfxtU6YtCv71wY3VDj/tyrD7f0pXhiK5vGb4W7LqFoXkj0VGxa4bLqFF/2mUfbCsz0XTVHQngkOuHcS/J7ijvSKdwbjZ07+Kgkk+zEJ+Uv3voOplTTVvzc7zbzjyE=
+	t=1726511457; cv=none; b=gpLY/1B9cJ+S71SdNo+6/oWZgHS0JuJDL0wjUanAqddE79lKrhfkJpq6HX+0Vr0YWk9rj4+43cOb3run8H8pPs2P2BAhj/Ktl77HlsNzVOx4eF9+Q+pIzWClYdEmTFGzh5X4sAN0pgyMzYKhFKUyvRG1J85r6GsXmHGA72DV8Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726511177; c=relaxed/simple;
-	bh=v56YRJJZy/wRNHZbG1ywnyqgE0PluUV7/SsL50AVYqw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZqeA9MpHtYYDiFgObDLmzQjJldDfnQC/0pf/igGQjO1hkbAUNOh12NTGGy99NjtFWWf7OSE2xMxH07NfkTux+bd+gOXuNPjbzlW+4qA6JPgafBFY18KTrpPXk+leS7wBRfUvIu0HIF3HFnfnYIUru1GqO3mXWmmh1mgV5MeWdlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avePzGF0; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8ce5db8668so832611666b.1;
-        Mon, 16 Sep 2024 11:26:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726511174; x=1727115974; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aIKV/f4fmNN+xl9ScoTPdS6tXhDJDmlBWNBiM5jjZOk=;
-        b=avePzGF0ni1+fZ9BsQrzpcUdAtONSXLWU62BnQJ+kSsa8nmhZcExmk6py0FsKe2wgj
-         N37LDVq1fcgyMSsihdYTZZy4wICmjUncVeqi9sSrqcl4/uQe/RYCnRa8eumQgWifRUxH
-         YZA/G0stIohZvJpXfvtb+PKhpfy/9kv9ZqJqMOfx/S6oKzsftFD3Q82f7BjqIBsMfK2h
-         GMS3M5NVBGuFhH6gwwISrEA8sjx+VCKnPXS6V8WWqqyNpgIq9esNlPAYbZDWj4vGD0Q7
-         TNICaXT3Ixiz0z5vy1j2D9m1wD5GUHPGUPH70cLMP0KEdhXmvHeTUd65FdR0qp+DES36
-         JsHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726511174; x=1727115974;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aIKV/f4fmNN+xl9ScoTPdS6tXhDJDmlBWNBiM5jjZOk=;
-        b=cmm+n6AHW0DNxAl+Km0Z6A+6X2DafANhDJeaIZBR6w2yqPKlrK4wYY/gqEIdcOcsKY
-         bw0EheJOzZcVY8e2IFaI4uiv3B8AtcpR3RdyIABPFe3twApTYEocPC5zXji7uo6Kd2GU
-         RLzlvRH0TEM6/mSe94Xa8ONoezl8D4bFS4BwlLnN1BxAXRaPgw4tdVQUUGBX5FuoUtmM
-         sEfd5CnvStanfNv8GLBAkIWrM2m25r/hUnEelVlobGM0eazXXQHmw6DNkT17orAFnZQv
-         fmxxAYW6tbPqgcPhHmq6NflY2n7afGi29eWCtm0/vbKasUJS/6NIVKUdC5jB9GyioP6I
-         iFEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVejVcOnOJ/p4EtEbotH/WlPe7BcaTlUXAzs44MLtvMG8WL2z8KiXFub2O3dYfQ3RWj4sd+ueETJFQ82JU@vger.kernel.org, AJvYcCVellwzOaSIjijxTJUkwQS1kVKqUr4qYul6YMFkqUfFzWsxQCH6m05AV17M7XZ6PU84gFmw7g/ieXyc2Kf8Aw==@vger.kernel.org, AJvYcCXKRlbz0P99/VqFoeCqrt59IL/7VPxYSInGUnt7oJxBGVtEnwlvwiYSqB37xuSURSSO00UzyTQnx43+qTyh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6C198udoPbdUasdHzZmDXdY+/9LO1V8f4V1X/flrRBguVngME
-	9QMkMWzkQ3T2UIoIKrtODdoEcv6CmkcFRPYB/2nDFPZ4QrHEZDcc
-X-Google-Smtp-Source: AGHT+IHZP5bpH5qlg2I9OOJbzFLfW3myCBjFcT869tCQtqCK3mxPDp7nmlTfLNMEnVpsMHcaCRBxoA==
-X-Received: by 2002:a17:907:e214:b0:a86:c1ff:c973 with SMTP id a640c23a62f3a-a902961ded5mr1657274866b.47.1726511172823;
-        Mon, 16 Sep 2024 11:26:12 -0700 (PDT)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061096aa2sm348392666b.35.2024.09.16.11.26.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 11:26:12 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs updates for 6.12
-Date: Mon, 16 Sep 2024 20:26:08 +0200
-Message-Id: <20240916182608.1532691-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726511457; c=relaxed/simple;
+	bh=DUd9WcMz0N6JqUgYIGzGsLNpdYVvSRcA8Vy4FpWVLHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4DSJeFWyKoooxzoURp5pacdoJxE779izTenMRLuSwBTfNfKqJcwKRNmm4xuss4+mCpl52dGObQqApvbDXI1OUiNXR67T7UifjlFRsiRw7PH6ZwgoLvvEjkLs/BIeS/tkaEYcfCyJo9isUIXOAeeYgiqrjq32jWVdgkxpvRjlx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Ws0IBRiw; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gAyI006SWlMSA59v//aeZLYRYdSo+/9azsJe9J8yl9Q=; b=Ws0IBRiw+dNalAZsQYhyl/kj7l
+	t69xyNCDPJRx5g0Vws3fEgIn4TrF5hPzXY5NJFv8SxieG7c2BhVYtMnIjweuOoA5MBQxkcdLEA0hv
+	PujIqfL6EV5xnBy4HQArVMFjb3NWuWpSbJVkJC24iCI/VoSsyWR9tzjZhFrpGyVVy9fpnqRP4VDW4
+	JJJO1YsA2bNEs5Z2unflfVxzbahkemKsMh6LVUpvyi4TzMv/830pfVD8aMUU3n192BxSgKpCIf0XE
+	TPvap8mGoz3zMkyMX4Ee7rY50jE2l47md5hnhmi00XCXWAGvMtIMAUgIgVa/WXMLeJ3MmqNo2kbri
+	rVv7RTrA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52784)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sqGUq-0006Ha-1I;
+	Mon, 16 Sep 2024 19:30:48 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sqGUm-0007BQ-1C;
+	Mon, 16 Sep 2024 19:30:44 +0100
+Date: Mon, 16 Sep 2024 19:30:44 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, bryan.whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com, maxime.chevallier@bootlin.com,
+	rdunlap@infradead.org, andrew@lunn.ch, Steen.Hegelund@microchip.com,
+	daniel.machon@microchip.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next V2 1/5] net: lan743x: Add SFP support check flag
+Message-ID: <Zuh5VDvnwx868Iqx@shell.armlinux.org.uk>
+References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+ <20240911161054.4494-2-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911161054.4494-2-Raju.Lakkaraju@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Linus,
+On Wed, Sep 11, 2024 at 09:40:50PM +0530, Raju Lakkaraju wrote:
+>  {
+> -	u32 chip_rev;
+> +	u32 fpga_rev;
+>  	u32 cfg_load;
+>  	u32 hw_cfg;
+>  	u32 strap;
 
-Please pull overlayfs updates for 6.12.
+...
 
-This branch has been sitting in linux-next for over a week and
-it has gone through the usual overlayfs test routines.
+>  	} else {
+> -		chip_rev = lan743x_csr_read(adapter, FPGA_REV);
+> -		if (chip_rev) {
+> -			if (chip_rev & FPGA_SGMII_OP)
+> +		fpga_rev = lan743x_csr_read(adapter, FPGA_REV);
+> +		if (fpga_rev) {
+> +			if (fpga_rev & FPGA_SGMII_OP)
 
-The branch merges cleanly with master branch of the moment.
+This looks like an unrelated change.
 
-Thanks,
-Amir.
-
-----------------------------------------------------------------
-The following changes since commit 3e9bff3bbe1355805de919f688bef4baefbfd436:
-
-  Merge tag 'vfs-6.11-rc6.fixes' of gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs (2024-08-27 16:57:35 +1200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-update-6.12
-
-for you to fetch changes up to 6c4a5f96450415735c31ed70ff354f0ee5cbf67b:
-
-  ovl: fail if trusted xattrs are needed but caller lacks permission (2024-09-08 15:36:59 +0200)
-
-----------------------------------------------------------------
-overlayfs updates for 6.12
-
-- Increase robustness of overlayfs to crashes in the case of underlying
-  filesystems that to not guarantee metadata ordering to persistent storage
-  (problem was reported with ubifs).
-
-- Deny mount inside container with features that require root privileges
-  to work properly, instead of failing operations later.
-
-- Some clarifications to overlayfs documentation.
-
-----------------------------------------------------------------
-Amir Goldstein (1):
-      ovl: fsync after metadata copy-up
-
-Haifeng Xu (1):
-      ovl: don't set the superblock's errseq_t manually
-
-Mike Baynton (1):
-      ovl: fail if trusted xattrs are needed but caller lacks permission
-
-Yuriy Belikov (1):
-      overlayfs.rst: update metacopy section in overlayfs documentation
-
- Documentation/filesystems/overlayfs.rst |  7 ++++--
- fs/overlayfs/copy_up.c                  | 43 ++++++++++++++++++++++++++++++---
- fs/overlayfs/params.c                   | 38 +++++++++++++++++++++++++----
- fs/overlayfs/super.c                    | 10 ++------
- 4 files changed, 79 insertions(+), 19 deletions(-)
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
