@@ -1,162 +1,145 @@
-Return-Path: <linux-kernel+bounces-330522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E07E979F9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:45:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9092A979FB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43592285F1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:45:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE674B21016
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEB315350B;
-	Mon, 16 Sep 2024 10:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8206154C19;
+	Mon, 16 Sep 2024 10:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sg6MUeb9"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZF/CBSDL"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EAA14F11E;
-	Mon, 16 Sep 2024 10:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54FC14F114
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726483503; cv=none; b=NItH/cFoUncj84dqP0YBCoKq4rYBKS/Dn+cfYGFe7NFgjpjrI9ltHxSGTeB02DDdXifz+jRHpYZBWTSi4CnvI6OKKb7aBMaDt79GOA6zaAcBWx4LMsJO5ID+j6NxgvjKS37h+b/IDzmW1wcnP73Ln4xQx5pAtXVmZpeDnHMTRaA=
+	t=1726483584; cv=none; b=PKWBPtINK1awoQ+XJAbKiPXGs59Jvtw6D0t9dkrci3kXql5ATA8ttJerb23WDc1Tkl4oiAF3pDLtF7fCeEWuwJOS7JwwiDsC+1EkebsBmtjsispu0l1YOTXxHZ+R4SRhOMm7HCEwzBICL6QVyQ66zp1VVwv+J5tzDeDrFX0tYe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726483503; c=relaxed/simple;
-	bh=o59dL819fJ6zGURqdBqB42E/6GtUK2dTZjXgsYOPuRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=i8YinulRLjyjy3g/Dut+6oMgn1/t4MwfVtWYA17wXsfubvD0FvY4C8/+P1HBmdwJm4F8TBqvVmEfFaJ4c0HaFPC3ecNFKuoHE4GcoB+MabV6iv3tija4BnHhbEUpBqlFEUoWdXaFFFUZeJq3spNySpY31sjyvxFku2AzU6ucxqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sg6MUeb9; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48GAimRJ034340;
-	Mon, 16 Sep 2024 05:44:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726483488;
-	bh=c41oU7Ad79H3UL8ipktVy6gBiXbYWMNfsad8ymFmWB4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=sg6MUeb9qAyMtkogW1W2XJe83R8KoJ2LuesEjH/JX4M1UCyWS5mhhKaIwi8EaPVTQ
-	 3y65i61ssLNO6vhrUaLZ9pXQSnw7cVdt6S4SFyiii6gYgU2bDTxgPOOHiGEQnaTzuY
-	 o1r9FgipN0LqgwXwuv6SEIXg1SzDVodPBZHM+hbg=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48GAimCe028539
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 16 Sep 2024 05:44:48 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 16
- Sep 2024 05:44:48 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 16 Sep 2024 05:44:48 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48GAih9M129669;
-	Mon, 16 Sep 2024 05:44:44 -0500
-Message-ID: <9aedf384-207a-4eb7-a371-70bbe76ab5af@ti.com>
-Date: Mon, 16 Sep 2024 16:14:43 +0530
+	s=arc-20240116; t=1726483584; c=relaxed/simple;
+	bh=mV9du04VKGKk1nPwWEovpDjsnvZZeLOYjvudwBnQ87c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IPjpuWpbLxbsf2qwWLL2WnOZ442L7zjAr2FU+ZXSnDWpIkGQSm+68wZR4oMTIlbuyZMQ+Yf404ynpj6qK+LF/hppElrUh9yuIfDtn2HYvo4bcDF1ULKaiL6odB9GQkOhDTlIdgW/qkwkeiz4UKWH9pc6jTLb+wFOtX8BL6/4lTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZF/CBSDL; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e1a7d43a226so2449500276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 03:46:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1726483582; x=1727088382; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hOot1WAmO0n8LqJvNiku2kLrm8KQvY7N+dDNwBSEg74=;
+        b=ZF/CBSDLw30DFYzkwvHzm2IktN8jmz0b7vNZq0DWTGZAVFfcfFcP/wIXl0Tvj+ujnp
+         GbkaPj0CXymhl6axTdGscnGJQph5P/lxaOYhn7ebYVqaA4nOxHUUJNuBdtKqhxhHoPpk
+         VZRjlhm5ad7OJYYX9V4jmqM5qpBr7Q7XDdqcBMJqy/PXxY8qKwnG+J8T/mqJLYqIS+YL
+         GxSWeR9JIBw9hDX8iHDe1/htoiETqUVtz9xY2QAJC3sQEnTqWmIKOk/9uSXcQAPz/04i
+         XR70Zq/8CDOmKPO9mdnZk57XNSW/d5Tf/Ju0ftptKSA/ti6NofGU+jdV8vfZB9pqzlkh
+         0MQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726483582; x=1727088382;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hOot1WAmO0n8LqJvNiku2kLrm8KQvY7N+dDNwBSEg74=;
+        b=S26wTYKabrbpjg98hDXdoTu6eew9ieZFWyQppaW//8u34mi/E5O5ayEKYsQAKNw0p5
+         g0WzQpv+j5Ky6vTS8lRsFCtckdglUhM0ls3oPjYY3a4CL3XHe9AE0biXgv5e1DkzU4hG
+         A2i/J9ANqDgcbZtnjzN5B+h2NaNO7SaWN2KGcbUSQWXh9WAmo8Uwq0MstbF3/f/sl891
+         oSHpF7rp02LjDLcXS4jz0ICaYRxHLLsQWC6BnJcUqs8LpJkWZLPW49kXZ9tPP4Eu6AbN
+         3uaxnooSEqneEFs3yDf4tSXFK4319IKTsIU06cEghKcc7hj+Q+17Y3EEUZ27ZapR0m0U
+         4fCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrRdHOq3OgfXkMlVZ88RVHjcocPyqSmnBMqIujKq7HvV577zqx3gZ0HO9mPJR2kl4/byx8+A7qkkSO82k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg/4S6r2MTF0lehRrTP5jHrwyNI0ZNauKZtzDZuSCM3Zpaf4+R
+	T6YBl3KNCWPwVwuR5Z5Z8MxZQaluAZBmT2sA8QAsFeyYbqkDVkUZ+sG202hYMlJMBEWLMHkxKuH
+	fCv673q8q3FtLh/Px75uccoJps4RPPaYL/hlE
+X-Google-Smtp-Source: AGHT+IFPT7p70pyzFPnGYf9oumwIpGAwqpVNEQ2qCQe0d4QnaPMyQB86xSQEpMCg12204Y4OQ+FOje+z2iOX3Dd9gQg=
+X-Received: by 2002:a05:6902:1883:b0:e1a:8e31:e451 with SMTP id
+ 3f1490d57ef6-e1daff6229bmr8957471276.10.1726483581486; Mon, 16 Sep 2024
+ 03:46:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: ti: k3-j784s4-evm: Mark tps659413
- regulators as bootph-all
-To: Andrew Halaney <ahalaney@redhat.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Keerthy
-	<j-keerthy@ti.com>,
-        Neha Malcom Francis <n-francis@ti.com>,
-        Eric Chanudet
-	<echanude@redhat.com>,
-        Enric Balletbo <eballetb@redhat.com>, Udit Kumar
-	<u-kumar1@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240911-j784s4-tps6594-bootph-v2-0-a83526264ab1@redhat.com>
- <20240911-j784s4-tps6594-bootph-v2-1-a83526264ab1@redhat.com>
- <c4ace228-ea32-4760-b6af-f7555b68063a@ti.com>
- <zlgo4e5qwg352tsadvw43oj7vlekefuqe66ckokyo6aba47z6o@2wwbyrfjkstz>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <zlgo4e5qwg352tsadvw43oj7vlekefuqe66ckokyo6aba47z6o@2wwbyrfjkstz>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
+ <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
+ <2494949.1723751188@warthog.procyon.org.uk> <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
+ <CAHC9VhSPcy-xZ=X_CF8PRsAFMSeP8-VppxKr3Sz3EqMWTEs-Cw@mail.gmail.com>
+In-Reply-To: <CAHC9VhSPcy-xZ=X_CF8PRsAFMSeP8-VppxKr3Sz3EqMWTEs-Cw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 16 Sep 2024 06:46:10 -0400
+Message-ID: <CAHC9VhS5ar0aU8Q6Ky133o=zYMHYRf=wxzTpxP+dtA=qunhcmw@mail.gmail.com>
+Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
+ [PATCH v2 1/2] KEYS: use synchronous task work for changing parent credentials
+To: Jann Horn <jannh@google.com>, David Howells <dhowells@redhat.com>
+Cc: Jeffrey Altman <jaltman@auristor.com>, openafs-devel@openafs.org, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	John Johansen <john.johansen@canonical.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, linux-afs@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 14/09/24 00:27, Andrew Halaney wrote:
-> On Fri, Sep 13, 2024 at 04:27:47PM GMT, Beleswar Prasad Padhi wrote:
->> Hi Andrew,
->>
->> On 11/09/24 22:49, Andrew Halaney wrote:
->>> In order for the MCU domain to access this PMIC, a regulator
->>> needs to be marked appropriately otherwise it is not seen by SPL and
->>> therefore not configured.
->>>
->>> This is necessary if the MCU domain is to program the TPS6594 MCU ESM
->>> state machine, which is required to wire up the watchdog in a manner
->>> that will reset the board.
->>>
->>> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
->>> ---
->>>    arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 8 ++++++++
->>>    1 file changed, 8 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
->>> index 6695ebbcb4d0..6ed628c2884e 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
->>> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
->>> @@ -663,6 +663,7 @@ tps659413: pmic@48 {
->>>    		regulators {
->>>    			bucka12: buck12 {
->>> +				bootph-all;
->>>    				regulator-name = "vdd_ddr_1v1";
->>>    				regulator-min-microvolt = <1100000>;
->>>    				regulator-max-microvolt = <1100000>;
->>
->> In my opinion, bootph-all property should come after other standard
->> properties like regulator-name etc., as it is least important to Linux. Same
->> comment for other nodes wherever applicable. What is your opinion?
->>
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n130
-> I think that does align better with the dts-coding-style doc!
+On Tue, Sep 10, 2024 at 4:49=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Thu, Aug 15, 2024 at 4:00=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
+e:
+> > On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redhat.=
+com> wrote:
+> > > Jann Horn <jannh@google.com> wrote:
+> > >
+> > > > Rewrite keyctl_session_to_parent() to run task work on the parent
+> > > > synchronously, so that any errors that happen in the task work can =
+be
+> > > > plumbed back into the syscall return value in the child.
+> > >
+> > > The main thing I worry about is if there's a way to deadlock the chil=
+d and the
+> > > parent against each other.  vfork() for example.
+> >
+> > Yes - I think it would work fine for scenarios like using
+> > KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
+> > launched the helper (which I think is the intended usecase?), but
+> > there could theoretically be constellations where it would cause an
+> > (interruptible) hang if the parent is stuck in
+> > uninterruptible/killable sleep.
+> >
+> > I think vfork() is rather special in that it does a killable wait for
+> > the child to exit or execute; and based on my understanding of the
+> > intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
+> > KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
+> > through execve?
 >
-> Looking at the tree though, the standard currently in the TI folder
-> is to put it first. In my opinion if changing the ordering is desired
-> it should be done in one fell swoop (outside this series). I'd do
+> Where did we land on all of this?  Unless I missed a thread somewhere,
+> it looks like the discussion trailed off without any resolution on if
+> we are okay with a potentially (interruptible) deadlock?
 
+As a potential tweak to this, what if we gave up on the idea of
+returning the error code so we could avoid the signal deadlock issue?
+I suppose there could be an issue if the parent was
+expecting/depending on keyring change from the child, but honestly, if
+the parent is relying on the kernel keyring and spawning a child
+process without restring the KEYCTL_SESSION_TO_PARENT then the parent
+really should be doing some sanity checks on the keyring after the
+child returns anyway.
 
-There is a series[0] under review which takes care of this bootph- 
-addition and order correction. In that series, looks like bootph- is 
-placed at the end of the list of all standard properties. So, it is 
-better if we align these patches to follow the same.
+I'm conflicted on the best way to solve this problem, but I think we
+need to fix this somehow as I believe the current behavior is broken
+...
 
-[0]: 
-https://lore.kernel.org/all/20240814-b4-upstream-bootph-all-v4-2-f2b462000f25@ti.com/
-
-
-Thanks,
-Beleswar
-
-> it one big patch, but I'm curious if that's decided the way forward what
-> the TI maintainers would like to see. I can send that patch if desired.
->
-> For now I think sticking with the current practice in this series
-> makes sense until that fell swoop happens.
->
-> Please let me know if you feel strongly otherwise.
->
-> Thanks,
-> Andrew
->
+--=20
+paul-moore.com
 
