@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-330758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15DD297A3D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:11:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BFE97A3DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 16:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8FFF28AFA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:11:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C80201C23A92
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D36E5258;
-	Mon, 16 Sep 2024 14:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA7D15B57C;
+	Mon, 16 Sep 2024 14:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eKtpv3ks"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DUvsLUqg"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D762B156228
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6C215B57D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 14:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726495751; cv=none; b=B56XoP4sS3pHnWdshaj2poHIUa8NMp1/zFwSGwoG+Cxtk5EzStqlH8kLQyk+uDgI2YQrBTId9ckTpI+z9mNXFPTjln3V36/tYNikzieeAbAQUuoqvCXoh8kbEGC4yUDPCK6/rBLP9MR/Vg96XUcUa3qi+JVSHG/NqmrN+J9j0lo=
+	t=1726495762; cv=none; b=ktKfCrmv1No40YVRiXluhItLLturHyl2QwIvdOQJ7HO7w+9cGGuZVwP2U6xgmQkxiSHz2YmkM+V8oFpV1q7/mHhWmeAv0uShImdkhDIyv0Pg2EIXDh/k5g1GGhwfkdkCZtA5iuUj8KTx+IArUDdMMcEXH6k2QMV2B7Oi6WtUPto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726495751; c=relaxed/simple;
-	bh=HmAK7CniaJQtMmxMwrtBOeKPih2cvAldTIyclY21mRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eLIXugb1TbPNYIvWApxZNKeYWPSB0AkCveU/DHJ9xbfz04kJHlK0+g+AVgJT0jLJlbzb3TpmvEY7g2hv4iB4nLdogAohvDIBK366wd2lK7xazotfwZZua6UEmzLvbSl5DxmmiIaNaQ/Jblhf0nVmFWMHcPAo3eZR4O7fFT0MavE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eKtpv3ks; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1726495762; c=relaxed/simple;
+	bh=oIihtEvugRekngdvGX9njfL9N3T0RbQ10ngt0gMQo5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqbgxiHweWaPvSJZfUPCw3l0QFObH8hm9Ce3rk/OBgyUEgWHsHIsJLR23BQwqvFsgdtoGQoQHBhOFZQO29Nf6CkljJCQUPFEkzrDAXd7uT1ZKjldGI0E8I6wd88k9XMpU0n1NOdBmKk+pZO17E1o6mqi4GDqyO/A0UpBqBAsNfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DUvsLUqg; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c255e3c327so5819475a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:09:09 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso824000566b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 07:09:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726495748; x=1727100548; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N1Z+SmDWQl+ToljrRXHidOzvuWiHEmYlCJkt0VHonRE=;
-        b=eKtpv3ksAYZmDex8k5JLNxRPf+lqwwl3CvLK/kW5fuRyfURT7vbMBlF98J9J64VGa7
-         uxU9A8YuMJCxGuT6NED4mfO0z3JxgILPSQxOXfXxhSayHf9PFilm8B8l6VtHyQc6VoRC
-         sQKiQlIAzSB1ApZa4x6T3klDPQUMdRyYbG7esqiazVxLhAOaMthCK07KpCn72Qf/aGPh
-         LySCZi+yPfctRdyEiD7rB1BpbGP/kGfuyvoJu/ejG07EJnJ1mTBs4sb4c2ZJdi+djNKc
-         LxrYO5S7SVqkzuxdULnQDUCSmsH0uTKJM7efq7G96ClNl5hVAqueZZbBdBukRQECmwhd
-         z6uw==
+        d=linaro.org; s=google; t=1726495758; x=1727100558; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=96jeFUgbQRZST+IYwU8Ial8RWWjGSXkDlbIleOFp4OM=;
+        b=DUvsLUqg9N9NDtNpHXrYuFqWLcTH6OHP/dVVTfu3rRTsauhgtd+/777gy939XfdJbg
+         VR9nPxMNajliOMvPOoMmfQVUUPzv7xEyNFPosl+bx2GbkMm0Ay4Enia63rORUVuo3azC
+         nfp5r4BTuimSg3WLM729z50n+FH6+LFUzayZSCmtk+HHvRtDCr1vASWAUNPvMyk+IQNF
+         iXJ+cH2VoJGXB5Ti6e/fXw57mDbozzQTFVzaUi96/uGLkTlEmGfeNxZMihEEPi+BAuI1
+         e7+MI5aI11SmF+0gO0BTq5kn3wFNFfk0273a1mGwYa6l+Spu+sMzqzAGX6aG9SyA2Wxj
+         j9+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726495748; x=1727100548;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N1Z+SmDWQl+ToljrRXHidOzvuWiHEmYlCJkt0VHonRE=;
-        b=th2EZEnlnO9n0XjIh9GCxSH1qnvx/CBd6/mD0xCVxV4yJg1tu+UbSjvngTaBcx4lzU
-         aersUwN7hnDoLWzRUAEggSmSe5ZWdaHHoq+IdVxnKsusfDUu2GLHnldzUNHmY/HP/TNT
-         Ys/DqcDA8vV91b3XwK5M3qyC4aFr+bfFKZ3AkA8Mj01BZT83y208bOFBaAYtkWp12g3j
-         uW/uSitjnc6ePvvbZUUkUa5WY0tujbUez/yiiLoAmeUVgJTegimAz8CYb+Az6B4BYaJn
-         FJBxP/641a8qlCv13Gc7lOFS8LkXBAvNzW0kuqepPMEoleJL6k44wDRRGnmxNMu+KNJn
-         u6VA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBNHKyNNItn1fW+YYzk1KvIkR7p57TNBvyMD6Ao3Cr+mRVuYFM0BqaHVNkxLlrkUIvASI2e7Q+Bu9EtYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc678s7vZpRBN4r35TYubLOr+Nay+x6agdYFWd3gHsq4X6iEeg
-	qEEoHdBwhct/rPmd8xjdeGQqGg/7AxiAOi3j8xM6C+bic2cZdqnfrVeAtbk2lHk=
-X-Google-Smtp-Source: AGHT+IGTIuoTiYSqzwlejafPpW/Fd3fLJblO19bLyEiOs75IO8kJfKTL0OQanRC2moMSY/TIko+L/A==
-X-Received: by 2002:a17:906:f5a9:b0:a86:7924:11bd with SMTP id a640c23a62f3a-a90296178c9mr1737460966b.41.1726495747986;
-        Mon, 16 Sep 2024 07:09:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726495758; x=1727100558;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=96jeFUgbQRZST+IYwU8Ial8RWWjGSXkDlbIleOFp4OM=;
+        b=WtL6qmtJfFBUUQnvgTPiofkqT2iktw8MxNpUSVm2v1CoD4AfmdPqH/pI37GnMHSxNh
+         3/0aZm1cXwiokmrAqAE1WXorGPMKB+bCyJZnfkX+xTN6Z0cFvlgLweYCh0aeVGELb4Q0
+         5w8YpBGI1524ZGZrrB5ClYivb8Bk3iTfz74gzyIltr9hClJs/7oXlDZexSXJsp7GvGZD
+         5nAKcZ+x+RwptZhfEkLc6KS6/AhIZdYXQoKV0PMZoHxZdSt8eEYniSfIp66NLiFav8Xs
+         ocnmRT+MBsJ8igI7Dh3cORgEb7+t7xvvUELVrGyOm+X06rNZOMvQK4NgXLpQds4qte7Z
+         hR3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3+5HsoxpIUllDRgTtk8JBDGU5aEqywEdPfyzMRgjp2Wkt1mMSdzBw5BzQQubwyLmCUV96opbweMCPVfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEJCKmSHXl3WgVSi1scnCaiso8IEfOFrrbwap2o5Sy5kTIYpsG
+	lhsaKDm6KBgrpPm4MeyOG1qU63nVSNLISfopGQmAWwZm/5cC8MPU+jql/L1gkgI=
+X-Google-Smtp-Source: AGHT+IHdZDPEBYWGYVLwV9TT2w6/zrnSjBTkWHdxrQG17ms6CikqS20u1qTFWfpLL/hEdMh16kOitg==
+X-Received: by 2002:a17:906:3395:b0:a90:34e8:6761 with SMTP id a640c23a62f3a-a9034e86912mr1253481866b.6.1726495756446;
+        Mon, 16 Sep 2024 07:09:16 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610966aasm322014566b.26.2024.09.16.07.09.06
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f445fsm322270666b.68.2024.09.16.07.09.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 07:09:07 -0700 (PDT)
-Date: Mon, 16 Sep 2024 17:09:03 +0300
+        Mon, 16 Sep 2024 07:09:16 -0700 (PDT)
+Date: Mon, 16 Sep 2024 17:09:10 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Denis Benato <benato.denis96@gmail.com>
 Cc: Jagath Jog J <jagathjog1996@gmail.com>,
 	Jonathan Cameron <jic23@kernel.org>,
 	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] iio: bmi323: Fix some bugs in suspend resume
-Message-ID: <e5a7bfc4-7c30-4d68-a522-1d780e910da1@stanley.mountain>
+Subject: [PATCH v2 1/2] iio: bmi323: fix copy and paste bugs in suspend resume
+Message-ID: <7175b8ec-85cf-4fbf-a4e1-c4c43c3b665c@stanley.mountain>
+References: <cover.1726333044.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,19 +83,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1726333044.git.dan.carpenter@linaro.org>
 
-These were a couple bugs I found using static analysis.
+This code is using bmi323_reg_savestate[] and ->reg_settings[] instead
+of bmi323_ext_reg_savestate[] and ->ext_reg_settings[].  This was
+discovered by Smatch:
 
-Changes in v2:
-Added an error message in patch 2.
+    drivers/iio/imu/bmi323/bmi323_core.c:2202 bmi323_core_runtime_suspend()
+    error: buffer overflow 'bmi323_reg_savestate' 9 <= 11
 
-Dan Carpenter (2):
-  iio: bmi323: fix copy and paste bugs in suspend resume
-  iio: bmi323: fix reversed if statement in bmi323_core_runtime_resume()
+Fixes: 16531118ba63 ("iio: bmi323: peripheral in lowest power state on suspend")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: no change
 
- drivers/iio/imu/bmi323/bmi323_core.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/iio/imu/bmi323/bmi323_core.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
+index 89eab40bcfdf..f6ff07ba98cd 100644
+--- a/drivers/iio/imu/bmi323/bmi323_core.c
++++ b/drivers/iio/imu/bmi323/bmi323_core.c
+@@ -2193,12 +2193,12 @@ static int bmi323_core_runtime_suspend(struct device *dev)
+ 	}
+ 
+ 	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
+-		ret = bmi323_read_ext_reg(data, bmi323_reg_savestate[i],
+-					  &savestate->reg_settings[i]);
++		ret = bmi323_read_ext_reg(data, bmi323_ext_reg_savestate[i],
++					  &savestate->ext_reg_settings[i]);
+ 		if (ret) {
+ 			dev_err(data->dev,
+ 				"Error reading bmi323 external reg 0x%x: %d\n",
+-				bmi323_reg_savestate[i], ret);
++				bmi323_ext_reg_savestate[i], ret);
+ 			return ret;
+ 		}
+ 	}
+@@ -2237,12 +2237,12 @@ static int bmi323_core_runtime_resume(struct device *dev)
+ 	}
+ 
+ 	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
+-		ret = bmi323_write_ext_reg(data, bmi323_reg_savestate[i],
+-					   savestate->reg_settings[i]);
++		ret = bmi323_write_ext_reg(data, bmi323_ext_reg_savestate[i],
++					   savestate->ext_reg_settings[i]);
+ 		if (ret) {
+ 			dev_err(data->dev,
+ 				"Error writing bmi323 external reg 0x%x: %d\n",
+-				bmi323_reg_savestate[i], ret);
++				bmi323_ext_reg_savestate[i], ret);
+ 			return ret;
+ 		}
+ 	}
 -- 
 2.45.2
 
