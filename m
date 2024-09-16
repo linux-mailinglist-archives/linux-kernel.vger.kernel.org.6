@@ -1,90 +1,103 @@
-Return-Path: <linux-kernel+bounces-330483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B826979F20
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:19:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE0A979F23
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04FA3B23038
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:19:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 251D01C21E94
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29822153BF6;
-	Mon, 16 Sep 2024 10:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8D815359A;
+	Mon, 16 Sep 2024 10:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="uxi2lr7G"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OsXs00T4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="18QLzLTo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD1C14A0B7;
-	Mon, 16 Sep 2024 10:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C85314A60C;
+	Mon, 16 Sep 2024 10:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726481944; cv=none; b=afQaVcp/oaFq+fuZCBF5w3bIDW31UZ6cBVFyUYYG30EKIC8un7TrHE13fldbG1rO6E/WIOurk3BIWbof0uVHH12s9grRuVaHdEkIBstaUgLTLGTTlhJCCFTov+P3j+h2QVzO9XAN4eptkXK9CFl4zxhOX00hw+Vg4CnDRnZ5BRc=
+	t=1726481987; cv=none; b=Iq8zJGaxtMyfwqXf1rBAtFTx2tImUTIZupjdhYDYK7adzJ+sUlUPjU4HKTm84SddmQM6Up+7rJBs972ph5p80Nx0axhFrX+Ttj8J5BoK/2qMb/VHJTuKwhCkKTjOmMJUxXzvgmUf9lJOcZBpId+5JM815ynYJXGYNIvasV2UXEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726481944; c=relaxed/simple;
-	bh=aE2ZuRNkpR8lWiZyGc6eXcn3rbGPF8R4n9L+y441/gY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EwR96/eL+6HxKDbBHMChsl7NMq+rF161gkjvn2TkNrZDYuCiXOEIRBKiSUEryv2dFQgY69HxBiclLkizRTuUzuxpxRydEubkd9jSsJlhX4sHaBjwv+Ka847hCAiFT50+7cKuG0qHpgns0GTrNb7WAlJL3FeGY//8x2BRMAoHJIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=uxi2lr7G; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EA8C0DB25C;
-	Mon, 16 Sep 2024 12:18:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1726481933; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=E59lMmvEEjwBR5jqTACOtU7Ga/pt9xTdExM4qjOnG9Y=;
-	b=uxi2lr7GX0CCcbJbSWSp0XpPn+LIHRKpYoXzPnUM08a3GjjKZtJdC0CtMRlQWFvO9pQeqU
-	tc5Cl4/QLnly6K2oXpeFYVz2GuMqIDPk4qeaAcOCnkvMQJFXqojoDwTuU5zAz5ic5XwO+8
-	bx1rsrsAO/bJ85bQhKaR3pWTvOUn58uudSkYgfCyZ/Ztzf4Wi3bEDZmBMBBZ2UCieN76VQ
-	EAsg/5s/MLlWyqu5jqRCUYd4c3gKggIW1sVOE8EqBt6vfTtBioJxIQiQLRcvoWKAg9coMi
-	bS0RmQC6gCYm2+OTlqSkcGBVx9MJkUSX6ukuNOOujjVXVZoRye9cQbLrT6L/xw==
-From: Daniel Wagner <wagi@monom.org>
-To: LKML <linux-kernel@vger.kernel.org>,
-	 <linux-rt-users@vger.kernel.org>,
-	 <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>
-Cc: Daniel Wagner <wagi@monom.org>
-Subject: [PATCH RT 1/1] Linux 4.19.322-rt138
-Date: Mon, 16 Sep 2024 12:18:44 +0200
-Message-ID: <20240916101844.280673-2-wagi@monom.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240916101844.280673-1-wagi@monom.org>
-References: <20240916101844.280673-1-wagi@monom.org>
+	s=arc-20240116; t=1726481987; c=relaxed/simple;
+	bh=xEY4iXHQyxQ5TEy5yUB0lFoOwfozOkxuoIir1tq/NwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l9yvXHnO1zmD048NP71mQAgzHnrER6FoIiTHl6ggTXpAafmLr9GGKYBLKPkh8BeqDRXsi+2skfA0zgFPusP15URm/C+iXNHj9ymG/3OqjRtE7aGqJYTLlhdyB5ZX32X47T2IM1uVK+/7o70FVKBvnCKd/Xs1x9Pf0UTbNDMxv5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OsXs00T4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=18QLzLTo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 16 Sep 2024 12:19:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726481984;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pZy5VfM0VgVYUQhNzkZHTWn2e+O6Pz/2EXmQN0vnal4=;
+	b=OsXs00T4j6uZTwh5uE8gFL9b8Tfkw1tWURw07F5Mzgy9887Pxa003jXbzAGuPMsIzWr9iC
+	CHfUNC46T+kqEDHyTt0QOGzpYa3di7AsWxqHZ5ML/AEzDsiepBiZdczFTVjhWqI2YqHjQu
+	708JyyZGT5HQGTggLQalBxjPpZ/vOjZFV6yP2rPpMv4IiotDsg70liisgAxxIWQbnBrBg3
+	k+WviKqiP4w71YIWlscmT/uUxWiiVpCfcffvwrJs6rJAaWXgHdsS3iDGOuA3uqXSkD/seb
+	K52AZlaK4EW/oBcu969XHh0mEwBRhA6+1YPouwy5W4S+DK4qM81NcgqPOXgnOA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726481984;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pZy5VfM0VgVYUQhNzkZHTWn2e+O6Pz/2EXmQN0vnal4=;
+	b=18QLzLTofgaZcyR16Y2UDAgkAFAHIFnQS+p09RQVOmSqhFHLDbMGe95vJN6PKD9MiWLciy
+	jGZM8bfK+d9KpDBA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>,
+	razor@blackwall.org, andrii@kernel.org, ast@kernel.org,
+	syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
+	bpf@vger.kernel.org, davem@davemloft.net, eddyz87@gmail.com,
+	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com,
+	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
+	song@kernel.org, syzkaller-bugs@googlegroups.com,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH net-net] tun: Assign missing bpf_net_context.
+Message-ID: <20240916101942.ZJP2h0NM@linutronix.de>
+References: <000000000000adb970061c354f06@google.com>
+ <20240702114026.1e1f72b7@kernel.org>
+ <20240703122758.i6lt_jii@linutronix.de>
+ <20240703120143.43cc1770@kernel.org>
+ <20240912-simple-fascinating-mackerel-8fe7c0@devvm32600>
+ <20240912122847.x70_LgN_@linutronix.de>
+ <20240912-hypnotic-messy-leopard-f1d2b0@leitao>
+ <ccd708bf-580a-3d24-e5be-4e7dc12e7b39@iogearbox.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ccd708bf-580a-3d24-e5be-4e7dc12e7b39@iogearbox.net>
 
-v4.19.322-rt138-rc1 stable review patch.
-If anyone has any objections, please let me know.
+On 2024-09-12 17:03:15 [+0200], Daniel Borkmann wrote:
+> 
+> Oh well, quite annoying that we need this context now everywhere also outside of XDP :(
+> Sebastian, do you see any way where this could be noop for !PREEMPT_RT?
 
------------
+This isn't related to XDP but to the redirect part of BPF which is (or
+was) using per-CPU variables.
+I don't know how much pain it causes here for you and how much of this
+is actually helping and not making anything worse:
+- If netkit::active is likely to be NULL you could limit assigning the
+  context only if it != NULL
 
+- If you can ensure (via verifier) that netkit_run() won't access the
+  redirect helper (such as bpf_redirect()) and won't return
+  NETKIT_REDIRECT (as a consequence) then the assignment could be
+  avoided in this case.
 
-Signed-off-by: Daniel Wagner <wagi@monom.org>
----
- localversion-rt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/localversion-rt b/localversion-rt
-index 41b444e910ef..9f63718d5731 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt137
-+-rt138
--- 
-2.46.0
-
+Sebastian
 
