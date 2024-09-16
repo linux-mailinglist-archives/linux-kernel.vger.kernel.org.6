@@ -1,166 +1,143 @@
-Return-Path: <linux-kernel+bounces-330217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DE4979B0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:15:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E793C979B0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1641F23E7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:15:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EC6B1F240B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9BB8288F;
-	Mon, 16 Sep 2024 06:15:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC55482EB;
-	Mon, 16 Sep 2024 06:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DFD40870;
+	Mon, 16 Sep 2024 06:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2Gjd1Jy"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721111F5F6;
+	Mon, 16 Sep 2024 06:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726467315; cv=none; b=dxPjaZOka7cjxkyIasKFyPF+vDKfTTxm3FLaqw2z/3Dhu9VW3vRmhNWsXmDVSBPlnTL6GQhQS43IQkHrkhFTavCI4iZqrSBcqEbefbiIjiHlQ9ovOecRuTrwCq22l0RaQyNikBptNaHB67AzL9YMuXu1geKt7k7D9XVyR8VxuhY=
+	t=1726467394; cv=none; b=G/PaxMD1LxMDuVfZK6tQ2vIN4S3gC6VSYun7f1gvVe24D2PJaPK51TedwsvV3ym2j9ttb0ZQ1MDVTGZWUcF5tbvu+PHpwGbt1bYy47qup/n1MT2Oxhx4S4EtupHwj0mhXjZFzcI2lhA4BJpu9uYos04cB3BW+NgaOky26NcMdjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726467315; c=relaxed/simple;
-	bh=D8j5Hk0CkaLEX7dXTn/2QhcETJs4MStq2/5OBrQQL24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nl1Bu0x95fDp0zOdJmfXyQSqq681xcLcRp+oO+VzV8pzRnJayYr6Ka7luEeIprlthj/PW+6l/b58xK4iUB37yFmnOQBZ4EKg4SkP3D/QrUY6ONTxbAcXfoIg7y0tz56DSrwSfVkBHSFINzovls9Skj/UCgElSx3+akqYInyhLpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DF0D11FB;
-	Sun, 15 Sep 2024 23:15:40 -0700 (PDT)
-Received: from [10.162.16.84] (a077893.blr.arm.com [10.162.16.84])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7AD03F66E;
-	Sun, 15 Sep 2024 23:15:04 -0700 (PDT)
-Message-ID: <61dafb6a-6212-40a6-8382-0d1b0dae57ac@arm.com>
-Date: Mon, 16 Sep 2024 11:45:00 +0530
+	s=arc-20240116; t=1726467394; c=relaxed/simple;
+	bh=aTB/qw9kD2XFLPT5/Fkbc2KOQyfZHYVKWvGk08K+AgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VC/Jqm4xBQuTwG9VkoP3uMEDzy/Dnro7FvglKLkXnorfouHJ/U1Iz8TfeJApf1utEa5qqPd/poahzklDrh6vyaZaUTzmbkxbhxxK1r/4j5rtjtnW0teeZcFVVl46yA4uCH2xVlDdwmOVbQcCqApJzEA2hzqRWil8BuaImbNBiDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l2Gjd1Jy; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-49bbbebc26dso1331329137.0;
+        Sun, 15 Sep 2024 23:16:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726467392; x=1727072192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X/pWnXCVlNoJ6VkECBnDb2dCNBxxBagSxuCXe+0vj/U=;
+        b=l2Gjd1JyEitRZ1w3nwVvpm085GHlb4BEL5hwUGyNAzK6iv8gd3iulFO1EhLcyElYqA
+         LAztGfJ/I3T7Ksjf988EwHaGpg8Es8L7UnEK/larYb9Q9RiI205Hi4ZPYU0sKKtZXjCr
+         9ZlYuynTC+9aasO9GFhxWjjtbsxNimdEEfkJ5ZE+v47YmUfOWx/lL8H21q7wp2upAFj+
+         NUKVrHXn4+mHAPKvZmUxNvQGSD4vdG6+6HkJRNMGl00FCPNId5xozcYmgPk+PbimPcIy
+         In+7eI4lGwpSIrsWTtLYO4+9EgqcgeIGsrl4plR5qJJltfRhMAY4we+NhH+y+mnPS8My
+         ThKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726467392; x=1727072192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X/pWnXCVlNoJ6VkECBnDb2dCNBxxBagSxuCXe+0vj/U=;
+        b=lF3i80YcKj92ES3fa2bGZmnjDbVkufvu1Ge360zpF2qhQLEOsbYvtuQgg9Ygo9fYgI
+         iPwJ7IS4CjKopwkwWP0tffqJYeE1zXyNX8Anq0x6Kub1J2YSOMIuoQWV1xs+ErE6XPRT
+         uDz51mOFxjUJD3Vx7hmqvnxR2EDj6rfO9+yKImxBSdem0EuJoRTviJ5bhTO7Cr5MEpbC
+         MuQNG1IcUZHuPs/rC2xP47FJ9dEQYS9W9h6x8Mxe8JZJO7R2wSCcT+AOYHiQyB15tEnu
+         kO48rGUZik4A5mt0i3xP6HDT1jxZgryaoSBUwZP4J+dAM2PHAggFCUwZxwiyh1an4piG
+         zViA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVoJrxbnEXT8ARzagG+CFUZHSqMzGFo0a9czG4w6WJwe5vKHE1HOkkVKqBwfypFbkxet13y8uZ8Q4KY0/j@vger.kernel.org, AJvYcCVHHey3ndOAW7GmSVLZikNINEfn9/7M2umhRHuZk+1G602iWKg8QEGZedhue9p++VDVd3lWC/6wOoVRnWQX@vger.kernel.org, AJvYcCXUnEuLiMBYhoN8J24tYQc19j+h/b/vbNnXpLZ6AnkiBCvNOKIdguW33/3f2nG3A8UYCOhkAf+PolE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+yzTnHakuFIxGDu5DJ06c5bIbQbNaiEKecDzJSif6uAeKKlRf
+	xe4GENCqS2NnjweyVSIXoYRKJNw3xaiQlsbk0u9Al5vZxwWnEt1PmZZ+9J90gjr2YLcWN5xRpXh
+	Wm32MWx10dnwzcV7WAXX0GdYqrzw=
+X-Google-Smtp-Source: AGHT+IHuDb4AshHoNGEtNLYb9Aqw/hI5Qvqs88n6Gf2duV4ShPpQUJ+XqeS6TANXDbbWCyu71nmrOqVR6aM2RpwtFvg=
+X-Received: by 2002:a05:6102:ccf:b0:48f:db3d:593e with SMTP id
+ ada2fe7eead31-49d41513e1fmr10472930137.14.1726467392099; Sun, 15 Sep 2024
+ 23:16:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] mm: Use pmdp_get() for accessing PMD entries
-To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dimitri Sivanich
- <dimitri.sivanich@hpe.com>, Muchun Song <muchun.song@linux.dev>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Dennis Zhou <dennis@kernel.org>,
- Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>
-References: <20240913084433.1016256-1-anshuman.khandual@arm.com>
- <20240913084433.1016256-5-anshuman.khandual@arm.com>
- <f918bd00-c6a4-498a-bd17-9f5b32f7d6a7@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <f918bd00-c6a4-498a-bd17-9f5b32f7d6a7@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1714581792.git.andre.glover@linux.intel.com> <8fe04e86f0907588d210885ac91965960f97f450.1714581792.git.andre.glover@linux.intel.com>
+In-Reply-To: <8fe04e86f0907588d210885ac91965960f97f450.1714581792.git.andre.glover@linux.intel.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 16 Sep 2024 14:16:20 +0800
+Message-ID: <CAGsJ_4xREUbRWRZEO8EiEBdP9YN0Wip4_p58Cca=B4ZdPb7Mpg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] crypto: add by_n attribute to acomp_req
+To: Andre Glover <andre.glover@linux.intel.com>
+Cc: tom.zanussi@linux.intel.com, minchan@kernel.org, senozhatsky@chromium.org, 
+	hannes@cmpxchg.org, yosryahmed@google.com, nphamcs@gmail.com, 
+	chengming.zhou@linux.dev, herbert@gondor.apana.org.au, davem@davemloft.net, 
+	fenghua.yu@intel.com, dave.jiang@intel.com, wajdi.k.feghali@intel.com, 
+	james.guilford@intel.com, vinodh.gopal@intel.com, bala.seshasayee@intel.com, 
+	heath.caldwell@intel.com, kanchana.p.sridhar@intel.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ryan.roberts@arm.com, 
+	linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, May 2, 2024 at 5:46=E2=80=AFAM Andre Glover
+<andre.glover@linux.intel.com> wrote:
+>
+> Add the 'by_n' attribute to the acomp_req. The 'by_n' attribute can be
+> used a directive by acomp crypto algorithms for splitting compress and
+> decompress operations into "n" separate jobs.
 
+Hi Andre,
 
-On 9/13/24 16:08, Ryan Roberts wrote:
-> On 13/09/2024 09:44, Anshuman Khandual wrote:
->> Convert PMD accesses via pmdp_get() helper that defaults as READ_ONCE() but
->> also provides the platform an opportunity to override when required.
->>
->> Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
->> Cc: Muchun Song <muchun.song@linux.dev>
->> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
->> Cc: Miaohe Lin <linmiaohe@huawei.com>
->> Cc: Naoya Horiguchi <nao.horiguchi@gmail.com>
->> Cc: Pasha Tatashin <pasha.tatashin@soleen.com>
->> Cc: Dennis Zhou <dennis@kernel.org>
->> Cc: Tejun Heo <tj@kernel.org>
->> Cc: Christoph Lameter <cl@linux.com>
->> Cc: Uladzislau Rezki <urezki@gmail.com>
->> Cc: Christoph Hellwig <hch@infradead.org>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-fsdevel@vger.kernel.org
->> Cc: linux-mm@kvack.org
->> Cc: kasan-dev@googlegroups.com
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  drivers/misc/sgi-gru/grufault.c |  4 +--
->>  fs/proc/task_mmu.c              | 26 +++++++-------
->>  include/linux/huge_mm.h         |  3 +-
->>  include/linux/mm.h              |  2 +-
->>  include/linux/pgtable.h         | 14 ++++----
->>  mm/gup.c                        | 14 ++++----
->>  mm/huge_memory.c                | 60 ++++++++++++++++-----------------
->>  mm/hugetlb_vmemmap.c            |  4 +--
->>  mm/kasan/init.c                 | 10 +++---
->>  mm/kasan/shadow.c               |  4 +--
->>  mm/khugepaged.c                 |  4 +--
->>  mm/madvise.c                    |  6 ++--
->>  mm/memory-failure.c             |  6 ++--
->>  mm/memory.c                     | 25 +++++++-------
->>  mm/mempolicy.c                  |  4 +--
->>  mm/migrate.c                    |  4 +--
->>  mm/migrate_device.c             | 10 +++---
->>  mm/mlock.c                      |  6 ++--
->>  mm/mprotect.c                   |  2 +-
->>  mm/mremap.c                     |  4 +--
->>  mm/page_table_check.c           |  2 +-
->>  mm/pagewalk.c                   |  4 +--
->>  mm/percpu.c                     |  2 +-
->>  mm/pgtable-generic.c            | 16 ++++-----
->>  mm/ptdump.c                     |  2 +-
->>  mm/rmap.c                       |  2 +-
->>  mm/sparse-vmemmap.c             |  4 +--
->>  mm/vmalloc.c                    | 12 +++----
->>  28 files changed, 129 insertions(+), 127 deletions(-)
->>
->> diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
->> index 3557d78ee47a..f3d6249b7dfb 100644
->> --- a/drivers/misc/sgi-gru/grufault.c
->> +++ b/drivers/misc/sgi-gru/grufault.c
->> @@ -224,10 +224,10 @@ static int atomic_pte_lookup(struct vm_area_struct *vma, unsigned long vaddr,
->>  		goto err;
->>  
->>  	pmdp = pmd_offset(pudp, vaddr);
->> -	if (unlikely(pmd_none(*pmdp)))
->> +	if (unlikely(pmd_none(pmdp_get(pmdp))))
->>  		goto err;
->>  #ifdef CONFIG_X86_64
->> -	if (unlikely(pmd_leaf(*pmdp)))
->> +	if (unlikely(pmd_leaf(pmdp_get(pmdp))))
-> Just a general comment about multiple gets; before, the compiler most likely
-> turned multiple '*pmdp' dereferences into a single actual load. But READ_ONCE()
-> inside pmdp_get() ensures you get a load for every call to pmdp_get(). This has
-> 2 potential problems:
-> 
->  - More loads could potentially regress speed in some hot paths
-> 
->  - In paths that don't hold an appropriate PTL the multiple loads could race
-> with a writer, meaning each load gets a different value. The intent of the code
-> is usually that each check is operating on the same value.
+I am definitely in favor of the patchset idea. However, I'm not convinced t=
+hat a
+separate by_n API is necessary. Couldn=E2=80=99t this functionality be hand=
+led
+automatically within your driver? For instance, if a large folio is detecte=
+d,
+could it automatically apply the by_n concept?
 
-Makes sense, above two concerns are potential problems I guess.
+Am I overlooking something that makes exposing the API necessary in
+this case?
 
-> 
-> For the ptep_get() conversion, I solved this by reading into a temporary once
-> then using the temporary for the comparisons.
+>
+> Signed-off-by: Andre Glover <andre.glover@linux.intel.com>
+> ---
+>  include/crypto/acompress.h | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/include/crypto/acompress.h b/include/crypto/acompress.h
+> index 2b73cef2f430..c687729e1966 100644
+> --- a/include/crypto/acompress.h
+> +++ b/include/crypto/acompress.h
+> @@ -25,6 +25,7 @@
+>   * @slen:      Size of the input buffer
+>   * @dlen:      Size of the output buffer and number of bytes produced
+>   * @flags:     Internal flags
+> + * @by_n:      by_n setting used by acomp alg
+>   * @__ctx:     Start of private context data
+>   */
+>  struct acomp_req {
+> @@ -34,6 +35,7 @@ struct acomp_req {
+>         unsigned int slen;
+>         unsigned int dlen;
+>         u32 flags;
+> +       u32 by_n;
+>         void *__ctx[] CRYPTO_MINALIGN_ATTR;
+>  };
+>
+> --
+> 2.27.0
+>
 
-Alright.
-
-> 
-> I'm not sure if these are real problems in practice, but seems safest to
-> continue to follow this established pattern?
-
-Yes, will make the necessary changes across the series which might create some
-amount of code churn but seems like it would be worth. Planning to add old_pxd
-local variables when required and load them from the address, as soon as 'pxd'
-pointer becomes valid.
+Thanks
+Barry
 
