@@ -1,120 +1,114 @@
-Return-Path: <linux-kernel+bounces-330695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A4697A2D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC73297A2E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 15:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04A1BB23549
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95DED28242B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EDA156220;
-	Mon, 16 Sep 2024 13:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F7E156228;
+	Mon, 16 Sep 2024 13:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="bvhUppNL"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DRzeFTsl"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0C2155322;
-	Mon, 16 Sep 2024 13:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFCC1514C6
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 13:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726492818; cv=none; b=rfs4GBrJbOeZ1BXmLnkI2fpQjGLti7CPaVpZ627HNde4a15BTqBv9Kvfyhah1C2IgHGdhCsR208ogzlkb188UNwaLWvNghhct4PLoaAw07jipx9rk0abx5Gc5vAdfg98QksWE8Bo5eYSlhc6GzGFzKdE2bOFnn92P30lbrdkJhA=
+	t=1726493022; cv=none; b=jle0Pj2bhno4RmTFTeqSiUUeRmp6lKcUUPD8HVMyaNwsEzaORmjw+Wf1KjficBtx0ZAAeJiggNt9kVptWbHMU2kUboOZSMPRM1qbIkHU29X9iXoZnCAy5RqRRI4h8cg7vnHV80KenNVN4ZfIBjYpBTvdWW7AVeu/vQdlHWSfJio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726492818; c=relaxed/simple;
-	bh=LtyrK8rT+ddKnOKr4OAF9a6sJB7r1UWxYnOf39Qe6Bg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S5IqTV96G7SfZT4L7FpE3xdqSswfv1sWOaBJW1tHWrqoW4aNqBMDMatjTU/+WjnjtlJlp2AkC+IedqF61z7M+efaTnT2WiBv2v2KhvEb34bqkFDeFcfYy30aZ/nl1gU8P142zvhhL3WZqbXaoIE/V52quOtZ9TTlS85dWyCExY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=bvhUppNL; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726492817; x=1758028817;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=LtyrK8rT+ddKnOKr4OAF9a6sJB7r1UWxYnOf39Qe6Bg=;
-  b=bvhUppNLtxRVPqBDMp2I/l4lJ0AKouLzKT22cylL/gU/Y83av7/l1vTt
-   YkPQGHIvyjfz6kRz3+QQWslGjZK7Gu1SkXBe/RRrayiMfYFVWlBew/e77
-   NrUcUVPVVG9Rh0rSJqUz1IadFynrA/IzZXeJDWmhSmnPeV2av54KHh8zu
-   ciakB/AF9mLXX0gHwbSKFyq2bW1eHqcmWrs6CrFrILkLi8BxZTxPaU8ox
-   /x1FIEbnHCTSq79Hp0WFcbvVHnI+9+ewZYqrMnyU4EwE7d0qs0PBaGRrz
-   VeFL1wIKoKqaLnXNTkAvQNntnDaxZEk62rp6WBcvAz+CTmCa/XAjM8gGF
-   Q==;
-X-CSE-ConnectionGUID: 50Z/Q3YNQtGxx5+pLOGVZA==
-X-CSE-MsgGUID: UsZZD4kASkGvuL/uCyRMpQ==
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="262829818"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 06:20:16 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 16 Sep 2024 06:19:35 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 16 Sep 2024 06:19:32 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>
-CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Andrei Simion
-	<andrei.simion@microchip.com>
-Subject: [PATCH v2 2/2] ASoC: atmel: atmel_ssc_dai: Drop S24_LE support due to single channel limitation
-Date: Mon, 16 Sep 2024 16:19:10 +0300
-Message-ID: <20240916131910.22680-3-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240916131910.22680-1-andrei.simion@microchip.com>
-References: <20240916131910.22680-1-andrei.simion@microchip.com>
+	s=arc-20240116; t=1726493022; c=relaxed/simple;
+	bh=00f9aJCyCO0yYAivTmuYv6PtRimsVf80yJ/hO4mM0mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVEaAInQXmt7eW0Sv4IrdeFaONEDI5NBtxTZz0inI4Y7mDUq3cxhYnBKxMoDACg8hET1CZLs9UjilaEhSIu4d1UTSfSc8wPX1l/HVeOyNnwGBKpU357bztEbbKgpyMK9bzi4e+xGcERdYfwg1CPN7aDib70ghMqD1MMAIZrTq1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DRzeFTsl; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=00f9
+	aJCyCO0yYAivTmuYv6PtRimsVf80yJ/hO4mM0mA=; b=DRzeFTslnJKCD/cqtXI3
+	iufuZKk+wppQq0/5hT9BiyaiJi+oM6MB6Iug0B9kvFRgjSlQzZednkJEmUhKxuUl
+	QSZA0TZofmaJKKpWsdcJcNPBxvwy+IdK/Wi84E08rykV8Ei31DVEEv+GjxgYgmLU
+	GQV/3R3hYbSISYBERq/1rwKnAZF/IGBHdxvZeQOuqUCRh4YgnvpQwGmksKS276/d
+	HlpYNHVbVoT1KVurVl5xaZ+5JaMDX1F04gHc96hWeJ4R+F8nF4bd5cAdJDS108c0
+	DMGF2Rt04kCJ5ZOccmOf0sCoke5QjsECPn2Uv/tk5Iq/kClTzdmOAwZdDFo464r1
+	Gw==
+Received: (qmail 2009962 invoked from network); 16 Sep 2024 15:23:35 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Sep 2024 15:23:35 +0200
+X-UD-Smtp-Session: l3s3148p1@QvvRejwigK65aIoy
+Date: Mon, 16 Sep 2024 15:23:33 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.11-rc8
+Message-ID: <ZugxVfn1IMCBtfyU@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+References: <2itivkfhp7s2dzmihtlo67w53wpdiukmmrcf625isex5rrtu23@4naen2rzimxw>
+ <Zugg26oB74biYTwN@shikoro>
+ <jlebwv5qchjbu6q2g36a7ilcnyt2o2zc4i2vw55vyqfmfnkkre@yrqezt3ufmkt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BGgOZZbftmVY/E67"
+Content-Disposition: inline
+In-Reply-To: <jlebwv5qchjbu6q2g36a7ilcnyt2o2zc4i2vw55vyqfmfnkkre@yrqezt3ufmkt>
 
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 
-Drop S24_LE format because it is not supported if more than 2 channels
-(of TDM slots) are used. This limitation makes it impractical for use cases
-requiring more than 2 TDM slots, leading to potential issues in
-multi-channel configurations.
+--BGgOZZbftmVY/E67
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[andrei.simion@microchip.com: Reword the commit title and the commit
-message. Add code comment to explain the removed code.]
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
-v1 -> v2:
-- add code comment to explain why S24_LE is dropped.
----
- sound/soc/atmel/atmel_ssc_dai.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> I can take the opportunity to include a few more fixes and send
+> a new pull request.
 
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index 7047f17fe7a8..89098f41679c 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -821,8 +821,9 @@ static int atmel_ssc_resume(struct snd_soc_component *component)
- 	return 0;
- }
- 
-+/* S24_LE is not supported if more than 2 channels (of TDM slots) are used. */
- #define ATMEL_SSC_FORMATS (SNDRV_PCM_FMTBIT_S8     | SNDRV_PCM_FMTBIT_S16_LE |\
--			  SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
-+			   SNDRV_PCM_FMTBIT_S32_LE)
- 
- static const struct snd_soc_dai_ops atmel_ssc_dai_ops = {
- 	.startup	= atmel_ssc_startup,
--- 
-2.34.1
+Let's make a new PR out of these. I don't want to send Linus a PR which
+we modified until the last second. This one has been stable for a few
+days, let's keep it in this state. The new PR will have its own
+timeline.
 
+> Also, there=E2=80=99s a patch from you (a fix of a fix) that I=E2=80=99ve=
+ already
+> commented on, which can be integrated as well.
+
+Further comment coming up ;)
+
+
+--BGgOZZbftmVY/E67
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmboMVIACgkQFA3kzBSg
+KbZ5NQ//dkm4tlkbSl/twFwloZIkT3FOo/6ZUd9X4X5Cz+m/m+w7S5GDOMu3S+v/
+ys2tlDZuVEZw4wBIRIm0iHSJe7sPNh/nlYfUfhBBQwOyGc3je5lWX8VVRbdMTsiH
+jig4zGCQ45m8iGqy5UdO4UXx6KsYvYpuNFINWtiRiOAC7fKJST0tJYOm9Mu8syPQ
+GJ43z0VY9zdHmtR66sblv8U4KYEwkvypWMzqn2zqfr0ZODiliDpiAanRkXv6GzJ0
+mcuhax6tHhGE++cNAVrLpCZf5Ax6qd65wbr7ZVTixYqscVwsjjxxx54t+Ln0jkSp
+K57qdhUJwPShd8/AnfqCSuIiuoo/H6kAWuJ3Gj2jNMhtf8hTfVl3qePIOCG+9Uxn
+8mRo9+UC+OSQf93wSAYF1cVJBH4rCJYxf/n6odl11al3PcSz9iBV4ONyQ13OYT+T
+0YItcWaeLVhcR46tAXEYyAAdZLg6pF0LVT9JGolX+GbrCOBt5LNEp1yznt6Kewsa
+lJR4LcJ2UVrJgkkRhh0lray5zxpy8LWqRcWdl2BGBRB+TJkV4EC3dbAaedThY81T
+jKdezpfQkxXhJ8lM9dt5bGRq4C+L/eS1Eyhx2Prjd84SgzExPhlfT7cCfK1zEblD
+0PDKZ+AVChboxm3Wu/cJofmLc4HSdIwC32Q4BUPFAxWXSZnlEyY=
+=mwFz
+-----END PGP SIGNATURE-----
+
+--BGgOZZbftmVY/E67--
 
