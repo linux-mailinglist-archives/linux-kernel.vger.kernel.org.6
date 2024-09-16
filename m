@@ -1,187 +1,116 @@
-Return-Path: <linux-kernel+bounces-331051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C46897A7C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:23:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F45797A7C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20663282690
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:23:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E29D1B25786
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD07015B572;
-	Mon, 16 Sep 2024 19:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A729515C13B;
+	Mon, 16 Sep 2024 19:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="Q88ZGTyO"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7yZVnJu"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31939175AD;
-	Mon, 16 Sep 2024 19:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C731459FD;
+	Mon, 16 Sep 2024 19:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726514609; cv=none; b=hcBiptYHMyFKh1dUqFUeCp5sVzQDm6vP9C+b1ANoUpTzuY7T81mGbu+bBu3FZKVlXeCmlUkX8H+BGZSeNIB2cC0kv5mRLngFxHSnqW/soWfRqjFIlmmwvqRw0cEFK8Ng+I9tu8RZOiyZhqTLneWhrT4gA7cCRilMAjNmXEvp42w=
+	t=1726514623; cv=none; b=Sb/XvLCAfQBUpbPYDHsdTKhDDtetPmg6V3MH9hcZLXaYm9mbZi7oPSeUj2+phQx4r+vWjRdgYtvOckx3Pv3v8/M5EUsDW2Emu390e9aBpEOnoO0Ag6BW4cVb6Rt0XreqfJ0iB+Au+dXKC24O8KdeYZioYH1DnJODBbQ4bfaaAEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726514609; c=relaxed/simple;
-	bh=Y9BOtJsZrUeI/T4AT5kJOL8XvzIzRW7qwuR4PC7DwVk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rEDfwufP5Rl7NkkZ2a4fCcYhrp58/n9QyVUx3TgwOD4Yf4W6sN5S9EmC6FjKkcUKoKScCR5G/BtAY2Df8Gw2xG1BAiv64UefEE9dYkKu8eHuY9xnRZvRaUMLe952otto7pvipMhyQtnVNNvmTHwAB77mnpLHYWpNzy7ml63kZT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=Q88ZGTyO; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1726514604; x=1726773804;
-	bh=EDMp3dBEF1fsOY4Eb5Xm0ct3qsgK0RLGRh03NwDR2vM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Q88ZGTyOptWULxET/5DFyEx6n0krlC7ffgtql0DkqjMMEBK8mQAyldbQqbCUBSsoB
-	 pTGc5FILZNEKuSmnJz/JmtstQMmvdBlaokkRQYd5bb3jKp4XwXytasW+7kx2ta+hJ2
-	 1aJYhznrEEbtuEQ6zhRvdzG5UxKqj5+g+RTKci3ksKjIwFNqU9KKUQ3tJv0FKEo7nW
-	 qoxFObG1YegUDN5j7yyH6s6NHS1pzQQt9dzM3VplE+AtJ790h/ZVH7725yaXMe7vIG
-	 pZTUgrgr9Ei2kZajnu+YT5EXn1jPIVsc99Tx4j1KvvvfOFKK/437lkunHJqPXBhnl9
-	 r/wsitoox+Gmg==
-Date: Mon, 16 Sep 2024 19:23:19 +0000
-To: Peter Zijlstra <peterz@infradead.org>
-From: Michael Pratt <mcpratt@pm.me>
-Cc: Ingo Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [RESEND PATCH] sched/syscalls: Allow setting niceness using sched_param struct
-Message-ID: <e6KW_ypfbIVbenvwbBwGgnxX700e-A68oVmCn1pdJ0834U4wtIWXhh5zfHrQF2dvSL_Vc_heC4KZ0XRzNZ-w7QfF70W0epxCzpph55reOls=@pm.me>
-In-Reply-To: <20240916111323.GX4723@noisy.programming.kicks-ass.net>
-References: <20240916050741.24206-1-mcpratt@pm.me> <20240916111323.GX4723@noisy.programming.kicks-ass.net>
-Feedback-ID: 27397442:user:proton
-X-Pm-Message-ID: c1a624c5731e80bb9e31a8274bfbd698f437c055
+	s=arc-20240116; t=1726514623; c=relaxed/simple;
+	bh=eNDNlenQ55wq3OU9jE97F/r798BG32rPjmyy5X4VSQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A3DMTwLYr7QBvvIeV6+F/KqTk4iVRNGiOkMdOZwA/SWcJEENP6gFIAYchlS0krU3qJIwzPVlY5cKBn/1huuK4Rm2QDcX+D9SV/VrtX9y78le7cHKI5FP8yrU845B/ddTdBgAcFUWVGtk1UebN5XCcDZ96Ir4ZFfKsVh/PoSc1kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7yZVnJu; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71829963767so573225b3a.1;
+        Mon, 16 Sep 2024 12:23:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726514621; x=1727119421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=foWXsdfvXW3kM0+CVvXUZRQOzmZiK+RDiPeNZHlJE8A=;
+        b=P7yZVnJuGFizK/d+c83CSngwa2jMh/IlG5IqLcREBV1DV5GuAZz31a2uyqzANHN+R2
+         YjnNWU526H+pkkF/+DLF8NtMCtRfuzQPA0qjOAZn0ovQ8EH/QoiufT+7/Z9OncfsxQvT
+         5kaSEXG00MJtumH3uVNTeceC/qRs7bO3w0j1EIyVyxrbGaB95YzOwcEAkzK0L3nceWQ9
+         oX4W6PVniEG2cVYfD90x81wT+4gpU/mtcsmoZ4k0tfn2cY8LEv/bfbBfoWQLVodhUk1H
+         jDvrMC+nGvw5eeyzKOKNdcsIDrw6NPT1GdxIucWACJf87GKW/ytLao4pV6/lprkGoTej
+         X1dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726514621; x=1727119421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=foWXsdfvXW3kM0+CVvXUZRQOzmZiK+RDiPeNZHlJE8A=;
+        b=ZcYLLU8iu3XxhGJnoa38WPicsQYAftlpHNJGrUTAITKL2QTRnXQkI+cVadhMC23ogM
+         q0BJbyreAcuLYzJCFiUHgMgnzOxlnpnPXTGWRz9IhyicbyjMS11H9E3ECSGVndth83Tg
+         X94vZFRWhTBgXCwYYltV+4WB6HMmIr8Jbl0oBlpVYSzy+JeYUS3/ffHvptIkqwssM6ro
+         fdgX8lu5MjW/eqwdOevROaAW1dAFJd8FwECdHHnr25q3QfyN5UnZTkIwMQItrYDisXbP
+         3TxnupWbMbJqmYG/2LTAMA73RQBKPLXQNu1RePP4SF5LrALyrS8X6JvqWNQH5lVxeDc7
+         JWlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXql+HtU7DOIn7cXB+sM2aCoKfPft1KwT4iB39CIuZAWWM3VKrmeIpNGi9TqnFx0KOqKu9pCy0CS4ngbio=@vger.kernel.org, AJvYcCXsotSz2bXJA7mfanEgesUD9W15dkCroXqORPVI9e9Gnu1KHIdD3fCkkFo22l5K1ceDcnykPQ2Sdx7xQeBxrjat@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAPV4C9WzfM2RqttBfDgtLheQcRZHGFAcGS6XqIJ+lvBZ5cJQ9
+	Js1D0NUw6EfvhSUQPpTEtU4HvcWUUQhCcoxtJUXJUD1TvSh4v7M1XikW2lQ9FdBVzN31Bgf32Q8
+	UuhS2LgwIRWzoYAUo6XGpBM8Q4Zc=
+X-Google-Smtp-Source: AGHT+IE7DRhJ+wg7wlbPODJvQQTOCMwvp+3FoQzGpOHy6LDZVVh093NafbDs/OOEt5XjGoPIpmBLlqaM0zneI2fo6eg=
+X-Received: by 2002:a05:6a00:2d88:b0:717:87c5:84b with SMTP id
+ d2e1a72fcca58-71926088d53mr9934593b3a.1.1726514620830; Mon, 16 Sep 2024
+ 12:23:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <CA+G9fYuaDUCxseqCW8BO0KhLKn6F0VHYaAhu-T9v-MJHzJebcQ@mail.gmail.com>
+In-Reply-To: <CA+G9fYuaDUCxseqCW8BO0KhLKn6F0VHYaAhu-T9v-MJHzJebcQ@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 16 Sep 2024 21:23:28 +0200
+Message-ID: <CANiq72kaAd5v+c+A3GHWp9riDtGTrKcCb3kraw2EaZLyp8asSg@mail.gmail.com>
+Subject: Re: rustgcc-kselftest: error: unknown unstable option: `patchable-function-entry`
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: rust-for-linux@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Miguel Ojeda <ojeda@kernel.org>, aliceryhl@google.com, 
+	Shuah Khan <shuah@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
+Hi Naresh,
 
-On Monday, September 16th, 2024 at 07:13, Peter Zijlstra <peterz@infradead.=
-org> wrote:
->=20
-> On Mon, Sep 16, 2024 at 05:08:49AM +0000, Michael Pratt wrote:
->=20
-> > From userspace, spawning a new process with, for example,
-> > posix_spawn(), only allows the user to work with
-> > the scheduling priority value defined by POSIX
-> > in the sched_param struct.
-> >=20
-> > However, sched_setparam() and similar syscalls lead to
-> > __sched_setscheduler() which rejects any new value
-> > for the priority other than 0 for non-RT schedule classes,
-> > a behavior kept since Linux 2.6 or earlier.
->=20
->=20
-> Right, and the current behaviour is entirely in-line with the POSIX
-> specs.
+On Mon, Sep 16, 2024 at 9:17=E2=80=AFPM Naresh Kamboju
+<naresh.kamboju@linaro.org> wrote:
+>
+> The x86 rust gcc builds failed on the Linux next-20240917 due to followin=
+g build
+> warnings / errors with rustgcc for selftests rust builds.
+>
+> First seen on next-20240917
+>   Good: next-20240913
+>   BAD:  next-20240917
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-I'm just mentioning this for context.
-In this case, "in-line with POSIX specs" has nothing to do with
-whether or not the feature works. POSIX says nothing about which policies
-should be accepting which values or not and how they are processed.
-Like many things, it is simply implementation-specific.
+Thanks for the report -- this should be already fixed in `rust-next`
+for tomorrow (requirement changed from `!FINEIBT` to `!CALL_PADDING`),
+please see https://lore.kernel.org/rust-for-linux/CANiq72=3DB9NmC=3D1eSaOrg=
+7XutjueQsSXGcBQb7dQFPuL0SFjPsA@mail.gmail.com/
 
-The current behavior is that it doesn't work, and I would like it to work.
+If you can confirm it is, that would be great, thanks! i.e. you will
+need either to disable `CALL_PADDING` or use a newer Rust compiler
+version.
 
-> I realize this might be a pain, but why should we change this spec
-> conforming and very long standing behavior?
+By the way, I think you meant next-202409176, not next-20240917?
 
-The fact that the overall behavior is "very long standing" is a coincidence=
-.
-The code here conforms to the specs both before and after the patch,
-and the difference is functionality.
-
-In fact, I am not aiming to change
-the exact behavior of "reject every priority value other than 0"
-but rather work around that by translating it to niceness
-so long as it is a valid range passed as the priority by the user.
-This method is not just to maintain that priority must be 0, but I found it=
- necessary,
-because if the syscall were allowed to change the static priority,
-then a future change in the "niceness" value would theoretically allow the =
-priority
-to pass into the RT range for non-RT policies.
-
-> Worse, you're proposing a nice ABI that is entirely different from the
-> normal [-20,19] range.
-
-Please take a closer look... The resulting niceness value is exactly that r=
-ange.
-  PRIO_TO_NICE([MAX_RT_PRIO,MAX_PRIO-1]) =3D [-20,19]
-
-I am not writing this so that the value passed as a "priority" value should=
- be assumed
-to be the "niceness" value instead by the user, but rather that the user sh=
-ould
-pass a value for "priority" that will actually result in that value,
-but with the "niceness" adjusted instead,
-as that is the user-specific method to effectively do the same thing.
-
-The "niceness" value has no meaning in the world of POSIX, it only means so=
-mething
-in the world of Linux, and just like the translation from sched_param to sc=
-hed_attr structs,
-this is the place where we would translate priority to niceness.
-Everything outside the internals of the kernel should be understood as the =
-"actual" priority,
-because POSIX is a userspace that doesn't acknowledge or understand the ker=
-nel's ABIs,
-not the other way around.
-
-Otherwise, we have a confusing conflation between the meaning of the two va=
-lues,
-where a value of 19 makes sense for niceness, but is obviously invalid for =
-priority
-for SCHED_NORMAL, and a negative value makes sense for niceness, but is obv=
-iously invalid
-for priority in any policy.
-
-Implementations of posix_spawn functions ask for the "priority",
-and POSIX states that the value passed in with the sched_param struct shoul=
-d be the "priority"
-and that the usage is implementation-specific, not the other way around, wh=
-ere
-the meaning of the value would be implementation-specific, but the usage of=
- the value
-would be clearly defined instead. I'm trying to stay in-line with the seman=
-tics as well.
-
-> Why do you feel this is the best way forward? Would not adding
-> POSIX_SPAWN_SETSCHEDATTR be a more future proof mechanism?
-
-New flags don't change the fact that the value will be rejected in the kern=
-el,
-unless I am misunderstanding what you mean...
-
-I believe this is the simplest and the smallest possible change
-that is conforming both to POSIX and the kernel's styling
-in order to make posix_spawnattr_setschedparam()
-work instead of _just_ being "conforming and compliant",
-which like I said is a low requirement of "just reject all values".
-
-Flags like POSIX_SPAWN_SETSCHEDATTR would be used at the library level
-and we have no problems at the library level, except for Linux-only librari=
-es
-that have not implemented posix_spawnattr_setschedparam() because it curren=
-tly fails.
-Notably, the musl C library is an example of this, but that might change
-if we finally add support for this.
-
-It would be nice if POSIX would add a flag to specifically cater to linux,
-however, that would likely require them to add the sched_attr struct defini=
-tion
-or replace the sched_param struct, and as we know things usually work the o=
-ther way around.
-
-Thanks for your time.
-
---
-MCP
+Cheers,
+Miguel
 
