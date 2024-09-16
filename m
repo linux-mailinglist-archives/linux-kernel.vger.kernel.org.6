@@ -1,215 +1,142 @@
-Return-Path: <linux-kernel+bounces-330509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDFC5979F7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:37:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2D3979F99
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC296284DA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:37:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FC11C226CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4A4154C18;
-	Mon, 16 Sep 2024 10:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xymqpmxo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC7C1514EE;
+	Mon, 16 Sep 2024 10:43:22 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5EC14E2ED;
-	Mon, 16 Sep 2024 10:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC0013C67C;
+	Mon, 16 Sep 2024 10:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726482983; cv=none; b=E/DzdtJKCLt2CseRH4tWZR+FcrvX4V4Yd43wPFMBBhELj0WmRSP6pZ1VfXo50COJ1mFQ4mhGhUsrtI4USk7HRkBi+FRNfQDjCnx7QeUz1yZh26mfh5NVRklfIm9g0RzoBfiR6/3fWcWzo5XyQr5iXafvZXfVIYWnfdJVCRfJ54o=
+	t=1726483402; cv=none; b=AcaYDJP48LetIl/0hJvt8VZ4IVJh2a9sR6GruaLlDKtLyCHsoK+T/6KgppF/6O7lhe5BO1pjYeIsFx3vcviaIq+cwDiy8fdOQL9mlkdQahvUUY8jCP2QHThcM4MhXuEZcNNuo/+z39UEKqqG027ab4U6kn2H2eZYi8/w8PDlqEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726482983; c=relaxed/simple;
-	bh=CDjA3xr2GeuvVu3jehLI18ppg/zZIc4QJHB1ZO9jvZ0=;
+	s=arc-20240116; t=1726483402; c=relaxed/simple;
+	bh=LjXZHDqq+VcA7YGoQC7ydES3vWftp0cOoDMUTSIpG60=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0NYXIJalhwCZeCX9pXsjaYp1ELTQheqcKhobU0F0sHWtvo90xpdbOnI9EJGlDzb3NWDJUSmWJEsu1zRQLhyCiOE3c+zrqQBdokjWCD5vIEZ0kjKxnEvo4gI/lNJbCvNCwMRP8I9KatjNlpQuC9JKFJ18JVkhbeZeMnjEjy88Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xymqpmxo; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726482982; x=1758018982;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=CDjA3xr2GeuvVu3jehLI18ppg/zZIc4QJHB1ZO9jvZ0=;
-  b=Xymqpmxo//PiSLZ5VBRtnHDewsWSMmDJ9mz0Ce+XOSH8DTUrnf2Ip5cL
-   JDEsU1mBxEtCJ9FeXER1jPQix0O7u5j9y9e1Vel4hu8j5TkLVQ7vSFC5V
-   VGl4QoCuRDTNRBjbhaCKWQoqISgR0NaBQ2tcr+y/otw4wJ8koDB0Z32wn
-   FkcRprzWr3EJ2wR0LAsG9z6l4owx7b8DK8ls8EufNvcJ/W7Rv5OIOUX0U
-   eI1KCJ3DvYl5TCRN1zAInjnIfs1b/IwFK2FAzxpITE8P2F5y6F4V4qoPQ
-   hzHz6CYmoRNJmaXFEKxaRzW1+vZGj3jhuSl5TV9bYJomm8bZdGL6/LLun
-   w==;
-X-CSE-ConnectionGUID: 0RSTf24gT8CbtaufSq0yCw==
-X-CSE-MsgGUID: xqGXweKORMGy6zg2E63u/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11196"; a="24787279"
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="24787279"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:36:21 -0700
-X-CSE-ConnectionGUID: Sr8ud2DJTkqIdiezt0xDVQ==
-X-CSE-MsgGUID: ogisOK5yTAGgv4HbGLc7xw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="68445987"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 03:36:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sq95a-00000009QO4-3oxK;
-	Mon, 16 Sep 2024 13:36:14 +0300
-Date: Mon, 16 Sep 2024 13:36:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v7 06/10] i2c: Introduce OF component probe function
-Message-ID: <ZugKHrzs5BWoDr1c@smile.fi.intel.com>
-References: <20240911072751.365361-1-wenst@chromium.org>
- <20240911072751.365361-7-wenst@chromium.org>
- <ZuQTFTNTBLCziD05@smile.fi.intel.com>
- <CAGXv+5HgkCZ=vdHGgvCW1U-nid=cQrVaxC+V+H2Gknf2pnTbYA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQ0Si7oS6ixk0juxn90HCk2hK07ht7tdubEQ+rRSgTCFJ4SlauNoIARdRtbEhlbZyY5saxWHD3C13lUnRF10xcheTly5p5M+6o5YbDV4tNLRSpj9po7Xvi++TrNAr27vKtDQWFlcDVB3rKTzhwTLJirQ/9HsFtBw85q35xpUPZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 7AE501F0004B;
+	Mon, 16 Sep 2024 10:36:35 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id D6057A1E15C; Mon, 16 Sep 2024 10:36:33 +0000 (UTC)
+X-Spam-Level: 
+Received: from collins (unknown [192.168.1.1])
+	by laika.paulk.fr (Postfix) with ESMTPSA id AC280A1E154;
+	Mon, 16 Sep 2024 10:36:32 +0000 (UTC)
+Date: Mon, 16 Sep 2024 12:36:30 +0200
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: tony@atomide.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	Paul Kocialkowski <contact@paulk.fr>
+Subject: Re: [PATCH] ARM: dts: omap4-kc1: fix twl6030 power node
+Message-ID: <ZugKLiRZrrDpdI_W@collins>
+References: <20240915193527.1071792-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0EOYwvdTGuWUqxoA"
+Content-Disposition: inline
+In-Reply-To: <20240915193527.1071792-1-andreas@kemnade.info>
+
+
+--0EOYwvdTGuWUqxoA
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5HgkCZ=vdHGgvCW1U-nid=cQrVaxC+V+H2Gknf2pnTbYA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 15, 2024 at 12:44:13PM +0200, Chen-Yu Tsai wrote:
-> On Fri, Sep 13, 2024 at 12:25 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Wed, Sep 11, 2024 at 03:27:44PM +0800, Chen-Yu Tsai wrote:
+Hi Andreas,
 
-...
+Le Sun 15 Sep 24, 21:35, Andreas Kemnade a =C3=A9crit :
+> dtbs_check was moaning about twl6030-power, use the standard property
+> instead.
+> Apparently that twl6030 power snippet slipped in without the
+> corresponding driver. Now it is handled by the standard property.
 
-> > > +int i2c_of_probe_component(struct device *dev, const struct i2c_of_probe_cfg *cfg, void *ctx)
-> > > +{
-> > > +     const struct i2c_of_probe_ops *ops;
-> > > +     const char *type;
-> > > +     struct device_node *i2c_node;
-> > > +     struct i2c_adapter *i2c;
-> > > +     int ret;
-> > > +
-> > > +     if (!cfg)
-> > > +             return -EINVAL;
-> > > +
-> > > +     ops = cfg->ops ?: &i2c_of_probe_dummy_ops;
-> > > +     type = cfg->type;
-> > > +
-> > > +     i2c_node = i2c_of_probe_get_i2c_node(dev, type);
-> >
-> >
-> >         struct device_node *i2c_node __free(of_node_put) =
-> >                 i2c_...;
-> 
-> cleanup.h says to not mix the two styles (scoped vs goto). I was trying
-> to follow that, though I realize now that with the scoped loops it
-> probably doesn't help.
-> 
-> I'll revert back to having __free().
-> 
-> > > +     if (IS_ERR(i2c_node))
-> > > +             return PTR_ERR(i2c_node);
-> > > +
-> > > +     for_each_child_of_node_with_prefix(i2c_node, node, type) {
-> > > +             if (!of_device_is_available(node))
-> > > +                     continue;
-> > > +
-> > > +             /*
-> > > +              * Device tree has component already enabled. Either the
-> > > +              * device tree isn't supported or we already probed once.
-> > > +              */
-> > > +             ret = 0;
-> >
-> > Shouldn't you drop reference count for "node"? (See also below)
-> 
-> This for-each loop the "scoped". It just doesn't have the prefix anymore.
-> I believe you asked if the prefix could be dropped and then Rob agreed.
+Thanks for the fix! LGTM.
 
-Hmm... I have looked into the implementation and I haven't found the evidence
-that this is anyhow scoped. Can you point out what I have missed?
+Reviewed-by: Paul Kocialkowski <contact@paulk.fr>
 
-> > > +             goto out_put_i2c_node;
-> > > +     }
-> > > +
-> > > +     i2c = of_get_i2c_adapter_by_node(i2c_node);
-> > > +     if (!i2c) {
-> > > +             ret = dev_err_probe(dev, -EPROBE_DEFER, "Couldn't get I2C adapter\n");
-> > > +             goto out_put_i2c_node;
-> > > +     }
-> > > +
-> > > +     /* Grab resources */
-> > > +     ret = 0;
-> > > +     if (ops->get_resources)
-> > > +             ret = ops->get_resources(dev, i2c_node, ctx);
-> > > +     if (ret)
-> > > +             goto out_put_i2c_adapter;
-> > > +
-> > > +     /* Enable resources */
-> > > +     if (ops->enable)
-> > > +             ret = ops->enable(dev, ctx);
-> > > +     if (ret)
-> > > +             goto out_release_resources;
-> > > +
-> > > +     ret = 0;
-> > > +     for_each_child_of_node_with_prefix(i2c_node, node, type) {
-> > > +             union i2c_smbus_data data;
-> > > +             u32 addr;
-> > > +
-> > > +             if (of_property_read_u32(node, "reg", &addr))
-> > > +                     continue;
-> > > +             if (i2c_smbus_xfer(i2c, addr, 0, I2C_SMBUS_READ, 0, I2C_SMBUS_BYTE, &data) < 0)
-> > > +                     continue;
-> > > +
-> > > +             /* Found a device that is responding */
-> > > +             if (ops->free_resources_early)
-> > > +                     ops->free_resources_early(ctx);
-> > > +             ret = i2c_of_probe_enable_node(dev, node);
-> >
-> > Hmm... Is "node" reference count left bumped up for a reason?
-> 
-> Same as above.
+Cheers,
 
-Same as above.
+Paul
 
-> > > +             break;
-> > > +     }
-> > > +
-> > > +     if (ops->cleanup)
-> > > +             ops->cleanup(dev, ctx);
-> > > +out_release_resources:
-> > > +     if (ops->free_resources_late)
-> > > +             ops->free_resources_late(ctx);
-> > > +out_put_i2c_adapter:
-> > > +     i2c_put_adapter(i2c);
-> > > +out_put_i2c_node:
-> > > +     of_node_put(i2c_node);
-> > > +
-> > > +     return ret;
-> > > +}
+> CC: Paul Kocialkowski <contact@paulk.fr>
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  arch/arm/boot/dts/ti/omap/omap4-kc1.dts | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/ti/omap/omap4-kc1.dts b/arch/arm/boot/dts/=
+ti/omap/omap4-kc1.dts
+> index c6b79ba8bbc91..df874d5f5327f 100644
+> --- a/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
+> +++ b/arch/arm/boot/dts/ti/omap/omap4-kc1.dts
+> @@ -112,11 +112,7 @@ twl: twl@48 {
+>  		reg =3D <0x48>;
+>  		/* IRQ# =3D 7 */
+>  		interrupts =3D <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* IRQ_SYS_1N cascaded=
+ to gic */
+> -
+> -		twl_power: power {
+> -			compatible =3D "ti,twl6030-power";
+> -			ti,system-power-controller;
+> -		};
+> +		system-power-controller;
+>  	};
+>  };
+> =20
+> --=20
+> 2.39.2
+>=20
 
--- 
-With Best Regards,
-Andy Shevchenko
+--=20
+Paul Kocialkowski,
 
+Independent contractor - sys-base - https://www.sys-base.io/
+Free software developer - https://www.paulk.fr/
 
+Expertise in multimedia, graphics and embedded hardware support with Linux.
+
+--0EOYwvdTGuWUqxoA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmboCi4ACgkQhP3B6o/u
+lQy80Q/+K61+Btb+NzT9ug0gX53/mlmAYW3LI2hAjlVUf/yWar5eirKSTJV+5AGi
+DpIKlROtOoiyGd2ikz6yInLYYc5IdDJHXuLsxJZB6+mLdF2zKm2O+lnMtW8f0LG/
+Xsyn7/qiGClG5a+tKn+RHKB4oHp3/xVT/u+fLJUZpwB35FuVw8ZK+Tc82Ax+QROH
+rFC/mdZQQJKHLkRnptunZlDJcOmbXDAzGCoSccuat79KUVEPIVQg/CjNt45xaDDy
+xUdKfjiBNcMfv6Egpk1BWtlheQeAVk2kIV7E8MfPtPQAWdBQiKwcTfbx6kur3zqC
+jE/AguUvb6uZsObqEBG9Z9YkOfMccK3ZLyCYH1AF8J0oypbfooZF4qkJpchA8gEy
+WpnPVkkgsrGBpzkZ2jXXj+Jx1jYxbVCfeVVh/uzw24ziwXr436DUVZWvpdYrFXvQ
+u2JX/4o7ELverZfWLAd42FqY/YRcn11Ajw7yLUNjz9hXhfGbz3E8SNYBt28+FrHx
+A03LvZN+FhANl+ZgPYtzCqg3tPvqUNrZoFycYscDD0xbpBLsO9GnwvFn5nvJePds
+oMrFIqO/tI8CRr1taY15twxFmYo3am3pM0FLhDl9DNa/6hEHU9vnE5jVAA3a4nHu
+fuO8Wxh7RKeStBgCxYmB3hD/Y3jX7w89+ohVYbobYIhTic78THs=
+=ihYs
+-----END PGP SIGNATURE-----
+
+--0EOYwvdTGuWUqxoA--
 
