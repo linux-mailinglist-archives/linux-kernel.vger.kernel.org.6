@@ -1,179 +1,120 @@
-Return-Path: <linux-kernel+bounces-331067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E8697A7F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A64F97A7F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 21:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC0B1F20ECB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:50:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44DB81F23E94
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 19:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF7C15DBB2;
-	Mon, 16 Sep 2024 19:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88F015C15D;
+	Mon, 16 Sep 2024 19:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gRGmkZ1r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b="erybvQEg"
+Received: from us-smtp-delivery-162.mimecast.com (us-smtp-delivery-162.mimecast.com [170.10.133.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DCD15958A;
-	Mon, 16 Sep 2024 19:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD0E2E659
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 19:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726516194; cv=none; b=skQz5bYcK0Qx/HGtvRRp1Zi8hUcqWeyXJ1mGU+3kfzAdk5VHRGxvdNuagFvT8MldDb8z8cklopvNkAbh2MdgYROpRG3Fl5CWb7tPE75nJTi2cXhP5SPDuBsIBm+PTNbi3JHVZ8Ow6i0gZqSx3shRQbUZRxMKwkDBk2GhxLnXfg8=
+	t=1726516386; cv=none; b=c4MUywtxv/cKJ4lyFP9punAoGwZmn+G7bvl9dP+pBToKQ4rBDecCXCGfvsdZx+v4zQGKRXe/t8TFphfOjG1IbqJAhWlB0ll3clVJj2h9xdN5FdMtqCbAytmpRRWOz0iE+fhqY9rkoCPzKpoltmHsDIdfT8Bcy71pdTGVjNLouU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726516194; c=relaxed/simple;
-	bh=MPrtqJCMaQ5fNqMU9g4vep21b+RBjK5oD8tbKWt3Hh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lq/CWD14UV1CKdnJ4By9mBJfUKm08WK6nYTtAi4s3FClBe1FRCIPuuOLyV98vkNbaJgRfBaTmoM20TzaD8ulfbzWtJQqvPbGgvbLcM7EAnyGIAHvuKv9TWEikH1jk3MnwESFVNACyK0MeeWyWHpZqrFsUZdGZLq3sjY84q4Hn9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gRGmkZ1r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08292C4CEC4;
-	Mon, 16 Sep 2024 19:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726516194;
-	bh=MPrtqJCMaQ5fNqMU9g4vep21b+RBjK5oD8tbKWt3Hh8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gRGmkZ1ryuNGZ7AzIsQszbkGeq4SRB8lTuBt+Z2yawk7SFST720LoB2nF6oAHRiiC
-	 YiVjt88q3ZomW/KwtIY1oPmzVsWqiSMga6wX7xlxcgVeu0q0cKZYA/skVS4knvHxAy
-	 Gpn7ua1vUsj5+/xHjTn82e30321Hpw7xK/nbL3oaVcY6Y3nGPopbvtQZF6zZQr369c
-	 8LqAQT09DO5o7S/MgyhQxghjD3sMHIfinIomkGZdwnMQeV4ggpt1v1zHC4+RZC0MzZ
-	 BUQfXEZoY2DnhAAT4GyGArcB6KBX3OceqXJZW0ZP3tz6eI2Xkqgdbk/azqKT5uifC/
-	 lzDw/MvYlEsaQ==
-Message-ID: <982ec9f3-13de-4693-b13c-fcf820ada662@kernel.org>
-Date: Mon, 16 Sep 2024 21:49:45 +0200
+	s=arc-20240116; t=1726516386; c=relaxed/simple;
+	bh=MA2ipLhTcZA7vIZAwQ9F3rY4FTOpS7BrXQ7wWgPpTtE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TeFFIFKiDMqt+yuOW5LcXfjE+Krn46xy8eyYi9bGaEp6pgciUTp0n1CpMVnSppMxJ21HfxLLSL7Uk4UYP5PfMdQ39OPwzUtoD2wohdijjsT4c2bvN2ekVW+9klzXuObyTkQHi0o4LUVDJHjPGsg452xtj0qBNYhE5Hn3/rsVHdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com; spf=pass smtp.mailfrom=hp.com; dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b=erybvQEg; arc=none smtp.client-ip=170.10.133.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hp.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hp.com; s=mimecast20180716;
+	t=1726516383;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MA2ipLhTcZA7vIZAwQ9F3rY4FTOpS7BrXQ7wWgPpTtE=;
+	b=erybvQEgDQPumf0de4VEzDxfBBlI0Q1u+B2Rb4/HksKur0l58EZshwStPM16bglrDRpRgl
+	VmkeVgI8kDsceDsQ/qb8HUTiBx0y9UzgyP57D+c7NXkef3tIDEOV2Sc0y8uuGoQByp5IQQ
+	dGoE1Y6diSiVRVCEIk+9Tu7geoMAr5E=
+Received: from g7t16451g.inc.hp.com (hpifallback.mail.core.hp.com
+ [15.73.128.137]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-512--iqLqW0tM3GD7IwAkHPVfg-1; Mon, 16 Sep 2024 15:53:02 -0400
+X-MC-Unique: -iqLqW0tM3GD7IwAkHPVfg-1
+Received: from g7t14407g.inc.hpicorp.net (g7t14407g.inc.hpicorp.net [15.63.19.131])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by g7t16451g.inc.hp.com (Postfix) with ESMTPS id 659EF6000CBF;
+	Mon, 16 Sep 2024 19:53:00 +0000 (UTC)
+Received: from niko-jammy.localdomain (unknown [15.52.90.21])
+	by g7t14407g.inc.hpicorp.net (Postfix) with ESMTP id F32DC18;
+	Mon, 16 Sep 2024 19:52:55 +0000 (UTC)
+From: nikolai.afanasenkov@hp.com
+To: tiwai@suse.com
+Cc: perex@perex.cz,
+	kailang@realtek.com,
+	sbinding@opensource.cirrus.com,
+	simont@opensource.cirrus.com,
+	foss@athaariq.my.id,
+	rf@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nikolai Afanasenkov <nikolai.afanasenkov@hp.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ALSA: hda/realtek: fix mute/micmute LED for HP mt645 G8
+Date: Mon, 16 Sep 2024 13:50:42 -0600
+Message-Id: <20240916195042.4050-1-nikolai.afanasenkov@hp.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/20] dt-bindings: arm: cpus: Add Apple A7-A11 CPU
- cores
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-References: <20240915080733.3565-1-towinchenmi@gmail.com>
- <20240915080733.3565-2-towinchenmi@gmail.com>
- <m4hw6wt2xcsgt23fvu7okump62bqhugpyecp3hqlj37x6m4gno@tmui7wdzhs3h>
- <c5407291-a799-4b41-aa84-4717a476b661@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c5407291-a799-4b41-aa84-4717a476b661@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: hp.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=WINDOWS-1252; x-default=true
 
-On 16/09/2024 16:47, Nick Chan wrote:
-> 
-> 
-> On 16/9/2024 22:34, Krzysztof Kozlowski wrote:
->> On Sun, Sep 15, 2024 at 03:58:46PM +0800, Nick Chan wrote:
->>> Add the following CPU cores:
->>>
->>> - apple,cyclone: A7 cores
->>> - apple,typhoon: A8 cores
->>> - apple,twister: A9 cores
->>> - apple,hurricane-zephyr: A10 logical cores
->>> - apple,monsoon: A11 performance cores
->>> - apple,mistral: A11 efficiency cores
->>>
->>> In the Apple A10, there are physical performance-efficiency cores that
->>> forms logical cores to software depending on the current p-state, and
->>> only one type of core may be active at one time.
->>>
->>> This follows the existing newest-first order.
->>>
->>> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
->>> ---
->>>  Documentation/devicetree/bindings/arm/cpus.yaml | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
->>> index f308ff6c3532..3959e022079f 100644
->>> --- a/Documentation/devicetree/bindings/arm/cpus.yaml
->>> +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
->>> @@ -89,6 +89,12 @@ properties:
->>>        - apple,blizzard
->>>        - apple,icestorm
->>>        - apple,firestorm
->>> +      - apple,mistral
->>> +      - apple,monsoon
->>> +      - apple,hurricane-zephyr
->>> +      - apple,twister
->>> +      - apple,typhoon
->>> +      - apple,cyclone
->>
->> Please keep alphabetical order. And no, just because earlier Hector
->> added stuff in reversed order, is not a reason to keep doing the same.
-> Ack. All bindings added in this series except
-> 
-> Documentation/devicetree/bindings/arm/apple.yaml
-> 
-> will be changed to alphabetical order in v2.
+From: Nikolai Afanasenkov <nikolai.afanasenkov@hp.com>
 
-Wait, that's not exactly what I meant. In Apple-specific bindings maybe
-some chronological order was chosen earlier. If there is some known
-order, you can keep it. But for common bindings (so like one here)we
-prefer alphabetical.
+The HP Elite mt645 G8 Mobile Thin Client uses an ALC236 codec
+and needs the ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF quirk
+to enable the mute and micmute LED functionality.
 
-Best regards,
-Krzysztof
+This patch adds the system ID of the HP Elite mt645 G8
+to the `alc269_fixup_tbl` in `patch_realtek.c`
+to enable the required quirk.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikolai Afanasenkov <nikolai.afanasenkov@hp.com>
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 452c6e7c20e2..5ad5a901f9b6 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10396,6 +10396,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[=
+] =3D {
+ =09SND_PCI_QUIRK(0x103c, 0x8ca2, "HP ZBook Power", ALC236_FIXUP_HP_GPIO_LE=
+D),
+ =09SND_PCI_QUIRK(0x103c, 0x8ca4, "HP ZBook Fury", ALC245_FIXUP_CS35L41_SPI=
+_2_HP_GPIO_LED),
+ =09SND_PCI_QUIRK(0x103c, 0x8ca7, "HP ZBook Fury", ALC245_FIXUP_CS35L41_SPI=
+_2_HP_GPIO_LED),
++=09SND_PCI_QUIRK(0x103c, 0x8caf, "HP Elite mt645 G8 Mobile Thin Client", A=
+LC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
+ =09SND_PCI_QUIRK(0x103c, 0x8cbd, "HP Pavilion Aero Laptop 13-bg0xxx", ALC2=
+45_FIXUP_HP_X360_MUTE_LEDS),
+ =09SND_PCI_QUIRK(0x103c, 0x8cdd, "HP Spectre", ALC287_FIXUP_CS35L41_I2C_2)=
+,
+ =09SND_PCI_QUIRK(0x103c, 0x8cde, "HP Spectre", ALC287_FIXUP_CS35L41_I2C_2)=
+,
+--=20
+2.34.1
 
 
