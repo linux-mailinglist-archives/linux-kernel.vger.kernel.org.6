@@ -1,63 +1,87 @@
-Return-Path: <linux-kernel+bounces-330292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89014979C27
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:41:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7986979C2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 09:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 339F11F210C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:41:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28045B22326
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 07:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474D4132103;
-	Mon, 16 Sep 2024 07:40:57 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A9213AD03;
+	Mon, 16 Sep 2024 07:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DQToUKuw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5200613D28F;
-	Mon, 16 Sep 2024 07:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A39C3E47B;
+	Mon, 16 Sep 2024 07:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726472456; cv=none; b=CMtqiuSeZOu5+8OU+gu+UmajO4AgLRAPY8yrACyymrVkCcK4/sOwAsagcv88WuZAsMwv5phzdu+nG7TVqpaWETPMFhjy5SgtLIsaZVH/+BCKmxcOaifuOwOBPJwfARCbdCteR7BFPjBwCJqw/c3hYuiAYcgrZxNUAT3moW6jOh0=
+	t=1726472501; cv=none; b=WxzFOFqVDZy8tKjmhRRTk1c10OuKJz3ZqSlwHLa0ng7v6ZjX8cuLHWqoVzoYRN2ibDXR8JhAxALy6XBajeEOawTdNf60QW86jfaMNAcuhTxyzPS2ae36xnlElZvaDuIQzyOytiKEIXEQy/MEcgeRDRikJj7kxeOeTSJA6C2WOCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726472456; c=relaxed/simple;
-	bh=j6sU9uDfg4k4A6QoHxtT3rJK5j+RZDSfsuYqBWiRX0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H5A4SPX7DqQ1y7gRAg7sxwziPtf1tDwkHHHR2+J+sZUGPat+y2RpP/DpZsWSB/lezWlV1ujTUw2z6zYFH7bQMssDlirpckCQYdEpPjRB0Hjf0otTJAAJvc/d8COEMoShBokJakmkpR6Wrj+gYcECetq1QSChptM5pxlzaUtxHdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C7EAA227AAD; Mon, 16 Sep 2024 09:40:51 +0200 (CEST)
-Date: Mon, 16 Sep 2024 09:40:51 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Vinod Koul <vkoul@kernel.org>, Nishad Saraf <nishads@amd.com>,
-	Lizhi Hou <lizhi.hou@amd.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Please revert the addition of the AMD QDMA driver
-Message-ID: <20240916074051.GA18902@lst.de>
+	s=arc-20240116; t=1726472501; c=relaxed/simple;
+	bh=MJNU64e/Cm28j4kruSrPIYGA0DU5DT4s0QKn5OFOK0w=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=H5mlldPT72pst4lLxlopvrtdkRDFaJs9EAokXh6yPvX94Mp2L+n8+frTBbCcwQto/UuSGBDCsXOZfCvWSaDX0Ad9IbHO8lZB1mCjBM+Rf7rtfEJwasu5PPTcK6YKVxvxDrGXsEnxvQZYbNRIDmQhfrYhlOmvnKlYkZz4IuuFCH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DQToUKuw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED106C4CEC4;
+	Mon, 16 Sep 2024 07:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1726472500;
+	bh=MJNU64e/Cm28j4kruSrPIYGA0DU5DT4s0QKn5OFOK0w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DQToUKuwz2Jb8fUUXg/iPHi2LSK/KgXrTbaXbMQx6mV2AQjd8nqsJ7lRGa/DOBaO1
+	 vKxB1QjAdiyEn/9lBro9wqp49GEobRgmTrk6H18r7dGQnUw6xb5+wE5V2VxNnzcwjv
+	 OOqfIV0Flp77+wu60/UScGJrVh8wGVtO4GTM4dRg=
+Date: Mon, 16 Sep 2024 00:41:34 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Jingxiang Zeng <jingxiangzeng.cas@gmail.com>
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, hannes@cmpxchg.org,
+ linuszeng@tencent.com, linux-kernel@vger.kernel.org, mhocko@kernel.org,
+ muchun.song@linux.dev, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+ yosryahmed@google.com
+Subject: Re: [PATCH V2] mm/memcontrol: add per-memcg pgpgin/pswpin counter
+Message-Id: <20240916004134.0ef2f50862b59079e1ac2928@linux-foundation.org>
+In-Reply-To: <20240913084453.3605621-1-jingxiangzeng.cas@gmail.com>
+References: <Jingxiang Zeng <linuszeng@tencent.com>
+	<20240913084453.3605621-1-jingxiangzeng.cas@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Vinod,
+On Fri, 13 Sep 2024 16:44:53 +0800 Jingxiang Zeng <jingxiangzeng.cas@gmail.com> wrote:
 
-I just noticed you added the AMD QDMA driver for this merge window,
-which is completely broken in terms of DMA API usage by using the
-private get/set_dma_ops APIs.  These were never for driver use (
-and I've been working for years to fix the few abusers), but with the
-DMA changes in 6.12 it actually can't work at all, as the dma-iommu
-driver now also sets NULL DMA ops in addition to dma-direct.
+> From: Jingxiang Zeng <linuszeng@tencent.com>
+> 
+> In proactive memory reclamation scenarios, it is necessary to estimate the
+> pswpin and pswpout metrics of the cgroup to determine whether to continue
+> reclaiming anonymous pages in the current batch.  This patch will collect
+> these metrics and expose them.
+> 
 
-As a reminder drivers must never try to inherit dma settings from
-one device or another, instead pass the actual DMA device to whatever
-layer does the DMA mapping.  Without that you break all kinds of
-thing.
+Please explain the differences between v1 and v2:
+
+--- a/mm/memcontrol-v1.c~mm-memcontrol-add-per-memcg-pgpgin-pswpin-counter-v2
++++ a/mm/memcontrol-v1.c
+@@ -2729,8 +2729,6 @@ static const char *const memcg1_stat_nam
+ static const unsigned int memcg1_events[] = {
+ 	PGPGIN,
+ 	PGPGOUT,
+-	PSWPIN,
+-	PSWPOUT,
+ 	PGFAULT,
+ 	PGMAJFAULT,
+ };
+_
+
 
