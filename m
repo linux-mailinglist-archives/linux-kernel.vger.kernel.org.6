@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-330346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F76979CF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:39:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE50979CFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85AFD281D1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86CBC1F22C1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F0E1474BF;
-	Mon, 16 Sep 2024 08:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661E713E03E;
+	Mon, 16 Sep 2024 08:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="g+rw9OBV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tppv5E2a"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lATcmgsw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B55tdtoh"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C59D1448C7
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5F3146A72
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 08:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726475927; cv=none; b=NO2CB1pO1jaSSabhxofVfrKFy1Y/cpXWNppWnO6VmaNzWIFhZRhlq2iPm/3GgjV1RJLJ+jWgkhPcvqMLyKVPkw3X1rPnxfBpBvkA43MTtjXxmzjJ1awtmBCShMQBdzPAw2veAKDQq/vlIdcza710qU4Wf8bJtOX6GEpEixBXzCQ=
+	t=1726475930; cv=none; b=GMjlhWs2shBZGyJ23Ase7SR7fpqpGDFUluKy0SgqZMEO5AoDe5zpMk7qcocoZBbLK8SKaEsuZddpegoiRX0LB0/y4GfJgGsfJAPZ6DAPXmzhhGfy8QhhjpdTuAqLY6X/VTqZcheSloPNjUa21gInNozsrSrjE8ec91w67t8+CKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726475927; c=relaxed/simple;
-	bh=AvdhLwulxq6k/+YWHP0A33LQAY0l7PceU50OcuY5XkU=;
+	s=arc-20240116; t=1726475930; c=relaxed/simple;
+	bh=lk/EgyrmE73eJq+w8XPJpjaOj1Zl3LE+Xj363u9mJkQ=;
 	h=From:To:Cc:Subject:References:Message-ID:Content-Type:
-	 MIME-Version:Date; b=uZkB/plqEKtMw0wIKu8QUWnkWvT1qj+J6d7nPZjy97ztGBgVCbKzsuN8X5d3GVB2neUSzSA21QMeSAkI33nLIydVfl+vmHCL6NG6pzunbWlaSEYmXgPnYnxoQsBINARWTJhyW4oVGMSPl6nbVKpYuvMBLk866rl46tsQiaSWiOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=g+rw9OBV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tppv5E2a; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Date; b=Rym+UIqAYG0LnR5TaDied17guJLcu0ggVbXcjIdH7MVchYaU6JiEIyQlhk8rqtPSrSx61lXWEg1LkhcqUry2OAMmhs2iYlY0fNI/I+7pLvUzPMmps7FmMu4jZevlFUC2qemkUPfliA+vrFsEJ6AsoLrWoJA/G3BtqvSA5PmvxuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lATcmgsw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B55tdtoh; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726475918;
+	s=2020; t=1726475920;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:  references:references;
-	bh=s+WeCSPpvK8tuxW5BLctlt7CA+xrWMFzPPDJy66ZJiI=;
-	b=g+rw9OBVd2eaaRzDGDcSNoH4NEXWCvVhaUzA9KTcpg+nsKJC62t9iaBpsLnulVUMmobxPd
-	4nXuC8c/c5Oq5OZK0lI+8cfjvHwnHb5BAIUb6A2xZzDltn4tz8egpWZ8T3KhscsHpvi2IB
-	wE0suNUPEEdeIcwR0cSFqVxexO6YC6wVJi+eJ2hKZgAM5KNFw+J4JqOOUlydS5rrI3k8Ti
-	ZHwQYI3ajhOyDkIGRgWcEfww2vM5HO7fDDkbRXJGl2+tMWhpqRFobAa9ZWY+LLFV3wKcVI
-	Avv1c5qDL54cuTVAc+cJ4TBibEPathX8unNEKeMMKnwPqzfczPK1CZt9PPtyAg==
+	bh=IIAizPiE38teQZpkZTcCJfDojT1J1Xdpby4SVSHnkgw=;
+	b=lATcmgswKk9P406Qc3ul1+QeP1HrWUwlpeEpzitkftjLfDyxtRcPDTvkD+/HA8oM7LMTw7
+	OMfCtpmVd/K8VSWdnwVrG6T9aOUS1rXBAN+0rLsSySUSQAa5D1K0D45MmNhyDDW2MVAVA4
+	3JshbXHg/Z0RwbrpJF6BTRGigx/TmgOPvPdKVrutiTpaQ2EuVzoLnketF9Ot8O5I60y/68
+	U6NeoCQApZHNs/FsWvd2tWWNALri6Ke+gAMGDWc35d5SdC4jYUSVUT2rWxKVJJThdBt19j
+	5rUZYc8WTuqIIT6B+47Ww64CJ1ZhRG5w8LhnXeMR8nft104mluoqpcFt19L0YA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726475918;
+	s=2020e; t=1726475920;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:  references:references;
-	bh=s+WeCSPpvK8tuxW5BLctlt7CA+xrWMFzPPDJy66ZJiI=;
-	b=Tppv5E2aMYaDr5XPDf+eyvfw5f1PWLUumQZXvluVL8LyfSSgbBRhDoM7eOuAkfHa6GPYXM
-	dc6WhC2DEkahoiAw==
+	bh=IIAizPiE38teQZpkZTcCJfDojT1J1Xdpby4SVSHnkgw=;
+	b=B55tdtoh9BlHSHu0yP6rG1sn4uO0ThGpk2u1wiwYW41V9Ql3kqUOiR1cYqJZirpu6GKtrK
+	T70BnLx/CJ/LH+CQ==
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] smp/core for v6.12-rc1
+Subject: [GIT pull] timers/clocksource for v6.12-rc1
 References: <172647588843.2450257.3544233832195550173.tglx@xen13>
-Message-ID: <172647589238.2450257.17734472985835252214.tglx@xen13>
+Message-ID: <172647589402.2450257.6913545425550099726.tglx@xen13>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -64,22 +64,25 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 16 Sep 2024 10:38:37 +0200 (CEST)
+Date: Mon, 16 Sep 2024 10:38:39 +0200 (CEST)
 
 Linus,
 
-please pull the latest smp/core branch from:
+please pull the latest timers/clocksource branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp-core-2024-09=
--16
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-clocksour=
+ce-2024-09-16
 
-up to:  1d07085402d1: smp: Mark smp_prepare_boot_cpu() __init
+up to:  4ac1dd3245b9: clocksource: Set cs_watchdog_read() checks based on .un=
+certainty_margin
 
-A set of updates for CPU hotplug:
 
-  - Prepare the core for supporting parallel hotplug on loongarch
+Updates for the clocksource watchdog:
 
-  - A small set of cleanups and enhancements
+  - Make the uncertainty margin handling more robust to prevent false
+    positives
+
+  - Clarify comments
 
 
 Thanks,
@@ -87,124 +90,122 @@ Thanks,
 	tglx
 
 ------------------>
-Bibo Mao (1):
-      smp: Mark smp_prepare_boot_cpu() __init
+Borislav Petkov (1):
+      clocksource: Improve comments for watchdog skew bounds
 
-Jiaxun Yang (2):
-      cpu/hotplug: Make HOTPLUG_PARALLEL independent of HOTPLUG_SMT
-      cpu/hotplug: Provide weak fallback for arch_cpuhp_init_parallel_bringup=
-()
-
-Thorsten Blum (1):
-      cpu: Fix W=3D1 build kernel-doc warning
+Paul E. McKenney (2):
+      clocksource: Fix comments on WATCHDOG_THRESHOLD & WATCHDOG_MAX_SKEW
+      clocksource: Set cs_watchdog_read() checks based on .uncertainty_margin
 
 
- arch/loongarch/kernel/smp.c |  2 +-
- arch/mips/kernel/smp.c      |  2 +-
- arch/powerpc/kernel/smp.c   |  2 +-
- include/linux/smp.h         |  2 +-
- kernel/cpu.c                | 20 +++++++++++++++++---
- 5 files changed, 21 insertions(+), 7 deletions(-)
+ kernel/time/clocksource.c | 45 ++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 32 insertions(+), 13 deletions(-)
 
-diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
-index ca405ab86aae..be2655c4c414 100644
---- a/arch/loongarch/kernel/smp.c
-+++ b/arch/loongarch/kernel/smp.c
-@@ -476,7 +476,7 @@ core_initcall(ipi_pm_init);
- #endif
-=20
- /* Preload SMP state for boot cpu */
--void smp_prepare_boot_cpu(void)
-+void __init smp_prepare_boot_cpu(void)
- {
- 	unsigned int cpu, node, rr_node;
-=20
-diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
-index 0362fc5df7b0..39e193cad2b9 100644
---- a/arch/mips/kernel/smp.c
-+++ b/arch/mips/kernel/smp.c
-@@ -439,7 +439,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
- }
-=20
- /* preload SMP state for boot cpu */
--void smp_prepare_boot_cpu(void)
-+void __init smp_prepare_boot_cpu(void)
- {
- 	if (mp_ops->prepare_boot_cpu)
- 		mp_ops->prepare_boot_cpu();
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 46e6d2cd7a2d..4ab9b8cee77a 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -1166,7 +1166,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
- 	cpu_smt_set_num_threads(num_threads, threads_per_core);
- }
-=20
--void smp_prepare_boot_cpu(void)
-+void __init smp_prepare_boot_cpu(void)
- {
- 	BUG_ON(smp_processor_id() !=3D boot_cpuid);
- #ifdef CONFIG_PPC64
-diff --git a/include/linux/smp.h b/include/linux/smp.h
-index fcd61dfe2af3..6a0813c905d0 100644
---- a/include/linux/smp.h
-+++ b/include/linux/smp.h
-@@ -109,7 +109,7 @@ static inline void on_each_cpu_cond(smp_cond_func_t cond_=
-func,
-  * Architecture specific boot CPU setup.  Defined as empty weak function in
-  * init/main.c. Architectures can override it.
-  */
--void smp_prepare_boot_cpu(void);
-+void __init smp_prepare_boot_cpu(void);
-=20
- #ifdef CONFIG_SMP
-=20
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index b1fd2a3db91a..0c9c5dfc8ddd 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1808,6 +1808,7 @@ static int __init parallel_bringup_parse_param(char *ar=
-g)
- }
- early_param("cpuhp.parallel", parallel_bringup_parse_param);
-=20
-+#ifdef CONFIG_HOTPLUG_SMT
- static inline bool cpuhp_smt_aware(void)
- {
- 	return cpu_smt_max_threads > 1;
-@@ -1817,6 +1818,21 @@ static inline const struct cpumask *cpuhp_get_primary_=
-thread_mask(void)
- {
- 	return cpu_primary_thread_mask;
- }
-+#else
-+static inline bool cpuhp_smt_aware(void)
-+{
-+	return false;
-+}
-+static inline const struct cpumask *cpuhp_get_primary_thread_mask(void)
-+{
-+	return cpu_none_mask;
-+}
-+#endif
-+
-+bool __weak arch_cpuhp_init_parallel_bringup(void)
-+{
-+	return true;
-+}
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index d0538a75f4c6..23336eecb4f4 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -113,7 +113,6 @@ static u64 suspend_start;
 =20
  /*
-  * On architectures which have enabled parallel bringup this invokes all BP
-@@ -2689,9 +2705,7 @@ int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- 	return ret;
- }
+  * Threshold: 0.0312s, when doubled: 0.0625s.
+- * Also a default for cs->uncertainty_margin when registering clocks.
+  */
+ #define WATCHDOG_THRESHOLD (NSEC_PER_SEC >> 5)
 =20
--/**
-- * Check if the core a CPU belongs to is online
-- */
-+/* Check if the core a CPU belongs to is online */
- #if !defined(topology_is_core_online)
- static inline bool topology_is_core_online(unsigned int cpu)
+@@ -125,6 +124,13 @@ static u64 suspend_start;
+  *
+  * The default of 500 parts per million is based on NTP's limits.
+  * If a clocksource is good enough for NTP, it is good enough for us!
++ *
++ * In other words, by default, even if a clocksource is extremely
++ * precise (for example, with a sub-nanosecond period), the maximum
++ * permissible skew between the clocksource watchdog and the clocksource
++ * under test is not permitted to go below the 500ppm minimum defined
++ * by MAX_SKEW_USEC.  This 500ppm minimum may be overridden using the
++ * CLOCKSOURCE_WATCHDOG_MAX_SKEW_US Kconfig option.
+  */
+ #ifdef CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+ #define MAX_SKEW_USEC	CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+@@ -132,6 +138,13 @@ static u64 suspend_start;
+ #define MAX_SKEW_USEC	(125 * WATCHDOG_INTERVAL / HZ)
+ #endif
+=20
++/*
++ * Default for maximum permissible skew when cs->uncertainty_margin is
++ * not specified, and the lower bound even when cs->uncertainty_margin
++ * is specified.  This is also the default that is used when registering
++ * clocks with unspecifed cs->uncertainty_margin, so this macro is used
++ * even in CONFIG_CLOCKSOURCE_WATCHDOG=3Dn kernels.
++ */
+ #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
+=20
+ #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
+@@ -231,6 +244,7 @@ enum wd_read_status {
+=20
+ static enum wd_read_status cs_watchdog_read(struct clocksource *cs, u64 *csn=
+ow, u64 *wdnow)
  {
++	int64_t md =3D 2 * watchdog->uncertainty_margin;
+ 	unsigned int nretries, max_retries;
+ 	int64_t wd_delay, wd_seq_delay;
+ 	u64 wd_end, wd_end2;
+@@ -245,7 +259,7 @@ static enum wd_read_status cs_watchdog_read(struct clocks=
+ource *cs, u64 *csnow,
+ 		local_irq_enable();
+=20
+ 		wd_delay =3D cycles_to_nsec_safe(watchdog, *wdnow, wd_end);
+-		if (wd_delay <=3D WATCHDOG_MAX_SKEW) {
++		if (wd_delay <=3D md + cs->uncertainty_margin) {
+ 			if (nretries > 1 && nretries >=3D max_retries) {
+ 				pr_warn("timekeeping watchdog on CPU%d: %s retried %d times before succe=
+ss\n",
+ 					smp_processor_id(), watchdog->name, nretries);
+@@ -258,12 +272,12 @@ static enum wd_read_status cs_watchdog_read(struct cloc=
+ksource *cs, u64 *csnow,
+ 		 * there is too much external interferences that cause
+ 		 * significant delay in reading both clocksource and watchdog.
+ 		 *
+-		 * If consecutive WD read-back delay > WATCHDOG_MAX_SKEW/2,
+-		 * report system busy, reinit the watchdog and skip the current
++		 * If consecutive WD read-back delay > md, report
++		 * system busy, reinit the watchdog and skip the current
+ 		 * watchdog test.
+ 		 */
+ 		wd_seq_delay =3D cycles_to_nsec_safe(watchdog, wd_end, wd_end2);
+-		if (wd_seq_delay > WATCHDOG_MAX_SKEW/2)
++		if (wd_seq_delay > md)
+ 			goto skip_test;
+ 	}
+=20
+@@ -1146,14 +1160,19 @@ void __clocksource_update_freq_scale(struct clocksour=
+ce *cs, u32 scale, u32 freq
+ 	}
+=20
+ 	/*
+-	 * If the uncertainty margin is not specified, calculate it.
+-	 * If both scale and freq are non-zero, calculate the clock
+-	 * period, but bound below at 2*WATCHDOG_MAX_SKEW.  However,
+-	 * if either of scale or freq is zero, be very conservative and
+-	 * take the tens-of-milliseconds WATCHDOG_THRESHOLD value for the
+-	 * uncertainty margin.  Allow stupidly small uncertainty margins
+-	 * to be specified by the caller for testing purposes, but warn
+-	 * to discourage production use of this capability.
++	 * If the uncertainty margin is not specified, calculate it.  If
++	 * both scale and freq are non-zero, calculate the clock period, but
++	 * bound below at 2*WATCHDOG_MAX_SKEW, that is, 500ppm by default.
++	 * However, if either of scale or freq is zero, be very conservative
++	 * and take the tens-of-milliseconds WATCHDOG_THRESHOLD value
++	 * for the uncertainty margin.  Allow stupidly small uncertainty
++	 * margins to be specified by the caller for testing purposes,
++	 * but warn to discourage production use of this capability.
++	 *
++	 * Bottom line:  The sum of the uncertainty margins of the
++	 * watchdog clocksource and the clocksource under test will be at
++	 * least 500ppm by default.  For more information, please see the
++	 * comment preceding CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US above.
+ 	 */
+ 	if (scale && freq && !cs->uncertainty_margin) {
+ 		cs->uncertainty_margin =3D NSEC_PER_SEC / (scale * freq);
 
 
