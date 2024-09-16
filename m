@@ -1,282 +1,127 @@
-Return-Path: <linux-kernel+bounces-330633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842B997A215
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:21:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AAEC97A240
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A52C01C21D62
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:21:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239B41F24904
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F86715531A;
-	Mon, 16 Sep 2024 12:21:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9109446D1;
-	Mon, 16 Sep 2024 12:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FCE15666B;
+	Mon, 16 Sep 2024 12:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="DwviWWQx"
+Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEF51553B7;
+	Mon, 16 Sep 2024 12:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726489289; cv=none; b=KvD47/hrZcpIDnoA/WEtrMJ95v9Q8P4CbklS5WqwX3zg9Drz07XiLVxFsL8D419BHYb3f9iH1vJmy9UWyJAqZmHjKsJ3+1sPy58zN0jGDqLklmAK6IFAZDubX8Z1y7SmpXjD+YfO6t2DJT013dUiGkEt2jmF+BS5QgQsk6Xbh5A=
+	t=1726489559; cv=none; b=tSiU9JugjZc/y1r5D8tiV3YseUkttb/vnAJYkZqhDGzYJFgdw3UIBUnwrGHwP5DvjLSwVqzfqkulYfa0ViZy9dmWHt2rni09sRQxYo/TpMS87jTCj32R6FpgAMEuYUn6VYMxMdw054gJPxIajfGY7k2H1D3RF6j+Ug3JHxzIvYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726489289; c=relaxed/simple;
-	bh=AWbWNHgiLrwlQTxSpQ1d+i0Ir4h8gtzshA7DctivCSI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h+GfSERFlkO2NnUOc1nQI+fVMJXqM+v6pWqRZv6X0kh52tJKPMRoQ6YOonG5YzgRJdPulDTGcKCQyQP9HGFyJFpVKNX7RcYWTH8KIxp5OtO0uxwLIA8QpYg1QJiGLRmpR27/65rU4TPNcZZI4uPd2EPunT25Mzzlqq+iKyK4klo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49A6E11FB;
-	Mon, 16 Sep 2024 05:21:55 -0700 (PDT)
-Received: from [192.168.2.132] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF2143F66E;
-	Mon, 16 Sep 2024 05:21:23 -0700 (PDT)
-Message-ID: <3b19e52e-b223-4753-b81c-5b47c8d0cf97@arm.com>
-Date: Mon, 16 Sep 2024 14:21:18 +0200
+	s=arc-20240116; t=1726489559; c=relaxed/simple;
+	bh=u966p51sgSEBSUnLsK0gdEYkL0s4sRyftNWcEuH4hd4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e/6xiG5N32mYJDyFKWkhTaKoLvWXH8w2o7sIWx7Wm3jNciqe2/o7eoi7wSJVKaXvidfJaokufvRsGcU7Flkx2Bz+sWsYKSLedg/O6S2pERIGOsfFrQyUL4mjJq971Wp7kAy3DrdqcApDslH8Lzg7q7B1TXRWUrHS+h7SvS0Wycw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=DwviWWQx; arc=none smtp.client-ip=51.83.41.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
+	t=1726489282; bh=u966p51sgSEBSUnLsK0gdEYkL0s4sRyftNWcEuH4hd4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DwviWWQxscsbPjrv4RWiczfo4wRhcHcU81HTlYnf/SlrLgfGAjHdi5gqzpjUwp3qm
+	 4GeDipF972tyjUZvhU77ZJNUgIxrDvNsmAGvE+UkMk1dT7WNg0ib0+sXk7WVWMVgkS
+	 Bpn/mzomS2xNAZ7Rb5IqaaLSVzTKmibJScNnrtkZKDuwKae/HcF+iPwnaT0QIIpk6M
+	 N8xbu03rvq5FRNVvQUsw4T0fJyHSb+4f8shZj6UXk7oZcdTraSbfrhCjnkNMjdjEwt
+	 3i+1IewTFfbXen0OJ16QTpKc/XOLZkHBM+plrlSfdNM94Z5GBr4S5qdFz1UrSuyi5M
+	 k2EH1/Z+B3Upg==
+Received: from localhost.localdomain (unknown [10.0.1.3])
+	by mx1.buffet.re (Postfix) with ESMTPA id 8D0661230AA;
+	Mon, 16 Sep 2024 14:21:21 +0200 (CEST)
+From: Matthieu Buffet <matthieu@buffet.re>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: [RFC PATCH v1 0/7] landlock: Add UDP access control support
+Date: Mon, 16 Sep 2024 14:22:23 +0200
+Message-Id: <20240916122230.114800-1-matthieu@buffet.re>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/16] sched/fair/schedutil: Better manage system
- response time
-To: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
- John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240820163512.1096301-1-qyousef@layalina.io>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240820163512.1096301-1-qyousef@layalina.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/08/2024 18:34, Qais Yousef wrote:
-> This series is a re-incarnation of Remove Hardcoded Margings posted a while ago
-> 
-> 	https://lore.kernel.org/lkml/20231208002342.367117-1-qyousef@layalina.io/
->
+Landlocked processes can freely use UDP sockets. This may allow them to
+escape their sandbox if they can reach UDP sockets of other vulnerable
+processes on the same host, or allow them to send/receive to/from unwanted
+hosts.
 
-Looks like some of the ideas were already discussed under
-https://lkml.kernel.org/r/20230827233203.1315953-1-qyousef@layalina.io
-back in Aug/Sept 23.
+This is a first attempt to add access control around UDP usage, based on
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
+Linux 6.11-rc1 (8400291e289e).
 
-> The original series attempted to address response time related issues stemming
-> from hardcoding migration margin in fits_capacity() on HMP system, and DVFS
-> headroom which had a constant 25% boost that is bad for power and thermal on
-> powerful systems. Saving power was the main goal by reducing these values to
-> the smallest possible value automatically based on anticipated worst case
-> scenario.
-> 
-> A tricky point was uncovered and demonstrated in the migration margin table in
-> this posting
-> 
-> 	https://lore.kernel.org/lkml/20240205223344.2280519-4-qyousef@layalina.io/
-> 
-> is that to make the system responsive to sudden changes, we actually need large
-> migration margin the smaller the core capacity is
-> 
-> 	cap		threshold	%		threshold-tick	%
-> 	0		0		0		0		0
-> 	16		0		0		0		0
-> 	32		1		3.12		0		0
-> 	48		3		6.25		2		4.16
-> 	64		4		6.25		2		3.12
-> 	80		6		7.5		5		6.25
-> 	96		10		10.41		8		8.33
-> 	112		14		12.5		11		9.82
-> 	128		18		14.06		16		12.5
-> 	144		21		14.58		18		12.5
-> 	160		26		16.25		23		14.37
+The first two commits fix what I interpret as a bug in landlock's sample's
+options parsing, in order to allow testing the actual patch contents.
+These two are finished afaict and could be merged separately, but are
+bundled here to have a working base-commit and allow the actual patch to
+get a first round of feedback.
 
-Not sure what this 'misfit threshold' should be?
+Add two new access rights in the same bind/connect hooks as used for
+TCP, with the same semantics.
 
-160 * 1024 / 1280 = 128 so threshold = 32 ?
+Also add two new hooks in recvmsg/sendmsg and two additional rights,
+because:
+- UDP allows processes to send traffic to anyone without any `bind()` nor
+  `connect()` by specifying an arbitrary address in `sendmsg()`, so
+  simply using existing hooks cannot prevent sending that traffic;
+- UDP allows processes to receive traffic on ephemeral ports without any
+  `bind()` (e.g. just `sendmsg()` to 127.0.0.1 to get a port assigned, then
+  you can `recv()` on that port).
 
-I know that you want to make the threshold bigger for smaller CPUs
-[PATCH 04/16]. I get:
+When benchmarking `iperf3 --udp` with and without sendmsg/recvmsg
+sandboxing, the difference appears negligible on my laptop, which makes
+me think I'm looking at a completely unrelated bottleneck somewhere else.
+Advice or tests from someone with non-potato hardware and benchmarking
+knowledge would be appreciated.
 
-update_cpu_capacity(): cpu=0 arch_scale_cpu_capacity=160
-approx_runtime=8 limit=4000 rq->fits_capacity_threshold=83
+Selftests updated for UDP, coverage should encompass all non-critical-error
+paths.
 
-for the little CPU on Pix6, I just don't know how this relates to 26 or 23.
+This is a first kernel patch attempt, any feedback appreciated.
 
-> 	176		33		18.75		29		16.47
-> 	192		39		20.31		35		18.22
-> 	208		47		22.59		43		20.67
-> 	224		55		24.55		50		22.32
-> 	240		63		26.25		59		24.58
-> 	256		73		28.51		68		26.56
-> 	272		82		30.14		77		28.30
-> 	288		93		32.29		87		30.20
-> 	304		103		33.88		97		31.90
-> 	320		114		35.62		108		33.75
-> 	336		126		37.5		120		35.71
-> 	352		138		39.20		132		37.5
-> 	368		151		41.03		144		39.13
-> 	384		163		42.44		157		40.88
-> 
-> The current 80% margin is valid for CPU with capacities in the 700-750 range,
-> which might have been true in the original generations of HMP systems.
-> 
-> 	704		557		79.11		550		78.12
-> 	720		578		80.27		572		79.44
-> 	736		606		82.33		600		81.52
-> 	752		633		84.17		627		83.37
-> 
-> This result contradicts the original goal of saving power as it indicates we
-> must be more aggressive with the margin, while the original observation was
-> that there are workloads with steady utilization that is hovering at a level
-> that is higher than this margin but lower than the capacity of the CPU (mid
-> CPUs particularly) and the aggressive upmigration is not desired, nor the
-> higher push to run at max freq where we could have run at a lower freq with no
-> impact on perf.
-> 
-> Further analysis using a simple rampup [1] test that spawns a busy task that
-> starts from util_avg/est = 0 and never goes to sleep. The purpose is to measure
-> the actual system response time for workloads that are bursty and need to
-> transition from lower to higher performance level quickly.
-> 
-> This lead to more surprising discovery due to utilization invariance, I call it
-> the black hole effect.
-> 
-> There's a black hole in the scheduler:
-> ======================================
-> 
-> It is no surprise to anyone that DVFS and HMP system have a time stretching
-> effect where the same workload will take longer to do the same amount of work
-> the lower the frequency/capacity.
-> 
-> This is countered in the system via clock_pelt which is central for
-> implementing utilization invariance. This helps ensure that the utilization
-> signal still accurately represent the computation demand of sched_entities.
-> 
-> But this introduces this black hole effect of time dilation. The concept of
-> passage of time is now different from task's perspective compared to an
-> external observer. The task will think 1ms has passed, but depending on the
-> capacity or the freq, the time from external observer point of view has passed
-> for 25 or even 30ms in reality.
+Link: https://github.com/landlock-lsm/linux/issues/10
 
-But only the PELT angle (and here especially p->se.avg.util_avg) of the
-task related accounting, right?
+Matthieu Buffet (7):
+  samples/landlock: Fix port parsing in sandboxer
+  samples/landlock: Clarify option parsing behaviour
+  landlock: Add UDP bind+connect access control
+  landlock: Add UDP send+recv access control
+  samples/landlock: Add sandboxer UDP access control
+  selftests/landlock: Adapt existing tests for UDP
+  selftests/landlock: Add UDP sendmsg/recvmsg tests
 
-> This has a terrible impact on utilization signal rise time. And since
-> utilization signal is central in making many scheduler decision like estimating
-> how loaded the CPU is, whether a task is misfit, and what freq to run at when
-> schedutil is being used, this leads to suboptimal decision being made and give
-> the external observer (userspace) that the system is not responsive or
-> reactive. This manifests as problems like:
+ include/uapi/linux/landlock.h                |  58 ++-
+ samples/landlock/sandboxer.c                 | 181 +++++--
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/net.c                      | 255 +++++++--
+ security/landlock/syscalls.c                 |   2 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/net_test.c  | 518 +++++++++++++++++--
+ 7 files changed, 886 insertions(+), 132 deletions(-)
 
-This can be described by:
+-- 
+2.39.5
 
-t = 1/cap_factor * hl * ln(1 - S_n/S_inv)/ln(0.5)
-
-cap_factor ... arch_scale_cpu_capacity(cpu)/SCHED_CAPACITY_SCALE
-S_n        ... partial sum
-S_inf      ... infinitive sum
-hl         ... halflife
-
-t_1024(cap=1024) = 323ms
-
-t_1024(cap=160)  = 2063ms
-
-[...]
-
-> Computational domain vs Time domain:
-> ------------------------------------
-> 
-> The util_avg is a good representation of compute demand of periodic tasks. And
-> should remain as such. But when they are no longer periodic, then looking at
-> computational domain doesn't make sense as we have no idea what's the actual
-> compute demand of the task, it's in transition. During this transition we need
-> to fallback to time domain based signal. Which is simply done by ignoring
-> invariance and let the util accumulate based on observer's time.
-
-And this is achieved by:
-
-   time = approximate_runtime(util)
-
-and
-
-   util_avg_end = approximate_util_avg(util_avg_start, time_delta)
-
-These functions allow you to switch between both domains. They do not
-consider invariance and are based on the 'util_avg - time curve' of the
-big CPU at max CPU frequency.
-
-> Coherent response time:
-> -----------------------
-> 
-> Moving transient tasks to be based on observer's time will create a coherent
-> and constant response time. Which is the time it takes util_avg to rampup from
-> 0 to max on the biggest core running at max freq (or performance level
-> 1024/max).
-> 
-> IOW, the rampup time of util signal should appear to be the same on all
-> capacities/frequencies as if we are running at the highest performance level
-> all the time. This will give the observer (userspace) the expected behavior of
-> things moving through the motions in a constant response time regardless of
-> initial conditions.
-> 
-> util_est extension:
-> -------------------
-> 
-> The extension is quite simple. util_est currently latches to util_avg at
-> enqueue/dequeue to act as a hold function for when busy tasks sleep for long
-> period and decay prematurely.
-> 
-> The extension is to account for RUNNING time of the task in util_est too, which
-> is currently ignored.
-> 
-> when a task is RUNNING, we accumulate delta_exec across context switches and
-> accumulate util_est as we're accumulating util_avg, but simply without any
-> invariance taken into account. This means when tasks are RUNNABLE, and continue
-> to run, util_est will act as our time based signal to help with the faster and
-> 'constant' rampup response.
-> 
-> Periodic vs Transient tasks:
-> ----------------------------
-> 
-> It is important to make a distinction now between tasks that are periodic and
-> their util_avg is a good faithful presentation of its compute demand. And
-> transient tasks that need help to move faster to their next steady state point.
-> 
-> In the code this distinction is made based on util_avg. In theory (I think we
-> have bugs, will send a separate report), util_avg should be near constant for
-
-Do you mean bugs in maintaining util_avg signal for tasks/taskgroups or
-cfs_rq?
-
-> a periodic task. So simply transient tasks are ones that lead to util_avg being
-> higher across activations. And this is our trigger point to know whether we
-
-Activations as in enqueue_entity()/dequeue_entity() or
-set_next_entity()/put_prev_entity().
-
-[...]
-
-> Patch 7 adds a multiplier to change PELT time constant. I am not sure if this
-> is necessary now after introducing per task rampup multipliers. The original
-> rationale was to help cater different hadware against the constant util_avg
-> response time. I might drop this in future postings. I haven't tested the
-> latest version which follows a new implementation suggested by Vincent.
-
-This one definitely stands out here. I remember that PELT halflife
-multiplier never had a chance in mainline so far (compile-time or
-boot-time) since the actual problem it solves couldn't be explained
-sufficiently so far.
-
-In previous discussions we went via the UTIL_EST_FASTER discussion to
-'runnable boosting' which is in mainline so far.
-
-https://lkml.kernel.org/r/20230907130805.GE10955@noisy.programming.kicks-ass.net
-
-[...]
 
