@@ -1,221 +1,611 @@
-Return-Path: <linux-kernel+bounces-330591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6141897A074
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 13:41:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245B897A0ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 14:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF3C1C20E5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 11:41:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46FFA1C219D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19A715531B;
-	Mon, 16 Sep 2024 11:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FE8154C04;
+	Mon, 16 Sep 2024 12:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oxSUzGVQ"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2065.outbound.protection.outlook.com [40.107.243.65])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Tyz/qtHL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61B3145B0C;
-	Mon, 16 Sep 2024 11:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726486862; cv=fail; b=hkp0LV5SAlKx8wldC9B6lGI4nhr1djYxjHvDmRFkhE/+oe9QT0MbOyak9yiASc9NWvv24GPFQx+N5PcxFnA12XnDb+sarfV+UFJ1z/2PGEs8mOLlwaG0yM5+2mf59tWIgVGToLjXTfxBYH+BDMa97392waG4bD2O8gGka6bE6VU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726486862; c=relaxed/simple;
-	bh=K+do64utLZuPW1BLJvVFZ2wbP5EYLrJDsCGs03f7DAY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NnRLAFYYt2wPgIm98BUDiMa/uymPQqgMUjWHUguJdAf+GWifbSyGBPBCdV13PCxxsfqIYXB6XQvH5dE8jyryd5c67wtbIYo72E/ag9MwJWHEMugjYHxLQPFr/1pNgckDsl88lOMV2Ra9nAvEf0weu9YoeJmUDG78htHrTj1fRU0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oxSUzGVQ; arc=fail smtp.client-ip=40.107.243.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VWmae4TxGfh5NJWwARJ7ERvfU14UPo31gum8z0CdflDCc5UvlCUXhU/A6GpbtDG2IsaHQO4uW7eIbh9AlNg0V+jsHB03DwF876ZbftIscN5ZAfvI2kxiKvDEVBvtoICeeI+/1Zc2H6o5lfUDHX+H8eDFzwlphVglL/3mbQJfUgX9UyTsxZYogPPwUnUaCQ9ktR7UH6afAQPSJO9WUuaYSf7zs5bE2hjQRrPfpV/oeip0ibgLizQRKXbaTxxmDzs8SAvHuMZ1rJ3wea0jPA+RyDzlewG9fhScOuy5W0CPDvp0d6Re2vSKev+W/BYSyWxg4RHQr4YhTax2WfnH02W8Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4WJz7p13+zJ5cYJ9RdkR5aztKlYNs3YlzHPoHaz0SAw=;
- b=WuhpSqS2UIttxFK0AZXyuB+Oneh4S5UqH6r0yzCy3U6TID3GcLaUKgCYE/kI8Yp06ge7CzeDBB3lXzTCdRNB4gY7ot9Gxy1vqIC31AHubdjhDcidkDt79ozyeiRXYbsZSv7Un61S33/raV3xx+XT3XqsaCHXvM3xp8gEOtxQJ3+MemeerCQwUvNgab1k3FD4d48iqfya3/aNVfYeYOPZrrS5w3WPM1y7U9vOIUHN8gL9rbipdLPd4ZxKxgI8HlYuFoxl3MQ+maXHwalZkj/goekKsnqt3ms2eFYtiDuZLatbTGtXuvrR0Nqypmn5VPBOj2ETAtdKrwuycZPVgaCg0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4WJz7p13+zJ5cYJ9RdkR5aztKlYNs3YlzHPoHaz0SAw=;
- b=oxSUzGVQ7UE9eEWjqK6+sYAGVbQSzCG5kvlItyYhs6lGNN4lFChu4gqan/9DXD8RvR1i/MxDI7jkeq0EimU297d8EYkdUagMCDHOKrQ81QyB2IXuRsRx8AbyvlH5IAtepcWAUAdYudqhjpACtqgrNsC9zWfYjqBOIpQr9eP8V+Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
- CY5PR12MB6324.namprd12.prod.outlook.com (2603:10b6:930:f::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7962.24; Mon, 16 Sep 2024 11:40:58 +0000
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec%5]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
- 11:40:58 +0000
-Message-ID: <7fe54097-20d8-fb9c-e79d-b62910b50154@amd.com>
-Date: Mon, 16 Sep 2024 17:10:48 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v11 20/20] x86/cpu/amd: Do not print FW_BUG for Secure TSC
-To: Jim Mattson <jmattson@google.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
- x86@kernel.org, kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
- pbonzini@redhat.com
-References: <20240731150811.156771-1-nikunj@amd.com>
- <20240731150811.156771-21-nikunj@amd.com>
- <CALMp9eRZtg126iSZ4zzH_SjEz2V+-FRJfkw7=fLxSoVL1NTp_g@mail.gmail.com>
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <CALMp9eRZtg126iSZ4zzH_SjEz2V+-FRJfkw7=fLxSoVL1NTp_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN2PR01CA0233.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:eb::12) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E3A13DBA0;
+	Mon, 16 Sep 2024 12:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726488148; cv=none; b=dVpsLpqZ0q88Bqabo2Ri76SjXSzMDipUnL0n/Rb9CkC0Ou9SKRdl8mXqPpRp4i+n78l739HjwTez0Nnm+80W4Q8qfY+3wUnnif6+sUdcJfWMGX61Y4l18H7lRhfOpOOqywsq1ZEgEVkWYxJgIb+YUQZvEeaOLfXFslB3LYi8qng=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726488148; c=relaxed/simple;
+	bh=/8MA5vy7bRo7/VnQPBN5Jk4Cre/gIzNmiW6PA92Ms7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EaySKyAypeI+1SPI9xlrCKCu6k3A/GBtZ/nJ0PFf6e7MlGPpP+DCyPMRdTt1Dpefwh7VSu97NkuRAp/fa+96JO6o4pzAw+pZrsOy5nROR2q67AkS4/o8dntSgQCt83SM7UVBSHjE6G7y/jTLPlIigvdeFTt13BPpZ8UanDw4Xzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Tyz/qtHL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26507C4CEC4;
+	Mon, 16 Sep 2024 12:02:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726488147;
+	bh=/8MA5vy7bRo7/VnQPBN5Jk4Cre/gIzNmiW6PA92Ms7k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Tyz/qtHL6Rcl/eLpM1SawVzsf/1gu9M0+EhcZn0SGhFSrSFM1ar4DS23jPc52MFSg
+	 qhmESWmWMSVCOS0qOrqPdMX+sTaq2nA82l0wNMbKIDVnO6GlvGKN2VYLJ1m/WzE4J7
+	 p3yVhewWX48VjS1K4R3+UUVj2DA8+rleoHpYZBAU=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org
+Subject: [PATCH 6.10 000/121] 6.10.11-rc1 review
+Date: Mon, 16 Sep 2024 13:42:54 +0200
+Message-ID: <20240916114228.914815055@linuxfoundation.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|CY5PR12MB6324:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83c8d10a-5e5d-4b57-5e81-08dcd6446e73
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K3hSTHZ4dFBITnJhcFlNWWFDSmpKOWo1OUJ1WE1lT0tZUCt6WmpzWEtqbk5P?=
- =?utf-8?B?U2RDdnM4aUtkV01GVEppOU9vRHpuck1hMVJQVXdXek5BaHZ4Ris2ajI0WFZU?=
- =?utf-8?B?RndHeFYwQ0F2eUcrcjh4eGlQNWd4c1NKK0xGbU5QbUJyUlNTeUlxR01VamVj?=
- =?utf-8?B?bXBINmJORGNBNjhDYWtPeGF4VTBYZitwaG1QcURhKytlN0VwVDZ1SDBGU3V4?=
- =?utf-8?B?V3dQdUVhWDZYaGpWM0VGRThzTi9HamlvbWF0a2xPK0syeFlPOFFWVEN2RW5m?=
- =?utf-8?B?eWxGRzhlcSs3UDFVclpsYUlDeWdRQVJlaVRhaS9KclUwN0lrY3VkUFBSN1dV?=
- =?utf-8?B?WEFqVWVkZE5Sb0xYbXhaZWk3ZFRvbng3d2ZHT1ZzQTVHZ21UYnBielhOTm54?=
- =?utf-8?B?bTc5WEtTajdPVWRBbnhiNnFPUzJuMDFqblRIeS9lQTFSVm0rZEkwZE90aVdK?=
- =?utf-8?B?Vmp6NUZmMnljQkJ2cm45SmdYU0x6KzBCcFdVOHcwZ2J3MFhOUWJ2ckJ3M08x?=
- =?utf-8?B?ZFBUejNJU2tvWktqbnZIb3EvMmdWVGlqQjI2dE1PY2lHL3ZFaFNDNHFmVFlF?=
- =?utf-8?B?TjJrL2FyejZybHZMZmh0S0R0ZmpPbUp4NW1CU1lsWmlscGFhYys4bzNZYmF6?=
- =?utf-8?B?Wi9zeTVrNGlibDZDajZrbmJ1WmZwbmFzOWZZVXhWaHAxaDZ3UUp5WTU4MnRO?=
- =?utf-8?B?c1k5SUkySTJUTCtIdHhCRUplY2U0NHo5RXdsSTNUSE9zQ0laSDUwRXpNdHhn?=
- =?utf-8?B?L1RHUThkRmpnUTJkYjFaZnhFQnQ3QTMvSUtlbmpheWtzbDk5NFUzcG0yeElQ?=
- =?utf-8?B?ZjdYeHpWSExOK1hUeTZiRVFmclBRdFh2T2dCZDNISkRGcW5hUlhoQWVOWmFM?=
- =?utf-8?B?MnlwZnRhdDg5cU54REtMQnplb0s3Y1Q4ZzVVMDlOcEQwWjNrcVdVY295a2xO?=
- =?utf-8?B?NmEyaGxCRHdvakUyTE5pdzhZM3ordjhVUTBMZXYwYzZhUWppbTNkUnMwOGJK?=
- =?utf-8?B?YytYY2NQV2tqUTc4aGt4WS9kdkRqT0dIWXZ2VVdYMFhKMFdpYVlLNjN2ZEJN?=
- =?utf-8?B?VTRTR3RZQ2x4S2pMcmU0V2FjTTMzQzNSaWcrNzloaUoyMytsRVh0ZG5SczVJ?=
- =?utf-8?B?dXoyUFA5Q2YzY3l5NzNsRWpNdXF5Uk4zbWxiNGdhRW0xaUNrNWVjTERESUNF?=
- =?utf-8?B?Zm9URjNkMUNOZWJPR0JZRHlubXVWL2dZOHR2MVZaL05DUVBISkVnQ01MZFpQ?=
- =?utf-8?B?bVZuOWZXSFlWc1NoeUJiRmk2aGNyeXJGYnlZSUhTL0w1cVhCU2o0a3I2L08w?=
- =?utf-8?B?NGZZQVFMYzgzZHhhSjJZbWtvRDRCTWErc2RVblRBMVVRSnpJcElmSEFMV2VX?=
- =?utf-8?B?bEEvYk1VQzZBRVB0NCtjcURjYUFKdFJuWDgraDl1ZTBWcFU2Ly9KbjFxOEdy?=
- =?utf-8?B?U3NvSEpVZ2FPKzUwSzVlMC9LL3pLWjR3R2dYdTFzVzlGMVNJRTJBMmMvaWFn?=
- =?utf-8?B?TzAxVi9nMXFDUlpDNXZveGRpNS9FZlpPczV4b0xDYWp2ODNBT3RlQnRZT3hF?=
- =?utf-8?B?RU1UUjVWUjI2TmN0ZVU5Q0cwT0ttNHRic3h6ckY5L1FIQkl3TmVxTkM5Y3lv?=
- =?utf-8?B?TWVFWDFJWXF3aTVLR2hmekN2YmtxWVY3eTJidlM3bWQ1ekRucHdhREd2STJE?=
- =?utf-8?B?NWZ4ZEMwZTR1U1hZRFBLNlhxOHdYRkpxK043bGtYczd3VFl2RnBaRStXL1p5?=
- =?utf-8?B?aGpRVVgyaXRIdktPMkh6cHJBdHFJcjVlWU1TcG5IUGVZc2lvSUhTdnUyZUJC?=
- =?utf-8?Q?fWv5QSwmov2QO+1ajFpC6ZyOzkTZlaXl3wyDU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NjJFUmpZbnlJSXorUndEWWRIMmV2QitwdEd1UmVDOU1XanFvR0J0TWJxSHUx?=
- =?utf-8?B?cWhVTHFwQ2FSYU5XYnZJSkFxb0loM3N5aXhOQ2trdFBWQjFjSzBlWUlqMUdy?=
- =?utf-8?B?NVNrdnBjd3I4akptSVp3TTJhcU9VRWVLOE1LZ0xjNVQyVWZDV09DZ0RKTXNG?=
- =?utf-8?B?MXVaMlF1NEhmNlF4UU82NTA5Mi9Zc0R1YlpXbXBTTURFSnVDblVYRUx1aUtT?=
- =?utf-8?B?Ym0zYy82RkJhVEo2bm1xZFVZcy9LMWtLTmlqL25wdmUwYUliVkhLa2Y5R0lp?=
- =?utf-8?B?c3daQVdlbGkxcjlmWE9OYzh3dThBMXAxQUo3Y3JTQm1SRmlDR3FIcWpQMWti?=
- =?utf-8?B?QU5pbzNES0FkSE01WmJtb0JPa0UraHIwbncvNWh0MDlZTk1KQUVEUktpK0U3?=
- =?utf-8?B?Vkg4aXFqNHJ3TXc4cEU4WkIzeUdXd3lIbUFsRTNpRDVxdmsvOVhFQk5sa29i?=
- =?utf-8?B?djliNHdBaDBIN1RjaUtxcnhqck5WVUNEbnJGa3pBUUhCcWwzVVFGVmlQWHhS?=
- =?utf-8?B?cnNkejBRWjh5d0lxd1hDaEY1RG1wRnVXL2RFWjQ4bUJ6c2M2K211TGQ0Mlhk?=
- =?utf-8?B?M1RRMUtWSCtSUWI5Yk9uWWFyL0lwUUx1aTROOWgrMkhrcGFHcWxnUDFRb2hG?=
- =?utf-8?B?OEJvWmQyUEthQy9veE8xUFE1MmV5Yi9zT0poNlpuM3ArajRONFc3SzBaTnZC?=
- =?utf-8?B?eG1teDNWcEZWQ2dMclBDN2dBWWJnMmd4L09kSUFCUWw2YUNrR2dOSjcxblpK?=
- =?utf-8?B?bEdDbzNBeFdLZDdYVnZpSWErWVhLUmZQcENWaWVmcGxvSklnS3NUNUFmVVVI?=
- =?utf-8?B?RGVaajVDVjlRRlFnSzNPcFZTeE5ZTm16dFBiMlBUdE1jc043Z2lPMHJFd3NC?=
- =?utf-8?B?UU1XWnRwYXpJZ0RjYXNzbzBtMEd4Y2U4MUF3M1FsYjNOT0tPMmllTFhNd3Zx?=
- =?utf-8?B?TUl6clpWb1VzU3BhZ2VWdUgwVy9JZWNYbGJsbnpmMjJ1MkduTGNkUE0wc3c1?=
- =?utf-8?B?aDlFbzNJeXI5cWdRTEN2S1h6bmdZRlFBc01iR0ViV01BMFJNSVVYcmk2QldS?=
- =?utf-8?B?dklnT1l1cGJtMzAxWVZjdERWSGIyR0RkR2RBNGZ4d0dsbGFtaTRWYTBtMUlw?=
- =?utf-8?B?dWxpNUIxdXFJMDliR1RWbndhUTRBajgrS2luNUFlK1JWN3NmYUo1cnB6NXF2?=
- =?utf-8?B?cHpteVlYOFNuZEVTMlY1WWZJR0g5UjBlL1JLcjlQSDdNMUd5Z3FUb2lZMWg1?=
- =?utf-8?B?bVR6SGFBclNUS0xxQWJBaEtyVm5Jazh2bzVXTTc4SFhCL0p2VnlMTkJDcmxs?=
- =?utf-8?B?ZzhjVmJLOFJzZ2NjU0xPZU9kVjczcUJ5aEFzWmNjMi8wK2QrWmZVWm9qYzU2?=
- =?utf-8?B?RkVUaFdJNGxUYU0wbFY4VTl3UHVUVWFiTmZURWRuREZNU09DMU9QTHJnRjIw?=
- =?utf-8?B?K29FSkZPbVFlREg2a08vRTdObml1SmREQnI3dFo0TG1ydkhzVHF6SzZZYWRx?=
- =?utf-8?B?N2F0MWhsYkJvb0wvckxlN0gwTlpQSHAwYzg4THdFeVFXMGVIU0hGc1V5ZHJC?=
- =?utf-8?B?MGhYaXUxU00vMWhZaEpqWXZQTjhkNlBaY3JsQ0dtOGdTZGllWVFNbjJJanNQ?=
- =?utf-8?B?UDQzMHQ2dGZFUksyMnFwMURSbFFSYldDaDZ6RGRkVWRsK0lBL3cya0xjdlFt?=
- =?utf-8?B?L0xGdGd0NlNXMzNUU3lNSzJXSXhOdVppcWtNblppUHZXcStkTmlJbnRLQzll?=
- =?utf-8?B?cmt0SDBGNm1SSU93Y3l3alFSMzJyTFFFOU9sc25TWnRCVEtwN2Y0YnZBNW41?=
- =?utf-8?B?SEV3aWhDMExha0tWKzcvakhscTdnSFlJMnBGVmZNYm4zNE9SdVJvTjFBSzh1?=
- =?utf-8?B?a3FNc0w1anRidmo0K09zSGxzSXBLbGZRNFdid3A0eVk2cVh0dXY1N3FSV0k2?=
- =?utf-8?B?NzBCVzdNb05CSWptcXJxUzR1cEVVSkE5Q284NHQ5TWEwMUx3YzR0L1BqWElK?=
- =?utf-8?B?aU1IQ1dYcm12S2JvdkRuZ1FmbFhiL0V3aGhpbXdaYmlLaFI2dkJ1SGdLWWhW?=
- =?utf-8?B?d3VxQnVMSXlqUUJmTVkyS1Ywek9lVXNxbXRXQUVySmZRSmk4SjBobnU3R0xN?=
- =?utf-8?Q?7XV4Ny4VzV5zuSZpzn7ujs6cj?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83c8d10a-5e5d-4b57-5e81-08dcd6446e73
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 11:40:58.2731
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T3uyMleQmQiAtuWVQjlhjUPc6J3egR8pV89u2Irz0HmUUw4U7yechLGy/p3aF86VyD1yss3H93kwp1sMDlsq9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6324
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.11-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.10.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.10.11-rc1
+X-KernelTest-Deadline: 2024-09-18T11:42+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is the start of the stable review cycle for the 6.10.11 release.
+There are 121 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
+
+Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
+Anything received after that time might be too late.
+
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.11-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.10.11-rc1
+
+Jameson Thies <jthies@google.com>
+    usb: typec: ucsi: Only set number of plug altmodes after registration
+
+Arseniy Krasnov <avkrasnov@salutedevices.com>
+    ASoC: meson: axg-card: fix 'use-after-free'
+
+Mika Westerberg <mika.westerberg@linux.intel.com>
+    pinctrl: meteorlake: Add Arrow Lake-H/U ACPI ID
+
+David Howells <dhowells@redhat.com>
+    cifs: Fix signature miscalculation
+
+Jani Nikula <jani.nikula@intel.com>
+    drm/xe/display: fix compat IS_DISPLAY_STEP() range end
+
+Su Hui <suhui@nfschina.com>
+    ASoC: codecs: avoid possible garbage value in peb2466_reg_read()
+
+Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+    drm/i915/guc: prevent a possible int overflow in wq offsets
+
+Jinjie Ruan <ruanjinjie@huawei.com>
+    spi: geni-qcom: Fix incorrect free_irq() sequence
+
+Jinjie Ruan <ruanjinjie@huawei.com>
+    spi: geni-qcom: Undo runtime PM changes at driver exit time
+
+Bard Liao <yung-chuan.liao@linux.intel.com>
+    ASoC: Intel: soc-acpi-intel-mtl-match: add missing empty item
+
+Bard Liao <yung-chuan.liao@linux.intel.com>
+    ASoC: Intel: soc-acpi-intel-lnl-match: add missing empty item
+
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
+    tracing/kprobes: Fix build error when find_module() is not available
+
+Matthew Auld <matthew.auld@intel.com>
+    drm/xe/client: add missing bo locking in show_meminfo()
+
+Matthew Auld <matthew.auld@intel.com>
+    drm/xe/client: fix deadlock in show_meminfo()
+
+David (Ming Qiang) Wu <David.Wu3@amd.com>
+    drm/amd/amdgpu: apply command submission parser for JPEG v2+
+
+David (Ming Qiang) Wu <David.Wu3@amd.com>
+    drm/amd/amdgpu: apply command submission parser for JPEG v1
+
+Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+    drm/amd/display: Avoid race between dcn35_set_drr() and dc_state_destruct()
+
+Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+    drm/amd/display: Avoid race between dcn10_set_drr() and dc_state_destruct()
+
+Alex Deucher <alexander.deucher@amd.com>
+    drm/amdgpu/atomfirmware: Silence UBSAN warning
+
+Ben Skeggs <bskeggs@nvidia.com>
+    drm/nouveau/fb: restore init() for ramgp102
+
+T.J. Mercier <tjmercier@google.com>
+    dma-buf: heaps: Fix off-by-one in CMA heap fault handler
+
+T.J. Mercier <tjmercier@google.com>
+    drm/syncobj: Fix syncobj leak in drm_syncobj_eventfd_ioctl
+
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+    soundwire: stream: Revert "soundwire: stream: fix programming slave ports for non-continous port maps"
+
+Han Xu <han.xu@nxp.com>
+    spi: nxp-fspi: fix the KASAN report out-of-bounds bug
+
+Steven Rostedt <rostedt@goodmis.org>
+    tracing/osnoise: Fix build when timerlat is not enabled
+
+Asbjørn Sloth Tønnesen <ast@fiberby.net>
+    netlink: specs: mptcp: fix port endianness
+
+Sean Anderson <sean.anderson@linux.dev>
+    net: dpaa: Pad packets to ETH_ZLEN
+
+Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
+    net: dsa: felix: ignore pending status of TAS module when it's disabled
+
+Jeongjun Park <aha310510@gmail.com>
+    net: hsr: prevent NULL pointer dereference in hsr_proxy_announce()
+
+Florian Westphal <fw@strlen.de>
+    netfilter: nft_socket: make cgroupsv2 matching work with namespaces
+
+Florian Westphal <fw@strlen.de>
+    netfilter: nft_socket: fix sk refcount leaks
+
+Charlie Jenkins <charlie@rivosinc.com>
+    riscv: Disable preemption while handling PR_RISCV_CTX_SW_FENCEI_OFF
+
+Alexandre Ghiti <alexghiti@rivosinc.com>
+    drivers: perf: Fix smp_processor_id() use in preemptible code
+
+Sean Anderson <sean.anderson@linux.dev>
+    selftests: net: csum: Fix checksums for packets with non-zero padding
+
+Tomas Paukrt <tomaspaukrt@email.cz>
+    net: phy: dp83822: Fix NULL pointer dereference on DP83825 devices
+
+Jacky Chou <jacky_chou@aspeedtech.com>
+    net: ftgmac100: Enable TX interrupt to avoid TX timeout
+
+Naveen Mamindlapalli <naveenm@marvell.com>
+    octeontx2-af: Modify SMQ flush sequence to drop packets
+
+Muhammad Usama Anjum <usama.anjum@collabora.com>
+    fou: fix initialization of grc
+
+Benjamin Poirier <bpoirier@nvidia.com>
+    net/mlx5: Fix bridge mode operations when there are no VFs
+
+Carolina Jubran <cjubran@nvidia.com>
+    net/mlx5: Verify support for scheduling element and TSAR type
+
+Cosmin Ratiu <cratiu@nvidia.com>
+    net/mlx5: Correct TASR typo into TSAR
+
+Carolina Jubran <cjubran@nvidia.com>
+    net/mlx5: Add missing masks and QoS bit masks for scheduling elements
+
+Carolina Jubran <cjubran@nvidia.com>
+    net/mlx5: Explicitly set scheduling element and TSAR type
+
+Shahar Shitrit <shshitrit@nvidia.com>
+    net/mlx5e: Add missing link mode to ptys2ext_ethtool_map
+
+Shahar Shitrit <shshitrit@nvidia.com>
+    net/mlx5e: Add missing link modes to ptys2ethtool_map
+
+Maher Sanalla <msanalla@nvidia.com>
+    net/mlx5: Update the list of the PCI supported devices
+
+Sriram Yagnaraman <sriram.yagnaraman@est.tech>
+    igb: Always call igb_xdp_ring_update_tail() under Tx lock
+
+Michal Schmidt <mschmidt@redhat.com>
+    ice: fix VSI lists confusion when adding VLANs
+
+Jacob Keller <jacob.e.keller@intel.com>
+    ice: fix accounting for filters shared by multiple VSIs
+
+Martyna Szapar-Mudlaw <martyna.szapar-mudlaw@linux.intel.com>
+    ice: Fix lldp packets dropping after changing the number of channels
+
+Patryk Biel <pbiel7@gmail.com>
+    hwmon: (pmbus) Conditionally clear individual status bits for pmbus rev >= 1.2
+
+Eric Dumazet <edumazet@google.com>
+    net: hsr: remove seqnr_lock
+
+Lukasz Majewski <lukma@denx.de>
+    net: hsr: Send supervisory frames to HSR network with ProxyNodeTable data
+
+Michal Luczaj <mhal@rbox.co>
+    selftests/bpf: Support SOCK_STREAM in unix_inet_redir_to_connected()
+
+Alison Schofield <alison.schofield@intel.com>
+    cxl: Restore XOR'd position bits during address translation
+
+peng guo <engguopeng@buaa.edu.cn>
+    cxl/core: Fix incorrect vendor debug UUID define
+
+Li Qiang <liqiang01@kylinos.cn>
+    clk/sophgo: Using BUG() instead of unreachable() in mmux_get_parent_id()
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    eeprom: digsy_mtc: Fix 93xx46 driver probe failure
+
+Ilya Bakoulin <ilya.bakoulin@amd.com>
+    drm/amd/display: Fix FEC_READY write on DP LT
+
+Cruise <cruise.hung@amd.com>
+    drm/amd/display: Disable error correction if it's not supported
+
+Xingyu Wu <xingyu.wu@starfivetech.com>
+    riscv: dts: starfive: jh7110-common: Fix lower rate of CPUfreq by setting PLL0 rate to 1.5GHz
+
+Dan Carpenter <dan.carpenter@linaro.org>
+    firmware: qcom: uefisecapp: Fix deadlock in qcuefi_acquire()
+
+FUKAUMI Naoki <naoki@radxa.com>
+    arm64: dts: rockchip: fix PMIC interrupt pin in pinctrl for ROCK Pi E
+
+Kent Overstreet <kent.overstreet@linux.dev>
+    bcachefs: Don't delete open files in online fsck
+
+Kent Overstreet <kent.overstreet@linux.dev>
+    bcachefs: Revert lockless buffered IO path
+
+Kent Overstreet <kent.overstreet@linux.dev>
+    bcachefs: Fix bch2_extents_match() false positive
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    mm: avoid leaving partial pfn mappings around in error case
+
+Anirudh Rayabharam (Microsoft) <anirudh@anirudhrb.com>
+    x86/hyperv: fix kexec crash due to VP assist page corruption
+
+Dexuan Cui <decui@microsoft.com>
+    clocksource: hyper-v: Use lapic timer in a TDX VM without paravisor
+
+Mikulas Patocka <mpatocka@redhat.com>
+    dm-integrity: fix a race condition when accessing recalc_sector
+
+Jiawen Wu <jiawenwu@trustnetic.com>
+    net: libwx: fix number of Rx and Tx descriptors
+
+Willem de Bruijn <willemb@google.com>
+    net: tighten bad gso csum offset check in virtio_net_hdr
+
+Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+    minmax: reduce min/max macro expansion in atomisp driver
+
+Quentin Schulz <quentin.schulz@cherry.de>
+    arm64: dts: rockchip: override BIOS_DISABLE signal via GPIO hog on RK3399 Puma
+
+Quentin Schulz <quentin.schulz@cherry.de>
+    arm64: dts: rockchip: fix eMMC/SPI corruption when audio has been used on RK3399 Puma
+
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+    selftests: mptcp: join: restrict fullmesh endp on 1st sf
+
+Edward Adam Davis <eadavis@qq.com>
+    mptcp: pm: Fix uaf in __timer_delete_sync
+
+Hans de Goede <hdegoede@redhat.com>
+    platform/x86: panasonic-laptop: Allocate 1 entry extra in the sinf array
+
+Hans de Goede <hdegoede@redhat.com>
+    platform/x86: panasonic-laptop: Fix SINF array out of bounds accesses
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFS: Avoid unnecessary rescanning of the per-server delegation list
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFSv4: Fix clearing of layout segments in layoutreturn
+
+ChenXiaoSong <chenxiaosong@kylinos.cn>
+    smb/server: fix return value of smb2_open()
+
+Alexander Gordeev <agordeev@linux.ibm.com>
+    s390/mm: Pin identity mapping base to zero
+
+Alexander Gordeev <agordeev@linux.ibm.com>
+    s390/mm: Prevent lowcore vs identity mapping overlap
+
+Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
+    drm/xe: use devm instead of drmm for managed bo
+
+Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
+    drm/xe: fix WA 14018094691
+
+Ngai-Mint Kwan <ngai-mint.kwan@linux.intel.com>
+    drm/xe/xe2lpm: Extend Wa_16021639441
+
+Takashi Iwai <tiwai@suse.de>
+    Input: i8042 - add Fujitsu Lifebook E756 to i8042 quirk table
+
+Rob Clark <robdclark@chromium.org>
+    drm/msm/adreno: Fix error return if missing firmware-name
+
+Sean Anderson <sean.anderson@linux.dev>
+    spi: zynqmp-gqspi: Scale timeout by data size
+
+Maximilian Luz <luzmaximilian@gmail.com>
+    platform/surface: aggregator_registry: Add support for Surface Laptop 6
+
+Maximilian Luz <luzmaximilian@gmail.com>
+    platform/surface: aggregator_registry: Add fan and thermal sensor support for Surface Laptop 5
+
+Maximilian Luz <luzmaximilian@gmail.com>
+    platform/surface: aggregator_registry: Add support for Surface Laptop Studio 2
+
+Maximilian Luz <luzmaximilian@gmail.com>
+    platform/surface: aggregator_registry: Add support for Surface Laptop Go 3
+
+Maximilian Luz <luzmaximilian@gmail.com>
+    platform/surface: aggregator_registry: Add Support for Surface Pro 10
+
+Luke D. Jones <luke@ljones.dev>
+    platform/x86: asus-wmi: Add quirk for ROG Ally X
+
+Anders Roxell <anders.roxell@linaro.org>
+    scripts: kconfig: merge_config: config files: add a trailing newline
+
+Waiman Long <longman@redhat.com>
+    cgroup/cpuset: Eliminate unncessary sched domains rebuilds in hotplug
+
+Felix Kaechele <felix@kaechele.ca>
+    Input: edt-ft5x06 - add support for FocalTech FT8201
+
+Dmitry Savin <envelsavinds@gmail.com>
+    HID: multitouch: Add support for GT7868Q
+
+Luke D. Jones <luke@ljones.dev>
+    hid-asus: add ROG Ally X prod ID to quirk list
+
+Jonathan Denose <jdenose@google.com>
+    Input: synaptics - enable SMBus for HP Elitebook 840 G2
+
+Marek Vasut <marex@denx.de>
+    Input: ads7846 - ratelimit the spi_sync error message
+
+Jeff Layton <jlayton@kernel.org>
+    btrfs: update target inode's ctime on unlink
+
+Peiyang Wang <wangpeiyang1@huawei.com>
+    net: hns3: use correct release function during uninitialization
+
+Yinjie Yao <yinjie.yao@amd.com>
+    drm/amdgpu: Update kmd_fw_shared for VCN5
+
+Bert Karwatzki <spasswolf@web.de>
+    wifi: mt76: mt7921: fix NULL pointer access in mt7921_ipv6_addr_change
+
+Christophe Leroy <christophe.leroy@csgroup.eu>
+    powerpc/mm: Fix boot warning with hugepages and CONFIG_DEBUG_VIRTUAL
+
+Pawel Dembicki <paweldembicki@gmail.com>
+    net: phy: vitesse: repair vsc73xx autonegotiation
+
+Bouke Sybren Haarsma <boukehaarsma23@gmail.com>
+    drm: panel-orientation-quirks: Add quirk for Ayn Loki Max
+
+Bouke Sybren Haarsma <boukehaarsma23@gmail.com>
+    drm: panel-orientation-quirks: Add quirk for Ayn Loki Zero
+
+Moon Yeounsu <yyyynoom@gmail.com>
+    net: ethernet: use ip_hdrlen() instead of bit shift
+
+Foster Snowhill <forst@pen.gy>
+    usbnet: ipheth: fix carrier detection in modes 1 and 4
+
+Foster Snowhill <forst@pen.gy>
+    usbnet: ipheth: do not stop RX on failing RX callback
+
+Foster Snowhill <forst@pen.gy>
+    usbnet: ipheth: drop RX URBs with no payload
+
+Foster Snowhill <forst@pen.gy>
+    usbnet: ipheth: remove extraneous rx URB length check
+
+Namjae Jeon <linkinjeon@kernel.org>
+    ksmbd: override fsids for smb2_query_info()
+
+Namjae Jeon <linkinjeon@kernel.org>
+    ksmbd: override fsids for share path check
+
+AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+    drm/mediatek: Set sensible cursor width/height values to fix crash
+
+Heikki Krogerus <heikki.krogerus@linux.intel.com>
+    usb: typec: ucsi: Fix cable registration
+
+Jameson Thies <jthies@google.com>
+    usb: typec: ucsi: Always set number of alternate modes
 
 
+-------------
 
-On 9/13/2024 11:12 PM, Jim Mattson wrote:
-> On Wed, Jul 31, 2024 at 8:16 AM Nikunj A Dadhania <nikunj@amd.com> wrote:
->>
->> When Secure TSC is enabled and TscInvariant (bit 8) in CPUID_8000_0007_edx
->> is set, the kernel complains with the below firmware bug:
->>
->> [Firmware Bug]: TSC doesn't count with P0 frequency!
->>
->> Secure TSC does not need to run at P0 frequency; the TSC frequency is set
->> by the VMM as part of the SNP_LAUNCH_START command. Skip this check when
->> Secure TSC is enabled
->>
->> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
->> Tested-by: Peter Gonda <pgonda@google.com>
->> ---
->>  arch/x86/kernel/cpu/amd.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
->> index be5889bded49..87b55d2183a0 100644
->> --- a/arch/x86/kernel/cpu/amd.c
->> +++ b/arch/x86/kernel/cpu/amd.c
->> @@ -370,7 +370,8 @@ static void bsp_determine_snp(struct cpuinfo_x86 *c)
->>
->>  static void bsp_init_amd(struct cpuinfo_x86 *c)
->>  {
->> -       if (cpu_has(c, X86_FEATURE_CONSTANT_TSC)) {
->> +       if (cpu_has(c, X86_FEATURE_CONSTANT_TSC) &&
->> +           !cc_platform_has(CC_ATTR_GUEST_SECURE_TSC)) {
-> 
-> Could we extend this to never complain in a virtual machine? i.e.
+Diffstat:
 
-Let me get more clarity on the below and your commit[1]
+ Documentation/netlink/specs/mptcp_pm.yaml          |   1 -
+ Makefile                                           |   4 +-
+ arch/arm64/boot/dts/rockchip/rk3328-rock-pi-e.dts  |   2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi      |  36 ++++-
+ arch/powerpc/kernel/setup-common.c                 |   1 +
+ arch/powerpc/mm/mem.c                              |   2 -
+ arch/riscv/boot/dts/starfive/jh7110-common.dtsi    |   6 +
+ arch/riscv/mm/cacheflush.c                         |  12 +-
+ arch/s390/Kconfig                                  |  13 ++
+ arch/s390/boot/startup.c                           |   3 +-
+ arch/s390/kernel/setup.c                           |  19 ++-
+ arch/x86/hyperv/hv_init.c                          |   5 +-
+ arch/x86/include/asm/mshyperv.h                    |   1 -
+ arch/x86/kernel/cpu/mshyperv.c                     |  20 ++-
+ drivers/clk/sophgo/clk-cv18xx-ip.c                 |   2 +-
+ drivers/clocksource/hyperv_timer.c                 |  16 ++-
+ drivers/cxl/acpi.c                                 |  40 ++++++
+ drivers/cxl/core/region.c                          |  23 ++--
+ drivers/cxl/cxl.h                                  |   3 +
+ drivers/cxl/cxlmem.h                               |   2 +-
+ drivers/dma-buf/heaps/cma_heap.c                   |   2 +-
+ drivers/firmware/qcom/qcom_qseecom_uefisecapp.c    |   4 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h            |   5 +-
+ drivers/gpu/drm/amd/amdgpu/jpeg_v1_0.c             |  76 ++++++++++-
+ drivers/gpu/drm/amd/amdgpu/jpeg_v1_0.h             |  11 ++
+ drivers/gpu/drm/amd/amdgpu/jpeg_v2_0.c             |  63 ++++++++-
+ drivers/gpu/drm/amd/amdgpu/jpeg_v2_0.h             |   6 +
+ drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c             |   2 +
+ drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c             |   1 +
+ drivers/gpu/drm/amd/amdgpu/jpeg_v4_0.c             |   1 +
+ drivers/gpu/drm/amd/amdgpu/jpeg_v4_0.h             |   1 -
+ drivers/gpu/drm/amd/amdgpu/jpeg_v4_0_3.c           |  57 +-------
+ drivers/gpu/drm/amd/amdgpu/jpeg_v4_0_3.h           |   7 +-
+ drivers/gpu/drm/amd/amdgpu/jpeg_v4_0_5.c           |   1 +
+ drivers/gpu/drm/amd/amdgpu/jpeg_v5_0_0.c           |   3 +-
+ .../drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c    |  20 +--
+ .../drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c    |  20 +--
+ .../amd/display/dc/link/protocols/link_dp_phy.c    |  53 ++++----
+ drivers/gpu/drm/amd/include/atomfirmware.h         |   4 +-
+ drivers/gpu/drm/drm_panel_orientation_quirks.c     |  12 ++
+ drivers/gpu/drm/drm_syncobj.c                      |  17 ++-
+ drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c  |   4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             |   4 +-
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c            |   2 +-
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/ram.h       |   2 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgp100.c  |   2 +-
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgp102.c  |   1 +
+ drivers/gpu/drm/xe/compat-i915-headers/i915_drv.h  |   2 +-
+ drivers/gpu/drm/xe/xe_bo.c                         |   6 +-
+ drivers/gpu/drm/xe/xe_drm_client.c                 |  45 ++++++-
+ drivers/gpu/drm/xe/xe_gsc.c                        |   4 +-
+ drivers/gpu/drm/xe/xe_wa.c                         |  10 ++
+ drivers/hid/hid-asus.c                             |   3 +
+ drivers/hid/hid-ids.h                              |   3 +
+ drivers/hid/hid-multitouch.c                       |  33 +++++
+ drivers/hwmon/pmbus/pmbus.h                        |   6 +
+ drivers/hwmon/pmbus/pmbus_core.c                   |  17 ++-
+ drivers/input/mouse/synaptics.c                    |   1 +
+ drivers/input/serio/i8042-acpipnpio.h              |   9 ++
+ drivers/input/touchscreen/ads7846.c                |   2 +-
+ drivers/input/touchscreen/edt-ft5x06.c             |   6 +
+ drivers/md/dm-integrity.c                          |   4 +-
+ drivers/misc/eeprom/digsy_mtc_eeprom.c             |   2 +-
+ drivers/net/dsa/ocelot/felix_vsc9959.c             |  11 +-
+ drivers/net/ethernet/faraday/ftgmac100.h           |   2 +-
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c     |   9 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |   2 +-
+ drivers/net/ethernet/intel/ice/ice_lib.c           |  15 ++-
+ drivers/net/ethernet/intel/ice/ice_switch.c        |   4 +-
+ drivers/net/ethernet/intel/igb/igb_main.c          |  17 ++-
+ drivers/net/ethernet/jme.c                         |  10 +-
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.h    |   3 +-
+ .../net/ethernet/marvell/octeontx2/af/rvu_nix.c    |  59 ++++++--
+ .../net/ethernet/mellanox/mlx5/core/en_ethtool.c   |  10 ++
+ .../net/ethernet/mellanox/mlx5/core/esw/legacy.c   |   4 +-
+ drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c  |  51 ++++---
+ drivers/net/ethernet/mellanox/mlx5/core/main.c     |   1 +
+ drivers/net/ethernet/mellanox/mlx5/core/qos.c      |   7 +
+ drivers/net/ethernet/wangxun/libwx/wx_type.h       |   6 +-
+ drivers/net/phy/dp83822.c                          |  35 +++--
+ drivers/net/phy/vitesse.c                          |  14 --
+ drivers/net/usb/ipheth.c                           |  18 +--
+ drivers/net/wireless/mediatek/mt76/mt7921/main.c   |   2 +-
+ drivers/perf/riscv_pmu_sbi.c                       |   7 +-
+ drivers/pinctrl/intel/pinctrl-meteorlake.c         |   1 +
+ .../platform/surface/surface_aggregator_registry.c |  58 +++++++-
+ drivers/platform/x86/asus-wmi.c                    |  16 ++-
+ drivers/platform/x86/panasonic-laptop.c            |  58 ++++++--
+ drivers/soundwire/stream.c                         |   8 +-
+ drivers/spi/spi-geni-qcom.c                        |  17 ++-
+ drivers/spi/spi-nxp-fspi.c                         |   5 +-
+ drivers/spi/spi-zynqmp-gqspi.c                     |  30 ++++-
+ drivers/staging/media/atomisp/pci/sh_css_frac.h    |  26 +++-
+ drivers/usb/typec/ucsi/ucsi.c                      |  44 +++---
+ drivers/usb/typec/ucsi/ucsi.h                      |   1 -
+ fs/bcachefs/extents.c                              |  23 +++-
+ fs/bcachefs/fs-io-buffered.c                       | 149 ++++++---------------
+ fs/bcachefs/fs.c                                   |   8 ++
+ fs/bcachefs/fs.h                                   |   7 +
+ fs/bcachefs/fsck.c                                 |  18 +++
+ fs/btrfs/inode.c                                   |   1 +
+ fs/nfs/delegation.c                                |  15 +--
+ fs/nfs/nfs4proc.c                                  |   9 +-
+ fs/nfs/pnfs.c                                      |   5 +-
+ fs/smb/client/cifsencrypt.c                        |   2 +-
+ fs/smb/server/mgmt/share_config.c                  |  15 ++-
+ fs/smb/server/mgmt/share_config.h                  |   4 +-
+ fs/smb/server/mgmt/tree_connect.c                  |   9 +-
+ fs/smb/server/mgmt/tree_connect.h                  |   4 +-
+ fs/smb/server/smb2pdu.c                            |  11 +-
+ fs/smb/server/smb_common.c                         |   9 +-
+ fs/smb/server/smb_common.h                         |   2 +
+ include/linux/mlx5/mlx5_ifc.h                      |  12 +-
+ include/linux/virtio_net.h                         |   3 +-
+ kernel/cgroup/cpuset.c                             |  33 ++---
+ kernel/trace/trace_kprobe.c                        |  25 +++-
+ kernel/trace/trace_osnoise.c                       |  10 +-
+ mm/memory.c                                        |  27 +++-
+ net/hsr/hsr_device.c                               | 102 +++++++++-----
+ net/hsr/hsr_forward.c                              |  41 +++++-
+ net/hsr/hsr_framereg.c                             |  12 ++
+ net/hsr/hsr_framereg.h                             |   2 +
+ net/hsr/hsr_main.h                                 |  10 +-
+ net/hsr/hsr_netlink.c                              |   3 +-
+ net/ipv4/fou_core.c                                |   4 +-
+ net/mptcp/pm_netlink.c                             |  13 +-
+ net/netfilter/nft_socket.c                         |  48 ++++++-
+ scripts/kconfig/merge_config.sh                    |   2 +
+ sound/soc/codecs/peb2466.c                         |   3 +-
+ sound/soc/intel/common/soc-acpi-intel-lnl-match.c  |   1 +
+ sound/soc/intel/common/soc-acpi-intel-mtl-match.c  |   1 +
+ sound/soc/meson/axg-card.c                         |   3 +-
+ .../selftests/bpf/prog_tests/sockmap_listen.c      |   3 +-
+ tools/testing/selftests/net/lib/csum.c             |  16 ++-
+ tools/testing/selftests/net/mptcp/mptcp_join.sh    |   4 +-
+ 135 files changed, 1378 insertions(+), 587 deletions(-)
 
-> ...
-> -       if (cpu_has(c, X86_FEATURE_CONSTANT_TSC)) {
-> +       if (cpu_has(c, X86_FEATURE_CONSTANT_TSC) &&
-> +           !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
-> ...
 
-Or do this for Family 15h and above ?
-
-Regards
-Nikunj
-
-1. https://github.com/torvalds/linux/commit/8b0e00fba934
 
