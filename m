@@ -1,80 +1,105 @@
-Return-Path: <linux-kernel+bounces-330337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33AC979CC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:27:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FBBA979CCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD8E1C21220
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:27:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45FD41F2399F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3397E13D891;
-	Mon, 16 Sep 2024 08:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ADD1428E7;
+	Mon, 16 Sep 2024 08:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQtWElH5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sGbCsTMo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEBF13B590;
-	Mon, 16 Sep 2024 08:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFE33770C;
+	Mon, 16 Sep 2024 08:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726475220; cv=none; b=u96dd2zDPM/wMiNDPjlecD8fTDa6c7v9ZAiGUn5tmtXw9EYg5fL0nVzO0gDZvhE9oarOqdaJmpl8ViFH7reemMKB2vvd/SHsA7CkyFHPjPgJ1ssMngJnCnTmBQG99enq3sLrCHreIy7RGhMk5kQBnU+onMR1mz2pz8ngTllIfhs=
+	t=1726475402; cv=none; b=Q3eUPDG7qtozPrPfda1yOMSdLSOihoPL3lpVsqpQSa4WKLOd221M3BsuAuMVO80l4EpqdhPkvBv5OOYwGWw4/toBUPMeBt3Et5IEqaOwLS2/9cIvcdG29vZlorZpwU4LCJxhaUJ3mzzyp+O+b4ucsnVjfDroGg0wtlWPtHVnf4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726475220; c=relaxed/simple;
-	bh=8DWtL+EHyERRG8cXzzPmiDSBP/gLfpuRk2nQC0QEpnk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dcHt+MwxiVwmnX8ufBxM0Givv89PDnjGw7c7GgIMCcSAHCIaj306GKvEz7ZhrBTsaDsWcW34jai3WeRAl21LsP7HJ2FztIRfgQIZtZ/RFDjENLOUPFQKkST282qshn94Ow7GC3kY3hqqqhVrjhPV98sEtpFgFKTNjOhY+UJY1z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQtWElH5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90998C4CEC4;
-	Mon, 16 Sep 2024 08:26:59 +0000 (UTC)
+	s=arc-20240116; t=1726475402; c=relaxed/simple;
+	bh=yfBFDbB93iEmu5WRyN3txgKZPZ1pPumVZZsmFoI6+r4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LNRAbQj3qtJaCyZlhquWK8RDcmPb2fZxkq1//YUu6Cnl7LW8aeG8iB1S50TCjeRe8BpHS5mTekJyJb1uOt57Np/m2l5n1iq9DNuerGHrcyS7U1bwSE82kWAHZ4pNJRh3fr80AsxAUOZqPOpXxHyRkb9vV/xtwZMO7naHgITdhzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sGbCsTMo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42987C4CECC;
+	Mon, 16 Sep 2024 08:30:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726475220;
-	bh=8DWtL+EHyERRG8cXzzPmiDSBP/gLfpuRk2nQC0QEpnk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hQtWElH54zW8d+JdbGuYzuJhd24vbDuKLRIpnuS9ovMJjP46HHveCFDaX+2Dm+Atr
-	 40YXyNJDqDkvbaGr1Hh3TUDblLX/ctuYieLJIgRJrFKYHVwmLtt7iUmUtOSp6E3m3D
-	 4hBEWUVlvVmdzkW6N5MrboZxytKyrAc5CXFvpnxy9y9LeIixYoJaY5NxjpyCn5CKQi
-	 iU68cxdrbaad2SDIlxOi5Ve/1Xmw4E5FGgN29aiAzdoNiU8/XIwXoZseL55K3LINVn
-	 yiuYQ2Jxkb2VAF7e6e6JBn8WUH2W57ZQYX7R2TXLFUu2XNXN1suK70vwjAHs1IT6MO
-	 IU95XoPEKc+Ww==
-From: Leon Romanovsky <leon@kernel.org>
-To: jgg@ziepe.ca, Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240912115700.2016443-1-huangjunxian6@hisilicon.com>
-References: <20240912115700.2016443-1-huangjunxian6@hisilicon.com>
-Subject: Re: [PATCH for-rc] RDMA/hns: Fix ah error counter in sw stat not
- increasing
-Message-Id: <172647521530.863326.4779292576968824657.b4-ty@kernel.org>
-Date: Mon, 16 Sep 2024 11:26:55 +0300
+	s=k20201202; t=1726475401;
+	bh=yfBFDbB93iEmu5WRyN3txgKZPZ1pPumVZZsmFoI6+r4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sGbCsTMoCY3c66R9QUrs6zy7mO3MDoscPw+hxXhdSP6C+EmuBPoRIBsxcMT6B9tVA
+	 S1lWgRz7F0GQHpMqkp7LCvdAQf7+AFuc4p9sgqbLy8SL/g+gA5r6D/M8AU0YEtFlX7
+	 rAAGmxG9/jjL8vJfsG2XrH0OTTPZNviUgAJHzNHHhs4c3OZKO6wOd1+8FkiG+SKuLq
+	 //Ql7zobhO9vF2c+mtqju3hsRR4NmhlGF91FGaPIFHJzTSrN5S5biA+kXrhP99afr5
+	 JLZrak3RYM8dBnHGxzCo3fDiZzs55kDKahk8sJjLbR6wm3PQd2TzSkvTXNGq0XZZWr
+	 Vjg9fVYYaLJ/g==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f6580c2bbfso45864771fa.1;
+        Mon, 16 Sep 2024 01:30:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVgKM5hzIFyJ0biZvwUFWtk4zPfNle708zs7t2OTBU/z4tP8ww184s8RSZdMVLpQhMlN0Ae/FJ64DqFISk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnTSvc3exfrQzXjMpA6Jdy9L2boIpX2umb19tdS14Zyfeyls6v
+	pAYPAuuEu+mwLYSMtp8PpM8EIBHe5+uLfcOgIsX5pUpgqHNHdstR1s8CyCcU85EYDMQK9PDhAsz
+	MdV2bjP1WyRBNX4gvD0qYUl+B9hE=
+X-Google-Smtp-Source: AGHT+IEZX4IxWSr7/56EKB8ikJTe+xpkGjICaT97FvK0IV4bmcKJwBp7nEQDn7i8Qq9aphDKzXMZDzUHN4V/mU+NbRY=
+X-Received: by 2002:a2e:a58b:0:b0:2f7:708f:d1c6 with SMTP id
+ 38308e7fff4ca-2f7a4b012d2mr14174991fa.12.1726475399647; Mon, 16 Sep 2024
+ 01:29:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+References: <20240913231954.20081-1-gourry@gourry.net> <20240913231954.20081-3-gourry@gourry.net>
+In-Reply-To: <20240913231954.20081-3-gourry@gourry.net>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 16 Sep 2024 10:29:48 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXH+QE+C78n84jRUn6ACUPbO9pU_EeeTcTa-nWitCKpt-Q@mail.gmail.com>
+Message-ID: <CAMj1kXH+QE+C78n84jRUn6ACUPbO9pU_EeeTcTa-nWitCKpt-Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] tpm: do not ignore memblock_reserve return value
+To: Gregory Price <gourry@gourry.net>, Dave Young <dyoung@redhat.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, leitao@debian.org, 
+	usamaarif642@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com, 
+	ilias.apalodimas@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
+(cc Dave)
 
-On Thu, 12 Sep 2024 19:57:00 +0800, Junxian Huang wrote:
-> There are several error cases where hns_roce_create_ah() returns
-> directly without jumping to sw stat path, thus leading to a problem
-> that the ah error counter does not increase.
-> 
-> 
+On Sat, 14 Sept 2024 at 15:26, Gregory Price <gourry@gourry.net> wrote:
+>
+> tpm code currently ignores a relevant failure case silently.
+> Add an error to make this failure non-silent.
+>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> ---
+>  drivers/firmware/efi/tpm.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
+> index 9c3613e6af15..b0cc2cc11d7e 100644
+> --- a/drivers/firmware/efi/tpm.c
+> +++ b/drivers/firmware/efi/tpm.c
+> @@ -61,7 +61,12 @@ int __init efi_tpm_eventlog_init(void)
+>         }
+>
+>         tbl_size = sizeof(*log_tbl) + log_tbl->size;
+> -       memblock_reserve(efi.tpm_log, tbl_size);
+> +       if (memblock_reserve(efi.tpm_log, tbl_size)) {
+> +               pr_err("TPM Event Log memblock reserve fails (0x%lx, 0x%x)\n",
+> +                      efi.tpm_log, tbl_size);
+> +               ret = -ENOMEM;
+> +               goto out;
+> +       }
+>
 
-Applied, thanks!
+Given the discussion in the other thread, I wonder if this should be
+efi_mem_reserve() instead - might as well fix that too.
 
-[1/1] RDMA/hns: Fix ah error counter in sw stat not increasing
-      https://git.kernel.org/rdma/rdma/c/39c047d4047a12
-
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
-
+Dave?
 
