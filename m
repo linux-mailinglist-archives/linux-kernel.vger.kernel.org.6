@@ -1,146 +1,153 @@
-Return-Path: <linux-kernel+bounces-330248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CAD979B84
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:50:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFED0979B8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 08:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF66281090
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E33921C22CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 06:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0630084D34;
-	Mon, 16 Sep 2024 06:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258B5136672;
+	Mon, 16 Sep 2024 06:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1D/ZAl0R"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9BU/6iE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8E6537F5;
-	Mon, 16 Sep 2024 06:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D80E4D8BF;
+	Mon, 16 Sep 2024 06:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726469413; cv=none; b=XN870FYbJ865MCJJJTa82kTUHIq9XHxp28+jFbz7Jqv75VJvUpInjwqNkshqcaB8t4e5ojU4xgZeum4hoy+/GzruKpEKFa2LTVSvypxmonVCxd3dOCqAQZM+dEvrYOVkt4OVSnVd9d+6rCXRZlcjsSvaQoIklyb7HFHHo8IqYNI=
+	t=1726469440; cv=none; b=FHyvvuEUiAMeE1oCuB9DtgEsvL3Bd87DwvlLYXPMfY5ROzoaclPKTI2D6zpa9OAOVq0mEdnZC1Mo27Yl3xWitk1kWdw5fLl1c70pH/4/vlgnFrNPn+jPtaCA66T+FZujQ06BPVXab1rvCTdzJgE4RJnW6swEx/6q+JnwE23jEDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726469413; c=relaxed/simple;
-	bh=GxHk/xrFXYov3d1t2q6REcdnGozK9lGHAQk2s4rVGv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qaFiFoONkax6jHmarYdwae6u0t1TYtEvdLHppclYrOS94nylziJB4QVtPbQYPRwpefYmSwD47vICKfmGnl3nMDfYdL+nUCdY1T55A37ininDsFsq7rKAyvRi0ietAnz3o5Eg68iiW1E6tBwbjSJAM+wUm0ZJ8JH6UdLPaUOGu2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1D/ZAl0R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC52C4CEC4;
-	Mon, 16 Sep 2024 06:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726469412;
-	bh=GxHk/xrFXYov3d1t2q6REcdnGozK9lGHAQk2s4rVGv8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1D/ZAl0RVmtqm9US99vyDuECyGRRRgVIfnIFnwGU5H58vcajQ8KZ4X4L7WK7n+FXT
-	 uLowrq1KQ8SkfQbDkJnUQ2Bg9qo2rVCYJ4Ld5X38vU8c9CKYMH8vRZS87spWszqvtW
-	 Gh2ny002nw9WJBoqcRMIaOASrs6S+dxa2/EkfCAI=
-Date: Mon, 16 Sep 2024 08:50:09 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: colin.i.king@gmail.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: use mutex_lock in iowarrior_read()
-Message-ID: <2024091659-showing-bulge-196b@gregkh>
-References: <20240916040629.28750-1-aha310510@gmail.com>
- <2024091648-excusable-unfilled-83de@gregkh>
- <CAO9qdTHPA6cUWc+T8pcO8_tUpJ5PZ4UgmyP6oA+R5bEH8nX5pQ@mail.gmail.com>
+	s=arc-20240116; t=1726469440; c=relaxed/simple;
+	bh=x4zKM6dHXR4Yem4FMLNEqU3wDBCmOyQz0b+ZFXsjo+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gcZBFKaUk48acX5+3bCC7ESQbnSm3OmJTBkWLUfZ+oLai6txjVe0nO2BWLjqlrVtHymikoUbpO/iV1JmhtZQ3GifKNg288zZrmdspOKfzflzauhaiHBng2+QeRNTGV64DGRdRaOEYbmSM1GQNoaaWVtm0eKnkdTPS3ag0Br5JRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9BU/6iE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA69C4CEC4;
+	Mon, 16 Sep 2024 06:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726469439;
+	bh=x4zKM6dHXR4Yem4FMLNEqU3wDBCmOyQz0b+ZFXsjo+k=;
+	h=Date:Subject:List-Id:To:Cc:References:From:In-Reply-To:From;
+	b=Y9BU/6iEsuC3ZxlE3Z1jalrWB0NnAOsY7syK/TpdTw1Yqj/X1o+ZpyT5pGXykgMlv
+	 9xu2mfM8L9cVvgi9wAXp/Lr18n7pHaPKhP5IJqTX5MTAVA3f3KgoExLLoyD1Dg+b1B
+	 VkicFtyd1KNVM4XTf4bHBtulXXw75jyyAeaOZ0Vc6CGBksDyanFsiJqNfTQnW2HqW4
+	 0AyBNr2MlyC+fnew1zDIn0wU2Ci4/sP8vRAu9CVt8Ow1542DcuFIlahn/7677xe2ez
+	 nabclv+oSVqELZ5DH7+duWUrLhoSDOkf+YkDL2uooKxWDG017nVXz/Oq6FooV16OdS
+	 HzsuflNzuDfcw==
+Message-ID: <f2c6cc62-e063-4482-a516-c6aa78d205cc@kernel.org>
+Date: Mon, 16 Sep 2024 08:50:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAO9qdTHPA6cUWc+T8pcO8_tUpJ5PZ4UgmyP6oA+R5bEH8nX5pQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/21] gpio: add driver for ADI ADSP-SC5xx platform
+To: arturs.artamonovs@analog.com, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Greg Malysa <greg.malysa@timesys.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Utsav Agarwal <Utsav.Agarwal@analog.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>,
+ Andi Shyti <andi.shyti@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Olof Johansson <olof@lixom.net>, soc@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org, adsp-linux@analog.com,
+ Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
+ <20240912-test-v1-9-458fa57c8ccf@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240912-test-v1-9-458fa57c8ccf@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 16, 2024 at 01:43:22PM +0900, Jeongjun Park wrote:
-> Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Sep 16, 2024 at 01:06:29PM +0900, Jeongjun Park wrote:
-> > > Currently, iowarrior_read() does not provide any protection for the
-> > > iowarrior structure, so the iowarrior structure is vulnerable to data-race.
-> > >
-> > > Therefore, I think it is appropriate to protect the structure using
-> > > mutex_lock in iowarrior_read().
-> > >
-> > > Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
-> > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > ---
-> > >  drivers/usb/misc/iowarrior.c | 42 +++++++++++++++++++++++++++---------
-> > >  1 file changed, 32 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-> > > index 6d28467ce352..7f3d37b395c3 100644
-> > > --- a/drivers/usb/misc/iowarrior.c
-> > > +++ b/drivers/usb/misc/iowarrior.c
-> > > @@ -277,28 +277,41 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
-> > >       struct iowarrior *dev;
-> > >       int read_idx;
-> > >       int offset;
-> > > +     int retval = 0;
-> > >
-> > >       dev = file->private_data;
-> > >
-> > > +     if (!dev) {
-> >
-> > How can this happen?  How was this tested?
-> >
-> > And you didn't mention this in your changelog, why?
+On 12/09/2024 20:24, Arturs Artamonovs via B4 Relay wrote:
+> From: Arturs Artamonovs <arturs.artamonovs@analog.com>
 > 
-> There is no separate reproduction code or bug report. However, all other
-> functions in iowarrior use mutex_lock to protect the iowarrior structure.
-> Only iowarrior_read does not use mutex_lock, which could potentially cause
-> bugs.
-
-But if you don't have a report, and don't have this device, how can you
-test this to make sure?
-
-> There is no reason why this function should not use mutex_lock,
-> so I think adding a lock is appropriate.
-
-Fair enough, but do it properly please.
-
-> > > +             retval = -ENODEV;
-> > > +             goto exit;
-> > > +     }
-> >
-> > What prevents dev from becoming invalid after it is checked here?
+> Add ADSP-SC5xx GPIO driver.
+> - Support all GPIO ports
+> - Each gpio support seperate PINT interrupt controller
 > 
-> I'm not sure what this means. Can you explain it in more detail?
+> Signed-off-by: Arturs Artamonovs <Arturs.Artamonovs@analog.com>
+> Co-developed-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+> Signed-off-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+> Co-developed-by: Greg Malysa <greg.malysa@timesys.com>
+> Signed-off-by: Greg Malysa <greg.malysa@timesys.com>
 
-What happens if the private_data pointer becomes "stale" right after
-checking it is not NULL?  You need to explain how it is safe, if it is,
-to do this.
+Your SoB chain is odd. Author is Greg, but Greg is not the first person
+in the chain? And no final SoB? This is really odd and not correct. I am
+not sure what you even want to say here.
 
-Actually, what ever sets this to NULL?  I think this check isn't needed
-at all from looking at the code (hint, think about the lifetime of the
-file pointer...)
+...
 
-> > > +     mutex_lock(&dev->mutex);
-> >
-> > Please use the guard() form here, it makes the change much simpler and
-> > easier to review and maintain.
-> 
-> I didn't know such a convenient function existed. It certainly seems like
-> it would make maintenance easier, but it also seems like it would be a
-> good idea to consistently replace all mutex_locks in iowarrior.c with guard().
-> 
-> What do you think?
+> +
+> +module_platform_driver(adsp_gpio_driver);
+> +
+> +MODULE_AUTHOR("Greg Malysa <greg.malysa@timesys.com>");
+> +MODULE_DESCRIPTION("Analog Devices GPIO driver");
+> +MODULE_LICENSE("GPL v2");
+> \ No newline at end of file
 
-Unless you have the hardware to test this, I would not worry about doing
-conversions like this.  I think I have this device somewhere around in
-my "big box of USB devices", but testing any driver changes for it will
-take a while before I can find it.
+Please review all your patches before sending for such stuff.
 
-Actually, in looking at the code further, I think the lock is not taken
-on purpose, so if you want to change this, you will have to document why
-it is now really needed and what will happen if it is not.
+Best regards,
+Krzysztof
 
-thanks,
-
-greg k-h
 
