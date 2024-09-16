@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-330517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-330519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188D3979F8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:41:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97901979F92
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 12:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E40D1F21546
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:41:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A42285266
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2024 10:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E55714F9E2;
-	Mon, 16 Sep 2024 10:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172DD1514FB;
+	Mon, 16 Sep 2024 10:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iEPqR6+c"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DEgA0Jy7"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF32B14E2ED
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AD01494BB
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 10:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726483257; cv=none; b=S+L00mKWLL80FrLs1e9DYXqgbu5BJe/a8BAdTca/xdVCVgGTF4EUY0v/7X6JZpn0SOa7x/lubwkjZeofdlbyuwoIGb+k21lnYPKGZOFh9vbG2LAyCw9JhUSzPirEELtqjEOTXVIMM813z3IVicOluTv8ZTw1ptUnuyxx4D2NkvQ=
+	t=1726483304; cv=none; b=MUBqQ/t4Gy/jdWSZldgxFibBEtJ/ObAFXVOoaY1oXQpG5g+2aXOtSrNVHi1m5yB7/3y0DqISiq7cz43E0VqBGXAf+S73PNfpYmuIVKcDMXA8JVhKeIqJd+dkApcZD7uWW2U4PSMGzy86zDXQG5b0XOmLMkx+bjL4DIS3OxSLt3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726483257; c=relaxed/simple;
-	bh=ntl0y1/Q/RwvsxR/8TTqJztjDFTu6S6bemSEG1jjQBA=;
+	s=arc-20240116; t=1726483304; c=relaxed/simple;
+	bh=M6qt0MqEg21tDFsnU0kxYsYOzFeuxCiE9c4uNlwuuyY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0xCcL7TmAxpNcMauocgIyms94OyyzN1QVlj/beXesG6xAd6cPOBr3qloeY/gcnKDcSM6y26wAR8vxbNxupjG6URaOHNo6aKrcObPKYT3bUXZe5z73kwNQs2+Pa1MWnpAhKmz3J+u6D+BjedhB96GkpbxSpkE5jzFo0D2r3e9E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iEPqR6+c; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so33860555e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 03:40:55 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=HvOZjsG5w4GOVMrel8RAcdhAOWMRV7zTMETmJ65rQYwh1PeJM/kAD2KIBKxi9ZOHCR3aIDuK6cqLpzfuKXykL2kGIsr6iSIMBr9fKbeMsAbPIKDLQbr3mF3OMXozXIPnuVLRdLBwo8PF6/ihdAjpZTQHldnEsJMrcYo5TEBB5NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DEgA0Jy7; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c326c638so1751496f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 03:41:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726483254; x=1727088054; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Uh4NEkHKiMJymObaXISine8gbvwHrlRosoYUXwllM2M=;
-        b=iEPqR6+cF99b+SSrhXpRH0/lwu0MWE0bdf0j0HL74Zf00T3Vwg/7aedv4lrlYreheE
-         qeJL3DI2UPPS4/kR6qpyJdzp86TuOxcJ2d1Yw71BnVBEfspOWOKpNgYYOHVrLR2aZnfF
-         cVFmysPUiIqqpstleSaWPkl/D0r5aYfnrnGeldovthPUoXNovzKIh0u3jSBAxwG3mkna
-         COb3vBdPhmvC/tPDtgxRUVpahJkKtT9PlFgN0WvlDR3eSONeuR92etukoNXnOSbcRX8t
-         RLF7cuOvU8ij5UQ/Hh5YLhlKn8Q/kW94R+O3oualA6K18dGaXtaBTdBhhU1HlIgzQ/0O
-         I1yA==
+        d=suse.com; s=google; t=1726483301; x=1727088101; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ra8/pqRfP7A8W4Sg1b45pf3BbARdFe/KatE6of4jnNM=;
+        b=DEgA0Jy7YJ4CFPxbHsucK8pBU2PDOnGdbv3aRhNbIZ+g/2fTRU23gm494BbL+2WlPg
+         mvLBqeJ8zf30v5ybDHo8w3tg23Nilq73g60lSGxx68JdGrdwPCXZl4LmFqwLYmEx5Yw+
+         +PNY82hxrbGrIO371SVh8JFlpnoGt6o5pDuIM+EbDI2XwiWn4/rWH25i3KEZfnDnobW3
+         R1I3oytSQ9z92jXgicjpud2EvckpHyOyINttrC8EmfBLI/ZxwGnSy4KppipC03mhlqp2
+         fv3NQNN5ncSLlLFC4EfBxpDFVBcqayiGFVQiXw+AqIPUz7bbianVUag5oEYBLgBkzyCD
+         6YeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726483254; x=1727088054;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uh4NEkHKiMJymObaXISine8gbvwHrlRosoYUXwllM2M=;
-        b=GXVeIHYOS+np2aHJR7uYKMoM0Sa+jrHxDB4Hq8BTDjPpLiHcBSzYEzC5Y8OQDqp1Rm
-         FGgNTv8Bz6NefdZ9zWZuxdUmWTbWEHAia2WFFRNOZOWMmd5OSWu8/jBc9jrKmCeFUzs7
-         U+KTYMTKdOk4VV1wfetvnAj9pMBt4wuyP891li15i4WrUEOlnScLEb8DDc75KRVM/EBB
-         8fvLExUfMN2f3FAnwOrj4tQe728FpiVljjKkhAweUT4G5VYPKJyDCgve1oxHNG4FHaF8
-         S3ruJ8u+z8f4v/tPEStGkferQbqQsO82Cnf8TTapZ0ytliGqXkxv99by/OUSEN+T2PK3
-         7Qmw==
-X-Forwarded-Encrypted: i=1; AJvYcCW65TwenCJXuIa8cX0TKY2znwp3b3v96rFHMlavQ+NXf8oKe4wdyNwxDv+dQQv+SGp+W5uIJiwlhzBHAoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmcL42jL/mC0O/v0PfWjtFNW7FH7AUVVPvuKR1vDNtEDj2rYnC
-	EUFMX4ArXvO4A7lMCoVUN/LFL85PSE0gQiWuO7AP66Xvd40djmEpOGMJUKrEX5c=
-X-Google-Smtp-Source: AGHT+IEW1CK4xoE0JM0fHQi3amnmo4pcWJsFhe6LIWUR9maOlvX3yzg2IUc6+DHriOOF104fsotm+Q==
-X-Received: by 2002:a05:600c:1c84:b0:42c:b5f1:4508 with SMTP id 5b1f17b1804b1-42cdb57c056mr110924355e9.23.1726483253100;
-        Mon, 16 Sep 2024 03:40:53 -0700 (PDT)
-Received: from [192.168.1.61] ([84.67.228.188])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7800237sm6875635f8f.83.2024.09.16.03.40.51
+        d=1e100.net; s=20230601; t=1726483301; x=1727088101;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ra8/pqRfP7A8W4Sg1b45pf3BbARdFe/KatE6of4jnNM=;
+        b=gWuJogDbjvZAaLhMyFDLvAHqpDpwFkWC2DjFEskrTk27CCVPRWgxBtTUQuP/eZqwU3
+         wn/KYjx8UkryPzxGtFKlhsn60BembTJiZ0mOzj++Yj+P+t8s1E30nY2Jh/TW0MudMv1r
+         WOWWct3AyaAlE2UBMlrOqn1wbT90UPnUIQ+60Mt5Kqo+lfKwn3kST1MKErc3m9zpn/bE
+         v9prc6nvyfDejn8lHM/h4aenZqRFwepUXf9zAp0CeY9bMIFW9t3Cikf1xpJg6nw9hema
+         UQVEa3FQiK4YD/nw0h6EwHAaUDWy1mgIVGVVNsLyHv2ig+BTzS9OSZXjQKlPtNXIMb8w
+         4Eow==
+X-Forwarded-Encrypted: i=1; AJvYcCVpFn7oeQNK3yeuK3Ak6YyCXfTh741zdvhYCrBItxLnlne6RFlrKIBRGXUOtsYL7lU+4jMnJovaZ84d23M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwscJ4mKSTmkXrfQPIs2i2BUsdyUqSHpSJXA1AeBo3TE3JGSgv6
+	3I+w/gMRsYpfivT17ybC0pbJJAmv9hpFlq0Jnd0RGtlakMa5Kv761fiNPi/pqeZf1siIJRVvS48
+	P
+X-Google-Smtp-Source: AGHT+IEmR93xh2og4ZQJtp1ucu8ZW4W/zfBvMfoRdORmexaCQuJzT7M8tUl3c1DLK5WZSD+CB9sFJA==
+X-Received: by 2002:a05:6000:c89:b0:374:b9a0:ddee with SMTP id ffacd0b85a97d-378d625a9d0mr5502398f8f.56.1726483299927;
+        Mon, 16 Sep 2024 03:41:39 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d2933sm33627785ad.155.2024.09.16.03.41.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 03:40:52 -0700 (PDT)
-Message-ID: <ae765643-a5ac-4331-a76d-3e04c1193b6c@linaro.org>
-Date: Mon, 16 Sep 2024 11:41:12 +0100
+        Mon, 16 Sep 2024 03:41:39 -0700 (PDT)
+Message-ID: <44534dea-0baf-420b-a2c2-0ee15db7298a@suse.com>
+Date: Mon, 16 Sep 2024 20:11:34 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,136 +77,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] perf scripts python cs-etm: Add start and stop
- arguments
-To: Leo Yan <leo.yan@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
- Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
- <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- gankulkarni@os.amperecomputing.com, coresight@lists.linaro.org,
- scclevenger@os.amperecomputing.com
-References: <20240912151143.1264483-1-james.clark@linaro.org>
- <20240912151143.1264483-7-james.clark@linaro.org>
- <11bca9b1-7eb1-4a13-8f05-9ba5b9c46d24@arm.com>
+Subject: Re: [PATCH v4 3/3] btrfs: Don't block system suspend during fstrim
+To: Luca Stefani <luca.stefani.ge1@gmail.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240916101615.116164-1-luca.stefani.ge1@gmail.com>
+ <20240916101615.116164-4-luca.stefani.ge1@gmail.com>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <11bca9b1-7eb1-4a13-8f05-9ba5b9c46d24@arm.com>
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
+ Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
+ p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
+ ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
+ dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
+ RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
+ rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
+ 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
+ bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
+ AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
+ ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
+In-Reply-To: <20240916101615.116164-4-luca.stefani.ge1@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-On 13/09/2024 14:20, Leo Yan wrote:
-> On 9/12/24 16:11, James Clark wrote:>
->> Make it possible to only disassemble a range of timestamps or sample
->> indexes. This will be used by the test to limit the runtime, but it's
->> also useful for users.
->>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   .../scripts/python/arm-cs-trace-disasm.py     | 22 +++++++++++++++++--
->>   1 file changed, 20 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py 
->> b/tools/perf/scripts/python/arm-cs-trace-disasm.py
->> index 02e957d037ea..a097995d8e7b 100755
->> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
->> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
->> @@ -55,6 +55,11 @@ args.add_argument("-k", "--vmlinux",
->>   args.add_argument("-d", "--objdump", nargs="?", 
->> const=default_objdump(),
->>                    help="Show disassembly. Can also be used to change 
->> the objdump path"),
->>   args.add_argument("-v", "--verbose", action="store_true", 
->> help="Enable debugging log")
->> +args.add_argument("--start-time", type=int, help="Time of sample to 
->> start from")
->> +args.add_argument("--stop-time", type=int, help="Time of sample to 
->> stop at")
->> +args.add_argument("--start-sample", type=int, help="Index of sample 
->> to start from")
->> +args.add_argument("--stop-sample", type=int, help="Index of sample to 
->> stop at")
->> +
+在 2024/9/16 19:46, Luca Stefani 写道:
+> Sometimes the system isn't able to suspend because the task
+> responsible for trimming the device isn't able to finish in
+> time, especially since we have a free extent discarding phase,
+> which can trim a lot of unallocated space, and there is no
+> limits on the trim size (unlike the block group part).
 > 
-> It is good to validate the ranges for time and sample indexes, in case
-> the user passes unexpected values and can directly report the error.
+> Since discard isn't a critical call it can be interrupted
+> at any time, in such cases we stop the trim, report the amount
+> of discarded bytes and return failure.
 > 
-> BTW, I think it is good to clarify the time is based on monotonic clock
-> but not wall-clock time.
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
+> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
+> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+> ---
+>   fs/btrfs/extent-tree.c | 19 ++++++++++++++++++-
+>   1 file changed, 18 insertions(+), 1 deletion(-)
 > 
-> With above changes, LGTM:
-> 
-> Reviewed-by: Leo Yan <leo.yan@arm.com>
-> 
+> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+> index cbe66d0acff8..ab2e5d366a3a 100644
+> --- a/fs/btrfs/extent-tree.c
+> +++ b/fs/btrfs/extent-tree.c
+> @@ -16,6 +16,7 @@
+>   #include <linux/percpu_counter.h>
+>   #include <linux/lockdep.h>
+>   #include <linux/crc32c.h>
+> +#include <linux/freezer.h>
+>   #include "ctree.h"
+>   #include "extent-tree.h"
+>   #include "transaction.h"
+> @@ -1235,6 +1236,11 @@ static int remove_extent_backref(struct btrfs_trans_handle *trans,
+>   	return ret;
+>   }
+>   
+> +static bool btrfs_trim_interrupted(void)
+> +{
+> +	return fatal_signal_pending(current) || freezing(current);
+> +}
+> +
+>   static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
+>   			       u64 *discarded_bytes)
+>   {
+> @@ -1319,6 +1325,11 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
+>   		start += bytes_to_discard;
+>   		bytes_left -= bytes_to_discard;
+>   		*discarded_bytes += bytes_to_discard;
+> +
+> +		if (btrfs_trim_interrupted()) {
+> +			ret = -ERESTARTSYS;
+> +			break;
+> +		}
+>   	}
+>   
+>   	return ret;
+> @@ -6473,7 +6484,7 @@ static int btrfs_trim_free_extents(struct btrfs_device *device, u64 *trimmed)
+>   		start += len;
+>   		*trimmed += bytes;
+>   
+> -		if (fatal_signal_pending(current)) {
+> +		if (btrfs_trim_interrupted()) {
+>   			ret = -ERESTARTSYS;
+>   			break;
+>   		}
+> @@ -6522,6 +6533,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
+>   
+>   	cache = btrfs_lookup_first_block_group(fs_info, range->start);
+>   	for (; cache; cache = btrfs_next_block_group(cache)) {
+> +		if (btrfs_trim_interrupted())
+> +			break;
+> +
 
-Yep makes sense, I can add that
+Please update @bg_ret return value.
 
->>   options = args.parse_args()
->>
->>   # Initialize global dicts and regular expression
->> @@ -63,6 +68,7 @@ cpu_data = dict()
->>   disasm_re = re.compile(r"^\s*([0-9a-fA-F]+):")
->>   disasm_func_re = re.compile(r"^\s*([0-9a-fA-F]+)\s.*:")
->>   cache_size = 64*1024
->> +sample_idx = -1
->>
->>   glb_source_file_name   = None
->>   glb_line_number                = None
->> @@ -151,10 +157,10 @@ def print_disam(dso_fname, dso_start, 
->> start_addr, stop_addr):
->>
->>   def print_sample(sample):
->>          print("Sample = { cpu: %04d addr: 0x%016x phys_addr: 0x%016x 
->> ip: 0x%016x " \
->> -             "pid: %d tid: %d period: %d time: %d }" % \
->> +             "pid: %d tid: %d period: %d time: %d index: %d}" % \
->>                (sample['cpu'], sample['addr'], sample['phys_addr'], \
->>                 sample['ip'], sample['pid'], sample['tid'], \
->> -              sample['period'], sample['time']))
->> +              sample['period'], sample['time'], sample_idx))
->>
->>   def trace_begin():
->>          print('ARM CoreSight Trace Data Assembler Dump')
->> @@ -216,6 +222,7 @@ def print_srccode(comm, param_dict, sample, 
->> symbol, dso):
->>   def process_event(param_dict):
->>          global cache_size
->>          global options
->> +       global sample_idx
->>
->>          sample = param_dict["sample"]
->>          comm = param_dict["comm"]
->> @@ -231,6 +238,17 @@ def process_event(param_dict):
->>          ip = sample["ip"]
->>          addr = sample["addr"]
->>
->> +       sample_idx += 1
->> +
->> +       if (options.start_time and sample["time"] < options.start_time):
->> +               return
->> +       if (options.stop_time and sample["time"] > options.stop_time):
->> +               exit(0)
->> +       if (options.start_sample and sample_idx < options.start_sample):
->> +               return
->> +       if (options.stop_sample and sample_idx > options.stop_sample):
->> +               exit(0)
->> +
->>          if (options.verbose == True):
->>                  print("Event type: %s" % name)
->>                  print_sample(sample)
->> -- 
->> 2.34.1
->>
+>   		if (cache->start >= range_end) {
+>   			btrfs_put_block_group(cache);
+>   			break;
+> @@ -6561,6 +6575,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
+>   
+>   	mutex_lock(&fs_devices->device_list_mutex);
+>   	list_for_each_entry(device, &fs_devices->devices, dev_list) {
+> +		if (btrfs_trim_interrupted())
+> +			break;
+> +
+
+The same here, please update @dev_ret.
+
+Thanks,
+Qu
+>   		if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))
+>   			continue;
+>   
 
