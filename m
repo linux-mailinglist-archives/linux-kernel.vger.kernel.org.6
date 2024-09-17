@@ -1,200 +1,130 @@
-Return-Path: <linux-kernel+bounces-332110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8417497B5B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:28:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF5A97B5B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D25A1F23111
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:28:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D692882D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0C818BBA3;
-	Tue, 17 Sep 2024 22:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E6216C687;
+	Tue, 17 Sep 2024 22:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="GLy4aq7E"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="czMEgfPl"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA128135417
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 22:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4A816849F
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 22:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726612078; cv=none; b=k8XpUBaOnjdap4jq6cLgALoQoLwwmLgVw9dbNrdwJIeF9G6uad+t2Dp5g5g5Qd+DeNy1dXQamW848dw0QP0LqzO62RZBqTdhcOXhdcF1usk20XAyFXBGd0H10JYdav7WishDeKqijRbpG3MoScoYV3vk2UQ+7GuL4bJtYP8crhM=
+	t=1726612093; cv=none; b=TsDYeDO1CTU7dHVymmHxSLERiBCAkx7MSg5xTmQXjf84vAaWzX7MAorgZkH2ZmByrLygT9ijcDKk8uzMmI/S663Kncv0rH6JOeBHv4eLFwqn0HGXhdg+hTTRaJ8M8xVszCFBkaiGIiQSG5SGw2kaLbHkbQ7cj2yRKy9IpKIvRxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726612078; c=relaxed/simple;
-	bh=EBE/kDYbk7dbdt1bwZQbkSfHD+9mMbCAVxtBBX4iXd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7E0KZpAc347ZHhcdVBvYAP65Wspzeof2gltiO2JRXtDSvBR6vrCN/zzCjCHjptbxaqkJ0BAAN3cnPD1KRhajrszLztb8pH7uFChQRpFFl0HncwnRDm3Xn+yCSrZ+yY0WhF4J0XdI09sXiufDdUzPKNH86jM4LqZyhrqtkNeBzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=GLy4aq7E; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7db54269325so2415818a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 15:27:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726612076; x=1727216876; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ccch/CYLhuEpupgCKar2vNrhn2tuHqzaZ85afBvK4mk=;
-        b=GLy4aq7EVIZnz9mrA3JPZRvCxApyShjN4Wj7Qq3M7gnwM0YhDZ2Zq6VJKQnfFZoGgl
-         XU6lp94UnvDLVdS/+nhTsceFmQgT/IRPfoBDcWeqxTJGOrDRLDApzLP9zNzM7N6a+NIo
-         xPaZAAtjtst09mph6zpDWh4RHiPxTp0OtwgsKRYKYDWju691nFkonIneFdHWjcWLvDOs
-         y9L3p+hCyL365/6RqIM7AtdvpqjVm87JleY7h0DloXuhRRI1pTknhc0LkCrNgNDHLKYo
-         CQw32WR4MhoLt80tQUOAb0icz731QBiz5lx1u5Ul6v/8/Fvr82GdhEMwYlp/csGSrtmn
-         WCmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726612076; x=1727216876;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ccch/CYLhuEpupgCKar2vNrhn2tuHqzaZ85afBvK4mk=;
-        b=JEJ+fPldORsDJeul9AiQojBoWwUDLBc6dEXBHUlHW6noXfHUWG2GJXDk8+EX7pP7BS
-         +kQ+KOnGykBc9yCh/zc9yO/qII+srnxDacAZz82zBiniALg7dnbxfr5vGmx2vmHgyDUb
-         GEALf9Lm5ciELjpxNHFEmJDhEXJbNy3G9vPYymHebIVg/Ns/WN3eVprHbHzRAJyrRse/
-         2OSQX4dMQvf/AHMM3CmsCfZFUp0ebRJ2pgS2uueddkNc0EJoKrvZbwV9N8GTPxj5oWk+
-         JsxlCZsR2h7xH5JuRHPdAu9m2ofvSPzSRaWrPmX7C4rr4xTM8j0WUAVHB6E/X2gdsZ/M
-         fdDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBQWLWJ07s+3xM09hrO1ScEwApmTrQks7LjW3Wy3N3ywA+/6FjHvW6rrba7cSONG4PpWYy3n6ZncqPdJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb904e9SWW5rrKgxaQpgmUjSQBujCaiP3HTf1zNik7+Jwnpv7t
-	6uf3IVb2wJjb9Vf6MA7l9w+YTtacMSgvGYsCjRfquOPhkMtK0ZQ3bQwWwiYn/uU=
-X-Google-Smtp-Source: AGHT+IF0NtHcWGgQkVG/yMvHatmnpgG/DEnu8eXNlMFeupDDsk0kMCwvT1TDHdDTmoFzXGa/p8UhJg==
-X-Received: by 2002:a05:6a21:a4c4:b0:1d2:e793:b35 with SMTP id adf61e73a8af0-1d2e7930d35mr5104220637.47.1726612076095;
-        Tue, 17 Sep 2024 15:27:56 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a9809esm5583859b3a.39.2024.09.17.15.27.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 15:27:55 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sqgfp-006XwE-0D;
-	Wed, 18 Sep 2024 08:27:53 +1000
-Date: Wed, 18 Sep 2024 08:27:53 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <ZuoCafOAVqSN6AIK@dread.disaster.area>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
- <87frqf2smy.fsf@gmail.com>
- <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
- <Ztom6uI0L4uEmDjT@dread.disaster.area>
- <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
- <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
- <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
- <ZufBMioqpwjSFul+@dread.disaster.area>
- <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
+	s=arc-20240116; t=1726612093; c=relaxed/simple;
+	bh=ITGcAc30GiZ2r9on52mDfrwUHdGvKkm4dpPJI3/8rlc=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=iDP1Wg1Mb5A+QjSSyHroaDqIR+mlY1an/6QdYbuGQWu/pK24lk2Rfnat0NoFR+vx4trlnyX2lbWipV+690TF2J86/IiyrUOwsBfvwTUHwwTCqHwWceYWe4i5yvu295L/E1juktrXt9xsEjBxSFN/Pcl4v6sL1CSfjI7g4md8OJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=czMEgfPl; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
+	by cmsmtp with ESMTPS
+	id qYGrsyuZtnNFGqgg5sJ2Mz; Tue, 17 Sep 2024 22:28:09 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id qgg4sbX7SIQwZqgg4saLNU; Tue, 17 Sep 2024 22:28:09 +0000
+X-Authority-Analysis: v=2.4 cv=FModxfos c=1 sm=1 tr=0 ts=66ea0279
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HhgWGGqSUKaUXy95pivy0JeC032zQ5e5NLogHgBkqFI=; b=czMEgfPlGR94PnCTB3YbXY5Hq7
+	HdtvDOkxgLgRmD4YEHOCme7zVVicM37CW8xwzu4g0BWuBCk5RcQXDzXHpcx8UJjnBP6umTslu4rfD
+	KmdplnQgPeP9KQE1qB+9XHhR0rJNq0rZsNAqKC7TfHDwhsdlnvBPdixUWGC1l7tUnXil+gB0iXsgE
+	E9ria9wHC82Ooj1yLf3gsRD+7LEvgErB2pCwUz7z2oU1ovHaUjvscxKjuezX0gmvCZ0q2uzLsLkzH
+	edNHX7UtNgmnWlhYkqD369E+lzcQTejukjsadYBAGMOcH5bd8tC1cBh62il0iwKvgJmJLfV6ekuRh
+	V6zvb9Lg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:41170 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sqgg2-001Uoq-1H;
+	Tue, 17 Sep 2024 16:28:06 -0600
+Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240916114228.914815055@linuxfoundation.org>
+In-Reply-To: <20240916114228.914815055@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <9a7a68d4-845c-6d37-420d-e98d6781df34@w6rz.net>
+Date: Tue, 17 Sep 2024 15:28:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sqgg2-001Uoq-1H
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:41170
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGvXkmzsrVhvavpu7ZsGHVNw+htkQcIXJPuFdU0YUSHKePq8pfRJtaUf2MDrl/ueZEHrBdwEUdT6U2Cf5mMTpjQoFmcgcIIroqKaUbC0PUjVrmIdgsw2
+ jyF53bwB5MmCp50+lUSxZIpHU+S+lPSsFKiwW3BsHVyoDPU0JPUo3EmN1xDODhCza68gH+scK1zWRM/lqF2Mja+b8i8WhXjSaGw=
 
-On Mon, Sep 16, 2024 at 10:44:38AM +0100, John Garry wrote:
-> 
-> > > * I guess that you had not been following the recent discussion on this
-> > > topic in the latest xfs atomic writes series @ https://urldefense.com/v3/__https://lore.kernel.org/linux-xfs/20240817094800.776408-1-john.g.garry@oracle.com/__;!!ACWV5N9M2RV99hQ!JIzCbkyp3JuPyzBx1n80WAdog5rLxMRB65FYrs1sFf3ei-wOdqrU_DZBE5zwrJXhrj949HSE0TwOEV0ciu8$
-> > > and also mentioned earlier in
-> > > https://urldefense.com/v3/__https://lore.kernel.org/linux-xfs/20240726171358.GA27612@lst.de/__;!!ACWV5N9M2RV99hQ!JIzCbkyp3JuPyzBx1n80WAdog5rLxMRB65FYrs1sFf3ei-wOdqrU_DZBE5zwrJXhrj949HSE0TwOiiEnYSk$
-> > > 
-> > > There I dropped the sub-alloc unit zeroing. The concept to iter for a single
-> > > bio seems sane, but as Darrick mentioned, we have issue of non-atomically
-> > > committing all the extent conversions.
-> > 
-> > Yes, I understand these problems exist.  My entire point is that the
-> > forced alignment implemention should never allow such unaligned
-> > extent patterns to be created in the first place. If we avoid
-> > creating such situations in the first place, then we never have to
-> > care about about unaligned unwritten extent conversion breaking
-> > atomic IO.
-> 
-> OK, but what about this situation with non-EOF unaligned extents:
-> 
-> # xfs_io -c "lsattr -v" mnt/file
-> [extsize, has-xattr, force-align] mnt/file
-> # xfs_io -c "extsize" mnt/file
-> [65536] mnt/file
-> #
-> # xfs_io  -d -c "pwrite 64k 64k" mnt/file
-> # xfs_io  -d -c "pwrite 8k 8k" mnt/file
-> # xfs_bmap -vvp  mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..15]:         384..399          0 (384..399)          16 010000
->   1: [16..31]:        400..415          0 (400..415)          16 000000
->   2: [32..127]:       416..511          0 (416..511)          96 010000
->   3: [128..255]:      256..383          0 (256..383)         128 000000
-> FLAG Values:
->    0010000 Unwritten preallocated extent
-> 
-> Here we have unaligned extents wrt extsize.
-> 
-> The sub-alloc unit zeroing would solve that - is that what you would still
-> advocate (to solve that issue)?
+On 9/16/24 4:42 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.11 release.
+> There are 121 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.11-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Yes, I thought that was already implemented for force-align with the
-DIO code via the extsize zero-around changes in the iomap code. Why
-isn't that zero-around code ensuring the correct extent layout here?
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-> > FWIW, I also understand things are different if we are doing 128kB
-> > atomic writes on 16kB force aligned files. However, in this
-> > situation we are treating the 128kB atomic IO as eight individual
-> > 16kB atomic IOs that are physically contiguous.
-> 
-> Yes, if 16kB force aligned, userspace can only issue 16KB atomic writes.
+Tested-by: Ron Economos <re@w6rz.net>
 
-Right, but the eventual goal (given the statx parameters) is to be
-able to do 8x16kB sequential atomic writes as a single 128kB IO, yes?
-
-> > > > Again, this is different to the traditional RT file behaviour - it
-> > > > can use unwritten extents for sub-alloc-unit alignment unmaps
-> > > > because the RT device can align file offset to any physical offset,
-> > > > and issue unaligned sector sized IO without any restrictions. Forced
-> > > > alignment does not have this freedom, and when we extend forced
-> > > > alignment to RT files, it will not have the freedom to use
-> > > > unwritten extents for sub-alloc-unit unmapping, either.
-> > > > 
-> > > So how do you think that we should actually implement
-> > > xfs_itruncate_extents_flags() properly for forcealign? Would it simply be
-> > > like:
-> > > 
-> > > --- a/fs/xfs/xfs_inode.c
-> > > +++ b/fs/xfs/xfs_inode.c
-> > > @@ -1050,7 +1050,7 @@ xfs_itruncate_extents_flags(
-> > >                  WARN_ON_ONCE(first_unmap_block > XFS_MAX_FILEOFF);
-> > >                  return 0;
-> > >          }
-> > > +	if (xfs_inode_has_forcealign(ip))
-> > > +	       first_unmap_block = xfs_inode_roundup_alloc_unit(ip,
-> > > first_unmap_block);
-> > >          error = xfs_bunmapi_range(&tp, ip, flags, first_unmap_block,
-> > 
-> > Yes, it would be something like that, except it would have to be
-> > done before first_unmap_block is verified.
-> > 
-> 
-> ok, and are you still of the opinion that this does not apply to rtvol?
-
-The rtvol is *not* force-aligned. It -may- have some aligned
-allocation requirements that are similar (i.e. sb_rextsize > 1 fsb)
-but it does *not* force-align extents, written or unwritten.
-
-The moment we add force-align support to RT files (as is the plan),
-then the force-aligned inodes on the rtvol will need to behave as
-force aligned inodes, not "rtvol" inodes.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
