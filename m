@@ -1,365 +1,201 @@
-Return-Path: <linux-kernel+bounces-331934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF7997B322
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:45:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA4E697B326
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B206728616B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:45:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CBC6B28BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EDA15D5BB;
-	Tue, 17 Sep 2024 16:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AF517B4ED;
+	Tue, 17 Sep 2024 16:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="KrgX+1HP"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYwdv2dJ"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF56176233
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4CE3B1A2;
+	Tue, 17 Sep 2024 16:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726591536; cv=none; b=KJbxRDdi9PW0GIg4uFJkzjwixFjlMtJhNwdaqOwmgbRKoWKMvGMLXxRrDDnhrc9QkAbVYR236heAnL0i0W/j/4LFzBRumfifybKMBI60ej/fLK3ZBQBOfFMz2CwS6iqSyLqe9GbcDNTm5uYeFzIuZO2BFFNqry7bcHt5d5TWtmw=
+	t=1726591718; cv=none; b=twM+DxU26cXE4lffLK8vpy0wyWakxcPhV0HWpZHfEYfvnGm9qms7mRuAX75lPojkxctttWN9946Z/hWLUYiGToDMshvpbNLpSV3iKqFSm/PNEMXDy6xiRkJEo3r1IxU2xB9FISkiFBhaW/qW3HiZgYEJKnZYfU/MIZSxMDqK3cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726591536; c=relaxed/simple;
-	bh=qqDFQFtVVcye2IEz2g3CHUsKZtVqb7nn9gHNIon5pT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tpOhalWI4E0sAlBtt/GpKermcMWXSwbEhFWK7jIh+54U+R41zO94ZpqGxmYJiAuBXDOhy+4Ak5aKCkafLQRnIg4vD4h5W6jqHrVwx67o9TwcNgXIGaRUiqtDU/Prztu7nxWQTbFp1Jrb5ZtXHgun/74y4wZ9/Uz94SPOBE5r/9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=KrgX+1HP; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A0BFC3F321
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1726591525;
-	bh=NT1MFgf5d1eFKJ8lvG5GHflLOH9+PDppupkTwcUm1iE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=KrgX+1HPwpu+sic132D3V6KRMUT7oK0Xl9ih7LjFrSzcqnbvTKjRbuRSj4edqynUw
-	 AZlUp6R2xsHlDs/xk0OB1uXI6UUI9yyfHtUfJ4nrKhxQIjRRozRyUwmC2m5Blx+Xt9
-	 ESfB8YhNYP+dNeWB+9vUpLyK/LT+3466Xfi+x1TL4KLKEewymmn6ajGxDAOFj4k39f
-	 cgTV3/SoVs2UL9MdBZaIraJ0XR0N235FYHHyCLrVbFHKXcypJFSMylhKXRq+600dkr
-	 6M7zuukJmuXhmmf2zFd2SYwLJ4r7UEqfCSMu55SdN6KPAQcymcXHlc+VO+7dWORdfj
-	 sOqQlAaa1yqxA==
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374b385b146so2973427f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:45:25 -0700 (PDT)
+	s=arc-20240116; t=1726591718; c=relaxed/simple;
+	bh=fH3plaBt0O+m/Vc13Tt0/wRtia4okRWIxHD+zFt0LHM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d2k/utU+lexPrxBjb3YFErhfuN0fN93X4CxI4Bpvq/lTv2PcLHxL19WlLbWG1O5CA72Q21YxFOiRIodjcIpCh/cDTIfvk2aSizzRurpu+uoU18179mZxjn+p/4nCqzBfvAdm1gdd6wjJGWu/GdY95dQKJVKxgPMGDvhk+8qW+C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYwdv2dJ; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d885019558so4016569a91.2;
+        Tue, 17 Sep 2024 09:48:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726591716; x=1727196516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L8Nl24p1XGq2gNfzD83xHLfViuR+0yvfPZUWWcKsgR0=;
+        b=hYwdv2dJm72zUw8s4Dy0gsY1xHukoTsiLJtxqTq6RX+sKbvoI3yoVHQCBCVIemvanb
+         ugcfAkZQC0vB5st6+y5UHtaJ2jlxlSlivrIsoXnbbnKjUYwCySGdZ0I/O5COHcRzj45p
+         7Iip9tMjAZFhuZH2tHArtxy2z9h2f7mssPCq/jnd3zbb3/iaHItEFXUW7oMuMAzmzjV+
+         /S4TBnnH91wDF7p1DuLlmZq6uWYhVQQqa/bJ6FgyLDlMyZucMImti5F7ydlg4QQbdoG8
+         YDrRw3i6zFEXIuP4Bd+zsnguD1Q0VcF0AQCEGQ61O3deahAeTwnSvQtT9jJWb37nxbaq
+         BViQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726591524; x=1727196324;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NT1MFgf5d1eFKJ8lvG5GHflLOH9+PDppupkTwcUm1iE=;
-        b=flef9zDj2+KLuPavIQDMj50BfL+G49FZBCC+VbbiqPgQRmfsYp+ANh1wHUuv+AIQnk
-         9VqQTq1gRckgqciiwLTyiqLqQxr2NfrODXMFKsKnE0d+GUHJ76SsU0p5PbNiL6qmMH6C
-         b+BZITXm7uXPftJHfHh3KVYWIe08jdlWe85dLYpxZx5mHWhPKjiEyEj9kx3uLlOi7Jid
-         X8ZCBRpFmVnkSkEE0D4yYStJ8PT8L1U9Zlnd/FmYjfHAk03Jzg9joUcCYXgdV6asz5nY
-         K7W5oCXXr6cJ69Plsq6gCIO084EwHqY+Y3MgBxZoPp5zHza5DxKnMzOs4/wlONacthGp
-         aSfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkszvGGtXSUMyMSl46bgSr1A93MG1U5WfdLbAqxsfAUOLPGaLri9/b/AmXa1BmWDW+IrPKNJzc743rg7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlRjN2R0CVRElCBSpL4tkJHxVfQylHK7n0AJj5LdVTaYYIwUei
-	vLn8daS3TYwzsTyClAUTDbgbNne6YyrVxxpPiPOcyqYhACOKBt1Yrn4RnRUd2R8w4flcgosN29H
-	k6UGXpvxIcYN7bVO/0Sr1KdR6NryW2xF2tKVqRScgbBqlTfIcQQv6UYxCWAxtrm1f2MFWz7b5vE
-	owqg==
-X-Received: by 2002:a5d:5e0b:0:b0:378:fd4a:b9c7 with SMTP id ffacd0b85a97d-378fd4abdd0mr1676597f8f.58.1726591524368;
-        Tue, 17 Sep 2024 09:45:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFs0Cj+RwanvZfc+Zpgq+IL/nl24ARC+SCQIgbK1A19jHR2OTbPlljOxY0Nabw1aG0vB0qF6g==
-X-Received: by 2002:a5d:5e0b:0:b0:378:fd4a:b9c7 with SMTP id ffacd0b85a97d-378fd4abdd0mr1676576f8f.58.1726591523830;
-        Tue, 17 Sep 2024 09:45:23 -0700 (PDT)
-Received: from [192.168.103.101] (dynamic-046-114-111-082.46.114.pool.telefonica.de. [46.114.111.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e8340sm9976172f8f.46.2024.09.17.09.45.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 09:45:23 -0700 (PDT)
-Message-ID: <8b24728f-8b6e-4c79-91f6-7cbb79494550@canonical.com>
-Date: Tue, 17 Sep 2024 18:45:21 +0200
+        d=1e100.net; s=20230601; t=1726591716; x=1727196516;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L8Nl24p1XGq2gNfzD83xHLfViuR+0yvfPZUWWcKsgR0=;
+        b=hiZve44yDc1Eqdqj2CjtOyI/fZ5cUpZ6MUaIn/O5Oa0Pm8H1agP14SUDKj1MG92dDe
+         NMhMmlutp8uYmdU/uJ45zy5/OnwjwfXpDqF9Q6MT/rgYQpXnU8Hk1hLvGFyKvsTZDaw6
+         RJGy6a7+L1GkGOFwvQOV31tfgbLjtch3RUXu0YHUg9IXzxavjYnydXiogOyv+NL3x+q6
+         QloVlXZvuFdUGT1yFyVNCU/acguSHtPV4v77RdTfevARFDyF6lTaZw53PMowLVtuwfm1
+         po/5oixCOwumkO9Xo7kyZ0AVU4EV6oNPRPSyHu1XjSOFT+4hSXDtk4AjKPX1ZOXEcoal
+         z2dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA8rdCvv+YHnlgBvVLrODpDix1hd1YBJbAaxiYi0rEAyUdMnGznqFGrxvcoBGevVzpWJEcK5p9TVL0LH4=@vger.kernel.org, AJvYcCWyYNSkhGhsC5nj9qgRo0xU+tJsyC8Id6N4dU6UW7bH5BucQdoFVxYbSGy2k2FRa72yhZtUp5ysd6qC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw70KU7EU3NRdWruzS68ijxBEsW1pDQAEjIdaZfWScJAoFEb8uM
+	7l6jENc+mAQ3hwyUeDUdIDwqu+fwk7VPiog7lTFO7SjwadAoksW+
+X-Google-Smtp-Source: AGHT+IEW1mfraWGIQ2l6x9WAabgd0zKN/ED+ZiVRPXKH9n+oj6g96LWnoy24+nOgYLDWS3p9az/ABA==
+X-Received: by 2002:a17:90a:d34c:b0:2d8:87d3:903b with SMTP id 98e67ed59e1d1-2dba0083863mr20529172a91.35.1726591715702;
+        Tue, 17 Sep 2024 09:48:35 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd52e3171fsm755569a91.1.2024.09.17.09.48.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 09:48:35 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: gregkh@linuxfoundation.org,
+	oneukum@suse.com
+Cc: colin.i.king@gmail.com,
+	aha310510@gmail.com,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: using mutex lock and supporting O_NONBLOCK flag in iowarrior_read()
+Date: Wed, 18 Sep 2024 01:48:20 +0900
+Message-Id: <20240917164820.143197-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] target/riscv: enable floating point unit
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
- Alistair Francis <alistair.francis@wdc.com>, Bin Meng <bmeng.cn@gmail.com>,
- Weiwei Li <liwei1518@gmail.com>,
- Daniel Henrique Barboza <dbarboza@ventanamicro.com>,
- Liu Zhiwei <zhiwei_liu@linux.alibaba.com>, qemu-riscv@nongnu.org,
- qemu-devel@nongnu.org, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240916181633.366449-1-heinrich.schuchardt@canonical.com>
- <20240917-f45624310204491aede04703@orel>
- <15c359a4-b3c1-4cb0-be2e-d5ca5537bc5b@canonical.com>
- <20240917-b13c51d41030029c70aab785@orel>
-Content-Language: en-US
-From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-In-Reply-To: <20240917-b13c51d41030029c70aab785@orel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17.09.24 16:49, Andrew Jones wrote:
-> On Tue, Sep 17, 2024 at 03:28:42PM GMT, Heinrich Schuchardt wrote:
->> On 17.09.24 14:13, Andrew Jones wrote:
->>> On Mon, Sep 16, 2024 at 08:16:33PM GMT, Heinrich Schuchardt wrote:
->>>> OpenSBI enables the floating point in mstatus. For consistency QEMU/KVM
->>>> should do the same.
->>>>
->>>> Without this patch EDK II with TLS enabled crashes when hitting the first
->>>> floating point instruction while running QEMU with --accel kvm and runs
->>>> fine with --accel tcg.
->>>>
->>>> Additionally to this patch EDK II should be changed to make no assumptions
->>>> about the state of the floating point unit.
->>>>
->>>> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
->>>> ---
->>>>    target/riscv/cpu.c | 7 +++++++
->>>>    1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/target/riscv/cpu.c b/target/riscv/cpu.c
->>>> index 4bda754b01..c32e2721d4 100644
->>>> --- a/target/riscv/cpu.c
->>>> +++ b/target/riscv/cpu.c
->>>> @@ -923,6 +923,13 @@ static void riscv_cpu_reset_hold(Object *obj, ResetType type)
->>>>        if (mcc->parent_phases.hold) {
->>>>            mcc->parent_phases.hold(obj, type);
->>>>        }
->>>> +    if (riscv_has_ext(env, RVF) || riscv_has_ext(env, RVD)) {
->>>> +        env->mstatus = set_field(env->mstatus, MSTATUS_FS, env->misa_mxl);
->>>> +        for (int regnr = 0; regnr < 32; ++regnr) {
->>>> +            env->fpr[regnr] = 0;
->>>> +        }
->>>> +        riscv_csrrw(env, CSR_FCSR, NULL, 0, -1);
->>>> +    }
->>>
->>> If this is only fixing KVM, then I think it belongs in
->>> kvm_riscv_reset_vcpu(). But, I feel like we're working around an issue
->>> with KVM synchronization with this, as well as with the "clear CSR values"
->>> part of commit 8633951530cc ("target/riscv: Clear CSR values at reset and
->>> sync MPSTATE with host"). KVM knows how to reset VCPUs. It does so on
->>> VCPU creation and for any secondaries started with SBI HSM start. KVM's
->>> reset would set sstatus.FS to 1 ("Initial") and zero out all the fp
->>> registers and fcsr. So it seems like we're either synchronizing prior to
->>> KVM resetting the boot VCPU, not synchronizing at all, or KVM isn't doing
->>> the reset of the boot VCPU.
->>>
->>> Thanks,
->>> drew
->>
->> Hello Drew,
->>
->> Thanks for reviewing.
->>
->> Concerning the question whether kvm_riscv_reset_vcpu() would be a better
->> place for the change:
->>
->> Is there any specification prescribing what the state of the FS bits should
->> be when entering M-mode and when entering S-mode?
-> 
-> I didn't see anything in the spec, so I think 0 (or 1 when all fp
-> registers are also reset) is reasonable for an implementation to
-> choose.
-> 
->>
->> Patch 8633951530cc seems not to touch the status register in QEMU's
->> kvm_riscv_reset_vcpu(). So it is not obvious that this patch could have
->> caused the problem.
-> 
-> I don't think 8633951530cc caused this problem. It was solving its own
-> problem in the same way, which is to add some more reset for the VCPU.
-> I think both it and this patch are working around a problem with KVM or
-> with a problem synchronizing with KVM. If that's the case, and we fix
-> KVM or the synchronization with KVM, then I would revert the reset parts
-> of 8633951530cc too.
-> 
->>
->> Looking at the call sequences in Linux gives some ideas where to debug:
->>
->> kvm_arch_vcpu_create calls kvm_riscv_reset_vcpu which calls
->> kvm_riscv_vcpu_fp_reset.
->>
->> riscv_vcpu_set_isa_ext_single and kvm_riscv_vcpu_set_reg_config
->> only call kvm_riscv_vcpu_fp_reset if !vcpu->arch.ran_atleast_once.
->>
->> kvm_riscv_vcpu_fp_reset sets FS bits to "initial"
->> if CONFIG_FPU=y and extension F or D is available.
->>
->> It seems that in KVM only the creation of a vcpu will set the FS bits but
->> rebooting will not.
-> 
-> If KVM never resets the boot VCPU on reboot, then maybe it should or needs
-> QEMU to inform it to do so. I'd rather just one of the two (KVM or QEMU)
-> decide what needs to be reset and to which values, rather than both having
-> their own ideas. For example, with this patch, the boot hart will have its
-> sstatus.FS set to 3, but, iiuc, all secondaries will be brought up
-> with their sstatus.FS set to 1.
-> 
-> Thanks,
-> drew
+iowarrior_read() uses the iowarrior dev structure, but does not use any 
+lock on the structure. This can cause various bugs including data-races,
+so it is more appropriate to use a mutex lock to safely protect the 
+iowarrior dev structure. When using a mutex lock, you should split the
+branch to prevent blocking when the O_NONBLOCK flag is set.
 
-Hello Drew,
+In addition, it is unnecessary to check for NULL on the iowarrior dev 
+structure obtained by reading file->private_data. Therefore, it is 
+better to remove the check.
 
-I added some debug messages.
+Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ drivers/usb/misc/iowarrior.c | 46 ++++++++++++++++++++++++++++--------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
 
-Without smp: Linux' kvm_riscv_vcpu_fp_reset() is called before QEMU's 
-kvm_riscv_reset_vcpu() and is never called on reboot.
-
-qemu-system-riscv64 -M virt -accel kvm -nographic -kernel 
-payload_workaround.bin
-[  920.805102] kvm_arch_vcpu_create: Entry
-[  920.805608] kvm_riscv_vcpu_fp_reset: At entry FS=0
-[  920.805961] kvm_riscv_vcpu_fp_reset: At exit FS=8192
-[  920.806289] kvm_arch_vcpu_create: Exit
-[  920.810554] kvm_arch_vcpu_create: Entry
-[  920.810959] kvm_riscv_vcpu_fp_reset: At entry FS=0
-[  920.811334] kvm_riscv_vcpu_fp_reset: At exit FS=8192
-[  920.811696] kvm_arch_vcpu_create: Exit
-[  920.816772] kvm_arch_vcpu_create: Entry
-[  920.817095] kvm_riscv_vcpu_fp_reset: At entry FS=0
-[  920.817411] kvm_riscv_vcpu_fp_reset: At exit FS=8192
-[  920.817975] kvm_arch_vcpu_create: Exit
-[  920.818395] kvm_riscv_vcpu_set_reg_config:
-[  920.818696] kvm_riscv_vcpu_set_reg_config:
-[  920.818975] kvm_riscv_vcpu_set_reg_config:
-QEMU riscv_cpu_reset_hold: Entry
-QEMU kvm_riscv_reset_vcpu: Entry
-QEMU kvm_riscv_reset_vcpu: Exit
-QEMU riscv_cpu_reset_hold: Exit
-QEMU riscv_cpu_reset_hold: Entry
-QEMU kvm_riscv_reset_vcpu: Entry
-QEMU kvm_riscv_reset_vcpu: Exit
-QEMU riscv_cpu_reset_hold: Exit
-[  920.946333] kvm_arch_vcpu_ioctl_run: run->ext_reason 0
-[  920.947031] kvm_arch_vcpu_ioctl_run: run->ext_reason 0
-[  920.947700] kvm_riscv_check_vcpu_requests: Entry
-[  920.948482] kvm_riscv_check_vcpu_requests: Entry
-
-Test payload
-============
-
-[  920.950012] kvm_arch_vcpu_ioctl_run: run->ext_reason 35
-
-[  920.950666] kvm_riscv_check_vcpu_requests: Entry
-Rebooting
-
-[  920.951478] kvm_arch_vcpu_ioctl_run: run->ext_reason 35
-[  920.952051] kvm_riscv_check_vcpu_requests: Entry
-QEMU riscv_cpu_reset_hold: Entry
-QEMU kvm_riscv_reset_vcpu: Entry
-QEMU kvm_riscv_reset_vcpu: Exit
-QEMU riscv_cpu_reset_hold: Exit
-[  920.962404] kvm_arch_vcpu_ioctl_run: run->ext_reason 24
-[  920.962969] kvm_arch_vcpu_ioctl_run: run->ext_reason 24
-[  920.963496] kvm_riscv_check_vcpu_requests: Entry
-
-Test payload
-============
-
-
-With -smp 2 this seems to hold true per CPU. So essentially the effect 
-of vm_riscv_vcpu_fp_reset() is always ignored both on the primary and 
-the secondary harts.
-
-$ qemu-system-riscv64 -M virt -accel kvm -smp 2 -nographic -kernel 
-payload_workaround.bin
-[  202.573659] kvm_arch_vcpu_create: Entry
-[  202.574024] kvm_riscv_vcpu_fp_reset: At entry FS=0
-[  202.574328] kvm_riscv_vcpu_fp_reset: At exit FS=8192
-[  202.574626] kvm_arch_vcpu_create: Exit
-[  202.580626] kvm_arch_vcpu_create: Entry
-[  202.581070] kvm_riscv_vcpu_fp_reset: At entry FS=0
-[  202.581599] kvm_riscv_vcpu_fp_reset: At exit FS=8192
-[  202.582040] kvm_arch_vcpu_create: Exit
-[  202.587356] kvm_arch_vcpu_create: Entry
-[  202.587894] kvm_riscv_vcpu_fp_reset: At entry FS=0
-[  202.588376] kvm_riscv_vcpu_fp_reset: At exit FS=8192
-[  202.589188] kvm_arch_vcpu_create: Exit
-[  202.589650] kvm_riscv_vcpu_set_reg_config:
-[  202.590014] kvm_riscv_vcpu_set_reg_config:
-[  202.590340] kvm_riscv_vcpu_set_reg_config:
-[  202.595220] kvm_arch_vcpu_create: Entry
-[  202.595604] kvm_riscv_vcpu_fp_reset: At entry FS=0
-[  202.595939] kvm_riscv_vcpu_fp_reset: At exit FS=8192
-[  202.596278] kvm_arch_vcpu_create: Exit
-QEMU riscv_cpu_reset_hold: Entry
-QEMU kvm_riscv_reset_vcpu: Entry
-QEMU kvm_riscv_reset_vcpu: Exit
-QEMU riscv_cpu_reset_hold: Exit
-[  202.602093] kvm_arch_vcpu_create: Entry
-[  202.602426] kvm_riscv_vcpu_fp_reset: At entry FS=0
-[  202.602777] kvm_riscv_vcpu_fp_reset: At exit FS=8192
-[  202.603110] kvm_arch_vcpu_create: Exit
-[  202.607898] kvm_arch_vcpu_create: Entry
-[  202.608306] kvm_riscv_vcpu_fp_reset: At entry FS=0
-[  202.608989] kvm_riscv_vcpu_fp_reset: At exit FS=8192
-[  202.609416] kvm_arch_vcpu_create: Exit
-[  202.609939] kvm_riscv_vcpu_set_reg_config:
-[  202.610312] kvm_riscv_vcpu_set_reg_config:
-[  202.610666] kvm_riscv_vcpu_set_reg_config:
-QEMU riscv_cpu_reset_hold: Entry
-QEMU kvm_riscv_reset_vcpu: Entry
-QEMU kvm_riscv_reset_vcpu: Exit
-QEMU riscv_cpu_reset_hold: Exit
-QEMU riscv_cpu_reset_hold: Entry
-QEMU kvm_riscv_reset_vcpu: Entry
-QEMU kvm_riscv_reset_vcpu: Exit
-QEMU riscv_cpu_reset_hold: Exit
-QEMU riscv_cpu_reset_hold: Entry
-QEMU kvm_riscv_reset_vcpu: Entry
-QEMU kvm_riscv_reset_vcpu: Exit
-QEMU riscv_cpu_reset_hold: Exit
-[  202.749911] kvm_arch_vcpu_ioctl_run: run->ext_reason 0
-[  202.750370] kvm_arch_vcpu_ioctl_run: run->ext_reason 0
-[  202.750799] kvm_arch_vcpu_ioctl_run: run->ext_reason 0
-[  202.750819] kvm_arch_vcpu_ioctl_run: run->ext_reason 0
-[  202.751574] kvm_riscv_check_vcpu_requests: Entry
-[  202.751617] kvm_riscv_check_vcpu_requests: Entry
-[  202.752737] kvm_riscv_check_vcpu_requests: Entry
-
-Test payload
-============
-
-[  202.753678] kvm_arch_vcpu_ioctl_run: run->ext_reason 35
-fcvt.d.w fa5,a5
-[  202.754145] kvm_riscv_check_vcpu_requests: Entry
-Rebooting
-
-[  202.754655] kvm_arch_vcpu_ioctl_run: run->ext_reason 35
-[  202.755030] kvm_riscv_check_vcpu_requests: Entry
-QEMU riscv_cpu_reset_hold: Entry
-QEMU kvm_riscv_reset_vcpu: Entry
-QEMU kvm_riscv_reset_vcpu: Exit
-QEMU riscv_cpu_reset_hold: Exit
-QEMU riscv_cpu_reset_hold: Entry
-QEMU kvm_riscv_reset_vcpu: Entry
-QEMU kvm_riscv_reset_vcpu: Exit
-QEMU riscv_cpu_reset_hold: Exit
-[  202.770352] kvm_arch_vcpu_ioctl_run: run->ext_reason 24
-[  202.770915] kvm_arch_vcpu_ioctl_run: run->ext_reason 10
-[  202.770951] kvm_arch_vcpu_ioctl_run: run->ext_reason 24
-[  202.771802] kvm_arch_vcpu_ioctl_run: run->ext_reason 10
-[  202.772272] kvm_riscv_check_vcpu_requests: Entry
-[  202.772888] kvm_riscv_check_vcpu_requests: Entry
-
-Test payload
-============
-
-
-When thinking about the migration of virtual machines shouldn't QEMU be 
-in control of the initial state of vcpus instead of KVM?
-
-CCing the RISC-V KVM maintainers.
-
-Best regards
-
-Heinrich
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index 6d28467ce352..a513766b4985 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -277,28 +277,45 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
+ 	struct iowarrior *dev;
+ 	int read_idx;
+ 	int offset;
++	int retval;
+ 
+ 	dev = file->private_data;
+ 
++	if (file->f_flags & O_NONBLOCK) {
++		retval = mutex_trylock(&dev->mutex);
++		if (!retval)
++			return -EAGAIN;
++	} else {
++		retval = mutex_lock_interruptible(&dev->mutex);
++		if (retval)
++			return -ERESTARTSYS;
++	}
++
+ 	/* verify that the device wasn't unplugged */
+-	if (!dev || !dev->present)
+-		return -ENODEV;
++	if (!dev->present) {
++		retval = -ENODEV;
++		goto exit;
++	}
+ 
+ 	dev_dbg(&dev->interface->dev, "minor %d, count = %zd\n",
+ 		dev->minor, count);
+ 
+ 	/* read count must be packet size (+ time stamp) */
+ 	if ((count != dev->report_size)
+-	    && (count != (dev->report_size + 1)))
+-		return -EINVAL;
++	    && (count != (dev->report_size + 1))) {
++		retval = -EINVAL;
++		goto exit;
++	}
+ 
+ 	/* repeat until no buffer overrun in callback handler occur */
+ 	do {
+ 		atomic_set(&dev->overflow_flag, 0);
+ 		if ((read_idx = read_index(dev)) == -1) {
+ 			/* queue empty */
+-			if (file->f_flags & O_NONBLOCK)
+-				return -EAGAIN;
++			if (file->f_flags & O_NONBLOCK) {
++				retval = -EAGAIN;
++				goto exit;
++			}
+ 			else {
+ 				//next line will return when there is either new data, or the device is unplugged
+ 				int r = wait_event_interruptible(dev->read_wait,
+@@ -309,28 +326,37 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
+ 								  -1));
+ 				if (r) {
+ 					//we were interrupted by a signal
+-					return -ERESTART;
++					retval = -ERESTART;
++					goto exit;
+ 				}
+ 				if (!dev->present) {
+ 					//The device was unplugged
+-					return -ENODEV;
++					retval = -ENODEV;
++					goto exit;
+ 				}
+ 				if (read_idx == -1) {
+ 					// Can this happen ???
+-					return 0;
++					retval = 0;
++					goto exit;
+ 				}
+ 			}
+ 		}
+ 
+ 		offset = read_idx * (dev->report_size + 1);
+ 		if (copy_to_user(buffer, dev->read_queue + offset, count)) {
+-			return -EFAULT;
++			retval = -EFAULT;
++			goto exit;
+ 		}
+ 	} while (atomic_read(&dev->overflow_flag));
+ 
+ 	read_idx = ++read_idx == MAX_INTERRUPT_BUFFER ? 0 : read_idx;
+ 	atomic_set(&dev->read_idx, read_idx);
++	mutex_unlock(&dev->mutex);
+ 	return count;
++
++exit:
++	mutex_unlock(&dev->mutex);
++	return retval;
+ }
+ 
+ /*
+--
 
