@@ -1,118 +1,351 @@
-Return-Path: <linux-kernel+bounces-331740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853B597B0B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:24:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF1897B0BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A802810A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:24:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92F3BB22B4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE3716B38B;
-	Tue, 17 Sep 2024 13:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08B516B75B;
+	Tue, 17 Sep 2024 13:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="yVstecOk"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XGZu8KDA"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E492A166F25
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143621EB35
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726579486; cv=none; b=Hiou2BJaI+GUsW+jFo9ZjA1NhYVv+7kw6DEDCvg07QOmnCQdtrN5/QFB/9gdsMKh6MMkSY6e+BQ+lvvhT9Ndf8QhA+zPPzvJDgc1z20yEZpce5uD/Gb6QrIS9OMNq2fgyHT45DRtlL3c2t45SheQu8M3el6et2Yw/M9QXRi1Pmg=
+	t=1726579514; cv=none; b=CVSOJpWoJBY5cSAN8kReoG0qAvuX44cgcAulwXWZjx+uly5RNTEJt4yKuhEEZBWjfHZ42ThxPZyPHJk024hLf8iHQzDUvdsaLHsskbIlEv3qaOJTUB8sRq+qDQq0UXqw7PiJTOjKa5oNOa/fS3/CWjXAl59OyAMAXVgf1/F3Kbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726579486; c=relaxed/simple;
-	bh=Gu+nQ7vQda4b+Ujmr4lLodnxU+xmstEw/XSIk3Da9I8=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID; b=m2tWVINBb1Gqt9bsbOkTUGYSZmVVZvcRUvmHJQ+a6cjxg5hjROo7UeOQDk3Gh4CYnQQ/rkIsRQvrFYr366mPe26kPdNtqfsf0M08BMyoEEKOPNv/8KKbSBhDZu0S9dguCbHp+/hZdzFEadNCk12bUDIUdd4V4c+h09zFqvRLgwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=yVstecOk; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-39f49600297so19338455ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1726579484; x=1727184284; darn=vger.kernel.org;
-        h=message-id:to:from:cc:in-reply-to:subject:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+GO6NbsJM6lj36sGfiQI8cJQWsBmv1dgpBBPrnX7Pwc=;
-        b=yVstecOkxgb8fZXxm0IqH0ZhTVVS70c6GXTNNyJWndJPacCHT/9ly6lGMIezPCjCxu
-         hEy8+VsA62Wj0VozCDp/37J2cUrpPwrI0/zRa3Qpsmx6yGtKEZI7xGcOl/FjANswQnv2
-         RfX7+2cbm/xvE2gsilDZwvCTYr6AYM0ci4dH5WnZn2kX6R7lAyzTMoIKyYKoN7iSK7nf
-         vyrKFmFK+OaLlL2evXRpva4FjgoNdULo63Pmn3My7BefYaSIqjPad6E9G4+zKBztfiB1
-         uauApl8aFPlFxW/SPPc7zCdYjeSqgyWGrIhdGWj1nOwQR7TfSEOKpisyZ6mW4Hm9rnrF
-         Pt+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726579484; x=1727184284;
-        h=message-id:to:from:cc:in-reply-to:subject:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+GO6NbsJM6lj36sGfiQI8cJQWsBmv1dgpBBPrnX7Pwc=;
-        b=cE16ecmTRWGDd02Vtaekj/iq1n1AsdhXP1QVOWt8U0JcfXdUrlOWT7ql1Sr09SXj1b
-         /gkAw8S37SgsD+EE5d5BqqDSMKxwRV8O1NJBQ6zijiWharyQs4Sw/UszrZCI81bJPzzQ
-         Z5yP9CZerfoC8yoWslEKf4rbunSDTp9RkH1oKVoHWVzZLymG8/+r/cmKFvI2TxaVTPQY
-         whhMRzeB8XW9iqCc0x1T1OwfdzLNJQVXkabZ8fRLSyWwHg3OVjVKpxVM4UwC+aNGyJFh
-         Tr38yM+HbFOS70bYKY+60PLHP2Wf/OXAoB9qAtJdIndhNib0oTrbSBBOIyXhisEDE0tL
-         cmIg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6TXhRHojSvQkivQfASiGs/NBQbr3lZVU0lTHrfRZAzarbm9vRIYQLQWTXzXQ6tvyirN6bjW9E6vXNUok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvBXq4QuTfBVHOU2ig/PZgn5jDVR6Wg/M13NwfYk5pvVoR7xHy
-	nChUypVGsoFQa/DEQWAfL+MIC0t0IXSTDsX23onyGF69oTcbalpA9zNUZ8XHAEM=
-X-Google-Smtp-Source: AGHT+IGzktPt5rKmypCFuPOGhoO3476MNHo/ULcvqysTy4mC+7xbksXlxosTGEXdcx5RmPg0u5jk5A==
-X-Received: by 2002:a92:c56e:0:b0:3a0:92e5:af68 with SMTP id e9e14a558f8ab-3a092e5b19emr88470795ab.15.1726579483879;
-        Tue, 17 Sep 2024 06:24:43 -0700 (PDT)
-Received: from localhost ([213.208.157.38])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4998e21dsm5830170a12.75.2024.09.17.06.24.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 06:24:43 -0700 (PDT)
-Date: Tue, 17 Sep 2024 06:24:43 -0700 (PDT)
-X-Google-Original-Date: Tue, 17 Sep 2024 06:24:36 PDT (-0700)
-Subject:     Re: [PATCH -next] irqchip/sifive-plic: Make use of __assign_bit() API
-In-Reply-To: <20240902130824.2878644-1-lihongbo22@huawei.com>
-CC: tglx@linutronix.de, Paul Walmsley <paul.walmsley@sifive.com>,
-  samuel.holland@sifive.com, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-  lihongbo22@huawei.com
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: lihongbo22@huawei.com
-Message-ID: <mhng-d2276021-b769-46e2-af6c-40802385909c@palmer-ri-x1c9>
+	s=arc-20240116; t=1726579514; c=relaxed/simple;
+	bh=vlt+KcaN724O/p16KqlKcvB/L9UhKK53yAL+yY5yOZ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lKLMUJG0mHNtwerv9Nv+qIDi1BtaU460AgyfHKjT4b+jRxtgk8egMvEYKcW83Q0NAtbuEvxoxkEReoAcrCNONibWO3CnRHXwV8OHPycdng24lkuSNU6mqlevoIXjFesNyIOb0RDKJEamFQlEUv9txvfGXfzrMGMgQZusCq559YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XGZu8KDA; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48H8FO9B031957;
+	Tue, 17 Sep 2024 13:24:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=Z769WCX4OS1KZIRuK7qzRG9PO/TL5XYkQB5PvLA
+	PAPc=; b=XGZu8KDAexY7PMt62ocFEdx0R0/V6sFh6a7GCpxQ4GVS0X3vTx4skGF
+	d0ZchNvzoB8XHgGaJRbjPLd+fhvgxP1GLCX6RpDJmHPlRlQ8zc8aVaxtGcEqiWkQ
+	pmputr2u0LLe6CmSIjXBFxy080Q0yDpMkdv3NhulSpbGQP52Cq5ozb1DAJZpzLkh
+	ttDHQ9pquJTq3ALP1pTANvMbjAI/B8alGiOa/CoSmTilqPBAHoVa2nAMD4R4KJ1O
+	JsKJyS08iFIuFKQ3ww/ND5vw7tRvH7aYUP7DnZMaIlJw5gpO3/X2qL13zHYnu5P8
+	uX+ns8HzS2JrRY0au8v8HnGtJv+L5ww==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3uj8c40-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 13:24:55 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48HDOtbJ020134;
+	Tue, 17 Sep 2024 13:24:55 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3uj8c3w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 13:24:55 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48HAQsrI024699;
+	Tue, 17 Sep 2024 13:24:54 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41nq1mw5ta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 13:24:54 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48HDOoDx43581880
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Sep 2024 13:24:50 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 77D5A20043;
+	Tue, 17 Sep 2024 13:24:50 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BA8D520040;
+	Tue, 17 Sep 2024 13:24:48 +0000 (GMT)
+Received: from ltc-wspoon17.aus.stglabs.ibm.com (unknown [9.3.101.49])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 17 Sep 2024 13:24:48 +0000 (GMT)
+From: Narayana Murty N <nnmlinux@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        linux-kernel@vger.kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, vaibhav@linux.ibm.com,
+        ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
+Subject: [PATCH] powerpc/pseries/eeh: move pseries_eeh_err_inject() outside CONFIG_DEBUG_FS block
+Date: Tue, 17 Sep 2024 09:24:45 -0400
+Message-Id: <20240917132445.3868016-1-nnmlinux@linux.ibm.com>
+X-Mailer: git-send-email 2.39.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: FtQ074m2Rfo7OijiNExjd6AeztopPfs4
+X-Proofpoint-GUID: 0axfa_oxoiyn_dZJi0weoiAiqHLdxOI1
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-17_05,2024-09-16_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409170094
 
-On Mon, 02 Sep 2024 06:08:24 PDT (-0700), lihongbo22@huawei.com wrote:
-> We have for some time the __assign_bit() API to replace
-> open coded
->     if (foo)
->         __set_bit(n, bar);
->     else
->         __clear_bit(n, bar);
->
-> Use this API to simplify the code. No functional change
-> intended.
->
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> ---
->  drivers/irqchip/irq-sifive-plic.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-> index 2f6ef5c495bd..c576b9bbeb13 100644
-> --- a/drivers/irqchip/irq-sifive-plic.c
-> +++ b/drivers/irqchip/irq-sifive-plic.c
-> @@ -252,10 +252,8 @@ static int plic_irq_suspend(void)
->  	priv = per_cpu_ptr(&plic_handlers, smp_processor_id())->priv;
->
->  	for (i = 0; i < priv->nr_irqs; i++)
-> -		if (readl(priv->regs + PRIORITY_BASE + i * PRIORITY_PER_ID))
-> -			__set_bit(i, priv->prio_save);
-> -		else
-> -			__clear_bit(i, priv->prio_save);
-> +		__assign_bit(i, priv->prio_save,
-> +		    readl(priv->regs + PRIORITY_BASE + i * PRIORITY_PER_ID));
->
->  	for_each_cpu(cpu, cpu_present_mask) {
->  		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
+Makes pseries_eeh_err_inject() available even when debugfs
+is disabled (CONFIG_DEBUG_FS=n). It moves eeh_debugfs_break_device()
+and eeh_pe_inject_mmio_error() out of the CONFIG_DEBUG_FS block
+and renames it as eeh_break_device().
 
-Reviewed-by: Palmer Dabbelt <palmer@rivosinc.com>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202409170509.VWC6jadC-lkp@intel.com/
+Fixes: b0e2b828dfca ("powerpc/pseries/eeh: Fix pseries_eeh_err_inject")
+Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+---
+ arch/powerpc/kernel/eeh.c | 198 +++++++++++++++++++-------------------
+ 1 file changed, 99 insertions(+), 99 deletions(-)
+
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index 49ab11a287a3..0fe25e907ea6 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -1574,6 +1574,104 @@ static int proc_eeh_show(struct seq_file *m, void *v)
+ }
+ #endif /* CONFIG_PROC_FS */
+ 
++static int eeh_break_device(struct pci_dev *pdev)
++{
++	struct resource *bar = NULL;
++	void __iomem *mapped;
++	u16 old, bit;
++	int i, pos;
++
++	/* Do we have an MMIO BAR to disable? */
++	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
++		struct resource *r = &pdev->resource[i];
++
++		if (!r->flags || !r->start)
++			continue;
++		if (r->flags & IORESOURCE_IO)
++			continue;
++		if (r->flags & IORESOURCE_UNSET)
++			continue;
++
++		bar = r;
++		break;
++	}
++
++	if (!bar) {
++		pci_err(pdev, "Unable to find Memory BAR to cause EEH with\n");
++		return -ENXIO;
++	}
++
++	pci_err(pdev, "Going to break: %pR\n", bar);
++
++	if (pdev->is_virtfn) {
++#ifndef CONFIG_PCI_IOV
++		return -ENXIO;
++#else
++		/*
++		 * VFs don't have a per-function COMMAND register, so the best
++		 * we can do is clear the Memory Space Enable bit in the PF's
++		 * SRIOV control reg.
++		 *
++		 * Unfortunately, this requires that we have a PF (i.e doesn't
++		 * work for a passed-through VF) and it has the potential side
++		 * effect of also causing an EEH on every other VF under the
++		 * PF. Oh well.
++		 */
++		pdev = pdev->physfn;
++		if (!pdev)
++			return -ENXIO; /* passed through VFs have no PF */
++
++		pos  = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_SRIOV);
++		pos += PCI_SRIOV_CTRL;
++		bit  = PCI_SRIOV_CTRL_MSE;
++#endif /* !CONFIG_PCI_IOV */
++	} else {
++		bit = PCI_COMMAND_MEMORY;
++		pos = PCI_COMMAND;
++	}
++
++	/*
++	 * Process here is:
++	 *
++	 * 1. Disable Memory space.
++	 *
++	 * 2. Perform an MMIO to the device. This should result in an error
++	 *    (CA  / UR) being raised by the device which results in an EEH
++	 *    PE freeze. Using the in_8() accessor skips the eeh detection hook
++	 *    so the freeze hook so the EEH Detection machinery won't be
++	 *    triggered here. This is to match the usual behaviour of EEH
++	 *    where the HW will asynchronously freeze a PE and it's up to
++	 *    the kernel to notice and deal with it.
++	 *
++	 * 3. Turn Memory space back on. This is more important for VFs
++	 *    since recovery will probably fail if we don't. For normal
++	 *    the COMMAND register is reset as a part of re-initialising
++	 *    the device.
++	 *
++	 * Breaking stuff is the point so who cares if it's racy ;)
++	 */
++	pci_read_config_word(pdev, pos, &old);
++
++	mapped = ioremap(bar->start, PAGE_SIZE);
++	if (!mapped) {
++		pci_err(pdev, "Unable to map MMIO BAR %pR\n", bar);
++		return -ENXIO;
++	}
++
++	pci_write_config_word(pdev, pos, old & ~bit);
++	in_8(mapped);
++	pci_write_config_word(pdev, pos, old);
++
++	iounmap(mapped);
++
++	return 0;
++}
++
++int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
++{
++	return eeh_break_device(pdev);
++}
++
+ #ifdef CONFIG_DEBUG_FS
+ 
+ 
+@@ -1727,99 +1825,6 @@ static const struct file_operations eeh_dev_check_fops = {
+ 	.read   = eeh_debugfs_dev_usage,
+ };
+ 
+-static int eeh_debugfs_break_device(struct pci_dev *pdev)
+-{
+-	struct resource *bar = NULL;
+-	void __iomem *mapped;
+-	u16 old, bit;
+-	int i, pos;
+-
+-	/* Do we have an MMIO BAR to disable? */
+-	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
+-		struct resource *r = &pdev->resource[i];
+-
+-		if (!r->flags || !r->start)
+-			continue;
+-		if (r->flags & IORESOURCE_IO)
+-			continue;
+-		if (r->flags & IORESOURCE_UNSET)
+-			continue;
+-
+-		bar = r;
+-		break;
+-	}
+-
+-	if (!bar) {
+-		pci_err(pdev, "Unable to find Memory BAR to cause EEH with\n");
+-		return -ENXIO;
+-	}
+-
+-	pci_err(pdev, "Going to break: %pR\n", bar);
+-
+-	if (pdev->is_virtfn) {
+-#ifndef CONFIG_PCI_IOV
+-		return -ENXIO;
+-#else
+-		/*
+-		 * VFs don't have a per-function COMMAND register, so the best
+-		 * we can do is clear the Memory Space Enable bit in the PF's
+-		 * SRIOV control reg.
+-		 *
+-		 * Unfortunately, this requires that we have a PF (i.e doesn't
+-		 * work for a passed-through VF) and it has the potential side
+-		 * effect of also causing an EEH on every other VF under the
+-		 * PF. Oh well.
+-		 */
+-		pdev = pdev->physfn;
+-		if (!pdev)
+-			return -ENXIO; /* passed through VFs have no PF */
+-
+-		pos  = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_SRIOV);
+-		pos += PCI_SRIOV_CTRL;
+-		bit  = PCI_SRIOV_CTRL_MSE;
+-#endif /* !CONFIG_PCI_IOV */
+-	} else {
+-		bit = PCI_COMMAND_MEMORY;
+-		pos = PCI_COMMAND;
+-	}
+-
+-	/*
+-	 * Process here is:
+-	 *
+-	 * 1. Disable Memory space.
+-	 *
+-	 * 2. Perform an MMIO to the device. This should result in an error
+-	 *    (CA  / UR) being raised by the device which results in an EEH
+-	 *    PE freeze. Using the in_8() accessor skips the eeh detection hook
+-	 *    so the freeze hook so the EEH Detection machinery won't be
+-	 *    triggered here. This is to match the usual behaviour of EEH
+-	 *    where the HW will asynchronously freeze a PE and it's up to
+-	 *    the kernel to notice and deal with it.
+-	 *
+-	 * 3. Turn Memory space back on. This is more important for VFs
+-	 *    since recovery will probably fail if we don't. For normal
+-	 *    the COMMAND register is reset as a part of re-initialising
+-	 *    the device.
+-	 *
+-	 * Breaking stuff is the point so who cares if it's racy ;)
+-	 */
+-	pci_read_config_word(pdev, pos, &old);
+-
+-	mapped = ioremap(bar->start, PAGE_SIZE);
+-	if (!mapped) {
+-		pci_err(pdev, "Unable to map MMIO BAR %pR\n", bar);
+-		return -ENXIO;
+-	}
+-
+-	pci_write_config_word(pdev, pos, old & ~bit);
+-	in_8(mapped);
+-	pci_write_config_word(pdev, pos, old);
+-
+-	iounmap(mapped);
+-
+-	return 0;
+-}
+-
+ static ssize_t eeh_dev_break_write(struct file *filp,
+ 				const char __user *user_buf,
+ 				size_t count, loff_t *ppos)
+@@ -1831,7 +1836,7 @@ static ssize_t eeh_dev_break_write(struct file *filp,
+ 	if (IS_ERR(pdev))
+ 		return PTR_ERR(pdev);
+ 
+-	ret = eeh_debugfs_break_device(pdev);
++	ret = eeh_break_device(pdev);
+ 	pci_dev_put(pdev);
+ 
+ 	if (ret < 0)
+@@ -1847,11 +1852,6 @@ static const struct file_operations eeh_dev_break_fops = {
+ 	.read   = eeh_debugfs_dev_usage,
+ };
+ 
+-int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
+-{
+-	return eeh_debugfs_break_device(pdev);
+-}
+-
+ static ssize_t eeh_dev_can_recover(struct file *filp,
+ 				   const char __user *user_buf,
+ 				   size_t count, loff_t *ppos)
+-- 
+2.39.2
+
 
