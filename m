@@ -1,150 +1,118 @@
-Return-Path: <linux-kernel+bounces-331863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DA697B223
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:47:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29EA397B226
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67AC71F29EEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072DB282EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC061188934;
-	Tue, 17 Sep 2024 15:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08673186E47;
+	Tue, 17 Sep 2024 15:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REkev21b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9eXdJni"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433C6183CB7;
-	Tue, 17 Sep 2024 15:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6BD18B46A;
+	Tue, 17 Sep 2024 15:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726586803; cv=none; b=R6hb07ptLckxaqnUBDR0nFpQxfyOe69I6IY7L4AiQLZD51wbZaJwQHqBneK4PfufGDDzdNIeWs6Aw/HHgDwmnWaCccMX0zMKkONJyYzAYww2gX4jWXOm1OZ6VRA4/B62OtvMCmvxb/atyRH6SpgSoqMxOLBC554KFUCgWx1Jywo=
+	t=1726587043; cv=none; b=Csw51XsE9lB0fKMKUvdT38HubOUUYhzJhMCTSGhCQHb9j/oEazEuD9ZbuFiZ7l7uPJGqQjiAjyWEdcUpAdU+qi3iAr6VnkqJKP/BvzKqpJNCUc/Kh2+paR6Qz2URLijlCMLuAn2lDVAUMcbCKt+IWI2zFX2Nom2S1tUMoKWAHmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726586803; c=relaxed/simple;
-	bh=1Y09J/5W6IHV5VTgs8vwAGfTMn4lqzG5/gPcakv1nfQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=j8X0gf7EefsU/sxL0EF+Ym1btqr6pFMSQRXDzlXiqv2HHWqezeHTv0k9yAVQ/eiE2JMA4BQuaGtF8JxBxDwQagHub2itf+rs8YrPT4/SR1o/GqKUcGszGue8RumnHVKS9mn2I/XxP9g2Kgs+MiBB3jGAjdI5nr2+6j/Gz3f7+U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REkev21b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E70AC4CEC5;
-	Tue, 17 Sep 2024 15:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726586803;
-	bh=1Y09J/5W6IHV5VTgs8vwAGfTMn4lqzG5/gPcakv1nfQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=REkev21bgewL0wukX5RNcZfTF3QJT//wBxJvlGd5u0itFEboL9HIyJ/y+I+Sfa9bJ
-	 UghplBhcRX2nUwlwuffRQHIc+/3Azl/VJQxLmFgYaVAliK7+QYRJsw83YywwDavOxR
-	 /6dsnU/paby0LKCyImt3YZmAW9H6FGmWW9Cmt60AbbTU/Ryqj3pQMY5OQtGfnoVlAR
-	 EPEKos2FaqiinGWPJLq8th+h11fCsAdiEnUVq1ZNFsM2Yu1feGK6SahaPJ1Xzpx8h9
-	 VcnhGiUtwY0S86MLQ5u2nb/OTqjmB/1QSJi0FbELZaIeRptdConr/r45oB2gDPa1lz
-	 EZoaFmu8MTsdQ==
-Date: Tue, 17 Sep 2024 17:26:40 +0200
-From: Conor Dooley <conor@kernel.org>
-To: Gary Guo <gary@garyguo.net>
-CC: Jason Montleon <jmontleo@redhat.com>, ojeda@kernel.org, alex.gaynor@gmail.com,
- boqun.feng@gmail.com, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@kernel.org, aliceryhl@google.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, nathan@kernel.org,
- ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, llvm@lists.linux.dev,
- stable@vger.kernel.org
-Subject: Re: [PATCH] RISC-V: Fix building rust when using GCC toolchain
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240917142950.48d800ac@eugeo>
-References: <20240917000848.720765-1-jmontleo@redhat.com> <20240917000848.720765-2-jmontleo@redhat.com> <334EBB3A-6ABF-4FBF-89D2-DF3A6DCCCEA2@kernel.org> <20240917142950.48d800ac@eugeo>
-Message-ID: <31885EDD-EF6D-4EF1-94CA-276BA7A340B7@kernel.org>
+	s=arc-20240116; t=1726587043; c=relaxed/simple;
+	bh=OJzTjkSK+iJo8xCS+hitRPETuIrLbA19oFp+chpHtSE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fLjjMv5f0C52fBUTPF8yz+ST6pBlxz8TTiR+wYL8J9FAA01ODrQy5tkMeHYk8+QHj8XyGfOtQKIXw/cmhWTGgI2yeOtfaslPr1yYYChixlPp9w2hfvYGb5+GfXBvBng10xXJwhUjZ2VJnh5AV0q6zZh6lClVl6Mcg8egz2v16ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9eXdJni; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a0979cc639so14728615ab.2;
+        Tue, 17 Sep 2024 08:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726587039; x=1727191839; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rPW/AgdMn9HEEBlCh+UVWWKGsOQrfUimterFynorjKM=;
+        b=Q9eXdJniOmSN4H4x+nHL1yHX8PwOBY0Wh9IKylMHv3ny5o2Lc30NocvM8odO/pMpOS
+         b8P1fvxyYFJ+vZtBckuhPdEaGaGtC/XfHaN1vFI0HEaH9pLN/CL3Rey+iPAEDjmbGWEP
+         tA6gDvvT2WLMq/l3BUFQCUimNRiGW0AIQ90l32TRRaHhZt9pms2bWvTtFErybpQXmFTc
+         28G45Y9lZTiE6p5FXAs4u1DtlV38uqViYFBrmTdkqLbk729A357u5p4VKp81luDokZTC
+         i8I2+SZrKtgeaXNI3Jf2VqK/uyKGLoV3/YaxBGBvEE9OZXT6gdrYFgSpT7n466NuFuP+
+         9I/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726587039; x=1727191839;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rPW/AgdMn9HEEBlCh+UVWWKGsOQrfUimterFynorjKM=;
+        b=Yi9mDBqd6P+qlw3A3vtSaGAFdELHdlkuKnd/1dPCF0WtUKoR1/NyNKsnWStIBPvVGw
+         3XFlEiiXFzkPfimAFiTOQhWq3h76mQktB5Y2e6qBBwxPY4CoJg95TLH3jb4B9AHcNk+p
+         QZHlvPMG64jIZkuXdf+SfDhsnCJbAzNroKzAjCCWEfIsAuz2rGgc1YNXhwmopiYeLY96
+         3DLeJHnpxmC6zEtpzmc3Vl1Cc9rZ7lXXSFoY0Q/A7qW03bhRTMYQxQqh487EoJ8hyoDZ
+         QGegE3sbFXC/eqQowQ9IbAFKgCFMYWlhORCWlktYxsyQfzkTfMvgm7pjI7LEjQ4kwEjD
+         vRIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFFi4F3nNEO5Qo7IaqKt8vPERR7prAAeBwY35gLQA3yQL+4HcNKxPztnPaFGUkJB2uRMvra3qExJVqlVdb@vger.kernel.org, AJvYcCWEXg36J7y//b4ixqArfNL/ckGKl07mPHdQ24rBtIUabqBcNk+3FCbB3u90iNuSRdO25v3inNpVz0GbtVHD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR2sE/Dins54WEVn9j81EdV+SjPLmvzq97mpnFU3xRp9d0NQvL
+	vMok2US843yAkVMMPJxV8VUxVpYNrxLAwOcFZJF3+6F16j4N6BUs1aqiYFAgpquDgNDcLRRHO1Q
+	DN0vNUSfqGp7yoCve1KgFyl9E/Ns=
+X-Google-Smtp-Source: AGHT+IFnQfX2Dm7t85FaLReCnsm/k3IVJHP6S0jDSauS+A3CY0LNPlrSmf9NZpTDLnGuUiYPAko0KJRt85OCKIPoMnY=
+X-Received: by 2002:a05:6e02:5a9:b0:3a0:8c68:7705 with SMTP id
+ e9e14a558f8ab-3a08c6877c6mr117243125ab.21.1726587038839; Tue, 17 Sep 2024
+ 08:30:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20240913195132.8282-1-robdclark@gmail.com> <e6991910-5058-4ef0-bfdf-6d33953535dd@kernel.org>
+In-Reply-To: <e6991910-5058-4ef0-bfdf-6d33953535dd@kernel.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 17 Sep 2024 08:30:25 -0700
+Message-ID: <CAF6AEGvgS-DD0+qGX_Mud75aES4AQQjmWx2j2gyz7uakTpnp0w@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/a6xx+: Insert a fence wait before SMMU table update
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+	Connor Abbott <cwabbott0@gmail.com>, Rob Clark <robdclark@chromium.org>, 
+	Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 17, 2024 at 6:47=E2=80=AFAM Konrad Dybcio <konradybcio@kernel.o=
+rg> wrote:
+>
+> On 13.09.2024 9:51 PM, Rob Clark wrote:
+> > From: Rob Clark <robdclark@chromium.org>
+> >
+> > The CP_SMMU_TABLE_UPDATE _should_ be waiting for idle, but on some
+> > devices (x1-85, possibly others), it seems to pass that barrier while
+> > there are still things in the event completion FIFO waiting to be
+> > written back to memory.
+>
+> Can we try to force-fault around here on other GPUs and perhaps
+> limit this workaround?
 
+not sure what you mean by "force-fault"... we could probably limit
+this to certain GPUs, the only reason I didn't is (a) it should be
+harmless when it is not needed, and (b) I have no real good way to get
+an exhaustive list of where it is needed.  Maybe/hopefully it is only
+x1-85, but idk.
 
-On 17 September 2024 15:29:50 GMT+02:00, Gary Guo <gary@garyguo=2Enet> wro=
-te:
->On Tue, 17 Sep 2024 10:35:12 +0100
->Conor Dooley <conor@kernel=2Eorg> wrote:
->
->> On 17 September 2024 01:08:48 IST, Jason Montleon <jmontleo@redhat=2Eco=
-m> wrote:
->> >Clang does not support '-mno-riscv-attribute' resulting in the error
->> >error: unknown argument: '-mno-riscv-attribute' =20
->>=20
->> This appears to conflict with your subject, which cities gcc, but I sus=
-pect that's due to poor wording of the body of the commit message than a mi=
-stake in the subject=2E
->> I'd rather disable rust on riscv when building with gcc, I've never bee=
-n satisfied with the interaction between gcc and rustc's libclang w=2Er=2Et=
-=2E extensions=2E
->>=20
->> Cheers,
->> Conor=2E
->
->Hi Conor,
->
->What happens is that when building against GCC, Kbuild gathers flag
->assuming CC is GCC, but bindgen uses clang instead=2E In this case, the
->CC is GCC and all C code is built by GCC=2E We have a filtering mechanism
->to only give bindgen (libclang) flags that it can understand=2E
+It does bring up an interesting question about preemption, though
 
-Yes, but unfortunately I already knew how it worked=2E It's not flags I am=
- worried about, it is extensions=2E
-Even using a libclang that doesn't match clang could be a problem, but we =
-can at least declare that unsupported=2E
-Not digging it out on an airport bus, but we discussed the lack of GCC sup=
-port on the original patch adding riscv, and decided against it=2E
+BR,
+-R
 
+> Akhil, do we have any insight on this?
 >
->While I do think this is a bit fragile, this is what I think all
->distros that enable Rust use=2E They still prefer to build C code with
->GCC=2E So I hope we can still keep that option around=2E
->
->Best,
->Gary
->
->
->>=20
->> >
->> >Not setting BINDGEN_TARGET_riscv results in the in the error
->> >error: unsupported argument 'medany' to option '-mcmodel=3D' for targe=
-t \
->> >'unknown'
->> >error: unknown target triple 'unknown'
->> >
->> >Signed-off-by: Jason Montleon <jmontleo@redhat=2Ecom>
->> >Cc: stable@vger=2Ekernel=2Eorg
->> >---
->> > rust/Makefile | 3 ++-
->> > 1 file changed, 2 insertions(+), 1 deletion(-)
->> >
->> >diff --git a/rust/Makefile b/rust/Makefile
->> >index f168d2c98a15=2E=2E73eceaaae61e 100644
->> >--- a/rust/Makefile
->> >+++ b/rust/Makefile
->> >@@ -228,11 +228,12 @@ bindgen_skip_c_flags :=3D -mno-fp-ret-in-387 -mp=
-referred-stack-boundary=3D% \
->> > 	-fzero-call-used-regs=3D% -fno-stack-clash-protection \
->> > 	-fno-inline-functions-called-once -fsanitize=3Dbounds-strict \
->> > 	-fstrict-flex-arrays=3D% -fmin-function-alignment=3D% \
->> >-	--param=3D% --param asan-%
->> >+	--param=3D% --param asan-% -mno-riscv-attribute
->> >=20
->> > # Derived from `scripts/Makefile=2Eclang`=2E
->> > BINDGEN_TARGET_x86	:=3D x86_64-linux-gnu
->> > BINDGEN_TARGET_arm64	:=3D aarch64-linux-gnu
->> >+BINDGEN_TARGET_riscv	:=3D riscv64-linux-gnu
->> > BINDGEN_TARGET		:=3D $(BINDGEN_TARGET_$(SRCARCH))
->> >=20
->> > # All warnings are inhibited since GCC builds are very experimental,
->> >
->> >base-commit: ad060dbbcfcfcba624ef1a75e1d71365a98b86d8 =20
->
+> Konrad
 
