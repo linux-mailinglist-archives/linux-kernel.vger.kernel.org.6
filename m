@@ -1,75 +1,107 @@
-Return-Path: <linux-kernel+bounces-332006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9799A97B41B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:22:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A3197B425
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5938E2888AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:22:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 664641F255AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A540B17C995;
-	Tue, 17 Sep 2024 18:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BADD18786C;
+	Tue, 17 Sep 2024 18:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nm02z22d"
-Received: from mail-43167.protonmail.ch (mail-43167.protonmail.ch [185.70.43.167])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="odhQpa8e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F66217A591
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 18:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CA24409;
+	Tue, 17 Sep 2024 18:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726597372; cv=none; b=aa91eBgOdZKr8XveV9Mu+vV6qZPcI1pOyH/GkndFRjWuiEcD58UkXr0ZopgpTQsb+xdxDfJ7eexG8fTm7Jn/WaTwCsBiEvLK6Ua/Z2ESYoyuPfFcNQmghtrhvAluo1cw2z8FL8sFYW5K9nxpGPjqmntWzzE2FWZhUGUani69HOw=
+	t=1726597901; cv=none; b=oH+A9eNMY7+0J+bRkdSOcvAhZ7OJLy960TtBlqsb+oprq23hFnAtDxT6vhtThADJ+qgLvkLXpIVjUUYvsFq/ESAZrphTUap0tdKlb4yeH0dJ71VTRnIwfjiDb1QHfNSnAjzLE0h/IFeROeptZnbXnOGpCNMkoA8mekG2I0uHoXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726597372; c=relaxed/simple;
-	bh=UVtbDhQAhwXKJeYJ2aCra/yibrzIuX1YdMKMOpmOxcs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e35ZiuvKoONW21od7o7+gd/At9q99wObf8zkbZPTG+FFwVlwmAfXtyaYjPO6lbN9y4JgWiBVsB+mi+nj/VLRDAoH80w1DyQsjLJTtF7Q84zR+q5peyuSVcURnFdahDs6x7j8MkzniQ8UcLtJqhKyPZXZ0Fc2OQHLszlRl9MJoiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nm02z22d; arc=none smtp.client-ip=185.70.43.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726597362; x=1726856562;
-	bh=FgeJqjaJlWaY5ugZwcddgLjQdpW/i8zhBRxK7KXlhSs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=nm02z22dYUF7/FcEGC9/hhSaoTKm2hV9ky+DKrNQoydpP7uXI06cB2+9UrNIGieSW
-	 rEnGB0bSXsCzs3qg01+4EksFXl7iBMiNnVmLxWxUmv56mwSi8mNijhvFfa2b4wsBpq
-	 h6iN0b9YJKSP1owdEJVzTlc8TtydY5r/oN4lgIB7wW9uUMI7lA1siSc4fwn03fdFzu
-	 c2L6UWRIXmOuEeJR5/bRYtv9nHJKUjhUUWhwJP+xQI/2DknW8ogvf8e4zOIB6gBYFK
-	 kYerbb8TyNsSgWDA6A0+lZQgcEX6rFcD/96kac4o2pPLfZs4kmUZbVyeRRB21isDyx
-	 +G/o3gaaKUHrQ==
-Date: Tue, 17 Sep 2024 18:22:38 +0000
-To: John <therealgraysky@proton.me>
-From: John <therealgraysky@proton.me>
-Cc: Dave Hansen <dave.hansen@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
-Message-ID: <yePf3dKBhN5-MT4j8MbstYrbVupKBUlpBQ-Oo4kXHVTWaCcWMAMgvY9_e2RPbB-tv4U30Hg33aaziplcL-T9ovY8aFNYdihMdiL7ysifliI=@proton.me>
-In-Reply-To: <XngBYmNlmx5HynQiady8B6MsNyjWhWsWHhjmEIw4vhFYS_Pyi082MCXetLK66amn2j2XQiRlzFVdrUu3V0UN-3yDWOSOv9Dpr7sAgShOme0=@proton.me>
-References: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me> <e5081e3b-0f14-4e1e-975a-a4fd22944fc7@intel.com> <XngBYmNlmx5HynQiady8B6MsNyjWhWsWHhjmEIw4vhFYS_Pyi082MCXetLK66amn2j2XQiRlzFVdrUu3V0UN-3yDWOSOv9Dpr7sAgShOme0=@proton.me>
-Feedback-ID: 47473199:user:proton
-X-Pm-Message-ID: 4b9bcd5385099d4d76cbf20817d8f62484dc05b8
+	s=arc-20240116; t=1726597901; c=relaxed/simple;
+	bh=ZAEq494/sqZBPlCB/otHcchttqR1q7YJ76nsR57lccA=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Qr3e1f7nh2PckVHVxvrtNcAfftDFMs+QlppNgipZAwr/3fCtEIDv6cyi/Df9SH1bX1KEfi4nY5DxYmZ1t01CvAycqw8TAcP0lCCSu8f26z/6dtb6c8i+JRuVUUHSGB+KbgmrNO1+Jkz2lrWaJw/Te76rjbaaWaEJ0hjU+w9F9VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=odhQpa8e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03293C4CEC5;
+	Tue, 17 Sep 2024 18:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726597901;
+	bh=ZAEq494/sqZBPlCB/otHcchttqR1q7YJ76nsR57lccA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=odhQpa8enI+U01sKCdvyE3tAWUdBQLUSmjtYJa71dQvV5X+vRV1EfDRcoisLs0ZiS
+	 x2yM4e/+hvpKWGpzWNY73dMkzV3adv6bjPI8d/hgigKvPbPMK2GLBhqoJtMpjMdsmT
+	 09A/zmErGTUXDRvj+1AwjgMyZhP/mNWzBAEUaPlS21lxR9Mt9tej14Mga4HU9/+I8Z
+	 keugS7sCqZwzoVsxhN2VMfacjsh4MOmbUp3FopSCgqZ+eaCiXDxH7w7x0I0mUfKUQT
+	 NpIYdMYxwFExB+e4u64vDeuKhVIQsTB6an2qf9fwRD3yiBfGD6phXBb8U3xVqtEsTf
+	 UaEMKBvKfL4eA==
+Date: Tue, 17 Sep 2024 13:31:39 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: devicetree@vger.kernel.org, Marc Zyngier <maz@kernel.org>, 
+ Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Chris Paterson <Chris.Paterson2@renesas.com>
+In-Reply-To: <20240917173249.158920-2-fabrizio.castro.jz@renesas.com>
+References: <20240917173249.158920-1-fabrizio.castro.jz@renesas.com>
+ <20240917173249.158920-2-fabrizio.castro.jz@renesas.com>
+Message-Id: <172659789985.3765128.16547421763148970852.robh@kernel.org>
+Subject: Re: [PATCH 1/6] dt-bindings: pinctrl: renesas: rzg2l-pinctrl: Add
+ interrupt-parent
 
-On Sunday, September 15th, 2024 at 2:42 PM, John wrote:
-> I like this approach much better, it is more streamlined and clean. I ran=
- with your suggestions and the attached seems to work. I am grateful for my=
- feedback and suggestions on the syntax.
 
-I pushed my draft incorporating your suggestions out to my github at the fo=
-llowing link.  I am going to unsubscribe from lkml now (hundreds of emails =
-per day) so please cc me on any replies or use the github.  Thanks.
+On Tue, 17 Sep 2024 18:32:44 +0100, Fabrizio Castro wrote:
+> All the platforms from the renesas,rzg2l-pinctrl.yaml binding
+> actually require the interrupt-parent property. Add it.
+> 
+> Fixes: 35c37efd1273 ("dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Document the properties to handle GPIO IRQ")
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> ---
+>  .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml    | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
 
-https://github.com/graysky2/kernel_compiler_patch/blob/master/lite-more-uar=
-ches-for-kernel-6.8-rc4%2B.patch
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.example.dtb: pinctrl@11030000: 'interrupt-parent' is a required property
+	from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rzg2l-pinctrl.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240917173249.158920-2-fabrizio.castro.jz@renesas.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
