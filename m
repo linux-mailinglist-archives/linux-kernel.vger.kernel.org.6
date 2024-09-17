@@ -1,204 +1,98 @@
-Return-Path: <linux-kernel+bounces-331428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A1B97ACCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:22:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE8697ACDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8E801C21776
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:22:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 464C6B2639A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAA41537C6;
-	Tue, 17 Sep 2024 08:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82271531F9;
+	Tue, 17 Sep 2024 08:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZUo3d75"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Q4N/nF7Q"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4317D4594A;
-	Tue, 17 Sep 2024 08:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881ED482E9
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 08:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726561353; cv=none; b=tt4ByPaWTaFHhHQEpfkRa76IiGctfKginQ80ZIcfsq9PUqg+pxmgl4s3H+TWDOs5UL95gmOHlqasOneF2II7vGYYqwJAh1yqmUrCKfqlUYwuglM3ec0pKlP+fsHSttCR668WGzyqsIfQFDM2CXLNa7Ptk1EUGa4PNvXKjhi7bsU=
+	t=1726562005; cv=none; b=bIPH7DMV73VeRwPobfyLjnlJlyTVRVVt/aJ8HBSoSAgZyhUA9/woDhqfhfYfYZuUwvR2+oWDJp2kKNPnei3+1aqTFMUDYsMsKLZeqCK42VlDfqzqb35cZAi/jcOKpDYsdX2xs9lXnkHSgrBaxdCIUkg1e3Yz3qEv3zKYTmagEf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726561353; c=relaxed/simple;
-	bh=l1pSz29EuUBpMGd3E01UJeVACK68jEKOOMaVk6onMDQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=J8lSONh5tyMswqEK8qj3bZnOTZO/OnqCFVIJIYQjk+ovt6VKUN6EQIu0gwTRA7mDkXZkU39HDryYJBfz2ZxtQeX5fmecwec80Y12f+f4qILkRQ6u2uAMQfY8UeymfT7NuStWtz5Ue+TlZqPtlp4wFRxXO41QzOJ5qHoKd7Lsf7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZUo3d75; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5365d3f9d34so4485422e87.3;
-        Tue, 17 Sep 2024 01:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726561349; x=1727166149; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wbe/JfD8hhe2IqgyM7Dn2Wgv/TP3Y/5IerNzqQMyyOQ=;
-        b=FZUo3d75zxE7ffgGvbztuyKwQZErsUpoBSrv/z3T6tDdjDN9BHJEGvDBDvHQVTZ2sx
-         qUe7wcTuGry2Pl5nkR3xhfbyimWLlKsZUj+ptIuCMtQ8YkDlHSGU+VeTVysNaDLasKLI
-         v69e6WiqvUh7TB9vhPGDjzTI5UcghqaovGLEB57/cqS5U43Gklu9kVUChQAxeY2lFhde
-         94HVosrPg0yzlBSJfrKibFGLkZ3Xm+VdBEjjSJEGrQp7QTESgIWE4nxnbH+BEv/EgvuY
-         lbWON2y58g7qXizKwzz+R3JEYi+ehPTvZu5rB6Q2UZKeVkgvovlvtpg0bzJm+UfiP3N2
-         uWUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726561349; x=1727166149;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wbe/JfD8hhe2IqgyM7Dn2Wgv/TP3Y/5IerNzqQMyyOQ=;
-        b=Tsqb+9UWTDT4oSztPcBCGND2VBGc0wS1vpAWj6cuQCJIf9mX9ynbOdohJGGgbPAfsr
-         z/2sWEb22imx1yRjq1beONPJHl739k93guLok70lV3Pkjm3w6xW8jrAiJUgpX6p4Isf7
-         fTeGj/r0FC/xVBIs/nwB2SrdkRFej179FFP8f7YOaDAS2cBLs7E4MmCukEaS/UpUuRND
-         XIeo1CGcVSzmw3TUIwGN8q9m4ItZfxxEK3ElSBUeSj35knfnNtgImMlwwdRFJpUwn3Gm
-         KjQa+2VCacaLss9WVU6dRS4DrXV6vkiypNwN8AhX3KhlAG8jT6qHgKm/4Odg0FlCkVy0
-         bRHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlanW/IahZLJLRBBsAMrb8Phg9y+pOPEDYi3hKHocG9sRj4vc3r5GvrzgF4RIKq4JJCiLrugkqi65d@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw9OouQbpSSKctLbfWCFS5tB+pQlwZ7zAeMQg+pBnYnYmYrfhp
-	R0MhMGcNixAS9AHeT2Njt1iFmZsoKHDaibpAFdLIgJyA+aa7OSK2PKTr4OYFf+tZ7fKQK2YYius
-	Q7BGZAPUElGfjcHCKD4Ae8zbxOpCX7dxg
-X-Google-Smtp-Source: AGHT+IEhuYf/jcliFXdW7ziBm3JsmBOtvVSb58+Ce7EZD5hsRuY/ASltwEu0MpB1LolN5xbuROCqCw2X1u4JJakeFiE=
-X-Received: by 2002:ac2:4bc4:0:b0:52e:a63d:e5c1 with SMTP id
- 2adb3069b0e04-5367fee52a2mr6667367e87.30.1726561349141; Tue, 17 Sep 2024
- 01:22:29 -0700 (PDT)
+	s=arc-20240116; t=1726562005; c=relaxed/simple;
+	bh=d733EcIxmZaBjdgAm7Srzkjrb2zAjIoDRUsZMU1zZs8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BprST2xX0pO5chAIkzbPSy/ciPK30y/Q0UMVGdRakkDaaRM+KI8i9dAytjafqR/7yrH7Q9CqhlPMQ8WEiek/x/M2vEVHjrrgee7iJlVXd7wpV43kXX5GebspVAF6US6d/tT8XjkE591ALKe8YIHYC7fyrUAuy0oq/+5YHNNLIqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Q4N/nF7Q; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1726561473;
+	bh=C4wJ7ptJot7KDWTuIlywID28JkwMEQ70zMg/a4akJKA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Q4N/nF7QQPtG+5kaztVw7XrbgLm6QBYGoqEHYFcnttGpeD1+d8+8Qla8lBPlkRlQh
+	 /IvRYt9OXtioubBW48pBa3/1tzwEBG1LFYINvdqv4+ikXWb5DaubbP2r+sAFLKep9T
+	 QXyVIlFxIYwnnotZrsuWYj97L0cKzlXxl0XMMvP4=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 3B94F669CD;
+	Tue, 17 Sep 2024 04:24:31 -0400 (EDT)
+Message-ID: <9352e7749783e3b36aaf23f0e29f2385a629d57e.camel@xry111.site>
+Subject: Re: [PATCH v10 1/2] x86/mm: Don't disable PCID if "incomplete
+ Global INVLPG flushes" is fixed by microcode
+From: Xi Ruoyao <xry111@xry111.site>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Dave Hansen
+	 <dave.hansen@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Michael Kelley
+ <mhklinux@outlook.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+ <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, Sean
+ Christopherson <seanjc@google.com>, Andrew Cooper
+ <andrew.cooper3@citrix.com>
+Date: Tue, 17 Sep 2024 16:24:29 +0800
+In-Reply-To: <20240626171541.eeisf66vhuyspv4j@desk>
+References: <20240522020625.69418-1-xry111@xry111.site>
+	 <b901776293d19271a34bb14f79639c4b574b6174.camel@xry111.site>
+	 <e2cb23a6-60d4-49b1-ba48-1ded846e5292@intel.com>
+	 <20240626171541.eeisf66vhuyspv4j@desk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 17 Sep 2024 03:22:17 -0500
-Message-ID: <CAH2r5mvoPwxQgOFOJpLke-deTpy2rh6o=Xh-F8tWr08bMdiEcg@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Please pull the following changes since commit
-98f7e32f20d28ec452afb208f9cffc08448a2652:
+On Wed, 2024-06-26 at 10:15 -0700, Pawan Gupta wrote:
+> On Wed, Jun 26, 2024 at 09:50:39AM -0700, Dave Hansen wrote:
+> > On 6/26/24 06:10, Xi Ruoyao wrote:
+> > > Ping.
+> > >=20
+> > > Ok to queue these two into some branch for integration?
+> >=20
+> > Please don't top post, and please trim your replies.
+> >=20
+> > The code looks fine, but this has zero acks and I can't find any public
+> > documentation of which microcode versions fix the errata.
+>=20
+> Based on an internal document, I provided the microcode versions used in
+> this patch.
+>=20
+> Acked-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 
-  Linux 6.11 (2024-09-15 16:57:56 +0200)
+Still applies and works on Linus' tree.  Ok for 6.12?
 
-are available in the Git repository at:
-
-  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.12-rc-smb3-client-fixes-=
-part1
-
-for you to fetch changes up to 5ac1f99fdd09d80223e8f47dffaea41a6563aace:
-
-  smb: client: fix compression heuristic functions (2024-09-16 20:10:39 -05=
-00)
-
-----------------------------------------------------------------
-SMB3 client fixes
- 11 cleanup changesets (moving duplicated code, removing unused code etc.)
- 7 fixes relating to "sfu" mount options (for better handling special
-file types)
- 6 SMB3.1.1 compression fixes/improvements
-----------------------------------------------------------------
-ChenXiaoSong (7):
-      smb/client: rename cifs_ntsd to smb_ntsd
-      smb/client: rename cifs_sid to smb_sid
-      smb/client: rename cifs_acl to smb_acl
-      smb/client: rename cifs_ace to smb_ace
-      smb: move some duplicate definitions to common/smbacl.h
-      smb: move SMB2 Status code to common header file
-      smb: add comment to STATUS_MCA_OCCURED
-
-Enzo Matsumiya (3):
-      smb: client: insert compression check/call on write requests
-      smb: client: compress: LZ77 code improvements cleanup
-      smb: client: fix compression heuristic functions
-
-Gaosheng Cui (1):
-      cifs: Remove obsoleted declaration for cifs_dir_open
-
-Hongbo Li (1):
-      smb: use LIST_HEAD() to simplify code
-
-Pali Roh=C3=A1r (7):
-      cifs: Fix recognizing SFU symlinks
-      cifs: Add support for reading SFU symlink location
-      cifs: Put explicit zero byte into SFU block/char types
-      cifs: Show debug message when SFU Fifo type was detected
-      cifs: Recognize SFU socket type
-      cifs: Add support for creating SFU symlinks
-      cifs: Update SFU comments about fifos and sockets
-
-Qianqiang Liu (2):
-      smb: client: compress: fix a potential issue of freeing an invalid po=
-inter
-      smb: client: compress: fix an "illegal accesses" issue
-
-Shen Lichuan (1):
-      smb: client: Use min() macro
-
-Steve French (1):
-      smb3: mark compression as CONFIG_EXPERIMENTAL and fix missing
-compression operation
-
-Yuesong Li (1):
-      cifs: convert to use ERR_CAST()
-
- fs/smb/client/Kconfig                  |   14 +
- fs/smb/client/Makefile                 |    2 +
- fs/smb/client/cifs_debug.c             |    7 +-
- fs/smb/client/cifsacl.c                |  226 +++---
- fs/smb/client/cifsacl.h                |   99 +--
- fs/smb/client/cifsfs.h                 |    1 -
- fs/smb/client/cifsglob.h               |   25 +-
- fs/smb/client/cifspdu.h                |    6 -
- fs/smb/client/cifsproto.h              |   28 +-
- fs/smb/client/cifssmb.c                |   14 +-
- fs/smb/client/compress.c               |  390 ++++++++++
- fs/smb/client/compress.h               |   90 +++
- fs/smb/client/compress/lz77.c          |  235 ++++++
- fs/smb/client/compress/lz77.h          |   15 +
- fs/smb/client/connect.c                |    5 +-
- fs/smb/client/file.c                   |    7 +-
- fs/smb/client/fs_context.c             |   20 +-
- fs/smb/client/inode.c                  |   42 +-
- fs/smb/client/link.c                   |    3 +
- fs/smb/client/misc.c                   |    9 +-
- fs/smb/client/smb1ops.c                |    2 +-
- fs/smb/client/smb2file.c               |    6 +-
- fs/smb/client/smb2inode.c              |    6 +-
- fs/smb/client/smb2maperror.c           |    2 +-
- fs/smb/client/smb2misc.c               |    2 +-
- fs/smb/client/smb2ops.c                |   98 ++-
- fs/smb/client/smb2pdu.c                |   19 +-
- fs/smb/client/smb2pdu.h                |    8 +-
- fs/smb/client/smb2proto.h              |    2 +-
- fs/smb/client/smb2transport.c          |    2 +-
- fs/smb/client/smbdirect.c              |    6 +-
- fs/smb/client/transport.c              |    4 +
- fs/smb/client/xattr.c                  |    4 +-
- fs/smb/{client =3D> common}/smb2status.h |    6 +
- fs/smb/common/smbacl.h                 |  121 ++++
- fs/smb/server/oplock.c                 |    2 +-
- fs/smb/server/server.c                 |    2 +-
- fs/smb/server/smb2misc.c               |    2 +-
- fs/smb/server/smb2pdu.c                |    2 +-
- fs/smb/server/smb_common.c             |    2 +-
- fs/smb/server/smbacl.h                 |  111 +--
- fs/smb/server/smbstatus.h              | 1822
------------------------------------------------
- fs/smb/server/transport_rdma.c         |    2 +-
- 43 files changed, 1206 insertions(+), 2265 deletions(-)
- create mode 100644 fs/smb/client/compress.c
- create mode 100644 fs/smb/client/compress.h
- create mode 100644 fs/smb/client/compress/lz77.c
- create mode 100644 fs/smb/client/compress/lz77.h
- rename fs/smb/{client =3D> common}/smb2status.h (99%)
- create mode 100644 fs/smb/common/smbacl.h
- delete mode 100644 fs/smb/server/smbstatus.h
-
-
---
-Thanks,
-
-Steve
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
