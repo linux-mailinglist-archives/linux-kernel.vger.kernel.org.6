@@ -1,108 +1,133 @@
-Return-Path: <linux-kernel+bounces-331282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E985F97AAF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB1397AAF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2B71F240E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:17:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677371F2405D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED3B4206B;
-	Tue, 17 Sep 2024 05:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056A2482DD;
+	Tue, 17 Sep 2024 05:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWznCF0g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhgY7Zi8"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03099847B;
-	Tue, 17 Sep 2024 05:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D002628C;
+	Tue, 17 Sep 2024 05:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726550265; cv=none; b=DNaIARyl9WVYxy8NjsVtlV5Idqi1D9shB69QC1WJwH893XqAqhyVD8q2rosHSQwc8B2XHfgVXcHkB6W8Vc0lHhyFTczKsHGnvUn/kNT3MOQO33C8ZKNbarqmi7uGpO3kpHNO9bedLISrYRwywoIRizFTrO+pOf5vY8xvBIi/7fs=
+	t=1726550343; cv=none; b=bxX+ccS4Gexo6j6Mxo1tCsbEkBmX3WmuAOGiC3Ju3oFMinpl5wQzxwFEfaTS+c9HC7+NFSgFZj9m7LGQ+hj/yTCnDJi37UBWY2tDRv8wIDN6GPFn/3CZhgFpUzJs7th5CfEoiRIkEyNavW3hUMnPQvKgXgaEHdpHa3auj+WaDoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726550265; c=relaxed/simple;
-	bh=XmLK79IKgo9Gfd5FfkuNV6VY0ioNZxix7rJzS2arwro=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GHFjXAWuNSypPn9tPlf0ZzgfmxL9iLBekaP+wGve+HH04bjMbFiTL10wnflOp4no+aib3I0DnsZWKdUTUeC5VZh/8bAJ4uwP2zFqULIdAtqN4V36QiM9+0LFDDhWxmYxErStI9X3Ho69Vk/0+hs0iSkcqAOAdzVFgNAG2n/RqxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWznCF0g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B1A2C4CEC6;
-	Tue, 17 Sep 2024 05:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726550264;
-	bh=XmLK79IKgo9Gfd5FfkuNV6VY0ioNZxix7rJzS2arwro=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IWznCF0guh0gFiZe98GjRWm+06DKn/OTHi2IRvqe2HEA0VgAYHBQpBOUwGYMFm9YZ
-	 JCbAnU0EhpBJwLkyS/AbJ2H5tGCEWQrYGcvbdZIlhSfVvTWCEFDrLyb+TqxlqNQii3
-	 gBFyvlxiRpxgSvGlabRbiADdMdBGI+AOtW3xyVUSwFodgwzghMBKavaj+COuDA+roS
-	 oV4KU+ldALC/f0WwlLFjKFuFkMgI8qepqslWemTH+xMDVLYih9Yqs00qIQBnbdMHlz
-	 91UPzorBVI8bd0ieQCao07QzGwmmctnnqDRskO6irvu9e0M52LvZvuXV7jPdrMbDVx
-	 OiNXmKH7oCbHA==
-Date: Tue, 17 Sep 2024 14:17:36 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
- <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Masahiro Yamada <masahiroy@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/ftrace: Include <asm/ptrace.h>
-Message-Id: <20240917141736.e24ca6004730435676031997@kernel.org>
-In-Reply-To: <20240916221557.846853-2-samitolvanen@google.com>
-References: <20240916221557.846853-2-samitolvanen@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726550343; c=relaxed/simple;
+	bh=M4vuMj7CLYT3Z8oQXAVcPG0QTJn48rt6NBlRQWqyZWY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=juJrMZweb6SHAT5dyf614gQeiNsq+bq1ZDimviMVh17/r0+FD56AzSr0QJb0bMtTCy1qHYXsPdHNcfiyX7BYaqR3jZi+d9jy3Ft4cftkUxFyv5ZwLQmQEcjZcMNq2Cy/Dw6Pzf0B42YqKZ35LHQO4URanskv101aZPnohuMqJEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhgY7Zi8; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d88c5d76eeso2746228a91.2;
+        Mon, 16 Sep 2024 22:19:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726550341; x=1727155141; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WRybB9wxP64p2CF/sxwLTas0ioD5kY3JDod4yC46o3Q=;
+        b=DhgY7Zi8H73Lbvy9xFo2wwoESkxRXuaPIFI6nbqA5VYa4dDHuQ0ssZYUuoWlnDFxno
+         PboLIPaA7mos0s0OfZzL8JL0udyZcrfacJqDTCQNwjfecpoV31ClO9Sq1nxBYe1meQF0
+         h2zQ/aE+AsAKtJMiWofy5mNRGL23sIxKeDXl589zuvf/0tA5+dPIc65CXm8231KOH0a+
+         FbUFaMV4K56E26wTYNI+bExLAwon6cja03FNhVY34+/AQh+Otl7p8gmijaT1rofglsK0
+         g3ktCq2BLu3z7h+y9AXYVxbgGEqVd4YleVUGJ23FmYjt9xIUVImZC3vYxk1jU/ym//yk
+         FSaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726550341; x=1727155141;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WRybB9wxP64p2CF/sxwLTas0ioD5kY3JDod4yC46o3Q=;
+        b=wN04MPBL8abbNFyjbRjXnSRoxsrlY+NNdNpOWF5zjdsGHw3bjIUpJO28fvqlsnWDif
+         iITQQj0V3CqD6NUeURg+N/rMkHxkv8Bgxu+B5ODOuB069RurVDjabGH3p6vO1CWValgh
+         olx+buuV+2uap7+r36n5DZG3TcCrdqPam7dIqK3YV6wMjCmzVphUCnrqV0Qgfw1/CfCG
+         faQhuRafljheP/A6KkdXAUDABLWXU530c4O93s/jXK6RPzVq1Y9qaG8z9uLs8EC8a0pV
+         4scgob990QaBSxSXIURcVEbnKSQYERV1Ju0HN83n9D7RtDD3k1qsF3j7r/G4vLA1czwC
+         +YIg==
+X-Forwarded-Encrypted: i=1; AJvYcCU09nYcwa0XpUPgI0jaOH5MdnnRFz3EOC33vHVa+GgQWEK0qDQshPuTJJ4U1yX6wbggR9WYeUNFLCstdNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwruC4cjbFTorfb+1eYVnJjzGMMvlvJNE2OoV8jGC3W5Q3O3D+H
+	pTnADk1IMGoKLPDUgo6kFDbaJr9GDbVI7YMqRE9aID9wveOb0j8l
+X-Google-Smtp-Source: AGHT+IH51uSUbdMQ9iCrRl2QRy9eX4aXfLw9P5cCMHdLWzhxrn4FSJyPmohY2Oyu5NtEd1wLer9ijg==
+X-Received: by 2002:a17:90a:68ce:b0:2c9:61ad:dcd9 with SMTP id 98e67ed59e1d1-2dbb9ee0450mr17054190a91.27.1726550340871;
+        Mon, 16 Sep 2024 22:19:00 -0700 (PDT)
+Received: from amenon-us-dl.hsd1.ca.comcast.net ([2601:646:a002:44b0:14db:b6fb:c5a7:2dd7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9d95b42sm8382324a91.48.2024.09.16.22.18.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 22:19:00 -0700 (PDT)
+From: Aakash Menon <aakash.r.menon@gmail.com>
+X-Google-Original-From: Aakash Menon <aakash.menon@protempis.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	lars.povlsen@microchip.com,
+	Steen.Hegelund@microchip.com,
+	daniel.machon@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	aakash.menon@protempis.com,
+	horms@kernel.org,
+	horatiu.vultur@microchip.com
+Cc: netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v2] net: sparx5: Fix invalid timestamps
+Date: Mon, 16 Sep 2024 22:18:29 -0700
+Message-ID: <20240917051829.7235-1-aakash.menon@protempis.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 16 Sep 2024 22:15:57 +0000
-Sami Tolvanen <samitolvanen@google.com> wrote:
+Bit 270-271 are occasionally unexpectedly set by the hardware. This issue
+was observed with 10G SFPs causing huge time errors (> 30ms) in PTP. Only
+30 bits are needed for the nanosecond part of the timestamp, clear 2 most
+significant bits before extracting timestamp from the internal frame
+header.
 
-> <asm/ftrace.h> uses struct pt_regs in several places. Include
-> <asm/ptrace.h> to ensure it's visible. This is needed to make sure
-> object files that only include <asm/asm-prototypes.h> compile.
+Fixes: 70dfe25cd866 ("net: sparx5: Update extraction/injection for timestamping")
+Signed-off-by: Aakash Menon <aakash.menon@protempis.com>
+---
+v2:
+- Wrap patch descriptions at 75 characters wide.
+- Use GENMASK(5,0) instead of masking with 0x3F
+- Update Fixes tag to be on the same line
+- Link to v1 -https://lore.kernel.org/r/20240913193357.21899-1-aakash.menon@protempis.com
+drivers/net/ethernet/microchip/sparx5/sparx5_packet.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Looks good to me.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks!
-
-> 
-> Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  arch/x86/include/asm/ftrace.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-> index 0152a81d9b4a..b4d719de2c84 100644
-> --- a/arch/x86/include/asm/ftrace.h
-> +++ b/arch/x86/include/asm/ftrace.h
-> @@ -2,6 +2,8 @@
->  #ifndef _ASM_X86_FTRACE_H
->  #define _ASM_X86_FTRACE_H
->  
-> +#include <asm/ptrace.h>
-> +
->  #ifdef CONFIG_FUNCTION_TRACER
->  #ifndef CC_USING_FENTRY
->  # error Compiler does not support fentry?
-> 
-> base-commit: ad060dbbcfcfcba624ef1a75e1d71365a98b86d8
-> -- 
-> 2.46.0.662.g92d0881bb0-goog
-> 
-
-
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
+index f3f5fb420468..70427643f777 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
+@@ -45,8 +45,12 @@ void sparx5_ifh_parse(u32 *ifh, struct frame_info *info)
+ 	fwd = (fwd >> 5);
+ 	info->src_port = FIELD_GET(GENMASK(7, 1), fwd);
+ 
++	/*
++	 * Bit 270-271 are occasionally unexpectedly set by the hardware,
++	 * clear bits before extracting timestamp
++	 */
+ 	info->timestamp =
+-		((u64)xtr_hdr[2] << 24) |
++		((u64)(xtr_hdr[2] & GENMASK(5, 0)) << 24) |
+ 		((u64)xtr_hdr[3] << 16) |
+ 		((u64)xtr_hdr[4] <<  8) |
+ 		((u64)xtr_hdr[5] <<  0);
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.46.0
+
 
