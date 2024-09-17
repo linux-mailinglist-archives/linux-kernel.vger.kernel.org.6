@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-331724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F7D97B079
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:02:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F3D97B07C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D49289FD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F25ED28A5ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4E4188A2C;
-	Tue, 17 Sep 2024 13:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F04171E7C;
+	Tue, 17 Sep 2024 13:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMzTIpXb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDBXtYUK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2D917278D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126E4189506
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726578051; cv=none; b=pz2s+keGfDfrNMayAB2x/QkpnPsbK99d/YLFiJpfrPDxGSLlwmidnc7oRRm7MExOOFNHk0IcCgxNa+9B5gxGFIyU2amDftTdf/qe9puO46mgR2FD5NtP1R08QsLqD0mK4lSNidj+SJvfEG8MhQ6q9OvqJhHoF6wY5k+5mGrmyAA=
+	t=1726578053; cv=none; b=B9W9JecDGB3coeZkvmWJnTyMNMIz3zXA/Sn/tYEBfT/mryD+2WwkT2NkdbRsAoP/FEMEFVmJhFS9pUuIkyTZK80t/UoW8pmoMkS9UdpFI++jaq10jhUWik8fx+0FxUi8mJVsYZ7AXmF8mk8EXmpyGG80c6IIR3x9THsoPwraHNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726578051; c=relaxed/simple;
-	bh=Q6+9RPMnWXw7ty1d3wppsdJNDMw93d6I2iASc3TKGVs=;
+	s=arc-20240116; t=1726578053; c=relaxed/simple;
+	bh=vXbeplZ1G+0wcjdO+vuH1yzCOpOfz/gAnMMvX2K1kVI=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=qak0szYVDPD9TcJOQA9s3uBcvVC4AmsgU0AqyaRTi4s9C32AQC8AudxaMD2zyLtZmXk3vr/c0/IztJH8BnU0JFssYWW1Ip7FAkwDFXx9dp7KptmmMdglRqQBbS5Eu6fpxi1n1L+iFXUbL8XAF4VZYeW2yVvbZZz5eRW4ZJ52wJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMzTIpXb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B1EFC4CEC5;
-	Tue, 17 Sep 2024 13:00:51 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rJa9W69TZG3SGWmyv+pbBezWrvCI5OGX9cu7Qn+gPZYSLpG7rH1D+IRMC3g5YvCnneeSB4uDigPCYjfMATAgmg1D0Q82m4Tspbxhv1kJ8d6KGEwRTHOA023kVd6Od3XLJphvGG2hO7iQ74KCrmnefqsZ/Kng98rz4u8TOSj6V5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDBXtYUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84666C4CECD;
+	Tue, 17 Sep 2024 13:00:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726578051;
-	bh=Q6+9RPMnWXw7ty1d3wppsdJNDMw93d6I2iASc3TKGVs=;
+	s=k20201202; t=1726578052;
+	bh=vXbeplZ1G+0wcjdO+vuH1yzCOpOfz/gAnMMvX2K1kVI=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CMzTIpXbmef+awfETv2iG2KiMB2Sb45MD9fjKeISVtRC0qQy1aD+sRJ60m3VRHL46
-	 8IU9uf1YXHLUkpTmMkLTP72J6OGvisiwgEeBcQrSKfYs6tuyh55t8dSw9ZWAGb271N
-	 xEet0IOPgoPEPFw/lPyMgusl5IAKVj87iFcHIgTR0DyZ0PXCBf1TQ8UwC8b2jdiZPE
-	 6zMPLVmGjLVHKzk+KQfyfFo78nZCY8iCrtxKhzi/pkiZp33CFSsvpzqIfTMv2x0K38
-	 8lNZ2AH5gJ+9ZZvwmWk2A2eiVzK+tm5fxK7T569IjBjlO1oYVGtMD1uZiJu3fii6sA
-	 6mzcKhnYFLSOQ==
+	b=jDBXtYUKDn6g8wSi+jxcozb/3cjhSUlghGet4AO8qeQauW/h73U58CHDG+TJma6Aw
+	 0PJetWr09JZhIuWAKsOtn8sHNOJ8rhbAp2sQfzJ+uqX1GFMZ0Z8pj8sW6GAffns1MB
+	 AQ4JG+ra6oFPzR+HpSDXSyoQMYwKd2ItzJVm333Eafx2Bzpvd4Ght88aoByYogqoES
+	 dctkPDU1ZWpFeUNRVbXYpt8CeUHhHl0usRnTfJAEoxelX+ahJRlAvUrfnCu5XNkOcs
+	 DsfbTbWhlWZ4BEK2zc6H+0Xlzjp156F6n5A5xgzqLg01T2UxTCbs6vCisAakigUeCF
+	 bPsH/x/V/X7Wg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFE63809A80;
-	Tue, 17 Sep 2024 13:00:53 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D2A3809A80;
+	Tue, 17 Sep 2024 13:00:55 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/2] riscv: select ARCH_USE_SYM_ANNOTATIONS
+Subject: Re: [PATCH v2] riscv: avoid Imbalance in RAS
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172657805249.126252.16379053409750992964.git-patchwork-notify@kernel.org>
-Date: Tue, 17 Sep 2024 13:00:52 +0000
-References: <20240709160536.3690-1-jszhang@kernel.org>
-In-Reply-To: <20240709160536.3690-1-jszhang@kernel.org>
+ <172657805400.126252.7167871737849732377.git-patchwork-notify@kernel.org>
+Date: Tue, 17 Sep 2024 13:00:54 +0000
+References: <20240720170659.1522-1-jszhang@kernel.org>
+In-Reply-To: <20240720170659.1522-1-jszhang@kernel.org>
 To: Jisheng Zhang <jszhang@kernel.org>
 Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, cleger@rivosinc.com,
- linux-kernel@vger.kernel.org
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+ cyrilbur@tenstorrent.com
 
 Hello:
 
-This series was applied to riscv/linux.git (for-next)
+This patch was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Wed, 10 Jul 2024 00:05:20 +0800 you wrote:
-> commit 76329c693924 ("riscv: Use SYM_*() assembly macros instead
-> of deprecated ones"), most riscv has been to converted the new style
-> SYM_ assembler annotations. The remaining one is sifive's
-> errata_cip_453.S, so convert to new style SYM_ annotations as well.
-> After that select ARCH_USE_SYM_ANNOTATIONS.
+On Sun, 21 Jul 2024 01:06:59 +0800 you wrote:
+> Inspired by[1], modify the code to remove the code of modifying ra to
+> avoid imbalance RAS (return address stack) which may lead to incorret
+> predictions on return.
 > 
+> Link: https://lore.kernel.org/linux-riscv/20240607061335.2197383-1-cyrilbur@tenstorrent.com/ [1]
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> Reviewed-by: Cyril Bur <cyrilbur@tenstorrent.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,1/2] riscv: errata: sifive: Use SYM_*() assembly macros
-    https://git.kernel.org/riscv/c/6868d12e0205
-  - [v2,2/2] riscv: select ARCH_USE_SYM_ANNOTATIONS
-    https://git.kernel.org/riscv/c/7c9d980e4670
+  - [v2] riscv: avoid Imbalance in RAS
+    https://git.kernel.org/riscv/c/8f1534e74403
 
 You are awesome, thank you!
 -- 
