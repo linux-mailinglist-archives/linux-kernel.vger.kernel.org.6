@@ -1,61 +1,96 @@
-Return-Path: <linux-kernel+bounces-331898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DC097B29B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:04:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE93597B2A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DD19B2AE4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:04:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450C21F230F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0B417B4ED;
-	Tue, 17 Sep 2024 16:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4844217C9E9;
+	Tue, 17 Sep 2024 16:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jpqk2Qiq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Btj9KYxV"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD61117838F;
-	Tue, 17 Sep 2024 16:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6F616087B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726589055; cv=none; b=KldnMdmkuM0Xk5xh8cpTrfXvPGU/Esmm/UBH5YPS+PvfHFhCftVr+ODpL2XPK5NAQtsxdgyTo+RRglVEeSDoh1mxE6gNC0kQYCG7/moaMOwk7c4bjpB+j1rCGTb3KUvJFtN/bksCSYGhgm6QG32O7u8zjugHbGYRsG7Up0AqdkQ=
+	t=1726589182; cv=none; b=cp/bT5IOj4nXecNFkjdXlitomp+NzJA0WdQN9VDCfS1d/zRExPpbvKBHEKJdRAUBGa62SBbEc5Zq2HT/PWZrc6GkpKQcRk8ZdIdhaTCeJb64ncNv5MqzVT1x13zEcR9s5UjQyIqRb71EEJSnX1IkufAGjDmsWazqqX53ePMcqZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726589055; c=relaxed/simple;
-	bh=LuR1ANNZH8escrqY6PxNCxW7+kznQJOfxLhSgvt8Vi8=;
+	s=arc-20240116; t=1726589182; c=relaxed/simple;
+	bh=32AEDX9cCv9RsZHT9wdTvhGXqMlN0xLTW5QkFMjL/4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cmIZ0Gcv3JDCemxC9dr2kPuOITQb2Yawps/rjSP7qEAqTdFYzUssJOQDMQGUAjFBo2cCp2jrtTFdaTw5L0EvtcI9DrihNhbqHxN3TA2on/JTHA4tCHcdnOOWcjA4JASaB0mwTQ7fxUlnGal5cha7Pp5KSAzQA5wuEmoze+9pwW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jpqk2Qiq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1EEDC4CEC5;
-	Tue, 17 Sep 2024 16:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726589055;
-	bh=LuR1ANNZH8escrqY6PxNCxW7+kznQJOfxLhSgvt8Vi8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jpqk2QiqZTNcLPj5QJ5f7LOamR6axMNR6DYg7wmB4ZwWBARgcZryqDUJZgSVBXG1F
-	 neSSMDqRlph+eBIreJNrQNo1niH2IIGGI+hBucFAXyjcw6BS6lh5+8uYPHuWqRigJ8
-	 M1R4Nn2fDQw7Zy6xzHRet+ZKeWZz8OENs5qMOcS7JV7ZQF9wGhiMu81xCwotcQRBl1
-	 s04kIVn1PmgJUkw4inp/QbQUOrv3ihYTLYV7LVHEjyeqxOagBsngWMue/EZbDwPp+u
-	 DJsUmiGOxkaIWbQh10X8+MoyWbIiDhquNumnRa8BjVBzLRMGE68drMNI/mCbYycH63
-	 RtOu9IWfGYi3g==
-Date: Tue, 17 Sep 2024 09:04:13 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v2] x86/resctrl: Annotate get_mem_config functions as
- __init
-Message-ID: <20240917160413.GA2865863@thelio-3990X>
-References: <20240913-x86-restctrl-get_mem_config_intel-init-v2-1-bf4b645f0246@kernel.org>
- <8e34346b-9703-48e5-8923-15800fa78899@intel.com>
- <20240917133520.GA2360164@thelio-3990X>
- <c4175ca2-6551-4255-ab5c-0840f2b43008@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qn+5JLEuHyKech4mRzsnMrWaMuacHtClNwPGUzDXaUtgAylkssnHXl1HZRxevGZIX15SIqAaI9JrvKMOulsFMxJI6tw/ucpZ/ST+9uVHF2ILYw6ODuEIjqczlRKVBrUx49i1zgd7HcLtXYD+CvxCo8eeta1aROKwXlZOPApkA0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Btj9KYxV; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c7e64b60so3482719f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:06:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1726589178; x=1727193978; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C3wWVmY11x7twX+QLzZLt+655E3mj9zAVsD71Ldt/Ac=;
+        b=Btj9KYxVw2j9NpKleB/T4folXDUm1hDLKUOF5p0UP0rZmRW2zo9kKiUcb4zFCbI0HH
+         6DSW1IUTCDDH6VWtfXz0WH3NhmVcbyV/iVYT0lXpFgiysn5nRfnPokS8WJZJ1bpuldDJ
+         usBcdZhn6U3VR6hG//rwzv6qNn1mlhSUP1mMZmGEECdbnLyPQvbY+Zg2oQ4o2RZKI2pj
+         mLOXrXarn9A8BBN95HQTDi/FNFBlTSHIXTg5vXCW36ggChLGOrR0cDzqkQYrimAVoBwK
+         TWbSSy8B5M46b/bGT6pj3puG6ytURDoRQ2hNtmFxWgUzNOVW22NSRdS/dG4l6Xo295gp
+         pykQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726589178; x=1727193978;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C3wWVmY11x7twX+QLzZLt+655E3mj9zAVsD71Ldt/Ac=;
+        b=OzTuYOkARPywqtYFLWgDf/lim1qxOFO2IL69Wq/wSWaq8A5fwxXIWElXTOvheBJMrv
+         6AnU9I7VnrqxNdYZZT24L18xrR46JHydkq4RmOyaEkpleQBslLhiN86jZAGLQ8yA13Aa
+         mQIyl4Jn6EP1IxSBQ/hQ5o9A50N6ttV7SrhrAK9zHobCRfpJIyaVA3cXQdgEFGyTrECu
+         QifVdjjeFzlqTWDbnyv/lMF5VUEJX5ADvJ3Pee22nVDlFWDituapD80b5OPlI0/SvLIl
+         z9GPVOWiVpOfecVzZy4AcNTK2iH9bv0RPv7fPi+2ks2k32wPsDQp6SBBPHFEyRgFE3K0
+         7Wfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJdU42Zcfz8DVdgcQkv+KXm8aBeO/LrY+LlpmacrVXY80kgDJPG3AArfp0EUChpG9uCkepG/6K622cO94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlyNNezdfpFS/0MrSwhtha5m9oyOVxfTRhluNLFjwy3VnTxGWw
+	cYCI+pPy8N5j0NDLKkA+64GOLnqzfqVXuQjtNy/Kojzjt+ZXi6qrYKQhVi/EKFo=
+X-Google-Smtp-Source: AGHT+IFBa6LORWITRw1wV+KPnnRiX0GK6peQ486VSUGuguJIiXw3h4Apf2WbrzFK92EDTfdpTnDLRA==
+X-Received: by 2002:adf:a45d:0:b0:374:c847:848 with SMTP id ffacd0b85a97d-378c2d5a70dmr9566997f8f.36.1726589177899;
+        Tue, 17 Sep 2024 09:06:17 -0700 (PDT)
+Received: from GHGHG14 ([2a09:bac5:50ca:432::6b:83])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7800138sm9857539f8f.68.2024.09.17.09.06.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 09:06:17 -0700 (PDT)
+Date: Tue, 17 Sep 2024 17:06:14 +0100
+From: Tiago Lam <tiagolam@cloudflare.com>
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Jakub Sitnicki <jakub@cloudflare.com>, kernel-team@cloudflare.com
+Subject: Re: [RFC PATCH 2/3] ipv6: Run a reverse sk_lookup on sendmsg.
+Message-ID: <Zumo9rNztx4PJgRP@GHGHG14>
+References: <20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com>
+ <20240913-reverse-sk-lookup-v1-2-e721ea003d4c@cloudflare.com>
+ <20240914085950.GC12935@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,38 +99,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c4175ca2-6551-4255-ab5c-0840f2b43008@intel.com>
+In-Reply-To: <20240914085950.GC12935@kernel.org>
 
-On Tue, Sep 17, 2024 at 08:14:17AM -0700, Reinette Chatre wrote:
-> Hi Nathan,
-> 
-> On 9/17/24 6:35 AM, Nathan Chancellor wrote:
-> > Hi Reinette,
+On Sat, Sep 14, 2024 at 09:59:50AM +0100, Simon Horman wrote:
+> On Fri, Sep 13, 2024 at 10:39:20AM +0100, Tiago Lam wrote:
+> > This follows the same rationale provided for the ipv4 counterpart, where
+> > it now runs a reverse socket lookup when source addresses and/or ports
+> > are changed, on sendmsg, to check whether egress traffic should be
+> > allowed to go through or not.
 > > 
-> > On Mon, Sep 16, 2024 at 02:42:09PM -0700, Reinette Chatre wrote:
-> > > Just one nit in the subject ... this area has the custom to use "()" to
-> > > highlight that the name refers to a function, so rather:
-> > > 
-> > > 	x86/resctrl: Annotate get_mem_config() functions as __init
+> > As with ipv4, the ipv6 sendmsg path is also extended here to support the
+> > IPV6_ORIGDSTADDR ancilliary message to be able to specify a source
+> 
+> Hi Tiago Lam,
+> 
+> Some minor nits from my side.
+> 
+> ancilliary -> ancillary
+> 
+> Likewise in patch 3/3.
+> Flagged by checkpatch.pl --codespell
+> 
+> > address/port.
 > > 
-> > Thanks, I am aware of this custom since I do it in the commit message
-> > but since get_mem_config() is a function in this file and it is not
-> > exactly touched by this change, it did not really feel appropriate to
-> > add the parentheses there.
-> 
-> hmmm ... I understand that () is used to highlight that the text is
-> referring to a function independent from how the function is impacted
-> by the change.
-> 
+> > Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
+> > Signed-off-by: Tiago Lam <tiagolam@cloudflare.com>
+> > ---
+> >  net/ipv6/datagram.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  net/ipv6/udp.c      |  8 ++++--
+> >  2 files changed, 82 insertions(+), 2 deletions(-)
 > > 
-> > I can send a v3 with this fixed if so desired or perhaps whoever is
-> > going to apply this can just do it then?
+> > diff --git a/net/ipv6/datagram.c b/net/ipv6/datagram.c
+> > index fff78496803d..4214dda1c320 100644
+> > --- a/net/ipv6/datagram.c
+> > +++ b/net/ipv6/datagram.c
+> > @@ -756,6 +756,27 @@ void ip6_datagram_recv_ctl(struct sock *sk, struct msghdr *msg,
+> >  }
+> >  EXPORT_SYMBOL_GPL(ip6_datagram_recv_ctl);
+> >  
+> > +static inline bool reverse_sk_lookup(struct flowi6 *fl6, struct sock *sk,
+> > +				     struct in6_addr *saddr, __be16 sport)
+> > +{
+> > +	if (static_branch_unlikely(&bpf_sk_lookup_enabled) &&
+> > +	    (saddr && sport) &&
+> > +	    (ipv6_addr_cmp(&sk->sk_v6_rcv_saddr, saddr) || inet_sk(sk)->inet_sport != sport)) {
 > 
-> Could you please send v3? That will make its inclusion smoother (pending
-> any other feedback from next level maintainers).
+> Please consider, where it can trivially be achieved, limiting Networking
+> code to 80 columns wide.
+> 
+> Checkpatch can be run with a flag to check for this.
+> 
 
-Alright sure, done: https://lore.kernel.org/20240917-x86-restctrl-get_mem_config_intel-init-v3-1-10d521256284@kernel.org/
+Thanks for the hints here, I've addressed these and will include the
+changes into the next revision. I use b4 which takes care of some of
+this checks, but I'll make sure I change my settings to use
+`--max-line-length=80` as well.
 
-Cheers,
-Nathan
+Tiago.
 
