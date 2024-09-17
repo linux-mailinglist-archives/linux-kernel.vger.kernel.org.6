@@ -1,145 +1,300 @@
-Return-Path: <linux-kernel+bounces-331985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5230D97B3A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:37:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDE997B3A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04BC21F24AA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:37:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320F51C236B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7A018756A;
-	Tue, 17 Sep 2024 17:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C77A18786B;
+	Tue, 17 Sep 2024 17:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oyy10bB4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fq59L0xT"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8DB182;
-	Tue, 17 Sep 2024 17:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31DF182;
+	Tue, 17 Sep 2024 17:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726594671; cv=none; b=LHJbZ1bnEsox+cxhx5Xl8nHJ6jKpByLwT22X+g5L3jC9cF45czldZlWoy7FeWVYMV96ffzzszLFOqA6CQ9AIapTsM4OerDmmQ1f2AoYhQYXsGyIpfOpujisAYZhmXcv02kMyjcc1lvwkhQcnTL17NOkmz3oGAAyJbh+qiSgy1ZY=
+	t=1726594685; cv=none; b=d4oQ1KklOu4XCtTDAbqj8HsVI3UTACQTY8cxh2pQCfU4cZTEvPqnNlJB828GSq3lQne41Vp78wmUkd6MSCftr3v0wOkcUwMga7Z/Z5t6X/fmzkokkZI+jIY7SM2RMJW7+9uXWiFCBmw/yltOjewlepn7Ec7NpJhgBG012GIJER8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726594671; c=relaxed/simple;
-	bh=Ss/tG/VcJ8Bh3kRu0STrQcuJlSGpvWoKELQo8KPoUYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kgb2w5oRuuAIsAC6v/iJWXyQQWxQykenxsd3gKBOUFbk8UsHcACmz4+CO0dJYPVW4U2fZMnuaRe2Mv9ny1XlrEv4CnBU/rUPL39yEUsdQr65GhoPxGjK6LddJ4C6USFtFfagDPsHA5bKTNJoyd1TOqdeStVhFRAVSZ+Hnmt26yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oyy10bB4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 322CAC4CEC5;
-	Tue, 17 Sep 2024 17:37:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726594670;
-	bh=Ss/tG/VcJ8Bh3kRu0STrQcuJlSGpvWoKELQo8KPoUYc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Oyy10bB4f7v2e/wiZCpZhUmezXfVZnCtv8cTfqlc7NjP8spBmL0zSBG/j9egGUVnN
-	 nwNaGblTuJo1jMPTpVygB6dWE3MMfoHLIOY7oHjZZSx+QkBGu7UfnXKvdmUJzsSgaG
-	 QQ2dgHgWbi0s8eQeBBtXWv5aPOXpS0/j9Sqo3Bp/UAHkZmIgaA8/ErZbfhZM1WP7L2
-	 1IargEPgngsaq9TAAuyRr7bkgohwKdEoNYPNqk0/NTg7U1WECb2vr3xGAjDPuZEo8u
-	 Mx+I/1DwgxDpK6CHOp3wn98Ocd5yCjw5fLtmnpNuj2ZsV2YMkWsbd0NuuP7kkPACc5
-	 7I8CSTWA6tz0Q==
-Message-ID: <56c16398-faeb-4c99-9eaf-66ac5a872072@kernel.org>
-Date: Tue, 17 Sep 2024 19:37:44 +0200
+	s=arc-20240116; t=1726594685; c=relaxed/simple;
+	bh=YJp4V6wTyZO1On2Nxmm2Polq125vQIdvl/cYgDZH4AI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XAF1ELT9ATjuEdgRwdtJLwWqSvPm2fEGvyNC5f8VqwQn4pp9QEznrLcp0Pmjh8suuomDyGnPOcsdzf9fDJA1hIN1ELOEFDDlQKj0fVanaVKT1FhlqOwC5RPRkjCJgIPpICype4E+4z2U+FussKePS0u7ys+2B1aZyeK5ys3DVOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fq59L0xT; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e1a9f84699cso4893229276.3;
+        Tue, 17 Sep 2024 10:38:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726594683; x=1727199483; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ctUVWsq6yFff6NPSbR4N6oZRMK3QB0xNYNo/96feZm0=;
+        b=fq59L0xTM1qbNLQhvCvNLPdY9svKMIWKZvlbCBrMG2Ca3M7obGj+wHSq9uwCFNUxHk
+         /oeVlF+zi3OQm7CZgVBluoR1fJeW+YrxeIov8rHALrgPr1jNFjP3BS4C5ETc2xih7oJh
+         ec5cjrfUu706RnGodpJ0bVUnYnVQTneoPkkqZsaKW9EyMyxXjptF8lwwDKfFtEz6XHm7
+         4VuQYfAT84komxXmf4OMXFNaZCZSIBWzIsnYz3T5TRiSA2b34s3nQWHOT81iny3aZkRc
+         26R9ZRP7E0DGQBYv/ENvSBWSyu3c74Fhb/1gPShpE96yIXwWbr9Y32V/lpsWHDe9Dnrb
+         /khw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726594683; x=1727199483;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ctUVWsq6yFff6NPSbR4N6oZRMK3QB0xNYNo/96feZm0=;
+        b=VwKqZsGE6/IiuUH96Gnd10y42SR+ED14yLq+cF3EvLEm39fJ2ZumdKufzsO28atm2v
+         FZJw1KI298pPdWLa7sv+k68bNNogVJAiBFUWjUAKfQ4nLF8QWXJvF9bErE0Ef1Z0/MZE
+         nyt3TlNpQOQ9pqPxOdGlPf5TrGkXR9YB3AooI2HSYALOO1I0WQW5PwXNu/mukJX0VPsY
+         pJRjRSy6QxmmzOfotPj42FnExyH/c6cBIBkIva6aUVZwjSexLMyQzqkxTQC/K9ZpI4ZM
+         gVNt7A5bHsKzioEgCpbab/PVabOx/7E3oHWYDqJMsnDhVNUOpVZ6/3YPG3hxBeHXK/J+
+         TjRg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6oZsisikaag5nFCdSmPMCFSoLwvZtBBfil4lww6vJKc1T3Xsr0lwSGHnijRmrEoPiYwfPc5qBM5GRqbc=@vger.kernel.org, AJvYcCXI0uhrOhlq8Nn6scrK/xqAwN7KFALbbZcO9ptSIckGOba4cVEI/e6iA4XfFefm1h/p21YNJlTvmjAgZy8sPrQPLg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSEAD6ynpIL9TYDKaT7NrZXfJoQ1gfESb7UI1oBY2LJxwVlI9A
+	GnvAtp3xrL/29rqtxIM1tKqryPHuzFGg6Y/Kolf8mvMxrZkWga9/sHxyCx/fNBF7F/VciEU+RlH
+	QiwzL8Ll1WHEqZWYnSueFyTdbgGGqiNtAFKM=
+X-Google-Smtp-Source: AGHT+IGVgtwWU9Z2K41HQPQnqv2+/TBePM0zz6xMOUSstQJVK15xQU8Ls11t5ydHHcBhyGHOyOhUjYD3XFItudA4IMk=
+X-Received: by 2002:a05:690c:110:b0:6db:c12b:4d76 with SMTP id
+ 00721157ae682-6dbc12b4eb1mr115474717b3.29.1726594682664; Tue, 17 Sep 2024
+ 10:38:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] MAINTAINERS: add MAINTAINER for S32G2/S32G3 RTC
- driver
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- NXP S32 Linux Team <s32@nxp.com>
-References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
- <20240911070028.127659-5-ciprianmarian.costea@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240911070028.127659-5-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <ZuGL9ROeTV2uXoSp@x1> <caad2d84-a8ff-4304-b8ab-04642ea18323@linaro.org>
+ <ZuL_0V5jgaaEUOY_@x1> <49fe18ff-827a-429b-9d74-9d8ed02ac409@linaro.org> <CA+JHD936J-q0-7LANQ3aW2G-PEmFP8PnXQ-TF-AMs9MtrCqfew@mail.gmail.com>
+In-Reply-To: <CA+JHD936J-q0-7LANQ3aW2G-PEmFP8PnXQ-TF-AMs9MtrCqfew@mail.gmail.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Tue, 17 Sep 2024 10:37:52 -0700
+Message-ID: <CAH0uvojUEXiT2mk1pknLS1nc-gA3Py+AjmEW22ETiCCyOLLr8Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] perf build: Require at least clang 16.0.6 to build
+ BPF skeletons
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc: James Clark <james.clark@linaro.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Alan Maguire <alan.maguire@oracle.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	linux-perf-users <linux-perf-users@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/09/2024 09:00, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> 
-> Now that a RTC driver was added for S32G2/S32G3 SoC, update
-> the mainainters list for it.
+Hello James and Arnaldo,
 
-Why? You don't do that alone. You add yourself for entire platform!
+On Fri, Sep 13, 2024 at 3:42=E2=80=AFAM Arnaldo Carvalho de Melo
+<arnaldo.melo@gmail.com> wrote:
+>
+>
+>
+> On Fri, Sep 13, 2024, 7:20=E2=80=AFAM James Clark <james.clark@linaro.org=
+> wrote:
+>>
+>>
+>>
+>> On 12/09/2024 15:50, Arnaldo Carvalho de Melo wrote:
+>> > On Thu, Sep 12, 2024 at 03:40:32PM +0100, James Clark wrote:
+>> >> On 11/09/2024 13:24, Arnaldo Carvalho de Melo wrote:
+>> >>> Howard reported problems using perf features that use BPF:
+>> >
+>> >>>     perf $ clang -v
+>> >>>     Debian clang version 15.0.6
+>> >>>     Target: x86_64-pc-linux-gnu
+>> >>>     Thread model: posix
+>> >>>     InstalledDir: /bin
+>> >>>     Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-g=
+nu/12
+>> >>>     Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/12
+>> >>>     Candidate multilib: .;@m64
+>> >>>     Selected multilib: .;@m64
+>> >>>     perf $ ./perf trace -e write --max-events=3D1
+>> >>>     libbpf: prog 'sys_enter_rename': BPF program load failed: Permis=
+sion denied
+>> >>>     libbpf: prog 'sys_enter_rename': -- BEGIN PROG LOAD LOG --
+>> >>>     0: R1=3Dctx() R10=3Dfp0
+>> >>>
+>> >>> But it works with:
+>> >>>
+>> >>>     perf $ clang -v
+>> >>>     Debian clang version 16.0.6 (15~deb12u1)
+>> >>>     Target: x86_64-pc-linux-gnu
+>> >>>     Thread model: posix
+>> >>>     InstalledDir: /bin
+>> >>>     Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-g=
+nu/12
+>> >>>     Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/12
+>> >>>     Candidate multilib: .;@m64
+>> >>>     Selected multilib: .;@m64
+>> >>>     perf $ ./perf trace -e write --max-events=3D1
+>> >>>          0.000 ( 0.009 ms): gmain/1448 write(fd: 4, buf: \1\0\0\0\0\=
+0\0\0, count: 8)                         =3D 8 (kworker/0:0-eve)
+>> >>>     perf $
+>> >>>
+>> >>> So lets make that the required version, if you happen to have a slig=
+htly
+>> >>> older version where this work, please report so that we can adjust t=
+he
+>> >>> minimum required version.
+>> >
+>> >> I wasn't able to reproduce the issue with either of these versions. B=
+ut I
+>> >> suppose it could be an issue with only 15.0.6.
+>> >
+>> > Interesting, that complicates things, probably the best way then is to
+>> > try to build it, if it fails, mention that 15.0.6 is known to be
+>> > problematic and suggest working versions?
+>> >
+>> > - Arnaldo
+>>
+>> I still wasn't able to reproduce it with 15.0.6. And I double checked
+>> with V=3D1 that the build was using the right clang. I suppose it could =
+be
+>> a build configuration issue, or maybe with a different kernel version?
+>
+>
+> Howard? If not reproducible we can revert it.
+>
+> - Arnaldo
+>
+>
+>>
+>> $  uname --kernel-release
+>> 6.8.0-76060800daily20240311-generic
+>>
+>> $ ../../llvm-project/build/bin/clang -v
+>> clang version 15.0.6 (https://github.com/llvm/llvm-project.git
+>> 088f33605d8a61ff519c580a71b1dd57d16a03f8)
+>> Target: x86_64-unknown-linux-gnu
+>> Thread model: posix
+>> InstalledDir: /home/james/workspace/linux/linux/../../llvm-project/build=
+/bin
+>> Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/11
+>> Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/12
+>> Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/12
+>> Candidate multilib: .;@m64
+>> Selected multilib: .;@m64
+>>
+>> $ git log
+>> commit 003265bb6f028d7bcd7cbd92d6ba2b4e26382796
+>> (perf-tools-next/perf-tools-next)
+>>
+>> $ make O=3D../build/local/ CLANG=3D../../llvm-project/build/bin/clang -C=
+ \
+>>    tools/perf
+>>
+>> $ perf trace -e write --max-events=3D1
+>>
+>>       0.000 ( 0.026 ms): gnome-shell/5454 write(fd: 5, buf:
+>>         0x7fffa102d9b0, count: 8)                           =3D 8
 
-> 
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
->  MAINTAINERS | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f328373463b0..a6d91101ec43 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2686,11 +2686,13 @@ ARM/NXP S32G ARCHITECTURE
->  R:	Chester Lin <chester62515@gmail.com>
->  R:	Matthias Brugger <mbrugger@suse.com>
->  R:	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
+Thanks for the effort! But this output seems to be unaugmented? I
+think you are testing the perf/perf-tools-next branch that's slightly
+older (perf mem: Fix the wrong reference in parse_record_events()
+003265bb6f028d7bcd7cbd92d6ba2b4e26382796), and I think that doesn't
+have the new perf trace feature yet...
 
-If you are touching someone's maintainer entry, at least you could do is
-to CC them.
+That's why the perf trace output looks like:
 
-And how many reviewers do you want to have in that platform? Are all
-entries real or some are stale?
+>> $ perf trace -e write --max-events=3D1
+>>
+>>       0.000 ( 0.026 ms): gnome-shell/5454 write(fd: 5, buf:
+>>         0x7fffa102d9b0, count: 8)
 
-Best regards,
-Krzysztof
+With the new buffer augmentation it should look like this:
 
+perf $ ./perf trace -e write --max-events=3D1
+     0.000 ( 0.011 ms): gmain/1408 write(fd: 4, buf: \1\0\0\0\0\0\0\0,
+count: 8)                         =3D
+
+The new perf trace can be found on
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/
+perf-tools-next
+
+perf $ git log
+commit 1de5b5dcb8353f36581c963df2d359a5f151a0be (HEAD ->
+struct-aug-arnaldo-2, perf/perf-tools-next)
+
+Also, if you want to test the clang, you may want to checkout to the
+commit before the clang-16 guard (otherwise you can't test different
+clang version).
+
+perf $ git log --oneline
+1de5b5dcb835 (HEAD -> struct-aug-arnaldo-2, perf/perf-tools-next) perf
+trace: Mark the 'head' arg in the set_robust_list syscall as coming
+from user space
+0c1019e3463b perf trace: Mark the 'rseq' arg in the rseq syscall as
+coming from user space
+edf3ce0ed38e perf env: Find correct branch counter info on hybrid
+9953807c9e01 perf evlist: Print hint for group
+eb9b9a6f5ab3 tools: Drop nonsensical -O6
+89c0a55e550e perf pmu: To info add event_type_desc
+f08cc258431d perf evsel: Add accessor for tool_event
+925320737ae2 perf pmus: Fake PMU clean up
+d3d5c1a00fcd perf list: Avoid potential out of bounds memory read
+4ae354d73a8e perf help: Fix a typo ("bellow")
+74298dd8acb8 perf ftrace: Detect whether ftrace is enabled on system
+83420d5f5863 perf test shell probe_vfs_getname: Remove extraneous '=3D'
+from probe line number regex
+9327f0ecad48 perf build: Require at least clang 16.0.6 to build BPF
+skeletons. **********[[[[[[[[[[[[!!!!(This is the clang
+guard)]]]]]]]]]]*****
+4c1af9bf97eb perf trace: If a syscall arg is marked as 'const', assume
+it is coming _from_ userspace
+e37b315c17df perf parse-events: Remove duplicated include in parse-events.c
+
+My machine is debian 12, and I cannot build perf trace with the new
+augmentation feature on clang-13, clang-14, and clang-15.
+
+perf $ uname -r
+6.11.0-061100rc7-generic
+
+perf $ git log
+commit 4c1af9bf97eb56d069421c3233ce61608458d5c8 (HEAD)
+
+perf $ make CLANG=3D/bin/clang-13 && ./perf trace -e write --max-events=3D1
+...
+libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
+libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
+0: R1=3Dctx() R10=3Dfp0
+; int sys_enter(struct syscall_enter_args *args) @
+augmented_raw_syscalls.bpf.c:509
+0: (bf) r7 =3D r1                       ; R1=3Dctx() R7_w=3Dctx()
+
+
+perf $ make CLANG=3D/bin/clang-14 && ./perf trace -e write --max-events=3D1
+...
+libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
+libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
+0: R1=3Dctx() R10=3Dfp0
+; int sys_enter(struct syscall_enter_args *args) @
+augmented_raw_syscalls.bpf.c:509
+
+
+perf $ make CLANG=3D/bin/clang-15 && ./perf trace -e write --max-events=3D1
+libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
+libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
+0: R1=3Dctx() R10=3Dfp0
+
+
+perf $ make CLANG=3D/bin/clang-16 && ./perf trace -e write --max-events=3D1
+     0.000 ( 0.010 ms): gmain/1408 write(fd: 4, buf: \1\0\0\0\0\0\0\0,
+count: 8)                         =3D
+
+
+Anyway thank you so much, I'll try to reproduce it on Ubuntu, like you
+mentioned.
+
+Thanks,
+Howard
+
+
+>>
 
