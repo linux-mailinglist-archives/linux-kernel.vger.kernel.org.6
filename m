@@ -1,191 +1,115 @@
-Return-Path: <linux-kernel+bounces-331270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B49F97AA91
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:09:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A089B97AABE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46AB41C2247C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 04:09:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2B6A1C26F09
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 04:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99782364BE;
-	Tue, 17 Sep 2024 04:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5627A45008;
+	Tue, 17 Sep 2024 04:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ukv2yPrK"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	dkim=pass (2048-bit key) header.d=zach.us header.i=@zach.us header.b="CoIVm1Do"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BAE288DB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 04:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704F72B9B3
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 04:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726546164; cv=none; b=IGvPoLh38sWD5nf82vyPBNcWHLv47KbceKDWtg4Rb14J6oF1CdYN0qnAqgYYzoWky8oNkjJf8aixXkk41kfcq87x0pp5CcnbeMWwmJJ7tu7fhpCBjSqJ5XQo3EZ6DwvZ0PLW2YZj+LkqjuMkVQtftLrxkkD8cfBhvPUU2cSft/k=
+	t=1726547490; cv=none; b=uvg+a7843LplCeyCk5KOIiFaKoIgli0ttpSvg1Tq6A6zqdEF4PNulxdG9IUsfones32k2nhh5vd0Svt4iNQxAkq5Ut+7rQWLxDCXQ2OhsVeILWw90ujpHSm2zzkIHzKRBIAkYML2k34lvNLNvsek5RL+9u+ZaPISWxl6VwLrwDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726546164; c=relaxed/simple;
-	bh=s41gIPNddDr5DruADSSRphIhBLtBdZiqSHRYbETjL/E=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:Content-Type; b=KM/AeHuJRA4t+XvvVbflcSNImNWGahZldcQ1s6N5JnoP3yuTvErjVq98Y75UprEEn/m8wpPyZ4guvFTG4Kra1tLRu4AaseXiuM+DAFaffwx8Y3FCQSL5V8dqiQiskYypCOJUGYW8TljG/N7l5CgaE214Pnj2Ue6gEYz0OciHyyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ukv2yPrK; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-207115e3056so46348965ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 21:09:22 -0700 (PDT)
+	s=arc-20240116; t=1726547490; c=relaxed/simple;
+	bh=l8miaHMe04523C6YCUfUQRfGF4ZRTHcQdIE0ha82H1Y=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=S76NDjj4EK0poijHJYp30gO9WrQuqaT/dpnW1tBzzEbClKA0x8fXun0ikrhfYuFF7K2UO/gynOoeU4ZMIJTNs5fJ181Xy9+E418KrFW+dfHrnOtwtcWwjQX9qOrOu1IHIYA4jdslgAgO44GVGyQDTCGk9lTmVwWFJpZc3elH29A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zach.us; spf=none smtp.mailfrom=zach.us; dkim=pass (2048-bit key) header.d=zach.us header.i=@zach.us header.b=CoIVm1Do; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zach.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=zach.us
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6d5893cd721so30438457b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 21:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726546162; x=1727150962; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:content-language:user-agent
-         :mime-version:date:message-id:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FLP3iy9E8YIRIod5VuQH5Q4jITgxku5jTl2OIlXsXvM=;
-        b=Ukv2yPrKF7BWTYBAsHXH2AiKMqb9vY9JhqtRfNLqaJe8ivPLp8kK1If9sayooQqebz
-         6xmzVek52P6TR7rXo+81WqYw6WZS+ncmX603GtODBxLvw0kDSFaJttOTeFmOC6Qa0F5p
-         +WHtwILkTjmmbouEsP2v5coaYkNR+tfhsvjh1NlfwbhiLbkPltr58JUHVL3WRp3aVacI
-         sQDrlnetg0pCbNwWJFIv6rX1ZMOo41Ma+uKEWbq/dtocTSgjt8MJQ4HqOxFB71jZNL9v
-         XeKuqnIj6zEe3eG9/cMQSNic3d2JFQBQNLpB3YJJyZrrMnzVltvNHxRDJwozqk7TLJGW
-         RbdQ==
+        d=zach.us; s=google; t=1726547488; x=1727152288; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LIHNcE4v45VqxruROqcgpWF9mo28yczvOySQoZ/7kjo=;
+        b=CoIVm1DoZ2Sj62iGRLNMfnGKhTz2gvoS6CLJujqG8sr2QwQUujCe0nJO7YkfzYQKse
+         fkiHqw2dTtHzIGj2TMpxgvnim3tPZCK/caT0cklqh2gKmcUx20LAgPnGENfON1y88TKT
+         t4IfASHw/TNNToLjn443mxkjEamY+MNDxOucSmblnrR4StMrIqb6kDselMX+R5gJ3G0z
+         P891UwF9IYt9j/vTKiZrKX2X1u5aX9llpIEuuteqnLveCYq0KE076zIZHaVyWqtQHh1E
+         2FUhQxLuOihcAMYSZtNVI1pDO1pnge6uIDoaH/71KhobPY8fDxIqz/iXjuP3us75otHQ
+         ZaMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726546162; x=1727150962;
-        h=content-transfer-encoding:cc:to:subject:content-language:user-agent
-         :mime-version:date:message-id:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FLP3iy9E8YIRIod5VuQH5Q4jITgxku5jTl2OIlXsXvM=;
-        b=gMalEvyuUt8Ul1U2g5VvLrz3ahADrMy15HV+TvBLyR2D7YonVJN/ghvpKbbB4bb9jv
-         ySRkbwJkrG4X/0hwOR2EwodpqEbxcs9Lkqwo/LtnePBVezqAHp6Ikf8zL33WKlAt2ZcV
-         ov9qwxerF11ExgZz2/2ylG+2PdU9SkNC17uZETAfrLDoE5+OzA89++d0DjYEtNOifRo5
-         herA+8nLWaMOOYA/8hNTWZ5/MOVFtELLcsIdMuDZzOYHF1NhWewTob/eBMXkjfsvyxfR
-         AITC8UJqqXOo/aRxC2GL5pxNZumKiLeU00i0bhCmchd9LHhP8ZlD3fNciF77W73IfscM
-         Uy8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWFztrrdY1uGxioOnzaGciYBjVSzaXyCwGOcGoNkbyjDq9P5jxlrBl67wOJTUZMyUXzbPi2llVMbLCDfZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdKiJHlppsSYn01eXuWC+Y0BjAgLVOjq4vDzB3wICxCsJjE0vQ
-	q+6YVZRg/J+AE/YNhhLRcxw11EiVWYQwUbjAKSXEm+x5Z+X+LP/V4IZc3mQ92Oo=
-X-Google-Smtp-Source: AGHT+IGtte48VDWtp7voeGx5u8hIT4MMgsMcZHq0QKlHfI2T2hgNVfvxq/b4zP5WAhQtiBQNdQKPiA==
-X-Received: by 2002:a17:902:db06:b0:206:fd9b:f4f1 with SMTP id d9443c01a7336-2076e4a6ee1mr266495285ad.56.1726546161434;
-        Mon, 16 Sep 2024 21:09:21 -0700 (PDT)
-Received: from [127.0.0.1] ([103.156.242.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d169csm42928855ad.138.2024.09.16.21.09.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 21:09:20 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Message-ID: <59505464-c84a-403d-972f-d4b2055eeaac@gmail.com>
-Date: Tue, 17 Sep 2024 12:09:15 +0800
+        d=1e100.net; s=20230601; t=1726547488; x=1727152288;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LIHNcE4v45VqxruROqcgpWF9mo28yczvOySQoZ/7kjo=;
+        b=RPFzxK36FmRCa9xva0wZJs3IgO2MAUeiEvMQZTnEb4yatefQTwaThbrtB1v8dhAdGP
+         xQwsa3fag8QFyBhHBxyW+Yz8K01xVSLkI9KNoEAmjD/+Y+VVCrxNWA6+BFK9KJoLfSbB
+         9Qp/3HavRs9bd3+sSTGlrCRfR8Kgpi06ziR95Fc565/Hd1IC+fq8Gvy4ZQxLP+iwpiYS
+         sdhxZkDz9BT8zIECx5S1O6Y2zAK+xiBiowXb7GxVJvUXE0VG+L3ncT4YDx8bbQKG/vcj
+         bytvwg7HYkwDCYLvkV7Q/YnJyYGuiQ52m+Q/APW+8l97lGsKoAi3XvYpC9ZHFs8P/a88
+         BCRw==
+X-Gm-Message-State: AOJu0YyUBj/l1lZ4CI1U8r1oL/RtwKvx0ZalW/oymbZ+El5BHdQcJY14
+	CGUT/MYMYLFRK8dNL1D3JJ8nGvvThXuHhyqG8wTzASQYOy1eDpbmxDtUat1a34Gnco4+cQHU/hv
+	g/lkF0jJnP0TotN8oS/79cEYQoSi6xgrnOgJiUiraIYQXW5kmENgMsQ==
+X-Google-Smtp-Source: AGHT+IGQfAujIncgZNtuPIZLaroqEPGZbnEfG6FzYF5SiY4HBnyhDQbtOvg2tIf7Z7xScqm1pw4/wBTNSRTc1+6Vygg=
+X-Received: by 2002:a05:690c:7204:b0:6db:b7a9:bc99 with SMTP id
+ 00721157ae682-6dbcc59b74emr113769267b3.43.1726547488077; Mon, 16 Sep 2024
+ 21:31:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB-large
-Subject: [RFC] riscv/entry: issue about a0/orig_a0 register and ENOSYS
-To: linux-riscv@lists.infradead.org, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Oleg Nesterov <oleg@redhat.com>,
- "Dmitry V. Levin" <ldv@strace.io>
-Cc: Andrea Bolognani <abologna@redhat.com>, WANG Xuerui <git@xen0n.name>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@kernel.org>,
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
- Yao Zi <ziyao@disroot.org>, Yangyu Chen <cyy@cyyself.name>,
- Han Gao <gaohan@iscas.ac.cn>, linux-kernel@vger.kernel.org,
- rsworktech@outlook.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Zach Walton <me@zach.us>
+Date: Mon, 16 Sep 2024 21:31:17 -0700
+Message-ID: <CABQG4PHGcZggTbDytM4Qq_zk2r3GPGAXEKPiFf9htjFpp+ouKg@mail.gmail.com>
+Subject: Allow ioctl TUNSETIFF without CAP_NET_ADMIN via seccomp?
+To: linux-kernel@vger.kernel.org
+Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jason Wang <jasowang@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Before PTRACE_GET_SYSCALL_INFO was implemented in v5.3, the only way to
-get syscall arguments was to get user_regs_struct via PTRACE_GETREGSET.
-On some architectures where a register is used as both the first
-argument and the return value and thus will be changed at some stage of
-the syscall process, something like orig_a0 is provided to save the
-original argument register value. But RISC-V doesn't export orig_a0 in
-user_regs_struct (This ABI was designed at e2c0cdfba7f6 ("RISC-V:
-User-facing API").) so userspace application like strace will get the
-right or wrong result depends on the operation order in do_trap_ecall_u()
-function.
+I was debugging a seccomp profile that attempts to allow TUNSETIFF in
+a container, relevant bits:
 
-This requires we put the ENOSYS process after syscall_enter_from_user_mode()
-or syscall_handler()[1]. Unfortunately, the generic entry API
-syscall_enter_from_user_mode() requires we
+...
+      {
+            "names":[
+                  "ioctl"
+            ],
+            "action":"SCMP_ACT_ALLOW",
+            "args":[
+                  {
+                        "index":1,
+                        "value":1074025674,
+                        "op":"SCMP_CMP_EQ"
+                  },
+                  {
+                        "index":1,
+                        "value":2147767498,
+                        "op":"SCMP_CMP_EQ"
+                  }
+            ]
+      },
+...
 
-*  process ENOSYS before syscall_enter_from_user_mode()
-*  or only set a0 to ENOSYS when the return value of
-   syscall_enter_from_user_mode() != -1
+...but I get:
 
-Again, if we choose the latter way to avoid conflict with the first
-issue, we will meet the third problem: strace depends on that kernel
-will return ENOSYS when syscall nr is -1 to implement their syscall
-tampering feature[2].
+Tuntap IOCTL TUNSETIFF failed [0], errno operation not permitted
 
-Actually, we tried the both ways in 52449c17bdd1 ("riscv: entry: set
-a0 = -ENOSYS only when syscall != -1") and 61119394631f ("riscv: entry:
-always initialize regs->a0 to -ENOSYS") before.
+Looking at the code, it seems that there's an explicit check for
+CAP_NET_ADMIN, which I'd prefer not to grant the container because the
+permissions are excessive (yes, I can lock it down with seccomp but
+still...): https://github.com/torvalds/linux/blob/3352633ce6b221d64bf40644d412d9670e7d56e3/drivers/net/tun.c#L2758-L2759
 
-Naturally, there is a solution:
-
-1. Just add orig_a0 in user_regs_struct and let strace use it as
-   loongarch does. So only two problems, which can be resolved without
-   conflict, are left here.
-
-The conflicts are the direct result of the limitation of generic entry
-API, so we have another two solutions:
-
-2. Give up the generic entry API, and switch back to the
-   architecture-specific standardalone implementation.
-3. Redesign the generic entry API: the problem was caused by
-   syscall_enter_from_user_mode() using the value -1 (which is unused
-   normally) of syscall nr to inform syscall was reject by seccomp/bpf.
-
-In theory, the Solution 1 is best:
-
-*  a0 was used for two purposes in ABI, so using two variables to store
-   it is natural.
-*  Userspace can implement features without depending on the internal
-   behavior of the kernel.
-
-Unfortunately, it's difficult to implement based on the current code.
-The RISC-V defined struct pt_regs as below:
-
-        struct pt_regs {
-                unsigned long epc;
-        ...
-                unsigned long t6;
-                /* Supervisor/Machine CSRs */
-                unsigned long status;
-                unsigned long badaddr;
-                unsigned long cause;
-                /* a0 value before the syscall */
-                unsigned long orig_a0;
-        };
-
-And user_regs_struct needs to be a prefix of struct pt_regs, so if we
-want to include orig_a0 in user_regs_struct, we will need to include
-Supervisor/Machine CSRs as well. It's not a big problem. Since
-struct pt_regs is the internal ABI of the kernel, we can reorder it.
-Unfortunately, struct user_regs_struct is defined as below:
-
-        struct user_regs_struct {
-                unsigned long pc;
-        ...
-                unsigned long t6;
-        };
-
-It doesn't contain something like reserved[] as padding to leave the
-space to add more registers from struct pt_regs!
-The loongarch do the right thing as below:
-
-        struct user_pt_regs {
-                /* Main processor registers. */
-                unsigned long regs[32];
-        ...
-                unsigned long reserved[10];
-        } __attribute__((aligned(8)));
-
-RISC-V can't include orig_a0 in user_regs_struct without breaking UABI.
-
-Need a discussion to decide to use which solution, or is there any
-other better solution?
-
-[1]: https://github.com/strace/strace/issues/315
-[2]: https://lore.kernel.org/linux-riscv/20240627071422.GA2626@altlinux.org/
-
+Is it possible to update this check to allow TUNSETIFF operations if a
+seccomp profile allowing it is in place? (I am not a kernel developer
+and it's unlikely I could safely contribute this)
 
