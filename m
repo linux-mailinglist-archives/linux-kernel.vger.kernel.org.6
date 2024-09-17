@@ -1,82 +1,53 @@
-Return-Path: <linux-kernel+bounces-331923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A9097B303
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:31:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD8897B305
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63EDEB25D2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7EDB1F23967
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97703183CB7;
-	Tue, 17 Sep 2024 16:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F76D17C234;
+	Tue, 17 Sep 2024 16:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AfpwKYjf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiSFquMT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3925715B54F;
-	Tue, 17 Sep 2024 16:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6972517AE11;
+	Tue, 17 Sep 2024 16:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726590662; cv=none; b=Sp7wpdsrHKGmkqiVp9KvUGZQIyLLtwG+jd86LA2Zt8uAPBDqXoQ1ib1Za9Jq868Ugx3G3EAFnpM2gFNCan64LW8Lk9GIie+zBA7PS0iO3PPJXpjuv/gJhGqLiJ67b9FKEMDaUo+NYXfEF2hDYjUzDfPNIx5GVCTFNSE8EYZTsis=
+	t=1726590684; cv=none; b=W+u5hmPHvCHwY+Pdw8UDZW5frg0otudtsWSEHWd8QOBF+AdfLSc+yNyz/ttazMFO7muHgr3ZP7/SvH4IL1sg81LjO65qtZijnDH7nzABRMpHKyirVAcTm88HyPTIk+fHdVH4tKqsd4r4KM95xwnosUq2NXKDMY4R3HhcX2RWbdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726590662; c=relaxed/simple;
-	bh=T0xCbAguwVe8L3zNEYirqsW01OcDvzdTUFRziwZJH14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1y0qApsmnR7GYxLJ62xS2BFMdPuz/9thqcoK0jtkkTZkMVR6uQgVj5rNSIcCaAlH3RV5eCkw3NFZ7cgw85RZi54MQXed9xJer9MY4LcRAYGziOxUer98V/I1cvvc9MeBGkk+hoWQj6p7Fb2SSEkPQj2cmD0SzU+qZe5pqZMaK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AfpwKYjf; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726590660; x=1758126660;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=T0xCbAguwVe8L3zNEYirqsW01OcDvzdTUFRziwZJH14=;
-  b=AfpwKYjf1OYofDq7wimAxxzkIMqifWp4eM08PFO1hePTRR/Vy4dWFfPZ
-   ZbrbjLSFc7h4LMROKD6qfANCUtTBESuqpCR9GrJomtuYchZjhGaxY+ARq
-   8eig0tHfW5kp8DMLOEfzHsDAMPctwQYRmbyRWsODY4AIMNq7diT/5wV3P
-   ZLDudCELNdiPjIZulcXPKqLFzGjQaq/m40g+pSH00oUwYuMaagWSp5F12
-   6lEOR2kI9LWssgrHTgRzDpT7jVB2fHTSA8cpm1PkcwB5s8DnCxRyIJOzN
-   tW5+cO2Qh2C7AUaXq2xl19QJg3j43RISdMJ9bH/tb1CTdDcv/Bl8cXLku
-   A==;
-X-CSE-ConnectionGUID: n3gVHtPtTCWKuk6x/aVRKQ==
-X-CSE-MsgGUID: rZEsyTyTS5CdBlNilUfDXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="13560061"
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="13560061"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 09:30:59 -0700
-X-CSE-ConnectionGUID: ahD0hZrcQO2ez3iJtGdOiw==
-X-CSE-MsgGUID: aW6W1bJsQNupTu5l7O00Vw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="69114330"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 09:30:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sqb6L-00000009sna-1A5j;
-	Tue, 17 Sep 2024 19:30:53 +0300
-Date: Tue, 17 Sep 2024 19:30:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Lin <yu-hao.lin@nxp.com>,
-	Dmitry Antipov <dmantipov@yandex.ru>,
-	Brian Norris <briannorris@chromium.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Sascha Hauer <s.hauer@pengutronix.de>, Kees Cook <kees@kernel.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH] wifi: mwifiex: Fix memcpy() field-spanning write warning
- in mwifiex_config_scan()
-Message-ID: <ZumuvP3aHiHHzGjp@smile.fi.intel.com>
-References: <20240917150938.843879-1-alpernebiyasak@gmail.com>
+	s=arc-20240116; t=1726590684; c=relaxed/simple;
+	bh=Otc0zh3c/58YMdEqJr0IqjKLuSXPqpKwMXo5XoW3uz8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=K9X9z+xEWTf9k0evS9Xp+STfOl9fmay9bPL332sF2gWe2KvSsOOIHl7GArJYXUGhuzWTvVl8vKQq5lU9owKjK7zBHNkx2r6R8i9kkuWnP+W/dX/VqzuQDCjGl2TO6ng/aAKP3Zfz8kHWnrqvR9LNkqUf/X7P3xkYH4jScNGbHPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiSFquMT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D5D9C4CEC5;
+	Tue, 17 Sep 2024 16:31:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726590684;
+	bh=Otc0zh3c/58YMdEqJr0IqjKLuSXPqpKwMXo5XoW3uz8=;
+	h=Date:From:To:Subject:From;
+	b=DiSFquMTP6xwmHVHHGQ9E1BociBWxKZYS0iG7FHjaeu1anJ/5LuGSIOXjE86s+Oot
+	 d7VhJf0uAqP0D9gUpLZ80uXJUDowqW9o63NlTG+j9XGpr4UswPIjEc8Q3+kh57Docg
+	 4Ce19fuOEZTG8GJz04+yVJgF+32YnhTHcx53NcPlodfI2HDOheyYHYdyc+7YPzFaKO
+	 KhU5Zkzv/R+N4+d7sQBMKVtOMUnEI04tJrxr83VPQlTMIxCKehx8tIeuQ1hzclvuG9
+	 rRI4DxaZtE/8uTLjkdNc4Sz4L4TN0eoRxFOKVz4qI6WQyqxSN5FuQL0rfVEtt997+v
+	 msBXa22WBp3/Q==
+Date: Tue, 17 Sep 2024 18:31:19 +0200
+From: Helge Deller <deller@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture fixes and updates for v6.12-rc1
+Message-ID: <Zumu14EgYx4LhqTx@p100>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,46 +56,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240917150938.843879-1-alpernebiyasak@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Sep 17, 2024 at 06:08:41PM +0300, Alper Nebi Yasak wrote:
-> Replace one-element array with a flexible-array member in `struct
-> mwifiex_ie_types_wildcard_ssid_params` to fix the following warning
-> on a MT8173 Chromebook (mt8173-elm-hana):
-> 
-> [  356.775250] ------------[ cut here ]------------
-> [  356.784543] memcpy: detected field-spanning write (size 6) of single field "wildcard_ssid_tlv->ssid" at drivers/net/wireless/marvell/mwifiex/scan.c:904 (size 1)
-> [  356.813403] WARNING: CPU: 3 PID: 742 at drivers/net/wireless/marvell/mwifiex/scan.c:904 mwifiex_scan_networks+0x4fc/0xf28 [mwifiex]
-> 
-> The "(size 6)" above is exactly the length of the SSID of the network
-> this device was connected to. The source of the warning looks like:
-> 
->     ssid_len = user_scan_in->ssid_list[i].ssid_len;
->     [...]
->     memcpy(wildcard_ssid_tlv->ssid,
->            user_scan_in->ssid_list[i].ssid, ssid_len);
-> 
-> Also adjust a #define that uses sizeof() on this struct to keep the
-> value same as before.
+Hi Linus,
 
-...
+Please pull the parisc architecture fixes and updates for 6.12-rc1, which
+includes:
 
->  #define WILDCARD_SSID_TLV_MAX_SIZE  \
->  	(MWIFIEX_MAX_SSID_LIST_LENGTH *					\
->  		(sizeof(struct mwifiex_ie_types_wildcard_ssid_params)	\
-> -			+ IEEE80211_MAX_SSID_LEN))
-> +			+ IEEE80211_MAX_SSID_LEN + 1))
->  
+- On parisc we now use the generic clockevent framework for timekeeping.
 
-This hunk has to be carefully checked by wireless people. I'm not sure
-that we need  + 1 here.
+- Although there is no 64-bit glibc/userspace for parisc yet, for testing
+  purposes one can run statically linked 64-bit binaries. This patchset
+  contains two patches which fix 64-bit userspace which has been broken since
+  kernel 4.19.
 
-Otherwise, LGTM.
+- Fix the userspace stack position and size when the ADDR_NO_RANDOMIZE
+  personality is enabled.
 
--- 
-With Best Regards,
-Andy Shevchenko
+- On other architectures mmap(MAP_GROWSDOWN | MAP_STACK) creates a
+  downward-growing stack. On parisc mmap(MAP_STACK) is now sufficient
+  to create an upward-growing stack.
 
+Thanks!
+Helge
 
+----------------------------------------------------------------
+The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
+
+  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git tags/parisc-for-6.12-rc1
+
+for you to fetch changes up to 5d698966fa7b452035c44c937d704910bf3440dd:
+
+  parisc: Allow mmap(MAP_STACK) memory to automatically expand upwards (2024-09-16 23:01:43 +0200)
+
+----------------------------------------------------------------
+parisc architecture fixes and updates for kernel v6.12-rc1:
+
+- Convert parisc to the generic clockevents framework
+- Fix syscall and mm for 64-bit userspace
+- Fix stack start when ADDR_NO_RANDOMIZE personality is set
+- Fix mmap(MAP_STACK) to map upward growing expandable memory on parisc
+
+----------------------------------------------------------------
+Helge Deller (6):
+      parisc: Convert to generic clockevents
+      parisc: Fix stack start for ADDR_NO_RANDOMIZE personality
+      parisc: Fix 64-bit userspace syscall path
+      parisc: Fix itlb miss handler for 64-bit programs
+      parisc: Use PRIV_USER instead of hardcoded value
+      parisc: Allow mmap(MAP_STACK) memory to automatically expand upwards
+
+Hongbo Li (1):
+      parisc: pdc_stable: Constify struct kobj_type
+
+ arch/parisc/Kconfig                 |   2 +-
+ arch/parisc/include/asm/mman.h      |  14 ++
+ arch/parisc/include/asm/processor.h |   2 +-
+ arch/parisc/kernel/entry.S          |   6 +-
+ arch/parisc/kernel/smp.c            |   2 +-
+ arch/parisc/kernel/syscall.S        |  14 +-
+ arch/parisc/kernel/time.c           | 261 +++++++++++++++---------------------
+ arch/parisc/kernel/traps.c          |   2 +-
+ drivers/parisc/pdc_stable.c         |   2 +-
+ fs/exec.c                           |   3 +-
+ 10 files changed, 136 insertions(+), 172 deletions(-)
 
