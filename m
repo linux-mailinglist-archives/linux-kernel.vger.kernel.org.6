@@ -1,224 +1,228 @@
-Return-Path: <linux-kernel+bounces-331348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7068497ABA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:47:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B54C97ABA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B80181F29FEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:47:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D547B248F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE203136347;
-	Tue, 17 Sep 2024 06:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4417D136E3B;
+	Tue, 17 Sep 2024 06:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WowDyOFo"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="UlY6F3xS"
+Received: from mail.tlmp.cc (unknown [148.135.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83454136337
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782572C18C;
+	Tue, 17 Sep 2024 06:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726555621; cv=none; b=A3X2wUp46Ozk7vahUiD2fI5MGJ3qA6OmLEKTKj8uE/V5nru3KUuBoIg3Exu517hUWPtvZMKZBxS42r5g2joRauIaqsCmCtnrr4Akjf6OHNk6zoFZvlMKiwl8QEzYzsEUbjaD5vRvHZXtA4bNu36Dxya0jJOPkDgEbaAjA+zJ6I0=
+	t=1726555737; cv=none; b=SOvNIDNAZWq9IGL7+82dV1HQUxzT74QmUa7liwc7Z+2rGZ9R/rpgS7JoVCDLZEketNljzwv/dQgA/zeiTrl6YdtNzCr4CVsbE491IBUwjS09voY/DVmYXBOUxBDW7cs6PJUEjmGe7mUju7torim0u/Eee7oiDTjH3nueSPAUUNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726555621; c=relaxed/simple;
-	bh=3qYSaumupE0TiIcflJEfJZ5Ni8Ktwd0CDC3Y6V0vkL0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UgwzHyZzXdMZ6Jsq5GuoTDbXLcqjMarwMNoWE8DdUhv0yCphQnPn3LMB6QpOE1PAgzibtDT8MEM2z20Z/3oLDBf3RNVgVBscWT8gk4zJQ/WjCkEXTIqf+Dx0DtOk83v2TEWFauIQa3djLcrQ6VdL7a9WwXKu9HJws+c/aEwoMK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WowDyOFo; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5356bb5522bso4833861e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 23:46:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726555616; x=1727160416; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WXTewivgLsmzlJ+30gpbLxMHkptTIEQ1/3gFwAu9U9g=;
-        b=WowDyOFo+hhKlPFkxpP4QhDXmjGYiKgx2/vfSmV8ySqRzzW0M2SIliqu+oaOxUNq14
-         rqWQyfz9h/oRzH2kP3gcGTA9772NzYLP2ERSUn1cxnMFMuvzjTI2vFKPZ5r51rnRQ0Re
-         v7UVPeFxA8Dwf7rNm9T1jBECtX9equGVbUG9eenWxMoMbTTMQkZQz/mJDnczaq2sPHlY
-         5d9XAD/NgCLrJ+TwMU7BLln/UGvzm/Luh9f7S8j/gRA4YeIh0qUlcgHy/Xe6zKBOVEVS
-         uiREdp0PkLJiqpGSVjWbzvFRn85dk529dOecAaiaRxJnPbObyVfCaJDOk5Qxc3jqszk9
-         MtXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726555616; x=1727160416;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WXTewivgLsmzlJ+30gpbLxMHkptTIEQ1/3gFwAu9U9g=;
-        b=SccjDmSR6l+4BvZXBQuAH1YaRSCnGvYVvO9z+8jEsjvOYPaLba+E2/ROilh2lJbDtx
-         x1qwc0WGjZ3U9LyN1D/a1Zxw2nqHHMqzbaj6ST+fxAqdRNY9IQ7pDFR/KdNoTyYLNoXY
-         QhxGo/i9MbnFFQElQr61ZmqehsaCX9epESwoCvpTY5O1fD3XDQ/fIKt8m7XNiG7mint9
-         VzbTnJaU2bFrV/Gn2/Fc2Kl8S97Jqee0Em/hSDICevislnFx175FF0b56KEnrYz6C5QS
-         /hc+7OLk2WpTUk29FTg/p6KCe6qhJ4bAXKS3IH2UsTOg8rMND7/Oa/cIR2xh2tbgtbKb
-         AsCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdzyGmHohoWDBHoKSDELHTFelTq+26F/M1H/fWuelwOmAEelwPoY4uL+M5f7j1AN6j0Ru5Q0Fbd8cM4eo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO/gKKxjIcT1nxypcj8Gn/eZEn6UUECcZOyjz9PtYVSAD2teOg
-	YSUSAHbP3xi/06NKpedpspuGL+eAqC/PYuD8/GgDxs1e5HQ3Dy538h0eMQUSLNs=
-X-Google-Smtp-Source: AGHT+IEglrlFdhDfUYd/C+Psw6SFttmg3CHticZ+MtCVdGeQeVedABPIgDd5SqDuLTpTdmpAiMUcJA==
-X-Received: by 2002:a05:6512:4020:b0:536:533c:c460 with SMTP id 2adb3069b0e04-5367ff295a6mr6115881e87.50.1726555616322;
-        Mon, 16 Sep 2024 23:46:56 -0700 (PDT)
-Received: from uffe-tuxpro14.. ([2a02:1406:5f:cdf3:9745:768d:3d6:b1bb])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687096816sm1090542e87.177.2024.09.16.23.46.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 23:46:55 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] pmdomain/cpuidle-psci updates for v6.12
-Date: Tue, 17 Sep 2024 08:46:53 +0200
-Message-Id: <20240917064653.4226-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726555737; c=relaxed/simple;
+	bh=OYVZS+5ii4rthOIBolFOAKAKlPprVk5AYLDFcTQvth0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BvLmi4PDeHp/iu1qmoR5tuaZziMLnFlksw8DZxtyoPNYCTDC+6RCNAAAMD0cPXnSK+sUM/+xLFrHOgxOi6kKr83t0nmKcpyKe0w2v7sRPt5JLe83GnTmk0oWS+IvzWRKlfQhWzE8SuQTpfRapcvzxTFYZFvF/RHJXftHCY5DoeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=UlY6F3xS; arc=none smtp.client-ip=148.135.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A6049697D1;
+	Tue, 17 Sep 2024 02:48:42 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
+	t=1726555733; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=Vun4PO28i0mmsLNX3QTNk55JwdaRwjIisdNr9s6W8dM=;
+	b=UlY6F3xSPENoOScyRvJyD/lb0LsHJnxP5PAj9oQJksih2Zy6kPXaVqlKOm/6Sc1GlxgcGR
+	L/C87vKY8I77AVCk5ZD9ejeV607hMzhOophmgBaKEzP0C+89UcflczYE93rvW6Kr/G30Hs
+	TLJGlqNuVHEgfxQoPgIIT8w68akuSPcQgYJXDVxir0fcm6XnwTL2nwymyrbcbV1kojHjfL
+	wGSyh+3y5eSrgXaB2SkZaUMuWDCPTeZoZ9sxvFYtwAzajUGlr8tuN+1k0LCH3+8qbHw9PW
+	0CDSA1RbYQ73J9Xgm4THjv/dUb91fAq3A2Mqo5G6nZcAVdQEva6kCG74xXmpEQ==
+Date: Tue, 17 Sep 2024 14:48:34 +0800
+From: Yiyang Wu <toolmanp@tlmp.cc>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 19/24] erofs: introduce namei alternative to C
+Message-ID: <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-20-toolmanp@tlmp.cc>
+ <20240916170801.GO2825852@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916170801.GO2825852@ZenIV>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Linus,
+On Mon, Sep 16, 2024 at 06:08:01PM GMT, Al Viro wrote:
+> On Mon, Sep 16, 2024 at 09:56:29PM +0800, Yiyang Wu wrote:
+> > +/// Lookup function for dentry-inode lookup replacement.
+> > +#[no_mangle]
+> > +pub unsafe extern "C" fn erofs_lookup_rust(
+> > +    k_inode: NonNull<inode>,
+> > +    dentry: NonNull<dentry>,
+> > +    _flags: c_uint,
+> > +) -> *mut c_void {
+> > +    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
+> > +    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
+> 
+> 	Ummm...  A wrapper would be highly useful.  And the reason why
+> it's safe is different - your function is called only via ->i_op->lookup,
+> the is only one instance of inode_operations that has that ->lookup
+> method, and the only place where an inode gets ->i_op set to that
+> is erofs_fill_inode().  Which is always passed erofs_inode::vfs_inode.
+> 
+So my original intention behind this is that all vfs_inodes come from
+that erofs_iget function and it's always gets initialized in this case
+And this just followes the same convention here. I can document this
+more precisely.
+> > +    // SAFETY: The super_block is initialized when the erofs_alloc_sbi_rust is called.
+> > +    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
+> 
+> 	Again, that calls for a wrapper - this time not erofs-specific;
+> inode->i_sb is *always* non-NULL, is assign-once and always points
+> to live struct super_block instance at least until the call of
+> destroy_inode().
+>
 
-Here's the PR with pmdomain and cpuidle-psci updates for v6.12. Details about
-the highlights are as usual found in the signed tag.
+Will be modified correctly, I'm not a native speaker and I just can't
+find a better way, I will take my note here.
+> > +    // SAFETY: this is backed by qstr which is c representation of a valid slice.
+> 
+> 	What is that sentence supposed to mean?  Nevermind "why is it correct"...
+> 
+> > +    let name = unsafe {
+> > +        core::str::from_utf8_unchecked(core::slice::from_raw_parts(
+> > +            dentry.as_ref().d_name.name,
+> > +            dentry.as_ref().d_name.__bindgen_anon_1.__bindgen_anon_1.len as usize,
+> 
+> 	Is that supposed to be an example of idiomatic Rust?  I'm not
+> trying to be snide, but my interest here is mostly about safety of
+> access to VFS data structures.	And ->d_name is _very_ unpleasant in
+> that respect; the locking rules required for its stability are subtle
+> and hard to verify on manual code audit.
+> 
+Yeah, this code is pretty messed up. I just cannot find a better
+way to use this qstr in dentry. So the original C qstr is this.
 
-Please pull this in!
+```c
+struct qstr {
+	union {
+		struct {
+			HASH_LEN_DECLARE;
+		};
+		u64 hash_len;
+	};
+	const unsigned char *name;
+};
 
-Kind regards
-Ulf Hansson
+```
+The original C code can use this pretty easily.
 
+```C
+int erofs_namei(struct inode *dir, const struct qstr *name, erofs_nid_t *nid,
+		unsigned int *d_type)
+{
+	int ndirents;
+	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+	struct erofs_dirent *de;
+	struct erofs_qstr qn;
 
-The following changes since commit 9ec87c5957ea9bf68d36f5e098605b585b2571e4:
+	if (!dir->i_size)
+		return -ENOENT;
 
-  OPP: Fix support for required OPPs for multiple PM domains (2024-08-23 11:57:44 +0200)
+	qn.name = name->name;
+	qn.end = name->name + name->len;
+	buf.mapping = dir->i_mapping;
 
-are available in the Git repository at:
+```
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.12
+But after bindgen, since Rust does not support any kinds of anonymous
+unions here it just converts to this.
 
-for you to fetch changes up to c6ccb691d484544636bc4a097574c5c135ccccda:
+```rust
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct qstr {
+    pub __bindgen_anon_1: qstr__bindgen_ty_1,
+    pub name: *const core::ffi::c_uchar,
+}
 
-  pmdomain: core: Reduce debug summary table width (2024-09-13 13:41:33 +0200)
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union qstr__bindgen_ty_1 {
+    pub __bindgen_anon_1: qstr__bindgen_ty_1__bindgen_ty_1,
+    pub hash_len: u64_,
+}
 
-----------------------------------------------------------------
-pmdomain core:
- - Add support for s2idle for CPU PM domains on PREEMPT_RT
- - Add device managed version of dev_pm_domain_attach|detach_list()
- - Improve layout of the debugfs summary table
+```
+And it just somehow degrades to this pure mess. :(
+I know this is stupid :(
 
-pmdomain providers:
- - amlogic: Remove obsolete vpu domain driver
- - bcm: raspberrypi: Add support for devices used as wakeup-sources
- - imx: Fixup clock handling for imx93 at driver remove
- - rockchip: Add gating support for RK3576
- - rockchip: Add support for RK3576 SoC
- - Some OF parsing simplifications
- - Some simplifications by using dev_err_probe() and guard()
+> 	Current erofs_lookup() (and your version as well) *is* indeed
+> safe in that respect, but the proof (from filesystem POV) is that "it's
+> called only as ->lookup() instance, so dentry is initially unhashed
+> negative and will remain such until it's passed to d_splice_alias();
+> until that point it is guaranteed to have ->d_name and ->d_parent stable".
+> 
+> 	Note that once you _have_ called d_splice_alias(), you can't
+> count upon the ->d_name stability - or, indeed, upon ->d_name.name you've
+> sampled still pointing to allocated memory.
+> 
+> 	For directory-modifying methods it's "stable, since parent is held
+> exclusive".  Some internal function called from different environments?
+> Well...  Swear, look through the call graph and see what can be proven
+> for each.
 
-pmdomain consumers:
- - qcom/media/venus: Convert to the device managed APIs for PM domains
+Sorry for my ignorance.
+I mean i just borrowed the code from the fs/erofs/namei.c and i directly
+translated that into Rust code. That might be a problem that also
+exists in original working C code.
 
-cpuidle-psci:
- - Add support for s2idle/s2ram for the hierarchical topology on PREEMPT_RT
- - Some OF parsing simplifications
+> 	Expressing that kind of fun in any kind of annotations (Rust type
+> system included) is not pleasant.  _Probably_ might be handled by a type
+> that would be a dentry pointer with annotation along the lines "->d_name
+> and ->d_parent of that one are stable".  Then e.g. ->lookup() would
+> take that thing as an argument and d_splice_alias() would consume it.
+> ->mkdir() would get the same thing, etc.  I hadn't tried to get that
+> all way through (the amount of annotation churn in existing filesystems
+> would be high and hard to split into reviewable patch series), so there
+> might be dragons - and there definitely are places where the stability is
+> proven in different ways (e.g. if dentry->d_lock is held, we have the damn
+> thing stable; then there's a "take a safe snapshot of name" API; etc.).
 
-----------------------------------------------------------------
-Dario Binacchi (3):
-      pmdomain: imx93-pd: replace dev_err() with dev_err_probe()
-      pmdomain: imx93-pd: don't unprepare clocks on driver remove
-      pmdomain: imx93-pd: drop the context variable "init_off"
+That's kinda interesting, I originally thought that VFS will make sure
+its d_name / d_parent is stable in the first place.
+Again, I just don't have a full picture or understanding of VFS and my
+code is just basic translation of original C code, Maybe we can address
+this later.
 
-Detlev Casanova (2):
-      pmdomain: rockchip: Add gating support
-      pmdomain: rockchip: Add gating masks for rk3576
+> 	I want to reduce the PITA of regular code audits.  If, at
+> some point, Rust use in parts of the tree reduces that - wonderful.
+> But then we'd better make sure that Rust-side uses _are_ safe, accurately
+> annotated and easy to grep for.
 
-Dikshita Agarwal (2):
-      PM: domains: add device managed version of dev_pm_domain_attach|detach_list()
-      media: venus: use device managed APIs for power domains
+Yeah, even a small portion of VFS gets abstracted can get things work
+smoothly, like inode and dentry data structure. From my understanding
+Rust can make some of stability issues you have mentioned
+compilation errors if it's correctly annotated.
 
-Finley Xiao (2):
-      dt-bindings: power: Add support for RK3576 SoC
-      pmdomain: rockchip: Add support for RK3576 SoC
+> Because we'll almost certainly need to
+> change method calling conventions at some points through all of that.
+> Even if it's just the annotation-level, any such contract change (it
+> is doable and quite a few had been done) will require going through
+> the instances and checking how much massage will be needed in those.
+> Opaque chunks like the above promise to make that very painful...
 
-Geert Uytterhoeven (4):
-      pmdomain: core: Harden inter-column space in debug summary
-      pmdomain: core: Fix "managed by" alignment in debug summary
-      pmdomain: core: Move mode_status_str()
-      pmdomain: core: Reduce debug summary table width
-
-Hongbo Li (1):
-      pmdomain: mediatek: make use of dev_err_cast_probe()
-
-Jerome Brunet (1):
-      pmdomain: amlogic: remove obsolete vpu domain driver
-
-Jinjie Ruan (1):
-      pmdomain: apple: Make apple_pmgr_reset_ops static
-
-Krzysztof Kozlowski (11):
-      cpuidle: psci: Simplify with scoped for each OF child loop
-      cpuidle: dt_idle_genpd: Simplify with scoped for each OF child loop
-      pmdomain: rockchip: Simplify with scoped for each OF child loop
-      pmdomain: rockchip: Simplify locking with guard()
-      pmdomain: imx: gpc: Simplify with scoped for each OF child loop
-      pmdomain: imx: gpcv2: Simplify with scoped for each OF child loop
-      pmdomain: qcom: cpr: Simplify with dev_err_probe()
-      pmdomain: qcom: cpr: Simplify locking with guard()
-      pmdomain: qcom: rpmhpd: Simplify locking with guard()
-      pmdomain: qcom: rpmpd: Simplify locking with guard()
-      pmdomain: rockchip: Simplify dropping OF node reference
-
-Stefan Wahren (3):
-      pmdomain: raspberrypi-power: Adjust packet definition
-      pmdomain: raspberrypi-power: Add logging to rpi_firmware_set_power
-      pmdomain: raspberrypi-power: set flag GENPD_FLAG_ACTIVE_WAKEUP
-
-Ulf Hansson (11):
-      pmdomain: core: Enable s2idle for CPU PM domains on PREEMPT_RT
-      pmdomain: core: Don't hold the genpd-lock when calling dev_pm_domain_set()
-      pmdomain: core: Use dev_name() instead of kobject_get_path() in debugfs
-      cpuidle: psci-domain: Enable system-wide suspend on PREEMPT_RT
-      cpuidle: psci: Drop redundant assignment of CPUIDLE_FLAG_RCU_IDLE
-      cpuidle: psci: Enable the hierarchical topology for s2ram on PREEMPT_RT
-      cpuidle: psci: Enable the hierarchical topology for s2idle on PREEMPT_RT
-      pmdomain: Merge branch fixes into next
-      pmdomain: Merge branch fixes into next
-      pmdomain: Merge branch dt into next
-      pmdomain: Merge branch fixes into next
-
-Zhang Zekun (2):
-      pmdomain: qcom-cpr: Use helper function for_each_available_child_of_node()
-      pmdomain: qcom-cpr: Use scope based of_node_put() to simplify code.
-
- .../bindings/power/rockchip,power-controller.yaml  |   1 +
- drivers/base/power/common.c                        |  45 +++
- drivers/cpuidle/cpuidle-psci-domain.c              |  17 +-
- drivers/cpuidle/cpuidle-psci.c                     |  26 +-
- drivers/cpuidle/dt_idle_genpd.c                    |  14 +-
- drivers/media/platform/qcom/venus/pm_helpers.c     |   5 +-
- drivers/pmdomain/amlogic/Kconfig                   |  11 -
- drivers/pmdomain/amlogic/Makefile                  |   1 -
- drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c       | 380 ---------------------
- drivers/pmdomain/apple/pmgr-pwrstate.c             |   2 +-
- drivers/pmdomain/bcm/raspberrypi-power.c           |  43 ++-
- drivers/pmdomain/core.c                            |  94 +++--
- drivers/pmdomain/imx/gpc.c                         |  14 +-
- drivers/pmdomain/imx/gpcv2.c                       |   8 +-
- drivers/pmdomain/imx/imx93-pd.c                    |  22 +-
- drivers/pmdomain/mediatek/mtk-pm-domains.c         |   6 +-
- drivers/pmdomain/qcom/cpr.c                        |  92 ++---
- drivers/pmdomain/qcom/rpmhpd.c                     |  11 +-
- drivers/pmdomain/qcom/rpmpd.c                      |  20 +-
- drivers/pmdomain/rockchip/pm-domains.c             | 118 +++++--
- include/dt-bindings/power/rockchip,rk3576-power.h  |  30 ++
- include/linux/pm_domain.h                          |  16 +-
- 22 files changed, 373 insertions(+), 603 deletions(-)
- delete mode 100644 drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
- create mode 100644 include/dt-bindings/power/rockchip,rk3576-power.h
+Certainly needs a lot of energy and efforts.
+WE just need a guy who has full grasp of a lot of filesystems and Rust
+to solve this stuff altogether to avoid the abstraction degraded
+into some toy concepts.
 
