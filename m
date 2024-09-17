@@ -1,66 +1,51 @@
-Return-Path: <linux-kernel+bounces-331398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393A897AC5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:46:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDFB97AC63
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FF071C21892
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F6B2822B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FA414A62E;
-	Tue, 17 Sep 2024 07:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E121D14BF8B;
+	Tue, 17 Sep 2024 07:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="GMTNj07v"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xhxt53I8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A2882D98;
-	Tue, 17 Sep 2024 07:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420DE364BE;
+	Tue, 17 Sep 2024 07:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726559164; cv=none; b=ZGXN/k0MWKLVbNczxM2FoYGniARPS+JCBY4G2+yyRQTFUmwT+zKyff/J4/5Pn6lthujfMl5D7vzYEPdvwx/y+6rOGj1ken7C5S422+I4RG4EMjtGszsWl+IRtt1juT8jYI/OxqfkqzwtqsigNX5nG2ZQ3Jbyv/dkEtpZIeHLHME=
+	t=1726559372; cv=none; b=s/XFGiC83hJpGWt3A2e1AplrG9s3Z79iWExeXwa3u56C4RcDp1abFFtPmVBXUepGCbnaJRJMKDjgItNdxvFhn3l91ZA6B5qUlB4bEZbgSqRuSI1/p4B0AKdeSPQXhjhwrWyprJVgf4KfaAMqJ3uWKaLXyq0zTaoiRmQ+aGUDhY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726559164; c=relaxed/simple;
-	bh=x+0wJ4cJX9+ICI32gYblCANCl/cc296DmLw3hduBRCs=;
+	s=arc-20240116; t=1726559372; c=relaxed/simple;
+	bh=358E0okUPbU385P9yKRBH41FfQjs18Lb/yyRalxR+LU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RBj4DGtem/ryYJ7ENBeZVR+Lm+r2Qqo/DUNumnsqgC77WJ5Su+nqz1MBIwjLeoNj3mJR/PlYOi1eZgJfMSCgZRqbIvFmOpDxqelkk1ZBppNBg86wxiFaW1ucTc2YjHOqenjSNxhhEdL3THnzlqNVt7hTj5JFOvJ7EYX1d6i/Utg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=GMTNj07v; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 6A8781F9C7;
-	Tue, 17 Sep 2024 09:45:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1726559150;
-	bh=0ctxh6EHatNfEKj/a1TCaaMo+DnREyCVRKDJamzJcTA=; h=From:To:Subject;
-	b=GMTNj07vlNNAvHSkjs9h+CXYzHd3oI0JfRiZ/HOZ3AKx3Syqt2ZbRfgZ02g3ByEqI
-	 sFrv0aqx8qzPsSIhkDhEW/fQe7S4WC02W9mvZv2GFE659P3e3cjTr8ZracM0IW3Q3D
-	 6ZBhoKXOqK5sZGuWLcH/Ovzs31BEsTKsK3p2lpxY3kr4gw+OH684fXtaJCR67DiJ80
-	 10AkWd1dLoWFGniJy14/vu2xp2ONRvs476xdVIponkHV2NTAg80445XDSNMKnO3TaB
-	 i7/Hd1AQertKt/B9sQZ7k90O7CIqTgZTszEctaozmfsC/w+ssz7bofteSSqnzDocYy
-	 qulu7vIvg0FYw==
-Date: Tue, 17 Sep 2024 09:45:44 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v1] arm64: dts: colibri-imx8x: Add ad7879_ts label to
- touchscreen controller
-Message-ID: <20240917074544.GA7916@francesco-nb>
-References: <20240910152213.2072743-1-ghidoliemanuele@gmail.com>
- <1cfe3f3a-28a3-4030-b6ba-3892a2a7bc79@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ii2EbD9t7cjYZ6phVIzrXzrj2sxCXk0u+mv4uVx5Y5RGQXM5KoM98v9NSpiUaHjC/y7oMJ17AY14E987SyP1Uw0S/byWLTcmvnyulnoymbxed6mEbRKN9PhTrR2t+xeYQhqXk4LJnkPPpuNJnYOqSMdt5A4wTO1Af0K7XR/NzTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xhxt53I8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CFC5C4CEC6;
+	Tue, 17 Sep 2024 07:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726559371;
+	bh=358E0okUPbU385P9yKRBH41FfQjs18Lb/yyRalxR+LU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xhxt53I8+YHqaaCRT3yYHs1U/f6tIgrkLalt96SrIIygJEBRJzybz6teOw8suONsD
+	 bpxlxTYvQoSaEy4uKnlcsWTal2oFfN949fexL544kvEYepVZ/XVMNbrpG6xTZNAJFC
+	 ngbHzg2pn8gT79msutfvAcnwew3CqdIAttKy6Of8=
+Date: Tue, 17 Sep 2024 09:49:26 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] list: Remove duplicated and unused macro
+ list_for_each_reverse
+Message-ID: <2024091752-passivism-donut-ccca@gregkh>
+References: <20240917-fix_list-v1-1-8fb8beb41e5d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,38 +54,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1cfe3f3a-28a3-4030-b6ba-3892a2a7bc79@linaro.org>
+In-Reply-To: <20240917-fix_list-v1-1-8fb8beb41e5d@quicinc.com>
 
-Hello Krzysztof,
-it seems that this patch requires more explanation, maybe something
-that should be part of the commit message, let's see ...
-
-On Mon, Sep 16, 2024 at 06:10:55PM +0200, Krzysztof Kozlowski wrote:
-> On 10/09/2024 17:22, Emanuele Ghidoli wrote:
-> > From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> > 
-> > The device tree defines the touchscreen controller, but it cannot be
-> > enabled because it lacks a reference label.
+On Tue, Sep 17, 2024 at 03:28:18PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> It can be. Just enable it...
-
-colibri-imx8x is a SoM, it's not a complete self-contained device. The
-display touch controller is part of the SoM, however it is kept disabled
-since you need an actual touchscreen to make any use of it.
-
-This label would be used where an actual touchscreen is defined, this can
-happen with a DT overlay, for example.
-
-> > This commit adds a label to allow it to be referenced and enabled.
+> Remove macro list_for_each_reverse due to below reasons:
 > 
-> You changed here nothing. For me this patch is churn and pointless.
-> You add the label when you need to use it.
+> - it is same as list_for_each_prev.
+> - it is not used by current kernel tree.
+> 
+> Fixes: 8bf0cdfac7f8 ("<linux/list.h>: Introduce the list_for_each_reverse() method")
 
-DT files from the Linux kernel GIT are used also outside the Linux kernel
-sources, see for example U-Boot OF_UPSTREAM [1], to me it's fair to add
-a label for an out-of-tree user, am I wrong?
+Why is this a "Fix:"?
 
-Francesco
+> Cc: stable@vger.kernel.org
 
-[1] https://lore.kernel.org/all/20240222093607.3085545-1-sumit.garg@linaro.org/
+Why is this for stable?  What does this fix?  Just removing code that no
+one uses doesn't need to be backported, it's just dead, delete it.
+
+thanks,
+
+greg k-h
 
