@@ -1,87 +1,150 @@
-Return-Path: <linux-kernel+bounces-331268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA23897AA82
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:55:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEDA97AA84
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66227B29F6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:55:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 577C1B2A316
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2380E29405;
-	Tue, 17 Sep 2024 03:55:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB2C24B2F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D081E3A1B6;
+	Tue, 17 Sep 2024 03:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="XhS1Rtha"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFA02746D;
+	Tue, 17 Sep 2024 03:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726545348; cv=none; b=eScGM+K8XD2EC8l/SDAf/4zb+UJz64Eb5HOqFnjLkoQBkMdoHO4lnNkuY2PVeXV/sK5t4MG0NfifpCzeJ/B/qzFPNKZWNseY0ACGSBbzvqIDgKDawmFbc0/0EbGqUog9s4IOV96Ux+LNkeQgZ43Pr7lKT+BEpG4zGZ4AIQ5/ip8=
+	t=1726545378; cv=none; b=Lj33abx2jh3ldGZv/FSgi5BS4ZLAOJZezNJvyBuWmUAox/mZ1j2MqZSIriF4LS2VJcz4isA03vhy5WaN26phK84zZtyXM0NpVp/XH1+GUNGBRmbfuX3y/31dq0ZRNE/KGJ6OQGBZ06bfK4GojOPd3MAv/L2l4SW/3r5eYAkz8A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726545348; c=relaxed/simple;
-	bh=iyzdC1QHt7t3Pm75mx2OSOzugs6ydIyBElrYDwbNPKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=foVKePTlkLaQlOMzZht7qbdEFO/i15Hz95kBuB7S5LJmvOQ7RDU38gf7wrgUXJAFL29YVWOuwbeUglue2GbJ0rXIuFdBj5uIDSbNE2gl6ZvXq72kQLec9FESl//SRKhpyWh+x+DS4dFRXpSF5KhVrKn03mIFFmlYv36RPZXSRUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF45B106F;
-	Mon, 16 Sep 2024 20:56:07 -0700 (PDT)
-Received: from [10.162.40.18] (e116581.arm.com [10.162.40.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 101BE3F66E;
-	Mon, 16 Sep 2024 20:55:33 -0700 (PDT)
-Message-ID: <091f517d-e7dc-4c10-b1ac-39658f31f0ed@arm.com>
-Date: Tue, 17 Sep 2024 09:25:27 +0530
+	s=arc-20240116; t=1726545378; c=relaxed/simple;
+	bh=RxDqC2ozWh7Na6ekNLJXlIzMu5kIVsVugWTFCC2B6O8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=riHMIG2lMJj58HkJfQCwtZ7e3rSa1Qn+U5/kn7LceY5tPjpboHzoqNluO/KRI1UKVKQ4vED09YdlXCwJNuw5KHt8NMWlUzLQJh+7nBdm+CsGhMb1Wk2u5zuKT4EXohVI64KK44MY5Zusvvk+1Hxs7/zrXTP4tMql7MkebsmC50I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=XhS1Rtha; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1726545370;
+	bh=rdaKv2SCKQiEUBlkoIWcwFivUueaYkkndS0l9oHCs3g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=XhS1RthaZ7kvnnXheodzMpPhIp86mlGCd1Wy7g6j3KF6XyjSK0Asomsc+fsWUiiXw
+	 Ve8jGHpRnH06F91HdpmJXA1vp42StFjU/gV33nAFT/Fjo7xsbODDwzTdI/A72xzEfK
+	 u16WAFnIjNmRWDH7KPC7JBeHGbFxDw4DuaoYEroM=
+X-QQ-mid: bizesmtpip4t1726545357t2v78q9
+X-QQ-Originating-IP: JkZWiTTTCundvO0LijIHjMBooeCg5sOePB39obv1NMI=
+Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 17 Sep 2024 11:55:54 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 3136961633973931208
+From: WangYuli <wangyuli@uniontech.com>
+To: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com,
+	matthias.bgg@gmail.com,
+	hello@felixjara.me,
+	wangyuli@uniontech.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	aaron.ma@canonical.com,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com
+Subject: [PATCH] Bluetooth: btusb: Add MT7925 support for ID 0x13d3:0x3608
+Date: Tue, 17 Sep 2024 11:55:45 +0800
+Message-ID: <C2837417C967D014+20240917035545.21209-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Compute mTHP order efficiently
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, david@redhat.com, ryan.roberts@arm.com,
- anshuman.khandual@arm.com, baohua@kernel.org, hughd@google.com,
- ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- baolin.wang@linux.alibaba.com, gshan@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240913091902.1160520-1-dev.jain@arm.com>
- <ZugxqJ-CjEi5lEW_@casper.infradead.org>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <ZugxqJ-CjEi5lEW_@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
+From: Félix Jara <hello@felixjara.me>
 
-On 9/16/24 18:54, Matthew Wilcox wrote:
-> On Fri, Sep 13, 2024 at 02:49:02PM +0530, Dev Jain wrote:
->> We use pte_range_none() to determine whether contiguous PTEs are empty
->> for an mTHP allocation. Instead of iterating the while loop for every
->> order, use some information, which is the first set PTE found, from the
->> previous iteration, to eliminate some cases. The key to understanding
->> the correctness of the patch is that the ranges we want to examine
->> form a strictly decreasing sequence of nested intervals.
-> This is a lot more complicated.  Do you have any numbers that indicate
-> that it's faster?  Yes, it's fewer memory references, but you've gone
-> from a simple linear scan that's easy to prefetch to an exponential scan
-> that might confuse the prefetchers.
+Add compatibility Bluetooth device MT7925 for Asus UM5606 with
+ID 13d3:3608.
 
-I do have some numbers, I tested with a simple program, and also used
-ktime API, with the latter, enclosing from "order = highest_order(orders)"
-till "pte_unmap(pte)" (enclosing the entire while loop), a rough average
-estimate is that without the patch, it takes 1700 ns to execute, with the
-patch, on an average it takes 80 - 100ns less. I cannot think of a good
-testing program...
+The device info from /sys/kernel/debug/usb/devices as below.
 
-For the prefetching thingy, I am still doing a linear scan, and in each
-iteration, with the patch, the range I am scanning is going to strictly
-lie inside the range I would have scanned without the patch. Won't the
-compiler and the CPU still do prefetching, but on a smaller range; where
-does the prefetcher get confused? I confess, I do not understand this
-very well.
+T:  Bus=03 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3608 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+
+Tested in Asus Zenbook S 16 UM5606XA
+
+Signed-off-by: Félix Jara <hello@felixjara.me>
+Tested-by: Félix Jara <hello@felixjara.me>
+Link: https://github.com/openSUSE/kernel/pull/10
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index cd22b34542d5..ff804a2b6c94 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -508,6 +508,9 @@ static const struct usb_device_id blacklist_table[] = {
+ 	{ USB_DEVICE(0x13d3, 0x3568), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
++	{ USB_DEVICE(0x13d3, 0x3608), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH |
++						     BTUSB_VALID_LE_STATES },
+ 	{ USB_DEVICE(0x0489, 0xe0e2), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
+-- 
+2.43.0
 
 
