@@ -1,261 +1,250 @@
-Return-Path: <linux-kernel+bounces-331327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C581C97AB58
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D35E597AB5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B87828C1ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7778A28199D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFF354F95;
-	Tue, 17 Sep 2024 06:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6828B1292CE;
+	Tue, 17 Sep 2024 06:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gPJksEur"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTAYCN1g"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514373A8F7
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476793A8F7;
+	Tue, 17 Sep 2024 06:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726553961; cv=none; b=Vk1T7KceY/LdSLr6rPefB84GRqh1I3QcO08IRHTO8uuslJGTGduepvISpbKHbx05xApJm3p7AXVfwwWh/AscR/Zdog2ncVmG2NM7jWOnwTqjVnhOuBp/425XCoVuP90bIPEWSyvIV5gJ1+CCLvrFqReNwKKGfT4tgM8opw+uxpY=
+	t=1726554196; cv=none; b=sIdIX3jRWQqwcd7QfiXQCTZTMhe1Dq1BT8xv+Akbpxh41bfnDq6Hr8ROic+xqIGG0hfdR4Go6eAPygmDqAuTYozGzTDQnd0LJo4Yt4u+IC8eIWT8UYcpnHwQgONzyhFkUzwJI2Sp+S412hlqbBsym2eomiy/JWeqL/uQcEzRANE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726553961; c=relaxed/simple;
-	bh=PPxQI8/Ol6thjErA4MShvQ6/FUJXqJ3cLMcF4VLikNM=;
+	s=arc-20240116; t=1726554196; c=relaxed/simple;
+	bh=MHZ6TBzV7dK+73H4yIqXBlCwEmhZLW3I8Ye/passFWc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QuhmBSkWRjMvqUu/4SYncDKs+Hu0l5bl0/NYTw/NWHEJ4jgv0T4ok09kponJScCk5k3apTMyqhOz6UZMn0bZz8fPB4Ji2i9kwYwhn9+nRXYzz84N+lvacV+UBiLTUy1TTM+IsTbUziraKb81qdZmUAW+gfJaLfMfTM5UryGHA7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gPJksEur; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so3368801a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 23:19:19 -0700 (PDT)
+	 To:Cc:Content-Type; b=mLKFF7PmhghXS5T4myVeNdjvAtAMK/rZ3pE6zrK3Hv9jds+cOl28ewwAxydJB7S1193mQBE/sivY9EMleB8u6x23pqLD+SrkVCTKxHVsyGE35vZQNsQwMNhoYfEe/wH5woN+Ef7wKCLY2At5yOzCA9/ejWiLYkT5H/Ta+bqGqms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XTAYCN1g; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2055a3f80a4so35018985ad.2;
+        Mon, 16 Sep 2024 23:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726553959; x=1727158759; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3rKaSVCwL8V6+GJeMoSG0acZSwK+zyKLY/9ImuFAJRM=;
-        b=gPJksEuryfP93Zub/MNXkTXsg2GS1TPCmg53pj7+8kw2+ckJ9KJlxm/Re/Fk+kkaM2
-         oOsUVqfDyqDvupCh3A8xfID61R+Gu1Ca5Jd3AtMTtP46RwDv8DRrl0TuZABiDabIel74
-         0EgNIePozCovWfum97yi39em5JETr0wmE4XC1L61GgTDvh0zaOJN6mYL2VZ0LPALSNhT
-         XLQyj4ywKD5/m0BlvDrpyrjq4+YX5fHaW7SahTDHURkPXXqReYop1WQwT5owGIvFlW/J
-         EAKxwdbFD94oEcXtJU9H61pxwipq3wRjSBe2gGdLG4B6Mx/0BUr6GRcYXYhmuz9A1JJv
-         oQOA==
+        d=gmail.com; s=20230601; t=1726554194; x=1727158994; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lssmupy31DP9vTEmMY66pZzEecZJ03hgiUUD1EIaisY=;
+        b=XTAYCN1gxFVRAvIcxuLY9udLfmoK+qwoqrADL/952dowMAqhxsY+S5AUwPtOB9qFDv
+         bYJ2wbXegweSfu7TJuf8u3xmUxrqDqVV23UpJHpBBy+a1xVlcWadzcrWNXg9B+KgLzZC
+         vQC2O1+zNK4ciVugplejSpr82D+iQYQTDw8XUZXiWrqHwplZO8qdzvUi9MhQNNlKBDea
+         erYFik9V4rXlO41RRErEwOA6/jT6Fm+0yd2M+whcVGs5fMSqmeVFKJuv8CIYHYwEHevj
+         YsRh2upHVFE/biWxsFtOq+zDCJg1DJtNs3G7Wg9Rq2jTWjrbrORHh0J7ds94Pe5zkvTY
+         ohEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726553959; x=1727158759;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3rKaSVCwL8V6+GJeMoSG0acZSwK+zyKLY/9ImuFAJRM=;
-        b=ZVioXdTE5Qht76IaBdFUtv2FF3uASbPfNZxuDu+Fj4L6fIHOk1EdJhTHpOHkt7D5aX
-         /aQCSG/OVJYhhrlX80tOz5bvFVgOcYA4mkM0/S56GGf/hUWC00n29HqZqgDaFED0ukEF
-         may3Msq6emOOyaBAWuCY8Dj8oGSrDaEn2k/j3E32AKgJARE70ZLrmEjvntJXYKO1XOZE
-         O/ZaOYJ4rfRptARjCESObyIH4u/K6W14CGW2zj2W+kdyaRdcRY0xu+wElRPxGA4F7vaj
-         v2FN9Zx0i/gl/94yqgYfLmsxKzFbsXYWZySO49CIRBNjTpSuDkfb0xD4wpSDRmqL3eHG
-         oPkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSfby/7DdPkBVVbgwqc/m5uFX9zFtwgvXZpxqL5kCWvuJHGJz3WGm96FT0L9WBjSu8pDiZ/bLhd77zjzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC4BeIwKsPopELT8TCfDj8mfIzAvwiq/XD5SUc5lVuaCqF3X6y
-	xbhBiGTe5S1PNXYpOmb14YfIrhu7bRO51CLdBiD/Kd7UCXClrk8bMWXC8qeab1NvGoHNWSnjgnX
-	oANMQ76YQBlA9oJTTZXEyCJKdAHZghnm4y1n5eg==
-X-Google-Smtp-Source: AGHT+IFuW6dBNf3DOn+Q2nKitRY27VuOT+N2wFm4dWqungxdicQl/uT9EyLoawRHLMVTRfq/KuMW5W8Zp0OjVBTXoBM=
-X-Received: by 2002:a17:90b:886:b0:2d3:c0b9:7c2a with SMTP id
- 98e67ed59e1d1-2db9ffee669mr20639834a91.20.1726553958529; Mon, 16 Sep 2024
- 23:19:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726554194; x=1727158994;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lssmupy31DP9vTEmMY66pZzEecZJ03hgiUUD1EIaisY=;
+        b=k5JZJ+zyuWk67BaILMUMJFBNG0GYZtc56CtPLDDKQINDTkkzIkoVbyjoSbcMxtgSbk
+         blnXhpX5rwWX1S4Mtfx58pT2lOzSCmA0BYKRz6/mUDValMGtWPI9bo6mUr5PhPLu96ck
+         5rqGQ4iQSgIRvB2eJutNz3hf+hCWdXFMUc7t+GfXJsFSVZC6Qg39N4DxM00t+2CsNvMJ
+         1DQ3K3d5gV08cx/IpZI5p9aOqjNbEKmH0aNfmeSMov6tuU3Asr9yaZUOgKmLndJlUnhQ
+         UrkqWPLi7Iu6Sy8rvtvPH0vaSun0A3YJbCEzobsUKT9XRJVxwfQ26+Jq1p1sY6cyhDS3
+         Myig==
+X-Forwarded-Encrypted: i=1; AJvYcCVe3AEacNhY85oeAE2kkF0wg0zNNpIM/R7d/VNQaun2IthaoDb7cHX9T317fA3OquoeeN49b1Mwx2yu@vger.kernel.org, AJvYcCWRqTfaU3nL3uXOvS1tIVmVeJWipkhAmctN+g+M1Zsr4Q4DZHIvj2FrdteTS+9peTlssKiDPyyqfkA64J0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2UWPtcX2adN1fUe2LuM21mdn7yI5B8Jn8Sy87X8jhaYqWuDN/
+	X84K2YcBrVm7MrEG2r9j8NQJ6DC4vZvf9wCdttI5gFzmy4hItNqc3Lo062tx3gbWaz8gsLs9D/O
+	ZanjvHm3O9yCy3O66RtVT3bFcaHY=
+X-Google-Smtp-Source: AGHT+IGJTHVZdoDO5HJBZmPo9F6gVZnzpPARSZ6LOyRm1uxyS7SUHcSjHLQCMjG2on+hkbBVT4oCZCv6StIehcdqnQQ=
+X-Received: by 2002:a17:90a:9e1:b0:2d8:8bfd:d10b with SMTP id
+ 98e67ed59e1d1-2dba0067ffamr18580562a91.26.1726554194461; Mon, 16 Sep 2024
+ 23:23:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725120315.212428-1-zhengzucheng@huawei.com>
- <3e68ccda-1606-9494-f57a-75be9668b83d@huawei.com> <cb3a3f3e-727a-4cbb-b4a8-f9469ed4f08d@redhat.com>
- <9982cb8d-9346-0640-dd9f-f68390f922e9@huawei.com> <CAKfTPtCdfzZ9Wxr7+zH5WW171LJGttgzto4W2wH9mm4d0jcTLg@mail.gmail.com>
- <f389a220-b628-575a-7af1-d897ee5730cc@huawei.com>
-In-Reply-To: <f389a220-b628-575a-7af1-d897ee5730cc@huawei.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 17 Sep 2024 08:19:07 +0200
-Message-ID: <CAKfTPtDMuqJUKfKSJNXMCPP13SfhG_sXMF2VUMw=6DD1XmxhWg@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BQuestion=5D_sched=EF=BC=9Athe_load_is_unbalanced_in_the?=
-	=?UTF-8?Q?_VM_overcommitment_scenario?=
-To: zhengzucheng <zhengzucheng@huawei.com>
-Cc: Waiman Long <longman@redhat.com>, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, oleg@redhat.com, 
-	Frederic Weisbecker <frederic@kernel.org>, mingo@kernel.org, peterx@redhat.com, tj@kernel.org, 
-	tjcao980311@gmail.com, linux-kernel@vger.kernel.org
+References: <20240916040629.28750-1-aha310510@gmail.com> <2024091648-excusable-unfilled-83de@gregkh>
+ <15bc0f3a-5433-43e0-b0b0-8b9c26dec165@suse.com> <CAO9qdTHrbG-aWetpM_e7zHUhrwPD=7uCHPbWSMoorgnwjKEOmA@mail.gmail.com>
+ <bf971924-9d91-40a3-a4c2-5b518e2ce2fd@suse.com>
+In-Reply-To: <bf971924-9d91-40a3-a4c2-5b518e2ce2fd@suse.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Tue, 17 Sep 2024 15:23:02 +0900
+Message-ID: <CAO9qdTHWfYv8u-gJqGkuG_OSdkU9c=qZSnEbE+zCYWG5bT6r+Q@mail.gmail.com>
+Subject: Re: [PATCH] usb: use mutex_lock in iowarrior_read()
+To: Oliver Neukum <oneukum@suse.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, colin.i.king@gmail.com, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, 14 Sept 2024 at 09:04, zhengzucheng <zhengzucheng@huawei.com> wrote=
-:
+Oliver Neukum <oneukum@suse.com> wrote:
 >
+> Hi,
 >
-> =E5=9C=A8 2024/9/13 23:55, Vincent Guittot =E5=86=99=E9=81=93:
-> > On Fri, 13 Sept 2024 at 06:03, zhengzucheng <zhengzucheng@huawei.com> w=
-rote:
-> >> In the VM overcommitment scenario, the overcommitment ratio is 1:2, 8
-> >> CPUs are overcommitted to 2 x 8u VMs,
-> >> and 16 vCPUs are bound to 8 cpu. However, one VM obtains only 2 CPUs
-> >> resources, the other VM has 6 CPUs.
-> >> The host is configured with 80 CPUs in a sched domain and other CPUs a=
-re
-> >> in the idle state.
-> >> The root cause is that the load of the host is unbalanced, some vCPUs
-> >> exclusively occupy CPU resources.
-> >> when the CPU that triggers load balance calculates imbalance value,
-> >> env->imbalance =3D 0 is calculated because of
-> >> local->avg_load > sds->avg_load. As a result, the load balance fails.
-> >> The processing logic:
-> >> https://github.com/torvalds/linux/commit/91dcf1e8068e9a8823e419a7a34ff=
-4341275fb70
+> On 16.09.24 14:44, Jeongjun Park wrote:
+> > Oliver Neukum <oneukum@suse.com> wrote:
 > >>
 > >>
-> >> It's normal from kernel load balance, but it's not reasonable from the
-> >> perspective of VM users.
-> >> In cgroup v1, set cpuset.sched_load_balance=3D0 to modify the schedule
-> >> domain to fix it.
-> >> Is there any other method to fix this problem? thanks.
-> > I'm not sure how to understand your setup and why the load balance is
-> > not balancing correctly 16 vCPU between the 8 CPUs.
+> >>
+> >> On 16.09.24 06:15, Greg KH wrote:
+> >>> On Mon, Sep 16, 2024 at 01:06:29PM +0900, Jeongjun Park wrote:
+>
+> >>> Please use the guard() form here, it makes the change much simpler and
+> >>> easier to review and maintain.
+> >>
+> >> That would break the O_NONBLOCK case.
+> >>
+> >> Looking at the code it indeed looks like iowarrior_read() can race
+> >> with itself. Strictly speaking it always could happen if a task used
+> >> fork() after open(). The driver tries to restrict its usage to one
+> >> thread, but I doubt that the logic is functional.
+> >>
+> >> It seems to me the correct fix is something like this:
 > >
-> > >From your test case description below,  you have 8 always running
-> > threads in cgroup A and 8 always running threads in cgroup B and the 2
-> > cgroups have only 8 CPUs among 80. This should not be a problem for
-> > load balance. I tried something similar although not exactly the same
-> > with cgroupv2 and rt-app and I don't have noticeable imbalance
-> >
-> > Do you have more details that you can share about your system ?
-> >
-> > Which kernel version are you using ? Which arch ?
+> > Well, I don't know why it's necessary to modify it like this.
+> > I think it would be more appropriate to patch it to make it
+> > more maintainable by using guard() as Greg suggested.
 >
-> kernel version: 6.11.0-rc7
-> arch: X86_64 and cgroup v1
+> Allow me to explain detail.
+>
+> guard() internally uses mutex_lock(). That means that
+>
+> a) it will block
+> b) having blocked it will sleep in the state TASK_UNINTERRUPTIBLE
+>
+> The driver itself uses TASK_INTERRUPTIBLE in iowarrior_read(),
+> when it waits for IO. That is entirely correct, as it waits for
+> an external device doing an operation that may never occur. You
+> must use TASK_INTERRUPTIBLE.
+>
+> Now, if you use mutex_lock() to wait for a task waiting for IO
+> to occur in the state TASK_INTERRUPTIBLE, you are indirectlywaiting for
+> an event that you must wait for in TASK_INTERRUPTIBLE in the state
+> TASK_UNINTERRUPTIBLE.
+> That is a bug. You have created a task that cannot be killed (uid may not match),
+> but may have to be killed. Furthermore you block even in case the
+> device has been opened with O_NONBLOCK, which is a second bug.
+>
+> These limitations are inherent in guard(). Therefore you cannot use
+> guard here.
 
-okay
+Okay. But O_NONBLOCK flag check already exists, and I don't know
+if we need to branch separately to mutex_trylock just because O_NONBLOCK
+flag exists. I think mutex_lock_interruptible is enough.
+
+And the point of locking is too late. I think it would be more appropriate to
+read file->private_data and then lock it right away.
+
+I think this patch is a more appropriate patch:
+
+---
+ drivers/usb/misc/iowarrior.c | 41 +++++++++++++++++++++++++++---------
+ 1 file changed, 31 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index 6d28467ce352..6fb4ecebbc15 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -277,28 +277,40 @@ static ssize_t iowarrior_read(struct file *file,
+char __user *buffer,
+    struct iowarrior *dev;
+    int read_idx;
+    int offset;
++   int retval = 0;
+
+    dev = file->private_data;
+
++   if (mutex_lock_interruptible(&dev->mutex)) {
++       retval = -EAGAIN;
++       goto exit;
++   }
++
+    /* verify that the device wasn't unplugged */
+-   if (!dev || !dev->present)
+-       return -ENODEV;
++   if (!dev->present) {
++       retval = -ENODEV;
++       goto unlock_exit;
++   }
+
+    dev_dbg(&dev->interface->dev, "minor %d, count = %zd\n",
+        dev->minor, count);
+
+    /* read count must be packet size (+ time stamp) */
+    if ((count != dev->report_size)
+-       && (count != (dev->report_size + 1)))
+-       return -EINVAL;
++       && (count != (dev->report_size + 1))) {
++       retval = -EINVAL;
++       goto unlock_exit;
++   }
+
+    /* repeat until no buffer overrun in callback handler occur */
+    do {
+        atomic_set(&dev->overflow_flag, 0);
+        if ((read_idx = read_index(dev)) == -1) {
+            /* queue empty */
+-           if (file->f_flags & O_NONBLOCK)
+-               return -EAGAIN;
++           if (file->f_flags & O_NONBLOCK) {
++               retval = -EAGAIN;
++               goto unlock_exit;
++           }
+            else {
+                //next line will return when there is either new data,
+or the device is unplugged
+                int r = wait_event_interruptible(dev->read_wait,
+@@ -309,28 +321,37 @@ static ssize_t iowarrior_read(struct file *file,
+char __user *buffer,
+                                  -1));
+                if (r) {
+                    //we were interrupted by a signal
+-                   return -ERESTART;
++                   retval = -ERESTART;
++                   goto unlock_exit;
+                }
+                if (!dev->present) {
+                    //The device was unplugged
+-                   return -ENODEV;
++                   retval = -ENODEV;
++                   goto unlock_exit;
+                }
+                if (read_idx == -1) {
+                    // Can this happen ???
+-                   return 0;
++                   goto unlock_exit;
+                }
+            }
+        }
+
+        offset = read_idx * (dev->report_size + 1);
+        if (copy_to_user(buffer, dev->read_queue + offset, count)) {
+-           return -EFAULT;
++           retval = -EFAULT;
++           goto unlock_exit;
+        }
+    } while (atomic_read(&dev->overflow_flag));
+
+    read_idx = ++read_idx == MAX_INTERRUPT_BUFFER ? 0 : read_idx;
+    atomic_set(&dev->read_idx, read_idx);
++   mutex_unlock(&dev->mutex);
+    return count;
++
++unlock_exit:
++   mutex_unlock(&dev->mutex);
++exit:
++   return retval;
+ }
+
+ /*
+--
 
 >
-> >> Abstracted reproduction case=EF=BC=9A
-> >> 1.environment information=EF=BC=9A
-> >>
-> >> [root@localhost ~]# cat /proc/schedstat
-> >>
-> >> cpu0
-> >> domain0 00000000,00000000,00010000,00000000,00000001
-> >> domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-> >> domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-> >> cpu1
-> >> domain0 00000000,00000000,00020000,00000000,00000002
-> >> domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-> >> domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-> >> cpu2
-> >> domain0 00000000,00000000,00040000,00000000,00000004
-> >> domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-> >> domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-> >> cpu3
-> >> domain0 00000000,00000000,00080000,00000000,00000008
-> >> domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-> >> domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-> > Is it correct to assume that domain0 is SMT, domain1 MC and domain2 PKG=
-  ?
-> >   and cpu80-83 are in the other group of PKG ? and LLC is at domain1 le=
-vel ?
->
-> domain0 is SMT and domain1 is MC
-> thread_siblings_list:0,80. 1,81. 2,82. 3,83
-
-Yeah, I should have read more carefully the domain0 cpumask
-
-> LLC is at domain1 level
->
-> >> 2.test case:
-> >>
-> >> vcpu.c
-> >> #include <stdio.h>
-> >> #include <unistd.h>
-> >>
-> >> int main()
-> >> {
-> >>           sleep(20);
-> >>           while (1);
-> >>           return 0;
-> >> }
-> >>
-> >> gcc vcpu.c -o vcpu
-> >> -----------------------------------------------------------------
-> >> test.sh
-> >>
-> >> #!/bin/bash
-> >>
-> >> #vcpu1
-> >> mkdir /sys/fs/cgroup/cpuset/vcpu_1
-> >> echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.cpus
-> >> echo 0 > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.mems
-> >> for i in {1..8}
-> >> do
-> >>           ./vcpu &
-> >>           pid=3D$!
-> >>           sleep 1
-> >>           echo $pid > /sys/fs/cgroup/cpuset/vcpu_1/tasks
-> >> done
-> >>
-> >> #vcpu2
-> >> mkdir /sys/fs/cgroup/cpuset/vcpu_2
-> >> echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.cpus
-> >> echo 0 > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.mems
-> >> for i in {1..8}
-> >> do
-> >>           ./vcpu &
-> >>           pid=3D$!
-> >>           sleep 1
-> >>           echo $pid > /sys/fs/cgroup/cpuset/vcpu_2/tasks
-> >> done
-> >> ------------------------------------------------------------------
-> >> [root@localhost ~]# ./test.sh
-> >>
-> >> [root@localhost ~]# top -d 1 -c -p $(pgrep -d',' -f vcpu)
-> >>
-> >> 14591 root      20   0    2448   1012    928 R 100.0   0.0 13:10.73 ./=
-vcpu
-> >> 14582 root      20   0    2448   1012    928 R 100.0   0.0 13:12.71 ./=
-vcpu
-> >> 14606 root      20   0    2448    872    784 R 100.0   0.0 13:09.72 ./=
-vcpu
-> >> 14620 root      20   0    2448    916    832 R 100.0   0.0 13:07.72 ./=
-vcpu
-> >> 14622 root      20   0    2448    920    836 R 100.0   0.0 13:06.72 ./=
-vcpu
-> >> 14629 root      20   0    2448    920    832 R 100.0   0.0 13:05.72 ./=
-vcpu
-> >> 14643 root      20   0    2448    924    836 R  21.0   0.0 2:37.13 ./v=
-cpu
-> >> 14645 root      20   0    2448    868    784 R  21.0   0.0 2:36.51 ./v=
-cpu
-> >> 14589 root      20   0    2448    900    816 R  20.0   0.0 2:45.16 ./v=
-cpu
-> >> 14608 root      20   0    2448    956    872 R  20.0   0.0 2:42.24 ./v=
-cpu
-> >> 14632 root      20   0    2448    872    788 R  20.0   0.0 2:38.08 ./v=
-cpu
-> >> 14638 root      20   0    2448    924    840 R  20.0   0.0 2:37.48 ./v=
-cpu
-> >> 14652 root      20   0    2448    928    844 R  20.0   0.0 2:36.42 ./v=
-cpu
-> >> 14654 root      20   0    2448    924    840 R  20.0   0.0 2:36.14 ./v=
-cpu
-> >> 14663 root      20   0    2448    900    816 R  20.0   0.0 2:35.38 ./v=
-cpu
-> >> 14669 root      20   0    2448    868    784 R  20.0   0.0 2:35.70 ./v=
-cpu
-> >>
-
-So I finally understood your situation. The limited cpuset screws up
-the avg load of system for domain1. The group_imbalanced state is
-there to try to fix an imbalanced situation related to tasks that are
-pinned to a subset of CPUs of the sched domain. But this can't cover
-all cases.
-
-> > .
+>         Regards
+>                 Oliver
 
