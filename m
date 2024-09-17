@@ -1,342 +1,192 @@
-Return-Path: <linux-kernel+bounces-331674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0951497AFE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:59:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1996497AFE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E5551C22567
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:59:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C42231F244D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770AE1662E8;
-	Tue, 17 Sep 2024 11:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ABF171E68;
+	Tue, 17 Sep 2024 11:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aTrK+auw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="esvqRVWg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383391EB35
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9308E1EB35
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726574383; cv=none; b=htSS7lFE0mfDD/CDFCGx6pXftRohGAnvGxqt2XtUanR3S6buXnF06fbmPYWSyDWoOwj/auAJ8ldATLcbNsBB2uLmaFSaSuJ8bPDs3cQKLqEOQ4OVbmoeMrtzqatLoBnlXs0/KShcXRpSjy/v0ZyidF2mqmhPm8QQXYu+TrizmdM=
+	t=1726574393; cv=none; b=A/ngD9YWELqPhJnSomBAFqajiwd3rxbrDCHH2c3QCwyxOg1Mpda1lAfHmJ3vlDLs4yB9D9tNo+8SAKK7hLe9oo5wxIWRBBYDidzd+EeA7xD/fPElQVR0H08XNOd/9F3enzGPerc+zWuqWZJRH240lMIG4PgZag4u2XIGL4H1b7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726574383; c=relaxed/simple;
-	bh=jV7fAjlGkXI4mLOzdNJdKxajzqDXIOCJq5HRGmq8z/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NyfkGG27ocJNRWAxEMTUHmj0PfDTkKWP6mKoif9sm7DtY+fMztuh1N3uVBe8ujOan8N9oEuNz08YFY0GsDX4BsboA9XFVSltN7vWMy8FkKxsnTjvrEGTMVApMotx2G9pJSgqzh7yNIDTuF50nSMo7WOwszyaxLaPV9hyTt16TEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aTrK+auw; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1726574393; c=relaxed/simple;
+	bh=Ik0qrV/mr31A5upMb1SUXUGcH6/CprQL5YfZil+Xkg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dZToX/qc8pabeV+AxzMBTZQAUsEZVyUsAFS/VPZ8CRunZp6S+q4Hee6IHhLLnCL/CcvqyKo+fnDNVqRxrNLDJCE68ci0zdmHL0bBM95UzLZLfee1jE2ezm4+3I6ttgENygh6UxTLdXbAqEmVDoGzjljZT+PHeLFxSb/tE0j37+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=esvqRVWg; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726574380;
+	s=mimecast20190719; t=1726574390;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g0PJ7PkwEzbZGxWHx3WAu3PZd7aveOxf5Ybsvqj+2Y8=;
-	b=aTrK+auwiQ5+R7CCX0JHufuPas63sn3+e4S24a1rSrAfrraR47qTPFWIdDEfQ8ZIGQd/yo
-	sIG96C11BTTfWzXmLJMyePZGUT4pesigOGoSVV9qpijp/cwgHqxwOu7cBxhBsDI7cQ9bB8
-	KMD0YorRCFCL1ZdCzcAz2u3oZea3F+0=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5tuyWy+viPkv83wz0PbFEOt4BIBRr5UCA+QlQy8fgpA=;
+	b=esvqRVWgy8uWnIqQLnjgk8bSoDNhRyJ2LWxZn82oPDfOXJmCgu9RIT214b2Y9uxRcwpwi1
+	ZlHXtVXT1R7e+rFly216Qw8dVqu5C/fbDL9KPsFuITYAbebJCMJ7Nm6ndrT6m95cW3Qf1A
+	CB3TqIHMMZFv+Cl1gJJBiNWCkeofHz4=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-12-hxTpZIDVM2WppUkcEAQSeA-1; Tue, 17 Sep 2024 07:59:38 -0400
-X-MC-Unique: hxTpZIDVM2WppUkcEAQSeA-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-374baf9f142so3135930f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 04:59:38 -0700 (PDT)
+ us-mta-83-8v_mbUs5OeaC85bb4u5T4g-1; Tue, 17 Sep 2024 07:59:49 -0400
+X-MC-Unique: 8v_mbUs5OeaC85bb4u5T4g-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a8d13a9cc7aso316202166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 04:59:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726574377; x=1727179177;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g0PJ7PkwEzbZGxWHx3WAu3PZd7aveOxf5Ybsvqj+2Y8=;
-        b=aUa3nGPGRbzcPn8HHGe/I+FlmPnuvA6D7n5e9JeYt5KsChZgXAkEjluPo5wSeCugNH
-         6sYIJswfHkWV6eZS68U6auXjg9eOj8OmcmlQk8ibGoOU3kI3ZBEwBj+DZTgbeQ3l8fuM
-         UU6A5WyS2zx5MOgqJKX8KWrhMTkUiQQLvjZ/P49we3iDQU51ArgpwCWwnb4moYmIETv1
-         LKt/PlSO3EL8P7LBeM+NLCwZLpgXCOyZpjr6/wHjuMwhbZEbpf+/MveMr8lG3hltdWca
-         /bNf7ZpKdWJIwAtCjqPu62fVqzlIPZk9uMMOEI7JOKNS7MBtt2BLWVPFN+M5hH3dMbwd
-         KUeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWj+OaZ1L6g33yEOYRy/b+bk4Q/VeJYnMCHi8zDgBXCnmZIDm4/nl14LGkfRMWH9D4ksgXOXQvY5gVwdy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ9TFa8beXXh2OWYHSvVBy4lmHYgJAy3NOOtTaCk0MAh8gx2J7
-	YeNF7rqCeJ+R21+FCVfi+0N9G16qWnwm2XAu6uGHbA+ZFnQvW74rcSxaUtNjkKPeiiycHFFlBdJ
-	JCiUfi1aLNgU4EgwYwOZ+y0nAmgwvIPA53zlGOeGub1kQCZWCorcCLwf0cO3pjQ==
-X-Received: by 2002:a5d:4811:0:b0:374:c6ad:a7c6 with SMTP id ffacd0b85a97d-378c2d065c0mr9143148f8f.20.1726574377526;
-        Tue, 17 Sep 2024 04:59:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjC41MYJffw19rKEKQL46pxo/mJddKgbcEKKYmVKZJhDrHTTgKw4LwBKde+I7JXBcisF/wAw==
-X-Received: by 2002:a5d:4811:0:b0:374:c6ad:a7c6 with SMTP id ffacd0b85a97d-378c2d065c0mr9143133f8f.20.1726574376947;
-        Tue, 17 Sep 2024 04:59:36 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e780015dsm9361963f8f.69.2024.09.17.04.59.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 04:59:36 -0700 (PDT)
-Date: Tue, 17 Sep 2024 13:59:34 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v10 07/21] acpi/ghes: rework the logic to handle HEST
- source ID
-Message-ID: <20240917135934.38579213@imammedo.users.ipa.redhat.com>
-In-Reply-To: <0dd7081717b23b4c1536bc86abfa926388cf2139.1726293808.git.mchehab+huawei@kernel.org>
-References: <cover.1726293808.git.mchehab+huawei@kernel.org>
-	<0dd7081717b23b4c1536bc86abfa926388cf2139.1726293808.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        d=1e100.net; s=20230601; t=1726574388; x=1727179188;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5tuyWy+viPkv83wz0PbFEOt4BIBRr5UCA+QlQy8fgpA=;
+        b=G1O7xA0knBL9oCIZoBCF6i76naqJpB92GsED5SfB3Fo0OLEUmgVdEzmFdHPiofUCJv
+         yJZ57KxV+ffkGUXAVxs2wiPdAgp1fkwLDdq1OSCoCQfgsCEhfLW1qLhKK20tVCX60BsN
+         GPgiVBGMTyM0FMT/Rg5HdwOYHvSgZ8Bb7AUrJrag1Gkm4094pz04UTnGXtyXMz4A+ppQ
+         QdAwN1LK77rjANcbUUX/IjYWcQWS+TwvMtGDAe6jOuGLs2ZYIgJ6ksedeBntYd6KAqJY
+         a6jlJ136k45qwkV7VsFuhO0+qGvUPOXvDjU23Z8YB4c5rRFmOtGrxkqOp6FUr699kur7
+         0Blg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbuEn05+pkYQqZAX1V0WBmHNT70edD2YIziLuJ4wFJQMRlsD5C7b3x86raRL+ITZ3CXHhxU/XeIsUcC3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrUac4EujsktaS9GrN47aORTUGAXsPzhUPD0+6NHywxUnq/c42
+	F4M2Y0rLki+CKEePixNSi7sA+H+Z4OvHmaBwkfe8AvvTLaK9WYOZnTjAZRSk4B9dFR454eHSmWM
+	0LqnCVgS1KboGpam7ijwdSSilG6U7Mk1vTwQ7Tli5xa0FkyS+TKX+Q+Y41IjMoBPrjjwUQw==
+X-Received: by 2002:a17:907:d2a:b0:a8d:51d6:b3ef with SMTP id a640c23a62f3a-a9029668104mr2064965266b.56.1726574388147;
+        Tue, 17 Sep 2024 04:59:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF97R38V4HWZTO7dwSDSPSvsE7YIPAL+RK1R5oC7wdwLlieHBu7z/9cKMMKIAq/N3RaIp00SA==
+X-Received: by 2002:a17:907:d2a:b0:a8d:51d6:b3ef with SMTP id a640c23a62f3a-a9029668104mr2064963066b.56.1726574387618;
+        Tue, 17 Sep 2024 04:59:47 -0700 (PDT)
+Received: from [192.168.55.136] (tmo-113-196.customers.d1-online.com. [80.187.113.196])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b3a04sm437357366b.125.2024.09.17.04.59.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 04:59:47 -0700 (PDT)
+Message-ID: <2875de57-6e11-4cfe-a0a6-36879ca96091@redhat.com>
+Date: Tue, 17 Sep 2024 13:59:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/huge_memory: ensure huge_zero_folio won't have
+ large_rmappable flag set
+To: Miaohe Lin <linmiaohe@huawei.com>, akpm@linux-foundation.org,
+ willy@infradead.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240914015306.3656791-1-linmiaohe@huawei.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240914015306.3656791-1-linmiaohe@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sat, 14 Sep 2024 08:13:28 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-
-> The current logic is based on a lot of duct tape, with
-> offsets calculated based on one define with the number of
-> source IDs and an enum.
+On 14.09.24 03:53, Miaohe Lin wrote:
+> Ensure huge_zero_folio won't have large_rmappable flag set. So it can be
+> reported as thp,zero correctly through stable_page_flags().
 > 
-> Rewrite the logic in a way that it would be more resilient
-> of code changes, by moving the source ID count to an enum
-> and make the offset calculus more explicit.
+> Fixes: 5691753d73a2 ("mm: convert huge_zero_page to huge_zero_folio")
+ > Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>> ---
+>   mm/huge_memory.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> Such change was inspired on a patch from Jonathan Cameron
-> splitting the logic to get the CPER address on a separate
-> function, as this will be needed to support generic error
-> injection.
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 2a73efea02d7..4e34b7f89daf 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -218,6 +218,8 @@ static bool get_huge_zero_page(void)
+>   		count_vm_event(THP_ZERO_PAGE_ALLOC_FAILED);
+>   		return false;
+>   	}
+> +	/* Ensure zero folio won't have large_rmappable flag set. */
+> +	folio_clear_large_rmappable(zero_folio);
+>   	preempt_disable();
+>   	if (cmpxchg(&huge_zero_folio, NULL, zero_folio)) {
+>   		preempt_enable();
 
-so this patch switches to using HEST to lookup error status block
-by source id, though nothing in commit message mentions that.
-Perhaps it's time to rewrite commit message to be more
-specific/clear on what it's doing.  
+Doesn't that rather fix
 
-now, I'd split this on several patches that should also take care of
-wiring needed to preserve old lookup to keep migration with 9.1 machines
-working:
+commit 4c8763e84aae4d04d94b35aca9f7db6a8930ad77
+Author: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+Date:   Fri Jul 5 10:43:43 2024 +0000
 
- 1. extract error status block read_ack addresses calculation/lookup
-    into a separate function (just current code, without HEST lookup).
- 2. since old lookup code handles only 1 source and won't ever see multiple
-    error sources, simplify that as much as possible to keep old way simple
-    (and mention that in commit message).
-    it basically should take 1st error status block/read ack addresses from
-    hardware_errors
-
- 3. add to AcpiGedState a callback to with signature of #1 lookup func.
-    (which will be used to switch between old/new code), by default set to
-    old lookup func
-
- 4. add to GED a bool property x-has-hardware_errors_addr = 1
-    and use it in acpi_ged_realize() to set callback
-
-          if x-has-hardware_errors_addr == 1
-               callback = old_lookup
-
- 5. add new HEST lookup func (not used yet with mentioning that follow up patch
-    will use it)
-
- 6. cleanup fwcfg based on x-has-hardware_errors_addr,
-       i.e. for 'true':
-          ask for write pointer to hardware_errors like it's done in current code
-          and don't register hest_addr write pointer
-       while for 'false'
-          do opposite of above.
+     kpageflags: detect isolated KPF_THP folios
 
 
- 7. flip x-has-hardware_errors_addr default to 0 and add to hw/core/machine.c
-      hw_compat_9_1[] = {
-          {ged type,  'x-has-hardware_errors_addr', 'true'},
-      }
-    this will make 9.1 and older machine types to use old lookup callback
-    while newer machines will use default new lookup
+?
 
-that should take care of switching between new and old ABI,
-i.e. which code qemu and guest will use/see.
+We could fix it simply by changing the order of checks in there.
 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> 
-> ---
-> 
-> Changes from v9:
-> - patch split on multiple patches to avoid multiple changes
->   at the same patch.
-> 
-> Changes from v8:
-> - Non-rename/cleanup changes merged altogether;
-> - source ID is now more generic, defined per guest target.
->   That should make easier to add support for 86.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  hw/acpi/ghes.c         | 95 ++++++++++++++++++++++++++++++------------
->  include/hw/acpi/ghes.h |  6 ++-
->  2 files changed, 73 insertions(+), 28 deletions(-)
-> 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index 36fe5f68782f..6e5f0e8cf0c9 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -61,6 +61,23 @@
->   */
->  #define ACPI_GHES_GESB_SIZE                 20
->  
-> +/*
-> + * Offsets with regards to the start of the HEST table stored at
-> + * ags->hest_addr_le, according with the memory layout map at
-> + * docs/specs/acpi_hest_ghes.rst.
-> + */
-> +
-> +/* ACPI 6.2: 18.3.2.8 Generic Hardware Error Source version 2
-> + * Table 18-382 Generic Hardware Error Source version 2 (GHESv2) Structure
-> + */
-> +#define HEST_GHES_V2_TABLE_SIZE  92
-> +#define GHES_ACK_OFFSET          (64 + GAS_ADDR_OFFSET)
-> +
-> +/* ACPI 6.2: 18.3.2.7: Generic Hardware Error Source
-> + * Table 18-380: 'Error Status Address' field
-> + */
-> +#define GHES_ERR_ST_ADDR_OFFSET  (20 + GAS_ADDR_OFFSET)
-> +
->  /*
->   * Values for error_severity field
->   */
-> @@ -401,11 +418,13 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
->  
->  int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
->  {
-> -    uint64_t error_block_addr, read_ack_register_addr, read_ack_register = 0;
-> -    uint64_t start_addr;
-> -    bool ret = -1;
-> +    uint64_t hest_read_ack_start_addr, read_ack_start_addr;
-> +    uint64_t hest_addr, cper_addr, err_source_struct;
-> +    uint64_t hest_err_block_addr, error_block_addr;
-> +    uint32_t i, ret;
->      AcpiGedState *acpi_ged_state;
->      AcpiGhesState *ags;
-> +    uint64_t read_ack;
->  
->      assert(source_id < ACPI_GHES_ERROR_SOURCE_COUNT);
->  
-> @@ -414,44 +433,66 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
->      g_assert(acpi_ged_state);
->      ags = &acpi_ged_state->ghes_state;
->  
-> -    start_addr = le64_to_cpu(ags->ghes_addr_le);
-> +    hest_addr = le64_to_cpu(ags->hest_addr_le);
->  
->      if (!physical_address) {
->          return -1;
->      }
->  
-> -    start_addr += source_id * sizeof(uint64_t);
-> +    err_source_struct = hest_addr + ACPI_GHES_ERROR_SOURCE_COUNT;
->  
-> -    cpu_physical_memory_read(start_addr, &error_block_addr,
-> -                                sizeof(error_block_addr));
-> +    /*
-> +     * Currently, HEST Error source navigates only for GHESv2 tables
-> +     */
-> +    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
-> +        uint64_t addr = err_source_struct;
-> +        uint16_t type, src_id;
->  
-> -    error_block_addr = le64_to_cpu(error_block_addr);
-> +        cpu_physical_memory_read(addr, &type, sizeof(type));
->  
-> -    read_ack_register_addr = start_addr +
-> -        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t);
-> +        /* For now, we only know the size of GHESv2 table */
-> +        assert(type == ACPI_GHES_SOURCE_GENERIC_ERROR_V2);
->  
-> -    cpu_physical_memory_read(read_ack_register_addr,
-> -                                &read_ack_register, sizeof(read_ack_register));
-> +        /* It is GHES. Compare CPER source address */
-> +        addr += sizeof(type);
-> +        cpu_physical_memory_read(addr, &src_id, sizeof(src_id));
->  
-> -    /* zero means OSPM does not acknowledge the error */
-> -    if (!read_ack_register) {
-> -        error_report("OSPM does not acknowledge previous error,"
-> -            " so can not record CPER for current error anymore");
-> -    } else if (error_block_addr) {
-> -        read_ack_register = cpu_to_le64(0);
-> -        /*
-> -         * Clear the Read Ack Register, OSPM will write it to 1 when
-> -         * it acknowledges this error.
-> -         */
-> -        cpu_physical_memory_write(read_ack_register_addr,
-> -            &read_ack_register, sizeof(uint64_t));
-> +        if (src_id == source_id) {
-> +            break;
-> +        }
->  
-> -        ret = acpi_ghes_record_mem_error(error_block_addr,
-> -                                            physical_address);
-> -    } else {
-> +        err_source_struct += HEST_GHES_V2_TABLE_SIZE;
-> +    }
-> +    if (i == ACPI_GHES_ERROR_SOURCE_COUNT) {
->          error_report("can not find Generic Error Status Block");
-> +
-> +        return -1;
->      }
->  
-> +    /* Navigate though table address pointers */
-> +
-> +    hest_err_block_addr = err_source_struct + GHES_ERR_ST_ADDR_OFFSET;
-> +    hest_read_ack_start_addr = err_source_struct + GHES_ACK_OFFSET;
-> +
-> +    cpu_physical_memory_read(hest_err_block_addr, &error_block_addr,
-> +                             sizeof(error_block_addr));
-> +
-> +    cpu_physical_memory_read(error_block_addr, &cper_addr,
-> +                             sizeof(error_block_addr));
-> +
-> +    cpu_physical_memory_read(hest_read_ack_start_addr, &read_ack_start_addr,
-> +                             sizeof(read_ack_start_addr));
-> +
-> +    /* Update ACK offset to notify about a new error */
-> +
-> +    cpu_physical_memory_read(read_ack_start_addr,
-> +                             &read_ack, sizeof(read_ack));
-> +
-> +    read_ack = cpu_to_le64(0);
-> +    cpu_physical_memory_write(read_ack_start_addr,
-> +                              &read_ack, sizeof(read_ack));
-> +
-> +    ret = acpi_ghes_record_mem_error(error_block_addr, physical_address);
->      return ret;
->  }
->  
-> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> index c9bbda4740e2..7485f54c28f2 100644
-> --- a/include/hw/acpi/ghes.h
-> +++ b/include/hw/acpi/ghes.h
-> @@ -23,6 +23,7 @@
->  #define ACPI_GHES_H
->  
->  #include "hw/acpi/bios-linker-loader.h"
-> +#include "qapi/error.h"
->  
->  /*
->   * Values for Hardware Error Notification Type field
-> @@ -74,7 +75,10 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
->                       const char *oem_id, const char *oem_table_id);
->  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
->                            GArray *hardware_errors);
-> -int acpi_ghes_record_errors(uint8_t source_id, uint64_t error_physical_addr);
-> +int acpi_ghes_record_errors(uint8_t source_id,
-> +                            uint64_t error_physical_addr);
-> +void ghes_record_cper_errors(const void *cper, size_t len,
-> +                             uint16_t source_id, Error **errp);
->  
->  /**
->   * acpi_ghes_present: Report whether ACPI GHES table is present
+It makes sense, though. The huge zeropage is not tracked via the rmap 
+... ever. Mapcounts etc are unused. But clearing that flag is just ugly.
+
+I wonder if the real problem lies in using folio_alloc() here, and that 
+we should be never setting the flag in the first place .... Yes, we want 
+a folio, but not really an rmappable one.
+
+... Willy, what would be your take?
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
