@@ -1,78 +1,152 @@
-Return-Path: <linux-kernel+bounces-331660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EA997AFAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:25:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DDA97AFB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF42C1F23340
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0461F24E4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E56C1684A0;
-	Tue, 17 Sep 2024 11:25:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EDB15820F;
-	Tue, 17 Sep 2024 11:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DDA169AC5;
+	Tue, 17 Sep 2024 11:29:50 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347E9200A3;
+	Tue, 17 Sep 2024 11:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726572322; cv=none; b=TXdDg/0zAw/OuYK+Zp4xhNzT95hgsqHqyqMbg9CfPftDDxwD94jSM+pqvfIQ2R4ZKNKMn77kusXCmUk1dCRgzgiWz7UqtT3j4hN1TwcexK/tU5nnxC36C8wz+BfDEiup7Bv35CdEknyQZy/HodzSEUzRVoTxN3l6zF++dz6ghlo=
+	t=1726572589; cv=none; b=VOCgToaa+ZwUeuPvBkFmOEiPRZQYUT/q1P3TWP5+O5Wfj8OWRGdNF6UBhQ73ooVZnymvlqzOxROGbPbum7QhW/pAEO9SVh2wJWpW5h93HH5lOOpnkjtwlAfkBKzNQ5y0ePHqgnOGif2NI6KgIjxPJNAbZydkiXnQYX0GQYCIFnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726572322; c=relaxed/simple;
-	bh=BYmFY8dLUIgAp4G3c1WMS+OnWT811CxQviKlYhUbkAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wri9GoVmR1jXonfdOVr6NrOhm9ueC7UR94VBFdtpcWllnfBM0zUYoDSZzPZ2gospp5mV9+BIAmDc7LffqZtMyEnJE0yCluhd4Pfw7Gq2lIYBezTN+0c/eojj+TUu9jhRB39v8eRIamHYtw+DUUQGDn6mXQXfUU7RPU1HhFizWIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7E381007;
-	Tue, 17 Sep 2024 04:25:48 -0700 (PDT)
-Received: from [10.163.61.158] (unknown [10.163.61.158])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA1E23F66E;
-	Tue, 17 Sep 2024 04:25:13 -0700 (PDT)
-Message-ID: <06703362-23d3-4554-ab33-e81960e7d41f@arm.com>
-Date: Tue, 17 Sep 2024 16:55:11 +0530
+	s=arc-20240116; t=1726572589; c=relaxed/simple;
+	bh=BSUGbVFzo/XLFC1Eb0wbRRxSENs3PhgBjIFbMO9VrPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5cBAFvqxGf7M1vnhkcXBk02LanXQxNAEHDLEZOg4ZGS9j3XQbM3vsliiwkcAYQ/Bd4ccYKrTKIrkShY8MwSYA2n31p1XMcLxPauN4cIs9LtxTvfzQBREQdm8aCFqWw3DEIf1VLAV7nDG7WiSDhubXsHvCXYDdVDLnde502G4YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48HBRQaS014263;
+	Tue, 17 Sep 2024 06:27:26 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48HBROCL014262;
+	Tue, 17 Sep 2024 06:27:24 -0500
+Date: Tue, 17 Sep 2024 06:27:24 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>, dhowells@redhat.com,
+        dwmw2@infradead.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+Message-ID: <20240917112724.GA14167@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com> <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com> <ZuaVzQqkwwjbUHSh@gondor.apana.org.au> <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com> <ZualreC25wViRHBq@gondor.apana.org.au> <ZuapXswFUxsFxjgH@gondor.apana.org.au> <2541abb8-68b5-4e6a-b309-a001ecdfbea1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/7] x86/mm: Drop page table entry address output from
- pxd_ERROR()
-To: Dave Hansen <dave.hansen@intel.com>, David Hildenbrand
- <david@redhat.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
- <20240917073117.1531207-3-anshuman.khandual@arm.com>
- <c4fe25e3-9b03-483f-8322-3a17d1a6644a@redhat.com>
- <be3a44a3-7f33-4d6b-8348-ed6b8c3e7b49@intel.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <be3a44a3-7f33-4d6b-8348-ed6b8c3e7b49@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2541abb8-68b5-4e6a-b309-a001ecdfbea1@huaweicloud.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 17 Sep 2024 06:27:26 -0500 (CDT)
 
-On 9/17/24 16:49, Dave Hansen wrote:
-> On 9/17/24 03:22, David Hildenbrand wrote:
->> Not a big fan of all these "bad PTE" thingies ...
-> 
-> In general?
-> 
-> Or not a big fan of the fact that every architecture has their own
-> (mostly) copied-and-pasted set?
+On Sun, Sep 15, 2024 at 07:52:13PM +0200, Roberto Sassu wrote:
 
-Right, these pxd_ERROR() have similar definitions across platforms,
-(often the exact same) something that could be converged into common
-generic ones instead.
+Good morning, I hope the day is starting well for everyone.
+
+> On 9/15/2024 11:31 AM, Herbert Xu wrote:
+> >On Sun, Sep 15, 2024 at 05:15:25PM +0800, Herbert Xu wrote:
+> >>
+> >>Roberto, correct me if I'm wrong but your intended use case is
+> >>the following patch series, right?
+> >
+> >Actually the meat of the changes is in the following series:
+> >
+> >https://lore.kernel.org/linux-integrity/20240905150543.3766895-1-roberto.sassu@huaweicloud.com/
+
+> Yes, correct. The idea is to verify the authenticity of RPM headers,
+> extract the file digests from them, and use those file digests as
+> reference values for integrity checking of files accessed by user
+> space processes.
+>
+> If the calculated digest of a file being accessed matches one
+> extracted from the RPM header, access is granted otherwise it is
+> denied.
+
+Based on the above response and your comment:
+
+"The security policy I want to enforce is: all code that the system
+executes has been built by a trusted source (e.g. a Linux
+distribution)."
+
+From the following URL:
+
+https://lore.kernel.org/linux-integrity/b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com/#t
+
+What you are advocating for then, with this patch series and the
+digest cache series, is a security policy that requires signed code
+execution, correct?
+
+Nothing wrong with that, it is a reasonable security desire, but it
+seems wrong to conflate that with the implementation of the digest
+cache.  There is a great deal of utility in a digest cache but it
+doesn't require the need to parse RPM header information and/or TLV
+sequences in the kernel.
+
+That would only appear to be a requirement if your goal is a signed
+executable policy that is implemented through a packaging medium,
+correct?
+
+To wit:
+
+If I have security infrastructure that gives me confidence in the
+integrity of the files on my media, I can populate a digest cache with
+a simple ASCII list of pathnames fed into the kernel at boot time.
+
+If I don't have confidence in the integrity of the files on my media I
+could append a known good checksum to each pathname with the last
+entry in the list being a PGP signature over the input stream.
+
+I brought the following issue up in the patch series that Herbert
+links to above, but will do so here, since I believe it has relevance
+to this conversation as well.
+
+If the goal is to have the digest cache be relevant from an integrity
+perspective, particularly a signed code policy, you have to physically
+read every file that has a digest value in the RPM digest list.
+Otherwise the scheme is vulnerable to a Time Of Measurement Time Of
+Use (TOMTOU) vulnerability scenario, correct?
+
+This requires that one needs to experience a latency hit at least
+once, presumably at boot when you prime the digest cache, correct?
+
+An alternative approach may be to separate the RPM/TLV parsing code
+from the digest code and implement RPM/Debian/whatever parsing in a
+loadable module that would in turn populate the digest cache.
+
+That may be a more acceptable strategy since it places the potential
+security vulnerabilities of a parser into something that an entity
+that is interested in a signed code policy would consider to be an
+acceptable tradeoff from a security perspective.
+
+> Roberto
+
+Hopefully the above comments and clarifications will be helpful in
+furthering additional discussion.
+
+Have a good day.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
