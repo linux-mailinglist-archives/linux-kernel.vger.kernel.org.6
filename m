@@ -1,217 +1,154 @@
-Return-Path: <linux-kernel+bounces-331592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96AB97AEA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:20:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B026697AEA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA8228139A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E013D1C21F35
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF74715E5DC;
-	Tue, 17 Sep 2024 10:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BLqmIprJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD7116A95B;
+	Tue, 17 Sep 2024 10:22:20 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A174615AACA
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5E315D5A6;
+	Tue, 17 Sep 2024 10:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726568431; cv=none; b=CLKt1pUirpB7rNbdwZ/jNsLadZDoU1O1oUf2Zfm9Ph6Htip23HstB7xfw+1ebZvJ8BETcHGLvfjqf2xov3pZsHHcugy7zYYsRs+asDBflqXDTcF7v5HbFqNd8XbLs0bwt97ixHqfq3xbs8I0eo2AFDykw0y0GshwhcIY8ILy+mI=
+	t=1726568540; cv=none; b=pRD+a+xXnVkDnjNeADHKG8Xtd6WTFjmb/eFFeYZvdgL0tMd582B0eBKY3ZLkCrw2Ue+JCNW6pBQyKnw0cIh9I7BiGSlHGhpttih9H3yqix0IqpauuXoCPAHvDrvwxwGoQqeMZp7jStUgDKZpluIiQSCEqiB8RW8XfuOtuohAgiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726568431; c=relaxed/simple;
-	bh=qe4jWrZe8Skbk/Q/ZNbiXKEoBv6Z8lAP9Ny5GlSyazg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FN9gR9BSQ0jnot/+vPQvhxkwiEPA/My8hnoGNvAWze+XvxCgfi+ePUUM7zCUHJ6rQwNKWli8Gnb8R8Jp28kiZss2gW1Uw4BymPi+gq0dis+k6UOQB5p+wXtzJkDjI+XAs5JakmPIhZgr2yaKFR8PES8Dtx+cT+boKKlM30KfPzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BLqmIprJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726568428;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6ZCJTmJx2xNT3osb0wa+deaEyFcFSSWyiY3NZGLuGe4=;
-	b=BLqmIprJ1EW0rZxGoiQQkoRXMQAUofH9dUgLRePXLS4hu2Npa7eaDeeuWgwbOWzOZ32Rnf
-	lAPtkJSCcDYVCEcEbweIp4uVpjpOl+JvCiW4RGv/rBoG15qC/FtQALOS8g6YqfvqiWw+Vd
-	epXmQ9GcKdl2XwL9vbydEwZFcWXCQno=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-403-z03GMOeDPWinZb7tLze6CA-1; Tue, 17 Sep 2024 06:20:27 -0400
-X-MC-Unique: z03GMOeDPWinZb7tLze6CA-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5c3c205df73so3371386a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:20:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726568426; x=1727173226;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6ZCJTmJx2xNT3osb0wa+deaEyFcFSSWyiY3NZGLuGe4=;
-        b=RNWFDX1eGggbNfc9NW+6eNSZYURaWqJxTRjG/kaTGNZ4rKGMrwWhtFancjh3e2dR0C
-         e/0gvHBZPWDLVjFOGQhfpfRUsopJ6O0fvr5+eKwW6OfNDz5QNjSer+O8Zkn4MaoUVLqe
-         E0YeNoiz0onDeMEkNvDfU9Uan3pm0VxiGTXXjUb15JbxydxO2KS3ABUP528oAQd1SdSy
-         UTNj3pO/uHRn1CBIRtawIcZDUZpWgV+FDOE7K68+uHi8TGefcFHOqnCk8SPw1/IdRCjm
-         fLAQqGg6Gd4JvqY2vpqmlfCOvya7S9/mZUKnixCl3EJpdvY9m7r/i+N0kxksFFKqVa6G
-         g6KA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Rh1l5upmd1BEEHlFOJftG05IMTZ56s8RlSw5magX7TKZFft6jfI895A3kX9TK+UzYlFk2hkJwN/wAeA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfvl3zLSWTMfi4cN8C01wypsEpQLDuIRu7xFE+i0aWyJYxjoD6
-	5a64PREq8PPPTxALYWVdQQZDjULcV6nuFdX+CQ28MDRYDpmIW/hQ5TAK0BFVcH79GefrzO05EaH
-	iG67qLRCNHPGCL1YNy6a2NeIWXpJW2OxOQeWsNhjeIio+ZdlHmXbw4wzJ/ivSUQ==
-X-Received: by 2002:a05:6402:280a:b0:5c2:8249:b2d3 with SMTP id 4fb4d7f45d1cf-5c413e4c51fmr15560398a12.26.1726568426143;
-        Tue, 17 Sep 2024 03:20:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHKO0hNuKYYyiVpmnAX1arSFAg5yVO4DtVE3xUZpqnqvalCbFtGjpIfHmfyO2kH806kqBFSKw==
-X-Received: by 2002:a05:6402:280a:b0:5c2:8249:b2d3 with SMTP id 4fb4d7f45d1cf-5c413e4c51fmr15560373a12.26.1726568425483;
-        Tue, 17 Sep 2024 03:20:25 -0700 (PDT)
-Received: from [192.168.55.136] (tmo-067-108.customers.d1-online.com. [80.187.67.108])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bc8a51dsm3510875a12.97.2024.09.17.03.20.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 03:20:25 -0700 (PDT)
-Message-ID: <4ced9211-2bd7-4257-a9fc-32c775ceffef@redhat.com>
-Date: Tue, 17 Sep 2024 12:20:22 +0200
+	s=arc-20240116; t=1726568540; c=relaxed/simple;
+	bh=OvPvzmYVf5PPB6SaJ1tyg1h/ET1ohPg3n64z+iN4ZdY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nirJxKZ3qCUNx7xVc6slylXMuy51juHzFZxOlmfH+ff4Dg6/w6aEVrSBrBdQQLs87XylUI0hhwwLwYwharCkdl2KNH4I66LwODsqM7pFOaujPVhJIy7rEluGm4nmOSUcvVD0CAqGjc+SWRo/cfnEpc9fRXu9GYLya7ok5nqures=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from inp1wst083.omp.ru (81.22.207.138) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 17 Sep
+ 2024 13:22:09 +0300
+From: Roman Smirnov <r.smirnov@omp.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Roman Smirnov <r.smirnov@omp.ru>, Mathias Nyman <mathias.nyman@intel.com>,
+	<linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sergey Shtylyov
+	<s.shtylyov@omp.ru>, Karina Yankevich <k.yankevich@omp.ru>, Sergey Yudin
+	<s.yudin@omp.ru>, <lvc-project@linuxtesting.org>, Mathias Nyman
+	<mathias.nyman@linux.intel.com>
+Subject: [PATCH 5.10] xhci: check virt_dev is valid before dereferencing it
+Date: Tue, 17 Sep 2024 13:21:50 +0300
+Message-ID: <20240917102150.84686-1-r.smirnov@omp.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/7] m68k/mm: Change pmd_val()
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
- Guo Ren <guoren@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
- <20240917073117.1531207-2-anshuman.khandual@arm.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240917073117.1531207-2-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/17/2024 10:08:56
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 187794 [Sep 17 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
+ 8a1fac695d5606478feba790382a59668a4f0039
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
+ dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;127.0.0.199:7.1.2;inp1wst083.omp.ru:7.1.1;81.22.207.138:7.1.2
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/17/2024 10:12:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/17/2024 9:17:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 17.09.24 09:31, Anshuman Khandual wrote:
-> This changes platform's pmd_val() to access the pmd_t element directly like
-> other architectures rather than current pointer address based dereferencing
-> that prevents transition into pmdp_get().
-> 
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Guo Ren <guoren@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-m68k@lists.linux-m68k.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->   arch/m68k/include/asm/page.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/m68k/include/asm/page.h b/arch/m68k/include/asm/page.h
-> index 8cfb84b49975..be3f2c2a656c 100644
-> --- a/arch/m68k/include/asm/page.h
-> +++ b/arch/m68k/include/asm/page.h
-> @@ -19,7 +19,7 @@
->    */
->   #if !defined(CONFIG_MMU) || CONFIG_PGTABLE_LEVELS == 3
->   typedef struct { unsigned long pmd; } pmd_t;
-> -#define pmd_val(x)	((&x)->pmd)
-> +#define pmd_val(x)	((x).pmd)
->   #define __pmd(x)	((pmd_t) { (x) } )
->   #endif
->   
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-Trying to understand what's happening here, I stumbled over
+commit 03ed579d9d51aa018830b0de3e8b463faf6b87db upstream.
 
-commit ef22d8abd876e805b604e8f655127de2beee2869
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Fri Jan 31 13:45:36 2020 +0100
+Check that the xhci_virt_dev structure that we dug out based
+on a slot_id value from a command completion is valid before
+dereferencing it.
 
-     m68k: mm: Restructure Motorola MMU page-table layout
-     
-     The Motorola 68xxx MMUs, 040 (and later) have a fixed 7,7,{5,6}
-     page-table setup, where the last depends on the page-size selected (8k
-     vs 4k resp.), and head.S selects 4K pages. For 030 (and earlier) we
-     explicitly program 7,7,6 and 4K pages in %tc.
-     
-     However, the current code implements this mightily weird. What it does
-     is group 16 of those (6 bit) pte tables into one 4k page to not waste
-     space. The down-side is that that forces pmd_t to be a 16-tuple
-     pointing to consecutive pte tables.
-     
-     This breaks the generic code which assumes READ_ONCE(*pmd) will be
-     word sized.
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/20210129130044.206855-7-mathias.nyman@linux.intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+---
+ drivers/usb/host/xhci-ring.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Where we did
-
-  #if !defined(CONFIG_MMU) || CONFIG_PGTABLE_LEVELS == 3
--typedef struct { unsigned long pmd[16]; } pmd_t;
--#define pmd_val(x)     ((&x)->pmd[0])
--#define __pmd(x)       ((pmd_t) { { (x) }, })
-+typedef struct { unsigned long pmd; } pmd_t;
-+#define pmd_val(x)     ((&x)->pmd)
-+#define __pmd(x)       ((pmd_t) { (x) } )
-  #endif
-
-So I assume this should be fine
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index fbb7a5b51ef4..a769803e7d38 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1415,6 +1415,8 @@ static void xhci_handle_cmd_config_ep(struct xhci_hcd *xhci, int slot_id,
+ 	 * is not waiting on the configure endpoint command.
+ 	 */
+ 	virt_dev = xhci->devs[slot_id];
++	if (!virt_dev)
++		return;
+ 	ctrl_ctx = xhci_get_input_control_ctx(virt_dev->in_ctx);
+ 	if (!ctrl_ctx) {
+ 		xhci_warn(xhci, "Could not get input context, bad type.\n");
+@@ -1459,6 +1461,8 @@ static void xhci_handle_cmd_addr_dev(struct xhci_hcd *xhci, int slot_id)
+ 	struct xhci_slot_ctx *slot_ctx;
+ 
+ 	vdev = xhci->devs[slot_id];
++	if (!vdev)
++		return;
+ 	slot_ctx = xhci_get_slot_ctx(xhci, vdev->out_ctx);
+ 	trace_xhci_handle_cmd_addr_dev(slot_ctx);
+ }
+@@ -1470,13 +1474,15 @@ static void xhci_handle_cmd_reset_dev(struct xhci_hcd *xhci, int slot_id,
+ 	struct xhci_slot_ctx *slot_ctx;
+ 
+ 	vdev = xhci->devs[slot_id];
++	if (!vdev) {
++		xhci_warn(xhci, "Reset device command completion for disabled slot %u\n",
++			  slot_id);
++		return;
++	}
+ 	slot_ctx = xhci_get_slot_ctx(xhci, vdev->out_ctx);
+ 	trace_xhci_handle_cmd_reset_dev(slot_ctx);
+ 
+ 	xhci_dbg(xhci, "Completed reset device command.\n");
+-	if (!xhci->devs[slot_id])
+-		xhci_warn(xhci, "Reset device command completion "
+-				"for disabled slot %u\n", slot_id);
+ }
+ 
+ static void xhci_handle_cmd_nec_get_fw(struct xhci_hcd *xhci,
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
