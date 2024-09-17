@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-331300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BE297AB0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB6F97AB11
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02CCE28137D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:37:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B861C27721
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7E31607B7;
-	Tue, 17 Sep 2024 05:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF8F165F0C;
+	Tue, 17 Sep 2024 05:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="Zid9J+nB"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="fueiyA6+"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66E7158A2E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 05:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCFC15AAD6
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 05:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726551127; cv=none; b=CJuBRu4bf3uo3Ixu6vVZoFe7nujJAgY1boH3XX/kkpiSas5zx+TzjbIAyTljSlwbTyXmr/FyqOAsbAPf9lk6kphGsu2iI7Uq7a5SUm7mZxJkbt32EAZzj1VucDLQejaE9+2NEwTBOFuqQ50OUNuNmaILiYZA9jKWCCvKxuC8wOw=
+	t=1726551129; cv=none; b=XG0tYEpqACBZRuAcPuyE459SgRF6cGxcmV/rgLTiOuhPOqvKFut3g8aceX5SUU/jI/0LKF1b+x5c23t9/gwWrt+QKxr3b6rX8SrFa2/qBuuRiFgZzFAWJjsMSZbu8V8ZmY/K3akTyoHyvprslF7tUzANShbefQai1BhthDF0vfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726551127; c=relaxed/simple;
-	bh=XMcaFax5C+HYiiHLiFOpXerrieIXgXMuHY19OMOdfUg=;
+	s=arc-20240116; t=1726551129; c=relaxed/simple;
+	bh=q+xOEKWsHd2GnzwxhTD1fpiaTHmugckiXD5ETn3XgWo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ikNSBjvrKZI0MqfUDfV94V15TWV/cwg5dgjPmag8G+Hd8Y7SqVdTJ2Z+8MkDnQJtPzcv+ITfNB6PwN0900hNpjKKg1/6+YPCMqHd2rLtjlkeGeA6tUXSVJ7I3IQid9NsYv+ESGW/gQzHQALI+TqMmNmMVH25h5+7S/tSXo31Kbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=Zid9J+nB; arc=none smtp.client-ip=209.85.167.179
+	 MIME-Version; b=BDsN08LldCH/VnZigibD5F+oYiwMpZDOrDOvmyCRlXRD1wqZAIEn71ZKbNqq0pbVKgXYwRvwE1fns8SkG802VzGzTOrwxu7rR4eJN8ej5TTveh5uTvo8MQmSwchtxfjpZ2b7YzVKlh2fq0Leaod+eJUF9pnFpWR6ziilJDe0lNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=fueiyA6+; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e039889ca0so2957023b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 22:32:05 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-718d606726cso3475595b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 22:32:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=darkphysics.net; s=google; t=1726551125; x=1727155925; darn=vger.kernel.org;
+        d=darkphysics.net; s=google; t=1726551126; x=1727155926; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kg3zx6b6YOG9l6VSYiIDTP4MSlvWxjTjdd2LPfzyLWY=;
-        b=Zid9J+nBPsO9JkmMJSlegGeYaCelnL+nX3lRkC0wAiEuArurpOoRVY0hcXbv7N3SC6
-         f7JMHfwbh/b7eZqkmV4ptbQ0uSsj+8vNVjyr7xKLZQ+i2kCSv+jeJV38F+HJbLRjvGR0
-         mAW0cEV0L1D0tFxFpmdZa4SYLKm0yGh7uUdIZg48cK9BxZhpUUI9rohwKYbrTcNHuPKC
-         4W1bTODuGB+07NwA8fOQt8fqsHM9Sk8H3jz3ay6gBVMvdUufQyH7jLnzOyVkUlUGikJB
-         OVmhGVWuy9XGn25G/KVtbPAorb1c9bd89hpO7S8N4UqLOcYvNGlYrx32+w/MlRYvx1Qg
-         XTjw==
+        bh=gRrw5+oANKkULNvvGuleCSc1g2ZOyWkjgPNrOQZeAG4=;
+        b=fueiyA6+l/pH9wA+VIr/PJ9Qu8UzFyqzQ3cyFPPzqN0mc6wWaGSyx6W4vb0xVk4cBR
+         nMJpEQ1tEUOv5hlTlVouExPFCE3TMcXs/sGECDJZCgtd2/KbIeDkNZarocp9J7aNPZUK
+         +20FBG0bPNVHrr2E1GedSbtFez+Bc/9sPPi+rm8akVx2hZg+bINIfqQV93NT/Kv1EJXX
+         HTbqxbgzBPKtF+neT8hOynWWlupLpK6l0Zjg8ZPkGuPvtDSgr42mAT3BrTUSZpIWPlSP
+         ycpNZQ2zbndmK6cHdN7a7eDA56Hrje1lRQXaU4veSLIJuo6wX2mMpL8bNBMceflK/KzZ
+         y4Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726551125; x=1727155925;
+        d=1e100.net; s=20230601; t=1726551126; x=1727155926;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kg3zx6b6YOG9l6VSYiIDTP4MSlvWxjTjdd2LPfzyLWY=;
-        b=dvU/8ebhmQL1JkuvqXJopFxUk1jzL3ANK1jLZ/JNycChAtpfyXiO2i1NBJGzJp6HWx
-         BS2wxjva6JPRU1q+6tw/csM0Epc50YO8TTP3Lj+OCLmNqwNxi+E3Ak4KvQk+t/l7JIsD
-         wOLlU5BZIFLjjWft3kXmJxXN8S887GToLownEetU9ZSpNO52d3OnL5kPWsYsbAL//zSd
-         2DHR7XMU2iQ+kFyaH9rJLH8DmW+C1AhvQN8das5WAtlu+Vg1xqlUgUjC0zpiEWxwoms4
-         eMAaiwoVM5jvQQlmIenykqM3Mw+DQg2pPUm7xertXjF5FwKu02jFZ1g1R+oK1fWYATfh
-         lipg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3W+WJ9MF2KRMFJPkdeD6zRKRaurzN4JWK6kVYKOfn5wyexZ1QC7FZsonr465x7YHoGbJ5c03f3KmxNRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUa/me+7IHOBi8bTJjJFZwHM7vqcXtJjcJjVy8HVW5qQRKk9mG
-	yZjsTZji8SSjr3O6FqmLKW84aYDiL+G4fmvIpjk6Snxvrx7pcBi8r7vwfKEaI0A=
-X-Google-Smtp-Source: AGHT+IHshQPSO9l9chCWXDqW7bFfP3ctcewyS6xrXxc3f4sDjsojmRNSeiqrerOHNWExZQMPHMpZog==
-X-Received: by 2002:a05:6808:1791:b0:3e0:467e:f189 with SMTP id 5614622812f47-3e071aab6afmr12609123b6e.24.1726551125121;
+        bh=gRrw5+oANKkULNvvGuleCSc1g2ZOyWkjgPNrOQZeAG4=;
+        b=WNCD+8pvEbOlpiUMoILzfhowJd84QIwqAkOBo/jZ4ICx8HZr/7V09fhBlK4jYFbLN+
+         /xrOtb5owiWP56uAdJSm9h+BUfFpUlzq8rhStekOyUOKkZz76D7pmBhPG1P40PqvPJ5c
+         qu6bF8UGcWjv5iB6igSTqfsVx7Pl9Ak4N3DHoT3IR/RjNzY3Qf05BT2QTb87GGU7RutZ
+         E5bcd1gsx8dsm1MCsGtelf4MnuC5UtS3WofjZ15bjdsygYJEny5ae0pSv4g82yHkiVRO
+         +PlsxOPiXPGuMx3/KlSXB7LlyYUFG9ivv+2JcYRcEun/re/QgVvzbxFgr0m7L7qHdP9O
+         WJMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyz4YcO4RoqDfDCfqBOz7SjNKIL2Y8I6+pUnYntPupNIItZxrDkWS93tVWqQnvgrIKjFZH7nCFedJocHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySPJ/MW4STWvD8gwk51N7C2gpvwRNMrXunX1QvSs98xO7msdBd
+	6H9SpxJgMTnyIzwliKWxr2tgcWhkdquaLQ+Q+M3HDb+IMX0hh6mCbii+BVcHD+s=
+X-Google-Smtp-Source: AGHT+IHyDu7EuUO7j+l9ZJc3NSt+VsHIp0EO//b6IiME0O7rD9sow6TqP9CxLW5YxEC1y5REHUmcxw==
+X-Received: by 2002:a05:6a20:8428:b0:1cf:ff65:3680 with SMTP id adf61e73a8af0-1cfff653b08mr27355421637.6.1726551125720;
         Mon, 16 Sep 2024 22:32:05 -0700 (PDT)
 Received: from lunchbox.darkphysics (c-73-83-183-190.hsd1.wa.comcast.net. [73.83.183.190])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db498e0607sm4392328a12.8.2024.09.16.22.32.04
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db498e0607sm4392328a12.8.2024.09.16.22.32.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 22:32:04 -0700 (PDT)
+        Mon, 16 Sep 2024 22:32:05 -0700 (PDT)
 From: Tree Davies <tdavies@darkphysics.net>
 To: gregkh@linuxfoundation.org,
 	philipp.g.hortmann@gmail.com,
@@ -73,9 +73,9 @@ To: gregkh@linuxfoundation.org,
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Tree Davies <tdavies@darkphysics.net>
-Subject: [PATCH 13/18] Staging: rtl8192e: Rename variable bToSelfBA
-Date: Mon, 16 Sep 2024 22:31:47 -0700
-Message-Id: <20240917053152.575553-14-tdavies@darkphysics.net>
+Subject: [PATCH 14/18] Staging: rtl8192e: Rename variable Tx_TS_Admit_List
+Date: Mon, 16 Sep 2024 22:31:48 -0700
+Message-Id: <20240917053152.575553-15-tdavies@darkphysics.net>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240917053152.575553-1-tdavies@darkphysics.net>
 References: <20240917053152.575553-1-tdavies@darkphysics.net>
@@ -87,104 +87,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename variable bToSelfBA to to_self_ba
+Rename variable Tx_TS_Admit_List to tx_ts_admit_list
 to fix checkpatch warning Avoid CamelCase.
 
 Signed-off-by: Tree Davies <tdavies@darkphysics.net>
 ---
- drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 16 ++++++++--------
- drivers/staging/rtl8192e/rtllib.h              |  2 +-
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/staging/rtl8192e/rtl819x_TSProc.c | 10 +++++-----
+ drivers/staging/rtl8192e/rtllib.h         |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-index 873c749250ae..2e3e8c57d6f0 100644
---- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-@@ -1153,7 +1153,7 @@ static void _rtl92e_query_rxphystatus(struct r8192_priv *priv,
- 				      bool bpacket_match_bssid,
- 				      bool bpacket_toself,
- 				      bool packet_beacon,
--				      bool bToSelfBA)
-+				      bool to_self_ba)
- {
- 	struct phy_sts_ofdm_819xpci *pofdm_buf;
- 	struct phy_sts_cck_819xpci *pcck_buf;
-@@ -1175,7 +1175,7 @@ static void _rtl92e_query_rxphystatus(struct r8192_priv *priv,
- 	pstats->packet_to_self = precord_stats->packet_to_self = bpacket_toself;
- 	pstats->is_cck = precord_stats->is_cck = is_cck_rate;
- 	pstats->packet_beacon = precord_stats->packet_beacon = packet_beacon;
--	pstats->bToSelfBA = precord_stats->bToSelfBA = bToSelfBA;
-+	pstats->to_self_ba = precord_stats->to_self_ba = to_self_ba;
- 	if (check_reg824 == 0) {
- 		reg824_bit9 = rtl92e_get_bb_reg(priv->rtllib->dev,
- 						rFPGA0_XA_HSSIParameter2,
-@@ -1363,7 +1363,7 @@ static void _rtl92e_process_phyinfo(struct r8192_priv *priv, u8 *buffer,
- 	priv->stats.signal_strength = rtl92e_translate_to_dbm(priv, tmp_val);
- 	curr_st->rssi = priv->stats.signal_strength;
- 	if (!prev_st->packet_match_bssid) {
--		if (!prev_st->bToSelfBA)
-+		if (!prev_st->to_self_ba)
- 			return;
+diff --git a/drivers/staging/rtl8192e/rtl819x_TSProc.c b/drivers/staging/rtl8192e/rtl819x_TSProc.c
+index efadb2b778b1..e87d2926f47c 100644
+--- a/drivers/staging/rtl8192e/rtl819x_TSProc.c
++++ b/drivers/staging/rtl8192e/rtl819x_TSProc.c
+@@ -124,7 +124,7 @@ void rtllib_ts_init(struct rtllib_device *ieee)
+ 	struct rx_reorder_entry *pRxReorderEntry = ieee->RxReorderEntry;
+ 	u8				count = 0;
+ 
+-	INIT_LIST_HEAD(&ieee->Tx_TS_Admit_List);
++	INIT_LIST_HEAD(&ieee->tx_ts_admit_list);
+ 	INIT_LIST_HEAD(&ieee->Tx_TS_Pending_List);
+ 	INIT_LIST_HEAD(&ieee->Tx_TS_Unused_List);
+ 
+@@ -189,7 +189,7 @@ static struct ts_common_info *SearchAdmitTRStream(struct rtllib_device *ieee,
  	}
  
-@@ -1417,7 +1417,7 @@ static void _rtl92e_process_phyinfo(struct r8192_priv *priv, u8 *buffer,
- 			prev_st->RxPWDBAll -= 3;
+ 	if (tx_rx_select == TX_DIR)
+-		psearch_list = &ieee->Tx_TS_Admit_List;
++		psearch_list = &ieee->tx_ts_admit_list;
+ 	else
+ 		psearch_list = &ieee->Rx_TS_Admit_List;
+ 
+@@ -279,7 +279,7 @@ bool rtllib_get_ts(struct rtllib_device *ieee, struct ts_common_info **ppTS,
+ 				(&ieee->Rx_TS_Unused_List);
+ 
+ 	pAddmitList = (tx_rx_select == TX_DIR) ?
+-				(&ieee->Tx_TS_Admit_List) :
++				(&ieee->tx_ts_admit_list) :
+ 				(&ieee->Rx_TS_Admit_List);
+ 
+ 	Dir = ((tx_rx_select == TX_DIR) ? DIR_UP : DIR_DOWN);
+@@ -374,7 +374,7 @@ void remove_peer_ts(struct rtllib_device *ieee, u8 *addr)
+ 		}
  	}
- 	if (prev_st->packet_to_self || prev_st->packet_beacon ||
--	    prev_st->bToSelfBA) {
-+	    prev_st->to_self_ba) {
- 		if (priv->undecorated_smoothed_pwdb < 0)
- 			priv->undecorated_smoothed_pwdb = prev_st->RxPWDBAll;
- 		if (prev_st->RxPWDBAll > (u32)priv->undecorated_smoothed_pwdb) {
-@@ -1438,7 +1438,7 @@ static void _rtl92e_process_phyinfo(struct r8192_priv *priv, u8 *buffer,
  
- 	if (prev_st->signal_quality != 0) {
- 		if (prev_st->packet_to_self || prev_st->packet_beacon ||
--		    prev_st->bToSelfBA) {
-+		    prev_st->to_self_ba) {
- 			if (slide_evm_statistics++ >= PHY_RSSI_SLID_WIN_MAX) {
- 				slide_evm_statistics = PHY_RSSI_SLID_WIN_MAX;
- 				last_evm =
-@@ -1460,7 +1460,7 @@ static void _rtl92e_process_phyinfo(struct r8192_priv *priv, u8 *buffer,
+-	list_for_each_entry_safe(ts, pTmpTS, &ieee->Tx_TS_Admit_List, list) {
++	list_for_each_entry_safe(ts, pTmpTS, &ieee->tx_ts_admit_list, list) {
+ 		if (memcmp(ts->addr, addr, 6) == 0) {
+ 			netdev_info(ieee->dev,
+ 				    "====>remove Tx_TS_admin_list\n");
+@@ -412,7 +412,7 @@ void remove_all_ts(struct rtllib_device *ieee)
+ 		list_add_tail(&ts->list, &ieee->Tx_TS_Unused_List);
+ 	}
  
- 		if (prev_st->packet_to_self ||
- 		    prev_st->packet_beacon ||
--		    prev_st->bToSelfBA) {
-+		    prev_st->to_self_ba) {
- 			for (ij = 0; ij < 2; ij++) {
- 				if (prev_st->RxMIMOSignalQuality[ij] != -1) {
- 					if (priv->stats.rx_evm_percentage[ij] == 0)
-@@ -1487,7 +1487,7 @@ static void _rtl92e_translate_rx_signal_stats(struct net_device *dev,
- 	bool bpacket_match_bssid, bpacket_toself;
- 	bool packet_beacon = false;
- 	struct ieee80211_hdr_3addr *hdr;
--	bool bToSelfBA = false;
-+	bool to_self_ba = false;
- 	static struct rtllib_rx_stats  previous_stats;
- 	u16 fc, type;
- 	u8 *tmp_buf;
-@@ -1514,7 +1514,7 @@ static void _rtl92e_translate_rx_signal_stats(struct net_device *dev,
- 	_rtl92e_process_phyinfo(priv, tmp_buf, &previous_stats, pstats);
- 	_rtl92e_query_rxphystatus(priv, pstats, pdesc, pdrvinfo,
- 				  &previous_stats, bpacket_match_bssid,
--				  bpacket_toself, packet_beacon, bToSelfBA);
-+				  bpacket_toself, packet_beacon, to_self_ba);
- 	rtl92e_copy_mpdu_stats(pstats, &previous_stats);
- }
- 
+-	list_for_each_entry_safe(ts, pTmpTS, &ieee->Tx_TS_Admit_List, list) {
++	list_for_each_entry_safe(ts, pTmpTS, &ieee->tx_ts_admit_list, list) {
+ 		RemoveTsEntry(ieee, ts, TX_DIR);
+ 		list_del_init(&ts->list);
+ 		list_add_tail(&ts->list, &ieee->Tx_TS_Unused_List);
 diff --git a/drivers/staging/rtl8192e/rtllib.h b/drivers/staging/rtl8192e/rtllib.h
-index 4055c3044fe9..315a75739e44 100644
+index 315a75739e44..3544054b78fc 100644
 --- a/drivers/staging/rtl8192e/rtllib.h
 +++ b/drivers/staging/rtl8192e/rtllib.h
-@@ -486,7 +486,7 @@ struct rtllib_rx_stats {
- 	bool  is_cck;
- 	bool  packet_to_self;
- 	bool   packet_beacon;
--	bool   bToSelfBA;
-+	bool   to_self_ba;
- };
+@@ -1194,7 +1194,7 @@ struct rtllib_device {
+ 	u8	tx_enable_fw_calc_dur;
+ 	atomic_t	atm_swbw;
  
- /* IEEE 802.11 requires that STA supports concurrent reception of at least
+-	struct list_head		Tx_TS_Admit_List;
++	struct list_head		tx_ts_admit_list;
+ 	struct list_head		Tx_TS_Pending_List;
+ 	struct list_head		Tx_TS_Unused_List;
+ 	struct tx_ts_record tx_ts_records[TOTAL_TS_NUM];
 -- 
 2.30.2
 
