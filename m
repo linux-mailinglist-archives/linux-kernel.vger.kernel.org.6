@@ -1,210 +1,127 @@
-Return-Path: <linux-kernel+bounces-331596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE6897AEB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1186C97AEB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7664B23DF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:24:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8C7B21B05
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524C6165EE2;
-	Tue, 17 Sep 2024 10:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF43D165EE4;
+	Tue, 17 Sep 2024 10:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qk+IN80N";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VXYMTNr+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qk+IN80N";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VXYMTNr+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHB/VKoC"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F41215B14F;
-	Tue, 17 Sep 2024 10:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E3B15D5A6
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726568680; cv=none; b=VmEjtuFGqDnGLe/TE4CWdLEaOQHpfhMxEvHsLSPbOFdiuxu9HY3LlbfcLJNvgEyfreFWxcdg4JzJdyJ9ZTdCjkaXkeTZALCsvMPjYGaDjBKSjRTLn4UgfNQuh9iyqt84hZ7/39kWLPizO/WaVbIIis6kUkiPek58jQoCMiKrSto=
+	t=1726568843; cv=none; b=WyL2LLjVsjc9od95hki0EJVIOdU+0xphs6zofU3VXzDPZh2I6eTlcwwXeaCiWWzkWmN+1MEQSs5PaOktHvv52ORSNTvZvHzIfBEzQXID6f5foDRfwla1sreFzngEel4yjNIYVNz3at/jEhfAqGo7ekHPT/Q1yynDR0A2xGwwdzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726568680; c=relaxed/simple;
-	bh=eyT1OtP54UlgVcI+m5y0AaA0jFcpYLcpfC+GsNQLgRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LjQQZJCxH7K2Bos5/Qw/olCl6Has0I9Nfoq5pH4orwMHx/jLNinjW5R5BrQsvWdqDHm9BtCeF3MN/mqIecafE/btE8DMp5L6KujcEF7UnXlIq/ETBxKebBmHp2ITiGziIJ1gvvJEtRaj78pSuKjb0/OOI4QwGnHHYSjuKP8gtY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qk+IN80N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VXYMTNr+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qk+IN80N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VXYMTNr+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5274C20006;
-	Tue, 17 Sep 2024 10:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726568676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SuGWZnD6p9BvXmL4N0uz16mbensRF2aEqhxw/6Os88g=;
-	b=Qk+IN80NjcPI5QJAMLDj4yio/ttB+54eP768tXylVeUCr5JxKeax765lDaRdBbxXksm9sU
-	V/3oVBnNB+LKp7YUhTb5vkt0m/dc24PiqcJ7FjkOSb856+3YFYTGHkkKgG4/RH4G2CxEQ8
-	FA4jOjSBLq3v9fwZtntrR6UbzjjQPR8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726568676;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SuGWZnD6p9BvXmL4N0uz16mbensRF2aEqhxw/6Os88g=;
-	b=VXYMTNr+RcGPMnM1ZA81h1IkQtdcFx01Ht1PQkf+xzrDTit8gjjgDgRS86naZpsBk65KSl
-	jSUvF/oTQpVVXXCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726568676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SuGWZnD6p9BvXmL4N0uz16mbensRF2aEqhxw/6Os88g=;
-	b=Qk+IN80NjcPI5QJAMLDj4yio/ttB+54eP768tXylVeUCr5JxKeax765lDaRdBbxXksm9sU
-	V/3oVBnNB+LKp7YUhTb5vkt0m/dc24PiqcJ7FjkOSb856+3YFYTGHkkKgG4/RH4G2CxEQ8
-	FA4jOjSBLq3v9fwZtntrR6UbzjjQPR8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726568676;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SuGWZnD6p9BvXmL4N0uz16mbensRF2aEqhxw/6Os88g=;
-	b=VXYMTNr+RcGPMnM1ZA81h1IkQtdcFx01Ht1PQkf+xzrDTit8gjjgDgRS86naZpsBk65KSl
-	jSUvF/oTQpVVXXCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 623D713AB6;
-	Tue, 17 Sep 2024 10:24:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kGX0FONY6WafdQAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Tue, 17 Sep 2024 10:24:35 +0000
-Message-ID: <a93c9757-963a-4b4f-a169-0c17ff39576b@suse.de>
-Date: Tue, 17 Sep 2024 13:24:30 +0300
+	s=arc-20240116; t=1726568843; c=relaxed/simple;
+	bh=RQUyVCVGKvk955KD/oOhxw77fHG83o7vjf2LfrYMi3g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tgf5qezdI2a1IPSlUcvIECejhONrwwFAEdtV73lUUpUMiKqg68p9965U28/fozmKsenFzjFa0oZtOKrbfXSSsYI+422jWv/Dcv4vinG2AvNLTAC7ZH6jkBL65EjwuprSsGapRdafWAfaq4eupninPqR87jZnszW9kgCHCstGsNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hHB/VKoC; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374b9761eecso4378736f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:27:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726568838; x=1727173638; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O3BbujuHzO/RAMZvTpQiB1Pqjgm8cgnsqTGoSPy3nXg=;
+        b=hHB/VKoCSJEgXT5RtxJduNcATFbNzOUn5Gx7nJJ3Wfs0w2Dr/Zhpz9ZxvaYAiSyNZY
+         puYz1QrxSvUAp0bq3RkVKB3iSPbEsIL2/O5+6RgAG3o98rcpxNK0UqDY5T5JaKN3AGhu
+         AvlmNrKadHbHN60gkAHi6xI0ttXW3o2zBIU97UlpQ3/EivqbRIVSf1RxI5HoVuFnNGVn
+         kK4e+14nhbxZPL2d8xiMtF5fCGnLhEYtH/9nIiXCu9iz2GamSpdDQgQ9I9PLseywswO6
+         FTdJUhXLJeifNqoXs3QcX8FyKP09OtmKktz1XK6cLNKEwWpNuEkLNGhfRmTAowfC0qR+
+         /MJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726568838; x=1727173638;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O3BbujuHzO/RAMZvTpQiB1Pqjgm8cgnsqTGoSPy3nXg=;
+        b=c110CTZ+y0IrtUWYlNOImiYYa3c1W7d1urxQyqlD6MNgB+isWZnCYS2JGb6s5Bzlo0
+         ILwxMR2Nqq2cf+fdpBOrDL5X/dxNeljYWO06gQjjEohIgnhv6tFRosFy9VFty/RaSfqE
+         +9pthugW8M333d1hSxlGXKDNg364mUk0KlR3kWTbOLYgKq9YiBMEloYaDo4EStW3AHyA
+         7ySIJgGLcu0Osxgs5obn/Ao+Ky3bZHYDVykdMBValP58y8+MdlZoTABqicYG6j4mr3GX
+         VcyATYaZG5s2JPxsb7dgBxgAGoyXIA1wDhcYpq7bzLx8MJfvGH0hmDZ7gbJSMX+Y3Mqd
+         okMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaVxD7MnFa9VUR4+UbqofL8Hovhx2GeQJdpLHBCztL80GfCPxWbxd4dtuCMzw6/KH46gh6CTXZahqx38Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJJBQdGcCG6p1nYb4cP05jO/zg1yU2CZ0XyD2Bre0vS58C0aGt
+	fwSYPgX8g6HRc8/MKDqWDmP8UfVhEn5kpmIZM+eck8zKEp0rsE71Xh6wlWMEI0c=
+X-Google-Smtp-Source: AGHT+IHV5sT6le5zmGHifYAmMMnHu84747/30MSIE35w1b7lr7DQVM5IDV37QwsVD4o4IxyZXamNlA==
+X-Received: by 2002:a5d:61c2:0:b0:371:a60e:a821 with SMTP id ffacd0b85a97d-378c2d4c9c6mr11217648f8f.38.1726568838503;
+        Tue, 17 Sep 2024 03:27:18 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e780031esm9151096f8f.84.2024.09.17.03.27.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 03:27:18 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: andersson@kernel.org
+Cc: konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] arm64: dts: qcom: x1e80100-t14s: add another trackpad support
+Date: Tue, 17 Sep 2024 06:27:15 -0400
+Message-Id: <20240917102715.4096-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next 05/11] PCI: brcmstb: Restore CRS in RootCtl after
- prstn_n
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
- Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20240910151845.17308-1-svarbanov@suse.de>
- <20240910151845.17308-6-svarbanov@suse.de>
- <9de505c5-d9a2-44b7-8db1-0686c61a0fb4@broadcom.com>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <9de505c5-d9a2-44b7-8db1-0686c61a0fb4@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[dt];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-Hi Florian,
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-On 9/10/24 19:59, Florian Fainelli wrote:
-> On 9/10/24 08:18, Stanimir Varbanov wrote:
->> RootCtl bits might reset by perst_n during probe, re-enable
->> CRS SVE here in pcie_start_link.
->>
->> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> 
-> This looks like a bug fix, and we should explain what is the user
-> visible effect of that, if any.
+Trackpad HID device on some of the T14s Product Models 21N2ZC5PUS is
+at I2C address 0x2c add this to be able to get it working on these laptops.
 
-It is definitely a bugfix. Otherwise, CRS Software Visibility is
-important feature from pcie1.1. Not enabling it on Root Port could lead
-to infinite configuration retry cycles when enumerate endpoints which
-supports CRS. For more information [1] and [2].
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-I spent some time debugging it and found that this is not the proper
-solution.  I think the issue comes from wrongly implemented .add_bus
-pci_ops. Looks like .add_bus op shouldn't call brcm_pcie_start_link()
-but invoke before pci_host_probe(), then the issue will fix by itself.
-
-What I observed is that pci_enable_crs() is setting CSR Software
-Visibility Enable bit but the controller is ignoring it without error
-(reading the Root Control register returns zero). This means that the
-controller is not ready to accept configuration write requests at that
-time, that's why I tried the following diff which seems to work:
-
- static struct pci_ops brcm_pcie_ops = {
-        .map_bus = brcm_pcie_map_bus,
-        .read = pci_generic_config_read,
-        .write = pci_generic_config_write,
--       .add_bus = brcm_pcie_add_bus,
--       .remove_bus = brcm_pcie_remove_bus,
- };
-
- static struct pci_ops brcm7425_pcie_ops = {
-@@ -1983,6 +2018,9 @@ static int brcm_pcie_probe(struct platform_device
-*pdev)
-
-        platform_set_drvdata(pdev, pcie);
-
-+       //TODO: check for error
-+       brcm_pcie_start_link(pcie);
+diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+index 941dfddd6713..8468f99d9bed 100644
+--- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
++++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+@@ -467,7 +467,19 @@ touchpad@15 {
+ 		wakeup-source;
+ 	};
+ 
+-	/* TODO: second-sourced SYNA8022 or SYNA8024 touchpad @ 0x2c */
++	/* SYNA8022 or SYNA8024 touchpad @ 0x2c */
++	touchpad@15 {
++		compatible = "hid-over-i2c";
++		reg = <0x2c>;
 +
-        ret = pci_host_probe(bridge);
-        if (!ret && !brcm_pcie_link_up(pcie))
-                ret = -ENODEV;
++		hid-descr-addr = <0x20>;
++		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
++
++		pinctrl-0 = <&tpad_default>;
++		pinctrl-names = "default";
++
++		wakeup-source;
++	};
+ 
+ 	/* ELAN06F1 or SYNA06F2 */
+ 	keyboard@3a {
+-- 
+2.39.2
 
-Of course this change would work on RPi5 because there are no regulators.
-
-I will drop the patch from the series for now and work on a proper solution.
-
-regards,
-~Stan
-
-[1]
-https://patchwork.kernel.org/project/linux-pci/patch/53FFA54D.9000907@gmail.com/
-[2]
-https://blog.linuxplumbersconf.org/2017/ocw/system/presentations/4732/original/crs.pdf
 
