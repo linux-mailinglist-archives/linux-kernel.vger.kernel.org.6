@@ -1,185 +1,134 @@
-Return-Path: <linux-kernel+bounces-331620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBF697AF14
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:41:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DE197AF17
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B9B1F22695
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:41:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1F062818A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35D516A94B;
-	Tue, 17 Sep 2024 10:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A97116A37C;
+	Tue, 17 Sep 2024 10:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PzGfis6o";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5o95e55u";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OEWKZpjy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cqzTbZDR"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIgE5YF6"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1E716130C;
-	Tue, 17 Sep 2024 10:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED29416131A;
+	Tue, 17 Sep 2024 10:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726569664; cv=none; b=J9Y4BZ1AccSFhy0D4K2ZijM5nEZDgNySG8GLI4sSSzz3vpgVYWHqTvx2IMa1PPemMLaI+g7q8NkHwZUYkhZ1ilvAye+OfF8aBG3mXqLY1AY40iG6ZCrKFkau6Cx5eN14A2bQx+X2GuP7srStIi5L/HKLbzcO7sypcVYqmGoRQrA=
+	t=1726569765; cv=none; b=DmCzsVw7Mrt5CBpD4vmNizx+Vb14TYzXTHWWU57Tjyd53f5ChJk/FXi8q/FfxVw+4kSFHzxOeGGDN1G/mjNmGQon1Rd7mj+NwRlVJeUuxshRwGvB33Jb5W0Um9YVzo8llRtsMTpAvA2wBG6EhdosTMECIWmvEg2kkCtE83TBWlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726569664; c=relaxed/simple;
-	bh=NGYoXzzFMQt7/QqjqT0sfh07G+FI9nh3E5Gk0adWa0Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gRiGoi23cfE+Q0iDLl8JmHDyVHGhPdJzRK7QT9skoi7bPO1EOVNxh2cyqQnAamroNMTGOnb+OAKusT0Pp5Sgs5K94rSkah8TMk5puQckFDvMr7IRvnHX9DYyxe65Ov8lKqkXeNE5W/8OyOEpBfYsjuHXK+IAlYv1b3fuIDs8s6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PzGfis6o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5o95e55u; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OEWKZpjy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cqzTbZDR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D5B2722113;
-	Tue, 17 Sep 2024 10:40:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726569661; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UxIhQZaCoEImEPjmzoyU9bT+2QV60ZDUbCgxrZhrBE0=;
-	b=PzGfis6oXBNyDrdgqdcdd2WDbyY1ks7VAVzahzseCZjwsdwJCFeu5XF39fvO8J+LnPZcuh
-	8J0x0mZ5o/nHF1MRvn+3yiuev+YhM7IQZlAYXUcc41/vRmz4mV2l8KZA+1JoiMVzq4MKoP
-	j8ow1lxnueWC7Gln0UNLQC18ceGRkJg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726569661;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UxIhQZaCoEImEPjmzoyU9bT+2QV60ZDUbCgxrZhrBE0=;
-	b=5o95e55u5j4joCIO9QXkwNxzl41B9yfzDdrv5GV9gatI4lZQs4Id7IeRPLwHzCvczOzCYy
-	ltkxVJYZCkzmFwBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726569659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UxIhQZaCoEImEPjmzoyU9bT+2QV60ZDUbCgxrZhrBE0=;
-	b=OEWKZpjyYQ85Aitk6U38t1LYhfuwCvVvH41dmtOfTziPPRdnBtxJOOtDgKnVx8yx0Bw51g
-	IlFii8HXaEggsHEhtNCuN969qzrg1+YBYzHUaMWp00l2ohEVvXsXx25Kt1Y9XbnR9B7rZL
-	xWHYC+xDQjSdN3Zs9tMJukdVPKYdTXQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726569659;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UxIhQZaCoEImEPjmzoyU9bT+2QV60ZDUbCgxrZhrBE0=;
-	b=cqzTbZDRWSsTIAKVAsx+kHaII+bKP2sui9irnRLB3Gwh4jEBuBVvygxG2X11zGNGIwY2dQ
-	JJ+e8LhPDwME5qDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C85F2139CE;
-	Tue, 17 Sep 2024 10:40:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id R1bkLbpc6WaPegAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Tue, 17 Sep 2024 10:40:58 +0000
-Message-ID: <34025684-f5e2-4c3e-aa8f-d90288c85218@suse.de>
-Date: Tue, 17 Sep 2024 13:40:58 +0300
+	s=arc-20240116; t=1726569765; c=relaxed/simple;
+	bh=E9a/nxXo2KiCHfXmLHA8W5nWpSHl1mkItmUZHHEd060=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IghpCZpoEvWIxMrDq0lk7I1dagZxNjbzjAvnhzqyo1U6nRJO5Eimz5kur1VSi310sSZVuCyGjvmCN5M9o1kus1V58rYF3p8o7OvwT0iNyGr6j5f/1Kx9yRNWwPfZ865j15o/RSMJt91AYkJrGg0O/qMHljE2ubwPQ+u4VbGsAQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BIgE5YF6; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f763e9e759so55786611fa.3;
+        Tue, 17 Sep 2024 03:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726569762; x=1727174562; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ofmX+HKXE00WtuM13hFGpW8n7y4t1BDYpJWpTwCfwYg=;
+        b=BIgE5YF6Ue3O9OXMIy5gRbmp0Sqh1SPHjYjge27rEVylgFZ1NoVm6VMXSeqlQTMDAp
+         R4wC86o/yevVzYXVyrMkxa+OVtw14PrCu8UU6efHA7OCt0ZUymawoAntST2IH/VeEAyy
+         lFI0GeI/dtDrsFrLVGyDgLfnwQngQyZAyGg/yV+tI8ENXNLXYmj9EsawI/U0BstAXfrF
+         lPCcvPgWUumIgn22xLyWh1yj3ZwbMPvYSf0SjJhGR9rslDAHKp6Pkw7lMEkMuHkw4aZG
+         HqlMbeMdPR7v/lmqhEaNTJR8+aDUCwD4+BcZevh/e+mxRr4OrP2CA9Qvmt9Fo7In2L9A
+         XEgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726569762; x=1727174562;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ofmX+HKXE00WtuM13hFGpW8n7y4t1BDYpJWpTwCfwYg=;
+        b=DmfH893KnxQsj10NPAzqf7OojQG19YinuCXjQ3uv+4oWUjW8XV1sf+5YST3a5TfUob
+         4KbZcnaDJOwR9G5thsCUN4DOzLkm/5ijwykPWpojO8xRCdAKukP1+DUjBIWZQdtNKfRN
+         mQ4tMKlley4rE21UoMyGrv6A65c/FsoShpfwkR8BgV13akdkY0+gIe7qKbPmOP1icccr
+         0flioI9ogYR1ZrRV04dFE5C1GO5bjUVxm1HUAXBUvfJ08+89sahg5TQoLMFH4zGupAzG
+         VSdNhReWBlHtSWwDsueiPCeLFUKbvXCgrHuQ/0ExDGiqy0l7GOeBGZzkHEP7159WYieR
+         XbGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrWGW0d9nBleISW+Dc70yK2HbiHEZJhpg1ujuc0h48aYhNG5Rhn9Re8+sQDB+wo87wtn2wK2IkS8uiH5XM@vger.kernel.org, AJvYcCWjlWCpGN87zJOkt+d085rM0TDBOChbjc9qT1FgHzxDukBl7Rpl5EzAPY3Uj3kO/aM84MIKB8mmcCgY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH2GdQbtTTr5h0criq8r4oMTTsTAbNiDGfYAJdqGrplz7VMAjN
+	aEdyWVQ+h4zpX21YVdDGh76SEsQ967jNfQ1TFCzVve6BvzMgzNtXZ45okmWnoGDvEK2FK79BWPp
+	PCt2BKX7UrQ3Zi+TEVJIwCtaq8w==
+X-Google-Smtp-Source: AGHT+IE7wDEsYvo3hu0cfYozzAesa6JgzseU8Or3sJo+TYtS5n5WmyOVSXkx1QfoYY8onXcByFX6eMTMS9XFQBUU0jU=
+X-Received: by 2002:a05:651c:b12:b0:2f7:6812:d0ae with SMTP id
+ 38308e7fff4ca-2f787dc301amr101396411fa.13.1726569761761; Tue, 17 Sep 2024
+ 03:42:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next 07/11] PCI: brcmstb: Avoid turn off of bridge
- reset
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
- Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20240910151845.17308-1-svarbanov@suse.de>
- <20240910151845.17308-8-svarbanov@suse.de>
- <b41afb62-8a89-4c9d-8462-f4c5574eac7a@broadcom.com>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <b41afb62-8a89-4c9d-8462-f4c5574eac7a@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[dt];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+References: <20240917094956.437078-1-erezgeva@nwtime.org> <20240917094956.437078-4-erezgeva@nwtime.org>
+ <9c273945-5a70-408e-a9da-a0797aa6d935@kernel.org>
+In-Reply-To: <9c273945-5a70-408e-a9da-a0797aa6d935@kernel.org>
+From: Erez <erezgeva2@gmail.com>
+Date: Tue, 17 Sep 2024 12:42:05 +0200
+Message-ID: <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>, 
+	Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Esben Haabendal <esben@geanix.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 17 Sept 2024 at 12:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 17/09/2024 11:49, Erez Geva wrote:
+> > From: Erez Geva <ErezGeva2@gmail.com>
+> >
+> > Some flash devices need OTP parameters in device tree.
+> > As we can not deduce the parameters based on JEDEC ID or SFDP.
+> >
+> > Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
+> > ---
+> >  .../bindings/mtd/jedec,spi-nor.yaml           | 37 +++++++++++++++++++
+> >  1 file changed, 37 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+> > index 6e3afb42926e..d502b7fab2ce 100644
+> > --- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+> > +++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+> > @@ -90,6 +90,43 @@ properties:
+> >        the SRWD bit while writing the status register. WP# signal hard strapped to GND
+> >        can be a valid use case.
+> >
+> > +  opt_n_regions:
+>
+> No underscores, but hyphens.
 
+I'll fix this.
 
-On 9/10/24 20:03, Florian Fainelli wrote:
-> On 9/10/24 08:18, Stanimir Varbanov wrote:
->> On brcm_pcie_turn_off avoid shutdown of bridge reset.
->>
->> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
->> ---
->>   drivers/pci/controller/pcie-brcmstb.c | 14 ++++++++++++--
->>   1 file changed, 12 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/pci/controller/pcie-brcmstb.c
->> b/drivers/pci/controller/pcie-brcmstb.c
->> index d78f33b33884..185ccf7fe86a 100644
->> --- a/drivers/pci/controller/pcie-brcmstb.c
->> +++ b/drivers/pci/controller/pcie-brcmstb.c
->> @@ -234,10 +234,17 @@ struct inbound_win {
->>       u64 cpu_addr;
->>   };
->>   +/*
->> + * Shutting down this bridge on pcie1 means accesses to rescal block
->> + * will hang the chip if another RC wants to assert/deassert rescal.
->> + */
-> 
-> Maybe a slightly more detailed comment saying that the RESCAL block is
-> tied to PCIe controller #1, regardless of the number of controllers, and
-> turning off PCIe controller #1 prevents access to the RESCAL register
-> blocks, therefore not other controller can access this register space,
-> and depending upon the bus fabric we may get a timeout (UBUS/GISB), or a
-> hang (AXI).
+>
+> > +    type: u32
+>
+> It does not look like you tested the bindings, at least after quick
+> look. Please run `make dt_binding_check` (see
 
-Ack. Thank you!
+I run "make dt_binding_check" on kernel 6.6.
 
-regards,
-~Stan
+> Documentation/devicetree/bindings/writing-schema.rst for instructions).
+> Maybe you need to update your dtschema and yamllint.
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
+
+Thanks for the feedback.
 
