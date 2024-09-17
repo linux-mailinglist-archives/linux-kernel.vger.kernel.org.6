@@ -1,127 +1,180 @@
-Return-Path: <linux-kernel+bounces-331616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A2297AF01
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:38:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91F397AF07
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20490283C78
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C57ABB2AA65
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820A916A949;
-	Tue, 17 Sep 2024 10:38:13 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC20216A37C;
+	Tue, 17 Sep 2024 10:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xhipkrYI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fEVD+yXa";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xhipkrYI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fEVD+yXa"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EF9166F2E;
-	Tue, 17 Sep 2024 10:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3EC167D80;
+	Tue, 17 Sep 2024 10:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726569493; cv=none; b=QFTTgschIHqWUjSoB/XOnczsT1wHaxHikovBuxmZ6ck/VhfIXecb1rP77yHbdyNF+8ovGpB+eoLit/IdFt4K9s13sDD7HZnXFuvFI14EUPu55fhZsHz6FrD+bdeAfkyD2goBzccJZqE/shKB6W/fqc2BeAoDQLz9F7l9VZVMVgo=
+	t=1726569510; cv=none; b=KP9GAiNAxQZvMFnUrULEHIhoTSmhoWHPpEeDYJvfX4RatH/tZlpbx3ObSkSDHj8jJX6D00boptSL4sQsTgq6lPiR/QgSNIOy+9j5VwHgOmWuwI7ZUz6ZUjLLnvqyGKYJbhX/OUH7MeTwXOgjoS1RQrPLv5RZiTH9TtmsFdO4IT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726569493; c=relaxed/simple;
-	bh=qUyC053BFLbdvh1TwSeAnDW+JocofleEoV+3f6rWh/Q=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ljuohh6yL4HSCGfaAG6CR/6fjo7RGzjbbEhA4XZAj/I4wO+k/cdri/w5cHhMniJuaZngJg9aK9s4adNqNNd/eNofl4V1S597eDkp24dPMVtK3DKzkZWnSiwKbc+2hEjwRSN5gcH/vAqoXF+JnrIDUzXHETfZ5QXfbntTo3F2kbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from msexch01.omp.ru (10.188.4.12) by msexch02.omp.ru (10.188.4.13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 17 Sep
- 2024 13:38:06 +0300
-Received: from msexch01.omp.ru ([fe80::485b:1c4a:fb7f:c753]) by
- msexch01.omp.ru ([fe80::485b:1c4a:fb7f:c753%5]) with mapi id 15.02.1258.012;
- Tue, 17 Sep 2024 13:38:06 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: Karina Yankevich <k.yankevich@omp.ru>, "rafael@kernel.org"
-	<rafael@kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, "Sergey
- Shtylyov" <s.shtylyov@omp.ru>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>, Sergey Yudin <s.yudin@omp.ru>,
-	"mathias.nyman@linux.intel.com" <mathias.nyman@linux.intel.com>
-Subject: Re: [PATCH 5.10] xhci: check virt_dev is valid before dereferencing
- it
-Thread-Topic: [PATCH 5.10] xhci: check virt_dev is valid before dereferencing
- it
-Thread-Index: AQHbCOln/SYt17slkkiGE+zcRk3mnbJblz2A
-Date: Tue, 17 Sep 2024 10:38:06 +0000
-Message-ID: <204adc683e0e71f227ba3f0c6126a80d9b281768.camel@omp.ru>
-References: <20240917100703.80166-1-r.smirnov@omp.ru>
-In-Reply-To: <20240917100703.80166-1-r.smirnov@omp.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-kse-serverinfo: msexch02.omp.ru, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 9/17/2024 9:17:00 AM
-x-kse-attachment-filter-triggered-rules: Clean
-x-kse-attachment-filter-triggered-filters: Clean
-x-kse-bulkmessagesfiltering-scan-result: InTheLimit
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A87ECA70B94A99428A66719B7ECD3694@omp.ru>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1726569510; c=relaxed/simple;
+	bh=HK4+QNzXimHDKGKcXLPgnls982dRYEHQ+jlHNA1CDcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ePqCSnckA0ORhQeCHSid0MhGs0DmUC7Suio13AIQ0I6nDc087HQZFWdIOUwbgZeIT+ZF93jy8uzuDhdiX8djPy6g5cButo8IEva9TDY33mnRD8zdDihNfRvspWhv+G17WiN1MXpSoMsHCo674c+TwTpusNhbUKAJ7Qz6oC2o1Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xhipkrYI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fEVD+yXa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xhipkrYI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fEVD+yXa; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1471E22143;
+	Tue, 17 Sep 2024 10:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726569506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEoiY9zcBK/RWEUmYqIt2Lvhk8rkyIaVp9adytOJcfk=;
+	b=xhipkrYI/SV+DF5pJ6kLzS7FHPF+T9JKzNC3bI1juA5Wa4MMgWGuKZuenAF1UXxMfyGpcA
+	aVf4RZNTAnOVtD1IxcCTItx8t0saXih4Rl7FDBUcnBgzDL8qvozUmRRmiiuqGqzSrDnp5w
+	l9gbDTT2KCm/uOAg6ulSfQ/+Grwx3J8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726569506;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEoiY9zcBK/RWEUmYqIt2Lvhk8rkyIaVp9adytOJcfk=;
+	b=fEVD+yXaWvdc1uQdMxiGja6+dqCsIu2z2q0sC67/sqFxOWUSoMUwEVzS3rXZ3yaltRVZUZ
+	7nw5hrbzJO8xa7CA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xhipkrYI;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=fEVD+yXa
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726569506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEoiY9zcBK/RWEUmYqIt2Lvhk8rkyIaVp9adytOJcfk=;
+	b=xhipkrYI/SV+DF5pJ6kLzS7FHPF+T9JKzNC3bI1juA5Wa4MMgWGuKZuenAF1UXxMfyGpcA
+	aVf4RZNTAnOVtD1IxcCTItx8t0saXih4Rl7FDBUcnBgzDL8qvozUmRRmiiuqGqzSrDnp5w
+	l9gbDTT2KCm/uOAg6ulSfQ/+Grwx3J8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726569506;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEoiY9zcBK/RWEUmYqIt2Lvhk8rkyIaVp9adytOJcfk=;
+	b=fEVD+yXaWvdc1uQdMxiGja6+dqCsIu2z2q0sC67/sqFxOWUSoMUwEVzS3rXZ3yaltRVZUZ
+	7nw5hrbzJO8xa7CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2327B139CE;
+	Tue, 17 Sep 2024 10:38:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qid3AiFc6WbIeQAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Tue, 17 Sep 2024 10:38:25 +0000
+Message-ID: <7d8b4fc0-0b62-474d-8cff-12291b62a62d@suse.de>
+Date: Tue, 17 Sep 2024 13:38:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next 04/11] PCI: brcmstb: Expand inbound size
+ calculation helper
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20240910151845.17308-1-svarbanov@suse.de>
+ <20240910151845.17308-5-svarbanov@suse.de>
+ <1bc838ab-509a-4501-a141-35c1000f5f49@broadcom.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <1bc838ab-509a-4501-a141-35c1000f5f49@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 1471E22143
+X-Spam-Score: -5.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[dt];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-T24gVHVlLCAyMDI0LTA5LTE3IGF0IDEzOjA3ICswMzAwLCBSb21hbiBTbWlybm92IHdyb3RlOgo+
-IEZyb206IE1hdGhpYXMgTnltYW4gPG1hdGhpYXMubnltYW5AbGludXguaW50ZWwuY29tPgo+IAo+
-IGNvbW1pdCAwM2VkNTc5ZDlkNTFhYTAxODgzMGIwZGUzZThiNDYzZmFmNmI4N2RiIHVwc3RyZWFt
-Lgo+IAo+IENoZWNrIHRoYXQgdGhlIHhoY2lfdmlydF9kZXYgc3RydWN0dXJlIHRoYXQgd2UgZHVn
-IG91dCBiYXNlZAo+IG9uIGEgc2xvdF9pZCB2YWx1ZSBmcm9tIGEgY29tbWFuZCBjb21wbGV0aW9u
-IGlzIHZhbGlkIGJlZm9yZQo+IGRlcmVmZXJlbmNpbmcgaXQuCj4gCj4gU2lnbmVkLW9mZi1ieTog
-TWF0aGlhcyBOeW1hbiA8bWF0aGlhcy5ueW1hbkBsaW51eC5pbnRlbC5jb20+Cj4gTGluazogaHR0
-cHM6Ly9sb3JlLmtlcm5lbC5vcmcvci8yMDIxMDEyOTEzMDA0NC4yMDY4NTUtNy1tYXRoaWFzLm55
-bWFuQGxpbnV4LmludGVsLmNvbQo+IFNpZ25lZC1vZmYtYnk6IEdyZWcgS3JvYWgtSGFydG1hbiA8
-Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+Cj4gU2lnbmVkLW9mZi1ieTogUm9tYW4gU21pcm5v
-diA8ci5zbWlybm92QG9tcC5ydT4KPiAtLS0KPiDCoGRyaXZlcnMvdXNiL2hvc3QveGhjaS1yaW5n
-LmMgfCAxMiArKysrKysrKystLS0KPiDCoDEgZmlsZSBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyks
-IDMgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2hvc3QveGhjaS1y
-aW5nLmMgYi9kcml2ZXJzL3VzYi9ob3N0L3hoY2ktcmluZy5jCj4gaW5kZXggZmJiN2E1YjUxZWY0
-Li5hNzY5ODAzZTdkMzggMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy91c2IvaG9zdC94aGNpLXJpbmcu
-Ywo+ICsrKyBiL2RyaXZlcnMvdXNiL2hvc3QveGhjaS1yaW5nLmMKPiBAQCAtMTQxNSw2ICsxNDE1
-LDggQEAgc3RhdGljIHZvaWQgeGhjaV9oYW5kbGVfY21kX2NvbmZpZ19lcChzdHJ1Y3QgeGhjaV9o
-Y2QgKnhoY2ksIGludCBzbG90X2lkLAo+IMKgwqDCoMKgwqDCoMKgwqAgKiBpcyBub3Qgd2FpdGlu
-ZyBvbiB0aGUgY29uZmlndXJlIGVuZHBvaW50IGNvbW1hbmQuCj4gwqDCoMKgwqDCoMKgwqDCoCAq
-Lwo+IMKgwqDCoMKgwqDCoMKgwqB2aXJ0X2RldiA9IHhoY2ktPmRldnNbc2xvdF9pZF07Cj4gK8Kg
-wqDCoMKgwqDCoMKgaWYgKCF2aXJ0X2RldikKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgcmV0dXJuOwo+IMKgwqDCoMKgwqDCoMKgwqBjdHJsX2N0eCA9IHhoY2lfZ2V0X2lucHV0X2Nv
-bnRyb2xfY3R4KHZpcnRfZGV2LT5pbl9jdHgpOwo+IMKgwqDCoMKgwqDCoMKgwqBpZiAoIWN0cmxf
-Y3R4KSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB4aGNpX3dhcm4oeGhjaSwg
-IkNvdWxkIG5vdCBnZXQgaW5wdXQgY29udGV4dCwgYmFkIHR5cGUuXG4iKTsKPiBAQCAtMTQ1OSw2
-ICsxNDYxLDggQEAgc3RhdGljIHZvaWQgeGhjaV9oYW5kbGVfY21kX2FkZHJfZGV2KHN0cnVjdCB4
-aGNpX2hjZCAqeGhjaSwgaW50IHNsb3RfaWQpCj4gwqDCoMKgwqDCoMKgwqDCoHN0cnVjdCB4aGNp
-X3Nsb3RfY3R4ICpzbG90X2N0eDsKPiDCoAo+IMKgwqDCoMKgwqDCoMKgwqB2ZGV2ID0geGhjaS0+
-ZGV2c1tzbG90X2lkXTsKPiArwqDCoMKgwqDCoMKgwqBpZiAoIXZkZXYpCj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybjsKPiDCoMKgwqDCoMKgwqDCoMKgc2xvdF9jdHggPSB4
-aGNpX2dldF9zbG90X2N0eCh4aGNpLCB2ZGV2LT5vdXRfY3R4KTsKPiDCoMKgwqDCoMKgwqDCoMKg
-dHJhY2VfeGhjaV9oYW5kbGVfY21kX2FkZHJfZGV2KHNsb3RfY3R4KTsKPiDCoH0KPiBAQCAtMTQ3
-MCwxMyArMTQ3NCwxNSBAQCBzdGF0aWMgdm9pZCB4aGNpX2hhbmRsZV9jbWRfcmVzZXRfZGV2KHN0
-cnVjdCB4aGNpX2hjZCAqeGhjaSwgaW50IHNsb3RfaWQsCj4gwqDCoMKgwqDCoMKgwqDCoHN0cnVj
-dCB4aGNpX3Nsb3RfY3R4ICpzbG90X2N0eDsKPiDCoAo+IMKgwqDCoMKgwqDCoMKgwqB2ZGV2ID0g
-eGhjaS0+ZGV2c1tzbG90X2lkXTsKPiArwqDCoMKgwqDCoMKgwqBpZiAoIXZkZXYpIHsKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgeGhjaV93YXJuKHhoY2ksICJSZXNldCBkZXZpY2Ug
-Y29tbWFuZCBjb21wbGV0aW9uIGZvciBkaXNhYmxlZCBzbG90ICV1XG4iLAo+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc2xvdF9pZCk7Cj4gK8KgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybjsKPiArwqDCoMKgwqDCoMKgwqB9Cj4gwqDC
-oMKgwqDCoMKgwqDCoHNsb3RfY3R4ID0geGhjaV9nZXRfc2xvdF9jdHgoeGhjaSwgdmRldi0+b3V0
-X2N0eCk7Cj4gwqDCoMKgwqDCoMKgwqDCoHRyYWNlX3hoY2lfaGFuZGxlX2NtZF9yZXNldF9kZXYo
-c2xvdF9jdHgpOwo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoHhoY2lfZGJnKHhoY2ksICJDb21wbGV0
-ZWQgcmVzZXQgZGV2aWNlIGNvbW1hbmQuXG4iKTsKPiAtwqDCoMKgwqDCoMKgwqBpZiAoIXhoY2kt
-PmRldnNbc2xvdF9pZF0pCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHhoY2lfd2Fy
-bih4aGNpLCAiUmVzZXQgZGV2aWNlIGNvbW1hbmQgY29tcGxldGlvbiAiCj4gLcKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgImZvciBk
-aXNhYmxlZCBzbG90ICV1XG4iLCBzbG90X2lkKTsKPiDCoH0KPiDCoAo+IMKgc3RhdGljIHZvaWQg
-eGhjaV9oYW5kbGVfY21kX25lY19nZXRfZncoc3RydWN0IHhoY2lfaGNkICp4aGNpLAoKU29ycnks
-IEkgYWNjaWRlbnRhbGx5IHNlbnQgYSBjb3B5IHRvIHRoZSB3cm9uZyBwbGFjZS4gSSd2ZSByZXNl
-bnQgdGhlIHBhdGNoLgo=
+
+
+On 9/10/24 19:59, Florian Fainelli wrote:
+> On 9/10/24 08:18, Stanimir Varbanov wrote:
+>> Expand the inbound size calculation in helper function
+>> up to 64GB.
+> 
+> Nit, we could explain why, which is that BCM2712's memory map supports
+> up to 64GB of DRAM. With that:
+
+Sure.
+
+> 
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+
+Thank you!
+
+regards,
+~Stan
 
