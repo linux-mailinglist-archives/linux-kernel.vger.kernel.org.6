@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-332095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2E297B56A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:57:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B845A97B570
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030061F21AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:57:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E0321F230D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB0C191F78;
-	Tue, 17 Sep 2024 21:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4EB185B52;
+	Tue, 17 Sep 2024 21:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7x17b0N"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZDxK4kQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9362DF510;
-	Tue, 17 Sep 2024 21:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEFD192B8C;
+	Tue, 17 Sep 2024 21:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726610242; cv=none; b=JP6qGR6W3vgH9hAAdtMCzMj0WS5yoh+InWw/k1TFuWcpQF1W37e+cCh1rB04fRBUg5Rz9i33vVuCi5STdfGqZ9/0nfZMqqZxjD073QTFfkM8RcTnnWVOmKpSlvDDPb3/Q9xPi40N/r/kjwS4x5flv9TwertJ5mClGE0zTMb2f9A=
+	t=1726610343; cv=none; b=GhmfFOjnO+i+Qa+ESdXmym9ZI3t2pcsp+NcA2vbIQaNuBwhcRW2McVR4/WXMSew/1kKhEiuFKz6HvqXQIm4Aq14a1EQQHXFDvdfEi5JaRZugGGWoj5jlDAHFrg+Ul33AeMPzlurNUjCzayNXYhiu3rTtEhDBtTQADsj9/6gJNTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726610242; c=relaxed/simple;
-	bh=hFlmpTWnyybhl7hlaDnjaHuk/xz5CLJJI8OxXLuvOSE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Nvt/4fzhj0WAY7CmVLm7fOR6kpyJJSb1epCNSMs+Je84aacRBm+Nn+wBnt7z0gzpy6ZGYWJYHWte2k8zla8Xq+b3QnBv0sh+Zm5Gzw9z1c8+Z/MWbLVJa+UG1IDJeNGHAfpQZ5rYaCFK0ofJfYo/NLbeO4xSE66wa2xMxxSm+go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7x17b0N; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2054e22ce3fso66451315ad.2;
-        Tue, 17 Sep 2024 14:57:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726610241; x=1727215041; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+IGgBEW9RL8xHUotH57V+NXA5SJXFjWvsNu+pEDVbjk=;
-        b=T7x17b0NWfE1bV2TJ/mppDt1Rm/LJRoWK5yEbd4dV8VqJqHlnZyrgMeDaWPdG0Aaq3
-         m0fYKstNdJMN7q/fFK2ocFYZMEgk7uZHmF394H7K+Tl/8osp06UMDZGzy4YzLWgfktUu
-         kQ1FzRpzMAFVdQdDZpalrPMvGWKf6GHvul513/S4TIhzYTtpd7+mDEfRDuAhQ1EdMws9
-         pofzMAjQPnJU+5hwZcQtpKEHOefVp5hZAo4Onfh6F23So401iDiErWqvhhPNYTqbdOCP
-         Aj0DEVXjvL85xun9OXJbZWjOUePNz2bvtVIqgm/ao1YLirqPt9b7Bium5CD69tywgU3O
-         cjTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726610241; x=1727215041;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+IGgBEW9RL8xHUotH57V+NXA5SJXFjWvsNu+pEDVbjk=;
-        b=Dem4+2XfdQGKCH6RWw/OVNzz8HMsTpSpi5aRyid6+Nt97vWBZ43MTO1N5wN9EBn9Yq
-         Z2VyubALHv05AUA+/iwI+ax2QAWSexBv1EusLr8uF3Z1DxgJvX8pxyb2F2EfJWlXds2k
-         HSUOY6pjodE5yCK1OItBpYI6wekLVZs1vtaFA1KN91saM+RFD9FkMNXZzb7HRcmvPexo
-         g0TJ1/86d9Q4kamAaSaDbfbFvR6VQ0IF31qD/kxPWZpDf9kAw/FaPpfhFOZzyD+LLBf3
-         J8rWA/p/tpG9+EUiQ/prJZnJ6X9zJikjFsbxHTkkhY/M2ss8e1w2FgR1tZTVkb+3StPk
-         BKEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUav6s8pUWjkqRUbYKDrJUy9eUuX71O/s29YGrudRN8NGESdHLMZTt/7BYfuTqajw1iXBZsNWU6DJ0L8SI=@vger.kernel.org, AJvYcCXU9Rk2D6f/IsKaGvYS/mPmd1bypRjH/Aa88TeSbr6SQfnv+ALwjMeaLMqSLWcHK6omQo02asME@vger.kernel.org
-X-Gm-Message-State: AOJu0YygH2N7P7INqYXR7xycLFsCwZ97VeCqu7OjOHUAMpTweJDTA7Az
-	LYfDkADu8iGoNpV78KnKoDwVjGeTBCnk+Hrgb9H3FFO14GvJgg4c
-X-Google-Smtp-Source: AGHT+IFA9w7IiS4cU8ZJaYaS+KbMJPZbx482us08hi9Ex8yg0JkLXF9fbd1HbU4pIutl9ArvYDPHQQ==
-X-Received: by 2002:a17:902:e852:b0:202:49e:6a35 with SMTP id d9443c01a7336-2076e33e935mr314661045ad.19.1726610240740;
-        Tue, 17 Sep 2024 14:57:20 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d19c0sm54563355ad.146.2024.09.17.14.57.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 14:57:19 -0700 (PDT)
-Message-ID: <30bb27e0-4569-4581-9a50-1fe7d5334c29@gmail.com>
-Date: Tue, 17 Sep 2024 14:57:16 -0700
+	s=arc-20240116; t=1726610343; c=relaxed/simple;
+	bh=XHchNEjGNbXlp7Wqp7pU3mczMQTJAnogTJaHlJi9jHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zx9colENnat9AFnFxp2vC2JW2Sb4CEzl1BbjJXd/R2Gs7n6qSIL2WPkfA3KkSpo8Bgs6ZuKOe9KzwU4vWhAEpQpUPecW+7N5sAvCkeAAt+c8X9x7mW5tfupQbNeFdQaZwQq+aNX9DSLKIMKPq+6LdO+qv7tC7Tn15JuU35amf7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZDxK4kQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46E54C4CEC5;
+	Tue, 17 Sep 2024 21:58:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726610342;
+	bh=XHchNEjGNbXlp7Wqp7pU3mczMQTJAnogTJaHlJi9jHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MZDxK4kQzPjG6ufMCyg9tWmQBRitkI3Z0BsdEcOYQeGWCweSxzo8vC5yevlsMpvxw
+	 lr9NJiOFcsZQbKdG1gN2WwIi9eqT3sssYqrZSOLPhnkNaJkxYTRQ34bO2EP5aQatSq
+	 2s0V4ncLOSdMvQ+eT4zg/1KIrBjlZMGtB4pUnYCelN+JdZWD26WmNgfV6lpF1x5Zwi
+	 EqGgj9vQd9TeCFPPFI10RqY4GZKuXr37VkX4xpJZKA6z9Xb2dKozt9U4UBCjxAl62f
+	 csK0hqJ79hptrIlEVkjvqOkLLJp7KoAxXpN5TD/bHgyQfTdjfUw473Cprhz7bJstLr
+	 j3HcTl7V40I3g==
+Date: Tue, 17 Sep 2024 14:58:52 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v2 00/11] unwind, perf: sframe user space unwinding,
+ deferred perf callchains
+Message-ID: <Zun7nKFzWz2J2rSz@google.com>
+References: <cover.1726268190.git.jpoimboe@kernel.org>
+ <20240914081246.1e07090c@rorschach.local.home>
+ <20240915111111.taq3sb5xzqamhb7f@treble>
+ <20240916140856.GB4723@noisy.programming.kicks-ass.net>
+ <20240916153953.7fq5fmch5uqg7tjj@treble>
+ <20240916181545.GD4723@noisy.programming.kicks-ass.net>
+ <20240916184645.142face1@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240916114228.914815055@linuxfoundation.org>
-Content-Language: en-US
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240916114228.914815055@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240916184645.142face1@rorschach.local.home>
 
-On 9/16/24 04:42, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.11 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hello,
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+On Mon, Sep 16, 2024 at 06:46:45PM -0400, Steven Rostedt wrote:
+> On Mon, 16 Sep 2024 20:15:45 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Mon, Sep 16, 2024 at 05:39:53PM +0200, Josh Poimboeuf wrote:
+> > 
+> > > The cookie is incremented once per entry from userspace, when needed.
+> > > 
+> > > It's a unique id used by the tracers which is emitted with both kernel
+> > > and user stacktrace samples so the userspace tool can stitch them back
+> > > together.  Even if you have multiple tracers triggering at the same time
+> > > they can all share a single user trace.  
+> > 
+> > But perf don't need this at all, right? It knows that the next deferred
+> > trace for that tid will be the one.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Well.. technically you can sample without tid.  But I'm not sure how
+much it'd be useful if you collect callchains without tid.
 
+> 
+> Is that because perf uses per task buffers? Will perf know this if it
+> uses a global buffer? What does perf do with "-a"?
+
+Then it'd use per-cpu ring buffers.  But each sample would have pid/tid
+pair and time so perf tools can match it with a deferred callchian.
+
+Thanks,
+Namhyung
 
