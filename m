@@ -1,101 +1,97 @@
-Return-Path: <linux-kernel+bounces-331567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855F797AE53
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:55:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F9B97AE8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC76283DC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:55:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56A3DB2FE42
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967AA15D5B6;
-	Tue, 17 Sep 2024 09:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252D415DBB2;
+	Tue, 17 Sep 2024 09:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TX1BFEAh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBfFc7Cj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09B637B;
-	Tue, 17 Sep 2024 09:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8084D15C137;
+	Tue, 17 Sep 2024 09:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726566945; cv=none; b=jRDOobpeGBTmjRWe2WrAafO94VDFrfsFZFPaHBU6y6H98RV+YgLK27lfEBcS8sWDwnMJpIt/NUvvHpvtV0HJQk/eKoi5mI23kypVT7ZX0v84F9Rna0cJIorfCwp29+UYob4sF5I+lS98rwGsK6/imSC5PWZdJPlcqh1D4+AYByY=
+	t=1726566976; cv=none; b=Q/miWzHu2/vJx45RZ5hhz2aIRyohDJuwKie8dOWILU3ljj9dvoUd7KifO76OEQP2pv76HIv2Zkzo4+gofPYdwxBTBGaTVaM0ptBoJjR0bd99WNrInXYcwBaRJLamDvklC+HeFdhVi5GFjGsPmOg7Tv3ywvsNRM9Fe/3NkW+jbsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726566945; c=relaxed/simple;
-	bh=WHbeFH5Td69vGBqxgGhIT2rQhQdb5LE6FSqeOmbeESY=;
+	s=arc-20240116; t=1726566976; c=relaxed/simple;
+	bh=+/1Jsm5EfZ+70W+tnarHdii86KgCFJlSCc02iiIG8qo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LxsHXU6ais6Va8Ae3l+nsaGwFmFlkCkr8YzrFkpGdHxe4kCnHKKTM3UvmbiShGKrjHESZ17Q9K6fVAQ8KQQo0D/kZBLzJNQ4GVXwVfd+463QaKIDKcWNAJmyzARy5lWka1p9IsHb3pPXfYXwgKza6jRWrICbAVnuVNIWnzF+j9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TX1BFEAh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58103C4CEC5;
-	Tue, 17 Sep 2024 09:55:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDnUa3kghb1jutS2bxy801Zk3WqZbZyPLQlpTJwcTme2IQBLn2EGBQsni6NUU0wDhdIogB+oxfIY+PHRPwuydbOwh2FQwTL9Y6I1+MAMhJhzbqm0CSQVXhc7D4TcOw0ptzvgmHa3Pql016UvDat9LdWgGlpvoZ3W6OFw2AbR/JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBfFc7Cj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB70EC4CEC5;
+	Tue, 17 Sep 2024 09:56:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726566944;
-	bh=WHbeFH5Td69vGBqxgGhIT2rQhQdb5LE6FSqeOmbeESY=;
+	s=k20201202; t=1726566976;
+	bh=+/1Jsm5EfZ+70W+tnarHdii86KgCFJlSCc02iiIG8qo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TX1BFEAhm+ZWwoXKsSRcTE128mIgVCrFrDzOfnhgjbI74MPD7etlTl2Nu8f5kmEAH
-	 odnIr3Nb6UCpPq31zJbqWeyICExBSR8Mvbv/WY13KbzhuymGLsjjQKQuHgCTunB5A5
-	 X3vBKyOMNSshGpb55BjfdNjWltv6Rfutm8Fu4pSsKl88eq1M/EeKkl56tcthmVWQ1K
-	 9EnNGZnVmlxv9HZGdBc/18YD0i86NfCp8NlF/dFqM9H1gt0RK94joobYPXi404jC93
-	 75fz7rFhMX0vCl8FTlcc/ow9QLYH6wssRCMkBSDAw90yZc5pYTOarC111swTX63pBi
-	 2LoQ6evp0eDrw==
-Date: Tue, 17 Sep 2024 10:55:39 +0100
-From: Will Deacon <will@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Florent Revest <revest@chromium.org>,
-	linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v14 04/19] function_graph: Replace fgraph_ret_regs with
- ftrace_regs
-Message-ID: <20240917095538.GA27384@willie-the-truck>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
- <172615373091.133222.1812791604518973124.stgit@devnote2>
- <20240915051144.445681c2@rorschach.local.home>
+	b=IBfFc7CjY6BowlUYZk19v6se9x/p006FROn6+NRQIyfA+vLQh/wWNfZgk2dRBXMZZ
+	 nC0MlNXIygKZAt40HgXlGthdkz/97+J1bvgLbT/gz1HOH9PpbVbm8APcBdsndZ8wCO
+	 FfVXJ47FcNSfDEM5yvSTlNf7TM9kcTqwvwK0JaB0Okubd29XqCIC4GqwOkHnDLHHt1
+	 2i6HVUKBXEQ9opiUd6TuD3rgRlq6Ud7RB/rdEfBZvlDPMz8+2vcxdPtkFnECYw7EnK
+	 02woCz3jdAup5lYgbasygQdAOpJBxWLN+9GPV5Y1d7EVzYoTZAGo0Zx3/+VtHnTtJB
+	 hT30gDOOl9l/Q==
+Date: Tue, 17 Sep 2024 11:56:12 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
+Message-ID: <ZulSPEG_BycLdDtE@finisterre.sirena.org.uk>
+References: <20240916114228.914815055@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qQY3pwmha7VkpfRr"
+Content-Disposition: inline
+In-Reply-To: <20240916114228.914815055@linuxfoundation.org>
+X-Cookie: Editing is a rewording activity.
+
+
+--qQY3pwmha7VkpfRr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240915051144.445681c2@rorschach.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, Sep 15, 2024 at 05:11:44AM -0400, Steven Rostedt wrote:
-> On Fri, 13 Sep 2024 00:08:51 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Use ftrace_regs instead of fgraph_ret_regs for tracing return value
-> > on function_graph tracer because of simplifying the callback interface.
-> > 
-> > The CONFIG_HAVE_FUNCTION_GRAPH_RETVAL is also replaced by
-> > CONFIG_HAVE_FUNCTION_GRAPH_FREGS.
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  Changes in v8:
-> >   - Newly added.
-> > ---
-> >  arch/arm64/Kconfig                  |    1 +
-> >  arch/arm64/include/asm/ftrace.h     |   23 ++++++-----------------
-> >  arch/arm64/kernel/asm-offsets.c     |   12 ------------
-> >  arch/arm64/kernel/entry-ftrace.S    |   32 ++++++++++++++++++--------------
+On Mon, Sep 16, 2024 at 01:42:54PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.11 release.
+> There are 121 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-The arm64 part looks good to me, although passing a partially-populated
-struct out of asm feels like it's going to cause us hard-to-debug
-problems down the line if any of those extra fields get used. How hard
-would it be to poison the unpopulated members of 'ftrace_regs'?
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Will
+--qQY3pwmha7VkpfRr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbpUjsACgkQJNaLcl1U
+h9AlYAf9F74CGgtiu9iyjIpEJr1fAN+uhIcG/2gq4eodTDEKl3sgPrmhEg4tdRZD
+GAB8AlwIf5KPqQBCjm2EoT55ykaerwPHN7L1Dq2jWJ9WUVcLEAMH3RJvXD11zG+D
+E2n4R0aC/xY+goUL/hbBNgnyUnsKVy8Hu75cMD0oA80vFW0hXGbINcl3+2QU/jLu
+bDSCOOnllNRn+eJxUjcD03J0QOZ38hhmPPX0Tp8pIGNiiJpWxcUMg1tCGSfTj1cC
+gTu3wHlY8cNjC4QcF5LLhoMChrEv7qEdVWkGPiMIeDuNf2smXY0MoYHlVbiEZYon
+qW/FDlAF/iYOjr82ZMNDUuSc4MJrqA==
+=XAZ3
+-----END PGP SIGNATURE-----
+
+--qQY3pwmha7VkpfRr--
 
