@@ -1,196 +1,266 @@
-Return-Path: <linux-kernel+bounces-331857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76AF097B217
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:45:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B91597B219
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BBED283329
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:45:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0E761C248B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52401D0945;
-	Tue, 17 Sep 2024 15:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDEF1C8FB2;
+	Tue, 17 Sep 2024 15:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hwleVkO7"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2065.outbound.protection.outlook.com [40.107.94.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXPZ7FsD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95086185939;
-	Tue, 17 Sep 2024 15:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726586402; cv=fail; b=BMv8JgBOuueji12qqAPyXmd2ngpmRFuFBxWxPpRUWSiQLmXyWeFgbnAnE4sJae1mrbT/ouKhwnUVSNOzK8NyBLg4kHChzZfBeFynVMRba+Ld7P54apCNgNkc0YyZ4AnsDrfjtK5VSavqO1rWUgU6xZJra4TFY0mdKxnRA4f1RUY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726586402; c=relaxed/simple;
-	bh=/Su4v/j24akbPu5txyEubK+a67MnSw6DpUIwDhJy8Ro=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=Glhl2IZrv6CRCeerzuU8GYPuU+ceIkHZjAqfxi7ReG7eAoQ0+aqQHaDR8UQ1caCkoi5vN478QxpJyJ9RKzI9BMZ05+TfnVhhY7Rfue16QLrxL6a/QAST4RUz4IMiPe8MZT737dml6ClNnp/heBxXVODJ/KVPNcqR2WUzZQMC4ic=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hwleVkO7; arc=fail smtp.client-ip=40.107.94.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HWWmge31w5zD9PEysFV0p7Ee8akPeiurRZpM0SQgAOd/lm/tWZoLxF1d9R40HG/nS5DTgwKt7lT0djW8jbvtOHom9GEfhFiGw9NifldWuDF+pBKjh67tAZtRraPAv8aY7O2Vup/WoclvGA/My2ug0lFlwSxAHRo8k9EH41gAFgJh9S5Z45bIh1TpPZe1FpWLL4R20zV+1bEgdamK2Jy69FkOtoN3U3iqtXsbNA4aipUXqwAronNdxPsPriMjYXwh7QuQ73BEjDLD5KzVZcORmECHp1BKmF/H9cFJwUvrm71xeYR4sIjwrFwUp2iKy0DSMhJ2P2aymm5QzuqnVKxfpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6xcoGfDdKeOkpjFOxKh/hxz06DnRbwjgmKd9FMjr0Vs=;
- b=lu8uWhLtnyEKbFchBGDN7dD3N1tfX8g9gjbe6zYBCeiN3gzSeSwH54bA/gvwtQIBE/JjSDCr5gaCSV2qSiXAgguSG0hT0a+5TOiGu9JdIRZAj9IZ9qZR9R2gbVKiAaSwmeraOo9ATbjpN1RMNYPvIwV6i7JGXyalGV3pKFTkD84MAcEIfY7cGldtJmArZnowsZx2n7owRf3q+eoptfk8Dm3yXtCfCu8OGJf09MCVJiwXNfFo9aIJuawwkjW5Y2iLcD+M0XieVj6XQxd0F3sY9SGgW6w1kThA1J01FpxP7f66/lUOLzUulPuC8VcnQBNFoMkq0UASiIIxG1i1ev14uA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6xcoGfDdKeOkpjFOxKh/hxz06DnRbwjgmKd9FMjr0Vs=;
- b=hwleVkO7tvKC1Ue9StU+CmyzJJVnIJVUJ7eT9qcmMxKWtFDQ17wJvsi4Pw9ObcbNV1ptLyM+ihhTRR3lHL1QqDyvTepMMjbjsi0cBDKx+bYC9/Hh5PIlX7TZBVet7Lf50UDr8cB/gBqCWjRnMZYB/APYFdqElYt1c3TrTfTl1/z+K2gKdzbo2JPqeWmb7ZRDh/mM5ubysP7+boymNccrIbKTVWGJlhPEPjOGNMAi9fFj5RHH5aZuoecGpXas15/w6iqgMLATEsrIgC88R98gVdBn3JWNHdwOiNKH7hZCrF5+Do8cp+Salfj8+7aFgsZNfuDRlBMb/BPAm52g3zHT3w==
-Received: from PH8PR02CA0017.namprd02.prod.outlook.com (2603:10b6:510:2d0::20)
- by DS7PR12MB6262.namprd12.prod.outlook.com (2603:10b6:8:96::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7962.24; Tue, 17 Sep 2024 15:19:56 +0000
-Received: from SA2PEPF000015C7.namprd03.prod.outlook.com
- (2603:10b6:510:2d0:cafe::5e) by PH8PR02CA0017.outlook.office365.com
- (2603:10b6:510:2d0::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
- Transport; Tue, 17 Sep 2024 15:19:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SA2PEPF000015C7.mail.protection.outlook.com (10.167.241.197) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Tue, 17 Sep 2024 15:19:55 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Sep
- 2024 08:19:40 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Sep
- 2024 08:19:40 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 17 Sep 2024 08:19:39 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
-In-Reply-To: <20240916114228.914815055@linuxfoundation.org>
-References: <20240916114228.914815055@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFF217BA4;
+	Tue, 17 Sep 2024 15:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726586552; cv=none; b=sWSqrTcI2+8M2USfI+Qu+7MeZIzXm1+yHlz795C0GpNZPoca/JCY7YPnHu04ZbBgoUKNRvOMxCQOF5jDjycAxf51Ps6rSaTm67hUNnhrbus9AvFOvWYrZckFM+5YgzlxLwODz4CVQfKijCCaexQgqVi3kluYBSv118ZBzGJFGmk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726586552; c=relaxed/simple;
+	bh=b17dV6kcYCKjtkCgvF4MqWi0LIWAWld8+sLS8KVrnNg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=q+vnGLweqc5iTRdLc/WGmm0EReb/R6eOGtEUc8OdDsrvj8SLeWjnFG5VpkfTOOr4AaMeL3kS0dwhp8oM8P2P/aqqJPZFtJB+uLPfCDE1d77iWF9C5wYrVCZavSAUSUy6/77fK251WybxvGleNk60LJTJDTUQIUZ19pfjPBgRf+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXPZ7FsD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A9826C4CEC5;
+	Tue, 17 Sep 2024 15:22:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726586551;
+	bh=b17dV6kcYCKjtkCgvF4MqWi0LIWAWld8+sLS8KVrnNg=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=nXPZ7FsDTlchEG+c7929e2Sf7D4yuNZs/KU/cPNCc4xj+BkoXvIHzOA3/9ZQdVfm4
+	 PBKe/jSEQEF82HetQgKXZ9u0h9CsRxKnVlnszHg8F+cT2q5ZG842wTB5dvNsVS3yNG
+	 IGADHuNB26kxG3TRIordt22pyy6OGDFzewFPdXKF3eJ03yMwFlLaKOknx3d+VHxsmx
+	 f3rElLXPONblsZKK4KOp6YgmJl9Sr0IAhVnKrQNRk8YXScvnLZbQ+7p3bJOB2eVQJa
+	 7o5bQt6HdlFRTS21z1Zl04o6F97YFfd4Ki5VHo362RJXAZCnjIrUzCSxfTgYp2FPs2
+	 nyWa+Qxdiw+cQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C77CAC58A;
+	Tue, 17 Sep 2024 15:22:31 +0000 (UTC)
+From: Daniel Gomez via B4 Relay <devnull+da.gomez.samsung.com@kernel.org>
+Date: Tue, 17 Sep 2024 17:22:18 +0200
+Subject: [PATCH RFC] blktrace: add i/o alignment information
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <91b2a0f9-44d9-4f01-92de-170805f37d71@rnnvmail203.nvidia.com>
-Date: Tue, 17 Sep 2024 08:19:39 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015C7:EE_|DS7PR12MB6262:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1767a6d3-7610-42e8-9129-08dcd72c2fb7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OEJZQVFDR0RpZ09QU0JCY243a0hVUVh3elRoOFdQQ211eGVsQWZzR25mWG5T?=
- =?utf-8?B?ZGJHOFVINng5VjBWZ0duRkdzNHpNNkp3SmwzRDBzOGplZ3UyTGVkcWh4SnZV?=
- =?utf-8?B?VWtEMTJqb2RXK2JTenZaR1g1eThDQ1QrNXl2M2ZnTnVsRld6c3FBdUt3OTly?=
- =?utf-8?B?Z1M4QlVGcU04YUpJajNwdzd4dWRRTTluT1lEMzZsVnZsL3Z2Wjg4MnM5blVJ?=
- =?utf-8?B?R2wvTmZzcnExU1FITHlPVnd2cVhndVBhdlJWMzcxdk14UXovRUx3amNyQUlC?=
- =?utf-8?B?K2Mzb2VCS1B4UmRvMTZiRVZEblJTbFYwTjlHWDBNcGNXakhlTG5abjJHVVQy?=
- =?utf-8?B?Vk5aWVNBZ2lneEhnNjJMcGZ0Qmh0c2JTS2dLUEg3YVFNWk1QclpMWGRLRzB3?=
- =?utf-8?B?ZlN0WXJTVHF1VHREaFg4TTJVdzdyYkMzd2V4ZzZ2eTB1cXNxMGpra2ZkOFJj?=
- =?utf-8?B?NGtBTzNuWXNRN00wYWZIdkVQdU04d245WE1Pb21xK2hVdGtDZ2hWaWwrNnlz?=
- =?utf-8?B?MzdybFR6NzkwZ1pHeXkxQk9nOUwvU1N2ZXhGY1hZSTIvSTNKWEVjMER5UFNW?=
- =?utf-8?B?VmFiRjJha0dzZS9EMzNlMVY3b1l5eGVGNURESXY0TkNwMXU0Z25ISVVQMU44?=
- =?utf-8?B?RFkzVFF3cU50ZFlJY25vVDZVdWc3VzRWWFgrNWFTdWFLWkFSb0pLREE1cUU1?=
- =?utf-8?B?dGpQOVdzL2tSaHVTV3ByeExnQjFUY0JEMGJiM3p1ZC94bEZvWWkraXFnZE9u?=
- =?utf-8?B?TFRaT2V2SmkzYmk4U0k0R3cxREdwcGpNelBURGNjeURmV3FEaFNna0l3c082?=
- =?utf-8?B?SjBxUGpxY3lFWDBkSjNpaEVKMUlULysyTjh2bS9Ka2tmdlNwUmhBVk9hZC80?=
- =?utf-8?B?RWJiaFdvcm1FdmJUUmJzU1k1c0FVMjRlOGY4VHJYUTZGVzFTbC9VUW1wN2Rl?=
- =?utf-8?B?czErZHBRWkpyZDRJanBOdFMvL0gzL1V3ZEFHSmJ2RytOaEE4NFozODlPVkpO?=
- =?utf-8?B?T2NSb01sTWtnMmo4VHhBRVJWei9DSENwQTk3Z1JPQWg0UzZRWWlMOUlpSUtn?=
- =?utf-8?B?OHNNN0JNZXBzVitEUUN1Y25BSTd4L2Y0RHlIVXNkbm9MV1E3TEROVW4wNTJW?=
- =?utf-8?B?c3RFb2tPL3dxYjBZVGNMRjB4N0xrZ3BtYnczY3grdWpvVTZxR2FxRHVXUS9N?=
- =?utf-8?B?V3FhU2tlNFZqTGtsMWJ1bkszaTJlRDlock91WVRTTEtmd2ZNNWl4bkZGWExY?=
- =?utf-8?B?MFdsSUVHZ3FERlJKZURxYlFIRWpiaERNaHFOYVBvZDVkeStha1ljakY4K0Ri?=
- =?utf-8?B?VVY2d21pMitGdDl2cWpxMGJaQUhiSVRCUkM0WCtmOG9EaGxTRStzVndvQTV6?=
- =?utf-8?B?Y0JXMGlXNHFsN1U1dGM4VFFwK3oySHQwcUN0bHVBRkQzaElack14dk12RU4r?=
- =?utf-8?B?VlZ3aWpEU2Y3MlJmWnBxWmVaQUo1d0RZdEV4Vy9RQ2d4cG83Um56dDUzS1hD?=
- =?utf-8?B?MHB4anRaS1J5T2tWRmd3SStTQkNST0FxdHQ2azlNUHBEcVpscG45TmdBOHND?=
- =?utf-8?B?VFRmQjk1MDVmZVVLSitZV0VOUnpvUkNzZlhqdDZmbTJhQUFvV3RpTE1GZnZ2?=
- =?utf-8?B?aDZJZ05GZkJ3OGtheTEwK3VMRmx5OUhSVmNLUG00U0JXYWRjQzlYQUd0VlZ3?=
- =?utf-8?B?RzE2M08ySUVLSGRuR0x0TGI2YmpZSjBqNFRzRzNnNEtuZHVwUi9MOU5WaVBB?=
- =?utf-8?B?WTV1V1Qrc21GZ2QycFdHakxic1IwUnRUbUNXYjJHNGJoMkFnc2xGUnl2QXdX?=
- =?utf-8?B?NzUzTkFXOTVRZ3RQQnBHaEo0QlpzZDVmYWRPazZZL0J1L044M1pmN2hvV3pr?=
- =?utf-8?B?NHhOUDFPSGdaNGZRMGdYRi8vaUFrclhTSVducDVzWnJYZjl3U21mTTIzYzg4?=
- =?utf-8?Q?YVUze3MrwWH+cig3HJLLpkYDMKORujdr?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 15:19:55.7453
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1767a6d3-7610-42e8-9129-08dcd72c2fb7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015C7.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6262
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240917-blktrace-algn-v1-1-9fb54b7b1dfa@samsung.com>
+X-B4-Tracking: v=1; b=H4sIAKme6WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0Mz3aSc7JKixORU3cSc9DzdRENDYyMDY1NjQwsjJaCegqLUtMwKsHn
+ RSkFuzkqxtbUAq9kXRGQAAAA=
+To: Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, gost.dev@samsung.com, 
+ John Garry <john.g.garry@oracle.com>, Dave Chinner <dchinner@redhat.com>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Pankaj Raghav <p.raghav@samsung.com>, 
+ Dan Helmick <dan.helmick@samsung.com>, Daniel Gomez <d@kruces.com>, 
+ Daniel Gomez <da.gomez@samsung.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726586542; l=6584;
+ i=da.gomez@samsung.com; s=20240621; h=from:subject:message-id;
+ bh=JygrMCTMhPqX/bAPRMl20ITyAtI+tYOaIShANk2aGlU=;
+ b=8mwlKU1v1feiAFYqL5Z0fOTBZ/cJLiS6UtnWxVXzTXO9WPZQ6SrTPGrgd5Ar2yXHEumZtQMHM
+ EeF05YyiVFRA2JQc2Iisq0RLzDK7A4smn7CIZ22sYd4U3gRUvnOjZiL
+X-Developer-Key: i=da.gomez@samsung.com; a=ed25519;
+ pk=BqYk31UHkmv0WZShES6pIZcdmPPGay5LbzifAdZ2Ia4=
+X-Endpoint-Received: by B4 Relay for da.gomez@samsung.com/20240621 with
+ auth_id=175
+X-Original-From: Daniel Gomez <da.gomez@samsung.com>
+Reply-To: da.gomez@samsung.com
 
-On Mon, 16 Sep 2024 13:42:54 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.11 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+From: Daniel Gomez <da.gomez@samsung.com>
 
-All tests passing for Tegra ...
+This patch introduces max I/O alignment boundaries in terms of LBA and
+size in blktrace for issued I/Os.
 
-Test results for stable-v6.10:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+Tracing alignment information is important for high-capacity and QLC
+SSDs with Indirection Units greater than 4 KiB. These devices are still
+4 KiB in Logical Block Size (LBS) but because they work at higher IUs,
+unaligned writes to the IU boundaries can imply in a read-modify-write
+(RMW).
 
-Linux version:	6.10.11-rc1-ge9fde6b546b5
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+This patch enables blktrace to report alignment details via new
+alignment parameter, which will be calculated during I/O tracing.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+---
+This patch introduces support for tracing maximum I/O alignment
+boundaries in terms of Logical Block Addressing (LBA) and size within
+blktrace for issued I/Os.
 
-Jon
+Note: the term alignment has been previously discussed here [1], where
+it was suggested to use "largest block size granularity". In this RFC,
+alignment term is kept, though further suggestions for an appropriate
+term are welcomed.
+
+[1] https://lore.kernel.org/all/a7f9079f-6f47-4a47-a327-98497bd33dfe@oracle.com
+
+Tracing alignment information is important for high-capacity and QLC
+SSDs with Indirection Units greater than 4 KiB. These devices are still
+4 KiB in Logical Block Size (LBS) but because they work at higher IUs,
+unaligned writes to the IU boundaries can imply in a read-modify-write
+(RMW).
+
+More information about the motivation can be found in the first LBS
+patch series [2].
+
+[2] Subject: [RFC 00/23] Enable block size > page size in XFS
+https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+
+Additionally, Dan Helmick's talk [3] provides further context on the
+importance of I/O granularity and alignment, specifically in the context
+of NVMe.
+
+[3] SDC2022 – Optimal Performance Parameters for NVMe SSDs
+
+The graph below is a representation of the device IU vs what is
+considered here the I/O block alignment.
+
+    |--- IU Boundaries ----|      |-PS-|
+a)  [====][====][====][====][····][····][····]--
+    |                      |
+b)  [····][====][====][====][====][····][····]--
+    |                      |
+c)  [····][····][====][====][····][····][····]--
+    |                      |
+LBA 0                      4
+
+    Key:
+    [====] = I/O Block
+    [····] = Memory in Page Size (PS) chunks
+    PS: System base Page Size (e.g. x86_64 is 4 KiB)
+
+a) I/O matches IU boundaries (LBA and block size). I/O is aligned to
+IU boundaries.
+b) The size of the I/O matches the IU size but the I/O is not aligned to
+the IU boundaries. I/O is unaligned.
+c) I/O does not match in either size or LBA. I/O is unaligned.
+
+This patch enables blktrace to report alignment details via new
+alignment parameter, which will be calculated during I/O tracing. For
+the example above, the following values would be reported:
+
+a) |16384|: I/O aligned to 16 KiB boundaries.
+b) |4096|:  I/O aligned to 4 KiB boundaries.
+c) |8192|:  I/O aligned to 8 KiB boundaries.
+
+Finally, this patch requires some minor changes [4] in the blktrace
+tool. If this moves forward, the changes will be submitted accordingly.
+
+[4] https://github.com/dkruces/blktrace/tree/algn
+---
+ include/linux/blktrace_api.h      |  2 ++
+ include/uapi/linux/blktrace_api.h |  1 +
+ kernel/trace/blktrace.c           | 38 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 41 insertions(+)
+
+diff --git a/include/linux/blktrace_api.h b/include/linux/blktrace_api.h
+index 122c62e561fc..17f1a21ffb5a 100644
+--- a/include/linux/blktrace_api.h
++++ b/include/linux/blktrace_api.h
+@@ -26,6 +26,8 @@ struct blk_trace {
+ 	struct dentry *dir;
+ 	struct list_head running_list;
+ 	atomic_t dropped;
++	u32 lbs;
++	u8 lba_shift;
+ };
+ 
+ extern int blk_trace_ioctl(struct block_device *, unsigned, char __user *);
+diff --git a/include/uapi/linux/blktrace_api.h b/include/uapi/linux/blktrace_api.h
+index 690621b610e5..d6df0c10ece1 100644
+--- a/include/uapi/linux/blktrace_api.h
++++ b/include/uapi/linux/blktrace_api.h
+@@ -110,6 +110,7 @@ struct blk_io_trace {
+ 	__u32 cpu;		/* on what cpu did it happen */
+ 	__u16 error;		/* completion error */
+ 	__u16 pdu_len;		/* length of data after this trace */
++	__u32 alignment;	/* i/o alignment boundaries */
+ 	/* cgroup id will be stored here if exists */
+ };
+ 
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index 8fd292d34d89..8330455458b8 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -208,6 +208,39 @@ static const u32 ddir_act[2] = { BLK_TC_ACT(BLK_TC_READ),
+ #define MASK_TC_BIT(rw, __name) ((__force u32)(rw & REQ_ ## __name) <<	\
+ 	  (ilog2(BLK_TC_ ## __name) + BLK_TC_SHIFT - __REQ_ ## __name))
+ 
++static inline bool blk_trace_lba_aligned(u32 len, u32 algn_len, u64 lba,
++				      u32 algn_lba)
++{
++	return !(len % algn_len) && !(lba % algn_lba);
++}
++
++static inline u32 blk_trace_align(struct blk_trace *bt, u64 sector,
++					u32 len)
++{
++	u64 lba = sector >> (bt->lba_shift - SECTOR_SHIFT);
++	u32 align_len = len;
++	u32 align_lba = align_len / bt->lbs;
++	u32 alignment = bt->lbs;
++
++	if (is_power_of_2(len) &&
++	    blk_trace_lba_aligned(len, align_len, lba, align_lba))
++		return len;
++
++	align_len = bt->lbs << 1UL;
++	align_lba = align_len / bt->lbs;
++
++	while (align_len < len) {
++		if (!blk_trace_lba_aligned(len, align_len, lba, align_lba))
++			break;
++
++		alignment = align_len;
++		align_len = align_len << 1UL;
++		align_lba = align_len / bt->lbs;
++	}
++
++	return alignment;
++}
++
+ /*
+  * The worker for the various blk_add_trace*() types. Fills out a
+  * blk_io_trace structure and places it in a per-cpu subbuffer.
+@@ -296,6 +329,9 @@ static void __blk_add_trace(struct blk_trace *bt, sector_t sector, int bytes,
+ 		t->device = bt->dev;
+ 		t->error = error;
+ 		t->pdu_len = pdu_len + cgid_len;
++		if (((what & 0xffff) & ~__BLK_TA_CGROUP) == __BLK_TA_ISSUE)
++			t->alignment =
++				blk_trace_align(bt, sector, bytes);
+ 
+ 		if (cgid_len)
+ 			memcpy((void *)t + sizeof(*t), &cgid, cgid_len);
+@@ -597,6 +633,8 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+ 		bt->act_mask = (u16) -1;
+ 
+ 	blk_trace_setup_lba(bt, bdev);
++	bt->lbs = queue_logical_block_size(q);
++	bt->lba_shift = ilog2(bt->lbs);
+ 
+ 	/* overwrite with user settings */
+ 	if (buts->start_lba)
+
+---
+base-commit: 4f3e012d4cfd1d9bf837870c961f462ca9f23ebe
+change-id: 20240916-blktrace-algn-a11320353182
+
+Best regards,
+-- 
+Daniel Gomez <da.gomez@samsung.com>
+
+
 
