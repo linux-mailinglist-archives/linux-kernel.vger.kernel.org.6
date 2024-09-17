@@ -1,91 +1,89 @@
-Return-Path: <linux-kernel+bounces-331356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855AE97ABC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:01:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6315F97ABC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85FC51C27C59
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95ACF1C21791
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD3214A624;
-	Tue, 17 Sep 2024 07:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sq9vfbO9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93BA138490;
+	Tue, 17 Sep 2024 07:02:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256401BF24;
-	Tue, 17 Sep 2024 07:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74FA4C66
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 07:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726556474; cv=none; b=fgGCu9ssQyC5cuJLd9XwFHrGfmRk9E9bHolFMncc+QRrjNNdHpW/L0WRpPdnL0Phg9Q499tkhzxsxEz2jdSfDB324d1tCU7aUdPGJfvVY8igtRjxHwRxVWWFiid3Y2heDCP7XFXZ8SrTi41xI/+UzCZq5fm6NTNA/vMJM6j/g4o=
+	t=1726556526; cv=none; b=ZfPagVEZWfe3N3JwGkloRhEuvXEJkgjMBiom+n7HwpBlTb9q1ZTJCX+Q4zqNrsujytsKPt1NURN/g4RbJ1ugFxRIpXxt9fHyARR+rhFhw4TYRiX1M/CoA+suP+Dp+gCnfTkW/YyMvrKcgS/MkXTLh5fxC/G9wgFWPRU8Cz9/NC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726556474; c=relaxed/simple;
-	bh=wL7bb6z2iPwWqy6wScaLnhBW8fFzb85kAzY2JZAjutM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=er8bXddGgDdwezuOD/OCzrB5MDaRh1iITGUeWx0NKdYluxunfRS81NqlJ3rI6B0FsJw0LfjcarbzFpc6d97NNj3Eep+gEJpQBo3xFvN6+7XxiSKobUE7RqU1/G1zsx/QFnY1h3lonnVtIAsYmwXHqCzGV9fjgBF34gT+SXmL/9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sq9vfbO9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A480C4CEC6;
-	Tue, 17 Sep 2024 07:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726556473;
-	bh=wL7bb6z2iPwWqy6wScaLnhBW8fFzb85kAzY2JZAjutM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sq9vfbO9nxUpSGNrYLqj2Q8lgo2euizIAqPcu+2RYfv9Qy3Xi2to2W8G0453aZgEc
-	 gyRJPwKRSdpoyxSS3nybDQAy6L0+yiQFLBZwEOKaqFabevwP3eAwvuBkC2PR07sLlc
-	 tdfPOcXthy+/W+VBtKl/10ApKOWKuVMlLQbddbD5x79MMNBxJkUEPa9xduBmI2O+4Q
-	 10OzeyGNN4KwiGQRZMx8NSk43PUjg2pSgZiF7cgpmecnNknHIG56/r4GwIrHSXI7qX
-	 hJZBX1ANS2kKMrC0YgPjonPKpAvKBQIpQnCTAGjsSUUrh22ejpWEeBjoyvk+UbB5uG
-	 y0jWIJh4ltyXg==
-Date: Tue, 17 Sep 2024 09:01:10 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Sean Wang <sean.wang@mediatek.com>, 
-	Sen Chu <sen.chu@mediatek.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Chen Zhong <chen.zhong@mediatek.com>, 
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org, 
-	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, 
-	Chris-qj chen <chris-qj.chen@mediatek.com>, 
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v5 3/3] regulator: dt-bindings: mt6397: move examples to
- parent PMIC mt6397
-Message-ID: <ev4kqtbjwglrti3mk2cnayilj4muy7ll7ux2uwlekcwu73dy5e@h4wvpucmyepw>
-References: <20240916151132.32321-1-macpaul.lin@mediatek.com>
- <20240916151132.32321-3-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1726556526; c=relaxed/simple;
+	bh=jiybRIMyi8xGvF1bSjHqzTbAmdYr5V3NPK3GciYGaXM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uwLemTq1t+q28aKzRkqlJ24LnbxtrsTJG83yox9GMt1ARmXU7J0hNQ8+GfqbKRfdAaK9B4tNl4/rhy8XbIMLk4dxA1/DoVJyk9xJLjoWcpmusOhxa4yiLvlxAUa3Q9VgxYrl4uigQb+7vFcFtyyBGRYT3R9OUnqF4pSSO7aMvOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a04c2472f6so78847445ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 00:02:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726556524; x=1727161324;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0HSv32HeGpYbI3uL9CkUI9gRqEnD6C5ndl4yRdjzD7Q=;
+        b=CrfBzvFK80CmJ1ozkHAt9+BlJ2pI/dLfPEpy0EWyFkcUSwafYZKkoHjNDqyDjSwFnS
+         qTxoftyXK7yZFpY0dOa8R7JGiRqATvWIGcz1Xw7cJyPE0kZVuMomo9Z5nKBxUMm+CJlw
+         iJ7OADV1e9zWoQkcwQDNqT3B9E50i4312uEGfS1zqzXjO5M6YLBu4c2+GmICgCKKVYta
+         RdTLi27d8+7oMwE/BmAZh5ldup8Tlzf/Gm0CsTXpF4W7UlDuE1C1obvmX5u3nleHBMxK
+         fAArx8U68gF3nIqaUcgPaERuwpVdmX0id9Saqfq2u/XlGmdM2uLUbe+rm/mAASSva8Ze
+         kLLw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Xnupp8B/o7YOw2bu+h3swrInpoUW05SupjjD/G8T8w8GnE2g1dF9WMnzrSjum9ZFA9FUiBICgQvjVoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYz0GDaZHsV6VD9COFX6SL1Wok2d3g1ojU/3r3/JS/bmK0UXNu
+	+DUOjaKZAHaeqy8qQJjE7aYrZSS27iW10DM7NbCAV6FAPX6UBNS1uGugxs+5ovBaZ2Tz3HW92ae
+	AVbR58+aO4UVcnXaOdc0nE5s4nXPS7oKJ4xcJzhfPYcm517xklNjawEE=
+X-Google-Smtp-Source: AGHT+IGw8MIimOumCcBH/mbb+XShL8ROcJkfpG6tiQ4cOqJf4vE+Ssk3Q/tTlw6EZZn4NTFoq+T7ItW8chy/Sbh4o0NPuCpCuNcj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240916151132.32321-3-macpaul.lin@mediatek.com>
+X-Received: by 2002:a05:6e02:b4c:b0:3a0:4c4e:2e53 with SMTP id
+ e9e14a558f8ab-3a08b6f86c2mr132203285ab.5.1726556524044; Tue, 17 Sep 2024
+ 00:02:04 -0700 (PDT)
+Date: Tue, 17 Sep 2024 00:02:04 -0700
+In-Reply-To: <f58a6956-5029-4764-962c-ffc02602a755@linux.alibaba.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66e9296c.050a0220.252d9a.0005.GAE@google.com>
+Subject: Re: [syzbot] [erofs?] [mm?] BUG: unable to handle kernel NULL pointer
+ dereference in filemap_read_folio (3)
+From: syzbot <syzbot+001306cd9c92ce0df23f@syzkaller.appspotmail.com>
+To: hsiangkao@linux.alibaba.com, linux-erofs@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, xiang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 16, 2024 at 11:11:32PM +0800, Macpaul Lin wrote:
-> Since the DT schema of multiple function PMIC mt6397 has been converted,
-> move the examples in "mediatek,mt6397-regulator.yaml" to the parent schema
-> "mediatek,mt6397.yaml".
+Hello,
 
-Is there any error otherwise? Why this cannot stay here, since it is
-already there?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Best regards,
-Krzysztof
+Reported-by: syzbot+001306cd9c92ce0df23f@syzkaller.appspotmail.com
+Tested-by: syzbot+001306cd9c92ce0df23f@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         2830df2e erofs: ensure regular inodes for file-backed ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b168a9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a43f85ec3262ab75
+dashboard link: https://syzkaller.appspot.com/bug?extid=001306cd9c92ce0df23f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
