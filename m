@@ -1,228 +1,336 @@
-Return-Path: <linux-kernel+bounces-332173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2B797B65D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 01:54:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D707597B660
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 01:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4FD0B29627
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 076891C23E87
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8DB1925AE;
-	Tue, 17 Sep 2024 23:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC300157A59;
+	Tue, 17 Sep 2024 23:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="aN8vqmnN"
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="b1rEiM0m"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2086.outbound.protection.outlook.com [40.107.102.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B699117C9A7
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 23:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.153
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726617232; cv=none; b=P0jcxjl57T+OvxC7X+iqoJu9WxkJE29N0qND+IjDhtsX1TgJDwpw2d/YGPNfqTqakzPAvUrl7hP3pgjnIDH4fvlZ8I4YZ3L2+D+dPzLDA28swEjAgRv2ELaAnTliocWUBNCGKmG2gIG1UZS7RA/ZbxSx3yE/vdCTF1q1FWmV6EQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726617232; c=relaxed/simple;
-	bh=pkiJFK4UWzbihdSQP0/vZjet04jCTlLQiH9p+ugfN30=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o080bSk12Uuj5AHyijgeOuwT1SH2Gh6XGExrhKcyg9SeJ1Y5VyIiT09X1ayCOriPlyycZ1PsiPOS5jYjYOMoEVnwoJqMX84fr/LhDG0CT4jcwUGCo4t9mSWtYmm3Bmo6oxKbAkUncZBPOIKEnBBAn4kko84coYXWqjyyz11d/IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=aN8vqmnN; arc=none smtp.client-ip=66.163.189.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726617229; bh=rLl2LsJz48bPh17xjOUIrSgVKkITvgpZAh47LFR7xMg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=aN8vqmnNvDZ9BXRzktIgzepVFtdZlUF4dPa1lIpwYmmOT1vXW/R4wv6k4ODw1Qzy9PDOiVp1pxP4Z7/DpGy0Rm1r1Ps4nTmWfjO00YRbQN5U73RztbNJ8j5KXpo8ODCe2gCaoKxQJaG94z7PyL06NoyPjc0M1bNhtfDnDmXH5IM1ZLm0pG+X/j0ukg2GRZSJsRgw67vPp0blbsapjaZXnVWdp0y7O9bo8ZcspL6/Y2Z0V852O3cSC+keGzh9YKjmkdFBZgFPdN6qCdt1Z5lg1Q9F2UxrJQviSyQcp/SZJ3SunBVjZ7nyj9WtqsECiZVkYGhvoDIlnYVv6Zvn9AQ3zw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726617229; bh=nzurJyaw6wgzma+7cmEzE6ah9+uczsB0t0PcMV6REn8=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=LKU9+0/gvBKTcCFnLN7LCno1U/mJ7fcHeVCpO9lYHh/76ImSMiIJ61ieoS2n9apfzPY0mGF/n/rV128jmEEcCcyiVeDzejZxDActMvXnmx4HP582HBFMqXKwv6KfNjSMug5BjgWFGjjZzbdEsk2lMYM1GVQ0N4k7Le9728p20NhlHRWnRbvYnb/CFWVox6lyCh8A3lDSmQMc3Onzlo9xPYVGg4ns4fj92umBbMwOCGuflwaw+oMgvyR/9WX855pu6UCeSWi/UEf3EsSaL8SqnXwmnScBTRYggvTT0so83c+YQYePQsqVk76nxlGVUEKJYmUs6Gm3VhpQdkhZuLUyXQ==
-X-YMail-OSG: 9eU7_wcVM1laETl53qEnKCSjr0kkFXb.xJgXYCSOr6MkDXYTAMXOSuvSlWqlLZf
- JLhBbiiC18K2VxlKHIuX4404UpN_C8eGNK.aBdNX__bIgb9VVQkWbxX4osFhUlLdnKF40l6.l241
- n5FU6e.gJlcH.lv0NhxHjFRIppcs4sK1HlvoAzysImgdaNiVuD2NvWuVAYR6oHtI26VUxe29w6jM
- KIHoz6uIvFpCs7IOkoLvlJMic.DU_zNs26z4VbBTCQNMJ8GdPX6dY7BEN2Qs5SpIgkqMTD8Ujfqm
- UHrvRAh3C6i.gLjWDzaWvdOJ2nF4b5AbHFbk.DomhQD_Dq2xxF5G2H5LDB0oXNkwGIL3xGXxDxZ1
- I.lYHNxsgmdO54NpIMvS5h7HymIcsHN1XRYVTdxchoZ.3tOknWdBdtzPcqHtNzJz4xDQZrC1_K1u
- KTpeNT2peNRAAqUU9yJOmVx1q0HnQhxaAfUBhlVZWpIO6jE1QbAYvzGVOHoKUBxdRziaJaygE_hQ
- jhTFBW9hSrqwESUmgISL1arujRb5VSdVZly5BXIX.mW2wo9iAqOFhBYssAYrPtnraLCsOWXbEQTf
- fWY.n0KQ8UxFyr6hvAlGmOs1VjZ2kHU9m8YNwssFf6vlxGEmC5Wtf5gJv.Q6R0BXPPbYvcLaGaHu
- VK_1Einto98Wk28eUuOaPAFaAadKQlZDrXASEZQNLh1BhQNnI5bh5MHf32GTBUmLzsM7k0DTGRLF
- gVF1wBLuj.DGGIGF1xR5Ws5X84nxrqQ1hIyHANTT1N34GOE6K.X81wNIXqQwaD94tN2Y8LmJsWeD
- DVDRvLTV9sc0xKBHRMWso5eNmfNmghAB2zlUhRHXXaqRTvpjJ58cIIrDthWc_TF.NW.lFkQIvaj_
- wmGIftu1AApaPAdlzHx.1eR2vg4RYqUwz3homsCl0tlbsViID0oHMTMAWyXL4vzsqo0hYOJemf.2
- bGTN_Qej_EMEQzsYzuxnoakmeWDtoMinN9lvKe6KU7q8QOI0mlGSAYk7Wam_H.KjCj5r31xTjDCc
- Az.LASenrltwT4_69Vfno07cyIs_AIvmiVMWJsIv2iROFk4dheP3oGWxNkuy9eEJksw2Ho19Gy5m
- jYMCLqOrbbJoA9xIHaDGMW0ojd3sSzLzc3Pip0IsXyNeAgxyz_kp7joe5nBf4y3YHl.LdHQSwZzc
- BZ4ZICkW54Qy1kH1bKOuBgsOXDG984wZVUp69p76TxsxL1BqEnKNTMnlvdYy6K7vswn7NUpVQ0_K
- 4W5ctq8tA7op1GAAThDezp_3Xev3NqRQOICIFSM5H3YOce8IvQ6EZapcQUIlZhfCIfjeD.RsdtjH
- GcS34MyJtl6jNUPllYRZc2iolWJgjKrvBQHYlLOCb1SSThgCvP5BfZaE2xTlWH8wd28MvdJLsM54
- hSNgeP8cQMokZuP2qcdMoCxbBJskHKXvNu7T0kb4KC2p5k1P_DoCry_mnNe9uwz4fmZozCasooiD
- vEZB_XIYdIUFFmnI9L544wRL9lwU2G_0ZjL7bZYyAHhxc9lyNjZxNf.DBrLU22ztjNDcn88hnTN.
- heO0ZDZcdo4yQWuSp.M1BF7Jb1aJfsWQGzkZ4Uaj8g6G88TPkwwHMonfOmLe5EcKmDR2XGUdydVr
- Bx4nLJamTDNmLUOp00bcBP_sMUWbTmD3pczhjTrvQSSXn3W9R_1Hg5RYXAAwfOlR1fMPmHp41ArJ
- n01e2Xmxbm36acFAxvxqfxDUN1aoSNiNfw5B6gRTbqbWNkXLYAw1dSL2RH2LMpp.gp8CGOdSzwcf
- ObMO5HvuVpAOam5c3hKSmSgN9v3LKc.PmogDXPNj8U0QGYdyuA4lcFLwLbC3ssHuluQfzkGWh85v
- A4x.QNQuei2U2uCGi11Y.Pzo5XPMCxYUQd.z983kRNeiwIjebFKJMz.DytRY8hpvcO4oAQkAWMW0
- .WviA7EyDMQvvY8iSS1vxiC0Zh_O5EZ.ZdrhY86THG0h8kiYsx7nzQ5onmMn3wNFgst9AX0H0Yl8
- PQyI12a4mzsBf6Yt46HbmS7t.J6uAyeI7DXgJx7lxa64Fwl5oDanQ8He_ny0eRkz1UisZvOoDtBZ
- F7.6Xu0PsqB8_E1IAJgtjsC8tHX4L8drGoQslh9ebj_OcDxPwsYyGH918e2vw3JMwMuHURB4r1M9
- jlP_nVRk21b81vGjY4WJxBcszfFrcrI3w2hostNs9xsPnYDhGVFF7e5KRVAReZCSwRZlA7Yf6yp1
- b73x6vGDntWCd1aJoCEtdOx85kGPLWW6OceWdQSU4veYnLuQA6yZKT_Z1VjWuXxrfkHt0eMSuK46
- qlGSo_Jd5fVdYHCuQe08E8ce43OQ1TXsbp.w-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 9f23d04c-1822-4eae-a91e-9d5266c6a30e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Tue, 17 Sep 2024 23:53:49 +0000
-Received: by hermes--production-gq1-5d95dc458-rvnnh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 41ac41609d6122fff099bda257412a4d;
-          Tue, 17 Sep 2024 23:53:45 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	mic@digikod.net
-Subject: [PATCH 5/5] LSM: Use lsm_context in security_inode_notifysecctx
-Date: Tue, 17 Sep 2024 16:52:02 -0700
-Message-ID: <20240917235202.32578-6-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240917235202.32578-1-casey@schaufler-ca.com>
-References: <20240917235202.32578-1-casey@schaufler-ca.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AA71607B2;
+	Tue, 17 Sep 2024 23:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726617261; cv=fail; b=tTaMbk7NACRv49u14sRer5bGFgU7X3Su0XkV1eWiegxF4pqYPIF5fN9F5o1xnM7nZvrvE1xiW4u6oA1jp8dPyKvSx8lSjAbVQTTAuI6uJJzU+qRf1foUKTDLdrUBZnlx6AFfnRbsFGOyLfoAajCtqpzc7xZ7wvhLBqHMlyI5wZ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726617261; c=relaxed/simple;
+	bh=XM06tuZmkcT8n3nGQr1UXrxGFMYHn1f1sQxlUGNTSgk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eveVNCY1O9dqFmzgpd3teIYW5YdodYfTQeH6M0HtwHSlNeMgPovEvj+Zxxxn5En1akOwdPoFY1DtUBw63UHn1Mc3Et+RsRYUlaFx+2nyeLtU/dmszE8uMVtGI9Pcjzmqepx+U6BgbNhu85fBuXfGPKtNUyidQ1dGWfR0C3wmhDk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=b1rEiM0m; arc=fail smtp.client-ip=40.107.102.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=owl7UttC7CzwR6dKtJTfzZREPxg6qsfVMyxCs6fJAP3iA++epDS6cd//PfsDvgFFN7dPWI2hNdozX5orjd/regHCfMntwzWvNuBe/BYUrZl4Vl5ab3NjFkDjxVpe4519M5PBI9BXZrusd00YPgS0/a2kIUpyjj6L1e42lqb4ap+n3YfWQcPABbTGNM4ytrugWpojwy1r23lFt3/1+BMEHxxesNGTdQFwzt9qk3x3UJeg3jcdWDV/2Y7aPap2bzDSe7rwDH2tz1JacDFjKd4Jki2CjxS/YPh/gMZavRK8TG8d3UiK6B5Cr1tDVsH+t1vb4oBeOvAFwSaZtGrceymBVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VO9CpxyMDKeQrGmBStDGxHs/MpQt/07Q/+W5jK1SEF0=;
+ b=SDSIg6pDVsxgkitLu+TGKHoEI1O9WG26E0a/Dw6PXNpoZSCooD1lUvBjnsmEGlNwfTpZqbAqM5xtU8do8qaDhEqMy732bx640bTIWeuiPHNZbGd9W6NKHYP4EVxa1J2ATJSRHJkEecx/1UJz7HcKSYfthTN1io36r504UdhBU+fK7tOGvsHxmca7RuN4leDM4J9d4VEuDudvNN6ofooNZeuUiTobD2oOoytLwzRDCJceA6rVXCwAVrk1vB0Snbtnq/IVT1QTe0oy/i4EbyoX7uQNLS+wq5ErVWZ2j6tFnT9pnp7OvjWC6c4x+fYWx+7a25hmTDyIm5lRUSZ2yioHag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VO9CpxyMDKeQrGmBStDGxHs/MpQt/07Q/+W5jK1SEF0=;
+ b=b1rEiM0mhx5svZXAFeY87o/WRBLaUkw1wvnwUaQbb1NODcxauaTBpXlWp0r3GraErz8ycWNfmounoOD7qpzr7FCvkyfg1FBF2JklbWMATnVUWXg//kwVMCkUprzWe5Q+fJKqirFeVQ+4GiLFDjgn4mQ1TxoZg4wX3kTrWN2UT4g=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com (2603:10b6:8:d1::12) by
+ CH2PR12MB4296.namprd12.prod.outlook.com (2603:10b6:610:af::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7962.24; Tue, 17 Sep 2024 23:54:16 +0000
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::c8a9:4b0d:e1c7:aecb]) by DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::c8a9:4b0d:e1c7:aecb%6]) with mapi id 15.20.7962.022; Tue, 17 Sep 2024
+ 23:54:16 +0000
+Message-ID: <49131e14-fb4c-4176-9e55-f50d69bc9bdf@amd.com>
+Date: Tue, 17 Sep 2024 16:54:13 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] e1000e: makes e1000_watchdog_task use queue_delayed_work
+To: Dmitrii Ermakov <demonihin@gmail.com>, davem@davemloft.net
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ przemyslaw.kitszel@intel.com, anthony.l.nguyen@intel.com,
+ netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+ linux-kernel@vger.kernel.org
+References: <20240915070334.1267-1-demonihin@gmail.com>
+Content-Language: en-US
+From: "Nelson, Shannon" <shannon.nelson@amd.com>
+In-Reply-To: <20240915070334.1267-1-demonihin@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR16CA0014.namprd16.prod.outlook.com
+ (2603:10b6:a03:1a0::27) To DS0PR12MB6583.namprd12.prod.outlook.com
+ (2603:10b6:8:d1::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6583:EE_|CH2PR12MB4296:EE_
+X-MS-Office365-Filtering-Correlation-Id: f82a6fed-a617-4cfd-773d-08dcd77409b3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VDNDNDN6dDE1M2lGa0V3WEJSRU9EYjVodVBTeFJYREo3ZUtFU3ZPSEJPUWlr?=
+ =?utf-8?B?bWRmVEFUbEs4Sk5uc3RvM05RMGNpbWlCelRtb1ByNDk5WDA5Q1p5R1JxaE9D?=
+ =?utf-8?B?U01icFRXVkV3M0htMnREMUU4MndvN2FMK25sNi95dWIvRVNKS1pJZ3UwWis2?=
+ =?utf-8?B?RnFpUEJzNXQ2Rzdzc0ZaaFBNZlJwdHBKOFFPWTJ5UmMveitNamFjWHJKK3M1?=
+ =?utf-8?B?ZXBtTEIvYjdMTXd0Uld5NlhicTdacWNPSm11U2g1VlA1VVZUMGdnbi9KWnNL?=
+ =?utf-8?B?R1o5azJEaGxJZjd5bEJpLzBrbXlyWkFYU0djVitNWWFGVXljTUMrcUZDWnNV?=
+ =?utf-8?B?M1pKZDlmQzdVNHpTMkorSEZyZmNBU2tBZmFpYlRqMEZmYUN2cG4vU01KNGNl?=
+ =?utf-8?B?Q2w2M3JXb2ZPU1JBbXhJbXV4Nk5JTUdvbnplMVNqQ0IrODJtK21YN2xBd0dH?=
+ =?utf-8?B?ZzB0OUU1TGIvSVpaQXZMWmRJR25PWnRaYmNWZjQ2bGMvaUoraW5DRGlPZklY?=
+ =?utf-8?B?ZGNtcGFsZzhXQkRpWXNVSUR0SG9uaXpBVkJVV3lkNzVIL2RidWcxbFIyRTBG?=
+ =?utf-8?B?Q21CZkptS2Z2Tmp1UGt4YWt4andIRjBHTmNwZHlrcWpUUjE4K05RRkVvWVVG?=
+ =?utf-8?B?ZzA5TlY3Z1h0YmdmM3ArNHlvanM4TGRRejRicHJrU2tuR3d1Y0lDRjFHMk9s?=
+ =?utf-8?B?YVdTbnF1Y0RzUmYzRFRTdWtHaGQ1VEtJYmRXNnZxMzRMcDZTcmZIQW5IeXdp?=
+ =?utf-8?B?c1U2NUpvVU5tbU4zK1YzUzJhYXlOdEluVThPcHpPVjVIVXpldHM0bEJIUnRn?=
+ =?utf-8?B?a0M2VlpJTHF4b0Q0bzVqWGVRajJmN2NPWTNZM25GR2hkREk1b094Rzl1eGNH?=
+ =?utf-8?B?WEd0SkpnblVxeUo2Y2ZKbGJnNmc3Q084UitMYW5oSVJJVERBMUhsT2hZZkdr?=
+ =?utf-8?B?cFpGR3MwRGl5T215cUFPL3FsTTY5ejVkSGNUY0dCMGNJR1VmekU2bUlMdlQ5?=
+ =?utf-8?B?T1ZLeDY5N1RNRS9XTEkzNUZUYVBUeWIzbFoxcmdnQ0VtaGZYdHB5V3BWeTky?=
+ =?utf-8?B?anUwby9Hc2VBeTJEN3hmRGNIejJpVnVWazJmTTk0aXBUYmsrSUdPc0dHaFUz?=
+ =?utf-8?B?RElqN0RIR2ZlWHJldTNNemRhT1pNbzBJbkEzTXdmT2xMMDB6OFMwMERrU0xw?=
+ =?utf-8?B?ejdxb3NGK3BiR1k0eENKeTQyMEVHbFZQNEh0WThjVXZUeUdoWk1wNFo2NDRm?=
+ =?utf-8?B?V2NnSTNWV1ZqL1BpekwyRkxCWG4vaFpVU3JzQmc1cDBuNWJXR29Uc2FOV2Ur?=
+ =?utf-8?B?dkprQXVyKzhHU3Bwc05xRXU4TzYrelRMbExCM2NrMm9YUFdsOXNSM2l2MWZG?=
+ =?utf-8?B?WFN0Q0lzUXBHc1ZqY0JwbktWVzRnYlBYZ3hsN0YwWmdpZ2plRUMrWFUyM2ow?=
+ =?utf-8?B?a1FDTWYrT1VOOW91MHYxeXNyV0gvTmlPZW9pVUNOekxYOFJrZ21vdHZlRnJs?=
+ =?utf-8?B?NXdlckFIQ1VnaVprSE1VaFlidjVFb2hrVzk3Y3JGWjFvekMvczA3N0lqc0ZU?=
+ =?utf-8?B?YmFKSklZbTJONzNyQ2s1a2tqYTNDRzUzKzUyTU94blpZZXdZSHIrS3pNL25v?=
+ =?utf-8?B?NXhTUExCWDVNLzhGaXF6WndmS2xsdTVoWHpUaG85emprOWltenVhc2pramJJ?=
+ =?utf-8?B?SXBLWDhRNzBnMml2cDlGSW1rUnc3aGNzYkVCUkx6alZFRnUyck9abC9wR1Zi?=
+ =?utf-8?B?SURrUU9MeWtZOGRnOVFFbmlUOVNacmtrUGZZSkFzL1pJL1BUQVE4LzRPbHlk?=
+ =?utf-8?B?RDYwbFl4dElBclVpaVFOZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6583.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YjdnNmc1NUh3WU05SFBnODhhbWpkdmxnUi9aQ0FOd0hCRTdubXZDT1VEK2xI?=
+ =?utf-8?B?ZjlVaVA4YUVENU1CMHhuSnIwb1l2U1B6SGlUbDhlVmVCZzBpMjlvS09adkZ2?=
+ =?utf-8?B?UE9sNGFwQmhwelBpWjFHV3VJZjYreUIzR05IYkVBckd4R3pXeEVPZUVrTHRL?=
+ =?utf-8?B?cCs5bE5TN2Zkc3g2T3B5NkQzU3U2aFVwSGg1OFhtYjZuSDczMlRkT3Erblhw?=
+ =?utf-8?B?ZFdFWkR6djJ5eU1SS2k4dFc3NFByV3BJUDg2eXhoWU5jOU1BRXRNV1R4d2Fa?=
+ =?utf-8?B?aEFiVzFxbTB0cDJpS0dsVHh1SW5PT2ZpL0JPZTVKV1ZWTDczTFBWZzd4TzdI?=
+ =?utf-8?B?cjQyUjhvYWlodHBuNCs5SytmRURJYWJTSW9aUS9WUEVTdUZ5dDFRY05SSjRE?=
+ =?utf-8?B?eW4wSHRnaUhKUTJQRUVROEhCN0hNSGpqc0tSZVN5dml2aGpsbEpCU3pNZmtm?=
+ =?utf-8?B?OTZDYk96QUVUY2hDQzVzSmJkVFVaazVLL0FwNy9aUjZhU3ZKTXorNzBuNmU4?=
+ =?utf-8?B?dzc5aFZPOGZZcUpUNlI2ZU01bkxwTGt3OFRtT3g1VVNzbkZPVnY5ODVNOWlN?=
+ =?utf-8?B?cUg1b292MVhFTVpLc1dJR2VNbkcyU0VOekg1L3AyOXpvakhhclp0Nkc4a0w1?=
+ =?utf-8?B?aFpFazZyVG93OXd5L0oyYndJTWgxOUIxalNJR1d5UHkwSVRIaWZ1cEl6bzNO?=
+ =?utf-8?B?bTNOZGovaVhUSHM4dzdLM1A1MVpselZwOWdIOUR0VVJTa0NSWDhQbXljYW56?=
+ =?utf-8?B?dUZ2WkhOeXU4TENERmhwL2NlUDQ4Mk96VzR5czlkNWRHbHNmZU9OUDdaVko2?=
+ =?utf-8?B?K1lIS0xVNlo3YVpMbkh3YVo5UFFUamZBbS92dFBwNE1EcThNREowcGlzRC82?=
+ =?utf-8?B?ZHRaSXpVWUpyOElVZ3FGUXJpUnNhaHh3SnBXb1ZhMm0zWFlMOHVyRTZ6bGZL?=
+ =?utf-8?B?UGdFQWRWdnhPRC9aWFhGZWlxQTJPeHhDcjZ0MnYrcmM3OXFHd3ZvVTNLMHJL?=
+ =?utf-8?B?ZXZuTTVVeEtqQkJwMlkxQ2o0SG1KekZ1UmpZMDErQmpWdi92SXhCVlVLeFlq?=
+ =?utf-8?B?L1dkT01NMGVpUGxUV05NTE56L0tINDdJN24yWWtmZ2k4dVdUOUZ2RkdhZDlv?=
+ =?utf-8?B?QkdlYTM3MlZneUhOb0liQmJrZGlLVG5XMUNXNFdNMmRFd3J5N21vbzdOWCtS?=
+ =?utf-8?B?VlllK2pheXBYRmNpVXpFcGViSlN3d1VZRzV0ejV6OHpmVXAzSEpzZWJoTnNZ?=
+ =?utf-8?B?dmNoMnlJVnUwVFlsNWRhOHYwUWRiRDV1VlYvOTI5cEd3enVhMFRRWnkwaWxX?=
+ =?utf-8?B?c3FLM2ZDWFUwdmN0NzN1a0VWenVhampCRnpYM2RCL1dmaGdON2RhWkJHakZz?=
+ =?utf-8?B?U3ZHWlpwODFRZGRTQkF1TGs5R0Jnd0xxM2szZnZ2SHdJVmtRcFpDdG1EMk1a?=
+ =?utf-8?B?THFsWEcvQ21UVUxqeS9veTJmR3B3eUdtVEdML3RaTzFudG94QmR0TE90K0ow?=
+ =?utf-8?B?K1pxcDVrak5PdmFJMTFIL1hERURvcmpNQVpHZzltakNJS1ovZHhLRW52N3pK?=
+ =?utf-8?B?ZndmczhHaTF0cktKYkxCQ0daY01qaksxNDMwYTA2VjZNaUJzOG91c0g2NVVI?=
+ =?utf-8?B?dnQyTHpjenBOdzUzZ05OUUUvVUVFQXlMVnN2RnZtbENGTExmclI0Q01LWlNw?=
+ =?utf-8?B?dWdHRmFHT1ZSSjh4UURjMEg3NUtFYXdIVFBhYkNzUm1oVDRuazRxeEo0eUxD?=
+ =?utf-8?B?UWx5ZUY4M3BwN1JvUVlOOS9hSm0vU3ZORmoyc2hKWXBJZmRzc1RaZFJWdEYy?=
+ =?utf-8?B?WmhoQUJMd2xXTW41UlZrdXprV28xMTZiWWJkdzU0WDV2UjlsTUJqdEFvM1RT?=
+ =?utf-8?B?T2RTSzc1OE5oUkwzQXdoZ3ByTFlRTklqd2t3ZzRFMGd2T1VSbVlFNWtCeFQy?=
+ =?utf-8?B?MjIxUVdCd0YwV2sxcytPeGVkaHRQSGp1K1BnK2cxblRYMWhseFBaTngvMTVz?=
+ =?utf-8?B?K04rMnBLZy9lT2dsbW1vTHozRlJBdGViYkVkN0tNRkp0WXVFT1JUUFVKR3lj?=
+ =?utf-8?B?Y3gvQ2lPU0tuKzZXV3ZBaWh4QXRKTGx3eDYyYWcyUnFtMHhqL2ExbDJHNG45?=
+ =?utf-8?Q?TXYAY/eTNJg7M9TfUxSU/hi4W?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f82a6fed-a617-4cfd-773d-08dcd77409b3
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6583.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 23:54:15.9983
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sV3G8oyar8Bfb1ph0U4IbI/u5FNFj3vRSiVeyW89ju5FbdZbPJR1C3Yr84AYxzM4uMavjftaCCJcQih2kWci0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4296
 
-Use the lsm_context structure in the security_inode_notifysecctx()
-interface. Its sole user is already using lsm_context to store
-the data.
+On 9/15/2024 12:03 AM, Dmitrii Ermakov wrote:
+> 
+> Replaces watchdog timer with delayed_work as advised
+> in the driver's TODO comment.
+> 
+> Signed-off-by: Dmitrii Ermakov <demonihin@gmail.com>
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- fs/nfs/inode.c                | 3 +--
- include/linux/lsm_hook_defs.h | 3 ++-
- include/linux/security.h      | 4 ++--
- security/security.c           | 7 +++----
- security/selinux/hooks.c      | 5 +++--
- security/smack/smack_lsm.c    | 6 +++---
- 6 files changed, 14 insertions(+), 14 deletions(-)
+The Subject should identify which tree to go to, net or net-next.  This 
+should be for net-next, e.g. [PATCH net-next].
 
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index 056ddc876cb5..4323a39c14c1 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -359,8 +359,7 @@ void nfs_setsecurity(struct inode *inode, struct nfs_fattr *fattr)
- 
- 	if ((fattr->valid & NFS_ATTR_FATTR_V4_SECURITY_LABEL) && inode->i_security) {
- 		error = security_inode_notifysecctx(inode,
--						fattr->label->lsmctx.context,
--						fattr->label->lsmctx.len);
-+						    &fattr->label->lsmctx);
- 		if (error)
- 			printk(KERN_ERR "%s() %s %d "
- 					"security_inode_notifysecctx() %d\n",
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 6b671f4ada03..0216aeb4a3fd 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -298,7 +298,8 @@ LSM_HOOK(int, -EOPNOTSUPP, lsmprop_to_secctx, struct lsm_prop *prop,
- LSM_HOOK(int, 0, secctx_to_secid, const char *secdata, u32 seclen, u32 *secid)
- LSM_HOOK(void, LSM_RET_VOID, release_secctx, struct lsm_context *cp)
- LSM_HOOK(void, LSM_RET_VOID, inode_invalidate_secctx, struct inode *inode)
--LSM_HOOK(int, 0, inode_notifysecctx, struct inode *inode, void *ctx, u32 ctxlen)
-+LSM_HOOK(int, 0, inode_notifysecctx, struct inode *inode,
-+	 struct lsm_context *cp)
- LSM_HOOK(int, 0, inode_setsecctx, struct dentry *dentry, void *ctx, u32 ctxlen)
- LSM_HOOK(int, -EOPNOTSUPP, inode_getsecctx, struct inode *inode,
- 	 struct lsm_context *cp)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index c9c4845da3a6..1b1411fff6ac 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -555,7 +555,7 @@ int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp);
- int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
- void security_release_secctx(struct lsm_context *cp);
- void security_inode_invalidate_secctx(struct inode *inode);
--int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
-+int security_inode_notifysecctx(struct inode *inode, struct lsm_context *cp);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, struct lsm_context *cp);
- int security_locked_down(enum lockdown_reason what);
-@@ -1536,7 +1536,7 @@ static inline void security_inode_invalidate_secctx(struct inode *inode)
- {
- }
- 
--static inline int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
-+static inline int security_inode_notifysecctx(struct inode *inode, struct lsm_context *cp);
- {
- 	return -EOPNOTSUPP;
- }
-diff --git a/security/security.c b/security/security.c
-index 020e7a89de16..44639d193ecd 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -4268,8 +4268,7 @@ EXPORT_SYMBOL(security_inode_invalidate_secctx);
- /**
-  * security_inode_notifysecctx() - Notify the LSM of an inode's security label
-  * @inode: inode
-- * @ctx: secctx
-- * @ctxlen: length of secctx
-+ * @ctx: LSM context
-  *
-  * Notify the security module of what the security context of an inode should
-  * be.  Initializes the incore security context managed by the security module
-@@ -4280,9 +4279,9 @@ EXPORT_SYMBOL(security_inode_invalidate_secctx);
-  *
-  * Return: Returns 0 on success, error on failure.
-  */
--int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
-+int security_inode_notifysecctx(struct inode *inode, struct lsm_context *cp)
- {
--	return call_int_hook(inode_notifysecctx, inode, ctx, ctxlen);
-+	return call_int_hook(inode_notifysecctx, inode, cp);
- }
- EXPORT_SYMBOL(security_inode_notifysecctx);
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 93188e124f99..382c63d67743 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6665,10 +6665,11 @@ static void selinux_inode_invalidate_secctx(struct inode *inode)
- /*
-  *	called with inode->i_mutex locked
-  */
--static int selinux_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
-+static int selinux_inode_notifysecctx(struct inode *inode,
-+				      struct lsm_context *cp)
- {
- 	int rc = selinux_inode_setsecurity(inode, XATTR_SELINUX_SUFFIX,
--					   ctx, ctxlen, 0);
-+					   cp->context, cp->len, 0);
- 	/* Do not return error when suppressing label (SBLABEL_MNT not set). */
- 	return rc == -EOPNOTSUPP ? 0 : rc;
- }
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index b443859948e9..1dfc4292ea15 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4906,10 +4906,10 @@ static int smack_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
-  * Now that there's a list such a hook adds cost.
-  */
- 
--static int smack_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
-+static int smack_inode_notifysecctx(struct inode *inode, struct lsm_context *cp)
- {
--	return smack_inode_setsecurity(inode, XATTR_SMACK_SUFFIX, ctx,
--				       ctxlen, 0);
-+	return smack_inode_setsecurity(inode, XATTR_SMACK_SUFFIX, cp->context,
-+				       cp->len, 0);
- }
- 
- static int smack_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen)
--- 
-2.46.0
+But be aware that net-next tree is closed during the merge window, so 
+you'll need to wait a week or two before reposting.
 
+
+> ---
+>   drivers/net/ethernet/intel/e1000e/e1000.h  |  4 +-
+>   drivers/net/ethernet/intel/e1000e/netdev.c | 43 ++++++++--------------
+>   2 files changed, 18 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/e1000e/e1000.h b/drivers/net/ethernet/intel/e1000e/e1000.h
+> index ba9c19e6994c..5a60372d2158 100644
+> --- a/drivers/net/ethernet/intel/e1000e/e1000.h
+> +++ b/drivers/net/ethernet/intel/e1000e/e1000.h
+> @@ -189,12 +189,12 @@ struct e1000_phy_regs {
+> 
+>   /* board specific private data structure */
+>   struct e1000_adapter {
+> -       struct timer_list watchdog_timer;
+>          struct timer_list phy_info_timer;
+>          struct timer_list blink_timer;
+> 
+> +       struct delayed_work watchdog_work;
+> +
+>          struct work_struct reset_task;
+> -       struct work_struct watchdog_task;
+> 
+>          const struct e1000_info *ei;
+> 
+> diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+> index 360ee26557f7..5b7a3a1423ed 100644
+> --- a/drivers/net/ethernet/intel/e1000e/netdev.c
+> +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+> @@ -1778,7 +1778,8 @@ static irqreturn_t e1000_intr_msi(int __always_unused irq, void *data)
+>                  }
+>                  /* guard against interrupt when we're going down */
+>                  if (!test_bit(__E1000_DOWN, &adapter->state))
+> -                       mod_timer(&adapter->watchdog_timer, jiffies + 1);
+> +                       queue_delayed_work(system_wq, &adapter->watchdog_work,
+> +                                          1);
+
+This is not worth the line wrap, keep it one line.
+
+>          }
+> 
+>          /* Reset on uncorrectable ECC error */
+> @@ -1857,7 +1858,8 @@ static irqreturn_t e1000_intr(int __always_unused irq, void *data)
+>                  }
+>                  /* guard against interrupt when we're going down */
+>                  if (!test_bit(__E1000_DOWN, &adapter->state))
+> -                       mod_timer(&adapter->watchdog_timer, jiffies + 1);
+> +                       queue_delayed_work(system_wq, &adapter->watchdog_work,
+> +                                          1);
+
+ditto
+
+>          }
+> 
+>          /* Reset on uncorrectable ECC error */
+> @@ -1901,7 +1903,8 @@ static irqreturn_t e1000_msix_other(int __always_unused irq, void *data)
+>                  hw->mac.get_link_status = true;
+>                  /* guard against interrupt when we're going down */
+>                  if (!test_bit(__E1000_DOWN, &adapter->state))
+> -                       mod_timer(&adapter->watchdog_timer, jiffies + 1);
+> +                       queue_delayed_work(system_wq, &adapter->watchdog_work,
+> +                                          1);
+
+ditto
+
+>          }
+> 
+>          if (!test_bit(__E1000_DOWN, &adapter->state))
+> @@ -4293,7 +4296,8 @@ void e1000e_down(struct e1000_adapter *adapter, bool reset)
+> 
+>          napi_synchronize(&adapter->napi);
+> 
+> -       del_timer_sync(&adapter->watchdog_timer);
+> +       cancel_delayed_work_sync(&adapter->watchdog_work);
+> +
+>          del_timer_sync(&adapter->phy_info_timer);
+> 
+>          spin_lock(&adapter->stats64_lock);
+> @@ -5164,25 +5168,12 @@ static void e1000e_check_82574_phy_workaround(struct e1000_adapter *adapter)
+>          }
+>   }
+> 
+> -/**
+> - * e1000_watchdog - Timer Call-back
+> - * @t: pointer to timer_list containing private info adapter
+> - **/
+> -static void e1000_watchdog(struct timer_list *t)
+> -{
+> -       struct e1000_adapter *adapter = from_timer(adapter, t, watchdog_timer);
+> -
+> -       /* Do the rest outside of interrupt context */
+> -       schedule_work(&adapter->watchdog_task);
+> -
+> -       /* TODO: make this use queue_delayed_work() */
+> -}
+> -
+>   static void e1000_watchdog_task(struct work_struct *work)
+
+In keeping with the theme, this could be changed to e1000_watchdog_work()
+
+>   {
+> -       struct e1000_adapter *adapter = container_of(work,
+> -                                                    struct e1000_adapter,
+> -                                                    watchdog_task);
+> +       struct delayed_work *dwork =
+> +               container_of(work, struct delayed_work, work);
+> +       struct e1000_adapter *adapter =
+> +               container_of(dwork, struct e1000_adapter, watchdog_work);
+>          struct net_device *netdev = adapter->netdev;
+>          struct e1000_mac_info *mac = &adapter->hw.mac;
+>          struct e1000_phy_info *phy = &adapter->hw.phy;
+> @@ -5411,8 +5402,8 @@ static void e1000_watchdog_task(struct work_struct *work)
+> 
+>          /* Reset the timer */
+>          if (!test_bit(__E1000_DOWN, &adapter->state))
+> -               mod_timer(&adapter->watchdog_timer,
+> -                         round_jiffies(jiffies + 2 * HZ));
+> +               queue_delayed_work(system_wq, &adapter->watchdog_work,
+> +                                  round_jiffies(2 * HZ));
+>   }
+> 
+>   #define E1000_TX_FLAGS_CSUM            0x00000001
+> @@ -7588,11 +7579,10 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>                  goto err_eeprom;
+>          }
+> 
+> -       timer_setup(&adapter->watchdog_timer, e1000_watchdog, 0);
+>          timer_setup(&adapter->phy_info_timer, e1000_update_phy_info, 0);
+> +       INIT_DELAYED_WORK(&adapter->watchdog_work, e1000_watchdog_task);
+> 
+>          INIT_WORK(&adapter->reset_task, e1000_reset_task);
+> -       INIT_WORK(&adapter->watchdog_task, e1000_watchdog_task);
+>          INIT_WORK(&adapter->downshift_task, e1000e_downshift_workaround);
+>          INIT_WORK(&adapter->update_phy_task, e1000e_update_phy_task);
+>          INIT_WORK(&adapter->print_hang_task, e1000_print_hw_hang);
+> @@ -7733,11 +7723,10 @@ static void e1000_remove(struct pci_dev *pdev)
+>           * from being rescheduled.
+>           */
+>          set_bit(__E1000_DOWN, &adapter->state);
+> -       del_timer_sync(&adapter->watchdog_timer);
+> +       cancel_delayed_work_sync(&adapter->watchdog_work);
+>          del_timer_sync(&adapter->phy_info_timer);
+> 
+>          cancel_work_sync(&adapter->reset_task);
+> -       cancel_work_sync(&adapter->watchdog_task);
+>          cancel_work_sync(&adapter->downshift_task);
+>          cancel_work_sync(&adapter->update_phy_task);
+>          cancel_work_sync(&adapter->print_hang_task);
+> --
+> 2.45.2
+> 
+> 
 
