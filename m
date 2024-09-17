@@ -1,127 +1,185 @@
-Return-Path: <linux-kernel+bounces-331619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDF697AF10
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCBF697AF14
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9EDC1F22411
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B9B1F22695
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3F316A37C;
-	Tue, 17 Sep 2024 10:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35D516A94B;
+	Tue, 17 Sep 2024 10:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mk1yY+Ur"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PzGfis6o";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5o95e55u";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OEWKZpjy";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cqzTbZDR"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4B616130C
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1E716130C;
+	Tue, 17 Sep 2024 10:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726569608; cv=none; b=IzUcJctaISK0bITbiHmBkjT32Ik+NjAyoxWHCtowS0BMJM7Xl+3G6Bl+a+UZVHc3c7apk3WRAEahbsFOWJODeK6QBljlxB2xmbRxOZg+ZY3OLAy3/DpKMlZk24elbYyqgix9z/YPGbkv0N+UP3KUOyz0f+h9BUdAyjXi0Hgre4o=
+	t=1726569664; cv=none; b=J9Y4BZ1AccSFhy0D4K2ZijM5nEZDgNySG8GLI4sSSzz3vpgVYWHqTvx2IMa1PPemMLaI+g7q8NkHwZUYkhZ1ilvAye+OfF8aBG3mXqLY1AY40iG6ZCrKFkau6Cx5eN14A2bQx+X2GuP7srStIi5L/HKLbzcO7sypcVYqmGoRQrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726569608; c=relaxed/simple;
-	bh=0LMBN520YvnGOafFgvhLjT6qIlZcWSGFYJKW35052PE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AV0OszifFi6UrYfn0GmEBPPxSE8JakDe0qKzF27ZgwITZJym+YpHI4el3UO88bd3Tppgffs0xdDYKq3c3pH2MKAyNpMUzBtDMkeF7O/1qDGYVwrmuYmO5W7nuWZbL7T8VQeQgJAK4U76ef0LZ95czY7kZAcRTp5YX2TRfnY44DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mk1yY+Ur; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726569606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=K8NsOdWTBNIM1qx9lP6F4iSdy29rXjvavRpAqXtZKsU=;
-	b=Mk1yY+UrlVMhFFAVFGel8B1+I4njXxSkc3i3O1vQX+cfbxerh6nPNIVGGiCZrhJKQ3jJ1s
-	zjskjNMFf2ZB431jpt5C/IVywPcmLQWZNU+naozx/2wjtUvrQD/wgPy/aXxvZl4gXjFN3n
-	qw94YLx6ce9/Lv8BxNkVcj00oZD24+Q=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-60-XO8L68teN_aj50LlCdQ-nA-1; Tue, 17 Sep 2024 06:40:04 -0400
-X-MC-Unique: XO8L68teN_aj50LlCdQ-nA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-374bb2f100fso1950144f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:40:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726569603; x=1727174403;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K8NsOdWTBNIM1qx9lP6F4iSdy29rXjvavRpAqXtZKsU=;
-        b=TZW0Hdn6PgcZruQ0qgbBjb4iJ/N/1WfWOFLx86M7ZtFv7XYLVlUtc8MIWPpU0u50GW
-         JDRJRWR2J1FMG0/tvGm4h9TEb8aBHEm10W5ct+CIH/IFKE2pjj/ncOskvbS3FJgI5AXQ
-         DEXOYcOjoEtqV0UZyOKRgOFLaGnSbti93664jWrMw18F3O+xAwr9xv388puTpGfWnSvx
-         r4kTLKfDemHJBHgKKs5WBR6VqX87ROhnFieJ51Ye1gLQMunR6t4QBrngTTniRxVPLf0K
-         I7WoSUechrgx+LkTImh9E32/u3rMB7/tsv1JygzoPLS5t0mRB1r9Q2fsp8OS70eaXxi5
-         uoVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV22mJFAMxDrOsN2NChL9COBc5o6Zr+XCdXOIFaht9iU76PivQvOfkL6itKfRvC3ywQ4yivnk4Rhisk8aE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpxc3lGsJVSIA04XMVOnhqBXS0DP+gDBMZ1PajLsX3bJeMsLEe
-	VnKK3x9rjZhUs3J1LIMuHYDexk6xYaGXFmyB21OBZXOrRmqFfpMQo9q9WJLAxE/sNPfUxG5pmg3
-	LASSGApG/vvvwAVVtPPg//OCTw/a3jQ9MQTmkVNAQsWi9Kt//Y7x+TkWc19MO0A==
-X-Received: by 2002:a5d:6892:0:b0:368:785f:b78e with SMTP id ffacd0b85a97d-378c2cfc259mr10196602f8f.13.1726569603381;
-        Tue, 17 Sep 2024 03:40:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHa4UI97Csxn3j4pYvJYFP/Fr/uiCCt79JPc4rAJ1fBKy2utflgkB7c4Go4SgMPtMwX0FZF9A==
-X-Received: by 2002:a5d:6892:0:b0:368:785f:b78e with SMTP id ffacd0b85a97d-378c2cfc259mr10196573f8f.13.1726569602833;
-        Tue, 17 Sep 2024 03:40:02 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e780007dsm9183869f8f.82.2024.09.17.03.40.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 03:40:02 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Andy Shevchenko <andy@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in INTEL MID PLATFORM
-Date: Tue, 17 Sep 2024 12:39:55 +0200
-Message-ID: <20240917103955.102921-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726569664; c=relaxed/simple;
+	bh=NGYoXzzFMQt7/QqjqT0sfh07G+FI9nh3E5Gk0adWa0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gRiGoi23cfE+Q0iDLl8JmHDyVHGhPdJzRK7QT9skoi7bPO1EOVNxh2cyqQnAamroNMTGOnb+OAKusT0Pp5Sgs5K94rSkah8TMk5puQckFDvMr7IRvnHX9DYyxe65Ov8lKqkXeNE5W/8OyOEpBfYsjuHXK+IAlYv1b3fuIDs8s6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PzGfis6o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5o95e55u; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OEWKZpjy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cqzTbZDR; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D5B2722113;
+	Tue, 17 Sep 2024 10:40:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726569661; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UxIhQZaCoEImEPjmzoyU9bT+2QV60ZDUbCgxrZhrBE0=;
+	b=PzGfis6oXBNyDrdgqdcdd2WDbyY1ks7VAVzahzseCZjwsdwJCFeu5XF39fvO8J+LnPZcuh
+	8J0x0mZ5o/nHF1MRvn+3yiuev+YhM7IQZlAYXUcc41/vRmz4mV2l8KZA+1JoiMVzq4MKoP
+	j8ow1lxnueWC7Gln0UNLQC18ceGRkJg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726569661;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UxIhQZaCoEImEPjmzoyU9bT+2QV60ZDUbCgxrZhrBE0=;
+	b=5o95e55u5j4joCIO9QXkwNxzl41B9yfzDdrv5GV9gatI4lZQs4Id7IeRPLwHzCvczOzCYy
+	ltkxVJYZCkzmFwBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726569659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UxIhQZaCoEImEPjmzoyU9bT+2QV60ZDUbCgxrZhrBE0=;
+	b=OEWKZpjyYQ85Aitk6U38t1LYhfuwCvVvH41dmtOfTziPPRdnBtxJOOtDgKnVx8yx0Bw51g
+	IlFii8HXaEggsHEhtNCuN969qzrg1+YBYzHUaMWp00l2ohEVvXsXx25Kt1Y9XbnR9B7rZL
+	xWHYC+xDQjSdN3Zs9tMJukdVPKYdTXQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726569659;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UxIhQZaCoEImEPjmzoyU9bT+2QV60ZDUbCgxrZhrBE0=;
+	b=cqzTbZDRWSsTIAKVAsx+kHaII+bKP2sui9irnRLB3Gwh4jEBuBVvygxG2X11zGNGIwY2dQ
+	JJ+e8LhPDwME5qDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C85F2139CE;
+	Tue, 17 Sep 2024 10:40:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id R1bkLbpc6WaPegAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Tue, 17 Sep 2024 10:40:58 +0000
+Message-ID: <34025684-f5e2-4c3e-aa8f-d90288c85218@suse.de>
+Date: Tue, 17 Sep 2024 13:40:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next 07/11] PCI: brcmstb: Avoid turn off of bridge
+ reset
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20240910151845.17308-1-svarbanov@suse.de>
+ <20240910151845.17308-8-svarbanov@suse.de>
+ <b41afb62-8a89-4c9d-8462-f4c5574eac7a@broadcom.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <b41afb62-8a89-4c9d-8462-f4c5574eac7a@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[dt];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Commit 5f1cda51107f ("platform/x86: intel_scu_wdt: Move intel_scu_wdt.h to
-x86 subfolder") moves intel-mid_wdt.h in ./include/linux/platform_data into
-the x86 subdirectory, but misses to adjust the INTEL MID PLATFORM section,
-which is referring to this file.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+On 9/10/24 20:03, Florian Fainelli wrote:
+> On 9/10/24 08:18, Stanimir Varbanov wrote:
+>> On brcm_pcie_turn_off avoid shutdown of bridge reset.
+>>
+>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+>> ---
+>>   drivers/pci/controller/pcie-brcmstb.c | 14 ++++++++++++--
+>>   1 file changed, 12 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/pcie-brcmstb.c
+>> b/drivers/pci/controller/pcie-brcmstb.c
+>> index d78f33b33884..185ccf7fe86a 100644
+>> --- a/drivers/pci/controller/pcie-brcmstb.c
+>> +++ b/drivers/pci/controller/pcie-brcmstb.c
+>> @@ -234,10 +234,17 @@ struct inbound_win {
+>>       u64 cpu_addr;
+>>   };
+>>   +/*
+>> + * Shutting down this bridge on pcie1 means accesses to rescal block
+>> + * will hang the chip if another RC wants to assert/deassert rescal.
+>> + */
+> 
+> Maybe a slightly more detailed comment saying that the RESCAL block is
+> tied to PCIe controller #1, regardless of the number of controllers, and
+> turning off PCIe controller #1 prevents access to the RESCAL register
+> blocks, therefore not other controller can access this register space,
+> and depending upon the bus fabric we may get a timeout (UBUS/GISB), or a
+> hang (AXI).
 
-Adjust the file entry to this header file movement.
+Ack. Thank you!
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4c4116045664..9a4fa88edcd3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11646,7 +11646,7 @@ F:	drivers/platform/x86/intel_scu_*
- F:	drivers/staging/media/atomisp/
- F:	drivers/watchdog/intel-mid_wdt.c
- F:	include/linux/mfd/intel_soc_pmic_mrfld.h
--F:	include/linux/platform_data/intel-mid_wdt.h
-+F:	include/linux/platform_data/x86/intel-mid_wdt.h
- F:	include/linux/platform_data/x86/intel_scu_ipc.h
- 
- INTEL P-Unit IPC DRIVER
--- 
-2.46.0
-
+regards,
+~Stan
 
