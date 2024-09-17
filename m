@@ -1,105 +1,115 @@
-Return-Path: <linux-kernel+bounces-331405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503C397AC72
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:53:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E6A97AC70
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D731C218E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F34028CBE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393CE155756;
-	Tue, 17 Sep 2024 07:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3770014C5AE;
+	Tue, 17 Sep 2024 07:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="t80vha9J"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="F5UuLDUk"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F375847B;
-	Tue, 17 Sep 2024 07:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56D3847B;
+	Tue, 17 Sep 2024 07:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726559599; cv=none; b=kIZXH/yjED/aVZutcmzyYDCUHEEIAmXd8xEl8LwMxCIKwyuBTeO39mt5q0UHXUfA7Jqm9nZR0i28jxE0J2gZ4x8lR3+qHzgIUDjN+0VDhSefHsoMK1NffFGuop4vJflfDX6ifdBCeYAilgzPSvNr8fVfKOMz3Ypu7Pivo4JNYfs=
+	t=1726559593; cv=none; b=O0RshdjYF2s8Mxz5IwSi7srIGNCvTn3ui77opzZGR6w++I8wUCgnezKiliwhmqdqqunn0fQGSDxoFrVJX/SbVwaJ9QNnIUvZVTvkWX4XcooUVam6IgUa0mJQEGUl/216hb9vPExq82C38xi+76qtAdiGTWpf2aHrU4ilUi8vAxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726559599; c=relaxed/simple;
-	bh=BW1bBTE+Kgi3GbEF9WPYjCD8Z3weDrmWy5PaSnftEfs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvGVMwMvkBmvUie5b93O57BMd4r4Lv8xdzWLoabQvqqv0Eu97OeZdipFiozAbOeGrC5OOEhs6KbOUgFDX3w7TgwrI1ezRcDypeaxu+XWdpFLRARPCGB3RxyjBJnbfrXFAEMZWquuw56+ijadPcwkmyZlfFypZ1aAcGDPqo4Plac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=t80vha9J; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726559597; x=1758095597;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BW1bBTE+Kgi3GbEF9WPYjCD8Z3weDrmWy5PaSnftEfs=;
-  b=t80vha9JteMQytKuOQaFOhvfumgNJG1sjk1sMtjSCpAb7JR4jN0A7SUf
-   bUyQPNUxgcMYREx8s7P979taRJ0+DGIMgmeDWlrc7E1De5OsUAGynTKtN
-   f3m+CcLRgKwklguupgL8pXJimurGURtvAQ0+tSYIPx+J5awv6NI3xV96f
-   3la+CBajcHoM8TrTBXlS9riWElSSl8aBTpWGKYkpGizSGg9t2A/3m/yZb
-   IjvznmvCbMspDQXwxVmykwdMn0gx5Qn1Te5ZQ3m4UwrIe5HN/kxzljv50
-   aDDt18EI+Hb4K5a9Wm1zaSESjH3okMI5gt2EomJhspK5blO45a2LCFN4Z
-   w==;
-X-CSE-ConnectionGUID: oGLJsDF/Qd+MdI2DdWlOIg==
-X-CSE-MsgGUID: D6yVr8HIQDSo9/Ku4oj0Mg==
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="31763481"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2024 00:53:15 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 17 Sep 2024 00:53:02 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 17 Sep 2024 00:53:00 -0700
-Date: Tue, 17 Sep 2024 07:52:59 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Lars Povlsen
-	<lars.povlsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>, <linux-gpio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: ocelot: document lan969x-pinctrl
-Message-ID: <20240917075259.deuwi5s5gdqo3w6z@DEN-DL-M70577>
-References: <20240914-lan969x-pinctrl-v1-0-1b3a4d454b0d@microchip.com>
- <20240914-lan969x-pinctrl-v1-1-1b3a4d454b0d@microchip.com>
- <20240916-uncut-badge-f31b97d7c375@spud>
+	s=arc-20240116; t=1726559593; c=relaxed/simple;
+	bh=Se4Ox4FdYkwXYp/fPyNavBt76V4zzgnJl2LUMhEtcx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZP2C/+zErKZnol0jrePZ4OKAnw2apKPxTg0SAh4Kl4KFm0Zhmrc4crx6t5efo3/W8/W2CGHHFkJ4u8e0HahD3StUg0VdtAHrB/fiJ1fobXTVjYuJU8ziWQmUmZAtorRmWees+eYhLqc87/wwevxjpvR480hpwd1iF9aVmhW57PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=F5UuLDUk; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 70E90A05EC;
+	Tue, 17 Sep 2024 09:53:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=hWDsT5EXBtwnRc38qFl6
+	l7996Q0pdajQg2k4m4ObVyM=; b=F5UuLDUksSYX6OEMczNeP058BfWKqveL83e6
+	NRONq2tfTpdJaYCw0DOu81MywWbq2Ws/ze5Po5HVjeWzNl21OcVdWsHueinofmrn
+	BM1lUCAgBXLfcY0Mmh/4kKyHOQD0C06om9htPxEEGHdM1ad4upj5AVr9eEpGMrWT
+	xlZT/3jY5NgG+uDjU8HuM4/2yvz7pkl3KrICi10sS7CQK+Q/GXstAi3Z52yxfmda
+	gVY2xQm6Bfz3zRx7ZZy5zV8bKQNq6UY72n5KKgYhZkJAQRCfZYrrN96GyhdjVSH6
+	yOH2lq4UDO8FcigHVYlaAFcYSpQaEX4SSk9JedwDvUa5X0I/pLKQ8j4ToLreFkmd
+	Ms8WE+20Faxt3gZkptgNxu7VKUe9ti+W6bZU5R3LBPWQkgOVkIinSGrSUx6c8goJ
+	3VDKsOkzGFmprbT4y9i4+5D33pUBph9OKQFk/Sm8SJv80jedKRMo4cJMzL8g/xSq
+	xs0gvZQny2bN38VLU4MxFS283KCynzmvBKMKTZCHRTr2CNuNdIJSJZI5UFLBnjGP
+	PQy1WDK/sqBSMn9j+pUyRd2yxTJqsVhC8dQQAFHREZL4+tnlB54KhCuIK2v0CQxD
+	n2x1GQCyUHKQ3DNYZCfoqqCpZ9j4PTaHGA9COWeApvr3LdyEQzaWXwmHNpxQz4v7
+	ubmuW88=
+Message-ID: <c70a049b-cef8-4b9d-8fd6-e9d8ec0270cc@prolan.hu>
+Date: Tue, 17 Sep 2024 09:53:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240916-uncut-badge-f31b97d7c375@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] net: fec: Reload PTP registers after link-state
+ change
+To: Frank Li <Frank.li@nxp.com>
+CC: <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Wei Fang <wei.fang@nxp.com>, Shenwei Wang
+	<shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Richard Cochran
+	<richardcochran@gmail.com>
+References: <20240916141931.742734-1-csokas.bence@prolan.hu>
+ <20240916141931.742734-2-csokas.bence@prolan.hu>
+ <ZuhJJ5BEgu9q6vaj@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <ZuhJJ5BEgu9q6vaj@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D948546D716A
 
-> >    reg:
-> >      items:
-> > @@ -85,6 +95,12 @@ allOf:
-> >            contains:
-> >              enum:
-> >                - microchip,lan966x-pinctrl
-> > +              - microchip,lan9698-pinctrl
-> > +              - microchip,lan9696-pinctrl
-> > +              - microchip,lan9694-pinctrl
-> > +              - microchip,lan9693-pinctrl
-> > +              - microchip,lan9692-pinctrl
+Hi!
+
+On 9/16/24 17:05, Frank Li wrote:
+> On Mon, Sep 16, 2024 at 04:19:31PM +0200, Csókás, Bence wrote:
+>> On link-state change, the controller gets reset,
+>> which clears all PTP registers, including PHC time,
+>> calibrated clock correction values etc. For correct
+>> IEEE 1588 operation we need to restore these after
+>> the reset.
 > 
-> > +              - microchip,lan9691-pinctrl
+> I am not sure if it necessary. timer will be big offset after reset. ptpd
+> should set_time then do clock frequency adjust, supposed just few ms, ptp
+> time will get resync.
 > 
-> This should work on its own, since the other devices here have it as a
-> fallback.
+> of course, restore these value may reduce the resync time.
+> 
+> Frank
 
-Just to be clear - we only need the "microchip,lan9691-pinctrl" here?
+There's 3 problems with that:
+1. ATCORR, ATINC and ATPER will not be restored, therefore precision 
+will be immediately lost.
+2. ptpd does NOT set the time, only once, on startup. Currently, on 
+link-down, ptpd tries to correct for the missing 54 years by making the 
+PHC tick 3% faster (therefore the PPS signal will have a frequency error 
+as well), which will never get it there. One work-around is to 
+periodically re-start ptpd, but this is obviously sub-optimal.
+3. If the PTP server goes away, there's no way to restore the time. 
+Whereas if you save and reload it, you can continue, although with 
+degraded precision.
 
-/Daniel
+Bence
 
 
