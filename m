@@ -1,256 +1,188 @@
-Return-Path: <linux-kernel+bounces-332080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B93597B528
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:27:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015FA97B52C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2F21C22E8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8099B1F226A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82C51922DA;
-	Tue, 17 Sep 2024 21:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vc7xCuoy"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792BB192580;
+	Tue, 17 Sep 2024 21:28:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E79918893F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 21:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D7127442
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 21:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726608431; cv=none; b=P8E7jZgLhD+5xcsU4WfF1UouomyetZxXYVyopihbfHbGlAZB3a5DFsZyyywxiCc4ARVt8z3At0qJl5sGa7WH/COFAbdSYJ1a4QIwtVl8oYBmeQgQKEEer8C5pHfoMkPYNmel0EFUJwArzx4u1Tn/JJYK+iG5VRNoQMhj+kHCvas=
+	t=1726608486; cv=none; b=h60Glu3JDRZOlc5e70XWV4kqy25O4npWYriIoz3ZXl5Axwb5Ra0iVxYn9jpqu6+gUc480OWhzYW5G2BNJEQoIzJoFPSU4iPLYWWc71D78zqQI6JV9fUO3xdrfwoQsD7GhxLKeBZhYyXCFoMUc0KCtAsweDknEIgbWx+FrAEfblc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726608431; c=relaxed/simple;
-	bh=6c9f9GMk0RwJmVnM261XKRTWoq80B+gB/g6JMY3uYy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSlCk55aP9KzqkgGlXrIpl4c9wVmHJOvIakVupsRlIGwkbJu9XxWUqEuuDRycz+Jfn0wbzGtMMdoD5S00PT8nSWuEq6/fh/7O8LiaHPDMoITw0xr6NoiPSUR+12fqWHm0rxVkLwEbA5GMOvKfih93ey9XStSKxtgpEDguudGif8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vc7xCuoy; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f75aa08a96so64558111fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 14:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726608427; x=1727213227; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tK+eryvZIWB7XUY6xEZS8PhI/lDVITII9hGxNEZ3sN0=;
-        b=Vc7xCuoyqm72XUQEgmzEsSrnaV6Y+0UjosmGGP4scYrV0ad9zZx882+GogUe+Olb9A
-         0ROtun+rRwlW+qYayiKeJRKivFaxn3TUkYf57yomLDALft0bhgCsEAcBolXLrCV9zOg2
-         QqtQVgq05Y2wiMnhOqrviEogJDiXNI/NA8HkjnTZtGcyUoWiUGwfqM3kTfM1/QoWF5Y9
-         dG1S3PibQHNBSwhS2QOoIxmDJ+tfvBPxoG3GocDiEKKuvBOmfe6lKQzfAGXhnmA11NLG
-         ha9XbtEhjZNuMSw++0wGh1NIitV2DeJoA6r/psdwMRvP1296r8ZQKj1fKbXAMU7lJ7Q+
-         gNeA==
+	s=arc-20240116; t=1726608486; c=relaxed/simple;
+	bh=FFms0JSvc6Z0q5c1Qi9WXKX5XoFu2RsClrHkYr07ICY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DLY3UJVVlF9XxYumZr4+lKKJu9O0E6+gS0eIgzf546OiuNnttyxhoDukNDV/rvflbnXDCvOkl/6xvvNFZc2isbv7L10CLuUxGsWp5CxlbQCoBa5pFNuZi9k7ZGNA6CrrIk+qDt2PZaR+WVneo7DQLvOJl8liMcDHJPFw3bPh7po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39fe9710b7fso125980785ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 14:28:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726608427; x=1727213227;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tK+eryvZIWB7XUY6xEZS8PhI/lDVITII9hGxNEZ3sN0=;
-        b=K6jPxqqhPipZq8r7SQ+F8UbEHHntntFbUElSrxGHhZomMRZL4Eh/OLh7ZoqljNM5aC
-         7PZ/rNMrWexvQkAXq0aX8VGYfBCOYUNbmqxCHD1u6LELmjABB+kd7JzrpgndpqE/vlYg
-         4siF610pdAcxNdutI6Vh8l0ckR1NkI+7aMbMMzo6VJ2V2q1AxT1D9Tqzvv6/D9vzH1ij
-         KNxt9OuybWyPZKiraIt//GeornsA0PL78JsHHHWESFp6TZ4gm/bemL1dA/QVIoNyuszY
-         znYDs6kz3hLbmccCqXXRgE7YfzIyXgOa5CisX4HBLZqnyDop0bwXCa/G/qOlHB4umsrB
-         yAyw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Jo+HT9A4uxi+ixgjNdABuV9LJqcaNDUt426Fp+xX2iDmJzFEfL/N/8X6PvqsKYRBmG9PKawdy2+JDfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7esAaaJUJVdEYFxp7QlJ8aUdL37U/xFO9GKOgUcw0aOZYzUHh
-	IOAGVKcAk3KH8NaUeHLuujjrQufiW9mlRQiCHpcVsLcZf286TTz1TmncPt0UN84=
-X-Google-Smtp-Source: AGHT+IF3NskUcf8RUOcTnIF63jZutapZ5Jeb7rdsU+2KtEQcoz8cIrf/mUhNgh51RCcY1c8ixVHM1Q==
-X-Received: by 2002:a05:6512:118a:b0:52e:e3c3:643f with SMTP id 2adb3069b0e04-53678fb1d3bmr11190040e87.2.1726608427105;
-        Tue, 17 Sep 2024 14:27:07 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870a89d7sm1324239e87.239.2024.09.17.14.27.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 14:27:06 -0700 (PDT)
-Date: Wed, 18 Sep 2024 00:27:03 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sa8775p: Add gpu and gmu nodes
-Message-ID: <udt76i3sl7zekhudqpnvhvhfxchvixwoinz7metuwfrpynl47k@wlpforwv7mcf>
-References: <20240918-a663-gpu-support-v1-0-25fea3f3d64d@quicinc.com>
- <20240918-a663-gpu-support-v1-3-25fea3f3d64d@quicinc.com>
+        d=1e100.net; s=20230601; t=1726608483; x=1727213283;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7bDAHX/2HpeG8O0GYsUySOvXaZHBEvJDh7x2fWTnQJ0=;
+        b=rrsBCGrda1kTPxntee6uoSArkFEqVygSXIZHCnRUyj1HhV+++oXbV6iMvDj2FHlce/
+         T5US0kv0TphJ5pI7D52bMzCAqBuDTHqewCmqLSzXAmU9WjYa5OUPCPeccyz2R6EbK+Ab
+         S6TLIDou71zdGoK/VQJ4EFPNEHD3/u0v6I6aj8bJIaYexrg5lAFX/h8dXkCqqKNYAJPh
+         47sKhvclea/1/ksx2dPppFxJSq9zsh9eTVr647IayLtIcJw9R9h2R5h2JIaAAww+OWjs
+         PpsvMXukepbAexpbI07NRvMFBrlOkuIbOmeqEfSuVB+JHy0JHUQoqrjMShQk+YKgMx5J
+         hDTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXr9DvGV3StHlSKizInPGffQdu7oc7NUxdvPNxuqoAUVNY7HcdoTyZ8YEfh4dUSqGNT+9CWAgLB0PC7dI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywaua0n6/A87hRC/mTMYDtC0dVi0+vROJZeHPu23L0u3VgmY36s
+	zZ7FMcmbbfjg96UM7kZcGOto0ipkzl2+zdj51n2/Ko67oJapdzCtiYyCbeoIahnLLbViSDNI0Co
+	9wHYkQ4glvv1EFa5xFT54rEkURGrYFDhZyGdcM1FXpJ1FFvHG7vW72vk=
+X-Google-Smtp-Source: AGHT+IFReLZrO4jwJzW8veawI7UH1yi9eJ8Twhb48vdnrlkmvEiNi2VB2VoI+z2BXtT5KR1MzxA5IUKoZqccQvSaeUy9x0PwHbo8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918-a663-gpu-support-v1-3-25fea3f3d64d@quicinc.com>
+X-Received: by 2002:a05:6e02:1e0a:b0:3a0:4d6b:42f7 with SMTP id
+ e9e14a558f8ab-3a08b79a1a2mr148103725ab.22.1726608483655; Tue, 17 Sep 2024
+ 14:28:03 -0700 (PDT)
+Date: Tue, 17 Sep 2024 14:28:03 -0700
+In-Reply-To: <fc79c53e-a5a7-4ae2-a579-83fefea772c4@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000055b6570622575dba@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in do_ip_setsockopt (4)
+From: syzbot <syzbot+e4c27043b9315839452d@syzkaller.appspotmail.com>
+To: alibuda@linux.alibaba.com, davem@davemloft.net, dsahern@kernel.org, 
+	dust.li@linux.alibaba.com, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	schnelle@linux.ibm.com, srikarananta01@gmail.com, 
+	syzkaller-bugs@googlegroups.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 18, 2024 at 02:08:43AM GMT, Akhil P Oommen wrote:
-> From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-> 
-> Add gpu and gmu nodes for sa8775p based platforms.
+Hello,
 
-Which platforms? The commit adds nodes to the SoC and the single RIDE
-platform.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in do_ip_setsockopt
 
-> 
-> Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  8 ++++
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 75 ++++++++++++++++++++++++++++++
->  2 files changed, 83 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> index 2a6170623ea9..a01e6675c4bb 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> @@ -407,6 +407,14 @@ queue3 {
->  	};
->  };
->  
-> +&gpu {
-> +	status = "okay";
-> +
-> +	zap-shader {
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-syzkaller-04557-g2f27fce67173-dirty #0 Not tainted
+------------------------------------------------------
+syz.0.15/6023 is trying to acquire lock:
+ffff888025c40918 (sk_lock-AF_INET){+.+.}-{0:0}, at: do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
 
-It's easier to add gpu_zap_shader_link label in the DTSI file and then
-reference it instead of using the subnode again.
+but task is already holding lock:
+ffffffff8faa9708 (rtnl_mutex){+.+.}-{3:3}, at: do_ip_setsockopt+0x127d/0x3cd0 net/ipv4/ip_sockglue.c:1077
 
-> +		firmware-name = "qcom/sa8775p/a663_zap.mbn";
-> +	};
-> +};
+which lock already depends on the new lock.
 
-Separate patch, please.
 
-> +
->  &i2c11 {
->  	clock-frequency = <400000>;
->  	pinctrl-0 = <&qup_i2c11_default>;
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 23f1b2e5e624..12c79135a303 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -2824,6 +2824,81 @@ tcsr_mutex: hwlock@1f40000 {
->  			#hwlock-cells = <1>;
->  		};
->  
-> +		gpu: gpu@3d00000 {
-> +			compatible = "qcom,adreno-663.0", "qcom,adreno";
-> +			reg = <0 0x03d00000 0 0x40000>,
-> +			      <0 0x03d9e000 0 0x1000>,
-> +			      <0 0x03d61000 0 0x800>;
+the existing dependency chain (in reverse order) is:
 
-I think it's suggested to use 0x0 now
+-> #1 (rtnl_mutex){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       smc_vlan_by_tcpsk+0x399/0x4e0 net/smc/smc_core.c:1898
+       __smc_connect+0x292/0x1850 net/smc/af_smc.c:1518
+       smc_connect+0x868/0xde0 net/smc/af_smc.c:1694
+       __sys_connect_file net/socket.c:2067 [inline]
+       __sys_connect+0x2d1/0x300 net/socket.c:2084
+       __do_sys_connect net/socket.c:2094 [inline]
+       __se_sys_connect net/socket.c:2091 [inline]
+       __x64_sys_connect+0x7a/0x90 net/socket.c:2091
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> +			reg-names = "kgsl_3d0_reg_memory",
-> +				    "cx_mem",
-> +				    "cx_dbgc";
-> +			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
-> +			iommus = <&adreno_smmu 0 0xc00>,
-> +				 <&adreno_smmu 1 0xc00>;
-> +			operating-points-v2 = <&gpu_opp_table>;
-> +			qcom,gmu = <&gmu>;
-> +			interconnects = <&gem_noc MASTER_GFX3D 0 &mc_virt SLAVE_EBI1 0>;
+-> #0 (sk_lock-AF_INET){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3158 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       lock_sock_nested+0x48/0x100 net/core/sock.c:3611
+       do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
+       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
+       do_sock_setsockopt+0x3af/0x720 net/socket.c:2330
+       __sys_setsockopt+0x1a8/0x250 net/socket.c:2353
+       __do_sys_setsockopt net/socket.c:2362 [inline]
+       __se_sys_setsockopt net/socket.c:2359 [inline]
+       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2359
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-QCOM_ICC_TAG_ALWAYS instead of 0
+other info that might help us debug this:
 
-> +			interconnect-names = "gfx-mem";
-> +			#cooling-cells = <2>;
+ Possible unsafe locking scenario:
 
-No speed bins?
+       CPU0                    CPU1
+       ----                    ----
+  lock(rtnl_mutex);
+                               lock(sk_lock-AF_INET);
+                               lock(rtnl_mutex);
+  lock(sk_lock-AF_INET);
 
-> +
-> +			status = "disabled";
-> +
-> +			zap-shader {
+ *** DEADLOCK ***
 
-gpu_zap_shader: zap-shader
+1 lock held by syz.0.15/6023:
+ #0: ffffffff8faa9708 (rtnl_mutex){+.+.}-{3:3}, at: do_ip_setsockopt+0x127d/0x3cd0 net/ipv4/ip_sockglue.c:1077
 
-> +				memory-region = <&pil_gpu_mem>;
-> +			};
-> +
-> +			gpu_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-405000000 {
+stack backtrace:
+CPU: 0 UID: 0 PID: 6023 Comm: syz.0.15 Not tainted 6.11.0-syzkaller-04557-g2f27fce67173-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
+ check_prev_add kernel/locking/lockdep.c:3158 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ lock_sock_nested+0x48/0x100 net/core/sock.c:3611
+ do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
+ ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
+ do_sock_setsockopt+0x3af/0x720 net/socket.c:2330
+ __sys_setsockopt+0x1a8/0x250 net/socket.c:2353
+ __do_sys_setsockopt net/socket.c:2362 [inline]
+ __se_sys_setsockopt net/socket.c:2359 [inline]
+ __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2359
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f34b9b79e79
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f34b95ff038 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f34b9d15f80 RCX: 00007f34b9b79e79
+RDX: 0000000000000023 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f34b9be793e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f34b9d15f80 R15: 00007ffd22175db8
+ </TASK>
 
-Just a single freq?
 
-> +					opp-hz = /bits/ 64 <405000000>;
-> +					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-> +					opp-peak-kBps = <8368000>;
-> +				};
-> +
+Tested on:
 
-Drop the empty line, please.
+commit:         2f27fce6 Merge tag 'sound-6.12-rc1' of git://git.kerne..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=104cb500580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c7e7e5a089fe8488
+dashboard link: https://syzkaller.appspot.com/bug?extid=e4c27043b9315839452d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> +			};
-> +		};
-> +
-> +		gmu: gmu@3d6a000 {
-> +			compatible = "qcom,adreno-gmu-663.0", "qcom,adreno-gmu";
-> +			reg = <0 0x03d6a000 0 0x34000>,
-> +				<0 0x3de0000 0 0x10000>,
-> +				<0 0x0b290000 0 0x10000>;
-
-Wrong indentation, please align to the angle bracket.
-Also I think it's suggested to use 0x0 now
-
-> +			reg-names = "gmu", "rscc", "gmu_pdc";
-> +			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-> +					<GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-
-And here
-
-> +			interrupt-names = "hfi", "gmu";
-> +			clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
-> +				 <&gpucc GPU_CC_CXO_CLK>,
-> +				 <&gcc GCC_DDRSS_GPU_AXI_CLK>,
-> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-> +				 <&gpucc GPU_CC_AHB_CLK>,
-> +				 <&gpucc GPU_CC_HUB_CX_INT_CLK>,
-> +				 <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
-> +			clock-names = "gmu",
-> +				      "cxo",
-> +				      "axi",
-> +				      "memnoc",
-> +				      "ahb",
-> +				      "hub",
-> +				      "smmu_vote";
-> +			power-domains = <&gpucc GPU_CC_CX_GDSC>,
-> +					<&gpucc GPU_CC_GX_GDSC>;
-> +			power-domain-names = "cx",
-> +					     "gx";
-> +			iommus = <&adreno_smmu 5 0xc00>;
-> +			operating-points-v2 = <&gmu_opp_table>;
-> +
-> +			gmu_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-200000000 {
-> +					opp-hz = /bits/ 64 <200000000>;
-> +					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-> +				};
-> +			};
-> +		};
-> +
->  		gpucc: clock-controller@3d90000 {
->  			compatible = "qcom,sa8775p-gpucc";
->  			reg = <0x0 0x03d90000 0x0 0xa000>;
-> 
-> -- 
-> 2.45.2
-> 
-
--- 
-With best wishes
-Dmitry
+Note: no patches were applied.
 
