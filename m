@@ -1,149 +1,94 @@
-Return-Path: <linux-kernel+bounces-331228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81ECC97A9FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 02:38:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0303397A9FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 02:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B18B2826D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2DCB1F28ADF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EDDC149;
-	Tue, 17 Sep 2024 00:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB2220322;
+	Tue, 17 Sep 2024 00:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="bftGcCwh"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQhXSInr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2A146B8;
-	Tue, 17 Sep 2024 00:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156061C6A3;
+	Tue, 17 Sep 2024 00:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726533504; cv=none; b=Y/uKt5wMIK0c4bpelBs+inVjBmCruNA7C/PaBNv7R6nvLKfXgagVimWjHXj6tc8/v6dt+cTZEeNp42yIzn7YN/HN2Z7X69F1Mnb1qZ4JynBllmR1+vS9lirDccGFj+3XZlNJnkpZmcimLOyKBhUD4Uzfj8OBMHjvL+FMHzKSp2o=
+	t=1726533517; cv=none; b=AHz/Q9pBFLyxVyoqspudtFZ85FATwZrT1CFUHTBr5Be/YptO//BqltOLocvbzVb7uigvFkC2wM5SofNTkq5LemWUBwceTnqS8ZNUMOB6yWS0A4B8cekBvD47NZ1XxesX3kgy7Srq6f155xIjK+6d/Kg2q04cxF3k4JXgUSNRKyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726533504; c=relaxed/simple;
-	bh=/L0+gC97vC/rvGLr+SBjf6HUMmp7jN9U2H1y9k/NREQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TLtCyfVWFf/onUjsuLSjCqq2aZYlGqSfLwt49IyH1h2xjpHzq3sCQ21OuWz0fG7DTmusMeLqw7xQ05dzghDa3Xbg2ZmnApwq6lDR69BxwxkJbJSIspSVurZKR09UpFT/7JxvWnVSiWXRp7PnNxg+QSWiYkqxxwvDUCh7XlsVksI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=bftGcCwh; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1726533501;
-	bh=/L0+gC97vC/rvGLr+SBjf6HUMmp7jN9U2H1y9k/NREQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=bftGcCwhFbGcXJnCn+ybIQvCK3zaQhifDC7Vsjgb32+dpB7DespwP6RFhaHbAov7F
-	 9H005YBQYeuDH82z1F4zCaMikbMfrkxddRC8hlltbJWaKO+P1a06biswiyJU4LZY+T
-	 BCakf7puu9NV832fwUr4U18/6luWhLlVfmJT7CsknhUqHxTJWE8sSPL2krdvnSNtU/
-	 0k/uNa3hsuQ8yeJzN4V09FEoaSzcwNv3AFsYdbhM5OMPiOStLjltfMhfYdI9X1tonv
-	 B9yPFQFKk7mjYWCiotAGtvEw9hnsbWQi/MY2tq5w+4+nTbaD6fIzQfcbtqIyDR/nUl
-	 ez8tntES35d0g==
-Received: from [IPV6:2001:4bc9:a47:b4b6:50af:bb4c:5411:8fdd] (unknown [IPv6:2001:4bc9:a47:b4b6:50af:bb4c:5411:8fdd])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X72vG3Kldz1LRd;
-	Mon, 16 Sep 2024 20:38:18 -0400 (EDT)
-Message-ID: <5977835d-c58f-4d1b-b625-dee51e874832@efficios.com>
-Date: Tue, 17 Sep 2024 02:37:31 +0200
+	s=arc-20240116; t=1726533517; c=relaxed/simple;
+	bh=i8NstBrUlbtzwhM3Nldx7FYmXK4bagD9WKh7WbF48uE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=E16aN9J0moOpPSRxJA7tbd8krWzjBue4Y9WPQhQnIX4yBOH4TCmJ3w1qIwbAUL6FFFBOI5J/6HH39bKsB1tZD8ajFEKIU2eO7hyjQE9TJLjEFhkxk+zeECs86ZTA1II53T+Y4q2AftvtvWP2IGL0wnBRKAZMaQmB5XeGqKlLAaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQhXSInr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E188C4CEC5;
+	Tue, 17 Sep 2024 00:38:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726533516;
+	bh=i8NstBrUlbtzwhM3Nldx7FYmXK4bagD9WKh7WbF48uE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GQhXSInrGw1WfTHiFJTWBvR1gHkwH5znvDCx/wymxzEKHwmjXA8HapieHT4Ns45vn
+	 T1MOyHrWdqEo6v1zb092o072z5jwYzMFPeF/Fl2MknqMqEnVNz7Xfvu2yR6feHcuCz
+	 kTD51ASmeG0eV35PvI9Q8A+tl1hD7brrcHbGjpDZwfBD4UtrOBiVQwRHPAPj3CLQ7G
+	 +Mf7uQo09cX4GOq8S/XkT82vwOhbqbzb0Gm5r/I8L379otbCcWw/7P/Nri27yUSFXY
+	 JQJBxyHgOjng/MtnYbFO/AFDTzd3DqMmbJWJ6dwDW5t5007BkXc2JGNzERVAM9EIcs
+	 HQYkxoSqQ2pxQ==
+Date: Tue, 17 Sep 2024 00:38:37 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Wei Liu <wei.liu@kernel.org>,
+	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>, kys@microsoft.com,
+	haiyangz@microsoft.com, decui@microsoft.com
+Subject: [GIT PULL] Hyper-V next for v6.12
+Message-ID: <ZujPjfi61CEVvhw3@liuwe-devbox-debian-v2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] unwind, perf: sframe user space unwinding,
- deferred perf callchains
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, x86@kernel.org,
- Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
- Sam James <sam@gentoo.org>
-References: <cover.1726268190.git.jpoimboe@kernel.org>
- <20240914081246.1e07090c@rorschach.local.home>
- <20240915111111.taq3sb5xzqamhb7f@treble>
- <20240916140856.GB4723@noisy.programming.kicks-ass.net>
- <20240916153953.7fq5fmch5uqg7tjj@treble>
- <20240916181545.GD4723@noisy.programming.kicks-ass.net>
- <36f32c27-3cab-48ea-b8de-8df91b91836d@efficios.com>
- <790edc54-97b9-462d-90e1-067662b561a9@efficios.com>
-Content-Language: en-US
-In-Reply-To: <790edc54-97b9-462d-90e1-067662b561a9@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2024-09-16 02:33, Mathieu Desnoyers wrote:
-> On 2024-09-16 02:15, Mathieu Desnoyers wrote:
->> On 2024-09-16 20:15, Peter Zijlstra wrote:
->> [...]
->>> The point being that it is possible to wrap one CPU into the id space of
->>> another CPU. It is not trivial, but someone who wants to can make it
->>> happen.
->>
->> I agree that the overflow of the free-running counter bleeding into the
->> CPU numbers is something we want to prevent. We don't care if this
->> counter overflows after day/months/years for sake of correlation
->> within a system call, but we do care about the fact that this
->> free-running counter could be made to overflow after a very long
->> time while the system runs, and then we reach a state where the
->> CPU numbers are mixed up, which leads to short-term correlation
->> issues.
->>
->> I would recommend this layout for this 64-bit value instead:
->>
->> low-bits: cpu number
->> high-bits: free-running counter
->>
->> This way, we eliminate any carry from overflow into the cpu number bits.
-> 
-> Even better: AFAIR from the discussion I had with Steven and Josh, we 
-> intend
-> to have the cookie stored to/read from the task struct with interrupts off,
-> we can simply do:
-> 
-> struct stackwalk_cookie {
->      uint64_t counter;    /* free running per-cpu counter value */
->      int cpu;        /* cpu on which the counter was snapshot. */
-> };
-> 
-> So we don't have to deal with any overflow trickiness, there is no need for
-> bit-shifting, and we get a full 64-bit free-running counter 
-> independently of
-> the number of CPUs.
+Hi Linus,
 
-Sorry my laptop had the wrong date when I sent this email. Re-sending to
-make sure it gets seen in the correct order time-wise.
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
-Thanks,
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
 
-Mathieu
+are available in the Git repository at:
 
-> 
-> Thanks,
-> 
-> Mathieu
-> 
-> 
-> 
->>
->> Thanks,
->>
->> Mathieu
->>
->>
-> 
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-next-signed-20240916
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+for you to fetch changes up to 94e86b174d103d941b4afc4f016af8af9e5352fa:
 
+  tools/hv: Add memory allocation check in hv_fcopy_start (2024-09-09 01:09:27 +0000)
+
+----------------------------------------------------------------
+hyperv-next for v6.12
+  - Optimize boot time by concurrent execution of hv_synic_init() (Saurabh Sengar)
+  - Use helpers to read control registers in hv_snp_boot_ap() (Yosry Ahmed)
+  - Add memory allocation check in hv_fcopy_start (Zhu Jun)
+----------------------------------------------------------------
+Saurabh Sengar (1):
+      Drivers: hv: vmbus: Optimize boot time by concurrent execution of hv_synic_init()
+
+Yosry Ahmed (1):
+      x86/hyperv: use helpers to read control registers in hv_snp_boot_ap()
+
+Zhu Jun (1):
+      tools/hv: Add memory allocation check in hv_fcopy_start
+
+ arch/x86/hyperv/ivm.c          |  6 +++---
+ drivers/hv/vmbus_drv.c         | 34 +++++++++++++++++++++++++++++++---
+ tools/hv/hv_fcopy_uio_daemon.c |  7 +++++++
+ 3 files changed, 41 insertions(+), 6 deletions(-)
 
