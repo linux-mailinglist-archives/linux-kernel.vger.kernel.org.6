@@ -1,100 +1,164 @@
-Return-Path: <linux-kernel+bounces-331513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8CB697ADC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF15A97ADDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BE5AB2CBF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:17:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97684B2C92C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6D615AAC8;
-	Tue, 17 Sep 2024 09:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B714136351;
+	Tue, 17 Sep 2024 09:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pyiRW+Mc"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TcpGKdCA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0DF136351;
-	Tue, 17 Sep 2024 09:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AC413213E
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726564653; cv=none; b=lePWAKf++9QNFOlYquy/WCBf72IaMl2x/gd5DYosmZi0y3LhnPqFz/lEsUdvM6MJF2dEBUz6OYIeLDac0PN208d413GtDvQJi59by7UqNwf6IwB5QV8CZChA1/57EluTzKsX/LiSokkBjPGlJU9ZSMS/rlRETeo4ACpbIxYocGk=
+	t=1726564769; cv=none; b=sxeYqlOJgzs/xk3ROb/Ufl5XXoQtrpqQn9Xes1cnkHItpka2BCohOWMuby11Y51rpax/c7txW+9hjTX5Ojj+c8f2FcD5XVeYpzZn89vLzDg3ZTsCWPWSRYj3JZNwkHxGzKkJmf2tiB48YdfTlAzKAp4QS4MZbOlPbJZV49XsGu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726564653; c=relaxed/simple;
-	bh=DG6fdDDcI5Cyq+nRTSK7X26r2gaWYB/ijo48VPl0dww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpEKgRTYfSRJFG+DBQN0O7s26UMk5mi6C7zfDpEmwu2EOQqP1/Es/fIrTFawTUm6cphaCj+ZPByWrhjEArOxU9agqStYLGrMX4L0yR0TQcPXkfGRS7keSnkgSynRWPzU/j3lPv0zldhI2voH9g6T19YgStuWi3UMd6BdRk+DdYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pyiRW+Mc; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=u1XtYv1oP8kEWubxjLTRw4ZnVypnBzNGZPdqFGQZ/Zs=; b=pyiRW+McJKSzuq/HMDwua8u2/S
-	8BzgpuXJeOo47eM8C2OjPZvN031lWeogAhraIulYkI3GqDYirk5p9e7nrHXhZvMBMhR8HXWrqP/I8
-	lC0WQOVlnrmjKoCBczJJLGN8n8adYym++lj/LjiYFyKiI3wf8l2TAZAils11j2EjvRe38MQ3ffgt4
-	pmJIrwVBINMgJE3GAPY1QxW5NJpchOwAAcP3Qbai0FF0+hiedtuwZpy3bDL3fYruTiV9MdeWrCMr6
-	tjUjUaXnv85+E70ZB5OCCWvj+f72PqiLUseLJy8H2vcKKbbPvGdj1bshU7DBhk/fWCQXplPh4Nq3H
-	FTScWuOA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33412)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sqUKl-0006mf-0N;
-	Tue, 17 Sep 2024 10:17:18 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sqUKj-0007rN-0k;
-	Tue, 17 Sep 2024 10:17:17 +0100
-Date: Tue, 17 Sep 2024 10:17:17 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/2] net: phy: Add support for PHY
- timing-role configuration via device tree
-Message-ID: <ZulJHVuku8OPlXke@shell.armlinux.org.uk>
-References: <20240913084022.3343903-1-o.rempel@pengutronix.de>
- <20240913084022.3343903-3-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1726564769; c=relaxed/simple;
+	bh=kWuW+XR4q5jXLOcqkgK9vOp5gvxRDxmxZd6napgsXZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EPyk/I+m589rl899L8MLCvgBnnpB1E6AQ4RnWa+ZYo1CPSfGCPxl44b5nfRHPnXAJcIn/rTcFcL9IEG+SYCakPoTyai1k1NXe7OIkDcwVcCLIJWUoPZ1WxoQxaD4QNqGmquccWJtitaEn6Py1/URpygFKcitZhJUtS9/jHVO6yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TcpGKdCA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726564766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KUX/cDE3gOpSZUKXDw0O/fMf4D971hqREO3NNvXeAJs=;
+	b=TcpGKdCA14AYWYaL2yd3/LKAM5B6XjIHzaBYBGaQydBnKlPd/L+j8tqp5bV054bnz/J1QR
+	fVgeGD1VEbR/VjWlRmvP08tdprd8jm9x3Mg51W2XVgZG54EtDnTI0Sw4xZTYnhWnbgRdbs
+	v8bBQms+BqKvDldy340cmOxR/8XGFBU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-482-wnnj1nLSPDC3rEKoOTIX-g-1; Tue, 17 Sep 2024 05:19:24 -0400
+X-MC-Unique: wnnj1nLSPDC3rEKoOTIX-g-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-377a26a5684so1476362f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 02:19:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726564763; x=1727169563;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KUX/cDE3gOpSZUKXDw0O/fMf4D971hqREO3NNvXeAJs=;
+        b=oBoc4MsGYzP9bKhmjPNZsiqmy0395gnREDyo0ZHaP9tw3OXtS93l1xt/cEQ/Go+0Fi
+         OP0mYfIEZV9hOO+UUNGFn78i4exQIakD5GonPx/iNklhre8isuPO8y7Yd4qYcrZ0l+Nr
+         G51uoQXejIRm6rLTFgkPrrcZXvYY7MIBMvvPS837uQV37aSN8O6/5gcH2rzndEh+5XtK
+         YYVCrQwY3iCS38H1PlmbjaIKGO0TXu0Q9T5ZrJpAwrQ1uS9WK0GnloyJzw7GQMs7V0OQ
+         KSWkCf2mfqDzXimeHLyBbDmqvqfPIYp0puYautJhKIDQmko47ZabkZWZwNwdZWKS4x2C
+         MA5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVa5yWRbYD8AOn5i/eeWNLHuPTH1Y2CgxZdXEWNwz3clpm9lKI89vUEvG3D1ib555kQi1NFjERbW8hYl0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg4rFSi1zW1mDuaJACFm3mCYNsB5qRSfsNZ/HHfGWHCNeByXCS
+	uQkKA06/RPzsA/zVz34cdiE+WwxGR+8Mp3ia0OB2OSBGLvGH2D1wkhIf0KPPvxl/kdIwxHEg8/J
+	q0K1WCrBDGWoIUp7KY+/HyHV7IfxDAJj/zbMLRFUJoDwtd9u4SJyumFiaE5ObrQ==
+X-Received: by 2002:a05:6000:120d:b0:371:82ec:206f with SMTP id ffacd0b85a97d-378d61e2871mr7662716f8f.16.1726564763157;
+        Tue, 17 Sep 2024 02:19:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFv0lTzGa0En47cTCylvcPoC7R3ZsfV7mcSql4HpZVVz0Cn5vdXmB2CE6F2pXgFsdS98qHtrQ==
+X-Received: by 2002:a05:6000:120d:b0:371:82ec:206f with SMTP id ffacd0b85a97d-378d61e2871mr7662700f8f.16.1726564762614;
+        Tue, 17 Sep 2024 02:19:22 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7804483sm8908721f8f.92.2024.09.17.02.19.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 02:19:22 -0700 (PDT)
+Date: Tue, 17 Sep 2024 11:19:21 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+ Peter Xu <peterx@redhat.com>, Fabiano Rosas <farosas@suse.de>
+Subject: Re: [PATCH v10 02/21] acpi/generic_event_device: Update GHES
+ migration to cover hest addr
+Message-ID: <20240917111921.7e95726b@imammedo.users.ipa.redhat.com>
+In-Reply-To: <bed4b2da51e0c894cc255f712b67e2e57295d826.1726293808.git.mchehab+huawei@kernel.org>
+References: <cover.1726293808.git.mchehab+huawei@kernel.org>
+	<bed4b2da51e0c894cc255f712b67e2e57295d826.1726293808.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913084022.3343903-3-o.rempel@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 10:40:22AM +0200, Oleksij Rempel wrote:
-> Introduce support for configuring the master/slave role of PHYs based on
-> the `timing-role` property in the device tree. While this functionality
-> is necessary for Single Pair Ethernet (SPE) PHYs (1000/100/10Base-T1)
-> where hardware strap pins may be unavailable or incorrectly set, it
-> works for any PHY type.
+On Sat, 14 Sep 2024 08:13:23 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> The GHES migration logic at GED should now support HEST table
+> location too.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Increase migration version and change needed to check for both
+> ghes_addr_le and hest_addr_le
+But I don't think it will work like this (but I might be easily wrong)
+However I don't know enough to properly review this patch, CCing Peter & Fabiano
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  hw/acpi/generic_event_device.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> index 15b4c3ebbf24..4e5e387ee2df 100644
+> --- a/hw/acpi/generic_event_device.c
+> +++ b/hw/acpi/generic_event_device.c
+> @@ -343,10 +343,11 @@ static const VMStateDescription vmstate_ged_state = {
+>  
+>  static const VMStateDescription vmstate_ghes = {
+>      .name = "acpi-ghes",
+> -    .version_id = 1,
+> -    .minimum_version_id = 1,
+> +    .version_id = 2,
+> +    .minimum_version_id = 2,
+>      .fields = (const VMStateField[]) {
+>          VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
+> +        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
+>          VMSTATE_END_OF_LIST()
+>      },
+>  };
+> @@ -354,13 +355,13 @@ static const VMStateDescription vmstate_ghes = {
+>  static bool ghes_needed(void *opaque)
+>  {
+>      AcpiGedState *s = opaque;
+> -    return s->ghes_state.ghes_addr_le;
+> +    return s->ghes_state.ghes_addr_le && s->ghes_state.hest_addr_le;
+>  }
 
-Thanks!
+what I would do:
+  add ghes_needed_v2(): return  s->ghes_state.hest_addr_le;
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+and then instead of reusing vmstate_ghes_state would add new
+vmstate_ghes_v2_state subsection that migrates only 
+  VMSTATE_UINT64(hest_addr_le, AcpiGhesState)
+field.
+
+btw: we probably don't need ghes_addr_le for new code that
+uses HEST to lookup relevant error status block.
+but we should still keep it for 9.1 and older machine types
+as they expect/use it. Separate subsections would work with
+this req just fine.
+
+>  static const VMStateDescription vmstate_ghes_state = {
+>      .name = "acpi-ged/ghes",
+> -    .version_id = 1,
+> -    .minimum_version_id = 1,
+> +    .version_id = 2,
+> +    .minimum_version_id = 2,
+>      .needed = ghes_needed,
+>      .fields = (const VMStateField[]) {
+>          VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
+
 
