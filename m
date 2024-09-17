@@ -1,108 +1,297 @@
-Return-Path: <linux-kernel+bounces-331672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EC797AFDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:53:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51ECD97AFE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80041B2BF56
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E97F8285D73
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B04016B38B;
-	Tue, 17 Sep 2024 11:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8FD171E6E;
+	Tue, 17 Sep 2024 12:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Op8M+Ud/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Nv/BsxsS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tIvPlhCx"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7BE14BFBF;
-	Tue, 17 Sep 2024 11:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD08E57D;
+	Tue, 17 Sep 2024 12:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726573972; cv=none; b=K5wPwa9/aams7whlpUyP/sbzbUzytL1wRrPQRq2zGHyPHkK5YPU81TAkBJHNDfV0J6L1NHRomkvph6bRSBpd4M42rcUDGIODBimD3agk213wRSUd2UoI7JYr04Ze3A4ZD0laeJDDZxlMJ5ykfOArMO2K43p6yLVEbwf4B9E9+0U=
+	t=1726574556; cv=none; b=sBlvaZm6D6yCj106xnsvZ6JK3mYNiOFNT623bwj544Y3Y6g6BB9J/xf4yWSNaqexsqnxt6L09ud4F516BNuUrV6EPYe0/r2tuZI2BtaoKx3ZF2cfeAhEP8La7VY6xd7DVjEiu6TN5thWdUihmLqUphXKCeOKXvJPNX6MmoY68Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726573972; c=relaxed/simple;
-	bh=XyJSjIDRupdeEJC9SuMT/izTX1qvkFBcETjsJkfr4VE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CEhwee/E6melPCEM+2NHyQZHAciKLe2ykASvj90FAmcejedv3rd2ipaTS7Rv3IpMPtiY8y5g0yyyU5hwYdWq6b+v3omgVOaY46vy60fDj2pnzt76/n9Fuk/J+LJBd3BayF1USow0gNeZzf5a7Tn4PrTrpp5dqWPMJDAs/GCL9zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Op8M+Ud/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Nv/BsxsS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726573969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7bX+ckDiWzV0UXiUsEpBvHAAjmkCz9ocHzwV5JJ1Gn4=;
-	b=Op8M+Ud/ecXwHOTy7YoUTH4slRc/9pzpxC5sgAbCKhScsfynbjtvzjn7cI2VkPtpaHNByX
-	6lDCZXjvLs1v5TxMEN0E5LIQFZmHVb8+FsmBvsCGeD9e55FZ0mtwfU0KHpqR/3mwHJNyj5
-	RxL8beQJgpw/sg3Cx9smitqJm9CAimomZxHQycly883Y7B0DFZiDDnX6887epqDFHeXqyP
-	6XY5FHyUejTAz1HsZYNaI/BcL6pnFZyIYyC4c1KuHBemn88f9eBxsFnYyuPydGqo9nhV9Q
-	VbvIEW4dOOiGVjm7zccRVtSfsK5R8tJDEYbkkVE3k6CIHccCilknBxwF42Q3Fg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726573969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7bX+ckDiWzV0UXiUsEpBvHAAjmkCz9ocHzwV5JJ1Gn4=;
-	b=Nv/BsxsS8N1MMLS0Mu4yS1B+iTF5E4Cmt408LhLBA/k+P/2xsFm9tPkhB/8+UpN3tp9U+F
-	oG+6WW/C6AQoWtCw==
-To: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arch@vger.kernel.org, "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
- acquire
-In-Reply-To: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
-References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
-Date: Tue, 17 Sep 2024 13:52:48 +0200
-Message-ID: <87o74m1oq7.ffs@tglx>
+	s=arc-20240116; t=1726574556; c=relaxed/simple;
+	bh=luqxYTH6BUDwfFwhpgXXrSF9yuT8UjjLcfN5E5jNujg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZWCGtOAKVh753vRhHaKVZfprUHoF9Jeck8tr9beHuVucIeX0iL6zet7dHG66O9Dw8OVfmlrPHx5EFOYVrdZg8ZmzliHfjgBYrPZd0h7GdIUvwTcj9eptQi+4bRTYlOhvzQ6AlxkZF/dArN8SpjakS5lw1a65l/TkiuafY6eJ2/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tIvPlhCx; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726574553; x=1758110553;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=luqxYTH6BUDwfFwhpgXXrSF9yuT8UjjLcfN5E5jNujg=;
+  b=tIvPlhCxrwKOgiavZANkjKK+N85lTqoWtTjoWQgnxmMMmJ3RJl/Og7c3
+   ebe1tsS3+lypcVokbfFRgShHO1A3Q2D7GBYPek+g9mFuGR3hf9dmDhwVk
+   Jz0hd49GTvLDy03ZvEBVYlHi++0TWQQgvmjsLukde9KXkYcbIcBVtjUpt
+   DcEJbFJ0OeM2ZWmMlDDTcbSg09ZcCBmkAhnAazJIdeFSB/ppRwHgqjzDl
+   uLGKH00QpAN+BZ6QBPGwHcfHezWXNI+IxrjJFGOqBKzkcw9Kg+h5mVqAl
+   y/sQFoLpYBjD0xIdHgQO4XSLSlTbDJsD/a3THZavnKgaSBpxpoRgb2sbr
+   Q==;
+X-CSE-ConnectionGUID: ZbeW3DQISYCZ2DnmZ/K/oA==
+X-CSE-MsgGUID: A/6RSKm8Q4SGgHiCZOqTbQ==
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="35073308"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2024 05:02:30 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 17 Sep 2024 05:01:49 -0700
+Received: from HYD-DK-UNGSW20.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 17 Sep 2024 05:01:46 -0700
+From: Tarun Alle <tarun.alle@microchip.com>
+To: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next V4] net: phy: microchip_t1: SQI support for LAN887x
+Date: Tue, 17 Sep 2024 17:26:57 +0530
+Message-ID: <20240917115657.51041-1-tarun.alle@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-On Thu, Sep 12 2024 at 15:44, Christoph Lameter via wrote:
+From: Tarun Alle <Tarun.Alle@microchip.com>
 
-$Subject: .....
+Add support for measuring Signal Quality Index for LAN887x T1 PHY.
+Signal Quality Index (SQI) is measure of Link Channel Quality from
+0 to 7, with 7 as the best. By default, a link loss event shall
+indicate an SQI of 0.
 
-You still fail to provide a proper subsystem prefix. It's not rocket science.
+Signed-off-by: Tarun Alle <Tarun.Alle@microchip.com>
+---
+v3 -> v4
+- Added check to handle invalid samples.
+- Added macro for ARRAY_SIZE(rawtable).
 
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#patch-subject
+v2 -> v3
+- Replaced hard-coded values with ARRAY_SIZE(rawtable).
 
-> From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
->
-> Some architectures support load acquire which can save us a memory
-> barrier and save some cycles.
->
-> A typical sequence
->
-> 	do {
-> 		seq = read_seqcount_begin(&s);
-> 		<something>
-> 	} while (read_seqcount_retry(&s, seq);
->
-> requires 13 cycles on ARM64 for an empty loop. Two read memory
-> barriers are needed. One for each of the seqcount_* functions.
->
-> We can replace the first read barrier with a load acquire of
-> the seqcount which saves us one barrier.
+v1 -> v2
+- Replaced hard-coded 200 with ARRAY_SIZE(rawtable).
+- Replaced return value -EINVAL with -ENETDOWN.
+- Changed link checks.
+---
+ drivers/net/phy/microchip_t1.c | 161 +++++++++++++++++++++++++++++++++
+ 1 file changed, 161 insertions(+)
 
-We ....
+diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
+index a5ef8fe50704..e5cc4c8b2265 100644
+--- a/drivers/net/phy/microchip_t1.c
++++ b/drivers/net/phy/microchip_t1.c
+@@ -6,6 +6,7 @@
+ #include <linux/delay.h>
+ #include <linux/mii.h>
+ #include <linux/phy.h>
++#include <linux/sort.h>
+ #include <linux/ethtool.h>
+ #include <linux/ethtool_netlink.h>
+ #include <linux/bitfield.h>
+@@ -226,6 +227,22 @@
+ #define MICROCHIP_CABLE_MAX_TIME_DIFF	\
+ 	(MICROCHIP_CABLE_MIN_TIME_DIFF + MICROCHIP_CABLE_TIME_MARGIN)
+ 
++#define LAN887X_COEFF_PWR_DN_CONFIG_100		0x0404
++#define LAN887X_COEFF_PWR_DN_CONFIG_100_V	0x16d6
++#define LAN887X_SQI_CONFIG_100			0x042e
++#define LAN887X_SQI_CONFIG_100_V		0x9572
++#define LAN887X_SQI_MSE_100			0x483
++
++#define LAN887X_POKE_PEEK_100			0x040d
++#define LAN887X_POKE_PEEK_100_EN		BIT(0)
++
++#define LAN887X_COEFF_MOD_CONFIG		0x080d
++#define LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN	BIT(8)
++
++#define LAN887X_DCQ_SQI_STATUS			0x08b2
++
++#define SQI100M_SAMPLE_INIT(x, t)	(ARRAY_SIZE(t) / (x))
++
+ #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
+ #define DRIVER_DESC	"Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
+ 
+@@ -1830,6 +1847,148 @@ static int lan887x_cable_test_get_status(struct phy_device *phydev,
+ 	return lan887x_cable_test_report(phydev);
+ }
+ 
++/* Compare block to sort in ascending order */
++static int data_compare(const void *a, const void *b)
++{
++	return  *(u16 *)a - *(u16 *)b;
++}
++
++static int lan887x_get_sqi_100M(struct phy_device *phydev)
++{
++	u16 rawtable[200];
++	u32 sqiavg = 0;
++	u8 sqinum = 0;
++	int rc;
++
++	/* Configuration of SQI 100M */
++	rc = phy_write_mmd(phydev, MDIO_MMD_VEND1,
++			   LAN887X_COEFF_PWR_DN_CONFIG_100,
++			   LAN887X_COEFF_PWR_DN_CONFIG_100_V);
++	if (rc < 0)
++		return rc;
++
++	rc = phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_SQI_CONFIG_100,
++			   LAN887X_SQI_CONFIG_100_V);
++	if (rc < 0)
++		return rc;
++
++	rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_SQI_CONFIG_100);
++	if (rc != LAN887X_SQI_CONFIG_100_V)
++		return -EINVAL;
++
++	rc = phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_POKE_PEEK_100,
++			    LAN887X_POKE_PEEK_100_EN,
++			    LAN887X_POKE_PEEK_100_EN);
++	if (rc < 0)
++		return rc;
++
++	/* Required before reading register
++	 * otherwise it will return high value
++	 */
++	msleep(50);
++
++	/* Link check before raw readings */
++	rc = genphy_c45_read_link(phydev);
++	if (rc < 0)
++		return rc;
++
++	if (!phydev->link)
++		return -ENETDOWN;
++
++	/* Get 200 SQI raw readings */
++	for (int i = 0; i < ARRAY_SIZE(rawtable); i++) {
++		rc = phy_write_mmd(phydev, MDIO_MMD_VEND1,
++				   LAN887X_POKE_PEEK_100,
++				   LAN887X_POKE_PEEK_100_EN);
++		if (rc < 0)
++			return rc;
++
++		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1,
++				  LAN887X_SQI_MSE_100);
++		if (rc < 0)
++			return rc;
++
++		rawtable[i] = (u16)rc;
++	}
++
++	/* Link check after raw readings */
++	rc = genphy_c45_read_link(phydev);
++	if (rc < 0)
++		return rc;
++
++	if (!phydev->link)
++		return -ENETDOWN;
++
++	/* Sort SQI raw readings in ascending order */
++	sort(rawtable, ARRAY_SIZE(rawtable), sizeof(u16), data_compare, NULL);
++
++	/* Keep inliers and discard outliers */
++	for (int i = SQI100M_SAMPLE_INIT(5, rawtable);
++	     i < SQI100M_SAMPLE_INIT(5, rawtable) * 4; i++)
++		sqiavg += rawtable[i];
++
++	/* Handle invalid samples */
++	if (sqiavg != 0) {
++		/* Get SQI average */
++		sqiavg /= SQI100M_SAMPLE_INIT(5, rawtable) * 4 -
++				SQI100M_SAMPLE_INIT(5, rawtable);
++
++		if (sqiavg < 75)
++			sqinum = 7;
++		else if (sqiavg < 94)
++			sqinum = 6;
++		else if (sqiavg < 119)
++			sqinum = 5;
++		else if (sqiavg < 150)
++			sqinum = 4;
++		else if (sqiavg < 189)
++			sqinum = 3;
++		else if (sqiavg < 237)
++			sqinum = 2;
++		else if (sqiavg < 299)
++			sqinum = 1;
++		else
++			sqinum = 0;
++	}
++
++	return sqinum;
++}
++
++static int lan887x_get_sqi(struct phy_device *phydev)
++{
++	int rc, val;
++
++	if (phydev->speed != SPEED_1000 &&
++	    phydev->speed != SPEED_100) {
++		return -ENETDOWN;
++	}
++
++	if (phydev->speed == SPEED_100)
++		return lan887x_get_sqi_100M(phydev);
++
++	/* Writing DCQ_COEFF_EN to trigger a SQI read */
++	rc = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1,
++			      LAN887X_COEFF_MOD_CONFIG,
++			      LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN);
++	if (rc < 0)
++		return rc;
++
++	/* Wait for DCQ done */
++	rc = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
++				       LAN887X_COEFF_MOD_CONFIG, val, ((val &
++				       LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN) !=
++				       LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN),
++				       10, 200, true);
++	if (rc < 0)
++		return rc;
++
++	rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_DCQ_SQI_STATUS);
++	if (rc < 0)
++		return rc;
++
++	return FIELD_GET(T1_DCQ_SQI_MSK, rc);
++}
++
+ static struct phy_driver microchip_t1_phy_driver[] = {
+ 	{
+ 		PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
+@@ -1881,6 +2040,8 @@ static struct phy_driver microchip_t1_phy_driver[] = {
+ 		.read_status	= genphy_c45_read_status,
+ 		.cable_test_start = lan887x_cable_test_start,
+ 		.cable_test_get_status = lan887x_cable_test_get_status,
++		.get_sqi	= lan887x_get_sqi,
++		.get_sqi_max	= lan87xx_get_sqi_max,
+ 	}
+ };
+ 
+-- 
+2.34.1
 
-Please write changelogs using passive voice. 'We' means nothing here.
-
-Thanks,
-
-        tglx
 
