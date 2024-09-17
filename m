@@ -1,166 +1,103 @@
-Return-Path: <linux-kernel+bounces-331415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E4097AC9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF0897ACA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88F79B29549
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B3AF28CCBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E637157E82;
-	Tue, 17 Sep 2024 08:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81201581F4;
+	Tue, 17 Sep 2024 08:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJyC6IcX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bUf9utEG"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D531156C70;
-	Tue, 17 Sep 2024 08:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B04149C7A;
+	Tue, 17 Sep 2024 08:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726560581; cv=none; b=M+2R+ROxGo41d9o6fTlPpJ0l7kRaQ3lswDE+m5r34AIWNPKIyUZnO3yHjTR9aXuqSx/tMDpMnvcH+H62rLCJC+i4gVQrv+LQhEGppqsWuQI+Q7BZ3EIrqnkDgWdRaoqmS3cK9JgM+owoJ5RzCalIQQXq/lHbUwolqGS4gPbXqXo=
+	t=1726560743; cv=none; b=UFoR2wQCiumlxGVvNIX4iIWFylaSoY4fNrTEUu9evzWdt328U21IM49LvFq+3OjF77Dg3fuB0VxGIXA27P2RvABAjphCGA3tSiSFybwVR4G9RDaT4DuVC3MdvTDTpyUE0X0diTrhmT4BwrRcxV3kgEe1359PSYhnGdjWRLdTSyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726560581; c=relaxed/simple;
-	bh=6s7C8hobD3fIYgLx8J4qWFbmevZAmpnrWRmu1pRVBTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQLQHRt1JY0BYvAGoy6RfgPrx3VeNWSv6iwCtFyPeJZoDvXuxuMPUOvqVXpCZjQI2ng1uVF0UTxw9ubKpH/lrYOPymTtv4VcCc5/ugSdGnMWrj2M6rl4b/xB+31gwIrpWOe0spg9IgRjUf/9oFFAYmr/fvSn5t6b6dIPDkz6d5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJyC6IcX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC3FC4CEC6;
-	Tue, 17 Sep 2024 08:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726560581;
-	bh=6s7C8hobD3fIYgLx8J4qWFbmevZAmpnrWRmu1pRVBTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QJyC6IcX1sm/0OS30slFVeEI3bzrgd4GDjjVWXPqBLYfX0uzsSejy2qcQHJayBaS8
-	 YX1DqT+qmcpf35HK/oWtY5TlOJ52UMEKF2VQ6NXObGBkgQMlSwwfhuNiZBAzmvPjLG
-	 j1gq4V7p6FM1e8LOE1zkWcIlkX+3y2A4WQ+XZzJKekx6PYVH9RcUk2fctzNz4p71p7
-	 gQ8cQqg+69mcZsFUUiPqAbFeMEZ/c5c0ElNjPVJ9sjehSapBH7+IHTy52uB5xfhXVD
-	 m5YkGvA2F2nG8Rsss5+plnfOKd5KcymxJKqILz66iDLhIxnknfWGaL/vK3KFnQAZCV
-	 KLaJCTJ65l/2Q==
-Date: Tue, 17 Sep 2024 09:09:35 +0100
-From: Lee Jones <lee@kernel.org>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	blake.vermeer@keysight.com
-Subject: Re: [PATCH 1/5] mfd: add Congatec Board Controller mfd driver
-Message-ID: <20240917080935.GC9955@google.com>
-References: <20240503-congatec-board-controller-v1-0-fec5236270e7@bootlin.com>
- <20240503-congatec-board-controller-v1-1-fec5236270e7@bootlin.com>
- <20240822103858.GH6858@google.com>
- <9f29d904-e7ba-40fb-b5d8-1efeddf6f148@bootlin.com>
- <20240912141309.GC24460@google.com>
- <618cb281-9fec-471f-9e3d-c7a471f75a7a@bootlin.com>
+	s=arc-20240116; t=1726560743; c=relaxed/simple;
+	bh=AVSpDINng/M8RPMo0wOBbSAxd97prxusW+zcNsFt9PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J1Ub/nYW8qO9HmZCiiPaUt80gi8UsAjOzX/BAREfQ4wU/bgAklTmv7ZIJhTKRdy/OkPDRf6I03CO3wzka3XNjj8cbGJBmTVPLVjfgs0ZDD848MNy8tG65sOQ5hZNeL6hIFd8KpFp/S3I7D+LLjFP8APW3W+NEztWD8P+h8OecmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bUf9utEG; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E4BA7240005;
+	Tue, 17 Sep 2024 08:12:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726560738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YVHa0U3M4RHRMsj+Dvk7seOfiTZYMT1VvMrVavb55+4=;
+	b=bUf9utEGd1l/RY4lvm5vf99OIrPy/njmBMMF0Itdq5tZ6QIi3wl5CFl9KVevbQW4u7qyL9
+	+cJaaAKzmjUtjlCEeSDm3ulqCBsun8Prx+2CgHaahHcB1MRFTZszsAz3xHMtpH2sPk0JlF
+	CqYjo3OrwyQC7/tXhtk3jxcMHfTBqDjj/1YJdRTUYTbfFfaIUrBOeMF7wL0Y0ZwCoV3z+r
+	6FhzXxh5tW2DZqm99loOebg2y/ZlhNZ3llbSR2H3yb0P/6vnp+Kqqk8GdJsDBb4NDmWx4n
+	t0iBmlXTHWZownMltKy+Z2x9pGNFfMTp7hcOZeUHeJGnGwf2GujnsX2gYrODqw==
+Date: Tue, 17 Sep 2024 10:12:16 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Michal Kubecek <mkubecek@suse.cz>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn
+ <andrew@lunn.ch>, Kyle Swenson <kyle.swenson@est.tech>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH ethtool-next 0/3] Add support for new features in C33
+ PSE
+Message-ID: <20240917101216.408c2f45@kmaincent-XPS-13-7390>
+In-Reply-To: <ohcflwsvztqatsaudheougap3sxkdah5lagtyzr6d55u2nzcwq@iaaoyutqdbj7>
+References: <20240912-feature_poe_power_cap-v1-0-499e3dd996d7@bootlin.com>
+	<ohcflwsvztqatsaudheougap3sxkdah5lagtyzr6d55u2nzcwq@iaaoyutqdbj7>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <618cb281-9fec-471f-9e3d-c7a471f75a7a@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Fri, 13 Sep 2024, Thomas Richard wrote:
+On Mon, 16 Sep 2024 22:11:28 +0200
+Michal Kubecek <mkubecek@suse.cz> wrote:
 
-> On 9/12/24 16:13, Lee Jones wrote:
-> > On Tue, 10 Sep 2024, Thomas Richard wrote:
-> > 
-> >> On 8/22/24 12:38, Lee Jones wrote:
-> >>> On Fri, 09 Aug 2024, Thomas Richard wrote:
-> >>>
-> >>>> Add core MFD driver for the Board Controller found on some Congatec SMARC
-> >>>> module. This Board Controller provides functions like watchdog, GPIO, and
-> >>>> I2C busses.
-> >>>>
-> >>>> This commit add support only for the conga-SA7 module.
-> >>>>
-> >>>> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> >>>> ---
-> >>>>  drivers/mfd/Kconfig      |  12 ++
-> >>>>  drivers/mfd/Makefile     |   1 +
-> >>>>  drivers/mfd/cgbc-core.c  | 453 +++++++++++++++++++++++++++++++++++++++++++++++
-> >>>>  include/linux/mfd/cgbc.h |  44 +++++
-> >>>>  4 files changed, 510 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> >>>> index bc8be2e593b6..3e0530f30267 100644
-> >>>> --- a/drivers/mfd/Kconfig
-> >>>> +++ b/drivers/mfd/Kconfig
-> >>>> @@ -224,6 +224,18 @@ config MFD_AXP20X_RSB
-> >>>>  	  components like regulators or the PEK (Power Enable Key) under the
-> >>>>  	  corresponding menus.
-> >>>>  
-> >>>> +config MFD_CGBC
-> >>>> +	tristate "Congatec Board Controller"
-> >>>> +	select MFD_CORE
-> >>>> +	depends on X86
-> >>>> +	help
-> >>>> +	  This is the core driver of the Board Controller found on some Congatec
-> >>>> +	  SMARC modules. The Board Controller provides functions like watchdog,
-> >>>> +	  I2C busses, and GPIO controller.
-> >>>> +
-> >>>> +	  To compile this driver as a module, choose M here: the module will be
-> >>>> +	  called cgbc-core.
-> >>>> +
-> >>>>  config MFD_CROS_EC_DEV
-> >>>>  	tristate "ChromeOS Embedded Controller multifunction device"
-> >>>>  	select MFD_CORE
-> >>>> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> >>>> index 02b651cd7535..d5da3fcd691c 100644
-> >>>> --- a/drivers/mfd/Makefile
-> >>>> +++ b/drivers/mfd/Makefile
-> >>>> @@ -13,6 +13,7 @@ obj-$(CONFIG_MFD_SM501)		+= sm501.o
-> >>>>  obj-$(CONFIG_ARCH_BCM2835)	+= bcm2835-pm.o
-> >>>>  obj-$(CONFIG_MFD_BCM590XX)	+= bcm590xx.o
-> >>>>  obj-$(CONFIG_MFD_BD9571MWV)	+= bd9571mwv.o
-> >>>> +obj-$(CONFIG_MFD_CGBC)		+= cgbc-core.o
-> >>>>  obj-$(CONFIG_MFD_CROS_EC_DEV)	+= cros_ec_dev.o
-> >>>>  obj-$(CONFIG_MFD_CS42L43)	+= cs42l43.o
-> >>>>  obj-$(CONFIG_MFD_CS42L43_I2C)	+= cs42l43-i2c.o
-> >>>> diff --git a/drivers/mfd/cgbc-core.c b/drivers/mfd/cgbc-core.c
-> >>>> new file mode 100644
-> >>>> index 000000000000..cca9b1170cc9
-> >>>> --- /dev/null
-> >>>> +++ b/drivers/mfd/cgbc-core.c
-> >>>> @@ -0,0 +1,453 @@
-> >>>> +// SPDX-License-Identifier: GPL-2.0-or-later
-> >>>> +/*
-> >>>> + * Congatec Board Controller MFD core driver.
-> >>>
-> >>> No such thing as an MFD.
-> >>
-> >> What should it be if it's not an MFD ?
-> > 
-> > You should be telling me this. :)
-> > 
-> > "Board Controller" according to the Kconfig entry.
-> > 
-> 
-> This Congatec Board Controller is an external micro-controller that is
-> interfaced with the CPU through a eSPI bus.
-> This Board Controller provides multiple functions: an I2C controller, a
-> GPIO controller, a watchdog and other not yet implemented functions
-> (temp/voltage sensors, backlight).
-> 
-> Therefore, the MFD subsystem is a very good fit, as it allows to have a
-> core driver that implements the communication with the external
-> micro-controller, and then individual drivers for each of the functions
-> offered by this Board Controller.
+> On Thu, Sep 12, 2024 at 11:20:01AM +0200, Kory Maincent wrote:
+>  [...] =20
+>=20
+> The series looks good, except for minor detail: the new parameter
+> c33-pse-avail-pw-limit is documented in the manual page but is not shown
+> in the "ethtool --help" output.
 
-Sorry for the ambiguity, that was not the point of the review comment.
+Oh indeed forgot the help usage text. Thanks for the review!
+=20
+> As far as I can see, the kernel counterpart is present in 6.11 so that
+> this series could technically go into ethtool 6.11 but as it was
+> submitted so shortly before the release, I would rather leave it for the
+> next cycle. As you submitted it against next branch, I assume you are OK
+> with that but I better ask.
+>
+> For now I applied patch 2/3 which is a simple fix independent of the
+> rest. Is it OK to apply the rest (with added help text) after the 6.11
+> release?
 
-Please remove all mentions to MFD in the help/header text.
+It's ok for me to apply the rest after the 6.11 release.
 
--- 
-Lee Jones [李琼斯]
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
