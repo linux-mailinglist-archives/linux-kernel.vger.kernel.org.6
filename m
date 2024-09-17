@@ -1,133 +1,75 @@
-Return-Path: <linux-kernel+bounces-332004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5271897B416
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9799A97B41B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F9D128743D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:21:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5938E2888AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B8C178368;
-	Tue, 17 Sep 2024 18:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A540B17C995;
+	Tue, 17 Sep 2024 18:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FaUNlyrj"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nm02z22d"
+Received: from mail-43167.protonmail.ch (mail-43167.protonmail.ch [185.70.43.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915AF13BAFA;
-	Tue, 17 Sep 2024 18:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F66217A591
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 18:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726597307; cv=none; b=lwyufLlaIQz26Ir21aJkDJfuitij+XzOc8mN7A5lDrK3qPkXAtTSZmesXLya4p3242t/WVYBbWma90QzoilXEJVtXjWlmiu5Whj3+NFbqIh9EdCHRCG++ZtDad65O/yc2eqTtjHPADihFBevpYEGFHntm/gzaRchB0Ze1BrFUpA=
+	t=1726597372; cv=none; b=aa91eBgOdZKr8XveV9Mu+vV6qZPcI1pOyH/GkndFRjWuiEcD58UkXr0ZopgpTQsb+xdxDfJ7eexG8fTm7Jn/WaTwCsBiEvLK6Ua/Z2ESYoyuPfFcNQmghtrhvAluo1cw2z8FL8sFYW5K9nxpGPjqmntWzzE2FWZhUGUani69HOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726597307; c=relaxed/simple;
-	bh=d/FGdE5p3l5KSKe+3EQ85x/v/U3i1kvogPNYEAMP1MM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r7eFrFs1xVUMZA29xzE9U6kjP1OPX92h2Bs//dPrh4nOCgCZIr4sMJ7lSGSj7+jbKfExuTZuIxh+TFO4tRNn44tiy0TsbUqoqvy33SNiKGd5foY05lgARGFo9O14s7sM1maMulKXVVwuJotuprhL8FVCpL5admg50FYle5lIPns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FaUNlyrj; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4X7VVK07RgzlgMVT;
-	Tue, 17 Sep 2024 18:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1726597302; x=1729189303; bh=AWzpBz0NXcHkJr5RdTZqdjJ7
-	Yk9gXxkmI8DiKLOd/lg=; b=FaUNlyrjWYKMUYXE7ISIpvvs8EyF+cw/Ti4a3w7G
-	WK7bpk4cz/zYSBOkk9iebUZwADxY6xmY+cyhnD/UPibAu7iEqrXFkN/jgnyFJnpt
-	Hs1QhcxXuNJfha/WbOEyOg5UvORsE1spOjxxny+It3XBllso4u5yqTU5aA08dcY/
-	EJMOdi1AJvNQl3lwonPpUCzNn1PmR2e/PWi7vpRuk4tYT89BXpoxtbyp/tz4LSj3
-	E+6cN+dDaWoAbxV8pAXrvoikh+7Lemp1nRjx82hD1l9oO3MzCyvGpB8v+laFqq9u
-	CC+q8A0hawDfoChSDiQplULvTjikYnzp4yObs7Z5wdPdxg==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id ZZpasyyRYEDL; Tue, 17 Sep 2024 18:21:42 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4X7VVD6KwhzlgMVP;
-	Tue, 17 Sep 2024 18:21:40 +0000 (UTC)
-Message-ID: <5c15b6c8-b47b-40fc-ba05-e71ef6681ad2@acm.org>
-Date: Tue, 17 Sep 2024 11:21:39 -0700
+	s=arc-20240116; t=1726597372; c=relaxed/simple;
+	bh=UVtbDhQAhwXKJeYJ2aCra/yibrzIuX1YdMKMOpmOxcs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e35ZiuvKoONW21od7o7+gd/At9q99wObf8zkbZPTG+FFwVlwmAfXtyaYjPO6lbN9y4JgWiBVsB+mi+nj/VLRDAoH80w1DyQsjLJTtF7Q84zR+q5peyuSVcURnFdahDs6x7j8MkzniQ8UcLtJqhKyPZXZ0Fc2OQHLszlRl9MJoiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nm02z22d; arc=none smtp.client-ip=185.70.43.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726597362; x=1726856562;
+	bh=FgeJqjaJlWaY5ugZwcddgLjQdpW/i8zhBRxK7KXlhSs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=nm02z22dYUF7/FcEGC9/hhSaoTKm2hV9ky+DKrNQoydpP7uXI06cB2+9UrNIGieSW
+	 rEnGB0bSXsCzs3qg01+4EksFXl7iBMiNnVmLxWxUmv56mwSi8mNijhvFfa2b4wsBpq
+	 h6iN0b9YJKSP1owdEJVzTlc8TtydY5r/oN4lgIB7wW9uUMI7lA1siSc4fwn03fdFzu
+	 c2L6UWRIXmOuEeJR5/bRYtv9nHJKUjhUUWhwJP+xQI/2DknW8ogvf8e4zOIB6gBYFK
+	 kYerbb8TyNsSgWDA6A0+lZQgcEX6rFcD/96kac4o2pPLfZs4kmUZbVyeRRB21isDyx
+	 +G/o3gaaKUHrQ==
+Date: Tue, 17 Sep 2024 18:22:38 +0000
+To: John <therealgraysky@proton.me>
+From: John <therealgraysky@proton.me>
+Cc: Dave Hansen <dave.hansen@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
+Message-ID: <yePf3dKBhN5-MT4j8MbstYrbVupKBUlpBQ-Oo4kXHVTWaCcWMAMgvY9_e2RPbB-tv4U30Hg33aaziplcL-T9ovY8aFNYdihMdiL7ysifliI=@proton.me>
+In-Reply-To: <XngBYmNlmx5HynQiady8B6MsNyjWhWsWHhjmEIw4vhFYS_Pyi082MCXetLK66amn2j2XQiRlzFVdrUu3V0UN-3yDWOSOv9Dpr7sAgShOme0=@proton.me>
+References: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me> <e5081e3b-0f14-4e1e-975a-a4fd22944fc7@intel.com> <XngBYmNlmx5HynQiady8B6MsNyjWhWsWHhjmEIw4vhFYS_Pyi082MCXetLK66amn2j2XQiRlzFVdrUu3V0UN-3yDWOSOv9Dpr7sAgShOme0=@proton.me>
+Feedback-ID: 47473199:user:proton
+X-Pm-Message-ID: 4b9bcd5385099d4d76cbf20817d8f62484dc05b8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: ufs: Use pre-calculated offsets in
- ufshcd_init_lrb
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
-References: <20240910044543.3812642-1-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240910044543.3812642-1-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/9/24 9:45 PM, Avri Altman wrote:
-> Replace manual offset calculations for response_upiu and prd_table in
-> ufshcd_init_lrb() with pre-calculated offsets already stored in the
-> utp_transfer_req_desc structure. The pre-calculated offsets are set
-> differently in ufshcd_host_memory_configure() based on the
-> UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk, ensuring correct alignment and
-> access.
-> 
-> Fixes: 26f968d7de82 ("scsi: ufs: Introduce UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Avri Altman <avri.altman@wdc.com>
-> 
-> ---
-> Changes in v2:
->   - add Fixes: and Cc: stable tags
->   - fix kernel test robot warning about type mismatch by using le16_to_cpu
-> ---
->   drivers/ufs/core/ufshcd.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 8ea5a82503a9..85251c176ef7 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -2919,9 +2919,8 @@ static void ufshcd_init_lrb(struct ufs_hba *hba, struct ufshcd_lrb *lrb, int i)
->   	struct utp_transfer_req_desc *utrdlp = hba->utrdl_base_addr;
->   	dma_addr_t cmd_desc_element_addr = hba->ucdl_dma_addr +
->   		i * ufshcd_get_ucd_size(hba);
-> -	u16 response_offset = offsetof(struct utp_transfer_cmd_desc,
-> -				       response_upiu);
-> -	u16 prdt_offset = offsetof(struct utp_transfer_cmd_desc, prd_table);
-> +	u16 response_offset = le16_to_cpu(utrdlp[i].response_upiu_offset);
-> +	u16 prdt_offset = le16_to_cpu(utrdlp[i].prd_table_offset);
->   
->   	lrb->utr_descriptor_ptr = utrdlp + i;
->   	lrb->utrd_dma_addr = hba->utrdl_dma_addr +
+On Sunday, September 15th, 2024 at 2:42 PM, John wrote:
+> I like this approach much better, it is more streamlined and clean. I ran=
+ with your suggestions and the attached seems to work. I am grateful for my=
+ feedback and suggestions on the syntax.
 
-Please always Cc the author of the original patch when posting a
-candidate fix.
+I pushed my draft incorporating your suggestions out to my github at the fo=
+llowing link.  I am going to unsubscribe from lkml now (hundreds of emails =
+per day) so please cc me on any replies or use the github.  Thanks.
 
-Alim, since the upstream kernel code seems to work fine with Exynos UFS
-host controllers, is the description of UFSHCD_QUIRK_PRDT_BYTE_GRAN
-perhaps wrong? I'm referring to the following description:
-
-	/*
-	 * This quirk needs to be enabled if the host controller regards
-	 * resolution of the values of PRDTO and PRDTL in UTRD as byte.
-	 */
-	UFSHCD_QUIRK_PRDT_BYTE_GRAN			= 1 << 9,
-
-Thanks,
-
-Bart.
+https://github.com/graysky2/kernel_compiler_patch/blob/master/lite-more-uar=
+ches-for-kernel-6.8-rc4%2B.patch
 
