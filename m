@@ -1,349 +1,166 @@
-Return-Path: <linux-kernel+bounces-332083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9507E97B535
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:30:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A049397B329
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57907284250
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72ABB282318
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AF41922E8;
-	Tue, 17 Sep 2024 21:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1676517B4F6;
+	Tue, 17 Sep 2024 16:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="otfEDEWv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qTbQNMke";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="otfEDEWv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qTbQNMke"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWk6coou"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200DE192594;
-	Tue, 17 Sep 2024 21:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1DD2EAEA;
+	Tue, 17 Sep 2024 16:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726608575; cv=none; b=rMjFUtq/PKMDif+xlLTTLN/O7ZdV4yCsNJYzrdeZCOl92Kwb7kWBtKqId6BCPt7WwE+2hFT6Vus5I7lh780ysg/z8TVzcDqnvNLt6YB8ZfzcEZn7p/9W/AR0aYkWvjBLBhHaBCqaq+h6NuKoXu27KwFxpm0UKek0vFBDtp3oe0A=
+	t=1726592125; cv=none; b=hs2f/jgK6F03MISPiUtpqi+1UFbjOQh9WJj2mZmVxtc9+7WEaWBOLqX+Ml3s9K1CgthpB9d+5y/doR+V43wjZQqaHBx02D4cbOGezoVT2tcP+s0zHAmjV2uVe/dSxVTe7WJ/r2OJb/H07R0gM2KJ7LBRIZgBX6MZvid+TOHBQXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726608575; c=relaxed/simple;
-	bh=U80A2QgmdDQ+lbcvzOnxUMw7XU6PGpCO/xL5QwdtEOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pk3eKGhUJcx8jt1btyxEpD1zIcKPadoznt8Q5jQSCFzZksjv+eLUlLTuE4BTl7uRTxNaPPhm6vdry+h1sOkSmS+gpLZVaaPqGX+mm997XglNZOUaCoczODEKGECOaafOGTqA5I9DXwrx2QQy8QvgGod5Hsv+nlhma9dM05U2anI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=otfEDEWv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qTbQNMke; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=otfEDEWv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qTbQNMke; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3AE55201E0;
-	Tue, 17 Sep 2024 21:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726608571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qa95/ktdvyh9hNFNrsN46J5FSoqzSObFkyzebALZLcM=;
-	b=otfEDEWvvhCi2pkswdoDo14sv5SIBWEPuecLEzcqT2uZLkiFDeiGORK7bhaUDSgu0Py/q+
-	aNEN+wIy62cGLzNvx5LDO8vnZXs58yP7XW5AHAIW49MrMLfKy2m8IilsK0cxpK8NkcKniI
-	t5yDGKUSmovDgE0UyF5Ry5iJPHDHMos=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726608571;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qa95/ktdvyh9hNFNrsN46J5FSoqzSObFkyzebALZLcM=;
-	b=qTbQNMkeVFeVBbigZsOEJIvfqZbn8R5DnEdtUokLOFCXXX0l5lAMiYI63yYDAKDyGuE1YU
-	sx9b3H/K+pjtYyCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726608571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qa95/ktdvyh9hNFNrsN46J5FSoqzSObFkyzebALZLcM=;
-	b=otfEDEWvvhCi2pkswdoDo14sv5SIBWEPuecLEzcqT2uZLkiFDeiGORK7bhaUDSgu0Py/q+
-	aNEN+wIy62cGLzNvx5LDO8vnZXs58yP7XW5AHAIW49MrMLfKy2m8IilsK0cxpK8NkcKniI
-	t5yDGKUSmovDgE0UyF5Ry5iJPHDHMos=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726608571;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qa95/ktdvyh9hNFNrsN46J5FSoqzSObFkyzebALZLcM=;
-	b=qTbQNMkeVFeVBbigZsOEJIvfqZbn8R5DnEdtUokLOFCXXX0l5lAMiYI63yYDAKDyGuE1YU
-	sx9b3H/K+pjtYyCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 27B7513AB6;
-	Tue, 17 Sep 2024 21:29:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8TOrCbv06WaiMwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 17 Sep 2024 21:29:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1E39EA0AC2; Tue, 17 Sep 2024 18:50:07 +0200 (CEST)
-Date: Tue, 17 Sep 2024 18:50:07 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 01/10] ext4: write out dirty data before dropping pages
-Message-ID: <20240917165007.j5dywaekvnirfffm@quack3>
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-2-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1726592125; c=relaxed/simple;
+	bh=AYkc77Maz/sVF6DUda6J3CIh2dCKMgXWRxg4il5DkVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=laofxPHqiY+0pdeUC70Ut0ixDTA6hAhhN4mOFWCKlepIRroKixaFogiIzyxnHZGgzSekXrbGv4/bU9vztrn+E9i7EeN6gmXk7UtRq1xJ/A08AiQexBFc7yZCXFGU88+D91vCIcirJYugNQc9orVSHtc3d22NDNQc8VzSbrlqqYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWk6coou; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EE9EC4CEC5;
+	Tue, 17 Sep 2024 16:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726592125;
+	bh=AYkc77Maz/sVF6DUda6J3CIh2dCKMgXWRxg4il5DkVc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oWk6cooucaEaqPyQxG1RCP8SAF5o/BZvqTv0J4oYYDHdK1nVAwUrSCumIp8WO1s8c
+	 mmHHe3sfod2/A3NYLGN1m+qKz/x2WYaZIOKFJ5aDEt4Gh/3wTHxrax1ZNdtEx5PQYN
+	 qmoM0AipB5GM7P0Q42JT0DXMAtEXfsvC0wcCMu4piUe9hJzxmmNvFmvde7iwAnW0ad
+	 W+4MEGC+Z6RZeGH9LmUKAgYPRrDWcLRX1QuSndkhIdZiq/CthaAIYramZzNQxhR2Z6
+	 Q1Qj0JxK1WpvsmWQzxTWxC9GCVFWHzIHIzJ6wIdqLuGSNCmBk7Mkk88+mGBvnyzur9
+	 FrugcbLwoFq2g==
+Message-ID: <b0cd6a5c-9dc2-4ca6-a526-104788edf581@kernel.org>
+Date: Tue, 17 Sep 2024 18:55:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904062925.716856-2-yi.zhang@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] regulator: max20339: add Maxim MAX20339 regulator
+ driver
+To: Mark Brown <broonie@kernel.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240916-max20339-v1-0-b04ce8e8c471@linaro.org>
+ <20240916-max20339-v1-2-b04ce8e8c471@linaro.org>
+ <29f30aae-ffad-4a42-909e-b05f9cf360b5@kernel.org>
+ <ZulFBQzRdOdw9cfV@finisterre.sirena.org.uk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZulFBQzRdOdw9cfV@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed 04-09-24 14:29:16, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On 17/09/2024 10:59, Mark Brown wrote:
+> On Mon, Sep 16, 2024 at 10:06:37PM +0200, Krzysztof Kozlowski wrote:
+>> On 16/09/2024 18:48, André Draszik wrote:
 > 
-> Current zero range, punch hole and collapse range have a common
-> potential data loss problem. In general, ext4_zero_range(),
-> ext4_collapse_range() and ext4_punch_hold() will discard all page cache
-> of the operation range before converting the extents status. However,
-> the first two functions don't write back dirty data before discarding
-> page cache, and ext4_punch_hold() write back at the very beginning
-> without holding i_rwsem and mapping invalidate lock. Hence, if some bad
-> things (e.g. EIO or ENOMEM) happens just after dropping dirty page
-> cache, the operation will failed but the user's valid data in the dirty
-> page cache will be lost. Fix this by write all dirty data under i_rwsem
-> and mapping invalidate lock before discarding pages.
+>>> +	/* INSW status */
+>>> +	if ((status[3] & MAX20339_VINVALID)
+>>> +	    && !(status[0] & MAX20339_VINVALID)) {
+>>> +		dev_warn(dev, "Vin over- or undervoltage\n");
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-
-I'm not sure this is the direction we want to go. When zeroing / collapsing
-/ punching writing out all the data we are going to remove seems suboptimal
-and we can spend significant time doing work that is mostly unnecessary.
-After all with truncate we also drop pagecache pages and the do on-disk
-modification which can fail.
-
-The case of EIO is in my opinion OK - when there are disk errors, we are
-going to loose data and e2fsck is needed. So protecting with writeout
-against possible damage is pointless. For ENOMEM I agree we should better
-preserve filesystem consistency. Is there some case where we would keep
-filesystem inconsistent on ENOMEM?
-
-								Honza
-
-> ---
->  fs/ext4/extents.c | 77 +++++++++++++++++------------------------------
->  fs/ext4/inode.c   | 19 +++++-------
->  2 files changed, 36 insertions(+), 60 deletions(-)
+>> Same with all these. What happens if interrupt is triggered constantly?
 > 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index e067f2dd0335..7d5edfa2e630 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4602,6 +4602,24 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  	if (ret)
->  		goto out_mutex;
->  
-> +	/*
-> +	 * Prevent page faults from reinstantiating pages we have released
-> +	 * from page cache.
-> +	 */
-> +	filemap_invalidate_lock(mapping);
-> +
-> +	ret = ext4_break_layouts(inode);
-> +	if (ret)
-> +		goto out_invalidate_lock;
-> +
-> +	/*
-> +	 * Write data that will be zeroed to preserve them when successfully
-> +	 * discarding page cache below but fail to convert extents.
-> +	 */
-> +	ret = filemap_write_and_wait_range(mapping, start, end - 1);
-> +	if (ret)
-> +		goto out_invalidate_lock;
-> +
->  	/* Preallocate the range including the unaligned edges */
->  	if (partial_begin || partial_end) {
->  		ret = ext4_alloc_file_blocks(file,
-> @@ -4610,7 +4628,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  				 round_down(offset, 1 << blkbits)) >> blkbits,
->  				new_size, flags);
->  		if (ret)
-> -			goto out_mutex;
-> +			goto out_invalidate_lock;
->  
->  	}
->  
-> @@ -4619,37 +4637,9 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
->  			  EXT4_EX_NOCACHE);
->  
-> -		/*
-> -		 * Prevent page faults from reinstantiating pages we have
-> -		 * released from page cache.
-> -		 */
-> -		filemap_invalidate_lock(mapping);
-> -
-> -		ret = ext4_break_layouts(inode);
-> -		if (ret) {
-> -			filemap_invalidate_unlock(mapping);
-> -			goto out_mutex;
-> -		}
-> -
->  		ret = ext4_update_disksize_before_punch(inode, offset, len);
-> -		if (ret) {
-> -			filemap_invalidate_unlock(mapping);
-> -			goto out_mutex;
-> -		}
-> -
-> -		/*
-> -		 * For journalled data we need to write (and checkpoint) pages
-> -		 * before discarding page cache to avoid inconsitent data on
-> -		 * disk in case of crash before zeroing trans is committed.
-> -		 */
-> -		if (ext4_should_journal_data(inode)) {
-> -			ret = filemap_write_and_wait_range(mapping, start,
-> -							   end - 1);
-> -			if (ret) {
-> -				filemap_invalidate_unlock(mapping);
-> -				goto out_mutex;
-> -			}
-> -		}
-> +		if (ret)
-> +			goto out_invalidate_lock;
->  
->  		/* Now release the pages and zero block aligned part of pages */
->  		truncate_pagecache_range(inode, start, end - 1);
-> @@ -4657,12 +4647,11 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  
->  		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
->  					     flags);
-> -		filemap_invalidate_unlock(mapping);
->  		if (ret)
-> -			goto out_mutex;
-> +			goto out_invalidate_lock;
->  	}
->  	if (!partial_begin && !partial_end)
-> -		goto out_mutex;
-> +		goto out_invalidate_lock;
->  
->  	/*
->  	 * In worst case we have to writeout two nonadjacent unwritten
-> @@ -4675,7 +4664,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  	if (IS_ERR(handle)) {
->  		ret = PTR_ERR(handle);
->  		ext4_std_error(inode->i_sb, ret);
-> -		goto out_mutex;
-> +		goto out_invalidate_lock;
->  	}
->  
->  	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
-> @@ -4694,6 +4683,8 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  
->  out_handle:
->  	ext4_journal_stop(handle);
-> +out_invalidate_lock:
-> +	filemap_invalidate_unlock(mapping);
->  out_mutex:
->  	inode_unlock(inode);
->  	return ret;
-> @@ -5363,20 +5354,8 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  	 * for page size > block size.
->  	 */
->  	ioffset = round_down(offset, PAGE_SIZE);
-> -	/*
-> -	 * Write tail of the last page before removed range since it will get
-> -	 * removed from the page cache below.
-> -	 */
-> -	ret = filemap_write_and_wait_range(mapping, ioffset, offset);
-> -	if (ret)
-> -		goto out_mmap;
-> -	/*
-> -	 * Write data that will be shifted to preserve them when discarding
-> -	 * page cache below. We are also protected from pages becoming dirty
-> -	 * by i_rwsem and invalidate_lock.
-> -	 */
-> -	ret = filemap_write_and_wait_range(mapping, offset + len,
-> -					   LLONG_MAX);
-> +	/* Write out all dirty pages */
-> +	ret = filemap_write_and_wait_range(mapping, ioffset, LLONG_MAX);
->  	if (ret)
->  		goto out_mmap;
->  	truncate_pagecache(inode, ioffset);
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 941c1c0d5c6e..c3d7606a5315 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3957,17 +3957,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->  
->  	trace_ext4_punch_hole(inode, offset, length, 0);
->  
-> -	/*
-> -	 * Write out all dirty pages to avoid race conditions
-> -	 * Then release them.
-> -	 */
-> -	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY)) {
-> -		ret = filemap_write_and_wait_range(mapping, offset,
-> -						   offset + length - 1);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
->  	inode_lock(inode);
->  
->  	/* No need to punch hole beyond i_size */
-> @@ -4021,6 +4010,14 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->  	if (ret)
->  		goto out_dio;
->  
-> +	/* Write out all dirty pages to avoid race conditions */
-> +	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY)) {
-> +		ret = filemap_write_and_wait_range(mapping, offset,
-> +						   offset + length - 1);
-> +		if (ret)
-> +			goto out_dio;
-> +	}
-> +
->  	first_block_offset = round_up(offset, sb->s_blocksize);
->  	last_block_offset = round_down((offset + length), sb->s_blocksize) - 1;
->  
-> -- 
-> 2.39.2
+> Logs on physical error conditions are a lot more appropriate than debug
+> logs, they should basically never be triggered in normal operation and 
+> often it's a priorty to get information out about a failure in case
+> someone might actually see something going wrong - especially with
+> regulators, the system might be about to fall over if we're failing to
+> regulate except in cases like SD cards.  However in the case of the
+> regulator API where you're telling the core about the error it's good to
+> defer this to the core.  We should probably be doing a better job here
+> and logging something in the core.
+
+In any case, this probably should be dev_warn_ratelimited.
+
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>>> +	if (val & MAX20339_LSWxSHORTFAULT)
+>>> +		*flags |= REGULATOR_ERROR_OVER_CURRENT;
+>>> +
+>>> +	if (val & MAX20339_LSWxOVFAULT)
+>>> +		*flags |= REGULATOR_ERROR_OVER_VOLTAGE_WARN;
+>>> +
+>>> +	if (val & MAX20339_LSWxOCFAULT)
+>>> +		*flags |= REGULATOR_ERROR_OVER_CURRENT;
+> 
+> These should be notified to the core too, especially over voltage.
+> 
+>>> +	irq_flags = IRQF_ONESHOT | IRQF_SHARED;
+> 
+>> Why shared?
+> 
+> Why not?  In general if a driver can support a shared interrupt it's
+> polite for it to do so.
+
+I explained why not further down the context: because with devm it can
+cause resource release issues. I also poke if person added it on
+purpose, thus knows the answer "why", or just copied whatever code was
+somewhere.
+
+Best regards,
+Krzysztof
+
 
