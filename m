@@ -1,153 +1,182 @@
-Return-Path: <linux-kernel+bounces-332082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4387897B531
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:29:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFA797B53B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 675131C2193A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:29:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E199B26DC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290E31922F9;
-	Tue, 17 Sep 2024 21:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9FC192B6E;
+	Tue, 17 Sep 2024 21:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuJLq6Nr"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bknTGe2H"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99F418950D;
-	Tue, 17 Sep 2024 21:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C68446A1;
+	Tue, 17 Sep 2024 21:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726608571; cv=none; b=DI80Zeax5SwXGox+poss0pOqGT3hv/F89voKnCoqVw7DnSD7t5UHU0/lyhZyEM6Yp1aEWVW5PbkZNjXKFRzG/lQRKIy1zQhIrDSg2KXqFcM/an6jW8oxW/o+ChC+mOgdYIieTwovne6KSKdm0Tuu6h4db+q/Rl795rtU2s/PzuE=
+	t=1726608602; cv=none; b=uYMDW/9VtpZBHpajdb2n3/1JWzQ/14fLpDidV2MI4Q65m87wwtaW5vV/UuO9p4fIbmVM51AmQIMDAMLfMcaVilSQDVRfnWR2qLNPl5bIe9qpANlYL0VW+vSCvJbSPZ0G24Ccl08QGyvDwkyQqaonwaiHXZay6vv63PbgTp5vMs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726608571; c=relaxed/simple;
-	bh=7wDJGEiuzOEoyKjEz8laAx74B672WrDzeZlpmIj2yrg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=AR4JPFapWjEFmsDHBx7Tq0Szd3tWEh5iySXLGW2LX1cLv9wNmWY/IBmn6PqV5bpU39v66KUmdZi7igjnx1H+cTodwhA2WoofQEI9EYSeHpQ7JMhbFk1Ojh9dvXTQtiZWKK5tw1F4N9EzpwcEVnSVr3ZThrPapQe5dylnCBA7cZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuJLq6Nr; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1726608602; c=relaxed/simple;
+	bh=J3ZfIbWvV/pUT2sQiBwsH1xpKOvs6n7Ihgb2nMGi+cA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tp/mek977Oi4xoXpZrZiEJISZ8FiNZc7gLnKLBfw6Tjq3JqNZnumL7T81oYKgKV/X0fwtREkP8JMmM60LTbJghjqTZ7Zen83nPrPohMukH9dOiRAVyyO2udwOuG8BJw339czj30jgQxt5dc+NMd8exZXEIruhKYbKn8xOJYBgMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bknTGe2H; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so64149965e9.3;
-        Tue, 17 Sep 2024 14:29:29 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c4226a5af8so6191849a12.1;
+        Tue, 17 Sep 2024 14:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726608568; x=1727213368; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0fiXrAh0T0NirGCSMPm2oNUpzalmlLbt5hKTzf6gFw=;
-        b=kuJLq6NrrlX/jamkw9uAwuWmGCDQ8th8aaIQ8bKzvWh/OE1FPDModEjKDCpoolxMEZ
-         abYQNi9wAleYSdzqtEaciW2q1Cv+IBxvNqQ34lCMsYaaKAdb0lLhpIO81l136KQjKUyV
-         9XGjeQbzAYMFlxOuZI+LEOcFlCOoNKl6jNGufs+DCWGaRgLeDEgsucQSOXLZJXcmXnjP
-         emSR+xasuFXcIFrG7SA0IK4mZjiYcuUCYmtq4ZqCTJ9rkiR0HO9bXUm6NWzXNh4LjUtw
-         NsK1/JF8WCNwHiSxxA/UGGT60yHSDx/LQFFKqcgM8sv+cSThwtiz+joQmSlZDuxArjSf
-         FUBw==
+        d=gmail.com; s=20230601; t=1726608599; x=1727213399; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/5yS1EFc2UkCNqUe9XkDS8zSd6iM9CaMBvaXI1VqENI=;
+        b=bknTGe2HEpPKSfi0FDLIzYUr3FAbp6Owg5nDdtrVd9W3vhSjt/De9pIhm6Z8XxLakq
+         stz5JtZoGDc/eJwV79vn6Y/OApxOz03JSjQB9CTWYZcPqE3xyCUALL5wuVS67viPbjSm
+         JQMkEJGXwUtA9d8c4XQJ+HWyJZ3qrg3wUAQEIkeVEuftUTaVBfFq2jEBrtMxqOXpdwzZ
+         RfESA7vXGnguA+yh9Ld+kwdPxH8c/C/+Jh8Svzo3iachjTty4Us1Jbb/mjqSkPGaaBvc
+         38wOo9nIjWuNDb0IAVMqIBLzWn8lMirMVLxrJoS+J6RJXfL6eqBeCWi6hbnEoti1peRO
+         ETog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726608568; x=1727213368;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1726608599; x=1727213399;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C0fiXrAh0T0NirGCSMPm2oNUpzalmlLbt5hKTzf6gFw=;
-        b=D7pXZA5Xzir/WM89LgXJduPqs+lrJMoj3w11oLddq3EhLifbCUpeiTnIsncqVDYzzX
-         CzH+ysx+NYc3wLgO5kaxQIx3w3FoG0QPyhbYgsQyEzgtnRlg6wek2oT3045wK8Ryp+ce
-         RJKa1N/cNZHIrQcasczh85O+FKrwskyiBO5DNbE9IJ7qcsEUJlaVHq4MOxm9SO+J6vRG
-         +vY4VGivci+F5YWghFC43mE5YbcnfAMgmEC95LLX5auRvrJESBfBD9MAbN3IUuHGWC7f
-         Wor7JvBLTZv8Xtb1aNc2v3ZuE1LEPszGZjjEIEkGoEHV6tc4pcoHzOhZ4E9szhROlmmC
-         gqTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHT+mr9wGTQEVrLGb0ioajy/cTotzjahIguzTDQt/BKxDlox//bDuQx2uHMGDx3yQJOKyJu4ni@vger.kernel.org, AJvYcCW5GTfZ+BTJcTrAIGIdmBKun9t0vjKPO8pZLCZTl6xSsY+UuBrpCtx9baSrK1/OR88U1AZ1yU3VkAY8Jls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZKNGlJQFyEHFob2Y7cYyq6ETJddJbWLRlynZPpzE6T6ISxeUH
-	y4a2Ys3wtv/NRy4ESg+NPo0Ri/aYMxqa8VI8AI9AdIOVgp59cka4
-X-Google-Smtp-Source: AGHT+IGtj+wglGTSG7Zjlv7rgBfqYnVp1mbr7Zutvj2l+RBqe1JJ9XBRQdRRx0UGULBl4NqwyNt63Q==
-X-Received: by 2002:a05:600c:1c9d:b0:42c:af5f:c00c with SMTP id 5b1f17b1804b1-42d908315a6mr157949655e9.21.1726608567602;
-        Tue, 17 Sep 2024 14:29:27 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b055018sm147828765e9.10.2024.09.17.14.29.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 14:29:25 -0700 (PDT)
-Message-ID: <b3f6c4b4-bbcb-4e3a-8a79-e9056d13b6b3@gmail.com>
-Date: Tue, 17 Sep 2024 14:29:20 -0700
+        bh=/5yS1EFc2UkCNqUe9XkDS8zSd6iM9CaMBvaXI1VqENI=;
+        b=tYIz7X/e1Fx9BkXqtEum1GMKzS/e2NrPj8CPb3yGkt5VuM/Q1/JLBDVPF2WnAXZZNR
+         34tnIrUVb9DhKKglgnJJe3lVwKe9Y6APhreDqwJ/v51G1xR6fOOri3FUo8Ks2vm0gsLk
+         ebz1Bd/SpwQY0haGjfQ/a2X1PuSfNyM5jcJnVWb+hbCYB9Cy9BCVP1MF9YU5bqMwK7pX
+         jnVsz3Ud2eDfD2OZD40pIDsCpsqUsligbquHQX4daDlEd2IW5nu2MXO7SS9nSCwnCMdn
+         H2fEToWUQFcgl3PzyImYRkMOF4fnmJwr3X/l36Dz8o3NPC7txu2DmI6Fh5HqrJsLJvj/
+         8s1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZJBO4fiPEKIfx7uEySDhmI2PVLEowl9xXPXbb4xRJuXocOKFbwbchujWyUoxs8p0O+BJp5SGv39N6@vger.kernel.org, AJvYcCXvMYPM5+Icve8LrsFAC5ED1oh6iMAFQwjeQAIjlKTGkgvRjeRdBdI5pBq4NmigCVFZEiW9i4DQqTWzX1wn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZxT7tWXzF6/iwB+YRhqsFTQwzSkJUtY9hdbu3hU4d8ZYfOCE2
+	XX1SLocIeQq7BLh/k6632KKDvcJHfDCy3vSPxHx9NcAiXIFFzsdG2if3ri5H0nRdquqC+n3az2N
+	D3svdGilZaxeOFwPb0h45vHyQxQ==
+X-Google-Smtp-Source: AGHT+IHZDSOWH5g2mse3vvoQufmbyrZHOiOqYeHvdcDTmjg09A/dKV48ek5QF2G9EkhG6CVgJbewgqf3PB397EjBApg=
+X-Received: by 2002:aa7:c882:0:b0:5c4:b33:1f with SMTP id 4fb4d7f45d1cf-5c413e4d733mr16483402a12.28.1726608598858;
+ Tue, 17 Sep 2024 14:29:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 6.1 00/63] 6.1.111-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240916114221.021192667@linuxfoundation.org>
-Content-Language: en-US
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240916114221.021192667@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240917094956.437078-1-erezgeva@nwtime.org> <20240917094956.437078-4-erezgeva@nwtime.org>
+ <9c273945-5a70-408e-a9da-a0797aa6d935@kernel.org> <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
+ <64ef46b1-7908-4b15-866d-9cabe2e5dc9e@kernel.org> <CANeKEMPwgtECfksgz6jXkR+bjVFwCB9DOh1q7t_3WeojReqxbA@mail.gmail.com>
+ <e0db2f62-b2fd-4b61-932c-cc2caf5dd647@kernel.org> <CANeKEMNCFKX2thq+Ws0vy9ovbQ7dve3YPh_FbRaoOEgL+7c_Mw@mail.gmail.com>
+ <fe98e49d-96d1-462f-99ac-93d8a53e55fd@kernel.org> <CANeKEMNg_hPcVHVo2c9u1Vdzaso0ODT+2uLmip6sd26uK8d_FQ@mail.gmail.com>
+ <20240917-taps-applied-6c0d411bbe08@squawk>
+In-Reply-To: <20240917-taps-applied-6c0d411bbe08@squawk>
+From: Erez <erezgeva2@gmail.com>
+Date: Tue, 17 Sep 2024 23:29:22 +0200
+Message-ID: <CANeKEMOXZjgLm-Wb8+9RMJYNN1a2Oy81P3MXZiLxNaAerLhYEA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
+To: Conor Dooley <conor@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>, 
+	Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Esben Haabendal <esben@geanix.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/16/24 04:43, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.111 release.
-> There are 63 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.111-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Tue, 17 Sept 2024 at 22:39, Conor Dooley <conor@kernel.org> wrote:
+>
+> On Tue, Sep 17, 2024 at 08:39:48PM +0200, Erez wrote:
+> > On Tue, 17 Sept 2024 at 19:32, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > >
+> > > On 17/09/2024 19:24, Erez wrote:
+> > > >>>>>>
+> > > >>>>>> It does not look like you tested the bindings, at least after quick
+> > > >>>>>> look. Please run `make dt_binding_check` (see
+> > > >>>>>
+> > > >>>>> I run "make dt_binding_check" on kernel 6.6.
+> > > >>>>
+> > > >>>> Yeah, we are no on kernel 6.6. You can run it also on kernel v4.1 -
+> > > >>>> still does not matter.
+> > > >>>>
+> > > >>>> Don't develop on ancient code because then you ask us to review same
+> > > >>>> broken stuff we already fixed.
+> > > >>>
+> > > >>> I test with Beaglebone black for testing, it is difficult to run the
+> > > >>> last vanille version.
+> > > >>> I did backport the spi-nor driver.
+> > > >>> As for "make dt_binding_check" on last kernel, it need to upgrade the tools,
+> > > >>>  and I did not think it could change that much.
+> > > >>>
+> > > >>
+> > > >> Well, it is possible to build kernel on small embedded board, but that's
+> > > >> quite cumbersone, slow and inefficient, considering that it's just
+> > > >> easier to cross compile. But anyway, binding check does not even need
+> > > >> cross compilation.
+> > > >>
+> > > >> Sorry, the code is obviously wrong, there is no such thing as u32, so
+> > > >> you did not test it. I provided link which explains how to test it. You
+> > > >> must do it on latest mainline kernel. Just like you must develop and
+> > > >> generate patches on latest mainline kernel, because this is where we
+> > > >> apply the patches. We do not apply them to v6.6.
+> > > >
+> > > > The patches are based on the lastest  mainline kernel.
+> > > > I do not understand why you think otherwise.
+> > >
+> > > Because you wrote:
+> > > "I run "make dt_binding_check" on kernel 6.6."
+> > >
+> > > The command is either part of build process or final check process
+> > > (static analyzers etc). If you say you did this on v6.6, you got such
+> > > response.
+> >
+> > I know you are NOT a service.
+> > The device tree is not the focus of my work.
+> > It should not be broken like that.
+> >
+> > I install dt-schema_2023.11-3_all.deb
+> > with Debian trixie
+> > I get:
+> >
+> > l
+> >   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+> > Traceback (most recent call last):
+> >   File "/usr/bin/dt-mk-schema", line 8, in <module>
+> >     sys.exit(main())
+> >              ^^^^^^
+> >   File "/usr/lib/python3/dist-packages/dtschema/mk_schema.py", line 28, in main
+> >     schemas = dtschema.DTValidator(args.schemas).schemas
+> >               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >   File "/usr/lib/python3/dist-packages/dtschema/validator.py", line
+> > 363, in __init__
+> >     self.make_property_type_cache()
+> >   File "/usr/lib/python3/dist-packages/dtschema/validator.py", line
+> > 420, in make_property_type_cache
+> >     self.props, self.pat_props = get_prop_types(self.schemas)
+> >                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >   File "/usr/lib/python3/dist-packages/dtschema/validator.py", line
+> > 187, in get_prop_types
+> >     del props[r'^[a-z][a-z0-9\-]*$']
+> >         ~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+> > KeyError: '^[a-z][a-z0-9\\-]*$'
+> > make[2]: *** [Documentation/devicetree/bindings/Makefile:64:
+> > Documentation/devicetree/bindings/processed-schema.json] Error 1
+> > make[2]: *** Deleting file
+> > 'Documentation/devicetree/bindings/processed-schema.json'
+> > make[1]: *** [/home/builder/kernel/Makefile:1435: dt_binding_schemas] Error 2
+>
+> Have you considered that this might be because of the invalid types you
+> used?
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+I remove the types.
+Anyway, scripts should report on errors, not crash.
+This is the purpose of syntax scripts, to help us, developers find out errors.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
 
+Erez :-)
 
