@@ -1,78 +1,84 @@
-Return-Path: <linux-kernel+bounces-331439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A14797ACE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:37:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5500A97ACF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F20B1F25C9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:37:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C383285FAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356BA16132F;
-	Tue, 17 Sep 2024 08:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D98115B0F2;
+	Tue, 17 Sep 2024 08:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXMNeSxu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msn23qj0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A99159583;
-	Tue, 17 Sep 2024 08:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B268158DDF;
+	Tue, 17 Sep 2024 08:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726562239; cv=none; b=Qz3S6oDr1n4QbQr1mYHTzFw7FtHS84NkqsjeaeHou6mqay6GsZP3efK08S+TmW2eadXv3c7qS3K+3iQmeC+5+76Rtv7RpJqD8CS+7/sfxg/GhKMJVGFSdQCc3WRppNOz8XWyOozArAexJKClVcQqK5hl3Vju/wbbplR12rMZHsU=
+	t=1726562399; cv=none; b=q6O3G4VpKOuVRpJPzpT/GOFos7t3kA/ieSgxvkc1KRDMHX3IyycEkubQ5mzzlMfDtDv+OJx6wgPMPGypq+vOgW0OvPYwoDDlv7Lf8sDNsOHGohdl62TLzJJBHmHpWoFNjEfbH9m/CoqR38VS8FMEuVKBeFz4kKPfouJLbbI/hd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726562239; c=relaxed/simple;
-	bh=aFHFDzJb9fpYwpZTzf5tUZQDlhEUPi0HRt0H5qkBZ4U=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=b2H4mB9baE2T7Op/ywuP6VUiwGE9W9FQ6NY/KzR3yFnT75LSEBcfOYqhTzFubja/S9wqB5wW0+WldQtJor8ATnzdzJLhGbBlV/ZyhCY2WyFDe5xaWmbQjsP93HPIbiN+VvUc9uRKVRs+m4zZLcsYb/zIjn7YxB1mvwUyAQHV9mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXMNeSxu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87921C4CEC7;
-	Tue, 17 Sep 2024 08:37:19 +0000 (UTC)
+	s=arc-20240116; t=1726562399; c=relaxed/simple;
+	bh=sA8EtIddwYcbM9QidX3yPbv7FtP5KS1p37I+r9fmU2U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P6T56QIN85Aye3So/sUfQQ0YVRx4ULvAKCtXn1paMVTarWCdGx6c+89mJx3Tt77PQaO7TOoDOm9R9IZVQc0H2bw+D10TLHy6LnnHUl9L00tG1rHGuRBpU5kE1DkKuaFcf0AoYe8tq1MmLbCEFWKlRVsCC+w3LbHfjYbpX1cvc2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msn23qj0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1602C4CEE6;
+	Tue, 17 Sep 2024 08:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726562239;
-	bh=aFHFDzJb9fpYwpZTzf5tUZQDlhEUPi0HRt0H5qkBZ4U=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=tXMNeSxu5fwRknDJwjziOKOLSqZ9FLJeGk4T7PKcBJJr+YP6zZIsUTOmNKSROuuLq
-	 eyROmau9yUtmweMpi0eyhxiWYoACSS4VBP/RKwkU07e2W98jUckaiBbQGz6VkMSrh+
-	 Uttv7aVuUaH8EIxByZu30Q/AjFjCiC+dW60aBsn1S3KHQ8zKuuPMmBrDyohWV8zcqJ
-	 EJ0xeSaHoOfTmRWOzkqg+WVXeXLC47M1+15UA9MGEDT0L7f4ke5qoE8Zf9vfzYY+lh
-	 RgWurfi6C4HXewGedNGrUy4B6GVfUVZEJt4S72jA1JiaL2NYj1n/c8xDyv+WNgbXrh
-	 ztkvOZ7JriwuQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 711113809A80;
-	Tue, 17 Sep 2024 08:37:22 +0000 (UTC)
-Subject: Re: [GIT PULL] SPI updates for v6.12
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ed8725667a2a9b9a1ca8fc371c792772.broonie@kernel.org>
-References: <ed8725667a2a9b9a1ca8fc371c792772.broonie@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ed8725667a2a9b9a1ca8fc371c792772.broonie@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v6.12
-X-PR-Tracked-Commit-Id: 07f1eb718db281c3e0cdb068ea7d73c30921a81c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 303ba85c60442ecdca77231f227126a83ba39bd3
-Message-Id: <172656224108.49587.543417542476279243.pr-tracker-bot@kernel.org>
-Date: Tue, 17 Sep 2024 08:37:21 +0000
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+	s=k20201202; t=1726562399;
+	bh=sA8EtIddwYcbM9QidX3yPbv7FtP5KS1p37I+r9fmU2U=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=msn23qj0z5WsNE7ouwUDh6Ouw+IFN0cNHR08Ijgw699Ot2RfOWiOfk4pE2zGNqeL3
+	 PzVOCuOdhwmcrxcnP0RpWkVcEY2Pqh9iM6MMBrstEUA27FjN+5Jc1gIXQI0duf8Cv6
+	 AUpEaZf80jl8d6mv75ZoOcE4sDAAWB931++RxhpQ91mvmmcb6sUl51gCW9ZimA7/P4
+	 AZT5BNvTmBIeh7It6J9nXsgXMQeSjJg7ry4RetcpHlev7tbnQ6jE3THPuKMYl5AmM4
+	 mtQeEcecg5n0IU6ENsDz8BjM+xD0XWv4tIB0a9eQFGz3iG/lrB/gsY6RDwkvWKQc5g
+	 0iwp86fyCLOXw==
+Message-ID: <22b91bc1410bf2a9b54b69a56075d368bf3e06d1.camel@kernel.org>
+Subject: Re: [PATCH] virtio_console: fix misc probe bugs
+From: Amit Shah <amit@kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>, Rusty Russell <rusty@rustcorp.com.au>, 
+	virtualization@lists.linux.dev
+Date: Tue, 17 Sep 2024 10:39:55 +0200
+In-Reply-To: <ad982e975a6160ad110c623c016041311ca15b4f.1726511547.git.mst@redhat.com>
+References: 
+	<ad982e975a6160ad110c623c016041311ca15b4f.1726511547.git.mst@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-The pull request you sent on Mon, 16 Sep 2024 00:26:43 +0100:
+On Mon, 2024-09-16 at 14:32 -0400, Michael S. Tsirkin wrote:
+> This fixes the following issue discovered by code review:
+>=20
+> after vqs have been created, a buggy device can send an interrupt.
+>=20
+> A control vq callback will then try to schedule control_work which
+> has
+> not been initialized yet. Similarly for config interrupt.=C2=A0 Further,
+> in
+> and out vq callbacks invoke find_port_by_vq which attempts to take
+> ports_lock which also has not been initialized.
+>=20
+> To fix, init all locks and work before creating vqs.
+>=20
+> Fixes: 17634ba25544 ("virtio: console: Add a new MULTIPORT feature,
+> support for generic ports")
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v6.12
+Reviewed-by: Amit Shah <amit@kernel.org>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/303ba85c60442ecdca77231f227126a83ba39bd3
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
