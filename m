@@ -1,94 +1,45 @@
-Return-Path: <linux-kernel+bounces-331363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7D497ABDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:12:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CA697ABE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26CC11F23282
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311D028DCA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EF9149C7A;
-	Tue, 17 Sep 2024 07:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6611534E6;
+	Tue, 17 Sep 2024 07:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VGqV8L9M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LknOXeBH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VGqV8L9M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LknOXeBH"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GBQcVWCs"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A1618C22;
-	Tue, 17 Sep 2024 07:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8B313CFB6;
+	Tue, 17 Sep 2024 07:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726557145; cv=none; b=mriG3+b1CIXWDazYP2pbI0wTY0fGXhbA8MrUNWW7G3nFHeHhy0etTwDGv207Z9OAPSm0dpWQ04vgSjDXd/hxU3cFZDVW6aAlB/LmhjnN4xB7xk2+xp/azOgZBJKXKeeCzCh+w+ZkqTvAkPX/iwcLsaAuZ6ssJUyontmHTn4NuBw=
+	t=1726557312; cv=none; b=Go8ugo5T95BrszmJhs0WkRnsZbW2quh+KxzaqDDCe3iqf9UscCc+l8k7ers9O0S43mksfyZefBjJ4aSORLvLjUZkfzye6HgseLYynBDHITiywTBKpjA51XhmvwLPBsaa8CqgDc2VOG6iFUmlrDOZ9TckSqG2+f9jxyFCNwOrSM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726557145; c=relaxed/simple;
-	bh=YVaZL4csMPhXuBXarOWltJeBnpp8mDumL1ZwPgMYrb0=;
+	s=arc-20240116; t=1726557312; c=relaxed/simple;
+	bh=uQSL8md113n0K1krkP2Ryqc1+J936Ef2Os9xbgicfBg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CJNOHcIh2KP9n8YB3zC/Q6mAvOoGJWfg62bHLXeImLmtesM76pibsn3xSd2Rb7ewlpTokoXluMhE14iQBlEOcvAMbsPWMLuVPfa+qhmozy1WcbI6In0QDlw8LpqigTsoJAH/MaUgri0kYhdnpWjRDfIElR66xg/a6mSALVG6zCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VGqV8L9M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LknOXeBH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VGqV8L9M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LknOXeBH; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ABA071FF95;
-	Tue, 17 Sep 2024 07:12:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726557135; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N617NhoUHi8bylefi8DLZm5EoXdh0UsbJwfB5ib7reg=;
-	b=VGqV8L9MtPvCaAyOEoVIBsOjaFs1htU2JdsdMKYffeGa7wZEQs0uKPcEMDkJqFpWKKrihV
-	0R7EZ+rfVyOwCkWTXoJBRjQ3kyWTrFLayzLvbNEpbegNRhBUK+2lZ1y83vHH+xEuc33h7s
-	4UxeZ/i9Bqcaw2BI+vSRb581ARCkuCA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726557135;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N617NhoUHi8bylefi8DLZm5EoXdh0UsbJwfB5ib7reg=;
-	b=LknOXeBHiovcaWj9EeUjg6JJkwb7OCb/1kg+OwZz6z+06b8LhSdyHKD9gPXbk/zwjTp1Ou
-	CB8BnX/TbFCMntBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726557135; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N617NhoUHi8bylefi8DLZm5EoXdh0UsbJwfB5ib7reg=;
-	b=VGqV8L9MtPvCaAyOEoVIBsOjaFs1htU2JdsdMKYffeGa7wZEQs0uKPcEMDkJqFpWKKrihV
-	0R7EZ+rfVyOwCkWTXoJBRjQ3kyWTrFLayzLvbNEpbegNRhBUK+2lZ1y83vHH+xEuc33h7s
-	4UxeZ/i9Bqcaw2BI+vSRb581ARCkuCA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726557135;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N617NhoUHi8bylefi8DLZm5EoXdh0UsbJwfB5ib7reg=;
-	b=LknOXeBHiovcaWj9EeUjg6JJkwb7OCb/1kg+OwZz6z+06b8LhSdyHKD9gPXbk/zwjTp1Ou
-	CB8BnX/TbFCMntBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 86511139CE;
-	Tue, 17 Sep 2024 07:12:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qgxLIM8r6WakOQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 17 Sep 2024 07:12:15 +0000
-Message-ID: <3f86acec-8aa0-4448-843f-509a182b5459@suse.cz>
-Date: Tue, 17 Sep 2024 09:14:40 +0200
+	 In-Reply-To:Content-Type; b=PUaNB3qmVKW/MXECnEmtRFu6nr8NEJovfl0mE0OXoJkyDO8uvHsVTy3mJ5AmlTEnwn+pAp5kxNumtAbReWkXE4HIp6gxJm7mOWSZySvEMxriJMvaaGtrdtSzmZPBveZ9Q1CkJTRphQJvUKwCypIjJAjiNN7T3N1mSTBkxzlS5sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GBQcVWCs; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726557300; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=aHmQE7AUQfpWpDBPMmGmaaJMlBjlx8yVsf52qbqS98k=;
+	b=GBQcVWCsDmuJ3zO1S2pJArzUDc1mE1ZZvGT+wfcSf7BFP7mADRKEXNczPF2MBUY7/YuZiW9c9pZ5NlxSprgEZifD9aZq20GXPlzSP0JSW4EijVO3RRXehAhK/7vAhuQ1+M40dSVxnw2P2gTgUGptNnqDz2KBcTCPhDIFikP2SGw=
+Received: from 30.27.106.17(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFACzIr_1726557298)
+          by smtp.aliyun-inc.com;
+          Tue, 17 Sep 2024 15:15:00 +0800
+Message-ID: <1edf9fe3-5e39-463b-8825-67b4d1ad01be@linux.alibaba.com>
+Date: Tue, 17 Sep 2024 15:14:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,111 +47,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/19] kthread: Default affine kthread to its preferred
- NUMA node
-To: Michal Hocko <mhocko@suse.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-mm@kvack.org, "Paul E. McKenney" <paulmck@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>, Boqun Feng <boqun.feng@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
-References: <20240916224925.20540-1-frederic@kernel.org>
- <20240916224925.20540-13-frederic@kernel.org> <ZukhKXxErPOaXtAL@tiehlicka>
- <4b107fec-e391-4680-9457-b282310b4454@suse.cz> <ZukqMvPU03hgCLHu@tiehlicka>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <ZukqMvPU03hgCLHu@tiehlicka>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [RFC PATCH 19/24] erofs: introduce namei alternative to C
+To: Yiyang Wu <toolmanp@tlmp.cc>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-20-toolmanp@tlmp.cc> <20240916170801.GO2825852@ZenIV>
+ <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,linux-foundation.org,infradead.org,linutronix.de,kvack.org,joelfernandes.org,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
 
-On 9/17/24 9:05 AM, Michal Hocko wrote:
-> On Tue 17-09-24 09:01:08, Vlastimil Babka wrote:
->> On 9/17/24 8:26 AM, Michal Hocko wrote:
->>> On Tue 17-09-24 00:49:16, Frederic Weisbecker wrote:
->>>> Kthreads attached to a preferred NUMA node for their task structure
->>>> allocation can also be assumed to run preferrably within that same node.
->>>>
->>>> A more precise affinity is usually notified by calling
->>>> kthread_create_on_cpu() or kthread_bind[_mask]() before the first wakeup.
->>>>
->>>> For the others, a default affinity to the node is desired and sometimes
->>>> implemented with more or less success when it comes to deal with hotplug
->>>> events and nohz_full / CPU Isolation interactions:
->>>>
->>>> - kcompactd is affine to its node and handles hotplug but not CPU Isolation
->>>> - kswapd is affine to its node and ignores hotplug and CPU Isolation
->>>> - A bunch of drivers create their kthreads on a specific node and
->>>>   don't take care about affining further.
->>>>
->>>> Handle that default node affinity preference at the generic level
->>>> instead, provided a kthread is created on an actual node and doesn't
->>>> apply any specific affinity such as a given CPU or a custom cpumask to
->>>> bind to before its first wake-up.
->>>
->>> Makes sense.
->>>
->>>> This generic handling is aware of CPU hotplug events and CPU isolation
->>>> such that:
->>>>
->>>> * When a housekeeping CPU goes up and is part of the node of a given
->>>>   kthread, it is added to its applied affinity set (and
->>>>   possibly the default last resort online housekeeping set is removed
->>>>   from the set).
->>>>
->>>> * When a housekeeping CPU goes down while it was part of the node of a
->>>>   kthread, it is removed from the kthread's applied
->>>>   affinity. The last resort is to affine the kthread to all online
->>>>   housekeeping CPUs.
->>>
->>> But I am not really sure about this part. Sure it makes sense to set the
->>> affinity to exclude isolated CPUs but why do we care about hotplug
->>> events at all. Let's say we offline all cpus from a given node (or
->>> that all but isolated cpus are offline - is this even
->>> realistic/reasonable usecase?). Wouldn't scheduler ignore the kthread's
->>> affinity in such a case? In other words how is that different from
->>> tasksetting an userspace task to a cpu that goes offline? We still do
->>> allow such a task to run, right? We just do not care about affinity
->>> anymore.
+
+
+On 2024/9/17 14:48, Yiyang Wu wrote:
+> On Mon, Sep 16, 2024 at 06:08:01PM GMT, Al Viro wrote:
+>> On Mon, Sep 16, 2024 at 09:56:29PM +0800, Yiyang Wu wrote:
+>>> +/// Lookup function for dentry-inode lookup replacement.
+>>> +#[no_mangle]
+>>> +pub unsafe extern "C" fn erofs_lookup_rust(
+>>> +    k_inode: NonNull<inode>,
+>>> +    dentry: NonNull<dentry>,
+>>> +    _flags: c_uint,
+>>> +) -> *mut c_void {
+>>> +    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
+>>> +    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
 >>
->> AFAIU it handles better the situation where all houskeeping cpus from
->> the preferred node go down, then it affines to houskeeping cpus from any
->> node vs any cpu including isolated ones.
+>> 	Ummm...  A wrapper would be highly useful.  And the reason why
+>> it's safe is different - your function is called only via ->i_op->lookup,
+>> the is only one instance of inode_operations that has that ->lookup
+>> method, and the only place where an inode gets ->i_op set to that
+>> is erofs_fill_inode().  Which is always passed erofs_inode::vfs_inode.
+>>
+> So my original intention behind this is that all vfs_inodes come from
+> that erofs_iget function and it's always gets initialized in this case
+> And this just followes the same convention here. I can document this
+> more precisely.
+
+I think Al just would like a wrapper here, like the current C EROFS_I().
+
+>>> +    // SAFETY: The super_block is initialized when the erofs_alloc_sbi_rust is called.
+>>> +    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
+>>
+>> 	Again, that calls for a wrapper - this time not erofs-specific;
+>> inode->i_sb is *always* non-NULL, is assign-once and always points
+>> to live struct super_block instance at least until the call of
+>> destroy_inode().
+>>
 > 
-> Doesn't that happen automagically? Or can it end up on a random
-> isolated cpu?
+> Will be modified correctly, I'm not a native speaker and I just can't
+> find a better way, I will take my note here.
 
-Good question, perhaps it can and there's no automagic, as I see code like:
+Same here, like the current EROFS_I_SB().
 
-+		/* Make sure the kthread never gets re-affined globally */
-+		set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_TYPE_KTHREAD));
- 
+>>> +    // SAFETY: this is backed by qstr which is c representation of a valid slice.
+>>
+>> 	What is that sentence supposed to mean?  Nevermind "why is it correct"...
+>>
+>>> +    let name = unsafe {
+>>> +        core::str::from_utf8_unchecked(core::slice::from_raw_parts(
+>>> +            dentry.as_ref().d_name.name,
+>>> +            dentry.as_ref().d_name.__bindgen_anon_1.__bindgen_anon_1.len as usize,
+>>
+
+...
+
+> 
+>> 	Current erofs_lookup() (and your version as well) *is* indeed
+>> safe in that respect, but the proof (from filesystem POV) is that "it's
+>> called only as ->lookup() instance, so dentry is initially unhashed
+>> negative and will remain such until it's passed to d_splice_alias();
+>> until that point it is guaranteed to have ->d_name and ->d_parent stable".
+
+Agreed.
+
+>>
+>> 	Note that once you _have_ called d_splice_alias(), you can't
+>> count upon the ->d_name stability - or, indeed, upon ->d_name.name you've
+>> sampled still pointing to allocated memory.
+>>
+>> 	For directory-modifying methods it's "stable, since parent is held
+>> exclusive".  Some internal function called from different environments?
+>> Well...  Swear, look through the call graph and see what can be proven
+>> for each.
+> 
+> Sorry for my ignorance.
+> I mean i just borrowed the code from the fs/erofs/namei.c and i directly
+> translated that into Rust code. That might be a problem that also
+> exists in original working C code.
+
+As for EROFS (an immutable fs), I think after d_splice_alias(), d_name is
+still stable (since we don't have rename semantics likewise for now).
+
+But as the generic filesystem POV, d_name access is actually tricky under
+RCU walk path indeed.
+
+> 
+>> 	Expressing that kind of fun in any kind of annotations (Rust type
+>> system included) is not pleasant.  _Probably_ might be handled by a type
+>> that would be a dentry pointer with annotation along the lines "->d_name
+>> and ->d_parent of that one are stable".  Then e.g. ->lookup() would
+>> take that thing as an argument and d_splice_alias() would consume it.
+>> ->mkdir() would get the same thing, etc.  I hadn't tried to get that
+>> all way through (the amount of annotation churn in existing filesystems
+>> would be high and hard to split into reviewable patch series), so there
+>> might be dragons - and there definitely are places where the stability is
+>> proven in different ways (e.g. if dentry->d_lock is held, we have the damn
+>> thing stable; then there's a "take a safe snapshot of name" API; etc.).
+> 
+> That's kinda interesting, I originally thought that VFS will make sure
+> its d_name / d_parent is stable in the first place.
+> Again, I just don't have a full picture or understanding of VFS and my
+> code is just basic translation of original C code, Maybe we can address
+> this later.
+
+d_alloc will allocate an unhashed dentry which is almost unrecognized
+by VFS dcache (d_name is stable of course).
+
+After d_splice_alias() and d_add(), rename() could change d_name.  So
+either we take d_lock or with rcu_read_lock() to take a snapshot of
+d_name in the RCU walk path.  That is my overall understanding.
+
+But for EROFS, since we don't have rename, so it doesn't matter.
+
+Thanks,
+Gao Xiang
 
