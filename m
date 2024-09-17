@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-331988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4AE97B3AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:38:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E3497B3BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F589284796
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:38:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4288A1F24994
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD65918A6DA;
-	Tue, 17 Sep 2024 17:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A29C187FFC;
+	Tue, 17 Sep 2024 17:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W664uhKa"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPAT2ZBc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B996186298;
-	Tue, 17 Sep 2024 17:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6B1174EFA;
+	Tue, 17 Sep 2024 17:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726594696; cv=none; b=dbmtQIgxBjhj373xrxyfIayoKT/K7JcSQhkCd8cAC5QUsldh9836BYvKhfRFByl8nDOuPAgPRvLrchH7ja0xAket3BCbr11k4YWxub288fAu0s2IYrCbVGBDnafQPEFt8wAy8lm+khuDwzQRUNENEq3EFNcuPAAtv3eVifmIbxQ=
+	t=1726594854; cv=none; b=jnGw/SzOefdeY9vt3UM34wF2PJCJfEAoahaxHcaheO3eu7V0WByDyBF8Zoc3zKUDsQ3C52Y4WPIbZk05NSBnwVS5g598giJBL5wUNvXXILqBiCXqEeWD798DdYTDiI1SR/xTdHMImhVY4Hp6fS6dJus40MGHblT7Q28fgkPf1z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726594696; c=relaxed/simple;
-	bh=PpSt5bi7zgx6n42erMIO++zOiEguil8UeQx1geZDx+A=;
+	s=arc-20240116; t=1726594854; c=relaxed/simple;
+	bh=CfyC31sh4NSND8jyoQX6OKo7Of16jGTsc/7R0TCHy14=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jtcSVngpg4oNsfTZ6aOOlvFBeBkyzFcVbpnVTXsVCA/GhCqzzyz3sVFJQbKOMbDs2hZOPH+mEEP3PEQ83wiZSt2zEZbdgVGNc+JxcpJrvD0mkpLZWUF7Qq1QArdvkr1XYbgKrd8PrFztDRTQNz5sWicl5xtbvET8AAn1UdBRmqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W664uhKa; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso58476015e9.0;
-        Tue, 17 Sep 2024 10:38:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726594692; x=1727199492; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oJR6KsPb+sMwPPa8GP9YpHwKRtIubZIdAh4KhDCN8B0=;
-        b=W664uhKa6jdjpB+K7dNX1uZEa7Q3rfhQ6dhCzjVp0n3RgYZoS96dfHkuIe2OsUi7We
-         xSM/PKvvlYJC2vaVtX6sRH68dG2f8NEdBuK9RrAPvubTIRdAD4lVfsIP14q5wTtNcyRu
-         pvFoW6BMokBvaryBqtvq/C+/7ZRzG7IT5t8zrGn8pFB4QrRly1GWy9CKz3woneDnBt6F
-         ROdsx3tpDzzLKdhYy3/4cWrWXj449ImxAFqugThurzp8FLTM4rOB5bKxHbRG2QKxHuNh
-         X87NSl4rpjqmypNpKwFYqojmMY4FVOxkzMDGjx2kJzJnzQYBI1jYhstF5P9VBQiend+Z
-         iWeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726594692; x=1727199492;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oJR6KsPb+sMwPPa8GP9YpHwKRtIubZIdAh4KhDCN8B0=;
-        b=sjem018yRCEX+Th/cS3RD8MEeW5dTDs2XjMMtZTX4+pZfzoLUne7y9ABZgW7GQfSUZ
-         RVo3l744dBbYZM6Re9FtNhMr9WR06ape9/y+XbHES5jo53+6J2aM0RsNuAJgGwuMskDc
-         og2ix6uhujV53QYYKtDV2g9WM2NaCQE7lh0D0F07WzgQ9/cgkmEaQeLa8yV7gDPXfu2Y
-         vg+HWs8LJzYhL/nFt83UXW2tFBZA58FK9wbkbUAcu2y0YYP20wStj1bw/D5lb1W/W53j
-         DFPXcIRNmJgbyzAntfJX5mlkJi5zLc7gnCkI6ioN+rw1lnEsV/TYb12NJykWQlzLnIlN
-         3M4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUP/lS1HZ9Zkn4aCiFev40BvQ4hFix1ZonKwql52sdVKibi2iftw5QuknzjJ/zmDmbSikItFmraOybQUoHC@vger.kernel.org, AJvYcCX2tF970wh5k5F59c3GZls4rGfesBngOQN3D6ftacnZwkK8ZTt83xOjC12fnJB4ltnZhQn/0TY/fr0BXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz99aXHeMxXJ1sfcxYd/Lom3x0ozqbgrZoAZbadagY0t9qEDSw4
-	OdfKTc2yvtfgHwYlaZWlB6os1bPV1CvST/8IcBFBDbKBhVBCJCrX
-X-Google-Smtp-Source: AGHT+IF3iclvo0qq6Xp+vK+h6Irojon6mIFMlmZ9JKYzrketr6QNBqBYOHtPtHVMW0H6fbpD4mOv2A==
-X-Received: by 2002:adf:f943:0:b0:374:ca1f:e0bb with SMTP id ffacd0b85a97d-378c2d072e9mr10279394f8f.24.1726594692133;
-        Tue, 17 Sep 2024 10:38:12 -0700 (PDT)
-Received: from [192.168.50.7] (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da22e6540sm110919955e9.21.2024.09.17.10.38.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 10:38:11 -0700 (PDT)
-Message-ID: <fc2adaec-adaa-4b96-a558-17a968a10f7c@gmail.com>
-Date: Tue, 17 Sep 2024 19:38:10 +0200
+	 In-Reply-To:Content-Type; b=Is58fo34ivdzc8Ah+7JG5okpHqos6xOaj0hSnIs/5QhghU/LN7q+WAhbgCpNDNxkirMZWO+W95Y+lKveEmoiXot1+WX1x3UUu+YNxv3qd6tLZD7tRXA7k9agGJoDnw95A9dNFN6OQI27sxKelVB2a5pjzTe7BXqLj8r8vQGpxDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPAT2ZBc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93371C4CEC5;
+	Tue, 17 Sep 2024 17:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726594854;
+	bh=CfyC31sh4NSND8jyoQX6OKo7Of16jGTsc/7R0TCHy14=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gPAT2ZBcYkkmfij4hHj6TqXn87KujkWns8I1H5A90IiyVWgQCy08tmzrGTjEMlYWU
+	 26nEMVuEDNT7T1wyp3ksvQhxHRuR2SnrXDyFBFFGMpcpnXPk/zZ+8fKbU8+JxyKxd+
+	 blzIQhfpehzA1xVdD8N+GAMGG8UEogQiakNY5xQh8XSsRk67uvm0+eXKrNwcovZbZU
+	 eTKkF0+8Y9ELuxy/0paY4pRi0UXgStru5A5wdVjYbhbVVRcVTOY1OoS2VbirvEtmMX
+	 A6vzre362IqIlhLOicebbv7IWK6DmxGR+ekn/DBOwpUGCzyyTRJdU6QO/A/JiAEJWj
+	 TlmA2ApFpVJUw==
+Message-ID: <51888969-5b0f-42de-8bbf-bcb325f642ea@kernel.org>
+Date: Tue, 17 Sep 2024 19:40:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,136 +49,329 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] btrfs: Don't block system suspend during fstrim
-To: dsterba@suse.cz
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240916125707.127118-1-luca.stefani.ge1@gmail.com>
- <20240916125707.127118-3-luca.stefani.ge1@gmail.com>
- <20240917162431.GC2920@twin.jikos.cz>
+Subject: Re: [PATCH 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ NXP S32 Linux Team <s32@nxp.com>, Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+ Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
+ Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
+ <20240911070028.127659-3-ciprianmarian.costea@oss.nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Luca Stefani <luca.stefani.ge1@gmail.com>
-In-Reply-To: <20240917162431.GC2920@twin.jikos.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240911070028.127659-3-ciprianmarian.costea@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 11/09/2024 09:00, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> 
+> Add a RTC driver for NXP S32G2/S32G3 SoCs.
+> 
+> The RTC module is used to enable Suspend to RAM (STR) support
+> on NXP S32G2/S32G3 SoC based boards.
+> RTC tracks clock time during system suspend.
+> 
 
+...
 
-On 17/09/24 18:24, David Sterba wrote:
-> On Mon, Sep 16, 2024 at 02:56:15PM +0200, Luca Stefani wrote:
->> Sometimes the system isn't able to suspend because the task
->> responsible for trimming the device isn't able to finish in
->> time, especially since we have a free extent discarding phase,
->> which can trim a lot of unallocated space, and there is no
->> limits on the trim size (unlike the block group part).
->>
->> Since discard isn't a critical call it can be interrupted
->> at any time, in such cases we stop the trim, report the amount
->> of discarded bytes and return failure.
->>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
->> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
->> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
-> 
-> I went through the cancellation points, some of them don't seem to be
-> necessary, eg. in a big loop when some function is called to do trim
-> (extents, bitmaps) and then again does the signal and freezing check.
-> 
-> Next, some of the functions are called from async discard and errors are
-> not checked: btrfs_trim_block_group_bitmaps() called from
-> btrfs_discard_workfn().
-Both btrfs_trim_block_group_bitmaps and btrfs_trim_block_group_extents 
-ret codes are never checked indeed in btrfs_discard_workfn. I'll fix 
-that up in another CL.
-> 
-> Ther's also check for signals pending in trim_bitmaps() in
-> free-space-cache.c. Given that the space cache code is on the way out we
-> don't necesssarily need to fix it but if the patch gets backported to
-> older kernels it still makes sense.
-Ah I missed this one, will fix it.
-There's a few more instances of fatal_signal_pending but I don't know if 
-they should be translated or not, will focus on the one you mentioned 
-and trim_no_bitmap which seems to do similar checks for fatal signals.
-> 
->> ---
->>   fs/btrfs/extent-tree.c | 23 ++++++++++++++++++++++-
->>   1 file changed, 22 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
->> index 79b9243c9cd6..cef368a30731 100644
->> --- a/fs/btrfs/extent-tree.c
->> +++ b/fs/btrfs/extent-tree.c
->> @@ -16,6 +16,7 @@
->>   #include <linux/percpu_counter.h>
->>   #include <linux/lockdep.h>
->>   #include <linux/crc32c.h>
->> +#include <linux/freezer.h>
->>   #include "ctree.h"
->>   #include "extent-tree.h"
->>   #include "transaction.h"
->> @@ -1235,6 +1236,11 @@ static int remove_extent_backref(struct btrfs_trans_handle *trans,
->>   	return ret;
->>   }
->>   
->> +static bool btrfs_trim_interrupted(void)
->> +{
->> +	return fatal_signal_pending(current) || freezing(current);
->> +}
->> +
->>   static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
->>   			       u64 *discarded_bytes)
->>   {
->> @@ -1316,6 +1322,11 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
->>   		start += bytes_to_discard;
->>   		bytes_left -= bytes_to_discard;
->>   		*discarded_bytes += bytes_to_discard;
->> +
->> +		if (btrfs_trim_interrupted()) {
->> +			ret = -ERESTARTSYS;
->> +			break;
->> +		}
->>   	}
->>   
->>   	return ret;
->> @@ -6470,7 +6481,7 @@ static int btrfs_trim_free_extents(struct btrfs_device *device, u64 *trimmed)
->>   		start += len;
->>   		*trimmed += bytes;
->>   
->> -		if (fatal_signal_pending(current)) {
->> +		if (btrfs_trim_interrupted()) {
->>   			ret = -ERESTARTSYS;
->>   			break;
->>   		}
->> @@ -6519,6 +6530,11 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
->>   
->>   	cache = btrfs_lookup_first_block_group(fs_info, range->start);
->>   	for (; cache; cache = btrfs_next_block_group(cache)) {
->> +		if (btrfs_trim_interrupted()) {
->> +			bg_ret = -ERESTARTSYS;
->> +			break;
->> +		}
->> +
->>   		if (cache->start >= range_end) {
->>   			btrfs_put_block_group(cache);
->>   			break;
->> @@ -6558,6 +6574,11 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
->>   
->>   	mutex_lock(&fs_devices->device_list_mutex);
->>   	list_for_each_entry(device, &fs_devices->devices, dev_list) {
->> +		if (btrfs_trim_interrupted()) {
->> +			dev_ret = -ERESTARTSYS;
-> 
-> This one seems redundant.
-> 
->> +			break;
->> +		}
->> +
->>   		if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))
->>   			continue;
->>   
->> -- 
->> 2.46.0
->>
+> +	priv->div512 = !!div[0];
+> +	priv->div32 = !!div[1];
+> +
+> +	switch (clksel) {
+> +	case S32G_RTC_SOURCE_SIRC:
+> +	case S32G_RTC_SOURCE_FIRC:
+> +		priv->clk_source = clksel;
+> +		break;
+> +	default:
+> +		dev_err(dev, "Unsupported clksel: %d\n", clksel);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rtc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct rtc_priv *priv;
+> +	int ret = 0;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(struct rtc_priv),
+
+sizeof(*)
+
+> +			    GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->rtc_base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(priv->rtc_base)) {
+> +		dev_err(dev, "Failed to map registers\n");
+> +		return PTR_ERR(priv->rtc_base);
+
+return dev_err_probe
+
+> +	}
+> +
+> +	device_init_wakeup(dev, true);
+> +	priv->dev = dev;
+> +
+> +	ret = priv_dts_init(priv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = rtc_init(priv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	platform_set_drvdata(pdev, priv);
+> +	rtc_enable(priv);
+> +
+> +	priv->rdev = devm_rtc_device_register(dev, "s32g_rtc",
+> +					      &rtc_ops, THIS_MODULE);
+> +	if (IS_ERR_OR_NULL(priv->rdev)) {
+> +		dev_err(dev, "Error registering RTC device, err: %ld\n",
+> +			PTR_ERR(priv->rdev));
+> +		ret = PTR_ERR(priv->rdev);
+> +		goto disable_rtc;
+> +	}
+> +
+> +	ret = devm_request_irq(dev, priv->dt_irq_id,
+> +			       rtc_handler, 0, dev_name(dev), pdev);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Request interrupt %d failed, error: %d\n",
+> +			priv->dt_irq_id, ret);
+> +		goto disable_rtc;
+> +	}
+> +
+> +	return 0;
+> +
+> +disable_rtc:
+> +	rtc_disable(priv);
+> +	return ret;
+> +}
+> +
+> +static void rtc_remove(struct platform_device *pdev)
+> +{
+> +	struct rtc_priv *priv = platform_get_drvdata(pdev);
+> +
+> +	rtc_disable(priv);
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static void enable_api_irq(struct device *dev, unsigned int enabled)
+> +{
+> +	struct rtc_priv *priv = dev_get_drvdata(dev);
+> +	u32 api_irq = RTCC_APIEN | RTCC_APIIE;
+> +	u32 rtcc;
+> +
+> +	rtcc = ioread32(priv->rtc_base + RTCC_OFFSET);
+> +	if (enabled)
+> +		rtcc |= api_irq;
+> +	else
+> +		rtcc &= ~api_irq;
+> +	iowrite32(rtcc, priv->rtc_base + RTCC_OFFSET);
+> +}
+> +
+> +static int adjust_dividers(u32 sec, struct rtc_priv *priv)
+> +{
+> +	u64 rtcval_max = U32_MAX;
+> +	u64 rtcval;
+> +
+> +	priv->div32 = 0;
+> +	priv->div512 = 0;
+> +
+> +	rtcval = sec * priv->rtc_hz;
+> +	if (rtcval < rtcval_max)
+> +		return 0;
+> +
+> +	if (rtcval / 32 < rtcval_max) {
+> +		priv->div32 = 1;
+> +		return 0;
+> +	}
+> +
+> +	if (rtcval / 512 < rtcval_max) {
+> +		priv->div512 = 1;
+> +		return 0;
+> +	}
+> +
+> +	if (rtcval / (512 * 32) < rtcval_max) {
+> +		priv->div32 = 1;
+> +		priv->div512 = 1;
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int rtc_suspend(struct device *dev)
+> +{
+> +	struct rtc_priv *init_priv = dev_get_drvdata(dev);
+> +	struct rtc_priv priv;
+> +	long long base_sec;
+> +	int ret = 0;
+> +	u32 rtcval;
+> +	u32 sec;
+> +
+> +	if (!device_may_wakeup(dev))
+> +		return 0;
+> +
+> +	/* Save last known timestamp before we switch clocks and reinit RTC */
+> +	ret = s32g_rtc_read_time(dev, &priv.base.tm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (init_priv->clk_source == S32G_RTC_SOURCE_SIRC)
+> +		return 0;
+> +
+> +	/*
+> +	 * Use a local copy of the RTC control block to
+> +	 * avoid restoring it on resume path.
+> +	 */
+> +	memcpy(&priv, init_priv, sizeof(priv));
+> +
+> +	/* Switch to SIRC */
+> +	priv.clk_source = S32G_RTC_SOURCE_SIRC;
+> +
+> +	ret = get_time_left(dev, init_priv, &sec);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Adjust for the number of seconds we'll be asleep */
+> +	base_sec = rtc_tm_to_time64(&init_priv->base.tm);
+> +	base_sec += sec;
+> +	rtc_time64_to_tm(base_sec, &init_priv->base.tm);
+> +
+> +	rtc_disable(&priv);
+> +
+> +	ret = adjust_dividers(sec, &priv);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to adjust RTC dividers to match a %u seconds delay\n", sec);
+> +		return ret;
+> +	}
+> +
+> +	ret = rtc_init(&priv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = sec_to_rtcval(&priv, sec, &rtcval);
+> +	if (ret) {
+> +		dev_warn(dev, "Alarm is too far in the future\n");
+> +		return ret;
+> +	}
+> +
+> +	s32g_rtc_alarm_irq_enable(dev, 0);
+> +	enable_api_irq(dev, 1);
+> +	iowrite32(rtcval, priv.rtc_base + APIVAL_OFFSET);
+> +	iowrite32(0, priv.rtc_base + RTCVAL_OFFSET);
+> +
+> +	rtc_enable(&priv);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rtc_resume(struct device *dev)
+> +{
+> +	struct rtc_priv *priv = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	if (!device_may_wakeup(dev))
+> +		return 0;
+> +
+> +	/* Disable wake-up interrupts */
+> +	enable_api_irq(dev, 0);
+> +
+> +	/* Reinitialize the driver using the initial settings */
+> +	ret = rtc_init(priv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rtc_enable(priv);
+> +
+> +	/*
+> +	 * Now RTCCNT has just been reset, and is out of sync with priv->base;
+> +	 * reapply the saved time settings
+> +	 */
+> +	return s32g_rtc_set_time(dev, &priv->base.tm);
+> +}
+> +#endif /* CONFIG_PM_SLEEP */
+> +
+> +static const struct of_device_id rtc_dt_ids[] = {
+> +	{.compatible = "nxp,s32g-rtc" },
+> +	{ /* sentinel */ },
+> +};
+> +
+> +static SIMPLE_DEV_PM_OPS(rtc_pm_ops,
+> +			 rtc_suspend, rtc_resume);
+> +
+> +static struct platform_driver rtc_driver = {
+> +	.driver		= {
+> +		.name			= "s32g-rtc",
+> +		.pm				= &rtc_pm_ops,
+> +		.of_match_table = of_match_ptr(rtc_dt_ids),
+
+Drop of_match_ptr, you have here warning.
+
+> +	},
+> +	.probe		= rtc_probe,
+> +	.remove_new	= rtc_remove,
+> +};
+> +module_platform_driver(rtc_driver);
+> +
+> +MODULE_AUTHOR("NXP");
+> +MODULE_DESCRIPTION("NXP RTC driver for S32G2/S32G3");
+> +MODULE_LICENSE("GPL");
+
+Best regards,
+Krzysztof
 
 
