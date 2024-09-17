@@ -1,110 +1,119 @@
-Return-Path: <linux-kernel+bounces-331403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3077397AC6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:51:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD4797AC75
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14EB28C891
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:51:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34AD8B222F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08D91509AB;
-	Tue, 17 Sep 2024 07:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4250A14A4E9;
+	Tue, 17 Sep 2024 07:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b03w+eEB"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="RfYUSAnf"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9F220EB;
-	Tue, 17 Sep 2024 07:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE38F847B;
+	Tue, 17 Sep 2024 07:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726559484; cv=none; b=ZRt7MAjXhHbNnGPjmRsO1ssXtUh2JNigTaIApAkyED77JZIbwb8I/YYAKvOisFwxhdb9htEMr3MrJ4K2oJ1korXYoMYzB8aio2HbL8rMwZ5kfrJpB83GqfEB2jLpsb8PiiRRkmEQdXCvee2QcNbmG49aixEwpN5jDHgiS1Pkb0k=
+	t=1726559671; cv=none; b=sTKSddbCyrgOBjDpvzhtafI0ss5qCSqDVdMipD6QXUbDeLTzGZu97c+lj1YXkGzxWFhc17yM47TgIUPXkigKkzQyCJYleMEvEWtYjh3n2A1rMtvf2eCLQcpHCrGjlGugY/IolH/AL0Gw4d24omUWn3bopHH0qq0iAH7xfzMTkoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726559484; c=relaxed/simple;
-	bh=pjuFRl9WZsOXg0FqWF5gKgVdiqZ8jg1lC79dYya+Fr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PKg3PnY5kQEGM+IKRHxbUFw99mYUlik+111ZVgyXgghqFgjhJXVn8Xz7UdxBlccJ1xp87h5moFH0Mya/CBJ9JUOVZVQDj73xkRww3z2yrudZTf54c1N4C7icWCgl4+M3kedwlqywF9UYMSJZU/AOAdWqx2wCRcz6Hicx07FOLt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b03w+eEB; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20792913262so34165115ad.3;
-        Tue, 17 Sep 2024 00:51:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726559482; x=1727164282; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GrGH2mPIe89MQypJfzhvjQ7gBAj+5lcgtl2++J9A1dc=;
-        b=b03w+eEB1iow081wfwgO+m9xWHrd5vy3vI76EDlNefq/OLbFXoi1mjdrdX5OSc96CG
-         ClXv5Sqffz9MdMLOubHb6BDkFRh9qLWgQLqe3K/tgMfLl/u3Ccv1lJTfL6nyLSbDs4ZF
-         tYD4qduPLIoNxpdDl2owBkYYJDFz5KpibiERBSedOxht1vDhqqhRkzYfiJyPtfe3IBBc
-         WTIYWQhWoDSpv6Str0UFA1M255DvNghxghLcoR9oEKC6lMfS/P7AiCMvQNB3Q5bFFN1z
-         tOMnemJabFXroxVYQggYd9KZTLOXYqT8MuoUa6/upNqm9Oy9n3HPA2/SG06RhccR8ipK
-         rvrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726559482; x=1727164282;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GrGH2mPIe89MQypJfzhvjQ7gBAj+5lcgtl2++J9A1dc=;
-        b=E9YOMNThbSp7U4sLMp5F4UyAHtNjL7Dromt5qwNY2TCkPA2j3PPHfmx7t/Q4qXJKHv
-         CcM7yptvDhugVwTvMUCrt8Xq4cUcZjx4bUJRRJieedLa1nFqR0CVVZ5cnV7mphLiFFzG
-         U9EaqOUKyl1UaPJEZG9vDAH0+i0qRMKZSOj3GuAXlCZw8/Cwpfv8gdGUIwkVROhceqLo
-         TB291R5wcLYE76104aE3NOd/T6d7ReBhcDERGwsdlK9FnJIR0j6qbwHNw3ZAmT2k2hj9
-         45FgtENNrGH3CE+u1xIj7BuneiQ2T9JbWupo3m6R2sSp80VIeuo5uqX1JI+MYVaNUizo
-         slXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbt+7WOLsqjoR6e5JKh6oq3dBijY/WrfI/f0YtyGBzRup6ZUalqq5l7ZoHcmQxBqDbFcB6E0R9F9/nNoOs@vger.kernel.org, AJvYcCXb6bEXS3UdHHGd2M+5tuFAGEVT+HZK8MI4B9VKLYVPc/YzYmU7+XMsgJS1OCGAx9xwVQp3NxbX4dxM@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYpD6czHkoIGwNAY93lkMReGrD9hbFjqIPk22YIs0fl0rrWJ25
-	4V78pHTEsb2hKzQE99BOyHa5S1api+Da6Gl5KOtq4cgio7KJdjRjESTz2TD77JvIog==
-X-Google-Smtp-Source: AGHT+IEeus8aOTYcUECAdvl+30eI4Dv62kNZY04t3pAKwmTROL2awD8q4KVcvuM9V7BGz+mqH4+LeA==
-X-Received: by 2002:a17:902:c94b:b0:207:5665:32b2 with SMTP id d9443c01a7336-20782a69ad1mr210704465ad.40.1726559481985;
-        Tue, 17 Sep 2024 00:51:21 -0700 (PDT)
-Received: from ?IPV6:2601:644:8502:9460:864b:f5ff:fe5c:59a5? ([2601:644:8502:9460:864b:f5ff:fe5c:59a5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d19c0sm46139135ad.146.2024.09.17.00.51.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 00:51:21 -0700 (PDT)
-Message-ID: <7c99becc-c179-4f81-ae50-5fa3bdffe1b4@gmail.com>
-Date: Tue, 17 Sep 2024 00:51:20 -0700
+	s=arc-20240116; t=1726559671; c=relaxed/simple;
+	bh=RyH+uVE9CwEOnk1OEb9c/htXe6YY24cQGkNL/8j3HJg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fIAwZF1BuP4bSQZ0tlTkUdyATQ69Cq/0DRP1MwUZdOMmuQI29aGLPo33FNjG/czdsBSDFDSz1sAL9z9zUZ1Zvivd8qRtORDPJdJsYkydrK2oqSilxoLVD9wIo98qWmMHOIXbWlW47Dy9utzYlpSm0jJjy6rZyCDyXzxfLOs8r1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=RfYUSAnf; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 1862E100002;
+	Tue, 17 Sep 2024 10:54:09 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1726559649; bh=gnnqirEGVQIaeAPSXoxwkTNiA3zJLHnpp4lImQKsAlI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=RfYUSAnfq/2jOhdAIGKG8Rl3PD2rqjkgFFjsePr2LC3F7tqfbqipyMSqH3gUz8rA4
+	 kky2ZdhSaqyEEzPX6M5Uv1xM5BgGtRVuWtTI1Wjj+6w0HvlrqLlghsD9Y5LgJDfkqp
+	 EsXnR2PtCJmHsnVc6yv0sfDz3LGbo/ewjEBsawgmwg3ZEI+mc56yb9Sv8UWZJLYnq5
+	 JQ6rr7KvmTuaoWz/Lb4DYZvndWpTKUThd+pxQUXME9M9rX7mV9VHyQH+pJAV94yFdR
+	 KUy105EP+K7v0g1HD1z3HwI8Tm6UChPo2J/0ozGPDWYSG3heoPH5Ouu5lG33yhgzdM
+	 SIaQj5ByHbxQQ==
+Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Tue, 17 Sep 2024 10:53:26 +0300 (MSK)
+Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 17 Sep
+ 2024 10:53:06 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Maxime Ripard <mripard@kernel.org>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] clk: si5341: Prevent division by zero in si5341_output_clk_determine_rate()
+Date: Tue, 17 Sep 2024 10:52:50 +0300
+Message-ID: <20240917075250.19333-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm: expressatt: fix pm8921_l6 regulator
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240916-sd-card-regulator-v1-1-669533c393d7@gmail.com>
- <edeb1681-7159-4fbd-ba81-6d007fa12f4d@kernel.org>
-Content-Language: en-US
-From: Rudraksha Gupta <guptarud@gmail.com>
-In-Reply-To: <edeb1681-7159-4fbd-ba81-6d007fa12f4d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187786 [Sep 17 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.5
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/09/17 06:34:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/09/17 06:27:00 #26601446
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-> That's odd. Are you sure regulator is provided in SD card node? Is it
-> SDCC1 or SDCC3?
+In si5341_output_clk_determine_rate() division by zero is possible if the
+following conditions are met:
+- rate > (parent_rate / 2);
+- (parent_rate / 2) is not multiple of rate;
+- CLK_SET_RATE_PARENT flag is not set.
 
-I believe it's SDCC3. Unfortunately, I don't think this patch is the 
-solution either anymore. It was working with this patch consistently, 
-but now my phone just hangs on mounting the SD card like before. I've 
-tried a combination of GPT and MSDOS + vfat, ext2, and ext4. I'm not 
-sure what I'm doing wrong cause the SD card consistently works on the 
-downstream Linux kernel :(
+Add zero value check to prevent division by zero.
 
-Sorry for wasting your time
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
+Fixes: 61c34af50c5f ("clk: si5341: Switch to determine_rate")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/clk/clk-si5341.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-Rudraksha
+diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+index 6e8dd7387cfd..d0d68a5bba74 100644
+--- a/drivers/clk/clk-si5341.c
++++ b/drivers/clk/clk-si5341.c
+@@ -855,7 +855,7 @@ static int si5341_output_clk_determine_rate(struct clk_hw *hw,
+ 	} else {
+ 		/* We cannot change our parent's rate, report what we can do */
+ 		r /= rate;
+-		rate = req->best_parent_rate / (r << 1);
++		rate = (r << 1) ? req->best_parent_rate / (r << 1) : 0;
+ 	}
+ 
+ 	req->rate = rate;
+-- 
+2.30.2
 
 
