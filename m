@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-331940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF37B97B336
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:59:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A1D97B339
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E252825BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:59:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0B0CB2865B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102E617DFF3;
-	Tue, 17 Sep 2024 16:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252FE17B4E5;
+	Tue, 17 Sep 2024 17:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KX+sEyNP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfdzwgPG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7321714AA;
-	Tue, 17 Sep 2024 16:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE92C185930;
+	Tue, 17 Sep 2024 17:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726592362; cv=none; b=VhcxG9N4CLnF6MivFRamT6pUcxotEGoQRnKCj9mTm7PwDDtmfFGNvX0d0tIhI+QQhyfRlr0z4U/mJwzAHg4BBr3lCF1iDVCX2Qsv9W6W+m7SdbCQeXUb25m0kJYSR3nzQsirx/2BJ/Grbgt1NneEY4jPxRE7ISscp12/Un1dce0=
+	t=1726592425; cv=none; b=LmC07+xHc7trewhq6yZTlA/Yb7xpD4lsy6aRGpPrA9om3AMdhDMPV4I7Plb58IV1O69BRXswv7gHQ9dLn0+lvOtVoFgsfi8iepDOCBMYGkPu0g5VjN9sJuMVNuJD86/TnMPNG7U4sKA8alHXT25uFB8pp5cDdTa2dM5McXDooqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726592362; c=relaxed/simple;
-	bh=/98qYrWeBJyHvH8rE3nzn1cN5MCwfwv0iVEOVjYPxnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aMJq3C4e1u6FAM7qP/KWTDR1F2nK5lG0geIMCL3hKi+xdC5NXCMoFX3VeVIGujFx7xTH9yS+ipUFvkjou0FOufCBuk1phcA0Wz4rf25mCYl9MG4zrReaUQ8LLf20TFmbLw0caFyH6is/agaTkgzIqLJRFnVJ6vXN28cfmcofTro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KX+sEyNP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85936C4CEC5;
-	Tue, 17 Sep 2024 16:59:17 +0000 (UTC)
+	s=arc-20240116; t=1726592425; c=relaxed/simple;
+	bh=GAURM/YpBS3b+LFfu7l4gm2U3fbk1Pb0IzBDDQmwEQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=of6bvVhMqqk/o64did9eyTL7vNmdE4GXLg36IO/WavEolYd5lht9BgQ0omWuqY+GwvKGLod7ZMYecxJsKzUpGBuXSGNgLV8ooBCd0ZKcoKgx0OsacDV8nIYGKMVWJ7ouIXxRy42LFXgjsPEq/fjPGp2md+wMnC0uskuqF5QqGXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfdzwgPG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF2BC4CEC5;
+	Tue, 17 Sep 2024 17:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726592361;
-	bh=/98qYrWeBJyHvH8rE3nzn1cN5MCwfwv0iVEOVjYPxnk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=KX+sEyNPf5X/ymXGQnTReg6MKKuRb9r4sZiEnTHJO20ukwMwy1H/y+56kO9tSucgj
-	 Gd0b85OzN9i15HHtks8DaL8npZ6RuO08b7Qauq/dp0ej3br1BQuENLXqb2aRZXcF9T
-	 TS/vE4cSxc7LZlRTqoHeoFxSu7M8P0/ld40ceKQ5diN9Z4dRNQ6ija3EhQ8u3Jh7aa
-	 mw3B+bfsPYQGy9M8Eisrrb15A9JJcxVNo2uIjtH5X3Rn67kEMMNMUc9YoOsFMyFHIK
-	 c/yA5JRdBgQi8yUIy24kyVKWTAJ103eZ+/Q6RUvRIs3KcQSv5XJtxOqo8HTHcwabRj
-	 /RNhX4rTjHV1w==
-Message-ID: <cf53cbb5-104b-4f60-8890-98a53c27d176@kernel.org>
-Date: Tue, 17 Sep 2024 18:59:14 +0200
+	s=k20201202; t=1726592424;
+	bh=GAURM/YpBS3b+LFfu7l4gm2U3fbk1Pb0IzBDDQmwEQ8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dfdzwgPG2XXaTFn0dKbJoXVeq0xtyAZbpqyLthVnoFis280XRLn/tUT4CwdTXiFXQ
+	 8nsJxD1v2IH7Gh3Woz7J+4S6NoPXmlK4ijYgCUwJCkDrQiH+S60e1WWdY37stzizHL
+	 wad792dwJ/VJn2pCQG57WR3jy/vK5ckaFPjcWPHbOcvd4WG0as1R7qKnuqjbMAGwnc
+	 s+s1vWcSAVM78Ub5LCmBbESR+q/2rLJVDQZtTSlNa3d7VQVoaVUacaHZkqDW5eNK/K
+	 WzVkXIWr59+F8v7mcXde6+1S9LFmZlGEAyw7KquNvm22CTlY38z7dm1nF5MOtRUDDp
+	 lMbLHMaTFXttg==
+Message-ID: <64ef46b1-7908-4b15-866d-9cabe2e5dc9e@kernel.org>
+Date: Tue, 17 Sep 2024 19:00:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/2] iio: imu: smi240: add bosch smi240 driver
-To: Jianping.Shen@de.bosch.com, jic23@kernel.org, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- dima.fedrau@gmail.com, marcelo.schmitt1@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Christian.Lorenz3@de.bosch.com,
- Ulrike.Frauendorf@de.bosch.com, Kai.Dolde@de.bosch.com
-References: <20240913100011.4618-1-Jianping.Shen@de.bosch.com>
+Subject: Re: [PATCH v4 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
+To: Erez <erezgeva2@gmail.com>
+Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Esben Haabendal <esben@geanix.com>
+References: <20240917094956.437078-1-erezgeva@nwtime.org>
+ <20240917094956.437078-4-erezgeva@nwtime.org>
+ <9c273945-5a70-408e-a9da-a0797aa6d935@kernel.org>
+ <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,80 +108,51 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240913100011.4618-1-Jianping.Shen@de.bosch.com>
+In-Reply-To: <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 13/09/2024 12:00, Jianping.Shen@de.bosch.com wrote:
-> From: Shen Jianping <Jianping.Shen@de.bosch.com>
+On 17/09/2024 12:42, Erez wrote:
+> On Tue, 17 Sept 2024 at 12:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 17/09/2024 11:49, Erez Geva wrote:
+>>> From: Erez Geva <ErezGeva2@gmail.com>
+>>>
+>>> Some flash devices need OTP parameters in device tree.
+>>> As we can not deduce the parameters based on JEDEC ID or SFDP.
+>>>
+>>> Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
+>>> ---
+>>>  .../bindings/mtd/jedec,spi-nor.yaml           | 37 +++++++++++++++++++
+>>>  1 file changed, 37 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>> index 6e3afb42926e..d502b7fab2ce 100644
+>>> --- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>> +++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>> @@ -90,6 +90,43 @@ properties:
+>>>        the SRWD bit while writing the status register. WP# signal hard strapped to GND
+>>>        can be a valid use case.
+>>>
+>>> +  opt_n_regions:
+>>
+>> No underscores, but hyphens.
 > 
-> Add the iio driver for bosch imu smi240. The smi240 is a combined
-> three axis angular rate and three axis acceleration sensor module
-> with a measurement range of +/-300°/s and up to 16g. This driver
-> provides raw data access for each axis through sysfs, and tiggered
-> buffer for continuous sampling. A synchronous acc and gyro sampling
-> can be triggered by setting the capture bit in spi read command.
+> I'll fix this.
 > 
-> dt-bindings: 
-> v1 -> v2
->     - Add more detail in description
->     - Add maintainer
->     - Add vdd and vddio power supply
->     - Use generic node name
->     - Order the properties according to DTS coding style
+>>
+>>> +    type: u32
+>>
+>> It does not look like you tested the bindings, at least after quick
+>> look. Please run `make dt_binding_check` (see
 > 
-> v2 -> v3
->     - Improve description
->     - Improve supply definition
->     - Make supply definition as required
->     - Add supply definition in example
-> 
-> v3 -> v4
->     - No changes
-> 
-> v4 -> v5
->     - No changes
-> 
-> v5 -> v6
->     - Fix checkpatch findings
-> 
-> v6 -> v7
->     - No changes
-> 
-> imu driver:
-> v1 -> v2
->     - Use regmap for register access
->     - Redefine channel for each singel axis
->     - Provide triggered buffer
->     - Fix findings in Kconfig
->     - Remove unimportant functions
-> 
-> v2 -> v3
->     - Use enum für capture mode
->     - Using spi default init value instead manual init 
->     - remove duplicated module declaration
->     - Fix code to avoid warning
-> 
-> v3 -> v4
->     - Use DMA safe buffer
->     - Use channel info instead of custom ABI
->     - Fix other findings
-> 
-> v4 -> v5
->     - Merge the implementation in one simple file
->     - Add channel info for acc/gyro data channel
->     - Fix other findings
+> I run "make dt_binding_check" on kernel 6.6.
 
-?
+Yeah, we are no on kernel 6.6. You can run it also on kernel v4.1 -
+still does not matter.
 
-> 
-> v5 -> v6
->     - Fix checkpatch findings
->     - Fix review findings
-
-? What exactly happened? Your changelog is way too vague.
-
-What happened with our reviews? Why did you get multiple of them?
+Don't develop on ancient code because then you ask us to review same
+broken stuff we already fixed.
 
 Best regards,
 Krzysztof
