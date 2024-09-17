@@ -1,140 +1,127 @@
-Return-Path: <linux-kernel+bounces-331654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F0E97AF9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:19:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E6E97AF9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8003D1C20F7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:19:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7E3D1C2139D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C63166F17;
-	Tue, 17 Sep 2024 11:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA02A1662F6;
+	Tue, 17 Sep 2024 11:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="boFiAMJ9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktMB1LgK"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FF6E57D;
-	Tue, 17 Sep 2024 11:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C766E57D;
+	Tue, 17 Sep 2024 11:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726571957; cv=none; b=o2K+r8xwMxypU+3YlnmbYh6BmO+u2OrEgcAsbAEaOp05tLJbVi2hhvNd50aGOO249m4ro6F9DxiDKY4NvOkOnL8xm+vxwRsi4Kl3iNONvLQsl/Y3N5cMtdyO74puXckeWMs1k7cO3rSpadxyKUltSa/KFnIpU1e/ICGegz0KlbQ=
+	t=1726571972; cv=none; b=YzihL6aJhXIjvxk9J6cNRLHD0jL4Tq9zl1NLUHy4lGyqqa80gcA/DQu6Luy7TM4NNvEr6rA7IHHYZ7HvjB9b52VfqaS9OJue99o4qGxdBm2LSzSGNFeffOmF09OU5kvaQJQNZCoqy2yE2HPCWmGPYEvkzhJvtpDiDaLkw1e4LqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726571957; c=relaxed/simple;
-	bh=9c0r+SK6yFndixT3JCN6TZFvWJo6HS+B9/y/Mhtg7+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qK+k9K77CXalJ0XLLwWk5FsCwp3geSCA76TlvWmdjvLOAjicTrluxwNSAwXp8RCR3n5b1dxEydzJdPyXz6GrEBSpUDE70owDzoffnWuo+xJJ+S0J1hC9XFdG8p15KM5NQV/R8/KPFlayz81YYTwVJWcCw0y7LG4+IqdMwq3ol3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=boFiAMJ9; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726571955; x=1758107955;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9c0r+SK6yFndixT3JCN6TZFvWJo6HS+B9/y/Mhtg7+A=;
-  b=boFiAMJ9fSNzjm6XCA4hVGM0ig+UxQ6gWtlsGy8eQ0TqyEwX3Ke6r71C
-   p2J+eQWNXdMATu5GNIrq6ZX25l3r/wNpmKqpsSuJSM/Yfa98FTqvUZhg6
-   vejhnm2rJc0w4/VUDnOIK/rYBJ34/OYaUBBLfReuHLs3hWMT0x/U92sdk
-   cwcNWB2oYcuf+v41kvDnf+zfrKFP5JCtVnOi8h313hM/VbJKr7qLpMxS7
-   Hfc8Wbj7Q9UXMBxKCcS54Vf1XYPeGlT9tPypVG79X4dyXTCsABl+e45lF
-   lrkn5jpTvg8yx1jGbnDlk9ORoWxO5+yL8eAxzHUXxoezj/o9vUyuyB2CJ
-   A==;
-X-CSE-ConnectionGUID: ZSmWUIqoTEiA6+NZMWYvvg==
-X-CSE-MsgGUID: bfQ3kSy8S4iUA2DfiBOxSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="50833168"
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="50833168"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 04:19:14 -0700
-X-CSE-ConnectionGUID: xNdd4YEhRlS1ILkNUGMgsA==
-X-CSE-MsgGUID: 01TQws4NTHq+/epabNaElw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="73982179"
-Received: from fpallare-mobl3.ger.corp.intel.com (HELO [10.245.245.10]) ([10.245.245.10])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 04:19:10 -0700
-Message-ID: <be3a44a3-7f33-4d6b-8348-ed6b8c3e7b49@intel.com>
-Date: Tue, 17 Sep 2024 04:19:00 -0700
+	s=arc-20240116; t=1726571972; c=relaxed/simple;
+	bh=oDEGe+IbXnjXP8bHyViYlZMJBe3NK2+FwSE2EiOLfyg=;
+	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=uxTIGv4Bca7PKzSgJP0gItKblHq8y1SRAOPwN6AbEXiISqqB/6K4alhZ5UhU70dxmXZV45Ey7F9vExRqRRwo85GsJ/qrWUcPvDlBYxATWyVJQdbSyG758fVQoW+D4N/79pHOfQo43iTo8Em79e/x6LVRmtS7Xe4ihhUv67+Arg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktMB1LgK; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d2b4a5bf1so758874666b.2;
+        Tue, 17 Sep 2024 04:19:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726571969; x=1727176769; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:date:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=tUcm5Im+md7LODP7Hdr/71vG84FUle4ybr5JwMog4Zo=;
+        b=ktMB1LgKf40PhY5vrYIxuhGHZVJKgktj8y3D2Tb36yUwnIDml+QHcRAPeqDrL4bbaD
+         kGu7+WN2Adq/bR6rqvOdPjWi1ziOxxmH2zVddVCuZ4LsRvHNL03jttGcbLETnWyVBcV+
+         W/n112AJ8JYs7floeWJqQr62TIKeblAqSIz8zLyUQpQcBy+iCucZ0p33kTwuBYi5uh9t
+         GkNx7WyGJ2Xdpv91Xw+UgL861PsZ5QBBqcc00D8BkcAjmeJ1vVYhoqprJpr8BbVO/yy5
+         uMLokdt2UrAYEyMirnyxp27bYQRVnD5yY4kEcEtZzafajRovt3iYDyhvHeZFgUfCXMHo
+         fQiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726571969; x=1727176769;
+        h=mime-version:user-agent:content-transfer-encoding:date:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tUcm5Im+md7LODP7Hdr/71vG84FUle4ybr5JwMog4Zo=;
+        b=Ztx07l8gksSy81Ob7y8WDR3qXxJBN6xvRPJf7ECCnYQEg1V7PTu0U1dzNInUZNvHL0
+         LwpiZcqVo+1B8XLevyVdVJ+wHKxYi7cTloyNFmzIIf2qjqqDvVysCwQTD7mq75k5Ddiv
+         PsBZvv59le+P/VeE2xQuks954cJsW/qfNf5QxjRlIbZmuNVdqBdGoIl+H/ymS/sDroz7
+         LwEAwdom5qpi5YAQLMfDDWcW7k97Bbl1GKy2wZZSM41w+cXsiPovSk06FftBdGw1UcQ2
+         wFJVm2ml7ypfi2eZ6Nc/k8CpdmgvqRMn7Igruu6Y5cBPeDGdl7EaE2tJw4r44NOENXI6
+         0bQw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Iapl/CwmC94xb070iorQ31ARZLFRStoNyEA/dv8TEQ3feoYiNzVt+hAdtFkTRRK6/BHYBjDPVhyi@vger.kernel.org, AJvYcCWliimfNbxQqv/vSgM7/9VwcMGttRGnftTEgp7I8lJwRoCp9az7xtUlHbJ0189OJCGGnXGpNLNue1ogrUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvQzM2pALbkPvt/gBLF4Ko3Z3QxwouRbkL9uEnTnQ7BODofqpx
+	/+7Tv189BTGiFg2JuCq7SHddk1CVCWeyEjaoRIOfd4IPhYsdZSwy
+X-Google-Smtp-Source: AGHT+IGRsPna0vulZPvdgVQ9MXw7LBoiLMdkxyJ6FtgzWvDfBBAgk+WpzcsIQvskCOqECufdF+vI4g==
+X-Received: by 2002:a17:907:e687:b0:a8d:2c3e:7ed3 with SMTP id a640c23a62f3a-a90295a6a66mr1785252766b.35.1726571968515;
+        Tue, 17 Sep 2024 04:19:28 -0700 (PDT)
+Received: from [192.168.216.101] (public-gprs228163.centertel.pl. [31.60.38.132])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061116c28sm434275766b.95.2024.09.17.04.19.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 04:19:28 -0700 (PDT)
+Message-ID: <10019b141275f7fa3e2446e207e7a9afaaa98b3d.camel@gmail.com>
+Subject: [PATCH v2] usb: gadget: u_ether: Use __netif_rx() in rx_callback()
+From: Hubert =?UTF-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ferry Toth
+ <ftoth@exalondelft.nl>, Kees Cook <kees@kernel.org>, Justin Stitt
+ <justinstitt@google.com>, Richard Acayan <mailingradian@gmail.com>,
+ "Ricardo B. Marliere" <ricardo@marliere.net>, Hardik Gajjar
+ <hgajjar@de.adit-jv.com>, Jeff Johnson <quic_jjohnson@quicinc.com>, Eric
+ Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Toke
+ =?ISO-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 17 Sep 2024 13:19:25 +0200
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/7] x86/mm: Drop page table entry address output from
- pxd_ERROR()
-To: David Hildenbrand <david@redhat.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
- <20240917073117.1531207-3-anshuman.khandual@arm.com>
- <c4fe25e3-9b03-483f-8322-3a17d1a6644a@redhat.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <c4fe25e3-9b03-483f-8322-3a17d1a6644a@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 9/17/24 03:22, David Hildenbrand wrote:
-> Not a big fan of all these "bad PTE" thingies ...
+netif_rx() now disables bottom halves, which causes the USB gadget to be
+unable to receive frames if the interface is not brought up quickly enough
+after being created by the driver (a bug confirmed on AM3352 SoC).
 
-In general?
+Replacing netif_rx() with __netif_rx() restores the old behavior and fixes
+the bug. This can be done since rx_callback() is called from the interrupt
+context.
 
-Or not a big fan of the fact that every architecture has their own
-(mostly) copied-and-pasted set?
+Fixes: baebdf48c360 ("net: dev: Makes sure netif_rx() can be invoked in any=
+ context.")
+Signed-off-by: Hubert Wi=C5=9Bniewski <hubert.wisniewski.25632@gmail.com>
+---
+v1 -> v2: Added Fixes tag and corrected Signed-off-by tag
+
+ drivers/usb/gadget/function/u_ether.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/fun=
+ction/u_ether.c
+index 4bb0553da658..fd7e483b4a48 100644
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -266,7 +266,7 @@ static void rx_complete(struct usb_ep *ep, struct usb_r=
+equest *req)
+ 			/* no buffer copies needed, unless hardware can't
+ 			 * use skb buffers.
+ 			 */
+-			status =3D netif_rx(skb2);
++			status =3D __netif_rx(skb2);
+ next_frame:
+ 			skb2 =3D skb_dequeue(&dev->rx_frames);
+ 		}
+--=20
+2.30.2
+
+
+
 
