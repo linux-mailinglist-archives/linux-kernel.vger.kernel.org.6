@@ -1,116 +1,137 @@
-Return-Path: <linux-kernel+bounces-332036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C50297B48F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:24:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A8797B498
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41DE6B214FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA80A1F23B3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECB018893F;
-	Tue, 17 Sep 2024 20:24:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A9513777E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 20:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B9C18BB9B;
+	Tue, 17 Sep 2024 20:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DaL7SDCx"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477A313777E;
+	Tue, 17 Sep 2024 20:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726604667; cv=none; b=M5GmhonnJ7NnuxYyHCkcgpNyY5hYRORJ2g9BKtsRCYp7zBioNabdXoIIQoOMr6yxGrY8x+BZXeP7H/gVz6mW6UZa1t2zJE3ES8RI+QMfKmPhYbl7iwxNAksJWKAxiF37QvfS41dqSgHRnoJ19tDF6XwAx/XSPqywm40UThKMGwI=
+	t=1726604700; cv=none; b=eYYSEimfvxAReOoxf8M5z0zXKrf2ekyLRNaV3gENe+rjK3ziZTOfU8rA2+Q7uEhVVi6IF3AyXgPuse9X14h2tV8R8ZUwdTaPN5MrUjgtzIo/wPsX0GER0FUEuJUxmPRy70zz2RKcfyBdtwxk7EEoxvFRLxQsabLljEB0s0VZydo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726604667; c=relaxed/simple;
-	bh=D5h2cUXL7xAUCAGbKP+qqFnHEWwFhB8GoTl3M6z26EI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RL6ckO8rP1u/jcQ7BrG0jB4SshBG4A2yjuQwwFMXEtOMczMbGXgqRmQcIh4pYMBlSArX8JtVWR2jkQqXCY4y+KPrUyZAGANjC2JoGORLzyODANG15jeVT+ecrKf+hzZ2J5rHk1khPz/mCtcoNrjjIq9kl8VEs/cgAUOw8DJLGHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 856ECFEC;
-	Tue, 17 Sep 2024 13:24:53 -0700 (PDT)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D1513F64C;
-	Tue, 17 Sep 2024 13:24:21 -0700 (PDT)
-Message-ID: <64ed0fb8-12ea-4452-9ec2-7ad127b65529@arm.com>
-Date: Tue, 17 Sep 2024 21:24:18 +0100
+	s=arc-20240116; t=1726604700; c=relaxed/simple;
+	bh=IAVkXOQbqNQ+A/paHcRK+K11s9PaWvOcPjw8qgl15js=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H9ijTN4YwlLDBqD2mfyCSncoyHYQr6F++VgXhLdSlXZdYyJcMVl88OEEc0tnxkovqN7KswBnNxXR3rR1Rw5VEPsS6lv6OfBSy/cwfXdeteMCP2E2jIx2eFhTCm2iqnXCnt1z36TXyXnVgy9Bsby3AyXZunOMvngBhwwLinYV+Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DaL7SDCx; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d87a57c06fso940513a91.2;
+        Tue, 17 Sep 2024 13:24:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726604698; x=1727209498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Id4GKCIpjHK3vGXpxt6PC/t1QKXrcVdOg0xAcAolYI=;
+        b=DaL7SDCxemPPtlecDo+Qr8VutvtnZGi6zN1YnbumO7oxvAqZRO9K7LdSNMenfj1puY
+         cwQQsDvPO2cr7GPnocJyHDG8S+0W+6SgE+X4wK5fVGbxtZSlnQxMIlKt1maYVvIISTB9
+         FUVyCFsc4HGn3XCKu6huArC6c+XPCbADV4w50lAIpThiMDZxTGsuBdrFGtcdLa21rOb5
+         mRyZZID1fs8qkoWXHQkGUhH2uy+aUKH/p37WTk7sXoA0l4AS2P8zgncmrfGlMdPIcmov
+         iLTUyuA9CQG88crdfccaiDRPR8NSTfvW/PbXAnE08dlxoJA//nwKhc1STWBT7j7N76pQ
+         2jwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726604698; x=1727209498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Id4GKCIpjHK3vGXpxt6PC/t1QKXrcVdOg0xAcAolYI=;
+        b=Yqmqo2V8ENLSgkCYLDor0fmoHLTD6eJmP0IRsVM7QO2scz6h2HhXnwATVx0jzddBnd
+         U5fB1vfMOFGbHv8ComZQ5Y8eODBQzMoa3Keqh1SiMy2GKOp+JjBrOzGUo1c0AgsMOMLt
+         Gt3FWpKUJtO+5eZ2CIM+w4eTpIfCiyNg6eJw//Xu+G1MxrDrlhbOs7apir+Y7a5LA99w
+         AZZFLM94QwM/RrmchnvDLB7CzS81aFyd3DYJToINGN54tWSrS6mw879LdBJk/PRUxEUM
+         AP38S62+iQEoLCX4YhilQpC9EdGLvY8DTpiYyrrDGfbJC3p9M8MxnCPu2kq2kVMttrpI
+         Og1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVuVy5HsAcDCNtqzKIALLWgNChXaAMyVnLfqzXmenHESVO4IBy5Q6t4+6sgJsAnzvwOQeR8JOSGC7dc7Q==@vger.kernel.org, AJvYcCXOoLD8a1ybjOPBgfvF39u0qqTHhrP35O7So7AwiUZiEuuJyrePOMYezZODFrScmb1STe4PmPm1dfaCb34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOSd3xJpE2mQDCv0UAt8I90+2afdVvapAWa6RJP8Qy4sZ72LJ4
+	oMEn7/y7XW254qqxN8O3jC5pl0j//l7VXq+I+ms9yJkY5uCKEV2IihAPgBsvZfH/Nvggu0c9rmE
+	TF31JUm1l9p7LHGc2WyVooZgS5ck=
+X-Google-Smtp-Source: AGHT+IFCDRUphcZwCSNQ9l93mPk9heYwuLJ5usPzFHJu9Rp4nIPipiFcuyVqWnOWRaFZDJ9/oYI1YejF8NLj/dKwG7s=
+X-Received: by 2002:a17:902:cec6:b0:206:b8b7:883 with SMTP id
+ d9443c01a7336-2076e375379mr119298905ad.1.1726604698482; Tue, 17 Sep 2024
+ 13:24:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
-To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
- linux-kernel@vger.kernel.org
-Cc: qyousef@layalina.io, hongyan.xia2@arm.com
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-5-vincent.guittot@linaro.org>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240830130309.2141697-5-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240916141517.3ef8b349@canb.auug.org.au> <4d69172b-dd12-433c-a030-3d48f2716e0a@math.uni-bielefeld.de>
+In-Reply-To: <4d69172b-dd12-433c-a030-3d48f2716e0a@math.uni-bielefeld.de>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 17 Sep 2024 16:24:46 -0400
+Message-ID: <CADnq5_Mx1b16sbJH2Y_XfD9GiYvuGtwZyxRa_1u151aZbZEyHA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, 
+	"Wentland, Harry" <Harry.Wentland@amd.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@redhat.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, Jerry Zuo <jerry.zuo@amd.com>, 
+	DRI <dri-devel@lists.freedesktop.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Sung Joon Kim <sungjoon.kim@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/30/24 14:03, Vincent Guittot wrote:
-> Keep looking for an energy efficient CPU even when the system is
-> overutilized and use the CPU returned by feec() if it has been able to find
-> one. Otherwise fallback to the default performance and spread mode of the
-> scheduler.
-> A system can become overutilized for a short time when workers of a
-> workqueue wake up for a short background work like vmstat update.
-> Continuing to look for a energy efficient CPU will prevent to break the
-> power packing of tasks.
-> 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  kernel/sched/fair.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 2273eecf6086..e46af2416159 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8505,7 +8505,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
->  		    cpumask_test_cpu(cpu, p->cpus_ptr))
->  			return cpu;
->  
-> -		if (!is_rd_overutilized(this_rq()->rd)) {
-> +		if (sched_energy_enabled()) {
->  			new_cpu = find_energy_efficient_cpu(p, prev_cpu);
->  			if (new_cpu >= 0)
->  				return new_cpu;
++ Harry
 
-Super quick testing on pixel6:
-for i in $(seq 0 6); do /data/local/tmp/hackbench -l 500 -g 100 | grep Time; sleep 60; done                                     
-with patch 5/5 only:
-Time: 19.433
-Time: 19.657
-Time: 19.851
-Time: 19.789
-Time: 19.857
-Time: 20.092
-Time: 19.973
+On Mon, Sep 16, 2024 at 8:58=E2=80=AFAM Tobias Jakobi
+<tjakobi@math.uni-bielefeld.de> wrote:
+>
+> On 9/16/24 06:15, Stephen Rothwell wrote:
+>
+> > Hi all,
+> >
+> > Today's linux-next merge of the drm tree got a conflict in:
+> >
+> >    drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c
+> >
+> > between commit:
+> >
+> >    e835d5144f5e ("drm/amd/display: Avoid race between dcn35_set_drr() a=
+nd dc_state_destruct()")
+> >
+> > from Linus' tree and commit:
+> >
+> >    be7a6a517164 ("drm/amd/display: Check stream pointer is initialized =
+before accessing")
+> >
+> > from the drm tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tre=
+e
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularl=
+y
+> > complex conflicts.
+> >
+> On close inspection it might be worthwhile to take the same precautions
+> that we now take with tg, also with pipe_ctx[i]->stream.
+>
+> @Alex: What do you think?
 
-mainline:
-Time: 18.836
-Time: 18.718
-Time: 18.781
-Time: 19.015
-Time: 19.061
-Time: 18.950
-Time: 19.166
+@Wentland, Harry can stream be NULL here?
 
+Alex
 
-The reason we didn't always have this enabled is the belief that
-this costs us too much performance in scenarios we most need it
-while at best making subpar EAS decisions anyway (in an
-overutilized state).
-I'd be open for questioning that, but why the change of mind?
-And why is this necessary in your series if the EAS selection
-isn't 'final' (until the next sleep) anymore (Patch 5/5)?
+>
+> With best wishes,
+> Tobias
+>
 
