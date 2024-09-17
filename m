@@ -1,131 +1,256 @@
-Return-Path: <linux-kernel+bounces-332079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9090897B523
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:24:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B93597B528
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11C131F233E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:24:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2F21C22E8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86AB1922F9;
-	Tue, 17 Sep 2024 21:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82C51922DA;
+	Tue, 17 Sep 2024 21:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMhqGr/8"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vc7xCuoy"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A4D34CE5;
-	Tue, 17 Sep 2024 21:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E79918893F
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 21:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726608282; cv=none; b=l6Q2+Ve9GbY4mE3baKZvqFnFq/6WZKvZtfI7LhYy7S1DAS6hWdThu8EcO0LFpU3ym6mjYPkJfHHvUlpegixU7UtqEofnBoidynKGjIExQ2pAar0RK3tsK02Xa8peEaGaxK6d6ydTSJCN88QpEHwGv5x/2LT7xnPdXfaYCvwi5xw=
+	t=1726608431; cv=none; b=P8E7jZgLhD+5xcsU4WfF1UouomyetZxXYVyopihbfHbGlAZB3a5DFsZyyywxiCc4ARVt8z3At0qJl5sGa7WH/COFAbdSYJ1a4QIwtVl8oYBmeQgQKEEer8C5pHfoMkPYNmel0EFUJwArzx4u1Tn/JJYK+iG5VRNoQMhj+kHCvas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726608282; c=relaxed/simple;
-	bh=qbzwExx8laMrc91h0RhCesWw10Mfdv3PH8Szj/HZGbo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GOVpII8OOnJDWuGBcFNmefAVJBZVROeRRs0UeoHkH557eHv5ti3PxsbIhDWqMB9Q6YGZ2McSzYJ0HMA0PJLkm/ZcM9SGvjNJxuKWNDNMD+5YmVwx1gsQglgsBDltVnLQsjODJ24Qfh1lCnGAypBNBvapT+hfu5FDR655dh3fGqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMhqGr/8; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5356ab89665so6828064e87.1;
-        Tue, 17 Sep 2024 14:24:40 -0700 (PDT)
+	s=arc-20240116; t=1726608431; c=relaxed/simple;
+	bh=6c9f9GMk0RwJmVnM261XKRTWoq80B+gB/g6JMY3uYy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KSlCk55aP9KzqkgGlXrIpl4c9wVmHJOvIakVupsRlIGwkbJu9XxWUqEuuDRycz+Jfn0wbzGtMMdoD5S00PT8nSWuEq6/fh/7O8LiaHPDMoITw0xr6NoiPSUR+12fqWHm0rxVkLwEbA5GMOvKfih93ey9XStSKxtgpEDguudGif8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vc7xCuoy; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f75aa08a96so64558111fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 14:27:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726608278; x=1727213078; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nELtIw4Zh0M13uRB/wUCoEnw1PUF7WXP5SyljJ7urZo=;
-        b=fMhqGr/8URtOGkTBGhuY0bL1sK/Fsc5wIl8Sp3tDG+CRme96UifQiXUmTp9l6IQXaa
-         WZVKHFNLDEX/4ltoA3TRKO44An1S/lOmZdRG9kAuQ/IgYAnT+DYYlZ076WQxCtLzb046
-         pxB4nfIRNNh4T0qpF0Jtp1V14KtYkYZQXI93UvLOpKRCks3TnblgxTmb4dWBziOMQj+h
-         U8Ty2drXSjisusplIRNvGnOFEgG5TSwEOnwVVGMjUH85Sp1LXkdIWLO3QTohhTB2HxAi
-         OqM2xbxDSnCjj8hDy4CaUnkXw6TpcYQnR7TYfRSXQhIlUKs28x144ji0muN+5Iemn8tp
-         xbxw==
+        d=linaro.org; s=google; t=1726608427; x=1727213227; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tK+eryvZIWB7XUY6xEZS8PhI/lDVITII9hGxNEZ3sN0=;
+        b=Vc7xCuoyqm72XUQEgmzEsSrnaV6Y+0UjosmGGP4scYrV0ad9zZx882+GogUe+Olb9A
+         0ROtun+rRwlW+qYayiKeJRKivFaxn3TUkYf57yomLDALft0bhgCsEAcBolXLrCV9zOg2
+         QqtQVgq05Y2wiMnhOqrviEogJDiXNI/NA8HkjnTZtGcyUoWiUGwfqM3kTfM1/QoWF5Y9
+         dG1S3PibQHNBSwhS2QOoIxmDJ+tfvBPxoG3GocDiEKKuvBOmfe6lKQzfAGXhnmA11NLG
+         ha9XbtEhjZNuMSw++0wGh1NIitV2DeJoA6r/psdwMRvP1296r8ZQKj1fKbXAMU7lJ7Q+
+         gNeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726608278; x=1727213078;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nELtIw4Zh0M13uRB/wUCoEnw1PUF7WXP5SyljJ7urZo=;
-        b=ll2eyim5Q70R0sncHZ5xbJUIpaUWJmZ9zc7IehqJrJmrlH8sLUkDQ9HHt4vJ2AFvQL
-         FN5m/XejGy3KolMcTE9HJDI5fj69wGTlpFgYPWFopSfTOvYgqllpx0BFUyPeTf60yOE0
-         YdKrKlhbU31lmWqDX1GHVjiknKZlbSsB12zK7qDusiCyXM6yHEffpjNzXk6tzOZyxPAo
-         7mJad2zG8LFhfKWqBVvwTlCz6v3OSDMcSjb2CjwU2Rn43m/tMrHWHcfjYF76PeQ31XWz
-         FaxW0l5bpoDWW8OKcie3drRDwziN/ZLiVNbCU8KO6Zt0ytRsBin/57YsSG+l9rO1Yqn4
-         wxIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQRArVLomZ8auQ3+dlOYWtzIpKqGI7a/VLkhA13nU32m9NMifVBtrJz+mSSNfnpIGxm3OzjUkNdWotRyAE@vger.kernel.org, AJvYcCWUR6C/r+ucTHYt0i9WlfwtAo5zS6xzMISfZQAQFxEOJ1/x5FtiIPcb/gAVnCpClmhM7ECsqepK1U+s@vger.kernel.org, AJvYcCXLoDTIMz6WmPG7rDRq49EQWHC4vmpj6MymLtDOX7LaH7AHyeimVPHr2oZgD7vBuKie+e0b3qjyJ/W7/fJXbg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhqCS8bpASN/+GZHx3MuAbCa9qhxBsv/DIyQ3VdemZMQCVvZGC
-	KOq3AsoBaP6ynshAD44lj9JpFhBo2aosa6zpGde90413d0U2GOxeAu5YEQ87dBHkB/GksesxdW7
-	rAP3s0wwyG9dbhM2EmNdx+d52sK4=
-X-Google-Smtp-Source: AGHT+IHpWygKBqdIpti/xTdN/vHJot0ZFGpOZk871PgTIMb/gjAsmuos+l2tbd/Rrtz8eDF8oHlZxhDKZPQxWoo6z4Q=
-X-Received: by 2002:a05:6512:1384:b0:52c:e1cd:39b7 with SMTP id
- 2adb3069b0e04-53678fb1e9fmr10522085e87.5.1726608278095; Tue, 17 Sep 2024
- 14:24:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726608427; x=1727213227;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tK+eryvZIWB7XUY6xEZS8PhI/lDVITII9hGxNEZ3sN0=;
+        b=K6jPxqqhPipZq8r7SQ+F8UbEHHntntFbUElSrxGHhZomMRZL4Eh/OLh7ZoqljNM5aC
+         7PZ/rNMrWexvQkAXq0aX8VGYfBCOYUNbmqxCHD1u6LELmjABB+kd7JzrpgndpqE/vlYg
+         4siF610pdAcxNdutI6Vh8l0ckR1NkI+7aMbMMzo6VJ2V2q1AxT1D9Tqzvv6/D9vzH1ij
+         KNxt9OuybWyPZKiraIt//GeornsA0PL78JsHHHWESFp6TZ4gm/bemL1dA/QVIoNyuszY
+         znYDs6kz3hLbmccCqXXRgE7YfzIyXgOa5CisX4HBLZqnyDop0bwXCa/G/qOlHB4umsrB
+         yAyw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Jo+HT9A4uxi+ixgjNdABuV9LJqcaNDUt426Fp+xX2iDmJzFEfL/N/8X6PvqsKYRBmG9PKawdy2+JDfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7esAaaJUJVdEYFxp7QlJ8aUdL37U/xFO9GKOgUcw0aOZYzUHh
+	IOAGVKcAk3KH8NaUeHLuujjrQufiW9mlRQiCHpcVsLcZf286TTz1TmncPt0UN84=
+X-Google-Smtp-Source: AGHT+IF3NskUcf8RUOcTnIF63jZutapZ5Jeb7rdsU+2KtEQcoz8cIrf/mUhNgh51RCcY1c8ixVHM1Q==
+X-Received: by 2002:a05:6512:118a:b0:52e:e3c3:643f with SMTP id 2adb3069b0e04-53678fb1d3bmr11190040e87.2.1726608427105;
+        Tue, 17 Sep 2024 14:27:07 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870a89d7sm1324239e87.239.2024.09.17.14.27.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 14:27:06 -0700 (PDT)
+Date: Wed, 18 Sep 2024 00:27:03 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sa8775p: Add gpu and gmu nodes
+Message-ID: <udt76i3sl7zekhudqpnvhvhfxchvixwoinz7metuwfrpynl47k@wlpforwv7mcf>
+References: <20240918-a663-gpu-support-v1-0-25fea3f3d64d@quicinc.com>
+ <20240918-a663-gpu-support-v1-3-25fea3f3d64d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2106017.1726559668@warthog.procyon.org.uk> <4bb2eee39bec0972377931aa8f4c280e@manguebit.com>
-In-Reply-To: <4bb2eee39bec0972377931aa8f4c280e@manguebit.com>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 17 Sep 2024 16:24:26 -0500
-Message-ID: <CAH2r5mu3TBeMugfWddNYSpPZiYe8Hhv7DYY52rsMb-Zs8BMv4g@mail.gmail.com>
-Subject: Re: [PATCH] netfs, cifs: Fix mtime/ctime update for mmapped writes
-To: Paulo Alcantara <pc@manguebit.com>
-Cc: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>, 
-	Christian Brauner <brauner@kernel.org>, kernel test robot <oliver.sang@intel.com>, 
-	Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918-a663-gpu-support-v1-3-25fea3f3d64d@quicinc.com>
 
-You can also add "Tested-by: Steve French <stfrench@microsoft.com>"
+On Wed, Sep 18, 2024 at 02:08:43AM GMT, Akhil P Oommen wrote:
+> From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+> 
+> Add gpu and gmu nodes for sa8775p based platforms.
 
-On Tue, Sep 17, 2024 at 1:01=E2=80=AFPM Paulo Alcantara <pc@manguebit.com> =
-wrote:
->
-> David Howells <dhowells@redhat.com> writes:
->
-> > The cifs flag CIFS_INO_MODIFIED_ATTR, which indicates that the mtime an=
-d
-> > ctime need to be written back on close, got taken over by netfs as
-> > NETFS_ICTX_MODIFIED_ATTR to avoid the need to call a function pointer t=
-o
-> > set it.
-> >
-> > The flag gets set correctly on buffered writes, but doesn't get set by
-> > netfs_page_mkwrite(), leading to occasional failures in generic/080 and
-> > generic/215.
-> >
-> > Fix this by setting the flag in netfs_page_mkwrite().
-> >
-> > Fixes: 73425800ac94 ("netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs=
-_inode")
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes: https://lore.kernel.org/oe-lkp/202409161629.98887b2-oliver.sang=
-@intel.com
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > cc: Jeff Layton <jlayton@kernel.org>
-> > cc: Steve French <sfrench@samba.org>
-> > cc: Paulo Alcantara <pc@manguebit.com>
-> > cc: linux-cifs@vger.kernel.org
-> > cc: netfs@lists.linux.dev
-> > cc: linux-fsdevel@vger.kernel.org
-> > ---
-> >  fs/netfs/buffered_write.c |    1 +
-> >  1 file changed, 1 insertion(+)
->
-> Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
->
+Which platforms? The commit adds nodes to the SoC and the single RIDE
+platform.
 
+> 
+> Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  8 ++++
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 75 ++++++++++++++++++++++++++++++
+>  2 files changed, 83 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> index 2a6170623ea9..a01e6675c4bb 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> @@ -407,6 +407,14 @@ queue3 {
+>  	};
+>  };
+>  
+> +&gpu {
+> +	status = "okay";
+> +
+> +	zap-shader {
 
---=20
-Thanks,
+It's easier to add gpu_zap_shader_link label in the DTSI file and then
+reference it instead of using the subnode again.
 
-Steve
+> +		firmware-name = "qcom/sa8775p/a663_zap.mbn";
+> +	};
+> +};
+
+Separate patch, please.
+
+> +
+>  &i2c11 {
+>  	clock-frequency = <400000>;
+>  	pinctrl-0 = <&qup_i2c11_default>;
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index 23f1b2e5e624..12c79135a303 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -2824,6 +2824,81 @@ tcsr_mutex: hwlock@1f40000 {
+>  			#hwlock-cells = <1>;
+>  		};
+>  
+> +		gpu: gpu@3d00000 {
+> +			compatible = "qcom,adreno-663.0", "qcom,adreno";
+> +			reg = <0 0x03d00000 0 0x40000>,
+> +			      <0 0x03d9e000 0 0x1000>,
+> +			      <0 0x03d61000 0 0x800>;
+
+I think it's suggested to use 0x0 now
+
+> +			reg-names = "kgsl_3d0_reg_memory",
+> +				    "cx_mem",
+> +				    "cx_dbgc";
+> +			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
+> +			iommus = <&adreno_smmu 0 0xc00>,
+> +				 <&adreno_smmu 1 0xc00>;
+> +			operating-points-v2 = <&gpu_opp_table>;
+> +			qcom,gmu = <&gmu>;
+> +			interconnects = <&gem_noc MASTER_GFX3D 0 &mc_virt SLAVE_EBI1 0>;
+
+QCOM_ICC_TAG_ALWAYS instead of 0
+
+> +			interconnect-names = "gfx-mem";
+> +			#cooling-cells = <2>;
+
+No speed bins?
+
+> +
+> +			status = "disabled";
+> +
+> +			zap-shader {
+
+gpu_zap_shader: zap-shader
+
+> +				memory-region = <&pil_gpu_mem>;
+> +			};
+> +
+> +			gpu_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				opp-405000000 {
+
+Just a single freq?
+
+> +					opp-hz = /bits/ 64 <405000000>;
+> +					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+> +					opp-peak-kBps = <8368000>;
+> +				};
+> +
+
+Drop the empty line, please.
+
+> +			};
+> +		};
+> +
+> +		gmu: gmu@3d6a000 {
+> +			compatible = "qcom,adreno-gmu-663.0", "qcom,adreno-gmu";
+> +			reg = <0 0x03d6a000 0 0x34000>,
+> +				<0 0x3de0000 0 0x10000>,
+> +				<0 0x0b290000 0 0x10000>;
+
+Wrong indentation, please align to the angle bracket.
+Also I think it's suggested to use 0x0 now
+
+> +			reg-names = "gmu", "rscc", "gmu_pdc";
+> +			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
+
+And here
+
+> +			interrupt-names = "hfi", "gmu";
+> +			clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
+> +				 <&gpucc GPU_CC_CXO_CLK>,
+> +				 <&gcc GCC_DDRSS_GPU_AXI_CLK>,
+> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
+> +				 <&gpucc GPU_CC_AHB_CLK>,
+> +				 <&gpucc GPU_CC_HUB_CX_INT_CLK>,
+> +				 <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
+> +			clock-names = "gmu",
+> +				      "cxo",
+> +				      "axi",
+> +				      "memnoc",
+> +				      "ahb",
+> +				      "hub",
+> +				      "smmu_vote";
+> +			power-domains = <&gpucc GPU_CC_CX_GDSC>,
+> +					<&gpucc GPU_CC_GX_GDSC>;
+> +			power-domain-names = "cx",
+> +					     "gx";
+> +			iommus = <&adreno_smmu 5 0xc00>;
+> +			operating-points-v2 = <&gmu_opp_table>;
+> +
+> +			gmu_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				opp-200000000 {
+> +					opp-hz = /bits/ 64 <200000000>;
+> +					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
+> +				};
+> +			};
+> +		};
+> +
+>  		gpucc: clock-controller@3d90000 {
+>  			compatible = "qcom,sa8775p-gpucc";
+>  			reg = <0x0 0x03d90000 0x0 0xa000>;
+> 
+> -- 
+> 2.45.2
+> 
+
+-- 
+With best wishes
+Dmitry
 
