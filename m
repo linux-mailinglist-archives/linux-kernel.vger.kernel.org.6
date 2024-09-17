@@ -1,164 +1,339 @@
-Return-Path: <linux-kernel+bounces-331535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF06397AE10
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:39:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F1297AE20
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EDFDB206AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:38:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACD12825BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81F115CD6E;
-	Tue, 17 Sep 2024 09:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AC3160883;
+	Tue, 17 Sep 2024 09:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="c4cW+c3+";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="W1VQT7rb"
-Received: from smtpout147.security-mail.net (smtpout147.security-mail.net [85.31.212.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vx8DGg8Z"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A70C15C138
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.147
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726565931; cv=fail; b=SmxNc/SMwN3eFKIQsEdS5KpSJToWCBS7Y1xGTjy6+0qOcum80mw2ZZOSk7f96+19M9EySJQ8WxRtvqOMUBr5vMi4C0q5eDXoMkSn7SADJeHNqfdpjsSMZu59/V/hE3Ev4IrTprPrX7H4Py7ceLwLNiwjE6lkbvMdhxvUS72YBYk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726565931; c=relaxed/simple;
-	bh=ADnbOxKEGr+4/HWF13UNe6Dd1ccEcNsSSd9ZwEivtbE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uG61W7zGOdXEKFVSyxYI0HibWHKN5Ptmm7NcKMUcVbXtq0USS4O+OSWCCa881rADwI/RIUL40B/0lgERJSuIZmRyI7BV6BrX2AaoLngAX6CeSxbBczJgTr9mV+UseAGc+t3PdmCu/8mZAnJjEjz2kXRpW98EzF9W0CWVI7w/Kgg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=c4cW+c3+; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=W1VQT7rb reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (fx409.security-mail.net [127.0.0.1])
-	by fx409.security-mail.net (Postfix) with ESMTP id 9D422349D9E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:38:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1726565922;
-	bh=ADnbOxKEGr+4/HWF13UNe6Dd1ccEcNsSSd9ZwEivtbE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=c4cW+c3+f1NOSWaQQgJQca8T+uwZsDBhgztunrGJnTjdPjkEr0zchq1cOfXDkbxH3
-	 5x2fjzmUmJHkGMZdcfUlD9u8QhgcWg7XbP8ZBJoHhge/7XcLR2KN7tkUtQJ5uJWXw4
-	 C+qxDpJ+H0m+uL30/NG7X/TQ2afJSuI9569SuuZo=
-Received: from fx409 (fx409.security-mail.net [127.0.0.1]) by
- fx409.security-mail.net (Postfix) with ESMTP id 5E64D349D97; Tue, 17 Sep
- 2024 11:38:42 +0200 (CEST)
-Received: from PAUP264CU001.outbound.protection.outlook.com
- (mail-francecentralazlp17011027.outbound.protection.outlook.com
- [40.93.76.27]) by fx409.security-mail.net (Postfix) with ESMTPS id
- 5A76D349D79; Tue, 17 Sep 2024 11:38:41 +0200 (CEST)
-Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
- by PARP264MB5468.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:3eb::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.21; Tue, 17 Sep
- 2024 09:38:39 +0000
-Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7962.022; Tue, 17 Sep
- 2024 09:38:38 +0000
-X-Secumail-id: <ff41.66e94e21.58fc8.0>
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NaKsHIntC6hPDFj754G/kBzC0WsTfjkcjDIThLTacWMo5PRTnbe/RzInDEn6DWEXGxylSxkHgPvshf9otEoY2c3B5MFXkVwQK/NQ/rMrmbRqN/8mlD5kX0K8YUpXjRQOpIWeMR9mPnehz5tCQTcYAxaV03IRUpexOYNbf8Z2fxl5Gtt938nl6p3TJRuZIpPuMkOSTdICUR+4SqsvoBtyBiUgEiuSgHc3tuNC05BcblQoXfbPh6JMMdsqIfvR+yS7pAwGSZ8abioLoRuqAGQoVl7C0SbunJ+nc0LL7nY40A85n/0aBy4ThRLNw6tjNskQYsqzGXRfVrExy2bWALSEXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microsoft.com; s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vxu1iA/AqCH7qkC0qgFXr1TPAgZDdJ3HOtv/h04Yz3s=;
- b=xHu/2nPNi7awbw7K7y7rB4Wuh+QJPpxvpIzHP2tsrQ8daaCPIa/NnZjGd5R+ateqUCw0iG+i5t8wzZQqgWktIPPK2a8B4dJwlf1jw5lzrLHzBRHHHrty0+2H+r26megH1k/neUJ4UxoVi5QuaxqLj79ALdekWciCHWilFUPbZlAwX1xAeUUluDJ2WPENM2BycbRM6Q9QuqsowO8lZZPd15IzqqWYqpEwQk55ArVG+e+5dSudgTNWdTgKLVuHrHnl/ZZyG/UzMzoZDFWdM5RVTmNf4kVsrDPH5S3qOyQ5UMQ99CHG0qwbL9jCwlWdn/BPxTAKH3LLWLSTNXo0h/IN1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
- header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vxu1iA/AqCH7qkC0qgFXr1TPAgZDdJ3HOtv/h04Yz3s=;
- b=W1VQT7rb8EAM+tYhM1B7gNMn1tRtXUt7h/XcKwi1dq5e4E5AK0Wc3ePNnowBwbycL2eVMhVvjPlk6Mb+DHIQOl5w5kyaP09a6bzJ/wJvveGXsjWmOfk1/A+6F7PduSW5o9Q96ThoHcbWeQFVK0GjxoCBHGNCQ89h/4tJ/+X+nrFKKgYBUH0TyvshmICfWF1XHKzg1LpKltKG5MIrSg4r6lTvUcwzSh4flNeLEDTQPEs4K4bGXe3gMpcZ0j+8bxfIbVmv5N8udKg9/QjYb/etDs/TV66VS02An5mkMwa5x033PSoac5pxr4VdnC2SDI8oyF7B4bguhc9s9uMk+iIaog==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kalrayinc.com;
-Message-ID: <de6287df-929e-4238-b247-4a3d8b85a5ca@kalrayinc.com>
-Date: Tue, 17 Sep 2024 11:38:35 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 00/63] 6.1.111-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240916114221.021192667@linuxfoundation.org>
-Content-Language: fr
-From: Yann Sionneau <ysionneau@kalrayinc.com>
-In-Reply-To: <20240916114221.021192667@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR04CA0009.eurprd04.prod.outlook.com
- (2603:10a6:208:122::22) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:14b::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB17158210
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726566007; cv=none; b=GCl+fH5VXP1hUUNvDsO23dT+oT2DcqQZfhPVAtvofhKySPMr9+y4kvAA4L5QDc7RZb0LmX3AHKveTSN5B28ovgcuxcjuNmUpmLbdz0rfy16jnC+gY/9DKZzfnZjQXZH8X8s1UkhLneplqHzIMToSmul/FxjxKpavdkL2SuVFZMw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726566007; c=relaxed/simple;
+	bh=HgaR8i31OZOKdgAtsNRbBBn5aIv9PkySv7Q0I+sk7tE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WEcga9U5t9hwEEIhqeSwIW/qh1wcQzYNbatXgCfsOmhfpCNtIA3OStXngVT3khf4wPkAHO/cAR2sBgAdcqQsLfZ1pNKSjUktBx3cuAK/l4mLEgg+2SiWfDICwQqTLJdgdj3gBcLcg9woXcEhLBL5xXR2xiBalJ1MEus4ixpVPak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vx8DGg8Z; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53653ff0251so4696649e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 02:40:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726566002; x=1727170802; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2TdDc/xmkZrPPBH4u3xIlLvgo7tWE4DCUQljDV1YjAk=;
+        b=vx8DGg8Zxj+VI1je52Skh4J1JCMsV0U/1NHJEOVqmlbirJ9CHkyr0lmNM+ureMoUSh
+         Q1Ux8ZNWQohxUXLMRm6TORC42EleO0Grl/zjG+cII/zat5C2VbFp1n3/B4mlFUvZJRp7
+         MR0hpny37HGeVmyec47dqqLEq70gmgiQ2pGFPklEVYktcxm8mFvjxfe/IUI4pCUL/6D5
+         QhCsXc4pEpYbnvrkDAyk8Hp/VRIxQ8Vnj2HmLbVlAAEv15O5NAKroqa9es6LROyGgE32
+         tRJYpPMiUtb+NLD9IKeJND4IpotCIloV/2+PqdT0X7DeZEYl0ZTiw59m/3685H19BRHf
+         nwxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726566002; x=1727170802;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2TdDc/xmkZrPPBH4u3xIlLvgo7tWE4DCUQljDV1YjAk=;
+        b=jJlKnezA/KN0yUoH0UjCGZaGwdGiApvLtG2iw4l0xf03hunr12Qysr2n468dsogFcz
+         A52Zfzg14lDPRFoyHCBZh8f1xgTgGY87uk2yV0kIMonsfoS2waXPLSCcoXO2kz1dRM6k
+         ev/61wIJJWedHXS5fLYsXkgdy5rS7RRsjrEmBJSnULcfmXjXyZvIS+nqldCJImf6G7Yb
+         hX88zgkVRc4x14kNtoBR3AxpXFcvGVXgPjNC/W4naNIpe9plLIJ33P9hjfHPHWG+z8Ti
+         uJ6ZHpFgTaKylDzvY5BmdkJDG8+LnYEuFWZSdcr1CqSy9C3ROoL4yhQQD8iNwOHiNOH2
+         4WzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGmiYVnAmloSPsXB3UoE1/6emJXqIL75K+Z18Gg8Iv2KWqirXInyyp6pz+8cOaC8lYtAmQMFPpSSarhtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB36lHkPZ8MAyVFypD07YSBYsx79u6h5YdE+Ny9gnATvtCCtFF
+	uJtTiS9Zcp4sS43kn2jPQeTb9zUkXHQi95DSuLKJj0L5lJn293TyLcdjfaRV25ygjAL9V/mb435
+	M40bPdQ==
+X-Google-Smtp-Source: AGHT+IH1oWcFaOPsJO/y2THHJ4b9NZbS7sU2H93ZXpNnxZIyw/06jdOgNys4oXb4al1qSWgDE9XEfw==
+X-Received: by 2002:a05:6512:3f06:b0:536:52ed:a23f with SMTP id 2adb3069b0e04-5367fb5b53bmr7933105e87.0.1726566001820;
+        Tue, 17 Sep 2024 02:40:01 -0700 (PDT)
+Received: from brgl-uxlite.pool3009.local ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89d50sm3507188a12.78.2024.09.17.02.40.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 02:40:01 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio updates for v6.12-rc1
+Date: Tue, 17 Sep 2024 11:39:56 +0200
+Message-ID: <20240917093957.6073-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|PARP264MB5468:EE_
-X-MS-Office365-Filtering-Correlation-Id: acab6118-722b-4384-4610-08dcd6fc81f8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info: zHCd1Pcltw43K3oQANPU6XsOnSo41xp/cZFLCB5PNzLrcDLbz8VgTMLJvI4gNl4P3bFT22QI5HzlvgnJBe0lP+R5T6b16vlBZHdHT+o2O9svg7CGrqVwxuPeCbwv0KdeCSaHYoWb3aj2u0bNAFWgp4In/xrfEvdaJV/b/j5xgy/OJVvKajeUHx+SwuXltPV92qf0Lz9Gwr2YmAbYnd5JS1amGE3JdUYb/9WzZcTPLHALpkpYg0otJDk5p0KYp+/9GMNdZktKr7ZpMcc4O0BpzCqv+PAONb1dbrzqunf1B71ycQ3IaVzyUGTgL8erLPjE7m6jjzNKEc7OBBfd06nzB26s9Qsc4RggS8DOfljLLdd8g5Y4YXc9cPdYlHQrli4sV1CQ2G/28coTMIXws409buGEIP6/1yb30KRJ5VZmeOjRztsHMFVI2govFR7RlsHBq//S+jmZTdkgZ06l4TkObknCIWz/NZsJnt4JaGMpfgfMvcCmhm4JgrQyrZiDPLwIsXb4s2VtUVF8Zh5KE6teXjpZ5hHHDkC6Si/EPT6HEfX2Xnk+1KdNLX/bejsuGnT/7hbiDwLiGKl2Zs5hIq9gy84X35VLoqJFS1gj0MjprrxAjBw/yB94AA9r7qfCwGdHXtCt8VtUx5oL20Gq54BoeCSltdg+2f/wO2K5BjXfbznQnjBFw56w5DNRxrOCn382kTPOIu5Jm19Uc0QZbihmIeLvi7lcisSD7qlawhaPsBAS+4mWu7vCgAW1VED70UL+v5edCAdFgaJVFI9L0E+XS75uSBu2zOkgyWBN5EyLErGhqgxiphlupPV1wEBS/pRFP96BpD/fvXCt6z7augasVesaSSj6lVN5kq1IBRzSAOOblwgqFwWrq5nCg2ix9V7Tlqmz8PzggcDEvvU7C4jaHRahWPTVq48NSxbctAMm9cEKD6IpH3uEetE1fZG3RPWU4yq
- yF/lyHtP7BB5LM0dwABpdIRtEnihha+dFE2s3vkX956FIDO8N3VD/qx00hwOHWfoZs5vabMylO06kMSHoTgm+l5uQcWjQYcMCqYzRRrALGOsbplzk9GaiWMc0PJx5LNKoapXz9N1jJwtIjejQWG0y+2XNxJF9ehURnFqs43YxwDT/A02EGATpwxKirQ/xJRbwJFvdwiUeni5QwRVZBZx02OrNrdMalz9QSO6z0L9k3n4R3846wWTyZKtFOmD7nK9jgYdm8Pfdmv38mDDNwpeHQeHvB75NR2sF635lhN0y7vPdb2lqlg6h8io4kpdMi7EFhnaFysBn2VC6ZTu9TTm1Utuz2nlbm/OjH3Xx3bwEogxCx1GxXl4HKwBd5m+nyZtSW6TdjvWKhDhC/LRmQzmziilrAdSRWZh5SGnJYwY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: cy1QSvghXEyDSyMiU59XPGEEMSZF7qGWTp3xmaBaRKIMPQUr0DnNHnpdfhbfRJqB4ejt+WepWd1kKm96WI1WWPdhsxs+PadkcLmlpBnb+oH/mm4dd3HstPycwfpH6V0hiAqq4vjSeQYvX7h2VnQr9oVJ73xVDC8ypILzR2j5gWdFcScsk7ncz+QNy9so0QhT5yncfgksZ6XCDHdAaHG3P2PFcOvdghx/UIsU8JGLkOasFNAS/lG23/Q1Oi5FKjELtlEiQuT5xM+7somvOUZ7pZ/zngjVCma58dAVPt+s/Xs46CbPKypdjNvnPVUHrAhXn4kC+7MyiVu+LdVCY+KY4xxttkjbT15ACmRBeUZIsp34159hNEAZy9Z05g7tgxcozuuek+1a7eErCtwlmQLnrJNOIwv0IGynx/3eSxJoK0+HXFl9kErjuoMXVFLE5HwFs+qB5y0hUguC6OwWDK+8xCt7Ot+/qNIgL05g7Ndrvybgu+lMDBDInrka9E+xsWrvORU4uiHcIP990AwGLpqgVMfpXS0IpotRk62a7aM5FvT9bXwKiHmpUTz77NXQWAadYEZBQkGffL+GyI5ROFHL9bdHQ7wvwB/H6hwlJUNM5vjK8ZM/BKPqTHqo29fugOnKFYB91xFn01BDbTmgJhJK9+lF01ro6cFjmGONYF3xp7UIyVqHzhXVU3gyByRl84NGyOiRf98pp0l4wTpmNAt04t63biAXlgkNGW2iQB/9RzIheuwvJjV16smgMMECRveFcPPjjVW9z4T2XpLTZKcDmpUYvQjyXU2UFHdutHzUSJDDhYBKpi4uQTyeGbUW64S3/ypLYv7Yf0dkUsQjl18bcAJatpXjc/Fpk65gwF+mWfalhiasGr44Oh7NM1DzQjXbcysYjWqMC0a8N1sSXyxkILgCHxsDCdNyeTyaP2q2o+XOV4DxwNMpnSVaQFmNMYY+
- jG4X0Z3az1iM/tlPB8qlcoji+3tPu8kVGGmzfLjBJXjks1gOVyQ+8CZb7DJE1MX0zaht0WsvEbNd85ONWWbEBw9BhMiXDIA5xRJQwLWzXKHDKAy40Yj933WcInP8vfIBI32OimBFcvxBCWz49ZIU2qpG6AEi43p5JR9wSuD3kvXj5VhZQ2EflsPODANZh8qkAe0brIdI5jLudzt/0yyt5qf+ZB+9X/pkALwJm6kZBe6lx8jrLT8TeQOQkAB7A3ggQP+dHWQ51+wXwKIA4KellDNXmOLaWAWc6RbZ6QEMWQxAZlAsoXumzLdm/AxvrWn6DGd5k5YqQNdAF7OJJdsY2xpaHRZM3S2802pxAtM9QGfkkRM9NtjgFlw1c8DzSoSwFdHeKvX8nrXKUWyKqw6LhJ6X+b2O0Yl+ApELl9n3xrksWpijHaUokMHmcjfytBeTZ5omg3fzxJ5A21Wi8XxpS9srGdWClBCnip/D61aO+yDrw+aAf3JF385rxQ+u9l57izy5++4rbAcaxC32+TUBXQI3li/1PED6yCjz9k5gKTDlkvCxiInMyPk/eechBzoA8vIRnKSrav9tIUpduCIWul4AtXB0hWtnX+JkHsuYxYps50eHcc4+yWaPV/h53JHUIyoPKKptkdm6tOwG3ZswWg==
-X-OriginatorOrg: kalrayinc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: acab6118-722b-4384-4610-08dcd6fc81f8
-X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 09:38:38.3827
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UxUX+vNfrKNkqXf1FGx2+SXNjm/o5n/+SedNrcGQ1eWmYrFqE31JrlR6izh8khYfwDSbFYDHZl3Flr2ozUBqZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PARP264MB5468
-X-ALTERMIMEV2_out: done
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Greg,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Le 9/16/24 à 13:43, Greg Kroah-Hartman a écrit :
-> This is the start of the stable review cycle for the 6.1.111 release.
-> There are 63 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.111-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
+Linus,
 
-I tested 6.1.111-rc1 (dc7da8d6f263) on Kalray kvx arch (not upstream yet) and everything looks good!
+Here are the updates from the GPIO tree for the next release. We have one
+new driver, some improvements to core GPIO code, various changes in
+drivers and their DT bindings as well fixes to kerneldocs.
 
-It ran on real hw (k200, k200lp and k300 boards), on qemu and on our internal instruction set simulator (ISS).
+Overall it has been a slow cycle, most likely due to the summertime
+vacation period and the changelog reflects it.
 
-Tests were run on several interfaces/drivers (usb, qsfp ethernet, eMMC, PCIe endpoint+RC, SPI, remoteproc, uart, iommu). LTP and uClibc-ng testsuites are also run without any regression.
+The merge from the MFD tree is there to pull dependencies for the new
+driver.
 
-Everything looks fine to us.
+There is a trivial conflict with the SoC tree (just drop
+arch/arm/mach-ep93xx/vision_ep9307.c).
 
-Tested-by: Yann Sionneau<ysionneau@kalrayinc.com>
+Details are in the signed tag. Please pull.
 
--- Yann
+Bartosz Golaszewski
 
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v6.12-rc1
 
+for you to fetch changes up to 6b5e97c020060c2b8ad286002415106ab7034435:
+
+  gpio: mpc8xxx: switch to using DEFINE_RUNTIME_DEV_PM_OPS() (2024-09-06 08:50:48 +0200)
+
+----------------------------------------------------------------
+gpio updates for v6.12-rc1
+
+Core GPIOLIB:
+- provide and add users for a macro allowing to iterate over accepted
+  GPIO property names of consumer device nodes
+- remove legacy definitions that are no longer used
+- put legacy GPIO devres helpers together with the rest of the deprecated
+  code
+- implement and use swnode_gpio_get_reference(): a wrapper simplifying
+  the underlying calls to fwnode_property_get_reference_args()
+- use IS_ERR_OR_NULL() where it makes sense
+- replace of_find_property() with of_property_present()
+- simplify code with the scoped variant of OF-node children iterator
+
+Documentation:
+- update GPIO kerneldocs with Return sections
+- fix "Excess struct member description" warnings now being triggered
+  with W=1
+
+New drivers:
+- add support for Analog Devices ADP5585
+
+Driver improvements:
+- add support for wake-on-GPIO to gpio-mpc8xxx
+- use GPIO_LOOKUP_IDX() in gpio-virtuser
+- use devm_clk_get_[optional_]enabled() where applicable in several
+  drivers
+- replace OF-specific functions with provider-agnostic alternatives where
+  possible
+- drop support for legacy platform data from gpio-ath79 and gpio-davinci
+- refactor gpio-stmpe
+- improve error reporting in gpio-pca953x
+- add support for reading the direction of pins for some models to
+  gpio-vf610
+
+DT bindings:
+- convert the bindings for nxp,lpc3220 to YAML
+- add gpio-reserved-ranges to gpio-davinci
+- simplify the GPIO hog schema
+- fix a GPIO hog issue in bindings for fcs,fxl6408
+
+Other:
+- fix format specifiers in user-space tools
+- remove leftover files on make clean in tools/gpio/
+
+----------------------------------------------------------------
+Andy Shevchenko (22):
+      gpiolib: Introduce for_each_gpio_property_name() helper
+      gpiolib: swnode: Unify return code variable name
+      gpiolib: swnode: Introduce swnode_gpio_get_reference() helper
+      gpiolib: swnode: Make use of for_each_gpio_property_name()
+      gpiolib: Replace gpio_suffix_count with NULL-terminated array
+      gpio: virtuser: Use GPIO_LOOKUP_IDX() macro
+      gpiolib: legacy: Kill GPIOF_INIT_* definitions
+      gpiolib: legacy: Kill GPIOF_DIR_* definitions
+      gpio: tegra: Replace of_node_to_fwnode() with more suitable API
+      gpio: msc313: Replace of_node_to_fwnode() with more suitable API
+      gpio: uniphier: Replace of_node_to_fwnode() with more suitable API
+      gpio: tegra186: Replace of_node_to_fwnode() with more suitable API
+      gpio: thunderx: Replace of_node_to_fwnode() with more suitable API
+      gpio: visconti: Replace of_node_to_fwnode() with more suitable API
+      gpio: ixp4xx: Replace of_node_to_fwnode() with more suitable API
+      gpiolib: Update the kernel documentation - add Return sections
+      gpiolib: legacy: Consolidate devm_gpio_*() with other legacy APIs
+      gpio: stmpe: Fix IRQ related error messages
+      gpio: stmpe: Remove unused 'dev' member of struct stmpe_gpio
+      gpio: stmpe: Utilise temporary variable for struct device
+      gpio: stmpe: Make use of device properties
+      gpio: stmpe: Sort headers
+
+Animesh Agarwal (1):
+      dt-bindings: gpio: nxp,lpc3220-gpio: Convert to dtschema
+
+Bartosz Golaszewski (9):
+      Merge tag 'ib-mfd-gpio-pwm-v6.12' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd into gpio/for-next
+      gpio: ath79: order headers alphabetically
+      gpio: ath79: add missing header
+      gpio: ath79: use generic device property getters
+      gpio: ath79: remove support for platform data
+      gpio: davinci: drop platform data support
+      gpio: davinci: use devm_clk_get_enabled()
+      gpio: mpc8xxx: order headers alphabetically
+      gpio: mpc8xxx: switch to using DEFINE_RUNTIME_DEV_PM_OPS()
+
+Chen Ni (1):
+      gpio: sama5d2-piobu: convert comma to semicolon
+
+Clark Wang (1):
+      pwm: adp5585: Add Analog Devices ADP5585 support
+
+Dhruva Gole (1):
+      gpio: syscon: fix excess struct member build warning
+
+Fabio Estevam (1):
+      gpio: pca953x: Print the error code on read/write failures
+
+Haibo Chen (4):
+      mfd: adp5585: Add Analog Devices ADP5585 core support
+      gpio: adp5585: Add Analog Devices ADP5585 support
+      gpio: gpio-vf610: use u32 mask to handle 32 number gpios
+      gpio: vf610: add get_direction() support
+
+Hongbo Li (1):
+      gpio: Use IS_ERR_OR_NULL() helper function
+
+Jared McArthur (1):
+      dt-bindings: gpio: gpio-davinci: Add the gpio-reserved-ranges property
+
+Krzysztof Kozlowski (4):
+      gpio: of: simplify with scoped for each OF child loop
+      dt-bindings: gpio: fcs,fxl6408: add missing type to GPIO hogs
+      dt-bindings: gpio: simplify GPIO hog nodes schema
+      gpio: pch: kerneldoc fixes for excess members
+
+Laurent Pinchart (1):
+      dt-bindings: mfd: Add Analog Devices ADP5585
+
+Martyn Welch (1):
+      gpio: mpc8xxx: Add wake on GPIO support
+
+Rob Herring (Arm) (1):
+      gpio: Use of_property_present()
+
+Rong Qianfeng (2):
+      gpio: stp-xway: Simplify using devm_clk_get_enabled()
+      gpio: zynq: Simplify using devm_clk_get_enabled()
+
+Shen Lichuan (1):
+      gpio: stmpe: Simplify with dev_err_probe()
+
+Uwe Kleine-König (1):
+      gpio: Drop explicit initialization of struct i2c_device_id::driver_data to 0
+
+Zhang Zekun (4):
+      gpio: cadence: Use helper function devm_clk_get_enabled()
+      gpio: lpc18xx: Use helper function devm_clk_get_enabled()
+      gpio: mb86s7x: Use helper function devm_clk_get_optional_enabled()
+      gpio: xilinx: Use helper function devm_clk_get_optional_enabled()
+
+Zhu Jun (1):
+      tools: gpio: Fix the wrong format specifier
+
+zhangjiao (1):
+      tools: gpio: rm .*.cmd on make clean
+
+ .../bindings/gpio/fairchild,74hc595.yaml           |  11 -
+ .../devicetree/bindings/gpio/fcs,fxl6408.yaml      |   1 +
+ .../devicetree/bindings/gpio/fsl-imx-gpio.yaml     |  11 -
+ .../devicetree/bindings/gpio/gpio-davinci.yaml     |   2 +
+ .../devicetree/bindings/gpio/gpio-pca95xx.yaml     |  11 -
+ .../devicetree/bindings/gpio/gpio_lpc32xx.txt      |  43 ----
+ .../bindings/gpio/microchip,mpfs-gpio.yaml         |  12 --
+ .../devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml |  50 +++++
+ .../bindings/gpio/socionext,uniphier-gpio.yaml     |  11 -
+ .../devicetree/bindings/mfd/adi,adp5585.yaml       |  92 +++++++++
+ .../devicetree/bindings/trivial-devices.yaml       |   4 -
+ MAINTAINERS                                        |  11 +
+ arch/arm/mach-ep93xx/vision_ep9307.c               |   6 +-
+ arch/mips/bcm63xx/boards/board_bcm963xx.c          |   2 +-
+ drivers/gpio/Kconfig                               |   7 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-adp5585.c                        | 229 +++++++++++++++++++++
+ drivers/gpio/gpio-ath79.c                          |  31 +--
+ drivers/gpio/gpio-cadence.c                        |  23 +--
+ drivers/gpio/gpio-davinci.c                        | 102 +++------
+ drivers/gpio/gpio-fxl6408.c                        |   2 +-
+ drivers/gpio/gpio-ixp4xx.c                         |  10 +-
+ drivers/gpio/gpio-lpc18xx.c                        |  23 +--
+ drivers/gpio/gpio-max7300.c                        |   2 +-
+ drivers/gpio/gpio-mb86s7x.c                        |  21 +-
+ drivers/gpio/gpio-mpc8xxx.c                        |  50 ++++-
+ drivers/gpio/gpio-msc313.c                         |   5 +-
+ drivers/gpio/gpio-pca953x.c                        |   4 +-
+ drivers/gpio/gpio-pch.c                            |   1 -
+ drivers/gpio/gpio-sama5d2-piobu.c                  |  18 +-
+ drivers/gpio/gpio-stmpe.c                          |  55 ++---
+ drivers/gpio/gpio-stp-xway.c                       |  10 +-
+ drivers/gpio/gpio-syscon.c                         |   1 -
+ drivers/gpio/gpio-tegra.c                          |   5 +-
+ drivers/gpio/gpio-tegra186.c                       |   3 +-
+ drivers/gpio/gpio-thunderx.c                       |   5 +-
+ drivers/gpio/gpio-uniphier.c                       |   5 +-
+ drivers/gpio/gpio-vf610.c                          |  31 ++-
+ drivers/gpio/gpio-virtuser.c                       |  13 +-
+ drivers/gpio/gpio-visconti.c                       |   5 +-
+ drivers/gpio/gpio-xilinx.c                         |  11 +-
+ drivers/gpio/gpio-zynq.c                           |  10 +-
+ drivers/gpio/gpiolib-acpi.c                        |  43 ++--
+ drivers/gpio/gpiolib-cdev.c                        |   8 +-
+ drivers/gpio/gpiolib-devres.c                      | 120 ++++-------
+ drivers/gpio/gpiolib-legacy.c                      |  94 ++++++++-
+ drivers/gpio/gpiolib-of.c                          |  92 ++++-----
+ drivers/gpio/gpiolib-swnode.c                      |  62 +++---
+ drivers/gpio/gpiolib-sysfs.c                       |   6 +-
+ drivers/gpio/gpiolib.c                             | 164 +++++++++++----
+ drivers/gpio/gpiolib.h                             |  16 +-
+ drivers/mfd/Kconfig                                |  12 ++
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/adp5585.c                              | 205 ++++++++++++++++++
+ drivers/pwm/Kconfig                                |   7 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/pwm-adp5585.c                          | 184 +++++++++++++++++
+ include/linux/gpio.h                               |  12 +-
+ include/linux/mfd/adp5585.h                        | 126 ++++++++++++
+ include/linux/platform_data/gpio-ath79.h           |  16 --
+ include/linux/platform_data/gpio-davinci.h         |  21 --
+ tools/gpio/Makefile                                |   2 +-
+ tools/gpio/gpio-hammer.c                           |   4 +-
+ 63 files changed, 1503 insertions(+), 643 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+ create mode 100644 drivers/gpio/gpio-adp5585.c
+ create mode 100644 drivers/mfd/adp5585.c
+ create mode 100644 drivers/pwm/pwm-adp5585.c
+ create mode 100644 include/linux/mfd/adp5585.h
+ delete mode 100644 include/linux/platform_data/gpio-ath79.h
+ delete mode 100644 include/linux/platform_data/gpio-davinci.h
 
