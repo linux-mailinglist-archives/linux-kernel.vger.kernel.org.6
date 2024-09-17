@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-331361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D7A97ABD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 152C197ABD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 234531C21957
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:10:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444311C217D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAAF14A4D6;
-	Tue, 17 Sep 2024 07:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8946214A0A0;
+	Tue, 17 Sep 2024 07:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="W1NLbyAo"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pi/MiEDF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C610818C22;
-	Tue, 17 Sep 2024 07:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC74D5C613;
+	Tue, 17 Sep 2024 07:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726556995; cv=none; b=Wd9H5Z5CuGd+/eomZG9HJustRxI5n4p9c+/Td+6Xigab+aJWVDOOwYkulZpexvLe0KwkH3jXQi4CIUR+ssL/3pcw7fPUQYP8YAyryzqSfACo2gqnNbBHkpT0k+YexbzItAl/e4jbBvMf/8E5vLh2WV+VJLT+8P6OryiILxN0EvU=
+	t=1726556905; cv=none; b=tqzgaM4KDVGNJGWQzsam3rikBYO9ZNGo5Cz5umV5y8WcnJ1lXxQRWdtd3puFeJD/xCsHF/l1gmDzDps7xJOUhiMUE+MiRYjme1h2N+5koLO2jb4yhAJ82knImgEqdfbRLC5lHSivsRktp4MQ6e0OMHylhyHRWwm41MfSe0ozonQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726556995; c=relaxed/simple;
-	bh=QP5z3YpQ64vercqehKu18xDUR8Ghf0PcF4X/8nrkZms=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UW3Kfm+nw+3S12LzsGg1h+4k3yg0nW93M4WrlqQ6USJJOS7GNUix4aGywP6AMCjM0hpmvHu1kChKPa9D7ZU2WD3q2O349fxBp5BW6p9PQ2dvsmV8inxcLDX0UlfFIb59HwymC+FpNbOKO4w/Gm8TB2m9hAITpXsT4rST8/aIF20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=W1NLbyAo; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 3D5B8100002;
-	Tue, 17 Sep 2024 10:09:32 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1726556972; bh=2uWqrevBYsQgvajuGiIozG7sst/1v+BZ6EvKtuKwz+8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=W1NLbyAoBZNeoTILFieA4L059ydXzmCxaSYzoFXiH0QVaQNe9o/n4jEi81nvvUb4o
-	 H707PmqEFlJseXu8KsSnnEBvSIfXLnJhCcAJ4LsfYVch75TYSi9eb5k1oJUwQTunbG
-	 pSVM3jTeY0hJr+UXYsaBvoMrOhfJXN5sqcWuqjI5cG32yIlAe909a3sKwsyCR+VQz+
-	 rdz/XhB405NGhV6rtI276RPGeTXyPec0qKjSFq80yEe1WZk7SDPyvexGHxfbe/JUC8
-	 qdmOjns+fmbOgkeQpb+hpQ8Roa4Nfbf5pG5IRvs4EhQMtZKJgYQ+9EMTC4h2t9n4ML
-	 7bV77vJ0bZHEw==
-Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Tue, 17 Sep 2024 10:08:09 +0300 (MSK)
-Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 17 Sep
- 2024 10:07:48 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Shaohua Li <shli@fb.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Jens Axboe <axboe@kernel.dk>,
-	Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>, Johannes
- Thumshirn <johannes.thumshirn@wdc.com>, Chaitanya Kulkarni <kch@nvidia.com>,
-	Zhu Yanjun <yanjun.zhu@linux.dev>, Chengming Zhou
-	<zhouchengming@bytedance.com>, John Garry <john.g.garry@oracle.com>, Yu Kuai
-	<yukuai3@huawei.com>, Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] nullb: Adjust device size calculation in null_alloc_dev()
-Date: Tue, 17 Sep 2024 10:07:29 +0300
-Message-ID: <20240917070729.15752-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1726556905; c=relaxed/simple;
+	bh=ywDWDT7uwRjpjVeQCDAYEXrWBlGwwNQFLzAouXZ5Fp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qqq3wpSkd1q+72ZUdBPPYiFJ7db5Z8W0NLI1czI1cMoFIMA4rRA0yyW1uJ2H8WzHsm9GciW9Z+slIbhwW8z29YGKYdiJyFHoGqJf88tXxuY9d6I621fZ5Ce6FO0U6KxzRLKPxwbStCGnvzk2ZjLn3P/1UHgQ7AitTcLvcJlAXVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pi/MiEDF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF951C4CECE;
+	Tue, 17 Sep 2024 07:08:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726556904;
+	bh=ywDWDT7uwRjpjVeQCDAYEXrWBlGwwNQFLzAouXZ5Fp8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pi/MiEDFtexiTTgZTDadyhzzx9yFK3hhOqM7BfcZlxJ26q/uLRKBok9H9C9qESr3v
+	 H5ajlgnvcMcHZfGn1O/daOMxiV0ixBxf4RuTpR3VB2gtU4YYWxAITapWxgy3SVBZeU
+	 YtAL5EeIutyqNbEyrTL2L7KCwzq4ekoYhjfE1HJM=
+Date: Tue, 17 Sep 2024 09:08:20 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Selvarasu Ganesan <selvarasu.g@samsung.com>,
+	"felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jh0801.jung@samsung.com" <jh0801.jung@samsung.com>,
+	"dh10.jung@samsung.com" <dh10.jung@samsung.com>,
+	"naushad@samsung.com" <naushad@samsung.com>,
+	"akash.m5@samsung.com" <akash.m5@samsung.com>,
+	"rc93.raju@samsung.com" <rc93.raju@samsung.com>,
+	"taehyun.cho@samsung.com" <taehyun.cho@samsung.com>,
+	"hongpooh.kim@samsung.com" <hongpooh.kim@samsung.com>,
+	"eomji.oh@samsung.com" <eomji.oh@samsung.com>,
+	"shijie.cai@samsung.com" <shijie.cai@samsung.com>,
+	stable <stable@kernel.org>
+Subject: Re: [PATCH v2] usb: dwc3: core: Stop processing of pending events if
+ controller is halted
+Message-ID: <2024091758-devotion-clutter-29f6@gregkh>
+References: <CGME20240916224630epcas5p42b355e2884c665e19d3c9c3a5afd428e@epcas5p4.samsung.com>
+ <20240916224543.187-1-selvarasu.g@samsung.com>
+ <20240916230032.ugw23x7gijamrf5x@synopsys.com>
+ <2024091716-snide-mashing-2c21@gregkh>
+ <20240917054703.w47rfo7x4lhzgccn@synopsys.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187786 [Sep 17 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/09/17 06:34:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/09/17 06:27:00 #26601446
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917054703.w47rfo7x4lhzgccn@synopsys.com>
 
-In null_alloc_dev() device size is a subject to overflow because 'g_gb'
-(which is module parameter, may have any value and is not validated
-anywhere) is not cast to a larger data type before performing arithmetic.
+On Tue, Sep 17, 2024 at 05:47:05AM +0000, Thinh Nguyen wrote:
+> On Tue, Sep 17, 2024, gregkh@linuxfoundation.org wrote:
+> > On Mon, Sep 16, 2024 at 11:00:30PM +0000, Thinh Nguyen wrote:
+> > > On Tue, Sep 17, 2024, Selvarasu Ganesan wrote:
+> > > > This commit addresses an issue where events were being processed when
+> > > > the controller was in a halted state. To fix this issue by stop
+> > > > processing the events as the event count was considered stale or
+> > > > invalid when the controller was halted.
+> > > > 
+> > > > Fixes: fc8bb91bc83e ("usb: dwc3: implement runtime PM")
+> > > > Cc: stable <stable@kernel.org>
+> > > 
+> > > Checkpatch doesn't like that format. Fix the Cc stable tag to below:
+> > > 
+> > > Cc: stable@kernel.org
+> > 
+> > What?  Why?  That should be fine, exactly what is the warning that this
+> > gives?  That should be fine, as it's what my scripts put into patches
+> > that I create :)
+> > 
+> 
+> This is what checkpatch complains:
+> 
+> WARNING:BAD_STABLE_ADDRESS_STYLE: Invalid email format for stable: 'stable <stable@kernel.org>', prefer 'stable@kernel.org'
+> #23: 
+> Cc: stable <stable@kernel.org>
+> 
+> total: 0 errors, 1 warnings, 0 checks, 72 lines checked
 
-Cast 'g_gb' to unsigned long to prevent overflow.
+Ugh, that's wrong, whatever you want to do here is fine.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Someone should send a patch for checkpatch...
 
-Fixes: 2984c8684f96 ("nullb: factor disk parameters")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/block/null_blk/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+thanks,
 
-diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index 2f0431e42c49..5edbf9c0aceb 100644
---- a/drivers/block/null_blk/main.c
-+++ b/drivers/block/null_blk/main.c
-@@ -762,7 +762,7 @@ static struct nullb_device *null_alloc_dev(void)
- 		return NULL;
- 	}
- 
--	dev->size = g_gb * 1024;
-+	dev->size = (unsigned long)g_gb * 1024;
- 	dev->completion_nsec = g_completion_nsec;
- 	dev->submit_queues = g_submit_queues;
- 	dev->prev_submit_queues = g_submit_queues;
--- 
-2.30.2
-
+greg k-h
 
