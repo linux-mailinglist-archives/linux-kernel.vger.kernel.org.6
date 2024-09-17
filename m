@@ -1,80 +1,94 @@
-Return-Path: <linux-kernel+bounces-331595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763BB97AEAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:23:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE6897AEB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77981F23793
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:23:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7664B23DF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9A6165EF5;
-	Tue, 17 Sep 2024 10:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524C6165EE2;
+	Tue, 17 Sep 2024 10:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ADeXggRK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qk+IN80N";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VXYMTNr+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qk+IN80N";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VXYMTNr+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D558A15B55D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F41215B14F;
+	Tue, 17 Sep 2024 10:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726568587; cv=none; b=ou1rcUoQc9oUx3wvqT/sSJRsNAyqvSkMy1r6l7fl8JyeuJItwsvnON1ExkkFk6TPgmBpE4y5GHrm+XifvHfZoRGr/8FI8oFAnp9KbaGVfEO624zkPGG699ERAKI3mIwSdPgxHtEMI83J4ZHSe4APWuzO9/uVnk7xmluVMdi74Dw=
+	t=1726568680; cv=none; b=VmEjtuFGqDnGLe/TE4CWdLEaOQHpfhMxEvHsLSPbOFdiuxu9HY3LlbfcLJNvgEyfreFWxcdg4JzJdyJ9ZTdCjkaXkeTZALCsvMPjYGaDjBKSjRTLn4UgfNQuh9iyqt84hZ7/39kWLPizO/WaVbIIis6kUkiPek58jQoCMiKrSto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726568587; c=relaxed/simple;
-	bh=hGi8YXModPaINEUs9neWzaD8fA7G6jKoaUEAHbv6Ne4=;
+	s=arc-20240116; t=1726568680; c=relaxed/simple;
+	bh=eyT1OtP54UlgVcI+m5y0AaA0jFcpYLcpfC+GsNQLgRU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oAO6hEsTrR0OP85bIWFPeyxh+H2HkSqo9R/Y09weOYNW0G3k7kEkOGO7ANhORDxJxj4b2UFi4b5NKNlLUBdN+/CGkwjtb+WrYymoHJHGibaK/+gI3tOJV1rGjqwxS79ce1Lz6D1+Bm1c/wty5fPSguovOrs2Ej+Lk8Gv9l8t3Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ADeXggRK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726568584;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=LjQQZJCxH7K2Bos5/Qw/olCl6Has0I9Nfoq5pH4orwMHx/jLNinjW5R5BrQsvWdqDHm9BtCeF3MN/mqIecafE/btE8DMp5L6KujcEF7UnXlIq/ETBxKebBmHp2ITiGziIJ1gvvJEtRaj78pSuKjb0/OOI4QwGnHHYSjuKP8gtY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qk+IN80N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VXYMTNr+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qk+IN80N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VXYMTNr+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5274C20006;
+	Tue, 17 Sep 2024 10:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726568676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ydd/x8z/rWdB1y1aNRkIvJ800tcht5bmAGltsT132Qk=;
-	b=ADeXggRKgQoFbnmu9QmpqRUDvAaoj9NdH3euG9zVXQG3aaa0YcrQ3jWc3/NoktCqCe+Vlt
-	7fvjJsQxsC7bg3jIRItUsuVbKASSFE1jc71zyMDYuXJWEuCI+y4D9CY80PW1nYq2M2ibBS
-	wF/1P5lF1DHh0jHhqJkSJOL8Bx6G2os=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-279-vhW9U78bO7mS-uZHeZbf8Q-1; Tue, 17 Sep 2024 06:23:02 -0400
-X-MC-Unique: vhW9U78bO7mS-uZHeZbf8Q-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c24cd1e1bdso5903676a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:23:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726568581; x=1727173381;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ydd/x8z/rWdB1y1aNRkIvJ800tcht5bmAGltsT132Qk=;
-        b=uf3aGepint+7v3T211PLTHIRp7+yG5Ee/j0z5kSekQc8CB1ht5udbC1AcVX3OMSc2A
-         xv35GtU6FZndfWVDyNZefyy+coaVyaCPkVwJRP21MSFgMKUGNHyZDnwMAbkMBkfwoyof
-         ERpGKYEIOrn9+nHpXoAV/ZqgI/fG7KgjelNA1AK/hjAIcB1czgzgyjG2nDTXZO0k3Rxv
-         xLdz0wwnZsgyZvw+xDUT2Zt3SDuozEPeAuKvrFUTB8wKecLjBT9xUbHaajZ/484qdzX2
-         HLr31atliFlGlBIvFSJGL+qAox7tU+Reama6d8l3U/8zOgb76F5hHLJ2AYNX4Fc54w5g
-         QROQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBt3aVFUNc9P4Oh4hKGRXqcnmpa3I69TE0X4Bxz+yj9sZm5R2tZlnTmkn+bIRCaW1wBRxL4huh0jrCWM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc5xnHzIrrSExNz9907KZ1cZFOkwymjX9WRDzd8aEm5dHZZomh
-	q2vTfV7ECT++Bo7mxDhHrNQgyc0A5mYvo8vt4ZL56fGiUYmgXyG3gpqYbMXIe7EPOyOKS3eQCTF
-	ugOYFbvk+WqQxbdHv6+ny7Kdptjzv8gq92tXSci/S/KKJJ5jwW3FYpFcyhS/OQA==
-X-Received: by 2002:a05:6402:354a:b0:5c2:439e:d6d6 with SMTP id 4fb4d7f45d1cf-5c413e117ebmr17061213a12.11.1726568581560;
-        Tue, 17 Sep 2024 03:23:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGn7gFPHvRH97LwaZjArKPHMj9F8rHYoTdOrw0TXFOFbnMeRWzKUCJY3AXZKV+B4Vp9xSUVxQ==
-X-Received: by 2002:a05:6402:354a:b0:5c2:439e:d6d6 with SMTP id 4fb4d7f45d1cf-5c413e117ebmr17061190a12.11.1726568581014;
-        Tue, 17 Sep 2024 03:23:01 -0700 (PDT)
-Received: from [192.168.55.136] (tmo-067-108.customers.d1-online.com. [80.187.67.108])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb5fce9sm3504885a12.56.2024.09.17.03.22.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 03:23:00 -0700 (PDT)
-Message-ID: <c4fe25e3-9b03-483f-8322-3a17d1a6644a@redhat.com>
-Date: Tue, 17 Sep 2024 12:22:57 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=SuGWZnD6p9BvXmL4N0uz16mbensRF2aEqhxw/6Os88g=;
+	b=Qk+IN80NjcPI5QJAMLDj4yio/ttB+54eP768tXylVeUCr5JxKeax765lDaRdBbxXksm9sU
+	V/3oVBnNB+LKp7YUhTb5vkt0m/dc24PiqcJ7FjkOSb856+3YFYTGHkkKgG4/RH4G2CxEQ8
+	FA4jOjSBLq3v9fwZtntrR6UbzjjQPR8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726568676;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SuGWZnD6p9BvXmL4N0uz16mbensRF2aEqhxw/6Os88g=;
+	b=VXYMTNr+RcGPMnM1ZA81h1IkQtdcFx01Ht1PQkf+xzrDTit8gjjgDgRS86naZpsBk65KSl
+	jSUvF/oTQpVVXXCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726568676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SuGWZnD6p9BvXmL4N0uz16mbensRF2aEqhxw/6Os88g=;
+	b=Qk+IN80NjcPI5QJAMLDj4yio/ttB+54eP768tXylVeUCr5JxKeax765lDaRdBbxXksm9sU
+	V/3oVBnNB+LKp7YUhTb5vkt0m/dc24PiqcJ7FjkOSb856+3YFYTGHkkKgG4/RH4G2CxEQ8
+	FA4jOjSBLq3v9fwZtntrR6UbzjjQPR8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726568676;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SuGWZnD6p9BvXmL4N0uz16mbensRF2aEqhxw/6Os88g=;
+	b=VXYMTNr+RcGPMnM1ZA81h1IkQtdcFx01Ht1PQkf+xzrDTit8gjjgDgRS86naZpsBk65KSl
+	jSUvF/oTQpVVXXCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 623D713AB6;
+	Tue, 17 Sep 2024 10:24:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kGX0FONY6WafdQAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Tue, 17 Sep 2024 10:24:35 +0000
+Message-ID: <a93c9757-963a-4b4f-a169-0c17ff39576b@suse.de>
+Date: Tue, 17 Sep 2024 13:24:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,95 +96,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/7] x86/mm: Drop page table entry address output from
- pxd_ERROR()
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
- <20240917073117.1531207-3-anshuman.khandual@arm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 -next 05/11] PCI: brcmstb: Restore CRS in RootCtl after
+ prstn_n
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20240910151845.17308-1-svarbanov@suse.de>
+ <20240910151845.17308-6-svarbanov@suse.de>
+ <9de505c5-d9a2-44b7-8db1-0686c61a0fb4@broadcom.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240917073117.1531207-3-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <9de505c5-d9a2-44b7-8db1-0686c61a0fb4@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[dt];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On 17.09.24 09:31, Anshuman Khandual wrote:
-> This drops page table entry address output from all pxd_ERROR() definitions
-> which now matches with other architectures. This also prevents build issues
-> while transitioning into pxdp_get() based page table entry accesses.
+Hi Florian,
+
+On 9/10/24 19:59, Florian Fainelli wrote:
+> On 9/10/24 08:18, Stanimir Varbanov wrote:
+>> RootCtl bits might reset by perst_n during probe, re-enable
+>> CRS SVE here in pcie_start_link.
+>>
+>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
 > 
-> The mentioned build error is caused with changed macros pxd_ERROR() ends up
-> doing &pxdp_get(pxd) which does not make sense and generates "error: lvalue
-> required as unary '&' operand" warning.
-> 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: x86@kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
+> This looks like a bug fix, and we should explain what is the user
+> visible effect of that, if any.
 
-Not a big fan of all these "bad PTE" thingies ...
+It is definitely a bugfix. Otherwise, CRS Software Visibility is
+important feature from pcie1.1. Not enabling it on Root Port could lead
+to infinite configuration retry cycles when enumerate endpoints which
+supports CRS. For more information [1] and [2].
 
-Acked-by: David Hildenbrand <david@redhat.com>
+I spent some time debugging it and found that this is not the proper
+solution.  I think the issue comes from wrongly implemented .add_bus
+pci_ops. Looks like .add_bus op shouldn't call brcm_pcie_start_link()
+but invoke before pci_host_probe(), then the issue will fix by itself.
 
--- 
-Cheers,
+What I observed is that pci_enable_crs() is setting CSR Software
+Visibility Enable bit but the controller is ignoring it without error
+(reading the Root Control register returns zero). This means that the
+controller is not ready to accept configuration write requests at that
+time, that's why I tried the following diff which seems to work:
 
-David / dhildenb
+ static struct pci_ops brcm_pcie_ops = {
+        .map_bus = brcm_pcie_map_bus,
+        .read = pci_generic_config_read,
+        .write = pci_generic_config_write,
+-       .add_bus = brcm_pcie_add_bus,
+-       .remove_bus = brcm_pcie_remove_bus,
+ };
 
+ static struct pci_ops brcm7425_pcie_ops = {
+@@ -1983,6 +2018,9 @@ static int brcm_pcie_probe(struct platform_device
+*pdev)
+
+        platform_set_drvdata(pdev, pcie);
+
++       //TODO: check for error
++       brcm_pcie_start_link(pcie);
++
+        ret = pci_host_probe(bridge);
+        if (!ret && !brcm_pcie_link_up(pcie))
+                ret = -ENODEV;
+
+Of course this change would work on RPi5 because there are no regulators.
+
+I will drop the patch from the series for now and work on a proper solution.
+
+regards,
+~Stan
+
+[1]
+https://patchwork.kernel.org/project/linux-pci/patch/53FFA54D.9000907@gmail.com/
+[2]
+https://blog.linuxplumbersconf.org/2017/ocw/system/presentations/4732/original/crs.pdf
 
