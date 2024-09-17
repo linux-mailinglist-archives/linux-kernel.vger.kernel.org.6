@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-331990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E3497B3BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:41:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A620497B3C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4288A1F24994
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D511F24976
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A29C187FFC;
-	Tue, 17 Sep 2024 17:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA92D186613;
+	Tue, 17 Sep 2024 17:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPAT2ZBc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nOLSqfeU"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6B1174EFA;
-	Tue, 17 Sep 2024 17:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAC3185956
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 17:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726594854; cv=none; b=jnGw/SzOefdeY9vt3UM34wF2PJCJfEAoahaxHcaheO3eu7V0WByDyBF8Zoc3zKUDsQ3C52Y4WPIbZk05NSBnwVS5g598giJBL5wUNvXXILqBiCXqEeWD798DdYTDiI1SR/xTdHMImhVY4Hp6fS6dJus40MGHblT7Q28fgkPf1z8=
+	t=1726594988; cv=none; b=kg8Zdq7AcE6Ks+fxiO1OdbjLBt5iwq+Q0xp0zusZS7YpGxLufwWmmqTuYX2KA9+hGs9fBIX4Vi8rtijG8D6FySewW0ZUlt+au66hsxnLrdcyyvEKT4R/GstanEZICL43rWSXtto2C5Itxlx5oNCrP5FJvJ1CJgZ9l1GsDLxJP6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726594854; c=relaxed/simple;
-	bh=CfyC31sh4NSND8jyoQX6OKo7Of16jGTsc/7R0TCHy14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Is58fo34ivdzc8Ah+7JG5okpHqos6xOaj0hSnIs/5QhghU/LN7q+WAhbgCpNDNxkirMZWO+W95Y+lKveEmoiXot1+WX1x3UUu+YNxv3qd6tLZD7tRXA7k9agGJoDnw95A9dNFN6OQI27sxKelVB2a5pjzTe7BXqLj8r8vQGpxDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPAT2ZBc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93371C4CEC5;
-	Tue, 17 Sep 2024 17:40:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726594854;
-	bh=CfyC31sh4NSND8jyoQX6OKo7Of16jGTsc/7R0TCHy14=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gPAT2ZBcYkkmfij4hHj6TqXn87KujkWns8I1H5A90IiyVWgQCy08tmzrGTjEMlYWU
-	 26nEMVuEDNT7T1wyp3ksvQhxHRuR2SnrXDyFBFFGMpcpnXPk/zZ+8fKbU8+JxyKxd+
-	 blzIQhfpehzA1xVdD8N+GAMGG8UEogQiakNY5xQh8XSsRk67uvm0+eXKrNwcovZbZU
-	 eTKkF0+8Y9ELuxy/0paY4pRi0UXgStru5A5wdVjYbhbVVRcVTOY1OoS2VbirvEtmMX
-	 A6vzre362IqIlhLOicebbv7IWK6DmxGR+ekn/DBOwpUGCzyyTRJdU6QO/A/JiAEJWj
-	 TlmA2ApFpVJUw==
-Message-ID: <51888969-5b0f-42de-8bbf-bcb325f642ea@kernel.org>
-Date: Tue, 17 Sep 2024 19:40:47 +0200
+	s=arc-20240116; t=1726594988; c=relaxed/simple;
+	bh=TpOQe6/Dn8/qqvOC0gefwgldzlMRhxmrUp0J6F1YV2s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=CN34KBCUs3IXGucqv5xxP5T25Cr/3+LPdAUxykpJUGwaDobf/9mB3dJxjHLwXW+PSWVndW4OUeAXlgpnxeowA661Kz1TKalM9ur/jw8kirx1otQdqQftE5fZgUzlwtOxqIRSJBQzU9nmSi2eXebNlVifO41xuqLqfk9Ta5+91tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nOLSqfeU; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726594963; x=1727199763; i=markus.elfring@web.de;
+	bh=pWO2K5IT291YPVVlABU0X2IXqhtsWWaMdnFFVbIS0nQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=nOLSqfeUaAi/83mr3M7ve0VpFC+MafCe5E5429bRzapNrRIOPMPsRzkVLZO1K/H3
+	 2bR5Rda94WOeJvm0+8XiyVygNF0W1PxKTRaEJ285+FjrYCJ8RQysQLmVMst1jsjEY
+	 rrlIlQcoPH//5mTrQUnbT3L1nwPkkCPpY7AQWeqwGgqB68KTh1ahcnGA8gEJHf2bO
+	 a+P6c4m8SfDU2SQOX33RY9Yhs/13em0DGRGxCweNTKT28e5ad/m++RdBQuzVL/gP6
+	 PpXkmDbTCMnw7Bh/3DCETCfedAdQWYrOKZlfbU0LYxwJehAh/h6/kMQNf2TbX7Qxd
+	 R8nCzfd/eOc7ATV5LQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhjm-1sA5bw3xmo-00fzWz; Tue, 17
+ Sep 2024 19:42:43 +0200
+Message-ID: <aa103a36-8cb3-4232-b4b7-3ffd117e303b@web.de>
+Date: Tue, 17 Sep 2024 19:42:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,329 +56,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- NXP S32 Linux Team <s32@nxp.com>, Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
- Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
- Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
- <20240911070028.127659-3-ciprianmarian.costea@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240911070028.127659-3-ciprianmarian.costea@oss.nxp.com>
+Subject: [PATCH 2/2] drm/mediatek: Use common error handling code in
+ mtk_gem_prime_vmap()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, Alexandre Mergnat <amergnat@baylibre.com>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ David Airlie <airlied@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Simona Vetter <simona@ffwll.ch>,
+ Sui Jingfeng <suijingfeng@loongson.cn>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <254d16d9-d56a-4f26-9914-db75e7aa4287@web.de>
+Content-Language: en-GB
+In-Reply-To: <254d16d9-d56a-4f26-9914-db75e7aa4287@web.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ezgH/8fZhFI1IrNh24hqxGOueTJdBwXGIwmeneXLT7XGQmG+3V4
+ z//xu1M6oMbjsPr4NXuaJ03mTgKWia4i1uBGqfgmZ8Q28a3Dkm65V1D+MJmuufEsX0sg4mc
+ tjL9pBs6prJYXwFEZyRK2Ivb8gMtHOle/MHWPYU3IU8mK71vUkSWAZrcmaXiepPEzCL/RXc
+ sfT1Q9i/g1tuB1VN+us7A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:aomhZC9t42M=;tH2TV6U/oikQBx24ke6cbQaKNNk
+ 5aVG/0ORPx83Ltc+EJ6HAwycWg8bWs4jcBpBMqoB48FpOl8kA5105zrzU3FXdzIWxSMS+bGn0
+ GxkRFke8i+DFXmE5ET6OUboflcwOLDHBvC22gFwVizMbvS87dZh9a/drZ6PKQ644DnnncFiTr
+ 71eZ83L0dT7bxdAPQ9c6DhgBp6w+ulfyKeioAmHvAsK2yhoaNvW4crGDETlKaXqxaO7Aco/L7
+ N4IRnZUyDH77qweJ1nWZkU1Ol1cL9X+Yolu3XLex48Z8wdcMXYbVkE4/qgJ24cDJB6QU35Z3N
+ JqBzC1GXbeXzIei4+gUKeopqr2hR0p9dq0IhXOMLzFQ7bEz0VpUoYNt+5bGw8ty0RNrxe89JN
+ tAHl17rzrScENx72+etL1s7YXg4RHBNCOEz2FDuhdIaEOqoE1D7OsusXT0pXObw3q20DVWD/Y
+ A+kP7X8XUnjM1Yi6Tqg/oWPtOf48FnBPwvN+Ee77N5BSgAdPFTZKGUHQwhIiQtBygT4EqwSzp
+ 1gAv+gpTUFzQTb4JJBvp8JUM6BrMSfYKntquoBp6MiHB+WAKN/2Lo4KQmXB2qeQeWqRM6BUp9
+ vxCNMZDdZB2fo3U0v/LCfc36U9kKgmjrW7nX91SAWEjMI1HVLudgGL6a9GJcBAqE1TccDSBI8
+ qe5WM+Vknyw3ru4gxh5d5AJRp+nizJQu8576r16nQkg0Kd28UEFKcdn2OU9X8305s0P/xIXmz
+ gbOpjrW/pd8Tq/1bLxxbHIk/xaoS+w0cQa0CtLHMqk6bj7McA9DExt33JwE/j95JViOIxc2so
+ BrSSOZpqessm8iBfa5zGFMHA==
 
-On 11/09/2024 09:00, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> 
-> Add a RTC driver for NXP S32G2/S32G3 SoCs.
-> 
-> The RTC module is used to enable Suspend to RAM (STR) support
-> on NXP S32G2/S32G3 SoC based boards.
-> RTC tracks clock time during system suspend.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Sep 2024 19:06:23 +0200
 
-...
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-> +	priv->div512 = !!div[0];
-> +	priv->div32 = !!div[1];
-> +
-> +	switch (clksel) {
-> +	case S32G_RTC_SOURCE_SIRC:
-> +	case S32G_RTC_SOURCE_FIRC:
-> +		priv->clk_source = clksel;
-> +		break;
-> +	default:
-> +		dev_err(dev, "Unsupported clksel: %d\n", clksel);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int rtc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rtc_priv *priv;
-> +	int ret = 0;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(struct rtc_priv),
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/mediatek/mtk_gem.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-sizeof(*)
+diff --git a/drivers/gpu/drm/mediatek/mtk_gem.c b/drivers/gpu/drm/mediatek=
+/mtk_gem.c
+index 9c7b7d0a3ffc..5713156efb4e 100644
+=2D-- a/drivers/gpu/drm/mediatek/mtk_gem.c
++++ b/drivers/gpu/drm/mediatek/mtk_gem.c
+@@ -251,8 +251,7 @@ int mtk_gem_prime_vmap(struct drm_gem_object *obj, str=
+uct iosys_map *map)
+ 	mtk_gem->pages =3D kcalloc(npages, sizeof(*mtk_gem->pages), GFP_KERNEL);
+ 	if (!mtk_gem->pages) {
+ 		sg_free_table(sgt);
+-		kfree(sgt);
+-		return -ENOMEM;
++		goto free_sgt;
+ 	}
 
-> +			    GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->rtc_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(priv->rtc_base)) {
-> +		dev_err(dev, "Failed to map registers\n");
-> +		return PTR_ERR(priv->rtc_base);
+ 	drm_prime_sg_to_page_array(sgt, mtk_gem->pages, npages);
+@@ -261,9 +260,8 @@ int mtk_gem_prime_vmap(struct drm_gem_object *obj, str=
+uct iosys_map *map)
+ 			       pgprot_writecombine(PAGE_KERNEL));
+ 	sg_free_table(sgt);
+ 	if (!mtk_gem->kvaddr) {
+-		kfree(sgt);
+ 		kfree(mtk_gem->pages);
+-		return -ENOMEM;
++		goto free_sgt;
+ 	}
 
-return dev_err_probe
+ 	kfree(sgt);
+@@ -272,6 +270,10 @@ int mtk_gem_prime_vmap(struct drm_gem_object *obj, st=
+ruct iosys_map *map)
+ 	iosys_map_set_vaddr(map, mtk_gem->kvaddr);
 
-> +	}
-> +
-> +	device_init_wakeup(dev, true);
-> +	priv->dev = dev;
-> +
-> +	ret = priv_dts_init(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = rtc_init(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	platform_set_drvdata(pdev, priv);
-> +	rtc_enable(priv);
-> +
-> +	priv->rdev = devm_rtc_device_register(dev, "s32g_rtc",
-> +					      &rtc_ops, THIS_MODULE);
-> +	if (IS_ERR_OR_NULL(priv->rdev)) {
-> +		dev_err(dev, "Error registering RTC device, err: %ld\n",
-> +			PTR_ERR(priv->rdev));
-> +		ret = PTR_ERR(priv->rdev);
-> +		goto disable_rtc;
-> +	}
-> +
-> +	ret = devm_request_irq(dev, priv->dt_irq_id,
-> +			       rtc_handler, 0, dev_name(dev), pdev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Request interrupt %d failed, error: %d\n",
-> +			priv->dt_irq_id, ret);
-> +		goto disable_rtc;
-> +	}
-> +
-> +	return 0;
-> +
-> +disable_rtc:
-> +	rtc_disable(priv);
-> +	return ret;
-> +}
-> +
-> +static void rtc_remove(struct platform_device *pdev)
-> +{
-> +	struct rtc_priv *priv = platform_get_drvdata(pdev);
-> +
-> +	rtc_disable(priv);
-> +}
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +static void enable_api_irq(struct device *dev, unsigned int enabled)
-> +{
-> +	struct rtc_priv *priv = dev_get_drvdata(dev);
-> +	u32 api_irq = RTCC_APIEN | RTCC_APIIE;
-> +	u32 rtcc;
-> +
-> +	rtcc = ioread32(priv->rtc_base + RTCC_OFFSET);
-> +	if (enabled)
-> +		rtcc |= api_irq;
-> +	else
-> +		rtcc &= ~api_irq;
-> +	iowrite32(rtcc, priv->rtc_base + RTCC_OFFSET);
-> +}
-> +
-> +static int adjust_dividers(u32 sec, struct rtc_priv *priv)
-> +{
-> +	u64 rtcval_max = U32_MAX;
-> +	u64 rtcval;
-> +
-> +	priv->div32 = 0;
-> +	priv->div512 = 0;
-> +
-> +	rtcval = sec * priv->rtc_hz;
-> +	if (rtcval < rtcval_max)
-> +		return 0;
-> +
-> +	if (rtcval / 32 < rtcval_max) {
-> +		priv->div32 = 1;
-> +		return 0;
-> +	}
-> +
-> +	if (rtcval / 512 < rtcval_max) {
-> +		priv->div512 = 1;
-> +		return 0;
-> +	}
-> +
-> +	if (rtcval / (512 * 32) < rtcval_max) {
-> +		priv->div32 = 1;
-> +		priv->div512 = 1;
-> +		return 0;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int rtc_suspend(struct device *dev)
-> +{
-> +	struct rtc_priv *init_priv = dev_get_drvdata(dev);
-> +	struct rtc_priv priv;
-> +	long long base_sec;
-> +	int ret = 0;
-> +	u32 rtcval;
-> +	u32 sec;
-> +
-> +	if (!device_may_wakeup(dev))
-> +		return 0;
-> +
-> +	/* Save last known timestamp before we switch clocks and reinit RTC */
-> +	ret = s32g_rtc_read_time(dev, &priv.base.tm);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (init_priv->clk_source == S32G_RTC_SOURCE_SIRC)
-> +		return 0;
-> +
-> +	/*
-> +	 * Use a local copy of the RTC control block to
-> +	 * avoid restoring it on resume path.
-> +	 */
-> +	memcpy(&priv, init_priv, sizeof(priv));
-> +
-> +	/* Switch to SIRC */
-> +	priv.clk_source = S32G_RTC_SOURCE_SIRC;
-> +
-> +	ret = get_time_left(dev, init_priv, &sec);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Adjust for the number of seconds we'll be asleep */
-> +	base_sec = rtc_tm_to_time64(&init_priv->base.tm);
-> +	base_sec += sec;
-> +	rtc_time64_to_tm(base_sec, &init_priv->base.tm);
-> +
-> +	rtc_disable(&priv);
-> +
-> +	ret = adjust_dividers(sec, &priv);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to adjust RTC dividers to match a %u seconds delay\n", sec);
-> +		return ret;
-> +	}
-> +
-> +	ret = rtc_init(&priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = sec_to_rtcval(&priv, sec, &rtcval);
-> +	if (ret) {
-> +		dev_warn(dev, "Alarm is too far in the future\n");
-> +		return ret;
-> +	}
-> +
-> +	s32g_rtc_alarm_irq_enable(dev, 0);
-> +	enable_api_irq(dev, 1);
-> +	iowrite32(rtcval, priv.rtc_base + APIVAL_OFFSET);
-> +	iowrite32(0, priv.rtc_base + RTCVAL_OFFSET);
-> +
-> +	rtc_enable(&priv);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rtc_resume(struct device *dev)
-> +{
-> +	struct rtc_priv *priv = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	if (!device_may_wakeup(dev))
-> +		return 0;
-> +
-> +	/* Disable wake-up interrupts */
-> +	enable_api_irq(dev, 0);
-> +
-> +	/* Reinitialize the driver using the initial settings */
-> +	ret = rtc_init(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rtc_enable(priv);
-> +
-> +	/*
-> +	 * Now RTCCNT has just been reset, and is out of sync with priv->base;
-> +	 * reapply the saved time settings
-> +	 */
-> +	return s32g_rtc_set_time(dev, &priv->base.tm);
-> +}
-> +#endif /* CONFIG_PM_SLEEP */
-> +
-> +static const struct of_device_id rtc_dt_ids[] = {
-> +	{.compatible = "nxp,s32g-rtc" },
-> +	{ /* sentinel */ },
-> +};
-> +
-> +static SIMPLE_DEV_PM_OPS(rtc_pm_ops,
-> +			 rtc_suspend, rtc_resume);
-> +
-> +static struct platform_driver rtc_driver = {
-> +	.driver		= {
-> +		.name			= "s32g-rtc",
-> +		.pm				= &rtc_pm_ops,
-> +		.of_match_table = of_match_ptr(rtc_dt_ids),
+ 	return 0;
++
++free_sgt:
++	kfree(sgt);
++	return -ENOMEM;
+ }
 
-Drop of_match_ptr, you have here warning.
-
-> +	},
-> +	.probe		= rtc_probe,
-> +	.remove_new	= rtc_remove,
-> +};
-> +module_platform_driver(rtc_driver);
-> +
-> +MODULE_AUTHOR("NXP");
-> +MODULE_DESCRIPTION("NXP RTC driver for S32G2/S32G3");
-> +MODULE_LICENSE("GPL");
-
-Best regards,
-Krzysztof
+ void mtk_gem_prime_vunmap(struct drm_gem_object *obj, struct iosys_map *m=
+ap)
+=2D-
+2.46.0
 
 
