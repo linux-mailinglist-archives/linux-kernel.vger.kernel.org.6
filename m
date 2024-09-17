@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-331770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E4697B103
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:58:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF92997B10A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49471F24F2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:58:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE68B225B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920ED176AD7;
-	Tue, 17 Sep 2024 13:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84692174EF0;
+	Tue, 17 Sep 2024 14:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R8hfm7Sh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="ngkM901K"
+Received: from mail.rosalinux.ru (mail.rosalinux.ru [195.19.76.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE3127442;
-	Tue, 17 Sep 2024 13:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71C23C08A;
+	Tue, 17 Sep 2024 14:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.19.76.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726581523; cv=none; b=NF73c/EOKy1+m6DPGp0LdQ8bs4ALMDAotqFXYQxCcksoHkz0OJiYtHXPzFBxqdWWjLZpX8HAh480aUZNNHI4sz1JwhTOdwfNTWZ+O2IbZqIOci3Uu7wUgUeywV0zX4+FP40jRNCCcwNpcq16FjBd+aRol/tE+1UflhTtoCVFvWM=
+	t=1726581990; cv=none; b=bSWJysWyosY2WMdb2xKoT1xzJknaYZjSlb7Sf11rcb3qa43tExVH8xDpotzFXBBn7STkyPztG8vf1kSi0s8nmcAPm8ZaK2HzMJWCMszaD9cbGsyrPgYqiupQOeH2LU7o8pUh59iEbJeLMe5cvU+mvSxDARmw88gPC/1T9OW1Cjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726581523; c=relaxed/simple;
-	bh=ZXeO3cCGpQp8km56A8jsnfTWizOI32RKsbTpSpPVZrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZCeeLZ1U50V6MaBgfo98JYEeTz3Tz4BJSgEUqcdMalBD8U6VEW3VZ3BUnfNLioNH66Go3JY750fAvkRuckv0kTZ11h5V+Av4wU2AE0if7IcC1rh0Qrpw5kqXGKJbalu00Ygvj/VTK0g0hLyAJfkDuW+QN7ZfYhxg2vVDcYTCbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R8hfm7Sh; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726581522; x=1758117522;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZXeO3cCGpQp8km56A8jsnfTWizOI32RKsbTpSpPVZrM=;
-  b=R8hfm7Shu6Ljm6DAPZ1w28kyBuHWeDcMac43GudnbDDH6u8GOA+WUgT1
-   +gnf3UWTq0oEfAKob4AHtLCM879fbiydvALkEzgf5c6uRtXSEQ5CRxQQg
-   8HXEZkDi0iJ8RkeT5NWQH03x1UmhXqROkTbAWUYPydTSqmZvG0fvPpFou
-   kJqYgkbYZs//2gvWD+dh/WVwb/hnerLDsnxCRWXYlH0uTGl8ujZwyp6tE
-   F4lV3IbM/aemYSuYc9kJJPtOnGQyzDmha7YzKR4teDa26sus2kp7HUP+b
-   dVh6XmgKvmKWSunHnYZqI7UGDBAxan/lYGQqF4FapinpPL6R/MAUdIcN2
-   Q==;
-X-CSE-ConnectionGUID: oORtztbiTcy7u2kxEzWo4g==
-X-CSE-MsgGUID: 8/HOxCK/RPuYxAyW4chHNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25538897"
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="25538897"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 06:58:41 -0700
-X-CSE-ConnectionGUID: DrsjfDWiQXS1CygqQkRpgQ==
-X-CSE-MsgGUID: +42bj6NxTM6E86iNmlIkXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="100036764"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 06:58:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sqYix-00000009q6z-1l1f;
-	Tue, 17 Sep 2024 16:58:35 +0300
-Date: Tue, 17 Sep 2024 16:58:35 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Sunil V L <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Greg KH <gregkh@linuxfoundation.org>, jirislaby@kernel.org,
-	andrei.warkentin@intel.com, apatel@ventanamicro.com,
-	ajones@ventanamicro.com, dfustini@tenstorrent.com
-Subject: Re: [PATCH] serial: 8250_platform: Enable generic 16550A platform
- devices
-Message-ID: <ZumLC9I1Jf82Y8T-@smile.fi.intel.com>
-References: <20240730051218.767580-1-sunilvl@ventanamicro.com>
- <mhng-d52ac6ff-2221-4613-9fce-f73467495389@palmer-ri-x1c9>
+	s=arc-20240116; t=1726581990; c=relaxed/simple;
+	bh=O8TFnEzzQuQka4uM9JJmV5K6N/xJ6xskvb4dgy98N24=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dZjvhwMjYXftEv01DoJVZ2DfItw+KARV5xjv5VGz5GMHMUVi8fmEGYKrgHGT66HDvBtSShEkn1ux0McBl5R5TpWkJG9Ug5wzRFXF6jHA177OeIyT4r7RbzNPI6AIPmLjpfv6MNMYk3QsRuJGS43FeYXHn+tm7iZSkpDQUF5+OCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru; spf=pass smtp.mailfrom=rosalinux.ru; dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b=ngkM901K; arc=none smtp.client-ip=195.19.76.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosalinux.ru
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rosalinux.ru (Postfix) with ESMTP id 1CA15DFC0E87E;
+	Tue, 17 Sep 2024 17:06:18 +0300 (MSK)
+Received: from mail.rosalinux.ru ([127.0.0.1])
+	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id N1XX7aZF9tt3; Tue, 17 Sep 2024 17:06:18 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rosalinux.ru (Postfix) with ESMTP id E2606DFC0E884;
+	Tue, 17 Sep 2024 17:06:17 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru E2606DFC0E884
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
+	s=1D4BB666-A0F1-11EB-A1A2-F53579C7F503; t=1726581977;
+	bh=ZnDp0kuwty6ZYaaIo7tuaeh++IuabuL6NxK44pY/klQ=;
+	h=From:To:Date:Message-Id:MIME-Version;
+	b=ngkM901K2TKUDaPb/wJmr8+7GOnECevGJqc6o8jWHtTiJiYZBU71zMIRpmy0v+FkG
+	 VDt9pWrlAyIHp2eZbyH0kHok0iTll3qhiwxZh1pHqlIJcrvncFnIEIm/X38i2ppX3f
+	 ETYr1+1jg0xOdbizNuOjjpg8E6cGWgsYViAKFHvGSpcXuJm4YgU3PfCGiate3GXeeY
+	 UYVFlOpxQBd1Z5OSCRpkEU7Orm3jmp4rWtNbiNXe0wUag/a8ap16WoDvGQvNJaZGSd
+	 /mip9VWnyq8iMj+dF6o5ppN0Jmex4l7/4gysKH6eKQg8tFqiXBYRsAJJB692IEQpSe
+	 T6zVa0wvBXYMQ==
+X-Virus-Scanned: amavisd-new at rosalinux.ru
+Received: from mail.rosalinux.ru ([127.0.0.1])
+	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ggBFHbrd65yx; Tue, 17 Sep 2024 17:06:17 +0300 (MSK)
+Received: from ubuntu.localdomain (unknown [144.206.93.23])
+	by mail.rosalinux.ru (Postfix) with ESMTPSA id A44EBDFC0E87E;
+	Tue, 17 Sep 2024 17:06:17 +0300 (MSK)
+From: Aleksandr Burakov <a.burakov@rosalinux.ru>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Aleksandr Burakov <a.burakov@rosalinux.ru>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	lvc-patches@linuxtesting.org
+Subject: [PATCH] V4L/DVB (13661): rj54n1cb0c: possible integer overflow fix
+Date: Tue, 17 Sep 2024 17:04:54 +0300
+Message-Id: <20240917140454.7880-1-a.burakov@rosalinux.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-d52ac6ff-2221-4613-9fce-f73467495389@palmer-ri-x1c9>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 17, 2024 at 06:10:25AM -0700, Palmer Dabbelt wrote:
-> On Mon, 29 Jul 2024 22:12:18 PDT (-0700), Sunil V L wrote:
-> > Currently, 8250_platform driver is used only for devices with fixed
-> > serial ports (plat_serial8250_port). Extend this driver for any generic
-> > 16550A platform devices which can be probed using standard hardware
-> > discovery mechanisms like ACPI.
-> >
-> > This is required in particular for RISC-V which has non-PNP generic
-> > 16550A compatible UART that needs to be enumerated as ACPI platform
-> > device.
+An integer overflow may occur due to arithmetic operation
+(multiplication) between value '314572800' and variable 'resize',
+where the value comes from '12 * RJ54N1_MAX_WIDTH * (1 << 14)'=20
+and when 'resize' is equal to 16319.
 
-> It seems a bit awkward that we need something RISC-V specific here.  I 
-> guess the idea is that we don't want to depend on PNP because we'd end 
-> up with a bunch of PCI dependencies as well?  That seems like kind of an 
-> odd way to do things, but I'm frequently suprised by ACPI stuff so
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-We have the same for HSUART on Intel (see 8250_dw.c). The ACPI devices use
-different approach than PNP. PNP has the exact requirements for compatibility
-with the legacy UARTs (to some extend). It puts some limitations. I believe
-having specifics for RISC-V is fine. But I haven't checked the real IP used
-in the SoC. If it's one that we have the existing driver for (like again
-mentioned 8250_dw.c), then it should be added there.
+Fixes: a6b5f2008a3d ("V4L/DVB (13661): rj54n1cb0c: Add cropping, auto whi=
+te balance, restrict sizes, add platform data")
+Signed-off-by: Aleksandr Burakov <a.burakov@rosalinux.ru>
+---
+ drivers/media/i2c/rj54n1cb0c.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-TL;DR: so, what is the IP is in hardware for UART? Custom?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+diff --git a/drivers/media/i2c/rj54n1cb0c.c b/drivers/media/i2c/rj54n1cb0=
+c.c
+index a59db10153cd..a612ec1e7157 100644
+--- a/drivers/media/i2c/rj54n1cb0c.c
++++ b/drivers/media/i2c/rj54n1cb0c.c
+@@ -776,8 +776,8 @@ static int rj54n1_sensor_scale(struct v4l2_subdev *sd=
+, s32 *in_w, s32 *in_h,
+ 	}
+=20
+ 	/* Antiflicker */
+-	peak =3D 12 * RJ54N1_MAX_WIDTH * (1 << 14) * resize / rj54n1->tgclk_mhz=
+ /
+-		10000;
++	peak =3D 12 * RJ54N1_MAX_WIDTH * resize / rj54n1->tgclk_mhz / 10000;
++	peak =3D peak * (1 << 14);
+ 	peak_50 =3D peak / 6;
+ 	peak_60 =3D peak / 5;
+=20
+--=20
+2.25.1
 
 
