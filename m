@@ -1,167 +1,282 @@
-Return-Path: <linux-kernel+bounces-331390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3571297AC33
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:34:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25AE97AC35
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DB4A1C2823A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:34:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DAB1F23649
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5922165F0E;
-	Tue, 17 Sep 2024 07:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CF014F126;
+	Tue, 17 Sep 2024 07:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MS6EJ24y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hbYwzUjj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B33A16193C;
-	Tue, 17 Sep 2024 07:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8F1136E3B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 07:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726558343; cv=none; b=SgZluajj2APtTop52b7qo3DSuSLkiA3jUMYI78/TKCDIKbupYiu6TLGKBH1Q+Z2p7EWwdz0mVRpdhS29nWIpNoza5nYLZyItGErZcCXteCj6TXtawDnh+CDDdEcKwpGIjEkbO381Fut5r10etBMWUddiwXwD8TDega+fqpDLwd4=
+	t=1726558367; cv=none; b=VqmB1x75v6AemCp+32M1HarUd/Jxg0TTzBg/g59FTel6XhBlITi/MI88Ks19XHq58ZDWZObMC3dQRTQCCGNZzKDZO4YcfOGPxrLZ+sjOq2TMmNXlbBm0bavCzWUwr+7czO6MO8k3258dQEAxwNl6/e5p3ECXpKRD1lGlCzNSyfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726558343; c=relaxed/simple;
-	bh=7Hwfh6nn+H/Twj0M/m3ZP/p1nsY1WaGzgv9vCVQ8AIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5TL49fk3f+9eiFuj+tTSVvsccQ3Dd14P70IXFfjQoMDMPkFjdA+UcEiaHRBjiG1bd10NxWeI7PLNhebHrfKuk0t60qigB0TRy1i8/qI1p9ow9GoU0HY/l3QlaW8B0QXLK1lEp2jcoDHByAuQde4HVNh1uDA3p1qJc0JEJ1pzg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MS6EJ24y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3611C4CEC7;
-	Tue, 17 Sep 2024 07:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726558342;
-	bh=7Hwfh6nn+H/Twj0M/m3ZP/p1nsY1WaGzgv9vCVQ8AIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MS6EJ24yFiZUzotIPLx2ItHcWVuE6SmgpHu5EHKBoZvZvmH97MgabzDFD4vhlOrVh
-	 oUtjNODTpOUma8LbNsu1ThwciMEyjwW8tRLuu8HsYhIg+s/qKAPuf47iPC5j46efAG
-	 7JXCU8FO8USMPYmwqGUBGKY76TnIpPcJ5/rEKqCvDaj2tBxDFc3gWEzzynRv28oRjN
-	 DQihrB5caChEERV5git0IROmNZ/2ryT+JT9NQEXnn5u5uHnw4nRcwBjjqU606Q8ECU
-	 bcihVHkRbYlt3kVR5Eo9jaX9GgQBcsOqSNrdfFhmQFXjF4eWdNqfxh00jNJKSGTQxY
-	 fYl1THonV9hUw==
-Date: Tue, 17 Sep 2024 08:32:15 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, helgaas@kernel.org, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, bagasdotme@gmail.com,
-	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
-	jing2.liu@intel.com
-Subject: Re: [PATCH V5 2/5] PCI/TPH: Add Steering Tag support
-Message-ID: <20240917073215.GH167971@kernel.org>
-References: <20240916205103.3882081-1-wei.huang2@amd.com>
- <20240916205103.3882081-3-wei.huang2@amd.com>
+	s=arc-20240116; t=1726558367; c=relaxed/simple;
+	bh=1giazlVL4veqhLIwMAeReV/7gEu/+fQLmWnxBMQTLKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fOj7hoC6zOQk0j8cbelPvgTrpTWpKyIZyfhSdzav4jdHVpTQOaiwxtpoLlShPIw9uSW4z2FiQCdHEQsyV2fNzd9NJixxCemOOeRTRG7mTRQRVY9kVU1v6mY9yNwOAwi6KQmJsoGFlNGq58GkQrtvshszdnOSzNi8VrmVWMhS/uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hbYwzUjj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726558363;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AlZOc2K+ISHHEauB0/GOs0ndNpHKjcVI8t+alRznKmc=;
+	b=hbYwzUjjWEPBVfAEQmwtcsd+nyuaVdX3bFhVT/4gEHBB2/kBX1aE+76/0yOSlC5H2q/pLQ
+	jyHGdiMfK3WpTzZw/de903lIDQT7OyL5hkE0QtlwQyseXmZIH1uAnERTPmhNkPJ4SRFuHL
+	cuYLfCEhxYA1l4pXlZXl+6ZkDOMYG6Q=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-148-TE8JhWzPO2e5DEBHourVaw-1; Tue, 17 Sep 2024 03:32:41 -0400
+X-MC-Unique: TE8JhWzPO2e5DEBHourVaw-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-374b981dd62so2901996f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 00:32:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726558360; x=1727163160;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AlZOc2K+ISHHEauB0/GOs0ndNpHKjcVI8t+alRznKmc=;
+        b=nOIK4+xFj23qkTqlp7aRldIbqaDZzV8E1FJX1jqLTm6NzayimT/S1zumBTddh2VkvO
+         904bYHBY+aSQru97PBi8UGZG65ZIGQ+r7L1P4e3QuIXCA0nTh/F2fu3yJ8jjGuPf7F9D
+         umsXZWhIasMD2QZbVKh8/+URSHABdQGQCS0kAwCtotjlLi6A/DzLbg7o/ci6PykDjWti
+         aAROxR9R+C9FlH5B69acFJGOmJhu2qwVVpsIjinoTE9ja4u30f2NrSCS6Rw3+E7Qux4Y
+         EuqqLfHpS9pTG9j/eWwFlTyaZ7ez/5YO48yRyBBeO/lKGDjb0JiTWDAomuXPghxicIQ7
+         QyLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1He9JyGWeX1CGMMIWtWZVBjQCL9Rtl2mwvUTPQzlVJV07cBVVeAgOQWsvBoodjQTFSefJIIm5Ux60FxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz91eD249qvaqIj36RQHkrOiq61EVpBQop2LoN9CdcbRnbKtjjr
+	h+m8Zpi3lMBRIgS9TLjCncLMq0SBtP57ph1WVh/cPSsuiccgqHvEr2vG88xM9yVG6XQ3/3lXJ98
+	rTbRV9tPv52CoGxMVLATDDw4xsx1JnTQzalbNN08FhxLjoS9vRJoBInTpNr4QnA==
+X-Received: by 2002:a5d:6743:0:b0:371:6fba:d555 with SMTP id ffacd0b85a97d-378c2cf40bamr9450358f8f.18.1726558360453;
+        Tue, 17 Sep 2024 00:32:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaAbMrGgGXriWb7e3gKHYim9vObh3Aaz+SmelHnYDdYV4b+eQYgEyl+BBZEUFQQOR1QjfGbw==
+X-Received: by 2002:a5d:6743:0:b0:371:6fba:d555 with SMTP id ffacd0b85a97d-378c2cf40bamr9450335f8f.18.1726558359840;
+        Tue, 17 Sep 2024 00:32:39 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f996dsm8777118f8f.65.2024.09.17.00.32.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 00:32:39 -0700 (PDT)
+Message-ID: <4427beee-f428-4c45-830d-d0cc58293bce@redhat.com>
+Date: Tue, 17 Sep 2024 09:32:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916205103.3882081-3-wei.huang2@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/panic: Fix uninitialized spinlock acquisition with
+ CONFIG_DRM_PANIC=n
+To: Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, stable@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240916230103.611490-1-lyude@redhat.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20240916230103.611490-1-lyude@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 16, 2024 at 03:51:00PM -0500, Wei Huang wrote:
-> pcie_tph_get_cpu_st() is added to allow a caller to retrieve Steering Tags
-> for a target memory that is associated with a specific CPU. The ST tag is
-> retrieved by invoking ACPI _DSM of the device's Root Port device.
+On 17/09/2024 01:00, Lyude Paul wrote:
+> It turns out that if you happen to have a kernel config where
+> CONFIG_DRM_PANIC is disabled and spinlock debugging is enabled, along with
+> KMS being enabled - we'll end up trying to acquire an uninitialized
+> spin_lock with drm_panic_lock() when we try to do a commit:
+
+The raw spinlock should be initialized in drm_dev_init() [1] regardless 
+of DRM_PANIC being enabled or not.
+
+ From the call trace, it looks like you are calling 
+drm_client_register() before calling drm_dev_register(), and that's 
+probably the root cause.
+
+I didn't find a doc saying drm_dev_register() should be done before 
+drm_client_register(), but all drivers are doing it this way.
+
+Can you try to do that in rvkms, and see if it fixes this error ?
+
+Best regards,
+
+-- 
+
+Jocelyn
+
+[1] 
+https://elixir.bootlin.com/linux/v6.11/source/drivers/gpu/drm/drm_drv.c#L642
+
 > 
-> pcie_tph_set_st_entry() is added to support updating the device's Steering
-> Tags. The tags will be written into the device's MSI-X table or the ST
-> table located in the TPH Extended Capability space.
+>    rvkms rvkms.0: [drm:drm_atomic_commit] committing 0000000068d2ade1
+>    INFO: trying to register non-static key.
+>    The code is fine but needs lockdep annotation, or maybe
+>    you didn't initialize this object before use?
+>    turning off the locking correctness validator.
+>    CPU: 4 PID: 1347 Comm: modprobe Not tainted 6.10.0-rc1Lyude-Test+ #272
+>    Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240524-3.fc40 05/24/2024
+>    Call Trace:
+>     <TASK>
+>     dump_stack_lvl+0x77/0xa0
+>     assign_lock_key+0x114/0x120
+>     register_lock_class+0xa8/0x2c0
+>     __lock_acquire+0x7d/0x2bd0
+>     ? __vmap_pages_range_noflush+0x3a8/0x550
+>     ? drm_atomic_helper_swap_state+0x2ad/0x3a0
+>     lock_acquire+0xec/0x290
+>     ? drm_atomic_helper_swap_state+0x2ad/0x3a0
+>     ? lock_release+0xee/0x310
+>     _raw_spin_lock_irqsave+0x4e/0x70
+>     ? drm_atomic_helper_swap_state+0x2ad/0x3a0
+>     drm_atomic_helper_swap_state+0x2ad/0x3a0
+>     drm_atomic_helper_commit+0xb1/0x270
+>     drm_atomic_commit+0xaf/0xe0
+>     ? __pfx___drm_printfn_info+0x10/0x10
+>     drm_client_modeset_commit_atomic+0x1a1/0x250
+>     drm_client_modeset_commit_locked+0x4b/0x180
+>     drm_client_modeset_commit+0x27/0x50
+>     __drm_fb_helper_restore_fbdev_mode_unlocked+0x76/0x90
+>     drm_fb_helper_set_par+0x38/0x40
+>     fbcon_init+0x3c4/0x690
+>     visual_init+0xc0/0x120
+>     do_bind_con_driver+0x409/0x4c0
+>     do_take_over_console+0x233/0x280
+>     do_fb_registered+0x11f/0x210
+>     fbcon_fb_registered+0x2c/0x60
+>     register_framebuffer+0x248/0x2a0
+>     __drm_fb_helper_initial_config_and_unlock+0x58a/0x720
+>     drm_fbdev_generic_client_hotplug+0x6e/0xb0
+>     drm_client_register+0x76/0xc0
+>     _RNvXs_CsHeezP08sTT_5rvkmsNtB4_5RvkmsNtNtCs1cdwasc6FUb_6kernel8platform6Driver5probe+0xed2/0x1060 [rvkms]
+>     ? _RNvMs_NtCs1cdwasc6FUb_6kernel8platformINtB4_7AdapterNtCsHeezP08sTT_5rvkms5RvkmsE14probe_callbackBQ_+0x2b/0x70 [rvkms]
+>     ? acpi_dev_pm_attach+0x25/0x110
+>     ? platform_probe+0x6a/0xa0
+>     ? really_probe+0x10b/0x400
+>     ? __driver_probe_device+0x7c/0x140
+>     ? driver_probe_device+0x22/0x1b0
+>     ? __device_attach_driver+0x13a/0x1c0
+>     ? __pfx___device_attach_driver+0x10/0x10
+>     ? bus_for_each_drv+0x114/0x170
+>     ? __device_attach+0xd6/0x1b0
+>     ? bus_probe_device+0x9e/0x120
+>     ? device_add+0x288/0x4b0
+>     ? platform_device_add+0x75/0x230
+>     ? platform_device_register_full+0x141/0x180
+>     ? rust_helper_platform_device_register_simple+0x85/0xb0
+>     ? _RNvMs2_NtCs1cdwasc6FUb_6kernel8platformNtB5_6Device13create_simple+0x1d/0x60
+>     ? _RNvXs0_CsHeezP08sTT_5rvkmsNtB5_5RvkmsNtCs1cdwasc6FUb_6kernel6Module4init+0x11e/0x160 [rvkms]
+>     ? 0xffffffffc083f000
+>     ? init_module+0x20/0x1000 [rvkms]
+>     ? kernfs_xattr_get+0x3e/0x80
+>     ? do_one_initcall+0x148/0x3f0
+>     ? __lock_acquire+0x5ef/0x2bd0
+>     ? __lock_acquire+0x5ef/0x2bd0
+>     ? __lock_acquire+0x5ef/0x2bd0
+>     ? put_cpu_partial+0x51/0x1d0
+>     ? lock_acquire+0xec/0x290
+>     ? put_cpu_partial+0x51/0x1d0
+>     ? lock_release+0xee/0x310
+>     ? put_cpu_partial+0x51/0x1d0
+>     ? fs_reclaim_acquire+0x69/0xf0
+>     ? lock_acquire+0xec/0x290
+>     ? fs_reclaim_acquire+0x69/0xf0
+>     ? kfree+0x22f/0x340
+>     ? lock_release+0xee/0x310
+>     ? kmalloc_trace_noprof+0x48/0x340
+>     ? do_init_module+0x22/0x240
+>     ? kmalloc_trace_noprof+0x155/0x340
+>     ? do_init_module+0x60/0x240
+>     ? __se_sys_finit_module+0x2e0/0x3f0
+>     ? do_syscall_64+0xa4/0x180
+>     ? syscall_exit_to_user_mode+0x108/0x140
+>     ? do_syscall_64+0xb0/0x180
+>     ? vma_end_read+0xd0/0xe0
+>     ? do_user_addr_fault+0x309/0x640
+>     ? clear_bhb_loop+0x45/0xa0
+>     ? clear_bhb_loop+0x45/0xa0
+>     ? clear_bhb_loop+0x45/0xa0
+>     ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>     </TASK>
 > 
-> Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Wei Huang <wei.huang2@amd.com>
-> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-> Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com>
-> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-
-...
-
-> @@ -45,6 +201,163 @@ static u8 get_rp_completer_type(struct pci_dev *pdev)
->  	return FIELD_GET(PCI_EXP_DEVCAP2_TPH_COMP_MASK, reg);
->  }
->  
-> +/* Write ST to MSI-X vector control reg - Return 0 if OK, otherwise -errno */
-> +static int write_tag_to_msix(struct pci_dev *pdev, int msix_idx, u16 tag)
+> Fix this by stubbing these macros out when this config option isn't
+> enabled, along with fixing the unused variable warning that introduces.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Fixes: e2a1cda3e0c7 ("drm/panic: Add drm panic locking")
+> Cc: <stable@vger.kernel.org> # v6.10+
+> 
+> ---
+> 
+> V2:
+> * Use static inline instead of macros so we don't need
+>    __maybe_unused
+> 
+> ---
+>   drivers/gpu/drm/drm_atomic_helper.c |  2 +-
+>   include/drm/drm_panic.h             | 14 ++++++++++++++
+>   2 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 43cdf39019a44..5186d2114a503 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -3015,7 +3015,7 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
+>   				  bool stall)
+>   {
+>   	int i, ret;
+> -	unsigned long flags;
+> +	unsigned long flags = 0;
+>   	struct drm_connector *connector;
+>   	struct drm_connector_state *old_conn_state, *new_conn_state;
+>   	struct drm_crtc *crtc;
+> diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
+> index 54085d5d05c34..f4e1fa9ae607a 100644
+> --- a/include/drm/drm_panic.h
+> +++ b/include/drm/drm_panic.h
+> @@ -64,6 +64,8 @@ struct drm_scanout_buffer {
+>   
+>   };
+>   
+> +#ifdef CONFIG_DRM_PANIC
+> +
+>   /**
+>    * drm_panic_trylock - try to enter the panic printing critical section
+>    * @dev: struct drm_device
+> @@ -149,4 +151,16 @@ struct drm_scanout_buffer {
+>   #define drm_panic_unlock(dev, flags) \
+>   	raw_spin_unlock_irqrestore(&(dev)->mode_config.panic_lock, flags)
+>   
+> +#else
+> +
+> +static inline bool drm_panic_trylock(struct drm_device *dev, unsigned long flags)
 > +{
-> +	struct msi_desc *msi_desc = NULL;
-> +	void __iomem *vec_ctrl;
-> +	u32 val, mask;
-> +	int err = 0;
-> +
-> +	msi_lock_descs(&pdev->dev);
-> +
-> +	/* Find the msi_desc entry with matching msix_idx */
-> +	msi_for_each_desc(msi_desc, &pdev->dev, MSI_DESC_ASSOCIATED) {
-> +		if (msi_desc->msi_index == msix_idx)
-> +			break;
-> +	}
-> +
-> +	if (!msi_desc) {
-> +		err = -ENXIO;
-> +		goto err_out;
-> +	}
-> +
-> +	/* Get the vector control register (offset 0xc) pointed by msix_idx */
-> +	vec_ctrl = pdev->msix_base + msix_idx * PCI_MSIX_ENTRY_SIZE;
-> +	vec_ctrl += PCI_MSIX_ENTRY_VECTOR_CTRL;
-> +
-> +	val = readl(vec_ctrl);
-> +	mask = PCI_MSIX_ENTRY_CTRL_ST_LOWER | PCI_MSIX_ENTRY_CTRL_ST_UPPER;
-> +	val &= ~mask;
-> +	val |= FIELD_PREP(mask, (u32)tag);
-
-Hi Wei Huang,
-
-Unfortunately clang-18 (x86_64, allmodconfig, W=1, when applied to net-next)
-complains about this.  I think it is because it expects FIELD_PREP to be
-used with a mask that is a built-in constant.
-
-drivers/pci/pcie/tph.c:232:9: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-  232 |         val |= FIELD_PREP(mask, (u32)tag);
-      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
-  115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
-   72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-   73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
-      |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   74 |                                  _pfx "type of reg too small for mask"); \
-      |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
-   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-      |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
-././include/linux/compiler_types.h:510:22: note: expanded from macro 'compiletime_assert'
-  510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-      |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-././include/linux/compiler_types.h:498:23: note: expanded from macro '_compiletime_assert'
-  498 |         __compiletime_assert(condition, msg, prefix, suffix)
-      |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-././include/linux/compiler_types.h:490:9: note: expanded from macro '__compiletime_assert'
-  490 |                 if (!(condition))                                       \
-      |                       ^~~~~~~~~
-1 warning generated.
-
-> +	writel(val, vec_ctrl);
-> +
-> +	/* Read back to flush the update */
-> +	val = readl(vec_ctrl);
-> +
-> +err_out:
-> +	msi_unlock_descs(&pdev->dev);
-> +	return err;
+> +	return true;
 > +}
+> +
+> +static inline void drm_panic_lock(struct drm_device *dev, unsigned long flags) {}
+> +static inline void drm_panic_unlock(struct drm_device *dev, unsigned long flags) {}
+> +
+> +#endif
+> +
+>   #endif /* __DRM_PANIC_H__ */
+> 
+> base-commit: bf05aeac230e390a5aee4bd3dc978b0c4d7e745f
 
-...
 
