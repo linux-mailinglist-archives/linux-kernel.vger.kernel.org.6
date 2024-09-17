@@ -1,60 +1,129 @@
-Return-Path: <linux-kernel+bounces-331322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0996C97AB49
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:12:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E9797AB4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19C61F23022
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:12:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F34C1C26E40
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DDA4D599;
-	Tue, 17 Sep 2024 06:12:34 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B37D53368;
+	Tue, 17 Sep 2024 06:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zboyY7Q8"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B62E1B5AA;
-	Tue, 17 Sep 2024 06:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B131B5AA;
+	Tue, 17 Sep 2024 06:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726553553; cv=none; b=bkxR9OWYZ+dLPTJKab8R/N2xTKc7VdhyCTB339a9Sv2a360iAH3PF0x0iC+1RQU8/1ydxtjZi5QDYB5hx4clRmIpV1cJGrxMlSpovZmZhjTlS+N38SWPiAMfkPitY3Ar4CKc+qnNAepvGq+YezRQhKzKqF4gZ1e8gnJa1Bs19vk=
+	t=1726553645; cv=none; b=cBIzmzMSGccP7pXD0HjoqE60QmlRA0fKZV8YSfomBbSVfL16pI9Q181TobYd5Me5y17FBFRXhcGu4Zb/m499fv5bPJav8gepgFTJt3YaLOa2kr23N/aZVCV7LU7v2NWM/oAhyU0j+4B2T0D3xVZKr14NZuSkS4TiyfAI4klQix0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726553553; c=relaxed/simple;
-	bh=dFj4PXIWzhbmUJOFmzQNt1qgtQ8syeC3KliuYY5z/vY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uTUUjtaLqXx3NusMKdfo9j6v6+lN2/T/VtoJl8e/Y7lPEoF4pq2GvOnGB4WXmqoRGn0zxdIPxr3ErW7CxOfZFWCJTGluEIynZAjmGdDq4wrGayVRD0oO2QgnUtjdFhvm+NXxz/DEAzRjMnrJmdYvPSV01w7ary1YfU+xuoLyiRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 303AE227ACB; Tue, 17 Sep 2024 08:12:27 +0200 (CEST)
-Date: Tue, 17 Sep 2024 08:12:26 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
-Cc: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmet-auth: assign dh_key to NULL after kfree_sensitive
-Message-ID: <20240917061226.GA3839@lst.de>
-References: <20240916174139.1182-1-v.shevtsov@maxima.ru>
+	s=arc-20240116; t=1726553645; c=relaxed/simple;
+	bh=1UhkNKfUndxWsU+go6ytaT8csVNZ5E84V18UPAAE3r0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F95BDNvrSsWoRXeGYc2AXNFqgBvnanG975Xqjho3eEODASGtjmoPWxFEAls2xL5EkE78UYCFSQjho6VRXJ3rzmcJXxHUTR85P168S78CJfvIjg1xDvzEkWojmbiotuF+ZS9l5fMDBwwH99IjP8/1v/Td78nOIJLmlnj/OVV6wUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zboyY7Q8; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726553643; x=1758089643;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1UhkNKfUndxWsU+go6ytaT8csVNZ5E84V18UPAAE3r0=;
+  b=zboyY7Q8rVCYev39XGHs3n9oFsJ26bCQjaLy6NcCzlun22bY3BZNNnsm
+   DF5NxnzXbXEVWC5s/NW0/ZeS62Cs2Rfnx/Qh2Muin6IkMUVguVAQ6WB/8
+   qsGkAwvRVxwenhkPZllOohF0aP2NAeTTYYpMT0jFVAgAgLxgKuJiw0XbO
+   sbSbFbAxY0UhtIXcsWlo7ZulGzlFnD3teIfZW9KiAmooOX1OiL2igmLTG
+   OUYYkgVeSYvJMG/fG112jXsdjFnkxOoHERZ5Me0xRiqqmdQ3fRDUxyseJ
+   6C/G16g8zRKllcimin4p19ugzu8ujiiMNWzW0rY5KiyU4+cETz0Ze7W2y
+   g==;
+X-CSE-ConnectionGUID: s7NP2PV/RvGiT0Z8I2cSNg==
+X-CSE-MsgGUID: 699qZaIpR3OgmeWprxqujA==
+X-IronPort-AV: E=Sophos;i="6.10,234,1719903600"; 
+   d="scan'208";a="262873114"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 23:14:02 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 16 Sep 2024 23:13:41 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 16 Sep 2024 23:13:41 -0700
+Date: Tue, 17 Sep 2024 08:13:05 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Aakash Menon <aakash.r.menon@gmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <lars.povlsen@microchip.com>,
+	<Steen.Hegelund@microchip.com>, <daniel.machon@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, <aakash.menon@protempis.com>,
+	<horms@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v2] net: sparx5: Fix invalid timestamps
+Message-ID: <20240917061305.47x26cdfv3fr7rzh@DEN-DL-M31836.microchip.com>
+References: <20240917051829.7235-1-aakash.menon@protempis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20240916174139.1182-1-v.shevtsov@maxima.ru>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20240917051829.7235-1-aakash.menon@protempis.com>
 
+The 09/16/2024 22:18, Aakash Menon wrote:
+> 
+> Bit 270-271 are occasionally unexpectedly set by the hardware. This issue
+> was observed with 10G SFPs causing huge time errors (> 30ms) in PTP. Only
+> 30 bits are needed for the nanosecond part of the timestamp, clear 2 most
+> significant bits before extracting timestamp from the internal frame
+> header.
 
-Looks good:
+Thanks for changes. I think it look good.
+Reviewed-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+> Fixes: 70dfe25cd866 ("net: sparx5: Update extraction/injection for timestamping")
+> Signed-off-by: Aakash Menon <aakash.menon@protempis.com>
+> ---
+> v2:
+> - Wrap patch descriptions at 75 characters wide.
+> - Use GENMASK(5,0) instead of masking with 0x3F
+> - Update Fixes tag to be on the same line
+> - Link to v1 -https://lore.kernel.org/r/20240913193357.21899-1-aakash.menon@protempis.com
+> drivers/net/ethernet/microchip/sparx5/sparx5_packet.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
+> index f3f5fb420468..70427643f777 100644
+> --- a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
+> +++ b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
+> @@ -45,8 +45,12 @@ void sparx5_ifh_parse(u32 *ifh, struct frame_info *info)
+>         fwd = (fwd >> 5);
+>         info->src_port = FIELD_GET(GENMASK(7, 1), fwd);
+> 
+> +       /*
+> +        * Bit 270-271 are occasionally unexpectedly set by the hardware,
+> +        * clear bits before extracting timestamp
+> +        */
+>         info->timestamp =
+> -               ((u64)xtr_hdr[2] << 24) |
+> +               ((u64)(xtr_hdr[2] & GENMASK(5, 0)) << 24) |
+>                 ((u64)xtr_hdr[3] << 16) |
+>                 ((u64)xtr_hdr[4] <<  8) |
+>                 ((u64)xtr_hdr[5] <<  0);
+> --
+> 2.46.0
+> 
 
+-- 
+/Horatiu
 
