@@ -1,234 +1,160 @@
-Return-Path: <linux-kernel+bounces-331492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE48997AD75
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:02:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC3697AD73
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D212890D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:01:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB67C1F22E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356A015D5A6;
-	Tue, 17 Sep 2024 09:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251B315C138;
+	Tue, 17 Sep 2024 09:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ooEti+rc"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y+yeMOKm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ubhbfIPG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97822157485;
-	Tue, 17 Sep 2024 09:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E752D4594D
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726563693; cv=none; b=rlgMnkOZ46UxSivYaf+qV/HYvPo7hoqK9vIpYAcCr/5c1CVRAmlXmhRc5AtmkA10ctQzz8K/Hs40lfxmYtQEU20zh2MrRcj3+nVjX00oIW8r2nwBXcfA+ZirqevOcHu4x75HQhEFiNCjLisyAImTdO5mOUL224jSfiXdNI2w4m8=
+	t=1726563673; cv=none; b=Z4uuJMsJJ2gVl/Ssj2dpJ8r3cQ27tH0+wLCQIusGFJYHbggQH+9HUCA62Bj8CUjd36ZHEcCjN77pjcqb0X8agwRcA9bb/Fbkvp5xrTMdkS+Th6aQyckjokxvc7U3pQd9sWGnGwKFqmeaPKO1BEipN28KZf5C9aSQujZGIlGkhX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726563693; c=relaxed/simple;
-	bh=QmmcVgg2r6Jv08Yqq+gxobNYdSCsToL9/I3bZiZSC4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=huTXoU1lxSf5d+1sFDdQY+Y52sMcAR1g+qmPyNjWWEp6Nn4Q8T/wkN1ko4qu1atPoADtZtCW4ZjzCDp2ajrZBZ0dV/GaROAMRqp9oIxBPqFmHX+xz+znvhzRLf8SXrXS3OyFiVO/LgUNSJYxZwc/HKJ60sVAx0CzM5E3gB+jsBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ooEti+rc; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GIUwPv030245;
-	Tue, 17 Sep 2024 09:01:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=SWB4bupZXFblmHZBV47cloHzPo
-	dL2jWg/q8JaiEkl2g=; b=ooEti+rcLYSXTQMktciwdduxu9OkNdE2deC7tuKqRB
-	ImeT4UNfXZ15fxJROpkOrFs6GVw4KiBkqKEHt1FLMo+CuBe7b7FOxlOH87+Vg4Pm
-	sz4f/lzDnK1nBuJ3yvOYhKbQ9Kb8q6Lzh11t/xeHNx1JO3G9e10lAx9saeIQ7n4+
-	4mcnfTw7nhsQ3BkYIs1K9Knbe307K4Y2iH0autXvijSaaOHl/L8ShCHpZXVntNKI
-	Wca0iDX94zfu9H5JW9Dbd6F8FFpzHxSlRKTfMzTrUn2Ox/5ZqetvAqKS4QCu45uh
-	B5MbZievsd8RIuB8NTQ6SkVtg47n47IGbVBWYpY9GndQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41pht8e22h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Sep 2024 09:01:14 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48H91DCL030474;
-	Tue, 17 Sep 2024 09:01:13 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41pht8e226-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Sep 2024 09:01:13 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48H6eBA6030625;
-	Tue, 17 Sep 2024 09:01:10 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41npan43bm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Sep 2024 09:01:10 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48H918KP51249578
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 17 Sep 2024 09:01:08 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C869B2004E;
-	Tue, 17 Sep 2024 09:01:08 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B1DB20040;
-	Tue, 17 Sep 2024 09:01:05 +0000 (GMT)
-Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.in.ibm.com (unknown [9.204.206.228])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 17 Sep 2024 09:01:05 +0000 (GMT)
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: [PATCH] perf sched replay: Remove unused parts of the code
-Date: Tue, 17 Sep 2024 14:31:00 +0530
-Message-ID: <20240917090100.42783-1-vineethr@linux.ibm.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1726563673; c=relaxed/simple;
+	bh=FfTt7DakWlYcn7oVa9+M6Q8rs2NTO2qcMODpYcRd9BE=;
+	h=From:To:Cc:Subject:Message-ID:Content-Type:MIME-Version:Date; b=BHoHYLOgypJXQCi3UksyhJ/Se1Kpbpl4zitrWS7lI+NZSh1Wkljb2PsbN7jBw6avn+nKLbwg5Ri/dZGPOAmrLZvTAuAT7RhBJ8mNiCUEnybcwXXdVJ69a+zuzqBBVnwhu3KzPGEUdOxmlZBM+giZGAYdEU1qFd7jd1zLwFhPcb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y+yeMOKm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ubhbfIPG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726563670;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QO+79JE2qWdTWvYywoNt0xVeTazweViRmroElAj/tbs=;
+	b=Y+yeMOKms1U6kxigztCBsg78/lttFn9i8lDlakN9ocq2mie4zbLHmlY79SO1jI49CVnhjl
+	5RJ6G/7w5vHSwKBVCTe9cZnABAY0mh3jULC1wzdbqdv2IeB09l+aAlQw0/XOD0meL3Fkuh
+	09FT7mGdmSQYARhnC7dsyBbZ19jFtcg4thABsl3HcMAXn4bXkMHbwPkSiOqCsbIelRIyNe
+	HDVjcNtoseh937ylQqguRSubT99mwiRnwRLtV3QGn3vOxTesr//CxAYDJuAJeWjy+wgTyu
+	pf764MuHGdrmHsJHNnvZVObMb22GhgYXcydMESmZkbRqLnxnQKl/nFj/XYUjBQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726563670;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QO+79JE2qWdTWvYywoNt0xVeTazweViRmroElAj/tbs=;
+	b=ubhbfIPG+raaw4bckZKkq8q3bmD+t3ftokufnnLw+7IjeJ5fjPmusfIXctuQIilz/C1Zdx
+	l7jQxNr/ME9vzMBw==
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] irq/domain for v6.12-rc1
+Message-ID: <172656366281.2473758.10766953231775492818.tglx@xen13>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 8V8OVRMvfHiRmMJGVJWIZbTSdgrlbZLL
-X-Proofpoint-ORIG-GUID: 5eFctY55oAic0tb9R_ONKobSXbp4tKLt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-17_02,2024-09-16_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 adultscore=0
- mlxlogscore=999 mlxscore=0 clxscore=1011 malwarescore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409170066
+Date: Tue, 17 Sep 2024 11:01:09 +0200 (CEST)
 
-The sleep_sem semaphore and the specific_wait field (member of sched_atom)
-are initialized but not used anywhere in the code, so this patch removes
-them.
+Linus,
 
-The SCHED_EVENT_MIGRATION case in perf_sched__process_event() is currently
-not used and is also removed.
+please pull the latest irq/domain branch from:
 
-Additionally, prev_state in add_sched_event_sleep() is marked with
-__maybe_unused and is not utilized anywhere in the function. This patch
-removes the parameter.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-domain-2024-=
+09-17
 
-If the task_state parameter was intended for future use, it can be
-reintroduced when needed.
+up to:  74c60a96ef6a: irqdomain: Remove stray '-' in the domain name
 
-No functionality change intended.
+Two small updates for interrupt domains:
 
-Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
----
- tools/perf/builtin-sched.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+  - Remove a stray '-' in the domain name
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 5981cc51abc8..fdf979aaf275 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -68,7 +68,6 @@ struct task_desc {
- 	struct sched_atom	**atoms;
- 
- 	pthread_t		thread;
--	sem_t			sleep_sem;
- 
- 	sem_t			ready_for_work;
- 	sem_t			work_done_sem;
-@@ -80,12 +79,10 @@ enum sched_event_type {
- 	SCHED_EVENT_RUN,
- 	SCHED_EVENT_SLEEP,
- 	SCHED_EVENT_WAKEUP,
--	SCHED_EVENT_MIGRATION,
- };
- 
- struct sched_atom {
- 	enum sched_event_type	type;
--	int			specific_wait;
- 	u64			timestamp;
- 	u64			duration;
- 	unsigned long		nr;
-@@ -421,14 +418,13 @@ static void add_sched_event_wakeup(struct perf_sched *sched, struct task_desc *t
- 
- 	wakee_event->wait_sem = zalloc(sizeof(*wakee_event->wait_sem));
- 	sem_init(wakee_event->wait_sem, 0, 0);
--	wakee_event->specific_wait = 1;
- 	event->wait_sem = wakee_event->wait_sem;
- 
- 	sched->nr_wakeup_events++;
- }
- 
- static void add_sched_event_sleep(struct perf_sched *sched, struct task_desc *task,
--				  u64 timestamp, const char task_state __maybe_unused)
-+				  u64 timestamp)
+  - Consolidate and clarify the bus token checks so they explicitely check
+    for DOMAIN_BUS_ANY instead of unspecified checks for zero.
+
+Thanks,
+
+	tglx
+
+------------------>
+Andy Shevchenko (2):
+      irqdomain: Clarify checks for bus_token
+      irqdomain: Remove stray '-' in the domain name
+
+
+ kernel/irq/irqdomain.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 01001eb615ec..1acc5308fcb7 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -130,8 +130,10 @@ EXPORT_SYMBOL_GPL(irq_domain_free_fwnode);
+=20
+ static int alloc_name(struct irq_domain *domain, char *base, enum irq_domain=
+_bus_token bus_token)
  {
- 	struct sched_atom *event = get_new_event(task, timestamp);
- 
-@@ -468,7 +464,7 @@ static struct task_desc *register_pid(struct perf_sched *sched,
- 	 * every task starts in sleeping state - this gets ignored
- 	 * if there's no wakeup pointing to this sleep state:
- 	 */
--	add_sched_event_sleep(sched, task, 0, 0);
-+	add_sched_event_sleep(sched, task, 0);
- 
- 	sched->pid_to_task[pid] = task;
- 	sched->nr_tasks++;
-@@ -529,8 +525,6 @@ static void perf_sched__process_event(struct perf_sched *sched,
- 				ret = sem_post(atom->wait_sem);
- 			BUG_ON(ret);
- 			break;
--		case SCHED_EVENT_MIGRATION:
--			break;
- 		default:
- 			BUG_ON(1);
- 	}
-@@ -673,7 +667,6 @@ static void create_tasks(struct perf_sched *sched)
- 		parms->task = task = sched->tasks[i];
- 		parms->sched = sched;
- 		parms->fd = self_open_counters(sched, i);
--		sem_init(&task->sleep_sem, 0, 0);
- 		sem_init(&task->ready_for_work, 0, 0);
- 		sem_init(&task->work_done_sem, 0, 0);
- 		task->curr_event = 0;
-@@ -697,7 +690,6 @@ static void destroy_tasks(struct perf_sched *sched)
- 		task = sched->tasks[i];
- 		err = pthread_join(task->thread, NULL);
- 		BUG_ON(err);
--		sem_destroy(&task->sleep_sem);
- 		sem_destroy(&task->ready_for_work);
- 		sem_destroy(&task->work_done_sem);
- 	}
-@@ -751,7 +743,6 @@ static void wait_for_tasks(struct perf_sched *sched)
- 
- 	for (i = 0; i < sched->nr_tasks; i++) {
- 		task = sched->tasks[i];
--		sem_init(&task->sleep_sem, 0, 0);
- 		task->curr_event = 0;
- 	}
- }
-@@ -852,7 +843,6 @@ static int replay_switch_event(struct perf_sched *sched,
- 		   *next_comm  = evsel__strval(evsel, sample, "next_comm");
- 	const u32 prev_pid = evsel__intval(evsel, sample, "prev_pid"),
- 		  next_pid = evsel__intval(evsel, sample, "next_pid");
--	const char prev_state = evsel__taskstate(evsel, sample, "prev_state");
- 	struct task_desc *prev, __maybe_unused *next;
- 	u64 timestamp0, timestamp = sample->time;
- 	int cpu = sample->cpu;
-@@ -884,7 +874,7 @@ static int replay_switch_event(struct perf_sched *sched,
- 	sched->cpu_last_switched[cpu] = timestamp;
- 
- 	add_sched_event_run(sched, prev, timestamp, delta);
--	add_sched_event_sleep(sched, prev, timestamp, prev_state);
-+	add_sched_event_sleep(sched, prev, timestamp);
- 
+-	domain->name =3D bus_token ? kasprintf(GFP_KERNEL, "%s-%d", base, bus_token=
+) :
+-				   kasprintf(GFP_KERNEL, "%s", base);
++	if (bus_token =3D=3D DOMAIN_BUS_ANY)
++		domain->name =3D kasprintf(GFP_KERNEL, "%s", base);
++	else
++		domain->name =3D kasprintf(GFP_KERNEL, "%s-%d", base, bus_token);
+ 	if (!domain->name)
+ 		return -ENOMEM;
+=20
+@@ -146,8 +148,10 @@ static int alloc_fwnode_name(struct irq_domain *domain, =
+const struct fwnode_hand
+ 	const char *suf =3D suffix ? : "";
+ 	char *name;
+=20
+-	name =3D bus_token ? kasprintf(GFP_KERNEL, "%pfw-%s%s%d", fwnode, suf, sep,=
+ bus_token) :
+-			   kasprintf(GFP_KERNEL, "%pfw-%s", fwnode, suf);
++	if (bus_token =3D=3D DOMAIN_BUS_ANY)
++		name =3D kasprintf(GFP_KERNEL, "%pfw%s%s", fwnode, sep, suf);
++	else
++		name =3D kasprintf(GFP_KERNEL, "%pfw%s%s-%d", fwnode, sep, suf, bus_token);
+ 	if (!name)
+ 		return -ENOMEM;
+=20
+@@ -166,11 +170,13 @@ static int alloc_unknown_name(struct irq_domain *domain=
+, enum irq_domain_bus_tok
+ 	static atomic_t unknown_domains;
+ 	int id =3D atomic_inc_return(&unknown_domains);
+=20
+-	domain->name =3D bus_token ? kasprintf(GFP_KERNEL, "unknown-%d-%d", id, bus=
+_token) :
+-				   kasprintf(GFP_KERNEL, "unknown-%d", id);
+-
++	if (bus_token =3D=3D DOMAIN_BUS_ANY)
++		domain->name =3D kasprintf(GFP_KERNEL, "unknown-%d", id);
++	else
++		domain->name =3D kasprintf(GFP_KERNEL, "unknown-%d-%d", id, bus_token);
+ 	if (!domain->name)
+ 		return -ENOMEM;
++
+ 	domain->flags |=3D IRQ_DOMAIN_NAME_ALLOCATED;
  	return 0;
  }
--- 
-2.43.2
+@@ -200,7 +206,7 @@ static int irq_domain_set_name(struct irq_domain *domain,=
+ const struct irq_domai
+ 			return alloc_name(domain, fwid->name, bus_token);
+ 		default:
+ 			domain->name =3D fwid->name;
+-			if (bus_token)
++			if (bus_token !=3D DOMAIN_BUS_ANY)
+ 				return alloc_name(domain, fwid->name, bus_token);
+ 		}
+=20
 
 
