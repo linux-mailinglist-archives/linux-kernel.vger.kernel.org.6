@@ -1,188 +1,163 @@
-Return-Path: <linux-kernel+bounces-331975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D6797B38D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:31:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 492D597B38F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CFFF28351B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC621F25DFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26D41862B9;
-	Tue, 17 Sep 2024 17:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E43185956;
+	Tue, 17 Sep 2024 17:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SbYWNzHW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+9xdd5t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861F417AE01
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 17:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED7D182;
+	Tue, 17 Sep 2024 17:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726594268; cv=none; b=lnzBDH1ICC0xydwbPnOVe9OFQ63yQSVvlYJ7XAE1oUs+YQbt2PAscUIUZg7CwjLuhyV3GDz/YMB+HXgc0FCsv9m7yUh9I2zwxWdkrvHOSPWstVDayje0dQEDAbiiDObNOFZQXp/nZjfeOXcisRCzB28VjUSk/yTpcZvxPyHU9mE=
+	t=1726594345; cv=none; b=h7MLrb/2t63M5+SV4QBduGsSxv2wYf+dj0pidA7ydp+5TKl9KRm38KajQKo0RceAgczHPYZpg8/HQLvsqSmsv1QnUm6B0OPKLTYvVxiZyDHoFvQ751UxiiS8MbubMzHcRYu1wOC98ATj8Bx1Vde8ipy2Krbp2dIbu0+0kBGnZvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726594268; c=relaxed/simple;
-	bh=tGYWR8/WN0m/AzKpQT7y+opcbunbNdg82+K/XE3Uq8M=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=lifC6mS7aAex+/RUQm043Z1Tsypc8Aj48HDxaUwrLH4lFCPOCvKUOrokoLGLaKY4VZav2UCKHeRKTRGGakL3zAvZ4APGnu9mAddlyPoZz2ZJCZXmrVCLk5dAYi/OYGxZtgtCM24qYnSdOcOabsx+qHE84uKDSufsJWB3DhlOmJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SbYWNzHW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726594264;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=E+Q1TBMKNjej+bpAWrl6GV0oWbucsyD8OkToLXYmdYQ=;
-	b=SbYWNzHWFQ0O64B0SdHA2FgCSlABB+FzKyqlmM+RqZLtT5a9uB18buMSaNazS76htc1SFr
-	txWhO2e2QJTPhBB22Uz8ZpPowleqr8nIrI4S18GgnomU5cymM/8dXuSfnbIA390sLIJvlu
-	OwpyOFGfrDl6X/1lfq5KUOOnLgyKtCk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-675-FysxpM_vNkG8aBj0T1ezlA-1; Tue,
- 17 Sep 2024 13:31:00 -0400
-X-MC-Unique: FysxpM_vNkG8aBj0T1ezlA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB83E1944AA8;
-	Tue, 17 Sep 2024 17:30:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B0B4C1956086;
-	Tue, 17 Sep 2024 17:30:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>,
-    Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, kernel test robot <oliver.sang@intel.com>,
-    Jeff Layton <jlayton@kernel.org>, Paulo Alcantara <pc@manguebit.com>,
-    linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Fix reversion of the iter in cifs_readv_receive().
+	s=arc-20240116; t=1726594345; c=relaxed/simple;
+	bh=zuJZQ8299xkKH2wZMWNDwLjbpsAb4hxeHNN5SgtIllg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qTIprbHEdeSXKZUGAeOSZMWtwtGzDG9Evr683HPZrGjii2Vfoz0RChlNTxBIj04ME/8la8dYpn7Tpnjr5vZm6bK/aptiHtM9S5SJmFSe/VKU6QnpAPAj0mQEMSIUEp01yP+X+EC7GBocTo1hXcLUJVVLSbazxv8UiDyW1siHNOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+9xdd5t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEF94C4CEC5;
+	Tue, 17 Sep 2024 17:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726594344;
+	bh=zuJZQ8299xkKH2wZMWNDwLjbpsAb4hxeHNN5SgtIllg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k+9xdd5tHHhOmzZwtUwx8LFrAmLRCjOwDUSuKa334AFbaYfNwTu4OhutKzmIt6kid
+	 Xy9iMbzyuLSFS2lQj43X58yjQ81S0F38nPw3xLQpqnJu87JG5abt8pa8CFr/hvtzSV
+	 ETswne5ezWjhLXJ8mFBoyyKzlseDyUu0rF5XOSZ2UBioJfDjednZsKooH8j/4UEnFK
+	 +UiTvLvW71zoUeN43TZH0pYYy8qL1QzZ4lC++I20Iw/s6P4qf4ZEdIXs+CSAMw62Or
+	 DbHX38T7UoqTvWu3wrHKTLSfBCUPMgCxZgn/eMRSMvGqyyGR7v7Ld6NFfg1mpdHJoM
+	 fMQ9vL+4jKaMQ==
+Message-ID: <fe98e49d-96d1-462f-99ac-93d8a53e55fd@kernel.org>
+Date: Tue, 17 Sep 2024 19:32:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2280666.1726594254.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Sep 2024 18:30:54 +0100
-Message-ID: <2280667.1726594254@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
+To: Erez <erezgeva2@gmail.com>
+Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Esben Haabendal <esben@geanix.com>
+References: <20240917094956.437078-1-erezgeva@nwtime.org>
+ <20240917094956.437078-4-erezgeva@nwtime.org>
+ <9c273945-5a70-408e-a9da-a0797aa6d935@kernel.org>
+ <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
+ <64ef46b1-7908-4b15-866d-9cabe2e5dc9e@kernel.org>
+ <CANeKEMPwgtECfksgz6jXkR+bjVFwCB9DOh1q7t_3WeojReqxbA@mail.gmail.com>
+ <e0db2f62-b2fd-4b61-932c-cc2caf5dd647@kernel.org>
+ <CANeKEMNCFKX2thq+Ws0vy9ovbQ7dve3YPh_FbRaoOEgL+7c_Mw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CANeKEMNCFKX2thq+Ws0vy9ovbQ7dve3YPh_FbRaoOEgL+7c_Mw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-cifs_read_iter_from_socket() copies the iterator that's passed in for the
-socket to modify as and if it will, and then advances the original iterato=
-r
-by the amount sent.  However, both callers revert the advancement (althoug=
-h
-receive_encrypted_read() zeros beyond the iterator first).  The problem is=
-,
-though, that cifs_readv_receive() reverts by the original length, not the
-amount transmitted which can cause an oops in iov_iter_revert().
+On 17/09/2024 19:24, Erez wrote:
+>>>>>>
+>>>>>> It does not look like you tested the bindings, at least after quick
+>>>>>> look. Please run `make dt_binding_check` (see
+>>>>>
+>>>>> I run "make dt_binding_check" on kernel 6.6.
+>>>>
+>>>> Yeah, we are no on kernel 6.6. You can run it also on kernel v4.1 -
+>>>> still does not matter.
+>>>>
+>>>> Don't develop on ancient code because then you ask us to review same
+>>>> broken stuff we already fixed.
+>>>
+>>> I test with Beaglebone black for testing, it is difficult to run the
+>>> last vanille version.
+>>> I did backport the spi-nor driver.
+>>> As for "make dt_binding_check" on last kernel, it need to upgrade the tools,
+>>>  and I did not think it could change that much.
+>>>
+>>
+>> Well, it is possible to build kernel on small embedded board, but that's
+>> quite cumbersone, slow and inefficient, considering that it's just
+>> easier to cross compile. But anyway, binding check does not even need
+>> cross compilation.
+>>
+>> Sorry, the code is obviously wrong, there is no such thing as u32, so
+>> you did not test it. I provided link which explains how to test it. You
+>> must do it on latest mainline kernel. Just like you must develop and
+>> generate patches on latest mainline kernel, because this is where we
+>> apply the patches. We do not apply them to v6.6.
+> 
+> The patches are based on the lastest  mainline kernel.
+> I do not understand why you think otherwise.
 
-Fix this by:
+Because you wrote:
+"I run "make dt_binding_check" on kernel 6.6."
 
- (1) Remove the iov_iter_advance() from cifs_read_iter_from_socket().
+The command is either part of build process or final check process
+(static analyzers etc). If you say you did this on v6.6, you got such
+response.
 
- (2) Remove the iov_iter_revert() from both callers.  This fixes the bug i=
-n
-     cifs_readv_receive().
-
- (3) In receive_encrypted_read(), if we didn't get back as much data as th=
-e
-     buffer will hold, copy the iterator, advance the copy and use the cop=
-y
-     to drive iov_iter_zero().
-
-As a bonus, this gets rid of some unnecessary processing.
-
-This was triggered by generic/074 with the "-o sign" mount option.
-
-Fixes: 3ee1a1fc3981 ("cifs: Cut over to using netfslib")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/smb/client/connect.c   |    6 +-----
- fs/smb/client/smb2ops.c   |    9 ++++++---
- fs/smb/client/transport.c |    3 ---
- 3 files changed, 7 insertions(+), 11 deletions(-)
-
-diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
-index 5375b0c1dfb9..06c16b0ce3e8 100644
---- a/fs/smb/client/connect.c
-+++ b/fs/smb/client/connect.c
-@@ -811,13 +811,9 @@ cifs_read_iter_from_socket(struct TCP_Server_Info *se=
-rver, struct iov_iter *iter
- 			   unsigned int to_read)
- {
- 	struct msghdr smb_msg =3D { .msg_iter =3D *iter };
--	int ret;
- =
-
- 	iov_iter_truncate(&smb_msg.msg_iter, to_read);
--	ret =3D cifs_readv_from_socket(server, &smb_msg);
--	if (ret > 0)
--		iov_iter_advance(iter, ret);
--	return ret;
-+	return cifs_readv_from_socket(server, &smb_msg);
- }
- =
-
- static bool
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index 159a063de6dd..5550d5237b22 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -4869,9 +4869,12 @@ receive_encrypted_read(struct TCP_Server_Info *serv=
-er, struct mid_q_entry **mid,
- 		goto discard_data;
- =
-
- 	server->total_read +=3D rc;
--	if (rc < len)
--		iov_iter_zero(len - rc, &iter);
--	iov_iter_revert(&iter, len);
-+	if (rc < len) {
-+		struct iov_iter tmp =3D iter;
-+
-+		iov_iter_advance(&tmp, rc);
-+		iov_iter_zero(len - rc, &tmp);
-+	}
- 	iov_iter_truncate(&iter, dw->len);
- =
-
- 	rc =3D cifs_discard_remaining_data(server);
-diff --git a/fs/smb/client/transport.c b/fs/smb/client/transport.c
-index 6e68aaf5bd20..abf966f6ff0a 100644
---- a/fs/smb/client/transport.c
-+++ b/fs/smb/client/transport.c
-@@ -1813,11 +1813,8 @@ cifs_readv_receive(struct TCP_Server_Info *server, =
-struct mid_q_entry *mid)
- 		length =3D data_len; /* An RDMA read is already done. */
- 	else
- #endif
--	{
- 		length =3D cifs_read_iter_from_socket(server, &rdata->subreq.io_iter,
- 						    data_len);
--		iov_iter_revert(&rdata->subreq.io_iter, data_len);
--	}
- 	if (length > 0)
- 		rdata->got_bytes +=3D length;
- 	server->total_read +=3D length;
+Best regards,
+Krzysztof
 
 
