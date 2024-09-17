@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-331664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D72097AFC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B098D97AFC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16E3C283536
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3B8E1C21DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE541169AC5;
-	Tue, 17 Sep 2024 11:38:43 +0000 (UTC)
-Received: from MSK-MAILEDGE.securitycode.ru (msk-mailedge.securitycode.ru [195.133.217.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDB116B75B;
+	Tue, 17 Sep 2024 11:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhwOnf9Q"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1A4291E;
-	Tue, 17 Sep 2024 11:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.217.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8903515F308;
+	Tue, 17 Sep 2024 11:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726573123; cv=none; b=fAbUXkpANgwbzS/Y08NS0ZSNsLdKOFIYtllF8tGLtZOoZEfkXP0pKqfAalSMuCq1cQQK4TXRE6o1Mbl9PVXOrPiAIHKewo0choa1d6RV1EJySvUuibX6LjXf2LrDpXT6e095xmWp8ELXjsXSUj2B1eH7f5oUDrLqwn3de3PFKfU=
+	t=1726573201; cv=none; b=X47dOoVlSJQmv9V19mCjtwzOR3Q7w8eYoDczZuAi+RZFUtjNQvy7qMXgdfFkbQMbCSP41ODlBz6zHnJuMRljAmDKUwEjhwrz3MhRrxhqtyzDxt5vLTqakIIPIUIEiMAYGc+eZNIU7RhzGOnAEhOMYS+7xaOT6ehAK6k1pkC9nD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726573123; c=relaxed/simple;
-	bh=VHWbmrfyp7kgfmRY2M4P/MMRHq5iiSVFxjguUg3vZ24=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dM2vcqWTa0a9TGnQdx8UuGA+8DOYSY0Vy6e+2Xb2KA3LSIQeHFvqnli5GJcFNq7rEpAvBgWiVOIGlda86oGU5cPNQ66oQD4Pr/6IAI+JFccg4hKWSdKWQhUkgRpVwQoTWNuH0DyU16D2bdOJEvz4kUHaSVkVsDOK05CoBTFHCv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru; spf=pass smtp.mailfrom=securitycode.ru; arc=none smtp.client-ip=195.133.217.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=securitycode.ru
-From: George Rurikov <g.ryurikov@securitycode.ru>
-To: Christoph Hellwig <hch@lst.de>
-CC: George Rurikov <g.ryurikov@securitycode.ru>, Sagi Grimberg
-	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
-	<linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] nvmet: Remove unnecessary check in nvmet_sq_destroy()
-Date: Tue, 17 Sep 2024 14:35:35 +0300
-Message-ID: <20240917113535.1916516-1-g.ryurikov@securitycode.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726573201; c=relaxed/simple;
+	bh=ecEGHgyhHCw7IfP+WwTd7Ywh0L4XyrtJjcE9jri8+XY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6IHOs9T65oySPyUenAMJM8PWKsQ+uKyAeqfls16m4wFtUxacKMO5u4qi/s30GWdEZUXnACidWx4z+bcoZT+p2GZYhKYz5QLX5zGUExllW5SDsfginSdLa6r4Bp+A/TF32jTCmF28ablAss2BnyHCNL7kPUe653Tl5hYeWYX5no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhwOnf9Q; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7191f58054aso4514408b3a.0;
+        Tue, 17 Sep 2024 04:40:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726573200; x=1727178000; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ecEGHgyhHCw7IfP+WwTd7Ywh0L4XyrtJjcE9jri8+XY=;
+        b=jhwOnf9QJn6ibWg3ispil1MnMmSjK8pak/Zg1WZbzBSn3BZJOx8Ws2/EO8TZwqamsY
+         Q863aFpp/LkiNSfESGM/4G0hIuApQkvKR1B3Da1uFLXO8QewHdJ04rqI3wpKT89pSXiW
+         Unh6reoS70mlgN09adnwHqjJpawTi/5uB3vpe5vR0PDpWGLMNAG0Y1USde1QGTm1ZHoo
+         UIcrbilKUdBhDRaANF2UcU73T2onwlSaHMXbr5oDzQqx5wRqudAIRs3+6eT8Yo3SjPqT
+         LbMJs/L2D+H3CxB/C6VFnqhR7WODn/+71l2Qq/TaG4vFgkUVCNXu4uKCB9BMMelWITp8
+         XgFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726573200; x=1727178000;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ecEGHgyhHCw7IfP+WwTd7Ywh0L4XyrtJjcE9jri8+XY=;
+        b=oJNXFtTGt1xgEcGS1bgA9iJYWJ+/vjPmrK8us7/nu3SPGOLC8kCVdf5QXcqkPeOlyl
+         e3l0+GZFFreoyRDZfP+zvOjzHJFz1BKQKhyqal21Yq0rhCDAYcvhTVHKpPwR2xKin1W4
+         c/n87T+lcsstRH9FgedJzs0F1Kya2NyNeuDTwElVsdzLgzaKgjoguObKwZ818nC42SL2
+         SPQQDVGucmjq9iqUqY9I7ttBRHkyBNo3dnHbqEgvWPCWmgAtWZhQx3GbPHZQgK/e1MrU
+         zF3+KearvqcFvRrjO4zqwGbZeoExoglosM6mKZ5Hr7QVFqxz7aHvymeD2BsrHYYy2sOh
+         KiRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoBoeImy+BdwLZRRrTBCezQQpgSPGYEPvC1M00x7kHps+3A9f1UpFemLo4tNAUzL3MDDXdd5xQ6U2Xw7E=@vger.kernel.org, AJvYcCVigD8b7INBU8ByVJwVXAZdDekHfdyMbnBQlXFke2qFyX8HB+nWSR4qc+M1c9rg1wP4gcurVJy6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFRFDBUQF1g/QAFmpUWlNtp1e4txnmow2fDX4qkqbp7FEK75Dw
+	pIgXATeMRoNeUPoOudclMzUMfMMbmuWEnyxFCoNGCG5tiYQqcNhlNgTKZUUE8b9YoPZLQools6F
+	qWhMhy60luzWBFLBb5IvvfJzE1Sk=
+X-Google-Smtp-Source: AGHT+IHCMSs5WXFsoCgcNfwmckmR2l9g1Zpnl0GggwToNMhM5h5CcrQFTEe88Wn/ywZnZoFeosxT6h5vlyJjHf6q9GU=
+X-Received: by 2002:a05:6a00:2d15:b0:717:8dd1:c309 with SMTP id
+ d2e1a72fcca58-7192606d3c1mr24904345b3a.9.1726573199759; Tue, 17 Sep 2024
+ 04:39:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CAHaCkmfFt1oP=r28DDYNWm3Xx5CEkzeu7NEstXPUV+BmG3F1_A@mail.gmail.com>
+ <CAHaCkmddrR+sx7wQeKh_8WhiYc0ymTyX5j1FB5kk__qTKe2z3Q@mail.gmail.com>
+ <20240912083746.34a7cd3b@kernel.org> <CAHaCkmekKtgdVhm7RFp0jo_mfjsJgAMY738wG0LPdgLZN6kq4A@mail.gmail.com>
+ <656a4613-9b31-d64b-fc78-32f6dfdc96e9@intel.com> <CAHaCkmfkD0GkT6OczjMVZ9x-Ucr9tS0Eo8t_edDgrrPk-ZNc-A@mail.gmail.com>
+ <534406c8-80d3-4978-702a-afa2f33573f7@intel.com>
+In-Reply-To: <534406c8-80d3-4978-702a-afa2f33573f7@intel.com>
+From: Jesper Juhl <jesperjuhl76@gmail.com>
+Date: Tue, 17 Sep 2024 13:39:23 +0200
+Message-ID: <CAHaCkmcZ6tqj8zJjLERO6Ze4SrKNHBpGL8aOLwt6CsX8b4TSFA@mail.gmail.com>
+Subject: Re: [Intel-wired-lan] igc: Network failure, reboot required: igc:
+ Failed to read reg 0xc030!
+To: "Lifshits, Vitaly" <vitaly.lifshits@intel.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, intel-wired-lan@lists.osuosl.org, 
+	Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: SPB-EX2.Securitycode.ru (172.16.24.92) To
- MSK-EX2.Securitycode.ru (172.17.8.92)
 
-This fix is mostly cosmetic.
+On Sun, 15 Sept 2024 at 09:03, Lifshits, Vitaly
+<vitaly.lifshits@intel.com> wrote:
+>
+> >
+> >> 2. What is the NVM version that your NIC has? (ethtool -i eno1)
+> > $ sudo ethtool -i eno1
+> > driver: igc
+> > version: 6.10.9-arch1-2
+> > firmware-version: 1082:8770
+> > expansion-rom-version:
+> > bus-info: 0000:0c:00.0
+> > supports-statistics: yes
+> > supports-test: yes
+> > supports-eeprom-access: yes
+> > supports-register-dump: yes
+> > supports-priv-flags: yes
+>
+> I see that you have an old NVM version, 1.82.
+>
+> In the recent versions, some power and stability bug fixes were
+> introduced to the NVM.
+>
+> These fixes in the NVM might resolve completely your issue.
+>
+> Therefore, I'd like to ask you to contact your board vendor, Asus, to
+> update the NVM to the latest version.
+>
+I'll get in touch with them and see if I can manage to get the
+firmware updated. I'll reply back what happens and whether or not it
+seems to fix the issue (after a while) - thank you for the
+information.
 
-Since =E2=80=9Cctrl->sqs=E2=80=9D is initialized in the same place as =E2=
-=80=9Cctrl=E2=80=9D
-(nvmet_alloc_ctrl), in my opinion checking =E2=80=9Cctrl->sqs=E2=80=9D for =
-0 in line
-814 is redundant.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Cc: stable@vger.kernel.org
-Fixes: 64f5e9cdd711 ("nvmet: fix memory leak when removing namespaces and c=
-ontrollers concurrently")
-Signed-off-by: George Rurikov <g.ryurikov@securitycode.ru>
----
- drivers/nvme/target/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index ed2424f8a396..d1b287310265 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -811,7 +811,7 @@ void nvmet_sq_destroy(struct nvmet_sq *sq)
-         * If this is the admin queue, complete all AERs so that our
-         * queue doesn't have outstanding requests on it.
-         */
--       if (ctrl && ctrl->sqs && ctrl->sqs[0] =3D=3D sq)
-+       if (ctrl && ctrl->sqs[0] =3D=3D sq)
-                nvmet_async_events_failall(ctrl);
-        percpu_ref_kill_and_confirm(&sq->ref, nvmet_confirm_sq);
-        wait_for_completion(&sq->confirm_done);
---
-2.34.1
-
-=D0=97=D0=B0=D1=8F=D0=B2=D0=BB=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BE =D0=BA=D0=BE=
-=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D0=
-=BE=D1=81=D1=82=D0=B8
-
-=D0=94=D0=B0=D0=BD=D0=BD=D0=BE=D0=B5 =D1=8D=D0=BB=D0=B5=D0=BA=D1=82=D1=80=
-=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D0=BF=D0=B8=D1=81=D1=8C=D0=BC=D0=BE =D0=B8 =
-=D0=BB=D1=8E=D0=B1=D1=8B=D0=B5 =D0=BF=D1=80=D0=B8=D0=BB=D0=BE=D0=B6=D0=B5=
-=D0=BD=D0=B8=D1=8F =D0=BA =D0=BD=D0=B5=D0=BC=D1=83 =D1=8F=D0=B2=D0=BB=D1=8F=
-=D1=8E=D1=82=D1=81=D1=8F =D0=BA=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=
-=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D0=BC=D0=B8 =D0=B8 =D0=BF=D1=80=
-=D0=B5=D0=B4=D0=BD=D0=B0=D0=B7=D0=BD=D0=B0=D1=87=D0=B5=D0=BD=D1=8B =D0=B8=
-=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE =
-=D0=B4=D0=BB=D1=8F =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=B0. =D0=95=
-=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=8F=D0=B5=
-=D1=82=D0=B5=D1=81=D1=8C =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=BE=
-=D0=BC =D0=B4=D0=B0=D0=BD=D0=BD=D0=BE=D0=B3=D0=BE =D0=BF=D0=B8=D1=81=D1=8C=
-=D0=BC=D0=B0, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=D0=B0,=
- =D1=83=D0=B2=D0=B5=D0=B4=D0=BE=D0=BC=D0=B8=D1=82=D0=B5 =D0=BD=D0=B5=D0=BC=
-=D0=B5=D0=B4=D0=BB=D0=B5=D0=BD=D0=BD=D0=BE =D0=BE=D1=82=D0=BF=D1=80=D0=B0=
-=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D1=8F, =D0=BD=D0=B5 =D1=80=D0=B0=D1=81=D0=BA=
-=D1=80=D1=8B=D0=B2=D0=B0=D0=B9=D1=82=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=
-=D0=B6=D0=B0=D0=BD=D0=B8=D0=B5 =D0=B4=D1=80=D1=83=D0=B3=D0=B8=D0=BC =D0=BB=
-=D0=B8=D1=86=D0=B0=D0=BC, =D0=BD=D0=B5 =D0=B8=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=
-=D0=B7=D1=83=D0=B9=D1=82=D0=B5 =D0=B5=D0=B3=D0=BE =D0=B2 =D0=BA=D0=B0=D0=BA=
-=D0=B8=D1=85-=D0=BB=D0=B8=D0=B1=D0=BE =D1=86=D0=B5=D0=BB=D1=8F=D1=85, =D0=
-=BD=D0=B5 =D1=85=D1=80=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D0=B8 =D0=BD=D0=B5 =
-=D0=BA=D0=BE=D0=BF=D0=B8=D1=80=D1=83=D0=B9=D1=82=D0=B5 =D0=B8=D0=BD=D1=84=
-=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BB=D1=8E=D0=B1=D1=8B=D0=BC =
-=D1=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BE=D0=BC.
+- Jesper Juhl
 
