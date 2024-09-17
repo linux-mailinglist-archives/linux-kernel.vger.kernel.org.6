@@ -1,90 +1,87 @@
-Return-Path: <linux-kernel+bounces-332030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 250A697B47B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:15:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE1197B480
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A6D7B25D15
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C1BC28429F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA4E170A0B;
-	Tue, 17 Sep 2024 20:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF1118BB9C;
+	Tue, 17 Sep 2024 20:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fafmN/fg"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WjxggxtP"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43223B1A1
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 20:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726604123; cv=none; b=h6K/66wKry9tC61fDyrMOzysWrnji1Gb2PB/ylpQf6ErO2nuhmbbkoajhvD6SJwqHdRai3bF6BbDCTLcNmyAv5TZwz7GO3Ij4bDjGjoBFcfwcgh/VpzvERrpyfbiYg6gBoi+SIJjf4JaTWOpyX2NDP3VCAcNIsAanLsDmYyhMYg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726604123; c=relaxed/simple;
-	bh=aOnxkE629Q7uxQvdIEGwqukFgP0+vOvNqIQw17ZdUFg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PBUE8sZRjYf1lg79rP96IapRWdsmqGi4FQtSAuJoFwJ5HL8dRUkyH2blTt7wSiGwBM+LKhkd/h83Do6PJ5XXRIZ/4kK28SWhZJRbFkd8T/QZyRZbTrLG8iVDCdkp0XiwYpI+sj7S7dETq1Qtovgl9Ll9RE44+YuSE7Ks70v/T7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fafmN/fg; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-710f63ff31eso48440a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:15:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726604120; x=1727208920; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qnpem1ad9XMHCNEO0doEltppxSVMaPU0TbCxRa1UzLo=;
-        b=fafmN/fg5SnVuJUOrSxdif8yEZsOZJmec4H5KCN/9h9gMDL4V9Q/9vHSu8Mwvg3Jlq
-         3SQ/1lZLJIv7ubXJnKpZKLG23WBfpNTxy589V82Ma4fvznsVjR18CTp+HhR2JAOsAKnb
-         fJD6LmmebKwHZnk9JCStT9dOgpQxeKbdY/oH+MK40J09/eqw/fO5mYlBVTStLnCf38iT
-         18XcoaRWLfDWpOdF6/s57lrgsLhA6iCHPqmoFskrsi9Se1MKA9JRD+NhIO44oL59yf1L
-         g4TFgBc9W83NwwmNORW0JrIi+qjMjsCc5MAvX3CPCJDl+HY8CXeJcMiuH2RNP4y1f+Zv
-         +5ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726604120; x=1727208920;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qnpem1ad9XMHCNEO0doEltppxSVMaPU0TbCxRa1UzLo=;
-        b=bgZo98Lvhgsb44WEbD5BplDQJl0KRmpQ9ilsrFlTEMwIUw8rB1nbB3BT8BCrRUkwh3
-         89s7eRaYFs4Sxa0ExL4AGyxyYmpd2lZUSKWg+d+7rp6TdEmCfo7h8DWN2TxfNvRubjmd
-         C2t8/7r7NUWQeHRtkZl+zJSGL+9emS2144+C8/snls8yd3+SKD99D/PXkJRnobdt0tnr
-         6rlkxyJMqyR2UZEOOuv7Jhk95FCvidwWC+xLsCqw/lFBggIiswtatSERlk6U//dFt1Ku
-         cwTLn4R7s3apFVC5YYfPPkczgzrtKduwGJGwGe8xxdlQ/7To04jaixpAO4wzsuw6pPdc
-         Yt0g==
-X-Gm-Message-State: AOJu0Yz7K6TK6sAoWWqN6RSn2Ib3kD0bCUsvUzBRtbNiVilooJkChOT8
-	4Iq3dH3jc9L75FGt/SDBUiVBR/5GRhHvwIbWuFXqK29XyDbXIzoM4QgEwR+d
-X-Google-Smtp-Source: AGHT+IHYsJ26P2MaX5MBeePofbG6Q73+J96JWmdrsHLigQQKy8YEHdjmxWSVwl73tuTml2XudIBiFw==
-X-Received: by 2002:a05:6830:4121:b0:709:41c4:6a5 with SMTP id 46e09a7af769-71109b666c7mr8531945a34.3.1726604120676;
-        Tue, 17 Sep 2024 13:15:20 -0700 (PDT)
-Received: from localhost.localdomain ([143.166.81.254])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71239e9fef8sm1658393a34.29.2024.09.17.13.15.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 13:15:20 -0700 (PDT)
-From: Stuart Hayes <stuart.w.hayes@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Martin Belanger <Martin.Belanger@dell.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Daniel Wagner <dwagner@suse.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>,
-	David Jeffery <djeffery@redhat.com>,
-	Jeremy Allison <jallison@ciq.com>,
-	Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Jan Kiszka <jan.kiszka@seimens.com>
-Cc: Stuart Hayes <stuart.w.hayes@gmail.com>
-Subject: [PATCH] driver core: fix async device shutdown hang
-Date: Tue, 17 Sep 2024 15:15:17 -0500
-Message-Id: <20240917201517.1145331-1-stuart.w.hayes@gmail.com>
-X-Mailer: git-send-email 2.39.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB6E3B1A1;
+	Tue, 17 Sep 2024 20:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726604188; cv=fail; b=uww1MgbUOS3NU9Jh2A7eff/06OFqUiYCall5lE/uv1eYQgfl4LmhlLKmIaD2+8A9kShsdq2A//Ty/jdoOre0nQIiZM5SunWpuLh89Wg2kSgC4B4EOrhWiutdA2Sx2jNiku9hhSBBL4bMSmdS4rhoh4eNn6BATpyY84YaG32rfOg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726604188; c=relaxed/simple;
+	bh=EEuTcsTlwaSykvRrJtGC26gbdXYScsBvDfS2uujoAWQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RQKqtIroxR177gpgInqL1/YqcVNnvAXsMxXrJIAarbh0OSBSJcyUOM9W4+5uNPO7P34rXiUc63JWvlb1T86tpwJmdVDi79hvmcpqtT+EDXag9LZ3QBNrxu09W35DgfSZF+eUma/2BYXKxrH5K8cy35imDu5YtYKhvJ04Q7qdn/Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WjxggxtP; arc=fail smtp.client-ip=40.107.93.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c8RqbU0QYVCZeshQS74nWJA6RuIKEH5Hnr98xe6X95Tt7PCIeVRc3GIVigf/DDnQL2UytVQiobTcFBFlWcKDry/Sv2RVzQW4AVmFK1H7GMjupLlS5/X2hZkvsZrXHbecx9pYT0w8++v5c7GFh2yUwcr+kU5Y6cYOe4Eup/iIwdkChlnULulm+Valo7CdzXMMmEh60HeroA3onYxVanwbnBsI26To6M6YYzqZRaefMgigqVR2xt33ULZSKdPGR8368WCHXu/GGJZenMI4Ts3slod9bJ4QtYFPi8E17Lo6Nwa6+TJBoKt0S9ZrOemBBqKfMgITFDn7YbsGNlcrK0cviQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RdSzXhpqmfbfNm+ES6/XesEs8SHjShUHY1kK+WyFWHk=;
+ b=jq0rIJS2HGFBH9OaTh4CcLUhMSJPuhuY2NI92qAzVh4yn3e9qMJgo34Ixa1vTIJwMa7ykmYFYj2jLMUPcJDFPyKdyWJ73po1oYvmAqhCfkjPKZ5e9WlhNu7cS1eOiMhZizHmXWzx/RFEVOPSyoS+NO282kg9Sv5Mx+7sCeNjEFwrp6MxjRTyRXbEVYAmWDJgkC/eO5i8o5iQtE3O5z4CdrSI6FStzlg0Jj2u+UTjsKnNpnaYoPkTzveF6i3iNPC3hbKEgIJbcjpsO9M/06sDxQETEqOeXLTaZZebK+NM4j/cU7ZdjrOO3C6RaVSqwRZWaPNWA4ootVntOXJQTQWC6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RdSzXhpqmfbfNm+ES6/XesEs8SHjShUHY1kK+WyFWHk=;
+ b=WjxggxtP8OONCfnkuo0vGYyweyoa8U5fs+nvxdsCIHuosPMa8laDa9meb5afafLdBtSv5F76DV8Z7qYt4MlwwWek/bOyMy8rGDpvI9lm8j1HRW4/8UTTEMMBLdRPM0yIT7TD1aEOQanYMY1+FsFhl5r3Y7v9Lj23wBOHeqaWZyA=
+Received: from SJ0PR13CA0141.namprd13.prod.outlook.com (2603:10b6:a03:2c6::26)
+ by CH3PR12MB8481.namprd12.prod.outlook.com (2603:10b6:610:157::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Tue, 17 Sep
+ 2024 20:16:21 +0000
+Received: from SJ5PEPF00000205.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c6:cafe::a8) by SJ0PR13CA0141.outlook.office365.com
+ (2603:10b6:a03:2c6::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16 via Frontend
+ Transport; Tue, 17 Sep 2024 20:16:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF00000205.mail.protection.outlook.com (10.167.244.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Tue, 17 Sep 2024 20:16:20 +0000
+Received: from purico-ed09host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 17 Sep
+ 2024 15:16:18 -0500
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <seanjc@google.com>, <pbonzini@redhat.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <herbert@gondor.apana.org.au>
+CC: <x86@kernel.org>, <john.allen@amd.com>, <davem@davemloft.net>,
+	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>
+Subject: [PATCH v2 1/3] crypto: ccp: New bit-field definitions for SNP_PLATFORM_STATUS command
+Date: Tue, 17 Sep 2024 20:16:09 +0000
+Message-ID: <afd7d4c5192109519ada49885e9585a1699820bc.1726602374.git.ashish.kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1726602374.git.ashish.kalra@amd.com>
+References: <cover.1726602374.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,41 +89,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000205:EE_|CH3PR12MB8481:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe388317-fc21-4321-ce31-08dcd7559873
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qAt+V+PjLX/qbx+GlCqjHTJjOpMPxAA+uJhbbRd9KhCJDw1OGvFtgA/UxFWk?=
+ =?us-ascii?Q?Vh7lWRisyBnvT00CifRWSBG1aXxdiR0aJ9Y/k8zNXl5HgwjUNZYGJQASaLFf?=
+ =?us-ascii?Q?NqnfjANXmS/Um5BN/VTcsVyz649F/Tsmp4eepAgc7DxjxHp4MEcjduCgIbPq?=
+ =?us-ascii?Q?vkLXiVGMrztPazq1BUTxXH1ecNI9YHak5Gg68dkULuW2x65THbBkRsNOEQzn?=
+ =?us-ascii?Q?Ev4RVTC1zq4ilTgam3IGOpT4Ag57QWu+PA3p+Jvdzy+berJ5CW13q7pIhRqu?=
+ =?us-ascii?Q?AS6SnfU/XosfJ/DWmnsHRBfoBiuDe/J/HGDCu1b6CRU5jk7VokcRMWCoBG53?=
+ =?us-ascii?Q?GJiZ0riUL/If1wz/sztMNtpKQzbQppmls1P2mWRNdRps62wiDC2x6ASO4+iQ?=
+ =?us-ascii?Q?RYqIB36vaTU/REJmifcKpNfdUduvuowPU2Oy/0anQJvu39Op7kWm4a8tezcz?=
+ =?us-ascii?Q?O/XX/qwtveAxEseRikNolV9O70h6jvBQ3x4yslwcamfiEZ9QXAsSLeGEG/8q?=
+ =?us-ascii?Q?GrKtX7A1JjGDYKv7mn3i7ijxVvkWBPofCvCrrTa1XNhv83cxlpXQQspG73KE?=
+ =?us-ascii?Q?RVF+WzNSsoHNRmr5eutco6ZOKbg75zRtpgiNFjpGd7zSpLev1prar9vVLpYj?=
+ =?us-ascii?Q?ZrXsPzNm3ZdE/F9FfJM7xsUKBawhq4qQa5ExiHouhdGLk5bSLpFoqgMsDUW0?=
+ =?us-ascii?Q?KmvA1dFADnYbP3GmRirdppg5DnMJLK3RuHelOiRmZyHBMBzaEc5sYyMQlpGW?=
+ =?us-ascii?Q?F2PlE55N06wB1KnaEKCEZTQhSQw7Jklx5aXwceDV+rAcPkXb1qXSXilCUmni?=
+ =?us-ascii?Q?3VIUywi+OEfKgnh1wKnxJsBcUj6Y36dprihBTpP3kqI+eiYW8TxYaU377Q//?=
+ =?us-ascii?Q?XBIi84ORiSs30mSotTzvX5wdpQ8qtqJvWbeIJBgeAsC0nNOFuWvUhGNlHAaf?=
+ =?us-ascii?Q?+BQadSddBgaMsjj76QW2niXm/RPQ1LkilAiQkFcivrCcKmGcOUGdOPiT2xok?=
+ =?us-ascii?Q?Sp0i98TTwtcyB9cMzWPbz2jUHK4ic2kuGkrLPdLPgStM9gb5QhncvG0Vu7Xq?=
+ =?us-ascii?Q?8aYr0l5T7zmDNIJDpvGF14TpTvKq0MZNie8NCL81rj/42gkuIZn2Na7lDhKx?=
+ =?us-ascii?Q?D1M7iUMcE1T7IqatyfTpnHlMxsJQOLPCijNXkpGu6lMFF94/y+Pwn9Tv1u3O?=
+ =?us-ascii?Q?EYgX27XYQ/PkTTrfdMvgQe6L6l8GAwDBW9cODGgHfmOEqTuejpp4ywdBI/pw?=
+ =?us-ascii?Q?G85L71BIKDneZMU7R7kBRouZ5LmCiRopi+D47xMXpDqd2PpJho1+3HjlPF7J?=
+ =?us-ascii?Q?vc5FOovx9438CKr/Ixw1bYvxZqqIDEXfq361N5G3ckrK90UxBBcGwFuutRYH?=
+ =?us-ascii?Q?Qs6IGlCfRxMqt5Pyx8mjBykCMm9ZvJjaf2dO3ejXynCMnbXco1Fqaoaptjyy?=
+ =?us-ascii?Q?J9F9L0gME43uOEbMYx0nHM7uL+IFwbtQ?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 20:16:20.7967
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe388317-fc21-4321-ce31-08dcd7559873
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF00000205.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8481
 
-Modify device_shutdown() so that supplier devices do not wait for
-consumer devices to be shut down first when the devlink is sync state
-only, since the consumer is not dependent on the supplier in this case.
+From: Ashish Kalra <ashish.kalra@amd.com>
 
-Without this change, a circular dependency could hang the system.
+Define new bit-field definitions returned by SNP_PLATFORM_STATUS command
+such as new capabilities like SNP_FEATURE_INFO command availability,
+ciphertext hiding enabled and capability.
 
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
 ---
- drivers/base/core.c | 10 +++++++++-
+ include/uapi/linux/psp-sev.h | 10 +++++++++-
  1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index b69b82da8837..76513e360496 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -4898,8 +4898,16 @@ void device_shutdown(void)
- 
- 		idx = device_links_read_lock();
- 		list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
--				device_links_read_lock_held())
-+				device_links_read_lock_held()) {
-+			/*
-+			 * sync_state_only suppliers don't need to wait,
-+			 * aren't reordered on devices_kset, so making them
-+			 * wait could result in a hang
-+			 */
-+			if (device_link_flag_is_sync_state_only(link->flags))
-+				continue;
- 			link->supplier->p->shutdown_after = cookie;
-+		}
- 		device_links_read_unlock(idx);
- 		put_device(dev);
- 
+diff --git a/include/uapi/linux/psp-sev.h b/include/uapi/linux/psp-sev.h
+index 832c15d9155b..dd7298b67b37 100644
+--- a/include/uapi/linux/psp-sev.h
++++ b/include/uapi/linux/psp-sev.h
+@@ -178,6 +178,10 @@ struct sev_user_data_get_id2 {
+  * @mask_chip_id: whether chip id is present in attestation reports or not
+  * @mask_chip_key: whether attestation reports are signed or not
+  * @vlek_en: VLEK (Version Loaded Endorsement Key) hashstick is loaded
++ * @feature_info: whether SNP_FEATURE_INFO command is available
++ * @rapl_dis: whether RAPL is disabled
++ * @ciphertext_hiding_cap: whether platform has ciphertext hiding capability
++ * @ciphertext_hiding_en: whether ciphertext hiding is enabled
+  * @rsvd1: reserved
+  * @guest_count: the number of guest currently managed by the firmware
+  * @current_tcb_version: current TCB version
+@@ -193,7 +197,11 @@ struct sev_user_data_snp_status {
+ 	__u32 mask_chip_id:1;		/* Out */
+ 	__u32 mask_chip_key:1;		/* Out */
+ 	__u32 vlek_en:1;		/* Out */
+-	__u32 rsvd1:29;
++	__u32 feature_info:1;		/* Out */
++	__u32 rapl_dis:1;		/* Out */
++	__u32 ciphertext_hiding_cap:1;	/* Out */
++	__u32 ciphertext_hiding_en:1;	/* Out */
++	__u32 rsvd1:25;
+ 	__u32 guest_count;		/* Out */
+ 	__u64 current_tcb_version;	/* Out */
+ 	__u64 reported_tcb_version;	/* Out */
 -- 
-2.39.3
+2.34.1
 
 
