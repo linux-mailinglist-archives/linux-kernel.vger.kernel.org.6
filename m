@@ -1,206 +1,120 @@
-Return-Path: <linux-kernel+bounces-331544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A10997AE22
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:42:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911F797AE2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFF8281DF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:42:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88314B2A98C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69D8166F06;
-	Tue, 17 Sep 2024 09:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D874016B38B;
+	Tue, 17 Sep 2024 09:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SNks2fau"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="BFmaCbYL"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4F216133E;
-	Tue, 17 Sep 2024 09:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726566021; cv=none; b=Sm1s3h1LAfh1mgwTii3QY51CqVa4oH9c7Gc3KbFC2Nld0c1byTV1tN1SIi0HqhRERGL1vEjkSZNamwfgiP2vBPrftsCdzY0QhkxoOmYdnIR5Wl92QC1Ays8WVopebleTdyG+ENCn/swIs5j44MaxvO2YZVyexvgOyfn4I6pmg0o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726566021; c=relaxed/simple;
-	bh=P0T0fsjedBJ/mFJriTdYoQ0qCDv8seU6l4f4zpGqa/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZmiMLsp2CDda4ipz+1NM4fYYcnNrGclPQG018qJztIJGszFsfQsnUj2gPZh46zOLB27WVRAuRSXr2nA3U0wPlblOhuTET54y6gOqh8XlbPdJHzFXfqs2axZcp3vjWu5SUhKnYmJIOHkzVKn7QOI7uRvjnC6VMuYM0Kv6Eyk/Aqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SNks2fau; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48H9eCeR106185;
-	Tue, 17 Sep 2024 04:40:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726566012;
-	bh=rVVmQPcwTSus71ETasIqw7oZH8e1wL19MfvMqR3xvj8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=SNks2fauBEt/CaNQWHz1ZAD4l8jLYw7V4P2ZYYQBZtnOKAJszUkNCTyLSbybZpOPR
-	 xBcXPMB/wewt3fmM6fh7Tqv8vebwMktG1E+Har7zJITvxTZ0JK7jBaMnCjEvgNMwtN
-	 uxH6gypwmy5UzJvvP2k+JsoRWsg1x+JdkwUSosCU=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H9eCO0029608;
-	Tue, 17 Sep 2024 04:40:12 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
- Sep 2024 04:40:12 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 17 Sep 2024 04:40:12 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H9e9j4058142;
-	Tue, 17 Sep 2024 04:40:10 -0500
-Message-ID: <c8b2e851-a247-4a90-acb5-a774d131b561@ti.com>
-Date: Tue, 17 Sep 2024 15:10:08 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40085169AE4;
+	Tue, 17 Sep 2024 09:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726566030; cv=pass; b=Qrb+84RN0eY0V1HtqoeUgzPa/uuoT5AxUkBfJSMaulCM9gu0efA4BHGB9kbCS1ZcYrBGlTNGxn1WoeS0E8xnMMXLFBLAN1BeKQEEct4RZ+o1wbCQuB7TEEpD+ki38TaHepQMPnsu1Z4YZlVBAlY9uurZtOAX4gE7hEMJlmBcW7s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726566030; c=relaxed/simple;
+	bh=fjMaab45+pbBhcWskkwLh7ZFuxcKK4idnJPlPFyB5hM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WcZRG9LYcaRJ9hP08VWy0yQFMyA8vDMkgUMdM8KppaT4emrXugHPdTty1MW0UWSuuQtVIG317tojrfLwuTgxVqhFTJhea386BfCIb7yPao2Kk6WfG6z1BWgCLbAzZWJT0F8L+tS5Qm5lV0Pq6k1+C4PMHq7x/QbP7ZnEN0Zx5W8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=BFmaCbYL; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1726566022; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fA07oXHUQRzPwkAI09zDfiHWFwOrWVfA7gr7+m7SUKQYSqiHF1My3UxpjjQKvloWf0Uev79oXLEIS+YlcN/HluU7XbAFItkAsrvfHR3VOwA12lphazT8+NonJM/Sq+nC0ffo2vfY2RWRolvMQIjR9iBGHSqwyBpMSERLDjerlgU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726566022; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=r/CPzEUqg0JVM57s+c79LCWGpHgUgoF/PtjNWw5wmT4=; 
+	b=POGElNvYLB+0J6rURvCvruqpv1cxl0hsQ4IVb93YBMavQxSFRC2tMqKx4vjUYBA/JYYDgVlFdPyyi3QC3os2Yh0HG2Pdi5Fqxy3gYnt7QvSI7YAafE3wCM2pNs5WhmgFJZZjWnE1ZNexJxoN/uhweVn+D4oSMQqoiAfGEpXo4lY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726566022;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=r/CPzEUqg0JVM57s+c79LCWGpHgUgoF/PtjNWw5wmT4=;
+	b=BFmaCbYLpI51Xw/E/5j5MWGV79lipmbvBFip4uE2HFpjWHyQxPWRabf48RJvQu+L
+	rd2N4HbIk1aQz+WLv+8eczUeve2CovFXaJAnQoCXlx0mqXfRPjTGgnTxcdZptkj4qai
+	KDkm+g1Ol4k2c3vWhW4cZY0tofrbkOpOm3gRh94HSBVcBrjBYHOj7KWfFlziF0uHMu2
+	IkME3FK3oYGX99oYs6d2ofLA/Agwkcxr1AWSgzWEFfnQkIqr6wTJwTqi/GicaXFft3Y
+	RctW005LsYi7fVwS7qV/1pgFbG1srrUAzY9aF6Em6O5kLFdvBjVtLcVlhqyzy/9j4eF
+	6qZgVl9CFA==
+Received: by mx.zohomail.com with SMTPS id 17265660210421019.1959058619678;
+	Tue, 17 Sep 2024 02:40:21 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH] dt-bindings: usb: genesys,gl850g: allow downstream device subnodes
+Date: Tue, 17 Sep 2024 17:40:08 +0800
+Message-ID: <20240917094008.283529-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] remoteproc: k3-r5: Fix check performed in
- k3_r5_rproc_{mbox_callback/kick}
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Kumar, Udit"
-	<u-kumar1@ti.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, Hari Nagalla <hnagalla@ti.com>,
-        Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-References: <20240916083131.2801755-1-s-vadapalli@ti.com>
- <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
- <fda85c12-e73f-44b8-b66b-1241e417a9b7@ti.com>
- <CANLsYky1Oxu7Fc1-gz53cR+KpO67nDE5LQGj_NV+czOwY2_2CA@mail.gmail.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <CANLsYky1Oxu7Fc1-gz53cR+KpO67nDE5LQGj_NV+czOwY2_2CA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Hi Mathieu,
+As this binding describes USB hubs, it's natural for them to have
+downstream devices.
 
-On 17/09/24 14:07, Mathieu Poirier wrote:
-> On Mon, 16 Sept 2024 at 23:20, Kumar, Udit <u-kumar1@ti.com> wrote:
->> On 9/16/2024 8:50 PM, Mathieu Poirier wrote:
->>> On Mon, 16 Sept 2024 at 02:31, Siddharth Vadapalli <s-vadapalli@ti.com> wrote:
->>>> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during
->>>> probe routine") introduced a check in the "k3_r5_rproc_mbox_callback()" and
->>>> "k3_r5_rproc_kick()" callbacks, causing them to exit if the remote core's
->>>> state is "RPROC_DETACHED". However, the "__rproc_attach()" function that is
->>>> responsible for attaching to a remote core, updates the state of the remote
->>>> core to "RPROC_ATTACHED" only after invoking "rproc_start_subdevices()".
->>>>
->>>> The "rproc_start_subdevices()" function triggers the probe of the Virtio
->>>> RPMsg devices associated with the remote core, which require that the
->>>> "k3_r5_rproc_kick()" and "k3_r5_rproc_mbox_callback()" callbacks are
->>>> functional. Hence, drop the check in the callbacks.
->>> Honestly, I am very tempted to just revert f3f11cfe8907 and ea1d6fb5b571.
->>
->> Please don't :) , it will break rproc in general for k3 devices.
->>
-> Why not - it is already broken anyway.  Reverting the patches will
-> force TI to actually think about the feature in terms of design,
-> completeness and testing.  The merge window opened on Sunday - I'm not
-> going to merge whack-a-mole patches and hope the right fix comes
-> along.
+Change "additionalProperties" to "unevaluatedProperties" to allow
+properties defined in usb-device.yaml (for DT cells properties) and add
+a pattern-based downstream device subnode rule to match those subnodes.
 
+These changes allow downstream devices get defined under the hub.
 
-Apologies for causing this trouble, Mathieu. I have accumulated various 
-use-cases of the driver, including this, and hereon will keep in mind 
-while posting further patches.
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
+This patch is sent to fix the problems shown for the patchset at [1],
+which declares a MAC-address-less ethernet adapter subnode of the GL850G
+to have its MAC address set from the bootloader.
 
->
->> Couple of solutions for this race around condition (in mine preference
->> order)
->>
-> This is for the TI team to discuss _and_ test thoroughly.  From hereon
-> and until I see things improve, all patches from TI will need to be
-> tagged with R-B and T-B tags (collected on the mailing lists) from two
-> different individuals before I look at them.
+[1] https://lore.kernel.org/linux-arm-kernel/172623730520.4076253.7175037716930825765.robh@kernel.org/
 
+ .../devicetree/bindings/usb/genesys,gl850g.yaml          | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Understood, that is a fair ask. Hereon, I will also attach my test logs 
-for all the usecases I've tested a patch with, to give more visibility 
-on the testing done.
+diff --git a/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml b/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml
+index fc833363cfb49..6fe2d356dcbde 100644
+--- a/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml
++++ b/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml
+@@ -62,7 +62,14 @@ allOf:
+         peer-hub: true
+         vdd-supply: true
+ 
+-additionalProperties: false
++patternProperties:
++  "^.*@[0-9a-f]{1,2}$":
++    description: The hard wired USB devices
++    type: object
++    $ref: /schemas/usb/usb-device.yaml
++    additionalProperties: true
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+-- 
+2.46.0
 
->
->> 1) In
->> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L190
->> have a check , if probe in is progress or not
->>
->> 2)
->> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1205
->> -- correct the state to ON or something else
->>
->> 3) Move condition
->> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/remoteproc_core.c#L1360
->> before rproc_start_subdevices
->> <https://elixir.bootlin.com/linux/v6.11/C/ident/rproc_start_subdevices>
->> calling
->>
->>
->>
->>>> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during probe routine")
->>>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
->>>> ---
->>>>
->>>> Hello,
->>>>
->>>> Since the commit being fixed is not yet a part of Mainline Linux, this
->>>> patch is based on linux-next tagged next-20240913.
->>>>
->>>> An alternative to this patch will be a change to the "__rproc_attach()"
->>>> function in the "remoteproc_core.c" driver with
->>>> rproc->state = RPROC_ATTACHED;
->>>> being set after "rproc_attach_device()" is invoked, but __before__
->>>> invoking "rproc_start_subdevices()". Since this change will be performed
->>>> in the common Remoteproc Core, it appeared to me that fixing it in the
->>>> TI remoteproc driver is the correct approach.
->>>>
->>>> The equivalent of this patch for ti_k3_dsp_remoteproc.c might also be
->>>> required, which I shall post if the current patch is acceptable.
->>>>
->>>> Kindly review and share your feedback on this patch.
->>>>
->>>> Regards,
->>>> Siddharth.
->>>>
->>>>    drivers/remoteproc/ti_k3_r5_remoteproc.c | 8 --------
->>>>    1 file changed, 8 deletions(-)
->>>>
->>>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>>> index 747ee467da88..4894461aa65f 100644
->>>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>>> @@ -194,10 +194,6 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
->>>>           const char *name = kproc->rproc->name;
->>>>           u32 msg = omap_mbox_message(data);
->>>>
->>>> -       /* Do not forward message from a detached core */
->>>> -       if (kproc->rproc->state == RPROC_DETACHED)
->>>> -               return;
->>>> -
->>>>           dev_dbg(dev, "mbox msg: 0x%x\n", msg);
->>>>
->>>>           switch (msg) {
->>>> @@ -233,10 +229,6 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
->>>>           mbox_msg_t msg = (mbox_msg_t)vqid;
->>>>           int ret;
->>>>
->>>> -       /* Do not forward message to a detached core */
->>>> -       if (kproc->rproc->state == RPROC_DETACHED)
->>>> -               return;
->>>> -
->>>>           /* send the index of the triggered virtqueue in the mailbox payload */
->>>>           ret = mbox_send_message(kproc->mbox, (void *)msg);
->>>>           if (ret < 0)
->>>> --
->>>> 2.40.1
->>>>
 
