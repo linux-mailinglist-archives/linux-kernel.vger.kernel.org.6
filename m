@@ -1,181 +1,224 @@
-Return-Path: <linux-kernel+bounces-331347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E2697ABA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7068497ABA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9CF81C26130
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:46:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B80181F29FEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D065C130A73;
-	Tue, 17 Sep 2024 06:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE203136347;
+	Tue, 17 Sep 2024 06:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmDUlcLa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WowDyOFo"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DC918B1A;
-	Tue, 17 Sep 2024 06:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83454136337
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726555557; cv=none; b=EMsdPEWukT2UP1nqGUMJHcx90h/b/OGVixVHYfut7RMdt+NChKEaUlRfJZQ7+QwBZIzJgOF4pAgNACqlnweYmHxtTDYSdGAkwWl7oS8BjtLjjJQfZi+RVoebWDHB7t1WuB97XhXJQxC8/wL2C6zr3gS8MUKGcLVnXTr5VNk5DLw=
+	t=1726555621; cv=none; b=A3X2wUp46Ozk7vahUiD2fI5MGJ3qA6OmLEKTKj8uE/V5nru3KUuBoIg3Exu517hUWPtvZMKZBxS42r5g2joRauIaqsCmCtnrr4Akjf6OHNk6zoFZvlMKiwl8QEzYzsEUbjaD5vRvHZXtA4bNu36Dxya0jJOPkDgEbaAjA+zJ6I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726555557; c=relaxed/simple;
-	bh=J43I05Zcs7kcFspFnWbTBMBwpCTbgNcmNj+jUQJ9eCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qIbe8wyYi85qTIHoJn/sTbIfsxIL33hMjQsB41EPwNiGL3G12z52vmI/2nqLYYp51NJg0lYYwN9vNPsWSPK5YEyBmm3EwcrsZeu2mwgvXm3XKbzixJRqKnIygfYeWdXGiUsx9KmoMonPtklLx7U9I23P1jyyN7fQUlBU/+RvS1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmDUlcLa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 022E7C4CED0;
-	Tue, 17 Sep 2024 06:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726555557;
-	bh=J43I05Zcs7kcFspFnWbTBMBwpCTbgNcmNj+jUQJ9eCA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fmDUlcLaKMhp66QFx4wHtpClgn1gLI1IdLAIg11AO3X0de90cMXayleJERfZPACw/
-	 3XHd799ANAOH5h/Ljoq2P9m7POZst+XKVtSjNXCeHoP+JnryUmZvPLPkXVItPglVNX
-	 Y3JfDFYaMMYRSZYpy6nRGhLokLI0h0S1R0n+kVV+1LJkzEjlmLihbV2Gf8riPRePbZ
-	 5h+spASbvwPuPRnBNyx0d4mteSaSPcO5XxwraYcRmFR7bTxdIiX7cPtF1UpHn9kp1U
-	 hbcuVB7lrcNH4RDXALMAi5T2htdOcDA51DkjVrDOei22cUUr8LiSda+TMoc+tkt4BS
-	 Et/woAq9Og2NA==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53659c8d688so4136439e87.1;
-        Mon, 16 Sep 2024 23:45:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVzB2K4E4kkowmAqEz6R2lJa8//sqEK8/Ju7VusrIPV9/BXXxdtwCBQb8URJp1JrAzchIeZ/dEheM8=@vger.kernel.org, AJvYcCXhHbLzW6DV1XbIT1xU8mRed6N+al+SmZqgVjsa0qvweElkKUqOu71TwUnADAr4ccV3bOaHpXkIU1OinwAO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIJ7mANLT/XJEyptNAbp+34OIq7/lXhhlKO0JCqCcgx7JPCQgF
-	ergTh+An2v2ve2S4wnqP4gfoVxi+r+ygcMNO7UP3Ypa0N3FnR9fhtnx/VcDAXb9XRir1GLKlU/f
-	2s2DtYvxkLJqsBHSo1XGkSITrjkU=
-X-Google-Smtp-Source: AGHT+IHn0yi/KPP4BE3OaV8sNgbLs1sC926jgjdW27Dc37QkocyI/d6HQzyaLm+1w24sdhCtt0W8vaoNjEGG8kMsXNA=
-X-Received: by 2002:a05:6512:230d:b0:533:426a:d52f with SMTP id
- 2adb3069b0e04-5366b91a435mr8325705e87.11.1726555555275; Mon, 16 Sep 2024
- 23:45:55 -0700 (PDT)
+	s=arc-20240116; t=1726555621; c=relaxed/simple;
+	bh=3qYSaumupE0TiIcflJEfJZ5Ni8Ktwd0CDC3Y6V0vkL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UgwzHyZzXdMZ6Jsq5GuoTDbXLcqjMarwMNoWE8DdUhv0yCphQnPn3LMB6QpOE1PAgzibtDT8MEM2z20Z/3oLDBf3RNVgVBscWT8gk4zJQ/WjCkEXTIqf+Dx0DtOk83v2TEWFauIQa3djLcrQ6VdL7a9WwXKu9HJws+c/aEwoMK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WowDyOFo; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5356bb5522bso4833861e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 23:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726555616; x=1727160416; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WXTewivgLsmzlJ+30gpbLxMHkptTIEQ1/3gFwAu9U9g=;
+        b=WowDyOFo+hhKlPFkxpP4QhDXmjGYiKgx2/vfSmV8ySqRzzW0M2SIliqu+oaOxUNq14
+         rqWQyfz9h/oRzH2kP3gcGTA9772NzYLP2ERSUn1cxnMFMuvzjTI2vFKPZ5r51rnRQ0Re
+         v7UVPeFxA8Dwf7rNm9T1jBECtX9equGVbUG9eenWxMoMbTTMQkZQz/mJDnczaq2sPHlY
+         5d9XAD/NgCLrJ+TwMU7BLln/UGvzm/Luh9f7S8j/gRA4YeIh0qUlcgHy/Xe6zKBOVEVS
+         uiREdp0PkLJiqpGSVjWbzvFRn85dk529dOecAaiaRxJnPbObyVfCaJDOk5Qxc3jqszk9
+         MtXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726555616; x=1727160416;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WXTewivgLsmzlJ+30gpbLxMHkptTIEQ1/3gFwAu9U9g=;
+        b=SccjDmSR6l+4BvZXBQuAH1YaRSCnGvYVvO9z+8jEsjvOYPaLba+E2/ROilh2lJbDtx
+         x1qwc0WGjZ3U9LyN1D/a1Zxw2nqHHMqzbaj6ST+fxAqdRNY9IQ7pDFR/KdNoTyYLNoXY
+         QhxGo/i9MbnFFQElQr61ZmqehsaCX9epESwoCvpTY5O1fD3XDQ/fIKt8m7XNiG7mint9
+         VzbTnJaU2bFrV/Gn2/Fc2Kl8S97Jqee0Em/hSDICevislnFx175FF0b56KEnrYz6C5QS
+         /hc+7OLk2WpTUk29FTg/p6KCe6qhJ4bAXKS3IH2UsTOg8rMND7/Oa/cIR2xh2tbgtbKb
+         AsCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdzyGmHohoWDBHoKSDELHTFelTq+26F/M1H/fWuelwOmAEelwPoY4uL+M5f7j1AN6j0Ru5Q0Fbd8cM4eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO/gKKxjIcT1nxypcj8Gn/eZEn6UUECcZOyjz9PtYVSAD2teOg
+	YSUSAHbP3xi/06NKpedpspuGL+eAqC/PYuD8/GgDxs1e5HQ3Dy538h0eMQUSLNs=
+X-Google-Smtp-Source: AGHT+IEglrlFdhDfUYd/C+Psw6SFttmg3CHticZ+MtCVdGeQeVedABPIgDd5SqDuLTpTdmpAiMUcJA==
+X-Received: by 2002:a05:6512:4020:b0:536:533c:c460 with SMTP id 2adb3069b0e04-5367ff295a6mr6115881e87.50.1726555616322;
+        Mon, 16 Sep 2024 23:46:56 -0700 (PDT)
+Received: from uffe-tuxpro14.. ([2a02:1406:5f:cdf3:9745:768d:3d6:b1bb])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687096816sm1090542e87.177.2024.09.16.23.46.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 23:46:55 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] pmdomain/cpuidle-psci updates for v6.12
+Date: Tue, 17 Sep 2024 08:46:53 +0200
+Message-Id: <20240917064653.4226-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911104109.1831501-1-usamaarif642@gmail.com>
- <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
- <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
- <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <d9df5012cd3306afa2eddd5187e643a3bbdfd866.camel@HansenPartnership.com>
- <20240913-careful-maroon-crab-8a0541@leitao> <5c525fe8f33fffebc0d275086cc7484e309dfae0.camel@HansenPartnership.com>
- <87o74n5p05.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87o74n5p05.fsf@email.froward.int.ebiederm.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 17 Sep 2024 08:45:44 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXF7EohKai9nyxSnvu32KNdUcNZxxP69Sz-vUZ-6nmvekg@mail.gmail.com>
-Message-ID: <CAMj1kXF7EohKai9nyxSnvu32KNdUcNZxxP69Sz-vUZ-6nmvekg@mail.gmail.com>
-Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Breno Leitao <leitao@debian.org>, 
-	Usama Arif <usamaarif642@gmail.com>, linux-efi@vger.kernel.org, 
-	kexec@lists.infradead.org, bhe@redhat.com, vgoyal@redhat.com, 
-	tglx@linutronix.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, rmikey@meta.com, gourry@gourry.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Eric,
+Hi Linus,
 
-Thanks for chiming in.
+Here's the PR with pmdomain and cpuidle-psci updates for v6.12. Details about
+the highlights are as usual found in the signed tag.
 
-On Mon, 16 Sept 2024 at 22:21, Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> James Bottomley <James.Bottomley@HansenPartnership.com> writes:
->
-> > On Fri, 2024-09-13 at 04:57 -0700, Breno Leitao wrote:
-> >> Hello James,
-> >>
-> >> On Thu, Sep 12, 2024 at 12:22:01PM -0400, James Bottomley wrote:
-> >> > On Thu, 2024-09-12 at 06:03 -0700, Breno Leitao wrote:
-> >> > > Hello Ard,
-> >> > >
-> >> > > On Thu, Sep 12, 2024 at 12:51:57PM +0200, Ard Biesheuvel wrote:
-> >> > > > I don't see how this could be an EFI bug, given that it does
-> >> > > > not deal with E820 tables at all.
-> >> > >
-> >> > > I want to back up a little bit and make sure I am following the
-> >> > > discussion.
-> >> > >
-> >> > > From what I understand from previous discussion, we have an EFI
-> >> > > bug as the root cause of this issue.
-> >> > >
-> >> > > This happens because the EFI does NOT mark the EFI TPM event log
-> >> > > memory region as reserved (EFI_RESERVED_TYPE). Not having an
-> >> > > entry for the event table memory in EFI memory mapped, then
-> >> > > libstub will ignore it completely (the TPM event log memory
-> >> > > range) and not populate e820 table with it.
-> >> >
-> >> > Wait, that's not correct.  The TPM log is in memory that doesn't
-> >> > survive ExitBootServices (by design in case the OS doesn't care
-> >> > about it).  So the EFI stub actually copies it over to a new
-> >> > configuration table that is in reserved memory before it calls
-> >> > ExitBootServices.  This new copy should be in kernel reserved
-> >> > memory regardless of its e820 map status.
-> >>
-> >> First of all, thanks for clarifying some points here.
-> >>
-> >> How should the TPM log table be passed to the next kernel when
-> >> kexecing() since it didn't surive ExitBootServices?
-> >
-> > I've no idea.  I'm assuming you don't elaborately reconstruct the EFI
-> > boot services, so you can't enter the EFI boot stub before
-> > ExitBootServices is called?  So I'd guess you want to preserve the EFI
-> > table that copied the TPM data in to kernel memory.
->
-> This leaves two practical questions if I have been following everything
-> correctly.
->
-> 1) How to get kexec to avoid picking that memory for the new kernel to
->    run in before it initializes itself. (AKA the getting stomped by
->    relocate kernel problem).
->
-> 2) How to point the new kernel to preserved tpm_log.
->
->
-> This recommendation is from memory so it may be a bit off but
-> the general structure should work.  The idea is as follows.
->
-> - Pass the information between kernels.
->
->   It is probably simplest for the kernel to have a command line option
->   that tells the kernel the address and size of the tpm_log.
->
->   We have a couple of mechanisms here.  Assuming you are loading a
->   bzImage with kexec_file_load you should be able to have the in kernel
->   loader to add those arguments to the kernel command line.
->
+Please pull this in!
 
-This shouldn't be necessary, and I think it is actively harmful to
-keep inventing special ways for the kexec kernel to learn about these
-things that deviate from the methods used by the first kernel. This is
-how we ended up with 5 sources of truth for the physical memory map
-(EFI memory map, memblock and 3 different versions of the e820 memory
-map).
+Kind regards
+Ulf Hansson
 
-We should try very hard to make kexec idempotent, and reuse the
-existing methods where possible. In this case, the EFI configuration
-table is already being exposed to the kexec kernel, which describes
-the base of the allocation. The size of the allocation can be derived
-from the table header.
 
-> - Ensure that when the loader is finding an address to load the new
->   kernel it treats the address of the tpm_log as unavailable.
->
+The following changes since commit 9ec87c5957ea9bf68d36f5e098605b585b2571e4:
 
-The TPM log is a table created by the EFI stub loader, which is part
-of the kernel. So if we need to tweak this for kexec's benefit, I'd
-prefer changing it in a way that can accommodate the first kernel too.
-However, I think the current method already has that property so I
-don't think we need to do anything (modulo fixing the bug)
+  OPP: Fix support for required OPPs for multiple PM domains (2024-08-23 11:57:44 +0200)
 
-That said, I am doubtful that the kexec kernel can make meaningful use
-of the TPM log to begin with, given that the TPM will be out of sync
-at this point. But it is still better to keep it for symmetry, letting
-the higher level kexec/kdump logic running in user space reason about
-whether the TPM log has any value to it.
+are available in the Git repository at:
 
--- 
-Ard.
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.12
+
+for you to fetch changes up to c6ccb691d484544636bc4a097574c5c135ccccda:
+
+  pmdomain: core: Reduce debug summary table width (2024-09-13 13:41:33 +0200)
+
+----------------------------------------------------------------
+pmdomain core:
+ - Add support for s2idle for CPU PM domains on PREEMPT_RT
+ - Add device managed version of dev_pm_domain_attach|detach_list()
+ - Improve layout of the debugfs summary table
+
+pmdomain providers:
+ - amlogic: Remove obsolete vpu domain driver
+ - bcm: raspberrypi: Add support for devices used as wakeup-sources
+ - imx: Fixup clock handling for imx93 at driver remove
+ - rockchip: Add gating support for RK3576
+ - rockchip: Add support for RK3576 SoC
+ - Some OF parsing simplifications
+ - Some simplifications by using dev_err_probe() and guard()
+
+pmdomain consumers:
+ - qcom/media/venus: Convert to the device managed APIs for PM domains
+
+cpuidle-psci:
+ - Add support for s2idle/s2ram for the hierarchical topology on PREEMPT_RT
+ - Some OF parsing simplifications
+
+----------------------------------------------------------------
+Dario Binacchi (3):
+      pmdomain: imx93-pd: replace dev_err() with dev_err_probe()
+      pmdomain: imx93-pd: don't unprepare clocks on driver remove
+      pmdomain: imx93-pd: drop the context variable "init_off"
+
+Detlev Casanova (2):
+      pmdomain: rockchip: Add gating support
+      pmdomain: rockchip: Add gating masks for rk3576
+
+Dikshita Agarwal (2):
+      PM: domains: add device managed version of dev_pm_domain_attach|detach_list()
+      media: venus: use device managed APIs for power domains
+
+Finley Xiao (2):
+      dt-bindings: power: Add support for RK3576 SoC
+      pmdomain: rockchip: Add support for RK3576 SoC
+
+Geert Uytterhoeven (4):
+      pmdomain: core: Harden inter-column space in debug summary
+      pmdomain: core: Fix "managed by" alignment in debug summary
+      pmdomain: core: Move mode_status_str()
+      pmdomain: core: Reduce debug summary table width
+
+Hongbo Li (1):
+      pmdomain: mediatek: make use of dev_err_cast_probe()
+
+Jerome Brunet (1):
+      pmdomain: amlogic: remove obsolete vpu domain driver
+
+Jinjie Ruan (1):
+      pmdomain: apple: Make apple_pmgr_reset_ops static
+
+Krzysztof Kozlowski (11):
+      cpuidle: psci: Simplify with scoped for each OF child loop
+      cpuidle: dt_idle_genpd: Simplify with scoped for each OF child loop
+      pmdomain: rockchip: Simplify with scoped for each OF child loop
+      pmdomain: rockchip: Simplify locking with guard()
+      pmdomain: imx: gpc: Simplify with scoped for each OF child loop
+      pmdomain: imx: gpcv2: Simplify with scoped for each OF child loop
+      pmdomain: qcom: cpr: Simplify with dev_err_probe()
+      pmdomain: qcom: cpr: Simplify locking with guard()
+      pmdomain: qcom: rpmhpd: Simplify locking with guard()
+      pmdomain: qcom: rpmpd: Simplify locking with guard()
+      pmdomain: rockchip: Simplify dropping OF node reference
+
+Stefan Wahren (3):
+      pmdomain: raspberrypi-power: Adjust packet definition
+      pmdomain: raspberrypi-power: Add logging to rpi_firmware_set_power
+      pmdomain: raspberrypi-power: set flag GENPD_FLAG_ACTIVE_WAKEUP
+
+Ulf Hansson (11):
+      pmdomain: core: Enable s2idle for CPU PM domains on PREEMPT_RT
+      pmdomain: core: Don't hold the genpd-lock when calling dev_pm_domain_set()
+      pmdomain: core: Use dev_name() instead of kobject_get_path() in debugfs
+      cpuidle: psci-domain: Enable system-wide suspend on PREEMPT_RT
+      cpuidle: psci: Drop redundant assignment of CPUIDLE_FLAG_RCU_IDLE
+      cpuidle: psci: Enable the hierarchical topology for s2ram on PREEMPT_RT
+      cpuidle: psci: Enable the hierarchical topology for s2idle on PREEMPT_RT
+      pmdomain: Merge branch fixes into next
+      pmdomain: Merge branch fixes into next
+      pmdomain: Merge branch dt into next
+      pmdomain: Merge branch fixes into next
+
+Zhang Zekun (2):
+      pmdomain: qcom-cpr: Use helper function for_each_available_child_of_node()
+      pmdomain: qcom-cpr: Use scope based of_node_put() to simplify code.
+
+ .../bindings/power/rockchip,power-controller.yaml  |   1 +
+ drivers/base/power/common.c                        |  45 +++
+ drivers/cpuidle/cpuidle-psci-domain.c              |  17 +-
+ drivers/cpuidle/cpuidle-psci.c                     |  26 +-
+ drivers/cpuidle/dt_idle_genpd.c                    |  14 +-
+ drivers/media/platform/qcom/venus/pm_helpers.c     |   5 +-
+ drivers/pmdomain/amlogic/Kconfig                   |  11 -
+ drivers/pmdomain/amlogic/Makefile                  |   1 -
+ drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c       | 380 ---------------------
+ drivers/pmdomain/apple/pmgr-pwrstate.c             |   2 +-
+ drivers/pmdomain/bcm/raspberrypi-power.c           |  43 ++-
+ drivers/pmdomain/core.c                            |  94 +++--
+ drivers/pmdomain/imx/gpc.c                         |  14 +-
+ drivers/pmdomain/imx/gpcv2.c                       |   8 +-
+ drivers/pmdomain/imx/imx93-pd.c                    |  22 +-
+ drivers/pmdomain/mediatek/mtk-pm-domains.c         |   6 +-
+ drivers/pmdomain/qcom/cpr.c                        |  92 ++---
+ drivers/pmdomain/qcom/rpmhpd.c                     |  11 +-
+ drivers/pmdomain/qcom/rpmpd.c                      |  20 +-
+ drivers/pmdomain/rockchip/pm-domains.c             | 118 +++++--
+ include/dt-bindings/power/rockchip,rk3576-power.h  |  30 ++
+ include/linux/pm_domain.h                          |  16 +-
+ 22 files changed, 373 insertions(+), 603 deletions(-)
+ delete mode 100644 drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
+ create mode 100644 include/dt-bindings/power/rockchip,rk3576-power.h
 
