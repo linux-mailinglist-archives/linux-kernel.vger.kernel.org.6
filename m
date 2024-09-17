@@ -1,103 +1,147 @@
-Return-Path: <linux-kernel+bounces-331224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C171B97A9E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 02:18:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C4E97A9EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 02:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B42FB2303A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:18:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A546B29F9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486D15672;
-	Tue, 17 Sep 2024 00:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A634A24;
+	Tue, 17 Sep 2024 00:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="n51OusJS"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RggufBgJ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0DA7F6;
-	Tue, 17 Sep 2024 00:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5C07F6;
+	Tue, 17 Sep 2024 00:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726532299; cv=none; b=PxgJUUKdrOYrz3+0v4a+FjPZjEuWSziqZepAH6Cv7uK+wlstQjpgFJTVHr7wAvCCk5VSy0x8VYuQCDEXY5xWztMNeBpTUcQSzoK57tB9TgakKpDgFzCOCTcLRPA1OZWD72ONpgbncGgXnZadaLJc7PHR5Kum69IoChKlwLjTtPY=
+	t=1726532474; cv=none; b=fEYVXffHhwH3hrk1dMBI3qNsYsnK4w0mv6YHB9xcHJ6GUi+/qlxuT8bSIXsW1WWHvPkuIKDOhxenzr23LGtbRLEkzIygMNdn174SYDfliPgAzJo28kDeGBZAYnHH2oDrj8A3EpXA3Z88x00xmbc8FHC4cGkyaz45XORkgJdcv6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726532299; c=relaxed/simple;
-	bh=WoOQFaL0Y91OIdupY2RuKodx73uY16jH/9yrW8snJOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ItsBaQkRaZA6pUs9Zc5CaDBl4I4VLLPVn+PJlvfN3z5h8Ap4F/D2L079i/BhOKiC8YjH6kT4G13M8wKJW8+Yz7ptThHgv6EpWoI8gXY6ifXvG/LUBj3evAb0dogmrFKtxEwGlbTBgXsaNcp0vvNHBc3u/MfGTCoqu0Ypgz7gdFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=n51OusJS; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726532288; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=7GIfLCzeyMWB6rR4gwhPkw73w43jwPFWmSDKoY5Td70=;
-	b=n51OusJSW6EkSmJH04obf0NssvbHBOESLGDGO7yR9gayqfoLrw8teR7IXxAwz2OeKzFRwqvljz60rs9AMb9SkISN0qwD7Ene1XW5voa7YezyVbWy1lWeDJCzUSzYG3e5fuPSamQeTfqp8wB6c2+dOgcDholOGDDRRw/gbo/w04Y=
-Received: from 30.27.106.17(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WF9M2-u_1726532286)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Sep 2024 08:18:07 +0800
-Message-ID: <aa7a902a-25f6-491c-88a3-ad0a3204d2ff@linux.alibaba.com>
-Date: Tue, 17 Sep 2024 08:18:06 +0800
+	s=arc-20240116; t=1726532474; c=relaxed/simple;
+	bh=3ZgGggHoX+pAh/tHkULzDYABI3Zv5CzNqsFGMvdZri8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ONUcjQj9WHt/otcVxYrgFTEBfipRUKY6aMdWhIgC0b3Bl+bHNN4uI1+UGFiGK//G0WIhiNdUigXHsAWjowBfntl2fnLEGkZumQ9PMxBszNTld9HjGQIGDzCEumbi7VUByyiNu04pk4Yzrm/9HKlnoPMnDvvuvnfmEPssL0EL1HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RggufBgJ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726532468;
+	bh=GG4tVFfNIhA20Bp/ypoPSDXgsH5ws+vJCG1ZE4vzUr4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RggufBgJiRvUzdGE322E8xlaWSERRWW4zKXlVDk1dbnSZ1tCmDod05NfZFdjRa7HP
+	 Oham83w4evFVlRCRWJZxDMnCMQ/sGuJU1AyAEZjBx8Cm4DL5s6MlngDzfOO0O1D0Yb
+	 WBxkPc5qXk+KflwkdB3Ef2z4yiSFZAdDNvZFIVFddiNGfswLb/gztDkqUrJWkF5JTG
+	 XYq6gHMe6KjIO0SF0bvmfjD2NRrCAhzEp2oXRc7A1zybE1Cw+jNtMgKeymTY5QVmXK
+	 HlYuo02fCl65r/Kvk6S+ZrK9oWghvrnTQZD2JLk7VEqfR1KXZ74kbwBzJVlXu8QRwi
+	 TLUIuvhwgD1+Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X72WN3GBqz4xZ7;
+	Tue, 17 Sep 2024 10:21:04 +1000 (AEST)
+Date: Tue, 17 Sep 2024 10:21:03 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Palmer Dabbelt <palmer@rivosinc.com>, "Rafael
+ J. Wysocki" <rafael.j.wysocki@intel.com>, Ryo Takakura
+ <takakura@valinux.co.jp>, Sunil V L <sunilvl@ventanamicro.com>
+Subject: Re: linux-next: manual merge of the pm tree with the risc-v tree
+Message-ID: <20240917102103.0e29172b@canb.auug.org.au>
+In-Reply-To: <20240902121140.51cc49c9@canb.auug.org.au>
+References: <20240902121140.51cc49c9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 02/24] erofs: add superblock data structure in Rust
-To: Greg KH <gregkh@linuxfoundation.org>, Yiyang Wu <toolmanp@tlmp.cc>
-Cc: linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- LKML <linux-kernel@vger.kernel.org>, rust-for-linux@vger.kernel.org
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-3-toolmanp@tlmp.cc>
- <2024091655-sneeze-pacify-cf28@gregkh>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <2024091655-sneeze-pacify-cf28@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/2qDCC+iALDf98l+Lmvw/OjJ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Greg,
+--Sig_/2qDCC+iALDf98l+Lmvw/OjJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/9/17 01:55, Greg KH wrote:
-> On Mon, Sep 16, 2024 at 09:56:12PM +0800, Yiyang Wu wrote:
->> diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
->> new file mode 100644
->> index 000000000000..0f1400175fc2
->> --- /dev/null
->> +++ b/fs/erofs/rust/erofs_sys.rs
->> @@ -0,0 +1,22 @@
->> +#![allow(dead_code)]
->> +// Copyright 2024 Yiyang Wu
->> +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
-> 
-> Sorry, but I have to ask, why a dual license here?  You are only linking
-> to GPL-2.0-only code, so why the different license?  Especially if you
-> used the GPL-2.0-only code to "translate" from.
-> 
-> If you REALLY REALLY want to use a dual license, please get your
-> lawyers to document why this is needed and put it in the changelog for
-> the next time you submit this series when adding files with dual
-> licenses so I don't have to ask again :)
+Hi all,
 
-As a new Rust kernel developper, Yiyang is working on EROFS Rust
-userspace implementation too.
+On Mon, 2 Sep 2024 12:11:40 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>=20
+> Today's linux-next merge of the pm tree got a conflict in:
+>=20
+>   arch/riscv/include/asm/irq.h
+>=20
+> between commit:
+>=20
+>   f15c21a3de1b ("RISC-V: Enable IPI CPU Backtrace")
+>=20
+> from the risc-v tree and commit:
+>=20
+>   f8619b66bdb1 ("irqchip/riscv-intc: Add ACPI support for AIA")
+>=20
+> from the pm tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc arch/riscv/include/asm/irq.h
+> index 8330d16b05b5,7e9a84a005ed..000000000000
+> --- a/arch/riscv/include/asm/irq.h
+> +++ b/arch/riscv/include/asm/irq.h
+> @@@ -12,11 -12,8 +12,13 @@@
+>  =20
+>   #include <asm-generic/irq.h>
+>  =20
+> + #define INVALID_CONTEXT UINT_MAX
+> +=20
+>  +#ifdef CONFIG_SMP
+>  +void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_=
+cpu);
+>  +#define arch_trigger_cpumask_backtrace arch_trigger_cpumask_backtrace
+>  +#endif
+>  +
+>   void riscv_set_intc_hwnode_fn(struct fwnode_handle *(*fn)(void));
+>  =20
+>   struct fwnode_handle *riscv_get_intc_hwnode(void);
 
-I think he just would like to share the common Rust logic between
-kernel and userspace.  Since for the userspace side, Apache-2.0
-or even MIT is more friendly for 3rd applications (especially
-cloud-native applications). So the dual license is proposed here,
-if you don't have strong opinion, I will ask Yiyang document this
-in the next version.  Or we're fine to drop MIT too.
+This is now a conflict between the risc-v tree and Linus' tree.
 
-Thanks,
-Gao Xiang
+--=20
+Cheers,
+Stephen Rothwell
 
-> 
-> thanks,
-> 
-> greg k-h
+--Sig_/2qDCC+iALDf98l+Lmvw/OjJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmboy28ACgkQAVBC80lX
+0GyDNwf+OhluL8ix9RtWsSsvBom/TEC8YT2L48ZI1m9JbCcgr2ZCgRlWTiusP08s
+2giZuwEJmSF4Zzwnr4auHf3y1PDHxtFqSz72ZIJDmzYxNQw4nJiGUTT0lIxNgV+E
+YeZpFy7fPatYsO0nPTpRutvapj+tapKK9dikcuQpm2Hmn1rv7kEtbi2p8AfNKWWN
+DCHcUm7SeYlbGqmCgTNFAynoNbktGJ3sDlCRO5gzw0Mi+xF9WkMoKA5ljYm5SpPJ
+q0aSg4W4TBkK1Bj3xndtL/gbu5CbKLlEnHtUwyQ4K0vjRQsencbFr+et4gjMaS/U
+HNOXbEVAQWTiU7QJK3IMSHdWNlOR0w==
+=g5Uy
+-----END PGP SIGNATURE-----
+
+--Sig_/2qDCC+iALDf98l+Lmvw/OjJ--
 
