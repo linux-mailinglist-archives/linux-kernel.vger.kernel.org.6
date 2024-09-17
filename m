@@ -1,83 +1,93 @@
-Return-Path: <linux-kernel+bounces-331510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BAB97ADAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:16:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B2497ADB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353D82868B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:16:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78E51C235B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F170165EED;
-	Tue, 17 Sep 2024 09:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE94B15DBC1;
+	Tue, 17 Sep 2024 09:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VT7p0ol2"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2050.outbound.protection.outlook.com [40.107.244.50])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QXzavk42"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C68716088F;
-	Tue, 17 Sep 2024 09:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726564551; cv=fail; b=TV1P7fmskEohNs4Kj8vq2QohEpe7DfWM6h9zrZeo63dO+OOhK28yzR5qDd6dMRcQOlVGL5jSDD0eh539E1+xmZZ3pJIobDh4mS9CeHzZJYgqvSSNgW17ztJW1CUhrSZ5sjPg8KEPl+UDdKL+OBpH+Hh56z6HMqu6pDJjK4coVro=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726564551; c=relaxed/simple;
-	bh=CjZ2tBe6himHK6bEvc0UdICBZuyx07AbEdOTFZWg3Lw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dOY7+T9Z5Ox9wS2rKQGOi+Rw70i3rJ7up4eMdKM7mmwYqavriIPK7Eq4RTDpA5xogtpg/jyVROLO1eJllbHlMECFTc9SfcKP2wr8i/us/aiSR8/SPjCHrmcv7jsaSGiGnHSi38BVnvfBXDn6jcYMwA2uk7v1wMIcRT7yyPB3GGk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VT7p0ol2; arc=fail smtp.client-ip=40.107.244.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KhoFPzEYnC0RZ06wsOCIA1BmPg+9kiL1VhF3Ke8tAoYCRFcP0ApI8Lvrii8Rg6NQeEjLhoN1yNsBW4B0ubIMTXqGNs+BCpZhgslneHNZO/MU/g+S5gspDjInN//uSpOlHXNmYXlchI0qcF/KHv71Gp6UXdai0+LlQGCb5xPv74lF/DvhtNEGeP1C5wkQuzLEkkVoRL9Nj8sh10zIfOIXRL8Wn2K5a2aUH5RBpvSof5Y20EuXefwexWOdg7mrdPBJoEmyJ/E7xVAmHWipSpqHdDOY8V+rQoQKDBVVYM6JizO66hoMgT3GNR8VM2iWGQ6uhGUnGykE5VuuLmdtSLj22A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8p2UDyNfF6pM9CXETbNFjqrIxZGnjcNE49kSeItX9W8=;
- b=IBepgvh88ubsClIXpWwzX3/VAkD1KhRNzzcRH+QFUBnGJfia8dF8DQcbo41c/DJRTW3srUr9jr4Wwm2vmdPkPawf/VpYqXM64woMwCRLNKRD9gbFWishhlKGDm19cVA36RfWV9jD6S5z8OLLw0qWyYauczrUAOmofgt4S6FJrqwxtBGCsPuPeaYFuq5vm2buFddauRYuD53AanGcjD5ylYlu0YJZl6TfaUugFtUqDqDJxzFMtycIEo7EPbF9LcFF4DHxqRiTieOoxopys/AtOn7sYyW9VWIABnPxA8opXMEB7EW4jlLCKr30GUHf+xThqNRBMVCMvpHo+eBJsSOSEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8p2UDyNfF6pM9CXETbNFjqrIxZGnjcNE49kSeItX9W8=;
- b=VT7p0ol2lNVOKZikg0kUAc3vXx3lmFFRLCCyXOV3dbvFwbFat8nx+e4vZ1vB/J/frl1v8ChOzCvT5fKMUj/wuAihm3J8DL6BT4PrjeDe5xs4+K92/IgP4Xk1gNG7CQF2MyFCEOd1j8icr94sMj56ayRZi3FW1RFd/9JtCyCu6z0=
-Received: from BN9PR03CA0404.namprd03.prod.outlook.com (2603:10b6:408:111::19)
- by SA3PR12MB7924.namprd12.prod.outlook.com (2603:10b6:806:313::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Tue, 17 Sep
- 2024 09:15:46 +0000
-Received: from BN1PEPF00005FFD.namprd05.prod.outlook.com
- (2603:10b6:408:111:cafe::b1) by BN9PR03CA0404.outlook.office365.com
- (2603:10b6:408:111::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.29 via Frontend
- Transport; Tue, 17 Sep 2024 09:15:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00005FFD.mail.protection.outlook.com (10.167.243.229) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Tue, 17 Sep 2024 09:15:46 +0000
-Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 17 Sep
- 2024 04:15:42 -0500
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-To: <gautham.shenoy@amd.com>, <mario.limonciello@amd.com>,
-	<perry.yuan@amd.com>, <ray.huang@amd.com>, <rafael@kernel.org>,
-	<viresh.kumar@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
- Ugwekar" <Dhananjay.Ugwekar@amd.com>
-Subject: cpufreq/amd-pstate: Rename MSR and shared memory specific functions
-Date: Tue, 17 Sep 2024 09:14:35 +0000
-Message-ID: <20240917091434.10685-1-Dhananjay.Ugwekar@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9D215748F;
+	Tue, 17 Sep 2024 09:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726564574; cv=none; b=C2oLIjs0aB/cqOMa7tKFc4gd9IplaXU2lHK1eZKsR2OUX0F0LNfKVTqTblIj9dNcvOHb4EL7YFGFwnSaawi4KzvC2DrmeUEFqPOBqrgTlsBj5wNDKvUYjJQcWRHDAGNclbXDEyVTT7AsxxvwjDvDuUW+PDabtxrY7pHYwPRI3X8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726564574; c=relaxed/simple;
+	bh=ac4/d29mS5O/62gmPzpLeoP9PsaOyE+5JvasKxndmF8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oNRL66Encrm5d4BfgqhS+L+BYKGGNro7XO+sxJ685R61ZdNKTuW/bvNc64AC/bk1jXJAPAJFxSVPs+jTGDsNZiI8GEc/iWDVflsWcl3kH2a2CaUMK/01p6Pu24g7Y+awTeZhcLbQs2uf28iSPMoZjqpYApnIr5lrayYsQc8Gjgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QXzavk42; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GIVDN4023504;
+	Tue, 17 Sep 2024 09:15:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=h3m6jqNZBK6B3p7NN/Fy8H/mok
+	WiNS8OHbW7LVLFg7Q=; b=QXzavk42JCY1MkAQQRx7GTuVHTihVdEiDWI2BB9NEz
+	v5bxpqTCspS0Oy9X8plIxZSCyLKDv7j0FvzySdl1XsCcMcTcjR9FUcDkkfd3lJx9
+	kq4DAR2Qj4Nbqvbzp3gKa63Mx7NmFdE8qPtpWhff/z7RIISDkhS6iaL7oYEuj2VT
+	fws9T8MU/WBhIEOLTWIRnCioHhCBsE+8Dkx2JnryLw3YBlduYoOj/rgEfWG2lh/u
+	RHKapD97Trwb4bv30tRij2li7B4DRNkg+F0xndcJaqfsXqy3Vh5nansgguedGU00
+	mJ5ZtqxqvE74oCkDoN1bGPeLA8eBIiIoaSyZ3mmr9cAQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3ud75f6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 09:15:47 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48H9FlYs000433;
+	Tue, 17 Sep 2024 09:15:47 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3ud75f1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 09:15:47 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48H7YOPm001821;
+	Tue, 17 Sep 2024 09:15:46 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41nqh3kwju-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 09:15:46 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48H9FiCD59703798
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Sep 2024 09:15:44 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 532802004B;
+	Tue, 17 Sep 2024 09:15:44 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D14FF2004D;
+	Tue, 17 Sep 2024 09:15:40 +0000 (GMT)
+Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.in.ibm.com (unknown [9.204.206.228])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 17 Sep 2024 09:15:40 +0000 (GMT)
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Subject: [PATCH] perf sched timehist: Add pre-migration wait time option
+Date: Tue, 17 Sep 2024 14:45:37 +0530
+Message-ID: <20240917091537.46684-1-vineethr@linux.ibm.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,163 +95,323 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFD:EE_|SA3PR12MB7924:EE_
-X-MS-Office365-Filtering-Correlation-Id: 016fc540-7717-4d25-8e92-08dcd6f95048
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MLhYscM+fJEd5phbQOj+/oKd5v4BwMUgtr2qIkZVk7yh9DIlLi1NEThz4if0?=
- =?us-ascii?Q?9AVL++dQqOqS4dPn0Z41O2sUw1c9dELHD4EPjUZ6WhxirRTbvGrRLX7pwaGf?=
- =?us-ascii?Q?cGmfLQThORKvSNIoCCCy5ojdNv8KuJP6Z4MSi0eTi0o0WxbLHIlGzYVCC0+Q?=
- =?us-ascii?Q?xjtw6cAk9TdnHP7VpdUCx7XXgyuM8wOxTcU4/mKtf4um6becI0yW4An1rpe3?=
- =?us-ascii?Q?6GaE+EVL+tHcpNQssTqfrZoAuttYx2kaUoLpQKsXKE8MaCsrruBoH+YtPR3/?=
- =?us-ascii?Q?6kcE/ZoFi5N9FpKC9PRM8t148GvkrHpH0tRzVN+eCwmLrIbq7mCBhzlhZqe7?=
- =?us-ascii?Q?nSDo7QNeIj65tUHWg3MQWe0i7edSDqfl3S4BnoBgTf51zg+/YC/UmHawdX2X?=
- =?us-ascii?Q?E+ev7e8U2f8yAguf3odatKfotK9vjCfx+9lkBtwHSTHbZSSON6uECL6IwtHg?=
- =?us-ascii?Q?mlaRJ1XTHZGCT2AQDCc+JxwMQrlz8702McfFiSwMFxS32hJBb6a8b1TP2Bfv?=
- =?us-ascii?Q?55AFs1gjRzW6jUkCXWq97TOVj8OzjEit5XwSSSeeuAzE4Y6l2+1isNWRZ82i?=
- =?us-ascii?Q?7U9AsryVvnir6Aho1QRRuohQFPBb1ugcHiVdjcraqV3WKO80vObobILboapP?=
- =?us-ascii?Q?cBjFD43hSq/sHET/s/XEdmZ9FqPakmgvl5rBfxhHoWfjVq6dV2RyLRV4a6ZA?=
- =?us-ascii?Q?cl88HuRFGjAFc3AxwBO98xqvJiXea+I3466T3rXAWrVrMzq5NSci60UTY6OU?=
- =?us-ascii?Q?XfoAy26kvnPdNgXJ45VHUw0wp1dP7yL1K5KS1p34PgXSfbh7OtQb4PLr9TDj?=
- =?us-ascii?Q?sd34Awy1caDBqlcrshiaqJ8g23JdflqWqSE+lNVzaPYcusNuopO07AQvHXjW?=
- =?us-ascii?Q?51T+zk6tevgEulCXS/Esh6r4bJq+ENzGewgvHSd8LbtIRk75OOXnAXp1f7kw?=
- =?us-ascii?Q?fdPpioZ/BB8VISrwffer/yWLhwqFOYmBuUNuKVRpCtmC2k+G6dL4NBbsBS8W?=
- =?us-ascii?Q?YZ0/NQn5XoBylOL2dn5Ek/qRtY+ZCWCtPW/MA5YHoODU//INUBizJOw8EaKD?=
- =?us-ascii?Q?MoIK4zIEAx0T7RopIGIpIcWwosJQnH4989pxS6/Pmr+SsbTwbnH2blfJ0q/W?=
- =?us-ascii?Q?eFwAMQCrCW4J74QQLqYIegqjcRzA2HXMl+3lYtbZt1ISgytp5HonyPjVDzi1?=
- =?us-ascii?Q?ealfb914melIggpLvHYQV+Sly9QN05oSQIHx3Iy8/u8TsOE0RHaNrCT3p6S+?=
- =?us-ascii?Q?2ypk80tiRO7YI9su7ZWZaxEixOhqGBLKSqYHV8/04PdZ0216UCPQ5SmFMalW?=
- =?us-ascii?Q?KFx9JKbOoSJVSsDT9H19dVPczXGVvMZYLzXTYZcdCUsXuBT9D6hBWTpgP6Q7?=
- =?us-ascii?Q?ROCAqmod4kBOOmxM7T9xQJeWIGRZhrC7HNMI7ixqr/92t5t1lpK9lVR/Tazu?=
- =?us-ascii?Q?cxyNp2dM236G9nbNyB71hiz52nDOtQa2?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 09:15:46.1119
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 016fc540-7717-4d25-8e92-08dcd6f95048
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00005FFD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7924
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: WQeybCeEutxgCkcnvoZMB3a4ByB9eRqb
+X-Proofpoint-ORIG-GUID: lE0v7Mp205RLPlsefKfD_eio9bMYFIJJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-17_02,2024-09-16_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 suspectscore=0
+ adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409170066
 
-Existing function names "cppc_*" and "pstate_*" for shared memory and
-MSR based systems are not intuitive enough, replace them with "shmem_*" and
-"msr_*" respectively.
+pre-migration wait time is the time that a task unnecessarily spends
+on the runqueue of a CPU but doesn't get switched-in there. In terms
+of tracepoints, it is the time between sched:sched_wakeup and
+sched:sched_migrate_task.
 
-Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Let's say a task woke up on CPU2, then it got migrated to CPU4 and
+then it's switched-in to CPU4. So, here pre-migration wait time is
+time that it was waiting on runqueue of CPU2 after it is woken up.
+
+The general pattern for pre-migration to occur is:
+sched:sched_wakeup
+sched:sched_migrate_task
+sched:sched_switch
+So, this option expects sched_wakeup also to be recorded and fails
+if attempted to use the option without sched:sched_wakeup tracepoint.
+
+pre-migrations are generally not useful and it increases migrations.
+This metric would be helpful in testing patches mainly related to wakeup
+and load-balancer code paths as better wakeup logic would choose an
+optimal CPU where task would be switched-in and thereby reducing pre-
+migrations.
+
+The sample output(s) when -P or --pre-migrations is used:
+=================
+           time    cpu  task name                       wait time  sch delay   run time  pre-mig time
+                        [tid/pid]                          (msec)     (msec)     (msec)     (msec)
+--------------- ------  ------------------------------  ---------  ---------  ---------  ---------
+  103032.721020 [0000]  perf[47206]                         0.000      0.000      0.000      0.000
+  103032.721034 [0000]  migration/0[18]                     0.000      0.003      0.013      0.000
+  103032.736716 [0001]  schbench[47229/47207]              10.664      9.231      0.039      9.170
+  103032.736719 [0005]  <idle>                              0.000      0.000     15.405      0.000
+  103032.736726 [0003]  schbench[47216/47207]              11.251      9.193      0.022      9.126
+  103032.736727 [0001]  schbench[47228/47207]              10.752      9.264      0.010      9.169
+  103032.736731 [0007]  <idle>                              0.000      0.000     15.314      0.000
+  103032.736739 [0008]  <idle>                              0.000      0.000     15.249      0.000
+  103032.736742 [0003]  schbench[47257/47207]               9.498      9.184      0.015      9.100
+
+   51370.894024 [0012]  schbench[38775/38770]              21.047     21.047      8.950      0.000
+   51370.894024 [0008]  schbench[38781/38770]              39.597     39.448      9.984     39.437
+   51370.894025 [0009]  stress-ng-cpu[38743]                7.971      7.971      9.997      0.000
+
+Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
 ---
- drivers/cpufreq/amd-pstate.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ tools/perf/Documentation/perf-sched.txt |   8 ++
+ tools/perf/builtin-sched.c              | 110 +++++++++++++++++-------
+ 2 files changed, 85 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 15e201d5e911..b7a17a3ef122 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -233,7 +233,7 @@ static int amd_pstate_get_energy_pref_index(struct amd_cpudata *cpudata)
- 	return index;
- }
+diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+index 3db64954a267..7935499b88b0 100644
+--- a/tools/perf/Documentation/perf-sched.txt
++++ b/tools/perf/Documentation/perf-sched.txt
+@@ -221,6 +221,14 @@ OPTIONS for 'perf sched timehist'
+ 	priorities are specified with -: 120-129. A combination of both can also be
+ 	provided: 0,120-129.
  
--static void pstate_update_perf(struct amd_cpudata *cpudata, u32 min_perf,
-+static void msr_update_perf(struct amd_cpudata *cpudata, u32 min_perf,
- 			       u32 des_perf, u32 max_perf, bool fast_switch)
- {
- 	if (fast_switch)
-@@ -243,7 +243,7 @@ static void pstate_update_perf(struct amd_cpudata *cpudata, u32 min_perf,
- 			      READ_ONCE(cpudata->cppc_req_cached));
- }
++-P::
++--pre-migrations::
++	Show pre-migration wait time. pre-migration wait time is the time spent
++	by a task waiting on a runqueue but not getting the chance to run there
++	and is migrated to a different runqueue where it is finally run. This
++	time between migrate_task and sched_wakeup is the pre-migration wait
++	time. This option is valid only if sched_wakeup tracepoint is recorded.
++
+ OPTIONS for 'perf sched replay'
+ ------------------------------
  
--DEFINE_STATIC_CALL(amd_pstate_update_perf, pstate_update_perf);
-+DEFINE_STATIC_CALL(amd_pstate_update_perf, msr_update_perf);
+diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+index 5981cc51abc8..252e71d83d82 100644
+--- a/tools/perf/builtin-sched.c
++++ b/tools/perf/builtin-sched.c
+@@ -228,6 +228,7 @@ struct perf_sched {
+ 	bool		show_wakeups;
+ 	bool		show_next;
+ 	bool		show_migrations;
++	bool		pre_migrations;
+ 	bool		show_state;
+ 	bool		show_prio;
+ 	u64		skipped_samples;
+@@ -247,7 +248,10 @@ struct thread_runtime {
+ 	u64 dt_iowait;      /* time between CPU access by iowait (off cpu) */
+ 	u64 dt_preempt;     /* time between CPU access by preempt (off cpu) */
+ 	u64 dt_delay;       /* time between wakeup and sched-in */
++	u64 dt_pre_mig;     /* time between migration and wakeup */
+ 	u64 ready_to_run;   /* time of wakeup */
++	u64 woken;	    /* time when sched_wakeup tracepoint is hit */
++	u64 migrated;	    /* time when a thread is migrated */
  
- static inline void amd_pstate_update_perf(struct amd_cpudata *cpudata,
- 					  u32 min_perf, u32 des_perf,
-@@ -306,7 +306,7 @@ static int amd_pstate_set_energy_pref_index(struct amd_cpudata *cpudata,
- 	return ret;
- }
+ 	struct stats run_stats;
+ 	u64 total_run_time;
+@@ -255,6 +259,7 @@ struct thread_runtime {
+ 	u64 total_iowait_time;
+ 	u64 total_preempt_time;
+ 	u64 total_delay_time;
++	u64 total_pre_mig_time;
  
--static inline int pstate_enable(bool enable)
-+static inline int msr_enable(bool enable)
- {
- 	int ret, cpu;
- 	unsigned long logical_proc_id_mask = 0;
-@@ -332,7 +332,7 @@ static inline int pstate_enable(bool enable)
- 	return 0;
- }
+ 	char last_state;
  
--static int cppc_enable(bool enable)
-+static int shmem_enable(bool enable)
- {
- 	int cpu, ret = 0;
- 	struct cppc_perf_ctrls perf_ctrls;
-@@ -359,14 +359,14 @@ static int cppc_enable(bool enable)
- 	return ret;
- }
- 
--DEFINE_STATIC_CALL(amd_pstate_enable, pstate_enable);
-+DEFINE_STATIC_CALL(amd_pstate_enable, msr_enable);
- 
- static inline int amd_pstate_enable(bool enable)
- {
- 	return static_call(amd_pstate_enable)(enable);
- }
- 
--static int pstate_init_perf(struct amd_cpudata *cpudata)
-+static int msr_init_perf(struct amd_cpudata *cpudata)
- {
- 	u64 cap1;
- 
-@@ -385,7 +385,7 @@ static int pstate_init_perf(struct amd_cpudata *cpudata)
- 	return 0;
- }
- 
--static int cppc_init_perf(struct amd_cpudata *cpudata)
-+static int shmem_init_perf(struct amd_cpudata *cpudata)
- {
- 	struct cppc_perf_caps cppc_perf;
- 
-@@ -420,14 +420,14 @@ static int cppc_init_perf(struct amd_cpudata *cpudata)
- 	return ret;
- }
- 
--DEFINE_STATIC_CALL(amd_pstate_init_perf, pstate_init_perf);
-+DEFINE_STATIC_CALL(amd_pstate_init_perf, msr_init_perf);
- 
- static inline int amd_pstate_init_perf(struct amd_cpudata *cpudata)
- {
- 	return static_call(amd_pstate_init_perf)(cpudata);
- }
- 
--static void cppc_update_perf(struct amd_cpudata *cpudata,
-+static void shmem_update_perf(struct amd_cpudata *cpudata,
- 			     u32 min_perf, u32 des_perf,
- 			     u32 max_perf, bool fast_switch)
- {
-@@ -1879,9 +1879,9 @@ static int __init amd_pstate_init(void)
- 			current_pstate_driver->adjust_perf = amd_pstate_adjust_perf;
- 	} else {
- 		pr_debug("AMD CPPC shared memory based functionality is supported\n");
--		static_call_update(amd_pstate_enable, cppc_enable);
--		static_call_update(amd_pstate_init_perf, cppc_init_perf);
--		static_call_update(amd_pstate_update_perf, cppc_update_perf);
-+		static_call_update(amd_pstate_enable, shmem_enable);
-+		static_call_update(amd_pstate_init_perf, shmem_init_perf);
-+		static_call_update(amd_pstate_update_perf, shmem_update_perf);
+@@ -2083,14 +2088,15 @@ static void timehist_header(struct perf_sched *sched)
+ 		printf(" ");
  	}
  
- 	if (amd_pstate_prefcore) {
+-	if (sched->show_prio) {
+-		printf(" %-*s  %-*s  %9s  %9s  %9s",
+-		       comm_width, "task name", MAX_PRIO_STR_LEN, "prio",
+-		       "wait time", "sch delay", "run time");
+-	} else {
+-		printf(" %-*s  %9s  %9s  %9s", comm_width,
+-		       "task name", "wait time", "sch delay", "run time");
+-	}
++	printf(" %-*s", comm_width, "task name");
++
++	if (sched->show_prio)
++		printf("  %-*s", MAX_PRIO_STR_LEN, "prio");
++
++	printf("  %9s  %9s  %9s", "wait time", "sch delay", "run time");
++
++	if (sched->pre_migrations)
++		printf("  %9s", "pre-mig time");
+ 
+ 	if (sched->show_state)
+ 		printf("  %s", "state");
+@@ -2105,17 +2111,15 @@ static void timehist_header(struct perf_sched *sched)
+ 	if (sched->show_cpu_visual)
+ 		printf(" %*s ", ncpus, "");
+ 
+-	if (sched->show_prio) {
+-		printf(" %-*s  %-*s  %9s  %9s  %9s",
+-		       comm_width, "[tid/pid]", MAX_PRIO_STR_LEN, "",
+-		       "(msec)", "(msec)", "(msec)");
+-	} else {
+-		printf(" %-*s  %9s  %9s  %9s", comm_width,
+-		       "[tid/pid]", "(msec)", "(msec)", "(msec)");
+-	}
++	printf(" %-*s", comm_width, "[tid/pid]");
+ 
+-	if (sched->show_state)
+-		printf("  %5s", "");
++	if (sched->show_prio)
++		printf("  %-*s", MAX_PRIO_STR_LEN, "");
++
++	printf("  %9s  %9s  %9s", "(msec)", "(msec)", "(msec)");
++
++	if (sched->pre_migrations)
++		printf("  %9s", "(msec)");
+ 
+ 	printf("\n");
+ 
+@@ -2127,15 +2131,15 @@ static void timehist_header(struct perf_sched *sched)
+ 	if (sched->show_cpu_visual)
+ 		printf(" %.*s ", ncpus, graph_dotted_line);
+ 
+-	if (sched->show_prio) {
+-		printf(" %.*s  %.*s  %.9s  %.9s  %.9s",
+-		       comm_width, graph_dotted_line, MAX_PRIO_STR_LEN, graph_dotted_line,
+-		       graph_dotted_line, graph_dotted_line, graph_dotted_line);
+-	} else {
+-		printf(" %.*s  %.9s  %.9s  %.9s", comm_width,
+-		       graph_dotted_line, graph_dotted_line, graph_dotted_line,
+-		       graph_dotted_line);
+-	}
++	printf(" %.*s", comm_width, graph_dotted_line);
++
++	if (sched->show_prio)
++		printf("  %.*s", MAX_PRIO_STR_LEN, graph_dotted_line);
++
++	printf("  %.9s  %.9s  %.9s", graph_dotted_line, graph_dotted_line, graph_dotted_line);
++
++	if (sched->pre_migrations)
++		printf("  %.9s", graph_dotted_line);
+ 
+ 	if (sched->show_state)
+ 		printf("  %.5s", graph_dotted_line);
+@@ -2190,6 +2194,8 @@ static void timehist_print_sample(struct perf_sched *sched,
+ 
+ 	print_sched_time(tr->dt_delay, 6);
+ 	print_sched_time(tr->dt_run, 6);
++	if (sched->pre_migrations)
++		print_sched_time(tr->dt_pre_mig, 6);
+ 
+ 	if (sched->show_state)
+ 		printf(" %5c ", thread__tid(thread) == 0 ? 'I' : state);
+@@ -2249,6 +2255,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
+ 	r->dt_iowait  = 0;
+ 	r->dt_preempt = 0;
+ 	r->dt_run     = 0;
++	r->dt_pre_mig = 0;
+ 
+ 	if (tprev) {
+ 		r->dt_run = t - tprev;
+@@ -2257,6 +2264,11 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
+ 				pr_debug("time travel: wakeup time for task > previous sched_switch event\n");
+ 			else
+ 				r->dt_delay = tprev - r->ready_to_run;
++
++			if (r->woken && r->migrated) {
++				if ((r->migrated > r->woken) && (r->migrated < tprev))
++					r->dt_pre_mig = r->migrated - r->woken;
++			}
+ 		}
+ 
+ 		if (r->last_time > tprev)
+@@ -2280,6 +2292,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
+ 	r->total_sleep_time   += r->dt_sleep;
+ 	r->total_iowait_time  += r->dt_iowait;
+ 	r->total_preempt_time += r->dt_preempt;
++	r->total_pre_mig_time += r->dt_pre_mig;
+ }
+ 
+ static bool is_idle_sample(struct perf_sample *sample,
+@@ -2579,12 +2592,27 @@ static void timehist_print_wakeup_event(struct perf_sched *sched,
+ 	printf("\n");
+ }
+ 
+-static int timehist_sched_wakeup_ignore(const struct perf_tool *tool __maybe_unused,
++static int timehist_sched_wakeup_consider(const struct perf_tool *tool __maybe_unused,
+ 					union perf_event *event __maybe_unused,
+ 					struct evsel *evsel __maybe_unused,
+ 					struct perf_sample *sample __maybe_unused,
+ 					struct machine *machine __maybe_unused)
+ {
++	struct thread *thread;
++	struct thread_runtime *tr = NULL;
++	const u32 pid = evsel__intval(evsel, sample, "pid");
++
++	thread = machine__findnew_thread(machine, 0, pid);
++	if (thread == NULL)
++		return -1;
++
++	tr = thread__get_runtime(thread);
++	if (tr == NULL)
++		return -1;
++
++	if (tr->woken == 0)
++		tr->woken = sample->time;
++
+ 	return 0;
+ }
+ 
+@@ -2694,8 +2722,14 @@ static int timehist_migrate_task_event(const struct perf_tool *tool,
+ 
+ 	tr->migrations++;
+ 
++	if (tr->migrated == 0)
++		tr->migrated = sample->time;
++
+ 	/* show migrations if requested */
+-	timehist_print_migration_event(sched, evsel, sample, machine, thread);
++	if (sched->show_migrations) {
++		timehist_print_migration_event(sched, evsel, sample,
++							machine, thread);
++	}
+ 
+ 	return 0;
+ }
+@@ -2846,11 +2880,14 @@ static int timehist_sched_change_event(const struct perf_tool *tool,
+ 		/* last state is used to determine where to account wait time */
+ 		tr->last_state = state;
+ 
+-		/* sched out event for task so reset ready to run time */
++		/* sched out event for task so reset ready to run time, woken and migrated time */
+ 		if (state == 'R')
+ 			tr->ready_to_run = t;
+ 		else
+ 			tr->ready_to_run = 0;
++
++		tr->woken = 0;
++		tr->migrated = 0;
+ 	}
+ 
+ 	evsel__save_time(evsel, sample->time, sample->cpu);
+@@ -3278,7 +3315,7 @@ static int perf_sched__timehist(struct perf_sched *sched)
+ 
+ 	/* prefer sched_waking if it is captured */
+ 	if (evlist__find_tracepoint_by_name(session->evlist, "sched:sched_waking"))
+-		handlers[1].handler = timehist_sched_wakeup_ignore;
++		handlers[1].handler = timehist_sched_wakeup_consider;
+ 
+ 	/* setup per-evsel handlers */
+ 	if (perf_session__set_tracepoints_handlers(session, handlers))
+@@ -3290,8 +3327,14 @@ static int perf_sched__timehist(struct perf_sched *sched)
+ 		goto out;
+ 	}
+ 
+-	if (sched->show_migrations &&
+-	    perf_session__set_tracepoints_handlers(session, migrate_handlers))
++	if (sched->pre_migrations && !evlist__find_tracepoint_by_name(session->evlist,
++									"sched:sched_wakeup")) {
++		pr_err("No sched_wakeup events found. sched_wakeup tracepoint is mandatory for -P option\n");
++		goto out;
++	}
++
++	if ((sched->show_migrations || sched->pre_migrations) &&
++		(perf_session__set_tracepoints_handlers(session, migrate_handlers)))
+ 		goto out;
+ 
+ 	/* pre-allocate struct for per-CPU idle stats */
+@@ -3833,6 +3876,7 @@ int cmd_sched(int argc, const char **argv)
+ 	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
+ 	OPT_STRING(0, "prio", &sched.prio_str, "prio",
+ 		   "analyze events only for given task priority(ies)"),
++	OPT_BOOLEAN('P', "pre-migrations", &sched.pre_migrations, "Show pre-migration wait time"),
+ 	OPT_PARENT(sched_options)
+ 	};
+ 
 -- 
-2.34.1
+2.43.1
 
 
