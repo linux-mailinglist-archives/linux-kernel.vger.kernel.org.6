@@ -1,129 +1,133 @@
-Return-Path: <linux-kernel+bounces-331635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B015497AF48
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:12:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9713097AF4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E36801C2247B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DE2B281E0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738C416190C;
-	Tue, 17 Sep 2024 11:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896C4166F17;
+	Tue, 17 Sep 2024 11:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NP0JiFdP"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKe3TFMN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B261EB2E;
-	Tue, 17 Sep 2024 11:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC37949659;
+	Tue, 17 Sep 2024 11:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726571553; cv=none; b=AZ41N7LKqTiVenhcTRE9Z3HHekjI66NNUmBJqF1hlTkLwWTwQUCYn6+31dfskM3N7lUhdj7XyJKInpCd7LUC9EzmaNV2Pvs0SIxM4T5ZSlXO00fgqlq1iMqultmGt4YNtWZybcdBcGlR4s4rPn5Qi59djn9zfbcXvao6lmcpnNE=
+	t=1726571597; cv=none; b=NMLrS69l2JflYpakJauZ2i1Q9SGYuRd0NInOGXD1RsOWZ3EIbH3SrVsM+sPUT+s7h2HrfvWSBvzmnRpAuidkKINm+51+Ze3t5Zw+i/j4f3l7cn2gRTeAPus+339LpMrYkjW37u/faVszwkDzWbOPTqhxz4uGvQSS+gRuXQRAS0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726571553; c=relaxed/simple;
-	bh=th365aV1O+nGA5aBZf9Og6p5JVrbCH1uNZNXWEcsUt0=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HANq31BgKoKIQwrIohFc7uE+9pzzkPw55WwtG3iP6PBJWmfCxy+386zScx6cJ2de9liuvRN1+bkw2K6vwVivKp/r74TDKLAV45NzUbG07WyGJZx0Bjw3qkExAuPTFB/b45aYfE0ARMu5ZlgwBZWfv3yj/jIVMJBic/lgqyDGh6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NP0JiFdP; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48HBCHJY131051;
-	Tue, 17 Sep 2024 06:12:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726571537;
-	bh=O2qUyvxpXkDxiU3OGy1Na0UNA/PkdcD9I0rS5TupXEI=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date;
-	b=NP0JiFdP4TS3JRsQ3CTOBFfs5I6YazreXl4s36RMWMPhLLRR7ez4VSAgx48WTXCnO
-	 n1DyVZH16KAUlRVVeEGbxyVQK/mIVICujwJkB11Zj4qm7Q63s/jb0X7ljPKvp2QE35
-	 ciErsbqHirTd4Pr6YC9u5Z6yTc4x7uCAI1LMCkAo=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48HBCHHL100603
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 17 Sep 2024 06:12:17 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
- Sep 2024 06:12:16 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 17 Sep 2024 06:12:16 -0500
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48HBCGCm010375;
-	Tue, 17 Sep 2024 06:12:16 -0500
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-To: Markus Schneider-Pargmann <msp@baylibre.com>, Nishanth Menon <nm@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        "Len
- Brown" <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
-        Dhruva Gole <d-gole@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        Dave Gerlach
-	<d-gerlach@ti.com>, Georgi Vlaev <g-vlaev@ti.com>,
-        "Markus
- Schneider-Pargmann" <msp@baylibre.com>
-Subject: Re: [PATCH v12 3/5] firmware: ti_sci: Add system suspend and resume
- call
-In-Reply-To: <20240904194229.109886-4-msp@baylibre.com>
-References: <20240904194229.109886-1-msp@baylibre.com>
- <20240904194229.109886-4-msp@baylibre.com>
-Date: Tue, 17 Sep 2024 16:42:15 +0530
-Message-ID: <87o74mlek0.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+	s=arc-20240116; t=1726571597; c=relaxed/simple;
+	bh=6lkR70ZMKFHtrFZOKX0zZA/AWJe88OjDhpXj46DGRD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hi/1IMya74K/Thts98EaCpqAuWYZ+YfhzU5I8KXJGyBhPxUceOmj6JJfxEArZodilqyo4NCCYMzV0eONktOiBV6VMvIGJ0bv3ow/9VwMjqlJrSYfRbkUSZ8aSFQjAnvhpeixjaXOur0AcAUK20myYQ8zgjgq+KUv5VEUdXyk1v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKe3TFMN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32F5C4CEC5;
+	Tue, 17 Sep 2024 11:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726571596;
+	bh=6lkR70ZMKFHtrFZOKX0zZA/AWJe88OjDhpXj46DGRD4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tKe3TFMNitbuFMrUU3GCIuYvuEs7bFk5+1O/TzRFzH8dnh793KRnNIneE9khxIaFo
+	 upcbNi6v5ApkWaxCM0NWt4yWdTyJedldNIysSiPribpTUbSjibECvBUpMOclfaysxN
+	 6NiXwc65wKcrtoaum1CacZ5WEPKyQ8ZApYiM1wk9NiAJXvJsDA6UmR3zyxflt1zhz0
+	 VxotGJFYmq/qiN6p5K7ujrCLDoMHRBnZDacgrYaTV3pyJDmxmuDzGImuRx/PBmiILP
+	 VeeUF3VW388XPpAjej4OWKsY57RxbcgZvqvGu+YHxnwQ4cffefmU87evdyQnzah1HY
+	 wAV90V+2ovfag==
+Date: Tue, 17 Sep 2024 12:13:01 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
+Cc: "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "dima.fedrau@gmail.com"
+ <dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
+ <marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
+ <Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
+ <Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
+ <Kai.Dolde@de.bosch.com>
+Subject: Re: [PATCH v7 2/2] iio: imu: smi240: add driver
+Message-ID: <20240917121301.3864a3f7@jic23-huawei>
+In-Reply-To: <AM8PR10MB4721196E13BCDAD7ABAD8E85CD602@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+References: <20240913100011.4618-1-Jianping.Shen@de.bosch.com>
+	<20240913100011.4618-3-Jianping.Shen@de.bosch.com>
+	<20240914173229.57548005@jic23-huawei>
+	<AM8PR10MB4721196E13BCDAD7ABAD8E85CD602@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Markus Schneider-Pargmann <msp@baylibre.com> writes:
-...
->  
-> +static int ti_sci_prepare_system_suspend(struct ti_sci_info *info)
-> +{
-> +	/*
-> +	 * Map and validate the target Linux suspend state to TISCI LPM.
-> +	 * Default is to let Device Manager select the low power mode.
-> +	 */
-> +	switch (pm_suspend_target_state) {
-> +	case PM_SUSPEND_MEM:
-> +		if (info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED) {
-> +			/*
-> +			 * For the DM_MANAGED mode the context is reserved for
-> +			 * internal use and can be 0
-> +			 */
-> +			return ti_sci_cmd_prepare_sleep(&info->handle,
-> +							TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED,
-> +							0, 0, 0);
-> +		} else {
-> +			/* DM Managed is not supported by the firmware. */
-> +			dev_err(info->dev, "Suspend to memory is not supported by the firmware\n");
-> +			return -EOPNOTSUPP;
-> +		}
-> +		break;
-> +	default:
-> +		/*
-> +		 * Do not fail if we don't have action to take for a
-> +		 * specific suspend mode.
-> +		 */
-> +		return 0;
-> +	}
-> +
-> +	return 0;
+On Mon, 16 Sep 2024 20:32:56 +0000
+"Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com> wrote:
 
-Looks like this statement is unreachable, may be generating a warning as well.
+> >Hi Shen,
+> >
+> >I suspect I led you astray.  regmap core seems unlikely to feed us little endian
+> >buffers on writes (they should be CPU endian I think) so there should be memcpy()
+> >for that not a get_unaligned_le16()
+> >  
+> >> +
+> >> +static int smi240_regmap_spi_write(void *context, const void *data,
+> >> +				   size_t count)
+> >> +{
+> >> +	u8 reg_addr;
+> >> +	u16 reg_data;
+> >> +	u32 request;
+> >> +	struct spi_device *spi = context;
+> >> +	struct iio_dev *indio_dev = dev_get_drvdata(&spi->dev);
+> >> +	struct smi240_data *iio_priv_data = iio_priv(indio_dev);
+> >> +
+> >> +	if (count < 2)
+> >> +		return -EINVAL;
+> >> +
+> >> +	reg_addr = ((u8 *)data)[0];
+> >> +	reg_data = get_unaligned_le16(&((u8 *)data)[1]);  
+> >
+> >Why is the regmap core giving us an le16?
+> >I probably sent you wrong way with this earlier :( memcpy probably the correct
+> >choice here.  
+> 
+> Yes, you are right. We shall use memcpy to keep the be CPU endian.  Just using memcpy may be not enough.
+> 
+> Shall we also change regmap_config.val_format_endian  from REGMAP_ENDIAN_LITTLE to  REGMAP_ENDIAN_NATIVE ?
+> 
+> This is to make sure that regmap_write passes the reg-value to smi240_regmap_spi_write without changing the CPU endian.
+>
+Hmm. I'd missed that control.  If the register data needs to be little endian
+then it is correct to leave that set as REGMAP_ENDIAN_LITTLE as then
+the regmap core will do the endian swap for you on Big endian systems.
 
-> +}
-> +
-...
+If I follow that bit of regmap correctly it will then have the data
+in the right order so the above still wants to just be a memcpy.
+
+As it stands, on a Big endian host, regmap will use the val_format_endian
+to decide to flip the bytes.  This code then flips them back again and
+the value written is big endian which is not what you intend!
+
+Easy way to check this will be to set it, on your little endian
+host, to REGMAP_BIG_ENDIAN and see what you get in the value.
+Then consider if you'd had get_unaligned_be16
+then it would end up as little endian again.  This should mirror
+the current situation if this driver runs on a big endian host.
+
+Hope that confusing set of comments helps!
+
+Jonathan
+
+ 
+
 
