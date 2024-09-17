@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-332026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E901397B472
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:05:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D2B97B473
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB3128377F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5DC1F22371
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A5D18784C;
-	Tue, 17 Sep 2024 20:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A34188A13;
+	Tue, 17 Sep 2024 20:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gcdfm1Pk"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZ6KcVq9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB5D145FEB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 20:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE35145FEB;
+	Tue, 17 Sep 2024 20:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726603521; cv=none; b=BcstsmWZUfF1DY44qCFwKZPeEmq47MC5zjJZMzkGDwA6Uc2Pzhvp5OS2k83VHfkVIsf0M6EMXoQzbZPETH3FrpqFkmu4ZrF9vwC4Q5BVDxMtS4wftqgD9fSIWdQU+iwqlsoZCysjuMDDni7/DHOzNsPLXSLFaw/pWIvyZl96KK4=
+	t=1726603567; cv=none; b=TBTJu2APeAV2pf1GR3q+bmK5Slj/WlwUB97HU4NBnXvtkUzO147XkX/038ue6gCXtZGTrlWYEEQ5IzvEzaLQkNkLIvjG2Wt/Qx3FmWUKrOtcVq/FTNIy8sGJ5MX6GfeEzPnZeXd6HDIPEgekmIlr6BUW+ZUUnJXtWMrbC8iEals=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726603521; c=relaxed/simple;
-	bh=SfodZ/rtM2jhxXtzGw81B5mYu4eTU4CKiUf1fOOsm7w=;
+	s=arc-20240116; t=1726603567; c=relaxed/simple;
+	bh=SUsK8Svdw3efubdcejW6xIz0v3Eh5IcBKBW2pOhzyhA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YOlh2IkrDFjllWB8I1NWdCRACmUMtVVcBd7NamSypngAwnrAH3KBHsBvWMZvUnrYbkE8Q34ndUViUxxrCI6MAQjJtVwPmQq05T6/GMbpicUnTXhREOhvw+PWPxcgpf0cmw46AdpPf5+MUZiVRw53hN9j3iw0av4xl4qHTmNT09I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gcdfm1Pk; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so6285352e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726603518; x=1727208318; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+BAqZEURXqmfkfN7P6xqojM68KIepLhSNWCqaR0uo9I=;
-        b=Gcdfm1PkCiv4aFOkeI6H+A0246SS/0VNF0RxVUi3uL0AqWEvcyc1jMU8JFkktt4rNf
-         2gDgRgKma7QbJ2B/vDorAonRPZ54+pDoZJZnkNmjCdt+z6w4ZZB4/7IE3KOiu1UESIKe
-         0asQWuuPfTQz/KbVeQU0JTyubc3e8EPKW9sKqZ861Py7+KzwBMBYfOI4LFbd3iKeTfmg
-         IoqaGgYBuBce9C1Mo/vRu6btUjRGET7zvoDVkY6Qz2XRHMgYWANOboONzemxwQ3YjrTC
-         FCmnrpuRDxUjkoyxR4KsJa4BjRJ7oVUuPN1dDuGI1RK0y9d21iGpn4w2xJLPEpMXdBwN
-         oq/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726603518; x=1727208318;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+BAqZEURXqmfkfN7P6xqojM68KIepLhSNWCqaR0uo9I=;
-        b=dwLNqlL/1afrqxaoULnQtZG45KZZJLuO7XbYQt/fQFGhM31nZbLq7BKsQehFILpcj2
-         l7VmKZyv7PTinNlkKvGsajHKr0ZuDXlCSO1f4M3PWCHDR39G5mpcM0ipQLm8TjAXv2Mc
-         J8HTIrvNpzd5w++7en/I1o7Ny1ntbi2iFLeigPIglr5yTRLRZf+FA+vH/4RACO949qT4
-         Lv7CY/f6qgEIQIoK8yRZlyCOv8W8aLkIrs424Zs9nmbY46bEiOOtmpMSOdu1I/pj3/kj
-         8NSMaBfDBSfCfr7qnfjDyLmzxyo8XZ+tA67EAndhA1FlUeN3zlgSOdPe1CPkvT7Uwiiq
-         CCoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKiXBRD3X+o6kr7g121HPl1nUQI1G876npy8/Y65Ngm7xdG2SxeEsnPlb1wEV3hOe7nYjgMm8PRXYTBbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsQpfy+sIsJ06GtwuBU4kLcvA7DRAIihA6eAQ6hhZYYZvVYZ2i
-	JZSetkBewshgg/kQb02brdR3me1n66yS7Sqbh4vCJvzqwr1P4RU0xViaHw==
-X-Google-Smtp-Source: AGHT+IGMIxuzqNUJOUvGmb59uVLTBMVAOejxcAU/dsF1JxJY/nZGiZtZ/Vngc3Cz2bCT6Kw24apbGg==
-X-Received: by 2002:a05:6512:ac8:b0:52c:c032:538d with SMTP id 2adb3069b0e04-53678fc857bmr9707003e87.27.1726603517664;
-        Tue, 17 Sep 2024 13:05:17 -0700 (PDT)
-Received: from kernel-710 (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f4358sm484154466b.71.2024.09.17.13.05.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 13:05:17 -0700 (PDT)
-Date: Tue, 17 Sep 2024 22:05:15 +0200
-From: philipp hortmann <philipp.g.hortmann@gmail.com>
-To: Tree Davies <tdavies@darkphysics.net>
-Cc: gregkh@linuxfoundation.org, anjan@momi.ca,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/18] Staging: rtl8192e: 18 more Style guide variable
- renames
-Message-ID: <Zung-0ClV_527-_e@kernel-710>
-References: <20240917053152.575553-1-tdavies@darkphysics.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=alKsEUGCD2zYxoPX5pHUZekKfd69ajU6cI1kUM9rUOP/Kk65ziy55HN1hPcouHe01NXbpoBAQSIdSfaQaCeYS9lm13qz9r7K1G3JRoiwrMLaIlBoANbH02WHQ5xG6bqGuDSwbalR2tGABAxX4OBfMeUHXDZX1HjBT6htii03hL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZ6KcVq9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B497EC4CEC5;
+	Tue, 17 Sep 2024 20:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726603566;
+	bh=SUsK8Svdw3efubdcejW6xIz0v3Eh5IcBKBW2pOhzyhA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iZ6KcVq9FTQAdTIpkvSLOvR6cTQ2d36mu+93O3SHxsDj9pI8ILZTUV3yaWCA7ohDf
+	 r3zui2lSheIA6HWKJrn0nZDXsJPshn/K8ZYdsvcPJxUYXCDu7Y8cZde2SlPMORHlZv
+	 o06cr1OYrLPRQsSwLIpMY3BXvEpitxHtew4saBemEOqSXF1DNGzAb/NWYSjUwmHeLt
+	 0yqbQLUib36RV0UnntiCQvjxvEs6rXnIASLSY+NVx7lAF164oDEY9/ZCO89AzKkx7A
+	 lH+6PRhwIWfk0U8r8IhicKR0w/TK1nbtQQQQS8nqpI67bPqWnvnvwY6zbFHN8S4/Kb
+	 LLnVxTgHTRaEg==
+Received: by pali.im (Postfix)
+	id 0E4CD7BA; Tue, 17 Sep 2024 22:06:01 +0200 (CEST)
+Date: Tue, 17 Sep 2024 22:06:00 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Fix getting reparse points from server without WSL
+ support
+Message-ID: <20240917200600.6smfxhrppkyjuyku@pali>
+References: <20240913200204.10660-1-pali@kernel.org>
+ <20240913201041.cwueaflcxhewnvwj@pali>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240917053152.575553-1-tdavies@darkphysics.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240913201041.cwueaflcxhewnvwj@pali>
+User-Agent: NeoMutt/20180716
 
-On Mon, Sep 16, 2024 at 10:31:34PM -0700, Tree Davies wrote:
-> This series fixes camelCase variable names
-> Thank you to all reviewers.
-> ~Tree
-> 
-> Tree Davies (18):
->   Staging: rtl8192e: Rename variable nDataRate
->   Staging: rtl8192e: Rename variable bIsCCK
->   Staging: rtl8192e: Rename variable bCRC
->   Staging: rtl8192e: Rename variable pMCSRateSet
->   Staging: rtl8192e: Rename variable PreCommonCmd
->   Staging: rtl8192e: Rename variable PostCommonCmd
->   Staging: rtl8192e: Rename variable RxDataNum
->   Staging: rtl8192e: Rename variable FwRWRF
->   Staging: rtl8192e: Rename variable bFirstMPDU
->   Staging: rtl8192e: Rename variable bPacketBeacon
->   Staging: rtl8192e: Rename variable Rx_TS_Pending_List
->   Staging: rtl8192e: Rename variable bPacketMatchBSSID
->   Staging: rtl8192e: Rename variable bToSelfBA
->   Staging: rtl8192e: Rename variable Tx_TS_Admit_List
->   Staging: rtl8192e: Rename variable Tx_TS_Pending_List
->   Staging: rtl8192e: Rename variable Tx_TS_Unused_List
->   Staging: rtl8192e: Rename variable Sbox
->   Staging: rtl8192e: Rename variable pMCSFilter
-> 
->  .../staging/rtl8192e/rtl8192e/r8192E_dev.c    | 50 +++++++++----------
->  .../staging/rtl8192e/rtl8192e/r8192E_phy.c    | 10 ++--
->  drivers/staging/rtl8192e/rtl8192e/rtl_core.c  |  6 +--
->  drivers/staging/rtl8192e/rtl8192e/rtl_dm.c    |  2 +-
->  drivers/staging/rtl8192e/rtl819x_HTProc.c     | 10 ++--
->  drivers/staging/rtl8192e/rtl819x_TSProc.c     | 36 ++++++-------
->  drivers/staging/rtl8192e/rtllib.h             | 34 ++++++-------
->  drivers/staging/rtl8192e/rtllib_crypt_tkip.c  |  6 +--
->  8 files changed, 77 insertions(+), 77 deletions(-)
-> 
-> -- 
-> 2.30.2
->
+And seems that SMB2_OP_QUERY_WSL_EA is useful not only for reparse
+points, but also for any regular file or directory as it can contain
+UNIX mode and UID/GID ownership.
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-
+On Friday 13 September 2024 22:10:41 Pali Rohár wrote:
+> Paulo, please look at this patch as it is related to WSL attributes
+> which you introduced in the mentioned commit. I think that the proper
+> fix should be to change SMB2_OP_QUERY_WSL_EA code to not trigger that
+> -EOPNOTSUPP error which is delivered to userspace. I just checked that
+> this my patch works fine for Native NTFS symlinks and NFS-style reparse
+> point special files.
+> 
+> On Friday 13 September 2024 22:02:04 Pali Rohár wrote:
+> > If SMB server does not support WSL EAs then for SMB2_OP_QUERY_WSL_EA
+> > request it returns STATUS_EAS_NOT_SUPPORTED. Function smb2_compound_op()
+> > translates STATUS_EAS_NOT_SUPPORTED to -EOPNOTSUPP which cause failure
+> > during calling lstat() syscall from userspace on any reparse point,
+> > including Native SMB symlink (which does not use any EAs). This issue
+> > happen for example when trying to resolve Native NTFS symlink from SMB
+> > server on Windows 8.
+> > 
+> > Avoid this problem by calling SMB2_OP_QUERY_WSL_EA only when detected
+> > reparse point is of WSL type. Note that this is not solve this problem
+> > fully as WSL reparse points can be created also on other SMB server
+> > which do not support Extended Attributes at all.
+> > 
+> > Fixes: ea41367b2a60 ("smb: client: introduce SMB2_OP_QUERY_WSL_EA")
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > ---
+> >  fs/smb/client/smb2inode.c | 15 ++++++++++++++-
+> >  1 file changed, 14 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+> > index 11a1c53c64e0..d65471aa55e6 100644
+> > --- a/fs/smb/client/smb2inode.c
+> > +++ b/fs/smb/client/smb2inode.c
+> > @@ -941,7 +941,20 @@ int smb2_query_path_info(const unsigned int xid,
+> >  		if (rc || !data->reparse_point)
+> >  			goto out;
+> >  
+> > -		cmds[num_cmds++] = SMB2_OP_QUERY_WSL_EA;
+> > +		/*
+> > +		 * Skip SMB2_OP_QUERY_WSL_EA if reparse point is not WSL.
+> > +		 * The server file system does not have to support Extended
+> > +		 * Attributes and in this case returns STATUS_EAS_NOT_SUPPORTED
+> > +		 * which smb2_compound_op() translate to -EOPNOTSUPP. This will
+> > +		 * present failure during reading of non-WSL special files.
+> > +		 */
+> > +		if (data->reparse.tag == IO_REPARSE_TAG_LX_SYMLINK ||
+> > +		    data->reparse.tag == IO_REPARSE_TAG_AF_UNIX ||
+> > +		    data->reparse.tag == IO_REPARSE_TAG_LX_FIFO ||
+> > +		    data->reparse.tag == IO_REPARSE_TAG_LX_CHR ||
+> > +		    data->reparse.tag == IO_REPARSE_TAG_LX_BLK)
+> > +			cmds[num_cmds++] = SMB2_OP_QUERY_WSL_EA;
+> > +
+> >  		/*
+> >  		 * Skip SMB2_OP_GET_REPARSE if symlink already parsed in create
+> >  		 * response.
+> > -- 
+> > 2.20.1
+> > 
 
