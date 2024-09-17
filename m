@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-331558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE2497AE74
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:05:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803AA97AE44
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC0DFB2D84C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:52:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B26DC1C213CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5AE170A1C;
-	Tue, 17 Sep 2024 09:51:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A14A15E5C8;
+	Tue, 17 Sep 2024 09:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Ch5lzFGE"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00548170822
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EACF15D5BB
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726566664; cv=none; b=hTuQNHDMngh1QdF7g+jgI02XiNdJi8vjDdi86Y4VhCDAo2Xq3GzLFGpFWz7OAEYNO/dl08B8+ZzJH3G2pn+uk2aM5MyhoHUPnkYp1DqPyzcaFFu79rqPm0KOTS+SbjasYz/qBjJilDI05x6UUNcd/IaRHMG599haqFxAomtHMaY=
+	t=1726566781; cv=none; b=hQvAUUP1lAssXYErqTsjqy0QYjk7xMUBnIZ3yM0DlD9WlaIugPqafqY50WVMxe/X75q4ubv1h1OeuPGqRvdkIQ6hFybrQwgIzUQgZjgeWBiXX1fcWPlhbtGb96YWtUOPdwVbFMEe6Uppe2/6PP6Na1cp8K/UvNjz/83pOW+PytA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726566664; c=relaxed/simple;
-	bh=d+BFDkFojviuUYyTlF8lf53Jk7wMgz/eph+lTUjGNJw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=s/X7rJZIspktyeOm5hcC/vCKDgKKdxi/VruTwkJtPZHK+xuv5QhSU28SRRC4B5KexbhC9EroYcpNEIzsVvBVug9MzTKcbQS9XTmk6LnxIG/cb7cxAbtH2RTBwCVawVb+9KeIwE+Ib+v83Up5uxk924sr2OzF05RsMz0LhsqjJdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d49576404so84356825ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 02:51:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726566662; x=1727171462;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1WAEizX9Y1SMbjSDqtNh8j+ktqk2hMLvxIFTpNMvgJ8=;
-        b=GmFprBqtREp6xnQCdqyQagG/JtsqANPb1tXp3cKcot/5eEeieT5N5yh9UlvQVhzieU
-         ZLQlvgsQes6l+EUAE0HmpGHT+vtVGmWuY37Kygow0d1Dbn6b9SS0Yb0ONmDi32Isfhgo
-         8s7edK2PRJAMHrXP3UvadBj+tctyVamWvR9v8dav3RZB+XI1Ttp68qJXv3XECLkwCFia
-         s/i3Akcn1JFCLtQuobIS+K6d1O8V4NFakYtlcH1WjsimFHj9w2yez0MwiDF6402bF/98
-         BpKdWCcowm8r3xLqDTpK09zaMPJ0uevYaaM2eVvcNI+b9aictwQKiou6P7E29L6CyT8q
-         E+0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWxAFa2n+GPzRQaL2Nk9aCgZxrENkuJCAqye7R7nM9ARdGeSrT945rZpd38MlpmsUjlg5fCTJ5Wig/lGpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzLfl9mxDqizWJtj1WpVi1siQSFQrQnFuPAD5RElQ7GIF2Ej54
-	v2Xt+m8kfN9Czcb7Ue8Tb4qLKB504iqMs1bxpo2RJgmWBWhEolFZqq9HsY0QpWdKE5bjg4oolpU
-	o57zGSbWdJQZlfN2t/JfeGUoc99hR3NheOdO5jJhfZTFEzGfICqrxP/U=
-X-Google-Smtp-Source: AGHT+IElAEl5pwEDniwyOyW0Nf1KrDJxFTCIQQfsNBJMaH4x60gTb1RTLqMDHomFXNXjut1/m+HvyRhTOj6ZfZj3XtZ3uDcCjebb
+	s=arc-20240116; t=1726566781; c=relaxed/simple;
+	bh=yekIoU8RPpjcOV1si9w4OlRIJpaBJRwrb6G63MrwfKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=snwMOfYtQpDjGYWD6uk8E0H+VxMjrPJOtPUFiRcaSp8M+XFd6FHpC5dJOHuWk+yqoTEjecPb3ASdLblRSKm1ynIEVywHxCfDWCJWiwt4Y5SpB8TzuEGAk6G6h/kWaLd9Ii/LPTFTkFAlEqodaaUsjrGJ5aid1pZ6LCg2VzAwEcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Ch5lzFGE; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5yGljVnafxjfOf4oYVp4y+Ih5fCdjClNcPxVb3Q5Rc8=; b=Ch5lzFGEsJqhhrWQsgRSTd/p0E
+	96MGsGzo/iaT2CQFz7YxZxK0S2sNmNg2xgAh+zZT3sZvR227fIfX66mCpig7lNL9HGVn+KIajyOde
+	9ONPqp1NNnfHxUasKY8PSmlm5gokkb40VZNLzGusulqWAwTES4aZ/Yh+YJ/xrhL05RwldoUMFCNV1
+	VHRFUuRqfxlU7zgFWgzCEoVNExbQfGioSt5xyDIj3Ybh4zqBm+3XJ/1k9iJHH7sCAK4L86hPJ3YHz
+	H/blI8H1pHx3pPUROPStK4MYapvsmwQQNI2PklQlOaRnEDXeNyPwcdEAGabjX2zvfipKbtZLeec06
+	c8hqubsw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36428)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sqUt6-0006pk-0H;
+	Tue, 17 Sep 2024 10:52:47 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sqUt2-0007sh-2j;
+	Tue, 17 Sep 2024 10:52:44 +0100
+Date: Tue, 17 Sep 2024 10:52:44 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Isaac Manjarres <isaacmanjarres@google.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH RFC 0/3] amba: bus: Move reading periphid operation from
+ amba_match() to amba_probe()
+Message-ID: <ZulRbGQf1b+Gy2Ox@shell.armlinux.org.uk>
+References: <20240909-fix_amba-v1-0-4658eed26906@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c5:b0:39f:5efe:ae73 with SMTP id
- e9e14a558f8ab-3a0848eb2admr187448595ab.5.1726566662251; Tue, 17 Sep 2024
- 02:51:02 -0700 (PDT)
-Date: Tue, 17 Sep 2024 02:51:02 -0700
-In-Reply-To: <0000000000006304400619bbfae2@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000095b8f806224da030@google.com>
-Subject: Re: [syzbot] [bcachefs?] INFO: task hung in bch2_copygc_stop
-From: syzbot <syzbot+c6fd966ebbdea1e8ff08@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909-fix_amba-v1-0-4658eed26906@quicinc.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-syzbot has bisected this issue to:
+On Mon, Sep 09, 2024 at 07:37:31AM +0800, Zijun Hu wrote:
+> This patch series is to make amba_match(), as bus_type @amba_bustype's
+> match(), also follow below ideal rule:
+> 
+> bus_type's match() should only return bool type compatible integer 0 or
+> 1 ideally since its main operations are lookup and comparison normally.
+> 
+> Which has been followed by match() of all other bus_types in current
+> kernel tree.
 
-commit f5095b9f85a1674a92d00e7ab466499a8ba49ce1
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Tue Jan 2 00:42:37 2024 +0000
+How does this work with e.g. udev module loading? If the ID isn't
+known until we attempt to probe a device, then if all AMBA drivers
+are modular, there'll be no drivers registered to cause an attempt
+to match a device to a driver, and thus there will be no
+peripheral IDs for udev to use to load modules.
 
-    bcachefs: dev_usage updated by new accounting
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1256e29f980000
-start commit:   adfc3ded5c33 Merge tag 'for-6.12/io_uring-discard-20240913..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1156e29f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1656e29f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6f94136b4da4e897
-dashboard link: https://syzkaller.appspot.com/bug?extid=c6fd966ebbdea1e8ff08
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10936a8b980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10bdd7c7980000
-
-Reported-by: syzbot+c6fd966ebbdea1e8ff08@syzkaller.appspotmail.com
-Fixes: f5095b9f85a1 ("bcachefs: dev_usage updated by new accounting")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
