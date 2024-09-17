@@ -1,171 +1,100 @@
-Return-Path: <linux-kernel+bounces-331487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F61797AD68
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:00:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59EAA97AD6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654171C21A05
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:00:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24AA3287E6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C504215B963;
-	Tue, 17 Sep 2024 08:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD541607B2;
+	Tue, 17 Sep 2024 08:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BosfkKcn"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkDNdmJI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF9A155A4E;
-	Tue, 17 Sep 2024 08:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B28155A4E;
+	Tue, 17 Sep 2024 08:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726563480; cv=none; b=EqFRhCRE4FaD6kqOoKE9kgFsSi7k+vwEc8Z5wPv99yNsYdrA3XG+Hid5rhxYrndqr8lCKMZrB8wBRnu+Y/meJSl2X9fbWqQxEz93CQshIqdlwb8WjqqUzyQrA9njfrzHSl/7CkRLZcGKFnL0Dr92SfG/qHek2XcGclsH0FcUVXQ=
+	t=1726563566; cv=none; b=V/Z9vHZDEDMhJ/6wjOVH4UH49lG+HaE1g7ZG0O8pVqJ62yqVSR24OGSj0FlTqD+/QiS8pATeDQBrhSfoPKEO7WChvzOhHGssSTIRQzRBRNIaBDQCGESojEcz68VNpZHVq3coem6CDMg+skw9R+PrGrh/BNgZ/W3JM/DpFUmXbII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726563480; c=relaxed/simple;
-	bh=JjP7qTaiTpP4a/ZiT/Z+OaXAbXtoOHmt7PjdpUAKQME=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=urJxlbW7YVaYj1q3ggs2tQiadeNoCfyYl6y1mtItl3LGiX+OiRE28MMgzWEdKA1PqXmEBHL3L7HNOeC0DGuRxpN8sE631mNBjw/Cf4XDNlVp3PdFpjT7wlBnTpjJ8KkGEvaWIsNMUYnXSLQI+oqXuCrqfQTUddIlmv3hSW7QWiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BosfkKcn; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48H3arWV019844;
-	Tue, 17 Sep 2024 08:57:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=AWfZ8ATBorZpXhCiJK6NxRh+ya
-	jtEN7MHw4OP+VQzCA=; b=BosfkKcnDUkxHHuDC7nUCHuZUda8j/1PT1qzixrrL0
-	+xW6SFLAPwllrCSmNliPb2A8uTNg+hRU+pdXIgEJCX9m/wIGh1U4uLbAvRjL9PdR
-	LpxayOTR8akFNox/WHNRyYYfvHYW/czZXIeRiv4CPX3WVQWigYBDEogF0CULqcDs
-	UoS+WYMcBoJqbL//JG3rdfhdtZ348e9nL2cP7q3/yf9X1f6bqBwqHJJQ+oRWRgpu
-	OdeeKaJotz2vHDCns4rMtaMU6apu2I3fd0b0k8IkLoCJqr6B8uKjzTvr0tHHSsPC
-	l6t7FVourkvAJgb1apUdKx4TAzGQoaIcJOaYh5BM77UA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n41aeg12-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Sep 2024 08:57:52 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48H5XNqF000842;
-	Tue, 17 Sep 2024 08:57:24 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41nn714bbg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Sep 2024 08:57:24 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48H8vJIv34210464
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 17 Sep 2024 08:57:19 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CC2B62004F;
-	Tue, 17 Sep 2024 08:57:19 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 825CE2004B;
-	Tue, 17 Sep 2024 08:57:19 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 17 Sep 2024 08:57:19 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, namhyung@kernel.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] perf/test: Speed up test case perf annotate basic tests
-Date: Tue, 17 Sep 2024 10:57:06 +0200
-Message-ID: <20240917085706.249691-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726563566; c=relaxed/simple;
+	bh=NKhckBMgwJKcDCDVH8R0awRFV2BdU7iPgvD+2gL7lgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V9lUlOZEVdCbkez3KlIIHLIuOSrJNqG/ijHdRRUngyGK5jmru+drcm15nOu31EZz5kZY7QtYo951hrdzgnfMUq3SdgSaSpSY2+SMwO/syEq+yxE/hSmvrd6Kj5yr6IgP2CwfH3RsFBiECWYYyz0YvpiLhTyXapQQ0FEGfffgM8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkDNdmJI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D740C4CEC5;
+	Tue, 17 Sep 2024 08:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726563565;
+	bh=NKhckBMgwJKcDCDVH8R0awRFV2BdU7iPgvD+2gL7lgQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hkDNdmJIqrdgegnNnlNIX+KgWGmbQVXD0wGSGAL40K5YK6/9OiM77zzk8lTJJ/ey+
+	 pSQucHG+KwI3gBYSQQnMjr4N6r8Kxb6oo6opLTyN1j0bJ4zYr+9eRvqNG/oFa1BFVn
+	 0x73yZxa3S8ErYG/OOGjY+olVwnDwH1rUGx1j+dS7NyfDFIv5tJQpNTvgqlyRzEd5S
+	 GxqXgz8kDXz6jp5wuALWXxyaNKBnKagklUvt/wNOgRv+U7so1tOD1KnbykM3Om8IoU
+	 TL7E7p0M0xgIMiBmbUWh4aBopqjaiWmli6y+ndzwnRhx13WBhz6I7/NMJfOZXLLNtl
+	 XkieuQHSDBerQ==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel test robot <oliver.sang@intel.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	linux-cifs@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Steve French <sfrench@samba.org>
+Subject: Re: [PATCH] netfs, cifs: Fix mtime/ctime update for mmapped writes
+Date: Tue, 17 Sep 2024 10:59:01 +0200
+Message-ID: <20240917-hypen-advokat-2d384f761fde@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <2106017.1726559668@warthog.procyon.org.uk>
+References: <2106017.1726559668@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1242; i=brauner@kernel.org; h=from:subject:message-id; bh=NKhckBMgwJKcDCDVH8R0awRFV2BdU7iPgvD+2gL7lgQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS9dHkifZuvafk8YU0el0MKa2IWePC8W985wW7OriN/9 2XPu96xrqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiL94yMjwWaFw0J4T3h9QW b/us1ave1cQcyYt+2Rm32IXvYn5u5lGGf4b8a5pt1jjYmEn4OzLJ2SvwXZvXe0pr2b/I8Buaqhv sGAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: JfhsLvr55GTmMiy85U1LQv_VzXZVQB9L
-X-Proofpoint-ORIG-GUID: JfhsLvr55GTmMiy85U1LQv_VzXZVQB9L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-17_02,2024-09-16_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 phishscore=0 priorityscore=1501 spamscore=0 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409170066
 
-perf test 70 takes a long time. One culprit is the output of command
-perf annotate. Per default enabled are
- - demangle symbol names
- - interleave source code with assembly code.
-Disable demangle of symbols and abort the annotation
-after the first 250 lines.
+On Tue, 17 Sep 2024 08:54:28 +0100, David Howells wrote:
+> The cifs flag CIFS_INO_MODIFIED_ATTR, which indicates that the mtime and
+> ctime need to be written back on close, got taken over by netfs as
+> NETFS_ICTX_MODIFIED_ATTR to avoid the need to call a function pointer to
+> set it.
+> 
+> The flag gets set correctly on buffered writes, but doesn't get set by
+> netfs_page_mkwrite(), leading to occasional failures in generic/080 and
+> generic/215.
+> 
+> [...]
 
-This speeds up the test case considerable, for example
-on s390:
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Output before:
- # time  perf test 70
- 70: perf annotate basic tests             : Ok
- .....
- real   2m7.467s
- user   1m26.869s
- sys    0m34.086s
- #
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
- Output after:
- # time perf test 70
- 70: perf annotate basic tests             : Ok
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
- real   0m3.341s
- user   0m1.606s
- sys    0m0.362s
- #
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
----
- tools/perf/tests/shell/annotate.sh | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
-index b072d9b97387..b28cd95b1d83 100755
---- a/tools/perf/tests/shell/annotate.sh
-+++ b/tools/perf/tests/shell/annotate.sh
-@@ -43,7 +43,7 @@ test_basic() {
-   fi
- 
-   # Generate the annotated output file
--  perf annotate -i "${perfdata}" --stdio 2> /dev/null > "${perfout}"
-+  perf annotate --no-demangle -i "${perfdata}" --stdio 2> /dev/null | head -250 > "${perfout}"
- 
-   # check if it has the target symbol
-   if ! grep "${testsym}" "${perfout}"
-@@ -62,8 +62,8 @@ test_basic() {
-   fi
- 
-   # check again with a target symbol name
--  if ! perf annotate -i "${perfdata}" "${testsym}" 2> /dev/null | \
--	  grep -m 3 "${disasm_regex}"
-+  if ! perf annotate --no-demangle -i "${perfdata}" "${testsym}" 2> /dev/null | \
-+	  head -250 | grep -m 3 "${disasm_regex}"
-   then
-     echo "Basic annotate [Failed: missing disasm output when specifying the target symbol]"
-     err=1
-@@ -71,8 +71,8 @@ test_basic() {
-   fi
- 
-   # check one more with external objdump tool (forced by --objdump option)
--  if ! perf annotate -i "${perfdata}" --objdump=objdump 2> /dev/null | \
--	  grep -m 3 "${disasm_regex}"
-+  if ! perf annotate --no-demangle -i "${perfdata}" --objdump=objdump 2> /dev/null | \
-+	  head -250 | grep -m 3 "${disasm_regex}"
-   then
-     echo "Basic annotate [Failed: missing disasm output from non default disassembler (using --objdump)]"
-     err=1
--- 
-2.46.0
-
+[1/1] netfs, cifs: Fix mtime/ctime update for mmapped writes
+      https://git.kernel.org/vfs/vfs/c/edd297c2764c
 
