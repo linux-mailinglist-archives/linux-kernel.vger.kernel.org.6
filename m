@@ -1,84 +1,95 @@
-Return-Path: <linux-kernel+bounces-331442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5500A97ACF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:40:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE31397ACF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C383285FAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D05C1C225CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D98115B0F2;
-	Tue, 17 Sep 2024 08:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msn23qj0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B268158DDF;
-	Tue, 17 Sep 2024 08:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6899815B964;
+	Tue, 17 Sep 2024 08:40:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65768446DB;
+	Tue, 17 Sep 2024 08:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726562399; cv=none; b=q6O3G4VpKOuVRpJPzpT/GOFos7t3kA/ieSgxvkc1KRDMHX3IyycEkubQ5mzzlMfDtDv+OJx6wgPMPGypq+vOgW0OvPYwoDDlv7Lf8sDNsOHGohdl62TLzJJBHmHpWoFNjEfbH9m/CoqR38VS8FMEuVKBeFz4kKPfouJLbbI/hd8=
+	t=1726562408; cv=none; b=Ld9tCJ/NgnAZo3KwB+mDU8q4G89SfI6fTXqyEkrVg+wc7qGv890PLliKhKa0E+shZ1QyuF2TfRQaSW7mEcXyvEY249e6Y8TR/92+Ek4c2zyyIF/OJlc8Yu1o/meiLv7oT/z2oTC6uydS6cuviKmIrxQnCZ097PyFZNCvT0FaeIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726562399; c=relaxed/simple;
-	bh=sA8EtIddwYcbM9QidX3yPbv7FtP5KS1p37I+r9fmU2U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P6T56QIN85Aye3So/sUfQQ0YVRx4ULvAKCtXn1paMVTarWCdGx6c+89mJx3Tt77PQaO7TOoDOm9R9IZVQc0H2bw+D10TLHy6LnnHUl9L00tG1rHGuRBpU5kE1DkKuaFcf0AoYe8tq1MmLbCEFWKlRVsCC+w3LbHfjYbpX1cvc2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msn23qj0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1602C4CEE6;
-	Tue, 17 Sep 2024 08:39:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726562399;
-	bh=sA8EtIddwYcbM9QidX3yPbv7FtP5KS1p37I+r9fmU2U=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=msn23qj0z5WsNE7ouwUDh6Ouw+IFN0cNHR08Ijgw699Ot2RfOWiOfk4pE2zGNqeL3
-	 PzVOCuOdhwmcrxcnP0RpWkVcEY2Pqh9iM6MMBrstEUA27FjN+5Jc1gIXQI0duf8Cv6
-	 AUpEaZf80jl8d6mv75ZoOcE4sDAAWB931++RxhpQ91mvmmcb6sUl51gCW9ZimA7/P4
-	 AZT5BNvTmBIeh7It6J9nXsgXMQeSjJg7ry4RetcpHlev7tbnQ6jE3THPuKMYl5AmM4
-	 mtQeEcecg5n0IU6ENsDz8BjM+xD0XWv4tIB0a9eQFGz3iG/lrB/gsY6RDwkvWKQc5g
-	 0iwp86fyCLOXw==
-Message-ID: <22b91bc1410bf2a9b54b69a56075d368bf3e06d1.camel@kernel.org>
-Subject: Re: [PATCH] virtio_console: fix misc probe bugs
-From: Amit Shah <amit@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
-	 <gregkh@linuxfoundation.org>, Rusty Russell <rusty@rustcorp.com.au>, 
-	virtualization@lists.linux.dev
-Date: Tue, 17 Sep 2024 10:39:55 +0200
-In-Reply-To: <ad982e975a6160ad110c623c016041311ca15b4f.1726511547.git.mst@redhat.com>
-References: 
-	<ad982e975a6160ad110c623c016041311ca15b4f.1726511547.git.mst@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1726562408; c=relaxed/simple;
+	bh=TWJMtfJZ9QPOu5Te4EqE5AIl1qhQ4uGMya1ppUhTjgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e91vE6ZrED+JvEvSoHWoH2FTjAZVVOjJgTviI/tH19ZpL4RMC6QEw2FdN5F16I9X3caue2qxjb/OqFjiC9oSrpadZKkVGFLfABvOJyJ73EzVC+UFCURT6ELonHYfjc970TnYRD+FSDOrZdJ2ha3XIE35x99mPoEsC2a7IwFoqDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3231DA7;
+	Tue, 17 Sep 2024 01:40:33 -0700 (PDT)
+Received: from [10.57.83.157] (unknown [10.57.83.157])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5AF643F66E;
+	Tue, 17 Sep 2024 01:40:02 -0700 (PDT)
+Message-ID: <6800a37f-8a37-4a9b-9e22-a78943d1ecf7@arm.com>
+Date: Tue, 17 Sep 2024 09:40:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/7] m68k/mm: Change pmd_val()
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Guo Ren <guoren@kernel.org>
+References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+ <20240917073117.1531207-2-anshuman.khandual@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240917073117.1531207-2-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-09-16 at 14:32 -0400, Michael S. Tsirkin wrote:
-> This fixes the following issue discovered by code review:
->=20
-> after vqs have been created, a buggy device can send an interrupt.
->=20
-> A control vq callback will then try to schedule control_work which
-> has
-> not been initialized yet. Similarly for config interrupt.=C2=A0 Further,
-> in
-> and out vq callbacks invoke find_port_by_vq which attempts to take
-> ports_lock which also has not been initialized.
->=20
-> To fix, init all locks and work before creating vqs.
->=20
-> Fixes: 17634ba25544 ("virtio: console: Add a new MULTIPORT feature,
-> support for generic ports")
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+On 17/09/2024 08:31, Anshuman Khandual wrote:
+> This changes platform's pmd_val() to access the pmd_t element directly like
+> other architectures rather than current pointer address based dereferencing
+> that prevents transition into pmdp_get().
+> 
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Guo Ren <guoren@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-m68k@lists.linux-m68k.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-Reviewed-by: Amit Shah <amit@kernel.org>
+I know very little about m68k, but for what it's worth:
+
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+
+> ---
+>  arch/m68k/include/asm/page.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/m68k/include/asm/page.h b/arch/m68k/include/asm/page.h
+> index 8cfb84b49975..be3f2c2a656c 100644
+> --- a/arch/m68k/include/asm/page.h
+> +++ b/arch/m68k/include/asm/page.h
+> @@ -19,7 +19,7 @@
+>   */
+>  #if !defined(CONFIG_MMU) || CONFIG_PGTABLE_LEVELS == 3
+>  typedef struct { unsigned long pmd; } pmd_t;
+> -#define pmd_val(x)	((&x)->pmd)
+> +#define pmd_val(x)	((x).pmd)
+>  #define __pmd(x)	((pmd_t) { (x) } )
+>  #endif
+>  
 
 
