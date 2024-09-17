@@ -1,277 +1,220 @@
-Return-Path: <linux-kernel+bounces-331813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EA397B17D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:35:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580C097B180
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ACABB24066
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0EE01F22A03
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9BA1865E7;
-	Tue, 17 Sep 2024 14:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0064C17B4E5;
+	Tue, 17 Sep 2024 14:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lowJ0vTG"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="gE7dhgyG"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020103.outbound.protection.outlook.com [52.101.61.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5F017C9E9;
-	Tue, 17 Sep 2024 14:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726583703; cv=none; b=mUnCnKui5mAOD2R/dqJCsUtfF1rB4a+1PTDj7Q3dxQdqpZ0vUFAdNCtG729xkb8TpGFtFEIS2hbA5w/njYf5qAqsaYVG7VMzl+g+cjWgOrX/3a7LNgZVQVGVMgnurJGyBnDEmhpIN65pnRX5fJTl9EVppcnltUgwpc9rEgU02c4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726583703; c=relaxed/simple;
-	bh=UEzTx9D/4aIem3SYwDJSGjr2mKzWLG8B0R4I+L4ZtQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B4ws+tLzkRUJ9xcA7B+TxZbIeczYGv+mXiUUDZnqARdYA33Nt5zp02HV7cIuztWyLQGTNw0tH5x/vK6PTTb7Nm3FZmBTsrZAhSPEomEhaC5TP4xwsA55rq3kwPyhG7up/G/xE6bHvWNYDssMDD1Nu0UZ1YokvQ5Gn6omoCmce2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lowJ0vTG; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6c579748bf4so44300066d6.1;
-        Tue, 17 Sep 2024 07:35:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726583701; x=1727188501; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cLQI6kZ6TnjcLlPN0cihMK1F/E38o+9g1wKleRuuDyM=;
-        b=lowJ0vTGORomv5QklVJK5iEMh4WwT6cttc3itDOnaXNGxM2YXvsCjPwHGsg3+NZs8A
-         2rYOoxDUtfGucLkNA1kdb4OwsSXIJcs+da5nXqhLnH2A2GQp7XB7EqNAt8e0Y4Rhu0XM
-         d6vprPfqiBIK77dOflufP2F2pAfbmXm0UYnprU1VEIwlelrB+sNndQUmKsJaMGnTYsLM
-         PzIrSBfTDO+scRkWacNrPebC8wUjy8fQUKSSaHwmGQv640NOddN1r87Wfs+RI4heiiv0
-         Cej/jKUae4smSeB0QGO8rqMISO/sIklewhipO8l7E7MBLA6VwnrQhiksvUrI+5wc5S96
-         T2fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726583701; x=1727188501;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cLQI6kZ6TnjcLlPN0cihMK1F/E38o+9g1wKleRuuDyM=;
-        b=tXRf9eSHXLSRQuBEZKmcA3O+EHB9Vzrl/H9H32JPMswNxZBEKnn/FBMO89DNXj3lBb
-         M4VQKz9fKCEKXI8Np0IoUVOYlZMdPC/6tklWN+hXujq4Wa0jNDAuvUqIy3UTKI+xc/c/
-         4JwciY4qe4zTT5XdY5e2H9GgTA9sbqMmUjEc0MgvQSQBTdgYsmHjJICPC1LBE1Gv5dKK
-         KMBH/x3BKmj1PaaftZqmOMKYqLowuNKdsXAm3r+2jgn70MkfZhI0gWdnp1wf9fShxN9f
-         HLbhc3PUiivGCA6Rkzpbc6jmrRVLNuPY3d2WbyiKmC8GW4WImTonHg3THRZg3iCIJedu
-         Z4wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtzRm1133qO6AXdRAkOZ8xl9qtidTr4Anu8scCpzNHdlDD3INGv6PBDX2drs75d/vPwwDx@vger.kernel.org, AJvYcCXVtPgoKOlLbbSQ+uSF7fsfPLNmp5N6jblJZRmQCnlhZiqX/oiPzwLeXJ2SW95KDsWkscbd@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8mUmiimeXP+FKdqQp9m9ylynYbN7h/fY/AA3+5UFTDVvvupay
-	oMP2PJjWwzGWEM3+eaTUOceQCtsxUD0mri3hEhlWjDpeE/apeOUV
-X-Google-Smtp-Source: AGHT+IHxAlrf3264M1eG0sU+WYQOpz1SeCGp6P57WflWDJF78YqG3aNM3gQ3OugWPUyeVTVmITSVWQ==
-X-Received: by 2002:a05:6214:440b:b0:6c3:62bc:5de3 with SMTP id 6a1803df08f44-6c57e240938mr223177656d6.53.1726583700929;
-        Tue, 17 Sep 2024 07:35:00 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c58c645d27sm35018466d6.73.2024.09.17.07.35.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 07:35:00 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id F227C1200070;
-	Tue, 17 Sep 2024 10:34:59 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 17 Sep 2024 10:34:59 -0400
-X-ME-Sender: <xms:k5PpZoyBuEtWz4UGkULBJa6aW9UOXEmvIx5H_9jeFJi8QNvqTvtrpQ>
-    <xme:k5PpZsQM-R7W-zPeDB5SqCvKg99YKQRNc0QqEBt6d-I3P0Ri2VbF-DxUdK0cqZe5f
-    yeksXmFnHqaqki4_A>
-X-ME-Received: <xmr:k5PpZqXfkqX4SPEUwBWiRctbcYiD4nd3B2gGLkqNkqu_un2JmSxJR_nfH2I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekjedgjeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeegleejiedthedvheeggfejveefjeejkefgveff
-    ieeujefhueeigfegueehgeeggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdehpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehrtghusehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoh
-    eplhhkmhhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlmhgt
-    kheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehnvggvrhgrjhdruhhprgguhhihrgihsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehjohgvlhesjhhovghlfhgvrhhnrghnuggvshdrohhrghdprh
-    gtphhtthhopehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
-X-ME-Proxy: <xmx:k5PpZmjjdvtfnnTUMxyarIvVGtN8GdMkpiet04So6-LLONo4c8ojwg>
-    <xmx:k5PpZqAHEvI5Qsczqkm_xhjIW9GQbQm-AzYSKanMgMCGZfqs0RZTdg>
-    <xmx:k5PpZnKb7YwChUhJaTD_JVehHcBDdHXKX9ao5SKSMth3Y8v_b0or1w>
-    <xmx:k5PpZhAtiRY7Dx0B77YyJRs3Tmb8XF0qz_kPg17U_I9Tou3KelXF-g>
-    <xmx:k5PpZqxcVUppObEIIxuJguw4G4QXC1wazBBEkZMsdIRHmYCqObGjQplm>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Sep 2024 10:34:59 -0400 (EDT)
-From: Boqun Feng <boqun.feng@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org,
-	linux-mm@kvack.org,
-	lkmm@vger.kernel.org
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	maged.michael@gmail.com
-Subject: [RFC PATCH 4/4] WIP: hazptr: Add hazptr test sample
-Date: Tue, 17 Sep 2024 07:34:02 -0700
-Message-ID: <20240917143402.930114-5-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240917143402.930114-1-boqun.feng@gmail.com>
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7E5171099;
+	Tue, 17 Sep 2024 14:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.103
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726583727; cv=fail; b=Dno8BRbANi+KyhhtJBh02LWl5pulj5NcAQFRQ6XWcOwWtCC9tVLbJMyScymzo+X5B/qix2H9OaYF89SWVdY3567G5/jBAr+CO6v8KtOY8SnOJ4WCraoibjVbgFnsoLi4w6lSCzCUdb+ipeihFiJ6OsAuMmdl+F0rNfkTufYgH1w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726583727; c=relaxed/simple;
+	bh=xZ/wepqkaXLZxuDxO2wZ/VLQGhSiMzNg3APiJDS1kDg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hJwied7WwwHhkP/wkWYB3KvVLTgD6SO/n6i+qJMlqOj8pp1T79cmlGG44vsMVX4Th5jmxkic9vdBlzV2vWPVBHtTkpNRBrvBWXeXK7pW2UPiJ3A3QwIvDl926l2JITG5/SdstuvGp7HCW1LlreGDGuZgYVJmgueV1avOTGVuX5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=gE7dhgyG; arc=fail smtp.client-ip=52.101.61.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gFZWL3BW4WViiSX4/oNG14XJVcHmHCO2h5H3Miqw+/MicOL673eWAozcS0pVKo46Dv7TSJJJ9mJKD/veaCjxhpVIBMwHJ5HKMrf+ggnJv014V6SAmMqZlOOfmayj08gLw/yJOQ4B/07CJeuNf/YVR/QZRHfEw1yxsqpzAnf/QYZOuFf7/9mHKDzRhWPqs5fEF6nJUb7YuUU1I5nl4llyDy5WxMmgHduQCMwA8hwPgGqa/sx0o+rn6Ezy8lcyGUn6QFvHoanQoM7yJ1GpN3+q9E/TWjmI11QTR2fWX3f//Ayh5cERHkrzQ9uq/6znAsp+SCOAg+cY5mwnyjjpX2gKhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MLAVh3jBZxFzWHhKNW4XIA1ZGwiDduVz/SvSIEsb6cI=;
+ b=aRnSdNI/UEvgP0MvtJExIY8jVlzIltOuGHMCWGadsBmyeo5Dr2hTdyN+TRwskyqLlPCDE6nmH+ygcGls1QHh+2xrwgPyKxBz25cI35dj4WaDsp5mL9zT8TC5e8CE1/AsovxwoN3wQ3uWxNrHqZQVij1x30QhKwNUM7pzPBnuFV0/VmiuqyuUyu289RTmVp59irf2vZTZd5Vq1gN05/TaoVF+0j573l7XHaI/KnfPvpNEUGt8tNNj5bUelqwCo7DQaiPPRJ5FR4yXfg1YdI2+5vthsTnAhPjU9dyiH2zkLjE3Mqg6u/ymdjvjHWT1P9A/J3wWsSuUINPYMdfVOUhhfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MLAVh3jBZxFzWHhKNW4XIA1ZGwiDduVz/SvSIEsb6cI=;
+ b=gE7dhgyGIYCrsQMjL0nmUELHrkJTK+wNKkyJ7zuucwpwsk+yCKH0J2AbzTr2xsxHRr0ylgN3tZfhU99dwBl5zUnrSSWDIzUlNaGk86DnErMDKQ9VGYifQZYSS3Hg6mv/evO7jACPPut9DJ3fCzBre/9LerqZkU1pKDl95aNRA7Q=
+Received: from PH7PR21MB3260.namprd21.prod.outlook.com (2603:10b6:510:1d8::15)
+ by MN0PR21MB3510.namprd21.prod.outlook.com (2603:10b6:208:3d1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.6; Tue, 17 Sep
+ 2024 14:35:21 +0000
+Received: from PH7PR21MB3260.namprd21.prod.outlook.com
+ ([fe80::a4dd:601a:6a96:9ef0]) by PH7PR21MB3260.namprd21.prod.outlook.com
+ ([fe80::a4dd:601a:6a96:9ef0%3]) with mapi id 15.20.8005.001; Tue, 17 Sep 2024
+ 14:35:21 +0000
+From: Haiyang Zhang <haiyangz@microsoft.com>
+To: Jakub Kicinski <kuba@kernel.org>, Erni Sri Satya Vennela
+	<ernis@linux.microsoft.com>
+CC: KY Srinivasan <kys@microsoft.com>, "wei.liu@kernel.org"
+	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "shradhagupta@linux.microsoft.com"
+	<shradhagupta@linux.microsoft.com>, "ahmed.zaki@intel.com"
+	<ahmed.zaki@intel.com>, "colin.i.king@gmail.com" <colin.i.king@gmail.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] net: mana: Add get_link and get_link_ksettings in ethtool
+Thread-Topic: [PATCH] net: mana: Add get_link and get_link_ksettings in
+ ethtool
+Thread-Index: AQHbBOeybZTViwmNu0ClIJxwZ4fwXrJWoTWAgAVwXIA=
+Date: Tue, 17 Sep 2024 14:35:21 +0000
+Message-ID:
+ <PH7PR21MB3260F88970A04FDB9C0ACCC4CA612@PH7PR21MB3260.namprd21.prod.outlook.com>
+References: <1726127083-28538-1-git-send-email-ernis@linux.microsoft.com>
+ <20240913202347.2b74f75e@kernel.org>
+In-Reply-To: <20240913202347.2b74f75e@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=490717f5-3f4c-43bc-b835-32d71e7fd4e3;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-09-17T14:27:13Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR21MB3260:EE_|MN0PR21MB3510:EE_
+x-ms-office365-filtering-correlation-id: 37ebe5c1-51da-4eb1-8d87-08dcd725f5aa
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?MH/WdvlF7iAKweKvMBIvrSEozNQ14ugFZucIyN5V5XHQzh9YXu1E8FT6evkS?=
+ =?us-ascii?Q?op+lXPLPc+FRtc57UrFCS+ciDRTXqFHZr9jQJXVtUsnE2zStsR9+P9FS+OLX?=
+ =?us-ascii?Q?mKa5KBnP3Qup4TCTj4r4sT3Sn2D0TGhkWbaXWHC27QSD/82hX1xrWkSAzAb5?=
+ =?us-ascii?Q?te99T3DR7BqfaT5hnSbt6Jhem5EdUqsFLCSDSY+zt7FSR3hv/w8/i4xIJDJ6?=
+ =?us-ascii?Q?j66IlSNX2+fuylNroJ2Qw7jMqMv+w/vDcfjIxJprk59FBxFhXHefH7wGLgPk?=
+ =?us-ascii?Q?qtccFFQyi3JM24gEia+s4k1ZHv0cMO8sHOSaAh8MEe6kSQ2HKsA/l5NlC/YT?=
+ =?us-ascii?Q?wYHbCzPd50BBz0I8PsT2Gzf9XLCOslIbVIci1FtyorB2gQT2y8TMuj7Sk7Cb?=
+ =?us-ascii?Q?bCNofi7xT2ZvOf8lkxFJm1NFj282cvQrgdcjB4KICX3nsDGMe08TOP1yC4Wk?=
+ =?us-ascii?Q?5WYwkOkKjxX4YGeifCyhY9iOdLS0p4AgkrMDz7GeHfkDSkvHNooGFXdSNszU?=
+ =?us-ascii?Q?FsaHTG0nJSTstLBYOWSxk/uIMRD5EwOc1HbiuRhKvJZd60Fzk38KsAiGtzjd?=
+ =?us-ascii?Q?QgkOdRJTrn0LkdtZAejCADiWZAZG2xtyJ9D5Gfp+f69O5uAAZrFXJCMXy2tk?=
+ =?us-ascii?Q?Xhryw5ztBfA8CKB3iI1KS8plmAjc09RfLohwxdpioZqWOStpOZwfSSfd+x2m?=
+ =?us-ascii?Q?blfElqc6306SIrLyOzQ1Zt7Gpq7Y4YC/I40WXwDvIN5uPESd0+9q8zQ1lIPY?=
+ =?us-ascii?Q?nE2wt0sBZ8+bu4+/e0kxUTi6+7UfMk1mH2RJNlZ+EMRO3XQZSfedeuGTx46c?=
+ =?us-ascii?Q?JyHjO3kopJnc8FYNHVbbO/SFSKHdpi2FvrT2Qvsp0kJ/oxNvWXMj1OWx2/vR?=
+ =?us-ascii?Q?Amlu+WEoA8RYZnsM5mH9TlYRUiFffbF/2YHGLatdW2d696JUreEAhSB8XCmd?=
+ =?us-ascii?Q?royp8VdNAmRlNCLDRjRx1gP8kcCWQaDP1wdFIkaU+Ez2OXRU7+Vl06dQD2JU?=
+ =?us-ascii?Q?7QwHiphEPyeCDOnjfPfsSSDrybJm3EdSGLrfC2Nxm9POaHtYXjEjJ+5VmzIp?=
+ =?us-ascii?Q?TVi/PpdhTWAIT6vLEewiJHGRMOgXiKEhp6Y3S5+7FRViCIZDiRDv0Je1HScU?=
+ =?us-ascii?Q?+CAJRrM3Vyz/RQHF+Tq4Q/L7BwQKD385S+qr6lv28kDEO/Gejq6+qKyiC59s?=
+ =?us-ascii?Q?QKAqkP0bnT5QCuue3wLxbBVM3Pn2PRzvjBWeQmftH8RLsKTHmxUqizYEIe9Z?=
+ =?us-ascii?Q?CzCxFq9/VN7Xe/dRzp0bjLrs11BofAu3pBTDxwHIhkU83ZlqIE718PranoOU?=
+ =?us-ascii?Q?v1XZTLlEUZL363GHMA0T7CGJ?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR21MB3260.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?sqswGb+TP8i9CnVBvtDW+RiODqMuCHC9Q04FntV0wBK0NdO2aaM6fsRSIDyH?=
+ =?us-ascii?Q?pGtd2jxrODrNcJbwFHdep8MWg5hhP9Hu4htBAVk4cEL4LriTa97cL3aTCsCy?=
+ =?us-ascii?Q?OnblrHEAuOU4i83nidlXovfF64ixqfcCtWGPkLMFBABrMfZgimD+jAI3sLTA?=
+ =?us-ascii?Q?XrnwoR5YySIZO0X7EYTZrnJbfIXCGtFbNtVTNiFDYrcLFZB3opgm/h/R32fU?=
+ =?us-ascii?Q?J4sz5BYz1rMhVSm1VIsrWBQaM/TpGN85qbrXWSp6sxwMrt19nBGiJrKpnr7A?=
+ =?us-ascii?Q?U0l4JuAkKD7NPeCx1R2XAlel/nAJoBtv1jYQRev8HsyJ3dqvRxiCn/Mdd069?=
+ =?us-ascii?Q?47lmTGHOIYmKVhKVqVWMaQUcalr294E3CA4pssPG9VdkQK/d1iRu1qWKy7fe?=
+ =?us-ascii?Q?AMKpWSb+lPWJOJG1wDDXUAnFBeh9h0zZpY1fzQtt1USWkcA+BCS1Vv4ylap2?=
+ =?us-ascii?Q?Xm/j0yvAVYAsozf1262e2my7hVRlM3OF11c2hsHME6zjlNzATScr85vvy0Ly?=
+ =?us-ascii?Q?qgG1H0RDyDxeIWUzdeItXTvWDq7WQ0UTcp9MVcEnNEkyRe/Y/nHu7NUyYCXg?=
+ =?us-ascii?Q?Y1kvkGHDE/VZsnnne7EB4BZGg7m4EHhQ7m+ZUeJo5eEhSAc1n/VHAJwVC+LV?=
+ =?us-ascii?Q?ilkQkej/+2M4krUHkWO9k64foqIBySRB0dX+3X8dzaA0s4rROH8Wf0nvX6fl?=
+ =?us-ascii?Q?0egnYuO+w16bb/uJbCo6ULmvBEQDRlj4TKmQYN/8O1JOvS2dY7qGziMTc6fM?=
+ =?us-ascii?Q?+k96g/Hu5X/MXXGK/IEzaIjdn42sdhXFWbBEdebG3XuwFFG6XNjWg4it1gam?=
+ =?us-ascii?Q?FKqrJ/8QkjhMJvTD/Y9urZCIvIy2XzULzRCQMrFWC/o+4qSdND3N6VEfxiGv?=
+ =?us-ascii?Q?UZVxHs52IO9HIMtVSxZgKrG6jhngKlnZxoeV1Arv0WxjfLmDJdMmftethFsu?=
+ =?us-ascii?Q?uMFTqAmbxRT07n6p7pVL8RYQOwgN8izgt9xoj7v91us9sby+vq31Y21IqIC3?=
+ =?us-ascii?Q?ITRGkJ7jgGRVJLikMMVz/FGXqTUZ1HKe/v81VKrZnBZhX78GkZILu3gzMU3C?=
+ =?us-ascii?Q?6cf4Fm/Yrz5tKUZONUwyvgxpwoL6r1bP9Qm1FaZE0VRHkyUSbRSE2Y5rZ05d?=
+ =?us-ascii?Q?UpOthsHhvuR5pJ5b7YjwqcgvDjxsM/f7WjqiFngel1Ogb/Nt5mXQB8v3ey+V?=
+ =?us-ascii?Q?eV9A70NfJr94AAxzdwFuGfzODbpG6cYhtwipaR+KPwVjgl6udB++bsi35z4j?=
+ =?us-ascii?Q?dmW0+kDnvoaPfo/vXdkk2ZhwRy7io44pXxanokXi4JuL7RzmeKkwVTjTtF1d?=
+ =?us-ascii?Q?rI7Su9OKZm0Ty0Iuet9EBm8KpStriaMIYlarEvkpJW6LJqCl2w7AJW4wbUkW?=
+ =?us-ascii?Q?aMf2hoQMqH8JkoCGDd4gK9KrQXqVbtUyaj5lfo0r27aL6mts6eY7sKX0vZIw?=
+ =?us-ascii?Q?NUR74siNpi20JEd30eXPUP+JoSWA10wPjeUTxFY6aGBqNGw7sh/nQpboQETU?=
+ =?us-ascii?Q?v8lKWgRPxJWslBa5SQMfsx3Br6xpVNohjauzHLwUgmlO/QGeikyCecKZNlGM?=
+ =?us-ascii?Q?8YV/yJ3h3Hz6DvkVUJy7athESbMpXPdPWmr397QX?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR21MB3260.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37ebe5c1-51da-4eb1-8d87-08dcd725f5aa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2024 14:35:21.5084
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: AdEBaaHqUUgn0GBFKVNmSsqGqSKxUeiwlEygEzXfjzrLVTF4GimG2OzCGf/jMp1AebDN8BDHbwzogOA6luvhhg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR21MB3510
 
-Sample code for hazptr. This should go away or get more polished when
-hazptr support is added into rcutorture.
 
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
----
- samples/Kconfig              |  6 +++
- samples/Makefile             |  1 +
- samples/hazptr/hazptr_test.c | 87 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 94 insertions(+)
- create mode 100644 samples/hazptr/hazptr_test.c
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index b288d9991d27..9b42cde35dca 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -293,6 +293,12 @@ config SAMPLE_CGROUP
- 
- source "samples/rust/Kconfig"
- 
-+config SAMPLE_HAZPTR
-+	bool "Build hazptr sample code"
-+	help
-+	  Build samples that shows hazard pointer usage. Currently only
-+	  builtin usage is supported.
-+
- endif # SAMPLES
- 
- config HAVE_SAMPLE_FTRACE_DIRECT
-diff --git a/samples/Makefile b/samples/Makefile
-index b85fa64390c5..0be21edc8a30 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -39,3 +39,4 @@ obj-$(CONFIG_SAMPLE_KMEMLEAK)		+= kmemleak/
- obj-$(CONFIG_SAMPLE_CORESIGHT_SYSCFG)	+= coresight/
- obj-$(CONFIG_SAMPLE_FPROBE)		+= fprobe/
- obj-$(CONFIG_SAMPLES_RUST)		+= rust/
-+obj-$(CONFIG_SAMPLE_HAZPTR)		+= hazptr/
-diff --git a/samples/hazptr/hazptr_test.c b/samples/hazptr/hazptr_test.c
-new file mode 100644
-index 000000000000..3cf0cdc8a83a
---- /dev/null
-+++ b/samples/hazptr/hazptr_test.c
-@@ -0,0 +1,87 @@
-+#include <linux/module.h>
-+#include <linux/kthread.h>
-+#include <linux/hazptr.h>
-+
-+struct foo {
-+	int i;
-+	struct callback_head head;
-+};
-+
-+static void simple_func(struct callback_head *head)
-+{
-+	struct foo *ptr = container_of(head, struct foo, head);
-+
-+	printk("callback called %px, i is %d\n", ptr, ptr->i);
-+	kfree(ptr);
-+}
-+
-+static void simple(void)
-+{
-+	struct hazptr_context ctx;
-+	struct foo *dummy, *tmp, *other;
-+	hazptr_t *hptr;
-+	hazptr_t *hptr2;
-+
-+	dummy = kzalloc(sizeof(*dummy), GFP_KERNEL);
-+	dummy->i = 42;
-+
-+	other = kzalloc(sizeof(*dummy), GFP_KERNEL);
-+	other->i = 43;
-+
-+	if (!dummy || !other) {
-+		printk("allocation failed, skip test\n");
-+		return;
-+	}
-+
-+	init_hazptr_context(&ctx);
-+	hptr = hazptr_alloc(&ctx);
-+	BUG_ON(!hptr);
-+
-+	// Get a second hptr.
-+	hptr2 = hazptr_alloc(&ctx);
-+	BUG_ON(!hptr2);
-+
-+	// No one is modifying 'dummy', protection must succeed.
-+	BUG_ON(!hazptr_tryprotect(hptr, dummy, head));
-+
-+	// Simulate changing a global pointer.
-+	tmp = dummy;
-+	WRITE_ONCE(dummy, other);
-+
-+	// Callback will run after no active readers.
-+	printk("callback added, %px\n", tmp);
-+
-+	call_hazptr(&tmp->head, simple_func);
-+
-+	// No one is modifying 'dummy', protection must succeed.
-+	tmp = hazptr_protect(hptr2, dummy, head);
-+
-+	printk("reader2 got %px, i is %d\n", tmp, tmp->i);
-+
-+	// The above callback should run after this.
-+	hazptr_clear(hptr);
-+	printk("first reader is out\n");
-+
-+	for (int i = 0; i < 10; i++)
-+		schedule(); // yield a few times.
-+
-+	// Simulate freeing a global pointer.
-+	tmp = dummy;
-+	WRITE_ONCE(dummy, NULL);
-+	printk("callback added, %px\n", tmp);
-+	call_hazptr(&tmp->head, simple_func);
-+
-+	cleanup_hazptr_context(&ctx);
-+	printk("no reader here\n");
-+
-+	for (int i = 0; i < 10; i++)
-+		schedule(); // yield a few times.
-+}
-+
-+static int hazptr_test(void)
-+{
-+	simple();
-+	printk("test ends\n");
-+	return 0;
-+}
-+module_init(hazptr_test);
--- 
-2.45.2
+> -----Original Message-----
+> From: Jakub Kicinski <kuba@kernel.org>
+> Sent: Friday, September 13, 2024 11:24 PM
+> To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+> Cc: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
+> <haiyangz@microsoft.com>; wei.liu@kernel.org; Dexuan Cui
+> <decui@microsoft.com>; davem@davemloft.net; edumazet@google.com;
+> pabeni@redhat.com; shradhagupta@linux.microsoft.com;
+> ahmed.zaki@intel.com; colin.i.king@gmail.com; linux-
+> hyperv@vger.kernel.org; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH] net: mana: Add get_link and get_link_ksettings in
+> ethtool
+>=20
+> On Thu, 12 Sep 2024 00:44:43 -0700 Erni Sri Satya Vennela wrote:
+> > Add support for the ethtool get_link and get_link_ksettings
+> > operations. Display standard port information using ethtool.
+>=20
+> Any reason why? Sometimes people add this callback for virtual
+> devices to expose some approximate speed, but you're not reporting
+> speed, so I'm curious.
+Speed info isn't available from the HW yet. But we are requesting=20
+that from HW team. For now, we just add some minimal info, like=20
+duplex, etc.
+
+>=20
+> > +static int mana_get_link_ksettings(struct net_device *ndev,
+> > +				   struct ethtool_link_ksettings *cmd)
+> > +{
+> > +	cmd->base.duplex =3D DUPLEX_FULL;
+>=20
+> make sense
+>=20
+> > +	cmd->base.autoneg =3D AUTONEG_ENABLE;
+>=20
+> what's the point of autoneg if we show no link info?
+> DISABLE seems more suitable
+We don't have strong opinion on this one.
+@Vennela, you may remove the 3 items related to autoneg.
+
+>=20
+> > +	cmd->base.port =3D PORT_DA;
+>=20
+> Any reason why DA? I'd think PORT_OTHER may be better?
+I'm OK with PORT_OTHER too :)
+
+Thanks,
+- Haiyang
 
 
