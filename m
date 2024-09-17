@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-331718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2549C97B072
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:01:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D707297B073
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A56D4B23F89
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D391F2222A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6334117B4ED;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5B717BB2E;
 	Tue, 17 Sep 2024 13:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1r6ZdXk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4IRscx4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBA717A5B5;
-	Tue, 17 Sep 2024 13:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC5017B425
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726578043; cv=none; b=FAHRw4Fyjs/cIz1E0lG03zBdgpDRPUYjCMXANW9dMiKeWFVUM4oX62S5Sn5/1LWQ0bVefzUgoWLZPbvHsMvS1wGJ4kCpSwFKS8AO8qQGrTv0ln1rdbjk3K4sJzNN0i+Qr5uRVblr/VZK8G+nF6VgegjW+aGff3rusDtbhrccK+A=
+	t=1726578044; cv=none; b=G3UOYexLr3YbQl5U6/ev+Hd6yreCZvAI3FLR1AS4WbBvmFNj9l1i6AfasnhGJGQ8OzpIah3nhIGesgO2xLYTzbJ6rnJCANt0jePHMKfmG5T6TnzEB76NZZhV8+JfOknsAuHauun8wcG3Bsa+UNyxDVW3ywqrVogmttPTdg7TRtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726578043; c=relaxed/simple;
-	bh=T/IyP9pgWZ80Y0k3xaS/Zgh3pLNXXlXoZNG7fPR+7wA=;
+	s=arc-20240116; t=1726578044; c=relaxed/simple;
+	bh=pIppZEbDiVADR7CG3QuxR5cXk1Q5xPxo9bdADzgacR0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AfTLyaSwnl3xZEam0X9mFeQcYgGf1I1GIIu9LWfbKLd7cpfWtGpFzdFnRUxEEW3ULJTGV7gQPgfLxW6Wj2FxMqv2ekYaRoYWol0H8q7CqQwXsGwNJM+RJskmWLaaaMoX5pro8d8LyTMhW/HWG0LlDjgALcU1G6F6uinnU0ZLl5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1r6ZdXk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 951CFC4CECD;
-	Tue, 17 Sep 2024 13:00:42 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=m3KI2/r83TMxCd05AgK9EBJDE2nt70CLgnB6DLv97ZSYpTxfNYqdDxvK8FfSCesMjXcDDFJZ/mS1lSsoVrtKP0C6+IMpD3nLOQRg4LQctQbuz4SFa+uUM6PdEBC/1kTSEFvItRZlXo1cGWisjhrgpHc4o33X/7yv3LDhICNFpzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4IRscx4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DE6C4CED0;
+	Tue, 17 Sep 2024 13:00:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726578043;
-	bh=T/IyP9pgWZ80Y0k3xaS/Zgh3pLNXXlXoZNG7fPR+7wA=;
+	s=k20201202; t=1726578044;
+	bh=pIppZEbDiVADR7CG3QuxR5cXk1Q5xPxo9bdADzgacR0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=u1r6ZdXkNJTnOEqfd5h/3+uxFCPmIfJo7LVA5fD7RmdXH5D2PZ007IRdDE0huLZBL
-	 l8OM2xdDox6JggxrSQama0UcKKPsoItWU86mNo2jivz2LSmWa6WYKoPkAgylbbgPXE
-	 VdyRjiXfi5Y7dDYxMDqh2onhJta0nS4xYN15ljVUK+OzIlJm3jVoN1q+QwoSYrq8Tl
-	 4R0NUtW4wkH9db/guo3Rop0L3MrTnK5s44XvJudvQtZmaSeyBQA527OG3QJHtx6JbK
-	 IFhx5zHQVRaGmfdNVUzg8Cgj/YWyA99exbme6ROXRxYpNRDyGhLzvInt3qFVD8zVHy
-	 NpwzYpD0qoRmQ==
+	b=M4IRscx41RmjikmLTvfArV6iuO3WwyTmo84DRb+nmVghVFRO0p9kcwfmJN2hnPGPs
+	 3c/U6GRrFRD/IIdt0PI1dMV8wwuQaWQKoaicZHcLgDZy7/hnAAjDFd0dF24Tg1tQ45
+	 OjGSRVlZbDJbpg0+9+MyxlzNsroZ5AvAfmDS88Vruoic/d+24USBerU0WHcL+cRyBc
+	 Fx/FpWXsQDjjNB6weZ7gc9uc63EV2XvD5qRsgwz6mLXnPtLbhFQnxrhn7hx0W+8ZKc
+	 NaCfViG+M55Sqo0tkeHRoQn+h6hmTrgJZSH6i4nkBVll1lHwfEtpsbDDvnrbuYVc2D
+	 h8GpD6vz6TjZg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71C173809A80;
-	Tue, 17 Sep 2024 13:00:45 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EC3D33809A80;
+	Tue, 17 Sep 2024 13:00:46 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 0/2] riscv: stacktrace: Add USER_STACKTRACE support
+Subject: Re: [PATCH] riscv: Remove redundant restriction on memory size
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172657804401.126252.11110872057144476877.git-patchwork-notify@kernel.org>
-Date: Tue, 17 Sep 2024 13:00:44 +0000
-References: <20240708032847.2998158-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240708032847.2998158-1-ruanjinjie@huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux-riscv@lists.infradead.org, bjorn@kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
- dev.mbstr@gmail.com, samuel.holland@sifive.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
+ <172657804552.126252.15064993791243643422.git-patchwork-notify@kernel.org>
+Date: Tue, 17 Sep 2024 13:00:45 +0000
+References: <20240624121723.2186279-1-stuart.menefy@codasip.com>
+In-Reply-To: <20240624121723.2186279-1-stuart.menefy@codasip.com>
+To: Stuart Menefy <stuart.menefy@codasip.com>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to riscv/linux.git (for-next)
+This patch was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Mon, 8 Jul 2024 11:28:45 +0800 you wrote:
-> Add RISC-V USER_STACKTRACE support, and fix the fp alignment bug
-> in perf_callchain_user() by the way as Björn pointed out.
+On Mon, 24 Jun 2024 13:17:23 +0100 you wrote:
+> The original reason for reserving the top 4GiB of the direct map
+> (space for modules/BPF/kernel) hasn't applied since the address
+> map was reworked for KASAN.
 > 
-> Changes in v3:
-> - Fix the fp alignment bug in perf_callchain_user().
-> - Remove the LTP message as Björn suggested.
-> - Add the userstack trace test info.
-> 
-> [...]
+> Signed-off-by: Stuart Menefy <stuart.menefy@codasip.com>
+> ---
+>  arch/riscv/mm/init.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
 
 Here is the summary with links:
-  - [v3,1/2] riscv: Fix fp alignment bug in perf_callchain_user()
-    https://git.kernel.org/riscv/c/22ab08955ea1
-  - [v3,2/2] riscv: stacktrace: Add USER_STACKTRACE support
-    https://git.kernel.org/riscv/c/1a7483318274
+  - riscv: Remove redundant restriction on memory size
+    https://git.kernel.org/riscv/c/d6a1928134a1
 
 You are awesome, thank you!
 -- 
