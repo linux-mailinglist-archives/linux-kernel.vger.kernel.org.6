@@ -1,202 +1,91 @@
-Return-Path: <linux-kernel+bounces-331354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E4997ABB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 855AE97ABC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21AD81C27C7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:58:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85FC51C27C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87A676034;
-	Tue, 17 Sep 2024 06:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD3214A624;
+	Tue, 17 Sep 2024 07:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2CVDQJMu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iwb8hpMg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2CVDQJMu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iwb8hpMg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sq9vfbO9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4414C66;
-	Tue, 17 Sep 2024 06:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256401BF24;
+	Tue, 17 Sep 2024 07:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726556327; cv=none; b=Wxm/He90u0m/E9gCmvHSwpTxpUXF4LLuVXNYIbrS/CqYwqIJE5nuroslJZ7EkMV8J+72Tm7ekOiYOmY4pZ7srL3b3NODc6GFpFNbMP3/ClmhHBOZ82LK1RJVX/Qy2oZ8dr5/uG+y94TY8db/EXPLxbv7ft61Hd0iUyxd+Lpah40=
+	t=1726556474; cv=none; b=fgGCu9ssQyC5cuJLd9XwFHrGfmRk9E9bHolFMncc+QRrjNNdHpW/L0WRpPdnL0Phg9Q499tkhzxsxEz2jdSfDB324d1tCU7aUdPGJfvVY8igtRjxHwRxVWWFiid3Y2heDCP7XFXZ8SrTi41xI/+UzCZq5fm6NTNA/vMJM6j/g4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726556327; c=relaxed/simple;
-	bh=RwswKx2Ru4HlGwngkygrKPS1zc9jVIfGlB10Nwsi/vs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=usV3gX9gNkg9rx51tpyMK686GeY8hH+on/F3LLdutJ4R2oIRUG/PEiREDp7rSR/x7I7naECDOmOTaO9OXxENXkKw9iYfBHLo+0EBk1qQzzVdv1ayjqWArMuPrYRtS8s7gl7NG5Li+ZId0DW1SMLIYMmkrzDpc3wjzckO+JKnL4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2CVDQJMu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iwb8hpMg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2CVDQJMu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iwb8hpMg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D4452203A;
-	Tue, 17 Sep 2024 06:58:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726556324; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eb6/2/53r1amqAN8+Pxosb0NBJtbXKF+syEPphgBDmA=;
-	b=2CVDQJMuRbly79vOqT2OVsObIe8NtK43I+OXPZ/Aaqs5/JYl5fFwC6q48YJyUqkh3WTW6v
-	1BHS2gzNOeT1uMray2CB1Db9FJvF1lWruQ5zF05ChrDzm2ar907l1eBtIcxtTUByedFOlQ
-	P/r39fsJ6kbolu0wgO37ZPEG00ZRo7I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726556324;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eb6/2/53r1amqAN8+Pxosb0NBJtbXKF+syEPphgBDmA=;
-	b=iwb8hpMgHE++RS/frFPzcd/x/4+48zRpv+0xEHyhe2C9ppCXCVwaB1zKjXzNOB0bgCUv+M
-	ZUqtpa8Lby5XFRDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2CVDQJMu;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iwb8hpMg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726556324; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eb6/2/53r1amqAN8+Pxosb0NBJtbXKF+syEPphgBDmA=;
-	b=2CVDQJMuRbly79vOqT2OVsObIe8NtK43I+OXPZ/Aaqs5/JYl5fFwC6q48YJyUqkh3WTW6v
-	1BHS2gzNOeT1uMray2CB1Db9FJvF1lWruQ5zF05ChrDzm2ar907l1eBtIcxtTUByedFOlQ
-	P/r39fsJ6kbolu0wgO37ZPEG00ZRo7I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726556324;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eb6/2/53r1amqAN8+Pxosb0NBJtbXKF+syEPphgBDmA=;
-	b=iwb8hpMgHE++RS/frFPzcd/x/4+48zRpv+0xEHyhe2C9ppCXCVwaB1zKjXzNOB0bgCUv+M
-	ZUqtpa8Lby5XFRDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DDD32139CE;
-	Tue, 17 Sep 2024 06:58:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /CimNaMo6WbwNQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 17 Sep 2024 06:58:43 +0000
-Message-ID: <4b107fec-e391-4680-9457-b282310b4454@suse.cz>
-Date: Tue, 17 Sep 2024 09:01:08 +0200
+	s=arc-20240116; t=1726556474; c=relaxed/simple;
+	bh=wL7bb6z2iPwWqy6wScaLnhBW8fFzb85kAzY2JZAjutM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=er8bXddGgDdwezuOD/OCzrB5MDaRh1iITGUeWx0NKdYluxunfRS81NqlJ3rI6B0FsJw0LfjcarbzFpc6d97NNj3Eep+gEJpQBo3xFvN6+7XxiSKobUE7RqU1/G1zsx/QFnY1h3lonnVtIAsYmwXHqCzGV9fjgBF34gT+SXmL/9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sq9vfbO9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A480C4CEC6;
+	Tue, 17 Sep 2024 07:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726556473;
+	bh=wL7bb6z2iPwWqy6wScaLnhBW8fFzb85kAzY2JZAjutM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sq9vfbO9nxUpSGNrYLqj2Q8lgo2euizIAqPcu+2RYfv9Qy3Xi2to2W8G0453aZgEc
+	 gyRJPwKRSdpoyxSS3nybDQAy6L0+yiQFLBZwEOKaqFabevwP3eAwvuBkC2PR07sLlc
+	 tdfPOcXthy+/W+VBtKl/10ApKOWKuVMlLQbddbD5x79MMNBxJkUEPa9xduBmI2O+4Q
+	 10OzeyGNN4KwiGQRZMx8NSk43PUjg2pSgZiF7cgpmecnNknHIG56/r4GwIrHSXI7qX
+	 hJZBX1ANS2kKMrC0YgPjonPKpAvKBQIpQnCTAGjsSUUrh22ejpWEeBjoyvk+UbB5uG
+	 y0jWIJh4ltyXg==
+Date: Tue, 17 Sep 2024 09:01:10 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Sean Wang <sean.wang@mediatek.com>, 
+	Sen Chu <sen.chu@mediatek.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Chen Zhong <chen.zhong@mediatek.com>, 
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org, 
+	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
+	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, 
+	Chris-qj chen <chris-qj.chen@mediatek.com>, 
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v5 3/3] regulator: dt-bindings: mt6397: move examples to
+ parent PMIC mt6397
+Message-ID: <ev4kqtbjwglrti3mk2cnayilj4muy7ll7ux2uwlekcwu73dy5e@h4wvpucmyepw>
+References: <20240916151132.32321-1-macpaul.lin@mediatek.com>
+ <20240916151132.32321-3-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/19] kthread: Default affine kthread to its preferred
- NUMA node
-To: Michal Hocko <mhocko@suse.com>, Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-mm@kvack.org, "Paul E. McKenney" <paulmck@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>, Boqun Feng <boqun.feng@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
-References: <20240916224925.20540-1-frederic@kernel.org>
- <20240916224925.20540-13-frederic@kernel.org> <ZukhKXxErPOaXtAL@tiehlicka>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <ZukhKXxErPOaXtAL@tiehlicka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 0D4452203A
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,linux-foundation.org,kernel.org,infradead.org,linutronix.de,kvack.org,joelfernandes.org,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240916151132.32321-3-macpaul.lin@mediatek.com>
 
-On 9/17/24 8:26 AM, Michal Hocko wrote:
-> On Tue 17-09-24 00:49:16, Frederic Weisbecker wrote:
->> Kthreads attached to a preferred NUMA node for their task structure
->> allocation can also be assumed to run preferrably within that same node.
->>
->> A more precise affinity is usually notified by calling
->> kthread_create_on_cpu() or kthread_bind[_mask]() before the first wakeup.
->>
->> For the others, a default affinity to the node is desired and sometimes
->> implemented with more or less success when it comes to deal with hotplug
->> events and nohz_full / CPU Isolation interactions:
->>
->> - kcompactd is affine to its node and handles hotplug but not CPU Isolation
->> - kswapd is affine to its node and ignores hotplug and CPU Isolation
->> - A bunch of drivers create their kthreads on a specific node and
->>   don't take care about affining further.
->>
->> Handle that default node affinity preference at the generic level
->> instead, provided a kthread is created on an actual node and doesn't
->> apply any specific affinity such as a given CPU or a custom cpumask to
->> bind to before its first wake-up.
-> 
-> Makes sense.
-> 
->> This generic handling is aware of CPU hotplug events and CPU isolation
->> such that:
->>
->> * When a housekeeping CPU goes up and is part of the node of a given
->>   kthread, it is added to its applied affinity set (and
->>   possibly the default last resort online housekeeping set is removed
->>   from the set).
->>
->> * When a housekeeping CPU goes down while it was part of the node of a
->>   kthread, it is removed from the kthread's applied
->>   affinity. The last resort is to affine the kthread to all online
->>   housekeeping CPUs.
-> 
-> But I am not really sure about this part. Sure it makes sense to set the
-> affinity to exclude isolated CPUs but why do we care about hotplug
-> events at all. Let's say we offline all cpus from a given node (or
-> that all but isolated cpus are offline - is this even
-> realistic/reasonable usecase?). Wouldn't scheduler ignore the kthread's
-> affinity in such a case? In other words how is that different from
-> tasksetting an userspace task to a cpu that goes offline? We still do
-> allow such a task to run, right? We just do not care about affinity
-> anymore.
+On Mon, Sep 16, 2024 at 11:11:32PM +0800, Macpaul Lin wrote:
+> Since the DT schema of multiple function PMIC mt6397 has been converted,
+> move the examples in "mediatek,mt6397-regulator.yaml" to the parent schema
+> "mediatek,mt6397.yaml".
 
-AFAIU it handles better the situation where all houskeeping cpus from
-the preferred node go down, then it affines to houskeeping cpus from any
-node vs any cpu including isolated ones.
-Yes it's probably a scenario that's not recommendable, but someone might
-do it anyway...
+Is there any error otherwise? Why this cannot stay here, since it is
+already there?
+
+Best regards,
+Krzysztof
+
 
