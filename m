@@ -1,117 +1,143 @@
-Return-Path: <linux-kernel+bounces-331894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE1197B289
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:03:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDB897B28D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61019289D1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:03:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A98289EBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1553817C98A;
-	Tue, 17 Sep 2024 16:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C92187FF5;
+	Tue, 17 Sep 2024 16:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CTe+OBXR"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEkZCG2/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE8017BEBA
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1828183CB2;
+	Tue, 17 Sep 2024 16:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726588968; cv=none; b=hdG60u4DHJV5SCyGXdAd/CnExOqinWK5sBVjxdZAJfowbGGvvFlnroo57m8ePddalU1J30F6QtRaRn9bzGf1UsO1eNYEOFsTaLSXHIE4BzjeSQUA2G7piPqslVQ3Vzkn0eLYQ71EdQlSGwsuwhU1ItMw+sPzn2jVHUL6wmaF3gE=
+	t=1726588982; cv=none; b=Dc8NaboCoH5ESFAzm2+grlLyLGBad7U7K2uTgHww9n9m3yE34p8tfWzzdqTOK0aNidParmIeYTygb0OB2XXf9px0JcRs47q9c7SajKyPBX5tGQ31eG2IFbd2YjW8oOMu8Nj16vsdc57O6T6RRp/b8DSz0pUoYFpwPyDg7jkuXY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726588968; c=relaxed/simple;
-	bh=Lv9+R9dPzs9Ep6Gza/zkEy8eC4sP1UWhIx5xq/4buCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mNgIQHKSZf9ZZqBzUckiM9Wrz+5iT3fstG6T3BIX/+EdqF++42UxzepSvbrZFT5sq7nPyKjrTnk96GbiBVV72aQW5dkmYOTEsqW3CJVMUZ7x6YKsDFEb5I8I1DJP+aO+2ogGgceix1CE3qbTTlyVCyXCah83YXLv2BtuW9RnHQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CTe+OBXR; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cd74c0d16so56686805e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726588964; x=1727193764; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o5TuisIvvO4eVZGC0q0fIWjLgFMzQ+uQ1tb0FCM/4bM=;
-        b=CTe+OBXRkYb3QrTA0DnwgVR+QI2phwt/kNumECyubztHyExUoOdTZiwM3AmV1bvCXh
-         8NaDVvQpc5l6N9s3kMy6R+XmycNFBa30vIbll5h8py4wBmpZTyUTkbF/eZrc2u0PVgGd
-         fuzW8wFH9M1WSW5MIjKYM0ouiUBe76fsW78K1s1IHduU7j+srPylGE59+DP5dWTkw7vn
-         Vnk2Pi3/u5SDE9UJaFczbfyDMTtZSjA7tGaIB5H5foE2JDUrVSWuCVE0udj0iwnUebSF
-         R2xd9Lv2ZgV8s6oFXwfHtXn/08lEWMhpUEPpMr8603p2X9ntsqTKv+Wz+Kv+Mbl9pLBb
-         rY9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726588964; x=1727193764;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o5TuisIvvO4eVZGC0q0fIWjLgFMzQ+uQ1tb0FCM/4bM=;
-        b=Px2A/MPoQt8Cri+q/T+2gZxbyrGZSXFbRznoudKZiX8TZkeahR58zP/GWmL9qsjlcf
-         My/eTpuXhLXqGMIEP4ojcxxm+WxTDuf/aDlWBff6dF4WHVoLVzuCkDf/gB6CDvHp9Ji2
-         weT84+OhHftlB2R/AFotmT+vtIKjT492fHmc0JyUN6bAasbeKt/i3EaKlvrbLhnvVBOF
-         O42HRQous1LqLpfzrV8KrpanqAibQSjG15fef79+x15mFJ4gZjVMlY4WJCUrm6zQre58
-         4NkF0bnUR+UOPqWeHNuyb/o9a5tO7pteSFAVRgZllcety0cKb2aruOgA7gdW7i4s9ecf
-         x90A==
-X-Forwarded-Encrypted: i=1; AJvYcCWGh/msK0EwaEB6bPnwxcNlpM/Gw2p6nU+Dt89YDsGvKqBo8Oa4JNjIl5jplz1PJ6/4BXRket8rof0jio4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnIP2EPsLnaVxMqWxORhAf3gVeHfM/6MhQUMbis6b+EE/xYbQ1
-	9G2WndHsv+FCqYr2wUTsujTLfqUGps6rMhU9CvxCUqY0fM8HnnuKaG4apzgQ5+g=
-X-Google-Smtp-Source: AGHT+IH/OSek0hb5owPjPED5yfEZr8vM6Cf19Sn7fU+h9P/0PLG66pMxWENwlAHWAm3qVptMw0Sj0w==
-X-Received: by 2002:a05:600c:3589:b0:42c:b63e:fea6 with SMTP id 5b1f17b1804b1-42cdb56cb12mr152252455e9.22.1726588963803;
-        Tue, 17 Sep 2024 09:02:43 -0700 (PDT)
-Received: from ?IPV6:2001:a61:13ed:c201:b884:edfc:abaf:1cf4? ([2001:a61:13ed:c201:b884:edfc:abaf:1cf4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da22e8d3esm107512145e9.25.2024.09.17.09.02.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 09:02:43 -0700 (PDT)
-Message-ID: <64dfb120-3a95-44dd-a50c-c4818baeb833@suse.com>
-Date: Tue, 17 Sep 2024 18:02:42 +0200
+	s=arc-20240116; t=1726588982; c=relaxed/simple;
+	bh=ut7+hKu9XXGBX1hORm85Odfx/e7qFN4ndLnDPCa+X3I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rpQvCOYQL4OZMjpl0CG/vHrVF3/27BupPzIof3hkugjB+5QO3ls05iiY14vIHWz2kdTq9Hsn9x4NxmTyKEX3nT6H4olDXDJ5aHbQCvbeVdPQJQ/3EEWe3ZqJsUTPLo1ONTakI+q6c45K9bDfdH/OokWw3o/a3f3PT4Pw/9KO7K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEkZCG2/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD527C4CEC5;
+	Tue, 17 Sep 2024 16:03:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726588981;
+	bh=ut7+hKu9XXGBX1hORm85Odfx/e7qFN4ndLnDPCa+X3I=;
+	h=From:Date:Subject:To:Cc:From;
+	b=eEkZCG2/JXhLepF4DxvWOELqtyz8KKdBisdG/oIgyZjg3AorUdC2lyDZyovU9khrZ
+	 En59hN7RSvuBgIVFC++IXWyoaV4B41yF4/v8SueS9hmN5PJaAZrr5xGPxZ2IYYuSUX
+	 MphyS51iBk+7QCQSnwHLWtQqJgQe5iCsdgQ/E37p1IvSCrt4puhToAfVMkbklu+Hjb
+	 +UhbMlNlWXHgLEm34PGuVRxVKePu6G9S578iFHYy4qPJ+hTePXv8GzDqRaEQv7EN9D
+	 Kc18+ytt6NB+ZmAY7OCZbJ9oTjvcOTpgIhFSw6A50bXkqCmgPb71Hpu/Me/qsNQ7S6
+	 E5I74NzxuTkhw==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Tue, 17 Sep 2024 09:02:53 -0700
+Subject: [PATCH v3] x86/resctrl: Annotate get_mem_config() functions as
+ __init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: use mutex_lock in iowarrior_read()
-To: Jeongjun Park <aha310510@gmail.com>, oneukum@suse.com
-Cc: colin.i.king@gmail.com, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <d88289f9-e22a-4960-9b3b-ad0b3ab17a89@suse.com>
- <20240917154107.137653-1-aha310510@gmail.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20240917154107.137653-1-aha310510@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240917-x86-restctrl-get_mem_config_intel-init-v3-1-10d521256284@kernel.org>
+X-B4-Tracking: v=1; b=H4sIACyo6WYC/5WPyw6CMBQFf8V0bU1f1OrK/zCGFLzAjVBM2zQYw
+ r9b2Bh3upyzmMmZSQCPEMh5NxMPCQOOLoPc70jdWdcCxXtmIphQzAhBJ6OphxDr6HvaQiwHGMp
+ 6dA22JboIPUWHkUrbMGELLlllSZY9PTQ4baHrLXOHIY7+tXUTX9e/E4lTTk3FrDbWHCW3lwd4B
+ /1h9C1ZG0l8vCcuf/aK7K0aVWlV5BNKf3mXZXkDa3ybMzUBAAA=
+X-Change-ID: 20240822-x86-restctrl-get_mem_config_intel-init-3af02a5130ba
+To: Fenghua Yu <fenghua.yu@intel.com>, 
+ Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2944; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=ut7+hKu9XXGBX1hORm85Odfx/e7qFN4ndLnDPCa+X3I=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGkvV5iEL/jct1WmlslIdFNntfkU+Qufn16e0lWzjI81R
+ azd2epqRykLgxgXg6yYIkv1Y9XjhoZzzjLeODUJZg4rE8gQBi5OAbjJDxkZNsR9j3tqxOrwktm6
+ 5DKb8GSpK98OfnZIu3GOT+15nsF+NkaGX4qvpletEHxaN93heuZd5QkTohLvKjkv4chZX3yH8Xw
+ vPwA=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On 17.09.24 17:41, Jeongjun Park wrote:
+After a recent LLVM change [1] that deduces __cold on functions that
+only call cold code (such as __init functions), there is a section
+mismatch warning from __get_mem_config_intel(), which got moved to
+.text.unlikely. as a result of that optimization:
 
-Hi,
+  WARNING: modpost: vmlinux: section mismatch in reference: __get_mem_config_intel+0x77 (section: .text.unlikely.) -> thread_throttle_mode_init (section: .init.text)
 
-comments in line.
-  
-> ---
->   drivers/usb/misc/iowarrior.c | 46 ++++++++++++++++++++++++++++--------
->   1 file changed, 36 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-> index 6d28467ce352..dbf0ed04f7c3 100644
-> --- a/drivers/usb/misc/iowarrior.c
-> +++ b/drivers/usb/misc/iowarrior.c
-> @@ -277,28 +277,45 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
->   	struct iowarrior *dev;
->   	int read_idx;
->   	int offset;
-> +	int retval = 0;
+Mark __get_mem_config_intel() as __init as well since it is only called
+from __init code, which clears up the warning.
 
-Initialization is useless.
+While __rdt_get_mem_config_amd() does not exhibit a warning because it
+does not call any __init code, it is a similar function that is only
+called from __init code like __get_mem_config_intel(), so mark it __init
+as well to keep the code symmetrical.
 
-The rest is fine.
+Link: https://github.com/llvm/llvm-project/commit/6b11573b8c5e3d36beee099dbe7347c2a007bf53 [1]
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+Changes in v3:
+- Adjust subject to add () before get_mem_config to highlight it as part
+  of a function (Reinette).
+- Carry forward Reinette's Reviewed-by.
+- Link to v2: https://lore.kernel.org/r/20240913-x86-restctrl-get_mem_config_intel-init-v2-1-bf4b645f0246@kernel.org
 
-	Regards
-		Oliver
+Changes in v2:
+- Move position of __init within definition of __get_mem_config_intel()
+  to better match coding style guidelines (Reinette).
+- Apply __init to __rdt_get_mem_config_amd(), as it has the same issue
+  by inspection (Reinette). Adjust commit message to reflect this
+  change.
+- Link to v1: https://lore.kernel.org/r/20240822-x86-restctrl-get_mem_config_intel-init-v1-1-8b0a68a8731a@kernel.org
+---
+ arch/x86/kernel/cpu/resctrl/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 1930fce9dfe96d5c323cb9000fb06149916a5a3c..59961618a02374a5b1639baa7034d05867884640 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -199,7 +199,7 @@ static inline bool rdt_get_mb_table(struct rdt_resource *r)
+ 	return false;
+ }
+ 
+-static bool __get_mem_config_intel(struct rdt_resource *r)
++static __init bool __get_mem_config_intel(struct rdt_resource *r)
+ {
+ 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+ 	union cpuid_0x10_3_eax eax;
+@@ -233,7 +233,7 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
+ 	return true;
+ }
+ 
+-static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
++static __init bool __rdt_get_mem_config_amd(struct rdt_resource *r)
+ {
+ 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+ 	u32 eax, ebx, ecx, edx, subleaf;
+
+---
+base-commit: 7424fc6b86c8980a87169e005f5cd4438d18efe6
+change-id: 20240822-x86-restctrl-get_mem_config_intel-init-3af02a5130ba
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
 
