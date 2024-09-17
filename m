@@ -1,81 +1,130 @@
-Return-Path: <linux-kernel+bounces-332028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE9997B476
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:09:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6104D97B47A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC1691C21595
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176BE1F233D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8CF1898E5;
-	Tue, 17 Sep 2024 20:09:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27817152176;
-	Tue, 17 Sep 2024 20:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D25418D64D;
+	Tue, 17 Sep 2024 20:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Th5+iAsG"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA6C179967;
+	Tue, 17 Sep 2024 20:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726603772; cv=none; b=ko4WY+RhAN3+Iofp0lXAYNYdA37ab9YzRvFk4NRfuDQVY4amDwoa3fdKXE2FbK1mFsBXc1nFcph5Wu4TeVPtE4DjZtMqZKdZwcjztLIv2ezXd8nhkR7AnGjEZoUdN0tqHgXishbNjNaFXMtI7ooHgimWxU1JbgSzGfeyZkEiPRc=
+	t=1726604105; cv=none; b=exn/S5hxkRFO0Ak1upino74aQ9+D8MJKt4MFmXhmceLjzqP9DF36yYFvmTTvgIBr2ka96d07KgcXaL+BTdXMyyIgEDhS5VrcpeNmy1YZtoR2cnY5DjYEgLs5AU+g0UJgumSbZpTY4EDzM7ZHn72M8ajm+HzC7YRcWuyT2o56r8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726603772; c=relaxed/simple;
-	bh=hoh85dhDSNoH4kL9B/JMGc0NlnTNoU6i3FvI5uRdVmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=crfoSQ6U04VYS7L6K/N9z2QMZLF/UO2WfFkf8pKsndQ/OJ5rLmgdVvA5oa1xDdWOe/DtdPAG7X4UUc5oREVAeRY8HQ39o2DOrO+pYKQQTZ1cinze+/JDxHrp+WDpFNZxLHTjLRAURW/NB4uawApLFygCLw8Owir4uip2+z9U9L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC8B0FEC;
-	Tue, 17 Sep 2024 13:09:58 -0700 (PDT)
-Received: from [10.1.47.44] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92A373F64C;
-	Tue, 17 Sep 2024 13:09:26 -0700 (PDT)
-Message-ID: <d5726cec-cbc6-476d-8abc-b29b98a1bcf4@arm.com>
-Date: Tue, 17 Sep 2024 22:09:24 +0200
+	s=arc-20240116; t=1726604105; c=relaxed/simple;
+	bh=81iSzbOqnhSne0ktuF01wg+nnD9mtVaFvoeVj8EBkw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mx3oJ/K9/oqKSaTWgF3VHJSzHAgunO62N7VUJLq6ZVBiKB6yamXf4ruxVTWK48kyP8KfVmRC79rm3PPkZTknNfqLcN+E/2ef41pTJjKBfAVNorMBLSmd9KkzR/O4oa3jZvr+t9Dy4sre+kd6q7OKqiQagPh8B6N95jUzPyGuVhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Th5+iAsG; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id D9E282004E;
+	Tue, 17 Sep 2024 22:14:59 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Z5SgtwYYZVmj; Tue, 17 Sep 2024 22:14:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1726604098; bh=81iSzbOqnhSne0ktuF01wg+nnD9mtVaFvoeVj8EBkw8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Th5+iAsGerByToyw4NuXu8K47DlwvEDYpiK0yxRx5l/RxP8eRTk9Tm/L/5lcBEv99
+	 y3um4swxXKfFj5++rSau/mlVnzW2SqcbI4TWoNO2VDtzgNWtmtTlAyfZ8WZDDARLlk
+	 njS39OGvoKPoyXdQ8nsieeU/tpVdGWrTp1PdtAJ/Cuw0wtP9+CWySSTKqzWZdY3Qy3
+	 Dlf5vTvHGhqBWP8LK9KMyRlPhE0/CGUAopEuf2GseFQiB86ZAGDFg7Qt2LcWr5n1sP
+	 i1rVOELPo+x6mIj5Tfaoj2l7RcZ7YAEo2Yom9g51I1QImo6U12IAJzDuR8vkB9T2mX
+	 nsMCVFH3CzB7A==
+Date: Tue, 17 Sep 2024 20:14:36 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+	Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+	Ondrej Jirman <megi@xff.cz>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Celeste Liu <CoelacanthusHex@gmail.com>
+Subject: Re: [PATCH v4 0/4] Add initial support for Rockchip RK3528 SoC
+Message-ID: <ZunjLMQGEcES2zIV@pineapple>
+References: <20240829092705.6241-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 11/16] sched/qos: Add rampup multiplier QoS
-To: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
- John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240820163512.1096301-1-qyousef@layalina.io>
- <20240820163512.1096301-12-qyousef@layalina.io>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240820163512.1096301-12-qyousef@layalina.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829092705.6241-1-ziyao@disroot.org>
 
-On 20/08/2024 18:35, Qais Yousef wrote:
+On Thu, Aug 29, 2024 at 09:27:01AM +0000, Yao Zi wrote:
+> Rockchip RK3528 is a quad-core ARM Cortex-A53 SoC designed for
+> multimedia application. This series add a basic device tree with CPU,
+> interrupts and UART nodes for it and is able to boot into a kernel with
+> only UART console.
+> 
+> Has been tested on Radxa E20C board[1] with vendor U-boot, successfully
+> booted into initramfs with this log[2].
+> 
+> [1]: https://docs.radxa.com/en/e/e20c
+> [2]: https://gist.github.com/ziyao233/b74523a1e3e8bf36286a572e008ca319
+> 
+> Changed from v3:
+> - move mmio devices into soc node
+> https://lore.kernel.org/all/20240814155014.18097-1-ziyao@disroot.org/
+> 
+> Changed from v2:
+> - fix fixed-clock nodename
+> https://lore.kernel.org/all/20240811140725.64866-1-ziyao@disroot.org/
+> 
+> Changed from v1:
+> - fix stdout-path
+> - style improvements
+> https://lore.kernel.org/all/20240803125510.4699-2-ziyao@disroot.org/
+> 
+> Yao Zi (4):
+>   dt-bindings: serial: snps-dw-apb-uart: Document Rockchip RK3528
+>   dt-bindings: arm: rockchip: Add Radxa E20C board
+>   arm64: dts: rockchip: Add base DT for rk3528 SoC
+>   arm64: dts: rockchip: Add Radxa e20c board
+> 
+>  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+>  .../bindings/serial/snps-dw-apb-uart.yaml     |   1 +
+>  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>  .../boot/dts/rockchip/rk3528-radxa-e20c.dts   |  22 ++
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 189 ++++++++++++++++++
+>  5 files changed, 218 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> 
+> -- 
+> 2.46.0
+> 
 
-[...]
+Ping on this thread. Is it possible to get this merged in v6.12? Or
+anything else I need to do?
 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 0c10e2afb52d..3d9794db58e1 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -4906,7 +4906,7 @@ static inline void util_est_update(struct cfs_rq *cfs_rq,
->  	if (!task_sleep) {
->  		if (task_util(p) > task_util_dequeued(p)) {
->  			ewma &= ~UTIL_AVG_UNCHANGED;
-> -			ewma = approximate_util_avg(ewma, p->se.delta_exec / 1000);
-> +			ewma = approximate_util_avg(ewma, (p->se.delta_exec/1000) * p->sched_qos.rampup_multiplier);
+Thanks for your time.
 
-Isn't this exactly the idea from UTIL_EST_FASTER?
-
-faster_est_approx(delta * 2) ... double speed even w/o contention?
-                          ^
-[...]
+Best regards,
+Yao Zi
 
