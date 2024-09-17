@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-331392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D3797AC3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:35:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B5097AC43
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952FA1C2414A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:35:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA471C23524
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895D214C5BD;
-	Tue, 17 Sep 2024 07:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E5B14B086;
+	Tue, 17 Sep 2024 07:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gi92DjyY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djEG01Z0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D949A10F4;
-	Tue, 17 Sep 2024 07:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C77E7BB15;
+	Tue, 17 Sep 2024 07:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726558543; cv=none; b=SpJsohLufi2fJDndneP4Gs2x43H/GlvXK+2zgeHA6by5Pr/AHhKWna+Jn4FihHS7R6dxNTYFc+gwnV3aMV5kYiupkiy2hm5Wt6QCNZdk8hdJUDQaxMx1MDQmh00xkRkbEUWEXH8VXUpgrQMG7ab97fazN1a5jmq6CDyj8RQAc7Q=
+	t=1726558630; cv=none; b=fhTRHppoX4WnA/Y2zFTKgit8oScqLawWmzq2P7HbUjcqxDFlPnkATjiflJsMO6IGTaAUQc+HIKwHzYvBzuP0DbAXHijKvrG3BynV2dTHIUJhC5+FHZUF09eRS16/nHK0nRGcjBexOpnqzBf7duxniprOSKg1944Vp3IM6ACunFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726558543; c=relaxed/simple;
-	bh=b769VKDrIsyHYUFOuBuTXdEnM2V0sH0E/dspVqolmlQ=;
+	s=arc-20240116; t=1726558630; c=relaxed/simple;
+	bh=jpSqmeV4F8zvF9gkT0QL3/l+GMRq3zlBQCNkbcrgjFQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omwgMN87edbHGunnh/6TJACC9GTSUdkJOyF4ypCwl/MuXMMIVCEX+UC6kSDcq+FaKbIk9oyGfkBME9PlQWQhrgdmXUWe7w938CHFvAi7gJVRlH79vr6TFzGWBN5Pg229taCZF1psaHQZEyGeMbm1tuT5fOHq0MWZUgi2LYEukJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gi92DjyY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAED7C4CECE;
-	Tue, 17 Sep 2024 07:35:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+FGvcqVw8yVt2/ZdedONpOk3kD0/6zETFcVplMihSZ5nq7p0FALPorjYBYj8bBpP8T2hRG3f3y12BwZsZu0qBBbqqNZJZlStRsPkMxJJceqbU93Wdb8KQ4bHCf3m6Ogqc20+hbqbHliRrx84G5kTxDxkbm6dsPKV2r4Vwz7BtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djEG01Z0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56FBC4CEC6;
+	Tue, 17 Sep 2024 07:37:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726558542;
-	bh=b769VKDrIsyHYUFOuBuTXdEnM2V0sH0E/dspVqolmlQ=;
+	s=k20201202; t=1726558630;
+	bh=jpSqmeV4F8zvF9gkT0QL3/l+GMRq3zlBQCNkbcrgjFQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gi92DjyYRGcKjng7ij/KzLsSrFPg9hxnsJP99zw56qAsWOEIA7b7xRguEzzR3qSR1
-	 L3PTIBJISJwJ18Q/HTyY5y/KgI7iEH2SusokCjlw95hgJZmcaKxX2qnSMtKJ10lEJK
-	 BqKdun/n5TRnVDRaz+PTxLnLYSNxVMTdgESyZFm0G7m9eqfBsWp/7rM80MKBNKOYwT
-	 E1I0MLDyXBAOGNNmp3lv8KguyTv5lSGcyyQe8k4Mu5RPBKjQB4L35DARUteTDjQ7yu
-	 Pk9ZNk5lw1ZsKcouWV94XPPypM3c8Tr6h582TZQ0Y0lbty3A2+favXieso1m96onKd
-	 iwxezRgIE5IXw==
-Date: Tue, 17 Sep 2024 08:35:35 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, helgaas@kernel.org, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, bagasdotme@gmail.com,
-	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
-	jing2.liu@intel.com
-Subject: Re: [PATCH V5 4/5] bnxt_en: Add TPH support in BNXT driver
-Message-ID: <20240917073535.GI167971@kernel.org>
-References: <20240916205103.3882081-1-wei.huang2@amd.com>
- <20240916205103.3882081-5-wei.huang2@amd.com>
+	b=djEG01Z03mYMCo6cGpoxgBOctC+8R09k+5yhS2FWuRaTQKORUCzKReDXfyVe+ly9L
+	 U60FnjgoNpoW5qqYO+q/+fsHhyl27CC2cnM5UK5sfAkAt5ufz1+DgT4O8eSaBNDD2s
+	 ryBMQZF6Eur9NS9JbE9XqXJQWt4/ksA0r+Sq7a6kh4VDNjIbV66ZQcEMNOxJZsRyBU
+	 ut2P7VOo0atxYVLSlqadbPQ8HAYOWT6e4a9Vb0+CEMB+S0269r8W/qDkl2zhtdgNHj
+	 HSbdlpjAta/H/3XEXjzAidptaz3Ci9H2V52zYY8cxDMQg8z0z6Rd1fwZO+arPHIP9Z
+	 0Wf3jJslP3Low==
+Date: Tue, 17 Sep 2024 08:37:04 +0100
+From: Will Deacon <will@kernel.org>
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: kernel test robot <lkp@intel.com>,
+	Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>, oe-kbuild-all@lists.linux.dev,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
+ acquire
+Message-ID: <20240917073703.GB27290@willie-the-truck>
+References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
+ <202409132135.ki3Mp5EA-lkp@intel.com>
+ <766fe92a-13da-f299-0ecf-f8a477d58a79@gentwo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,75 +66,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240916205103.3882081-5-wei.huang2@amd.com>
+In-Reply-To: <766fe92a-13da-f299-0ecf-f8a477d58a79@gentwo.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, Sep 16, 2024 at 03:51:02PM -0500, Wei Huang wrote:
-> From: Manoj Panicker <manoj.panicker2@amd.com>
+On Mon, Sep 16, 2024 at 10:52:18AM -0700, Christoph Lameter (Ampere) wrote:
+> On Fri, 13 Sep 2024, kernel test robot wrote:
 > 
-> Implement TPH support in Broadcom BNXT device driver. The driver uses TPH
-> functions to retrieve and configure the device's Steering Tags when its
-> interrupt affinity is being changed. With appropriate firmware, we see
-> sustancial memory bandwidth savings and other benefits using real network
-> benchmarks.
+> > >> drivers/gpu/drm/i915/gt/intel_tlb.h:21:47: error: macro "seqprop_sequence" requires 2 arguments, but only 1 given
 > 
-> Co-developed-by: Somnath Kotur <somnath.kotur@broadcom.com>
-> Signed-off-by: Somnath Kotur <somnath.kotur@broadcom.com>
-> Co-developed-by: Wei Huang <wei.huang2@amd.com>
-> Signed-off-by: Wei Huang <wei.huang2@amd.com>
-> Signed-off-by: Manoj Panicker <manoj.panicker2@amd.com>
-> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
+> From 15d86bc9589f16947c5fb0f34d2947eacd48f853 Mon Sep 17 00:00:00 2001
+> From: Christoph Lameter <cl@gentwo.org>
+> Date: Mon, 16 Sep 2024 10:44:16 -0700
+> Subject: [PATCH] Update Intel DRM use of seqprop_sequence
+> 
+> One of Intels drivers uses seqprop_sequence() for its tlb sequencing.
+> We added a parameter so that we can use acquire. Its pretty safe to
+> assume that this will work without acquire.
+> 
+> Signed-off-by: Christoph Lameter <cl@linux.com>
 > ---
->  drivers/net/ethernet/broadcom/bnxt/bnxt.c | 85 +++++++++++++++++++++++
->  drivers/net/ethernet/broadcom/bnxt/bnxt.h |  7 ++
->  net/core/netdev_rx_queue.c                |  1 +
->  3 files changed, 93 insertions(+)
+>  drivers/gpu/drm/i915/gt/intel_tlb.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-
-...
-
-> @@ -10865,6 +10867,63 @@ int bnxt_reserve_rings(struct bnxt *bp, bool irq_re_init)
->  	return 0;
+> diff --git a/drivers/gpu/drm/i915/gt/intel_tlb.h b/drivers/gpu/drm/i915/gt/intel_tlb.h
+> index 337327af92ac..81998c4cd4fb 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_tlb.h
+> +++ b/drivers/gpu/drm/i915/gt/intel_tlb.h
+> @@ -18,7 +18,7 @@ void intel_gt_fini_tlb(struct intel_gt *gt);
+> 
+>  static inline u32 intel_gt_tlb_seqno(const struct intel_gt *gt)
+>  {
+> -	return seqprop_sequence(&gt->tlb.seqno);
+> +	return seqprop_sequence(&gt->tlb.seqno, false);
 >  }
->  
-> +static void __bnxt_irq_affinity_notify(struct irq_affinity_notify *notify,
-> +				       const cpumask_t *mask)
-> +{
-> +	struct bnxt_rx_ring_info *rxr;
 
-Hi Wei Huang,
+Yikes, why is the driver using the seqlock internals here? It's a bit of
+a pity, as a quick grep suggest that this is the _only_ user of
+'seqcount_mutex_t', yet it's still having to work around the API.
 
-A minor nit from my side:
-
-rxr is set but otherwise unused in this function.
-
-Flagged by x86_64 W=1 builds with gcc-14 and clang-18.
-
-> +	struct bnxt_irq *irq;
-> +	u16 tag;
-> +	int err;
-> +
-> +	irq = container_of(notify, struct bnxt_irq, affinity_notify);
-> +	cpumask_copy(irq->cpu_mask, mask);
-> +
-> +	if (pcie_tph_get_cpu_st(irq->bp->pdev, TPH_MEM_TYPE_VM,
-> +				cpumask_first(irq->cpu_mask), &tag))
-> +		return;
-> +
-> +	if (pcie_tph_set_st_entry(irq->bp->pdev, irq->msix_nr, tag))
-> +		return;
-> +
-> +	if (netif_running(irq->bp->dev)) {
-> +		rxr = &irq->bp->rx_ring[irq->ring_nr];
-> +		rtnl_lock();
-> +		err = netdev_rx_queue_restart(irq->bp->dev, irq->ring_nr);
-> +		if (err)
-> +			netdev_err(irq->bp->dev,
-> +				   "rx queue restart failed: err=%d\n", err);
-> +		rtnl_unlock();
-> +	}
-> +}
-
-...
+Will
 
