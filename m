@@ -1,191 +1,152 @@
-Return-Path: <linux-kernel+bounces-331578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B3797AE7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:08:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E0497AE80
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1F41C217C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F62C288D61
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AEC16FF44;
-	Tue, 17 Sep 2024 10:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B854165F0E;
+	Tue, 17 Sep 2024 10:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wf6Ng0hY"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7T5lCk5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EF816BE39;
-	Tue, 17 Sep 2024 10:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3397158D8F;
+	Tue, 17 Sep 2024 10:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726567695; cv=none; b=AyfwEAlkuoY9CfWNs+COO6eIFCrafkLcwkGQOCHW0QE+qzfyWrVtHVDZkds3LCuSNm6oUAz4X8zsy181059QwkhtR2/WXE8eW62mPGXW9816dTNfyB6tzAZgUI5r0g0GrLrDZENtfzEPbDIlojuJNJeMfLePbJdIByHjF6fNqRA=
+	t=1726567734; cv=none; b=FxRG6gLLT2I+tM5sa//OaAYuhAXLqIXtjNa4juzLBoL0nInEv21vaqa6b44ytr4QXlSooRGp1onkP2QpfqAJHGPzvCxkPKo/sz40y+CiamAhLEXKJcUgx9IMj3bfgxw9k5cT83adhx3ti9CSirW7hQmynsAiyognW7Z7rlLjj1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726567695; c=relaxed/simple;
-	bh=Zjuf7lESNXXXmJ1CBu0nQw9jUXCZZ0Wamegwacai9SE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p0Jbc0Jxk/xu57kv9C3PUYWH/UOJwGksqCKxi9frn2V5sVqdfGctU/h0ZhE3XeNpJe5HUEaqvwyUzpy419GEvroZJCvj1AiZ2wfB9DoYYZ/WtgMzoykW2ogPIBd1d6KpHYA4ZdQN9WZrkYe7DBMgWbp32poM0JWpLUDdkn+NdiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wf6Ng0hY; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f74e468baeso47200941fa.2;
-        Tue, 17 Sep 2024 03:08:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726567691; x=1727172491; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KJbxN/BoBiYWDohSMCRDVcluwineaYIhEPM4cB3crFw=;
-        b=Wf6Ng0hY8Lh9ugp+z31YtlOtTQKJBl6XdPm5Wlj5KenDiKH2yC4NO7j1T5W301JlAY
-         Q/UuPsZ9jmsSwL8RU9DcGaYSa+dO++Ah0ge5X0CCPxb8QxDz00un43zKJb2/7LV6iesd
-         ksoJxf+WdxBjdZaFHSQtNH2gpHqtaOfV9AOvHngSIxLk8V7Y3W5QOMNGDydnWCqzg580
-         WmH7FDUgJQhqkkKGWow0qJYdlyew1KG1ArqCEMzeRKkprR4gZVhwzCBjIL4gGYw4g6zZ
-         EE6nHA96m4iQ5TS6LQnAZzrvqI3phSQc1806zzeAvD6XsVvp5P1xEB7tEY9O8Nz3ipXN
-         ixxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726567691; x=1727172491;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KJbxN/BoBiYWDohSMCRDVcluwineaYIhEPM4cB3crFw=;
-        b=Bu39V+f3p79U5FcpvWuqTT80//HxBtZ85QcW/9/hTqwBURJ7CV6i5QCC5GD7P99cQf
-         7spw8cJ4Zqb5SxBrS7BKVZ+FtjotsedVtV4EB20qBTRpxtLoX7cR2agATswzIOQDwmWP
-         JG6gVuHenVv4qlXYUWTgK223G0dPcE4ffZXWzvv40PUV4Av+u/W3GyddK0f/mEFgw6k1
-         P8v/uXoZJlmgqaAH3H5V9ksDaTEwvpcsZ5OfAOBTcE4bNdECHGPWJVw5lzjSyslkP64z
-         bxkk4SoIRHMl6Sp1xpIwZQTIZfKPh1Bl7X5stgMVak4PYAKG+UMRsMbcaIWzhQrKmQ07
-         qBJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBiYBhoAyinoFcmG6QFqPcN3TyqJvqIMzQeZ8vzz+zNAmqG6A/C+DUoSugq5cujO9ump1qN5MpXTVamKqIgnE=@vger.kernel.org, AJvYcCXMIJpZmFdtsb6fOylOsYnMyF2kTrMZiAiDJ6ognDxEy5yrnTBwSf7LDBYFPeI7SndOiWeg7tdrba1qYBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdCLp4PLoFGoC1zNmNfcP/rVjIGooCVifchttSt6flPPbfHaRf
-	1rLwOlevwBIiqEILg4PirMwYHIHk2ibW/3jzLHmBkAPlub+P5TSAsCgBz6EP6Ew=
-X-Google-Smtp-Source: AGHT+IGiqzBAYFz/mDtE2N5VLwEzMkWQFs36XzIRE4/HfHEtFG+isbnI1S5WWQgrzxd2uMOGc0oGfQ==
-X-Received: by 2002:a2e:e11:0:b0:2f7:53b8:ca57 with SMTP id 38308e7fff4ca-2f791a01ef2mr51657271fa.19.1726567690819;
-        Tue, 17 Sep 2024 03:08:10 -0700 (PDT)
-Received: from [192.168.0.10] ([178.233.24.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b1947e2sm135592985e9.44.2024.09.17.03.08.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 03:08:10 -0700 (PDT)
-Message-ID: <5823a50e-c607-4e1c-ba4d-d88b38c734cb@gmail.com>
-Date: Tue, 17 Sep 2024 13:08:08 +0300
+	s=arc-20240116; t=1726567734; c=relaxed/simple;
+	bh=+p+xzX06Jj/qgHQUUsyqMfiIDzxXJxTBwKU5YNzm6aE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dKti/vhFAlWfso/HaNsftVyBPi6GEKZfuoSnrPm2mFoOhz+eJU5x4UPxgAdfMZ9YDqo/Pt31caIMJq2yImDV/becAOFfmiK8Zo0M9D5+X3KCWalKx8ykyEk+lnR/y/Eua3TDLk/cigYxl5zc+XW+Iuzdic7nzvAJQSC0mF12O3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7T5lCk5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5243BC4CEC5;
+	Tue, 17 Sep 2024 10:08:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726567734;
+	bh=+p+xzX06Jj/qgHQUUsyqMfiIDzxXJxTBwKU5YNzm6aE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V7T5lCk5nRzzKAhyIkC6pLUkkNBm9pTCQq2/12J0Pc/Uze6ei05mfSz4Fr+XtaV2G
+	 jHprXcyCpfQcU/8wHY5VRw09tfgnj3qGtNr1k29ejZsi6kh/p0UUvZ9zYG5aY3+JHP
+	 /ZtrwCM08+NCT7aGwBjfL4/1x/pVHFSD+grUyT+SnU126u1yRm2KgE2DBzp65iC96t
+	 Xf5+zbcXwPLKX/h7xy9x3H65XWbKBOvVWqq9/Hc1bFGHyKi8wQ3ABHpJ2+SylHHGC9
+	 0SzNm81H7ohWIuRyigQBcl/X6sKK2cCUskdg3iu3svC//jbOv787dtvKRmC1hE7TYL
+	 O9xBlVa51CegA==
+Date: Tue, 17 Sep 2024 11:08:48 +0100
+From: Will Deacon <will@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Florent Revest <revest@chromium.org>,
+	linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v14 05/19] function_graph: Pass ftrace_regs to retfunc
+Message-ID: <20240917100848.GB27384@willie-the-truck>
+References: <172615368656.133222.2336770908714920670.stgit@devnote2>
+ <172615374207.133222.13117574733580053025.stgit@devnote2>
+ <20240915044920.29a86d25@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: BUG and WARNINGs from mt7921s on next-20240916
-To: Felix Fietkau <nbd@nbd.name>, Kalle Valo <kvalo@kernel.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: linux-mediatek@lists.infradead.org, linux-wireless@vger.kernel.org,
- Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Ming Yen Hsieh <mingyen.hsieh@mediatek.com>, Deren Wu
- <deren.wu@mediatek.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Ma Ke <make24@iscas.ac.cn>,
- regressions@lists.linux.dev
-References: <144fbf79-950c-4cd1-bc68-4e00b47b03e9@gmail.com>
- <ZujCwvd4XiwljDyv@lore-desk> <87ldzqdcsv.fsf@kernel.org>
- <b8e11bbc-c718-4acf-acc0-6b31f25fae27@nbd.name>
-From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-Content-Language: en-US, tr, en-GB
-In-Reply-To: <b8e11bbc-c718-4acf-acc0-6b31f25fae27@nbd.name>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240915044920.29a86d25@rorschach.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi,
-
-On 2024-09-17 12:15 +03:00, Felix Fietkau wrote:
-> On 17.09.24 08:17, Kalle Valo wrote:
->> Lorenzo Bianconi <lorenzo@kernel.org> writes:
->>
->>>> Hi,
->>>>
->>>> I ran into some bug messages while testing linux-next on a MT8186
->>>> Magneton Chromebook (mt8186-corsola-magneton-sku393218). It boots 
->>>> to the OS, but at least Wi-Fi and Bluetooth are unavailable.
->>>>
->>>> As a start, I tried reverting commit abbd838c579e ("Merge tag 
->>>> 'mt76-for-kvalo-2024-09-06' of https://github.com/nbd168/wireless")
->>>> and it works fine after that. Didn't have time to do a full bisect, 
->>>> but will try if nobody has any immediate opinions.
->>>>
->>>> There are a few traces, here's some select lines to catch your attention,
->>>> not sure how informational they are:
->>>>
->>>> [   16.040525] kernel BUG at net/core/skbuff.c:2268!
->>>> [   16.040531] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
->>>> [ 16.040803] CPU: 3 UID: 0 PID: 526 Comm: mt76-sdio-txrx Not tainted
->>>> 6.11.0-next-20240916-deb-00002-g7b544e01c649 #1
->>>> [   16.040897] Call trace:
->>>> [   16.040899]  pskb_expand_head+0x2b0/0x3c0
->>>> [   16.040905]  mt76s_tx_run_queue+0x274/0x410 [mt76_sdio]
->>>> [   16.040909]  mt76s_txrx_worker+0xe4/0xac8 [mt76_sdio]
->>>> [   16.040914]  mt7921s_txrx_worker+0x98/0x1e0 [mt7921s]
->>>> [   16.040924]  __mt76_worker_fn+0x80/0x128 [mt76]
->>>> [   16.040934]  kthread+0xe8/0xf8
->>>> [   16.040940]  ret_from_fork+0x10/0x20
->>>
->>> Hi,
->>>
->>> I guess this issue has been introduced by the following commit:
->>>
->>> commit 3688c18b65aeb2a1f2fde108400afbab129a8cc1
->>> Author: Felix Fietkau <nbd@nbd.name>
->>> Date:   Tue Aug 27 11:30:01 2024 +0200                  
->>>
->>>     wifi: mt76: mt7915: retry mcu messages                                            
->>>                         
->>>     In some cases MCU messages can get lost. Instead of failing completely,
->>>     attempt to recover by re-sending them.
->>>      
->>>     Link: https://patch.msgid.link/20240827093011.18621-14-nbd@nbd.name
->>>     Signed-off-by: Felix Fietkau <nbd@nbd.name>
->>>
->>>
->>> In particular, skb_get() in mt76_mcu_skb_send_and_get_msg() is bumping skb users
->>> refcount (making the skb shared) and pskb_expand_head() (run by __skb_grow() in
->>> mt76s_tx_run_queue()) does not like shared skbs.
->>>
->>> @Felix: any input on it?
+On Sun, Sep 15, 2024 at 04:49:20AM -0400, Steven Rostedt wrote:
+> On Fri, 13 Sep 2024 00:09:02 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 > 
-> Sorry about that. Please try this patch, it should probably resolve this issue:
-> 
-> ---
-> --- a/drivers/net/wireless/mediatek/mt76/mcu.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mcu.c
-> @@ -84,13 +84,15 @@ int mt76_mcu_skb_send_and_get_msg(struct mt76_dev *dev, struct sk_buff *skb,
->   	mutex_lock(&dev->mcu.mutex);
->   
->   	if (dev->mcu_ops->mcu_skb_prepare_msg) {
-> +		orig_skb = skb;
->   		ret = dev->mcu_ops->mcu_skb_prepare_msg(dev, skb, cmd, &seq);
->   		if (ret < 0)
->   			goto out;
->   	}
->   
->   retry:
-> -	orig_skb = skb_get(skb);
-> +	if (orig_skb)
-> +		skb_get(orig_skb);
->   	ret = dev->mcu_ops->mcu_skb_send_msg(dev, skb, cmd, &seq);
->   	if (ret < 0)
->   		goto out;
-> @@ -105,7 +107,7 @@ int mt76_mcu_skb_send_and_get_msg(struct mt76_dev *dev, struct sk_buff *skb,
->   	do {
->   		skb = mt76_mcu_get_response(dev, expires);
->   		if (!skb && !test_bit(MT76_MCU_RESET, &dev->phy.state) &&
-> -		    retry++ < dev->mcu_ops->max_retry) {
-> +		    orig_skb && retry++ < dev->mcu_ops->max_retry) {
->   			dev_err(dev->dev, "Retry message %08x (seq %d)\n",
->   				cmd, seq);
->   			skb = orig_skb;
-> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Pass ftrace_regs to the fgraph_ops::retfunc(). If ftrace_regs is not
+> > available, it passes a NULL instead. User callback function can access
+> > some registers (including return address) via this ftrace_regs.
+> > 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  Changes in v8:
+> >   - Pass ftrace_regs to retfunc, instead of adding retregfunc.
+> >  Changes in v6:
+> >   - update to use ftrace_regs_get_return_value() because of reordering
+> >     patches.
+> >  Changes in v3:
+> >   - Update for new multiple fgraph.
+> >   - Save the return address to instruction pointer in ftrace_regs.
+> > ---
+> >  include/linux/ftrace.h               |    3 ++-
+> >  kernel/trace/fgraph.c                |   16 +++++++++++-----
+> >  kernel/trace/ftrace.c                |    3 ++-
+> >  kernel/trace/trace.h                 |    3 ++-
+> >  kernel/trace/trace_functions_graph.c |    7 ++++---
+> >  kernel/trace/trace_irqsoff.c         |    3 ++-
+> >  kernel/trace/trace_sched_wakeup.c    |    3 ++-
+> >  kernel/trace/trace_selftest.c        |    3 ++-
+> >  8 files changed, 27 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> > index 13987cd63553..e7c41d9988e1 100644
+> > --- a/include/linux/ftrace.h
+> > +++ b/include/linux/ftrace.h
+> > @@ -1069,7 +1069,8 @@ struct fgraph_ops;
+> >  
+> >  /* Type of the callback handlers for tracing function graph*/
+> >  typedef void (*trace_func_graph_ret_t)(struct ftrace_graph_ret *,
+> > -				       struct fgraph_ops *); /* return */
+> > +				       struct fgraph_ops *,
+> > +				       struct ftrace_regs *); /* return */
+> >  typedef int (*trace_func_graph_ent_t)(struct ftrace_graph_ent *,
+> >  				      struct fgraph_ops *,
+> >  				      struct ftrace_regs *); /* entry */
+> > diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> > index 30bebe43607d..6a3e2db16aa4 100644
+> > --- a/kernel/trace/fgraph.c
+> > +++ b/kernel/trace/fgraph.c
+> > @@ -297,7 +297,8 @@ static int entry_run(struct ftrace_graph_ent *trace, struct fgraph_ops *ops,
+> >  }
+> >  
+> >  /* ftrace_graph_return set to this to tell some archs to run function graph */
+> > -static void return_run(struct ftrace_graph_ret *trace, struct fgraph_ops *ops)
+> > +static void return_run(struct ftrace_graph_ret *trace, struct fgraph_ops *ops,
+> > +		       struct ftrace_regs *fregs)
+> >  {
+> >  }
+> >  
+> > @@ -491,7 +492,8 @@ int ftrace_graph_entry_stub(struct ftrace_graph_ent *trace,
+> >  }
+> >  
+> >  static void ftrace_graph_ret_stub(struct ftrace_graph_ret *trace,
+> > -				  struct fgraph_ops *gops)
+> > +				  struct fgraph_ops *gops,
+> > +				  struct ftrace_regs *fregs)
+> >  {
+> >  }
+> >  
+> > @@ -787,6 +789,9 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  	}
+> >  
+> >  	trace.rettime = trace_clock_local();
+> > +	if (fregs)
+> > +		ftrace_regs_set_instruction_pointer(fregs, ret);
 
-Tested-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Where does the instruction pointer get used after this? The arm64
+'return_to_handler' function doesn't look at it when we return.
 
-Thanks!
+Will
 
