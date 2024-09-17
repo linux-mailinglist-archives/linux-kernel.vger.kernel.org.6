@@ -1,249 +1,120 @@
-Return-Path: <linux-kernel+bounces-331926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FBB97B30A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:38:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5710097B30D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22799B218A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:37:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5CFA1F23644
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D33E176FA0;
-	Tue, 17 Sep 2024 16:37:51 +0000 (UTC)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D48617B4ED;
+	Tue, 17 Sep 2024 16:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="X2DrIT6n"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB7817BA4;
-	Tue, 17 Sep 2024 16:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0299B15B54F;
+	Tue, 17 Sep 2024 16:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726591070; cv=none; b=DGiFy1SzK6mZ4r1I5FHMRQW2tZX6FINBUDSsi/ssACwtGkhbgpemnS4LR1yTH0Fkv2SNoR1YTa2fcMhG50+HDQEwbdcLcL/PI+cDNt+PTGeV86qScpYXYGxej32/PCLAX/GuQ0sYYsdso/Ry60PpG6uVLym7h5vKzvbwagyFwbs=
+	t=1726591133; cv=none; b=krHSxcrQ8tfF37SgB3lt6VsNJ1cAwwXTU3CMQwUOXoT4eJ76ifgdvW6PtHPuTFmDs9BwKZvWJyP0TICBq1g3hEWihCyUVUlnkGxkjnWdL72s4vfsOnzyZsAPON1D7S2vcZ548LCiXr16VlgMN1LSRlt9ctZfi5Oa6ycbnn3TRVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726591070; c=relaxed/simple;
-	bh=TUNIZL1YIT6oeKwTzfmH+eZkxFoJIJp4HqU/22HUYFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jl5onO9Xy47bfHQ6G2IFddUTMWpUVdmj8teM20DR+SdaC0SBA6VuZQ0iSr9vIbCjOFRUUNrMAWy4oYdbI7sgviep7orZD9yph+VZZW470b2kpOPDbcDBGD0KtEw73LSvSk69V37oXPx9Ly/B+HLTfI5NI+MOZPnXybf+pDm+UgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c34fb4f65eso42262926d6.0;
-        Tue, 17 Sep 2024 09:37:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726591067; x=1727195867;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kXQda56YrJG4pLuPYq9YltdvrEvuSPsYRw5+Mc1L42w=;
-        b=odaD9kq7mBJgcp/FAX/q5NkkVx/zovPrOh1FAJkb0Mug+2XVnVZ289MSIVsKwmsnZc
-         u3mcDZv8AYneVPWi7d+vwD+9MSx7C3g++HrqgWbMtRhstJ9f+3zSFkM0cK4iPtLDxaMa
-         DvNZsP0LOdTDayxgQzYGnSU7ctjy7DZ00/SF5uQh/nb6zGaNTNrtQbYPTPHqVXbCr0l2
-         3sO5SUGZ4qrXTuXcZBGLoNVnneOZEnM4AFS1zFgl9YvVhZCqtD/m48Z7HrgJrtGlnvdb
-         Qiw68y2LqEIiNLFZkeBHX2mEvlp5YlKLnSUfzffVamtuWzJbNyAPM+rDq9hYaMx3tHbd
-         LFCg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1n7OgZWxclG3BUffYBxggIbKFlW7QD/AEW/OWl2a737ywvXavXxpMqa1rNn2FcpsI3jD9IaVKjnY=@vger.kernel.org, AJvYcCXhuiTavRC5fCLZ6EvSjvokQxN6DJAY5wwUTFIHJKISrpcgUgHKcsWAtiDYUtkEYjpzy2mCKES5Xb2XJl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkEH3360uYh+6vVjTyow672f8tVu+gkQkx1aSzTs7d5/bqCD7a
-	RX29KuNdZUINqPh718sXKgtEZzMbbQM9ymUI28csheR2ZVo9mEr6
-X-Google-Smtp-Source: AGHT+IGGBf9/e6O1ntWmc2YX7CGXE6d5jsChz8P2QxTASGHH97EqpLpTUE3r9bE7rmFWJ1jTgtOJ2w==
-X-Received: by 2002:a0c:f411:0:b0:6c3:5c75:d2bc with SMTP id 6a1803df08f44-6c57e0d6734mr261842196d6.47.1726591067519;
-        Tue, 17 Sep 2024 09:37:47 -0700 (PDT)
-Received: from dogali.home ([70.24.204.168])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c58c625f50sm36131796d6.3.2024.09.17.09.37.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 09:37:46 -0700 (PDT)
-From: Dave Vasilevsky <dave@vasilevsky.ca>
-To: glaubitz@physik.fu-berlin.de,
-	bhe@redhat.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sh@vger.kernel.org,
-	mpe@ellerman.id.au,
-	kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	ebiederm@xmission.com
-Cc: Dave Vasilevsky <dave@vasilevsky.ca>,
-	=?UTF-8?q?Reimar=20D=C3=B6ffinger?= <Reimar.Doeffinger@gmx.de>
-Subject: [PATCH v2] crash, powerpc: Default to CRASH_DUMP=n on PPC_BOOK3S_32
-Date: Tue, 17 Sep 2024 12:37:20 -0400
-Message-ID: <20240917163720.1644584-1-dave@vasilevsky.ca>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726591133; c=relaxed/simple;
+	bh=MKHgmO+3Xifkepbel/1AoIncpVt48s/BSwXlmUgmVs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S83JgGCQzfpI4F6iKv3oCW3LwWa7F565hfIRELVtomakDoSiPx6h4usaaEkbRSzzlF+pUuqMpNeHz8xXg66JljPoHBG93Ek435GFK6GQF5LFMoRz1yQ6KTd9JwOESEXZ0aCjcIWrMdwCOkQZmg3KAtM/hjbFYyftzkHWXSaCF8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=X2DrIT6n; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2gF1vA5L6EE6G2YZmnsgM9pMh8U9Q+ZRL07Ag2QVU7g=; b=X2DrIT6nooiFloPCuupd15LCFm
+	0U8LQuOX7HazGti2EdvdEkdWPzkbSthF7Jpp/GIb64gDnJox5JSmgejp17FH2WpvlZFlek59pzI4Y
+	so0/9+meRzNRoI6+t9VtSS03jnZyWMKQHwf2quLw/nd/RQwgKqg4dIGik1jsMbzvauf06wNneuqf8
+	MjWSqS5dEFAYAB3tmvSvZD1BajIhG6t8sr+XDJxTFwqxzcl+lMm7Iv6JpqAv7ds30msJQj7ErswZW
+	LpUDp5fE/ZBPlPXPfxyxoxj2lQ6+e95P040/Dst7h89fHdKRITGizhGuy9zS2A7gV4o7I3F2qco8b
+	r4/+IedA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42554)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sqbDx-00077q-12;
+	Tue, 17 Sep 2024 17:38:44 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sqbDr-00087u-36;
+	Tue, 17 Sep 2024 17:38:39 +0100
+Date: Tue, 17 Sep 2024 17:38:39 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Daniel Golle <daniel@makrotopia.org>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Edward Cree <ecree.xilinx@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	John Crispin <john@phrozen.org>
+Subject: Re: ethtool settings and SFP modules with PHYs
+Message-ID: <ZumwjxMVpoJ+cqvH@shell.armlinux.org.uk>
+References: <ZuhQjx2137ZC_DCz@makrotopia.org>
+ <ebfeeabd-7f4a-4a80-ba76-561711a9d776@lunn.ch>
+ <ZuhsQxHA+SJFPa5S@shell.armlinux.org.uk>
+ <20240917175347.5ad207da@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917175347.5ad207da@fedora>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Fixes boot failures on 6.9 on PPC_BOOK3S_32 machines using
-Open Firmware. On these machines, the kernel refuses to boot
-from non-zero PHYSICAL_START, which occurs when CRASH_DUMP is on.
+On Tue, Sep 17, 2024 at 05:53:47PM +0200, Maxime Chevallier wrote:
+> For the SFP case, the notification would trigger indeed at the
+> module_start/module_remove step.
 
-Since most PPC_BOOK3S_32 machines boot via Open Firmware, it should
-default to off for them. Users booting via some other mechanism
-can still turn it on explicitly.
+This (the confusion of module_remove being the opposite of
+module_start)...
 
-Does not change the default on any other architectures for the
-time being.
+> 
+> All of that is still WIP, but I think it would reply to that exact need
+> of "notifying users when something happens to the ports", including SFP
+> module insertion.
 
-Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
-Reported-by: Reimar Döffinger <Reimar.Doeffinger@gmx.de>
-Closes: https://lists.debian.org/debian-powerpc/2024/07/msg00001.html
-Fixes: 75bc255a7444 ("crash: clean up kdump related config items")
----
- arch/arm/Kconfig       | 3 +++
- arch/arm64/Kconfig     | 3 +++
- arch/loongarch/Kconfig | 3 +++
- arch/mips/Kconfig      | 3 +++
- arch/powerpc/Kconfig   | 4 ++++
- arch/riscv/Kconfig     | 3 +++
- arch/s390/Kconfig      | 3 +++
- arch/sh/Kconfig        | 3 +++
- arch/x86/Kconfig       | 3 +++
- kernel/Kconfig.kexec   | 2 +-
- 10 files changed, 29 insertions(+), 1 deletion(-)
+and talking here about module insertion here, leads me to believe that
+you haven't grasped the problem with SFPs, where we don't know what
+the module supports at _insertion_ time.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 0ec034933cae..4cc31467298b 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1598,6 +1598,9 @@ config ATAGS_PROC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config AUTO_ZRELADDR
- 	bool "Auto calculation of the decompressed kernel image address" if !ARCH_MULTIPLATFORM
- 	default !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index ed15b876fa74..8c67b76347d3 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1559,6 +1559,9 @@ config ARCH_DEFAULT_KEXEC_IMAGE_VERIFY_SIG
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
- 	def_bool CRASH_RESERVE
- 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 0e3abf7b0bd3..7ba3baee859e 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -600,6 +600,9 @@ config ARCH_SUPPORTS_KEXEC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config ARCH_SELECTS_CRASH_DUMP
- 	def_bool y
- 	depends on CRASH_DUMP
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 60077e576935..b547f4304d0c 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2881,6 +2881,9 @@ config ARCH_SUPPORTS_KEXEC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config PHYSICAL_START
- 	hex "Physical address where the kernel is loaded"
- 	default "0xffffffff84000000"
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8a4ee57cd4ef..c04f7bb543cc 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -682,6 +682,10 @@ config RELOCATABLE_TEST
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	bool
-+	default y if !PPC_BOOK3S_32
-+
- config ARCH_SELECTS_CRASH_DUMP
- 	def_bool y
- 	depends on CRASH_DUMP
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 86d1f1cea571..341ef759870a 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -882,6 +882,9 @@ config ARCH_SUPPORTS_KEXEC_PURGATORY
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
- 	def_bool CRASH_RESERVE
- 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index c60e699e99f5..fff371b89e41 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -275,6 +275,9 @@ config ARCH_SUPPORTS_CRASH_DUMP
- 	  This option also enables s390 zfcpdump.
- 	  See also <file:Documentation/arch/s390/zfcpdump.rst>
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- menu "Processor type and features"
- 
- config HAVE_MARCH_Z10_FEATURES
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index e9103998cca9..04ff5fb9242e 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -550,6 +550,9 @@ config ARCH_SUPPORTS_KEXEC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool BROKEN_ON_SMP
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config ARCH_SUPPORTS_KEXEC_JUMP
- 	def_bool y
- 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index d1fe732979d4..7f39db779574 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2092,6 +2092,9 @@ config ARCH_SUPPORTS_KEXEC_JUMP
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool X86_64 || (X86_32 && HIGHMEM)
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config ARCH_SUPPORTS_CRASH_HOTPLUG
- 	def_bool y
- 
-diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-index 6c34e63c88ff..4d111f871951 100644
---- a/kernel/Kconfig.kexec
-+++ b/kernel/Kconfig.kexec
-@@ -97,7 +97,7 @@ config KEXEC_JUMP
- 
- config CRASH_DUMP
- 	bool "kernel crash dumps"
--	default y
-+	default ARCH_DEFAULT_CRASH_DUMP
- 	depends on ARCH_SUPPORTS_CRASH_DUMP
- 	depends on KEXEC_CORE
- 	select VMCORE_INFO
+If we're after giving userspace a notification so it can make decisions
+about what to do after examining capabilities, then insertion time is
+too early.
+
+If we're after giving userspace a notification e.g. that a SFP was
+inserted, so please bring up the network interface, then that may be
+useful, but userspace needs to understand that SFPs are special and
+they can't go configuring the link at this point if it's a SFP.
+
+Honestly, I do not want to expose to userspace this kind of complexity
+that's specific to SFPs. It _will_ get it wrong. I also think that it
+will tie our hands when working around module problems if we have to
+change the way module capabilities are handled - and I don't wish to
+be tied by "but that change you made to make module XYZ work breaks
+my userspace!" because someone's using these events to do some weirdo
+configuration.
+
 -- 
-2.43.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
