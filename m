@@ -1,282 +1,285 @@
-Return-Path: <linux-kernel+bounces-331238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DEF597AA42
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8312897AA46
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A5E281045
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6B1028853B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B681EAD8;
-	Tue, 17 Sep 2024 01:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1C41B813;
+	Tue, 17 Sep 2024 01:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Om2BL8GQ"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Su5pRlkJ"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192A210F4
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 01:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADBC134B6;
+	Tue, 17 Sep 2024 01:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726537391; cv=none; b=OL0TSgKhezZg54iEAGSRM0V3rjR6fmkRuaYZOccwFYSoq7HZB3hjKv+nqJOUZlggJARRwP6Oz597CGl51+s32Mp0nqlwMEQuzyV6iE6WISZwj8GqKTRljmaBbUy56qf4nZ3AEsb+TmnyjpHkdZR6mA5ZGAmTYkXlx7o8wbBq1zc=
+	t=1726537614; cv=none; b=GShQSw2eNdMnt01WfqyJHzleEorYPsR7rp4Q82TN1ZZ0v20yRhhQFKJhYyyDQMRQQvjo+phQZSRpz9ahjt8nHfLkHpq5x7l23s5JIeUfWI5W1VCR2hY5t7ex09c7N1yjGn9UvePh+pW3dbAGWkLyeenrYENtirZ3cPHUI0mXDo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726537391; c=relaxed/simple;
-	bh=SFcWc1WmbX0vO/W+lgo9m6RoHifIehMnmRS68bx09Xw=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=SINuwVdnIG0hfjfCutbuLHmULabZx//sw8GAi+zcekFGs8ug9Th1mRNIhcxodjX+S1UdOr+gJP7xWtA0Z0OKX6apzsmnMqdmd/WFXdPX4aYaY5xDbvd0kS5rZ8aJY2fWvpCQvdzBZvQd2tgjMVxjwPj6fxunhEPySJci5cgsTCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Om2BL8GQ; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-710d77380cdso2525206a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 18:43:08 -0700 (PDT)
+	s=arc-20240116; t=1726537614; c=relaxed/simple;
+	bh=/brxbPc3FMEZyUFKdaEo/F3MJogHN+JwKDCdPbpHpiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WPthcIIX+WE4SNKwkRxcUBCeKgwVR07JXOpegKrLf/ZmJpfQAyZtqlEtQhUXx7WJ3XYYPZ0cDRlQvQMu7PsxNBZE+hjsdhP8sT0ugxzxBNhF7wm55HpA19pWs7celHQxrkb+Gz4aDF406kufbzZHIu6r5xcnzDRTbIIBKqTo8jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Su5pRlkJ; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d86f71353dso3589052a91.2;
+        Mon, 16 Sep 2024 18:46:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1726537388; x=1727142188; darn=vger.kernel.org;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=fguZJhGgPHETd4UiqrKTvBlbZG1+BZyjNBt8fALpw+g=;
-        b=Om2BL8GQVtJXg1P7vCWBnfPHKJdPEYPl4DPVGLIclotiZOFpE7rL78K4m11aCjNblQ
-         ke8HtIY83xEb2tYhLadvtyJhm1UngbH1Vllk+B0Z7w8PDtB8n5jB3bJ/707oad5AwVUt
-         4yjz2+pXEwWT2jpe/1v+q1FlcQjbPvbP3FK8U=
+        d=gmail.com; s=20230601; t=1726537612; x=1727142412; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+D4cPBmRT6xaemcGTmAgItbpnUbMzRSePyZlZJqK1E=;
+        b=Su5pRlkJVS8oMuIM6KKmP3wqbzHdoCRKZsfJBBFQJqjgPOsCUNx+kbcTz+Vsb9LRVj
+         5ZsNC/bRfPB1HjJdrCpEIXzbyMfoGlt+gFn8xOGXS7z+ImJIzt6diHkZ0Kv2dNIlGLNC
+         Zm82fS4KXWd9iHHEIqMDJnZ9Q80BA8uSP5X2exUO6k+hjpkyIlZuVtNf088yKcheWh++
+         7Ws9zBsMorPwgHvcW+FqMXdlwYcUgM2+v09+L+Cv/yU92Zkt56VBPABfFQmL7+002VZu
+         LEPW8Vd0vrIRQJbgDmVVN8WQbFEG8gJfW1LsKfRYIEuqxc40/pYVoCgBFdCQqPvp7EWY
+         4aZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726537388; x=1727142188;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fguZJhGgPHETd4UiqrKTvBlbZG1+BZyjNBt8fALpw+g=;
-        b=jx0GrLlDFDW+x+mEVOIJGF1NmXYKveZ2c2pmg3Uk5QoHkAxB52UJ72jthONtvspSZa
-         Wq97eH3Tr67ZZh2KrW/umLa62iERQIB2N+pXuGNKIIpQJdj2uEc6SM6eUzr0pFfrocaT
-         EULR9gZG2hHEFnh8BUrZ4pOB023KWzYqQPFdRQOTGnnNm3ZKDNXwnIEwBN6LPInofu1A
-         yDqFeSaG1DRLhMAUVtBVfBmF25irOhAI7lQeKMnTiInc84n5YtgK79zdSblZuPia6FiF
-         u4C3Pjfllej/KK8OWjMKsgsR6WKTCRltRUKEubuXbX3hmXjNyo46a/XsGzymlB1HGu8a
-         xDRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVj2hdaDDhHFXZRhFDoUorv62uFfY5pp1F3vF8Z/UnOg8envH2yorZsDxbuE++5xDb0iXDoYB/6nYgNiQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyshUIR7InMbUUu+ELvMhJqijuwroW6P8wTCnZE3QwF4FVwOp4i
-	bQvg1oxH+hviFjJhmfeSr+cFancSx4bhEN0/qiiBWNZCpalVIiBaj8UPXNEU0q4=
-X-Google-Smtp-Source: AGHT+IEEUnMOyB/lW4B8UcljdY9G+v154ZdnfUO4v2IbzyZjNWYuJkF11G5lPkla6TTfxLauI0Oeow==
-X-Received: by 2002:a05:6830:3693:b0:710:efd5:f467 with SMTP id 46e09a7af769-711095729b1mr10863572a34.29.1726537387915;
-        Mon, 16 Sep 2024 18:43:07 -0700 (PDT)
-Received: from [172.20.0.160] ([50.202.43.9])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71239ece57asm1349778a34.41.2024.09.16.18.43.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 18:43:07 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------lDmTx2uXH530aimSr6U5KQT6"
-Message-ID: <fec42732-fc6b-4025-8326-38cb8157057c@linuxfoundation.org>
-Date: Mon, 16 Sep 2024 19:43:05 -0600
+        d=1e100.net; s=20230601; t=1726537612; x=1727142412;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q+D4cPBmRT6xaemcGTmAgItbpnUbMzRSePyZlZJqK1E=;
+        b=RycS0ukvbMpWF18kQgnlcUejNfICwEFMqu/0vnNdbOAJMHwkEhVrkvZ0qWyxmjEE87
+         f1JZt2ATiknepgaSVbeyoVrlcpq3Vp5rWnguPPYnDeN5efMlpSGuz4/87NIUyUi168Yw
+         EYOU+6EeoozmzoQwUsM93StNYkLzTRKdvFc2aLeOuOGA5ASe4QRo9npBojqqP24Uo2ls
+         9c+OFdly3JZ+r1dYT28JzHC+TsPBcjPHwv431nyMLyszRoS8cFP9TthO5E12wmGGFlH7
+         J1lJDBUhWga2q1lZCIbTOUhsf1kG5kCdJDaxQrExMYNF2uNI5RR8pf1FTQIW+w/nwwO0
+         l91A==
+X-Forwarded-Encrypted: i=1; AJvYcCUt328uZODeZ/NMXngX+FD8Q3fR4IlmwLB3flCFNH5cvKY+C9tpkMDlwGdN18fwQCLC6060jwmhliP9@vger.kernel.org, AJvYcCW2v0M2IMxC5zZjfXPlXDrF6XliUj3eClL6fIWlTfn0sVvagyhaCusDo3lITKVWzzJW7jlflFIc016+@vger.kernel.org, AJvYcCXMXYkefIdxZWzRdrkuPryWHHj3Wq5JsVVnMLNvnVjOxs+UfVCKk/c62AtT7grkLizDHObnyuIzXqFXc1AR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXFqKJCIdAeYVS43555ta0sowqNJANMWBW19d8r86xc5o8rWr+
+	IyQiyR2Y4CJMRFPbX1OFaixXdc5IW6VhYK9cCmytjgwy8KieYOKY
+X-Google-Smtp-Source: AGHT+IEdGRthF0fnla/GYicoDcKM7UbNyJjWQz8xasioZPu4c/6Qc7VBLGYpi0jEQP/OFDLMoLvwkw==
+X-Received: by 2002:a17:90b:2883:b0:2dd:4f93:93d4 with SMTP id 98e67ed59e1d1-2dd4f93944emr672335a91.17.1726537611784;
+        Mon, 16 Sep 2024 18:46:51 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9ccd91dsm8113123a91.33.2024.09.16.18.46.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 18:46:50 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 950254A1A1F4; Tue, 17 Sep 2024 08:46:46 +0700 (WIB)
+Date: Tue, 17 Sep 2024 08:46:46 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linu Cherian <lcherian@marvell.com>, suzuki.poulose@arm.com,
+	mike.leach@linaro.org, james.clark@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	corbet@lwn.net, devicetree@vger.kernel.org, sgoutham@marvell.com,
+	gcherian@marvell.com
+Subject: Re: [PATCH v10 8/8] Documentation: coresight: Panic support
+Message-ID: <ZujfhpLezHtbXhjs@archie.me>
+References: <20240916103437.226816-1-lcherian@marvell.com>
+ <20240916103437.226816-9-lcherian@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- David Gow <davidgow@google.com>, Brendan Higgins <brendanhiggins@google.com>
-From: Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] KUnit update for Linux 6.12-rc1
-
-This is a multi-part message in MIME format.
---------------lDmTx2uXH530aimSr6U5KQT6
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hi Linus,
-
-Please pull the following kunit update for Linux 6.12-rc1.
-
-This kunit update for Linux 6.12-rc1 consists of:
-
--- a new int_pow test suite
--- documentation update to clarify filename best practices
--- kernel-doc fix for EXPORT_SYMBOL_IF_KUNIT
--- change to build compile_commands.json automatically instead
-    of requiring a manual build.
-
-diff is attached.
-
-thanks,
--- Shuah
-
-----------------------------------------------------------------
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.12-rc1
-
-for you to fetch changes up to 7fcc9b53216cd87f73cc6dbb404220350ddc93b8:
-
-   lib/math: Add int_pow test suite (2024-09-12 10:03:00 -0600)
-
-----------------------------------------------------------------
-linux_kselftest-kunit-6.12-rc1
-
-This kunit update for Linux 6.12-rc1 consists of:
-
--- a new int_pow test suite
--- documentation update to clarify filename best practices
--- kernel-doc fix for EXPORT_SYMBOL_IF_KUNIT
--- change to build compile_commands.json automatically instead
-    of requiring a manual build.
-
-----------------------------------------------------------------
-Brendan Jackman (1):
-       kunit: tool: Build compile_commands.json
-
-Kees Cook (1):
-       Documentation: KUnit: Update filename best practices
-
-Luis Felipe Hernandez (1):
-       lib/math: Add int_pow test suite
-
-Michal Wajdeczko (1):
-       kunit: Fix kernel-doc for EXPORT_SYMBOL_IF_KUNIT
-
-  Documentation/dev-tools/kunit/style.rst | 29 ++++++++++++------
-  include/kunit/visibility.h              |  1 +
-  lib/Kconfig.debug                       | 16 ++++++++++
-  lib/math/Makefile                       |  1 +
-  lib/math/tests/Makefile                 |  3 ++
-  lib/math/tests/int_pow_kunit.c          | 52 +++++++++++++++++++++++++++++++++
-  tools/testing/kunit/kunit_kernel.py     |  3 +-
-  7 files changed, 95 insertions(+), 10 deletions(-)
-  create mode 100644 lib/math/tests/Makefile
-  create mode 100644 lib/math/tests/int_pow_kunit.c
-
-----------------------------------------------------------------
---------------lDmTx2uXH530aimSr6U5KQT6
-Content-Type: text/x-patch; charset=UTF-8;
- name="linux_kselftest-kunit-6.12-rc1.diff"
-Content-Disposition: attachment;
- filename="linux_kselftest-kunit-6.12-rc1.diff"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2LXRvb2xzL2t1bml0L3N0eWxlLnJzdCBi
-L0RvY3VtZW50YXRpb24vZGV2LXRvb2xzL2t1bml0L3N0eWxlLnJzdAppbmRleCBiNmQwZDcz
-NTlmMDAuLmVhYzgxYTcxNGEyOSAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXYtdG9v
-bHMva3VuaXQvc3R5bGUucnN0CisrKyBiL0RvY3VtZW50YXRpb24vZGV2LXRvb2xzL2t1bml0
-L3N0eWxlLnJzdApAQCAtMTg4LDE1ICsxODgsMjYgQEAgRm9yIGV4YW1wbGUsIGEgS2NvbmZp
-ZyBlbnRyeSBtaWdodCBsb29rIGxpa2U6CiBUZXN0IEZpbGUgYW5kIE1vZHVsZSBOYW1lcwog
-PT09PT09PT09PT09PT09PT09PT09PT09PT0KIAotS1VuaXQgdGVzdHMgY2FuIG9mdGVuIGJl
-IGNvbXBpbGVkIGFzIGEgbW9kdWxlLiBUaGVzZSBtb2R1bGVzIHNob3VsZCBiZSBuYW1lZAot
-YWZ0ZXIgdGhlIHRlc3Qgc3VpdGUsIGZvbGxvd2VkIGJ5IGBgX3Rlc3RgYC4gSWYgdGhpcyBp
-cyBsaWtlbHkgdG8gY29uZmxpY3Qgd2l0aAotbm9uLUtVbml0IHRlc3RzLCB0aGUgc3VmZml4
-IGBgX2t1bml0YGAgY2FuIGFsc28gYmUgdXNlZC4KK0tVbml0IHRlc3RzIGFyZSBvZnRlbiBj
-b21waWxlZCBhcyBhIHNlcGFyYXRlIG1vZHVsZS4gVG8gYXZvaWQgY29uZmxpY3RpbmcKK3dp
-dGggcmVndWxhciBtb2R1bGVzLCBLVW5pdCBtb2R1bGVzIHNob3VsZCBiZSBuYW1lZCBhZnRl
-ciB0aGUgdGVzdCBzdWl0ZSwKK2ZvbGxvd2VkIGJ5IGBgX2t1bml0YGAgKGUuZy4gaWYgImZv
-b2JhciIgaXMgdGhlIGNvcmUgbW9kdWxlLCB0aGVuCisiZm9vYmFyX2t1bml0IiBpcyB0aGUg
-S1VuaXQgdGVzdCBtb2R1bGUpLgogCi1UaGUgZWFzaWVzdCB3YXkgb2YgYWNoaWV2aW5nIHRo
-aXMgaXMgdG8gbmFtZSB0aGUgZmlsZSBjb250YWluaW5nIHRoZSB0ZXN0IHN1aXRlCi1gYDxz
-dWl0ZT5fdGVzdC5jYGAgKG9yLCBhcyBhYm92ZSwgYGA8c3VpdGU+X2t1bml0LmNgYCkuIFRo
-aXMgZmlsZSBzaG91bGQgYmUKLXBsYWNlZCBuZXh0IHRvIHRoZSBjb2RlIHVuZGVyIHRlc3Qu
-CitUZXN0IHNvdXJjZSBmaWxlcywgd2hldGhlciBjb21waWxlZCBhcyBhIHNlcGFyYXRlIG1v
-ZHVsZSBvciBhbgorYGAjaW5jbHVkZWBgIGluIGFub3RoZXIgc291cmNlIGZpbGUsIGFyZSBi
-ZXN0IGtlcHQgaW4gYSBgYHRlc3RzL2BgCitzdWJkaXJlY3RvcnkgdG8gbm90IGNvbmZsaWN0
-IHdpdGggb3RoZXIgc291cmNlIGZpbGVzIChlLmcuIGZvcgordGFiLWNvbXBsZXRpb24pLgor
-CitOb3RlIHRoYXQgdGhlIGBgX3Rlc3RgYCBzdWZmaXggaGFzIGFsc28gYmVlbiB1c2VkIGlu
-IHNvbWUgZXhpc3RpbmcKK3Rlc3RzLiBUaGUgYGBfa3VuaXRgYCBzdWZmaXggaXMgcHJlZmVy
-cmVkLCBhcyBpdCBtYWtlcyB0aGUgZGlzdGluY3Rpb24KK2JldHdlZW4gS1VuaXQgYW5kIG5v
-bi1LVW5pdCB0ZXN0cyBjbGVhcmVyLgorCitTbyBmb3IgdGhlIGNvbW1vbiBjYXNlLCBuYW1l
-IHRoZSBmaWxlIGNvbnRhaW5pbmcgdGhlIHRlc3Qgc3VpdGUKK2BgdGVzdHMvPHN1aXRlPl9r
-dW5pdC5jYGAuIFRoZSBgYHRlc3RzYGAgZGlyZWN0b3J5IHNob3VsZCBiZSBwbGFjZWQgYXQK
-K3RoZSBzYW1lIGxldmVsIGFzIHRoZSBjb2RlIHVuZGVyIHRlc3QuIEZvciBleGFtcGxlLCB0
-ZXN0cyBmb3IKK2BgbGliL3N0cmluZy5jYGAgbGl2ZSBpbiBgYGxpYi90ZXN0cy9zdHJpbmdf
-a3VuaXQuY2BgLgogCiBJZiB0aGUgc3VpdGUgbmFtZSBjb250YWlucyBzb21lIG9yIGFsbCBv
-ZiB0aGUgbmFtZSBvZiB0aGUgdGVzdCdzIHBhcmVudAotZGlyZWN0b3J5LCBpdCBtYXkgbWFr
-ZSBzZW5zZSB0byBtb2RpZnkgdGhlIHNvdXJjZSBmaWxlbmFtZSB0byByZWR1Y2UgcmVkdW5k
-YW5jeS4KLUZvciBleGFtcGxlLCBhIGBgZm9vX2Zpcm13YXJlYGAgc3VpdGUgY291bGQgYmUg
-aW4gdGhlIGBgZm9vL2Zpcm13YXJlX3Rlc3QuY2BgCi1maWxlLgorZGlyZWN0b3J5LCBpdCBt
-YXkgbWFrZSBzZW5zZSB0byBtb2RpZnkgdGhlIHNvdXJjZSBmaWxlbmFtZSB0byByZWR1Y2UK
-K3JlZHVuZGFuY3kuIEZvciBleGFtcGxlLCBhIGBgZm9vX2Zpcm13YXJlYGAgc3VpdGUgY291
-bGQgYmUgaW4gdGhlCitgYGZvby90ZXN0cy9maXJtd2FyZV9rdW5pdC5jYGAgZmlsZS4KZGlm
-ZiAtLWdpdCBhL2luY2x1ZGUva3VuaXQvdmlzaWJpbGl0eS5oIGIvaW5jbHVkZS9rdW5pdC92
-aXNpYmlsaXR5LmgKaW5kZXggMGRmZTM1ZmVlZWM2Li5lZmZmNzdiNThkZDYgMTAwNjQ0Ci0t
-LSBhL2luY2x1ZGUva3VuaXQvdmlzaWJpbGl0eS5oCisrKyBiL2luY2x1ZGUva3VuaXQvdmlz
-aWJpbGl0eS5oCkBAIC0yMiw2ICsyMiw3IEBACiAgICAgICogRVhQT1JURURfRk9SX0tVTklU
-X1RFU1RJTkcgbmFtZXNwYWNlIG9ubHkgaWYgQ09ORklHX0tVTklUIGlzCiAgICAgICogZW5h
-YmxlZC4gTXVzdCB1c2UgTU9EVUxFX0lNUE9SVF9OUyhFWFBPUlRFRF9GT1JfS1VOSVRfVEVT
-VElORykKICAgICAgKiBpbiB0ZXN0IGZpbGUgaW4gb3JkZXIgdG8gdXNlIHN5bWJvbHMuCisg
-ICAgICogQHN5bWJvbDogdGhlIHN5bWJvbCBpZGVudGlmaWVyIHRvIGV4cG9ydAogICAgICAq
-LwogICAgICNkZWZpbmUgRVhQT1JUX1NZTUJPTF9JRl9LVU5JVChzeW1ib2wpIEVYUE9SVF9T
-WU1CT0xfTlMoc3ltYm9sLCBcCiAJICAgIEVYUE9SVEVEX0ZPUl9LVU5JVF9URVNUSU5HKQpk
-aWZmIC0tZ2l0IGEvbGliL0tjb25maWcuZGVidWcgYi9saWIvS2NvbmZpZy5kZWJ1ZwppbmRl
-eCBhMzBjMDNhNjYxNzIuLmI1Njk2NjU5ZjAyNyAxMDA2NDQKLS0tIGEvbGliL0tjb25maWcu
-ZGVidWcKKysrIGIvbGliL0tjb25maWcuZGVidWcKQEAgLTMwNTEsMyArMzA1MSwxOSBAQCBj
-b25maWcgUlVTVF9LRVJORUxfRE9DVEVTVFMKIGVuZG1lbnUgIyAiUnVzdCIKIAogZW5kbWVu
-dSAjIEtlcm5lbCBoYWNraW5nCisKK2NvbmZpZyBJTlRfUE9XX1RFU1QKKwl0cmlzdGF0ZSAi
-SW50ZWdlciBleHBvbmVudGlhdGlvbiAoaW50X3BvdykgdGVzdCIgaWYgIUtVTklUX0FMTF9U
-RVNUUworCWRlcGVuZHMgb24gS1VOSVQKKwlkZWZhdWx0IEtVTklUX0FMTF9URVNUUworCWhl
-bHAKKwkgIFRoaXMgb3B0aW9uIGVuYWJsZXMgdGhlIEtVbml0IHRlc3Qgc3VpdGUgZm9yIHRo
-ZSBpbnRfcG93IGZ1bmN0aW9uLAorCSAgd2hpY2ggcGVyZm9ybXMgaW50ZWdlciBleHBvbmVu
-dGlhdGlvbi4gVGhlIHRlc3Qgc3VpdGUgaXMgZGVzaWduZWQgdG8KKwkgIHZlcmlmeSB0aGF0
-IHRoZSBpbXBsZW1lbnRhdGlvbiBvZiBpbnRfcG93IGNvcnJlY3RseSBjb21wdXRlcyB0aGUg
-cG93ZXIKKwkgIG9mIGEgZ2l2ZW4gYmFzZSByYWlzZWQgdG8gYSBnaXZlbiBleHBvbmVudC4K
-KworCSAgRW5hYmxpbmcgdGhpcyBvcHRpb24gd2lsbCBpbmNsdWRlIHRlc3RzIHRoYXQgY2hl
-Y2sgdmFyaW91cyBzY2VuYXJpb3MKKwkgIGFuZCBlZGdlIGNhc2VzIHRvIGVuc3VyZSB0aGUg
-YWNjdXJhY3kgYW5kIHJlbGlhYmlsaXR5IG9mIHRoZSBleHBvbmVudGlhdGlvbgorCSAgZnVu
-Y3Rpb24uCisKKwkgIElmIHVuc3VyZSwgc2F5IE4KZGlmZiAtLWdpdCBhL2xpYi9tYXRoL01h
-a2VmaWxlIGIvbGliL21hdGgvTWFrZWZpbGUKaW5kZXggOTFmY2RiMGM5ZWZlLi4zYzFmOTJh
-NzQ1OWQgMTAwNjQ0Ci0tLSBhL2xpYi9tYXRoL01ha2VmaWxlCisrKyBiL2xpYi9tYXRoL01h
-a2VmaWxlCkBAIC01LDUgKzUsNiBAQCBvYmotJChDT05GSUdfQ09SRElDKQkJKz0gY29yZGlj
-Lm8KIG9iai0kKENPTkZJR19QUklNRV9OVU1CRVJTKQkrPSBwcmltZV9udW1iZXJzLm8KIG9i
-ai0kKENPTkZJR19SQVRJT05BTCkJCSs9IHJhdGlvbmFsLm8KIAorb2JqLSQoQ09ORklHX0lO
-VF9QT1dfVEVTVCkgICs9IHRlc3RzL2ludF9wb3dfa3VuaXQubwogb2JqLSQoQ09ORklHX1RF
-U1RfRElWNjQpCSs9IHRlc3RfZGl2NjQubwogb2JqLSQoQ09ORklHX1JBVElPTkFMX0tVTklU
-X1RFU1QpICs9IHJhdGlvbmFsLXRlc3QubwpkaWZmIC0tZ2l0IGEvbGliL21hdGgvdGVzdHMv
-TWFrZWZpbGUgYi9saWIvbWF0aC90ZXN0cy9NYWtlZmlsZQpuZXcgZmlsZSBtb2RlIDEwMDY0
-NAppbmRleCAwMDAwMDAwMDAwMDAuLjZhMTY5MTIzMzIwYQotLS0gL2Rldi9udWxsCisrKyBi
-L2xpYi9tYXRoL3Rlc3RzL01ha2VmaWxlCkBAIC0wLDAgKzEsMyBAQAorIyBTUERYLUxpY2Vu
-c2UtSWRlbnRpZmllcjogR1BMLTIuMC1vbmx5CisKK29iai0kKENPTkZJR19JTlRfUE9XX1RF
-U1QpICs9IGludF9wb3dfa3VuaXQubwpkaWZmIC0tZ2l0IGEvbGliL21hdGgvdGVzdHMvaW50
-X3Bvd19rdW5pdC5jIGIvbGliL21hdGgvdGVzdHMvaW50X3Bvd19rdW5pdC5jCm5ldyBmaWxl
-IG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAwMC4uMzRiMzM2NzdkNDU4Ci0tLSAvZGV2
-L251bGwKKysrIGIvbGliL21hdGgvdGVzdHMvaW50X3Bvd19rdW5pdC5jCkBAIC0wLDAgKzEs
-NTIgQEAKKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9ubHkKKworI2lu
-Y2x1ZGUgPGt1bml0L3Rlc3QuaD4KKyNpbmNsdWRlIDxsaW51eC9tYXRoLmg+CisKK3N0cnVj
-dCB0ZXN0X2Nhc2VfcGFyYW1zIHsKKwl1NjQgYmFzZTsKKwl1bnNpZ25lZCBpbnQgZXhwb25l
-bnQ7CisJdTY0IGV4cGVjdGVkX3Jlc3VsdDsKKwljb25zdCBjaGFyICpuYW1lOworfTsKKwor
-c3RhdGljIGNvbnN0IHN0cnVjdCB0ZXN0X2Nhc2VfcGFyYW1zIHBhcmFtc1tdID0geworCXsg
-NjQsIDAsIDEsICJQb3dlciBvZiB6ZXJvIiB9LAorCXsgNjQsIDEsIDY0LCAiUG93ZXIgb2Yg
-b25lIn0sCisJeyAwLCA1LCAwLCAiQmFzZSB6ZXJvIiB9LAorCXsgMSwgNjQsIDEsICJCYXNl
-IG9uZSIgfSwKKwl7IDIsIDIsIDQsICJUd28gc3F1YXJlZCJ9LAorCXsgMiwgMywgOCwgIlR3
-byBjdWJlZCJ9LAorCXsgNSwgNSwgMzEyNSwgIkZpdmUgcmFpc2VkIHRvIHRoZSBmaWZ0aCBw
-b3dlciIgfSwKKwl7IFU2NF9NQVgsIDEsIFU2NF9NQVgsICJNYXggYmFzZSIgfSwKKwl7IDIs
-IDYzLCA5MjIzMzcyMDM2ODU0Nzc1ODA4VUxMLCAiTGFyZ2UgcmVzdWx0In0sCit9OworCitz
-dGF0aWMgdm9pZCBnZXRfZGVzYyhjb25zdCBzdHJ1Y3QgdGVzdF9jYXNlX3BhcmFtcyAqdGMs
-IGNoYXIgKmRlc2MpCit7CisJc3Ryc2NweShkZXNjLCB0Yy0+bmFtZSwgS1VOSVRfUEFSQU1f
-REVTQ19TSVpFKTsKK30KKworS1VOSVRfQVJSQVlfUEFSQU0oaW50X3BvdywgcGFyYW1zLCBn
-ZXRfZGVzYyk7CisKK3N0YXRpYyB2b2lkIGludF9wb3dfdGVzdChzdHJ1Y3Qga3VuaXQgKnRl
-c3QpCit7CisJY29uc3Qgc3RydWN0IHRlc3RfY2FzZV9wYXJhbXMgKnRjID0gKGNvbnN0IHN0
-cnVjdCB0ZXN0X2Nhc2VfcGFyYW1zICopdGVzdC0+cGFyYW1fdmFsdWU7CisKKwlLVU5JVF9F
-WFBFQ1RfRVEodGVzdCwgdGMtPmV4cGVjdGVkX3Jlc3VsdCwgaW50X3Bvdyh0Yy0+YmFzZSwg
-dGMtPmV4cG9uZW50KSk7Cit9CisKK3N0YXRpYyBzdHJ1Y3Qga3VuaXRfY2FzZSBtYXRoX2lu
-dF9wb3dfdGVzdF9jYXNlc1tdID0geworCUtVTklUX0NBU0VfUEFSQU0oaW50X3Bvd190ZXN0
-LCBpbnRfcG93X2dlbl9wYXJhbXMpLAorCXt9Cit9OworCitzdGF0aWMgc3RydWN0IGt1bml0
-X3N1aXRlIGludF9wb3dfdGVzdF9zdWl0ZSA9IHsKKwkubmFtZSA9ICJtYXRoLWludF9wb3ci
-LAorCS50ZXN0X2Nhc2VzID0gbWF0aF9pbnRfcG93X3Rlc3RfY2FzZXMsCit9OworCitrdW5p
-dF90ZXN0X3N1aXRlcygmaW50X3Bvd190ZXN0X3N1aXRlKTsKKworTU9EVUxFX0RFU0NSSVBU
-SU9OKCJtYXRoLmludF9wb3cgS1VuaXQgdGVzdCBzdWl0ZSIpOworTU9EVUxFX0xJQ0VOU0Uo
-IkdQTCIpOwpkaWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGluZy9rdW5pdC9rdW5pdF9rZXJuZWwu
-cHkgYi90b29scy90ZXN0aW5nL2t1bml0L2t1bml0X2tlcm5lbC5weQppbmRleCA3MjU0YzEx
-MGZmMjMuLjYxOTMxYzQ5MjZmZCAxMDA2NDQKLS0tIGEvdG9vbHMvdGVzdGluZy9rdW5pdC9r
-dW5pdF9rZXJuZWwucHkKKysrIGIvdG9vbHMvdGVzdGluZy9rdW5pdC9rdW5pdF9rZXJuZWwu
-cHkKQEAgLTcyLDcgKzcyLDggQEAgY2xhc3MgTGludXhTb3VyY2VUcmVlT3BlcmF0aW9uczoK
-IAkJCXJhaXNlIENvbmZpZ0Vycm9yKGUub3V0cHV0LmRlY29kZSgpKQogCiAJZGVmIG1ha2Uo
-c2VsZiwgam9iczogaW50LCBidWlsZF9kaXI6IHN0ciwgbWFrZV9vcHRpb25zOiBPcHRpb25h
-bFtMaXN0W3N0cl1dKSAtPiBOb25lOgotCQljb21tYW5kID0gWydtYWtlJywgJ0FSQ0g9JyAr
-IHNlbGYuX2xpbnV4X2FyY2gsICdPPScgKyBidWlsZF9kaXIsICctLWpvYnM9JyArIHN0cihq
-b2JzKV0KKwkJY29tbWFuZCA9IFsnbWFrZScsICdhbGwnLCAnY29tcGlsZV9jb21tYW5kcy5q
-c29uJywgJ0FSQ0g9JyArIHNlbGYuX2xpbnV4X2FyY2gsCisJCQkgICAnTz0nICsgYnVpbGRf
-ZGlyLCAnLS1qb2JzPScgKyBzdHIoam9icyldCiAJCWlmIG1ha2Vfb3B0aW9uczoKIAkJCWNv
-bW1hbmQuZXh0ZW5kKG1ha2Vfb3B0aW9ucykKIAkJaWYgc2VsZi5fY3Jvc3NfY29tcGlsZToK
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NdeeukOhj8gwtfO8"
+Content-Disposition: inline
+In-Reply-To: <20240916103437.226816-9-lcherian@marvell.com>
 
 
---------------lDmTx2uXH530aimSr6U5KQT6--
+--NdeeukOhj8gwtfO8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 16, 2024 at 04:04:37PM +0530, Linu Cherian wrote:
+> +3. On a kernel panic, all coresight blocks are disabled, necessary
+> +   metadata is synced by kernel panic handler.
+"... and necessary metadata ..."
+> +
+> +   System would eventually reboot or boot a crashdump kernel.
+> +
+> +4. For  platforms that supports crashdump kernel, raw trace data can be
+> +   dumped using the coresight sysfs interface from the crashdump kernel
+> +   itself. Persistent RAM is not a requirement in this case.
+> +
+> +5. For platforms that supports persistent RAM, trace data can be dumped
+> +   using the coresight sysfs interface in the subsequent Linux boot.
+> +   Crashdump kernel is not a requirement in this case. Persistent RAM
+> +   ensures that trace data is intact across reboot.
+> +
+> +Coresight trace during Watchdog reset
+> +-------------------------------------
+> +The main difference between addressing the watchdog reset and kernel pan=
+ic
+> +case are below,
+"... are:"
+> +Sample commands for testing a Kernel panic case with ETR sink
+> +-------------------------------------------------------------
+> +
+> +1. Boot Linux kernel with "crash_kexec_post_notifiers" added to the kern=
+el
+> +   bootargs. This is mandatory if the user would like to read the traced=
+ata
+> +   from the crashdump kernel.
+> +
+> +2. Enable the preloaded ETM configuration
+> +
+> +    #echo 1 > /sys/kernel/config/cs-syscfg/configurations/panicstop/enab=
+le
+> +
+> +3. Configure CTI using sysfs interface::
+> +
+> +    #./cti_setup.sh
+> +
+> +    #cat cti_setup.sh
+> +
+> +
+> +    cd /sys/bus/coresight/devices/
+> +
+> +    ap_cti_config () {
+> +      #ETM trig out[0] trigger to Channel 0
+> +      echo 0 4 > channels/trigin_attach
+> +    }
+> +
+> +    etf_cti_config () {
+> +      #ETF Flush in trigger from Channel 0
+> +      echo 0 1 > channels/trigout_attach
+> +      echo 1 > channels/trig_filter_enable
+> +    }
+> +
+> +    etr_cti_config () {
+> +      #ETR Flush in from Channel 0
+> +      echo 0 1 > channels/trigout_attach
+> +      echo 1 > channels/trig_filter_enable
+> +    }
+> +
+> +    ctidevs=3D`find . -name "cti*"`
+> +
+> +    for i in $ctidevs
+> +    do
+> +            cd $i
+> +
+> +            connection=3D`find . -name "ete*"`
+> +            if [ ! -z "$connection" ]
+> +            then
+> +                    echo "AP CTI config for $i"
+> +                    ap_cti_config
+> +            fi
+> +
+> +            connection=3D`find . -name "tmc_etf*"`
+> +            if [ ! -z "$connection" ]
+> +            then
+> +                    echo "ETF CTI config for $i"
+> +                    etf_cti_config
+> +            fi
+> +
+> +            connection=3D`find . -name "tmc_etr*"`
+> +            if [ ! -z "$connection" ]
+> +            then
+> +                    echo "ETR CTI config for $i"
+> +                    etr_cti_config
+> +            fi
+> +
+> +            cd ..
+> +    done
+> +
+> +Note: CTI connections are SOC specific and hence the above script is
+> +added just for reference.
+> +
+> +4. Choose reserved buffer mode for ETR buffer
+> +    #echo "resrv" > /sys/bus/coresight/devices/tmc_etr0/buf_mode_preferr=
+ed
+> +
+> +5. Enable stop on flush trigger configuration
+> +    #echo 1 > /sys/bus/coresight/devices/tmc_etr0/stop_on_flush
+> +
+> +6. Start Coresight tracing on cores 1 and 2 using sysfs interface
+> +
+> +7. Run some application on core 1
+> +    #taskset -c 1 dd if=3D/dev/urandom of=3D/dev/null &
+> +
+> +8. Invoke kernel panic on core 2
+> +    #echo 1 > /proc/sys/kernel/panic
+> +    #taskset -c 2 echo c > /proc/sysrq-trigger
+> +
+> +9. From rebooted kernel or crashdump kernel, read crashdata
+> +
+> +    #dd if=3D/dev/crash_tmc_etr0 of=3D/trace/cstrace.bin
+> +
+> +10. Run opencsd decoder tools/scripts to generate the instruction trace.
+
+Format all command lines as literal code blocks to be consistent:
+
+---- >8 ----
+diff --git a/Documentation/trace/coresight/panic.rst b/Documentation/trace/=
+coresight/panic.rst
+index 3b53d91cace8fd..864f6c05b3f7af 100644
+--- a/Documentation/trace/coresight/panic.rst
++++ b/Documentation/trace/coresight/panic.rst
+@@ -113,7 +113,7 @@ Sample commands for testing a Kernel panic case with ET=
+R sink
+    bootargs. This is mandatory if the user would like to read the tracedata
+    from the crashdump kernel.
+=20
+-2. Enable the preloaded ETM configuration
++2. Enable the preloaded ETM configuration::
+=20
+     #echo 1 > /sys/kernel/config/cs-syscfg/configurations/panicstop/enable
+=20
+@@ -176,22 +176,26 @@ Sample commands for testing a Kernel panic case with =
+ETR sink
+ Note: CTI connections are SOC specific and hence the above script is
+ added just for reference.
+=20
+-4. Choose reserved buffer mode for ETR buffer
++4. Choose reserved buffer mode for ETR buffer::
++
+     #echo "resrv" > /sys/bus/coresight/devices/tmc_etr0/buf_mode_preferred
+=20
+-5. Enable stop on flush trigger configuration
++5. Enable stop on flush trigger configuration::
++
+     #echo 1 > /sys/bus/coresight/devices/tmc_etr0/stop_on_flush
+=20
+ 6. Start Coresight tracing on cores 1 and 2 using sysfs interface
+=20
+-7. Run some application on core 1
++7. Run some application on core 1::
++
+     #taskset -c 1 dd if=3D/dev/urandom of=3D/dev/null &
+=20
+-8. Invoke kernel panic on core 2
++8. Invoke kernel panic on core 2::
++
+     #echo 1 > /proc/sys/kernel/panic
+     #taskset -c 2 echo c > /proc/sysrq-trigger
+=20
+-9. From rebooted kernel or crashdump kernel, read crashdata
++9. From rebooted kernel or crashdump kernel, read crashdata::
+=20
+     #dd if=3D/dev/crash_tmc_etr0 of=3D/trace/cstrace.bin
+=20
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--NdeeukOhj8gwtfO8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZujfgQAKCRD2uYlJVVFO
+o2zvAQDx+PVsRJKQr7fD6gbDCeVA0X1MY9/zbQoMUWgQIFBkLQD/cQtUnKML1Ccq
+xuiDgDEMvkAKQS8ti1jx1KpyslAhDwY=
+=mgTK
+-----END PGP SIGNATURE-----
+
+--NdeeukOhj8gwtfO8--
 
