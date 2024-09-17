@@ -1,203 +1,234 @@
-Return-Path: <linux-kernel+bounces-331490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D0097AD71
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:01:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE48997AD75
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD7BD1C21C45
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D212890D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89552158522;
-	Tue, 17 Sep 2024 09:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356A015D5A6;
+	Tue, 17 Sep 2024 09:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2Kf22Ac"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ooEti+rc"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99441581F4;
-	Tue, 17 Sep 2024 09:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97822157485;
+	Tue, 17 Sep 2024 09:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726563630; cv=none; b=igDyRqi5XQLm/L7kYbgwyjIwrt0epuBClI8yz+Gw+IHm951qsKigTCVmLyaoaopiCtl6GbnO/6AYHmmVZ40L3jCO7HwLmPCc7Cxb5wnL24YCYM0ET1gvkqoANTkGvJZPyNRp3lS6szxHaREEzdlBJO+9oFXHYJBXD/RKLSC+ErI=
+	t=1726563693; cv=none; b=rlgMnkOZ46UxSivYaf+qV/HYvPo7hoqK9vIpYAcCr/5c1CVRAmlXmhRc5AtmkA10ctQzz8K/Hs40lfxmYtQEU20zh2MrRcj3+nVjX00oIW8r2nwBXcfA+ZirqevOcHu4x75HQhEFiNCjLisyAImTdO5mOUL224jSfiXdNI2w4m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726563630; c=relaxed/simple;
-	bh=bylRqLvpte95KDB+rIKaU72XufqIzcho94KPX37KWSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SotXY4HlyCux2Pu94rnWud8liT1GYNHot7O9EGg8wO8DA3fwDcdtlF89t8ykJ33RrrGHHUVOx6q9uzSgLiUvbP5tVYCjTNAYLEkaitWAptbZJ06NnttSxfqIRkPinIiO4bKkfsx320KMtT+A3ovCKnTuKBX+8vzBqguZ+7OjtfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2Kf22Ac; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 811ACC4CECE;
-	Tue, 17 Sep 2024 09:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726563630;
-	bh=bylRqLvpte95KDB+rIKaU72XufqIzcho94KPX37KWSY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B2Kf22AcWi8n7QZe0kUovmYLR0PjYqz12U38N8Ee9dM09PUEhIuY/jNC2hR86CG9p
-	 yO+n5q3EfN4JFATcPJLhDTu+vH1OUNkQ9Yc+PeHhtnkT86Dg4iY5uLmWpj/nLZNjs2
-	 5ONUfAFjMvv8WiHKatsLUxzOVa4MWal19NZOK+pFPrhYsuyHX2Ma0S6B62v7XP+qpi
-	 NZy3qP9yrJdH/9SCsWlRHsi3vFcz4fWuSRump2FAop/WeHOhBlFEyvPRddPIf3yAvz
-	 Eghm8lYHaedqMZQJxKuyz2Rro1wAqyWPR4WFfWVhT/k1IZEv5nSxksdUIFM3Zk538V
-	 9rsBCf2YxVDpw==
-Message-ID: <cd4ff3c1-ece5-4508-93f0-2806cc6e76ba@kernel.org>
-Date: Tue, 17 Sep 2024 11:00:23 +0200
+	s=arc-20240116; t=1726563693; c=relaxed/simple;
+	bh=QmmcVgg2r6Jv08Yqq+gxobNYdSCsToL9/I3bZiZSC4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=huTXoU1lxSf5d+1sFDdQY+Y52sMcAR1g+qmPyNjWWEp6Nn4Q8T/wkN1ko4qu1atPoADtZtCW4ZjzCDp2ajrZBZ0dV/GaROAMRqp9oIxBPqFmHX+xz+znvhzRLf8SXrXS3OyFiVO/LgUNSJYxZwc/HKJ60sVAx0CzM5E3gB+jsBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ooEti+rc; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GIUwPv030245;
+	Tue, 17 Sep 2024 09:01:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=SWB4bupZXFblmHZBV47cloHzPo
+	dL2jWg/q8JaiEkl2g=; b=ooEti+rcLYSXTQMktciwdduxu9OkNdE2deC7tuKqRB
+	ImeT4UNfXZ15fxJROpkOrFs6GVw4KiBkqKEHt1FLMo+CuBe7b7FOxlOH87+Vg4Pm
+	sz4f/lzDnK1nBuJ3yvOYhKbQ9Kb8q6Lzh11t/xeHNx1JO3G9e10lAx9saeIQ7n4+
+	4mcnfTw7nhsQ3BkYIs1K9Knbe307K4Y2iH0autXvijSaaOHl/L8ShCHpZXVntNKI
+	Wca0iDX94zfu9H5JW9Dbd6F8FFpzHxSlRKTfMzTrUn2Ox/5ZqetvAqKS4QCu45uh
+	B5MbZievsd8RIuB8NTQ6SkVtg47n47IGbVBWYpY9GndQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41pht8e22h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 09:01:14 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48H91DCL030474;
+	Tue, 17 Sep 2024 09:01:13 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41pht8e226-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 09:01:13 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48H6eBA6030625;
+	Tue, 17 Sep 2024 09:01:10 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41npan43bm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 09:01:10 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48H918KP51249578
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Sep 2024 09:01:08 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C869B2004E;
+	Tue, 17 Sep 2024 09:01:08 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6B1DB20040;
+	Tue, 17 Sep 2024 09:01:05 +0000 (GMT)
+Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.in.ibm.com (unknown [9.204.206.228])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 17 Sep 2024 09:01:05 +0000 (GMT)
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Subject: [PATCH] perf sched replay: Remove unused parts of the code
+Date: Tue, 17 Sep 2024 14:31:00 +0530
+Message-ID: <20240917090100.42783-1-vineethr@linux.ibm.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: probe-control: add probe control driver
-To: Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org,
- rafael@kernel.org
-Cc: yoshihiro.toyama@sony.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240911142319.3435746-1-nayeemahmed.badebade@sony.com>
- <20240911142319.3435746-2-nayeemahmed.badebade@sony.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240911142319.3435746-2-nayeemahmed.badebade@sony.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8V8OVRMvfHiRmMJGVJWIZbTSdgrlbZLL
+X-Proofpoint-ORIG-GUID: 5eFctY55oAic0tb9R_ONKobSXbp4tKLt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-17_02,2024-09-16_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 adultscore=0
+ mlxlogscore=999 mlxscore=0 clxscore=1011 malwarescore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409170066
 
-On 11/09/2024 16:23, Nayeemahmed Badebade wrote:
-> Device tree binding document for the probe-control driver
+The sleep_sem semaphore and the specific_wait field (member of sched_atom)
+are initialized but not used anywhere in the code, so this patch removes
+them.
 
-Describe the hardware, not driver...
+The SCHED_EVENT_MIGRATION case in perf_sched__process_event() is currently
+not used and is also removed.
 
-> 
-> Signed-off-by: Toyama Yoshihiro <yoshihiro.toyama@sony.com>
-> Signed-off-by: Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>
-> ---
->  .../probe-control/linux,probe-controller.yaml | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/probe-control/linux,probe-controller.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/probe-control/linux,probe-controller.yaml b/Documentation/devicetree/bindings/probe-control/linux,probe-controller.yaml
-> new file mode 100644
-> index 000000000000..1945a7a5ab3c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/probe-control/linux,probe-controller.yaml
-> @@ -0,0 +1,59 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (c) 2024 Sony Group Corporation
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/linux,probe-controller.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Probe control device
-> +
-> +maintainers:
-> +  - Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>
-> +  - Toyama Yoshihiro <yoshihiro.toyama@sony.com>
-> +
-> +description: |
-> +  This binding is for controlling the probes of a set of devices in the system.
-> +  Probe control device is a dummy device that can be used to control the probe
-> +  of a group of devices. To have finer control, the devices can further be
-> +  divided into multiple groups and for each group a probe control device can
-> +  be assigned. This way, individual groups can be managed independently.
-> +  For example, one group can be for pcie based devices and other can be
-> +  scsi or usb devices.
-> +  Probe control device is provider node and the devices whose probes need to be
-> +  controlled, are consumer nodes. To establish control over consumer device
-> +  probes, each consumer device node need to refer the probe control provider
-> +  node by the phandle.
+Additionally, prev_state in add_sched_event_sleep() is marked with
+__maybe_unused and is not utilized anywhere in the function. This patch
+removes the parameter.
 
-So all this looks like not suitable for DT at all.
+If the task_state parameter was intended for future use, it can be
+reintroduced when needed.
 
-> +
-> +properties:
-> +  compatible:
-> +    const: linux,probe-control
-> +
-> +  probe-control-supply:
-> +    description:
-> +      Phandle to the probe control provider node.
+No functionality change intended.
 
-I don't understand this. Regulator supply is not a provider node.
+Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+---
+ tools/perf/builtin-sched.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-> +
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    // The node below defines a probe control device/provider node
-> +    prb_ctrl_dev_0: prb_ctrl_dev_0 {
-
-No underscores in node names.
-
-> +        compatible = "linux,probe-control";
-
-Where are the resources? It's empty?
-
-> +    };
-> +
-> +    // The node below is the consumer device node that refers to provider
-> +    // node by its phandle and a result will not be probed until provider
-> +    // node is probed.
-> +    pcie@1ffc000 {
-> +        reg = <0x01ffc000 0x04000>, <0x01f00000 0x80000>;
-> +        #address-cells = <3>;
-> +        #size-cells = <2>;
-> +        device_type = "pci";
-> +        ranges = <0x81000000 0 0          0x01f80000 0 0x00010000>,
-> +                 <0x82000000 0 0x01000000 0x01000000 0 0x00f00000>;
-> +
-> +        probe-control-supply = <&prb_ctrl_dev_0>;
-> +    };
-
-Best regards,
-Krzysztof
+diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+index 5981cc51abc8..fdf979aaf275 100644
+--- a/tools/perf/builtin-sched.c
++++ b/tools/perf/builtin-sched.c
+@@ -68,7 +68,6 @@ struct task_desc {
+ 	struct sched_atom	**atoms;
+ 
+ 	pthread_t		thread;
+-	sem_t			sleep_sem;
+ 
+ 	sem_t			ready_for_work;
+ 	sem_t			work_done_sem;
+@@ -80,12 +79,10 @@ enum sched_event_type {
+ 	SCHED_EVENT_RUN,
+ 	SCHED_EVENT_SLEEP,
+ 	SCHED_EVENT_WAKEUP,
+-	SCHED_EVENT_MIGRATION,
+ };
+ 
+ struct sched_atom {
+ 	enum sched_event_type	type;
+-	int			specific_wait;
+ 	u64			timestamp;
+ 	u64			duration;
+ 	unsigned long		nr;
+@@ -421,14 +418,13 @@ static void add_sched_event_wakeup(struct perf_sched *sched, struct task_desc *t
+ 
+ 	wakee_event->wait_sem = zalloc(sizeof(*wakee_event->wait_sem));
+ 	sem_init(wakee_event->wait_sem, 0, 0);
+-	wakee_event->specific_wait = 1;
+ 	event->wait_sem = wakee_event->wait_sem;
+ 
+ 	sched->nr_wakeup_events++;
+ }
+ 
+ static void add_sched_event_sleep(struct perf_sched *sched, struct task_desc *task,
+-				  u64 timestamp, const char task_state __maybe_unused)
++				  u64 timestamp)
+ {
+ 	struct sched_atom *event = get_new_event(task, timestamp);
+ 
+@@ -468,7 +464,7 @@ static struct task_desc *register_pid(struct perf_sched *sched,
+ 	 * every task starts in sleeping state - this gets ignored
+ 	 * if there's no wakeup pointing to this sleep state:
+ 	 */
+-	add_sched_event_sleep(sched, task, 0, 0);
++	add_sched_event_sleep(sched, task, 0);
+ 
+ 	sched->pid_to_task[pid] = task;
+ 	sched->nr_tasks++;
+@@ -529,8 +525,6 @@ static void perf_sched__process_event(struct perf_sched *sched,
+ 				ret = sem_post(atom->wait_sem);
+ 			BUG_ON(ret);
+ 			break;
+-		case SCHED_EVENT_MIGRATION:
+-			break;
+ 		default:
+ 			BUG_ON(1);
+ 	}
+@@ -673,7 +667,6 @@ static void create_tasks(struct perf_sched *sched)
+ 		parms->task = task = sched->tasks[i];
+ 		parms->sched = sched;
+ 		parms->fd = self_open_counters(sched, i);
+-		sem_init(&task->sleep_sem, 0, 0);
+ 		sem_init(&task->ready_for_work, 0, 0);
+ 		sem_init(&task->work_done_sem, 0, 0);
+ 		task->curr_event = 0;
+@@ -697,7 +690,6 @@ static void destroy_tasks(struct perf_sched *sched)
+ 		task = sched->tasks[i];
+ 		err = pthread_join(task->thread, NULL);
+ 		BUG_ON(err);
+-		sem_destroy(&task->sleep_sem);
+ 		sem_destroy(&task->ready_for_work);
+ 		sem_destroy(&task->work_done_sem);
+ 	}
+@@ -751,7 +743,6 @@ static void wait_for_tasks(struct perf_sched *sched)
+ 
+ 	for (i = 0; i < sched->nr_tasks; i++) {
+ 		task = sched->tasks[i];
+-		sem_init(&task->sleep_sem, 0, 0);
+ 		task->curr_event = 0;
+ 	}
+ }
+@@ -852,7 +843,6 @@ static int replay_switch_event(struct perf_sched *sched,
+ 		   *next_comm  = evsel__strval(evsel, sample, "next_comm");
+ 	const u32 prev_pid = evsel__intval(evsel, sample, "prev_pid"),
+ 		  next_pid = evsel__intval(evsel, sample, "next_pid");
+-	const char prev_state = evsel__taskstate(evsel, sample, "prev_state");
+ 	struct task_desc *prev, __maybe_unused *next;
+ 	u64 timestamp0, timestamp = sample->time;
+ 	int cpu = sample->cpu;
+@@ -884,7 +874,7 @@ static int replay_switch_event(struct perf_sched *sched,
+ 	sched->cpu_last_switched[cpu] = timestamp;
+ 
+ 	add_sched_event_run(sched, prev, timestamp, delta);
+-	add_sched_event_sleep(sched, prev, timestamp, prev_state);
++	add_sched_event_sleep(sched, prev, timestamp);
+ 
+ 	return 0;
+ }
+-- 
+2.43.2
 
 
