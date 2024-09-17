@@ -1,129 +1,261 @@
-Return-Path: <linux-kernel+bounces-331326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48E797AB57
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:17:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C581C97AB58
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA2928CA9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B87828C1ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E44A13CFB6;
-	Tue, 17 Sep 2024 06:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFF354F95;
+	Tue, 17 Sep 2024 06:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okamibA8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gPJksEur"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B37A923;
-	Tue, 17 Sep 2024 06:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514373A8F7
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726553846; cv=none; b=eIDKQhh6at1vIAMorR0xg52ESNRXUfJccSPUttHzNDv+6Kd/um9S6oPHJhrKwn/Udutp8KOk6YrIrrOVwD54ox7VtmE9dwSp39yGPmoua/Sj1Za26s6qMIEC3sYeiKhqXq3w8jEVVCNgctZ3GO/XIBkk4PdJGPIzGuWyq8D1Hxo=
+	t=1726553961; cv=none; b=Vk1T7KceY/LdSLr6rPefB84GRqh1I3QcO08IRHTO8uuslJGTGduepvISpbKHbx05xApJm3p7AXVfwwWh/AscR/Zdog2ncVmG2NM7jWOnwTqjVnhOuBp/425XCoVuP90bIPEWSyvIV5gJ1+CCLvrFqReNwKKGfT4tgM8opw+uxpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726553846; c=relaxed/simple;
-	bh=CB4t/+5moG0/28K8fc5AivaacXB2UZMNsXSP/NqIUrA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=a+2RQNxHm+wim42DbQgLYDykUlD980bcCMOPAyWVHP67sLE82ZVjZFOh5IpmcqS+JbrW/hPWzRRYfktMIQbiyjt83GOWdtPpvS8HJIuy73lBx3j4+aRVMH92LM/cgu1qDAXE1WrTizPCRu6qXd+5shwGHBXo1TSRECZRGZdtdpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okamibA8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7298C4CEC6;
-	Tue, 17 Sep 2024 06:17:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726553846;
-	bh=CB4t/+5moG0/28K8fc5AivaacXB2UZMNsXSP/NqIUrA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=okamibA89T+tS2KYSFAwVrMBm6dqR2AErTJMj4IQZ6f9YXr0OX2iihrJjdXKkStyV
-	 qUqVD8pAe3kgju5SQWuZEqiVCKKHGlWaNnvLJPHGQ9xv41IfGKjsdMkDcbQgsz4bjo
-	 UhQtYqTGX4B1FocupsBBx3m8w8EWGMia6m97OvZR75XNCi3zC2cedktZrDpDeQOGN7
-	 SJJrOzn9Ibyb7Kj7xHWV08/eKpvTWHbNPss8E0+QftSdQhif/VVU/bVCYYrZJYzTDD
-	 T151cGYeYe6/VMUiTdqKT4c2YyuIrhiF7pYkkK8SFD1/4EtX1QOO1Y14qml61S8Snk
-	 0zAvdCZQa+45A==
-From: Kalle Valo <kvalo@kernel.org>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Alper Nebi Yasak <alpernebiyasak@gmail.com>,
-  linux-mediatek@lists.infradead.org,  linux-wireless@vger.kernel.org,
-  Felix Fietkau <nbd@nbd.name>,  Ryder Lee <ryder.lee@mediatek.com>,
-  Shayne Chen <shayne.chen@mediatek.com>,  Sean Wang
- <sean.wang@mediatek.com>,  Matthias Brugger <matthias.bgg@gmail.com>,
-  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-  Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,  Deren Wu
- <deren.wu@mediatek.com>,  linux-kernel@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  Ma Ke <make24@iscas.ac.cn>,
-    regressions@lists.linux.dev
-Subject: Re: BUG and WARNINGs from mt7921s on next-20240916
-References: <144fbf79-950c-4cd1-bc68-4e00b47b03e9@gmail.com>
-	<ZujCwvd4XiwljDyv@lore-desk>
-Date: Tue, 17 Sep 2024 09:17:20 +0300
-In-Reply-To: <ZujCwvd4XiwljDyv@lore-desk> (Lorenzo Bianconi's message of "Tue,
-	17 Sep 2024 01:44:02 +0200")
-Message-ID: <87ldzqdcsv.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1726553961; c=relaxed/simple;
+	bh=PPxQI8/Ol6thjErA4MShvQ6/FUJXqJ3cLMcF4VLikNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QuhmBSkWRjMvqUu/4SYncDKs+Hu0l5bl0/NYTw/NWHEJ4jgv0T4ok09kponJScCk5k3apTMyqhOz6UZMn0bZz8fPB4Ji2i9kwYwhn9+nRXYzz84N+lvacV+UBiLTUy1TTM+IsTbUziraKb81qdZmUAW+gfJaLfMfTM5UryGHA7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gPJksEur; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so3368801a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 23:19:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726553959; x=1727158759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3rKaSVCwL8V6+GJeMoSG0acZSwK+zyKLY/9ImuFAJRM=;
+        b=gPJksEuryfP93Zub/MNXkTXsg2GS1TPCmg53pj7+8kw2+ckJ9KJlxm/Re/Fk+kkaM2
+         oOsUVqfDyqDvupCh3A8xfID61R+Gu1Ca5Jd3AtMTtP46RwDv8DRrl0TuZABiDabIel74
+         0EgNIePozCovWfum97yi39em5JETr0wmE4XC1L61GgTDvh0zaOJN6mYL2VZ0LPALSNhT
+         XLQyj4ywKD5/m0BlvDrpyrjq4+YX5fHaW7SahTDHURkPXXqReYop1WQwT5owGIvFlW/J
+         EAKxwdbFD94oEcXtJU9H61pxwipq3wRjSBe2gGdLG4B6Mx/0BUr6GRcYXYhmuz9A1JJv
+         oQOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726553959; x=1727158759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3rKaSVCwL8V6+GJeMoSG0acZSwK+zyKLY/9ImuFAJRM=;
+        b=ZVioXdTE5Qht76IaBdFUtv2FF3uASbPfNZxuDu+Fj4L6fIHOk1EdJhTHpOHkt7D5aX
+         /aQCSG/OVJYhhrlX80tOz5bvFVgOcYA4mkM0/S56GGf/hUWC00n29HqZqgDaFED0ukEF
+         may3Msq6emOOyaBAWuCY8Dj8oGSrDaEn2k/j3E32AKgJARE70ZLrmEjvntJXYKO1XOZE
+         O/ZaOYJ4rfRptARjCESObyIH4u/K6W14CGW2zj2W+kdyaRdcRY0xu+wElRPxGA4F7vaj
+         v2FN9Zx0i/gl/94yqgYfLmsxKzFbsXYWZySO49CIRBNjTpSuDkfb0xD4wpSDRmqL3eHG
+         oPkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSfby/7DdPkBVVbgwqc/m5uFX9zFtwgvXZpxqL5kCWvuJHGJz3WGm96FT0L9WBjSu8pDiZ/bLhd77zjzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC4BeIwKsPopELT8TCfDj8mfIzAvwiq/XD5SUc5lVuaCqF3X6y
+	xbhBiGTe5S1PNXYpOmb14YfIrhu7bRO51CLdBiD/Kd7UCXClrk8bMWXC8qeab1NvGoHNWSnjgnX
+	oANMQ76YQBlA9oJTTZXEyCJKdAHZghnm4y1n5eg==
+X-Google-Smtp-Source: AGHT+IFuW6dBNf3DOn+Q2nKitRY27VuOT+N2wFm4dWqungxdicQl/uT9EyLoawRHLMVTRfq/KuMW5W8Zp0OjVBTXoBM=
+X-Received: by 2002:a17:90b:886:b0:2d3:c0b9:7c2a with SMTP id
+ 98e67ed59e1d1-2db9ffee669mr20639834a91.20.1726553958529; Mon, 16 Sep 2024
+ 23:19:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240725120315.212428-1-zhengzucheng@huawei.com>
+ <3e68ccda-1606-9494-f57a-75be9668b83d@huawei.com> <cb3a3f3e-727a-4cbb-b4a8-f9469ed4f08d@redhat.com>
+ <9982cb8d-9346-0640-dd9f-f68390f922e9@huawei.com> <CAKfTPtCdfzZ9Wxr7+zH5WW171LJGttgzto4W2wH9mm4d0jcTLg@mail.gmail.com>
+ <f389a220-b628-575a-7af1-d897ee5730cc@huawei.com>
+In-Reply-To: <f389a220-b628-575a-7af1-d897ee5730cc@huawei.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 17 Sep 2024 08:19:07 +0200
+Message-ID: <CAKfTPtDMuqJUKfKSJNXMCPP13SfhG_sXMF2VUMw=6DD1XmxhWg@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BQuestion=5D_sched=EF=BC=9Athe_load_is_unbalanced_in_the?=
+	=?UTF-8?Q?_VM_overcommitment_scenario?=
+To: zhengzucheng <zhengzucheng@huawei.com>
+Cc: Waiman Long <longman@redhat.com>, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, oleg@redhat.com, 
+	Frederic Weisbecker <frederic@kernel.org>, mingo@kernel.org, peterx@redhat.com, tj@kernel.org, 
+	tjcao980311@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Lorenzo Bianconi <lorenzo@kernel.org> writes:
+On Sat, 14 Sept 2024 at 09:04, zhengzucheng <zhengzucheng@huawei.com> wrote=
+:
+>
+>
+> =E5=9C=A8 2024/9/13 23:55, Vincent Guittot =E5=86=99=E9=81=93:
+> > On Fri, 13 Sept 2024 at 06:03, zhengzucheng <zhengzucheng@huawei.com> w=
+rote:
+> >> In the VM overcommitment scenario, the overcommitment ratio is 1:2, 8
+> >> CPUs are overcommitted to 2 x 8u VMs,
+> >> and 16 vCPUs are bound to 8 cpu. However, one VM obtains only 2 CPUs
+> >> resources, the other VM has 6 CPUs.
+> >> The host is configured with 80 CPUs in a sched domain and other CPUs a=
+re
+> >> in the idle state.
+> >> The root cause is that the load of the host is unbalanced, some vCPUs
+> >> exclusively occupy CPU resources.
+> >> when the CPU that triggers load balance calculates imbalance value,
+> >> env->imbalance =3D 0 is calculated because of
+> >> local->avg_load > sds->avg_load. As a result, the load balance fails.
+> >> The processing logic:
+> >> https://github.com/torvalds/linux/commit/91dcf1e8068e9a8823e419a7a34ff=
+4341275fb70
+> >>
+> >>
+> >> It's normal from kernel load balance, but it's not reasonable from the
+> >> perspective of VM users.
+> >> In cgroup v1, set cpuset.sched_load_balance=3D0 to modify the schedule
+> >> domain to fix it.
+> >> Is there any other method to fix this problem? thanks.
+> > I'm not sure how to understand your setup and why the load balance is
+> > not balancing correctly 16 vCPU between the 8 CPUs.
+> >
+> > >From your test case description below,  you have 8 always running
+> > threads in cgroup A and 8 always running threads in cgroup B and the 2
+> > cgroups have only 8 CPUs among 80. This should not be a problem for
+> > load balance. I tried something similar although not exactly the same
+> > with cgroupv2 and rt-app and I don't have noticeable imbalance
+> >
+> > Do you have more details that you can share about your system ?
+> >
+> > Which kernel version are you using ? Which arch ?
+>
+> kernel version: 6.11.0-rc7
+> arch: X86_64 and cgroup v1
 
->> Hi,
->> 
->> I ran into some bug messages while testing linux-next on a MT8186
->> Magneton Chromebook (mt8186-corsola-magneton-sku393218). It boots 
->> to the OS, but at least Wi-Fi and Bluetooth are unavailable.
->> 
->> As a start, I tried reverting commit abbd838c579e ("Merge tag 
->> 'mt76-for-kvalo-2024-09-06' of https://github.com/nbd168/wireless")
->> and it works fine after that. Didn't have time to do a full bisect, 
->> but will try if nobody has any immediate opinions.
->> 
->> There are a few traces, here's some select lines to catch your attention,
->> not sure how informational they are:
->> 
->> [   16.040525] kernel BUG at net/core/skbuff.c:2268!
->> [   16.040531] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
->> [ 16.040803] CPU: 3 UID: 0 PID: 526 Comm: mt76-sdio-txrx Not tainted
->> 6.11.0-next-20240916-deb-00002-g7b544e01c649 #1
->> [   16.040897] Call trace:
->> [   16.040899]  pskb_expand_head+0x2b0/0x3c0
->> [   16.040905]  mt76s_tx_run_queue+0x274/0x410 [mt76_sdio]
->> [   16.040909]  mt76s_txrx_worker+0xe4/0xac8 [mt76_sdio]
->> [   16.040914]  mt7921s_txrx_worker+0x98/0x1e0 [mt7921s]
->> [   16.040924]  __mt76_worker_fn+0x80/0x128 [mt76]
->> [   16.040934]  kthread+0xe8/0xf8
->> [   16.040940]  ret_from_fork+0x10/0x20
->
-> Hi,
->
-> I guess this issue has been introduced by the following commit:
->
-> commit 3688c18b65aeb2a1f2fde108400afbab129a8cc1
-> Author: Felix Fietkau <nbd@nbd.name>
-> Date:   Tue Aug 27 11:30:01 2024 +0200                  
->
->     wifi: mt76: mt7915: retry mcu messages                                            
->                         
->     In some cases MCU messages can get lost. Instead of failing completely,
->     attempt to recover by re-sending them.
->      
->     Link: https://patch.msgid.link/20240827093011.18621-14-nbd@nbd.name
->     Signed-off-by: Felix Fietkau <nbd@nbd.name>
->
->
-> In particular, skb_get() in mt76_mcu_skb_send_and_get_msg() is bumping skb users
-> refcount (making the skb shared) and pskb_expand_head() (run by __skb_grow() in
-> mt76s_tx_run_queue()) does not like shared skbs.
->
-> @Felix: any input on it?
+okay
 
-Adding regressions list to Cc.
+>
+> >> Abstracted reproduction case=EF=BC=9A
+> >> 1.environment information=EF=BC=9A
+> >>
+> >> [root@localhost ~]# cat /proc/schedstat
+> >>
+> >> cpu0
+> >> domain0 00000000,00000000,00010000,00000000,00000001
+> >> domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
+> >> domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> >> cpu1
+> >> domain0 00000000,00000000,00020000,00000000,00000002
+> >> domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
+> >> domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> >> cpu2
+> >> domain0 00000000,00000000,00040000,00000000,00000004
+> >> domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
+> >> domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> >> cpu3
+> >> domain0 00000000,00000000,00080000,00000000,00000008
+> >> domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
+> >> domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+> > Is it correct to assume that domain0 is SMT, domain1 MC and domain2 PKG=
+  ?
+> >   and cpu80-83 are in the other group of PKG ? and LLC is at domain1 le=
+vel ?
+>
+> domain0 is SMT and domain1 is MC
+> thread_siblings_list:0,80. 1,81. 2,82. 3,83
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Yeah, I should have read more carefully the domain0 cpumask
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> LLC is at domain1 level
+>
+> >> 2.test case:
+> >>
+> >> vcpu.c
+> >> #include <stdio.h>
+> >> #include <unistd.h>
+> >>
+> >> int main()
+> >> {
+> >>           sleep(20);
+> >>           while (1);
+> >>           return 0;
+> >> }
+> >>
+> >> gcc vcpu.c -o vcpu
+> >> -----------------------------------------------------------------
+> >> test.sh
+> >>
+> >> #!/bin/bash
+> >>
+> >> #vcpu1
+> >> mkdir /sys/fs/cgroup/cpuset/vcpu_1
+> >> echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.cpus
+> >> echo 0 > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.mems
+> >> for i in {1..8}
+> >> do
+> >>           ./vcpu &
+> >>           pid=3D$!
+> >>           sleep 1
+> >>           echo $pid > /sys/fs/cgroup/cpuset/vcpu_1/tasks
+> >> done
+> >>
+> >> #vcpu2
+> >> mkdir /sys/fs/cgroup/cpuset/vcpu_2
+> >> echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.cpus
+> >> echo 0 > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.mems
+> >> for i in {1..8}
+> >> do
+> >>           ./vcpu &
+> >>           pid=3D$!
+> >>           sleep 1
+> >>           echo $pid > /sys/fs/cgroup/cpuset/vcpu_2/tasks
+> >> done
+> >> ------------------------------------------------------------------
+> >> [root@localhost ~]# ./test.sh
+> >>
+> >> [root@localhost ~]# top -d 1 -c -p $(pgrep -d',' -f vcpu)
+> >>
+> >> 14591 root      20   0    2448   1012    928 R 100.0   0.0 13:10.73 ./=
+vcpu
+> >> 14582 root      20   0    2448   1012    928 R 100.0   0.0 13:12.71 ./=
+vcpu
+> >> 14606 root      20   0    2448    872    784 R 100.0   0.0 13:09.72 ./=
+vcpu
+> >> 14620 root      20   0    2448    916    832 R 100.0   0.0 13:07.72 ./=
+vcpu
+> >> 14622 root      20   0    2448    920    836 R 100.0   0.0 13:06.72 ./=
+vcpu
+> >> 14629 root      20   0    2448    920    832 R 100.0   0.0 13:05.72 ./=
+vcpu
+> >> 14643 root      20   0    2448    924    836 R  21.0   0.0 2:37.13 ./v=
+cpu
+> >> 14645 root      20   0    2448    868    784 R  21.0   0.0 2:36.51 ./v=
+cpu
+> >> 14589 root      20   0    2448    900    816 R  20.0   0.0 2:45.16 ./v=
+cpu
+> >> 14608 root      20   0    2448    956    872 R  20.0   0.0 2:42.24 ./v=
+cpu
+> >> 14632 root      20   0    2448    872    788 R  20.0   0.0 2:38.08 ./v=
+cpu
+> >> 14638 root      20   0    2448    924    840 R  20.0   0.0 2:37.48 ./v=
+cpu
+> >> 14652 root      20   0    2448    928    844 R  20.0   0.0 2:36.42 ./v=
+cpu
+> >> 14654 root      20   0    2448    924    840 R  20.0   0.0 2:36.14 ./v=
+cpu
+> >> 14663 root      20   0    2448    900    816 R  20.0   0.0 2:35.38 ./v=
+cpu
+> >> 14669 root      20   0    2448    868    784 R  20.0   0.0 2:35.70 ./v=
+cpu
+> >>
+
+So I finally understood your situation. The limited cpuset screws up
+the avg load of system for domain1. The group_imbalanced state is
+there to try to fix an imbalanced situation related to tasks that are
+pinned to a subset of CPUs of the sched domain. But this can't cover
+all cases.
+
+> > .
 
