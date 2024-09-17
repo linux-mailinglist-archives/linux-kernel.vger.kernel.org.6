@@ -1,114 +1,105 @@
-Return-Path: <linux-kernel+bounces-331771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF92997B10A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:06:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF7D97B10D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE68B225B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:06:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53691F22C3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84692174EF0;
-	Tue, 17 Sep 2024 14:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579611662FA;
+	Tue, 17 Sep 2024 14:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="ngkM901K"
-Received: from mail.rosalinux.ru (mail.rosalinux.ru [195.19.76.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ExNUDci8"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71C23C08A;
-	Tue, 17 Sep 2024 14:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.19.76.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED631167D83
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 14:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726581990; cv=none; b=bSWJysWyosY2WMdb2xKoT1xzJknaYZjSlb7Sf11rcb3qa43tExVH8xDpotzFXBBn7STkyPztG8vf1kSi0s8nmcAPm8ZaK2HzMJWCMszaD9cbGsyrPgYqiupQOeH2LU7o8pUh59iEbJeLMe5cvU+mvSxDARmw88gPC/1T9OW1Cjo=
+	t=1726582003; cv=none; b=ZxtVV9TD2+8L88TuF5t1m5aDmVSCA8Ej8Q5rqPy6FN5GVnpho7Z+90s7LzavdcWm2CGZRYzAly1rF9kLc7DfZqIImjStExLHv/vbsEI1uZTPPfnaQr+XKDfngSRnPi0gwhM9X4rwLSzrLqJLz8pFNB3PcWhqwHmw27e5nBv+Xvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726581990; c=relaxed/simple;
-	bh=O8TFnEzzQuQka4uM9JJmV5K6N/xJ6xskvb4dgy98N24=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dZjvhwMjYXftEv01DoJVZ2DfItw+KARV5xjv5VGz5GMHMUVi8fmEGYKrgHGT66HDvBtSShEkn1ux0McBl5R5TpWkJG9Ug5wzRFXF6jHA177OeIyT4r7RbzNPI6AIPmLjpfv6MNMYk3QsRuJGS43FeYXHn+tm7iZSkpDQUF5+OCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru; spf=pass smtp.mailfrom=rosalinux.ru; dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b=ngkM901K; arc=none smtp.client-ip=195.19.76.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosalinux.ru
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id 1CA15DFC0E87E;
-	Tue, 17 Sep 2024 17:06:18 +0300 (MSK)
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id N1XX7aZF9tt3; Tue, 17 Sep 2024 17:06:18 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id E2606DFC0E884;
-	Tue, 17 Sep 2024 17:06:17 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru E2606DFC0E884
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
-	s=1D4BB666-A0F1-11EB-A1A2-F53579C7F503; t=1726581977;
-	bh=ZnDp0kuwty6ZYaaIo7tuaeh++IuabuL6NxK44pY/klQ=;
-	h=From:To:Date:Message-Id:MIME-Version;
-	b=ngkM901K2TKUDaPb/wJmr8+7GOnECevGJqc6o8jWHtTiJiYZBU71zMIRpmy0v+FkG
-	 VDt9pWrlAyIHp2eZbyH0kHok0iTll3qhiwxZh1pHqlIJcrvncFnIEIm/X38i2ppX3f
-	 ETYr1+1jg0xOdbizNuOjjpg8E6cGWgsYViAKFHvGSpcXuJm4YgU3PfCGiate3GXeeY
-	 UYVFlOpxQBd1Z5OSCRpkEU7Orm3jmp4rWtNbiNXe0wUag/a8ap16WoDvGQvNJaZGSd
-	 /mip9VWnyq8iMj+dF6o5ppN0Jmex4l7/4gysKH6eKQg8tFqiXBYRsAJJB692IEQpSe
-	 T6zVa0wvBXYMQ==
-X-Virus-Scanned: amavisd-new at rosalinux.ru
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ggBFHbrd65yx; Tue, 17 Sep 2024 17:06:17 +0300 (MSK)
-Received: from ubuntu.localdomain (unknown [144.206.93.23])
-	by mail.rosalinux.ru (Postfix) with ESMTPSA id A44EBDFC0E87E;
-	Tue, 17 Sep 2024 17:06:17 +0300 (MSK)
-From: Aleksandr Burakov <a.burakov@rosalinux.ru>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Aleksandr Burakov <a.burakov@rosalinux.ru>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	lvc-patches@linuxtesting.org
-Subject: [PATCH] V4L/DVB (13661): rj54n1cb0c: possible integer overflow fix
-Date: Tue, 17 Sep 2024 17:04:54 +0300
-Message-Id: <20240917140454.7880-1-a.burakov@rosalinux.ru>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1726582003; c=relaxed/simple;
+	bh=T1fbGCPWhQTMc2ds84cJIDmVKbIUxTcWTVyoeXm/q08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1N4kGy/yEOHD7W3n2Y0N2PCZQAZDGLAVdDb1EsAiDM2k+qfUNiL4VqQIom1n0V/eaq8yFU17jGR+v3cRVt2i5cmB1y9Ts1+JUzLkZdhISgwpk5Q8mxZzOnJ9b5cFUEXMDMNDeZD/yFR/tsgzIS6P0OlAXWtV2NzeNUAHPteC5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ExNUDci8; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f75d044201so57150081fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 07:06:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726582000; x=1727186800; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e3VqCwJoNraqawyxrMvuXWNHXBSF9eIrcmWFKjZa7aQ=;
+        b=ExNUDci8xTPxlpzXR9TZcuD5VM4XLpnrOGPjQJ5HUVilbGDuFTdAPr9webCdabjIoT
+         JBJ23bZc77RWINCIO8O3hTflR4ij0MBfB1SCzWqWeBYw9mlpO9tWPQcslePg5hwckOO3
+         4zAi/sRgq+XP7wSAcA8kYdwHN7d6RtybXmbfnvHn2rdzaBKGaN4DzABhnhpLO3lxLElU
+         RVYkB46hdUB7dwxsMUqp1+JguC5OvAArUQdXRmL9wuWZIgEuwptad+20YDOaig1LwfVG
+         F0khcdu/zdrc5Z4HcaPET62VIGOM4/1bxBC8eHROG0x6q8v2R5ZFYbE5O9F7QJvnOf74
+         uP+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726582000; x=1727186800;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e3VqCwJoNraqawyxrMvuXWNHXBSF9eIrcmWFKjZa7aQ=;
+        b=lgHCHo8T3zr6SE/kustfCgk3UOan+pQ4QyiVQN97k4Ik+t9ly8GxXGZb4eUeI6m7c+
+         +oO0FnJqUBBgr5I5CwmQJHiNOrxciZfO5VrFvtzQEs9Ma43j7zeku34/nx9HcqmfF1pG
+         ENrsegRZyZIhlqgrYj7rUAtJZdhB81W5gPhvHcuNCZvPrvLzffmhlAHSsAvUbMbVMF7A
+         6Seqe/N+KJ8W7OnzLIGJxsYsJyJfXRPWDLuNEW3I9HyYmRVp9/5HJmy9a2HM0zi1hrkX
+         JdzC7Rh886PjhXdbH7PwswBv5lzhKjBxSWeAQko1TYK+5tpSPRV9EQqwJJCnV/97YFhL
+         3BJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDtP25uWSrHCVXJ52CYMsuM7w1fvjlfrwwwYMYUZzhPS/QKnNankV932a63VVBDYQl8KudiKf5/lDdj94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzTkHhCHefjgef7kpMQt/uqgK/bXGdD6i5IAY+SqCHHdymzoqP
+	aBtK3Z/rc80pWYg0Hi+8mqM7Z/CPtPJSvHDndRBLMcCl7rwnBtVk5gNvEwTboRg=
+X-Google-Smtp-Source: AGHT+IG6aNuAURHRTSsm3TSfe1rxuQWJil3WUMVpaQOmq8kaPdwBxfbyRKDasQb44N87rlFO2iNLxg==
+X-Received: by 2002:a2e:b889:0:b0:2f6:6074:db9a with SMTP id 38308e7fff4ca-2f7726199abmr93412081fa.7.1726581999899;
+        Tue, 17 Sep 2024 07:06:39 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d1f1254sm11036491fa.0.2024.09.17.07.06.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 07:06:39 -0700 (PDT)
+Date: Tue, 17 Sep 2024 17:06:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: quic_vnagar@quicinc.com
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6460-rb3gen2: enable venus node
+Message-ID: <t7r46onezqkksdvk3i26fzreqxgwvyh32bebwysaxzl5pn642m@6m2kmbsh42pg>
+References: <20240917-venus_rb3_gen2-v1-1-8fea70733592@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917-venus_rb3_gen2-v1-1-8fea70733592@quicinc.com>
 
-An integer overflow may occur due to arithmetic operation
-(multiplication) between value '314572800' and variable 'resize',
-where the value comes from '12 * RJ54N1_MAX_WIDTH * (1 << 14)'=20
-and when 'resize' is equal to 16319.
+On Tue, Sep 17, 2024 at 02:54:31PM GMT, Vedang Nagar via B4 Relay wrote:
+> From: Vedang Nagar <quic_vnagar@quicinc.com>
+> 
+> Enable the venus node on Qualcomm Rb3gen2 so that the
+> video decoder will start working.
+> 
+> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Fixes: a6b5f2008a3d ("V4L/DVB (13661): rj54n1cb0c: Add cropping, auto whi=
-te balance, restrict sizes, add platform data")
-Signed-off-by: Aleksandr Burakov <a.burakov@rosalinux.ru>
----
- drivers/media/i2c/rj54n1cb0c.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-diff --git a/drivers/media/i2c/rj54n1cb0c.c b/drivers/media/i2c/rj54n1cb0=
-c.c
-index a59db10153cd..a612ec1e7157 100644
---- a/drivers/media/i2c/rj54n1cb0c.c
-+++ b/drivers/media/i2c/rj54n1cb0c.c
-@@ -776,8 +776,8 @@ static int rj54n1_sensor_scale(struct v4l2_subdev *sd=
-, s32 *in_w, s32 *in_h,
- 	}
-=20
- 	/* Antiflicker */
--	peak =3D 12 * RJ54N1_MAX_WIDTH * (1 << 14) * resize / rj54n1->tgclk_mhz=
- /
--		10000;
-+	peak =3D 12 * RJ54N1_MAX_WIDTH * resize / rj54n1->tgclk_mhz / 10000;
-+	peak =3D peak * (1 << 14);
- 	peak_50 =3D peak / 6;
- 	peak_60 =3D peak / 5;
-=20
---=20
-2.25.1
-
+-- 
+With best wishes
+Dmitry
 
