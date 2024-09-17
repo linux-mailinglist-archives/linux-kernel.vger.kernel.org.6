@@ -1,110 +1,116 @@
-Return-Path: <linux-kernel+bounces-331630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A174097AF2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDE897AF33
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D40261C2144F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:50:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10F111C21C1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA35D166F23;
-	Tue, 17 Sep 2024 10:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5728E160884;
+	Tue, 17 Sep 2024 10:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNzYjDmC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="jo9LQE5I"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452608F77;
-	Tue, 17 Sep 2024 10:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA0A219ED;
+	Tue, 17 Sep 2024 10:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726570194; cv=none; b=GkdxnwKCfWXFIl5kiW+zyHpKzk9qd4H6KwkpBPickYHesXGhcsX2762zvlA4+PwT7JOWEz/JyusqQSoWZr0PucjiLok/XswY3nIGU6tXtnriSmOP7ACjUS4KuXESuDkedsY5IOanIgyYU6oflhadtq8yGxWv1hdMGwusinacSX4=
+	t=1726570507; cv=none; b=C9SnCRIkMDJ6f42C6Dx2AGPqqfrmS1k/9N6AB3hmWe6c2KlM1yiV53hhPJ6ZXOUKNhKj8GLJEVOSRlIoMPGHS2avq0B3emXdVaHMJf2nM5ThwKY9dZOfaZ7kS8F+FMEBGA2y2UrQ6iJN3x0/cN+4Ne6iZLU+FHrAvzwAwRBGyEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726570194; c=relaxed/simple;
-	bh=QymIW4WPXHYXp2+gvRQI/PQAiTDdbcnDFvemDS0mJfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVZG+mPTMUUt6RAVTFKynz6C5/+wytv2AyCzdb0EHMKo5hWs5ngOaym/WbqmNTiOmn4wt6YvwQh5l7JoiTDkf9EfuFxf1AwYh/Ly7bzl99WQbulJa1CahE6Xn6zQhYKiqKkA5701I8FODwtzKk+P9VFD7WCgxByQpzG+Wer4wio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNzYjDmC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2685C4CEC5;
-	Tue, 17 Sep 2024 10:49:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726570193;
-	bh=QymIW4WPXHYXp2+gvRQI/PQAiTDdbcnDFvemDS0mJfI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TNzYjDmCVZc3CdpX2eHBDBrBF0YYUokBysdxrIDlonOtwCV/I5YbmtdogpgbrYYZ7
-	 ++vYiGL+94F4I+K1EIJizZKHF1rAqeDMdnjpGpbvMaFD/FfgCVJrDotXC+Noub49pk
-	 PRoTtfxhg/y6juW3X9FqlJrAeEzBUmpNIw0W3UurtOvXP8gEIZQ7jz3m7tVbMctg2p
-	 oTFvLDut8AzEv1QW2Pq5JK+lIvXZuqGIl6Mi8BNJ8qi9Cxhl4DUFcashBPplVfo/jt
-	 0NePQU++yWXSQ951qV2JpjPQyuKMIhq7hd5um9ji2Em0Tk1TBJHKaYEy7edYcFufos
-	 DvH2zGvtx5/Eg==
-Date: Tue, 17 Sep 2024 12:49:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Thippeswamy Havalige <thippesw@amd.com>
-Cc: manivannan.sadhasivam@linaro.org, robh@kernel.org, 
-	linux-pci@vger.kernel.org, bhelgaas@google.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, bharat.kumar.gogada@amd.com, michal.simek@amd.com, 
-	lpieralisi@kernel.org, kw@linux.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: xilinx-cpm: Add compatible
- string for CPM5 controller 1
-Message-ID: <tqte5pxvuhkqwr7gaxblx6orprd74qyw5ekrx53blbbygtrgpn@3uprlzf5otou>
-References: <20240916163124.2223468-1-thippesw@amd.com>
- <20240916163124.2223468-2-thippesw@amd.com>
+	s=arc-20240116; t=1726570507; c=relaxed/simple;
+	bh=CLl1v7tNL9sqp0wNarKO6L4gl8/2HIzkr1LFz2APFpg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=um8YBpZp+uDIeoGErqbzoUrjYgXWmoLXOPIQTuReUMHrVwczS/fclUb5+JEKESAno7WWD2yIuhhxIPnUbEY/93LMLariEpjFvobpx3/bRQ7UV++/2lfJt/a5/ITnOSBDWiWa0M27d/g9aQwZ9uSt0wxrhITr2/CXK53+k82n1G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=jo9LQE5I; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id DD1BF100002;
+	Tue, 17 Sep 2024 13:54:43 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1726570483; bh=VrqSC7yyHWGVkvMWSkMvKGyaXmdoFYc4NAZw5E45oko=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=jo9LQE5Iqpv2u8buJiBFdhlCTalp5+7kGDnTiJXjcFMbdLDQ8QUu3mrj+uDUJp77o
+	 YBN936hLRsnXnIzlzF4KmfybUkHd0MRA9z686BQKovjAh5FwI7NXH52WG54oWS0QPr
+	 tfucJJhg41dPpxV2MWsUuADZDRbl1Q0mIHK6IZ14HVgAl12UYdnQJzBLQHYop1f3Qg
+	 BuNPOQVOEpjUzkmdc03GO2g4lDtm4BV5rYVFhz9TGwmCiDHR75ML1Tyeqk/o0/bcPv
+	 Un5DEq5WYWG++HgKoEJ8NnBAboC+k32OftIfcQf5/Gxa1QSJU/LMvJCXlno6HH4LyP
+	 B0yP+eU4kr3Ww==
+Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Tue, 17 Sep 2024 13:54:10 +0300 (MSK)
+Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 17 Sep
+ 2024 13:53:50 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Marcel Holtmann
+	<marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	<linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] Bluetooth: btbcm: Handle memory allocation failure in btbcm_get_board_name()
+Date: Tue, 17 Sep 2024 13:53:31 +0300
+Message-ID: <20240917105331.21945-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240916163124.2223468-2-thippesw@amd.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187796 [Sep 17 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.5
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/09/17 10:04:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/09/17 09:54:00 #26602246
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Mon, Sep 16, 2024 at 10:01:23PM +0530, Thippeswamy Havalige wrote:
-> The Xilinx Versal Premium series includes the CPM5 block, which supports
-> two Type-A Root Port controllers operating at Gen5 speed.
-> 
-> This patch adds a compatible string to distinguish between the two CPM5
-> Root Port controllers. The error interrupt registers and corresponding bits
-> for Controller 0 and Controller 1 are located at different offsets, making
-> it necessary to differentiate them.
-> 
-> By using the new compatible string, the driver can properly handle these
-> platform-specific differences between the controllers.
-> 
-> Signed-off-by: Thippeswamy Havalige <thippesw@amd.com>
-> ---
-> changes in v2:
-> --------------
-> Modify compatible string to differentiate controller 0 and controller 1
-> ---
->  Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-> index 989fb0fa2577..3783075661e2 100644
-> --- a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-> +++ b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-> @@ -17,6 +17,7 @@ properties:
->      enum:
->        - xlnx,versal-cpm-host-1.00
->        - xlnx,versal-cpm5-host
-> +      - xlnx,versal-cpm5-host1-1
+In btbcm_get_board_name() devm_kstrdup() can return NULL due to memory
+allocation failure.
 
-Hm, I thought my irony was obvious, but it seems was not. Apologies.
-"1-1", "1-2", "1-1-1" or "1-1.00-1" are all poor choices.
+Add NULL return check to prevent NULL dereference.
 
-I was waiting for some reasonable name idea, because it is you who knows
-the hardware and has datasheet.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-I guess if I have to come up with name then "host1" was better. Or
-"cpm5-1-host". Dunno, all these names "5" in "cpm5" and "-1.00" in IP
-version are randomly constructed.
+Fixes: 63fac3343b99 ("Bluetooth: btbcm: Support per-board firmware variants")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/bluetooth/btbcm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+index f9a7c790d7e2..84273b7f02e1 100644
+--- a/drivers/bluetooth/btbcm.c
++++ b/drivers/bluetooth/btbcm.c
+@@ -554,6 +554,8 @@ static const char *btbcm_get_board_name(struct device *dev)
+ 
+ 	/* get rid of any '/' in the compatible string */
+ 	board_type = devm_kstrdup(dev, tmp, GFP_KERNEL);
++	if (!board_type)
++		return NULL;
+ 	strreplace(board_type, '/', '-');
+ 	of_node_put(root);
+ 
+-- 
+2.30.2
 
 
