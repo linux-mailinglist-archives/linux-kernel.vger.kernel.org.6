@@ -1,54 +1,65 @@
-Return-Path: <linux-kernel+bounces-331306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C40397AB18
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:39:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C90B97AB19
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8AF1F23A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:39:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6265C282E35
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F3F1292CE;
-	Tue, 17 Sep 2024 05:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227BB13DDB5;
+	Tue, 17 Sep 2024 05:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="n0SLIoxA"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LH/uGK1w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17CF4174A;
-	Tue, 17 Sep 2024 05:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A76A137745;
+	Tue, 17 Sep 2024 05:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726551277; cv=none; b=Xn38jdDbL0UEawy010aMWUkdP4moBrZe2PBNZ0Kx5wtGjiVXfD77i3IItIDsBKpUJ1QAbs0a0GTDf1XLAdoMSZWUQIonh1zco6SHDGDHbKNDWLsYyLTHLFyCaTRU5fkF8NJzOrHV+tam7VUhfaGIMBaMWvMHkyQWWnu0PpTGSto=
+	t=1726551374; cv=none; b=LTrVwCfwclneE+XL9GExsL1hTfXPrA0pNWY/XTDQXWa4cOY0YGgJqMawTzz9+xlIljIKStcoiE9ikkT2Z0AK3QvWvI3CpRoewq0vK0xA1o9pUBhXDAEeBj1mKBO4ymXjTT8s7kfX/3DjQG/BBkoENftCPyM0hP46Sav04cqmBZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726551277; c=relaxed/simple;
-	bh=2PPXsB99Wx7DXtoG9gyiqOc62XsvddUP7aAxrHGWr1I=;
+	s=arc-20240116; t=1726551374; c=relaxed/simple;
+	bh=OPXVdrWekYS4HRt3jS1XMZNUS2M7lr5o0Nv4AyrbWTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kf5qjslBHHROR30OqhxOzgnkRWkRWhcICN7NC9aI9PeEmhgqdbUwVeZU7mrbLJ6pPcNUuQS7jMo6cvDdz/Cs9b7qN0x9Jwk7kdMVaPeawIyf+E+/JF1Hrj0oqmmCXEfaJ7/92isnP+YBpxgFl59xGr92QXA/cFjIsrWM0srE6mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=n0SLIoxA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CEECC4CEC6;
-	Tue, 17 Sep 2024 05:34:36 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PpGOolBVCmM5jAOfPzAeOg5hVMW1ltRVcEhbtuK+PYrnB2CmAyBU6od6JkQqjNTL/3cWrVuLKrhUvxVKymnI1fh/5Xp/MMDxvkiSkRM3RakK6aRbaMW8wqUwf4KZbkTRtopJKU3hdLt8bdZPtFgqN2Mlm/D0v84dVtjAwcrPI/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LH/uGK1w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87478C4CEC6;
+	Tue, 17 Sep 2024 05:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726551276;
-	bh=2PPXsB99Wx7DXtoG9gyiqOc62XsvddUP7aAxrHGWr1I=;
+	s=korg; t=1726551374;
+	bh=OPXVdrWekYS4HRt3jS1XMZNUS2M7lr5o0Nv4AyrbWTk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n0SLIoxAk1LOnU11qV51emCyj0yH4TToCO1jWU7PNuQPY5iL5s/5ORtjFFQ7UMIVw
-	 EFgRsxoauY9XRIBdJObT15tzs5Yt/b82/dt6mL5rhppovHTdizgQWg9VHoitDBxPGM
-	 x6d3BY5xW/AQ4h8lfp4QqhfLSDvtfcJ8ibO4UnUU=
-Date: Tue, 17 Sep 2024 07:34:33 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Yiyang Wu <toolmanp@tlmp.cc>, linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [RFC PATCH 02/24] erofs: add superblock data structure in Rust
-Message-ID: <2024091702-easiest-prelude-7d4f@gregkh>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-3-toolmanp@tlmp.cc>
- <2024091655-sneeze-pacify-cf28@gregkh>
- <aa7a902a-25f6-491c-88a3-ad0a3204d2ff@linux.alibaba.com>
+	b=LH/uGK1wp4trpla9LCHuK7pFxzF0HqSw2Y7k/Kb10m/OSNj2DI/RkHKvKNfs/0hLb
+	 uPSRuFHkjtkIkEEfqC9b9gj62MxHo0OS2t76Sun34NhPRnXaZsKtnAlURt17BEn6I9
+	 SnHrZAMLCXTYaKsvR/RTdLCBboAP67drtMwBw9EM=
+Date: Tue, 17 Sep 2024 07:36:10 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Selvarasu Ganesan <selvarasu.g@samsung.com>,
+	"felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jh0801.jung@samsung.com" <jh0801.jung@samsung.com>,
+	"dh10.jung@samsung.com" <dh10.jung@samsung.com>,
+	"naushad@samsung.com" <naushad@samsung.com>,
+	"akash.m5@samsung.com" <akash.m5@samsung.com>,
+	"rc93.raju@samsung.com" <rc93.raju@samsung.com>,
+	"taehyun.cho@samsung.com" <taehyun.cho@samsung.com>,
+	"hongpooh.kim@samsung.com" <hongpooh.kim@samsung.com>,
+	"eomji.oh@samsung.com" <eomji.oh@samsung.com>,
+	"shijie.cai@samsung.com" <shijie.cai@samsung.com>,
+	stable <stable@kernel.org>
+Subject: Re: [PATCH v2] usb: dwc3: core: Stop processing of pending events if
+ controller is halted
+Message-ID: <2024091716-snide-mashing-2c21@gregkh>
+References: <CGME20240916224630epcas5p42b355e2884c665e19d3c9c3a5afd428e@epcas5p4.samsung.com>
+ <20240916224543.187-1-selvarasu.g@samsung.com>
+ <20240916230032.ugw23x7gijamrf5x@synopsys.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,55 +68,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aa7a902a-25f6-491c-88a3-ad0a3204d2ff@linux.alibaba.com>
+In-Reply-To: <20240916230032.ugw23x7gijamrf5x@synopsys.com>
 
-On Tue, Sep 17, 2024 at 08:18:06AM +0800, Gao Xiang wrote:
-> Hi Greg,
-> 
-> On 2024/9/17 01:55, Greg KH wrote:
-> > On Mon, Sep 16, 2024 at 09:56:12PM +0800, Yiyang Wu wrote:
-> > > diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
-> > > new file mode 100644
-> > > index 000000000000..0f1400175fc2
-> > > --- /dev/null
-> > > +++ b/fs/erofs/rust/erofs_sys.rs
-> > > @@ -0,0 +1,22 @@
-> > > +#![allow(dead_code)]
-> > > +// Copyright 2024 Yiyang Wu
-> > > +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
+On Mon, Sep 16, 2024 at 11:00:30PM +0000, Thinh Nguyen wrote:
+> On Tue, Sep 17, 2024, Selvarasu Ganesan wrote:
+> > This commit addresses an issue where events were being processed when
+> > the controller was in a halted state. To fix this issue by stop
+> > processing the events as the event count was considered stale or
+> > invalid when the controller was halted.
 > > 
-> > Sorry, but I have to ask, why a dual license here?  You are only linking
-> > to GPL-2.0-only code, so why the different license?  Especially if you
-> > used the GPL-2.0-only code to "translate" from.
-> > 
-> > If you REALLY REALLY want to use a dual license, please get your
-> > lawyers to document why this is needed and put it in the changelog for
-> > the next time you submit this series when adding files with dual
-> > licenses so I don't have to ask again :)
+> > Fixes: fc8bb91bc83e ("usb: dwc3: implement runtime PM")
+> > Cc: stable <stable@kernel.org>
 > 
-> As a new Rust kernel developper, Yiyang is working on EROFS Rust
-> userspace implementation too.
+> Checkpatch doesn't like that format. Fix the Cc stable tag to below:
 > 
-> I think he just would like to share the common Rust logic between
-> kernel and userspace.
+> Cc: stable@kernel.org
 
-Is that actually possible here?  This is very kernel-specific code from
-what I can tell, and again, it's based on the existing GPL-v2 code, so
-you are kind of changing the license in the transformation to a
-different language, right?
-
-> Since for the userspace side, Apache-2.0
-> or even MIT is more friendly for 3rd applications (especially
-> cloud-native applications). So the dual license is proposed here,
-> if you don't have strong opinion, I will ask Yiyang document this
-> in the next version.  Or we're fine to drop MIT too.
-
-If you do not have explicit reasons to do this, AND legal approval with
-the understanding of how to do dual license kernel code properly, I
-would not do it at all as it's a lot of extra work.  Again, talk to your
-lawyers about this please.  And if you come up with the "we really want
-to do this," great, just document it properly as to what is going on
-here and why this decision is made.
+What?  Why?  That should be fine, exactly what is the warning that this
+gives?  That should be fine, as it's what my scripts put into patches
+that I create :)
 
 thanks,
 
