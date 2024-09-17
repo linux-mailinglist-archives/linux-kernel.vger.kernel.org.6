@@ -1,143 +1,156 @@
-Return-Path: <linux-kernel+bounces-331896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EDB897B28D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:03:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35DFB97B296
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A98289EBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B5BE1C22611
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C92187FF5;
-	Tue, 17 Sep 2024 16:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3F817E46E;
+	Tue, 17 Sep 2024 16:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEkZCG2/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="PrtR+7V3"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1828183CB2;
-	Tue, 17 Sep 2024 16:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CCF176AC2
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726588982; cv=none; b=Dc8NaboCoH5ESFAzm2+grlLyLGBad7U7K2uTgHww9n9m3yE34p8tfWzzdqTOK0aNidParmIeYTygb0OB2XXf9px0JcRs47q9c7SajKyPBX5tGQ31eG2IFbd2YjW8oOMu8Nj16vsdc57O6T6RRp/b8DSz0pUoYFpwPyDg7jkuXY0=
+	t=1726589042; cv=none; b=A1tuuI0kwW4z5FTJOZq59FCkYnE/+uegLNN8y09S2o75nyE5exADO6NuCJirPcJe1fTVj8VSIceGBZuqcO4rDlL6y8tQMqR8sgIEUSbWyGKEg8CiSOyXTpxhBjF6Fx7PSkzazMIkz7+2fb8bp0qIH0+ejH39guHpDn/oljoYA4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726588982; c=relaxed/simple;
-	bh=ut7+hKu9XXGBX1hORm85Odfx/e7qFN4ndLnDPCa+X3I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rpQvCOYQL4OZMjpl0CG/vHrVF3/27BupPzIof3hkugjB+5QO3ls05iiY14vIHWz2kdTq9Hsn9x4NxmTyKEX3nT6H4olDXDJ5aHbQCvbeVdPQJQ/3EEWe3ZqJsUTPLo1ONTakI+q6c45K9bDfdH/OokWw3o/a3f3PT4Pw/9KO7K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEkZCG2/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD527C4CEC5;
-	Tue, 17 Sep 2024 16:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726588981;
-	bh=ut7+hKu9XXGBX1hORm85Odfx/e7qFN4ndLnDPCa+X3I=;
-	h=From:Date:Subject:To:Cc:From;
-	b=eEkZCG2/JXhLepF4DxvWOELqtyz8KKdBisdG/oIgyZjg3AorUdC2lyDZyovU9khrZ
-	 En59hN7RSvuBgIVFC++IXWyoaV4B41yF4/v8SueS9hmN5PJaAZrr5xGPxZ2IYYuSUX
-	 MphyS51iBk+7QCQSnwHLWtQqJgQe5iCsdgQ/E37p1IvSCrt4puhToAfVMkbklu+Hjb
-	 +UhbMlNlWXHgLEm34PGuVRxVKePu6G9S578iFHYy4qPJ+hTePXv8GzDqRaEQv7EN9D
-	 Kc18+ytt6NB+ZmAY7OCZbJ9oTjvcOTpgIhFSw6A50bXkqCmgPb71Hpu/Me/qsNQ7S6
-	 E5I74NzxuTkhw==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Tue, 17 Sep 2024 09:02:53 -0700
-Subject: [PATCH v3] x86/resctrl: Annotate get_mem_config() functions as
- __init
+	s=arc-20240116; t=1726589042; c=relaxed/simple;
+	bh=0PuAepZP1sMeQLDW26baLJXMCFGkoiK4j9E2aYYgQd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnUQ6dA9CIs5MnxI8cY4oMZJC2VGYHKB/HVX3LqnKyaZ6ori1K4Ck1S1Eb4e1w8g3EsgZBdoKvQxaL20JEZb3MHna/S/JU5TREgwlGJ40YbEiNiJMnAVfmEPgG1qggLZ04YOhzL4C8GqYpV0UAfsAQNWbwSDjkZGJ5hr15sFdMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=PrtR+7V3; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374c5bab490so4595932f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:04:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1726589039; x=1727193839; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LUR6P1shZ3CKhHBcBU/pF/r4AHgnylMjyz2ZEJJwzZ8=;
+        b=PrtR+7V36+bdtIYbt8jGPfg4Fq8iv+OgbBEi38aTn4D6RkH8DfhftzDB2cEtbAE4ax
+         +k/jjCPCysCZPACbPQfJBy/p6p4u6rvCvei6iQ3EVOPEvXyzVVaVz71FEWm3sCScFnRq
+         rrMzAydd9aMzjGYlV2SCdhl1yzLnq4mMpnbBXzQC2E0nSq390cWSzGaw/Pup4STv8id+
+         +bwAVT7NVtcm/vckPd8eDZI6CJDtErwEpleVN0wcLp3BTPKYRT09KntmcI53BepXUSLX
+         5YXwB3WDlcOefY/LxhzP292n8RHzX+cYfj/GNqcuuUOY9C62/q6yrSLbVSU+fcBeI6zU
+         la2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726589039; x=1727193839;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LUR6P1shZ3CKhHBcBU/pF/r4AHgnylMjyz2ZEJJwzZ8=;
+        b=uKj24uatXvC+VBRRQUlAF63bSAE9BhqoPJZ6P1KqC1fP/yQnRTo/KJSE3VBY91wj4/
+         JVAMISn+MxWEJYkMvtQApnzZvKkFA2en70zX0gY09uWQ4ClVvNamdREiWAlx7juEZNRU
+         RvIfFfz8UGrKykanarWMZQLEZPKzPxtKWWVG7MDHXWGxf1CV+JSOK6Jo9e5ZXE8EUmik
+         dLZVpwTergs/0+ZY5aQY3L/x09VbjNBrLr2bVZcpMWeI0hyYFIU737eViVdvwg3zCKw3
+         gQl/ygx7zg0ikQurqZaTC2CNTmPvx/UhqxQDDLXEjMO9kI2Zb8SZArQ8yQy8+iPPHZ9J
+         y1YA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZm9vS0dKAgUOnyBN+JTCkMyaV9fszwAaybF4FVzKzGbWwLy1Sr/uHUHvv5cNLAf9ZJWEW3ue56Hbninw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXLp1rr29LaEPq8ayEr0rhSrt42ZtmdDJiYxHGRkEbaOTt1pBw
+	rTiIK9crrJGIeqWXFeiT8LTkgqqDXYSlM0HMLFIBTZuSHa/Ep+gV6W5zh6UNVwA=
+X-Google-Smtp-Source: AGHT+IELMxfdNDwf5iSZU7vWhaPPmOrDY6BB7npKjG6qP2MIc5qwafIMfPL8kaxPB51/BUhX9+hYJA==
+X-Received: by 2002:a5d:4d0e:0:b0:374:cc89:174b with SMTP id ffacd0b85a97d-378a89e6471mr15397653f8f.4.1726589038490;
+        Tue, 17 Sep 2024 09:03:58 -0700 (PDT)
+Received: from GHGHG14 ([2a09:bac5:50ca:432::6b:83])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da22e733bsm106395475e9.22.2024.09.17.09.03.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 09:03:58 -0700 (PDT)
+Date: Tue, 17 Sep 2024 17:03:54 +0100
+From: Tiago Lam <tiagolam@cloudflare.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Jakub Sitnicki <jakub@cloudflare.com>, kernel-team@cloudflare.com
+Subject: Re: [RFC PATCH 2/3] ipv6: Run a reverse sk_lookup on sendmsg.
+Message-ID: <ZumoapFx+iLeCFZ0@GHGHG14>
+References: <20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com>
+ <20240913-reverse-sk-lookup-v1-2-e721ea003d4c@cloudflare.com>
+ <CANn89iLE8zgX2U5+3YmBoPgsDAV8xGOcfZcd7Pzd_4MSFs64BA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240917-x86-restctrl-get_mem_config_intel-init-v3-1-10d521256284@kernel.org>
-X-B4-Tracking: v=1; b=H4sIACyo6WYC/5WPyw6CMBQFf8V0bU1f1OrK/zCGFLzAjVBM2zQYw
- r9b2Bh3upyzmMmZSQCPEMh5NxMPCQOOLoPc70jdWdcCxXtmIphQzAhBJ6OphxDr6HvaQiwHGMp
- 6dA22JboIPUWHkUrbMGELLlllSZY9PTQ4baHrLXOHIY7+tXUTX9e/E4lTTk3FrDbWHCW3lwd4B
- /1h9C1ZG0l8vCcuf/aK7K0aVWlV5BNKf3mXZXkDa3ybMzUBAAA=
-X-Change-ID: 20240822-x86-restctrl-get_mem_config_intel-init-3af02a5130ba
-To: Fenghua Yu <fenghua.yu@intel.com>, 
- Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
- patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2944; i=nathan@kernel.org;
- h=from:subject:message-id; bh=ut7+hKu9XXGBX1hORm85Odfx/e7qFN4ndLnDPCa+X3I=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDGkvV5iEL/jct1WmlslIdFNntfkU+Qufn16e0lWzjI81R
- azd2epqRykLgxgXg6yYIkv1Y9XjhoZzzjLeODUJZg4rE8gQBi5OAbjJDxkZNsR9j3tqxOrwktm6
- 5DKb8GSpK98OfnZIu3GOT+15nsF+NkaGX4qvpletEHxaN93heuZd5QkTohLvKjkv4chZX3yH8Xw
- vPwA=
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iLE8zgX2U5+3YmBoPgsDAV8xGOcfZcd7Pzd_4MSFs64BA@mail.gmail.com>
 
-After a recent LLVM change [1] that deduces __cold on functions that
-only call cold code (such as __init functions), there is a section
-mismatch warning from __get_mem_config_intel(), which got moved to
-.text.unlikely. as a result of that optimization:
+On Sat, Sep 14, 2024 at 01:40:25PM +0200, Eric Dumazet wrote:
+> On Fri, Sep 13, 2024 at 11:39 AM Tiago Lam <tiagolam@cloudflare.com> wrote:
+> >
+> > This follows the same rationale provided for the ipv4 counterpart, where
+> > it now runs a reverse socket lookup when source addresses and/or ports
+> > are changed, on sendmsg, to check whether egress traffic should be
+> > allowed to go through or not.
+> >
+> > As with ipv4, the ipv6 sendmsg path is also extended here to support the
+> > IPV6_ORIGDSTADDR ancilliary message to be able to specify a source
+> > address/port.
+> >
+> > Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
+> > Signed-off-by: Tiago Lam <tiagolam@cloudflare.com>
+> > ---
+> >  net/ipv6/datagram.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  net/ipv6/udp.c      |  8 ++++--
+> >  2 files changed, 82 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/net/ipv6/datagram.c b/net/ipv6/datagram.c
+> > index fff78496803d..4214dda1c320 100644
+> > --- a/net/ipv6/datagram.c
+> > +++ b/net/ipv6/datagram.c
+> > @@ -756,6 +756,27 @@ void ip6_datagram_recv_ctl(struct sock *sk, struct msghdr *msg,
+> >  }
+> >  EXPORT_SYMBOL_GPL(ip6_datagram_recv_ctl);
+> >
+> > +static inline bool reverse_sk_lookup(struct flowi6 *fl6, struct sock *sk,
+> > +                                    struct in6_addr *saddr, __be16 sport)
+> > +{
+> > +       if (static_branch_unlikely(&bpf_sk_lookup_enabled) &&
+> > +           (saddr && sport) &&
+> > +           (ipv6_addr_cmp(&sk->sk_v6_rcv_saddr, saddr) || inet_sk(sk)->inet_sport != sport)) {
+> > +               struct sock *sk_egress;
+> > +
+> > +               bpf_sk_lookup_run_v6(sock_net(sk), IPPROTO_UDP, &fl6->daddr, fl6->fl6_dport,
+> > +                                    saddr, ntohs(sport), 0, &sk_egress);
+> > +               if (!IS_ERR_OR_NULL(sk_egress) &&
+> > +                   atomic64_read(&sk_egress->sk_cookie) == atomic64_read(&sk->sk_cookie))
+> 
+> I do not understand this.
+> 
+> 1) sk_cookie is not always initialized. It is done on demand, when/if
+> __sock_gen_cookie() was called.
+> 
+> 2) if sk1 and sk2 share the same sk_cookie, then sk1 == sk2 ???
+> 
+> So why not simply testing sk_egress == sk ?
+> 
 
-  WARNING: modpost: vmlinux: section mismatch in reference: __get_mem_config_intel+0x77 (section: .text.unlikely.) -> thread_throttle_mode_init (section: .init.text)
-
-Mark __get_mem_config_intel() as __init as well since it is only called
-from __init code, which clears up the warning.
-
-While __rdt_get_mem_config_amd() does not exhibit a warning because it
-does not call any __init code, it is a similar function that is only
-called from __init code like __get_mem_config_intel(), so mark it __init
-as well to keep the code symmetrical.
-
-Link: https://github.com/llvm/llvm-project/commit/6b11573b8c5e3d36beee099dbe7347c2a007bf53 [1]
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
-Changes in v3:
-- Adjust subject to add () before get_mem_config to highlight it as part
-  of a function (Reinette).
-- Carry forward Reinette's Reviewed-by.
-- Link to v2: https://lore.kernel.org/r/20240913-x86-restctrl-get_mem_config_intel-init-v2-1-bf4b645f0246@kernel.org
-
-Changes in v2:
-- Move position of __init within definition of __get_mem_config_intel()
-  to better match coding style guidelines (Reinette).
-- Apply __init to __rdt_get_mem_config_amd(), as it has the same issue
-  by inspection (Reinette). Adjust commit message to reflect this
-  change.
-- Link to v1: https://lore.kernel.org/r/20240822-x86-restctrl-get_mem_config_intel-init-v1-1-8b0a68a8731a@kernel.org
----
- arch/x86/kernel/cpu/resctrl/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 1930fce9dfe96d5c323cb9000fb06149916a5a3c..59961618a02374a5b1639baa7034d05867884640 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -199,7 +199,7 @@ static inline bool rdt_get_mb_table(struct rdt_resource *r)
- 	return false;
- }
- 
--static bool __get_mem_config_intel(struct rdt_resource *r)
-+static __init bool __get_mem_config_intel(struct rdt_resource *r)
- {
- 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
- 	union cpuid_0x10_3_eax eax;
-@@ -233,7 +233,7 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
- 	return true;
- }
- 
--static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
-+static __init bool __rdt_get_mem_config_amd(struct rdt_resource *r)
- {
- 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
- 	u32 eax, ebx, ecx, edx, subleaf;
-
----
-base-commit: 7424fc6b86c8980a87169e005f5cd4438d18efe6
-change-id: 20240822-x86-restctrl-get_mem_config_intel-init-3af02a5130ba
-
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
-
+Oh, yes, you're right. I'll include this in my next revision, thanks.
 
