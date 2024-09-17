@@ -1,207 +1,159 @@
-Return-Path: <linux-kernel+bounces-331580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8655197AE82
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:10:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2BD97AED0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B832E1C236D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD03D1F238C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548C9161319;
-	Tue, 17 Sep 2024 10:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83533165EE3;
+	Tue, 17 Sep 2024 10:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w5+wZPXv"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ei0v93IU"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0573913C836
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BB920323
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726567802; cv=none; b=kmTbPd55hrMKx02m695pyBFQc+tKNBtPrcE9ftt0Y1JJfRF8OWrvVl+DyWgc/nT7l9W1AYSMEhmCFPq9GopRpCLRUg7FVOaBosqTR0l8oPc+iPePGuPn4x9z0DMxmh0urBFwLSmalegaVhxbkok5VYIwtUhcpJsjKf1Zrhq1elY=
+	t=1726569211; cv=none; b=CGR07oCPnBGmWnTJ+a4xBDgnxy5MjmbcqJi5n2carUkZz7E2wl9IY5KAqLw2ajTHvA66OT4jgceYAZKUvy0eiYmL64sqSn9ME2THhyXN+81i5lYbVuNBpIw4p45pPoYNOlS2gQ5mFg+a4Qn8bVIHy/rRRrQ9VJztdiYHK2T1+5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726567802; c=relaxed/simple;
-	bh=mci6yPUx+wsul89Nqm1QrvcXenOqtKT5eHzKYgTmGJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k5iYHbmehcT8UvWinKtMYhxazO9VjmH53JfGBz5xPwtvxkGlkz6qiMD6lpMbiqnDXRMMcwiwr6Sb5MU21qG418O0sXrsmAbEwBdMwzyQWLS5YIralHqu7f/ezot3XnwJ8q6q5DA9cbB5wkrsrKdn0HeHEU8je0tb3z1L9KT6Mrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w5+wZPXv; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-49bdc6e2e3dso1809875137.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:10:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726567800; x=1727172600; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QEzwSJGE/IhfM3ZCNhdv0v538ihtzVo7TmOfB7fiKIM=;
-        b=w5+wZPXvQCEDuUHFEKZyPvA+M/7BQXJptBTIOhr2wvOoEwqXEf0AnuOh3C00WPinF6
-         b7I7M+kVOXEptkI+aVG77ERU13/RjFfYnDBxZ+fFgTXBMXamKIw33EseMG2TUhSGZvr7
-         zRQ0t3mR9GiyvkuLNXJRVnLu0qad0AFSmHudAXPjmpQ4o2tzBrubkLAQABICuTpKY4km
-         kecPoMP9Dd++pkeDVP5dJUTNNFSVfMyExrIM+iRx37VPCX1jJ1Ju/sejOE74nMMm4PUP
-         AcnZhX2owLruJvRN9D77RjVNnkqXmH+SHveDRtURYj0+qEafKBSU9k5kdDIPm1mD9ZfI
-         ZtSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726567800; x=1727172600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QEzwSJGE/IhfM3ZCNhdv0v538ihtzVo7TmOfB7fiKIM=;
-        b=FsQuxlctK+6YfFZO39HhWGxAC2s8i/tQd7x2bqtQRnLanZNo+ObqAdsgK+6YuxmJmx
-         T+mJNWcFVghYSxD7GiEwztlsULAige4ftUFK9ZaSF/udUMcwix7SWuq/C2oZJsOQammQ
-         LBvti0g/15I46kXVbz2odj6T8ciA5RCjEWmDUXNlMp4sNzmdHIwf1JGOdw785ixgZtG9
-         y1W8MeG1iAZpUyO+uULZM+FkjYb2zXd4QOUUnZDhYB8+CEAcf3/I6d0KTuSL9LwK7aHi
-         csUy3vVXcyCl74hB+ciTqVJggjbbK0zZY3+DoeZ5UZc0NZHK+PVN4nZ+cIcJ1ZcOQKNG
-         3R5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXZm2ExaWj5GAr7C3Vsj6WdoFmSiwTeodb3+N2cXpBni8oOxzxoSPRXvvzg6QWnzf3/iQMjnI7lxgNtwAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd3hadoFUB8LhPq0h0LrSQGF9Mzj/jNxebzpTnhkmXfNb5pPcR
-	crkBwk8hhAsMs1U1wokofZlXDb5+1KalvQI8Eb96c3BDcMhiz9DTeQ3v2mtLDKjdvJbhSNWcQqe
-	8rxmsoa6CWNjp6LvpedRenmk6LpzmpmR814Gq
-X-Google-Smtp-Source: AGHT+IF/+AY8Y44nMN9VUOTL+sG+4U2ePtDKxC1isK7HLOyM/JyvWzLOHy7MuIKAIhfqlNkhK/4NsSG649ctJq8kdEM=
-X-Received: by 2002:a05:6102:c8a:b0:49b:fe4d:20e4 with SMTP id
- ada2fe7eead31-49d4157d270mr12189094137.28.1726567799603; Tue, 17 Sep 2024
- 03:09:59 -0700 (PDT)
+	s=arc-20240116; t=1726569211; c=relaxed/simple;
+	bh=GXHmv3xE4dKtJvrMtkT3tLwCpZBr3MGDCIZtW82P684=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=chSc6UAdr3fif4FFF/8yklvYNQjluAay3aPwxDMKBBFh1Oxd++em/TD+4PcGWwejyWfUfxIPDqTsRHvLG4OepTqjUtqsL9zrk4keyt/u1dCHpmSQSZzVnUOKtJE3GGinlOKe4bLPiHY3Z7i1Q3sCS++4XJyNxJy+pCGBbwJqUV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ei0v93IU; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240917103328epoutp040f4f576d8204c6d9afa083cb62014238~2AYwGYNYd3232232322epoutp04b
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:33:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240917103328epoutp040f4f576d8204c6d9afa083cb62014238~2AYwGYNYd3232232322epoutp04b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726569208;
+	bh=t9pNkSuC4u/Jt0z8TVovLGh2ODPwcLGaLQu4B08KWzE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Ei0v93IUn/tRPoe0W2noye+zu8qmM8qUggffyMjuo56MM80t0hqVf6n9DjH39zyWO
+	 XMIpZYfLT1rhvymupvGqc2YxWl4oOf9EU3n6wLsa6/NFGiKFfw1ZizQg2dJuC5iTgg
+	 tiogIWQ94hsLjrPX1C3aw5Cl0e9cDyGGrePMMXro=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240917103327epcas5p4ae1828ec38b03d1bf870260a7ee611eb~2AYv04sba0820308203epcas5p4Z;
+	Tue, 17 Sep 2024 10:33:27 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4X7J5y0gCBz4x9Pp; Tue, 17 Sep
+	2024 10:33:26 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7D.BF.09743.5FA59E66; Tue, 17 Sep 2024 19:33:26 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300~2AFKoBRft1994019940epcas5p3m;
+	Tue, 17 Sep 2024 10:11:02 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240917101102epsmtrp20e1086b90a1682a6be30a020922f129e~2AFKnD9Ef1153611536epsmtrp2B;
+	Tue, 17 Sep 2024 10:11:02 +0000 (GMT)
+X-AuditID: b6c32a4a-3b1fa7000000260f-3d-66e95af57223
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7A.90.08964.5B559E66; Tue, 17 Sep 2024 19:11:01 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240917101059epsmtip27876f395701c6dfecd4b26eab13e47c5~2AFIk5IHT1640416404epsmtip2D;
+	Tue, 17 Sep 2024 10:10:59 +0000 (GMT)
+From: Inbaraj E <inbaraj.e@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com, Inbaraj E
+	<inbaraj.e@samsung.com>
+Subject: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+Date: Tue, 17 Sep 2024 15:40:16 +0530
+Message-Id: <20240917101016.23238-1-inbaraj.e@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7bCmuu63qJdpBhfuMVo8mLeNzeL6l+es
+	FjcP7GSyuPtnEpvF+fMb2C0+9txjtbi8aw6bxYzz+5gsLp5ytVi09Qu7xeE37awW/65tZHHg
+	8Xh/o5XdY9OqTjaPvi2rGD0+b5ILYInKtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0
+	tDBXUshLzE21VXLxCdB1y8wBukxJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BS
+	oFecmFtcmpeul5daYmVoYGBkClSYkJ3x7e8O9oILXBVL+p+wNDB2cXYxcnJICJhIPO+azNrF
+	yMUhJLCbUWLOjgtMEM4nRoktr7+wQTjfGCWWLfwB5HCAtbz+nAYR38sosbv7DwuE08ok8X7W
+	WiaQuWwC6hIbur+DdYsIvGCUeLGsgxUkwSwQLnFu+kUwW1jAQeJDyyNmEJtFQFXi/4FrYM28
+	AlYS708sZYY4UF5i9YYDzCCDJATOsUu8m9jMCpFwkeiY/RmqSFji1fEt7BC2lMTnd3vZIGwf
+	if1zfjFC2BkSx7Yvh+q1lzhwZQ4LyDvMApoS63fpQ4RlJaaeWscEcSefRO/vJ0wQcV6JHfNg
+	bGWJmUfuQ42XlNh5eScLhO0h0b5tJ9g5QgKxEpN2TWCZwCg7C2HDAkbGVYySqQXFuempxaYF
+	Rnmp5fCYSs7P3cQITnFaXjsYHz74oHeIkYmD8RCjBAezkgiv7e+naUK8KYmVValF+fFFpTmp
+	xYcYTYFhNpFZSjQ5H5hk80riDU0sDUzMzMxMLI3NDJXEeV+3zk0REkhPLEnNTk0tSC2C6WPi
+	4JRqYBJ7ssnz+/xbKrMmMew0e8+u41a78VWdjuySjBfBJ86nF5Vb6homlU3yE1Nd9upCt+vG
+	2xqC2+VbCj0i/VvPGTmVzC977PGy6a/zSmX9yVUGvhbVBQzrllY4OHx9tMuVf+Hjc2LnN8ZZ
+	Ckd3yy741Lzpha7T7lffRds1mbjXnZl/30Uud2om89S9zdp3f5txiv3bkOdkt9fL8OnVgwkJ
+	Gq88hAU2dK86om3+dKK4YYH/igz5Hff3703iZP/396cjc2mEM3fIhvjZNwxedLmyxmsvvKkb
+	y/FVYNWlpPUbap48zPTRyzVd8eX4z30Pc66XTleadDKE7XSY/Grbnc1zZ17iDdq4p+HwqtPv
+	j/F4fFViKc5INNRiLipOBAD9Vdgx+gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprELMWRmVeSWpSXmKPExsWy7bCSvO7W0JdpBve+aFk8mLeNzeL6l+es
+	FjcP7GSyuPtnEpvF+fMb2C0+9txjtbi8aw6bxYzz+5gsLp5ytVi09Qu7xeE37awW/65tZHHg
+	8Xh/o5XdY9OqTjaPvi2rGD0+b5ILYInisklJzcksSy3St0vgyvj2dwd7wQWuiiX9T1gaGLs4
+	uxg5OCQETCRef07rYuTiEBLYzSjx+0grYxcjJ1BcUmL27+nsELawxMp/z9khipqZJO59Ws8K
+	kmATUJfY0P2dDSQhIvCJUeLb1z9gHcwCkRI/2reC2cICDhIfWh4xg9gsAqoS/w9cYwKxeQWs
+	JN6fWMoMsUFeYvWGA8wTGHkWMDKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIDjYt
+	zR2M21d90DvEyMTBeIhRgoNZSYTX9vfTNCHelMTKqtSi/Pii0pzU4kOM0hwsSuK84i96U4QE
+	0hNLUrNTUwtSi2CyTBycUg1MzOu73pi+v/G8epoCz8RtxdxfH5xTsVFz2x39Zs9W9YWlz3u5
+	edOWXpy144ZbUcdi1YnLTmuHLXmwaKuSu0lI6dFv5xndrl6o3CNgzyL7s27WqW/BsYa9xnqf
+	VbINpy3/8bKnPHNJWsIHhrezFRj9+iWZZKPjwxId+9/tr+hMPC1ktsxAc1m369Tfz65b2EzM
+	lX/A9+HWHbVNl+tUnlfFH5x7O29v2y8lli22B51/ff9c4D3X9r5sRlaA1fmoKoG+HS3iPZ6S
+	gt9TDvGV9rfbcatcPX169vevG5p/87BN+zA9OXNVqtTbPvv0spZnPwSfO5/17Y688ez8vEvX
+	+g3LPWNCjuhFez5hEm3IurlHiaU4I9FQi7moOBEAFKqb2aUCAAA=
+X-CMS-MailID: 20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300
+References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <66e57e46.050a0220.115905.0002.GAE@google.com> <rVaWgPULej8K7HqMPNIu8kVNyXNjjCiTB-QBtItLFBmk0alH6fV2tk4joVPk97Evnuv4ZRDd8HB5uDCkiFG6u81xKdzDj-KrtIMJSlF6Kt8=@proton.me>
- <CANp29Y5LiryeHFtHtx2XPZkPitOW2NhQfwDbUGw6XxDQ0q-vRw@mail.gmail.com>
-In-Reply-To: <CANp29Y5LiryeHFtHtx2XPZkPitOW2NhQfwDbUGw6XxDQ0q-vRw@mail.gmail.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Tue, 17 Sep 2024 12:09:19 +0200
-Message-ID: <CAG_fn=XSQvdeFXCx2rsgdoUCyDV8t4LJBuRA8nKHKdCHrcWBYw@mail.gmail.com>
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_bkey_cmp_packed_inlined
-To: Aleksandr Nogikh <nogikh@google.com>
-Cc: Piotr Zalewski <pZ010001011111@proton.me>, 
-	syzbot <syzbot+6f655a60d3244d0c6718@syzkaller.appspotmail.com>, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 17, 2024 at 8:27=E2=80=AFAM Aleksandr Nogikh <nogikh@google.com=
-> wrote:
->
-> +Alexander Potapenko
->
->
-> On Tue, Sep 17, 2024 at 8:26=E2=80=AFAM 'Piotr Zalewski' via syzkaller-bu=
-gs
-> <syzkaller-bugs@googlegroups.com> wrote:
-> >
-> > Hello,
-> >
-> > On Saturday, September 14th, 2024 at 2:15 PM, syzbot <syzbot+6f655a60d3=
-244d0c6718@syzkaller.appspotmail.com> wrote:
-> >
-> > > Hello,
-> > >
-> > > syzbot has tested the proposed patch but the reproducer is still trig=
-gering an issue:
-> > > kernel panic: corrupted stack end in x64_sys_call
-> > >
-> > > bucket 0:127 gen 0 has wrong data_type: got free, should be sb, fixin=
-g
-> > > bucket 0:127 gen 0 data type sb has wrong dirty_sectors: got 0, shoul=
-d be 256, fixing
-> > > done
-> > > bcachefs (loop0): going read-write
-> > > bcachefs (loop0): journal_replay...
-> > > Kernel panic - not syncing: corrupted stack end detected inside sched=
-uler
-> > > CPU: 0 UID: 0 PID: 5945 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkall=
-er-g57719771a244-dirty #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BI=
-OS Google 08/06/2024
-> > > Call Trace:
-> > > <TASK>
-> > >
-> > > __dump_stack lib/dump_stack.c:93 [inline]
-> > > dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:119
-> > > dump_stack+0x1e/0x30 lib/dump_stack.c:128
-> > > panic+0x4e2/0xcd0 kernel/panic.c:354
-> > > schedule_debug kernel/sched/core.c:5745 [inline]
-> >
-> > The place where kernel task's stack magic number gets
-> > smashed was found. Backtrace was presented below. Seems
-> > like it is KMSAN's fault. Is this considered a bug?
+PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the CMU_CAM_CSI
+block. When we gate ACLK or PCLK, the clock framework will subsequently
+disables the parent clocks(PLL_CAM_CSI). Disabling PLL_CAM_CSI is causing
+sytem level halt.
 
-Interesting, 18446744071600444244 is 0xffffffff82499354, which is the
-get_shadow_origin_ptr() return address.
-So we're indeed seeing a stack overflow in the instrumentation code.
+It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI stop
+streaming through pm_runtime_put system is getting halted. So marking
+PLL_CAM_CSI as critical to prevent disabling.
 
-Looking at vmlinux-b7718454 from
-https://storage.googleapis.com/syzbot-assets/094db88ff1c2/vmlinux-b7718454.=
-xz
-(I am assuming it was used to test this patch), I see that a number
-functions from the report have quite big stack frames:
+Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+---
+ drivers/clk/samsung/clk-fsd.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-symbol_string
-ffffffff8fc9b801: 48 81 ec 00 03 00 00 sub    $0x300,%rsp
-bch2_path_get
-ffffffff853a7ad1: 48 81 ec 60 01 00 00 sub    $0x160,%rsp
-bch2_btree_path_traverse_one
-ffffffff85399741: 48 81 ec 70 02 00 00 sub    $0x270,%rsp
-bch2_bucket_alloc_set_trans
-ffffffff852bf441: 48 81 ec 98 03 00 00 sub    $0x398,%rsp
-__open_bucket_add_buckets
-ffffffff852d128d: 48 81 ec 70 02 00 00 sub    $0x270,%rsp
-bch2_alloc_sectors_start_trans
-ffffffff852c25d1: 48 81 ec b0 01 00 00 sub    $0x1b0,%rsp
-bch2_btree_update_start
-ffffffff85456c1d: 48 81 ec 20 01 00 00 sub    $0x120,%rsp
-__bch2_trans_commit
-ffffffff85424541: 48 81 ec a0 01 00 00 sub    $0x1a0,%rsp
-btree_write_buffer_flush_seq
-ffffffff8548dd6d: 48 81 ec 10 02 00 00 sub    $0x210,%rsp
-journal_flush_pins
-ffffffff856f6bad: 48 81 ec 38 01 00 00 sub    $0x138,%rsp
-bch2_fs_recovery
-ffffffff8575cff1: 48 81 ec 78 01 00 00 sub    $0x178,%rsp
-bch2_fs_get_tree
-ffffffff855ac5c1: 48 81 ec e8 01 00 00 sub    $0x1e8,%rsp
+diff --git a/drivers/clk/samsung/clk-fsd.c b/drivers/clk/samsung/clk-fsd.c
+index 6f984cfcd33c..b1764aab9429 100644
+--- a/drivers/clk/samsung/clk-fsd.c
++++ b/drivers/clk/samsung/clk-fsd.c
+@@ -1637,8 +1637,9 @@ static const struct samsung_pll_rate_table pll_cam_csi_rate_table[] __initconst
+ };
+ 
+ static const struct samsung_pll_clock cam_csi_pll_clks[] __initconst = {
+-	PLL(pll_142xx, 0, "fout_pll_cam_csi", "fin_pll",
+-	    PLL_LOCKTIME_PLL_CAM_CSI, PLL_CON0_PLL_CAM_CSI, pll_cam_csi_rate_table),
++	__PLL(pll_142xx, 0, "fout_pll_cam_csi", "fin_pll",
++		CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL, PLL_LOCKTIME_PLL_CAM_CSI,
++		PLL_CON0_PLL_CAM_CSI, pll_cam_csi_rate_table),
+ };
+ 
+ PNAME(mout_cam_csi_pll_p) = { "fin_pll", "fout_pll_cam_csi" };
+-- 
+2.17.1
 
-KASAN creates even bigger frames for these functions, but that's
-because of redzones added around local variables.
-For KASAN we increase the default kernel stack sizes to account for
-that, but we do not for KMSAN, because its effect on stack frame sizes
-was usually moderate.
-But looking at the same stack sizes for a binary with CONFIG_KMSAN=3Dn
-now, I'm seeing much lower values for some of them:
-
-symbol_string
-ffffffff8fd6d6e1: 48 81 ec 10 03 00 00 sub    $0x310,%rsp
-bch2_path_get
-ffffffff853ec4e1: 48 81 ec 68 01 00 00 sub    $0x168,%rsp
-bch2_btree_path_traverse_one
-ffffffff853de5a1: 48 81 ec 58 02 00 00 sub    $0x258,%rsp
-bch2_bucket_alloc_set_trans
-ffffffff853051d1: 48 81 ec b0 03 00 00 sub    $0x3b0,%rsp
-__open_bucket_add_buckets
-ffffffff8531759d: 48 81 ec 68 02 00 00 sub    $0x268,%rsp
-bch2_alloc_sectors_start_trans
-ffffffff85308de1: 48 81 ec b8 01 00 00 sub    $0x1b8,%rsp
-bch2_btree_update_start
-ffffffff8549a63d: 48 81 ec 20 01 00 00 sub    $0x120,%rsp
-__bch2_trans_commit
-ffffffff85468b51: 48 81 ec 80 01 00 00 sub    $0x180,%rsp
-btree_write_buffer_flush_seq
-ffffffff854d17fd: 48 81 ec 10 02 00 00 sub    $0x210,%rsp
-journal_flush_pins
-ffffffff8573c36d: 48 81 ec 30 01 00 00 sub    $0x130,%rsp
-bch2_fs_recovery
-ffffffff857a27d1: 48 81 ec 68 01 00 00 sub    $0x168,%rsp
-bch2_fs_get_tree
-ffffffff855f04d1: 48 81 ec e8 01 00 00 sub    $0x1e8,%rsp
-
-I'll probably need to recalculate the overall stack bloat for KMSAN
-builds and land something along the lines of
-https://github.com/google/kmsan/commit/060de96aa5de0a95b42589920b64e9aa95af=
-2151,
-if needed.
 
