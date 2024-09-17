@@ -1,132 +1,183 @@
-Return-Path: <linux-kernel+bounces-331959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F2C97B372
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:18:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6025A97B37F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE991F23D09
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:18:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A36B2ADC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E5718E05A;
-	Tue, 17 Sep 2024 17:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF0218800E;
+	Tue, 17 Sep 2024 17:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Xg+cFc3B"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GG3mX/0j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDBA181339
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 17:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CA5187FFC;
+	Tue, 17 Sep 2024 17:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726593423; cv=none; b=URJO4WL0pisJBXLYYQTbpCV7tGDEXY5hUkzMlndedoBncE+6gRElLnP36eKO5cWbgDMSWWxOA+AO9XQQIKhFQey+RPgRikmC6qvhNceqxatRdboO4+0W1Z3EFSAnwnT6URfYv4RbHHGZhplrWDpZf+DxqN7whj95yHutS4Pfqaw=
+	t=1726593434; cv=none; b=M4Io/3Ez8FBaFZ8sqatidKBv5wvQnXPgv0p7BHdEaQT8kCjvgunR9eRifLcqXPUWUM6aaBLS5OCJhl8N3/XpXCOHroe73+dVovsNmtGH0lHuvlfbfPjvjMitS/rdjV0+f4ziJUCHttoJ6uFOFlvbH7zHuj+N6WiY2kTD68mtmJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726593423; c=relaxed/simple;
-	bh=v9lP3LDc0A27jTbdyuIFtQjxcl9DZISNvo/u3EtcGIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ork30OgJJh7oFFlNZxne4ByNc7nVXzYUWQOGQfU501Qd4rp8UAbEWoF28aSHq/GuifA9MPdwhLNf33C68nIjg+tehsScNC6nmA+Dj42orONyAZ5mf4Nfbew7tmaA471xN8cJafETCjGz4xra55oG7aO8n0dta4UWlCqqBZj0fG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Xg+cFc3B; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48H9pkd7022492;
-	Tue, 17 Sep 2024 17:16:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=dnGqzXOeX4T8Q
-	hvF6PDp/id4OxgamrxvQO99vsDWvIc=; b=Xg+cFc3Bhy3bq3PNYOapIfw4KW8eZ
-	ow8KN07jmcs7X6y5/Tk8JbtnqDmWpqcOEqHqKkUXN50/9+pHeEtdZ13L8/11MGMh
-	qJcj03+r4ZcM3kvk/4G+asLcVnFFf3mO/OWh1BOXnO8Fiwgv2pAiKJHBjZemqu2Z
-	GMrIzsa2Kk2CJh3KHrF1lNJQ9x+77w+UaykOXC42heyvwOlz87BSZGNGhvAxYFmk
-	qegQbGeNw89SRi2N2oGuMwttGztOA1QHevRDJRTPpwzizPn/gi9hl8Nv7GRJB+qz
-	evP75WFhsMQNzwK7C8XYU4OBcGQI3UM43+8xQ20IM3kJW/DleShp4zo9g==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3ud9hgn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Sep 2024 17:16:53 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48HGVuB3025033;
-	Tue, 17 Sep 2024 17:16:52 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41nq1mx7ud-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Sep 2024 17:16:52 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48HHGpeA23658906
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 17 Sep 2024 17:16:51 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3EDDF58057;
-	Tue, 17 Sep 2024 17:16:51 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 09B0A58059;
-	Tue, 17 Sep 2024 17:16:51 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.93.228])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 17 Sep 2024 17:16:50 +0000 (GMT)
-From: Eddie James <eajames@linux.ibm.com>
-To: linux-fsi@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, alistair@popple.id.au, joel@jms.id.au,
-        jk@ozlabs.org, andrew@codeconstruct.com.au, eajames@linux.ibm.com,
-        ninad@linux.ibm.com
-Subject: [PATCH 15/15] fsi: i2cr: Reduce status checks for read operations
-Date: Tue, 17 Sep 2024 12:16:47 -0500
-Message-ID: <20240917171647.1403910-16-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240917171647.1403910-1-eajames@linux.ibm.com>
-References: <20240917171647.1403910-1-eajames@linux.ibm.com>
+	s=arc-20240116; t=1726593434; c=relaxed/simple;
+	bh=fmDfbRwe9CfPOnof2be3cKpz85D/y4WnwkurNAiLbwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MaOa4K8cRuqIyX+oeK+RPb+ytTjwU5uzqQ4chBgC1mu4N631apzhdIrUm9rLmPkLXLRi6ZqaikKmEdTt356U/9VkTscUr5KtGF0Ipv7H/Kzl7kmh1EUoM2R8BD4j37PIlGYfK8IZLNco2PrttYYWFwX2VYT/ed0oje555E+P7ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GG3mX/0j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 436E1C4CEC5;
+	Tue, 17 Sep 2024 17:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726593433;
+	bh=fmDfbRwe9CfPOnof2be3cKpz85D/y4WnwkurNAiLbwE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GG3mX/0jkn+pYcBuZvD35KENr2LMZNwW6DjalirywwLWNWOm/6dmR0O60nEAhyob2
+	 IZQO6eZWJa9zerY+EX0jQnlBUcz0tKYU1iBCC4cfT4GcC4INugvtSh9YukbkByOXjM
+	 elcgLZh3F71AJptTtzGY82cOkckjoQLEduDS3SGHuZTxCHcqb1zb8Kmlxn8jc2KEAo
+	 G+MCGDVaSrtiNK2xAQM/v8Iibcn+gFUEVlaYfjAC6XRrvt+uXPvHZOdCEivmiq66za
+	 0oznR3Gp6zb/uIJ95DRjRu6j+JxfUD1V4oYk18E4SiZ+xsrejlu3jrAB+0//BvSDlJ
+	 EkFDDs/wWv4xA==
+Message-ID: <e0db2f62-b2fd-4b61-932c-cc2caf5dd647@kernel.org>
+Date: Tue, 17 Sep 2024 19:17:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: eguy6qpgCxaVN2TdNyw2OM6_Z2OcTuhe
-X-Proofpoint-ORIG-GUID: eguy6qpgCxaVN2TdNyw2OM6_Z2OcTuhe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-17_08,2024-09-16_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=896
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409170122
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
+To: Erez <erezgeva2@gmail.com>
+Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Esben Haabendal <esben@geanix.com>
+References: <20240917094956.437078-1-erezgeva@nwtime.org>
+ <20240917094956.437078-4-erezgeva@nwtime.org>
+ <9c273945-5a70-408e-a9da-a0797aa6d935@kernel.org>
+ <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
+ <64ef46b1-7908-4b15-866d-9cabe2e5dc9e@kernel.org>
+ <CANeKEMPwgtECfksgz6jXkR+bjVFwCB9DOh1q7t_3WeojReqxbA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CANeKEMPwgtECfksgz6jXkR+bjVFwCB9DOh1q7t_3WeojReqxbA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-As an optimization, only check the status register if the eight
-byte i2c read operation returns 0xffffffffffffffff. This indicates
-that the I2C Responder operation failed and the status register
-will provide the reason. Otherwise, the operation was successful,
-so no status check is necessary.
+On 17/09/2024 19:11, Erez wrote:
+> On Tue, 17 Sept 2024 at 19:00, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 17/09/2024 12:42, Erez wrote:
+>>> On Tue, 17 Sept 2024 at 12:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>
+>>>> On 17/09/2024 11:49, Erez Geva wrote:
+>>>>> From: Erez Geva <ErezGeva2@gmail.com>
+>>>>>
+>>>>> Some flash devices need OTP parameters in device tree.
+>>>>> As we can not deduce the parameters based on JEDEC ID or SFDP.
+>>>>>
+>>>>> Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
+>>>>> ---
+>>>>>  .../bindings/mtd/jedec,spi-nor.yaml           | 37 +++++++++++++++++++
+>>>>>  1 file changed, 37 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>>>> index 6e3afb42926e..d502b7fab2ce 100644
+>>>>> --- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>>>> @@ -90,6 +90,43 @@ properties:
+>>>>>        the SRWD bit while writing the status register. WP# signal hard strapped to GND
+>>>>>        can be a valid use case.
+>>>>>
+>>>>> +  opt_n_regions:
+>>>>
+>>>> No underscores, but hyphens.
+>>>
+>>> I'll fix this.
+>>>
+>>>>
+>>>>> +    type: u32
+>>>>
+>>>> It does not look like you tested the bindings, at least after quick
+>>>> look. Please run `make dt_binding_check` (see
+>>>
+>>> I run "make dt_binding_check" on kernel 6.6.
+>>
+>> Yeah, we are no on kernel 6.6. You can run it also on kernel v4.1 -
+>> still does not matter.
+>>
+>> Don't develop on ancient code because then you ask us to review same
+>> broken stuff we already fixed.
+> 
+> I test with Beaglebone black for testing, it is difficult to run the
+> last vanille version.
+> I did backport the spi-nor driver.
+> As for "make dt_binding_check" on last kernel, it need to upgrade the tools,
+>  and I did not think it could change that much.
+> 
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/fsi/fsi-master-i2cr.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Well, it is possible to build kernel on small embedded board, but that's
+quite cumbersone, slow and inefficient, considering that it's just
+easier to cross compile. But anyway, binding check does not even need
+cross compilation.
 
-diff --git a/drivers/fsi/fsi-master-i2cr.c b/drivers/fsi/fsi-master-i2cr.c
-index 61e55740946b..44dbc7029942 100644
---- a/drivers/fsi/fsi-master-i2cr.c
-+++ b/drivers/fsi/fsi-master-i2cr.c
-@@ -145,9 +145,11 @@ int fsi_master_i2cr_read(struct fsi_master_i2cr *i2cr, u32 addr, u64 *data)
- 	if (ret)
- 		goto unlock;
- 
--	ret = i2cr_check_status(i2cr->client);
--	if (ret)
--		goto unlock;
-+	if (*data == 0xffffffffffffffffull) {
-+		ret = i2cr_check_status(i2cr->client);
-+		if (ret)
-+			goto unlock;
-+	}
- 
- 	trace_i2cr_read(i2cr->client, command, data);
- 
--- 
-2.43.0
+Sorry, the code is obviously wrong, there is no such thing as u32, so
+you did not test it. I provided link which explains how to test it. You
+must do it on latest mainline kernel. Just like you must develop and
+generate patches on latest mainline kernel, because this is where we
+apply the patches. We do not apply them to v6.6.
+
+Best regards,
+Krzysztof
 
 
