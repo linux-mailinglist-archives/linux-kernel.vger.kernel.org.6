@@ -1,119 +1,228 @@
-Return-Path: <linux-kernel+bounces-331870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31E7C97B23B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:49:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E284897B23D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC501F2B325
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:49:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A1FFB29A2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150DC19409E;
-	Tue, 17 Sep 2024 15:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764851925B7;
+	Tue, 17 Sep 2024 15:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="Eh5vqDHy"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W5I0mnN4"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED291192D80
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 15:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27433175D57;
+	Tue, 17 Sep 2024 15:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726587691; cv=none; b=jlu+Kyp2Whq7mLiJvTqlYY8o74g/mNpRDt4DU57YaSRJ/nC36FkFbuTC+3oEwgfzD7ZPqAZJSGkt0KALs5/KblE2LqnG7d2Fif7nrau+Ix5INFIOWEYThIHhFtW3kL/tkqmHVJIsyXRenZj1QoGjGLghFix8aJwyMMtVwSJ4Jj4=
+	t=1726587696; cv=none; b=jxd3UaPla4fuOoPixaJroDYOuSa986/CkUCbDSze4lvzVJG0uNstPWM0ykhhCvV6L31NpCJFI57O8vnJIcb3b6ZZzDWNIyMdFz3e7MPY1dD86j57lMHCbtY9I3QK6+LePNA/nZVGnW34F23dQSxcQBRTCFKrMtM8zJmava3k63o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726587691; c=relaxed/simple;
-	bh=Y/ueD7Er4ksHV0zEFMf0k0PeCDW+b7AGJyD5al1Tm/I=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=UJzORZmMBBYiISOpK0m/H5lT6xjfALhy1q8nBHXhLjrPffaqsGRXk1zcI7PSS22WY/28A2Rx6/8b92LxW2fgI0GCVSor/v7l4SH8e14ervrI8yz4ppbwUKesexSSabpKoGenzJ+UiqaHXQDyjFmnH5zb3U24GJ+YsWMKvt4zL3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=Eh5vqDHy; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2068bee21d8so57679375ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 08:41:06 -0700 (PDT)
+	s=arc-20240116; t=1726587696; c=relaxed/simple;
+	bh=B95BDudSjFAy/R2H+SL/kqDBaib+V3s8HTtOB08FwEQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UPt0FjasRkuFOERg1O/Z/W5AKE0SKZi+MlVHxvu4cZrNeAnIyde+neQArOW0Crnsf8p7Gy3wHZWaqsOeP3oIKu2794C9GpZRP9xMxCIa/BXQDboEPjXzKkeGUXTTXzSa8ryFb1N7j3OHn9WwEQkBKlzjt2mtUhH8hHy1F/QezJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W5I0mnN4; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7db238d07b3so4607714a12.2;
+        Tue, 17 Sep 2024 08:41:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1726587666; x=1727192466; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v6cEhAcJt3HhcTHDpOxIvaAzXbYRd4H4Nq0SQeFTmVU=;
-        b=Eh5vqDHymQt7CkxNq7nMYn6S1sLA9zNkCRacJTJ+PoJ15h3jI0ECI6EJ/fgTcZRx5a
-         GhrsNT12/bvZLamEjCBR6xmMXmC8yKV3O1yesBOfPxKA8qqE66ouSFUPr2ikm8pGBZmw
-         +zyHkrw8Z7Wqcy8Tsoaafm9KHp9YYdNfbGWe5mC3DNy581NEw2bnXvT1vTwggamItdpG
-         /soZOB11jCCED8AO2TcsmL4W3mbz2ocLnA+H55BIRn3v9+4eUGv4yRMNUupdPbbymh9D
-         uEs6xMOHmWwPev1vj0joLSgtDITALi9T5Xg0U/2pmkHjSJX8RUe2v7tgSLtbRwVMDnkb
-         eDDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726587666; x=1727192466;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1726587672; x=1727192472; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v6cEhAcJt3HhcTHDpOxIvaAzXbYRd4H4Nq0SQeFTmVU=;
-        b=nQFrY7zyutva00/+N6EGGI4OiIBVAK8CILUzim5FBD2q7QSfxW0VD4mQqBJVQCwCid
-         mp+L1UugaHy/Xv+TlAPAVaOAOxh8cABKOrGc+b/bbix2/0b4rYh2lIc0BK/1xAXDgMbK
-         NakcpxDOu8essWo7EwgZvmHsjsfuiekxgAYDqtx6k7r02QXDHY1CLEahMeL8wh0WtAGB
-         yhPx25zmA6VEpMBi2z6N2W3B28Vd2d22regXWMzfncKjv0LnGgGxC1jyKoKxSpolyfml
-         94YUCWCjRvXd602hSWQyIPFZmdhVc4xPDa4+C/JX5TusuJyx7NswKA6ZLdnHixytxPzj
-         RkSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrvAnQAGJt2MxFfAX6502Oxdq8KY/zTHJtdoo4uXSBs7aNDhoLXH2g30+CmVFyeBOiPb7JWi/2HBFgzaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd/ZWzqGSf1Lk/NpAmwIgBc0okHGv4GK7um5T+TiSLXN6PEEUj
-	qF42kn6WDEnkdUUOOnjznrnqeeC8KFKfPNPeyht2qTM531QjwkoTCZue8R8hLtQ=
-X-Google-Smtp-Source: AGHT+IH8BbHXUPz/AlzFd5EcNCywWECO/RcDJ1X5X6FPp6Pwu0T7DzZHVs7nzUw1h1hhW4jS6pFF3g==
-X-Received: by 2002:a17:902:f547:b0:205:8407:631d with SMTP id d9443c01a7336-2076e3511c7mr238055635ad.13.1726587666169;
-        Tue, 17 Sep 2024 08:41:06 -0700 (PDT)
-Received: from localhost ([213.208.157.38])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079473634esm51620645ad.262.2024.09.17.08.41.04
+        bh=zyMjeXu3OpqjGRYJSQIFTO8OVuBFAop/R2lwpRCjT10=;
+        b=W5I0mnN4dnZqIjCLakqBDOSp0VOuVv3D+KBbgYNq7GUhEiNt2pB2qJxJrt4dWIkrDt
+         HVRVD1ssc7MH6bjywqMXYCaNvQWqQj6lLU6fm/J/eUpRjmb4x09NxgBHcA8An8QgZZEY
+         FDv8b3DIbECya3A/W5Xyg37/E6TD/STef5nJyh4+Lx2sNilV+m33tX6nw5lV/ER6SzXx
+         kQBYy+DciTXEv/xb1ix5s68LG9s99AXeVkkSejXsC3XhrCNlj2vmGLoLCF6mOO2VA4gn
+         DQ9pRKydj4o3iyuA0XkJohuaw7Jz1F41ve4aBQccmVsB6j0HRaaBz13QAJMFkU8eBKrH
+         Yt3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726587672; x=1727192472;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zyMjeXu3OpqjGRYJSQIFTO8OVuBFAop/R2lwpRCjT10=;
+        b=qYltnpAW3LI/TYauhalvxG9lRAfJh4mvvHuew22lSnUtFl6xlfm6Ks5G0esKxpjHTE
+         WcTITmJXAN8oXeOq6kg6lvAO4okYCaPCSPw+cIMy2xyQdfZZSEsg92KLnES+LHPsRsH4
+         Mrl6l1dmvoOiCWblawh4SSkviZJ73pfm/xe+Q1ePOq9e4dCRG0/yraBIa765YUs+EnNb
+         PQMRwPCFQLljF+qSe3+NH9E/uQAe8jP1r7bfY+z4cjOkj8H8TVBPm+qH8m3aRAtQ92hg
+         mH6Cx5XfDjSXwxlfoKf9+OneRH6GT0sonL+H08OMCZsBzpHG/8vRMS+qbs9aWuArWqDL
+         ZVCg==
+X-Forwarded-Encrypted: i=1; AJvYcCV33YcPu+/d+TvXo0CZPkpn8EPH8lxu1n4Phyf/J5ptbDdEOplRtIqx6ZYXiEer5xbsthN2Hdx6OlsoA8s=@vger.kernel.org, AJvYcCW7MxC4AyyXErg3MZLjs9GXHLBm875oNLVyy9zAFkFHo1U2cW6C1oAnDPooc9jCkyKzYoLP9C4z2ILN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2iXRjs50cgCFTcVTRL+bmNymNVskQBeA7m/AubZ9Iwh48kFa1
+	5Lu4QlVu3I84rizMW8zEJs4wJ0KoSx0Ab4fFzSoATy5cAxsdHHdk41HenrEZ
+X-Google-Smtp-Source: AGHT+IHcXfIZM/MxapOHro6O3vkHE9BRbzKVHnujFEAm01zqaoFisDVKcQUiTRm3Vg/hQZdXjfBAuQ==
+X-Received: by 2002:a17:90a:7408:b0:2d8:b91d:d284 with SMTP id 98e67ed59e1d1-2db9ff91f8bmr22007709a91.16.1726587672133;
+        Tue, 17 Sep 2024 08:41:12 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9c7c7a8sm9599246a91.15.2024.09.17.08.41.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 08:41:05 -0700 (PDT)
-Date: Tue, 17 Sep 2024 08:41:05 -0700 (PDT)
-X-Google-Original-Date: Tue, 17 Sep 2024 08:40:59 PDT (-0700)
-Subject:     Re: [PATCH v2 1/2] riscv: vdso: Prevent gcc from inserting calls to memset()
-In-Reply-To: <20240705060902.113294-2-alexghiti@rivosinc.com>
-CC: vladimir.isaev@syntacore.com, roman.artemev@syntacore.com, guoren@kernel.org,
-  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org, alexghiti@rivosinc.com
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: alexghiti@rivosinc.com
-Message-ID: <mhng-b17acfa9-03e8-4ef7-a24f-a133b2dbf31a@palmer-ri-x1c9>
+        Tue, 17 Sep 2024 08:41:11 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: oneukum@suse.com
+Cc: aha310510@gmail.com,
+	colin.i.king@gmail.com,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: use mutex_lock in iowarrior_read()
+Date: Wed, 18 Sep 2024 00:41:07 +0900
+Message-Id: <20240917154107.137653-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <d88289f9-e22a-4960-9b3b-ad0b3ab17a89@suse.com>
+References: <d88289f9-e22a-4960-9b3b-ad0b3ab17a89@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Thu, 04 Jul 2024 23:09:01 PDT (-0700), alexghiti@rivosinc.com wrote:
-> gcc is smart enough to insert a call to memset() in
-> riscv_vdso_get_cpus(), which generates a dynamic relocation.
+Oliver Neukum <oneukum@suse.com> wrote:
 >
-> So prevent gcc from doing that by using the
-> -fno-tree-loop-distribute-patterns option.
+> On 17.09.24 12:01, Jeongjun Park wrote:
+>
+> > Okay, I understand. Then I think it would be appropriate to do
+> > the patch below to prevent blocking, but I have one question.
+> >
+> > Currently, many misc usb drivers do not seem to handle the
+> > O_NONBLOCK flag when using mutex_lock. If this is really
+>
+> Yes. The quality of many drivers could be improved.
+> Feel free to make patches. However, the lack of quality elsewhere
+> does not justify a regression. Hence code fixing drivers already
+> correctly supporting O_NONBLOCK must be correct in that regard.
+>
+> > necessary code, I think it would require code modifications to
+> > other functions inside iowarrior and many misc usb drivers.
+> >
+> > What do you think about this?
+>
+> The formatting seems to be broken. In terms of content it is good.
 
-This option doesn't exist on LLVM (at least on whatever version I'm 
-using), and I'm not getting any memset()s generated locally so I'm not 
-sure what to look for over there.
+Oh, this format was sent broken. I'm sending you the patch below again.
+I'll send you a new patch with this patch right away.
 
-From poking around GCC it looks like we might want -fno-tree-ccp too?  
-That seems to be able to convert assignments into builtins as well...
+And I'll try to write a patch for other functions and misc usbs that don't
+support O_NONBLOCK properly soon.
 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/kernel/vdso/Makefile | 1 +
->  1 file changed, 1 insertion(+)
+Regards,
+Jeongjun Park
+
+---
+ drivers/usb/misc/iowarrior.c | 46 ++++++++++++++++++++++++++++--------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index 6d28467ce352..dbf0ed04f7c3 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -277,28 +277,45 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
+ 	struct iowarrior *dev;
+ 	int read_idx;
+ 	int offset;
++	int retval = 0;
+ 
+ 	dev = file->private_data;
+ 
++	if (file->f_flags & O_NONBLOCK) {
++		retval = mutex_trylock(&dev->mutex);
++		if (!retval)
++			return -EAGAIN;
++	} else {
++		retval = mutex_lock_interruptible(&dev->mutex);
++		if (retval)
++			return -ERESTARTSYS;
++	}
++
+ 	/* verify that the device wasn't unplugged */
+-	if (!dev || !dev->present)
+-		return -ENODEV;
++	if (!dev->present) {
++		retval = -ENODEV;
++		goto exit;
++	}
+ 
+ 	dev_dbg(&dev->interface->dev, "minor %d, count = %zd\n",
+ 		dev->minor, count);
+ 
+ 	/* read count must be packet size (+ time stamp) */
+ 	if ((count != dev->report_size)
+-	    && (count != (dev->report_size + 1)))
+-		return -EINVAL;
++	    && (count != (dev->report_size + 1))) {
++		retval = -EINVAL;
++		goto exit;
++	}
+ 
+ 	/* repeat until no buffer overrun in callback handler occur */
+ 	do {
+ 		atomic_set(&dev->overflow_flag, 0);
+ 		if ((read_idx = read_index(dev)) == -1) {
+ 			/* queue empty */
+-			if (file->f_flags & O_NONBLOCK)
+-				return -EAGAIN;
++			if (file->f_flags & O_NONBLOCK) {
++				retval = -EAGAIN;
++				goto exit;
++			}
+ 			else {
+ 				//next line will return when there is either new data, or the device is unplugged
+ 				int r = wait_event_interruptible(dev->read_wait,
+@@ -309,28 +326,37 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
+ 								  -1));
+ 				if (r) {
+ 					//we were interrupted by a signal
+-					return -ERESTART;
++					retval = -ERESTART;
++					goto exit;
+ 				}
+ 				if (!dev->present) {
+ 					//The device was unplugged
+-					return -ENODEV;
++					retval = -ENODEV;
++					goto exit;
+ 				}
+ 				if (read_idx == -1) {
+ 					// Can this happen ???
+-					return 0;
++					retval = 0;
++					goto exit;
+ 				}
+ 			}
+ 		}
+ 
+ 		offset = read_idx * (dev->report_size + 1);
+ 		if (copy_to_user(buffer, dev->read_queue + offset, count)) {
+-			return -EFAULT;
++			retval = -EFAULT;
++			goto exit;
+ 		}
+ 	} while (atomic_read(&dev->overflow_flag));
+ 
+ 	read_idx = ++read_idx == MAX_INTERRUPT_BUFFER ? 0 : read_idx;
+ 	atomic_set(&dev->read_idx, read_idx);
++	mutex_unlock(&dev->mutex);
+ 	return count;
++
++exit:
++	mutex_unlock(&dev->mutex);
++	return retval;
+ }
+ 
+ /*
+--
+
 >
-> diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
-> index f7ef8ad9b550..c7e40bf36371 100644
-> --- a/arch/riscv/kernel/vdso/Makefile
-> +++ b/arch/riscv/kernel/vdso/Makefile
-> @@ -18,6 +18,7 @@ obj-vdso = $(patsubst %, %.o, $(vdso-syms)) note.o
->
->  ccflags-y := -fno-stack-protector
->  ccflags-y += -DDISABLE_BRANCH_PROFILING
-> +ccflags-y += -fno-tree-loop-distribute-patterns
->
->  ifneq ($(c-gettimeofday-y),)
->    CFLAGS_vgettimeofday.o += -fPIC -include $(c-gettimeofday-y)
+>         Regards
+>                 Oliver
 
