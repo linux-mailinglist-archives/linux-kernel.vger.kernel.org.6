@@ -1,394 +1,308 @@
-Return-Path: <linux-kernel+bounces-331685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0DFB97AFFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:11:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C29A97B003
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 462F1B23393
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:11:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD24B285F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851F316EC0E;
-	Tue, 17 Sep 2024 12:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC13170A29;
+	Tue, 17 Sep 2024 12:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mHNyVbsA"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2042.outbound.protection.outlook.com [40.107.101.42])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQPc5YG0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3EB43150;
-	Tue, 17 Sep 2024 12:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726575096; cv=fail; b=ShDDJqx4JLu0MgRzD2fe55UEhUEvFhuH6KCut6yJ4k9kL5uZpq0Vf7RekJW4g9CoNxmklNCEhx4PFye+pqCSYL7miRNr/VoYDvjgsagRkg3HeEkT1HIfnzcs3I85IdJd2mcG/bHPvxROELiv9KglvWE8VwbM4DbeOBnyBleAW3w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726575096; c=relaxed/simple;
-	bh=MdrAAPL4WCJMCFWqUzSN+59YTcokf3AOVFF3iqP4MSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QPwYirJZKjuFnXtn63IqBPE3gBDN2e8VhDSrFI0rtQU2irbI5vXO782/ooExgwzm8X7DLf4H+LkjfpnShgTDqzSdg/RfoTpeFOeiXG6z5sjIRxV6RxRqGDzbUmYsVpzyb5Dz2mO72oKEV/AAMkG65eoKOg/P8SuDQ/AXffhqWHg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mHNyVbsA; arc=fail smtp.client-ip=40.107.101.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m9bFP9hpzdFIOON+4QhSV3N5veIdEdaJY08laTHssl+6aBIW51pUgYnST0EuJTrAjOe6vMdE/g88IogrjIYQcPJWz+VJYI1GUWMy6XPyo73XGAi6sWGsfysrI0Kt/FQD9Ncd86Q+5TmLlmf5CidLLSE2X2EL0uTcdCOWYzfLeN2sFFYMMrcypomfZ5QF9NyxYYxKr4F2uSjOTVbWaetVHR1g/Qixp5ug4uOj2KPop25sVMYwpxloCqxGi8XcJh8xQR2/i2yglcJNSWsC2V0pmWPeXZXAAq/K4COfe44Z2mwjO90uhxEsXf8f8Uau/UesEzgTtDmRzdoyuQYp9PECnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PJrPlqVW1cxoQgcWpKANqQS+KDCG8uN92o5fzJYpxNo=;
- b=nosjpWNkb9BTizvwoYHL0DrGE2G4ShxwCQVIfi1jo5eJqN4zKyCUnmjzkcpEzn8oZbts1jIP/C71krMn0UM0B4Qd5UeyxkutmyGg5YM14l3+YnZz6t5FfMQJ4LkUB1W3mijR4C9dTKppT9HdmFDk77D/hN/hOpqz0NgyLQR/B7sgVJk0oGwVmNa2YOagi02tCSL3ewTGWYR8VOC/qEsUmdMYCwK83uO3AfolyDdUt0x9wuCVukb4JmHCvEVUKM4qVMeS+lcykpjHHLESfyEpk4jBGCv85XnxzSejsVkSAx1L7M+mFiiOWW26jxu/my70gyISaef88VooOSn2Obwmsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PJrPlqVW1cxoQgcWpKANqQS+KDCG8uN92o5fzJYpxNo=;
- b=mHNyVbsAWZFW1u9lEwXSSqIzEN0PblR01BJB+PG8nVxte9+uiKDyXZ/hd87TuW3uXiORVWZTy65TBlsfaav0lEsS17J5itDwEVugBuGeT/qRPsqx7bIyJLDI8nrBLf2SyZWbg26yBmFej/Na66kFwwyUzsofeycqf9f/6vKl8RlrGrIgCGE5DV9tQ1wz7qJf0iFnla/TrA3FH2TuLO9BRxrceWjPSkZM+uhLSqCCS48SJA7tezrioW3FA8T5rRH1+0BsdHgjBSXOsWMRJSr9Rq44doiKtj+kbw3coabGyN8/Y8nF7H3M6A+DK+B0DDaNSon5y4N87GKCTb/Tfb5NkA==
-Received: from SA1PR05CA0019.namprd05.prod.outlook.com (2603:10b6:806:2d2::26)
- by PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.23; Tue, 17 Sep
- 2024 12:11:30 +0000
-Received: from SN1PEPF0002529D.namprd05.prod.outlook.com
- (2603:10b6:806:2d2:cafe::9b) by SA1PR05CA0019.outlook.office365.com
- (2603:10b6:806:2d2::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.14 via Frontend
- Transport; Tue, 17 Sep 2024 12:11:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SN1PEPF0002529D.mail.protection.outlook.com (10.167.242.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Tue, 17 Sep 2024 12:11:30 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Sep
- 2024 05:11:16 -0700
-Received: from [10.41.21.79] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Sep
- 2024 05:11:12 -0700
-Message-ID: <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
-Date: Tue, 17 Sep 2024 17:41:09 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95852173332
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 12:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726575330; cv=none; b=L0NFj3DRlJIG4HuwIFeEkp+m/TI5Xo5Mw/oPKG4hBIbmrfcQhhiCpxbBoOCjqc3RotZEN8oopXITOYqdke/Q1TFKXrSa3q906lUdSWysBUnBVLO6+mFKjMCPlzgT10BiB1eqDVjPv60j7U4wv65BQfggSMv3AtbNIymZuEfNDSU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726575330; c=relaxed/simple;
+	bh=aHYn3dmDCJnWNIlJcWJDvc+UKiUxjkFYBntpcXxE8kU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R18xDRGQKMFt0s0sp3DD7KipjlaBinao0L2Pn+es0cECSpCg9QPc6+RTjQOkd67uzcsdCyEcrlNi3c4JQ1dDPMy6etn+0XR4WImAkuKPXcmnXUI6j8DN5+kTguP7ujq4omHBqX79XPuOKFR6visDAPG7tYKGmUqh5DZ9t2c89Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQPc5YG0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726575324;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AsBnjy+X7R8yO5SwSmmu3aaG/Z4/ynLw4YA/Z9vtMbI=;
+	b=bQPc5YG0eZRaSZdE2eeYt3F90mH5lBrwcvsJral2fE5WtIpQfbnzRm3GbJVfN139RlvffX
+	oxlbfFk4UcT+jyl79VgCwvoV/XOXbK68ucJ92zk3wjv5yiuPFNFmsypRaeyPNqp4coIsED
+	ZtEvsGACg0+tx1vK3Bb7AuwjKdT2nUE=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-VW_ahWl8Ou-wfJNTpqQlIQ-1; Tue, 17 Sep 2024 08:15:23 -0400
+X-MC-Unique: VW_ahWl8Ou-wfJNTpqQlIQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb6dc3365so41110325e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 05:15:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726575322; x=1727180122;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AsBnjy+X7R8yO5SwSmmu3aaG/Z4/ynLw4YA/Z9vtMbI=;
+        b=SvTomeFIms4roifbjGjLk70JamFNLbFZYuvRdrL18ApFQNqmSEBg575yh0GBcVd5PK
+         gZBtO3+SKWX3cvrDHFd+oP+2TauTSq6QBQ6dU8XMST21oNk2l9C0AiMOpfA8VkDQ2ihB
+         vvURDXR36VX9z73neJxAtPa/jxZpU60xprgDBQ0UCtplnXxTIzxOIQblWJAUXWGh8GAB
+         DG2aLU19FqlfCgMO+RUUOhqx8N+6edyXTdQsTqcAvx3DJUQmv76Mu3Yq5/dtt8R/v+Ns
+         ik873wrB5yqElnX4bIrq3gfV8PtuP7mBmUZuchqmt7PbQfRSy1HHAwNi5NvLWwgQ10zr
+         8CUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTx735b5HO6MJHa00WJ4LIjBInIiN2E5Vnq/4kApuap/ZXtvgCatxgGGt+zil5YiXhUGxUBQd++ViQUpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEJgOF2CEdzazL03LSoG14eDTB+9bfgyfkGdpLt/BNSuGdWMhI
+	s71oNQkVKW8TjFJFTQGNQWLm7kWoaGaEj0QjdAvUFk+JQUYUWsNylB/pNFyUyb11xgEOQIHn0LF
+	MhyGDVZZGjYS5Bw8C7s1G1mpw3WiDGmD1cvvEBsZevQCGvVxzLDEIE6JzOAe2dA==
+X-Received: by 2002:a05:600c:474d:b0:42b:8a35:1acf with SMTP id 5b1f17b1804b1-42cdb586f4cmr147962375e9.25.1726575321770;
+        Tue, 17 Sep 2024 05:15:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDaQt/Kk+FBdnrigXqyg0bYmIA0V9x+x+wJSLf76x1CQYsA1tvA83D0CUwSoJQMo2sBz6ibg==
+X-Received: by 2002:a05:600c:474d:b0:42b:8a35:1acf with SMTP id 5b1f17b1804b1-42cdb586f4cmr147961835e9.25.1726575321020;
+        Tue, 17 Sep 2024 05:15:21 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e80eesm9339148f8f.30.2024.09.17.05.15.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 05:15:20 -0700 (PDT)
+Date: Tue, 17 Sep 2024 14:15:19 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
+ <gengdongjiu1@gmail.com>, Eric Blake <eblake@redhat.com>, John Snow
+ <jsnow@redhat.com>, Markus Armbruster <armbru@redhat.com>, Michael Roth
+ <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
+ <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org, qemu-arm@nongnu.org,
+ qemu-devel@nongnu.org
+Subject: Re: [PATCH v10 00/21] Add ACPI CPER firmware first error injection
+ on ARM emulation
+Message-ID: <20240917141519.57766bb6@imammedo.users.ipa.redhat.com>
+In-Reply-To: <cover.1726293808.git.mchehab+huawei@kernel.org>
+References: <cover.1726293808.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
- arch_freq_avg_get_on_cpu
-To: Beata Michalska <beata.michalska@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<ionela.voinescu@arm.com>, <sudeep.holla@arm.com>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>
-CC: <yang@os.amperecomputing.com>, <vanshikonda@os.amperecomputing.com>,
-	<lihuisong@huawei.com>, <zhanjie9@hisilicon.com>, linux-tegra
-	<linux-tegra@vger.kernel.org>, Bibek Basu <bbasu@nvidia.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-4-beata.michalska@arm.com>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <20240913132944.1880703-4-beata.michalska@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529D:EE_|PH8PR12MB7446:EE_
-X-MS-Office365-Filtering-Correlation-Id: 119b63a1-c581-4d86-445c-08dcd711dcfb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?emdUVWcrMDk1SDJOT29peVdMeGwrNHVHN3JWSXZ4emczYXk5L3FZVHJPSllz?=
- =?utf-8?B?TS85elJzL1pGc0kxZEROV0tOYnh0eTB4Zk8xV2ZUU21HUVgwcEkzU2pTMTg5?=
- =?utf-8?B?eGFxZ2VtTVkvU3BKRHVvbCtUT0Rlcm9CSThaYWVHVFZ5ek80d09YSXVCMTJW?=
- =?utf-8?B?M2NvL3ZKQ21WemNZckhvTVhIbThFVXc5U1pLOFVkMXdCMnpTd0N1TlFBbEdI?=
- =?utf-8?B?SFlyMnhqVGVCV1JUWGtTSHFmdnc0ekNBYUtYMFdzM3hjeTNXZ3hsMkM1aHRB?=
- =?utf-8?B?aEF0eU1Yell0WjBDTlliM2s3dWhZVldKNzdUV1lBRVRNYlVYaTc2eGpiN1gr?=
- =?utf-8?B?SFVKRmNtOUkxQVpzOGRMQTV4ZkJkaFJKeUdBdXBRdmMveFh5eTBKZmVKWXVE?=
- =?utf-8?B?eG1IKzNreDFTb0lVRnVrN1NjVlhUUEVYbkN5RzJhMTcvdm9tTEJlQlBWS3lh?=
- =?utf-8?B?M0Q1SUNXcjE5R1ppY2ZleDVuQ1R1NUpITG1TNEgvVHZlc2JBT1Z0ZUxUdFls?=
- =?utf-8?B?ZHMxVEJjVUVUWWZFWFdJekZiZlhTLzk5aHROdkZ6MUhrUjluU1poWVp3SDF6?=
- =?utf-8?B?bzNxU0xzeFRUNzR5NFBMbmlMc1NiUnNZanJ2YkNMZXQrTVhsZUg5RVlSdW9o?=
- =?utf-8?B?UmlTTXIzaEFCYW9FWXJVWDlSU0J2YnllTDl4WDZVUUN5UlQxVGY5aWtpMGo3?=
- =?utf-8?B?WStnSnh2V3EvOUthbzNsNk1zMlFZOEd2Z2pjY0lZckZRU1ludkc1enZ2b0oy?=
- =?utf-8?B?eU9md3EvQktzeTRoUEdyZXdtS3B6YkZBbXVpNEE0Uk1VcDhFbFdSaC9ZcFFE?=
- =?utf-8?B?MWYyeWV6V252ZWpKdkk4dlk4MGpGSWRUUUFjUm9MZ2VWZnZQTlRlVWpsZWZS?=
- =?utf-8?B?cU55UFFQNThaWHZuYjNvelBiMEJSRG9GK3pQcU1sTFNOcEt6eURKbmxvS2F3?=
- =?utf-8?B?Z1dMUDVBTWRPR014akFTSUpGUWhHNkxibHR1MzdsY3J3V3N3M0lua2pwallS?=
- =?utf-8?B?bDA1R2VLdVBsUXJjMUtXdDBacDR5TXlOMjVudENZd2JxQXZYYnJ2SkNYUEJk?=
- =?utf-8?B?UTdPS3dmY3VGblpJN3V6WEpLMnRYU0NqaVRNOHJHc0hiNHR5YzhpSStSTEhF?=
- =?utf-8?B?ZllheG5yQkhoVWxZUEREQWJIOHpnV0gxUFJWcmx4aW9mNytSanc0MU1ubUpk?=
- =?utf-8?B?Qi96N1hKbCtOZ2ozYWFjUEdvV3FOUWtBMjNEekY3SXVNZzRad1QveGZ5Q2R6?=
- =?utf-8?B?bTFKZ2Rtb0dackdQeE1vdDZ4cGpTMWd2Sm1icU0zT3R5ZnpORGVHT0RwM01v?=
- =?utf-8?B?clpzQldsdVZxbzFGeGs5eWVjZGpodEpyOEg4TzRFaG8rZ2N5MkRYdEk3NHFQ?=
- =?utf-8?B?Kzh1QkVPM3ZEa05lY1RSZ3NJcVRYRzdCb2dNM3hucnk0Z2lhYmY1TFFyZkIy?=
- =?utf-8?B?UlUxZmlreVNqSEZ4UXhBZW9DY3JFYm5TQnJ3QU4ycHpKeUtMRy9Wa3NhTUxY?=
- =?utf-8?B?Vi9EWGdETVgxelljSjN0MGlvTWJNY0V3UHBNbHVZVkJaWmhmMThmUzRZbmxR?=
- =?utf-8?B?Q3dBdUgrNUU3WnpaeFVJQVIyKzk1UUMxMmRrSFhWSnlYaXdhSXg3YTlHWGNB?=
- =?utf-8?B?dy8wNmphZUM5VVlXdzBOeXovUjFjTXB6YTN6TFYyb0llUFA4T2dFaXpqR3N5?=
- =?utf-8?B?WFBvTEY1cXVMZXE0MFczaHExOEgzclZJdktxNmxOaHAwcTZBL1VNd2NxNXha?=
- =?utf-8?B?Wm9PSkR1STlRZFc4NzNFV0h6MHR1ak1rZU9KV0pjUkZWQkI5WWRzeHhwYmx6?=
- =?utf-8?B?b25teHhLUXFxNnJGYVVwRGpoK21wczZIWGpiQW9Rc2ZFcFFGWXc3SGlKNU05?=
- =?utf-8?B?Z1FRUGJESjg0M1BnR2JoZlNDdUdiUXA4Q3dycFl0R1FVTW9wcldBcXNzU1pu?=
- =?utf-8?B?WU1adWkvTzdxMW9UMjllNlU2UEFQUDRTeE8zSkJjM0xidUJxc2hXbndER1lK?=
- =?utf-8?B?UGY4d2lyTmdBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 12:11:30.0857
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 119b63a1-c581-4d86-445c-08dcd711dcfb
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002529D.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7446
 
-Hi Beata,
+On Sat, 14 Sep 2024 08:13:21 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Thank you for the patches.
+> This series add support for injecting generic CPER records.  Such records
+> are generated outside QEMU via a provided script.
+> 
+> On this  version,  the patch reworking the way offsets are calculated were
+> split on several other patches, to make one logical change per patch and
+> make review easier.
+> 
+> Despite the number of patches increased from 12 to 21, there is just one
+> real new patch (as the other ones are a split from a big change):
+> 
+>   acpi/generic_event_device: Update GHES migration to cover hest addr
 
-On 13/09/24 18:59, Beata Michalska wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> With the Frequency Invariance Engine (FIE) being already wired up with
-> sched tick and making use of relevant (core counter and constant
-> counter) AMU counters, getting the average frequency for a given CPU,
-> can be achieved by utilizing the frequency scale factor which reflects
-> an average CPU frequency for the last tick period length.
-> 
-> The solution is partially based on APERF/MPERF implementation of
-> arch_freq_get_on_cpu.
-> 
-> Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+I'm done with this round of review.
+
+Given that the series accumulated a bunch of cleanups,
+I'd suggest to move all cleanups/renamings not related
+to new HEST lookup and new src id mapping to the beginning
+of the series, so once they reviewed they could be split up into
+a separate series that could be merged while we are ironing down
+the new functionality. 
+ 
+
 > ---
->   arch/arm64/kernel/topology.c | 109 +++++++++++++++++++++++++++++++----
->   1 file changed, 99 insertions(+), 10 deletions(-)
 > 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index cb180684d10d..22e510733336 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -17,6 +17,7 @@
->   #include <linux/cpufreq.h>
->   #include <linux/init.h>
->   #include <linux/percpu.h>
-> +#include <linux/sched/isolation.h>
+> v10:
+> - Patch 1 split on several patches to make reviews easier;
+> - Added a migration patch;
+> - CPER QMP command was renamed;
+> - Updated some comments to better reflect exact ACPI version;
+> - Removed a code to reset acks when OSPM fails to read records;
+> - Removed a duplicated config GHES_CPER symbol;
+> - There is  now an arch-independent namespace for GHES source IDs;
+> - Fixed the size of hest_ghes_notify array when creating tables;
+> - acpi-hest.json is now a section of ACPI;
+> - QMP command renamed from @ghes-cper to inject-ghes-error.
 > 
->   #include <asm/cpu.h>
->   #include <asm/cputype.h>
-> @@ -88,18 +89,28 @@ int __init parse_acpi_topology(void)
->    * initialized.
->    */
->   static DEFINE_PER_CPU_READ_MOSTLY(unsigned long, arch_max_freq_scale) =  1UL << (2 * SCHED_CAPACITY_SHIFT);
-> -static DEFINE_PER_CPU(u64, arch_const_cycles_prev);
-> -static DEFINE_PER_CPU(u64, arch_core_cycles_prev);
->   static cpumask_var_t amu_fie_cpus;
+> v9:
+> - Patches reorganized to make easier for reviewers;
+> - source ID is now guest-OS specific;
+> - Some patches got a revision history since v8;
+> - Several minor cleanups.
 > 
-> +struct amu_cntr_sample {
-> +       u64             arch_const_cycles_prev;
-> +       u64             arch_core_cycles_prev;
-> +       unsigned long   last_scale_update;
-> +};
-> +
-> +static DEFINE_PER_CPU_SHARED_ALIGNED(struct amu_cntr_sample, cpu_amu_samples);
-> +
->   void update_freq_counters_refs(void)
->   {
-> -       this_cpu_write(arch_core_cycles_prev, read_corecnt());
-> -       this_cpu_write(arch_const_cycles_prev, read_constcnt());
-> +       struct amu_cntr_sample *amu_sample = this_cpu_ptr(&cpu_amu_samples);
-> +
-> +       amu_sample->arch_core_cycles_prev = read_corecnt();
-> +       amu_sample->arch_const_cycles_prev = read_constcnt();
->   }
+> v8:
+> - Fix one of the BIOS links that were incorrect;
+> - Changed mem error internal injection to use a common code;
+> - No more hardcoded values for CPER: instead of using just the
+>   payload at the QAPI, it now has the full raw CPER there;
+> - Error injection script now supports changing fields at the
+>   Generic Error Data section of the CPER;
+> - Several minor cleanups.
 > 
->   static inline bool freq_counters_valid(int cpu)
->   {
-> +       struct amu_cntr_sample *amu_sample = per_cpu_ptr(&cpu_amu_samples, cpu);
-> +
->          if ((cpu >= nr_cpu_ids) || !cpumask_test_cpu(cpu, cpu_present_mask))
->                  return false;
+> v7:
+> - Change the way offsets are calculated and used on HEST table.
+>   Now, it is compatible with migrations as all offsets are relative
+>   to the HEST table;
+> - GHES interface is now more generic: the entire CPER is sent via
+>   QMP, instead of just the payload;
+> - Some code cleanups to make the code more robust;
+> - The python script now uses QEMUMonitorProtocol class.
 > 
-> @@ -108,8 +119,8 @@ static inline bool freq_counters_valid(int cpu)
->                  return false;
->          }
+> v6:
+> - PNP0C33 device creation moved to aml-build.c;
+> - acpi_ghes record functions now use ACPI notify parameter,
+>   instead of source ID;
+> - the number of source IDs is now automatically calculated;
+> - some code cleanups and function/var renames;
+> - some fixes and cleanups at the error injection script;
+> - ghes cper stub now produces an error if cper JSON is not compiled;
+> - Offset calculation logic for GHES was refactored;
+> - Updated documentation to reflect the GHES allocated size;
+> - Added a x-mpidr object for QOM usage;
+> - Added a patch making usage of x-mpidr field at ARM injection
+>   script;
 > 
-> -       if (unlikely(!per_cpu(arch_const_cycles_prev, cpu) ||
-> -                    !per_cpu(arch_core_cycles_prev, cpu))) {
-> +       if (unlikely(!amu_sample->arch_const_cycles_prev ||
-> +                    !amu_sample->arch_core_cycles_prev)) {
->                  pr_debug("CPU%d: cycle counters are not enabled.\n", cpu);
->                  return false;
->          }
-> @@ -152,17 +163,22 @@ void freq_inv_set_max_ratio(int cpu, u64 max_rate)
+> v5:
+> - CPER guid is now passing as string;
+> - raw-data is now passed with base64 encode;
+> - Removed several GPIO left-overs from arm/virt.c changes;
+> - Lots of cleanups and improvements at the error injection script.
+>   It now better handles QMP dialog and doesn't print debug messages.
+>   Also, code was split on two modules, to make easier to add more
+>   error injection commands.
 > 
->   static void amu_scale_freq_tick(void)
->   {
-> +       struct amu_cntr_sample *amu_sample = this_cpu_ptr(&cpu_amu_samples);
->          u64 prev_core_cnt, prev_const_cnt;
->          u64 core_cnt, const_cnt, scale;
+> v4:
+> - CPER generation moved to happen outside QEMU;
+> - One patch adding support for mpidr query was removed.
 > 
-> -       prev_const_cnt = this_cpu_read(arch_const_cycles_prev);
-> -       prev_core_cnt = this_cpu_read(arch_core_cycles_prev);
-> +       prev_const_cnt = amu_sample->arch_const_cycles_prev;
-> +       prev_core_cnt = amu_sample->arch_core_cycles_prev;
+> v3:
+> - patch 1 cleanups with some comment changes and adding another place where
+>   the poweroff GPIO define should be used. No changes on other patches (except
+>   due to conflict resolution).
 > 
->          update_freq_counters_refs();
+> v2:
+> - added a new patch using a define for GPIO power pin;
+> - patch 2 changed to also use a define for generic error GPIO pin;
+> - a couple cleanups at patch 2 removing uneeded else clauses.
 > 
-> -       const_cnt = this_cpu_read(arch_const_cycles_prev);
-> -       core_cnt = this_cpu_read(arch_core_cycles_prev);
-> +       const_cnt = amu_sample->arch_const_cycles_prev;
-> +       core_cnt = amu_sample->arch_core_cycles_prev;
+> Example of generating a CPER record:
 > 
-> +       /*
-> +        * This should not happen unless the AMUs have been reset and the
-> +        * counter values have not been restored - unlikely
-> +        */
->          if (unlikely(core_cnt <= prev_core_cnt ||
->                       const_cnt <= prev_const_cnt))
->                  return;
-> @@ -182,6 +198,8 @@ static void amu_scale_freq_tick(void)
+> $ scripts/ghes_inject.py -d arm -p 0xdeadbeef
+> GUID: e19e3d16-bc11-11e4-9caa-c2051d5d46b0
+> Generic Error Status Block (20 bytes):
+>       00000000  01 00 00 00 00 00 00 00 00 00 00 00 90 00 00 00   ................
+>       00000010  00 00 00 00                                       ....
 > 
->          scale = min_t(unsigned long, scale, SCHED_CAPACITY_SCALE);
->          this_cpu_write(arch_freq_scale, (unsigned long)scale);
-> +
-> +       amu_sample->last_scale_update = jiffies;
->   }
+> Generic Error Data Entry (72 bytes):
+>       00000000  16 3d 9e e1 11 bc e4 11 9c aa c2 05 1d 5d 46 b0   .=...........]F.
+>       00000010  00 00 00 00 00 03 00 00 48 00 00 00 00 00 00 00   ........H.......
+>       00000020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+>       00000030  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+>       00000040  00 00 00 00 00 00 00 00                           ........
 > 
->   static struct scale_freq_data amu_sfd = {
-> @@ -189,6 +207,77 @@ static struct scale_freq_data amu_sfd = {
->          .set_freq_scale = amu_scale_freq_tick,
->   };
+> Payload (72 bytes):
+>       00000000  05 00 00 00 01 00 00 00 48 00 00 00 00 00 00 00   ........H.......
+>       00000010  00 00 00 80 00 00 00 00 10 05 0f 00 00 00 00 00   ................
+>       00000020  00 00 00 00 00 00 00 00 00 20 14 00 02 01 00 03   ......... ......
+>       00000030  0f 00 91 00 00 00 00 00 ef be ad de 00 00 00 00   ................
+>       00000040  ef be ad de 00 00 00 00                           ........
 > 
-> +static __always_inline bool amu_fie_cpu_supported(unsigned int cpu)
-> +{
-> +       return cpumask_available(amu_fie_cpus) &&
-> +               cpumask_test_cpu(cpu, amu_fie_cpus);
-> +}
-> +
-> +#define AMU_SAMPLE_EXP_MS      20
-> +
-> +int arch_freq_avg_get_on_cpu(int cpu)
-> +{
-> +       struct amu_cntr_sample *amu_sample;
-> +       unsigned int start_cpu = cpu;
-> +       unsigned long last_update;
-> +       unsigned int freq = 0;
-> +       u64 scale;
-> +
-> +       if (!amu_fie_cpu_supported(cpu) || !arch_scale_freq_ref(cpu))
-> +               return -EOPNOTSUPP;
-> +
-> +retry:
-> +       amu_sample = per_cpu_ptr(&cpu_amu_samples, cpu);
-> +
-> +       last_update = amu_sample->last_scale_update;
-> +
-> +       /*
-> +        * For those CPUs that are in full dynticks mode, and those that have
-'or those' to match with if condition?
+> Error injected.
+> 
+> [    9.358364] {1}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
+> [    9.359027] {1}[Hardware Error]: event severity: recoverable
+> [    9.359586] {1}[Hardware Error]:  Error 0, type: recoverable
+> [    9.360124] {1}[Hardware Error]:   section_type: ARM processor error
+> [    9.360561] {1}[Hardware Error]:   MIDR: 0x00000000000f0510
+> [    9.361160] {1}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000080000000
+> [    9.361643] {1}[Hardware Error]:   running state: 0x0
+> [    9.362142] {1}[Hardware Error]:   Power State Coordination Interface state: 0
+> [    9.362682] {1}[Hardware Error]:   Error info structure 0:
+> [    9.363030] {1}[Hardware Error]:   num errors: 2
+> [    9.363656] {1}[Hardware Error]:    error_type: 0x02: cache error
+> [    9.364163] {1}[Hardware Error]:    error_info: 0x000000000091000f
+> [    9.364834] {1}[Hardware Error]:     transaction type: Data Access
+> [    9.365599] {1}[Hardware Error]:     cache error, operation type: Data write
+> [    9.366441] {1}[Hardware Error]:     cache level: 2
+> [    9.367005] {1}[Hardware Error]:     processor context not corrupted
+> [    9.367753] {1}[Hardware Error]:    physical fault address: 0x00000000deadbeef
+> [    9.374267] Memory failure: 0xdeadb: recovery action for free buddy page: Recovered
+> 
+> Such script currently supports arm processor error CPER, but can easily be
+> extended to other GHES notification types.
+> 
+> 
+> Mauro Carvalho Chehab (21):
+>   acpi/ghes: add a firmware file with HEST address
+>   acpi/generic_event_device: Update GHES migration to cover hest addr
+>   acpi/ghes: get rid of ACPI_HEST_SRC_ID_RESERVED
+>   acpi/ghes: simplify acpi_ghes_record_errors() code
+>   acpi/ghes: better handle source_id and notification
+>   acpi/ghes: Remove a duplicated out of bounds check
+>   acpi/ghes: rework the logic to handle HEST source ID
+>   acpi/ghes: Change the type for source_id
+>   acpi/ghes: Don't hardcode the number of sources on ghes
+>   acpi/ghes: make the GHES record generation more generic
+>   acpi/ghes: don't crash QEMU if ghes GED is not found
+>   acpi/ghes: rename etc/hardware_error file macros
+>   acpi/ghes: better name GHES memory error function
+>   acpi/ghes: add a notifier to notify when error data is ready
+>   acpi/generic_event_device: add an APEI error device
+>   arm/virt: Wire up a GED error device for ACPI / GHES
+>   qapi/acpi-hest: add an interface to do generic CPER error injection
+>   docs: acpi_hest_ghes: fix documentation for CPER size
+>   scripts/ghes_inject: add a script to generate GHES error inject
+>   target/arm: add an experimental mpidr arm cpu property object
+>   scripts/arm_processor_error.py: retrieve mpidr if not filled
+> 
+>  MAINTAINERS                            |  10 +
+>  docs/specs/acpi_hest_ghes.rst          |   6 +-
+>  hw/acpi/Kconfig                        |   5 +
+>  hw/acpi/aml-build.c                    |  10 +
+>  hw/acpi/generic_event_device.c         |  19 +-
+>  hw/acpi/ghes-stub.c                    |   2 +-
+>  hw/acpi/ghes.c                         | 312 +++++++----
+>  hw/acpi/ghes_cper.c                    |  32 ++
+>  hw/acpi/ghes_cper_stub.c               |  19 +
+>  hw/acpi/meson.build                    |   2 +
+>  hw/arm/virt-acpi-build.c               |  12 +-
+>  hw/arm/virt.c                          |  19 +-
+>  include/hw/acpi/acpi_dev_interface.h   |   1 +
+>  include/hw/acpi/aml-build.h            |   2 +
+>  include/hw/acpi/generic_event_device.h |   1 +
+>  include/hw/acpi/ghes.h                 |  37 +-
+>  include/hw/arm/virt.h                  |   2 +
+>  qapi/acpi-hest.json                    |  35 ++
+>  qapi/meson.build                       |   1 +
+>  qapi/qapi-schema.json                  |   1 +
+>  scripts/arm_processor_error.py         | 388 ++++++++++++++
+>  scripts/ghes_inject.py                 |  51 ++
+>  scripts/qmp_helper.py                  | 702 +++++++++++++++++++++++++
+>  target/arm/cpu.c                       |   1 +
+>  target/arm/cpu.h                       |   1 +
+>  target/arm/helper.c                    |  10 +-
+>  target/arm/kvm.c                       |   3 +-
+>  27 files changed, 1552 insertions(+), 132 deletions(-)
+>  create mode 100644 hw/acpi/ghes_cper.c
+>  create mode 100644 hw/acpi/ghes_cper_stub.c
+>  create mode 100644 qapi/acpi-hest.json
+>  create mode 100644 scripts/arm_processor_error.py
+>  create mode 100755 scripts/ghes_inject.py
+>  create mode 100644 scripts/qmp_helper.py
+> 
 
-> +        * not seen tick for a while, try an alternative source for the counters
-> +        * (and thus freq scale), if available, for given policy: this boils
-> +        * down to identifying an active cpu within the same freq domain, if any.
-> +        */
-> +       if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
-> +           time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
-> +               struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> +               int ref_cpu = cpu;
-> +
-> +               if (!policy)
-> +                       return 0;
-> +
-
-We can skip the rest of code if policy has a single cpu. AFAIR, one of 
-the previous versions had similar check.
-
-       if (!policy_is_shared(policy)) {
-               cpufreq_cpu_put(policy);
-               goto freq_comput;
-       }
-
-> +               if (!cpumask_intersects(policy->related_cpus,
-> +                                       housekeeping_cpumask(HK_TYPE_TICK))) {
-> +                       cpufreq_cpu_put(policy);
-> +                       return -EOPNOTSUPP;
-> +               }
-> +
-> +
-> +               do {
-> +                       ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
-> +                                                   start_cpu, false);
-> +
-> +               } while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
-> +
-> +               cpufreq_cpu_put(policy);
-> +
-> +               if (ref_cpu >= nr_cpu_ids)
-> +                       /* No alternative to pull info from */
-> +                       return 0;
-> +
-
-The 'cpuinfo_avg_freq' node gives 'unknown' value for single CPU per 
-policy as 'ref_cpu' increments to 'nr_cpu_ids'. We can use the same CPU 
-instead of returning zero if no alternative CPU.
-
-   # cat /sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_avg_freq
-   <unknown>
-
-   ----
-       if (ref_cpu >= nr_cpu_ids)
-           /* Use same CPU if no alternative to pull info from */
-           goto freq_comput;
-
-     ..
-   freq_comput:
-     scale = arch_scale_freq_capacity(cpu);
-     freq = scale * arch_scale_freq_ref(cpu);
-   ----
-
-Thank you,
-Sumit Gupta
-
-P.S. Will be on afk for next 2 weeks with no access to email. Please 
-expect a delay in response.
-
-> +               cpu = ref_cpu;
-> +               goto retry;
-> +       }
-> +       /*
-> +        * Reversed computation to the one used to determine
-> +        * the arch_freq_scale value
-> +        * (see amu_scale_freq_tick for details)
-> +        */
-> +       scale = arch_scale_freq_capacity(cpu);
-> +       freq = scale * arch_scale_freq_ref(cpu);
-> +       freq >>= SCHED_CAPACITY_SHIFT;
-> +       return freq;
-> +}
-> +
-
->   static void amu_fie_setup(const struct cpumask *cpus)
->   {
->          int cpu;
-> --
-> 2.25.1
-> 
 
