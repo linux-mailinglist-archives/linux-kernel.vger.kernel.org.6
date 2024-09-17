@@ -1,151 +1,147 @@
-Return-Path: <linux-kernel+bounces-331450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44B397AD0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:50:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D90A997AD11
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62FD91F25038
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:50:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40531B22C16
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2198156C40;
-	Tue, 17 Sep 2024 08:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EC8159217;
+	Tue, 17 Sep 2024 08:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="D5KaWB03"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WpZ641AA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BC9146D6B;
-	Tue, 17 Sep 2024 08:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8499515667E;
+	Tue, 17 Sep 2024 08:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726563000; cv=none; b=E1hspCc3U8RljJBeSOQ6b0/IUDEJbs9ujAWBp0djvTgNwNdiLWDIJhSNvvDCP0bOCur3uAdMs4JPJJcSEP8IxbO5DtAufMx6HgkzGhfaBWMLuLi3Nbpvrec/bkPpHJZ2RYVl++UD26RFtMO8+DRyWsQO3HbVze1z3S6LHWkcMMg=
+	t=1726563032; cv=none; b=a2HRa87fB25N0g2AalobNCWQF18crZLjFtn+omKk+lT8/hqFHTIPeodLLtNabNt5n9npltRM2HsaYJQg2o4WHXoQvjZcY9HOaTSaIKJt0/DoEebThyivjWQl21RJPux1oSLILSDx/RZaW0zD6I2IT+X+1RwlWZ2nei9lgTmgfoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726563000; c=relaxed/simple;
-	bh=LssHL0o8gqHlXpaUgFEYZYDWsFgM2dA16ib5MYaTLvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jP1xfEEnbYW0Bagp/zhxwzPXQrsCr6O9JNtUcv9dgi8a4iP/Itx/a/E0jOdyS7RJ8pOap6FDpS02YMgDPo/iOll+4riZ5Y70VHM2W6eiO9G9ANde6CimZKU9oGMAmmiTOGRXCGmrNdPIdRHD+BbPabgkF2EZW+H/V8z/P9nnc+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=D5KaWB03; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1726562953;
-	bh=LssHL0o8gqHlXpaUgFEYZYDWsFgM2dA16ib5MYaTLvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=D5KaWB03cjATfV9q/yXc56NbLefmoAyEBdyO0aGWw9sbrJbqWswDSNORYVYt3ABrV
-	 nHNQtBQrEaF+Q2AKXdNo3h26a8frvlGSr6nIz6ZjjRW2577R5y/Z2g9yPEFGxmapO2
-	 H5kVKHwo6VReQQIum4Gzh4tylIpfMsEl4oiQPu64=
-X-QQ-mid: bizesmtpip2t1726562946tqwms51
-X-QQ-Originating-IP: G+YseKVbbTNQgJwSB8iy9v4u6ESfp3jPo6df9dsT3bo=
-Received: from [IPV6:240e:36c:d18:fa00:4838:7a ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 17 Sep 2024 16:49:04 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6379166551292348725
-Message-ID: <3E9630B3C9FBF09F+32098b9e-b18a-4252-b8c6-a766f3de84b4@uniontech.com>
-Date: Tue, 17 Sep 2024 16:49:04 +0800
+	s=arc-20240116; t=1726563032; c=relaxed/simple;
+	bh=h/QmTo1KvZhaAd/PjbHW8qmqQposFpAVwPsudk425Lc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QZqUFjJwf11jvDrXtsLhVN6ib60ES60VzT3qzTOof+EqseZ3MDwym97mgJEYHTQXrcmu8h/X1Mx4trsX4wD3wounBPAA8CCd/jZJWeBRE39CM5hxdvtCsVLXxfVTNgEhhJhynKOBPSDOUF6JkkZbUpitERasXnPAfQ2w8d9cxmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WpZ641AA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 389DCC4CEC6;
+	Tue, 17 Sep 2024 08:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726563032;
+	bh=h/QmTo1KvZhaAd/PjbHW8qmqQposFpAVwPsudk425Lc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WpZ641AAsui1/5e6nz19v9VvtTsriJgA1g7mSdZlSVSKcZC7xYW80YL+FNeiFo1pO
+	 YZ6R6FCTuIGKsAbTGulnf4Q3WvtLeYR9WwQ4RuxKrb/Rn81Y+ayIU5pjbkq2JUzUDx
+	 Kn13T9q00Ho9B7k/HfWahok/kkelJdDRt6DDgRpM/j866YHjKipgmk45KGquR97X8P
+	 4RmqlptlymkjIUejdcHQB8mKGnKOZakEgnTPz2NWGY8kAHvAo1FsnQEIAyf3SX8xPx
+	 a2W8orqyAa72C5SjPrNi04E+zGjRfB0NavpsY6OfupFx5IHc2sJpJoEhnBbOSumYP8
+	 kmrBFskf1cclA==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCHv4 00/14] uprobe, bpf: Add session support
+Date: Tue, 17 Sep 2024 10:50:10 +0200
+Message-ID: <20240917085024.765883-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6.10] LoongArch: KVM: Remove undefined a6 argument
- comment for kvm_hypercall()
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, sashal@kernel.org, maobibo@loongson.cn,
- guanwentao@uniontech.com, zhangdandan@uniontech.com, chenhuacai@loongson.cn,
- zhaotianrui@loongson.cn, kernel@xen0n.name, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <5B13B2AF7C2779A7+20240916092857.433334-1-wangyuli@uniontech.com>
- <2024091647-absolve-wharf-f271@gregkh>
-From: WangYuli <wangyuli@uniontech.com>
-Content-Language: en-US
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <2024091647-absolve-wharf-f271@gregkh>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------HDUTo0wGYhCUeLHRnq3cTPTT"
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Transfer-Encoding: 8bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------HDUTo0wGYhCUeLHRnq3cTPTT
-Content-Type: multipart/mixed; boundary="------------TPiiqvvKxfu54ZhFQ02qlh8n";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, sashal@kernel.org, maobibo@loongson.cn,
- guanwentao@uniontech.com, zhangdandan@uniontech.com, chenhuacai@loongson.cn,
- zhaotianrui@loongson.cn, kernel@xen0n.name, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Message-ID: <32098b9e-b18a-4252-b8c6-a766f3de84b4@uniontech.com>
-Subject: Re: [PATCH v2 6.10] LoongArch: KVM: Remove undefined a6 argument
- comment for kvm_hypercall()
-References: <5B13B2AF7C2779A7+20240916092857.433334-1-wangyuli@uniontech.com>
- <2024091647-absolve-wharf-f271@gregkh>
-In-Reply-To: <2024091647-absolve-wharf-f271@gregkh>
+hi,
+this patchset is adding support for session uprobe attachment and
+using it through bpf link for bpf programs.
 
---------------TPiiqvvKxfu54ZhFQ02qlh8n
-Content-Type: multipart/mixed; boundary="------------vt0AXiXzEA4MnK0wswNOi5e5"
+The session means that the uprobe consumer is executed on entry
+and return of probed function with additional control:
+  - entry callback can control execution of the return callback
+  - entry and return callbacks can share data/cookie
 
---------------vt0AXiXzEA4MnK0wswNOi5e5
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+On more details please see patch #2.
 
-DQpPbiAyMDI0LzkvMTYgMTk6MzksIEdyZWcgS0ggd3JvdGU6DQo+IEFnYWluLCB3aHkgaXMg
-dGhpcyBuZWVkZWQ/DQo+DQpIbW0uLi4NCg0KSnVzdCBhIG1pbmkgJ2ZpeCcuDQoNClRoZSBy
-ZWFzb24gb2YgDQonaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQwOTE2MjgtZ2ln
-YW50aWMtZmlsdGgtYjdiN0BncmVna2gnIGlzIHNhbWUuDQoNCj4gdGhhbmtzLA0KPg0KPiBn
-cmVnIGstaA0KPg0KVGhhbmtzLA0KLS0gDQpXYW5nWXVsaQ0K
---------------vt0AXiXzEA4MnK0wswNOi5e5
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+It's based on Peter's perf/core:
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/core
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+v4 changes:
+  - rework the uprobe consumer allocation based on Oleg's suggestions [Oleg]
+  - moved docs about handler return values to uprobes.h header [Oleg]
+  - use libbpf's attach_uprobe_multi for session attach [Andrii]
+  - make verifier to check session return values [Andrii]
+  - various small review changes
+  - added more tests
+  - added acks
 
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
+patch #6 is already in bpf-next tree, but we need that as dependency
 
---------------vt0AXiXzEA4MnK0wswNOi5e5--
+thanks,
+jirka
 
---------------TPiiqvvKxfu54ZhFQ02qlh8n--
 
---------------HDUTo0wGYhCUeLHRnq3cTPTT
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+---
+Jiri Olsa (14):
+      uprobe: Add data pointer to consumer handlers
+      uprobe: Add support for session consumer
+      bpf: Add support for uprobe multi session attach
+      bpf: Add support for uprobe multi session context
+      bpf: Allow return values 0 and 1 for uprobe/kprobe session
+      libbpf: Fix uretprobe.multi.s programs auto attachment
+      libbpf: Add support for uprobe multi session attach
+      selftests/bpf: Add uprobe session test
+      selftests/bpf: Add uprobe session cookie test
+      selftests/bpf: Add uprobe session recursive test
+      selftests/bpf: Add uprobe session verifier test for return value
+      selftests/bpf: Add kprobe session verifier test for return value
+      selftests/bpf: Add uprobe session single consumer test
+      selftests/bpf: Add consumers stress test on single uprobe
 
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZulCgAUDAAAAAAAKCRDF2h8wRvQL7tVy
-AP9MVhEXseSIS+VfhuY0FCwd0fhc6z2XDqNn6WlPwB/JRgEAgKIGARi2cYl/nSW/o/w3RsclJn16
-NEjRYCfUQ98+tgI=
-=7q2+
------END PGP SIGNATURE-----
-
---------------HDUTo0wGYhCUeLHRnq3cTPTT--
+ include/linux/uprobes.h                                            |  29 +++++++++-
+ include/uapi/linux/bpf.h                                           |   1 +
+ kernel/bpf/syscall.c                                               |   9 ++-
+ kernel/bpf/verifier.c                                              |  10 ++++
+ kernel/events/uprobes.c                                            | 150 ++++++++++++++++++++++++++++++++++++++++----------
+ kernel/trace/bpf_trace.c                                           |  66 ++++++++++++++++------
+ kernel/trace/trace_uprobe.c                                        |  12 ++--
+ tools/include/uapi/linux/bpf.h                                     |   1 +
+ tools/lib/bpf/bpf.c                                                |   1 +
+ tools/lib/bpf/libbpf.c                                             |  22 +++++++-
+ tools/lib/bpf/libbpf.h                                             |   4 +-
+ tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c              |   2 +-
+ tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c         |   2 +
+ tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c         | 252 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/kprobe_multi_verifier.c          |  31 +++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_consumer_stress.c   |  29 ++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session.c           |  71 ++++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_cookie.c    |  48 ++++++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c |  44 +++++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_single.c    |  44 +++++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_verifier.c          |  31 +++++++++++
+ 21 files changed, 798 insertions(+), 61 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/kprobe_multi_verifier.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_consumer_stress.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_cookie.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_single.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_verifier.c
 
