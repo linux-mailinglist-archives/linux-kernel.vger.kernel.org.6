@@ -1,153 +1,127 @@
-Return-Path: <linux-kernel+bounces-331526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D4497ADEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:32:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C761397AE07
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 232B61C2214C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06A321C224FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0934415C144;
-	Tue, 17 Sep 2024 09:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA85160887;
+	Tue, 17 Sep 2024 09:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hiAllB/c"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BeoH2Iy6"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A10150990;
-	Tue, 17 Sep 2024 09:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E201315DBD5;
+	Tue, 17 Sep 2024 09:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726565534; cv=none; b=b1UWzkUtz1zSWU2kIOlYhBDRKUZnztyB9nkOO+xLXaXzTUSWWpCZ6m7JEqgHDh7LnzsVBeWV4ObKfry2anQo72dBC/kyBkMe118KsuLHwEoYEfyJZ7lnGseOCX7A7xx9urwCXNeUbkqddsFTdG5AnJny6ojftLWdUCUp1dsRxag=
+	t=1726565623; cv=none; b=jkJl2i+54mBbPS7ZonTwvtSSeSybtIN/ID75WGiOBaTToE23o00GnAB/o6h2j5Wh1Q07E7F8kkSFUgY86PIFi/WG6e+3ogP9ML8E+/2nUA87inpsaISCzsrkKOa9Yg39gr4cRE9h7l6DLb6uxWn/UDdhi9UfiwSZedQvCpV44Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726565534; c=relaxed/simple;
-	bh=bYcVc+PqeHmqPJzhSjc2SvfecRr25R0jHytk8paNgsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kc1bJTCEQL8CnOx05X/oHmTP7zqFvxC2nLtW+leG3FqIDCMamvO86nRbplLNtT8q8xSHAwbDQVr8+4jZjzMx39tHbKUB/dBvFhVQ2OhHPlvIWYBfZK1sQPCYT9clv19ZvuJn0Y+KYguIxhqdM4BX3dWzniccWh5FQeQIrlzWK/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hiAllB/c; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AqxKUzFGQdmgzjFQB7tJnhZLtky0WoPwa3ZP0bwa7kw=; b=hiAllB/ciABy+VhhuHSacSE+Oa
-	SkkEdCai+UpuhIa9Yf1t+vo02bnbfsGYxVDgljWR3ImyeE7KwLUBF1VNYMhKx4oAl16yvn/pQ6OPQ
-	H3m2XoG5UiYzmqwMb5tuuRdps/hVoLjPG4pohXphNPaX2soLEzxWxfUcY+BYEFrXFfVvJSoYdsG02
-	2Pyl5awELZWuUbbvhKTT6oxktKMcKpioP2G61vO7hgxyRoK9+bZXzQBt7Fmf/M7fihX6s6K9fAlbG
-	9wzarVZDbmH1YOOtLKXK07Ymuk7V/UT48FXq1KB2oVwYg0M6i2v4+MLsQVIiw6agHfahLFV47FNAC
-	s9XTgnRA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sqUZ2-00000002zBP-3zLK;
-	Tue, 17 Sep 2024 09:32:04 +0000
-Date: Tue, 17 Sep 2024 10:32:04 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Chris Mason <clm@meta.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Chinner <david@fromorbit.com>, Jens Axboe <axboe@kernel.dk>,
-	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
-	regressions@leemhuis.info
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-Message-ID: <ZulMlPFKiiRe3iFd@casper.infradead.org>
-References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
- <ZuNjNNmrDPVsVK03@casper.infradead.org>
- <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
- <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area>
- <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
- <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
+	s=arc-20240116; t=1726565623; c=relaxed/simple;
+	bh=hac2hUFaa/gebLVtfJwTY0SuulzszxQKQH0AilZ+XKk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=TyDLaifcpA6Y1knhCBVyLll8PLeif/IPmzSAgz72kIfAkBTUeW7rJOnAXjzVRMP/JfNnti7cvovSXYgHmfPH5XClOh4QSDzPoplT8HnPIe1m4O3lGsO3wNI2njqmRLB9tN95DYpe7StuGPnnIzlaI1HDfvTWUbW6aQkwZ0sDNbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BeoH2Iy6; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726565606; x=1727170406; i=markus.elfring@web.de;
+	bh=BQCXTN8kKkd1kkGO9NF/p4jvWGCDLj4NS40vm1F4hUo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BeoH2Iy6DdIU4GndjNZnbkIeq2YNj+TbY72vkBctTYkViWyETfm032YkQg4aDjm/
+	 dnHEB91Vdg7GgM0aXN8k+BRJCmbj5a82Y8mGIrFcUTCCAuyY/9EavMWuXPqUyzB1Z
+	 VRFy4o/bQaqKlG224rPYsAm+oZoqV6f8cOzpwp2X/azvLAyweYX74sXkWinE+9isF
+	 vj1T1c/Rkx8a5j2FtJcaRUHlqdBx8K8boeFkHucGEmdAQOa3WQ+aBna4wVJwA+cCM
+	 KaDXKfOpDdK/aEEVf46RtVBTaZD3asU51rYbyc5r2w6X8hGlNDrIxg3PpcXZxqhFa
+	 gFibUQDQN2Kp8A/f+A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLzin-1sYYC72tIP-00XdyW; Tue, 17
+ Sep 2024 11:33:26 +0200
+Message-ID: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
+Date: Tue, 17 Sep 2024 11:33:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] crypto: lib/mpi - Extend support for scope-based resource
+ management
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nL+dVkroubRqlrEYG8b1wBZgrLvmUOOGbIjc8yycZpxoJGL7txJ
+ yJLhnXrJOfhNzXjkjDx0dOMp9rCMBlSW+UyLuseJhCHYJtOROYuX05EpirMYRhVpQBpuONv
+ yiqNw9Xqay4zM+1t0x23t3HAMkWkqpHpe7O+kMv7h9/xbfDMIcXsB2US/vCYC0gmTUXj53u
+ im/6olLOPOVb/VSqJa+rg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kry6FD/SrT0=;M8vir+4w+5TsOFOlWwr5t5mOHsE
+ xYwAJEZBe+83b20qSxUCsq1VdlMDdcNKVeJN1+tPmBvjqAq37VOSfPbn+ncF808CBFqaNbB99
+ 7v/D5sdb6zU7bw4ZH7pfIBK3+k/U5PlN7aCYXngiRHGZwCP6AHWKX4diP9DItMJ685b4K9LXa
+ /QmURvgfEIUJJt8oKf7f1aT5/9wVTndD7qa3f4dYdVvGUn8IrOIDP6LDsBH2vNpnrVq81uB1P
+ VvSy61A8B/L7gkyuHkKAAr60Giuk/QF9+IM2ZvjHcYJoqKniVp5FgbbRcNOF1TI8TwiMhuEqP
+ pbCbN2p1brdGmutyHsbmSMwfEytJnekaNPIr2Z0FeIm+0G1P5XOafD9QuldXADVYz/ZAUgmAR
+ 43ykwMUljolsPUaX7fr4+9CkgrXwNHgu43FLvNV1GAeRx+j0p+0UjjvqvkdUi7v1TBld7NBnR
+ DjJu5BDq3dH+4bqmvvr5vcC8dVoMq+WPBXsZEbFmqc1WQliUC29mZL4qX1uxWckBUog0rzuUE
+ 2jtjbR3BhnQGb9pT+4R+ka3obPBmcSHT9rgwt/mKxTq5hdxxUW7Qs4cSMOlwmZLyNbgXmQdxJ
+ Y6S3M2kZg6c4jZ5ud1BsLC6Jej0U8TkDUs0wH6d24+uqLO3tj3IvcSbHTTdA+etyfNsUsmVI3
+ ljsZ6KMSF9LkPSxUCgSO2Oz73J0AROskgn7vvA6KMdluwSxivi5kZFJOGM0ghRwX9M89CnELP
+ j1bWDw1ppr7O70TWGx5Dyt/Z84mfWk93VBaQ9Rpa49cmfNFJBfdZJSkPSXG3wCtPBqtbsmpQE
+ xCdY1bnSLOvV7/Lcam9gU/NA==
 
-On Mon, Sep 16, 2024 at 10:47:10AM +0200, Chris Mason wrote:
-> I've got a bunch of assertions around incorrect folio->mapping and I'm
-> trying to bash on the ENOMEM for readahead case.  There's a GFP_NOWARN
-> on those, and our systems do run pretty short on ram, so it feels right
-> at least.  We'll see.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Sep 2024 11:20:29 +0200
 
-I've been running with some variant of this patch the whole way across
-the Atlantic, and not hit any problems.  But maybe with the right
-workload ...?
+Scope-based resource management became supported for some
+programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
+See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
+Introduce __cleanup() based infrastructure").
 
-There are two things being tested here.  One is whether we have a
-cross-linked node (ie a node that's in two trees at the same time).
-The other is whether the slab allocator is giving us a node that already
-contains non-NULL entries.
+Thus add a macro call so that the attribute =E2=80=9C__free(mpi_free)=E2=
+=80=9D can be
+applied accordingly.
 
-If you could throw this on top of your kernel, we might stand a chance
-of catching the problem sooner.  If it is one of these problems and not
-something weirder.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ include/linux/mpi.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 0b618ec04115..006556605eb3 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -1179,6 +1179,8 @@ struct xa_node {
- 
- void xa_dump(const struct xarray *);
- void xa_dump_node(const struct xa_node *);
-+void xa_dump_index(unsigned long index, unsigned int shift);
-+void xa_dump_entry(const void *entry, unsigned long index, unsigned long shift);
- 
- #ifdef XA_DEBUG
- #define XA_BUG_ON(xa, x) do {					\
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 32d4bac8c94c..6bb35bdca30e 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -6,6 +6,8 @@
-  * Author: Matthew Wilcox <willy@infradead.org>
-  */
- 
-+#define XA_DEBUG
+diff --git a/include/linux/mpi.h b/include/linux/mpi.h
+index 47be46f36435..47db8fa5fcc8 100644
+=2D-- a/include/linux/mpi.h
++++ b/include/linux/mpi.h
+@@ -19,6 +19,8 @@
+
+ #include <linux/types.h>
+ #include <linux/scatterlist.h>
++#include <linux/cleanup.h>
++#include <linux/err.h>
+
+ #define BYTES_PER_MPI_LIMB	(BITS_PER_LONG / 8)
+ #define BITS_PER_MPI_LIMB	BITS_PER_LONG
+@@ -44,6 +46,8 @@ typedef struct gcry_mpi *MPI;
+ /*-- mpiutil.c --*/
+ MPI mpi_alloc(unsigned nlimbs);
+ void mpi_free(MPI a);
++DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
 +
- #include <linux/bitmap.h>
- #include <linux/export.h>
- #include <linux/list.h>
-@@ -206,6 +208,7 @@ static __always_inline void *xas_descend(struct xa_state *xas,
- 	unsigned int offset = get_offset(xas->xa_index, node);
- 	void *entry = xa_entry(xas->xa, node, offset);
- 
-+	XA_NODE_BUG_ON(node, node->array != xas->xa);
- 	xas->xa_node = node;
- 	while (xa_is_sibling(entry)) {
- 		offset = xa_to_sibling(entry);
-@@ -309,6 +312,7 @@ bool xas_nomem(struct xa_state *xas, gfp_t gfp)
- 		return false;
- 	xas->xa_alloc->parent = NULL;
- 	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
-+	XA_NODE_BUG_ON(xas->xa_alloc, memchr_inv(&xas->xa_alloc->slots, 0, sizeof(void *) * XA_CHUNK_SIZE));
- 	xas->xa_node = XAS_RESTART;
- 	return true;
- }
-@@ -345,6 +349,7 @@ static bool __xas_nomem(struct xa_state *xas, gfp_t gfp)
- 		return false;
- 	xas->xa_alloc->parent = NULL;
- 	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
-+	XA_NODE_BUG_ON(xas->xa_alloc, memchr_inv(&xas->xa_alloc->slots, 0, sizeof(void *) * XA_CHUNK_SIZE));
- 	xas->xa_node = XAS_RESTART;
- 	return true;
- }
-@@ -388,6 +393,7 @@ static void *xas_alloc(struct xa_state *xas, unsigned int shift)
- 	}
- 	XA_NODE_BUG_ON(node, shift > BITS_PER_LONG);
- 	XA_NODE_BUG_ON(node, !list_empty(&node->private_list));
-+	XA_NODE_BUG_ON(node, memchr_inv(&node->slots, 0, sizeof(void *) * XA_CHUNK_SIZE));
- 	node->shift = shift;
- 	node->count = 0;
- 	node->nr_values = 0;
+ int mpi_resize(MPI a, unsigned nlimbs);
+
+ MPI mpi_copy(MPI a);
+=2D-
+2.46.0
+
 
