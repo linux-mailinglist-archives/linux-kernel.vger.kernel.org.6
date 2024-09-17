@@ -1,154 +1,144 @@
-Return-Path: <linux-kernel+bounces-331609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C317397AEE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:35:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D829197AEE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80ADA284E82
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2D6DB2970F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2238165EED;
-	Tue, 17 Sep 2024 10:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464E7166F17;
+	Tue, 17 Sep 2024 10:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQC6j6WM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ILOnHvid"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5877861FCE;
-	Tue, 17 Sep 2024 10:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15AF61FCE
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726569296; cv=none; b=GjD8Buc73Ey4cShPon9EGdZnRglsT2WvWRjzE9nuJEHoNdHCrot+22nZ12BHls14x96ukVuWDFQHGe9SSzINleQS4tIxs+uc4adkUHkrMA4ktWAvk4MgNKkDS25CleGvY8OV0lnTbsjjNIKOlNCnMj/qrut9oCkPqX2bqjcGS7I=
+	t=1726569292; cv=none; b=MTZ6+6cbyZx9mbxdB+/Jjhj8YNmOzMNjIRp9QEOvxCAa8KrUpKG8890hhS6EZA9WJt2RFTSOpfr9ooKQizMp4FJ0Gavmtsk24ptqbrT2ppZ7JlplT6V8xgWQK/EGtYrTRLFAJjlFsshgu8hQmaJLbmv0oGF9/rIcdzo2SRnGDuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726569296; c=relaxed/simple;
-	bh=jkoXYaDwCNxtdu1uXwJxHkE0KqMtq8XRlMuq5uYA7+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDPbresAHYEscxV8P/d8aqIHRucwuN6K8P7NBMHvpq0BEVtDOIWliXYUiCATWUJ8dt+ea4B8jsOJhVdNoIgG8Xm69Om6A1CBL3RcFWadSNVql92q+bRtMNt/lhm6T9i9sHFbxSmP/2yOXkDuxkmIm3N3OlDDlxUHErQBNYAEy/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQC6j6WM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556F1C4CEC6;
-	Tue, 17 Sep 2024 10:34:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726569295;
-	bh=jkoXYaDwCNxtdu1uXwJxHkE0KqMtq8XRlMuq5uYA7+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HQC6j6WM0pSGZOMjvw4jMiRTLPPxbzbIvA/OEmOQBzvMzc/RuMlAONRYmY/yA3i7F
-	 q0CqWxT6t2XuukQyNlUrhR2VU862bo6KAKam31zYfGT2FG0SO79V1SBg3/pG0iY82i
-	 bcsLb1yB0dvm6JbeJ0u9CBb4KwO30iP6zljXKG64l2IghIH2+1fZBk0UaZy/vtbdtK
-	 USojShQXCJnEK2IUvhLOzIdBaXTVkdwFiaI+eWIFubioDJZQ9FQV9Rtws6+9VGSd1z
-	 1dt1YJy0y6wP/Xlh0aQoejbdvMy2hjlhrBF4Lk40fX3L4UA3hF6k/W6C16n8VdnNGU
-	 qAf3XH6WHM/8g==
-Date: Tue, 17 Sep 2024 12:34:51 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
-Subject: Re: [PATCH 12/19] kthread: Default affine kthread to its preferred
- NUMA node
-Message-ID: <ZulbS1MvZVVYe-YO@localhost.localdomain>
-References: <20240916224925.20540-1-frederic@kernel.org>
- <20240916224925.20540-13-frederic@kernel.org>
- <ZukhKXxErPOaXtAL@tiehlicka>
+	s=arc-20240116; t=1726569292; c=relaxed/simple;
+	bh=7/3vPXDrQWMhs9icxfIhVsMHblmE8JCuuUC6wc2CeiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u3lQVjcOz4lvEQwBsJbdc6oQJ7geRsTLMJ5OhInq7G8i8hFn0VtxlEV508zXjyH3uO9/otkJDKM2AX0h1agv4y9invE8GpUjmJx5SF1awjo/sM6Jv2x+t8LVHZ+5FvNRpV5bzi63XWBam7b23CIghnuh7cGhhJInTkoz3knivxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ILOnHvid; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso54006755e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:34:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726569289; x=1727174089; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3lajiHp8pF3piHvYLQb6FYA0YAlImwOIzK66rOuQWis=;
+        b=ILOnHvidhGH18+EDdsZLFVm9cHFxr29LqgOUwdaAHDEESf49nh8ZB8kSSNI6vSMSXZ
+         80yqpR9J0Foz+3OU5RTYv/0BUkJgAbwr8YST4s9M7CCdFavRf4VtwSNLiS3l2t6mHtKZ
+         yY3i/LvXQ2ZXpHozVoZWNa+P76L8oQKmwIS3eI9rNqz5urpnq3paYRoXss6ZtuyX4for
+         uKUWdmF7F0Jg8YLzQUpHlNtDdhNGtto+yI7IKtUqCAJ7seJ5GkRsrcfBR/1ynOZbJi+j
+         I2WU3CCRXekZygBghS+RJlPIQAgOOXoLcWdCyvXAnaVO6PaQwz6G1Pavy3zNurJaxF7V
+         s4CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726569289; x=1727174089;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3lajiHp8pF3piHvYLQb6FYA0YAlImwOIzK66rOuQWis=;
+        b=s64RCLCQi16FXUfu05yyekHh791V89KQ12F2NGcBGcBAqEEo+f6lXx/BiGlAWPVz8g
+         Hvr6Y4B73+odc03Y+A3G5SCSN2uZ8g3lASYvk8GN7TPXlKvoHFbDM40iNOskaa3A1i+e
+         s5nXHfyrWQxU6k3ozsCl73Mmq1Y0R4VvYOpPyKJPCwQED8WXf++RhjfKFxILmvjfD337
+         2DQD639IIX3n9IGrc+8pS8J7fXIki5piVAJa2vulkLMV+9p4gHMul7Uh6ji1GbLd37/T
+         HUCGvzjQ4b73/woUT1xNGSgF0trVuuoJYevjpUEWceI3Om2gOJ352/YJGfUFGQTq2WIv
+         mUXA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6s74XNMOtpbt0HPJVAooUhwqwr8Z7eW4rKV9AYUL6s+cGMlvRzUvt026ZT1yeNFRBh3jh2H41fS3eXKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8qXkMOGj406fM0DjCCCbMGWtFQi/pZLY1ghOiPUkmbg5CMMfg
+	E3gWBg7V6YXA7ZpWvwqp5gusS9EQBxpG4H3E7GwH5kagSS4PgtMDs3jEOT/UKzI=
+X-Google-Smtp-Source: AGHT+IGTY3U2D3ATkqAlxhwKnfD0PwMT+SbB1VPzu7nsazWDiqfRvg8PRPw4ZwRCHyCLO4+1Gti3kg==
+X-Received: by 2002:a05:600c:314e:b0:42c:bf94:f9ad with SMTP id 5b1f17b1804b1-42cdb5919fbmr131246545e9.34.1726569288794;
+        Tue, 17 Sep 2024 03:34:48 -0700 (PDT)
+Received: from [192.168.1.61] ([84.67.228.188])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f99a4sm9100986f8f.57.2024.09.17.03.34.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 03:34:48 -0700 (PDT)
+Message-ID: <95e39d9c-7f0e-447b-9b2d-aab5d36b933a@linaro.org>
+Date: Tue, 17 Sep 2024 11:35:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZukhKXxErPOaXtAL@tiehlicka>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] perf sched stats: Add record and rawdump support
+To: Ravi Bangoria <ravi.bangoria@amd.com>, swapnil.sapkal@amd.com
+Cc: yu.c.chen@intel.com, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, rostedt@goodmis.org,
+ vincent.guittot@linaro.org, bristot@redhat.com, adrian.hunter@intel.com,
+ james.clark@arm.com, kan.liang@linux.intel.com, gautham.shenoy@amd.com,
+ kprateek.nayak@amd.com, juri.lelli@redhat.com, yangjihong@bytedance.com,
+ void@manifault.com, tj@kernel.org, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, santosh.shukla@amd.com,
+ ananth.narayan@amd.com, sandipan.das@amd.com, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, irogers@google.com
+References: <20240916164722.1838-1-ravi.bangoria@amd.com>
+ <20240916164722.1838-3-ravi.bangoria@amd.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20240916164722.1838-3-ravi.bangoria@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le Tue, Sep 17, 2024 at 08:26:49AM +0200, Michal Hocko a écrit :
-> On Tue 17-09-24 00:49:16, Frederic Weisbecker wrote:
-> > Kthreads attached to a preferred NUMA node for their task structure
-> > allocation can also be assumed to run preferrably within that same node.
-> > 
-> > A more precise affinity is usually notified by calling
-> > kthread_create_on_cpu() or kthread_bind[_mask]() before the first wakeup.
-> > 
-> > For the others, a default affinity to the node is desired and sometimes
-> > implemented with more or less success when it comes to deal with hotplug
-> > events and nohz_full / CPU Isolation interactions:
-> > 
-> > - kcompactd is affine to its node and handles hotplug but not CPU Isolation
-> > - kswapd is affine to its node and ignores hotplug and CPU Isolation
-> > - A bunch of drivers create their kthreads on a specific node and
-> >   don't take care about affining further.
-> > 
-> > Handle that default node affinity preference at the generic level
-> > instead, provided a kthread is created on an actual node and doesn't
-> > apply any specific affinity such as a given CPU or a custom cpumask to
-> > bind to before its first wake-up.
+
+
+On 16/09/2024 17:47, Ravi Bangoria wrote:
+> From: Swapnil Sapkal <swapnil.sapkal@amd.com>
 > 
-> Makes sense.
+> Define new, perf tool only, sample types and their layouts. Add logic
+> to parse /proc/schedstat, convert it to perf sample format and save
+> samples to perf.data file with `perf sched stats record` command. Also
+> add logic to read perf.data file, interpret schedstat samples and
+> print rawdump of samples with `perf script -D`.
 > 
-> > This generic handling is aware of CPU hotplug events and CPU isolation
-> > such that:
-> > 
-> > * When a housekeeping CPU goes up and is part of the node of a given
-> >   kthread, it is added to its applied affinity set (and
-> >   possibly the default last resort online housekeeping set is removed
-> >   from the set).
-> > 
-> > * When a housekeeping CPU goes down while it was part of the node of a
-> >   kthread, it is removed from the kthread's applied
-> >   affinity. The last resort is to affine the kthread to all online
-> >   housekeeping CPUs.
+> Note that, /proc/schedstat file output is standardized with version
+> number. The patch supports v15 but older or newer version can be added
+> easily.
 > 
-> But I am not really sure about this part. Sure it makes sense to set the
-> affinity to exclude isolated CPUs but why do we care about hotplug
-> events at all. Let's say we offline all cpus from a given node (or
-> that all but isolated cpus are offline - is this even
-> realistic/reasonable usecase?). Wouldn't scheduler ignore the kthread's
-> affinity in such a case? In other words how is that different from
-> tasksetting an userspace task to a cpu that goes offline? We still do
-> allow such a task to run, right? We just do not care about affinity
-> anymore.
+> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
+> Co-developed-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> ---
 
-Suppose we have this artificial online set:
+[...]
 
-NODE 0 -> CPU 0
-NODE 1 -> CPU 1
-NODE 2 -> CPU 2
+> +int perf_event__synthesize_schedstat(const struct perf_tool *tool,
+> +				     perf_event__handler_t process,
+> +				     struct perf_cpu_map *user_requested_cpus)
+> +{
+> +	union perf_event *event = NULL;
+> +	size_t line_len = 0;
+> +	char *line = NULL;
+> +	char bf[BUFSIZ];
+> +	__u64 timestamp;
+> +	__u16 version;
+> +	struct io io;
+> +	int ret = -1;
+> +	int cpu = -1;
+> +	char ch;
+> +
+> +	io.fd = open("/proc/schedstat", O_RDONLY, 0);
 
-And we have nohz_full=1,2
+Other parts of the tool use procfs__mountpoint() for /proc. Although it 
+can only be in one place so it doesn't actually make a difference for 
+this one. Probably worth it for consistency though.
 
-So there is kswapd/2 that is affine to NODE 2 and thus CPU 2 for now.
+> +	if (io.fd < 0) {
+> +		pr_err("Failed to open /proc/schedstat\n");
 
-Now CPU 2 goes offline. The scheduler migrates off all
-tasks. select_fallback_rq() for kswapd/2 doesn't find a suitable CPU
-to run to so it affines kswapd/2 to all remaining online CPUs (CPU 0, CPU 1)
-(see the "No more Mr. Nice Guy" comment).
-
-But CPU 1 is nohz_full, so kswapd/2 could run on that isolated CPU. Unless we
-handle things before, like this patchset does.
-
-And note that adding isolcpus=domain,1,2 or setting 1,2 as isolated
-cpuset partition (like most isolated workloads should do) is not helping
-here. And I'm not sure this last resort scheduler code is the right place
-to handle isolated cpumasks.
-
-So it looks necessary, unless I am missing something else?
-
-And that is just for reaffine on CPU down. CPU up needs mirroring treatment
-and also it must handle new CPUs freshly added to a node.
-
-Thanks.
-
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
+A hint about CONFIG_SCHEDSTAT would be useful here.
 
