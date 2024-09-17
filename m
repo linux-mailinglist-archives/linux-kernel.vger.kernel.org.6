@@ -1,182 +1,244 @@
-Return-Path: <linux-kernel+bounces-332084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFA797B53B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:30:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61EC997B540
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E199B26DC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:30:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878101C22C3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9FC192B6E;
-	Tue, 17 Sep 2024 21:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF541917E0;
+	Tue, 17 Sep 2024 21:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bknTGe2H"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uUsd9osz"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C68446A1;
-	Tue, 17 Sep 2024 21:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF70446A1
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 21:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726608602; cv=none; b=uYMDW/9VtpZBHpajdb2n3/1JWzQ/14fLpDidV2MI4Q65m87wwtaW5vV/UuO9p4fIbmVM51AmQIMDAMLfMcaVilSQDVRfnWR2qLNPl5bIe9qpANlYL0VW+vSCvJbSPZ0G24Ccl08QGyvDwkyQqaonwaiHXZay6vv63PbgTp5vMs8=
+	t=1726608724; cv=none; b=sutNqycOMDsMtOvIaaVHC9u87b5CrA1jCeRPFjdU5JAieOjgbM/INQ7gtsuyL9gd9QaluASQOy+0/VrtJgLMse731f+Mdw/yXXof8O2LpZ6sw91alp2JOa1q8+KjqLJdF1f3bP6cumY1sDWwpvHphP/pb70UWzlwqE1/qSNDPas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726608602; c=relaxed/simple;
-	bh=J3ZfIbWvV/pUT2sQiBwsH1xpKOvs6n7Ihgb2nMGi+cA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tp/mek977Oi4xoXpZrZiEJISZ8FiNZc7gLnKLBfw6Tjq3JqNZnumL7T81oYKgKV/X0fwtREkP8JMmM60LTbJghjqTZ7Zen83nPrPohMukH9dOiRAVyyO2udwOuG8BJw339czj30jgQxt5dc+NMd8exZXEIruhKYbKn8xOJYBgMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bknTGe2H; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c4226a5af8so6191849a12.1;
-        Tue, 17 Sep 2024 14:30:00 -0700 (PDT)
+	s=arc-20240116; t=1726608724; c=relaxed/simple;
+	bh=7imgg8MHnR9gxNsCcaxlqJr1rg23llfOC/+tu1YfRZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNIeEzrlHt5zZOMJbJoj/unk2UT4mdh22LFP+mHsHh3uQl8Cr6pmK9mxdvs4dIIDmgsgSKLKuGgereJMKsvUNEg+S2tAB7pzUEeXTefb61ptuvdBr1qJHMGH4w3IGAjIXqN4lfxiM7l89jrrSAEgJR2N/5nQt+05nwIz6DiHTEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uUsd9osz; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53653682246so7257087e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 14:32:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726608599; x=1727213399; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/5yS1EFc2UkCNqUe9XkDS8zSd6iM9CaMBvaXI1VqENI=;
-        b=bknTGe2HEpPKSfi0FDLIzYUr3FAbp6Owg5nDdtrVd9W3vhSjt/De9pIhm6Z8XxLakq
-         stz5JtZoGDc/eJwV79vn6Y/OApxOz03JSjQB9CTWYZcPqE3xyCUALL5wuVS67viPbjSm
-         JQMkEJGXwUtA9d8c4XQJ+HWyJZ3qrg3wUAQEIkeVEuftUTaVBfFq2jEBrtMxqOXpdwzZ
-         RfESA7vXGnguA+yh9Ld+kwdPxH8c/C/+Jh8Svzo3iachjTty4Us1Jbb/mjqSkPGaaBvc
-         38wOo9nIjWuNDb0IAVMqIBLzWn8lMirMVLxrJoS+J6RJXfL6eqBeCWi6hbnEoti1peRO
-         ETog==
+        d=linaro.org; s=google; t=1726608719; x=1727213519; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1R6BTw3CyHrPVMyIN0XqxDT3g5ElbidWKYOyL9ivcME=;
+        b=uUsd9oszLmhHzREMuF0DhArJ4j2m5ClBXdtpkH+QKKaNONHEPw08MffuFNnr5FCPQm
+         UhiwHTDwAgxy+FuP0cGTnjDxw6knaz7SwqKK+MtXgmq8nSFu7ASc02aQgPZbbCvBLoAB
+         le/BVaBe6J2iWYF+AAXmsv1JsuKcHjpNyb++Ko68YxygnmSy74snzr5V+qGqfPvyCyR2
+         /Aw7zChbVFahu12GTlqSBCH80ErbSuMqfmphE4WXvs8sPgzbKjVxH8qvlKdfcfl72CZ7
+         wi3TJKSa2slxY+Lf6PSunKn2/ZKPGNb7QPxhh97nLedb83RbccMXA5RFgpsPNUjjBGNI
+         ef8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726608599; x=1727213399;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/5yS1EFc2UkCNqUe9XkDS8zSd6iM9CaMBvaXI1VqENI=;
-        b=tYIz7X/e1Fx9BkXqtEum1GMKzS/e2NrPj8CPb3yGkt5VuM/Q1/JLBDVPF2WnAXZZNR
-         34tnIrUVb9DhKKglgnJJe3lVwKe9Y6APhreDqwJ/v51G1xR6fOOri3FUo8Ks2vm0gsLk
-         ebz1Bd/SpwQY0haGjfQ/a2X1PuSfNyM5jcJnVWb+hbCYB9Cy9BCVP1MF9YU5bqMwK7pX
-         jnVsz3Ud2eDfD2OZD40pIDsCpsqUsligbquHQX4daDlEd2IW5nu2MXO7SS9nSCwnCMdn
-         H2fEToWUQFcgl3PzyImYRkMOF4fnmJwr3X/l36Dz8o3NPC7txu2DmI6Fh5HqrJsLJvj/
-         8s1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVZJBO4fiPEKIfx7uEySDhmI2PVLEowl9xXPXbb4xRJuXocOKFbwbchujWyUoxs8p0O+BJp5SGv39N6@vger.kernel.org, AJvYcCXvMYPM5+Icve8LrsFAC5ED1oh6iMAFQwjeQAIjlKTGkgvRjeRdBdI5pBq4NmigCVFZEiW9i4DQqTWzX1wn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZxT7tWXzF6/iwB+YRhqsFTQwzSkJUtY9hdbu3hU4d8ZYfOCE2
-	XX1SLocIeQq7BLh/k6632KKDvcJHfDCy3vSPxHx9NcAiXIFFzsdG2if3ri5H0nRdquqC+n3az2N
-	D3svdGilZaxeOFwPb0h45vHyQxQ==
-X-Google-Smtp-Source: AGHT+IHZDSOWH5g2mse3vvoQufmbyrZHOiOqYeHvdcDTmjg09A/dKV48ek5QF2G9EkhG6CVgJbewgqf3PB397EjBApg=
-X-Received: by 2002:aa7:c882:0:b0:5c4:b33:1f with SMTP id 4fb4d7f45d1cf-5c413e4d733mr16483402a12.28.1726608598858;
- Tue, 17 Sep 2024 14:29:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726608719; x=1727213519;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1R6BTw3CyHrPVMyIN0XqxDT3g5ElbidWKYOyL9ivcME=;
+        b=i1XCwdcEFVkviaQ/TakJXLvpOHiM1HWwW5WQgXh0a20pO293rW7r7t/CER2X3ERa7D
+         WUNXpjMcti6ArvH382dSVeZXE6CMlRDfNzg02iS2blC34wB5eRtoBQM5Qi+5GqH5HaE3
+         aQmAEJxu2gQMu3wFjquUtLhBy7AA5ps5nc1mnxUrX5rCpEcEW62e4OJFVIfRFk+s9+aJ
+         +F4Et7v5hOXsp9w5Z08SbrrFuG/Dl77merOHQumsyTk+5T8DP/nxSYd7blRdy/LbYUOj
+         OKIvOJSAaItIsL+qk7OgvrEzu5aFx8fq4MrJVO46OChSTH2lz1AOZoZY1yKSy4uuVnRw
+         EA5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnAl7ay0OUWCns7I+J46lxTTSo/5xQpMoB0jJoiSJqB6FEcGWAqGuAMNJNmu2rrdDumf7CJNyFNcSf+LQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYarfUxjNHhBqc1S0bEu/TyVCuDU7lzNWNdPgFA2skkQk21rX+
+	fqmefc4u9lNZsDf7Ah2a43VPzJ61heIBQjjlO3FihAkZNVTJ3578Xm8s8X/lHUc=
+X-Google-Smtp-Source: AGHT+IHhcqmPzBEx+mRQGBWjo5mWxJ/GGeo4PSbS+lWwhv89D5TADe1zKDPSG1PO6BnyN1AO9gTdww==
+X-Received: by 2002:a05:6512:3995:b0:52c:e326:f4cf with SMTP id 2adb3069b0e04-53678fb4606mr12705813e87.3.1726608718749;
+        Tue, 17 Sep 2024 14:31:58 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704def1sm1313577e87.84.2024.09.17.14.31.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 14:31:57 -0700 (PDT)
+Date: Wed, 18 Sep 2024 00:31:55 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+Subject: Re: [PATCH 1/3] drm/msm/a6xx: Add support for A663
+Message-ID: <vahykyu4cck26sstulzukl323rskjoqebogz4ckv2aoibb2eo6@kmbrw7voa5tx>
+References: <20240918-a663-gpu-support-v1-0-25fea3f3d64d@quicinc.com>
+ <20240918-a663-gpu-support-v1-1-25fea3f3d64d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917094956.437078-1-erezgeva@nwtime.org> <20240917094956.437078-4-erezgeva@nwtime.org>
- <9c273945-5a70-408e-a9da-a0797aa6d935@kernel.org> <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
- <64ef46b1-7908-4b15-866d-9cabe2e5dc9e@kernel.org> <CANeKEMPwgtECfksgz6jXkR+bjVFwCB9DOh1q7t_3WeojReqxbA@mail.gmail.com>
- <e0db2f62-b2fd-4b61-932c-cc2caf5dd647@kernel.org> <CANeKEMNCFKX2thq+Ws0vy9ovbQ7dve3YPh_FbRaoOEgL+7c_Mw@mail.gmail.com>
- <fe98e49d-96d1-462f-99ac-93d8a53e55fd@kernel.org> <CANeKEMNg_hPcVHVo2c9u1Vdzaso0ODT+2uLmip6sd26uK8d_FQ@mail.gmail.com>
- <20240917-taps-applied-6c0d411bbe08@squawk>
-In-Reply-To: <20240917-taps-applied-6c0d411bbe08@squawk>
-From: Erez <erezgeva2@gmail.com>
-Date: Tue, 17 Sep 2024 23:29:22 +0200
-Message-ID: <CANeKEMOXZjgLm-Wb8+9RMJYNN1a2Oy81P3MXZiLxNaAerLhYEA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
-To: Conor Dooley <conor@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Esben Haabendal <esben@geanix.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918-a663-gpu-support-v1-1-25fea3f3d64d@quicinc.com>
 
-On Tue, 17 Sept 2024 at 22:39, Conor Dooley <conor@kernel.org> wrote:
->
-> On Tue, Sep 17, 2024 at 08:39:48PM +0200, Erez wrote:
-> > On Tue, 17 Sept 2024 at 19:32, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > On 17/09/2024 19:24, Erez wrote:
-> > > >>>>>>
-> > > >>>>>> It does not look like you tested the bindings, at least after quick
-> > > >>>>>> look. Please run `make dt_binding_check` (see
-> > > >>>>>
-> > > >>>>> I run "make dt_binding_check" on kernel 6.6.
-> > > >>>>
-> > > >>>> Yeah, we are no on kernel 6.6. You can run it also on kernel v4.1 -
-> > > >>>> still does not matter.
-> > > >>>>
-> > > >>>> Don't develop on ancient code because then you ask us to review same
-> > > >>>> broken stuff we already fixed.
-> > > >>>
-> > > >>> I test with Beaglebone black for testing, it is difficult to run the
-> > > >>> last vanille version.
-> > > >>> I did backport the spi-nor driver.
-> > > >>> As for "make dt_binding_check" on last kernel, it need to upgrade the tools,
-> > > >>>  and I did not think it could change that much.
-> > > >>>
-> > > >>
-> > > >> Well, it is possible to build kernel on small embedded board, but that's
-> > > >> quite cumbersone, slow and inefficient, considering that it's just
-> > > >> easier to cross compile. But anyway, binding check does not even need
-> > > >> cross compilation.
-> > > >>
-> > > >> Sorry, the code is obviously wrong, there is no such thing as u32, so
-> > > >> you did not test it. I provided link which explains how to test it. You
-> > > >> must do it on latest mainline kernel. Just like you must develop and
-> > > >> generate patches on latest mainline kernel, because this is where we
-> > > >> apply the patches. We do not apply them to v6.6.
-> > > >
-> > > > The patches are based on the lastest  mainline kernel.
-> > > > I do not understand why you think otherwise.
-> > >
-> > > Because you wrote:
-> > > "I run "make dt_binding_check" on kernel 6.6."
-> > >
-> > > The command is either part of build process or final check process
-> > > (static analyzers etc). If you say you did this on v6.6, you got such
-> > > response.
-> >
-> > I know you are NOT a service.
-> > The device tree is not the focus of my work.
-> > It should not be broken like that.
-> >
-> > I install dt-schema_2023.11-3_all.deb
-> > with Debian trixie
-> > I get:
-> >
-> > l
-> >   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-> > Traceback (most recent call last):
-> >   File "/usr/bin/dt-mk-schema", line 8, in <module>
-> >     sys.exit(main())
-> >              ^^^^^^
-> >   File "/usr/lib/python3/dist-packages/dtschema/mk_schema.py", line 28, in main
-> >     schemas = dtschema.DTValidator(args.schemas).schemas
-> >               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >   File "/usr/lib/python3/dist-packages/dtschema/validator.py", line
-> > 363, in __init__
-> >     self.make_property_type_cache()
-> >   File "/usr/lib/python3/dist-packages/dtschema/validator.py", line
-> > 420, in make_property_type_cache
-> >     self.props, self.pat_props = get_prop_types(self.schemas)
-> >                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >   File "/usr/lib/python3/dist-packages/dtschema/validator.py", line
-> > 187, in get_prop_types
-> >     del props[r'^[a-z][a-z0-9\-]*$']
-> >         ~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-> > KeyError: '^[a-z][a-z0-9\\-]*$'
-> > make[2]: *** [Documentation/devicetree/bindings/Makefile:64:
-> > Documentation/devicetree/bindings/processed-schema.json] Error 1
-> > make[2]: *** Deleting file
-> > 'Documentation/devicetree/bindings/processed-schema.json'
-> > make[1]: *** [/home/builder/kernel/Makefile:1435: dt_binding_schemas] Error 2
->
-> Have you considered that this might be because of the invalid types you
-> used?
+On Wed, Sep 18, 2024 at 02:08:41AM GMT, Akhil P Oommen wrote:
+> From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+> 
+> Add support for Adreno 663 found on sa8775p based platforms.
+> 
+> Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 19 ++++++++++++++++++
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  8 +++++++-
+>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c     | 33 +++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  5 +++++
+>  4 files changed, 64 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> index 0312b6ee0356..8d8d0d7630f0 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> @@ -972,6 +972,25 @@ static const struct adreno_info a6xx_gpus[] = {
+>  			.prim_fifo_threshold = 0x00300200,
+>  		},
+>  		.address_space_size = SZ_16G,
+> +	}, {
+> +		.chip_ids = ADRENO_CHIP_IDS(0x06060300),
+> +		.family = ADRENO_6XX_GEN4,
+> +		.fw = {
+> +			[ADRENO_FW_SQE] = "a660_sqe.fw",
+> +			[ADRENO_FW_GMU] = "a663_gmu.bin",
+> +		},
+> +		.gmem = SZ_1M + SZ_512K,
+> +		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+> +		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+> +			ADRENO_QUIRK_HAS_HW_APRIV,
+> +		.init = a6xx_gpu_init,
+> +		.a6xx = &(const struct a6xx_info) {
+> +			.hwcg = a690_hwcg,
+> +			.protect = &a660_protect,
+> +			.gmu_cgc_mode = 0x00020200,
+> +			.prim_fifo_threshold = 0x00300200,
+> +		},
+> +		.address_space_size = SZ_16G,
+>  	}, {
+>  		.chip_ids = ADRENO_CHIP_IDS(0x06030500),
+>  		.family = ADRENO_6XX_GEN4,
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> index 06cab2c6fd66..e317780caeae 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -541,6 +541,12 @@ static void a6xx_calc_ubwc_config(struct adreno_gpu *gpu)
+>  		gpu->ubwc_config.macrotile_mode = 1;
+>  	}
+>  
+> +	if (adreno_is_a663(gpu)) {
+> +		gpu->ubwc_config.highest_bank_bit = 13;
+> +		gpu->ubwc_config.ubwc_swizzle = 0x4;
+> +		gpu->ubwc_config.macrotile_mode = 1;
 
-I remove the types.
-Anyway, scripts should report on errors, not crash.
-This is the purpose of syntax scripts, to help us, developers find out errors.
+If this looks like A660 / A690, shouldn't the driver also enable .amsbc,
+.rgb565_predicator and .uavflagprd_inv?
 
+> +	}
+> +
+>  	if (adreno_is_7c3(gpu)) {
+>  		gpu->ubwc_config.highest_bank_bit = 14;
+>  		gpu->ubwc_config.amsbc = 1;
+> @@ -1062,7 +1068,7 @@ static int hw_init(struct msm_gpu *gpu)
+>  	if (adreno_is_a690(adreno_gpu))
+>  		gpu_write(gpu, REG_A6XX_UCHE_CMDQ_CONFIG, 0x90);
+>  	/* Set dualQ + disable afull for A660 GPU */
+> -	else if (adreno_is_a660(adreno_gpu))
+> +	else if (adreno_is_a660(adreno_gpu) || adreno_is_a663(adreno_gpu))
+>  		gpu_write(gpu, REG_A6XX_UCHE_CMDQ_CONFIG, 0x66906);
+>  	else if (adreno_is_a7xx(adreno_gpu))
+>  		gpu_write(gpu, REG_A6XX_UCHE_CMDQ_CONFIG,
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> index cdb3f6e74d3e..f1196d66055c 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> @@ -478,6 +478,37 @@ static void a660_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+>  	msg->cnoc_cmds_data[1][0] =  0x60000001;
+>  }
+>  
+> +static void a663_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+> +{
+> +	/*
+> +	 * Send a single "off" entry just to get things running
+> +	 * TODO: bus scaling
+> +	 */
+> +	msg->bw_level_num = 1;
+> +
+> +	msg->ddr_cmds_num = 3;
+> +	msg->ddr_wait_bitmask = 0x07;
+> +
+> +	msg->ddr_cmds_addrs[0] = 0x50004;
+> +	msg->ddr_cmds_addrs[1] = 0x50000;
+> +	msg->ddr_cmds_addrs[2] = 0x500b4;
+> +
+> +	msg->ddr_cmds_data[0][0] =  0x40000000;
+> +	msg->ddr_cmds_data[0][1] =  0x40000000;
+> +	msg->ddr_cmds_data[0][2] =  0x40000000;
+> +
+> +	/*
+> +	 * These are the CX (CNOC) votes - these are used by the GMU but the
+> +	 * votes are known and fixed for the target
+> +	 */
+> +	msg->cnoc_cmds_num = 1;
+> +	msg->cnoc_wait_bitmask = 0x01;
+> +
+> +	msg->cnoc_cmds_addrs[0] = 0x50058;
+> +	msg->cnoc_cmds_data[0][0] =  0x40000000;
+> +	msg->cnoc_cmds_data[1][0] =  0x60000001;
+> +}
+> +
+>  static void adreno_7c3_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+>  {
+>  	/*
+> @@ -646,6 +677,8 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+>  		adreno_7c3_build_bw_table(&msg);
+>  	else if (adreno_is_a660(adreno_gpu))
+>  		a660_build_bw_table(&msg);
+> +	else if (adreno_is_a663(adreno_gpu))
+> +		a663_build_bw_table(&msg);
+>  	else if (adreno_is_a690(adreno_gpu))
+>  		a690_build_bw_table(&msg);
+>  	else if (adreno_is_a730(adreno_gpu))
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> index 58d7e7915c57..10f8f25d8826 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> @@ -455,6 +455,11 @@ static inline int adreno_is_a680(const struct adreno_gpu *gpu)
+>  	return adreno_is_revn(gpu, 680);
+>  }
+>  
+> +static inline int adreno_is_a663(const struct adreno_gpu *gpu)
+> +{
+> +	return gpu->info->chip_ids[0] == 0x06060300;
+> +}
+> +
+>  static inline int adreno_is_a690(const struct adreno_gpu *gpu)
+>  {
+>  	return gpu->info->chip_ids[0] == 0x06090000;
+> 
+> -- 
+> 2.45.2
+> 
 
-Erez :-)
+-- 
+With best wishes
+Dmitry
 
