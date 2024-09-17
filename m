@@ -1,375 +1,164 @@
-Return-Path: <linux-kernel+bounces-331542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C1497AE28
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:42:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF06397AE10
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAEDBB2A2BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:41:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EDFDB206AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45301175D5C;
-	Tue, 17 Sep 2024 09:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81F115CD6E;
+	Tue, 17 Sep 2024 09:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PYO+6Vlt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="c4cW+c3+";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="W1VQT7rb"
+Received: from smtpout147.security-mail.net (smtpout147.security-mail.net [85.31.212.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E28175D35
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726565974; cv=none; b=ghmvvEDQ2VveZOeeD4quj3MUANP71ZYZ6BWeowAE971VRPk98iBCmfxl0tcupmdpJ7fLRVUv0Lhpl64+hgC3AtFbwJDgygSMy2ZC8lgVTEnpQ9T7fmGSja+5fsEB85nFYeleYplxB/608jXR2T687EsNFCjZ8QeRTIK5g5T5Scs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726565974; c=relaxed/simple;
-	bh=DD7LKAAtg82s+28f/r6UEMp2lwsOQZEDcHe9oYbBG+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fvdQsriVps5PhfsXiz+yO/iRVBKXO60XlXxfVb/YDQnIRdO9iF744bp9YpcxSSGvHUuvSAJVmU6OVePf5X2T8i1aqW7WVJco5Wc1gGP3t/6ofjUPblsUL9JmLJZ/aA2V6Al6G4g18EV//Zq5vB6/VNFyKhy/343YoT3oob5Qcj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PYO+6Vlt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726565971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yJBF0n0Br65n2hjLZ9wmJHiD+OfAK3na6qQbL7dPnQQ=;
-	b=PYO+6VltLLdY26Wsb05/tbyAomQvD/A/zHxNruB98yclDDjl2CbIS4Sz/f7hi6YHKbfUTi
-	CiFXjZgNU8W2vNvxiqau5sp5Ev8+5fGDpCzvGINQCLfDjdTTONrkPCAm5ziyS+SE9uzJwe
-	XJf5uohSRg6frrcPkXoBEZueymifIho=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-Bm8CA_JRN8av95K9V719Rw-1; Tue,
- 17 Sep 2024 05:39:28 -0400
-X-MC-Unique: Bm8CA_JRN8av95K9V719Rw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BFED419560A3;
-	Tue, 17 Sep 2024 09:39:26 +0000 (UTC)
-Received: from laptop.redhat.com (unknown [10.39.193.23])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AB43E30001A1;
-	Tue, 17 Sep 2024 09:39:22 +0000 (UTC)
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com,
-	eric.auger@redhat.com,
-	treding@nvidia.com,
-	vbhadram@nvidia.com,
-	jonathanh@nvidia.com,
-	mperttunen@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	alex.williamson@redhat.com,
-	clg@redhat.com,
-	alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com
-Cc: msalter@redhat.com
-Subject: [RFC PATCH v2 6/6] vfio/platform: Add tegra234-mgbe vfio platform reset module
-Date: Tue, 17 Sep 2024 11:38:14 +0200
-Message-ID: <20240917093851.990344-7-eric.auger@redhat.com>
-In-Reply-To: <20240917093851.990344-1-eric.auger@redhat.com>
-References: <20240917093851.990344-1-eric.auger@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A70C15C138
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.147
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726565931; cv=fail; b=SmxNc/SMwN3eFKIQsEdS5KpSJToWCBS7Y1xGTjy6+0qOcum80mw2ZZOSk7f96+19M9EySJQ8WxRtvqOMUBr5vMi4C0q5eDXoMkSn7SADJeHNqfdpjsSMZu59/V/hE3Ev4IrTprPrX7H4Py7ceLwLNiwjE6lkbvMdhxvUS72YBYk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726565931; c=relaxed/simple;
+	bh=ADnbOxKEGr+4/HWF13UNe6Dd1ccEcNsSSd9ZwEivtbE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uG61W7zGOdXEKFVSyxYI0HibWHKN5Ptmm7NcKMUcVbXtq0USS4O+OSWCCa881rADwI/RIUL40B/0lgERJSuIZmRyI7BV6BrX2AaoLngAX6CeSxbBczJgTr9mV+UseAGc+t3PdmCu/8mZAnJjEjz2kXRpW98EzF9W0CWVI7w/Kgg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=c4cW+c3+; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=W1VQT7rb reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (fx409.security-mail.net [127.0.0.1])
+	by fx409.security-mail.net (Postfix) with ESMTP id 9D422349D9E
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:38:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1726565922;
+	bh=ADnbOxKEGr+4/HWF13UNe6Dd1ccEcNsSSd9ZwEivtbE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=c4cW+c3+f1NOSWaQQgJQca8T+uwZsDBhgztunrGJnTjdPjkEr0zchq1cOfXDkbxH3
+	 5x2fjzmUmJHkGMZdcfUlD9u8QhgcWg7XbP8ZBJoHhge/7XcLR2KN7tkUtQJ5uJWXw4
+	 C+qxDpJ+H0m+uL30/NG7X/TQ2afJSuI9569SuuZo=
+Received: from fx409 (fx409.security-mail.net [127.0.0.1]) by
+ fx409.security-mail.net (Postfix) with ESMTP id 5E64D349D97; Tue, 17 Sep
+ 2024 11:38:42 +0200 (CEST)
+Received: from PAUP264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17011027.outbound.protection.outlook.com
+ [40.93.76.27]) by fx409.security-mail.net (Postfix) with ESMTPS id
+ 5A76D349D79; Tue, 17 Sep 2024 11:38:41 +0200 (CEST)
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
+ by PARP264MB5468.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:3eb::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.21; Tue, 17 Sep
+ 2024 09:38:39 +0000
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7962.022; Tue, 17 Sep
+ 2024 09:38:38 +0000
+X-Secumail-id: <ff41.66e94e21.58fc8.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NaKsHIntC6hPDFj754G/kBzC0WsTfjkcjDIThLTacWMo5PRTnbe/RzInDEn6DWEXGxylSxkHgPvshf9otEoY2c3B5MFXkVwQK/NQ/rMrmbRqN/8mlD5kX0K8YUpXjRQOpIWeMR9mPnehz5tCQTcYAxaV03IRUpexOYNbf8Z2fxl5Gtt938nl6p3TJRuZIpPuMkOSTdICUR+4SqsvoBtyBiUgEiuSgHc3tuNC05BcblQoXfbPh6JMMdsqIfvR+yS7pAwGSZ8abioLoRuqAGQoVl7C0SbunJ+nc0LL7nY40A85n/0aBy4ThRLNw6tjNskQYsqzGXRfVrExy2bWALSEXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Vxu1iA/AqCH7qkC0qgFXr1TPAgZDdJ3HOtv/h04Yz3s=;
+ b=xHu/2nPNi7awbw7K7y7rB4Wuh+QJPpxvpIzHP2tsrQ8daaCPIa/NnZjGd5R+ateqUCw0iG+i5t8wzZQqgWktIPPK2a8B4dJwlf1jw5lzrLHzBRHHHrty0+2H+r26megH1k/neUJ4UxoVi5QuaxqLj79ALdekWciCHWilFUPbZlAwX1xAeUUluDJ2WPENM2BycbRM6Q9QuqsowO8lZZPd15IzqqWYqpEwQk55ArVG+e+5dSudgTNWdTgKLVuHrHnl/ZZyG/UzMzoZDFWdM5RVTmNf4kVsrDPH5S3qOyQ5UMQ99CHG0qwbL9jCwlWdn/BPxTAKH3LLWLSTNXo0h/IN1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vxu1iA/AqCH7qkC0qgFXr1TPAgZDdJ3HOtv/h04Yz3s=;
+ b=W1VQT7rb8EAM+tYhM1B7gNMn1tRtXUt7h/XcKwi1dq5e4E5AK0Wc3ePNnowBwbycL2eVMhVvjPlk6Mb+DHIQOl5w5kyaP09a6bzJ/wJvveGXsjWmOfk1/A+6F7PduSW5o9Q96ThoHcbWeQFVK0GjxoCBHGNCQ89h/4tJ/+X+nrFKKgYBUH0TyvshmICfWF1XHKzg1LpKltKG5MIrSg4r6lTvUcwzSh4flNeLEDTQPEs4K4bGXe3gMpcZ0j+8bxfIbVmv5N8udKg9/QjYb/etDs/TV66VS02An5mkMwa5x033PSoac5pxr4VdnC2SDI8oyF7B4bguhc9s9uMk+iIaog==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+Message-ID: <de6287df-929e-4238-b247-4a3d8b85a5ca@kalrayinc.com>
+Date: Tue, 17 Sep 2024 11:38:35 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/63] 6.1.111-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240916114221.021192667@linuxfoundation.org>
+Content-Language: fr
+From: Yann Sionneau <ysionneau@kalrayinc.com>
+In-Reply-To: <20240916114221.021192667@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM0PR04CA0009.eurprd04.prod.outlook.com
+ (2603:10a6:208:122::22) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:14b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|PARP264MB5468:EE_
+X-MS-Office365-Filtering-Correlation-Id: acab6118-722b-4384-4610-08dcd6fc81f8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info: zHCd1Pcltw43K3oQANPU6XsOnSo41xp/cZFLCB5PNzLrcDLbz8VgTMLJvI4gNl4P3bFT22QI5HzlvgnJBe0lP+R5T6b16vlBZHdHT+o2O9svg7CGrqVwxuPeCbwv0KdeCSaHYoWb3aj2u0bNAFWgp4In/xrfEvdaJV/b/j5xgy/OJVvKajeUHx+SwuXltPV92qf0Lz9Gwr2YmAbYnd5JS1amGE3JdUYb/9WzZcTPLHALpkpYg0otJDk5p0KYp+/9GMNdZktKr7ZpMcc4O0BpzCqv+PAONb1dbrzqunf1B71ycQ3IaVzyUGTgL8erLPjE7m6jjzNKEc7OBBfd06nzB26s9Qsc4RggS8DOfljLLdd8g5Y4YXc9cPdYlHQrli4sV1CQ2G/28coTMIXws409buGEIP6/1yb30KRJ5VZmeOjRztsHMFVI2govFR7RlsHBq//S+jmZTdkgZ06l4TkObknCIWz/NZsJnt4JaGMpfgfMvcCmhm4JgrQyrZiDPLwIsXb4s2VtUVF8Zh5KE6teXjpZ5hHHDkC6Si/EPT6HEfX2Xnk+1KdNLX/bejsuGnT/7hbiDwLiGKl2Zs5hIq9gy84X35VLoqJFS1gj0MjprrxAjBw/yB94AA9r7qfCwGdHXtCt8VtUx5oL20Gq54BoeCSltdg+2f/wO2K5BjXfbznQnjBFw56w5DNRxrOCn382kTPOIu5Jm19Uc0QZbihmIeLvi7lcisSD7qlawhaPsBAS+4mWu7vCgAW1VED70UL+v5edCAdFgaJVFI9L0E+XS75uSBu2zOkgyWBN5EyLErGhqgxiphlupPV1wEBS/pRFP96BpD/fvXCt6z7augasVesaSSj6lVN5kq1IBRzSAOOblwgqFwWrq5nCg2ix9V7Tlqmz8PzggcDEvvU7C4jaHRahWPTVq48NSxbctAMm9cEKD6IpH3uEetE1fZG3RPWU4yq
+ yF/lyHtP7BB5LM0dwABpdIRtEnihha+dFE2s3vkX956FIDO8N3VD/qx00hwOHWfoZs5vabMylO06kMSHoTgm+l5uQcWjQYcMCqYzRRrALGOsbplzk9GaiWMc0PJx5LNKoapXz9N1jJwtIjejQWG0y+2XNxJF9ehURnFqs43YxwDT/A02EGATpwxKirQ/xJRbwJFvdwiUeni5QwRVZBZx02OrNrdMalz9QSO6z0L9k3n4R3846wWTyZKtFOmD7nK9jgYdm8Pfdmv38mDDNwpeHQeHvB75NR2sF635lhN0y7vPdb2lqlg6h8io4kpdMi7EFhnaFysBn2VC6ZTu9TTm1Utuz2nlbm/OjH3Xx3bwEogxCx1GxXl4HKwBd5m+nyZtSW6TdjvWKhDhC/LRmQzmziilrAdSRWZh5SGnJYwY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: cy1QSvghXEyDSyMiU59XPGEEMSZF7qGWTp3xmaBaRKIMPQUr0DnNHnpdfhbfRJqB4ejt+WepWd1kKm96WI1WWPdhsxs+PadkcLmlpBnb+oH/mm4dd3HstPycwfpH6V0hiAqq4vjSeQYvX7h2VnQr9oVJ73xVDC8ypILzR2j5gWdFcScsk7ncz+QNy9so0QhT5yncfgksZ6XCDHdAaHG3P2PFcOvdghx/UIsU8JGLkOasFNAS/lG23/Q1Oi5FKjELtlEiQuT5xM+7somvOUZ7pZ/zngjVCma58dAVPt+s/Xs46CbPKypdjNvnPVUHrAhXn4kC+7MyiVu+LdVCY+KY4xxttkjbT15ACmRBeUZIsp34159hNEAZy9Z05g7tgxcozuuek+1a7eErCtwlmQLnrJNOIwv0IGynx/3eSxJoK0+HXFl9kErjuoMXVFLE5HwFs+qB5y0hUguC6OwWDK+8xCt7Ot+/qNIgL05g7Ndrvybgu+lMDBDInrka9E+xsWrvORU4uiHcIP990AwGLpqgVMfpXS0IpotRk62a7aM5FvT9bXwKiHmpUTz77NXQWAadYEZBQkGffL+GyI5ROFHL9bdHQ7wvwB/H6hwlJUNM5vjK8ZM/BKPqTHqo29fugOnKFYB91xFn01BDbTmgJhJK9+lF01ro6cFjmGONYF3xp7UIyVqHzhXVU3gyByRl84NGyOiRf98pp0l4wTpmNAt04t63biAXlgkNGW2iQB/9RzIheuwvJjV16smgMMECRveFcPPjjVW9z4T2XpLTZKcDmpUYvQjyXU2UFHdutHzUSJDDhYBKpi4uQTyeGbUW64S3/ypLYv7Yf0dkUsQjl18bcAJatpXjc/Fpk65gwF+mWfalhiasGr44Oh7NM1DzQjXbcysYjWqMC0a8N1sSXyxkILgCHxsDCdNyeTyaP2q2o+XOV4DxwNMpnSVaQFmNMYY+
+ jG4X0Z3az1iM/tlPB8qlcoji+3tPu8kVGGmzfLjBJXjks1gOVyQ+8CZb7DJE1MX0zaht0WsvEbNd85ONWWbEBw9BhMiXDIA5xRJQwLWzXKHDKAy40Yj933WcInP8vfIBI32OimBFcvxBCWz49ZIU2qpG6AEi43p5JR9wSuD3kvXj5VhZQ2EflsPODANZh8qkAe0brIdI5jLudzt/0yyt5qf+ZB+9X/pkALwJm6kZBe6lx8jrLT8TeQOQkAB7A3ggQP+dHWQ51+wXwKIA4KellDNXmOLaWAWc6RbZ6QEMWQxAZlAsoXumzLdm/AxvrWn6DGd5k5YqQNdAF7OJJdsY2xpaHRZM3S2802pxAtM9QGfkkRM9NtjgFlw1c8DzSoSwFdHeKvX8nrXKUWyKqw6LhJ6X+b2O0Yl+ApELl9n3xrksWpijHaUokMHmcjfytBeTZ5omg3fzxJ5A21Wi8XxpS9srGdWClBCnip/D61aO+yDrw+aAf3JF385rxQ+u9l57izy5++4rbAcaxC32+TUBXQI3li/1PED6yCjz9k5gKTDlkvCxiInMyPk/eechBzoA8vIRnKSrav9tIUpduCIWul4AtXB0hWtnX+JkHsuYxYps50eHcc4+yWaPV/h53JHUIyoPKKptkdm6tOwG3ZswWg==
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: acab6118-722b-4384-4610-08dcd6fc81f8
+X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 09:38:38.3827
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UxUX+vNfrKNkqXf1FGx2+SXNjm/o5n/+SedNrcGQ1eWmYrFqE31JrlR6izh8khYfwDSbFYDHZl3Flr2ozUBqZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PARP264MB5468
+X-ALTERMIMEV2_out: done
 
-init and release callbacks take care of resources requested by
-the reset code, ie. clocks and reset.
+Hi Greg,
 
-The actual reset function toggles the mac reset, disable mac
-ihterrupts, stop DMA requests and do a SW reset.
+Le 9/16/24 à 13:43, Greg Kroah-Hartman a écrit :
+> This is the start of the stable review cycle for the 6.1.111 release.
+> There are 63 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.111-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
----
- drivers/vfio/platform/reset/Kconfig           |   7 +
- drivers/vfio/platform/reset/Makefile          |   2 +
- .../reset/vfio_platform_tegra234_mgbe.c       | 234 ++++++++++++++++++
- 3 files changed, 243 insertions(+)
- create mode 100644 drivers/vfio/platform/reset/vfio_platform_tegra234_mgbe.c
+I tested 6.1.111-rc1 (dc7da8d6f263) on Kalray kvx arch (not upstream yet) and everything looks good!
 
-diff --git a/drivers/vfio/platform/reset/Kconfig b/drivers/vfio/platform/reset/Kconfig
-index dcc08dc145a5..3113fae21ebf 100644
---- a/drivers/vfio/platform/reset/Kconfig
-+++ b/drivers/vfio/platform/reset/Kconfig
-@@ -14,6 +14,13 @@ config VFIO_PLATFORM_AMDXGBE_RESET
- 
- 	  If you don't know what to do here, say N.
- 
-+config VFIO_PLATFORM_TEGRA234_MGBE_RESET
-+	tristate "VFIO support for NVidia tegra234 MGBE reset"
-+	help
-+	  Enables the VFIO platform driver to handle reset for NVidia tegra234 mgbe
-+
-+	  If you don't know what to do here, say N.
-+
- config VFIO_PLATFORM_BCMFLEXRM_RESET
- 	tristate "VFIO support for Broadcom FlexRM reset"
- 	depends on ARCH_BCM_IPROC || COMPILE_TEST
-diff --git a/drivers/vfio/platform/reset/Makefile b/drivers/vfio/platform/reset/Makefile
-index 7294c5ea122e..5ebef71f61a0 100644
---- a/drivers/vfio/platform/reset/Makefile
-+++ b/drivers/vfio/platform/reset/Makefile
-@@ -1,7 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- vfio-platform-calxedaxgmac-y := vfio_platform_calxedaxgmac.o
- vfio-platform-amdxgbe-y := vfio_platform_amdxgbe.o
-+vfio-platform-tegra234-mgbe-y := vfio_platform_tegra234_mgbe.o
- 
- obj-$(CONFIG_VFIO_PLATFORM_CALXEDAXGMAC_RESET) += vfio-platform-calxedaxgmac.o
- obj-$(CONFIG_VFIO_PLATFORM_AMDXGBE_RESET) += vfio-platform-amdxgbe.o
-+obj-$(CONFIG_VFIO_PLATFORM_TEGRA234_MGBE_RESET) += vfio-platform-tegra234-mgbe.o
- obj-$(CONFIG_VFIO_PLATFORM_BCMFLEXRM_RESET) += vfio_platform_bcmflexrm.o
-diff --git a/drivers/vfio/platform/reset/vfio_platform_tegra234_mgbe.c b/drivers/vfio/platform/reset/vfio_platform_tegra234_mgbe.c
-new file mode 100644
-index 000000000000..8e889e5d04f3
---- /dev/null
-+++ b/drivers/vfio/platform/reset/vfio_platform_tegra234_mgbe.c
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * VFIO platform driver specialized for NVidia tegra234-mgbe reset
-+ * Code is inspired from dwxgmac2_dma.c and dwmac-tegra.c code
-+ *
-+ * Copyright (c) 2024 Red Hat, Inc.  All rights reserved.
-+ *     Author: Eric Auger <eric.auger@redhat.com>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/reset.h>
-+#include <linux/iopoll.h>
-+#include <linux/clk.h>
-+
-+#include "../vfio_platform_private.h"
-+
-+static const char *const mgbe_clks[] = {
-+	"rx-pcs", "tx", "tx-pcs", "mac-divider", "mac", "mgbe", "ptp-ref", "mac"
-+};
-+
-+struct tegra_mgbe {
-+	struct clk_bulk_data *clks;
-+	struct reset_control *mac_rst;
-+	void __iomem *mac;
-+};
-+
-+#define XGMAC_TX_CONFIG                 0x00000000
-+#define XGMAC_CONFIG_TE                 BIT(0)
-+#define XGMAC_RX_CONFIG                 0x00000004
-+#define XGMAC_CONFIG_RE                 BIT(0)
-+#define XGMAC_DMA_MODE			0x00003000
-+#define XGMAC_SWR			BIT(0)
-+
-+#define XGMAC_DMA_CH_INT_EN(x)		(0x00003138 + (0x80 * (x)))
-+#define XGMAC_TIE			BIT(0)
-+#define XGMAC_RIE			BIT(6)
-+#define XGMAC_RBUE			BIT(7)
-+#define XGMAC_DMA_INT_DEFAULT_RX	(XGMAC_RBUE | XGMAC_RIE)
-+#define XGMAC_DMA_INT_DEFAULT_TX	(XGMAC_TIE)
-+
-+#define XGMAC_DMA_CH_STATUS(x)		(0x00003160 + (0x80 * (x)))
-+#define XGMAC_DMA_CH_RX_CONTROL(x)      (0x00003108 + (0x80 * (x)))
-+#define XGMAC_RXST                      BIT(0)
-+#define XGMAC_DMA_CH_TX_CONTROL(x)      (0x00003104 + (0x80 * (x)))
-+#define XGMAC_TXST                      BIT(0)
-+
-+#define XGMAC_INT_STATUS                0x000000b0
-+#define XGMAC_INT_EN                    0x000000b4
-+
-+#define MGBE_WRAP_COMMON_INTR_ENABLE 0x8704
-+
-+static int
-+toggle_reset(struct device *dev, const char *rst_str, struct reset_control *rst)
-+{
-+	int ret;
-+
-+	ret = reset_control_assert(rst);
-+	if (ret < 0)
-+		dev_err(dev, "Failed to assert %s reset %d\n",
-+			rst_str, ret);
-+	usleep_range(2000, 4000);
-+
-+	ret = reset_control_deassert(rst);
-+	if (ret < 0)
-+		dev_err(dev, "Failed to deassert %s reset %d\n", rst_str, ret);
-+	usleep_range(2000, 4000);
-+	return ret;
-+}
-+
-+static void stop_dma(void __iomem *mac, uint channel)
-+{
-+	u32 value;
-+
-+	/* DMA Stop RX */
-+	value = readl(mac + XGMAC_DMA_CH_RX_CONTROL(channel));
-+	value &= ~XGMAC_RXST;
-+	writel(value, mac + XGMAC_DMA_CH_RX_CONTROL(channel));
-+
-+	value = readl(mac + XGMAC_RX_CONFIG);
-+	value &= ~XGMAC_CONFIG_RE;
-+	writel(value, mac + XGMAC_RX_CONFIG);
-+
-+	usleep_range(10, 15);
-+
-+	/* DMA Stop TX */
-+	value = readl(mac + XGMAC_DMA_CH_TX_CONTROL(channel));
-+	value &= ~XGMAC_RXST;
-+	writel(value, mac + XGMAC_DMA_CH_TX_CONTROL(channel));
-+
-+	value = readl(mac + XGMAC_TX_CONFIG);
-+	value &= ~XGMAC_CONFIG_TE;
-+	writel(value, mac + XGMAC_TX_CONFIG);
-+
-+	usleep_range(10, 15);
-+}
-+
-+static int dma_sw_reset(void __iomem *mac)
-+{
-+	u32 value;
-+
-+	value = readl(mac + XGMAC_DMA_MODE);
-+	writel(value | XGMAC_SWR, mac + XGMAC_DMA_MODE);
-+	return readl_poll_timeout(mac + XGMAC_DMA_MODE, value,
-+				  !(value & XGMAC_SWR), 0, 100000);
-+}
-+
-+static void disable_dma_irq(void __iomem *mac, u32 channel)
-+{
-+	u32 intr_en, intr_status;
-+
-+	intr_en = readl(mac + XGMAC_DMA_CH_INT_EN(channel));
-+
-+	intr_en &= ~XGMAC_DMA_INT_DEFAULT_RX;
-+	intr_en &= ~XGMAC_DMA_INT_DEFAULT_TX;
-+	writel(intr_en, mac + XGMAC_DMA_CH_INT_EN(channel));
-+	usleep_range(10, 15);
-+
-+	intr_status = readl(mac + XGMAC_DMA_CH_STATUS(channel));
-+	writel(0, mac + XGMAC_DMA_CH_STATUS(channel));
-+}
-+
-+static int prepare_enable_clocks(struct device *dev, struct clk_bulk_data **clocks)
-+{
-+	struct clk_bulk_data *clks;
-+	int ret;
-+
-+	clks = kcalloc(ARRAY_SIZE(mgbe_clks), sizeof(*clks), GFP_KERNEL);
-+	if (!clks)
-+		return -ENOMEM;
-+
-+	for (int i = 0; i <  ARRAY_SIZE(mgbe_clks); i++)
-+		clks[i].id = mgbe_clks[i];
-+
-+	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(mgbe_clks), clks);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to get clocks %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = clk_bulk_prepare_enable(ARRAY_SIZE(mgbe_clks), clks);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to prepare_enable clocks %d\n", ret);
-+		return ret;
-+	}
-+	*clocks = clks;
-+	return ret;
-+}
-+
-+static int vfio_platform_tegra234_mgbe_init(struct vfio_platform_device *vpdev)
-+{
-+	struct tegra_mgbe *mgbe;
-+	struct vfio_platform_region *mac_regs;
-+	struct vfio_device *vdev = &vpdev->vdev;
-+	struct device *dev = vdev->dev;
-+	int ret = 0;
-+
-+	mac_regs = vfio_platform_get_region(vpdev, "mac");
-+	if (!mac_regs)
-+		return -EINVAL;
-+
-+	mgbe = devm_kmalloc(dev, sizeof(struct tegra_mgbe), GFP_KERNEL);
-+	if (!mgbe)
-+		return -ENOMEM;
-+
-+	ret = prepare_enable_clocks(dev, &mgbe->clks);
-+	if (ret)
-+		return ret;
-+
-+	mgbe->mac_rst = devm_reset_control_get(dev, "mac");
-+	if (IS_ERR(mgbe->mac_rst)) {
-+		dev_err(dev, "Failed to get mac reset %ld\n", PTR_ERR(mgbe->mac_rst));
-+		ret = PTR_ERR(mgbe->mac_rst);
-+		return ret;
-+	}
-+
-+	mac_regs->ioaddr = ioremap(mac_regs->addr, mac_regs->size);
-+	if (!mac_regs->ioaddr)
-+		return -ENOMEM;
-+
-+	mgbe->mac = mac_regs->ioaddr;
-+	vpdev->reset_opaque = mgbe;
-+	return ret;
-+}
-+
-+static void vfio_platform_tegra234_mgbe_release(struct vfio_platform_device *vpdev)
-+{
-+	struct tegra_mgbe *mgbe = vpdev->reset_opaque;
-+
-+	/* iounmap is done in vfio_platform_common */
-+	clk_bulk_disable_unprepare(ARRAY_SIZE(mgbe_clks), mgbe->clks);
-+	vpdev->reset_opaque = NULL;
-+}
-+
-+static int vfio_platform_tegra234_mgbe_reset(struct vfio_platform_device *vpdev)
-+{
-+	struct tegra_mgbe *mgbe = vpdev->reset_opaque;
-+	struct vfio_device *vdev = &vpdev->vdev;
-+	struct device *dev = vdev->dev;
-+	int ret;
-+
-+	if (!mgbe)
-+		return -ENODEV;
-+
-+	toggle_reset(dev, "mac", mgbe->mac_rst);
-+
-+	for (int i = 0; i < 10; i++)
-+		disable_dma_irq(mgbe->mac, i);
-+
-+	writel(0, mgbe->mac + MGBE_WRAP_COMMON_INTR_ENABLE);
-+
-+	for (int i = 0; i < 10; i++)
-+		stop_dma(mgbe->mac, i);
-+
-+	ret = dma_sw_reset(mgbe->mac);
-+	if (ret)
-+		dev_err(dev, "Failed to reset the DMA %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static const struct vfio_platform_of_reset_ops
-+vfio_platform_tegra234_mgbe_of_reset_ops = {
-+	.reset = vfio_platform_tegra234_mgbe_reset,
-+	.init = vfio_platform_tegra234_mgbe_init,
-+	.release = vfio_platform_tegra234_mgbe_release,
-+};
-+
-+module_vfio_reset_handler("nvidia,tegra234-mgbe", vfio_platform_tegra234_mgbe_of_reset_ops);
-+
-+MODULE_VERSION("0.1");
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Eric Auger <eric.auger@redhat.com>");
-+MODULE_DESCRIPTION("Reset support for NVidia tegra234 mgbe vfio platform device");
--- 
-2.41.0
+It ran on real hw (k200, k200lp and k300 boards), on qemu and on our internal instruction set simulator (ISS).
+
+Tests were run on several interfaces/drivers (usb, qsfp ethernet, eMMC, PCIe endpoint+RC, SPI, remoteproc, uart, iommu). LTP and uClibc-ng testsuites are also run without any regression.
+
+Everything looks fine to us.
+
+Tested-by: Yann Sionneau<ysionneau@kalrayinc.com>
+
+-- Yann
+
+
+
+
 
 
