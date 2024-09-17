@@ -1,154 +1,130 @@
-Return-Path: <linux-kernel+bounces-331589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E2697AE9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:18:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E2097AE9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 400C0281CDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC281C23D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ABE161914;
-	Tue, 17 Sep 2024 10:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+wVIrlK"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E871416A949;
+	Tue, 17 Sep 2024 10:18:35 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4065115D5B8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1122313E41D;
 	Tue, 17 Sep 2024 10:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726568310; cv=none; b=WecPUnssghrz4SZLRNrvIoFbq/3HSzE97mA6ReozKv8W7GPEtYE0/9eOmv+PYoONRPLOD6WrV/VYoaIQ9aPW7uibfl28Actuy3zGFYsDn7RZIM/O1loJBuETLVqvtkl+am9BGipSPAS678tnTSVkK+SYqIsGX+h8PpzcRCjb6Dk=
+	t=1726568315; cv=none; b=RtrTqwmo9d4UQ3pJlYTS9ufFglBXwDaxT2/3fj6KW9NLOK4rIchr1TzrAxvpDYfQlk02BkKdYO97SyjLroq85BXw/RWg4b1sT+NbSIdxKiONaanOg0pLSV4J56yQiezKx2nAqcxxUHJh6XEnUV0Ntjaoue7WEeQg018MoKwMa1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726568310; c=relaxed/simple;
-	bh=/CSOxkHfgO7zvTmBYBXJxaZ5unslc9ZBnbzkD7JUIXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fG4uU/UqL+Uzfwyy/k0ZT46r3ImSJqYFTND1mPo12/O9MJWmyj3TI7MXTKeQd5Pv/cZIk7ZsLqEmLERgq8pA1qLVwQFycrQH/1jwYoW3CHymd4g7nK+jgACed3G8Ew2mk0APCyiC/ynLLR/xfZkMkdEsI/JRCYaVl4E6/U+EHS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W+wVIrlK; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d3cde1103so735328966b.2;
-        Tue, 17 Sep 2024 03:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726568307; x=1727173107; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=j3I8RvtrkEGLcn/jjCsGtDX+89c/RzZJGXWndr0k2ts=;
-        b=W+wVIrlKyBhQPtw2qoq43Rav3FhRQu9V8nHacXWo3ftjOthHIr+f422upBN3AVl+eG
-         jg9ok72nE2VLFobNLJsine0Y2GvJMPZtoRF8JUn7M3MmfSindpwjiBoTnQG8SbHG8k8t
-         cqOZucDBJTqXxPjCuf/uycmqpzhFipdH/EHlzhOQ/3A70dFG8+gowyUNa2gSKMkRPWaP
-         PDSUReN8FHIxlpYw0xYTxrefFyIaVtYCYqEqRkfVgum3bL27UbQHYDQjm4B8Js3Qk1xT
-         eaT1AuTlS+QFwdCtQ795ozLr3ZN5uTvuFZnvjSW3CasTJscQ7VC+wopQpTS2KvsQKeAF
-         bDPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726568307; x=1727173107;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j3I8RvtrkEGLcn/jjCsGtDX+89c/RzZJGXWndr0k2ts=;
-        b=vTBkXky86BRauyKPkbo4eYVbLFrugM89GnTxlshqU72fpttwthV1W0nmm3DG+K9O5w
-         DKFxdw6pvXSYOr2jRLk6A1CrCJvpKnu7vQBCNOiyZqfv8N/RVeb2mx2JxB2sdHwM5SaD
-         KJ1LZ0kO0AmWxUg0LuyxLs+yIWddqM5gaPvpfCqfxGVOcgAJoa6aXuYlyOYyzwTrDrUI
-         6EPiuPqu4VVHAfs8jwRBWOx6I0Qu7R2a4UZOQtn7lCVAA+HEN14OZJoO7et0WTnjl2QJ
-         vc5IwM94xB607UFOqpHdusV/3slsCjsRyzYPU6pIG/LRoGjDjcL8Cp/j+0qsJiubuXIT
-         /rhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSuUW5TGdI+aS5YALIE7Kg4XpckEdtWDPSD/teeByYiXVLyG7zWICNNkpruBO2VoEAe64tL9iKLG2u@vger.kernel.org, AJvYcCX+KMKuFZB4i25cbB2mWdkA+1HBgvTiP4vg/YcFF/hcysLtvret8UKxNtZ1aZteYcheiJRBgjuwVBZLWuum@vger.kernel.org
-X-Gm-Message-State: AOJu0YytxQpe0xcbWbNoajqdCrGMR8ud8/poNiYc7OXgGp7cMlUdn9ZW
-	1Ox07ZQweO3qHAAYCiegVB2xn3e4PHE+d9lJinpRhw4EKHaNgWRFKh2/z/ypRqLfuKqAZMocHet
-	kwVMyjqVZIidz5/UFWSYvekAwhg==
-X-Google-Smtp-Source: AGHT+IFPC7DuVhYOkzCC23HgXMsE9KQr7nFypNg6U23LTW2Jqo3RSrdGkptdza7AxI6UwIQn0MGyh39umF9wjGpzJPM=
-X-Received: by 2002:a17:907:f72a:b0:a80:7193:bd93 with SMTP id
- a640c23a62f3a-a9029447148mr1934202366b.25.1726568307199; Tue, 17 Sep 2024
- 03:18:27 -0700 (PDT)
+	s=arc-20240116; t=1726568315; c=relaxed/simple;
+	bh=T2HlKWKOFHe+AjBsWvXEFtdaYNxiWWSa/XFLmo1uKoU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IH2kbDggj0H5mI8hbHcB+92yUP0CvCUEFpKej+PGAmCGsi+9oKglYREW2sU7gzydhhHgowKqzho7KzzMhc+XCO1qvnzFLEHkSxQXqtMARo+4k0sUKLc7gwEXV6P21ERnlSsmuA7cFoa/xKW8wVM+pfNpnR0potldyf2eytRl/qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from inp1wst083.omp.ru (81.22.207.138) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 17 Sep
+ 2024 13:18:22 +0300
+From: Roman Smirnov <r.smirnov@omp.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>
+CC: Roman Smirnov <r.smirnov@omp.ru>, Mark Brown <broonie@kernel.org>, "Rafael
+ J. Wysocki" <rafael@kernel.org>, <linux-kernel@vger.kernel.org>, Karina
+ Yankevich <k.yankevich@omp.ru>, Sergey Yudin <s.yudin@omp.ru>,
+	<lvc-project@linuxtesting.org>, Schspa Shi <schspa@gmail.com>
+Subject: [PATCH 5.10] regmap: cache: Add extra parameter check in regcache_init
+Date: Tue, 17 Sep 2024 13:17:57 +0300
+Message-ID: <20240917101757.83398-1-r.smirnov@omp.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917094956.437078-1-erezgeva@nwtime.org> <20240917094956.437078-4-erezgeva@nwtime.org>
-In-Reply-To: <20240917094956.437078-4-erezgeva@nwtime.org>
-From: Erez <erezgeva2@gmail.com>
-Date: Tue, 17 Sep 2024 12:17:50 +0200
-Message-ID: <CANeKEMMDj2D9x5jbOEbDDtbN_NG22mJwDPJva+bT-p6RJawMdg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
-To: Erez Geva <erezgeva@nwtime.org>
-Cc: linux-mtd@lists.infradead.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Esben Haabendal <esben@geanix.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/17/2024 10:02:15
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 187794 [Sep 17 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
+ 8a1fac695d5606478feba790382a59668a4f0039
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	lore.kernel.org:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;inp1wst083.omp.ru:7.1.1;omp.ru:7.1.1;81.22.207.138:7.1.2
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/17/2024 10:05:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/17/2024 9:17:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Tue, 17 Sept 2024 at 11:50, Erez Geva <erezgeva@nwtime.org> wrote:
->
-> From: Erez Geva <ErezGeva2@gmail.com>
->
-> Some flash devices need OTP parameters in device tree.
-> As we can not deduce the parameters based on JEDEC ID or SFDP.
->
-> Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
-> ---
->  .../bindings/mtd/jedec,spi-nor.yaml           | 37 +++++++++++++++++++
->  1 file changed, 37 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-> index 6e3afb42926e..d502b7fab2ce 100644
-> --- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-> +++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-> @@ -90,6 +90,43 @@ properties:
->        the SRWD bit while writing the status register. WP# signal hard strapped to GND
->        can be a valid use case.
->
-> +  opt_n_regions:
-> +    type: u32
-> +    description:
-> +      Some flash devices need OTP parameters in the device tree.
-> +      As we can not deduce the parameters based on JEDEC ID or SFDP.
-> +      This parameter indicates the number of OTP regions.
-> +      The value must be larger than 1 and mandatory for OTP.
+From: Schspa Shi <schspa@gmail.com>
 
-Sorry: "The value must be larger or equal to 1 and mandatory for OTP.
-"
+commit a5201d42e2f8a8e8062103170027840ee372742f upstream.
 
-> +
-> +  otp_len:
-> +    type: u32
-> +    description:
-> +      Some flash devices need OTP parameters in the device tree.
-> +      As we can not deduce the parameters based on JEDEC ID or SFDP.
-> +      This parameter indicates the size (length) in bytes of an OTP region.
-> +      Currently the driver supports symmetric OTP,
-> +       which means all regions must use the same size.
-> +      The value must be positive and mandatory for OTP.
-> +
-> +  otp_offset:
-> +    type: u32
-> +    description:
-> +      Some flash devices need OTP parameters in the device tree.
-> +      As we can not deduce the parameters based on JEDEC ID or SFDP.
-> +      This parameter indicates the offset in bytes of
-> +       an OTP region relative to its previous.
-> +      User can omit it if the offset equals the length.
-> +      Or in case we have a single OTP region.
-> +
-> +  otp_base:
-> +    type: u32
-> +    description:
-> +      Some flash devices need OTP parameters in the device tree.
-> +      As we can not deduce the parameters based on JEDEC ID or SFDP.
-> +      This parameter indicates the base in bytes of the first OTP region.
-> +      User can omit it if the base is zero.
-> +      I.e. the address of the first OTP region starts from 0.
-> +
->    reset-gpios:
->      description:
->        A GPIO line connected to the RESET (active low) signal of the device.
-> --
-> 2.39.5
->
+When num_reg_defaults > 0 but reg_defaults is NULL, there will be a
+NULL pointer exception.
+
+Current code has no such usage, but as additional hardening, also
+check this to prevent any chance of crashing.
+
+Signed-off-by: Schspa Shi <schspa@gmail.com>
+Link: https://lore.kernel.org/r/20220629130951.63040-1-schspa@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+---
+ drivers/base/regmap/regcache.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/base/regmap/regcache.c b/drivers/base/regmap/regcache.c
+index 7fdd702e564a..5ff79ba665ad 100644
+--- a/drivers/base/regmap/regcache.c
++++ b/drivers/base/regmap/regcache.c
+@@ -133,6 +133,12 @@ int regcache_init(struct regmap *map, const struct regmap_config *config)
+ 		return -EINVAL;
+ 	}
+ 
++	if (config->num_reg_defaults && !config->reg_defaults) {
++		dev_err(map->dev,
++			"Register defaults number are set without the reg!\n");
++		return -EINVAL;
++	}
++
+ 	for (i = 0; i < config->num_reg_defaults; i++)
+ 		if (config->reg_defaults[i].reg % map->reg_stride)
+ 			return -EINVAL;
+-- 
+2.34.1
+
 
