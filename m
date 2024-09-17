@@ -1,87 +1,92 @@
-Return-Path: <linux-kernel+bounces-332034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9956A97B489
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:17:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135B997B48C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F2151F22BEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:17:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E43FB24A18
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D4318D65E;
-	Tue, 17 Sep 2024 20:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBC41898E5;
+	Tue, 17 Sep 2024 20:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="T7yRrceT"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzQ6Lkrs"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC92718D642;
-	Tue, 17 Sep 2024 20:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726604217; cv=fail; b=Ar/fFzwC9sLH2rgZpZhLZwzcAdbET4JrmCCgs3zdMsbsdwwU3A2j9H1NdPWfVp6PJtlo5wtcr4SXW+54mN52LYSJ6q5TswNqnDbG5g+GWH9ecMIKWOH1y6bXLPC+C3YIGwKM+EmOHPyzE+X1rXsA2Z+4vReBLKME6YCKmymz73g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726604217; c=relaxed/simple;
-	bh=97OMTkc6nh0RADY0jBiLNbirHC+FcUyE/dxwD9QQPlM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qRrEcIgyaXEA7+uxjrMSIBKJCv+jBGf7q/ehwuOBqUVBLQ85lxubzoeY5Z1Amf6AMt6rZu45LUELHWAaAwWPVFcvLIVcTI6Ac3yyWBkBsuINO5zFVkGzzgNSBYeKc0a03J8JRdGonsxDfGGnAf6k9/AeZ9u+VFXU0QTwJfcNd84=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=T7yRrceT; arc=fail smtp.client-ip=40.107.94.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gt7Tbdkm9N8glQO5/df8sjql3KlaUQfC6xdmwxj6Dnm43fR8w5OHY6NsX8kAwvxSrzpw2I25jEO4rVpcBddbgHrBAMjEqlPClzz6aBXrxgVKJOKaBc0bmPsgMp46FGmxRheYD9QZ2WWHhVexa0iE5PXWa9rc0kCxYBrpbQr/3/wXFzpaAl6iwhG+XDnmVndbpiG10W4F+iWBJPW/ltt05yU6kmBKIMC26FWhT0MKTPmH44Naq92J3pipTWQpDAuVKUiDfZaJmIxVBS2S9FCEfdM14aADdSeTCTybPJ2f1k1l+x8+TlfpoxayfZXzbRkVtxiY3Pa2wKzJyfts+itzwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UNUmalYNDqqMh/2kEaKAXyS4RTGZo0MdYwcH+kyPJEw=;
- b=YkLKSDgsNUiSOHhcqMQhCefgVLOFp3K1Iy0NL1BTak6lZbPzMYQ/Yg9lfuBmUoo8L50QFDHOKY+4/snt4HI0hpkzLjLgWzJWfKNDlaog2SmH5KMAdZNsGHB9ud8jzxD9FCnz2k/+N6gazOwXolqJePXFt5lAHThus8RpMTACMJI6tPjnllwB/KNliWGB2o9s3ECXYbrP/mfoyMKRtw2S2QbEdc21gbVtmXH74MLkzX9ps/SiiIjqKhrS0XYT0rQyb4D77N2Uf5emQQwy8HXF9bkYWkoW0AGsSXG0zWQD63sXOSyf5LgvMM2RXRGOEhBU+BswFUXSAu7o670Le4lPqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UNUmalYNDqqMh/2kEaKAXyS4RTGZo0MdYwcH+kyPJEw=;
- b=T7yRrceTLweYe4AsrLOBrYBWmIlWbsfvryjp67xeKOPOFiUOAb/DnTsxAHUNu9uggU/4nLWCrqXxogspypwCZ4aN/nFOdolOppNxe8V9zkqpM1jrvKoeuYOsHrPMc8eLRn4XfPGghld78U+C0yLoFko5uQvBaRkbmvjf7jxKStw=
-Received: from BYAPR04CA0026.namprd04.prod.outlook.com (2603:10b6:a03:40::39)
- by CY8PR12MB7145.namprd12.prod.outlook.com (2603:10b6:930:5f::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Tue, 17 Sep
- 2024 20:16:53 +0000
-Received: from SJ5PEPF00000209.namprd05.prod.outlook.com
- (2603:10b6:a03:40:cafe::b2) by BYAPR04CA0026.outlook.office365.com
- (2603:10b6:a03:40::39) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
- Transport; Tue, 17 Sep 2024 20:16:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF00000209.mail.protection.outlook.com (10.167.244.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Tue, 17 Sep 2024 20:16:52 +0000
-Received: from purico-ed09host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 17 Sep
- 2024 15:16:50 -0500
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <seanjc@google.com>, <pbonzini@redhat.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <herbert@gondor.apana.org.au>
-CC: <x86@kernel.org>, <john.allen@amd.com>, <davem@davemloft.net>,
-	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>
-Subject: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
-Date: Tue, 17 Sep 2024 20:16:41 +0000
-Message-ID: <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E49213777E
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 20:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726604308; cv=none; b=TBb32TGandFe6o9CCgavwyW4IBf3rzEhM5WroK4ZSXnif1H6NzaiR3vAx3Oqbb3vHHwvAoxgmAbqEJtLgM0Jm8ZLtKiWH7PmvJTJmEd13bkGHlnGvY6b54k3A4pOgG9h1c7PbFPh83slsGw+ZpzgZ2muKKWI4YRT/gVL7orQd1s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726604308; c=relaxed/simple;
+	bh=NjE8Sv0r1KTqiB+toGEtVBR7W0Lm0ydZnC5yQVDy4eM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fCnUx60akaeDAPSx4dK6g7C3ez0ROsM0aX9lwGw0ar298wZZ6CmsUlH90CskxrFLKUNdd2M+We6/SEmplcnzw0d+1cmaqaOSYaxpb/RuDHXYV4AA1qStAsNgTurPkZFdUi1/k2Rs0WHih9jDBxgdKAlD72EQjNIfbU3fRxZ/aF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fzQ6Lkrs; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f7ba97ebaaso4898841fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:18:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726604304; x=1727209104; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1KPVK8WDP2lu8d6Rf2OpDhu2yQ4Y7AWH6O/hGAY3qvM=;
+        b=fzQ6LkrsASW54T678mEMDPOaeweRdebpZQ7VPa+VJ4Z3/6XTlvEo8SKXd20hMHwcj1
+         SPePU/Oihlhf8B63MZytpffX29hSD6kJsPdEK3XI7QrEkI4WUwZ/mmSvli4dq9GVs6Lz
+         DMNX/SWKtZwcVGOTgtTAcZ0y0D1M1rCK7S2bc55ES7ppasL1OLKjjhBYU1yy+pVnd3y9
+         BInbFRowZtt7s97NMJr5km7LHsb7Lj36SqEN9yODRM3xoQ3yVdzLNhqjy6sZ07Rqwk3e
+         +pIOLIrUcYM6xhXO5Z8qiHmG7ShCx/fHfRY1c5w+GRgStfHDC5h52VHZnecrzUefrSB8
+         M7aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726604304; x=1727209104;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1KPVK8WDP2lu8d6Rf2OpDhu2yQ4Y7AWH6O/hGAY3qvM=;
+        b=XGgs8mx88D9CXAr5WQ5Xfs3/g02RVqA/FLBffAI5WGH3S1pJLPIVwg1VvOjUEE0vIR
+         WFwL0hXMfHV8qR8DJaC4fjwh4SHCrFolxAQKRDNsxJZWTkOYwOBu5KTTaabUECybamCs
+         7kyLc1Dy1RDfkixd0fQwz/LrsUiWd2jhSkXQLbcRu97fa0cXliVt3EPMGSzm1OWlAJSJ
+         XM58q2ZZmQ61AUGJRVPuryQQjGGG49tOETAYawAlRXY/Gz66JL89mFW95uK9lih2eCHA
+         5Vhn2tEdFxwa9zdQwrACLrWyUydAUKR92Y1rqTehDOKenLMo4jakoPfWz+W03CMck0MB
+         d6zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXP4uzsM/dhxvMXLPG+uf8KT0zy3CwLfQuXAbaduNN0aJSP0FZdCp3S7WAKkrZIGySrQKSon4zocFhHE7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNrpl5eyAgnngD5CMyBRd9V+Tvrxx7rh1vOT3eV5X317ahiHUx
+	sJFyATSBz0W4yaHKOegsTWLORa6t5OYj1M7et0uVZjD/UeMfUeSx
+X-Google-Smtp-Source: AGHT+IE/VaOX6ysUN/MJb+7iEx7h2yL96iWAaz8lQ1zGBWntmQNzrmXsLhnEwB1lXy+RwG+r2chGOw==
+X-Received: by 2002:a2e:611a:0:b0:2f7:4c31:acae with SMTP id 38308e7fff4ca-2f787da5004mr82814691fa.2.1726604304078;
+        Tue, 17 Sep 2024 13:18:24 -0700 (PDT)
+Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d59b99bsm11668051fa.130.2024.09.17.13.18.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 13:18:23 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: tglx@linutronix.de,
+	bp@alien8.de,
+	glider@google.com,
+	andreyknvl@gmail.com,
+	akpm@linux-foundation.org
+Cc: mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	ryabinin.a.a@gmail.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	dvyukov@google.com,
+	vincenzo.frascino@arm.com,
+	brauner@kernel.org,
+	dhowells@redhat.com,
+	linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	snovitoll@gmail.com
+Subject: [PATCH] mm: x86: instrument __get/__put_kernel_nofault
+Date: Wed, 18 Sep 2024 01:18:17 +0500
+Message-Id: <20240917201817.657490-1-snovitoll@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1726602374.git.ashish.kalra@amd.com>
-References: <cover.1726602374.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,267 +94,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF00000209:EE_|CY8PR12MB7145:EE_
-X-MS-Office365-Filtering-Correlation-Id: d76cd972-049d-4605-22a0-08dcd755ab82
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hSab+bTztaVz5nfTA1Dgj6D92bRHYcqxUJXcxZ2YcWMM94NeujGsRDkPZwXT?=
- =?us-ascii?Q?SBsNtCwXeg5bAva1bNk3qm6cCCsKMvAunHCkGhN42hkM0bAkSYSkFttw7MPu?=
- =?us-ascii?Q?LF3f0ltqYisGD6qxu0WFdk8PV6Q6twoO0lRhV8biMX2fHMntW5TkzYwtMqhs?=
- =?us-ascii?Q?CWIyBbqr3xkoXdzEZktwHsPfDSFCPN5yV2IVnlGjw3TPsLRg89PCZXSvGBzx?=
- =?us-ascii?Q?Mf+YDE1/EP6axDKCezr/3VsSemA65GTqTWON+ea7ih0Y8dGQ0FSMgrnfiZbs?=
- =?us-ascii?Q?QXIg5mJMmN60NUvcL93n+sc0C6H+AclhlEEA4cgX6ta0tsruBbQcMCQfH0eZ?=
- =?us-ascii?Q?zf6DEbfN8HYy7xrz53nkgVslbeGiOp2XZXBaP/xsEztTNKXN4vyli27qjoEX?=
- =?us-ascii?Q?WwPLnxN5k/bGzXAIFInnn+KHQ4QNCO95spzZQVqCBMYWtLcXCiweJhnADPYN?=
- =?us-ascii?Q?CpGSyRHkaEj/+f7z0o2RNNAo8GmWLc9cgof0bJM0y+t9ektJaJzSze7qYzti?=
- =?us-ascii?Q?bHyQo5NQMwzh0MIHOwWFrk7scfkDDtcHvgEW1TWLp6BduTrKBEF+tjMArcZp?=
- =?us-ascii?Q?ci3ZOS7ARS3tiImWr8oHAXl1s/BPvvk5sBEirMZnw0B0DMXgEO8S3FHWY3Ev?=
- =?us-ascii?Q?zGHKeKJqEoPw4xz1yLY056jDDTO2z6YFh71AUaf/1n4b5+hB7AyyyXJUXS7l?=
- =?us-ascii?Q?gnDY9Tp1c6IRCSDTi5GrnNFib+a4VUPKlmJueEXpf7qCwBgk9/Q67/2cfxyu?=
- =?us-ascii?Q?5PJjwbutKCwigLw4VX/0Cl8N7wtB6Fe2n99fHlti1e+e4Fy7AybOY6l3zXGT?=
- =?us-ascii?Q?QE5OL2Rxc2kyFN4bSpLYY+PCGBCorFhWOIvTcttzYKSewYcmEdrB+02o/Luf?=
- =?us-ascii?Q?I1llUo7bwarxNlODoKbjHeTgv+IySlQQTuVtZnV9zVW9h8+asABdp9ekw/NU?=
- =?us-ascii?Q?PmcfoZqQPPeKHIvnOr5Vtalr/DzH3qfUx+keCoo3CULf6EbYRJbM3B6Sm5gf?=
- =?us-ascii?Q?diSto8N/WeDrZ2r2yfk0k2iEa0TKvB3Gr3hzI4CsBzWkbe02AP5PzNvTfbJI?=
- =?us-ascii?Q?lmtfuObe8uxjiZ2n83e3XGf+H+L/MijMzU1PIMoX/uoT8CSoVpAL7BuUl/UY?=
- =?us-ascii?Q?wFU9dYemESPdr75RLqj+sBfuNVKZDIGGokjvcElllwuZegKYgc85aiTWJbXK?=
- =?us-ascii?Q?O8P3Q6BCYZEdPMaPCNKSTt5/lxE3kseP2dV6kHJIxF6aaWuxjdG3TtIzz8Mc?=
- =?us-ascii?Q?BvLd2Tih7k/MMg1nNuAe1ruIAYKUp5rOZEcCxoIq/cbrGUUBYiRhs/JGZpWW?=
- =?us-ascii?Q?bUhBk+OqodREVU4hpLS5n1HJjMuE+0DW5Fi2GGy4KPSmKMT4MbF+QVr7jeCu?=
- =?us-ascii?Q?tnh+S+sT78m/lIHh7h8t+Z3a5FvoE7xHFJ6WcsDGA0Z/xtVMkzpeYYfQiSL+?=
- =?us-ascii?Q?OhQy9RxlKuYyucA1gSJ935Q7Hvi5l26U?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 20:16:52.8298
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d76cd972-049d-4605-22a0-08dcd755ab82
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF00000209.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7145
 
-From: Ashish Kalra <ashish.kalra@amd.com>
+Instrument copy_from_kernel_nofault(), copy_to_kernel_nofault(),
+strncpy_from_kernel_nofault() where __put_kernel_nofault,
+__get_kernel_nofault macros are used.
 
-Ciphertext hiding prevents host accesses from reading the ciphertext of
-SNP guest private memory. Instead of reading ciphertext, the host reads
-will see constant default values (0xff).
+Regular instrument_read() and instrument_write() handles KASAN, KCSAN
+checks for the access address, though instrument_memcpy_before() might
+be considered as well for both src and dst address validation.
 
-Ciphertext hiding separates the ASID space into SNP guest ASIDs and host
-ASIDs. All SNP active guests must have an ASID less than or equal to
-MAX_SNP_ASID provided to the SNP_INIT_EX command. All SEV-legacy guests
-(SEV and SEV-ES) must be greater than MAX_SNP_ASID.
+__get_user_size was appended with instrument_get_user() for KMSAN check in
+commit 888f84a6da4d("x86: asm: instrument usercopy in get_user() and
+put_user()") but only for CONFIG_CC_HAS_ASM_GOTO_OUTPUT.
 
-This patch-set adds a new module parameter to the CCP driver defined as
-max_snp_asid which is a user configurable MAX_SNP_ASID to define the
-system-wide maximum SNP ASID value. If this value is not set, then the
-ASID space is equally divided between SEV-SNP and SEV-ES guests.
-
-Ciphertext hiding needs to be enabled on SNP_INIT_EX and therefore this
-new module parameter has to added to the CCP driver.
-
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 ---
- arch/x86/kvm/svm/sev.c       | 26 ++++++++++++++----
- drivers/crypto/ccp/sev-dev.c | 52 ++++++++++++++++++++++++++++++++++++
- include/linux/psp-sev.h      | 12 +++++++--
- 3 files changed, 83 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/uaccess.h |  4 ++++
+ mm/kasan/kasan_test.c          | 17 +++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 0b851ef937f2..a345b4111ad6 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -171,7 +171,7 @@ static void sev_misc_cg_uncharge(struct kvm_sev_info *sev)
- 	misc_cg_uncharge(type, sev->misc_cg, 1);
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index 3a7755c1a441..bed84d3f7245 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -353,6 +353,7 @@ do {									\
+ 	default:							\
+ 		(x) = __get_user_bad();					\
+ 	}								\
++	instrument_get_user(x);						\
+ } while (0)
+ 
+ #define __get_user_asm(x, addr, err, itype)				\
+@@ -620,6 +621,7 @@ do {									\
+ 
+ #ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
+ #define __get_kernel_nofault(dst, src, type, err_label)			\
++	instrument_read(src, sizeof(type));				\
+ 	__get_user_size(*((type *)(dst)), (__force type __user *)(src),	\
+ 			sizeof(type), err_label)
+ #else // !CONFIG_CC_HAS_ASM_GOTO_OUTPUT
+@@ -627,6 +629,7 @@ do {									\
+ do {									\
+ 	int __kr_err;							\
+ 									\
++	instrument_read(src, sizeof(type));				\
+ 	__get_user_size(*((type *)(dst)), (__force type __user *)(src),	\
+ 			sizeof(type), __kr_err);			\
+ 	if (unlikely(__kr_err))						\
+@@ -635,6 +638,7 @@ do {									\
+ #endif // CONFIG_CC_HAS_ASM_GOTO_OUTPUT
+ 
+ #define __put_kernel_nofault(dst, src, type, err_label)			\
++	instrument_write(dst, sizeof(type));				\
+ 	__put_user_size(*((type *)(src)), (__force type __user *)(dst),	\
+ 			sizeof(type), err_label)
+ 
+diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
+index 7b32be2a3cf0..f5086c86e0bd 100644
+--- a/mm/kasan/kasan_test.c
++++ b/mm/kasan/kasan_test.c
+@@ -1899,6 +1899,22 @@ static void match_all_mem_tag(struct kunit *test)
+ 	kfree(ptr);
  }
  
--static int sev_asid_new(struct kvm_sev_info *sev)
-+static int sev_asid_new(struct kvm_sev_info *sev, unsigned long vm_type)
- {
- 	/*
- 	 * SEV-enabled guests must use asid from min_sev_asid to max_sev_asid.
-@@ -199,6 +199,18 @@ static int sev_asid_new(struct kvm_sev_info *sev)
- 
- 	mutex_lock(&sev_bitmap_lock);
- 
-+	/*
-+	 * When CipherTextHiding is enabled, all SNP guests must have an
-+	 * ASID less than or equal to MAX_SNP_ASID provided on the
-+	 * SNP_INIT_EX command and all the SEV-ES guests must have
-+	 * an ASID greater than MAX_SNP_ASID.
-+	 */
-+	if (snp_cipher_text_hiding && sev->es_active) {
-+		if (vm_type == KVM_X86_SNP_VM)
-+			max_asid = snp_max_snp_asid;
-+		else
-+			min_asid = snp_max_snp_asid + 1;
-+	}
- again:
- 	asid = find_next_zero_bit(sev_asid_bitmap, max_asid + 1, min_asid);
- 	if (asid > max_asid) {
-@@ -440,7 +452,7 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
- 	if (vm_type == KVM_X86_SNP_VM)
- 		sev->vmsa_features |= SVM_SEV_FEAT_SNP_ACTIVE;
- 
--	ret = sev_asid_new(sev);
-+	ret = sev_asid_new(sev, vm_type);
- 	if (ret)
- 		goto e_no_asid;
- 
-@@ -3059,14 +3071,18 @@ void __init sev_hardware_setup(void)
- 								       "unusable" :
- 								       "disabled",
- 			min_sev_asid, max_sev_asid);
--	if (boot_cpu_has(X86_FEATURE_SEV_ES))
-+	if (boot_cpu_has(X86_FEATURE_SEV_ES)) {
-+		if (snp_max_snp_asid >= (min_sev_asid - 1))
-+			sev_es_supported = false;
- 		pr_info("SEV-ES %s (ASIDs %u - %u)\n",
- 			sev_es_supported ? "enabled" : "disabled",
--			min_sev_asid > 1 ? 1 : 0, min_sev_asid - 1);
-+			min_sev_asid > 1 ? snp_max_snp_asid ? snp_max_snp_asid + 1 : 1 :
-+							      0, min_sev_asid - 1);
-+	}
- 	if (boot_cpu_has(X86_FEATURE_SEV_SNP))
- 		pr_info("SEV-SNP %s (ASIDs %u - %u)\n",
- 			sev_snp_supported ? "enabled" : "disabled",
--			min_sev_asid > 1 ? 1 : 0, min_sev_asid - 1);
-+			min_sev_asid > 1 ? 1 : 0, snp_max_snp_asid ? : min_sev_asid - 1);
- 
- 	sev_enabled = sev_supported;
- 	sev_es_enabled = sev_es_supported;
-diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-index 564daf748293..77900abb1b46 100644
---- a/drivers/crypto/ccp/sev-dev.c
-+++ b/drivers/crypto/ccp/sev-dev.c
-@@ -73,11 +73,27 @@ static bool psp_init_on_probe = true;
- module_param(psp_init_on_probe, bool, 0444);
- MODULE_PARM_DESC(psp_init_on_probe, "  if true, the PSP will be initialized on module init. Else the PSP will be initialized on the first command requiring it");
- 
-+static bool cipher_text_hiding = true;
-+module_param(cipher_text_hiding, bool, 0444);
-+MODULE_PARM_DESC(cipher_text_hiding, "  if true, the PSP will enable Cipher Text Hiding");
-+
-+static int max_snp_asid;
-+module_param(max_snp_asid, int, 0444);
-+MODULE_PARM_DESC(max_snp_asid, "  override MAX_SNP_ASID for Cipher Text Hiding");
-+
- MODULE_FIRMWARE("amd/amd_sev_fam17h_model0xh.sbin"); /* 1st gen EPYC */
- MODULE_FIRMWARE("amd/amd_sev_fam17h_model3xh.sbin"); /* 2nd gen EPYC */
- MODULE_FIRMWARE("amd/amd_sev_fam19h_model0xh.sbin"); /* 3rd gen EPYC */
- MODULE_FIRMWARE("amd/amd_sev_fam19h_model1xh.sbin"); /* 4th gen EPYC */
- 
-+/* Cipher Text Hiding Enabled */
-+bool snp_cipher_text_hiding;
-+EXPORT_SYMBOL(snp_cipher_text_hiding);
-+
-+/* MAX_SNP_ASID */
-+unsigned int snp_max_snp_asid;
-+EXPORT_SYMBOL(snp_max_snp_asid);
-+
- static bool psp_dead;
- static int psp_timeout;
- 
-@@ -1064,6 +1080,38 @@ static void snp_set_hsave_pa(void *arg)
- 	wrmsrl(MSR_VM_HSAVE_PA, 0);
- }
- 
-+static void sev_snp_enable_ciphertext_hiding(struct sev_data_snp_init_ex *data, int *error)
++static void copy_from_to_kernel_nofault(struct kunit *test)
 +{
-+	struct psp_device *psp = psp_master;
-+	struct sev_device *sev;
-+	unsigned int edx;
++	char *ptr;
++	char buf[16];
++	size_t size = sizeof(buf);
 +
-+	sev = psp->sev_data;
++	ptr = kmalloc(size, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
++	kfree(ptr);
 +
-+	/*
-+	 * Check if CipherTextHiding feature is supported and enabled
-+	 * in the Platform/BIOS.
-+	 */
-+	if ((sev->feat_info.ecx & SNP_CIPHER_TEXT_HIDING_SUPPORTED) &&
-+	    sev->snp_plat_status.ciphertext_hiding_cap) {
-+		/* Retrieve SEV CPUID information */
-+		edx = cpuid_edx(0x8000001f);
-+		/* Do sanity checks on user-defined MAX_SNP_ASID */
-+		if (max_snp_asid >= edx) {
-+			dev_info(sev->dev, "max_snp_asid module parameter is not valid, limiting to %d\n",
-+				 edx - 1);
-+			max_snp_asid = edx - 1;
-+		}
-+		snp_max_snp_asid = max_snp_asid ? : (edx - 1) / 2;
-+
-+		snp_cipher_text_hiding = 1;
-+		data->ciphertext_hiding_en = 1;
-+		data->max_snp_asid = snp_max_snp_asid;
-+
-+		dev_dbg(sev->dev, "SEV-SNP CipherTextHiding feature support enabled\n");
-+	}
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		copy_from_kernel_nofault(&buf[0], ptr, size));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		copy_to_kernel_nofault(ptr, &buf[0], size));
 +}
 +
- static void snp_get_platform_data(void)
- {
- 	struct sev_device *sev = psp_master->sev_data;
-@@ -1199,6 +1247,10 @@ static int __sev_snp_init_locked(int *error)
- 		}
- 
- 		memset(&data, 0, sizeof(data));
-+
-+		if (cipher_text_hiding)
-+			sev_snp_enable_ciphertext_hiding(&data, error);
-+
- 		data.init_rmp = 1;
- 		data.list_paddr_en = 1;
- 		data.list_paddr = __psp_pa(snp_range_list);
-diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
-index 6068a89839e1..2102248bd436 100644
---- a/include/linux/psp-sev.h
-+++ b/include/linux/psp-sev.h
-@@ -27,6 +27,9 @@ enum sev_state {
- 	SEV_STATE_MAX
+ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(kmalloc_oob_right),
+ 	KUNIT_CASE(kmalloc_oob_left),
+@@ -1971,6 +1987,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(match_all_not_assigned),
+ 	KUNIT_CASE(match_all_ptr_tag),
+ 	KUNIT_CASE(match_all_mem_tag),
++	KUNIT_CASE(copy_from_to_kernel_nofault),
+ 	{}
  };
  
-+extern bool snp_cipher_text_hiding;
-+extern unsigned int snp_max_snp_asid;
-+
- /**
-  * SEV platform and guest management commands
-  */
-@@ -746,10 +749,13 @@ struct sev_data_snp_guest_request {
- struct sev_data_snp_init_ex {
- 	u32 init_rmp:1;
- 	u32 list_paddr_en:1;
--	u32 rsvd:30;
-+	u32 rapl_dis:1;
-+	u32 ciphertext_hiding_en:1;
-+	u32 rsvd:28;
- 	u32 rsvd1;
- 	u64 list_paddr;
--	u8  rsvd2[48];
-+	u16 max_snp_asid;
-+	u8  rsvd2[46];
- } __packed;
- 
- /**
-@@ -841,6 +847,8 @@ struct snp_feature_info {
- 	u32 edx;
- } __packed;
- 
-+#define SNP_CIPHER_TEXT_HIDING_SUPPORTED	BIT(3)
-+
- #ifdef CONFIG_CRYPTO_DEV_SP_PSP
- 
- /**
 -- 
 2.34.1
 
