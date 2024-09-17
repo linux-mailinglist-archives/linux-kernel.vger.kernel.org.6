@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-331621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E42D97AF16
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:42:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763BB97AEAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3A25B2B747
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77981F23793
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF761166F39;
-	Tue, 17 Sep 2024 10:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9A6165EF5;
+	Tue, 17 Sep 2024 10:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="qnoXUTuZ"
-Received: from smtp86.iad3b.emailsrvr.com (smtp86.iad3b.emailsrvr.com [146.20.161.86])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ADeXggRK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534D51537C6
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D558A15B55D
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726569723; cv=none; b=U4ikMa7HSjAc0R0PyjjjD5855K424jT8+VM2+HDrFMjws8M7gj4htsqW5DLmKthlIoYWkUXChH+immODeFwanh9QM1OCXqgqCAOUUWc4tb5glgDw7NPkylczzbeKS1uD/Dv2fAVvDVqtHGoG5h0LqnThliVORwQhz0egnRg60aU=
+	t=1726568587; cv=none; b=ou1rcUoQc9oUx3wvqT/sSJRsNAyqvSkMy1r6l7fl8JyeuJItwsvnON1ExkkFk6TPgmBpE4y5GHrm+XifvHfZoRGr/8FI8oFAnp9KbaGVfEO624zkPGG699ERAKI3mIwSdPgxHtEMI83J4ZHSe4APWuzO9/uVnk7xmluVMdi74Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726569723; c=relaxed/simple;
-	bh=LFjC9qvfVz9xY8IYtmTgrBOAqLLEB5YbtKAj0tbNYAk=;
+	s=arc-20240116; t=1726568587; c=relaxed/simple;
+	bh=hGi8YXModPaINEUs9neWzaD8fA7G6jKoaUEAHbv6Ne4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GQcLvzQOVHkdmenSYU+y5yAJzhBcM3oQrdJ+bzAjCJq5Q2tvIoIvtdoewBrFYn1JlEOvadDAlmW3ccwujF2TU1WwJTJNnwGPh5EcpkO7E8rhxe6tt6c+dD3pu2A5svz06vleKlx+g6FT1jz9AzvyEUT7rxyjhmSSXeOFhp5C9UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=qnoXUTuZ; arc=none smtp.client-ip=146.20.161.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1726568542;
-	bh=LFjC9qvfVz9xY8IYtmTgrBOAqLLEB5YbtKAj0tbNYAk=;
-	h=Date:Subject:To:From:From;
-	b=qnoXUTuZT99MLkyxIpzJMk8ADP1VhOOfEPuYWbw+YuzyPJE8fWR/LYdwTOGCxAuaK
-	 jeaqa0l2nUyj7Dxw2PNczFbzn1jHGvIDgsGPfoBT9NiwBqByag6APuqj3HQDO9RLdc
-	 zBqol2dcAdxCzG23l80qAreE1wWFjzpGi6cEuOT4=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp3.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 4EC644010D;
-	Tue, 17 Sep 2024 06:22:22 -0400 (EDT)
-Message-ID: <5c3172d8-517f-4d23-a713-fc41406c00d8@mev.co.uk>
-Date: Tue, 17 Sep 2024 11:22:21 +0100
+	 In-Reply-To:Content-Type; b=oAO6hEsTrR0OP85bIWFPeyxh+H2HkSqo9R/Y09weOYNW0G3k7kEkOGO7ANhORDxJxj4b2UFi4b5NKNlLUBdN+/CGkwjtb+WrYymoHJHGibaK/+gI3tOJV1rGjqwxS79ce1Lz6D1+Bm1c/wty5fPSguovOrs2Ej+Lk8Gv9l8t3Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ADeXggRK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726568584;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ydd/x8z/rWdB1y1aNRkIvJ800tcht5bmAGltsT132Qk=;
+	b=ADeXggRKgQoFbnmu9QmpqRUDvAaoj9NdH3euG9zVXQG3aaa0YcrQ3jWc3/NoktCqCe+Vlt
+	7fvjJsQxsC7bg3jIRItUsuVbKASSFE1jc71zyMDYuXJWEuCI+y4D9CY80PW1nYq2M2ibBS
+	wF/1P5lF1DHh0jHhqJkSJOL8Bx6G2os=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-279-vhW9U78bO7mS-uZHeZbf8Q-1; Tue, 17 Sep 2024 06:23:02 -0400
+X-MC-Unique: vhW9U78bO7mS-uZHeZbf8Q-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c24cd1e1bdso5903676a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:23:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726568581; x=1727173381;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ydd/x8z/rWdB1y1aNRkIvJ800tcht5bmAGltsT132Qk=;
+        b=uf3aGepint+7v3T211PLTHIRp7+yG5Ee/j0z5kSekQc8CB1ht5udbC1AcVX3OMSc2A
+         xv35GtU6FZndfWVDyNZefyy+coaVyaCPkVwJRP21MSFgMKUGNHyZDnwMAbkMBkfwoyof
+         ERpGKYEIOrn9+nHpXoAV/ZqgI/fG7KgjelNA1AK/hjAIcB1czgzgyjG2nDTXZO0k3Rxv
+         xLdz0wwnZsgyZvw+xDUT2Zt3SDuozEPeAuKvrFUTB8wKecLjBT9xUbHaajZ/484qdzX2
+         HLr31atliFlGlBIvFSJGL+qAox7tU+Reama6d8l3U/8zOgb76F5hHLJ2AYNX4Fc54w5g
+         QROQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBt3aVFUNc9P4Oh4hKGRXqcnmpa3I69TE0X4Bxz+yj9sZm5R2tZlnTmkn+bIRCaW1wBRxL4huh0jrCWM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc5xnHzIrrSExNz9907KZ1cZFOkwymjX9WRDzd8aEm5dHZZomh
+	q2vTfV7ECT++Bo7mxDhHrNQgyc0A5mYvo8vt4ZL56fGiUYmgXyG3gpqYbMXIe7EPOyOKS3eQCTF
+	ugOYFbvk+WqQxbdHv6+ny7Kdptjzv8gq92tXSci/S/KKJJ5jwW3FYpFcyhS/OQA==
+X-Received: by 2002:a05:6402:354a:b0:5c2:439e:d6d6 with SMTP id 4fb4d7f45d1cf-5c413e117ebmr17061213a12.11.1726568581560;
+        Tue, 17 Sep 2024 03:23:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGn7gFPHvRH97LwaZjArKPHMj9F8rHYoTdOrw0TXFOFbnMeRWzKUCJY3AXZKV+B4Vp9xSUVxQ==
+X-Received: by 2002:a05:6402:354a:b0:5c2:439e:d6d6 with SMTP id 4fb4d7f45d1cf-5c413e117ebmr17061190a12.11.1726568581014;
+        Tue, 17 Sep 2024 03:23:01 -0700 (PDT)
+Received: from [192.168.55.136] (tmo-067-108.customers.d1-online.com. [80.187.67.108])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb5fce9sm3504885a12.56.2024.09.17.03.22.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 03:23:00 -0700 (PDT)
+Message-ID: <c4fe25e3-9b03-483f-8322-3a17d1a6644a@redhat.com>
+Date: Tue, 17 Sep 2024 12:22:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,60 +82,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: comedi: ni_tio: Adjust clock period calculation
- in ni_tio_set_clock_src()
-To: Aleksandr Mishin <amishin@t-argos.ru>,
- H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-References: <20240917062317.13516-1-amishin@t-argos.ru>
-Content-Language: en-GB
-From: Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-In-Reply-To: <20240917062317.13516-1-amishin@t-argos.ru>
+Subject: Re: [PATCH V2 2/7] x86/mm: Drop page table entry address output from
+ pxd_ERROR()
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+ <20240917073117.1531207-3-anshuman.khandual@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240917073117.1531207-3-anshuman.khandual@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Classification-ID: 42b9c177-b03c-47cc-894b-09293ba44710-1-1
 
-On 17/09/2024 07:23, Aleksandr Mishin wrote:
-> In ni_tio_set_clock_src() clock period is a subject to overflow because
-> 'period_ns' (which comes from user, may have any value and is not
-> validated anywhere) is not cast to a larger data type before performing
-> arithmetic.
+On 17.09.24 09:31, Anshuman Khandual wrote:
+> This drops page table entry address output from all pxd_ERROR() definitions
+> which now matches with other architectures. This also prevents build issues
+> while transitioning into pxdp_get() based page table entry accesses.
 > 
-> Cast 'period_ns' to u64 to prevent overflow.
+> The mentioned build error is caused with changed macros pxd_ERROR() ends up
+> doing &pxdp_get(pxd) which does not make sense and generates "error: lvalue
+> required as unary '&' operand" warning.
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 3e90b1c7ebe9 ("staging: comedi: ni_tio: tidy up ni_tio_set_clock_src() and helpers")
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: x86@kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > ---
->   drivers/comedi/drivers/ni_tio.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/comedi/drivers/ni_tio.c b/drivers/comedi/drivers/ni_tio.c
-> index da6826d77e60..98b5b44416cf 100644
-> --- a/drivers/comedi/drivers/ni_tio.c
-> +++ b/drivers/comedi/drivers/ni_tio.c
-> @@ -800,7 +800,7 @@ static int ni_tio_set_clock_src(struct ni_gpct *counter,
->   				GI_PRESCALE_X2(counter_dev->variant) |
->   				GI_PRESCALE_X8(counter_dev->variant), bits);
->   	}
-> -	counter->clock_period_ps = period_ns * 1000;
-> +	counter->clock_period_ps = (u64)period_ns * 1000;
->   	ni_tio_set_sync_mode(counter);
->   	return 0;
->   }
 
-Thanks.  The patch looks good but since comedi was migrated out of 
-staging, it should no longer be tagged as "staging:" in the title.
+Not a big fan of all these "bad PTE" thingies ...
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+Cheers,
+
+David / dhildenb
 
 
