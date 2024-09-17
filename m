@@ -1,141 +1,185 @@
-Return-Path: <linux-kernel+bounces-331447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A635997AD07
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:45:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F5B97AD0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CEBB284B1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:45:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40830B29079
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F4C15B57F;
-	Tue, 17 Sep 2024 08:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF9415667E;
+	Tue, 17 Sep 2024 08:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xp5NHVZc"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="iA7rSkyc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jb7dxzh8"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D8415689A;
-	Tue, 17 Sep 2024 08:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1460615358F;
+	Tue, 17 Sep 2024 08:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726562721; cv=none; b=i4KxgJmahvhwklRzuBXbITf4vGZGeM4lV0K62p2jgj/cpmyQqR9fRrH4oYtbLjNidVmIQQCe6XIICfjyGP73c49lAykFketdB3GydTSeGPzfmmo73Blj25Nc4dPdC3XV1nxW5KrrOTtGOht51256PSTgSZFcgXIDSjQsHHB7pGc=
+	t=1726562777; cv=none; b=dB2iQAROQHENvy+/ODITgYF9C2aEzuJCTSVChRCUOlyY36soWaLhC4AZwr9scLxuJTX+vNi5zjiZOojOK1ja4ucRcDcMU2Sp0ax/PUxpY80QE2D7zNG0IrzTkT0UCsgx5npNQzN7kuVWs/xMC0BwXfspMwlxNeu/ucKwZ+W6ehQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726562721; c=relaxed/simple;
-	bh=y+pWxGvGgH9u0hhKK+QZJVtcntnBZsyZchYJw41PpHM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=hS+Dk/TXhUlwZMYeiWbdvv0s1qOculzAZPsdasXCfiPmYvWiSAtusnZaWD77oXIni2f4IgkAG9VuulCPw7A8qwXPHGa1cXN6huEdy/XBo0jDqUxhOpj6xIpIEJosGi+o+gF58OB85iTRBPk+ShHN1892qgWVHhOEecMHZMdCnOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xp5NHVZc; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a9ac0092d9so250519185a.1;
-        Tue, 17 Sep 2024 01:45:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726562717; x=1727167517; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5+5UG83gqFAAzo1DmGhZKki5qbeLYQrCYs3Ps8q0c9E=;
-        b=Xp5NHVZcLUpMXV6lDLj88v9N90k/vtplEwj/CLHalqtovg5rPXpXq1A/E8EN//5Mzo
-         HU1JuN5SWdW8iOHH1R2biBrwdiJQjy01O3pvV9U0o1fDuPaJrVVgC0DrrINMk5Us34li
-         h90ea21t2ccdpsNJ/vJ3u2fHE2hABChYBLHa0iQTmJTl4S+lVicyQk6p8j/1b506kXqg
-         4GXkT8/eprft1MiDZuWFNB1mNZHfeTZ/k4o+LhBPklUDlCAl6gjd0ADGbBWLNTdlJZrt
-         ItAW9HFEXaBf1WdKpBkK1JvLxCe68fFC9uF9DJz25JQxHJz6DyuBUAulRu6gXiOft/0u
-         p1sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726562717; x=1727167517;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5+5UG83gqFAAzo1DmGhZKki5qbeLYQrCYs3Ps8q0c9E=;
-        b=V0rCpOpULwMOyn/GMv+fkGyDMjTPt9um3fqmRWI8oe2noQUQtc+uN9gjZ1mfs6QGel
-         6WjHbwlkVHf0doNW/cDHw0o5YtvAcIRxSIEIQ1EL7O86hVj5V9bHhZup3WFE4FLlcoB4
-         DpKZCwvhjz0prrnrvBWw69NlleXkpCmqzgG5B1FK2kmzqkZ5AhQsznbC7+5sET9cqQS5
-         SmZvpQVILULnGl1NnjIhLvKX820YV5Ze1ZLGRd0wZ2Ae0GyLS1Ff3MxhCWckjeaUrels
-         5QloxAY1k2KQJeQBLslp9Sv+sqWP8v7qyRAUZA1iACjM1pf6P12G0uMmhNnZoGEvDPOH
-         NoLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJmQVH0h4ZYm+cnblm55Gy7vcmFpi8J0FLnOw+eYu/855qWzFiYWqrXnyovka73Aidi1/oPJ1/Jv179SA=@vger.kernel.org, AJvYcCVtc+Y0cuE3tlmdCqm/ueaMXEYaBgCOJg4bVQF8L43DrrPcqzplgJDAGgQLZ2Cr6JUlRqYH54Um@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrjwKsSRao2MHOvTAJ9uOX3yRA3Loqa0LLrtV34PtetGXi5k/v
-	DRcxdEhyndfprdlwIxXCyVf1b+PlDSGlRJmX1S1dF18iHi3i0yl2
-X-Google-Smtp-Source: AGHT+IGzTM+igHKo8tgese8eUxD+qyvSIZo3MJgTBs063qWO3xIHpoeiQfm2xBjOiExCtuTGdeK0dg==
-X-Received: by 2002:ac8:7fc8:0:b0:458:21f9:5a84 with SMTP id d75a77b69052e-4599d2d14e8mr264171281cf.54.1726562717264;
-        Tue, 17 Sep 2024 01:45:17 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-459aad04446sm35518391cf.66.2024.09.17.01.45.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 01:45:16 -0700 (PDT)
-Date: Tue, 17 Sep 2024 04:45:16 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Zach Walton <me@zach.us>, 
- linux-kernel@vger.kernel.org
-Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jason Wang <jasowang@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- netdev@vger.kernel.org
-Message-ID: <66e9419c6c8f9_2561f32947d@willemb.c.googlers.com.notmuch>
-In-Reply-To: <CABQG4PHGcZggTbDytM4Qq_zk2r3GPGAXEKPiFf9htjFpp+ouKg@mail.gmail.com>
-References: <CABQG4PHGcZggTbDytM4Qq_zk2r3GPGAXEKPiFf9htjFpp+ouKg@mail.gmail.com>
-Subject: Re: Allow ioctl TUNSETIFF without CAP_NET_ADMIN via seccomp?
+	s=arc-20240116; t=1726562777; c=relaxed/simple;
+	bh=7il+1Y+xDmFDzhpMMo6AtEpUg427MJzyHRGjoapMw1w=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=J5kAdyJRO8JoLhYJdDjwT52SYcaitaRNmT+N1XyEwRTY9wF29qnu1eNrdNWcibXWEj2Y4Jumz344YYzSr0zr4Xqx+85ImdWHeqN/pi/8IbjCz5JLqQQroandrmInMI9eNCGhtakGW8o9AgmT83o6mnv8Csbzt24WIdvZTFuZgWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=iA7rSkyc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jb7dxzh8; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id 27EC313802EA;
+	Tue, 17 Sep 2024 04:46:14 -0400 (EDT)
+Received: from phl-imap-01 ([10.202.2.91])
+  by phl-compute-08.internal (MEProxy); Tue, 17 Sep 2024 04:46:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1726562774;
+	 x=1726649174; bh=r02SC9UwRVZI3dSIERxjx/Dlw5QW6ywAV9eCY3QxIfc=; b=
+	iA7rSkycZ7jdRG1k5E9R0WBk4tNh3E41X7vYFI+8VNIgBY4EH7/18ikik+fWXm93
+	95TAzL2aBtaFyFSv+E8XkXwvNmbCsvYyM3xI29Br6KPzHlK7hzmCqgIB/fStu6cl
+	gTfZCyW0S2lW8TxOJ+2Lwde4kgIau/9X8DeZqs5eswUMduaWBubkyq35u5Tce+r1
+	T2a5IPdWwUG8w31UTpFy2HQCoIkWphycAJh1ZU+4FfJ7giqL4JibjjECB1NftZtk
+	0P9Uq80a7n2OUDgb0p598j321nq5Wy/oY6CO3nKFUPwPfkbt1zLEiyN0ZRkAQ/5D
+	jBfTUouEwHbY+BUFyVEiZQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726562774; x=
+	1726649174; bh=r02SC9UwRVZI3dSIERxjx/Dlw5QW6ywAV9eCY3QxIfc=; b=j
+	b7dxzh8JFyYdqB9WYcA1E2UY0f6eYM3/mn9B/Y9f8XvPcCaeNGhmdKXr1GMlNFLF
+	F3lbl6Y/3N0rW4CGbF1+V4VIKwQIGeSwUnpJC/ZZPZkz2zavCpMnP/SHyVu/rzXr
+	+IIj6qyAy9GI6jWqomx5aXqei4MUd1BqKkNietQkuPzuSYBo70ryi7/yoEZZ+Eyt
+	r8wsOYWLB5ZZsyFLcPSORHM6dP4MjvPf26/rwyhcdFoH52RsONVBJ3/3i0i+hx+8
+	VtwtQufvLZ2rxDi0NlpPbqm23Je+h2bhbS/7ojcBPQ0cwyKFDZFz4yUU+3kryM4a
+	R/UcAu8Ykjoi44nxoqRRA==
+X-ME-Sender: <xms:1UHpZug18bT4z4dUwrKZ7a29BTkMq93PtcHDLjeoR2hAu13HRuLoDA>
+    <xme:1UHpZvB_-Op6mvOb8NQ-6ZVtaXNGHyz9o7UL3IFEJ8IlnjTdKT8HzoUb4SapDysTJ
+    FF7Bmb7o8sE-yjWgTQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekjedgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
+    hvqeenucggtffrrghtthgvrhhnpeevteelkeefueeuleejveetueetvefggfeuledvhfdv
+    gedvheelfeelkefhgfetheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhho
+    nhgvshdruggvvhdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthht
+    ohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtph
+    htthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphhlrg
+    htfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:1UHpZmFxYFdEmvwOf_ZB1SZ9jAuNe4vWqasyLsspy-I2UCUrJKtk-Q>
+    <xmx:1UHpZnTYPMKYRvef4vLNAs7Y5nE57ntRryK27hjMI2vd15YaQKevXg>
+    <xmx:1UHpZrwllL2HPMGTrTxnjrWxMgiwVdgruost1Y6nQxKyRdxxKHze1A>
+    <xmx:1UHpZl6VMSQIGjQ1xIdZNaK0OuNGIPZ_u_8-N5sqhHne9deYShexdw>
+    <xmx:1kHpZr8IaFQOclHulvd-JEycuOHKPak5L6z0OpFN9CLuXpHP-ASHbAcb>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 89FF93360077; Tue, 17 Sep 2024 04:46:13 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+Date: Tue, 17 Sep 2024 20:45:53 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Hans de Goede" <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ corentin.chary@gmail.com
+Message-Id: <b7cd34f6-b0d9-466b-b1b4-3e4283b6f6c8@app.fastmail.com>
+In-Reply-To: <6ad5b0ee-d05f-4e8e-8946-cbeb350add8a@redhat.com>
+References: <20240910045443.678145-1-luke@ljones.dev>
+ <6ad5b0ee-d05f-4e8e-8946-cbeb350add8a@redhat.com>
+Subject: Re: [PATCH] platform/x86: asus-wmi: don't fail if platform_profile already
+ registered
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Zach Walton wrote:
-> I was debugging a seccomp profile that attempts to allow TUNSETIFF in
-> a container, relevant bits:
+On Thu, 12 Sep 2024, at 12:32 AM, Hans de Goede wrote:
+> Hi,
 > 
-> ...
->       {
->             "names":[
->                   "ioctl"
->             ],
->             "action":"SCMP_ACT_ALLOW",
->             "args":[
->                   {
->                         "index":1,
->                         "value":1074025674,
->                         "op":"SCMP_CMP_EQ"
->                   },
->                   {
->                         "index":1,
->                         "value":2147767498,
->                         "op":"SCMP_CMP_EQ"
->                   }
->             ]
->       },
-> ...
+> On 9/10/24 6:54 AM, Luke D. Jones wrote:
+> > On some newer laptops ASUS laptops SPS support is advertised but not
+> > actually used, causing the AMD driver to register as a platform_profile
+> > handler.
+> > 
+> > If this happens then the asus_wmi driver would error with -EEXIST when
+> > trying to register its own handler leaving the user with a possibly
+> > unusable system. This is especially true for laptops with an MCU that emit
+> > a stream of HID packets, some of which can be misinterpreted as shutdown
+> > signals.
+> > 
+> > We can safely continue loading the driver instead of bombing out.
+> > 
+> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
 > 
-> ...but I get:
+> Thank you for your patch. I've applied this now, dropping the second
+> unnecessary chunk manually so there is no need to send out a new version.
 > 
-> Tuntap IOCTL TUNSETIFF failed [0], errno operation not permitted
+> Thank you for your patch, I've applied this patch to my review-hans 
+> branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
 > 
-> Looking at the code, it seems that there's an explicit check for
-> CAP_NET_ADMIN, which I'd prefer not to grant the container because the
-> permissions are excessive (yes, I can lock it down with seccomp but
-> still...): https://github.com/torvalds/linux/blob/3352633ce6b221d64bf40644d412d9670e7d56e3/drivers/net/tun.c#L2758-L2759
+> Once I've run some tests on this branch the patches there will be
+> added to the platform-drivers-x86/for-next branch and eventually
+> will be included in the pdx86 pull-request to Linus for the next
+> merge-window.
 > 
-> Is it possible to update this check to allow TUNSETIFF operations if a
-> seccomp profile allowing it is in place? (I am not a kernel developer
-> and it's unlikely I could safely contribute this)
+> Regards,
+> 
+> Hans
 
-In this case seccomp would not restrict capabilities, but actually
-expand them, by bypassing the standard CAP_NET_ADMIN requirement.
 
-That sounds like it might complicate reasoning about seccomp.
+Okay Thanks Hans,
 
-Is there prior art, where kernel restrictions are actually relaxed
-when relying on a privileged process allow a privileged operation
-through a seccomp policy?
 
+> 
+> 
+> 
+> > ---
+> >  drivers/platform/x86/asus-wmi.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> > index fbb3345cc65a..d53c4aff519f 100644
+> > --- a/drivers/platform/x86/asus-wmi.c
+> > +++ b/drivers/platform/x86/asus-wmi.c
+> > @@ -3876,8 +3876,13 @@ static int platform_profile_setup(struct asus_wmi *asus)
+> >  asus->platform_profile_handler.choices);
+> >  
+> >  err = platform_profile_register(&asus->platform_profile_handler);
+> > - if (err)
+> > + if (err == -EEXIST) {
+> > + pr_warn("%s, a platform_profile handler is already registered\n", __func__);
+> > + return 0;
+> > + } else if (err) {
+> > + pr_err("%s, failed at platform_profile_register: %d\n", __func__, err);
+> >  return err;
+> > + }
+> >  
+> >  asus->platform_profile_support = true;
+> >  return 0;
+> > @@ -4752,7 +4757,7 @@ static int asus_wmi_add(struct platform_device *pdev)
+> >  goto fail_fan_boost_mode;
+> >  
+> >  err = platform_profile_setup(asus);
+> > - if (err)
+> > + if (err && err != -EEXIST)
+> >  goto fail_platform_profile_setup;
+> >  
+> >  err = asus_wmi_sysfs_init(asus->platform_device);
+> 
+> 
 
