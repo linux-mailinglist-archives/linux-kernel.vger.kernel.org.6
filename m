@@ -1,151 +1,105 @@
-Return-Path: <linux-kernel+bounces-331581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A5E97AE84
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:11:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48CFE97AE8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A65D288EC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:11:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 690FDB31704
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6DA165EF5;
-	Tue, 17 Sep 2024 10:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11805166302;
+	Tue, 17 Sep 2024 10:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hYKAiCGo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="EzeXgYQi"
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80425158D8F;
-	Tue, 17 Sep 2024 10:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8EF15E5DC;
+	Tue, 17 Sep 2024 10:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726567889; cv=none; b=aixtgSPa+qS3H+JIhA5x+ntL1qHwnRj6tKlgLiUYAbGh55DSsJ10TX0hE7VkMbmLlPTAe/Qdl97EbWNYsaXKb7VCuzipaGUFI6DGMzcKmjEhWtkA7lYqSDuUnOBE+fxtsLrBXkZzMysl2NX3BXUMJJ72k1+fwswSIvsC2zjBvFY=
+	t=1726567933; cv=none; b=R1pRJ/Ylga3sqF4oUYFX3mrlSPQRyEQ2gKKCpcUW9uBEQx14uWXZj4WCTkEFoPg383S4wM2jjOgLgvvsy714k7oJonkpBptwhr490SSl46EWlBel4m3JhONsh78ZfOxPyGkh0nGjeX7GWLhDws/6p7L8QfuQ3iXSxJuu3YNEKmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726567889; c=relaxed/simple;
-	bh=l/t8WJfxLZSD5aZRSlHi28JBF5MloZP8QoclryrVsmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HvfcYnJukT5Gy0KTcbXlWaS3+wjAI6IXnZdpbNFLALhEE6MG7Kqrj9on8hM6ivOuPqvqduDCstP2yA6ivyxLlS4xnqXlc8YEF+vKaZQaxddhoPniFU/C94dQ+IEvYAojj25j00nY1MDHSm4LMqrpFH5ZaLDyyXwsk5KYiEjvu4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hYKAiCGo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7302C4CEC5;
-	Tue, 17 Sep 2024 10:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726567889;
-	bh=l/t8WJfxLZSD5aZRSlHi28JBF5MloZP8QoclryrVsmA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hYKAiCGoVDDaF+XLmGB+V+zqyDLzkMjOetyLn42TPsoSFlwwSK2vUSUcOGHhmnnRn
-	 a27L+CXlKe1+Pr3cfrtTOmqBMD2Pveega7lG1UhVQgOy5z2y6btsFusard42/M0j5y
-	 5Bckp61CogVjRVmvWXWghOPvkiD2pt3kvnBurwCs=
-Date: Tue, 17 Sep 2024 12:11:22 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	rafael@kernel.org, yoshihiro.toyama@sony.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/2] Add framework for user controlled driver probes
-Message-ID: <2024091743-germinate-fructose-3ded@gregkh>
-References: <20240911142319.3435746-1-nayeemahmed.badebade@sony.com>
- <2024091327-repacking-avatar-ec23@gregkh>
- <ZulGr8Ul7y0T0NkQ@NAB-HP-ProDesk-600sony.com>
+	s=arc-20240116; t=1726567933; c=relaxed/simple;
+	bh=+Fxan0ei7X39eyTJEb/0r6Ru5Bzasua4yPtNhr9nADI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=phQ89ClRHfJbDG/S+MtyrFOdB041T5fHyAEhtUJ3VVj99bRMx0aZ7XNo3Sqae91b/TLZZRXkH7ZyWzsRe+NgOPYQGpI+b8N9450YwH+nl/ZDgebATru/KKwBx4Q8LTYObXRRm0PoF9w1wcUpv9jZuYBPxy2MOfpE6XbvbPgsOo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=EzeXgYQi; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1726567919;
+	bh=cP8/Fn6tBfIOd+vH1Y/PmiZPk7CDO2/GsMaiS3P7iDk=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=EzeXgYQigjspo6b8ojyblK2LXyNnz6q359oHf3RoineE9bK9E7Wudt8oPLOJ+BLhc
+	 2Z1DbBLSGQTsMKgscBSomb4WKaRw1SehOFcdLjOQLDsAfiEMi1tLOJyGsqjvvm3Gis
+	 SeFqs+atjmb2LoyAVoaPcUDKy1XgNJ/vYnmko5ns=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZulGr8Ul7y0T0NkQ@NAB-HP-ProDesk-600sony.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <ZulMlPFKiiRe3iFd@casper.infradead.org>
+Date: Tue, 17 Sep 2024 12:11:37 +0200
+Cc: Chris Mason <clm@meta.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Dave Chinner <david@fromorbit.com>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9256DE36-5885-41F3-B5C7-ED6BA286E063@flyingcircus.io>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <Zud1EhTnoWIRFPa/@dread.disaster.area>
+ <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+ <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
 
-On Tue, Sep 17, 2024 at 02:36:55PM +0530, Nayeemahmed Badebade wrote:
-> Hi Greg,
-> 
-> Thank you for taking the time to check our patch and provide
-> valuable feedback. We appreciate your comments/suggestions.
-> 
-> Please find our reply to your comments.
-> 
-> On Fri, Sep 13, 2024 at 06:36:38AM +0200, Greg KH wrote:
-> > On Wed, Sep 11, 2024 at 07:53:17PM +0530, Nayeemahmed Badebade wrote:
-> > > Hi,
-> > 
-> > If Rob hadn't responded, I wouldn't have noticed these as they ended up
-> > in spam for some reason.  You might want to check your email settings...
-> > 
-> 
-> I have ensured standard settings which we have been using are used this
-> time, let me know if this email is received properly.
 
-I got it this time, thanks.
 
-> > > This patch series introduces a new framework in the form of a driver
-> > > probe-control, aimed at addressing the need for deferring the probes
-> > > from built-in drivers in kernels where modules are not used.
-> > 
-> > Wait, why?
-> >
-> 
-> We have a scenario where a driver cannot be built as a module and ends up
-> as a built-in driver. We don't want to probe this driver during boot as its
-> not required at the time of booting.
-> Example: drivers/pci/controller/dwc/pci-imx6.c
-> So the intention is to only postpone some driver probes similar to:
-> https://elinux.org/Deferred_Initcalls
-> But instead of delaying initcall execution(which requires initmem to be kept
-> and not freed during boot) we are trying to delay driver probes as this is
-> much simpler.
-> The proposed driver is a generic solution for managing such driver
-> probes.
+> On 17. Sep 2024, at 11:32, Matthew Wilcox <willy@infradead.org> wrote:
+>=20
+> On Mon, Sep 16, 2024 at 10:47:10AM +0200, Chris Mason wrote:
+>> I've got a bunch of assertions around incorrect folio->mapping and =
+I'm
+>> trying to bash on the ENOMEM for readahead case.  There's a =
+GFP_NOWARN
+>> on those, and our systems do run pretty short on ram, so it feels =
+right
+>> at least.  We'll see.
+>=20
+> I've been running with some variant of this patch the whole way across
+> the Atlantic, and not hit any problems.  But maybe with the right
+> workload ...?
 
-Again, please fix the drivers that are having problems with this, and
-build them as a module and load them when you need/want them and can be
-probed correctly.
+I can start running my non-prod machines that were affected previously. =
+I=E2=80=99d run this on top of 6.11?
 
-> > > In such scenario, delaying the initialization of certain devices such
-> > > as pcie based devices not needed during boot and giving user the control
-> > > on probing these devices post boot, can help reduce overall boot time.
-> > > This is achieved without modifying the driver code, simply by configuring
-> > > the platform device tree.
-> > 
-> > PCI devices should not be on the platform device tree.
-> >
-> 
-> You are right, we are referring to the pci host controller that will be
-> listed in device tree and skipping its probe during boot as an example
-> here.
+Christian
 
-pci host controllers should really be availble at boot time, wow your
-hardware is b0rked, sorry.  Just make it a module and load it when you
-want/need it.
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
 
-> > And what's wrong with async probing?  That was written for this very
-> > issue.
-> >
-> 
-> We have explored async probe as an option, but we noticed below:
-> 1) Probe initiated via async
-> 2) Boot continues with other setup.
-> 3) Boot reaches stage where ip configuration is to be done via
->    ip_auto_config() and 1) is still in progress, then boot waits for all
->    async calls to be completed before proceeding with network setup.
->    ip_auto_config()
->     -> wait_for_devices()
->       -> wait_for_device_probe()
->          -> async_synchronize_full()
-> 4) Similar thing happens with rootfs mount step in prepare_namespace()
->    initcall
-
-Again, if you make the problem driver as a module you should be ok,
-right?
-
-> So to avoid getting blocked on these probes which are not required
-> during boot, we proposed this driver for managing such built-in driver
-> probes execution.
-
-Fix the broken drivers please :)
-
-thanks,
-
-greg k-h
 
