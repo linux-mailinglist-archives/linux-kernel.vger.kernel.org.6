@@ -1,51 +1,64 @@
-Return-Path: <linux-kernel+bounces-332061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1B697B4EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:52:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8CC97B4EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614061C21BEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:52:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F8A285301
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83FE1917E6;
-	Tue, 17 Sep 2024 20:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED746191F78;
+	Tue, 17 Sep 2024 20:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dJFmL2pS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="If+Ajxd+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F7427470;
-	Tue, 17 Sep 2024 20:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7B427470;
+	Tue, 17 Sep 2024 20:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726606367; cv=none; b=FDKcW1gEVecQ4E9uTMEzB48e+V/5TFXMfchmTycpomJsegFLafWCtzO1jB/vEU2SHBT3ca4d0/guSycPvQlcbaMgoztwDS/wtcZPHk2Z1lkGP68mNHbDmYe/I2cG+C7xuY6uC8J9d+pSXKrzXi5kFd2qAZ2yQ/BBBCnXoJQNjOU=
+	t=1726606461; cv=none; b=aky+/oOTf/i6t9WBkAq1vJc1tYF9elBuvBr6WcxBL/tdOs/GGctEwAwgG5XoMqHNfPGDWlM1orOiPhBNXOx2Yp2y8/TbX4DGVXhiLDjPoYfzCR5xgqwktFv/zAkb+iWmaj93roviN2UsQdQ8sM60YDsG3HcSVntrL5Ej+GzOR3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726606367; c=relaxed/simple;
-	bh=MihfQfGY4t38NvosXuHtawOewr8RJbkv4jxSbju8Jv0=;
+	s=arc-20240116; t=1726606461; c=relaxed/simple;
+	bh=qyGaWpfb/w0UzJgTsTCKxut6trVk3jG6V7ahLPFoNa0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YHqCp0a8lrIRkFjjddJq11V/kYMP2OnYwMcVxzinfDARyIC+aq38U0VECEM32XrGoge8ZGe7EF9JGnE5DDEj6WMTN7+dLwjvWOAzrUwZcM11qlLgb/JvazMEXb8qOQO6/51tE6qwf2bxhzWUlhUuumkrNoff5kigjbZMm301CZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dJFmL2pS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4754BC4CEC5;
-	Tue, 17 Sep 2024 20:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726606366;
-	bh=MihfQfGY4t38NvosXuHtawOewr8RJbkv4jxSbju8Jv0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=t29rmObzyKSVRY8DwWbBctCSOp49H/QEqBIvibUJKH5jUq7meVw5C5KSUY6ufq5ylhieg1OYifLZ1m1TlTMeYk6B4FdCSJ6NBUIgN1YFiP7V4WCqqQj+guOTu+xEV78AFM67HPLA5yjIg7ZUxOciZ1qVd1ILB2uJgdftZGjBvDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=If+Ajxd+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C08EEC4CEC5;
+	Tue, 17 Sep 2024 20:54:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726606460;
+	bh=qyGaWpfb/w0UzJgTsTCKxut6trVk3jG6V7ahLPFoNa0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dJFmL2pSCzN2MD1mO1hs/Np4+opJWOXqz1p+CZTyEy63txS3tSSbo5xS8oWob0kl+
-	 Y/yPvBZyfuxtv28h3ohytM8d7sLWhfVD3S0GLOa0eyv6/bX1ge9m5sB4RPiEXIvlnA
-	 NLdhNSHVjSJIeUsglowVFcEpjVpWjQGFQ4QcQiNY=
-Date: Tue, 17 Sep 2024 22:52:43 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: oneukum@suse.com, colin.i.king@gmail.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: using mutex lock and supporting O_NONBLOCK flag in
- iowarrior_read()
-Message-ID: <2024091730-reporter-clause-80b4@gregkh>
-References: <20240917164820.143197-1-aha310510@gmail.com>
+	b=If+Ajxd+MuwQa3wddNVbppCmbR0L95q8B6vFAyAiqWSsALuKQnuu72loovaKoHfWk
+	 zo45fqyBiJsyKufUo2p8fHreKgAr5VT00QhOL7xReFiQFDoddYZkWJYSGAK2tNcC/v
+	 gDKnu1FlzooiIEK1L65eW7I5jBc+0ARX0879A98SVRrq+I/v5izYbwKEYsHKhfgnZH
+	 5yLdwwdZYYSutoxeeQm1ybNR8XO8QSkMtYJHMChZTWDmfbxbPp4C3c61ztJcUG3iNv
+	 SxZCItjm9joUVUyLJ5embJuQhH0LwSllzleQezi4KawMeW+EUQgXaj+PXNOMkTJKk+
+	 vlJm88FhAGvLw==
+Date: Tue, 17 Sep 2024 13:54:20 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
+	dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	catherine.hoang@oracle.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <20240917205420.GB182177@frogsfrogsfrogs>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <87frqf2smy.fsf@gmail.com>
+ <ZtjrUI+oqqABJL2j@dread.disaster.area>
+ <877cbq3g9i.fsf@gmail.com>
+ <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
+ <8734m7henr.fsf@gmail.com>
+ <ZufYRolfyUqEOS1c@dread.disaster.area>
+ <c8a9dba5-7d02-4aa2-a01f-dd7f53b24938@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,58 +67,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240917164820.143197-1-aha310510@gmail.com>
+In-Reply-To: <c8a9dba5-7d02-4aa2-a01f-dd7f53b24938@oracle.com>
 
-On Wed, Sep 18, 2024 at 01:48:20AM +0900, Jeongjun Park wrote:
-> iowarrior_read() uses the iowarrior dev structure, but does not use any 
-> lock on the structure. This can cause various bugs including data-races,
-> so it is more appropriate to use a mutex lock to safely protect the 
-> iowarrior dev structure. When using a mutex lock, you should split the
-> branch to prevent blocking when the O_NONBLOCK flag is set.
+On Mon, Sep 16, 2024 at 11:24:56AM +0100, John Garry wrote:
+> On 16/09/2024 08:03, Dave Chinner wrote:
+> > OTOH, we can't do this with atomic writes. Atomic writes require
+> > some mkfs help because they require explicit physical alignment of
+> > the filesystem to the underlying storage.
+
+Forcealign requires agsize%extsize==0, it's atomicwrites that adds the
+requirement that extsize be a power of 2...
+
+> If we are enabling atomic writes at mkfs time, then we can ensure agsize %
+> extsize == 0. That provides the physical alignment guarantee. It also makes
+> sense to ensure extsize is a power-of-2.
 > 
-> In addition, it is unnecessary to check for NULL on the iowarrior dev 
-> structure obtained by reading file->private_data. Therefore, it is 
-> better to remove the check.
+> However, extsize is re-configurble per inode. So, for an inode enabled for
+> atomic writes, we must still ensure agsize % new extsize == 0 (and also new
+> extsize is a power-of-2)
+
+...so yes.
+
+> > Hence we'll eventually end
+> > up with atomic writes needing to be enabled at mkfs time, but force
+> > align will be an upgradeable feature flag.
 > 
-> Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  drivers/usb/misc/iowarrior.c | 46 ++++++++++++++++++++++++++++--------
->  1 file changed, 36 insertions(+), 10 deletions(-)
+> Could atomic writes also be an upgradeable feature? We just need to ensure
+> that agsize % extsize == 0 for an inode enabled for atomic writes. Valid
+> extsize values may be quite limited, though, depending on the value of
+> agsize.
 
-Hi,
+I don't see why forcealign and atomicwrites can't be added to the sb
+featureset after the fact, though you're right that callers of xfs_io
+chattr might be hard pressed to find an fsx_extsize value that fits.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+--D
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+> Thanks,
+> John
+> 
+> 
 
