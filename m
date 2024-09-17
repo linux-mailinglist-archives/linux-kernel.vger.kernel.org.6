@@ -1,243 +1,355 @@
-Return-Path: <linux-kernel+bounces-331263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B8D97AA77
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:17:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA10297AA7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DA828AB73
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:17:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8D43B227A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4622628C;
-	Tue, 17 Sep 2024 03:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4E727442;
+	Tue, 17 Sep 2024 03:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="4Z+Qhy2x"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2057.outbound.protection.outlook.com [40.107.96.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILOlg0Ii"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304A22572;
-	Tue, 17 Sep 2024 03:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726543020; cv=fail; b=gn23LVSnHBtTTgGe/V5J35xfoJrhQC9faG/wJlzA8Ng0rxHW7fA7sgeaHziIp+fxjo3L5O9tP44JnUmgaiyuzkTdX+Sm7bY2g0n0EngApUvwLMqLw/vU98NKb1/OSbgTbYI4NcGaLlKNFO0Uj+Ai4lue+969T7YaCemRt7h9gGU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726543020; c=relaxed/simple;
-	bh=3b7jdovQ3G9zMLiFAZPvKECVrTDW4YH6J8nm/WPMNqM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KNWPzlLhwLjoY095XSGb1cz8CbBRoBTWZLygAHH50yrFYrbfGD2aymebjHdbhJi37WesQXJfziHmMv5HUM7sOI8ACMXNlmO1pXWkbgR260Rg/lZZhopxTlf7unw75OLwTNixb4+EFQE9spUs2DVPSOyTwsvZcqwqeWsOtc3mhgs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=4Z+Qhy2x; arc=fail smtp.client-ip=40.107.96.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bdoIAbWtvGwsgufEuF9l9yR7Rp/kZPlAtB66h1fzP7SP+obwHePMIz4PvMtzbwVqUghz9+1/rpBYbRT+jWfw7vSaeFOJNNdVTeXlZKYTKVbgTLq355CDo4/bxOtdLy+mtky4C8qIrFJ7ndx1jcaydwrH/dCsVCi+hnECkc7GsCNLkFet5wMpRqeVjy0qaTFQLVaDvRi2QeYjfkZFujo3dbDEql02dIqXnO7gRBDf9esKQMYcyTFVUlxVOg9ILy60U+NkpHtTV5B5JnIv4Q+JQdMH9kCc4EEwaABVAz/ronpzrMgY7AZu5KZTxrMCYy+e9yAxiDsb7MtKTRhTRzbgzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3b7jdovQ3G9zMLiFAZPvKECVrTDW4YH6J8nm/WPMNqM=;
- b=tnCUMxi0a+5yeBhFylZbfg0AzDmsgsdYyNRqgnV38ZJaxhXiJBT0VyoYA81tty0Kru+4CX4dQZLs/Xh5BbjN5lkoAUqxUiDUgfHajz1jp/M+ULI6g/zLIO8MinsIVthdLYcuJymswOpIrXAsF+qtyZOTIrEuJ4aqsSKjkRO6oSiWx4xqSOxzttpxaNv06jKECOHGPo9Tcrxam0CIl3XcAqW5kDLNO86bV+E0qfCZXfbLT7WGvGgRq1ars7s0QdQKaaqFvuNGhtYgeTp8IehnfRptKek4lZ1N3FcZF1Nru4xabefTvl8AcybOLkh96W65tI1oUmRbZHRWrlsD13z+OQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3b7jdovQ3G9zMLiFAZPvKECVrTDW4YH6J8nm/WPMNqM=;
- b=4Z+Qhy2xl/gnrmAlLDyxAVqMtkcfqovAOoneySF76fFLCgNO/LEhi6i3mWFmdM6TiqOTwVzX5/8KNVGqAt/tY/dOVU8K50kVK9mnVY5o7opg33ErB7Pu47ff01aIqU4eqw1a4YbW6C5ezTRE0oiL3CA5UwuNiSMHBSds6JfVUpCrB5RzpZTaAuMajXB6f8RKXsKxTpu8tBFZ74JSJaqGgmfik0x6NmJBKlVzQMlkvBN//TjOn7fmG6nJDIG4Zp2khD2z8j47lcb6Smvq4zFksgDEcDg3QO9S0S5kyJ3HwHNV+WuXA1lpvtDaRGJUZWuD8LVcXDrgl5wXIjASafPxoA==
-Received: from PH8PR11MB6609.namprd11.prod.outlook.com (2603:10b6:510:1cc::16)
- by SJ0PR11MB5772.namprd11.prod.outlook.com (2603:10b6:a03:422::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.23; Tue, 17 Sep
- 2024 03:16:53 +0000
-Received: from PH8PR11MB6609.namprd11.prod.outlook.com
- ([fe80::ebc1:5d63:a07c:60d]) by PH8PR11MB6609.namprd11.prod.outlook.com
- ([fe80::ebc1:5d63:a07c:60d%4]) with mapi id 15.20.7962.022; Tue, 17 Sep 2024
- 03:16:53 +0000
-From: <Manikandan.M@microchip.com>
-To: <conor@kernel.org>
-CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-	<rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <linux@armlinux.org.uk>,
-	<Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <arnd@arndb.de>, <geert+renesas@glider.be>,
-	<mpe@ellerman.id.au>, <rdunlap@infradead.org>, <Dharma.B@microchip.com>,
-	<dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: display: bridge: add sam9x75-mipi-dsi
- binding
-Thread-Topic: [PATCH v3 1/4] dt-bindings: display: bridge: add
- sam9x75-mipi-dsi binding
-Thread-Index: AQHa7jg/AxrwKF2pJU2+HZGoh+wjwbImx9aAgDS7zgA=
-Date: Tue, 17 Sep 2024 03:16:53 +0000
-Message-ID: <5cb63b40-9710-4a6d-984d-1be1394dcb63@microchip.com>
-References: <20240814105256.177319-1-manikandan.m@microchip.com>
- <20240814105256.177319-2-manikandan.m@microchip.com>
- <20240814-anaerobic-unpainted-532b8b117b79@spud>
-In-Reply-To: <20240814-anaerobic-unpainted-532b8b117b79@spud>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH8PR11MB6609:EE_|SJ0PR11MB5772:EE_
-x-ms-office365-filtering-correlation-id: a72d10eb-b469-4160-4b5b-08dcd6c72dc1
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6609.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?aUZCbWM3S2ZPOFh2SmVRdGY4YURDeXFtODBSSHozRjViTHI5S1ZGR25UaFJt?=
- =?utf-8?B?K3Z3WkpjTGoxcjlNMzZ6Q2ZLem91VnFKVUcweGtDUVllMW1oK0JndytvSnBW?=
- =?utf-8?B?OG50WFBrbGJLeUh3SUUzK1Zoc2M3VEhPSUR1MC95TVl1SFo1MXJ4bWlrNkVw?=
- =?utf-8?B?UFlJNGtKbnFXNkJXdVdvck9NMmpPOHpEbHRCb2tsam9iaXBHUXAxYUFwYnQ3?=
- =?utf-8?B?NXdHTUVJaFYwUGlmUlVqdXYvZ2lqYTZtUHpWWkFraFVEQ2kwL3lxSEVBVXlK?=
- =?utf-8?B?QnJHWmpHNDV1M05lWFMxOTh6TGZYNmJLdXRMRlFPb3NuMGhZWDl4bG1PY2dq?=
- =?utf-8?B?bEpETW1DcndrbURUQ2poZUVpU3hQNEFUa0hRZlZmdmZUSWd5U28xWjR0RW5J?=
- =?utf-8?B?TTZ1TmEzTGVrWlV6UkhJVk9tdXlXZWRYaEtFbUk5TVUwSENSMGZhQnZNQ29U?=
- =?utf-8?B?WldJSnlVcWxEUEZhMW9QVHBKTG40RWJ2MnAwanlKcnBlNnk3L2J0LzRMWmg4?=
- =?utf-8?B?QjBWc3Mvc05EVFh5T0pmNFZteWVtZFNJWEtjY2c0c0diZkc3MVBjaXA4TkZE?=
- =?utf-8?B?MEpQcE1vbm1OY1dHK0xwbDcxS2xuUjJ1VFVyaWhHNlRBcm9oRURIODhmOCt0?=
- =?utf-8?B?SnlUbFQrSkxxNXBnV3RadTVxWno2RlhqZVlBZWo2T2ZWVUVZQUhtYTYrR3kv?=
- =?utf-8?B?KzJ3eUxoU2ttWTBCZXVUSVZmWVkwVmdmMGtBTUVITFpSRGJweUU2NCtPMTdE?=
- =?utf-8?B?d3FZTjNaeDlXTUU4R01rbUpySG9USkdHeHN3Q0I3a0ptYjRteVpxVEppSksr?=
- =?utf-8?B?WXB6K3BEamcxQjNKcXcvMHkzNTNtamEzanppMnhMNkR5eHVzcDBJZUVBVG0x?=
- =?utf-8?B?dk91elk4TmZKTE5rU08yazNhNEtRcmtCOUdhc3hwMEdpMWtOZ0Zha2VTZHJk?=
- =?utf-8?B?dEZLVlJiRE81ZGZLT2dWZGR4UkhoWW1VaXNEZjN0R05GMUdEWHc3WmN4U3JQ?=
- =?utf-8?B?Rzl3RzFwSTlXZENYd3ZOUmFERUNsSGdhMXQzYVVLQTRKdXNSVEs5N3d3V2pZ?=
- =?utf-8?B?eTY4am9Ebm1tWXdLdFpsQXlDOGxPUnBDWVRBcHZtRitIS09DN3NPS3pZYXRv?=
- =?utf-8?B?cm5rY2dHMDBFTUtDUFdsMVZsOVcwR2FDWkp3cDJMNldJbGdXNXpWeVFrZXZp?=
- =?utf-8?B?ekRWVWZCajloZFNVMWVYQTBZRU1NL0VSazgzc2c1VzZKMDhTZy9YWFN2Lzgr?=
- =?utf-8?B?RUpnYTVwN2tXRVprWE5GOWphc2dNSkxnZVdJU2VnM0V6b2VmK3FuV1U1dmE4?=
- =?utf-8?B?UHRRNDdiWGw2SlVXRWJlZjc4eVlTdElEN2RNT3FKZHlXMElrK25xcEdoQUlF?=
- =?utf-8?B?V2daV0NWS09zbnhmQkFqMkFGbkM0enh6QmpaRXcvWjNzY2Iva01OVUFJenVo?=
- =?utf-8?B?LzhTRkpyUThKTnlLOUVISWkxRTl6Um00Vk5kU1gxaVNxaWVrSXJsVDF6MHg5?=
- =?utf-8?B?U3ZKbVlmMXE3WmFLa2R3OU1BbVJkUVdWdmtkYUgwejkwL1doYm11TGxwSXFy?=
- =?utf-8?B?TEFxZHpMY2lYZnpBK1ZtbE1EZE93aHM1NTRpZE5BZ0ZFVkQwTnJFQzZpTUZm?=
- =?utf-8?B?Z3FKN3RtaHFJQUQvcVZhK2VaTEFKLzVjOGkxeGtOWDdJdE5RbU03N2E5b3g2?=
- =?utf-8?B?QTkyM2J4T3dCL01MSGUyY0lSSEw1RWcvZldUYVBVQkt1d0tiVXRQcnNpSndE?=
- =?utf-8?B?Y2NibDBUSzBUSFdFeEc4R0xscmR2bGJHMUhNNk9XazJxQXlHRDl2VTg1TDEx?=
- =?utf-8?Q?FjzN5mmWyDdi3GYdqE8X4MNFTx0qL3LI4CnR8=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?STZjSXl5eDlUa1ZYWmpHdm9rdGVDMWRXVmlVcERITmI0K3VZb0JxU3hySzQ4?=
- =?utf-8?B?NHVudlZRY1RteE5EMHdJM3ViZXlmS0svNkFEa2UyVHZ6V2dCTGI3RU45QUw1?=
- =?utf-8?B?QXFQQlhYSFhweEg0V2R5cUlDcWdDQmZjSDZNaC8xTEpBMjdCSVVwRGJ3N0lX?=
- =?utf-8?B?ZjdQVHJlZWtjL0JXcis3cGtMRG11SWNTTEE2WHlGVUVSUDZFNk95S2JHN04w?=
- =?utf-8?B?K3N5Q29zZ3JyMkY5NWdCUCtJMkZTR3J0dGZtMXRNdXJlV3Bzcm9WdGFFc3dN?=
- =?utf-8?B?ajAram1iVUN3MWYyOXpGZG92dm4wVVFPeUpPcXZCdFl1WXFGVjAxdU55alhF?=
- =?utf-8?B?N05sY0I5OXZJeDJ0NGFIMGtXUXV3WEFLMXdWM1gwb3p5VGJXNEVTSHlIZExL?=
- =?utf-8?B?UldNR28xV0pnRlNYZG12VjZBZDU5VTlLSGtUQzFzdGNFV1FFbXNjK3llUGRJ?=
- =?utf-8?B?YXErd1BTN2RIN1VMaU1IajV4VmRCVmIzcURzS3pMRndXQzVORTI5K0VYS1FE?=
- =?utf-8?B?T1JTUFNHaHpodmJlWHRBUFlCVVUzdW9lZEpRWGxVK2M5SCtTVVJsTUtVSHph?=
- =?utf-8?B?dHhNb2RyTkx3TzVVa2p6d2FOWEhRS1hQV2FFUTZLa0tWNlFrMDlDYnlYWUVy?=
- =?utf-8?B?NFpWcWxqazhQamxuLzIwbFdNWlY2TFNaRjZpZnR1KzdRUSt5bGV4VkRZWXJJ?=
- =?utf-8?B?ajNUdUVvTE9QbjYxSnJYVmFBaXRUTk5FTFJKK3RXMFhNVU9PNWtrVVZ2cEZt?=
- =?utf-8?B?SmtlckhuWXNVWi9XaFBFNE1yZkNPNXc4MWNiSjlmT2ZrR21Bc05adGJDYzNY?=
- =?utf-8?B?QTNkN0toQ2szbitZam90VHNXOVRLdkdJNmkwcHY3eHNOT0pFbkpwL01LVURj?=
- =?utf-8?B?bC9ReXNleDZVZVh6RFhzTDlQY0tqSDdoZXVsL09iNU5sdkI0SjdEclIvcTZ4?=
- =?utf-8?B?WGdPOUtMc2FybTFMaTJDa2NIOWNCdWorR04vaWdseHhvbHl0aHZNTWorVmZM?=
- =?utf-8?B?NXVJK05rOHJKWFVLUXZra2kyK0wyeXB0aUdic1lZNDFvZGtWYWVPdSs0Q2hn?=
- =?utf-8?B?S1BXbEduNkcyRUVGd0g1ajZLc3Z2bCtPUTRRNGJRbEFzbmcrWXFGRHJkYmFu?=
- =?utf-8?B?OHBGZ2ZOa0J4K3JlaTA2VEhUWXV4TmxzSEJNM0RTUDE1QStQVTFDMTJ0WmJL?=
- =?utf-8?B?MXRMc1JTbUVqeEtMMStrNmdGUnlRMitJcUNaN3I0Z3kyVVYyQUZLbnhOSU5t?=
- =?utf-8?B?NkxSTmJ0ZXBTeHdUcWozcVBzM29tRHRNd1FHNEdybGlmTEVRaXFnWGQwdEtG?=
- =?utf-8?B?NTRDaEZLN2JrazZYQzVPUE5sbGV6MWtZd2RDWGZ1V3NrYTFWR1NaWVFQMUZl?=
- =?utf-8?B?KysvaXVEZnFLR0QxVUhnd051MXZIV2E4Tnl2YkVvY2cyZ2VCVC9qeW9yZ1M3?=
- =?utf-8?B?L3FqTUxwSEFDcFBtV1EzQW9YeW9BRkdVMkFEQUtHekx0bjZNMW5lY1JnY1po?=
- =?utf-8?B?TUZ6T0lwVVZXeWVNNUY4VEZ1SGk1aUZ3MDY1UXRKTSsxUzhuSUJ1UWRxSk1P?=
- =?utf-8?B?bVJqb1JkYVdQYjYxdzJld2R3Zm9MZnB0Q1g3OTdLN211enBmOElyeVZIQW9J?=
- =?utf-8?B?VEdCUkRKKzk1TFZLdUN4bG4yTmFrWkhKOWlrZnlMQXd6TVdEajBwT2I0Ky8z?=
- =?utf-8?B?aTB6OXk0VEx5ZGJmWkNNRXE2RzVhUDRoTlNqTFR0OEFjYkdXalpwKzJCaXZn?=
- =?utf-8?B?d080ZXhoVUIwSkYraFI4VHFmR3lDaHBSWnJzTGhzdXU1d2o2UjVvQjB4dHB0?=
- =?utf-8?B?ZHFKS2d1c2l5ZEFGVjZyd3VaeC9wSkRYYllCT2lTNXMyWG9xNzBhTm5HdHRr?=
- =?utf-8?B?bmtIQkY0andzNmVZMG40dy96cDRTL3BVSVV2UnB1Z3h4aFBPRTlabEZMOUgz?=
- =?utf-8?B?VnpLUW5uVjhkbGtuemw0YVVaY05xUDRrVlJERHYvL3FHaThQMGNuNStvbngy?=
- =?utf-8?B?RklqVVltY1lCQm5YUFl2UVh5bXBacmsvMm9HVlByUnBpVzJCVk05dlFFRS9z?=
- =?utf-8?B?bCttVmFzdVlyQi9pNnVVcTlaWnJtUUk4SjlhNk11ZWpqRFBka2lvVzB3WFpD?=
- =?utf-8?Q?TNxjtPfn+6OvOIt/rVm4nffGs?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4669A5A57250E74CAC9F6B104D624C12@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEF81C6A3;
+	Tue, 17 Sep 2024 03:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726543371; cv=none; b=NANH3v+ocx+0GokCg+mK1vIazL/jBFGnI7HDGjB8OLitUKY2IZsNiIt5la9+DFHnHnGAoHsR9E8qbEHSbqsIeAXuTbG0KHZLn1zNPjwGk71BXmoariokZ5IL45xiegUav2l5lLAo6w7Y5vUjOPiHaI5xAXS8MX7+iYLMnj1UrPQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726543371; c=relaxed/simple;
+	bh=oA+WBiiltc86QhQ73GcxPYmdx3xELH0twqcVS0pLxWY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IINC57NbmUGdzZg5X63dmFvwMXk1ZC/RwLn+mw577ME+cZJXPvB2XrpLhk0Z0bgcY1n+C/1Ta3W+SBHIFetS//9tbXUPtbhgxehpF8+DG3krgKnHzU2wPJ1VDbNAHZxHtB1g1bP82o11auG531OZ2+jTPgrXEaNm10OdsjkyBLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILOlg0Ii; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7db61fd92a1so149949a12.3;
+        Mon, 16 Sep 2024 20:22:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726543369; x=1727148169; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HRoDa+OP8QDuDOw6/kSHMLN0m29ZMMXSBvdc4le+TLs=;
+        b=ILOlg0IiGxP7DTXmnV+9fDnqV44V++/M0ygomSePo4aL3Vc0qG6oDO0AG+nbw5wWU0
+         Hnraw7OMGtYVywDszn9d6loGNwpasNFjzev5Bl64oPWK81zMZovwNukx0y7/blyP4p5h
+         +hXqSciBdJZK4R1sYerCDJcaAvlwYFouHeEFdZ+ZgCevawIJoWsrL2l64knNv688uIi7
+         7XMNBi8/HYmAcoGL/3u09bsQ/Ftq7TB7DtyA3rEz67i+pybVJLVK9rewyVhouWYC4mzF
+         Og+H+YOROQ6F8H8QXCa1AsoH0cVHVw9OOtV0Q2a2/TRdhPAxywmJA303h50p9OavoDUb
+         pGDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726543369; x=1727148169;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HRoDa+OP8QDuDOw6/kSHMLN0m29ZMMXSBvdc4le+TLs=;
+        b=JaDw2J6ntlFYSFHhcZG2Jm/yNMaLfHK3f9Ml19iEQ5q4ijfxfgm8STiVIqEhM1DJBU
+         LXxxTZ6zZu4EBFyXNtbrqFvwN14cqLRXRD6ckdeEReohgSAnDBK2gxbH/ELI5jR7Nl2I
+         OzTx2h3WPvn7Hi2oZ2kBYMaOokGeRJXHbcfKbmzWy3pl3RYHipr4W2FGWNd+w7ws9dhQ
+         xI9GKz8kHgCggVlZmFRKhGi4kVJDzHnaqIPdv7eiMlB/DnuD5HpUpmbgZa2z90M2tHA4
+         sZayzVxS1ksHIHEoAiEVrj9veQKzoD5Cykvk6PpcFvoWNdMBbbYutjsxCu0jXdHNUsjc
+         2xBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsNeSxIzzzGfp8/JogC5f7pyseD7BIAwhnK+mzVAQV8gj+Z8vn+32p8ex4UR3QgJMhSIixlx8QrxUWJ1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOTTT3PX00IGTk1vw9+5blch51fnmQDqRqqTkz2lrvmu8L24RE
+	AQVa//R5oPoBu4gkiJjByi/ns8NqwQAcJHhfvLIxXsHVINOKZUIx
+X-Google-Smtp-Source: AGHT+IGJilnqTsauTpAVwaCF0Hhts4rbjby8OGDD4jbYSahaHBZW7QD40gUaWT6DzXOnISMzIX//vA==
+X-Received: by 2002:a17:903:1d1:b0:205:8820:fe1c with SMTP id d9443c01a7336-2076e361732mr112405635ad.5.1726543368526;
+        Mon, 16 Sep 2024 20:22:48 -0700 (PDT)
+Received: from aizome.localdomain ([117.172.223.137])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079475ddd6sm42589735ad.297.2024.09.16.20.22.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 20:22:48 -0700 (PDT)
+From: Pengyu Zhang <zpenya1314@gmail.com>
+To: alexs@kernel.org,
+	siyanteng@loongson.cn,
+	corbet@lwn.net,
+	seakeel@gmail.com,
+	si.yanteng@linux.dev
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zpenya1314@gmail.com,
+	yaxin_wang_uestc@163.com
+Subject: [PATCH v2] Docs/zh_CN: Translate page_tables.rst to Simplified Chinese
+Date: Tue, 17 Sep 2024 11:22:41 +0800
+Message-Id: <20240917032241.27623-1-zpenya1314@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6609.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a72d10eb-b469-4160-4b5b-08dcd6c72dc1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2024 03:16:53.4150
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +hLCJ1CtE+DobAnt5OsoN5HaJMcchoa2HA9ebupeOU0LbT5jz31uh3MyX6tSjCz9CAdoAOU9ygpCACexYQLaKomzyGOvzaz0c55skeW7xrM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5772
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-SGkgQ29ub3IsDQoNCk9uIDE0LzA4LzI0IDc6MjkgcG0sIENvbm9yIERvb2xleSB3cm90ZToNCj4g
-T24gV2VkLCBBdWcgMTQsIDIwMjQgYXQgMDQ6MjI6NTNQTSArMDUzMCwgTWFuaWthbmRhbiBNdXJh
-bGlkaGFyYW4gd3JvdGU6DQo+PiBBZGQgdGhlICdzYW05eDc1LW1pcGktZHNpJyBjb21wYXRpYmxl
-IGJpbmRpbmcsIHdoaWNoIGRlc2NyaWJlcyB0aGUNCj4+IE1pY3JvY2hpcCdzIHNwZWNpZmljIHdy
-YXBwZXIgZm9yIHRoZSBTeW5vcHN5cyBEZXNpZ25XYXJlIE1JUEkgRFNJIEhPU1QNCj4+IENvbnRy
-b2xsZXIgZm9yIHRoZSBzYW05eDc1IHNlcmllcyBTeXN0ZW0tb24tQ2hpcCAoU29DKSBkZXZpY2Vz
-Lg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IE1hbmlrYW5kYW4gTXVyYWxpZGhhcmFuPG1hbmlrYW5k
-YW4ubUBtaWNyb2NoaXAuY29tPg0KPj4gLS0tDQo+PiBjaGFuZ2VzIGluIHYzOg0KPj4gLSBEZXNj
-cmliZSB0aGUgY2xvY2tzIHVzZWQNCj4+DQo+PiBjaGFuZ2VzIGluIHYyOg0KPj4gLSBMaXN0IHRo
-ZSBjbG9ja3Mgd2l0aCBkZXNjcmlwdGlvbg0KPj4gLSByZW1vdmUgZGVzY3JpYmluZyAncmVtb3Zl
-LWVuZHBvaW50JyBwcm9wZXJ0aWVzDQo+PiAtIHJlbW92ZSB1bnVzZWQgbGFiZWwsIG5vZGUgYW5k
-IGZpeCBleGFtcGxlIERUIGluZGVudGF0aW9uDQo+PiAtIGNvc21ldGljIGZpeGVzDQo+PiAtLS0N
-Cj4+ICAgLi4uL2JyaWRnZS9taWNyb2NoaXAsc2FtOXg3NS1taXBpLWRzaS55YW1sICAgIHwgMTE2
-ICsrKysrKysrKysrKysrKysrKw0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMTE2IGluc2VydGlvbnMo
-KykNCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9kaXNwbGF5L2JyaWRnZS9taWNyb2NoaXAsc2FtOXg3NS1taXBpLWRzaS55YW1sDQo+Pg0K
-Pj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5
-L2JyaWRnZS9taWNyb2NoaXAsc2FtOXg3NS1taXBpLWRzaS55YW1sIGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL21pY3JvY2hpcCxzYW05eDc1LW1pcGkt
-ZHNpLnlhbWwNCj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+PiBpbmRleCAwMDAwMDAwMDAwMDAu
-LjNjODZmMGNkNDllOQ0KPj4gLS0tIC9kZXYvbnVsbA0KPj4gKysrIGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL21pY3JvY2hpcCxzYW05eDc1LW1pcGkt
-ZHNpLnlhbWwNCj4+IEBAIC0wLDAgKzEsMTE2IEBADQo+PiArIyBTUERYLUxpY2Vuc2UtSWRlbnRp
-ZmllcjogKEdQTC0yLjAtb25seSBPUiBCU0QtMi1DbGF1c2UpDQo+PiArJVlBTUwgMS4yDQo+PiAr
-LS0tDQo+PiArJGlkOmh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL2Rpc3BsYXkvYnJpZGdl
-L21pY3JvY2hpcCxzYW05eDc1LW1pcGktZHNpLnlhbWwjDQo+PiArJHNjaGVtYTpodHRwOi8vZGV2
-aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMNCj4+ICsNCj4+ICt0aXRsZTogTWlj
-cm9jaGlwIFNBTTlYNzUgTUlQSSBEU0kgQ29udHJvbGxlcg0KPj4gKw0KPj4gK21haW50YWluZXJz
-Og0KPj4gKyAgLSBNYW5pa2FuZGFuIE11cmFsaWRoYXJhbjxtYW5pa2FuZGFuLm1AbWljcm9jaGlw
-LmNvbT4NCj4+ICsNCj4+ICtkZXNjcmlwdGlvbjoNCj4+ICsgIE1pY3JvY2hpcCBzcGVjaWZpYyBl
-eHRlbnNpb25zIG9yIHdyYXBwZXIgdG8gdGhlIFN5bm9wc3lzIERlc2lnbndhcmUgTUlQSSBEU0ku
-DQo+PiArICBUaGUgTUlQSSBEaXNwbGF5IFNlcmlhbCBJbnRlcmZhY2UgKERTSSkgSG9zdCBDb250
-cm9sbGVyIGltcGxlbWVudHMgYWxsDQo+PiArICBwcm90b2NvbCBmdW5jdGlvbnMgZGVmaW5lZCBp
-biB0aGUgTUlQSSBEU0kgU3BlY2lmaWNhdGlvbi5UaGUgRFNJIEhvc3QNCj4+ICsgIHByb3ZpZGVz
-IGFuIGludGVyZmFjZSBiZXR3ZWVuIHRoZSBMQ0QgQ29udHJvbGxlciAoTENEQykgYW5kIHRoZSBN
-SVBJIEQtUEhZLA0KPj4gKyAgYWxsb3dpbmcgY29tbXVuaWNhdGlvbiB3aXRoIGEgRFNJLWNvbXBs
-aWFudCBkaXNwbGF5Lg0KPj4gKw0KPj4gK2FsbE9mOg0KPj4gKyAgLSAkcmVmOiAvc2NoZW1hcy9k
-aXNwbGF5L2RzaS1jb250cm9sbGVyLnlhbWwjDQo+PiArDQo+PiArcHJvcGVydGllczoNCj4+ICsg
-IGNvbXBhdGlibGU6DQo+PiArICAgIGNvbnN0OiBtaWNyb2NoaXAsc2FtOXg3NS1taXBpLWRzaQ0K
-Pj4gKw0KPj4gKyAgcmVnOg0KPj4gKyAgICBtYXhJdGVtczogMQ0KPj4gKw0KPj4gKyAgY2xvY2tz
-Og0KPj4gKyAgICBpdGVtczoNCj4+ICsgICAgICAtIGRlc2NyaXB0aW9uOg0KPj4gKyAgICAgICAg
-ICBQZXJpcGhlcmFsIEJ1cyBDbG9jayBiZXR3ZWVuIExDREMgYW5kIE1JUEkgRFBIWQ0KPj4gKyAg
-ICAgIC0gZGVzY3JpcHRpb246DQo+PiArICAgICAgICAgIE1JUEkgRFBIWSBJbnRlcmZhY2UgcmVm
-ZXJlbmNlIGNsb2NrIGZvciBQTEwgYmxvY2sNCj4+ICsNCj4+ICsgIGNsb2NrLW5hbWVzOg0KPj4g
-KyAgICBpdGVtczoNCj4+ICsgICAgICAtIGNvbnN0OiBwY2xrDQo+PiArICAgICAgLSBjb25zdDog
-cmVmY2xrDQo+PiArDQo+PiArICBtaWNyb2NoaXAsc2ZyOg0KPj4gKyAgICAkcmVmOiAvc2NoZW1h
-cy90eXBlcy55YW1sIy9kZWZpbml0aW9ucy9waGFuZGxlDQo+PiArICAgIGRlc2NyaXB0aW9uOg0K
-Pj4gKyAgICAgIHBoYW5kbGUgdG8gU3BlY2lhbCBGdW5jdGlvbiBSZWdpc3RlciAoU0ZSKSBub2Rl
-LlRvIGVuYWJsZSB0aGUgRFNJL0NTSQ0KPj4gKyAgICAgIHNlbGVjdGlvbiBiaXQgaW4gU0ZSJ3Mg
-SVNTIENvbmZpZ3VyYXRpb24gUmVnaXN0ZXIuDQo+IEknbSBjdXJpb3VzIC0gd2h5IGlzIHRoaXMg
-cGhhbmRsZSByZXF1aXJlZD8gSG93IG1hbnkgU0ZSIG5vZGVzIGFyZSB0aGVyZQ0KPiBvbiB0aGUg
-cGxhdGZvcm0/DQpUaGlzIHBoYW5kbGUgaXMgdG8gbWFwIHRoZSBtZW1vcnkgcmVnaW9uIG9mIFNG
-UiBub2RlIGFuZCBjb25maWd1cmUgdGhlIA0KRFNJIGJpdCBpbiB0aGUgU0ZSJ3MgSVNTIGNvbmZp
-Z3VyYXRpb24gcmVnaXN0ZXIuDQpjdXJyZW50bHkgdGhlcmUgaXMgb25seSBvbmUgU0ZSIG5vZGUg
-aW4gdGhpcyBwbGF0Zm9ybS4NCg0KLS0gDQpUaGFua3MgYW5kIFJlZ2FyZHMsDQpNYW5pa2FuZGFu
-IE0uDQoNCg==
+This patch provides a Simplified Chinese translation of the
+"page_tables.rst" document, aimed at improving accessibility
+for Chinese-speaking developers and users.
+
+The translation prioritizes technical accuracy and readability,
+ensuring that the content remains clear and informative for
+its intended audience.
+
+Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
+---
+v1->v2:fix issues mentioned by Alex, Dongliang:
+https://lore.kernel.org/linux-doc/3c550784-9b31-4688-80a8-e8ee344e7c3e@gmail.com/
+https://lore.kernel.org/linux-doc/CAD-N9QXoiRKzGBXSqRABkn=Na6GSmkeTL3-82eVEP+VYARp09g@mail.gmail.com/
+1. Corrected the incorrect use of symbols.
+2. Added index for this new file.
+3. Adjusted the indentation in the RST file to make it more aesthetically pleasing.
+4. Optimized some of the translated sentences.
+
+ Documentation/translations/zh_CN/mm/index.rst |   1 +
+ .../translations/zh_CN/mm/page_tables.rst     | 221 ++++++++++++++++++
+ 2 files changed, 222 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/mm/page_tables.rst
+
+diff --git a/Documentation/translations/zh_CN/mm/index.rst b/Documentation/translations/zh_CN/mm/index.rst
+index b950dd118be7..0765d4d9758c 100644
+--- a/Documentation/translations/zh_CN/mm/index.rst
++++ b/Documentation/translations/zh_CN/mm/index.rst
+@@ -53,6 +53,7 @@ Linux内存管理文档
+    page_migration
+    page_owner
+    page_table_check
++   page_tables.rst
+    remap_file_pages
+    split_page_table_lock
+    vmalloced-kernel-stacks
+diff --git a/Documentation/translations/zh_CN/mm/page_tables.rst b/Documentation/translations/zh_CN/mm/page_tables.rst
+new file mode 100644
+index 000000000000..c280555e74a5
+--- /dev/null
++++ b/Documentation/translations/zh_CN/mm/page_tables.rst
+@@ -0,0 +1,221 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/mm/page_tables.rst
++
++:翻译:
++
++ 张鹏宇 Pengyu Zhang <zpenya1314@gmail.com>
++
++:校译:
++
++====
++页表
++====
++
++分页虚拟内存是随虚拟内存的概念一起于 1962 年在 Ferranti Atlas 计算机上被提出的，
++这是第一台有分页虚拟内存的计算机。随着时间推移，这个特性被迁移到更新的计算机上，
++并且成为所有类 Unix 系统实际的特性。在 1985 年，这个特性被包含在了英特尔 80386
++中，也就是 Linux 1.0 基于的 CPU。
++
++页表将 CPU 看到的虚拟地址映射到外部内存总线上看到的物理地址。
++
++Linux 将页表定义为一个分级结构，目前有五级。对于支持的每种架构，其代码会根据硬件
++限制对这个层级结构进行映射。
++
++虚拟地址对应的物理地址通常由底层物理页帧引用。 **页帧号(page frame number,pfn)**
++是页的物理地址（在外部内存总线看到的地址）除以 `PAGE_SIZE` 得到的值。
++
++物理内存地址 0 对应 *pfn 0*，而最大的 pfn 对应处理器外部地址总线所能寻址物理地址
++的最后一页。
++
++在页粒度为 4KB 且地址范围为32位的情况下，pfn 0 对应地址0x00000000，pfn 1 对应
++地址0x00001000，pfn 2 对应地址 0x00002000，以此类推，直到 pfn 0xfffff 对应
++0xfffff000。如果页粒度为 16KB，则 pfn 分别对应地址 0x00004000、0x00008000
++... 0xffffc000，pfn 的范围从 0 到 0x3fffff。
++
++如你所见，对于 4KB 页面粒度，页基址使用地址的 12-31 位，这就是为什么在这种情况下
++`PAGE_SHIFT` 被定义为 12，并且 `PAGE_SIZE` 通常由页偏移定义，为 `(1 << PAGE_SHIFT)`。
++
++随着内存容量的增加，久而久之层级结构逐渐加深。Linux 最初使用 4KB 页面和一个名为
++`swapper_pg_dir` 的页表，该页表拥有 1024 个条目(entries)，覆盖 4MB 的内存，
++事实上Torvald 的第一台计算机正好就有 4MB 物理内存。条目在这张表中被称为 *PTE*:s
++- 页表条目(page table entries)。
++
++软件页表层级结构反映了页表硬件已经变得分层化的事实，而这种分层化的目的是为了节省
++页表内存并加快地址映射速度。
++
++当然，人们可以想象一张拥有大量条目的单一线性的页表将整个内存分为一个个页。而且，
++这样的页表会非常稀疏，因为虚拟内存中大部分位置通常是未使用的。通过页表分层，虚拟
++内存中的大量空洞不会浪费宝贵的页表内存，因为只需要在上层页表中将大块的区域标记为
++未映射即可。
++
++另外，在现代处理器中，上层页表条目可以直接指向一个物理地址范围，这使得单个上层
++页表条目可以连续映射几兆字节甚至几千兆字节的内存范围，从而快捷地实现虚拟地址到
++物理地址的映射：当你找到一个像这样的大型映射范围时，无需在层级结构中进一步遍历。
++
++页表的层级结构目前发展为如下所示::
++
++  +-----+
++  | PGD |
++  +-----+
++     |
++     |   +-----+
++     +-->| P4D |
++         +-----+
++            |
++            |   +-----+
++            +-->| PUD |
++                +-----+
++                   |
++                   |   +-----+
++                   +-->| PMD |
++                       +-----+
++                          |
++                          |   +-----+
++                          +-->| PTE |
++                              +-----+
++
++
++不同页表层级的符号含义从最底层开始如下：
++
++- **pte**, `pte_t`, `pteval_t` = **页表条目** - 前面提到过。*pte* 是一个由
++  `PTRS_PER_PTE` 个 `pteval_t` 类型元素组成的数组，每个元素将一个虚拟内存页
++  映射到一个物理内存页。体系结构定义了 `pteval_t` 的大小和内容。
++
++  一个典型的例子是 `pteval_t` 是一个 32 或者 64 位的值，其中高位是 **pfn**，
++  而低位则一些特定体系架构相关的位，如内存保护。
++
++  这个 **条目(entry)** 有点令人困惑，因为在 Linux 1.0 中它确实指的是单层顶级
++  页表中的单个页表条目，但在首次引入二级页表时，它被重新定义为映射元素的数组。
++  因此，*pte* 现在指的是最底层的页 *表*，而不是一个页表 *条目*。
++
++- **pmd**, `pmd_t`, `pmdval_t` = **页中间目录(Page Middle Directory)**,
++  位于 *pte* 之上的层级结构，包含 `PTRS_PER_PMD` 个指向 *pte* 的引用。
++
++- **pud**, `pud_t`, `pudval_t` = **页上级目录(Page Upper Directory)**
++  是在其他层级之后引入的，用于处理四级页表。它可能未被使用，或者像我们稍后
++  讨论的那样被“折叠”。
++
++- **p4d**, `p4d_t`, `p4dval_t` = **页四级目录(Page Level 4 Directory)**
++  是在 *pud* 之后用于处理五级页表引入的。至此，显然需要用数字来替代 *pgd*、
++  *pmd*、*pud* 等目录层级的名称，不能再继续使用临时的命名方式。这个目录层级
++  只在实际拥有五级页表的系统上使用，否则它会被折叠。
++
++- **pgd**, `pgd_t`, `pgdval_t` = **页全局目录(Page Global Directory)** -
++  Linux 内核用于处理内核内存的 *PGD* 主页表仍然位于 `swapper_pg_dir`。
++  但系统中的每个用户空间进程也有自己的内存上下文，因此也有自己的 *pgd*，
++  它位于 `struct mm_struct` 中，而 `struct mm_struct` 又在每个 `struct task_struct`
++  中有引用。所以，任务（进程）存在一个形式为 `struct mm_struct` 的内存上下文，
++  而这个结构体中有一个指向指向相应的页全局目录 `struct pgt_t *pgd` 指针。
++
++重申一下：页表层级结构中的每一层都是一个 *指针数组*，所以 *pgd* 包含 `PTRS_PER_PGD`
++个指向下一层的指针，*p4d* 包含 `PTRS_PER_P4D` 个指向 *pud* 项的指针，依此类推。
++每一层的指针数量由体系结构定义。::
++
++        PMD
++  --> +-----+           PTE
++      | ptr |-------> +-----+
++      | ptr |-        | ptr |-------> PAGE
++      | ptr | \       | ptr |
++      | ptr |  \        ...
++      | ... |   \
++      | ptr |    \         PTE
++      +-----+     +----> +-----+
++                         | ptr |-------> PAGE
++                         | ptr |
++                           ...
++
++页表折叠
++========
++
++如果架构不使用所有的页表层级，那么这些层级可以被 *折叠*，也就是说被跳过。在
++访问下一层时，所有在页表上执行的操作都会在编译时增强，以跳过这一层。
++
++与架构无关的页表处理代码（例如虚拟内存管理器）需要编写得能够遍历当前的所有五个
++层级。对于特定架构的代码，也应优先采用这种风格，以便对未来的变化具有更好的适应性。
++
++MMU，TLB 和缺页异常
++===================
++
++`内存管理单元(MMU)` 是处理虚拟地址到物理地址转换的硬件组件。它可能会使用相对较小
++的硬件缓存，如 `转换后备缓冲区(TLB)` 和 `页遍历缓存`，以加快这些地址翻译过程。
++
++当 CPU 访存时，它会向 MMU 提供一个虚拟地址。MMU 会首先检查 TLB 或者页遍历缓存
++（在支持的架构上）是否存在对应的转换结果。如果没有，MMU 会通过遍历来确定物理地址
++并且建立映射。
++
++当页面被写入时，该页的脏位会被设置（即打开）。每个内存页面都有相关的权限位和脏位。
++后者表明这个页自从被加载到内存以来是否被修改。
++
++如果没有任何阻碍，物理内存到头来可以被任意访问并且对物理帧进行请求的操作。
++
++MMU 无法找到某些转换有多种原因。有可能是 CPU 试图去访问当前进程没有权限访问的
++内存，或者因为访问的数据还不在物理内存中。
++
++当这些情况发生时，MMU 会触发缺页异常，这是一种异常类型，用于通知 CPU 暂停当前
++执行并运行一个特殊的函数去处理这些异常。
++
++缺页异常有一些常见且预期的原因。这些因素是由称为“懒加载”和“写时复制”的进程管理
++优化技术来触发的。缺页异常也可能发生在当页帧被交换到持久存储（交换分区或者文件）
++并从其物理地址移出时。
++
++这些技术提高了内存效率，减少了延迟，并且最小化了空间占用。本文档不会深入讨论
++“懒加载”和“写时复制”的细节，因为这些的主题属于进程地址管理范畴，超出了本文范围。
++
++交换技术和前面提到的其他技术不同，因为它是在压力过大下情况下减少内存消耗的一种
++迫不得已的手段，因此是不受欢迎的。
++
++交换不适用于由内核逻辑地址映射的内存。这些地址是内核虚拟地址空间的子集，直接映射
++一段连续的物理内存。对于提供的任意逻辑地址，它的物理地址可以通过对偏移量进行简单
++的算数运算来确定。对逻辑地址的访问很快，因为这避免了复杂的页表查找，但代价是这些
++内存不能被驱逐或置换。
++
++如果内核无法为必须存在于物理帧中的数据腾出空间，那么它会调用内存不足(out-of-memory,
++OOM)杀手，通过杀掉低优先级的进程来腾出空间，直到内存压力下降到安全阈值之下。
++
++另外，代码漏洞或指示 CPU 访问的精心制作的恶意地址也可能导致缺页异常。一个进程的
++线程可以利用指令来访问不属于其地址空间的（非共享）内存，或者试图执行写入只读位置
++的指令。
++
++如果上述情况发生在用户态，内核会向当前线程发送 `段错误` (SIGSEGV)信号。该信号
++通常导致线程及其所属的进程终止。
++
++本文将简化并概述 Linux 内核如何处理这些页面错误、创建表和表项、检查内存是否存在，
++以及当内存不存在时，如何请求从持久存储或其他设备加载数据，并更新 MMU 及其缓存。
++
++前几步取决于设备依赖。大多是架构跳转到 `do_page_fault()`，而 x86 中断处理程序由
++`DEFINE_IDTENTRY_RAW_ERRORCODE()` 宏定义的，该宏调用 `handle_page_fault()`。
++
++无论调用路径如何，所有架构最终都会调用 `handle_mm_fault()`，该函数通常会调用
++`__handle_mm_fault()` 来执行实际分配页表的任务。
++
++如果不幸无法调用 `__handle_mm_fault()` 则意味着虚拟地址指向了无权访问的物理
++内存区域（至少对于当前上下文如此）。这种情况会导致内核向该进程发送上述的 SIGSEGV
++信号，并引发前面提到的后果。
++
++这些用于查找偏移量的函数名称通常以 `*_offset()` 结尾，其中“\*”可以是 pgd，p4d，
++pud，pmd 或者 pte；而分配相应层级页表的函数名称是 `*_alloc`，它们按照上述命名
++约定以对应页表层级的类型命名。
++
++页表遍历可能在中间或者上层结束(PMD，PUD)。
++
++Linux 支持比通常 4KB 更大的页面（即所谓的 `巨页`）。当使用这种较大的页面时，没有
++必要使用更低层的页表项(PTE)。巨页通常包含 2MB 到 1GB 的大块连续物理区域，分别由
++PMD 和 PUD 页表项映射。
++
++巨页带来许多好处，如减少 TLB 压力，减少页表开销，提高内存分配效率，以及改善
++特定工作负载的性能。然而，这些好处也伴随着权衡，如内存浪费和分配难度增加。
++
++在遍历和分配的最后，如果没有返回错误， `__handle_mm_fault()` 最终调用`handle_pte_fault()`
++通过 `do_fault()` 执行 `do_read_fault()`、 `do_cow_fault()` 和 `do_shared_fault()`。
++“read”，“cow”和“shared”分别暗示了它处理错误的类型和原因。
++
++实际的工作流程实现是非常复杂的。其设计允许 Linux 根据每种架构的特定特性处理缺页
++异常，同时仍然共享一个通用的整体结构。
++
++为了总结 Linux 如何处理缺页中断的概述，需要补充的是，缺页异常处理程序可以通过
++`pagefault_disable()` 和 `pagefault_enable()` 分别禁用和启用。
++
++许多代码路径使用了这两个函数，因为它们需要禁止陷入缺页异常处理程序，主要是为了
++防止死锁。
+-- 
+2.25.1
+
 
