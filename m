@@ -1,94 +1,130 @@
-Return-Path: <linux-kernel+bounces-331922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FBE97B300
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:31:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A9097B303
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9691F22A0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:31:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63EDEB25D2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A972D185B52;
-	Tue, 17 Sep 2024 16:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97703183CB7;
+	Tue, 17 Sep 2024 16:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qfgt2Dga"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AfpwKYjf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1464017C990
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3925715B54F;
+	Tue, 17 Sep 2024 16:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726590636; cv=none; b=lUpzTf3E8EUpmyf6yt4NyXJERy731McOyLG9FT8D2SNpGSVOG7yEOi24Xjj6FsqKiSGESNSZtC4UTmKV6wuBbbPacVtpPNmGMq9n52w2ZxAuWh/xECs325RQwab3fwr7hKdGfFGqyUNrVE+BjTr7yI4HiU8g2TjPCk2JIBCQ6Os=
+	t=1726590662; cv=none; b=Sp7wpdsrHKGmkqiVp9KvUGZQIyLLtwG+jd86LA2Zt8uAPBDqXoQ1ib1Za9Jq868Ugx3G3EAFnpM2gFNCan64LW8Lk9GIie+zBA7PS0iO3PPJXpjuv/gJhGqLiJ67b9FKEMDaUo+NYXfEF2hDYjUzDfPNIx5GVCTFNSE8EYZTsis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726590636; c=relaxed/simple;
-	bh=lp76d/TPZKlYblD+Lxh9elSyGKFOamh6gIPS5YpuIy4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GivEGbhJOtLkj9RsTfU8kPei2qOff9atkAr9dvGLkzuys7ptqpksYiHbz9v6PVE3CZZip7a7ryBnVAA54CbjQsHaSoG8aXT8om/OiC3UmKp84YHw07dIs+z4aNOZgUlZm0VzsfjVRXclqs7tFj1/rD8PgUqwCC1AEUdjk4NSGfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qfgt2Dga; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90503C4CEC7;
-	Tue, 17 Sep 2024 16:30:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726590635;
-	bh=lp76d/TPZKlYblD+Lxh9elSyGKFOamh6gIPS5YpuIy4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Qfgt2Dga75Wfn+yRt1adZC6YxdGF+wInN9mL1ME/yzDxdzrcAAOdey9LI6jP0VPpp
-	 WRgNqsbQdGhsxlQDK5NfJAHLLJTEzj3SirpwqtPGQFu1Js7idYEUSDjjVBeldoDdDE
-	 kwv78ql2Mlc5+969vuuxCMTYQOaQuB3V/JMNtwfjrnXNj5vgMVQODy+u6VataYemES
-	 Q7GcBIgTWQAvfmvs33VLqNN/av6bqx28vrNJkf9JSbERz9/pDGP7DYiHPiQ58GslFE
-	 mDQcIDXmb02xjJarhD2GYbFrIaLHIMa8NCGnfIBbaQUsRx0rGZEZ7lpau6J9H8oHdX
-	 V94OHERudae4g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7119E3809A80;
-	Tue, 17 Sep 2024 16:30:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726590662; c=relaxed/simple;
+	bh=T0xCbAguwVe8L3zNEYirqsW01OcDvzdTUFRziwZJH14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M1y0qApsmnR7GYxLJ62xS2BFMdPuz/9thqcoK0jtkkTZkMVR6uQgVj5rNSIcCaAlH3RV5eCkw3NFZ7cgw85RZi54MQXed9xJer9MY4LcRAYGziOxUer98V/I1cvvc9MeBGkk+hoWQj6p7Fb2SSEkPQj2cmD0SzU+qZe5pqZMaK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AfpwKYjf; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726590660; x=1758126660;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T0xCbAguwVe8L3zNEYirqsW01OcDvzdTUFRziwZJH14=;
+  b=AfpwKYjf1OYofDq7wimAxxzkIMqifWp4eM08PFO1hePTRR/Vy4dWFfPZ
+   ZbrbjLSFc7h4LMROKD6qfANCUtTBESuqpCR9GrJomtuYchZjhGaxY+ARq
+   8eig0tHfW5kp8DMLOEfzHsDAMPctwQYRmbyRWsODY4AIMNq7diT/5wV3P
+   ZLDudCELNdiPjIZulcXPKqLFzGjQaq/m40g+pSH00oUwYuMaagWSp5F12
+   6lEOR2kI9LWssgrHTgRzDpT7jVB2fHTSA8cpm1PkcwB5s8DnCxRyIJOzN
+   tW5+cO2Qh2C7AUaXq2xl19QJg3j43RISdMJ9bH/tb1CTdDcv/Bl8cXLku
+   A==;
+X-CSE-ConnectionGUID: n3gVHtPtTCWKuk6x/aVRKQ==
+X-CSE-MsgGUID: rZEsyTyTS5CdBlNilUfDXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="13560061"
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="13560061"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 09:30:59 -0700
+X-CSE-ConnectionGUID: ahD0hZrcQO2ez3iJtGdOiw==
+X-CSE-MsgGUID: aW6W1bJsQNupTu5l7O00Vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="69114330"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 09:30:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sqb6L-00000009sna-1A5j;
+	Tue, 17 Sep 2024 19:30:53 +0300
+Date: Tue, 17 Sep 2024 19:30:52 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Lin <yu-hao.lin@nxp.com>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	Brian Norris <briannorris@chromium.org>,
+	Kalle Valo <kvalo@kernel.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Kees Cook <kees@kernel.org>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH] wifi: mwifiex: Fix memcpy() field-spanning write warning
+ in mwifiex_config_scan()
+Message-ID: <ZumuvP3aHiHHzGjp@smile.fi.intel.com>
+References: <20240917150938.843879-1-alpernebiyasak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] RISC-V: Implement kgdb_roundup_cpus() to enable future NMI
- Roundup
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <172659063700.214459.15823238572969686332.git-patchwork-notify@kernel.org>
-Date: Tue, 17 Sep 2024 16:30:37 +0000
-References: <20240727063438.886155-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240727063438.886155-1-ruanjinjie@huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, samuel.holland@sifive.com,
- conor.dooley@microchip.com, takakura@valinux.co.jp,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917150938.843879-1-alpernebiyasak@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello:
-
-This patch was applied to riscv/linux.git (for-next)
-by Palmer Dabbelt <palmer@rivosinc.com>:
-
-On Sat, 27 Jul 2024 14:34:38 +0800 you wrote:
-> Until now, the generic weak kgdb_roundup_cpus() has been used for kgdb on
-> RISCV. A custom one allows to debug CPUs that are stuck with interrupts
-> disabled with NMI support in the future. And using an IPI is better than
-> the generic one since it avoids the potential situation described in the
-> generic kgdb_call_nmi_hook(). As Andrew pointed out, once there is NMI
-> support, we can easily extend this and the CPU backtrace support
-> to use NMIs.
+On Tue, Sep 17, 2024 at 06:08:41PM +0300, Alper Nebi Yasak wrote:
+> Replace one-element array with a flexible-array member in `struct
+> mwifiex_ie_types_wildcard_ssid_params` to fix the following warning
+> on a MT8173 Chromebook (mt8173-elm-hana):
 > 
-> [...]
+> [  356.775250] ------------[ cut here ]------------
+> [  356.784543] memcpy: detected field-spanning write (size 6) of single field "wildcard_ssid_tlv->ssid" at drivers/net/wireless/marvell/mwifiex/scan.c:904 (size 1)
+> [  356.813403] WARNING: CPU: 3 PID: 742 at drivers/net/wireless/marvell/mwifiex/scan.c:904 mwifiex_scan_networks+0x4fc/0xf28 [mwifiex]
+> 
+> The "(size 6)" above is exactly the length of the SSID of the network
+> this device was connected to. The source of the warning looks like:
+> 
+>     ssid_len = user_scan_in->ssid_list[i].ssid_len;
+>     [...]
+>     memcpy(wildcard_ssid_tlv->ssid,
+>            user_scan_in->ssid_list[i].ssid, ssid_len);
+> 
+> Also adjust a #define that uses sizeof() on this struct to keep the
+> value same as before.
 
-Here is the summary with links:
-  - [v2] RISC-V: Implement kgdb_roundup_cpus() to enable future NMI Roundup
-    https://git.kernel.org/riscv/c/983f12149942
+...
 
-You are awesome, thank you!
+>  #define WILDCARD_SSID_TLV_MAX_SIZE  \
+>  	(MWIFIEX_MAX_SSID_LIST_LENGTH *					\
+>  		(sizeof(struct mwifiex_ie_types_wildcard_ssid_params)	\
+> -			+ IEEE80211_MAX_SSID_LEN))
+> +			+ IEEE80211_MAX_SSID_LEN + 1))
+>  
+
+This hunk has to be carefully checked by wireless people. I'm not sure
+that we need  + 1 here.
+
+Otherwise, LGTM.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+With Best Regards,
+Andy Shevchenko
 
 
 
