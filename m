@@ -1,105 +1,140 @@
-Return-Path: <linux-kernel+bounces-331772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF7D97B10D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:06:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091F797B116
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53691F22C3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39E961C21502
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579611662FA;
-	Tue, 17 Sep 2024 14:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FFA17ADFF;
+	Tue, 17 Sep 2024 14:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ExNUDci8"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VG3kdr51"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED631167D83
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 14:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EF420323;
+	Tue, 17 Sep 2024 14:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726582003; cv=none; b=ZxtVV9TD2+8L88TuF5t1m5aDmVSCA8Ej8Q5rqPy6FN5GVnpho7Z+90s7LzavdcWm2CGZRYzAly1rF9kLc7DfZqIImjStExLHv/vbsEI1uZTPPfnaQr+XKDfngSRnPi0gwhM9X4rwLSzrLqJLz8pFNB3PcWhqwHmw27e5nBv+Xvc=
+	t=1726582210; cv=none; b=YGakTErVjleyk7QY3rT14XyPDYkCPoYJICwbeUehf6jdkJ03u16hiAaMkYy1efcTnNGJj/i3V9rVVsMC3k/o3/JZxUNSETh0vjmZrnLzghSK/YiUA54jlvDNzCK1ZztvHL9sgcEydbC3pniO2TxgJdaH031wsLf6P4VAeWMNq2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726582003; c=relaxed/simple;
-	bh=T1fbGCPWhQTMc2ds84cJIDmVKbIUxTcWTVyoeXm/q08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h1N4kGy/yEOHD7W3n2Y0N2PCZQAZDGLAVdDb1EsAiDM2k+qfUNiL4VqQIom1n0V/eaq8yFU17jGR+v3cRVt2i5cmB1y9Ts1+JUzLkZdhISgwpk5Q8mxZzOnJ9b5cFUEXMDMNDeZD/yFR/tsgzIS6P0OlAXWtV2NzeNUAHPteC5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ExNUDci8; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f75d044201so57150081fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 07:06:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726582000; x=1727186800; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e3VqCwJoNraqawyxrMvuXWNHXBSF9eIrcmWFKjZa7aQ=;
-        b=ExNUDci8xTPxlpzXR9TZcuD5VM4XLpnrOGPjQJ5HUVilbGDuFTdAPr9webCdabjIoT
-         JBJ23bZc77RWINCIO8O3hTflR4ij0MBfB1SCzWqWeBYw9mlpO9tWPQcslePg5hwckOO3
-         4zAi/sRgq+XP7wSAcA8kYdwHN7d6RtybXmbfnvHn2rdzaBKGaN4DzABhnhpLO3lxLElU
-         RVYkB46hdUB7dwxsMUqp1+JguC5OvAArUQdXRmL9wuWZIgEuwptad+20YDOaig1LwfVG
-         F0khcdu/zdrc5Z4HcaPET62VIGOM4/1bxBC8eHROG0x6q8v2R5ZFYbE5O9F7QJvnOf74
-         uP+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726582000; x=1727186800;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e3VqCwJoNraqawyxrMvuXWNHXBSF9eIrcmWFKjZa7aQ=;
-        b=lgHCHo8T3zr6SE/kustfCgk3UOan+pQ4QyiVQN97k4Ik+t9ly8GxXGZb4eUeI6m7c+
-         +oO0FnJqUBBgr5I5CwmQJHiNOrxciZfO5VrFvtzQEs9Ma43j7zeku34/nx9HcqmfF1pG
-         ENrsegRZyZIhlqgrYj7rUAtJZdhB81W5gPhvHcuNCZvPrvLzffmhlAHSsAvUbMbVMF7A
-         6Seqe/N+KJ8W7OnzLIGJxsYsJyJfXRPWDLuNEW3I9HyYmRVp9/5HJmy9a2HM0zi1hrkX
-         JdzC7Rh886PjhXdbH7PwswBv5lzhKjBxSWeAQko1TYK+5tpSPRV9EQqwJJCnV/97YFhL
-         3BJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDtP25uWSrHCVXJ52CYMsuM7w1fvjlfrwwwYMYUZzhPS/QKnNankV932a63VVBDYQl8KudiKf5/lDdj94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzTkHhCHefjgef7kpMQt/uqgK/bXGdD6i5IAY+SqCHHdymzoqP
-	aBtK3Z/rc80pWYg0Hi+8mqM7Z/CPtPJSvHDndRBLMcCl7rwnBtVk5gNvEwTboRg=
-X-Google-Smtp-Source: AGHT+IG6aNuAURHRTSsm3TSfe1rxuQWJil3WUMVpaQOmq8kaPdwBxfbyRKDasQb44N87rlFO2iNLxg==
-X-Received: by 2002:a2e:b889:0:b0:2f6:6074:db9a with SMTP id 38308e7fff4ca-2f7726199abmr93412081fa.7.1726581999899;
-        Tue, 17 Sep 2024 07:06:39 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d1f1254sm11036491fa.0.2024.09.17.07.06.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 07:06:39 -0700 (PDT)
-Date: Tue, 17 Sep 2024 17:06:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: quic_vnagar@quicinc.com
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: qcs6460-rb3gen2: enable venus node
-Message-ID: <t7r46onezqkksdvk3i26fzreqxgwvyh32bebwysaxzl5pn642m@6m2kmbsh42pg>
-References: <20240917-venus_rb3_gen2-v1-1-8fea70733592@quicinc.com>
+	s=arc-20240116; t=1726582210; c=relaxed/simple;
+	bh=iXygWqgsvlZ4USdjE4KG4+lh1cAoIA2R/07pye8+siE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=p/w6HP+GOIznF/i3BrZUFE3H4L96iBKF9UsMJ5cipIURq+PmGmOC2sSFBZB6gFA1p5pN0NpF/ycYlp+PynKIE6QtQkb3hh0+kAZh/gGHL9BQrTLc+GuzrGBZ+6BjjbBm6CUl/Z9WiPsN84tuIGcsbLwB7mg1MfIWYh1ARhlWczc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VG3kdr51; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3169C514;
+	Tue, 17 Sep 2024 16:08:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1726582123;
+	bh=iXygWqgsvlZ4USdjE4KG4+lh1cAoIA2R/07pye8+siE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=VG3kdr51W/mcljJnuI5jmfFlx9vMwlUlJ8eihLsUEbEpJZpTxzvkW3pa/ME3GIb/+
+	 v5NRBn0Fwbx5UJ8LzKspKjohBK+g25z4dRzuUrPXXw4Y2ZdkE9qN30Bhdrtn/5SUAJ
+	 a/odRGXoTVeBOaUXprgsGYOt4Oxcnndw9oO1P+KA=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH 0/4] media: v4l2-subdev: Add cleanup macros for active
+ state
+Date: Tue, 17 Sep 2024 17:09:28 +0300
+Message-Id: <20240917-scoped-state-v1-0-b8ba3fbe5952@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917-venus_rb3_gen2-v1-1-8fea70733592@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJmN6WYC/x3MQQqAIBBA0avErBNMi7CrRAvTqWaj4UgE4t2Tl
+ m/xfwHGRMiwdAUSPsQUQ8PQd+AuG04U5JtBSTVKM8yCXbzRC842o7DGTM5Jv1utoSV3woPef7d
+ utX675DINXgAAAA==
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2320;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=iXygWqgsvlZ4USdjE4KG4+lh1cAoIA2R/07pye8+siE=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBm6Y23aU4AVMm7kTVvvMNhihlpGEH+U6rQxs59S
+ xHxmcjFq0mJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZumNtwAKCRD6PaqMvJYe
+ 9Yu7D/439cuminfFl9puxve5vBS0uUeIweAZws2iN9f0jq4PSj+nwvXsIcDZLMHqJi76BVWaWz+
+ I7k3/gIjs5PZe8aUqoqq8Jc5vE59/ISGNsCgLxZZszvbvUghR0s9G1RwPmu83OSmVTNDWwrBaAx
+ lJxT03hbmVfZORyan9Om/FFOXch9jc0YXp69QuQN/znU+5e8+dCTdC0CBCAImbLskD/s06Lczba
+ kIDn6/PlmG4VZ4L7tynotfipfZlB4wWJGEOEesFBD7URkxW1gw6FZLz5ipiLbhBFRHi+eamkv2d
+ up6gazJp4ZMy2H326nUD6byYiAlA1IXDFtiofvZmKCln+eR4e9MyL283pEVkiCFcDEGzJ2sk46F
+ 5cOqube5lnVAuuxjNHgpDqmbBzyyWAVrN6kUFMa8wgk6WtjUjiQLmj90+3IqW0Ke1jaHQhtwqQO
+ 4FoUKZ3OemNxw8qVGpOgfBvBkZ/vk8asxl3N7xJEt+CTbdOyZHRYSVreoFC8/mARGEedj2+LL/K
+ erT05Fp5IAirKj+q3RWB0BIn/WoffaYyhVgdZPEOTVVFnzOzfT9MVDSv075fTNADFduMd5+XaNI
+ 9W3rZ1/xNEO04ynivJg23rEr1UijT0e1AxOUjQad0xYer52yFDP76kKriPQbsN4RbTC/OJ4TRd6
+ QNjQR+RsZ4SqI/w==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Tue, Sep 17, 2024 at 02:54:31PM GMT, Vedang Nagar via B4 Relay wrote:
-> From: Vedang Nagar <quic_vnagar@quicinc.com>
-> 
-> Enable the venus node on Qualcomm Rb3gen2 so that the
-> video decoder will start working.
-> 
-> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 4 ++++
->  1 file changed, 4 insertions(+)
+Add cleanup macros for the subdev active state. While we could add more
+macros to handle state locking in different situations, I believe the
+two macros introduced here are the ones most often needed.
 
+A few drivers are changed to use the macros, as an example.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+A few thoughts:
 
+The scoped_v4l2_subdev_lock_and_get_active_state() macro will define an
+implicitly named 'state' variable inside the scope. This is a bit
+similar to scoped_guard(), which defined an implicitly named 'scope'
+variable. However, adding the name of the variable as a parameter to the
+macro is an easy addition, if needed. Then the usage would be:
+
+    scoped_v4l2_subdev_lock_and_get_active_state(subdev, state) {
+    }
+
+Using the CLASS() version does take the name of the variable. The two
+macros also look quite different, so I wonder if we should make a helper
+macro to hide the CLASS() usage (I don't know what to call it...):
+
+    #define init_v4l2_subdev_lock_and_get_active_state(sd) \
+         CLASS(v4l2_subdev_lock_and_get_active_state, state)(sd)
+
+The macro names are quite long, but so is the function name of
+'v4l2_subdev_lock_and_get_active_state', which these macros often
+replace.
+
+ Tomi
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+Tomi Valkeinen (4):
+      media: v4l2-subdev: Add cleanup macros for active state
+      media: v4l2-subdev: Use state cleanup macros
+      media: renesas: Use state cleanup macros
+      media: i2c: ds90ub9xx: Use state cleanup macros
+
+ drivers/media/i2c/ds90ub913.c                      | 11 +++------
+ drivers/media/i2c/ds90ub953.c                      | 11 +++------
+ drivers/media/i2c/ds90ub960.c                      | 27 +++++++---------------
+ drivers/media/platform/renesas/rcar-csi2.c         | 14 ++++-------
+ .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  |  9 ++++----
+ .../media/platform/renesas/rzg2l-cru/rzg2l-ip.c    |  9 ++------
+ drivers/media/v4l2-core/v4l2-subdev.c              | 14 +++--------
+ include/media/v4l2-subdev.h                        | 10 ++++++++
+ 8 files changed, 37 insertions(+), 68 deletions(-)
+---
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+change-id: 20240917-scoped-state-a995cc0dba33
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
