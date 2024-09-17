@@ -1,244 +1,237 @@
-Return-Path: <linux-kernel+bounces-331516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC8E97ADBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:20:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE0997ADBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20C2C2839D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:20:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC781F21158
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD98158203;
-	Tue, 17 Sep 2024 09:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38F4158DBA;
+	Tue, 17 Sep 2024 09:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CBLrMnu9"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3NBg7bP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF6914BFBF;
-	Tue, 17 Sep 2024 09:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF59D14BFBF;
+	Tue, 17 Sep 2024 09:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726564803; cv=none; b=sQueu8BRmvdtElGRcFoarbqsnAbheKiV8IEPCV4j7h1oc2Gw6R3cnwy0nPC/g0aFCuzL08QyVKgExfNcCqbssUhvtVQjseaTx5JTiScB5aN0R/AfJrE7953pnbMb/cZlnu7UcgG+xPhLrJaYBetuAkVJGGc+JPCoeeCggtKZYFs=
+	t=1726564798; cv=none; b=crv0i2HpTsXdk4kEtK5Bnb2Ccxg8S1/uS85+xluFZ7RGg8s2X9Y4IKQtqPIj4aq4ro5w0DApQuoW3idt9gQbRcC+L6Tnqi5MVTmCfiBPXfykwdFl0DtkVVxoBHPCM7wZaSJCqHdPuJGBdqg/XmIsG5yp0cK+Kphq9tEY0IfAyDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726564803; c=relaxed/simple;
-	bh=pbCRi/aWHwIz/Np1eLPb/787hCnDF3dkIvKvtI6tKrU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LYtYOYSXjHTsPrxlSFFp79SAcJ68uoK4aXcFSCgUWKglfAsRepnwmZPQmZUDGw/64BkjHKa+apMM0svVkx8Id7FtOVpfPpJQ9HpiHelGaquxcUAnV/XBnxpXVnCMjl/Zba0RHKwNhtDuX+I8u4MmWJj13K354rK0IRp7+BYN8Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CBLrMnu9; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48H9Jhv0088904;
-	Tue, 17 Sep 2024 04:19:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726564783;
-	bh=1JHCD/69VTCYscf7qteQl5ACCgoQ/36oUJ28AIZ9YE4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=CBLrMnu9rFcHI/W0hnPX4uuCniRT9HvTQzGOZKs5IyLIYzIMwPVquSS6oWbEqCdXe
-	 Ji5jfyo0NGf/wBBlyQ9BskPp4o03Heaq5i+XO8IDtQEXwR2fXgY6dbG91eFYR3BGfQ
-	 PUV91bUrpeFV+r55OKjh/eW/y4fj6W/5oN7iHru0=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H9Jh5p019052;
-	Tue, 17 Sep 2024 04:19:43 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
- Sep 2024 04:19:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 17 Sep 2024 04:19:43 -0500
-Received: from [172.24.19.92] (lt5cd2489kgj.dhcp.ti.com [172.24.19.92])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H9JdDr035699;
-	Tue, 17 Sep 2024 04:19:40 -0500
-Message-ID: <5e52e8f4-cb50-4490-a9ce-c9074b3d9b7a@ti.com>
-Date: Tue, 17 Sep 2024 14:49:39 +0530
+	s=arc-20240116; t=1726564798; c=relaxed/simple;
+	bh=N6LlSkUbGt+i7mOEB4yC6nRtyA+qbiO+7RVITLJQkxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IiIQsPaIOHQW0nqOJPQ3zqwsNUJXkstEgLRnVbWD9IoPTQ5/KwFEOl/6bJ1DNbwh/1GlafbusZMUETtphGxTuolqaXLTcC8ICjoP2YHp+059xiAK0PebcpgGz+0RRC433uXYL1oYRwPR4BFCp6FGOBJLqMMB3bwnapm7x7nZfsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3NBg7bP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F03DEC4CEC6;
+	Tue, 17 Sep 2024 09:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726564797;
+	bh=N6LlSkUbGt+i7mOEB4yC6nRtyA+qbiO+7RVITLJQkxk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E3NBg7bPjhG9cN6lgm/mPd5X+YtauDq1fXf6C1eqDxpCF9M1qwylNOEgOWVsZ1YaF
+	 yND8I5zPJDZ5QwYjSKjlWCLV8Y1WDGmaHXvLUDXvKEXngtr1tsKvz5jqQSMoS80Jtk
+	 pS0u7+F3ShqPWBgja5YggLSDVOWgw95fwfAWQGia02qcO/vDVGA4Iex4O1iRkq30OO
+	 EbgkgHPGiC4RIrEkGrRb/3irNB2SXtyTM6ILAV7h+7cFky/YmlG10SMaEtuVfd908m
+	 PIk9Y0ueCXoB1X6T06whc8Cmq9DI6fPiIi8BHImgzdOAypevFvO2+fw7ZJ+7LlJO7q
+	 8rvL3vbYd4r5w==
+Date: Tue, 17 Sep 2024 11:19:52 +0200
+From: Mark Brown <broonie@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] regulator: max20339: add Maxim MAX20339 regulator
+ driver
+Message-ID: <ZulJuCu-QcMYrphP@finisterre.sirena.org.uk>
+References: <20240916-max20339-v1-0-b04ce8e8c471@linaro.org>
+ <20240916-max20339-v1-2-b04ce8e8c471@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] remoteproc: k3-r5: Fix check performed in
- k3_r5_rproc_{mbox_callback/kick}
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, Hari Nagalla <hnagalla@ti.com>,
-        Andrew Davis <afd@ti.com>, <andersson@kernel.org>, <b-padhi@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <u-kumar1@ti.com>
-References: <20240916083131.2801755-1-s-vadapalli@ti.com>
- <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
- <fda85c12-e73f-44b8-b66b-1241e417a9b7@ti.com>
- <CANLsYky1Oxu7Fc1-gz53cR+KpO67nDE5LQGj_NV+czOwY2_2CA@mail.gmail.com>
- <3ca4b2d1-5c47-4f85-969d-cd61c7ade2dc@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <3ca4b2d1-5c47-4f85-969d-cd61c7ade2dc@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+h+CYzyetNHuwcry"
+Content-Disposition: inline
+In-Reply-To: <20240916-max20339-v1-2-b04ce8e8c471@linaro.org>
+X-Cookie: Editing is a rewording activity.
 
 
-On 9/17/2024 2:43 PM, Kumar, Udit wrote:
-> Hi Mathieu,
->
-> On 9/17/2024 2:07 PM, Mathieu Poirier wrote:
->> On Mon, 16 Sept 2024 at 23:20, Kumar, Udit <u-kumar1@ti.com> wrote:
->>> On 9/16/2024 8:50 PM, Mathieu Poirier wrote:
->>>> On Mon, 16 Sept 2024 at 02:31, Siddharth Vadapalli 
->>>> <s-vadapalli@ti.com> wrote:
->>>>> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle 
->>>>> during
->>>>> probe routine") introduced a check in the 
->>>>> "k3_r5_rproc_mbox_callback()" and
->>>>> "k3_r5_rproc_kick()" callbacks, causing them to exit if the remote 
->>>>> core's
->>>>> state is "RPROC_DETACHED". However, the "__rproc_attach()" 
->>>>> function that is
->>>>> responsible for attaching to a remote core, updates the state of 
->>>>> the remote
->>>>> core to "RPROC_ATTACHED" only after invoking 
->>>>> "rproc_start_subdevices()".
->>>>>
->>>>> The "rproc_start_subdevices()" function triggers the probe of the 
->>>>> Virtio
->>>>> RPMsg devices associated with the remote core, which require that the
->>>>> "k3_r5_rproc_kick()" and "k3_r5_rproc_mbox_callback()" callbacks are
->>>>> functional. Hence, drop the check in the callbacks.
->>>> Honestly, I am very tempted to just revert f3f11cfe8907 and 
->>>> ea1d6fb5b571.
->>>
->>> Please don't :) , it will break rproc in general for k3 devices.
->>>
->> Why not - it is already broken anyway.  Reverting the patches will
->> force TI to actually think about the feature in terms of design,
->> completeness and testing.  The merge window opened on Sunday - I'm not
->> going to merge whack-a-mole patches and hope the right fix comes
->> along.
->
-> Now, I am not advocating here to revert or not.
->
-> But where we stand currently
->
-> 1-  Without this patch, IPC is broken in general.
->
-> 2-  With this patch, IPC is conditionally broken.
+--+h+CYzyetNHuwcry
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 16, 2024 at 05:48:53PM +0100, Andr=E9 Draszik wrote:
 
-Sorry for confusion,
+> +config REGULATOR_MAX20339
+> +       tristate "Maxim MAX20339 overvoltage protector with load switches"
+> +       depends on GPIOLIB || COMPILE_TEST
+> +       depends on I2C
+> +       select GPIO_REGMAP if GPIOLIB
 
-here _this_ patch I meant below commit ids
+I don't see any dependency on gpiolib here, the GPIO functionality
+appears unrelated to the regulator functionality (this could reasonably
+be a MFD, though it's probably not worth it given how trivial the GPIO
+functionality is).
 
-f3f11cfe8907 and ea1d6fb5b571.
+> +++ b/drivers/regulator/max20339-regulator.c
+> @@ -0,0 +1,912 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2024 Linaro Ltd.
 
->
-> In either case, we need to fix it.
->
-> your call to revert or keep it.
->
->
->>
->>> Couple of solutions for this race around condition (in mine preference
->>> order)
->>>
->> This is for the TI team to discuss _and_ test thoroughly.  From hereon
->> and until I see things improve, all patches from TI will need to be
->> tagged with R-B and T-B tags (collected on the mailing lists) from two
->> different individuals before I look at them.
->
-> Sure we will take care of above
->
-> and fair ask on R-B and T-B tags
->
->>
->>> 1) In
->>> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L190 
->>>
->>> have a check , if probe in is progress or not
->>>
->>> 2)
->>> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1205 
->>>
->>> -- correct the state to ON or something else
->>>
->>> 3) Move condition
->>> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/remoteproc_core.c#L1360 
->>>
->>> before rproc_start_subdevices
->>> <https://elixir.bootlin.com/linux/v6.11/C/ident/rproc_start_subdevices>
->>> calling
->>>
->>>
->>>
->>>>> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle 
->>>>> during probe routine")
->>>>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
->>>>> ---
->>>>>
->>>>> Hello,
->>>>>
->>>>> Since the commit being fixed is not yet a part of Mainline Linux, 
->>>>> this
->>>>> patch is based on linux-next tagged next-20240913.
->>>>>
->>>>> An alternative to this patch will be a change to the 
->>>>> "__rproc_attach()"
->>>>> function in the "remoteproc_core.c" driver with
->>>>> rproc->state = RPROC_ATTACHED;
->>>>> being set after "rproc_attach_device()" is invoked, but __before__
->>>>> invoking "rproc_start_subdevices()". Since this change will be 
->>>>> performed
->>>>> in the common Remoteproc Core, it appeared to me that fixing it in 
->>>>> the
->>>>> TI remoteproc driver is the correct approach.
->>>>>
->>>>> The equivalent of this patch for ti_k3_dsp_remoteproc.c might also be
->>>>> required, which I shall post if the current patch is acceptable.
->>>>>
->>>>> Kindly review and share your feedback on this patch.
->>>>>
->>>>> Regards,
->>>>> Siddharth.
->>>>>
->>>>>    drivers/remoteproc/ti_k3_r5_remoteproc.c | 8 --------
->>>>>    1 file changed, 8 deletions(-)
->>>>>
->>>>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
->>>>> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>>>> index 747ee467da88..4894461aa65f 100644
->>>>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>>>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>>>> @@ -194,10 +194,6 @@ static void k3_r5_rproc_mbox_callback(struct 
->>>>> mbox_client *client, void *data)
->>>>>           const char *name = kproc->rproc->name;
->>>>>           u32 msg = omap_mbox_message(data);
->>>>>
->>>>> -       /* Do not forward message from a detached core */
->>>>> -       if (kproc->rproc->state == RPROC_DETACHED)
->>>>> -               return;
->>>>> -
->>>>>           dev_dbg(dev, "mbox msg: 0x%x\n", msg);
->>>>>
->>>>>           switch (msg) {
->>>>> @@ -233,10 +229,6 @@ static void k3_r5_rproc_kick(struct rproc 
->>>>> *rproc, int vqid)
->>>>>           mbox_msg_t msg = (mbox_msg_t)vqid;
->>>>>           int ret;
->>>>>
->>>>> -       /* Do not forward message to a detached core */
->>>>> -       if (kproc->rproc->state == RPROC_DETACHED)
->>>>> -               return;
->>>>> -
->>>>>           /* send the index of the triggered virtqueue in the 
->>>>> mailbox payload */
->>>>>           ret = mbox_send_message(kproc->mbox, (void *)msg);
->>>>>           if (ret < 0)
->>>>> -- 
->>>>> 2.40.1
->>>>>
+Nothing inherited from the original Pixel 6 kernel?
+
+> + *
+> + * Maxim MAX20339 load switch with over voltage protection
+
+Please make the entire comment a C++ one so things look more
+intentional.
+
+> +static const struct regmap_config max20339_regmap_config =3D {
+> +	.reg_bits =3D 8,
+> +	.val_bits =3D 8,
+> +	.max_register =3D MAX20339_LAST_REGISTER,
+> +	.wr_table =3D &max20339_write_table,
+> +	.rd_table =3D &max20339_rd_table,
+> +	.volatile_table =3D &max20339_volatile_table,
+> +	.precious_table =3D &max20339_precious_table,
+> +};
+
+You've specified volatile registers here but not configured a cache.
+
+> +	if (status[3] & status[0] & MAX20339_INOVFAULT) {
+> +		dev_warn(dev, "Over voltage on INput\n");
+> +		regulator_notifier_call_chain(max20339->rdevs[MAX20339_REGULATOR_INSW],
+> +					      REGULATOR_EVENT_OVER_VOLTAGE_WARN,
+> +					      NULL);
+> +	}
+
+This is an error on the input, not an error from this regulator, so the
+notification isn't appropriate here.
+
+> +static int max20339_insw_is_enabled(struct regulator_dev *rdev)
+> +{
+> +	unsigned int val;
+> +	int ret;
+> +	struct device *dev =3D rdev_get_dev(rdev);
+> +
+> +	ret =3D regmap_read(rdev_get_regmap(rdev), MAX20339_STATUS1, &val);
+> +	if (ret) {
+> +		dev_err(dev, "error reading STATUS1: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dev_dbg(dev, "%s: %s: %c\n", __func__, rdev->desc->name,
+> +		"ny"[FIELD_GET(MAX20339_INSWCLOSED, val)]);
+
+In addition to the log spam issues I've no idea how anyone is supposed
+to interpret this log :/
+
+> +
+> +	return FIELD_GET(MAX20339_INSWCLOSED, val) =3D=3D 1;
+> +}
+
+This does not appear to be an enable control, it's reading back a status
+register rather than turning on or off a regulator.  It's not clear to
+me what the status actually is (possibly saying if there's a voltage
+present?) but it should be reported with a get_status() operation.
+
+> +static int max20339_set_voltage_sel(struct regulator_dev *rdev,
+> +				    unsigned int sel)
+> +{
+> +	return max20339_set_ovlo_helper(rdev,
+> +					FIELD_PREP(MAX20339_OVLOSEL_INOVLOSEL,
+> +						   sel));
+> +}
+
+This device does not appear to be a voltage regualtor, it is a
+protection device.  A set_voltage() operation is therfore inappropriate
+for it, any voltage configuration would need to be done on the parent
+regulator.
+
+> +static const struct regulator_ops max20339_insw_ops =3D {
+> +	.enable =3D regulator_enable_regmap,
+> +	.disable =3D regulator_disable_regmap,
+> +	.is_enabled =3D max20339_insw_is_enabled,
+
+The is_enabled() operation should match the enable() and disable(), it
+should reflect what the device is being told to do.
+
+> +static int max20339_lsw_is_enabled(struct regulator_dev *rdev)
+> +{
+> +	struct max20339_regulator *data =3D rdev_get_drvdata(rdev);
+> +	unsigned int val;
+> +	int ret;
+> +	struct device *dev =3D rdev_get_dev(rdev);
+> +
+> +	ret =3D regmap_read(rdev_get_regmap(rdev), data->status_reg, &val);
+> +	if (ret) {
+> +		dev_err(dev, "error reading STATUS%d: %d\n",
+> +			data->status_reg, ret);
+> +		return ret;
+> +	}
+
+Same issues here.
+
+> +	if (val & MAX20339_LSWxSHORTFAULT)
+> +		*flags |=3D REGULATOR_ERROR_OVER_CURRENT;
+> +
+> +	if (val & MAX20339_LSWxOVFAULT)
+> +		*flags |=3D REGULATOR_ERROR_OVER_VOLTAGE_WARN;
+> +
+> +	if (val & MAX20339_LSWxOCFAULT)
+> +		*flags |=3D REGULATOR_ERROR_OVER_CURRENT;
+
+These statuses should be flagged ot the core.
+
+> +static int max20339_setup_irq(struct i2c_client *client,
+> +			      struct regmap *regmap,
+> +			      struct regulator_dev *rdevs[])
+> +{
+> +	u8 enabled_irqs[3];
+> +	struct max20339_irq_data *max20339;
+> +	int ret;
+> +	unsigned long irq_flags;
+> +
+> +	/* the IRQ is optional */
+> +	if (!client->irq) {
+> +		enabled_irqs[0] =3D enabled_irqs[1] =3D enabled_irqs[2] =3D 0;
+
+Please just write a normal series of assignments, it's much clearer.
+`
+> +		dev_info(&client->dev, "registered MAX20339 regulator %s\n",
+> +			 max20339_regulators[i].desc.name);
+
+This is just noise, remove it.
+
+--+h+CYzyetNHuwcry
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbpSbcACgkQJNaLcl1U
+h9BRzwf+KEKw9eD78PbFbAThDy0JoZEkPtjx6vuMotDaiP5iBbcA+awC/CAGkVoV
+8ZIJjcGU89UCcBn2xGZM+MdW+6GgYc1DXWRJcCiQI8HBpPMBKkecmeEEHEGRQv3J
+M8HpqxXni8Af/zpDsHqW4cuAh5ZlLcJzeqZA/Uc9ngXEmad8X337VQ/5wwwVs1Fr
+eFVRZZBbXlAjuoWf+0eGc43kY3KgxiEgUT9SlKIH32RwMgpAlyoFCb90k/4TyT+p
+MVWlXaewGnZTHYY1P6gB/5pv5Ega0bd5uqRDxl01p7bfenPPR9CKF2OkPi/bg38T
+SeikReG7DYDULpdeJhtjdml57EQp2g==
+=XvxX
+-----END PGP SIGNATURE-----
+
+--+h+CYzyetNHuwcry--
 
