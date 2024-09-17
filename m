@@ -1,241 +1,153 @@
-Return-Path: <linux-kernel+bounces-332088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC4C97B54E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0507397B554
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F1111F22CE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A500B1F22F21
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1231922CB;
-	Tue, 17 Sep 2024 21:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A171531C5;
+	Tue, 17 Sep 2024 21:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IWphPGPh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBW9MWfz"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2C91531C5;
-	Tue, 17 Sep 2024 21:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E411422D8;
+	Tue, 17 Sep 2024 21:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726609080; cv=none; b=mJOM1f0W7LKcCRzp6LAQUBz8QjvM2bccbNcmUMcKYbWAy5EJFONNenX8H757ZgWFiaDn23++IT5ror9reM8jOv/9euo705nyYquDQlPMujfjkvIFF+Ls35xH4vMmwNCwS/h2kXfMsZo0yHPOdiJTR5y/iJSN7BC2sLDnKrJ7cG8=
+	t=1726609454; cv=none; b=Gvooaw0lKQ9ddtADz9bLpu76hjMBAqR+peiXQHfAJPIM1B588SKFzCFyKGnYQ64vSVYMTJ5hQegYXlmlmIPEv0woOJ8+F8dkMOIsSKfG5hh2TY1atWpk8x15D5L40fVUTEAhF6EJFFZrU6jnl0gWzQAQZZvwTp1TfCMZXtDYHqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726609080; c=relaxed/simple;
-	bh=r4yu7OaAkw2nHJ5m2iWzbbbfoy+QdCsQhP0wHKG9pyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NID6YwyY8d2Y1OdK+ekWNQLoy8dij6OA75GmO69yPdGl/3Mz55+qXgFZ8l/SX+yJQDMalWQX4ha3Tu8RhABVfcyDFRV3/pvPcfi/HQsedLCFnEBiBeMgH/zLWOchoXWkZIGj4ZvNLtqiATiEXM9yvMcdrTKeVxFW5rPjbJMkYdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IWphPGPh; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726609078; x=1758145078;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r4yu7OaAkw2nHJ5m2iWzbbbfoy+QdCsQhP0wHKG9pyw=;
-  b=IWphPGPhURbjathUSkcE5b4OwyGgxz+f6qzJ4J++CgwxHYMNjET3LkvT
-   YzzcgmnMaAoprQ37Ho2gUtL9GJh4PGt0GRp4GnT698EkiCkb//xgHMA16
-   TTL80GK/zvTtntbo5qn2CBeej8K0WIrTSfoxhR4/MZXNjIp7A+IzmO9Fu
-   LPjZ3kJ2xg9Dl8OnoKVNjlhu2uGViwNMvcuOarigqzW6UEirp/OXmqk3c
-   qHwTOIe09NQK11aZkvlwBhB/48zt5xemGor/68z9uVZ81PiJLF/eX3a4I
-   POxuPvMvfEHjj8N2v2YMccqAuWVqoFOZCyn/Es7BOKQeHCdMPsJmumd8C
-   g==;
-X-CSE-ConnectionGUID: gM9CNxzQTuaX8+qnJLgaOQ==
-X-CSE-MsgGUID: sxPmm42lQiqC8pQWeWEXfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25379339"
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="25379339"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 14:37:58 -0700
-X-CSE-ConnectionGUID: he5jR1jZScmWRbBMkc2/og==
-X-CSE-MsgGUID: lIFX4D4WSTSNW9zy31G0Ow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="73424010"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 14:37:57 -0700
-Date: Tue, 17 Sep 2024 14:43:37 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 11/16] sched/qos: Add rampup multiplier QoS
-Message-ID: <20240917214337.GA10143@ranerica-svr.sc.intel.com>
-References: <20240820163512.1096301-1-qyousef@layalina.io>
- <20240820163512.1096301-12-qyousef@layalina.io>
+	s=arc-20240116; t=1726609454; c=relaxed/simple;
+	bh=7N1BDLZ2Hw2Ih69xLhnLRuzIjeIwOEMnsNj3wLctgS4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PzkvDcK3l8Ci+PJ0ikJ4sRcqnk0NkSVxu6axmpVPsXAi4/TU3ItXLTmTlhkMsPrFNISaCuJZE9GlhNXUp7v2VAoJrdJG7qo3s0E+AWz73fWjQ8cPmn57QAiVKMZ8KgJt1YwNqYjuOsfPMxnBfmk3ofjm+4yc0vPloOOahLVnZyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBW9MWfz; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a9af813f6cso582825285a.3;
+        Tue, 17 Sep 2024 14:44:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726609452; x=1727214252; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=LLm6Tz/RxDmOJ4MExUq9RFzyS6STGghL0Dwapo5TV3U=;
+        b=DBW9MWfzAKNOJJWknIQEHd4t9l67qv7Njjb/MXZDkWdLG4gMcv7nIER9wFzZ/TfdUo
+         jq9hK8unhRTOi2G9XDDrz5dV7mhcfwjIlmeqqm44Ya7esT2K3nN+n3lJgXAUAW2HQcvI
+         xK7bzfE2FTPnEZzbXIz0xgVfjQl60akYr7893WZPgfUZ8cAGUMfF7qpeWjef6AujTQQr
+         qPq1ibc6Toj0+QGZQN9OSfKlqBTmhswGk/UWMHRs7ssnCSDMSm205KdeeWgn3KgUOffC
+         wYFbGDRzQBme0o9UD+z8YyVNWYhSPRKQG1YHNZvrfa3wDyl3gf4Zbx120odv61SL45rw
+         3AtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726609452; x=1727214252;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LLm6Tz/RxDmOJ4MExUq9RFzyS6STGghL0Dwapo5TV3U=;
+        b=KtyzEkMXZZrD77Y6w9LhM5a6gmqXJExxIeoUAC/KEHBSN6hzCE4tmYOrnHBFGQe1cp
+         F9/fg8qHBBCeV8tso4XCfx+1uto4vRGslfIldtjf+/wPPa+HOWZWN8VYw1t4m/VWX/iM
+         XU++MRQRMGkHkutd1GmIdS/2mGN2kP06NB6nst/LufeReG4C1MZRzxUMlNhhc1TEQAjK
+         j1ihwtQm0sFXaj8V5O7SK0SamQiQVNFuDSZja2C0sVAKQWMab315R6AClfjIcmg2SZ46
+         V9hFsdMNala60t6NuXiuTS6BD7l6prAS3xYgxyw6dH5uhtyDi3ft71D8+/gsTFq33uTa
+         kv0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOXGIV5e3X+CWfMaembm6qoYIYIOgCzcT7Ne/CE6VPOlqOhb3t+kKcHRWsj3jrLHBTBJCb7h7Y@vger.kernel.org, AJvYcCVCt8kBKReV7B2SRCPVZDhY/Q7yNpsoUqYQtTm/NpplQVjZDjcJXrIqwh73N83z2wMXTIlBSjxSxbDEwuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUQtgIZIIIYcAXMJeULjzhwvfOPsJl0mmrp3xOItAiSJao+OCh
+	ywqRdWFsFGCUiUU0CvYYoJwhb+c9NX9rA/Nyr1auSR8f4SXbOjln
+X-Google-Smtp-Source: AGHT+IFP7+sZPljq3WwKBZcfXMXk5ibtuVW5Motu3Etbp1q4vsLGRlUe0SeAXmJS2Op32l8v/PQHuA==
+X-Received: by 2002:a05:620a:46aa:b0:7a1:c40d:7573 with SMTP id af79cd13be357-7a9e5fa1d85mr3062532785a.49.1726609451611;
+        Tue, 17 Sep 2024 14:44:11 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ab3eb585d1sm400560485a.85.2024.09.17.14.44.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 14:44:10 -0700 (PDT)
+Message-ID: <531351b9-7972-4936-8c55-b44aec0cfe58@gmail.com>
+Date: Tue, 17 Sep 2024 14:44:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820163512.1096301-12-qyousef@layalina.io>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mozilla Thunderbird
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 6.6 00/91] 6.6.52-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240916114224.509743970@linuxfoundation.org>
+Content-Language: en-US
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20240916114224.509743970@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 20, 2024 at 05:35:07PM +0100, Qais Yousef wrote:
-> Bursty tasks are hard to predict. To use resources efficiently, the
-> system would like to be exact as much as possible. But this poses
-> a challenge for these bursty tasks that need to get access to more
-> resources quickly.
+On 9/16/24 04:43, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.52 release.
+> There are 91 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> The new SCHED_QOS_RAMPUP_MULTIPLIER allows userspace to do that. As the
-> name implies, it only helps them to transition to a higher performance
-> state when they get _busier_. That is perfectly periodic tasks by
-> definition are not going through a transition and will run at a constant
-> performance level. It is the tasks that need to transition from one
-> periodic state to another periodic state that is at a higher level that
-> this rampup_multiplier will help with. It also slows down the ewma decay
-> of util_est which should help those bursty tasks to keep their faster
-> rampup.
+> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
+> Anything received after that time might be too late.
 > 
-> This should work complimentary with uclamp. uclamp tells the system
-> about min and max perf requirements which can be applied immediately.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.52-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
-> rampup_multiplier is about reactiveness of the task to change.
-> Specifically to a change for a higher performance level. The task might
-> necessary need to have a min perf requirements, but it can have sudden
-> burst of changes that require higher perf level and it needs the system
-> to provide this faster.
+> thanks,
 > 
-> TODO: update the sched_qos docs
-> 
-> Signed-off-by: Qais Yousef <qyousef@layalina.io>
-> ---
->  include/linux/sched.h      |  7 ++++
->  include/uapi/linux/sched.h |  2 ++
->  kernel/sched/core.c        | 66 ++++++++++++++++++++++++++++++++++++++
->  kernel/sched/fair.c        |  6 ++--
->  kernel/sched/syscalls.c    | 38 ++++++++++++++++++++--
->  5 files changed, 115 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 2e8c5a9ffa76..a30ee43a25fb 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -404,6 +404,11 @@ struct sched_info {
->  #endif /* CONFIG_SCHED_INFO */
->  };
->  
-> +struct sched_qos {
-> +	DECLARE_BITMAP(user_defined, SCHED_QOS_MAX);
-> +	unsigned int rampup_multiplier;
-> +};
-> +
->  /*
->   * Integer metrics need fixed point arithmetic, e.g., sched/fair
->   * has a few: load, load_avg, util_avg, freq, and capacity.
-> @@ -882,6 +887,8 @@ struct task_struct {
->  
->  	struct sched_info		sched_info;
->  
-> +	struct sched_qos		sched_qos;
-> +
->  	struct list_head		tasks;
->  #ifdef CONFIG_SMP
->  	struct plist_node		pushable_tasks;
-> diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
-> index 67ef99f64ddc..0baba91ba5b8 100644
-> --- a/include/uapi/linux/sched.h
-> +++ b/include/uapi/linux/sched.h
-> @@ -104,6 +104,8 @@ struct clone_args {
->  };
->  
->  enum sched_qos_type {
-> +	SCHED_QOS_RAMPUP_MULTIPLIER,
-> +	SCHED_QOS_MAX,
->  };
->  #endif
->  
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index c91e6a62c7ab..54faa845cb29 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -152,6 +152,8 @@ __read_mostly int sysctl_resched_latency_warn_once = 1;
->   */
->  const_debug unsigned int sysctl_sched_nr_migrate = SCHED_NR_MIGRATE_BREAK;
->  
-> +unsigned int sysctl_sched_qos_default_rampup_multiplier	= 1;
-> +
->  __read_mostly int scheduler_running;
->  
->  #ifdef CONFIG_SCHED_CORE
-> @@ -4488,6 +4490,47 @@ static int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
->  #endif /* CONFIG_SCHEDSTATS */
->  
->  #ifdef CONFIG_SYSCTL
-> +static void sched_qos_sync_sysctl(void)
-> +{
-> +	struct task_struct *g, *p;
-> +
-> +	guard(rcu)();
-> +	for_each_process_thread(g, p) {
-> +		struct rq_flags rf;
-> +		struct rq *rq;
-> +
-> +		rq = task_rq_lock(p, &rf);
-> +		if (!test_bit(SCHED_QOS_RAMPUP_MULTIPLIER, p->sched_qos.user_defined))
-> +			p->sched_qos.rampup_multiplier = sysctl_sched_qos_default_rampup_multiplier;
-> +		task_rq_unlock(rq, p, &rf);
-> +	}
-> +}
-> +
-> +static int sysctl_sched_qos_handler(struct ctl_table *table, int write,
-> +				    void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	unsigned int old_rampup_mult;
-> +	int result;
-> +
-> +	old_rampup_mult = sysctl_sched_qos_default_rampup_multiplier;
-> +
-> +	result = proc_dointvec(table, write, buffer, lenp, ppos);
-> +	if (result)
-> +		goto undo;
-> +	if (!write)
-> +		return 0;
-> +
-> +	if (old_rampup_mult != sysctl_sched_qos_default_rampup_multiplier) {
-> +		sched_qos_sync_sysctl();
-> +	}
-> +
-> +	return 0;
-> +
-> +undo:
-> +	sysctl_sched_qos_default_rampup_multiplier = old_rampup_mult;
-> +	return result;
-> +}
-> +
->  static struct ctl_table sched_core_sysctls[] = {
->  #ifdef CONFIG_SCHEDSTATS
->  	{
-> @@ -4534,6 +4577,13 @@ static struct ctl_table sched_core_sysctls[] = {
->  		.extra2		= SYSCTL_FOUR,
->  	},
->  #endif /* CONFIG_NUMA_BALANCING */
-> +	{
-> +		.procname	= "sched_qos_default_rampup_multiplier",
-> +		.data           = &sysctl_sched_qos_default_rampup_multiplier,
-> +		.maxlen         = sizeof(unsigned int),
+> greg k-h
 
-IIUC, user space needs to select a value between 0 and (2^32 - 1). Does
-this mean that it will need fine-tuning for each product and application?
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Could there be some translation to a fewer number of QoS levels that are
-qualitatively?
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-Also, I think about Intel processors. They work with hardware-controlled
-performance scaling. The proposed interface would help us to communicate
-per-task multipliers to hardware, but they would be used as hints to
-hardware and not acted upon by the kernel to scale frequency.
 
