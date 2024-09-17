@@ -1,148 +1,93 @@
-Return-Path: <linux-kernel+bounces-331918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E6B97B2FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:30:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C8397B2FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA84283B8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:30:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B241F23224
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3D417C990;
-	Tue, 17 Sep 2024 16:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBF0186E51;
+	Tue, 17 Sep 2024 16:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MyAv6M6z"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgyNJbBc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB5718757D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C2017D377
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726590622; cv=none; b=Rf9JVX64ouPLf8vOBW2rKoMBBuIAQPj8xo0+NvvveJ+RITYdpFFIa4cnnRDRcbxnRkjir7M+yAak+Bsu+mrJWyzakvX/o8PVOatv6calNmTPWLgT22dba6KWIdF1MNztR3qnBcnsl8oX8TJj3hGRIMD0Kgv6RB8AbtGULV08iqU=
+	t=1726590632; cv=none; b=C4eR/UZNVmHoKc5XbasVaBkL2taIwFzAy8cehFUyi4p5tAMQmsYDK/y8iM6rygu4BOdRxNLyyBK5V3fIkjSTJNP/WajkHBM09lsXP92d0JXDyFeKEqHlNDjpOTVfaYREjg+r+KuejFm3pW6TWT17kEgqCpvZmBxpxXVakxxmulA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726590622; c=relaxed/simple;
-	bh=+AYSP8Iks0rfQFv9IxI04uwjRGftLRsEP71GVxeE45E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XYBZF3Evh1WobK2Wn4hUydINK0nvXWH28dzIV2tmPLOSMfoiwPwWOiayiq5FTzipEL4JFfP4nDpZ5t2Ze+sVJzQthypB9tmUQCoQf/VUoRa4geLJFCNx8nBSapCjGM+1gyi1MBWJ4qi8rIK0AwKIpFvdlMovuu+gSl6nemM3yf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MyAv6M6z; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <df22ea76-f123-4d27-a6ad-e217259a13ba@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726590613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/5Ya9iuPd9IkAM5QyBlkxjJ8I+vb80CLXkQAfeniDks=;
-	b=MyAv6M6zCA97kWp6nDjqcuGq8WknhSt5x9diJk6Pdua4KmJwmk+dcpeOAPWR8kZd/hSlBa
-	Ac52o2G7XaP2wOEKkUEQzBJ6KYlcrxBVxCXXzRjMXFYMTNvEexXt6OnVVTnuej7x03QldW
-	GCsWoD0Ob9wlZFJdLFA8pT1plzi3/JE=
-Date: Wed, 18 Sep 2024 00:29:35 +0800
+	s=arc-20240116; t=1726590632; c=relaxed/simple;
+	bh=Qp1EeX8xGUd5kQiQXNESKgJ0EV0UH4Y/iy7zxMn1Lvo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tgwsNCqBkQ4NGxSgRHdfBp1A7GS8ucM3kJ7YrVuINd6xNEvfQWr7YLkcMkWa776VfiHtalwITCgmdr3harjU/O8+qgVxhw00OyDjfF8rgnoKKKg87bRa9bjuFG0+f0SpvIPhuYaTdfj7bf1MRflWLOllXmkoa1ZJpFIeZb2MWLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgyNJbBc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 161B3C4CEC5;
+	Tue, 17 Sep 2024 16:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726590630;
+	bh=Qp1EeX8xGUd5kQiQXNESKgJ0EV0UH4Y/iy7zxMn1Lvo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=TgyNJbBcw2xzv5RloeoYcrEkX6Whx/GkckMJuCATs3ROis2LX0WZ81THmXk13YR7T
+	 whRNNBfxHCq6MLvpgl/5cUBsWCf/NPcPbQQcE90hj521BJLZNqXpmmyzz8xb7sGo4I
+	 zBRkhZpdB/ZTIpivUhNz4aR/ErqdSUpo+xH0xnDea8KeZzz+U5Tqjc8XN60AOxfrfB
+	 KwOBoV6b6pKrGVP1bx+J4OEIEALrVfLUSHVzCe97LUeiZ0lVQ4ROn6Z3tG6tIPhzyW
+	 1fPEoIU+a3gamopndP1zJEM/eZ1VPsq5RM1QhBq3554uXUwwLUJwHurOjl54XqPjwH
+	 E8yoj1Klm5K+Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBBAE3809A80;
+	Tue, 17 Sep 2024 16:30:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] nullb: Adjust device size calculation in null_alloc_dev()
-To: Damien Le Moal <dlemoal@kernel.org>, Aleksandr Mishin
- <amishin@t-argos.ru>, Shaohua Li <shli@fb.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
- Johannes Thumshirn <johannes.thumshirn@wdc.com>,
- Chaitanya Kulkarni <kch@nvidia.com>,
- Chengming Zhou <zhouchengming@bytedance.com>,
- John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai3@huawei.com>,
- Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20240917070729.15752-1-amishin@t-argos.ru>
- <c50f7ca2-8f3d-4b7e-bd50-1957e4a09b7b@kernel.org>
- <e1aad556-eab1-4ac4-aec3-1706e302cfb1@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <e1aad556-eab1-4ac4-aec3-1706e302cfb1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH] riscv: Make riscv_isa_vendor_ext_andes array static
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <172659063180.214459.6745282493523135362.git-patchwork-notify@kernel.org>
+Date: Tue, 17 Sep 2024 16:30:31 +0000
+References: <20240807-make_andes_static-v1-1-b64bf4c3d941@rivosinc.com>
+In-Reply-To: <20240807-make_andes_static-v1-1-b64bf4c3d941@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+ lkp@intel.com
 
-在 2024/9/17 15:24, Damien Le Moal 写道:
-> On 2024/09/17 16:21, Damien Le Moal wrote:
->> On 2024/09/17 16:07, Aleksandr Mishin wrote:
->>> In null_alloc_dev() device size is a subject to overflow because 'g_gb'
->>> (which is module parameter, may have any value and is not validated
->>> anywhere) is not cast to a larger data type before performing arithmetic.
->>>
->>> Cast 'g_gb' to unsigned long to prevent overflow.
->>>
->>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->>>
->>> Fixes: 2984c8684f96 ("nullb: factor disk parameters")
->>> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
->>> ---
->>>   drivers/block/null_blk/main.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
->>> index 2f0431e42c49..5edbf9c0aceb 100644
->>> --- a/drivers/block/null_blk/main.c
->>> +++ b/drivers/block/null_blk/main.c
->>> @@ -762,7 +762,7 @@ static struct nullb_device *null_alloc_dev(void)
->>>   		return NULL;
->>>   	}
->>>   
->>> -	dev->size = g_gb * 1024;
->>> +	dev->size = (unsigned long)g_gb * 1024;
->>
->> This still does not prevent overflows... So what about doing a proper check ?
+Hello:
+
+This patch was applied to riscv/linux.git (for-next)
+by Palmer Dabbelt <palmer@rivosinc.com>:
+
+On Wed, 07 Aug 2024 17:27:42 -0700 you wrote:
+> Since this array is only used in this file, it should be static.
 > 
-> This still does not prevent overflows on 32-bits architectures.
-
-Because "unsigned long" on 32-bits architectures is 32 bit, so solution 
-1 is to change the type "unsigned long" to u64, and the diff is as below:
-
-diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index 2f0431e42c49..27a453b3094d 100644
---- a/drivers/block/null_blk/main.c
-+++ b/drivers/block/null_blk/main.c
-@@ -762,7 +762,7 @@ static struct nullb_device *null_alloc_dev(void)
-                 return NULL;
-         }
-
--       dev->size = g_gb * 1024;
-+       dev->size = (u64)g_gb * 1024;
-         dev->completion_nsec = g_completion_nsec;
-         dev->submit_queues = g_submit_queues;
-         dev->prev_submit_queues = g_submit_queues;
-diff --git a/drivers/block/null_blk/null_blk.h 
-b/drivers/block/null_blk/null_blk.h
-index a7bb32f73ec3..e30c011909ad 100644
---- a/drivers/block/null_blk/null_blk.h
-+++ b/drivers/block/null_blk/null_blk.h
-@@ -74,7 +74,7 @@ struct nullb_device {
-         bool need_zone_res_mgmt;
-         spinlock_t zone_res_lock;
-
--       unsigned long size; /* device size in MB */
-+       u64 size; /* device size in MB */
-         unsigned long completion_nsec; /* time in ns to complete a 
-request */
-         unsigned long cache_size; /* disk cache size in MB */
-         unsigned long zone_size; /* zone size in MB if device is zoned */
-
-I just built it and did not make tests.
-
-Zhu Yanjun
-
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202407241530.ej5SVgX1-lkp@intel.com/
+> ---
+>  arch/riscv/kernel/vendor_extensions/andes.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->>
->>>   	dev->completion_nsec = g_completion_nsec;
->>>   	dev->submit_queues = g_submit_queues;
->>>   	dev->prev_submit_queues = g_submit_queues;
->>
-> 
+> [...]
+
+Here is the summary with links:
+  - riscv: Make riscv_isa_vendor_ext_andes array static
+    https://git.kernel.org/riscv/c/594ffcf4efe5
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
