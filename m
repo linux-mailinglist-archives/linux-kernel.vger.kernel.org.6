@@ -1,153 +1,231 @@
-Return-Path: <linux-kernel+bounces-331735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C5897B0AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:18:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851D797B0B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E04D31F21E84
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:18:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95181C21E9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0765176233;
-	Tue, 17 Sep 2024 13:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8466A170A0B;
+	Tue, 17 Sep 2024 13:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KYE2Ul8e"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="rIZ0pqYD"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2FE27442
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80E71EB2E
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726579115; cv=none; b=EZrrxhq/WuApr+ZUQhlG1jFydJHyG6s0m6ZzyJPRXJPXAMg2eNRAddo8cIRsxips0Lk8s+0pyyBXOBMyxCp5piMk/zqeF7xnkHQRduiAja1u9ubegZ1GHKCK35uB2O3Alva5sWmys5DRgLYdXMxeiXwtIvjujCrFyo8IxDJfBzs=
+	t=1726579255; cv=none; b=iokwW71RqsWuhebgeHrzpcQmT3Ekl+vnROQwpAMhWNcRaFKL+NXOvdtUKhDyRwqT0DEmksn2MMQ+y/8h3HYX47aKP/eU6PMZSl5j4gHHQDPxkdrrHqbfzIHEppX/ZKmWkLyG4G7C1btfduiGAybI+YUBI8cyTpNJWs70ZhFS+zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726579115; c=relaxed/simple;
-	bh=PLZDwvQindRRAHeB5t+ZnYOnq5gFNu+v/Oyb6XAl6nc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cGA+bwHT0B+eJpMxw/sS2okY2X2ZJdQloU0ep2fXSBrvaq5Hi/4N9XW+VbJLQoKHZM0Y0MfXa5ZqqQhl9+dfs56gSXW/bt4Sh19G1R5MEqeB2QP92m1+RvzL8ae1NRElfroiZ63NS4UlURP1zM94J0uPSQnDZgjG7Pm5zvlbZOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KYE2Ul8e; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6b8f13f28fbso39514807b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:18:33 -0700 (PDT)
+	s=arc-20240116; t=1726579255; c=relaxed/simple;
+	bh=Fpm0Y4e07Hw3gcfa0JjfLJNgQcphzoqg/BK3qENdfrY=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=Mqmejsj9nXrqT5sN9IDkTqv2ap0dfP//QOve9DdzGG4FP1bOY9n1Uy6QAzgdLojmXNjwQtosSUb0tztoKb7czNZw4RBtUVl28YvpT/YzmY5+MToBbaTuQLe+C5hvLpjW/M1AgEfQkGHp5n5ms8esiCaEG8WaBzg/eNCEAqfB/As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=rIZ0pqYD; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cbaf9bfdbso36721595e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:20:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726579112; x=1727183912; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0ik0KS2s0Nmk5lT8nEB/dCiWK+hK/hgiv+ifmVBdzG4=;
-        b=KYE2Ul8e4vMrxhhwwfxSrDQGSZRPxfJzON9CW5ME+DtCdFNk8w+IRmPsuEZrp3Urxo
-         fNSNJtxxsnXcbdubeZo9/He3dd+Wmiud34gwzCGhiZLeuly56iea0YkajSjHCLxLUe6x
-         labaf8UaY0EFPvBEMLK6PFpyymc+Q0EJzSFR0sgeylNbnTc3gfz2Ep13L+nd3B79jaUW
-         gpW7Cxkw5HQmVDD7C/vFM+juSNAtqOpbobiBpxn5ec1S9tqYOGxKil3eiRgGHZ/BjZAG
-         eTKM8RdUW3SSdeDwvx+evkZb6hB9fJ+LS0RRtf90SziLHDEgJ7meDivUCbVum6VFoizb
-         27dQ==
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1726579252; x=1727184052; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J2dLER4hFIewaSVuZKAuDv/8Id6s8izBkR6u+XBoB78=;
+        b=rIZ0pqYDu/GtThmFFKcAxUv40XJQtk+rTyLESYXkOdRlbBh4XYtNXp3VHzjlHPalHR
+         pDm5ZkG8emIYwi8o2X5qohrfq6AukDGDMJfaYT/87LErAGZAV4GIf0ukYo/uOgCP1WXs
+         ofXt+UZVE/HP/f4+Kw5fpwkQgcN6nHoJrVNuA3sycK3IWEsMTcsungHsAvmLz7m4otnV
+         3hAHb36G+Bs2+4NI5Vj/++di2oymykvMfacE5aEb2AhzGXfN/S4MyTq7zUW/u9vJohGd
+         DUmlJNS2g3LRllXcmSmhtB1pnNPRiMkieg5agVzyWNGelMKF9CHSuqQpxddsChDCvjfV
+         0DeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726579112; x=1727183912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0ik0KS2s0Nmk5lT8nEB/dCiWK+hK/hgiv+ifmVBdzG4=;
-        b=PPgyXB4mJPvMSV0xbQ/H1sQUMxpjfHnjxhfLficTCTHrHeAHsXdnFVW1VyQzy7pj2W
-         XxHCDICmUJgT8PgmsKmAGCQh05E7xtZZU2fe0E8/i0jCY/nUKz2STnGEzAn2KyPaxn9w
-         v4kmXXOmj+XNGJONT+vDruUro6+KPsBkyMXUCyHUnbyOTDeCSf79z7Aujt62yffWaWkd
-         6wDmG9Mu6MxBvJGK+VFcipd5ThV+0/Jfanjv9W0HXH8jfvPH9elm5OrGDjarKW0+kmJD
-         h/hc9UHZcxJB/N+9737b9yE/2AyPDtHBL4vfBMFuOIUxbx0GA9pfYI9pvKnZ8zM4MPB+
-         MRUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVimAxJAaDPqOJ3ht62LBXeU02IjtNgJAupWRSFGJky7UU7h1cLzakOXqSUbGdfRJV5AAo0hjqEk1/J1gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX69p1eaj/PUHmN4OnnoaOh9XEMdynnn8RPafsxdw1juAtzYo2
-	v6TlLfHwxCTnLCTjV8pF+FrGkoHSjBGPE8uLaDjO6RvVm92N95Xz0qwzcRKgFEOaa10YuRJunrG
-	2pjHIaxttcojEvF8bbSrnJ/oMhNh0Pci0fJQc
-X-Google-Smtp-Source: AGHT+IFzy8A2VzLN97EIN8C84hYkL689RhOu4IvKHAq/2Q9MzBc7XO8oVmBIIV4kMcThVv4zW0yrYqT2m+du+VHod0g=
-X-Received: by 2002:a05:690c:6713:b0:6dd:dc67:a03f with SMTP id
- 00721157ae682-6dddc67a3b0mr40348017b3.16.1726579112435; Tue, 17 Sep 2024
- 06:18:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726579252; x=1727184052;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J2dLER4hFIewaSVuZKAuDv/8Id6s8izBkR6u+XBoB78=;
+        b=Qkfogk4U+sAi71l0ESLZtAUPLkFXDNT7J338hcW5CRSHH0iMSMF8xaRGXiPqKwJvqd
+         Oz0lIiaN35cWEKZo7AEFMHwCJ2GSTTwcgbIKbbOni9djnrBk+QaODHPmT8ZHhe50ipBY
+         h2HNzuHGNAw8V8r3wnwjk6ZxfX+bUT7vf7wph/uvMAohx2ojfF63LamERtHCnGZVPT4Q
+         k1EVcMB8BG7+LVEs/OhufzH7ApeFzl5g/DyIR+RFiD+lhUX4tL/GbSG02Nxv9RiHv5id
+         41TdBBiivBxxisD4pnUcKk4bEg3Jj0J1cplyp8ejw3vhbphgyw5gvg1aQZHxD1LwCzUe
+         QiVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZkVnRNX0jlhw0awQqBrl39t/FX6w5Cn2agIe+I1LMBLKYMiUAX4hCXgezt4h8Ng3KvOOiXE1IPfs05ug=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx3DoLajukWW5zUKYVr5p9FRVEDCGT/RL6dMpVVRJuSLmrGudj
+	abCzkm4z5eJcpscnSHV7E+1E0pEhvSufn5UaN3Vt0gRpmFhzt+ni+gNPbUbkhZs=
+X-Google-Smtp-Source: AGHT+IEkJo5p9GCz0LoYuqEsugBea6QpohVZTav3exdRbgQ8e5OLK2ugx0SXZ25Eyd1uMg7S70RlkA==
+X-Received: by 2002:a05:600c:510a:b0:42c:b58d:98ad with SMTP id 5b1f17b1804b1-42d9081b3a2mr101242645e9.14.1726579251797;
+        Tue, 17 Sep 2024 06:20:51 -0700 (PDT)
+Received: from localhost ([213.208.157.38])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da22d8b22sm102624115e9.12.2024.09.17.06.20.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 06:20:51 -0700 (PDT)
+Date: Tue, 17 Sep 2024 06:20:51 -0700 (PDT)
+X-Google-Original-Date: Tue, 17 Sep 2024 06:20:20 PDT (-0700)
+Subject:     Re: [PATCH/RFC] riscv: defconfig: Disable RZ/Five peripheral support
+In-Reply-To: <CA+V-a8tKdwvDxYqxyf9JwDa4ZPz41=+ecJ5cf7ZO-G_PAk26-Q@mail.gmail.com>
+CC: geert+renesas@glider.be, Paul Walmsley <paul.walmsley@sifive.com>,
+  aou@eecs.berkeley.edu, prabhakar.mahadev-lad.rj@bp.renesas.com,
+  Conor Dooley <conor.dooley@microchip.com>, linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: prabhakar.csengg@gmail.com
+Message-ID: <mhng-b838be82-513e-4403-8746-d6db428bbb1f@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-5-88484f7a3dcf@google.com> <202409151325.09E4F3C2F@keescook>
- <CAH5fLghA0tLTwCDBRrm+GAEWhhY7Y8qLtpj0wwcvTK_ZRZVgBw@mail.gmail.com> <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com>
-In-Reply-To: <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 17 Sep 2024 09:18:21 -0400
-Message-ID: <CAHC9VhQX0k68fwWF08eMCiMsewRRSqN3q=QwirV_0XjoJ4wo5A@mail.gmail.com>
-Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, Kees Cook <kees@kernel.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 16, 2024 at 11:40=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
-> On 9/15/2024 2:07 PM, Alice Ryhl wrote:
-> > On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> wr=
-ote:
-> >> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
-> >>> Add an abstraction for viewing the string representation of a securit=
-y
-> >>> context.
-> >> Hm, this may collide with "LSM: Move away from secids" is going to hap=
-pen.
-> >> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-ca.=
-com/
-> >>
-> >> This series is not yet landed, but in the future, the API changes shou=
-ld
-> >> be something like this, though the "lsmblob" name is likely to change =
-to
-> >> "lsmprop"?
-> >> security_cred_getsecid()   -> security_cred_getlsmblob()
-> >> security_secid_to_secctx() -> security_lsmblob_to_secctx()
+On Thu, 01 Aug 2024 00:32:43 PDT (-0700), prabhakar.csengg@gmail.com wrote:
+> Hi Geert,
 >
-> The referenced patch set does not change security_cred_getsecid()
-> nor remove security_secid_to_secctx(). There remain networking interfaces
-> that are unlikely to ever be allowed to move away from secids. It will
-> be necessary to either retain some of the secid interfaces or introduce
-> scaffolding around the lsm_prop structure ...
+> On Tue, Jul 30, 2024 at 4:37 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>>
+>> There is not much point in keeping support for RZ/Five peripherals
+>> enabled, as the RZ/Five platform option (ARCH_R9A07G043) is gated behind
+>> NONPORTABLE.  Hence drop all config options that enable built-in or
+>> modular support for peripherals found on RZ/Five SoCs.
+>>
+>> Disable USB_XHCI_RCAR explicitly, as its value defaults to the value of
+>> ARCH_RENESAS, which is still enabled.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> Questions:
+>>   1. Perhaps the intention is to keep all RZ/Five peripheral support
+>>      enabled, so RZ/Five users can start from the defconfig, and
+>>      "just"[1] enable NONPORTABLE and ARCH_R9A07G043?
+>>
+>>      [1] Nope, need to disable RISCV_ISA_ZICBOM and ERRATA_THEAD_CMO
+>>          (and whatever else in the future?), too.
+>>
+>>   2. Perhaps CONFIG_ARCH_RENESAS=y should be dropped, too?
+>>      In addition to USB_XHCI_RCAR, that would get rid of SOC_BUS,
+>>      PINCTRL_RENESAS, CLK_RENESAS, and SOC_RENESAS.
+>>
+> I think it does make sense if we drop the above configs too as anyway
+> users will have to select the configs manually to get a bootable image
+> for RZ/Five.
 
-First, thanks for CC'ing the LSM list Alice, I appreciate it.
+Ya, I agree.  If we end up with another RZ/Five or somone gets rid of 
+that DMA pool stuff that's forcing the NONPORTABLE then we can always 
+re-add it.
 
-As Kees and Casey already pointed out, there are relevant LSM changes
-that are nearing inclusion which might be relevant to the Rust
-abstractions.  I don't think there is going to be anything too
-painful, but I must admit that my Rust knowledge has sadly not
-progressed much beyond the most basic "hello world" example.
+I picked this one up and send the ARCH_RENESAS removal.
 
-This brings up the point I really want to discuss: what portions of
-the LSM framework are currently accessible to Rust, and what do we
-(the LSM devs) need to do to preserve the Rust LSM interfaces when the
-LSM framework is modified?  While the LSM framework does not change
-often, we do modify both the LSM hooks (the security_XXX() calls that
-serve as the LSM interface/API) and the LSM callbacks (the individual
-LSM hook implementations) on occasion as they are intentionally not
-part of any sort of stable API.  In a perfect world we/I would have a
-good enough understanding of the Rust kernel abstractions and would
-submit patches to update the Rust code as appropriate, but that isn't
-the current situation and I want to make sure the LSM framework and
-the Rust interfaces don't fall out of sync.  Do you watch the LSM list
-or linux-next for patches that could affect the Rust abstractions?  Is
-there something else you would recommend?
-
---=20
-paul-moore.com
+>
+>> ---
+>>  arch/riscv/configs/defconfig | 12 +-----------
+>>  1 file changed, 1 insertion(+), 11 deletions(-)
+>>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Cheers,
+> Prabhakar
+>
+>> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+>> index 0d678325444fccdc..b51ef6cd1e3986ed 100644
+>> --- a/arch/riscv/configs/defconfig
+>> +++ b/arch/riscv/configs/defconfig
+>> @@ -137,12 +137,10 @@ CONFIG_VIRTIO_NET=y
+>>  CONFIG_MACB=y
+>>  CONFIG_E1000E=y
+>>  CONFIG_R8169=y
+>> -CONFIG_RAVB=y
+>>  CONFIG_STMMAC_ETH=m
+>>  CONFIG_MICREL_PHY=y
+>>  CONFIG_MICROSEMI_PHY=y
+>>  CONFIG_MOTORCOMM_PHY=y
+>> -CONFIG_CAN_RCAR_CANFD=m
+>>  CONFIG_INPUT_MOUSEDEV=y
+>>  CONFIG_KEYBOARD_SUN4I_LRADC=m
+>>  CONFIG_SERIAL_8250=y
+>> @@ -150,7 +148,6 @@ CONFIG_SERIAL_8250_CONSOLE=y
+>>  CONFIG_SERIAL_8250_DW=y
+>>  CONFIG_SERIAL_OF_PLATFORM=y
+>>  CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
+>> -CONFIG_SERIAL_SH_SCI=y
+>>  CONFIG_VIRTIO_CONSOLE=y
+>>  CONFIG_HW_RANDOM=y
+>>  CONFIG_HW_RANDOM_VIRTIO=y
+>> @@ -159,11 +156,9 @@ CONFIG_I2C=y
+>>  CONFIG_I2C_CHARDEV=m
+>>  CONFIG_I2C_DESIGNWARE_PLATFORM=y
+>>  CONFIG_I2C_MV64XXX=m
+>> -CONFIG_I2C_RIIC=y
+>>  CONFIG_SPI=y
+>>  CONFIG_SPI_CADENCE_QUADSPI=m
+>>  CONFIG_SPI_PL022=m
+>> -CONFIG_SPI_RSPI=m
+>>  CONFIG_SPI_SIFIVE=y
+>>  CONFIG_SPI_SUN6I=y
+>>  # CONFIG_PTP_1588_CLOCK is not set
+>> @@ -172,7 +167,6 @@ CONFIG_POWER_RESET_GPIO_RESTART=y
+>>  CONFIG_SENSORS_SFCTEMP=m
+>>  CONFIG_CPU_THERMAL=y
+>>  CONFIG_DEVFREQ_THERMAL=y
+>> -CONFIG_RZG2L_THERMAL=y
+>>  CONFIG_WATCHDOG=y
+>>  CONFIG_SUNXI_WATCHDOG=y
+>>  CONFIG_MFD_AXP20X_I2C=y
+>> @@ -201,11 +195,11 @@ CONFIG_USB=y
+>>  CONFIG_USB_OTG=y
+>>  CONFIG_USB_XHCI_HCD=y
+>>  CONFIG_USB_XHCI_PLATFORM=y
+>> +# CONFIG_USB_XHCI_RCAR is not set
+>>  CONFIG_USB_EHCI_HCD=y
+>>  CONFIG_USB_EHCI_HCD_PLATFORM=y
+>>  CONFIG_USB_OHCI_HCD=y
+>>  CONFIG_USB_OHCI_HCD_PLATFORM=y
+>> -CONFIG_USB_RENESAS_USBHS=m
+>>  CONFIG_USB_STORAGE=y
+>>  CONFIG_USB_UAS=y
+>>  CONFIG_USB_CDNS_SUPPORT=m
+>> @@ -217,7 +211,6 @@ CONFIG_USB_MUSB_HDRC=m
+>>  CONFIG_USB_MUSB_SUNXI=m
+>>  CONFIG_NOP_USB_XCEIV=m
+>>  CONFIG_USB_GADGET=y
+>> -CONFIG_USB_RENESAS_USBHS_UDC=m
+>>  CONFIG_USB_CONFIGFS=m
+>>  CONFIG_USB_CONFIGFS_SERIAL=y
+>>  CONFIG_USB_CONFIGFS_ACM=y
+>> @@ -235,7 +228,6 @@ CONFIG_MMC_SDHCI_PLTFM=y
+>>  CONFIG_MMC_SDHCI_OF_DWCMSHC=y
+>>  CONFIG_MMC_SDHCI_CADENCE=y
+>>  CONFIG_MMC_SPI=y
+>> -CONFIG_MMC_SDHI=y
+>>  CONFIG_MMC_DW=y
+>>  CONFIG_MMC_DW_STARFIVE=y
+>>  CONFIG_MMC_SUNXI=y
+>> @@ -250,7 +242,6 @@ CONFIG_VIRTIO_INPUT=y
+>>  CONFIG_VIRTIO_MMIO=y
+>>  CONFIG_CLK_SOPHGO_CV1800=y
+>>  CONFIG_SUN8I_DE2_CCU=m
+>> -CONFIG_RENESAS_OSTM=y
+>>  CONFIG_SUN50I_IOMMU=y
+>>  CONFIG_RPMSG_CHAR=y
+>>  CONFIG_RPMSG_CTRL=y
+>> @@ -258,7 +249,6 @@ CONFIG_RPMSG_VIRTIO=y
+>>  CONFIG_PM_DEVFREQ=y
+>>  CONFIG_IIO=y
+>>  CONFIG_PHY_SUN4I_USB=m
+>> -CONFIG_PHY_RCAR_GEN3_USB2=y
+>>  CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
+>>  CONFIG_PHY_STARFIVE_JH7110_PCIE=m
+>>  CONFIG_PHY_STARFIVE_JH7110_USB=m
+>> --
+>> 2.34.1
+>>
+>>
 
