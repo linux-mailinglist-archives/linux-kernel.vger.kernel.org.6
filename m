@@ -1,142 +1,116 @@
-Return-Path: <linux-kernel+bounces-331706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A68097B051
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:45:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16FD97B054
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2FF5B2368E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F14BF1C21875
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267D61741C9;
-	Tue, 17 Sep 2024 12:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEAB171E76;
+	Tue, 17 Sep 2024 12:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWpdbn+8"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lbsZKirE"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36099171E5F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 12:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839FB167D80;
+	Tue, 17 Sep 2024 12:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726577099; cv=none; b=poa5PgKWhFXEbe+ua9Rk8OynKPUmHxcZBdW7o2lP7PsX1/UH/ib71EECwtuwekQWh7s2XGGyx88w6+xmp2oDmQGxFwr8ZXpVw7DjBwH3NmFyd7lL+Yw8AB3iSit2HB5X6SKaAsX+H3plL8A7brPUEegi2BGS1lCc4R/pmtkP8gs=
+	t=1726577182; cv=none; b=YOEIjebZU2Kxki+l4qIGJiaXJglpwNf6+7ypeBp4LQwilHXGnhCDMquKzC/Voxa4/Yll6mZbtDRXvOqoJUXDZaOq24nH+sTGavPL62Hqqp2olako+yRW0ruj5sLSks8uemI8xt8MDV+6cuV13St5oLR4srZlpkhyzchMazxi7h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726577099; c=relaxed/simple;
-	bh=j7HFvW9myGO2OFpl+AaBP1hzdJw+MsoPLToWcqMhK/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XUGw0tWs2KNa2tK87IorWuG+BNHXD0yypONOseL+JUb+MXsLeGasPU5QiIcjxPFhbBENFPQSNAFZv21X3jVIpVnE7Fw76j5lVtUXh5KXz4iUn2e9ZyUTl5GBXWlRN+zAN1CjohSyY3S5Q/sdX6C4A9+UGGVNTx6wnHyi8HRmaP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWpdbn+8; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7179069d029so3451195b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 05:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726577097; x=1727181897; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PuR2oEx7UOd4jtIaDKowFjYpkaW0nFWhgHvIpNqBCnA=;
-        b=cWpdbn+8wrb+FP4flZGHpvQa6071igUOyxdjjnViP3M6rtA6W80D2cG5RUsuz+08BS
-         Gvg9XS9ux1WhIgI9f6o8OLO4lYhLXrW2XTTKTBcO2RCHaWZsgbV5Z92p0QJke3Sr9XJO
-         B2kfYseAOll9VnOHH4Eq5EEEiICpnS1G0hBvAoey6TOe9QzgMGrC1+IM/R/RFtg1wDaa
-         4138M39kTdGJWkWkf8WAMnFngzuhXMp5Vi5K1mjUSu8PCL3FuKctFK6GXE/JPg84NQRl
-         bf4+0ZhARnqgdogOx1mCYYeiPgJ7CnpllvlumaDNRPV8SRemB7ar2EufYxkNrHytXnQt
-         Aa7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726577097; x=1727181897;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PuR2oEx7UOd4jtIaDKowFjYpkaW0nFWhgHvIpNqBCnA=;
-        b=VFmtt1UIFNLHvxPJRDMcr349zw67aYN+3o7Cx/u/jA4zO6oy/iEET47o1iOicEdptD
-         ZJ9DSltDorBm/t3Cqd391OseOcwH0BaqDX8B9QOE8r/KNHe2IsEtcv0Ls7xH/04Cj9yT
-         MCa0Xg8+RotlrabtAqSDR8QJV/+YdJCm2cjCPc7qjizK9U9sGdnzVXStiNo+5sfwfuew
-         BSCpvIaFXTHxizV7OUhAWUq2IvcycCqt6okQGiVCvXRdXtgqVaWa3NISTw4c3WWAZv3g
-         v4URrj3hUio5CE1Ud0KbcJCBdgPiu0mAM/iVCNYfsMLMR94uHQBm52sLPfwaIITYgSSx
-         n0gg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOhJpnJEFsBthC6bWKSq0F1ZmmbZCoU2ns3wrIIGsrld1n9cgvZS7IKQEdbSVYQRn0VqgzvO6TAaRUoa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdOL37Hosicnwwyj3w1aKY1C+VFj/yCNPUwYnr+kmPLHgt8eaw
-	h7t799PZfIjbkPy+WSDZaps5wkMcH+Z6N4cfQjesqs77D2TnpxfF3X6jVqyOx5AIR3kb
-X-Google-Smtp-Source: AGHT+IElrNVLMYeSdPugu8LX32nYuMCgAY1uSEYXmKx1Xd1xFBDpCzFzwKVITNzv1ITogJ2layOxZg==
-X-Received: by 2002:a05:6a00:27a0:b0:714:20a8:d79f with SMTP id d2e1a72fcca58-71936a60409mr23039083b3a.14.1726577097122;
-        Tue, 17 Sep 2024 05:44:57 -0700 (PDT)
-Received: from fedora.. ([2405:201:d007:50c2:4888:86b4:6f32:9ae])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a973d7sm5117415b3a.6.2024.09.17.05.44.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 05:44:56 -0700 (PDT)
-From: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
-To: gustavo.sousa@intel.com,
-	jani.nikula@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	joonas.lahtinen@linux.intel.com,
-	tursulin@ursulin.net,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: skhan@linuxfoundation.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] drm/i915/cx0: Set power state to ready only on owned PHY lanes
-Date: Tue, 17 Sep 2024 18:14:49 +0530
-Message-ID: <20240917124449.223206-1-vamsikrishna.brahmajosyula@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1726577182; c=relaxed/simple;
+	bh=bZ5b6xs4uGqzHS2ma79eAvMeSc630G5yFXXNPzKYkfs=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Qq45VofQk4xTDwKDSgJTunrHQ1hZQVXrqTAiSkIz87ET2+/nDDwzgKczZIidCQf9X3mhn0ghSZT5L86fm5CzId8aCO92V4iDCAEH0yzQdYb3qVG0HwkZ2MuDYDNC5MXIkKzV+fEqFK9cJUbUinTrtzFaU+dM7NZkPy1WkFd1/Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lbsZKirE; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726577181; x=1758113181;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=bZ5b6xs4uGqzHS2ma79eAvMeSc630G5yFXXNPzKYkfs=;
+  b=lbsZKirE3G12ctX9T/I+AyaQ0T8VxleJIzo7/TYjFI5ruPP8Xm1pLSDl
+   eeu9cGdQ274NFZIT5U+Kd3rrDXgpkzR4Y5j0z6xFdK0oWm4ATvil+fhkZ
+   WV/EbzlzkCFeoMoRM2fPr9mdXrI3BV34/fLw+exW8QgACAuynRGpv7Ivf
+   8zR2vygdL0Q4NGqdMkEYalW/XiGFH7UbtC2IeohSZJgvSlJuKqBKWBbuJ
+   nDoxe/8Ste29sy4HHVI8T3c0+SNJ1FmurKjhp9U3sdW8FWj3WQCbesLQV
+   twlSSklfO0/FaUe246+NViaiOm8uQaNnBdNGGhh3FYVriHJBLpYuAFijD
+   A==;
+X-CSE-ConnectionGUID: sQTfSDXxSnySe0MAAS5CZA==
+X-CSE-MsgGUID: i09oUsOuQQeHeYeDjJje7g==
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="31891362"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2024 05:46:20 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 17 Sep 2024 05:45:55 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 17 Sep 2024 05:45:53 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Subject: [PATCH v2 0/2] pinctrl: ocelot: add support for lan969x SoC
+Date: Tue, 17 Sep 2024 14:45:39 +0200
+Message-ID: <20240917-lan969x-pinctrl-v2-0-ea02cbc56831@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPN56WYC/2WNyw6CMBQFf4V0bU2pBVNX/odh0cfV3gRabKHBE
+ P7dQuLK5STnzKwkQURI5FatJELGhMEX4KeKGKf8CyjawoQzLpisOe2Vl61c6IjeTLGnwsimMQz
+ 0lbWkvMYIT1wO46MrrFUCqqPyxu0eC5m+Z5hh3zpMU4ifI57r/fHriL9Orimjtb4oYUUjNLP3A
+ U0MxuF4NmEg3bZtXyiyPFLOAAAA
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Lars Povlsen
+	<lars.povlsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>
+CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+X-Mailer: b4 0.14-dev
 
-In DP alt mode, when pin assignment is D, only one PHY lane is owned
-by the display. intel_cx0pll_enable currently performs a power state
-ready on both the lanes in all cases.
+This series adds support for lan969x SoC pinctrl by reusing the existing
+Ocelot pinctrl driver.
 
-Address the todo to perfom power state ready on owned lanes.
+There are 66 General Purpose I/O pins that are individually configurable
+to multiple interfaces. The matrix of available GPIO alternate functions
+is detailed in the pinmuxing table of patch #2.
 
-Tested on Meteor Lake-P [Intel Arc Graphics] with DP alt mode.
+Patch #1 adds compatible strings for lan969x in the dt-bindings.
+Patch #2 adds support for lan969x SoC pinctrl.
 
-v2 -> v3:
-- Fix changelog per Jani Nikula's feedback
-v1 -> v2: Address Gustavo Sousa's feedback
-- Use owned lanes mask to set Phy power state to Ready, instead of
-  maxpclk_lane with DP alt mode check.
-- Owned lanes are obtained from intel_cx0_get_owned_lane_mask().
-
-Signed-off-by: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 ---
- drivers/gpu/drm/i915/display/intel_cx0_phy.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in v2:
+- dt-bindings: add only microchip,lan9691-pinctrl to conditional enum.
+- Link to v1: https://lore.kernel.org/r/20240914-lan969x-pinctrl-v1-0-1b3a4d454b0d@microchip.com
 
-diff --git a/drivers/gpu/drm/i915/display/intel_cx0_phy.c b/drivers/gpu/drm/i915/display/intel_cx0_phy.c
-index 4a6c3040ca15..cbed53d3b250 100644
---- a/drivers/gpu/drm/i915/display/intel_cx0_phy.c
-+++ b/drivers/gpu/drm/i915/display/intel_cx0_phy.c
-@@ -2934,6 +2934,7 @@ static void intel_cx0pll_enable(struct intel_encoder *encoder,
- 	enum phy phy = intel_encoder_to_phy(encoder);
- 	struct intel_digital_port *dig_port = enc_to_dig_port(encoder);
- 	bool lane_reversal = dig_port->saved_port_bits & DDI_BUF_PORT_REVERSAL;
-+	u8 owned_lane_mask = intel_cx0_get_owned_lane_mask(encoder);
- 	u8 maxpclk_lane = lane_reversal ? INTEL_CX0_LANE1 :
- 					  INTEL_CX0_LANE0;
- 	intel_wakeref_t wakeref = intel_cx0_phy_transaction_begin(encoder);
-@@ -2948,10 +2949,9 @@ static void intel_cx0pll_enable(struct intel_encoder *encoder,
- 	intel_cx0_phy_lane_reset(encoder, lane_reversal);
- 
- 	/*
--	 * 3. Change Phy power state to Ready.
--	 * TODO: For DP alt mode use only one lane.
-+	 * 3. Change Phy power state to Ready on owned lanes.
- 	 */
--	intel_cx0_powerdown_change_sequence(encoder, INTEL_CX0_BOTH_LANES,
-+	intel_cx0_powerdown_change_sequence(encoder, owned_lane_mask,
- 					    CX0_P2_STATE_READY);
- 
- 	/*
+---
+Daniel Machon (2):
+      dt-bindings: ocelot: document lan969x-pinctrl
+      pinctrl: ocelot: add support for lan969x SoC pinctrl
 
-base-commit: ad060dbbcfcfcba624ef1a75e1d71365a98b86d8
+ .../bindings/pinctrl/mscc,ocelot-pinctrl.yaml      |  27 ++-
+ drivers/pinctrl/pinctrl-ocelot.c                   | 203 +++++++++++++++++++++
+ 2 files changed, 222 insertions(+), 8 deletions(-)
+---
+base-commit: 3cfb5aa10cb78571e214e48a3a6e42c11d5288a1
+change-id: 20240912-lan969x-pinctrl-4c955c0eb706
+
+Best regards,
 -- 
-2.46.0
+Daniel Machon <daniel.machon@microchip.com>
 
 
