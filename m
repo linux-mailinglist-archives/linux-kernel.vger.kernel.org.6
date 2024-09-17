@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-331995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABDC97B3CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:45:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5976C97B3D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F9281F218C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:45:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49C6F1C22B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C65189503;
-	Tue, 17 Sep 2024 17:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A941865F5;
+	Tue, 17 Sep 2024 17:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECH2i6Eb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULnogOvi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8AE4B5AE;
-	Tue, 17 Sep 2024 17:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E5026296;
+	Tue, 17 Sep 2024 17:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726595105; cv=none; b=fQopsNZMU6aXdgkS1mxlDt+cS9w0RxObfQg63Ba4mUrFFemOimaJkuQD9l0asPhtoFyLBmakb9cAdV9ZLZDiB7ChEwVWrE8MYjpBhUBQNtXifJzjgphVJh9ISKyfu15/XpuG//GHyv8UO2ic9ZAWXRYu60iyl9MmBOCA/fImSgw=
+	t=1726595446; cv=none; b=hkH9bk7aKGKYcqG8mKHMJZUhdvuTRwc3J+qsChnGYaOmFxcIcx/oJZE0wprw7JLpHyjSwdjPuPsYC/2DuyMHNavWfPyGc3UFkPojP7XHxy/0kwqneTyNoe2Xijn3m/DDK/fqFToMLksZ4WYVBCjaZX96Sl9KFNcMcccdsjdTzzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726595105; c=relaxed/simple;
-	bh=Xp6ZAq9hsiTKRria2h5DeY+qKHFXNOswbSuyjAmT2hw=;
+	s=arc-20240116; t=1726595446; c=relaxed/simple;
+	bh=KqzwpTjy2vBumBCJNsZn7LDiQ3vCSlT5F+VQFWQwqM0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/pEMxLyH4/omYmyqowuuOMPqmTAWTJYuF7xkQFWQyNMMgkB7EMvCKBTYKOJpcDKD7IGrgB1t6xM1zmPz/lf6YW4a0cfqru4xIDhNHCDYn96ptp+THQdN+qc+m4IYktawypCUGsRbyHWRT2xxKKHpiQ4NM78b9+FgG65fBagVp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECH2i6Eb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 272C0C4CEC5;
-	Tue, 17 Sep 2024 17:44:59 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=BxssW1mCyj9UIo3lsMALdGphFbhvrCtaupfbMWNkK05Ye3bczVTO/o0XFQ3O+B3EIdTYHM9tRURPTNR0yw1L2Q5C3QHx6qAPv1HawTIvFTGagnp0IzSK+PkyhOMhK6SDeEVaGCWn3lQMSTqEZkVIA8zW2hzNaVS/1EvOrbEPcfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULnogOvi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433B3C4CEC5;
+	Tue, 17 Sep 2024 17:50:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726595104;
-	bh=Xp6ZAq9hsiTKRria2h5DeY+qKHFXNOswbSuyjAmT2hw=;
+	s=k20201202; t=1726595446;
+	bh=KqzwpTjy2vBumBCJNsZn7LDiQ3vCSlT5F+VQFWQwqM0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ECH2i6EbA/cdbPJIZ1ej2qvVLWFe91xElbs8DA8EGO2UStj1Ca8bpJ0hELsGWRhLp
-	 nal15XCSfUvXZ7LAiYjT7t1VqO7jQEIiSO3sueHG5lnj1FyRaI7lgedXPXPjhsYsyt
-	 rihJSSoOhrdr+V2G0wJyiWzzI9+8L/W5sbAsZfDbEZjV1ZcjSi2RWKjMYXRWR7ImT6
-	 DI2k/PQqV9sPL2xI8AE1sEGRxgFt0J0cHDDY6NDzURhAMY/BgLa0UqgjfIBpuyIDhj
-	 bjWr5B1gDeK6UcpfiYFZmqN+Ja8lGgPF/Gw1aipNevKm8/JaWdf84H0qEzcIMy23IU
-	 cXvpgX6HufzQg==
-Message-ID: <f2660611-6f60-4913-8705-e99956ab23b0@kernel.org>
-Date: Tue, 17 Sep 2024 19:44:58 +0200
+	b=ULnogOviwpYiKB6dOcP0wEEd5iv6nbDbfMK4pNag3OLh+YleacZW9bQdj/XRWIY6c
+	 KnSdq6gIvzds593czpv/sbOgZZDHIO9sPkUMIJM5xrA0dIuRQt5FYWPowAig5Gnvht
+	 NAESLCtD374e4HcRoOCts/nZXYXHXY/q51XeuTZEbQUjrBuSXTM9y1sBpDDCXj1lBg
+	 reLEITBdFWeyoj1btA7C5Aa4cyz49FxW8s6cgIYvTiCiJDvluJIc8634JWOWu4OYqr
+	 MRWpEZj1uuQb11RCpq2coQ+HYr1/QwSif8o3ALV5V/b8h4dL6juT8YGOcDhmF7ULyq
+	 B4E5+BsN4xNIw==
+Message-ID: <ca1be1c8-42f8-44a4-83d0-3849060c8355@kernel.org>
+Date: Tue, 17 Sep 2024 19:50:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: s32g: Add S32G2/S32G3 uSDHC pinmux
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- NXP S32 Linux Team <s32@nxp.com>, Radu Pirea <radu-nicolae.pirea@nxp.com>
-References: <20240830113347.4048370-1-ciprianmarian.costea@oss.nxp.com>
- <20240830113347.4048370-2-ciprianmarian.costea@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: xilinx-cpm: Add compatible
+ string for CPM5 controller 1
+To: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
+Cc: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "Gogada, Bharat Kumar" <bharat.kumar.gogada@amd.com>,
+ "Simek, Michal" <michal.simek@amd.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>
+References: <20240916163124.2223468-1-thippesw@amd.com>
+ <20240916163124.2223468-2-thippesw@amd.com>
+ <tqte5pxvuhkqwr7gaxblx6orprd74qyw5ekrx53blbbygtrgpn@3uprlzf5otou>
+ <SN7PR12MB72013ED0B8074DC832E6234C8B612@SN7PR12MB7201.namprd12.prod.outlook.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -107,40 +115,74 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240830113347.4048370-2-ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <SN7PR12MB72013ED0B8074DC832E6234C8B612@SN7PR12MB7201.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/08/2024 13:33, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+On 17/09/2024 14:32, Havalige, Thippeswamy wrote:
+> Hi Krzysztof,
 > 
-> Adding 100mhz & 200mhz pinmux support for uSDHC helps to enable
-> higher speed modes for SD (SDR50, DDR50, SDR104) and
-> eMMC (such as HS200, HS400/HS400ES).
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Tuesday, September 17, 2024 4:20 PM
+>> To: Havalige, Thippeswamy <thippeswamy.havalige@amd.com>
+>> Cc: manivannan.sadhasivam@linaro.org; robh@kernel.org; linux-
+>> pci@vger.kernel.org; bhelgaas@google.com; linux-arm-kernel@lists.infradead.org;
+>> linux-kernel@vger.kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+>> devicetree@vger.kernel.org; Gogada, Bharat Kumar
+>> <bharat.kumar.gogada@amd.com>; Simek, Michal <michal.simek@amd.com>;
+>> lpieralisi@kernel.org; kw@linux.com
+>> Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: xilinx-cpm: Add compatible string for
+>> CPM5 controller 1
+>>
+>> On Mon, Sep 16, 2024 at 10:01:23PM +0530, Thippeswamy Havalige wrote:
+>>> The Xilinx Versal Premium series includes the CPM5 block, which
+>>> supports two Type-A Root Port controllers operating at Gen5 speed.
+>>>
+>>> This patch adds a compatible string to distinguish between the two
+>>> CPM5 Root Port controllers. The error interrupt registers and
+>>> corresponding bits for Controller 0 and Controller 1 are located at
+>>> different offsets, making it necessary to differentiate them.
+>>>
+>>> By using the new compatible string, the driver can properly handle
+>>> these platform-specific differences between the controllers.
+>>>
+>>> Signed-off-by: Thippeswamy Havalige <thippesw@amd.com>
+>>> ---
+>>> changes in v2:
+>>> --------------
+>>> Modify compatible string to differentiate controller 0 and controller
+>>> 1
+>>> ---
+>>>  Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+>>> b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+>>> index 989fb0fa2577..3783075661e2 100644
+>>> --- a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+>>> +++ b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+>>> @@ -17,6 +17,7 @@ properties:
+>>>      enum:
+>>>        - xlnx,versal-cpm-host-1.00
+>>>        - xlnx,versal-cpm5-host
+>>> +      - xlnx,versal-cpm5-host1-1
+>>
+>> Hm, I thought my irony was obvious, but it seems was not. Apologies.
+>> "1-1", "1-2", "1-1-1" or "1-1.00-1" are all poor choices.
+>>
+>> I was waiting for some reasonable name idea, because it is you who knows the
+>> hardware and has datasheet.
+>>
+>> I guess if I have to come up with name then "host1" was better. Or "cpm5-1-host".
+>> Dunno, all these names "5" in "cpm5" and "-1.00" in IP version are randomly
+>> constructed.
 > 
-> Signed-off-by: Radu Pirea <radu-nicolae.pirea@nxp.com>
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/s32g2.dtsi      | 153 ++++++++++++++++++
->  .../arm64/boot/dts/freescale/s32g274a-evb.dts |   4 +
->  .../boot/dts/freescale/s32g274a-rdb2.dts      |   4 +
->  arch/arm64/boot/dts/freescale/s32g3.dtsi      | 153 ++++++++++++++++++
->  .../boot/dts/freescale/s32g399a-rdb3.dts      |   4 +
->  5 files changed, 318 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> index fa054bfe7d5c..7be430b78c83 100644
-> --- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> @@ -162,6 +162,159 @@ jtag-grp4 {
->  					slew-rate = <166>;
->  				};
->  			};
-> +
-> +			pinctrl_usdhc0: usdhc0grp-pins {
-> +				usdhc0-grp0 {
+> Here, CPM5 indicates gen5 Root Port and host1 indicates controller 1.
+> So, Let me resend patch with compatible string as "xlnx,versal-cpm5-host1" it looks fine.
 
-Are you sure that this passes dtbs_check W=1?
+yes, thanks.
 
 Best regards,
 Krzysztof
