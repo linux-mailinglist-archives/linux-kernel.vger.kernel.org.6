@@ -1,148 +1,129 @@
-Return-Path: <linux-kernel+bounces-332164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A238B97B63D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 01:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF9897B63B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 01:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BCB51F2305E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1170D1C232E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A567B1917C9;
-	Tue, 17 Sep 2024 23:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE4C174ED0;
+	Tue, 17 Sep 2024 23:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ARGHAbHK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASJ5Qech"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB65174EFA;
-	Tue, 17 Sep 2024 23:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2231192B67
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 23:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726616266; cv=none; b=d4outlBM8HntT2RXas+u0AcFkAmLrlFsxuB0N3KuEjlO6yTLJDCDZu+bu5BGq2U2I4WLBuwG+IwtZUX2JVuFn4g+HDoZYnrbqmLEweolcFuIOqmIoxew0/dKcgkpWrk3us1c1Q7M6ss+pEV+mzgi+iQ9LYmMbpD4PmKmDpbAxlw=
+	t=1726616242; cv=none; b=Aw40N1veHJvS7ebkX3eplxdASneudH3k+jNQoE1ZXokb0xKewzmXles3uW179aNd5e7QOlVIw/Mk0ZgeGl9aMUEncZyLnkmZNhNkXqSSTlJ0hH3EiT+yNI5JarxvJ1WMNU/viy1kXtzb2sYYKpE6KFSarPp6Q6n376RE1uqhfA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726616266; c=relaxed/simple;
-	bh=IeQGCcYzD8Cb2a3HoWYEbAeSnkkf4gpNrRD9gJg7Itc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RyRJOuSzXq1xxtCUHKgLg/i6w/YhX3xsAfRtcvdFQoQTDVp7gGodZUrvgIWY5HiHzot6fYVMQFRbE0zg5PdQTUIusg3HJyPMzM9kZGveMM7tGJRiSPQB6+JQtJgebmb0GlpdHBxp/PHzxsISeof29ye5d012uF/k61z39glF5kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ARGHAbHK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726616253;
-	bh=9K1Jwj7VRe6zoUK4rOxE26mm0OV3ZJlbf/JGUPe9vfI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ARGHAbHKT9b5IJnNDyIllzMQgxato/oh5fTQ0g3gnh50ckUZn2QXSK8uXMlT7U7lg
-	 h1k9g3t9rIWvD2gPjl+ggC1Ccusnn+navJIxDqsMVI9PMiXDlXAEeoNbPV9aRbYR8o
-	 5NrcuHirVRh1P7PIFmXo5iwadQPvirTI0ztlqYAKqXIgmcMm3ztTdnmArSSmUJpYov
-	 2rptdk2CePK3MKMFA5Ze7P9ugGCmu6Y57y1ORbOtLblUTEGXoPpWoTiyppOEcIwyI7
-	 sYGs2MkETqJeVKBjUxaXJrF7rqZTY6AvaxrRCLSkJngcwScxgIUF014Ca88yUM77GD
-	 Ui4ktX765UGog==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X7dVj3nRxz4xbv;
-	Wed, 18 Sep 2024 09:37:33 +1000 (AEST)
-Date: Wed, 18 Sep 2024 09:36:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: manual merge of the mm tree with Linus' tree
-Message-ID: <20240918093643.1662ccab@canb.auug.org.au>
-In-Reply-To: <20240909100043.60668995@canb.auug.org.au>
-References: <20240909100043.60668995@canb.auug.org.au>
+	s=arc-20240116; t=1726616242; c=relaxed/simple;
+	bh=Yh6b1rfZvza7i3KWslmDXs3gmXNNkw7ztRq9xhqYkkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sZM9fftUMOiX7hmu2LiJdXQvogwt2LKWm4Wd0ZEWkhh7g+/DjdtvNDXaoe5uQGNVQ65mw/3zTtTnt0dTvmEe1Ftib31xcqZeyod0GnwNmbnyH6ZevbZDYDdy8p0a3+EV6n1h4W1d75Z237VX46yzfPi2MZxyqUn3Ub6eYk/HiPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ASJ5Qech; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fee6435a34so54842125ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:37:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726616240; x=1727221040; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+4V/8APfhFDjK0TbP6vOe2EfVKeMMbKBRPhEv2aIfeI=;
+        b=ASJ5Qech5LGhG9H4A1xGgDFb9+Y7gRgv+BA18AKyNDqiblM9c/kTuhlEkNNG6fIdB2
+         oiyT3Ia30BSKzAaOdlML0eqVIaM7l1GrxHlN41AdXAs3FvZagIPbtbhEVPFcVXilkmFg
+         1z/Z8Qa4uNIjbZr4wrryEg1VOL5WNDDAW/8IzzRHBEp9IYykAnJUQwHVFkTIY7/g4y0o
+         q6U+HDtCumsMSSccrL5Le07jy5xm6egZEt0vzJso7tfvj7qGXf9ZOumyLP+/7kLVYFxl
+         y2VbNs6iuYS1kmFgdFekHnPwC/aH+GWfQHAjCOkoOD6T/xxe1vGhgJ+4VyJnhcGP2dSV
+         H6Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726616240; x=1727221040;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+4V/8APfhFDjK0TbP6vOe2EfVKeMMbKBRPhEv2aIfeI=;
+        b=tGmQ89vqAjWUk2riH9Q7t+SUrftEwG/ab65g6NlImekV1DfRY8Z9OLnyKrnqOC4WvE
+         h4hLk4jv/GQC0sPjbmmfX1ydHcM04In7asq3FKXAqRdhmSlUG/mVod+Ang7vo3j5sDqd
+         bN0/+r+dqJy+t5GkegI0HkypWhO7kZBlFSDpZ6f/epvWh7nQJGmict0aT6Am/D06OtR1
+         iezFX0E808KTnmQDeY5papvM9/Ft/Uuj4dAFvjgWQKpL4GQ+ywq68e+f8Xmp6lDElFk1
+         WmBRsKPKGYTVzSe5dXq+Dx14b23mq3upu+NOm1qUVyJKR6fXGXFxl00xh3NDru4fLRny
+         bnqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlTbCrDpW6RI/OrkWncylJshbijAWARLQxqqdKiD6q0YFLxAuEB/e0ZPTuv4xPhRbYKzN5Hq5EsEop2a0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt2yfwL1bk5/zurwNqSQqqP7ULLW/6rThpCdmPN/XtJ6K0oxMa
+	+yUIXrN88WzeFm6U7nF0biRmTrlQkOCJU9usuS19gCbXdKTSAp2+
+X-Google-Smtp-Source: AGHT+IHG+QKuoEXpiLZOezS6Ou+QNM1i+bhg/FChfpH3EGXD6kQ0RtkpjirogCLkckbdMU4O2+xsCQ==
+X-Received: by 2002:a17:903:1112:b0:205:4531:54d with SMTP id d9443c01a7336-2076e37af96mr318957255ad.30.1726616240064;
+        Tue, 17 Sep 2024 16:37:20 -0700 (PDT)
+Received: from localhost.localdomain (111-240-85-119.dynamic-ip.hinet.net. [111.240.85.119])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946029c7sm54703325ad.113.2024.09.17.16.37.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 16:37:19 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
+	xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] xen/pciback: fix cast to restricted pci_ers_result_t and pci_power_t
+Date: Wed, 18 Sep 2024 07:36:50 +0800
+Message-ID: <20240917233653.61630-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Sb22zYFhbnog4DN6M18=2IO";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/Sb22zYFhbnog4DN6M18=2IO
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch fix the following sparse warning by applying
+__force cast to pci_ers_result_t and pci_power_t.
 
-Hi all,
+drivers/xen/xen-pciback/pci_stub.c:760:16: sparse: warning: cast to restricted pci_ers_result_t
+drivers/xen/xen-pciback/conf_space_capability.c:125:22: sparse: warning: cast to restricted pci_power_t
 
-On Mon, 9 Sep 2024 10:00:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the mm tree got a conflict in:
->=20
->   kernel/resource.c
->=20
-> between commit:
->=20
->   ea72ce5da228 ("x86/kaslr: Expose and use the end of the physical memory=
- address space")
->=20
-> from Linus' tree and commit:
->=20
->   e2941fe697c8 ("resource, kunit: add test case for region_intersects()")
->=20
-> from the mm-unstable branch of the mm tree.
->=20
-> I fixed it up (I just used the former - and see below) and can carry the
-> fix as necessary. This is now fixed as far as linux-next is concerned,
-> but any non trivial conflicts should be mentioned to your upstream
-> maintainer when your tree is submitted for merging.  You may also want
-> to consider cooperating with the maintainer of the conflicting tree to
-> minimise any particularly complex conflicts.
->=20
-> diff --cc kernel/resource.c
-> index 1ac30110b5b3,2ee143fff1af..000000000000
-> --- a/kernel/resource.c
-> +++ b/kernel/resource.c
-> @@@ -1817,8 -1859,18 +1859,12 @@@ EXPORT_SYMBOL(resource_list_free)
->   #ifdef CONFIG_GET_FREE_REGION
->   #define GFR_DESCENDING		(1UL << 0)
->   #define GFR_REQUEST_REGION	(1UL << 1)
-> - #define GFR_DEFAULT_ALIGN (1UL << PA_SECTION_SHIFT)
-> + #ifdef PA_SECTION_SHIFT
-> + #define GFR_DEFAULT_ALIGN	(1UL << PA_SECTION_SHIFT)
-> + #else
-> + #define GFR_DEFAULT_ALIGN	PAGE_SIZE
-> + #endif
->  =20
->  -#ifdef MAX_PHYSMEM_BITS
->  -#define MAX_PHYS_ADDR		((1ULL << MAX_PHYSMEM_BITS) - 1)
->  -#else
->  -#define MAX_PHYS_ADDR		(-1ULL)
->  -#endif
->  -
->   static resource_size_t gfr_start(struct resource *base, resource_size_t=
- size,
->   				 resource_size_t align, unsigned long flags)
->   {
+No functional changes intended.
 
-This is now a conflict between the mm-stable tree and Linus' tree.
+Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+---
+ drivers/xen/xen-pciback/conf_space_capability.c | 2 +-
+ drivers/xen/xen-pciback/pci_stub.c              | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/drivers/xen/xen-pciback/conf_space_capability.c b/drivers/xen/xen-pciback/conf_space_capability.c
+index 1948a9700c8f..cf568e899ee2 100644
+--- a/drivers/xen/xen-pciback/conf_space_capability.c
++++ b/drivers/xen/xen-pciback/conf_space_capability.c
+@@ -122,7 +122,7 @@ static int pm_ctrl_write(struct pci_dev *dev, int offset, u16 new_value,
+ 	if (err)
+ 		goto out;
+ 
+-	new_state = (pci_power_t)(new_value & PCI_PM_CTRL_STATE_MASK);
++	new_state = (__force pci_power_t)(new_value & PCI_PM_CTRL_STATE_MASK);
+ 
+ 	new_value &= PM_OK_BITS;
+ 	if ((old_value & PM_OK_BITS) != new_value) {
+diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
+index 4faebbb84999..368738312696 100644
+--- a/drivers/xen/xen-pciback/pci_stub.c
++++ b/drivers/xen/xen-pciback/pci_stub.c
+@@ -757,7 +757,7 @@ static pci_ers_result_t common_process(struct pcistub_device *psdev,
+ 	}
+ 	clear_bit(_PCIB_op_pending, (unsigned long *)&pdev->flags);
+ 
+-	res = (pci_ers_result_t)aer_op->err;
++	res = (__force pci_ers_result_t)aer_op->err;
+ 	return res;
+ }
+ 
+-- 
+2.43.0
 
---Sig_/Sb22zYFhbnog4DN6M18=2IO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbqEosACgkQAVBC80lX
-0GxZhwf+Pjhc05xgK+zqM0QQ/bfBXlX3Jzh6uwNfljvr60dv8JAplJ4IO6yIT09+
-Nhb8wwYP1vDmYBvY4up/f5ggYhWWMOzg3/TsGVX05zzdNbcVpj9Zr/v/2LAt6Mrr
-TxoXlYwtArR8Je7t6cyLjAPQDcXip/lALyJXakefKIB0NFLwlH42D/HKSsfKyNJt
-3zEld2NtuzDSzerFxiOoxQ4uWWR4chJm9fSjWGOV1AqtAzREWLQqNGjCv+cd8sKq
-RxLUDqByBQNonSZOIFatY5EQL04HXkxKTk1ay+JX9YXFvIYmI8ISTbR6dqhD/0aM
-F735CWBlPd0Zk9Nji7Oh+oRjIuuRhA==
-=eB6x
------END PGP SIGNATURE-----
-
---Sig_/Sb22zYFhbnog4DN6M18=2IO--
 
