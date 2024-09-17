@@ -1,254 +1,120 @@
-Return-Path: <linux-kernel+bounces-331217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E1E97A9D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 02:01:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4A297A9DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 02:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6201C23297
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:01:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35EBF1F2711F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 00:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADD214C5B0;
-	Tue, 17 Sep 2024 00:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1822595;
+	Tue, 17 Sep 2024 00:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="RhRoQT49"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CAy8Ja/X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C568845008
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 00:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C00137B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 00:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726531249; cv=none; b=QxQk8E/smfDS88mMkFC7iReIAQbHwhSsSQEhrazZqKK+9H6kVsGkCowA1ODchAZwEsACPklqiF3P19JfwhB8LMQ7JajAGAducwqVxZtw5ykcq2x3jedIT5ytUh6GiAMKv16h/ZexRXC0odfY8W2058NtdgENs0hXQ1cZtYrIfRc=
+	t=1726531867; cv=none; b=iodZQEePNA0JK0jTLnjyv77t0DqiG4nVZpeTIKvL7nwYgZuQErBmtcAR6AJRIYxypeX/yrYAhOL3HXY++Pc5fMaqlEhhgS5AAWS4hpAPZiRX5nnsM8ywk9oBWDylKUcuzSJV8MVW+f38e4UfZj5aywzNuQpMiP4TAK5ptfgHhW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726531249; c=relaxed/simple;
-	bh=Ee17siRqBFROuZr/thXBuY61Xxnn7brpn1HX2BS79j4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ei6c1dU1vhsmjtpkV5NgY/YkDxBq4gMrTCR+ke+UmwmoMxYm6jDjGJYRwvuc6hjFCxuN2wL/5SCGRwnfuBhEP3w0oUeDX4nY7FTGzvyjbuKDQueLjh7VNF+EId5Z/4WDwxRrVl6NiuT4u/XSv7o5RD9gZebTmEDGmX84uPUUJd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=RhRoQT49; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2053a0bd0a6so51896135ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 17:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726531246; x=1727136046; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eup1ahvLxbk3GqS/ZMeUjwBFH9cE8D+Ggr+WJlLQMOk=;
-        b=RhRoQT49oLiMTKeVDt3o35EPTFrI9VTfyuiHCpYg0jF/Ir0+3X6JtB37avwfLK/pOo
-         xtUz4MGUJ6UkuCuX+7d1d7AMVsLkDNoHDX5K14QrtR8CNaDZkDZUC2CwcyvDqi99H8k0
-         SGt7yw9X814xthl4fj/4VQFD6VQjlbyrxxw5EkJUNfr4kfrfC5MEl7zwcFJMbhfvCeaM
-         EKmNXMThZdV2mD32PkwhtCa0LrlHqz+etI5OcLU2psrqL/OE6ymC6jTgvp9xbONqSMP8
-         BUTnOj2lJLTz9/RK58pKcXsMfwkOfq6yQ9Y6hgKizhG7G6mYHOPDm4WIYfihyE0f8IYh
-         PjXw==
+	s=arc-20240116; t=1726531867; c=relaxed/simple;
+	bh=hU5iLxSH47Q+dO7j9wFD3aK57rS6msnzhfZQwB1PLck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hJBi5MmRnvcnkTSuFSzMLAqPWdwciGhGMn0iKZv38w4c9KYSJjA10va2tCF9gj5Uxe1SZvJdc1wS9KxYmilHLJjTUTSVGjGWJ2U3yIH8J7W4l4942NVVdtk4J9C+sEF65Z74X4Z5pqw7SmEvjWH7Cx0uH3EyUBFP5iON/CMxmSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CAy8Ja/X; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726531863;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Tmm8QBHX9hBz4OCA1JEiQcNTP6WIrwV8Na168B9eMdQ=;
+	b=CAy8Ja/XhITSS9CdopBZ5HCQv8+jgKWPOq6xt3t0jmgyZnIFQnqArbGEv5VNrtKw+yIhVG
+	9kyONXTQBOtFly8CAkmf3jFWZ6tKHtgX6QG/5rMNbNmpWqci8QR18yh8Y1V6Ea6fKw2TM8
+	6emqSBu9BEQdqeQBZH40gzZyrO/qbmM=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-237-hWgEn81ZPEG39J6LVYsXvA-1; Mon, 16 Sep 2024 20:11:02 -0400
+X-MC-Unique: hWgEn81ZPEG39J6LVYsXvA-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-45856a29545so98554111cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 17:11:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726531246; x=1727136046;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eup1ahvLxbk3GqS/ZMeUjwBFH9cE8D+Ggr+WJlLQMOk=;
-        b=QCR58PDIx2g5x6E9uekGBbNvlZUX+Xh2pbfUoGmBLo9hnNwBdg9yjXgCNkv4og1W6b
-         ve8xFjfYG89AAIXBnRtWk9IgOWD5V5Plom7uBTiRBgHo+RuURH7NXWHLq10CruHsn5AP
-         Cj/0zAkb7m9inTWmNDSWzh4IPm0vBfWuyGvobOdjNSRjcG4OVoPEASIKYrSOyMVfY/Ew
-         e4OQs3hDnWhu+vbOj6kd/Yd+1NZCi+didXyyhR3p1PDyyKNajCVtZ4COfO+VnWe3xjrd
-         DpJkagwD5weMRn0yR5nxRLcK4viACJT9/ksmcfleJT9YXblrJhM3PvoCfeO24kYMsLuv
-         V+aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkPkeiM3sFbB5XRFsyl7Z6B/cJd2IasytxUIQbaaWU50RrpQmsyJS2BF49asIM9VjqNn/Y57IEaASZlUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFBfTPtjPwFC5vHkSbuLhW1zDIohmSpSR/U3c/yTUzNe9faDXI
-	jg+EfySHd2chJaWSAzgeobgkPr7Nb3e+L+fP0iqxLmIC1nwG8hwfsgkT1QflWuk=
-X-Google-Smtp-Source: AGHT+IH64YpGkOt6sdEnN70vzwbW5vOexKApQ3tQQA6MC8BwStmIPrrAyTwaRSTJo5R11SP51oTbHQ==
-X-Received: by 2002:a17:902:ea0d:b0:205:7c76:4b2c with SMTP id d9443c01a7336-2076e412882mr247960785ad.48.1726531245442;
-        Mon, 16 Sep 2024 17:00:45 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794601384sm41311685ad.94.2024.09.16.17.00.41
+        d=1e100.net; s=20230601; t=1726531862; x=1727136662;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tmm8QBHX9hBz4OCA1JEiQcNTP6WIrwV8Na168B9eMdQ=;
+        b=Ag+9QntYmQk0SvgMzo2mtdaWEKald//xn8bUQlYiIJjxqko1DEjKtvtQ92uv52Kxj2
+         3qaKR/AU0Hn1v5xjcxaSgCItDhoq7nWTG+UBYRexIR7EHxyKblyiO88Alrw8SJF4pSZ/
+         fryAvoV4E5Cvq86gQU3ewcCBC8Pq1wYuhPXW9M284T6XPDbLRjh8Iwfwobia/1orisbQ
+         /9hSDQ7NCAO211SI5CPJetZTjPuwfTE/2DooX0PGtmr9FQ2cpDxqSeacJZATCKa/gxfF
+         0l/wuQ+xmpersN4qMHxDpke//6n+UeAXAjc7lM3fdq/Bo4tc8wdoXc8Z8ZuV/Ur4YNCR
+         XsGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfBDuFINDAQZLG974VkGZ2rRSJ2+E3aRlOh098EtlUNCFKMIEE0iQkO+viOWOTjKx1whicJWvgU5hBD/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY27rnWR7YIpdseozomJlVKuEI3Bhen68JcXGl04ocQBvsk/R3
+	xTadp64NKsRnD/MUPDPWLZcSEr/eXwTTfP0j6/T9FApJSWgMU7qcHSkL2vLX3MkHFwMwSx0DHEP
+	rqRDxJ4zfNKG3gyEkiqG9SNwSFxD1xSMtdHi+NrzbUQoLAT+NKnyGSaEU5XmyLw==
+X-Received: by 2002:a05:622a:53cf:b0:458:42aa:9853 with SMTP id d75a77b69052e-4599d2393f1mr205215041cf.23.1726531862048;
+        Mon, 16 Sep 2024 17:11:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPpDTLWSZw+zeRZnpq/bYJ/50ETGEyIM5xiGEn5/ULUALhOfBRgLa1LxUZ/Zwgxif9zNnwBA==
+X-Received: by 2002:a05:622a:53cf:b0:458:42aa:9853 with SMTP id d75a77b69052e-4599d2393f1mr205214611cf.23.1726531861627;
+        Mon, 16 Sep 2024 17:11:01 -0700 (PDT)
+Received: from towerofpower.montleon.net (syn-066-026-073-226.res.spectrum.com. [66.26.73.226])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c58c62633bsm29221956d6.25.2024.09.16.17.10.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 17:00:45 -0700 (PDT)
-Date: Mon, 16 Sep 2024 17:00:40 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Andy Chiu <andybnac@gmail.com>
-Cc: paul.walmsley@sifive.com, palmer@sifive.com, conor@kernel.org,
-	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	quic_zhonhan@quicinc.com, zong.li@sifive.com, zev@bewilderbeest.net,
-	david@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-	broonie@kernel.org, dave.hansen@linux.intel.com,
-	atishp@rivosinc.com, bjorn@rivosinc.com, namcaov@gmail.com,
-	usama.anjum@collabora.com, guoren@kernel.org, alx@kernel.org,
-	jszhang@kernel.org, hpa@zytor.com, puranjay@kernel.org,
-	shuah@kernel.org, sorear@fastmail.com, costa.shul@redhat.com,
-	robh@kernel.org, antonb@tenstorrent.com, quic_bjorande@quicinc.com,
-	lorenzo.stoakes@oracle.com, corbet@lwn.net, dawei.li@shingroup.cn,
-	anup@brainfault.org, deller@gmx.de, x86@kernel.org,
-	andrii@kernel.org, willy@infradead.org, kees@kernel.org,
-	mingo@redhat.com, libang.li@antgroup.com, samitolvanen@google.com,
-	greentime.hu@sifive.com, osalvador@suse.de, ajones@ventanamicro.com,
-	revest@chromium.org, ancientmodern4@gmail.com,
-	aou@eecs.berkeley.edu, jerry.shih@sifive.com,
-	alexghiti@rivosinc.com, arnd@arndb.de, yang.lee@linux.alibaba.com,
-	charlie@rivosinc.com, bgray@linux.ibm.com, Liam.Howlett@oracle.com,
-	leobras@redhat.com, songshuaishuai@tinylab.org,
-	xiao.w.wang@intel.com, bp@alien8.de, cuiyunhui@bytedance.com,
-	mchitale@ventanamicro.com, cleger@rivosinc.com, tglx@linutronix.de,
-	krzk+dt@kernel.org, vbabka@suse.cz, brauner@kernel.org,
-	bhe@redhat.com, ke.zhao@shingroup.cn, oleg@redhat.com,
-	samuel.holland@sifive.com, ben.dooks@codethink.co.uk,
-	evan@rivosinc.com, palmer@dabbelt.com, ebiederm@xmission.com,
-	andy.chiu@sifive.com, schwab@suse.de, akpm@linux-foundation.org,
-	sameo@rivosinc.com, tanzhasanwork@gmail.com, rppt@kernel.org,
-	ryan.roberts@arm.com
-Subject: Re: [PATCH v4 21/30] riscv/traps: Introduce software check exception
-Message-ID: <ZujGqOVbYZ8+8XPu@debug.ba.rivosinc.com>
-References: <20240912231650.3740732-1-debug@rivosinc.com>
- <20240912231650.3740732-22-debug@rivosinc.com>
- <CAFTtA3NA+OwZv5hJU3EWjuNHNjA3fQzPC+sX84Nb9YyJXdENSA@mail.gmail.com>
+        Mon, 16 Sep 2024 17:11:01 -0700 (PDT)
+From: Jason Montleon <jmontleo@redhat.com>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	llvm@lists.linux.dev,
+	Jason Montleon <jmontleo@redhat.com>
+Subject: [PATCH 0/1] RISC-V: Fix building rust when using GCC toolchain 
+Date: Mon, 16 Sep 2024 20:08:47 -0400
+Message-ID: <20240917000848.720765-1-jmontleo@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFTtA3NA+OwZv5hJU3EWjuNHNjA3fQzPC+sX84Nb9YyJXdENSA@mail.gmail.com>
 
-On Fri, Sep 13, 2024 at 09:35:50PM +0200, Andy Chiu wrote:
->Hi Deepak
->
->Deepak Gupta <debug@rivosinc.com> 於 2024年9月13日 週五 上午2:32寫道：
->>
->> zicfiss / zicfilp introduces a new exception to priv isa `software check
->> exception` with cause code = 18. This patch implements software check
->> exception.
->>
->> Additionally it implements a cfi violation handler which checks for code
->> in xtval. If xtval=2, it means that sw check exception happened because of
->> an indirect branch not landing on 4 byte aligned PC or not landing on
->> `lpad` instruction or label value embedded in `lpad` not matching label
->> value setup in `x7`. If xtval=3, it means that sw check exception happened
->> because of mismatch between link register (x1 or x5) and top of shadow
->> stack (on execution of `sspopchk`).
->>
->> In case of cfi violation, SIGSEGV is raised with code=SEGV_CPERR.
->> SEGV_CPERR was introduced by x86 shadow stack patches.
->>
->> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->> ---
->>  arch/riscv/include/asm/asm-prototypes.h |  1 +
->>  arch/riscv/include/asm/entry-common.h   |  2 ++
->>  arch/riscv/kernel/entry.S               |  3 ++
->>  arch/riscv/kernel/traps.c               | 38 +++++++++++++++++++++++++
->>  4 files changed, 44 insertions(+)
->>
->> diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
->> index cd627ec289f1..5a27cefd7805 100644
->> --- a/arch/riscv/include/asm/asm-prototypes.h
->> +++ b/arch/riscv/include/asm/asm-prototypes.h
->> @@ -51,6 +51,7 @@ DECLARE_DO_ERROR_INFO(do_trap_ecall_u);
->>  DECLARE_DO_ERROR_INFO(do_trap_ecall_s);
->>  DECLARE_DO_ERROR_INFO(do_trap_ecall_m);
->>  DECLARE_DO_ERROR_INFO(do_trap_break);
->> +DECLARE_DO_ERROR_INFO(do_trap_software_check);
->>
->>  asmlinkage void handle_bad_stack(struct pt_regs *regs);
->>  asmlinkage void do_page_fault(struct pt_regs *regs);
->> diff --git a/arch/riscv/include/asm/entry-common.h b/arch/riscv/include/asm/entry-common.h
->> index 2293e535f865..4068c7e5452a 100644
->> --- a/arch/riscv/include/asm/entry-common.h
->> +++ b/arch/riscv/include/asm/entry-common.h
->> @@ -39,4 +39,6 @@ static inline int handle_misaligned_store(struct pt_regs *regs)
->>  }
->>  #endif
->>
->> +bool handle_user_cfi_violation(struct pt_regs *regs);
->> +
->>  #endif /* _ASM_RISCV_ENTRY_COMMON_H */
->> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
->> index ca9203e6d76d..2ec75ba864a8 100644
->> --- a/arch/riscv/kernel/entry.S
->> +++ b/arch/riscv/kernel/entry.S
->> @@ -384,6 +384,9 @@ SYM_DATA_START_LOCAL(excp_vect_table)
->>         RISCV_PTR do_page_fault   /* load page fault */
->>         RISCV_PTR do_trap_unknown
->>         RISCV_PTR do_page_fault   /* store page fault */
->> +       RISCV_PTR do_trap_unknown /* cause=16 */
->> +       RISCV_PTR do_trap_unknown /* cause=17 */
->> +       RISCV_PTR do_trap_software_check /* cause=18 is sw check exception */
->>  SYM_DATA_END_LABEL(excp_vect_table, SYM_L_LOCAL, excp_vect_table_end)
->>
->>  #ifndef CONFIG_MMU
->> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
->> index 51ebfd23e007..32d1453bed72 100644
->> --- a/arch/riscv/kernel/traps.c
->> +++ b/arch/riscv/kernel/traps.c
->> @@ -354,6 +354,44 @@ void do_trap_ecall_u(struct pt_regs *regs)
->>
->>  }
->>
->> +#define CFI_TVAL_FCFI_CODE     2
->> +#define CFI_TVAL_BCFI_CODE     3
->> +/* handle cfi violations */
->> +bool handle_user_cfi_violation(struct pt_regs *regs)
->> +{
->> +       bool ret = false;
->> +       unsigned long tval = csr_read(CSR_TVAL);
->> +
->> +       if (((tval == CFI_TVAL_FCFI_CODE) && cpu_supports_indirect_br_lp_instr()) ||
->> +               ((tval == CFI_TVAL_BCFI_CODE) && cpu_supports_shadow_stack())) {
->> +               do_trap_error(regs, SIGSEGV, SEGV_CPERR, regs->epc,
->> +                                         "Oops - control flow violation");
->> +               ret = true;
->> +       }
->> +
->> +       return ret;
->> +}
->> +/*
->> + * software check exception is defined with risc-v cfi spec. Software check
->> + * exception is raised when:-
->> + * a) An indirect branch doesn't land on 4 byte aligned PC or `lpad`
->> + *    instruction or `label` value programmed in `lpad` instr doesn't
->> + *    match with value setup in `x7`. reported code in `xtval` is 2.
->> + * b) `sspopchk` instruction finds a mismatch between top of shadow stack (ssp)
->> + *    and x1/x5. reported code in `xtval` is 3.
->> + */
->
->It seems like this trap handler does not follow generic entry. This
->can cause problems as signal delivery is done in
->irqentry_exit_to_user_mode(). Please reference the commit f0bddf50586d
->("riscv: entry: Convert to generic entry") for more information.
+The following patch resolves errors encountered while building on RISC-V
+using the gcc toolchain with RUST_CONFIG=y
 
-Ack. will fix it.
+Jason Montleon (1):
+  RISC-V: Fix building rust when using GCC toolchain
 
->
->> +asmlinkage __visible __trap_section void do_trap_software_check(struct pt_regs *regs)
->> +{
->> +       if (user_mode(regs)) {
->> +               /* not a cfi violation, then merge into flow of unknown trap handler */
->> +               if (!handle_user_cfi_violation(regs))
->> +                       do_trap_unknown(regs);
->> +       } else {
->> +               /* sw check exception coming from kernel is a bug in kernel */
->> +               die(regs, "Kernel BUG");
->> +       }
->> +}
->> +
->>  #ifdef CONFIG_MMU
->>  asmlinkage __visible noinstr void do_page_fault(struct pt_regs *regs)
->>  {
->> --
->> 2.45.0
->>
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
->
->Cheers,
->Andy
+ rust/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+
+base-commit: ad060dbbcfcfcba624ef1a75e1d71365a98b86d8
+-- 
+2.46.0
+
 
