@@ -1,128 +1,138 @@
-Return-Path: <linux-kernel+bounces-331879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7464597B262
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C2397B264
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A77DF1C20B44
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:51:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD511C22151
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5A018858E;
-	Tue, 17 Sep 2024 15:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8E6196D90;
+	Tue, 17 Sep 2024 15:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAE0QSA5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyoHUmUG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C516217BEC3;
-	Tue, 17 Sep 2024 15:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA24B188A23;
+	Tue, 17 Sep 2024 15:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726587924; cv=none; b=qrVJoerGuHccKNYL7RWX8wXyyCzsokRwScxYkLV7ZCCK8SuNntuIr6BpNsYG4BgjeteyqOqbUwJdMUzAzzQIv74DkD0JNQK2DkGQVs48/2h0l5ZK+S4zsP23+h3GPvq2pLpeXiyZ2yoQ8ZXWfzIoKphBZFuCyELmg1s95JERd9g=
+	t=1726587945; cv=none; b=Sfx8uQR23Yp0THrTRTEMi1WZjQtDU8+5ItA2t4YGHXS3TN8PArpeXJ0xKaBK4HLf3z37XELGfllDD7hmTPZIKORnWK4Nm1VZl5GpuBo4lSIFmaDApHpye9MmtN2c7ki2P8hqR1eRQrUsM++dxK78GJ2DHhlE7zzM5fRWUNNgYpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726587924; c=relaxed/simple;
-	bh=cogOvavHdY+bOLWky6a19ab7QS0R/kyUy+elvwMD+8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cAzFliSBlsPFC0B880QJovT18JsLoA7ZKrGrspSiIiuGt8AZR+auMnOWOPyew9RB+2fOM5cdirnIRFxResH4tUWHoBzxvgXTwidR3JqFs42nVALCimhQ/EAPasSm1zLYYqJbHHhKoVcrET/vEdBkezPU2gojdfQqXxc6dyPOW9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAE0QSA5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78AECC4CEC5;
-	Tue, 17 Sep 2024 15:45:23 +0000 (UTC)
+	s=arc-20240116; t=1726587945; c=relaxed/simple;
+	bh=KWtkj0GL9S0bCz/hrLAjMTZkpobKDEnlNQquUiw4hWY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hwTsvHg3XlVLiYPMhJGkEfdRW4n2mY2L6Nau56N2LYATNwNcFvXwPW5kSHNa/Lj+/5xBLTKD0U02YMhRN9Cwe8fxNE5WO9UV+M4aDPdFvWzB/Wtmd8InXOBUAjimGcFp0Wv67Wfse1F7Pog7J5l3Zncy7V+nwMAV3lRa51szGHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oyoHUmUG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3638C4CEC5;
+	Tue, 17 Sep 2024 15:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726587924;
-	bh=cogOvavHdY+bOLWky6a19ab7QS0R/kyUy+elvwMD+8A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aAE0QSA5Q47KqSDJ8Urj7f8ny0MWEE0E9/KopCBWe2vv2QFiu9HoZEb84kgXSrcxr
-	 XH0Ifng2shmQwEI+UCariZONqHLEb+r3iJNJXqgx9imPz0OigdJ2GytObiNl4uxsaf
-	 NoUsI/F+dYXPXGxHy42BWUQqZ5QaD1LpA9okGUEKpfXSi8IBGiXz20zC01i5+I23uM
-	 rcgPV4ncPHqHjBfIR76Oow3lA7W39VATlgpCUb+Iddt1UV/kJnmVydS0/tgddq5o47
-	 DIdXPm3G76l53S4ldCfRGFLXC1qFg44A1PO0SEQSBaEJs1VNc+7647VAPh54bCos73
-	 oiIxOUkEEs/Qw==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com,
-	roberto.sassu@huawei.com,
-	mapengyu@gmail.com,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 7/7] tpm: open code tpm2_create_null_primary()
-Date: Tue, 17 Sep 2024 18:44:36 +0300
-Message-ID: <20240917154444.702370-8-jarkko@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240917154444.702370-1-jarkko@kernel.org>
-References: <20240917154444.702370-1-jarkko@kernel.org>
+	s=k20201202; t=1726587945;
+	bh=KWtkj0GL9S0bCz/hrLAjMTZkpobKDEnlNQquUiw4hWY=;
+	h=Date:From:To:Subject:From;
+	b=oyoHUmUG6QRDskcwLX+4a6Eqfo/Upl5AQkkSjeX1VjqxVTLJL0fQHCOPlog1RQxVf
+	 r0O7kcDy6igsh7DiMv2Cbbdf88Xnv2xaG8wic2albBDExAHsVA20Ao7iSKmvyttN/1
+	 dGI6kwau+KG7F0tWiO75IUSQ7wIvl8QNGB3i2YUgkiQF+omNFhgjTkSBRUhNdIOO+1
+	 HwatWXJF/gKnQC+LDylCrl+4sEsL6Ley9DrJuZWRCNrjV5Yq8kWfOTDg2om8ACtKNr
+	 0syy7bBb0ZAXOoipRCA7yeUSt01LYbpo6hm4mzvlisy1Yn03EDp7lTMUQiPVKDcT+J
+	 8XZ6uOC36ieMg==
+Date: Tue, 17 Sep 2024 17:45:40 +0200
+From: Helge Deller <deller@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [GIT PULL] fbdev fixes and cleanups for v6.12-rc1
+Message-ID: <ZumkJA3zfB8AhDsF@carbonx1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-As tpm2_sessions_init() has been shrunk only as a single and only call
-site for tpm2_create_null_primary(), open code it to the call site.
+Hi Linus,
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3:
-- A new patch.
----
- drivers/char/tpm/tpm2-sessions.c | 26 +++++++-------------------
- 1 file changed, 7 insertions(+), 19 deletions(-)
+please pull some updates and cleanups for the fbdev drivers for kernel 6.12-rc1.
+This patchset includes a crashfix for xen and a possible use-after-free fix in pxafb.
 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index d240039d0849..72c83eb3f665 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -1281,7 +1281,13 @@ static int tpm2_create_primary(struct tpm_chip *chip, u32 hierarchy,
- 	return rc;
- }
- 
--static int tpm2_create_null_primary(struct tpm_chip *chip)
-+/**
-+ * tpm2_sessions_init() - Initialize the null keypair for authenticated sessions
-+ * @chip: a &tpm_chip instance
-+ *
-+ * Return: 0 on success and -ENODEV on failure.
-+ */
-+int tpm2_sessions_init(struct tpm_chip *chip)
- {
- 	u32 null_key;
- 	int rc;
-@@ -1308,23 +1314,5 @@ static int tpm2_create_null_primary(struct tpm_chip *chip)
- 	/* Map all errors to -ENODEV: */
- 	return rc ? -ENODEV : rc;
- }
--
--/**
-- * tpm2_sessions_init() - start of day initialization for the sessions code
-- * @chip: TPM chip
-- *
-- * Derive and context save the null primary and allocate memory in the
-- * struct tpm_chip for the authorizations.
-- */
--int tpm2_sessions_init(struct tpm_chip *chip)
--{
--	int rc;
--
--	rc = tpm2_create_null_primary(chip);
--	if (rc)
--		return rc;
--
--	return rc;
--}
- EXPORT_SYMBOL(tpm2_sessions_init);
- #endif /* CONFIG_TCG_TPM2_HMAC */
--- 
-2.46.0
+Thanks!
+Helge
 
+----------------------------------------------------------------
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  http://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git tags/fbdev-for-6.12-rc1
+
+for you to fetch changes up to de5e89b6654ea0b021a5737e0f55fc6bed625550:
+
+  fbdev: omapfb: Fix typo in comment (2024-09-11 20:53:04 +0200)
+
+----------------------------------------------------------------
+fbdev fixes and updates for 6.12-rc1:
+
+- video: Reduce code when CONFIG_HAS_IOPORT=n
+- xenfb: Fix crash by assigning fb_info->device
+- pxafb: Fix possible use after free in pxafb_task()
+- efifb: Introduce and use new devm_register_framebuffer() function
+- mmpfb: Utilize devm_clk_get_enabled() helpers
+- various typo fixes and code cleanups
+
+----------------------------------------------------------------
+Andrew Kreimer (1):
+      fbdev: omapfb: Fix typo in comment
+
+Chen Ni (3):
+      fbdev: pxa3xx-gcu: Convert comma to semicolon
+      fbdev: imsttfb: convert comma to semicolon
+      fbdev: hyperv_fb: Convert comma to semicolon
+
+Christophe JAILLET (3):
+      fbdev: hpfb: Fix an error handling path in hpfb_dio_probe()
+      fbdev: omapfb: panel-sony-acx565akm: Simplify show_cabc_available_modes()
+      fbdev: omapfb: Use sysfs_emit_at() to simplify code
+
+Jason Andryuk (1):
+      fbdev: xen-fbfront: Assign fb_info->device
+
+Kaixin Wang (1):
+      fbdev: pxafb: Fix possible use after free in pxafb_task()
+
+Niklas Schnelle (1):
+      video: Handle HAS_IOPORT dependencies
+
+Thomas Weiﬂschuh (4):
+      fbdev: Introduce devm_register_framebuffer()
+      fbdev: efifb: Register sysfs groups through driver core
+      fbdev: efifb: Use devm_register_framebuffer()
+      fbdev: efifb: Use driver-private screen_info for sysfs
+
+ying zuxin (1):
+      fbdev: mmp: Use devm_clk_get_enabled() helpers
+
+ drivers/video/fbdev/core/fbmem.c                   | 30 +++++++++++
+ drivers/video/fbdev/efifb.c                        | 27 +++-------
+ drivers/video/fbdev/hpfb.c                         |  1 +
+ drivers/video/fbdev/hyperv_fb.c                    |  2 +-
+ drivers/video/fbdev/imsttfb.c                      |  4 +-
+ drivers/video/fbdev/mmp/hw/mmp_ctrl.c              |  6 +--
+ drivers/video/fbdev/omap/omapfb_main.c             | 36 ++++++--------
+ .../omap2/omapfb/displays/panel-sony-acx565akm.c   | 15 +++---
+ drivers/video/fbdev/omap2/omapfb/dss/hdmi.h        |  2 +-
+ drivers/video/fbdev/pxa3xx-gcu.c                   |  4 +-
+ drivers/video/fbdev/pxafb.c                        |  1 +
+ drivers/video/fbdev/xen-fbfront.c                  |  1 +
+ include/linux/fb.h                                 |  1 +
+ include/video/vga.h                                | 58 ++++++++++++++++------
+ 14 files changed, 111 insertions(+), 77 deletions(-)
 
