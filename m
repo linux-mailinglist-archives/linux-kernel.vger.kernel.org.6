@@ -1,129 +1,118 @@
-Return-Path: <linux-kernel+bounces-331769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE1397B100
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:56:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E4697B103
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29B721F245CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49471F24F2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9502E177982;
-	Tue, 17 Sep 2024 13:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920ED176AD7;
+	Tue, 17 Sep 2024 13:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SECdTm6n"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R8hfm7Sh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC4D170A20;
-	Tue, 17 Sep 2024 13:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE3127442;
+	Tue, 17 Sep 2024 13:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726581399; cv=none; b=rwPMOMWIAOELlQ/Y6lJnfNvRGEoKsAa5ed8FOX7Fk37Z0PAHEmQmOqdwHMzzdTHkhiFAcrcvhOMGAdNX/WEbS9MGCj2J6fYOooh5tWzw2O1bPB+n/uDUwMmQkN7dD0yRkC6E8F7InxGgeEBInWJ+d2dY8oBo8wdRbLswf2+Wstg=
+	t=1726581523; cv=none; b=NF73c/EOKy1+m6DPGp0LdQ8bs4ALMDAotqFXYQxCcksoHkz0OJiYtHXPzFBxqdWWjLZpX8HAh480aUZNNHI4sz1JwhTOdwfNTWZ+O2IbZqIOci3Uu7wUgUeywV0zX4+FP40jRNCCcwNpcq16FjBd+aRol/tE+1UflhTtoCVFvWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726581399; c=relaxed/simple;
-	bh=b01XcGpgVZ/b3Rb+1+ZTp1hmGHnL6vJVrMuUCnae3po=;
-	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=QDM115NuAnNd3m34iHsrfnYF7EDV1gifbpj+jBhS3eqdQXXspsAysSaXPg+NIMbxaPcWZdzgyXN31+DzUhNho89oTkfuosAtgkHivxPjz26ZAezn4lTRMSynaJYDrWZSRqqfbrjDe6bZYVztKzDJ9VxdTzctjI+zp3nMKMeSwUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SECdTm6n; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c3ca32974fso7013359a12.3;
-        Tue, 17 Sep 2024 06:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726581396; x=1727186196; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:date:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wl5lJZKo2InPHFwy70QqMNH9ys6Nw/9lea3YM3N2W2c=;
-        b=SECdTm6nB+SLi7qtBcoXOVQRgHpWB5BtKeOQChtrKshtsxJ5QAM2J6XUpBXDVSixHY
-         6J7HYwS7iOenQNbFmQY9mTg/lVGLXyyHfDAJBDPnxm3YujYX+NwKl3lnpL+hLtalbgTX
-         K6ZOV1Hg7DER/CojfY/CBpiQVi9NFDtqsnYIsOIZC//EoGuF1mPd2FfPUCAnJ98L2otA
-         4KBfgOGYn11N9IerFqmSjenUNwNRaGcsSo0qc00sh5naZ+wlO7DJDMBJwO7+WjheKARL
-         fJYjObvFtEyJfgZ+CI6DQwfcvP3OAPbIeEReKfMIx19FHYncl4t98kyfa4ysdqzGd/CS
-         h4TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726581396; x=1727186196;
-        h=mime-version:user-agent:content-transfer-encoding:date:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wl5lJZKo2InPHFwy70QqMNH9ys6Nw/9lea3YM3N2W2c=;
-        b=OhHaob+qH/0g+56tTRotebiz+n+h+uVJov7U2adX8Mg2q4Av0elf99Wpwc1fe/jClg
-         SrerJpdN+H1ZyxpkXCyZFLYcjVJcJWy+nsPNZDUHrIzSOayoXCzulLzT+U6148eL7AVY
-         VSte6w7Rv4q3HOA0+Q0IeiXM9vz0ZCtSoREN7BIO9sffz8iUCvN3Q1DNo+SLH+f0dAKT
-         8SQjIqt6bw4CXYmZxxNxmWrWfpa6Ftr4naxiHHZwNRj8a9aD9Y5K0+J66ITQMssrfRVB
-         80ZBT6YP12P9Y/urexVpwVzQtqys6BxeF7RZCev67IGwlVdTM+WjIza8ygd+V83lQca5
-         JQvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUB6+T5Vra0JgVABukazwDYtGjvDy9k6cmSLlJ8ZOAMdGtTfMdP17Dt9/anhqnbQspkr3KzDbGDfm3X@vger.kernel.org, AJvYcCXs82WHfWVqOqlwEz1ASOdQfpIndObI+GMWFGFULLD6JknubpeSRIjU4IWzDkgpDK2y7iOTZXVs/fAc1fA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynMYmxIkJG8U/milE2kXgtsHU2hgXTNuPcHzsUGK/DZu5kUuY+
-	i8Pfsj5arsKJMlKicLHDsGP2XloBfRCGvUkVMmJ0wqLkCdz/q+C1
-X-Google-Smtp-Source: AGHT+IEcCdajP+bwf7m0fr+lfVuodN90RXtvgydV3QS3XeNLgeP7uTT5l1qL0Lorxz0VZOBpoAqvzA==
-X-Received: by 2002:a05:6402:13c7:b0:5c4:14fe:971e with SMTP id 4fb4d7f45d1cf-5c414fe9994mr16838943a12.23.1726581395341;
-        Tue, 17 Sep 2024 06:56:35 -0700 (PDT)
-Received: from [192.168.216.101] (public-gprs228163.centertel.pl. [31.60.38.132])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb49761sm3899034a12.15.2024.09.17.06.56.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 06:56:35 -0700 (PDT)
-Message-ID: <155be9e56e650dd7f7baf1c7e193e1a3d85e7141.camel@gmail.com>
-Subject: [PATCH v3] usb: gadget: u_ether: Use __netif_rx() in rx_callback()
-From: Hubert =?UTF-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ferry Toth
- <ftoth@exalondelft.nl>, Hardik Gajjar <hgajjar@de.adit-jv.com>, Kees Cook
- <kees@kernel.org>, Justin Stitt <justinstitt@google.com>, Richard Acayan
- <mailingradian@gmail.com>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
- "Ricardo B. Marliere" <ricardo@marliere.net>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Toke
- =?ISO-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>, Sebastian Andrzej
- Siewior <bigeasy@linutronix.de>,  linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 17 Sep 2024 15:56:33 +0200
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1726581523; c=relaxed/simple;
+	bh=ZXeO3cCGpQp8km56A8jsnfTWizOI32RKsbTpSpPVZrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WZCeeLZ1U50V6MaBgfo98JYEeTz3Tz4BJSgEUqcdMalBD8U6VEW3VZ3BUnfNLioNH66Go3JY750fAvkRuckv0kTZ11h5V+Av4wU2AE0if7IcC1rh0Qrpw5kqXGKJbalu00Ygvj/VTK0g0hLyAJfkDuW+QN7ZfYhxg2vVDcYTCbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R8hfm7Sh; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726581522; x=1758117522;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZXeO3cCGpQp8km56A8jsnfTWizOI32RKsbTpSpPVZrM=;
+  b=R8hfm7Shu6Ljm6DAPZ1w28kyBuHWeDcMac43GudnbDDH6u8GOA+WUgT1
+   +gnf3UWTq0oEfAKob4AHtLCM879fbiydvALkEzgf5c6uRtXSEQ5CRxQQg
+   8HXEZkDi0iJ8RkeT5NWQH03x1UmhXqROkTbAWUYPydTSqmZvG0fvPpFou
+   kJqYgkbYZs//2gvWD+dh/WVwb/hnerLDsnxCRWXYlH0uTGl8ujZwyp6tE
+   F4lV3IbM/aemYSuYc9kJJPtOnGQyzDmha7YzKR4teDa26sus2kp7HUP+b
+   dVh6XmgKvmKWSunHnYZqI7UGDBAxan/lYGQqF4FapinpPL6R/MAUdIcN2
+   Q==;
+X-CSE-ConnectionGUID: oORtztbiTcy7u2kxEzWo4g==
+X-CSE-MsgGUID: 8/HOxCK/RPuYxAyW4chHNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25538897"
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="25538897"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 06:58:41 -0700
+X-CSE-ConnectionGUID: DrsjfDWiQXS1CygqQkRpgQ==
+X-CSE-MsgGUID: +42bj6NxTM6E86iNmlIkXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="100036764"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 06:58:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sqYix-00000009q6z-1l1f;
+	Tue, 17 Sep 2024 16:58:35 +0300
+Date: Tue, 17 Sep 2024 16:58:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Sunil V L <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Greg KH <gregkh@linuxfoundation.org>, jirislaby@kernel.org,
+	andrei.warkentin@intel.com, apatel@ventanamicro.com,
+	ajones@ventanamicro.com, dfustini@tenstorrent.com
+Subject: Re: [PATCH] serial: 8250_platform: Enable generic 16550A platform
+ devices
+Message-ID: <ZumLC9I1Jf82Y8T-@smile.fi.intel.com>
+References: <20240730051218.767580-1-sunilvl@ventanamicro.com>
+ <mhng-d52ac6ff-2221-4613-9fce-f73467495389@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mhng-d52ac6ff-2221-4613-9fce-f73467495389@palmer-ri-x1c9>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-netif_rx() now disables bottom halves, which causes the USB gadget to be
-unable to receive frames if the interface is not brought up quickly enough
-after being created by the driver (a bug confirmed on AM3352 SoC).
+On Tue, Sep 17, 2024 at 06:10:25AM -0700, Palmer Dabbelt wrote:
+> On Mon, 29 Jul 2024 22:12:18 PDT (-0700), Sunil V L wrote:
+> > Currently, 8250_platform driver is used only for devices with fixed
+> > serial ports (plat_serial8250_port). Extend this driver for any generic
+> > 16550A platform devices which can be probed using standard hardware
+> > discovery mechanisms like ACPI.
+> >
+> > This is required in particular for RISC-V which has non-PNP generic
+> > 16550A compatible UART that needs to be enumerated as ACPI platform
+> > device.
 
-Replacing netif_rx() with __netif_rx() restores the old behavior and fixes
-the bug. This can be done since rx_callback() is called from the interrupt
-context.
+> It seems a bit awkward that we need something RISC-V specific here.  I 
+> guess the idea is that we don't want to depend on PNP because we'd end 
+> up with a bunch of PCI dependencies as well?  That seems like kind of an 
+> odd way to do things, but I'm frequently suprised by ACPI stuff so
 
-Fixes: baebdf48c360 ("net: dev: Makes sure netif_rx() can be invoked in any=
- context.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Hubert Wi=C5=9Bniewski <hubert.wisniewski.25632@gmail.com>
----
-v2 -> v3: Added cc stable tag
-v1 -> v2: Added Fixes tag and corrected Signed-off-by tag
+We have the same for HSUART on Intel (see 8250_dw.c). The ACPI devices use
+different approach than PNP. PNP has the exact requirements for compatibility
+with the legacy UARTs (to some extend). It puts some limitations. I believe
+having specifics for RISC-V is fine. But I haven't checked the real IP used
+in the SoC. If it's one that we have the existing driver for (like again
+mentioned 8250_dw.c), then it should be added there.
 
- drivers/usb/gadget/function/u_ether.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+TL;DR: so, what is the IP is in hardware for UART? Custom?
 
-diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/fun=
-ction/u_ether.c
-index 4bb0553da658..fd7e483b4a48 100644
---- a/drivers/usb/gadget/function/u_ether.c
-+++ b/drivers/usb/gadget/function/u_ether.c
-@@ -266,7 +266,7 @@ static void rx_complete(struct usb_ep *ep, struct usb_r=
-equest *req)
- 			/* no buffer copies needed, unless hardware can't
- 			 * use skb buffers.
- 			 */
--			status =3D netif_rx(skb2);
-+			status =3D __netif_rx(skb2);
- next_frame:
- 			skb2 =3D skb_dequeue(&dev->rx_frames);
- 		}
---=20
-2.30.2
-
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
