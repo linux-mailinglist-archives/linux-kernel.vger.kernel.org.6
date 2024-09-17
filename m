@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-332064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5F897B4F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:55:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3157A97B4F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F69B2855E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:55:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB92C1F21229
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F284A1917E6;
-	Tue, 17 Sep 2024 20:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5E51922CB;
+	Tue, 17 Sep 2024 20:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="X0jv3Jpe"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iJw4JQmQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B21187851;
-	Tue, 17 Sep 2024 20:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F3827470;
+	Tue, 17 Sep 2024 20:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726606532; cv=none; b=SyhYM4nWlTxeVGAiNHlS4yXjuhR87reUCs/rsaGtATAmcE6F6u1rgD0PHo4lfkPt/mIvYUInIkYWoSGLN/DmWNc8b6ByXWm/ua66cE9LqXBvnnNVJsGpebv0Lstk4jSlV7ztyt72jZX2efoWtGE8OJZ8kN6dge3vnSu1zdAlcaA=
+	t=1726606717; cv=none; b=hBEcDgMEuP179a265VXETRF/2Fuj0EVtUN5DaByomZkISz/80RJ+c6eV0Ard2SWikTmDXDmDkYbMffgo6yBjx2ddWmVv8byAv9Nt6O5R2TswyEfLd/NZXlRyf23aYNKWpxdkJqr+cZI2PJHoP0xfU0z0ZAaaJgsw+p7XE+QdhVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726606532; c=relaxed/simple;
-	bh=0HRbMpgSpWuJMfbAKur5WSqdhmw4LM9drJ989gsTTeM=;
+	s=arc-20240116; t=1726606717; c=relaxed/simple;
+	bh=1DnEq3OtxesbaE5y6su/lPozimbl2W5ioRipEl9iM50=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CxucIP2NuqUPlb+g1Ivrvoinwc9PbmPWVlYPxjllbdnVWiqHD6b+Qjn3pgMCzaUKTIeOpxw+6y/lK/8jbN/Vh/8ALlc4KYgN0j42/FSNE/gSh8zN8k1f9lemiN/En+g6Ta3oqiaxDNHvNMFxHV53xk2fS/d3D8zw9I6e8Xaftw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=X0jv3Jpe; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1726606530; x=1758142530;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=0HRbMpgSpWuJMfbAKur5WSqdhmw4LM9drJ989gsTTeM=;
-  b=X0jv3Jpe8DJdxU2xuCctufQ+/eW/znu84c4DH6yi9SAlesTBkvCm8y9N
-   9ED1pUTEX6+prX17bxPFFwYrvtH+K6ujGJ8GLEh6BMhcwSgakQh6XkoDC
-   ryTHjEInvAcfcaS9GEB3sU6lc25R+C2BM2/F4wYGfFqAm07uX9OANVypI
-   s=;
-X-IronPort-AV: E=Sophos;i="6.10,235,1719878400"; 
-   d="scan'208";a="126870230"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 20:55:28 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:51685]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.42.45:2525] with esmtp (Farcaster)
- id c2281199-2c62-4271-b314-23e8901afbbe; Tue, 17 Sep 2024 20:55:28 +0000 (UTC)
-X-Farcaster-Flow-ID: c2281199-2c62-4271-b314-23e8901afbbe
-Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 17 Sep 2024 20:55:28 +0000
-Received: from [0.0.0.0] (10.253.83.51) by EX19D020UWC004.ant.amazon.com
- (10.13.138.149) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Tue, 17 Sep 2024
- 20:55:23 +0000
-Message-ID: <84c3696d-8108-4a2e-90d7-7830ca6cc3b9@amazon.com>
-Date: Tue, 17 Sep 2024 22:55:20 +0200
+	 In-Reply-To:Content-Type; b=nMJMV3qg3ujF3vY1ZDCjraVyqaBJrcSzrq7EJpWyFxaTPILn7u19bfBznmJxUNdhX29LTJNgzgig4lfHEBfEJZZNVZfQVweJQuPx8GTkIYKp7DUz0f7by5F8syGy8tBbniPw4LL0rGz9LElgqVsRUNvRK3Rm6k9rt9ajp8IpiTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iJw4JQmQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48HHgmbo015455;
+	Tue, 17 Sep 2024 20:58:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rSz8GeEz1hPdodPMqmxwWaTHcv+FJmxacUW6JdoidJ0=; b=iJw4JQmQsjPDmQ+A
+	ptgcHiKs5vQTY/2006tpuUlCbOpn1HB9/C/+Sp980twhdGhT80k9MWcdo6PC6WvO
+	U/AQQesnGimr4PZ0GNlODZLlKLU6WTHqt8Ck052/lf6FnevK2pWY4ocYvUg8QQtK
+	Yg/lJiDkTNq9gDgatZjN5XcsjepQYrgFLfIDix9vJhG7PjgS7BNiY83YsA6nGwbs
+	lDC5M5YwzzgMHJ1/vunnIedkqonWmu6fDlu8UtsdpQ/k+DGocyOOuYIr3Sys5r0L
+	6JwyirlAjZwazjY++iSLqE1FRp9DPwcOk7cYbcqT5M0wEJ5ScaQB0fuESEyKyDzX
+	e7cSIQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4kjfyug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 20:58:10 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48HKw9q1009718
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 20:58:09 GMT
+Received: from [10.110.34.108] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Sep
+ 2024 13:58:05 -0700
+Message-ID: <1c58c34e-8845-41f2-8951-68ba5b9ced38@quicinc.com>
+Date: Tue, 17 Sep 2024 13:57:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,71 +64,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Re: [PATCH] Revert "vmgenid: emit uevent when
- VMGENID updates"
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-CC: Lennart Poettering <mzxreary@0pointer.de>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Babis Chalios
-	<bchalios@amazon.es>, Theodore Ts'o <tytso@mit.edu>, "Cali, Marco"
-	<xmarcalx@amazon.co.uk>, Arnd Bergmann <arnd@arndb.de>, "rostedt@goodmis.org"
-	<rostedt@goodmis.org>, Christian Brauner <brauner@kernel.org>,
-	<linux@leemhuis.info>, <regressions@lists.linux.dev>, Paolo Bonzini
-	<pbonzini@redhat.com>, "Michael Kelley (LINUX)" <mikelley@microsoft.com>,
-	Sean Christopherson <seanjc@google.com>
-References: <20240418114814.24601-1-Jason@zx2c4.com>
- <e09ce9fd-14cb-47aa-a22d-d295e466fbb4@amazon.com>
- <CAHmME9qKFraYWmzD9zKCd4oaMg6FyQGP5pL9bzZP4QuqV1O_Qw@mail.gmail.com>
- <ZieoRxn-On0gD-H2@gardel-login>
- <b819717c-74ea-4556-8577-ccd90e9199e9@amazon.com>
- <Ziujox51oPzZmwzA@zx2c4.com> <Zi9ilaX3254KL3Pp@gardel-login>
- <01d2b24c-a9d2-4be0-8fa0-35d9937eceb4@amazon.com>
- <CAHmME9rxn5KJJBOC3TqTEgotnsFO5r6F-DJn3ekc5ZgW8OaCFw@mail.gmail.com>
+Subject: Re: [RFC PATCH net v1] net: phy: aquantia: Set phy speed to 2.5gbps
+ for AQR115c
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+        Andrew Lunn
+	<andrew@lunn.ch>
+CC: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Heiner
+ Kallweit" <hkallweit1@gmail.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>,
+        Brad Griffis <bgriffis@nvidia.com>,
+        "Vladimir
+ Oltean" <vladimir.oltean@nxp.com>,
+        Jon Hunter <jonathanh@nvidia.com>, <kernel@quicinc.com>
+References: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
+ <20240913100120.75f9d35c@fedora.home>
+ <eb601920-c2ea-4ef6-939b-44aa18deed82@quicinc.com>
+ <c6cc025a-ff13-46b8-97ac-3ad9df87c9ff@lunn.ch>
+ <ZulMct3UGzlfxV1T@shell.armlinux.org.uk>
 Content-Language: en-US
-From: Alexander Graf <graf@amazon.com>
-In-Reply-To: <CAHmME9rxn5KJJBOC3TqTEgotnsFO5r6F-DJn3ekc5ZgW8OaCFw@mail.gmail.com>
-X-ClientProxiedBy: EX19D033UWA002.ant.amazon.com (10.13.139.10) To
- EX19D020UWC004.ant.amazon.com (10.13.138.149)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: base64
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+In-Reply-To: <ZulMct3UGzlfxV1T@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Gi9fHv0lIXjHCzVNutMXWJvaKRE6ae0K
+X-Proofpoint-ORIG-GUID: Gi9fHv0lIXjHCzVNutMXWJvaKRE6ae0K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0
+ phishscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409170148
 
-Ck9uIDE3LjA5LjI0IDIwOjA0LCBKYXNvbiBBLiBEb25lbmZlbGQgd3JvdGU6Cj4gT24gVGh1LCBK
-dW4gMTMsIDIwMjQgYXQgNjozN+KAr1BNIEFsZXhhbmRlciBHcmFmIDxncmFmQGFtYXpvbi5jb20+
-IHdyb3RlOgo+PiBGcmllbmRseSBwaW5nIGFnYWluLiBXZSB3b3VsZCByZWFsbHkgbGlrZSB0byBo
-YXZlIGEgY29uc3RydWN0aXZlCj4+IHRlY2huaWNhbCBjb252ZXJzYXRpb24gYW5kIGNvbGxhYm9y
-YXRpb24gb24gaG93IHRvIG1ha2UgZm9yd2FyZCBwcm9ncmVzcwo+PiB3aXRoIFZNIGNsb25lIG5v
-dGlmaWNhdGlvbnMgZm9yIHVzZXIgc3BhY2UgYXBwbGljYXRpb25zIHRoYXQgaG9sZCB1bmlxdWUK
-Pj4gZGF0YSBhbmQgaGVuY2UgbmVlZCB0byBsZWFybiBhYm91dCBWTSBjbG9uZSBldmVudHMsIG91
-dHNpZGUgb2YgYW55Cj4+IHJhbmRvbW5lc3Mgc2VtYW50aWNzLgo+IFdpdGggdGhlIG90aGVyIHdv
-cmsgbm93IG1vc3RseSBkb25lLCBzdXJlLCBsZXQncyBwaWNrIHRoaXMgdXAgYWdhaW4uIEkKPiB0
-aGluayBuZXh0IG9uIHRoZSBsaXN0IHdhcyBnZXR0aW5nIHRoZSB2aXJ0aW8gcm5nIGRldmljZSBk
-ZWxpdmVyaW5nIFZNCj4gY2xvbmUgZXZlbnRzIGFuZCB1bmlxdWUgVVVJRHMuIFRoZXJlIHdhcyBh
-IHNwZWMgY2hhbmdlIHBvc3RlZCBhIHdoaWxlCj4gYmFjayBhbmQgYSBwYXRjaCBmb3IgdGhlIGtl
-cm5lbC4gRG8geW91IHdhbnQgdG8gcmVmcmVzaCB0aG9zZT8gSQo+IHRob3VnaHQgdGhhdCB3YXMg
-YSBwcm9taXNpbmcgZGlyZWN0aW9uIC0tIGFuZCB0aGUgb25lIHdlIGFsbCBkZWNpZGVkCj4gdG9n
-ZXRoZXIgaW4gcGVyc29uIGFzIHRoZSBtb3N0IHZpYWJsZSwgcmFjZS1mcmVlIHdheSwgZXRjIC0t
-Cj4gZXNwZWNpYWxseSBiZWNhdXNlIGl0IHdvdWxkIG1ha2Ugd2F5cyBvZiBleHBvc2luZyB0aG9z
-ZSBJRHMgbG93IGNvc3QuCj4gQW5kLCBpbXBvcnRhbnRseSBmb3IgeW91LCBJIHRoaW5rIHRoYXQg
-bWlnaHQgKmFsc28qIGNvdmVyIHRoZSBuZWVkCj4gdGhhdCB5b3UgaGF2ZSBoZXJlLCBzbyB3ZSds
-bCBraWxsIHNldmVyYWwgYmlyZHMgd2l0aCBvbmUgc3RvbmUuCgoKVGhlIHZpcnRpbyBwcm9wb3Nh
-bCBvbmx5IGFkZHJlc3NlZCBjb25zdW1lcnMgdGhhdCByZXF1aXJlIHNpbmdsZSBhdG9taWMgCm1l
-bW9yeSB1cGRhdGVzIHRvIGxlYXJuIGFib3V0IGFueSBldmVudCB0aGF0IGlzIGRpc3J1cHRpdmUg
-dG8gdGhlaXIgCmVudHJvcHkgc291cmNlcy4gV2l0aCB2Z2V0cmFuZG9tIGFuZC9vciByZHJhbmQg
-d2Ugc29sdmVkIHRoYXQgcHJvYmxlbSwgCnNvIHdlIGNhbiBjbG9zZSB0aGUgY2hhcHRlciBvZiB0
-aGF0IGNsYXNzIG9mIHVzZSBjYXNlcy4KCldoYXQgaXMgc3RpbGwgb3BlbiBhcmUgdXNlciBzcGFj
-ZSBhcHBsaWNhdGlvbnMgdGhhdCByZXF1aXJlIGV2ZW50IGJhc2VkIApub3RpZmljYXRpb24gb24g
-Vk0gY2xvbmUgZXZlbnRzIC0gYW5kICpvbmx5KiBWTSBjbG9uZSBldmVudHMuIFRoaXMgCm1vc3Rs
-eSBjYXRlcnMgZm9yIHRvb2xzIGxpa2Ugc3lzdGVtZCB3aGljaCBuZWVkIHRvIGV4ZWN1dGUgcG9s
-aWN5IC0gc3VjaCAKYXMgZ2VuZXJhdGluZyByYW5kb21seSBnZW5lcmF0ZWQgTUFDIGFkZHJlc3Nl
-cyAtIGluIHRoZSBldmVudCBhIFZNIHdhcyAKY2xvbmVkLgoKVGhhdCdzIHRoZSB1c2UgY2FzZSB0
-aGlzIHBhdGNoICJ2bWdlbmlkOiBlbWl0IHVldmVudCB3aGVuIFZNR0VOSUQgCnVwZGF0ZXMiIGlz
-IGFib3V0IGFuZCBJIHRoaW5rIHRoZSBiZXN0IHBhdGggZm9yd2FyZCBpcyB0byBqdXN0IHJldmVy
-dCAKdGhlIHJldmVydC4gQSB1ZXZlbnQgZnJvbSB0aGUgZGV2aWNlIGRyaXZlciBpcyBhIHdlbGwg
-ZXN0YWJsaXNoZWQsIHdlbGwgCmZpdHRpbmcgTGludXggbWVjaGFuaXNtIGZvciB0aGF0IHR5cGUg
-b2Ygbm90aWZpY2F0aW9uLgoKCkFsZXgKCgoKCkFtYXpvbiBXZWIgU2VydmljZXMgRGV2ZWxvcG1l
-bnQgQ2VudGVyIEdlcm1hbnkgR21iSApLcmF1c2Vuc3RyLiAzOAoxMDExNyBCZXJsaW4KR2VzY2hh
-ZWZ0c2Z1ZWhydW5nOiBDaHJpc3RpYW4gU2NobGFlZ2VyLCBKb25hdGhhbiBXZWlzcwpFaW5nZXRy
-YWdlbiBhbSBBbXRzZ2VyaWNodCBDaGFybG90dGVuYnVyZyB1bnRlciBIUkIgMjU3NzY0IEIKU2l0
-ejogQmVybGluClVzdC1JRDogREUgMzY1IDUzOCA1OTcK
 
+
+On 9/17/2024 2:31 AM, Russell King (Oracle) wrote:
+> On Fri, Sep 13, 2024 at 06:35:17PM +0200, Andrew Lunn wrote:
+>> On Fri, Sep 13, 2024 at 09:12:13AM -0700, Abhishek Chauhan (ABC) wrote:
+>>> On 9/13/2024 1:01 AM, Maxime Chevallier wrote:
+>>>> Hi,
+>>>>
+>>>> On Thu, 12 Sep 2024 18:16:35 -0700
+>>>> Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
+>>>>
+>>>>> Recently we observed that aquantia AQR115c always comes up in
+>>>>> 100Mbps mode. AQR115c aquantia chip supports max speed up to
+>>>>> 2.5Gbps. Today the AQR115c configuration is done through
+>>>>> aqr113c_config_init which internally calls aqr107_config_init.
+>>>>> aqr113c and aqr107 are both capable of 10Gbps. Whereas AQR115c
+>>>>> supprts max speed of 2.5Gbps only.
+>>>>>
+>>>>> Fixes: 0ebc581f8a4b ("net: phy: aquantia: add support for aqr115c")
+>>>>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+>>>>> ---
+>>>>>  drivers/net/phy/aquantia/aquantia_main.c | 7 +++++++
+>>>>>  1 file changed, 7 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+>>>>> index e982e9ce44a5..9afc041dbb64 100644
+>>>>> --- a/drivers/net/phy/aquantia/aquantia_main.c
+>>>>> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+>>>>> @@ -499,6 +499,12 @@ static int aqr107_config_init(struct phy_device *phydev)
+>>>>>  	if (!ret)
+>>>>>  		aqr107_chip_info(phydev);
+>>>>>  
+>>>>> +	/* AQR115c supports speed up to 2.5Gbps */
+>>>>> +	if (phydev->interface == PHY_INTERFACE_MODE_2500BASEX) {
+>>>>> +		phy_set_max_speed(phydev, SPEED_2500);
+>>>>> +		phydev->autoneg = AUTONEG_ENABLE;
+>>>>> +	}
+>>>>> +
+>>>>
+>>>> If I get your commit log right, the code above will also apply for
+>>>> ASQR107, AQR113 and so on, don't you risk breaking these PHYs if they
+>>>> are in 2500BASEX mode at boot?
+>>>>
+>>>
+>>> I was thinking of the same. That this might break something here for other Phy chip. 
+>>> As every phy shares the same config init. Hence the reason for RFC. 
+>>>
+>>>> Besides that, if the PHY switches between SGMII and 2500BASEX
+>>>> dynamically depending on the link speed, it could be that it's
+>>>> configured by default in SGMII, hence this check will be missed.
+>>>>
+>>>>
+>>> I think the better way is to have AQR115c its own config_init which sets 
+>>> the max speed to 2.5Gbps and then call aqr113c_config_init . 
+>>
+>> phy_set_max_speed(phydev, SPEED_2500) is something a MAC does, not a
+>> PHY. It is a way for the MAC to say is supports less than the PHY. I
+>> would say the current aqcs109_config_init() is doing this wrong.
+> 
+> Agreed on two points:
+> 
+> 1) phy_set_max_speed() is documented as a function that the MAC will
+> call.
+> 
+> 2) calling phy_set_max_speed() in .config_init() is way too late for
+> phylink. .config_init() is called from phy_init_hw(), which happens
+> after the PHY has been attached. However, phylink needs to know what
+> the PHY supports _before_ that, especially for any PHY that is on a
+> SFP, so it can determine what interface to use for the PHY.
+> 
+> So, as Andrew says, the current aqcs109_config_init(), and it seems
+> aqr111_config_init() are both broken.
+> 
+> The PHY driver needs to indicate to phylib what is supported by the
+> PHY no later than the .get_features() method.
+> 
+
+Noted!. Makes sense. thanks for your review, Russell. 
+We are in the process of figuring out what the phy chip is reporting as 
+its features. Once done i will raise a clean patch for upstream review. 
+
+> Thanks.
+> 
 
