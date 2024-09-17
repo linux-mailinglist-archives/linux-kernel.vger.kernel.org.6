@@ -1,155 +1,144 @@
-Return-Path: <linux-kernel+bounces-331240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32B497AA47
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:49:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D411C97AA4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507ED1F2663C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914E5282E88
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9E619BBC;
-	Tue, 17 Sep 2024 01:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D4620322;
+	Tue, 17 Sep 2024 01:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CQMnIWez"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UcR8OEjq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40D4134B6
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 01:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A38AA93D;
+	Tue, 17 Sep 2024 01:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726537785; cv=none; b=hmdUmi87a/SD+MUWMgq6VIflXrUP1jmlp++izLi/g/6TunhQnIROaR5wEibrfPaD6rEmPPz9Lewm/QEE/821dLSTnL61NnBUscT29K4b2nnHPp59lrnE+7YZAwMpgzVz3tuNySjbZR0sUUug6+KsJApM8MwBCnlKuBhFtu+O1t4=
+	t=1726538040; cv=none; b=K3q2tCY7tkX1A2esy5s/wOyHmw9rh4zc5lKdmGtDwo2l8fpjVfkVnX81sTDmGFJATT8NcDjbbPRcOmDUhlsTmvWRoLIqj5OfPAld6rJq7yTrtvEJDYzW/kplaA7Bi3lopQn7ZQd6HK88+5qV7uJt/zOG3HxpXg4kUJvbAkhxV84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726537785; c=relaxed/simple;
-	bh=NbOMlFHD53WxzHeq7t15Hgu47c3rGVA32W5Nuk5iMDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XBYxFA+rukzFZqD6pZEUcm2Hrk1cHXw5LhkgTMO/oTQkwaXz8NXUKRhywN8BW/H2JWqJSq7STWV1ON8umOcy1PMNV9QCFX4zSm1qw4zQcVHlDmum4H5wmdGFY7p30iMgWzk1yt/c7v04mP8auFMi3DeNi6vsYKMkrvABvu5f4qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CQMnIWez; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726537783; x=1758073783;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=NbOMlFHD53WxzHeq7t15Hgu47c3rGVA32W5Nuk5iMDg=;
-  b=CQMnIWezo9wlUD7LbwTBtCPDBw7oi5PxcuYXgYCQZhJviSMjJ9+1Jgcz
-   K7lIrv0dYnP1v00D/psLwyuSjXN+Z9+Pe8kFlcAd2ahIadzkCqO42hL3K
-   KDoJh6aY+ajLEnAF3bYqc2NnsWYZN8EkNN5q7VXYvZuxrnn+3/TSCNboS
-   G7f1fngEhOKjm5XVkYEckm6xlw0etfyB9HOc84X51Wlnxwi0sHOA7zXoZ
-   uyHXV1FY8frh9h1FnO0iNvMqeZFH+2jQAUQElS6Uq1cw1sO90OhcegeWA
-   TVq/mdj/DvQLgVMJqWA2XHlfKAMX8TbWFSR7aTLkAA/LXXuGsQpwu9n9W
-   A==;
-X-CSE-ConnectionGUID: WEIwY3W5SoGJt7Xp45N0+Q==
-X-CSE-MsgGUID: G/E8xopYSImw1vJi3W3dfA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="25505117"
-X-IronPort-AV: E=Sophos;i="6.10,234,1719903600"; 
-   d="scan'208";a="25505117"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 18:49:43 -0700
-X-CSE-ConnectionGUID: bmmvkZ59RIKGUlSuf180dA==
-X-CSE-MsgGUID: B3uKY8UiRcWW3M1pkD1oyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,234,1719903600"; 
-   d="scan'208";a="73405343"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 16 Sep 2024 18:49:41 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sqNLW-000Ah6-30;
-	Tue, 17 Sep 2024 01:49:38 +0000
-Date: Tue, 17 Sep 2024 09:48:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: arch/powerpc/platforms/44x/uic.c:40:12: sparse: sparse: symbol
- 'primary_uic' was not declared. Should it be static?
-Message-ID: <202409170900.BtJZbhrx-lkp@intel.com>
+	s=arc-20240116; t=1726538040; c=relaxed/simple;
+	bh=TVC8iIjH/HSN+mLtYjCyftkVQEtHMFReuFWlMPT3hFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QtMEDGNITy2CwALourVbQeWwU2XlB8KeI/JqhqP16jV/sOWX585rUYP8pIe20I0JLtKmFnA8r2siLPNgBD3sWKq0d8onD4v8ZrZM98DNPq9aAeeuYbrJvpDnk5fLMLvOWJxaVIw9+zehRPNQOOS6zlSH3M+lX9Y02LX3jlVcA1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UcR8OEjq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726538034;
+	bh=3VsrjsLEQYwGSbqRw1f36c24Yuqeom+BZaf0fc/aIWI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UcR8OEjqap5dP9bGpBCrIqwISB0koDU5yoy42rsvidJks9baxJ/kKpr4VmXgnjXSp
+	 fnDiawijeDNEs10GguJ7QibwXyWwnvXhGyUuBx6b4NJxA9FXUrllJsTe+xUikutVdR
+	 YTw2zLe5iLk/tK59hfDYJM0AP8jPY05bD4t6g+hzNUA2gkRRe1DVGc1kPmxATsAzpb
+	 NSy14FQSpyQv323uG/P9Rr5GuS4qIx8Gn1EYUIp3yrRAwd9BaIlGo/PuLuY+YG9U2w
+	 /b3CubLGz8kVhQAB9sQIw24kej861XSzejI8n0+LopLPmtdXKHf0QS3Df4MLe9j6Kh
+	 ZXj/nN2uIEnAA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X74ZT5zLsz4xWK;
+	Tue, 17 Sep 2024 11:53:53 +1000 (AEST)
+Date: Tue, 17 Sep 2024 11:53:52 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Leon Romanovsky <leon@kernel.org>,
+ Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Saeed Mahameed <saeedm@nvidia.com>, Yevgeny
+ Kliteynik <kliteyn@nvidia.com>, Yishai Hadas <yishaih@nvidia.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the
+ mlx5-next tree
+Message-ID: <20240917115352.12f0de91@canb.auug.org.au>
+In-Reply-To: <20240912120619.38fa7556@canb.auug.org.au>
+References: <20240912120619.38fa7556@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="Sig_/0IfIBLytk=.b.QYqZFnCuZG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Christophe,
+--Sig_/0IfIBLytk=.b.QYqZFnCuZG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-First bad commit (maybe != root cause):
+Hi all,
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   a430d95c5efa2b545d26a094eb5f624e36732af0
-commit: d5d1a1a55a7f227c0f41847b0598982f0a93170d powerpc/platforms: Move files from 4xx to 44x
-date:   3 months ago
-config: powerpc-randconfig-r132-20240916 (https://download.01.org/0day-ci/archive/20240917/202409170900.BtJZbhrx-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240917/202409170900.BtJZbhrx-lkp@intel.com/reproduce)
+On Thu, 12 Sep 2024 12:06:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the net-next tree got a conflict in:
+>=20
+>   include/linux/mlx5/mlx5_ifc.h
+>=20
+> between commit:
+>=20
+>   c772a2c69018 ("net/mlx5: Add IFC related stuff for data direct")
+>=20
+> from the mlx5-next tree and commit:
+>=20
+>   34c626c3004a ("net/mlx5: Added missing mlx5_ifc definition for HW Steer=
+ing")
+>=20
+> from the net-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc include/linux/mlx5/mlx5_ifc.h
+> index 65bbf535b365,b6f8e3834bd3..000000000000
+> --- a/include/linux/mlx5/mlx5_ifc.h
+> +++ b/include/linux/mlx5/mlx5_ifc.h
+> @@@ -313,7 -315,7 +315,8 @@@ enum=20
+>   	MLX5_CMD_OP_MODIFY_VHCA_STATE             =3D 0xb0e,
+>   	MLX5_CMD_OP_SYNC_CRYPTO                   =3D 0xb12,
+>   	MLX5_CMD_OP_ALLOW_OTHER_VHCA_ACCESS       =3D 0xb16,
+>  +	MLX5_CMD_OPCODE_QUERY_VUID                =3D 0xb22,
+> + 	MLX5_CMD_OP_GENERATE_WQE                  =3D 0xb17,
+>   	MLX5_CMD_OP_MAX
+>   };
+>  =20
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409170900.BtJZbhrx-lkp@intel.com/
+This is now a conflict between the rdma tree and Linus' tree.
 
-sparse warnings: (new ones prefixed by >>)
->> arch/powerpc/platforms/44x/uic.c:40:12: sparse: sparse: symbol 'primary_uic' was not declared. Should it be static?
-   arch/powerpc/platforms/44x/uic.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/slab.h):
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
---
->> arch/powerpc/platforms/44x/pci.c:116:54: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __be32 const [usertype] *cell @@     got unsigned int const [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:116:54: sparse:     expected restricted __be32 const [usertype] *cell
-   arch/powerpc/platforms/44x/pci.c:116:54: sparse:     got unsigned int const [usertype] *
->> arch/powerpc/platforms/44x/pci.c:117:74: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __be32 const [usertype] *in_addr @@     got unsigned int const [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:117:74: sparse:     expected restricted __be32 const [usertype] *in_addr
-   arch/powerpc/platforms/44x/pci.c:117:74: sparse:     got unsigned int const [usertype] *
-   arch/powerpc/platforms/44x/pci.c:118:52: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __be32 const [usertype] *cell @@     got unsigned int const [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:118:52: sparse:     expected restricted __be32 const [usertype] *cell
-   arch/powerpc/platforms/44x/pci.c:118:52: sparse:     got unsigned int const [usertype] *
->> arch/powerpc/platforms/44x/pci.c:1528:30: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1528:30: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned char const volatile [noderef] [usertype] __iomem *addr @@     got unsigned char [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1528:30: sparse:     expected unsigned char const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1528:30: sparse:     got unsigned char [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1531:33: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1531:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short const volatile [noderef] [usertype] __iomem *addr @@     got unsigned short [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1531:33: sparse:     expected unsigned short const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1531:33: sparse:     got unsigned short [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1534:33: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1534:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got unsigned int [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1534:33: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1534:33: sparse:     got unsigned int [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1585:24: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1585:24: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned char volatile [noderef] [usertype] __iomem *addr @@     got unsigned char [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1585:24: sparse:     expected unsigned char volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1585:24: sparse:     got unsigned char [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1588:27: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1588:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short volatile [noderef] [usertype] __iomem *addr @@     got unsigned short [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1588:27: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1588:27: sparse:     got unsigned short [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1591:27: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1591:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got unsigned int [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1591:27: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1591:27: sparse:     got unsigned int [usertype] *
-   arch/powerpc/platforms/44x/pci.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+--=20
+Cheers,
+Stephen Rothwell
 
-vim +/primary_uic +40 arch/powerpc/platforms/44x/uic.c
+--Sig_/0IfIBLytk=.b.QYqZFnCuZG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-e58923ed14370e arch/powerpc/sysdev/uic.c David Gibson 2007-04-18  39  
-e58923ed14370e arch/powerpc/sysdev/uic.c David Gibson 2007-04-18 @40  struct uic *primary_uic;
-e58923ed14370e arch/powerpc/sysdev/uic.c David Gibson 2007-04-18  41  
+-----BEGIN PGP SIGNATURE-----
 
-:::::: The code at line 40 was first introduced by commit
-:::::: e58923ed14370e0facc5eb2c3923216adc3bf260 [POWERPC] Add arch/powerpc driver for UIC, PPC4xx interrupt controller
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbo4TAACgkQAVBC80lX
+0Gw35Qf/eEfu9H09plXHgZx7CuGsPwXU9bkgufvHOaaxep0kLBnBmf/kKuUrJ6dA
+8OEyZZ2tK9uOMgqoS9PW6yXDeeXBXalKKcBv+gbmPwlXVag7k79NM4JGjI3PJovs
+Tv3q3FFFz6E9vaPig3CYNyDcypSF74DNupfSz7XmwuXHMJ+DQEgLBi1/5Ae7nObA
+7e6SFpyLDWpW2EtO7QJ0LptlYrd02bWapAQoWWOgouPjdnDC8l+jFI1W21egRkUT
+sTkFTSh7fDQQr+mY3det3Vvem/X2lTvZOy5QtfQJU2wT1iH3gx2cW25a2aWyFnbP
+T9HBMDlqHiVXCtS7YsAPKxWiltpmTA==
+=Fsek
+-----END PGP SIGNATURE-----
 
-:::::: TO: David Gibson <david@gibson.dropbear.id.au>
-:::::: CC: Paul Mackerras <paulus@samba.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--Sig_/0IfIBLytk=.b.QYqZFnCuZG--
 
