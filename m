@@ -1,152 +1,176 @@
-Return-Path: <linux-kernel+bounces-331661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3DDA97AFB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:29:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2139797AFB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0461F24E4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD5AC28257C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DDA169AC5;
-	Tue, 17 Sep 2024 11:29:50 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347E9200A3;
-	Tue, 17 Sep 2024 11:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279FF169AC5;
+	Tue, 17 Sep 2024 11:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ws0Y8SBl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D96200A3
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726572589; cv=none; b=VOCgToaa+ZwUeuPvBkFmOEiPRZQYUT/q1P3TWP5+O5Wfj8OWRGdNF6UBhQ73ooVZnymvlqzOxROGbPbum7QhW/pAEO9SVh2wJWpW5h93HH5lOOpnkjtwlAfkBKzNQ5y0ePHqgnOGif2NI6KgIjxPJNAbZydkiXnQYX0GQYCIFnk=
+	t=1726572707; cv=none; b=Kowld1mPMGOqdzv3kxvZkpBnzeYZFhu/xwVEFipYKVjIeMcHOmomwqW5xVsSzFpcKMFw+r0zHrosIK76JKRf7XTYbZlmTHyTqFd9zxLLYWkvKQd9vxXM+Vp7aYXbLgmAlqfW55Xfzv2YRrwvUtcaChw7xoUkasZlrOLbmaGgVUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726572589; c=relaxed/simple;
-	bh=BSUGbVFzo/XLFC1Eb0wbRRxSENs3PhgBjIFbMO9VrPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L5cBAFvqxGf7M1vnhkcXBk02LanXQxNAEHDLEZOg4ZGS9j3XQbM3vsliiwkcAYQ/Bd4ccYKrTKIrkShY8MwSYA2n31p1XMcLxPauN4cIs9LtxTvfzQBREQdm8aCFqWw3DEIf1VLAV7nDG7WiSDhubXsHvCXYDdVDLnde502G4YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48HBRQaS014263;
-	Tue, 17 Sep 2024 06:27:26 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48HBROCL014262;
-	Tue, 17 Sep 2024 06:27:24 -0500
-Date: Tue, 17 Sep 2024 06:27:24 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>, dhowells@redhat.com,
-        dwmw2@infradead.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-Message-ID: <20240917112724.GA14167@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com> <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com> <ZuaVzQqkwwjbUHSh@gondor.apana.org.au> <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com> <ZualreC25wViRHBq@gondor.apana.org.au> <ZuapXswFUxsFxjgH@gondor.apana.org.au> <2541abb8-68b5-4e6a-b309-a001ecdfbea1@huaweicloud.com>
+	s=arc-20240116; t=1726572707; c=relaxed/simple;
+	bh=4bjNKuWWw046PH8j5NUWvAfjfjaVMZDU0UtUhBsJzsA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZvN81ceAA3g/rLamkcvRbSY229wq96I2YzuW+ICHRPN0Vplz4UadAc4aqdwE9iKWUCBgi4YePwyAfbEnxIyNdG3LSPa/Xi8dXXBW9zRWllTXkgaIL/p4cbsWJSFc++hh1gpzBbaOtNvzTPzThkjPvd+xJ8iC7wlCmzVjt5wJCVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ws0Y8SBl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726572705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oul+0D/MDGitLa0XxGud62DDDYkyjjPr6iJYhvpm5HA=;
+	b=Ws0Y8SBlro5uhGlKl48YeakpbVfjf+Ll/o3GyprslMZBB27lvSzRor7jCD1bmzcA1WPbbu
+	6SMZ8MK3hNCam9ItjLlDolgFl4Up83ZpffNS1ZmyJGPnmdylaeXt+kadF6GAUsIkyZr5xL
+	uleCpzIEGSIiMryFC0KrsHdP8dXxJho=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-641-Hd-5feMdMky041nAARiCUw-1; Tue, 17 Sep 2024 07:31:43 -0400
+X-MC-Unique: Hd-5feMdMky041nAARiCUw-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-535681e6f8eso2023864e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 04:31:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726572702; x=1727177502;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oul+0D/MDGitLa0XxGud62DDDYkyjjPr6iJYhvpm5HA=;
+        b=kMGTZdedvVNpLDV+pDpXvqvLNk4T8aEqRVLS0KcgiFmMo8CKZarRvKyV5qmD6rJ+Mv
+         XMbiOvG1Fk5mL79oX9xO+fIaH6cEQzwO2vn05j5VM3s49HM3j4OmKLT1GZX8/Vji0iEX
+         zUl8L/bumF8tVQbh3GtbKPjnUBugmGuWjFgpDWLPxViA0fLgd9PRLbcWF5KAG1/8iXwf
+         WNeiVgcVtPdB0cHWK+Ii9E9YCqH9vkWwB5aUgvwJXxcCYOyKyJKU1yvUXyNeHq8pdlpa
+         BXGfFFaGqO38ovr53oy2yI5p2mhBqDFH19qVxPBmZ2B1lJ1rcQWj0X2gS4ddn3JENK6D
+         SIEw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5OG/2brhM5dxX4NKDr3hWvQy9NKn7j8sszhFyI7pQsBMUbuoKueUqfJ3zGq+rwQccnH+HMbx4NdCFnpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJC8c/ehvUTdJ3hxC8TXbDSnBNowyihawKqg1EGoI6WL8XvDAS
+	yNREbICvjSifxFj+bNI4OG6s1kyrXG5dXMjvSsvE7R53/CiM8Ycbe5jaGrTZjlCzUMsP8caPIeV
+	/2Rdk8GIpd1ntL81ejl/F2sYU5KGMEYEWFOod0OU7usHz/2F+AsuNaJoftE+ftw==
+X-Received: by 2002:a05:6512:1242:b0:533:448f:7632 with SMTP id 2adb3069b0e04-5367feba053mr7554872e87.1.1726572702218;
+        Tue, 17 Sep 2024 04:31:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvGVKtqN3ILBeZBk9xYEyrdcbPUlznGq75QoE8BG0n/NvnMUhaFxW/EXPIZ8zLsf4a5/FruQ==
+X-Received: by 2002:a05:6512:1242:b0:533:448f:7632 with SMTP id 2adb3069b0e04-5367feba053mr7554843e87.1.1726572701637;
+        Tue, 17 Sep 2024 04:31:41 -0700 (PDT)
+Received: from [192.168.55.136] (tmo-067-108.customers.d1-online.com. [80.187.67.108])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb949bdsm3535380a12.84.2024.09.17.04.31.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 04:31:40 -0700 (PDT)
+Message-ID: <5af75d55-f65d-4c3d-be85-402386ece04d@redhat.com>
+Date: Tue, 17 Sep 2024 13:31:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2541abb8-68b5-4e6a-b309-a001ecdfbea1@huaweicloud.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 17 Sep 2024 06:27:26 -0500 (CDT)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/7] x86/mm: Drop page table entry address output from
+ pxd_ERROR()
+To: Dave Hansen <dave.hansen@intel.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+ <20240917073117.1531207-3-anshuman.khandual@arm.com>
+ <c4fe25e3-9b03-483f-8322-3a17d1a6644a@redhat.com>
+ <be3a44a3-7f33-4d6b-8348-ed6b8c3e7b49@intel.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <be3a44a3-7f33-4d6b-8348-ed6b8c3e7b49@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 15, 2024 at 07:52:13PM +0200, Roberto Sassu wrote:
+On 17.09.24 13:19, Dave Hansen wrote:
+> On 9/17/24 03:22, David Hildenbrand wrote:
+>> Not a big fan of all these "bad PTE" thingies ...
+> 
+> In general?
 
-Good morning, I hope the day is starting well for everyone.
+In general, after I learned that pmd_bad() fires on perfectly fine 
+pmd_large() entries, which makes things like pmd_none_or_clear_bad() 
+absolutely dangerous to use in code where we could have THPs ...
 
-> On 9/15/2024 11:31 AM, Herbert Xu wrote:
-> >On Sun, Sep 15, 2024 at 05:15:25PM +0800, Herbert Xu wrote:
-> >>
-> >>Roberto, correct me if I'm wrong but your intended use case is
-> >>the following patch series, right?
-> >
-> >Actually the meat of the changes is in the following series:
-> >
-> >https://lore.kernel.org/linux-integrity/20240905150543.3766895-1-roberto.sassu@huaweicloud.com/
+Consequently, we stopped using them in THP code, so what's the whole 
+point of having them ...
 
-> Yes, correct. The idea is to verify the authenticity of RPM headers,
-> extract the file digests from them, and use those file digests as
-> reference values for integrity checking of files accessed by user
-> space processes.
->
-> If the calculated digest of a file being accessed matches one
-> extracted from the RPM header, access is granted otherwise it is
-> denied.
+> 
+> Or not a big fan of the fact that every architecture has their own
+> (mostly) copied-and-pasted set?
 
-Based on the above response and your comment:
+Well, that most certainly as well :)
 
-"The security policy I want to enforce is: all code that the system
-executes has been built by a trusted source (e.g. a Linux
-distribution)."
+-- 
+Cheers,
 
-From the following URL:
+David / dhildenb
 
-https://lore.kernel.org/linux-integrity/b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com/#t
-
-What you are advocating for then, with this patch series and the
-digest cache series, is a security policy that requires signed code
-execution, correct?
-
-Nothing wrong with that, it is a reasonable security desire, but it
-seems wrong to conflate that with the implementation of the digest
-cache.  There is a great deal of utility in a digest cache but it
-doesn't require the need to parse RPM header information and/or TLV
-sequences in the kernel.
-
-That would only appear to be a requirement if your goal is a signed
-executable policy that is implemented through a packaging medium,
-correct?
-
-To wit:
-
-If I have security infrastructure that gives me confidence in the
-integrity of the files on my media, I can populate a digest cache with
-a simple ASCII list of pathnames fed into the kernel at boot time.
-
-If I don't have confidence in the integrity of the files on my media I
-could append a known good checksum to each pathname with the last
-entry in the list being a PGP signature over the input stream.
-
-I brought the following issue up in the patch series that Herbert
-links to above, but will do so here, since I believe it has relevance
-to this conversation as well.
-
-If the goal is to have the digest cache be relevant from an integrity
-perspective, particularly a signed code policy, you have to physically
-read every file that has a digest value in the RPM digest list.
-Otherwise the scheme is vulnerable to a Time Of Measurement Time Of
-Use (TOMTOU) vulnerability scenario, correct?
-
-This requires that one needs to experience a latency hit at least
-once, presumably at boot when you prime the digest cache, correct?
-
-An alternative approach may be to separate the RPM/TLV parsing code
-from the digest code and implement RPM/Debian/whatever parsing in a
-loadable module that would in turn populate the digest cache.
-
-That may be a more acceptable strategy since it places the potential
-security vulnerabilities of a parser into something that an entity
-that is interested in a signed code policy would consider to be an
-acceptable tradeoff from a security perspective.
-
-> Roberto
-
-Hopefully the above comments and clarifications will be helpful in
-furthering additional discussion.
-
-Have a good day.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
 
