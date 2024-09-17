@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-331833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E57497B1C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:29:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2DB497B1C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1776E1F22388
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:29:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35FEDB270E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6AF197A7A;
-	Tue, 17 Sep 2024 15:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DF7198E76;
+	Tue, 17 Sep 2024 15:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDqODFE4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRAsGDbn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC873196D90;
-	Tue, 17 Sep 2024 15:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49A2198A35
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 15:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726585211; cv=none; b=UxuxirYh0mZhb7DC5+yzveAGP2xK0RG/PWQ3xmcrKo+d0fuyRgRMmAKqdRpZ7/6s9kYGfw6kj07FVZpT0krxxndwHOChAciwXtO4W57gPqPgGw7PSS41V3EIcPaSuRpdkcSIjzsaH3phHh1J9uW+i4qaNd9xDhsSMWwrAN8d2Xc=
+	t=1726585214; cv=none; b=IJ6t4sGudYm4H5JrSjFpeu988QQzw8LCsohal7lQdlQhxhvCtx9Rm1iFsOJzni3HhC2fSxjhPieQrshMQJPDSsqitRJ1qB81FACdzstCgFVLfezF6Hox9V1du89FOiE3kxRDmbjPZ6srjcj1QbJTD3BZmi0H1X1CsZUiEnx5/OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726585211; c=relaxed/simple;
-	bh=YaxADWUv+InYe4vS7lQY/3IlqlOm46pOkX7forOHb3E=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=GiK3JDG5ZsVe/8WSfcn+qYtzCe6Xs0gHpe3tylnJA9xw4a+NYSzosLtU9fUmYLhK0+9pyrzli/xP/KFU2EUH1KshsjpckCjoapPXUVPvVNjx9qq+KHx4Jn7+spEucdJp/0LaN2fRVnzWqBNwFPTpdJylltKFA77G9nRdt9NQMuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDqODFE4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899C4C4CEC7;
-	Tue, 17 Sep 2024 15:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726585211;
-	bh=YaxADWUv+InYe4vS7lQY/3IlqlOm46pOkX7forOHb3E=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=QDqODFE4NdFM13xRy4tQ0Fjk3m0ckntAt87SoEipAoxHNJ7ILS5t93wx0f/z8qbKZ
-	 +6GwZggNGF1IzpOFoyX42f+cDenhog+76xvpG0Tw187Ao3hutZmGU1KPF0aur7TfMb
-	 yUPBAX0zn+c6R+R4QkUTjJu9kcsSboeeRMNZRe2vIa5u+sFT9oM85aTwPeZk+YwnVO
-	 HPBCv+ZDo4/j7wAgwHKnjBLs/QArPbDVLnilz6q9WVcYjk142ACjYu4gMOEtobaUli
-	 SfLQa51rgitnJ7xWsyUbGd302P9akAuAmC/5Q37uH053GyIGXwxJI2UbKAbBHfA+v4
-	 hx2kbAB8nXjpQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 81C363809A81;
+	s=arc-20240116; t=1726585214; c=relaxed/simple;
+	bh=ZfgA4/JViSBsV8tmHW2to/KT72ZyzCULt7YAReA3E2I=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=d9co7UPGnM3W/muQqkEEzRAa2CqnMBeW2oNN+wjFoExK5Sr7VqrWNWC+ofaYn5wPYmLmXLp1HZpGk8D3ZZcyMwq8TyeO1OHGWI1PNw+8w5rgCz1Bl5w4WEo/Quf81NrJgdqN9AqUyykMLMCklmsbRToAvRT8gCb9qYSQ8LzWtZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRAsGDbn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB9CEC4CEC7;
 	Tue, 17 Sep 2024 15:00:14 +0000 (UTC)
-Subject: Re: [GIT PULL] KUnit update for Linux 6.12-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726585214;
+	bh=ZfgA4/JViSBsV8tmHW2to/KT72ZyzCULt7YAReA3E2I=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=VRAsGDbn7kuTSErHGp7cLF6ciRRmALC3ywZRtwcLcBqfgCIuKhHH4pq999Z7HrBMM
+	 enVX+MmlQDdBt6dlovswk+F0nw2MS4MU34vGtwxlHGrPdREzFXxTVTJHifrrlv70iJ
+	 k+Z7PUzX1nnhHsJR6AYhE/LQqMaWXgbIS77pmKwc+smEvzZH/Gp4gaNJabgnQeZSU4
+	 VRefB3xpo+kjIv5hzuQ/GGn5+lOle3XmqjRR/x6/TUHdVP10owEBWuZ9u1SCh6QtFj
+	 n3UIBW1unEAwy+0+7GOZn1kzYYwZDWLe3QKWxZpRoBSnc3JpEF2e7e3dHKno4fh4cL
+	 6ZG0Yet/wEE8A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE8393809A80;
+	Tue, 17 Sep 2024 15:00:17 +0000 (UTC)
+Subject: Re: [GIT PULL] m68k updates for v6.12
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <fec42732-fc6b-4025-8326-38cb8157057c@linuxfoundation.org>
-References: <fec42732-fc6b-4025-8326-38cb8157057c@linuxfoundation.org>
-X-PR-Tracked-List-Id: <linux-kselftest.vger.kernel.org>
-X-PR-Tracked-Message-Id: <fec42732-fc6b-4025-8326-38cb8157057c@linuxfoundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.12-rc1
-X-PR-Tracked-Commit-Id: 7fcc9b53216cd87f73cc6dbb404220350ddc93b8
+In-Reply-To: <20240916143207.995330-1-geert@linux-m68k.org>
+References: <20240916143207.995330-1-geert@linux-m68k.org>
+X-PR-Tracked-List-Id: <linux-m68k.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240916143207.995330-1-geert@linux-m68k.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v6.12-tag1
+X-PR-Tracked-Commit-Id: b90fae5df91744e45e683c17bb1a38e466770df3
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 194fcd20ebccbc34bba80d7d9b203920087bb01d
-Message-Id: <172658521328.168423.15354061886165730557.pr-tracker-bot@kernel.org>
-Date: Tue, 17 Sep 2024 15:00:13 +0000
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>, Brendan Higgins <brendanhiggins@google.com>
+X-PR-Merge-Commit-Id: 8202cc803f3d0a0a7f7e4c08ce575634a0220406
+Message-Id: <172658521641.168423.13820957370081838369.pr-tracker-bot@kernel.org>
+Date: Tue, 17 Sep 2024 15:00:16 +0000
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg Ungerer <gerg@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 16 Sep 2024 19:43:05 -0600:
+The pull request you sent on Mon, 16 Sep 2024 16:32:07 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.12-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v6.12-tag1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/194fcd20ebccbc34bba80d7d9b203920087bb01d
+https://git.kernel.org/torvalds/c/8202cc803f3d0a0a7f7e4c08ce575634a0220406
 
 Thank you!
 
