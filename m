@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-331517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E03F97ADC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3EA97ADC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A29B1C20D97
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C5E1F24090
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA34158DBA;
-	Tue, 17 Sep 2024 09:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CE115958E;
+	Tue, 17 Sep 2024 09:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=email.cz header.i=@email.cz header.b="OzCOLtqT"
-Received: from mxe.seznam.cz (mxe.seznam.cz [77.75.78.34])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="puMJTVxZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFEA136351;
-	Tue, 17 Sep 2024 09:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.75.78.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11394594A;
+	Tue, 17 Sep 2024 09:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726564847; cv=none; b=JI/kH1ZPSMYTHwVHhcPDzeZzlg6b0cY6DKhthXkUSwzASmQqDuWBJ0LHj5Sj3KzVSTApEe+iTpKzRDKvzlKadnMchfeI0Vc9cOUXQcMQqpKa7DBK+0AE8zWcglI9p55xI25+nQVzoOXwhwJh0CsvqYCAJ9L8r65IDZSvL7skZKU=
+	t=1726564899; cv=none; b=sbBaHOq6UF6/wWFZ7f1+GP6hpT1vnMvguoOcHOYQ/6p4FJ0f3LTPn7ukhvXQZcNR1+wYpPgsy7DeQ8F2Lk8vBRwt2wQltM23hmVCbDKQ8ATz/H8Sg34EompEhoJs+lWC11kuUfP/XfEZ+Z55nfl65p6E8Q1Utidzc/WQp+vrcmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726564847; c=relaxed/simple;
-	bh=YWcSGgii0kjSXN2C6TXGhqMl7BdnBamLfMUrfZsE+6c=;
-	h=From:To:Cc:Subject:Date:Message-Id:Mime-Version:Content-Type; b=i2ZumyyomDmJfPz6310zcDPDYAsCbVURaJ2/3f2NBo+FdTXIRX0+wgooIHyYs6V+vMBz1UIeYjMw4ezxfF8PGK+CNT2nfS8qw9XezI4rYNRU/RKHc4hMh/4v+zyyw6yLsx2utv72uXvAoHbgbYNTRsz747PhuRz9qbuRawSJ15s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.cz; spf=pass smtp.mailfrom=email.cz; dkim=pass (2048-bit key) header.d=email.cz header.i=@email.cz header.b=OzCOLtqT; arc=none smtp.client-ip=77.75.78.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=email.cz
-Received: from email.seznam.cz
-	by smtpc-mxe-6b57b49b5-v6frq
-	(smtpc-mxe-6b57b49b5-v6frq [2a02:598:128:8a00::1000:512])
-	id 13e37486ed17c62c136dfa9e;
-	Tue, 17 Sep 2024 11:20:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=email.cz;
-	s=szn20221014; t=1726564823;
-	bh=XQ/r9k6iIDpXJmlOKdz92zJ7UI7i/2S2EpvU0oDuCtw=;
-	h=Received:From:To:Cc:Subject:Date:Message-Id:Mime-Version:X-Mailer:
-	 Content-Type:Content-Transfer-Encoding;
-	b=OzCOLtqTUZcecRryevHvgR4O7JEJMjUWEqmJy2OZroGkoP70t1LeHuP99Hag5UToC
-	 8nANEY2jh7bJg5GQuiGZhcx8g1fo/CaejbL/v5ZiA0mN+7+TbRuqkhBCIspqpGbtMr
-	 j0Fs2d/UK/1pm8+c/eJUc4yAv3VDGmmnJGxyuLuBujRd6/tsIIpOUk65H9Dy10IE9E
-	 5EZuuyjgKsUoHwmozMR8WphQYz8+owz042FamdRaOwSjhjN2z0pxmJ0M5fOvQl1rmy
-	 hGTf+ceM7PdlVJaKnrhLpGXOj6RJpSY4/Nuv8vclEcs90p6URZHgi080k0G7Yj2mHm
-	 LqpZbNFngKT8g==
-Received: from 215-143.ktuo.cz (215-143.ktuo.cz [82.144.143.215])
-	by email.seznam.cz (szn-ebox-5.0.189) with HTTP;
-	Tue, 17 Sep 2024 11:20:12 +0200 (CEST)
-From: "Tomas Paukrt" <tomaspaukrt@email.cz>
-To: <linux-crypto@vger.kernel.org>
-Cc: "Herbert Xu" <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] crypto: algif_skcipher - Enable access to internal skciphers
-Date: Tue, 17 Sep 2024 11:20:12 +0200 (CEST)
-Message-Id: <3ge.ZcSB.212DbbvIi2E.1cwKdC@seznam.cz>
+	s=arc-20240116; t=1726564899; c=relaxed/simple;
+	bh=R1iqgmx+CMAzHieMLoPMrwkljgV4c7hm0z+Zyu3WcgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kk5YZFjZUUIEoLFh6NbEo3rE8DTU05GQ9N18raIKSVxMMqMCQIDZEYoLSY99XRuiW11qcsaRXuRPOWbFmntzslRSd6B+X8AORYn8oQNRIQJNUi5Gl7Ex/hapF0qUOnA0TuqXj6l4OK8lBhrF/qfA7cRlMd0kaQx3FJ4LVc2kNTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=puMJTVxZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A590C4CEC5;
+	Tue, 17 Sep 2024 09:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726564899;
+	bh=R1iqgmx+CMAzHieMLoPMrwkljgV4c7hm0z+Zyu3WcgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=puMJTVxZSWsz62fJ18IF/MuwcOcZ73UlG089lAPo0fNTyluMojDcUVRZ0vtLwENu0
+	 s9YmUUfbSaECrVKLgJ/hJMJW6BB65bFFrnRDs3qJpv1KM7rlkqkvX3cL0uRz1Os5rc
+	 7GJwtPuObIBqF9guJJcJ9mDwZDmNFboRlqu6fp0E=
+Date: Tue, 17 Sep 2024 11:21:32 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	rafael@kernel.org, yoshihiro.toyama@sony.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/2] Add framework for user controlled driver probes
+Message-ID: <2024091747-monorail-unbutton-7ebd@gregkh>
+References: <20240911142319.3435746-1-nayeemahmed.badebade@sony.com>
+ <2024091327-repacking-avatar-ec23@gregkh>
+ <ZulGr8Ul7y0T0NkQ@NAB-HP-ProDesk-600sony.com>
+ <26fed82b-7c60-4fda-8951-b22654728743@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (szn-mime-2.1.61)
-X-Mailer: szn-ebox-5.0.189
-Content-Type: text/plain;
-	charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26fed82b-7c60-4fda-8951-b22654728743@kernel.org>
 
-Add an option to enable the userspace interface for symmetric key
-cipher algorithms marked as internal (CRYPTO_ALG_INTERNAL).
+On Tue, Sep 17, 2024 at 11:03:14AM +0200, Krzysztof Kozlowski wrote:
+> On 17/09/2024 11:06, Nayeemahmed Badebade wrote:
+> > Hi Greg,
+> > 
+> > Thank you for taking the time to check our patch and provide
+> > valuable feedback. We appreciate your comments/suggestions.
+> > 
+> > Please find our reply to your comments.
+> > 
+> > On Fri, Sep 13, 2024 at 06:36:38AM +0200, Greg KH wrote:
+> >> On Wed, Sep 11, 2024 at 07:53:17PM +0530, Nayeemahmed Badebade wrote:
+> >>> Hi,
+> >>
+> >> If Rob hadn't responded, I wouldn't have noticed these as they ended up
+> >> in spam for some reason.  You might want to check your email settings...
+> >>
+> > 
+> > I have ensured standard settings which we have been using are used this
+> > time, let me know if this email is received properly.
+> > 
+> >>> This patch series introduces a new framework in the form of a driver
+> >>> probe-control, aimed at addressing the need for deferring the probes
+> >>> from built-in drivers in kernels where modules are not used.
+> >>
+> >> Wait, why?
+> >>
+> > 
+> > We have a scenario where a driver cannot be built as a module and ends up
+> > as a built-in driver. We don't want to probe this driver during boot as its
+> 
+> Fix this instead.
 
-Signed-off-by: Tomas Paukrt <tomaspaukrt@email.cz>
----
- crypto/Kconfig          | 10 ++++++++++
- crypto/algif_skcipher.c |  4 ++++
- 2 files changed, 14 insertions(+)
+Agreed, that should be much simpler to do instead of adding core driver
+code that will affect all drivers/devices because just one driver
+doesn't seem to be able to be fixed?
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index a779cab..2ce1877 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -1392,6 +1392,16 @@ config CRYPTO_USER_API_SKCIPHER
- 	  See Documentation/crypto/userspace-if.rst and
- 	  https://www.chronox.de/libkcapi/html/index.html
- 
-+config CRYPTO_USER_API_SKCIPHER_INTERNAL
-+	bool "Enable access to internal symmetric key cipher algorithms"
-+	depends on CRYPTO_USER_API_SKCIPHER
-+	default n
-+	help
-+	  Enable the userspace interface for symmetric key cipher algorithms
-+	  marked as internal (CRYPTO_ALG_INTERNAL).
-+
-+	  Say N unless you know what you are doing.
-+
- config CRYPTO_USER_API_RNG
- 	tristate "RNG (random number generator) algorithms"
- 	depends on NET
-diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index 125d395..028aef7 100644
---- a/crypto/algif_skcipher.c
-+++ b/crypto/algif_skcipher.c
-@@ -342,6 +342,10 @@ static struct proto_ops algif_skcipher_ops_nokey =3D =
-{
- 
- static void *skcipher_bind(const char *name, u32 type, u32 mask)
- {
-+#ifdef CONFIG_CRYPTO_USER_API_SKCIPHER_INTERNAL
-+	type |=3D CRYPTO_ALG_INTERNAL;
-+#endif
-+
- 	return crypto_alloc_skcipher(name, type, mask);
- }
- 
--- 
-2.7.4
- 
+What driver is this that is causing the problem?
+
+> > not required at the time of booting.
+> > Example: drivers/pci/controller/dwc/pci-imx6.c
+
+Just this one?  I don't see anything obvious that can't turn that into a
+module, have you tried?  What went wrong?
+
+thanks,
+
+greg k-h
 
