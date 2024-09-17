@@ -1,98 +1,94 @@
-Return-Path: <linux-kernel+bounces-332070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC3697B503
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:10:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24DE97B505
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265EE2849A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:10:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A601C22A81
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EED191F85;
-	Tue, 17 Sep 2024 21:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402431922D7;
+	Tue, 17 Sep 2024 21:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+IeerCj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBsbVAAq"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED48B148828;
-	Tue, 17 Sep 2024 21:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D761891BB;
+	Tue, 17 Sep 2024 21:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726607422; cv=none; b=OuJVpMiFQhEUhBiM06jVzx6eILKeOyrvXkJxW1U0ARxfFkKYAueuJtGDCn2hpYJwjqlJ0koe0ynLp+Ntvc2KqopZ1TQ+sSZGaLxON+7QdnS7WjE/K9SJavsGG9nYm/0eI0kBwlZe2zdoqlE5hQENgnj8LXWXCRg+YMfMt1XFnQk=
+	t=1726607465; cv=none; b=eUtPqJWzeaVzoju0FUFVjff0QSA590DgTpFhUDcDuG7bvFNUAU1V6HoS7J75G43uOcFHgMYBzdvrq14HXMefadE3ob4KDTEjzJdyEoYRoT7F3DcGiPuCEEGPvlaHN1xxpJr+X8cRSXkOTqX1pu3j53lAAjX4MPRD6IRiKI0v6Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726607422; c=relaxed/simple;
-	bh=0+1Kk8qbnQpvx/WTrWcAecTadUQe/6CkxewPFVE67f0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P8S6QbVvCckY2HmxEKT1cCr26oipmncNqf0pt85VIzTc3dd8y8p7b1JB8lLxvY5BpvE4KzADRd+1KNBkQ+K3eA2AoSrGwsgODu5+h1NAsBuGlPurBtEsyhGdtUD9GTu7jpGdURrT3ZyRq9iOrVAuugP2zx/bMWwADoK3gxkyqa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+IeerCj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8368C4CEC5;
-	Tue, 17 Sep 2024 21:10:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726607421;
-	bh=0+1Kk8qbnQpvx/WTrWcAecTadUQe/6CkxewPFVE67f0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C+IeerCjUCjrDlkF+ZG++13Tno4MgaBhi202Htzlv88wmkFSredyg2zc+RExWjX/J
-	 Y3/aJtLP31WYS1s1gs4LsPmbECVV1PTaH1tbNa+o12k90KBTDYvlGqXrqiLKTTYJD5
-	 tqBbcLbSIk/CQBRLpU+PQiWo7Olg8l2m9D234ACNO/LxUyfeZohCosX45R6uMUVKpX
-	 KO8yADgQCI40F2f+jFSJIjMb6OoPk0ODwqYNeNz2kt0xRKlHy74xRVfb5YOYns0DAl
-	 JyT7guFRCMgdNCruMGXrMUMo5ditXGEzLVkpJdt7p+YVlrsxOj9ij/qjAJlQuJe2Pf
-	 uu1grnJqdSk0w==
-Date: Tue, 17 Sep 2024 22:10:25 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Daniel Machon <daniel.machon@microchip.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: ocelot: document lan969x-pinctrl
-Message-ID: <20240917-appease-angelfish-7ae6490f3dd9@squawk>
-References: <20240917-lan969x-pinctrl-v2-0-ea02cbc56831@microchip.com>
- <20240917-lan969x-pinctrl-v2-1-ea02cbc56831@microchip.com>
+	s=arc-20240116; t=1726607465; c=relaxed/simple;
+	bh=oY7LP8m4kAB+OCiYtJk3+oBAX2lA1aoLzJBbYSqE8BI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=uKGONerHWQPFkUwKSx8JCYTtCXYbxs+hkf5K8M6hXnjqRcozUydq2NbdobWiLzRjQR8iPWn1eVm27WalkXVIc315jvcv2oqP0bZWiKs504dI+ST52qt9McMssAxIAe17Ie8C+lcZOrnwnN5ikkAB8Ipf6+kMYl6JMF+CobHBBNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBsbVAAq; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso5856402276.2;
+        Tue, 17 Sep 2024 14:11:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726607463; x=1727212263; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=THbtV4zkLuswYUTQFBFQ+ye5UYZZbQ5pAscYSwJszcM=;
+        b=hBsbVAAqqvWqT1mYEo7qYWo2toLcJJTeTYKwSwnMzuZpHEJZPl34vX/8Xs4MEnFGZt
+         KIKF5CEAfa5DF9y7lpnIo6A6qNF5c6qoqqa5KK38pdDW/FhZx9vAwnjjZ5IyGrQctVl7
+         7fD8smqa4mbA8zxWnOkIXflCLQE+qullBaxpTyQ66ZAGABC4w19fuzuot3bFX5q3KK2Y
+         Gtg3dBABRb/TkD7xEPyBXVs/tpLbNC2TJpQf/Qoa+7A5kSfPKgCsyxIyhIBjaOqyA5SC
+         rBiif7wqkWbKkJ4yTqPmM9R92z7d8auDWfDzcOcgQw6iKD7ZfYhi/Kh95XBbnjYfVfzE
+         NYZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726607463; x=1727212263;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=THbtV4zkLuswYUTQFBFQ+ye5UYZZbQ5pAscYSwJszcM=;
+        b=ih78Im9mjV821cKUxOwsUSBXy6h8SDgXLx3HtkJ0KIE10N6nASTwVhlp0rKbQdLGz7
+         dk6y/vi/orHAS/2l5S0sFLuzV/7VeReTgv1CswKVbbCFmWlhWF9DwlUTmSeUPIw0JaZf
+         XYKxZkYLswqBQEuxAELXB2j43XKdu/uRY4Ei1DWJoDbJ/9YfkgJl6faqKJcqCv+a7UT6
+         tvoaTC6edb6z7l8NCZqF+gjWOUemaBY+9OFhVcX4EsflxFKAlmjQ07ovqnGvuXwQpGsE
+         BirY52oaL8IMFBsnZ35Dy16otx1RzKCTojBtobTDa1FTpCSvDQuik6t/LMtgT/pq0Fju
+         MkrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+zYWVQYRhwh41LdPUqaDVwuWnA/rJkeQ3xVxmAbJS5vLBiC3PSt460rhmmfAsCv78KHc2kSrIaH/DK7I=@vger.kernel.org, AJvYcCV78r4EVQwwCeGng/VawPURVy/llYnOe6FnBzsWT9XEDo1kxQy7XMWdK2KalKiRmdZx0ALuX5K5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv1Ub9ieh//Ll6Hkl9GCWNrmh1nQgdCo/Zz5lKPbe88ocRmMe6
+	TyJFPXRg0Q+aF2f4s/ymzxjDP3XgcKqjxF7N2wzGU+jw8Vp4RAO1
+X-Google-Smtp-Source: AGHT+IHAYuBgWqQRSDzP7XBadSWPcSsJWOkdYtTzfRXK5jkk7pyHN1Z+cBLbbh7Vge0pwYUJtlYwjQ==
+X-Received: by 2002:a05:690c:470b:b0:6db:da26:e8c6 with SMTP id 00721157ae682-6dbda26eca3mr95063987b3.44.1726607463269;
+        Tue, 17 Sep 2024 14:11:03 -0700 (PDT)
+Received: from [10.0.1.200] (c-71-56-174-87.hsd1.va.comcast.net. [71.56.174.87])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ddbf87c73fsm12217157b3.117.2024.09.17.14.11.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 14:11:02 -0700 (PDT)
+Message-ID: <fc79c53e-a5a7-4ae2-a579-83fefea772c4@gmail.com>
+Date: Tue, 17 Sep 2024 17:11:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jaFozI3L4Cl0p1Ja"
-Content-Disposition: inline
-In-Reply-To: <20240917-lan969x-pinctrl-v2-1-ea02cbc56831@microchip.com>
+User-Agent: Mozilla Thunderbird
+To: syzbot+e4c27043b9315839452d@syzkaller.appspotmail.com
+Cc: alibuda@linux.alibaba.com, davem@davemloft.net, dsahern@kernel.org,
+ dust.li@linux.alibaba.com, edumazet@google.com, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ schnelle@linux.ibm.com, syzkaller-bugs@googlegroups.com, wenjia@linux.ibm.com
+References: <000000000000d26462062079b885@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in do_ip_setsockopt (4)
+Content-Language: en-US
+From: Ananta Srikar Puranam <srikarananta01@gmail.com>
+In-Reply-To: <000000000000d26462062079b885@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
---jaFozI3L4Cl0p1Ja
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Sep 17, 2024 at 02:45:40PM +0200, Daniel Machon wrote:
-> Lan969x is going to reuse the existing Ocelot pinctrl driver - document
-> that by adding compatible strings for the different SKU's that we
-> support.
->=20
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-
---jaFozI3L4Cl0p1Ja
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZunwPgAKCRB4tDGHoIJi
-0r5CAP9nkg4MqFxcQWXAXSDB29vqTFeIHZse1degYU92eUEDcAD9ERB+KS1RYS6Q
-snKzldKIgd4RVWUeb9oa/TkQtMs1fw8=
-=So0U
------END PGP SIGNATURE-----
-
---jaFozI3L4Cl0p1Ja--
+#syz test: 
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 
+2f27fce67173bbb05d5a0ee03dae5c021202c912
 
