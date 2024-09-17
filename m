@@ -1,211 +1,325 @@
-Return-Path: <linux-kernel+bounces-331665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2166A97AFC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:40:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEEA97AFC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F010B230B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:39:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59ADE1F24361
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBEA1662F1;
-	Tue, 17 Sep 2024 11:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F9A169AC5;
+	Tue, 17 Sep 2024 11:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="anI3phN5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HdnjA14E"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D454291E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382ED1547E6
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726573184; cv=none; b=gpp+PnxjY7fE8HS74BXWuOcIqJRZNdxiPsmmCboT6dMTPvN+m/jEZJ98QFrZfmS10L7n/8f0mr03p6kwLH05/PpgOGPWjxlUnuhQ7yTFWE56E1Umn3AnUhDv2TSA0ciLeJAhLrshtEEzQXTmtEMvW0fKvbJkZ4MV4vi3VAlBc3w=
+	t=1726573282; cv=none; b=PKwpeOVzY+06JckzITBt4rxMhraaREAxO2j/gENaMrO1HGzHRxU8NX6DvtjNWxxOiXKSdvnaXERrRMS9/R5enUdHaHdOY6RhbvFYsQgAbCfFvRIf6C6Bl3MO68T534fB8/H9Um9+YhK8sNiiffWtBdcDSvwftzCgUfNdc+UASn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726573184; c=relaxed/simple;
-	bh=dt6levFMxkrBxTkHkAW8cmaWvRTC+fIKiHPD9GIU1DE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=upbzhsaeBUFs/WL7tywGs6u1JTTm63jBYv6t6IVezQ123RFN7MO09MIDjwEVdUIRYIAu8nQeu1tvnmkr+FHNSNkMJHOcTGYteJiGVCDPi4HmHusTwswy+AX3q1cAbpuitsmUQKRjSdOdUQBrp4wbF/Ee4L3g+Ykm/Oyu6CV+Mt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=anI3phN5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726573182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x25FGhNrbRrB7l0EAbf9r+A9zJVW9TzQMyHez/fL9yw=;
-	b=anI3phN5mygqPMSpdBmuRQz1aSWeroq+PWFsvrXreELLv9LuVHZh2+Ssy95qWVEcYLdwrB
-	ODbTyzTmsUNKhGm11s5Z0SvCH7D1saMqA3XUXvTZp53HigR61Rqm8imfseoQU8gronDWb8
-	URwftpuQa8u1/mkDBIuq6s3JjJOicSI=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-zh6jmFaoMRWa69-EqcypVw-1; Tue, 17 Sep 2024 07:39:40 -0400
-X-MC-Unique: zh6jmFaoMRWa69-EqcypVw-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-5356908d54dso1446645e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 04:39:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726573179; x=1727177979;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+	s=arc-20240116; t=1726573282; c=relaxed/simple;
+	bh=jz0FE0Kf675baCmwmaa4cz9aN8rAv8r7cgzxmXwFamI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N0/OUx0IRF3hRoMYkb2hoMWZhOC5n1fPny/ryXxYhmeFXgpIhexsCX4Kxg4VBNq+b24lUuOClrBgiTkR31hVmveARbZALmRzXWMPnCXLiyoMxFVajNo8Fzfq9rQHriKmGXXNwQbl3v9zbj+PztYtg+NSpnNyn+I2F4dnfS4xyv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HdnjA14E; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso919966666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 04:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726573279; x=1727178079; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=x25FGhNrbRrB7l0EAbf9r+A9zJVW9TzQMyHez/fL9yw=;
-        b=lIAWokndjLNrfZfL5fLFJMfbf4yV1puRv8uLaVmVX8/CnlW1t8ynKiBarwyoK0tk3l
-         CU/5jSaFSAlxFcTcy2jvMcvOO3Zq4dCtceAuiC5vGkmYKV/18YnPMjNGUTXSNtcfI8lC
-         ItXl5e0ZiGvy8l2HxaQO0QxlZcdAz87+79tzo6RsP97lHAFJovTbQgbfwuckFPMWmOVB
-         tIWcRZwI48JeVxQeWqmmUfRC9TTtbCThcEszH47XzBEL0Jdk3yoMdiUQJVzWxAT2m7YZ
-         0LpmcU8+YczXrC97yskNk0DDdXdRdOULgWpAtxXSBEy4vQbdnOleZl2GE9+n40X5OPMK
-         dF5w==
-X-Gm-Message-State: AOJu0Yza2kNKiJNfUSW6RoX4Kce6N6hc2AnBYmY4E1pIAHB+GDk3qEsL
-	rLdgXR7Y1HfAj3kwR5F2xhHRhE2d1KyRq3VucOnG6RBKpaOU+UQbEc3lDbI2H3KjHIE/n+0xaic
-	JZDKmdlM1A5S2wIU0Brcja0C3umrnggOGgQ4bzNLbK8cVOpf9KMt6cAbkkk0Xgrs+rc2eNA==
-X-Received: by 2002:a05:6512:2384:b0:533:1cb8:ec6e with SMTP id 2adb3069b0e04-53678fd1244mr9293217e87.33.1726573179238;
-        Tue, 17 Sep 2024 04:39:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIPiQM2QeQhlXxzkl2yNRrunnMhLvrgjoAQtiYKnuUy5KGUQvdORsr41DP3x/pZkWD8Kf2hw==
-X-Received: by 2002:a05:6512:2384:b0:533:1cb8:ec6e with SMTP id 2adb3069b0e04-53678fd1244mr9293197e87.33.1726573178642;
-        Tue, 17 Sep 2024 04:39:38 -0700 (PDT)
-Received: from [192.168.55.136] (tmo-067-108.customers.d1-online.com. [80.187.67.108])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb94a19sm3571129a12.83.2024.09.17.04.39.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 04:39:38 -0700 (PDT)
-Message-ID: <d289061d-7dc8-41d7-a166-4b3b8dce886d@redhat.com>
-Date: Tue, 17 Sep 2024 13:39:35 +0200
+        bh=ZBWxTLIwaRXzz2B6lBD4X89iivmw4HPn5CVhIHdb5b4=;
+        b=HdnjA14Eo8G/eygl4QXA/kUdAo9m+07PH1fiSHlUnvfxFFuAdl4APEgCgiIBSZff4O
+         uwYrPTfAYIGFoMNAsElo/97xA0U0cMJ662oxyw3nNN/aKiwF3cWAmcaMdmymmU99P+b1
+         l64oyhKrNvMrHfBTNgFDmynLy7hLQV8zkOdsiVY3Mv07ZSG+x3H7a4SNFrDyGiQqfPbM
+         dPFFiIisFPna68CBFlnpWvCEPK1/TE9VI8X4uhI7XzRbWEJqZjRpKr6w+cL9sPaXgSUg
+         qlu7/Mf9XaD0SAAswcHYWUTilaNYFRChLkcHPVQImwxTymiHW0B5yTDRvU8+c+MmNOQu
+         1eww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726573279; x=1727178079;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZBWxTLIwaRXzz2B6lBD4X89iivmw4HPn5CVhIHdb5b4=;
+        b=jjlJIe8q3w/fsCbGz90VQo6rSmmNDxF+30YVHgtcQqSnm+KzipRmxzUpAyfnyiM7hX
+         9Oe42NlM6XIVyKW5gTcI1qJ27sqA+VSDbgASI/2mnPBP3SBTAJ/0XZlqHaqcI29+cfPW
+         Hngk0ZKLBpbBoKZKsDwl5R8k0uEp+k5Qhw/gDD3UxLVQgXoJL2zX9/OUtcnn5d2qim2J
+         Ch1/Ekk6sARwcEYlnsZ7iK19h/nsqmAUPoPATnHEHYPrIKagwYe/Ou2E5PU47+O3nE+b
+         vXfIOlLp8F+d7ZiOeP0C04Rw4ShFZWFjeTrm6bmThDGFAHhW5lt9YDW3OiZ3YCroTMEi
+         4Thg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtq+lHYsjfFhAqYaQfL74uSHB/3yzH5rEmM3kcrD+T2LL0ZMHc74jHLy8I0gyx8Mi2lG7LN9v/8NcA1z4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzsT4cuFT1C4ulFX2RYF7YgFXpmk6I+Er0/NUmbhT8AYUnqsQT
+	wy3bh/QoKpUDx70ciYNjoscmF3jqnX8A9HV5bKsbakjXAYFsbfzOujsg97KLVis=
+X-Google-Smtp-Source: AGHT+IH2PSVF4UNMXvmdrYZyznZ7q1qkqZCW0MIRea2AY8og0vl8cI8cc+wtlZVbuMmX/jgs8zvd9w==
+X-Received: by 2002:a17:907:2da3:b0:a7d:9f92:9107 with SMTP id a640c23a62f3a-a9029690793mr2309234666b.58.1726573278256;
+        Tue, 17 Sep 2024 04:41:18 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b4321sm431729166b.113.2024.09.17.04.41.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 04:41:17 -0700 (PDT)
+Message-ID: <5ad81ed43d8bb2426c9ae7d22fdb4c7aeb905129.camel@linaro.org>
+Subject: Re: [PATCH 2/2] regulator: max20339: add Maxim MAX20339 regulator
+ driver
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Walle <mwalle@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker <willmcvicker@google.com>,  kernel-team@android.com,
+ linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
+Date: Tue, 17 Sep 2024 12:41:16 +0100
+In-Reply-To: <ZulJuCu-QcMYrphP@finisterre.sirena.org.uk>
+References: <20240916-max20339-v1-0-b04ce8e8c471@linaro.org>
+	 <20240916-max20339-v1-2-b04ce8e8c471@linaro.org>
+	 <ZulJuCu-QcMYrphP@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Dead code by symbols
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: linux-kernel@vger.kernel.org, kees@kernel.org
-References: <ZugliLgw5VFb9yau@gallifrey>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZugliLgw5VFb9yau@gallifrey>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 16.09.24 14:33, Dr. David Alan Gilbert wrote:
-> Hi David,
->    A while ago we were chatting about me spotting dead structs, and
-> you wondered if it might be possible to spot dead functions that
-> were exported from an object but never used - and I've been trying
-> it for the last few days.
-> 
->    I'm pretty early on, but it's already got some fun things:
+Hi Mark,
 
-Cool, stuff! :)
+Thanks for the review!
 
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6a36d828bdef0e02b1e6c12e2160f5b83be6aab5
->    Core code not used for ~20 years
-> 
-> https://lore.kernel.org/lkml/1690847.1726346402@warthog.procyon.org.uk/
->    A bug! A recently added function that lost the place it was wired up
->    so was currently unused.
+On Tue, 2024-09-17 at 11:19 +0200, Mark Brown wrote:
+> On Mon, Sep 16, 2024 at 05:48:53PM +0100, Andr=C3=A9 Draszik wrote:
+>=20
+> > +config REGULATOR_MAX20339
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tristate "Maxim MAX20339 overvolt=
+age protector with load switches"
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on GPIOLIB || COMPILE_TES=
+T
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on I2C
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select GPIO_REGMAP if GPIOLIB
+>=20
+> I don't see any dependency on gpiolib here, the GPIO functionality
+> appears unrelated to the regulator functionality (this could reasonably
+> be a MFD, though it's probably not worth it given how trivial the GPIO
+> functionality is).
 
-That is really nice!
+Yes, it's very trivial and I opted to go the simpler path without MFD.
 
-> 
-> https://lore.kernel.org/lkml/ZuXOWjvVYa64c1-5@gallifrey/
->    A few small dead files.
-> 
-> Now, it does take some more guesswork, for example an unused function
-> which was added a couple of years back, might be something that's
-> there for consistency, 
+The alternative is just
+         depends on GPIO_REGMAP || COMPILE_TEST
+which doesn't appear used at all in the tree, so I opted for the above
+instead.
 
-I know people will find reasons to do something like that, but we really 
-*shouldn't* be maintaining / dragging along dead code that nobody might 
-ever use.
+I'll change it the dependency line
 
-> might have been forgotten to be wired up,
+>=20
+> > +++ b/drivers/regulator/max20339-regulator.c
+> > @@ -0,0 +1,912 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (C) 2024 Linaro Ltd.
+>=20
+> Nothing inherited from the original Pixel 6 kernel?
 
-Forgotten as in "BUG" or as in "ran out of steam" ?
+No, not for this one.
 
-> or might just be something that's going to be used but the
-> authors haven't got to it yet, e.g.
->     https://lore.kernel.org/lkml/ZuRGRKU9bjgC52mD@gallifrey/
+> > + *
+> > + * Maxim MAX20339 load switch with over voltage protection
+>=20
+> Please make the entire comment a C++ one so things look more
+> intentional.
+>=20
+> > +static const struct regmap_config max20339_regmap_config =3D {
+> > +	.reg_bits =3D 8,
+> > +	.val_bits =3D 8,
+> > +	.max_register =3D MAX20339_LAST_REGISTER,
+> > +	.wr_table =3D &max20339_write_table,
+> > +	.rd_table =3D &max20339_rd_table,
+> > +	.volatile_table =3D &max20339_volatile_table,
+> > +	.precious_table =3D &max20339_precious_table,
+> > +};
+>=20
+> You've specified volatile registers here but not configured a cache.
 
-Yes, that' a valid case.
+Yes, cache didn't seem worthwhile, but I wanted to document the volatile
+registers nonetheless.
 
-> 
-> My patience varies from Ooh core code, to meh old driver to very meh
-> for old undead staging code.
+I'll enable the cache.
 
-:)
+> > +	if (status[3] & status[0] & MAX20339_INOVFAULT) {
+> > +		dev_warn(dev, "Over voltage on INput\n");
+> > +		regulator_notifier_call_chain(max20339->rdevs[MAX20339_REGULATOR_INS=
+W],
+> > +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 REGULATOR_EVENT_OVER_VOLTAGE_WARN,
+> > +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL);
+> > +	}
+>=20
+> This is an error on the input, not an error from this regulator, so the
+> notification isn't appropriate here.
 
-> 
->    I've got some nasty awk which kind of works some of the time;
-> but it does require a lot of handholding; often things like inlining
-> isn't spotted so gives a false positive, and I'm only looking at
-> the objects from a single architecture, so again have to grep
-> for the symbol name to make sure it's not used by a different
-> architecture build.
-> 
->    And heck, I wish git log -G was faster.
+The input is usually a USB plug / cable. Is there a better option to report
+this? I guess I could register a power supply.
 
-:)
+> > +static int max20339_insw_is_enabled(struct regulator_dev *rdev)
+> > +{
+> > +	unsigned int val;
+> > +	int ret;
+> > +	struct device *dev =3D rdev_get_dev(rdev);
+> > +
+> > +	ret =3D regmap_read(rdev_get_regmap(rdev), MAX20339_STATUS1, &val);
+> > +	if (ret) {
+> > +		dev_err(dev, "error reading STATUS1: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	dev_dbg(dev, "%s: %s: %c\n", __func__, rdev->desc->name,
+> > +		"ny"[FIELD_GET(MAX20339_INSWCLOSED, val)]);
+>=20
+> In addition to the log spam issues I've no idea how anyone is supposed
+> to interpret this log :/
 
-> 
-> Anyway, thanks for the suggestion!
+I'll remove it, it doesn't add much value.
 
-Glad you're able to spot some nice (+fun, otherwise you wouldn't be 
-doing it ;) ) things!
+> > +
+> > +	return FIELD_GET(MAX20339_INSWCLOSED, val) =3D=3D 1;
+> > +}
+>=20
+> This does not appear to be an enable control, it's reading back a status
+> register rather than turning on or off a regulator.
 
--- 
-Cheers,
+This is the regulator_ops::is_enabled() callback, shouldn't it return the
+status in effect? It's required to return effective status for one of the
+code paths in _regulator_do_enable(), when .poll_enabled_time is !=3D 0.
 
-David / dhildenb
+> It's not clear to
+> me what the status actually is (possibly saying if there's a voltage
+> present?)
+
+To enable, one writes to MAX20339_IN_CTR. While one can read back that
+register, it doesn't reflect the actual status (e.g. it takes time to
+take effect), so it has this MAX20339_STATUS1 register to inform us if
+the output is actually enabled (switch closed or open).
+
+On top of that, yes, the switch will also open if the input disappears
+(cable unplug), this also is reflected in MAX20339_STATUS1 only.
+
+So this regulator_ops::is_enabled() callback returns whether or not
+it's open or closed - it returns the status that is in effect.
+
+>  but it should be reported with a get_status() operation.
+
+I missed ::get_status(), I'll implement it.
+
+> > +static int max20339_set_voltage_sel(struct regulator_dev *rdev,
+> > +				=C2=A0=C2=A0=C2=A0 unsigned int sel)
+> > +{
+> > +	return max20339_set_ovlo_helper(rdev,
+> > +					FIELD_PREP(MAX20339_OVLOSEL_INOVLOSEL,
+> > +						=C2=A0=C2=A0 sel));
+> > +}
+>=20
+> This device does not appear to be a voltage regualtor, it is a
+> protection device.=C2=A0 A set_voltage() operation is therfore inappropri=
+ate
+> for it, any voltage configuration would need to be done on the parent
+> regulator.
+
+This is handling one of the switches, and the input usually is
+a USB plug / cable.
+
+Based on the use-case (peripheral / OTG / wireless charging), the
+overvoltage voltage=C2=A0needs to be modified at runtime for full
+protection.
+
+The set-voltage APIs seemed like a good fit for that, given the
+regulator APIs allow setting those thresholds already (during init).
+
+I'll see if I could maybe add a power supply as the parent and leave out
+all the voltage and current related settings here altogether and make it
+just control the switches, like some other regulator drivers do.
+
+>=20
+> > +static const struct regulator_ops max20339_insw_ops =3D {
+> > +	.enable =3D regulator_enable_regmap,
+> > +	.disable =3D regulator_disable_regmap,
+> > +	.is_enabled =3D max20339_insw_is_enabled,
+>=20
+> The is_enabled() operation should match the enable() and disable(), it
+> should reflect what the device is being told to do.
+
+That wouldn't match _regulator_do_enable(), which requires .is_enabled()
+to return the status in effect rather than the requested status, when
+.poll_enabled_time is !=3D 0.
+
+
+> > +static int max20339_lsw_is_enabled(struct regulator_dev *rdev)
+> > +{
+> > +	struct max20339_regulator *data =3D rdev_get_drvdata(rdev);
+> > +	unsigned int val;
+> > +	int ret;
+> > +	struct device *dev =3D rdev_get_dev(rdev);
+> > +
+> > +	ret =3D regmap_read(rdev_get_regmap(rdev), data->status_reg, &val);
+> > +	if (ret) {
+> > +		dev_err(dev, "error reading STATUS%d: %d\n",
+> > +			data->status_reg, ret);
+> > +		return ret;
+> > +	}
+>=20
+> Same issues here.
+
+See above.
+
+>=20
+> > +	if (val & MAX20339_LSWxSHORTFAULT)
+> > +		*flags |=3D REGULATOR_ERROR_OVER_CURRENT;
+> > +
+> > +	if (val & MAX20339_LSWxOVFAULT)
+> > +		*flags |=3D REGULATOR_ERROR_OVER_VOLTAGE_WARN;
+> > +
+> > +	if (val & MAX20339_LSWxOCFAULT)
+> > +		*flags |=3D REGULATOR_ERROR_OVER_CURRENT;
+>=20
+> These statuses should be flagged ot the core.
+
+OK
+
+>=20
+> > +static int max20339_setup_irq(struct i2c_client *client,
+> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct regmap *regmap,
+> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct regulator_dev *rdevs[])
+> > +{
+> > +	u8 enabled_irqs[3];
+> > +	struct max20339_irq_data *max20339;
+> > +	int ret;
+> > +	unsigned long irq_flags;
+> > +
+> > +	/* the IRQ is optional */
+> > +	if (!client->irq) {
+> > +		enabled_irqs[0] =3D enabled_irqs[1] =3D enabled_irqs[2] =3D 0;
+>=20
+> Please just write a normal series of assignments, it's much clearer.
+
+OK
+
+> `
+> > +		dev_info(&client->dev, "registered MAX20339 regulator %s\n",
+> > +			 max20339_regulators[i].desc.name);
+>=20
+> This is just noise, remove it.
+
+OK
+
+Thanks,
+Andre'
 
 
