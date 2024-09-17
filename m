@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-331285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAF597AAF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:22:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD03F97AAFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D35286E60
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:22:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5685E1F26E89
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C80481B6;
-	Tue, 17 Sep 2024 05:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D8C60DCF;
+	Tue, 17 Sep 2024 05:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="uE7YHFnc"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="lXLv26ys"
+Received: from mail.tlmp.cc (unknown [148.135.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A41288B1
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 05:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA39B1BC41;
+	Tue, 17 Sep 2024 05:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726550534; cv=none; b=Wo+F3AuAhwOl/nqeO/rygHcAecTzB4VBHbT7rPFXax8t8QUNgJguBJKRFqj9sfVcm2LVOIi14LqR7nqQtsBVulCm/uOk1cKzTTslEtyPFxaC9DXu8cdmTQ9DzZRMVEoPOjZdatV27nQ8rpxwdfLRakIlLJBojQHRTWfQTIRbXDk=
+	t=1726550879; cv=none; b=BiguELZAJQv14u3AAcj2i+x/FMB63RPAlzK/mdGgcQcsmEtb4A2ymKdQNz0HaAKHm/Pk4//YDpc2Bzf98w2PRlbLE1Itiix0uLdmuonMMpyGLtW4oVkL+IhkuvvoX6/Y/c2Kfew/bNtczM5K1zdYpNABxxOcBZxx8wrDbuweClw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726550534; c=relaxed/simple;
-	bh=FROrw0IXlzItQSfhHRHUvjIOTBu4ABMZqIMKJtQffAE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gZVXlhWfxl8lemuryj3AjHAzpy/1o8iQl158nNMlTJvmhiJntd8NaCvoWQQRh4VcGWGBFtoeb9UZjr5DgHWPCBsPNhab5Q1LB4waj02vIaYpUKpl2m0NZ/VXZW2ZbSa4znjZ7Z0rau2sfw9UCj5d4sFZ7WtuUahutMhs1a/TIW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=uE7YHFnc; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id qQf2sEuii3ZMyqQf2s4PfP; Tue, 17 Sep 2024 07:22:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726550528;
-	bh=ox/BUEVjGvecYqicoCV10v4Q9kXMIsRKDm9TgbacwPA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To;
-	b=uE7YHFncSbIkns75ceMLvKBWR2lLESwDluJGLQhQBCQV5lrcOaRwCaTNTSOfcQpVq
-	 HJm+j7e1uOEsx+GUZ7TkF+WOOqssb6mQ20ALFlGIaRf9KYFvSjIxmC0ctChK9RKjkP
-	 VHegYqJfxnmpTt+hhya69OXSYxRcdh4NY3Nx4ludydVSWdFFHnCuY48Vq5d4BGuFHH
-	 iIBCrqPhkEWoNiBUDqoomBPmojMFvpSGzksiXevYTJzesiUhHvUmNIIDj1if0WR1dK
-	 bCJHsDM4ZJQSKYDiq97zSpNKRY9B+XwVjxgT8qhAE/jWfxA728uT22uHSOZu+Yfgmr
-	 KFRvY0tmnJyeg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 17 Sep 2024 07:22:08 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <6cbedd50-c2d5-4ad7-8133-774eebd9d2f1@wanadoo.fr>
-Date: Tue, 17 Sep 2024 07:22:00 +0200
+	s=arc-20240116; t=1726550879; c=relaxed/simple;
+	bh=mPptHASd9tL+XEXg5ZdKM6m7SrQZ+NB0mubeoxadEYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qczXvRdclajsFiEIVtSF/ctWnq9DqmZiyOezGZkcSn2/EyEDP9YELHexMefUGtF94zUSGPBwDMWPvmzO4mG9fml3F6m5vxkKyFt9ylLZut9+wr03MbPRS+5AvQ6rt/mrU8RncZcnj72lqiW49G/x2M+kNWHS7AztIhlmwWRTT6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=lXLv26ys; arc=none smtp.client-ip=148.135.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A71626982E;
+	Tue, 17 Sep 2024 01:27:45 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
+	t=1726550875; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=UqoAnaFjj0g05/20IdLuYc+XLZjT4bqDf94/49ZqBlk=;
+	b=lXLv26ysjmiyZ4/wYXdHjA/yN/rFjNJ3nx9N1P0zGIOySd6NphncUuFbURMTF9hF+727Zc
+	5x9TRzpKES2GWMmYucBPjQ3rRewe3pVJW7YacN/tMHe2Z9aEio5p6pvPHx15moKaApTag0
+	dNxB5WK1p9Jt4OI1eDuAbi90c4PNewEQ52oiYKV1bdiUNKAPpf9zl8jVYVUZ3Sv2cD10Av
+	PF56Yb4nuXhm040Z4BMCBxYjeHiPsqgclFYTsqVtp0WpCZmfqKN11E+/MY1TulPCELeIpz
+	Z/FnzhJEFh7E2o9CLUBbQMXdTNNVvBDt1wZkVfREW2PT5o5EG755Wv7pNDweCw==
+Date: Tue, 17 Sep 2024 13:27:39 +0800
+From: Yiyang Wu <toolmanp@tlmp.cc>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 02/24] erofs: add superblock data structure in Rust
+Message-ID: <igyrm2gfmedt6v654lxcarcc7gqhc2qjkyopkwk65cdtnue3uh@rkz3m5s2qcm4>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-3-toolmanp@tlmp.cc>
+ <2024091655-sneeze-pacify-cf28@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2 00/15] timers: Cleanup delay/sleep related mess
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev,
- linux-mm@kvack.org, SeongJae Park <sj@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
- Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Andy Whitcroft <apw@canonical.com>,
- Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, netdev@vger.kernel.org,
- linux-sound@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
- Nathan Lynch <nathanl@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>
-References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
- <c794b4a6-468d-4552-a6d6-8185f49339d3@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <c794b4a6-468d-4552-a6d6-8185f49339d3@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024091655-sneeze-pacify-cf28@gregkh>
+X-Last-TLS-Session-Version: TLSv1.3
 
+On Mon, Sep 16, 2024 at 07:55:43PM GMT, Greg KH wrote:
+> On Mon, Sep 16, 2024 at 09:56:12PM +0800, Yiyang Wu wrote:
+> > diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
+> > new file mode 100644
+> > index 000000000000..0f1400175fc2
+> > --- /dev/null
+> > +++ b/fs/erofs/rust/erofs_sys.rs
+> > @@ -0,0 +1,22 @@
+> > +#![allow(dead_code)]
+> > +// Copyright 2024 Yiyang Wu
+> > +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
+> 
+> Sorry, but I have to ask, why a dual license here?  You are only linking
+> to GPL-2.0-only code, so why the different license?  Especially if you
+> used the GPL-2.0-only code to "translate" from.
+> 
+> If you REALLY REALLY want to use a dual license, please get your
+> lawyers to document why this is needed and put it in the changelog for
+> the next time you submit this series when adding files with dual
+> licenses so I don't have to ask again :)
+> 
+> thanks,
+> 
+> greg k-h
 
+C'mon, I just don't want this discussion to be heated.
 
-Le 16/09/2024 à 22:20, Christophe JAILLET a écrit :
-> Le 11/09/2024 à 07:13, Anna-Maria Behnsen a écrit :
->> Hi,
->>
->> a question about which sleeping function should be used in 
->> acpi_os_sleep()
->> started a discussion and examination about the existing documentation and
->> implementation of functions which insert a sleep/delay.
->>
->> The result of the discussion was, that the documentation is outdated and
->> the implemented fsleep() reflects the outdated documentation but doesn't
->> help to reflect reality which in turns leads to the queue which covers 
->> the
->> following things:
->>
->> - Split out all timeout and sleep related functions from hrtimer.c and 
->> timer.c
->>    into a separate file
->>
->> - Update function descriptions of sleep related functions
->>
->> - Change fsleep() to reflect reality
->>
->> - Rework all comments or users which obviously rely on the outdated
->>    documentation as they reference "Documentation/timers/timers- 
->> howto.rst"
->>
->> - Last but not least (as there are no more references): Update the 
->> outdated
->>    documentation and move it into a file with a self explaining file name
->>
->> The queue is available here and applies on top of tip/timers/core:
->>
->>    git://git.kernel.org/pub/scm/linux/kernel/git/anna-maria/linux- 
->> devel.git timers/misc
->>
->> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> 
-> Hi,
-> 
-> not directly related to your serie, but some time ago I sent a patch to 
-> micro-optimize Optimize usleep_range(). (See [1])
-> 
-> The idea is that the 2 parameters of usleep_range() are usually 
-> constants and some code reordering could easily let the compiler compute 
-> a few things at compilation time.
-> 
-> There was consensus on the value of the change (see [2]), but as you are 
+I mean my original code is licensed under MIT and I've already learned
+that Linux is under GPL-2.0. So i originally thought modifying it to
+dual licenses can help address incompatiblity issues. According to
+wikipedia, may I quote: "When software is multi-licensed, recipients
+can typically choose the terms under which they want to use or
+distribute the software, but the simple presence of multiple licenses
+in a software package or library does not necessarily indicate that
+the recipient can freely choose one or the other."[1], so according
+to this, I believe putting these under a GPL-2.0 project should be
+OK, since it will be forcily licensed **only** under GPL-2.0.
 
-Typo: there was *no* consensus...
+Since I wasn't involved in Kernel Development before, 
+I just don't know you guys attitudes towards this kind of stuff.
+If you guys are not pretty happy with this, I can just switch back to
+GPL-2.0 and it's a big business for me.
 
-> touching things here, maybe it makes sense now to save a few cycles at 
-> runtime and a few bytes of code?
-> 
-> CJ
-> 
-> [1]: https://lore.kernel.org/all/ 
-> f0361b83a0a0b549f8ec5ab8134905001a6f2509.1659126514.git.christophe.jaillet@wanadoo.fr/
-> 
-> [2]: https://lore.kernel.org/ 
-> all/03c2bbe795fe4ddcab66eb852bae3715@AcuMS.aculab.com/
-> 
-> 
-> 
-> 
-
+Best Regards,
+Yiyang Wu.
 
