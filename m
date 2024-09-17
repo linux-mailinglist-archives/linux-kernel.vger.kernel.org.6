@@ -1,104 +1,107 @@
-Return-Path: <linux-kernel+bounces-331260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A6D697AA6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:03:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1339D97AA6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CE2EB2388E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:03:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A890628AB6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3072E4D8CB;
-	Tue, 17 Sep 2024 03:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143762B9CD;
+	Tue, 17 Sep 2024 03:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VOqXjtmB"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KEmhaphZ"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77BB49625;
-	Tue, 17 Sep 2024 03:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832051B813
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726542218; cv=none; b=dhmpn7zpoYMt5RKQdHN5QU6pAic6PwYN7BkNsnr6c/kxxdjZAUhmMC7NjKv62xs8mQF44h8EWXLJFeU9LkL2xoKBaVUwHqkXGHNw2aMN4v1K6e7huBA1iMvhMjl2jebmZaRZljGSrIS4YKl+UDLOuzgokxsQyqWFjG8Rjvth0rA=
+	t=1726542727; cv=none; b=pkcPEoiu/9B3M0I+diToSWQ/uFG7atjQgsf489rjshY8l53WtAyyuxtE8Q/gq2b9TdbWhX8VxRataf3FQ+RT+A4QkrEkiAUco/Vqg0zhV+5Z+BjS0tThquPtmH2v0oZ26ZubP7l3bPGewyVRATKMyIxOUrkIu/K7cYgCn17ane4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726542218; c=relaxed/simple;
-	bh=Ir83WJWCHpsMRbAbsjXxMFLBw4Mv2RkETk4uwBzh46k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ISq5N5+V87YWITQabrnqFMEppeCIuVOF+to3pASyMnSoZKfYMN3LbdShhJztY+nda3zoiPzqDpu4a6pW5Wx3em0xeuoPiXyEJ1KrgeDlXCYhbub+IDhtOKB3GclsldMNQ1yYlsPmPXpZDAbgtvSJSK6Mx6u9QhO/HwpkitjD3Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VOqXjtmB; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726542209;
-	bh=sxN7UW/uf8V1inCK8hH+Of4ach6T482hB/M64KESMWE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VOqXjtmBdr7lxA+ihPl0mBsF+g+d0Ymic14gKfN4+bU/o9uUFto2cHwLhgliWiQ1T
-	 60TojwWkA3IXpcbzM2Fp+85dqfpUqF8bMXGd6/ho6uAFZJIxxb9jDcVin56rOTOrwL
-	 95uFFbLc7iRh9f1YuGNEH92+A7N8bmYg1n3NyCaJNL6YjXeJYcBNK24rp5AxiKzkfS
-	 +O+P2YfgMuRyffl5QYqGJzceFZCvVi6YkWDpcJzOkTSeFiXTD2AYgj4dCRi5mqGnd9
-	 AWxUjR+FpFy22VJqWcvaiCU2uYNlIVwDsxOkjUT6lMrw5oa+H6NiogfzojwxDielN7
-	 OfEvozVsD5Klw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X766l2NmMz4x5M;
-	Tue, 17 Sep 2024 13:03:26 +1000 (AEST)
-Date: Tue, 17 Sep 2024 13:03:25 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Wim Van Sebroeck <wim@iguana.be>, Olof Johansson <olof@lixom.net>, Arnd
- Bergmann <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the watchdog tree
-Message-ID: <20240917130325.0460eebf@canb.auug.org.au>
+	s=arc-20240116; t=1726542727; c=relaxed/simple;
+	bh=d6RUdXmX65JlV4ifds0THcuSzXzdxdkkt/pSJg4W0v4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DvckCHihnr/XVdO/Azzvb7fQtSrOt6RiWfHKWINtH7mrpxcT65hjJe0CZTp2t6dDr1EM7j0W/1LezLDXHslZHd1ZEHjdmwpLY7b7vIaeQJSGzW/CfZARVUFiuzuPrDihEKAwRYD4qys8PGihI6LMD8YxoNGokrdMzRFLIO4gd7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KEmhaphZ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cba8340beso38101925e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 20:12:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726542724; x=1727147524; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pndO79yIEXi5D/T5Hiw5+hSCMV+JnoiyMVBfXesV0SY=;
+        b=KEmhaphZtzMaBqdSlrH8S0d/XBDTrJ4JN0dEaado+hNrdc0aPYTs0foGkxuY+hW75c
+         CWsy/v6tfXPujmLeWwJea1enao+wbWLTwWkJq96z1beLoQhPxRyV69j8c9TlmQXscMbZ
+         iRJHOoxbrgVO9eF1kOjIokqR7JBPqD/vRNltZm3m/BPh18E4ldd0iU1OfH0lJ4+0sHhB
+         wtufrHs546NX5zVUBZwXxWUYy4jYgYWJ9sPH2bMHANNjiH49GYqhNLi0DtcX70dhMkbv
+         f1eSzeoVVALcszgoQFYmS+PU2FFmHD64fakEJRkjTUnZihd7lr/94KfqqaKRmLVMO+vv
+         6whQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726542724; x=1727147524;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pndO79yIEXi5D/T5Hiw5+hSCMV+JnoiyMVBfXesV0SY=;
+        b=J7btTEKGwQnlWotwm7cGy7tv4haKwLZaIrHQVONEgAA3fSvfAvopkT3ZtEvrfrmpzx
+         RXqr8q9Q6ic2st42ar1Zamnv8E0YspPnYsL2O3/fm5DHjLUf/mWnBaYPDuVGlurYXKm3
+         OHHBiE/MHi44JaZyS5NIlg4BEefUj1HItwsQdIZesZuLBXjAOV5vMgYWjx7u6JEhWu/x
+         ss18P4Yuu3Rx6gM9ZCJYdha/G9YCIGBPVe6Pgmj4k4Rd4fJgqDd8np+1pxp+JJHzJLM0
+         v1DIFV9/Yfpcb9+taaI3zCY6CAG96EbtUbyAEXsoT/TAxVM4I9BnLQpsFx46Q0MIRy9r
+         hVMQ==
+X-Gm-Message-State: AOJu0Yx+AKgTuuVmqVWrEu2u2pSK6/GVZ1nVKHFFjkHEpPAAxkaVc+26
+	vsPSA43A8rE/4wW2A09gdIyHIVke+V3EibRwjImFB4gZ2tRKSPDgbrXxFAjNQLs=
+X-Google-Smtp-Source: AGHT+IE3x6M8kqDP9HN0dSWPfZr9uevVahP/pokENG4Q7OcHHF7RCwUkr3dTJyAmWCiqUjtzbd6T6w==
+X-Received: by 2002:adf:b50a:0:b0:374:d130:a43b with SMTP id ffacd0b85a97d-378c27a12cdmr10392856f8f.4.1726542723772;
+        Mon, 16 Sep 2024 20:12:03 -0700 (PDT)
+Received: from [192.168.0.216] ([185.44.53.103])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7805185sm8417966f8f.96.2024.09.16.20.12.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2024 20:12:03 -0700 (PDT)
+Message-ID: <68e8c574-1266-42e1-9d0d-ed837c7105b6@kernel.dk>
+Date: Mon, 16 Sep 2024 21:12:02 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Bmz+PYHM_z=KqzW8CYquIW5";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] block: change wait on bd_claiming to use a
+ var_waitqueue, not a bit_waitqueue
+To: NeilBrown <neilb@suse.de>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org
+References: <20240826063659.15327-1-neilb@suse.de>
+ <20240826063659.15327-2-neilb@suse.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240826063659.15327-2-neilb@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/Bmz+PYHM_z=KqzW8CYquIW5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 8/26/24 12:30 AM, NeilBrown wrote:
+> bd_prepare_to_claim() waits for a var to change, not for a bit to be
+> cleared.
+> So change from bit_waitqueue() to __var_waitqueue() and correspondingly
+> use wake_up_var().
+> This will allow a future patch which change the "bit" function to expect
+> an "unsigned long *" instead of "void *".
 
-Hi all,
+Looks fine to me - since this one is separate from the series, I can snag
+it and shove it into the block side so it'll make 6.12-rc1. Then at least
+it won't be a dependency for the rest of the series post that.
 
-The following commit is also in the arm-soc tree as a different commit
-(but the same patch):
+-- 
+Jens Axboe
 
-  f0764bb2a7b6 ("wdt: ts72xx: add DT support for ts72xx")
-
-This is commit
-
-  177c20d761c5 ("wdt: ts72xx: add DT support for ts72xx")
-
-in the arm-soc tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Bmz+PYHM_z=KqzW8CYquIW5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbo8X0ACgkQAVBC80lX
-0Gz4ywgAgEpu0B3KR7TU1aQm21B+JNtkFrNcsYIgu+00Y620AT2pi76WgsNLt5rK
-4ZnEMR5++2P9uy0TA9gqHHMGrcP7IAtHN2kX7hPNo4JCQfTBih3P9FoWY1Nv561M
-Rx42JJxWKeGyFmTkkdOzjzRhCXVwOnK1lkzyXYi77VvL6fOD6Xu7+FQHchl3bb0O
-gdBNK3HFEFCT7X2Vnr87HoFxKdSmSvso17KTBiFg5dTD8YrNmol1YSGG9x2qSZKA
-X79yNidCL/+adJAY//ciFzKZ6dPQpCHeCbyY2N5OHnPQ6C7lFF0GUzfJ49jUNi4Q
-xSBQo7AdQobBt08CXi5c5u/zBdqlyQ==
-=uh/H
------END PGP SIGNATURE-----
-
---Sig_/Bmz+PYHM_z=KqzW8CYquIW5--
 
