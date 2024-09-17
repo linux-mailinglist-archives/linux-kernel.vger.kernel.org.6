@@ -1,95 +1,50 @@
-Return-Path: <linux-kernel+bounces-331612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C132297AEF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:36:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A16297AEF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841992815A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2501F21C02
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F8016A956;
-	Tue, 17 Sep 2024 10:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2AD1684A8;
+	Tue, 17 Sep 2024 10:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n2AGEgRj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0HyloQUg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n2AGEgRj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0HyloQUg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="hdnNHGiJ"
+Received: from pv50p00im-ztdg10021801.me.com (pv50p00im-ztdg10021801.me.com [17.58.6.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD9B166F39;
-	Tue, 17 Sep 2024 10:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C532715E5DC
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726569389; cv=none; b=eKZgJtqgjF3VUSuaTRSP6Bq0c6hQPUoadg5X007axdE9wyYRfwtY74OTXF6JHZEMLgm3MLCLunOUeC6JFNceoaO7gOA5le0Cg1Z63UrVi+ZlfKdhCrFg2R+S0u2gOdJRXdO2eMGk5vLilcK4/9YooJyU7+GywF+F44QBbn847wI=
+	t=1726569415; cv=none; b=CZi0Qx4y2ZwVgSS+BS/XTyPeAzblY3042BF4nwv8pwBmstS/3p1PL92aIZADKWSPO0hDLINXclWTRPC8mIEJIcV0XlwQ8Ms/HxYP2fYdPpwN5enUA6hPYI3IaQtBmP3ixIFeLqIFXTyYUZ+/GiAM8Z+Pbxz6aB6I6bg2ajSIqZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726569389; c=relaxed/simple;
-	bh=EXjHP0ntIqBSDvqt/VUu+sQc/EeSv8evdSX1J2w9cxg=;
+	s=arc-20240116; t=1726569415; c=relaxed/simple;
+	bh=qCfkST9/ft5SsImYPRZVlh+vnAIaaTcFSbz5op8XtxQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CeCpOHrPoRzEZfrc+daVlKdHsgTTvVMI0YmVTq61sE4iMjZKRHogwbFfohmtw648k65FSh+u2fmqE8A/GsjFf1hpiXEwEIiyLv5QSl6kK5YLtE1PaN2QgbEnQHSBtTjFu0BstDa7zxFkd7opQ8cSX2GL1/QnjPMiWi91kKDCGT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n2AGEgRj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0HyloQUg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n2AGEgRj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0HyloQUg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 577DA2000D;
-	Tue, 17 Sep 2024 10:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726569386; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EMMN4yUf7Xe7564xvTCUNORqPqK8TC5Mw2dgzq+7TBY=;
-	b=n2AGEgRjSSSpUeEhqEFKDbrsf+QBmNJmdgEU1IfCFPmp6F/o/VzePAillHSkv1rOxO+6Ye
-	BNDQLj5Avg4yewxo0l85hT0o05aFaHeAH00YvOis0RZ5eHv2FDGC7A3Gj9D8SmQlfrpFOb
-	pK/1bsVoWB1c4bHoI2m4apxMntgA5VQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726569386;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EMMN4yUf7Xe7564xvTCUNORqPqK8TC5Mw2dgzq+7TBY=;
-	b=0HyloQUgExFcWuF0noc9p6gZUg878/BJS33bxdnG1Anul7mZEkjW1OZ39amj/o69rlnqKv
-	ApKruc6EATX6ytCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=n2AGEgRj;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0HyloQUg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726569386; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EMMN4yUf7Xe7564xvTCUNORqPqK8TC5Mw2dgzq+7TBY=;
-	b=n2AGEgRjSSSpUeEhqEFKDbrsf+QBmNJmdgEU1IfCFPmp6F/o/VzePAillHSkv1rOxO+6Ye
-	BNDQLj5Avg4yewxo0l85hT0o05aFaHeAH00YvOis0RZ5eHv2FDGC7A3Gj9D8SmQlfrpFOb
-	pK/1bsVoWB1c4bHoI2m4apxMntgA5VQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726569386;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EMMN4yUf7Xe7564xvTCUNORqPqK8TC5Mw2dgzq+7TBY=;
-	b=0HyloQUgExFcWuF0noc9p6gZUg878/BJS33bxdnG1Anul7mZEkjW1OZ39amj/o69rlnqKv
-	ApKruc6EATX6ytCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5A2A2139CE;
-	Tue, 17 Sep 2024 10:36:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GBGKE6lb6WYzeQAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Tue, 17 Sep 2024 10:36:25 +0000
-Message-ID: <d9e4253f-c817-4197-9c77-40d2ac8dec65@suse.de>
-Date: Tue, 17 Sep 2024 13:36:20 +0300
+	 In-Reply-To:Content-Type; b=JPpoa3Wj/pnqAMP4rX5fjmu7VXlCbdnou4kIYns8LEd/qKEYTUoy7MpzF2mUZcKL6U9LDl5Ikr8oh1AHFBvXPYDfyNhNhDTCP9G0YrdaUIDh3Xs5u7KlgVUoSDlrUJvPcw7Ec9a4stn6AqK9NjIuHk3I/ObsKMZ2j8tgwXh/XWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=hdnNHGiJ; arc=none smtp.client-ip=17.58.6.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1726569413;
+	bh=gfI6XH1BgBt2Bw02rFX0q5DP7pqI5n4xQBeIPuY+IQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=hdnNHGiJRHBGI+2lhD9EyyXJb6sX5vHhy0/8JN0wmBD+h4o5Eq3nIts2P4uYMG5ZY
+	 5I7W7AAroNv3pti3yZg4iDb+eReA+l6lk9J3PxwaM6x0emYaj98lIYqE/9pFYSCCAw
+	 /ZSBAE3U7Da3p380d0bOC5URYd9GDsh578myO1Ux8uiur30RZ+f/HnebQSZfhU2BwT
+	 17ItAl3AigXHJfF7ZfF9LwAmt7nmfyE9GEVjQbii7yBbRLA8JkR+nMkFknkXTsaLN1
+	 lVdpYT/jikWmyNg0u7v2OQqHAa1VdXntOe3w/mHsr9W4co8rXDrsFXcL+lSran7qMC
+	 K3dELRJwMHvFA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021801.me.com (Postfix) with ESMTPSA id 2B254201049B;
+	Tue, 17 Sep 2024 10:36:48 +0000 (UTC)
+Message-ID: <7478478c-14e0-4760-b018-6bcf282db1b9@icloud.com>
+Date: Tue, 17 Sep 2024 18:36:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,136 +52,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next 03/11] irqchip: mip: Add Broadcom bcm2712 MSI-X
- interrupt controller
-To: Thomas Gleixner <tglx@linutronix.de>,
- Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20240910151845.17308-1-svarbanov@suse.de>
- <20240910151845.17308-4-svarbanov@suse.de> <87o74va4br.ffs@tglx>
+Subject: Re: [PATCH] list: Remove duplicated and unused macro
+ list_for_each_reverse
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
+References: <20240917-fix_list-v1-1-8fb8beb41e5d@quicinc.com>
+ <2024091752-passivism-donut-ccca@gregkh>
 Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <87o74va4br.ffs@tglx>
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <2024091752-passivism-donut-ccca@gregkh>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 577DA2000D
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,broadcom.com,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[dt];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.01
-X-Spam-Flag: NO
+X-Proofpoint-GUID: Q0VPYEKiAdwPevmrLx0_59b1hg7mo5q_
+X-Proofpoint-ORIG-GUID: Q0VPYEKiAdwPevmrLx0_59b1hg7mo5q_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-17_02,2024-09-16_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=815 suspectscore=0
+ adultscore=0 phishscore=0 spamscore=0 mlxscore=0 malwarescore=0
+ clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2409170076
 
-Hi Thomas,
-
-Thank you for the comments!
-
-On 9/10/24 18:58, Thomas Gleixner wrote:
-> On Tue, Sep 10 2024 at 18:18, Stanimir Varbanov wrote:
->> +
->> +struct mip_priv {
->> +	/* used to protect bitmap alloc/free */
->> +	spinlock_t lock;
->> +	void __iomem *base;
->> +	u64 msg_addr;
->> +	u32 msi_base;
->> +	u32 num_msis;
->> +	unsigned long *bitmap;
->> +	struct irq_domain *parent;
+On 2024/9/17 15:49, Greg Kroah-Hartman wrote:
+> On Tue, Sep 17, 2024 at 03:28:18PM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> Remove macro list_for_each_reverse due to below reasons:
+>>
+>> - it is same as list_for_each_prev.
+>> - it is not used by current kernel tree.
+>>
+>> Fixes: 8bf0cdfac7f8 ("<linux/list.h>: Introduce the list_for_each_reverse() method")
 > 
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
+> Why is this a "Fix:"?
 > 
-> And please read the rest of the document too.
 
-Sure.
+thank you for code review.
+Will remove fix tag for next revision and manually loop author of fixes
+tag commit.
 
+>> Cc: stable@vger.kernel.org
 > 
->> +};
->> +
->> +static void mip_mask_msi_irq(struct irq_data *d)
->> +{
->> +	pci_msi_mask_irq(d);
->> +	irq_chip_mask_parent(d);
->> +}
->> +
->> +static void mip_unmask_msi_irq(struct irq_data *d)
->> +{
->> +	pci_msi_unmask_irq(d);
->> +	irq_chip_unmask_parent(d);
+
+will remove Cc tag for next revision as well. (^^)
+
+> Why is this for stable?  What does this fix?  Just removing code that no
+> one uses doesn't need to be backported, it's just dead, delete it.
 > 
-> This is asymmetric vs. mask(), but that's just the usual copy & pasta
-> problem.
-
-Correct, but this will disappear when convert to MSI parent.
-
+> thanks,
 > 
->> +}
->> +static int mip_init_domains(struct mip_priv *priv, struct device_node *np)
->> +{
->> +	struct irq_domain *middle_domain, *msi_domain;
->> +
->> +	middle_domain = irq_domain_add_hierarchy(priv->parent, 0,
->> +						 priv->num_msis, np,
->> +						 &mip_middle_domain_ops,
->> +						 priv);
->> +	if (!middle_domain)
->> +		return -ENOMEM;
->> +
->> +	msi_domain = pci_msi_create_irq_domain(of_node_to_fwnode(np),
->> +					       &mip_msi_domain_info,
->> +					       middle_domain);
->> +	if (!msi_domain) {
->> +		irq_domain_remove(middle_domain);
->> +		return -ENOMEM;
->> +	}
-> 
-> This is not much different. Please convert this to a proper MSI parent
-> domain and let the PCI/MSI core handle the PCI/MSI part.
+> greg k-h
 
-I apologize, but I wasn't able to make it work on time. The good news is
-that I made it now and will send it in next version of the series.
-
-regards,
-~Stan
 
