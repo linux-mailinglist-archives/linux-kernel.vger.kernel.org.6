@@ -1,98 +1,110 @@
-Return-Path: <linux-kernel+bounces-331688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C8B97B009
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 386E297B00B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3AD282ECB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C9F28297C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399CC167D98;
-	Tue, 17 Sep 2024 12:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3354916A95B;
+	Tue, 17 Sep 2024 12:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WJW0SVc8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8tRFJZpA"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YPkUKIQK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FABF156250
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 12:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0CD156250
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 12:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726575590; cv=none; b=ZcvH2hngXPMq1vRLzY4Sbg2AIwl+gGZjQtX9dAj227KkJZ7NKPEmpUkRhzcEquUjHFWghUNURju3fK9GaXqD/N41huqtLd1+DHm4L0so2+7RJdAFynOGHhMx3s+oLWNRFnJFRXnjHClfvvbX3nwY6bcUV4hY14nT6lEFSTt1wIA=
+	t=1726575751; cv=none; b=OhLZRjuOYEVjD9EsArIckfsEZKMR5/iZwRf5xVpuWrc0ytM7aWcbxm2VzYfQ/1CjYwYFbibmkwO1DuAKNSYVTBFaG8teQ+ST1NfwfWUlmVelUm7hbtzXu2ccc5jcR2qE7qYQ/cQ2G5oCCJWKRYmTWQOYYCCE20SvId1hx0cq1Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726575590; c=relaxed/simple;
-	bh=ysMaVrmccLvAsJpHtXtCUt5fwM1sEzRh4w2ysymCwgQ=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cWCT30NW9QhjzxwvyttE2AjFPEnEb7XAzZHlmVswy6DOXmco9UkpGIbTDnCNBtCc4A4awHnmfI5Go3ui6fF6Ozbk0Y20oiJpvWsi5R0Q3YpPK+ugNRt8x7Bc6u3v6Y9auQLAFdcx7Vosz3l+n2N5TI+eptUwgF20mkJLfICEjuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WJW0SVc8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8tRFJZpA; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726575587;
+	s=arc-20240116; t=1726575751; c=relaxed/simple;
+	bh=xeuHGDnRy1DC9m3oPh8xhe81PwylpW4rMI++5qNAX/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E8frhPuyeoq5KXAi28BQT2PbJaZC7gYYzXoei4K4xlnyzI/zOJhnSR2MnzXrnGFDciV99gQ92ZcfrMLU/iWEwIBsIRs3ZYOJv1hdLnC++veTSkFIjofMA3GcIPKEUeox7eGkYsPrtx+lLtmGOU1U1ty4xG377gbmE15w4SukleE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YPkUKIQK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726575748;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wQndafcmk9PWFnoR4Ov7CRlR9eb2pjcJP6NIxwAilGk=;
-	b=WJW0SVc8Q6XAwPs3vfR2orQayevGv11zzXUsEhT3NisKn/cAEEXibQC2pZlS2ifViDRptR
-	jdgDJBM9FsGPNbMVYOaL0HFAJ1q0OWpbMgIy9MEoOqguxbEwJs4hhMN6T4rxM9g5dyWPd8
-	+pmwjPgw9Vz8o4olzF6naXr/p3OmvIOpnYCKiyJkwQzWs5XsjG8dY40xBV+7qpavzFx9E6
-	F23okdMpaltllyTqWoV7ymu0efYz7/NjAEWinqwWRyKQ/hWNUeVzhjE0/c1OfFLV2NykDm
-	+zkm+bFqzHPyepOripFJbj/zvJnID8SP4Y73csRo8wus04pEraDl94+q+QMVYg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726575587;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wQndafcmk9PWFnoR4Ov7CRlR9eb2pjcJP6NIxwAilGk=;
-	b=8tRFJZpAcOzI6i4As9JPOfRX5L9HcnqUVpDeGAdE6LooQkh4kKEnuu3fqoPFGeGe+twc5G
-	C72cKmtmN4HLPLDw==
-To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] debugobjects: Reduce contention on pool lock in
- fill_pool()
-In-Reply-To: <90546c16-52e3-b92c-d99b-724278647809@huawei.com>
-References: <20240911083521.2257-1-thunder.leizhen@huawei.com>
- <20240911083521.2257-4-thunder.leizhen@huawei.com>
- <90546c16-52e3-b92c-d99b-724278647809@huawei.com>
-Date: Tue, 17 Sep 2024 14:19:46 +0200
-Message-ID: <87ldzq1nh9.ffs@tglx>
+	bh=jdc0W87W/DOchOKoYPEek4bV7oRWeb/I9Hni4nlJ9R8=;
+	b=YPkUKIQKe0u9zWZWJvD477Vq0fHn23AhQ1iV1y+WCGfvi5BDS8ftVCIrQBiqBREqyMJLU1
+	8kl1emoR7fqkzXT+gbglTnk+joCgXQodeJFNSXzppaZGKbjRGIG4xwYLbB8fYCTk1pktpv
+	q1ysBX1Wfv0bJS8VrlQ4aoVydNG282U=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-nok1KpieM02snB7pAK7qkA-1; Tue,
+ 17 Sep 2024 08:22:27 -0400
+X-MC-Unique: nok1KpieM02snB7pAK7qkA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03E2919560A3;
+	Tue, 17 Sep 2024 12:22:25 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.79])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CF70F19560AA;
+	Tue, 17 Sep 2024 12:22:18 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 17 Sep 2024 14:22:12 +0200 (CEST)
+Date: Tue, 17 Sep 2024 14:22:05 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 02/14] uprobe: Add support for session consumer
+Message-ID: <20240917122204.GB7752@redhat.com>
+References: <20240917085024.765883-1-jolsa@kernel.org>
+ <20240917085024.765883-3-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917085024.765883-3-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Sep 11 2024 at 17:04, Leizhen wrote:
-> On 2024/9/11 16:35, Zhen Lei wrote:
->> Scenarios that use allocated node filling can also be applied lockless
->> mechanisms, but slightly different. The global list obj_to_free can only
->> be operated exclusively by one core, while kmem_cache_zalloc() can be
->> invoked by multiple cores simultaneously. Use atomic counting to mark how
->> many cores are filling, to reduce atomic write conflicts during check. In
->> principle, only the first comer is allowed to fill, but there is a very
->> low probability that multiple comers may fill at the time.
->> 
->> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
->> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+On 09/17, Jiri Olsa wrote:
 >
-> Hi, Thomas:
->   I was going to mark "Signed-off-by" as you. Because except for the
-> following line of changes, you wrote everything. But you're maintainer.
-> It doesn't seem good if I post a patch with your Signed-off-by. Please
-> feel free to change it, but do not forget to add "Reported-by" or
-> "Tested-by" for me.
+>  static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+...
+> +	if (!ignore && !ZERO_OR_NULL_PTR(ri)) {
+> +		/*
+> +		 * The push_idx value has the final number of return consumers,
+> +		 * and ri->consumers_cnt has number of allocated consumers.
+> +		 */
+> +		ri->consumers_cnt = push_idx;
+> +		prepare_uretprobe(uprobe, regs, ri);
+> +	}
 
-Suggested-by is fine. I look at it after back from travel and
-conferencing.
+This looks wrong. ri is not kfreed if ignore == true.
 
-Thanks,
+But see my previous email, if we change this code as I tried to suggest
+the problem goes away and handler_chain() doesn't need "bool ignore".
 
-        tglx
+Oleg.
+
 
