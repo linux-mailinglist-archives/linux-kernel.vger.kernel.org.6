@@ -1,109 +1,141 @@
-Return-Path: <linux-kernel+bounces-332011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1024997B431
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:52:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829DF97B435
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B258A1F2448C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 178EA28766A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49969188A32;
-	Tue, 17 Sep 2024 18:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFL8jZOm"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D64218991C;
+	Tue, 17 Sep 2024 18:56:00 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A0A52F88
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 18:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD00215ECD7;
+	Tue, 17 Sep 2024 18:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726599139; cv=none; b=JDWzLPVaB3mFhbDeJOJRQ4giJne5d1faQcC2Piix70z28m1V9tiyuRFUSjbiRPN03+f9PnD6dCuopIlVDq6nE3RsNtXkQ2T+4zqdLEVNl6J6TJ6KnEdbFH2i2Kb5QDIj/4Jl0fLEGCaLaqqzaEozrPKSd8I8PuuKLW/DIjze5aA=
+	t=1726599360; cv=none; b=FFtv15JThAdtAcGo/DjC1t3Dhlkj+Y34zqrH/+Yu/ENIIgsgTwFeKANzacsVVc861WsQ2Aq6CwCa2StQZ5yd8/J5gclL/hczHPnRwDYJF23c/zPDcaEry30m9KtCkaswlF9uGDpoWd0kQ/Ue20Ulr14moBmvlg3JWg2Vxm7sYY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726599139; c=relaxed/simple;
-	bh=9rZ0NAjyMN/Cy6XIxzVeo9DgCI/Rlqh8OOlBqAhJOdY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oAFluLOQ4LTpp8xkcuyU2o1ljqEnn3ERBYZqgLfZ4QIioA7NpqMD7OCpx8XxEYx+j0NeFTcDDikdEQJUN9h8JP72zyQz9YxrbWQYtPDCnEB+kBIJpnZyxi2QiFfe29Xdjk2yPJI58aETI7Hl1Vc/t+E961xMHDTtySTACl8utfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFL8jZOm; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71979bf5e7aso603520b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:52:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726599137; x=1727203937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+vyLopvVFarVc7b6zqFWSVn6Mj7mgp46/75nlYETkLY=;
-        b=dFL8jZOmLU68gsn/sfaZPQ3MLrequOI/ystdz9YC3id1Drgh8Fu1drt9fNRJvsbJse
-         +yx9ZvAuZs+/SLvRNkIthiyvjO+deOgRwe+FLFbU3/wz5Inyedok1bs0demduafZKo+Q
-         lBhGZPeeH4LScz3MGvTQRxyS1kJRplkp/O1qUpvV2ImcOXsCaewtUZ3731nA6HUCR3pR
-         szHC5yPemdrbyZo7W9jJ4pNztKOivpVMMaSqWR3r9oIwdR4eTemO0yb7FNT3hFhmunom
-         JddRKufIi/rc+hEPWl/X5/5OQvTzea0D+KX8UxrKOhSPMJ+RQ4yyF43Beq0JmymsAvR3
-         OjOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726599137; x=1727203937;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+vyLopvVFarVc7b6zqFWSVn6Mj7mgp46/75nlYETkLY=;
-        b=lIUrqPtWalfGLg2FjEnY/DMPrDdwMpb8QtwFc2cBeSXOXQcVyPjBnOjFj54/G4XtJ8
-         Z/EtF/LJPJyMSEsoPqJZ1ZH5x8RHzBkrJ/GkAF88wmCunWtyPeg3QJpnv3WvHZzLppv2
-         elES/cQnPq5fuC1Z8NssffEelTPDJN3/SsPfJpqvkcsPP2qsQTsPJB50sXUsP4JF6sJ1
-         4x1t7fJ3kkvp/hI51pl0bYD7Tf3Xz9SQ5oN5PGKzkIWmN4bH4oQ0rxu1fBt70ihDarSJ
-         JVz29bswrNmYsdm0dzgyD1YO1Ko+R8yNsZIN9LCVszI/xkvoZpXM9svZ938OuvmUJ/xs
-         sS6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUBeGAyI8ZESiWfdnoMCtDRHhKpIbtkAQd6MB6nRhR8V1qG+701E2ggnDjxhJQHTAuycCtb1/+H1N02pVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZszzRJDPL7e7MFbru1rDWGbyL112KZt1D/QYvjuBQgPkcOEcx
-	Vu2xRKwDJapQd7dZ0uQ33KDND1HHYq0hVt11ddYSWd43weJjURvx
-X-Google-Smtp-Source: AGHT+IFmCN82+5xtavbARoR+V+tU/i2kaMpPTlaO2CRQHv+8DXSG6y6urfrYImfGrdKu9Rjz81UpEA==
-X-Received: by 2002:a05:6a00:23d5:b0:719:1f54:73a5 with SMTP id d2e1a72fcca58-71926056052mr28503306b3a.2.1726599137339;
-        Tue, 17 Sep 2024 11:52:17 -0700 (PDT)
-Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71944adf70fsm5468108b3a.89.2024.09.17.11.52.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 11:52:16 -0700 (PDT)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Mohammed Anees <pvmohammedanees2003@gmail.com>
-Subject: [PATCH] ocfs2: Fix typo in comment
-Date: Tue, 17 Sep 2024 18:51:56 +0000
-Message-ID: <20240917185156.10580-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726599360; c=relaxed/simple;
+	bh=6D8fJosTTxd2L3lfaDtxSU9L6o0MY6+KjLaJSKRE57g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YEAZhhpNO2njf3zMzfitbwk9rTqG5OO/DX2b7puFNKd/47Ko1ARcxr+jmMsGGXmw3lx307HQ5TaAx4Ma6ah7JdfijWWMofv4DQGXj/Ds9IE81wjMQNCpAkI9ps8L+X+f1JxWRwNbI5y9yoeneuKc6org5D0r0Hu+1fHi1RNuMkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.108] (178.176.74.43) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 17 Sep
+ 2024 21:55:36 +0300
+Message-ID: <96bcc902-630f-83c2-0e4b-27ed552fbe09@omp.ru>
+Date: Tue, 17 Sep 2024 21:55:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [lvc-patches] [PATCH 6.1] platform/x86: android-platform: deref
+ after free in x86_android_tablet_init() fix
+Content-Language: en-US
+To: Aleksandr Burakov <a.burakov@rosalinux.ru>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, <stable@vger.kernel.org>, Hans de Goede
+	<hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>
+CC: <lvc-project@linuxtesting.org>, <lvc-patches@linuxtesting.org>,
+	<platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240917120458.7300-1-a.burakov@rosalinux.ru>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20240917120458.7300-1-a.burakov@rosalinux.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/17/2024 18:42:41
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 187805 [Sep 17 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
+ 8a1fac695d5606478feba790382a59668a4f0039
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_cat_drugs}
+X-KSE-AntiSpam-Info: {Tracking_bl_eng_cat, c6}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.74.43 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.74.43
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/17/2024 18:45:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/17/2024 4:41:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-Fix "Allcate" -> "Allocate"
+On 9/17/24 15:04, Aleksandr Burakov wrote:
 
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
----
- fs/ocfs2/alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> No upstream commit exists for this commit.
+> 
+> Pointer '&pdevs[i]' is dereferenced at x86_android_tablet_init()
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index ea9127ba3..395e23920 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -4767,7 +4767,7 @@ int ocfs2_insert_extent(handle_t *handle,
- }
- 
- /*
-- * Allcate and add clusters into the extent b-tree.
-+ * Allocate and add clusters into the extent b-tree.
-  * The new clusters(clusters_to_add) will be inserted at logical_offset.
-  * The extent b-tree's root is specified by et, and
-  * it is not limited to the file storage. Any extent tree can use this
--- 
-2.46.0
+   s/at/in.
 
+> after the referenced memory was deallocated by calling function
+> 'x86_android_tablet_cleanup()'.
+
+   No quotes around a function name the 1st time, and here they are
+the 2nd time. Please be consistent...
+
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 5eba0141206e ("platform/x86: x86-android-tablets: Add support for instantiating platform-devs")
+> Signed-off-by: Aleksandr Burakov <a.burakov@rosalinux.ru>
+> ---
+>  drivers/platform/x86/x86-android-tablets.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/x86-android-tablets.c b/drivers/platform/x86/x86-android-tablets.c
+> index 9178076d9d7d..9838c5332201 100644
+> --- a/drivers/platform/x86/x86-android-tablets.c
+> +++ b/drivers/platform/x86/x86-android-tablets.c
+> @@ -1853,8 +1853,9 @@ static __init int x86_android_tablet_init(void)
+>  	for (i = 0; i < pdev_count; i++) {
+>  		pdevs[i] = platform_device_register_full(&dev_info->pdev_info[i]);
+>  		if (IS_ERR(pdevs[i])) {
+> +			int ret = PTR_ERR(pdevs[i]);
+
+   Need an empty line after the declartion, BTW...
+
+>  			x86_android_tablet_cleanup();
+> -			return PTR_ERR(pdevs[i]);
+> +			return ret;
+>  		}
+>  	}
+
+MBR, Sergey
 
