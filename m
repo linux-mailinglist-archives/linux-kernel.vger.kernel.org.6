@@ -1,128 +1,112 @@
-Return-Path: <linux-kernel+bounces-332073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8AC097B50C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A884D97B50F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3202843F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1D42848B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2D8192B67;
-	Tue, 17 Sep 2024 21:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD441922E8;
+	Tue, 17 Sep 2024 21:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyE8X+Gq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQwqAPjX"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19482AEEE;
-	Tue, 17 Sep 2024 21:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D644A762E0;
+	Tue, 17 Sep 2024 21:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726607635; cv=none; b=ZE8zLdcN3jf9ik6SyRz5mw9tK23XA/2I+T1GMObfvUcj2A5dtsOpEagSKLGXtVOs8XShYzRJi2R81y9yFrsYeNlGrcXUltE9fvOnwovyJO6q/KxTV2O8l3D4Ee4R8/SEUsi6wizaeQ6eQqUSoSZLVz9jX/uoDNSycj3zCOJ7x/Y=
+	t=1726607701; cv=none; b=YY7OkE1WUGNDrnbo63ORsFJeYabyoHRShta+XctWj7EiUyc2YYsgt7HtT5VpQBM0o4GIFaJfwmEVSpy5PS8a8GQHl9GHo0LjZfVBC7W9iDEJABDbNge54UYrlNJHnNoJrnpSVj4KZgYn3Jp5nl223AaRJUgcuJXFvyJUxyWGd38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726607635; c=relaxed/simple;
-	bh=h6tfNn4BixxJYWQYKrDQLr7/eqjQkFy0kULBd/P+I4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UD2glWYTSx+z+ruNNbVVk7yHm+/XIHqbv+7WXR6GpZE+KC61BiXyTGYcqOrg1mlMRQ2q3laEUXs0vkbQMtUhV9wiEusmzIwURJN5wCl752r5Bxm//6X7d8sOE6WkhaLtrHjT3BnAURG8tP2EzChNWIBNlA+UnqzPhrkN73IzxrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyE8X+Gq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70DC3C4CEC5;
-	Tue, 17 Sep 2024 21:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726607635;
-	bh=h6tfNn4BixxJYWQYKrDQLr7/eqjQkFy0kULBd/P+I4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TyE8X+GqWp7Z/p5furrj0+eAxM/KsS6HaBJHLmVLo8Koq88/0VSzkyTGN5IKW1HZG
-	 OPwMjuyM78k+lDKtOBlMtoDD5NvXGC/HfGb0ZP4s+t0l70B3tkUCXZeU0Q/u/X0M/Q
-	 a54APR/wJoX5/8nmIxkF6XPa3vuriJP7Jy7pCGTgpleDJnyjg/vJppLeEKS8rrwkm8
-	 PUV0AxR9m5qcOUzETL8CZ409Ff01O8bxO3wotbiUby33e7RDVvXN89v5cQqtYX4P/C
-	 gPYxufC+CdP2VL3vdg9U2I7ilIp5Y6DgI5t6CP5vLyuEb7fjJ4SSh3pNKahZ/CrqYg
-	 DQM4Xhac7Mb5A==
-Date: Tue, 17 Sep 2024 22:13:58 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: Possible misleading information in rockchip,rk3588-cru.yaml
-Message-ID: <20240917-flypaper-december-3719ea838b3c@squawk>
-References: <ZuIJgiN2xp6oPrHD@pineapple>
- <20240916-neuron-surfer-32db6440e1ad@spud>
- <ZuhtMHgx8XlZaayp@pineapple>
+	s=arc-20240116; t=1726607701; c=relaxed/simple;
+	bh=kJECOZCsW0bph0jwO/WiWvsCNSmNxOHaG+UK7d0vBJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mmZXNUKNT2g5QlPGSQUF3czgBEh+FZCN92VlLtV6J2qLoEXJwqp8oL7ea2F0w0zUWtUt69CUdo25GJv2/zGJRHXHprU+YLaZw06hkAmwFhwPTFLeW5A8/fp/AAcJHLCPtdIDx65q3t31UnNqYa+OuSPYljnMsOTPzI/s/mK92p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQwqAPjX; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-535be093a43so7581329e87.3;
+        Tue, 17 Sep 2024 14:14:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726607698; x=1727212498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GNg6uisIstT3PKLiZhnOxCRwpJJd6ocjANF9dbenPCo=;
+        b=XQwqAPjX1HAIyU0CMuWIJQXOC74dCXnhE9g+4q5+HnQNASzsXZAJbs8/Yu8jfjsGDd
+         VhnB2J0WNs5hlAFe1VXV7y/mehWiM3pH0crnFqjK22J6kJ/PZF2RJCN6v/CGxxlTsQL+
+         60zwnQuaIdXglppuUBPs2H1pFBmTTNGQmDaeFVwOx6lLobIXPbpozO90HQrtaPizEZXa
+         XLgP5tvrYKOgY6br9M2Svv1ejFV3NR4jn7zJtoLLRwBwN+48ma/+Agk3NGVkAaqbmnaU
+         dNC7hCtH7/EZArjzPxKtXTZ3lGrQBCwFnt7RDuaNZw44DP7V+0p6r7zubal0ckkGUGa1
+         YszQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726607698; x=1727212498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GNg6uisIstT3PKLiZhnOxCRwpJJd6ocjANF9dbenPCo=;
+        b=vZ+b+frIfqRcZ0vwvG2RvbcmkHCp6VignrhMaurETdyk3cd6v9DLb/p9i3rpte9cFk
+         h+e4B0HPPLadFJAvxUEQXn6Re1D8FCW5Pg/eyhXo6cHf1DuWjoZ0kxXYa+tdiQKPmBtA
+         QHmguxP8shetYnlEkL32u4XsLzNbi4loY/D0/XBg7JBlvRhszwLxHsRFG9Yl+ixuLb/j
+         ZuoxqiYm7DlVcvTzQYfC/iLpxvscn65jGogNay8R2eCF4bqgXwtTwT1tUPGEWKlmXfTF
+         dui7hQhVF1XzWxjzaM4H87fvFg/caTOhgL78Nol16uTmxNtYxUYmAAueNsiCKx6iv301
+         llCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0KWyRpncaxUm5N9HSyb+o6GrtIHRPrGMs2W0fHs+OigxY97EzQzFQ++oIdJ4IN6cax5BAMtsPPtDqUyiR@vger.kernel.org, AJvYcCXdh/Dh4QIolxejczZT2Yk7vPtbPuiQ9tFLsP82/MMlM0bUzrOW59t33Bh+43nJxPs8Umy4Fe9Htui8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwObWMr+7cSr+sRetiVtnPcK5kPcRNUxg8vHF/6saOlBMjJNCiA
+	ousc1auIfUixkWZmzMTaZRUzeatQ/NewpoakS7mfOjLDCTABntUkptc2JKsE2nAbyXxnLa3zrJS
+	9fqhyZ8sxEIa1DQnxqkVVkoxRz9RJ3qS4
+X-Google-Smtp-Source: AGHT+IFw62JFgbtc4EWdmaclsx9ONshsvHiY8ieUIwJLSe6BPrVbYk+kdvuTFThyJfKtnUzfw+gCOJqZJstndxIwADI=
+X-Received: by 2002:a05:6512:31cc:b0:52c:d904:d26e with SMTP id
+ 2adb3069b0e04-53678fba511mr10018402e87.21.1726607697539; Tue, 17 Sep 2024
+ 14:14:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RIDGw94K0j/yawb4"
-Content-Disposition: inline
-In-Reply-To: <ZuhtMHgx8XlZaayp@pineapple>
-
-
---RIDGw94K0j/yawb4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240913200204.10660-1-pali@kernel.org> <20240913201041.cwueaflcxhewnvwj@pali>
+ <73552a5120ff0a49a5e046a08c6c57f4@manguebit.com>
+In-Reply-To: <73552a5120ff0a49a5e046a08c6c57f4@manguebit.com>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 17 Sep 2024 16:14:44 -0500
+Message-ID: <CAH2r5mskTFRKF0sxjZ6qjrdtntCVHt1EfCR3o=3BuDa1PU=A+w@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Fix getting reparse points from server without WSL support
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 16, 2024 at 05:38:56PM +0000, Yao Zi wrote:
-> On Mon, Sep 16, 2024 at 05:33:49PM +0100, Conor Dooley wrote:
-> > On Wed, Sep 11, 2024 at 09:20:02PM +0000, Yao Zi wrote:
-> > > Hi,
-> > >=20
-> > > rockchip,rk3588-cru.yaml, dt-binding for RK3588 clock and reset modul=
-e,
-> > > contains description of customized property "rockchip,grf",
-> > >=20
-> > >   rockchip,grf:
-> > >     $ref: /schemas/types.yaml#/definitions/phandle
-> > >     description: >
-> > >       phandle to the syscon managing the "general register files". It=
- is
-> > >       used for GRF muxes, if missing any muxes present in the GRF will
-> > >       not be available.
-> > >=20
-> > > But after doing some searching, I found that clk-rk3588.c actually
-> > > defines no clock hardware with MUXGRF type. This is also true in in t=
-he
-> > > vendor code[1], it seems there is actually no GRF mux on RK3588
-> > > platform.
-> >=20
-> > Have you been able to check the datasheet/register map for this piece of
-> > hardware? Does it have a grf register region?
-> > Wouldn't be surprised if it didn't, and the cause of it being in the
-> > binding was nothing more than copy-paste.
->=20
-> Have checked a public datasheet[1], RK3588 does have corresponding grf
-> region and there are only clock related bits in PHP_GRF_CLK_CON1[2].
->=20
-> But these gmac clocks bits are used in dwmac-rk GMAC driver[3]
-> internally, out of the common clock driver, rk3588-cru. So I don't think
-> the CRU needs access to the grf by design.
+On Tue, Sep 17, 2024 at 4:04=E2=80=AFPM Paulo Alcantara <pc@manguebit.com> =
+wrote:
+>
+> Pali Roh=C3=A1r <pali@kernel.org> writes:
+>
+> > Paulo, please look at this patch as it is related to WSL attributes
+> > which you introduced in the mentioned commit. I think that the proper
+> > fix should be to change SMB2_OP_QUERY_WSL_EA code to not trigger that
+> > -EOPNOTSUPP error which is delivered to userspace. I just checked that
+> > this my patch works fine for Native NTFS symlinks and NFS-style reparse
+> > point special files.
+>
+> Thanks for the patch.  The problem is that the client is considering
+> that the entire compound request failed when the server doesn't support
+> EA.  The client should still parse the rest of the response that
+> contains the getinfo and get reparse info data.
 
-That sounds like a reasonable justification for deleting it - but please
-check U-Boot etc to make sure that other projects are not using this in
-a different manner to the kernel. If they are not using it, then please
-send a patch :)
+Yes.  Agreed.
 
---RIDGw94K0j/yawb4
-Content-Type: application/pgp-signature; name="signature.asc"
+And on the
 
------BEGIN PGP SIGNATURE-----
+--=20
+Thanks,
 
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZunxEgAKCRB4tDGHoIJi
-0tzwAPsEW69ocfhtVR+GMWt0pS+MPPaBskZvsdl4XuVumMe3NAEAvsgdPy+i81Ec
-ZX8q4UQyEvwTSKQHOQvpLTNM8UhH0gw=
-=GlRo
------END PGP SIGNATURE-----
-
---RIDGw94K0j/yawb4--
+Steve
 
