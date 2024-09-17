@@ -1,66 +1,62 @@
-Return-Path: <linux-kernel+bounces-332005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38FC797B418
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:22:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5271897B416
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7041C2148F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:22:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F9D128743D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9137188915;
-	Tue, 17 Sep 2024 18:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B8C178368;
+	Tue, 17 Sep 2024 18:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="K+/LpjXw"
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FaUNlyrj"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEA117B4FA
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 18:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915AF13BAFA;
+	Tue, 17 Sep 2024 18:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726597316; cv=none; b=F/7tdrUztO2vGYraceY5bOTyDu/Uj93736UTWO+PHCKf4c0S3GQmarSl9Mq9k90MCI+/U8j3CuKD8ob3LKmb0I7RqocAZNS0ZDF8wVQO6Y/x+AB7V+2dpBXPYx7J4NbbkW9Ghpxg3jXvsgxZemOn1eV7svtilW2ul/zyvkFgAyg=
+	t=1726597307; cv=none; b=lwyufLlaIQz26Ir21aJkDJfuitij+XzOc8mN7A5lDrK3qPkXAtTSZmesXLya4p3242t/WVYBbWma90QzoilXEJVtXjWlmiu5Whj3+NFbqIh9EdCHRCG++ZtDad65O/yc2eqTtjHPADihFBevpYEGFHntm/gzaRchB0Ze1BrFUpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726597316; c=relaxed/simple;
-	bh=F/5Uk9BmhUmJeZmONjtDhwhpEWYM+T/oEN+3bs6YFPI=;
+	s=arc-20240116; t=1726597307; c=relaxed/simple;
+	bh=d/FGdE5p3l5KSKe+3EQ85x/v/U3i1kvogPNYEAMP1MM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ddnM05hjWtQt+lOxvmYgE+M5daUncLoLVHp8RLmn08d50kZmJ0SpNLs9nz1zmUP9iXVFCjQu0cu/TCSTAJYgo+MiGt6QYaqJKNbDXRSHvoSoPLUO7n4avDX8xbN148AzPtpBit9b1aTcSKc9oedXUGmhXMxTaeFiLi9bKG7YC6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=K+/LpjXw; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id qbYaszmnKnNFGqcpesHHWi; Tue, 17 Sep 2024 18:21:46 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id qcpcs1BmWks1PqcpdsC3cF; Tue, 17 Sep 2024 18:21:45 +0000
-X-Authority-Analysis: v=2.4 cv=Ud+aS7SN c=1 sm=1 tr=0 ts=66e9c8b9
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=rpUMG24A1zG+UrzXDtAMsg==:17
- a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7T7KSl7uo7wA:10 a=pGLkceISAAAA:8
- a=VwQbUJbxAAAA:8 a=McKQfLOCXuPBttKt2ZEA:9 a=QEXdDO2ut3YA:10
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ef0Hg5MrRNH1tr9n1lG3ogKlKwcjx39jbO/ZsfsDFfc=; b=K+/LpjXwujNIDopPIB3afOgVN4
-	yu20Tiv+i55+wj1ViBwPVKqXqmOOqJ1AlQZLrVE8XBedPhuSTdjpY+/hfo4jeTSvsNkZpgnWdEJ+u
-	GOTwkP+j0GUqCXGwBliFDAo3sFt4QI3PwCCzY63wi3atlqrW0niWg6wqz8MQrfG19Vz3VJ51QXf+3
-	sDu3HNl5e9B74o4qj33mpbpGkJWS8lEePTfSFrEUJJh4Yu+zD6fgupP5TWX4hrJ9smyIb4inBqNK4
-	72o4++Y77d5haau87oqk3StJ1MTF4COjxOBri1E4n0VjYVJhsRQZIKizbgRPHPhHRA715fZNhhEt8
-	tsfrq2sw==;
-Received: from [185.44.53.103] (port=57240 helo=[192.168.1.187])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sqcpb-002rYi-2v;
-	Tue, 17 Sep 2024 13:21:44 -0500
-Message-ID: <4e926821-de7c-4618-be73-e95965bef3b5@embeddedor.com>
-Date: Tue, 17 Sep 2024 20:21:32 +0200
+	 In-Reply-To:Content-Type; b=r7eFrFs1xVUMZA29xzE9U6kjP1OPX92h2Bs//dPrh4nOCgCZIr4sMJ7lSGSj7+jbKfExuTZuIxh+TFO4tRNn44tiy0TsbUqoqvy33SNiKGd5foY05lgARGFo9O14s7sM1maMulKXVVwuJotuprhL8FVCpL5admg50FYle5lIPns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FaUNlyrj; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4X7VVK07RgzlgMVT;
+	Tue, 17 Sep 2024 18:21:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1726597302; x=1729189303; bh=AWzpBz0NXcHkJr5RdTZqdjJ7
+	Yk9gXxkmI8DiKLOd/lg=; b=FaUNlyrjWYKMUYXE7ISIpvvs8EyF+cw/Ti4a3w7G
+	WK7bpk4cz/zYSBOkk9iebUZwADxY6xmY+cyhnD/UPibAu7iEqrXFkN/jgnyFJnpt
+	Hs1QhcxXuNJfha/WbOEyOg5UvORsE1spOjxxny+It3XBllso4u5yqTU5aA08dcY/
+	EJMOdi1AJvNQl3lwonPpUCzNn1PmR2e/PWi7vpRuk4tYT89BXpoxtbyp/tz4LSj3
+	E+6cN+dDaWoAbxV8pAXrvoikh+7Lemp1nRjx82hD1l9oO3MzCyvGpB8v+laFqq9u
+	CC+q8A0hawDfoChSDiQplULvTjikYnzp4yObs7Z5wdPdxg==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ZZpasyyRYEDL; Tue, 17 Sep 2024 18:21:42 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4X7VVD6KwhzlgMVP;
+	Tue, 17 Sep 2024 18:21:40 +0000 (UTC)
+Message-ID: <5c15b6c8-b47b-40fc-ba05-e71ef6681ad2@acm.org>
+Date: Tue, 17 Sep 2024 11:21:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,126 +64,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: mwifiex: Fix memcpy() field-spanning write warning
- in mwifiex_config_scan()
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Alper Nebi Yasak <alpernebiyasak@gmail.com>, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: David Lin <yu-hao.lin@nxp.com>, Dmitry Antipov <dmantipov@yandex.ru>,
- Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
- Francesco Dolcini <francesco@dolcini.it>,
- Sascha Hauer <s.hauer@pengutronix.de>, Kees Cook <kees@kernel.org>,
- "Gustavo A . R . Silva" <gustavoars@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Johannes Berg <johannes.berg@intel.com>
-References: <20240917150938.843879-1-alpernebiyasak@gmail.com>
- <1b2af606-ade7-4550-b1ba-a78202b257e5@quicinc.com>
+Subject: Re: [PATCH v2] scsi: ufs: Use pre-calculated offsets in
+ ufshcd_init_lrb
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
+References: <20240910044543.3812642-1-avri.altman@wdc.com>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <1b2af606-ade7-4550-b1ba-a78202b257e5@quicinc.com>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240910044543.3812642-1-avri.altman@wdc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 185.44.53.103
-X-Source-L: No
-X-Exim-ID: 1sqcpb-002rYi-2v
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.187]) [185.44.53.103]:57240
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfG5hyir6zylR9Bq/qh/eCWYTjrCK/lHkNVJSTBfCjV9H4TVFvJjyYmwTDG1s/lQd0uzY1e7Q6J3uk8Id5gd5jEMLfQuKWIVr34sZX0A8YTld31eimfal
- facbhIuUqHBZ9k0D4rMcEe4X9nuXYvtKF2Xknww768xC5eQa61Czp36JyG7FT9T88w8R6tvcADUY9wUGNrVs0jg126Xxez6ipZAK6mHtCHmwJNevqChjY15v
 
-
-
-On 17/09/24 20:10, Jeff Johnson wrote:
-> On 9/17/2024 8:08 AM, Alper Nebi Yasak wrote:
->> Replace one-element array with a flexible-array member in `struct
->> mwifiex_ie_types_wildcard_ssid_params` to fix the following warning
->> on a MT8173 Chromebook (mt8173-elm-hana):
->>
->> [  356.775250] ------------[ cut here ]------------
->> [  356.784543] memcpy: detected field-spanning write (size 6) of single field "wildcard_ssid_tlv->ssid" at drivers/net/wireless/marvell/mwifiex/scan.c:904 (size 1)
->> [  356.813403] WARNING: CPU: 3 PID: 742 at drivers/net/wireless/marvell/mwifiex/scan.c:904 mwifiex_scan_networks+0x4fc/0xf28 [mwifiex]
->>
->> The "(size 6)" above is exactly the length of the SSID of the network
->> this device was connected to. The source of the warning looks like:
->>
->>      ssid_len = user_scan_in->ssid_list[i].ssid_len;
->>      [...]
->>      memcpy(wildcard_ssid_tlv->ssid,
->>             user_scan_in->ssid_list[i].ssid, ssid_len);
->>
->> Also adjust a #define that uses sizeof() on this struct to keep the
->> value same as before.
->>
->> Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
->> ---
->> I found these relevant patches that modify other such arrays, where the
->> second one removes a -1 from some sizeof() calculation:
->>
->> https://lore.kernel.org/lkml/Y9xkECG3uTZ6T1dN@work/T/#u
->> https://lore.kernel.org/lkml/ZsZa5xRcsLq9D+RX@elsanto/T/#u
->>
->> So I think we need the +1 to keep things same. But it appears to work
->> fine without it, so I'm not sure. Maybe it should've had a -1 before
->> that I would remove with this?
+On 9/9/24 9:45 PM, Avri Altman wrote:
+> Replace manual offset calculations for response_upiu and prd_table in
+> ufshcd_init_lrb() with pre-calculated offsets already stored in the
+> utp_transfer_req_desc structure. The pre-calculated offsets are set
+> differently in ufshcd_host_memory_configure() based on the
+> UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk, ensuring correct alignment and
+> access.
 > 
-> I think the original code was incorrect and was allocating too much memory.
-> I do not think WILDCARD_SSID_TLV_MAX_SIZE requires modification.
-
-If this is case, I think the changelog text should include the following
-'Fixes' tag (and the `__counted_by` annotation added in a separate patch):
-
-Fixes: 5e6e3a92b9a4 ("wireless: mwifiex: initial commit for Marvell mwifiex driver")
-
-Thanks
---
-Gustavo
-
+> Fixes: 26f968d7de82 ("scsi: ufs: Introduce UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Avri Altman <avri.altman@wdc.com>
 > 
->>
->>   drivers/net/wireless/marvell/mwifiex/fw.h   | 2 +-
->>   drivers/net/wireless/marvell/mwifiex/scan.c | 2 +-
->>   2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/wireless/marvell/mwifiex/fw.h b/drivers/net/wireless/marvell/mwifiex/fw.h
->> index d03129d5d24e..4a96281792cc 100644
->> --- a/drivers/net/wireless/marvell/mwifiex/fw.h
->> +++ b/drivers/net/wireless/marvell/mwifiex/fw.h
->> @@ -875,7 +875,7 @@ struct mwifiex_ietypes_chanstats {
->>   struct mwifiex_ie_types_wildcard_ssid_params {
->>   	struct mwifiex_ie_types_header header;
->>   	u8 max_ssid_length;
->> -	u8 ssid[1];
->> +	u8 ssid[];
->>   } __packed;
->>   
->>   #define TSF_DATA_SIZE            8
->> diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
->> index cab889af4c4a..50af78ee935b 100644
->> --- a/drivers/net/wireless/marvell/mwifiex/scan.c
->> +++ b/drivers/net/wireless/marvell/mwifiex/scan.c
->> @@ -32,7 +32,7 @@
->>   #define WILDCARD_SSID_TLV_MAX_SIZE  \
->>   	(MWIFIEX_MAX_SSID_LIST_LENGTH *					\
->>   		(sizeof(struct mwifiex_ie_types_wildcard_ssid_params)	\
->> -			+ IEEE80211_MAX_SSID_LEN))
->> +			+ IEEE80211_MAX_SSID_LEN + 1))
->>   
->>   /* Maximum memory needed for a mwifiex_scan_cmd_config with all TLVs at max */
->>   #define MAX_SCAN_CFG_ALLOC (sizeof(struct mwifiex_scan_cmd_config)        \
->>
->> base-commit: 4f3e012d4cfd1d9bf837870c961f462ca9f23ebe
+> ---
+> Changes in v2:
+>   - add Fixes: and Cc: stable tags
+>   - fix kernel test robot warning about type mismatch by using le16_to_cpu
+> ---
+>   drivers/ufs/core/ufshcd.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
 > 
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 8ea5a82503a9..85251c176ef7 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -2919,9 +2919,8 @@ static void ufshcd_init_lrb(struct ufs_hba *hba, struct ufshcd_lrb *lrb, int i)
+>   	struct utp_transfer_req_desc *utrdlp = hba->utrdl_base_addr;
+>   	dma_addr_t cmd_desc_element_addr = hba->ucdl_dma_addr +
+>   		i * ufshcd_get_ucd_size(hba);
+> -	u16 response_offset = offsetof(struct utp_transfer_cmd_desc,
+> -				       response_upiu);
+> -	u16 prdt_offset = offsetof(struct utp_transfer_cmd_desc, prd_table);
+> +	u16 response_offset = le16_to_cpu(utrdlp[i].response_upiu_offset);
+> +	u16 prdt_offset = le16_to_cpu(utrdlp[i].prd_table_offset);
+>   
+>   	lrb->utr_descriptor_ptr = utrdlp + i;
+>   	lrb->utrd_dma_addr = hba->utrdl_dma_addr +
+
+Please always Cc the author of the original patch when posting a
+candidate fix.
+
+Alim, since the upstream kernel code seems to work fine with Exynos UFS
+host controllers, is the description of UFSHCD_QUIRK_PRDT_BYTE_GRAN
+perhaps wrong? I'm referring to the following description:
+
+	/*
+	 * This quirk needs to be enabled if the host controller regards
+	 * resolution of the values of PRDTO and PRDTL in UTRD as byte.
+	 */
+	UFSHCD_QUIRK_PRDT_BYTE_GRAN			= 1 << 9,
+
+Thanks,
+
+Bart.
 
