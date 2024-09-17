@@ -1,486 +1,146 @@
-Return-Path: <linux-kernel+bounces-331893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F0097B287
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:02:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D955197B28A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B74B1C21AE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2594289CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C152817B4ED;
-	Tue, 17 Sep 2024 16:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C9C185935;
+	Tue, 17 Sep 2024 16:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PIgZmPiK"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lVlEUNpK"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F02181329
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54E617B4E9
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726588960; cv=none; b=e8wVMFkzvGUr7Nxq8+X5dZxI3qRK5+0OL47QBEzmgLmfm0uRETn0PH4BedxZsvpG3NWPqwE3o9vnwGEqNsQwubenrYHG/vYiqAoiAakUv6OIqqVGIylNdcamxX3UNwc/B2hUS30bcRV69w+1Qb/pozzi2U3oc4aiuCBGwes/Tms=
+	t=1726588968; cv=none; b=e/H0BstqMs+pYHoYpWcj+e27en0mosAOjuQ7gv9gmgTdyekVlul21KxiVzgMoyLqukjK/IQKIl2JO5fazDrdFwlaQYyKvIqDNKhR0tCoDrXf3SYuRILd4jnIUyrlbjJoA38X3rvJOzeeJFUSyUEBBBFShr2Wku9XxPXuL5zUv18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726588960; c=relaxed/simple;
-	bh=IzsfkJ2euzm3ZmAlTVcxGGeV4DyjYHry6P5qgOPKGKE=;
+	s=arc-20240116; t=1726588968; c=relaxed/simple;
+	bh=m/7xfKs1vDGE/IvLOmvdVBLplK1KnhXmlb6VvcXHdv8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mVk8exuYNw60b0J4VeGQSARO3ZB7pZ4OX5CzPExlCYOPNMiwa9vQ0ghHMy10gcHQtW7xDtzXhLNzyOO7+sdlVH/wB6uhfjRopNeAAkBOlMQcrIBSZbtiyuclJOaWKZZS2iymjJi8Q1qh9JyOOV1IQuVgKQ908eRYTic3ECRxGGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PIgZmPiK; arc=none smtp.client-ip=209.85.208.177
+	 MIME-Version:Content-Type; b=dpqhPRsK2UPzYdvHofLtOUArZ9/xODcTRbhg3usP6r6nOdjontsboyewfDCDm6izf48KKbONf8DlZO3+9X5N7jnwtsyRayG07jEZ1LvMiARwWmH0ezQmOMWg3UOQs/P73j1OWsIXexdYsPANiWv6CNzY3vkx9NWJ5EgNabHLODE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lVlEUNpK; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f74e468aa8so60804531fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:02:38 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f763e9e759so60160001fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:02:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726588957; x=1727193757; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726588965; x=1727193765; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Prb/XuntYvwW1szk7e/6s0gPqiKMdYwpWPFawPrBQg0=;
-        b=PIgZmPiKeE2PVHBhjNDCEZ63UU93AnYWmSaOzn8dtgNkPfmL6YgXNPPR0Ez2xzNown
-         ESzdxiIk89AIWtA8UdHxn1p7SxGp9qMoYtHRJ/4PP7NDX4l8M5IgOOK1gb9VghHmIo/S
-         WpzA+u7O8CZBmlgeKAMXsqtb67IfenhbXlJF1cJVvmj58NhLpwGBlE5P05ypSFPX3pQe
-         StBRucDMVvnp2iKsrG2v4HckIDPC1uvHHvVrDpWzsVQW+8VBFzkiiCvtoblCak0NJQo+
-         dV+SjxIRagvcB3FiMvIVGxFCdA3J979JEu0rRag3nZd5HPe5VHNYkIPboNq8edMNLkco
-         rrzw==
+        bh=qmO+mvccPH3HoFLjdOHsVRubWAgC2YHdv7d1kMMRDLg=;
+        b=lVlEUNpK2evpqyBwg+TriIbJNOwZEXvOKsWXpnNXmhSI4LQfB5iZds56GN5NY8RlMj
+         RTbIhjibPc37qYVkGlZrDfXMX7X7yfDR37RqncG4RBxlAAVzqZk6d9TaXKBYOEkNH2yu
+         So4kNj0yU1pMPqef/LpfEeS0tOyYY0Lcr6NLwnsjo5uouKihaFZx8yGM/5+XQYnwyF63
+         7yobwbxJgNgV8cDj516J7Lqv+7VXjn/IT+3WpZRWCIEavKrcIPiMG2cykSCmlgkij/bZ
+         BJekK670KHtx4cBXvExXo0itH0xjfFiw0HbnJ8WjvMqiyAPvTdPt/gYwhzwA1tVJmhWR
+         0dFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726588957; x=1727193757;
+        d=1e100.net; s=20230601; t=1726588965; x=1727193765;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Prb/XuntYvwW1szk7e/6s0gPqiKMdYwpWPFawPrBQg0=;
-        b=DIQ2iCplzNIKHUMShSrD35+dPWUMKHueJsfIuMC4ed72Lv+116awvclZcb9shU1qlX
-         5g1ZYkFhVTh65ObJ5ybYmOcEUVwWaAKPtLVb26XrnDvrj14rGdgg3Z6Uu6Q+/4cgyzaZ
-         kqUSSn+vzWAUgHGDTQcJljhvY9xRfZ1if4b0ZGCT6KMJeF5cw+gSb6MSl2VdHDdX7MVb
-         cVrXClh0+RpYfzpjrDJfu4sOT5ccivt1PSMVLYmTg6cqf6wr4DstGh3HFn6VkeFyCSZE
-         P2RBBGovGAJDNYpbXw9GkLyRBtCwx5ot0SjbJxhVFXJGTd76yQit/O1RtkznJnoQQ5Ax
-         3qOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAYmEZsKhZYvDpT1//MiaYNpKNjN/6RkXJMusV9iRuKAfLUe32HONygWH+5EXOoH0Q3XDOWhVqclHWeIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKy1000EKbyBjgMstIL0109g+yeIAbRaKBzZ109ULBsg/gkFhG
-	lLOzzXrhwcdqF5Is5mgtiK+hBF6GcKpZMXMI/8xW92DsHHnlHyrG
-X-Google-Smtp-Source: AGHT+IFVvVB9rmAXRhSjeD7eoEgheQfsMenQ4xk0qEZ5eR827HzNC70srwXJZ+FpEXW9sEv39nqPHA==
-X-Received: by 2002:a05:6512:258b:b0:536:9f72:c43a with SMTP id 2adb3069b0e04-5369f72c5a9mr129577e87.36.1726588956215;
-        Tue, 17 Sep 2024 09:02:36 -0700 (PDT)
+        bh=qmO+mvccPH3HoFLjdOHsVRubWAgC2YHdv7d1kMMRDLg=;
+        b=RWrURi4vWceCUHGXqS2WEv8zY3r24+SsBs+4sNsFm0wdO47QQT9xH6P4WvgLARuGby
+         zAi5nuEKqq6sMQvIBTAexGNj+UlNEeq2fY3FXTNlPxD8cJUyZmuY3GgArVaHIn1x3uTr
+         8JXULcZEQ+jdWcSXYR/LvOCghdXhkwvAxexz/fz6CMd1xeCwh2sXJeTtaVn6SYIQeS8R
+         GveaSRM/XjCaijY+a2dCVU1oFfxFrDJQb4MVlCZ4KpiPkaBYp+lw5d/iJhRBl4I0++6E
+         Xq0N4Af0bQUBUz/X78463bxCjr9m7Ye4OCs+1oGACAcFaw1XFpU4x734e/VnTmPHtHa/
+         11Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyOH0A2T20AntOb9qC4HIPm4FLbPyaMUHG0WEdfWkv8K6cLkjeoGwR/IMxCUD4CwF7P8J/Oaa55s5n00w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnDklEskrHPlVCxgePjjDxDbFf+S/QIe1lM3pgTe8DstPnK1bU
+	nV2RI/ymUWZnh1t86UBLyjyKrf0k/FbOczAo2G+Uly7H7rU8faUc
+X-Google-Smtp-Source: AGHT+IEPgD8VnvpPcMCe+0rWVyMAZssxXAum20O0qWKZ6bEljf5n74TaMyhUGEPO6EJYfZZNVvUPUQ==
+X-Received: by 2002:a2e:a587:0:b0:2f7:5d73:92a3 with SMTP id 38308e7fff4ca-2f787edbc0dmr121273931fa.24.1726588964937;
+        Tue, 17 Sep 2024 09:02:44 -0700 (PDT)
 Received: from fedora.. ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b194005sm140757665e9.40.2024.09.17.09.02.35
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e81e2sm9862759f8f.37.2024.09.17.09.02.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 09:02:35 -0700 (PDT)
+        Tue, 17 Sep 2024 09:02:44 -0700 (PDT)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
 To: louis.chauvet@bootlin.com
 Cc: airlied@gmail.com,
+	arthurgrillo@riseup.net,
 	daniel@ffwll.ch,
 	dri-devel@lists.freedesktop.org,
-	jani.nikula@linux.intel.com,
+	hamohammed.sa@gmail.com,
+	jeremie.dautheribes@bootlin.com,
 	linux-kernel@vger.kernel.org,
 	maarten.lankhorst@linux.intel.com,
+	mairacanal@riseup.net,
+	melissa.srw@gmail.com,
+	miquel.raynal@bootlin.com,
 	mripard@kernel.org,
+	nicolejadeyee@google.com,
+	rodrigosiqueiramelo@gmail.com,
+	seanpaul@google.com,
 	thomas.petazzoni@bootlin.com,
-	tzimmermann@suse.de
-Subject: [PATCH] drm: writeback: Introduce drm managed helpers
-Date: Tue, 17 Sep 2024 18:02:35 +0200
-Message-ID: <20240917160235.2947-1-jose.exposito89@gmail.com>
+	tzimmermann@suse.de,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v3 0/4] drm/vkms: Switch all vkms object to DRM managed objects
+Date: Tue, 17 Sep 2024 18:02:41 +0200
+Message-ID: <20240917160242.2959-1-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240906-writeback-drmm-v1-1-01ede328182c@bootlin.com>
-References: <20240906-writeback-drmm-v1-1-01ede328182c@bootlin.com>
+In-Reply-To: <20240912-google-vkms-managed-v3-0-7708d6ad262d@bootlin.com>
+References: <20240912-google-vkms-managed-v3-0-7708d6ad262d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hey Louis,
+Hi Louis,
 
-> Currently drm_writeback_connector are created by
-> drm_writeback_connector_init or drm_writeback_connector_init_with_encoder.
-> Both of the function uses drm_connector_init and drm_encoder_init, but
-> there is no way to properly clean those structure from outside. By using
-> drm managed variants, we can ensure that the writeback connector is
-> properly cleaned.
+Thanks for making this change even more atomic.
+
+> To simplify the memory managment this series replace all manual drm 
+> object managment by drm-managed one. This way the VKMS code don't have to 
+> manage it directly and the DRM core will handle the object destruction.
 > 
-> This patch introduce drmm_writeback_connector_init, an helper to initialize
-> a writeback connector using drm managed helpers. This function allows the
-> caller to use its own encoder.
+> No functional changes are intended in this series. This series depends on 
+> [1] (for writeback connector) and [2] (for cleaning code).
+> 
+> PATCH 1/4: Migrate connector managment to drmm
+> PATCH 2/4: Migrate encoder managment to drmm
+> PATCH 3/4: Migrate connector management to drm
+> PATCH 4/4: Migrate writeback connector management to drm
+> 
+> [1]: https://lore.kernel.org/all/20240906-writeback-drmm-v1-1-01ede328182c@bootlin.com/
+> [2]: https://lore.kernel.org/all/20240906-vkms-remove-index-v1-1-3cfedd8ccb2f@bootlin.com/
 > 
 > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
+The 4 patches:
+Reviewed-by: José Expósito <jose.exposito89@gmail.com>
+
 > ---
-> Hi Maxime, Jani,
+> Changes in v3:
+> - As suggested by Maxime, split the managed and the dynamic allocation 
+>   parts in different series
+> - To reduce the diff in this series, extract the "remove crtc index" part, 
+>   see https://lore.kernel.org/all/20240906-vkms-remove-index-v1-1-3cfedd8ccb2f@bootlin.com/
+> - Link to v2: https://lore.kernel.org/r/20240827-google-vkms-managed-v2-0-f41104553aeb@bootlin.com
 > 
-> I tried with this commit to implement the drm-managed version of writeback 
-> connector initialization. I tested with the current vkms driver, and it 
-> seems to works (at least no crash/warns).
-> 
-> As suggested by Jani, I only created one function, which takes a 
-> NULL-able pointer for encoder/encoder functions/possible_crtc. What do you 
-> think about it?
-> 
-> Regarding the documentation, I think I repeated too much, can I simply add 
-> comments like "see documentation of @... for the details / requirements"?
-> 
-> Good weekend,
-> Louis Chauvet
-> ---
->  drivers/gpu/drm/drm_writeback.c | 224 ++++++++++++++++++++++++++++++++++------
->  include/drm/drm_writeback.h     |   7 ++
->  2 files changed, 201 insertions(+), 30 deletions(-)
-> 
-> 
-> ---
-> base-commit: a6bb1f77a94335de67dba12e7f52651c115b82d2
-> change-id: 20240829-writeback-drmm-b9b85dcdaf7b
-> 
-> Best regards,
-> 
-> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-> index a031c335bdb9..a161deeea908 100644
-> --- a/drivers/gpu/drm/drm_writeback.c
-> +++ b/drivers/gpu/drm/drm_writeback.c
-> @@ -18,6 +18,7 @@
->  #include <drm/drm_modeset_helper_vtables.h>
->  #include <drm/drm_property.h>
->  #include <drm/drm_writeback.h>
-> +#include <drm/drm_managed.h>
-
-Includes are sort alphabetically, you might want to move this one up.
-
->  
->  /**
->   * DOC: overview
-> @@ -202,13 +203,12 @@ int drm_writeback_connector_init(struct drm_device *dev,
->  EXPORT_SYMBOL(drm_writeback_connector_init);
->  
->  /**
-> - * drm_writeback_connector_init_with_encoder - Initialize a writeback connector with
-> - * a custom encoder
-> + * __drm_writeback_connector_init - Common initialization code for writeback
-> + * connector
->   *
->   * @dev: DRM device
->   * @wb_connector: Writeback connector to initialize
->   * @enc: handle to the already initialized drm encoder
-> - * @con_funcs: Connector funcs vtable
->   * @formats: Array of supported pixel formats for the writeback engine
->   * @n_formats: Length of the formats array
->   *
-> @@ -224,41 +224,31 @@ EXPORT_SYMBOL(drm_writeback_connector_init);
->   * assigning the encoder helper functions, possible_crtcs and any other encoder
->   * specific operation.
->   *
-> - * Drivers should always use this function instead of drm_connector_init() to
-> - * set up writeback connectors if they want to manage themselves the lifetime of the
-> - * associated encoder.
-> - *
->   * Returns: 0 on success, or a negative error code
->   */
-> -int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
-> -		struct drm_writeback_connector *wb_connector, struct drm_encoder *enc,
-> -		const struct drm_connector_funcs *con_funcs, const u32 *formats,
-> -		int n_formats)
-> +static int __drm_writeback_connector_init(
-> +	struct drm_device *dev, struct drm_writeback_connector *wb_connector,
-> +	struct drm_encoder *enc, const u32 *formats, int n_formats)
-
-Not a big deal, but ./scripts/checkpatch.pl complains about this
-ideantation:
-
-    CHECK: Lines should not end with a '('
-    CHECK: Alignment should match open parenthesis
-
-You can fix it with:
-
-static int __drm_writeback_connector_init(struct drm_device *dev,
-					  struct drm_writeback_connector *wb_connector,
-					  struct drm_encoder *enc,
-					  const u32 *formats,
-					  int n_formats)
-
->  {
-> -	struct drm_property_blob *blob;
->  	struct drm_connector *connector = &wb_connector->base;
->  	struct drm_mode_config *config = &dev->mode_config;
-> -	int ret = create_writeback_properties(dev);
-> -
-> -	if (ret != 0)
-> -		return ret;
-> -
-> -	blob = drm_property_create_blob(dev, n_formats * sizeof(*formats),
-> -					formats);
-> -	if (IS_ERR(blob))
-> -		return PTR_ERR(blob);
-> -
-> +	struct drm_property_blob *blob;
-> +	int ret;
->  
->  	connector->interlace_allowed = 0;
->  
-> -	ret = drm_connector_init(dev, connector, con_funcs,
-> -				 DRM_MODE_CONNECTOR_WRITEBACK);
-> +	ret = create_writeback_properties(dev);
->  	if (ret)
-> -		goto connector_fail;
-> +		return ret;
->  
->  	ret = drm_connector_attach_encoder(connector, enc);
->  	if (ret)
-> -		goto attach_fail;
-> +		return ret;
-> +
-> +	blob = drm_property_create_blob(dev, n_formats * sizeof(*formats),
-> +					formats);
-> +	if (IS_ERR(blob))
-> +		return PTR_ERR(blob);
->  
->  	INIT_LIST_HEAD(&wb_connector->job_queue);
->  	spin_lock_init(&wb_connector->job_lock);
-> @@ -281,15 +271,189 @@ int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
->  	wb_connector->pixel_formats_blob_ptr = blob;
->  
->  	return 0;
-> +}
-> +
-> +/**
-> + * drm_writeback_connector_init_with_encoder - Initialize a writeback connector with
-> + * a custom encoder
-> + *
-> + * @dev: DRM device
-> + * @wb_connector: Writeback connector to initialize
-> + * @enc: handle to the already initialized drm encoder
-> + * @con_funcs: Connector funcs vtable
-> + * @formats: Array of supported pixel formats for the writeback engine
-> + * @n_formats: Length of the formats array
-> + *
-> + * This function creates the writeback-connector-specific properties if they
-> + * have not been already created, initializes the connector as
-> + * type DRM_MODE_CONNECTOR_WRITEBACK, and correctly initializes the property
-> + * values.
-> + *
-> + * This function assumes that the drm_writeback_connector's encoder has already been
-> + * created and initialized before invoking this function.
-> + *
-> + * In addition, this function also assumes that callers of this API will manage
-> + * assigning the encoder helper functions, possible_crtcs and any other encoder
-> + * specific operation.
-> + *
-> + * Drivers should always use this function instead of drm_connector_init() to
-> + * set up writeback connectors if they want to manage themselves the lifetime of the
-> + * associated encoder.
-> + *
-> + * Returns: 0 on success, or a negative error code
-> + */
-> +int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
-> +		struct drm_writeback_connector *wb_connector, struct drm_encoder *enc,
-> +		const struct drm_connector_funcs *con_funcs, const u32 *formats,
-> +		int n_formats)
-> +{
-> +	struct drm_connector *connector = &wb_connector->base;
-> +	int ret;
-> +
-> +	ret = drm_connector_init(dev, connector, con_funcs,
-> +				 DRM_MODE_CONNECTOR_WRITEBACK);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = __drm_writeback_connector_init(dev, wb_connector, enc, formats,
-> +					     n_formats);
-> +	if (ret)
-> +		drm_connector_cleanup(connector);
->  
-> -attach_fail:
-> -	drm_connector_cleanup(connector);
-> -connector_fail:
-> -	drm_property_blob_put(blob);
->  	return ret;
->  }
->  EXPORT_SYMBOL(drm_writeback_connector_init_with_encoder);
->  
-> +/**
-> + * drm_writeback_connector_cleanup - Cleanup the writeback connector
-> + * @dev: DRM device
-> + * @data: Opaque pointer to the writeback connector
-> + *
-> + * This will decrement the reference counter of blobs and it will clean the
-> + * remaining jobs in this writeback connector.
-> + */
-> +static void drm_writeback_connector_cleanup(struct drm_device *dev, void *data)
-> +{
-> +	struct drm_writeback_connector *wb_connector = data;
-> +	unsigned long flags;
-> +	struct drm_writeback_job *pos, *n;
-> +
-> +	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
-> +
-> +	spin_lock_irqsave(&wb_connector->job_lock, flags);
-> +	list_for_each_entry_safe(pos, n, &wb_connector->job_queue, list_entry) {
-> +		drm_writeback_cleanup_job(pos);
-> +		list_del(&pos->list_entry);
-> +	}
-> +	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
-> +}
-> +
-> +/**
-> + * __drmm_writeback_connector_init - Initialize a writeback connector with
-> + * a custom encoder
-> + *
-> + * @dev: DRM device
-> + * @wb_connector: Writeback connector to initialize
-> + * @con_funcs: Connector funcs vtable
-> + * @enc: handle to the already initialized drm encoder
-> + * @formats: Array of supported pixel formats for the writeback engine
-> + * @n_formats: Length of the formats array
-> + *
-> + * This function initialize a writeback connector and register its cleanup.
-> + * It uses the common helper @__drm_writeback_connector_init to do the
-> + * general initialization.
-> + *
-> + * This function assumes that @enc has already been created and initialized
-> + * before invoking this function.
-> + *
-> + * In addition, this function also assumes that callers of this API will manage
-> + * assigning the encoder helper functions, possible_crtcs and any other encoder
-> + * specific operation.
-> + *
-> + * Returns: 0 on success, or a negative error code
-> + */
-> +static int __drmm_writeback_connector_init(
-> +	struct drm_device *dev, struct drm_writeback_connector *wb_connector,
-> +	const struct drm_connector_funcs *con_funcs, struct drm_encoder *enc,
-> +	const u32 *formats, int n_formats)
-
-checkpatch warnings here as well.
-
-> +{
-> +	struct drm_connector *connector = &wb_connector->base;
-> +	int ret;
-> +
-> +	ret = drmm_connector_init(dev, connector, con_funcs,
-> +				  DRM_MODE_CONNECTOR_WRITEBACK, NULL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = __drm_writeback_connector_init(dev, wb_connector, enc, formats,
-> +					     n_formats);
-> +	if (ret) {
-> +		drm_writeback_connector_cleanup(dev, &wb_connector);
-
-Is it safe to call drm_writeback_connector_cleanup() without initializing
-the job_queue and job_lock?
-
-> +		return ret;
-> +	}
-> +
-> +	ret = drmm_add_action_or_reset(dev, &drm_writeback_connector_cleanup,
-> +				       wb_connector);
-> +	if (ret)
-
-Missing call to drm_writeback_connector_cleanup()?
-
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * drmm_writeback_connector_init - Initialize a writeback connector with
-> + * a custom encoder
-> + *
-> + * @dev: DRM device
-> + * @wb_connector: Writeback connector to initialize
-> + * @con_funcs: Connector funcs vtable
-> + * @enc: handle to the already initialized drm encoder, optional
-> + * @enc_funcs: Encoder funcs vtable, optional
-
-I think that this is only used if @enc is NULL, it'd be nice to clarify
-it like you did with @possible_crtcs.
-
-> + * @formats: Array of supported pixel formats for the writeback engine
-> + * @n_formats: Length of the formats array
-> + * @possible_crtcs: if @enc is NULL, this will set the possible_crtc for the
-> + *		    newly created encoder
-> + *
-> + * This function initialize a writeback connector and register its cleanup.
-> + *
-> + * This function creates the writeback-connector-specific properties if they
-> + * have not been already created, initializes the connector as
-> + * type DRM_MODE_CONNECTOR_WRITEBACK, and correctly initializes the property
-> + * values.
-> + *
-> + * If @enc is NULL, a drm-managed encoder is created and used.
-> + * If @enc_funcs is not NULL, this vtable is attached to @enc or this new
-> + * encoder.
-
-Isn't it only attached when @enc is NULL?
-
-> + *
-> + * Returns: 0 on success, or a negative error code
-> + */
-> +int drmm_writeback_connector_init(
-> +	struct drm_device *dev, struct drm_writeback_connector *wb_connector,
-> +	const struct drm_connector_funcs *con_funcs,
-> +	struct drm_encoder *enc,
-> +	const struct drm_encoder_helper_funcs *enc_funcs, const u32 *formats,
-> +	int n_formats, u32 possible_crtcs)
-
-Same checkpatch issues.
-
-> +{
-> +	int ret;
-> +
-> +	if (!enc) {
-> +		ret = drmm_encoder_init(dev, &wb_connector->encoder,
-> +					NULL, DRM_MODE_ENCODER_VIRTUAL, NULL);
-> +		if (ret)
-> +			return ret;
-> +
-> +		enc = &wb_connector->encoder;
-
-This modifies an input function parameter, not sure if it's intended
-but undocumented.
-
-> +		enc->possible_crtcs |= possible_crtcs;
-> +		if (enc_funcs)
-> +			drm_encoder_helper_add(enc, enc_funcs);
-> +	}
-> +
-> +	return __drmm_writeback_connector_init(dev, wb_connector, con_funcs,
-> +					       &wb_connector->encoder, formats,
-> +					       n_formats);
-> +}
-> +EXPORT_SYMBOL(drmm_writeback_connector_init);
-> +
->  int drm_writeback_set_fb(struct drm_connector_state *conn_state,
->  			 struct drm_framebuffer *fb)
->  {
-> diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-> index 17e576c80169..88abfd3d4564 100644
-> --- a/include/drm/drm_writeback.h
-> +++ b/include/drm/drm_writeback.h
-> @@ -161,6 +161,13 @@ int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
->  				const struct drm_connector_funcs *con_funcs, const u32 *formats,
->  				int n_formats);
->  
-> +int drmm_writeback_connector_init(
-> +	struct drm_device *dev, struct drm_writeback_connector *wb_connector,
-> +	const struct drm_connector_funcs *con_funcs,
-> +	struct drm_encoder *enc,
-> +	const struct drm_encoder_helper_funcs *enc_funcs, const u32 *formats,
-> +	int n_formats, u32 possible_crtcs);
-> +
-
-This indentation make checkpatch happy:
-
-int drmm_writeback_connector_init(struct drm_device *dev,
-				  struct drm_writeback_connector *wb_connector,
-				  const struct drm_connector_funcs *con_funcs,
-				  struct drm_encoder *enc,
-				  const struct drm_encoder_helper_funcs *enc_funcs,
-				  const u32 *formats,
-				  int n_formats,
-				  u32 possible_crtcs);
-
->  int drm_writeback_set_fb(struct drm_connector_state *conn_state,
->  			 struct drm_framebuffer *fb);
->  
-> 
+> Changes in v2:
+> - Applied comments from José
+> - Extract the rename vkms_output -> vkms_crtc to avoid useless changes in 
+>   the last commit
+> - Extract the rename to_vkms_crtc_state to
+>   drm_crtc_state_to_vkms_crtc_state to avoid useless changes in last 
+>   commit
+> - Extract the drm_mode_crtc_set_gamma_size result check in its own commit
+> - Rebased on drm-misc/drm-misc-next
+> - Link to v1: https://lore.kernel.org/r/20240814-google-vkms-managed-v1-0-7ab8b8921103@bootlin.com> 
 
