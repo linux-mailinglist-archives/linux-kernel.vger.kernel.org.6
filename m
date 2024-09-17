@@ -1,168 +1,88 @@
-Return-Path: <linux-kernel+bounces-331504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8F297ADA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:12:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A9097AD9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51D1E284C24
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:12:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C391C21461
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B2F161914;
-	Tue, 17 Sep 2024 09:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B53615B137;
+	Tue, 17 Sep 2024 09:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mUjkdxI9"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J7rqANJ8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BF915AACA;
-	Tue, 17 Sep 2024 09:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36851531C5;
+	Tue, 17 Sep 2024 09:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726564300; cv=none; b=jtBnyqvVeirry1NK7X5agPp4bTNmePUQBgpbJHz19AbIaGvdW8Te9FgQR/DumrK2rPgKCcWTWAb3sZF7tHdafFJxmOeiazFd9dJ0GaROUjir6bWJnkngCqnOejjhs7juyfN1Bs6Yx6rnlU4ryynYNfBjlDLavonSDJV6nk7fhhM=
+	t=1726564286; cv=none; b=W5aNzXyWJNwnsgQMAdfVt1A9yNbafb38HWaauJUB20P/agJVOpjrxzWqt3+KR3i+aqDMlCH9fjo3Y73Ejqn2B841PhMBD2cj+/Jk3VBjSMfxUOhXOv8dnAFMPznHqYh4j8ANdAoMYdEolR08ml09IwEU1IiabHIHkvpWo7M3rkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726564300; c=relaxed/simple;
-	bh=CmBOrOWMOO93CuLcWjDRjEaUDrbCyW9xdULFfDPOC8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rKlnh5Z5e/87JBAx0rrENc/mWb4+447Cl2Y1jcmtOrIjed+Y69+xQKxTSvns/c+bO6JrDmmd2Cif19V6oFh0Oayf6hzsF/3VT4Fx1uANR0XxoF6+ggD24VqtUYJCma7doNCjwOdS5EX/zh6NHEI+i/F+z6l3ys3o5/Lp4GUup/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mUjkdxI9; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1726564297;
-	bh=CmBOrOWMOO93CuLcWjDRjEaUDrbCyW9xdULFfDPOC8E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mUjkdxI92OKogmFv2ioV4lARuuwB/8U1GJ6Odx4FuHWDrfD2G401S6ZXXHrN9I4f+
-	 Ajeu+j8suXW0DGcWDPxKJKksXOT7m3pb+PPebwGjwprHd65/UpHmqLFccxApj9DmJN
-	 yWUbTjpgbZ2n8e9JIeUk6aVuCcJel9ARttKnrJmo40Pz53b6ZTqImR2oEGvvOqMIYY
-	 Ilr8VYo/BmSo9jiAMDnQrd/5vbD8arWg+kWfkprdIVNDn/8cT7fOWtEADW4UuKoW1q
-	 kXs4FMXvhpY1BqLKW5o5mjzOvwt+yBwruLAxKip/ahD3K8v1aF0fKH1tvtZruS09sE
-	 lLKMuMuN5N56g==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id CB01F17E1097;
-	Tue, 17 Sep 2024 11:11:36 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-pci@vger.kernel.org
-Cc: ryder.lee@mediatek.com,
-	jianjun.wang@mediatek.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com
-Subject: [PATCH v2 2/2] PCI: mediatek-gen3: Add support for restricting link width
-Date: Tue, 17 Sep 2024 11:11:32 +0200
-Message-ID: <20240917091132.286582-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240917091132.286582-1-angelogioacchino.delregno@collabora.com>
-References: <20240917091132.286582-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1726564286; c=relaxed/simple;
+	bh=1M660MGwnKa5xzZvC3cRlluW/mS30wfRQ495mAyX7so=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y9lmG6k+3qq6Y03DvgYb0nQHewdAD2IYpSJx6DlEiKn8j/3UzDuYsa9W+U54w7aZyDFWkGm16OSp+dmLR93J2rv6SDkoLE4bccND9jVjJ57F1dY4eNHTdONPVoi7JhINuLF2+/AgvzZ36Y4PGDLUVF4Rv0n+JFWwMiYjH9gAQP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J7rqANJ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE16C4CEC5;
+	Tue, 17 Sep 2024 09:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726564286;
+	bh=1M660MGwnKa5xzZvC3cRlluW/mS30wfRQ495mAyX7so=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J7rqANJ8HHb0qCS2AwNDRc4cZ2mneHx4ZRXKA37jAZLhGYwztgErwjZEbTheuF8xM
+	 vUyooFO6v4WbZ4T8wQHHH4LWifpJK6rj4dcEqBOU4f66SJetKEIilfGKEF5QU9WWvd
+	 UYRaovWZVeyT2+Ybb2z/SR3nQ+9f/hke8+jNKV5fMi1CtojNMYqWpzd+XfNt2wUO6L
+	 Dgeqi8cv98L22wpF2xy5s0/QY4kIxxEC/zcv5t5V0uXTJoYw/4wnFsyd59AuWVciHe
+	 j3+fdRUOmSu6h2aIu39HIUqeeFdL73pOUFbt9bEKXrwtOSlB/9wdbF7gQLedvcBlLK
+	 JCc2Vi2p93tlA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sqUFN-000000002pB-0JYr;
+	Tue, 17 Sep 2024 11:11:45 +0200
+Date: Tue, 17 Sep 2024 11:11:45 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH 3/3] serial: qcom-geni: fix receiver enable
+Message-ID: <ZulH0SZJBlgS4teO@hovoldconsulting.com>
+References: <20240916172642.7814-1-johan+linaro@kernel.org>
+ <20240916172642.7814-4-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916172642.7814-4-johan+linaro@kernel.org>
 
-Add support for restricting the port's link width by specifying
-the num-lanes devicetree property in the PCIe node.
+On Mon, Sep 16, 2024 at 07:26:42PM +0200, Johan Hovold wrote:
+> The receiver should be enabled in the startup() callback and there is no
+> need to stop it on every termios update.
+> 
+> Since commit 6f3c3cafb115 ("serial: qcom-geni: disable interrupts during
+> console writes") the calls to manipulate the secondary interrupts, which
+> were done without holding the port lock, can lead to the receiver being
+> left disabled when set_termios() races with the console code (e.g. when
+> init opens the tty during boot).
+> 
+> Fixes: 6f3c3cafb115 ("serial: qcom-geni: disable interrupts during console writes")
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
-The setting is done in the GEN_SETTINGS register (in the driver
-named as PCIE_SETTING_REG), where each set bit in [11:8] activates
-a set of lanes (from bits 11 to 8 respectively, x16/x8/x4/x2).
+Turns out the DMA implementation is broken and currently depends on
+these bogus calls to stop and restart rx in set_termios().
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/pci/controller/pcie-mediatek-gen3.c | 22 ++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+I won't have time to look at this for a couple of weeks due to
+conferences, so please hold off on merging these until I'm back.
 
-diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-index e1d1fb39d5c6..e2c9802a230c 100644
---- a/drivers/pci/controller/pcie-mediatek-gen3.c
-+++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-@@ -32,6 +32,7 @@
- #define PCIE_BASE_CFG_SPEED_MASK	GENMASK(15, 8)
- 
- #define PCIE_SETTING_REG		0x80
-+#define PCIE_SETTING_LINK_WIDTH		GENMASK(11, 8)
- #define PCIE_SETTING_GEN_SUPPORT_MASK	GENMASK(14, 12)
- #define PCIE_PCI_IDS_1			0x9c
- #define PCI_CLASS(class)		(class << 8)
-@@ -168,6 +169,7 @@ struct mtk_msi_set {
-  * @clks: PCIe clocks
-  * @num_clks: PCIe clocks count for this port
-  * @max_link_speed: Maximum link speed (PCIe Gen) for this port
-+ * @num_lanes: Number of PCIe lanes for this port
-  * @irq: PCIe controller interrupt number
-  * @saved_irq_state: IRQ enable state saved at suspend time
-  * @irq_lock: lock protecting IRQ register access
-@@ -189,6 +191,7 @@ struct mtk_gen3_pcie {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
- 	u8 max_link_speed;
-+	u8 num_lanes;
- 
- 	int irq;
- 	u32 saved_irq_state;
-@@ -390,7 +393,7 @@ static int mtk_pcie_startup_port(struct mtk_gen3_pcie *pcie)
- 	int err;
- 	u32 val;
- 
--	/* Set as RC mode and set controller PCIe Gen speed restriction, if any*/
-+	/* Set as RC mode and set controller PCIe Gen speed/lanes restriction, if any */
- 	val = readl_relaxed(pcie->base + PCIE_SETTING_REG);
- 	val |= PCIE_RC_MODE;
- 	if (pcie->max_link_speed) {
-@@ -401,6 +404,14 @@ static int mtk_pcie_startup_port(struct mtk_gen3_pcie *pcie)
- 			val |= FIELD_PREP(PCIE_SETTING_GEN_SUPPORT_MASK,
- 					  GENMASK(pcie->max_link_speed - 2, 0));
- 	}
-+	if (pcie->num_lanes) {
-+		val &= ~PCIE_SETTING_LINK_WIDTH;
-+
-+		/* Zero means one lane, each bit activates x2/x4/x8/x16 */
-+		if (pcie->num_lanes > 1)
-+			val |= FIELD_PREP(PCIE_SETTING_LINK_WIDTH,
-+					  GENMASK(pcie->num_lanes >> 1, 0));
-+	};
- 	writel_relaxed(val, pcie->base + PCIE_SETTING_REG);
- 
- 	/* Set Link Control 2 (LNKCTL2) speed restriction, if any */
-@@ -838,6 +849,7 @@ static int mtk_pcie_parse_port(struct mtk_gen3_pcie *pcie)
- 	struct device *dev = pcie->dev;
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct resource *regs;
-+	u32 num_lanes;
- 
- 	regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcie-mac");
- 	if (!regs)
-@@ -883,6 +895,14 @@ static int mtk_pcie_parse_port(struct mtk_gen3_pcie *pcie)
- 		return pcie->num_clks;
- 	}
- 
-+	ret = of_property_read_u32(dev->of_node, "num-lanes", &num_lanes);
-+	if (ret == 0) {
-+		if (num_lanes == 0 || num_lanes > 16 || (num_lanes != 1 && num_lanes % 2))
-+			dev_warn(dev, "Invalid num-lanes, using controller defaults\n");
-+		else
-+			pcie->num_lanes = num_lanes;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.46.0
-
+Johan
 
