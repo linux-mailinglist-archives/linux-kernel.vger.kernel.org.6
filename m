@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-331330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD8E97AB62
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:24:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260D197AB61
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38B0D1F22ADC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:24:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C877DB29934
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B9B60DCF;
-	Tue, 17 Sep 2024 06:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582A482D98;
+	Tue, 17 Sep 2024 06:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="TgJLmBVq"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XX1z+fyp"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0562EAEA
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281CF3A8F7;
+	Tue, 17 Sep 2024 06:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726554290; cv=none; b=CL1dyf/c85R90CkW8uJ/eRtMdFE6reBkb+07eXSc4+EApz+34Y3ipkmzwAXOZ5efELmyzetqg/RpKWEPIGC/mCA8zu8TttvFVeAIGKZRa0tIB0m4cw6Uu4vYSwIIDqdoZZxSPr/YRAfNIu8cZZbaAGrG7BD7LAK1V0TQovarego=
+	t=1726554225; cv=none; b=EUH10F7aXrHa9XHff9HHG52diLChmqqfzh0ir+Zh9RVXd8ziC0N0cWMrs29lPmxta3ShrMfQVlaq76ATDgNYLyKX52c8FunEEIzqcro/eeApzIpbqHHAIHFr2C6IamGwYtOyEMBDa7I8DSCQBdREE653SpjpT2nPDO5L67ebghE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726554290; c=relaxed/simple;
-	bh=mlDLqVNyCvZ/vFOKfM7nRSeSFkRvEEJotPsaO1/6w/M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u8PIHJoEDCqccekBAJ+g0dVC/Tmu645b51mI+XdZaqSn7wldTRlVtHuy0ZXe6xJTY6+FWk8yZTH3BnCsDBBfsL/uzcaR2W93Z40OMK5cUlezjUKKe1g/iI4EtDHshF4l8RDWCXsvBOFtRj2ZrOyWmSuk4Osgx10HAv74MYRn130=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=TgJLmBVq; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id A407E100003;
-	Tue, 17 Sep 2024 09:24:20 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1726554260; bh=2umEi2JxmwKzV7yDqu9QlyjgI+BGHxSiEgIHomw3HFI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=TgJLmBVq1vCdopKecQbLy4IWocujNAKRY3fj0QL5SGxAO4RaTSy3D2WTqDmup2vxO
-	 oCzFFCiJlW+ZZAgkpIPP0Mq8jxJwne9Ryo0g0FiHTGq31e2fJ844K9LF/LAbq0zvW0
-	 3zkRf+hODweAqWvmODJq/35mhbSe/x1yyKGihhLFzUvLEF5fktJ6TgQr5r+o0BEi4d
-	 zmC3bo96SCY6ERIJ8SpvvSaTfOM/bWDFiIZ4XCHNpnd/xyIps4E86KI9yq3yNR0QrO
-	 5yHimoXVn5Stj9Hf/IW0L++AjTyg1LrSl7mTXApZbn890L5QtNSsn3c/TnQHKdCXle
-	 yCmJGyuDuNe7w==
-Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Tue, 17 Sep 2024 09:23:52 +0300 (MSK)
-Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 17 Sep
- 2024 09:23:32 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: H Hartley Sweeten <hsweeten@visionengravers.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Ian Abbott <abbotti@mev.co.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] staging: comedi: ni_tio: Adjust clock period calculation in ni_tio_set_clock_src()
-Date: Tue, 17 Sep 2024 09:23:17 +0300
-Message-ID: <20240917062317.13516-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1726554225; c=relaxed/simple;
+	bh=0/Z8IpGMnPVF85y9VmcieKJEoBMNXOSKXTdO2gOQbWI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oiV9G/HzPtowq350Yji4NPd1mxXrY4q8jrf9Vni5w8lUw4TWIYxxtyYloBeKUrday7l3b71TYU7HyPj6jUjkLGkdgCp5Mn9JgbzOtmhwWKlkfn9DUjaPBTFv4WAmNU7DDXdhVMIxSEiPNaklRZeHsyHiYSJ40z2aTB60425qTQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XX1z+fyp; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-536562739baso4254404e87.1;
+        Mon, 16 Sep 2024 23:23:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726554222; x=1727159022; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kdXezKVi8wVMNco9JlH4OMJNOoS1t1UfiPgsoBgiquM=;
+        b=XX1z+fypdTi9qyI65bChRTD18uQ5OprwmFK4pez0jgcabAi+lpPvk1ZbIaNcD09ozL
+         8+DHDO/h/pLkm80QwFxBcneChmUcvKlrlqNbFyOhAn0y1xzKQodRf27pYR0oRsODf7E2
+         dpJI7VWwhixz80Pm1lqTlMN3Vxvy94pyv1otXrumRaCUmSju4nDPI2CGtG9ixdtk2Oqf
+         Mkwd+mnI0BR8cIsu3Ec+EtQvRwEWnY+ZuCJse47PUP6Fa44VU4Td4z80O71QcEuB2Ovy
+         Riuy8BqX9TnVnJx5xOeFRObcVVBXIe/N9HNxV/Ayl3iLdklufznX+uD1tw0SZaThWea9
+         WjRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726554222; x=1727159022;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kdXezKVi8wVMNco9JlH4OMJNOoS1t1UfiPgsoBgiquM=;
+        b=aKjAi6gh+vpTnigFKbnHewSoB0Ql+UTGwxvLUFJ+RO0mUi1iKoFQ/Uw//xCPtnJ/EZ
+         pmc1kF3MVYdrECl0d/MDf4YbIdQJWmf+4jy21pMy4ESfJ46CHhiMgbt7ovj+zi5f9ckw
+         Zu0kdbCmV4CRyX1M2IL/wwVSqoJHo6MRDB+vHi4lup3nnMIZE028fDA2Dx1uuJnJRvgN
+         u2T7DE1Qv7UFcR87/4kxDKgS9MawY8RsY4yi9OMBXzXRsfsCftEHVlpTtoUFIs2SQ9H2
+         MZ0HmmcvPGZ4BgJcdBxlx1YioswCU7QTNZCCaVG/oAB4WHhHYJ0st01LKx5ODEqk28Mb
+         3CLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8u2m6YuhRAMT6aLp7WMaJv5sgn97vVOQCFtR9rA/pofH9azS5VsBYfBx9i1vBLdAcUO9bH87lnUuz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1kgwpvigxGDYtC0MSzRKr4UV2UWVSDxvPvsbOAhRinofSZfzE
+	RbfeTPwpcmLNhUPhcV6cjdgdy9uUImsim1ezidK6xb6HMzLbz6mjv6T6ZkpwKs1+SvNPkJnJjaZ
+	kdAHFoAv68OToBjsG7OOmkPYD7FP5W5m5lYs=
+X-Google-Smtp-Source: AGHT+IH+zFP6kEMEy+Z0PJGVt/6mZsuIrGzUHMtHAdEUdh0LHFi/cQ89fHLaonUoJJlPgAh6ER58I+hPJFk4FyC7HFE=
+X-Received: by 2002:a05:6512:1325:b0:535:6aa9:9868 with SMTP id
+ 2adb3069b0e04-53678fc23dcmr9602468e87.19.1726554221811; Mon, 16 Sep 2024
+ 23:23:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187783 [Sep 17 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1;mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/09/17 01:07:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/09/17 03:42:00 #26600672
-X-KSMG-AntiVirus-Status: Clean, skipped
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 17 Sep 2024 01:23:30 -0500
+Message-ID: <CAH2r5mtbB4soi6ZYq_ajFy_RaHRm=DdUTfNNbnj0UtfXF5dmEw@mail.gmail.com>
+Subject: [GIT PULL] ksmbd server fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	Namjae Jeon <linkinjeon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-In ni_tio_set_clock_src() clock period is a subject to overflow because
-'period_ns' (which comes from user, may have any value and is not
-validated anywhere) is not cast to a larger data type before performing
-arithmetic.
+Please pull the following changes since commit
+da3ea35007d0af457a0afc87e84fddaebc4e0b63:
 
-Cast 'period_ns' to u64 to prevent overflow.
+  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+are available in the Git repository at:
 
-Fixes: 3e90b1c7ebe9 ("staging: comedi: ni_tio: tidy up ni_tio_set_clock_src() and helpers")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/comedi/drivers/ni_tio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  git://git.samba.org/ksmbd.git tags/6.12-rc-ksmbd-server-fixes-part1
 
-diff --git a/drivers/comedi/drivers/ni_tio.c b/drivers/comedi/drivers/ni_tio.c
-index da6826d77e60..98b5b44416cf 100644
---- a/drivers/comedi/drivers/ni_tio.c
-+++ b/drivers/comedi/drivers/ni_tio.c
-@@ -800,7 +800,7 @@ static int ni_tio_set_clock_src(struct ni_gpct *counter,
- 				GI_PRESCALE_X2(counter_dev->variant) |
- 				GI_PRESCALE_X8(counter_dev->variant), bits);
- 	}
--	counter->clock_period_ps = period_ns * 1000;
-+	counter->clock_period_ps = (u64)period_ns * 1000;
- 	ni_tio_set_sync_mode(counter);
- 	return 0;
- }
+for you to fetch changes up to c5a709f08d40b1a082e44ffcde1aea4d2822ddd5:
+
+  ksmbd: handle caseless file creation (2024-09-14 00:03:15 -0500)
+
+----------------------------------------------------------------
+Four ksmbd server fixes, three for stable
+- Fix the issue where the directory can't be deleted if the share is
+on a file system that does not provide dot and dotdot entries.
+- Fix file creation failure if the parent name of pathname is case sensitive.
+- Fix write failure with FILE_APPEND_DATA flags.
+- Add reference count to connection struct to protect UAF of oplocks
+on multichannel.
+----------------------------------------------------------------
+Hobin Woo (1):
+      ksmbd: make __dir_empty() compatible with POSIX
+
+Namjae Jeon (3):
+      ksmbd: allow write with FILE_APPEND_DATA
+      ksmbd: add refcnt to ksmbd_conn struct
+      ksmbd: handle caseless file creation
+
+ fs/smb/server/connection.c |  4 +++-
+ fs/smb/server/connection.h |  1 +
+ fs/smb/server/oplock.c     | 55
+++++++++++++++++---------------------------------------
+ fs/smb/server/vfs.c        | 19 ++++++++-----------
+ fs/smb/server/vfs_cache.c  |  3 +++
+ 5 files changed, 31 insertions(+), 51 deletions(-)
+
 -- 
-2.30.2
+Thanks,
 
+Steve
 
