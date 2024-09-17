@@ -1,144 +1,170 @@
-Return-Path: <linux-kernel+bounces-331564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA6697AE4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:54:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE54897AE4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A61282597
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:54:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24E21C215A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B4415C14D;
-	Tue, 17 Sep 2024 09:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3E615D5B9;
+	Tue, 17 Sep 2024 09:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="TRrNw8G2"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="j4QveIfx"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6FC1531EF;
-	Tue, 17 Sep 2024 09:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E95537B;
+	Tue, 17 Sep 2024 09:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726566857; cv=none; b=bq6u5HlY9O8s1T8HIXpTlDI7Wl6DeDftqi1QS2wHC1bj9MzQQQ7BmbK7UllLLTKrNGrcX7MGeklbN/lvhlexKHiKNkIkCDIm64tc4BdbpXbvlwfM2Zo5+pIRbftY+aXyof/natKT5GhFxfO1XKkyuMj/WItmi+AgWV2ZRH3ON60=
+	t=1726566904; cv=none; b=GB9/QszH3Z8z3LEfZK5RaqvQeqjy74lqJyB9VpJB93+ZMPzXiiCLIA90w8jpHmDtj03d1JUsLC79CY3nofo5EA+VE0JM0b9+E2XZtT/B7WJYx9crpFInbZMAtridGvefbHlgXPXYgyT2gj7vL8cQgvbiLEpCQ6Y3JOACqdkVlLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726566857; c=relaxed/simple;
-	bh=i6FW+BbLI4d6QSQyycHtGGXrCwqHeSaaHzDuOKUey8k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nAx+YtgaKIsidE46CIz0GV83A7+AAnwfiQkB8fg5qNDR5y3/8OM0oFil/HZHeFE+SfQaeFsbxRZ0Ri82S9BWi2isTB27vidcdrf3+FMU12D7TGXgQ0Fwgk+cDUJBZt+y2eDIMIc6r9ekYuxjlfwF+wdOxQHl+R0JshfUOrd+QVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=TRrNw8G2; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726566855; x=1758102855;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=i6FW+BbLI4d6QSQyycHtGGXrCwqHeSaaHzDuOKUey8k=;
-  b=TRrNw8G2z83SRk28wJEJtrpbyenvOI9/vgTf/fHg5tMmGf7N+/dCc0vl
-   vuBA0uDAqwwclJqyqv0kFcmYanmCC+Kmydnfi+GhOTFyxty87OwdHJeCi
-   e9sJTGUTaAcefwgABfpDbsd0uUd1mHGn8qQhDZhy/5ntLTuyjsIRio/KS
-   +kx6i4UlIhRZT4Q+ZMiDOYEi7WRzNYCVsn2Q8svoLgufFJvMO94fWcFec
-   d8Y2hfUfZwaO2tpSW5U3C8WfrVK4jfp90+/Y+kqJIg6Yvf+OYA8vktSTm
-   3QfaYMORQ/Y51Cw6hd9Mghjgw8x3gXacWjuDmstwADfzppsRXujijJThw
-   A==;
-X-CSE-ConnectionGUID: irRbk7d1RsGIQMHLTrxw7Q==
-X-CSE-MsgGUID: QU6rrHdJSg6vEW/bKSpxNQ==
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="35069829"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2024 02:54:14 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 17 Sep 2024 02:53:54 -0700
-Received: from che-lt-i67131.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 17 Sep 2024 02:53:49 -0700
-From: Manikandan Muralidharan <manikandan.m@microchip.com>
-To: <neil.armstrong@linaro.org>, <quic_jesszhan@quicinc.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<thierry.reding@gmail.com>, <sam@ravnborg.org>,
-	<dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <manikandan.m@microchip.com>, Dharma Balasubiramani
-	<dharma.b@microchip.com>
-Subject: [PATCH 2/2] drm/panel: simple: Add Microchip AC69T88A LVDS Display panel
-Date: Tue, 17 Sep 2024 15:23:30 +0530
-Message-ID: <20240917095330.267397-2-manikandan.m@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240917095330.267397-1-manikandan.m@microchip.com>
-References: <20240917095330.267397-1-manikandan.m@microchip.com>
+	s=arc-20240116; t=1726566904; c=relaxed/simple;
+	bh=C77244BaFWtlO4nvGxXTmzlBGsuRhHCxPtNfcZGy8zE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EAEYhbnWDOz0twNbBGGhEyUxVIqGNNwta9BQwZn4EhBso4Jzu5Z0N57GusL4B4XSjPisiAcLE0gNY9DJU1+i6H1mbI+9q6nwogOSPCt3Vsrj2RkCmDNahzYT2dgavIviY4k2PYm+oBDXkmyiS4/KnU+1a2lEG6hpguQ3EMXpGSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=j4QveIfx; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1726566900;
+	bh=C77244BaFWtlO4nvGxXTmzlBGsuRhHCxPtNfcZGy8zE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j4QveIfx0t86au5RR8lb64DwiRUtb2Dt/v4CaBAW63QlOlszYeDmd/mKtSrJen6En
+	 ep7MYUqBuyBORrrlCJokcf5coSSiO79zUc42P3Q6+4z83wUgHOlBsb74+1jNDtvcbS
+	 yxNNqq/WtGrY4Wi3zVZDy++E8fBmZ/jQQqXcdFuCCoIsGjO127FmfML8Nx0cs0QyGF
+	 2Q5smsFVxZu2WqbrtlVOfMz1OB82Qur8fQEYNS9OAEaUV96yioROG95bEulG893FFr
+	 iFTISXq93iNzO+tB/12Dlcl/yeUlxPe74eBcO4p9QqvF2t8tfQre+uEFQHvvKAsO29
+	 2jKB86TsOU5SA==
+Received: from [IPV6:2001:4bc9:a46:d7de:edc9:fc73:b785:1ddd] (unknown [IPv6:2001:4bc9:a46:d7de:edc9:fc73:b785:1ddd])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X7HFX3v0qz1LcP;
+	Tue, 17 Sep 2024 05:54:55 -0400 (EDT)
+Message-ID: <c2a2db4b-4409-4f3c-9959-53622fd8dfa7@efficios.com>
+Date: Tue, 17 Sep 2024 11:54:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] tracing: Allow system call tracepoints to handle page
+ faults
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
+ Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>
+References: <20240909201652.319406-1-mathieu.desnoyers@efficios.com>
+ <20240917044916.c615d25eb4fecc9818d3d376@kernel.org>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240917044916.c615d25eb4fecc9818d3d376@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add support for Microchip AC69T88A 5 inch TFT LCD 800x480
-Display module with LVDS interface.The panel uses the Sitronix
-ST7262 800x480 Display driver
+On 2024-09-16 21:49, Masami Hiramatsu (Google) wrote:
+> On Mon,  9 Sep 2024 16:16:44 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+>> Wire up the system call tracepoints with Tasks Trace RCU to allow
+>> the ftrace, perf, and eBPF tracers to handle page faults.
+>>
+>> This series does the initial wire-up allowing tracers to handle page
+>> faults, but leaves out the actual handling of said page faults as future
+>> work.
+>>
+>> This series was compile and runtime tested with ftrace and perf syscall
+>> tracing and raw syscall tracing, adding a WARN_ON_ONCE() in the
+>> generated code to validate that the intended probes are used for raw
+>> syscall tracing. The might_fault() added within those probes validate
+>> that they are called from a context where handling a page fault is OK.
+> 
+> I think this series itself is valuable.
+> However, I'm still not sure that why ftrace needs to handle page faults.
+> This allows syscall trace-event itself to handle page faults, but the
+> raw-syscall/syscall events only accesses registers, right?
 
-Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+You are correct that ftrace currently only accesses registers as of
+today. And maybe it will stay the focus for ftrace, as the ftrace
+focus appears to be more about what happens inside the kernel than
+the causality from user-space. But different tracers have different
+focus and use-cases.
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 86735430462f..6c2322ec218a 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -4565,6 +4565,31 @@ static const struct panel_desc yes_optoelectronics_ytc700tlag_05_201c = {
- 	.connector_type = DRM_MODE_CONNECTOR_LVDS,
- };
- 
-+static const struct drm_display_mode mchp_ac69t88a_mode = {
-+	.clock = 25000,
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 88,
-+	.hsync_end = 800 + 88 + 5,
-+	.htotal = 800 + 88 + 5 + 40,
-+	.vdisplay = 480,
-+	.vsync_start = 480 + 23,
-+	.vsync_end = 480 + 23 + 5,
-+	.vtotal = 480 + 23 + 5 + 1,
-+};
-+
-+static const struct panel_desc mchp_ac69t88a = {
-+	.modes = &mchp_ac69t88a_mode,
-+	.num_modes = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 108,
-+		.height = 65,
-+	},
-+	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA,
-+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-+};
-+
- static const struct drm_display_mode arm_rtsm_mode[] = {
- 	{
- 		.clock = 65000,
-@@ -5048,6 +5073,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "yes-optoelectronics,ytc700tlag-05-201c",
- 		.data = &yes_optoelectronics_ytc700tlag_05_201c,
-+	}, {
-+		.compatible = "microchip,ac69t88a-lvds-panel",
-+		.data = &mchp_ac69t88a,
- 	}, {
- 		/* Must be the last entry */
- 		.compatible = "panel-dpi",
+It's a different story for eBPF and LTTng though: LTTng grabs filename strings from user-space for the openat system call for instance, so
+we can reconstruct which system calls were done on which files at
+post-processing. This is convenient if the end user wishes to focus
+on the activity for given file/set of files.
+
+eBPF also allows grabbing userspace data AFAIR, but none of those
+tracers can handle page faults because tracepoints disables preemption,
+which leads to missing data in specific cases, e.g. immediately after an
+execve syscall when pages are not faulted in yet.
+
+Also having syscall entry called from a context that can handle
+preemption would allow LTTng (or eBPF) to do an immediate stackwalk
+(see the sframe work from Josh) directly at system call entry. This
+can be useful for filtering based on the user callstack before writing
+to a ring buffer.
+
+> 
+> I think that the page faults happen only when dereference those registers
+> as a pointer to the data structure, and currently that is done by probes
+> like eprobe and fprobe. In order to handle faults in those probes, we
+> need to change how those writes data in per-cpu ring buffer.
+> 
+> Currently, those probes reserves an entry on ring buffer and writes the
+> dereferenced data on the entry, and commits it. So during this reserve-
+> write-commit operation, this still disables preemption. So we need a
+> another buffer for dereference on the stack and copy it.
+
+There are quite a few approaches we can take there, with different
+tradeoffs.
+
+A) Issue dummy loads of user-space data just to trigger page faults
+before disabling preemption. Unless the system has extreme memory
+pressure, it should be enough to page in the data and it should stay
+available for copy into the ring buffer immediately after with preemption
+disabled. This should be fine for practical purposes. This is simple to
+implement and is the route I intend to take initially for LTTng.
+
+B) Do a copy in a local buffer and take page faults at that point. This
+bring the question of where to allocate the buffer. This also requires an
+extra copy from userspace, to the local buffer, then to the per-cpu ring
+buffer, so it may come with a certain overhead. One advantage of that
+approach is that it opens the door to fix TOCTOU races that syscall audit
+systems (e.g. seccomp) have if we change the system call implementation
+to use data from this argument copy rather than re-read them from
+userspace within the system call. But this is a much larger endeavor that
+should be done in collaboration between the tracing & seccomp developers.
+
+C) Modify the ring buffer to make it usable without disabling preemption.
+It's straightforward in LTTng because its ring buffer has been designed
+to be usable in preemptible userspace context as well (LTTng-UST).
+This may not be as easy for ftrace since disabling preemption is
+rooted deep in its ring buffer design.
+
+Besides those basic tradeoffs, we should of course consider the overhead
+associated with each approach.
+
+Thanks,
+
+Mathieu
+
 -- 
-2.25.1
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
