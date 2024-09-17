@@ -1,288 +1,146 @@
-Return-Path: <linux-kernel+bounces-331380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C944C97AC12
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFA497AC16
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C3E28431B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:30:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B871C21702
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B17714A4E9;
-	Tue, 17 Sep 2024 07:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTKVgwuF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CCC7DA91;
-	Tue, 17 Sep 2024 07:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B5E14B94B;
+	Tue, 17 Sep 2024 07:31:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3AD10F4;
+	Tue, 17 Sep 2024 07:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726558199; cv=none; b=BnE6GBNkyAdocEfzMyyobw12l2XYI4wNbWrpOzKdxzHHotzBUsU/68aG3kHCmZBBG52YoBVRqSGYZvukdErF8kONq5j4sx9QtZqZiATSaF7UdpqbTrr9KYYMVkb35mkeajsef3wLhuZHCgNE4uYO6TKFSWAEGf7nY95FBMWDzwU=
+	t=1726558291; cv=none; b=c3NI6F2B9ATcyVYIfeOW41rC/XO+1l0Xd+x++7sIk+stKvrBrEvNcT6hnTdeIfVtgaDf4nV9TaS2lcWXaEb8i4Z7xqguSQ4oG4Gcj8jN6dyOpUZ11hL7BX0CQYTSfvali7m7R52sHmjLL0nM/96vRPl4mcMsvlj1EOVsKrRAW1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726558199; c=relaxed/simple;
-	bh=Z5NUsYcUClm/uE1LHjZj4eyucRsVWIllVFrJCeNFoRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQFBkcovAMRmxR+3whjOlVOcnsIoGtHyYhl+KY4K4B1A+wAy9mfZooWtJd61XkUDRoDXYuCKOTR5vst7j7t/nYfFtLE0D4ymWvj+F/+qo6ZNk1CAVJvk0QEbgs2AxDceqZINg+/sPljGq5+nmZZ5H1b2cWQqwdqnMHeMkGielIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTKVgwuF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B398C4CEC6;
-	Tue, 17 Sep 2024 07:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726558198;
-	bh=Z5NUsYcUClm/uE1LHjZj4eyucRsVWIllVFrJCeNFoRs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VTKVgwuFxN4Xn9f+gqdGxPsksxaOc5UH3HhFDWdnCFE0IGvFjhdxXP/tjUTGFgmRH
-	 5lPa8SSZm6T3SGbWs4a/IgVSHAOaSolpvzunVSBCEJmtttyNtSZc/JyykQIpi9yVmX
-	 frHA12yeXUJCYgYa8/j8Ut64W3d8TiyG+Fh7fqflWXnFwT8uX/XN5gfqXgsSeiSLTG
-	 tha3LsiZ45Sg1WIcsZc0prD52955Szu0SQUltJ66Qy015YVW5Gr0/Fi8nZM+pBl6vg
-	 JrEOzni0J8z/Hx4iKSsRTDoGLCR8pIhCy4AXn79KZubPS34LnlmDmhI9wARW/FnWBG
-	 5NwcOVv2WZeVw==
-Date: Tue, 17 Sep 2024 09:29:46 +0200
-From: Bjorn Andersson <andersson@kernel.org>
-To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com, quic_vproddut@quicinc.com, 
-	quic_abhinavk@quicinc.com
-Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: add DisplayPort device node
-Message-ID: <cofwijgk2dgg5i5xhvhq3exug4o77mttmozw5amtc3myn4zzq5@m5x44hswwsmt>
-References: <20240916091344.27607-1-quic_mukhopad@quicinc.com>
+	s=arc-20240116; t=1726558291; c=relaxed/simple;
+	bh=YtVtHuoqABW83akAZdZj/UkU/MTxSwj/EJVNpnVEej4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uyPxa/9uVWVsS7L+TiSE1Ndn/cPGKGu1zDJHP8Zzpwujlc4bECWE+jAMP8BzSJDN6nAybuW/zICzRzdN3BlaLVT5QNO4GPMDbcL15HG9+aDchBxT2zaIxPM5tJhWdjgoKv2NfrOr+BgrkBWpQ12CikgIoIOtdsg+I5x+xNyDCZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF4CF1063;
+	Tue, 17 Sep 2024 00:31:57 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.61.158])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 904823F64C;
+	Tue, 17 Sep 2024 00:31:23 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	x86@kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-fsdevel@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH V2 0/7] mm: Use pxdp_get() for accessing page table entries
+Date: Tue, 17 Sep 2024 13:01:10 +0530
+Message-Id: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916091344.27607-1-quic_mukhopad@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 16, 2024 at 02:43:44PM GMT, Soutrik Mukhopadhyay wrote:
-> Add device tree node for the DisplayPort controller
-> and eDP PHY found on the Qualcomm SA8775P SoC.
-> 
+This series converts all generic page table entries direct derefences via
+pxdp_get() based helpers extending the changes brought in via the commit
+c33c794828f2 ("mm: ptep_get() conversion"). First it does some platform
+specific changes for m68k and x86 architecture.
 
-Please split this in a change for the platform (.dtsi) which defines
-_all_ the DPTX and DP PHYs, and then a ride dts change which enables all
-the ports available on the Ride.
+This series has been build tested on multiple architecture such as x86,
+arm64, powerpc, powerpc64le, riscv, and m68k etc.
 
-If there are platform ports that are not accessible on any hardware,
-state in the commit message which ones you tested and which ones you
-didn't test.
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: x86@kernel.org
+Cc: linux-m68k@lists.linux-m68k.org
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: kasan-dev@googlegroups.com
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org
+Cc: kasan-dev@googlegroups.com
 
-> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-> ---
-> This patch depends on following series:
-> https://lore.kernel.org/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com/
-> https://lore.kernel.org/all/20240912071437.1708969-1-quic_mahap@quicinc.com/
-> https://lore.kernel.org/all/20240913103755.7290-1-quic_mukhopad@quicinc.com/
+Changes in V2:
 
-Please hold off resubmitting this series until there's conclusion on
-these dependencies.
+- Separated out PUD changes from P4D changes
+- Updated the commit message for x86 patch per Dave
+- Implemented local variable page table value caching when applicable
+- Updated all commit messages regarding local variable caching
 
->  
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  23 +++++
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 114 ++++++++++++++++++++-
->  2 files changed, 136 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> index 0c1b21def4b6..728b4cda8353 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> @@ -421,6 +421,23 @@
->  	status = "okay";
->  };
->  
-> +&mdss0 {
-> +	status = "okay";
-> +};
-> +
-> +&mdss0_dp0 {
-> +	status = "okay";
-> +};
-> +
-> +&mdss0_dp0_out {
-> +	data-lanes = <0 1 2 3>;
-> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-> +};
-> +
-> +&mdss0_edp_phy0 {
-> +	status = "okay";
-> +};
-> +
->  &pmm8654au_0_gpios {
->  	gpio-line-names = "DS_EN",
->  			  "POFF_COMPLETE",
-> @@ -527,6 +544,12 @@
->  };
->  
->  &tlmm {
-> +	dp_hot_plug_det: dp-hot-plug-det-state {
-> +		pins = "gpio101";
-> +		function = "edp0_hot";
-> +		bias-disable;
-> +	};
-> +
->  	ethernet0_default: ethernet0-default-state {
->  		ethernet0_mdc: ethernet0-mdc-pins {
->  			pins = "gpio8";
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 7747965e7e46..a04150c29565 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -3339,6 +3339,18 @@
->  				interrupt-parent = <&mdss0>;
->  				interrupts = <0>;
->  
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +						dpu_intf0_out: endpoint {
-> +							remote-endpoint = <&mdss0_dp0_in>;
-> +						};
-> +					};
-> +				};
-> +
->  				mdss0_mdp_opp_table: opp-table {
->  					compatible = "operating-points-v2";
->  
-> @@ -3363,6 +3375,106 @@
->  					};
->  				};
->  			};
-> +
-> +			mdss0_edp_phy0: phy@aec2a00 {
-> +				compatible = "qcom,sa8775p-edp-phy";
+Changes in V1:
 
-Is this really a eDP PHY, not a DP/eDP combo phy?
+https://lore.kernel.org/all/20240913084433.1016256-1-anshuman.khandual@arm.com/
 
-I would prefer that we keep the label prefix "mdssM_dpN" on the DP TX
-and DP PHY nodes, to keep them neatly sorted in the dts. (If you name
-half mdssM_edp_phyN and half mdssM_dp_phyN we're going to have a mess)
+Anshuman Khandual (7):
+  m68k/mm: Change pmd_val()
+  x86/mm: Drop page table entry address output from pxd_ERROR()
+  mm: Use ptep_get() for accessing PTE entries
+  mm: Use pmdp_get() for accessing PMD entries
+  mm: Use pudp_get() for accessing PUD entries
+  mm: Use p4dp_get() for accessing P4D entries
+  mm: Use pgdp_get() for accessing PGD entries
 
-> +
-> +				reg = <0x0 0xaec2a00 0x0 0x200>,
-> +					<0x0 0xaec2200 0x0 0xd0>,
-> +					<0x0 0xaec2600 0x0 0xd0>,
-> +					<0x0 0xaec2000 0x0 0x1c8>;
-> +
-> +				clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +					 <&gcc GCC_EDP_REF_CLKREF_EN>;
-> +				clock-names = "aux",
-> +					      "cfg_ahb";
-> +
-> +				vdda-phy-supply = <&vreg_l1c>;
-> +				vdda-pll-supply = <&vreg_l4a>;
-> +				#clock-cells = <1>;
-> +				#phy-cells = <0>;
-> +
-> +				status = "disabled";
-> +			};
-> +
-> +			mdss0_dp0: displayport-controller@af54000 {
-> +				compatible = "qcom,sa8775p-dp";
-> +
-> +				pinctrl-0 = <&dp_hot_plug_det>;
+ arch/m68k/include/asm/page.h          |  2 +-
+ arch/x86/include/asm/pgtable-3level.h | 12 ++--
+ arch/x86/include/asm/pgtable_64.h     | 20 +++---
+ drivers/misc/sgi-gru/grufault.c       | 13 ++--
+ fs/proc/task_mmu.c                    | 28 +++++----
+ fs/userfaultfd.c                      |  6 +-
+ include/linux/huge_mm.h               |  6 +-
+ include/linux/mm.h                    |  6 +-
+ include/linux/pgtable.h               | 49 +++++++++------
+ kernel/events/core.c                  |  6 +-
+ mm/gup.c                              | 43 ++++++-------
+ mm/hmm.c                              |  2 +-
+ mm/huge_memory.c                      | 90 +++++++++++++++------------
+ mm/hugetlb.c                          | 10 +--
+ mm/hugetlb_vmemmap.c                  |  4 +-
+ mm/kasan/init.c                       | 38 +++++------
+ mm/kasan/shadow.c                     | 12 ++--
+ mm/khugepaged.c                       |  4 +-
+ mm/madvise.c                          |  6 +-
+ mm/mapping_dirty_helpers.c            |  2 +-
+ mm/memory-failure.c                   | 14 ++---
+ mm/memory.c                           | 71 +++++++++++----------
+ mm/mempolicy.c                        |  4 +-
+ mm/migrate.c                          |  4 +-
+ mm/migrate_device.c                   | 10 +--
+ mm/mlock.c                            |  6 +-
+ mm/mprotect.c                         |  2 +-
+ mm/mremap.c                           |  4 +-
+ mm/page_table_check.c                 |  4 +-
+ mm/page_vma_mapped.c                  |  6 +-
+ mm/pagewalk.c                         | 10 +--
+ mm/percpu.c                           |  8 +--
+ mm/pgalloc-track.h                    |  6 +-
+ mm/pgtable-generic.c                  | 30 ++++-----
+ mm/ptdump.c                           |  8 +--
+ mm/rmap.c                             | 10 +--
+ mm/sparse-vmemmap.c                   | 10 +--
+ mm/vmalloc.c                          | 58 +++++++++--------
+ mm/vmscan.c                           |  6 +-
+ 39 files changed, 333 insertions(+), 297 deletions(-)
 
-Don't make references from .dtsi to labels defined in .dts.
+-- 
+2.25.1
 
-Regards,
-Bjorn
-
-> +				pinctrl-names = "default";
-> +
-> +				reg = <0x0 0xaf54000 0x0 0x104>,
-> +					<0x0 0xaf54200 0x0 0x0c0>,
-> +					<0x0 0xaf55000 0x0 0x770>,
-> +					<0x0 0xaf56000 0x0 0x09c>;
-> +
-> +				interrupt-parent = <&mdss0>;
-> +				interrupts = <12>;
-> +
-> +				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK>,
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-> +				clock-names = "core_iface",
-> +						"core_aux",
-> +						"ctrl_link",
-> +						"ctrl_link_iface",
-> +						"stream_pixel";
-> +				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
-> +						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-> +				assigned-clock-parents = <&mdss0_edp_phy0 0>, <&mdss0_edp_phy0 1>;
-> +				phys = <&mdss0_edp_phy0>;
-> +				phy-names = "dp";
-> +
-> +				operating-points-v2 = <&dp_opp_table>;
-> +				power-domains = <&rpmhpd SA8775P_MMCX>;
-> +
-> +				#sound-dai-cells = <0>;
-> +
-> +				status = "disabled";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +						mdss0_dp0_in: endpoint {
-> +							remote-endpoint = <&dpu_intf0_out>;
-> +						};
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +						mdss0_dp0_out: endpoint { };
-> +					};
-> +				};
-> +
-> +				dp_opp_table: opp-table {
-> +					compatible = "operating-points-v2";
-> +
-> +					opp-160000000 {
-> +						opp-hz = /bits/ 64 <160000000>;
-> +						required-opps = <&rpmhpd_opp_low_svs>;
-> +					};
-> +
-> +					opp-270000000 {
-> +						opp-hz = /bits/ 64 <270000000>;
-> +						required-opps = <&rpmhpd_opp_svs>;
-> +					};
-> +
-> +					opp-540000000 {
-> +						opp-hz = /bits/ 64 <540000000>;
-> +						required-opps = <&rpmhpd_opp_svs_l1>;
-> +					};
-> +
-> +					opp-810000000 {
-> +						opp-hz = /bits/ 64 <810000000>;
-> +						required-opps = <&rpmhpd_opp_nom>;
-> +					};
-> +				};
-> +			};
->  		};
->  
->  		dispcc0: clock-controller@af00000 {
-> @@ -3372,7 +3484,7 @@
->  				 <&rpmhcc RPMH_CXO_CLK>,
->  				 <&rpmhcc RPMH_CXO_CLK_A>,
->  				 <&sleep_clk>,
-> -				 <0>, <0>, <0>, <0>,
-> +				 <&mdss0_edp_phy0 0>, <&mdss0_edp_phy0 1>, <0>, <0>,
->  				 <0>, <0>, <0>, <0>;
->  			power-domains = <&rpmhpd SA8775P_MMCX>;
->  			#clock-cells = <1>;
-> -- 
-> 2.17.1
-> 
 
