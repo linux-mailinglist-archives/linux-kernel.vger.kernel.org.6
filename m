@@ -1,160 +1,147 @@
-Return-Path: <linux-kernel+bounces-331941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A1D97B339
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C240097B344
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 19:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0B0CB2865B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:00:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A9F6B225BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252FE17B4E5;
-	Tue, 17 Sep 2024 17:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88F6185B55;
+	Tue, 17 Sep 2024 17:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfdzwgPG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T6kLt+Wa"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE92C185930;
-	Tue, 17 Sep 2024 17:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441BE15AD90;
+	Tue, 17 Sep 2024 17:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726592425; cv=none; b=LmC07+xHc7trewhq6yZTlA/Yb7xpD4lsy6aRGpPrA9om3AMdhDMPV4I7Plb58IV1O69BRXswv7gHQ9dLn0+lvOtVoFgsfi8iepDOCBMYGkPu0g5VjN9sJuMVNuJD86/TnMPNG7U4sKA8alHXT25uFB8pp5cDdTa2dM5McXDooqU=
+	t=1726592466; cv=none; b=Ju96726331onmyz7JQRF4G0SYoS26cQipLSwXIFARISEWbHABKdRXtcidfzHTkVUB/dBNff7JhqQ+3wuON10wHEmLkzxRs/z/L3A4+VR4GIjcBoMmE9AlhJCzw2FW+th6vs9PAAlzK1b3aXsKDHijhoZGvKzaF24OWDPpKaN2cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726592425; c=relaxed/simple;
-	bh=GAURM/YpBS3b+LFfu7l4gm2U3fbk1Pb0IzBDDQmwEQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=of6bvVhMqqk/o64did9eyTL7vNmdE4GXLg36IO/WavEolYd5lht9BgQ0omWuqY+GwvKGLod7ZMYecxJsKzUpGBuXSGNgLV8ooBCd0ZKcoKgx0OsacDV8nIYGKMVWJ7ouIXxRy42LFXgjsPEq/fjPGp2md+wMnC0uskuqF5QqGXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfdzwgPG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF2BC4CEC5;
-	Tue, 17 Sep 2024 17:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726592424;
-	bh=GAURM/YpBS3b+LFfu7l4gm2U3fbk1Pb0IzBDDQmwEQ8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dfdzwgPG2XXaTFn0dKbJoXVeq0xtyAZbpqyLthVnoFis280XRLn/tUT4CwdTXiFXQ
-	 8nsJxD1v2IH7Gh3Woz7J+4S6NoPXmlK4ijYgCUwJCkDrQiH+S60e1WWdY37stzizHL
-	 wad792dwJ/VJn2pCQG57WR3jy/vK5ckaFPjcWPHbOcvd4WG0as1R7qKnuqjbMAGwnc
-	 s+s1vWcSAVM78Ub5LCmBbESR+q/2rLJVDQZtTSlNa3d7VQVoaVUacaHZkqDW5eNK/K
-	 WzVkXIWr59+F8v7mcXde6+1S9LFmZlGEAyw7KquNvm22CTlY38z7dm1nF5MOtRUDDp
-	 lMbLHMaTFXttg==
-Message-ID: <64ef46b1-7908-4b15-866d-9cabe2e5dc9e@kernel.org>
-Date: Tue, 17 Sep 2024 19:00:17 +0200
+	s=arc-20240116; t=1726592466; c=relaxed/simple;
+	bh=PCwEG5cM4IEq07AFnUZTSlDXP7VkqJ13jqXIS6+Le1k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FZQelHhULPKH7z0zxta7gwQsMOYGGjwZMY08iZs26moiNYSCrklf6cmRI747jENlQSjdl6Ll/+gr8ULuC6o6loXPnN+PJrpTwe48CptlYy6LlSSXpYaHezVnz3O1xD7Np38u3hv9hgEHIR9zP8hHEMldZn20S3eqm0HEHmbpb6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T6kLt+Wa; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2B971FF804;
+	Tue, 17 Sep 2024 17:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726592456;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VOJA4oKRl1c97qcSG2JsyY/IxozKo3PoM0EutgiNiJk=;
+	b=T6kLt+Wa/cNA9JSypXaiBatuSPPDxb0BnZSHtwn6UOtGmAqcxfW3wICOhChbxk45SkhNVG
+	+gFN2DVb36n5VH1P2tVzcaHXk9hfiFsi6zBzQZJS9V/BC9zSnht9lBCIj1IKRrkVb7xSJu
+	ASzkaweTjkfrEl/2PVAi+Kj8co1e6hQ0xvFfa4zgH3bLhKAFbx9hKZFhDqvRzAGFAyCM2w
+	bxEody8eXV0CEmGBE00uZDOiLedNwtwCkOW8kO4HbopMCGTLqftZ1QGl52pnKmE1IH77Ea
+	ykT+NwFE2tmS6TALFbgyHTcP3gufq9jzXdvsVul3mEvT0hy8yX8keHQIRdMyVg==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH v2 0/5] Congatec Board Controller drivers
+Date: Tue, 17 Sep 2024 19:00:46 +0200
+Message-Id: <20240503-congatec-board-controller-v2-0-681511a01c8f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
-To: Erez <erezgeva2@gmail.com>
-Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Esben Haabendal <esben@geanix.com>
-References: <20240917094956.437078-1-erezgeva@nwtime.org>
- <20240917094956.437078-4-erezgeva@nwtime.org>
- <9c273945-5a70-408e-a9da-a0797aa6d935@kernel.org>
- <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL616WYC/42OTQqDMBCFryJZNyXGX7rqPYqLZBw1oJkyCdIi3
+ r2JJ+jye4/3c4iA7DCIR3EIxt0FRz6BvhUCFuNnlG5MLLTStWpUJYH8bCKCtGR4zBiZ1hVZ9hp
+ a29cw1mhEylsTUFo2HpbcsJkQkbPxZpzc5xp9DYkXFyLx9/qwl1n9Z24vpZITQqOrVncKu6cli
+ qvzd6BNDOd5/gBTgtEr3QAAAA==
+To: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.12.0
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On 17/09/2024 12:42, Erez wrote:
-> On Tue, 17 Sept 2024 at 12:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 17/09/2024 11:49, Erez Geva wrote:
->>> From: Erez Geva <ErezGeva2@gmail.com>
->>>
->>> Some flash devices need OTP parameters in device tree.
->>> As we can not deduce the parameters based on JEDEC ID or SFDP.
->>>
->>> Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
->>> ---
->>>  .../bindings/mtd/jedec,spi-nor.yaml           | 37 +++++++++++++++++++
->>>  1 file changed, 37 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
->>> index 6e3afb42926e..d502b7fab2ce 100644
->>> --- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
->>> +++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
->>> @@ -90,6 +90,43 @@ properties:
->>>        the SRWD bit while writing the status register. WP# signal hard strapped to GND
->>>        can be a valid use case.
->>>
->>> +  opt_n_regions:
->>
->> No underscores, but hyphens.
-> 
-> I'll fix this.
-> 
->>
->>> +    type: u32
->>
->> It does not look like you tested the bindings, at least after quick
->> look. Please run `make dt_binding_check` (see
-> 
-> I run "make dt_binding_check" on kernel 6.6.
+This is a new iteration of the Congatec Board Controller series.
 
-Yeah, we are no on kernel 6.6. You can run it also on kernel v4.1 -
-still does not matter.
+For the MFD driver, the main change is the use of
+platform_device_register_simple() which makes the code smaller.
 
-Don't develop on ancient code because then you ask us to review same
-broken stuff we already fixed.
+For the GPIO driver the main change is the use of guard() and scope_gard().
+
+For the I2C bus driver, the I2C_FUNC_SMBUS_QUICK flag was unset as the
+controller doesn't support smbus quick accesses.
+
+For the Watchdog driver, min_timeout and max_timeout are configured now,
+and watchdog_init_timeout() is used to initialize the timeout. 
+
+More details in the changelog.
+
+Best Regards,
+
+Thomas
+
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+Changes in v2:
+- mfd: use platform_device_register_simple(), so struct cgbc_platform_data
+  and cgbc_create_platform_device() were removed.
+- mfd: rename cgbc_detect_device() to cgbc_wait_device().
+- mfd: remove the useless abstracted function cgbc_command().
+- mfd: set the release session message as warning instead of error.
+- mfd: minor fixes (sort includes, add comments, fix some alignments and
+  nit ...).
+- gpio: use scoped_guard() and guard().
+- gpio: use devm_mutex_init().
+- i2c: unset the I2C_FUNC_SMBUS_QUICK flag as smbus quick accesses are not
+  supported by the controller.
+- i2c: rephrase comment for read_maxtime_us.
+- i2c: set the invalid frequency message as an info (previously a warning).
+- i2c: other minor fixes (sort includes, fix name of i2c_state enum).
+- watchdog: add missing includes.
+- watchdog: remove warning for the pretimeout.
+- watchdog: remove timeout_action and pretimeout_action (ACTION_RESET and
+  ACTION_SMI are directly used in cgbc_wdt_start()).
+- watchdog: set max_timeout and min_timeout.
+- watchdog: use watchdog_init_timeout() to set the timeout.
+- Link to v1: https://lore.kernel.org/r/20240503-congatec-board-controller-v1-0-fec5236270e7@bootlin.com
+
+---
+Thomas Richard (5):
+      mfd: add Congatec Board Controller mfd driver
+      gpio: Congatec Board Controller gpio driver
+      i2c: Congatec Board Controller i2c bus driver
+      watchdog: Congatec Board Controller watchdog timer driver
+      MAINTAINERS: Add entry for Congatec Board Controller
+
+ MAINTAINERS                   |   9 +
+ drivers/gpio/Kconfig          |  10 +
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-cgbc.c      | 196 ++++++++++++++++++++
+ drivers/i2c/busses/Kconfig    |  10 +
+ drivers/i2c/busses/Makefile   |   1 +
+ drivers/i2c/busses/i2c-cgbc.c | 406 +++++++++++++++++++++++++++++++++++++++++
+ drivers/mfd/Kconfig           |  12 ++
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/cgbc-core.c       | 411 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/watchdog/Kconfig      |  10 +
+ drivers/watchdog/Makefile     |   1 +
+ drivers/watchdog/cgbc_wdt.c   | 211 ++++++++++++++++++++++
+ include/linux/mfd/cgbc.h      |  44 +++++
+ 14 files changed, 1323 insertions(+)
+---
+base-commit: 83d650136610d87d8ed0626c178ed18879b69564
+change-id: 20240503-congatec-board-controller-82c6b84cd4ea
 
 Best regards,
-Krzysztof
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
 
 
