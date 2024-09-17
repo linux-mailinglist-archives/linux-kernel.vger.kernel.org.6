@@ -1,266 +1,182 @@
-Return-Path: <linux-kernel+bounces-331858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B91597B219
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:45:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AF797B21B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0E761C248B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F044282B52
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDEF1C8FB2;
-	Tue, 17 Sep 2024 15:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06CB1D0DE1;
+	Tue, 17 Sep 2024 15:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXPZ7FsD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A9JhALVA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFF217BA4;
-	Tue, 17 Sep 2024 15:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7342917C9B5
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 15:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726586552; cv=none; b=sWSqrTcI2+8M2USfI+Qu+7MeZIzXm1+yHlz795C0GpNZPoca/JCY7YPnHu04ZbBgoUKNRvOMxCQOF5jDjycAxf51Ps6rSaTm67hUNnhrbus9AvFOvWYrZckFM+5YgzlxLwODz4CVQfKijCCaexQgqVi3kluYBSv118ZBzGJFGmk=
+	t=1726586561; cv=none; b=jC9jAZBDy9oPShER9GghCn6x9Vn6CK5D/Q5jYQR/Oh97ZYNyNkxlhmq+rsQUKbfvjjXDb0tKW60HwXnGL0C9vfvHWgrz4bafRSvGPZGlUZf6kEpCE5EzsejhgVxKglthsY9sSpdFq5cNeXgjoiQpobD49zBCVMU0RFOosMq435s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726586552; c=relaxed/simple;
-	bh=b17dV6kcYCKjtkCgvF4MqWi0LIWAWld8+sLS8KVrnNg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=q+vnGLweqc5iTRdLc/WGmm0EReb/R6eOGtEUc8OdDsrvj8SLeWjnFG5VpkfTOOr4AaMeL3kS0dwhp8oM8P2P/aqqJPZFtJB+uLPfCDE1d77iWF9C5wYrVCZavSAUSUy6/77fK251WybxvGleNk60LJTJDTUQIUZ19pfjPBgRf+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXPZ7FsD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A9826C4CEC5;
-	Tue, 17 Sep 2024 15:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726586551;
-	bh=b17dV6kcYCKjtkCgvF4MqWi0LIWAWld8+sLS8KVrnNg=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=nXPZ7FsDTlchEG+c7929e2Sf7D4yuNZs/KU/cPNCc4xj+BkoXvIHzOA3/9ZQdVfm4
-	 PBKe/jSEQEF82HetQgKXZ9u0h9CsRxKnVlnszHg8F+cT2q5ZG842wTB5dvNsVS3yNG
-	 IGADHuNB26kxG3TRIordt22pyy6OGDFzewFPdXKF3eJ03yMwFlLaKOknx3d+VHxsmx
-	 f3rElLXPONblsZKK4KOp6YgmJl9Sr0IAhVnKrQNRk8YXScvnLZbQ+7p3bJOB2eVQJa
-	 7o5bQt6HdlFRTS21z1Zl04o6F97YFfd4Ki5VHo362RJXAZCnjIrUzCSxfTgYp2FPs2
-	 nyWa+Qxdiw+cQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C77CAC58A;
-	Tue, 17 Sep 2024 15:22:31 +0000 (UTC)
-From: Daniel Gomez via B4 Relay <devnull+da.gomez.samsung.com@kernel.org>
-Date: Tue, 17 Sep 2024 17:22:18 +0200
-Subject: [PATCH RFC] blktrace: add i/o alignment information
+	s=arc-20240116; t=1726586561; c=relaxed/simple;
+	bh=/PklNxOBmAhcx3M/RDpgql1gjxEINNmnEgxxr/Ido5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rA9j6KxNzk+3+L3s6A8mRuyiZz5I9yQs4DTtokaDPdU7TU1RFaYTB7/F6EGzG1kNWaujtOXrkQCdhg5GpryqT8dmdfAGeIrtLYHR1oT2f+dcz60qTpQSPrhguvTm8Otdth2lLg4XJqYW9mwyo46CHAlP6iCAozfR6VhET1+9q0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A9JhALVA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726586558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kVNzcPJtWdGeNQl5mUfxLbMTyPgjJZvkVqNPRnpN6Ts=;
+	b=A9JhALVA124nzreCfP9JJu4pIlQsskCXqlsr53xjUUbDza51aB47emqIhjuwNTAANfkyfi
+	xQPWl3evIfSPO0rpQ8LMSlMRGDyEB/kM4ncGDM9iMybM+SSMbOlUYdicmp7qmGcxqXE5b0
+	4FS4njNwog8O/rVmSVmbB+E8titj3ug=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-39-8ahQjVWsP4ytiIWs2D4u5A-1; Tue, 17 Sep 2024 11:22:37 -0400
+X-MC-Unique: 8ahQjVWsP4ytiIWs2D4u5A-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7a9b6181a13so1416923785a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 08:22:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726586556; x=1727191356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVNzcPJtWdGeNQl5mUfxLbMTyPgjJZvkVqNPRnpN6Ts=;
+        b=tsLjV7n2DegqR5r1aNI8PzxVi6T84mkHn2FoCiGGx9Q25o1M5HdAYz9bRiN6uR52jy
+         DHUH/Bsv2EbwRbJVV651bgMnXtPx5HEzke26+UGvqXN5OHeoHghvCUHGcIKhwYuFPjWL
+         7ZAq89Z6biSrSvuZnrwIRV0bzTwl3N66yJXXtQ09vWEqdHP3kvSqYspri2U4uWOzxiLD
+         EnoH6o3/HAc/KhiQ/IzwUhAxY9PSXHB2TED7TekfySRezIJm19LW0PMODUrjMRcNAdzQ
+         RNeTyvq3tPdK9Wwr9sGmRZIoINUm2BW3Sm7JcSPKvZy+TA7BaERfBZC+2t0zQqx4wKc4
+         WvQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVshoesu+M5JoZivnhCvYTUryEJGWF83p3xJDfoiNH2TMk52FR/3XhtHynm2xSk9qus/1J1WxI8Tp+STtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf/f+4RP1F7x8KhfMBHxzt1aebNt9ojjqn6/ZsiLCPH60Zc4D4
+	tu5WMMNSzG+dCCfdNwddvriJVNLr1rtX6hG+Rt4ImraFspIbOULU5cj5DH9aaMgs4FAu+6eCK38
+	chCYcsOI13X/UJKKyLBtyYroTeuAq2lt4uYhhoqI78L17pcPfzIkmBRcahqnmiA==
+X-Received: by 2002:a05:620a:484:b0:7ac:a077:6a1e with SMTP id af79cd13be357-7aca0776ac1mr194409585a.9.1726586555834;
+        Tue, 17 Sep 2024 08:22:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF4xX1n5vRQPcE2i5odLOKTy7iWO0rD+5f1yG6JD9ULO+gdNCAcyCtvfbS9/cxvUhtWHamzNw==
+X-Received: by 2002:a05:620a:484:b0:7ac:a077:6a1e with SMTP id af79cd13be357-7aca0776ac1mr194407385a.9.1726586555449;
+        Tue, 17 Sep 2024 08:22:35 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ab3e95e99fsm367173885a.17.2024.09.17.08.22.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 08:22:34 -0700 (PDT)
+Date: Tue, 17 Sep 2024 11:22:31 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>, linux-kernel@vger.kernel.org,
+	qemu-devel@nongnu.org, Fabiano Rosas <farosas@suse.de>
+Subject: Re: [PATCH v10 02/21] acpi/generic_event_device: Update GHES
+ migration to cover hest addr
+Message-ID: <ZumetxyRro8RfC8h@x1n>
+References: <cover.1726293808.git.mchehab+huawei@kernel.org>
+ <bed4b2da51e0c894cc255f712b67e2e57295d826.1726293808.git.mchehab+huawei@kernel.org>
+ <20240917111921.7e95726b@imammedo.users.ipa.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240917-blktrace-algn-v1-1-9fb54b7b1dfa@samsung.com>
-X-B4-Tracking: v=1; b=H4sIAKme6WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0Mz3aSc7JKixORU3cSc9DzdRENDYyMDY1NjQwsjJaCegqLUtMwKsHn
- RSkFuzkqxtbUAq9kXRGQAAAA=
-To: Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, gost.dev@samsung.com, 
- John Garry <john.g.garry@oracle.com>, Dave Chinner <dchinner@redhat.com>, 
- Luis Chamberlain <mcgrof@kernel.org>, Pankaj Raghav <p.raghav@samsung.com>, 
- Dan Helmick <dan.helmick@samsung.com>, Daniel Gomez <d@kruces.com>, 
- Daniel Gomez <da.gomez@samsung.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726586542; l=6584;
- i=da.gomez@samsung.com; s=20240621; h=from:subject:message-id;
- bh=JygrMCTMhPqX/bAPRMl20ITyAtI+tYOaIShANk2aGlU=;
- b=8mwlKU1v1feiAFYqL5Z0fOTBZ/cJLiS6UtnWxVXzTXO9WPZQ6SrTPGrgd5Ar2yXHEumZtQMHM
- EeF05YyiVFRA2JQc2Iisq0RLzDK7A4smn7CIZ22sYd4U3gRUvnOjZiL
-X-Developer-Key: i=da.gomez@samsung.com; a=ed25519;
- pk=BqYk31UHkmv0WZShES6pIZcdmPPGay5LbzifAdZ2Ia4=
-X-Endpoint-Received: by B4 Relay for da.gomez@samsung.com/20240621 with
- auth_id=175
-X-Original-From: Daniel Gomez <da.gomez@samsung.com>
-Reply-To: da.gomez@samsung.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240917111921.7e95726b@imammedo.users.ipa.redhat.com>
 
-From: Daniel Gomez <da.gomez@samsung.com>
+On Tue, Sep 17, 2024 at 11:19:21AM +0200, Igor Mammedov wrote:
+> On Sat, 14 Sep 2024 08:13:23 +0200
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > The GHES migration logic at GED should now support HEST table
+> > location too.
+> > 
+> > Increase migration version and change needed to check for both
+> > ghes_addr_le and hest_addr_le
+> But I don't think it will work like this (but I might be easily wrong)
+> However I don't know enough to properly review this patch, CCing Peter & Fabiano
+> 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  hw/acpi/generic_event_device.c | 11 ++++++-----
+> >  1 file changed, 6 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> > index 15b4c3ebbf24..4e5e387ee2df 100644
+> > --- a/hw/acpi/generic_event_device.c
+> > +++ b/hw/acpi/generic_event_device.c
+> > @@ -343,10 +343,11 @@ static const VMStateDescription vmstate_ged_state = {
+> >  
+> >  static const VMStateDescription vmstate_ghes = {
+> >      .name = "acpi-ghes",
+> > -    .version_id = 1,
+> > -    .minimum_version_id = 1,
+> > +    .version_id = 2,
+> > +    .minimum_version_id = 2,
+> >      .fields = (const VMStateField[]) {
+> >          VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
+> > +        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
+> >          VMSTATE_END_OF_LIST()
+> >      },
+> >  };
+> > @@ -354,13 +355,13 @@ static const VMStateDescription vmstate_ghes = {
+> >  static bool ghes_needed(void *opaque)
+> >  {
+> >      AcpiGedState *s = opaque;
+> > -    return s->ghes_state.ghes_addr_le;
+> > +    return s->ghes_state.ghes_addr_le && s->ghes_state.hest_addr_le;
+> >  }
+> 
+> what I would do:
+>   add ghes_needed_v2(): return  s->ghes_state.hest_addr_le;
+> 
+> and then instead of reusing vmstate_ghes_state would add new
+> vmstate_ghes_v2_state subsection that migrates only 
+>   VMSTATE_UINT64(hest_addr_le, AcpiGhesState)
+> field.
+> 
+> btw: we probably don't need ghes_addr_le for new code that
+> uses HEST to lookup relevant error status block.
+> but we should still keep it for 9.1 and older machine types
+> as they expect/use it. Separate subsections would work with
+> this req just fine.
 
-This patch introduces max I/O alignment boundaries in terms of LBA and
-size in blktrace for issued I/Os.
+Right, if we need bi-directional migration we need above and a compat
+property (or VMSTATE_UINT64_TEST() would work too, iiuc).
 
-Tracing alignment information is important for high-capacity and QLC
-SSDs with Indirection Units greater than 4 KiB. These devices are still
-4 KiB in Logical Block Size (LBS) but because they work at higher IUs,
-unaligned writes to the IU boundaries can imply in a read-modify-write
-(RMW).
+OTOH VMSD versioning only works for forward migration, not backward.
 
-This patch enables blktrace to report alignment details via new
-alignment parameter, which will be calculated during I/O tracing.
+> 
+> >  static const VMStateDescription vmstate_ghes_state = {
+> >      .name = "acpi-ged/ghes",
+> > -    .version_id = 1,
+> > -    .minimum_version_id = 1,
+> > +    .version_id = 2,
+> > +    .minimum_version_id = 2,
 
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
----
-This patch introduces support for tracing maximum I/O alignment
-boundaries in terms of Logical Block Addressing (LBA) and size within
-blktrace for issued I/Os.
+(and IIUC if we set min ver=2, even forward migration should fail.. better
+ test it with an old binary, migrating back and forth)
 
-Note: the term alignment has been previously discussed here [1], where
-it was suggested to use "largest block size granularity". In this RFC,
-alignment term is kept, though further suggestions for an appropriate
-term are welcomed.
+> >      .needed = ghes_needed,
+> >      .fields = (const VMStateField[]) {
+> >          VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
+> 
 
-[1] https://lore.kernel.org/all/a7f9079f-6f47-4a47-a327-98497bd33dfe@oracle.com
+Thanks,
 
-Tracing alignment information is important for high-capacity and QLC
-SSDs with Indirection Units greater than 4 KiB. These devices are still
-4 KiB in Logical Block Size (LBS) but because they work at higher IUs,
-unaligned writes to the IU boundaries can imply in a read-modify-write
-(RMW).
-
-More information about the motivation can be found in the first LBS
-patch series [2].
-
-[2] Subject: [RFC 00/23] Enable block size > page size in XFS
-https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
-
-Additionally, Dan Helmick's talk [3] provides further context on the
-importance of I/O granularity and alignment, specifically in the context
-of NVMe.
-
-[3] SDC2022 – Optimal Performance Parameters for NVMe SSDs
-
-The graph below is a representation of the device IU vs what is
-considered here the I/O block alignment.
-
-    |--- IU Boundaries ----|      |-PS-|
-a)  [====][====][====][====][····][····][····]--
-    |                      |
-b)  [····][====][====][====][====][····][····]--
-    |                      |
-c)  [····][····][====][====][····][····][····]--
-    |                      |
-LBA 0                      4
-
-    Key:
-    [====] = I/O Block
-    [····] = Memory in Page Size (PS) chunks
-    PS: System base Page Size (e.g. x86_64 is 4 KiB)
-
-a) I/O matches IU boundaries (LBA and block size). I/O is aligned to
-IU boundaries.
-b) The size of the I/O matches the IU size but the I/O is not aligned to
-the IU boundaries. I/O is unaligned.
-c) I/O does not match in either size or LBA. I/O is unaligned.
-
-This patch enables blktrace to report alignment details via new
-alignment parameter, which will be calculated during I/O tracing. For
-the example above, the following values would be reported:
-
-a) |16384|: I/O aligned to 16 KiB boundaries.
-b) |4096|:  I/O aligned to 4 KiB boundaries.
-c) |8192|:  I/O aligned to 8 KiB boundaries.
-
-Finally, this patch requires some minor changes [4] in the blktrace
-tool. If this moves forward, the changes will be submitted accordingly.
-
-[4] https://github.com/dkruces/blktrace/tree/algn
----
- include/linux/blktrace_api.h      |  2 ++
- include/uapi/linux/blktrace_api.h |  1 +
- kernel/trace/blktrace.c           | 38 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 41 insertions(+)
-
-diff --git a/include/linux/blktrace_api.h b/include/linux/blktrace_api.h
-index 122c62e561fc..17f1a21ffb5a 100644
---- a/include/linux/blktrace_api.h
-+++ b/include/linux/blktrace_api.h
-@@ -26,6 +26,8 @@ struct blk_trace {
- 	struct dentry *dir;
- 	struct list_head running_list;
- 	atomic_t dropped;
-+	u32 lbs;
-+	u8 lba_shift;
- };
- 
- extern int blk_trace_ioctl(struct block_device *, unsigned, char __user *);
-diff --git a/include/uapi/linux/blktrace_api.h b/include/uapi/linux/blktrace_api.h
-index 690621b610e5..d6df0c10ece1 100644
---- a/include/uapi/linux/blktrace_api.h
-+++ b/include/uapi/linux/blktrace_api.h
-@@ -110,6 +110,7 @@ struct blk_io_trace {
- 	__u32 cpu;		/* on what cpu did it happen */
- 	__u16 error;		/* completion error */
- 	__u16 pdu_len;		/* length of data after this trace */
-+	__u32 alignment;	/* i/o alignment boundaries */
- 	/* cgroup id will be stored here if exists */
- };
- 
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 8fd292d34d89..8330455458b8 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -208,6 +208,39 @@ static const u32 ddir_act[2] = { BLK_TC_ACT(BLK_TC_READ),
- #define MASK_TC_BIT(rw, __name) ((__force u32)(rw & REQ_ ## __name) <<	\
- 	  (ilog2(BLK_TC_ ## __name) + BLK_TC_SHIFT - __REQ_ ## __name))
- 
-+static inline bool blk_trace_lba_aligned(u32 len, u32 algn_len, u64 lba,
-+				      u32 algn_lba)
-+{
-+	return !(len % algn_len) && !(lba % algn_lba);
-+}
-+
-+static inline u32 blk_trace_align(struct blk_trace *bt, u64 sector,
-+					u32 len)
-+{
-+	u64 lba = sector >> (bt->lba_shift - SECTOR_SHIFT);
-+	u32 align_len = len;
-+	u32 align_lba = align_len / bt->lbs;
-+	u32 alignment = bt->lbs;
-+
-+	if (is_power_of_2(len) &&
-+	    blk_trace_lba_aligned(len, align_len, lba, align_lba))
-+		return len;
-+
-+	align_len = bt->lbs << 1UL;
-+	align_lba = align_len / bt->lbs;
-+
-+	while (align_len < len) {
-+		if (!blk_trace_lba_aligned(len, align_len, lba, align_lba))
-+			break;
-+
-+		alignment = align_len;
-+		align_len = align_len << 1UL;
-+		align_lba = align_len / bt->lbs;
-+	}
-+
-+	return alignment;
-+}
-+
- /*
-  * The worker for the various blk_add_trace*() types. Fills out a
-  * blk_io_trace structure and places it in a per-cpu subbuffer.
-@@ -296,6 +329,9 @@ static void __blk_add_trace(struct blk_trace *bt, sector_t sector, int bytes,
- 		t->device = bt->dev;
- 		t->error = error;
- 		t->pdu_len = pdu_len + cgid_len;
-+		if (((what & 0xffff) & ~__BLK_TA_CGROUP) == __BLK_TA_ISSUE)
-+			t->alignment =
-+				blk_trace_align(bt, sector, bytes);
- 
- 		if (cgid_len)
- 			memcpy((void *)t + sizeof(*t), &cgid, cgid_len);
-@@ -597,6 +633,8 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
- 		bt->act_mask = (u16) -1;
- 
- 	blk_trace_setup_lba(bt, bdev);
-+	bt->lbs = queue_logical_block_size(q);
-+	bt->lba_shift = ilog2(bt->lbs);
- 
- 	/* overwrite with user settings */
- 	if (buts->start_lba)
-
----
-base-commit: 4f3e012d4cfd1d9bf837870c961f462ca9f23ebe
-change-id: 20240916-blktrace-algn-a11320353182
-
-Best regards,
 -- 
-Daniel Gomez <da.gomez@samsung.com>
-
+Peter Xu
 
 
