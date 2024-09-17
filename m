@@ -1,160 +1,184 @@
-Return-Path: <linux-kernel+bounces-331519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3830F97ADCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A544B97AD67
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0DA1F22928
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:22:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26FDC1F21EFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834FA1586CB;
-	Tue, 17 Sep 2024 09:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBC115C14D;
+	Tue, 17 Sep 2024 08:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ARPFIflb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="gSXFJCJu"
+Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F5D4594A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726564966; cv=none; b=VBWQurqBPojTWpkKy7YO5z61gl+prWjYm1WjgfJLaWa3TJQFqDbAfQYVhpBloAxt7TvmgyzYpMiMKQKPA/trLXwyieZkM+TtZHTbMi+o0EXSDdhP9QQBwILtv7IaGvwwAYrRE30pOsFrJZxNA8XXxg8hUzzR8EIkU4qsaQM0ZS4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726564966; c=relaxed/simple;
-	bh=z6zsszpTqpD+2xRUZNgY5tcNkGFeaWpqpeBlzad6yyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D4JUBC5eICgJfu2+jaS32d9y5NHCqKo9YXH+0yrHrSbByBPbCbPeVTjoCGTZ449MNQX2to2WWO3+r8ayhsL3Wlgw66dOV/ckgk98yquVEfqLEaKES63FKN8jV1l8zgcqlRpKx3kGhF8CShVIL91/QrcokYtae22j0eiiFSzTUSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ARPFIflb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726564964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gM6/s5JzlURtImk2OaK1piumzBONmsL9B4dUQRIQefk=;
-	b=ARPFIflbk25XJsmYE/eg/nLDTEknavw1FworF+cnDbYvpnjBMhrXSfI9nbqdy5OHEnBU5D
-	kiD3K7Qb9qIWM+xxJr4mJv2kE/XwAKtOScVeF7zxsmGF96zsXaVstXydBAgAwVDNJQnehJ
-	hZp96+iPWv7BIDo52/W0aXZhEyi18ok=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-17-0r8dulNDNG2inB_DJYuQKw-1; Tue, 17 Sep 2024 05:22:42 -0400
-X-MC-Unique: 0r8dulNDNG2inB_DJYuQKw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cdeac2da6so41183245e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 02:22:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726564961; x=1727169761;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gM6/s5JzlURtImk2OaK1piumzBONmsL9B4dUQRIQefk=;
-        b=FyGhCZ2fAw7ii5noxOOkCb6nh6jxhWJjhjXsAnj8ShlYC7J58ht3wpsnCEkuJNWSQS
-         zA2K6LbEJ4g8CCJlIm+V98Uncs5sm4PkJ6EEe+/D2SRRx812cRwNhiCgRUxBqC6U7VvJ
-         JVoiBKahLUdVrNunCZRJriYyXKBJSZ9Efoz8szAB5PL0Ikq4Q1ceQLWM9HDjAqq8MmcL
-         PxlZKgcHbH3u26zsqJC9RK5fn42WxCdqOFp1cGrabyNdMyV8LXar3U+pjc8WicVryMJw
-         +skdNxgibCqn8VpNeqS1To1ZYLy2ObULPj4fbEcTHn3vL4pAzaHvuwVcrwkhCyFdhOHH
-         aZfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnzazNPcc8NUF2k52U34uGbt5XshUeo/8EIBmiBBvi2Nam23G9mazP6hJj9pzQc5ARsOMKJgrcuTCKI6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY88MtKuerSkDP1mwAaBD+V7uZAuuCCQJVgxlsdqvoQbo2+9Xr
-	qbxo6tqg/F0l9QROtc36NCSaU0abXt1+EUysWyl8iBq4AmYsIZDkDSD6fZyitB7blgf3M0+7yPg
-	MDD82xEgqwSpMnztBMogLXwUi4cUXLbY5tmd0rzisBTulZ/nYJ2cbQejR/1Maig==
-X-Received: by 2002:adf:efc9:0:b0:371:8a91:9e72 with SMTP id ffacd0b85a97d-378c2d119f7mr12005829f8f.30.1726564961565;
-        Tue, 17 Sep 2024 02:22:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqYVYCTIMhAhk0CJfwZmZ3/b1qIb8YzfZSTf4gL82RAQ5AU+D2fLAvtIxrIBrsVjw24Z0VhA==
-X-Received: by 2002:adf:efc9:0:b0:371:8a91:9e72 with SMTP id ffacd0b85a97d-378c2d119f7mr12005812f8f.30.1726564961052;
-        Tue, 17 Sep 2024 02:22:41 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f62dasm8971910f8f.49.2024.09.17.02.22.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 02:22:40 -0700 (PDT)
-Date: Tue, 17 Sep 2024 11:22:39 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v10 03/21] acpi/ghes: get rid of
- ACPI_HEST_SRC_ID_RESERVED
-Message-ID: <20240917112239.503b2a0b@imammedo.users.ipa.redhat.com>
-In-Reply-To: <eb07ac97c57f4fbab413eba8a47150037b5a7684.1726293808.git.mchehab+huawei@kernel.org>
-References: <cover.1726293808.git.mchehab+huawei@kernel.org>
-	<eb07ac97c57f4fbab413eba8a47150037b5a7684.1726293808.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D3F157485;
+	Tue, 17 Sep 2024 08:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.183.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726563354; cv=fail; b=CNHSdUJisgWpK0akKvphImkzMM5Pd2Fl5ShNq97WL3k/4MVVqcZjlCTzRONXJ10d1HDTisJs1mrHyq710cjTLE+yBxclbW1jJpd0t5IlEA2ZjOXjkpiwWlVoDlIn9BpDCyY3F+d0gpvGIYuw/Qq54CCus+auv4syJ9WB6tJrUR0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726563354; c=relaxed/simple;
+	bh=TjIv55c+GXxJpZuuSO6WbbOm72/lffgYXrHDrp7e1hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXXJ2pacSmXKVl4b+tb2tvYOF6M1GOGWMqcBJ7Rd7ZK6A4l/FdO/iKJQ+WFXyf0KTnotf1EvEIrFMI79OtxHiSkiC7YBhgXYVwmfIaRZT5Fl2ugue1XgnLubEDcjJ9DBdultMn0uWVuEGid9vWrD4LWheS1ixo1Ot3tQg/j2Rtk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=gSXFJCJu; arc=fail smtp.client-ip=185.132.183.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+Received: from pps.filterd (m0209326.ppops.net [127.0.0.1])
+	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48H6qEm8005537;
+	Tue, 17 Sep 2024 08:55:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=S1; bh=OZGDK86JVJ3rwfCI16CpHdsDgMbhbbt
+	zK3Cu6aBs6eg=; b=gSXFJCJuCzKyo/aYNPvY8EV6pIVHyN3uksMCK7BhGoVvruR
+	KtqhNin3Db5R7jizSsS2lDsCIWtF7toFp4BmHnvlpHj6CQSEtoOgJA/KhFythZF9
+	Evs93RYXJ5tbo5Xumf6p5FHdQXaJfe0lrZ8u5g1ph0V/U9/8dDL3ekFk1WLWCpF/
+	ZdbDN9G3JzHPhyyq3q2nBnEFdZzCNzgETk5v9C90F0vzelp8x56IifF/AvOVTC0I
+	3OyYlLuT9IIMSXckCRyKptJgC/y4LspTYWZDSeYIYkg9udSM+S12IW1WfiXscIGH
+	lvvhyO9n5crgLx36fz1BNs1MOM+uJm13kDKe8WA==
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2171.outbound.protection.outlook.com [104.47.55.171])
+	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 41n3deaauw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Sep 2024 08:55:43 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B0cdWkB+YwzpP/zJySSoMrkNJ0mwgfXo4Tt8MOTV1LK2Z69qNRy6nqmWEdtv4dEmrrOf8dbqjjvBuRojzqxl/ecgB1msFp0WBYmPYb0OCtvwLe/J/qrdvVWIVyE6QK2AlxiaOgjc/eOGEuhWEW4FnE2SpHEz00jkqOgA00o35S2gWVDD9sWWClmPrgGOYCFA8Zdb5DGoHJp0HqkDAQuBhMf8jm0TTHYpw38YnrQM+/1IPMTcLxxLsrx2wyHcFaX+cQKJx7f8T/xgQ55nuc7Qf41Hcb0iZ3xpRcSMHSVmh40aDiXa6xDB0OvZ3oE/aGkz20ieKNkhQWcMaaz02UXypg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OZGDK86JVJ3rwfCI16CpHdsDgMbhbbtzK3Cu6aBs6eg=;
+ b=sD1bASej2ihFy4omiq9H2UReRipIJZGCGhb4b9lu6Zjld7VJXUQ1qSPRphzwWNEepobRqt9SjLsOtBVyb4v1yD/3wBbagGNBSTsq7yFSPRMAEZ5TRg27E5zRo4sopRDn0J03NbQd04IAm5W4KOnNe9A34YdoeadOBqoO1prslOpCi8u3LIG5Ua7/WcdifvsAk1sMR9zwDCQ2Nknch3DvZNCmyvHQZVBIEN0J6EqElloaX+VinDQ9QImYeyiCA2aPqWjMrA6gnRb6UQEYT3roUUBOb1t+0GJzKG5nKzxlF8Fzfw2hBKg5WBReorWLM61ivFZ0pObNwzR3yyG2HYp1fQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 121.100.38.196) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=sony.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=sony.com;
+ dkim=none (message not signed); arc=none (0)
+Received: from SJ0PR03CA0380.namprd03.prod.outlook.com (2603:10b6:a03:3a1::25)
+ by PH0PR13MB5424.namprd13.prod.outlook.com (2603:10b6:510:12b::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Tue, 17 Sep
+ 2024 08:55:38 +0000
+Received: from SJ5PEPF000001D3.namprd05.prod.outlook.com
+ (2603:10b6:a03:3a1:cafe::d2) by SJ0PR03CA0380.outlook.office365.com
+ (2603:10b6:a03:3a1::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
+ Transport; Tue, 17 Sep 2024 08:55:38 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 121.100.38.196)
+ smtp.mailfrom=sony.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=sony.com;
+Received-SPF: Fail (protection.outlook.com: domain of sony.com does not
+ designate 121.100.38.196 as permitted sender)
+ receiver=protection.outlook.com; client-ip=121.100.38.196;
+ helo=gepdcl07.sg.gdce.sony.com.sg;
+Received: from gepdcl07.sg.gdce.sony.com.sg (121.100.38.196) by
+ SJ5PEPF000001D3.mail.protection.outlook.com (10.167.242.55) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Tue, 17 Sep 2024 08:55:37 +0000
+Received: from gepdcl04.s.gdce.sony.com.sg (SGGDCSE1NS08.sony.com.sg [146.215.123.198])
+	by gepdcl07.sg.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 48H8tZVP000484
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 17 Sep 2024 16:55:35 +0800
+Received: from mail.sony.com ([43.88.80.182])
+	by gepdcl04.s.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 48H8tYCO009762;
+	Tue, 17 Sep 2024 16:55:34 +0800
+Received: by mail.sony.com (Postfix, from userid 1000)
+	id 5B95F1BA9034; Tue, 17 Sep 2024 14:52:51 +0530 (IST)
+Date: Tue, 17 Sep 2024 14:52:51 +0530
+From: Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        rafael@kernel.org, yoshihiro.toyama@sony.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] driver: core: add probe control driver
+Message-ID: <ZulKazNUcO9IiaVg@NAB-HP-ProDesk-600sony.com>
+References: <20240911142319.3435746-1-nayeemahmed.badebade@sony.com>
+ <20240911142319.3435746-3-nayeemahmed.badebade@sony.com>
+ <2024091334-unsterile-blitz-efde@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024091334-unsterile-blitz-efde@gregkh>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D3:EE_|PH0PR13MB5424:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50a35e66-a98a-4148-318a-08dcd6f6803b
+x-proofpoint-id: d8690225-876f-412f-87c6-a7cb45557a4c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Asnm2LoqVVr0Yf2jvrC+TdCvvLQ365aNxgNWTacMk5tv2l+pTfosQxVW/4JB?=
+ =?us-ascii?Q?S5Ql98KNVAyse6S3e8j8PqzyN7HpIdzvHm0rrIl3rnKDLYd9/k7PwJiTzU5S?=
+ =?us-ascii?Q?V9rDS2VIeW6tscY6sppSdyopbULggH0kFwMbFpOPHWJDEBkrpt/GXpxKhwqV?=
+ =?us-ascii?Q?22Yj3ZHj3peFjxeND4KyQDtUdqRnU1B17QhWzMI4l/xrKqhEAdKgrHJpnzq9?=
+ =?us-ascii?Q?qp7SxtRTzMysP6iTlI48a7Grro1ShfTCbzKSbdoWESXFIXPUbbUjaVT+co8I?=
+ =?us-ascii?Q?sFsVcmPsaqjS/NX+Ww+vOndqEhlkSn7midQisdPU03SKb8NHVQuD6pmS1bmo?=
+ =?us-ascii?Q?jnbotoof3Mf1Um/K6jMck9cDxCyOCEPlBs0jSmGQrvi7DMRRvXk9YXcWmNHu?=
+ =?us-ascii?Q?7236u65he/X47O4M0c/PhSlc0JQySsoJzl3ytydyGoEFHjW7eC1sTDe79YVQ?=
+ =?us-ascii?Q?vo+tPFxnKcX9zv0TJjsYuiY4kcsQNf/4otD9pJbtbUbLKQwOnyGH9HNp4Yro?=
+ =?us-ascii?Q?aYYP1ijnkb9bkk+pu4OC5tKSv7VuvFmKt+zh+3Gx2bWwN1QHBN4ZFd7ebRH3?=
+ =?us-ascii?Q?dB148KCtTie0MGXer21Sl+Nq0klxDKaFGn+++ztxPg0GGtxT/tJomBuiI7AL?=
+ =?us-ascii?Q?B02obs07LlN3WIhrnQ6jTOz3BDKDYZ3xuoPqGZU4AQDSPQtim52L3h0vUGfn?=
+ =?us-ascii?Q?f5ArWNleGv5AG5KDYaj3s2IsWDEOqc9C1a0+fJ+q3gE7mRcHeiqttxPm5zkT?=
+ =?us-ascii?Q?P1aBb11c5CFamOo5EmUoHZ1nl4k3tU5KC1zCGuBiklD5z6RpD1ZEJaGRI8bK?=
+ =?us-ascii?Q?OGT0kJrUkylBCNjtszQdMXLah9Eh5qOIPtxaIwBDfET0N5YW/3EcjvBSdIFO?=
+ =?us-ascii?Q?kEHTymVIDxoAsGIcqZrnif3Hghd/y12wuR6Deg2VtRrKx+eEu3J2V0DBxeCG?=
+ =?us-ascii?Q?5FSLAujsBAUG7xH9TCFUbGLfgtY962XBqGvEUq7Rz3XGacLNw9PdVfyv9mO+?=
+ =?us-ascii?Q?kIFwNzCKA7IGIGYgOvo6sp6hUNImjgqE6H9Xll3rYynA3kmoV84KINU3mXF7?=
+ =?us-ascii?Q?06S4KT2HMdHLC/jPKAHo2gXbLNXK2S5hnajC2RXWWdmLruEy1WHXVRyVGYiP?=
+ =?us-ascii?Q?pSEzIo1HDDJl4Jl6iHaxreZMGsx1yR3LD/CNeHQtDVP5itCO/rb4Y0E3IXDl?=
+ =?us-ascii?Q?7S2jjs3TQ9wTl/lbAyXPxo+kJzSBhFonPrd79yesophMGWUIuh0UOdbNbqRK?=
+ =?us-ascii?Q?WNs1uDgrcFRTSAduUE7USf52L0/p5dKo85rADSM+XMOkutf7iqO82ur2z3Mr?=
+ =?us-ascii?Q?fym6Ca/sPUQh9TAtvbLPwYMZG3z7dezpchf0P3n14tVRCjlLqPqnA9aAHaDT?=
+ =?us-ascii?Q?Ihh1dzjzILotvqwkx+0gGQ11Gt9t?=
+X-Forefront-Antispam-Report:
+	CIP:121.100.38.196;CTRY:SG;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:gepdcl07.sg.gdce.sony.com.sg;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	zKmlFtNLjn1PAi3L3Vu/1hqm0TbPww+kL5PTRlEmPkXAxj2CgpFm/RauOVGLTm6vA7fxdo+RnLE4kjwaqfUaPpaxL7hXHg/dHxmhl7kOnOlhvf1T7FP7kIGyJP7o0JLNGZksgO6LVU6r1Ohx6GqND2VKIgtSP9gHQl3rHrtnnAYc1KGOlwuN+MD7DlBJepXxMm0FEEp9Ms7DVXulcwI3LlyM5sSqDW0BKiId1OmmfPWZBg+vLx6VrzGgYFikUnHMzKzDoJIPGEclgPeOraU8w4bRNP2QgfiGEjWYf8QYPC1P36MLOAY0iD7dzIXQrgEXFqpwHUl7UJdMhHIcfIJB30GJ7ygPzCcakbbDxDIVNxqCSPRolbiKYTbgF5rspb69XMAixz1FhnpbqO4AJ3f+OYh9A4NEKSOxOjrsBwuMGGmqj85d0ihwotOvL5Y2EDYDEfFjj5RWChniecUYTfyYD/bJ+AVsaKGv1V1VlPqtYv4BkH+jw4Rhlx+jRj6fN6/Mw2tI8kgHqVdJ7BsbpcU59PPIZxm02wQsWhj5Nh9s7q2KougSDVv4l2UKAu4TwDsC9sjWY7vCj5yUjQ4z1wf9WNCk+5ukacQo6hJa7JSUoIUCrbV2O9LEnUZsjTl7/ENP
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 08:55:37.5960
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50a35e66-a98a-4148-318a-08dcd6f6803b
+X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[121.100.38.196];Helo=[gepdcl07.sg.gdce.sony.com.sg]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SJ5PEPF000001D3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB5424
+X-Proofpoint-GUID: 872yqvlrMmbphD_cgvXUAnXBB5V4Hmbo
+X-Proofpoint-ORIG-GUID: 872yqvlrMmbphD_cgvXUAnXBB5V4Hmbo
+X-Sony-Outbound-GUID: 872yqvlrMmbphD_cgvXUAnXBB5V4Hmbo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-17_02,2024-09-16_01,2024-09-02_01
 
-On Sat, 14 Sep 2024 08:13:24 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-
-> This is just duplicating ACPI_GHES_ERROR_SOURCE_COUNT, which
-> has a better name. So, drop the duplication.
+On Fri, Sep 13, 2024 at 06:37:59AM +0200, Greg KH wrote:
+> On Wed, Sep 11, 2024 at 07:53:19PM +0530, Nayeemahmed Badebade wrote:
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/debugfs-probe-control
+> > @@ -0,0 +1,14 @@
+> > +What:		/sys/kernel/debug/probe_control_status
+> > +Date:		September 2024
+> > +KernelVersion:	6.11.0
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Minor nit, there's no way this can go into 6.11, you all know that :(
+>
 
-Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+Thank you for checking the patch and pointing this out.
+We will update this in next iteration based on feedback for the
+proposed patchset.
 
-> ---
->  hw/acpi/ghes.c         | 7 ++-----
->  include/hw/acpi/ghes.h | 3 ++-
->  2 files changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index 529c14e3289f..35f793401d06 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -35,9 +35,6 @@
->  /* The max size in bytes for one error block */
->  #define ACPI_GHES_MAX_RAW_DATA_LENGTH   (1 * KiB)
->  
-> -/* Now only support ARMv8 SEA notification type error source */
-> -#define ACPI_GHES_ERROR_SOURCE_COUNT        1
-> -
->  /* Generic Hardware Error Source version 2 */
->  #define ACPI_GHES_SOURCE_GENERIC_ERROR_V2   10
->  
-> @@ -411,7 +408,7 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
->      AcpiGedState *acpi_ged_state;
->      AcpiGhesState *ags;
->  
-> -    assert(source_id < ACPI_HEST_SRC_ID_RESERVED);
-> +    assert(source_id < ACPI_GHES_ERROR_SOURCE_COUNT);
->  
->      acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
->                                                         NULL));
-> @@ -422,7 +419,7 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
->  
->      if (physical_address) {
->  
-> -        if (source_id < ACPI_HEST_SRC_ID_RESERVED) {
-> +        if (source_id < ACPI_GHES_ERROR_SOURCE_COUNT) {
->              start_addr += source_id * sizeof(uint64_t);
->          }
->  
-> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> index 28b956acb19a..5421ffcbb7fa 100644
-> --- a/include/hw/acpi/ghes.h
-> +++ b/include/hw/acpi/ghes.h
-> @@ -59,7 +59,8 @@ enum AcpiGhesNotifyType {
->  enum {
->      ACPI_HEST_SRC_ID_SEA = 0,
->      /* future ids go here */
-> -    ACPI_HEST_SRC_ID_RESERVED,
-> +
-> +    ACPI_GHES_ERROR_SOURCE_COUNT
->  };
->  
->  typedef struct AcpiGhesState {
-
+Thanks,
+Nayeem
 
