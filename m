@@ -1,163 +1,267 @@
-Return-Path: <linux-kernel+bounces-331819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99B497B18E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:46:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE8F97B190
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61EFD1F24002
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:46:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029A92851C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B90176AD8;
-	Tue, 17 Sep 2024 14:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1FE1741DC;
+	Tue, 17 Sep 2024 14:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUVb6Mve"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="X0nCawQw"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9009166F25;
-	Tue, 17 Sep 2024 14:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84480535DC;
+	Tue, 17 Sep 2024 14:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726584376; cv=none; b=aJue89ZG4wxLCa+xLDvwqmOhd0Eo1ITX4AXCU56dA9rM+wZUKzRni688+pUoaZgs5Og9010GOHnI16ZV0q/bQ2ndWiRULz32Zt7R5NUj3BcOR1s+b9yskyTiz2hP/QULb2rFej4VYZHfY/J7KwIUOFVk3XMLojrSRvN8F8mObl0=
+	t=1726584465; cv=none; b=KepUesOah7N17M+zig2QzUt3o7yaLveuqnPgpZju60mRL1Imf95a3UFtCfE2+khPXJv5fZKBqSnpY0VrsiZSyzm5Ea9uOwgAi+yzi70VvnMkpoM8Xse6mprZtUgmT4LJQbkJk9zXQEpjg3jLVdH0SoTc50eZvAfkhDZ73mrTDHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726584376; c=relaxed/simple;
-	bh=bzGxtk+MIkfByjqW8d00PpgpiKOPF44XfST2Mx7WVCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hIRQv3FIh4woHCLUKLZz1Sr6pw9hMTXB379Hj57fMltPw/YJpBRyzsp3shXLXm8rEIKNIjEBSB4Ar2ET85DYTNGv2sZB6l6uiDIUdEIQjf4yu+08uVdJniL104ukcP5ugoFm3Y3pvwTmcQqxsV8FPiKN1pYhXUE8JKUaN4t1wDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUVb6Mve; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7673BC4CECF;
-	Tue, 17 Sep 2024 14:46:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726584375;
-	bh=bzGxtk+MIkfByjqW8d00PpgpiKOPF44XfST2Mx7WVCk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qUVb6Mvek2Un5RPqAmm0H+c6VU74iuXgcy7KwEDMbJaR0A36puZDPzEqcJYqxLiNH
-	 bWalm1aB0Be4rT1FV/7Ev+oigqejq4f+OykWB/9Vic5sq/FyOhfTB1Zy4L7faxBcdf
-	 WKWdlY0CDWIPMXikpw08cfyHpTZrKPy8HkiKvWvR5Mi7/VPFz4SfMxm0Tw+MvFnxd2
-	 qpM5OP1QcGpYPf1CK3lI37QwsNH5UyOrdfa7+EyXxeq0qQM0t403uzlyvrz0qgyiB+
-	 DjJTuftsUB9QZpJdYy1/RT+/s2B20bpjuNASYlCrmkgSoiTz3SRKP3Y66ettC3r1kq
-	 tISzE/fZb+4nw==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75129b3a3so61559231fa.2;
-        Tue, 17 Sep 2024 07:46:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW0a/TdrH79IP+161ojii0sBU8F8rU8HjDu4LjbnmvSwbrzqUQ+uysLYPIVF/IiGmr/TcqCZO5iDwpvTU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7aP6eWFm8XZx+LV4CKcr6b1essuhW0jpe41xESDAR4B7Cq0Rb
-	0YSyJUyDpaIDWP5SWTcTo/eJYr9unfM08EefWT7Q6mv6hgUygXMaTZV00cmi54h5X7xJDnvyJ2s
-	TYCtVX36/5Q8Qyiziht+yAQwgxwg=
-X-Google-Smtp-Source: AGHT+IFDUbCjIACLojUJmRe9YfSF7lIOYMefTjFUQayEeE/cSETzSVLJx5rYk5NhV4f/bWglh+KRaGqwLFBQAozeYNs=
-X-Received: by 2002:a2e:be25:0:b0:2f7:7b34:285f with SMTP id
- 38308e7fff4ca-2f787ed8881mr95244751fa.20.1726584374098; Tue, 17 Sep 2024
- 07:46:14 -0700 (PDT)
+	s=arc-20240116; t=1726584465; c=relaxed/simple;
+	bh=0gmS0CrHykIuqhYWHp6T8EI7WFpQtf/PrGx+TvZzGoM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K8cVB1OIhyHueQP+MujsHcNbesvmmXWyuL+MUcVTLN9XHSszJsXob6yd0GJQjttE9PaWudNdAFMcR5ijsaZZn0y//GnrA48Zyor7bWtt3EaXy1CQPV7G++7Uz/as64AI4yRoSy4fJkWUhCU3/iGzKzkuxMQhCNLLL3+46Mi2xjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=X0nCawQw; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+From: Denis Arefev <arefev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1726584453;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=D2tUHWrlbsrsSeaQbFVGiyfoPkRoLq2KwPhMPJ3F3JU=;
+	b=X0nCawQwbGEgDMmhhMD4sukzDsJaEkSWLq7/ZjBOlgl1XJSqJnpJDcRicCxFwHe/Pt9zEN
+	JscIr4xZCtAp3Kg1cRWlnKmUyaMXL0QEniR6DvoJ+XIAxCdPll6a6fPbbYlSq0ecRVQiW0
+	q1wx1vYhEoaAPE3wZOWDFCZFMUIoVb8=
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5.10] mtd: rawnand: mxc: Remove platform data support
+Date: Tue, 17 Sep 2024 17:47:33 +0300
+Message-Id: <20240917144733.47815-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916142939.754911-1-david.hunter.linux@gmail.com>
-In-Reply-To: <20240916142939.754911-1-david.hunter.linux@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 17 Sep 2024 23:45:36 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATbgLrU07dZe+30jzUuP-A1KRfPY8=E2hP9W-Rvzsfg8Q@mail.gmail.com>
-Message-ID: <CAK7LNATbgLrU07dZe+30jzUuP-A1KRfPY8=E2hP9W-Rvzsfg8Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] linux-kbuild: fix: process configs set to "y"
-To: David Hunter <david.hunter.linux@gmail.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	shuah@kernel.org, javier.carrasco.cruz@gmail.com, 
-	Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-(+CC: Steven Rostedt, the author of this script)
+From: Fabio Estevam <festevam@gmail.com>
 
+[ Upstream commit 0f6b791955a6365b5ebe8b6a5b01de69a47ee92e ]
 
+i.MX is a devicetree-only platform now and the existing platform data
+support in this driver was only useful for old non-devicetree platforms.
 
+Get rid of the platform data support since it is no longer used.
 
-On Mon, Sep 16, 2024 at 11:31=E2=80=AFPM David Hunter
-<david.hunter.linux@gmail.com> wrote:
->
-> An assumption made in this script is that the config options do not need
-> to be processed because they will simply be in the new config file. This
-> assumption is incorrect.
->
-> Process the config entries set to "y" because those config entries might
-> have dependencies set to "m". If a config entry is set to "m" and is not
-> loaded directly into the machine, the script will currently turn off
-> that config entry; however, if that turned off config entry is a
-> dependency for a "y" option. that means the config entry set to "y"
-> will also be turned off later when the conf executive file is called.
->
-> Here is a model of the problem (arrows show dependency):
->
-> Original config file
-> Config_1 (m) <-- Config_2 (y)
->
-> Config_1 is not loaded in this example, so it is turned off.
-> After scripts/kconfig/streamline_config.pl, but before scripts/kconfig/co=
-nf
-> Config_1 (n) <-- Config_2 (y)
->
-> After  scripts/kconfig/conf
-> Config_1 (n) <-- Config_2 (n)
->
->
-> It should also be noted that any module in the dependency chain will
-> also be turned off, even if that module is loaded directly onto the
-> computer. Here is an example:
->
-> Original config file
-> Config_1 (m) <-- Config_2 (y) <-- Config_3 (m)
->
-> Config_3 will be loaded in this example.
-> After scripts/kconfig/streamline_config.pl, but before scripts/kconfig/co=
-nf
-> Config_1 (n) <-- Config_2 (y) <-- Config_3 (m)
->
-> After scripts/kconfig/conf
-> Config_1 (n) <-- Config_2 (n) <-- Config_3 (n)
->
->
-> I discovered this problem when I ran "make localmodconfig" on a generic
-> Ubuntu config file. Many hardware devices were not recognized once the
-> kernel was installed and booted. Another way to reproduced the error I
-> had is to run "make localmodconfig" twice. The standard error might displ=
-ay
-> warnings that certain modules should be selected but no config files are
-> turned on that select that module.
->
-> With the changes in this series patch, all modules are loaded properly
-> and all of the hardware is loaded when the kernel is installed and
-> booted.
->
->
-> David Hunter (7):
->   linux-kbuild: fix: config option can be bool
->   linux-kbuild: fix: missing variable operator
->   linux-kbuild: fix: ensure all defaults are tracked
->   linux-kbuild: fix: ensure selected configs were turned on in original
->   linux-kbuild: fix: implement choice for kconfigs
->   linux-kbuild: fix: configs with defaults do not need a prompt
->   linux-kbuild: fix: process config options set to "y"
->
-> ---
-> V2:
->         - Put in subject.
-> V1:
->         - https://lore.kernel.org/all/20240913171205.22126-1-david.hunter=
-.linux@gmail.com/
->
-> ---
->  scripts/kconfig/streamline_config.pl | 77 ++++++++++++++++++++++++----
->  1 file changed, 66 insertions(+), 11 deletions(-)
->
->
->
->
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Link: https://lore.kernel.org/linux-mtd/20201110121908.19400-1-festevam@gmail.com
+Signed-off-by: Denis Arefev <arefev@swemel.ru>
+---
+ drivers/mtd/nand/raw/Kconfig               |  2 +-
+ drivers/mtd/nand/raw/mxc_nand.c            | 75 ++--------------------
+ include/linux/platform_data/mtd-mxc_nand.h | 19 ------
+ 3 files changed, 5 insertions(+), 91 deletions(-)
+ delete mode 100644 include/linux/platform_data/mtd-mxc_nand.h
 
+diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+index 6c46f25b57e2..58421866bdc3 100644
+--- a/drivers/mtd/nand/raw/Kconfig
++++ b/drivers/mtd/nand/raw/Kconfig
+@@ -313,7 +313,7 @@ config MTD_NAND_VF610_NFC
+ config MTD_NAND_MXC
+ 	tristate "Freescale MXC NAND controller"
+ 	depends on ARCH_MXC || COMPILE_TEST
+-	depends on HAS_IOMEM
++	depends on HAS_IOMEM && OF
+ 	help
+ 	  This enables the driver for the NAND flash controller on the
+ 	  MXC processors.
+diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_nand.c
+index 684c51e5e60d..f896364968d8 100644
+--- a/drivers/mtd/nand/raw/mxc_nand.c
++++ b/drivers/mtd/nand/raw/mxc_nand.c
+@@ -21,7 +21,6 @@
+ #include <linux/completion.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/platform_data/mtd-mxc_nand.h>
+ 
+ #define DRIVER_NAME "mxc_nand"
+ 
+@@ -184,7 +183,6 @@ struct mxc_nand_host {
+ 	unsigned int		buf_start;
+ 
+ 	const struct mxc_nand_devtype_data *devtype_data;
+-	struct mxc_nand_platform_data pdata;
+ };
+ 
+ static const char * const part_probes[] = {
+@@ -1611,29 +1609,6 @@ static inline int is_imx53_nfc(struct mxc_nand_host *host)
+ 	return host->devtype_data == &imx53_nand_devtype_data;
+ }
+ 
+-static const struct platform_device_id mxcnd_devtype[] = {
+-	{
+-		.name = "imx21-nand",
+-		.driver_data = (kernel_ulong_t) &imx21_nand_devtype_data,
+-	}, {
+-		.name = "imx27-nand",
+-		.driver_data = (kernel_ulong_t) &imx27_nand_devtype_data,
+-	}, {
+-		.name = "imx25-nand",
+-		.driver_data = (kernel_ulong_t) &imx25_nand_devtype_data,
+-	}, {
+-		.name = "imx51-nand",
+-		.driver_data = (kernel_ulong_t) &imx51_nand_devtype_data,
+-	}, {
+-		.name = "imx53-nand",
+-		.driver_data = (kernel_ulong_t) &imx53_nand_devtype_data,
+-	}, {
+-		/* sentinel */
+-	}
+-};
+-MODULE_DEVICE_TABLE(platform, mxcnd_devtype);
+-
+-#ifdef CONFIG_OF
+ static const struct of_device_id mxcnd_dt_ids[] = {
+ 	{
+ 		.compatible = "fsl,imx21-nand",
+@@ -1655,26 +1630,6 @@ static const struct of_device_id mxcnd_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, mxcnd_dt_ids);
+ 
+-static int mxcnd_probe_dt(struct mxc_nand_host *host)
+-{
+-	struct device_node *np = host->dev->of_node;
+-	const struct of_device_id *of_id =
+-		of_match_device(mxcnd_dt_ids, host->dev);
+-
+-	if (!np)
+-		return 1;
+-
+-	host->devtype_data = of_id->data;
+-
+-	return 0;
+-}
+-#else
+-static int mxcnd_probe_dt(struct mxc_nand_host *host)
+-{
+-	return 1;
+-}
+-#endif
+-
+ static int mxcnd_attach_chip(struct nand_chip *chip)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+@@ -1759,6 +1714,7 @@ static const struct nand_controller_ops mxcnd_controller_ops = {
+ 
+ static int mxcnd_probe(struct platform_device *pdev)
+ {
++	const struct of_device_id *of_id;
+ 	struct nand_chip *this;
+ 	struct mtd_info *mtd;
+ 	struct mxc_nand_host *host;
+@@ -1800,20 +1756,8 @@ static int mxcnd_probe(struct platform_device *pdev)
+ 	if (IS_ERR(host->clk))
+ 		return PTR_ERR(host->clk);
+ 
+-	err = mxcnd_probe_dt(host);
+-	if (err > 0) {
+-		struct mxc_nand_platform_data *pdata =
+-					dev_get_platdata(&pdev->dev);
+-		if (pdata) {
+-			host->pdata = *pdata;
+-			host->devtype_data = (struct mxc_nand_devtype_data *)
+-						pdev->id_entry->driver_data;
+-		} else {
+-			err = -ENODEV;
+-		}
+-	}
+-	if (err < 0)
+-		return err;
++	of_id = of_match_device(mxcnd_dt_ids, host->dev);
++	host->devtype_data = of_id->data;
+ 
+ 	if (!host->devtype_data->setup_interface)
+ 		this->options |= NAND_KEEP_TIMINGS;
+@@ -1843,14 +1787,6 @@ static int mxcnd_probe(struct platform_device *pdev)
+ 
+ 	this->legacy.select_chip = host->devtype_data->select_chip;
+ 
+-	/* NAND bus width determines access functions used by upper layer */
+-	if (host->pdata.width == 2)
+-		this->options |= NAND_BUSWIDTH_16;
+-
+-	/* update flash based bbt */
+-	if (host->pdata.flash_bbt)
+-		this->bbt_options |= NAND_BBT_USE_FLASH;
+-
+ 	init_completion(&host->op_completion);
+ 
+ 	host->irq = platform_get_irq(pdev, 0);
+@@ -1891,9 +1827,7 @@ static int mxcnd_probe(struct platform_device *pdev)
+ 		goto escan;
+ 
+ 	/* Register the partitions */
+-	err = mtd_device_parse_register(mtd, part_probes, NULL,
+-					host->pdata.parts,
+-					host->pdata.nr_parts);
++	err = mtd_device_parse_register(mtd, part_probes, NULL, NULL, 0);
+ 	if (err)
+ 		goto cleanup_nand;
+ 
+@@ -1930,7 +1864,6 @@ static struct platform_driver mxcnd_driver = {
+ 		   .name = DRIVER_NAME,
+ 		   .of_match_table = of_match_ptr(mxcnd_dt_ids),
+ 	},
+-	.id_table = mxcnd_devtype,
+ 	.probe = mxcnd_probe,
+ 	.remove = mxcnd_remove,
+ };
+diff --git a/include/linux/platform_data/mtd-mxc_nand.h b/include/linux/platform_data/mtd-mxc_nand.h
+deleted file mode 100644
+index d1230030c6db..000000000000
+--- a/include/linux/platform_data/mtd-mxc_nand.h
++++ /dev/null
+@@ -1,19 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * Copyright 2004-2007 Freescale Semiconductor, Inc. All Rights Reserved.
+- * Copyright 2008 Sascha Hauer, kernel@pengutronix.de
+- */
+-
+-#ifndef __ASM_ARCH_NAND_H
+-#define __ASM_ARCH_NAND_H
+-
+-#include <linux/mtd/partitions.h>
+-
+-struct mxc_nand_platform_data {
+-	unsigned int width;	/* data bus width in bytes */
+-	unsigned int hw_ecc:1;	/* 0 if suppress hardware ECC */
+-	unsigned int flash_bbt:1; /* set to 1 to use a flash based bbt */
+-	struct mtd_partition *parts;	/* partition table */
+-	int nr_parts;			/* size of parts */
+-};
+-#endif /* __ASM_ARCH_NAND_H */
+-- 
+2.25.1
 
---
-Best Regards
-Masahiro Yamada
 
