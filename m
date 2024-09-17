@@ -1,308 +1,165 @@
-Return-Path: <linux-kernel+bounces-331686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C29A97B003
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF8697B006
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD24B285F57
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E606B28659F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC13170A29;
-	Tue, 17 Sep 2024 12:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE5416A959;
+	Tue, 17 Sep 2024 12:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQPc5YG0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="LjPaOx7x"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95852173332
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 12:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FA416A930
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 12:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726575330; cv=none; b=L0NFj3DRlJIG4HuwIFeEkp+m/TI5Xo5Mw/oPKG4hBIbmrfcQhhiCpxbBoOCjqc3RotZEN8oopXITOYqdke/Q1TFKXrSa3q906lUdSWysBUnBVLO6+mFKjMCPlzgT10BiB1eqDVjPv60j7U4wv65BQfggSMv3AtbNIymZuEfNDSU=
+	t=1726575363; cv=none; b=J6zPuSU1uUgX7ToXf7TcZvsqFBZ2G8WNrBIGOiU5VxeJBr43CFp3ZNmmXlUyw+oMb87Ef1OiVffIqHLEhRdc3D/bO7OJF9p4nspxzMlw1zADoVFKdp1iJxCMdpvdzGhdTgS450RyY4kgNHNMrWqzYTw9RUVAVBYc3H4bgdHUypI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726575330; c=relaxed/simple;
-	bh=aHYn3dmDCJnWNIlJcWJDvc+UKiUxjkFYBntpcXxE8kU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R18xDRGQKMFt0s0sp3DD7KipjlaBinao0L2Pn+es0cECSpCg9QPc6+RTjQOkd67uzcsdCyEcrlNi3c4JQ1dDPMy6etn+0XR4WImAkuKPXcmnXUI6j8DN5+kTguP7ujq4omHBqX79XPuOKFR6visDAPG7tYKGmUqh5DZ9t2c89Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQPc5YG0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726575324;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AsBnjy+X7R8yO5SwSmmu3aaG/Z4/ynLw4YA/Z9vtMbI=;
-	b=bQPc5YG0eZRaSZdE2eeYt3F90mH5lBrwcvsJral2fE5WtIpQfbnzRm3GbJVfN139RlvffX
-	oxlbfFk4UcT+jyl79VgCwvoV/XOXbK68ucJ92zk3wjv5yiuPFNFmsypRaeyPNqp4coIsED
-	ZtEvsGACg0+tx1vK3Bb7AuwjKdT2nUE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-VW_ahWl8Ou-wfJNTpqQlIQ-1; Tue, 17 Sep 2024 08:15:23 -0400
-X-MC-Unique: VW_ahWl8Ou-wfJNTpqQlIQ-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb6dc3365so41110325e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 05:15:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726575322; x=1727180122;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AsBnjy+X7R8yO5SwSmmu3aaG/Z4/ynLw4YA/Z9vtMbI=;
-        b=SvTomeFIms4roifbjGjLk70JamFNLbFZYuvRdrL18ApFQNqmSEBg575yh0GBcVd5PK
-         gZBtO3+SKWX3cvrDHFd+oP+2TauTSq6QBQ6dU8XMST21oNk2l9C0AiMOpfA8VkDQ2ihB
-         vvURDXR36VX9z73neJxAtPa/jxZpU60xprgDBQ0UCtplnXxTIzxOIQblWJAUXWGh8GAB
-         DG2aLU19FqlfCgMO+RUUOhqx8N+6edyXTdQsTqcAvx3DJUQmv76Mu3Yq5/dtt8R/v+Ns
-         ik873wrB5yqElnX4bIrq3gfV8PtuP7mBmUZuchqmt7PbQfRSy1HHAwNi5NvLWwgQ10zr
-         8CUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTx735b5HO6MJHa00WJ4LIjBInIiN2E5Vnq/4kApuap/ZXtvgCatxgGGt+zil5YiXhUGxUBQd++ViQUpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEJgOF2CEdzazL03LSoG14eDTB+9bfgyfkGdpLt/BNSuGdWMhI
-	s71oNQkVKW8TjFJFTQGNQWLm7kWoaGaEj0QjdAvUFk+JQUYUWsNylB/pNFyUyb11xgEOQIHn0LF
-	MhyGDVZZGjYS5Bw8C7s1G1mpw3WiDGmD1cvvEBsZevQCGvVxzLDEIE6JzOAe2dA==
-X-Received: by 2002:a05:600c:474d:b0:42b:8a35:1acf with SMTP id 5b1f17b1804b1-42cdb586f4cmr147962375e9.25.1726575321770;
-        Tue, 17 Sep 2024 05:15:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDaQt/Kk+FBdnrigXqyg0bYmIA0V9x+x+wJSLf76x1CQYsA1tvA83D0CUwSoJQMo2sBz6ibg==
-X-Received: by 2002:a05:600c:474d:b0:42b:8a35:1acf with SMTP id 5b1f17b1804b1-42cdb586f4cmr147961835e9.25.1726575321020;
-        Tue, 17 Sep 2024 05:15:21 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e80eesm9339148f8f.30.2024.09.17.05.15.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 05:15:20 -0700 (PDT)
-Date: Tue, 17 Sep 2024 14:15:19 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, Eric Blake <eblake@redhat.com>, John Snow
- <jsnow@redhat.com>, Markus Armbruster <armbru@redhat.com>, Michael Roth
- <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
- <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, qemu-arm@nongnu.org,
- qemu-devel@nongnu.org
-Subject: Re: [PATCH v10 00/21] Add ACPI CPER firmware first error injection
- on ARM emulation
-Message-ID: <20240917141519.57766bb6@imammedo.users.ipa.redhat.com>
-In-Reply-To: <cover.1726293808.git.mchehab+huawei@kernel.org>
-References: <cover.1726293808.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1726575363; c=relaxed/simple;
+	bh=jZFbMQUcwbMtY/pZtUSmrWo0bd4B5DgQOKNIHvqm/w0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s7/sfmwwiYvrBWwPXVVg4ac0fc1GwqD3Do7FPf7Cge+RPalW2rFU2s3VEhsE3/L3Q/qchB13cZwrDPtrKgbVF3/t0Bbnj2T8OVVn0rBUelk2q1Gi4jWM2JUAixJppLMBTR76GHChcpMJ3ODhSRfvM+5S6qN4Bf6RVbelXGLEnCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=LjPaOx7x; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=tUuwK+BCmRSw8d5B3ixan7E6pH9SFIFACTSMqu09Nd8=; b=LjPaOx7xVSOI914o
+	NP4bwHMFEuktkAhzwTROwyhkE7jpdjW1Pu43yOdoJ/88NIZcoSN4P8bMe6qPqXozwre66w6pVuI20
+	rJ4jYI40Qq9PEGJJmPQ6aILPdgBLsND0jVvATdqAPcYlgd7hlBM68nTOvc2y0U26zxDJ7ayRjP+cM
+	uiwhGRyJKqyp46KEHMF2apyLw0GF95iyoCTvva5jsNdFFseYvADXYbcx5fljWpz4cPGFRoAQ0/D+V
+	M/5j/flCJROnRHppsgzDne+zqhfsL+r6PzDIT2/TuTva2m+O/Dft4Z8ouLnCHu7P2HocPrkmdH2m2
+	9mxYwTnmxWpjV4uIsw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sqX7Z-0066XY-2V;
+	Tue, 17 Sep 2024 12:15:53 +0000
+Date: Tue, 17 Sep 2024 12:15:53 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kees@kernel.org
+Subject: Re: Dead code by symbols
+Message-ID: <Zuly-WPqwxqWXylP@gallifrey>
+References: <ZugliLgw5VFb9yau@gallifrey>
+ <d289061d-7dc8-41d7-a166-4b3b8dce886d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <d289061d-7dc8-41d7-a166-4b3b8dce886d@redhat.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 12:04:34 up 131 days, 23:18,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Sat, 14 Sep 2024 08:13:21 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+* David Hildenbrand (david@redhat.com) wrote:
+> On 16.09.24 14:33, Dr. David Alan Gilbert wrote:
+> > Hi David,
+> >    A while ago we were chatting about me spotting dead structs, and
+> > you wondered if it might be possible to spot dead functions that
+> > were exported from an object but never used - and I've been trying
+> > it for the last few days.
+> > 
+> >    I'm pretty early on, but it's already got some fun things:
+> 
+> Cool, stuff! :)
+> 
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6a36d828bdef0e02b1e6c12e2160f5b83be6aab5
+> >    Core code not used for ~20 years
+> > 
+> > https://lore.kernel.org/lkml/1690847.1726346402@warthog.procyon.org.uk/
+> >    A bug! A recently added function that lost the place it was wired up
+> >    so was currently unused.
+> 
+> That is really nice!
+> 
+> > 
+> > https://lore.kernel.org/lkml/ZuXOWjvVYa64c1-5@gallifrey/
+> >    A few small dead files.
+> > 
+> > Now, it does take some more guesswork, for example an unused function
+> > which was added a couple of years back, might be something that's
+> > there for consistency,
+> 
+> I know people will find reasons to do something like that, but we really
+> *shouldn't* be maintaining / dragging along dead code that nobody might ever
+> use.
 
-> This series add support for injecting generic CPER records.  Such records
-> are generated outside QEMU via a provided script.
-> 
-> On this  version,  the patch reworking the way offsets are calculated were
-> split on several other patches, to make one logical change per patch and
-> make review easier.
-> 
-> Despite the number of patches increased from 12 to 21, there is just one
-> real new patch (as the other ones are a split from a big change):
-> 
->   acpi/generic_event_device: Update GHES migration to cover hest addr
+One example is lib/base64.c base64_encode - that's not used, but the base64_decode
+in the same file is used by nvme; I've not convinced myself if it makes sense
+to take the encode out or not.
+(We do have ceph_base64_encode with slightly different base64 behaviour,
+and then there's chap_base64_decode and ceph_base64_decode which are all different;
+it's pretty hideous)
 
-I'm done with this round of review.
+> > might have been forgotten to be wired up,
+> 
+> Forgotten as in "BUG" or as in "ran out of steam" ?
 
-Given that the series accumulated a bunch of cleanups,
-I'd suggest to move all cleanups/renamings not related
-to new HEST lookup and new src id mapping to the beginning
-of the series, so once they reviewed they could be split up into
-a separate series that could be merged while we are ironing down
-the new functionality. 
- 
+BUG like the afs one above where the function exists but the line
+to use it got lost.
+But there are 'ran out of steam' ones as well - eg bc9ab6d31c4f
+added a function for 'runtime reconfiguration' to an audio codec
+with a note that some systems require it; as far as I can tell
+it was never used.  Since that was over 10 years ago it's probably
+time for it to go, but if it was only a year or so old then maybe
+it would still be something that might be getting added.
 
-> ---
+> > or might just be something that's going to be used but the
+> > authors haven't got to it yet, e.g.
+> >     https://lore.kernel.org/lkml/ZuRGRKU9bjgC52mD@gallifrey/
 > 
-> v10:
-> - Patch 1 split on several patches to make reviews easier;
-> - Added a migration patch;
-> - CPER QMP command was renamed;
-> - Updated some comments to better reflect exact ACPI version;
-> - Removed a code to reset acks when OSPM fails to read records;
-> - Removed a duplicated config GHES_CPER symbol;
-> - There is  now an arch-independent namespace for GHES source IDs;
-> - Fixed the size of hest_ghes_notify array when creating tables;
-> - acpi-hest.json is now a section of ACPI;
-> - QMP command renamed from @ghes-cper to inject-ghes-error.
+> Yes, that' a valid case.
 > 
-> v9:
-> - Patches reorganized to make easier for reviewers;
-> - source ID is now guest-OS specific;
-> - Some patches got a revision history since v8;
-> - Several minor cleanups.
+> > 
+> > My patience varies from Ooh core code, to meh old driver to very meh
+> > for old undead staging code.
 > 
-> v8:
-> - Fix one of the BIOS links that were incorrect;
-> - Changed mem error internal injection to use a common code;
-> - No more hardcoded values for CPER: instead of using just the
->   payload at the QAPI, it now has the full raw CPER there;
-> - Error injection script now supports changing fields at the
->   Generic Error Data section of the CPER;
-> - Several minor cleanups.
+> :)
 > 
-> v7:
-> - Change the way offsets are calculated and used on HEST table.
->   Now, it is compatible with migrations as all offsets are relative
->   to the HEST table;
-> - GHES interface is now more generic: the entire CPER is sent via
->   QMP, instead of just the payload;
-> - Some code cleanups to make the code more robust;
-> - The python script now uses QEMUMonitorProtocol class.
+> > 
+> >    I've got some nasty awk which kind of works some of the time;
+> > but it does require a lot of handholding; often things like inlining
+> > isn't spotted so gives a false positive, and I'm only looking at
+> > the objects from a single architecture, so again have to grep
+> > for the symbol name to make sure it's not used by a different
+> > architecture build.
+> > 
+> >    And heck, I wish git log -G was faster.
 > 
-> v6:
-> - PNP0C33 device creation moved to aml-build.c;
-> - acpi_ghes record functions now use ACPI notify parameter,
->   instead of source ID;
-> - the number of source IDs is now automatically calculated;
-> - some code cleanups and function/var renames;
-> - some fixes and cleanups at the error injection script;
-> - ghes cper stub now produces an error if cper JSON is not compiled;
-> - Offset calculation logic for GHES was refactored;
-> - Updated documentation to reflect the GHES allocated size;
-> - Added a x-mpidr object for QOM usage;
-> - Added a patch making usage of x-mpidr field at ARM injection
->   script;
+> :)
 > 
-> v5:
-> - CPER guid is now passing as string;
-> - raw-data is now passed with base64 encode;
-> - Removed several GPIO left-overs from arm/virt.c changes;
-> - Lots of cleanups and improvements at the error injection script.
->   It now better handles QMP dialog and doesn't print debug messages.
->   Also, code was split on two modules, to make easier to add more
->   error injection commands.
+> > 
+> > Anyway, thanks for the suggestion!
 > 
-> v4:
-> - CPER generation moved to happen outside QEMU;
-> - One patch adding support for mpidr query was removed.
-> 
-> v3:
-> - patch 1 cleanups with some comment changes and adding another place where
->   the poweroff GPIO define should be used. No changes on other patches (except
->   due to conflict resolution).
-> 
-> v2:
-> - added a new patch using a define for GPIO power pin;
-> - patch 2 changed to also use a define for generic error GPIO pin;
-> - a couple cleanups at patch 2 removing uneeded else clauses.
-> 
-> Example of generating a CPER record:
-> 
-> $ scripts/ghes_inject.py -d arm -p 0xdeadbeef
-> GUID: e19e3d16-bc11-11e4-9caa-c2051d5d46b0
-> Generic Error Status Block (20 bytes):
->       00000000  01 00 00 00 00 00 00 00 00 00 00 00 90 00 00 00   ................
->       00000010  00 00 00 00                                       ....
-> 
-> Generic Error Data Entry (72 bytes):
->       00000000  16 3d 9e e1 11 bc e4 11 9c aa c2 05 1d 5d 46 b0   .=...........]F.
->       00000010  00 00 00 00 00 03 00 00 48 00 00 00 00 00 00 00   ........H.......
->       00000020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
->       00000030  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
->       00000040  00 00 00 00 00 00 00 00                           ........
-> 
-> Payload (72 bytes):
->       00000000  05 00 00 00 01 00 00 00 48 00 00 00 00 00 00 00   ........H.......
->       00000010  00 00 00 80 00 00 00 00 10 05 0f 00 00 00 00 00   ................
->       00000020  00 00 00 00 00 00 00 00 00 20 14 00 02 01 00 03   ......... ......
->       00000030  0f 00 91 00 00 00 00 00 ef be ad de 00 00 00 00   ................
->       00000040  ef be ad de 00 00 00 00                           ........
-> 
-> Error injected.
-> 
-> [    9.358364] {1}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
-> [    9.359027] {1}[Hardware Error]: event severity: recoverable
-> [    9.359586] {1}[Hardware Error]:  Error 0, type: recoverable
-> [    9.360124] {1}[Hardware Error]:   section_type: ARM processor error
-> [    9.360561] {1}[Hardware Error]:   MIDR: 0x00000000000f0510
-> [    9.361160] {1}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000080000000
-> [    9.361643] {1}[Hardware Error]:   running state: 0x0
-> [    9.362142] {1}[Hardware Error]:   Power State Coordination Interface state: 0
-> [    9.362682] {1}[Hardware Error]:   Error info structure 0:
-> [    9.363030] {1}[Hardware Error]:   num errors: 2
-> [    9.363656] {1}[Hardware Error]:    error_type: 0x02: cache error
-> [    9.364163] {1}[Hardware Error]:    error_info: 0x000000000091000f
-> [    9.364834] {1}[Hardware Error]:     transaction type: Data Access
-> [    9.365599] {1}[Hardware Error]:     cache error, operation type: Data write
-> [    9.366441] {1}[Hardware Error]:     cache level: 2
-> [    9.367005] {1}[Hardware Error]:     processor context not corrupted
-> [    9.367753] {1}[Hardware Error]:    physical fault address: 0x00000000deadbeef
-> [    9.374267] Memory failure: 0xdeadb: recovery action for free buddy page: Recovered
-> 
-> Such script currently supports arm processor error CPER, but can easily be
-> extended to other GHES notification types.
-> 
-> 
-> Mauro Carvalho Chehab (21):
->   acpi/ghes: add a firmware file with HEST address
->   acpi/generic_event_device: Update GHES migration to cover hest addr
->   acpi/ghes: get rid of ACPI_HEST_SRC_ID_RESERVED
->   acpi/ghes: simplify acpi_ghes_record_errors() code
->   acpi/ghes: better handle source_id and notification
->   acpi/ghes: Remove a duplicated out of bounds check
->   acpi/ghes: rework the logic to handle HEST source ID
->   acpi/ghes: Change the type for source_id
->   acpi/ghes: Don't hardcode the number of sources on ghes
->   acpi/ghes: make the GHES record generation more generic
->   acpi/ghes: don't crash QEMU if ghes GED is not found
->   acpi/ghes: rename etc/hardware_error file macros
->   acpi/ghes: better name GHES memory error function
->   acpi/ghes: add a notifier to notify when error data is ready
->   acpi/generic_event_device: add an APEI error device
->   arm/virt: Wire up a GED error device for ACPI / GHES
->   qapi/acpi-hest: add an interface to do generic CPER error injection
->   docs: acpi_hest_ghes: fix documentation for CPER size
->   scripts/ghes_inject: add a script to generate GHES error inject
->   target/arm: add an experimental mpidr arm cpu property object
->   scripts/arm_processor_error.py: retrieve mpidr if not filled
-> 
->  MAINTAINERS                            |  10 +
->  docs/specs/acpi_hest_ghes.rst          |   6 +-
->  hw/acpi/Kconfig                        |   5 +
->  hw/acpi/aml-build.c                    |  10 +
->  hw/acpi/generic_event_device.c         |  19 +-
->  hw/acpi/ghes-stub.c                    |   2 +-
->  hw/acpi/ghes.c                         | 312 +++++++----
->  hw/acpi/ghes_cper.c                    |  32 ++
->  hw/acpi/ghes_cper_stub.c               |  19 +
->  hw/acpi/meson.build                    |   2 +
->  hw/arm/virt-acpi-build.c               |  12 +-
->  hw/arm/virt.c                          |  19 +-
->  include/hw/acpi/acpi_dev_interface.h   |   1 +
->  include/hw/acpi/aml-build.h            |   2 +
->  include/hw/acpi/generic_event_device.h |   1 +
->  include/hw/acpi/ghes.h                 |  37 +-
->  include/hw/arm/virt.h                  |   2 +
->  qapi/acpi-hest.json                    |  35 ++
->  qapi/meson.build                       |   1 +
->  qapi/qapi-schema.json                  |   1 +
->  scripts/arm_processor_error.py         | 388 ++++++++++++++
->  scripts/ghes_inject.py                 |  51 ++
->  scripts/qmp_helper.py                  | 702 +++++++++++++++++++++++++
->  target/arm/cpu.c                       |   1 +
->  target/arm/cpu.h                       |   1 +
->  target/arm/helper.c                    |  10 +-
->  target/arm/kvm.c                       |   3 +-
->  27 files changed, 1552 insertions(+), 132 deletions(-)
->  create mode 100644 hw/acpi/ghes_cper.c
->  create mode 100644 hw/acpi/ghes_cper_stub.c
->  create mode 100644 qapi/acpi-hest.json
->  create mode 100644 scripts/arm_processor_error.py
->  create mode 100755 scripts/ghes_inject.py
->  create mode 100644 scripts/qmp_helper.py
-> 
+> Glad you're able to spot some nice (+fun, otherwise you wouldn't be doing it
+> ;) ) things!
 
+Dave
+
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
