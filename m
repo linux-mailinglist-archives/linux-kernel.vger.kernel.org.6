@@ -1,144 +1,110 @@
-Return-Path: <linux-kernel+bounces-331402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F27397AC6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:51:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3077397AC6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A0F28C274
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14EB28C891
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDB814C5AE;
-	Tue, 17 Sep 2024 07:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08D91509AB;
+	Tue, 17 Sep 2024 07:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZqzP+xTS"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b03w+eEB"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED54137745
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 07:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9F220EB;
+	Tue, 17 Sep 2024 07:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726559471; cv=none; b=Xvh68rkUPVW1na3jPFhp6PqtYiJr036KcwU4o/sal6RFwpbnezJN//QiYV3ch++2tCw14e2nT60TYtiRNTnN0PISPjYmwtssSg1g1fPGC9rmKB8V0jkvgDY2QLqAibfrE8dWFjC7XA0c2/vSvUJsisKEwLkDM+gJkt62in7yXgY=
+	t=1726559484; cv=none; b=ZRt7MAjXhHbNnGPjmRsO1ssXtUh2JNigTaIApAkyED77JZIbwb8I/YYAKvOisFwxhdb9htEMr3MrJ4K2oJ1korXYoMYzB8aio2HbL8rMwZ5kfrJpB83GqfEB2jLpsb8PiiRRkmEQdXCvee2QcNbmG49aixEwpN5jDHgiS1Pkb0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726559471; c=relaxed/simple;
-	bh=Fb/PRE95IrWc4GVMYKNPXZjzYswrFaLIb3MD8w25iCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ipd2N2XrU80mlDI8CU6CSfRG3SJwNRW6uKvrQm2Dx6wv4Rhz5apZKC2HPFSJo7rYTUqhLcoekB6efjXwyRquqKTXfoNcnDNBVoibI7CB7GRiZpiKFAdQuuuQYGX7mzceohFoCubmU5aUrT2s2WXlRERGj5wJ+JhYoyMkSHLjbI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZqzP+xTS; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cae102702so33663845e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 00:51:08 -0700 (PDT)
+	s=arc-20240116; t=1726559484; c=relaxed/simple;
+	bh=pjuFRl9WZsOXg0FqWF5gKgVdiqZ8jg1lC79dYya+Fr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PKg3PnY5kQEGM+IKRHxbUFw99mYUlik+111ZVgyXgghqFgjhJXVn8Xz7UdxBlccJ1xp87h5moFH0Mya/CBJ9JUOVZVQDj73xkRww3z2yrudZTf54c1N4C7icWCgl4+M3kedwlqywF9UYMSJZU/AOAdWqx2wCRcz6Hicx07FOLt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b03w+eEB; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20792913262so34165115ad.3;
+        Tue, 17 Sep 2024 00:51:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726559467; x=1727164267; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vKbget9kHS3cKjGipzdpUeRREgJys2Zr0EUkoUcP4ps=;
-        b=ZqzP+xTS9Vb0kXE5GLAwjChSjLfb3JeKt4qEfSqIORiNgnOuN7udt+aO82yBRiw1FJ
-         dFrSo2h99LzXCFD0IF4DYZ6JocVQP6W0/2IOTTz4fs+jqExuVF2A3nDCaYPY4XJwIGOE
-         X2fT15KnFTgtP6OTqrAisLhhavT5nhASyQbZ5dAv1tziCzHs17MzXoBtzWAxyztBN70p
-         1W7Hv3+NrQetuIAR0rQPqq1u0zZn4/fHD/ttUoKDl9G/Ad9arL7vWGj0y7vScnlCqDKW
-         FQbAS9q1N9/QM7iHRBAPasCLzaUS3yeFHHA+JzV3amUlw52un4jGbhQK81ppxDpcT/Xe
-         YZog==
+        d=gmail.com; s=20230601; t=1726559482; x=1727164282; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GrGH2mPIe89MQypJfzhvjQ7gBAj+5lcgtl2++J9A1dc=;
+        b=b03w+eEB1iow081wfwgO+m9xWHrd5vy3vI76EDlNefq/OLbFXoi1mjdrdX5OSc96CG
+         ClXv5Sqffz9MdMLOubHb6BDkFRh9qLWgQLqe3K/tgMfLl/u3Ccv1lJTfL6nyLSbDs4ZF
+         tYD4qduPLIoNxpdDl2owBkYYJDFz5KpibiERBSedOxht1vDhqqhRkzYfiJyPtfe3IBBc
+         WTIYWQhWoDSpv6Str0UFA1M255DvNghxghLcoR9oEKC6lMfS/P7AiCMvQNB3Q5bFFN1z
+         tOMnemJabFXroxVYQggYd9KZTLOXYqT8MuoUa6/upNqm9Oy9n3HPA2/SG06RhccR8ipK
+         rvrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726559467; x=1727164267;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vKbget9kHS3cKjGipzdpUeRREgJys2Zr0EUkoUcP4ps=;
-        b=XY4CogquAc/at2z/LpatlXSV6ImFcOyVcBXOMthY8jxb45PoSRAKEEutuZEH4JqqbN
-         pKJmwm8WQIA2PgyZRP5rmoymQXs+Bc/unYB/fOHex9Yu8UMAMimRdyhAg016HDxCCzJ/
-         +x8q5RrPsfAYW3DBzGuO1qUjH8BtKzdcpE079w//VaM2oLgfuusaUazz9N8ksZ9Bttto
-         phr5jJ07y9HbIRHL9rH6IYY0QQY6i2CUjGUfrNj1zhUGxSVMioICijaDVZBHP6D+r8+J
-         +Z8LzCj3VbvS7nxSJ9eCa0yRex9CDjXPMSdmwkrxSaLidADPQruCEt3kxEIicAEU3JGZ
-         ikhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQNwOTkql5x1HuPGDKhUdw6EvUljJt6iW3wnkxEPpFq071kT1bW7ZbAwsgbjzEsNbFixH5mhsJ+EpbzeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8/rHMZguQn3XPtlq2O9tXAWvO+fTB8Zmv7ls/reprbPWM3cp1
-	FQZNZMSRxY920AFFz2AzBtz+mW6vPEIhdT3eydJDkTWl82uDTNdF4VAcioojKjk=
-X-Google-Smtp-Source: AGHT+IE0rMtK6o/bazTbZ5qxAOmHueW9ni4vtvrgTICtT7NsNghRhqyfXop3QknDWPgmyETSFhjNiw==
-X-Received: by 2002:a05:600c:3b07:b0:426:6876:83bb with SMTP id 5b1f17b1804b1-42d9082b91bmr99955905e9.17.1726559466759;
-        Tue, 17 Sep 2024 00:51:06 -0700 (PDT)
-Received: from localhost (109-81-84-13.rct.o2.cz. [109.81.84.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b15c2f4sm129769635e9.24.2024.09.17.00.51.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 00:51:06 -0700 (PDT)
-Date: Tue, 17 Sep 2024 09:51:05 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the security tree with the mm tree
-Message-ID: <Zuk06cfmaOT5fltF@tiehlicka>
-References: <20240911142822.7c65e02e@canb.auug.org.au>
- <20240917093048.71949a8f@canb.auug.org.au>
+        d=1e100.net; s=20230601; t=1726559482; x=1727164282;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GrGH2mPIe89MQypJfzhvjQ7gBAj+5lcgtl2++J9A1dc=;
+        b=E9YOMNThbSp7U4sLMp5F4UyAHtNjL7Dromt5qwNY2TCkPA2j3PPHfmx7t/Q4qXJKHv
+         CcM7yptvDhugVwTvMUCrt8Xq4cUcZjx4bUJRRJieedLa1nFqR0CVVZ5cnV7mphLiFFzG
+         U9EaqOUKyl1UaPJEZG9vDAH0+i0qRMKZSOj3GuAXlCZw8/Cwpfv8gdGUIwkVROhceqLo
+         TB291R5wcLYE76104aE3NOd/T6d7ReBhcDERGwsdlK9FnJIR0j6qbwHNw3ZAmT2k2hj9
+         45FgtENNrGH3CE+u1xIj7BuneiQ2T9JbWupo3m6R2sSp80VIeuo5uqX1JI+MYVaNUizo
+         slXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbt+7WOLsqjoR6e5JKh6oq3dBijY/WrfI/f0YtyGBzRup6ZUalqq5l7ZoHcmQxBqDbFcB6E0R9F9/nNoOs@vger.kernel.org, AJvYcCXb6bEXS3UdHHGd2M+5tuFAGEVT+HZK8MI4B9VKLYVPc/YzYmU7+XMsgJS1OCGAx9xwVQp3NxbX4dxM@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYpD6czHkoIGwNAY93lkMReGrD9hbFjqIPk22YIs0fl0rrWJ25
+	4V78pHTEsb2hKzQE99BOyHa5S1api+Da6Gl5KOtq4cgio7KJdjRjESTz2TD77JvIog==
+X-Google-Smtp-Source: AGHT+IEeus8aOTYcUECAdvl+30eI4Dv62kNZY04t3pAKwmTROL2awD8q4KVcvuM9V7BGz+mqH4+LeA==
+X-Received: by 2002:a17:902:c94b:b0:207:5665:32b2 with SMTP id d9443c01a7336-20782a69ad1mr210704465ad.40.1726559481985;
+        Tue, 17 Sep 2024 00:51:21 -0700 (PDT)
+Received: from ?IPV6:2601:644:8502:9460:864b:f5ff:fe5c:59a5? ([2601:644:8502:9460:864b:f5ff:fe5c:59a5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d19c0sm46139135ad.146.2024.09.17.00.51.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 00:51:21 -0700 (PDT)
+Message-ID: <7c99becc-c179-4f81-ae50-5fa3bdffe1b4@gmail.com>
+Date: Tue, 17 Sep 2024 00:51:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917093048.71949a8f@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm: expressatt: fix pm8921_l6 regulator
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240916-sd-card-regulator-v1-1-669533c393d7@gmail.com>
+ <edeb1681-7159-4fbd-ba81-6d007fa12f4d@kernel.org>
+Content-Language: en-US
+From: Rudraksha Gupta <guptarud@gmail.com>
+In-Reply-To: <edeb1681-7159-4fbd-ba81-6d007fa12f4d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 17-09-24 09:30:48, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Wed, 11 Sep 2024 14:28:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the security tree got conflicts in:
-> > 
-> >   include/linux/lsm_hooks.h
-> >   security/security.c
-> > 
-> > between commit:
-> > 
-> >   3346ada04cf5 ("bcachefs: do not use PF_MEMALLOC_NORECLAIM")
-> > 
-> > from the mm-unstable branch of the mm tree and commit:
-> > 
-> >   711f5c5ce6c2 ("lsm: cleanup lsm_hooks.h")
-> > 
-> > from the security tree.
-> > 
-> > I fixed it up (I used the latter version ofinclude/linux/lsm_hooks.h
-> > and see below) and can carry the fix as necessary. This is now fixed as
-> > far as linux-next is concerned, but any non trivial conflicts should be
-> > mentioned to your upstream maintainer when your tree is submitted for
-> > merging.  You may also want to consider cooperating with the maintainer
-> > of the conflicting tree to minimise any particularly complex conflicts.
-> > 
-> > -- 
-> > Cheers,
-> > Stephen Rothwell
-> > 
-> > diff --cc security/security.c
-> > index 3581262da5ee,4564a0a1e4ef..000000000000
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@@ -660,7 -745,7 +745,7 @@@ static int lsm_file_alloc(struct file *
-> >    *
-> >    * Returns 0, or -ENOMEM if memory can't be allocated.
-> >    */
-> > - int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
-> >  -static int lsm_inode_alloc(struct inode *inode)
-> > ++static int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
-> >   {
-> >   	if (!lsm_inode_cache) {
-> >   		inode->i_security = NULL;
-> 
-> This is now a conflict between the mm tree and Linus' tree.
+> That's odd. Are you sure regulator is provided in SD card node? Is it
+> SDCC1 or SDCC3?
 
-Andrew said he would drop the mm patches and I will resubmit when merge
-window closes.
+I believe it's SDCC3. Unfortunately, I don't think this patch is the 
+solution either anymore. It was working with this patch consistently, 
+but now my phone just hangs on mounting the SD card like before. I've 
+tried a combination of GPT and MSDOS + vfat, ext2, and ext4. I'm not 
+sure what I'm doing wrong cause the SD card consistently works on the 
+downstream Linux kernel :(
+
+Sorry for wasting your time
 
 
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+Rudraksha
+
 
