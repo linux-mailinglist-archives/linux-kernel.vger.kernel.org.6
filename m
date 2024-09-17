@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-331372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2DD97ABF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:22:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D07B97ABF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C230282C4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:22:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6131F22EB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A0C136352;
-	Tue, 17 Sep 2024 07:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A898413B5B3;
+	Tue, 17 Sep 2024 07:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cxAZQLM/"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3qEzGn5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B1E4594D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 07:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1139E4594D;
+	Tue, 17 Sep 2024 07:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726557744; cv=none; b=s/DiG0m/P3qgGg2kt4R8u4Hz0K+1x+bBx+yFn/qBy4EO/hm8YR0cl4QN4TiDiiz95EHofDgM9RAmU5l9T/12r7Q9gw48slSaYhT+L1KxUiuKYedlyhtwO1tdgCRUXuR46WXCUz+bevhtWkE+ZmS/AUv7v8JUG6dAsPRR0rnlnC4=
+	t=1726557873; cv=none; b=DVWGbDZg9GQ+gTUlFQUJqKChTb1CW4p9GjlOXkX/WcWYgEksEW/7vpa28bhFGZngbcO9Dz6K1tGcDtYZwzVsSmyBxlDtX06j2KKhEr63d91XXX6oaIemc1fJP0zFZ0qMDpiLEEjXPIO758PWj/QvdN0eXxO/CqbVYydnM8qn1go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726557744; c=relaxed/simple;
-	bh=EXosztwyNJ5epeSTdrIp9xX9X4TY8HE1nbbC7P7snp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j4D4nTOe3XERuFjLA5yMxVeSuCNrPLS5pPIPUQg6psVDzMVyGR4rlVyub6391+KQ6rMOkRmJkJo0st6iyg566BmGYaAManPClSeNZhFLlUpCz4xm1vk6Ge/T1ky1Jb2JHmzayqlb72efbBcDRf/PWev+LkR2EbFaqrQOQyjLZg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cxAZQLM/; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cb1758e41so33351925e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 00:22:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726557740; x=1727162540; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aTfn5RtEW0BHfgAEJj/p2eepLow2Hx5yPD5gDz7PNO0=;
-        b=cxAZQLM/awzTF01TxZmYFXccfQ8ufmMz+R2RTEnmGYDIPawk9d3yZ7R7j8W1GII2Vu
-         Vpk7UeVgbgx2aZ8++pZplPbiP1VViWAAZKP92CN64Vw6CwPTzT48wuAEcLqjYg2Ct4JG
-         REg709Uk81KoI+kj53lKO3NveFKwEcwTRKVXZu63xwJhicJBN13P1eziYgIjZfQ2Bwks
-         ms1ntJodBfTa/o12UErZPSfskkxT712reMIumzskHQxukeBhxJQy6vaAH7/s3bZnBAAr
-         iHz2hAptvKvTpHWEMz6TQJvagxpQD+3FDfR5TakbVLMYA4MxKQfWAtyhX/hZB9IEeE04
-         L+cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726557740; x=1727162540;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aTfn5RtEW0BHfgAEJj/p2eepLow2Hx5yPD5gDz7PNO0=;
-        b=UVc0LA3u8fcDGN2rOqTrwZH8Y014lUPqX23CVTwn7Dg/elaI3R7WEhJ0R1JSAbwedu
-         8VGYUTX+BsEiQOCv8ub+94EDBNxEtTR3Ueh2GwxOdzkWKUlr/1RHnIwQMo5ah64oOtRM
-         kHIqbaSNWVqQI1Nl/ogw5jJElT1WX3HCggWYkmdV83cuRgLyxSv1PmuoMFxLHZ1g49xh
-         VNerYCI+mMM2Dv2JA17K7W48SwpJtxNkhbNz+ciclfhut38Ab/jDrbdaJezNgBj9Taq6
-         54JXtHMfYnwiUnKYgIWaULQvBI5yytkOFbrIUdaxiC2BMzdJsWc8eDgeQ/JvZvEwvdhZ
-         HDhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXcDADrW2LnwIwhYNHJ/mhbLiAEZQf8eCjrqFsVGJC4o9U52tR4Z9z4IGivkpDH5P3XIks66Bx8d2Phwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFzcQ3lzzJ37nLpqJOTPJechdQoAu3DdaBc2GwgR2whF/aV8pJ
-	UGm/lZGz/2bhGXDQd3dy8Iq26cT4voluh19opxwTBUOQrtZW8o48zefS+YFxxkY=
-X-Google-Smtp-Source: AGHT+IEs3i+jEeRyv1/BqTTM4EXjo9wtLDdr/wLvkxkXwQKCsGaLcSJy1Ldi9iMlPSaFT1+hS0S36w==
-X-Received: by 2002:a05:600c:1d17:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-42d964d8563mr99634035e9.25.1726557740344;
-        Tue, 17 Sep 2024 00:22:20 -0700 (PDT)
-Received: from [192.168.7.95] ([212.114.21.58])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b1947cfsm128395345e9.42.2024.09.17.00.22.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 00:22:19 -0700 (PDT)
-Message-ID: <94e37138-ae66-4336-93ac-79683f2058aa@linaro.org>
-Date: Tue, 17 Sep 2024 09:22:19 +0200
+	s=arc-20240116; t=1726557873; c=relaxed/simple;
+	bh=X8vjfoYlPbAxQw8Py+2hLWq0kqxUupoSphWKecqxkmM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GxNQLPQftzmTM1swEY0lfjJrR+1ZwvmkPH6xHuRT7t+FYstaFNMw3xEGmp04RCNO50WAOkhDMb/k9/TGeHncb39HmVrX9p1mym7jvCyEu0g5zEEVHi5EHr8508Q/baJnVd/LXLSQx6wOhZXBdoG35/1HdMutKzdBasBpQeUmQ0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3qEzGn5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEB2C4CEC6;
+	Tue, 17 Sep 2024 07:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726557872;
+	bh=X8vjfoYlPbAxQw8Py+2hLWq0kqxUupoSphWKecqxkmM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=B3qEzGn51fC5JCwWjeiT/tro8LjflbyM4r2j0dtAHC9keNFjiI+LrQbgpnVTyg2xI
+	 NdXn3572pA6aYydBt3x2/SCHV+bG9NvnH/rQwlg0O2AxcuVyV15toWrBYRda9dSq9b
+	 g55H3km5oaHKZ4Q4Zkm2jgSmx60ZQnK495LRc/AP25nltC1MZ10KuQDYGGBn77k1di
+	 N+XNTSBUM8DzOgnT3fGQTAspxa+83mjFVRwCXLjhIPGgfXVN1SOUIINlq8zaLr/8zn
+	 A/MWS6fMAjyT4Bs/2h2B4XH0bNbamTKkCHZMzwLdiGEuzrIOCNIgTptiPm2vZbHjHK
+	 P+AlN23lWI5Qw==
+Message-ID: <e1aad556-eab1-4ac4-aec3-1706e302cfb1@kernel.org>
+Date: Tue, 17 Sep 2024 09:24:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,67 +49,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] tee: amdtee: Use %pUl printk() format specifier to
- print GUIDs
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rijo Thomas <Rijo-john.Thomas@amd.com>
-Cc: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
- op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
-References: <20240911204136.2887858-1-andriy.shevchenko@linux.intel.com>
- <CAHUa44G4O0JgqN=BwvshRXzUeEE1oXD1o8Yn-5X6p5qY8vkDQA@mail.gmail.com>
- <ZuQF_w7G1A90tYG3@smile.fi.intel.com>
- <5c95cbc6-48b6-9cf4-8682-fc6469cb9c81@amd.com>
- <Zuf8fw1MM0jaisUh@smile.fi.intel.com>
+Subject: Re: [PATCH] nullb: Adjust device size calculation in null_alloc_dev()
+From: Damien Le Moal <dlemoal@kernel.org>
+To: Aleksandr Mishin <amishin@t-argos.ru>, Shaohua Li <shli@fb.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Zhu Yanjun <yanjun.zhu@linux.dev>,
+ Chengming Zhou <zhouchengming@bytedance.com>,
+ John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai3@huawei.com>,
+ Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+References: <20240917070729.15752-1-amishin@t-argos.ru>
+ <c50f7ca2-8f3d-4b7e-bd50-1957e4a09b7b@kernel.org>
 Content-Language: en-US
-From: Jerome Forissier <jerome.forissier@linaro.org>
-In-Reply-To: <Zuf8fw1MM0jaisUh@smile.fi.intel.com>
+Organization: Western Digital Research
+In-Reply-To: <c50f7ca2-8f3d-4b7e-bd50-1957e4a09b7b@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 9/16/24 11:38, Andy Shevchenko wrote:
-> On Mon, Sep 16, 2024 at 01:38:27PM +0530, Rijo Thomas wrote:
->> On 9/13/2024 2:59 PM, Andy Shevchenko wrote:
->>> On Thu, Sep 12, 2024 at 07:50:08AM +0200, Jens Wiklander wrote:
->>>> On Wed, Sep 11, 2024 at 10:41 PM Andy Shevchenko
->>>> <andriy.shevchenko@linux.intel.com> wrote:
->>>>>
->>>>> Replace the custom approach with the %pUl printk() format specifier.
->>>>> No functional change intended.
->>>
->>>> Thanks, the patch looks like a nice simplificatrion.
->>>
->>> Thank you for the review.
->>>
->>>> Rijo, Devaraj, does this work for you?
->>>
->>> Yes, please test, because seems others use uuid_t (UUID BE) for TEE,
->>> but in this driver IIUC it's guid_t (UUID LE).
+On 2024/09/17 16:21, Damien Le Moal wrote:
+> On 2024/09/17 16:07, Aleksandr Mishin wrote:
+>> In null_alloc_dev() device size is a subject to overflow because 'g_gb'
+>> (which is module parameter, may have any value and is not validated
+>> anywhere) is not cast to a larger data type before performing arithmetic.
 >>
->> No, this does not work for us. I tested this patch, it does not work as expected.
+>> Cast 'g_gb' to unsigned long to prevent overflow.
 >>
->> %pUl gives output in uuid format (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x).
->> But, what we need, is a name with the format %08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x.
+>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 >>
->> Endian-ness is not an issue here. uuid generates name with 4 hypens (-).
->> While, in our TA naming we are using 3 hyphens (-).
+>> Fixes: 2984c8684f96 ("nullb: factor disk parameters")
+>> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+>> ---
+>>  drivers/block/null_blk/main.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+>> index 2f0431e42c49..5edbf9c0aceb 100644
+>> --- a/drivers/block/null_blk/main.c
+>> +++ b/drivers/block/null_blk/main.c
+>> @@ -762,7 +762,7 @@ static struct nullb_device *null_alloc_dev(void)
+>>  		return NULL;
+>>  	}
+>>  
+>> -	dev->size = g_gb * 1024;
+>> +	dev->size = (unsigned long)g_gb * 1024;
 > 
-> Ah, good catch! Can somebody add a comment there to explain that this uses
-> non-standard human-readable representation of GUID/UUID?
+> This still does not prevent overflows... So what about doing a proper check ?
 
-Could this be due to some copying/pasting from the OP-TEE code base which had
-a similar mistake prior to v2.3.0 [1][2][3]?
-
-[1] https://github.com/OP-TEE/optee_os/blob/2.3.0/CHANGELOG.md?plain=1#L40-L45
-[2] https://github.com/OP-TEE/optee_client/commit/a5b1ffcd26e3
-[3] https://github.com/OP-TEE/optee_client/commit/365657667f89
+This still does not prevent overflows on 32-bits architectures.
 
 > 
-> P.S. Thank you for testing!
+>>  	dev->completion_nsec = g_completion_nsec;
+>>  	dev->submit_queues = g_submit_queues;
+>>  	dev->prev_submit_queues = g_submit_queues;
 > 
 
-Regards,
 -- 
-Jerome
+Damien Le Moal
+Western Digital Research
+
 
