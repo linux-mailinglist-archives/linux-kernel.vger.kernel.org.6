@@ -1,105 +1,171 @@
-Return-Path: <linux-kernel+bounces-332002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB5397B3E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:05:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFB597B3EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F34A7B21202
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:05:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E01DA1F24865
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BF617D8A2;
-	Tue, 17 Sep 2024 18:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76333183CB7;
+	Tue, 17 Sep 2024 18:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ICZknHN2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LdDdL6Jj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AA44B5AE;
-	Tue, 17 Sep 2024 18:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2650E38FA1;
+	Tue, 17 Sep 2024 18:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726596311; cv=none; b=j0s00TfUBPsDj0iXGuwQmmf/rOaMZEje/0Z6Iaj0WiLrLhWTNpbozY3tOQVgggQxOZH+6Azeo2k3LfPsfjXlbd4mqovmu7ahj4EbGM9NVtvDznCPadRp5QsSeHnAYFoHX0P0XQd3bEKXDhYCoe82gKf0gBTPV5kFj3HrV1k3aCc=
+	t=1726596628; cv=none; b=tV8DnXNQnAnPh+AYXSTb/yFspKiyjmS+3eOcOnDeytZFI5B+QIDxROtC+euqNaimmI2QGNUJ6hZrpCCkoY/TQqNRtwEyA1Ch4g44H/qnRqg73H0OXy3byQ5FHnt1CtSW89B+arejUJFpSXUjw5F3gd5krgIO+WBaUvdAN6dimNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726596311; c=relaxed/simple;
-	bh=HNiU/xFkXuBMHW7Zd5LsIV4jMcr1zTjEJbiCwnEDbRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QRacSMwLYVg3G8skeeB5s+04q/w/6VC+mvwiUirFct6eJ91NB9O2Vs2mm+ui2Ekz1VMFVUV5w1UJR//HBYx3YfENdi2Jk93lmlW7XUJpX5uSBUio0rCilBOs+r1PLR5+Tnkgxq+5kMi8Eho6RbotwbRBI72fzQT/+1Hcvgz2dns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ICZknHN2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C2E3C4CED0;
-	Tue, 17 Sep 2024 18:05:10 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ICZknHN2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1726596306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HNiU/xFkXuBMHW7Zd5LsIV4jMcr1zTjEJbiCwnEDbRM=;
-	b=ICZknHN2wr6dqCtKUdedr1JBjPSQKgbtFXOE/Diejh05c40JiOMKq6QcWpZoJKgkrECahl
-	2SFL/0/Z5eS5rS1ZI/hz7GCZ93Q32WDv+YbnFtbrFwsVQPy2OIOtPXKGko5NB17jBRYrmX
-	HQ4Ccy7uCO81e72BYfd4Pn+HIJikevo=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ef27daea (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 17 Sep 2024 18:05:06 +0000 (UTC)
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-27cebc3e91eso260701fac.2;
-        Tue, 17 Sep 2024 11:05:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUobvUI67+VqRGFvUHB84YPE17UQbf80LDALi9LzvXyT1v23uIwPgRxytmQ3hSbNg15/czi4Ytk@vger.kernel.org, AJvYcCX2A1mzV1D3XQ/ylA5kfUKlypp1Eud/bKWeACUoOxNUpaaxyGgYgWb7PnEKzUSlekPjOg9Eu0lhAra3bbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4FmiF3r9VRnCDuonXNA+wizdRHIxI5XKXlY0OrMFCcUM0SwLn
-	op2XOSPmjDSJVcZcfowrol1StPcj3PyJqWmXKVe7p6QdAPplecqmmdDtX26r7mdnJjKeyHcGDDR
-	f0wfgFJTrQ9C9TBnSFdd/G6i1GAU=
-X-Google-Smtp-Source: AGHT+IEQZRhAA4Jq8raTdkSStrXgki8rCOXGQ5BoH3HW1S+7ShUR0mu1p+XIZxVwkJ+vt4xnl2M4yPpvrx+YnlExQ5I=
-X-Received: by 2002:a05:6870:d107:b0:260:fb11:3e49 with SMTP id
- 586e51a60fabf-27c68c344d6mr8469322fac.45.1726596304061; Tue, 17 Sep 2024
- 11:05:04 -0700 (PDT)
+	s=arc-20240116; t=1726596628; c=relaxed/simple;
+	bh=xtvyd1hf4SBhNzbONKOrGmyIrZ9Gk897DoDSdjF3cnM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dcdPhmWjhak2zkVV2jLaKS52ZtOHR9mkFienVQY9eNK4emUExpnv7qK6GqjYmNKGNA9njb683EXUkzy0YlaWh73I0VaDH5giG/ICVM6s7XCxZl3beHJBLyMvEoXQ2hy5kHFYfGYnr+httNvc8jb7SnOg2BySo6qq/NwLEiUKw68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LdDdL6Jj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48HI2rTx021517;
+	Tue, 17 Sep 2024 18:10:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Xsaxpigv0/6kI/TwNwYU01A8ExRcLlAuGWhHEBR602Y=; b=LdDdL6JjwYOT278j
+	FT1+wMyqlTbagzMt/ronQmdigKvEMyk9BEUY0cDNAxwenLk78ukZN+K4YlDRyIl7
+	Uo18yYLLjtexTePXkrzjQtpeqovFdkb3zeIHQq0CmnUtkKakFEEbPbM0GgHhbaDW
+	9KrjeCBVLU4b7ItM+Iz92G6HLlw4wXwret4ERurFBS6Kxy8gYSjzxwl7O8oeFb6Y
+	9QK1eA007WsNGR6KSg6F6+CGTv0lzhzFnE8s+jNaruRGZZXXfyV5npQqegzrQ2i2
+	UPj45JmYGVDR4Eajk8WkuMhKy9ds514XkqHXDM3A01ByUXX/4OrSTErU+W2ESByL
+	r4ZgVg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4k0qp26-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 18:10:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48HIA90t027026
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 18:10:09 GMT
+Received: from [10.111.182.118] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Sep
+ 2024 11:10:08 -0700
+Message-ID: <1b2af606-ade7-4550-b1ba-a78202b257e5@quicinc.com>
+Date: Tue, 17 Sep 2024 11:10:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240418114814.24601-1-Jason@zx2c4.com> <e09ce9fd-14cb-47aa-a22d-d295e466fbb4@amazon.com>
- <CAHmME9qKFraYWmzD9zKCd4oaMg6FyQGP5pL9bzZP4QuqV1O_Qw@mail.gmail.com>
- <ZieoRxn-On0gD-H2@gardel-login> <b819717c-74ea-4556-8577-ccd90e9199e9@amazon.com>
- <Ziujox51oPzZmwzA@zx2c4.com> <Zi9ilaX3254KL3Pp@gardel-login> <01d2b24c-a9d2-4be0-8fa0-35d9937eceb4@amazon.com>
-In-Reply-To: <01d2b24c-a9d2-4be0-8fa0-35d9937eceb4@amazon.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Tue, 17 Sep 2024 20:04:51 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rxn5KJJBOC3TqTEgotnsFO5r6F-DJn3ekc5ZgW8OaCFw@mail.gmail.com>
-Message-ID: <CAHmME9rxn5KJJBOC3TqTEgotnsFO5r6F-DJn3ekc5ZgW8OaCFw@mail.gmail.com>
-Subject: Re: [REGRESSION] Re: [PATCH] Revert "vmgenid: emit uevent when
- VMGENID updates"
-To: Alexander Graf <graf@amazon.com>
-Cc: Lennart Poettering <mzxreary@0pointer.de>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Babis Chalios <bchalios@amazon.es>, 
-	"Theodore Ts'o" <tytso@mit.edu>, "Cali, Marco" <xmarcalx@amazon.co.uk>, Arnd Bergmann <arnd@arndb.de>, 
-	"rostedt@goodmis.org" <rostedt@goodmis.org>, Christian Brauner <brauner@kernel.org>, linux@leemhuis.info, 
-	regressions@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>, 
-	"Michael Kelley (LINUX)" <mikelley@microsoft.com>, Sean Christopherson <seanjc@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: mwifiex: Fix memcpy() field-spanning write warning
+ in mwifiex_config_scan()
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: David Lin <yu-hao.lin@nxp.com>, Dmitry Antipov <dmantipov@yandex.ru>,
+        Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
+        Francesco Dolcini <francesco@dolcini.it>,
+        Sascha Hauer
+	<s.hauer@pengutronix.de>, Kees Cook <kees@kernel.org>,
+        "Gustavo A . R .
+ Silva" <gustavoars@kernel.org>,
+        Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>,
+        Johannes Berg <johannes.berg@intel.com>
+References: <20240917150938.843879-1-alpernebiyasak@gmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240917150938.843879-1-alpernebiyasak@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: XNHH2m2FdLi6QtOc2glCzeIvTBj5VH4A
+X-Proofpoint-GUID: XNHH2m2FdLi6QtOc2glCzeIvTBj5VH4A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 phishscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 impostorscore=0 mlxlogscore=999 clxscore=1011
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409170128
 
-On Thu, Jun 13, 2024 at 6:37=E2=80=AFPM Alexander Graf <graf@amazon.com> wr=
-ote:
-> Friendly ping again. We would really like to have a constructive
-> technical conversation and collaboration on how to make forward progress
-> with VM clone notifications for user space applications that hold unique
-> data and hence need to learn about VM clone events, outside of any
-> randomness semantics.
+On 9/17/2024 8:08 AM, Alper Nebi Yasak wrote:
+> Replace one-element array with a flexible-array member in `struct
+> mwifiex_ie_types_wildcard_ssid_params` to fix the following warning
+> on a MT8173 Chromebook (mt8173-elm-hana):
+> 
+> [  356.775250] ------------[ cut here ]------------
+> [  356.784543] memcpy: detected field-spanning write (size 6) of single field "wildcard_ssid_tlv->ssid" at drivers/net/wireless/marvell/mwifiex/scan.c:904 (size 1)
+> [  356.813403] WARNING: CPU: 3 PID: 742 at drivers/net/wireless/marvell/mwifiex/scan.c:904 mwifiex_scan_networks+0x4fc/0xf28 [mwifiex]
+> 
+> The "(size 6)" above is exactly the length of the SSID of the network
+> this device was connected to. The source of the warning looks like:
+> 
+>     ssid_len = user_scan_in->ssid_list[i].ssid_len;
+>     [...]
+>     memcpy(wildcard_ssid_tlv->ssid,
+>            user_scan_in->ssid_list[i].ssid, ssid_len);
+> 
+> Also adjust a #define that uses sizeof() on this struct to keep the
+> value same as before.
+> 
+> Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+> ---
+> I found these relevant patches that modify other such arrays, where the
+> second one removes a -1 from some sizeof() calculation:
+> 
+> https://lore.kernel.org/lkml/Y9xkECG3uTZ6T1dN@work/T/#u
+> https://lore.kernel.org/lkml/ZsZa5xRcsLq9D+RX@elsanto/T/#u
+> 
+> So I think we need the +1 to keep things same. But it appears to work
+> fine without it, so I'm not sure. Maybe it should've had a -1 before
+> that I would remove with this?
 
-With the other work now mostly done, sure, let's pick this up again. I
-think next on the list was getting the virtio rng device delivering VM
-clone events and unique UUIDs. There was a spec change posted a while
-back and a patch for the kernel. Do you want to refresh those? I
-thought that was a promising direction -- and the one we all decided
-together in person as the most viable, race-free way, etc --
-especially because it would make ways of exposing those IDs low cost.
-And, importantly for you, I think that might *also* cover the need
-that you have here, so we'll kill several birds with one stone.
+I think the original code was incorrect and was allocating too much memory.
+I do not think WILDCARD_SSID_TLV_MAX_SIZE requires modification.
 
-Jason
+> 
+>  drivers/net/wireless/marvell/mwifiex/fw.h   | 2 +-
+>  drivers/net/wireless/marvell/mwifiex/scan.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/marvell/mwifiex/fw.h b/drivers/net/wireless/marvell/mwifiex/fw.h
+> index d03129d5d24e..4a96281792cc 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/fw.h
+> +++ b/drivers/net/wireless/marvell/mwifiex/fw.h
+> @@ -875,7 +875,7 @@ struct mwifiex_ietypes_chanstats {
+>  struct mwifiex_ie_types_wildcard_ssid_params {
+>  	struct mwifiex_ie_types_header header;
+>  	u8 max_ssid_length;
+> -	u8 ssid[1];
+> +	u8 ssid[];
+>  } __packed;
+>  
+>  #define TSF_DATA_SIZE            8
+> diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
+> index cab889af4c4a..50af78ee935b 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/scan.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+> @@ -32,7 +32,7 @@
+>  #define WILDCARD_SSID_TLV_MAX_SIZE  \
+>  	(MWIFIEX_MAX_SSID_LIST_LENGTH *					\
+>  		(sizeof(struct mwifiex_ie_types_wildcard_ssid_params)	\
+> -			+ IEEE80211_MAX_SSID_LEN))
+> +			+ IEEE80211_MAX_SSID_LEN + 1))
+>  
+>  /* Maximum memory needed for a mwifiex_scan_cmd_config with all TLVs at max */
+>  #define MAX_SCAN_CFG_ALLOC (sizeof(struct mwifiex_scan_cmd_config)        \
+> 
+> base-commit: 4f3e012d4cfd1d9bf837870c961f462ca9f23ebe
+
 
