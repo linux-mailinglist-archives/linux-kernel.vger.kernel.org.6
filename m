@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-331790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C0F97B145
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:20:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC6697B147
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165B91C20DFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71DE61C21429
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170431925A4;
-	Tue, 17 Sep 2024 14:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543D2192B73;
+	Tue, 17 Sep 2024 14:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKX6o4/r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxsxDyhz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B32617BEDB;
-	Tue, 17 Sep 2024 14:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3A91925B1;
+	Tue, 17 Sep 2024 14:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726582675; cv=none; b=RbI5WCIOxELIDhQZz5PQnJG69s0C8CKFyygMtL0lZvZdrnp2bRjcTToMgBXOpSOWbLbMcidw4VO/riCm2S2j7pzKve/1X+AltkFhNl3eDzAndEIff5UmQP65rWYbpKNV37SPqgp9pfTAzA3lCSdS1JVj1rbaEenjdzGin6SF+jo=
+	t=1726582677; cv=none; b=T205+eUOt70ocOTel9K6FbzcwunRp7RdJUqD6smukABTl8/+0uSNUgtfi87fiKelWXaPoofzdjOjyNv9+t5y4rZCY1g78KiUeEzmnh7z7QrF5pihjP+0GXFqj2jlJSVOlvWo29q8sY3O4YyfHbGdKHBqehkMLJhxDtvWZEVhK/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726582675; c=relaxed/simple;
-	bh=4bq9doD09IGzlJ3vv9HsmysgLeLSxT9Eyw84oRf2g1g=;
+	s=arc-20240116; t=1726582677; c=relaxed/simple;
+	bh=CPGuVVmP9nfnoF+wMfgzB9DaNE/+HVqfHgpUsGHpkck=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UchGlwTvHAEEwHtJEvD4+lT1+zyvVf45H+CSaYYzFOc7vTClJUYgC1cY2KmzaPEfO0Lj4amNXppa0AhUgsX+Dfi74uAhlC7ovFs3GkAo+541ZjR2qHsTXU3VwTGtK9cyq1xw//aLG+sghg1r5T+nfzjQWMfnbS5fQo3IhTOYtGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKX6o4/r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42FBCC4CECE;
-	Tue, 17 Sep 2024 14:17:53 +0000 (UTC)
+	 MIME-Version; b=ioY400YZboTnuE5kEdBdh05bIrlAuxQ4WLTQ7r8CEGo6Hhdn1HoIon07+EHiFvcYenydkP8DMihnThofVFoZYBcc/zOZS6GMYXfxYxLyrdGYb5IlLh/Y7G8za1k2JTMtq3AtG2HnmhC+cP2EFwhyWIy3j2hoAJH44Y+KDUvyRZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxsxDyhz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94298C4CEC5;
+	Tue, 17 Sep 2024 14:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726582675;
-	bh=4bq9doD09IGzlJ3vv9HsmysgLeLSxT9Eyw84oRf2g1g=;
+	s=k20201202; t=1726582677;
+	bh=CPGuVVmP9nfnoF+wMfgzB9DaNE/+HVqfHgpUsGHpkck=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DKX6o4/rSSj/+99p6SQAuNKThNXjF+BJA2kw2x9aSClEOtv5zysvRDgXIdXtFwwpk
-	 3kvuQWyTw2vFMucNX5MGNztXZIVXlUYMpWlOhHSgDVNfnYedO4l+hdizb+Yeu2xvTz
-	 K4YrjvLrtkBD+dwj7YK4SXhWpNQqW+tgknpFMtdN9cywZO/NbabRrS4iyisKh6PUqz
-	 vwp1leq9nFURUP2KOXvHGyvmCZmmokq5wfecgHTTzqbWYSJHiQkuUApUp8oBM9pCYo
-	 USu9LBQ2asHTDl/ZJSQfRqa9KHCLzIN9KSXYQ4a+ynOpnBTGu3wEZFFdPeGK06U0U5
-	 KmLsxAvhtVygA==
+	b=HxsxDyhz/AwuzXACq66np4u4XrLpfHNQqs5Bm6tWzlHQ+885AdHOzSiSN1ztMyrAD
+	 8ZoaJW7oQZwvS4D3qOdA1SKcRue4DSLjJnZfQP9j3kRDcP9Xac9kxgkbeDYIPE6VeB
+	 UJOzimE6zu47d+4fAMPldduXCNxV/+Z/9QEQOL2CVsgV+DiZOX6D4kVmtIpwT+8vHB
+	 YQSGUQy15KElY6hGYPmxtM6Qb6ghabXxVDXNS52dXQSCuf79b4HJpSeQsERmOu8YMo
+	 jjImF+uCPm8IumSRyvo+Pfmmw1JPYIVEppeKTKGExZiwihShQ0V2fld1xU2UnsOBsJ
+	 tF1mdozZZts0w==
 From: Masahiro Yamada <masahiroy@kernel.org>
 To: linux-kbuild@vger.kernel.org
 Cc: Miguel Ojeda <ojeda@kernel.org>,
@@ -48,9 +48,9 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,
 	Nathan Chancellor <nathan@kernel.org>,
 	Nicolas Schier <nicolas@fjasle.eu>,
 	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 11/23] kbuild: check the presence of include/generated/rustc_cfg
-Date: Tue, 17 Sep 2024 23:16:39 +0900
-Message-ID: <20240917141725.466514-12-masahiroy@kernel.org>
+Subject: [PATCH 12/23] scripts/nsdeps: use VPATH as src_prefix
+Date: Tue, 17 Sep 2024 23:16:40 +0900
+Message-ID: <20240917141725.466514-13-masahiroy@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240917141725.466514-1-masahiroy@kernel.org>
 References: <20240917141725.466514-1-masahiroy@kernel.org>
@@ -62,40 +62,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since commit 2f7ab1267dc9 ("Kbuild: add Rust support"), Kconfig
-generates include/generated/rustc_cfg, but its presence is not checked
-in the top-level Makefile. It should be checked similarly to the C
-header counterpart, include/generated/autoconf.h.
+This change allows it to work not only for in-tree modules but also for
+external modules, even if they are built in a separate build directory.
 
 Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
 
- Makefile | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ scripts/nsdeps | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 3f5c273c2901..5700d08c9b57 100644
---- a/Makefile
-+++ b/Makefile
-@@ -780,7 +780,7 @@ else # !may-sync-config
- # and include/config/auto.conf but do not care if they are up-to-date.
- # Use auto.conf to show the error message
+diff --git a/scripts/nsdeps b/scripts/nsdeps
+index f1718cc0d700..8b4db63838ce 100644
+--- a/scripts/nsdeps
++++ b/scripts/nsdeps
+@@ -19,10 +19,10 @@ if ! { echo "$SPATCH_REQ_VERSION"; echo "$SPATCH_VERSION"; } | sort -CV ; then
+ 	exit 1
+ fi
  
--checked-configs := include/generated/autoconf.h include/config/auto.conf
-+checked-configs := include/generated/autoconf.h include/generated/rustc_cfg include/config/auto.conf
- missing-configs := $(filter-out $(wildcard $(checked-configs)), $(checked-configs))
+-if [ "$KBUILD_EXTMOD" ]; then
++if [ "${VPATH+set}" ]; then
+ 	src_prefix=
+ else
+-	src_prefix=$srctree/
++	src_prefix=$VPATH/
+ fi
  
- ifdef missing-configs
-@@ -1187,7 +1187,8 @@ PHONY += prepare archprepare
- 
- archprepare: outputmakefile archheaders archscripts scripts include/config/kernel.release \
- 	asm-generic $(version_h) include/generated/utsrelease.h \
--	include/generated/compile.h include/generated/autoconf.h remove-stale-files
-+	include/generated/compile.h include/generated/autoconf.h \
-+	include/generated/rustc_cfg remove-stale-files
- 
- prepare0: archprepare
- 	$(Q)$(MAKE) $(build)=scripts/mod
+ generate_deps_for_ns() {
 -- 
 2.43.0
 
