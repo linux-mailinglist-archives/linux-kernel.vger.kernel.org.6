@@ -1,127 +1,81 @@
-Return-Path: <linux-kernel+bounces-332027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D2B97B473
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:06:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE9997B476
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5DC1F22371
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:06:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC1691C21595
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A34188A13;
-	Tue, 17 Sep 2024 20:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZ6KcVq9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE35145FEB;
-	Tue, 17 Sep 2024 20:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8CF1898E5;
+	Tue, 17 Sep 2024 20:09:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27817152176;
+	Tue, 17 Sep 2024 20:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726603567; cv=none; b=TBTJu2APeAV2pf1GR3q+bmK5Slj/WlwUB97HU4NBnXvtkUzO147XkX/038ue6gCXtZGTrlWYEEQ5IzvEzaLQkNkLIvjG2Wt/Qx3FmWUKrOtcVq/FTNIy8sGJ5MX6GfeEzPnZeXd6HDIPEgekmIlr6BUW+ZUUnJXtWMrbC8iEals=
+	t=1726603772; cv=none; b=ko4WY+RhAN3+Iofp0lXAYNYdA37ab9YzRvFk4NRfuDQVY4amDwoa3fdKXE2FbK1mFsBXc1nFcph5Wu4TeVPtE4DjZtMqZKdZwcjztLIv2ezXd8nhkR7AnGjEZoUdN0tqHgXishbNjNaFXMtI7ooHgimWxU1JbgSzGfeyZkEiPRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726603567; c=relaxed/simple;
-	bh=SUsK8Svdw3efubdcejW6xIz0v3Eh5IcBKBW2pOhzyhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=alKsEUGCD2zYxoPX5pHUZekKfd69ajU6cI1kUM9rUOP/Kk65ziy55HN1hPcouHe01NXbpoBAQSIdSfaQaCeYS9lm13qz9r7K1G3JRoiwrMLaIlBoANbH02WHQ5xG6bqGuDSwbalR2tGABAxX4OBfMeUHXDZX1HjBT6htii03hL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZ6KcVq9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B497EC4CEC5;
-	Tue, 17 Sep 2024 20:06:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726603566;
-	bh=SUsK8Svdw3efubdcejW6xIz0v3Eh5IcBKBW2pOhzyhA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iZ6KcVq9FTQAdTIpkvSLOvR6cTQ2d36mu+93O3SHxsDj9pI8ILZTUV3yaWCA7ohDf
-	 r3zui2lSheIA6HWKJrn0nZDXsJPshn/K8ZYdsvcPJxUYXCDu7Y8cZde2SlPMORHlZv
-	 o06cr1OYrLPRQsSwLIpMY3BXvEpitxHtew4saBemEOqSXF1DNGzAb/NWYSjUwmHeLt
-	 0yqbQLUib36RV0UnntiCQvjxvEs6rXnIASLSY+NVx7lAF164oDEY9/ZCO89AzKkx7A
-	 lH+6PRhwIWfk0U8r8IhicKR0w/TK1nbtQQQQS8nqpI67bPqWnvnvwY6zbFHN8S4/Kb
-	 LLnVxTgHTRaEg==
-Received: by pali.im (Postfix)
-	id 0E4CD7BA; Tue, 17 Sep 2024 22:06:01 +0200 (CEST)
-Date: Tue, 17 Sep 2024 22:06:00 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Fix getting reparse points from server without WSL
- support
-Message-ID: <20240917200600.6smfxhrppkyjuyku@pali>
-References: <20240913200204.10660-1-pali@kernel.org>
- <20240913201041.cwueaflcxhewnvwj@pali>
+	s=arc-20240116; t=1726603772; c=relaxed/simple;
+	bh=hoh85dhDSNoH4kL9B/JMGc0NlnTNoU6i3FvI5uRdVmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=crfoSQ6U04VYS7L6K/N9z2QMZLF/UO2WfFkf8pKsndQ/OJ5rLmgdVvA5oa1xDdWOe/DtdPAG7X4UUc5oREVAeRY8HQ39o2DOrO+pYKQQTZ1cinze+/JDxHrp+WDpFNZxLHTjLRAURW/NB4uawApLFygCLw8Owir4uip2+z9U9L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC8B0FEC;
+	Tue, 17 Sep 2024 13:09:58 -0700 (PDT)
+Received: from [10.1.47.44] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92A373F64C;
+	Tue, 17 Sep 2024 13:09:26 -0700 (PDT)
+Message-ID: <d5726cec-cbc6-476d-8abc-b29b98a1bcf4@arm.com>
+Date: Tue, 17 Sep 2024 22:09:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240913201041.cwueaflcxhewnvwj@pali>
-User-Agent: NeoMutt/20180716
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 11/16] sched/qos: Add rampup multiplier QoS
+To: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240820163512.1096301-1-qyousef@layalina.io>
+ <20240820163512.1096301-12-qyousef@layalina.io>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <20240820163512.1096301-12-qyousef@layalina.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-And seems that SMB2_OP_QUERY_WSL_EA is useful not only for reparse
-points, but also for any regular file or directory as it can contain
-UNIX mode and UID/GID ownership.
+On 20/08/2024 18:35, Qais Yousef wrote:
 
-On Friday 13 September 2024 22:10:41 Pali Rohár wrote:
-> Paulo, please look at this patch as it is related to WSL attributes
-> which you introduced in the mentioned commit. I think that the proper
-> fix should be to change SMB2_OP_QUERY_WSL_EA code to not trigger that
-> -EOPNOTSUPP error which is delivered to userspace. I just checked that
-> this my patch works fine for Native NTFS symlinks and NFS-style reparse
-> point special files.
-> 
-> On Friday 13 September 2024 22:02:04 Pali Rohár wrote:
-> > If SMB server does not support WSL EAs then for SMB2_OP_QUERY_WSL_EA
-> > request it returns STATUS_EAS_NOT_SUPPORTED. Function smb2_compound_op()
-> > translates STATUS_EAS_NOT_SUPPORTED to -EOPNOTSUPP which cause failure
-> > during calling lstat() syscall from userspace on any reparse point,
-> > including Native SMB symlink (which does not use any EAs). This issue
-> > happen for example when trying to resolve Native NTFS symlink from SMB
-> > server on Windows 8.
-> > 
-> > Avoid this problem by calling SMB2_OP_QUERY_WSL_EA only when detected
-> > reparse point is of WSL type. Note that this is not solve this problem
-> > fully as WSL reparse points can be created also on other SMB server
-> > which do not support Extended Attributes at all.
-> > 
-> > Fixes: ea41367b2a60 ("smb: client: introduce SMB2_OP_QUERY_WSL_EA")
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > ---
-> >  fs/smb/client/smb2inode.c | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-> > index 11a1c53c64e0..d65471aa55e6 100644
-> > --- a/fs/smb/client/smb2inode.c
-> > +++ b/fs/smb/client/smb2inode.c
-> > @@ -941,7 +941,20 @@ int smb2_query_path_info(const unsigned int xid,
-> >  		if (rc || !data->reparse_point)
-> >  			goto out;
-> >  
-> > -		cmds[num_cmds++] = SMB2_OP_QUERY_WSL_EA;
-> > +		/*
-> > +		 * Skip SMB2_OP_QUERY_WSL_EA if reparse point is not WSL.
-> > +		 * The server file system does not have to support Extended
-> > +		 * Attributes and in this case returns STATUS_EAS_NOT_SUPPORTED
-> > +		 * which smb2_compound_op() translate to -EOPNOTSUPP. This will
-> > +		 * present failure during reading of non-WSL special files.
-> > +		 */
-> > +		if (data->reparse.tag == IO_REPARSE_TAG_LX_SYMLINK ||
-> > +		    data->reparse.tag == IO_REPARSE_TAG_AF_UNIX ||
-> > +		    data->reparse.tag == IO_REPARSE_TAG_LX_FIFO ||
-> > +		    data->reparse.tag == IO_REPARSE_TAG_LX_CHR ||
-> > +		    data->reparse.tag == IO_REPARSE_TAG_LX_BLK)
-> > +			cmds[num_cmds++] = SMB2_OP_QUERY_WSL_EA;
-> > +
-> >  		/*
-> >  		 * Skip SMB2_OP_GET_REPARSE if symlink already parsed in create
-> >  		 * response.
-> > -- 
-> > 2.20.1
-> > 
+[...]
+
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 0c10e2afb52d..3d9794db58e1 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -4906,7 +4906,7 @@ static inline void util_est_update(struct cfs_rq *cfs_rq,
+>  	if (!task_sleep) {
+>  		if (task_util(p) > task_util_dequeued(p)) {
+>  			ewma &= ~UTIL_AVG_UNCHANGED;
+> -			ewma = approximate_util_avg(ewma, p->se.delta_exec / 1000);
+> +			ewma = approximate_util_avg(ewma, (p->se.delta_exec/1000) * p->sched_qos.rampup_multiplier);
+
+Isn't this exactly the idea from UTIL_EST_FASTER?
+
+faster_est_approx(delta * 2) ... double speed even w/o contention?
+                          ^
+[...]
 
