@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-331420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E79397ACB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFF897ACB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 864AB1C21E2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:13:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35CC91C22097
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AED158523;
-	Tue, 17 Sep 2024 08:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1E5158203;
+	Tue, 17 Sep 2024 08:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YyQ8hnum"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAga/992"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A66C4C66;
-	Tue, 17 Sep 2024 08:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2438E154454;
+	Tue, 17 Sep 2024 08:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726560820; cv=none; b=dKjjYBWQTLUciIJ41meJM/FGDZgB3IpHY6gUqnx6k0wKHnQajeFoEu4CZ/NC8YfbMKm9XYU3ZS6NbWEX/GzVNfl2jT/5TD/42WckZQTEhRgCMZyoW8NbkgPlc4cTpbDK1yUSPjFF3/QskXlPcF2ljyGzoG39pNqNBssRmEAsfPA=
+	t=1726560912; cv=none; b=hOtQaV2QNR2Bb93uiseMuu9emvWprxD6OS1JDr1tyg3D+BBxJdkftlRxRk8dQamUIRxFOh5H71mh4LRDN1JfKy6oqDHGJrnCW6FjImk4NFhmYTRi3fm39DjcigeMUQqtcCBN6r2AfL3S4yWD+RI+llMcc+rtlzr6dGsKQoHpJBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726560820; c=relaxed/simple;
-	bh=Jm5H51ypjDRfmud7zfN/qRg1l14hF/3tZRg+kYXohSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GWDYRqez31Qh9RNGTb+clQSZ4wD5tSbpyljIL5XrokWyJryRhvfbFPVf1eKnRHQvRA2VIo3A/rmbzIHawSF2H7EdS2NOl56dWexwY7cCEhAhpErwdp6dR5aMEpsh+nSBayTI65RhZRP2Nv0EFQWQCaEWPZaxMx60MtS6/AOWSLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YyQ8hnum; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GFEtL6007234;
-	Tue, 17 Sep 2024 08:13:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6RdX0bFCBFita5q9pO6XTSQJpayvjOJ/luZyvNW3Cn0=; b=YyQ8hnumYeB79eof
-	espbv8XOu908CLozu+8rC7jxULWG1TzfYrKk1t65xpvxuCS1UU/tZGbGfgk3/6Ru
-	Q0QZu9KJ3fbHIAxStdQ92/9LKjMWoEFQlO4HR0m4NcmSzV8LAoTsk+yLsNXmdFDb
-	hRZTp5MJat/PTBlqTvwzC0dxJxseWEzt3Q0tmS9evQqwXkuwj2jXHw83raE4tcTd
-	v7kjws+vE0a7KDJLFXBsHGn7o+eKsCL8+v1E2pKckrs7hgNyT2D6VI1PzlSnlj4t
-	JsEqpy+j2NT7WL/XeHfPbGlQ1+RD026vBsteYGdVKl1MEwszKGJhe3Qp0B7e+J6W
-	kx11+w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jhp8e3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Sep 2024 08:13:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48H8D65w000864
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Sep 2024 08:13:06 GMT
-Received: from [10.204.67.70] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Sep
- 2024 01:12:57 -0700
-Message-ID: <b2d94fa5-6924-46f6-95cf-bde315ccbdbd@quicinc.com>
-Date: Tue, 17 Sep 2024 13:42:54 +0530
+	s=arc-20240116; t=1726560912; c=relaxed/simple;
+	bh=X8t15naKkmIQAijVecue21y1T52JyDvS8+FkFEqBo3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BrT/13ZaX/fljZqRAMA79lRm3h/oTsVF9RKAOu1lLXG7OGmTWwEuuHwVE6lTeZLq0cIpCEOJxVM6j+fnC6y3XLA/X66N21Wg71jV9NUampocrum6O40rt9mwErgl0R/PihMg4apy4/rhTqI9HDlLkLpsX0Msetp1hNntROkh1xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAga/992; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D750AC4CEC6;
+	Tue, 17 Sep 2024 08:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726560911;
+	bh=X8t15naKkmIQAijVecue21y1T52JyDvS8+FkFEqBo3Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gAga/992/QembpC4cgku0YnCasW2ebaWp3rcO4zvC6JgXHOw5x+zvghr24XMIz2y6
+	 rTebLZbBLCaUFyiRa49Dra69lJJwYGGSJJBP4ykXs7XJ10e0DNyFY8c0vxI/1ERMhe
+	 bvVL2rODTP31N6YsCn1autKu3A78Pd53AEEoqmjNLrAqXMgxDUT311QpGnMcWSc20m
+	 Er4stFGEWRrNYpqiZSs2N9OjvNPUDjJWnQiFKeXUxnUZCcV0CYu8WE/fBMuEMtJwHU
+	 dess8L20YCz0pzQBbz8puWLgoPLnx7v5zdYXp8UAyM1JFsmu7S7/NCQBYPXrf1yxHl
+	 w5X+ea6nQAtaw==
+Message-ID: <a2193800-69ea-4909-ba8b-05b85915ae6a@kernel.org>
+Date: Tue, 17 Sep 2024 10:15:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,127 +49,176 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] drm/msm/dp: Add DisplayPort controller for SA8775P
+Subject: Re: [PATCH 2/2] regulator: max20339: add Maxim MAX20339 regulator
+ driver
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Michael Walle <mwalle@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240916-max20339-v1-0-b04ce8e8c471@linaro.org>
+ <20240916-max20339-v1-2-b04ce8e8c471@linaro.org>
+ <29f30aae-ffad-4a42-909e-b05f9cf360b5@kernel.org>
+ <290668fb4f86a4d2caa779e517c736c93c3fc429.camel@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <konradybcio@kernel.org>,
-        <andersson@kernel.org>, <simona@ffwll.ch>,
-        <dmitry.baryshkov@linaro.org>, <abel.vesa@linaro.org>,
-        <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <quic_khsieh@quicinc.com>,
-        <konrad.dybcio@linaro.org>, <quic_parellan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <quic_riteshk@quicinc.com>, <quic_vproddut@quicinc.com>
-References: <20240911100813.338-1-quic_mukhopad@quicinc.com>
- <20240911100813.338-6-quic_mukhopad@quicinc.com>
- <ZuH3WqMwn7fl3nhh@hu-bjorande-lv.qualcomm.com>
- <a44a6f08-1f4a-4e5c-a4e4-30ab65c467f7@quicinc.com>
- <ZuStkRFvwJT7re6D@hu-bjorande-lv.qualcomm.com>
-From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-In-Reply-To: <ZuStkRFvwJT7re6D@hu-bjorande-lv.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: C2cU45NdQrzcj1_yrumqfypF_LZ5lcmM
-X-Proofpoint-GUID: C2cU45NdQrzcj1_yrumqfypF_LZ5lcmM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 phishscore=0 impostorscore=0 bulkscore=0 adultscore=0
- suspectscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409170061
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <290668fb4f86a4d2caa779e517c736c93c3fc429.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-On 9/14/2024 2:54 AM, Bjorn Andersson wrote:
-> On Thu, Sep 12, 2024 at 03:34:05PM +0530, Soutrik Mukhopadhyay wrote:
->> On 9/12/2024 1:32 AM, Bjorn Andersson wrote:
->>> On Wed, Sep 11, 2024 at 03:38:13PM +0530, Soutrik Mukhopadhyay wrote:
->>>> The Qualcomm SA8775P platform comes with a DisplayPort controller
->>>> with a different base offset than the previous SoCs,
->>>> add support for this in the DisplayPort driver.
-> Please check the line wrapping of this as well; the lines here should be
-> wrapped at 75 columns.
-
-
-Yes, it is within 75 columns, we ran checkpatch.pl before posting the patch.
-
-
->
->>>> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
->>>> ---
->>>>    drivers/gpu/drm/msm/dp/dp_display.c | 7 +++++++
->>>>    1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
->>>> index e1228fb093ee..e4954fd99eb0 100644
->>>> --- a/drivers/gpu/drm/msm/dp/dp_display.c
->>>> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
->>>> @@ -118,6 +118,12 @@ struct msm_dp_desc {
->>>>    	bool wide_bus_supported;
->>>>    };
->>>> +static const struct msm_dp_desc sa8775p_dp_descs[] = {
->>>> +	{ .io_start = 0xaf54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
->>>> +	{ .io_start = 0xaf5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
->>> Why is this list incomplete?
->>>
->>> Regards,
->>> Bjorn
+On 17/09/2024 10:03, André Draszik wrote:
+>>> +}
+>>> +
+>>> +static int max20339_lsw_dt_parse(struct device_node *np,
+>>> +				 const struct regulator_desc *desc,
+>>> +				 struct regulator_config *cfg)
+>>> +{
+>>> +	struct max20339_regulator *data = cfg->driver_data;
+>>> +
+>>> +	/* we turn missing properties into a fatal issue during probe() */
 >>
->> Do you mean to add for mdss_1 as well?
+>> Your binding does not look in sync with above.
+> 
+> Do you mean it doesn't enforce existence of this property? (It does and
+> binding check appropriately complains if it's missing). Otherwise, can
+> you please point me to the problem you're seeing?
+
+Indeed, it's in the subnode. It's fine.
+
+> 
+> From the binding:
+> 
+> +properties:
+> +  [...]
+> +  regulators:
+> +    type: object
+> +    [...]
+> +    patternProperties:
+> +      "^lsw[12]$":
+> +        [...]
+> +        properties:
+> +          [...]
+> +          shunt-resistor-micro-ohms:
+> +            [...]
+> +        required:
+> +          - shunt-resistor-micro-ohms
+> +
+> +        unevaluatedProperties: false
+> +
+> +    required:
+> +      - lsw1
+> +      - lsw2
+> +
+> +    additionalProperties: false
+> +
+> +[...]
+> +
+> +required:
+> +  [...]
+> +  - regulators
+> 
+> Anything wrong or missing in the above?
+> 
+>>> [...]
+>>> +	},                                                        \
+>>> +	.ovp_mask = _ovp_mask,                                    \
+>>> +	.status_reg = _status_reg,                                \
+>>> +}
+>>> +
+>>> +
 >>
-> I don't see a reason for not submitting them as well.
-
-
-Sure, we will add for mdss_1 as well.
-
-
->
->> We only added dp controllers for mdss_0 as we plan to validate and enable
->> only these.
+>> Here and in few other places - just one blank line.
+> 
+> OK.
+> 
+>>> +static struct max20339_regulator max20339_regulators[MAX20339_N_REGULATORS] = {
 >>
-> As far as I can tell there are 5 DPTX blocks on mdss_0.
->
->
-> It is perfectly fine that you just state in the commit message that
-> "Only MDSS0 DPTX0 and DPTX1 have been validated", but please add the
-> others as well in this commit.
->
-> Regards,
-> Bjorn
+>> This can be const and then use container_of instead of rdev_get_drvdata().
+>>
+>> See:
+>> https://lore.kernel.org/all/20240909-regulator-const-v1-17-8934704a5787@linaro.org/
+> 
+> Thanks!
+> 
+>> [...]
+>>> +
+>>> +	irq_flags = IRQF_ONESHOT | IRQF_SHARED;
+>>
+>> Why shared?
+> 
+> Just to be nice in case somebody puts it on a shared line. Not actually
+> required in my case.
+> 
+>>> +	irq_flags |= irqd_get_trigger_type(irq_get_irq_data(client->irq));
+>>> +
+>>> +	ret = devm_request_threaded_irq(&client->dev, client->irq,
+>>
+>> Shared interrupts should not be devm. It leads to tricky cases during
+>> removal. If you investigated the code and you are 100% sure there is no
+>> issue, please write a short comment in the code confirming that. Or just
+>> don't use devm.
+> 
+> I wasn't aware of this, thanks. I'll drop the shared and somebody can
+> revisit it in the future if required. BTW, a naive grep returned +400
+> drivers that use shared together with devm.
 
+Yeah, I was once thinking to check them, because there is an easy hint
+problems are possible: if driver has remove() callback which does
+anything with resources. However even if driver code looks unsafe, it
+requires quite some time to figure out if the issue is real - need to
+find other driver who will trigger the interrupt afterwards.
 
-We cross-checked the mdss architecture and found that there are only 2 
-dp controllers for each mdss.
+You can BTW test it with CONFIG_DEBUG_SHIRQ + bind/unbind.
 
-We will add all 4 and mention in the commit message that "Only MDSS0 
-DPTX0 and DPTX1 have been validated".
+Maybe we need some more explicit documentation around devm() or IRQF_SHARED.
 
+Best regards,
+Krzysztof
 
->
->>>> +	{}
->>>> +};
->>>> +
->>>>    static const struct msm_dp_desc sc7180_dp_descs[] = {
->>>>    	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
->>>>    	{}
->>>> @@ -162,6 +168,7 @@ static const struct msm_dp_desc x1e80100_dp_descs[] = {
->>>>    };
->>>>    static const struct of_device_id dp_dt_match[] = {
->>>> +	{ .compatible = "qcom,sa8775p-dp", .data = &sa8775p_dp_descs },
->>>>    	{ .compatible = "qcom,sc7180-dp", .data = &sc7180_dp_descs },
->>>>    	{ .compatible = "qcom,sc7280-dp", .data = &sc7280_dp_descs },
->>>>    	{ .compatible = "qcom,sc7280-edp", .data = &sc7280_dp_descs },
->>>> -- 
->>>> 2.17.1
->>>>
 
