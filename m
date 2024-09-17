@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-331496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9FA97AD86
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD99597AD89
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DF6E1C2144D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:04:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27CF1C20F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1F115B560;
-	Tue, 17 Sep 2024 09:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4543C15AAD9;
+	Tue, 17 Sep 2024 09:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S5RMeAyL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IMf0b+rA"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B50150990;
-	Tue, 17 Sep 2024 09:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45B71369B4;
+	Tue, 17 Sep 2024 09:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726563881; cv=none; b=CYyON8CekeyrDP76HlJBp7l5++G+vONTwY8B5hc0cX4rfWG12VhjU7kclQHeDanaJybEf5v0T6J0D9bFyNAjD/3h6APpW7U4bLR8piGKKMgNFchAliMnhtAPY3AiPOegPiWhf7xeKVmcow2u+QDXNDFZtufEyZSJwcuR5kzdDPU=
+	t=1726563922; cv=none; b=E+0MLftb6TdtzET1JN1IiNGIhvD6Q4Er4Gv3zZSBhGGNRTC2esT3IY0N6G0KSZSXAjqrn7Ko+q1HKzyLcW+yJyd3ItNV0LjKQ6n6FPoVEF5PKFt9f3m/GfMNmTfVnqFIOYx8ruslCPfu7qsp9ZcMOEJylOBBXHRKnJlZZaxWnFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726563881; c=relaxed/simple;
-	bh=5NCGPiERJ+Jw5qTfwSzmHF6iCdF89H70h6XEILDhTIE=;
+	s=arc-20240116; t=1726563922; c=relaxed/simple;
+	bh=OHzIsORNWOnBrIg7XJ7bfKSdglTf2UxbNSnmMm4yDvc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/Pnp9DC411k1ssPzZJK3nXdGPGila/tMSTbGu9N2R/Tm8jrsVraFkFYhkfQz55a804Moh2E0iwt2UbBEiaJWD381/OTFfupR7Skz4ELc21HtcNCdYAPFP6TofbLhbGK1VYMzuFZ5qqifXVwcXsmfhshxK4IpO+jOjs/pOdtUDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S5RMeAyL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1726563878;
-	bh=5NCGPiERJ+Jw5qTfwSzmHF6iCdF89H70h6XEILDhTIE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S5RMeAyLuLMXAZ2qIVHPpQd+yUU7hN6A9HmCHPyK3f/Qm4sqiXA2P5IDtgTO6x+CA
-	 gY9CznaCeUisJIeO7nOfj9MvveNWSI96sSPNWHDMTf3HO1lOXXEQRXgs5Yqo/VIw5X
-	 3EzWC/6RCGN4xCicPAKEqbaYzsy4XIpR/EkE432JijXfSsEhiXKuuC9+tPDNxLdUP9
-	 P2OUxIR7t8sYk+AtNUm9IrY+oLh5bnYHNEyiwHQBNPsef5b7lGbZhtNkygfnOFy3FJ
-	 TBSgxGOyL/YUvetV7okyLSdFBN4RSsA5Dt9gxfphjhOQY1Y6C7zN9zLm2AD/oWg5TP
-	 R4jGK++Gne67w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id ADEF717E107A;
-	Tue, 17 Sep 2024 11:04:34 +0200 (CEST)
-Message-ID: <08bdcc19-023b-4c7d-9e01-2b04cac00a08@collabora.com>
-Date: Tue, 17 Sep 2024 11:04:33 +0200
+	 In-Reply-To:Content-Type; b=J2vpUsql9133+SrcPCE76mxu0wz898mQGatU8am/4sv5SBV/OZGWdoQTDb76yqNQ6vYQgLzt8hxwgvFmQx+0ewE8vFJuJuInLj9wpqBfvZsyoHE1MyFAHVYiaIuF1GwYfiB4RhGvfvuJO2cE6bfzJCMw68YOgJxfkto/Zd+mbIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IMf0b+rA; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cba0dc922so41478075e9.3;
+        Tue, 17 Sep 2024 02:05:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726563919; x=1727168719; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oSrvhSccG4jYV4fFOorkzHAURIRqtMxP8iPHb1jw5uI=;
+        b=IMf0b+rAmzO9UzD4N2uuvOcllaheraWHC/27LfcJnLrNVnG2wVEyAqOzy0zg5mUyX4
+         IFcly600Vlwy1VsEWORJNGqyTGBWaMtgSBluPk1aRvpsDtN7fxUDRl3g9d0OfcPEcGF5
+         sWL8AS6WbmhC+Amrs8Hg9oChZviQ3ZxUAshrmkarmBQA2CkjEHcbW/gaW3kXTXOivpUT
+         xtzHf3hFtY7koofeOoNNXlp3QY1gb6p9T9bVye9DX9ZQlj4Hlzp00sFEk5szKiA3qcVt
+         SOVQiU2KEood0R3YMSojbAiI1QKnq9Rg4pb6Oj6pKEy48lhyiM0Y4+ylV/jpEh4zZZz2
+         Ucuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726563919; x=1727168719;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oSrvhSccG4jYV4fFOorkzHAURIRqtMxP8iPHb1jw5uI=;
+        b=rLeR4PPkBRIV5D1A3yqdcfiELHmYnSozRI3KADRuh9F+kiaoQOs1ZVPKYl668hJEqe
+         IzIXw7uDkjn2i+enmqTs8VymO8zOw21Xu3/+doaUka3fgpUqvJ2x+yczqDNK47TfBExF
+         hEiNnSOwWgTGImJ1z4/NVTH0reKwserjrumRVy37aOV1L4hVhA5dYOi27Y7eoz2UN7a1
+         DWY+HQQhIbgNUJxt1uAb5VnDJusWc+OsGhLa+BG2BOAwpYcBeY1UpjA2cp8eC71P5Fuu
+         YLkRjOL8GdOm29n/yFVpdXo2wHwl702jVhWoztfE5tLcvu6w5fjX5UJJJI07gdlazlob
+         qtWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU64Ffs7cSDfTTtHzHnpYAF2zWKBOR/f0wxfUUIz7Pu36D9YkJAEQLK1X4X6G8oxJaweBesWGekp0u9JlQ=@vger.kernel.org, AJvYcCW8IEU94ZztfoLrmKNVB+esBkXnsLdHwXoRSSXohBF7L4AkKvHmhw7XCbc1sXGLORem1oXkK7NcBHM4ZFti+ZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj6n8ERzOVUlQv0xJJtGakglwYJ0nRMwkgfvJLjdUcjwjv0lwQ
+	9PlswMwiJwIlEyRYVQ3jhDtXOEBW9RSJZJv0QH6IIinj6Olobyfi
+X-Google-Smtp-Source: AGHT+IFU3P3MQf5VTEuLKF85MQML6XIcvLrFQezS4OKNLvV1EMyIBYelPAYYhEKEIx215+fARri8Bg==
+X-Received: by 2002:a05:600c:4fc8:b0:427:ff3b:7a20 with SMTP id 5b1f17b1804b1-42cdb56714bmr108943345e9.27.1726563918916;
+        Tue, 17 Sep 2024 02:05:18 -0700 (PDT)
+Received: from [192.168.0.10] ([178.233.24.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b15d3ebsm130744695e9.28.2024.09.17.02.05.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 02:05:18 -0700 (PDT)
+Message-ID: <5a0a8892-c88e-4cac-a53c-a31385217235@gmail.com>
+Date: Tue, 17 Sep 2024 12:05:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,61 +75,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] regulator: dt-bindings: mt6397: move examples to
- parent PMIC mt6397
-To: Macpaul Lin <macpaul.lin@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
- Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
- <olteanv@gmail.com>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Sean Wang <sean.wang@mediatek.com>, Sen Chu <sen.chu@mediatek.com>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Chen Zhong <chen.zhong@mediatek.com>, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
- Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
- MediaTek Chromebook Upstream
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-References: <20240916151132.32321-1-macpaul.lin@mediatek.com>
- <20240916151132.32321-3-macpaul.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240916151132.32321-3-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: BUG and WARNINGs from mt7921s on next-20240916
+To: Kalle Valo <kvalo@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Felix Fietkau <nbd@nbd.name>
+Cc: linux-mediatek@lists.infradead.org, linux-wireless@vger.kernel.org,
+ Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Ming Yen Hsieh <mingyen.hsieh@mediatek.com>, Deren Wu
+ <deren.wu@mediatek.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Ma Ke <make24@iscas.ac.cn>,
+ regressions@lists.linux.dev, =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?=
+ <nfraprado@collabora.com>
+References: <144fbf79-950c-4cd1-bc68-4e00b47b03e9@gmail.com>
+ <ZujCwvd4XiwljDyv@lore-desk> <87ldzqdcsv.fsf@kernel.org>
+Content-Language: en-US, tr, en-GB
+From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+In-Reply-To: <87ldzqdcsv.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Il 16/09/24 17:11, Macpaul Lin ha scritto:
-> Since the DT schema of multiple function PMIC mt6397 has been converted,
-> move the examples in "mediatek,mt6397-regulator.yaml" to the parent schema
-> "mediatek,mt6397.yaml".
+Hi,
+
+On 2024-09-17 09:17 +03:00, Kalle Valo wrote:
+> Lorenzo Bianconi <lorenzo@kernel.org> writes:
 > 
+>>> Hi,
+>>>
+>>> I ran into some bug messages while testing linux-next on a MT8186
+>>> Magneton Chromebook (mt8186-corsola-magneton-sku393218). It boots 
+>>> to the OS, but at least Wi-Fi and Bluetooth are unavailable.
+>>>
+>>> As a start, I tried reverting commit abbd838c579e ("Merge tag 
+>>> 'mt76-for-kvalo-2024-09-06' of https://github.com/nbd168/wireless")
+>>> and it works fine after that. Didn't have time to do a full bisect, 
+>>> but will try if nobody has any immediate opinions.
+>>>
+>>> There are a few traces, here's some select lines to catch your attention,
+>>> not sure how informational they are:
+>>>
+>>> [   16.040525] kernel BUG at net/core/skbuff.c:2268!
+>>> [   16.040531] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
+>>> [ 16.040803] CPU: 3 UID: 0 PID: 526 Comm: mt76-sdio-txrx Not tainted
+>>> 6.11.0-next-20240916-deb-00002-g7b544e01c649 #1
+>>> [   16.040897] Call trace:
+>>> [   16.040899]  pskb_expand_head+0x2b0/0x3c0
+>>> [   16.040905]  mt76s_tx_run_queue+0x274/0x410 [mt76_sdio]
+>>> [   16.040909]  mt76s_txrx_worker+0xe4/0xac8 [mt76_sdio]
+>>> [   16.040914]  mt7921s_txrx_worker+0x98/0x1e0 [mt7921s]
+>>> [   16.040924]  __mt76_worker_fn+0x80/0x128 [mt76]
+>>> [   16.040934]  kthread+0xe8/0xf8
+>>> [   16.040940]  ret_from_fork+0x10/0x20
+>>
+>> Hi,
+>>
+>> I guess this issue has been introduced by the following commit:
+>>
+>> commit 3688c18b65aeb2a1f2fde108400afbab129a8cc1
+>> Author: Felix Fietkau <nbd@nbd.name>
+>> Date:   Tue Aug 27 11:30:01 2024 +0200                  
+>>
+>>     wifi: mt76: mt7915: retry mcu messages                                            
+>>                         
+>>     In some cases MCU messages can get lost. Instead of failing completely,
+>>     attempt to recover by re-sending them.
+>>      
+>>     Link: https://patch.msgid.link/20240827093011.18621-14-nbd@nbd.name
+>>     Signed-off-by: Felix Fietkau <nbd@nbd.name>
+>>
+>>
+>> In particular, skb_get() in mt76_mcu_skb_send_and_get_msg() is bumping skb users
+>> refcount (making the skb shared) and pskb_expand_head() (run by __skb_grow() in
+>> mt76s_tx_run_queue()) does not like shared skbs.
+>>
+>> @Felix: any input on it?
+> 
+> Adding regressions list to Cc.
 
-You can instead just keep a reference to mediatek,mt6397-regulator.yaml in the
-"MFD" (pmic) schema instead.
+Reverting just that commit fixes my issue. Looks like it's the same
+issue recently reported by kernelci as a reply to that patch [1].
 
-It's true that for MT6397 you can possibly have only MT6397's regulator and not
-others, but still, the logic is to:
-  - Say that MT6397 supports regulator subnode(s) in mediatek,mt6397.yaml
-    - Refer to the regulator schema (mediatek,mt6397-regulator.yaml)
-  - Keep the regulator schema (providing only regulator HW specific info)
-    in the regulator folder.
+[1] https://lore.kernel.org/all/d907b13a-f8be-4cb8-a0bb-560a21278041@notapiano/
 
-Besides that, this also makes the main mediatek,mt6397.yaml schema a bit more
-human readable... :-)
-
-Cheers,
-Angelo
-
-
+Adding Cc: Nícolas F. R. A. Prado <nfraprado@collabora.com> per above.
 
