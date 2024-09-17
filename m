@@ -1,339 +1,206 @@
-Return-Path: <linux-kernel+bounces-331543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F1297AE20
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:41:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A10997AE22
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACD12825BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:41:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFF8281DF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AC3160883;
-	Tue, 17 Sep 2024 09:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69D8166F06;
+	Tue, 17 Sep 2024 09:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vx8DGg8Z"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SNks2fau"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB17158210
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4F216133E;
+	Tue, 17 Sep 2024 09:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726566007; cv=none; b=GCl+fH5VXP1hUUNvDsO23dT+oT2DcqQZfhPVAtvofhKySPMr9+y4kvAA4L5QDc7RZb0LmX3AHKveTSN5B28ovgcuxcjuNmUpmLbdz0rfy16jnC+gY/9DKZzfnZjQXZH8X8s1UkhLneplqHzIMToSmul/FxjxKpavdkL2SuVFZMw=
+	t=1726566021; cv=none; b=Sm1s3h1LAfh1mgwTii3QY51CqVa4oH9c7Gc3KbFC2Nld0c1byTV1tN1SIi0HqhRERGL1vEjkSZNamwfgiP2vBPrftsCdzY0QhkxoOmYdnIR5Wl92QC1Ays8WVopebleTdyG+ENCn/swIs5j44MaxvO2YZVyexvgOyfn4I6pmg0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726566007; c=relaxed/simple;
-	bh=HgaR8i31OZOKdgAtsNRbBBn5aIv9PkySv7Q0I+sk7tE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WEcga9U5t9hwEEIhqeSwIW/qh1wcQzYNbatXgCfsOmhfpCNtIA3OStXngVT3khf4wPkAHO/cAR2sBgAdcqQsLfZ1pNKSjUktBx3cuAK/l4mLEgg+2SiWfDICwQqTLJdgdj3gBcLcg9woXcEhLBL5xXR2xiBalJ1MEus4ixpVPak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vx8DGg8Z; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53653ff0251so4696649e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 02:40:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726566002; x=1727170802; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2TdDc/xmkZrPPBH4u3xIlLvgo7tWE4DCUQljDV1YjAk=;
-        b=vx8DGg8Zxj+VI1je52Skh4J1JCMsV0U/1NHJEOVqmlbirJ9CHkyr0lmNM+ureMoUSh
-         Q1Ux8ZNWQohxUXLMRm6TORC42EleO0Grl/zjG+cII/zat5C2VbFp1n3/B4mlFUvZJRp7
-         MR0hpny37HGeVmyec47dqqLEq70gmgiQ2pGFPklEVYktcxm8mFvjxfe/IUI4pCUL/6D5
-         QhCsXc4pEpYbnvrkDAyk8Hp/VRIxQ8Vnj2HmLbVlAAEv15O5NAKroqa9es6LROyGgE32
-         tRJYpPMiUtb+NLD9IKeJND4IpotCIloV/2+PqdT0X7DeZEYl0ZTiw59m/3685H19BRHf
-         nwxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726566002; x=1727170802;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2TdDc/xmkZrPPBH4u3xIlLvgo7tWE4DCUQljDV1YjAk=;
-        b=jJlKnezA/KN0yUoH0UjCGZaGwdGiApvLtG2iw4l0xf03hunr12Qysr2n468dsogFcz
-         A52Zfzg14lDPRFoyHCBZh8f1xgTgGY87uk2yV0kIMonsfoS2waXPLSCcoXO2kz1dRM6k
-         ev/61wIJJWedHXS5fLYsXkgdy5rS7RRsjrEmBJSnULcfmXjXyZvIS+nqldCJImf6G7Yb
-         hX88zgkVRc4x14kNtoBR3AxpXFcvGVXgPjNC/W4naNIpe9plLIJ33P9hjfHPHWG+z8Ti
-         uJ6ZHpFgTaKylDzvY5BmdkJDG8+LnYEuFWZSdcr1CqSy9C3ROoL4yhQQD8iNwOHiNOH2
-         4WzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGmiYVnAmloSPsXB3UoE1/6emJXqIL75K+Z18Gg8Iv2KWqirXInyyp6pz+8cOaC8lYtAmQMFPpSSarhtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB36lHkPZ8MAyVFypD07YSBYsx79u6h5YdE+Ny9gnATvtCCtFF
-	uJtTiS9Zcp4sS43kn2jPQeTb9zUkXHQi95DSuLKJj0L5lJn293TyLcdjfaRV25ygjAL9V/mb435
-	M40bPdQ==
-X-Google-Smtp-Source: AGHT+IH1oWcFaOPsJO/y2THHJ4b9NZbS7sU2H93ZXpNnxZIyw/06jdOgNys4oXb4al1qSWgDE9XEfw==
-X-Received: by 2002:a05:6512:3f06:b0:536:52ed:a23f with SMTP id 2adb3069b0e04-5367fb5b53bmr7933105e87.0.1726566001820;
-        Tue, 17 Sep 2024 02:40:01 -0700 (PDT)
-Received: from brgl-uxlite.pool3009.local ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89d50sm3507188a12.78.2024.09.17.02.40.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 02:40:01 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio updates for v6.12-rc1
-Date: Tue, 17 Sep 2024 11:39:56 +0200
-Message-ID: <20240917093957.6073-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726566021; c=relaxed/simple;
+	bh=P0T0fsjedBJ/mFJriTdYoQ0qCDv8seU6l4f4zpGqa/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZmiMLsp2CDda4ipz+1NM4fYYcnNrGclPQG018qJztIJGszFsfQsnUj2gPZh46zOLB27WVRAuRSXr2nA3U0wPlblOhuTET54y6gOqh8XlbPdJHzFXfqs2axZcp3vjWu5SUhKnYmJIOHkzVKn7QOI7uRvjnC6VMuYM0Kv6Eyk/Aqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SNks2fau; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48H9eCeR106185;
+	Tue, 17 Sep 2024 04:40:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726566012;
+	bh=rVVmQPcwTSus71ETasIqw7oZH8e1wL19MfvMqR3xvj8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=SNks2fauBEt/CaNQWHz1ZAD4l8jLYw7V4P2ZYYQBZtnOKAJszUkNCTyLSbybZpOPR
+	 xBcXPMB/wewt3fmM6fh7Tqv8vebwMktG1E+Har7zJITvxTZ0JK7jBaMnCjEvgNMwtN
+	 uxH6gypwmy5UzJvvP2k+JsoRWsg1x+JdkwUSosCU=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H9eCO0029608;
+	Tue, 17 Sep 2024 04:40:12 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
+ Sep 2024 04:40:12 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 17 Sep 2024 04:40:12 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H9e9j4058142;
+	Tue, 17 Sep 2024 04:40:10 -0500
+Message-ID: <c8b2e851-a247-4a90-acb5-a774d131b561@ti.com>
+Date: Tue, 17 Sep 2024 15:10:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] remoteproc: k3-r5: Fix check performed in
+ k3_r5_rproc_{mbox_callback/kick}
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Kumar, Udit"
+	<u-kumar1@ti.com>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, Hari Nagalla <hnagalla@ti.com>,
+        Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+References: <20240916083131.2801755-1-s-vadapalli@ti.com>
+ <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
+ <fda85c12-e73f-44b8-b66b-1241e417a9b7@ti.com>
+ <CANLsYky1Oxu7Fc1-gz53cR+KpO67nDE5LQGj_NV+czOwY2_2CA@mail.gmail.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <CANLsYky1Oxu7Fc1-gz53cR+KpO67nDE5LQGj_NV+czOwY2_2CA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Mathieu,
 
-Linus,
+On 17/09/24 14:07, Mathieu Poirier wrote:
+> On Mon, 16 Sept 2024 at 23:20, Kumar, Udit <u-kumar1@ti.com> wrote:
+>> On 9/16/2024 8:50 PM, Mathieu Poirier wrote:
+>>> On Mon, 16 Sept 2024 at 02:31, Siddharth Vadapalli <s-vadapalli@ti.com> wrote:
+>>>> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during
+>>>> probe routine") introduced a check in the "k3_r5_rproc_mbox_callback()" and
+>>>> "k3_r5_rproc_kick()" callbacks, causing them to exit if the remote core's
+>>>> state is "RPROC_DETACHED". However, the "__rproc_attach()" function that is
+>>>> responsible for attaching to a remote core, updates the state of the remote
+>>>> core to "RPROC_ATTACHED" only after invoking "rproc_start_subdevices()".
+>>>>
+>>>> The "rproc_start_subdevices()" function triggers the probe of the Virtio
+>>>> RPMsg devices associated with the remote core, which require that the
+>>>> "k3_r5_rproc_kick()" and "k3_r5_rproc_mbox_callback()" callbacks are
+>>>> functional. Hence, drop the check in the callbacks.
+>>> Honestly, I am very tempted to just revert f3f11cfe8907 and ea1d6fb5b571.
+>>
+>> Please don't :) , it will break rproc in general for k3 devices.
+>>
+> Why not - it is already broken anyway.  Reverting the patches will
+> force TI to actually think about the feature in terms of design,
+> completeness and testing.  The merge window opened on Sunday - I'm not
+> going to merge whack-a-mole patches and hope the right fix comes
+> along.
 
-Here are the updates from the GPIO tree for the next release. We have one
-new driver, some improvements to core GPIO code, various changes in
-drivers and their DT bindings as well fixes to kerneldocs.
 
-Overall it has been a slow cycle, most likely due to the summertime
-vacation period and the changelog reflects it.
+Apologies for causing this trouble, Mathieu. I have accumulated various 
+use-cases of the driver, including this, and hereon will keep in mind 
+while posting further patches.
 
-The merge from the MFD tree is there to pull dependencies for the new
-driver.
+>
+>> Couple of solutions for this race around condition (in mine preference
+>> order)
+>>
+> This is for the TI team to discuss _and_ test thoroughly.  From hereon
+> and until I see things improve, all patches from TI will need to be
+> tagged with R-B and T-B tags (collected on the mailing lists) from two
+> different individuals before I look at them.
 
-There is a trivial conflict with the SoC tree (just drop
-arch/arm/mach-ep93xx/vision_ep9307.c).
 
-Details are in the signed tag. Please pull.
+Understood, that is a fair ask. Hereon, I will also attach my test logs 
+for all the usecases I've tested a patch with, to give more visibility 
+on the testing done.
 
-Bartosz Golaszewski
-
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v6.12-rc1
-
-for you to fetch changes up to 6b5e97c020060c2b8ad286002415106ab7034435:
-
-  gpio: mpc8xxx: switch to using DEFINE_RUNTIME_DEV_PM_OPS() (2024-09-06 08:50:48 +0200)
-
-----------------------------------------------------------------
-gpio updates for v6.12-rc1
-
-Core GPIOLIB:
-- provide and add users for a macro allowing to iterate over accepted
-  GPIO property names of consumer device nodes
-- remove legacy definitions that are no longer used
-- put legacy GPIO devres helpers together with the rest of the deprecated
-  code
-- implement and use swnode_gpio_get_reference(): a wrapper simplifying
-  the underlying calls to fwnode_property_get_reference_args()
-- use IS_ERR_OR_NULL() where it makes sense
-- replace of_find_property() with of_property_present()
-- simplify code with the scoped variant of OF-node children iterator
-
-Documentation:
-- update GPIO kerneldocs with Return sections
-- fix "Excess struct member description" warnings now being triggered
-  with W=1
-
-New drivers:
-- add support for Analog Devices ADP5585
-
-Driver improvements:
-- add support for wake-on-GPIO to gpio-mpc8xxx
-- use GPIO_LOOKUP_IDX() in gpio-virtuser
-- use devm_clk_get_[optional_]enabled() where applicable in several
-  drivers
-- replace OF-specific functions with provider-agnostic alternatives where
-  possible
-- drop support for legacy platform data from gpio-ath79 and gpio-davinci
-- refactor gpio-stmpe
-- improve error reporting in gpio-pca953x
-- add support for reading the direction of pins for some models to
-  gpio-vf610
-
-DT bindings:
-- convert the bindings for nxp,lpc3220 to YAML
-- add gpio-reserved-ranges to gpio-davinci
-- simplify the GPIO hog schema
-- fix a GPIO hog issue in bindings for fcs,fxl6408
-
-Other:
-- fix format specifiers in user-space tools
-- remove leftover files on make clean in tools/gpio/
-
-----------------------------------------------------------------
-Andy Shevchenko (22):
-      gpiolib: Introduce for_each_gpio_property_name() helper
-      gpiolib: swnode: Unify return code variable name
-      gpiolib: swnode: Introduce swnode_gpio_get_reference() helper
-      gpiolib: swnode: Make use of for_each_gpio_property_name()
-      gpiolib: Replace gpio_suffix_count with NULL-terminated array
-      gpio: virtuser: Use GPIO_LOOKUP_IDX() macro
-      gpiolib: legacy: Kill GPIOF_INIT_* definitions
-      gpiolib: legacy: Kill GPIOF_DIR_* definitions
-      gpio: tegra: Replace of_node_to_fwnode() with more suitable API
-      gpio: msc313: Replace of_node_to_fwnode() with more suitable API
-      gpio: uniphier: Replace of_node_to_fwnode() with more suitable API
-      gpio: tegra186: Replace of_node_to_fwnode() with more suitable API
-      gpio: thunderx: Replace of_node_to_fwnode() with more suitable API
-      gpio: visconti: Replace of_node_to_fwnode() with more suitable API
-      gpio: ixp4xx: Replace of_node_to_fwnode() with more suitable API
-      gpiolib: Update the kernel documentation - add Return sections
-      gpiolib: legacy: Consolidate devm_gpio_*() with other legacy APIs
-      gpio: stmpe: Fix IRQ related error messages
-      gpio: stmpe: Remove unused 'dev' member of struct stmpe_gpio
-      gpio: stmpe: Utilise temporary variable for struct device
-      gpio: stmpe: Make use of device properties
-      gpio: stmpe: Sort headers
-
-Animesh Agarwal (1):
-      dt-bindings: gpio: nxp,lpc3220-gpio: Convert to dtschema
-
-Bartosz Golaszewski (9):
-      Merge tag 'ib-mfd-gpio-pwm-v6.12' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd into gpio/for-next
-      gpio: ath79: order headers alphabetically
-      gpio: ath79: add missing header
-      gpio: ath79: use generic device property getters
-      gpio: ath79: remove support for platform data
-      gpio: davinci: drop platform data support
-      gpio: davinci: use devm_clk_get_enabled()
-      gpio: mpc8xxx: order headers alphabetically
-      gpio: mpc8xxx: switch to using DEFINE_RUNTIME_DEV_PM_OPS()
-
-Chen Ni (1):
-      gpio: sama5d2-piobu: convert comma to semicolon
-
-Clark Wang (1):
-      pwm: adp5585: Add Analog Devices ADP5585 support
-
-Dhruva Gole (1):
-      gpio: syscon: fix excess struct member build warning
-
-Fabio Estevam (1):
-      gpio: pca953x: Print the error code on read/write failures
-
-Haibo Chen (4):
-      mfd: adp5585: Add Analog Devices ADP5585 core support
-      gpio: adp5585: Add Analog Devices ADP5585 support
-      gpio: gpio-vf610: use u32 mask to handle 32 number gpios
-      gpio: vf610: add get_direction() support
-
-Hongbo Li (1):
-      gpio: Use IS_ERR_OR_NULL() helper function
-
-Jared McArthur (1):
-      dt-bindings: gpio: gpio-davinci: Add the gpio-reserved-ranges property
-
-Krzysztof Kozlowski (4):
-      gpio: of: simplify with scoped for each OF child loop
-      dt-bindings: gpio: fcs,fxl6408: add missing type to GPIO hogs
-      dt-bindings: gpio: simplify GPIO hog nodes schema
-      gpio: pch: kerneldoc fixes for excess members
-
-Laurent Pinchart (1):
-      dt-bindings: mfd: Add Analog Devices ADP5585
-
-Martyn Welch (1):
-      gpio: mpc8xxx: Add wake on GPIO support
-
-Rob Herring (Arm) (1):
-      gpio: Use of_property_present()
-
-Rong Qianfeng (2):
-      gpio: stp-xway: Simplify using devm_clk_get_enabled()
-      gpio: zynq: Simplify using devm_clk_get_enabled()
-
-Shen Lichuan (1):
-      gpio: stmpe: Simplify with dev_err_probe()
-
-Uwe Kleine-König (1):
-      gpio: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-
-Zhang Zekun (4):
-      gpio: cadence: Use helper function devm_clk_get_enabled()
-      gpio: lpc18xx: Use helper function devm_clk_get_enabled()
-      gpio: mb86s7x: Use helper function devm_clk_get_optional_enabled()
-      gpio: xilinx: Use helper function devm_clk_get_optional_enabled()
-
-Zhu Jun (1):
-      tools: gpio: Fix the wrong format specifier
-
-zhangjiao (1):
-      tools: gpio: rm .*.cmd on make clean
-
- .../bindings/gpio/fairchild,74hc595.yaml           |  11 -
- .../devicetree/bindings/gpio/fcs,fxl6408.yaml      |   1 +
- .../devicetree/bindings/gpio/fsl-imx-gpio.yaml     |  11 -
- .../devicetree/bindings/gpio/gpio-davinci.yaml     |   2 +
- .../devicetree/bindings/gpio/gpio-pca95xx.yaml     |  11 -
- .../devicetree/bindings/gpio/gpio_lpc32xx.txt      |  43 ----
- .../bindings/gpio/microchip,mpfs-gpio.yaml         |  12 --
- .../devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml |  50 +++++
- .../bindings/gpio/socionext,uniphier-gpio.yaml     |  11 -
- .../devicetree/bindings/mfd/adi,adp5585.yaml       |  92 +++++++++
- .../devicetree/bindings/trivial-devices.yaml       |   4 -
- MAINTAINERS                                        |  11 +
- arch/arm/mach-ep93xx/vision_ep9307.c               |   6 +-
- arch/mips/bcm63xx/boards/board_bcm963xx.c          |   2 +-
- drivers/gpio/Kconfig                               |   7 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-adp5585.c                        | 229 +++++++++++++++++++++
- drivers/gpio/gpio-ath79.c                          |  31 +--
- drivers/gpio/gpio-cadence.c                        |  23 +--
- drivers/gpio/gpio-davinci.c                        | 102 +++------
- drivers/gpio/gpio-fxl6408.c                        |   2 +-
- drivers/gpio/gpio-ixp4xx.c                         |  10 +-
- drivers/gpio/gpio-lpc18xx.c                        |  23 +--
- drivers/gpio/gpio-max7300.c                        |   2 +-
- drivers/gpio/gpio-mb86s7x.c                        |  21 +-
- drivers/gpio/gpio-mpc8xxx.c                        |  50 ++++-
- drivers/gpio/gpio-msc313.c                         |   5 +-
- drivers/gpio/gpio-pca953x.c                        |   4 +-
- drivers/gpio/gpio-pch.c                            |   1 -
- drivers/gpio/gpio-sama5d2-piobu.c                  |  18 +-
- drivers/gpio/gpio-stmpe.c                          |  55 ++---
- drivers/gpio/gpio-stp-xway.c                       |  10 +-
- drivers/gpio/gpio-syscon.c                         |   1 -
- drivers/gpio/gpio-tegra.c                          |   5 +-
- drivers/gpio/gpio-tegra186.c                       |   3 +-
- drivers/gpio/gpio-thunderx.c                       |   5 +-
- drivers/gpio/gpio-uniphier.c                       |   5 +-
- drivers/gpio/gpio-vf610.c                          |  31 ++-
- drivers/gpio/gpio-virtuser.c                       |  13 +-
- drivers/gpio/gpio-visconti.c                       |   5 +-
- drivers/gpio/gpio-xilinx.c                         |  11 +-
- drivers/gpio/gpio-zynq.c                           |  10 +-
- drivers/gpio/gpiolib-acpi.c                        |  43 ++--
- drivers/gpio/gpiolib-cdev.c                        |   8 +-
- drivers/gpio/gpiolib-devres.c                      | 120 ++++-------
- drivers/gpio/gpiolib-legacy.c                      |  94 ++++++++-
- drivers/gpio/gpiolib-of.c                          |  92 ++++-----
- drivers/gpio/gpiolib-swnode.c                      |  62 +++---
- drivers/gpio/gpiolib-sysfs.c                       |   6 +-
- drivers/gpio/gpiolib.c                             | 164 +++++++++++----
- drivers/gpio/gpiolib.h                             |  16 +-
- drivers/mfd/Kconfig                                |  12 ++
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/adp5585.c                              | 205 ++++++++++++++++++
- drivers/pwm/Kconfig                                |   7 +
- drivers/pwm/Makefile                               |   1 +
- drivers/pwm/pwm-adp5585.c                          | 184 +++++++++++++++++
- include/linux/gpio.h                               |  12 +-
- include/linux/mfd/adp5585.h                        | 126 ++++++++++++
- include/linux/platform_data/gpio-ath79.h           |  16 --
- include/linux/platform_data/gpio-davinci.h         |  21 --
- tools/gpio/Makefile                                |   2 +-
- tools/gpio/gpio-hammer.c                           |   4 +-
- 63 files changed, 1503 insertions(+), 643 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
- create mode 100644 drivers/gpio/gpio-adp5585.c
- create mode 100644 drivers/mfd/adp5585.c
- create mode 100644 drivers/pwm/pwm-adp5585.c
- create mode 100644 include/linux/mfd/adp5585.h
- delete mode 100644 include/linux/platform_data/gpio-ath79.h
- delete mode 100644 include/linux/platform_data/gpio-davinci.h
+>
+>> 1) In
+>> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L190
+>> have a check , if probe in is progress or not
+>>
+>> 2)
+>> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1205
+>> -- correct the state to ON or something else
+>>
+>> 3) Move condition
+>> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/remoteproc_core.c#L1360
+>> before rproc_start_subdevices
+>> <https://elixir.bootlin.com/linux/v6.11/C/ident/rproc_start_subdevices>
+>> calling
+>>
+>>
+>>
+>>>> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during probe routine")
+>>>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+>>>> ---
+>>>>
+>>>> Hello,
+>>>>
+>>>> Since the commit being fixed is not yet a part of Mainline Linux, this
+>>>> patch is based on linux-next tagged next-20240913.
+>>>>
+>>>> An alternative to this patch will be a change to the "__rproc_attach()"
+>>>> function in the "remoteproc_core.c" driver with
+>>>> rproc->state = RPROC_ATTACHED;
+>>>> being set after "rproc_attach_device()" is invoked, but __before__
+>>>> invoking "rproc_start_subdevices()". Since this change will be performed
+>>>> in the common Remoteproc Core, it appeared to me that fixing it in the
+>>>> TI remoteproc driver is the correct approach.
+>>>>
+>>>> The equivalent of this patch for ti_k3_dsp_remoteproc.c might also be
+>>>> required, which I shall post if the current patch is acceptable.
+>>>>
+>>>> Kindly review and share your feedback on this patch.
+>>>>
+>>>> Regards,
+>>>> Siddharth.
+>>>>
+>>>>    drivers/remoteproc/ti_k3_r5_remoteproc.c | 8 --------
+>>>>    1 file changed, 8 deletions(-)
+>>>>
+>>>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>> index 747ee467da88..4894461aa65f 100644
+>>>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>> @@ -194,10 +194,6 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
+>>>>           const char *name = kproc->rproc->name;
+>>>>           u32 msg = omap_mbox_message(data);
+>>>>
+>>>> -       /* Do not forward message from a detached core */
+>>>> -       if (kproc->rproc->state == RPROC_DETACHED)
+>>>> -               return;
+>>>> -
+>>>>           dev_dbg(dev, "mbox msg: 0x%x\n", msg);
+>>>>
+>>>>           switch (msg) {
+>>>> @@ -233,10 +229,6 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
+>>>>           mbox_msg_t msg = (mbox_msg_t)vqid;
+>>>>           int ret;
+>>>>
+>>>> -       /* Do not forward message to a detached core */
+>>>> -       if (kproc->rproc->state == RPROC_DETACHED)
+>>>> -               return;
+>>>> -
+>>>>           /* send the index of the triggered virtqueue in the mailbox payload */
+>>>>           ret = mbox_send_message(kproc->mbox, (void *)msg);
+>>>>           if (ret < 0)
+>>>> --
+>>>> 2.40.1
+>>>>
 
