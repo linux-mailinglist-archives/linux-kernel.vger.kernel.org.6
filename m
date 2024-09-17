@@ -1,127 +1,136 @@
-Return-Path: <linux-kernel+bounces-331597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1186C97AEB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBD797AEB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8C7B21B05
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:27:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1C64B21C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF43D165EE4;
-	Tue, 17 Sep 2024 10:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHB/VKoC"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E3B15D5A6
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF4A165EF5;
+	Tue, 17 Sep 2024 10:27:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5D115B54F;
+	Tue, 17 Sep 2024 10:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726568843; cv=none; b=WyL2LLjVsjc9od95hki0EJVIOdU+0xphs6zofU3VXzDPZh2I6eTlcwwXeaCiWWzkWmN+1MEQSs5PaOktHvv52ORSNTvZvHzIfBEzQXID6f5foDRfwla1sreFzngEel4yjNIYVNz3at/jEhfAqGo7ekHPT/Q1yynDR0A2xGwwdzE=
+	t=1726568875; cv=none; b=XE3mpbZnExsXRdXPrcLnAOjIRhfEGDsrCWcVRZZ/O7J8U0p2htrC0xg5skJBmVtdNun0WF+/QqCfoeUDxLAWqh3dI2xH/DeTMl22YqjBMEQjTvCIxk2ZZQx+YpERRvQExkxakAZVZDOWqbxmfkjqr2C/EYdjjvrPMeINBGVSv4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726568843; c=relaxed/simple;
-	bh=RQUyVCVGKvk955KD/oOhxw77fHG83o7vjf2LfrYMi3g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tgf5qezdI2a1IPSlUcvIECejhONrwwFAEdtV73lUUpUMiKqg68p9965U28/fozmKsenFzjFa0oZtOKrbfXSSsYI+422jWv/Dcv4vinG2AvNLTAC7ZH6jkBL65EjwuprSsGapRdafWAfaq4eupninPqR87jZnszW9kgCHCstGsNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hHB/VKoC; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374b9761eecso4378736f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:27:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726568838; x=1727173638; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O3BbujuHzO/RAMZvTpQiB1Pqjgm8cgnsqTGoSPy3nXg=;
-        b=hHB/VKoCSJEgXT5RtxJduNcATFbNzOUn5Gx7nJJ3Wfs0w2Dr/Zhpz9ZxvaYAiSyNZY
-         puYz1QrxSvUAp0bq3RkVKB3iSPbEsIL2/O5+6RgAG3o98rcpxNK0UqDY5T5JaKN3AGhu
-         AvlmNrKadHbHN60gkAHi6xI0ttXW3o2zBIU97UlpQ3/EivqbRIVSf1RxI5HoVuFnNGVn
-         kK4e+14nhbxZPL2d8xiMtF5fCGnLhEYtH/9nIiXCu9iz2GamSpdDQgQ9I9PLseywswO6
-         FTdJUhXLJeifNqoXs3QcX8FyKP09OtmKktz1XK6cLNKEwWpNuEkLNGhfRmTAowfC0qR+
-         /MJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726568838; x=1727173638;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O3BbujuHzO/RAMZvTpQiB1Pqjgm8cgnsqTGoSPy3nXg=;
-        b=c110CTZ+y0IrtUWYlNOImiYYa3c1W7d1urxQyqlD6MNgB+isWZnCYS2JGb6s5Bzlo0
-         ILwxMR2Nqq2cf+fdpBOrDL5X/dxNeljYWO06gQjjEohIgnhv6tFRosFy9VFty/RaSfqE
-         +9pthugW8M333d1hSxlGXKDNg364mUk0KlR3kWTbOLYgKq9YiBMEloYaDo4EStW3AHyA
-         7ySIJgGLcu0Osxgs5obn/Ao+Ky3bZHYDVykdMBValP58y8+MdlZoTABqicYG6j4mr3GX
-         VcyATYaZG5s2JPxsb7dgBxgAGoyXIA1wDhcYpq7bzLx8MJfvGH0hmDZ7gbJSMX+Y3Mqd
-         okMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaVxD7MnFa9VUR4+UbqofL8Hovhx2GeQJdpLHBCztL80GfCPxWbxd4dtuCMzw6/KH46gh6CTXZahqx38Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJJBQdGcCG6p1nYb4cP05jO/zg1yU2CZ0XyD2Bre0vS58C0aGt
-	fwSYPgX8g6HRc8/MKDqWDmP8UfVhEn5kpmIZM+eck8zKEp0rsE71Xh6wlWMEI0c=
-X-Google-Smtp-Source: AGHT+IHV5sT6le5zmGHifYAmMMnHu84747/30MSIE35w1b7lr7DQVM5IDV37QwsVD4o4IxyZXamNlA==
-X-Received: by 2002:a5d:61c2:0:b0:371:a60e:a821 with SMTP id ffacd0b85a97d-378c2d4c9c6mr11217648f8f.38.1726568838503;
-        Tue, 17 Sep 2024 03:27:18 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e780031esm9151096f8f.84.2024.09.17.03.27.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 03:27:18 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: andersson@kernel.org
-Cc: konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] arm64: dts: qcom: x1e80100-t14s: add another trackpad support
-Date: Tue, 17 Sep 2024 06:27:15 -0400
-Message-Id: <20240917102715.4096-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726568875; c=relaxed/simple;
+	bh=2HVdrGR1eXf+GNnUU3v+HBuFx+xtJm0DzRrb41BDCKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rSZR1fQxW6VrvXu2we+VuoDOvPAdJuVRmXTGANJDxllKreI1pJh7T8CyUBxnDfbulGOB4EqZdkSJ4/r9vmBZU63h4yx0zyIeA9Nbv6Jd3u89iSv4aELzAndmpN36HFFfhvBQsHnnOcbqQ+YJU1Wp3tHgN80b+MdNI7TglavL/Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49E8F1007;
+	Tue, 17 Sep 2024 03:28:22 -0700 (PDT)
+Received: from [10.57.83.157] (unknown [10.57.83.157])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1A063F64C;
+	Tue, 17 Sep 2024 03:27:50 -0700 (PDT)
+Message-ID: <a35f99b6-1510-443c-bb6f-7e312cbd4f79@arm.com>
+Date: Tue, 17 Sep 2024 11:27:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/7] m68k/mm: Change pmd_val()
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ x86@kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-fsdevel@vger.kernel.org, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+ <20240917073117.1531207-2-anshuman.khandual@arm.com>
+ <4ced9211-2bd7-4257-a9fc-32c775ceffef@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <4ced9211-2bd7-4257-a9fc-32c775ceffef@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On 17/09/2024 11:20, David Hildenbrand wrote:
+> On 17.09.24 09:31, Anshuman Khandual wrote:
+>> This changes platform's pmd_val() to access the pmd_t element directly like
+>> other architectures rather than current pointer address based dereferencing
+>> that prevents transition into pmdp_get().
+>>
+>> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Cc: Guo Ren <guoren@kernel.org>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: linux-m68k@lists.linux-m68k.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>   arch/m68k/include/asm/page.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/m68k/include/asm/page.h b/arch/m68k/include/asm/page.h
+>> index 8cfb84b49975..be3f2c2a656c 100644
+>> --- a/arch/m68k/include/asm/page.h
+>> +++ b/arch/m68k/include/asm/page.h
+>> @@ -19,7 +19,7 @@
+>>    */
+>>   #if !defined(CONFIG_MMU) || CONFIG_PGTABLE_LEVELS == 3
+>>   typedef struct { unsigned long pmd; } pmd_t;
+>> -#define pmd_val(x)    ((&x)->pmd)
+>> +#define pmd_val(x)    ((x).pmd)
+>>   #define __pmd(x)    ((pmd_t) { (x) } )
+>>   #endif
+>>   
+> 
+> Trying to understand what's happening here, I stumbled over
+> 
+> commit ef22d8abd876e805b604e8f655127de2beee2869
+> Author: Peter Zijlstra <peterz@infradead.org>
+> Date:   Fri Jan 31 13:45:36 2020 +0100
+> 
+>     m68k: mm: Restructure Motorola MMU page-table layout
+>         The Motorola 68xxx MMUs, 040 (and later) have a fixed 7,7,{5,6}
+>     page-table setup, where the last depends on the page-size selected (8k
+>     vs 4k resp.), and head.S selects 4K pages. For 030 (and earlier) we
+>     explicitly program 7,7,6 and 4K pages in %tc.
+>         However, the current code implements this mightily weird. What it does
+>     is group 16 of those (6 bit) pte tables into one 4k page to not waste
+>     space. The down-side is that that forces pmd_t to be a 16-tuple
+>     pointing to consecutive pte tables.
+>         This breaks the generic code which assumes READ_ONCE(*pmd) will be
+>     word sized.
+> 
+> Where we did
+> 
+>  #if !defined(CONFIG_MMU) || CONFIG_PGTABLE_LEVELS == 3
+> -typedef struct { unsigned long pmd[16]; } pmd_t;
+> -#define pmd_val(x)     ((&x)->pmd[0])
+> -#define __pmd(x)       ((pmd_t) { { (x) }, })
+> +typedef struct { unsigned long pmd; } pmd_t;
+> +#define pmd_val(x)     ((&x)->pmd)
+> +#define __pmd(x)       ((pmd_t) { (x) } )
+>  #endif
+> 
+> So I assume this should be fine
 
-Trackpad HID device on some of the T14s Product Models 21N2ZC5PUS is
-at I2C address 0x2c add this to be able to get it working on these laptops.
+I think you're implying that taking the address then using arrow operator was
+needed when pmd was an array? I don't really understand that if so? Surely:
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+  ((x).pmd[0])
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-index 941dfddd6713..8468f99d9bed 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-@@ -467,7 +467,19 @@ touchpad@15 {
- 		wakeup-source;
- 	};
- 
--	/* TODO: second-sourced SYNA8022 or SYNA8024 touchpad @ 0x2c */
-+	/* SYNA8022 or SYNA8024 touchpad @ 0x2c */
-+	touchpad@15 {
-+		compatible = "hid-over-i2c";
-+		reg = <0x2c>;
-+
-+		hid-descr-addr = <0x20>;
-+		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&tpad_default>;
-+		pinctrl-names = "default";
-+
-+		wakeup-source;
-+	};
- 
- 	/* ELAN06F1 or SYNA06F2 */
- 	keyboard@3a {
--- 
-2.39.2
+would have worked too? I traced back further, and a version of that macro exists
+with the "address of" and arrow operator since the beginning of (git) time.
+
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> 
 
 
