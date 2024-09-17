@@ -1,126 +1,148 @@
-Return-Path: <linux-kernel+bounces-332054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C40A97B4DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:44:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CFD97B4DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32FB1282993
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:44:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1B601C22C1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 20:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7877A18FC85;
-	Tue, 17 Sep 2024 20:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tga0bg+M"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F9A191F87;
+	Tue, 17 Sep 2024 20:44:38 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F77016132A;
-	Tue, 17 Sep 2024 20:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824D218A956;
+	Tue, 17 Sep 2024 20:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726605835; cv=none; b=uziX0DhIdjPb/h3t5Da7+ID+++c9NAATUFFKkD92zzwiuDmUUu29JMcM2/Q299hGKnGbLduJRRR96M3Dnv5ZrS53sE9wlcyJMpYiELO7pjImQ+tLhZwgaLO09csh0+IeimoeUjfaBvwNlqCTFYuo0fbzUFA9x4wrDW/QAM8pCgQ=
+	t=1726605877; cv=none; b=u1Yc2Bc81Y1ELgUHiK46ZTXLSU2wHC68ua7q9sRg06V6ZcE9sJ672kPLUiQ+CBJWI+ijo7sgac+uj/PhS6AmpGuwTsu4knv6svY5WcpSv7chBpxTdSX7pnxIzP/2wfOccUBkCsn80+rjncTfyD4CMjutAyUQhrR/qrzBCHGiUFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726605835; c=relaxed/simple;
-	bh=YeaS3unihXtzQOMow7ezk1Bx9gSH++mgIedNJfbgh0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XAKAQEoOzDBqIjrluxx/yQvXDGlhgAyvYsVjpu4qTMWotrsTOVMjU3BHxI7WYhSKAhHJMN3EcD1PHHMU1Ej7+2+r4t5O69j31QjL9+RKa+6ZpI/FVIhC6ly6tsaJYGGPsq8VWLlSij2L2T11VOz4lDZ67RXE1Rp1WtwNiqJ/UFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tga0bg+M; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726605830;
-	bh=qv5jMhiYV9JvdlxIVn4GEDGlQx775UIeF98ZabxwPdI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tga0bg+MLRDZaLdYyWr9wOHGduEZAK0gvBp5yaP6orAVpwQlfInSwSoNHo693BZeB
-	 y0uxKQ/J/Rd/x+ebTMFshgcM9AHPbiRZWAg4jGg3AKMeUCE8rQVHmV3mYBBaTISaZj
-	 f8jqjNeLp2tSFZfWmnVNHjtE6A08G5YjfSjvXpKDk3Fu/CRnmGvR7xwLZIcDCuA6o+
-	 ocCfKkeM/Y6IkBxLGTJRCFpFLxrAAQg2KrXka2vc1VUiCMr9PGs/mU6z43cvOrnirb
-	 odA/AkanoqmqDT4pGsaEGQAzBk7ZKncNdMl2BJOaHQWtu+/+p8OY41h7P/lWG5A/yI
-	 zvk9I5SE8yNwg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X7YfF4xgvz4xWm;
-	Wed, 18 Sep 2024 06:43:49 +1000 (AEST)
-Date: Wed, 18 Sep 2024 06:43:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM
- <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the stm32 tree
-Message-ID: <20240918064349.79dc0a1e@canb.auug.org.au>
-In-Reply-To: <20240906120821.6ca2ac3d@canb.auug.org.au>
-References: <20240906120821.6ca2ac3d@canb.auug.org.au>
+	s=arc-20240116; t=1726605877; c=relaxed/simple;
+	bh=iMxZB+YttnhccaC3XGRZRTY+r8Kip8OD0WLKB804tlA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=sCW8XHKR+zC1WYtf7NrFmMtTjRNH1j14RiheD8PSt7kxhD8w8ZUD60rF++Q6BE132jWNbWdKGgPi+7XUd/rePuszzN/js1L6wMjRbL/w08+jrbxKorF5buie77tLtjwRj/OQ5HEGSsu9iBo0yLg8plEAQlO4LeSFPVzxuZmADfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.108] (178.176.74.43) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 17 Sep
+ 2024 23:44:24 +0300
+Message-ID: <abe87c03-3a73-3f16-92eb-a988a61649d5@omp.ru>
+Date: Tue, 17 Sep 2024 23:44:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/dtVwgsyt0Ba3JX/KfWIkA4r";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] ata: pata_octeon_cf: Use common error handling code in
+ octeon_cf_probe()
+Content-Language: en-US
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+To: Markus Elfring <Markus.Elfring@web.de>, <linux-ide@vger.kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>
+References: <4ca111f2-9b38-47a1-88d5-7dfaedcc6ea5@web.de>
+ <2e38a924-a68a-8d19-8c3a-c19708f9ab74@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <2e38a924-a68a-8d19-8c3a-c19708f9ab74@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/17/2024 20:26:13
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 187809 [Sep 17 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
+ 8a1fac695d5606478feba790382a59668a4f0039
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.74.43 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.74.43 in (user)
+ dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.74.43
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/17/2024 20:28:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/17/2024 6:58:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
---Sig_/dtVwgsyt0Ba3JX/KfWIkA4r
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 9/17/24 20:43, Sergey Shtylyov wrote:
 
-Hi all,
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Tue, 17 Sep 2024 13:43:24 +0200
+>>
+>> Add a label so that a bit of exception handling can be better reused
+> 
+>    s/exception/error/.
+> 
+>> in a subsequent if branch of this function implementation.
+>>
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>  drivers/ata/pata_octeon_cf.c | 9 ++++-----
+>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/ata/pata_octeon_cf.c b/drivers/ata/pata_octeon_cf.c
+>> index 0bb9607e7348..62289f6aef95 100644
+>> --- a/drivers/ata/pata_octeon_cf.c
+>> +++ b/drivers/ata/pata_octeon_cf.c
+>> @@ -848,14 +848,13 @@ static int octeon_cf_probe(struct platform_device *pdev)
+>>  				struct resource *res_dma;
+>>  				int i;
+>>  				res_dma = platform_get_resource(dma_dev, IORESOURCE_MEM, 0);
+>> -				if (!res_dma) {
+>> -					put_device(&dma_dev->dev);
+>> -					of_node_put(dma_node);
+>> -					return -EINVAL;
+>> -				}
+>> +				if (!res_dma)
+>> +					goto put_device;
+>> +
+>>  				cf_port->dma_base = (u64)devm_ioremap(&pdev->dev, res_dma->start,
+>>  									 resource_size(res_dma));
+>>  				if (!cf_port->dma_base) {
+>> +put_device:
+> 
+>    Ugh... :-/
+>    Please use the new-fangled *devm_platform_ioremap_resource() instead of those
+> old-fashioned APIs.
 
-On Fri, 6 Sep 2024 12:08:21 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> The following commits are also in the arm-soc tree as different commits
-> (but the same patches):
->=20
->   078dc4752822 ("ARM: dts: stm32: stm32mp151a-prtt1l: Fix QSPI configurat=
-ion")
->   76e16f3549e8 ("ARM: dts: stm32: Keep MDIO bus in AF across suspend DH S=
-TM32MP13xx DHCOR DHSBC board")
->   835dfbca3781 ("ARM: dts: stm32: Add ethernet MAC nvmem cells to DH STM3=
-2MP13xx DHCOR DHSBC board")
->   8388a6e67f22 ("dt-bindings: arm: stm32: Add compatible strings for Prot=
-onic boards")
->   a15ad86d4b65 ("ARM: dts: stm32: Add MECIO1 and MECT1S board variants")
->   b14c9f6bd0ba ("ARM: dts: stm32: Use SAI to generate bit and frame clock=
- on STM32MP15xx DHCOM PDK2")
->   b512ce39b570 ("ARM: dts: stm32: Sort properties in audio endpoints on S=
-TM32MP15xx DHCOM PDK2")
->   c00176c49e94 ("ARM: dts: stm32: Describe PHY LEDs in DH STM32MP13xx DHC=
-OR DHSBC board DT")
->   ce923f5d2804 ("ARM: dts: stm32: Switch bitclock/frame-master to flag on=
- STM32MP15xx DHCOM PDK2")
->   d3557e468f68 ("ARM: dts: stm32: Disable PHY clock output on DH STM32MP1=
-3xx DHCOR DHSBC board")
->   efab072ce426 ("ARM: dts: stm32: Add missing gpio options for sdmmc2_d47=
-_pins_d")
+   Another option is to place this error patch somewhere at the end
+of this function but I think I prefer the new APIs.
 
-Those patches are now in Linus' tree (as different commits).  Please
-clean up the stm32 tree.
---=20
-Cheers,
-Stephen Rothwell
+[...]
 
---Sig_/dtVwgsyt0Ba3JX/KfWIkA4r
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbp6gUACgkQAVBC80lX
-0GxHuggAjN3UZ7xhHdYguvl/wLOsYviQ5R1fG0ygEw1PFEhNurXj3W9sIPIoBzat
-6PhKmRbL9dZxmJCc3vy23SslWUXALFO4yUG5wXayJV9sdJc1b/hpD7tX2qjpbk2q
-4TvlMPVAYwh9VX/Uosmi8QzB6vzgnjuGyWqxzGQBN3pzrmQep/gt4HKqxf7CJgNa
-V6F/Jvnmzgf0EvAfU76u0EEu+mM46UU2k6ehAGvngtIAMqX23rwcjuRw9sc4crjA
-jDMFpdpiH1Kq3hlO1KQyVgcHPigUxm0AhxVHRCjoEMCTyS9FJDLxDlISwNy9E4K/
-FekJ40Urx0jsP40wuJoHEORV1FiTjw==
-=bHIe
------END PGP SIGNATURE-----
-
---Sig_/dtVwgsyt0Ba3JX/KfWIkA4r--
+MBR, Sergey
 
