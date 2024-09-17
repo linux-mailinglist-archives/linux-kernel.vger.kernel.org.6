@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-331501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A323F97AD9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:11:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34D197ADA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65EC6284571
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 509401F25120
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A4915C127;
-	Tue, 17 Sep 2024 09:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB5815B57F;
+	Tue, 17 Sep 2024 09:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="i/okB5hp"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GMUa/pPX"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B93146A69;
-	Tue, 17 Sep 2024 09:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45807146A69;
+	Tue, 17 Sep 2024 09:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726564287; cv=none; b=dt3zAZt59sW21WoAf9fu/uW8Jh3ia55ibYzyM21GLyg729XTwpt2kA8WEaLW4Y/QCWZsxMpsF2tRUvL4JOP3fBruUmN86rA7sKpMyQIdtWaAmrK7/zZdPpQBjP10Y2M5E4pDdmWR5J2HXZyBPPO7UAuJU+W9EvbNGZXG53EKA1A=
+	t=1726564300; cv=none; b=UnnF+IqFiWgZRIvmNNhojrOqod7e0eVYgVlF40RbxmoK/vX4L/TQKEUq+mc368czPfpBqqrQYX2HGbIK+QhUWGdAdcZ6MkA6AtTbdZ429zOrB1swgZbjFF8Rs0wuRIbeMyYJRlwWF89q7QLdsp/X3qy9nP2Z9qewDVt58Hj1KZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726564287; c=relaxed/simple;
-	bh=/bcneZc/Oh8H9i2vgkzVtn/cy+RLi1pifCKFElLWdF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2sJHp+CXlB+5fd6Q6maflrUu8brkvgtcJ86V/8h1wkrkHGf9lom2jTo3od0p0f+HrpEC1IL9RsH9jEf1dbH+QSvq5yLyrXwdOE5lynVnualzxn3X0edE2nTRrvToLRz5zAM9qL0Wwj4uvCwWQC7saLTiX8/42FS/pZ6zaTJ9SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=i/okB5hp; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0jZ4zCvDYMFilkK8UmjZolNeKopNB0TODO3PgZAi9XM=; b=i/okB5hp8JcMMS+UjY8J+wf/sn
-	sgfCPkqfEPmxREuSN7vJLU7UYyieN6qWp/GT6pR3AjTJqFLknvBK2totvC9vYfzJIKIYhKiO3cpa6
-	k/bK5KZMhF36xbF4OQpApJnAPUWTR455xWQosC0BycxZESNULtIcIz8FUDAa2E81DSzGK1k0Usum8
-	n7TdaICcLdM4mRXS2IL2zdOpXTON3VA2+dJzG/HA15xh0GPl4Ke65u8zbxRVByCxh1mT1GU1Gmt0k
-	hmxK3SUy2+eXsq8x7U8puw/Io/T90crXrpIXgJW7atX7nNlVaXDwI+6++XUcV0/GBPz52cZp4/5XQ
-	utcjUWXw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41350)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sqUEm-0006lk-1J;
-	Tue, 17 Sep 2024 10:11:08 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sqUEi-0007rB-0d;
-	Tue, 17 Sep 2024 10:11:04 +0100
-Date: Tue, 17 Sep 2024 10:11:03 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/2] dt-bindings: net: ethernet-phy: Add
- timing-role role property for ethernet PHYs
-Message-ID: <ZulHp9IBvptenuRa@shell.armlinux.org.uk>
-References: <20240913084022.3343903-1-o.rempel@pengutronix.de>
- <20240913084022.3343903-2-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1726564300; c=relaxed/simple;
+	bh=58lPaXcY3g+9HNzDYS6D7c9jH1qiDF3Ci+34DHi5/VE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iDtpFFM0q0fMJ6+Nx4DAidsbDyEwoFBWy3HWb1Zz3Jamjwyq085hoVR/Kmx4Q6tpcNiSKYd7+kzQahGaxZyjIU9K6THCu7VVk6KAKl/0BLRMp2YK/vqQq8baTgteBlMFMOU/EMsDDTm9QDhyIaHhsnL1/YJ013NU2KYVhi2IG1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GMUa/pPX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726564296;
+	bh=58lPaXcY3g+9HNzDYS6D7c9jH1qiDF3Ci+34DHi5/VE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GMUa/pPXwwgAJ5nhu3kpb/IFFI7eIclKibLfPmOyBaUkSuH5jecsvH1+6CCqTx8GB
+	 iC5X6nZpS0r8/usRgxtpNN7B115yGu5NWt9JpEozbqhtpUswtUbVWWdTjd0+qg/IfN
+	 TyjqwfiXoWuvpJpHUbdOfOSjAIB4aAOAW5N1uH4qHR6T7SnD81eD/hBaoZuHdkBSUH
+	 olg7EEpN/Ajn4nMaeNuS++G5NCrvy/HE1BhxrU7mGLTmyHhkH7iQl2Jo9lEkXPHYop
+	 fbhbiScF91DvpAWZj1UFFxUrMektIN5xiYneD0QZ6TwOCK7CfPZBYsJdBxsZ/TLzHD
+	 5adlB7soSivPQ==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9268E17E1080;
+	Tue, 17 Sep 2024 11:11:35 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-pci@vger.kernel.org
+Cc: ryder.lee@mediatek.com,
+	jianjun.wang@mediatek.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH v2 0/2] PCI: mediatek-gen3: Support limiting link speed and width
+Date: Tue, 17 Sep 2024 11:11:30 +0200
+Message-ID: <20240917091132.286582-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913084022.3343903-2-o.rempel@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 10:40:21AM +0200, Oleksij Rempel wrote:
-> This patch introduces a new `timing-role` property in the device tree
-> bindings for configuring the master/slave role of PHYs. This is
-> essential for scenarios where hardware strap pins are unavailable or
-> incorrectly configured.
-> 
-> The `timing-role` property supports the following values:
-> - `force-master`: Forces the PHY to operate as a master (clock source).
-> - `force-slave`: Forces the PHY to operate as a slave (clock receiver).
-> - `prefer-master`: Prefers the PHY to be master but allows negotiation.
-> - `prefer-slave`: Prefers the PHY to be slave but allows negotiation.
-> 
-> The terms "master" and "slave" are retained in this context to align
-> with the IEEE 802.3 standards, where they are used to describe the roles
-> of PHY devices in managing clock signals for data transmission. In
-> particular, the terms are used in specifications for 1000Base-T and
-> MultiGBASE-T PHYs, among others. Although there is an effort to adopt
-> more inclusive terminology, replacing these terms could create
-> discrepancies between the Linux kernel and the established standards,
-> documentation, and existing hardware interfaces.
+Changes in v2:
+ - Rebased on next-20240917
 
-Does this provide the boot-time default that userspace is subsequently
-allowed to change through ethtool, or does it provide a fixed
-configuration?
+This series adds support for limiting the PCI-Express link speed
+(or PCIe gen restriction) and link width (number of lanes) in the
+pcie-mediatek-gen3 driver.
+
+The maximum supported pcie gen is read from the controller itself,
+so defining a max gen through platform data for each SoC is avoided.
+
+Both are done by adding support for the standard devicetree properties
+`max-link-speed` and `num-lanes`.
+
+Please note that changing the bindings is not required, as those do
+already allow specifying those properties for this controller.
+
+
+
+AngeloGioacchino Del Regno (2):
+  PCI: mediatek-gen3: Add support for setting max-link-speed limit
+  PCI: mediatek-gen3: Add support for restricting link width
+
+ drivers/pci/controller/pcie-mediatek-gen3.c | 75 ++++++++++++++++++++-
+ 1 file changed, 73 insertions(+), 2 deletions(-)
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.46.0
+
 
