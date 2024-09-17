@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-332145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4FA97B5F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:55:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 966DC97B5F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7DFD284B60
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2771F24C1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A066168483;
-	Tue, 17 Sep 2024 22:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhRKzGlw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14203166F1A;
+	Tue, 17 Sep 2024 22:57:47 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBF3208D0;
-	Tue, 17 Sep 2024 22:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5130115C144
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 22:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726613718; cv=none; b=Mw9bt/e5JRXk1kCQvoF4xn5A7fEYSIRmmpNsZiL9gei9LWkQzpSfURY/IVw3SExOAfp/EAAGWpMJ4xeyOWmVMnMDdsnHJ7uqGV+RnpaGCDd1EzWE/mNhY3jhUQNSbYbZNjYBvpwH028UXTW/xsa2iEzqxHJo7u+gVQt0uh9B/Jc=
+	t=1726613866; cv=none; b=ltc7eRTbdlKNaaKXBXjGqutmC6VrAlD2Lg92ndZu9JzSkSo23IjZIJoTS72mql+RH9mRFDszcXQI+hI/YI4Gkx4Iq/WqAyUlO1iV5ScRrRcVOHq2C5Fm4lKiF3pCCQ+65wWzBdis22oBYfbMbLklSHjGrKBjKq1LWCTTXqoZKgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726613718; c=relaxed/simple;
-	bh=7pt6/NdSRGsKCr7dAnEZxjHuCV8vZIOSmOLJzsCOY7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=msVT9uPGNbS9s+54A8fkpcOkpDHy3QwpuKNVdd9d9ZFlq/5SnacQAM7uLaqb4q58hsHjQqTPLJyaaMW5nJ+d2qpZ8soviPDHn9ehKcx5Fq9xbLf0Lu3aQW+GnfmEO6m+pqwcH6O/towikBhndGoD5c3LiRsUPjoV56R16LfGagM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhRKzGlw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5795C4CECF;
-	Tue, 17 Sep 2024 22:55:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726613717;
-	bh=7pt6/NdSRGsKCr7dAnEZxjHuCV8vZIOSmOLJzsCOY7g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FhRKzGlwjDpaBgXDm71+ykMIHI4DTaBaDBXjsQxk1noVJawgI0gXbqqaEdEv76Vdg
-	 n3wdHe/uSL/hHieKCgOt4Fq7RXGdvJ32As2v3ng1HRxFYCCEn3hmQEpO+8TZ2otDl3
-	 qkeX5mRVokQ95zlGsE3bZiB9qlEqSKCD/kkGZ3rlyYGikSCd+6jHb3pRWCzv4Jv0TO
-	 aIRbb+5MQBwiapcE8wmNotJJVVRnEBaPzwq+QFXd2Va9dhQLCnL9QOYmTXMef4KwAg
-	 2fp5yLZDZANrU3rYKOZ0JGUhK/IBgGsnGlODMatJ+61qsqEYA/1p2CTtIBZ8W9qcLv
-	 bj2q3twBDGeWw==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2780827dbafso2556471fac.1;
-        Tue, 17 Sep 2024 15:55:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVgTrBnJhRjr/A5lrNg1spwVZKRVNhU7ZVB+ZK+ROnz7ByVOVUkxB8JG4Rpfky3yZHk21SqkkOmEy8EDQ==@vger.kernel.org, AJvYcCXiraCVqXuVWjgjXsykWd0p4gc8DJ6mlE2d38li53sJtCzGgvcBs+4UFbIbEKQe4s5AOQ4+/UdSuiiV9bQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxms03PEcqHz2/5m4PZtt8lxdoqPmj6Oomq63BIoHpyVuLrecGO
-	z/IOB7GFLoO5vfsLq+FYgNKzK1QwUiIap9y/bzaTl2stbZVLyavpn2uQ/nmxckGkiMkZXCj8SZs
-	nb8eccERj/zMqtwGFIIOQ6JOqSW8=
-X-Google-Smtp-Source: AGHT+IFrzoKN8gE/bX0LOpzi2sP7RLQGw/8k8Ds/ZCwYSF7gDyW9eGDz+uiP7W1kAB41Pk0SAxinlPKP1lmMuYhTQBA=
-X-Received: by 2002:a05:687c:2b8e:b0:260:eb3a:1b2 with SMTP id
- 586e51a60fabf-27c688c0633mr9973789fac.7.1726613716925; Tue, 17 Sep 2024
- 15:55:16 -0700 (PDT)
+	s=arc-20240116; t=1726613866; c=relaxed/simple;
+	bh=xRnxC3RFg1wvnYWAtKHCgiBSzoSkcYHITvn1QpTkXdA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=f378SSfJzvxKX4Lkv7Pt6/igXpjIPm1zFAxz+qOBDN3fg/8bJE+TZ/frp30A0bLEAG4NOxXmhGTGi3v2JXkDeC3r4T5JVe7d6AGePP3TOIPVmtjIIh7qoIANGYREKDGIHAycvR1uHtYTCGHh2q1oixaWjWTuDTj3XSzzpbp4DpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0a4db9807so36641595ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 15:57:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726613864; x=1727218664;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qqTClFTgVvBIEVRLdYgG5Xx4293FOgi8Cdwdo32lTpI=;
+        b=FyeibbmySbGSVqUErq8EnnJqo07xlM9zWlMzkJbV5jnIuyBL3xi4nCcGcUjf0FrPKZ
+         zYmv7kfzw2OlHX4wf+ZJjekYCwk/rhC6rl+nOChZLgqoUJDdCGGuOfiBxUm+uLgxA+Ob
+         CeWTtdo7cTR2ndJIe+gaSb0GSmRVU+FNyp6HI497Y1nr/SisfTH3W1Gz1n3h0pNPpNg0
+         Eje5lY0D1PvOuKl2LJEefa2SxeRCt7Atv5RVtLGrDYZBFUbOwNSDVCLwg4sF+mrJ3pM7
+         ACjmDvX1SADZ5WNMMWwDBG7Uza0SaZp21TH91r3RCYvvHTNsHyOSyX0aiY2WkEOB1o3s
+         T32w==
+X-Gm-Message-State: AOJu0YwNy5pnA9xYFfrpDIG9khQ6edeFabM1HvgMdC8s/hc+bHgpq8ys
+	v5l2uoF04i6h6aEQX3AoTUUEWjMFLOXSNW44NUSAZQTxT6OriUxx9TMAUUs/evToj1qnNCeQ41Z
+	heVCK+itHZR9JuURMjKjQEs3xp4RNDjlinMAVHLrLAMV5VBK+izs1M9Q=
+X-Google-Smtp-Source: AGHT+IFjDLRG1obEqyoR3j6sN8SHSrnA3vxR8kFfqIwLcnmidqzX830UYZF8eUGzK3jDqOYZf/GWB6Ab7I2gi2qjZhmNMTnhWp0O
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918081323.760ac7b4@canb.auug.org.au>
-In-Reply-To: <20240918081323.760ac7b4@canb.auug.org.au>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 18 Sep 2024 07:55:05 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_=u0qqtuQNwx7y10U4sYVFzk-A=zO-eaeMNJr3KFv9Kw@mail.gmail.com>
-Message-ID: <CAKYAXd_=u0qqtuQNwx7y10U4sYVFzk-A=zO-eaeMNJr3KFv9Kw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the exfat tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dongliang Cui <dongliang.cui@unisoc.com>, Zhiguo Niu <zhiguo.niu@unisoc.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+X-Received: by 2002:a05:6e02:164f:b0:39b:330b:bb25 with SMTP id
+ e9e14a558f8ab-3a0848f7e52mr196769465ab.12.1726613864446; Tue, 17 Sep 2024
+ 15:57:44 -0700 (PDT)
+Date: Tue, 17 Sep 2024 15:57:44 -0700
+In-Reply-To: <00000000000039e8e1061bc7f16f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000e0b1c0622589e12@google.com>
+Subject: Re: [syzbot] [PATCH] net/ipv4: Fixing circular deadlock
+From: syzbot <syzbot+e4c27043b9315839452d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 18, 2024 at 7:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> Hi all,
->
-> After merging the exfat tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> In file included from fs/exfat/inode.c:18:
-> fs/exfat/exfat_fs.h:13:10: fatal error: uapi/linux/exfat.h: No such file =
-or directory
->    13 | #include <uapi/linux/exfat.h>
->       |          ^~~~~~~~~~~~~~~~~~~~
-Oops, Sorry for missing adding this header...
-I have updated exfat tree again. Please check it.
-Thanks!
->
-> Caused by commit
->
->   0636fd914f77 ("exfat: Implement sops->shutdown and ioctl")
->
-> I have used the exfat tree from next-20240917 for today.
->
-> --
-> Cheers,
-> Stephen Rothwell
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
+
+***
+
+Subject: [PATCH] net/ipv4: Fixing circular deadlock
+Author: srikarananta01@gmail.com
+
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+Fixed the circular lock dependency reported by syzkaller.
+
+Signed-off-by: AnantaSrikar <srikarananta01@gmail.com>
+Reported-by: syzbot+e4c27043b9315839452d@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e4c27043b9315839452d
+Fixes: d2bafcf224f3 ("Merge tag 'cgroup-for-6.11-rc4-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup")
+---
+ net/ipv4/ip_sockglue.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
+index cf377377b52d..a8f46d1ba62b 100644
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -1073,9 +1073,11 @@ int do_ip_setsockopt(struct sock *sk, int level, int optname,
+ 	}
+ 
+ 	err = 0;
++
++	sockopt_lock_sock(sk);
++
+ 	if (needs_rtnl)
+ 		rtnl_lock();
+-	sockopt_lock_sock(sk);
+ 
+ 	switch (optname) {
+ 	case IP_OPTIONS:
+-- 
+2.43.0
 
