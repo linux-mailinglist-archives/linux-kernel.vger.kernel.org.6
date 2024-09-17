@@ -1,110 +1,183 @@
-Return-Path: <linux-kernel+bounces-331866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5AAD97B22B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:47:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303FF97B22D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E9E1F2A725
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:47:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EB91C238A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A0E18C342;
-	Tue, 17 Sep 2024 15:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BD817BECB;
+	Tue, 17 Sep 2024 15:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jrLuhqHE"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8QpCMsl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7569418BBB8
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 15:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928E93E47B;
+	Tue, 17 Sep 2024 15:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726587149; cv=none; b=RX/Q2hycg/0ZooTmiC60XCRV1Sq2vjk5FQAIED8sPAsCFNHi68CH+sz7BTqDd5po6wTw2xDBb+lHr4lY7T6beO4aoKGs2eSU2DxTHVft92wf+cPaRuBeqJtoUWS0Q2ypo77WKDK2/+wzREqPzyLoE5uXRWAEK53phLvyrVTiCIs=
+	t=1726587334; cv=none; b=g3YbBNPE9vKgdXPzrA3diwHgTUfF9kZvu+ZvLZta09D1FpqBmY8IlLrL04d7gnXS1CUtqMeuf7g/7yFADr/5XGsN5+apmH92Y8kpcRzewIT4ZMfE3r8XOjx/jBFvfB/HC/ZPrVEIMngaqtOsUco7KYZhsNi3Mxyu/9U+CDyyWIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726587149; c=relaxed/simple;
-	bh=GtH6orHOd7OaviqK1eMSDZXt9/hshFTmujsoRog2i5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJFNvjyaQ6xiakjAoiVq0lGaV2W3XKixPECpj4RYk6z/YZ+FZNXuSXac95yIBazF42LP6E26r3h8AoxKgqpR8SByIv4e9m4RTKJYu3LN+bAWxU6yaftyqbK8dkdUj6jy+anoCxgnIqZECtheKVAaNCe4Upsyqbv3wOosev5B15s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jrLuhqHE; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5367ae52a01so5138572e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 08:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726587145; x=1727191945; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hovqWX9ZGGc/PguKDoamC6JnPtCjHAI2q7eZhe99mHg=;
-        b=jrLuhqHEB/m24mTFwQ7lqODwdsXkSI4ZHgYeQwxkV1wFXNhYcaw7122NKAdfMyCKDU
-         OYu+Hl7guKw94l/38T0I5poKeyMpKnx5xw5B4JmQMX1v7ZNji5jUwGA9BzRpQQS0oYuX
-         tjO60Nog3uzyDTPeglaHhnBPWd3J5r6bDXhbROzC59bAjPFtqAHfw+sLhuvavONSHJX4
-         nhaYBPxpZLeX3xboc3kOrhC3R8LM4JV9i73ih1L2LYdUenfajCgycXe8fvxKYWpnUJ11
-         YFGodc9EM7bctRm4mf3Me2ns6M+XJiz5bMcelzeTeGkFFhnAZvmIlMtFDPUK+MrJFABS
-         Qacw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726587145; x=1727191945;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hovqWX9ZGGc/PguKDoamC6JnPtCjHAI2q7eZhe99mHg=;
-        b=KxxyGP/XSgGzLHxC1zgbQIUDI7BBO4PEonzTXRW1ZsmIsDPhT7nHtRertex1gww7Fq
-         eE5DqMSUal8qKwfNNDkbAG0SjjXY73IFCsvWhpV6y13gKomWMZt6qDOXrHIJQDzPLdcM
-         TfY/P/PPVDplsqXi/gEEdx/wm0+li/RYBTGHfHh6d3UmHa+caWjW93MNi8VIz7OkboGM
-         vX23Hq6zVzxYC08phHctwh3XgCE4+r9J0KuF7It+faGslv2mmrUnAZAsCPawrEL+9MYo
-         BoLyn/wjiF7ugeMJHVv2mXTFRf9s2Ii/NoJ9gCY5uT1V8GNSQULYMXPeviVB+/EMHkIs
-         LdxA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+E00j3DnJj1xtRFl/lGIZiYhRLqfRrA2cMAcLIhs6s86CHS8eSR9exIbqEcIgvxFv6O/wXppoyirEFrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuZ5aPUNxh2Ac+3y0ZZ3P9amLtw+vIiKk3Q3/xrA35wacBn2Et
-	5GtPwFJ9vrP0sSLFMVNNSw+apDv3rKEJKGwWwQN4OHB7nvQ5tz17Ctis0cWiMgs=
-X-Google-Smtp-Source: AGHT+IGtfgOTi9jypDor4dQ1o5T3M6DF1HXTXj8usXJ4QJ+V6oHOzNjz0387tRIfAxVH1jPQlKdX8A==
-X-Received: by 2002:a05:6512:12d1:b0:536:5827:8778 with SMTP id 2adb3069b0e04-5367ff3382bmr7813936e87.53.1726587144460;
-        Tue, 17 Sep 2024 08:32:24 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870b8cd6sm1218096e87.290.2024.09.17.08.32.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 08:32:23 -0700 (PDT)
-Date: Tue, 17 Sep 2024 18:32:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: srinivas.kandagatla@linaro.org
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, abel.vesa@linaro.org
-Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100-t14s: add another trackpad
- support
-Message-ID: <xn3pyfko2px4w73qijpkhccujgipckrazquesvzz3odbkxclzr@azgbhljfllfv>
-References: <20240917150049.3110-1-srinivas.kandagatla@linaro.org>
+	s=arc-20240116; t=1726587334; c=relaxed/simple;
+	bh=jJt7WnZBGuBV8L4paI1I1Es2EO1tM2i2LNNETVlvlLg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hZVcbm3QnAtwT/L+QdLSlGHsBRyKpPhEYptJdpREz6EHtKLs4iggRsWRFhWXm4itULU0rVlvObRD3ftn66xdYE3x4mtVpiaI0QVsdP7AElIz8NkwVl6TeaZr4WwnIxtNXe6GoITONidVJSum/RrMVh6AjXMp9jj/uTBthOQl5DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8QpCMsl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16913C4CECE;
+	Tue, 17 Sep 2024 15:35:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726587334;
+	bh=jJt7WnZBGuBV8L4paI1I1Es2EO1tM2i2LNNETVlvlLg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=D8QpCMsl4hL6URbZ0y9GOTbkwLbGidkNzrLm1OkyRJYFPfL6xa1fjlldFR0Fzh33n
+	 vrYhxuly++Rq4Hge4f6PnD1FDN+6sraoPg/xbrhbAZrs2yFG4w/MO9n/sjudVgT9VI
+	 J78/7dtup430/h5ym92SJBJ5uh+F6K4gtFGHz3xi1xpJnADasSvmaNdw0BLTDSo4fZ
+	 MKHVluYW9UUXCF3XIWRmhMTH8EKtJcZNUz5Gd8EMn/GceO97jcBIYQCaViClbBGSJ4
+	 og7dPqrPLgIm751QTNcZm3Fr3RRkyTJlGUb5lHqGgdER87ld2wRzk05pKy0eL85QqP
+	 gafhFW9lu7stg==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f74e613a10so61235551fa.1;
+        Tue, 17 Sep 2024 08:35:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUH5O6ahxsBD9bJlHSqikNXxzuL3Bm5dxhmwqlt3YsnptOFwrT266QS4vqklx1a8MFwFB3hHey9OLw=@vger.kernel.org, AJvYcCX56DEzN38L5b0r3v055jMyNhn2kTiynMEl0Gdq9bRZvk7C1rgbhCol3NK6rYCWZhsn9Z/4S4iGgl0+j2Qm@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywue90WQ4HMYqp7kC3ms5GRJilQPqGCXu3DDGgcsDuif12zEa3X
+	mywAV/+7WtG6cavsDIP4xkWJwOADETnZ2Q/wVTDckaA80IkIZEtIfPlXs/Wd7YXzseI+eG7MSaw
+	OkID7ObH67S1YCmIABTUl9E975wM=
+X-Google-Smtp-Source: AGHT+IFfQJc8EcaWULN3Z+i8J/MSKeJvx5yHNWVN+ecZpADLsbwRegnU6nAb8P+zRnNC86xZWl36vWg3eoJPTQEschw=
+X-Received: by 2002:a2e:b8d3:0:b0:2f7:7fe7:ca94 with SMTP id
+ 38308e7fff4ca-2f7918e4df3mr114333291fa.1.1726587332402; Tue, 17 Sep 2024
+ 08:35:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917150049.3110-1-srinivas.kandagatla@linaro.org>
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <d9df5012cd3306afa2eddd5187e643a3bbdfd866.camel@HansenPartnership.com>
+ <20240913-careful-maroon-crab-8a0541@leitao> <5c525fe8f33fffebc0d275086cc7484e309dfae0.camel@HansenPartnership.com>
+ <87o74n5p05.fsf@email.froward.int.ebiederm.org> <CAMj1kXF7EohKai9nyxSnvu32KNdUcNZxxP69Sz-vUZ-6nmvekg@mail.gmail.com>
+ <874j6e482p.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <874j6e482p.fsf@email.froward.int.ebiederm.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 17 Sep 2024 17:35:20 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEa4DSY8omHGhoTK0U5isvK2G-PJO9go-QK_Mzny=g6ow@mail.gmail.com>
+Message-ID: <CAMj1kXEa4DSY8omHGhoTK0U5isvK2G-PJO9go-QK_Mzny=g6ow@mail.gmail.com>
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Breno Leitao <leitao@debian.org>, 
+	Usama Arif <usamaarif642@gmail.com>, linux-efi@vger.kernel.org, 
+	kexec@lists.infradead.org, bhe@redhat.com, vgoyal@redhat.com, 
+	tglx@linutronix.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, rmikey@meta.com, gourry@gourry.net
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 17, 2024 at 11:00:49AM GMT, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> Trackpad HID device on some of the T14s Product Models 21N2ZC5PUS is
-> at I2C address 0x2c add this to be able to get it working on these laptops.
+On Tue, 17 Sept 2024 at 17:24, Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Ard Biesheuvel <ardb@kernel.org> writes:
+>
+> > Hi Eric,
+> >
+> > Thanks for chiming in.
+>
+> It just looked like after James gave some expert input the
+> conversation got stuck, so I am just trying to move it along.
+>
+> I don't think anyone knows what this whole elephant looks like,
+> which makes solving the problem tricky.
+>
+> > On Mon, 16 Sept 2024 at 22:21, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >>
+...
+> >>
+> >> This leaves two practical questions if I have been following everything
+> >> correctly.
+> >>
+> >> 1) How to get kexec to avoid picking that memory for the new kernel to
+> >>    run in before it initializes itself. (AKA the getting stomped by
+> >>    relocate kernel problem).
+> >>
+> >> 2) How to point the new kernel to preserved tpm_log.
+> >>
+> >>
+> >> This recommendation is from memory so it may be a bit off but
+> >> the general structure should work.  The idea is as follows.
+> >>
+> >> - Pass the information between kernels.
+> >>
+> >>   It is probably simplest for the kernel to have a command line option
+> >>   that tells the kernel the address and size of the tpm_log.
+> >>
+> >>   We have a couple of mechanisms here.  Assuming you are loading a
+> >>   bzImage with kexec_file_load you should be able to have the in kernel
+> >>   loader to add those arguments to the kernel command line.
+> >>
+> >
+> > This shouldn't be necessary, and I think it is actively harmful to
+> > keep inventing special ways for the kexec kernel to learn about these
+> > things that deviate from the methods used by the first kernel. This is
+> > how we ended up with 5 sources of truth for the physical memory map
+> > (EFI memory map, memblock and 3 different versions of the e820 memory
+> > map).
+> >
+> > We should try very hard to make kexec idempotent, and reuse the
+> > existing methods where possible. In this case, the EFI configuration
+> > table is already being exposed to the kexec kernel, which describes
+> > the base of the allocation. The size of the allocation can be derived
+> > from the table header.
+> >
+> >> - Ensure that when the loader is finding an address to load the new
+> >>   kernel it treats the address of the tpm_log as unavailable.
+> >>
+> >
+> > The TPM log is a table created by the EFI stub loader, which is part
+> > of the kernel. So if we need to tweak this for kexec's benefit, I'd
+> > prefer changing it in a way that can accommodate the first kernel too.
+> > However, I think the current method already has that property so I
+> > don't think we need to do anything (modulo fixing the bug)
+>
+> I am fine with not inventing a new mechanism, but I think we need
+> to reuse whatever mechanism the stub loader uses to pass it's
+> table to the kernel.  Not the EFI table that disappears at
+> ExitBootServices().
+>
 
-Commit message should describe reasons for moving device-specific
-pinctrl to the bus level. Other than that LGTM.
+Not sure what you mean here - the EFI table that gets clobbered by
+kexec *is* the table that is created by the stub loader to pass the
+TPM log to the kernel. Not sure what alternative you have in mind
+here.
 
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
-> Changes since v1:
-> - moved pinctrl to parent node so that pinctrl can be claimed globally.
-> 
->  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts  | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-> 
+> > That said, I am doubtful that the kexec kernel can make meaningful use
+> > of the TPM log to begin with, given that the TPM will be out of sync
+> > at this point. But it is still better to keep it for symmetry, letting
+> > the higher level kexec/kdump logic running in user space reason about
+> > whether the TPM log has any value to it.
+>
+> Someone seems to think so or there would not be a complaint that it is
+> getting corrupted.
+>
 
--- 
-With best wishes
-Dmitry
+No. The problem is that the size of the table is *in* the table, and
+so if it gets corrupted, the code that attempts to memblock_reserve()
+it goes off into the weeds. But that does not imply there is a point
+to having access to this table from a kexec kernel in the first place.
+
+> This should not be the kexec-on-panic kernel as that runs in memory
+> that is reserved solely for it's own use.  So we are talking something
+> like using kexec as a bootloader.
+>
+
+kexec as a bootloader under TPM based measured boot will need to do a
+lot more than pass the firmware's event log to the next kernel. I'd
+expect a properly engineered kexec to replace this table entirely, and
+include the hashes of the assets it has loaded and measured into the
+respective PCRs.
+
+But let's stick to solving the actual issue here, rather than
+philosophize on how kexec might work in this context.
 
