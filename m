@@ -1,156 +1,250 @@
-Return-Path: <linux-kernel+bounces-331244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A177597AA4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 03:59:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B0A97AA53
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 04:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFAA41C272A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 01:59:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3341C27309
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 02:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2C71C687;
-	Tue, 17 Sep 2024 01:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E51418C22;
+	Tue, 17 Sep 2024 01:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LIZOpj4T"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="31hvlrO6"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8132E13FF5
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 01:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B590513FF5
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 01:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726538386; cv=none; b=E72qhO01NKe4QJpJZc4Eu8031hyQ2AEQbD8W5Dca6Yy8GTGOf+QZVsqnTcEQdmNC8bviDezNGpy3yKK/zxURFdk5IN4DoGxxkF+NP9UDE3cJTbURRWxBwwHf/7NY3eZQw2ipbUpgaans0N9Yo7VvHk1/t+aXSyJ3G5iqET8ajRE=
+	t=1726538393; cv=none; b=f2luIrGfIXJB1KyNyfuIwQZAARx7r7upgfMGiEh/a0zKW6e3Pe5sV5tQDSwSmo04PkGMxGjxfnjLPIS1BAJ+qg1tjAFD0AHnuH/WEQIoHQTbTwLp4N0USUcAEr30k9I+iex7FA/Mg4WRJ2Mx/fX1SJil2wOOCCtmJqUGnPDCH3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726538386; c=relaxed/simple;
-	bh=PBNscUon1+CtI7ORXXoRyhPkUBWtu17V4/5DauJBbx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=guiV2/8hsnQ5/PUKUrYjnUJiIvtxZvc/WzYkPlhLIzLg7vWN6Sm2G9iR2Q2wUrrRReUy5NE0VN7ewxtchILMdt3D/4JwkYC/m3t4QjekswM94KfbPHwVItJ7bVKCO5wNwoZp5VOJGMinH4t+BD3gaElNruCLwPif5XAg3JZidVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LIZOpj4T; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726538384; x=1758074384;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=PBNscUon1+CtI7ORXXoRyhPkUBWtu17V4/5DauJBbx0=;
-  b=LIZOpj4TNqlk2rxe1VTp/TsONSKRZmiJkEFkAJ6ZpHC3/JtG1OeyHTFp
-   LaQKjOLXplSqHx93w9jctZ7JGEZ+nhGN2cFqECOsshHxgQY9K8OSr2Pum
-   ROu3GSy9FKKyo8PRP5c/B9hGjS9xro6AmNOyiI0/McSGM/JwpcPfA0djj
-   wA5CszgUefHUYHbV0VA6UueSWu2jWG+cQcpoJN3zPEFEbthQI0w+J+bcx
-   IzgJYL5AHtJ0mO82oShqmC1ROpO21zc55+TGkKiYPh+T0OiskFXVicB/1
-   vsrmAGpRdJosF6oGphZletqOw4d6+4Uy6T3oxJcv7EuklzZV6H96tvULj
-   g==;
-X-CSE-ConnectionGUID: /FH4qfCLQd+q95afUf79EA==
-X-CSE-MsgGUID: Ol4wsJcJTVW/yJXPF+xpxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="28295498"
-X-IronPort-AV: E=Sophos;i="6.10,234,1719903600"; 
-   d="scan'208";a="28295498"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 18:59:43 -0700
-X-CSE-ConnectionGUID: MwtTOmwjQBmbk10gQODHGQ==
-X-CSE-MsgGUID: ZdcU930bSAmZVAQDLmeCCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,234,1719903600"; 
-   d="scan'208";a="68925188"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 16 Sep 2024 18:59:42 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sqNVD-000Ahe-1i;
-	Tue, 17 Sep 2024 01:59:39 +0000
-Date: Tue, 17 Sep 2024 09:59:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>
-Subject: include/linux/ftrace.h:138:9: error: call to undeclared function
- 'arch_ftrace_get_regs'; ISO C99 and later do not support implicit function
- declarations
-Message-ID: <202409170931.PtyPpRfV-lkp@intel.com>
+	s=arc-20240116; t=1726538393; c=relaxed/simple;
+	bh=a4cyz9C2TYpaQTgEf3VqxHDqbgfDNEPLnRIQAzrWS04=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V7yn8GyeAT6L6xcMEcKzgDYkbIsYNXyyTdB9IwPA0aKomcMoDgpjaur7lynoglfWyEfwYToW/dz0XKkQy/YizY+l9bR7NQ2PDCU9jnRZ4/q4hXF4inzo1GH5GBVA3reLd75PG+A/7TKAS9ziEFIQLFau4fq7Axpv//qsHEx8BjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=31hvlrO6; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d87a1f0791so2668470a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 18:59:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726538391; x=1727143191; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+eogsbTlEU/20KpLpv0UCHv4GA8kVLu0/JxFWXQRsSU=;
+        b=31hvlrO6rdJozOlIHN8V/MFfiqUMCHNaTQbbxg4hQngMTQFDi8pR0M1jAYF9KJtpM5
+         2x8et6c7cNZF206CBdmzic6GLb+kS5pCMLHy78frB2dqoBb/Kl8AlEPiGV3CGyFUsNf+
+         CHL9zNIGapnTcNbZ9BLuakv/qb/QPTSr/6H62SuW/gD4mD+YpiPqmbFgNddu2xZY94OF
+         djFLvxP611pabv/hKwwH8UXbAdksHVfGm+Tp2hn5xCo4LS3u8uaZgTWbAiic/Ulxsk/K
+         etL4XIwK+LVy2aW94LzSBF1MNwOP5mccKAqqXNgAtcM7dzDMFY3uHX7HOdLWsFZjKkwM
+         j8MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726538391; x=1727143191;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+eogsbTlEU/20KpLpv0UCHv4GA8kVLu0/JxFWXQRsSU=;
+        b=P4a3tCAnNS1Q3yG0wHZpp1rMUwakicuhvhmdYhZQr1Kdj24DbYwHrXY4izO7NO115X
+         iQND1gAn/nOY7qaWSnPq0BtZOYXCGV78qiNhjA9YGByP5ieLs0jWwoGN8pBhAkVtbZU6
+         qMB7JSKj9JFu5JKHGS7RdFNvIQDaT/VB0wGb3mCy06P2Qtz643LPjjfCusdApCOH1G+5
+         jmyWYSXXg09uH4ZQQI0KgX71T//D+x25ajj4y67X79vEMmpIeKCeq4Ah3zCgn0x7w5sB
+         SOho2xDKbrqagrBSNwlCDMA78XqSL1a/CqoSpVAi9CBwaadnCEPz/nhHTdwo/4v7b630
+         xDPw==
+X-Gm-Message-State: AOJu0YzDsFLFqhDDYQNwfEAvRX8jqCqGqQR7ah4ci+tz/PzlAL0XC0gZ
+	XzJtAFGMtuDttrMNVozcpLAQoTK9Yqpy9wkk6wq1vDibXJgAZFkG6dKX82KNxA==
+X-Google-Smtp-Source: AGHT+IEiSrWG76oGSMdtgJ8W8NNxk2NCB1dVYWJNPMFzgRZn9A2zFmCZkc+rVecNPMaHzfQokThRFQ==
+X-Received: by 2002:a17:90a:4924:b0:2d8:8d61:8a50 with SMTP id 98e67ed59e1d1-2dbb9f31abcmr15360207a91.32.1726538390300;
+        Mon, 16 Sep 2024 18:59:50 -0700 (PDT)
+Received: from ?IPV6:2a00:79e0:2e14:7:e1f6:9f31:2c3f:1500? ([2a00:79e0:2e14:7:e1f6:9f31:2c3f:1500])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9d972fcsm8174933a91.57.2024.09.16.18.59.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2024 18:59:49 -0700 (PDT)
+Message-ID: <2dab1111-49fd-43b7-8624-2d61b3d546b1@google.com>
+Date: Mon, 16 Sep 2024 18:59:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 1/2] dt-bindings: connector: Add property to set pd timer
+ values
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kyletso@google.com, rdbabiera@google.com,
+ Badhri Jagan Sridharan <badhri@google.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240911000715.554184-1-amitsd@google.com>
+ <20240911000715.554184-2-amitsd@google.com>
+ <ae520641-38a4-405e-89d0-e0921dfc7cff@linaro.org>
+Content-Language: en-US
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <ae520641-38a4-405e-89d0-e0921dfc7cff@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Puranjay,
+Hi Krzysztof,
 
-FYI, the error/warning still remains.
+Thanks for the review!
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   a430d95c5efa2b545d26a094eb5f624e36732af0
-commit: 7caa9765465f60b6d88e22264892cee12d971888 ftrace: riscv: move from REGS to ARGS
-date:   4 months ago
-config: riscv-randconfig-002-20240917 (https://download.01.org/0day-ci/archive/20240917/202409170931.PtyPpRfV-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240917/202409170931.PtyPpRfV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409170931.PtyPpRfV-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/riscv/kernel/asm-offsets.c:10:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from arch/riscv/kernel/asm-offsets.c:12:
->> include/linux/ftrace.h:138:9: error: call to undeclared function 'arch_ftrace_get_regs'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     138 |         return arch_ftrace_get_regs(fregs);
-         |                ^
-   include/linux/ftrace.h:138:9: note: did you mean 'ftrace_get_regs'?
-   include/linux/ftrace.h:133:40: note: 'ftrace_get_regs' declared here
-     133 | static __always_inline struct pt_regs *ftrace_get_regs(struct ftrace_regs *fregs)
-         |                                        ^
-     134 | {
-     135 |         if (!fregs)
-     136 |                 return NULL;
-     137 | 
-     138 |         return arch_ftrace_get_regs(fregs);
-         |                ~~~~~~~~~~~~~~~~~~~~
-         |                ftrace_get_regs
->> include/linux/ftrace.h:138:9: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'struct pt_regs *' [-Wint-conversion]
-     138 |         return arch_ftrace_get_regs(fregs);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning and 2 errors generated.
-   make[3]: *** [scripts/Makefile.build:117: arch/riscv/kernel/asm-offsets.s] Error 1 shuffle=2879536417
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1203: prepare0] Error 2 shuffle=2879536417
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:240: __sub-make] Error 2 shuffle=2879536417
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:240: __sub-make] Error 2 shuffle=2879536417
-   make: Target 'prepare' not remade because of errors.
+On 9/16/24 9:05 AM, Krzysztof Kozlowski wrote:
+> On 11/09/2024 02:07, Amit Sunil Dhamne wrote:
+>> This commit adds a new property "pd-timers" to enable setting of
+>> platform/board specific pd timer values for timers that have a range of
+>> acceptable values.
+>>
+>> Cc: Badhri Jagan Sridharan <badhri@google.com>
+>> Cc: linux-usb@vger.kernel.org
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> Please work on mainline, not ancient tree. You cannot get my CC address
+> like that from mainline.
+I was working off gregkh's tree on usb-next branch as that's suggested 
+for USB development.
 
 
-vim +/arch_ftrace_get_regs +138 include/linux/ftrace.h
+> It's not possible. So either you don't develop
+> on mainline or you don't use get_maintainers.pl/b4/patman.
+>
+The above branch and even the tree on Linus' master branch has you
+listed as a maintainer
+(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/MAINTAINERS#n17181).
+I guess that's why the get_maintainers script probably returned your
+email id when I ran it. Please let me know if I missed something :).
 
-d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  132) 
-d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  133) static __always_inline struct pt_regs *ftrace_get_regs(struct ftrace_regs *fregs)
-d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  134) {
-d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  135) 	if (!fregs)
-d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  136) 		return NULL;
-d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  137) 
-02a474ca266a47 Steven Rostedt (VMware  2020-10-27 @138) 	return arch_ftrace_get_regs(fregs);
-d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  139) }
-d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  140) 
 
-:::::: The code at line 138 was first introduced by commit
-:::::: 02a474ca266a47ea8f4d5a11f4ffa120f83730ad ftrace/x86: Allow for arguments to be passed in to ftrace_regs by default
+>> ---
+>>   .../bindings/connector/usb-connector.yaml     | 23 +++++++++++++++++++
+>>   include/dt-bindings/usb/pd.h                  |  8 +++++++
+>>   2 files changed, 31 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>> index fb216ce68bb3..9be4ed12f13c 100644
+>> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>> @@ -253,6 +253,16 @@ properties:
+>>   
+>>       additionalProperties: false
+>>   
+>> +  pd-timers:
+>> +    description: An array of u32 integers, where an even index (i) is the timer (referenced in
+>> +      dt-bindings/usb/pd.h) and the odd index (i+1) is the timer value in ms (refer
+> timer of what? OS behavior?
+In the context of USB Type C Power Delivery (PD), timers are run on the 
+typec protocol driver
+(usb/typec/tcpm/tcpm.c).
+These are used to keep track of min/max or range of time required to 
+enter a PD state with the
+goal of a successful USB typec capabilities negotiation.  Eg., the timer 
+PD_TIMER_SINK_WAIT_CAP (referred to as SinkWaitCapTimer in spec)would be 
+responsible to keep track of whether a power source sent us (as sink) PD 
+source capabilities pkts within 600ms (say), if yes, then we would 
+transition to the next state or do a state machine reset. USB PD 3.1 
+spec refers to these elements as timers and therefore referred to as 
+such here.
 
-:::::: TO: Steven Rostedt (VMware) <rostedt@goodmis.org>
-:::::: CC: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>> +      "Table 6-68 Time Values" of "USB Power Delivery Specification Revision 3.0, Version 1.2 " for
+>> +      the appropriate value). For certain timers the PD spec defines a range rather than a fixed
+>> +      value. The timers may need to be tuned based on the platform. This dt property allows the user
+> Do not describe what DT is. We all know what DT properties allow.
+> Instead describe how this relates to hardware or boards.
+>
+> All this is wrongly wrapped. See Coding style (and I am not telling you
+> the value on purpose, so you will read the coding style) .
+
+
+Ack. Thanks for pointing it out, I will fix both the above in the next 
+revision.
+
+
+>
+>> +      to assign specific values based on the platform. If these values are not explicitly defined,
+>> +      TCPM will use a valid default value for such timers.
+> And what is the default?
+
+Defaults are given in (include/linux/usb/pd.h). But I guess I should 
+have probably mentioned
+that here.
+
+
+>
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> I guess you want matrix here.
+
+Yes, I should have. Though, I will be re-implementing this such that 
+each timer is represented
+as a separate property based on Rob and Dmitry's suggestion in
+https://lore.kernel.org/lkml/20240916163328.GA394032-robh@kernel.org/ .
+
+>> +
+>>   dependencies:
+>>     sink-vdos-v1: [ sink-vdos ]
+>>     sink-vdos: [ sink-vdos-v1 ]
+>> @@ -478,3 +488,16 @@ examples:
+>>               };
+>>           };
+>>       };
+>> +
+>> +  # USB-C connector with PD timers
+>> +  - |
+>> +    #include <dt-bindings/usb/pd.h>
+>> +    usb {
+>> +        connector {
+>> +            compatible = "usb-c-connector";
+>> +            label = "USB-C";
+>> +            pd-timers =
+>> +                <PD_TIMER_SINK_WAIT_CAP 600>,
+>> +                <PD_TIMER_CC_DEBOUNCE 170>;
+> Incorporate it into existing example.
+>
+Ack.
+
+
+>> +        };
+>> +    };
+>> diff --git a/include/dt-bindings/usb/pd.h b/include/dt-bindings/usb/pd.h
+>> index e6526b138174..6c58c30f3f39 100644
+>> --- a/include/dt-bindings/usb/pd.h
+>> +++ b/include/dt-bindings/usb/pd.h
+>> @@ -465,4 +465,12 @@
+>>   	 | ((vbm) & 0x3) << 15 | (curr) << 14 | ((vbi) & 0x3f) << 7	\
+>>   	 | ((gi) & 0x3f) << 1 | (ct))
+>>   
+>> +/* PD Timer definitions */
+>> +/* tTypeCSinkWaitCap (Table 6-68 Time Values, USB PD3.1 Spec) */
+> Please expand this a bit, so we won't have to reach to external sources.
+
+Ack.
+
+I will incorporate all of your review comments.
+
+Since you are no longer maintaining the
+"OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" component, please let 
+me know
+if you'd still like to be CC'ed in the subsequent revisions.
+
+
+Thanks,
+
+Amit
+
+
+>> +#define PD_TIMER_SINK_WAIT_CAP		0
+>> +/* tPSSourceOff (Table 6-68 Time Values, USB PD3.1 Spec) */
+>> +#define PD_TIMER_PS_SOURCE_OFF		1
+>> +/* tCCDebounce (Table 4-33 CC Timing, USB Type-C Cable & Connector Spec Rel2.2) */
+>> +#define PD_TIMER_CC_DEBOUNCE		2
+>
+> Best regards,
+> Krzysztof
+>
 
