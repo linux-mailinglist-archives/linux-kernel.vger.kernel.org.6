@@ -1,225 +1,141 @@
-Return-Path: <linux-kernel+bounces-331731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C3697B099
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:10:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FCAC97B09F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094CA284088
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:10:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EF9BB28023
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6371714AA;
-	Tue, 17 Sep 2024 13:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B37173331;
+	Tue, 17 Sep 2024 13:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="mz1XAu4B"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QdiBXc6b"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F99C15B54F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128DB14D444;
+	Tue, 17 Sep 2024 13:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726578629; cv=none; b=rsx0C62bmvtWCoFH0QBSy5lZzeRRNJ6rE/VClTsIgEcBJdGIvj+fLR/q/3lq9ooT+ziSKnf1u0BNr8kDRkwQv+2x2UfJVxQ3u9WILwaGbrd5dBOf5LTwKAU+b2R3f6ovjjoiwpfRcQTyYzTlb3klk2wJxhWR6XROdFvNZs14slU=
+	t=1726578690; cv=none; b=DruKSpR0fjLVlhtjchFB2fmqusHsZFrGMd04SUS+GQ9BcVUri9S1Sf9oW72McjvSodRzxpo4oQZCnhj/BuWZcgnENi59Xl58XLkebY7oKRt3OYVk98RTf7ESnVZgcaQvpl2rp9/yeMZhQPCvFKCdlQ2ngy4K8X4GlGt7C9qhjyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726578629; c=relaxed/simple;
-	bh=ZH2QndDVxXKun5T0YQ831uYRPaFGatEyken8xicj57c=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID; b=ebUXmw5BbNGp/vSZWwSrJ4sRBSUdW6cyCRmSqlIshvLZeMKYty7TKWFzv0Xjw7gZ9tSl2s+A5gcVVdpN/yMheZd/PUU8YUsoW0rhO1HPuiqxjIeFju6z/QYBj405Ek15YscT+Vrh0d5GE9n4kVeFQ5zRl47CmdwEh2MXqeqfE5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=mz1XAu4B; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-205659dc63aso54061295ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:10:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1726578626; x=1727183426; darn=vger.kernel.org;
-        h=message-id:to:from:cc:in-reply-to:subject:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tmpipaU5ffyWBh3m6fh3V3iGFrcojyzndJ3rQy5E5JM=;
-        b=mz1XAu4BGRbr6IrTw0Dieok3tAeTzO7FLFn6Px45kSFTZBOQ8t74YZmy5RyqYmLYvV
-         fRmj0Z8iXiD2ewC/z8VrFE+kYklw2c/Q1cM1tZB4Z5SdsQj3L/lKopxljjOLVohe7hQV
-         mbTdTpel/XYiglljN4CsW7IunqRuQDAY1Onj1607CQr3PeMyTI3BXLPZqThne5KiDSrP
-         a7q5KxwGaOse9mP3SCvwqyIJrBeMDKYGTVviEKv8SvfUmtkzNkvlYRy/XELQ1XPcLXnp
-         HUQH1K4S2+qEErVVJbAbf2WYkq1bxIqZLOEAl9DmqHP6BvVQcFQRI1F6Jck4OFVQj6jI
-         Fw1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726578626; x=1727183426;
-        h=message-id:to:from:cc:in-reply-to:subject:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tmpipaU5ffyWBh3m6fh3V3iGFrcojyzndJ3rQy5E5JM=;
-        b=e9Urutz0ExyzmD59Tf5qeuqzlQqw+tHEPek5vMN9GRqDK5RiGq02xf/LEyhXlnwl7u
-         dELJtyINGD3T+NIQBnvMWY0yBfyNrc6/ByUrQOZ4fazjSG+13WZVQfKDOHMZBpuSgfQ4
-         u/FRsUN28YKvROyUczkGt4CrrwtPUejyfvWhjtdHr+Nzevhm7Buj9SNGUMKNvYcZGZt3
-         0fMJPgQfSTH64StSUuLtNFclhuwBKIcaTucTY6SBHtzEiGI0hf7S/fyLu0Woe0Kh4vfo
-         gU7KyZa7F2uTnsW2N+Gx3oqM3cexX9Wzh4LBQ6h0mI+0B2tqpNbQmg9loafEheEYFMWy
-         U26Q==
-X-Gm-Message-State: AOJu0Yy8yIWOiggWS3QdeN3dGoCoOGXzQfh1oIfRbhX68c0biMUpzJDn
-	8zUiZ7M+swGPEvHM1BvJgELGETMs3/DLa/2r6OLYK8tOEeVV5+Xr+l+N3fbrLenZJsCX/gPsaIH
-	fy9wpFA==
-X-Google-Smtp-Source: AGHT+IHr2PTsAEqZCBw/S1zvsTs5J8nFAVPnfPYChOs8eSgK4C2WuQJcW+CGfn1gsM2xolgbVSznbg==
-X-Received: by 2002:a17:902:da84:b0:206:c911:9d75 with SMTP id d9443c01a7336-2076e3b2654mr255519565ad.20.1726578626018;
-        Tue, 17 Sep 2024 06:10:26 -0700 (PDT)
-Received: from localhost ([213.208.157.38])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945db10csm50158835ad.53.2024.09.17.06.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 06:10:25 -0700 (PDT)
-Date: Tue, 17 Sep 2024 06:10:25 -0700 (PDT)
-X-Google-Original-Date: Tue, 17 Sep 2024 06:10:18 PDT (-0700)
-Subject:     Re: [PATCH] serial: 8250_platform: Enable generic 16550A platform devices
-In-Reply-To: <20240730051218.767580-1-sunilvl@ventanamicro.com>
-CC: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-  linux-riscv@lists.infradead.org, Greg KH <gregkh@linuxfoundation.org>, jirislaby@kernel.org,
-  andriy.shevchenko@linux.intel.com, andrei.warkentin@intel.com, apatel@ventanamicro.com, ajones@ventanamicro.com,
-  dfustini@tenstorrent.com, Sunil V L <sunilvl@ventanamicro.com>
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Sunil V L <sunilvl@ventanamicro.com>
-Message-ID: <mhng-d52ac6ff-2221-4613-9fce-f73467495389@palmer-ri-x1c9>
+	s=arc-20240116; t=1726578690; c=relaxed/simple;
+	bh=6Ke2LO7s4ZzmToKebEatmGWtotLu0wOhxrNMZgnJtPM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JEZY3okqEpaN35VUS7FZ/yaofD5l4KP50T/nXa4Qe2Xn9V1zJWsP2PfNii5Bu8w2lo0uP5R7ESqKZxMQgkWeOYVMW0FMmVnkqh2Rsy/CxysJHl0B7hZ0tQQMeAm5kOwun1vf2Eh8zmbcXumKf/cAmmqVhNg5pAa2wn+mzCOL5co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QdiBXc6b; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726578637; x=1727183437; i=markus.elfring@web.de;
+	bh=J6JjhpLStxd4n+dG1pBrTv7bWU/OYj2EwD1A9TDg+Uo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=QdiBXc6bBeQKfjStchkZf+tdKyVhFizxZlMo17Kmn9/mDeCUp+4EersR6DLPnfjx
+	 0TCEuMjNlN+eSx4Ux3i3B58va+a7Ejc2259jXqIPQXZogNxv8VCAq8QdQlFu1TpFz
+	 hD/wJD6RRzs8yImVIl76WKzKTYJW8zNsU5voJWZonYnb1DUHv+B+UjCNMGvZ4aa5n
+	 ZhoG5LdjjWnZojIyX+qmwC6gKjXFj9y7XMsvX9VcWzlEPY5ZCkXMSWBQyvyS9OAdD
+	 /f80A6T3Z7z22Z6wBlNkBVsTYdH20wswktEvj4qo8ZO6SuXWgS69IA8DMKRtSqQuv
+	 G+0Lr4p8UHrAH5QHMA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1rPI-1soL363S2q-00EsWt; Tue, 17
+ Sep 2024 15:10:36 +0200
+Message-ID: <79d31fe5-6ec1-4e40-be5f-85e1f61811c1@web.de>
+Date: Tue, 17 Sep 2024 15:10:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: linux-clk@vger.kernel.org, David Lechner <david@lechnology.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Nishka Dasgupta <nishkadg.linux@gmail.com>, Stephen Boyd <sboyd@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] clk: davinci: Use common error handling code in
+ of_davinci_pll_init()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:WOVzW7HcSsZRvtHPLh/BFCBgt2D5JVmVJu8CtJercp308RlgUaD
+ InUVNi+WfMaTRaGx2Lls9emimQOZRpOgoi/OxQbj+VlC+Frt+/c5LxA8yY+O6xxpuIwwrSH
+ M79qZG65N2HhX+ZTf8JvBaFwm6fSM188aKSOOeDT3p4xdmxskLXxORkVVXNbDa4bkcr/e69
+ E47GHZAnv4xzhIub1fZ7A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yuBg0OJDkpA=;NVABBst3JDN/DTznxHGOmRkwHbE
+ 1Ych8FIXAMu3Av8IH/n/WR4tQtVhHlzpoUuhCjfgd1GHy1mS+sthPVBeGwZ7Jf498wSsW3hl4
+ sNTnhPcT+utXJsyzsAU2s4etVCVmlZ6eEnza1yzs9g6Cwuv5ZTQ6KITM0TWWKOcJZIDlFc9qf
+ x2BQK7yt/HduNmkTGPoJmfU/RY3ZY57U4ITWKYSJxf+UuzCS4T+Pi0UsfCaCSt2z0eaLyZFX3
+ SEyiSEDiDUtIcVTvDbHWJgCUx38XHxlY0yEB+h6W7/J7QS6E0socqYDq2IjjyICZC4XqR06cm
+ a8GdaMOlVsK8aLY4c6RsCdmA7G1FzOBAthgx+ybUEdhAXEH9M0kXS/rUHomsiG3ktZ0d2mht/
+ R8+z/JueY3V1SvJ0yZy/KENC7vutrePmP5FMo3lcuw87bI79431zV4vRWLRX25nfbF7cd4Lht
+ ior4K6WysY3NVxulgE7SkbzEJp/AgbkYiZ/VCGvmtap144VbMIPljv0z+Q7WVmVdKNILRLLjH
+ 9ckTt5/BvsBmjJQim5jrEJZHSSESphx7w1HXhjVyvbl4Im6XnyQMnaApob+EVsvgR2OOVLfDh
+ dFdRsscPkJ+pydX270RVdQ8ZboLoCS3bLYM2OAhSC+vFmSGg/XUpxsBKaxAVSrDPEB7vpXnXj
+ Z40hnZi09qlZSsl4omRYEyG1+S8nyNhXBwVbuQoaNeNm8WWySxKp+aRxEJzEmAMDBEFK0mwtB
+ sDM9KavAoqljR579t9LwKVeJGg3nIF1EUlNcje2U9PuEhwhkuYlJ9jJXfsSaH19XeECNWcPX8
+ 3FaZJ5gUPn2+dpGF0b07cdZw==
 
-On Mon, 29 Jul 2024 22:12:18 PDT (-0700), Sunil V L wrote:
-> Currently, 8250_platform driver is used only for devices with fixed
-> serial ports (plat_serial8250_port). Extend this driver for any generic
-> 16550A platform devices which can be probed using standard hardware
-> discovery mechanisms like ACPI.
->
-> This is required in particular for RISC-V which has non-PNP generic
-> 16550A compatible UART that needs to be enumerated as ACPI platform
-> device.
->
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> ---
->  drivers/tty/serial/8250/8250_platform.c | 77 +++++++++++++++++++++++++
->  1 file changed, 77 insertions(+)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Sep 2024 15:00:53 +0200
 
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-It seems a bit awkward that we need something RISC-V specific here.  I 
-guess the idea is that we don't want to depend on PNP because we'd end 
-up with a bunch of PCI dependencies as well?  That seems like kind of an 
-odd way to do things, but I'm frequently suprised by ACPI stuff so
+This issue was detected by using the Coccinelle software.
 
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/clk/davinci/pll.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-if someone was waiting for me...
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 5bbbb3a66477..eb79424f216d 100644
+=2D-- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -777,16 +777,13 @@ int of_davinci_pll_init(struct device *dev, struct d=
+evice_node *node,
+ 		int i;
 
-> diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
-> index d5c8d851348d..bdfb16bed4f2 100644
-> --- a/drivers/tty/serial/8250/8250_platform.c
-> +++ b/drivers/tty/serial/8250/8250_platform.c
-> @@ -6,7 +6,9 @@
->   *	      PNP 8250/16550 ports
->   *	      "serial8250" platform devices
->   */
-> +#include <linux/acpi.h>
->  #include <linux/array_size.h>
-> +#include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/moduleparam.h>
->  #include <linux/once.h>
-> @@ -100,6 +102,65 @@ void __init serial8250_isa_init_ports(void)
->  	DO_ONCE(__serial8250_isa_init_ports);
->  }
->
-> +/*
-> + * Generic 16550A platform devices
-> + */
-> +static int serial8250_platform_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct uart_8250_port uart = { 0 };
-> +	struct resource *regs;
-> +	unsigned char iotype;
-> +	int ret, line;
-> +
-> +	regs = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> +	if (regs) {
-> +		uart.port.iobase = regs->start;
-> +		iotype = UPIO_PORT;
-> +	} else {
-> +		regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +		if (!regs) {
-> +			dev_err(dev, "no registers defined\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		uart.port.mapbase = regs->start;
-> +		uart.port.mapsize = resource_size(regs);
-> +		uart.port.flags = UPF_IOREMAP;
-> +		iotype = UPIO_MEM;
-> +	}
-> +
-> +	/* Default clock frequency*/
-> +	uart.port.uartclk = 1843200;
-> +	uart.port.type = PORT_16550A;
-> +	uart.port.dev = &pdev->dev;
-> +	uart.port.flags |= UPF_SKIP_TEST | UPF_BOOT_AUTOCONF;
-> +	ret = uart_read_and_validate_port_properties(&uart.port);
-> +	/* no interrupt -> fall back to polling */
-> +	if (ret == -ENXIO)
-> +		ret = 0;
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (uart.port.mapbase) {
-> +		uart.port.membase = devm_ioremap(dev, uart.port.mapbase, uart.port.mapsize);
-> +		if (!uart.port.membase)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	/*
-> +	 * The previous call may not set iotype correctly when reg-io-width
-> +	 * property is absent and it doesn't support IO port resource.
-> +	 */
-> +	uart.port.iotype = iotype;
-> +
-> +	line = serial8250_register_8250_port(&uart);
-> +	if (line < 0)
-> +		return -ENODEV;
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * Register a set of serial devices attached to a platform device.  The
->   * list is terminated with a zero flags entry, which means we expect
-> @@ -110,6 +171,15 @@ static int serial8250_probe(struct platform_device *dev)
->  	struct plat_serial8250_port *p = dev_get_platdata(&dev->dev);
->  	struct uart_8250_port uart;
->  	int ret, i, irqflag = 0;
-> +	struct fwnode_handle *fwnode = dev_fwnode(&dev->dev);
-> +
-> +	/*
-> +	 * Probe platform UART devices defined using standard hardware
-> +	 * discovery mechanism like ACPI or DT. Support only ACPI based
-> +	 * serial device for now.
-> +	 */
-> +	if (!p && is_acpi_node(fwnode))
-> +		return serial8250_platform_probe(dev);
->
->  	memset(&uart, 0, sizeof(uart));
->
-> @@ -198,6 +268,12 @@ static int serial8250_resume(struct platform_device *dev)
->  	return 0;
->  }
->
-> +static const struct acpi_device_id acpi_platform_serial_table[] = {
-> +	{ "RSCV0003", 0 }, // RISC-V Generic 16550A UART
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(acpi, acpi_platform_serial_table);
-> +
->  static struct platform_driver serial8250_isa_driver = {
->  	.probe		= serial8250_probe,
->  	.remove_new	= serial8250_remove,
-> @@ -205,6 +281,7 @@ static struct platform_driver serial8250_isa_driver = {
->  	.resume		= serial8250_resume,
->  	.driver		= {
->  		.name	= "serial8250",
-> +		.acpi_match_table = ACPI_PTR(acpi_platform_serial_table),
->  	},
->  };
+ 		clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
+-		if (!clk_data) {
+-			of_node_put(child);
+-			return -ENOMEM;
+-		}
++		if (!clk_data)
++			goto put_node;
+
+ 		clks =3D kmalloc_array(n_clks, sizeof(*clks), GFP_KERNEL);
+ 		if (!clks) {
+ 			kfree(clk_data);
+-			of_node_put(child);
+-			return -ENOMEM;
++			goto put_node;
+ 		}
+
+ 		clk_data->clks =3D clks;
+@@ -838,6 +835,10 @@ int of_davinci_pll_init(struct device *dev, struct de=
+vice_node *node,
+ 	of_node_put(child);
+
+ 	return 0;
++
++put_node:
++	of_node_put(child);
++	return -ENOMEM;
+ }
+
+ static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct dev=
+ice *dev)
+=2D-
+2.46.0
+
 
