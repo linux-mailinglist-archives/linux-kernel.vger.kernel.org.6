@@ -1,138 +1,165 @@
-Return-Path: <linux-kernel+bounces-331880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C2397B264
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:51:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7962197B265
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD511C22151
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3947F285BBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8E6196D90;
-	Tue, 17 Sep 2024 15:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B57176FD3;
+	Tue, 17 Sep 2024 15:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyoHUmUG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yt7NKeVB"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA24B188A23;
-	Tue, 17 Sep 2024 15:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9E7170A0B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 15:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726587945; cv=none; b=Sfx8uQR23Yp0THrTRTEMi1WZjQtDU8+5ItA2t4YGHXS3TN8PArpeXJ0xKaBK4HLf3z37XELGfllDD7hmTPZIKORnWK4Nm1VZl5GpuBo4lSIFmaDApHpye9MmtN2c7ki2P8hqR1eRQrUsM++dxK78GJ2DHhlE7zzM5fRWUNNgYpE=
+	t=1726588082; cv=none; b=X7H16yFYBuyKkx8K3921V1dOkJrjJ8S6ZgytoGx+jHvukxUM4nG0p1Nh5v0bn0xjXqynL0D215XbQG6rzweMw6H37Cd5+bIh/9t5NiPnfZYpuFz2FD2WmkulA/mAAljOmqO6r6+BR6uYftCwfyxz6o+0kDZZs//XutZOmc+iDOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726587945; c=relaxed/simple;
-	bh=KWtkj0GL9S0bCz/hrLAjMTZkpobKDEnlNQquUiw4hWY=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hwTsvHg3XlVLiYPMhJGkEfdRW4n2mY2L6Nau56N2LYATNwNcFvXwPW5kSHNa/Lj+/5xBLTKD0U02YMhRN9Cwe8fxNE5WO9UV+M4aDPdFvWzB/Wtmd8InXOBUAjimGcFp0Wv67Wfse1F7Pog7J5l3Zncy7V+nwMAV3lRa51szGHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oyoHUmUG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3638C4CEC5;
-	Tue, 17 Sep 2024 15:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726587945;
-	bh=KWtkj0GL9S0bCz/hrLAjMTZkpobKDEnlNQquUiw4hWY=;
-	h=Date:From:To:Subject:From;
-	b=oyoHUmUG6QRDskcwLX+4a6Eqfo/Upl5AQkkSjeX1VjqxVTLJL0fQHCOPlog1RQxVf
-	 r0O7kcDy6igsh7DiMv2Cbbdf88Xnv2xaG8wic2albBDExAHsVA20Ao7iSKmvyttN/1
-	 dGI6kwau+KG7F0tWiO75IUSQ7wIvl8QNGB3i2YUgkiQF+omNFhgjTkSBRUhNdIOO+1
-	 HwatWXJF/gKnQC+LDylCrl+4sEsL6Ley9DrJuZWRCNrjV5Yq8kWfOTDg2om8ACtKNr
-	 0syy7bBb0ZAXOoipRCA7yeUSt01LYbpo6hm4mzvlisy1Yn03EDp7lTMUQiPVKDcT+J
-	 8XZ6uOC36ieMg==
-Date: Tue, 17 Sep 2024 17:45:40 +0200
-From: Helge Deller <deller@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [GIT PULL] fbdev fixes and cleanups for v6.12-rc1
-Message-ID: <ZumkJA3zfB8AhDsF@carbonx1>
+	s=arc-20240116; t=1726588082; c=relaxed/simple;
+	bh=Ld7fRpLxFMJNxIaFcR99WTYikSCebs9O5cxo+5DSHuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=COcpAq7DZT+L+9MkSGCUJJ+CQqBqrACxrZX0jZwTz0xy/28t2Uk4p4LkEYJhMddKqWi6cjmt8Rw0VYPM9a6ThsnmRKaFBYEP+sqssnvxaCqyHMleg0XRyPPDj/gMh49/rl6FZzd8yHF7IU0oNXVZdQkb0TIXffL4efa75dr7gO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yt7NKeVB; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a90349aa7e5so706886766b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 08:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726588079; x=1727192879; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LlwzHDu+HWKNGZE27Uc0LkSKrmxyD2UPEKYf14nObbE=;
+        b=Yt7NKeVB08hp7tHma9PhYhBpFTW3rNfOJkvApijH2yY25EikuxyoBpwfjxN+GzQURD
+         o3ILuuG0yvfGoON9zct+Kdx1lQLpmlHj1jeZhOWnLyTYPuBDE+qn7HRAv3+d06LmQTyk
+         KSI+5ek1lJe/59njfPtgx/V/eqG1e9GgeXu5+R8uANuEw3pqArNXbOha17u58RMd0pVW
+         9HtstdNz0I8S//AwAPqVfpO8XHaUx64BdRBP7tYWQcRaBLHWp2GlObGEBPJPQlKVhM67
+         j3Iqa/PJERIF9usO5PmYo1C0Tjh+UB1gg8fxK7/DWWh5bHfl3PwL+8CizXI9obiUA4iA
+         Pz9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726588079; x=1727192879;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LlwzHDu+HWKNGZE27Uc0LkSKrmxyD2UPEKYf14nObbE=;
+        b=lsKUWjTSTUcsytAXh3ekvcvYafDdOvzaJJeWYnnCOAHG2RsSxnrbBBoA591xqCypFc
+         bdGP2fyeTN9Cw8T6YsbDZbelygKXMOXGRBtxYka4AxAKdlKnyb2U/TebEXMW/CUAZCYI
+         h3/opPIrKPEraCrqHklJaBrxv62sNRmqLY/frlD02HHpdqQxdUTw8KAMXCA+zk7XOs6i
+         gsaRJzN9GowANg5t1rNsYZGLUAuCtrEvVNOtwc9TyYTE7CxPNW+zUR3sinusWbb1i2yq
+         AV0zOgdwLNPCnw3kRMHmxz2UNTegWLR5554hH7xHw9I452ydWalj96445qnPhX+a/08e
+         sPVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZA4FWW/w4qlWOFQ+bhvsMJiKP6HXtac99pbGDZn3Llja3Hq96im83VP9u3s4hRyVaMb6zbTIsVra0XSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaC3FtkWwsXRjARd8fhqDcbeaTP18TSanAiFUfJIQrpAtKxhzQ
+	VpT6GJ8J0rqa3hQK7ixZO+oP7MnCUGPjV4gsLvfR823Pi3Mk5UGy
+X-Google-Smtp-Source: AGHT+IHhC0COrvuStie5QwYI0cPnBAH4a/c91m0AHmvbkWZJmnY8YNyTN+BYErxCmGTU5u00tF5B/w==
+X-Received: by 2002:a17:907:94c4:b0:a8a:3f78:7b7b with SMTP id a640c23a62f3a-a9029440920mr1821474666b.14.1726588079014;
+        Tue, 17 Sep 2024 08:47:59 -0700 (PDT)
+Received: from carol.localdomain (cst-prg-234-228.cust.vodafone.cz. [46.135.234.228])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061096896sm467141266b.23.2024.09.17.08.47.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 08:47:58 -0700 (PDT)
+Received: by carol.localdomain (Postfix, from userid 1000)
+	id 8A461197F7C07; Tue, 17 Sep 2024 17:47:57 +0200 (CEST)
+Date: Tue, 17 Sep 2024 17:47:57 +0200
+From: Martin Kletzander <nert.pinx@gmail.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/resctrl: Avoid overflow in MB settings in
+ bw_validate()
+Message-ID: <ZumkrWn7FtiMxESR@carol.k8r.cz>
+References: <1723949d8053aa74da907165dbdc26755f341736.1726492059.git.nert.pinx@gmail.com>
+ <abffe9bc-4c2b-4d44-b521-f138179033e3@intel.com>
+ <Zuk5_3qzSfld5dvD@wheatley.k8r.cz>
+ <7467f313-761a-42ed-ae2d-cdadfd93db90@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7467f313-761a-42ed-ae2d-cdadfd93db90@intel.com>
+X-Clacks-Overhead: GNU Terry Pratchett
 
-Hi Linus,
+On Tue, Sep 17, 2024 at 08:08:50AM -0700, Reinette Chatre wrote:
+>Hi Martin,
+>
+>On 9/17/24 1:12 AM, Martin Kletzander wrote:
+>> On Mon, Sep 16, 2024 at 09:56:01AM -0700, Reinette Chatre wrote:
+>>> On 9/16/24 6:07 AM, Martin Kletzander wrote:
+>>>> When resctrl is mounted with the "mba_MBps" option the default (maximum)
+>>>> bandwidth is the maximum unsigned value for the type.  However when
+>>>> using the same value that already exists in the schemata file it is then
+>>>> rounded up to the bandwidth granularity and overflows to a small number
+>>>> instead, making it difficult to reset memory bandwidth allocation value
+>>>> back to its default.
+>>>>
+>>>> Since the granularity and minimum bandwidth are not used when the
+>>>> software controller is used (resctrl is mounted with the "mba_MBps"),
+>>>> skip the rounding up as well and return early from bw_validate().
+>>>
+>>> Thank you very much for finding the issue and proposing a fix.
+>>>
+>>>>
+>>>> Signed-off-by: Martin Kletzander <nert.pinx@gmail.com>
+>>>> ---
+>>>> Changes in v2:
+>>>>   - actually save the value in the output parameter @data
+>>>>
+>>>>   arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 9 +++++++--
+>>>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>>>> index 50fa1fe9a073..702b1a372e9c 100644
+>>>> --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>>>> +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>>>> @@ -48,8 +48,13 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+>>>>           return false;
+>>>>       }
+>>>>
+>>>> -    if ((bw < r->membw.min_bw || bw > r->default_ctrl) &&
+>>>> -        !is_mba_sc(r)) {
+>>>> +    /* Nothing else to do if software controller is enabled */
+>>>> +    if (is_mba_sc(r)) {
+>>>> +        *data = bw;
+>>>> +        return true;
+>>>
+>>> While this would fix the scenario tested I do not believe this fully addresses the
+>>> overflow issue. As I understand the test wrote U32_MAX to the schemata file,
+>>> which triggered the overflow because of the rounding and is fixed by this patch. Looks like,
+>>> after this patch, writing "U32_MAX + 1" will still trigger the overflow.
+>>>
+>>> The overflow appears to result from some inconsistent type use and not using
+>>> appropriate parsing API that is able to detect overflow.
+>>>
+>>> How about something like below:
+>>>
+>>
+>> That makes much more sense, I have not considered changing the data type
+>> as I wanted to keep the changes at minimum, but your solution is even
+>> better.  Should I leave the fix up to you or do you want me to send a v3?
+>
+>Could you please try it out to ensure it works for you and then send a v3?
+>
 
-please pull some updates and cleanups for the fbdev drivers for kernel 6.12-rc1.
-This patchset includes a crashfix for xen and a possible use-after-free fix in pxafb.
-
+I wanted but the diff has some weird line numbering and could not be
+applied.  I'll write it manually later, test it out, and send a v3.
 Thanks!
-Helge
 
-----------------------------------------------------------------
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  http://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git tags/fbdev-for-6.12-rc1
-
-for you to fetch changes up to de5e89b6654ea0b021a5737e0f55fc6bed625550:
-
-  fbdev: omapfb: Fix typo in comment (2024-09-11 20:53:04 +0200)
-
-----------------------------------------------------------------
-fbdev fixes and updates for 6.12-rc1:
-
-- video: Reduce code when CONFIG_HAS_IOPORT=n
-- xenfb: Fix crash by assigning fb_info->device
-- pxafb: Fix possible use after free in pxafb_task()
-- efifb: Introduce and use new devm_register_framebuffer() function
-- mmpfb: Utilize devm_clk_get_enabled() helpers
-- various typo fixes and code cleanups
-
-----------------------------------------------------------------
-Andrew Kreimer (1):
-      fbdev: omapfb: Fix typo in comment
-
-Chen Ni (3):
-      fbdev: pxa3xx-gcu: Convert comma to semicolon
-      fbdev: imsttfb: convert comma to semicolon
-      fbdev: hyperv_fb: Convert comma to semicolon
-
-Christophe JAILLET (3):
-      fbdev: hpfb: Fix an error handling path in hpfb_dio_probe()
-      fbdev: omapfb: panel-sony-acx565akm: Simplify show_cabc_available_modes()
-      fbdev: omapfb: Use sysfs_emit_at() to simplify code
-
-Jason Andryuk (1):
-      fbdev: xen-fbfront: Assign fb_info->device
-
-Kaixin Wang (1):
-      fbdev: pxafb: Fix possible use after free in pxafb_task()
-
-Niklas Schnelle (1):
-      video: Handle HAS_IOPORT dependencies
-
-Thomas Weißschuh (4):
-      fbdev: Introduce devm_register_framebuffer()
-      fbdev: efifb: Register sysfs groups through driver core
-      fbdev: efifb: Use devm_register_framebuffer()
-      fbdev: efifb: Use driver-private screen_info for sysfs
-
-ying zuxin (1):
-      fbdev: mmp: Use devm_clk_get_enabled() helpers
-
- drivers/video/fbdev/core/fbmem.c                   | 30 +++++++++++
- drivers/video/fbdev/efifb.c                        | 27 +++-------
- drivers/video/fbdev/hpfb.c                         |  1 +
- drivers/video/fbdev/hyperv_fb.c                    |  2 +-
- drivers/video/fbdev/imsttfb.c                      |  4 +-
- drivers/video/fbdev/mmp/hw/mmp_ctrl.c              |  6 +--
- drivers/video/fbdev/omap/omapfb_main.c             | 36 ++++++--------
- .../omap2/omapfb/displays/panel-sony-acx565akm.c   | 15 +++---
- drivers/video/fbdev/omap2/omapfb/dss/hdmi.h        |  2 +-
- drivers/video/fbdev/pxa3xx-gcu.c                   |  4 +-
- drivers/video/fbdev/pxafb.c                        |  1 +
- drivers/video/fbdev/xen-fbfront.c                  |  1 +
- include/linux/fb.h                                 |  1 +
- include/video/vga.h                                | 58 ++++++++++++++++------
- 14 files changed, 111 insertions(+), 77 deletions(-)
+>Thank you very much.
+>
+>Reinette
 
