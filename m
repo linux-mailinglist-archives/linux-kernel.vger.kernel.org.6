@@ -1,92 +1,94 @@
-Return-Path: <linux-kernel+bounces-331319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609D997AB40
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:05:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73FF697AB41
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60349B25413
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:04:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B3B8B28D9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB9D49634;
-	Tue, 17 Sep 2024 06:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64294D8CB;
+	Tue, 17 Sep 2024 06:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eyz5V3dJ"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G7rAXiMT"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3C34174A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B064778E
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726553090; cv=none; b=qq8m8v37ITvR2fq5+lMnXNa6+n9cNVN8jnDhofo3n5NtiKVsjgavtH5x6TJt+bHegTh08mcrtERwkbLtbGiirVHMci6PghnDR2eUmBqEZ6jG18FXHazd6rxHsXZisBNbHDQUEWZ50tfg7NMtys89YBE0dNKJGdFjzZLOCtfWP4g=
+	t=1726553114; cv=none; b=AFbMwGwwhnqEfMke9guM6zqEo/LWHI+qHAouT1CoO92lTJmJ1WQgXs9h6V3xGPyFQm8HeQx7UGqF0bU+dY7bdjzUOJ27vPOLIX9dvqhWCjwcXGh8/2hWm/E+OpBn4Y5fVvbzAbmfYr/envo0egKI7FRajIVRgh2AV3FLeBSdMB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726553090; c=relaxed/simple;
-	bh=T8jN8uIqnVIuytMyftLQA1cByWItBknUN5J+DtGe/eY=;
+	s=arc-20240116; t=1726553114; c=relaxed/simple;
+	bh=i6VfCIU+UDMyljEhAjvUnnMMjVD3LmvgW+qc/y486Lo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X6rsguPLB9Hb27Q1RUsWrx0M3tqFKlABx3WbnO0/IJftL7kDfUn+SZEZCS4Wp+YU4yUxIlMBSZRnMv6NahcoZ3xP+sjSb4lie1ZeWZWkUUTVANjR1Mca0rEDvUgvPJIggwu3uYOzNqVxdiPlzMvNuRUP3crVOAndkW2nhiBYsZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eyz5V3dJ; arc=none smtp.client-ip=209.85.128.46
+	 Content-Type:Content-Disposition:In-Reply-To; b=KZ7RvYpn46LKDl5r8/vC/nSOFOvpFjw36mUI4ThCJHLGPOWYol1jl/LO/K1BpINa1E9UMSJoLjeGnfl4fAgVzgxry/tth+tPQ7wMxvwagWt6h1swXpe0OyQ+0I0zsloL3lJb5YIUdkkNI16v4jw3ZEpyYDbzE1IPnIX7qFd92LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G7rAXiMT; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cbe624c59so32868135e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 23:04:46 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cae102702so32956875e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 23:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726553085; x=1727157885; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+QHYq7633zmakbskovpL4u4ejDhGKehunkMUdAo+20=;
-        b=eyz5V3dJxe5aMz8/xL54eYc13n8sd1rDXAOM6W2Fb3XtMoWoOnfMrMG7P7ZRkswa8j
-         MMtR3zfIskwA9gLVyNm7wJgVRPbkIDvKcu9R/f3ssC0Gg1MfujBz2bfO6y6JT9ye1tOG
-         ImUDIFqeGcqpQtz0f2PCjJlgAtMpXYesiguh4Cdu/WWtblAA2dE9pMLke2da0FBKmflO
-         wwsAEVt3xhkwlevMWUAhLGKUuuaHAaOlXCFsIoUnO2l06a1iVTO0weBFg94gb0ZgKPl4
-         GZmSQRlJRYfGpvF972mpuGDJqfkGy6DVkhpktpw1w9foST/pqsOg/gt+anyD/TiIb0ks
-         f8GA==
+        d=suse.com; s=google; t=1726553110; x=1727157910; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IAqEXr9dsx/GFARHKZ+CSfu6ynKeAlvuTAEqE2pmJ5s=;
+        b=G7rAXiMToZRpHAKdy3r80682Z6yxiQpf5qMZmQLazy4m5lGdDzX+Bngi1BYf91ui+x
+         w0ELnfz0dLkK4OFOiOKMbUdi//kvu5WN4AhjBZbzs6jEL9BmNHrRMME18mHHIaHlqu6r
+         IkHyq7bvX/qFwgORHAxSRXKV7Njud0r5gH7ZJwRQyYmZZ5G7QukKKV5KjdpawiTJKpZF
+         bVrkcQjPp/r+cLJCLn4RclSHVYHywExWzKwXOsuINTyJmaEGGkICZdKS9dltmOcCucIq
+         EAI3eo4dHJ6ZSjLK1Q1LA9ytTtpqMLX/np7QUThgk14VlrifJcflxQv2oR9irwJ9S0/Q
+         M1uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726553085; x=1727157885;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G+QHYq7633zmakbskovpL4u4ejDhGKehunkMUdAo+20=;
-        b=uBDXa8OeBOS0pXoTc563f2yjtk0MB/YD9OaeNykCxbVowgImQjsw3Y6Ngxe0b7RV3m
-         7dNsAd/ofKr885N/moX4m/6Z4Kz9freKzm90II76XXJlApZLMNn8Q5paqjdN8P8gSxaJ
-         O8BCHR62d9XQVAxkHFVAk/HllTCpRx4KFjWy4fHd6oCAFaUMSqLipKLAysiZW0sMprhy
-         zESdbQizNOoWH0bz/0/88dl0L5Q9CHxYRSM9/MlhfrvFNx8oC5oC6wIW2ZGMC8Y2kRRx
-         Q3d5HFMbLqdfn1L1u4pR/hs8YLdi7BL4vAAFchGM3mTNv6FtRZIvOxaCO0MIXkkY3P4T
-         UEJw==
-X-Gm-Message-State: AOJu0Yxk+ipvckjrTagZvgu1VsysClmtHn5Kfl8Ga0HKp2cIfk2z5Ium
-	Ocx/MIUrFpvxVlP9qyq4nwADxfOx0vYzS/ChseN9N27xOlEr2iTQ9WKOM4DdBXY=
-X-Google-Smtp-Source: AGHT+IHETGMgx1Yh32zfGXj9vccCNdLbPLd/l1Gn7bQOQ4puEMDXLSWmyvdFQeTf4t7KbDZsWtv0Dg==
-X-Received: by 2002:a05:600c:4e8c:b0:42c:c37b:4d53 with SMTP id 5b1f17b1804b1-42d86cdba37mr83900355e9.0.1726553085295;
-        Mon, 16 Sep 2024 23:04:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726553110; x=1727157910;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IAqEXr9dsx/GFARHKZ+CSfu6ynKeAlvuTAEqE2pmJ5s=;
+        b=jsZF+VsJY/Na3ubyoXi5w9zOWT9KAHBJrzjoQem7emHB+zapvt++dc1AmzXC3JJqY8
+         7+abKjbKdQ94H5UaLFOR1Y4zJkbxzLoiro6IZW9MLJtJ5sZfgldvpsobM5Y0Y+mp3UxC
+         oVL0ilqzEz7OzlzljVs2JKWZzTlK9dGN03JUrWs21PQe1o+JL2xfogGYm6XpUu9atvJL
+         DXSlZAh9IqX/UVrGTVhVCaaAf5EJFIB/6PTkbGQ+EpNtJozK+tY2+L1xzd90bzp9gTVH
+         swEFfafwDcSKm9bBCz4T/Ik47k+enWbSpalCIanG3ivFNHNRY6Ba9jw+ArGYEfM07FAM
+         kR4w==
+X-Gm-Message-State: AOJu0YynJvxQuXEcN9fkJXAj6AIyGtnaUU4k4s6i728FheXqhEy6TbgY
+	5FaLmN6l3cAJzpj1Bami9rPvYdvLhzAi6vcG+kUk3VC73nNfp9AJVhotJC5PdUA=
+X-Google-Smtp-Source: AGHT+IHWktBmb6JyxkK3Y8xMasoWNsJW/k8Kak+KevSump0oJf2owVsn0eMLrPm7k+dYafLzUSmICw==
+X-Received: by 2002:a05:600c:35ca:b0:425:5ec3:570b with SMTP id 5b1f17b1804b1-42d964e186amr78086315e9.35.1726553110371;
+        Mon, 16 Sep 2024 23:05:10 -0700 (PDT)
 Received: from localhost (109-81-84-13.rct.o2.cz. [109.81.84.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b054f97sm127329025e9.4.2024.09.16.23.04.44
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e71f0699sm8622412f8f.15.2024.09.16.23.05.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 23:04:45 -0700 (PDT)
-Date: Tue, 17 Sep 2024 08:04:44 +0200
+        Mon, 16 Sep 2024 23:05:10 -0700 (PDT)
+Date: Tue, 17 Sep 2024 08:05:09 +0200
 From: Michal Hocko <mhocko@suse.com>
 To: Frederic Weisbecker <frederic@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 13/19] mm: Create/affine kcompactd to its preferred node
-Message-ID: <Zukb_FEVRllBDhKO@tiehlicka>
+Subject: Re: [PATCH 14/19] mm: Create/affine kswapd to its preferred node
+Message-ID: <ZukcFS8aFLrUzH7b@tiehlicka>
 References: <20240916224925.20540-1-frederic@kernel.org>
- <20240916224925.20540-14-frederic@kernel.org>
+ <20240916224925.20540-15-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240916224925.20540-14-frederic@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240916224925.20540-15-frederic@kernel.org>
 
-On Tue 17-09-24 00:49:17, Frederic Weisbecker wrote:
-> Kcompactd is dedicated to a specific node. As such it wants to be
+On Tue 17-09-24 00:49:18, Frederic Weisbecker wrote:
+> kswapd is dedicated to a specific node. As such it wants to be
 > preferrably affine to it, memory and CPUs-wise.
 > 
 > Use the proper kthread API to achieve that. As a bonus it takes care of
@@ -96,93 +98,43 @@ On Tue 17-09-24 00:49:17, Frederic Weisbecker wrote:
 > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
 Acked-by: Michal Hocko <mhocko@suse.com>
-Clear simplification, thanks!
 
 > ---
->  mm/compaction.c | 43 +++----------------------------------------
->  1 file changed, 3 insertions(+), 40 deletions(-)
+>  mm/vmscan.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 > 
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index eb95e9b435d0..69742555f2e5 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -3179,15 +3179,9 @@ void wakeup_kcompactd(pg_data_t *pgdat, int order, int highest_zoneidx)
->  static int kcompactd(void *p)
->  {
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index bd489c1af228..00a7f1e92447 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -7139,10 +7139,6 @@ static int kswapd(void *p)
+>  	unsigned int highest_zoneidx = MAX_NR_ZONES - 1;
 >  	pg_data_t *pgdat = (pg_data_t *)p;
-> -	struct task_struct *tsk = current;
->  	long default_timeout = msecs_to_jiffies(HPAGE_FRAG_CHECK_INTERVAL_MSEC);
->  	long timeout = default_timeout;
->  
+>  	struct task_struct *tsk = current;
 > -	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
 > -
 > -	if (!cpumask_empty(cpumask))
 > -		set_cpus_allowed_ptr(tsk, cpumask);
-> -
->  	set_freezable();
 >  
->  	pgdat->kcompactd_max_order = 0;
-> @@ -3258,10 +3252,12 @@ void __meminit kcompactd_run(int nid)
->  	if (pgdat->kcompactd)
->  		return;
+>  	/*
+>  	 * Tell the memory management that we're a "memory allocator",
+> @@ -7311,13 +7307,15 @@ void __meminit kswapd_run(int nid)
 >  
-> -	pgdat->kcompactd = kthread_run(kcompactd, pgdat, "kcompactd%d", nid);
-> +	pgdat->kcompactd = kthread_create_on_node(kcompactd, pgdat, nid, "kcompactd%d", nid);
->  	if (IS_ERR(pgdat->kcompactd)) {
->  		pr_err("Failed to start kcompactd on node %d\n", nid);
->  		pgdat->kcompactd = NULL;
-> +	} else {
-> +		wake_up_process(pgdat->kcompactd);
+>  	pgdat_kswapd_lock(pgdat);
+>  	if (!pgdat->kswapd) {
+> -		pgdat->kswapd = kthread_run(kswapd, pgdat, "kswapd%d", nid);
+> +		pgdat->kswapd = kthread_create_on_node(kswapd, pgdat, nid, "kswapd%d", nid);
+>  		if (IS_ERR(pgdat->kswapd)) {
+>  			/* failure at boot is fatal */
+>  			pr_err("Failed to start kswapd on node %d，ret=%ld\n",
+>  				   nid, PTR_ERR(pgdat->kswapd));
+>  			BUG_ON(system_state < SYSTEM_RUNNING);
+>  			pgdat->kswapd = NULL;
+> +		} else {
+> +			wake_up_process(pgdat->kswapd);
+>  		}
 >  	}
->  }
->  
-> @@ -3279,30 +3275,6 @@ void __meminit kcompactd_stop(int nid)
->  	}
->  }
->  
-> -/*
-> - * It's optimal to keep kcompactd on the same CPUs as their memory, but
-> - * not required for correctness. So if the last cpu in a node goes
-> - * away, we get changed to run anywhere: as the first one comes back,
-> - * restore their cpu bindings.
-> - */
-> -static int kcompactd_cpu_online(unsigned int cpu)
-> -{
-> -	int nid;
-> -
-> -	for_each_node_state(nid, N_MEMORY) {
-> -		pg_data_t *pgdat = NODE_DATA(nid);
-> -		const struct cpumask *mask;
-> -
-> -		mask = cpumask_of_node(pgdat->node_id);
-> -
-> -		if (cpumask_any_and(cpu_online_mask, mask) < nr_cpu_ids)
-> -			/* One of our CPUs online: restore mask */
-> -			if (pgdat->kcompactd)
-> -				set_cpus_allowed_ptr(pgdat->kcompactd, mask);
-> -	}
-> -	return 0;
-> -}
-> -
->  static int proc_dointvec_minmax_warn_RT_change(const struct ctl_table *table,
->  		int write, void *buffer, size_t *lenp, loff_t *ppos)
->  {
-> @@ -3362,15 +3334,6 @@ static struct ctl_table vm_compaction[] = {
->  static int __init kcompactd_init(void)
->  {
->  	int nid;
-> -	int ret;
-> -
-> -	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
-> -					"mm/compaction:online",
-> -					kcompactd_cpu_online, NULL);
-> -	if (ret < 0) {
-> -		pr_err("kcompactd: failed to register hotplug callbacks.\n");
-> -		return ret;
-> -	}
->  
->  	for_each_node_state(nid, N_MEMORY)
->  		kcompactd_run(nid);
+>  	pgdat_kswapd_unlock(pgdat);
 > -- 
 > 2.46.0
 
