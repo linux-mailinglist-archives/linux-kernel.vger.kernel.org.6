@@ -1,187 +1,108 @@
-Return-Path: <linux-kernel+bounces-332102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163AA97B59A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:12:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B291797B59C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108C41C211A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:12:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7582D2866F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE5E1862B9;
-	Tue, 17 Sep 2024 22:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B7D18BC17;
+	Tue, 17 Sep 2024 22:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="nwn1BEkr"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GY6/WgQQ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297AEA29
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 22:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8E015B0F2;
+	Tue, 17 Sep 2024 22:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726611150; cv=none; b=nQ6U13DF/syJZucmKlJ1pQ7pV4R/aaO0uQhvJRxfdnT/Wk1w8L5OUGQRrB4VWby9mqQotojlINZXtrrHeThr3a1BukNq+g/tI6qpe1x+h0fvctZeualu+EY3ZM3SfjiG0WRWp99sra9HkxgXkIk9VULoRma3EhK0GUzcEsSzT5g=
+	t=1726611211; cv=none; b=VdCbRVgkNMhoZvEPX1+C0R6aOg6fO+92MSdUss3JlMZZllx4IbQQS2Gr5OpMqDUpooyWH2RHfeFkgLButJG6yXJnkja9ujNzLNxO22LNPK/Y+6pPWdI/O948LcxzsdMD32u7ViNQM2tS97oa9LES11q6U009UlC7Tm7Dozx1B/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726611150; c=relaxed/simple;
-	bh=WWQPzPB6XklDRgv0vLVv5iItdWfgdPNrU/E2toBl9zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gd8w2LEH4EAsuyW9q0ucdf3sgVRcPMLiJPB/ppvP68s1CvH9rcQd37+lyHNgM3CuxLEHX+36+K9X+NktW3pMTgmrBAFgZPzMhQyNLusQTq+ABMLQr8oBKQTaQ66vuOHMPl5eSU8MXfEEHQFnVCZv7+MZcUecjf+ieOIrBNZIZmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=nwn1BEkr; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-205722ba00cso51827895ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 15:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726611148; x=1727215948; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vph46MtSHnTYp0ntwJB5uF+q0djCNtjTNx1dscTaD4I=;
-        b=nwn1BEkrIrSzdFObK+hiyyUqX9cx6OabUE4iEyYx8MgS4emwyS5FfYo/ZG/EDGQusO
-         oLk/wt65kVGbDcBsF1LGQM+pfFEM8DoS8559Ke0FDflAxZ3wCdSKdcLPoJvWSqwTT8g5
-         flwJPkKk1CZ6eMDVlJfjNqY6CHIts75Cj416XIHSbJVS5uyXJ2fCS6KrGDE+cLoMRcDq
-         yU+XbfoHA1C4/25IX9S6j8qb8oP4aRIDdeNqs+ZKdWgyIYHDemYXzkQdyfufqTbtoo6k
-         puW2UC8oPcWCYpVQwhn3oEJ0M7NFuuyRykMvqC/XvIKftdG797Kw7Lsj+W9ULY4cJrC/
-         M/YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726611148; x=1727215948;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vph46MtSHnTYp0ntwJB5uF+q0djCNtjTNx1dscTaD4I=;
-        b=s9NuQYZgVz+RsJQNdSiF1Jzc4xVFj2I7HYMSjeBjCzj+kPP+4KE7ZMA9FgxGxgyh97
-         1sJBZ5ppoKsxnwCIcuY5vSv1KqSEOYMCkoLxh4budfdN4kaxgs9V1VALaxe/oLIXbZN6
-         tW+WLusbzmX4YmQfTQz0frQOJ2IN32lOuW4/nNaDOhD09h88Cg3v7M5J9qqVzapH2MRp
-         1XqUDEp81cY/n+Q6WNA18JXUjCO8Xhjro4Ms2AkREhWqqubF6YicEqrddIUVfmD2JiZU
-         dc677TaQTkNXxGC7rV7xZ31Xx3q9ALUG8Y1ojJRyb7JbLw9lkg+hu9E2ecBkchPibP2c
-         8Wkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiqp6cT1xiFIhsSLleaERKiqcUrtXvJZNHaYuRqL2K6GA777PQLoX1fDiUumktzn4BMmQeO+GpfdN+ox0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuXgtbqpSHcTUmJKiiVfes9rKb0KoQWKxQ268oumhlNlAzlFV5
-	TzR45WjkXuzBMEF/9iVMK0APVEGdb+boaB2KYTcCis2sjWS2HH1EJy3YOEbJHwY=
-X-Google-Smtp-Source: AGHT+IEFU5lXa7bN+x6NP0rB51iaOBq6eYNCKDJAX7u54ocjAxzPQV7qI/M7WvKTTKiqWid16LuRUg==
-X-Received: by 2002:a17:902:e5d1:b0:206:c2e3:68ef with SMTP id d9443c01a7336-2076e3c2048mr307007945ad.22.1726611148438;
-        Tue, 17 Sep 2024 15:12:28 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794731627sm54665565ad.266.2024.09.17.15.12.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 15:12:28 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sqgQr-006Xav-0U;
-	Wed, 18 Sep 2024 08:12:25 +1000
-Date: Wed, 18 Sep 2024 08:12:25 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <Zun+yci6CeiuNS2o@dread.disaster.area>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
- <87frqf2smy.fsf@gmail.com>
- <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <877cbq3g9i.fsf@gmail.com>
- <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
- <8734m7henr.fsf@gmail.com>
- <ZufYRolfyUqEOS1c@dread.disaster.area>
- <c8a9dba5-7d02-4aa2-a01f-dd7f53b24938@oracle.com>
+	s=arc-20240116; t=1726611211; c=relaxed/simple;
+	bh=ygH9Je0RWqE+9Zl2PMFWYOW6l3+zWxd+lzPKFxn61fw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=k1mRZJ/GEv5B7V9OLLwh4Gb7FG0L+oqSVslwo5ZVrE+cWo2SZ2rfED4Mbk9lhj9cAci3fvJBQy52ISRC3x8oYTwUe2sHzU5y6B5SbsusYpMQ7e/Pj1CiBKdqvX4GeRasnBlqgMrsjqoOJkBI96LzRwHioSotcLjNtz0Qn7gX6DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GY6/WgQQ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726611204;
+	bh=TDZjQFU1EEtnXlsLV7wF7rYgn/RFoMLvnlwlfiu2C+0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GY6/WgQQk4pK5GKS9qlJU535tIO0GANy0NyVnQLimNF6GyY+JbhYi5acWdP4dh3FY
+	 IO8EAzXsb/T/IYxhCibNdTXT9+PKtXn5GX0d5NRf+bWoBmf935Gcs6g8DyI8yqMQMd
+	 5bK7ob+HHRGEj4qIR3OV1YBaKOJs8YHidovW49dlGPQtAsZleczIau2jZ9cCyGxZf4
+	 uEsEphITYdKAVhhhUuemQ7QwT+F6BtZYpEANPVF3JuqhNrWEiJaS5BZbXKLoglKsj+
+	 dAiTu5eZGxApZD0cChH3Q7MCt3YDrC8MGOCDZ4j2ClBzPLIfDDsDC8n+az9VYEtIgY
+	 +wX7/8PA1uFdg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X7bdc0f0Vz4x8C;
+	Wed, 18 Sep 2024 08:13:24 +1000 (AEST)
+Date: Wed, 18 Sep 2024 08:13:23 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: Dongliang Cui <dongliang.cui@unisoc.com>, Zhiguo Niu
+ <zhiguo.niu@unisoc.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the exfat tree
+Message-ID: <20240918081323.760ac7b4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c8a9dba5-7d02-4aa2-a01f-dd7f53b24938@oracle.com>
+Content-Type: multipart/signed; boundary="Sig_/NsSsJYJ/jIOwns0la7wFHF.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Sep 16, 2024 at 11:24:56AM +0100, John Garry wrote:
-> On 16/09/2024 08:03, Dave Chinner wrote:
-> > OTOH, we can't do this with atomic writes. Atomic writes require
-> > some mkfs help because they require explicit physical alignment of
-> > the filesystem to the underlying storage.
-> 
-> If we are enabling atomic writes at mkfs time, then we can ensure agsize %
-> extsize == 0. That provides the physical alignment guarantee. It also makes
-> sense to ensure extsize is a power-of-2.
+--Sig_/NsSsJYJ/jIOwns0la7wFHF.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-No, mkfs does not want to align anything to "extsize". It needs to
-align the filesystem geometry to be compatible with the underlying
-block device atomic write alignment parameters.
+Hi all,
 
-We just don't care if extsize is not an exact multiple of agsize.
-As long as extsize is aligned to the atomic write boundaries and the
-start of the AG is aligned to atomic write boundaries, we can
-allocate hardware aligned extsize sized extents from the AG.
+After merging the exfat tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-AGs are always going to contain lots of non-aligned, randomly sized
-extents for other stuff like metadata and unaligned file data.
-Aligned allocation is all about finding extsized aligned free space
-within the AG and has nothing to do with the size of the AG itself.
+In file included from fs/exfat/inode.c:18:
+fs/exfat/exfat_fs.h:13:10: fatal error: uapi/linux/exfat.h: No such file or=
+ directory
+   13 | #include <uapi/linux/exfat.h>
+      |          ^~~~~~~~~~~~~~~~~~~~
 
-> However, extsize is re-configurble per inode. So, for an inode enabled for
-> atomic writes, we must still ensure agsize % new extsize == 0 (and also new
-> extsize is a power-of-2)
+Caused by commit
 
-Ensuring that the extsize is aligned to the hardware atomic write
-limits is a kernel runtime check when enabling atomic writes on an
-inode.
+  0636fd914f77 ("exfat: Implement sops->shutdown and ioctl")
 
-In this case, we do not care what the AG size is - it is completely
-irrelevant to these per-inode runtime checks because mkfs has
-already guaranteed that the AG is correctly aligned to the
-underlying hardware. That means is extsize is also aligned to the
-underlying hardware, physical extent layout is guaranteed to be
-compatible with the hardware constraints for atomic writes...
+I have used the exfat tree from next-20240917 for today.
 
-> > Hence we'll eventually end
-> > up with atomic writes needing to be enabled at mkfs time, but force
-> > align will be an upgradeable feature flag.
-> 
-> Could atomic writes also be an upgradeable feature? We just need to ensure
-> that agsize % extsize == 0 for an inode enabled for atomic writes.
+--=20
+Cheers,
+Stephen Rothwell
 
-To turn the superblock feature bit on, we have to check the AGs are
-correctly aligned to the *underlying hardware*. If they aren't
-correctly aligned (and there is a good chance they will not be)
-then we can't enable atomic writes at all. The only way to change
-this is to physically move AGs around in the block device (i.e. via
-xfs_expand tool I proposed).
+--Sig_/NsSsJYJ/jIOwns0la7wFHF.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-i.e. the mkfs dependency on having the AGs aligned to the underlying
-atomic write capabilities of the block device never goes away, even
-if we want to make the feature dynamically enabled.
+-----BEGIN PGP SIGNATURE-----
 
-IOWs, yes, an existing filesystem -could- be upgradeable, but there
-is no guarantee that is will be.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbp/wMACgkQAVBC80lX
+0GxGbAf/fv5sEQ+EuHiBypyPnkTyPE1inWD3LTFBDxTfTGuAu2RGBqmcBDiiXkP4
+PtBptsLqgoZEgyqHZ9Vy/jUFOLJZrJII6ufRYXuD4tyfAip9+OPq3XIejnIdaiAU
+jE/qsryedIHMGgsokzm65R+Ca61S9OR/YwjUaz0YhnBWCO/YR07Hr4NzOEHPM7Sx
+i+UKEpyBV6mh9qy8/bI8DSorcF/0EPEBnoVUaVfcp8HbzV5S6bwr8ks4raJzFunB
+u12qcwUtGMvGiFQOU4kbjXz9Kg/KuaO51Nc60Ix6WAvV1rbce/tXDYZ9QqzouH7q
+JAOntLE7MKD7q+PI7zghW/getP2aMQ==
+=TBxD
+-----END PGP SIGNATURE-----
 
-Quite frankly, we aren't going to see block devices that filesystems
-already exist on suddenly sprout support for atomic writes mid-life.
-Hence if mkfs detects atomic write support in the underlying device,
-it should *always* modify the geometry to be compatible with atomic
-writes and enable atomic write support.
-
-Yes, that means the "incompat with reflink" issue needs to be fixed
-before we take atomic writes out of experimental (i.e. we consistently
-apply the same "full support" criteria we applied to DAX).
-
-Hence by the time atomic writes are a fully supported feature, we're
-going to be able to enable them by default at mkfs time for any
-hardware that supports them...
-
-> Valid
-> extsize values may be quite limited, though, depending on the value of
-> agsize.
-
-No. The only limit agsize puts on extsize is that a single aligned
-extent can't be larger than half the AG size. Forced alignment and
-atomic writes don't change that.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--Sig_/NsSsJYJ/jIOwns0la7wFHF.--
 
