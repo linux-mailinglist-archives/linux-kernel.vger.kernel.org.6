@@ -1,103 +1,195 @@
-Return-Path: <linux-kernel+bounces-331278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B8F497AAE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 06:59:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1870197AAE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42E32855E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 04:59:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F6B9B29027
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F2B45016;
-	Tue, 17 Sep 2024 04:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E876660DCF;
+	Tue, 17 Sep 2024 05:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SqxzndFK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HlR564Qh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9DF2B9B3;
-	Tue, 17 Sep 2024 04:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576A025763;
+	Tue, 17 Sep 2024 05:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726549187; cv=none; b=W/WEDut2moMZIzVN5HPq/WVTq87RqNWuvY2gz0z+BFrJEC9sjyDxHS4Nfl8fedaGXpFHMuifDUF2/IOTc5dL9wzwrR7eAYCfYJWwzaLsWRp6g4oQN35I43gHBEaej4Thh0GzQ8fwIVXNtofV8fY/tMhdDIXvB097dsni+o5ayEs=
+	t=1726549555; cv=none; b=A34nNXpE7ffdhqiKPPy7c+q0utPyPykZPLxQnBluhlJqNRgzxn6MYVdjmR6jY/6q35O379HYoeudFcGLypZZZJKuASIsceO748f19DNmtZ68OTaYowZ0jAqqb2pD6WBDqr4I+ki+Vrvl48YKIT6P85Ru91/x6VqndiAZm6IbTzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726549187; c=relaxed/simple;
-	bh=DwZUZ2SpiL/gq3e9qSka5nJFvofxdDOJh68Tp1JclQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Bs/WpUO4WKFNFVOm1fa0lol6/8iDUfznoggERpIvly+fdoW/hESSpBH6c2SrMFZMpn6xFhsMx0cdsmOXW8makPp7t8cj6UP4Ic+FT6P1H6OzMQl10QxK4vnQrADxSPV8H+Acg3YpDRtQkdYaYLUio3W1t/HRnBOYzctjut/1i+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SqxzndFK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726549182;
-	bh=I8RZnLN8fIZOZORfd1+gMIR1qybHXpbTW3SBHXbulD0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SqxzndFKe4s7bdRcX9dcFWwyBGrfyq4dck4C/HZsiRhiPFAu2NppSypoubUt3nZcg
-	 dSi1ysiu+Dq5cr8PaKQOXKO6BhDHRWN4t7mg0HbvjTbJo7UyEp1I+OJnXu0/HaAvjR
-	 wUrrqx4XnLTzyKcyKRfqdf64qfpC3PPJCnptR5yOTvbtpMo3mEloEZML077Q0ImMpx
-	 x3FhrIU+d7zHgHSJSGUHKLPDr7rL0cs3oxOhdUKw7lBpsP2g7BdyLpSW42olJqaQGd
-	 YIqsWlal0by359a1/KZupEBy7Q40iNXWeUyN4D/FsHHgPe2mu9oC+EePWi5XYCpu/x
-	 Xq7ReCWJvjLJQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X78ht0nDyz4xbK;
-	Tue, 17 Sep 2024 14:59:42 +1000 (AEST)
-Date: Tue, 17 Sep 2024 14:59:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the rust tree
-Message-ID: <20240917145941.2c4695a5@canb.auug.org.au>
+	s=arc-20240116; t=1726549555; c=relaxed/simple;
+	bh=XqJJFeOp7MdyQLdxKtgi2ITW8F7GZDZkuwkfDas8Xb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VwozU18aFUP8pvYWD34P0lddyghY/HKcL8FKFCTFMDIw38K+9d8fNSosdxF27K38HClfLeF/aPT5K4OwoobBLNGK8p9Lu7qXkQkhInb8Py5akjv+u5zupuGmzjjjPLwI5YBBy/virPnHfUKoFJ02wvIcaTx1mShftQNiVHwbxLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HlR564Qh; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726549554; x=1758085554;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XqJJFeOp7MdyQLdxKtgi2ITW8F7GZDZkuwkfDas8Xb8=;
+  b=HlR564Qh3/p5Sh0kkkGBUofPAQ65soGZ4CK5Z8nlxodHDyRb4O9uEMNC
+   DpV+aJsmo0HRNGZuht82DWlFbgxY2I0m8dqsFT7Lr6Jqgho6vwK5HATZj
+   D4lif6G+V0IoAnTXf7ERJvWNdQoZvsENNoMsIRFzCqIBURiQg5qVRX4I+
+   Vrcfz6xo3WXKkX3ML6bYshh0OKfK8HeEidDo5+OYMn6YfnRSoGKWmYLgZ
+   p7xcyOIrzUDsmfzq0F4sEG1B+dJ8IcnEpvkhM9h/k7JVg9LxvO/e2IO5c
+   MmLHFmWeyKGfnP00nhmLb0l1e4pbh/xWZdf9uXKaEVksQMoKjFbTzu1jA
+   g==;
+X-CSE-ConnectionGUID: RZaWERXNRE2VLSmrXFOGjA==
+X-CSE-MsgGUID: Kka+zk0pT5O5eczFkik6tQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11197"; a="24930138"
+X-IronPort-AV: E=Sophos;i="6.10,234,1719903600"; 
+   d="scan'208";a="24930138"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2024 22:05:53 -0700
+X-CSE-ConnectionGUID: UDgYpWYHSw6tiyAgLVXzBA==
+X-CSE-MsgGUID: w5W0zApoSMCZMnGOleu5JA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,234,1719903600"; 
+   d="scan'208";a="68954735"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 16 Sep 2024 22:05:47 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sqQPI-000AoA-22;
+	Tue, 17 Sep 2024 05:05:44 +0000
+Date: Tue, 17 Sep 2024 13:05:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk,
+	song@kernel.org, yukuai3@huawei.com, agk@redhat.com,
+	snitzer@kernel.org, mpatocka@redhat.com, adrian.hunter@intel.com,
+	quic_asutoshd@quicinc.com, ritesh.list@gmail.com,
+	ulf.hansson@linaro.org, andersson@kernel.org,
+	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
+	quic_varada@quicinc.com, quic_mdalam@quicinc.com
+Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+Message-ID: <202409171209.aEtxsPez-lkp@intel.com>
+References: <20240916085741.1636554-2-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wM5kYmkIVR/lU/.71QvmqzU";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916085741.1636554-2-quic_mdalam@quicinc.com>
 
---Sig_/wM5kYmkIVR/lU/.71QvmqzU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Md,
 
-Hi all,
+kernel test robot noticed the following build errors:
 
-The following commit is also in the mm-stable tree as a different commit
-(but the same patch):
+[auto build test ERROR on device-mapper-dm/for-next]
+[also build test ERROR on axboe-block/for-next linus/master song-md/md-next v6.11 next-20240916]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  cc1d98f9fe30 ("kasan: simplify and clarify Makefile")
+url:    https://github.com/intel-lab-lkp/linux/commits/Md-Sadre-Alam/dm-inlinecrypt-Add-inline-encryption-support/20240916-170452
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git for-next
+patch link:    https://lore.kernel.org/r/20240916085741.1636554-2-quic_mdalam%40quicinc.com
+patch subject: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+config: openrisc-randconfig-r062-20240917 (https://download.01.org/0day-ci/archive/20240917/202409171209.aEtxsPez-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240917/202409171209.aEtxsPez-lkp@intel.com/reproduce)
 
-This is commit
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409171209.aEtxsPez-lkp@intel.com/
 
-  78788c3ede90 ("kasan: simplify and clarify Makefile")
+All errors (new ones prefixed by >>):
 
-in the mm-stable branch.
+   drivers/md/dm-inline-crypt.c: In function 'crypt_prepare_inline_crypt_key':
+>> drivers/md/dm-inline-crypt.c:81:15: error: implicit declaration of function 'blk_crypto_init_key' [-Wimplicit-function-declaration]
+      81 |         ret = blk_crypto_init_key(cc->blk_key, cc->key, cc->crypto_mode,
+         |               ^~~~~~~~~~~~~~~~~~~
+>> drivers/md/dm-inline-crypt.c:88:15: error: implicit declaration of function 'blk_crypto_start_using_key' [-Wimplicit-function-declaration]
+      88 |         ret = blk_crypto_start_using_key(cc->dev->bdev, cc->blk_key);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/md/dm-inline-crypt.c: In function 'crypt_destroy_inline_crypt_key':
+>> drivers/md/dm-inline-crypt.c:104:17: error: implicit declaration of function 'blk_crypto_evict_key'; did you mean 'blk_crypto_register'? [-Wimplicit-function-declaration]
+     104 |                 blk_crypto_evict_key(cc->dev->bdev, cc->blk_key);
+         |                 ^~~~~~~~~~~~~~~~~~~~
+         |                 blk_crypto_register
+   drivers/md/dm-inline-crypt.c: In function 'crypt_inline_encrypt_submit':
+>> drivers/md/dm-inline-crypt.c:121:17: error: implicit declaration of function 'bio_crypt_set_ctx' [-Wimplicit-function-declaration]
+     121 |                 bio_crypt_set_ctx(bio, cc->blk_key, dun, GFP_KERNEL);
+         |                 ^~~~~~~~~~~~~~~~~
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/wM5kYmkIVR/lU/.71QvmqzU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+vim +/blk_crypto_init_key +81 drivers/md/dm-inline-crypt.c
 
------BEGIN PGP SIGNATURE-----
+    72	
+    73	static int crypt_prepare_inline_crypt_key(struct inlinecrypt_config *cc)
+    74	{
+    75		int ret;
+    76	
+    77		cc->blk_key = kzalloc(sizeof(*cc->blk_key), GFP_KERNEL);
+    78		if (!cc->blk_key)
+    79			return -ENOMEM;
+    80	
+  > 81		ret = blk_crypto_init_key(cc->blk_key, cc->key, cc->crypto_mode,
+    82					  cc->iv_size, cc->sector_size);
+    83		if (ret) {
+    84			DMERR("Failed to init inline encryption key");
+    85			goto bad_key;
+    86		}
+    87	
+  > 88		ret = blk_crypto_start_using_key(cc->dev->bdev, cc->blk_key);
+    89		if (ret) {
+    90			DMERR("Failed to use inline encryption key");
+    91			goto bad_key;
+    92		}
+    93	
+    94		return 0;
+    95	bad_key:
+    96		kfree_sensitive(cc->blk_key);
+    97		cc->blk_key = NULL;
+    98		return ret;
+    99	}
+   100	
+   101	static void crypt_destroy_inline_crypt_key(struct inlinecrypt_config *cc)
+   102	{
+   103		if (cc->blk_key) {
+ > 104			blk_crypto_evict_key(cc->dev->bdev, cc->blk_key);
+   105			kfree_sensitive(cc->blk_key);
+   106			cc->blk_key = NULL;
+   107		}
+   108	}
+   109	
+   110	static void crypt_inline_encrypt_submit(struct dm_target *ti, struct bio *bio)
+   111	{
+   112		struct inlinecrypt_config *cc = ti->private;
+   113		u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE];
+   114	
+   115		bio_set_dev(bio, cc->dev->bdev);
+   116		if (bio_sectors(bio)) {
+   117			memset(dun, 0, BLK_CRYPTO_MAX_IV_SIZE);
+   118			bio->bi_iter.bi_sector = cc->start +
+   119				dm_target_offset(ti, bio->bi_iter.bi_sector);
+   120			dun[0] = le64_to_cpu(bio->bi_iter.bi_sector + cc->iv_offset);
+ > 121			bio_crypt_set_ctx(bio, cc->blk_key, dun, GFP_KERNEL);
+   122		}
+   123	
+   124		submit_bio_noacct(bio);
+   125	}
+   126	
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbpDL0ACgkQAVBC80lX
-0Gz5/Qf/S5CRlue+QXC62vDeTVbT7yiGzdLhY3R5e/L6rvYloQDxInvEDCsBDz0s
-786cxLIm9w3W/lxnpEyiARHAaflY2VYWU7oMaEgfBpcJuo3PU10AobrcOiUcVATw
-nFDxBI16ilz8zwVAk6eMccMougho6HLmx3FCW0Aw6glh62rT5lwtAOMYzfFojfM0
-sl6EdAmI9sl0qF8Wap3m3hqnXuOiOB1WxG2LlYpyDaj6266BooTkCBgxbT+fC87d
-QY5DILzaJh5/WGOD7jtjD3az9ukZ11+SL9bON/MZr3t8tCB+KH5ODZeAz27lXp7Y
-j1g0jo6pQ9froGleBKhzfVbO6Ky3TQ==
-=O0no
------END PGP SIGNATURE-----
-
---Sig_/wM5kYmkIVR/lU/.71QvmqzU--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
