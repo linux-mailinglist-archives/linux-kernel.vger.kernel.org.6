@@ -1,86 +1,146 @@
-Return-Path: <linux-kernel+bounces-332068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692DA97B4FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:07:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BE297B500
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 23:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB351C21C90
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:07:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72896B22FD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 21:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946A818DF78;
-	Tue, 17 Sep 2024 21:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61076191F85;
+	Tue, 17 Sep 2024 21:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jd4hfuGH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CsbDwsQM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EE717A591;
-	Tue, 17 Sep 2024 21:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C8D17A591;
+	Tue, 17 Sep 2024 21:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726607233; cv=none; b=e6pQwKe2MaEefmOBidAwE8XyUAjDrDqiiO+2xsbyu+XJpQfh7S5orhjgBqRE3EVGVofctkrRCsxrFg0e6/ZxuXmCNHcy2Ff0X6D3W/xlL8HMfQ+7CAyCMY4v2UTRcF4kR1bgZ6ogHmjgt2Z5vd8KQchjeggDyncmVow1PTmiOXw=
+	t=1726607282; cv=none; b=Ej9L496Q1YJQvmL2PORmDorKLW8IJBl1k9SbzRE/fSZgDslf62iMtKktoaRXI94x8kycToOR4rG6Rzh2P+BAyNLI8iXu7vQKRB0Y7TYxyiVCuLZAMmyDJhKm8AI+hLfewVf4g2lUjY16hibz3jFe1LULTCJ4dPE9VihATyQbK/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726607233; c=relaxed/simple;
-	bh=7uT1AaVoZkpWkUatDBsp5LuR0h7674QxIfTjTM6bybw=;
+	s=arc-20240116; t=1726607282; c=relaxed/simple;
+	bh=Xw3qFVde4mW/vVW5R3FHyrkUkN6HRIPohqAfP8ki1cI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fh+y1fQm7BuXEh5LfNEUYIwUgZ22PnshUdHm8i7I9huf8S8uTT44lO2A8hGR7sGqJPfZHCse0qqQWh7h8QN+7LKyTEJ1LUUU6jZIITBCwOzrq76wESppKqJaSZSmOKJNl10zQ+V8jSp3EZvQSoBTP1Z36FNjwXF32LJbK5BLa3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jd4hfuGH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA560C4CEC5;
-	Tue, 17 Sep 2024 21:07:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gpm86PngAXCsRvCTexiLdvOakvuHASqkzb0hdL1skBcejwsaKLpP+UxMtP5tEol0pksW4cu9HbFi84ZhsjGe0jV12g8m7WeWsrb3OzlIpS4Lbrl9fMSamKq2qurFbAWJuTgHKJMkG6gf3XEkB9Kwvvaoui17QvxZ6IXW2QKY0zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CsbDwsQM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7AFC4CEC5;
+	Tue, 17 Sep 2024 21:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726607232;
-	bh=7uT1AaVoZkpWkUatDBsp5LuR0h7674QxIfTjTM6bybw=;
+	s=k20201202; t=1726607282;
+	bh=Xw3qFVde4mW/vVW5R3FHyrkUkN6HRIPohqAfP8ki1cI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jd4hfuGHxooJEtCIjzF2tF5IVAOp4qLFY4J3RJkpNQsRcwvrXJQMbFkzUa34YBo0F
-	 Sh0Rc9oSaptpL6Ydl5/0n4vmLhCMvo60qQgm9FIwA6VWmHmwzv4I6aQVUCtCKfDL8b
-	 Nqt8l4G4sc+pv5cd2zq91TA/1H2k/1g81qRcfob6dAWSLxkHLlNop0YWZhb/SYyiWZ
-	 L9khGfpbVF2RMnP3LshWmpwwxSBo+ZwTxRSKVKN9oe7RybAPKucBYbEZpliMuAxKGh
-	 xzV7SHOylTKyFisflOmjUFNcXkTuXc7T+F7DkxzAYgRWM/WBy48hTl9axsQy3q4r1j
-	 PI54vKWJJnA9A==
-Received: by pali.im (Postfix)
-	id BE4F17BA; Tue, 17 Sep 2024 23:07:07 +0200 (CEST)
-Date: Tue, 17 Sep 2024 23:07:07 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Paulo Alcantara <pc@manguebit.com>
-Cc: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Fix getting reparse points from server without WSL
- support
-Message-ID: <20240917210707.4lt4obty7wlmm42j@pali>
-References: <20240913200204.10660-1-pali@kernel.org>
- <20240913201041.cwueaflcxhewnvwj@pali>
- <73552a5120ff0a49a5e046a08c6c57f4@manguebit.com>
+	b=CsbDwsQMzYP89sJ1xwuAWKIoRn8xBwDKXeZc2aPQxof68aoPY2YRumZdSdWdEc+Ho
+	 bENcFwj9e2++zZDEjW5+MefLdrq9A7siRX0dYBhKXcollwOX8h6rvTqCIXASx6zlsT
+	 eCQ3DnxsA7D4JgP+zlUg/XWpEUZE5HuM3eHqwTIE18TbkNf/zdkqH0lyNQ8JS7MGIV
+	 EgDUjZhWlOBVSDbinAUrSP8yB/jDA1sZsLgrJiZ9hgOf0Uzueilgi8rybxwdvawVL1
+	 3wNiEVxcHWM7tZ2bhrPRO9GHpav6z2H5S8wcRzE9aDScHsr16Jy/xFTrrl3bulziAm
+	 K4nxuAfu/2ZlQ==
+Date: Tue, 17 Sep 2024 22:08:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: dlan@gentoo.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
+	aou@eecs.berkeley.edu, cyy@cyyself.name, daniel.lezcano@linaro.org,
+	tglx@linutronix.de, samuel.holland@sifive.com, anup@brainfault.org,
+	Greg KH <gregkh@linuxfoundation.org>, jirislaby@kernel.org,
+	lkundrak@v3.sk, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-serial@vger.kernel.org, jesse@rivosinc.com,
+	jszhang@kernel.org, inochiama@outlook.com, uwu@icenowy.me,
+	zhangmeng.kevin@spacemit.com, kevin.z.m@hotmail.com,
+	Conor Dooley <conor.dooley@microchip.com>, matthias.bgg@kernel.org
+Subject: Re: [PATCH v5 00/10] riscv: add initial support for SpacemiT K1
+Message-ID: <20240917-spoilage-nimble-a8303fd04482@squawk>
+References: <20240730-k1-01-basic-dt-v5-0-98263aae83be@gentoo.org>
+ <mhng-5bc45db9-5deb-4db6-8733-561768b2968c@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="v4bulkuQot7/4uA1"
+Content-Disposition: inline
+In-Reply-To: <mhng-5bc45db9-5deb-4db6-8733-561768b2968c@palmer-ri-x1c9>
+
+
+--v4bulkuQot7/4uA1
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <73552a5120ff0a49a5e046a08c6c57f4@manguebit.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 17 September 2024 18:04:37 Paulo Alcantara wrote:
-> Pali Rohár <pali@kernel.org> writes:
-> 
-> > Paulo, please look at this patch as it is related to WSL attributes
-> > which you introduced in the mentioned commit. I think that the proper
-> > fix should be to change SMB2_OP_QUERY_WSL_EA code to not trigger that
-> > -EOPNOTSUPP error which is delivered to userspace. I just checked that
-> > this my patch works fine for Native NTFS symlinks and NFS-style reparse
-> > point special files.
-> 
-> Thanks for the patch.  The problem is that the client is considering
-> that the entire compound request failed when the server doesn't support
-> EA.  The client should still parse the rest of the response that
-> contains the getinfo and get reparse info data.
+On Tue, Sep 17, 2024 at 06:04:29AM -0700, Palmer Dabbelt wrote:
+> On Mon, 29 Jul 2024 17:28:03 PDT (-0700), dlan@gentoo.org wrote:
+> > SpacemiT K1 is an ideal chip for some new extension such as RISC-V Vect=
+or
+> > 1.0 and Zicond evaluation now. Add initial support for it to allow more
+> > people to participate in building drivers to mainline for it.
+> >=20
+> > This kernel has been tested upon Banana Pi BPI-F3 board on vendor U-Boot
+> > bootflow generated by Armbian SDK[1] and patched OpenSBI[2] to enable
+> > Zicboz, which does not in the vendor dts on its U-Boot. Then successful=
+ly
+> > booted to busybox on initrd with this log[3].
+> >=20
+> > As previous discussion in patch v1[4], maintainer expect more basic dri=
+vers
+> > ready before really merging it, which would be fine. For other follow-u=
+p patches,
+> > that are clk, pinctrl/gpio, reset.. My current goal would target at a h=
+eadless
+> > system including SD card, emmc, and ethernet.
+>=20
+> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+>=20
+> if you guys want to take this through some SOC tree.  I'm not really sure
+> what the bar is for SOC support to get merged, but I'd be happy to just s=
+ee
+> this booting at all -- we've got a bunch of them floating around and the
+> vendor kernels are pretty crusty, so anything's an improvement on my end.
 
-I agree with you. This sounds like the best option.
+I've asked for clock and ideally pinctrl support before merging it. We
+had a conversation about the usefulness etc of some of the initial
+devicetrees merged for some platforms a few months back, that lead to me
+not merging the k230 support I had queued up. I know this isn't exactly
+a "fair" barrier to entry, as it is likely that platforms supported by
+hobbyists are going to be more affected than companies that usually come
+with that basic level, but have to draw a line somewhere.
+Both clock and pinctrl are currently in progress for the k1, hopefully
+wont take too much longer before this is mergeable.
 
-Would you be able to fix the client code to do this?
+In other news, nobody has really made an "official" statement about who
+is going to maintain this particular platform. People have expressed
+interest (including the submitter of the series, IIRC) but there's no
+MAINTAINERS entry added here AFAICT. I used to have an entry that
+covered arch/riscv/boot/dts/*, with exclusions for sunxi and renesas,
+but with Drew taking on thead and sophgo being the res=E3=81=BDonsibility of
+Chen Wang and Inochi, I no longer have that wildcard.
+
+I'm happy to apply patches for the platform if noone else is interested
+in that side of things, provided there are willing reviewers, but I
+would much rather that someone else took up the responsibility of
+applying patches and sending PRs - and of course I am happy to help
+whoever that is with the process.
+
+Cheers,
+Conor.
+
+--v4bulkuQot7/4uA1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZunvrwAKCRB4tDGHoIJi
+0vJfAQCKzg29et4gyyvvDvcq+H0Lr+9pUp0MuhQz0BQ1+12qRAD/ZabDnCrlmXdm
+mcstHKWqUcb70WAc/TNCUbS+pCiwsgo=
+=JYI3
+-----END PGP SIGNATURE-----
+
+--v4bulkuQot7/4uA1--
 
