@@ -1,196 +1,322 @@
-Return-Path: <linux-kernel+bounces-331602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E02897AEC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:31:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AF297AECB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4A9BB28ECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:30:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDD02837B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDAA165F0C;
-	Tue, 17 Sep 2024 10:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176CB16130C;
+	Tue, 17 Sep 2024 10:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sstSTs6V"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwPP/pa6"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C738B171089
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 10:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E7361FCE;
+	Tue, 17 Sep 2024 10:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726569030; cv=none; b=Shn5HRiiTlBVA5j7OazkBMW6l5V/qbQ6cKQfQennXlkSOco+qjvsFHEJU47/dzCDRhSyCx47MfRu8Sm7E7mnHX9HvxNKX0nATexaC2EKVlDlml1Wm/EZK8szIy0btL9vqRLxXIWjO943+rbEOl2NS29mgLCnghCXeg/3plXiO6Q=
+	t=1726569176; cv=none; b=XLny19fdXmi2pxnpvRdbE7PWm9/m0/Zi3bPBC9Is5eBkVDZ5B7mzwIhsIE1PJeS7g1IYsejhwO/i5B4SkewyTCFl7i03lKhllARJhYUTdqaQbVoZ+EU3sGKHBlk5d5yzV53zlptTlHBr+LqfMHFZeFTEUFwEE791+Kkhgd0bhiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726569030; c=relaxed/simple;
-	bh=rAUoQ4nus9+gGnXZO4GR16ay3famp7WL4FkpgBIVWUg=;
+	s=arc-20240116; t=1726569176; c=relaxed/simple;
+	bh=QeTNcms1pCatvxZiPyM6j/75fEw2qRdEoth+C5Qo0R0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i7YwXiO8VmH72XOBvld9As4AYctLhvwiDmRspaQB749oiGILObGwOPtN7j4IGjmJeilRdqHMAw8coGUvBqdHgjjI5RDaSN/btdmMFNSQp/0NyuTC/Kz4yrSQ4eft3UP8MmCTIe3Uov4KvIq3sIwA9j3bNebJjc8Vh2e758QKlw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sstSTs6V; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-846bc2104c8so2894116241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 03:30:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=nEQcKYyAodPBq4vHOp2iWKhZtSaYp81h9ToHLrW228Auvcc3eeQbmU3MmBd+Wsiwgk2dES1ThPWUY5+Oigh4hqpUxBYmVUB7G+vi/vr+raY+glAFexQXcB26E3vyZKPB5PYJbz3N7Chaa8dXjRVLlbGspXILuT8CD4zNqUtQTEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fwPP/pa6; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so5814713a12.0;
+        Tue, 17 Sep 2024 03:32:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726569023; x=1727173823; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726569173; x=1727173973; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TiSL4J7L8lMiEUKJ3FGpFS/7E/wv/Xs1VRoLh25eebs=;
-        b=sstSTs6VNOKqvK/uhvKhCNmEzG9dK4Mh1KxBFQl5JDZoOgEM8Xh5hc3sBCeryZaMJi
-         LG2v/rbPzwqDHlt2xovQx45QiW9TCc+/bxhO5ZexUO07pB6blRLs4OY4V/j0Heq9Kd+d
-         a615cKnZkbUMs5Y7nSmGeSce1Bws1pvcHcrKpeVzdHoXqCoRK5sk4jzdU/YO+TLIHNH+
-         EsdlEGNkolXiyGdt14FYc0oElpkSJXR7TI+Bh6llzJyI7JH6qQm0IUn9hJtXZtPmvjoU
-         rBcwA/NGA0j0tXu7PAclba/fsh2gUVW3nl+/6l85wKsn9lHdat36VXR7RbuqXqLa2ANL
-         1mzw==
+        bh=urw93t9dgeqJfpnW0Vddrv1JySfFGP+z7gLlYb3sLUw=;
+        b=fwPP/pa6xzmoF3mz66OVHQ5tzx8U1Ihj32JTRBiyNFHpZvjK5GcvemSRprNn6KjAsL
+         8q+HfasuOW5KfqBssqY8xnuFNC4O5YvZ+VehJPV5TmtP6Co1CVAaAbqMpbdEXaO6bzMN
+         V8adad50a65bISTEGlECDUH2mzdMAPdetATQfqkAq0lZIQB6X8X70/xdWme/ax06ymPH
+         rkKCT9QYg74MRIbz2+MOAQJfgE1ryAmBfNE1uutiolf5wyNQf+cA9s9iEcM/Mr+vgl9U
+         hNQa78AX1XQaK+IV8z8hOepe59rN+TnNw5xy/2U9vxADqC6lPihKkp8pwkGRAZX+o4/j
+         iz8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726569023; x=1727173823;
+        d=1e100.net; s=20230601; t=1726569173; x=1727173973;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TiSL4J7L8lMiEUKJ3FGpFS/7E/wv/Xs1VRoLh25eebs=;
-        b=sYjRCMCMyPxxp0eGv7TxluKYVwFetvg3lwJP0ehs5Wf4U1+d1QORCJNb2LUdcgQOou
-         2b02NaD+SXZqITcKQxAQzg7gd3C7TseTewEwmoxZgYWIEf12gfzwbtohPNvo5A9vzCFi
-         BBcUaX5cU7vsN2z4TVUlFs9dt8s52QgAA6zBtgKC/IG8lgt62J8VXT84iKtVva1kfa+U
-         ODYHaNJyj4vENpPB02X/OLn5iEOCyAixhjLw1HEYxizi/JLhOLJrnjeRdUQhz23nDVN2
-         jFwZH/BIYMwckGLoqja79bpvFZJZ4Xe1UHTTCfwM3e4TxBe95NP9t5MnIrz6u2/uZtyD
-         2hIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm7d8UxtHpFjF/3heuHxvIZQINFS7cDfOlKwOebOSnWHr6Of6KgHPMNDNyOYuR6NnSBc8qiHNi2c3CCys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8cuWrPCpYpcGCci5smXbuu0oJeEi1MsXLzZAjv1X9Z4dB3Ies
-	8xfLQ/sHzhRVZCdp8fjGlx2aXeZOjETLbIpkJznD4dcDK613xscvFMEFe6l8BA6JJ4s7C7+GaQA
-	gx+J9JG6AyWMhlir98lIUzU5ef+SQmxkiCrkvGg==
-X-Google-Smtp-Source: AGHT+IEVb9UtvU3qIrJ3hyC4983sMEXpKsLF/53bfiXaTkarBvujHfkK9GFkmBvRc6GUz54Xmq2wvMJKl1xR3mITQ20=
-X-Received: by 2002:a05:6102:b0d:b0:493:c261:1a9c with SMTP id
- ada2fe7eead31-49d42165fe1mr12824423137.5.1726569022577; Tue, 17 Sep 2024
- 03:30:22 -0700 (PDT)
+        bh=urw93t9dgeqJfpnW0Vddrv1JySfFGP+z7gLlYb3sLUw=;
+        b=SFpclvh+tOp2jn+QS2fErTSorESKSlrvV2fG15Jr4/XGjjYJcQfW5acTUxhR1DZIWk
+         RlCzOj4ScFz89+lUe8oDP9BNH66T5k2DZ+ZyWzXwHmEmomOZqw7l2xmHt+MxRbBn6Hel
+         P5U2cZfECwMokAyWmW/4YF/B3z2k+x0Z++GiqMD97jyUZEKX06/gz0BXjHl1GpNlAmwW
+         yht6XkbbjzRalixH6xKjCJ2t0WJyX2vmj/7P/6MrhrIfLKpN1Sm1EpB5gjV7rC/ddFp0
+         DNzPABWOzoXSyF3ZM1v51JUAnJA3d+4GhGeK6IjHsrPHEMAobS5JMWvH6lQaSsBeVSSZ
+         76Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFC8dmYtg0bAt7gGSNLmJxLCa/TLutPdO06uzJM+4jCI0Lg2O+mYHRGW5S01Ny1k7NKvl4k/S/fX31@vger.kernel.org, AJvYcCXZCTxKCOw7sD2uu4m6QO09ka/fT0RFCvHbHkyVn2sshTD2S3oLMhyW/bNgIWbit7lO8bG1/QUCGFsZHfMZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLoPYfC/z9rCrvtIIIgJO8Onl0e6atBFQhcxNsCLgiiI4WqSWz
+	18K1oAgIDvi4BSokoNPg9oEZFTw1R5L5Hr3OYXN9o5u8iCUxK40Hk9m5r0fdV4xCyCVBQ0SYN+z
+	xBqHhiuWyDKjMMNYQqfZtcAJS1w==
+X-Google-Smtp-Source: AGHT+IHzw0PEUSjwbeoB50lNCJxhRmwmchGr8DJxZWRkSMgFxsN/7POvekxN1y4jscottow7M2YGBODgeFPz5dPsdLc=
+X-Received: by 2002:a05:6402:278b:b0:5c2:6d16:ad5e with SMTP id
+ 4fb4d7f45d1cf-5c41e1906e8mr12620913a12.19.1726569172271; Tue, 17 Sep 2024
+ 03:32:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916114224.509743970@linuxfoundation.org>
-In-Reply-To: <20240916114224.509743970@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 17 Sep 2024 16:00:10 +0530
-Message-ID: <CA+G9fYv+OXhNPn87X4O9w8-HzGP04USge-et0b3Y4ncU9tussg@mail.gmail.com>
-Subject: Re: [PATCH 6.6 00/91] 6.6.52-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Vasily Gorbik <gor@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Anders Roxell <anders.roxell@linaro.org>
+References: <20240917094956.437078-1-erezgeva@nwtime.org> <20240917094956.437078-5-erezgeva@nwtime.org>
+In-Reply-To: <20240917094956.437078-5-erezgeva@nwtime.org>
+From: Erez <erezgeva2@gmail.com>
+Date: Tue, 17 Sep 2024 12:32:15 +0200
+Message-ID: <CANeKEMNouQi+L8qUjayaNwyWwi6v=4PsX+VcgqiJgz4z9S91hQ@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] mtd: spi-nor: macronix: add support for OTP
+To: Erez Geva <erezgeva@nwtime.org>
+Cc: linux-mtd@lists.infradead.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Esben Haabendal <esben@geanix.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 16 Sept 2024 at 17:38, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Tue, 17 Sept 2024 at 11:50, Erez Geva <erezgeva@nwtime.org> wrote:
 >
-> This is the start of the stable review cycle for the 6.6.52 release.
-> There are 91 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> From: Erez Geva <ErezGeva2@gmail.com>
 >
-> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> Anything received after that time might be too late.
+> Macronix SPI-NOR support OTP.
+> Add callbacks to read, write and lock the OTP.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.52-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> Notice Macronix OTP do not support erase.
+> Every bit written with '0', can not be changed further.
 >
-> thanks,
+> Notice Macronix OTP do not support single region lock!
+> The locking includes all regions at once!
 >
-> greg k-h
+> Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
+> ---
+>  drivers/mtd/spi-nor/macronix.c | 167 +++++++++++++++++++++++++++++++++
+>  include/linux/mtd/spi-nor.h    |   9 ++
+>  2 files changed, 176 insertions(+)
+>
+> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+> index ea6be95e75a5..02aa844d641b 100644
+> --- a/drivers/mtd/spi-nor/macronix.c
+> +++ b/drivers/mtd/spi-nor/macronix.c
+> @@ -8,6 +8,162 @@
+>
+>  #include "core.h"
+>
+> +/**
+> + * macronix_nor_otp_enter() - Send Enter Secured OTP instruction to the chip.
+> + * @nor:       pointer to 'struct spi_nor'.
+> + *
+> + * Return: 0 on success, -errno otherwise.
+> + */
+> +static int macronix_nor_otp_enter(struct spi_nor *nor)
+> +{
+> +       int error;
+> +
+> +       error = spi_nor_send_cmd(nor, SPINOR_OP_ENSO);
+> +       if (error)
+> +               dev_dbg(nor->dev, "error %d on Macronix Enter Secured OTP\n", error);
+> +
+> +       return error;
+> +}
+> +
+> +/**
+> + * macronix_nor_otp_exit() - Send Exit Secured OTP instruction to the chip.
+> + * @nor:       pointer to 'struct spi_nor'.
+> + *
+> + * Return: 0 on success, -errno otherwise.
+> + */
+> +static int macronix_nor_otp_exit(struct spi_nor *nor)
+> +{
+> +       int error;
+> +
+> +       error = spi_nor_send_cmd(nor, SPINOR_OP_EXSO);
+> +       if (error)
+> +               dev_dbg(nor->dev, "error %d on Macronix Exit Secured OTP\n", error);
+> +
+> +       return error;
+> +}
+> +
+> +/**
+> + * macronix_nor_otp_read() - read security register
 
+Sorry, it should be "read OTP data".
 
-The s390 builds failed on the Linux stable-rc linux-6.6.y and linux-6.10.y due
-to following build warnings / errors with gcc-13 and clang-19 with defconfig.
+> + * @nor:       pointer to 'struct spi_nor'
+> + * @addr:       offset to read from
+> + * @len:        number of bytes to read
+> + * @buf:        pointer to dst buffer
+> + *
+> + * Return: number of bytes read successfully, -errno otherwise
+> + */
+> +static int macronix_nor_otp_read(struct spi_nor *nor, loff_t addr, size_t len, u8 *buf)
+> +{
+> +       int ret, error;
+> +
+> +       error = macronix_nor_otp_enter(nor);
+> +       if (error)
+> +               return error;
+> +
+> +       ret = spi_nor_read_data(nor, addr, len, buf);
+> +
+> +       error = macronix_nor_otp_exit(nor);
+> +
+> +       if (ret < 0)
+> +               dev_dbg(nor->dev, "error %d on Macronix read OTP data\n", ret);
+> +       else if (error)
+> +               return error;
+> +
+> +       return ret;
+> +}
+> +
+> +/**
+> + * macronix_nor_otp_write() - write security register
 
-* s390, build
-  - clang-19-allnoconfig
-  - clang-19-defconfig
-  - clang-19-tinyconfig
-  - clang-nightly-allnoconfig
-  - clang-nightly-defconfig
-  - clang-nightly-tinyconfig
-  - gcc-13-allmodconfig
-  - gcc-13-allnoconfig
-  - gcc-13-defconfig
-  - gcc-13-tinyconfig
-  - gcc-8-allnoconfig
-  - gcc-8-defconfig-fe40093d
-  - gcc-8-tinyconfig
+Sorry, it should be "write data to OTP".
 
-
-First seen on v6.6.51-92-gfd49ddc1e5f8
-  Good: v6.6.51
-  BAD:  v6.6.51-92-gfd49ddc1e5f8
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-build log:
---------
-arch/s390/kernel/setup.c: In function 'reserve_lowcore':
-arch/s390/kernel/setup.c:748:31: error: implicit declaration of
-function 'get_lowcore'; did you mean 'setup_lowcore'?
-[-Werror=implicit-function-declaration]
-  748 |         void *lowcore_start = get_lowcore();
-      |                               ^~~~~~~~~~~
-      |                               setup_lowcore
-arch/s390/kernel/setup.c:748:31: warning: initialization of 'void *'
-from 'int' makes pointer from integer without a cast
-[-Wint-conversion]
-arch/s390/kernel/setup.c:752:21: error: '__identity_base' undeclared
-(first use in this function)
-  752 |         if ((void *)__identity_base < lowcore_end) {
-      |                     ^~~~~~~~~~~~~~~
-arch/s390/kernel/setup.c:752:21: note: each undeclared identifier is
-reported only once for each function it appears in
-In file included from include/linux/bits.h:21,
-                 from arch/s390/include/asm/ptrace.h:10,
-                 from arch/s390/include/asm/lowcore.h:13,
-                 from arch/s390/include/asm/current.h:13,
-                 from include/linux/sched.h:12,
-                 from arch/s390/kernel/setup.c:21:
-include/linux/minmax.h:31:9: error: first argument to
-'__builtin_choose_expr' not a constant
-   31 |
-__builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))),
- \
-      |         ^~~~~~~~~~~~~~~~~~~~~
-
-Build Log links,
---------
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.51-92-gfd49ddc1e5f8/testrun/25153617/suite/build/test/gcc-13-defconfig/log
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2m9YUHx7PsQwr4lBdvjITAfP9Pp/
-
-Build failed comparison:
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.51-92-gfd49ddc1e5f8/testrun/25153617/suite/build/test/gcc-13-defconfig/history/
-
-metadata:
-----
-  git describe: v6.6.51-92-gfd49ddc1e5f8
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-  git sha: fd49ddc1e5f8121355db23e04b94f6df460a5051
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2m9YUHx7PsQwr4lBdvjITAfP9Pp/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2m9YUHx7PsQwr4lBdvjITAfP9Pp/
-  toolchain: gcc-13, gcc-8 and clang-19
-  config: defconfig
-  arch: s390
-
-Steps to reproduce:
----------
- - # tuxmake --runtime podman --target-arch s390 --toolchain gcc-13
---kconfig defconfig
-
---
-Linaro LKFT
-https://lkft.linaro.org
+> + * @nor:        pointer to 'struct spi_nor'
+> + * @addr:       offset to write to
+> + * @len:        number of bytes to write
+> + * @buf:        pointer to src buffer
+> + *
+> + * Return: number of bytes written successfully, -errno otherwise
+> + */
+> +static int macronix_nor_otp_write(struct spi_nor *nor, loff_t addr, size_t len, const u8 *buf)
+> +{
+> +       int error, ret = 0;
+> +
+> +       error = macronix_nor_otp_enter(nor);
+> +       if (error)
+> +               return error;
+> +
+> +       error = spi_nor_write_enable(nor);
+> +       if (error)
+> +               goto otp_write_err;
+> +
+> +       ret = spi_nor_write_data(nor, addr, len, buf);
+> +       if (ret < 0) {
+> +               dev_dbg(nor->dev, "error %d on Macronix write OTP data\n", ret);
+> +               goto otp_write_err;
+> +       }
+> +
+> +       error = spi_nor_wait_till_ready(nor);
+> +       if (error)
+> +               dev_dbg(nor->dev, "error %d on Macronix waiting write OTP finish\n", error);
+> +
+> +otp_write_err:
+> +
+> +       error = macronix_nor_otp_exit(nor);
+> +
+> +       return ret;
+> +}
+> +
+> +/**
+> + * macronix_nor_otp_lock() - lock the OTP region
+> + * @nor:        pointer to 'struct spi_nor'
+> + * @region:     OTP region
+> + *
+> + * Return: 0 on success, -errno otherwise.
+> + */
+> +static int macronix_nor_otp_lock(struct spi_nor *nor, unsigned int region)
+> +{
+> +       int error;
+> +       u8 *rdscur = nor->bouncebuf;
+> +
+> +       error = spi_nor_read_reg(nor, SPINOR_OP_RDSCUR, 1);
+> +       if (error) {
+> +               dev_dbg(nor->dev, "error %d on read security register\n", error);
+> +               return error;
+> +       }
+> +
+> +       if (rdscur[0] & SEC_REG_LDSO)
+> +               return 0;
+> +
+> +       error = spi_nor_write_enable(nor);
+> +       if (error) {
+> +               dev_dbg(nor->dev, "error %d on enable write before update security register\n",
+> +                       error);
+> +               return error;
+> +       }
+> +
+> +       error = spi_nor_send_cmd(nor, SPINOR_OP_WRSCUR);
+> +       if (error)
+> +               dev_dbg(nor->dev, "error %d on update security register\n", error);
+> +
+> +       return error;
+> +}
+> +
+> +/**
+> + * macronix_nor_otp_is_locked() - get the OTP region lock status
+> + * @nor:        pointer to 'struct spi_nor'
+> + * @region:     OTP region
+> + *
+> + * Return: 1 on lock, 0 on not locked, -errno otherwise.
+> + */
+> +static int macronix_nor_otp_is_locked(struct spi_nor *nor, unsigned int region)
+> +{
+> +       int error;
+> +       u8 *rdscur = nor->bouncebuf;
+> +
+> +       error = spi_nor_read_reg(nor, SPINOR_OP_RDSCUR, 1);
+> +       if (error) {
+> +               dev_dbg(nor->dev, "error %d on read security register\n", error);
+> +               return error;
+> +       }
+> +       return rdscur[0] & SEC_REG_LDSO ? 1 : 0;
+> +}
+> +
+>  static int
+>  mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
+>                             const struct sfdp_parameter_header *bfpt_header,
+> @@ -190,8 +346,19 @@ static void macronix_nor_default_init(struct spi_nor *nor)
+>         nor->params->quad_enable = spi_nor_sr1_bit6_quad_enable;
+>  }
+>
+> +static const struct spi_nor_otp_ops macronix_nor_otp_ops = {
+> +       .read = macronix_nor_otp_read,
+> +       .write = macronix_nor_otp_write,
+> +       /* .erase = Macronix OTP do not support erase, */
+> +       .lock = macronix_nor_otp_lock,
+> +       .is_locked = macronix_nor_otp_is_locked,
+> +};
+> +
+>  static int macronix_nor_late_init(struct spi_nor *nor)
+>  {
+> +       if (nor->params->otp.org.n_regions)
+> +               nor->params->otp.ops = &macronix_nor_otp_ops;
+> +
+>         if (!nor->params->set_4byte_addr_mode)
+>                 nor->params->set_4byte_addr_mode = spi_nor_set_4byte_addr_mode_en4b_ex4b;
+>
+> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+> index cdcfe0fd2e7d..ef834e7fc0ac 100644
+> --- a/include/linux/mtd/spi-nor.h
+> +++ b/include/linux/mtd/spi-nor.h
+> @@ -81,6 +81,15 @@
+>  #define SPINOR_OP_BP           0x02    /* Byte program */
+>  #define SPINOR_OP_AAI_WP       0xad    /* Auto address increment word program */
+>
+> +/* Macronix OTP registers. */
+> +#define SPINOR_OP_RDSCUR       0x2b    /* read security register */
+> +#define SPINOR_OP_WRSCUR       0x2f    /* write security register */
+> +#define SPINOR_OP_ENSO         0xb1    /* enter secured OTP */
+> +#define SPINOR_OP_EXSO         0xc1    /* exit secured OTP */
+> +
+> +/* Macronix security register values */
+> +#define SEC_REG_LDSO           BIT(1)  /* Lock-down Secured OTP */
+> +
+>  /* Used for Macronix and Winbond flashes. */
+>  #define SPINOR_OP_EN4B         0xb7    /* Enter 4-byte mode */
+>  #define SPINOR_OP_EX4B         0xe9    /* Exit 4-byte mode */
+> --
+> 2.39.5
+>
 
