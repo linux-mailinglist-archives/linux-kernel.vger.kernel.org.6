@@ -1,176 +1,260 @@
-Return-Path: <linux-kernel+bounces-331367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CA697ABE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D006597ABED
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311D028DCA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:15:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C7428E3AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6611534E6;
-	Tue, 17 Sep 2024 07:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E0A364D6;
+	Tue, 17 Sep 2024 07:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GBQcVWCs"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vh1NIRph"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8B313CFB6;
-	Tue, 17 Sep 2024 07:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E3718B1A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 07:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726557312; cv=none; b=Go8ugo5T95BrszmJhs0WkRnsZbW2quh+KxzaqDDCe3iqf9UscCc+l8k7ers9O0S43mksfyZefBjJ4aSORLvLjUZkfzye6HgseLYynBDHITiywTBKpjA51XhmvwLPBsaa8CqgDc2VOG6iFUmlrDOZ9TckSqG2+f9jxyFCNwOrSM0=
+	t=1726557478; cv=none; b=aEgk3H4x45hgxxITB+vz7PxpDYEF2WJF7/4HdQY5UhHdVW3DaucDYVoLcJp+ZU+NNxOANOODWiAAb/Ha0XowA6/xX7kfnWBrUb6652Twg3dZfbQmANAgMN26o+Dkn1S94MR53ZN2+8zU498/qDUfAqvke2Fyv9A74e7xkXD1iQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726557312; c=relaxed/simple;
-	bh=uQSL8md113n0K1krkP2Ryqc1+J936Ef2Os9xbgicfBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUaNB3qmVKW/MXECnEmtRFu6nr8NEJovfl0mE0OXoJkyDO8uvHsVTy3mJ5AmlTEnwn+pAp5kxNumtAbReWkXE4HIp6gxJm7mOWSZySvEMxriJMvaaGtrdtSzmZPBveZ9Q1CkJTRphQJvUKwCypIjJAjiNN7T3N1mSTBkxzlS5sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GBQcVWCs; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726557300; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=aHmQE7AUQfpWpDBPMmGmaaJMlBjlx8yVsf52qbqS98k=;
-	b=GBQcVWCsDmuJ3zO1S2pJArzUDc1mE1ZZvGT+wfcSf7BFP7mADRKEXNczPF2MBUY7/YuZiW9c9pZ5NlxSprgEZifD9aZq20GXPlzSP0JSW4EijVO3RRXehAhK/7vAhuQ1+M40dSVxnw2P2gTgUGptNnqDz2KBcTCPhDIFikP2SGw=
-Received: from 30.27.106.17(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFACzIr_1726557298)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Sep 2024 15:15:00 +0800
-Message-ID: <1edf9fe3-5e39-463b-8825-67b4d1ad01be@linux.alibaba.com>
-Date: Tue, 17 Sep 2024 15:14:58 +0800
+	s=arc-20240116; t=1726557478; c=relaxed/simple;
+	bh=PECPKPSEI8s0qwxIK9pwA5oxGgap47aIA0uplBlQZt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SkHdNP0uMA1dOkpCrbJEKV7HQRJtaQzJ9ZRvuiqbM/Mc5g0jgKh3PRCS5ho/Ooa2X31vCDoqF1N5PFrVaw1cV2TtZiZjemHH2ZdSgpvT2adsUvYjQzk998smRNwnFwPlEzLs3GeaL3wlofx9qAGxo4UAi9WdZ5XW97cZuzEnpSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vh1NIRph; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-718e6299191so2945970b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 00:17:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726557476; x=1727162276; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eR3y36WD4tVlkVWOhI0lCliV58lEc5qOyZSZyDjtgq0=;
+        b=Vh1NIRphkwz3MHzcjXzf6DhrYXlKZLJBwlUpHcNQ33q+qNM5b5c5KkAD88S/JBzevf
+         22EwFZbgskIbNGUpe8qau2ZoMjz5qP5IZP/aigFEcQzy9RDmDkGgm3lyBpcZ0xHeSDpd
+         yJbY6mHn81rEPgwvgsx3vHWs9Vtefix77KCGxNyd6EvyyyGaYaNsV4SyathZbxQn9r3M
+         fLRw57Wlgp7SwhdCxrKXE5PpG787Lh8h6NUdtmmwCx8hf0PMf0U3xQIdUFcTtPAdpRm8
+         IHtz56RmnTlCWxQsa5D4gT6EcMGRZs/OMUxtP9FRC+Y4DxyjGgfGCqikLZCXXk+s6+6S
+         cYwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726557476; x=1727162276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eR3y36WD4tVlkVWOhI0lCliV58lEc5qOyZSZyDjtgq0=;
+        b=PZK6XQsTNnKr8esoIg4X0MyQK1vKJAHbF6JJVsWW8FaeMR0g68jq06q3uh2m+S9sfi
+         +mXpoPp81ADJ6IPkEqfQJpSh9f4WufHRM3d/SDraQgn+h5BZF3YwYXMxgWFJlGijKlp5
+         jVsXknATmKXvxtZBrEDwg4Bjw1+MZiEzT+YCaJrcv1LQlYjv0uJGjJcq00kwI0+f89a/
+         TWE8tQmGVbYaLKU1Nd9gqWrdp7zFOxQHeR0qhNKssYJlrO8WH4N9MzOe0uuQqIsJEndD
+         UPHmxJHk2F7xhia9JUGvT+acskUvGcrAT0ZS/wdTPn1qiXVOFGZRUGVeYplRTgN7LC8U
+         Xoxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwXf9gG5rswvb88WZxt7Jzlep7FU/e55W31Vq3BQqGY0H0bG02kxOYGPBAmBsOJE6Fmxxm9QOxI87ch/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp5s2ummeV6pLxbct4zUnZ7GIqFThdsLfrFmfPwKkboPrHMLwy
+	sVAbgZ0zq7PeGed9U4LYY/uhUHbmRBYyr2rWqkq/HzjwDKUFEAfX
+X-Google-Smtp-Source: AGHT+IGaBul7iKoYU2pjQ6zunExY6Y/eI2Dn+fgyD558TLkqm9GaNv+wFopgw4ia4meegOtO8eKN+Q==
+X-Received: by 2002:a05:6a00:2d05:b0:714:1bcf:3d93 with SMTP id d2e1a72fcca58-719260562d7mr25693441b3a.5.1726557476257;
+        Tue, 17 Sep 2024 00:17:56 -0700 (PDT)
+Received: from distilledx.srmu.edu.in ([59.152.80.69])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a97e6fsm4691502b3a.26.2024.09.17.00.17.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 00:17:55 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: neil.armstrong@linaro.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: quic_jesszhan@quicinc.com,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Tejas Vipin <tejasvipin76@gmail.com>
+Subject: [PATCH] drm/panel: elida-kd35t133: transition to mipi_dsi wrapped functions
+Date: Tue, 17 Sep 2024 12:47:10 +0530
+Message-ID: <20240917071710.1254520-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 19/24] erofs: introduce namei alternative to C
-To: Yiyang Wu <toolmanp@tlmp.cc>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-20-toolmanp@tlmp.cc> <20240916170801.GO2825852@ZenIV>
- <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Changes the elida-kd35t133 panel to use multi style functions for
+improved error handling.
 
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+---
+ drivers/gpu/drm/panel/panel-elida-kd35t133.c | 107 ++++++++-----------
+ 1 file changed, 45 insertions(+), 62 deletions(-)
 
-On 2024/9/17 14:48, Yiyang Wu wrote:
-> On Mon, Sep 16, 2024 at 06:08:01PM GMT, Al Viro wrote:
->> On Mon, Sep 16, 2024 at 09:56:29PM +0800, Yiyang Wu wrote:
->>> +/// Lookup function for dentry-inode lookup replacement.
->>> +#[no_mangle]
->>> +pub unsafe extern "C" fn erofs_lookup_rust(
->>> +    k_inode: NonNull<inode>,
->>> +    dentry: NonNull<dentry>,
->>> +    _flags: c_uint,
->>> +) -> *mut c_void {
->>> +    // SAFETY: We are sure that the inode is a Kernel Inode since alloc_inode is called
->>> +    let erofs_inode = unsafe { &*container_of!(k_inode.as_ptr(), KernelInode, k_inode) };
->>
->> 	Ummm...  A wrapper would be highly useful.  And the reason why
->> it's safe is different - your function is called only via ->i_op->lookup,
->> the is only one instance of inode_operations that has that ->lookup
->> method, and the only place where an inode gets ->i_op set to that
->> is erofs_fill_inode().  Which is always passed erofs_inode::vfs_inode.
->>
-> So my original intention behind this is that all vfs_inodes come from
-> that erofs_iget function and it's always gets initialized in this case
-> And this just followes the same convention here. I can document this
-> more precisely.
+diff --git a/drivers/gpu/drm/panel/panel-elida-kd35t133.c b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+index 00791ea81e90..62abda9559e7 100644
+--- a/drivers/gpu/drm/panel/panel-elida-kd35t133.c
++++ b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+@@ -50,55 +50,45 @@ static inline struct kd35t133 *panel_to_kd35t133(struct drm_panel *panel)
+ 	return container_of(panel, struct kd35t133, panel);
+ }
+ 
+-static int kd35t133_init_sequence(struct kd35t133 *ctx)
++static void kd35t133_init_sequence(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	struct device *dev = ctx->dev;
+-
+ 	/*
+ 	 * Init sequence was supplied by the panel vendor with minimal
+ 	 * documentation.
+ 	 */
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POSITIVEGAMMA,
+-			       0x00, 0x13, 0x18, 0x04, 0x0f, 0x06, 0x3a, 0x56,
+-			       0x4d, 0x03, 0x0a, 0x06, 0x30, 0x3e, 0x0f);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_NEGATIVEGAMMA,
+-			       0x00, 0x13, 0x18, 0x01, 0x11, 0x06, 0x38, 0x34,
+-			       0x4d, 0x06, 0x0d, 0x0b, 0x31, 0x37, 0x0f);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POWERCONTROL1, 0x18, 0x17);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POWERCONTROL2, 0x41);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_VCOMCONTROL, 0x00, 0x1a, 0x80);
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_ADDRESS_MODE, 0x48);
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_PIXEL_FORMAT, 0x55);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_INTERFACEMODECTRL, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_FRAMERATECTRL, 0xa0);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_DISPLAYINVERSIONCTRL, 0x02);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_DISPLAYFUNCTIONCTRL,
+-			       0x20, 0x02);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_SETIMAGEFUNCTION, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_ADJUSTCONTROL3,
+-			       0xa9, 0x51, 0x2c, 0x82);
+-	mipi_dsi_dcs_write(dsi, MIPI_DCS_ENTER_INVERT_MODE, NULL, 0);
+-
+-	dev_dbg(dev, "Panel init sequence done\n");
+-	return 0;
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POSITIVEGAMMA,
++				     0x00, 0x13, 0x18, 0x04, 0x0f, 0x06, 0x3a, 0x56,
++				     0x4d, 0x03, 0x0a, 0x06, 0x30, 0x3e, 0x0f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_NEGATIVEGAMMA,
++				     0x13, 0x18, 0x01, 0x11, 0x06, 0x38, 0x34,
++				     0x06, 0x0d, 0x0b, 0x31, 0x37, 0x0f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POWERCONTROL1, 0x18, 0x17);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POWERCONTROL2, 0x41);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_VCOMCONTROL, 0x00, 0x1a, 0x80);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, MIPI_DCS_SET_ADDRESS_MODE, 0x48);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, MIPI_DCS_SET_PIXEL_FORMAT, 0x55);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_INTERFACEMODECTRL, 0x00);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_FRAMERATECTRL, 0xa0);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_DISPLAYINVERSIONCTRL, 0x02);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_DISPLAYFUNCTIONCTRL,
++				     0x02);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_SETIMAGEFUNCTION, 0x00);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_ADJUSTCONTROL3,
++				     0x51, 0x2c, 0x82);
++	if (!dsi_ctx->accum_err)
++		mipi_dsi_dcs_write(dsi_ctx->dsi, MIPI_DCS_ENTER_INVERT_MODE, NULL, 0);
+ }
+ 
+ static int kd35t133_unprepare(struct drm_panel *panel)
+ {
+ 	struct kd35t133 *ctx = panel_to_kd35t133(panel);
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0)
+-		dev_err(ctx->dev, "failed to set display off: %d\n", ret);
+-
+-	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "failed to enter sleep mode: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
++	if (dsi_ctx.accum_err)
++		return dsi_ctx.accum_err;
+ 
+ 	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+ 
+@@ -112,18 +102,20 @@ static int kd35t133_prepare(struct drm_panel *panel)
+ {
+ 	struct kd35t133 *ctx = panel_to_kd35t133(panel);
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+ 	dev_dbg(ctx->dev, "Resetting the panel\n");
+-	ret = regulator_enable(ctx->vdd);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to enable vdd supply: %d\n", ret);
+-		return ret;
++	dsi_ctx.accum_err = regulator_enable(ctx->vdd);
++	if (dsi_ctx.accum_err) {
++		dev_err(ctx->dev, "Failed to enable vdd supply: %d\n",
++			dsi_ctx.accum_err);
++		return dsi_ctx.accum_err;
+ 	}
+ 
+-	ret = regulator_enable(ctx->iovcc);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n", ret);
++	dsi_ctx.accum_err = regulator_enable(ctx->iovcc);
++	if (dsi_ctx.accum_err) {
++		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n",
++			dsi_ctx.accum_err);
+ 		goto disable_vdd;
+ 	}
+ 
+@@ -135,25 +127,16 @@ static int kd35t133_prepare(struct drm_panel *panel)
+ 
+ 	msleep(20);
+ 
+-	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to exit sleep mode: %d\n", ret);
+-		goto disable_iovcc;
+-	}
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 250);
+ 
+-	msleep(250);
++	kd35t133_init_sequence(&dsi_ctx);
++	if (!dsi_ctx.accum_err)
++		dev_dbg(ctx->dev, "Panel init sequence done\n");
+ 
+-	ret = kd35t133_init_sequence(ctx);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Panel init sequence failed: %d\n", ret);
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
++	if (dsi_ctx.accum_err)
+ 		goto disable_iovcc;
+-	}
+-
+-	ret = mipi_dsi_dcs_set_display_on(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to set display on: %d\n", ret);
+-		goto disable_iovcc;
+-	}
+ 
+ 	msleep(50);
+ 
+@@ -163,7 +146,7 @@ static int kd35t133_prepare(struct drm_panel *panel)
+ 	regulator_disable(ctx->iovcc);
+ disable_vdd:
+ 	regulator_disable(ctx->vdd);
+-	return ret;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static const struct drm_display_mode default_mode = {
+-- 
+2.46.0
 
-I think Al just would like a wrapper here, like the current C EROFS_I().
-
->>> +    // SAFETY: The super_block is initialized when the erofs_alloc_sbi_rust is called.
->>> +    let sbi = erofs_sbi(unsafe { NonNull::new(k_inode.as_ref().i_sb).unwrap() });
->>
->> 	Again, that calls for a wrapper - this time not erofs-specific;
->> inode->i_sb is *always* non-NULL, is assign-once and always points
->> to live struct super_block instance at least until the call of
->> destroy_inode().
->>
-> 
-> Will be modified correctly, I'm not a native speaker and I just can't
-> find a better way, I will take my note here.
-
-Same here, like the current EROFS_I_SB().
-
->>> +    // SAFETY: this is backed by qstr which is c representation of a valid slice.
->>
->> 	What is that sentence supposed to mean?  Nevermind "why is it correct"...
->>
->>> +    let name = unsafe {
->>> +        core::str::from_utf8_unchecked(core::slice::from_raw_parts(
->>> +            dentry.as_ref().d_name.name,
->>> +            dentry.as_ref().d_name.__bindgen_anon_1.__bindgen_anon_1.len as usize,
->>
-
-...
-
-> 
->> 	Current erofs_lookup() (and your version as well) *is* indeed
->> safe in that respect, but the proof (from filesystem POV) is that "it's
->> called only as ->lookup() instance, so dentry is initially unhashed
->> negative and will remain such until it's passed to d_splice_alias();
->> until that point it is guaranteed to have ->d_name and ->d_parent stable".
-
-Agreed.
-
->>
->> 	Note that once you _have_ called d_splice_alias(), you can't
->> count upon the ->d_name stability - or, indeed, upon ->d_name.name you've
->> sampled still pointing to allocated memory.
->>
->> 	For directory-modifying methods it's "stable, since parent is held
->> exclusive".  Some internal function called from different environments?
->> Well...  Swear, look through the call graph and see what can be proven
->> for each.
-> 
-> Sorry for my ignorance.
-> I mean i just borrowed the code from the fs/erofs/namei.c and i directly
-> translated that into Rust code. That might be a problem that also
-> exists in original working C code.
-
-As for EROFS (an immutable fs), I think after d_splice_alias(), d_name is
-still stable (since we don't have rename semantics likewise for now).
-
-But as the generic filesystem POV, d_name access is actually tricky under
-RCU walk path indeed.
-
-> 
->> 	Expressing that kind of fun in any kind of annotations (Rust type
->> system included) is not pleasant.  _Probably_ might be handled by a type
->> that would be a dentry pointer with annotation along the lines "->d_name
->> and ->d_parent of that one are stable".  Then e.g. ->lookup() would
->> take that thing as an argument and d_splice_alias() would consume it.
->> ->mkdir() would get the same thing, etc.  I hadn't tried to get that
->> all way through (the amount of annotation churn in existing filesystems
->> would be high and hard to split into reviewable patch series), so there
->> might be dragons - and there definitely are places where the stability is
->> proven in different ways (e.g. if dentry->d_lock is held, we have the damn
->> thing stable; then there's a "take a safe snapshot of name" API; etc.).
-> 
-> That's kinda interesting, I originally thought that VFS will make sure
-> its d_name / d_parent is stable in the first place.
-> Again, I just don't have a full picture or understanding of VFS and my
-> code is just basic translation of original C code, Maybe we can address
-> this later.
-
-d_alloc will allocate an unhashed dentry which is almost unrecognized
-by VFS dcache (d_name is stable of course).
-
-After d_splice_alias() and d_add(), rename() could change d_name.  So
-either we take d_lock or with rcu_read_lock() to take a snapshot of
-d_name in the RCU walk path.  That is my overall understanding.
-
-But for EROFS, since we don't have rename, so it doesn't matter.
-
-Thanks,
-Gao Xiang
 
