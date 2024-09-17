@@ -1,152 +1,191 @@
-Return-Path: <linux-kernel+bounces-331577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0BC97AE7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:07:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B3797AE7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3CF11F25678
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:07:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1F41C217C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854DB16130C;
-	Tue, 17 Sep 2024 10:07:49 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AEC16FF44;
+	Tue, 17 Sep 2024 10:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wf6Ng0hY"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C432158D8F;
-	Tue, 17 Sep 2024 10:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EF816BE39;
+	Tue, 17 Sep 2024 10:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726567669; cv=none; b=Prb/rEg6FsSFjsjuzJNb05Y/1y7iZP21mlxmqphs9P9+fQOUucx3Y95cTJ4LaN/4okS4zddlU3Fw6fHwiz8kIuFxfnpdVvqZKZBPDNSU1cs2EJ6p4Cxrbo5PHO08G4+rSw4GEMfmavKYXl9kw/flIITs/abcXpvznANYxtV40Cw=
+	t=1726567695; cv=none; b=AyfwEAlkuoY9CfWNs+COO6eIFCrafkLcwkGQOCHW0QE+qzfyWrVtHVDZkds3LCuSNm6oUAz4X8zsy181059QwkhtR2/WXE8eW62mPGXW9816dTNfyB6tzAZgUI5r0g0GrLrDZENtfzEPbDIlojuJNJeMfLePbJdIByHjF6fNqRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726567669; c=relaxed/simple;
-	bh=OvPvzmYVf5PPB6SaJ1tyg1h/ET1ohPg3n64z+iN4ZdY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A3DvviYctU6oAtpXgus+DXUS1nbs8fekRl9E3SZIgZDKENa6MaB5Oe3F+xGKOCOtmObW6ccK0vRobjIRuTWHzVz5NUnrAycxyjRAAJc7mR1eWKLJGfRpkUqm4pt0e+Ms3wdb1eDDpnZIHizJoSzN3yKEtpWVpWx/dAuvGYpInZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from inp1wst083.omp.ru (81.22.207.138) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 17 Sep
- 2024 13:07:23 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Roman Smirnov <r.smirnov@omp.ru>, Mark Brown <broonie@kernel.org>, "Rafael
- J. Wysocki" <rafael@kernel.org>, <linux-kernel@vger.kernel.org>, Sergey
- Shtylyov <s.shtylyov@omp.ru>, Karina Yankevich <k.yankevich@omp.ru>, Sergey
- Yudin <s.yudin@omp.ru>, <lvc-project@linuxtesting.org>, Mathias Nyman
-	<mathias.nyman@linux.intel.com>
-Subject: [PATCH 5.10] xhci: check virt_dev is valid before dereferencing it
-Date: Tue, 17 Sep 2024 13:07:03 +0300
-Message-ID: <20240917100703.80166-1-r.smirnov@omp.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726567695; c=relaxed/simple;
+	bh=Zjuf7lESNXXXmJ1CBu0nQw9jUXCZZ0Wamegwacai9SE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p0Jbc0Jxk/xu57kv9C3PUYWH/UOJwGksqCKxi9frn2V5sVqdfGctU/h0ZhE3XeNpJe5HUEaqvwyUzpy419GEvroZJCvj1AiZ2wfB9DoYYZ/WtgMzoykW2ogPIBd1d6KpHYA4ZdQN9WZrkYe7DBMgWbp32poM0JWpLUDdkn+NdiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wf6Ng0hY; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f74e468baeso47200941fa.2;
+        Tue, 17 Sep 2024 03:08:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726567691; x=1727172491; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KJbxN/BoBiYWDohSMCRDVcluwineaYIhEPM4cB3crFw=;
+        b=Wf6Ng0hY8Lh9ugp+z31YtlOtTQKJBl6XdPm5Wlj5KenDiKH2yC4NO7j1T5W301JlAY
+         Q/UuPsZ9jmsSwL8RU9DcGaYSa+dO++Ah0ge5X0CCPxb8QxDz00un43zKJb2/7LV6iesd
+         ksoJxf+WdxBjdZaFHSQtNH2gpHqtaOfV9AOvHngSIxLk8V7Y3W5QOMNGDydnWCqzg580
+         WmH7FDUgJQhqkkKGWow0qJYdlyew1KG1ArqCEMzeRKkprR4gZVhwzCBjIL4gGYw4g6zZ
+         EE6nHA96m4iQ5TS6LQnAZzrvqI3phSQc1806zzeAvD6XsVvp5P1xEB7tEY9O8Nz3ipXN
+         ixxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726567691; x=1727172491;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJbxN/BoBiYWDohSMCRDVcluwineaYIhEPM4cB3crFw=;
+        b=Bu39V+f3p79U5FcpvWuqTT80//HxBtZ85QcW/9/hTqwBURJ7CV6i5QCC5GD7P99cQf
+         7spw8cJ4Zqb5SxBrS7BKVZ+FtjotsedVtV4EB20qBTRpxtLoX7cR2agATswzIOQDwmWP
+         JG6gVuHenVv4qlXYUWTgK223G0dPcE4ffZXWzvv40PUV4Av+u/W3GyddK0f/mEFgw6k1
+         P8v/uXoZJlmgqaAH3H5V9ksDaTEwvpcsZ5OfAOBTcE4bNdECHGPWJVw5lzjSyslkP64z
+         bxkk4SoIRHMl6Sp1xpIwZQTIZfKPh1Bl7X5stgMVak4PYAKG+UMRsMbcaIWzhQrKmQ07
+         qBJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBiYBhoAyinoFcmG6QFqPcN3TyqJvqIMzQeZ8vzz+zNAmqG6A/C+DUoSugq5cujO9ump1qN5MpXTVamKqIgnE=@vger.kernel.org, AJvYcCXMIJpZmFdtsb6fOylOsYnMyF2kTrMZiAiDJ6ognDxEy5yrnTBwSf7LDBYFPeI7SndOiWeg7tdrba1qYBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdCLp4PLoFGoC1zNmNfcP/rVjIGooCVifchttSt6flPPbfHaRf
+	1rLwOlevwBIiqEILg4PirMwYHIHk2ibW/3jzLHmBkAPlub+P5TSAsCgBz6EP6Ew=
+X-Google-Smtp-Source: AGHT+IGiqzBAYFz/mDtE2N5VLwEzMkWQFs36XzIRE4/HfHEtFG+isbnI1S5WWQgrzxd2uMOGc0oGfQ==
+X-Received: by 2002:a2e:e11:0:b0:2f7:53b8:ca57 with SMTP id 38308e7fff4ca-2f791a01ef2mr51657271fa.19.1726567690819;
+        Tue, 17 Sep 2024 03:08:10 -0700 (PDT)
+Received: from [192.168.0.10] ([178.233.24.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b1947e2sm135592985e9.44.2024.09.17.03.08.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 03:08:10 -0700 (PDT)
+Message-ID: <5823a50e-c607-4e1c-ba4d-d88b38c734cb@gmail.com>
+Date: Tue, 17 Sep 2024 13:08:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/17/2024 09:55:40
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 187792 [Sep 17 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
- 8a1fac695d5606478feba790382a59668a4f0039
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	lore.kernel.org:7.1.1;inp1wst083.omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.22.207.138:7.1.2;127.0.0.199:7.1.2;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/17/2024 09:59:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/17/2024 9:17:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+User-Agent: Mozilla Thunderbird
+Subject: Re: BUG and WARNINGs from mt7921s on next-20240916
+To: Felix Fietkau <nbd@nbd.name>, Kalle Valo <kvalo@kernel.org>,
+ Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: linux-mediatek@lists.infradead.org, linux-wireless@vger.kernel.org,
+ Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Ming Yen Hsieh <mingyen.hsieh@mediatek.com>, Deren Wu
+ <deren.wu@mediatek.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Ma Ke <make24@iscas.ac.cn>,
+ regressions@lists.linux.dev
+References: <144fbf79-950c-4cd1-bc68-4e00b47b03e9@gmail.com>
+ <ZujCwvd4XiwljDyv@lore-desk> <87ldzqdcsv.fsf@kernel.org>
+ <b8e11bbc-c718-4acf-acc0-6b31f25fae27@nbd.name>
+From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Content-Language: en-US, tr, en-GB
+In-Reply-To: <b8e11bbc-c718-4acf-acc0-6b31f25fae27@nbd.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Hi,
 
-commit 03ed579d9d51aa018830b0de3e8b463faf6b87db upstream.
+On 2024-09-17 12:15 +03:00, Felix Fietkau wrote:
+> On 17.09.24 08:17, Kalle Valo wrote:
+>> Lorenzo Bianconi <lorenzo@kernel.org> writes:
+>>
+>>>> Hi,
+>>>>
+>>>> I ran into some bug messages while testing linux-next on a MT8186
+>>>> Magneton Chromebook (mt8186-corsola-magneton-sku393218). It boots 
+>>>> to the OS, but at least Wi-Fi and Bluetooth are unavailable.
+>>>>
+>>>> As a start, I tried reverting commit abbd838c579e ("Merge tag 
+>>>> 'mt76-for-kvalo-2024-09-06' of https://github.com/nbd168/wireless")
+>>>> and it works fine after that. Didn't have time to do a full bisect, 
+>>>> but will try if nobody has any immediate opinions.
+>>>>
+>>>> There are a few traces, here's some select lines to catch your attention,
+>>>> not sure how informational they are:
+>>>>
+>>>> [   16.040525] kernel BUG at net/core/skbuff.c:2268!
+>>>> [   16.040531] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
+>>>> [ 16.040803] CPU: 3 UID: 0 PID: 526 Comm: mt76-sdio-txrx Not tainted
+>>>> 6.11.0-next-20240916-deb-00002-g7b544e01c649 #1
+>>>> [   16.040897] Call trace:
+>>>> [   16.040899]  pskb_expand_head+0x2b0/0x3c0
+>>>> [   16.040905]  mt76s_tx_run_queue+0x274/0x410 [mt76_sdio]
+>>>> [   16.040909]  mt76s_txrx_worker+0xe4/0xac8 [mt76_sdio]
+>>>> [   16.040914]  mt7921s_txrx_worker+0x98/0x1e0 [mt7921s]
+>>>> [   16.040924]  __mt76_worker_fn+0x80/0x128 [mt76]
+>>>> [   16.040934]  kthread+0xe8/0xf8
+>>>> [   16.040940]  ret_from_fork+0x10/0x20
+>>>
+>>> Hi,
+>>>
+>>> I guess this issue has been introduced by the following commit:
+>>>
+>>> commit 3688c18b65aeb2a1f2fde108400afbab129a8cc1
+>>> Author: Felix Fietkau <nbd@nbd.name>
+>>> Date:   Tue Aug 27 11:30:01 2024 +0200                  
+>>>
+>>>     wifi: mt76: mt7915: retry mcu messages                                            
+>>>                         
+>>>     In some cases MCU messages can get lost. Instead of failing completely,
+>>>     attempt to recover by re-sending them.
+>>>      
+>>>     Link: https://patch.msgid.link/20240827093011.18621-14-nbd@nbd.name
+>>>     Signed-off-by: Felix Fietkau <nbd@nbd.name>
+>>>
+>>>
+>>> In particular, skb_get() in mt76_mcu_skb_send_and_get_msg() is bumping skb users
+>>> refcount (making the skb shared) and pskb_expand_head() (run by __skb_grow() in
+>>> mt76s_tx_run_queue()) does not like shared skbs.
+>>>
+>>> @Felix: any input on it?
+> 
+> Sorry about that. Please try this patch, it should probably resolve this issue:
+> 
+> ---
+> --- a/drivers/net/wireless/mediatek/mt76/mcu.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mcu.c
+> @@ -84,13 +84,15 @@ int mt76_mcu_skb_send_and_get_msg(struct mt76_dev *dev, struct sk_buff *skb,
+>   	mutex_lock(&dev->mcu.mutex);
+>   
+>   	if (dev->mcu_ops->mcu_skb_prepare_msg) {
+> +		orig_skb = skb;
+>   		ret = dev->mcu_ops->mcu_skb_prepare_msg(dev, skb, cmd, &seq);
+>   		if (ret < 0)
+>   			goto out;
+>   	}
+>   
+>   retry:
+> -	orig_skb = skb_get(skb);
+> +	if (orig_skb)
+> +		skb_get(orig_skb);
+>   	ret = dev->mcu_ops->mcu_skb_send_msg(dev, skb, cmd, &seq);
+>   	if (ret < 0)
+>   		goto out;
+> @@ -105,7 +107,7 @@ int mt76_mcu_skb_send_and_get_msg(struct mt76_dev *dev, struct sk_buff *skb,
+>   	do {
+>   		skb = mt76_mcu_get_response(dev, expires);
+>   		if (!skb && !test_bit(MT76_MCU_RESET, &dev->phy.state) &&
+> -		    retry++ < dev->mcu_ops->max_retry) {
+> +		    orig_skb && retry++ < dev->mcu_ops->max_retry) {
+>   			dev_err(dev->dev, "Retry message %08x (seq %d)\n",
+>   				cmd, seq);
+>   			skb = orig_skb;
+> 
 
-Check that the xhci_virt_dev structure that we dug out based
-on a slot_id value from a command completion is valid before
-dereferencing it.
+Tested-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
 
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20210129130044.206855-7-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
----
- drivers/usb/host/xhci-ring.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index fbb7a5b51ef4..a769803e7d38 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1415,6 +1415,8 @@ static void xhci_handle_cmd_config_ep(struct xhci_hcd *xhci, int slot_id,
- 	 * is not waiting on the configure endpoint command.
- 	 */
- 	virt_dev = xhci->devs[slot_id];
-+	if (!virt_dev)
-+		return;
- 	ctrl_ctx = xhci_get_input_control_ctx(virt_dev->in_ctx);
- 	if (!ctrl_ctx) {
- 		xhci_warn(xhci, "Could not get input context, bad type.\n");
-@@ -1459,6 +1461,8 @@ static void xhci_handle_cmd_addr_dev(struct xhci_hcd *xhci, int slot_id)
- 	struct xhci_slot_ctx *slot_ctx;
- 
- 	vdev = xhci->devs[slot_id];
-+	if (!vdev)
-+		return;
- 	slot_ctx = xhci_get_slot_ctx(xhci, vdev->out_ctx);
- 	trace_xhci_handle_cmd_addr_dev(slot_ctx);
- }
-@@ -1470,13 +1474,15 @@ static void xhci_handle_cmd_reset_dev(struct xhci_hcd *xhci, int slot_id,
- 	struct xhci_slot_ctx *slot_ctx;
- 
- 	vdev = xhci->devs[slot_id];
-+	if (!vdev) {
-+		xhci_warn(xhci, "Reset device command completion for disabled slot %u\n",
-+			  slot_id);
-+		return;
-+	}
- 	slot_ctx = xhci_get_slot_ctx(xhci, vdev->out_ctx);
- 	trace_xhci_handle_cmd_reset_dev(slot_ctx);
- 
- 	xhci_dbg(xhci, "Completed reset device command.\n");
--	if (!xhci->devs[slot_id])
--		xhci_warn(xhci, "Reset device command completion "
--				"for disabled slot %u\n", slot_id);
- }
- 
- static void xhci_handle_cmd_nec_get_fw(struct xhci_hcd *xhci,
--- 
-2.34.1
-
+Thanks!
 
