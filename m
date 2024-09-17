@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-331495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EE797AD7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:03:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9FA97AD86
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC6C2865FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:03:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DF6E1C2144D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A34F53389;
-	Tue, 17 Sep 2024 09:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1F115B560;
+	Tue, 17 Sep 2024 09:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQ/yANKh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S5RMeAyL"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26F2136357;
-	Tue, 17 Sep 2024 09:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B50150990;
+	Tue, 17 Sep 2024 09:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726563813; cv=none; b=eDt3xRD70BrWFBvNp7lrq2h3u99JKEKyOq2PwqLHZ32stn9D+FDUWDdk8VJlJAr/DoqvS/X9PUI7h+kuF7tvtQ0aRXuVF8o1cqFfwa6nn6RXPKhKgAWVbAzYDRBFP1eWfNQkUs2nHYLx6hlze+H0VRIxTeRfYb2VGyvs0QvhcPg=
+	t=1726563881; cv=none; b=CYyON8CekeyrDP76HlJBp7l5++G+vONTwY8B5hc0cX4rfWG12VhjU7kclQHeDanaJybEf5v0T6J0D9bFyNAjD/3h6APpW7U4bLR8piGKKMgNFchAliMnhtAPY3AiPOegPiWhf7xeKVmcow2u+QDXNDFZtufEyZSJwcuR5kzdDPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726563813; c=relaxed/simple;
-	bh=EltNu/Vvs2dUaVxhrsZoanhKyc7N5StGFgimWX0o+4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FQ1Ln7CqDBd9Pwkd//NTlBPblSGFxpk7zgJe4pJoISHQHdIJeMrjBoGEKkcl56dmGwujv+eYw8vJuARZhWXGgwhR4k6it8tyg1URcbUvzdy6pbTVgN71pl9LSz93ixsyyOUpZAJ6U18YK/rrUepBw5fUqQnzawX+mG5jeBvhpks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQ/yANKh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A3BC4CEC5;
-	Tue, 17 Sep 2024 09:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726563811;
-	bh=EltNu/Vvs2dUaVxhrsZoanhKyc7N5StGFgimWX0o+4Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OQ/yANKhnddSqulNweiFVaryGn6CGgbcQ6UcZlMfKrPknKnYcKUP9MFP+cqeUMVcM
-	 oBmLAOppc1865gs6utmZ5AEq7RN6oZbGfidJEP8dJoGboU1DUv2Cgp2AWpHzVWdIt5
-	 YITHBvii9sspSNKH5/jSDrOAleRV5c8zkumZzM0kHLUNprvTYNlwbIn33+kJMGnM7Z
-	 Le8qw7A6CUYhw9Pb5MiDuPI4ryqwsrb/APjIlHO+/aMrPSvQMhedmfXrJWZQrlO2gL
-	 tBDJetlSQGD/w3nZ0YL6zUBaKeqoJPr60aUUlsQ6f8FiMApwzTYXkxoHsMzuIfDSNQ
-	 bsBMFhvlMSVbQ==
-From: Christian Brauner <brauner@kernel.org>
-To: netfs@lists.linux.dev,
-	libaokun@huaweicloud.com
-Cc: Christian Brauner <brauner@kernel.org>,
-	dhowells@redhat.com,
-	jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	jefflexu@linux.alibaba.com,
-	linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	yukuai3@huawei.com,
-	wozizhi@huawei.com,
-	Baokun Li <libaokun1@huawei.com>,
-	stable@kernel.org,
-	Gao Xiang <xiang@kernel.org>
-Subject: Re: [PATCH v2] cachefiles: fix dentry leak in cachefiles_open_file()
-Date: Tue, 17 Sep 2024 11:03:19 +0200
-Message-ID: <20240917-ursachen-umsatz-3746ab6636a8@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240829083409.3788142-1-libaokun@huaweicloud.com>
-References: <20240829083409.3788142-1-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1726563881; c=relaxed/simple;
+	bh=5NCGPiERJ+Jw5qTfwSzmHF6iCdF89H70h6XEILDhTIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i/Pnp9DC411k1ssPzZJK3nXdGPGila/tMSTbGu9N2R/Tm8jrsVraFkFYhkfQz55a804Moh2E0iwt2UbBEiaJWD381/OTFfupR7Skz4ELc21HtcNCdYAPFP6TofbLhbGK1VYMzuFZ5qqifXVwcXsmfhshxK4IpO+jOjs/pOdtUDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S5RMeAyL; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726563878;
+	bh=5NCGPiERJ+Jw5qTfwSzmHF6iCdF89H70h6XEILDhTIE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S5RMeAyLuLMXAZ2qIVHPpQd+yUU7hN6A9HmCHPyK3f/Qm4sqiXA2P5IDtgTO6x+CA
+	 gY9CznaCeUisJIeO7nOfj9MvveNWSI96sSPNWHDMTf3HO1lOXXEQRXgs5Yqo/VIw5X
+	 3EzWC/6RCGN4xCicPAKEqbaYzsy4XIpR/EkE432JijXfSsEhiXKuuC9+tPDNxLdUP9
+	 P2OUxIR7t8sYk+AtNUm9IrY+oLh5bnYHNEyiwHQBNPsef5b7lGbZhtNkygfnOFy3FJ
+	 TBSgxGOyL/YUvetV7okyLSdFBN4RSsA5Dt9gxfphjhOQY1Y6C7zN9zLm2AD/oWg5TP
+	 R4jGK++Gne67w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id ADEF717E107A;
+	Tue, 17 Sep 2024 11:04:34 +0200 (CEST)
+Message-ID: <08bdcc19-023b-4c7d-9e01-2b04cac00a08@collabora.com>
+Date: Tue, 17 Sep 2024 11:04:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1589; i=brauner@kernel.org; h=from:subject:message-id; bh=EltNu/Vvs2dUaVxhrsZoanhKyc7N5StGFgimWX0o+4Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS9dL1tmNoz0SxnS82BXuV4j459Ti7XWO+85k8TYXBKY F4689PsjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInY5TMyNB861azxZYP1hOsl z4IfLt/p+ve2+xzG9etuSj2M/fB9XwYjw5Wir3wewlPMdCb38aTXM+T8Ufjj+frIrrOKU6OeX76 VzQ4A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] regulator: dt-bindings: mt6397: move examples to
+ parent PMIC mt6397
+To: Macpaul Lin <macpaul.lin@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+ <olteanv@gmail.com>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Sean Wang <sean.wang@mediatek.com>, Sen Chu <sen.chu@mediatek.com>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Chen Zhong <chen.zhong@mediatek.com>, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
+ Alexandre Mergnat <amergnat@baylibre.com>
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+ MediaTek Chromebook Upstream
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ Chen-Yu Tsai <wenst@chromium.org>
+References: <20240916151132.32321-1-macpaul.lin@mediatek.com>
+ <20240916151132.32321-3-macpaul.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240916151132.32321-3-macpaul.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 29 Aug 2024 16:34:09 +0800, libaokun@huaweicloud.com wrote:
-> A dentry leak may be caused when a lookup cookie and a cull are concurrent:
+Il 16/09/24 17:11, Macpaul Lin ha scritto:
+> Since the DT schema of multiple function PMIC mt6397 has been converted,
+> move the examples in "mediatek,mt6397-regulator.yaml" to the parent schema
+> "mediatek,mt6397.yaml".
 > 
->             P1             |             P2
-> -----------------------------------------------------------
-> cachefiles_lookup_cookie
->   cachefiles_look_up_object
->     lookup_one_positive_unlocked
->      // get dentry
->                             cachefiles_cull
->                               inode->i_flags |= S_KERNEL_FILE;
->     cachefiles_open_file
->       cachefiles_mark_inode_in_use
->         __cachefiles_mark_inode_in_use
->           can_use = false
->           if (!(inode->i_flags & S_KERNEL_FILE))
->             can_use = true
-> 	  return false
->         return false
->         // Returns an error but doesn't put dentry
-> 
-> [...]
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+You can instead just keep a reference to mediatek,mt6397-regulator.yaml in the
+"MFD" (pmic) schema instead.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+It's true that for MT6397 you can possibly have only MT6397's regulator and not
+others, but still, the logic is to:
+  - Say that MT6397 supports regulator subnode(s) in mediatek,mt6397.yaml
+    - Refer to the regulator schema (mediatek,mt6397-regulator.yaml)
+  - Keep the regulator schema (providing only regulator HW specific info)
+    in the regulator folder.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Besides that, this also makes the main mediatek,mt6397.yaml schema a bit more
+human readable... :-)
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Cheers,
+Angelo
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
 
-[1/1] cachefiles: fix dentry leak in cachefiles_open_file()
-      https://git.kernel.org/vfs/vfs/c/31075a6ed624
 
