@@ -1,164 +1,244 @@
-Return-Path: <linux-kernel+bounces-331514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF15A97ADDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:27:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC8E97ADBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97684B2C92C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20C2C2839D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B714136351;
-	Tue, 17 Sep 2024 09:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD98158203;
+	Tue, 17 Sep 2024 09:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TcpGKdCA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CBLrMnu9"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AC413213E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF6914BFBF;
+	Tue, 17 Sep 2024 09:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726564769; cv=none; b=sxeYqlOJgzs/xk3ROb/Ufl5XXoQtrpqQn9Xes1cnkHItpka2BCohOWMuby11Y51rpax/c7txW+9hjTX5Ojj+c8f2FcD5XVeYpzZn89vLzDg3ZTsCWPWSRYj3JZNwkHxGzKkJmf2tiB48YdfTlAzKAp4QS4MZbOlPbJZV49XsGu8=
+	t=1726564803; cv=none; b=sQueu8BRmvdtElGRcFoarbqsnAbheKiV8IEPCV4j7h1oc2Gw6R3cnwy0nPC/g0aFCuzL08QyVKgExfNcCqbssUhvtVQjseaTx5JTiScB5aN0R/AfJrE7953pnbMb/cZlnu7UcgG+xPhLrJaYBetuAkVJGGc+JPCoeeCggtKZYFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726564769; c=relaxed/simple;
-	bh=kWuW+XR4q5jXLOcqkgK9vOp5gvxRDxmxZd6napgsXZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EPyk/I+m589rl899L8MLCvgBnnpB1E6AQ4RnWa+ZYo1CPSfGCPxl44b5nfRHPnXAJcIn/rTcFcL9IEG+SYCakPoTyai1k1NXe7OIkDcwVcCLIJWUoPZ1WxoQxaD4QNqGmquccWJtitaEn6Py1/URpygFKcitZhJUtS9/jHVO6yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TcpGKdCA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726564766;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KUX/cDE3gOpSZUKXDw0O/fMf4D971hqREO3NNvXeAJs=;
-	b=TcpGKdCA14AYWYaL2yd3/LKAM5B6XjIHzaBYBGaQydBnKlPd/L+j8tqp5bV054bnz/J1QR
-	fVgeGD1VEbR/VjWlRmvP08tdprd8jm9x3Mg51W2XVgZG54EtDnTI0Sw4xZTYnhWnbgRdbs
-	v8bBQms+BqKvDldy340cmOxR/8XGFBU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-482-wnnj1nLSPDC3rEKoOTIX-g-1; Tue, 17 Sep 2024 05:19:24 -0400
-X-MC-Unique: wnnj1nLSPDC3rEKoOTIX-g-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-377a26a5684so1476362f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 02:19:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726564763; x=1727169563;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KUX/cDE3gOpSZUKXDw0O/fMf4D971hqREO3NNvXeAJs=;
-        b=oBoc4MsGYzP9bKhmjPNZsiqmy0395gnREDyo0ZHaP9tw3OXtS93l1xt/cEQ/Go+0Fi
-         OP0mYfIEZV9hOO+UUNGFn78i4exQIakD5GonPx/iNklhre8isuPO8y7Yd4qYcrZ0l+Nr
-         G51uoQXejIRm6rLTFgkPrrcZXvYY7MIBMvvPS837uQV37aSN8O6/5gcH2rzndEh+5XtK
-         YYVCrQwY3iCS38H1PlmbjaIKGO0TXu0Q9T5ZrJpAwrQ1uS9WK0GnloyJzw7GQMs7V0OQ
-         KSWkCf2mfqDzXimeHLyBbDmqvqfPIYp0puYautJhKIDQmko47ZabkZWZwNwdZWKS4x2C
-         MA5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVa5yWRbYD8AOn5i/eeWNLHuPTH1Y2CgxZdXEWNwz3clpm9lKI89vUEvG3D1ib555kQi1NFjERbW8hYl0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg4rFSi1zW1mDuaJACFm3mCYNsB5qRSfsNZ/HHfGWHCNeByXCS
-	uQkKA06/RPzsA/zVz34cdiE+WwxGR+8Mp3ia0OB2OSBGLvGH2D1wkhIf0KPPvxl/kdIwxHEg8/J
-	q0K1WCrBDGWoIUp7KY+/HyHV7IfxDAJj/zbMLRFUJoDwtd9u4SJyumFiaE5ObrQ==
-X-Received: by 2002:a05:6000:120d:b0:371:82ec:206f with SMTP id ffacd0b85a97d-378d61e2871mr7662716f8f.16.1726564763157;
-        Tue, 17 Sep 2024 02:19:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFv0lTzGa0En47cTCylvcPoC7R3ZsfV7mcSql4HpZVVz0Cn5vdXmB2CE6F2pXgFsdS98qHtrQ==
-X-Received: by 2002:a05:6000:120d:b0:371:82ec:206f with SMTP id ffacd0b85a97d-378d61e2871mr7662700f8f.16.1726564762614;
-        Tue, 17 Sep 2024 02:19:22 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7804483sm8908721f8f.92.2024.09.17.02.19.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 02:19:22 -0700 (PDT)
-Date: Tue, 17 Sep 2024 11:19:21 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
- Peter Xu <peterx@redhat.com>, Fabiano Rosas <farosas@suse.de>
-Subject: Re: [PATCH v10 02/21] acpi/generic_event_device: Update GHES
- migration to cover hest addr
-Message-ID: <20240917111921.7e95726b@imammedo.users.ipa.redhat.com>
-In-Reply-To: <bed4b2da51e0c894cc255f712b67e2e57295d826.1726293808.git.mchehab+huawei@kernel.org>
-References: <cover.1726293808.git.mchehab+huawei@kernel.org>
-	<bed4b2da51e0c894cc255f712b67e2e57295d826.1726293808.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1726564803; c=relaxed/simple;
+	bh=pbCRi/aWHwIz/Np1eLPb/787hCnDF3dkIvKvtI6tKrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LYtYOYSXjHTsPrxlSFFp79SAcJ68uoK4aXcFSCgUWKglfAsRepnwmZPQmZUDGw/64BkjHKa+apMM0svVkx8Id7FtOVpfPpJQ9HpiHelGaquxcUAnV/XBnxpXVnCMjl/Zba0RHKwNhtDuX+I8u4MmWJj13K354rK0IRp7+BYN8Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CBLrMnu9; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48H9Jhv0088904;
+	Tue, 17 Sep 2024 04:19:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726564783;
+	bh=1JHCD/69VTCYscf7qteQl5ACCgoQ/36oUJ28AIZ9YE4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=CBLrMnu9rFcHI/W0hnPX4uuCniRT9HvTQzGOZKs5IyLIYzIMwPVquSS6oWbEqCdXe
+	 Ji5jfyo0NGf/wBBlyQ9BskPp4o03Heaq5i+XO8IDtQEXwR2fXgY6dbG91eFYR3BGfQ
+	 PUV91bUrpeFV+r55OKjh/eW/y4fj6W/5oN7iHru0=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H9Jh5p019052;
+	Tue, 17 Sep 2024 04:19:43 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
+ Sep 2024 04:19:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 17 Sep 2024 04:19:43 -0500
+Received: from [172.24.19.92] (lt5cd2489kgj.dhcp.ti.com [172.24.19.92])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H9JdDr035699;
+	Tue, 17 Sep 2024 04:19:40 -0500
+Message-ID: <5e52e8f4-cb50-4490-a9ce-c9074b3d9b7a@ti.com>
+Date: Tue, 17 Sep 2024 14:49:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] remoteproc: k3-r5: Fix check performed in
+ k3_r5_rproc_{mbox_callback/kick}
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, Hari Nagalla <hnagalla@ti.com>,
+        Andrew Davis <afd@ti.com>, <andersson@kernel.org>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <u-kumar1@ti.com>
+References: <20240916083131.2801755-1-s-vadapalli@ti.com>
+ <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
+ <fda85c12-e73f-44b8-b66b-1241e417a9b7@ti.com>
+ <CANLsYky1Oxu7Fc1-gz53cR+KpO67nDE5LQGj_NV+czOwY2_2CA@mail.gmail.com>
+ <3ca4b2d1-5c47-4f85-969d-cd61c7ade2dc@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <3ca4b2d1-5c47-4f85-969d-cd61c7ade2dc@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Sat, 14 Sep 2024 08:13:23 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-> The GHES migration logic at GED should now support HEST table
-> location too.
-> 
-> Increase migration version and change needed to check for both
-> ghes_addr_le and hest_addr_le
-But I don't think it will work like this (but I might be easily wrong)
-However I don't know enough to properly review this patch, CCing Peter & Fabiano
+On 9/17/2024 2:43 PM, Kumar, Udit wrote:
+> Hi Mathieu,
+>
+> On 9/17/2024 2:07 PM, Mathieu Poirier wrote:
+>> On Mon, 16 Sept 2024 at 23:20, Kumar, Udit <u-kumar1@ti.com> wrote:
+>>> On 9/16/2024 8:50 PM, Mathieu Poirier wrote:
+>>>> On Mon, 16 Sept 2024 at 02:31, Siddharth Vadapalli 
+>>>> <s-vadapalli@ti.com> wrote:
+>>>>> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle 
+>>>>> during
+>>>>> probe routine") introduced a check in the 
+>>>>> "k3_r5_rproc_mbox_callback()" and
+>>>>> "k3_r5_rproc_kick()" callbacks, causing them to exit if the remote 
+>>>>> core's
+>>>>> state is "RPROC_DETACHED". However, the "__rproc_attach()" 
+>>>>> function that is
+>>>>> responsible for attaching to a remote core, updates the state of 
+>>>>> the remote
+>>>>> core to "RPROC_ATTACHED" only after invoking 
+>>>>> "rproc_start_subdevices()".
+>>>>>
+>>>>> The "rproc_start_subdevices()" function triggers the probe of the 
+>>>>> Virtio
+>>>>> RPMsg devices associated with the remote core, which require that the
+>>>>> "k3_r5_rproc_kick()" and "k3_r5_rproc_mbox_callback()" callbacks are
+>>>>> functional. Hence, drop the check in the callbacks.
+>>>> Honestly, I am very tempted to just revert f3f11cfe8907 and 
+>>>> ea1d6fb5b571.
+>>>
+>>> Please don't :) , it will break rproc in general for k3 devices.
+>>>
+>> Why not - it is already broken anyway.  Reverting the patches will
+>> force TI to actually think about the feature in terms of design,
+>> completeness and testing.  The merge window opened on Sunday - I'm not
+>> going to merge whack-a-mole patches and hope the right fix comes
+>> along.
+>
+> Now, I am not advocating here to revert or not.
+>
+> But where we stand currently
+>
+> 1-  Without this patch, IPC is broken in general.
+>
+> 2-  With this patch, IPC is conditionally broken.
 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  hw/acpi/generic_event_device.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> index 15b4c3ebbf24..4e5e387ee2df 100644
-> --- a/hw/acpi/generic_event_device.c
-> +++ b/hw/acpi/generic_event_device.c
-> @@ -343,10 +343,11 @@ static const VMStateDescription vmstate_ged_state = {
->  
->  static const VMStateDescription vmstate_ghes = {
->      .name = "acpi-ghes",
-> -    .version_id = 1,
-> -    .minimum_version_id = 1,
-> +    .version_id = 2,
-> +    .minimum_version_id = 2,
->      .fields = (const VMStateField[]) {
->          VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
-> +        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
->          VMSTATE_END_OF_LIST()
->      },
->  };
-> @@ -354,13 +355,13 @@ static const VMStateDescription vmstate_ghes = {
->  static bool ghes_needed(void *opaque)
->  {
->      AcpiGedState *s = opaque;
-> -    return s->ghes_state.ghes_addr_le;
-> +    return s->ghes_state.ghes_addr_le && s->ghes_state.hest_addr_le;
->  }
 
-what I would do:
-  add ghes_needed_v2(): return  s->ghes_state.hest_addr_le;
+Sorry for confusion,
 
-and then instead of reusing vmstate_ghes_state would add new
-vmstate_ghes_v2_state subsection that migrates only 
-  VMSTATE_UINT64(hest_addr_le, AcpiGhesState)
-field.
+here _this_ patch I meant below commit ids
 
-btw: we probably don't need ghes_addr_le for new code that
-uses HEST to lookup relevant error status block.
-but we should still keep it for 9.1 and older machine types
-as they expect/use it. Separate subsections would work with
-this req just fine.
+f3f11cfe8907 and ea1d6fb5b571.
 
->  static const VMStateDescription vmstate_ghes_state = {
->      .name = "acpi-ged/ghes",
-> -    .version_id = 1,
-> -    .minimum_version_id = 1,
-> +    .version_id = 2,
-> +    .minimum_version_id = 2,
->      .needed = ghes_needed,
->      .fields = (const VMStateField[]) {
->          VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
-
+>
+> In either case, we need to fix it.
+>
+> your call to revert or keep it.
+>
+>
+>>
+>>> Couple of solutions for this race around condition (in mine preference
+>>> order)
+>>>
+>> This is for the TI team to discuss _and_ test thoroughly.  From hereon
+>> and until I see things improve, all patches from TI will need to be
+>> tagged with R-B and T-B tags (collected on the mailing lists) from two
+>> different individuals before I look at them.
+>
+> Sure we will take care of above
+>
+> and fair ask on R-B and T-B tags
+>
+>>
+>>> 1) In
+>>> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L190 
+>>>
+>>> have a check , if probe in is progress or not
+>>>
+>>> 2)
+>>> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1205 
+>>>
+>>> -- correct the state to ON or something else
+>>>
+>>> 3) Move condition
+>>> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/remoteproc_core.c#L1360 
+>>>
+>>> before rproc_start_subdevices
+>>> <https://elixir.bootlin.com/linux/v6.11/C/ident/rproc_start_subdevices>
+>>> calling
+>>>
+>>>
+>>>
+>>>>> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle 
+>>>>> during probe routine")
+>>>>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+>>>>> ---
+>>>>>
+>>>>> Hello,
+>>>>>
+>>>>> Since the commit being fixed is not yet a part of Mainline Linux, 
+>>>>> this
+>>>>> patch is based on linux-next tagged next-20240913.
+>>>>>
+>>>>> An alternative to this patch will be a change to the 
+>>>>> "__rproc_attach()"
+>>>>> function in the "remoteproc_core.c" driver with
+>>>>> rproc->state = RPROC_ATTACHED;
+>>>>> being set after "rproc_attach_device()" is invoked, but __before__
+>>>>> invoking "rproc_start_subdevices()". Since this change will be 
+>>>>> performed
+>>>>> in the common Remoteproc Core, it appeared to me that fixing it in 
+>>>>> the
+>>>>> TI remoteproc driver is the correct approach.
+>>>>>
+>>>>> The equivalent of this patch for ti_k3_dsp_remoteproc.c might also be
+>>>>> required, which I shall post if the current patch is acceptable.
+>>>>>
+>>>>> Kindly review and share your feedback on this patch.
+>>>>>
+>>>>> Regards,
+>>>>> Siddharth.
+>>>>>
+>>>>>    drivers/remoteproc/ti_k3_r5_remoteproc.c | 8 --------
+>>>>>    1 file changed, 8 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
+>>>>> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>>> index 747ee467da88..4894461aa65f 100644
+>>>>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>>>>> @@ -194,10 +194,6 @@ static void k3_r5_rproc_mbox_callback(struct 
+>>>>> mbox_client *client, void *data)
+>>>>>           const char *name = kproc->rproc->name;
+>>>>>           u32 msg = omap_mbox_message(data);
+>>>>>
+>>>>> -       /* Do not forward message from a detached core */
+>>>>> -       if (kproc->rproc->state == RPROC_DETACHED)
+>>>>> -               return;
+>>>>> -
+>>>>>           dev_dbg(dev, "mbox msg: 0x%x\n", msg);
+>>>>>
+>>>>>           switch (msg) {
+>>>>> @@ -233,10 +229,6 @@ static void k3_r5_rproc_kick(struct rproc 
+>>>>> *rproc, int vqid)
+>>>>>           mbox_msg_t msg = (mbox_msg_t)vqid;
+>>>>>           int ret;
+>>>>>
+>>>>> -       /* Do not forward message to a detached core */
+>>>>> -       if (kproc->rproc->state == RPROC_DETACHED)
+>>>>> -               return;
+>>>>> -
+>>>>>           /* send the index of the triggered virtqueue in the 
+>>>>> mailbox payload */
+>>>>>           ret = mbox_send_message(kproc->mbox, (void *)msg);
+>>>>>           if (ret < 0)
+>>>>> -- 
+>>>>> 2.40.1
+>>>>>
 
