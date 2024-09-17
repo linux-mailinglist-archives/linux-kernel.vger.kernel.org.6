@@ -1,105 +1,192 @@
-Return-Path: <linux-kernel+bounces-331633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F88F97AF38
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:03:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9805797AF40
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3132D28751A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B612875E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 11:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481221547E6;
-	Tue, 17 Sep 2024 11:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FFC15CD41;
+	Tue, 17 Sep 2024 11:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="f7d4csEi"
-Received: from qs51p00im-qukt01071702.me.com (qs51p00im-qukt01071702.me.com [17.57.155.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z9bbRuWJ"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E9A1BC41
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A823315539A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 11:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726570979; cv=none; b=WcQgGW36dE0GynZ3XcnulwcmZKmR5BhD2lQCDng9rp83sRnEaYT1t18VVw/P1vbzyrmz+ooBXBkhx4Fn01X6s7wTfEY8uJEOwIQnehgwus/2lk+nC4c2SlAQAn08uGNCAJ3sLDP5x71tOtdApQb4d4bglaO0V+OEy3LcI8GP8WE=
+	t=1726571250; cv=none; b=kLxUzlDNntep+y+H1rgeQQPmFA8d3o5ulDnWBVqd8wz2mfi2N62j72zW50kQVFAYMfXo6+W2lKQ0uh9/tR1tozRLDccdsTfQ8A+q0a3GtWuvYAYeMu2/PoxambNocqQq4a5VHTHNagbJox99Zybe/dFQ8nImAZap8znjnlUwwiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726570979; c=relaxed/simple;
-	bh=+B0c/QMAklB3h8JYBEZju8mHxfN5K2/6NAUqdJCW3XU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uyNn72hxFkkjtKUoWOphzGmJrmhFC6OhvmPgWfGMTWtN6qSoezoTdyjICFIGTVi7wzCkaOViHpxaC4+TzqhDQ48YmhJcyWryPwSFFJ/kIlVAgUBf8kqu+cwNyrM2Hw/GuCYLjaI/Pm9ffWBg6diGmR6sHB1nYadRz/0Ap3chi+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=f7d4csEi; arc=none smtp.client-ip=17.57.155.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1726570977;
-	bh=wQp9W0C9HvXVILgEa9rTmn5kH5GQ3PbomengBiIPFNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=f7d4csEiidsjF9On/FwxSK4fbuHuhO3VYgpZ3s5ZbKLoHzWQIEfP92Ch0LQH0zn9/
-	 zdwNt7GJrp5AZ3h0Dws8nSWGyVEFWBAi2E4TxzcBsXy7mPbzlD1A2nidATatkntNDo
-	 u9wx+yAs9o8gE0wHnE5hOjD2MflQqwDoZbmcECGvmkzVHveE5S1eY2qkD4iFeDHrgD
-	 rwApR0MX3i0Jw298QvrsXSKfJs0i5B+TfFc8v0ikx0E0T/G5ldalBJ6CmswrruEl+x
-	 Rdn7VovNMC4CEVTv2ISggaxjS5r+ewiWqQPy5qCnLELZZWJ8wxEJ5QxJg8JM3qZBD9
-	 klBKvVtkhqFRw==
-Received: from [192.168.1.26] (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
-	by qs51p00im-qukt01071702.me.com (Postfix) with ESMTPSA id 3DA2F35002B1;
-	Tue, 17 Sep 2024 11:02:51 +0000 (UTC)
-Message-ID: <ac98845a-2461-4098-a162-0edea662d71c@icloud.com>
-Date: Tue, 17 Sep 2024 19:02:47 +0800
+	s=arc-20240116; t=1726571250; c=relaxed/simple;
+	bh=AjzXQJDawkz0u3x8Gb/cP4YDGAWEbv6gltnoKXeUdic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpuL4Q+LuTRSln4kAimAOzIjD40F9ByECRPnsLlubGgNJXpJt3NgzvySa+p0ARfofWZN0QVD7LoNUYmAsoSB1Gb9YAmc3+YccypTNPUPZyXNR8+RTlG5/zEuFYnHxo/7ezqUUMXBhc4v3seVZz7Q4f8etPLB1uCpH8n0SoNIXdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z9bbRuWJ; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374b9761eecso4409222f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 04:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726571247; x=1727176047; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D51B76i/syphr7fBrFBR8DX4oQsj03G++/BsgOPPFu4=;
+        b=Z9bbRuWJZET7u4aBl11Q6HL0YK2/i0JTSxgvUNB+wj8JZwA/GDOYOPH1c6zgefcryz
+         bCDalKH7XsAGG16z34BUmDdvflJef68F8m1HQCtIYcoLymsoTy7qhmeoFG8igvTJh1/R
+         TZbqoC8q6teazoEh3PzIQaDBWTcR/M/h2Q+RlsbB7egsunnk9FZ5Rf8vrFzZyotjq3XH
+         GXCJgS7UbRJ8HKx1yqSBV8fOigbguXSQUh55Z88A2a+XGPD6CHeQJTRabkNjJqrVcQOp
+         V67yif7FIHSWN5N1PD5HN6eFfpreAbGAbDQkHRNg5htb5S/BnxpxeJLmKPrRS3EtWvcq
+         9Cqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726571247; x=1727176047;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D51B76i/syphr7fBrFBR8DX4oQsj03G++/BsgOPPFu4=;
+        b=RgcuKcLTLWwPcBjBqmarrVb1+e6lzVa0OQ52Umre8vyoPzGsFstA7C9gfRJCGqA0D0
+         lBE3lSRcHY9yaD0BnGgBh8EEvoE8WGQ5J/wcqVeH4voGYx3hkjp+C/A6g4avA4kgI1iB
+         4WWgTcNo8Nxhx8s+aJhJ8cZvTpgR9V06EC9XnTxNAZA4aTXyWsA93o7ufbPAKXNuBb3a
+         O8EQjU/p/F8iBd+UrYMwFSeOz5lliTqf5ECGtm5fflAuEF+zsyXmXsgCVheMl1rKSQUo
+         sQXS/2FBIMypVfwaU1LC34smyOYhzxevOQbgB/QSYR/PtoJeJUL/+n4FWy+wx7zhG33t
+         Kx9A==
+X-Gm-Message-State: AOJu0Yw8XwXuEUOlraq6+Daq4y0hPsa173eiaGkfWjlP1E61DMm6mSFV
+	W6WZ8F0TQBY3uxnmvoWstdoTL4iLvNn+3eA1EDbJ+yVfAl2bnbVyc1ntbFQqSc0=
+X-Google-Smtp-Source: AGHT+IEOVlYSleyjY2/K9oNfyzgog+SKayd+ffTDMu5r/Gl/KopEsVR3ZiFiNUx57eV/p1k50ijMkg==
+X-Received: by 2002:adf:f9c5:0:b0:374:b675:6213 with SMTP id ffacd0b85a97d-378c2d4c938mr11870489f8f.45.1726571246795;
+        Tue, 17 Sep 2024 04:07:26 -0700 (PDT)
+Received: from localhost (109-81-94-244.rct.o2.cz. [109.81.94.244])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7805185sm9195857f8f.96.2024.09.17.04.07.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 04:07:26 -0700 (PDT)
+Date: Tue, 17 Sep 2024 13:07:25 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
+Subject: Re: [PATCH 12/19] kthread: Default affine kthread to its preferred
+ NUMA node
+Message-ID: <Zuli7SGxkbEbQraJ@tiehlicka>
+References: <20240916224925.20540-1-frederic@kernel.org>
+ <20240916224925.20540-13-frederic@kernel.org>
+ <ZukhKXxErPOaXtAL@tiehlicka>
+ <ZulbS1MvZVVYe-YO@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] amba: bus: Move reading periphid operation from
- amba_match() to amba_probe()
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>,
- Isaac Manjarres <isaacmanjarres@google.com>,
- Lu Baolu <baolu.lu@linux.intel.com>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240909-fix_amba-v1-0-4658eed26906@quicinc.com>
- <ZulRbGQf1b+Gy2Ox@shell.armlinux.org.uk>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <ZulRbGQf1b+Gy2Ox@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: PWCzSPIcJQdpCa5c-AZ0tFWTcRxKs42g
-X-Proofpoint-GUID: PWCzSPIcJQdpCa5c-AZ0tFWTcRxKs42g
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-17_02,2024-09-16_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 clxscore=1015 spamscore=0
- mlxlogscore=881 suspectscore=0 bulkscore=0 malwarescore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409170079
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZulbS1MvZVVYe-YO@localhost.localdomain>
 
-On 2024/9/17 17:52, Russell King (Oracle) wrote:
-> On Mon, Sep 09, 2024 at 07:37:31AM +0800, Zijun Hu wrote:
->> This patch series is to make amba_match(), as bus_type @amba_bustype's
->> match(), also follow below ideal rule:
->>
->> bus_type's match() should only return bool type compatible integer 0 or
->> 1 ideally since its main operations are lookup and comparison normally.
->>
->> Which has been followed by match() of all other bus_types in current
->> kernel tree.
+On Tue 17-09-24 12:34:51, Frederic Weisbecker wrote:
+> Le Tue, Sep 17, 2024 at 08:26:49AM +0200, Michal Hocko a écrit :
+> > On Tue 17-09-24 00:49:16, Frederic Weisbecker wrote:
+> > > Kthreads attached to a preferred NUMA node for their task structure
+> > > allocation can also be assumed to run preferrably within that same node.
+> > > 
+> > > A more precise affinity is usually notified by calling
+> > > kthread_create_on_cpu() or kthread_bind[_mask]() before the first wakeup.
+> > > 
+> > > For the others, a default affinity to the node is desired and sometimes
+> > > implemented with more or less success when it comes to deal with hotplug
+> > > events and nohz_full / CPU Isolation interactions:
+> > > 
+> > > - kcompactd is affine to its node and handles hotplug but not CPU Isolation
+> > > - kswapd is affine to its node and ignores hotplug and CPU Isolation
+> > > - A bunch of drivers create their kthreads on a specific node and
+> > >   don't take care about affining further.
+> > > 
+> > > Handle that default node affinity preference at the generic level
+> > > instead, provided a kthread is created on an actual node and doesn't
+> > > apply any specific affinity such as a given CPU or a custom cpumask to
+> > > bind to before its first wake-up.
+> > 
+> > Makes sense.
+> > 
+> > > This generic handling is aware of CPU hotplug events and CPU isolation
+> > > such that:
+> > > 
+> > > * When a housekeeping CPU goes up and is part of the node of a given
+> > >   kthread, it is added to its applied affinity set (and
+> > >   possibly the default last resort online housekeeping set is removed
+> > >   from the set).
+> > > 
+> > > * When a housekeeping CPU goes down while it was part of the node of a
+> > >   kthread, it is removed from the kthread's applied
+> > >   affinity. The last resort is to affine the kthread to all online
+> > >   housekeeping CPUs.
+> > 
+> > But I am not really sure about this part. Sure it makes sense to set the
+> > affinity to exclude isolated CPUs but why do we care about hotplug
+> > events at all. Let's say we offline all cpus from a given node (or
+> > that all but isolated cpus are offline - is this even
+> > realistic/reasonable usecase?). Wouldn't scheduler ignore the kthread's
+> > affinity in such a case? In other words how is that different from
+> > tasksetting an userspace task to a cpu that goes offline? We still do
+> > allow such a task to run, right? We just do not care about affinity
+> > anymore.
 > 
-> How does this work with e.g. udev module loading? If the ID isn't
-> known until we attempt to probe a device, then if all AMBA drivers
-> are modular, there'll be no drivers registered to cause an attempt
-> to match a device to a driver, and thus there will be no
-> peripheral IDs for udev to use to load modules.
+> Suppose we have this artificial online set:
 > 
+> NODE 0 -> CPU 0
+> NODE 1 -> CPU 1
+> NODE 2 -> CPU 2
+> 
+> And we have nohz_full=1,2
+> 
+> So there is kswapd/2 that is affine to NODE 2 and thus CPU 2 for now.
+> 
+> Now CPU 2 goes offline. The scheduler migrates off all
+> tasks. select_fallback_rq() for kswapd/2 doesn't find a suitable CPU
+> to run to so it affines kswapd/2 to all remaining online CPUs (CPU 0, CPU 1)
+> (see the "No more Mr. Nice Guy" comment).
+> 
+> But CPU 1 is nohz_full, so kswapd/2 could run on that isolated CPU. Unless we
+> handle things before, like this patchset does.
 
-drivers/amba/bus.c have registered a empty AMBA driver @amba_proxy_drv
-this change makes AMBA device without valid periphid ONLY match with
-the empty driver, that will trigger trying to read periphid with
-bus_type's @amba_bustype's amba_probe(). it will send AMBA device adding
-uevent once periphid is read out, then udev will notice the uevent and
-perform further actions.
+But that is equally broken as before, no? CPU2 is isolated as well so it
+doesn't really make much of a difference.
 
+> And note that adding isolcpus=domain,1,2 or setting 1,2 as isolated
+> cpuset partition (like most isolated workloads should do) is not helping
+> here. And I'm not sure this last resort scheduler code is the right place
+> to handle isolated cpumasks.
+
+Well, we would have the same situation with userspace tasks, no? Say I
+have taskset -p 2 (because I want bidning to node2) and that CPU2 goes
+offline. The task needs to be moved somewhere. And it would be last
+resort logic to do that unless I am missing anything. Why should kernel
+threads be any different?
+
+> So it looks necessary, unless I am missing something else?
+
+I am not objecting to patch per se. I am just not sure this is really
+needed. It is great to have kernel threads bound to non isolated cpus by
+default if they have node preferences. But as soon as somebody starts
+offlining cpus excessively and make the initial cpumask empty then
+select_fallback_rq sounds like the right thing to do.
+
+Not my call though. I was just curious why this is needed and it seems
+to me you are looking for some sort of correctness for broken setups.
+-- 
+Michal Hocko
+SUSE Labs
 
