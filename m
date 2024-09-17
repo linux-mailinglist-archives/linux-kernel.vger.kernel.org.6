@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-331394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855E597AC47
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A927E97AC53
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 09:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23B7AB22AEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5FB01F248D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5491814E2E3;
-	Tue, 17 Sep 2024 07:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E844594A;
+	Tue, 17 Sep 2024 07:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKj5ky0R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="MlGiO8IF"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD8F7F477;
-	Tue, 17 Sep 2024 07:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8491271750;
+	Tue, 17 Sep 2024 07:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726558711; cv=none; b=YygJjqjUdK/5VOx4BQFLbn/hD48OzzOF1wHdLl2bw7YEs6trq7YJrvRpFN6Aqqg43miNY/eLfMCyhUgZE1d2qaj5ovOLRlIRpsWw89QIk/rFhZ3rTlLbpdW1kaLQdz/s7vi1Jzktf0nAys5CnVPZl4psjMGVM422+o5hRaUkdvw=
+	t=1726559078; cv=none; b=rkaxdvhf+PQOGmkH6TcSMDPsmQIO6YB0AM47YU2RqsJu0VG7kScSkGr/fQeyIf0VTG88hW33Xw2cwTnjlFz9D/BBaTmtrMGJc8DNr/6bifkFO8z6UZ/sMrikHdrLf1ScTWsr0OKhJHhDpKty+JPsYVjcCK3NrWDKEq8kyTrpIc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726558711; c=relaxed/simple;
-	bh=W9FGfW3WwX5TvvthiroecfgwLNT2pwNbL4OeKD5b7GA=;
+	s=arc-20240116; t=1726559078; c=relaxed/simple;
+	bh=2GovlFmFngew98nnqJdSUfpfZ6K5DSEqQBQAgPo4Q6w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LnyBO/hUvT1xCYhewq0fmSvWO4OdnYyoE4DuxtQQ9182rHA+1VUCG8xkMZlvvUcGO4N/AnRTi0Xst2X/TwRDM+tgt39i0BJ4JlMe0+B1YDutZiDeie4TsOMzWpbNiHCqSyksDcBrFq/gWVj9412xYjTtPNLMV6j6+5Ldo/mE9h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKj5ky0R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D565C4CECE;
-	Tue, 17 Sep 2024 07:38:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726558711;
-	bh=W9FGfW3WwX5TvvthiroecfgwLNT2pwNbL4OeKD5b7GA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XKj5ky0RMiLXrrPB/xPe5xRerlV2/ArPrqisvhkNlrLz+KlGKurcuZnUY0U6XrDpL
-	 JAzWEOaEq22x89QfKEMdEigAxRySjFEfLbL29a1lJgVgrfu65rC5b3z9zbYC9c7mss
-	 g4vAAZpcLBLIapuT3KJ/qr7bnaxnmT8CXsj/vNd/ANZngjDVjzZNAxFPWDttUgsmsK
-	 o+o5JUs3y95ZXh3deyIys66IBEKiEacJQLPEaI/jQukb0NCWpEh/+jTTc/k97LyImk
-	 HD9hpy1NfGZYg5yRGk1mb9KUabxKKbHoAVhYjxhM4Fhj3nEIVTZGQ4A6KyUmOklHwv
-	 mDD1iNdKJBjtw==
-Date: Tue, 17 Sep 2024 08:38:24 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, helgaas@kernel.org, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, bagasdotme@gmail.com,
-	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
-	jing2.liu@intel.com
-Subject: Re: [PATCH V5 1/5] PCI: Add TLP Processing Hints (TPH) support
-Message-ID: <20240917073824.GJ167971@kernel.org>
-References: <20240916205103.3882081-1-wei.huang2@amd.com>
- <20240916205103.3882081-2-wei.huang2@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YaByh7w6FaMlzA+3dLlZksA/x/fBewBB/Hxl6Rus+TMqoexBngtVbNorKIk/5aR50xfmUZrL6nbyiEQUCc5AG/K8m+yaSU4TVuAzolMnOx9MGeWsiyhz6qnCYBs5TCcXRsCqvv46KMAIKV0ZlFj+cDblYRZ9tvHStyvTUKU82kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=MlGiO8IF; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9cCDNqUqku74cuT7uPSo0Wm5Piy7EOaKF6xGAapJSn8=; b=MlGiO8IFgA/5EE8FaV84k6wbe5
+	hL87z/Km4WaN9jOXFpYpVWjE00u+bKu2Whq+a5UKdOEEg7YJ57e4DcFyeOGak3IabNckm1PpwrbgY
+	K12LtGN71UYaDm2LotNk6R14LIpbc7MVqwemmNVAn7HLHBXA7v+ZuRMRgUEK9zxNCNRBFG61pOywl
+	2kogj/jVtNYd2W9thyz44rcpHCWOB2F+odMecViYUCdYGkSztpnASLeKU8o7QVPULgXddI2Hmleof
+	R5ltXXvY/SXeeHjNwXD7H26eQsTiRQc0lSIMWiH+jGxAN/DGSeKZm0eSDMaD6Vj3CLsq1f9JOh3Gu
+	BMonxIIA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sqSsv-0000000D8Ft-3xHZ;
+	Tue, 17 Sep 2024 07:44:29 +0000
+Date: Tue, 17 Sep 2024 08:44:29 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Yiyang Wu <toolmanp@tlmp.cc>, linux-erofs@lists.ozlabs.org,
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 19/24] erofs: introduce namei alternative to C
+Message-ID: <20240917074429.GE3107530@ZenIV>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-20-toolmanp@tlmp.cc>
+ <20240916170801.GO2825852@ZenIV>
+ <ocmc6tmkyl6fnlijx4r3ztrmjfv5eep6q6dvbtfja4v43ujtqx@y43boqba3p5f>
+ <1edf9fe3-5e39-463b-8825-67b4d1ad01be@linux.alibaba.com>
+ <20240917073149.GD3107530@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,120 +65,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240916205103.3882081-2-wei.huang2@amd.com>
+In-Reply-To: <20240917073149.GD3107530@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Sep 16, 2024 at 03:50:59PM -0500, Wei Huang wrote:
-> Add support for PCIe TLP Processing Hints (TPH) support (see PCIe r6.2,
-> sec 6.17).
+On Tue, Sep 17, 2024 at 08:31:49AM +0100, Al Viro wrote:
+
+> > After d_splice_alias() and d_add(), rename() could change d_name.  So
+> > either we take d_lock or with rcu_read_lock() to take a snapshot of
+> > d_name in the RCU walk path.  That is my overall understanding.
 > 
-> Add missing TPH register definitions in pci_regs.h, including the TPH
-> Requester capability register, TPH Requester control register, TPH
-> Completer capability, and the ST fields of MSI-X entry.
+> No, it's more complicated than that, sadly.  ->d_name and ->d_parent are
+> the trickiest parts of dentry field stability.
 > 
-> Introduce pcie_enable_tph() and pcie_disable_tph(), enabling drivers to
-> toggle TPH support and configure specific ST mode as needed. Also add a
-> new kernel parameter, "pci=notph", allowing users to disable TPH support
-> across the entire system.
+> > But for EROFS, since we don't have rename, so it doesn't matter.
 > 
-> Co-developed-by: Jing Liu <jing2.liu@intel.com>
-> Signed-off-by: Jing Liu <jing2.liu@intel.com>
-> Co-developed-by: Paul Luse <paul.e.luse@linux.intel.com>
-> Signed-off-by: Paul Luse <paul.e.luse@linux.intel.com>
-> Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Wei Huang <wei.huang2@amd.com>
-> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-> Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com>
-> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+> See above.  IF we could guarantee that all filesystem images are valid
+> and will remain so, life would be much simpler.
 
-...
+In any case, currently it is safe - d_splice_alias() is the last thing
+done by erofs_lookup().  Just don't assume that names can't change in
+there - and the fewer places in filesystem touch ->d_name, the better.
 
-> diff --git a/drivers/pci/pcie/tph.c b/drivers/pci/pcie/tph.c
+In practice, for ->lookup() you are safe until after d_splice_alias()
+and for directory-modifying operations you are safe unless you start
+playing insane games with unlocking and relocking the parent directories
+(apparmorfs does; the locking is really obnoxious there).  That covers
+the majority of ->d_name and ->d_parent accesses in filesystem code.
 
-...
+->d_hash() and ->d_compare() are separate story; I've posted a text on
+that last year (or this winter - not sure, will check once I get some
+sleep).
 
-> +/**
-> + * pcie_enable_tph - Enable TPH support for device using a specific ST mode
-> + * @pdev: PCI device
-> + * @mode: ST mode to enable. Current supported modes include:
-> + *
-> + *   - PCI_TPH_ST_NS_MODE: NO ST Mode
-> + *   - PCI_TPH_ST_IV_MODE: Interrupt Vector Mode
-> + *   - PCI_TPH_ST_DS_MODE: Device Specific Mode
-> + *
-> + * Checks whether the mode is actually supported by the device before enabling
-> + * and returns an error if not. Additionally determines what types of requests,
-> + * TPH or extended TPH, can be issued by the device based on its TPH requester
-> + * capability and the Root Port's completer capability.
-> + *
-> + * Return: 0 on success, otherwise negative value (-errno)
-> + */
-> +int pcie_enable_tph(struct pci_dev *pdev, int mode)
-> +{
-> +	u32 reg;
-> +	u8 dev_modes;
-> +	u8 rp_req_type;
-> +
-> +	/* Honor "notph" kernel parameter */
-> +	if (pci_tph_disabled)
-> +		return -EINVAL;
-> +
-> +	if (!pdev->tph_cap)
-> +		return -EINVAL;
-> +
-> +	if (pdev->tph_enabled)
-> +		return -EBUSY;
-> +
-> +	/* Sanitize and check ST mode comptability */
+d_path() et.al. are taking care to do the right thing; those (and %pd
+format) can be used safely.
 
-Hi Wei Huang, all,
-
-Another minor nit from my side (the last one, I think):
-
-comptability -> compatibility
-
-Flagged by checkpatch.pl --codespell
-
-> +	mode &= PCI_TPH_CTRL_MODE_SEL_MASK;
-> +	dev_modes = get_st_modes(pdev);
-> +	if (!((1 << mode) & dev_modes))
-> +		return -EINVAL;
-> +
-> +	pdev->tph_mode = mode;
-> +
-> +	/* Get req_type supported by device and its Root Port */
-> +	pci_read_config_dword(pdev, pdev->tph_cap + PCI_TPH_CAP, &reg);
-> +	if (FIELD_GET(PCI_TPH_CAP_EXT_TPH, reg))
-> +		pdev->tph_req_type = PCI_TPH_REQ_EXT_TPH;
-> +	else
-> +		pdev->tph_req_type = PCI_TPH_REQ_TPH_ONLY;
-> +
-> +	rp_req_type = get_rp_completer_type(pdev);
-> +
-> +	/* Final req_type is the smallest value of two */
-> +	pdev->tph_req_type = min(pdev->tph_req_type, rp_req_type);
-> +
-> +	if (pdev->tph_req_type == PCI_TPH_REQ_DISABLE)
-> +		return -EINVAL;
-> +
-> +	/* Write them into TPH control register */
-> +	pci_read_config_dword(pdev, pdev->tph_cap + PCI_TPH_CTRL, &reg);
-> +
-> +	reg &= ~PCI_TPH_CTRL_MODE_SEL_MASK;
-> +	reg |= FIELD_PREP(PCI_TPH_CTRL_MODE_SEL_MASK, pdev->tph_mode);
-> +
-> +	reg &= ~PCI_TPH_CTRL_REQ_EN_MASK;
-> +	reg |= FIELD_PREP(PCI_TPH_CTRL_REQ_EN_MASK, pdev->tph_req_type);
-> +
-> +	pci_write_config_dword(pdev, pdev->tph_cap + PCI_TPH_CTRL, reg);
-> +
-> +	pdev->tph_enabled = 1;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(pcie_enable_tph);
-
-...
+Anyway, I'm half-asleep at the moment and I'd rather leave writing these
+rules up until tomorrow.  Sorry...
 
