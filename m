@@ -1,92 +1,141 @@
-Return-Path: <linux-kernel+bounces-331829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED5F97B1BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:24:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64AED97B1C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C251C22238
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:24:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC865B2141C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F706188A02;
-	Tue, 17 Sep 2024 14:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDF31925B7;
+	Tue, 17 Sep 2024 14:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fe2xLK84"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TvDA7Lia"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF37187FF5;
-	Tue, 17 Sep 2024 14:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF121922ED;
+	Tue, 17 Sep 2024 14:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726585143; cv=none; b=Dh6v3+GslWR3UfMSSKzyV9aaXm+ndaPOODllxtZEzywH5ezdyVF3rbLYrhO5aEDrtXCwVPFEPpsj9NW+YPWgp0EZVbRIabddMwyCIyoeknTFQB65r6iaUcEOVN+EiZj0jOqlMldinHhdvdOJ1v54IqWlI5WXmzLlHqIOH34KFcM=
+	t=1726585186; cv=none; b=TLcpp+ACNgRScoKL+z8hTERu/x5m7XYzCO3qCU9tLgzu+9uDqI6NhINuyyRxMGXiCcESaj3Pf/MfaF/X+scnsM0GYDTwTdSF1Vyme0xTU+ATfBuL5jOSy997NTytiQG3X81OMF7NUcP318W0t23zSn0rmsz6gqyFOJrPNTHDkg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726585143; c=relaxed/simple;
-	bh=RzBd61ZiE5iObY/dWD1aI/PEu/Zlxazk8FvhgR8ZWf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbejj1n+FOjYtYdUmhfw3ZBwewsLyl74/8k6qdV0wRMaLCx84Nn+MbD2DaHPhE0NM4JL5iSeFOWi5eneRm/mx9MgS7MouErC5rMMF+j2dFUNFlbj251XLLPHdwFyhLSwdAeO90DSUz2FW9H+KIoyWxZUfL8XCiKLviYWhZfBXX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fe2xLK84; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 36AE21C0004;
-	Tue, 17 Sep 2024 14:58:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726585134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RNjBY/yrqiRYcCWR8FN7MlTfLsbuXBXY/h7RcE1c1zM=;
-	b=Fe2xLK84IaCCn94GfdEPfB+GrUeTShJDFxjrZ5qo2CPyMZZkIRQjHnI+7OxhgvtNosNkUv
-	tXQjcvWQ1zTSUWzSvfYSs/7LL9BzM0885E0okb6+8ahVdPEdtXUWDP3z6faZWzwngN1oNF
-	2svjDrP4t9tWK3SG6j1EdalxOR/7WuklE8ygG+XSuJrK1CuWNP0lhcbsdUP3y6GPeH4Er5
-	gACcaBCNXWXFBlFra1OO7J2LDCPNLZlQo8s4IlQwTXbskwca4qqvB5CZy6V/xHlgfvV0yY
-	RqpypQM9pbI9wvTA47Pgpa9tbm8bU94k6RTxOPPMmwIbGMZDy4330BH5XhhAyw==
-Date: Tue, 17 Sep 2024 16:58:51 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: miquel.raynal@bootlin.com, Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Cc: 21210240012@m.fudan.edu.cn, 21302010073@m.fudan.edu.cn,
-	conor.culhane@silvaco.com, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org, frank.li@nxp.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] i3c: master: svc: Fix use after free vulnerability in
- svc_i3c_master Driver Due to Race Condition
-Message-ID: <172658508687.68424.10453824473496378760.b4-ty@bootlin.com>
-References: <20240914163932.253-1-kxwang23@m.fudan.edu.cn>
+	s=arc-20240116; t=1726585186; c=relaxed/simple;
+	bh=7yGTXCeJyHx0pn9KEaVOKoW1uu11ZTcpJPmslp+rTFk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FPiKatLPpgh36Ka2zqa2babrwLnHt3yV3cTimiVVZceDC4fCboIBGJFvGZNJFHFzwTCtzZ7NaV7LHhAMHcFcGsqHO3qO8D4JKnmhZF0dvDFx+wU2Ic+YMrF9P/75KmlOkdnlfEq2L37biZr+WfDDPujnVvhdtjeOjDFJnODPRPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TvDA7Lia; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GNGEHe022320;
+	Tue, 17 Sep 2024 14:59:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KCPA0YBW61i/OFnXlZZqJSraPl+xBvzDKB4MCJnZBuA=; b=TvDA7LiasXu3VACB
+	OHBue/f0ViTdGeL912ROh11CUHNF5AN8r5TzIBAa4+PqcuEcWkJxBtJy5nbO/52X
+	Og4DZ5t7792EzS4jnjgBpF9LTPi4/UQTwrd8A8fxIUqgswnfpAV0Hwt37Tq3I7Co
+	CtH6GfLgar5oQflsYBGBIWYImti+mS4nm6JCKwcdg4NG+ugVbmfAtbZErLIQvGFR
+	FXp8o2GudlrdJQRVbL5S9EzN5ZFhjdO1dEPCqSPbKcKFLBSmhCZDWmx9BZt2AYJD
+	RYd7jkJ1xfB2T2GdfTe4M7jJtKQRIFhRlUoLsIoDlo1MYiNCPZc/TMjPTlNtQrJk
+	9uqX0Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hey2t0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 14:59:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48HExZik029143
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 14:59:35 GMT
+Received: from [10.251.40.127] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Sep
+ 2024 07:59:31 -0700
+Message-ID: <a3abd3f6-6247-4933-9b8e-df2241a3ec75@quicinc.com>
+Date: Tue, 17 Sep 2024 07:59:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240914163932.253-1-kxwang23@m.fudan.edu.cn>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: qrtr: Update packets cloning when broadcasting
+To: Youssef Samir <quic_yabdulra@quicinc.com>, <mani@kernel.org>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <andersson@kernel.org>
+CC: <quic_jhugo@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Carl Vanderlip
+	<quic_carlv@quicinc.com>
+References: <20240916170858.2382247-1-quic_yabdulra@quicinc.com>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240916170858.2382247-1-quic_yabdulra@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fYzBeVyEEexO_S_T4TmGrkb0m4WMCa-p
+X-Proofpoint-GUID: fYzBeVyEEexO_S_T4TmGrkb0m4WMCa-p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011
+ mlxlogscore=999 adultscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409170107
 
-On Sun, 15 Sep 2024 00:39:33 +0800, Kaixin Wang wrote:
-> In the svc_i3c_master_probe function, &master->hj_work is bound with
-> svc_i3c_master_hj_work, &master->ibi_work is bound with
-> svc_i3c_master_ibi_work. And svc_i3c_master_ibi_work  can start the
-> hj_work, svc_i3c_master_irq_handler can start the ibi_work.
+Hi Youssef,
+
+On 9/16/2024 10:08 AM, Youssef Samir wrote:
+> When broadcasting data to multiple nodes via MHI, using skb_clone()
+> causes all nodes to receive the same header data. This can result in
+> packets being discarded by endpoints, leading to lost data.
 > 
-> If we remove the module which will call svc_i3c_master_remove to
-> make cleanup, it will free master->base through i3c_master_unregister
-> while the work mentioned above will be used. The sequence of operations
-> that may lead to a UAF bug is as follows:
+> This issue occurs when a socket is closed, and a QRTR_TYPE_DEL_CLIENT
+> packet is broadcasted. All nodes receive the same destination node ID,
+> causing the node connected to the client to discard the packet and
+> remain unaware of the client's deletion.
 > 
-> [...]
 
-Applied, thanks!
+I guess this never happens for the SMD/RPMSG transport because the skb 
+is consumed within the context of qrtr_node_enqueue where as MHI queues 
+the skb to be transmitted later.
 
-[1/1] i3c: master: svc: Fix use after free vulnerability in svc_i3c_master Driver Due to Race Condition
-      https://git.kernel.org/abelloni/c/618507257797
+Does the duplicate destination node ID match the last node in the 
+qrtr_all_nodes list?
 
-Best regards,
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Replace skb_clone() with pskb_copy(), to create a separate copy of
+> the header for each sk_buff.
+> 
+> Fixes: bdabad3e363d ("net: Add Qualcomm IPC router")
+> Signed-off-by: Youssef Samir <quic_yabdulra@quicinc.com>
+> Reviewed-by: Jeffery Hugo <quic_jhugo@quicinc.com>
+> Reviewed-by: Carl Vanderlip <quic_carlv@quicinc.com>
+> ---
+>   net/qrtr/af_qrtr.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/qrtr/af_qrtr.c b/net/qrtr/af_qrtr.c
+> index 41ece61eb57a..00c51cf693f3 100644
+> --- a/net/qrtr/af_qrtr.c
+> +++ b/net/qrtr/af_qrtr.c
+> @@ -884,7 +884,7 @@ static int qrtr_bcast_enqueue(struct qrtr_node *node, struct sk_buff *skb,
+>   
+>   	mutex_lock(&qrtr_node_lock);
+>   	list_for_each_entry(node, &qrtr_all_nodes, item) {
+> -		skbn = skb_clone(skb, GFP_KERNEL);
+> +		skbn = pskb_copy(skb, GFP_KERNEL);
+>   		if (!skbn)
+>   			break;
+>   		skb_set_owner_w(skbn, skb->sk);
 
