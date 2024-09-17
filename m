@@ -1,130 +1,163 @@
-Return-Path: <linux-kernel+bounces-332111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF5A97B5B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C4297B5BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D692882D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:28:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBF5288C27
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 22:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E6216C687;
-	Tue, 17 Sep 2024 22:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E5C192B93;
+	Tue, 17 Sep 2024 22:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="czMEgfPl"
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRLlo5lG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4A816849F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 22:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0732D192B65;
+	Tue, 17 Sep 2024 22:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726612093; cv=none; b=TsDYeDO1CTU7dHVymmHxSLERiBCAkx7MSg5xTmQXjf84vAaWzX7MAorgZkH2ZmByrLygT9ijcDKk8uzMmI/S663Kncv0rH6JOeBHv4eLFwqn0HGXhdg+hTTRaJ8M8xVszCFBkaiGIiQSG5SGw2kaLbHkbQ7cj2yRKy9IpKIvRxw=
+	t=1726612107; cv=none; b=S8tYbDHVMpRMFJZIhIBgmUQbp1Ez9ZJGYOMOr3FYG46IySsAIBDOYvwG2puvmtp3vNYZFO2cNVJqQ6dqheRtl1y+T7XM/YMOTE3t+G7FUKRQ/FXH5ZCs2QjwEDL/9iq+bMejwj0YvFYvF1GAThCEDednjyMJ2Jf+3Ge187p0ciI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726612093; c=relaxed/simple;
-	bh=ITGcAc30GiZ2r9on52mDfrwUHdGvKkm4dpPJI3/8rlc=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=iDP1Wg1Mb5A+QjSSyHroaDqIR+mlY1an/6QdYbuGQWu/pK24lk2Rfnat0NoFR+vx4trlnyX2lbWipV+690TF2J86/IiyrUOwsBfvwTUHwwTCqHwWceYWe4i5yvu295L/E1juktrXt9xsEjBxSFN/Pcl4v6sL1CSfjI7g4md8OJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=czMEgfPl; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
-	by cmsmtp with ESMTPS
-	id qYGrsyuZtnNFGqgg5sJ2Mz; Tue, 17 Sep 2024 22:28:09 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id qgg4sbX7SIQwZqgg4saLNU; Tue, 17 Sep 2024 22:28:09 +0000
-X-Authority-Analysis: v=2.4 cv=FModxfos c=1 sm=1 tr=0 ts=66ea0279
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HhgWGGqSUKaUXy95pivy0JeC032zQ5e5NLogHgBkqFI=; b=czMEgfPlGR94PnCTB3YbXY5Hq7
-	HdtvDOkxgLgRmD4YEHOCme7zVVicM37CW8xwzu4g0BWuBCk5RcQXDzXHpcx8UJjnBP6umTslu4rfD
-	KmdplnQgPeP9KQE1qB+9XHhR0rJNq0rZsNAqKC7TfHDwhsdlnvBPdixUWGC1l7tUnXil+gB0iXsgE
-	E9ria9wHC82Ooj1yLf3gsRD+7LEvgErB2pCwUz7z2oU1ovHaUjvscxKjuezX0gmvCZ0q2uzLsLkzH
-	edNHX7UtNgmnWlhYkqD369E+lzcQTejukjsadYBAGMOcH5bd8tC1cBh62il0iwKvgJmJLfV6ekuRh
-	V6zvb9Lg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:41170 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sqgg2-001Uoq-1H;
-	Tue, 17 Sep 2024 16:28:06 -0600
-Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240916114228.914815055@linuxfoundation.org>
-In-Reply-To: <20240916114228.914815055@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <9a7a68d4-845c-6d37-420d-e98d6781df34@w6rz.net>
-Date: Tue, 17 Sep 2024 15:28:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1726612107; c=relaxed/simple;
+	bh=ukObCMspFSCFE55xSfnhSqn0sZVwDJhzCm5JUIv+TK8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AwMHwipOGfr+otzE2CYUwaA0Ma0sYs8+Vf0ZAzOyT+Kay3U+BPOjoknWVV8HXRlORcvyfkqe+srNdbGNFD8jt00hYHGuxaUCv+0QhY6nCOqn3rR0/NeARp/Qh5Id81YGf8nIkZmFTZOSrxU9Gk2Z04qjhRUddAiI8voGfwEeKC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRLlo5lG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E91D5C4CECD;
+	Tue, 17 Sep 2024 22:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726612106;
+	bh=ukObCMspFSCFE55xSfnhSqn0sZVwDJhzCm5JUIv+TK8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oRLlo5lGbC5AbGkgYAW4uo1S+3wuOY1cvHmY6lqZ2hwVREmKzh0zZXWW8litnuuP8
+	 ikFcs1ahw3CazAkkvvmXrvag2boikZ2xrschEg5md53C0F3EOGQoLErUyUVN4Xf4CT
+	 btDSwcsfPc3g5W1EZ+hUVLnThRNRRiQFYG8pEBty/To7ZnzdOUcr3x9vW6FCi29FkI
+	 2VoMLt/HxuXr068ngW36+1t5lUqz3y40LILkWKBtPUKJPOc1tWR9giMw284jgMaxIf
+	 ZPSfXMByKvRA7qwI8pfWyCVBVoadUOHYpQaGxJ2YMkZqiK/L1+sv8cjbb2yc0a2JYS
+	 IvYOpmcs096+Q==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	linux-toolchains@vger.kernel.org
+Subject: [RFC/PATCHSET 0/5] perf tools: Support deferred user callchains (v2)
+Date: Tue, 17 Sep 2024 15:28:15 -0700
+Message-ID: <20240917222820.197594-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sqgg2-001Uoq-1H
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:41170
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfGvXkmzsrVhvavpu7ZsGHVNw+htkQcIXJPuFdU0YUSHKePq8pfRJtaUf2MDrl/ueZEHrBdwEUdT6U2Cf5mMTpjQoFmcgcIIroqKaUbC0PUjVrmIdgsw2
- jyF53bwB5MmCp50+lUSxZIpHU+S+lPSsFKiwW3BsHVyoDPU0JPUo3EmN1xDODhCza68gH+scK1zWRM/lqF2Mja+b8i8WhXjSaGw=
+Content-Transfer-Encoding: 8bit
 
-On 9/16/24 4:42 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.11 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hello,
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+This is a counterpart for Josh's kernel change v2 [1] to support deferred
+user callchains.  The change is transparent and users should not notice
+anything with the deferred callchains.
 
-Tested-by: Ron Economos <re@w6rz.net>
+  $ perf record -g sleep 1
+
+I added --[no-]merge-callchains option to control output of perf script.
+You can verify it has the deferred callchains like this:
+
+  $ perf script --no-merge-callchains
+  perf     801 [000]    18.031793:          1 cycles:P:
+          ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
+          ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
+          ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
+          ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
+          ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
+          ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
+          ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
+          ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
+          ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
+          ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
+          ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
+          ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
+          ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
+
+  perf     801 [000]    18.031814: DEFERRED CALLCHAIN
+                  7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
+
+  ...
+
+When the callchain is merged (it's the default) it'd look like below:
+
+  $ perf script
+  perf     801 [000]    18.031793:          1 cycles:P:
+          ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
+          ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
+          ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
+          ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
+          ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
+          ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
+          ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
+          ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
+          ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
+          ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
+          ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
+          ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
+          ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
+                  7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
+
+  ...
+
+Notice that the last line and it has the __GI___ioctl in the same
+callchain.  It should work with other tools like perf report.
+
+The code is available at 'perf/defer-callchain-v2' branch in
+https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+
+Thanks,
+Namhyung
+
+[1] https://lore.kernel.org/lkml/cover.1726268190.git.jpoimboe@kernel.org
+
+
+Namhyung Kim (5):
+  perf tools: Sync UAPI perf_event.h header
+  perf tools: Minimal DEFERRED_CALLCHAIN support
+  perf record: Enable defer_callchain for user callchains
+  perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
+  perf tools: Merge deferred user callchains
+
+ tools/include/uapi/linux/perf_event.h     | 21 +++++-
+ tools/lib/perf/include/perf/event.h       |  7 ++
+ tools/perf/Documentation/perf-script.txt  |  5 ++
+ tools/perf/builtin-script.c               | 92 +++++++++++++++++++++++
+ tools/perf/util/callchain.c               | 24 ++++++
+ tools/perf/util/callchain.h               |  3 +
+ tools/perf/util/event.c                   |  1 +
+ tools/perf/util/evlist.c                  |  1 +
+ tools/perf/util/evlist.h                  |  1 +
+ tools/perf/util/evsel.c                   | 32 +++++++-
+ tools/perf/util/evsel.h                   |  1 +
+ tools/perf/util/machine.c                 |  1 +
+ tools/perf/util/perf_event_attr_fprintf.c |  1 +
+ tools/perf/util/sample.h                  |  3 +-
+ tools/perf/util/session.c                 | 78 +++++++++++++++++++
+ tools/perf/util/tool.c                    |  2 +
+ tools/perf/util/tool.h                    |  4 +-
+ 17 files changed, 273 insertions(+), 4 deletions(-)
+
+-- 
+2.46.0.792.g87dc391469-goog
 
 
