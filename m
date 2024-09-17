@@ -1,66 +1,101 @@
-Return-Path: <linux-kernel+bounces-331915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4184097B2F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:25:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6C697B2F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11D01F22D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:25:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28495B2404D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B692717BECB;
-	Tue, 17 Sep 2024 16:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C770417B4E9;
+	Tue, 17 Sep 2024 16:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3yUgbQt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QjwzFnEa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nFZPvPkg";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QjwzFnEa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nFZPvPkg"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBD1175D5C;
-	Tue, 17 Sep 2024 16:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541F41531CC;
+	Tue, 17 Sep 2024 16:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726590291; cv=none; b=b4wv9qfeLYWcxf7OOi2kga4tQNpi7x19dcy1ayrMoMYirDH7L54xfnKA4+edRIRgV/lY7N1Lnj5wm0Qab/71S56YwUr3P6KCl731BqEvw9QgLlnJ+PGsEHmnkuho66ZGnKyHTzpdhRi7MOvHMnOnhU9jYsEZ95aksCkTGWiWGC0=
+	t=1726590315; cv=none; b=GiwkAfW4/WWa3ZJNY2kwQee061ONyPW4SwV6UwRVxKp4MVzvy8KRoMmJ+fqboi4avUta4/512VYP0D0NlrLnapEizlszQoKnZFpHmWC36wtStMTFWNi4EFXSfIO8DawYwEKHfKHUORMI79TbjWyqdSFh6c2F9nAgZ676tKAx1s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726590291; c=relaxed/simple;
-	bh=FSJzYyebJu6EW3JtLhOKiicsMZb4Rpff6c5JHt6r/Uc=;
+	s=arc-20240116; t=1726590315; c=relaxed/simple;
+	bh=Ydk70KHQM2/FHTUJos6S6apo0Pz30BpsQw+QGuDykS0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YNAMRzAgRcaCYw1Scm+b6MYbdlddlAVz2zyUDmWJwZAIOJXNkmkDYwtSJBijlwKKRws5ts7o5jNxs/B5W8iXBZIcmhV7j241IQgkUssh95w+jooYfmNE3MCDh3Pq69Imn2v7RjuDPX/CX9mDT10KuATUi7GvF/oWhmJd1HkvArY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R3yUgbQt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6831FC4CEC5;
-	Tue, 17 Sep 2024 16:24:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726590290;
-	bh=FSJzYyebJu6EW3JtLhOKiicsMZb4Rpff6c5JHt6r/Uc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R3yUgbQtV8tokG1/kV8PQm0MbBIf4yGJMYzMOVqL3YftanW05+prjHe//G1Pu3B9d
-	 bDcevZBzWinn4BdwWbpwDmt2ipSyNaM5+a/ZojefTgf1tKpFIRRLHDS2KMnaPHNxPg
-	 stRxN03aOiXPGDwijZuM2+wRNTi20wk4teUNIMSFKGntJBbMshkDG1utS2XDCivZU0
-	 iafMUy3dIE5przpHhFh5p/e4kJoYGGZkKOgOGJIlCWsLdZ0MmBcLg/2QokpFGHendm
-	 1B91XwDCuvTlYWhhgWMRAX0GRvLVZHY+ZAVjAg6id5VhPleH0Q78wxWcQtPdApgI2l
-	 /FGI00YRFKXJQ==
-Date: Tue, 17 Sep 2024 17:24:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, helgaas@kernel.org, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, bagasdotme@gmail.com,
-	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
-	jing2.liu@intel.com
-Subject: Re: [PATCH V5 2/5] PCI/TPH: Add Steering Tag support
-Message-ID: <20240917162443.GQ167971@kernel.org>
-References: <20240916205103.3882081-1-wei.huang2@amd.com>
- <20240916205103.3882081-3-wei.huang2@amd.com>
- <20240917073215.GH167971@kernel.org>
- <6efc219d-29e1-4169-8393-c7e4610347cc@amd.com>
- <20240917161410.GP167971@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kcB9RvlZAHhRnvV93VeJyM5SrudX+5TEXO6LFthHkcTgyNEVngF5ERvRb5zyMA6mVvDGkTGy76IHxglioRo4v0ULAiNnvqkqjcel4j4E/+r0BTInIij1or3jNWOi4orgzu4C5lL4XGQ/W+Zo6D331yyyjd+Ht+nvCJ7fSraZOYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QjwzFnEa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nFZPvPkg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QjwzFnEa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nFZPvPkg; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 941D720109;
+	Tue, 17 Sep 2024 16:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726590311;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qdKW6EkONv4i994oa6L4QX4PlRqTMJWx+W6mB/sTMJE=;
+	b=QjwzFnEaK7LkkEKWG7ey9QEDFBRKc31wTDD5QShyD9jmzgzYST1fqJ80/3ebTrx/77Y99G
+	CQqjCUDZFXXU0lB/cQStNTjr5XjQ9se5zGDfR3lp+VaHQ0O9yitMDyb0dfoA2pwuRbP7lL
+	5maSvDalxascaMzhIRyTqdkzYPB7XhA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726590311;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qdKW6EkONv4i994oa6L4QX4PlRqTMJWx+W6mB/sTMJE=;
+	b=nFZPvPkgxvYhU0xP3KKcLTMOswgN9M6tdSoEh7wz4oLrVlKsyAVQkbkQeypmyKqrxKSD0H
+	Qj7U5BWPj1rWHmDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726590311;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qdKW6EkONv4i994oa6L4QX4PlRqTMJWx+W6mB/sTMJE=;
+	b=QjwzFnEaK7LkkEKWG7ey9QEDFBRKc31wTDD5QShyD9jmzgzYST1fqJ80/3ebTrx/77Y99G
+	CQqjCUDZFXXU0lB/cQStNTjr5XjQ9se5zGDfR3lp+VaHQ0O9yitMDyb0dfoA2pwuRbP7lL
+	5maSvDalxascaMzhIRyTqdkzYPB7XhA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726590311;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qdKW6EkONv4i994oa6L4QX4PlRqTMJWx+W6mB/sTMJE=;
+	b=nFZPvPkgxvYhU0xP3KKcLTMOswgN9M6tdSoEh7wz4oLrVlKsyAVQkbkQeypmyKqrxKSD0H
+	Qj7U5BWPj1rWHmDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 74EB813AB6;
+	Tue, 17 Sep 2024 16:25:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FSFXHGet6WZ+ZQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 17 Sep 2024 16:25:11 +0000
+Date: Tue, 17 Sep 2024 18:25:02 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Luca Stefani <luca.stefani.ge1@gmail.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] btrfs: Split remaining space to discard in chunks
+Message-ID: <20240917162502.GD2920@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240916125707.127118-1-luca.stefani.ge1@gmail.com>
+ <20240916125707.127118-2-luca.stefani.ge1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,36 +104,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240917161410.GP167971@kernel.org>
+In-Reply-To: <20240916125707.127118-2-luca.stefani.ge1@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -2.50
+X-Spamd-Result: default: False [-2.50 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,suse.cz:replyto,twin.jikos.cz:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Sep 17, 2024 at 05:14:10PM +0100, Simon Horman wrote:
-> On Tue, Sep 17, 2024 at 09:31:00AM -0500, Wei Huang wrote:
-> > 
-> > 
-> > On 9/17/24 02:32, Simon Horman wrote:
-> > > On Mon, Sep 16, 2024 at 03:51:00PM -0500, Wei Huang wrote:
-> > ...
-> > >> +	val = readl(vec_ctrl);
-> > >> +	mask = PCI_MSIX_ENTRY_CTRL_ST_LOWER | PCI_MSIX_ENTRY_CTRL_ST_UPPER;
-> > >> +	val &= ~mask;
-> > >> +	val |= FIELD_PREP(mask, (u32)tag);
-> > > 
-> > > Hi Wei Huang,
-> > > 
-> > > Unfortunately clang-18 (x86_64, allmodconfig, W=1, when applied to net-next)
-> > > complains about this.  I think it is because it expects FIELD_PREP to be
-> > > used with a mask that is a built-in constant.
-> > 
-> > I thought I fixed it, but apparently not enough for clang-18. I will
-> > address this problem, along with other comments from you and Bjorn (if any).
-> > 
-> > BTW there is another code in drivers/gpu/drm/ using a similar approach.
+On Mon, Sep 16, 2024 at 02:56:14PM +0200, Luca Stefani wrote:
+> Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
+> mostly empty although we will do the split according to our super block
+> locations, the last super block ends at 256G, we can submit a huge
+> discard for the range [256G, 8T), causing a super large delay.
 > 
-> Thanks,
+> We now split the space left to discard based on BTRFS_MAX_DATA_CHUNK_SIZE
+> in preparation of introduction of cancellation signals handling.
 > 
-> I will run some checks over drivers/gpu/drm/ and let you know if they find
-> anything.
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
+> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
+> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+> ---
+>  fs/btrfs/extent-tree.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+> index a5966324607d..79b9243c9cd6 100644
+> --- a/fs/btrfs/extent-tree.c
+> +++ b/fs/btrfs/extent-tree.c
+> @@ -1300,13 +1300,24 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
+>  		bytes_left = end - start;
+>  	}
+>  
+> -	if (bytes_left) {
+> +	while (bytes_left) {
+> +		u64 bytes_to_discard = min(SZ_1G, bytes_left);
 
-FWIIW, I did try compiling all the .c files under drivers/gpu/drm/ with
-clang-18, and it did not flag this problem.
+Please define a separate constant for that and also mention it in the
+changelog instead of BTRFS_MAX_DATA_CHUNK_SIZE.
+
+> +
+>  		ret = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
+> -					   bytes_left >> SECTOR_SHIFT,
+> +					   bytes_to_discard >> SECTOR_SHIFT,
+>  					   GFP_NOFS);
+> -		if (!ret)
+> -			*discarded_bytes += bytes_left;
+> +
+> +		if (ret) {
+> +			if (ret != -EOPNOTSUPP)
+> +				break;
+> +			continue;
+> +		}
+> +
+> +		start += bytes_to_discard;
+> +		bytes_left -= bytes_to_discard;
+> +		*discarded_bytes += bytes_to_discard;
+>  	}
+> +
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.46.0
+> 
 
