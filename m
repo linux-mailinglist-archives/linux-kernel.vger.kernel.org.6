@@ -1,110 +1,82 @@
-Return-Path: <linux-kernel+bounces-331689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386E297B00B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:22:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD2C97B013
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C9F28297C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:22:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B30F7B25282
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 12:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3354916A95B;
-	Tue, 17 Sep 2024 12:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102C9171675;
+	Tue, 17 Sep 2024 12:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YPkUKIQK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="fTXFL85G"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0CD156250
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 12:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EC943150;
+	Tue, 17 Sep 2024 12:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726575751; cv=none; b=OhLZRjuOYEVjD9EsArIckfsEZKMR5/iZwRf5xVpuWrc0ytM7aWcbxm2VzYfQ/1CjYwYFbibmkwO1DuAKNSYVTBFaG8teQ+ST1NfwfWUlmVelUm7hbtzXu2ccc5jcR2qE7qYQ/cQ2G5oCCJWKRYmTWQOYYCCE20SvId1hx0cq1Y0=
+	t=1726575799; cv=none; b=igDA+BYVcYrKSyHbLH9RMzJVZxSo3A4i8xKmiFTORiQouOHlR5XA+9mp/QotlbfDS2RwbXT91YiNxNPNHio+bhKUCkUKcVzUUnpUpYWBILAY5yRHm2ZO5AecMrxIKodahn2gKESL/prxRlGbA8SLHHuoHL1GosvfpKp8ru0IMsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726575751; c=relaxed/simple;
-	bh=xeuHGDnRy1DC9m3oPh8xhe81PwylpW4rMI++5qNAX/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E8frhPuyeoq5KXAi28BQT2PbJaZC7gYYzXoei4K4xlnyzI/zOJhnSR2MnzXrnGFDciV99gQ92ZcfrMLU/iWEwIBsIRs3ZYOJv1hdLnC++veTSkFIjofMA3GcIPKEUeox7eGkYsPrtx+lLtmGOU1U1ty4xG377gbmE15w4SukleE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YPkUKIQK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726575748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jdc0W87W/DOchOKoYPEek4bV7oRWeb/I9Hni4nlJ9R8=;
-	b=YPkUKIQKe0u9zWZWJvD477Vq0fHn23AhQ1iV1y+WCGfvi5BDS8ftVCIrQBiqBREqyMJLU1
-	8kl1emoR7fqkzXT+gbglTnk+joCgXQodeJFNSXzppaZGKbjRGIG4xwYLbB8fYCTk1pktpv
-	q1ysBX1Wfv0bJS8VrlQ4aoVydNG282U=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-nok1KpieM02snB7pAK7qkA-1; Tue,
- 17 Sep 2024 08:22:27 -0400
-X-MC-Unique: nok1KpieM02snB7pAK7qkA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1726575799; c=relaxed/simple;
+	bh=s01KuvTCbDVR8WKC3ckvpZ8pP6ILxVGR4xqqntSdNlI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=duyG7X1P/yJONxqqGtb78Us5ID834EpMF2RU0I6snauvk1me4UGXEOT/c3Uz0g8OpB1CzsYqYuJMEScf4W6caYda7E9VYqNlcil3npNWEHe+2ylUHCS8tMRIsZ/ikbDrm9Lf0Y6yrOqUNeGyVV+3yxBeJ8d/8vrMVZaXhI3MQ9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=fTXFL85G; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1726575793;
+	bh=l5b1A67OP/Y2uiKoarqWCTGMlz/bG3WrxVqC/iAu3zk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=fTXFL85GDr5HeFSDPu9Y+CkmW/P0RtSfgEjjMiSdGzNozY6cY6Awj9UbZQKIM4xVK
+	 oHB7mD9cc/nK2Al08TLCS3WY5I9NP+f2zH1Y1/7oGZoYqCmFvfvyxuXYHHdm0dtOCY
+	 x1wUxpPgTp4QvAVsRc2ydkSq26k1z/ISa7Z/3g3vE6oumDWN65hlICdxIn/+NZ9XDz
+	 WxmCtw8oadH1bZBzztHde+vBtDr80vypqGqWA/4HcdVJgAJqkk2a8GvcnIhku3PQeG
+	 vQhBzxDO6Bw1ghmXha0BVZ54teVQW1hhXw8jLgnv+gRQB3B1UD19/4dr8rTdicEM1s
+	 hcXtr6zMCWQ0A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03E2919560A3;
-	Tue, 17 Sep 2024 12:22:25 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.79])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CF70F19560AA;
-	Tue, 17 Sep 2024 12:22:18 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 17 Sep 2024 14:22:12 +0200 (CEST)
-Date: Tue, 17 Sep 2024 14:22:05 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 02/14] uprobe: Add support for session consumer
-Message-ID: <20240917122204.GB7752@redhat.com>
-References: <20240917085024.765883-1-jolsa@kernel.org>
- <20240917085024.765883-3-jolsa@kernel.org>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X7LXd3z57z4xVV;
+	Tue, 17 Sep 2024 22:23:13 +1000 (AEST)
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+To: linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
+Cc: christophe.leroy@csgroup.eu, segher@kernel.crashing.org, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, almasrymina@google.com, kuba@kernel.org
+In-Reply-To: <20240916120510.2017749-1-mpe@ellerman.id.au>
+References: <20240916120510.2017749-1-mpe@ellerman.id.au>
+Subject: Re: [PATCH] powerpc/atomic: Use YZ constraints for DS-form instructions
+Message-Id: <172657576225.2195991.10894874767253579579.b4-ty@ellerman.id.au>
+Date: Tue, 17 Sep 2024 22:22:42 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917085024.765883-3-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 09/17, Jiri Olsa wrote:
->
->  static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
-...
-> +	if (!ignore && !ZERO_OR_NULL_PTR(ri)) {
-> +		/*
-> +		 * The push_idx value has the final number of return consumers,
-> +		 * and ri->consumers_cnt has number of allocated consumers.
-> +		 */
-> +		ri->consumers_cnt = push_idx;
-> +		prepare_uretprobe(uprobe, regs, ri);
-> +	}
+On Mon, 16 Sep 2024 22:05:10 +1000, Michael Ellerman wrote:
+> The 'ld' and 'std' instructions require a 4-byte aligned displacement
+> because they are DS-form instructions. But the "m" asm constraint
+> doesn't enforce that.
+> 
+> That can lead to build errors if the compiler chooses a non-aligned
+> displacement, as seen with GCC 14:
+> 
+> [...]
 
-This looks wrong. ri is not kfreed if ignore == true.
+Applied to powerpc/next.
 
-But see my previous email, if we change this code as I tried to suggest
-the problem goes away and handler_chain() doesn't need "bool ignore".
+[1/1] powerpc/atomic: Use YZ constraints for DS-form instructions
+      https://git.kernel.org/powerpc/c/39190ac7cff1fd15135fa8e658030d9646fdb5f2
 
-Oleg.
-
+cheers
 
