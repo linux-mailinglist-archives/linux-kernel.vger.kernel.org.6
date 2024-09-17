@@ -1,145 +1,86 @@
-Return-Path: <linux-kernel+bounces-331838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3913797B1D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:34:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB4597B1D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 17:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A1A1F22E8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:34:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 264CB2822A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52C719F474;
-	Tue, 17 Sep 2024 15:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D971A00D6;
+	Tue, 17 Sep 2024 15:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="qB93pYbb"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVB63rQ1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA82B19F41B
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 15:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F026D19754A;
+	Tue, 17 Sep 2024 15:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726585416; cv=none; b=nWyvxqdt7++hlcUPkz/rV2IJFQ8Xyvq2xkHQoAs4pzT88t7otZZexDX7k3qczmmDV8AE3mc6BzipUBG+njeWk3qjihvQ18VydW9dpYJvyQZsKEQjrZe6spr611bCageVDGZ/Byd+TnySPrkmKsSGIsIHKZOIdOwUXg/7S7fI2SU=
+	t=1726585453; cv=none; b=aVzNSymoM+aLvELSlGPKIQjmd60NjeptXIZfku4SwTK90fYg9zFXZ3lGtxRsITfu8BppinK9+vb8pUj5CqTYWAleDLzANdDUTinCVRPId2REvwTFOvh5MJmyUk4Za62CzBdANPJ0ciutlVoESW6xrXr4MtmmHk3bJTVpyZm2Yi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726585416; c=relaxed/simple;
-	bh=xY9XpkDmSD/xk6OEETkgGDk1u5UGujSDYdc4wxzsr8c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UtOaqXT3OOroN36Ydu9m3liTww39SyXtFV8Lu1gEYCD+9v5tu3Ak2tRzWRaYi6Q9njUkYtQR4Ht7mDvinc1XS12WVM1oYIBjnhGTU2bYe3ZH0aIhbgcZ/VvhWA35nwPZXoXSqcSgno84ehUzhL47t8Auq+8fm0RtgalskSSbbI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=qB93pYbb; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so49457255e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 08:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726585411; x=1727190211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ND6eYc2e5z5r+zC7yHLZpkb+5DC0X9uw7m7bHoeXpy8=;
-        b=qB93pYbbuazHoCUBxNhmGTV9rmDbsoCPgZJWFyKITjVWPtC0MixJJv3Ccp48vOL6nb
-         ada/ssb0JH3+RBP7uLiOIbDK1DCwUKPka6dqsAfRTBc2FF/Sjafe/qztAMlxRObcL4em
-         cQetQG9kWQ7CKoJEqsRy3D2GKb+l+V82BmWTRaNDG4hHoecel1xx4Uhq2GbnTw/S6akX
-         CTZGbZz7TgsdunqeePl9BzEJG7HeS6O1qnJ5m1cuKmsCzxOzCwOER27N8N23nMDaRqre
-         CNrEn0dreoB+p8DCQ0CKWWOVxk/HVhFLyp5RxXa+crCHFUDcDId1ev2Cc97xt6jjYxK+
-         QdXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726585411; x=1727190211;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ND6eYc2e5z5r+zC7yHLZpkb+5DC0X9uw7m7bHoeXpy8=;
-        b=eUKd/vzwiKXTYJdKJvNrWcrxsZ0dfpiG9Sun4W0vbgL2Y/dvnQerdhos6VkgsekRuA
-         PayHzrsg5pX7WR3AG7bhJuIkP9Koj1ibkq6x+Fuva5xTiW5ktPzA/sqIgxqGrmWpDRav
-         zaroi0o0+Xl6iNBO7oimNHeWyNF1bGTTT5NISufQspHCNA/1utH9BL83GVf0n//fdOKi
-         zCXM8aEBwBUrGFg1AVMTENPIPLV5tIHrXEico8nwLepW9cXrQszNwIsKCItCykPIT99h
-         AzyeOY3peM8BFA6BsaPmreeJ6bXCH0mAW62NAwilHRQuO1xxVZ4WXkPpU1RtGX2qLkty
-         S0MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0o2yLUu4VKwR8ce/p0rYO0ZKHdtXsQ8PfVSnCf/4mEiUNyW0hxYM7rgRm8tlP5POdw2Kb3Z1dA3Kf/yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFBvhT0018I2vKPFJSN5wr6FKvqXzAcaTLW5U4P/tOcpFDce8N
-	qGgk64LH6S/OKPTwiDy3mXsSulabh49ykdJNXH8YnWQ5RShCZR3o1kV0Fg199io=
-X-Google-Smtp-Source: AGHT+IFcVadBxh+qAbSCLQDPMzD1mmtwUDKphd/cCXTI/LhLVwku41hzZL7m/dPisydjMBeLLD04ig==
-X-Received: by 2002:a05:600c:1e10:b0:42c:bd27:4c12 with SMTP id 5b1f17b1804b1-42cdb522cf7mr148867315e9.10.1726585410790;
-        Tue, 17 Sep 2024 08:03:30 -0700 (PDT)
-Received: from alex-rivos.ba.rivosinc.com (83-65-76-156.static.upcbusiness.at. [83.65.76.156])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e81a5sm9812770f8f.34.2024.09.17.08.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 08:03:30 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Guo Ren <guoren@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	syzbot+ba9eac24453387a9d502@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH -fixes] riscv: Fix kernel stack size when KASAN is enabled
-Date: Tue, 17 Sep 2024 17:03:28 +0200
-Message-Id: <20240917150328.59831-1-alexghiti@rivosinc.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726585453; c=relaxed/simple;
+	bh=zXsoH+o4A35ndDJgHDjG0rrx13JWwVadVhEYJGQjNyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ahob3qoOKwjgKpxPkCH/6j2hbDzuybHiH85OClNWeoRZn5YG50L96rICybS5DkczJ5QwJmNTfEqeuI7My6WVpFyiGvrh+D2rCR/wYdVmsoFjNsSmgkot+w5MkI963l3980Bwy4zYo2SkNlke36EI9tAe2JJ4WZQtnXH9F6K0mPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVB63rQ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB286C4CEC5;
+	Tue, 17 Sep 2024 15:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726585452;
+	bh=zXsoH+o4A35ndDJgHDjG0rrx13JWwVadVhEYJGQjNyA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eVB63rQ1H6gY/409ooHvZcIBSj64srzmEJffbHpBGzPJR4f2uVpt6g7dMcZ4K/ymM
+	 qLmfg0ocYmWMxZysoUiRh32xQa39NwGBNk/e/ajgi33qdEz9MCGk0IhO/40K+1QTCS
+	 5AHq/mqcONpGKfHGGs0hfJJfKTvYfcQSxEFzS6px1aRzn0zlH7woGjholmBE13v2yS
+	 dSlMUbCOagn7LytppTUXpfpe+5fmN8nWVDTq+skykHCmDtgckyQ6FItXukH6RXF98B
+	 1Ott+XMrVvoR0bKyy8NRN1l7GGE/xrk4oNPRoRAcmLtwhAwmcBsl/XksgJd3hCqmsX
+	 Jj3qWS3KDKDgA==
+Date: Tue, 17 Sep 2024 17:04:06 +0200
+From: Jakub Kicinski <kuba@kernel.org>
+To: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Erni Sri Satya Vennela <ernis@linux.microsoft.com>, KY Srinivasan
+ <kys@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui
+ <decui@microsoft.com>, "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "shradhagupta@linux.microsoft.com"
+ <shradhagupta@linux.microsoft.com>, "ahmed.zaki@intel.com"
+ <ahmed.zaki@intel.com>, "colin.i.king@gmail.com" <colin.i.king@gmail.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: mana: Add get_link and get_link_ksettings in
+ ethtool
+Message-ID: <20240917170406.6a9d6e27@kernel.org>
+In-Reply-To: <PH7PR21MB3260F88970A04FDB9C0ACCC4CA612@PH7PR21MB3260.namprd21.prod.outlook.com>
+References: <1726127083-28538-1-git-send-email-ernis@linux.microsoft.com>
+	<20240913202347.2b74f75e@kernel.org>
+	<PH7PR21MB3260F88970A04FDB9C0ACCC4CA612@PH7PR21MB3260.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-We use Kconfig to select the kernel stack size, doubling the default
-size if KASAN is enabled.
+On Tue, 17 Sep 2024 14:35:21 +0000 Haiyang Zhang wrote:
+> > Any reason why? Sometimes people add this callback for virtual
+> > devices to expose some approximate speed, but you're not reporting
+> > speed, so I'm curious.  
+> Speed info isn't available from the HW yet. But we are requesting 
+> that from HW team. For now, we just add some minimal info, like 
+> duplex, etc.
 
-But that actually only works if KASAN is selected from the beginning,
-meaning that if KASAN config is added later (for example using
-menuconfig), CONFIG_THREAD_SIZE_ORDER won't be updated, keeping the
-default size, which is not enough for KASAN as reported in [1].
+Unless I'm misreading I don't see the answer to the "why?" in your
+reply.
 
-So fix this by moving the logic to compute the right kernel stack into a
-header.
-
-Fixes: a7555f6b62e7 ("riscv: stack: Add config of thread stack size")
-Reported-by: syzbot+ba9eac24453387a9d502@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/000000000000eb301906222aadc2@google.com/ [1]
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
- arch/riscv/Kconfig                   | 3 +--
- arch/riscv/include/asm/thread_info.h | 7 ++++++-
- 2 files changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index ccbfd28f4982..b65846d02622 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -759,8 +759,7 @@ config IRQ_STACKS
- config THREAD_SIZE_ORDER
- 	int "Kernel stack size (in power-of-two numbers of page size)" if VMAP_STACK && EXPERT
- 	range 0 4
--	default 1 if 32BIT && !KASAN
--	default 3 if 64BIT && KASAN
-+	default 1 if 32BIT
- 	default 2
- 	help
- 	  Specify the Pages of thread stack size (from 4KB to 64KB), which also
-diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
-index fca5c6be2b81..385b43211a71 100644
---- a/arch/riscv/include/asm/thread_info.h
-+++ b/arch/riscv/include/asm/thread_info.h
-@@ -13,7 +13,12 @@
- #include <linux/sizes.h>
- 
- /* thread information allocation */
--#define THREAD_SIZE_ORDER	CONFIG_THREAD_SIZE_ORDER
-+#ifdef CONFIG_KASAN
-+#define KASAN_STACK_ORDER	1
-+#else
-+#define KASAN_STACK_ORDER	0
-+#endif
-+#define THREAD_SIZE_ORDER	(CONFIG_THREAD_SIZE_ORDER + KASAN_STACK_ORDER)
- #define THREAD_SIZE		(PAGE_SIZE << THREAD_SIZE_ORDER)
- 
- /*
--- 
-2.39.2
-
+What benefit does reporting duplex on a virtual device bring?
+What kind of SW need this current patch?
+etc.
 
