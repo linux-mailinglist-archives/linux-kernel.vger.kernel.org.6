@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-331799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F5D97B157
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:22:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA1197B159
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D22E28211F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CB9283C7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A71C194AF3;
-	Tue, 17 Sep 2024 14:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D6C1953A2;
+	Tue, 17 Sep 2024 14:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxcRo7Hx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T19nYlja"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7491194AD6;
-	Tue, 17 Sep 2024 14:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D41194C8F;
+	Tue, 17 Sep 2024 14:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726582695; cv=none; b=fvft7fx5OwayeKcJGWbfV/McVAWET/tkaggh1v9iHvfozZCgx8vKliJwj/2F1w1GqY7SQLJ1IjvPg/EmsLs2dsR0DfRd2IG+eKYym7mwt8TPJfxCzjo6tiUKk3K+/ftBxno6WW/gdkzEqpPQ02M9/kT89hHPAbe/6Fc2i3zYSUs=
+	t=1726582698; cv=none; b=D43DPf7pEMYt4XstW53dcTB21/QogvXLMWVR+2fsv9j1gIpTBZCUjZ5a7VqxmSY1It9FFj4lKm7xQ+rOUC/hBOD7y85nvTig8M3QnDSREPXj7QMdVuIle2YF3WyvzEL0jwI7johOKxv1kwW25UiMaTnIrBvCKkHqaZZJMHzKl0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726582695; c=relaxed/simple;
-	bh=6ovtfxPLSr9bMGDxuc9bLq1SSFe119PmyqlLKy/y1gI=;
+	s=arc-20240116; t=1726582698; c=relaxed/simple;
+	bh=/5fq3didrGVAcPh4C5/Q4yo410TOLiRILJJC0tUs9Go=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h8oGr0EXo2xHT4xrr33qmQyggN+tRtF3eWaVr1SC/aGugUUiPDzRxAJEcYLlC7J6ALXbn5AOsSWfG3YHB7IoZAQAZtYX2/Tl7yPH86kfOLWI1YjTsYhDeLEcqM2NnHR2i+hjmaw2YyZvGJmj0kLkj1WemBHz59BTy2rIdbHDgWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SxcRo7Hx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5C8C4CECD;
-	Tue, 17 Sep 2024 14:18:13 +0000 (UTC)
+	 MIME-Version; b=JFwan9NsTcltTkiaVcWVS2unPBJ/ibOUnycr7v9VWVEBnPd/eRTaBldE+EdD/XiVUBWC3xq6V3LfcI5vqHm9UUIkAUw4ah4K7FVeI8IYc1672tR+3Ia1iW6P628Fpo5OKHwlfmsrVClmxq39g41OzhjBfz31D66ThyjdrbMjiTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T19nYlja; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD112C4CECD;
+	Tue, 17 Sep 2024 14:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726582695;
-	bh=6ovtfxPLSr9bMGDxuc9bLq1SSFe119PmyqlLKy/y1gI=;
+	s=k20201202; t=1726582697;
+	bh=/5fq3didrGVAcPh4C5/Q4yo410TOLiRILJJC0tUs9Go=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SxcRo7Hxr/XE+diRmR2zFq37e+ot4nD4aE1owbXAC0SQ+F2TWekZarZQ/uUuauT9C
-	 u0Jwa7AXmYwSGtP4c/RCPj4rTsDK47ns+fEEpYSJWDcxS/i0Vyc+IeVJ4izadvDoAV
-	 M0u0DZ5xBnR1WdhUuTLm0zDLJ8R+TSU37uzV4SIeiO0gBmMPupMbGvTf5oSOHRQF57
-	 0iNR/bU/5lfz0GO25Qy4uJDeZPhq4TicVVqWAmwk3pinfopcGeKCfdi/l/GN3yWTQG
-	 1f2a7U+Yf7lVcx0Ja4AjJTDfpJ0Ta2lzoLYyWngviZF2Zx8VSdCB+w+OYzV2j86pSt
-	 daeCHkYTSE9WQ==
+	b=T19nYlja1p0xgVKeZLU/WtpTcajsT9vIRdu+VTu6ffeetHV3TGr7u2PJTInnpQ81h
+	 xF6CCxARdatLfOpHWY7dD6BuacR33KEG9QrU+VRR+li7Pc1q1rDW1T3q/4lpbR0ZQn
+	 rukdp5z4ZvMhuAwlW6NsSCpte9bV8lLvyE/jEeWaXkzmb70n0ocyYsUejL9hdIV59o
+	 HqMpXEx98OZFDDvWbPt4tSdLWbYuuvaRclBeRj6HZe+Ud3KPXMBS5UIKSO8mxl30mu
+	 vFtO0GDDBkNjAEgNm6uMVYeYGGmoSlCn9S1ax+JTjUPo7noquQOLlPoLtRw0dIXtn9
+	 o2qMBlcGa27Jw==
 From: Masahiro Yamada <masahiroy@kernel.org>
 To: linux-kbuild@vger.kernel.org
 Cc: Miguel Ojeda <ojeda@kernel.org>,
@@ -48,9 +48,9 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,
 	Nathan Chancellor <nathan@kernel.org>,
 	Nicolas Schier <nicolas@fjasle.eu>,
 	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 20/23] kbuild: support -fmacro-prefix-map for external modules
-Date: Tue, 17 Sep 2024 23:16:48 +0900
-Message-ID: <20240917141725.466514-21-masahiroy@kernel.org>
+Subject: [PATCH 21/23] kbuild: use absolute path in the generated wrapper Makefile
+Date: Tue, 17 Sep 2024 23:16:49 +0900
+Message-ID: <20240917141725.466514-22-masahiroy@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240917141725.466514-1-masahiroy@kernel.org>
 References: <20240917141725.466514-1-masahiroy@kernel.org>
@@ -62,37 +62,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit makes -fmacro-prefix-map work for external modules built in
-a separate output directory. It improves the reproducibility of external
-modules and provides the benefits described in commit a73619a845d5
-("kbuild: use -fmacro-prefix-map to make __FILE__ a relative path").
-
-When VPATH is not defined (e.g., when the kernel or external module is
-built in the source directory), this option is unnecessary.
+Keep the consistent behavior when this Makefile is invoked from another
+directory.
 
 Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
 
- Makefile | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ Makefile | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index b654baa0763a..ce646a6994a6 100644
+index ce646a6994a6..9f0ba07e8f25 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1027,8 +1027,10 @@ ifdef CONFIG_CC_IS_GCC
- KBUILD_CFLAGS   += -fconserve-stack
- endif
+@@ -643,8 +643,9 @@ ifdef building_out_of_srctree
  
--# change __FILE__ to the relative path from the srctree
--KBUILD_CPPFLAGS += $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
-+# change __FILE__ to the relative path to the source directory
-+ifdef VPATH
-+KBUILD_CPPFLAGS += $(call cc-option,-fmacro-prefix-map=$(VPATH)/=)
-+endif
+ quiet_cmd_makefile = GEN     Makefile
+       cmd_makefile = { \
+-	echo "\# Automatically generated by $(srctree)/Makefile: don't edit"; \
+-	echo "include $(srctree)/Makefile"; \
++	echo "\# Automatically generated by $(abs_srctree)/Makefile: don't edit"; \
++	echo "export KBUILD_OUTPUT = $(CURDIR)"; \
++	echo "include $(abs_srctree)/Makefile"; \
+ 	} > Makefile
  
- # include additional Makefiles when needed
- include-y			:= scripts/Makefile.extrawarn
+ outputmakefile:
 -- 
 2.43.0
 
