@@ -1,218 +1,389 @@
-Return-Path: <linux-kernel+bounces-331888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2824397B27B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:00:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CAA597B27E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 18:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24DD1F23AB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 418A31C216AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2057517DFE2;
-	Tue, 17 Sep 2024 16:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68A9176AC2;
+	Tue, 17 Sep 2024 16:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="SJZb3PBs"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iml4v0Ye"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C04176228
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CD4535DC
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 16:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726588834; cv=none; b=cPSrKXXu3lZNqjWd/Ab8ncPDIRIS4uZb1yManxG1rmIGgUg5hJoy7amSfcweodUoECtxoUeBOaMS5dg692dm+43lYWXkUiadtPTnDr/kpAXlpeL7KAt/tm0a3JbVvgpbfDXJ+bnaYHVv9tI/W1mGNDXsI45jK8e39cpq9heFLfw=
+	t=1726588926; cv=none; b=MR4iTqJRlOrij+Uq5NApj378XkrDHiEUEyhKAyD3+ew5KitBMsT2N3Vk6u4UK/IpW6QlljuXaKgHjk+esmWpB9S2AFVPvXS6jsl16PTLmKzMibz7h5fvo575ymcbGnei0tVHGCHY+VBmBQFDmK9qJLVcwx37uStiDIrM0DwAONw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726588834; c=relaxed/simple;
-	bh=iwhaIuE2h6sVer3uexfprQjPfDuKxTFnO2orokxvbjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZVvdUed2W02/geCoBboJ7cfRl75SVYF25qY0Eg0pSB/HgunupD1ToKv+nDlQRlIvU1Ujwq0q/Udoz9aZlKlmY/m0ek3yUvOxLbGtKXjYf24m1Wp9BJ3nIsBsTgSd5AtAnxI+8KE6NymPyNB6AEp91VaUvwjIO1q7NiAOIsdMov8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=SJZb3PBs; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-374bfc395a5so3768041f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:00:30 -0700 (PDT)
+	s=arc-20240116; t=1726588926; c=relaxed/simple;
+	bh=/Jec9/iWuRZ2ax6CNr4zJaNvk7xYQ5SbbWkgHhU7LBg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pLB+TnGJ8rC4nSYiG4LTpDEmtKwta2SBCtrI/P0LPBDnNdpoTOQ4EkiipefGVQPddEe1/HQJodIy7iGeO1J/AphT9to9EOkPbY9CGMYjIE8sBAM3snjzzL5QJFG4Rs4csBP3VFPhyX52+axj9GvoZO7n2f0DTV1xhgB4wVcP3JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iml4v0Ye; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so57484845e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 09:02:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1726588829; x=1727193629; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GzdDM52YJ5QqZgf2ijfzw5JmBHoLQaTemNy6F79uMx8=;
-        b=SJZb3PBsuGonG+ptKeQS2P6ofza9yIldqBv/W2aHahEbvr8Ax0OC0TQqd4hW5ldwAR
-         SlCSgGLAcVZ3YIgjWr5MKKPLM4IJpxMskTgy7i84fxIltuF+SsEROKEpD3P0/iE9YV8y
-         v3PtU6Ey05X0IuD6KwzAx2kBdF1ctEI6Z/Ha5bE66H+Ua/7NHl69J+CwPFpnomWC476z
-         U3TE9mFVbIUdPXgGlUDq6DsuSTpIClbURudeOszlONHKnpb+BUE53uGH+IWO4wkvVzRj
-         phbNyZEt6SxWK8cT23m6uv4D59hOZzXds791pPBsV0eHCNgEN20XoR4UbnQhDHtNvpss
-         AtAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726588829; x=1727193629;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1726588923; x=1727193723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GzdDM52YJ5QqZgf2ijfzw5JmBHoLQaTemNy6F79uMx8=;
-        b=m3DZHwEMssODe8DXDr7Rqee2QmySxIqhYZKlKrR7sMVfMI1BUDUIu9l+bdTQhtytNW
-         tSl6K2I6BQNfqrtcSD+jFB4CVY/Kn8gfSckvPoSLXkSio82WI797lcC/VUU1furcEtV9
-         o+0UK2dk2gEWk8CRCHyZ1S5hYz+iGQW3vM9JqZOpM8UYNQWLzJWEbZj6iRYt3Fp+9nQq
-         P9GxXY2pDX/dWM6iopPhMcCGTUveMwZ93ZPiDvup8qjiLt9A4OdpJpPA3wrPZp5OIJDR
-         k4QNeTCPTycjUSE58Qkp6X65JA+H3rYYBPpEY/e+9sE8z1x5XM79dCfIG64O5iu+3+jC
-         tHwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyrmQi5FAaWJNUNmXTqty1CogwSJ6iMcaA6Zl0dHw+yrTKfTBsuJXpiC+A2dT6D27ewWrAO9KxUZYIwXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFnJ5kgMfRIF2Jzo1UyPd44Zed5uEOXpTzXAID25bYXEE5Dzk1
-	3M+wGkMWdcaIcM1JyvRSGHKdgU9ih31SOyh8QbdEAdGqTsZVmCuJobLg6pGjvpk=
-X-Google-Smtp-Source: AGHT+IGiLZWARlLw1w001NS+/MT9IxxbVcl3J2mqD02KxtsHkKPX5hJJBnZPHFNkpPuN3Vvo5pqZSw==
-X-Received: by 2002:a05:6000:bc7:b0:374:b6e4:16a7 with SMTP id ffacd0b85a97d-378a8a0b864mr12922145f8f.8.1726588828834;
-        Tue, 17 Sep 2024 09:00:28 -0700 (PDT)
-Received: from GHGHG14 ([2a09:bac5:50ca:432::6b:83])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b19493bsm141491855e9.45.2024.09.17.09.00.26
+        bh=m5KQ1kLnN8DMSlG9w5BfJJLpfIAjSTIsA7znasV0gTg=;
+        b=Iml4v0YeGOeq+vSQ9gDA7bn5LmwBdvyIHoPGlIIZxnQexdjuqfEWrx4VIzKQcu/ENq
+         93PPBqkpLPQjnRXzT2vr/yFSB1ux+X85g07uTQV/9PYyjz3agFuYlSxsfijkFHO6PLCj
+         yuh/yAk1cSUDouAz3+MfeJsNqveubBjKhTADgUmVWu1Py9iPvhIMhVWX74RsgSW5t4H7
+         YzlkM7L6NLYSSm4qGlk1bWrG9tdKCALAuTLKmIV1zjeqLhgMvjW9Dle5nG+XIdjcDQsE
+         x90AJPw/4ZjbMQhQ4QT03ugV9z7jUoSi9A+92S9iMhGSWUR7XTP5HLYnWvVdoZirL0Zl
+         vIpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726588923; x=1727193723;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m5KQ1kLnN8DMSlG9w5BfJJLpfIAjSTIsA7znasV0gTg=;
+        b=YVRx958aOkemoxojrSOBd4yj3mo8HYIBqmmGlLLLkuc6Iw+ENgh7ZIO/DSZkgEh3p2
+         cMZktYW0osKRctiT6w2ZOUFsfbsqFLW7p7EShmMSHh/TnvEtv390Vy4663ac8y38cipH
+         trPtI5x+R/WYAHQEIlOtxk7jN1OrIxpevexwOsZEu7bt/q50Xe+guSv2WNylOUWhqSBf
+         FVziHiRwgUgcC71qjsdS+46NDYAnW7jUrt7vu2PuBl9lXOFUj+V99agTxC88zxMzt8DF
+         zzG02abarj/QiwxARNcif2bGfraOA2yWzgb7Q4tNnw4sDY8SwXajuH702vMOrqISmi3T
+         4vPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVPGuV1cdFuZg6kk1cvc4fYUf4sXD7/3wOfXVFM1sM3I14F53c6QT/X+WTRVu1R5XB7VPPP6PxLAsMr5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJvM8WgiEO5qx5l8836oketAunrsw3olugYEjeGBZlTljoO21/
+	5bYxZmt/oDuduaQtmuEXm8iGAgURnlTzh8oHFYveKh9cH534PrAY
+X-Google-Smtp-Source: AGHT+IFEFYqkN8FhiJkkKF9AnGNvNEYelsyf87w6eG31+Zh8MeE18OaiUzbDO3QzrD4Fj7t9ZH1nFw==
+X-Received: by 2002:a05:600c:2e48:b0:42c:de6f:6ab3 with SMTP id 5b1f17b1804b1-42cde6f6b81mr150925295e9.6.1726588922489;
+        Tue, 17 Sep 2024 09:02:02 -0700 (PDT)
+Received: from fedora.. ([213.94.26.172])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78044easm9902317f8f.91.2024.09.17.09.02.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 09:00:28 -0700 (PDT)
-Date: Tue, 17 Sep 2024 17:00:19 +0100
-From: Tiago Lam <tiagolam@cloudflare.com>
-To: Philo Lu <lulie@linux.alibaba.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Jakub Sitnicki <jakub@cloudflare.com>, kernel-team@cloudflare.com
-Subject: Re: [RFC PATCH 3/3] bpf: Add sk_lookup test to use ORIGDSTADDR cmsg.
-Message-ID: <Zumnk3MEqINMnTf6@GHGHG14>
-References: <20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com>
- <20240913-reverse-sk-lookup-v1-3-e721ea003d4c@cloudflare.com>
- <8d5469d2-7525-420b-b506-8de2ecf04734@linux.alibaba.com>
+        Tue, 17 Sep 2024 09:02:01 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	hamohammed.sa@gmail.com,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mairacanal@riseup.net,
+	melissa.srw@gmail.com,
+	mripard@kernel.org,
+	rodrigosiqueiramelo@gmail.com,
+	thomas.petazzoni@bootlin.com,
+	tzimmermann@suse.de
+Subject: [PATCH 3/3] drm/vkms: Switch to dynamic allocation for CRTC
+Date: Tue, 17 Sep 2024 18:02:00 +0200
+Message-ID: <20240917160200.2888-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240912-b4-vkms-allocated-v1-3-29abbaa14af9@bootlin.com>
+References: <20240912-b4-vkms-allocated-v1-3-29abbaa14af9@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d5469d2-7525-420b-b506-8de2ecf04734@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 08:10:24PM +0800, Philo Lu wrote:
-> Hi Tiago,
+Hi Louis,
+
+Thanks for this series!
+
+The first 2 patches look good to me. It could make sense to move the
+alloc + init pair of calls to a function (vkms_connector_init() and
+vkms_encoder_init() for example), but we can always move it in the
+furure:
+
+This one looks good, but I added couple of comments:
+
+> specific allocation for the CRTC is not strictly necessary at this point,
+> but in order to implement dynamic configuration of VKMS (configFS), it
+> will be easier to have one allocation per CRTC.
 > 
-> On 2024/9/13 17:39, Tiago Lam wrote:
-> > This patch reuses the framework already in place for sk_lookup, allowing
-> > it now to send a reply from the server fd directly, instead of having to
-> > create a socket bound to the original destination address and reply from
-> > there. It does this by passing the source address and port from where to
-> > reply from in a IP_ORIGDSTADDR ancilliary message passed in sendmsg.
-> > 
-> > Signed-off-by: Tiago Lam <tiagolam@cloudflare.com>
-> > ---
-> >   tools/testing/selftests/bpf/prog_tests/sk_lookup.c | 70 +++++++++++++++-------
-> >   1 file changed, 48 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/sk_lookup.c b/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
-> > index ae87c00867ba..b99aff2e3976 100644
-> > --- a/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
-> > +++ b/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
-> > @@ -75,6 +75,7 @@ struct test {
-> >   	struct inet_addr listen_at;
-> >   	enum server accept_on;
-> >   	bool reuseport_has_conns; /* Add a connected socket to reuseport group */
-> > +	bool dont_bind_reply; /* Don't bind, send direct from server fd. */
-> >   };
-> >   struct cb_opts {
-> > @@ -363,7 +364,7 @@ static void v4_to_v6(struct sockaddr_storage *ss)
-> >   	memset(&v6->sin6_addr.s6_addr[0], 0, 10);
-> >   }
-> > -static int udp_recv_send(int server_fd)
-> > +static int udp_recv_send(int server_fd, bool dont_bind_reply)
-> >   {
-> >   	char cmsg_buf[CMSG_SPACE(sizeof(struct sockaddr_storage))];
-> >   	struct sockaddr_storage _src_addr = { 0 };
-> > @@ -415,26 +416,41 @@ static int udp_recv_send(int server_fd)
-> >   		v4_to_v6(dst_addr);
-> >   	}
-> > -	/* Reply from original destination address. */
-> > -	fd = start_server_addr(SOCK_DGRAM, dst_addr, sizeof(*dst_addr), NULL);
-> > -	if (!ASSERT_OK_FD(fd, "start_server_addr")) {
-> > -		log_err("failed to create tx socket");
-> > -		return -1;
-> > -	}
-> > +	if (dont_bind_reply) {
-> > +		/* Reply directly from server fd, specifying the source address and/or
-> > +		 * port in struct msghdr.
-> > +		 */
-> > +		n = sendmsg(server_fd, &msg, 0);
-> > +		if (CHECK(n <= 0, "sendmsg", "failed\n")) {
-> > +			log_err("failed to send echo reply");
-> > +			return -1;
-> > +		}
-> > +	} else {
-> > +		/* Reply from original destination address. */
-> > +		fd = socket(dst_addr->ss_family, SOCK_DGRAM, 0);
-> > +		if (CHECK(fd < 0, "socket", "failed\n")) {
-> > +			log_err("failed to create tx socket");
-> > +			return -1;
-> > +		}
-> Just curious, why not use start_server_addr() here like before?
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_crtc.c      | 28 ++++++++++++++-----------
+>  drivers/gpu/drm/vkms/vkms_drv.h       |  9 ++++----
+>  drivers/gpu/drm/vkms/vkms_output.c    | 39 ++++++++++++++++++-----------------
+>  drivers/gpu/drm/vkms/vkms_writeback.c | 17 ++++++++-------
+>  4 files changed, 50 insertions(+), 43 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+> index 821b9ac746083630116e05c1cf8e3dc2424ac66a..1169eb5a5e521fb42b1af85082425cd71aa2be4d 100644
+> --- a/drivers/gpu/drm/vkms/vkms_crtc.c
+> +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+> @@ -88,7 +88,7 @@ static bool vkms_get_vblank_timestamp(struct drm_crtc *crtc,
+>  {
+>  	struct drm_device *dev = crtc->dev;
+>  	struct vkms_device *vkmsdev = drm_device_to_vkms_device(dev);
 
-Thanks, you're right. Initially I rebased this on commit
-e3d332aaf898ed755b29c8cdf59be2cfba1cac4b (v6.6.31), which didn't have
-start_server_addr(), and used bind() instead. I must have messed up the
-rebased.
+vkmsdev is unused.
 
-I've fixed this and included your other suggestion in the patch below
-and will fold it into the next revision.
+> -	struct vkms_output *output = &vkmsdev->output;
+> +	struct vkms_output *output = drm_crtc_to_vkms_output(crtc);
+>  	struct drm_vblank_crtc *vblank = drm_crtc_vblank_crtc(crtc);
+>  
+>  	if (!READ_ONCE(vblank->enabled)) {
+> @@ -281,19 +281,23 @@ static void vkms_crtc_destroy_workqueue(struct drm_device *dev,
+>  	destroy_workqueue(vkms_out->composer_workq);
+>  }
+>  
+> -int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+> -		   struct drm_plane *primary, struct drm_plane *cursor)
+> +struct vkms_output *vkms_crtc_init(struct drm_device *dev, struct drm_plane *primary,
+> +				   struct drm_plane *cursor)
+>  {
+> -	struct vkms_output *vkms_out = drm_crtc_to_vkms_output(crtc);
+> +	struct vkms_output *vkms_out;
+> +	struct drm_crtc *crtc;
+>  	int ret;
+>  
+> -	ret = drmm_crtc_init_with_planes(dev, crtc, primary, cursor,
+> -					 &vkms_crtc_funcs, NULL);
+> -	if (ret) {
+> -		DRM_ERROR("Failed to init CRTC\n");
+> -		return ret;
+> +	vkms_out = drmm_crtc_alloc_with_planes(dev, struct vkms_output, crtc,
+> +					       primary, cursor,
+> +					       &vkms_crtc_funcs, NULL);
+> +	if (IS_ERR(vkms_out)) {
+> +		DRM_DEV_ERROR(dev->dev, "Failed to init CRTC\n");
+> +		return vkms_out;
+>  	}
+>  
+> +	crtc = &vkms_out->crtc;
+> +
+>  	drm_crtc_helper_add(crtc, &vkms_crtc_helper_funcs);
+>  
+>  	drm_mode_crtc_set_gamma_size(crtc, VKMS_LUT_SIZE);
+> @@ -304,12 +308,12 @@ int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+>  
+>  	vkms_out->composer_workq = alloc_ordered_workqueue("vkms_composer", 0);
+>  	if (!vkms_out->composer_workq)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	ret = drmm_add_action_or_reset(dev, vkms_crtc_destroy_workqueue,
+>  				       vkms_out);
+>  	if (ret)
+> -		return ret;
+> +		return ERR_PTR(ret);
+>  
+> -	return ret;
+> +	return vkms_out;
+>  }
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 972aee6853f2b29909291e33652f68740fdc9dbc..a97164c0c2d62c4b6bb5641d09b3607a742cf585 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -126,7 +126,6 @@ struct vkms_config {
+>  struct vkms_device {
+>  	struct drm_device drm;
+>  	struct platform_device *platform;
+> -	struct vkms_output output;
+>  	const struct vkms_config *config;
+>  };
+>  
+> @@ -143,8 +142,9 @@ struct vkms_device {
+>  	container_of(target, struct vkms_plane_state, base.base)
+>  
+>  /* CRTC */
+> -int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+> -		   struct drm_plane *primary, struct drm_plane *cursor);
+> +struct vkms_output *vkms_crtc_init(struct drm_device *dev,
+> +				   struct drm_plane *primary,
+> +				   struct drm_plane *cursor);
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/sk_lookup.c b/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
-index b99aff2e3976..0628a67681c5 100644
---- a/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
-@@ -374,7 +374,7 @@ static int udp_recv_send(int server_fd, bool dont_bind_reply)
-        struct iovec iov = { 0 };
-        struct cmsghdr *cm;
-        char buf[1];
--       int ret, fd;
-+       int fd;
-        ssize_t n;
- 
-        iov.iov_base = buf;
-@@ -427,19 +427,12 @@ static int udp_recv_send(int server_fd, bool dont_bind_reply)
-                }
-        } else {
-                /* Reply from original destination address. */
--               fd = socket(dst_addr->ss_family, SOCK_DGRAM, 0);
--               if (CHECK(fd < 0, "socket", "failed\n")) {
-+               fd = start_server_addr(SOCK_DGRAM, dst_addr, sizeof(*dst_addr), NULL);
-+               if (!ASSERT_OK_FD(fd, "start_server_addr")) {
-                        log_err("failed to create tx socket");
-                        return -1;
-                }
- 
--               ret = bind(fd, (struct sockaddr *)dst_addr, sizeof(*dst_addr));
--               if (CHECK(ret, "bind", "failed\n")) {
--                       log_err("failed to bind tx socket");
--                       close(fd);
--                       return ret;
--               }
--
-                msg.msg_control = NULL;
-                msg.msg_controllen = 0;
-                n = sendmsg(fd, &msg, 0);
-@@ -451,6 +444,8 @@ static int udp_recv_send(int server_fd, bool dont_bind_reply)
- 
-                close(fd);
-        }
-+
-+       return 0;
- }
- 
- static int tcp_echo_test(int client_fd, int server_fd)
+Do you think that it could make sense to rename vkms_output to vkms_crtc
+in a follow up patch?
+
+I find a bit confusing that vkms_crtc_init returns a different type.
+Renaming it would make drm_crtc_to_vkms_output() consistent with the
+other container_of macros.
+
+>  
+>  int vkms_output_init(struct vkms_device *vkmsdev);
+>  
+> @@ -165,6 +165,7 @@ void vkms_compose_row(struct line_buffer *stage_buffer, struct vkms_plane_state
+>  void vkms_writeback_row(struct vkms_writeback_job *wb, const struct line_buffer *src_buffer, int y);
+>  
+>  /* Writeback */
+> -int vkms_enable_writeback_connector(struct vkms_device *vkmsdev);
+> +int vkms_enable_writeback_connector(struct vkms_device *vkmsdev,
+> +				    struct vkms_output *vkms_out);
+>  
+>  #endif /* _VKMS_DRV_H_ */
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> index 60d5365f8d41b8f20da489cfb9dbc85eb9df4916..a57a0cfa21964577f98e564acf87711b2e85fa67 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -29,11 +29,11 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
+>  
+>  int vkms_output_init(struct vkms_device *vkmsdev)
+>  {
+> -	struct vkms_output *output = &vkmsdev->output;
+> +
+
+Extra blank line.
+
+>  	struct drm_device *dev = &vkmsdev->drm;
+>  	struct drm_connector *connector;
+>  	struct drm_encoder *encoder;
+> -	struct drm_crtc *crtc = &output->crtc;
+> +	struct vkms_output *output;
+>  	struct vkms_plane *primary, *overlay, *cursor = NULL;
+>  	int ret;
+>  	int writeback;
+> @@ -49,31 +49,33 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+>  			return PTR_ERR(cursor);
+>  	}
+>  
+> -	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
+> -	if (ret)
+> -		return ret;
+> +	output = vkms_crtc_init(dev, &primary->base,
+> +				cursor ? &cursor->base : NULL);
+> +	if (IS_ERR(output)) {
+> +		DRM_ERROR("Failed to allocate CRTC\n");
+> +		return PTR_ERR(output);
+> +	}
+>  
+>  	if (vkmsdev->config->overlay) {
+>  		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
+>  			overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY);
+>  			if (IS_ERR(overlay))
+>  				return PTR_ERR(overlay);
+> -			overlay->base.possible_crtcs = drm_crtc_mask(crtc);
+> +			overlay->base.possible_crtcs = drm_crtc_mask(&output->crtc);
+>  		}
+>  	}
+>  
+>  	connector = drmm_kzalloc(dev, sizeof(*connector), GFP_KERNEL);
+>  	if (!connector) {
+>  		DRM_ERROR("Failed to allocate connector\n");
+> -		ret = -ENOMEM;
+> -		goto err_connector;
+> +		return -ENOMEM;
+>  	}
+>  
+>  	ret = drmm_connector_init(dev, connector, &vkms_connector_funcs,
+>  				  DRM_MODE_CONNECTOR_VIRTUAL, NULL);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to init connector\n");
+> -		goto err_connector;
+> +		return ret;
+>  	}
+>  
+>  	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+> @@ -81,34 +83,33 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+>  	encoder = drmm_kzalloc(dev, sizeof(*encoder), GFP_KERNEL);
+>  	if (!encoder) {
+>  		DRM_ERROR("Failed to allocate encoder\n");
+> -		ret = -ENOMEM;
+> -		goto err_connector;
+> +		return -ENOMEM;
+>  	}
+>  	ret = drmm_encoder_init(dev, encoder, NULL,
+>  				DRM_MODE_ENCODER_VIRTUAL, NULL);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to init encoder\n");
+> -		goto err_connector;
+> +		return ret;
+>  	}
+> -	encoder->possible_crtcs = drm_crtc_mask(crtc);
+> +	encoder->possible_crtcs = drm_crtc_mask(&output->crtc);
+>  
+> +	/* Attach the encoder and the connector */
+>  	ret = drm_connector_attach_encoder(connector, encoder);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to attach connector to encoder\n");
+>  		return ret;
+>  	}
+>  
+> +	/* Initialize the writeback component */
+>  	if (vkmsdev->config->writeback) {
+> -		writeback = vkms_enable_writeback_connector(vkmsdev);
+> -		if (writeback)
+> +		writeback = vkms_enable_writeback_connector(vkmsdev, output);
+> +		if (writeback) {
+>  			DRM_ERROR("Failed to init writeback connector\n");
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	drm_mode_config_reset(dev);
+>  
+>  	return 0;
+> -
+> -err_connector:
+> -	drm_crtc_cleanup(crtc);
+> -	return ret;
+>  }
+> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
+> index a948f4598764efef971f76e1016fc1a963fbbba7..f91c6418480f71ab3ec9989ea85814460e10d231 100644
+> --- a/drivers/gpu/drm/vkms/vkms_writeback.c
+> +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
+> @@ -105,7 +105,9 @@ static void vkms_wb_cleanup_job(struct drm_writeback_connector *connector,
+>  				struct drm_writeback_job *job)
+>  {
+>  	struct vkms_writeback_job *vkmsjob = job->priv;
+> -	struct vkms_device *vkmsdev;
+> +	struct vkms_output *vkms_output = container_of(connector,
+> +						       struct vkms_output,
+> +						       wb_connector);
+>  
+>  	if (!job->fb)
+>  		return;
+> @@ -114,8 +116,7 @@ static void vkms_wb_cleanup_job(struct drm_writeback_connector *connector,
+>  
+>  	drm_framebuffer_put(vkmsjob->wb_frame_info.fb);
+>  
+> -	vkmsdev = drm_device_to_vkms_device(job->fb->dev);
+> -	vkms_set_composer(&vkmsdev->output, false);
+> +	vkms_set_composer(vkms_output, false);
+>  	kfree(vkmsjob);
+>  }
+>  
+> @@ -124,8 +125,7 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
+>  {
+>  	struct drm_connector_state *connector_state = drm_atomic_get_new_connector_state(state,
+>  											 conn);
+> -	struct vkms_device *vkmsdev = drm_device_to_vkms_device(conn->dev);
+> -	struct vkms_output *output = &vkmsdev->output;
+> +	struct vkms_output *output = drm_crtc_to_vkms_output(connector_state->crtc);
+>  	struct drm_writeback_connector *wb_conn = &output->wb_connector;
+>  	struct drm_connector_state *conn_state = wb_conn->base.state;
+>  	struct vkms_crtc_state *crtc_state = output->composer_state;
+> @@ -139,7 +139,7 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
+>  	if (!conn_state)
+>  		return;
+>  
+> -	vkms_set_composer(&vkmsdev->output, true);
+> +	vkms_set_composer(output, true);
+>  
+>  	active_wb = conn_state->writeback_job->priv;
+>  	wb_frame_info = &active_wb->wb_frame_info;
+> @@ -167,9 +167,10 @@ static const struct drm_connector_helper_funcs vkms_wb_conn_helper_funcs = {
+>  	.atomic_check = vkms_wb_atomic_check,
+>  };
+>  
+> -int vkms_enable_writeback_connector(struct vkms_device *vkmsdev)
+> +int vkms_enable_writeback_connector(struct vkms_device *vkmsdev,
+> +				    struct vkms_output *vkms_output)
+>  {
+> -	struct drm_writeback_connector *wb = &vkmsdev->output.wb_connector;
+> +	struct drm_writeback_connector *wb = &vkms_output->wb_connector;
+>  
+>  	drm_connector_helper_add(&wb->base, &vkms_wb_conn_helper_funcs);
+>  
+> 
 
