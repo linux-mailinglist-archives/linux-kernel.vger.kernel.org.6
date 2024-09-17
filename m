@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-331284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E6697AAF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:20:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAF597AAF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3846E1C22311
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:20:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D35286E60
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C2C481D1;
-	Tue, 17 Sep 2024 05:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C80481B6;
+	Tue, 17 Sep 2024 05:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kJfgKfvW"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="uE7YHFnc"
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01C5288B1;
-	Tue, 17 Sep 2024 05:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A41288B1
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 05:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726550423; cv=none; b=XENtrtCez502kpBwx2GOZJcMBpmRDCwL/dtQmX0FwG6TK+VOJL80rax+AOPMEtgPvzhSc7TrPT8TTo077xj/lO4/hBSUaOay6y08ZopJuFGjImGvQoyJKvgviyUxSNm9lyvK0DIz3Zon5OB0E77oSiTzoxOWxSaEfe5iHjOIXP0=
+	t=1726550534; cv=none; b=Wo+F3AuAhwOl/nqeO/rygHcAecTzB4VBHbT7rPFXax8t8QUNgJguBJKRFqj9sfVcm2LVOIi14LqR7nqQtsBVulCm/uOk1cKzTTslEtyPFxaC9DXu8cdmTQ9DzZRMVEoPOjZdatV27nQ8rpxwdfLRakIlLJBojQHRTWfQTIRbXDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726550423; c=relaxed/simple;
-	bh=yYcmQlQZ78r/n5JJeYFb7IMdI48aUYUtAr1H/PKhXwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BLhjGEGr5uSL/JLe2qEKcuRk0a/ZD6u5hmrAb5R66byejrp1BzJkLIkccjSx9ZFiifNBR4RnFX5hfNXNNN1H8kI629Vd6iVb4HKPDL3Mm4/LP76RctzdtQCFH479fqEjYkD+xP9SD9vRftlNHYMjfRBo0XNl19YyQtgX+9Qm3cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kJfgKfvW; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48H5K6Jw051855;
-	Tue, 17 Sep 2024 00:20:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726550406;
-	bh=Nnp33+KXLcWzN5rrn20cPD+EDnVgjdIxGIfjhChI7Ys=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=kJfgKfvWjrtEOtqn+NLEUEH1UF3aZ9VVSKxeUUXZ2ClH+zEdfXJgL9M+SQ83lVaBV
-	 K66HQbI1jvWqWrEfFt5psRFUhK87CKguABOA6KDMpin+MxVoV5zHh1QemxgKjRZxEw
-	 OGHnAPcu27Fzqtcu/VzMLXPiBS1Hp7xtD6jxv0T0=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48H5K6pR033430
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 17 Sep 2024 00:20:06 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
- Sep 2024 00:20:05 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 17 Sep 2024 00:20:05 -0500
-Received: from [172.24.19.92] (lt5cd2489kgj.dhcp.ti.com [172.24.19.92])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H5K2uq038382;
-	Tue, 17 Sep 2024 00:20:02 -0500
-Message-ID: <fda85c12-e73f-44b8-b66b-1241e417a9b7@ti.com>
-Date: Tue, 17 Sep 2024 10:50:01 +0530
+	s=arc-20240116; t=1726550534; c=relaxed/simple;
+	bh=FROrw0IXlzItQSfhHRHUvjIOTBu4ABMZqIMKJtQffAE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gZVXlhWfxl8lemuryj3AjHAzpy/1o8iQl158nNMlTJvmhiJntd8NaCvoWQQRh4VcGWGBFtoeb9UZjr5DgHWPCBsPNhab5Q1LB4waj02vIaYpUKpl2m0NZ/VXZW2ZbSa4znjZ7Z0rau2sfw9UCj5d4sFZ7WtuUahutMhs1a/TIW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=uE7YHFnc; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id qQf2sEuii3ZMyqQf2s4PfP; Tue, 17 Sep 2024 07:22:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726550528;
+	bh=ox/BUEVjGvecYqicoCV10v4Q9kXMIsRKDm9TgbacwPA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To;
+	b=uE7YHFncSbIkns75ceMLvKBWR2lLESwDluJGLQhQBCQV5lrcOaRwCaTNTSOfcQpVq
+	 HJm+j7e1uOEsx+GUZ7TkF+WOOqssb6mQ20ALFlGIaRf9KYFvSjIxmC0ctChK9RKjkP
+	 VHegYqJfxnmpTt+hhya69OXSYxRcdh4NY3Nx4ludydVSWdFFHnCuY48Vq5d4BGuFHH
+	 iIBCrqPhkEWoNiBUDqoomBPmojMFvpSGzksiXevYTJzesiUhHvUmNIIDj1if0WR1dK
+	 bCJHsDM4ZJQSKYDiq97zSpNKRY9B+XwVjxgT8qhAE/jWfxA728uT22uHSOZu+Yfgmr
+	 KFRvY0tmnJyeg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 17 Sep 2024 07:22:08 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <6cbedd50-c2d5-4ad7-8133-774eebd9d2f1@wanadoo.fr>
+Date: Tue, 17 Sep 2024 07:22:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,118 +56,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] remoteproc: k3-r5: Fix check performed in
- k3_r5_rproc_{mbox_callback/kick}
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Siddharth Vadapalli
-	<s-vadapalli@ti.com>,
-        Hari Nagalla <hnagalla@ti.com>, Andrew Davis
-	<afd@ti.com>
-CC: <andersson@kernel.org>, <b-padhi@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-References: <20240916083131.2801755-1-s-vadapalli@ti.com>
- <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-
-On 9/16/2024 8:50 PM, Mathieu Poirier wrote:
-> On Mon, 16 Sept 2024 at 02:31, Siddharth Vadapalli <s-vadapalli@ti.com> wrote:
->> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during
->> probe routine") introduced a check in the "k3_r5_rproc_mbox_callback()" and
->> "k3_r5_rproc_kick()" callbacks, causing them to exit if the remote core's
->> state is "RPROC_DETACHED". However, the "__rproc_attach()" function that is
->> responsible for attaching to a remote core, updates the state of the remote
->> core to "RPROC_ATTACHED" only after invoking "rproc_start_subdevices()".
->>
->> The "rproc_start_subdevices()" function triggers the probe of the Virtio
->> RPMsg devices associated with the remote core, which require that the
->> "k3_r5_rproc_kick()" and "k3_r5_rproc_mbox_callback()" callbacks are
->> functional. Hence, drop the check in the callbacks.
-> Honestly, I am very tempted to just revert f3f11cfe8907 and ea1d6fb5b571.
-
-
-Please don't :) , it will break rproc in general for k3 devices.
-
-Couple of solutions for this race around condition (in mine preference 
-order)
-
-1) In 
-https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L190 
-have a check , if probe in is progress or not
-
-2) 
-https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1205 
--- correct the state to ON or something else
-
-3) Move condition 
-https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/remoteproc_core.c#L1360 
-before rproc_start_subdevices 
-<https://elixir.bootlin.com/linux/v6.11/C/ident/rproc_start_subdevices> 
-calling
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2 00/15] timers: Cleanup delay/sleep related mess
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev,
+ linux-mm@kvack.org, SeongJae Park <sj@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+ Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Andy Whitcroft <apw@canonical.com>,
+ Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, netdev@vger.kernel.org,
+ linux-sound@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+ Nathan Lynch <nathanl@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>
+References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
+ <c794b4a6-468d-4552-a6d6-8185f49339d3@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <c794b4a6-468d-4552-a6d6-8185f49339d3@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
->
->> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during probe routine")
->> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
->> ---
+Le 16/09/2024 à 22:20, Christophe JAILLET a écrit :
+> Le 11/09/2024 à 07:13, Anna-Maria Behnsen a écrit :
+>> Hi,
 >>
->> Hello,
+>> a question about which sleeping function should be used in 
+>> acpi_os_sleep()
+>> started a discussion and examination about the existing documentation and
+>> implementation of functions which insert a sleep/delay.
 >>
->> Since the commit being fixed is not yet a part of Mainline Linux, this
->> patch is based on linux-next tagged next-20240913.
+>> The result of the discussion was, that the documentation is outdated and
+>> the implemented fsleep() reflects the outdated documentation but doesn't
+>> help to reflect reality which in turns leads to the queue which covers 
+>> the
+>> following things:
 >>
->> An alternative to this patch will be a change to the "__rproc_attach()"
->> function in the "remoteproc_core.c" driver with
->> rproc->state = RPROC_ATTACHED;
->> being set after "rproc_attach_device()" is invoked, but __before__
->> invoking "rproc_start_subdevices()". Since this change will be performed
->> in the common Remoteproc Core, it appeared to me that fixing it in the
->> TI remoteproc driver is the correct approach.
+>> - Split out all timeout and sleep related functions from hrtimer.c and 
+>> timer.c
+>>    into a separate file
 >>
->> The equivalent of this patch for ti_k3_dsp_remoteproc.c might also be
->> required, which I shall post if the current patch is acceptable.
+>> - Update function descriptions of sleep related functions
 >>
->> Kindly review and share your feedback on this patch.
+>> - Change fsleep() to reflect reality
 >>
->> Regards,
->> Siddharth.
+>> - Rework all comments or users which obviously rely on the outdated
+>>    documentation as they reference "Documentation/timers/timers- 
+>> howto.rst"
 >>
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 8 --------
->>   1 file changed, 8 deletions(-)
+>> - Last but not least (as there are no more references): Update the 
+>> outdated
+>>    documentation and move it into a file with a self explaining file name
 >>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index 747ee467da88..4894461aa65f 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -194,10 +194,6 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
->>          const char *name = kproc->rproc->name;
->>          u32 msg = omap_mbox_message(data);
+>> The queue is available here and applies on top of tip/timers/core:
 >>
->> -       /* Do not forward message from a detached core */
->> -       if (kproc->rproc->state == RPROC_DETACHED)
->> -               return;
->> -
->>          dev_dbg(dev, "mbox msg: 0x%x\n", msg);
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/anna-maria/linux- 
+>> devel.git timers/misc
 >>
->>          switch (msg) {
->> @@ -233,10 +229,6 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
->>          mbox_msg_t msg = (mbox_msg_t)vqid;
->>          int ret;
->>
->> -       /* Do not forward message to a detached core */
->> -       if (kproc->rproc->state == RPROC_DETACHED)
->> -               return;
->> -
->>          /* send the index of the triggered virtqueue in the mailbox payload */
->>          ret = mbox_send_message(kproc->mbox, (void *)msg);
->>          if (ret < 0)
->> --
->> 2.40.1
->>
+>> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> 
+> Hi,
+> 
+> not directly related to your serie, but some time ago I sent a patch to 
+> micro-optimize Optimize usleep_range(). (See [1])
+> 
+> The idea is that the 2 parameters of usleep_range() are usually 
+> constants and some code reordering could easily let the compiler compute 
+> a few things at compilation time.
+> 
+> There was consensus on the value of the change (see [2]), but as you are 
+
+Typo: there was *no* consensus...
+
+> touching things here, maybe it makes sense now to save a few cycles at 
+> runtime and a few bytes of code?
+> 
+> CJ
+> 
+> [1]: https://lore.kernel.org/all/ 
+> f0361b83a0a0b549f8ec5ab8134905001a6f2509.1659126514.git.christophe.jaillet@wanadoo.fr/
+> 
+> [2]: https://lore.kernel.org/ 
+> all/03c2bbe795fe4ddcab66eb852bae3715@AcuMS.aculab.com/
+> 
+> 
+> 
+> 
+
 
