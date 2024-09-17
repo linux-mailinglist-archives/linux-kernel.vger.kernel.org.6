@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-331286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD03F97AAFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:28:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508D197AB01
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 07:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5685E1F26E89
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:28:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D992628A812
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 05:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D8C60DCF;
-	Tue, 17 Sep 2024 05:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E584E446DB;
+	Tue, 17 Sep 2024 05:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="lXLv26ys"
-Received: from mail.tlmp.cc (unknown [148.135.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="GEW9ZczD"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA39B1BC41;
-	Tue, 17 Sep 2024 05:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6701B4690
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 05:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726550879; cv=none; b=BiguELZAJQv14u3AAcj2i+x/FMB63RPAlzK/mdGgcQcsmEtb4A2ymKdQNz0HaAKHm/Pk4//YDpc2Bzf98w2PRlbLE1Itiix0uLdmuonMMpyGLtW4oVkL+IhkuvvoX6/Y/c2Kfew/bNtczM5K1zdYpNABxxOcBZxx8wrDbuweClw=
+	t=1726551118; cv=none; b=rGVMXuz0IiWDc+r+GXw5HmmaRPf8w0NNGqVOoA7d+hvIluNZ5Wu96lROE3kpgsfMKWycmaY+n0zLeM4zNh07MOZrUgirR+QVtKVaIf+dQAXsZrclp3jqvN5Kx0Z512rZWKllSTTIg44dzxo9zc9QcQgwHzXhZhU0G8x1HL3x2qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726550879; c=relaxed/simple;
-	bh=mPptHASd9tL+XEXg5ZdKM6m7SrQZ+NB0mubeoxadEYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qczXvRdclajsFiEIVtSF/ctWnq9DqmZiyOezGZkcSn2/EyEDP9YELHexMefUGtF94zUSGPBwDMWPvmzO4mG9fml3F6m5vxkKyFt9ylLZut9+wr03MbPRS+5AvQ6rt/mrU8RncZcnj72lqiW49G/x2M+kNWHS7AztIhlmwWRTT6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=lXLv26ys; arc=none smtp.client-ip=148.135.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A71626982E;
-	Tue, 17 Sep 2024 01:27:45 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1726550875; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=UqoAnaFjj0g05/20IdLuYc+XLZjT4bqDf94/49ZqBlk=;
-	b=lXLv26ysjmiyZ4/wYXdHjA/yN/rFjNJ3nx9N1P0zGIOySd6NphncUuFbURMTF9hF+727Zc
-	5x9TRzpKES2GWMmYucBPjQ3rRewe3pVJW7YacN/tMHe2Z9aEio5p6pvPHx15moKaApTag0
-	dNxB5WK1p9Jt4OI1eDuAbi90c4PNewEQ52oiYKV1bdiUNKAPpf9zl8jVYVUZ3Sv2cD10Av
-	PF56Yb4nuXhm040Z4BMCBxYjeHiPsqgclFYTsqVtp0WpCZmfqKN11E+/MY1TulPCELeIpz
-	Z/FnzhJEFh7E2o9CLUBbQMXdTNNVvBDt1wZkVfREW2PT5o5EG755Wv7pNDweCw==
-Date: Tue, 17 Sep 2024 13:27:39 +0800
-From: Yiyang Wu <toolmanp@tlmp.cc>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 02/24] erofs: add superblock data structure in Rust
-Message-ID: <igyrm2gfmedt6v654lxcarcc7gqhc2qjkyopkwk65cdtnue3uh@rkz3m5s2qcm4>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-3-toolmanp@tlmp.cc>
- <2024091655-sneeze-pacify-cf28@gregkh>
+	s=arc-20240116; t=1726551118; c=relaxed/simple;
+	bh=vB/6gPefa12QWCfO9e9MQ0H+EUnjA7We5BRFa/kPRmo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hvz+AQdVYewwJ5jAqKvm4GL2kcHD5LFGrdRvI8RZr2VxF1VDhwCVR6fJbOm6CBB1JMVIELlc7Iuy7Zpkl8Jj6VY/eW6wBdlb7c3JnM2dqSbYFmYnKEDB15/ZUCUlPW2SCw/306NoSVV4oNvAKaQTvLZfA0f3uT9HnYFfVny0B/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=GEW9ZczD; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7db238d07b3so4147983a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2024 22:31:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=darkphysics.net; s=google; t=1726551115; x=1727155915; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B4+rbOwWS2DJD5HVsT+VzMKozNo+bnQY21oBRpMmEKE=;
+        b=GEW9ZczDPHhS5WPW2IST8vw6QQ0DuoP2F/5H1+0KOzzLKlV06e3c6pcwDVpnFZrE0D
+         0n9EWxrC5l5A8v48lAIV8i8Mi8amoRFB7n+zqFF1DhhezGHDcoiiWHLEwSqKhPYGOCEd
+         Pg5HEKCXY4esDnf594zCTK7XqV2iOdkGcWr5YciFikDejmZUv7fK91Zv1VSc6aTli8QK
+         8pDfxUAUnTpaVww8xcUfRo0euS3ZYOL+uAh4Tda7M0Z/Udd4NxfDSzWgBUtVOBwFXJqP
+         szjiHyyXGgWU/fo9PaneKxDFotIcvdA3PaM5P8igPXZpS1B599Lkwzn5LlZNu5hmszdE
+         bnKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726551115; x=1727155915;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B4+rbOwWS2DJD5HVsT+VzMKozNo+bnQY21oBRpMmEKE=;
+        b=R95TBrYEZGcFHntzmbWAXrEeWutyqOfR5AecBoh0Zg22COTfEf9n9vm/suqk8d15dy
+         xK7v1AlL79pho6ikj2QYmkdPXqmY1LE4RDi03gTvIYNLSHJps3G7+kMWqhuiATG8/W3R
+         Jax7vJeWnsXMCoNdpvx3zK7J7WJrhsIJgQQBe+M4R5Z8ClPaX2iv3GsLUw9fNzpbH6oR
+         RZTcD7nHJ8ZEsekjDyGXgnAPpIpHIL9yNA7dRdW/Fj/Zzyjh2v3EigzAEzK0Rw+s1pqm
+         ZSs1n4NcMzp5JTWNRNuWDf4fIlT8yNlKg6bNpeS+w9eNEVUA2H7eGY5MhWiJbvqfqqXx
+         Sftg==
+X-Forwarded-Encrypted: i=1; AJvYcCURFXwVtE1R8/ut4e6+KaCYZqBCPMpK4PJM700C16dgbLweV+YKElEyWDhQe9eNL54eV9nzaV9PzTFAG7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD9CVJMdMIx7vRpQPCw5OVhOUlnnHBAsdWf9uQNLq7foejllOJ
+	qdMnmNgP2Z98ZBq6aKJhji8lLRUCqReuI1d2uZkQkxASfCXk0HxTOqxUT6eA03tqKnkW20wzmZ1
+	2
+X-Google-Smtp-Source: AGHT+IEce3aewCe+0Wdm7Lx+Pv1FczWLHVBy3xP5BWihRV7NTQtpgjIcFBlcxur2cIxwgHHBt1Xjpw==
+X-Received: by 2002:a05:6a20:d808:b0:1cf:50ce:58d7 with SMTP id adf61e73a8af0-1cf75f65c3emr26253133637.29.1726551115409;
+        Mon, 16 Sep 2024 22:31:55 -0700 (PDT)
+Received: from lunchbox.darkphysics (c-73-83-183-190.hsd1.wa.comcast.net. [73.83.183.190])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db498e0607sm4392328a12.8.2024.09.16.22.31.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 22:31:54 -0700 (PDT)
+From: Tree Davies <tdavies@darkphysics.net>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com,
+	anjan@momi.ca
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tree Davies <tdavies@darkphysics.net>
+Subject: [PATCH 00/18] Staging: rtl8192e: 18 more Style guide variable renames
+Date: Mon, 16 Sep 2024 22:31:34 -0700
+Message-Id: <20240917053152.575553-1-tdavies@darkphysics.net>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024091655-sneeze-pacify-cf28@gregkh>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 16, 2024 at 07:55:43PM GMT, Greg KH wrote:
-> On Mon, Sep 16, 2024 at 09:56:12PM +0800, Yiyang Wu wrote:
-> > diff --git a/fs/erofs/rust/erofs_sys.rs b/fs/erofs/rust/erofs_sys.rs
-> > new file mode 100644
-> > index 000000000000..0f1400175fc2
-> > --- /dev/null
-> > +++ b/fs/erofs/rust/erofs_sys.rs
-> > @@ -0,0 +1,22 @@
-> > +#![allow(dead_code)]
-> > +// Copyright 2024 Yiyang Wu
-> > +// SPDX-License-Identifier: MIT or GPL-2.0-or-later
-> 
-> Sorry, but I have to ask, why a dual license here?  You are only linking
-> to GPL-2.0-only code, so why the different license?  Especially if you
-> used the GPL-2.0-only code to "translate" from.
-> 
-> If you REALLY REALLY want to use a dual license, please get your
-> lawyers to document why this is needed and put it in the changelog for
-> the next time you submit this series when adding files with dual
-> licenses so I don't have to ask again :)
-> 
-> thanks,
-> 
-> greg k-h
+This series fixes camelCase variable names
+Thank you to all reviewers.
+~Tree
 
-C'mon, I just don't want this discussion to be heated.
+Tree Davies (18):
+  Staging: rtl8192e: Rename variable nDataRate
+  Staging: rtl8192e: Rename variable bIsCCK
+  Staging: rtl8192e: Rename variable bCRC
+  Staging: rtl8192e: Rename variable pMCSRateSet
+  Staging: rtl8192e: Rename variable PreCommonCmd
+  Staging: rtl8192e: Rename variable PostCommonCmd
+  Staging: rtl8192e: Rename variable RxDataNum
+  Staging: rtl8192e: Rename variable FwRWRF
+  Staging: rtl8192e: Rename variable bFirstMPDU
+  Staging: rtl8192e: Rename variable bPacketBeacon
+  Staging: rtl8192e: Rename variable Rx_TS_Pending_List
+  Staging: rtl8192e: Rename variable bPacketMatchBSSID
+  Staging: rtl8192e: Rename variable bToSelfBA
+  Staging: rtl8192e: Rename variable Tx_TS_Admit_List
+  Staging: rtl8192e: Rename variable Tx_TS_Pending_List
+  Staging: rtl8192e: Rename variable Tx_TS_Unused_List
+  Staging: rtl8192e: Rename variable Sbox
+  Staging: rtl8192e: Rename variable pMCSFilter
 
-I mean my original code is licensed under MIT and I've already learned
-that Linux is under GPL-2.0. So i originally thought modifying it to
-dual licenses can help address incompatiblity issues. According to
-wikipedia, may I quote: "When software is multi-licensed, recipients
-can typically choose the terms under which they want to use or
-distribute the software, but the simple presence of multiple licenses
-in a software package or library does not necessarily indicate that
-the recipient can freely choose one or the other."[1], so according
-to this, I believe putting these under a GPL-2.0 project should be
-OK, since it will be forcily licensed **only** under GPL-2.0.
+ .../staging/rtl8192e/rtl8192e/r8192E_dev.c    | 50 +++++++++----------
+ .../staging/rtl8192e/rtl8192e/r8192E_phy.c    | 10 ++--
+ drivers/staging/rtl8192e/rtl8192e/rtl_core.c  |  6 +--
+ drivers/staging/rtl8192e/rtl8192e/rtl_dm.c    |  2 +-
+ drivers/staging/rtl8192e/rtl819x_HTProc.c     | 10 ++--
+ drivers/staging/rtl8192e/rtl819x_TSProc.c     | 36 ++++++-------
+ drivers/staging/rtl8192e/rtllib.h             | 34 ++++++-------
+ drivers/staging/rtl8192e/rtllib_crypt_tkip.c  |  6 +--
+ 8 files changed, 77 insertions(+), 77 deletions(-)
 
-Since I wasn't involved in Kernel Development before, 
-I just don't know you guys attitudes towards this kind of stuff.
-If you guys are not pretty happy with this, I can just switch back to
-GPL-2.0 and it's a big business for me.
+-- 
+2.30.2
 
-Best Regards,
-Yiyang Wu.
 
