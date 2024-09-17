@@ -1,267 +1,264 @@
-Return-Path: <linux-kernel+bounces-331820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE8F97B190
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:47:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B9C97B193
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 16:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029A92851C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:47:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 235EA2852E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 14:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1FE1741DC;
-	Tue, 17 Sep 2024 14:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20216176FA0;
+	Tue, 17 Sep 2024 14:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="X0nCawQw"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="U1rc3TZN"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84480535DC;
-	Tue, 17 Sep 2024 14:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8785D167D83
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 14:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726584465; cv=none; b=KepUesOah7N17M+zig2QzUt3o7yaLveuqnPgpZju60mRL1Imf95a3UFtCfE2+khPXJv5fZKBqSnpY0VrsiZSyzm5Ea9uOwgAi+yzi70VvnMkpoM8Xse6mprZtUgmT4LJQbkJk9zXQEpjg3jLVdH0SoTc50eZvAfkhDZ73mrTDHs=
+	t=1726584528; cv=none; b=GvHU5KgndDWY5epAbT349U2llDa9Ni+l4zhJEf3kByFvjde0wleHOvlHCwpYbxjIN5nB3L6pu7ei0ZmyEZkY1kHfHJXlPtWjSYs2JXHhpE4pJiAu74jF5OipPjqvdVytCJLxw6DvQGUKW8AXD6NoBRsqcrkFUmTNFLROJPFO+2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726584465; c=relaxed/simple;
-	bh=0gmS0CrHykIuqhYWHp6T8EI7WFpQtf/PrGx+TvZzGoM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K8cVB1OIhyHueQP+MujsHcNbesvmmXWyuL+MUcVTLN9XHSszJsXob6yd0GJQjttE9PaWudNdAFMcR5ijsaZZn0y//GnrA48Zyor7bWtt3EaXy1CQPV7G++7Uz/as64AI4yRoSy4fJkWUhCU3/iGzKzkuxMQhCNLLL3+46Mi2xjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=X0nCawQw; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1726584453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=D2tUHWrlbsrsSeaQbFVGiyfoPkRoLq2KwPhMPJ3F3JU=;
-	b=X0nCawQwbGEgDMmhhMD4sukzDsJaEkSWLq7/ZjBOlgl1XJSqJnpJDcRicCxFwHe/Pt9zEN
-	JscIr4xZCtAp3Kg1cRWlnKmUyaMXL0QEniR6DvoJ+XIAxCdPll6a6fPbbYlSq0ecRVQiW0
-	q1wx1vYhEoaAPE3wZOWDFCZFMUIoVb8=
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
+	s=arc-20240116; t=1726584528; c=relaxed/simple;
+	bh=4uIK60EGaW6dVjNViNGIwWxFwwNR/9uuqLGHsgbYNc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jSTauRNTYuMmBGYK6O7pYIVkDk4pB350CqrkkJO4anpiDMDc38KgRPVdvTft4RwAQgZJiH8B1KoUZVGFQ3NqZazXQl06YzmLiOdtdMoknsBdWfBCV04LqmjOPGPv97kd6IVo79CT86jPqi8E/xMcrw86zhQdFIjGc1OBjYUv9m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=U1rc3TZN; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so37519965e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 07:48:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726584524; x=1727189324; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nXDqTY064KNEq97yK926UATT+WBft9fL/VhHHBwl5bE=;
+        b=U1rc3TZNvJTf9dNFnvMDZehGz9sVj1jOrNeAsOm+vlXkQoRMmJWPt9rb5EjN0wThH7
+         FC2dfS/GfTXbEdeXkbV437b9kfP5cUuzkKFrSwaZ0JyqrYepYuUZ8rT2vGUs08Er7AbN
+         THbD7lolzR9ysjwldOR2390EIQh4YEFqlZ8KpVh67yvpe4pqSpZ974P+05evVOgsSK1Q
+         aSgGO3WVCazBsdwiNCKI3mmnn5yK9zBkFU9HcIy51PCvmnt6djCUqAt5x11ov0uPL9aB
+         howf/8itIifIKChpdDqa45r+CYuG5UTMQZMDP3Ya4X+czq2wEEvJJsidiK4pMFtLPm37
+         hRbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726584524; x=1727189324;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nXDqTY064KNEq97yK926UATT+WBft9fL/VhHHBwl5bE=;
+        b=l6kkVfUVl79eXw18hTvzRLu0xjfFwh6F3ZFLSeZ7VoKWI/1OyDAVu1ozqF3JULGusI
+         khy+WEkJdocmloQUya0VCHk39q+zvq4vHvWwl2N/P8bx0r5QrzmwHFwYvXgVpUWgu4ch
+         qf7qu/tsrqmqxEgSZl8PT9upO5yNtAYfFpqozdaOO48yZsrbl0ZttP+mrg1CRVq+oesp
+         37Rkc93+E8QDGLxTHWIGQph9bvYQ/y/5tsVTWZCm/jqZVHwZgpHIyej7QpJNHrbf3ywj
+         jA3bEaKhsbx5hhIh30K5U54bTAOyUcy6lwJQuZcUmsgsi+/bSBpGJ4lp8t8AZ+Ac2N5B
+         qyoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfoSY1sGOdG1QXjIeM8+Dbiqa0O0Cjm9byrcATrxsq6ooT7HHUZLxIqezOtINMnuuwuqzJaaVFepS7mlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys19VDXqKAGowH88jF7V5G/I74fTWIRPAvQBMiqIFilp8Rbgdv
+	X9dG4ZfJGaFjTR5JoGVgoqkGEoM8jrGRobJ+mSHAfLvipznLSmyszk+Q5LmnYC8ho79974UORGc
+	S
+X-Google-Smtp-Source: AGHT+IGEmOVQE8uhUKC3WlhBdCfEe4ALXQuvED5sUykC8fxO080mg9b5sZyFqp/kwmVWyffuaG5TzA==
+X-Received: by 2002:a05:6000:25c:b0:371:8688:1660 with SMTP id ffacd0b85a97d-378d625a53cmr6960061f8f.51.1726584523556;
+        Tue, 17 Sep 2024 07:48:43 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b97544sm5480696b3a.146.2024.09.17.07.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 07:48:41 -0700 (PDT)
+Date: Tue, 17 Sep 2024 16:48:26 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH 5.10] mtd: rawnand: mxc: Remove platform data support
-Date: Tue, 17 Sep 2024 17:47:33 +0300
-Message-Id: <20240917144733.47815-1-arefev@swemel.ru>
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sunil V L <sunilvl@ventanamicro.com>, Arnd Bergmann <arnd@arndb.de>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Serge Semin <fancer.lancer@gmail.com>
+Subject: Re: [PATCH next v2 1/4] serial: 8250: Split out IER from
+ rs485_start_tx()
+Message-ID: <ZumWuketXcGQNw49@pathway.suse.cz>
+References: <20240913140538.221708-1-john.ogness@linutronix.de>
+ <20240913140538.221708-2-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913140538.221708-2-john.ogness@linutronix.de>
 
-From: Fabio Estevam <festevam@gmail.com>
+On Fri 2024-09-13 16:11:35, John Ogness wrote:
+> Move IER handling out of rs485_start_tx() callback and into a new
+> wrapper serial8250_rs485_start_tx(). Replace all callback call sites
+> with wrapper, except for the console write() callback, where it is
+> inappropriate to modify IER.
 
-[ Upstream commit 0f6b791955a6365b5ebe8b6a5b01de69a47ee92e ]
+Sigh, I am trying to review this patch but I am not familiar with the
+code. Feel free to ignore me when the questions are completely off.
 
-i.MX is a devicetree-only platform now and the existing platform data
-support in this driver was only useful for old non-devicetree platforms.
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -1370,7 +1370,6 @@ static void serial8250_stop_rx(struct uart_port *port)
+>  	serial8250_rpm_get(up);
+>  
+>  	up->ier &= ~(UART_IER_RLSI | UART_IER_RDI);
+> -	up->port.read_status_mask &= ~UART_LSR_DR;
+>  	serial_port_out(port, UART_IER, up->ier);
+>  
+>  	serial8250_rpm_put(up);
+> @@ -1543,16 +1542,20 @@ static inline void __start_tx(struct uart_port *port)
+>   *
+>   * Generic callback usable by 8250 uart drivers to start rs485 transmission.
+>   * Assumes that setting the RTS bit in the MCR register means RTS is high.
+> - * (Some chips use inverse semantics.)  Further assumes that reception is
+> - * stoppable by disabling the UART_IER_RDI interrupt. (Some chips set the
+> - * UART_LSR_DR bit even when UART_IER_RDI is disabled, foiling this approach.)
+> + * (Some chips use inverse semantics.)
+> + * It does not disable RX interrupts. Use the wrapper function
+> + * serial8250_rs485_start_tx() if that is also needed.
+>   */
+>  void serial8250_em485_start_tx(struct uart_8250_port *up)
+>  {
+>  	unsigned char mcr = serial8250_in_MCR(up);
+>  
+> +	/*
+> +	 * Some chips set the UART_LSR_DR bit even when UART_IER_RDI is
+> +	 * disabled, so explicitly mask it.
+> +	 */
+>  	if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX))
+> -		serial8250_stop_rx(&up->port);
+> +		up->port.read_status_mask &= ~UART_LSR_DR;
 
-Get rid of the platform data support since it is no longer used.
+This change is related to disabling UART_IER_RDI but we do not longer
+disable it in this code path.
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Link: https://lore.kernel.org/linux-mtd/20201110121908.19400-1-festevam@gmail.com
-Signed-off-by: Denis Arefev <arefev@swemel.ru>
----
- drivers/mtd/nand/raw/Kconfig               |  2 +-
- drivers/mtd/nand/raw/mxc_nand.c            | 75 ++--------------------
- include/linux/platform_data/mtd-mxc_nand.h | 19 ------
- 3 files changed, 5 insertions(+), 91 deletions(-)
- delete mode 100644 include/linux/platform_data/mtd-mxc_nand.h
+Why do we need to do it here, please?
+Why is it needed only in the em485-specific path, please?
 
-diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-index 6c46f25b57e2..58421866bdc3 100644
---- a/drivers/mtd/nand/raw/Kconfig
-+++ b/drivers/mtd/nand/raw/Kconfig
-@@ -313,7 +313,7 @@ config MTD_NAND_VF610_NFC
- config MTD_NAND_MXC
- 	tristate "Freescale MXC NAND controller"
- 	depends on ARCH_MXC || COMPILE_TEST
--	depends on HAS_IOMEM
-+	depends on HAS_IOMEM && OF
- 	help
- 	  This enables the driver for the NAND flash controller on the
- 	  MXC processors.
-diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_nand.c
-index 684c51e5e60d..f896364968d8 100644
---- a/drivers/mtd/nand/raw/mxc_nand.c
-+++ b/drivers/mtd/nand/raw/mxc_nand.c
-@@ -21,7 +21,6 @@
- #include <linux/completion.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/platform_data/mtd-mxc_nand.h>
- 
- #define DRIVER_NAME "mxc_nand"
- 
-@@ -184,7 +183,6 @@ struct mxc_nand_host {
- 	unsigned int		buf_start;
- 
- 	const struct mxc_nand_devtype_data *devtype_data;
--	struct mxc_nand_platform_data pdata;
- };
- 
- static const char * const part_probes[] = {
-@@ -1611,29 +1609,6 @@ static inline int is_imx53_nfc(struct mxc_nand_host *host)
- 	return host->devtype_data == &imx53_nand_devtype_data;
- }
- 
--static const struct platform_device_id mxcnd_devtype[] = {
--	{
--		.name = "imx21-nand",
--		.driver_data = (kernel_ulong_t) &imx21_nand_devtype_data,
--	}, {
--		.name = "imx27-nand",
--		.driver_data = (kernel_ulong_t) &imx27_nand_devtype_data,
--	}, {
--		.name = "imx25-nand",
--		.driver_data = (kernel_ulong_t) &imx25_nand_devtype_data,
--	}, {
--		.name = "imx51-nand",
--		.driver_data = (kernel_ulong_t) &imx51_nand_devtype_data,
--	}, {
--		.name = "imx53-nand",
--		.driver_data = (kernel_ulong_t) &imx53_nand_devtype_data,
--	}, {
--		/* sentinel */
--	}
--};
--MODULE_DEVICE_TABLE(platform, mxcnd_devtype);
--
--#ifdef CONFIG_OF
- static const struct of_device_id mxcnd_dt_ids[] = {
- 	{
- 		.compatible = "fsl,imx21-nand",
-@@ -1655,26 +1630,6 @@ static const struct of_device_id mxcnd_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, mxcnd_dt_ids);
- 
--static int mxcnd_probe_dt(struct mxc_nand_host *host)
--{
--	struct device_node *np = host->dev->of_node;
--	const struct of_device_id *of_id =
--		of_match_device(mxcnd_dt_ids, host->dev);
--
--	if (!np)
--		return 1;
--
--	host->devtype_data = of_id->data;
--
--	return 0;
--}
--#else
--static int mxcnd_probe_dt(struct mxc_nand_host *host)
--{
--	return 1;
--}
--#endif
--
- static int mxcnd_attach_chip(struct nand_chip *chip)
- {
- 	struct mtd_info *mtd = nand_to_mtd(chip);
-@@ -1759,6 +1714,7 @@ static const struct nand_controller_ops mxcnd_controller_ops = {
- 
- static int mxcnd_probe(struct platform_device *pdev)
- {
-+	const struct of_device_id *of_id;
- 	struct nand_chip *this;
- 	struct mtd_info *mtd;
- 	struct mxc_nand_host *host;
-@@ -1800,20 +1756,8 @@ static int mxcnd_probe(struct platform_device *pdev)
- 	if (IS_ERR(host->clk))
- 		return PTR_ERR(host->clk);
- 
--	err = mxcnd_probe_dt(host);
--	if (err > 0) {
--		struct mxc_nand_platform_data *pdata =
--					dev_get_platdata(&pdev->dev);
--		if (pdata) {
--			host->pdata = *pdata;
--			host->devtype_data = (struct mxc_nand_devtype_data *)
--						pdev->id_entry->driver_data;
--		} else {
--			err = -ENODEV;
--		}
--	}
--	if (err < 0)
--		return err;
-+	of_id = of_match_device(mxcnd_dt_ids, host->dev);
-+	host->devtype_data = of_id->data;
- 
- 	if (!host->devtype_data->setup_interface)
- 		this->options |= NAND_KEEP_TIMINGS;
-@@ -1843,14 +1787,6 @@ static int mxcnd_probe(struct platform_device *pdev)
- 
- 	this->legacy.select_chip = host->devtype_data->select_chip;
- 
--	/* NAND bus width determines access functions used by upper layer */
--	if (host->pdata.width == 2)
--		this->options |= NAND_BUSWIDTH_16;
--
--	/* update flash based bbt */
--	if (host->pdata.flash_bbt)
--		this->bbt_options |= NAND_BBT_USE_FLASH;
--
- 	init_completion(&host->op_completion);
- 
- 	host->irq = platform_get_irq(pdev, 0);
-@@ -1891,9 +1827,7 @@ static int mxcnd_probe(struct platform_device *pdev)
- 		goto escan;
- 
- 	/* Register the partitions */
--	err = mtd_device_parse_register(mtd, part_probes, NULL,
--					host->pdata.parts,
--					host->pdata.nr_parts);
-+	err = mtd_device_parse_register(mtd, part_probes, NULL, NULL, 0);
- 	if (err)
- 		goto cleanup_nand;
- 
-@@ -1930,7 +1864,6 @@ static struct platform_driver mxcnd_driver = {
- 		   .name = DRIVER_NAME,
- 		   .of_match_table = of_match_ptr(mxcnd_dt_ids),
- 	},
--	.id_table = mxcnd_devtype,
- 	.probe = mxcnd_probe,
- 	.remove = mxcnd_remove,
- };
-diff --git a/include/linux/platform_data/mtd-mxc_nand.h b/include/linux/platform_data/mtd-mxc_nand.h
-deleted file mode 100644
-index d1230030c6db..000000000000
---- a/include/linux/platform_data/mtd-mxc_nand.h
-+++ /dev/null
-@@ -1,19 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
-- * Copyright 2004-2007 Freescale Semiconductor, Inc. All Rights Reserved.
-- * Copyright 2008 Sascha Hauer, kernel@pengutronix.de
-- */
--
--#ifndef __ASM_ARCH_NAND_H
--#define __ASM_ARCH_NAND_H
--
--#include <linux/mtd/partitions.h>
--
--struct mxc_nand_platform_data {
--	unsigned int width;	/* data bus width in bytes */
--	unsigned int hw_ecc:1;	/* 0 if suppress hardware ECC */
--	unsigned int flash_bbt:1; /* set to 1 to use a flash based bbt */
--	struct mtd_partition *parts;	/* partition table */
--	int nr_parts;			/* size of parts */
--};
--#endif /* __ASM_ARCH_NAND_H */
--- 
-2.25.1
 
+I tried to understand the code and am in doubts:
+
+On one hand, the comment talks about UART_LSR_DR and UART_IER_RDI
+so seems to be relater.
+
+But the "Some chips set..." comment has been added by the commit
+058bc104f7ca5c83d81 ("serial: 8250: Generalize rs485 software emulation").
+And I do not see any explanation why it was added in this code path
+even though UART_LSR_DR and UART_IER_RDI were manipulated in
+serial8250_stop_rx() which can be called also in other code
+paths via uport->ops->stop_rx().
+
+Also the comment suggests that this fixes a bug in some chips but
+the line has been added into 1.1.60 back in 2007.
+
+--- a/drivers/char/ChangeLog
++++ b/drivers/char/ChangeLog
+@@ -1,3 +1,28 @@
++Sat Oct 29 18:17:34 1994  Theodore Y. Ts'o  (tytso@rt-11)
++
++	* serial.c (rs_ioctl, get_lsr_info): Added patch suggested by Arne
++		Riiber so that user mode programs can tell when the
++		transmitter shift register is empty.
++
++Thu Oct 27 23:14:29 1994  Theodore Y. Ts'o  (tytso@rt-11)
++
++	* tty_ioctl.c (wait_until_sent): Added debugging printk statements
++		(under the #ifdef TTY_DEBUG_WAIT_UNTL_SENT)  
++
++	* serial.c (rs_interrupt, rs_interrupt_single, receive_chars,
++		change_speed, rs_close): rs_close now disables receiver
++		interrupts when closing the serial port.  This allows the
++		serial port to close quickly when Linux and a modem (or a
++		mouse) are engaged in an echo war; when closing the serial
++		port, we now first stop listening to incoming characters,
++		and *then* wait for the transmit buffer to drain.  
++
++		In order to make this change, the info->read_status_mask
++		is now used to control what bits of the line status
++		register are looked at in the interrupt routine in all
++		cases; previously it was only used in receive_chars to
++		select a few of the status bits.
++
+--- a/drivers/char/serial.c
++++ b/drivers/char/serial.c
+[...]
+@@ -1780,6 +1830,15 @@ static void rs_close(struct tty_struct *tty, struct file * filp)
+ 		info->normal_termios = *tty->termios;
+ 	if (info->flags & ASYNC_CALLOUT_ACTIVE)
+ 		info->callout_termios = *tty->termios;
++	/*
++	 * At this point we stop accepting input.  To do this, we
++	 * disable the receive line status interrupts, and tell the
++	 * interrut driver to stop checking the data ready bit in the
++	 * line status register.
++	 */
++	info->IER &= ~UART_IER_RLSI;
++	serial_out(info, UART_IER, info->IER);
++	info->read_status_mask &= ~UART_LSR_DR;
+ 	if (info->flags & ASYNC_INITIALIZED) {
+ 		wait_until_sent(tty, 3000); /* 30 seconds timeout */
+ 		/*
+
+    => It looks like it was not a fix for a "buggy chips". It looks
+       like it was part of the design.
+
+>  
+>  	if (up->port.rs485.flags & SER_RS485_RTS_ON_SEND)
+>  		mcr |= UART_MCR_RTS;
+> @@ -1562,6 +1565,18 @@ void serial8250_em485_start_tx(struct uart_8250_port *up)
+>  }
+>  EXPORT_SYMBOL_GPL(serial8250_em485_start_tx);
+>  
+> +/**
+> + * serial8250_rs485_start_tx() - stop rs485 reception, enable transmission
+> + * @up: uart 8250 port
+> + */
+> +void serial8250_rs485_start_tx(struct uart_8250_port *up)
+> +{
+> +	if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX))
+> +		serial8250_stop_rx(&up->port);
+> +
+> +	up->rs485_start_tx(up);
+> +}
+> +
+>  /* Returns false, if start_tx_timer was setup to defer TX start */
+>  static bool start_tx_rs485(struct uart_port *port)
+>  {
+> @@ -1585,7 +1600,7 @@ static bool start_tx_rs485(struct uart_port *port)
+>  	if (em485->tx_stopped) {
+>  		em485->tx_stopped = false;
+>  
+> -		up->rs485_start_tx(up);
+> +		serial8250_rs485_start_tx(up);
+
+If I get this correctly then this keeps the existing behavior when
+
+    up->rs485_start_tx == serial8250_em485_start_tx
+
+Is this always the case, please?
+
+The callback has been added by the commit 058bc104f7ca5c83d81
+("serial: 8250: Generalize rs485 software emulation") because
+8250_bcm2835aux.c driver needed to do something else.
+
+Can start_tx_rs485() be called for the 8250_bcm2835aux.c driver?
+Will it still work as expected?
+
+>  
+>  		if (up->port.rs485.delay_rts_before_send > 0) {
+>  			em485->active_timer = &em485->start_tx_timer;
+
+Best Regards,
+Petr
 
