@@ -1,147 +1,125 @@
-Return-Path: <linux-kernel+bounces-331743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0606D97B0C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:28:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BF097B0C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 15:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2531F2276A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BFF28267A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 13:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203A0156883;
-	Tue, 17 Sep 2024 13:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01692174EF0;
+	Tue, 17 Sep 2024 13:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="tInRlTsU"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="wkFhk6gi"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CE14C66
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 13:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511EB4C66;
+	Tue, 17 Sep 2024 13:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726579716; cv=none; b=KzbG3Ha4F6vhXMhZXDkM0waXweGSjXlgwiQP8dN1mndhG755PsxEOr06SszfGe3krRMYZenjHzvWUMLk7Fp1ue9Szxtv5k50HIgideN++JzZ9tYR4nvGgkGrvp2DoacxeoLSY+qR2kf/JTmbxVdnAx4ZaQO7IpsK9wdTvg1zs9I=
+	t=1726579780; cv=none; b=kGdTknBtS7g5aABpTL618IqnggHTV4IzteAIWNNIB8uolhpja/3nN/tAvK3g2fkknI++ieU/bEJnr38eJOIkBsXsoUw/0fMl/apEPyapEyvBzeGVoxulto7xRRBwV0CprHG/yHkTBIUI67Jm1DoyR079Hjb0F9Tfx/Iwzj6jxrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726579716; c=relaxed/simple;
-	bh=z/QlTYHj16cG15b0556RWiV9m/fJsfLUu7T9utUH3Mo=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=ALz0LpdZ0kW7jYBAa57SPUy59dfPDRe6PPhlE8lXMa8uRZNhzIEsfTtIQ4bMPX6s/VpVPZJIKCRyoHwfTXxfLfUyZQXhjDshzd3FdpteatJ8DEr5z9Q7LHfvM73FRbCoQs9jzX7C/41eLE3rHJsAoeNCmHXbD09LSI+v4IWpmfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=tInRlTsU; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71971d20ad9so762175b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 06:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1726579714; x=1727184514; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QSjVIhSmfJ0CyaIM/a3SSB+ZCJQA5N7E16cyTDPSeoc=;
-        b=tInRlTsUc8zkkekyHrwxTnE66V0D1bKJc0KcnjOolKj43ibAPgFxJSg2k8OgXEh4pi
-         HK02RvUQyw4w18kJ0/qoA8IjXslivxW3tmYZqOTSslxPPCfKRwnnMNtpuSFJZ9Ag7ar2
-         59VFe2RIGv034jUXS1GBsvLs/bZ1pKQ6fOfjPQEa9odwAhSe55DpVq+d2db7gD0hs7Ps
-         hq85D7Vnx5WAPUxdR9pP/S4XRJ6R4ltZBfoX2M5b43/kdkEojCuBIMIa8lmK1b3acg3P
-         X5gR1n5PEQGj42RqJ0/skCgNKqGTCweYdSJwI56NOsCd9UUsOtZJV4DC4aqj2MN6qvux
-         Mbdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726579714; x=1727184514;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QSjVIhSmfJ0CyaIM/a3SSB+ZCJQA5N7E16cyTDPSeoc=;
-        b=JYcbR0S/2WY4lgv+U9hdaz683f8xKT7i8z5kh77GN21iMKr5W4kJu25+cWFJFFF6yn
-         XNHCpEzs1ElYyy6gO/fhigHy9M8+0zOyas0xLVRNE7pnwGHA2gTCP5ra9/d6iD7H8NDJ
-         B1TpUYHH5cgawZthSXLhdUYQ0tjB6k7Wm2PKDc+SKs0Dq1XhSN0w8DwL4QuAgkHW+n2n
-         a4fRYQjzDFWQGMuyPXUiIj/sHYwRf86NyEzP82VKiK3AaukfGO0E8hfupMp8+wwG9Ry6
-         cEMZJ1NK/AsQ2xDhpKd+7y9M2TQa88DGwgkzPa3InZAFXQ78Z8ud6jEsqUBmRVEEm8/L
-         tbRg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8jsVY+LRqLNkF2Pk5YagCoAM48DlNyyFdGr+c5eIGWdSo1k52tZbqCKipzgTGWloCzZ/adZtYIMZZ4rE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYckbmc4MtLixCan79BmwsXKt7+l5Xn0X4r/n+e+qMnXCW7ivT
-	YDivXua49S5TsYuLx6JaEkNENHrENMwOLB1SjWTh+KkJ5HhCsDy2gIsbk2jIGzg=
-X-Google-Smtp-Source: AGHT+IEDqJbKpA6LAn7lxbzNxohHyNQyKe4VpZi839U/YbK8TEHIC3wtGjjJt3DVKNnGqc0aqDaaDA==
-X-Received: by 2002:a05:6a00:854:b0:718:d94b:4b with SMTP id d2e1a72fcca58-71936a2f634mr25905784b3a.6.1726579713896;
-        Tue, 17 Sep 2024 06:28:33 -0700 (PDT)
-Received: from localhost ([213.208.157.38])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a9809esm5146960b3a.39.2024.09.17.06.28.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 06:28:33 -0700 (PDT)
-Date: Tue, 17 Sep 2024 06:28:33 -0700 (PDT)
-X-Google-Original-Date: Tue, 17 Sep 2024 06:28:26 PDT (-0700)
-Subject:     Re: [PATCH v2 5/7] RISC-V: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
-In-Reply-To: <20240903142506.3444628-6-heikki.krogerus@linux.intel.com>
-CC: andi.shyti@kernel.org, jarkko.nikula@linux.intel.com,
-  andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org,
-  linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-  linux-riscv@lists.infradead.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: heikki.krogerus@linux.intel.com
-Message-ID: <mhng-c9a63485-1f83-48c6-8840-accd5f97d237@palmer-ri-x1c9>
+	s=arc-20240116; t=1726579780; c=relaxed/simple;
+	bh=eldDH882dZ+EPXSBNmWCfXwvB7TGB5pJITFXykbO/HA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AzbY66HWhiZPKRL5RUTmCrQF9/xaDK+oipe3TF2arcNWMaKWbDB9w/x5lfHohuGZ0iLcqXc3ekExZN5j2UDpjfQgI44vF8peB90yDoVv3tbP5YI5OlSMXa8PTzMbpkA2RMcJvvBe8YCqHJXiY1rsRaQ+lah8iJ6yWXtSjdJiBY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=wkFhk6gi; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id CAA241F910;
+	Tue, 17 Sep 2024 15:29:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1726579773;
+	bh=+17PJtQ9hXw0xsvyjaFHf6l+N2HVSiJMd9TkH1OyWKk=; h=From:To:Subject;
+	b=wkFhk6gikRjOdmodnIppIFD8v8E76qRGG2r+Tgrj2tgiMaa4EAs8DdShu4APg8TOV
+	 pauHmxvvUXRRVOIG2dJOejLP/CjWsuEgjyHTX33AETbeey49Iw9mjb7GFuWdClUomR
+	 qpexSmcZQ3bDrBwW6aQ7SfZDsWT8xi8Puxy2fhNfB1K+sfPm4rYElF2pMLwtn0DcjA
+	 2+6xwVO46djGMEwYHuK7CjNn2ibFV43AuHHQJQ5m/thOTcNjWNYScLqTdCMhgtUmWo
+	 LCkD8cCQbFQ0kFYzv54YB53inbEjjunk6wwBpdsSAMU+7K2Wx8jR/jgV6ZIPcpkxdO
+	 SVLhuCAWWIuUA==
+Date: Tue, 17 Sep 2024 15:29:28 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1] arm64: dts: colibri-imx8x: Add ad7879_ts label to
+ touchscreen controller
+Message-ID: <20240917132928.GA5292@francesco-nb>
+References: <20240910152213.2072743-1-ghidoliemanuele@gmail.com>
+ <1cfe3f3a-28a3-4030-b6ba-3892a2a7bc79@linaro.org>
+ <20240917074544.GA7916@francesco-nb>
+ <99a6eec3-ed24-47b2-af07-b4764c6de6a9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <99a6eec3-ed24-47b2-af07-b4764c6de6a9@linaro.org>
 
-On Tue, 03 Sep 2024 07:25:04 PDT (-0700), heikki.krogerus@linux.intel.com wrote:
-> The dependency handling of the Synopsys DesignWare I2C
-> adapter drivers is going to be changed so that the glue
-> drivers for the PCI and platform buses depend on
-> I2C_DESIGNWARE_CORE.
->
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: linux-riscv@lists.infradead.org
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->  arch/riscv/configs/defconfig                   | 1 +
->  arch/riscv/configs/nommu_k210_defconfig        | 1 +
->  arch/riscv/configs/nommu_k210_sdcard_defconfig | 1 +
->  3 files changed, 3 insertions(+)
->
-> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> index 0d678325444f..a644a798f602 100644
-> --- a/arch/riscv/configs/defconfig
-> +++ b/arch/riscv/configs/defconfig
-> @@ -157,6 +157,7 @@ CONFIG_HW_RANDOM_VIRTIO=y
->  CONFIG_HW_RANDOM_JH7110=m
->  CONFIG_I2C=y
->  CONFIG_I2C_CHARDEV=m
-> +CONFIG_I2C_DESIGNWARE_CORE=y
->  CONFIG_I2C_DESIGNWARE_PLATFORM=y
->  CONFIG_I2C_MV64XXX=m
->  CONFIG_I2C_RIIC=y
-> diff --git a/arch/riscv/configs/nommu_k210_defconfig b/arch/riscv/configs/nommu_k210_defconfig
-> index af9601da4643..87ff5a1233af 100644
-> --- a/arch/riscv/configs/nommu_k210_defconfig
-> +++ b/arch/riscv/configs/nommu_k210_defconfig
-> @@ -58,6 +58,7 @@ CONFIG_I2C=y
->  # CONFIG_I2C_COMPAT is not set
->  CONFIG_I2C_CHARDEV=y
->  # CONFIG_I2C_HELPER_AUTO is not set
-> +CONFIG_I2C_DESIGNWARE_CORE=y
->  CONFIG_I2C_DESIGNWARE_PLATFORM=y
->  CONFIG_SPI=y
->  # CONFIG_SPI_MEM is not set
-> diff --git a/arch/riscv/configs/nommu_k210_sdcard_defconfig b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-> index dd460c649152..95cbd574f291 100644
-> --- a/arch/riscv/configs/nommu_k210_sdcard_defconfig
-> +++ b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-> @@ -50,6 +50,7 @@ CONFIG_DEVTMPFS_MOUNT=y
->  CONFIG_I2C=y
->  CONFIG_I2C_CHARDEV=y
->  # CONFIG_I2C_HELPER_AUTO is not set
-> +CONFIG_I2C_DESIGNWARE_CORE=y
->  CONFIG_I2C_DESIGNWARE_PLATFORM=y
->  CONFIG_SPI=y
->  # CONFIG_SPI_MEM is not set
+On Tue, Sep 17, 2024 at 10:21:16AM +0200, Krzysztof Kozlowski wrote:
+> On 17/09/2024 09:45, Francesco Dolcini wrote:
+> > On Mon, Sep 16, 2024 at 06:10:55PM +0200, Krzysztof Kozlowski wrote:
+> >> On 10/09/2024 17:22, Emanuele Ghidoli wrote:
+> >>> From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> >>>
+> >>> The device tree defines the touchscreen controller, but it cannot be
+> >>> enabled because it lacks a reference label.
+> >>
+> >> It can be. Just enable it...
+> > 
+> > colibri-imx8x is a SoM, it's not a complete self-contained device. The
+> > display touch controller is part of the SoM, however it is kept disabled
+> > since you need an actual touchscreen to make any use of it.
+> > 
+> > This label would be used where an actual touchscreen is defined, this can
+> > happen with a DT overlay, for example.
+> 
+> DT overlay should be in the tree.
+> 
+> > 
+> >>> This commit adds a label to allow it to be referenced and enabled.
+> >>
+> >> You changed here nothing. For me this patch is churn and pointless.
+> >> You add the label when you need to use it.
+> > 
+> > DT files from the Linux kernel GIT are used also outside the Linux kernel
+> > sources, see for example U-Boot OF_UPSTREAM [1], to me it's fair to add
+> > a label for an out-of-tree user, am I wrong?
+> 
+> 
+> For U-Boot or any other upstream project: yes. It's enough to point to
+> lore patch or lore link. For downstream projects: I don't care, just
+> churn. Downstream should upstream their stuff to be considered.
 
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+In the specific case this is a SOM dtsi that can be included in an
+actual whole self-contained product DTS file. It's not just about DT overlay.
 
-(based on the rest of the thread I'm assuming you're taking these all 
-together, which seems saner to me)
+In the Linux kernel DT files we do have labels all the time into SOC
+dtsi files to allow the actual board user to augment/edit the node,
+even when not used (yet). As a user of SOC dtsi file this is great
+to me, and the same reasoning just apply to a SOM dtsi.
+
+While I understand you do not care, IMO it has some valid use case and
+should be considered for merging.
+
+Francesco
+
 
