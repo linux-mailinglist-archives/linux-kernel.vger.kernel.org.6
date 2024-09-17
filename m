@@ -1,114 +1,158 @@
-Return-Path: <linux-kernel+bounces-331409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-331410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6905E97AC85
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9768F97AC88
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 10:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311A5287A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:01:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4E5284A34
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2024 08:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F03314D70E;
-	Tue, 17 Sep 2024 08:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C99214C5BD;
+	Tue, 17 Sep 2024 08:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B98kdvWp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="r6HT0/ry"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FA929A0;
-	Tue, 17 Sep 2024 08:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390DD12F399;
+	Tue, 17 Sep 2024 08:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726560081; cv=none; b=BQblffU8pJtw1uQNwVxxnblGSw43mwMe2TbIwcXyCzUBq/SxJOzL6H6m1XyzRe7eEvTrUAx1/aVb4tKK2o6xmjvI3L05wCQIgC/vFD/7x4m5+yqi50La7dadrB7vIWEXrI1ANf5oXmFKyaZjK7uxAtzoe0XlEBtTIrEQpqua0oM=
+	t=1726560134; cv=none; b=aJSgDby6g4LrCmTzKlMFXfyiTrRL3rBML+a7WH4wEGHCMrkhavIk+on6e6bjI+3eKyFQE6s6hRF2fTM5vdPuMPbs/cI1l1hS0I5Q1b1ihPOZ4Pa09sG6kqMLhLS/qxRuCT5WccTf2DcixFnzbfYVfgLhXwlKkWBxtyx7Qr0MQ98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726560081; c=relaxed/simple;
-	bh=tO6Tw7K9c4PjqQEh9NEuL90zC3+LFKl6sE7WNkMEt34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/IC60OPeaOnZqT5dRU/zYu/r8bNP3f31OhMYBt0xCpvMMJymJfhbMauhdsc2/Kxj9nA1mgLFugSuQPHJawHCdbICu28Gk0eoLwchNkSrKCH1HZeXMzFxXz6/xp1ZwE7XfkVcjAX/aetaw31jQjHEA0DoFktUxWaQzjDRWAfKEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B98kdvWp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5EF3C4CEC6;
-	Tue, 17 Sep 2024 08:01:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726560080;
-	bh=tO6Tw7K9c4PjqQEh9NEuL90zC3+LFKl6sE7WNkMEt34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B98kdvWpHvR9LgiEwUGT6oiBjA53BjSiTZZPXfA2wWflYl8MCVvcBECGBsLVKTmtD
-	 JL4Oa3CyJiE2j9R7Oq34tMBr5gUsujQp+Wo4HyMcJ/BLdEXTyhmp7xcjok+xuEBrwf
-	 bePXQdfJ2bGndDyPXS67kw+b/P1L2NL053dQ/OJbYgjSvn/FIG58ARSziOLPA9HHJC
-	 GgOViL8pr3yLrKOb4VPROFhWzYQo5x0IvPD0dB43hZDPbEPsxLFgwGn0rBD5ALlNMl
-	 Sd0P/Zgc2jCZ71X4hrjvi8E1WbjNVuvZGRhYj/1cvXTx2oicjPTCEx8kOC74mNti/+
-	 buFehd8wLVogw==
-Date: Tue, 17 Sep 2024 09:01:15 +0100
-From: Lee Jones <lee@kernel.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@quicinc.com,
-	quic_psodagud@quicinc.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Shazad Hussain <quic_shazhuss@quicinc.com>
-Subject: Re: [PATCH v3] dt-bindings: mfd: qcom,tcsr: document support for
- SA8255p
-Message-ID: <20240917080115.GA9955@google.com>
-References: <20240905194741.3803345-1-quic_nkela@quicinc.com>
- <edb25f16-aa9a-4d44-9eb5-63f509f80fde@quicinc.com>
+	s=arc-20240116; t=1726560134; c=relaxed/simple;
+	bh=ESBg/RwXEIF18IhmT97V59aOMlXtn5mQkWw6ywjoOKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fFg9xYbCJjUqyobi6gUJHdipklLMT2nxzsLLETJJIDy1nJMYwJJErom0+0qY800g2nDtIkpSirm05Uv686u728lNsDKvoOgGz4mJ5Ek7kY0CA+MexQlXoDb2sILaTVuzL+Z0Xx/FnzknJbJzAb5LclooEZ++JNDMVByPs26tuhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=r6HT0/ry; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726560128;
+	bh=9Zs5rC6LYBPELuXcpw4Ezx66lMlbhg+66YXN2cd6eKo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=r6HT0/ryNJePs7T1/FV0IIVrzv+7elw8Lc8IxLu+Bh0tFGF+6y8ddDzxneunCxyND
+	 8gy0LLPbQpZG035TgsnD19P3xIFVuXfUSAEpiJOYlOrkzPbiibeSYo48hYg+Z+nzPU
+	 Emu22ZeFWb5xsNQfIhIVDhZRnVqv5l6r+nj7TjTYuTj9CEM43lW+GC0AVyO/KLjuJ+
+	 mZ0V33Vj6hvBZysIDUJ/tYsAOOfBuG/IP0tBfYfa8S6bf25pmapf2yg7YCRYnbl6Kg
+	 cZv4m4Tf6Hcv+cUNzlQD3kkQeJwoarZQn7cOEZaAbyiPpQMmca6p7G7p6+lnXFdgIj
+	 /bm5x15+kTBhg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X7DlM69pkz4x8X;
+	Tue, 17 Sep 2024 18:02:07 +1000 (AEST)
+Date: Tue, 17 Sep 2024 18:02:07 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Paul Moore
+ <paul@paul-moore.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the security tree with the mm tree
+Message-ID: <20240917180207.1f68637c@canb.auug.org.au>
+In-Reply-To: <Zuk06cfmaOT5fltF@tiehlicka>
+References: <20240911142822.7c65e02e@canb.auug.org.au>
+	<20240917093048.71949a8f@canb.auug.org.au>
+	<Zuk06cfmaOT5fltF@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <edb25f16-aa9a-4d44-9eb5-63f509f80fde@quicinc.com>
+Content-Type: multipart/signed; boundary="Sig_/KVEd/WIycsNfDgRwmGL9htV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, 16 Sep 2024, Nikunj Kela wrote:
+--Sig_/KVEd/WIycsNfDgRwmGL9htV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Gentle ping...
+Hi Michal,
 
-Please don't do that!
+On Tue, 17 Sep 2024 09:51:05 +0200 Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Tue 17-09-24 09:30:48, Stephen Rothwell wrote:
+> >=20
+> > On Wed, 11 Sep 2024 14:28:22 +1000 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote: =20
+> > >
+> > > Today's linux-next merge of the security tree got conflicts in:
+> > >=20
+> > >   include/linux/lsm_hooks.h
+> > >   security/security.c
+> > >=20
+> > > between commit:
+> > >=20
+> > >   3346ada04cf5 ("bcachefs: do not use PF_MEMALLOC_NORECLAIM")
+> > >=20
+> > > from the mm-unstable branch of the mm tree and commit:
+> > >=20
+> > >   711f5c5ce6c2 ("lsm: cleanup lsm_hooks.h")
+> > >=20
+> > > from the security tree.
+> > >=20
+> > > I fixed it up (I used the latter version ofinclude/linux/lsm_hooks.h
+> > > and see below) and can carry the fix as necessary. This is now fixed =
+as
+> > > far as linux-next is concerned, but any non trivial conflicts should =
+be
+> > > mentioned to your upstream maintainer when your tree is submitted for
+> > > merging.  You may also want to consider cooperating with the maintain=
+er
+> > > of the conflicting tree to minimise any particularly complex conflict=
+s.
+> > >=20
+> > > --=20
+> > > Cheers,
+> > > Stephen Rothwell
+> > >=20
+> > > diff --cc security/security.c
+> > > index 3581262da5ee,4564a0a1e4ef..000000000000
+> > > --- a/security/security.c
+> > > +++ b/security/security.c
+> > > @@@ -660,7 -745,7 +745,7 @@@ static int lsm_file_alloc(struct file *
+> > >    *
+> > >    * Returns 0, or -ENOMEM if memory can't be allocated.
+> > >    */
+> > > - int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
+> > >  -static int lsm_inode_alloc(struct inode *inode)
+> > > ++static int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
+> > >   {
+> > >   	if (!lsm_inode_cache) {
+> > >   		inode->i_security =3D NULL; =20
+> >=20
+> > This is now a conflict between the mm tree and Linus' tree. =20
+>=20
+> Andrew said he would drop the mm patches and I will resubmit when merge
+> window closes.
 
-No top posting, no contentless pings, and be aware of the merge-cycle.
+Yeah, I normally drop the unstable parts of the mm tree during the merge
+window, so I will do that from tomorrow.
 
-You're on the list (which since it's in reverse chronological order
-based on the last message, you've just put yourself at the bottom of the
-list).
+--=20
+Cheers,
+Stephen Rothwell
 
-> On 9/5/2024 12:47 PM, Nikunj Kela wrote:
-> > Add compatible for tcsr representing support on SA8255p SoC.
-> >
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
-> > Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> > ---
-> >
-> > Changes in v3:
-> > 	- Removed the patch from original series[1]
-> >
-> > Changes in v2:
-> > 	- Added Reviewed-by tag
-> >
-> > [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
-> > ---
-> >  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> > index c6bd14ec5aa0..88f804bd7581 100644
-> > --- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> > @@ -21,6 +21,7 @@ properties:
-> >            - qcom,msm8998-tcsr
-> >            - qcom,qcm2290-tcsr
-> >            - qcom,qcs404-tcsr
-> > +          - qcom,sa8255p-tcsr
-> >            - qcom,sc7180-tcsr
-> >            - qcom,sc7280-tcsr
-> >            - qcom,sc8280xp-tcsr
+--Sig_/KVEd/WIycsNfDgRwmGL9htV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--- 
-Lee Jones [李琼斯]
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbpN38ACgkQAVBC80lX
+0GzsgQf+MLS9yqbDMD8Yc75RSEFXCnAKhHBxaRnHj6OMHpII3nmDaOUEnKis2/0H
+eF3xYNWTfWBAmrvF9dQwbLMyAScrFIMHhKH9oL/vUrcv9xz+3LsBvRkMm3sCrf0G
+HJl3T1jyv5t5g2udaoulolZTgmnRKaEI98mDsI/NBlz8pxrfG2+m0QOI5+f5BXI3
+qzfrBqUSgw3/Ap90GjKI/jV5mvz5qDesbRLHo2b8i92xl4ZTDeq2pA1nQYzX/b2B
+KvgOwTxfwlnZR+cV5bb6q8z5sTFxWH6T3jQmHSzzMbrii0jWl+CXSTLmiPAMDDob
+f5ssCZpmSVUFjG4hGoooJeZCPEVEYw==
+=A8tJ
+-----END PGP SIGNATURE-----
+
+--Sig_/KVEd/WIycsNfDgRwmGL9htV--
 
