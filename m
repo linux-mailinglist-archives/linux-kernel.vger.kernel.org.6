@@ -1,218 +1,205 @@
-Return-Path: <linux-kernel+bounces-333009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF5B97C220
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:02:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 487B597C224
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6536B280E62
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D38281826
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B171CB322;
-	Wed, 18 Sep 2024 23:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEC61CB526;
+	Wed, 18 Sep 2024 23:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="OvyA/Jcn"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Xd42YF+L"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85069161328
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 23:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2CE17BEB7;
+	Wed, 18 Sep 2024 23:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726700547; cv=none; b=sF1dajfruSMI7hL5aeDjExugNBTSrDQ5jFtO20TWF22R+y+3RyExwBqWjHDbp25KxP/g29O8BOuTHu6A1S9/dYUr89crA5eveOTcnBffX9jaju58UDVkIGf24rNPotFM5go6NTArNWR0zRCPQnW3GoFXG+C9KeRXFA255A4EGkg=
+	t=1726700653; cv=none; b=Xms3SAobH9non4p26AqqSPmbFeEyau0+2sFmoLCsl7AQPigmSOM0kMdsVINm49NMi/a3j1oOCS9oyky9OSkOHHC5C1jw6pNprFdGKUIUFwAF5dUwxrHt7GnpBO9Zv3YREXAxow88XHo/2yk7Y0vv0sEOBaKUhbWnvubQ792/SBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726700547; c=relaxed/simple;
-	bh=qaNCtu5Ah5GsphXESzIsuf1PNk2lIzYS7FZTOR3VTqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QcBDoIofQeKxouvzY1ykmu1XUj9a+88Tf73LQtMv+Dduu1so6N/hkazdDYho8/2yT8N5g/Ym6mgl7C+lNmUZiAB8e55EOM5h2ghsleU+IUA0m4qATAcE2qT/aYB6XGnNTkU/xWDlDNy32q4e82yVZL9UDwYKlNZ8cV4Xkt4hq1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=OvyA/Jcn; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1726700545; x=1758236545;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qaNCtu5Ah5GsphXESzIsuf1PNk2lIzYS7FZTOR3VTqo=;
-  b=OvyA/JcnOs69gszZ+CJ6xnI6RpDf4BylqZbdnAZGjFiM7/DeLXFRkXtf
-   BJbSSjnNUUUo/oprZajRmUClHpKHO1i66YakzsIJ4urmlsrMxGv98MPlN
-   UpSOmyR/gKUtvWwqee1DHeMmzYcHlLheEldc4mkwzc3r4SonXUk7QPpUI
-   w=;
-X-IronPort-AV: E=Sophos;i="6.10,240,1719878400"; 
-   d="scan'208";a="434420965"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 23:02:21 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:29700]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.10.6:2525] with esmtp (Farcaster)
- id d980ed7c-ac6b-4381-a9dc-9e91c65cd53c; Wed, 18 Sep 2024 23:02:20 +0000 (UTC)
-X-Farcaster-Flow-ID: d980ed7c-ac6b-4381-a9dc-9e91c65cd53c
-Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 18 Sep 2024 23:02:19 +0000
-Received: from [0.0.0.0] (10.253.83.51) by EX19D020UWC004.ant.amazon.com
- (10.13.138.149) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 18 Sep 2024
- 23:02:15 +0000
-Message-ID: <5e2b6e72-0b7e-45fa-8a5d-d7a2eff9a5b4@amazon.com>
-Date: Thu, 19 Sep 2024 01:02:12 +0200
+	s=arc-20240116; t=1726700653; c=relaxed/simple;
+	bh=esnSunhQqIePqw8T82wJhKYUg7vAtVonlRyNWfy26nQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZhuULjmfBjSPnGaKcyvPSemmNeLf4ml5zeIjGeN6brmKH0w59GOJgW4wDyJtFyBZ6mdvrZLn+VKPfZPbiaMLu3/kK/rTLZU4wiBOmui2tIzcDFMcyhHZQZB/N2pGIJWIsKuobZgjdZ7hIwitlnJxnW77XxXJV0gUW2rrt8YBjJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Xd42YF+L; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726700649;
+	bh=w5ZUe2n66+HmOGjMNMZO7YmCadAXr8Vgiuzi7WmcYHs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Xd42YF+LzDxEL1j5k9xCIb8Uk3mPau3f/w8CgofByNP0D/yQAmfRLN2Ts891V0XIx
+	 1kC1xs/ROepWBMbb6Yei3Y+hPGazlKxvhSfCzio6ryEkPz88ViQ1U1c5Y0vLMSILGm
+	 AuQcks2ZSN5VIUxMHq0DQxVtManharQYWfMmh+SQJsM/HgJAqSl0+KhQDGygoL43Tx
+	 CgE9j7gEIiDPimcXQenkATOy0ASJ4zQba5yDTYQtoK1jq3+6Vi8OQ0ULEYYhJRvUN6
+	 8MLriQ2c3XzoTNjpWrex2fpZqHJ5PuKfRaGsgrOqdlao45qAM9042c5SJa4WAjqyki
+	 unlV1laIcN/NA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X8Djh5ycBz4x2g;
+	Thu, 19 Sep 2024 09:04:08 +1000 (AEST)
+Date: Thu, 19 Sep 2024 09:04:07 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, Jeff Xu <jeffxu@chromium.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Yu Zhao <yuzhao@google.com>
+Subject: Re: linux-next: manual merge of the execve tree with the mm tree
+Message-ID: <20240919090407.30c30759@canb.auug.org.au>
+In-Reply-To: <20240909171843.78c294da@canb.auug.org.au>
+References: <20240909171843.78c294da@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: vm events, userspace, the vmgenid driver, and the future [was:
- the uevent revert thread]
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>, "Michael S. Tsirkin"
-	<mst@redhat.com>, <virtio-dev@lists.oasis-open.org>, <qemu-devel@nongnu.org>
-CC: Lennart Poettering <mzxreary@0pointer.de>, <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Babis Chalios
-	<bchalios@amazon.es>, Theodore Ts'o <tytso@mit.edu>, "Cali, Marco"
-	<xmarcalx@amazon.co.uk>, Arnd Bergmann <arnd@arndb.de>, "rostedt@goodmis.org"
-	<rostedt@goodmis.org>, Christian Brauner <brauner@kernel.org>, Paolo Bonzini
-	<pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>,
-	<jann@thejh.net>, Michael Kelley <mhklinux@outlook.com>
-References: <20240418114814.24601-1-Jason@zx2c4.com>
- <e09ce9fd-14cb-47aa-a22d-d295e466fbb4@amazon.com>
- <CAHmME9qKFraYWmzD9zKCd4oaMg6FyQGP5pL9bzZP4QuqV1O_Qw@mail.gmail.com>
- <ZieoRxn-On0gD-H2@gardel-login>
- <b819717c-74ea-4556-8577-ccd90e9199e9@amazon.com>
- <Ziujox51oPzZmwzA@zx2c4.com> <Zi9ilaX3254KL3Pp@gardel-login>
- <01d2b24c-a9d2-4be0-8fa0-35d9937eceb4@amazon.com>
- <CAHmME9rxn5KJJBOC3TqTEgotnsFO5r6F-DJn3ekc5ZgW8OaCFw@mail.gmail.com>
- <84c3696d-8108-4a2e-90d7-7830ca6cc3b9@amazon.com>
- <ZutT7bArzCwW5yyf@zx2c4.com>
-Content-Language: en-US
-From: Alexander Graf <graf@amazon.com>
-In-Reply-To: <ZutT7bArzCwW5yyf@zx2c4.com>
-X-ClientProxiedBy: EX19D036UWB001.ant.amazon.com (10.13.139.133) To
- EX19D020UWC004.ant.amazon.com (10.13.138.149)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; boundary="Sig_/O4sf0IwIek/e2XnMQTbZopU";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Ck9uIDE5LjA5LjI0IDAwOjI3LCBKYXNvbiBBLiBEb25lbmZlbGQgd3JvdGU6Cj4gW2Jyb2FkZW5l
-ZCBzdWJqZWN0IGxpbmUgYW5kIGFkZGVkIHJlbGV2YW50IHBhcnRpZXMgdG8gY2MgbGlzdF0KPgo+
-IE9uIFR1ZSwgU2VwIDE3LCAyMDI0IGF0IDEwOjU1OjIwUE0gKzAyMDAsIEFsZXhhbmRlciBHcmFm
-IHdyb3RlOgo+PiBXaGF0IGlzIHN0aWxsIG9wZW4gYXJlIHVzZXIgc3BhY2UgYXBwbGljYXRpb25z
-IHRoYXQgcmVxdWlyZSBldmVudCBiYXNlZAo+PiBub3RpZmljYXRpb24gb24gVk0gY2xvbmUgZXZl
-bnRzIC0gYW5kICpvbmx5KiBWTSBjbG9uZSBldmVudHMuIFRoaXMKPj4gbW9zdGx5IGNhdGVycyBm
-b3IgdG9vbHMgbGlrZSBzeXN0ZW1kIHdoaWNoIG5lZWQgdG8gZXhlY3V0ZSBwb2xpY3kgLSBzdWNo
-Cj4+IGFzIGdlbmVyYXRpbmcgcmFuZG9tbHkgZ2VuZXJhdGVkIE1BQyBhZGRyZXNzZXMgLSBpbiB0
-aGUgZXZlbnQgYSBWTSB3YXMKPj4gY2xvbmVkLgo+Pgo+PiBUaGF0J3MgdGhlIHVzZSBjYXNlIHRo
-aXMgcGF0Y2ggInZtZ2VuaWQ6IGVtaXQgdWV2ZW50IHdoZW4gVk1HRU5JRAo+PiB1cGRhdGVzIiBp
-cyBhYm91dCBhbmQgSSB0aGluayB0aGUgYmVzdCBwYXRoIGZvcndhcmQgaXMgdG8ganVzdCByZXZl
-cnQKPj4gdGhlIHJldmVydC4gQSB1ZXZlbnQgZnJvbSB0aGUgZGV2aWNlIGRyaXZlciBpcyBhIHdl
-bGwgZXN0YWJsaXNoZWQsIHdlbGwKPj4gZml0dGluZyBMaW51eCBtZWNoYW5pc20gZm9yIHRoYXQg
-dHlwZSBvZiBub3RpZmljYXRpb24uCj4gVGhlIHRoaW5nIHRoYXQgd29ycmllcyBtZSBpcyB0aGF0
-IHZtZ2VuaWQgaXMganVzdCBzb21lIHdlaXJkIHJhbmRvbQo+IG1pY3Jvc29mdCBhY3BpIGRyaXZl
-ci4gSXQncyBvbmUgc29ydCBvZiBwYXJ0aWN1bGFyIGRldmljZSwgYW5kIG5vdCBhCj4gdmVyeSBn
-b29kIG9uZSBhdCB0aGF0LiBUaGVyZSdzIHN0aWxsIHJvb20gZm9yIHZpcnRpby9xZW11IHRvIGlt
-cHJvdmUgb24KPiBpdCB3aXRoIHRoZWlyIG93biB0aGluZywgb3IgZm9yIHZib3ggb3Igd2hhdGV2
-ZXIgZWxzZSB0byBoYXZlIHRoZWlyCj4gdmVyc2lvbiwgYW5kIHhlbiB0aGVpcnMsIGFuZCBzbyBm
-b3J0aC4gVGhhdCBpcyB0byBzYXksIEknbSBub3Qgc3VyZSB0aGF0Cj4gdGhpcyB2aXJ0dWFsIGhh
-cmR3YXJlIGlzICp0aGUqIHdheSBvZiBkb2luZyBpdC4KCgpJIGFncmVlLCBidXQgZ2l2ZW4gdGhh
-dCBpdCdzIGJlZW4gYSBmZXcgeWVhcnMgYW5kIG5vYm9keSBlbHNlIHJlYWxseSAKY2FtZSB1cCB3
-aXRoIGEgZGlmZmVyZW50IGRldmljZSwgaXQgbWVhbnMgdGhlIGN1cnJlbnQgc2VtYW50aWNzIGZv
-ciB0aGUgCnNjb3BlIG9mIHdoYXQgdGhlIGRldmljZSBpcyBkb2luZyBhcmUgY2xvc2UgdG8gImdv
-b2QgZW5vdWdoIi4gU28gSSBkb24ndCAKZXhwZWN0IGEgbG90IG9mIGlubm92YXRpb24gaGVyZS4g
-QW5kIGlmIHRoZXJlIHdpbGwgYmUgaW5ub3ZhdGlvbiAtIGFzIAp5b3UgcG9pbnQgb3V0IC0gaXQg
-d2lsbCBicmluZyBkaWZmZXJlbnQgc2VtYW50aWNzIHRoYXQgd2lsbCB0aGVuIGFsc28gCnJlcXVp
-cmUgdXNlciBzcGFjZSBjaGFuZ2VzIGFueXdheS4KCgo+IEV2ZW4gaW4gdGVybXMgb2YgdGhlIGVu
-dHJvcHkgc3R1ZmYgKHdoaWNoIEkga25vdyB5b3Ugbm8gbG9uZ2VyIGNhcmUKPiBhYm91dCwgYnV0
-IEkgZG8pLCBtc3QncyBvcmlnaW5hbCB2aXJ0aW8tcm5nIGRyYWZ0IG1lbnRpb25lZCByZXBvcnRp
-bmcKPiBldmVudHMgYmV5b25kIGp1c3QgVk0gZm9ya3MsIGV4dGVuZGluZyBpdCBnZW5lcmljYWxs
-eSB0byBhbnkga2luZCBvZgo+IGVudHJvcHkgcmVkdWN0aW9uIHNpdHVhdGlvbi4gRm9yIGV4YW1w
-bGUsIG1pZ3JhdGlvbiBvciBzdXNwZW5kIG9yCj4gd2hhdGV2ZXIgbWlnaHQgYmUgaW50ZXJlc3Rp
-bmcgdGhpbmdzIHRvIHRyaWdnZXIuIEhlY2ssIG9uZSBjb3VsZCBpbWFnaW5lCj4gdGhvc2UgY29t
-aW5nIHRocm91Z2ggdm1nZW5pZCBhdCBzb21lIHBvaW50LCB3aGljaCB3b3VsZCB0aGVuIGNoYW5n
-ZSB0aGUKPiBzZW1hbnRpY3MgeW91J3JlIGFmdGVyIGZvciBzeXN0ZW1kLgoKCklmIHRoZXkgY29t
-ZSB0aHJvdWdoIHZtZ2VuaWQsIGl0IHdvdWxkIG5lZWQgdG8gZ2FpbiBhIG5ldyB0eXBlIG9mIGV2
-ZW50IAphdCB3aGljaCBwb2ludCB0aGUgdWV2ZW50IG5vdGlmaWNhdGlvbiB3b3VsZCBhbHNvIGNo
-YW5nZS4KCkknbSBhbHNvIG5vdCBzdXJlIHdoeSBsaXZlIG1pZ3JhdGlvbiB3b3VsZCB0cmlnZ2Vy
-IGVpdGhlciBhIHZtIGNsb25lIG9yIAphbnkgcm5nIHJlbGV2YW50IGV2ZW50LiBBbmQgc3VzcGVu
-ZCBpcyBzb21ldGhpbmcgd2UgYWxyZWFkeSBoYXZlIHRoZSAKbWFjaGluZXJ5IGZvciB0byBkZXRl
-Y3QuCgoKPiBFdmVuIGluIHRlcm1zIG9mIHJlcG9ydGluZyBleGNsdXNpdmVseSBhYm91dCBleHRl
-cm5hbCBWTSBldmVudHMsIHRoZXJlJ3MKPiBhIHN1YnRsZSB0aGluZyB0byBjb25zaWRlciBiZXR3
-ZWVuIGNsb25lcy9mb3JrcyBhbmQgcm9sbGJhY2tzLCBhcyB3ZWxsCj4gYXMgbWlncmF0aW9ucy4g
-Vm1nZW5pZCBraW5kIG9mIGx1bXBzIGl0IGFsbCB0b2dldGhlciwgYW5kIGhvcGVmdWxseSB0aGUK
-CgpJdCdzIHRoZSBvcHBvc2l0ZTogVk1HZW5JRCBpcyBleGNsdXNpdmVseSBjb25jZXJuZWQgYWJv
-dXQgY2xvbmVzLiBJdCAKZG9lc24ndCBjYXJlIGFib3V0IHJvbGxiYWNrcy4gSXQgZG9lc24ndCBj
-YXJlIGFib3V0IG1pZ3JhdGlvbnMuIEl0cyAKdmFsdWUgZWZmZWN0aXZlbHkgY2hhbmdlcyB3aGVu
-IHlvdSBjbG9uZSBhIFZNOyBhbmQgb25seSB0aGVuLgoKCj4gaHlwZXJ2aXNvciBub3RpZmllcyBp
-biBhIHdheSBjb25zaXN0ZW50IHdpdGggd2hhdCB1c2Vyc3BhY2Ugd2FzIGhvcGluZwo+IHRvIGxl
-YXJuIGFib3V0LiAoUmlnaHQgbm93LCBtYXliZSB3ZSdyZSBkb2luZyB3aGF0IEh5cGVyLVYgZG9l
-cywgbWF5YmUsCj4gYnV0IGFsc28gbWF5YmUgbm90OyBpdCdzIGtpbmQgb2YgbG9vc2UuKSBTbyBh
-dCBzb21lIHBvaW50LCB0aGVyZSdzIGEKPiBxdWVzdGlvbiBhYm91dCB0aGUgbGltaXRhdGlvbnMg
-b2Ygdm1nZW5pZCBhbmQgdGhlIHBvc3NpYmxlIGV4dGVuc2lvbnMgb2YKPiBpdCwgb3Igd2hldGhl
-ciB0aGlzIHdpbGwgY29tZSBpbiBhIGRpZmZlcmVudCBkcml2ZXIgb3IgdmlydHVhbCBoYXJkd2Fy
-ZSwKPiBhbmQgaG93LgoKClRvIG1lIGEgbG90IG9mIHRoaXMgaXMgdG9vIHZhZ3VlIHRvIGJlIGFj
-dGlvbmFibGUuIFVubGVzcyBzb21lb25lIGNvbWVzIAppbiB3aXRoIHJlYWwgc2NlbmFyaW9zIHdo
-ZXJlIHRoZXkgY2FyZSBhYm91dCBvdGhlciBzY2VuYXJpb3MsIGl0IHNvdW5kcyAKdG8gbWUgbGlr
-ZSB0aGUgb25lIHNjZW5hcmlvIHRoYXQgdm1nZW5pZCBjb3ZlcnMgaXMgd2hhdCBzeXN0ZW0gbGV2
-ZWwgCnVzZXIgc3BhY2UgY2FyZXMgYWJvdXQuIElmIGluIGEgZmV3IHllYXJzIHdlIHJlYWxpemUg
-dGhhdCB3ZSBuZWVkIDMgCmRpZmZlcmVudCB0eXBlcyBvZiBldmVudHMsIHdlIGNhbiBzdGFydCBs
-b29raW5nIGF0IHdheXMgdG8gZnVubmVsIHRob3NlIAppbiBhIG1vcmUgYWJzdHJhY3Qgd2F5LiBV
-bnRpbCB0aGVuLCBiZWNhdXNlIHdlIGRvbid0IGtub3cgd2hhdCB0aGVzZSAKZXZlbnRzIHdpbGwg
-YmUsIHdlIGNhbid0IGV2ZW4gZGVzaWduIGFuIEFQSSB0aGF0IHdvdWxkIGFkZHJlc3MgdGhlbS4K
-CktlZXAgaW4gbWluZCB0aGF0IHdlJ3JlIG5vdCByZWFsbHkgdGFsa2luZyBoZXJlIGFib3V0IGJ1
-aWxkaW5nIGEgZ2VuZXJpYyAKQVBJIGZvciBhbnkgcmFuZG9tIHVzZXIgc3BhY2UgYXBwbGljYXRp
-b24uIFdlIG9ubHkgd2FudCB0byBnaXZlIHN5c3RlbSAKc29mdHdhcmUgdGhlIGFiaWxpdHkgdG8g
-cmVhc29uIGFib3V0IHN5c3RlbSBldmVudHMuIElNSE8gYW55IG1vcmUgCmFic3RyYWN0IGxheWVy
-IHRvIGZ1bm5lbCBtdWx0aXBsZSBkaWZmZXJlbnQgb2YgdGhlc2UgdG8gZG93bnN0cmVhbSB1c2Vy
-IApzcGFjZSAoaWYgd2UgZXZlciBjYXJlKSB3b3VsZCBiZSBhIHVzZXIgc3BhY2UgcHJvYmxlbSB0
-byBzb2x2ZSwgbGlrZSBmb3IgCmV4YW1wbGUgYSBkYnVzIGV2ZW50LgoKCj4gUmlnaHQgbm93LCB0
-aGlzIGlzIG1vc3RseSB1bmV4cGxvcmVkLiBUaGUgdmlydGlvLXJuZyBhdmVudWUgd2FzIGxhcmdl
-c3QKPiBzdGVwIGluIHRlcm1zIG9mIGV4cGxvcmluZyB0aGlzIHByb2JsZW0gc3BhY2UsIGJ1dCB0
-aGVyZSBhcmUgb2J2aW91c2x5IGEKPiBmZXcgZGlyZWN0aW9ucyB0byBnbywgZGVwZW5kaW5nIG9u
-IHdoYXQgeW91ciBwcmltYXJ5IGNvbmNlcm4gaXMuCj4KPiBCdXQgYWxsIG9mIHRoYXQgbWFrZXMg
-bWUgdGhpbmsgdGhhdCBleHBvc2luZyB0aGUgcGFydGljdWxhcnMgb2YgdGhpcwo+IHZpcnR1YWwg
-aGFyZHdhcmUgZHJpdmVyIHRvIHVzZXJzcGFjZSBpcyBub3QgdGhlIGJlc3Qgb3B0aW9uLCBvciBh
-dCBsZWFzdAo+IG5vdCBhbiBvcHRpb24gdG8gcnVzaCBpbnRvIChvciB0byB0cmljayBHcmVnIGlu
-dG8pLCBhbmQgd2lsbCBib3RoIGxpbWl0CgoKSSdtIHByZXR0eSBzdXJlIEkgbmV2ZXIgdHJpY2tl
-ZCBHcmVnIGludG8gYW55dGhpbmcgOikKCgo+IHdoYXQgd2UgY2FuIGRvIHdpdGggaXQgbGF0ZXIs
-IGFuZCBwb3RlbnRpYWxseSBidXJkZW4gdXNlcnNwYWNlIHdpdGgKPiBoYXZpbmcgdG8gY2hlY2sg
-bXVsdGlwbGUgZGlmZmVyZW50IHRoaW5ncyB3aXRoIGNvbmZ1c2luZyBpbnRlcmFjdGlvbnMKPiBk
-b3duIHRoZSByb2FkLiBTbyBJIHRoaW5rIGl0J3Mgd29ydGggc3RlcHBpbmcgYmFjayBhIGJpdCBh
-bmQgdGhpbmtpbmcKCgpUaGlzIGludGVyZmFjZSBoZXJlIGlzIG9ubHkgYXZhaWxhYmxlIHRvIGVm
-ZmVjdGl2ZWx5IHVkZXYvc3lzdGVtZCB0eXBlIApzb2Z0d2FyZS4gQW55IGFic3RyYWN0aW9uIGFi
-b3ZlIHRoYXQgc2hvdWxkIGJlIG9uIHRoZW0uIEFuZCBpZiB3ZSAKZXZlbnR1YWxseSBkZWNpZGUg
-dGhhdCB3ZSBuZWVkIGEgYmV0dGVyIGludGVyZmFjZSB0byBnZW5lcmljIHVzZXIgc3BhY2UsIAp3
-ZSBjYW4gc3RpbGwgYnVpbGQgaXQuCgoKPiBhYm91dCB3aGF0IHdlIGFjdHVhbGx5IHdhbnQgZnJv
-bSB0aGlzIGFuZCB3aGF0IHRob3NlIHNlbWFudGljcyBzaG91bGQKPiBiZS4KPgo+IEknZCBhbHNv
-IGxvdmUgdG8gaGVhciBmcm9tIHRoZSBRRU1VIGd1eXMgb24gdGhpcyBhbmQgZ2V0IHRoZWlyIGlu
-cHV0LiBUbwo+IHRoYXQgZW5kLCBJJ3ZlIGFkZGVkIHFlbXUgYW5kIHZpcnRpbyBtYWlsaW5nIGxp
-c3RzLCBhcyB3ZWxsIGFzIG1zdC4KPgo+IEFsc28sIEknZCBiZSBpbnRlcmVzdGVkIHRvIGxlYXJu
-IHNwZWNpZmljYWxseSB3aGF0IHlvdSAoQW1hem9uKSB3YW50Cj4gdGhpcyBmb3IgYW5kIHdoYXQg
-dGhlIGxhcmdlciBwaWN0dXJlIHRoZXJlIGlzLiBJIGdldCB0aGUgc3lzdGVtZCBjYXNlLAo+IGJ1
-dCBJJ20gdW5kZXIgdGhlIGFzc3VtcHRpb24geW91J3ZlIGdvdCBhIGRpZmZlcmVudCBwcm9qZWN0
-IGluIHlvdXIKPiB3b29kcy4KCgpUaGUgcHVycG9zZSBmb3IgQW1hem9uIGhlcmUgaXMgdG8gYWNj
-ZWxlcmF0ZSBzZXJ2ZXJsZXNzIGNvbXB1dGUgVk1zIFsxXS4KCldlIHdhbnQgdG8gc25hcHNob3Qg
-YSBWTSBwb3N0LWluaXQsIGJlZm9yZSBpdCByZWNlaXZlcyBhbnkgb3BlcmF0aW9uLiAKVGhlbiBy
-ZXN1bWUgaXQsIGluaXRpYXRlIGxvZ2ljIHRvIHJlc2FuaXRpemUgaXRzZWxmIGFuZCBzZXJ2ZSB0
-aGUgCnJlcXVlc3QuIFRoZSByZWFzb24gd2Ugd2FudCB0aGlzIHBhcnRpY3VsYXIgdm1nZW5pZCBp
-bnRlcmZhY2UgaXMgc28gdGhhdCAKd2UgY2FuIGNyZWF0ZSBhIG5vdGlvbiBvZiAicmVzYW5pdGl6
-YXRpb24iIGluIHVzZXIgc3BhY2UgYXQgYWxsLiBPbmNlIHdlIApoYXZlIHRoZSBldmVudCwgc3lz
-dGVtZCBjYW4gc3RhcnQgZXN0YWJsaXNoaW5nIHNlcnZpY2UgYWN0aW9ucyBiYXNlZCBvbiAKdGhh
-dCB3aGljaCB3aWxsIGxlYWQgdG8gdGhlIHVzZXIgc3BhY2UgZWNvc3lzdGVtIHRvIGdyb3cgaW50
-ZXJmYWNlcyB0byAKc2F5ICJzYW5pdGl6ZSB5b3Vyc2VsZiIgd2hpY2ggd2UgY2FuIHRoZW4gYWxz
-byBpbnZva2UgaW4gVk0gcG9zdC1pbml0IC0gCnByb2JhYmx5IHdpdGhvdXQgc3lzdGVtZCA6KS4K
-CldlIGJ1aWx0IHN1Y2ggZXZlbnQgbG9naWMgZm9yIEphdmEgdG9kYXkgWzJdLCBidXQgd2Ugd291
-bGQgbGlrZSB0byAKZXhwYW5kIGJleW9uZC4gQW5kIHRoYXQgd2lsbCBiZWNvbWUgYW4gdW5tYWlu
-dGFpbmFibGUgbWVzcyB3aXRob3V0IAp2aWFibGUgZWNvc3lzdGVtIHN1cHBvcnQsIHNvIHdlIG1h
-eSBhcyB3ZWxsIGVuYWJsZSAibm9ybWFsIiBWTSBjbG9uZXMgCndpdGggdGhlIHNhbWUgbG9naWMu
-IEdpdmVuIHByZXR0eSBtdWNoIGFsbCBoeXBlcnZpc29ycyAoaW5jbHVkaW5nIFFFTVUpIApvdXQg
-dGhlcmUgYWxyZWFkeSBpbXBsZW1lbnQgdm1nZW5pZCwgaXQgc2VlbXMgdG8gYmUgdGhlIGRlIGZh
-Y3RvIApzdGFuZGFyZCB0byBkbyBleGFjdGx5IHRoaXMgbm90aWZpY2F0aW9uLgoKCkFsZXgKClsx
-XSBodHRwczovL2RvY3MuYXdzLmFtYXpvbi5jb20vbGFtYmRhL2xhdGVzdC9kZy9zbmFwc3RhcnQu
-aHRtbApbMl0gCmh0dHBzOi8vZG9jcy5hd3MuYW1hem9uLmNvbS9sYW1iZGEvbGF0ZXN0L2RnL3Nu
-YXBzdGFydC1ydW50aW1lLWhvb2tzLmh0bWwKCgoKCkFtYXpvbiBXZWIgU2VydmljZXMgRGV2ZWxv
-cG1lbnQgQ2VudGVyIEdlcm1hbnkgR21iSApLcmF1c2Vuc3RyLiAzOAoxMDExNyBCZXJsaW4KR2Vz
-Y2hhZWZ0c2Z1ZWhydW5nOiBDaHJpc3RpYW4gU2NobGFlZ2VyLCBKb25hdGhhbiBXZWlzcwpFaW5n
-ZXRyYWdlbiBhbSBBbXRzZ2VyaWNodCBDaGFybG90dGVuYnVyZyB1bnRlciBIUkIgMjU3NzY0IEIK
-U2l0ejogQmVybGluClVzdC1JRDogREUgMzY1IDUzOCA1OTcK
+--Sig_/O4sf0IwIek/e2XnMQTbZopU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
+
+On Mon, 9 Sep 2024 17:18:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the execve tree got a conflict in:
+>=20
+>   include/linux/mm.h
+>=20
+> between commits:
+>=20
+>   99ab6f0a6854 ("mm/codetag: fix pgalloc_tag_split()")
+>   4d42ecdbd2fb ("mm/codetag: add pgalloc_tag_copy()")
+>=20
+> from the mm-unstable branch of the mm tree and commit:
+>=20
+>   44f65d900698 ("binfmt_elf: mseal address zero")
+>=20
+> from the execve tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc include/linux/mm.h
+> index 79d69e998649,a178c15812eb..000000000000
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@@ -4148,61 -4201,14 +4148,71 @@@ void vma_pgtable_walk_end(struct vm_are
+>  =20
+>   int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys=
+_addr_t *size);
+>  =20
+>  +#ifdef CONFIG_MEM_ALLOC_PROFILING
+>  +static inline void pgalloc_tag_split(struct folio *folio, int old_order=
+, int new_order)
+>  +{
+>  +	int i;
+>  +	struct alloc_tag *tag;
+>  +	unsigned int nr_pages =3D 1 << new_order;
+>  +
+>  +	if (!mem_alloc_profiling_enabled())
+>  +		return;
+>  +
+>  +	tag =3D pgalloc_tag_get(&folio->page);
+>  +	if (!tag)
+>  +		return;
+>  +
+>  +	for (i =3D nr_pages; i < (1 << old_order); i +=3D nr_pages) {
+>  +		union codetag_ref *ref =3D get_page_tag_ref(folio_page(folio, i));
+>  +
+>  +		if (ref) {
+>  +			/* Set new reference to point to the original tag */
+>  +			alloc_tag_ref_set(ref, tag);
+>  +			put_page_tag_ref(ref);
+>  +		}
+>  +	}
+>  +}
+>  +
+>  +static inline void pgalloc_tag_copy(struct folio *new, struct folio *ol=
+d)
+>  +{
+>  +	struct alloc_tag *tag;
+>  +	union codetag_ref *ref;
+>  +
+>  +	tag =3D pgalloc_tag_get(&old->page);
+>  +	if (!tag)
+>  +		return;
+>  +
+>  +	ref =3D get_page_tag_ref(&new->page);
+>  +	if (!ref)
+>  +		return;
+>  +
+>  +	/* Clear the old ref to the original allocation tag. */
+>  +	clear_page_tag_ref(&old->page);
+>  +	/* Decrement the counters of the tag on get_new_folio. */
+>  +	alloc_tag_sub(ref, folio_nr_pages(new));
+>  +
+>  +	__alloc_tag_ref_set(ref, tag);
+>  +
+>  +	put_page_tag_ref(ref);
+>  +}
+>  +#else /* !CONFIG_MEM_ALLOC_PROFILING */
+>  +static inline void pgalloc_tag_split(struct folio *folio, int old_order=
+, int new_order)
+>  +{
+>  +}
+>  +
+>  +static inline void pgalloc_tag_copy(struct folio *new, struct folio *ol=
+d)
+>  +{
+>  +}
+>  +#endif /* CONFIG_MEM_ALLOC_PROFILING */
+>  +
+> + #ifdef CONFIG_64BIT
+> + int do_mseal(unsigned long start, size_t len_in, unsigned long flags);
+> + #else
+> + static inline int do_mseal(unsigned long start, size_t len_in, unsigned=
+ long flags)
+> + {
+> + 	/* noop on 32 bit */
+> + 	return 0;
+> + }
+> + #endif
+> +=20
+>   #endif /* _LINUX_MM_H */
+
+This is now a conflict between the mm-stable tree and Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/O4sf0IwIek/e2XnMQTbZopU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbrXGcACgkQAVBC80lX
+0GyqWAf/fVu0zg1L5AHxhN3quMiMz2pb0CBTfFdzZaPQBHwCIPYb4QZBt6kTm9N9
+nDxAIg8aK06yxrd2iiYkc4hyvIGFZxp6QB8zS3WMx79VkcNu3CZggc8xQA0tX2H8
+qt5xObP4vOT1LwMPPxz9QoBDLPaO+0Ome27Gkb/76LsmCQhTulvoTDgUhPDjvzbz
+Crz8bTCCTJtKWj9RbrLjLE0sw5OhIngAC5LdwsKoDb16Hy8Xb9uJ9tkyeR7unw9a
+YZ4YX75jjRgS/DF9iBNodLym39DyI3gKJnN4cMGUe03bJv8P/0A+AT2SSDSsKYNu
+BEuTbtNcBfCRTzcKfOF+D6wKG7k52w==
+=zRLY
+-----END PGP SIGNATURE-----
+
+--Sig_/O4sf0IwIek/e2XnMQTbZopU--
 
