@@ -1,116 +1,238 @@
-Return-Path: <linux-kernel+bounces-332546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87DE597BB0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:44:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56ED97BB11
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337CC1F21BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:44:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3FA1C23BAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EBB17C9B8;
-	Wed, 18 Sep 2024 10:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1270186E3E;
+	Wed, 18 Sep 2024 10:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="n/sO5OvW"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtqGAr3O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD6E17A597
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D819717BB25;
+	Wed, 18 Sep 2024 10:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726656272; cv=none; b=W1DKeEwczidy+c4ZEuVCMkVxbolsHNnd6LdWVENbm3LQkIIAZ6ticF2bIda2MoXczScNJSK9QRDeQ/yJ7A0PDqosJtlaHvP1I2nhBwhE1W1Bw2Z3yAviDE4P9wPVif5vAn7SO352nuKkV9MqHzMzPgOPm1Qcdhx4ur+Qpp55inQ=
+	t=1726656371; cv=none; b=Z8sIq/soPTjkjVadYfGS23YQOKI4MF9dOLQ2gyyzW5Ppb64j0yHu6L/wRu3Tiuu72p+cdBkMHL1kUYemkvt+b/mWBVnO6syDLOFpRfc7xjUSyyOQ735cPMzXM6YDHimu5b6twtKpgENLfPxfS5OzCLMG/NyhmDwQ3cAanTlDbXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726656272; c=relaxed/simple;
-	bh=K+LQMJ7qJOU3k+VAzSN0VOR2Jr1VgiVwu4dJIhpclvE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vAMCatUPYMkmA0RziEbUjQ+uTjftS5CCxhdmIPuvBBXG1O4ljd3Ddu+PLvMlFqDlw3SIgPajEj+qwa0JLR6E+jZsywII/FEs2DPzLwyBRq0Tnc2cm+Aksfc15G0lXZVkKCSr5v4zbRFDYU/5wxbeCXrplter+hCDVsZus1RNE8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=n/sO5OvW; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 46A83100002;
-	Wed, 18 Sep 2024 13:44:08 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1726656248; bh=uknRtrNx7YVrWwi+rWIEtfF6DVVkwQoskz2i90YW9nE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=n/sO5OvWKybsYechy+LXbR52YnULDWemhQ+/8NOvN/0PxK8GdFKlKvgnkVDXgLM4C
-	 jhXyg4rv8kdwDoYIHk4X8EgOoElQQe8Z4knwL507I1+uQ03OCD+TcoB+4EqUkZrP5g
-	 HHnDvHAGGBcqWLl3/u3RGNrk2Q+cl8V9W0wDLCtkmOtBh8Qdm7pUgobyO9kk0uedqr
-	 Gdv7wOuOijb8zxjk3HpKFLSujUyaaZiya6N4/OazdKcdlnpVPYmMUZnVKLLvQ3LSNj
-	 4CuR49Led+fUJ57PdncSJ6f0rawbXUp72AE/VbaqAVDuyFOFGbVZi1f0NLeXiDdN/s
-	 jqOF+vI2qP0yA==
-Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Wed, 18 Sep 2024 13:43:36 +0300 (MSK)
-Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 18 Sep
- 2024 13:43:16 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: H Hartley Sweeten <hsweeten@visionengravers.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Ian Abbott <abbotti@mev.co.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] comedi: adl_pci9111: Fix possible division by zero in pci9111_ai_do_cmd_test()
-Date: Wed, 18 Sep 2024 13:43:04 +0300
-Message-ID: <20240918104304.15772-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1726656371; c=relaxed/simple;
+	bh=Qnppz8lfqtx1saJh/hYNgsjBVMxARtwGX6DimFRp+tI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EavhyuB5FYjXTX+MD8FN9R5xoJEbEBOjjBcSZAUYYYFqYIukt/+ZxtQc8H5anaLeOOGPmtQm7V2xAwLDakq5JWUUQhFzNgBTbhTmuyIZT6Y8jGI6wOBfGro90EO7WJr0N9dic8dX63Jhz7cy+l8rP36XCaBS8p3xDv+TMnQ/zis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtqGAr3O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B25C4CEC3;
+	Wed, 18 Sep 2024 10:46:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726656369;
+	bh=Qnppz8lfqtx1saJh/hYNgsjBVMxARtwGX6DimFRp+tI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=qtqGAr3OKlzRxwhZOwjnfH1a6sZH1gy5TUNJ7FQ1BvtHCdrDpChObKblx6qi7jxPS
+	 yE4w/ECmrHmeD73HEsyGqyAAvT7OTAouiJiv6apaVVviDmqWKh4DrZbUlbV7iAsiGZ
+	 qYdPKc5Weq/h8SeXsePqYm61JM7ahPzEF2fhiXUZwwgTuQtEJrnJNmWaCToq9e9epU
+	 +UR7/HMdx8iUjpA3cYPNba8FpDunJJ9Xgu01vDX1NzmzvVUjyM9qSGrWMbZHeAdRZw
+	 gsPzQFqgtlAkSaFjzDSlAkqDgLKsY045grcKPi4IYieiK3RGMaVOYzHPNQiyZ/MeiD
+	 qSYjsObSWj/hw==
+Message-ID: <d27d7439-bd8d-4e89-b940-cb1cebba2fb8@kernel.org>
+Date: Wed, 18 Sep 2024 12:46:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187817 [Sep 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2;t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/09/18 10:01:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/09/18 08:50:00 #26615196
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: power: supply: Add TI TWL603X charger
+To: Andreas Kemnade <andreas@kemnade.info>, tony@atomide.com,
+ Sebastian Reichel <sre@kernel.org>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ linux-pm@vger.kernel.org
+References: <20240918084132.928295-1-andreas@kemnade.info>
+ <20240918084132.928295-2-andreas@kemnade.info>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240918084132.928295-2-andreas@kemnade.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Division by zero is possible in pci9111_ai_do_cmd_test() in case of scan
-begin trigger source is TRIG_TIMER and either 'chanlist_len' or
-'convert_arg' is zero.
+On 18/09/2024 10:41, Andreas Kemnade wrote:
+> Use a fallback compatible since for especially for generic
+> defensive setup of parameters, both 6030 and 6032 are the same and
+> U-Boot actually uses a generic 6030/32 function to enable the
+> charger.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  .../power/supply/ti,twl6030-charger.yaml      | 62 +++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.yaml b/Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.yaml
+> new file mode 100644
+> index 0000000000000..fe0fe9a78761c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-Add zero value check to prevent division by zero.
+Dual license. See checkpatch.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
 
-Fixes: f1c51faabc4d ("staging: comedi: adl_pci9111: tidy up (*do_cmdtest) Step 4")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/comedi/drivers/adl_pci9111.c | 2 ++
- 1 file changed, 2 insertions(+)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/supply/ti,twl6030-charger.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TWL6030/32 BCI (Battery Charger Interface)
+> +
+> +description: |
 
-diff --git a/drivers/comedi/drivers/adl_pci9111.c b/drivers/comedi/drivers/adl_pci9111.c
-index 086d93f40cb9..ec1fb570b98c 100644
---- a/drivers/comedi/drivers/adl_pci9111.c
-+++ b/drivers/comedi/drivers/adl_pci9111.c
-@@ -312,6 +312,8 @@ static int pci9111_ai_do_cmd_test(struct comedi_device *dev,
- 	 */
- 	if (cmd->scan_begin_src == TRIG_TIMER) {
- 		arg = cmd->chanlist_len * cmd->convert_arg;
-+		if (!arg)
-+			return 4;
- 
- 		if (arg < cmd->scan_begin_arg)
- 			arg *= (cmd->scan_begin_arg / arg);
--- 
-2.30.2
+Do not need '|' unless you need to preserve formatting.
+
+
+> +  The battery charger needs to be configured to do any charging besides of
+> +  precharging. The GPADC in the PMIC has to be used to get the related
+> +  voltages.
+> +
+> +maintainers:
+> +  - Andreas Kemnade <andreas@kemnade.info>
+> +
+> +allOf:
+> +  - $ref: power-supply.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+
+No need for items here. Just const directly.
+
+> +          - const: "ti,twl6030-charger"
+
+Not tested.
+
+Drop ""
+
+> +      - items:
+> +          - const: "ti,twl6032-charger"
+> +          - const: "ti,twl6030-charger"
+> +
+> +  interrupts:
+> +    minItems: 2
+
+Drop minItems
+
+> +    maxItems: 2
+
+... and actually drop both and instead list items with description
+(items: -descriptio: ... - description: ....)
+
+> +
+> +  io-channels:
+> +    items:
+> +      - description: VBUS Voltage Channel
+> +
+> +  io-channel-names:
+> +    items:
+> +      - const: vusb
+> +
+> +  monitored-battery:
+
+Just : true
+
+> +    description:
+> +      phandle of battery characteristics devicetree node
+
+That's redundant, you do no say anything useful here.
+
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - monitored-battery
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pmic {
+
+Drop... or this is supposed to be part of parent schema?
+
+> +      bci {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+e.g. charger
+
+> +        compatible = "ti,twl6032-charger", "ti,twl6030-charger";
+> +        interrupts = <2>, <5>;
+> +        io-channels = <&gpadc 10>;
+> +        io-channel-names = "vusb";
+> +        monitored-battery = <&bat>;
+> +      };
+> +    };
+
+Best regards,
+Krzysztof
 
 
