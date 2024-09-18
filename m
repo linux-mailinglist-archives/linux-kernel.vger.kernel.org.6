@@ -1,195 +1,105 @@
-Return-Path: <linux-kernel+bounces-332740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09D197BE35
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:46:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE6597BE38
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FB028352E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:46:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E98A1C21254
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A488C1BF326;
-	Wed, 18 Sep 2024 14:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB061BF7E6;
+	Wed, 18 Sep 2024 14:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Ek9if8Nt"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NiAzZ67Y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ksUDclSH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77D81BE853;
-	Wed, 18 Sep 2024 14:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C94C1BF304;
+	Wed, 18 Sep 2024 14:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726670799; cv=none; b=JPb60I323/PLz8syIblyR9ftllBlYWJgWm3zy2oiZGYN+DtvNVrnKsHhkNT+x0ICmHUkqGEaKPRGnDgSE+H0UKnQRJfGyHhd3jmcTgEbGcLpa4VFxhfLJaKrpEF9x+drxFNbYY5f69XB3YLosWvRbLD2/zGocp0pTLTEtmQFpPY=
+	t=1726670837; cv=none; b=oxwPv+4ejqOCXjXPZ0iwQnkoFQjmf0G3ciOYDM8FD2d9fJ2M5AdI7/1MT8T7b8Z93o8JwHn6feK0m2mZ5p2a7adJveV/6l/sBtwuUkck+SK7Ijxw4g1FTobEF7Oo++qZz39itjPVW5JNPkDVi+AT1B+hiGtVjf+4BI4GGaxI6NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726670799; c=relaxed/simple;
-	bh=BM8hNkRIdH5oUzp/C0nNik0IY4RsXG+YF5a51+mTTyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=loDF4Mzd6MjiqKjdLSLIeNL+6KwWDumJy0JE+twZj0ylDLzA4C/Ly70X9RYY9NBjaD7DgodcZ0Xer7iekbZ0Vv0aRYat5SqgGek/Oo3oXEEngcDqoUYB9DE770x1Oztx8bCXELWOKzNEFAPDZu63ivkVRIArBgIAR1MzpMdxt5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Ek9if8Nt; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48ICZctX017253;
-	Wed, 18 Sep 2024 16:46:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Ds0wtYkHarzU5Z0GpuaBvBbV3g5NZzHffS5yleTHHoQ=; b=Ek9if8NtFgnioPTi
-	lUeIjqVVQwrHB5LrcoTOXITp5DzP0AM852YMxrLqWSI3iXnGemW8ZoBhqwPAPbWz
-	ThlgQRA0JHR789Oqj/mMTTzF30fO3z5JAWnR37eZdImJJkqEcNaM7Bb07sb+qD6r
-	HW9rJSpjBspcR6oAAKFn0zSTBNmqyE6HGqmMEHGStByRiMUVd3KM+Ua4suiLE6S4
-	vOELQ1Av8TvtRzaj5nSFU8KtSJGSXCRzajM9qFd/K1xaLIn80RGeFjmkOcpusHOI
-	I3rJiyTRRzac9Ll1tp8uosZAhZ4fkoMCwM+NOEzyq/dn7j+/18xDLIC4r97WorcY
-	bjeKrg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41nnehq9gv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Sep 2024 16:46:13 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 33D6340044;
-	Wed, 18 Sep 2024 16:45:03 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 253FB2928B9;
-	Wed, 18 Sep 2024 16:43:34 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 18 Sep
- 2024 16:43:33 +0200
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 18 Sep
- 2024 16:43:33 +0200
-Message-ID: <fabec69a-3b3a-4068-8906-7996cf125c0b@foss.st.com>
-Date: Wed, 18 Sep 2024 16:43:32 +0200
+	s=arc-20240116; t=1726670837; c=relaxed/simple;
+	bh=mrCSN/5slYGBSDKXEIP8r1qzpyFQ4Ye6LoTtQVredz4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QYuYKKAdSgkr5tJxw5ElWgz/MBwBWXUHWZZ8PmkbQ2rXDtzNOUOWK1CnYvY1pP08MlaKhLkp23XAOpP702HbMixvvdpVEJSSIKduqv93rBjl7EUJmjHwq45Ng77ixEmAag3X7K1I7WWzvVcAb1uRXu75G1rPV8KV1Oy0M3WVbs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NiAzZ67Y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ksUDclSH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726670833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mE03GBXmWAksElzFDVw/gDDmYxh5FSKWUbown+C5kDI=;
+	b=NiAzZ67YWyq7cqRtj9DvH67c/czw30NM1m6J3w/d1xnZQt7j/MhL7sgeXxzBCi7KFamyoU
+	ypgWianA4F0e3yS1CxYGW1WkOCQAHp62NdW1d6u0SgbfsDlBM2PA1Qp+9U+XGisK/PfXir
+	PVwwvusSRfZtlMuiyjQAeUzGtV1lE+Xmqm9hSfRlZ90GpOjQZFz/wGBoD2Na6OU2MZbU1F
+	iKKQxmqasi8YbKaaO2/P0uApiOnZAk6bA44arEDhuK8v4lunisyr6l1ltQF3usr8J+RABz
+	I+rnsPEz88WmtlU9aUtFyscydaY341H2Rl5X26gEXiu7zKO/ak2/KPdpun2Qaw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726670833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mE03GBXmWAksElzFDVw/gDDmYxh5FSKWUbown+C5kDI=;
+	b=ksUDclSHn1+aq75DdoxvxInIOyYqX1c5KZdlvkkUMiDzSSuovHYOpJ9PXPqRqBMjQbm779
+	3yNRvOKtWs0vhOCg==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, Esben
+ Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Tony Lindgren <tony@atomide.com>,
+ Ilpo =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, Uwe
+ =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Serge Semin
+ <fancer.lancer@gmail.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Lino Sanfilippo
+ <l.sanfilippo@kunbus.com>
+Subject: Re: [PATCH next v2 3/4] serial: 8250: Switch to nbcon console
+In-Reply-To: <20240913140538.221708-4-john.ogness@linutronix.de>
+References: <20240913140538.221708-1-john.ogness@linutronix.de>
+ <20240913140538.221708-4-john.ogness@linutronix.de>
+Date: Wed, 18 Sep 2024 16:53:12 +0206
+Message-ID: <84o74lrpcf.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/7] remoteproc: core: Add TEE interface support for
- firmware release
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
-References: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
- <20240830095147.3538047-5-arnaud.pouliquen@foss.st.com>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20240830095147.3538047-5-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain
 
-Hello Mathieu,
-
-On 8/30/24 11:51, Arnaud Pouliquen wrote:
-> Add support for releasing remote processor firmware through
-> the Trusted Execution Environment (TEE) interface.
-> 
-> The tee_rproc_release_fw() function is called in the following cases:
-> 
-> - An error occurs in rproc_start() between the loading of the segments and
->   the start of the remote processor.
-> - When rproc_release_fw is called on error or after stopping the remote
->   processor.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 7694817f25d4..32052dedc149 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -29,6 +29,7 @@
->  #include <linux/debugfs.h>
->  #include <linux/rculist.h>
->  #include <linux/remoteproc.h>
-> +#include <linux/remoteproc_tee.h>
->  #include <linux/iommu.h>
->  #include <linux/idr.h>
->  #include <linux/elf.h>
-> @@ -1258,6 +1259,9 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
->  
->  static void rproc_release_fw(struct rproc *rproc)
->  {
-> +	if (rproc->state == RPROC_OFFLINE && rproc->tee_interface)
-> +		tee_rproc_release_fw(rproc);
-
-I'm requesting you expertise to fix an issue I'm facing during my test preparing
-the V10.
-
-My issue is that here, we can call the tee_rproc_release_fw() function, defined
-in remoteproc_tee built as a remoteproc_tee.ko module.
-
-I tried to use the IS_ENABLED and IS_REACHABLE macros in remoteproc_tee.h, but
-without success:
-- use IS_ENABLED() results in a link error: "undefined reference to
-tee_rproc_release_fw."
-- use IS_REACHABLE() returns false and remoteproc_core calls the inline
-tee_rproc_release_fw function that just call WARN_ON(1).
-
-To solve the issue, I can see three alternatives:
-
-1) Modify Kconfig and remoteproc_tee.c to support only built-in.
-2) Use symbol_get/symbol_put.
-3) Define a new rproc_ops->release_fw operation that will be initialized to
-tee_rproc_release_fw.
-
-From my perspective, the solution 3 seems to be the cleanest way, as it also
-removes the dependency between remoteproc_core.c and remoteproc_tee.c. But
-regarding previous discussion/series version, it seems that it could not be your
-preferred solution.
-
-Please, could you indicate your preference so that I can directly implement the
-best solution (or perhaps you have another alternative to propose)?
-
-Thanks in advance!
-
-Arnaud
-
-
+On 2024-09-13, John Ogness <john.ogness@linutronix.de> wrote:
+> +/*
+> + * irq_work handler to perform modem control. Only triggered via
+> + * write_atomic() callback because it may be in a scheduler or NMI
+> + * context, unable to wake tasks.
+> + */
+> +static void modem_status_handler(struct irq_work *iwp)
+> +{
+> +	struct uart_8250_port *up = container_of(iwp, struct uart_8250_port, modem_status_work);
+> +	struct uart_port *port = &up->port;
 > +
->  	/* Free the copy of the resource table */
->  	kfree(rproc->cached_table);
->  	rproc->cached_table = NULL;
-> @@ -1348,7 +1352,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	if (ret) {
->  		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
->  			rproc->name, ret);
-> -		goto reset_table_ptr;
-> +		goto release_fw;
->  	}
->  
->  	/* power up the remote processor */
-> @@ -1376,7 +1380,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	rproc->ops->stop(rproc);
->  unprepare_subdevices:
->  	rproc_unprepare_subdevices(rproc);
-> -reset_table_ptr:
-> +release_fw:
-> +	if (rproc->tee_interface)
-> +		tee_rproc_release_fw(rproc);
->  	rproc->table_ptr = rproc->cached_table;
->  
->  	return ret;
+> +	uart_port_lock(port);
+> +	serial8250_modem_status(up);
+> +	uart_port_unlock(port);
+> +}
+
+As reported [0] by the kernel test robot, I need to move
+modem_status_handler() down into the "#ifdef CONFIG_SERIAL_8250_CONSOLE"
+block.
+
+John Ogness
+
+[0] https://lore.kernel.org/oe-kbuild-all/202409140437.EP0Ryw3u-lkp@intel.com
 
