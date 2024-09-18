@@ -1,149 +1,175 @@
-Return-Path: <linux-kernel+bounces-332817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A7497BF31
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 18:39:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48C497BF34
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 18:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94EDBB21589
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3324F1F21AE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3601C9DC3;
-	Wed, 18 Sep 2024 16:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="URN4wQiT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3927B1C8FC8;
+	Wed, 18 Sep 2024 16:43:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA86A1C9844
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 16:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385871487F1
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 16:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726677545; cv=none; b=d9G7vg/5p6z4RODX7n16Ff1WNAHX8LXyDHQqGhsJ3u+oOBU3GIgxwlqiFN1khSkEaT9dEjz6cw7vj2b3e4fayN3rZ6+723IYRsiqnx0kEc32xUNnek+xHT+NkNNmmeVJdiND0TXbUE5RWtzw2ZeR7E7cl9HOcDug9VCBWl2WoYA=
+	t=1726677785; cv=none; b=sehUrNVM08VnSTwkvM/TdTtq7xirX4xP2gPUc0d0q3xxoKsXXqyScmJxYZyJyFeJfDMNjnGkuycbyGv2+1ZGF+WF0ZLFt9btZWbHtsYdJxU8FUIYmwWOVUJ8RUb66/94hAtlM2eZS/M4ssDsjmlWLOvtytDzS9bqeiqNPARDzcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726677545; c=relaxed/simple;
-	bh=Fj4rZQJQUIuU0wDhWXrLZzxjYeHI+c7sUIPayv9HwUc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TVpqJUrzVZ4Ifh0pwSR9ByRBwIf9OU9PeFTtAC69MG92UUmoj4KPi3RT5SpnSOm6vXGm7i9ckdY/unSbThw1MMLkZ7M1P9ObEhodTiOwgsceamDUeL1hKe4Opjykq4VoOq52tFJmazmwJke0ojDhMuoApRtqoMtmfLh96aTGQP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=URN4wQiT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726677542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WA2tGkPSyN9kMCthLe0asjcZRulGUF3dg/RoXXIi6U4=;
-	b=URN4wQiTelJDFjjAJJ6mgiIR2XX49uGeMCSdGSXUBHnPWz46lrcbpDrbag4S5Dq3LvlOUu
-	nneCjhr9PXiCxiTtd9kQPQwObRXhtIBmnZ7cw5nYEJkKHklqIAQTvBc7Pg3fd2eQV0eCX9
-	Z5E//olVmpb/S/HWCTwKEOT3er+f6gM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-411-CSaE2cW9MSK95PewHkinYw-1; Wed,
- 18 Sep 2024 12:38:54 -0400
-X-MC-Unique: CSaE2cW9MSK95PewHkinYw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3601A193EF44;
-	Wed, 18 Sep 2024 16:38:49 +0000 (UTC)
-Received: from [10.45.224.27] (unknown [10.45.224.27])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 417F83002087;
-	Wed, 18 Sep 2024 16:38:46 +0000 (UTC)
-Date: Wed, 18 Sep 2024 18:38:42 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org, 
-    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    Ondrej Kozina <okozina@redhat.com>, Waiman Long <longman@redhat.com>, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] dm-crypt: Use common error handling code in
- crypt_set_keyring_key()
-In-Reply-To: <4b4379e6-e341-46da-a951-57b31edf3997@web.de>
-Message-ID: <dbdb4828-4301-6756-fcc5-f94c0ffc3893@redhat.com>
-References: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de> <4b4379e6-e341-46da-a951-57b31edf3997@web.de>
+	s=arc-20240116; t=1726677785; c=relaxed/simple;
+	bh=0aNRNQVoWdbPDaSuZnkNEqAAaXYvqAgutmgnITlzVHk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LajlYyGWKo5AuTLDfHWhiS5tZyQ0a0WWKhfYdDxIw+0qGu++kq1O0JIZ/7NffNlQtp2g3OpyQSeAWFZ9/p8ghCukVlwRK9y+6JD6iSNf+Xv3Gd7l8LhvKVzuXS8pfbDmqKhS+Ev05ekDmV2auPUgjfY7gbgeXhdWtHRtVTekEPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0a54fb476so39201385ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:43:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726677783; x=1727282583;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n40AUz6mSXm75GOX2sI5FTPKY970XkBFErgY+hw5v3I=;
+        b=uRnEn8C+tmDHUN7bi6PNbh8uZxs9jxW8aK2kQQ6px24P06tuBt/7cl5URtS3gbH11b
+         BjzJxksFAb9hOb7BknIp5WvIo0DuKFWRmDKG3e9DFkRlmNU/GChkxCoRUsbtAUVwHTwR
+         Q96uiy3229ynM5Q6VHUEpN3B1Shcy/aH0t0t5ZjWRnwTIooPMv8oLvDu/o1PQLAMjgbc
+         60dWIPpUS7I27tTBV78dogfTBLuZi8NbIFWRq1d0tftbw6oWI/KqMWiTc/kG8avmhqn1
+         WPZ9UCrltJSa2uRSgcQWd7QcJTdySSqiFegSWKUGAL10uaCcAsGfUyh+zm9Da1h3Ookp
+         R1FA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOxSTUVsFRJYnjoFj/FkLsq5WDM4sNXddUkrVunay9YFcVoDkOUgaCyhfu6Pevzhl5wtO62kZX4UipwXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzSKWLtnvw78mpRRW0+mtcHEEt+QnxHu0eAsssPnEK6IDY5OaE
+	Wcv+ckdpF30S6Udzp98V6pXZdNsfovjvLwPZOGZX6lXO1y1wZHkkUyCteZzmleD8tQdd1T3ClOt
+	wZyaNvysdY7rhhoTUp2MNo7j67f11UCn9on7ps9jxNA9qpVM31PqpmR8=
+X-Google-Smtp-Source: AGHT+IEwY4RBAlNT2qlcBTixkxo8ogLoemSK21rrolTmAN3w1D4rDp7A40KE95zEHLCX95vdzcOzIqJJgGW4z62OHTJfMDC/pDHI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Received: by 2002:a05:6e02:214a:b0:3a0:bc39:2d7a with SMTP id
+ e9e14a558f8ab-3a0bc39352cmr19117945ab.13.1726677783244; Wed, 18 Sep 2024
+ 09:43:03 -0700 (PDT)
+Date: Wed, 18 Sep 2024 09:43:03 -0700
+In-Reply-To: <20240918160402.242505-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e983360622677f0a@google.com>
+Subject: Re: [syzbot] [net?] [s390?] general protection fault in smc_diag_dump_proto
+From: syzbot <syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Both patches applied, thanks.
+Hello,
 
-Mikulas
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+general protection fault in smc_diag_dump_proto
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc00000a2403: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: probably user-memory-access in range [0x0000000000512018-0x000000000051201f]
+CPU: 0 UID: 0 PID: 6289 Comm: syz.1.16 Not tainted 6.11.0-syzkaller-05319-g4a39ac5b7d62-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+RIP: 0010:__smc_diag_dump net/smc/smc_diag.c:89 [inline]
+RIP: 0010:smc_diag_dump_proto+0x6d9/0x3270 net/smc/smc_diag.c:217
+Code: 80 3c 2c 00 74 08 48 89 df e8 a3 3a 96 f6 48 89 5c 24 30 48 8b 1b 48 85 db 0f 84 2d 02 00 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 78 3a 96 f6 48 8b 44 24 28 4c 8d
+RSP: 0018:ffffc900030beb00 EFLAGS: 00010206
+RAX: 00000000000a2403 RBX: 0000000000512018 RCX: ffff888026420000
+RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
+RBP: ffffc900030bef90 R08: ffffffff89989932 R09: 1ffff1100c1b418b
+R10: dffffc0000000000 R11: ffffed100c1b418c R12: 1ffff1100c1b422b
+R13: dffffc0000000000 R14: ffff888060da0c00 R15: ffff88806f750010
+FS:  00007f5aa99ff6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5aa99fefa8 CR3: 0000000023558000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ smc_diag_dump+0x59/0xa0 net/smc/smc_diag.c:236
+ netlink_dump+0x647/0xd80 net/netlink/af_netlink.c:2325
+ __netlink_dump_start+0x5a2/0x790 net/netlink/af_netlink.c:2440
+ netlink_dump_start include/linux/netlink.h:339 [inline]
+ smc_diag_handler_dump+0x1ab/0x250 net/smc/smc_diag.c:251
+ sock_diag_rcv_msg+0x3dc/0x5f0
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ sock_sendmsg+0x134/0x200 net/socket.c:768
+ splice_to_socket+0xa10/0x10b0 fs/splice.c:889
+ do_splice_from fs/splice.c:941 [inline]
+ do_splice+0xd68/0x18e0 fs/splice.c:1354
+ __do_splice fs/splice.c:1436 [inline]
+ __do_sys_splice fs/splice.c:1652 [inline]
+ __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5aa9f75f19
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5aa99ff048 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
+RAX: ffffffffffffffda RBX: 00007f5aaa106038 RCX: 00007f5aa9f75f19
+RDX: 0000000000000005 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007f5aa9fe4e68 R08: 0000000080000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f5aaa106038 R15: 00007ffe5e8646f8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+RIP: 0010:__smc_diag_dump net/smc/smc_diag.c:89 [inline]
+RIP: 0010:smc_diag_dump_proto+0x6d9/0x3270 net/smc/smc_diag.c:217
+Code: 80 3c 2c 00 74 08 48 89 df e8 a3 3a 96 f6 48 89 5c 24 30 48 8b 1b 48 85 db 0f 84 2d 02 00 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 78 3a 96 f6 48 8b 44 24 28 4c 8d
+RSP: 0018:ffffc900030beb00 EFLAGS: 00010206
+RAX: 00000000000a2403 RBX: 0000000000512018 RCX: ffff888026420000
+RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
+RBP: ffffc900030bef90 R08: ffffffff89989932 R09: 1ffff1100c1b418b
+R10: dffffc0000000000 R11: ffffed100c1b418c R12: 1ffff1100c1b422b
+R13: dffffc0000000000 R14: ffff888060da0c00 R15: ffff88806f750010
+FS:  00007f5aa99ff6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5aa99fefa8 CR3: 0000000023558000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	80 3c 2c 00          	cmpb   $0x0,(%rsp,%rbp,1)
+   4:	74 08                	je     0xe
+   6:	48 89 df             	mov    %rbx,%rdi
+   9:	e8 a3 3a 96 f6       	call   0xf6963ab1
+   e:	48 89 5c 24 30       	mov    %rbx,0x30(%rsp)
+  13:	48 8b 1b             	mov    (%rbx),%rbx
+  16:	48 85 db             	test   %rbx,%rbx
+  19:	0f 84 2d 02 00 00    	je     0x24c
+  1f:	48 83 c3 18          	add    $0x18,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 78 3a 96 f6       	call   0xf6963ab1
+  39:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
+  3e:	4c                   	rex.WR
+  3f:	8d                   	.byte 0x8d
 
 
-On Wed, 18 Sep 2024, Markus Elfring wrote:
+Tested on:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 18 Sep 2024 15:34:45 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/md/dm-crypt.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-> index dae2fe3cb182..3d2247cfd42b 100644
-> --- a/drivers/md/dm-crypt.c
-> +++ b/drivers/md/dm-crypt.c
-> @@ -2614,8 +2614,8 @@ static int crypt_set_keyring_key(struct crypt_config *cc, const char *key_string
-> 
->  	key = request_key(type, key_desc + 1, NULL);
->  	if (IS_ERR(key)) {
-> -		kfree_sensitive(new_key_string);
-> -		return PTR_ERR(key);
-> +		ret = PTR_ERR(key);
-> +		goto free_new_key_string;
->  	}
-> 
->  	down_read(&key->sem);
-> @@ -2623,23 +2623,23 @@ static int crypt_set_keyring_key(struct crypt_config *cc, const char *key_string
->  	ret = set_key(cc, key);
->  	up_read(&key->sem);
->  	key_put(key);
-> -	if (ret < 0) {
-> -		kfree_sensitive(new_key_string);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto free_new_key_string;
-> 
->  	/* clear the flag since following operations may invalidate previously valid key */
->  	clear_bit(DM_CRYPT_KEY_VALID, &cc->flags);
-> 
->  	ret = crypt_setkey(cc);
-> +	if (ret)
-> +		goto free_new_key_string;
-> 
-> -	if (!ret) {
-> -		set_bit(DM_CRYPT_KEY_VALID, &cc->flags);
-> -		kfree_sensitive(cc->key_string);
-> -		cc->key_string = new_key_string;
-> -	} else
-> -		kfree_sensitive(new_key_string);
-> +	set_bit(DM_CRYPT_KEY_VALID, &cc->flags);
-> +	kfree_sensitive(cc->key_string);
-> +	cc->key_string = new_key_string;
-> +	return 0;
-> 
-> +free_new_key_string:
-> +	kfree_sensitive(new_key_string);
->  	return ret;
->  }
-> 
-> --
-> 2.46.0
-> 
+commit:         4a39ac5b Merge tag 'random-6.12-rc1-for-linus' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=102c269f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5c3b301db2ae9f24
+dashboard link: https://syzkaller.appspot.com/bug?extid=f69bfae0a4eb29976e44
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=125fc4a9980000
 
 
