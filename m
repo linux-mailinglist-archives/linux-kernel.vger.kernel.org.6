@@ -1,209 +1,139 @@
-Return-Path: <linux-kernel+bounces-332319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FCA97B844
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:58:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8250397B847
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01B6FB22671
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD7B1F21735
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31A416C852;
-	Wed, 18 Sep 2024 06:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D14F15B57F;
+	Wed, 18 Sep 2024 07:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Mlpu46Je"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cd932QZ1"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4415713CFBC
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF1D13CFBC
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 07:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726642724; cv=none; b=SOGFFvFuOgA83WZgerYJflZAwWvH71gnAL+Xh0rJ45L1kBXvMztL0NN1h94TuEpwy6eU2ml4RuaCPKBs9Ny41fEHnuhgIk0v+Nbl8jnwJzInCvvgD3vPGDbZSerSSHx/dyHFIR8E2fMSLVNWOxH+SLJuDgIHgwnrcKz+0r0GSm0=
+	t=1726642814; cv=none; b=t/LxvNasLfH8JXizm/ZcprQbOYxnwioscwgZ97b4g+kzmakfiEWgCPRNVRirPrvun4gFkz6muYeJWVjeUSY3/1Dr6npLYpze9vpHCR+i6P3n2QC0I2dAbdkPahq4tliV6YV4IZydFA1xo7wL+Q4zoidnJS80zsjOUbIIZic1w7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726642724; c=relaxed/simple;
-	bh=VwZ1Mt8tOC8bQd5xQqxBKzNk4WxbyaNh4rNbYko7c5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dvE7a6Zn3dhp3XwhNZpmLHUmH7plDXeFUJLyv6iY/fa7d1uHl3Fi5Fj4mJ8p93uBFjin5Rxojohy+GTUuHbaZZkWnk93C5E0FpbdiyfRR9LmZVHTLEj/KCCjTZshqSFAxuwS1O1ooy+9695QfSyQmE9GT9FYS2q5CrbwA/a2aPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Mlpu46Je; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726642718; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=negx0jCLfoYgxXd/fRYCNprGFS+F3/XHuqOLymBg7ls=;
-	b=Mlpu46Je7CJf+vVGeWtZlxGADFUbwXNuq5WCM3yJKZHCLTtUR4Ye4/e/R2y0WfsPrReMn6XVkJorG+ugQrz6EgBYuqADQQKaS+sYwFgY/njj4tM4LCWfJR0YQJPvfR1+4VJaB8r2Y7Q2L3OLPoWacJcRJIuWmZQZH6LGF4wWhZQ=
-Received: from 30.221.67.136(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WFD7oUb_1726642717)
-          by smtp.aliyun-inc.com;
-          Wed, 18 Sep 2024 14:58:38 +0800
-Message-ID: <cbbe6257-594b-4192-b9c8-af5b1953f6e7@linux.alibaba.com>
-Date: Wed, 18 Sep 2024 14:58:37 +0800
+	s=arc-20240116; t=1726642814; c=relaxed/simple;
+	bh=VGj7MFbbpbV6gAewaS84mKaTbH5kyGiVAY8srxXcrHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nreR6AyMydCm1D6tjRLVnqdKZyxgsyKSY0Pa7Y7Pyf4XhYVuKq63Ks78u1Gj+q4TatfGCgsljQRyDr2pfeppJK60yV4qa6QiDGy6VxZW5KT76Ps4KEMf0/vauaevZ7p0bCtYcE4o5Vd4A6QgmifZPivxqt6AyuPAYz19+0Q6srE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cd932QZ1; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-710e1a48130so1446197a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 00:00:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726642808; x=1727247608; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZOqc83yMPmUNy7v5ZCgAL4TGfjubvgZuTWuJi6zr/fg=;
+        b=cd932QZ1fXLzJLwwBucfEuXoMCvwoZ9Ksk1BB8+8eHudztFWah/Mz8e64RBwsfUiMU
+         l+quW7pDdWeI6Ma2/v4WXVH36rkkKZ33XAtvBCv5yV9A8FmAsx65ZsLpTp45zaP04x/b
+         8+KuPXnuw//3A/lIUWZBydiqjXGFY5ZeT49fE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726642808; x=1727247608;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZOqc83yMPmUNy7v5ZCgAL4TGfjubvgZuTWuJi6zr/fg=;
+        b=erkNNj1rhTt4KCvxZz6ub5kfnG9Fzeu1K+J+rRQeSRjWYaKfBy5nvjNnjjvFXsdXj/
+         tXm+GGI1StBheUOU3N72UIOE2OzmcGpuW4sgId1VPD5oJ7VHiA1dmBzIp6tjdvz6sVt3
+         NuU7V7/oCA4NOKYhm0ZAJcRI5JXM5Ajzy1qEhoADl4y69ie+py8Cv5v7pae9SuTzIC9K
+         r1NFouuoSp4+F17ZRYtovujI2S5UQr3inyooZ1FhgqaKeoECYb7qpfp7FmVvdx8ox0r9
+         bFb0hVuyHnK5fiOtDMdjMYVMvrolqTYVgy4eOd9leHBPaVK6wUChu6GqAL1P+/Mz0HR3
+         MV4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVDwNGQ/bBq/VnFjDfcVHSGBUYWrLErD2B+llbIiLdWL6ca/qFQ/HzTuiIHcQO2TLHNGk/ya4bz6Tn+uxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuHM3g530uEzO89VWcvUzj2zTS4mm9AMvTUJDqYbncCzDB5zfo
+	clztBljGyQyLFf7m5gMTTIRKgQeSO6jYniphjFEm25YLfpAECcYdlev63UwXjKUmaiEpyqgDLVY
+	dMtNcUOIvycEsHrtWlpajfnpN40++DGFIQ6zX
+X-Google-Smtp-Source: AGHT+IEBksw6fFdlYZ7q/FBpGRgy55uXZtW9PS9HPUQ2weMty0HZGZxThjuKX6anaB5NViscVV3L7qxmQJ9lVWMx6WM=
+X-Received: by 2002:a05:6830:3703:b0:703:6434:aba8 with SMTP id
+ 46e09a7af769-711168e8f6fmr11760759a34.0.1726642808164; Wed, 18 Sep 2024
+ 00:00:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC V5 1/1] ocfs2: reserve space for inline xattr before
- attaching reflink tree
-To: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
- akpm <akpm@linux-foundation.org>
-Cc: junxiao.bi@oracle.com, rajesh.sivaramasubramaniom@oracle.com,
- ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240918063844.1830332-1-gautham.ananthakrishna@oracle.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20240918063844.1830332-1-gautham.ananthakrishna@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240916162956.267340-1-alpernebiyasak@gmail.com>
+In-Reply-To: <20240916162956.267340-1-alpernebiyasak@gmail.com>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Wed, 18 Sep 2024 14:59:57 +0800
+Message-ID: <CAEXTbpc=ZgF_V9AwxgTTJ8Ki1pb5M7bJ=se2fPE7Qg7s9H7XdA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8183-kukui: Disable DPI display interface
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Cc: linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+	Pi-Hsun Shih <pihsun@chromium.org>, linux-arm-kernel@lists.infradead.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, Fabien Parent <fparent@baylibre.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jitao Shi <jitao.shi@mediatek.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 9/18/24 2:38 PM, Gautham Ananthakrishna wrote:
-> One of our customers reported a crash and a corrupted ocfs2 filesystem.
-> The crash was due to the detection of corruption. Upon troubleshooting,
-> the fsck -fn output showed the below corruption
-> 
-> [EXTENT_LIST_FREE] Extent list in owner 33080590 claims 230 as the next free chain record,
-> but fsck believes the largest valid value is 227.  Clamp the next record value? n
-> 
-> The stat output from the debugfs.ocfs2 showed the following corruption
-> where the "Next Free Rec:" had overshot the "Count:" in the root metadata
-> block.
-> 
->         Inode: 33080590   Mode: 0640   Generation: 2619713622 (0x9c25a856)
->         FS Generation: 904309833 (0x35e6ac49)
->         CRC32: 00000000   ECC: 0000
->         Type: Regular   Attr: 0x0   Flags: Valid
->         Dynamic Features: (0x16) HasXattr InlineXattr Refcounted
->         Extended Attributes Block: 0  Extended Attributes Inline Size: 256
->         User: 0 (root)   Group: 0 (root)   Size: 281320357888
->         Links: 1   Clusters: 141738
->         ctime: 0x66911b56 0x316edcb8 -- Fri Jul 12 06:02:30.829349048 2024
->         atime: 0x66911d6b 0x7f7a28d -- Fri Jul 12 06:11:23.133669517 2024
->         mtime: 0x66911b56 0x12ed75d7 -- Fri Jul 12 06:02:30.317552087 2024
->         dtime: 0x0 -- Wed Dec 31 17:00:00 1969
->         Refcount Block: 2777346
->         Last Extblk: 2886943   Orphan Slot: 0
->         Sub Alloc Slot: 0   Sub Alloc Bit: 14
->         Tree Depth: 1   Count: 227   Next Free Rec: 230
->         ## Offset        Clusters       Block#
->         0  0             2310           2776351
->         1  2310          2139           2777375
->         2  4449          1221           2778399
->         3  5670          731            2779423
->         4  6401          566            2780447
->         .......          ....           .......
->         .......          ....           .......
-> 
-> The issue was in the reflink workfow while reserving space for inline xattr.
-> The problematic function is ocfs2_reflink_xattr_inline(). By the time this
-> function is called the reflink tree is already recreated at the destination
-> inode from the source inode. At this point, this function reserves space
-> for inline xattrs at the destination inode without even checking if there
-> is space at the root metadata block. It simply reduces the l_count from 243
-> to 227 thereby making space of 256 bytes for inline xattr whereas the inode
-> already has extents beyond this index (in this case upto 230), thereby causing
-> corruption.
-> 
-> The fix for this is to reserve space for inline metadata at the destination
-> inode before the reflink tree gets recreated. The customer has verified the
-> fix.
-> 
-> Fixes: ef962df057aa ("ocfs2: xattr: fix inlined xattr reflink")
-> Cc: stable@vger.kernel.org
-> 
-> Signed-off-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
-
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+On Tue, Sep 17, 2024 at 12:30=E2=80=AFAM Alper Nebi Yasak
+<alpernebiyasak@gmail.com> wrote:
+>
+> Commit 009d855a26fd ("arm64: dts: mt8183: add dpi node to mt8183") adds
+> a device-tree node for the DPI display interface that feeds the external
+> display pipeline, to enable HDMI support on the Pumpkin board.
+>
+> However, the external display is not fully described on Chrome devices,
+> blocked by further work on DP / USB-C muxing graph bindings. This
+> incomplete description currently breaks internal display at least on the
+> Cozmo board. The same issue was found and fixed on MT8186 devices with
+> commit 3079fb09ddac ("arm64: dts: mediatek: mt8186-corsola: Disable DPI
+> display interface"), but the MT8183 change wasn't merged until then.
+>
+> Disable the external display interface for the Kukui device family until
+> the necessary work is done, like in the MT8186 Corsola case.
+>
+> Fixes: 009d855a26fd ("arm64: dts: mt8183: add dpi node to mt8183")
+> Link: https://lore.kernel.org/linux-mediatek/20240821042836.2631815-1-wen=
+st@chromium.org/
+> Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
 > ---
->  fs/ocfs2/refcounttree.c | 26 ++++++++++++++++++++++++--
->  fs/ocfs2/xattr.c        | 11 +----------
->  2 files changed, 25 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-> index 25c8ec3c8c3a5..80f441878dc1f 100644
-> --- a/fs/ocfs2/refcounttree.c
-> +++ b/fs/ocfs2/refcounttree.c
-> @@ -25,6 +25,7 @@
->  #include "namei.h"
->  #include "ocfs2_trace.h"
->  #include "file.h"
-> +#include "symlink.h"
->  
->  #include <linux/bio.h>
->  #include <linux/blkdev.h>
-> @@ -4155,8 +4156,9 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
->  	int ret;
->  	struct inode *inode = d_inode(old_dentry);
->  	struct buffer_head *new_bh = NULL;
-> +	struct ocfs2_inode_info *oi = OCFS2_I(inode);
->  
-> -	if (OCFS2_I(inode)->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
-> +	if (oi->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
->  		ret = -EINVAL;
->  		mlog_errno(ret);
->  		goto out;
-> @@ -4182,6 +4184,26 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
->  		goto out_unlock;
->  	}
->  
-> +	if ((oi->ip_dyn_features & OCFS2_HAS_XATTR_FL) &&
-> +	    (oi->ip_dyn_features & OCFS2_INLINE_XATTR_FL)) {
-> +		/*
-> +		 * Adjust extent record count to reserve space for extended attribute.
-> +		 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
-> +		 */
-> +		struct ocfs2_inode_info *new_oi = OCFS2_I(new_inode);
+>
+>  arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/=
+boot/dts/mediatek/mt8183-kukui.dtsi
+> index 22924f61ec9e..07ae3c8e897b 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> @@ -290,6 +290,11 @@ dsi_out: endpoint {
+>         };
+>  };
+>
+> +&dpi0 {
+> +       /* TODO Re-enable after DP to Type-C port muxing can be described=
+ */
+> +       status =3D "disabled";
+> +};
 > +
-> +		if (!(new_oi->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
-> +		    !(ocfs2_inode_is_fast_symlink(new_inode))) {
-> +			struct ocfs2_dinode *new_di = (struct ocfs2_dinode *)new_bh->b_data;
-> +			struct ocfs2_dinode *old_di = (struct ocfs2_dinode *)old_bh->b_data;
-> +			struct ocfs2_extent_list *el = &new_di->id2.i_list;
-> +			int inline_size = le16_to_cpu(old_di->i_xattr_inline_size);
-> +
-> +			le16_add_cpu(&el->l_count, -(inline_size /
-> +					sizeof(struct ocfs2_extent_rec)));
-> +		}
-> +	}
-> +
->  	ret = ocfs2_create_reflink_node(inode, old_bh,
->  					new_inode, new_bh, preserve);
->  	if (ret) {
-> @@ -4189,7 +4211,7 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
->  		goto inode_unlock;
->  	}
->  
-> -	if (OCFS2_I(inode)->ip_dyn_features & OCFS2_HAS_XATTR_FL) {
-> +	if (oi->ip_dyn_features & OCFS2_HAS_XATTR_FL) {
->  		ret = ocfs2_reflink_xattrs(inode, old_bh,
->  					   new_inode, new_bh,
->  					   preserve);
-> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-> index 6510ad783c912..2c572b336ba48 100644
-> --- a/fs/ocfs2/xattr.c
-> +++ b/fs/ocfs2/xattr.c
-> @@ -6511,16 +6511,7 @@ static int ocfs2_reflink_xattr_inline(struct ocfs2_xattr_reflink *args)
->  	}
->  
->  	new_oi = OCFS2_I(args->new_inode);
-> -	/*
-> -	 * Adjust extent record count to reserve space for extended attribute.
-> -	 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
-> -	 */
-> -	if (!(new_oi->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
-> -	    !(ocfs2_inode_is_fast_symlink(args->new_inode))) {
-> -		struct ocfs2_extent_list *el = &new_di->id2.i_list;
-> -		le16_add_cpu(&el->l_count, -(inline_size /
-> -					sizeof(struct ocfs2_extent_rec)));
-> -	}
-> +
->  	spin_lock(&new_oi->ip_lock);
->  	new_oi->ip_dyn_features |= OCFS2_HAS_XATTR_FL | OCFS2_INLINE_XATTR_FL;
->  	new_di->i_dyn_features = cpu_to_le16(new_oi->ip_dyn_features);
+>  &gic {
+>         mediatek,broken-save-restore-fw;
+>  };
+>
+> base-commit: 7083504315d64199a329de322fce989e1e10f4f7
+> --
+> 2.45.2
+>
+Reviewed-by: Pin-yen Lin <treapking@chromium.org>
 
+Thanks for fixing this!
 
