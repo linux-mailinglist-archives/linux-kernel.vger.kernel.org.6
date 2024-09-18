@@ -1,98 +1,126 @@
-Return-Path: <linux-kernel+bounces-332301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D6697B7F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:31:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1EB597B7FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92F4AB262DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23877282982
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0651482F2;
-	Wed, 18 Sep 2024 06:31:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8112C9A
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16CB169AE6;
+	Wed, 18 Sep 2024 06:33:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0AF1487C8;
+	Wed, 18 Sep 2024 06:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726641065; cv=none; b=Tf7tINeWSds0iJu0/kNQ8jXUiW7murFyaSPwMZYhR5j+gC5wQcDhSc9simil4XXc4Iz00tLm6ZeVhjwoYLJIRGTU9DB28LVZPSsTpmko4UqMisKDPpIV0MUdAmFX0+xI8Xgc1h1qMc3AxuMbgpHSV+PerX94RThlY9mGEcsfN14=
+	t=1726641180; cv=none; b=CS0lIHHzpYulCOlCCncdVjfw4IUDcjOCgJ+U0VRreInBzkcOIfz027nsxUQH5MrfVnVUk5MQRi3e0IT4MCPx8MVfdSDixbdAb0s9ZXViJbaanB1O7bf6LlOVifalb2VOIG23hZlWzgQBKM//SHKctrLnULumidemuwIxk2rps6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726641065; c=relaxed/simple;
-	bh=h6qJInskvGOYUcEM5b1IKPMo+T6/kr6NvsU9W/XEmDw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FpSu+pBZUeCplwg+fQhKxPahLD1ey2Tzji5mbApyHEgENGmDxUGsriSYdvAC+BuGRwpw2Rq7ir8MIkZr8maFl9buvsIajgrkujDZJ9FLWEv7JM9QKRTO+aA74/u7dN1CMhL6njLNXgj3hUVB8QcpxkczBDXddbSJsDOodunwkH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cd93852b5so143648039f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 23:31:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726641063; x=1727245863;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tbu5vqAmHMbzfSR9yiTvjc4w9SzN6dFmwBNiGZOqmk=;
-        b=HCat5YOboTTG5IoKIwoGEGsSwVXmBHAWtEHqG7SJCdHVJi0zqRyswbIiSSYAgYIMs7
-         X5s6LGpmxXgdLJw1pcPEVi/1xVh4mY3R6VroEAyvRrFc7uKe5Yp8oOxwchdf1mY4dj7h
-         aX2Cbawq6I+WMDk1rD8yKh7ZqKNBoYUg0zBWrcOKGnNaXheO4YsOxXBFqEcOeKl4RR5O
-         oAd8Mt2L6ZLdRaEdh6EQZQiiNmltxxs+Zt32CxEFapa3wAlI+NiY9IC3Z4IVHNThMTaX
-         HZ9LadeitXZHosy88aJXBl9qL6L6vpJG7FmSud0EuAc7yqaNkOfKcCrrK1aF0UDp7zmi
-         HvkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLnwDtJPDYGoMuJ+fI4L09DChI/Wj+iKrKaSN4M4WPpdP57+SmRiVIZXd/8Tb1lZG1qPd0jCuKQx1ORP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw44sNLWQx4mz6nE7mVTmhU52pMOVnpSe0KmZejlZsAfL5Y9ZFo
-	sVor0b3oG1Y4yyTQzAFdhA7ncjlt50fKaqQOIxGI7qslTR8XfCMADiNZDxgIxGee8R4Y0KqRyeD
-	6Ka3mSt+qPCo6LcU67RWrU+l+Y55hvilF+d8ZRfgL1USYBeoLcG+p/DQ=
-X-Google-Smtp-Source: AGHT+IEWVHPdagiJqgeBW7wVyEqbO7IAy5+S9xJThvgfGQy7P6YYwO/eUFWDI51ygZM9LruaCqnn8epG77dG8oOjcu4hD+km3Z+T
+	s=arc-20240116; t=1726641180; c=relaxed/simple;
+	bh=TryCCA1ZWWAttn4FkLibmn0nSAOSRu1FKRZqsZOjeT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tCZmEaAQoDpwNmeXoAd9h4HXerOaRB43JpHm64FEgOdGPSBqVaocAhyd2S0vfS4X6YGv/7hjhhrMkQc7Yi5Zec8F7U31lxrxkL1nMY9I8gZzWEwI6jnC3Fa2snuBTUzS8cwCyqaakVVgv96UZ01nbKmPm5lCjLFq4FAEkBydnhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 36FB4FEC;
+	Tue, 17 Sep 2024 23:33:21 -0700 (PDT)
+Received: from [10.162.16.84] (a077893.blr.arm.com [10.162.16.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E5633F64C;
+	Tue, 17 Sep 2024 23:32:48 -0700 (PDT)
+Message-ID: <8cafe140-35cf-4e9d-8218-dfbfc156ca69@arm.com>
+Date: Wed, 18 Sep 2024 12:02:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24f:0:b0:3a0:a440:fe0a with SMTP id
- e9e14a558f8ab-3a0a4411e12mr21956265ab.4.1726641063279; Tue, 17 Sep 2024
- 23:31:03 -0700 (PDT)
-Date: Tue, 17 Sep 2024 23:31:03 -0700
-In-Reply-To: <20240918062609.200332-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003b506406225ef3b6@google.com>
-Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
-From: syzbot <syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-fs/ext4/super.c:317:9: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
-fs/ext4/super.c:319:4: error: cannot take the address of an rvalue of type 'ext4_fsblk_t' (aka 'unsigned long long')
-fs/ext4/super.c:325:9: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
-fs/ext4/super.c:327:4: error: cannot take the address of an rvalue of type 'ext4_fsblk_t' (aka 'unsigned long long')
-fs/ext4/super.c:333:9: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
-fs/ext4/super.c:335:4: error: cannot take the address of an rvalue of type 'ext4_fsblk_t' (aka 'unsigned long long')
-fs/ext4/super.c:341:9: error: cannot take the address of an rvalue of type '__u16' (aka 'unsigned short')
-fs/ext4/super.c:343:4: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
-fs/ext4/super.c:349:9: error: cannot take the address of an rvalue of type '__u16' (aka 'unsigned short')
-fs/ext4/super.c:351:4: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
-fs/ext4/super.c:357:9: error: cannot take the address of an rvalue of type '__u16' (aka 'unsigned short')
-fs/ext4/super.c:359:4: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
-fs/ext4/super.c:365:9: error: cannot take the address of an rvalue of type '__u16' (aka 'unsigned short')
-fs/ext4/super.c:367:4: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 3/7] mm: Use ptep_get() for accessing PTE entries
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+ <20240917073117.1531207-4-anshuman.khandual@arm.com>
+ <f9a7ebb4-3d7c-403e-b818-29a6a3b12adc@redhat.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <f9a7ebb4-3d7c-403e-b818-29a6a3b12adc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-Tested on:
 
-commit:         2f27fce6 Merge tag 'sound-6.12-rc1' of git://git.kerne..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=31b069fcee8f481d
-dashboard link: https://syzkaller.appspot.com/bug?extid=702361cf7e3d95758761
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10fc7500580000
+On 9/17/24 15:58, David Hildenbrand wrote:
+> On 17.09.24 09:31, Anshuman Khandual wrote:
+>> Convert PTE accesses via ptep_get() helper that defaults as READ_ONCE() but
+>> also provides the platform an opportunity to override when required. This
+>> stores read page table entry value in a local variable which can be used in
+>> multiple instances there after. This helps in avoiding multiple memory load
+>> operations as well possible race conditions.
+>>
+> 
+> Please make it clearer in the subject+description that this really only involves set_pte_safe().
 
+I will update the commit message with some thing like this.
+
+mm: Use ptep_get() in set_pte_safe()
+
+This converts PTE accesses in set_pte_safe() via ptep_get() helper which
+defaults as READ_ONCE() but also provides the platform an opportunity to
+override when required. This stores read page table entry value in a local
+variable which can be used in multiple instances there after. This helps
+in avoiding multiple memory load operations as well as some possible race
+conditions.
+
+> 
+> 
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+>> Cc: linux-mm@kvack.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>   include/linux/pgtable.h | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+>> index 2a6a3cccfc36..547eeae8c43f 100644
+>> --- a/include/linux/pgtable.h
+>> +++ b/include/linux/pgtable.h
+>> @@ -1060,7 +1060,8 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
+>>    */
+>>   #define set_pte_safe(ptep, pte) \
+>>   ({ \
+>> -    WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
+>> +    pte_t __old = ptep_get(ptep); \
+>> +    WARN_ON_ONCE(pte_present(__old) && !pte_same(__old, pte)); \
+>>       set_pte(ptep, pte); \
+>>   })
+>>   
+> 
+> I don't think this is necessary. PTE present cannot flip concurrently, that's the whole reason of the "safe" part after all.
+
+Which is not necessary ? Converting de-references to ptep_get() OR caching
+the page table read value in a local variable ? ptep_get() conversion also
+serves the purpose providing an opportunity for platform to override.
+
+> 
+> Can we just move these weird set_pte/pmd_safe() stuff to x86 init code and be done with it? Then it's also clear *where* it is getting used and for which reason.
+> 
+set_pte/pmd_safe() can be moved to x86 platform - as that is currently the
+sole user for these helpers. But because set_pgd_safe() gets used in riscv
+platform, just wondering would it be worth moving only the pte/pmd helpers
+but not the pgd one ?
 
