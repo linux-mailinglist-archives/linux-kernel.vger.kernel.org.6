@@ -1,75 +1,69 @@
-Return-Path: <linux-kernel+bounces-332589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FE997BB85
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:20:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FFC97BB6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F9D2855F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:20:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D361C24969
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A4D17DFFF;
-	Wed, 18 Sep 2024 11:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="Evnv6eIb"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187D6189917;
+	Wed, 18 Sep 2024 11:13:41 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5A817C9B8;
-	Wed, 18 Sep 2024 11:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06724188A07;
+	Wed, 18 Sep 2024 11:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726658441; cv=none; b=ub5BEqX6sTbDH6Notrpmglekvgx30XJ7y9RDzQKr4VRyTn0tDPmVqGuJuis3T3eYle5svn/QMRvWACm/WlasfpmNCMD+qCejJDPak/58+R3i8tjydNAPv8xkmfRzzXc99iiwN3l2TUuzLz2ncyMyYg4tDv48FP3bCTYfzbe8jlI=
+	t=1726658020; cv=none; b=U4gychSMgwIQVCO4weB4BCuW/5/4pQrhkee/De5zHXogvYDM1q2+6hm4MLco33BOgZZKT93nBAsge0WN2lIal76dfltmLERkGqSZUplgJXuPZTGaJF6N/do/liVrXtm/b8QrLl3alRODLFs5XwViHWMBT6SGl/Bm6K0OjU2Og5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726658441; c=relaxed/simple;
-	bh=KqLB8e9EUW+MpxLtVXJvY2jaJ164ff1tjKpFXCU/+r4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=la5kGDpxkcTttoGQfD9y2ZbN3CvU2I6YYGgcHlF6ewRA3usMXlxtWHiJei2E/r3tbt0bPtiO7cugfxfaV+mWyvRaKvT5Ckm9S5/am5f2OOydwFVEvlE5SmHLKS4nN1GGm8yC9Bb7P51dyW0LBVZTkrsd7bJQQNPTmutEg6eNnJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=Evnv6eIb; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1726657899;
-	bh=KqLB8e9EUW+MpxLtVXJvY2jaJ164ff1tjKpFXCU/+r4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=Evnv6eIbn3pBYG8rWAXPRpm7UYLtdwojpT2lTbcEjx1joY02r1d/ecH27eUCcs0FH
-	 1KelXHQToPhtrgkfGZ8qA/alKTv61nexuuITNdRVLARUUla0k8alPPFpajexhWBfUx
-	 GliRtT65tiskXtBoLLZ98a2tRWmbWPzmh1Iyuf60=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 6CBE3401CF; Wed, 18 Sep 2024 04:11:39 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 6BC79401C5;
-	Wed, 18 Sep 2024 04:11:39 -0700 (PDT)
-Date: Wed, 18 Sep 2024 04:11:39 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-cc: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>, 
-    Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-    Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-    Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-    linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
- acquire
-In-Reply-To: <87o74m1oq7.ffs@tglx>
-Message-ID: <420432ae-a738-97df-2d59-c36deadd70f4@gentwo.org>
-References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org> <87o74m1oq7.ffs@tglx>
+	s=arc-20240116; t=1726658020; c=relaxed/simple;
+	bh=C1xZ4FanfkuTbNx0464dR570gk0nKR3LFi1tRGMyDGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kbi4JURaw3gIZzyVilZhni+N7HLaotCMmdO0x4sYZVsXh/9QvU5tJyDZjVEPkoY+UhNbKDMV/nCKWhyX3qMdttRuXTkTCrW4sMT565E1MQJuXE/vEoXB82cGXhXmA1kStFJF3ti0o/MC3IXZKPw1jgW72vKRAOGlLtBdInvQxao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=40992 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1sqsck-001KJt-K5; Wed, 18 Sep 2024 13:13:32 +0200
+Date: Wed, 18 Sep 2024 13:13:29 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <Zuq12avxPonafdvv@calendula>
+References: <20240909084620.3155679-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240909084620.3155679-1-leitao@debian.org>
+X-Spam-Score: -1.8 (-)
 
-On Tue, 17 Sep 2024, Thomas Gleixner wrote:
+On Mon, Sep 09, 2024 at 01:46:17AM -0700, Breno Leitao wrote:
+> These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
+> Kconfigs user selectable, avoiding creating an extra dependency by
+> enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
 
-> We ....
->
-> Please write changelogs using passive voice. 'We' means nothing here.
+This needs a v6. There is also:
 
-Done using active voice.
+BRIDGE_NF_EBTABLES_LEGACY
+
+We have more copy and paste in the bridge.
+
+Would you submit a single patch covering this too?
 
