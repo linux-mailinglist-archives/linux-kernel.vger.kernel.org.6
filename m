@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-332246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DDF597B72A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:59:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F8E97B72E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02055286CAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:59:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747BC281FE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600C813A3EC;
-	Wed, 18 Sep 2024 03:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD8C1386D8;
+	Wed, 18 Sep 2024 04:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="TYVe56lT"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EtW2JiDn"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B5127442
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DFE5588F
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 04:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726631985; cv=none; b=IF6K46JSxXLtQMk4Xtldqxgjwp8a3iBH4jC+UYCr6exCE3qnRCR/mteRrAhaxKYoybXq67RLq4nJtYc0YnvcEr7uv9XKIcwprXHushujsAWByBtMqdiUmACeamCqvk9HlNa41fn12B46j7l37XSyh8WuY+eN0rlwmUYS5REs54U=
+	t=1726632245; cv=none; b=mA+nRa+Yfat5DLXLLAIBzqxdOOyRyuH8t6Rs3E6Ledk/AwFRZxUgcu5zsoGLhdc5jfjgwB4/q/kqMsR2YAiY6K7/+mtaP25WGRQOhRIypY4jY1PjDlqyS0mO+N8o9Hq5KQXxxYcEg17nGQWySX2DX/Fiwp6ZDojQLJv5dZ11gYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726631985; c=relaxed/simple;
-	bh=g4pV84ZXe6Z3UQh0TVE5prh0s6XUyVugKfi/NSEEO9c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=n5/X8dyliB7ojhau9fL6GdhgHChUviTqzQTF0wQ/bz1ScnUavAwjetkDvfHA9k9mkhMV3D7FOIg/PwGS8X0Sj+3dGmv8UiC1hpkZZsdQ6C0DDr/vCiUll/WuEdSVjT96PbxY/+NYgv/SLcgx7COfRv6Ig3yLU0E71uGRMPeJO9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=TYVe56lT reason="signature verification failed"; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-X-QQ-mid: bizesmtpsz4t1726631918taq48xd
-X-QQ-Originating-IP: 1Sn0WOKbwVG4a4Z6Z9OX5IYgS+IIhgH0rPbwJGuBZk0=
-Received: from m16.mail.163.com ( [117.135.210.5])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 18 Sep 2024 11:58:36 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13185123578724237292
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=y3E6MmDVT/btgzdDlbzQ7veIeptYfTz+aSWqvVj2FMk=; b=T
-	YVe56lT8CH3Mp31ds3uz9hMVD/wR3/Aow/PqsIbX3Ge4j14sg7k8PzHy0a6pWM3n
-	DWKjz5vYNMoMIejniuTdz34cNEGCviFTzAF6PPuHvA05ggw2fDSJ+TvuElRd/3yj
-	4IvdflzGEXOBiypRzPD+SWFvv/IRAETByKsU68IcYQ=
-Received: from kxwang23$m.fudan.edu.cn ( [202.120.235.228] ) by
- ajax-webmail-wmsvr-40-138 (Coremail) ; Wed, 18 Sep 2024 11:57:57 +0800
- (CST)
-Date: Wed, 18 Sep 2024 11:57:57 +0800 (CST)
-From: "Kaixin Wang" <kxwang23@m.fudan.edu.cn>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: sre@kernel.org, rdunlap@infradead.org, linux-kernel@vger.kernel.org, 
-	21210240012@m.fudan.edu.cn, 21302010073@m.fudan.edu.cn
-Subject: Re: [PATCH v2] HSI: ssi_protocol: Fix use after free vulnerability
- in ssi_protocol Driver Due to Race Condition
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <ZugK8hXvMaMEaOsz@smile.fi.intel.com>
-References: <20240914172142.328-1-kxwang23@m.fudan.edu.cn>
- <ZugK8hXvMaMEaOsz@smile.fi.intel.com>
-X-NTES-SC: AL_Qu2ZBPqYvkAs4SmeZukXn0kbjug3WcW0u/0k3oJUNps0iCXO5jASYlZYDHzb6/qIERKvmTG6YB9gwcB/WaZ3Y4ldX8L0cE/rMG2+CnumzVwv
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1726632245; c=relaxed/simple;
+	bh=g8aCclcIOoxlTxgin7zj4UlRLEDM0xID/ZCMXRhbS94=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pkzXOodKY1p2L6vhRCaepviXRmHzWpsyLG5sDDKJtL2z9VmLHm+nHlwRn3LSUGLKjYFs5j/ZVYF2P3038lKRAZXdPeUaV8zniFJuo/u6xvh3i4d4L2KOyX/6qZic6ZiheGhdefoXCf9Sglt1smqvg5+1uUPooR3HLLyrjdtMjfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EtW2JiDn; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-206aee4073cso63869795ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 21:04:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726632243; x=1727237043; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S+lE2AlQ2VhUnUgBUO0LtM4gZBxdX1Qi7kt/dc8W54Y=;
+        b=EtW2JiDnA/n3Vdj5Isa72jU6pl8L4mmv8yeHiZDKFinBbyhNXhREGsAn58HxoiGHmO
+         FrbK9AsyZEH9GstlaD6GbcRLydH8ldotTSgU1vW4XNdiAXd8Ty5qoCISlhWs4AbYirub
+         cDDNTL4aBvpUNhD9Dt7p3p3r6Ho4qFvTjAkIGipv38HN46GWA6oB4V9r1BEH+0rBMMJ+
+         i0cLt3PK+ixMYpPc0v54p2NVVxwl8x9YULtuuMg16CarR0AFxHlqbb54K57oKzve3amF
+         JU6Xqy7wa2cbRkpNZHWmo6uYDKq7yNNcm6QUwXF/wTJq7OclRLbaA96spfzFalKdNscu
+         /x6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726632243; x=1727237043;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S+lE2AlQ2VhUnUgBUO0LtM4gZBxdX1Qi7kt/dc8W54Y=;
+        b=PPBYBzgAAIRnzLDNKdDKH1JwMfzrNknCTXn1viAfi2nVMklRHK/bE+re97DNgojwBK
+         LVamV/IrxntjcaIrVP0NMiKTUjb7xWFdkHv56H5vnBc0I/SNtaTVCvUw9f/lGLT03jKO
+         oQxbHnExov4DNSwqzJv7HuYamr81TlRL9FxeyL78eXiz9/arVsO5clEWR1K9fElEXhxZ
+         SrbAVpb85kF6sGXLGPBf4ojdbfh8Wu/74EYHxPpiu+K0jv7udeK1klIegsWuXo5zKCMi
+         8X3WHZ0F/hKgY5FS2Sbkf2e/fhbQrGqoOzcH42TfWHBe+jrlyGEMAGUrOsfkTVs2jb6e
+         //Tg==
+X-Gm-Message-State: AOJu0YwCV6bUaFdudJ79DWSz7ztd+wIXiph9XTs5Hioyd0wetERzn3vr
+	J1nM2qdiFq9bXL35xDno649Ouk2l+npoUr3jmNfo45lHa9N8cGFbd0VZZNWq
+X-Google-Smtp-Source: AGHT+IFabt3/Yn9O5YMpz7E0q/NmSZRR5sNZEFGvt/CaiORbUjdfYhkUWyiV+YqXWE3Y6JVG8CVXKQ==
+X-Received: by 2002:a17:902:ecc4:b0:202:508c:b598 with SMTP id d9443c01a7336-2076e447f9cmr343542035ad.59.1726632243197;
+        Tue, 17 Sep 2024 21:04:03 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794603792sm57160435ad.106.2024.09.17.21.04.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 21:04:02 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
+Date: Wed, 18 Sep 2024 13:03:59 +0900
+Message-Id: <20240918040359.189212-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <0000000000007337c705fa1060e2@google.com>
+References: <0000000000007337c705fa1060e2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <90855D27249D797E+4a7cfd3a.4df2.19203479d54.Coremail.kxwang23@m.fudan.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3H+jHT+pmeKURAA--.2334W
-X-CM-SenderInfo: zprtkiiuqyikitw6il2tof0z/1tbiYxxc2GV4KzIKgAAIs9
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Transfer-Encoding: 8bit
 
-CkF0IDIwMjQtMDktMTYgMTg6Mzk6NDYsICJBbmR5IFNoZXZjaGVua28iIDxhbmRyaXkuc2hldmNo
-ZW5rb0BsaW51eC5pbnRlbC5jb20+IHdyb3RlOgo+T24gU3VuLCBTZXAgMTUsIDIwMjQgYXQgMDE6
-MjE6NDNBTSArMDgwMCwgS2FpeGluIFdhbmcgd3JvdGU6Cj4+IEluIHRoZSBzc2lfcHJvdG9jb2xf
-cHJvYmUgZnVuY3Rpb24sICZzc2ktPndvcmsgaXMgYm91bmQgd2l0aAo+PiBzc2lwX3htaXRfd29y
-aywgSW4gc3NpcF9wbl9zZXR1cCwgdGhlIHNzaXBfcG5feG1pdCBmdW5jdGlvbgo+PiB3aXRoaW4g
-dGhlIHNzaXBfcG5fb3BzIHN0cnVjdHVyZSBpcyBjYXBhYmxlIG9mIHN0YXJ0aW5nIHRoZQo+PiB3
-b3JrLgo+Cj5XZSByZWZlciB0byB0aGUgZnVuY3Rpb25zIGFzIGZ1bmMoKS4gRS5nLiwgc3NpcF9w
-bl9zZXR1cCgpLAo+c3NpcF9wbl94bWl0KCkuCj4KCkkgd2lsbCBjb3JyZWN0IGl0LgoKPj4gSWYg
-d2UgcmVtb3ZlIHRoZSBtb2R1bGUgd2hpY2ggd2lsbCBjYWxsIHNzaV9wcm90b2NvbF9yZW1vdmUK
-Pj4gdG8gbWFrZSBhIGNsZWFudXAsIGl0IHdpbGwgZnJlZSBzc2kgdGhyb3VnaCBrZnJlZShzc2kp
-LAo+PiB3aGlsZSB0aGUgd29yayBtZW50aW9uZWQgYWJvdmUgd2lsbCBiZSB1c2VkLiBUaGUgc2Vx
-dWVuY2UKPj4gb2Ygb3BlcmF0aW9ucyB0aGF0IG1heSBsZWFkIHRvIGEgVUFGIGJ1ZyBpcyBhcyBm
-b2xsb3dzOgo+PiAKPj4gQ1BVMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIENQ
-VTEKPj4gCj4+ICAgICAgICAgICAgICAgICAgICAgICAgIHwgc3NpcF94bWl0X3dvcmsKPj4gc3Np
-X3Byb3RvY29sX3JlbW92ZSAgICAgfAo+PiBrZnJlZShzc2kpOyAgICAgICAgICAgICB8Cj4+ICAg
-ICAgICAgICAgICAgICAgICAgICAgIHwgc3RydWN0IGhzaV9jbGllbnQgKmNsID0gc3NpLT5jbDsK
-Pj4gICAgICAgICAgICAgICAgICAgICAgICAgfCAvLyB1c2Ugc3NpCj4+IAo+PiBGaXggaXQgYnkg
-ZW5zdXJpbmcgdGhhdCB0aGUgd29yayBpcyBjYW5jZWxlZCBiZWZvcmUgcHJvY2VlZGluZwo+PiB3
-aXRoIHRoZSBjbGVhbnVwIGluIHNzaV9wcm90b2NvbF9yZW1vdmUuCj4KPlNhbWUgaGVyZS4KPgoK
-SSB3aWxsIGNvcnJlY3QgaXQuCgo+Li4uCj4KPj4gQWNrZWQtYnk6IEFuZHkgU2hldmNoZW5rbyA8
-YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tPgo+Cj4+IC0gYWRkIHRoZSBBY2tlZC1i
-eSBsYWJlbCBmcm9tIEFuZHkKPgo+Tm90IHRoYXQgQWNrIHdhcyBnaXZlbiB0byBfdGhpc18gdmVy
-c2lvbiBvZiB0aGUgY2hhbmdlIChpdCBoYXMgYmVlbiBjaGFuZ2VkCj5hIGxvdCksIGJ1dCBJJ20g
-ZmluZSB3aXRoIGtlZXBpbmcgaXQuCj4KClNvcnJ5LCBJIG1pc3NlZCB0aGlzIHBvaW50LgoKPi0t
-IAo+V2l0aCBCZXN0IFJlZ2FyZHMsCj5BbmR5IFNoZXZjaGVua28KPgo+Cj4KCkJlc3QgcmVnYXJk
-cywKS2FpeGluIFdhbmcK
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+---
+ fs/ext4/super.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index e72145c4ae5a..466aece8518f 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -338,7 +338,7 @@ ext4_fsblk_t ext4_inode_table(struct super_block *sb,
+ __u32 ext4_free_group_clusters(struct super_block *sb,
+ 			       struct ext4_group_desc *bg)
+ {
+-	return le16_to_cpu(bg->bg_free_blocks_count_lo) |
++	return le16_to_cpu(READ_ONCE(bg->bg_free_blocks_count_lo)) |
+ 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
+ 		 (__u32)le16_to_cpu(bg->bg_free_blocks_count_hi) << 16 : 0);
+ }
+@@ -394,7 +394,7 @@ void ext4_inode_table_set(struct super_block *sb,
+ void ext4_free_group_clusters_set(struct super_block *sb,
+ 				  struct ext4_group_desc *bg, __u32 count)
+ {
+-	bg->bg_free_blocks_count_lo = cpu_to_le16((__u16)count);
++	WRITE_ONCE(bg->bg_free_blocks_count_lo, cpu_to_le16((__u16)count));
+ 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
+ 		bg->bg_free_blocks_count_hi = cpu_to_le16(count >> 16);
+ }
+--
 
