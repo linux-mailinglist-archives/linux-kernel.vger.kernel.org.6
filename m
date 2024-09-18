@@ -1,91 +1,136 @@
-Return-Path: <linux-kernel+bounces-332344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51E897B89D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:37:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC5197B8A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5225B1F22639
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 551791C2114E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86D915B57F;
-	Wed, 18 Sep 2024 07:37:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE4116DEBD;
+	Wed, 18 Sep 2024 07:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="CsIwwC/W"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157C1273DC
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 07:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA1916A956
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 07:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726645024; cv=none; b=cxbFfUybrChuwac7TbnuoYXR/1fKPfmeO3pBkwUH93fF42A0kpoeZbZG9nxsTZXiPlvFrK0xiR/q+V+H74Rn/WnUdAA+5RJLzhUT3SaZHaddby7svi1OX6aVdwQEwNKrFqHs84rk681npi+v87yEzhpTezKeeAdR4akkZk1H52k=
+	t=1726645143; cv=none; b=sr0Q6Hf2m86nphh3koMdBFVMtxX8FqgCThsgwo7I/W2LgCIL3+3IiQ0dRCOeJ1zAzCR/Pr+nViuNbrXDqtXMvI9jUcqOQfgdBzB2SZrcaMCg1c713vDeh7K3NDx2vbdP6UjTW4KgAwi6ysdnG5fp/xS1LSCkuG0mgpp6/x+yPgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726645024; c=relaxed/simple;
-	bh=UeMAVdDfkvgUwuxYrYuU5ivMnrozQpkGU4GumukxZsU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OzFfDHfKY0750jfHcyfo8eG9i3BttbNwcae2CnfCYD+OLrri0dPJM2RPewyaTj1lCepReuWxTUQyXsNsqY1cUyoNiBjXKim2GLDuHUQmcRUKS/F3v6Sr583mzg4TEFY38FF/mk9Ps3gSpvHeTHuL80n+pLFsG2CXhjXyCb/4t+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0a71b7d90so38599975ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 00:37:02 -0700 (PDT)
+	s=arc-20240116; t=1726645143; c=relaxed/simple;
+	bh=//pIglqzc8dzYvGNeS5Ko9SdNk4llqFHy43hfE20ldg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=hNdDCf21MM/i9AjBqdHAvkg7jbEi02RALzEwuCu/wFYNmNObtnD+6xUTBm22QMyswEF095f2zo6jsLqSaFRWtVhH+U4RLWsF1A0ZiPHd+l3oLwalYIXJ1esQFPRQhrymwHZzwIGd0U+Enab39tHiJJ8bXIAvQWWHScTYY7cN+2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=CsIwwC/W; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8ce5db8668so43743966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 00:39:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1726645140; x=1727249940; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A2jmoIVe7y4meKOlJ6qsYCF/E/rFl2kVumr9vup8PFw=;
+        b=CsIwwC/WO3/MQf/eFaHNW9ztHmDu02PBTLoAGqnfoHlELVZuxJEXhfBdZPxcZAHJE8
+         mXAIso9Qlh2sHlEYFbZdRv0BYYApoW3VyIw7wPFOpOrc6NhwocZHMCQUh6wHueYTxEe4
+         bTT06dAwJGkqQGqRWmL+dVwKOMu7y9KkUXwGIDip/jhWWx4fzjwKC/r+uaYrVi332vAF
+         0qgpwK9cz6FdAEjYjtnTBRM6yUjZkw9UKzScl6dnhPDapOx6zqmXHqExGPwjLsWWX7kW
+         LeD5BcFgA9nTFqkNjPRVpGvvFXLqWYKYhEuTUbVNYRndXZ3YnQx4nmcUl1YkXSHF4/18
+         tM/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726645022; x=1727249822;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNDK2LKZ4njEZoeqFEptv9Q65TNnpy3U1I05FVRb5lk=;
-        b=YGcG5nQfOQ7yhI+Kj8LFxIM+rKST10yrOQR+c9ElfW73LVzRnsdLvTXqijpoNNTNxF
-         TFLnJiPsJIIAKwQ4pUIzmVmu3QpyEK06xvL5nIvyLyfIO/jw2vNw1RpRadrNB3F0L1wc
-         ybIgvdn8qYGcEyYqJFAIZUbrhKEL6qO/19F+6a+qes4vu0W4rw2at5JUxrfZbRV/jm2t
-         kApwzUPWZ4t3CT0s5r9F3y3CTZH2vBWBwIslBaXeR8OLVUkkXezjqzY3JgPexuUxFi7M
-         6FNSDH7dRPoLtpjEMbv/FQRLF7ywi+Uhcvble/krY6+NAdnLB3R/YqM2fqJ1GNK1NXBX
-         0XTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhfwIfINPOxuLEZSoWE7a1jvZ6rlKECQTFbO1Sw731Ez3jz9TypCplE0iMwo+P2x3FtVkn0bgK/G6eRxk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKzYKB0XuhHG0lrzcOnML7rIZVn1ba11//VUbvxlCAUicH79oe
-	SG7/jSpe5C1ns1jAEdH0QNw3OO9GuZFi6TadkBAytz3pd8YI56W1Wh/poVmEh8UBkjEK1ax9Pib
-	I6iyolfT3jT5h4fBf4LClazB7ULbKOSwbIIatzvZdlhP4o2lhgsgCMdU=
-X-Google-Smtp-Source: AGHT+IHRLgBYYx+9Az9JF+y7koLf4BPzUIQAOG6YuGVKOs23tWbIlvXKYy3/tvDLZXR9YEgBJGzDoGVxRrmMLfUYdvzfJMdrD/9w
+        d=1e100.net; s=20230601; t=1726645140; x=1727249940;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=A2jmoIVe7y4meKOlJ6qsYCF/E/rFl2kVumr9vup8PFw=;
+        b=W3FM/gUQ4Bx1tWzhFxO0i2krb0jrvzv+UOwhnvVgDyCyNQXpoT4v+t01FYYh25EzSl
+         8r0HYFkV68WEDRpogFsMU3COD3ZQWQmPRSBTupyNEt/G50l5/HOqtjQYi/ePFwfEqN5k
+         Aiz3MKqcSeRxmPIOHGtnliprByi5wBlhKXrVUpKFGg94RaCa7WMKpM+bOIIRp/JJ7nb8
+         0vCHB1rt0fOxGaOhdUo/MIFDLiGYwJj9mcSGLrB2hMp6XaX6DOYqWMLl+zyi1j0P7Qe7
+         IfhaGN1f2phFPyKZjO7h6WKpRhqcnSwZ2brBZEaYjm39IKX4lE5k07W2+2JoYmW47Qtt
+         +TTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbWJt43/+21t8kH4BNqpudJciNRCXjXU7qD+54fXFa6Q5mwoR6mK4CLbb0zOFQzkaPNn8R6ksLdibV+vw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTtEGzGNuTfdcL757JJFbQZWIzG6iobvtH3dRe/0KdQAqLZ2iT
+	6qAzboRc8X4BUy4MxT01DIsTqzi6jvPm6Hl9F6N44blCSW+bGYtOD62Q16G1aHc=
+X-Google-Smtp-Source: AGHT+IFinsfrLJxQPIM62bR1nTdw6sMrl8MRa9zZrqsJ/V6spvPBZm85g7rw3MsYHtujZaGQwgKEDQ==
+X-Received: by 2002:a17:907:c882:b0:a89:c8db:3810 with SMTP id a640c23a62f3a-a9029492510mr2239940366b.30.1726645139623;
+        Wed, 18 Sep 2024 00:38:59 -0700 (PDT)
+Received: from localhost (2a02-8388-6584-6400-d322-7350-96d2-429d.cable.dynamic.v6.surfer.at. [2a02:8388:6584:6400:d322:7350:96d2:429d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612e1a1csm543157866b.156.2024.09.18.00.38.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 00:38:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cc:b0:3a0:a385:9128 with SMTP id
- e9e14a558f8ab-3a0a3859420mr75605905ab.6.1726645022141; Wed, 18 Sep 2024
- 00:37:02 -0700 (PDT)
-Date: Wed, 18 Sep 2024 00:37:02 -0700
-In-Reply-To: <20240918064122.202586-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000032c10906225fdfaf@google.com>
-Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
-From: syzbot <syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 18 Sep 2024 09:38:57 +0200
+Message-Id: <D498M9YSOTE8.2LB8FJBSBBLT2@fairphone.com>
+To: <quic_vnagar@quicinc.com>, "Bjorn Andersson" <andersson@kernel.org>,
+ "Konrad Dybcio" <konrad.dybcio@linaro.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>
+Cc: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6460-rb3gen2: enable venus node
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20240917-venus_rb3_gen2-v1-1-8fea70733592@quicinc.com>
+In-Reply-To: <20240917-venus_rb3_gen2-v1-1-8fea70733592@quicinc.com>
 
-Hello,
+Hi Vedang!
 
-syzbot tried to test the proposed patch but the build/boot failed:
+On Tue Sep 17, 2024 at 11:24 AM CEST, Vedang Nagar via B4 Relay wrote:
+> From: Vedang Nagar <quic_vnagar@quicinc.com>
+>
+> Enable the venus node on Qualcomm Rb3gen2 so that the
+> video decoder will start working.
+>
+> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/bo=
+ot/dts/qcom/qcs6490-rb3gen2.dts
+> index 0d45662b8028bff475024cff37c33e01d2ee251b..d52a7e0a35bf941c66ccaa004=
+25147781976b359 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -790,6 +790,10 @@ &ufs_mem_phy {
+>  	status =3D "okay";
+>  };
+> =20
+> +&venus {
+> +	status =3D "okay";
 
-fs/ext4/super.c:319:4: error: cannot take the address of an rvalue of type 'ext4_fsblk_t' (aka 'unsigned long long')
-fs/ext4/super.c:327:4: error: cannot take the address of an rvalue of type 'ext4_fsblk_t' (aka 'unsigned long long')
-fs/ext4/super.c:335:4: error: cannot take the address of an rvalue of type 'ext4_fsblk_t' (aka 'unsigned long long')
-fs/ext4/super.c:343:4: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
-fs/ext4/super.c:351:4: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
-fs/ext4/super.c:359:4: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
-fs/ext4/super.c:367:4: error: cannot take the address of an rvalue of type '__u32' (aka 'unsigned int')
+Don't you want to set firmware-name property here?
 
+Regards
+Luca
 
-Tested on:
-
-commit:         2f27fce6 Merge tag 'sound-6.12-rc1' of git://git.kerne..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=31b069fcee8f481d
-dashboard link: https://syzkaller.appspot.com/bug?extid=702361cf7e3d95758761
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1084c69f980000
+> +};
+> +
+>  &wifi {
+>  	memory-region =3D <&wlan_fw_mem>;
+>  };
+>
+> ---
+> base-commit: 3f52e32445a1f63b788bc8969b7dc2386a80a24d
+> change-id: 20240917-venus_rb3_gen2-502e672d0e20
+> prerequisite-change-id: 20240913-qcm6490-clock-configs-0239f30babb5:v1
+> prerequisite-patch-id: faac726ebdf08240ab0913132beb2c620e52a98a
+>
+> Best regards,
 
 
