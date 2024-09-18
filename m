@@ -1,127 +1,201 @@
-Return-Path: <linux-kernel+bounces-332369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA09A97B8F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:05:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F69297B8F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512161F2178A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:05:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2F84B280E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35BA175D48;
-	Wed, 18 Sep 2024 08:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17893170A27;
+	Wed, 18 Sep 2024 08:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKz6pjT8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hwObczKK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aKyjuGee";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cK5ofELI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/sz8tx6+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E81174ECD;
-	Wed, 18 Sep 2024 08:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F1D34CDD;
+	Wed, 18 Sep 2024 08:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726646690; cv=none; b=i9CMJ44zjbybRyOE/+GrMTfxrFiP917LszB954H8fPEdJSB7XErDPWzFzeGd07KgKRKojTU1HMQWOrBFHO5iz53TwvXyVvI/TElVm8nRAh9dlSinIXzZw/KC6DzWFogHwHahdZAtH1NRcjDDrgQbd5xCD8/eA8TdtZX4GzSPJSw=
+	t=1726646721; cv=none; b=UIM+QRwdGQgydDT6TvozC8wcHFQIk+nB54Ld0B13t9LkBppWLW1JkjOGS8lMfqG6vEUtT2/C7FHZ5ZsGlKNAybW7Ll5yafgqnDs/tMBao0qF9PthgwatjM1Gedaz2aV73BhcxCjVK+cp2dLY5Wqz9aBxzQdy1v/tweNOBGuu8cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726646690; c=relaxed/simple;
-	bh=CQpaFzysb4OVegJAA2SGpwkBi1FpniqWiux2/BwVPz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xx7n2v2sNQ+h4yd9Kw0xdnLzN9yO1uldKaMtSmUGxVnXPj+TF4FVhO8EEahRoODcB7YenatjdOGN2wg9LuOqXxzJLxW0H61lIG4d5VvCub7HyQGMzvHTzgFoJMXfkoZopQcVgHWBRQqlfZSDtyNwdA2oVo5AXI+7Q/p+slOzjIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKz6pjT8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40932C4CEC3;
-	Wed, 18 Sep 2024 08:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726646689;
-	bh=CQpaFzysb4OVegJAA2SGpwkBi1FpniqWiux2/BwVPz4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vKz6pjT8tQ7gXW4b12FNAM0Ow63owPjNv97x/c0DbBnxpIX72WC0RV7AeZd16B8YD
-	 yaSYyZQAxwVQtg77ATahJhS87G2rTF5nKYhEr/9Spb0F72Lci81jAntvdo8AES88fa
-	 JR30B13QFSArCwPjNCbZFJWOFa7thHqJgWWtaCsz4jfDoGLoVxor547dfauqpnEXtT
-	 Z4UIT9udfbB4gBP6fJ0jfgzt+pRdLcQRsfXee92bUdCBGzJMN0nu+HLQOsyjyuU/Um
-	 fC40NpYA5HvvAMjqxlYYkiaC1yLhBvBg5gkc98f4SUnQG18yvKxRR2WoFwkN/H1Cec
-	 EqZ/UUaigKcKw==
-Date: Wed, 18 Sep 2024 09:04:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Manikandan.M@microchip.com
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, airlied@gmail.com, daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux@armlinux.org.uk,
-	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, arnd@arndb.de, geert+renesas@glider.be,
-	mpe@ellerman.id.au, rdunlap@infradead.org, Dharma.B@microchip.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: display: bridge: add
- sam9x75-mipi-dsi binding
-Message-ID: <20240918-concert-liability-fab83f411cfa@squawk>
-References: <20240814105256.177319-1-manikandan.m@microchip.com>
- <20240814105256.177319-2-manikandan.m@microchip.com>
- <20240814-anaerobic-unpainted-532b8b117b79@spud>
- <5cb63b40-9710-4a6d-984d-1be1394dcb63@microchip.com>
- <20240917-verdict-nativity-3b84cc3457cc@squawk>
- <d343d34e-f810-4375-882e-d74f104ce215@microchip.com>
+	s=arc-20240116; t=1726646721; c=relaxed/simple;
+	bh=hMFeXQZRHn8UB2b48vO/INvfoZ45GI6TKEEB4599HkA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hbsa/Dzh+bSpTG+bg54FZlRbN1gCOviYlNq5JXN4O3nhxcjheZZBBYrJjm8eFat68wDOWriz/BEVbhhycmFOBsEOF3/FYXdNtATbTrBCdrgTNygVr8Kydg0g5as/muEkQUmPItzXJ9/Bs9GXK79O9GChdChbjIYhU97f2BWsMnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hwObczKK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aKyjuGee; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cK5ofELI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/sz8tx6+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EFDA21FBB5;
+	Wed, 18 Sep 2024 08:05:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726646712; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iRb6bhUWnfap7Hi0tQE7Q46cU6rKKKEkL1LdvSyKE34=;
+	b=hwObczKKsvudn5VmkoySwCfL+3jwY5o4EW2Kkxv5nQpTftRCbnvVoyC3hBObBZTSjfKwVK
+	oRDv18Wt1Q1zymP5pY/RyqKnbIgJxnB4K3cvyP5sqj8MhIFBXPl0uabESsEDk4pFhLv5+2
+	9p47QyS4XPdXn1HBpMJc3IMBA+1e06U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726646712;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iRb6bhUWnfap7Hi0tQE7Q46cU6rKKKEkL1LdvSyKE34=;
+	b=aKyjuGeeWte7+hYVvmhDGlJJPU9wmYUr03NAD8+wG71U+doC4rPFwErOgSWDYN9vGnCQfs
+	Kg6xW9w4nG6x+RCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=cK5ofELI;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/sz8tx6+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726646710; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iRb6bhUWnfap7Hi0tQE7Q46cU6rKKKEkL1LdvSyKE34=;
+	b=cK5ofELIJK/qJAmUPiFdayjaLFQt255Uo12uNmfeXonSuvCrOoJEoF2IebF+nxMxyBArYO
+	dbVh/Lrg+z46JOqJf95359QB2QwFIBGDP8TBjsBk9M03GA3IVaYDL/VeoEqAoiwQd+moLS
+	JOiDCN1kp0uYA03pL52FrsP+/h5YPOo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726646710;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iRb6bhUWnfap7Hi0tQE7Q46cU6rKKKEkL1LdvSyKE34=;
+	b=/sz8tx6+f/4xxKdpoLp8G3VXfdSqp2Lc+f3OkludsFrOD2LefO/zPFUezBj0esfSaDYhfa
+	TYlRwm1fgtkZQ9Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF33613A57;
+	Wed, 18 Sep 2024 08:05:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fq93KbaJ6mazVQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 18 Sep 2024 08:05:10 +0000
+Date: Wed, 18 Sep 2024 10:06:01 +0200
+Message-ID: <87setxe68m.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Jerry Luo <jerryluo225@gmail.com>
+Cc: Christoffer Sandberg <cs@tuxedo.de>,
+	Christian Heusel <christian@heusel.eu>,
+	Werner Sembach <wse@tuxedocomputers.com>,
+	regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
+In-Reply-To: <1fbba03e-56b8-4e74-adf6-998e3a2d9dac@gmail.com>
+References: <c930b6a6-64e5-498f-b65a-1cd5e0a1d733@heusel.eu>
+	<87jzfbh5tu.wl-tiwai@suse.de>
+	<66dfd536-ae17-4d75-b514-7931a3734e54@gmail.com>
+	<20f70c0a92a27db29f188e05c33ba82c@tuxedo.de>
+	<1fbba03e-56b8-4e74-adf6-998e3a2d9dac@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wyxYEbU3SQR8ONJ3"
-Content-Disposition: inline
-In-Reply-To: <d343d34e-f810-4375-882e-d74f104ce215@microchip.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: EFDA21FBB5
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -5.51
+X-Spam-Flag: NO
+
+On Tue, 17 Sep 2024 23:16:08 +0200,
+Jerry Luo wrote:
+> 
+> On 9/17/24 5:50 AM, Christoffer Sandberg wrote:
+> 
+> > From the dmesg logs it does look like the quirk is applied. Assuming
+> > the pci ids collide between these models (or the model param is used)
+> > which would explain why it gets applied:
+> > 
+> > 1. Does the device have dual speaker pairs? If so (or if in doubt),
+> >    check alsamixer for the codec and play around with the volume knobs
+> >    to see if the controls affect the individual speaker pairs. Or try
+> >    this https://github.com/alsa-project/alsa-ucm-conf/pull/410 to control
+> >    both with the system volume control
+> > 2. If the device does not have dual speakers the quirk application
+> > probably
+> >    needs to be extended with DMI specific info to limit it more.
+> > 
+> > Let me know how it works,
+> > 
+> > Christoffer
+> 
+> From what I am can tell, and as mentioned in the tech specs, the
+> laptop only have two speakers, unlike the Sirius series.
+> 
+> In case I didn't make it clear enough, the audio volume is normal now
+> for some unknown reasons. And no matter which kernel I change to, the
+> issue doesn't reappear.
+> 
+> If you want a dmesg log from the kernel that used to not work, or any
+> other info, please let me know.
+
+I don't see any relevant about the incorrect volumes by the suggested
+commit, but at least we should avoid applying the quirk for a
+non-existing speaker pin.
+
+Jerry, yours is with CX11970 (codec id 0x14f120d0), right?
+
+Werner, how about your Sirius models?  Are they also with the same
+codec chip?  If they are different, we can have the additional checks
+for judging whether to apply the pincfg fix or not.
 
 
---wyxYEbU3SQR8ONJ3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+thanks,
 
-On Wed, Sep 18, 2024 at 03:00:45AM +0000, Manikandan.M@microchip.com wrote:
-> On 17/09/24 6:08 pm, Conor Dooley wrote:
-> > On Tue, Sep 17, 2024 at 03:16:53AM +0000,Manikandan.M@microchip.com  wr=
-ote:
-> >> Hi Conor,
-> >>
-> >> On 14/08/24 7:29 pm, Conor Dooley wrote:
-> >>> On Wed, Aug 14, 2024 at 04:22:53PM +0530, Manikandan Muralidharan wro=
-te:
-
-> >>>> +  microchip,sfr:
-> >>>> +    $ref: /schemas/types.yaml#/definitions/phandle
-> >>>> +    description:
-> >>>> +      phandle to Special Function Register (SFR) node.To enable the=
- DSI/CSI
-> >>>> +      selection bit in SFR's ISS Configuration Register.
-> >>> I'm curious - why is this phandle required? How many SFR nodes are th=
-ere
-> >>> on the platform?
-> >> This phandle is to map the memory region of SFR node and configure the
-> >> DSI bit in the SFR's ISS configuration register.
-> >> currently there is only one SFR node in this platform.
-> > What does "currently" mean? The platform either has one or it does not,
-> > currently makes it sound like it has more than one but the dts only has
-> > one.
-> Apologies, I would like to clarify the statement that this platform only=
-=20
-> has one 32-bit special function register implemented.
-
-In that case, you dont need a phandle at all, just look the sfr up by
-its compatible.
-
---wyxYEbU3SQR8ONJ3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHQEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuqJnwAKCRB4tDGHoIJi
-0ix4AQChrfrTy2bNfbi7J9Cmvc0AkOrqd4lC8oOBGlzlXXvbeAD1HqbkyJyyxQph
-0xKmWJd1OCZWfCk7wGtjmG795nIHAA==
-=/n4k
------END PGP SIGNATURE-----
-
---wyxYEbU3SQR8ONJ3--
+Takashi
 
