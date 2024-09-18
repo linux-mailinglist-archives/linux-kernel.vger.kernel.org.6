@@ -1,169 +1,241 @@
-Return-Path: <linux-kernel+bounces-332586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B8A97BB75
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:17:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3742997BBB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87CED2829F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:17:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECF082849E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F18D17C9B8;
-	Wed, 18 Sep 2024 11:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eIjHGc2Z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AF61891C0;
+	Wed, 18 Sep 2024 11:41:31 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216A317AE0C
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 11:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8422628C;
+	Wed, 18 Sep 2024 11:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726658260; cv=none; b=HHMDDTIddWGxK71MccJELCaH4lDcT3bybBDvCc3VOX3ZwKLHFgXdoQhngV8vanW+Iq7UE2ThORmLhS/kaiCcT4SJuCrHUJrn0NrQLcSHqV8uR/FsFsUdBZKT9ekiQ+ym9A83fGIQUwjZyevsYeFmZaHIHZc5ZCouXkxkf7VZluU=
+	t=1726659690; cv=none; b=B0frwtEG2L55H0dt7w5m/aoPOdcaSgTHXzfJGDkvtWUW1AFLA99kfagoFR1N9l29OdxM0c4rhqLS5RBfmuUtzK0KqKJyLiLEJbqc1dphsSUyFY5fEvgZqZIU6sfBCHFq88kYKAdTz94tUZfoEBoksr7968bsy/gnX8Vz74H7vdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726658260; c=relaxed/simple;
-	bh=IF+uOHS1Yh3wSLzJpiC0yW+gJj7j6acT0GmLW0UFFLA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gkNZYGILXAaW0zQ0/wBLI7Yq+WkyZlotajSk3SNsOmXKXFCHAPZ/WGFts7vhXFirnX7kbw57NSWhDpzKh39dREVOBnd0iC3+wERISAF3gyPbyWWK+F99G5dCIO1bBKDgzhtskp78+g/cVn1+1B11KuCevspFBoutKcHYfbtTD5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eIjHGc2Z; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726658259; x=1758194259;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IF+uOHS1Yh3wSLzJpiC0yW+gJj7j6acT0GmLW0UFFLA=;
-  b=eIjHGc2ZMYuoxgrTAzy1P5Wzp3h9cYR5PyvuY7kPg3vRT2Nsw61bHFso
-   Qv/9veFcWeVV6MioI1KW23HJ7EmZzDVqFKCj/Ye4x1gG2bFMVMElWV/9U
-   CED2RfZeNUAY33cDe/u89DhDTv6recmafIhb8FssD9r8ep+rfPMLL2hGs
-   4rFNWxAJ6wW8eCSpdE5+F4pbci3j+NuPdjv/S/z/1S1VeJCzwSVkNK9vM
-   nM4FMxm2Kvqwye3SmXji3HUUfWQgDaG6hJobjOYoK+DBtII5aStOs643D
-   gE5uOctjMs44bBb15rvMiUH/287E4PZn9nlrmAAFkdDCXVhnDkrc3v7oO
-   w==;
-X-CSE-ConnectionGUID: Z7m4WuOhSy21qRxPChzpKQ==
-X-CSE-MsgGUID: p02CstOeRpuLeWSTKTTi0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="13573469"
-X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="13573469"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 04:17:37 -0700
-X-CSE-ConnectionGUID: Mw4BS6K6QoSJ3dKK+PlNmw==
-X-CSE-MsgGUID: +xWHocPeQYqfXr9ZKsA4xA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="100340582"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 04:17:35 -0700
-Message-ID: <c54a15d8-fe60-480c-9156-bd77114c196c@linux.intel.com>
-Date: Wed, 18 Sep 2024 19:17:32 +0800
+	s=arc-20240116; t=1726659690; c=relaxed/simple;
+	bh=yZqA0HU97VRFkqkKbQCUl5SiXbIKmeGlKqj5Gqax0fs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=srsX8jBOu5iQdXDpeLvqto8Yd+/IlRDRWF32jKfmTQKObb/Hgm0az7LJ+nB2w84Qg1flU48GXUyMKN+wRaiA/uDaeTwtrzmO4gOkOIOpQhwPLjw6x/q6oJcHoCymONd0nUfYdtqkrsms3RkmRVoF0wiQpbSgBC6OO2yXcZ3OIBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X7x8r3ylrzyRhL;
+	Wed, 18 Sep 2024 19:23:08 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id A7D5B1400DD;
+	Wed, 18 Sep 2024 19:24:24 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 18 Sep 2024 19:24:24 +0800
+From: Yunsheng Lin <linyunsheng@huawei.com>
+To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
+	<zhangkun09@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>, Alexander
+ Lobakin <aleksander.lobakin@intel.com>, Robin Murphy <robin.murphy@arm.com>,
+	Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+	<john.fastabend@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<netdev@vger.kernel.org>, <intel-wired-lan@lists.osuosl.org>,
+	<bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH net 0/2] fix two bugs related to page_pool
+Date: Wed, 18 Sep 2024 19:18:23 +0800
+Message-ID: <20240918111826.863596-1-linyunsheng@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v2 1/5] iommu/vt-d: Separate page request queue from SVM
-To: "Tian, Kevin" <kevin.tian@intel.com>,
- "j.granados@samsung.com" <j.granados@samsung.com>,
- David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Klaus Jensen <its@irrelevant.dk>
-References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
- <20240913-jag-iopfv8-v2-1-dea01c2343bc@samsung.com>
- <BL1PR11MB52713D3D5947C66AE463FA4B8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
- <e0a1347f-877e-445c-9158-7584ae200bff@linux.intel.com>
- <BN9PR11MB527611131A808B78C8E0E8388C662@BN9PR11MB5276.namprd11.prod.outlook.com>
- <c8708b95-14b9-4545-84f7-6f45161456cc@linux.intel.com>
- <BN9PR11MB52769D1D1FEA9BAF0E6D19718C622@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB52769D1D1FEA9BAF0E6D19718C622@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 2024/9/18 16:20, Tian, Kevin wrote:
->> From: Baolu Lu<baolu.lu@linux.intel.com>
->> Sent: Saturday, September 14, 2024 1:50 PM
->>
->> On 2024/9/14 10:53, Tian, Kevin wrote:
->>>> From: Baolu Lu<baolu.lu@linux.intel.com>
->>>> Sent: Saturday, September 14, 2024 9:18 AM
->>>>
->>>> On 9/14/24 8:52 AM, Tian, Kevin wrote:
->>>>>> From: Joel Granados via B4 Relay
->>>>>> <devnull+j.granados.samsung.com@kernel.org>
->>>>>>
->>>>>> From: Joel Granados<j.granados@samsung.com>
->>>>>>
->>>>>> IO page faults are no longer dependent on
->> CONFIG_INTEL_IOMMU_SVM.
->>>>>> Move
->>>>>> all Page Request Queue (PRQ) functions that handle prq events to a
->> new
->>>>>> file in drivers/iommu/intel/prq.c. The page_req_des struct is now
->>>>>> declared in drivers/iommu/intel/prq.c.
->>>>>>
->>>>>> No functional changes are intended. This is a preparation patch to
->>>>>> enable the use of IO page faults outside the SVM/PASID use cases.
->>>>> Do we want to guard it under a new config option e.g.
->>>>> CONFIG_INTEL_IOMMU_IOPF? it's unnecessary to allocate resources
->>>>> for the majority usages which don't require IOPF.
->>>>>
->>>>> Baolu?
->>>> The OS builder doesn't know if Linux will run on a platform with PRI-
->>>> capable devices. They'll probably always enable this option if we
->>>> provide it.
->>> hmm then why do we need a SVM option? In reality I haven't seen
->>> a platform which supports IOPF but no pasid/SVM. so the reason
->>> for whether to have an option should be same between IOPF/SVM.
->>>
->>> IMHO the point of options is to allow reducing footprint of the kernel
->>> image and many options are probably always enabled in distributions...
->> To be honest, I would hope to remove the SVM option some day. It's
->> nothing special except listening to an external notification and
->> synchronize the caches when the page table is updated.
-> more than that... for each IOMMU the current code allocates 16 pages
-> and 1 hwirq. Those are unnecessary burdens in majority deployments
-> which don't support/require I/O page faults.
+Patch 1 fix a possible time window problem for page_pool.
+Patch 2 fix the kernel crash problem at iommu_get_dma_domain
+reported in [1].
 
-Yeah! I only focused on the kernel binary size but ignored these system
-resources consumed by IOPF. Then, perhaps
+When page_pool_put_unrefed_netmem() is called with allow_direct
+being true, there is added checking overhead introduced in patch
+1, which seem to be no noticeable performance impact.
 
-diff --git a/drivers/iommu/intel/Kconfig b/drivers/iommu/intel/Kconfig
-index f52fb39c968e..847a5c43c9dc 100644
---- a/drivers/iommu/intel/Kconfig
-+++ b/drivers/iommu/intel/Kconfig
-@@ -97,4 +97,7 @@ config INTEL_IOMMU_PERF_EVENTS
-           to aid performance tuning and debug. These are available on 
-modern
-           processors which support Intel VT-d 4.0 and later.
+When page_pool_put_unrefed_netmem() is called with allow_direct
+being false, there is a rcu read lock overhead introduced in
+patch 1, and the overhead is about 13ns using the below test code,
+but 'time_bench_page_pool02_ptr_ring' only show about 2ns overhead,
+which is about 2% degradation.
 
-+config INTEL_IOMMU_IOPF
-+       depends on IOMMUFD || INTEL_IOMMU_SVM
++static int time_bench_rcu(
++       struct time_bench_record *rec, void *data)
++{
++       uint64_t loops_cnt = 0;
++       int i;
 +
-  endif # INTEL_IOMMU
-diff --git a/drivers/iommu/intel/Makefile b/drivers/iommu/intel/Makefile
-index c8beb0281559..c382307ae7aa 100644
---- a/drivers/iommu/intel/Makefile
-+++ b/drivers/iommu/intel/Makefile
-@@ -5,6 +5,7 @@ obj-$(CONFIG_DMAR_TABLE) += trace.o cap_audit.o
-  obj-$(CONFIG_DMAR_PERF) += perf.o
-  obj-$(CONFIG_INTEL_IOMMU_DEBUGFS) += debugfs.o
-  obj-$(CONFIG_INTEL_IOMMU_SVM) += svm.o
-+obj-$(CONFIG_INTEL_IOMMU_IOPF) += prq.o
-  ifdef CONFIG_INTEL_IOMMU
-  obj-$(CONFIG_IRQ_REMAP) += irq_remapping.o
-  endif
++       time_bench_start(rec);
++       /** Loop to measure **/
++       for (i = 0; i < rec->loops; i++) {
++               rcu_read_lock();
++               loops_cnt++;
++               barrier(); /* avoid compiler to optimize this loop */
++               rcu_read_unlock();
++       }
++       time_bench_stop(rec, loops_cnt);
++       return loops_cnt;
++}
 
-?
+When page_pool need to be refilled from or flushed to the page allocator,
+the added overhead is the page_pool_item_add() and page_pool_item_del()
+calling overhead, using below patch to enable Jesper's testing running in
+arm64, the overhead is 0~20ns, which is quite variable 
 
-Thanks,
-baolu
+Before this patchset:
+root@(none)$ taskset -c 1 insmod bench_page_pool_simple.ko
+[  136.641453] bench_page_pool_simple: Loaded
+[  136.722560] time_bench: Type:for_loop Per elem: 0 cycles(tsc) 0.769 ns (step:0) - (measurement period time:0.076968720 sec time_interval:76968720) - (invoke count:100000000 tsc_interval:7696855)
+[  137.317006] time_bench: Type:atomic_inc Per elem: 0 cycles(tsc) 5.771 ns (step:0) - (measurement period time:0.577164350 sec time_interval:577164350) - (invoke count:100000000 tsc_interval:57716429)
+[  137.480852] time_bench: Type:lock Per elem: 1 cycles(tsc) 14.621 ns (step:0) - (measurement period time:0.146218730 sec time_interval:146218730) - (invoke count:10000000 tsc_interval:14621868)
+[  138.842377] time_bench: Type:rcu Per elem: 1 cycles(tsc) 13.444 ns (step:0) - (measurement period time:1.344419820 sec time_interval:1344419820) - (invoke count:100000000 tsc_interval:134441975)
+[  138.859656] bench_page_pool_simple: time_bench_page_pool01_fast_path(): Cannot use page_pool fast-path
+[  139.132102] time_bench: Type:no-softirq-page_pool01 Per elem: 2 cycles(tsc) 26.315 ns (step:0) - (measurement period time:0.263151430 sec time_interval:263151430) - (invoke count:10000000 tsc_interval:26315135)
+[  139.150769] bench_page_pool_simple: time_bench_page_pool02_ptr_ring(): Cannot use page_pool fast-path
+[  139.910642] time_bench: Type:no-softirq-page_pool02 Per elem: 7 cycles(tsc) 75.066 ns (step:0) - (measurement period time:0.750663200 sec time_interval:750663200) - (invoke count:10000000 tsc_interval:75066312)
+[  139.929312] bench_page_pool_simple: time_bench_page_pool03_slow(): Cannot use page_pool fast-path
+[  141.673951] time_bench: Type:no-softirq-page_pool03 Per elem: 17 cycles(tsc) 173.578 ns (step:0) - (measurement period time:1.735781610 sec time_interval:1735781610) - (invoke count:10000000 tsc_interval:173578155)
+[  141.692970] bench_page_pool_simple: pp_tasklet_handler(): in_serving_softirq fast-path
+[  141.700874] bench_page_pool_simple: time_bench_page_pool01_fast_path(): in_serving_softirq fast-path
+[  141.973638] time_bench: Type:tasklet_page_pool01_fast_path Per elem: 2 cycles(tsc) 26.364 ns (step:0) - (measurement period time:0.263645150 sec time_interval:263645150) - (invoke count:10000000 tsc_interval:26364508)
+[  141.992912] bench_page_pool_simple: time_bench_page_pool02_ptr_ring(): in_serving_softirq fast-path
+[  142.531745] time_bench: Type:tasklet_page_pool02_ptr_ring Per elem: 5 cycles(tsc) 52.980 ns (step:0) - (measurement period time:0.529801250 sec time_interval:529801250) - (invoke count:10000000 tsc_interval:52980119)
+[  142.550933] bench_page_pool_simple: time_bench_page_pool03_slow(): in_serving_softirq fast-path
+[  144.297646] time_bench: Type:tasklet_page_pool03_slow Per elem: 17 cycles(tsc) 173.802 ns (step:0) - (measurement period time:1.738029000 sec time_interval:1738029000) - (invoke count:10000000 tsc_interval:173802894)
+
+After this patchset:
+root@(none)$ taskset -c 1 insmod bench_page_pool_simple.ko
+[  149.865799] bench_page_pool_simple: Loaded
+[  149.946907] time_bench: Type:for_loop Per elem: 0 cycles(tsc) 0.769 ns (step:0) - (measurement period time:0.076965620 sec time_interval:76965620) - (invoke count:100000000 tsc_interval:7696556)
+[  150.722282] time_bench: Type:atomic_inc Per elem: 0 cycles(tsc) 7.580 ns (step:0) - (measurement period time:0.758094660 sec time_interval:758094660) - (invoke count:100000000 tsc_interval:75809459)
+[  150.886335] time_bench: Type:lock Per elem: 1 cycles(tsc) 14.640 ns (step:0) - (measurement period time:0.146405830 sec time_interval:146405830) - (invoke count:10000000 tsc_interval:14640578)
+[  152.249454] time_bench: Type:rcu Per elem: 1 cycles(tsc) 13.460 ns (step:0) - (measurement period time:1.346009570 sec time_interval:1346009570) - (invoke count:100000000 tsc_interval:134600951)
+[  152.266734] bench_page_pool_simple: time_bench_page_pool01_fast_path(): Cannot use page_pool fast-path
+[  152.537046] time_bench: Type:no-softirq-page_pool01 Per elem: 2 cycles(tsc) 26.100 ns (step:0) - (measurement period time:0.261007670 sec time_interval:261007670) - (invoke count:10000000 tsc_interval:26100761)
+[  152.555714] bench_page_pool_simple: time_bench_page_pool02_ptr_ring(): Cannot use page_pool fast-path
+[  153.342212] time_bench: Type:no-softirq-page_pool02 Per elem: 7 cycles(tsc) 77.729 ns (step:0) - (measurement period time:0.777293380 sec time_interval:777293380) - (invoke count:10000000 tsc_interval:77729331)
+[  153.360881] bench_page_pool_simple: time_bench_page_pool03_slow(): Cannot use page_pool fast-path
+[  155.287747] time_bench: Type:no-softirq-page_pool03 Per elem: 19 cycles(tsc) 191.800 ns (step:0) - (measurement period time:1.918007990 sec time_interval:1918007990) - (invoke count:10000000 tsc_interval:191800791)
+[  155.306766] bench_page_pool_simple: pp_tasklet_handler(): in_serving_softirq fast-path
+[  155.314670] bench_page_pool_simple: time_bench_page_pool01_fast_path(): in_serving_softirq fast-path
+[  155.584313] time_bench: Type:tasklet_page_pool01_fast_path Per elem: 2 cycles(tsc) 26.052 ns (step:0) - (measurement period time:0.260524810 sec time_interval:260524810) - (invoke count:10000000 tsc_interval:26052476)
+[  155.603588] bench_page_pool_simple: time_bench_page_pool02_ptr_ring(): in_serving_softirq fast-path
+[  156.183214] time_bench: Type:tasklet_page_pool02_ptr_ring Per elem: 5 cycles(tsc) 57.059 ns (step:0) - (measurement period time:0.570594850 sec time_interval:570594850) - (invoke count:10000000 tsc_interval:57059478)
+[  156.202402] bench_page_pool_simple: time_bench_page_pool03_slow(): in_serving_softirq fast-path
+[  158.045594] time_bench: Type:tasklet_page_pool03_slow Per elem: 18 cycles(tsc) 183.450 ns (step:0) - (measurement period time:1.834507700 sec time_interval:1834507700) - (invoke count:10000000 tsc_interval:183450764)
+
+Patch for time_bench.h enable the out of tree testing on arm64 system:
+@@ -101,6 +101,7 @@ struct time_bench_cpu {
+  *  CPUID clears the high 32-bits of all (rax/rbx/rcx/rdx)
+  */
+ static __always_inline uint64_t tsc_start_clock(void) {
++#if defined(__i386__) || defined(__x86_64__)
+        /* See: Intel Doc #324264 */
+        unsigned hi, lo;
+        asm volatile (
+@@ -111,9 +112,13 @@ static __always_inline uint64_t tsc_start_clock(void) {
+                "%rax", "%rbx", "%rcx", "%rdx");
+        //FIXME: on 32bit use clobbered %eax + %edx
+        return ((uint64_t)lo) | (((uint64_t)hi) << 32);
++#else
++       return get_cycles();
++#endif
+ }
+
+ static __always_inline uint64_t tsc_stop_clock(void) {
++#if defined(__i386__) || defined(__x86_64__)
+        /* See: Intel Doc #324264 */
+        unsigned hi, lo;
+        asm volatile(
+@@ -123,6 +128,9 @@ static __always_inline uint64_t tsc_stop_clock(void) {
+                "CPUID\n\t": "=r" (hi), "=r" (lo)::
+                "%rax", "%rbx", "%rcx", "%rdx");
+        return ((uint64_t)lo) | (((uint64_t)hi) << 32);
++#else
++       return get_cycles();
++#endif
+ }
+
+ /* Notes for RDTSC and RDTSCP
+@@ -186,10 +194,14 @@ enum {
+
+ static __always_inline unsigned long long p_rdpmc(unsigned in)
+ {
++#if defined(__i386__) || defined(__x86_64__)
+        unsigned d, a;
+
+        asm volatile("rdpmc" : "=d" (d), "=a" (a) : "c" (in) : "memory");
+        return ((unsigned long long)d << 32) | a;
++#else
++       return 0;
++#endif
+ }
+
+ /* These PMU counter needs to be enabled, but I don't have the
+@@ -216,7 +228,11 @@ static __always_inline unsigned long long pmc_clk(void)
+ #define MSR_IA32_PCM2 0x400000C3
+ inline uint64_t msr_inst(unsigned long long *msr_result)
+ {
++#if defined(__i386__) || defined(__x86_64__)
+        return rdmsrl_safe(MSR_IA32_PCM0, msr_result);
++#else
++       return 0;
++#endif
+ }
+
+1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
+
+CC: Alexander Lobakin <aleksander.lobakin@intel.com>
+CC: Robin Murphy <robin.murphy@arm.com>
+CC: Alexander Duyck <alexander.duyck@gmail.com>
+CC: IOMMU <iommu@lists.linux.dev>
+
+Yunsheng Lin (2):
+  page_pool: fix timing for checking and disabling napi_local
+  page_pool: fix IOMMU crash when driver has already unbound
+
+ drivers/net/ethernet/freescale/fec_main.c     |   8 +-
+ drivers/net/ethernet/intel/iavf/iavf_txrx.c   |   6 +-
+ drivers/net/ethernet/intel/idpf/idpf_txrx.c   |  14 +-
+ drivers/net/ethernet/intel/libeth/rx.c        |   2 +-
+ .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |   3 +-
+ drivers/net/netdevsim/netdev.c                |   6 +-
+ drivers/net/wireless/mediatek/mt76/mt76.h     |   2 +-
+ include/linux/mm_types.h                      |   2 +-
+ include/linux/skbuff.h                        |   1 +
+ include/net/libeth/rx.h                       |   3 +-
+ include/net/netmem.h                          |  10 +-
+ include/net/page_pool/helpers.h               |  11 +
+ include/net/page_pool/types.h                 |  15 +-
+ net/core/devmem.c                             |   4 +-
+ net/core/netmem_priv.h                        |   5 +-
+ net/core/page_pool.c                          | 188 +++++++++++++++---
+ net/core/page_pool_priv.h                     |  10 +-
+ net/core/skbuff.c                             |   3 +-
+ net/core/xdp.c                                |   3 +-
+ 19 files changed, 238 insertions(+), 58 deletions(-)
+
+-- 
+2.33.0
+
 
