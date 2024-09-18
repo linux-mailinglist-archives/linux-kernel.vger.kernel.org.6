@@ -1,95 +1,92 @@
-Return-Path: <linux-kernel+bounces-332325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 552BC97B856
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:07:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C3197B88F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 009E71F22F84
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:07:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33E01C20FBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD22315E5CA;
-	Wed, 18 Sep 2024 07:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjPfdOO6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0D214F135;
+	Wed, 18 Sep 2024 07:31:59 +0000 (UTC)
+Received: from s1.jo-so.de (s1.jo-so.de [37.221.195.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372BD14B94A;
-	Wed, 18 Sep 2024 07:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0E5273DC;
+	Wed, 18 Sep 2024 07:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.221.195.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726643215; cv=none; b=YZR3loM7FRBKdkZ8dI8ZXrIYQu9hXnJl05tOe/5IelJwXckcFNUgqkGAyJlkFl8sWInxAp3jtMWuGgIa7w1B8c6QNkDGKKYc3M3nacs8WvmSt3qWJ08rLGnpEZKCvQQ1HTtYY7CNOQCEtMXTP4bmVyGzEJJtt1ugN3U7egKYJq4=
+	t=1726644719; cv=none; b=MgC3z2C8uLzFig7IuhXewFWUnAa5MVnUVxAz1gJJhlCufXvZJNl8HcssYrXxDig0bjJXcG/19weTw2sD1VFD//91jT3FFWUE6KZEc7sUAcYUHCZm6UCqcuu+FBO8GTD7vtRKt2NDJvrNTeuAIwOouO5c4uZwheYLdJb/0FA8bKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726643215; c=relaxed/simple;
-	bh=JHFisloYJ8iNozFHBXze6I2YOCTCLbb8vU2LUj9xLzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIDx/RjJfDZe1vb3HGyQ5BtU6SFViOWI+fOBjTAHhjJXcpOkOgtcJwlXdSirUTHy2lNprAAJz884kIDRpAaMrykZ3GyhDeNjd9appv4GEnv1VxB1IzPkltyl+MewEV4K5Fu2RYb4YmuNPz7xicA2pL7vPdib+rnDMezYOwFmHlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjPfdOO6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE4FAC4CECE;
-	Wed, 18 Sep 2024 07:06:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726643214;
-	bh=JHFisloYJ8iNozFHBXze6I2YOCTCLbb8vU2LUj9xLzE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YjPfdOO6zoXO5DtfASuViQvoPC6Jn+8HRSlyH/Ja2NsNA5j3c7kzMZ7Cgzc75/9Mk
-	 2rUDnDJeMiAAb8SWvctJhsjVtHR6DVJB6LXE1vbRIe/q/xkhT9/sP2p8h15b8lLJbA
-	 6GeRtVhUfX0XggY+yje0tmM6jc1H7NCCxWoyal9sgqQ9/5Zhk9+oA3H5CaEYvs7T9t
-	 xFTUL9GlFJBEXawzaHut5UkoqGWOxvQGQHfE5ZeAnQbq0+Xxe+PIjrQ7HwNM53pAQY
-	 u7PS2CEdhP/qbusMWyS9Bi8QpCFdL8Jj9omWc5PoNSqN42Np9slQJsFJRXZJaXfcVy
-	 fuzboYA/oXy5w==
-Date: Wed, 18 Sep 2024 08:06:49 +0100
-From: Simon Horman <horms@kernel.org>
-To: KhaiWenTan <khai.wen.tan@linux.intel.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Xiaolei Wang <xiaolei.wang@windriver.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Tan Khai Wen <khai.wen.tan@intel.com>
-Subject: Re: [PATCH net v2 1/1] net: stmmac: Fix zero-division error when
- disabling tc cbs
-Message-ID: <20240918070649.GR167971@kernel.org>
-References: <20240918061422.1589662-1-khai.wen.tan@linux.intel.com>
+	s=arc-20240116; t=1726644719; c=relaxed/simple;
+	bh=vlf1ZBRI9wDDax1WdsvmMvExEWZ+WEy3ket3BOut1Wk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HjoMPnKq+k9cqwrTMDzhzXQeDJOhRKJSqnGYKxJ6mvBMyFuBCbr0qe8JuU769ASutRt4CB70ikxsn60DoXYMcA8c1HnhaIEce6H+U1pchcaB1jDe++p0J3hWx5ua1QI2s2DhAvtkS0dm6ID2UljdaitTMP4oGBOA9GRD60wcOYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jo-so.de; spf=pass smtp.mailfrom=jo-so.de; arc=none smtp.client-ip=37.221.195.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jo-so.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jo-so.de
+Received: from mail-relay (helo=jo-so.de)
+	by s1.jo-so.de with local-bsmtp (Exim 4.96)
+	(envelope-from <joerg@jo-so.de>)
+	id 1sqot5-005k8K-2Q;
+	Wed, 18 Sep 2024 09:14:07 +0200
+Received: from joerg by zenbook.jo-so.de with local (Exim 4.98)
+	(envelope-from <joerg@jo-so.de>)
+	id 1sqot4-000000012GP-40wa;
+	Wed, 18 Sep 2024 09:14:06 +0200
+From: =?UTF-8?q?J=C3=B6rg=20Sommer?= <joerg@jo-so.de>
+To: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kees Cook <keescook@chromium.org>,
+	=?UTF-8?q?J=C3=B6rg=20Sommer?= <joerg@jo-so.de>
+Subject: [PATCH] doc/pstore: Fix parameter names in examples
+Date: Wed, 18 Sep 2024 09:13:28 +0200
+Message-ID: <41bc35342567227eb73c1b7683870b5975b9241c.1726643608.git.joerg@jo-so.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918061422.1589662-1-khai.wen.tan@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 18, 2024 at 02:14:22PM +0800, KhaiWenTan wrote:
-> The commit b8c43360f6e4 ("net: stmmac: No need to calculate speed divider
-> when offload is disabled") allows the "port_transmit_rate_kbps" to be
-> set to a value of 0, which is then passed to the "div_s64" function when
-> tc-cbs is disabled. This leads to a zero-division error.
-> 
-> When tc-cbs is disabled, the idleslope, sendslope, and credit values the
-> credit values are not required to be configured. Therefore, adding a return
-> statement after setting the txQ mode to DCB when tc-cbs is disabled would
-> prevent a zero-division error.
-> 
-> Fixes: b8c43360f6e4 ("net: stmmac: No need to calculate speed divider when offload is disabled")
-> Cc: <stable@vger.kernel.org>
-> Co-developed-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-> Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-> Signed-off-by: KhaiWenTan <khai.wen.tan@linux.intel.com>
-> ---
-> v2:
->   - reflected code for better understanding
-> v1: https://patchwork.kernel.org/project/netdevbpf/patch/20240912015541.363600-1-khai.wen.tan@linux.intel.com/
+Signed-off-by: Jörg Sommer <joerg@jo-so.de>
+---
+ Documentation/admin-guide/pstore-blk.rst | 2 +-
+ Documentation/admin-guide/ramoops.rst    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for the update.
+diff --git a/Documentation/admin-guide/pstore-blk.rst b/Documentation/admin-guide/pstore-blk.rst
+index 1bb2a1c292aa..5c247c25e13a 100644
+--- a/Documentation/admin-guide/pstore-blk.rst
++++ b/Documentation/admin-guide/pstore-blk.rst
+@@ -35,7 +35,7 @@ module parameters have priority over Kconfig.
+ 
+ Here is an example for module parameters::
+ 
+-        pstore_blk.blkdev=/dev/mmcblk0p7 pstore_blk.kmsg_size=64 best_effort=y
++        pstore_blk.blkdev=/dev/mmcblk0p7 pstore_blk.kmsg_size=64 pstore_blk.best_effort=y
+ 
+ The detail of each configurations may be of interest to you.
+ 
+diff --git a/Documentation/admin-guide/ramoops.rst b/Documentation/admin-guide/ramoops.rst
+index 6f534a707b2a..2eabef31220d 100644
+--- a/Documentation/admin-guide/ramoops.rst
++++ b/Documentation/admin-guide/ramoops.rst
+@@ -129,7 +129,7 @@ Setting the ramoops parameters can be done in several different manners:
+     takes a size, alignment and name as arguments. The name is used
+     to map the memory to a label that can be retrieved by ramoops.
+ 
+-	reserver_mem=2M:4096:oops  ramoops.mem_name=oops
++	reserve_mem=2M:4096:oops  ramoops.mem_name=oops
+ 
+ You can specify either RAM memory or peripheral devices' memory. However, when
+ specifying RAM, be sure to reserve the memory by issuing memblock_reserve()
+-- 
+2.45.2
 
-Reviewed-by: Simon Horman <horms@kernel.org>
 
