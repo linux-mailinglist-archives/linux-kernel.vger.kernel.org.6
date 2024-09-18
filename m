@@ -1,124 +1,193 @@
-Return-Path: <linux-kernel+bounces-332383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C7397B911
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D6A97B916
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6441C224D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:15:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6EB11C22377
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC41E18CC10;
-	Wed, 18 Sep 2024 08:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE1D1922D4;
+	Wed, 18 Sep 2024 08:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKJxxqlR"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ckuC0Om9"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB0618CC08
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACE0189BA0;
+	Wed, 18 Sep 2024 08:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726647122; cv=none; b=K0FJ5gukUUhyDl6e543SiRTE1d7ZtRZrQ3JLeFY9ngcTiiIRHiKwnCcQCOM2Bbwi0LTAthJDKxv4uMUAzXcuqgDfUemmTMiTHFmYR+TvAJJchQHouNm8T5w8SyzOFQ1eSf5b14U5nEwG3ZzRNhFkx38EtowQgBy0j/ilDfbRw6Q=
+	t=1726647189; cv=none; b=abbJ+cOKPsipZqfOWj1eZeBV1YJFVPTxEvBWwuEoHCo2CHGicYE63L2niq95OGjwlWFpFnHBB7bn9DJ9+st2NglaslmGMnoblUmDSmiWI6yczji3yqf+rKjL+KBz9Vuc/BtOimqS/FsAfIU4fnDDUfditC+X3xA7Ze7rDssUwXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726647122; c=relaxed/simple;
-	bh=HqLgz5W8L3Z2ToDYujWMwqQ7NVOvBNWUaY5XOmPswog=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mc+2DBAwldlzVVt0pS3/F7r4lSxEsagA4I3K5+K9KGV0meCoiYNLh+sxKx75Hy1OmZV72ZSHgzgrylquLhClCw/53pr7POe3PT5lW/DGUo8k4rMigL5WUNFcPWRE/U+u4svTbgVZCc7+OPE/lEPF1fON1MSvr+OE38FoHmQh9iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eKJxxqlR; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d8abac30ddso5375961a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 01:12:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726647120; x=1727251920; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b2cqOX2dSMOJQpwfNpcENwnMnrm9vyfSvRfrGoQ5NYI=;
-        b=eKJxxqlRjEU9v2qzmi3OflgI65YovhalWNcwBuk7t/eP8TbZv4X2PV8PNSAuwlLX7B
-         OJdpeODc3E9y09Y8WLWOKhfzLbbbe7rBSqvjKL48exKQb7f2znOzO4ls9nbaO0XrHWsj
-         tgqMWtjPiWZtPg1pnp6kmjaE6mIMxpvRwkmPEihlbhTQ1nbmULqq9+4NbezL6kMF+Pba
-         t5j+DE6Ww1g5WSx1gzHBv7aUog85grzEGbQzneaS8cVYS3QWlMuvSNctpD9e7nOzZKOT
-         UNNAVLPgGJeksDb2LgWVQYhCdOzRkqqlFOoyxZHDeRpUuUX9WTi33n+kVXGOy1cn/+xm
-         TD5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726647120; x=1727251920;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b2cqOX2dSMOJQpwfNpcENwnMnrm9vyfSvRfrGoQ5NYI=;
-        b=W+FumjoeTjIYViRXYHN5dXVSrxPZQN2xGYEybvhlk+E9AbwqyjMbNFM54Mifct8ZES
-         Q2Thq5zgmOwQSOfh5/bsrIaidWPpe6XWz/79Grq9QHSkjbY+YH+WzvvZbc/QghjM+52a
-         MVGKjl9+jkuHPOGpaUwSWDCOss6lOfAHMjgrZ/4Cydm02Fe3mptz0hjoDh+WJSHRztFu
-         YPhIhsiKH3TAG8acuxLqzPsRRqdm7RPZFle186MyUCGkzceqmYBYdnSy1ei6HxVzpfmu
-         LvzFf5nC8pA09krsMcwCZF60wBuam0rMUwWWllCj7WWe3UyfuRUIdsZ5xzGSVuiYtyw3
-         NLUg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8GFsESrY3YLSgR2z4EXlcofIYole5OGeB4IKbnPRbjIBVnDxPK81l13fRPgndZZJvxmaZ/U3jKH47LaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBvNsJSy057E99Tym/uvDNh8c1Q6a7Dhu19s7A75fo2xMibg0C
-	A2mw5FGonGbDJs1nFiKfPMhipZPwcivNLwjZYItNalnWmoOWXne/
-X-Google-Smtp-Source: AGHT+IF3TbuagLRJ5khlQ0Ro6XlrWxJIZHhyFFdaMnXUyxVG9aYDTi47WYS9w9Id5VWpekDFXOryDQ==
-X-Received: by 2002:a17:90a:d791:b0:2cb:5112:740 with SMTP id 98e67ed59e1d1-2dba0062abemr22277547a91.26.1726647120029;
-        Wed, 18 Sep 2024 01:12:00 -0700 (PDT)
-Received: from dev.. ([129.41.59.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd608d1939sm904648a91.33.2024.09.18.01.11.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 01:11:59 -0700 (PDT)
-From: Rohit Chavan <roheetchavan@gmail.com>
-To: Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Rohit Chavan <roheetchavan@gmail.com>
-Subject: [PATCH] nvmet: Fix warnings given by checkpatch
-Date: Wed, 18 Sep 2024 13:41:34 +0530
-Message-Id: <20240918081134.908075-1-roheetchavan@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726647189; c=relaxed/simple;
+	bh=ykfMzlPUMMa0Z7Gq1bunkKZMbdyybMY1mZyrStzwaw4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=LphIPG5LFYJiT3Y+itvxXoMYDELZZ+DeDCh3Vr3qGYCCxo9XEWHT6BIueaun1Pg+z3Qg0m1lAXoXoYE1HuqgcNW26HhHFptQWoPFTJ68GhRWnffTKMFTrNJBwnp9qRLQink6dYmxBKf2mNeuXqKLqmOQTOqQPpKUaoNq2/grhHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ckuC0Om9; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726647163; x=1727251963; i=markus.elfring@web.de;
+	bh=kInQ//rPSsqlgcK7FpGZP43VvDdx4dvgsVxHv3VH3nI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ckuC0Om92SIu+UHVBmv0FIG+p2lPJY37ZtpYU6/TF8VabNiMYID6V2d6PoOP49Yv
+	 hyiZKldZckMoa5Zz8eECGaMEBgwECB9kzeYssSmB912p7Pf8CIne30bdzdkCIdoKl
+	 SZ8ADiEVc4ZRrXaa0nG1u1tzGJAjFkQaaEHdoH7Zkn2VbFsYeSgwKDr8oRuZzLv+S
+	 3Sb3T+0cdZS+qma0CV9RR/vISMHaTeOqzI6wcpSNBIbiEYvFrL2kbND+ul+0S9rxz
+	 wueje130/Hj9j0uweR7R2Wb/1OIZ02hLXn4pfzXr/W5hc4X1IMGKpupCwOT/XBHKQ
+	 IVVI4hBJe6hK1TXOoQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mfc8y-1sJhy70VPE-00ixjw; Wed, 18
+ Sep 2024 10:12:43 +0200
+Message-ID: <d1f1eb7f-1de7-4d73-a7d0-00cc1eac3d5d@web.de>
+Date: Wed, 18 Sep 2024 10:12:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ kernel-janitors@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Faith Ekstrand <faith.ekstrand@collabora.com>,
+ Francois Dugast <francois.dugast@intel.com>,
+ Jani Nikula <jani.nikula@intel.com>,
+ =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Matt Roper <matthew.d.roper@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>, Nirmoy Das <nirmoy.das@intel.com>,
+ Philippe Lecluse <philippe.lecluse@intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drm/xe/query: Refactor copy_to_user() usage in four functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1KMy0yAdh4GMhkxbk+tvy/qZLdxiPwbW85tozVJiNzbZLOB1351
+ y1EfCORR2QuAvKPUa3Uu4Ky2IV+rP4QYTjXAWmNPfRbFlIwWIc00b9COnmrgieUmd6iIzpC
+ fdVGkt7xuob2v19OTCBJk5tqpLbZ5+ESSPbTb+cnm9KVR2HlxH3Y4UZ4bb14+s3XPmzZAnM
+ bJiYIpXwLw0AGvmQ6xqjQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mr+sK1Kvv0Q=;TWQfCzjh0yjiyT5cJLK1+Oj1u3v
+ dXTfDQggGDJfrvpK2pY7OBiGx+Xux+scjcqkAFHmbvRfW/+//rno/UCiYTVDCJ9WxVz3EF7I3
+ fQ2PFV4VgTvr9gkW3q83We0dkBQ1zvnU1o110qtWEjsvHRy7h7uA1nFP+Xo9CfuUefbrwuCT0
+ WdulMAy4IIoETB9dUnzgA0S2gpvVT8jNCzkm8yz1oSZxmBLx1a5LznByJpW+mcsK/47Z181sl
+ Hd8Sq6AmG1L/VgLg98oFh204tqmTn4eE8PbNb8d59fFUaGWr2U1PTz+dEv6Z7XZ1x1uY4xVZE
+ WslD4da9QagicmTTrAS44yHzmIG+tATnuFXgyCyW2GWuoq8RBHYxgPH7F31jS2zICTaVQge6X
+ hUbdEgJQ5NYRDW3qA7+CSnmm4BUYHf1mShwG2oR1NGae1UAhSeUSQ2F0nL+QFDbrfzLlARTjW
+ 2yn9y9xdjQJkFX37oehc6UKArgxmVg3RFsfoYiS35sX2H/a75NjAaqC8z0z5KT58NpRQvbQHN
+ t5dG5QYn6veLuwu42vQVGZ2pYB95nzDxVdcEe5QL7WPtyWjYcqe3diaKIARppGWbEFGBkImPL
+ 7wOd/FDULHDc2Wk0Fid9SxcnToQH9pvfMBGWz3Sr3K46v5xbs5ChQCtkbh5ONjJFGJDKHtMWs
+ Jx0NiR18sXnotG7RrRxvNNds9m4t2o5Jls6Mv8IgUR3SRqD1hZYVB5fk3Dt+aN+X2MxmxW7mY
+ zNhnctiU0cPC2JJJvtf3mYaKeWkWvjAHnj5y6S4crqtUnI2XwuIwIIPBr56YVKSwxZRzoMlcb
+ iQARlY43W2pNq031OQGlTs8w==
 
-This patch addresses below issues produced by checkpatch script.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2024 09:43:07 +0200
 
-ERROR: space required before the open brace '{'
-drivers/nvme/target/debugfs.h:25
+Assign return values from copy_to_user() calls to additional local variabl=
+es
+so that four kfree() calls and return statements can be omitted accordingl=
+y.
 
-WARNING: please, no spaces at the start of a line
-drivers/nvme/target/debugfs.h:35
+This issue was transformed by using the Coccinelle software.
 
-Signed-off-by: Rohit Chavan <roheetchavan@gmail.com>
----
- drivers/nvme/target/debugfs.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/xe/xe_query.c | 32 ++++++++++++--------------------
+ 1 file changed, 12 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/nvme/target/debugfs.h b/drivers/nvme/target/debugfs.h
-index cfb8bbf6a297..166de8c7fc49 100644
---- a/drivers/nvme/target/debugfs.h
-+++ b/drivers/nvme/target/debugfs.h
-@@ -22,7 +22,7 @@ static inline int nvmet_debugfs_subsys_setup(struct nvmet_subsys *subsys)
- {
- 	return 0;
+diff --git a/drivers/gpu/drm/xe/xe_query.c b/drivers/gpu/drm/xe/xe_query.c
+index 5246a4a2740e..6195e720176d 100644
+=2D-- a/drivers/gpu/drm/xe/xe_query.c
++++ b/drivers/gpu/drm/xe/xe_query.c
+@@ -220,13 +220,11 @@ static int query_engines(struct xe_device *xe,
+
+ 	engines->num_engines =3D i;
+
+-	if (copy_to_user(query_ptr, engines, size)) {
++	{
++		unsigned long ctu =3D copy_to_user(query_ptr, engines, size);
+ 		kfree(engines);
+-		return -EFAULT;
++		return ctu ? -EFAULT : 0;
+ 	}
+-	kfree(engines);
+-
+-	return 0;
  }
--static inline void nvmet_debugfs_subsys_free(struct nvmet_subsys *subsys){}
-+static inline void nvmet_debugfs_subsys_free(struct nvmet_subsys *subsys) {}
- 
- static inline int nvmet_debugfs_ctrl_setup(struct nvmet_ctrl *ctrl)
- {
-@@ -32,7 +32,7 @@ static inline void nvmet_debugfs_ctrl_free(struct nvmet_ctrl *ctrl) {}
- 
- static inline int __init nvmet_init_debugfs(void)
- {
--    return 0;
-+        return 0;
+
+ static size_t calc_mem_regions_size(struct xe_device *xe)
+@@ -344,13 +342,11 @@ static int query_config(struct xe_device *xe, struct=
+ drm_xe_device_query *query)
+ 	config->info[DRM_XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY] =3D
+ 		xe_exec_queue_device_get_max_priority(xe);
+
+-	if (copy_to_user(query_ptr, config, size)) {
++	{
++		unsigned long ctu =3D copy_to_user(query_ptr, config, size);
+ 		kfree(config);
+-		return -EFAULT;
++		return ctu ? -EFAULT : 0;
+ 	}
+-	kfree(config);
+-
+-	return 0;
  }
- 
- static inline void nvmet_exit_debugfs(void) {}
--- 
-2.34.1
+
+ static int query_gt_list(struct xe_device *xe, struct drm_xe_device_query=
+ *query)
+@@ -414,13 +410,11 @@ static int query_gt_list(struct xe_device *xe, struc=
+t drm_xe_device_query *query
+ 			REG_FIELD_GET(GMD_ID_REVID, gt->info.gmdid);
+ 	}
+
+-	if (copy_to_user(query_ptr, gt_list, size)) {
++	{
++		unsigned long ctu =3D copy_to_user(query_ptr, gt_list, size);
+ 		kfree(gt_list);
+-		return -EFAULT;
++		return ctu ? -EFAULT : 0;
+ 	}
+-	kfree(gt_list);
+-
+-	return 0;
+ }
+
+ static int query_hwconfig(struct xe_device *xe,
+@@ -444,13 +438,11 @@ static int query_hwconfig(struct xe_device *xe,
+
+ 	xe_guc_hwconfig_copy(&gt->uc.guc, hwconfig);
+
+-	if (copy_to_user(query_ptr, hwconfig, size)) {
++	{
++		unsigned long ctu =3D copy_to_user(query_ptr, hwconfig, size);
+ 		kfree(hwconfig);
+-		return -EFAULT;
++		return ctu ? -EFAULT : 0;
+ 	}
+-	kfree(hwconfig);
+-
+-	return 0;
+ }
+
+ static size_t calc_topo_query_size(struct xe_device *xe)
+=2D-
+2.46.0
 
 
