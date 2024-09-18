@@ -1,95 +1,206 @@
-Return-Path: <linux-kernel+bounces-332204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518C497B6C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:17:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5BE97B6C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD5D1C21846
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:17:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68C491F232E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1EE12B17C;
-	Wed, 18 Sep 2024 02:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B7061FED;
+	Wed, 18 Sep 2024 02:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="raMoa5ft"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2RtnQL6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890DC41C79;
-	Wed, 18 Sep 2024 02:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658DA82485
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726625815; cv=none; b=MckKmOnAXl3Ju2vZd+SklxG3LBSe6Z7i1VWeUtC8ni4MiFo+t0hrWxWamo5cHwBBmRaIaCdvcVsHggKu6aGfDuQ9eBLeKjyOf7ur1u3jZVgxilB9P49EDg9WMv0mSRzy+5MsetbO4pFpfX9+tQOA56f3XtwPnw++2QlmT1dQj2M=
+	t=1726625831; cv=none; b=Uqs77Hahy9mt6Q4RWz9p7p9y68WGNtG22nxpbL6yCL1hCqQArKw8UYoZtCMyKdWH+Qc7UNJhHVitM/9vEdpn900li7UKfiR56ZWNsB8JYwSqQg1eHcYZ5jq/fF+3881tK5qBeu0oJVO+/asAS34H7M5FK9AuraYZFPQZj/h9/3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726625815; c=relaxed/simple;
-	bh=4C9Ht1EBlLpV0cIxDh91gHaRUlOpXC6nq2v9gSS3vY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=spS4f6hZPr1idJ5BrXFToSS8316LYRdaiERWK0qsOc0n9kaf4kvgBNZQrcJg5WSzg8KFPfcgw0LfjhodOtaJxdQia0qVCb0faGd+0uLXdTcOWzurewHhgsDaNHOqXNVXJJEVaHJkgri2vFYdM4nbAQKyUMUMJvxUIjF9V+Posxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=raMoa5ft; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726625810; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=26lXBlLla4cdOKVAJLtZkE/DW3VbondK5ccXaSRzzHQ=;
-	b=raMoa5ftoR9x9fC36nWiL4bywHQErQrKMEUMLRT9qXVn8XiCFhWJNX7GR1GK4fm3/uYQpVtRy4I3xLbUAqdyCDNxkz+HuuuCwa5K6WKSos3pmBY0WfgWc2cDor/Aa+lldpTHAu2wkw+76GQ1a+/tdv+kAJbVF53pxgaOmLWngQE=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WFC8dO._1726625793)
-          by smtp.aliyun-inc.com;
-          Wed, 18 Sep 2024 10:16:49 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: selvin.xavier@broadcom.com
-Cc: jgg@ziepe.ca,
-	leon@kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] RDMA/bnxt_re: Remove the unused variable en_dev
-Date: Wed, 18 Sep 2024 10:16:32 +0800
-Message-Id: <20240918021632.36091-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1726625831; c=relaxed/simple;
+	bh=96sNLHPtKJjpnFwcUjmF7eaeg2lVid3ev+H1R/IjA2Y=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=KXh4Oe3z6baacA+knwNHqHSo6GkLfYyoXWY7JhSybH4OOLfOUJ2wVkEUhLmv2tT8KFtnaaMbijVnZW5aSZ2cgHbX+e6VDdavZnwG5Z9OGWLiif2o6yL0YwgOn5eQlcQvXUpJwBqn05/w2t1g3xfZxwaxDyrzOfENGVL/Zuw1cm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2RtnQL6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22A03C4CEC5;
+	Wed, 18 Sep 2024 02:17:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726625830;
+	bh=96sNLHPtKJjpnFwcUjmF7eaeg2lVid3ev+H1R/IjA2Y=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=q2RtnQL6dqB28kcDqbEDD7ZVlrOkug5tyOwtNuwazI9cnncghRYujM2FgxHNyBRP/
+	 Kyl8TmD5Rl1snHi9G/S7bh96BefUqNg6uXoXPjJpEiHTCenVbL086JFZM/vQN6xWI5
+	 AFmhXnHvy+rfCfre76/J+Jmt/GMDxBZy91INebA+tOnXMrIKkHwxbTFLcN/wxJC4L0
+	 IsS80ACWZbEtCgSFT2Sb6PbxNhEFeozrZxtisZI36g+K6cSmDWYiQVefmZwcoERiOt
+	 6cM79U6G0XBi10r/Rf4ZMa2mukvdC1tP/kGI15B+LFjgKmvKpsgvCPZd2gVE6RlfU6
+	 dLon9YRvq4hyw==
+Message-ID: <5a15ae2c-28e3-4305-b010-83830ad68ff2@kernel.org>
+Date: Wed, 18 Sep 2024 10:17:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: use per-log target_bitmap to
+ improve lookup performace of ssr allocation
+From: Chao Yu <chao@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20240411082354.1691820-1-chao@kernel.org>
+ <11d5d736-bae5-4a71-b400-087b8722893c@kernel.org>
+ <03647897-8b1f-4c82-b2b6-0aa0704bed05@kernel.org>
+ <ZlkOLN0BugwQ2p5p@google.com>
+ <41187ebc-cfc5-49a5-93e8-0350d2686d42@kernel.org>
+Content-Language: en-US
+In-Reply-To: <41187ebc-cfc5-49a5-93e8-0350d2686d42@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Variable en_dev is not effectively used, so delete it.
+On 2024/5/31 9:10, Chao Yu wrote:
+> On 2024/5/31 7:39, Jaegeuk Kim wrote:
+>> On 05/29, Chao Yu wrote:
+>>> Ping,
+> 
+> Jaegeuk,
+> 
+>>
+>> Chao, sorry, I might need some time to take a look at the change cautiously.
+> 
+> No problem, I've done some tests on this patch, though, I will keeping this in
+> my queue, and do test base on the queue whenever it comes new patches.
 
-drivers/infiniband/hw/bnxt_re/main.c:1980:22: warning: variable ‘en_dev’ set but not used.
+Jaegeuk,
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=10867
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/infiniband/hw/bnxt_re/main.c | 2 --
- 1 file changed, 2 deletions(-)
+Any progress on this patchset?
 
-diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
-index adff9e494c9d..777068de4bbc 100644
---- a/drivers/infiniband/hw/bnxt_re/main.c
-+++ b/drivers/infiniband/hw/bnxt_re/main.c
-@@ -1977,7 +1977,6 @@ static void bnxt_re_remove_device(struct bnxt_re_dev *rdev, u8 op_type,
- static void bnxt_re_remove(struct auxiliary_device *adev)
- {
- 	struct bnxt_re_en_dev_info *en_info = auxiliary_get_drvdata(adev);
--	struct bnxt_en_dev *en_dev;
- 	struct bnxt_re_dev *rdev;
- 
- 	mutex_lock(&bnxt_re_mutex);
-@@ -1985,7 +1984,6 @@ static void bnxt_re_remove(struct auxiliary_device *adev)
- 		mutex_unlock(&bnxt_re_mutex);
- 		return;
- 	}
--	en_dev = en_info->en_dev;
- 	rdev = en_info->rdev;
- 
- 	if (rdev)
--- 
-2.32.0.3.g01195cf9f
+Thanks,
+
+> 
+> Thanks,
+> 
+>>
+>>>
+>>> On 2024/4/23 10:07, Chao Yu wrote:
+>>>> Jaegeuk, any comments for this serials?
+>>>>
+>>>> On 2024/4/11 16:23, Chao Yu wrote:
+>>>>> After commit 899fee36fac0 ("f2fs: fix to avoid data corruption by
+>>>>> forbidding SSR overwrite"), valid block bitmap of current openned
+>>>>> segment is fixed, let's introduce a per-log bitmap instead of temp
+>>>>> bitmap to avoid unnecessary calculation overhead whenever allocating
+>>>>> free slot w/ SSR allocator.
+>>>>>
+>>>>> Signed-off-by: Chao Yu <chao@kernel.org>
+>>>>> ---
+>>>>> v2:
+>>>>> - rebase to last dev-test branch.
+>>>>>    fs/f2fs/segment.c | 30 ++++++++++++++++++++++--------
+>>>>>    fs/f2fs/segment.h |  1 +
+>>>>>    2 files changed, 23 insertions(+), 8 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>> index 6474b7338e81..af716925db19 100644
+>>>>> --- a/fs/f2fs/segment.c
+>>>>> +++ b/fs/f2fs/segment.c
+>>>>> @@ -2840,31 +2840,39 @@ static int new_curseg(struct f2fs_sb_info *sbi, int type, bool new_sec)
+>>>>>        return 0;
+>>>>>    }
+>>>>> -static int __next_free_blkoff(struct f2fs_sb_info *sbi,
+>>>>> -                    int segno, block_t start)
+>>>>> +static void __get_segment_bitmap(struct f2fs_sb_info *sbi,
+>>>>> +                    unsigned long *target_map,
+>>>>> +                    int segno)
+>>>>>    {
+>>>>>        struct seg_entry *se = get_seg_entry(sbi, segno);
+>>>>>        int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
+>>>>> -    unsigned long *target_map = SIT_I(sbi)->tmp_map;
+>>>>>        unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
+>>>>>        unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
+>>>>>        int i;
+>>>>>        for (i = 0; i < entries; i++)
+>>>>>            target_map[i] = ckpt_map[i] | cur_map[i];
+>>>>> +}
+>>>>> +
+>>>>> +static int __next_free_blkoff(struct f2fs_sb_info *sbi, unsigned long *bitmap,
+>>>>> +                    int segno, block_t start)
+>>>>> +{
+>>>>> +    __get_segment_bitmap(sbi, bitmap, segno);
+>>>>> -    return __find_rev_next_zero_bit(target_map, BLKS_PER_SEG(sbi), start);
+>>>>> +    return __find_rev_next_zero_bit(bitmap, BLKS_PER_SEG(sbi), start);
+>>>>>    }
+>>>>>    static int f2fs_find_next_ssr_block(struct f2fs_sb_info *sbi,
+>>>>> -        struct curseg_info *seg)
+>>>>> +                    struct curseg_info *seg)
+>>>>>    {
+>>>>> -    return __next_free_blkoff(sbi, seg->segno, seg->next_blkoff + 1);
+>>>>> +    return __find_rev_next_zero_bit(seg->target_map,
+>>>>> +                BLKS_PER_SEG(sbi), seg->next_blkoff + 1);
+>>>>>    }
+>>>>>    bool f2fs_segment_has_free_slot(struct f2fs_sb_info *sbi, int segno)
+>>>>>    {
+>>>>> -    return __next_free_blkoff(sbi, segno, 0) < BLKS_PER_SEG(sbi);
+>>>>> +    return __next_free_blkoff(sbi, SIT_I(sbi)->tmp_map, segno, 0) <
+>>>>> +                            BLKS_PER_SEG(sbi);
+>>>>>    }
+>>>>>    /*
+>>>>> @@ -2890,7 +2898,8 @@ static int change_curseg(struct f2fs_sb_info *sbi, int type)
+>>>>>        reset_curseg(sbi, type, 1);
+>>>>>        curseg->alloc_type = SSR;
+>>>>> -    curseg->next_blkoff = __next_free_blkoff(sbi, curseg->segno, 0);
+>>>>> +    curseg->next_blkoff = __next_free_blkoff(sbi, curseg->target_map,
+>>>>> +                            curseg->segno, 0);
+>>>>>        sum_page = f2fs_get_sum_page(sbi, new_segno);
+>>>>>        if (IS_ERR(sum_page)) {
+>>>>> @@ -4635,6 +4644,10 @@ static int build_curseg(struct f2fs_sb_info *sbi)
+>>>>>                    sizeof(struct f2fs_journal), GFP_KERNEL);
+>>>>>            if (!array[i].journal)
+>>>>>                return -ENOMEM;
+>>>>> +        array[i].target_map = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
+>>>>> +                                GFP_KERNEL);
+>>>>> +        if (!array[i].target_map)
+>>>>> +            return -ENOMEM;
+>>>>>            if (i < NR_PERSISTENT_LOG)
+>>>>>                array[i].seg_type = CURSEG_HOT_DATA + i;
+>>>>>            else if (i == CURSEG_COLD_DATA_PINNED)
+>>>>> @@ -5453,6 +5466,7 @@ static void destroy_curseg(struct f2fs_sb_info *sbi)
+>>>>>        for (i = 0; i < NR_CURSEG_TYPE; i++) {
+>>>>>            kfree(array[i].sum_blk);
+>>>>>            kfree(array[i].journal);
+>>>>> +        kfree(array[i].target_map);
+>>>>>        }
+>>>>>        kfree(array);
+>>>>>    }
+>>>>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>>>>> index e1c0f418aa11..10f3e44f036f 100644
+>>>>> --- a/fs/f2fs/segment.h
+>>>>> +++ b/fs/f2fs/segment.h
+>>>>> @@ -292,6 +292,7 @@ struct curseg_info {
+>>>>>        struct f2fs_summary_block *sum_blk;    /* cached summary block */
+>>>>>        struct rw_semaphore journal_rwsem;    /* protect journal area */
+>>>>>        struct f2fs_journal *journal;        /* cached journal info */
+>>>>> +    unsigned long *target_map;        /* bitmap for SSR allocator */
+>>>>>        unsigned char alloc_type;        /* current allocation type */
+>>>>>        unsigned short seg_type;        /* segment type like CURSEG_XXX_TYPE */
+>>>>>        unsigned int segno;            /* current segment number */
+>>>>
+>>>>
+>>>> _______________________________________________
+>>>> Linux-f2fs-devel mailing list
+>>>> Linux-f2fs-devel@lists.sourceforge.net
+>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
