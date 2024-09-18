@@ -1,165 +1,97 @@
-Return-Path: <linux-kernel+bounces-332856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3BE97BFC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:37:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7001797BFC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA141C212E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:37:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AB8EB20DAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EA31C9DEB;
-	Wed, 18 Sep 2024 17:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A917A1C9DFE;
+	Wed, 18 Sep 2024 17:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gVSJXc0J"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2068.outbound.protection.outlook.com [40.107.237.68])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dQ3OEi6i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56D81ACE0F;
-	Wed, 18 Sep 2024 17:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726681030; cv=fail; b=i41Eonke28I8AYR9AYocNnmhvLRn/5rmZeHNoRxM11dea/4liLljtVbSnvku70/mvgXB8tH6oPsjcQSyTdONiE06n+Xt284biF0w64/VMwU+dJEjk8oeFBp10RvPJLeyfzFftpIL5krkxhRWxFM4ODt3ZHCcViIdTPfwluU6fcA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726681030; c=relaxed/simple;
-	bh=KEYG/bLykfkabG2xZSpEp99C9V0DdV3akR5cWfQEfj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O7i5I5en1Rci7bqb8pOm8d5JnG9JaaFGPmOdJZY3A5aUjQqv5y+pak/2aEz7nkPl8FN4NGOQz/NABybvC8Kh4vZAsn3d3tnE5y+TIeqzToq6UGhrA0+5TW9Hovn5R9Ks7tLXtiQ0PFVAoZyzecyNoEY4s6rPK7sLoJNHVpJFMTg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gVSJXc0J; arc=fail smtp.client-ip=40.107.237.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WpE39/xyDsTUpXWQQI8JQUaYj/sL+h5NcXyn3BBvmOHSeU7u1ke4pXgccm3X9CtDUACDj0/T5eMgvkkFtPxBjqBn8GWaP2IOyYTTi7tWaTUfYTklqe/RIOFyqA5F3Mu6G2Fr59i0k5IzEPA6tXyc+/gbvRhE45r+EZd9SVBs7WyST3TrFCe5xbrE10lP/q6a43edrWFiBMEyk5ida0Pz8OwuHgg9vRxKSoIuwkPUYV3BVm0miSwAty1Phzy4hNfDflq/OaiOkgElex1zZdzQ8PlUy6q3Kg7AbOhJMY82zuzwdqwkP7U/phjXOahKw9q1XTlYVPvc8mM5pJYpmA1DUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KEYG/bLykfkabG2xZSpEp99C9V0DdV3akR5cWfQEfj0=;
- b=supUdsBpdF6IC/VeuNY9Y/ZgiS+qzXP6Z8KhZ3kodGL2um68+YWi0urLAf+bszr/+18vppRJiO9ltQ7tNEDKdfiQOTg5JtL82B32OKN66zWrLuqhuVncqfv7IFXNQGH2/CQzlV0DCQoRWoN6FN3YmRK3dQizEct/9LM+1TwwSoxbOChbkn36TfqqkpUG7DGFKalnFRLwuIIWRIO6gEf1KB12POT/S/UC0wcm6LkvVQ4UWF20UpURVNhYDadd5yBJoErHLscOjV/pzxz2R0+zxWnsUMuf3y09Ru0QP8k69PVQEAF/9807ZbbhRZHswbOmG7aKMCEi/XbQ88AKCJkqdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lst.de smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KEYG/bLykfkabG2xZSpEp99C9V0DdV3akR5cWfQEfj0=;
- b=gVSJXc0JVF6Y4ftNztWW3T20DT+ix8gmjihJgNGsioCv2mo+pKVf/ZUyaRMukVEksKCrrdJmndR3oM8TnXaV1K/VgEO5cZNOSfyjwImo4m8a8qE2CZtDEIc17Cw1scNvm2WJ15e8OU8+8WwPh7XtJ16awye3kXt1ZTpiQqg2MPA=
-Received: from CH2PR04CA0024.namprd04.prod.outlook.com (2603:10b6:610:52::34)
- by DM4PR12MB6592.namprd12.prod.outlook.com (2603:10b6:8:8a::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.16; Wed, 18 Sep 2024 17:37:04 +0000
-Received: from DS3PEPF000099D8.namprd04.prod.outlook.com
- (2603:10b6:610:52:cafe::89) by CH2PR04CA0024.outlook.office365.com
- (2603:10b6:610:52::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
- Transport; Wed, 18 Sep 2024 17:37:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- DS3PEPF000099D8.mail.protection.outlook.com (10.167.17.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024 17:37:03 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Sep
- 2024 12:37:02 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Sep
- 2024 12:37:01 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 18 Sep 2024 12:37:01 -0500
-Message-ID: <c35e1e99-ea3b-4625-eef3-cb0a415d1c18@amd.com>
-Date: Wed, 18 Sep 2024 10:37:01 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E241ACE0F;
+	Wed, 18 Sep 2024 17:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726681173; cv=none; b=XhasENx7KzkhN51V1n+uev8F1hz4sbBomzLbyncTKGi7eMWHVHj5aTu9WAJ1bNveO0S3Haf557POx1sMEvXVH2mYPs8h/lAs9dDA7iDfD52D12CAye4X6TkR+1/G0VlOaipchQ/6m+4zYCoHILUuPZ7xF7Jeeka+Y4xj+KVauNU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726681173; c=relaxed/simple;
+	bh=6fvGOTYPpuxD1CfR1yv0PU9tWs8bxTCP6YOL9Y+thPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozXc6xAaijDXCnh6fUVJ42uO9hvRSNcn17wPQsQ+9G6JHlrg6FOtqi7l3J5n1mSk0UlELtuTeObaclpCrZB7/HgjSB7I5hHujPctLf5Fh5Zirf0HX/Rp8oKmb7B5TCh9FrFz6bXBmbiIahRIhn9Gq+RXBzc0hWNvUTUl1tJSwEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dQ3OEi6i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03C27C4CEC2;
+	Wed, 18 Sep 2024 17:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726681170;
+	bh=6fvGOTYPpuxD1CfR1yv0PU9tWs8bxTCP6YOL9Y+thPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dQ3OEi6iVKmBcu4BXzJVHl2FKsTMlM/S1tXhInU+mvobRVRzwc9L3NkmfMMbarvpd
+	 Vg6RqkZVf/71p4X11ixduN0fovtgJ536vmubTa4SxKoPERhQK9NumAM0AzRbpr9E5N
+	 LHivkx31jGC5OR6bWV9LS423/HNhzK/P+Rg25lUw=
+Date: Wed, 18 Sep 2024 19:39:28 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] rust: add untrusted data abstraction
+Message-ID: <2024091812-baffle-cubbyhole-34b9@gregkh>
+References: <20240913112643.542914-1-benno.lossin@proton.me>
+ <20240913112643.542914-2-benno.lossin@proton.me>
+ <ZuRbSxwlz1xWT1pG@phenom.ffwll.local>
+ <cf0d6189-e81c-4b7c-ab50-7a297c69b132@proton.me>
+ <ZuhTdwCqz61bQEgq@phenom.ffwll.local>
+ <26534d80-989d-4b77-9720-84575275890f@proton.me>
+ <2024091858-surrender-broadcast-e11f@gregkh>
+ <af028585-d253-4460-acdc-99b349f49d47@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 1/1] dmaengine: amd: qdma: Remove using the private get
- and set dma_ops APIs
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>
-CC: <vkol@kernel.org>, <dmaengine@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <nishads@amd.com>
-References: <20240917161740.2111871-1-lizhi.hou@amd.com>
- <20240918121302.GB21062@lst.de>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <20240918121302.GB21062@lst.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099D8:EE_|DM4PR12MB6592:EE_
-X-MS-Office365-Filtering-Correlation-Id: 90c1eafc-b62b-48ec-29c9-08dcd8088216
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SVU3VVFpYXovUUoxU3gxWDg5MUROYzN3bHhNZ0hxR0dzaGNqVVMvZDlaTy9C?=
- =?utf-8?B?VkEra3I2Y2l6dkw5bDJsbTY4Rk5wenlaYVdHVS9Udlg1ZWllTXk1MVNxL1do?=
- =?utf-8?B?aFF5d1ZNbm8zZEIrWFpmS3BvZXArbEUwWjFGbkZZa2wvM1JzaFNvVmN6M21a?=
- =?utf-8?B?MTdZQ1lHWk1KcWVrR1pjdjNuMHlKNmNkRFN2dzdYNjRRV2MxczRDWUxMZEZn?=
- =?utf-8?B?TEZQd05qZnRvcEVoK3JnMVJuRmxTWXdsSXFkam51bHBkMmFNeVFNdTRJQ2s2?=
- =?utf-8?B?bldpTXdUaGVWL3RSNzRiMVhybXNBbDBVQWlITFlGRm56Z2s1NjV0bUlFOGhy?=
- =?utf-8?B?UjJCZW1PZTdxSkoxYjJHaGNvU0h3OTE1Zk1JWjFhZE1rR1VFSXEyWnRBajBo?=
- =?utf-8?B?SFlaODVldC9iL3VHcGtidzFwcXBRRWVaUUNGKytKM00vWitWTklaT09pUXhZ?=
- =?utf-8?B?YW5KQUE5dmFWSzVMMUlxSU95Y2cycTYzejV6QVlPRW4zblFqOHRRVlpPN3pM?=
- =?utf-8?B?dVR5QUxNSDYxVjJzMDFSYU5xYWxwVFRCSDU2dnN4RGdRMGgxYjBmZExDcVA1?=
- =?utf-8?B?Zk9PajBVUGNSTEtPa1FReHlpK0tvemJYMDNrdGc1ZUtsa1NkTllHdWlLS3pa?=
- =?utf-8?B?bkd3ZmoyQjB6eE0rWkpEYUZGcHlvd3c2c202a2l5b0RQV1BnaVA2RDZKNTBC?=
- =?utf-8?B?VmxMR3B4UDgvQXQvWFU3d0M4dnY5VlF1REEwRTVhaTlnR0RrNEZvTWtKNHVC?=
- =?utf-8?B?U09BKy9KbzhheFFjZVd6SVFNMUpZWW5nUUZFeFlOV1JkV1ZWYVA5TlMvVVFr?=
- =?utf-8?B?dGhJVjdCVnZneXVsQlRvWDJHekh1bStuTE1icUlaenJQNVpQTEFwTUNncFdm?=
- =?utf-8?B?dHNKZHl3R3Qwb0FIeU9YSmZsclNrMEQ4d1V3T1Y3VTJPNXhhaTkxbjNlc2RE?=
- =?utf-8?B?UFZLUldKa3R2NlNIaUNUbVJHUk4vdmRITlVKMWY2cStHZTJERlMyRXZvNXgy?=
- =?utf-8?B?ODBmSE1CRHVFVGYrd1RoRzNOU3k0RzQzQVh3d3lqNk9kbjZlSzVhTUlVcjFY?=
- =?utf-8?B?VU1HZWFQRCtHSmdXRXhVRWw3bjYvVDk5Z0xzTjZYaHY4MkN3ZzFNcXc4SWp2?=
- =?utf-8?B?K1N1a3ZJeTVxdDFVYXdUcWlQTTUyYUxYcFloOTFqZjNucit3WE9iQ2xLbkg5?=
- =?utf-8?B?aTRydTROclBJanBsOTBpRVljdVprb09EL1FJNGV3ckI5TE0xTEZoa3phaWhT?=
- =?utf-8?B?M1NhNTJoNFgwSlVBK2VPRzY0eG1rbG8rd09wKzhCVGdFOEE3M05jbEZ1UUtO?=
- =?utf-8?B?eVdkOW9UcGhzVW1YWDVnTnd2UDViT0VSbVhFTWdyNjFwMFQ1cmpxM0NBOE9L?=
- =?utf-8?B?Zzl5SjdlSU11SURHZHpGbG85bGVUQUtiSERVSytrRlBhV3kxMiswcDVUWDBC?=
- =?utf-8?B?bytERHlGVS9aSDdTMUNNQVQxajNnUFYxdWRMTjY3S0NOQ3c0OEJxTGVaV0xP?=
- =?utf-8?B?NytaZ0Fhc3hYd2R6UUNHVjRXWG1wTXpDMXNOUGZwZHQ5NDlaamJzaGFZWE5u?=
- =?utf-8?B?VWJpNGp5MjErSWd5T2F1RWJaZVRqcTROTyt2cGM2elQ2VExySzNrY3FPT1Jh?=
- =?utf-8?B?eHN1YkFKcEtaajkxZU1GMERZb1I0L0ZiejRnTG9JZ2NSRElxUU1FMzJ0aitF?=
- =?utf-8?B?eTFUNjlXbWhJdzR4bzhrcURrTjdEd0xCZW81L1dUcFlzVVpRemZjNG5ESlVv?=
- =?utf-8?B?QlcyYVdDdHpYdURqT2ZJVy9OM0lDcmJuRkozcmxqZFZDdmRGdk9OUjUzRWo5?=
- =?utf-8?Q?x+DfKJUmLePoCX/64Z6FtLgA2xMk/WLCmGYc8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 17:37:03.2658
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90c1eafc-b62b-48ec-29c9-08dcd8088216
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099D8.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6592
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af028585-d253-4460-acdc-99b349f49d47@proton.me>
 
+On Wed, Sep 18, 2024 at 05:33:33PM +0000, Benno Lossin wrote:
+> On 18.09.24 19:09, Greg KH wrote:
+> > On Wed, Sep 18, 2024 at 03:40:54PM +0000, Benno Lossin wrote:
+> >>>> Yeah, we need more users of this to know the full way to express this
+> >>>> correctly. I would like to avoid huge refactorings in the future.
+> >>>
+> >>> I think adding it to the copy_*_user functions we already have in
+> >>> upstream, and then asking Alice to rebase binder should be a really solid
+> >>> real-world testcase. And I think currently for the things in-flight
+> >>> copy*user is going to be the main source of untrusted data anyway, not so
+> >>> much page cache folios.
+> >>
+> >> Sure. I chose tarfs as the use-case, because Greg mentioned to me that
+> >> it would benefit from adding this API. (I have no prior linux kernel
+> >> experience, so you giving me some pointers where this will be useful is
+> >> very helpful!)
+> > 
+> > I just had tarfs as an easy example where we were reading data off the
+> > disk and acting on it, in a way just like C where if the data is
+> > corrupted we can do "not normal" things.  Sorry it got tied up with
+> 
+> No worries! I was just under the impression that this would be common
+> (maybe it's common for filesystems?), so just having that clarification
+> now makes more sense.
 
-On 9/18/24 05:13, Christoph Hellwig wrote:
-> On Tue, Sep 17, 2024 at 09:17:40AM -0700, Lizhi Hou wrote:
->> The get_dma_ops and set_dma_ops APIs were never for driver to use. Remove
->> these calls from QDMA driver. Instead, pass the DMA device pointer from the
->> qdma_platdata structure.
-> Btw, this file should also drop the include of <linux/dma-map-ops.h>,
-> which is clearly marked as not for driver use.
->
->
-Thanks. I will remove this header and re-spin a new patch.
+Yes, this would be common for filesystems.
 
