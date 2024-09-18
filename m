@@ -1,193 +1,124 @@
-Return-Path: <linux-kernel+bounces-332252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5C297B747
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2169A97B748
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6671F2402A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC20D282705
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD47513A3F2;
-	Wed, 18 Sep 2024 04:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o9Ta53eV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E59913A3F2;
+	Wed, 18 Sep 2024 04:58:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406CC22EED
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 04:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39322B2D7
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 04:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726635276; cv=none; b=n0O8tShx5NhLFn3IxrM3wLuSRK8wdwOiUeyZ/82funOTJUjpFTZ60lpUB3c9WQi4UoqX0Z/O/jheOXIqyEDKGBzk35j9lgtwvNdgIKMsFbcgBR5NaxbUxoXCdPpTwyslgIuxEtWYxVosWE12tUaBVbLogif0ytMLsS3ZNBn378o=
+	t=1726635484; cv=none; b=NYKOuJFWFxaEQ+v+2pfwD3477oZpVtPppdEdHkc84zYsva8dPar5sv8dpGNnrWsWFK9L7K/yow74xcT4lEffcAeJNV3oy2MrUbh6XHx8xmldB4yYH/Qx5cKsUNy0xgFuk9rDgm9eGjfpCpdJhgg7C6/qx45gB+hYbqAeCceXinE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726635276; c=relaxed/simple;
-	bh=zkI3MphARaozn8NdrN54ydRhmNyndHd93oD0qNgaZQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iilaq3zz09hKU5RbYSJ3fDwcRKAqmXPQf+RCyvSeFGp4JHsHGaSSwVbgQsW01CHorhtkxM3rQpbIsjHf7I16CqbSGR4/Isev1mOu1p5aMsthe8C09tRpy6eFiyRCxJQ9VeqoyPkfyTvYoWIYVtORoX1M+MxmUDms+UqnoSPgqJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o9Ta53eV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15EECC4CEC3;
-	Wed, 18 Sep 2024 04:54:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726635275;
-	bh=zkI3MphARaozn8NdrN54ydRhmNyndHd93oD0qNgaZQk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=o9Ta53eV++98pykwR8v3XLSwpZpt9PVEkE/Jo27kHMo2PanFiVoLhFFU0fb10fYG9
-	 cXnYOWY/QLWUmB78RNVqyT8BdkTt5EwPgRnsLNWxbjSsnDQ328A5hBWUiJ8Q1+f6w0
-	 Vnj0sF9DqVfS71Qp62bHf6iO1ZR7g7Ae0Irwd+qyvbqCor1tP5TznXVERRp2J5qqry
-	 /zsVc49mS56pBfFhg0VCA8/Bg0LNql4vxhT0YYHfjDvT1R3PVMltm52wZb668tTSyE
-	 2iTLv/8ZMuxmhwAAXKZ4/ARJkVuqsLe+7DoXeyhV2Vhq72F4iLArwesO6/ovinaf0o
-	 h0JSXgPUGysnA==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Michal Simek <monstr@monstr.eu>,
-	linux-kernel@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH] microblaze: use the common infrastructure to support built-in DTB
-Date: Wed, 18 Sep 2024 13:52:43 +0900
-Message-ID: <20240918045431.607826-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726635484; c=relaxed/simple;
+	bh=OYOva2N2oEy3+7ofy6L2tWpAhUcQfY8GQGjqNOEvRrM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=h22fe496EWZkFXBliQGo9Aepm0cFq8IWKxsIbWawtMFrLtkiygiQYRTh9MrmeI3k01aGlxfyCWeH/pxhpp2Il4cQ6VQbm/oq4wGD8yIUw4xip3Opa8fdh9iDvFmNXfv1l8AtZ4h4VmF7QIH3y/gOZebYKRSzHpKgYffyYEARsxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a049f9738fso99160165ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 21:58:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726635482; x=1727240282;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y5iWlzom4+ZJTobOcv9G6iiHOTB3GkrwQjltrlVFqpw=;
+        b=B4yP3w5ALjmqGFgflzEghVch3JqlQjqennYG5hjMPu7Y3wZRXmHEPduG1oH+AwmyKd
+         hq8fIZvxVDf5Pu/Ffh0EQWv6FK5cIaFjM819Y5sU4r3/ve7z4SQ8HMSDIFcEU7q2Qon+
+         mN9n/T4omnKMjZB08tX7zIz4Lw8nwOwtBqzc4PEeHp9ah6yf/uPkrsoPb+Ce9yCSoCqt
+         RKDgMiJjWVo97dVtfdqFJFe/pfJWXhqWMmVClmbwu8hOlLZKy0USeLlhOfGAWPImnjTy
+         k4TMT2229lG/9a6yvv7vrkPPBkN+azVRqFBol2jVpDR4Fkj5qqLX+x02he1ntDBqoqac
+         UE5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXe3PrlNGIz91ZoLSBLYw3CuSila9mNEFW/XUWmaI1wsj9QQtaAearkphwFUNxqrIrjV4Rn0n3gp6TEV74=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvkxE6xnrQGHX3F6dgUZ9te2IZjqQg85CbTv/JD2biSiVE9FAR
+	wnjAb3ybxPqwVMvB56RHREAzuyyhQ6Iq4Lui2h5T5Lfvuy7F5LnhF9eqwcr3TW+BZ5RexIsXZV0
+	qouOpssVtIvYsMd94SS7bm1AakKhmbBTlVsHTJ8grR8GqYoYak+8F+g0=
+X-Google-Smtp-Source: AGHT+IFyHns1jOVJf05SgvMveag/B1Tj3i2O7BFIJTNydbcv6esbsFtrE+mCiFPWhDYu8IUVVW9vro7hxhDjNs5BdbB0Hdfef6+X
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1c87:b0:3a0:90c7:f1b with SMTP id
+ e9e14a558f8ab-3a090c7116bmr121456945ab.12.1726635481834; Tue, 17 Sep 2024
+ 21:58:01 -0700 (PDT)
+Date: Tue, 17 Sep 2024 21:58:01 -0700
+In-Reply-To: <20240918040359.189212-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008d509306225da626@google.com>
+Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
+From: syzbot <syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-MicroBlaze is the only architecture that supports a built-in DTB in
-its own way.
+Hello,
 
-Other architectures (e.g., ARC, NIOS2, RISC-V, etc.) use the common
-infrastructure introduced by commit aab94339cd85 ("of: Add support for
-linking device tree blobs into vmlinux").
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KCSAN: data-race in ext4_free_inodes_count / ext4_free_inodes_set
 
-This commit migrates MicroBlaze to this common infrastructure.
+==================================================================
+BUG: KCSAN: data-race in ext4_free_inodes_count / ext4_free_inodes_set
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+write to 0xffff88810404300e of 2 bytes by task 6254 on cpu 1:
+ ext4_free_inodes_set+0x1f/0x80 fs/ext4/super.c:405
+ __ext4_new_inode+0x15ca/0x2200 fs/ext4/ialloc.c:1216
+ ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
+ vfs_symlink+0xca/0x1d0 fs/namei.c:4615
+ do_symlinkat+0xe3/0x340 fs/namei.c:4641
+ __do_sys_symlinkat fs/namei.c:4657 [inline]
+ __se_sys_symlinkat fs/namei.c:4654 [inline]
+ __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
+ x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-I do not know why MicroBlaze still adopts its own way.
-Perhaps, because MicroBlaze supports the built-in DTB
-before aab94339cd85 and nobody attempted migration.
-Anyway, I only compile-tested this patch.
-I hope the maintainer can do boot-testing.
+read to 0xffff88810404300e of 2 bytes by task 6257 on cpu 0:
+ ext4_free_inodes_count+0x1c/0x80 fs/ext4/super.c:349
+ find_group_other fs/ext4/ialloc.c:594 [inline]
+ __ext4_new_inode+0x6ec/0x2200 fs/ext4/ialloc.c:1017
+ ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
+ vfs_symlink+0xca/0x1d0 fs/namei.c:4615
+ do_symlinkat+0xe3/0x340 fs/namei.c:4641
+ __do_sys_symlinkat fs/namei.c:4657 [inline]
+ __se_sys_symlinkat fs/namei.c:4654 [inline]
+ __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
+ x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
- arch/microblaze/boot/Makefile          | 3 +--
- arch/microblaze/boot/dts/Makefile      | 5 +----
- arch/microblaze/boot/dts/linked_dtb.S  | 2 --
- arch/microblaze/include/asm/sections.h | 2 --
- arch/microblaze/kernel/head.S          | 2 +-
- arch/microblaze/kernel/setup.c         | 4 ++--
- arch/microblaze/kernel/vmlinux.lds.S   | 8 --------
- 7 files changed, 5 insertions(+), 21 deletions(-)
- delete mode 100644 arch/microblaze/boot/dts/linked_dtb.S
+value changed: 0x185c -> 0x185b
 
-diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefile
-index 2b42c370d574..23a48e090f93 100644
---- a/arch/microblaze/boot/Makefile
-+++ b/arch/microblaze/boot/Makefile
-@@ -17,8 +17,7 @@ $(obj)/linux.bin.gz: $(obj)/linux.bin FORCE
- 	$(call if_changed,gzip)
- 
- quiet_cmd_strip = STRIP   $< $@$2
--	cmd_strip = $(STRIP) -K microblaze_start -K _end -K __log_buf \
--				-K _fdt_start $< -o $@$2
-+	cmd_strip = $(STRIP) -K microblaze_start -K _end -K __log_buf $< -o $@$2
- 
- UIMAGE_LOADADDR = $(CONFIG_KERNEL_BASE_ADDR)
- 
-diff --git a/arch/microblaze/boot/dts/Makefile b/arch/microblaze/boot/dts/Makefile
-index b84e2cbb20ee..f168a127bf94 100644
---- a/arch/microblaze/boot/dts/Makefile
-+++ b/arch/microblaze/boot/dts/Makefile
-@@ -4,10 +4,7 @@
- dtb-y := system.dtb
- 
- ifneq ($(DTB),)
--obj-y += linked_dtb.o
--
--# Ensure system.dtb exists
--$(obj)/linked_dtb.o: $(obj)/system.dtb
-+obj-y += system.dtb.o
- 
- # Generate system.dtb from $(DTB).dtb
- ifneq ($(DTB),system)
-diff --git a/arch/microblaze/boot/dts/linked_dtb.S b/arch/microblaze/boot/dts/linked_dtb.S
-deleted file mode 100644
-index 23345af3721f..000000000000
---- a/arch/microblaze/boot/dts/linked_dtb.S
-+++ /dev/null
-@@ -1,2 +0,0 @@
--.section __fdt_blob,"a"
--.incbin "arch/microblaze/boot/dts/system.dtb"
-diff --git a/arch/microblaze/include/asm/sections.h b/arch/microblaze/include/asm/sections.h
-index a9311ad84a67..6bc4855757c3 100644
---- a/arch/microblaze/include/asm/sections.h
-+++ b/arch/microblaze/include/asm/sections.h
-@@ -14,7 +14,5 @@
- extern char _ssbss[], _esbss[];
- extern unsigned long __ivt_start[], __ivt_end[];
- 
--extern u32 _fdt_start[], _fdt_end[];
--
- # endif /* !__ASSEMBLY__ */
- #endif /* _ASM_MICROBLAZE_SECTIONS_H */
-diff --git a/arch/microblaze/kernel/head.S b/arch/microblaze/kernel/head.S
-index ec2fcb545e64..9727aa1934df 100644
---- a/arch/microblaze/kernel/head.S
-+++ b/arch/microblaze/kernel/head.S
-@@ -95,7 +95,7 @@ big_endian:
- 	bnei	r11, no_fdt_arg			/* No - get out of here */
- _prepare_copy_fdt:
- 	or	r11, r0, r0 /* incremment */
--	ori	r4, r0, TOPHYS(_fdt_start)
-+	ori	r4, r0, TOPHYS(__dtb_start)
- 	ori	r3, r0, (0x10000 - 4)
- _copy_fdt:
- 	lw	r12, r7, r11 /* r12 = r7 + r11 */
-diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setup.c
-index f417333eccae..8e57b490ca9c 100644
---- a/arch/microblaze/kernel/setup.c
-+++ b/arch/microblaze/kernel/setup.c
-@@ -120,7 +120,7 @@ void __init machine_early_init(const char *cmdline, unsigned int ram,
- 	memset(_ssbss, 0, _esbss-_ssbss);
- 
- /* initialize device tree for usage in early_printk */
--	early_init_devtree(_fdt_start);
-+	early_init_devtree(__dtb_start);
- 
- 	/* setup kernel_tlb after BSS cleaning
- 	 * Maybe worth to move to asm code */
-@@ -132,7 +132,7 @@ void __init machine_early_init(const char *cmdline, unsigned int ram,
- 	if (fdt)
- 		pr_info("FDT at 0x%08x\n", fdt);
- 	else
--		pr_info("Compiled-in FDT at %p\n", _fdt_start);
-+		pr_info("Compiled-in FDT at %p\n", __dtb_start);
- 
- #ifdef CONFIG_MTD_UCLINUX
- 	pr_info("Found romfs @ 0x%08x (0x%08x)\n",
-diff --git a/arch/microblaze/kernel/vmlinux.lds.S b/arch/microblaze/kernel/vmlinux.lds.S
-index ae50d3d04a7d..3d4a78aa9ab4 100644
---- a/arch/microblaze/kernel/vmlinux.lds.S
-+++ b/arch/microblaze/kernel/vmlinux.lds.S
-@@ -44,14 +44,6 @@ SECTIONS {
- 		_etext = . ;
- 	}
- 
--	. = ALIGN (8) ;
--	__fdt_blob : AT(ADDR(__fdt_blob) - LOAD_OFFSET) {
--		_fdt_start = . ;		/* place for fdt blob */
--		*(__fdt_blob) ;			/* Any link-placed DTB */
--	        . = _fdt_start + 0x10000;	/* Pad up to 64kbyte */
--		_fdt_end = . ;
--	}
--
- 	. = ALIGN(16);
- 	RO_DATA(4096)
- 
--- 
-2.43.0
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 UID: 0 PID: 6257 Comm: syz-executor.4 Not tainted 6.11.0-syzkaller-04557-g2f27fce67173-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+==================================================================
+
+
+Tested on:
+
+commit:         2f27fce6 Merge tag 'sound-6.12-rc1' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=138f469f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dac6637d61966e53
+dashboard link: https://syzkaller.appspot.com/bug?extid=702361cf7e3d95758761
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16bc9207980000
 
 
