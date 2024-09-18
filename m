@@ -1,86 +1,101 @@
-Return-Path: <linux-kernel+bounces-332839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E0097BF87
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:15:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C290497BF89
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E161F228D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:15:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50B0FB2223C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DA31C9DF0;
-	Wed, 18 Sep 2024 17:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7E61C9ECE;
+	Wed, 18 Sep 2024 17:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjFh4A1H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZmKNUWi"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B361B9B49;
-	Wed, 18 Sep 2024 17:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C561C9EBD;
+	Wed, 18 Sep 2024 17:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726679695; cv=none; b=W65S19XvzbzxvfSV7iBGiEMwnJtZVqrfjz5b4Ni9XsX1Jac7ranyJwSQ9ql3rxXhbMkB4fr5bVs+CzC15h24cMATQjZosN2xIvmd4E6KdzxC2QVc/rEELYWnsnyRGycZXdErhrqAW6X0VW5o6soTIADFnCL3e36T+1pIGE1vlyI=
+	t=1726679714; cv=none; b=TEobrdKa4LZKGCz1fRmzJQ/OAS1nLVXbSNtklN8dosmn4kYy9Pc6ZkkoVxF5FfnhbN6koILVg43PU/zphTwC7uVEWO46pp646hAlHNWibARojlCsL9tqz8LksLIXPB6XRo3p43fYWvYcoOhewwPs4Po8tS85TKqwjdCsora4ajU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726679695; c=relaxed/simple;
-	bh=se9nDBRBjI7FoM8cZzoIPCEXe0jMmjU5Q1XxWRQ6wUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JBD0ZS1Z3XBMUFd//SI62qWl5kIQojDTnD3eaa5R8l+2L+GIeEZ8lWC0Fp2zJySNBeWkIWMW46dd+33UvBvo9qK2pH9w7jUTWHdNS8kjqgxW2YrwmzTAUl9yFbphYbPOSCptC0v0f1CTt3tSr3YgywSyRyY8JnO8qjsRx+lxOvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hjFh4A1H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA227C4CEC2;
-	Wed, 18 Sep 2024 17:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726679695;
-	bh=se9nDBRBjI7FoM8cZzoIPCEXe0jMmjU5Q1XxWRQ6wUA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hjFh4A1Hi4VkpIC8I2IMLHVXC6pOFVGLcPJu/LY/tYv312M0B/g+aA5eMcOB21d7v
-	 pirME89AvXq8f7qy+B6NQifjSFYkUCLG3Kee7FQKBJLcNz/VI/ymALb0BCCKljjpjX
-	 Gy8b3WYJAkWTraU6DbWgX2S6z8RFZ6OmA9GFSijBmzek5JfJ68PvdQ2gVmfVdxtL+m
-	 vG45JW3AWMI2o+zIBHtpc7pZOK83tK8BIE2Avw4ikCQjFZVBgDP91w7wkSIViXd3w8
-	 Z9FqO2F3LLS7nFTPQLEU+8N3QAomNYMbjwZlStqRp2lDIK+Xq55YG8d0Cfpklh+Frx
-	 o2Q3ESpMo1dww==
-Date: Wed, 18 Sep 2024 12:14:53 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>, linux-phy@lists.infradead.org,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: add
- missing x1e80100 pipediv2 clocks
-Message-ID: <172667969326.1817225.11425040649410740756.robh@kernel.org>
-References: <20240916082307.29393-1-johan+linaro@kernel.org>
- <20240916082307.29393-2-johan+linaro@kernel.org>
+	s=arc-20240116; t=1726679714; c=relaxed/simple;
+	bh=0T4dzBMSx9q2Pd8rRyNMc3An/s/+jpL4XqaACOjlOKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RMJANttH4+5LArhif4mun701E5YjJLRSJIN1zTaqvR3XJS4Z/RjzI3Dl4N8hD1IZk0ZmK1UQSBvll/WRwQC6wFrfSXLGfZcC6Y7Ku709amEvq4kfx8yyHvaRyHnRe+hp17pfgIkXK77j7LXae/zAGHKDWzXH48dMUjhOxx7qEw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZmKNUWi; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-717839f9eb6so1220056b3a.3;
+        Wed, 18 Sep 2024 10:15:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726679712; x=1727284512; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A7mOTp2QbM6JpO/W/v9h01oSVJjDYr1umsEL0GXcYKM=;
+        b=JZmKNUWizL+DQ79r0bjFTSNSoLgaxXtTjAdwP3jIZ7H5wINmo8xXpJsboyuzTmkNU2
+         NFW8VPmA+lkO4lzOL1+5EEWEfY36IlmNi6lH8JM/ZWkqgl8IdnSSJnvK0ybQsAkFD3s+
+         v4QfBTHrPG4azxQesKdI4gpX30ase45atShM7/yg84Kcm/EKfLGHGSHeB5UFoomYAKXm
+         2PZkPJAwkRVfHq3TYqq6SCznb/YWKWfa3J57Wu/mHaSQupafGKgK/hnphRA2jWPRlcb1
+         D6Dfs9PNBSOPecnIgiy2HtcOHXpFk2wQCDQsIMVCBKZR5Zk3FcxqUi3lpGxTk/9x9EZl
+         DbGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726679712; x=1727284512;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A7mOTp2QbM6JpO/W/v9h01oSVJjDYr1umsEL0GXcYKM=;
+        b=oos8qCFaaMC2QRgf8LxUeAR5YhHnL4D1XGug4U7Bycmj1OchETz+1Bk94pYO+rLw7r
+         eXZm+rcUTSLvhbtaAYUee7JllKfW9kOa6lBv0xrlqBLqh07KJtL4K7VwXeixnLuiqXas
+         OXnBRQrMre2OehsMq0q8gLQkAlmOcGDNSjjQa6AoAjGe3J+RTNdFy5ThjVC4gIVD4n0Q
+         9Ywv/HUo5tY/fva9F8c6BxQMgmRiLP/JdiIruaDNczDLu3nieB2/ubZyI3bDh5PKLcxU
+         oCW3aBmngejOU2jBfOAotEmtlPk/KCAx0s6rn5BH7i0FGqU/QZ/RB9t194xvuDovjxlr
+         wjxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEKovbqAksj/Rc/hql4Ny9WadJsQAf79FMvbIr2dXHpVA8Y3wCsb+WPooi0D6vF7SwtF/iyPlWx3ixwN+y@vger.kernel.org, AJvYcCVnu36CmLgzdl0+qZIDhAsxIGQTYfKHr8FMJT72c5fNA8L14mFXhnUEoDbp47s4nGKflDZPYTgnRHOxsJM=@vger.kernel.org, AJvYcCXJ/iI40qd+ceO+ctMMm1iUi52jGZgtQxqS6bkySlIgzv5pgJB6ErPcaHHHBQH+cUiVEQAmP3xlOi4b4dl/s0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVOXsKf1OjXGApBE0G3ahyXMRHZ+5kJ85G8ntO6uSeuyClw1Xt
+	NRkBpZ8sfsWmYjopAs2JwKjB66gb4XHZtOfxJeG2NM3bE7u6OCefDGX0Bodb1vrgFvslmkgS1fx
+	vg2kozZKbw1VShha/ZnRPzNVONzI=
+X-Google-Smtp-Source: AGHT+IFF/LgKgX/HNMX/z0sTSTA3m/uP1n0NQbvd23SX9AXcy4JiGh1ahWMx5sX7FZO7LoZTcKcEbe5HMqBMTNNhF7U=
+X-Received: by 2002:a05:6a20:6a20:b0:1cf:3be6:9f65 with SMTP id
+ adf61e73a8af0-1cf756c40eamr15771809637.0.1726679711964; Wed, 18 Sep 2024
+ 10:15:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916082307.29393-2-johan+linaro@kernel.org>
+References: <20240801-kcfi-v2-2-c93caed3d121@google.com> <20240801-kcfi-v2b-2-c93caed3d121@google.com>
+ <CANiq72=B9NmC=1eSaOrg7XutjueQsSXGcBQb7dQFPuL0SFjPsA@mail.gmail.com> <CANiq72miDK-Z3v46QX9MQTT_raJTz+ja-Qx5j1qBmptHXkhY+A@mail.gmail.com>
+In-Reply-To: <CANiq72miDK-Z3v46QX9MQTT_raJTz+ja-Qx5j1qBmptHXkhY+A@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 18 Sep 2024 19:14:59 +0200
+Message-ID: <CANiq72mF0_RUU4=-OGCHv-O4MBt5vkNYvNByEAVQ3teA2cEapQ@mail.gmail.com>
+Subject: Re: [PATCH v2b] rust: cfi: add support for CFI_CLANG with Rust
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, benno.lossin@proton.me, 
+	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	kees@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	masahiroy@kernel.org, mmaurer@google.com, nathan@kernel.org, 
+	nicolas@fjasle.eu, ojeda@kernel.org, peterz@infradead.org, 
+	rust-for-linux@vger.kernel.org, samitolvanen@google.com, wedsonaf@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 16, 2024 at 6:14=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+>     [ Replaced `!FINEIBT` requirement with `!CALL_PADDING` to prevent
+>       a build error on older Rust compilers. Fixed typo. - Miguel ]
 
-On Mon, 16 Sep 2024 10:23:05 +0200, Johan Hovold wrote:
-> The x1e80100 QMP PCIe PHYs all have a pipediv2 clock that needs to be
-> described.
-> 
-> Fixes: e94b29f2bd73 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100 QMP PCIe PHYs")
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml   | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+I also noticed we need Rust 1.81.0 for the flag rather than 1.80.0 --
+I will send a patch later and/or rebase.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
+Cheers,
+Miguel
 
