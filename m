@@ -1,113 +1,165 @@
-Return-Path: <linux-kernel+bounces-332649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8868D97BC87
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:52:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB6AF97BC8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B2E1C21D4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:52:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2422285021
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0050B176ADA;
-	Wed, 18 Sep 2024 12:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD9F189F47;
+	Wed, 18 Sep 2024 12:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NgCT4nhi"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lk+6HPJe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB529189901
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9874409;
+	Wed, 18 Sep 2024 12:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726663946; cv=none; b=ujCNrFALwvYsqQIdAi88Mb4M39ZGkF1jKWQLzEaitKnED6qzMxd7izAOeqLn/3gyxes6IGD8rXKtm8YxMkneGBZcdrvsPwD/oRRCT/dzIxhvGGU58+O3070iCv3nbzhct1o8IWqrD5QGQfrtaL9F5nMXKjMTFSIZao0/Q5NqPz8=
+	t=1726664005; cv=none; b=VPYN3zh7Y3MRunmXd7lX2n2SVwhgvUcuq6vtPmUIkQJh5Ve6NUgFBDJbhmXfo52BLw/DdgeyTC8ulk6MRAO1Pe5XorzExUN1X/xpp6kjGim0Jjv9xLDjfm+64CcR4PkNtoJbtCqD+tj37u15FVn1j1tgCfTbFYa0QVyOTn4VTBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726663946; c=relaxed/simple;
-	bh=5QbounyFpdeLyPpqYbR0StL4YuvH2a6AMVNNNNvb9Cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSnAyMtjRVj34B3oP59qT5GwYGJsqtJdhv9sPCFGWBljiIUs2vDDVMi+M00eACj1KSCRDTv5WU9TiKE6W6y5Br+FNAml6rxm5qyjwCPzB2NDgo+sbVFWim5pdqgtbvFteKkzxn8k+6nu1lezZRrRm8tjwEGVZIY/unk1ISyVuKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NgCT4nhi; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so66663175e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 05:52:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726663941; x=1727268741; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+s5jBMUot9g03xEiSgGkzS9qg+YNVwIhQFcEqltV6D0=;
-        b=NgCT4nhiqTYFBrzcC9iixqV4la5ZcYUfAPFjOMXQSN0dtPg6wtkLGbszmdGa3h7dJf
-         JLGiPTvldGF376yuuctA1BjQIdJPYa2zKvGWS0/lQnMIPOjRHoMrEWOjmVPjIAHGlpjJ
-         jam+z2BZtkgQSBbw2BqK4T7t4HM1Z6X4BjQwz5Tjl8Aov8mO3NpO7P778HVNA4T7fYUf
-         JY9RarhV2ZQ7f7E5f2RsL5i8AOmOq8tVkR94HtwGrMmSIIrnUdWQaH7wiCbkZTQlLxHR
-         yTEhaa22uiArE6WquudZabBtzpk+yOHRaPbcDccQTGq3hnlCZ8Sa7o6UbmvUdocChDMe
-         moVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726663941; x=1727268741;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+s5jBMUot9g03xEiSgGkzS9qg+YNVwIhQFcEqltV6D0=;
-        b=T/TK1Uoa45CZZl2diVAQbzU2n4P4MycC7LAE0obPS9go9AXzI9Sn7JSO2nu5rUtvEv
-         puoOEtnhmMytNAxepSTcBO93h/VlfyWm6fF1py5AO2L8cJUdyUe5WTw61enPF1KQzOnE
-         fYelO7cMmOeXjtnO//jf6JmB+/c3jfaM/0eDOp3X4/siTHVp3oHIUWICMwSbIs+dtNNW
-         ar2oYEteKSdB+4fzB8fAyYrmGfLNttSZHG37bSspg2wehch3SDoLtltPm2ORMaTe26kK
-         c5BZCv3leSHIvNYOT/Sq7KRueoJA1ojKhk6E9Dgk5+1k07jytRp0F2kdCuEXxwGFBWJw
-         KUgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXcMUOdZhnn8DIcjMVGq2lvUaakouabRznz0+YHrqvtNfL07iYRIcF0wWckMDp+13romeTg0EA9cmxg1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3LqGExQXaPV7X4JG5v8q+FQbKN5mQDEjNxoMZmghoc6VBfq8p
-	+e0eiz3YoZ6WjiBtvO47fWJNJMTT9JvMnb7JF80JITPKiYDwaz/p2aOy+rphxW8=
-X-Google-Smtp-Source: AGHT+IG1ehOCKV8YfrxH+CjYDke8qE4rmuwAM6XvhbWHjYwR2pC+c9kHprUmLkqGKwV66QYZbIfGtg==
-X-Received: by 2002:adf:a3c6:0:b0:374:cb30:b9b3 with SMTP id ffacd0b85a97d-378c2cfed36mr11530408f8f.2.1726663941116;
-        Wed, 18 Sep 2024 05:52:21 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794601083sm64767585ad.71.2024.09.18.05.52.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 05:52:20 -0700 (PDT)
-Date: Wed, 18 Sep 2024 14:52:06 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Peter Collingbourne <pcc@google.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [PATCH next v2 4/4] serial: 8250: Revert "drop lockdep
- annotation from serial8250_clear_IER()"
-Message-ID: <ZurM9ufiMsjT6qKo@pathway.suse.cz>
-References: <20240913140538.221708-1-john.ogness@linutronix.de>
- <20240913140538.221708-5-john.ogness@linutronix.de>
+	s=arc-20240116; t=1726664005; c=relaxed/simple;
+	bh=wY+N0gtyoE3pVm7cALL9HROy1JLdDoNRKvAgOydK7wU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RmJbVTXdmPEl/AXJWSrfuIzxM/5xag734J0bq2JFFSkp4Y3KRw6fjm9n7TBII/wDk/PyP/OGsQTpWBpn9IKAGHFXHfIhQ2RXZtXJR5M62vJscfdTdr0OILlm0fnK7fTnRfcuLsWT/0+z+C3RMJQ3PgkKcfT74O7YzazWwHBMabE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lk+6HPJe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A370C4CEC3;
+	Wed, 18 Sep 2024 12:53:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726664005;
+	bh=wY+N0gtyoE3pVm7cALL9HROy1JLdDoNRKvAgOydK7wU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Lk+6HPJepScDuEOL82hSQLh5HA226fljb7qBc4l+mnCUOuIGdOQhT31dxmFzofabS
+	 k3SyScF2lXKzp6xIBpJsPuSNi9ZW/dZJ8vOrY9WXRweVIjRiX9oFe+KbpOFQd732PT
+	 LHTHCzQNc+G3Ly9SOKf6IMFzwCh8I52OYk6pvk9ZCsKUOZgM2copwmc+w7k+OrSSTJ
+	 /Y4f8K1MS75kK63YX9WDSbpP8cQ1wxr6ks94DHKNPhtoVLuneXeGw4vGlmarrtub57
+	 1DpkvIud5KGOLCCiAclsK96nVkUMpAPOB9L+xVeuaALvZRiBLsHEZCPBCgT9un4MpN
+	 wxKU8plC7EBmg==
+Message-ID: <b4186150-bc96-49c7-8622-0692365acb69@kernel.org>
+Date: Wed, 18 Sep 2024 14:53:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913140538.221708-5-john.ogness@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] power: supply: initial support for TWL6030/32
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: tony@atomide.com, Sebastian Reichel <sre@kernel.org>,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org
+References: <20240918084132.928295-1-andreas@kemnade.info>
+ <20240918084132.928295-4-andreas@kemnade.info>
+ <89a7e86b-8866-4148-9f9e-13ca84c1aede@kernel.org>
+ <20240918144325.0ccca89c@akair>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240918144325.0ccca89c@akair>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri 2024-09-13 16:11:38, John Ogness wrote:
-> The 8250 driver no longer depends on @oops_in_progress and
-> will no longer violate the port->lock locking constraints.
+On 18/09/2024 14:43, Andreas Kemnade wrote:
+> Am Wed, 18 Sep 2024 12:43:01 +0200
+> schrieb Krzysztof Kozlowski <krzk@kernel.org>:
 > 
-> This reverts commit 3d9e6f556e235ddcdc9f73600fdd46fe1736b090.
->
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> [...]
+>> Drop {}, see checkpatch.
+>>
+>>> +		return dev_err_probe(&pdev->dev, ret,
+>>> +				     "could not request irq %d\n",
+>>> +				     charger->irq_chg);
+>>> +	}
+>>> +
+> 
+> Apparently checkpatch only moans about {} around single *lines*
+> not single *statements*, even with --strict.
+> 
+> Coding-style says single statements,  so maybe checkpatch should be
+> fixed?
+> 
+> Same for other appearance of this pattern.
 
-Makes sense.
+Hm, could be. I think this still should be without {}, regardless of
+checkpatch.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+> 
+>>> +	/* turing to charging to configure things */
+>>> +	twl6030_charger_write(CONTROLLER_CTRL1, 0);
+>>> +	twl6030_charger_interrupt(0, charger);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static const struct of_device_id twl_charger_of_match[]
+>>> __maybe_unused = {
+>>> +	{.compatible = "ti,twl6030-charger", },
+>>> +	{.compatible = "ti,twl6032-charger", },  
+>>
+>> So they are compatible? Why two entries in such case?
+>>
+> There is one device_is_compatible() in the file.
 
-Best Regards,
-Petr
+Ah, you should rather use match data. Compatibles inside the code do not
+scale.
+
+
+
+> 
+> Regrads,
+> Andreas
+
+Best regards,
+Krzysztof
+
 
