@@ -1,112 +1,140 @@
-Return-Path: <linux-kernel+bounces-332744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12AF97BE3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:49:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B173F97BE3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106E01C20FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EE5A283811
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0782D1BF7E4;
-	Wed, 18 Sep 2024 14:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949231C2DAA;
+	Wed, 18 Sep 2024 14:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="k3DtKxsi"
-Received: from mr85p00im-zteg06022001.me.com (mr85p00im-zteg06022001.me.com [17.58.23.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUciZoU6"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3142D1C1736
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 14:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852A91C233D;
+	Wed, 18 Sep 2024 14:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726670918; cv=none; b=XUHrGp4S5RK+E86VRflCwNm1WrpDfrthGOkk82kX+TDjuOLh/Ib8fmDbMMwEbL8WMfbdFsKijJLEA2Ig9FlrVLl/J583BdNxdXcaEKP9DFTVMLPXJyZNRCa/qlHrs2O+DBxb9Ap9YPlxfTPyON4eK8+0QL0WZ8eDRifLclDPm6Q=
+	t=1726671147; cv=none; b=bptHz40G2FJih/t5CcNGhjx9dSzQEvYPAO/H11zicmWH6UeKnIgRn7wIeuanyRZS8D9KcFpWxYZpIGu+tDp/wvN4BfAf3irPMlAc8sDLLMvjCb3z4muwgxuMOgMjvWRarxjAww48K4oGL+UZkB/sDYmt+zz8sJhHfE5to4vactc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726670918; c=relaxed/simple;
-	bh=oWvoqzkwTAc38n+BkwjGqCuP09d2IzfV0BqEwl/OdmM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FW2aBllTJij7snWJgPtbuehYYSgCrmDmwGxwVhnN4C2AwZirFcyFXY/7H20alN7DpsvnH01eo0PZCCQpIh6WtvrdU5DUMpc+xx4UqQ1nokfbb3UGnCGZApyTDOHS/4Twbxf9TMQ44A9vVFek+SCBip8vXNPDxC136rdOkiW/PCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=k3DtKxsi; arc=none smtp.client-ip=17.58.23.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1726670916;
-	bh=k3QBKO1gMnIwD3eJwfnqLxeWPGTlb1G+6bWXT1SuXf4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=k3DtKxsi2vtsTOKGQUcY3yEBBvLZuULUYXWTd1JuuP6azNL5ZMb+fqLoM3RoDImco
-	 Bpqb8XnCJIfqTN06xQrRFmMpvlfn/v7TEXyr9w5gon9Yz3Woe6hwJiI77LfXTxm/c/
-	 HobGFTdCd97p+NN86gTIPPbnBBH0INSFG4BrzZTWRionRXQVJGyxlak3LopBfLxqSB
-	 +p+ZPR3IQSR++G1TfkX5TLsJTWvPGN/Tm2MRx2FYzknQv1jJVuRk/YJLH7mAdjL5XB
-	 tgGBxwRH8dg8InIy2o4y6fhRxTVb2mqH2EREukF+gxyWfuZZVbW+fSxjJb7FA0SmP4
-	 fAtCrtFO72SOA==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-zteg06022001.me.com (Postfix) with ESMTPSA id 8E1CD800322;
-	Wed, 18 Sep 2024 14:48:34 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Wed, 18 Sep 2024 22:48:14 +0800
-Subject: [PATCH 2/2] lib: devres: Simplify API devm_ioport_unmap()
- implementation
+	s=arc-20240116; t=1726671147; c=relaxed/simple;
+	bh=mfN2DniJzGyQnvzX5jdac8Ty83Jtdx/9QJzOTBacA1M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZQCIuYqGwtFm9p/Z6tGlzKZGaklNfH2fG97iOejtGZIrsw3LNHLW2noB+tYl5F3CXNZ7wDwvmSVxDI2NQPaNYLoaKTitF2DH/EVu0EfqaGrB+/RHGeaAxBbFV+VS3uWCO8mbHwJlBzEWMj5WJLDVKQuOHLVvlK5wG5yu05BJTRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUciZoU6; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4585e250f9dso46039861cf.1;
+        Wed, 18 Sep 2024 07:52:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726671144; x=1727275944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1G3UqcqiJStniDz8ouIeMn2j4w8oVsWRLj7dQqF5BGg=;
+        b=QUciZoU6CaS7KhKJS7Bc4olNTKpQe6zLC8xeAfCli/7/RdmCjwQemBqVwrhQ6sqDyo
+         UK95/VQnPpO0lWp91wFVZ2UgnvwlbfX4MXNG0+/0Hi/tz73Qum8UOUYVxmIqcEBR/MpI
+         Irv0uyIPgRTeHzNRCe9kMnu1D7EaHrD3q2uyh0RRW3qH101k2nogYNoMBIITe08/9tVj
+         fwj+kA+DMlTId3lxOhM0OCaMcaclVBfnCIbhHzX5qVA4bWYhi9FIRHAwsq8GWQ8vZ5Tc
+         836VbgZvbfndBgTD8vUzcCC+FNzzo2XMOBNGPxRGRaQefqS5GKDX6YqRwWhKe0XoPYXC
+         oJgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726671144; x=1727275944;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1G3UqcqiJStniDz8ouIeMn2j4w8oVsWRLj7dQqF5BGg=;
+        b=ezWZh/HNC1ZyawuKeL0fbIhxZsB0TzZul6xVUtdqKDFPY3PRs7Ms01WJ1Kw03umx3G
+         24sjG/LnA++bsv82J097Z6VkGvybqXS1rtbnDbatXOv/MVUYSnDl1lP9fp/kKz3yMDhF
+         WpXBDdRQhKqEOb/cvgBsOyL7Vov984lZ5KsU3NYpBGLf1HLPDywx5zohvZSD9ygeGYaW
+         pfPZ0889BNZUlcwFu3WZhUbAzHGDLPGHKNjBLHhRdNOpXEnsY1uV1w582HJ+Dn9Q+0fC
+         wS5zFg/HMbaLd05fuwYc0jAPEhOs/O05PbpsN1/59DVxla9ArqrBRtN8B0XjfBgretJ8
+         M6+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKnrnjwSIUQP7LSNmG81ngefQaxeriAULIoG6D161gsrPm8BtRepSZP/DTvnPzYKcwJ/waxbD3MTmAWH8=@vger.kernel.org, AJvYcCWRBpczXabq3bEZgtF4Ms7euCigpOLAcqncL7oKNichyG5zfpV3zO4YV0By8z6iX+/a2V6fuhpTiFIr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsZMjr3tI89na8V0owLouCc6tbcUDRYxMbmL2nN8ohJjwn4bTp
+	E+7gA07CqKfJGRnE4zOCevs5Cg1qn1HKBs4lMkAUpPrAVJYiXQ4+
+X-Google-Smtp-Source: AGHT+IFIL/32etJe0v6sSG7H0lQqshBBcTL4IRYyceTivDTN7x9yX3xJpZbfQWfbl7kK2dY0Zv5mxQ==
+X-Received: by 2002:a05:622a:1b90:b0:458:3cc4:74fb with SMTP id d75a77b69052e-458603da6c4mr347857571cf.37.1726671144148;
+        Wed, 18 Sep 2024 07:52:24 -0700 (PDT)
+Received: from localhost.localdomain (206-47-13-49.static.dsl.ncf.ca. [206.47.13.49])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-459aad2363bsm49717001cf.86.2024.09.18.07.52.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 07:52:23 -0700 (PDT)
+From: Olexa Bilaniuk <obilaniu@gmail.com>
+To: keita.aihara@sony.com
+Cc: Masaya.Takahashi@sony.com,
+	Shingo.Takeuchi@sony.com,
+	Tim.Bird@sony.com,
+	jonathan@raspberrypi.com,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	ulf.hansson@linaro.org
+Subject: [PATCH] mmc: core: apply SD quirks earlier during probe
+Date: Wed, 18 Sep 2024 10:51:33 -0400
+Message-ID: <20240918145133.18480-1-obilaniu@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240802032121.GA4019194@sony.com>
+References: <20240802032121.GA4019194@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240918-fix_lib_devres-v1-2-e696ab5486e6@quicinc.com>
-References: <20240918-fix_lib_devres-v1-0-e696ab5486e6@quicinc.com>
-In-Reply-To: <20240918-fix_lib_devres-v1-0-e696ab5486e6@quicinc.com>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: qMzcp3crPxakdMNBIoRQFbbaAEiyHP0a
-X-Proofpoint-GUID: qMzcp3crPxakdMNBIoRQFbbaAEiyHP0a
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-18_10,2024-09-18_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 bulkscore=0
- mlxscore=0 spamscore=0 mlxlogscore=933 malwarescore=0 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409180096
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+> diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
+> index cca71867bc4a..92905fc46436 100644
+> --- a/drivers/mmc/core/quirks.h
+> +++ b/drivers/mmc/core/quirks.h
+> @@ -15,6 +15,19 @@
+> 
+>  #include "card.h"
+> 
+> +static const struct mmc_fixup __maybe_unused mmc_sd_fixups[] = {
+> +	/*
+> +	 * Kingston Canvas Go! Plus microSD cards never finish SD cache flush.
+> +	 * This has so far only been observed on cards from 11/2019, while new
+> +	 * cards from 2023/05 do not exhibit this behavior.
+> +	 */
+> +	_FIXUP_EXT("SD64G", CID_MANFID_KINGSTON_SD, 0x5449, 2019, 11,
+> +		   0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
+> +		   MMC_QUIRK_BROKEN_SD_CACHE, EXT_CSD_REV_ANY),
+> +
+> +	END_FIXUP
+> +};
+> +
 
-Simplify devm_ioport_unmap() implementation by dedicated API
-devres_release(), compared with current solution, namely
-ioport_unmap() + devres_destroy(), devres_release() has below advantages:
+By happenstance I have just such a Kingston Canvas Go! Plus card, but
+in standard SD form-factor and not microSD, and dating from *08/2021*.
+I had heretofore-inexplicable filesystem corruption problems with this
+card that may well be attributable to a failure to flush the cache.
+Despite diligence in issuing an explicit "sync" before ejecting, the
+filesystem would reliably appear corrupt after reconnecting it, and
+would require a "fsck", but no bad blocks could be identified.
 
-- it is simpler if devm_ioport_unmap()'s parameter @addr was ever
-  returned by devm_ioport_map().
+The vitals of my card are:
 
-- it can avoid unnecessary ioport_unmap(@addr) if @addr was not
-  ever returned by devm_ioport_map().
+  type:   SD
+  name:   SD64G
+  date:   08/2021
+  manfid: 0x00009f (Kingston)
+  oemid:  0x5449
+  fwrev:  0x1
+  hwrev:  0x6
+  csd:    400e00325b590001cf9f7f800a400001
+  ocr:    0x00300000
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- lib/devres.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I think the quirk here can be safely broadened to all variants of
+this card and to the date range 11/2019 - 08/2021 inclusive.
 
-diff --git a/lib/devres.c b/lib/devres.c
-index 68ffcd5d9358..73901160197e 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -307,8 +307,7 @@ EXPORT_SYMBOL(devm_ioport_map);
-  */
- void devm_ioport_unmap(struct device *dev, void __iomem *addr)
- {
--	ioport_unmap(addr);
--	WARN_ON(devres_destroy(dev, devm_ioport_map_release,
-+	WARN_ON(devres_release(dev, devm_ioport_map_release,
- 			       devm_ioport_map_match, (__force void *)addr));
- }
- EXPORT_SYMBOL(devm_ioport_unmap);
 
--- 
-2.34.1
-
+Sincerely,
+Olexa Bilaniuk
 
