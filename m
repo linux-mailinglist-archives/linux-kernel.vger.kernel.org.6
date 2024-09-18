@@ -1,134 +1,142 @@
-Return-Path: <linux-kernel+bounces-332963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE4397C18E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:46:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93F597C190
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E9D21C22416
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:46:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 669B9B22094
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC621CB327;
-	Wed, 18 Sep 2024 21:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8457F1CB306;
+	Wed, 18 Sep 2024 21:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2uMRqhng"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbD8MhW+"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6C06FB6;
-	Wed, 18 Sep 2024 21:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492CC15853D
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726695971; cv=none; b=FEKjj+gdp/az5fa+sPZxtWt9KRXLaYGQtDi7BgyMFjXKW+jpisWJIFPePjmq8hiP2HwwLsMBgM3Wxlo2M+6WMJO6pZ9D4iSjX1F64BPfe6u2tJi66XIHSHAmC85qjPXsxCxanSYSJko/sO+bEvi/Qbx1Zzb6TCxoVpS6iZZ7jok=
+	t=1726696094; cv=none; b=L5X/OegMLtvgmC/+0UUFUWNNKVwKFJYrmiFyblnTp10GQ3CnlAWRpiWR8hJcuLMCnSl3DCYEYRiu6GV0jy2i+8RCwUwpUgDB0YdOWltHn/75uJ3jhZEyM7pq1GYqrzzsrc0+BwZMWHkBw0F2P3RSnOxEsoJbnF9kuDBlcPDheto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726695971; c=relaxed/simple;
-	bh=2JAVXLbmvY5chR2s5ENXGYmaUDXwiVf9c2ghoNaPybo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3GtxzaRVBX8dspWD3Og2UTT2LIu2OkpwncXDAJNOH/28fNMdwVbG7lG1XyftTYs9j52Yr475uWPLYj1250DnzvVH/F/Wi13bwCx5l3+mgiiXFe+9J2gexf6QDBRFv4UjKamCWMd+IzQGCrc67Xd6vYI6kT3YiW2aZ1w9b5IGyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2uMRqhng; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=LiTlMU5tNsXM0VVteoP1U3alR033HX1QCn0vzJFq568=; b=2uMRqhng2P9k5kwobap9kfvqLz
-	wWF2oIkz+NWodWiTpWv4fNMB+ZD+vjhwEb1JCMp7/hmmOYZ3LXg5EVZTPD5OoUOpbwEZMI9d81syM
-	HmfIdm6VuG0wkKUPoxcbJovX7ALTqObwkFm+Bhp1nB220NTGYTDGGqirD7Gozilvdp0A=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sr2Uk-007kQk-60; Wed, 18 Sep 2024 23:45:54 +0200
-Date: Wed, 18 Sep 2024 23:45:54 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Brad Griffis <bgriffis@nvidia.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>, kernel@quicinc.com
-Subject: Re: [RFC PATCH net v1] net: phy: aquantia: Set phy speed to 2.5gbps
- for AQR115c
-Message-ID: <473d2830-c7e0-4adf-8279-33b91e112f80@lunn.ch>
-References: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
- <20240913100120.75f9d35c@fedora.home>
- <eb601920-c2ea-4ef6-939b-44aa18deed82@quicinc.com>
- <c6cc025a-ff13-46b8-97ac-3ad9df87c9ff@lunn.ch>
- <ZulMct3UGzlfxV1T@shell.armlinux.org.uk>
- <1c58c34e-8845-41f2-8951-68ba5b9ced38@quicinc.com>
- <1ed3968a-ed7a-4ddf-99bd-3f1a6aa2528f@quicinc.com>
+	s=arc-20240116; t=1726696094; c=relaxed/simple;
+	bh=K4ULRQGSX6v6Gt+d3hf0+R5LrIquVuMk6KwQTpR4jD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aP/bTr8X2j5/dGzk4b7ipvYCgeNciXDjM/rQBN+pkvccUFaBNsHIdKH+boTl5SLKPLdoPN6qiLRYheoJ+usEBLzrxC7ZHBuQjvIF3ld2uNrrQ23/1MjymgDHKcitnFdVrSDsivQC5tZFN34Ndeii3QsnFv9TjRrdwztULSBCo7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbD8MhW+; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f74e468aa8so1583971fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 14:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726696091; x=1727300891; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:mime-version:date:message-id:sender:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=eAYgv3oA/3JyPIun1hHuY9SsCmCAKJ8G9ItQHU0o4Y0=;
+        b=JbD8MhW+dTRMaHr8r0n46jRAQvO3k4gW7ehr6PzWpL7F/7+EJCOS1CptDov2KN5KtX
+         uZoV6YWzDamm/7QYTJAFebbMGHuIXPxmZt6Y5hx/FJAGFAwl5rFIFk/S1x56lL7BTpBu
+         aa3K2izybwtYShDIKf/SB1i9jNSyYKnfBXEQiVXl17QJEjoE+P/D7kTWmi56wSXjKVDp
+         c5ZbqkPMaWhAOXqfnqTGSBmQ8Ts7uD+QOOLhjq75+MMvS4Q6FOF6zYSiJIwAtDu12sp3
+         f/eEuSwB3deWMEvB4AYU5D9Yq46aJpTPPr4fSmkqIEqMNNycS0LH4TPOF+5BYbE0++tu
+         7gSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726696091; x=1727300891;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:mime-version:date:message-id:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eAYgv3oA/3JyPIun1hHuY9SsCmCAKJ8G9ItQHU0o4Y0=;
+        b=KDym/hIawagaYgu1rq3zglIZXUUAHeLnrR6cIwCvz9Ue/WoH6Mht2WPPiHxcXw5PE2
+         rEiKYpcJY7FgvI0pZShiMWuzuRUtHBlM/8vOgEUFUhAK6CD2Ax3DIvXaXHJkg8tDNVvi
+         hOzVu1HhqOIcf1TsU89+FwoBfjjvMckYopgu1hHfxszK1ywF1598/mQ7/4lXFGIxJmWS
+         9valtyX3cyi70DgNvh5FDjN+aDxT8XVluAikK18USmwySALv/73AUW5xwv91QbrnbvEY
+         CYFOBR8LFHZOnEp8NRqY4JJqMBa8wLFOqhM51zujXPFsfW3GTOliftTwd85qHlIC0Ccg
+         rtNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbGJYFJW7UqEI8dACdd3UCdezf04qBIsBQN8aSntG9Ib2YVRri5HQC5yeTIgp+lScSfFwIUsEGToNKgh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzif4vJuXa9O9hH3wm32tK/EPRh/U2nblqDLzgZ6SCTzCTe5Gxh
+	1AskaM9jWwudOTxv88YrtPzQLFbo3JT1ZOHCQa0lJAxSd1941nVB
+X-Google-Smtp-Source: AGHT+IEcuLK5e8qPSjy2l4MZm4O4MJCxgaQ1oucKpx3mQ1dxWFPqhJIyy7c0Z88HNW1x4o/Cwv9a2w==
+X-Received: by 2002:a05:651c:2c9:b0:2f3:a06a:4c5 with SMTP id 38308e7fff4ca-2f787f2fc40mr95364171fa.29.1726696090845;
+        Wed, 18 Sep 2024 14:48:10 -0700 (PDT)
+Received: from 127.0.0.1 ([94.41.86.134])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d37f66dsm14564851fa.81.2024.09.18.14.48.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 14:48:10 -0700 (PDT)
+Sender: <irecca.kun@gmail.com>
+Message-ID: <17b2ed36-3075-4888-8057-0a471e5df209@gmail.com>
+Date: Wed, 18 Sep 2024 21:48:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ed3968a-ed7a-4ddf-99bd-3f1a6aa2528f@quicinc.com>
+Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
+Content-Language: en-US
+To: John <therealgraysky@proton.me>
+Cc: Borislav Petkov <bp@alien8.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>
+References: <W22JX8eWQctCiWIDKGjx4IUU4ZgYmKa1zPOZSKHHVZ74zpUEmVV1VoPMMNcyc-zhraUayW0d4d7OIUYZHuiEqllnAc1tB8DthZahsHZuw0Y=@proton.me>
+ <20240915124944.GAZubX6LAcjQjN-yEb@fat_crate.local>
+ <90d5a756-e534-490b-b451-7c855183ebc3@gmail.com>
+ <JDkDAyklisK_zhy8Ecsw8Z6t4ALDO1Jzzza2DZjWefD5erI-tTPGD6GhevyIp1Ee1xoWg1ouqkMCOqcylaqwZg2YBO7h9USi0qzCIRotUBo=@proton.me>
+ <96f609c7-f185-49c8-a9d5-a26bfd093b09@gmail.com>
+ <KcA5fQwm2CimaycjqPqz-HP7y7Dyx3MbSNUc2F6eYqN5T48hLrFAUwiajYvOaat8Apn-dZvzQ2RAp2Ln-9BE2s1uYn7LwFdTX7NLqbBkC5k=@proton.me>
+From: Hanabishi <i.r.e.c.c.a.k.u.n+kernel.org@gmail.com>
+In-Reply-To: <KcA5fQwm2CimaycjqPqz-HP7y7Dyx3MbSNUc2F6eYqN5T48hLrFAUwiajYvOaat8Apn-dZvzQ2RAp2Ln-9BE2s1uYn7LwFdTX7NLqbBkC5k=@proton.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Russell and Andrew 
-> 
-> we added prints and understood what the phy is reporting as part of the 
-> genphy_c45_pma_read_abilities 
-> 
-> [   12.041576] MDIO_STAT2: 0xb301
-> 
-> 
-> [   12.050722] MDIO_PMA_EXTABLE: 0x40fc
-> 
-> >From the PMA extensible register we see that the phy is reporting that it supports
-> 
-> #define MDIO_PMA_EXTABLE_10GBT		0x0004	/* 10GBASE-T ability */
-> #define MDIO_PMA_EXTABLE_10GBKX4	0x0008	/* 10GBASE-KX4 ability */
-> #define MDIO_PMA_EXTABLE_10GBKR		0x0010	/* 10GBASE-KR ability */
-> #define MDIO_PMA_EXTABLE_1000BT		0x0020	/* 1000BASE-T ability */
-> #define MDIO_PMA_EXTABLE_1000BKX	0x0040	/* 1000BASE-KX ability */
-> #define MDIO_PMA_EXTABLE_100BTX		0x0080	/* 100BASE-TX ability */
-> #define MDIO_PMA_EXTABLE_NBT		0x4000  /* 2.5/5GBASE-T ability */
-> 
-> [   12.060265] MDIO_PMA_NG_EXTABLE: 0x3
-> 
-> /* 2.5G/5G Extended abilities register. */
-> #define MDIO_PMA_NG_EXTABLE_2_5GBT	0x0001	/* 2.5GBASET ability */
-> #define MDIO_PMA_NG_EXTABLE_5GBT	0x0002	/* 5GBASET ability */
-> 
-> I feel that the phy here is incorrectly reporting all these abilities as 
-> AQR115c supports speeds only upto 2.5Gbps 
-> https://www.marvell.com/content/dam/marvell/en/public-collateral/transceivers/marvell-phys-transceivers-aqrate-gen4-product-brief.pdf
-> 
-> AQR115C / AQR115 Single port, 2.5Gbps / 1Gbps / 100Mbps / 10Mbps 7 x 7 mm / 7 x 11 mm
+On 9/18/24 21:14, John wrote:
+> I am not sure.  Are some of the other things -march=-x86-64-v3 driving them?
 
-One things to check. Are you sure you have the correct firmware? Many
-of the registers which the standards say should be Read Only can be
-influenced by the firmware. So the wrong firmware, or provisioning
-taken from another device could result in the wrong capabilities being
-set.
+Looking up a full table, v3 adds more than just AVX.
 
-You might want to report this issue to Marvell, but my guess would be,
-they don't care. I would guess the vendor driver ignores these
-registers and simply uses the product ID to determine what the device
-actually supports.
+x86-64-v2:
+CMPXCHG16B
+LAHF-SAHF
+POPCNT
+SSE3
+SSE4_1
+SSE4_2
+SSSE3
 
-> I am thinking of solving this problem by having 
-> custom .get_features in the AQR115c driver to only set supported speeds 
-> upto 2.5gbps 
+x86-64-v3:
+AVX
+AVX2
+BMI1
+BMI2
+F16C
+FMA
+LZCNT
+MOVBE
+OSXSAVE
 
-Yes, that is the correct solution.
+x86-64-v4:
+AVX512F
+AVX512BW
+AVX512CD
+AVX512DQ
+AVX512VL
 
-It would also be good if you could, in a separate patch, change the
-aqcs109_config_init() to not call phy_set_max_speed() and add a custom
-.get_features.
+Maybe some other enabled instructions could issue some benefit.
 
-	Andrew
+v4 seems to be useless for us though.
+
+> As to the code you referenced re: disabling the SIMD extensions.  Do you know why that is in place?
+
+Not really. There is a link above pointing to a bug report discussing GCC quirks. I am not an expert in that.
+
+One day, out of curiosity, I tried to override it and build the kernel with '-mavx' (free performance, yay!).
+Well, it didn't even start and crashed immediately.
+
+I don't know if something has changed since then, but I guess there are reasons.
+
 
