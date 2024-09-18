@@ -1,255 +1,359 @@
-Return-Path: <linux-kernel+bounces-332861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E0597BFDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:52:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0E997BFEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D014D2832EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:52:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1812832F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D711C9EC3;
-	Wed, 18 Sep 2024 17:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2EB1C9ECC;
+	Wed, 18 Sep 2024 17:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTqoTda/"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LE3IpYln"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77DE2AC29;
-	Wed, 18 Sep 2024 17:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C141C9EB4;
+	Wed, 18 Sep 2024 17:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726681924; cv=none; b=ta4zoRxysblQr00b6/Kbnv7C49Qt5pq9ter3mJBDlH/M9nGEImhapKPWxrBwCfvA/CVApOdYjUGHQ4S6Dqrmu52Hp7PWQykOOb5o6ASeOljNS2g3G+FEMQBMIrrV6cy4qAnZJo53atebhiJ8BjiSfXSgPwpDV6WJ5Qdj+KLYE0U=
+	t=1726682060; cv=none; b=a/cnMwwh9pNB2Nb1egM5iFNEbrcMTp1zCWkqgZIuBS149kr2tRqzL/fH6Dq86aAvYil0oQiNbtgoABqVTPVA+2XyZVW1kiXTU9T2Ra8Oj7QY6sBSLaDLnzMn94NBg9BnH4/u7hX0gk3mTOSzWd7mYMSn1+ZFfKiSZt5QOgFZWc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726681924; c=relaxed/simple;
-	bh=mj8nFcIIxCHzzhwMu1RFYlqvCh9jeMP5Z6wkSYRtqfg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ElIjW6CAfRD4p6b1L+4k/+xaDvcimKKUClOPZzWHKKcaqMhBaNmjodaMKW3z0CQgh44IfpiNv5cxkP6GHAZ5Mx96hZYDKgoa5j2exIPMetX9uW33HbtjDA0NXa3XVauYqFs9ZpYwYzntoqOjXyt7F0yWq3GaBItF5V4DTtXNFRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTqoTda/; arc=none smtp.client-ip=209.85.215.169
+	s=arc-20240116; t=1726682060; c=relaxed/simple;
+	bh=8g1ZyWNrJVy3mg588ybFXKX4m9TA5WDT4YyZap2W66Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cFc/YI+Wr1yZHjK1/1JgDlvozjWTkZ2EZdZpB5xuqVinncYh4iEOxCv2gb3mkLvmI5ah7vvd+ZR4+TSi++2AC+iIOZ6v/8MWkxCr/mg87x69tZ8bO1kerrimh6MCfmY2x5q5b6RsrsAMDXmfAjwMfTHcaIE+hohr8DBT3CeVrTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LE3IpYln; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7db3e962c2aso304687a12.0;
-        Wed, 18 Sep 2024 10:52:02 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb0f28bfbso61525305e9.1;
+        Wed, 18 Sep 2024 10:54:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726681922; x=1727286722; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ENDlvV+k2ihN7FXIWJUs/9L1QeoJY5NtPnVMTnrhmms=;
-        b=UTqoTda/B+qKcaMd8De9/fd301VOiidHm2rVLvx+TzCX0R1ZsQN4bjvuVFN46aGoLb
-         L/Bhgt5T38YCbAG51mdu6Tz6Vklr3uJEk8YwG1WfFZYNfhxBqW/HmLnJ5O34X70gIJkr
-         tGXRF+oaqsI1gbjFtNjHieONZk7g1/8f92vLDwGgNeMQ1zbuLc5XfpM1NA1LhIFeiIpO
-         /TAU3WqnOu/k5e6Kph1315paHXyvIAw9GdYJiJq+SgEKO/eZ6EeqqDF+/tmfRGNmc0zQ
-         4bRGPmfFc5N6abbjJJuSoWFTusp5Ym1uMWW4/P5BAJFfFwTvzxBQ3hcQKUtTDai1r/iF
-         9RDA==
+        d=gmail.com; s=20230601; t=1726682057; x=1727286857; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4YdeDfryno/+LkCXv1GZ4YNBzPvX86nNSKieqAhx+P8=;
+        b=LE3IpYlnX64yp5R+uaCDgx817yIRAgCZuH7AMCyiHZeP3C1ju3FwHK7RAKUF7Tna5v
+         g2I39BMc2XnvOUJuPH7+EdSKOgaQ2gC7zGQXu/Bm32u7tfTNyNeCI8KHYELeEZMxEqr2
+         bep7JvhdCn1nJDEelC49VpxA1mCNOxyWYzZxZSa4HwCQPtq/LAAefeaJFNqJXHgeDOQt
+         m0W2JVN+ZByP7En3715PXU0mHomDqOJ/nxuPKlK+nFgW3hccjMu4Mh3H3WwVDOivkUyc
+         TM7aH5Sl4GUrIXQiFrmNqoKVKSxQa98ysxvTLP+h5psCmtka2DsBVLW5WlpTtcmL2MDW
+         s8Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726681922; x=1727286722;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ENDlvV+k2ihN7FXIWJUs/9L1QeoJY5NtPnVMTnrhmms=;
-        b=GVpUmUGisaavRQ1TdGta0vuuo5KRrIbnMbuHhrRSn2mbQeeDP9vMS8L3dcf1OoKbUd
-         LCmANg3q+SftHeMAISez7ii9WgdJ5cfiq3JqaRMt+YmwaBW4m8PhxVwKh1Cog0YONHxf
-         ymehOAxtx+DmRqP/Kq8wYe99zL3bmwhyDiDbk2LcfFnH2u1r+FPnYgpdLFoNJPJiGAhq
-         VVB6VHGFcJ3EZU2aulIW9hiTGTvLUJEEsBuZZGNWNqgEant/M/azkEGAT86lz/T4hzJB
-         18Z2y44T83lkUEEK2KLfxVt/N89+Pa/x53QMtt080PsTgcV400tnCGYhhAYZWy5kSZ4c
-         BxOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWouf6t1UBtlWANveQM/MCnUf1qQ7wgdIyQCTd9+i6u9/UOHTkAz+cVbALF3Nkk/LUPppyNbo3Mocwp@vger.kernel.org, AJvYcCXkeYj5YeEadWm+qDmKEUhzO5jJoHWz5ILaUFyxP2O4ifiEqE8AvsXxgcmeMteP5W94ZLCfWc7cCo0Cf4bj@vger.kernel.org, AJvYcCXqNZ2BPAhRyWiNwN6H9QOPrlk6/yCO5fKSPcnjbiOo2XSLDTTdqQ6l3ASOLOk6V+6EjEYquolCi7JTn7XmiQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMjHrDGcBz8vzHE/o9NuT7d3rYgsYkJMV+NHHV8CgilUhu1MbF
-	NVxHIJLxAZZdBBX4GBxr8l0FNtpkIDQ2rlhTa8Fw8H4khSvAIN6si74HnwFxOASFTltBksIc5uu
-	BVzkPipPBNqRa+W/HS13S/gQSUUE=
-X-Google-Smtp-Source: AGHT+IGl24GCLZbvMHh7TRhbzUZeL22U2do6IjT0xh3HcCz7pBaY6uhEYjhMYxPhuWZ2i/EP9WFfZrfcnG8qFj36Fe0=
-X-Received: by 2002:a17:90b:78e:b0:2db:60b:366a with SMTP id
- 98e67ed59e1d1-2dba007f424mr10737301a91.9.1726681921950; Wed, 18 Sep 2024
- 10:52:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726682057; x=1727286857;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4YdeDfryno/+LkCXv1GZ4YNBzPvX86nNSKieqAhx+P8=;
+        b=Uz3/ojhOjT1dOpLjz0rYsxGG87Eod2DpfaEs1JIKhOJdqTiimwKBDPXGA9NyHJe/ex
+         zgZ84fisANyIt69vLvyH6umQ6rfhs85ozVeGj3WOGUexmGI172EyHgOYUDvNE1HKgtl5
+         66N+1yKkIWxBwsBJwoOhpno2hhOgMaojjUfNd0jjDjreyP2LZK59k+9DHXELcp3Gobhs
+         3vQNnkUIcxqUtdnYSyDzQSl0xgCOxyRr7E2yD2tFw7ERANfgBfSxZPaglX3h3ADBKsBJ
+         z4Oix9+pnowOPmo/8mrf9coujVwuVk4Q+UwfArh8dkt3erixJ0/z4jHn5CjE0XgHnE9K
+         +E0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU77MLCCNxnJECahI8qZIfKk7Hg2pTYLNhFGvr/vkrZbRGSQU2btqrbSmDUsY8QNeum4Dd1K5ln0fMBBA==@vger.kernel.org, AJvYcCWt5DsXpskP+bwjfsdShzsK6V9MRpwxJcDWDKBdP602w8KqKvgVoN1iJUwTzNsxeaua/X/Dg0/1bLaE@vger.kernel.org, AJvYcCWun4dKVcQa2uzTtMoD4r5Ykp0FDY+liU49pJOFovgRKLLMxl4ElXptP9t0lo90ct/TLLMrQUXr0SY5piL8jWpeNLI=@vger.kernel.org, AJvYcCXEOXrAkz7e0m4aKd8UMZLRSpmIw9YHNpi2Fxjx6nnY3aJDA3O2LiucrZH7Sm2Jd8oj4PyRVGPEwV8JUi+h@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4glQfg3fEMSLNMhjPG6yzqoLBBn59/ZoD0/yayDJSa14ht+G5
+	GpWVjxbv1stwIynipRKPHxUfR6ZI00g5dAU3Jwr+0hYKNoA3nUZR
+X-Google-Smtp-Source: AGHT+IHzflAi+Tk6JXO6OnkT4gjSHrOOAjOa6jFD00Heydj2S+pRfz+9cYpMV5t0dwEaJfWoEJVIwQ==
+X-Received: by 2002:a05:6000:c86:b0:374:b3a3:3f83 with SMTP id ffacd0b85a97d-378c2d617cemr11727764f8f.53.1726682056212;
+        Wed, 18 Sep 2024 10:54:16 -0700 (PDT)
+Received: from [192.168.1.106] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e70537c71sm22762645e9.31.2024.09.18.10.54.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 10:54:15 -0700 (PDT)
+Message-ID: <ddda4f98-2402-04ab-108d-a1ee4beb33bd@gmail.com>
+Date: Wed, 18 Sep 2024 20:54:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918-a663-gpu-support-v1-0-25fea3f3d64d@quicinc.com> <20240918-a663-gpu-support-v1-1-25fea3f3d64d@quicinc.com>
-In-Reply-To: <20240918-a663-gpu-support-v1-1-25fea3f3d64d@quicinc.com>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Wed, 18 Sep 2024 18:51:50 +0100
-Message-ID: <CACu1E7FGMX8KTbhS1HAEumD9Dx7K334bnJecg14-mSQBaZ4V5g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] drm/msm/a6xx: Add support for A663
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 08/10] arm64: dts: exynos: Add initial support for
+ exynos8895 SoC
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com>
+ <20240909110017.419960-9-ivo.ivanov.ivanov1@gmail.com>
+ <ylxrbde4kafbos3qmx54w2d6hpv26ngxgkkpnbdynjj2wfce32@fyzr4jxzn6z4>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <ylxrbde4kafbos3qmx54w2d6hpv26ngxgkkpnbdynjj2wfce32@fyzr4jxzn6z4>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 17, 2024 at 9:39=E2=80=AFPM Akhil P Oommen <quic_akhilpo@quicin=
-c.com> wrote:
->
-> From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
->
-> Add support for Adreno 663 found on sa8775p based platforms.
->
-> Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 19 ++++++++++++++++++
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  8 +++++++-
->  drivers/gpu/drm/msm/adreno/a6xx_hfi.c     | 33 +++++++++++++++++++++++++=
-++++++
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  5 +++++
->  4 files changed, 64 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/=
-msm/adreno/a6xx_catalog.c
-> index 0312b6ee0356..8d8d0d7630f0 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> @@ -972,6 +972,25 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                         .prim_fifo_threshold =3D 0x00300200,
->                 },
->                 .address_space_size =3D SZ_16G,
-> +       }, {
-> +               .chip_ids =3D ADRENO_CHIP_IDS(0x06060300),
-> +               .family =3D ADRENO_6XX_GEN4,
-> +               .fw =3D {
-> +                       [ADRENO_FW_SQE] =3D "a660_sqe.fw",
-> +                       [ADRENO_FW_GMU] =3D "a663_gmu.bin",
-> +               },
-> +               .gmem =3D SZ_1M + SZ_512K,
-> +               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
-> +               .quirks =3D ADRENO_QUIRK_HAS_CACHED_COHERENT |
-> +                       ADRENO_QUIRK_HAS_HW_APRIV,
-> +               .init =3D a6xx_gpu_init,
-> +               .a6xx =3D &(const struct a6xx_info) {
-> +                       .hwcg =3D a690_hwcg,
-> +                       .protect =3D &a660_protect,
-> +                       .gmu_cgc_mode =3D 0x00020200,
-> +                       .prim_fifo_threshold =3D 0x00300200,
-> +               },
-> +               .address_space_size =3D SZ_16G,
->         }, {
->                 .chip_ids =3D ADRENO_CHIP_IDS(0x06030500),
->                 .family =3D ADRENO_6XX_GEN4,
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/=
-adreno/a6xx_gpu.c
-> index 06cab2c6fd66..e317780caeae 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -541,6 +541,12 @@ static void a6xx_calc_ubwc_config(struct adreno_gpu =
-*gpu)
->                 gpu->ubwc_config.macrotile_mode =3D 1;
->         }
->
-> +       if (adreno_is_a663(gpu)) {
-> +               gpu->ubwc_config.highest_bank_bit =3D 13;
-> +               gpu->ubwc_config.ubwc_swizzle =3D 0x4;
 
-It's already been mentioned in the Mesa MR, but since this is the
-first GPU with level2_swizzling_dis set, the relevant vulkan CTS tests
-need to be tested with
-https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/26578
-rebased on your Mesa enablement patch.
+On 9/16/24 17:23, Krzysztof Kozlowski wrote:
+> On Mon, Sep 09, 2024 at 02:00:15PM +0300, Ivaylo Ivanov wrote:
+>
+>> +&pinctrl_peric0 {
+>> +	gpd0: gpd0-gpio-bank {
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +	};
+>> +
+>> +	gpd1: gpd1-gpio-bank {
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +	};
+>> +
+>> +	gpd2: gpd2-gpio-bank {
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +	};
+>> +
+>> +	gpd3: gpd3-gpio-bank {
+> These should be ordered by node name. Same in peric1.
+Alright.
+>
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +	};
+>> +
+>> +	gpb1: gpb1-gpio-bank {
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +	};
+>> +
+>> +	gpe7: gpe7-gpio-bank {
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +	};
+>> +
+>> +	gpf1: gpf1-gpio-bank {
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +	};
+>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
+>> new file mode 100644
+>> index 000000000..59af33420
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
+>> @@ -0,0 +1,249 @@
+>> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+>> +/*
+>> + * Samsung's Exynos 8895 SoC device tree source
+>> + *
+>> + * Copyright (c) 2024, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> + */
+>> +
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +/ {
+>> +	compatible = "samsung,exynos8895";
+>> +	#address-cells = <2>;
+>> +	#size-cells = <1>;
+>> +
+>> +	interrupt-parent = <&gic>;
+>> +
+>> +	aliases {
+>> +		pinctrl0 = &pinctrl_alive;
+>> +		pinctrl1 = &pinctrl_abox;
+>> +		pinctrl2 = &pinctrl_vts;
+>> +		pinctrl3 = &pinctrl_fsys0;
+>> +		pinctrl4 = &pinctrl_fsys1;
+>> +		pinctrl5 = &pinctrl_busc;
+>> +		pinctrl6 = &pinctrl_peric0;
+>> +		pinctrl7 = &pinctrl_peric1;
+>> +	};
+>> +
+>> +	arm-a53-pmu {
+>> +		compatible = "arm,cortex-a53-pmu";
+>> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
+>> +			     <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
+>> +			     <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+>> +			     <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
+>> +		interrupt-affinity = <&cpu0>,
+>> +				     <&cpu1>,
+>> +				     <&cpu2>,
+>> +				     <&cpu3>;
+>> +	};
+>> +
+>> +	/* There's no PMU model for the Mongoose cores */
+>> +
+>> +	cpus {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		cpu-map {
+>> +			cluster0 {
+>> +				core0 {
+>> +					cpu = <&cpu0>;
+>> +				};
+>> +				core1 {
+>> +					cpu = <&cpu1>;
+>> +				};
+>> +				core2 {
+>> +					cpu = <&cpu2>;
+>> +				};
+>> +				core3 {
+>> +					cpu = <&cpu3>;
+>> +				};
+>> +			};
+>> +
+>> +			cluster1 {
+>> +				core0 {
+>> +					cpu = <&cpu4>;
+>> +				};
+>> +				core1 {
+>> +					cpu = <&cpu5>;
+>> +				};
+>> +				core2 {
+>> +					cpu = <&cpu6>;
+>> +				};
+>> +				core3 {
+>> +					cpu = <&cpu7>;
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		cpu0: cpu@100 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53";
+>> +			reg = <0x100>;
+>> +			enable-method = "psci";
+>> +		};
+>> +
+>> +		cpu1: cpu@101 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53";
+>> +			reg = <0x101>;
+>> +			enable-method = "psci";
+>> +		};
+>> +
+>> +		cpu2: cpu@102 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53";
+>> +			reg = <0x102>;
+>> +			enable-method = "psci";
+>> +		};
+>> +
+>> +		cpu3: cpu@103 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53";
+>> +			reg = <0x103>;
+>> +			enable-method = "psci";
+>> +		};
+>> +
+>> +		cpu4: cpu@0 {
+> Why cpu@0 is cpu4 not cpu0? Anyway, these should be ordered by unit
+> address.
 
-> +               gpu->ubwc_config.macrotile_mode =3D 1;
-> +       }
-> +
->         if (adreno_is_7c3(gpu)) {
->                 gpu->ubwc_config.highest_bank_bit =3D 14;
->                 gpu->ubwc_config.amsbc =3D 1;
-> @@ -1062,7 +1068,7 @@ static int hw_init(struct msm_gpu *gpu)
->         if (adreno_is_a690(adreno_gpu))
->                 gpu_write(gpu, REG_A6XX_UCHE_CMDQ_CONFIG, 0x90);
->         /* Set dualQ + disable afull for A660 GPU */
-> -       else if (adreno_is_a660(adreno_gpu))
-> +       else if (adreno_is_a660(adreno_gpu) || adreno_is_a663(adreno_gpu)=
-)
->                 gpu_write(gpu, REG_A6XX_UCHE_CMDQ_CONFIG, 0x66906);
->         else if (adreno_is_a7xx(adreno_gpu))
->                 gpu_write(gpu, REG_A6XX_UCHE_CMDQ_CONFIG,
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/=
-adreno/a6xx_hfi.c
-> index cdb3f6e74d3e..f1196d66055c 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> @@ -478,6 +478,37 @@ static void a660_build_bw_table(struct a6xx_hfi_msg_=
-bw_table *msg)
->         msg->cnoc_cmds_data[1][0] =3D  0x60000001;
->  }
+cpu@100 is the boot core of the first cluster consisting of cortex-a53
+
+cores, hence why it's labelled as cpu0. The second cluster contains
+
+the Mongoose cores, labelled and ordered after the first cluster.
+
+
+It's ordered like so on a lot of SoCs for sanity's sake, hence why I
+
+believe it should stay like that.
+
+
+If you still think that they must be ordered by unit address, please
+
+explicitly let me know so that I include that change in the v5.
+
+
+Regards, Ivo.
+
 >
-> +static void a663_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +{
-> +       /*
-> +        * Send a single "off" entry just to get things running
-> +        * TODO: bus scaling
-> +        */
-> +       msg->bw_level_num =3D 1;
-> +
-> +       msg->ddr_cmds_num =3D 3;
-> +       msg->ddr_wait_bitmask =3D 0x07;
-> +
-> +       msg->ddr_cmds_addrs[0] =3D 0x50004;
-> +       msg->ddr_cmds_addrs[1] =3D 0x50000;
-> +       msg->ddr_cmds_addrs[2] =3D 0x500b4;
-> +
-> +       msg->ddr_cmds_data[0][0] =3D  0x40000000;
-> +       msg->ddr_cmds_data[0][1] =3D  0x40000000;
-> +       msg->ddr_cmds_data[0][2] =3D  0x40000000;
-> +
-> +       /*
-> +        * These are the CX (CNOC) votes - these are used by the GMU but =
-the
-> +        * votes are known and fixed for the target
-> +        */
-> +       msg->cnoc_cmds_num =3D 1;
-> +       msg->cnoc_wait_bitmask =3D 0x01;
-> +
-> +       msg->cnoc_cmds_addrs[0] =3D 0x50058;
-> +       msg->cnoc_cmds_data[0][0] =3D  0x40000000;
-> +       msg->cnoc_cmds_data[1][0] =3D  0x60000001;
-> +}
-> +
->  static void adreno_7c3_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->         /*
-> @@ -646,6 +677,8 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gm=
-u)
->                 adreno_7c3_build_bw_table(&msg);
->         else if (adreno_is_a660(adreno_gpu))
->                 a660_build_bw_table(&msg);
-> +       else if (adreno_is_a663(adreno_gpu))
-> +               a663_build_bw_table(&msg);
->         else if (adreno_is_a690(adreno_gpu))
->                 a690_build_bw_table(&msg);
->         else if (adreno_is_a730(adreno_gpu))
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/ms=
-m/adreno/adreno_gpu.h
-> index 58d7e7915c57..10f8f25d8826 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> @@ -455,6 +455,11 @@ static inline int adreno_is_a680(const struct adreno=
-_gpu *gpu)
->         return adreno_is_revn(gpu, 680);
->  }
+>> +
+>> +	oscclk: osc-clock {
+>> +		compatible = "fixed-clock";
+>> +		#clock-cells = <0>;
+>> +		clock-output-names = "oscclk";
+>> +	};
+>> +
+>> +	psci {
+>> +		compatible = "arm,psci";
+>> +		method = "smc";
+>> +		cpu_suspend = <0xc4000001>;
+>> +		cpu_off = <0x84000002>;
+>> +		cpu_on = <0xc4000003>;
+>> +	};
+>> +
+>> +	timer {
+> Keep order by names, timer goes after soc.
 >
-> +static inline int adreno_is_a663(const struct adreno_gpu *gpu)
-> +{
-> +       return gpu->info->chip_ids[0] =3D=3D 0x06060300;
-> +}
-> +
->  static inline int adreno_is_a690(const struct adreno_gpu *gpu)
->  {
->         return gpu->info->chip_ids[0] =3D=3D 0x06090000;
+>> +		compatible = "arm,armv8-timer";
+>> +		/* Hypervisor Virtual Timer interrupt is not wired to GIC */
+>> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+>> +		/*
+>> +		 * Non-updatable, broken stock Samsung bootloader does not
+>> +		 * configure CNTFRQ_EL0
+>> +		 */
+>> +		clock-frequency = <26000000>;
+>> +	};
+>> +
+>> +	soc: soc@0 {
+>> +		compatible = "simple-bus";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x0 0x0 0x20000000>;
+> ranges is the second property (see DTS coding style).
 >
-> --
-> 2.45.2
+>> +
+>> +		chipid@10000000 {
+>> +			compatible = "samsung,exynos8895-chipid",
+>> +				     "samsung,exynos850-chipid";
+>> +			reg = <0x10000000 0x24>;
+>> +		};
+>> +
+>> +		gic: interrupt-controller@10201000 {
+>> +			compatible = "arm,gic-400";
+>> +			#interrupt-cells = <3>;
+>> +			#address-cells = <0>;
+>> +			interrupt-controller;
+>> +			reg = <0x10201000 0x1000>,
+> reg is second, please follow DTS coding style for new submissions.
+>
+>> +			      <0x10202000 0x1000>,
+>> +			      <0x10204000 0x2000>,
+>> +			      <0x10206000 0x2000>;
+>> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) |
+>> +						 IRQ_TYPE_LEVEL_HIGH)>;
+>> +		};
+> Best regards,
+> Krzysztof
 >
 
