@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-332600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4529A97BBAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:35:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3805297BBB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86638B2258A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:35:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C164B23933
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB20B186E3E;
-	Wed, 18 Sep 2024 11:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262361891C0;
+	Wed, 18 Sep 2024 11:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKd0aTU8"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="aB4sLtY8"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADFC28EF;
-	Wed, 18 Sep 2024 11:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAC1282E5;
+	Wed, 18 Sep 2024 11:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726659335; cv=none; b=ByzT1F2+ThihnavPZI0qXvbPWZ+3QTge3HBgbEECgbKAvCdHDyQhvZPNyXVcV4aJNx/SLCv+UR9ncP7y9oC1LjxLC4Y0jnpjH+EhEBhAo3O/2iv4GFvvEAnOyMb8NZZWrPnQkHiqzt4qt6VWZXgbExl2w6X6Zpi/BMK2EprTqx8=
+	t=1726659356; cv=none; b=o+hJWUIx7dqvr036pSe5U0KqRdDrEOboRhJeQxDvemtccWnCN3A5z3dX0PKBfyhB+nrzGFd6gveJURdKLloIrndpGw9p6p+upG4xMtg25krVXsLBJRcxdEqulP9SEN8viWgJdQsJB6EJpDMneD2KzUCcmzhoRPANMpaqANx/Q5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726659335; c=relaxed/simple;
-	bh=ovxya7lXdEGnE0A+EuzKwD5pxlYykPJgGWx2fudUCUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Hs/2dFLEJ0GPAzhO3OufT5+I3CyMt1cgXbFdkL4LZLvFqyKuDZcY7n9YpUuLI2N6XlBEEhoONZQXVRL3xIbCZ7iDarUdSCv4QOccl2TTmDIV9sVjq41eCSmEf8P7g3rCRxhZ/HXxqR3JoyV++ykjaof8YU7SvVvEmzKBiKKAvjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKd0aTU8; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374c5bab490so428106f8f.1;
-        Wed, 18 Sep 2024 04:35:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726659332; x=1727264132; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Krs8Km71K3DpWJhmegxLANswkZJOZp+boIvmDijJFk8=;
-        b=nKd0aTU8kXYHbN/TuRrxfaaId5nOcC9NGQV7KJUYqT4s28st5rmfuz9QNmFFhm8HAs
-         mX0T0Eu0yRNUTCPvD9Hrz0RekC2cb3p+tTEi/MdPMctddB4Y2YC8OBWnHnznW58gdIIq
-         leJ3SMDM5NxNNNLqHjcoX7BaUDSTe/e+lrV/woDWSpzIAJcgRVbNaO1hsJfEEFqaZ244
-         6elrk+y0B+01rZmh8gY0NknCt6p1FxfUwMI6e3GpdPvUv0TgOIm/1BOpwggztQJkD7rv
-         T/oSyEaW+JiF98+yxWYK3IJzlnqu7Tgs1IblsFb2fI2KrlNeSzyPs1T/hmXNn+J15agq
-         N2tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726659332; x=1727264132;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Krs8Km71K3DpWJhmegxLANswkZJOZp+boIvmDijJFk8=;
-        b=w1nGRM9xBWrXSvNmiQOOlyIJQnwl/GdbvFpIKBl1Drf6z0lryP2wxt4SHBgwHmovEV
-         6tLJC7OWL5mjFBuLn14o/KXCINbAKB7e3XOStWRU9gYFb1/PUX2Q/511iWCbNnn1rnx8
-         9L5ozUXGqPg6xID+R1MYGARYyjsywvwvFJfmTpY9sxoXWb/wu890H73Mbis9v6HgkBzt
-         nNKcmc5ZFoQ3BNTqIgVOc+VLikERlqrbuclnVld0J/vwbbTa87xnbOE/9lMURVyHjldX
-         MSq/2qbxhcWBW3XgX+3yF0f1lYSD99fQk0XLeCJZgz0zN2Vvc1Et7yvxxcskhYaeyEYa
-         MuOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVT4fz+90WMjWRij6/IjfVX59GuCmqVhyhwEjDX8CyJSmKVLw7FhNhhKEy6xcY3Xj+UmY0jxP7chDfdThbtV3mF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhlVmsqJA3iwB6LjAwMSqsVNxTsFmqQfLw/hnKczi1iy3X2sun
-	QmjfJyr5HZS89w3QWHDudVrCMO2dOks4QtpV7W5nUfPL3WZG6PlS
-X-Google-Smtp-Source: AGHT+IGdkfsM44HHj8mo1ejS+zbYGHgt+eRp8px3a+f3p69efwS4LCzFULnyNYMMDsJ7wyfgvZdiLw==
-X-Received: by 2002:a5d:5d81:0:b0:374:bb1a:eebb with SMTP id ffacd0b85a97d-378c5e5d6a3mr10472989f8f.25.1726659331614;
-        Wed, 18 Sep 2024 04:35:31 -0700 (PDT)
-Received: from gmail.com (1F2EF419.nat.pool.telekom.hu. [31.46.244.25])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e80afsm12028647f8f.38.2024.09.18.04.35.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 04:35:31 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Wed, 18 Sep 2024 13:35:29 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [GIT PULL] Performance events fixes left over from v6.11
-Message-ID: <Zuq7AXjknK8ooci6@gmail.com>
+	s=arc-20240116; t=1726659356; c=relaxed/simple;
+	bh=PPDrz82lIfrteE+dEjEqvbG0bP+PLJJgb9hsrt8OMl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Aws+d+2TUygEap33mcJJsQW0VIbD91LdtKQPKmbVj78o/ufIdrr0OpEChTVj7K02i2iZ0/IISXbbeEa+wia3CEGwW8zxb4/LKuR7dNFacpT334sBnmhHO4V8DWC1b4xVNHxQSRQ94c0YN4He1nlicyfBewDQVrjw0BPJgbVxtJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=aB4sLtY8; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=c+4wISZpTBZ5pFb7R+0lordsy6M0zdVfp3Wwwcoc6g4=; b=aB4sLtY8ju6ohBMuN3AV9zX8TM
+	3F4E1iB+yGNMjguydi/Akd6s9lRhMiXsWALCyq9WH0wvHNyGlsk1xcUnQjthvySuaGtoTs9xGIYpD
+	/cV/Z7zU9jknjL/ASjyez8+PY+sEs+Ij0NuxZtra+Fo/W/737JPZCbyjle2o13cJ3Xs7oWDtwElCw
+	oizzrpcGkBeSvDDaDPaEQeTYXafcDEQOFHzncVUh91ww7dFUTN+SJAO0j2Hx5BclczEj6DhHcRSPy
+	TtwueghTfLIt8oMFKUKVKAmch8k25EGf7pOVeocYOFHbwn4WCKzIAHY+aTv5Jk2oRn5nXp5PVmFtz
+	qvSD6nlA==;
+Date: Wed, 18 Sep 2024 13:35:46 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: tony@atomide.com, Sebastian Reichel <sre@kernel.org>,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org, Lee Jones
+ <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, Conor Dooley
+ <conor+dt@kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: twl: add charger node also for
+ TWL603x
+Message-ID: <20240918133546.33cb6d68@akair>
+In-Reply-To: <c38c9ada-e054-4a14-9265-25065048ae54@kernel.org>
+References: <20240918084132.928295-1-andreas@kemnade.info>
+	<20240918084132.928295-3-andreas@kemnade.info>
+	<c38c9ada-e054-4a14-9265-25065048ae54@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Linus,
+Am Wed, 18 Sep 2024 12:47:22 +0200
+schrieb Krzysztof Kozlowski <krzk@kernel.org>:
 
-Please pull the latest perf/urgent Git tree from:
+> On 18/09/2024 10:41, Andreas Kemnade wrote:
+> > Also the TWL603X devices have a charger, so allow to specify it
+> > here.
+> > 
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> >  .../devicetree/bindings/mfd/ti,twl.yaml        | 18
+> > ++++++++++++++++++ 1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> > b/Documentation/devicetree/bindings/mfd/ti,twl.yaml index
+> > e94b0fd7af0f8..4064a228cb0fc 100644 ---
+> > a/Documentation/devicetree/bindings/mfd/ti,twl.yaml +++
+> > b/Documentation/devicetree/bindings/mfd/ti,twl.yaml @@ -105,6
+> > +105,11 @@ allOf: regulator-initial-mode: false
+> >  
+> >        properties:
+> > +        bci:  
+> 
+> charger
+> 
+> > +          type: object  
+> 
+> additionalProperties: true
+> 
+> Each node must end with additionalProperties or unevaluated. I think
+> you never tested it, because dtschema reports this.
+> 
+I did run it, no complaints:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-2024-09-18
+andi@aktux:~/kernel$ touch Documentation/devicetree/bindings/mfd/ti,twl.yaml 
+andi@aktux:~/kernel$ touch Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.yaml 
+andi@aktux:~/kernel$ make ARCH=arm dt_binding_check DT_SCHEMA_FILES=twl
+  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+/home/andi/kernel/Documentation/devicetree/bindings/net/snps,dwmac.yaml: mac-mode: missing type definition
+  CHKDT   Documentation/devicetree/bindings
+  LINT    Documentation/devicetree/bindings
+  DTC [C] Documentation/devicetree/bindings/power/supply/twl4030-charger.example.dtb
+  DTEX    Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.example.dts
+  DTC [C] Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.example.dtb
+  DTC [C] Documentation/devicetree/bindings/iio/adc/ti,twl6030-gpadc.example.dtb
+  DTC [C] Documentation/devicetree/bindings/iio/adc/ti,twl4030-madc.example.dtb
+  DTEX    Documentation/devicetree/bindings/mfd/ti,twl.example.dts
+  DTC [C] Documentation/devicetree/bindings/mfd/ti,twl.example.dtb
+andi@aktux:~/kernel$
 
-   # HEAD: ef493f4b122d6b14a6de111d1acac1eab1d673b0 perf/x86/intel: Allow to setup LBR for counting event for BPF
-
-Perf events fixes left over from the v6.11 cycle:
-
- - Fix energy-pkg event enumeration on certain AMD CPUs
- - Set up the LBR branch stack for BPF counting events too
-
- Thanks,
-
-	Ingo
-
------------------->
-Dhananjay Ugwekar (1):
-      perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
-
-Kan Liang (1):
-      perf/x86/intel: Allow to setup LBR for counting event for BPF
-
-
- arch/x86/events/intel/core.c |  8 ++++++--
- arch/x86/events/rapl.c       | 47 +++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 48 insertions(+), 7 deletions(-)
+Regards,
+Andreas
 
