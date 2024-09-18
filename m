@@ -1,124 +1,151 @@
-Return-Path: <linux-kernel+bounces-332652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBF597BC9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:55:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDCE97BCA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1021284EEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:55:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CEDB1C20BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290B9189F43;
-	Wed, 18 Sep 2024 12:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E2A189F47;
+	Wed, 18 Sep 2024 12:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="ANFSxVDq"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dI0iUyOS"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566CF4409
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475104409;
+	Wed, 18 Sep 2024 12:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726664100; cv=none; b=XvQR2GA/JXTrfRKEozja3bdI3U71dNU9IZ3tk6mIBbHLk40pNeBkTexJV2mTLxcK9JbMz6Gq5loJHmMxUbFzq39nAKMuoFg1HU5UH9/rYnxf9o70Cl33QGvOVkUkyVDBThxRWhtvJuxopEfAiuPT4/NtCLR2Lf2432IQWYlI02Q=
+	t=1726664335; cv=none; b=SWsRbWuOgi1t5cXq0n7K1Frgwjqk7haaQcW9RCSfXFKLYcZpvlWSOZ578nHxZU5AJjkDC3bo0cSelhBYe5dn4Gg8ProaSSUEkaa1gyS8x5cq1AVPFWC5SO3N3u0QchDOm8OPB+VwBCnIMmZFANwRQgIzquuR7POiVDUKZTGyGwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726664100; c=relaxed/simple;
-	bh=CJsMjJ9SSNkNbyIg61aQirT+ILrP1pvI/J/vQSMGH4I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XJNoisjfBM6HjAmh+EabtlTviYotm9v4cnbMtbBrLGetvLcUYHUasGYvVkmyu0STNq+ed/qS6T9jfQO3S+GYUzQK0ccQj2BX9UIkJjjDnAIkZqPY416qKDAZydzqC7xmopwCw22b+DDi7tjeCqpPHJHOPYDxzcVnzAsVbqfOEE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=ANFSxVDq; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 7688E100002;
-	Wed, 18 Sep 2024 15:54:36 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1726664076; bh=pdEQXQtdtzWCKVddTR7BJOhY5ihU3J1r9dacg0zbWiI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=ANFSxVDqIiXvw2EIMY0rui3fiAF7J3+MsijuYyhIGDrny/YVtYY6GFHtlxr1vVATp
-	 2ZZr/pFX+otLL0wTwRIVeObxESJb0gH1dlyd7QyOWA6Vx2JL9YZOjBV67WA9X3L6/5
-	 QheRUf/xD4k8oZvSaDg020mPYHN+kFBHzm5s2uJl7Gp+uNS/93dwyrV6YVi991qaeB
-	 8WOCrntc45qs6TgaV3vXwD/ljSezEWgwAt0+WAUaUGuKse1SVPOFHhZEAZDS53FI7a
-	 UvSZb9cs2I7DtqSva8bof7DSOCsgSS2f84znSt1plY6dBVhhMCdKlId4FRFFuVUJ1y
-	 d8B5NAtpPDlCA==
-Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Wed, 18 Sep 2024 15:54:08 +0300 (MSK)
-Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 18 Sep
- 2024 15:53:48 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: H Hartley Sweeten <hsweeten@visionengravers.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Ian Abbott <abbotti@mev.co.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH v2] comedi: adl_pci9111: Fix possible division by zero in pci9111_ai_do_cmd_test()
-Date: Wed, 18 Sep 2024 15:53:38 +0300
-Message-ID: <20240918125338.16660-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240918104304.15772-1-amishin@t-argos.ru>
-References: 
+	s=arc-20240116; t=1726664335; c=relaxed/simple;
+	bh=WHN2Or2KmX97EgplTcnWv9pNo/oOs7of4tjRXWWWC8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NKyUEH6NeU4h2XG001Nn/4ty6R4iSWY/QO2J/8h4IyW68qA8AdN/PzHun32GKkQ9LCa7c1tKjs+UdIH54mLaL7tiBgrjaW1/LaZuhZq0b2MDtP/7j/O6pO5z7UBMV4nVnZBqRa83x2mxpSDbZqrTP4MSWN/699PXLHx4l9tfHPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dI0iUyOS; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726664333; x=1758200333;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WHN2Or2KmX97EgplTcnWv9pNo/oOs7of4tjRXWWWC8M=;
+  b=dI0iUyOSkIhdEDM/5LFCaEzSSKc2ybCWWxLMHWhUxtgEmvrkflcTHcPO
+   7VKpvaRl0YWwy2zqvuOM8XJbtiiLhsUn2oJNoTkjZ4vLPQ7tbnlBaQmRE
+   0SEF1gHgYWtOa7YPOKSGW5+o79MfVE4By3Sx6b5g0SWz58kz6vezTDlu+
+   oKSLvKArSVQfu9/H7f4LmA7iaJoiXbcpIYkB8dzdc68qGBjee2CMDjJOO
+   IhN4lJMp1mQLq5JlF3+CSdn94VCidn09S014pWpavjFfUm0FuL+XWyvyD
+   ZIvPWj4zzauCAE1cOhZRMcf2xgZwf8bBjsdh2OJ397nN2LG+zJoBtZFCD
+   A==;
+X-CSE-ConnectionGUID: 6wyIBGIQTUq+t6epY6O5fA==
+X-CSE-MsgGUID: d/oozOpsSRqyFWoxElkoRw==
+X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
+   d="scan'208";a="199377516"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2024 05:58:51 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 18 Sep 2024 05:58:21 -0700
+Received: from [10.171.248.44] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 18 Sep 2024 05:58:19 -0700
+Message-ID: <672befa1-cefb-480e-b474-ff40e4fe80ed@microchip.com>
+Date: Wed, 18 Sep 2024 14:58:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187822 [Sep 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/09/18 12:02:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/09/18 11:02:00 #26615694
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: at91: pmc: Use common error handling code in
+ pmc_register_ops()
+Content-Language: en-US, fr-FR
+To: Markus Elfring <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>
+References: <4a82fe70-b07c-4878-bd31-6ae07b61f522@web.de>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <4a82fe70-b07c-4878-bd31-6ae07b61f522@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Division by zero is possible in pci9111_ai_do_cmd_test() in case of scan
-begin trigger source is TRIG_TIMER and 'chanlist_len' is zero.
+On 17/09/2024 at 14:34, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 17 Sep 2024 14:28:22 +0200
+> 
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function implementation.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Add zero value check to prevent division by zero.
+Bad track record and no real benefit from the patch:
+NACK, sorry.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Regards,
+   Nicolas
 
-Fixes: f1c51faabc4d ("staging: comedi: adl_pci9111: tidy up (*do_cmdtest) Step 4")
-Suggested-by: Ian Abbott <abbotti@mev.co.uk>
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
-v1->v2: Update comment and fix as suggested by Ian,
- add "Reviewed-by: Ian Abbott <abbotti@mev.co.uk>"
- (https://lore.kernel.org/all/4f46343a-a1f9-4082-8ef2-50cdb3d74f31@mev.co.uk/)
-
- drivers/comedi/drivers/adl_pci9111.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/comedi/drivers/adl_pci9111.c b/drivers/comedi/drivers/adl_pci9111.c
-index 086d93f40cb9..e5989d180650 100644
---- a/drivers/comedi/drivers/adl_pci9111.c
-+++ b/drivers/comedi/drivers/adl_pci9111.c
-@@ -310,7 +310,7 @@ static int pci9111_ai_do_cmd_test(struct comedi_device *dev,
- 	 * There's only one timer on this card, so the scan_begin timer
- 	 * must be a multiple of chanlist_len*convert_arg
- 	 */
--	if (cmd->scan_begin_src == TRIG_TIMER) {
-+	if (cmd->scan_begin_src == TRIG_TIMER && cmd->chanlist_len) {
- 		arg = cmd->chanlist_len * cmd->convert_arg;
- 
- 		if (arg < cmd->scan_begin_arg)
--- 
-2.30.2
+> ---
+>   drivers/clk/at91/pmc.c | 18 ++++++++++--------
+>   1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 5aa9c1f1c886..040b70e1ffbc 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -162,20 +162,18 @@ static int __init pmc_register_ops(void)
+>          if (!np)
+>                  return -ENODEV;
+> 
+> -       if (!of_device_is_available(np)) {
+> -               of_node_put(np);
+> -               return -ENODEV;
+> -       }
+> +       if (!of_device_is_available(np))
+> +               goto put_node;
+> +
+>          of_node_put(np);
+> 
+>          np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-securam");
+>          if (!np)
+>                  return -ENODEV;
+> 
+> -       if (!of_device_is_available(np)) {
+> -               of_node_put(np);
+> -               return -ENODEV;
+> -       }
+> +       if (!of_device_is_available(np))
+> +               goto put_node;
+> +
+>          of_node_put(np);
+> 
+>          at91_pmc_backup_suspend = of_iomap(np, 0);
+> @@ -187,6 +185,10 @@ static int __init pmc_register_ops(void)
+>          register_syscore_ops(&pmc_syscore_ops);
+> 
+>          return 0;
+> +
+> +put_node:
+> +       of_node_put(np);
+> +       return -ENODEV;
+>   }
+>   /* This has to happen before arch_initcall because of the tcb_clksrc driver */
+>   postcore_initcall(pmc_register_ops);
+> --
+> 2.46.0
+> 
 
 
