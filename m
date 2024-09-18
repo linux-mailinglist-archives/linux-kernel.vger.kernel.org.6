@@ -1,296 +1,166 @@
-Return-Path: <linux-kernel+bounces-332489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F6F97BA63
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:54:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D94797BA65
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7F3C1C20972
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:54:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8889FB26E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE6417BB25;
-	Wed, 18 Sep 2024 09:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C086417B425;
+	Wed, 18 Sep 2024 09:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="l62ed5r/"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="gOeOXZ7A"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2044.outbound.protection.outlook.com [40.107.255.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC38A148828
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726653274; cv=none; b=MhnF8z+9siU3xV/mKMq1JTHKcdHDIAQDp6SjWeXt5gtRE4OcB2gvzfuSs6PUB4ud9PMEzL60qncrdGpzItmMYDgvYUAYWF2ujLPntMh/+2yW2bqC56nz57bc8hM9Yey6nLOiM3rJ4Je/cCTz9v/lRinhSYeQY4psEhoKLNn67HU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726653274; c=relaxed/simple;
-	bh=hczx1B30LddQG5sqoBf/k9U+8Dd8jt5o+N548Etg0bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQpOPACjTkIWysLzEs5LA1rB53dorBvAYQJXJrM4wSgNKSKIvKudoMoDRfSlCjzmNILZJ2FTczad/Ck/sAdP75oT0lLD5GemXI4TkWk+WqhzSQbKFsKgPD3DI9OL8FpCyPX98Q9TbGto+GSOa3BHbE3nR3m0I+Ez7ZnRhvYXEg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=l62ed5r/; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20792913262so49249555ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726653272; x=1727258072; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q/VCafIfAu4TzVmJWk9ey780TGQnXStCJMuHQdcUPmI=;
-        b=l62ed5r/f23GDyGeClGFYQuRq8E4gzEdCSl0zidvhsjbIQk8ObEJlrquxq3ehtp6jg
-         lOSDMKLT+z1VrpxZq8jEY4m/7gXiMTKpsJEYGywY5N3FUeFRB7sF8IHVGUN9CtVjY56a
-         QUzF+O5v1IK/YDQaJsWqzztsyVnbRbjmWlbLKRel8cKci/7Dg5ZBpp474Hjp50juBhep
-         s0AytMSDjsGDE0lun59gvhrxCf3K4p7kXIlJcj8u8K0SeRE+hEWatntravoeVVo5Su+8
-         cn2rgoIi5lyclOQSylz/s3c7MrEz2AgM6I3kcpau4RqdB2shbgBgKaooAi9QJtggq19q
-         /Rcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726653272; x=1727258072;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q/VCafIfAu4TzVmJWk9ey780TGQnXStCJMuHQdcUPmI=;
-        b=thWiY+PMT1lVk6WLzWB79sLWBf+Xsf6w/njoLPaa3qctI4NRpk/fCDlzkR+s0OM2Ev
-         3zv50xch1RpHCfaLiySFN5lg/eiHs/u0aAPR2gIyWOQuFmi9f/Hlo5LlL4H5ZtCEvF3t
-         PEboqt10kss1v96xI2gGTqGg9TfMDpV+tvnXx8wvIkRSsJIZzpBVaTpKu4eA6e9DDdZI
-         zaCdE4tVeBCVjWlyLQkj31wGxxRT8LrGgrzfqmoUkfOWTConAd+B5Iey+Q0McLxv4D7U
-         peox2N+V3ceCycjxiGShkkglwCrcUDqx8idKpSrD/3X0zDucPVzZLqaWrKPR01g9kyVz
-         Stbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhjrsxVL2lo64ydx4yshvybuLFoDrmgRumbPiteQ8yAITS5pojTyXC48Pm/X/osqS3t+mH9rQnYtIP9lE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVntSlBln7VARgiZqOw22+8Otbfx0fYYL3CqnBCts532h6IaYA
-	hCyxp3regv6RQDXNF5vG1zIITAjjgVsbX82Tw+aDJHsvpvD4/OfmxlE/Ji4DwZ8=
-X-Google-Smtp-Source: AGHT+IEI7yiEk5IiJcitmWeLLauSS6dqRLSeWVvDsuHj1ewoa+0LxE0UBx6ziJqrtHINodWPpK3v3w==
-X-Received: by 2002:a17:90a:aa0b:b0:2d8:8920:771c with SMTP id 98e67ed59e1d1-2dbb9f3a6ccmr21926575a91.32.1726653272024;
-        Wed, 18 Sep 2024 02:54:32 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd608dceabsm1141103a91.28.2024.09.18.02.54.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 02:54:31 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sqrOF-006kam-2U;
-	Wed, 18 Sep 2024 19:54:27 +1000
-Date: Wed, 18 Sep 2024 19:54:27 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F315D176AD4;
+	Wed, 18 Sep 2024 09:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726653291; cv=fail; b=VOEYYa/O1CmbxtPhrqLth1NnrBiTWuoeQaE4UAuPVBeVOh9RLs7Ve48cCWA1GRbdILEHfzvgSPRBvTepV53T7CG/kYShqMrlPQnkDUdwlBDhy4Juxe2M3cpdXkcNmf+LcFx988HMvmEn7THU2kYMI+xreAAo1S1L0JdBSD/cgwI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726653291; c=relaxed/simple;
+	bh=wtd7Mofk8UuO3a4JKhjAok96UgvoGiYLtUtGo0lGJuA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Aucm6DxLUmoyTpqw+i7TcltmV9pz8Lh/9Exk7laJBfwgadJLfjgtu0I9p9t1alTgU1QXx0XHxA42C1jZmyvNqP8VFrqDznEsRefQFV88rz1iI//b4/x0YppbapL96R23z96sWpLn+XlCBuU4Abdh31yYY1tzULj1N4CImz8o3Xc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=gOeOXZ7A; arc=fail smtp.client-ip=40.107.255.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bfvt0J1SRxdffkaRx3cS2dXaDbZTRVNWwPsfVf8ttk/W39s5pG3x70vvyn68PR1EfPvKhTe0hH0CLLWik83iGLLVF1H11vPw8i3iDbvwPvuDTEi+LGhTHMhAMG55B2S+IyiHEf2BEhMA3QIInqGqJcAbJXRKtWmOnIVwWr9asW3cTU90Y2ke2zTCOoveTHJqznff3qRQtuL/a0+3HfyI1Yre23TUTElsFXrio6i8Ya7h0pWGaN1wSwnTTLSQLzYdBaR8WR/wOpRlvOej6a4eoQ/nazrIONex0fczQUHmNBRFW7+sUD0wGHVsIz7iH9cqvqJb6pQeZ8vzXThGYV4KFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7m0wnkY79E+rq1Xji4rog/110+/dvCad1+WnaLGP72k=;
+ b=SXznKQ07FzhlqCYKYUb42oRPHkhga1VIFQvSLoCiiTEMEGtSfv8hRaYwegxGJ1VDq5jXOrlWzklylkzDCCsxVaAD4oqzrigw+LaQ0E5RyGqHN04jg4ywYaTSu1q1SnxUFNVfDtN+4ncnVe8C+wmlz76NgT6Y9OvGuG3e8hVcskw+JezNVqotQHUuhlde1kFMCi+EmvLxmjCWpDjIwoF/hYsJQif6KcQOjjlc1zMwJgBdrA5c/dIbiGEIv9Z5dLTLjuLtJlb7OZAE8B4FxXgr3AdVpznGpBQBSV5fquKaH1lqHnlnmrduyK78U5djIxNs9JLDRxLWQ494UCbciCiQhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7m0wnkY79E+rq1Xji4rog/110+/dvCad1+WnaLGP72k=;
+ b=gOeOXZ7ANfNZblR+R6re/g+oHzziYZfqN9pJ1gRY50kOUXxc3842EFjcI+oC6+6TqV/7qol7PFrUnSJ8SlK0r89EdfVO3fLJnCbtAVoP6IICnxttWsA/AXawSPPWVyt8YOHPkdW0royaKDW0FT8b9zKcVnDbKU8+EvGlQWWjkRVSx0ahRDC+9hmHhlA1KDUUTig8xjrd8ee/ipn9KAO9KC8NW8w1Sjh55zrwipYIAxyZMiPeKUEvFtJXAHlf3NBjOLqpSbLHO+za8oCHj/ThMXL/MABzBIX5o1BT0XVYhwk7SGSqWJqPYogzikXsFr7TbZwru9Z46FqhkrCNICKo9g==
+Received: from SG2PR01CA0130.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::34) by TYZPR04MB7280.apcprd04.prod.outlook.com
+ (2603:1096:400:44f::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Wed, 18 Sep
+ 2024 09:54:43 +0000
+Received: from SG1PEPF000082E4.apcprd02.prod.outlook.com
+ (2603:1096:4:40:cafe::42) by SG2PR01CA0130.outlook.office365.com
+ (2603:1096:4:40::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.25 via Frontend
+ Transport; Wed, 18 Sep 2024 09:54:42 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ SG1PEPF000082E4.mail.protection.outlook.com (10.167.240.7) with Microsoft
+ SMTP Server id 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024
+ 09:54:41 +0000
+From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+To: patrick@stwcx.xyz
+Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Noah Wang <noahwang.wang@outlook.com>,
+	Peter Yin <peteryin.openbmc@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
-	dchinner@redhat.com
-Subject: Re: [RFC 0/5] ext4: Implement support for extsize hints
-Message-ID: <ZuqjU0KcCptQKrFs@dread.disaster.area>
-References: <cover.1726034272.git.ojaswin@linux.ibm.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org
+Subject: [PATCH v2 0/3] yosemite4: Add power module and ADC on Medusa Board
+Date: Wed, 18 Sep 2024 17:54:33 +0800
+Message-Id: <20240918095438.1345886-1-Delphine_CC_Chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1726034272.git.ojaswin@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E4:EE_|TYZPR04MB7280:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 8cbc5783-0b12-4689-9890-08dcd7c7eb5d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|32650700017|82310400026|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tP035RvE8f4zUI3U83Iom2TjQ+Aqnr4e9b6ZdxwAeggUkTaFbIhobEUOh7WV?=
+ =?us-ascii?Q?hdIudR/EXh9enEImYaKYVDVMsMImqinto4LHdGQ1ZM/QU8i7WThv1o0WIOmj?=
+ =?us-ascii?Q?aUgwm3lp2wNCTi8aGG9rwupjFif3vcW+2I7FpicjSeRAsM4zp90zVRyjkB7a?=
+ =?us-ascii?Q?oJX3VSwV5WLfaCu7Pclpbx80RpkWhmm1kE842BVR8CAlIwtQEkPgssF9yb0h?=
+ =?us-ascii?Q?PwoWi8jiFaq9rq2WL4aERts62ioGJ5so8V2LzGxGMZJHS+F1CZTvH2RdQPG6?=
+ =?us-ascii?Q?cA6PyDhlSB+c85vcQvNDRpozPV/T9r0jxIdZx1hZ8IsR971EsC+64GbZib5P?=
+ =?us-ascii?Q?s+2FauoY4+bKd4J8TBLjqi2u7g7+AaVDkLr8H5QfkSxt6eAT+jwbVRxvsP1d?=
+ =?us-ascii?Q?ZPqju5DS7bRad1tIDPqu7lGOO17F0v/HpjROhqbK0OxIFsDrFvRngecabKjs?=
+ =?us-ascii?Q?Cixr+P4Djj0JBARx3nGl6tNaiS04BkVPoJo2qYCerT7b9tYVFZ90w31B9Lby?=
+ =?us-ascii?Q?5zUKehi/lKajKj0Ws+pLPN2L1dCDD0Jh97PhExsBNbmCMesoLLnE7ODE+Ktt?=
+ =?us-ascii?Q?jkVSclTkGzDU3kJPHUlXy+43BOhGIEDqr286T8LBhs95QSm2L/XXUQr/CmDE?=
+ =?us-ascii?Q?jykM5kENWlW1xmal8OOE4EnXCSjILGzb9Qly2AwQnlKyhO5BMlHR8yYfQC1X?=
+ =?us-ascii?Q?xHlU86gPYfNHE+qplZE1um/DG3hmC4PGQWPwPBvpkD84RGVhiLZ/N072i6bs?=
+ =?us-ascii?Q?aW+GECTYRRTc7qvwOWInrpHim+w7svX2agTqkn1uPjs4WXklbQnGf3WlU7+H?=
+ =?us-ascii?Q?ge9K4xF9Dk/oEtPb8Kgc/5RBWMzZduVSk4u3C76i5OAoJwSjMmPQMvLAnX24?=
+ =?us-ascii?Q?t6GfC4jmD2i2ZCDMf5JiKGWYQrmbwlN2Q07TqIid2uNpKxeHSvAF5tRuWJIb?=
+ =?us-ascii?Q?81PG6xWhGQDDDn9u6jsmvsan5BTipAkgmydL6WNmOchXEp5Eq+xcRn6eBM/0?=
+ =?us-ascii?Q?ouY4Cd0gDvNcVZw7aoVxV8e+wxlJ1bLtTZKywRvV0AlJCfYIkX874N5QMnW6?=
+ =?us-ascii?Q?WyiUmbHb5KRC0vsHAMN0lvFQT1OBqxqP85jhzKIGVpTMxgR5xl0Pqj7YmGCp?=
+ =?us-ascii?Q?5U+ys3C1mKwvz/OFheMaWLKbH/9VK6srx1Rt94B4iA/8QBzlOfho2AwvXw6B?=
+ =?us-ascii?Q?yv221tFFqtYyEObG/FdX/uslM0DsnELQ2WnXzVfiqxPgPtPyWxTcx7dkdPv9?=
+ =?us-ascii?Q?cgUeG1tmuOuf1v3Xr/KDcfEin6Gmo97sx4lGRrBq5Tn6jiy4/4QIzl+kLO5O?=
+ =?us-ascii?Q?JcSHE22auonXl7TK7w8LzycfEg4JnUXawNRTpbcEjzPQEs/4EH2b6rIGj7CP?=
+ =?us-ascii?Q?XVIqLsgTlmY9fiZzPDUk2yxpSE4ei63fVsNTXVEWljaePIOGsH2rzcQRWKdo?=
+ =?us-ascii?Q?68ew+Ts9Bg+3atjymvc/n56WyZSNcVr4?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(376014)(36860700013)(32650700017)(82310400026)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 09:54:41.7167
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cbc5783-0b12-4689-9890-08dcd7c7eb5d
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E4.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB7280
 
-On Wed, Sep 11, 2024 at 02:31:04PM +0530, Ojaswin Mujoo wrote:
-> This patchset implements extsize hint feature for ext4. Posting this RFC to get
-> some early review comments on the design and implementation bits. This feature
-> is similar to what we have in XFS too with some differences.
-> 
-> extsize on ext4 is a hint to mballoc (multi-block allocator) and extent
-> handling layer to do aligned allocations. We use allocation criteria 0
-> (CR_POWER2_ALIGNED) for doing aligned power-of-2 allocations. With extsize hint
-> we try to align the logical start (m_lblk) and length(m_len) of the allocation
-> to be extsize aligned. CR_POWER2_ALIGNED criteria in mballoc automatically make
-> sure that we get the aligned physical start (m_pblk) as well. So in this way
-> extsize can make sure that lblk, len and pblk all are aligned for the allocated
-> extent w.r.t extsize.
-> 
-> Note that extsize feature is just a hinting mechanism to ext4 multi-block
-> allocator. That means that if we are unable to get an aligned allocation for
-> some reason, than we drop this flag and continue with unaligned allocation to
-> serve the request. However when we will add atomic/untorn writes support, then
-> we will enforce the aligned allocation and can return -ENOSPC if aligned
-> allocation was not successful.
-> 
-> Comparison with XFS extsize feature -
-> =====================================
-> 1. extsize in XFS is a hint for aligning only the logical start and the lengh
->    of the allocation v/s extsize on ext4 make sure the physical start of the
->    extent gets aligned as well.
+Changelog:
+  - v2
+    - Add pmbus compatible string in trivial-devices.
+	- Add mp5023 compatible string in trivial-devices.
+  - v1
+    - Add power module and ADC on Medusa Board.
 
-What happens when you can't align the physical start of the extent?
-It fails the allocation with ENOSPC?
+Ricky CX Wu (3):
+  dt-bindings: trivial-devices: support pmbus compatible string
+  dt-bindings: trivial-devices: support MPS MP5023
+  ARM: dts: aspeed: yosemite4: Add power module and ADC on Medusa Board
 
-For XFS, the existing extent size behaviour is a hint, and so we
-ignore the hint if we cannot perform the allocation with the
-suggested alignment. i.e. We should not fail an allocation with an
-extent size hint until we are actually very near ENOSPC.
+ .../devicetree/bindings/trivial-devices.yaml  |  4 ++
+ .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 45 ++++++++++++++++++-
+ 2 files changed, 47 insertions(+), 2 deletions(-)
 
-With the new force-align feature, the physical alignment within an
-AG gets aligned to the extent size. In this case, if we can't find
-an aligned free extent to allocate, we fail the allocation (ENOSPC).
-Hence with forced alignment, we can have ENOSPC occur when there are
-large amounts of free space available in the filesystem.
-
-This is almost certainly what most people -don't want-, but it is a
-requirement for atomic writes. To make matters worse, this behaviour
-will almost certainly get worst as filesystem ages and free space
-slowly fragments over time.
-
-IOWs, by making the ext4 extsize have forced alignment semantics by
-default, it means users will see ENOSPC at lot more frequently and
-in situations where it is most definitely not expected.
-
-We also have to keep in mind that there are applications out there
-that set and use extent size hints, and so enabling extsize in ext4
-will result in those applications silently starting to use them. If
-ext4 supporting extsize hints drastically changes the behaviour of
-the filesystem then that is going to cause significant unexpected
-regressions for users as they upgrade kernels and filesystems.
-
-Hence I strongly suggest that ext4 implements extent size hints in
-the same way that XFS does. i.e. unless forced alignment has been
-enabled for the inode, extsize is just a hint that gets discarded if
-aligned allocation does not succeed.
-
-Behaviour such as extent size hinting *should* be the same across
-all filesystems that provide this functionality.  This makes using
-extent size hints much easier for users, admins and application
-developers. The last thing I want to hear is application devs tell
-me at conferences that "we don't use extent size hints anymore
-because ext4..."
-
-> 2. eof allocation on XFS trims the blocks allocated beyond eof with extsize
->    hint. That means on XFS for eof allocations (with extsize hint) only logical
->    start gets aligned.
-
-I'm not sure I understand what you are saying here. XFS does extsize
-alignment of both the start and end of post-eof extents the same as
-it does for extents within EOF. For example:
-
-# xfs_io -fdc "truncate 0" -c "extsize 16k" -c "pwrite 0 4k" -c "bmap -vvp" foo
-wrote 4096/4096 bytes at offset 0
-4 KiB, 1 ops; 0.0308 sec (129.815 KiB/sec and 32.4538 ops/sec)
-foo:
-EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-   0: [0..7]:          256504..256511    0 (256504..256511)     8 000000
-   1: [8..31]:         256512..256535    0 (256512..256535)    24 010000
- FLAG Values:
-    0100000 Shared extent
-    0010000 Unwritten preallocated extent
-
-There's a 4k written extent at 0, and a 12k unwritten extent
-beyond EOF at 4k. I.e. we have an extent of 16kB as the hint
-required that is correctly aligned beyond EOF.
-
-If I then write another 4k at 20k (beyond both EOF and the unwritten
-extent beyond EOF:
-
-# xfs_io -fdc "truncate 0" -c "extsize 16k" -c "pwrite 0 4k" -c "pwrite 20k 4k" -c "bmap -vvp" foo
-wrote 4096/4096 bytes at offset 0
-4 KiB, 1 ops; 0.0210 sec (190.195 KiB/sec and 47.5489 ops/sec)
-wrote 4096/4096 bytes at offset 20480
-4 KiB, 1 ops; 0.0001 sec (21.701 MiB/sec and 5555.5556 ops/sec)
-foo:
- EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-   0: [0..7]:          180000..180007    0 (180000..180007)     8 000000
-   1: [8..39]:         180008..180039    0 (180008..180039)    32 010000
-   2: [40..47]:        180040..180047    0 (180040..180047)     8 000000
-   3: [48..63]:        180048..180063    0 (180048..180063)    16 010000
- FLAG Values:
-    0100000 Shared extent
-    0010000 Unwritten preallocated extent
-
-You can see we did contiguous allocation of another 16kB at offset
-16kB, and then wrote to 20k for 4kB.. i.e. the new extent was
-correctly aligned at both sides as the extsize hint says it should
-be....
-
->    However extsize hint in ext4 for eof allocation is not
->    supported in this version of the series.
-
-If you can't do extsize aligned allocations for EOF extension, then
-how to applications use atomic writes to atomically extend the file?
-
-> 3. XFS allows extsize to be set on file with no extents but delayed data.
-
-It does?
-
-<looks>
-
-Yep, it doesn't check ip->i_delayed_blks is zero when changing
-extsize.
-
-I think that's simply a bug, not intended behaviour, because
-delalloc will not have reserved space for the extsize hint rounding
-needed when writeback occurs. Can you send a patch to add this
-check?
-
->    However, ext4 don't allow that for simplicity. The user is expected to set
->    it on a file before changing it's i_size.
-
-We don't actually care about i_size in XFS - the determining factor
-is whether there are extents allocated on disk. i.e. we can truncate
-up and then set the extent size hint because there are no extents
-allocated even though the size is non-zero. 
-
-There are almost certainly applications out there that change extent
-size after truncating to a non-zero size, so this needs to work on
-ext4 the same way it does on XFS. Otherwise people are going to
-complain that their applications suddenly stop working properly on
-ext4....
-
-> 4. XFS allows non-power-of-2 values for extsize but ext4 does not, since we
->    primarily would like to support atomic writes with extsize.
-
-Yes, ext4 can make that restriction if desired.
-
-Keep in mind that the XFS atomic write support is still evolving,
-and I think the way we are using extent size hints isn't fully
-solidified yet.
-
-Indeed, I think that we can allow non-power-of-2 extent sizes for
-atomic writes, because integer multiples of the atomic write unit
-will still ensure that physical extents are properly aligned for
-atomic writes to succeed.  e.g. 24kB extent size is compatible with
-8kB atomic write sizes.
-
-To make that work efficiently unwritten extent boundaries need to be
-maintained at atomic write alignments (8kB), not extent size
-alignment (24kB), but other than that I don't think anything else is
-needed....
-
-This is desirable because it will allow extent size hints to remain
-usable for their original purposes even with atomic writes on XFS.
-i.e. fragmentation minimisation for small random DIO write worklaods
-(exactly the sort of IO you'd consider using atomic writes for!),
-alignment of extents to [non-power-of-2] RAID stripe geometry, etc.
-
-> 5. In ext4 we chose to store the extsize value in SYSTEM_XATTR rather than an
->    inode field as it was simple and most flexible, since there might be more
->    features like atomic/untorn writes coming in future.
-
-Does that mean you can query and set it through the user xattr
-interfaces? If so, how do you enforce the values users set are
-correct?
-
-> 6. In buffered-io path XFS switches to non-delalloc allocations for extsize hint.
->    The same has been kept for EXT4 as well.
-
-That's an internal XFS implementation detail that you don't need to
-replicate. Historically speaking, we didn't use unwritten extents
-for delayed allocation and so we couldn't do within-EOF extsize
-unaligned writes without adding special additional zero-around code to
-ensure that we never exposed stale data to userspace from the extra
-allocation that the data write did not cover.
-
-We now use unwritten extents for delalloc conversion, so this istale
-data exposure issue no longer exists. We should really switch this
-code back to using delalloc because it is much faster and less
-fragmentation prone than direct extsize allocation....
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.25.1
+
 
