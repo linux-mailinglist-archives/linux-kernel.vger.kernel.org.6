@@ -1,376 +1,153 @@
-Return-Path: <linux-kernel+bounces-332679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9211197BCF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:20:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E1997BCFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8206B267F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C6E1C214F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB41018A6CA;
-	Wed, 18 Sep 2024 13:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C779E18A931;
+	Wed, 18 Sep 2024 13:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="upIniZBC"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="N3vGN9qD"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC44F18952A;
-	Wed, 18 Sep 2024 13:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726665609; cv=fail; b=OfNKXpTrZgi/4miFtRiKPTQzVYS26iouGVdZ73rQzG4cQC5FQpAJSDfayliV7sRbuge2KpD/0Y+9e/Bm/TmztizMaV8XdvpmxolUNAlbEg5MbWBB3Js9dCkV62pQbdOaeOycH/Hec6FbU2dJBiEIIHtMbxcS5rvMy2zLR4TvBGs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726665609; c=relaxed/simple;
-	bh=N8rZM/+D8c00SIvYUWSEIgqoGdrKbq8x0msIT+OAAKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PgKuUwdgYjKtpVENz0a08k0kTfvlt7FdjfbP/wk4ug+LRBbhzjdDU7dSJyR6F+398OFUDOepUCFLFh3kNRZ/0CNCjTebXJSgOs7eyygwf3AY4Sge8SyPicCd0wG7m+BeJLdJZxPQEdfOCU8Wf0TPYdrfdPYAk0zYu53h+Higk2c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=upIniZBC; arc=fail smtp.client-ip=40.107.223.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dWBPuLBIj4K7t/Pfp0meoqCZjAegnDW/jy+fAf0fSFxnVMOGdKWFvUv3AoEc8OV8Ewj6kMaElcB9+/s2A4PrOjbCioYtcgEB7YF1AXooS2Z4bdbUVvh4QHtiK69vTKw5k/5KJYCCUIVkcutEe6RgcNTYjwN8NO9HYaD434iKXFxYBULaF1WPE9BS00CHUq/l4oPfimWIkKJu8fzZoOUcaiZZJzgh4p5psbnMUrqiKHAzxei9oJty8ibn4wONdLFLAsDMYJGJFuf4xyLhDDLYZNZHZ3VVehHT1Q1HzzGrlegZ9i2iByIKZI1IWWqQrfk7Nr2hc0OG3/QzT4hIY2pXeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Rr+dHzYORG2Ce3SKuWLDE6MEiqAO54E/eHq8o2fnJNA=;
- b=PvHk2knBAfa2c/bkGX8yOiwQjdS3VywR2enSDdbkN4lPMZqVRgXw5RnCpxi4/1Ste+V6LHHJLnQEN0sTtCT1fdP2u8wqVKz3h7oevRGiCS10jzWAbRpPycKC5RS80+6G+jDmt0FVLvWVbfr7lTQOOMeT05m4BbCumLHirHxDju8xNns3ptUswG+FCUR7xO3usID2ES4sLNrcwc2d3aNhWKnTnB/jrYSQ7pq+6dNlK9zk6JWfYBQxuivMI6pDiKX7WQtX4vthdxFKblMMuECBYlCKCbdtKpS0X+Qi4788/Jf2pZlys1mV/CcjwXqO4iPfhiD7uZKx4j0Cr62TrKcRKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rr+dHzYORG2Ce3SKuWLDE6MEiqAO54E/eHq8o2fnJNA=;
- b=upIniZBCsFPbFL4x69J89Go1sKSflHQiMSu6jzbcDzmkKsqs6tOGXogtl2jxMtoiW97+xaXZD5gj+wMBg2jHRupwTvnw6Kw499+qjmtszJFVneyt0ZqN6gIYRkFAow6g4XQL0q/bEcXxJ+72VBPRepGHmGN/Myzw5bW7U0zplIk=
-Received: from DS7PR03CA0124.namprd03.prod.outlook.com (2603:10b6:5:3b4::9) by
- IA0PR12MB7529.namprd12.prod.outlook.com (2603:10b6:208:431::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Wed, 18 Sep
- 2024 13:20:03 +0000
-Received: from DS3PEPF000099D4.namprd04.prod.outlook.com
- (2603:10b6:5:3b4:cafe::ae) by DS7PR03CA0124.outlook.office365.com
- (2603:10b6:5:3b4::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
- Transport; Wed, 18 Sep 2024 13:20:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF000099D4.mail.protection.outlook.com (10.167.17.5) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024 13:20:03 +0000
-Received: from [172.31.178.209] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Sep
- 2024 08:19:54 -0500
-Message-ID: <124e9602-77c6-4e85-907c-907dfdc42087@amd.com>
-Date: Wed, 18 Sep 2024 18:49:52 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE74189F5B
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726665617; cv=none; b=Z9OfFWfPi2gSKmkzB4CxPI/qMZ+GREJHZR7HFnL7YNOEwywgIBfaogWhXcM9AUwpASUftFyShlnImkwL8EcBZqZ8xc/XEVigDiCwSDof/hiTqR6WK9Ta/hDOe4YfgheTkbzOcVCpwG7aVZIt92yQotc08/Std3z3LHbHoUQsSyg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726665617; c=relaxed/simple;
+	bh=qasVY9q9JlT/gYIplGSzGfKBcxwHYNBMpM0Po9f558s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sAV9ZUVDZOzkiNjYxRyiWuW3aER/eaGYZXwdn8OfnWCaIqkR4QpkvtMGr+PVf5lIOR/05hOsL2UvODaMxi2Y0fF49tmQyTYMsXBpIezLkQz2XHwq0OBb0NSmrZZ9yT4tmcr1IbHRCVN0h0FoLEONwW5iRkRWTxhj/+eGsxHuIUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=N3vGN9qD; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c3e1081804so3344566a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1726665615; x=1727270415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U14kx2C0BiP6Rt0qs7C1nD5REJe6+YgVN8tQlwgFjYA=;
+        b=N3vGN9qDDGL5h+4KJvUOl0JhrZ3OCXu35mqaMH5nXq5ddWBfclQtyq9AoK0jUxi0qf
+         BtEQ2+Jc6+4cWAgP62ZjQ7s/zjgjc3TwWBtA4EQey6jO64Vq1J24MqxoSYeeR0p7Gozt
+         7GbRANwwyDZcJ0g9GsniwwhgkqMtzvGvTvlqKaWOdmOSdP4X/XcKlvj5HXaA3nTVrk5i
+         Wqgi4X2g9ZEBndgwXWbryI8Ci0wyPHMG+gNI0A2htx38B06tFG89rFQp8EPqfL5KSALF
+         RGFW7xemvcJJomCmRsm77jibzI9NiYXXXFBlKLlah06ZYUBCpxkuM/p6FFEiEnuilNra
+         LA4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726665615; x=1727270415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U14kx2C0BiP6Rt0qs7C1nD5REJe6+YgVN8tQlwgFjYA=;
+        b=Fowc+VCZXEXq5C1Qlb42/gveUHIG7+KVTMopZevRZw1eti5233ESVzbj7mpAxzV/SD
+         hswonHogHps5VMU8PG5Xn3LoH4szLkMKKXaJ5SQRdhS+HIiZ8N17xVRdxfOQ/dmXLn6L
+         F3xm958tFv4NYZPGjD5+8hBYjHx168ld+dOSfyhKwu2lLj3KUj7JXrLEzQPF7odmWAcL
+         e3tXA7QwncbnqtIy3Mjozx4CzG+u9c4NJADMjp9xSYIkS73S1KtHS0mo/2uyCNcAhHzK
+         QW4fNr4JCd7W4DX3mCGPvr2pyk4NFP1VPpxMXLvNUAnOII990GTMoIThj9pIPh4kJN9Q
+         ltIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWakU+ajXBbdHw0S+FOUc5wbl53R78JgwReelqyDXcvt6McPbxAyIJA3TQh6lt4IqpYK/iFzLbI2Ci9vE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysEnynihIFrX7s8XbovhMpw3ry2x7/KopA4+wQC+8xIqHG6+so
+	JDWT9XBF7MiS7PLlfgvW16JmbaYQn+rAu73rBHFWCS8Aal2M1WzjJBg+i0Ouy/9aECIAUKcJbPV
+	diOI=
+X-Google-Smtp-Source: AGHT+IFmyUFJ7YqItzZrWxCpO5NtkRt3lLOwk+f1KzPuBQI+jMhY31lixZxSduR+YwmQQqbJPHLS6g==
+X-Received: by 2002:a05:6a20:e687:b0:1c6:fb2a:4696 with SMTP id adf61e73a8af0-1cf75eefa0cmr36702294637.19.1726665614849;
+        Wed, 18 Sep 2024 06:20:14 -0700 (PDT)
+Received: from LRW1FYT73J.bytedance.net ([139.177.225.248])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944bc17edsm6698666b3a.184.2024.09.18.06.20.10
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 18 Sep 2024 06:20:14 -0700 (PDT)
+From: Wenbo Li <liwenbo.martin@bytedance.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wenbo Li <liwenbo.martin@bytedance.com>,
+	Jiahui Cen <cenjiahui@bytedance.com>,
+	Ying Fang <fangying.tommy@bytedance.com>
+Subject: [PATCH v3] virtio_net: Fix mismatched buf address when unmapping for small packets
+Date: Wed, 18 Sep 2024 21:20:05 +0800
+Message-Id: <20240918132005.31174-1-liwenbo.martin@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] perf sched: Introduce stats tool
-Content-Language: en-GB
-To: James Clark <james.clark@linaro.org>, Ravi Bangoria
-	<ravi.bangoria@amd.com>
-CC: <yu.c.chen@intel.com>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<rostedt@goodmis.org>, <vincent.guittot@linaro.org>, <bristot@redhat.com>,
-	<adrian.hunter@intel.com>, <james.clark@arm.com>,
-	<kan.liang@linux.intel.com>, <gautham.shenoy@amd.com>,
-	<kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
-	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<santosh.shukla@amd.com>, <ananth.narayan@amd.com>, <sandipan.das@amd.com>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <irogers@google.com>
-References: <20240916164722.1838-1-ravi.bangoria@amd.com>
- <f022afad-793d-4a3d-acad-13fd27dd5e62@linaro.org>
-From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-In-Reply-To: <f022afad-793d-4a3d-acad-13fd27dd5e62@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099D4:EE_|IA0PR12MB7529:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae30c6e3-8b86-4046-3b1d-08dcd7e49b15
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VDJjTlRIT3ZPeTUwRFFYamN4QVhZY0V3YnB2ZVVlbE5RVUlmakJvWXh2emZC?=
- =?utf-8?B?Zm5kZzdYenFtZWhReFRiSzVjdklwRWZNblZhYmVYdjQ4aVFFa1A0ZTVFQkFI?=
- =?utf-8?B?QkFZSWhPVXFlbU1DRWJaaFFSbXJ1K01ZcGtjNFFZZHI4ZU1OVnMvZlBWWHdn?=
- =?utf-8?B?QTNOSVhYZVJkbk43aVMva2s3MmdPZ1N3bkNxVzRRTzJmWFhkSFB5cnpuTTVu?=
- =?utf-8?B?RUdLR3Y2bVhsN3VjSGJ2RzRrSWpJc1pNUzRmSDMxYjFGS1hNN09PbWNPS1Ax?=
- =?utf-8?B?bVVBN3BqT2w4WDRSSnBUUXRJVW9pcEpEK3U0QWlyUEU1M1htam0vYlpoQUpL?=
- =?utf-8?B?T3JQSXBKcFJUOTNwcGdPMGlZM2FNdG1uK0lHZEtGMFM3Q1A5a3JQdERXb2RO?=
- =?utf-8?B?N2M1Uk45L3NtY2ZZWmlaaFEraFVuNFFTdEhLK2YrMDJFQUdIU3BIZmFIMXRD?=
- =?utf-8?B?a0VDZjZHalJ2czg1eUYwRU5SOTZWQmI3QzQwRDlSS1FkN3RnU0tTZlVjbXA5?=
- =?utf-8?B?K0lxdjVHTSs3S2U4UUFKN0UzbFlNWXhqZGxWdTNDVGNvUzF6UEVCSys3WGZZ?=
- =?utf-8?B?ZE9zd1FNZTh6MituZklzbVVlZjVlSnlQTHZqdmlOYmRyV05GZUMxaGpxQUpS?=
- =?utf-8?B?WDJoRkVITWk3L3lhN1Q5UjdUTmgvYVRsMmpOOWlhU2dwbUR4VzQ1blQ3RFgz?=
- =?utf-8?B?Z0dxQWFuSDBBR0p0QzdzcW44SzA3TERpV215L1hPeEJLbzVLVzNWOXB3aFB6?=
- =?utf-8?B?Rmw0N1BkeXpieHFldGplTzhKSlRjN2lrZnV0SVpsZ2YwVmpoR3QwaVlHUkdX?=
- =?utf-8?B?YUtuS1hYOXpRV0dFWERxYS9pQnVZZHNKMkpQdWVvb0lCWmhlbk9jYWozN05l?=
- =?utf-8?B?elZLZUJaRTFxUjAwMFVmazIvZ1pCNmN2UTV0QmM3WWJYWTdyZUpvZjA4aGxs?=
- =?utf-8?B?QjdQR1duTTNrdlBlN29MRmFHSGEvNUVQTDJIRHdYT1JkRytFOEthYXA5Yllu?=
- =?utf-8?B?NlVVUHhobmQ4TjJHUHJiVUlpZ28rakRubGkwT3FUSWtDcnVBUWkyeTV6SDAx?=
- =?utf-8?B?ME1JSlYyUW1BSXJsUzJsdFp4cUN0K2dDTFhCcWNvaGtmWndNM1RNNXgvUnZw?=
- =?utf-8?B?ZHNORnlFckFvb3o1cEJVdE5rNkZXRHZnbkpNK2Z3Nno4VTU1QUlLajQzSlox?=
- =?utf-8?B?U2xnZlJpckFiNGdDR2FoTDJVNzFpbi9MMm01ck43OUhZQkh5by8zbklKT3I5?=
- =?utf-8?B?Q0F2bHJ5SzlXcnJKeUtjWEg1TEFRcVQxZ1VqWHZFbU4vUHU1dVNJMU1QTzND?=
- =?utf-8?B?T3Y0VlpSRnJjYzhaZlBwVTAyL0U2dmR0b0theDR1N2JHQkNwSzJFY3QwWTg0?=
- =?utf-8?B?OU9WR1RKZS9UbTh1Rk5xVWxya3ZyTzVhMnhyajRSeEZ0TUk0bTJOZnRmTFBO?=
- =?utf-8?B?VkZUNjFkd2h5b1kyTmhZNjErWTRKQmZBM0JiWWZucThyWTU2TTBDMkVsMkcw?=
- =?utf-8?B?Qkt1VjFpMnYyM0lVQ00xYU81RXR5RlVzWXlTcnozVEw1QjIyTjhmUjlUdXdK?=
- =?utf-8?B?RWZNMXRuS1BVOEtmSUhDREZGTE1TdWV0bDhZWTkrVTdLakZvVnhMaFdvTEtY?=
- =?utf-8?B?U2JVQm52clVYUjFGRHliektTV2VKMmJZNWJFMjE0Y242V25GS21YQy9zejR3?=
- =?utf-8?B?elBpeHRkNzJWVmxVSU5FMXQ3cWhWejJ1bVZCNFRiL1hZK3hPQkhCdklQMHFL?=
- =?utf-8?B?bkpWdkNQcjN1N0tySVRyeWtlRkpOLytjLzRIYzVjcG95UXhONVVzQmcwK2Ji?=
- =?utf-8?B?ZGx3R3U1ZDFna0J1b3hXN0txTG9sdER2L2xBN011RkRVNW02OWpxeWRwSDVa?=
- =?utf-8?B?U2x2UzVabzBQbDhDK2daRDZGb3hzeHNvWDNTUysvMDNaYjExK3BhWkM2SzZr?=
- =?utf-8?Q?v6uEVdkijRZ0lXGRXbpe2Nd63jtpKS7d?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 13:20:03.3205
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae30c6e3-8b86-4046-3b1d-08dcd7e49b15
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099D4.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7529
 
-Hi James,
+Currently, the virtio-net driver will perform a pre-dma-mapping for
+small or mergeable RX buffer. But for small packets, a mismatched address
+without VIRTNET_RX_PAD and xdp_headroom is used for unmapping.
 
-On 9/17/2024 4:05 PM, James Clark wrote:
-> 
-> 
-> On 16/09/2024 17:47, Ravi Bangoria wrote:
->> MOTIVATION
->> ----------
->>
->> Existing `perf sched` is quite exhaustive and provides lot of insights
->> into scheduler behavior but it quickly becomes impractical to use for
->> long running or scheduler intensive workload. For ex, `perf sched record`
->> has ~7.77% overhead on hackbench (with 25 groups each running 700K loops
->> on a 2-socket 128 Cores 256 Threads 3rd Generation EPYC Server), and it
->> generates huge 56G perf.data for which perf takes ~137 mins to prepare
->> and write it to disk [1].
->>
->> Unlike `perf sched record`, which hooks onto set of scheduler tracepoints
->> and generates samples on a tracepoint hit, `perf sched stats record` 
->> takes
->> snapshot of the /proc/schedstat file before and after the workload, i.e.
->> there is almost zero interference on workload run. Also, it takes very
->> minimal time to parse /proc/schedstat, convert it into perf samples and
->> save those samples into perf.data file. Result perf.data file is much
->> smaller. So, overall `perf sched stats record` is much more light weight
->> compare to `perf sched record`.
->>
->> We, internally at AMD, have been using this (a variant of this, known as
->> "sched-scoreboard"[2]) and found it to be very useful to analyse impact
->> of any scheduler code changes[3][4].
->>
->> Please note that, this is not a replacement of perf sched record/report.
->> The intended users of the new tool are scheduler developers, not regular
->> users.
->>
->> USAGE
->> -----
->>
->>    # perf sched stats record
->>    # perf sched stats report
->>
->> Note: Although `perf sched stats` tool supports workload profiling syntax
->> (i.e. -- <workload> ), the recorded profile is still systemwide since the
->> /proc/schedstat is a systemwide file.
->>
->> HOW TO INTERPRET THE REPORT
->> ---------------------------
->>
->> The `perf sched stats report` starts with total time profiling was active
->> in terms of jiffies:
->>
->>    
->> ----------------------------------------------------------------------------------------------------
->>    Time elapsed (in jiffies)                                   :       
->> 24537
->>    
->> ----------------------------------------------------------------------------------------------------
->>
->> Next is CPU scheduling statistics. These are simple diffs of
->> /proc/schedstat CPU lines along with description. The report also
->> prints % relative to base stat.
->>
->> In the example below, schedule() left the CPU0 idle 98.19% of the time.
->> 16.54% of total try_to_wake_up() was to wakeup local CPU. And, the total
->> waittime by tasks on CPU0 is 0.49% of the total runtime by tasks on the
->> same CPU.
->>
->>    
->> ----------------------------------------------------------------------------------------------------
->>    CPU 0
->>    
->> ----------------------------------------------------------------------------------------------------
->>    sched_yield() count                                         
->> :           0
->>    Legacy counter can be ignored                               
->> :           0
->>    schedule() called                                           :       
->> 17138
->>    schedule() left the processor idle                          :       
->> 16827 ( 98.19% )
->>    try_to_wake_up() was called                                 
->> :         508
->>    try_to_wake_up() was called to wake up the local cpu        
->> :          84 ( 16.54% )
->>    total runtime by tasks on this processor (in jiffies)       :  
->> 2408959243
->>    total waittime by tasks on this processor (in jiffies)      :    
->> 11731825 ( 0.49% )
->>    total timeslices run on this cpu                            
->> :         311
->>    
->> ----------------------------------------------------------------------------------------------------
->>
->> Next is load balancing statistics. For each of the sched domains
->> (eg: `SMT`, `MC`, `DIE`...), the scheduler computes statistics under
->> the following three categories:
->>
->>    1) Idle Load Balance: Load balancing performed on behalf of a long
->>                          idling CPU by some other CPU.
->>    2) Busy Load Balance: Load balancing performed when the CPU was busy.
->>    3) New Idle Balance : Load balancing performed when a CPU just became
->>                          idle.
->>
->> Under each of these three categories, sched stats report provides
->> different load balancing statistics. Along with direct stats, the
->> report also contains derived metrics prefixed with *. Example:
->>
->>    
->> ----------------------------------------------------------------------------------------------------
->>    CPU 0 DOMAIN SMT CPUS <0, 64>
->>    ----------------------------------------- <Category idle> 
->> ------------------------------------------
->>    load_balance() count on cpu idle                                 
->> :          50   $      490.74 $
->>    load_balance() found balanced on cpu idle                        
->> :          42   $      584.21 $
->>    load_balance() move task failed on cpu idle                      
->> :           8   $     3067.12 $
->>    imbalance sum on cpu idle                                        
->> :           8
->>    pull_task() count on cpu idle                                    
->> :           0
->>    pull_task() when target task was cache-hot on cpu idle           
->> :           0
->>    load_balance() failed to find busier queue on cpu idle           
->> :           0   $        0.00 $
->>    load_balance() failed to find busier group on cpu idle           
->> :          42   $      584.21 $
->>    *load_balance() success count on cpu idle                        
->> :           0
->>    *avg task pulled per successful lb attempt (cpu idle)            
->> :        0.00
->>    ----------------------------------------- <Category busy> 
->> ------------------------------------------
->>    load_balance() count on cpu busy                                 
->> :           2   $    12268.50 $
->>    load_balance() found balanced on cpu busy                        
->> :           2   $    12268.50 $
->>    load_balance() move task failed on cpu busy                      
->> :           0   $        0.00 $
->>    imbalance sum on cpu busy                                        
->> :           0
->>    pull_task() count on cpu busy                                    
->> :           0
->>    pull_task() when target task was cache-hot on cpu busy           
->> :           0
->>    load_balance() failed to find busier queue on cpu busy           
->> :           0   $        0.00 $
->>    load_balance() failed to find busier group on cpu busy           
->> :           1   $    24537.00 $
->>    *load_balance() success count on cpu busy                        
->> :           0
->>    *avg task pulled per successful lb attempt (cpu busy)            
->> :        0.00
->>    ---------------------------------------- <Category newidle> 
->> ----------------------------------------
->>    load_balance() count on cpu newly idle                           
->> :         427   $       57.46 $
->>    load_balance() found balanced on cpu newly idle                  
->> :         382   $       64.23 $
->>    load_balance() move task failed on cpu newly idle                
->> :          45   $      545.27 $
->>    imbalance sum on cpu newly idle                                  
->> :          48
->>    pull_task() count on cpu newly idle                              
->> :           0
->>    pull_task() when target task was cache-hot on cpu newly idle     
->> :           0
->>    load_balance() failed to find busier queue on cpu newly idle     
->> :           0   $        0.00 $
->>    load_balance() failed to find busier group on cpu newly idle     
->> :         382   $       64.23 $
->>    *load_balance() success count on cpu newly idle                  
->> :           0
->>    *avg task pulled per successful lb attempt (cpu newly idle)      
->> :        0.00
->>    
->> ----------------------------------------------------------------------------------------------------
->>
->> Consider following line:
->>
->>    load_balance() found balanced on cpu newly idle                  
->> :         382    $      64.23 $
->>
->> While profiling was active, the load-balancer found 382 times the load
->> needs to be balanced on a newly idle CPU 0. Following value encapsulated
->> inside $ is average jiffies between two events (24537 / 382 = 64.23).
-> 
-> This explanation of the $ fields is quite buried. Is there a way of 
-> making it clearer with a column header in the report? I think even if it 
-> was documented in the man pages it might not be that useful.
-> 
-Thank you for the suggestion. I will add a header in the report to 
-explain what each column values are representing.
+That will result in unsynchronized buffers when SWIOTLB is enabled, for
+example, when running as a TDX guest.
 
-> There are also other jiffies fields that don't use $. Maybe if it was 
-> like this it could be semi self documenting:
-> 
-> ----------------------------------------------------------------------
->      Time elapsed (in jiffies)               :        $  24537        $ 
->   ----------------------------------------------------------------------
-> 
-> ------------------<Category newidle> ---------------------------------
->    load_balance() count on cpu newly idle    :   427  $     57.46 avg $
-> ----------------------------------------------------------------------
-> 
-> 
-> Other than that:
-> 
-> Tested-by: James Clark <james.clark@linaro.org>
+This patch unifies the address passed to the virtio core into the address of
+the virtnet header and fixes the mismatched buffer address.
 
-Ack.
+Changes from v2: unify the buf that passed to the virtio core in small
+and merge mode.
+Changes from v1: Use ctx to get xdp_headroom.
 
---
-Thanks and Regards,
-Swapnil
+Fixes: 295525e29a5b ("virtio_net: merge dma operations when filling mergeable buffers")
+Signed-off-by: Wenbo Li <liwenbo.martin@bytedance.com>
+Signed-off-by: Jiahui Cen <cenjiahui@bytedance.com>
+Signed-off-by: Ying Fang <fangying.tommy@bytedance.com>
+---
+ drivers/net/virtio_net.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 6f4781ec2b36..9446666c84aa 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -1804,9 +1804,15 @@ static struct sk_buff *receive_small(struct net_device *dev,
+ 				     struct virtnet_rq_stats *stats)
+ {
+ 	unsigned int xdp_headroom = (unsigned long)ctx;
+-	struct page *page = virt_to_head_page(buf);
++	struct page *page;
+ 	struct sk_buff *skb;
+ 
++	// We passed the address of virtnet header to virtio-core,
++	// so truncate the padding.
++	buf -= VIRTNET_RX_PAD + xdp_headroom;
++
++	page = virt_to_head_page(buf);
++
+ 	len -= vi->hdr_len;
+ 	u64_stats_add(&stats->bytes, len);
+ 
+@@ -2422,8 +2428,9 @@ static int add_recvbuf_small(struct virtnet_info *vi, struct receive_queue *rq,
+ 	if (unlikely(!buf))
+ 		return -ENOMEM;
+ 
+-	virtnet_rq_init_one_sg(rq, buf + VIRTNET_RX_PAD + xdp_headroom,
+-			       vi->hdr_len + GOOD_PACKET_LEN);
++	buf += VIRTNET_RX_PAD + xdp_headroom;
++
++	virtnet_rq_init_one_sg(rq, buf, vi->hdr_len + GOOD_PACKET_LEN);
+ 
+ 	err = virtqueue_add_inbuf_ctx(rq->vq, rq->sg, 1, buf, ctx, gfp);
+ 	if (err < 0) {
+-- 
+2.20.1
+
 
