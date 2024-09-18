@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-332209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A9297B6CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:27:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DC697B6CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFB96282C62
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:26:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C29EB236C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3272B12E1D1;
-	Wed, 18 Sep 2024 02:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF07132111;
+	Wed, 18 Sep 2024 02:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDEwFnJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RxgkEqYJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB313D8E;
-	Wed, 18 Sep 2024 02:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D1C3D8E;
+	Wed, 18 Sep 2024 02:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726626414; cv=none; b=FSskMDCgGpqS63J1I24DTHTl5SCYfmCi0FaxDNmcHasQt/cm7n3oaJagy/a1w3GVCU11qHGeKy31jOTdU/P+rJ9e17f/DhdC4pCFx55WVpLzcYMxwPa7vEvYRsYMF2LQd3Gw9fLa0WoFT9pHI53/tPwVl60eO2auj1TNGtdKTRY=
+	t=1726626457; cv=none; b=iPFqdWvZPFJmJ56Y3VmWIILGRiXi5tWWgZeKC8W7clY72sY1yXxke70K/K7zHGU2fH/wxfD1Unj50z90DgsT8vhm6WihWjskx2qHPnTe9hzq/2IFGkz+EV6sotkyEM2i/+si+ecQ3FTJ55fbrnma3FG0uOJBCtuUi9CgVMcZxt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726626414; c=relaxed/simple;
-	bh=zHccpoxi6k4rCaf90hrPUWrqkjxWOnkOK309CcwZhEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bNej4/H6xYlAgr7dzgyWIqT3S5q4i3l2sE8AquteEfgjrHaZjzwprfRNWoiiosAyPz7GRz8RajQ2O37C+w40T4GyQRODfcRfo4Olg5OM5m269VlEfr48t7RRIfr7f0fLW2UFfhaxkt4gLOrWvrM2Sj4Q0iVyfg39R6GaJC9Rv1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDEwFnJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13686C4CEC7;
-	Wed, 18 Sep 2024 02:26:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726626414;
-	bh=zHccpoxi6k4rCaf90hrPUWrqkjxWOnkOK309CcwZhEc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aDEwFnJ+CBmnRkq0efo1uoM/5w8WPq8XhShZi8zzVS3l4J7/TYt6OUuKGqzEympMO
-	 EXdc/Bqm8NzRkqPE62JloRoG69evhbRjzOMjD4HKnNkn7UxdJstSOhknwd0a1c47xl
-	 edYHbmefS47ilUXnBTZaowr5aAC0RfcEGC3B4/eCdszr0tOFjGa+stIg22SRtIcQ6F
-	 7GrAydc27cZzTOARgi8ySKX9n750voWIEP/MhugQpUJuTrLb+S5989+tvR1ywcI4ec
-	 VQZCmUmE4njOGNcrpFVmxbyxzeHY+yvL9wucE+j0fzA7in5T4IFdyPvI3TmTDeh4hx
-	 ApqVC9s5yT79w==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d2daa2262so636719766b.1;
-        Tue, 17 Sep 2024 19:26:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWGIBPboNUuYuOQ1H3kTKf4Cpgu57wZXsig/ETCNdYVMx1MYeiVHMSrC3fituRdixtmZDyhkwHgpwGA@vger.kernel.org, AJvYcCWnvmEGgxgWgfOFs++WLXvPC6Kf6rAeOLPs6IWCCngclxBfGbcCAXF6AEmx1FWyUDAxocQXEU3ohsSgm/V8@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZbZfm6Dn3oMItWuQ6DaORaKthXXBnu2TAvpt+bjZFcgFoUdZm
-	1vE+F3/JCpMVU7TDPQGOcS/Sq1yHDktIQ1jtPyvs/eveYE2ccUfVA9Jmlxo2Tu7lscFY2IXr84x
-	rlCTf+2j/h1W+448j8VnembDss1k=
-X-Google-Smtp-Source: AGHT+IHdH78oOHxe4W0yPL8blfmsq1Fswk5TE5U6eoGCMbCOPlWVAd6hKOZYEBwjJguzK50lsYiLmKhC5icAgnuVfY8=
-X-Received: by 2002:a17:907:2d87:b0:a8d:7046:a1bd with SMTP id
- a640c23a62f3a-a9047d03d80mr1407013366b.28.1726626412527; Tue, 17 Sep 2024
- 19:26:52 -0700 (PDT)
+	s=arc-20240116; t=1726626457; c=relaxed/simple;
+	bh=uS2YFxRvMGKdY4hVYbzDLw3B0Hjyf+pk1jbICas5hRA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hVIOydGAUJLG0v0EQg0xqxj7kF70KPFCGhmIb7LyUFlP0IVFbZIWxFR33CVUoJEhjEaUH/60TDOs6t69vKV1ute/UtA9xB4JmkImApRP3ngR5YYGGdaKw3f0ddcN72Su1iorGqq8UY5f0Q8zKT+y4kugWnWnbCFrqNYFKzlGzUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RxgkEqYJ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726626456; x=1758162456;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=uS2YFxRvMGKdY4hVYbzDLw3B0Hjyf+pk1jbICas5hRA=;
+  b=RxgkEqYJJz5s+vJWFhWtPXfr/3J3SH5x1jbzCbFB7yFUwgOAw0hD5yx7
+   ZtULDonxP9VmmyEtsXydS7Dw8xxXe34m7g36QoFC3Dd6qu0nI5eE+FkOu
+   oQErzT6+HB+ahU3LiuqrYp2a96lBbr9nWioTeBp5Au5QSP2pECKIp4gBT
+   9IJbmhT4NQFU60UNIjfgZ5JMS2nM11HftbrpQqR/p6J3jaWbvNK7qIhmq
+   7tIEq7LZ9uuOb2vkw2wcQpCPQPRxL2Qpmy9o66D524C6+8K6G8veSNjm8
+   p8MY4C24gBlMnUsWEcd1Q1AQFb3Au1pDuMKcCsyQ0W03C6q2yQ912di+G
+   Q==;
+X-CSE-ConnectionGUID: lQ5RqSp3QiCkhEVx03LHRA==
+X-CSE-MsgGUID: I1Xbma5mR0aLUBQGNi8deg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="48029180"
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="48029180"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 19:27:36 -0700
+X-CSE-ConnectionGUID: YftceeTmRu+lZhiPv3An2g==
+X-CSE-MsgGUID: JqmCe4dtQyCA8IDnL3KVMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="74221109"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 19:27:35 -0700
+Received: from [10.208.96.32] (unknown [10.208.96.32])
+	by linux.intel.com (Postfix) with ESMTP id B0B2320CFEE5;
+	Tue, 17 Sep 2024 19:27:31 -0700 (PDT)
+Message-ID: <7b6283e8-9a8d-4daf-9e99-f32dd55bcea5@linux.intel.com>
+Date: Wed, 18 Sep 2024 10:27:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909133159.2024688-4-jvetter@kalrayinc.com>
- <202409101549.CyV0mJ2S-lkp@intel.com> <c78987ba-6b54-4433-b5dc-3b3b9f98354a@app.fastmail.com>
-In-Reply-To: <c78987ba-6b54-4433-b5dc-3b3b9f98354a@app.fastmail.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Wed, 18 Sep 2024 10:26:41 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTaQugaXoUWEVgrJ_3i9z4tep05BF1wQ9QQifgqw5B+vQ@mail.gmail.com>
-Message-ID: <CAJF2gTTaQugaXoUWEVgrJ_3i9z4tep05BF1wQ9QQifgqw5B+vQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] Use generic io memcpy functions on the csky architecture
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: kernel test robot <lkp@intel.com>, Julian Vetter <jvetter@kalrayinc.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Andrew Morton <akpm@linux-foundation.org>, oe-kbuild-all@lists.linux.dev, 
-	Linux Memory Management List <linux-mm@kvack.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>, loongarch@lists.linux.dev, 
-	Yann Sionneau <ysionneau@kalrayinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 1/1] net: stmmac: Fix zero-division error when
+ disabling tc cbs
+To: Simon Horman <horms@kernel.org>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Xiaolei Wang <xiaolei.wang@windriver.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Tan Khai Wen <khai.wen.tan@intel.com>
+References: <20240912015541.363600-1-khai.wen.tan@linux.intel.com>
+ <20240912153730.GN572255@kernel.org> <20240912153913.GO572255@kernel.org>
+Content-Language: en-US
+From: "Tan, Khai Wen" <khai.wen.tan@linux.intel.com>
+In-Reply-To: <20240912153913.GO572255@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024 at 5:16=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
+On 12/9/2024 11:39 pm, Simon Horman wrote:
+> On Thu, Sep 12, 2024 at 04:37:30PM +0100, Simon Horman wrote:
+>> On Thu, Sep 12, 2024 at 09:55:41AM +0800, KhaiWenTan wrote:
+>>> The commit b8c43360f6e4 ("net: stmmac: No need to calculate speed divider
+>>> when offload is disabled") allows the "port_transmit_rate_kbps" to be
+>>> set to a value of 0, which is then passed to the "div_s64" function when
+>>> tc-cbs is disabled. This leads to a zero-division error.
+>>>
+>>> When tc-cbs is disabled, the idleslope, sendslope, and credit values the
+>>> credit values are not required to be configured. Therefore, adding a return
+>>> statement after setting the txQ mode to DCB when tc-cbs is disabled would
+>>> prevent a zero-division error.
+>>>
+>>> Fixes: b8c43360f6e4 ("net: stmmac: No need to calculate speed divider when offload is disabled")
+>>> Cc: <stable@vger.kernel.org>
+>>> Co-developed-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+>>> Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+>>> Signed-off-by: KhaiWenTan <khai.wen.tan@linux.intel.com>
+> ...
 >
-> On Tue, Sep 10, 2024, at 07:27, kernel test robot wrote:
+> One more thing, if you do post an updated patch, please
+> be sure to wait until 24h after the original patch was posted.
 >
-> > 6a9bfa83709a84e Julian Vetter 2024-09-09  55          while (count >=3D
-> > NATIVE_STORE_SIZE) {
-> > 6a9bfa83709a84e Julian Vetter 2024-09-09  56                  if
-> > (IS_ENABLED(CONFIG_64BIT))
-> > 6a9bfa83709a84e Julian Vetter 2024-09-09 @57
-> >                       __raw_writeq(get_unaligned((uintptr_t *)from), to=
-);
-> > 6a9bfa83709a84e Julian Vetter 2024-09-09  58                  else
->
-> Right, this one actually has to be a preprocessor conditional
-> because __raw_writeq is not defined.
-All 32-bit ISAs didn't support __raw_writeq.
+> https://docs.kernel.org/process/maintainer-netdev.html
 
-e.g.: include/asm-generic/io.h
-#ifdef CONFIG_64BIT
-#ifndef __raw_writeq
-#define __raw_writeq __raw_writeq
-static inline void __raw_writeq(u64 value, volatile void __iomem *addr)
-{
-        *(volatile u64 __force *)addr =3D value;
-}
-#endif
-#endif /* CONFIG_64BIT */
+Hi Simon,
 
-e.g.: arch/riscv/include/asm/mmio.h
-#ifdef CONFIG_64BIT
-#define __raw_writeq __raw_writeq
-static inline void __raw_writeq(u64 val, volatile void __iomem *addr)
-{
-        asm volatile("sd %0, 0(%1)" : : "r" (val), "r" (addr));
-}
-#endif
+Thanks for the clarification. Will be updating a version 2 for this patch.
 
->
->      Arnd
-
-
-
---=20
-Best Regards
- Guo Ren
 
