@@ -1,97 +1,102 @@
-Return-Path: <linux-kernel+bounces-332992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3D297C1F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:53:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF79397C1F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06852283A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:53:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2DDA283CDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638A51CB50C;
-	Wed, 18 Sep 2024 22:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D2D1CB307;
+	Wed, 18 Sep 2024 22:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sy4ayfqM"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j5ttkSnV"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599E7135417;
-	Wed, 18 Sep 2024 22:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399911494B1
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 22:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726699996; cv=none; b=iwl9+IEFBDzltt+hhVv5P7799bSYABUiDu1utuc+n1NXBsYEiRPlSfDonCdGhBJlu3tI3cSQUk3FKiRfU4WbXpIMPt8EbUy8IbrP30cq6bRtNCX/LOCHOCvQ2+qnFqSP972gXtr+OQN+m6b+0PzMsDrjT/PCt65BWaY1LGzOk0k=
+	t=1726700064; cv=none; b=fnJk/vUtqYVec73zCuOegou2RbkSga4MOiLZVSoQ/RNjYNbFOX6nlc50KdK6Rpny+buSMQPO62R43xnlu5p0tcOgzIbe84vqhmGCVXnzlYiLoYJmU/uXSecQ9D/dqzzz4RoXF9FSzHPxFpRDfaXpRZ5Wo2iAKQKk1xs5o2275xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726699996; c=relaxed/simple;
-	bh=cnfy/Hr4/cgTNhxdbPxEeeVZiQUWu0bu0FmFpa/qFKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z0IyVzjVQ/idIrarbcY56MjdplbuSw72/B1XfPHBejP1TXvaPSpFLzKsuv8twGFZrZl0zI5q79fyu4xyZORhFHoBCOfTSrXfuaFXEXdQb9tj9x19qvzrMPwPf9HIp4kcldP4PblAuYBi9F/SlTT18GDyU5pOGWOIu9AA6e3Q/pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sy4ayfqM; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726699988;
-	bh=cnfy/Hr4/cgTNhxdbPxEeeVZiQUWu0bu0FmFpa/qFKo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=sy4ayfqMYj9UR1ACm0RwHPNYc/p9zwxJk1U2QWDjcWCLyGKFBC2wttxlCYj4/bHWw
-	 mlO3pd5OsjW1L+Ag95nSvJJtbpeLtzh8J6y13xbg2Muv7zw9mkdfztMagxATf1nxmj
-	 RG1/GVdYh0g1ZuBZqGFCzc3FQRvSKzKXohz+bwYIvNvPdhOCrx/sUBn9eEKVRdydxI
-	 sZe4gp3T8ub6ItCqn3ez2xjkqfiks/M6k68KVr9bMrCO9jQv9Mn/ZMGsShu6VxCl9L
-	 dVBXBhDFWwGfBSNZBCAKEHpfMsf9Z1N0pqOnMqAEOYJjoae2s5T0gqieOUdzz2jBmm
-	 Lfw+rVyRoZBMw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X8DT05bVbz4wnw;
-	Thu, 19 Sep 2024 08:53:08 +1000 (AEST)
-Date: Thu, 19 Sep 2024 08:53:08 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: error while fetching the drm-msm-lumag tree
-Message-ID: <20240919085308.1171490f@canb.auug.org.au>
+	s=arc-20240116; t=1726700064; c=relaxed/simple;
+	bh=OxKyUufht0q3CEXmxv5toefQozGjYx7DZiJ0OEjsbHs=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=k3N7pPaeoRQZyhFPhMtfiPoNIo/mqhKMB0V0W4/yrO7roBJ8HasCL4EWLz67hmvkxBkL7fYhQoJ4Le2jsJI6et2hbYQNRzf8ffO5mqVD1xhDlYijXQakj9YsPVd/qh6QarX2BD2MjkqbgdarPsiUOHkG1idemzZWNTKjVqDg94A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j5ttkSnV; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6cf78470a56so6872847b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726700062; x=1727304862; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q5ICEyu+KfG8LnD7rrY5JAl3MiV83XrCT4LMwE3uhCA=;
+        b=j5ttkSnVuRUK8l2tRAmS1DNdXz2NZfuPqq7KOk0XN0Yb+iosw8+uOUfu6aOd0Uullh
+         zSfZLqMYOz82sZnL57besursB01U2+pv79wbz/QhAjvh4revmsXZdzZZmQEXuiWo8L/+
+         c6QN+ea1JclvJwla+0grQN1wfRTHkkF43i78JykJbGVdfRRGV8ldoCf8VxGCDR93jKeO
+         oOE7VlHiXe8ejSUA1/5BRBbA5CvhFmqf5bhhA8Rj3RfjRahEBZlFEOTCLZcNN06qYsZo
+         4uFMrZqTCOBlhoawsNCHkUDNH4wLlWBNIo/o6HtCnLmWNID5wS8jicesLWRkGbzTl610
+         wooQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726700062; x=1727304862;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q5ICEyu+KfG8LnD7rrY5JAl3MiV83XrCT4LMwE3uhCA=;
+        b=mDrfdVH83zl5Rd5aApWAyxylO1vPRmLktMjrX8hnpxQTtbFw/xpiDQ0CZ21OBwXQJE
+         95P2LIh38x2MYez7jLn+1/dClB6sBDPFCeNO+lUx3OZSrplJjMCC3z0fU0IKb/YPuWS5
+         fHQU3J3uvsILCymmvrPAsNeTG62bK5K4DGUF1iGygv1w+DSL6ASi3XdeEX24TphoiNn4
+         UUusjqKkvsI3LUPjUWupK81xS6zrAzebjXzpn0l+WuIhAhbEXnITCvRdC2uLE5cM2Uo/
+         o9lycProXyYu5mb+jpbbGSKRFXKTTYeN/oMFYt+PKXqBIynaJ1m/XMunb8ZUs+EhZPXC
+         5/dA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZPOwu7U3R2M3+mPT7aCP12aTV86GbEiJ+YtTqeOTYqmbqOvq0M5onQUlnY7feYCpk4fwSmaI1GGLjids=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1YVoJRM+HF3UTJGc9MC+f8rn2ah2qc1j+mSF+T/eTGLcF4puh
+	pvor40+JoQ4WhFzNZpuHHhb9LsPDbtxVVexLXuAw6htV85uWgLrZsTCrvDPK+6GpuewJ6ZHKUcq
+	ZyEJhFA==
+X-Google-Smtp-Source: AGHT+IHr4DfOLJNUlz9M3nEE5DuR6Q22roaSsevBUu2c5aAYacWeG1F9xpkUUkJ77QIvz1tqChjGxTqgH6tu
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:cb6b:1e62:cfd8:bd50])
+ (user=irogers job=sendgmr) by 2002:a05:690c:4a0f:b0:6db:d257:b98 with SMTP id
+ 00721157ae682-6dbd2570de2mr9938907b3.3.1726700062173; Wed, 18 Sep 2024
+ 15:54:22 -0700 (PDT)
+Date: Thu, 19 Sep 2024 00:54:16 +0200
+Message-Id: <20240918225418.166717-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/=EUkMPDciMBV_EdZ+IdBt64";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+Subject: [PATCH v1 0/2] Python module cleanup
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	Andi Kleen <ak@linux.intel.com>, Zixian Cai <fzczx123@gmail.com>, Paran Lee <p4ranlee@gmail.com>, 
+	Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/=EUkMPDciMBV_EdZ+IdBt64
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Remove workarounds for Python 2 module support. Constify variables and
+parameters to functions.
 
-Hi all,
+Ian Rogers (2):
+  perf python: Remove python 2 scripting support
+  perf python: Constify variables and parameters
 
-Fetching the drm-msm-lumag tree
-(https://gitlab.freedesktop.org/lumag/msm.git#msm-next-lumag) has produced
-this error for a few days now:
+ .../scripts/python/Perf-Trace-Util/Context.c  |  18 ---
+ tools/perf/util/python.c                      | 128 ++++++------------
+ .../scripting-engines/trace-event-python.c    |  63 +--------
+ 3 files changed, 44 insertions(+), 165 deletions(-)
 
-fatal: couldn't find remote ref refs/heads/msm-next-lumag
+-- 
+2.46.0.662.g92d0881bb0-goog
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/=EUkMPDciMBV_EdZ+IdBt64
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbrWdQACgkQAVBC80lX
-0Gy7HggAnvs84v4PJjj8ni0APXiPL0RTuTOyBmE4E51K25WAHVVMPudo6Ie5RgXa
-RuSdRncUOCUaLtONh89CWiz8ix6tmCpjg5cMM4uXj3IKVFCt734xI6mRiAi6FQAM
-uMcB9gD/dqDqAbY6iLgt9mADFZC+PnLD2XglrzYu/08PYJfqfrjQBbEkcAbv+vgE
-hHN6tmn5BdMOr18uC+z14yQfW0eAt1QT3eP23FURp3Gn7teRlQODubVrd2i5dU3b
-A4L21Kp67W20OEH0E8KWyqoVjRY+e0kR1RFkT9jEUUh9hL4O2NbPB5RHSetRW6Iu
-EwvFSxT5yAnldC/Gu52wMzHLSxjopQ==
-=/mq0
------END PGP SIGNATURE-----
-
---Sig_/=EUkMPDciMBV_EdZ+IdBt64--
 
