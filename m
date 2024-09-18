@@ -1,240 +1,229 @@
-Return-Path: <linux-kernel+bounces-332881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9988897C03E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:57:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F1A197C042
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 901B91C21139
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 18:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13038282CCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648711CA69D;
-	Wed, 18 Sep 2024 18:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAA51CA682;
+	Wed, 18 Sep 2024 19:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kETt4hDT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Xlkb5Oh/"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2074.outbound.protection.outlook.com [40.107.103.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D231C9DFF;
-	Wed, 18 Sep 2024 18:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726685866; cv=none; b=Ia+eOlCUXIf64JC8tn75i2go7fkrKLOzigKKNiHWAEy4cHvSCEpBfV5zK352OyTvJ/zGrrd2qIygc+jLjccGufcLxJQCsLFwt2gxaPvBRNo/AAb4P/WPTYjPpaq1wZa+KiEbDgJGjVkO0Dc48ySU9vvVTvxfHvSSm2uAyHoSZJE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726685866; c=relaxed/simple;
-	bh=uT4pFaHDwbX4JpOoyZm9j/R5DoXtXSFmvct+549geck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j8N98bwIwSoXdq9daX8GaStMFwg3CNk0Za7Ac3vAyHl1M5unVqtwDTRkcPKgM4IqvV2qrlQ4ljeema+nR+XfrCOcTT1TR5x0trzMdeZ3Am6GVCSMjK6t8+J312XwJzpxjBEuO+d97U/TuyB48h0VOXuVObzQBuj+4v7GKTH/8xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kETt4hDT; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726685865; x=1758221865;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uT4pFaHDwbX4JpOoyZm9j/R5DoXtXSFmvct+549geck=;
-  b=kETt4hDTPg77IO76d5r1DjFZXO272KzCPvlWk1MXFqtKVwR5IxrAIT4n
-   KPUkKfoD7ScyX/Opod+WSYhDUDu9SzpMbjrrpWfPKaTac5Jzj2wfOfNuJ
-   zh30fkTBuHfM7VklXVX9gmZlxtPCNXReHlA69bs7KybRU6yzUIiy6lkOM
-   rswI5egHgU9jbSFw+NXNBk11tiFfdsCX8k7rYojIf7/PSQJuN7bJDfFKU
-   1F1LL2cB2sZO4HEBh6bKqG/9g0MrXZAwtDMplaQrDMVos0bY2+YkdI5au
-   rKxKVO62hihwQfbFEhh8IxYgCkrwDgt4mMq0zfVhSWay0era5KBFGTLBw
-   A==;
-X-CSE-ConnectionGUID: 04qVlnIzR72TilXHbALLSQ==
-X-CSE-MsgGUID: 0KElYuPZSBOknubA5QcEKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11199"; a="25739632"
-X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
-   d="scan'208";a="25739632"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 11:57:44 -0700
-X-CSE-ConnectionGUID: sLnHQreLSg2vk4+qzDcHEw==
-X-CSE-MsgGUID: RGijHgmTRSecDRaYHwGhDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
-   d="scan'208";a="69916612"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 18 Sep 2024 11:57:37 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sqzrr-000CXC-1a;
-	Wed, 18 Sep 2024 18:57:35 +0000
-Date: Thu, 19 Sep 2024 02:57:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
-	linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH V2 4/7] mm: Use pmdp_get() for accessing PMD entries
-Message-ID: <202409190205.YJ5gtx3T-lkp@intel.com>
-References: <20240917073117.1531207-5-anshuman.khandual@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534DB1C9DE5;
+	Wed, 18 Sep 2024 19:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726686043; cv=fail; b=nUdWwWOX6L8zqQM/1EQncibaNXTHHA9Q/TauaMA8J1sg4eNCqWYNVFGD1TiAILVl+quKyb8+Cx6jCoaN6z6fW1A8jQ082yUU5mhe8GTNvOEGF19HIA+bJ23cbSxymURlKXxONH8nfWrCdAFBQtNUX36k1Ck487MxtA7UspN3YpE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726686043; c=relaxed/simple;
+	bh=zFQ2ZxTdWg2P2sxuWXL0cgXi+e146VdxA0dWx9BlZ2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ROTnaErTcpuppRCaRpmstBw9NkqC7RTOxAEJZB/Z+rdlBLi9XxJZoVIBELVkP6+hJCHYgCYyuzh5Mj3TfZuKuDSOkHt3E/+r1XyLs3x3xk6LAy+J+afUT051EbW67tnr8RfNyYfExrhdZidT6QalUQJIuP2aM+eY3deNsATpkHA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Xlkb5Oh/; arc=fail smtp.client-ip=40.107.103.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X93oftBE8i8/8lTyNURSs+kFZPqd4GEifegkUsnsBbKyiwr5IgFLykQXm+Pz8iGJgXDeqVAg18rnDEOW8dufLWzBOIyuFGYa/Fkwj2oEAjlM/RJ85Juru5Z3jrX7nSURuiOnVnTIz9tYkr6cA1p9wL9FfyS7eLkUk9DPgqoDV+snrqgQ7YiD3b9nCFpsWtSPTMPcN/Fnl0ndkCJ7jgpIpr2AjnUKneWZLqozsUIw9SD/cdxVxnpzh3i4HpJ7yW4ZFuA6MwlAPsNb+gJywL8aO8HSsKrmK/0E1FHBJ+N0O4KwfuNES56LTooRTUkVmltojEzmVKLA1jyavnAM1olo9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7s2i8WZxxCPIly5z4ahlIrY15uWKkIiYfmrfTJqKKnE=;
+ b=QuqnfKY4RCnfr2BVOqRnlvO2/fsITlsswnoEIdul+YbOeqxHlXmYmO2ZkyESgq1T2bwTC4uBcxoMnsw32ZciKkhBUok9LJcNtvuvtWsB8QHyHxC8p2iknc79+xq0+rjNeYZkCEqdKRAWimbkMm2FU1Kc+nF5MHB8eqnGnLh3/P6XZfn87ewM5qoUN0TicB3ovcsXBmSn1dhOldtOAdZjE3K5zN9ros9iVdq7/gDpwUDUSQlkLYN/j2ZrR3lvYPh1LAxF9EixiCoSaED0R5jK9tN3gPsPcSZKzw3wqW1/+c8XhbLJ5xjbqs7Hy8wW+jdAjQjE4h9C7GZGgAV0GarX+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7s2i8WZxxCPIly5z4ahlIrY15uWKkIiYfmrfTJqKKnE=;
+ b=Xlkb5Oh/MtLy814mhwPmw3IA837rPpP0+QzjzxrXWEtzCPDvsLSsNjawVVt9A8okvrUi6Ya4ja8Pp7i9sN6LBhVSl51CCLvSB2fP5tBuISdkpQ/RZdwj2+Oh1BI6P4q89dC6dGoYOR5GkUQj+m36xOwyaHcHWeCaF2sWscTRXcJnA+hz8knu0W6aP8F/k7sfYE/fTIZjkP1bmO3zzgnY9tvQ1bzAFUskRrTTYM/Pl+pM305XHYZ2NZUG0orNQ61AP9JO7oR967Pk93ucxH68T1jcB23uyhNxc43zzJDc93Gv5t/oUj6fSa4F6dmKis0gUZLStNoR44t9N+B5TQW3iA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU4PR04MB10549.eurprd04.prod.outlook.com (2603:10a6:10:58d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Wed, 18 Sep
+ 2024 19:00:32 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7962.022; Wed, 18 Sep 2024
+ 19:00:32 +0000
+Date: Wed, 18 Sep 2024 15:00:24 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] arm64: dts: imx8qm: enable dsp node for rproc usage
+Message-ID: <ZusjSPQ0vpqIUtlL@lizhi-Precision-Tower-5810>
+References: <20240918182117.86221-1-laurentiumihalcea111@gmail.com>
+ <20240918182117.86221-6-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918182117.86221-6-laurentiumihalcea111@gmail.com>
+X-ClientProxiedBy: SJ0PR13CA0045.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::20) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917073117.1531207-5-anshuman.khandual@arm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU4PR04MB10549:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05764a11-7b75-4d00-4b1b-08dcd8142bc2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|376014|366016|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ia6sYIjlfLCaF6xrnVE5kC5i2H5bYPOYQsjNPLEmZJqCuInUpi2gtSh1MsJi?=
+ =?us-ascii?Q?NJD4i00WI49XdPpj3ykaYb8wqoSEMNVJ7V5LNNq7hHkW6wJTd68tMaon9bqS?=
+ =?us-ascii?Q?Imp3Upm7wj67AD8kgml0NO2lroQvjaK6WworsjUWiItcLyINpvsS4+lJ8woC?=
+ =?us-ascii?Q?KeKL1STA+EliEqpPlVLPep1gmQhcps/dhwPvHa7TohuCoiEftSVZWTZ24YLF?=
+ =?us-ascii?Q?eAvKc/J1ygeBUNxZRVA+Ihl2/ixx7mWXd4IwQ2jNIDA6uSCokQ/RqiiRi+eI?=
+ =?us-ascii?Q?WGSw9diERSxS0KgwxH8srZ5iP7dSTLtnCJLiHSdJqYnnxkRcFixg9hPWDi+m?=
+ =?us-ascii?Q?ad45ipKAMXgw/wMjPCTrlgD13uZZ30PbeuAHkQPgFKtxJ6wmuw8vN2TQ2+i0?=
+ =?us-ascii?Q?CU4SHG1O+VDriH+oOYnqBpeJg79vy10YRN1X55uXhzRuGb20BQEk4UXZk4cg?=
+ =?us-ascii?Q?jdrudYsTxK184WDweHgEOownHOUCXi8U41E0meDSLfffvfFhPgPWqMBHQDsc?=
+ =?us-ascii?Q?2Ce3diIWiQgtMzcNkWP1i7IDklUoTWbODEpqbxVspJklc0obLatFbPaw0Ira?=
+ =?us-ascii?Q?zFEyEENHb1At/IZucoobWH+ndNXNFItFbMxGoFegrgTYZ4eAG6z/nWk22PLD?=
+ =?us-ascii?Q?KVOxCzA8zG9J1Eq763UfaOrW2rlrmmciOZwZ3fbWY5lXEgUwbMZRbjGztpGz?=
+ =?us-ascii?Q?jMtYDFpagkPfUsYh68h5Cj3wf6chFpQU5xYXBV/HXLNcoAIOSGdGH+Bv81lc?=
+ =?us-ascii?Q?keUPL17R5C2LgHNiltOgFnDfDxZASDfvlXr9xCxxCDGZQPDF25jtjg/duEWT?=
+ =?us-ascii?Q?5uyGgmqOBAS8mEuCbZKM1rimkwEHFPF+hoRK8Db9GCJl+zo/nD2G2QMRbtZY?=
+ =?us-ascii?Q?YZsJQfPBkq+QBq5c5vxXNleuNcAMuAM4J67ml96KTVmB3NHCjmqGXmZ7/5/Q?=
+ =?us-ascii?Q?7vbcbNbn2T5k6H2ZUl08BfnJ+MkIjtaQPu7OApmEoi6g/g7ZkFUb/Czstumv?=
+ =?us-ascii?Q?JTwrj+icf3wJGHRfa3eslTV9AhWH7QkSRkTJ2WkgaTl89gfphD4t4lBzNr6m?=
+ =?us-ascii?Q?/HX1awEKGggFCgYa14sW26hgDc/EjGhtQ6l2D5uhI/f5zzjESwPu29u0zd4r?=
+ =?us-ascii?Q?uAjPvu2ReSowdZ6bKk92D8R5CvKt4iPI4ORyBO7SyOQP5SV8+OsF4ThD7pZy?=
+ =?us-ascii?Q?neFBfdoF0Zz0OmaFiKkPt2xH4b87cQyAU6oZD64j6wxz3MabAAR/P2cRjcVw?=
+ =?us-ascii?Q?c75R80F8w2A5xeUYKUOOohv+dH48P916gWLqYLQCu8+fGekb+67RDmHhcvB9?=
+ =?us-ascii?Q?1dCsVp2gHBtOJgJO/08tKVfE3tPvEJQh3t/UtFm5qHjFIdPlIQkaav1hBc4R?=
+ =?us-ascii?Q?ul9PBufDg3UngRl/t93N+dRhuWIwJ3ge8RqFTB5t6FLBnJj5Ig=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(366016)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DyupLbuloqU05JpA16gSA0nVMjzSngdvGxRzfy4mdSryNHNZwauMTFMJgSAX?=
+ =?us-ascii?Q?59nb+51GDU5A5PAcbCA27JfyOy928OaDUWKbIEJGvPyNqvw6eliCpLn9oiuL?=
+ =?us-ascii?Q?7PzlRkMs3jzy7/5zz5R82h1lAYAGw+uxQc7wjJX3wXpwQypqw4F6ieFFFXHz?=
+ =?us-ascii?Q?b0cvwmjjEo0QjQgO7zNAyD4fodn7fdbf0G3wwzAktRivsKYN6lXNF+DPXwu9?=
+ =?us-ascii?Q?mfjLaUSAg2pLnhQGRN+iJJ8x8fIxwkT+Dk2trv/5Y5F0g3pWZKx3vuMCBrF+?=
+ =?us-ascii?Q?j3C1gCLnzXzdGMlh33n0zRL54EOSOMrii1EWWBk5yAPNqG+bjAqH2HiKfFXE?=
+ =?us-ascii?Q?+1yPO897YQYfVRiWhHLHd1nlaEKxgEPzPDd5Jqo9c3a/MJlrzK8T9uGTfvmo?=
+ =?us-ascii?Q?fZmuP8k1g9smgInOHAWA7f1JcwjSY8P0OmKQg//HLvFZkL+eG42JKKCnyqrn?=
+ =?us-ascii?Q?ZiYQxA20/wMxddViXuU/9gMueo29JxCxYb9an61PYtzwiVkINmlEiapAPZ23?=
+ =?us-ascii?Q?w3l1rRzL6pMTAsOI4/modE05CGX0dKpmOqbm7g21n0OoKjtzgTNNML/0BtqK?=
+ =?us-ascii?Q?xPday+kKxHnl82FZ7fdOWY80m/T2d3isHoDaHwnFZyZuH/0hmWcF05xku/bl?=
+ =?us-ascii?Q?vjbEBXWBdSK+GKTNH8ogGVcXSEKeNQPMFExHXqTlCHvOU2TNd2iuT5WGLHFY?=
+ =?us-ascii?Q?jfXk6QavQsZv2aiwAkIuL2oEIvDo23NrbFicNBPYDLBot4BNIrvBsefre23S?=
+ =?us-ascii?Q?wG8aS6YKZVZdIcYjFJgOHvuczhLQrkh9o8kDrL+aRMVxM+h4WE55u5iNTh97?=
+ =?us-ascii?Q?VR1yxt8iHFiyOk4V9SBkGEKQs3yyB9kpM7aPSQebtu+UYYnLcbdUatuAHGz5?=
+ =?us-ascii?Q?UkpNIe0GY+XU7afjkovTr1Sak5XISxNivtCQWJZCsGd7D5TBHE5ZLBIiY4h+?=
+ =?us-ascii?Q?Veb/oveqz+RsvBdK6tHWArnWrOupNLZivbsqUvbwKQjcKdExVUOXBD2JLL8F?=
+ =?us-ascii?Q?pKIDopw4E9UlRtBOxab7n0jKzjRcPXSaJcNqPiRpUDYpLdYIW0suIvBFE5Bd?=
+ =?us-ascii?Q?lfx4rAH3zfTz92l7NvhlpPDZ9qotQpeDnSz4nTJaZRtXdsx30BKbX1JUiF4l?=
+ =?us-ascii?Q?EzpNiPbSN0uII5kgNqG+kU8ukNLLsJ3XeU/63xlERafzrbEumR0F37hIC0db?=
+ =?us-ascii?Q?CPYuVcCOf3jzhOQQtLAxeAU8et9x2gbZH4VBKah9DJboQt/LFOO8A+ViT/0N?=
+ =?us-ascii?Q?fomyOQcMasBUE5moWyPA157BnNBJrf1pjLZcqL0Z0G+7oCZChLIlawKvWZht?=
+ =?us-ascii?Q?E+3lkq9GEadlXqIPkxyvgn6TR4UxctV7U24/8sHTTyqZ+B+l3ed1Ac8n4zOd?=
+ =?us-ascii?Q?cQ3ZWYKujLiZNW+gpvCYvZHbb90d1aSpMaLxxQYkYe7FCU4xIDrjKkRsGJ6i?=
+ =?us-ascii?Q?qAMjNli9lc/h/2xSOPClzy3wFdm8De6JGV6g3NSLHvBMYTXBtf1frAQdGyKF?=
+ =?us-ascii?Q?Sr2WcDNV7bU3ut5LiU34hPuO48J9n1Sg2ZdyaFTZ7VhviCUl/WkDwQkCb1Tn?=
+ =?us-ascii?Q?yK6LLrA+tKaFCN//W1s=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05764a11-7b75-4d00-4b1b-08dcd8142bc2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 19:00:32.7451
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kFmfhConyrAXpOqkWreVwcWkMdt7EeAdPzO05WcpE/uBcRrSIqdByi2RKsirv5LFGIQ8qMcDksrpO0EB5uHhAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10549
 
-Hi Anshuman,
+On Wed, Sep 18, 2024 at 02:21:17PM -0400, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>
+> Set the status of the dsp node to "okay" and assign
+> its reserved memory regions.
 
-kernel test robot noticed the following build errors:
+wrap at 75 chars.
 
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus brauner-vfs/vfs.all dennis-percpu/for-next linus/master v6.11]
-[cannot apply to akpm-mm/mm-everything next-20240918]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Add dsp node and related reserved memory regions.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/m68k-mm-Change-pmd_val/20240917-153331
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20240917073117.1531207-5-anshuman.khandual%40arm.com
-patch subject: [PATCH V2 4/7] mm: Use pmdp_get() for accessing PMD entries
-config: um-allnoconfig (https://download.01.org/0day-ci/archive/20240919/202409190205.YJ5gtx3T-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240919/202409190205.YJ5gtx3T-lkp@intel.com/reproduce)
+Frank
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409190205.YJ5gtx3T-lkp@intel.com/
+>
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8qm-mek.dts | 27 ++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qm-mek.dts b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
+> index 62203eed6a6c..7ee69ce7b193 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
+> @@ -92,6 +92,27 @@ vdevbuffer: memory@90400000 {
+>  			reg = <0 0x90400000 0 0x100000>;
+>  			no-map;
+>  		};
+> +
+> +		dsp_reserved: dsp@92400000 {
+> +			reg = <0 0x92400000 0 0x1000000>;
+> +			no-map;
+> +		};
+> +
+> +		dsp_vdev0vring0: vdev0vring0@942f0000 {
 
-All errors (new ones prefixed by >>):
+'vdev0vring0' should be genernal name, such as 'memory'
 
-   In file included from mm/pgtable-generic.c:10:
-   In file included from include/linux/pagemap.h:11:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from mm/pgtable-generic.c:10:
-   In file included from include/linux/pagemap.h:11:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from mm/pgtable-generic.c:10:
-   In file included from include/linux/pagemap.h:11:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> mm/pgtable-generic.c:54:2: error: cannot take the address of an rvalue of type 'pgd_t'
-      54 |         pmd_ERROR(pmdp_get(pmd));
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/pgtable-nopmd.h:36:28: note: expanded from macro 'pmd_ERROR'
-      36 | #define pmd_ERROR(pmd)                          (pud_ERROR((pmd).pud))
-         |                                                  ^~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/pgtable-nopud.h:32:28: note: expanded from macro 'pud_ERROR'
-      32 | #define pud_ERROR(pud)                          (p4d_ERROR((pud).p4d))
-         |                                                  ^~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/pgtable-nop4d.h:25:28: note: expanded from macro 'p4d_ERROR'
-      25 | #define p4d_ERROR(p4d)                          (pgd_ERROR((p4d).pgd))
-         |                                                  ^~~~~~~~~~~~~~~~~~~~
-   arch/um/include/asm/pgtable-2level.h:31:67: note: expanded from macro 'pgd_ERROR'
-      31 |         printk("%s:%d: bad pgd %p(%08lx).\n", __FILE__, __LINE__, &(e), \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-      32 |                pgd_val(e))
-         |                ~~~~~~~~~~~
-   include/linux/printk.h:465:60: note: expanded from macro 'printk'
-     465 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/printk.h:437:19: note: expanded from macro 'printk_index_wrap'
-     437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                                 ^~~~~~~~~~~
-   12 warnings and 1 error generated.
-
-
-vim +/pgd_t +54 mm/pgtable-generic.c
-
-    46	
-    47	/*
-    48	 * Note that the pmd variant below can't be stub'ed out just as for p4d/pud
-    49	 * above. pmd folding is special and typically pmd_* macros refer to upper
-    50	 * level even when folded
-    51	 */
-    52	void pmd_clear_bad(pmd_t *pmd)
-    53	{
-  > 54		pmd_ERROR(pmdp_get(pmd));
-    55		pmd_clear(pmd);
-    56	}
-    57	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +			reg = <0 0x942f0000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		dsp_vdev0vring1: vdev0vring1@942f8000 {
+> +			reg = <0 0x942f8000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		dsp_vdev0buffer: vdev0buffer@94300000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0 0x94300000 0 0x100000>;
+> +			no-map;
+> +		};
+>  	};
+>
+>  	lvds_backlight0: backlight-lvds0 {
+> @@ -640,6 +661,12 @@ &sai7 {
+>  	status = "okay";
+>  };
+>
+> +&vpu_dsp {
+> +	memory-region = <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
+> +			<&dsp_vdev0vring1>, <&dsp_reserved>;
+> +	status = "okay";
+> +};
+> +
+>  &iomuxc {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_hog>;
+> --
+> 2.34.1
+>
 
