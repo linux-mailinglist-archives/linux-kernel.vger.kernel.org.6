@@ -1,118 +1,145 @@
-Return-Path: <linux-kernel+bounces-332986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A4A97C1E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CD997C1E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E38E8B218DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:26:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972091F2253D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FEE1CB52E;
-	Wed, 18 Sep 2024 22:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00241CB334;
+	Wed, 18 Sep 2024 22:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N2xjtGrD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="DqMCBf/B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2E4178CF6;
-	Wed, 18 Sep 2024 22:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B01178CF6
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 22:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726698390; cv=none; b=JB595Rn44QGsDzvFrSzuqEKJJsgtqVWKfJ4EgIYvdACvXoKz9KjwyGRjnMT1IncF3Iq11Wbyhh+UPcuD85j4CQQ+MO8PzXDhFrwXxCxxkkMuq5Zk/0oLjCxKvWQQipUWI/PWUciYqY8ofHHhzlbU5934bF7EqY5M5ChQt2VOeik=
+	t=1726698485; cv=none; b=eixOxt702XkPG778CvoE8Ajp9l2MfsPROvUtTEys2OjVyFG6Vf4xURwC9pqq6Z8s39Q6mov+XpWnYQ9VlKy6i4BHFUuWvh42Fys1WzkWUTy23U6/zC+Bg1MDKxqc2OJqKIm785pRShU+dWhXGeE2QPcsmp6RogpygIBXH91XtEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726698390; c=relaxed/simple;
-	bh=OhYI+MNoOFaYPiFXE26XcNL5YfvUyP5sjGy/ntvdgV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=loR+vjLXddQYfFqwkN2gfRLjyVUAL/Uoz0OqXBv2ntOw1siNww28Y92nN4N4nTHqt0pwDhV575/heqtm0azSH8i1OH1VTXTm4kWkWCkcnsWXSv8s4YU4Dbp24kgbbjWFqKdCqNK6522uZug0xFRGBIprSxkeamjQaq1PE3JPD8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=N2xjtGrD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726698385;
-	bh=NfEv9d3LU+LUqcR27zMivHL1FEOXtWuNMUA2OR0jp08=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=N2xjtGrD2fuzZJf2Z6fmQdUfiCeUfvwHY+P4vB19ZyAhcvg3NnB7Gc6j4+Q3PS/BC
-	 nZWuXbYT2l1KQbp0pINqOBcml8wq3yGJGQC3qYJCtliAgjTwX1XUMVFMMH1J6H8sSI
-	 fHL6teFf0iGu42csvi/qGsbjSqpcr76uTgCWFbUmo2WCmxwSp+FuXxXoo5XmE2/xc1
-	 bXvDPUzvQkcrf8Vdc19A1TqqaEMfZomOMrTc3gOuk+DGBHhDF9aLibbu588e8/1Hio
-	 XYAAdijRVRnNuFYCNBpjgickFas1Ncpa4SRyjcxeF7LnzWmyTw8jKxeKsbSffVbZI2
-	 CaNBwUPtryCJQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X8Ct90FGjz4xVV;
-	Thu, 19 Sep 2024 08:26:25 +1000 (AEST)
-Date: Thu, 19 Sep 2024 08:26:24 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Arnaldo Carvalho de Melo <acme@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, Mark Rutland
- <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>,
- linux-perf-users@vger.kernel.org
-Subject: Re: [GIT PULL] Performance events changes for v6.12
-Message-ID: <20240919082624.05ca5fd6@canb.auug.org.au>
-In-Reply-To: <ZurLc9qEjBH9MkvK@gmail.com>
-References: <ZurLc9qEjBH9MkvK@gmail.com>
+	s=arc-20240116; t=1726698485; c=relaxed/simple;
+	bh=DviNfOBLBfJtvGzTe4PiwqFhlg1DqqYhA659Mdmix88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=adn51tKVnPXHLKqHRAVgfeBHvouQYrFeTXOYuVaJ+EUt/lfqd+i7X2synRJQMdh3W1QR08oC5rSLoNkOFaYPLnkLI4DW2wNG6tz+eA7U1F1E5D/v2J8eL2d/xXLtod99vkbBMqLNg4tpxBlOEPVB9WoRgSwupizx2iP0BsPH5aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=DqMCBf/B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEFFBC4CEC2;
+	Wed, 18 Sep 2024 22:28:02 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="DqMCBf/B"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1726698481;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zWmjdRBT0ivUDXNAnsZ9bumBL4RE93ccXi0XEeAeoT0=;
+	b=DqMCBf/B5uJIiTmJrKVJFMDkraiFYgXBFcz+QJrZMm3PMEoRiytvqI72S5twJq+Jb1HvEV
+	hzEASuovnk20zW5Jrn7aWqq12gxvM6U1ImGn6rowC8n5kpWGQSw7rwy202a4SGLHB13BTa
+	VNjg8CfPrmqrOaKxaHuQIfX3o04kK7c=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ca5a12b2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 18 Sep 2024 22:28:00 +0000 (UTC)
+Date: Thu, 19 Sep 2024 00:27:57 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Alexander Graf <graf@amazon.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+	virtio-dev@lists.oasis-open.org, qemu-devel@nongnu.org
+Cc: Lennart Poettering <mzxreary@0pointer.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Babis Chalios <bchalios@amazon.es>, Theodore Ts'o <tytso@mit.edu>,
+	"Cali, Marco" <xmarcalx@amazon.co.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	"Michael Kelley (LINUX)" <mikelley@microsoft.com>,
+	Sean Christopherson <seanjc@google.com>, jann@thejh.net
+Subject: vm events, userspace, the vmgenid driver, and the future [was: the
+ uevent revert thread]
+Message-ID: <ZutT7bArzCwW5yyf@zx2c4.com>
+References: <20240418114814.24601-1-Jason@zx2c4.com>
+ <e09ce9fd-14cb-47aa-a22d-d295e466fbb4@amazon.com>
+ <CAHmME9qKFraYWmzD9zKCd4oaMg6FyQGP5pL9bzZP4QuqV1O_Qw@mail.gmail.com>
+ <ZieoRxn-On0gD-H2@gardel-login>
+ <b819717c-74ea-4556-8577-ccd90e9199e9@amazon.com>
+ <Ziujox51oPzZmwzA@zx2c4.com>
+ <Zi9ilaX3254KL3Pp@gardel-login>
+ <01d2b24c-a9d2-4be0-8fa0-35d9937eceb4@amazon.com>
+ <CAHmME9rxn5KJJBOC3TqTEgotnsFO5r6F-DJn3ekc5ZgW8OaCFw@mail.gmail.com>
+ <84c3696d-8108-4a2e-90d7-7830ca6cc3b9@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/smY3BmHj5Ku=0u/jB1puZt+";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <84c3696d-8108-4a2e-90d7-7830ca6cc3b9@amazon.com>
 
---Sig_/smY3BmHj5Ku=0u/jB1puZt+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+[broadened subject line and added relevant parties to cc list]
 
-Hi all,
+On Tue, Sep 17, 2024 at 10:55:20PM +0200, Alexander Graf wrote:
+> What is still open are user space applications that require event based 
+> notification on VM clone events - and *only* VM clone events. This 
+> mostly caters for tools like systemd which need to execute policy - such 
+> as generating randomly generated MAC addresses - in the event a VM was 
+> cloned.
+> 
+> That's the use case this patch "vmgenid: emit uevent when VMGENID 
+> updates" is about and I think the best path forward is to just revert 
+> the revert. A uevent from the device driver is a well established, well 
+> fitting Linux mechanism for that type of notification.
 
-On Wed, 18 Sep 2024 14:45:39 +0200 Ingo Molnar <mingo@kernel.org> wrote:
->
-> Please pull the latest perf/core Git tree from:
->=20
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-core-20=
-24-09-18
->=20
->    # HEAD: 5e645f31139183ac9a282238da18ca6bbc1c6f4a Merge branch 'perf/ur=
-gent' into perf/core, to pick up fixes
+The thing that worries me is that vmgenid is just some weird random
+microsoft acpi driver. It's one sort of particular device, and not a
+very good one at that. There's still room for virtio/qemu to improve on
+it with their own thing, or for vbox or whatever else to have their
+version, and xen theirs, and so forth. That is to say, I'm not sure that
+this virtual hardware is *the* way of doing it.
 
->       perf: Generic hotplug support for a PMU with a scope
+Even in terms of the entropy stuff (which I know you no longer care
+about, but I do), mst's original virtio-rng draft mentioned reporting
+events beyond just VM forks, extending it generically to any kind of
+entropy reduction situation. For example, migration or suspend or
+whatever might be interesting things to trigger. Heck, one could imagine
+those coming through vmgenid at some point, which would then change the
+semantics you're after for systemd.
 
-This commit introduces a (reported) build warning in some configurations:
+Even in terms of reporting exclusively about external VM events, there's
+a subtle thing to consider between clones/forks and rollbacks, as well
+as migrations. Vmgenid kind of lumps it all together, and hopefully the
+hypervisor notifies in a way consistent with what userspace was hoping
+to learn about. (Right now, maybe we're doing what Hyper-V does, maybe,
+but also maybe not; it's kind of loose.) So at some point, there's a
+question about the limitations of vmgenid and the possible extensions of
+it, or whether this will come in a different driver or virtual hardware,
+and how.
 
-https://lore.kernel.org/all/20240911153854.240bbc1f@canb.auug.org.au
+Right now, this is mostly unexplored. The virtio-rng avenue was largest
+step in terms of exploring this problem space, but there are obviously a
+few directions to go, depending on what your primary concern is.
 
-That turns into a build failure for some configurations :-(
+But all of that makes me think that exposing the particulars of this
+virtual hardware driver to userspace is not the best option, or at least
+not an option to rush into (or to trick Greg into), and will both limit
+what we can do with it later, and potentially burden userspace with
+having to check multiple different things with confusing interactions
+down the road. So I think it's worth stepping back a bit and thinking
+about what we actually want from this and what those semantics should
+be.
 
-A suggested fix was posted a few days ago.
+I'd also love to hear from the QEMU guys on this and get their input. To
+that end, I've added qemu and virtio mailing lists, as well as mst.
 
---=20
-Cheers,
-Stephen Rothwell
+Also, I'd be interested to learn specifically what you (Amazon) want
+this for and what the larger picture there is. I get the systemd case,
+but I'm under the assumption you've got a different project in your
+woods.
 
---Sig_/smY3BmHj5Ku=0u/jB1puZt+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbrU5AACgkQAVBC80lX
-0GzKJAf9GT3d8pjycXjf+9AP3bwANR/y/tjabxwDQJHWoRuKoWnodYiQxwu6iVdf
-QEgI+KCH+NfwXVNIP4/zVaBsXL2BFCyoOrr9ZWzLOOrLBnoCWvMzC2+f0TW3YG3I
-MVAH507r0Ygb/VtxaieIgCluXuGg0nTlFrjHo3Ul/COAp2WY1GcYB1eTppfTWdWu
-wfIIKGZ7ByHJp5GUw7nlBmmkSMfN1OFeJfO6BBfzfMUJmt0bTIojhw+tYRiObAXX
-7ISaSbVzdJyZ/6sdDfN8pzzfJsTxLzl3ON9gDBunk2MD8gAo1ZHApeEjB+8xbHsm
-7xWIDaXo23MrJ//sR66smsO5/vc92A==
-=rAW0
------END PGP SIGNATURE-----
-
---Sig_/smY3BmHj5Ku=0u/jB1puZt+--
+Jason
 
