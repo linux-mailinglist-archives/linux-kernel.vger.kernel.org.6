@@ -1,122 +1,154 @@
-Return-Path: <linux-kernel+bounces-332459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35DCA97BA07
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:17:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3D497BA0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18752869E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04F161F21B49
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F54176AB6;
-	Wed, 18 Sep 2024 09:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E0F176AB6;
+	Wed, 18 Sep 2024 09:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWmZzSvP"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fC06XVHb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B18A4C8C;
-	Wed, 18 Sep 2024 09:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1142868B;
+	Wed, 18 Sep 2024 09:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726651050; cv=none; b=u0tfYcDRqX/aT74Vaig6vhZjYOW/BF/q3FFBRd51hnkWJ7Y4Kgb7KLsbJiUv3b+TrcDsoMtGyKwwfrPg8WW4BLpqdyrP0nic61RtBdOFUrnFY2InPivYS0nFhd9lGS8wE13gQPgq6yZFhW7Tz0QNgUdv4qToN0167iweka2Pr50=
+	t=1726651211; cv=none; b=ib3Q+oLbfeAxQoyBbyEcgJJ0bU2jCh9XWCFuFgM5ao/2NRkcm78tyuRhOaPRwYttM7Vz6q/jK6jeY5N60kvdddNe0J70PlxntGCKfHWr0fiDrNtu12JyokBbZgXPSO+5oa+fVsh8tMopzbf5e87idSMEyXQdlpRP7mQS6ap/aHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726651050; c=relaxed/simple;
-	bh=gHVgazaMlap02rbz/N01EBqF3qRxYVTPMKxxVaCQlCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BPutZVjrlzxb8TxuvKtf1z9k9rpGfFlK8lT2u/pPr92csxGVYzmTCQJoskLiCSIZV39WLf+Nsz7VlZF0+DYSlNapp9Fl7F7Nxc+qPNhTvRG1Lsihesccjl9BH8By6A2VgEIm7bUy7EGp4bg0lYRPGleZZVPD27CJ+UlZlRGDT0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DWmZzSvP; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so69935201fa.2;
-        Wed, 18 Sep 2024 02:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726651047; x=1727255847; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gHVgazaMlap02rbz/N01EBqF3qRxYVTPMKxxVaCQlCs=;
-        b=DWmZzSvP9AVx9LwWqFA4myjulDrq3OVcpEqGoxXaZLCmbi7mjkjE3WV9v94jRE0HkX
-         wt1Mn3XfZ11+HgXjWbIVI3z0CECnVKu/sgvuXfmjGUrpKjbzJf8N6XtM9co68qqIsmCc
-         HTyH0SDG7hF+UdagygEEcgRPrphHNieH0VnXruK0YK7tPiUkI/RsRUJnx0xpAJbOVZ0b
-         CGhZpzQOp+RbVV2FGWTG19v6SDmy1q0LwAcx7zAMzMqIZ4yPRjShYxNS8UHoBm0TjIq7
-         wBJGp+3E3tJhEuOg+XHPU4JrSWvbHjOmpRQU5RW6LxCtwfcAFn5+OBb+au5GKGYc0lbC
-         IZpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726651047; x=1727255847;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gHVgazaMlap02rbz/N01EBqF3qRxYVTPMKxxVaCQlCs=;
-        b=aJ5uGINz5YqkD93ufGSSzfkJFVQeieUsDlJU1Ob4awmP8GzvdQvjCju5cKr92nkUKW
-         /Qbj8seM1I0g9KHp0T2AvzgcTNPU+GtyVMNucCt28K7ygLYT+Yt9lQiX/5YXdkO1oX/y
-         PKwndgCfBk6ZCi2PuF/yJoRyq6nB15n2NqhPn8GtJXLY4TATe3/9zngpwN75TZagJf98
-         nwFWS8btP9VO+VKKQ3zx9CuwMFTiPX8+51bh4Zr7oGQDd76FEIdZQIcrJ6EK15IGsegx
-         6W7UUcoNLHEG4AIg3IB9MmAL8AMynOtFZ9ddTS2Yohejj+uJbo5mhh1HFdFDPieqvt+z
-         TLiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWw0q/vuKWhDtvEbfLcemsF4CAPDnfrJeDEc9mz1xILo9lno+fqugYSe4laTp8KImdQoLh+n/f32AW0mkA2@vger.kernel.org, AJvYcCWy+jwQTiuEWomqmXKF6W80Sgzviu00IDVG4pyEWyDeMheXgns6ZrIgFYv7CtgC2OFOytEzNxUVwdqpVA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YymEN+o7N4xN0cMTFNSbBpW9YA1LgdNjnako2hflv0T/axx8kdJ
-	NeuaFJACjzq7s973oLdWDwb1x9yItL3nyZvs11xBLN0fIUJRqBp9rWnSJN9x
-X-Google-Smtp-Source: AGHT+IEaCVMll76ZZk+GatEityraYUqZlAkucugFbDrKNIQyfFFWL1rOr8B9BGZvl7SXtghoH8Ghyg==
-X-Received: by 2002:a05:6512:3c97:b0:533:901:e455 with SMTP id 2adb3069b0e04-53678fab595mr12187729e87.2.1726651046808;
-        Wed, 18 Sep 2024 02:17:26 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5369efc8be8sm251746e87.248.2024.09.18.02.17.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 02:17:25 -0700 (PDT)
-Date: Wed, 18 Sep 2024 11:17:21 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/14] HID: vrc2: constify fixed up report descriptor
-Message-ID: <ZuqaoRdJuujgLTZL@gmail.com>
-References: <20240828-hid-const-fixup-2-v1-0-663b9210eb69@weissschuh.net>
- <20240828-hid-const-fixup-2-v1-7-663b9210eb69@weissschuh.net>
+	s=arc-20240116; t=1726651211; c=relaxed/simple;
+	bh=2IPuGsFVx6i3IPlbaxYG1lBF+gtjjtT/tgBzPKncEKQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JCSnOPGj96ldvcyLV+wRHRLuqZNb9fUg7bCjxFfrGDJZhtPTHUXBJ5gFryknlxvVx6l/LFcx49muuAUxDn4GJFMeVJgt51Xqk1WdVyM5luDHFbnzlTn5+EKzzk6qG9fldnNBH8+zOhxVnl7EUmxsMH7qi9n1PDfjGplrREnJaqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fC06XVHb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A2314C4CECD;
+	Wed, 18 Sep 2024 09:20:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726651210;
+	bh=2IPuGsFVx6i3IPlbaxYG1lBF+gtjjtT/tgBzPKncEKQ=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=fC06XVHb0/Un4jdSh1HWBV7i/wmL1z2RxPkGk8bOlKg9AfKs01BfHtIzPEx+yuwTl
+	 lBs6hYpXEK09I/sWdZSYTDA2yePX/1dUhQZTnoj2tMWdUN/lh4368Ri1SXjyMo6M1U
+	 kGaeqrLxMYiNpHBuyUFq1li+i6nrob1V4+sMThYJezPS3HFbjkfgAtg3KbWaHQHctu
+	 Opi3Fjbl8UDWlH75eCxCulPgpszA/eymt9iVSA4RifTcA6eJ8gFCF2A7X3yy5b7oiA
+	 NdQNBtNgCQCg2joM8bqJn34ekUqhqnZYLWe0o77gcwGZ6Xd9FicrH1FxU61poWlcED
+	 j6aJEIM8xkCKQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 971C5CCD193;
+	Wed, 18 Sep 2024 09:20:10 +0000 (UTC)
+From: Manojkiran Eda via B4 Relay <devnull+manojkiran.eda.gmail.com@kernel.org>
+Date: Wed, 18 Sep 2024 14:50:03 +0530
+Subject: [PATCH v2] ARM: dts: aspeed: Enable PECI and LPC snoop for IBM
+ System1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IYUNy8FbiPaQblw+"
-Content-Disposition: inline
-In-Reply-To: <20240828-hid-const-fixup-2-v1-7-663b9210eb69@weissschuh.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240918-dts-aspeed-system1-peci-snoop-v2-1-2d4d17403670@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAEKb6mYC/43NTQ6CMBCG4auQWTuGlp+qK+9hWJQywCRCmw4hE
+ sLdrZzA5fMt3m8Hocgk8Mh2iLSysJ8T9CUDN9p5IOQuGXSuy/yuDHaLoJVA1KFsstCkMJBjlNn
+ 7gEZXzuR9actbBakRIvX8OfuvJnlkWXzczrtV/dZ/y6tChe29Nn1b2NoU1XOYLL+vzk/QHMfxB
+ WL1jDLKAAAA
+To: Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ Manojkiran Eda <manojkiran.eda@gmail.com>, 
+ Ninad Palsule <ninad@linux.ibm.com>, openbmc@lists.ozlabs.org, 
+ Eddie James <eajames@linux.ibm.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726651208; l=2124;
+ i=manojkiran.eda@gmail.com; s=20240917; h=from:subject:message-id;
+ bh=PhsAWX7PZUt4OM1Bw10bIDsLdGTH2xpjWLavU7+Q4Tk=;
+ b=czWKIuxWc7LaxglC3n9wJmLebajDF5jrdBsRa+IlENMLoNzE6kVM3/qJqWPjuB3Y/egwdDuqB
+ JNNjTtL1XS5BICAZswrBb/1tOEriGVb3/1DQfw2KkhL3/sE8CpMpgrM
+X-Developer-Key: i=manojkiran.eda@gmail.com; a=ed25519;
+ pk=DhQ/NRPeyE1WOxUmafF9Oy8LLco0c8CCeTN+Ef6q6Ts=
+X-Endpoint-Received: by B4 Relay for manojkiran.eda@gmail.com/20240917 with
+ auth_id=215
+X-Original-From: Manojkiran Eda <manojkiran.eda@gmail.com>
+Reply-To: manojkiran.eda@gmail.com
+
+From: Manojkiran Eda <manojkiran.eda@gmail.com>
+
+This patch enables the PECI interface and configures the LPC Snoop for
+ports 0x80 and 0x81 in the ASPEED BMC for IBM System1.
+
+Signed-off-by: Manojkiran Eda <manojkiran.eda@gmail.com>
+---
+This patch enables PECI and LPC snoop functionality on the IBM System1
+BMC in the device tree.
+
+The following changes have been made:
+
+1. Enabled the PECI controller (peci0) by marking its status to "okay".
+2. Enabled the LPC snoop engine, configuring snoop ports at 0x80 and
+   0x81.
+
+These changes are required to support PECI communication and LPC
+snooping for system monitoring and debugging purposes.
+
+To: Ninad Palsule <ninad@linux.ibm.com>
+To: Joel Stanley <joel@jms.id.au>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: openbmc@lists.ozlabs.org
+To: Eddie James <eajames@linux.ibm.com>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+To: Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-aspeed@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+
+Changes in v2:
+- Added ibm system1 in the subject & added upstream mailing
+  list as well for reviews.
+- Link to v1: https://lore.kernel.org/r/20240917-dts-aspeed-system1-peci-snoop-v1-1-b967fb3a6735@gmail.com
+---
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+index cb3063413d1f..738a86c787c0 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+@@ -464,6 +464,15 @@ &kcs3 {
+ 	aspeed,lpc-interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+ };
+ 
++&peci0 {
++	status = "okay";
++};
++
++&lpc_snoop {
++	status = "okay";
++	snoop-ports = <0x80>, <0x81>;
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+
+---
+base-commit: ca2478a7d974f38d29d27acb42a952c7f168916e
+change-id: 20240917-dts-aspeed-system1-peci-snoop-725c70f4a485
+
+Best regards,
+-- 
+Manojkiran Eda <manojkiran.eda@gmail.com>
 
 
---IYUNy8FbiPaQblw+
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 28, 2024 at 09:33:26AM +0200, Thomas Wei=DFschuh wrote:
-> Now that the HID core can handle const report descriptors,
-> constify them where possible.
->=20
-> Signed-off-by: Thomas Wei=DFschuh <linux@weissschuh.net>
-Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-
---IYUNy8FbiPaQblw+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmbqmpwACgkQiIBOb1ld
-UjKCxxAAmevoExDx49kPiEqS9H0/hT+JcrRXv3S/Xgq45MNSST9Y9rhEPzg4auaQ
-FLcB5bvT02rLWZa8gDFlti1ZZHFWpGYBsYWhiMD6oyjLyBVVi+oNsLaJqFvUa1LR
-Y8aTETFg1CTwVQaeaPo2SAdUVdD4tXYP9fbyqHIIMQam2+WzjANIqWoJmbL9wjNX
-BXvZok+PhChDH9DUFsj99L9wJmkgHrMiBrvUhFyl9YBSq22Oo+H33R2pPi3na/Jq
-gEA7hFGaBanIyOlPMiJujXH/j9Z8wRzFNxKbeUAA+CHGGt/ro8/gGTt0KLjFA+BS
-uCi4BY5jVqKUKfu+G0f9m+YIPxpfRJQuTJKQ/TT9btIuSLuhHZSMHgou9kUtktc0
-HdjU9hTj4TfifdO7mf26o7xH8YHOnqP5AzJXagid8xrFkyQxiX+4jvd8qFVRpJ+n
-ntcjORvStIg58rjYBCBPFjxpAZtYsidYpsYdvbyFwsZNRwWS9bOZ9MRllCA7FQiJ
-4pHrsjRGPjV/APoLf+y6N0anBtlRmbmGUyZPHlEV7lPh5iw9qXlB4iow4jTwhc2L
-CfVsN9EBvNOShNXNWIawA1it8t2rcAJY5jdaiJzv7egzgC17KLkYVu3c2FTLKMmP
-A6OS33Qk1BXyOl0fhi3rnxM8TUbWBYWegs986JnMdaK7kt5D/4A=
-=Mqcl
------END PGP SIGNATURE-----
-
---IYUNy8FbiPaQblw+--
 
